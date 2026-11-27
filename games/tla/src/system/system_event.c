@@ -19,14 +19,7 @@ void syInitEvent(void)
 	EventsInitialized = 1;
 }
 
-/* Unused: copies `byteCnt` bytes a word at a time. */
-UNUSED void syCopyEventWords(Uint32 *dst, Uint32 *src, Uint32 byteCnt)
-{
-	Uint32 idx;
-	byteCnt >>= 2;
-	for(idx = 0; idx < byteCnt; idx++)
-		*dst++ = *src++;
-}
+#include "system/copy_event_words.c"
 
 /* Bubble-sorts the event table by priority, highest first, so each pass runs
    its events from the highest priority down; removed events

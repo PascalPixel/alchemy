@@ -16,64 +16,9 @@ typedef enum LOBBED_SHELLS_MODE {
 	LOBBED_SHELLS_POISON_INK	 /* Mars Djinn colours, smoke */
 } LOBBED_SHELLS_MODE;
 
-/* Gold shells arc from the user onto each target in turn and burst into shards.
+#include "battle_effect/effect_mad_spatter.c"
 
-   Abilities: Mad Spatter. */
-void btEffectRunMadSpatter(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunLobbedShells(args, LOBBED_SHELLS_MAD_SPATTER);
-}
-
-/* Green shells arc from the user onto each target in turn and burst into smoke.
-
-   Abilities: Decompose. */
-void btEffectRunDecompose(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunLobbedShells(args, LOBBED_SHELLS_DECOMPOSE);
-}
-
-/* Blue shells arc from the user onto each target in turn and burst into smoke.
-
-   Abilities: Bone Chiller. */
-void btEffectRunBoneChiller(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunLobbedShells(args, LOBBED_SHELLS_BONE_CHILLER);
-}
-
-/* Shells in the spider web's colours arc from the user onto each target in turn
-   and burst into smoke.
-
-   Abilities: Sticky Goo. */
-void btEffectRunStickyGoo(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunLobbedShells(args, LOBBED_SHELLS_STICKY_GOO);
-}
-
-/* Shells in Mars Djinn colours arc from the user onto each target in turn and
-   burst into smoke.
-
-   Abilities: Poison Ink. */
-void btEffectRunPoisonInk(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunLobbedShells(args, LOBBED_SHELLS_POISON_INK);
-}
-
-/* Lime shells arc from the user onto each target in turn and burst into smoke.
-
-   Abilities: Sticky Poison. */
-void btEffectRunStickyPoison(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunLobbedShells(args, LOBBED_SHELLS_STICKY_POISON);
-}
-
-/* Green shells arc from the user onto each target in turn and burst into
-   shards.
-
-   Abilities: Rotten Blood. */
-void btEffectRunRottenBlood(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunLobbedShells(args, LOBBED_SHELLS_ROTTEN_BLOOD);
-}
+#include "battle_effect/effect_poison_shells.c"
 
 /* The bursts, after the shells in PARTICLES. */
 #define LOBBED_SHELLS_BURSTS	  (PARTICLES + 256)

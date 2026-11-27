@@ -90,24 +90,7 @@ void fdCameraMoveToActor(Sint32 actorId, Sint32 pan)
 			actor->x.fixed, actor->y.fixed, actor->z.fixed, pan);
 }
 
-/* The script command "camera wait for move": waits (at most 600 ticks) for the
-   camera to arrive, then 2 ticks more. */
-void fdCameraWaitForArrival(void)
-{
-	fdActorWaitForMoveStub(((FIELD_STATE *)syHeapSlotAllocEWRAM(
-								HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))
-			->camera);
-	fdScriptWait(2);
-}
-
-/* The script command "get camera": returns the camera's own actor, which the
-   view centres on. */
-ACTOR *fdCameraGetActor(void)
-{
-	return ((FIELD_STATE *)syHeapSlotAllocEWRAM(
-				HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))
-		->camera;
-}
+#include "field/camera_wait_for_arrival.c"
 
 /* Unused: makes the camera follow target; unless keepCurPos is set it
    jumps there at once. */

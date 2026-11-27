@@ -20,60 +20,13 @@ typedef enum STAT_REDUCTION_MODE {
 	STAT_REDUCTION_UNUSED  /* played as STAT_REDUCTION_WEAKEN; unused */
 } STAT_REDUCTION_MODE;
 
-/* Light swirls into each target and bursts, then a dagger appears in Mars
-   colours.
+#include "battle_effect/effect_impact_guard.c"
 
-   Abilities: Impact, High Impact, Demon Spear, Angel Spear; Forge. */
-void btEffectRunImpact(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunStatBoost(args, STAT_BOOST_IMPACT);
-}
+#include "battle_effect/effect_ward.c"
 
-/* Light swirls into each target and bursts, then a shield appears in Mars
-   colours.
+#include "battle_effect/effect_granite_flash.c"
 
-   Abilities: Guard, Protect, Guardian, Protector; Corona. */
-void btEffectRunGuard(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunStatBoost(args, STAT_BOOST_GUARD);
-}
-
-/* Light swirls into each target and bursts, then a shield appears in Jupiter
-   colours.
-
-   Abilities: Ward, Resist, Magic Shell, Magic Shield; Breeze. */
-void btEffectRunWard(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunStatBoost(args, STAT_BOOST_WARD);
-}
-
-/* Light swirls into each target and bursts, then a pane of light appears in
-   Venus colours.
-
-   Abilities: Granite. */
-void btEffectRunGranite(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunStatBoost(args, STAT_BOOST_GRANITE);
-}
-
-/* Light swirls into each target and bursts, then a pane of light appears in
-   Mars colours.
-
-   Abilities: Flash. */
-void btEffectRunFlash(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunStatBoost(args, STAT_BOOST_FLASH);
-}
-
-/* Light swirls into each target and bursts, then a gust of wind sweeps across
-   it in the colours already loaded, as this is the one boost that keeps the
-   palette.
-
-   Abilities: Zephyr. */
-void btEffectRunZephyr(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunStatBoost(args, STAT_BOOST_ZEPHYR);
-}
+#include "battle_effect/effect_zephyr.c"
 
 /* Where each picture sits in the sprite sheet. */
 typedef enum STAT_BOOST_SHEET {
@@ -445,32 +398,7 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	btEffectEndCanvasLayer();
 }
 
-/* A dagger appears over each target and breaks into shards that fade through
-   darker copies, in the pink burst's colours.
-
-   Abilities: Dull, Blunt. */
-void btEffectRunDull(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunStatReduction(args, STAT_REDUCTION_DULL);
-}
-
-/* A shield appears over each target and breaks into shards that fade through
-   darker copies, in the glow orb's colours.
-
-   Abilities: Impair, Debilitate. */
-void btEffectRunImpair(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunStatReduction(args, STAT_REDUCTION_IMPAIR);
-}
-
-/* A shield appears over each target and breaks into fading shards, in the pink
-   burst's colours.
-
-   Abilities: Weaken, Enfeeble. */
-void btEffectRunWeaken(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunStatReduction(args, STAT_REDUCTION_WEAKEN);
-}
+#include "battle_effect/effect_stat_lowering.c"
 
 /* Breaks the shield sprite into fading shards as Weaken does; no effect table
    entry reaches it. */

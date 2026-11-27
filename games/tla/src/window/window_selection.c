@@ -200,10 +200,7 @@ void mnSelectionMenuBuildEntries(Uint32 unused)
 	mnSelectionMenuLoadLargeIcon();
 }
 
-/* Does nothing; reached only through the window stub table. */
-void mnSelectionMenuReservedNoOperation(void)
-{
-}
+#include "window/selection_menu_reserved_no_operation.c"
 
 /* Returns a free selection icon record of `kind` (SELECTION_ICON_GROUP), or
    NULL. */
@@ -228,18 +225,7 @@ Sint32 mnSelectionMenuFindFreeIcon(Sint32 kind)
 	return 0;
 }
 
-/* Starts drawing the selection screen each tick, in the vertical blank pass
-   (EVENT_PASS_TICK). */
-void mnSelectionMenuStartDrawing(void)
-{
-	sySetEvent(mnSelectionMenuDraw, EVENT_PASS_TICK);
-}
-
-/* Stops drawing the selection screen. */
-void mnSelectionMenuStopDrawing(void)
-{
-	syCloseEvent(mnSelectionMenuDraw);
-}
+#include "window/selection_menu_drawing.c"
 
 extern const Sint8 MenuCursorBobOffsets[];
 
@@ -1363,21 +1349,7 @@ void mnArrowCreate(MENU_SPR *spr, Sint32 *slot)
 	spr->oam.f.pri = 0;
 }
 
-/* Places an arrow sprite at screen pixel (x, y) and queues it for drawing this
-   tick, at depth OAM_DEPTH_FRONT - 3; the caller calls it every tick it
-   shows. */
-void mnArrowSetPos(MENU_SPR *sprite, Sint32 x, Sint32 y)
-{
-	sprite->oam.f.x = x;
-	sprite->oam.f.y = y;
-	syOAMAddSprAtDepth(sprite, OAM_DEPTH_FRONT - 3);
-}
-
-/* Frees an arrow sprite's tile slot. */
-void mnArrowRelease(Sint32 slot)
-{
-	syVRAMCacheFreeEntry(slot);
-}
+#include "window/arrow.c"
 
 /* The large icon's zoom: it opens at this scale (in 8.8) and grows by as much
    each tick until six steps, when mnSelectionMenuDraw shows it at its own
@@ -1506,19 +1478,7 @@ Sint32 mnFieldMenuRun(void)
 	return ret;
 }
 
-/* Opens the party status window that shows with the field menu (flags 1) and
-   waits a tick. */
-void mnPartyStatOpenAndWait(void)
-{
-	mnPartyStatCreateWindow(1);
-	sySynch(1);
-}
-
-/* Closes the party status window that shows with the field menu. */
-void mnPartyStatCloseWithMenu(void)
-{
-	mnPartyStatClose();
-}
+#include "window/party_stat_open_close.c"
 
 /* Sets up an empty selection screen and waits a tick. */
 void mnSelectionMenuCreateEmpty(void)

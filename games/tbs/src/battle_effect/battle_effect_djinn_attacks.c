@@ -3,17 +3,7 @@
    element's colour, while what it throws bursts over every target. Part of
    battle_effect.c. */
 
-/* Copies a byte picture turned 90 degrees clockwise. */
-void btEffectTransposeCopy(const Uint8 *src, Uint8 *dst, Sint32 w, Sint32 h)
-{
-	Sint32 x;
-	Sint32 y;
-
-	for(y = 0; y != h; y++) {
-		for(x = 0; x != w; x++)
-			dst[x * h + (h - 1 - y)] = src[y * w + x];
-	}
-}
+#include "battle_effect/effect_transpose_copy.c"
 
 /* The tick each Djinni's attack shows its damage. */
 #define DJINN_ATTACK_DAMAGE_TICK 56

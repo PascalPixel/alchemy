@@ -39,7 +39,8 @@ says plainly what the sequel adds: a party of eight, the ship, the forge, and a
 third game of chance. [How the two games relate](../docs/tla/sequel.md) reads the
 two side by side. The files both games have byte for byte, such as the
 development kit's code, the fonts and many of the songs, are one copy in
-[common](common/README.md) that both build.
+[common](common/README.md) that both build, and so is each function both
+games write the same.
 
 There is more to wander through in The Broken Seal.
 [Places](https://alchemy.pascalpixel.com/tbs/places) has a page for every

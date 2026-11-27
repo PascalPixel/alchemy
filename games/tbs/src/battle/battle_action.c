@@ -20,27 +20,7 @@ typedef enum ACTION_CHANCE {
 /* gmBattleRollEffectSuccess's successScale at full strength, in percent. */
 #define EFFECT_CHANCE_FULL 100
 
-/* Returns 1 when the unit is in its side's list of units in the battle
-   (btUnitListIds), 0 otherwise. */
-Uint32 btUnitIsListed(Uint32 unitId)
-{
-	Uint16 list[8];
-	Sint32 side;
-	Sint32 unitCnt;
-	Sint32 unitIdx;
-
-	side = BATTLE_SIDE_MASK_PARTY;
-	if(unitId > ALLY_MAX)
-		side = BATTLE_SIDE_MASK_ENEMIES;
-	unitCnt = btUnitListIds(side, list);
-
-	for(unitIdx = 0; unitIdx < unitCnt; unitIdx++) {
-		if(list[unitIdx] == unitId)
-			break;
-	}
-
-	return unitIdx != unitCnt;
-}
+#include "battle/unit_is_listed.c"
 
 /* Counts the standby Djinn on unitId's side, and each element's count into
    counts when it is not null. */

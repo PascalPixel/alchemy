@@ -238,14 +238,7 @@ redraw:
 	}
 }
 
-/* Returns the distance between lhs and rhs, reusing their supplied
-   difference. */
-static inline Sint32 mnAbsDiff(Sint32 diff, Sint32 lhs, Sint32 rhs)
-{
-	if(diff >= 0)
-		return diff;
-	return rhs - lhs;
-}
+#include "window/abs_diff.c"
 
 /* Moves the selection from start to goal one icon at a time with the cursor
    sound, redrawing the label each step and waiting
@@ -303,18 +296,7 @@ Sint32 mnIconMenuAnimateTo(Sint32 start, Sint32 goal)
 	return goal;
 }
 
-/* Decodes command icon `idx` into the VRAM cache entry `slot`, through a
-   block it allocates and frees. */
-void mnCommandIconLoadIntoSlot(Sint32 slot, Sint32 idx)
-{
-	Sint32	size = COMMAND_ICON_BYTES;
-	void   *buf = syHeapAlloc(size);
-	Uint16 *ofsTbl = syResourceGetTableEntry(RESOURCE_COMMAND_ICONS);
-
-	syDecompressByteLZ((void *)((Uint32)ofsTbl + ofsTbl[idx]), buf);
-	syVRAMCacheLoad(slot, size, buf);
-	syHeapRelease(buf);
-}
+#include "window/command_icon_load_into_slot.c"
 
 /* Appends a command icon if fewer than ICON_MENU_MAX_ICONS are present. It
    starts on the bottom row; mnIconMenuCenter or mnIconMenuLayoutIcons places
@@ -390,11 +372,7 @@ void mnIconMenuLayoutIcons(
 	state->win = mnWindowCreate(x, y, state->width, 3, WINDOW_FLAG_INSTANT);
 }
 
-/* Reads the signed command-position mapping used by the icon menu. */
-static __inline__ Sint32 mnIconMenuReadCommandPos(Sint8 *tbl, Sint32 idx)
-{
-	return tbl[idx];
-}
+#include "window/icon_menu_read_command_pos.c"
 
 /* The field menu's row of icons: Psynergy, Djinn, Item and Status, without
    Djinn when the party has none. `selection` is the command to start on and the
@@ -765,34 +743,7 @@ Sint32 mnSelectSanctumService(Sint32 selection)
 	return result;
 }
 
-/* Selects Yes or No, returning YES or NO; cancelling returns NO. */
-Sint32 mnYesNoMenuRun(
-	Sint32 bottom, Sint32 msg, Sint32 labelWidth, Sint32 selection)
-{
-	Sint32 row;
-
-	row = 0;
-
-	mnIconMenuOpen();
-
-	if(labelWidth == 0) {
-		labelWidth = 3;
-	}
-	if(bottom != 0) {
-		row = ICON_MENU_BOTTOM_ROW;
-	}
-
-	mnIconMenuAddIcon(COMMAND_ICON_YES);
-	mnIconMenuAddIcon(COMMAND_ICON_NO);
-	mnIconMenuCenter(row, labelWidth, msg);
-
-	selection = mnIconMenuRun(selection);
-	mnIconMenuClose();
-	if(selection == -1) {
-		selection = NO;
-	}
-	return selection;
-}
+#include "window/yes_no_menu_run.c"
 
 /* Selects Yes or No with the icons from tile (x, y) and the name window after
    them, returning YES or NO; cancelling returns NO. */
@@ -816,20 +767,7 @@ Sint32 mnYesNoMenuRunAt(Sint32 x, Sint32 y, Sint32 selection)
    language's text. */
 #define PAIR_WIDTH BY_LANGUAGE(7, 9, 9, 9, 10, 10)
 
-/* Selects Coins or Lucky Medals, centred on the bottom row, starting on
-   position `selection`. Returns the position chosen, or -1 when cancelled. */
-Sint32 mnSelectCoinsOrMedals(Sint32 selection)
-{
-	Sint32 result;
-
-	mnIconMenuOpen();
-	mnIconMenuAddIcon(COMMAND_ICON_COINS);
-	mnIconMenuAddIcon(COMMAND_ICON_LUCKY_MEDALS);
-	mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, PAIR_WIDTH, 0);
-	result = mnIconMenuRun(selection);
-	mnIconMenuClose();
-	return result;
-}
+#include "window/select_coins_or_medals.c"
 
 #undef TRANSFER_CABLE_HELP_SECOND_Y
 #undef ICON_MENU_BOTTOM_ROW

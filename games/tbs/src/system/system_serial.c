@@ -105,32 +105,7 @@ void sySerialInit(void)
 	IRQ_UNLOCK(interruptEnable);
 }
 
-/* Lets the timer start transfers again once a link mode is set, by setting
-   SerialStateWork.transferEnabled. */
-void sySerialEnableTransferTimer(void)
-{
-	SERIAL_STATE *state = &SerialStateWork;
-
-	if(state->mode != 0)
-		state->transferEnabled = 1;
-}
-
-/* Unused: disables the serial and timer 3 interrupts, stops the transfer timer
-   and clears SerialStateWork.transferEnabled. */
-void sySerialDisableTransfer(void)
-{
-	SERIAL_STATE *state;
-
-	REG_IME = 0;
-	REG_IE &= (Uint16)~(INTR_FLAG_SERIAL | INTR_FLAG_TIMER3);
-	REG_IME = 1;
-	REG_SIOCNT16 = SIO_MULTI_MODE | SIO_115200_BPS;
-	/* Timer 3 stopped, with its reload set */
-	REG_TM3CNT = SERIAL_TIMER_RELOAD;
-	REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
-	state = &SerialStateWork;
-	state->transferEnabled = 0;
-}
+#include "system/serial_transfer_timer.c"
 
 /* Looks for the link partner and, once connected, does one exchange (as
    sySerialExchangePayloads). */
@@ -201,32 +176,7 @@ Sint32 sySerialPollStat(void)
 	return sySerialGetLinkStat(control);
 }
 
-/* Once connected (SERIAL_PHASE_CONNECTED), gathers the received payloads into
-   `receive` and builds the next packet from `send`. Called by the VBlank
-   handler while SerialExchangeActive is set, which stores the result in
-   LinkStatusWork. Returns the link status:
-	 bits 0 and 1 : consoles 0 and 1 heard from this tick
-	 0x80         : this console clocks the transfers (LINK_STATUS_CLOCKING)
-	 bits 8 and 9 : consoles 0 and 1 heard from since the link began
-	 0x1000       : the last transfer interrupt found SIOCNT's error bit
-					set (LINK_STATUS_ERROR)
-	 0x2000       : SIOCNT's multiplayer id is 2 or more
-   So LINK_STATUS_HEARD_BOTH is what the block transfer and
-   sySerialWaitForStatMask(LINK_STATUS_HEARD_BOTH) wait for. */
-Sint32 sySerialExchangePayloads(void *send, void *receive)
-{
-	volatile Uint32 *siocnt;
-	Uint32			 control;
-
-	siocnt = &REG_SIOCNT;
-	control = *siocnt;
-	if(SerialStateWork.phase == SERIAL_PHASE_CONNECTED) {
-		sySerialCollectReceivedPayloads(receive);
-		sySerialPrepareSendPacket(send);
-		SerialStateWork.packetNum++;
-	}
-	return sySerialGetLinkStat(control);
-}
+#include "system/serial_exchange_payloads.c"
 
 /* Builds the packet to send in sendBuf[0]: [0] the packet number, [1] the
    consoles not yet heard from, [2] the checksum and [4] the 24-byte payload. */
@@ -404,24 +354,7 @@ void sySerialHandleTransferInterrupt(void)
 	}
 }
 
-/* Clears SerialExchangeActive, which stops the per-tick exchange, and removes
-   the link interrupt handlers. */
-void sySerialRemoveIRQHandlers(void)
-{
-	SerialExchangeActive = 0;
-	syIntFunction(IRQ_SERIAL, 0, 0);
-	syIntFunction(IRQ_TIMER3, 0, 0);
-}
-
-/* Waits a tick at a time until every status bit in `mask` is set in
-   LinkStatusWork, then returns this console's multiplayer id. */
-Uint32 sySerialWaitForStatMask(Sint32 mask)
-{
-	while((mask & LinkStatusWork) != mask) {
-		sySynch(1);
-	}
-	return SIO_ID_OF(REG_SIOCNT);
-}
+#include "system/serial_irq_handlers.c"
 
 /* Starts sending `size` bytes from `src` to the partner in 20-byte blocks:
    sets the send source, size and block number that sySerialStepBlockTransfer
@@ -482,36 +415,7 @@ SERIAL_DEFINE_WAIT(sySerialWaitForSend, SerialSendSource)
 /* Waits for the receive in progress to finish. */
 SERIAL_DEFINE_WAIT(sySerialWaitForReceive, SerialReceiveDestination)
 
-/* Waits until both the send and the receive have finished, giving up after
-   SERIAL_TRANSFER_TIMEOUT_TICKS. Reached through the stub table. */
-void sySerialWaitForTransfers(void)
-{
-	Uint32 cnt;
-
-	cnt = 0;
-	while(SerialSendSource != 0 || SerialReceiveDestination != 0) {
-		sySynch(1);
-		cnt++;
-		if(cnt >= SERIAL_TRANSFER_TIMEOUT_TICKS)
-			return;
-	}
-}
-
-/* Returns bit 0 while a send runs and bit 1 while a receive runs. The link
-   battle and the Battle Arena poll it between ticks. */
-Sint32 sySerialGetActiveTransfers(void)
-{
-	Sint32 flg;
-
-	flg = 0;
-	if(SerialSendSource != 0) {
-		flg = 1;
-	}
-	if(SerialReceiveDestination != 0) {
-		flg |= 2;
-	}
-	return flg;
-}
+#include "system/serial_wait_for_transfers.c"
 
 /* sySerialResetTransferState as a function, for the link set-up and a link
    battle that fails. */
@@ -645,10 +549,7 @@ void sySerialStepBlockTransfer(void)
 	}
 }
 
-/* An empty function the link test calls to waste time. */
-void sySerialTestDelay(void)
-{
-}
+#include "system/serial_test_delay.c"
 
 /* The link test's block: LINK_TEST_TILES tiles' worth of bytes, shown from tile
    LINK_TEST_TILE of character block 0. */

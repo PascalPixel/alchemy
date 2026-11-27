@@ -191,15 +191,7 @@ update_object:
 	return 1;
 }
 
-/* SC_KEY_COUNT: checks the configured keys (fdCheckConfiguredKeys) and steps
-   the script on. Returns 1. */
-Sint32 fdCheckConfiguredKeysAndCount(ACTOR *actor)
-{
-
-	fdCheckConfiguredKeys();
-	actor->scriptCursor++;
-	return 1;
-}
+#include "field/check_configured_keys_and_count.c"
 
 /* The ship turns toward the pad by this much a tick, once the turn left is
    wider than FIELD_BLOCKED_TURN_MAX; a narrower one it makes at once. */

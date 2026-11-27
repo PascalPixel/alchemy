@@ -83,38 +83,7 @@ Sint32 gmInventoryCount(Sint32 unitId)
 	return cnt;
 }
 
-/* Returns 1 when the leader or any party member has a free inventory slot. */
-Bool gmPartyInventoryHasSpace(void)
-{
-	Sint16	unitIds[10];
-	Sint32	unitCnt;
-	Sint16 *unitId;
-	Sint32	i;
-
-	if(gmInventoryCount(MainRoutineStateWork.leaderActorId) != INVENTORY_SLOTS)
-		return TRUE;
-	unitCnt = gmPartyListMembers(unitIds);
-	unitId = unitIds;
-	for(i = 0; i < unitCnt; i++) {
-		if(gmInventoryCount(*unitId++) != INVENTORY_SLOTS)
-			return TRUE;
-	}
-	return FALSE;
-}
-
-/* Returns the free inventory slots of the whole party. */
-Sint32 gmPartyInventoryCountFreeSlots(void)
-{
-	Sint16	unitIds[10];
-	Sint32	unitCnt = gmPartyListMembers(unitIds);
-	Sint32	freeSlots = 0;
-	Sint16 *unitId = unitIds;
-	Sint32	i;
-
-	for(i = 0; i < unitCnt; i++)
-		freeSlots = freeSlots - gmInventoryCount(*unitId++) + INVENTORY_SLOTS;
-	return freeSlots;
-}
+#include "game/party_inventory_space.c"
 
 /* Gives a unit one item, joining its first matching stack (up to
    INVENTORY_STACK_MAX) or taking the first free slot. A full matching stack
@@ -156,23 +125,7 @@ Sint32 gmInventoryAddItem(Sint32 unitId, Sint32 itemId)
 	return -1;
 }
 
-/* Gives the item to the first party member with room. Returns who took it, or
-   -1. */
-Sint32 gmPartyInventoryAdd(Sint32 itemId)
-{
-	Sint16	unitIds[10];
-	Sint32	unitCnt = gmPartyListMembers(unitIds);
-	Sint16 *cursor = unitIds;
-	Sint32	i;
-
-	for(i = 0; i < unitCnt; i++) {
-		Sint16 unitId = *cursor++;
-
-		if(gmInventoryAddItem(unitId, itemId) >= 0)
-			return unitId;
-	}
-	return -1;
-}
+#include "game/party_inventory_add.c"
 
 /* Returns the first party member with room for `itemId`, found by giving it and
    taking it back, or -1. */
@@ -209,26 +162,7 @@ Sint32 gmInventoryFind(Sint32 unitId, Sint32 itemId)
 	return -1;
 }
 
-/* Returns who carries `itemId`, asking the leader first, or -1. */
-Sint32 gmPartyInventoryFindMember(Sint32 itemId)
-{
-	Sint16	unitIds[10];
-	Sint32	unitCnt;
-	Sint16 *cursor;
-	Sint32	i;
-
-	if(gmInventoryFind(MainRoutineStateWork.leaderActorId, itemId) != -1)
-		return MainRoutineStateWork.leaderActorId;
-	unitCnt = gmPartyListMembers(unitIds);
-	cursor = unitIds;
-	for(i = 0; i < unitCnt; i++) {
-		Sint16 unitId = *cursor++;
-
-		if(gmInventoryFind(unitId, itemId) != -1)
-			return unitId;
-	}
-	return -1;
-}
+#include "game/party_inventory_find_member.c"
 
 /* Equips the item in `slot`, clearing the equipped bit of the item of the same
    type it replaces. Psynergy items may coexist. Recomputes the unit's Psynergy
@@ -307,23 +241,7 @@ ITEM_DEFINITION *gmInventoryGetEquippedDefinition(UNIT *unit, Sint32 type)
 	return 0;
 }
 
-/* Returns the id of the unit's equipped item of `type`, or 0. */
-Sint32 gmInventoryGetEquippedItem(UNIT *unit, Sint32 type)
-{
-	Sint32 slot;
-
-	for(slot = 0; slot < INVENTORY_SLOTS; slot++) {
-		if(unit->inventory[slot] & INVENTORY_EQUIPPED) {
-			const ITEM_DEFINITION *item =
-				gmItemGetDirect(unit->inventory[slot]);
-
-			if(item->type == type) {
-				return unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
-			}
-		}
-	}
-	return 0;
-}
+#include "game/inventory_get_equipped_item.c"
 
 /* Empties an inventory slot outright, closes the inventory up and recalculates
    the unit; returns INVENTORY_REMOVE_LAST, as gmInventoryRemove does for a last
@@ -413,28 +331,7 @@ Sint32 gmInventoryCheckDiscard(Sint32 unitId, Sint32 slot)
 	return result;
 }
 
-/* Removes one `itemId` from whoever carries it first; always returns 0. */
-Sint32 gmPartyInventoryRemove(Sint32 itemId)
-{
-	Sint32 unitId = gmPartyInventoryFindMember(itemId);
-
-	if(unitId == -1)
-		return 0;
-	gmInventoryRemove(unitId, gmInventoryFind(unitId, itemId));
-	return 0;
-}
-
-/* Discards one `itemId` from whoever carries it first, as gmInventoryDiscard
-   does; always returns 0. */
-Sint32 gmPartyInventoryDiscard(Sint32 itemId)
-{
-	Sint32 unitId = gmPartyInventoryFindMember(itemId);
-
-	if(unitId == -1)
-		return 0;
-	gmInventoryDiscard(unitId, gmInventoryFind(unitId, itemId));
-	return 0;
-}
+#include "game/party_inventory_remove.c"
 
 /* Marks the item in `slot` broken; returns -1 for an empty slot. */
 Sint32 gmInventoryBreak(Sint32 unitId, Sint32 slot)
@@ -459,12 +356,7 @@ Sint32 gmInventoryRepair(Sint32 unitId, Sint32 slot)
 	return 0;
 }
 
-/* Returns how the action an item performs when used picks its targets. Nothing
-   calls it or its stub. */
-Uint8 gmItemGetTargetMode(Sint32 itemId)
-{
-	return gmAbilityGetDirect(gmItemGetDirect(itemId)->abilityId)->tgtMode;
-}
+#include "game/item_get_target_mode.c"
 
 /* Adds `delta` to rare item counter `idx`, kept between 0 and
    ITEM_COUNTER_MAX, and returns the new count (0 for an index from
@@ -533,15 +425,4 @@ Sint32 gmInventoryCountItem(Sint32 unitId, Sint32 itemId)
 	return cnt;
 }
 
-/* Counts `itemId` across the party. */
-Sint32 gmPartyInventoryCountItem(Sint32 itemId)
-{
-	Uint16 unitIds[16];
-	Sint32 cnt = 0;
-	Sint32 unitCnt = gmPartyListMembers(unitIds);
-	Sint32 i;
-
-	for(i = 0; i < unitCnt; i++)
-		cnt += gmInventoryCountItem(unitIds[i], itemId);
-	return cnt;
-}
+#include "game/party_inventory_count_item.c"

@@ -116,16 +116,7 @@ void mnWindowDrawZoomBorder(WINDOW *win, Sint32 savePos)
 	}
 }
 
-/* Fills count halfwords at dst with value and returns the position after the
-   fill. */
-Uint16 *mnMemoryFillHalfwordsDMA(Uint16 *dst, Sint32 value, Sint32 cnt)
-{
-	if(cnt > 0) {
-		DMA_FILL16(value, dst, cnt * 2);
-		dst += cnt;
-	}
-	return dst;
-}
+#include "window/memory_fill_halfwords_dma.c"
 
 /* Draws an empty window: a border around a filled interior, at tile (x, y) of
    width by height tiles, and frees the text tiles the rectangle showed. */
@@ -555,14 +546,7 @@ void mnFieldMessageShow(Sint32 msg, Sint32 flg)
 	sySynch(3);
 }
 
-/* The window system's per-tick event: windows, then messages, then sprite
-   animation. */
-void mnWindowSystemUpdate(void)
-{
-	mnWindowUpdateZooms();
-	mnMessageUpdateAll();
-	mnWindowSprUpdateAll();
-}
+#include "window/window_system_update.c"
 
 /* The window system's per-tick event in battle: windows, messages and sprite
    animation while the battle menu's state exists, otherwise messages alone. */

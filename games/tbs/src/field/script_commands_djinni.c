@@ -318,11 +318,7 @@ void fdEffectReleaseSlots(void)
 	sySynch(1);
 }
 
-/* Per-tick update: spins an actor 1/8 turn a tick. */
-void fdEffectAdvanceSpinAng(ACTOR *actor)
-{
-	actor->facing += DEGtoANG(45);
-}
+#include "field/effect_advance_spin_ang.c"
 
 /* The ticks a Jupiter Djinni's light widens, and later closes in over, so that
    it ends where it began; and the ticks it circles and drifts. */

@@ -549,26 +549,7 @@ void *fdEffectSpawnMoveHand(void *object)
 	return parent;
 }
 
-/* Grows a hand to full size at once and waits for it to reach where it is
-   going. */
-void fdEffectGrowHandAndWait(ACTOR *actor)
-{
-	FIXED next;
-	FIXED scale;
-
-	if(actor != NULL) {
-		scale = actor->scaleX;
-		if(scale < toFIXED(1)) {
-			do {
-				next = scale + toFIXED(1) / 16;
-				scale = next;
-			} while(next < toFIXED(1));
-			actor->scaleX = next;
-			actor->scaleY = next;
-		}
-		fdActorWaitForMoveStub(actor);
-	}
-}
+#include "field/effect_grow_hand_and_wait.c"
 
 #define BURST_RISE_TICKS 31
 #define BURST_SPARKLES	 8
@@ -1167,11 +1148,7 @@ Sint32 fdEffectSpawnHeavyImpact(ACTOR *src)
 	return 0;
 }
 
-/* Runs Force cast on a target, through fdPsynergyForce. */
-void fdPsynergyForceOnTarget(Sint32 unused)
-{
-	fdPsynergyForce();
-}
+#include "field/psynergy_force_on_target.c"
 
 /* Force's ring of particles round the caster, one every 2 ticks, and the
    ticks it waits at most for the fist to strike. */

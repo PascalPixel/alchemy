@@ -23,21 +23,7 @@ typedef enum GROWING_COLUMNS_MODE {
 	GROWING_COLUMNS_PILLARS /* Punji's green pillars */
 } GROWING_COLUMNS_MODE;
 
-/* Vines grow from the ground, flaring at each root.
-
-   Abilities: Growth, Mad Growth, Wild Growth. */
-void btEffectRunGrowth(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunGrowingColumns(args, GROWING_COLUMNS_VINES);
-}
-
-/* Green pillars grow from the ground, flaring at each root.
-
-   Abilities: Punji, Punji Trap, Punji Strike. */
-void btEffectRunPunji(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunGrowingColumns(args, GROWING_COLUMNS_PILLARS);
-}
+#include "battle_effect/effect_growth_punji.c"
 
 /* Vines or green pillars grow one after another, alternately mirrored, each
    flaring at its root. */

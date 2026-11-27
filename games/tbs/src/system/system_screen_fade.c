@@ -74,34 +74,6 @@ FADE_DEFINE_BLEND(syScreenFadeToWhite, 1, FADE_LEVEL_MAX)
 /* Fades in from white. */
 FADE_DEFINE_BLEND(syScreenFadeFromWhite, 1, 0)
 
-/* Starts a fade of any layers by setting the ScreenFade globals
-   syScreenFadeUpdate steps. Reached through the stub table.
-	 bright  : 0 toward black, 1 toward white
-	 layer   : the BLDCNT layers to fade (low six bits)
-	 start   : the starting brightness; above 16, the current target
-	 target  : the brightness to end at
-	 frames : how long the fade takes, in frames; with 0 nothing is
-			   written, but `tgt` still becomes the current target */
-void syScreenFadeStart(
-	Sint8 bright, Sint32 layer, Uint32 start, Sint32 tgt, Sint32 frames)
-{
-	ScreenFadeToWhite = bright;
-	ScreenFadeLayers = layer & FADE_LAYER_MASK;
-	if(start > FADE_LEVEL_MAX) {
-		ScreenFadeStartLevel = ScreenFadeTargetLevel;
-	} else {
-		ScreenFadeStartLevel = start;
-	}
-	ScreenFadeTargetLevel = tgt;
-	ScreenFadeFramesLeft = (ScreenFadeFrames = frames);
-}
-
-/* Waits a tick at a time until the running fade has finished. */
-void syScreenFadeWait(void)
-{
-	while(ScreenFadeFrames != 0) {
-		sySynch(1);
-	}
-}
+#include "system/screen_fade.c"
 
 #undef FADE_DEFINE_BLEND

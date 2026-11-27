@@ -7,13 +7,7 @@
 #include "window/stubs.h"
 #include "window/window.h"
 
-/* Starts a new game: clears the main routine's state and restarts at the
-   opening. */
-void gmRestartQuest(void)
-{
-	gmMainRoutineStateInitDefaults();
-	gmMainRoutineRunStub(0);
-}
+#include "game/restart_quest.c"
 
 /* Returns the party's Djinn recovery bank, the standby Djinn and their turns to
    recover, or for the enemy side a battle unit read as one. */

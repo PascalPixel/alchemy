@@ -1313,19 +1313,7 @@ Sint32 mnPsynergyMenuRunList(Sint32 sideIdx)
    shifts. */
 #define PSYNERGY_ABILITY_OF(entry) (((Uint32)(entry) << 18) >> 18)
 
-/* Returns 1 when actionEntry cannot be used from the menu: it has no field
-   effect and is not usable both in the field and in battle. */
-Bool mnPsynergyMenuIsActionRestricted(Sint32 actionEntry)
-{
-	ABILITY_DEFINITION *action =
-		gmAbilityGetDirectStub(PSYNERGY_ABILITY_OF(actionEntry));
-
-	if(action->fieldPsynergy != 0 ||
-		(action->flg & (ABILITY_USABLE_IN_FIELD | ABILITY_USABLE_IN_BATTLE)) ==
-			(ABILITY_USABLE_IN_FIELD | ABILITY_USABLE_IN_BATTLE))
-		return FALSE;
-	return TRUE;
-}
+#include "menu/psynergy_menu_is_action_restricted.c"
 
 #undef PSYNERGY_PROMPT_TILES
 #undef PSYNERGY_PROMPT_TILES_SIZE

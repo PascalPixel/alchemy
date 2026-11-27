@@ -667,21 +667,7 @@ void btPlaybackPush(Uint32 opcode, Uint32 operand)
 	queue->cnt = idx + 1;
 }
 
-/* Returns 1 for an effect that still applies when the ability's damage has just
-   knocked its target out: the drains, which give the damage they dealt back to
-   the user. */
-Bool btAbilityEffectAppliesToDowned(Sint32 effect)
-{
-	switch(effect) {
-	case ABILITY_EFFECT_DRAIN_HP:
-	case ABILITY_EFFECT_DRAIN_PP:
-	case ABILITY_EFFECT_DRAIN_HALF_HP:
-	case ABILITY_EFFECT_PSY_LEECH:
-		return TRUE;
-	default:
-		return FALSE;
-	}
-}
+#include "battle/ability_effect_applies_to_downed.c"
 
 /* Returns 1 for a unit no blow may fell, which is left 1 HP: Agatio and Karst
    in their first battle. */
@@ -2328,16 +2314,7 @@ done:
 	}
 }
 
-/* Returns 1 for abilities that cost PP, and for Psy Drain whatever its cost. */
-Uint32 btAbilityIsPsynergy(Sint32 abilityId)
-{
-	Uint8 pp;
-
-	if(abilityId == ABILITY_PSY_DRAIN)
-		return 1;
-	pp = gmAbilityGetDirectStub(abilityId)->ppCost;
-	return pp != 0;
-}
+#include "battle/ability_is_psynergy.c"
 
 /* The battle's state, as the forms of Poseidon and the Doom Dragon read it
    before btAIChooseAction sets its own battle further on. */

@@ -1940,22 +1940,7 @@ void mnPlaceEntryIconsInGrid(Sint32 originX, Sint32 originY, Sint32 columns)
 /* The side of a cell of the grids mnPlaceEntryIconInGrid places icons in. */
 #define ENTRY_ICON_CELL_SIZE 16
 
-/* Places icon at cell index (an index above 31 is taken as 0) of a grid of
-   ENTRY_ICON_CELL_SIZE square cells, columns wide, from (originX, originY), and
-   shows it. */
-void mnPlaceEntryIconInGrid(WINDOW_SPR *icon, Sint32 idx, Sint32 originX,
-	Sint32 originY, Sint32 columns)
-{
-	Sint32 entryIdx;
-
-	entryIdx = idx;
-	if(entryIdx > MENU_ENTRY_ICONS - 1) {
-		entryIdx = 0;
-	}
-	icon->y = (entryIdx / columns * ENTRY_ICON_CELL_SIZE) + originY;
-	icon->x = (entryIdx % columns * ENTRY_ICON_CELL_SIZE) + originX;
-	mnIconShow(icon);
-}
+#include "menu/place_entry_icon_in_grid.c"
 
 /* Places the icon of each worn weapon, armor, shield and helm at x 216, on its
    slot's row of mnItemMenuDrawEquipment's window; the others stay off

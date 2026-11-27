@@ -27,57 +27,7 @@ typedef enum STREAK_STYLE {
 	STREAK_STYLE_CYAN	 /* War Cry */
 } STREAK_STYLE;
 
-/* Three streaks of ember light fly from the user at each target in turn; each
-   target flashes and recoils.
-
-   Abilities: Sonic Wave. */
-void btEffectRunSonicWave(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunStreakVolley(args, STREAK_STYLE_EMBER);
-}
-
-/* Three streaks of lime light fly from the user at each target in turn; each
-   target flashes and recoils.
-
-   Abilities: Shriek, Harpy. */
-void btEffectRunShriek(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunStreakVolley(args, STREAK_STYLE_LIME);
-}
-
-/* Three streaks of violet light fly from the user at each target in turn; each
-   target flashes and trembles.
-
-   Abilities: Banshee Howl. */
-void btEffectRunBansheeHowl(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunStreakVolley(args, STREAK_STYLE_VIOLET);
-}
-
-/* Three flickering cyan streaks fly from the user at each target in turn; each
-   target flashes and recoils.
-
-   Abilities: War Cry. */
-void btEffectRunWarCry(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunStreakVolley(args, STREAK_STYLE_CYAN);
-}
-
-/* Three flickering red streaks fly from the user at each target in turn; each
-   target flashes and trembles.
-
-   Abilities: Wicked Howl. */
-void btEffectRunWickedHowl(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunStreakVolley(args, STREAK_STYLE_RED);
-}
-
-/* Unused: no entry of the effect table points here. It would have played the
-   same lime streaks as Shriek. */
-UNUSED void btEffectRunLimeStreaks(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunStreakVolley(args, STREAK_STYLE_LIME);
-}
+#include "battle_effect/effect_streaks.c"
 
 /* FlameArcSheet's streaks: three animation frames, each six pictures that grow;
    each picture is the lower half of a ring, and the upper half is it drawn
@@ -313,23 +263,7 @@ typedef enum MOTE_FOUNTAIN_MODE {
 /* The motes the fountain sets up, and how many of them it moves and draws. */
 enum { MOTE_FOUNTAIN_INITIALIZED_COUNT = 256, MOTE_VISIBLE_COUNT = 128 };
 
-/* Motes burst out of the user and float up, wobbling, as they drift across the
-   field onto the targets, and each target flinches in turn.
-
-   Abilities: Sleep Star. */
-void btEffectRunSleepStar(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunMoteFountain(args, MOTE_FOUNTAIN_DRIFTING);
-}
-
-/* Orange healing motes burst out of the user and float up close to it, and each
-   target glows in turn with the recovery sound.
-
-   Abilities: Soothing Star. */
-void btEffectRunSoothingStar(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunMoteFountain(args, MOTE_FOUNTAIN_HEALING);
-}
+#include "battle_effect/effect_stars.c"
 
 /* Green drops are flung up from the user in a half-circle fan and fall,
    bouncing off the ground, then Impair plays on the targets.

@@ -3,16 +3,7 @@
 
 #include "battle_internal.h"
 
-/* Returns the enemy's defeat-sound kind, 0 to 4, or -1 for none; a fallen
-   enemy's sound is SE_ENEMY_CRY plus it. Reads any index unchecked. */
-Uint32 btSprGetDefeatSnd(Sint32 idx)
-{
-	Uint32 kind = BattleSprites[idx].defeatSnd;
-
-	if((Sint32)kind > 4)
-		kind = -1U;
-	return kind;
-}
+#include "battle/spr_get_defeat_snd.c"
 
 /* The last row of BattleSprites (battle_sprites.c). */
 #define BATTLE_SPRITE_ROW_LAST 171

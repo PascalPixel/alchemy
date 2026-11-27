@@ -27,14 +27,7 @@ Sint32 mnItemCheckBattleUse(Sint32 unit, Sint32 itemId)
 	return BATTLE_ITEM_USABLE;
 }
 
-/* Copies one 4bpp tile of BG character block 0 to another, each given as a
-   tilemap entry whose palette and flip bits are ignored. */
-void mnVRAMCopyTile(Uint32 srcTile, Uint32 dstTile)
-{
-	syDMAXCopy(BG_CHAR_BLOCK(0) + (srcTile & TILE_NUMBER_MASK) * TILE_SIZE_4BPP,
-		BG_CHAR_BLOCK(0) + (dstTile & TILE_NUMBER_MASK) * TILE_SIZE_4BPP,
-		DMA_COPY_WORDS(8), REG_DMA3);
-}
+#include "window/vram_copy_tile.c"
 
 /* The battle item list for unit `member`: `cnt` inventory entries (ended by
    0), five to a page, each with its icon and name: plain when usable,

@@ -684,33 +684,7 @@ Sint32 mnShopSelectQuantity(Sint32 minimum, Sint32 maximum, Sint32 price)
 	return selectedQuantity;
 }
 
-/* Gives the party member each item bought and takes its price, then offers to
-   equip it and to sell what it replaced. */
-void mnShopBuyDone(Sint32 unitId, Sint32 itemId, Sint32 quantity)
-{
-	Sint32			 replacedSlot;
-	Sint32			 i;
-	Sint32			 lastAddedSlot;
-	ITEM_DEFINITION *item;
-
-	item = gmItemGetDirectStub(itemId);
-	lastAddedSlot = 0;
-	replacedSlot = gmInventoryFindEquippedStub(unitId, item->type);
-	/* Each one is paid for on its own, and its price counts toward the next
-	   Game Ticket. */
-	sySndPlayStub(SE_SHOP_PURCHASE);
-	for(i = 0; i < quantity; i++) {
-		lastAddedSlot = gmInventoryAddItemStub(unitId, itemId);
-		gmPartyAdjustCoinsStub(0 - item->price);
-		gmPartyAdjustShopCreditStub(item->price);
-		mnShopDrawMoney();
-	}
-	/* "Then here you go!" */
-	mnShopShowKeeperMessageHidingCursor(MsgHereYouGo);
-	if(mnShopConfirmEquip(unitId, lastAddedSlot) != 0) {
-		mnShopSellOld(unitId, replacedSlot);
-	}
-}
+#include "shop/shop_buy_done.c"
 
 /* Offers to equip the item just bought, and warns of a curse. Returns 1 when it
    was equipped. */
@@ -786,24 +760,7 @@ Bool mnShopSellOld(Sint32 unitId, Sint32 slot)
 	return TRUE;
 }
 
-/* Returns what the shops pay for an inventory entry: nothing for an
-   indispensable item, half the price for a broken one, three quarters
-   otherwise. */
-Sint32 mnShopSalePrice(Sint32 inventoryEntry)
-{
-	Sint32 salePrice;
-
-	salePrice = gmItemGetDirectStub(inventoryEntry)->price;
-
-	if(gmItemGetDirectStub(inventoryEntry)->flg & ITEM_INDISPENSABLE) {
-		salePrice = 0;
-	} else if(inventoryEntry & INVENTORY_BROKEN) {
-		salePrice = salePrice / 2;
-	} else {
-		salePrice = salePrice * 3 / 4;
-	}
-	return salePrice;
-}
+#include "shop/shop_sale_price.c"
 
 #undef SHOP_QUANTITY_NUMBER_X
 #undef SHOP_QUANTITY_COIN_LABEL_X

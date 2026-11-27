@@ -114,27 +114,7 @@ void fdEffectCircleAnchor(ACTOR *effect)
 	}
 }
 
-/* Shrinks an event-selected Whirlwind target each tick; below half size, moves
-   it to the origin, stops it and removes the update. */
-void fdWhirlwindUpdateTarget(ACTOR *actor)
-{
-	Sint32 scale;
-
-	scale = actor->scaleX - WHIRLWIND_TARGET_SCALE_STEP;
-	actor->scaleY = scale;
-	actor->scaleX = scale;
-	if(scale < WHIRLWIND_TARGET_MIN_SCALE) {
-		fdActorSetPosAndResetMotionStub(actor, 0, 0, 0);
-		actor->update = 0;
-	}
-}
-
-/* Runs Whirlwind cast on a target, using the target already stored in the field
-   effect. */
-void fdPsynergyWhirlwindOnTarget(Sint32 unused)
-{
-	fdPsynergyWhirlwind();
-}
+#include "field/whirlwind_target.c"
 
 /* Whirlwind: an orb grows as it flies from the caster to 4 pixels below the
    Psynergy's position in 10 ticks, swells and gusts; cast at a target a cue

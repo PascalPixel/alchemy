@@ -134,11 +134,7 @@ UNUSED Sint16 fdFixedPointDivQ8(Sint16 numerator, Sint16 denominator)
 	return (numerator * Q_8_8(1)) / denominator;
 }
 
-/* Unused: the reciprocal of an 8.8 fixed-point value. */
-UNUSED Sint16 fdFixedPointReciprocal(Sint16 value)
-{
-	return toFIXED(1) / value;
-}
+#include "field/fixed_point_reciprocal.c"
 
 /* Copies count RGB555 colours from source to destination with each channel
    multiplied by scale (16.16: 0 is black, toFIXED(1) unchanged), for fades. */

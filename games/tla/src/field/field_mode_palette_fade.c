@@ -426,12 +426,7 @@ void fdPaletteFadeInit(void)
 	sySetEvent(fdPaletteFadeUpdate, EVENT_PASS_TICK + 15);
 }
 
-/* Stops the palette fade and frees it. */
-void fdPaletteFadeRelease(void)
-{
-	syCloseEvent(&fdPaletteFadeUpdate);
-	syHeapSlotRelease(HEAP_SLOT_PALETTE_FADE);
-}
+#include "field/palette_fade_release.c"
 
 /* Sets the colours the palette fade moves toward (see fdPaletteFadeBuild); does
    nothing without a palette fade. */

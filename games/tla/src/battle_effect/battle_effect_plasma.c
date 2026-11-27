@@ -170,21 +170,7 @@ void btEffectRunPlasma(BATTLE_EFFECT_PARM *args)
 	EFFECT_FINISH_CANVAS();
 }
 
-/* Bursts go off behind the battle's first layer.
-
-   Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb. */
-void btEffectRunNova(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunSparkGroups(args, SPARK_GROUPS_NOVA);
-}
-
-/* Orange bursts go off in front of the battle, which darkens behind them.
-
-   Abilities: Dynamite, Angry Mine. */
-void btEffectRunDynamite(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunSparkGroups(args, SPARK_GROUPS_DYNAMITE);
-}
+#include "battle_effect/effect_nova_dynamite.c"
 
 /* Each spark group variant's row of SparkGroupsShapes: sparks per burst,
    bursts, and from SPARK_GROUPS_OFFSET each burst's offset across. */

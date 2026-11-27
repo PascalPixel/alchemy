@@ -125,22 +125,7 @@ void fdCameraMoveToActorById(Sint32 actorId, Sint32 glide)
 	}
 }
 
-/* Waits (at most 600 ticks) for the camera to arrive, then 2 ticks more. */
-void fdCameraWaitForArrival(void)
-{
-	fdActorWaitForMoveStub(((FIELD_STATE *)syHeapSlotAllocEWRAM(
-								HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))
-			->camera);
-	fdScriptWait(2);
-}
-
-/* Returns the camera actor. */
-ACTOR *fdCameraGetActor(void)
-{
-	return ((FIELD_STATE *)syHeapSlotAllocEWRAM(
-				HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))
-		->camera;
-}
+#include "field/camera_wait_for_arrival.c"
 
 /* Unused: makes the camera follow target; unless keepCurPos is set it
    jumps there at once. */

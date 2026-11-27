@@ -20,16 +20,7 @@ typedef enum FLASHING_STRIKE_MODE {
 	FLASHING_STRIKE_VORPAL_SLASH  /* VorpalSlashImageA and B */
 } FLASHING_STRIKE_MODE;
 
-/* The user leaps high at the first target, then sparks burst beneath it.
-
-   Abilities: Thrash. */
-void btEffectRunThrash(BATTLE_EFFECT_PARM *args)
-{
-	btMotionApproachTargetStub(args->user, args->tgts[0], 24, toFIXED(61) / 5);
-	sySynch(29);
-	args->variant = SPARK_GROUPS_THRASH;
-	btEffectRunSparkGroups(args, SPARK_GROUPS_RISING);
-}
+#include "battle_effect/effect_thrash.c"
 
 /* Unused: no row of AbilityBattleEffects names its kind. The user would leap at
    the first target, then sparks would burst beneath it and the canvas flash; it
@@ -42,23 +33,7 @@ void btEffectRunUnusedSevereBlowLeap(BATTLE_EFFECT_PARM *args)
 	btEffectRunSparkGroups(args, SPARK_GROUPS_RISING);
 }
 
-/* The user leaps at the first target, four pictures flash across the effect
-   layer, then it fills with one colour as the target is struck.
-
-   Abilities: Quick Strike. */
-void btEffectRunQuickStrike(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunFlashingStrike(args, FLASHING_STRIKE_QUICK_STRIKE);
-}
-
-/* The user steps up to the first target, four pictures flash across the effect
-   layer, then it fills with one colour as the target is struck.
-
-   Abilities: Vorpal Slash. */
-void btEffectRunVorpalSlash(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunFlashingStrike(args, FLASHING_STRIKE_VORPAL_SLASH);
-}
+#include "battle_effect/effect_quick_strikes.c"
 
 /* Plays a flashing strike; nothing passes FLASHING_STRIKE_UNUSED. */
 void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)

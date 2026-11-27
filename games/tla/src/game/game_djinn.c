@@ -147,47 +147,7 @@ Uint32 gmDjinnPutOnStandby(Sint32 unitId, Sint32 element, Sint32 djinnIdx)
 	return wasActive;
 }
 
-/* Takes the Djinni off its side's standby and recovery list, closing the gap.
-   Returns 1 when it was there. */
-Sint32 gmDjinnRecoveryRemove(Sint32 unitId, Sint32 element, Sint32 djinnIdx)
-{
-	DJINN_RECOVERY_LIST *list;
-	Bool				 removed = FALSE;
-	Sint32				 entryIdx;
-
-	list = &gmDjinnGetRecoveryTable(unitId < 0 || unitId > PIERS)->list;
-	for(entryIdx = 0; entryIdx < list->cnt; entryIdx++) {
-		if(element == list->entries[entryIdx].element &&
-			djinnIdx == list->entries[entryIdx].idx) {
-			list->cnt--;
-			removed = TRUE;
-			break;
-		}
-	}
-	for(; entryIdx < list->cnt; entryIdx++) {
-		list->entries[entryIdx] = list->entries[entryIdx + 1];
-	}
-	return removed;
-}
-
-/* Puts a unit's Djinni at the end of its side's list on standby. Nothing checks
-   the list's capacity. */
-Uint32 *gmDjinnRecoveryAddStandby(
-	Uint32 unitId, Uint32 element, Uint32 djinnIdx)
-{
-	DJINN_RECOVERY_LIST *list;
-	Sint32				 cnt;
-
-	gmDjinnRecoveryRemove(unitId, element, djinnIdx);
-	list = &gmDjinnGetRecoveryTable(unitId > PIERS)->list;
-	cnt = list->cnt;
-	list->entries[cnt].element = element;
-	list->entries[cnt].idx = djinnIdx;
-	list->entries[cnt].unitId = unitId;
-	list->entries[cnt].turns = DJINN_RECOVERY_AFTER_BATTLE;
-	list->cnt = cnt + 1;
-	return (Uint32 *)&list->cnt;
-}
+#include "game/djinn_recovery.c"
 
 /* Moves a Djinni from one unit to another, set or on standby as it was. Returns
    -1 when it cannot. */
@@ -215,33 +175,7 @@ Sint32 gmDjinnTransfer(Sint32 src, Sint32 element, Sint32 djinnIdx, Sint32 tgt)
 	return -1;
 }
 
-/* Counts the party's Djinn on standby, and by element into `cnts` when it is
-   given. */
-Sint32 gmDjinnRecoveryCountStandby(Uint8 *cnts)
-{
-	Sint32				  standbyCnt = 0;
-	DJINN_RECOVERY_TABLE *recoveryTbl =
-		gmDjinnGetRecoveryTable(DJINN_RECOVERY_PARTY);
-	DJINN_RECOVERY_ENTRY *entry = recoveryTbl->list.entries;
-	Sint32				  entryIdx;
-
-	if(cnts != 0) {
-		Sint32 element;
-
-		/* Each element's count starts at 0. */
-		for(element = 0; element < ELEMENT_COUNT; element++)
-			cnts[element] = 0;
-	}
-	for(entryIdx = 0; entryIdx != recoveryTbl->list.cnt; entryIdx++) {
-		if(entry->turns == DJINN_RECOVERY_AFTER_BATTLE) {
-			if(cnts != 0)
-				cnts[entry->element]++;
-			standbyCnt++;
-		}
-		entry++;
-	}
-	return standbyCnt;
-}
+#include "game/djinn_recovery_count_standby.c"
 
 /* Returns the ability the Djinni performs when it is unleashed. */
 Uint16 gmDjinnGetAbilityId(Uint32 element, Uint32 djinn)

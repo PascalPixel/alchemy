@@ -574,18 +574,7 @@ void fdBlendScriptStart(Uint16 *script)
 		sySetEvent(fdBlendScriptRun, EVENT_PASS_TICK);
 }
 
-/* Suspends the blend script; scenes reach it through
-   fdBlendScriptSuspendStub. */
-void fdBlendScriptSuspend(void)
-{
-	sySuspendEvent(fdBlendScriptRun);
-}
-
-/* Resumes the blend script, through fdBlendScriptResumeStub. */
-void fdBlendScriptResume(void)
-{
-	syResumeEvent(fdBlendScriptRun);
-}
+#include "field/blend_script_suspend.c"
 
 #include "palette_cycle_initialize.c"
 
@@ -599,11 +588,7 @@ UNUSED void fdPaletteQueueStop(void)
 	syHeapSlotRelease(HEAP_SLOT_PALETTE_CYCLES);
 }
 
-/* Unused: starts running the palette cycles each tick. */
-UNUSED void fdPaletteCycleStart(void)
-{
-	sySetEvent(fdPaletteCycleStep, EVENT_PASS_TICK);
-}
+#include "field/palette_cycle_start.c"
 
 /* Each tick: advances each palette cycle whose timer has run out by one
    colour, writing the rotated colours back to the palette. */

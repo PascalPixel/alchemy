@@ -59,16 +59,7 @@
    ways, drawn 16 pixels left and 8 down. */
 #define LUCKY_WHEELS_TITLE_FIRST_TURNED (LANGUAGE == LANGUAGE_SPANISH)
 
-/* Plays Lucky Wheels: blanks the screen, seeds the random numbers with the play
-   time and runs the game. Returns 0. */
-Sint32 fdLuckyWheelsStart(void)
-{
-	REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-	RandomSeed = MainRoutineStateWork.playTime;
-	sySndPlayStub(MUS_TRY_YOUR_LUCK);
-	fdLuckyWheelsRun();
-	return 0;
-}
+#include "field/lucky_wheels_start.c"
 
 #include "palette_scale.c"
 
@@ -107,86 +98,7 @@ void fdLuckyWheelsTransferCanvas(void)
 	}
 }
 
-/* Darkens the screen one step: lowers each channel of the machine's 16 colours
-   and of the icons' by 1. */
-void fdLuckyWheelsDarkenStep(void)
-{
-	Uint16 *col;
-	Sint32	i;
-
-	col = (Uint16 *)&BG_PLTT_COLOR(LUCKY_WHEELS_MACHINE_PALETTE, 0);
-	for(i = 0; i != PALETTE_COLORS; i++) {
-		Sint32 b = RGB_BLUE(*col);
-		Sint32 g = RGB_GREEN(*col);
-		Sint32 r = RGB_RED(*col);
-
-		b--;
-		g--;
-		r--;
-
-		if(b < 0)
-			b = 0;
-		if(g < 0)
-			g = 0;
-		if(r < 0)
-			r = 0;
-		*col++ = RGB(r, g, b);
-	}
-	col = (Uint16 *)&OBJ_PLTT[1];
-	for(i = 0; i != LUCKY_WHEELS_ICON_COLORS - 1; i++) {
-		Sint32 b = RGB_BLUE(*col);
-		Sint32 g = RGB_GREEN(*col);
-		Sint32 r = RGB_RED(*col);
-
-		b--;
-		g--;
-		r--;
-
-		if(b < 0)
-			b = 0;
-		if(g < 0)
-			g = 0;
-		if(r < 0)
-			r = 0;
-		*col++ = RGB(r, g, b);
-	}
-}
-
-/* Moves the sparks' colours one step toward the palette of resource; the
-   backdrop colour is not written back. */
-void fdLuckyWheelsStepSparkCols(Sint32 resource)
-{
-	Uint16	dst[LUCKY_WHEELS_SPARK_COLORS];
-	Uint16 *col = (Uint16 *)BG_PLTT;
-	Sint32	i;
-
-	syDMAXCopy(syResourceGetTableEntry(resource), dst,
-		DMA_COPY_WORDS(sizeof dst / 4), REG_DMA3);
-	for(i = 0; i != LUCKY_WHEELS_SPARK_COLORS; i++, col++) {
-		Sint32 r = RGB_RED(*col);
-		Sint32 g = RGB_GREEN(*col);
-		Sint32 b = RGB_BLUE(*col);
-		Sint32 targetRed = RGB_RED(dst[i]);
-		Sint32 targetGreen = RGB_GREEN(dst[i]);
-		Sint32 targetBlue = RGB_BLUE(dst[i]);
-
-		if(r < targetRed)
-			r++;
-		else if(r > targetRed)
-			r--;
-		if(g < targetGreen)
-			g++;
-		else if(g > targetGreen)
-			g--;
-		if(b < targetBlue)
-			b++;
-		else if(b > targetBlue)
-			b--;
-		dst[i] = RGB(r, g, b);
-	}
-	syDMAXCopy(dst + 1, (void *)&BG_PLTT[1],
-		DMA_COPY_HALFWORDS(LUCKY_WHEELS_SPARK_COLORS - 1), REG_DMA3);
-}
+#include "field/lucky_wheels_darken_and_sparks.c"
 
 /* The byte of the canvas's pixel (x, y): its tiles run 32 to a row, 64 bytes
    each. */
@@ -1645,30 +1557,7 @@ void fdLZPackResetChains(void)
 	}
 }
 
-/* Adds window position index to the chain of the byte it holds. */
-void fdLZPackInsertSlotNode(Sint32 idx)
-{
-	LZ_PACK_STATE *state = LzPackStateWork;
-
-	state->nodes[idx].prev =
-		(LZ_PACK_NODE *)&state->bucket[state->bucketBySlot[idx]];
-	state->nodes[idx].next = state->bucket[state->bucketBySlot[idx]];
-	state->bucket[state->bucketBySlot[idx]] = &state->nodes[idx];
-	if(state->nodes[idx].next != NULL)
-		state->nodes[idx].next->prev = &state->nodes[idx];
-}
-
-/* Removes window position slot from its chain. */
-void fdLZPackRemoveSlotNode(Sint32 slot)
-{
-	if(LzPackStateWork->nodes[slot].prev != NULL) {
-		if(LzPackStateWork->nodes[slot].next != NULL)
-			LzPackStateWork->nodes[slot].next->prev =
-				LzPackStateWork->nodes[slot].prev;
-		LzPackStateWork->nodes[slot].prev->next =
-			LzPackStateWork->nodes[slot].next;
-	}
-}
+#include "field/lz_pack_slot_nodes.c"
 
 /* Reads count more input bytes into the window from position start, dropping
    the bytes they replace from their chains; past the end of the input the
@@ -1725,79 +1614,7 @@ void fdLZPackReadInput(Sint32 start, Sint32 cnt, const Uint8 *input)
 	}
 }
 
-/* Appends the finished group (a flag byte and up to eight items) to the
-   output. */
-void fdLZPackCopyBufferedBytes(Uint8 *dst)
-{
-	LZ_PACK_STATE *state = LzPackStateWork;
-	Sint32		   idx;
-
-	for(idx = 0; idx != state->outCnt; idx++) {
-		dst[state->outTotal] = state->outBuf[idx];
-		state->outTotal++;
-	}
-}
-
-/* Finds the longest earlier match (up to PACK_MATCH_MAX bytes, at most
-   PACK_DISTANCE_MAX back) for the bytes at window position start; matchLen
-   stays 1 for none. */
-static __inline__ void fdLZPackFindWindowMatch(Sint32 start)
-{
-	LZ_PACK_NODE *node;
-	Sint32		  len;
-
-	LzPackStateWork->matchLen = 1;
-	if(LzPackStateWork->bucketBySlot[start] == -1) {
-		return;
-	}
-	node = LzPackStateWork->bucket[LzPackStateWork->bucketBySlot[start]];
-	if(start + PACK_MATCH_MAX > PACK_WINDOW_MASK) {
-		while(node != NULL) {
-			Sint32 dist = (start - node->slot) & PACK_WINDOW_MASK;
-
-			if(dist > 0 && dist <= PACK_DISTANCE_MAX) {
-				for(len = 1; len < PACK_MATCH_MAX; len++) {
-					if(LzPackStateWork
-							->bucketBySlot[(start + len) & PACK_WINDOW_MASK] !=
-						LzPackStateWork->bucketBySlot[(node->slot + len) &
-							PACK_WINDOW_MASK]) {
-						break;
-					}
-				}
-				if(LzPackStateWork->matchLen < len) {
-					LzPackStateWork->matchOfs = dist;
-					LzPackStateWork->matchLen = len;
-					if(len == PACK_MATCH_MAX) {
-						return;
-					}
-				}
-			}
-			node = node->next;
-		}
-	} else {
-		while(node != NULL) {
-			Sint32 dist = (start - node->slot) & PACK_WINDOW_MASK;
-
-			if(dist > 0 && dist <= PACK_DISTANCE_MAX) {
-				for(len = 1; len < PACK_MATCH_MAX; len++) {
-					if(LzPackStateWork->bucketBySlot[start + len] !=
-						LzPackStateWork->bucketBySlot[(node->slot + len) &
-							PACK_WINDOW_MASK]) {
-						break;
-					}
-				}
-				if(LzPackStateWork->matchLen < len) {
-					LzPackStateWork->matchOfs = dist;
-					LzPackStateWork->matchLen = len;
-					if(len == PACK_MATCH_MAX) {
-						return;
-					}
-				}
-			}
-			node = node->next;
-		}
-	}
-}
+#include "field/lz_pack_window_match.c"
 
 /* Unused: packs size bytes of input into dst with a small LZ scheme and returns
    the packed size. Each group starts with a flag byte, a set bit marking a

@@ -81,11 +81,7 @@ void mnShopGiveGameTicket(WINDOW *win, WINDOW *itemWin)
 	shop->selectedItem = savedSelectedItem;
 }
 
-/* Returns how many stock rows there are; mnShopRun refuses a row past them. */
-Sint32 mnShopStockGetRowCount(void)
-{
-	return SHOP_STOCK_ROWS;
-}
+#include "shop/shop_stock_get_row_count.c"
 
 /* Adds a shop's artifacts to the shared stock on its first visit, so an item
    two shops list can be bought twice. */

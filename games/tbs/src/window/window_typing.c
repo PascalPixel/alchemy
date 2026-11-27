@@ -13,23 +13,7 @@
 #define MESSAGE_KEY_WAIT		 919
 #define MESSAGE_KEY_WAIT_STARTED 900
 
-/* Scrolls the battle message canvas up by 6 pixel rows per step, below its top
-   8 rows, and clears the rows this uncovers. */
-void mnTextScrollCanvasUp(Sint32 step)
-{
-	Sint32	shift = step * 6;
-	Uint32 *base = TEXT_CANVAS_VRAM;
-	Sint32	n;
-
-	for(n = 0; n < CANVAS_COLUMNS; n++) {
-		Uint32 *column = base + n * CANVAS_COLUMN_WORDS;
-
-		syDMAXCopy(column + CANVAS_KEPT_ROWS + shift, column + CANVAS_KEPT_ROWS,
-			DMA_COPY_WORDS(CANVAS_COLUMN_WORDS - CANVAS_KEPT_ROWS - shift),
-			REG_DMA3);
-		syWordsFill(column + (CANVAS_COLUMN_WORDS - shift), shift * 4, 0);
-	}
-}
+#include "window/text_scroll_canvas_up.c"
 
 /* What mnMessageType reports. */
 enum {

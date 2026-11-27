@@ -407,10 +407,7 @@ void mnTextUseExtraTiles(Sint32 allowAlternateTiles)
 		state->textTileState[i] = 0;
 }
 
-/* Unused: an empty function between the text tiles and the dividers. */
-UNUSED void mnWindowReservedNoOperation(void)
-{
-}
+#include "window/window_reserved_no_operation.c"
 
 /* Draws a straight divider line inside a window from tile (x1, y1) to (x2, y2),
    horizontal or vertical: its ends join the tick or the lines they meet, and
@@ -576,13 +573,7 @@ void mnWindowDrawDividerLine(
 	}
 }
 
-/* Sets the colour (TEXT_COL) text is drawn in. */
-void mnTextSetCol(Sint32 col)
-{
-	WIN_STATE *state = WINDOW_STATE;
-
-	state->colour = col & (PALETTE_COLORS - 1);
-}
+#include "window/text_set_col.c"
 
 /* Sets the style (TXT_STYLE) text is drawn in. */
 void mnTextSetStyle(Uint16 style)

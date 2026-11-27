@@ -203,14 +203,6 @@ void fdPsynergyResumeHaltedActor(Sint32 actorId)
 	}
 }
 
-/* Returns id, or -1 (no target) when Halt passes actor id's sprite over
-   (SPEAKER_HALTED_LINES_NONE in SpeakerDefinitions): the talking monsters and
-   the things, the 20 rows before the default. */
-Sint32 fdPsynergyFilterHaltTarget(Sint32 id)
-{
-	if(fdSpeakerGetHaltedLines(id) == SPEAKER_HALTED_LINES_NONE)
-		return -1;
-	return id;
-}
+#include "field/psynergy_filter_halt_target.c"
 
 #undef HALT_SPARKLES

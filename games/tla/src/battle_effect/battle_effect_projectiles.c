@@ -332,57 +332,7 @@ void btEffectRunDjinniEntrance(
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 }
 
-/* Six comets fly at each target, three ticks apart, and burst into a flash and
-   sparks; the effect's variant picks one of three comets.
-
-   Abilities: Slash, Wind Slash, Sonic Slash. */
-void btEffectRunSlash(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunProjectileVolley(args, PROJECTILE_VOLLEY_SLASH);
-}
-
-/* Four spinning shurikens fly at each target, five ticks apart, and vanish
-   once past it.
-
-   Abilities: Shuriken. */
-void btEffectRunShuriken(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunProjectileVolley(args, PROJECTILE_VOLLEY_SHURIKEN);
-}
-
-/* Ten musical notes fly slowly at each target and bounce off it, up or down at
-   random.
-
-   Abilities: Crazy Voice. */
-void btEffectRunCrazyVoice(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunProjectileVolley(args, PROJECTILE_VOLLEY_CRAZY_VOICE);
-}
-
-/* Five yellow sparks fly level at each target, five ticks apart.
-
-   Abilities: Wing Flutter. */
-void btEffectRunWingFlutter(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunProjectileVolley(args, PROJECTILE_VOLLEY_WING_FLUTTER);
-}
-
-/* Ten large yellow sparks stream level at each target, one a tick, spread up
-   and down.
-
-   Abilities: Wing Stroke. */
-void btEffectRunWingStroke(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunProjectileVolley(args, PROJECTILE_VOLLEY_WING_STROKE);
-}
-
-/* Ten small yellow sparks stream level at each target, one a tick.
-
-   Abilities: Wing Beat. */
-void btEffectRunWingBeat(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunProjectileVolley(args, PROJECTILE_VOLLEY_WING_BEAT);
-}
+#include "battle_effect/effect_projectile_volleys.c"
 
 /* Fires the volley from the user's leap pose, animated three times as fast. */
 static inline void btEffectRunVolleyWithAction(
@@ -397,40 +347,9 @@ static inline void btEffectRunVolleyWithAction(
 	fdActorSetAnimationSpeedStub(actor, ANIM_STEP_NORMAL);
 }
 
-/* From the user's leap pose, one large comet in ice colours flies at each
-   target and bursts into 80 sparks.
+#include "battle_effect/effect_leap_projectiles.c"
 
-   Abilities: Cutting Edge. */
-void btEffectRunCuttingEdge(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunVolleyWithAction(args, PROJECTILE_VOLLEY_CUTTING_EDGE);
-}
-
-/* From the user's leap pose, seven fireballs trailing embers fly at each
-   target, two ticks apart, each bursting into 40 sparks.
-
-   Abilities: Heat Wave. */
-void btEffectRunHeatWave(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunVolleyWithAction(args, PROJECTILE_VOLLEY_HEAT_WAVE);
-}
-
-/* Thirty ice chips fall from high above the user onto each target.
-
-   Abilities: Sleet. */
-void btEffectRunSleet(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunProjectileVolley(args, PROJECTILE_VOLLEY_SLEET);
-}
-
-/* From the user's leap pose, sixty ice chips stream at each target, one a
-   tick, scattered up and down, without knocking it back.
-
-   Abilities: Blizzard. */
-void btEffectRunBlizzard(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunVolleyWithAction(args, PROJECTILE_VOLLEY_BLIZZARD);
-}
+#include "battle_effect/effect_blizzard.c"
 
 /* From the user's leap pose, seven fireballs trailing smoke fly level at each
    target, two ticks apart, scattered up and down, each bursting into 40
@@ -486,13 +405,7 @@ void btEffectRunStunSting(BATTLE_EFFECT_PARM *args)
 	btEffectRunProjectileVolley(args, PROJECTILE_VOLLEY_STUN_STING);
 }
 
-/* Sixty ice chips stream at each target, one a tick, without knocking it back.
-
-   Abilities: Ice Breath, Blue Dragon. */
-void btEffectRunIceBlessing(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunProjectileVolley(args, PROJECTILE_VOLLEY_ICE_BLESSING);
-}
+#include "battle_effect/effect_ice_blessing.c"
 
 /* Sixty ice chips stream at each target, one a tick, from the user's breath.
 

@@ -133,11 +133,7 @@ void btBackgroundInit(void)
 	background->mode = BATTLE_BACKGROUND_NONE;
 }
 
-/* Frees the zoomed background's scanline state. */
-void btBackgroundFree(void)
-{
-	syHeapSlotRelease(HEAP_SLOT_BATTLE_SCANLINES);
-}
+#include "battle/background_free.c"
 
 /* Loads a battle background: its picture decoded into BG VRAM, its palette
    darkened by level steps of 1/60 (none when level is negative), its tile table

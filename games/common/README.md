@@ -34,6 +34,36 @@ games have it unchanged and its place in either ROM stays the same.
 - `window/` holds the Djinn menu's blinking tile, and `battle/transition/`
   the battle curtain's pictures, each with its list.
 
+## Functions both games write the same
+
+Where both games have a function of the same name written the same, its
+source is here once, in a folder named after the game's own folder for that
+system: `system/`, `sound/`, `game/`, `field/`, `battle/`, `battle_effect/`,
+`window/`, `menu/` and `shop/`. A file holds one function or a run of
+functions that stand together in both games, and is named for what they do
+(`system/matrix_stack.c`). It opens with a comment that names the functions
+and the file of each game that includes it.
+
+Such a file is not built on its own. Each game's C file includes it at the
+very place the functions stood, as it includes a header:
+
+```c
+#include "system/matrix_stack.c"
+```
+
+so the functions are still compiled in that game's object, with that file's
+headers, statics and macros in sight, and land where the game's cartridge
+has them. The include finds the file through the build's search path, after
+the game's own `include/`, and the build's dependency scan follows it, so a
+change here rebuilds both games' objects. `make test` checks that each file
+here is included by a C file of each game.
+
+A function stays in each game's own file when the two games write it
+differently, even by one type in its signature. One written the same that
+reads a macro, a feature or a structure each game defines its own way is
+shared all the same: each game's file includes it where its own definitions
+are in sight, and the code it compiles to is that game's.
+
 A picture listed in a game's own list beside other pictures of that game
 stays in that game's folder even when the other game has the same file:
 a list names the files beside it.

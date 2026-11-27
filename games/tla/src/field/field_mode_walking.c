@@ -18,24 +18,7 @@ UNUSED Sint32 fdModeReturnZero(void)
 	return 0;
 }
 
-/* Clears the field's twelve pending requests (see FIELD_STATE). */
-void fdClearRequests(void)
-{
-	FIELD_STATE *state = FieldStateWork;
-
-	state->stepCue = 0;
-	state->pushMetatile = 0;
-	state->exit = 0;
-	state->fieldMenu = 0;
-	state->aButton = 0;
-	state->pauseMenu = 0;
-	state->talk = 0;
-	state->examineMetatile = 0;
-	state->encounter = 0;
-	state->psynergy = 0;
-	state->item = 0;
-	state->raisedCue = 0;
-}
+#include "field/clear_requests.c"
 
 /* Returns the sum of the field's twelve pending requests: non-zero while any
    request is pending. */
@@ -359,16 +342,7 @@ void fdUpdateWalking(Uint32 layer, FIXED x, FIXED y, FIXED z)
 	}
 }
 
-/* Gives each character in the party amount PP (PP regenerates as the party
-   walks). */
-void fdPartyAddPp(Sint32 amount, Sint32 unused)
-{
-	Sint32 partyCnt = gmPartyCountMembersStub();
-	Sint32 partyIdx;
-
-	for(partyIdx = 0; partyIdx < partyCnt; partyIdx++)
-		gmUnitAddPpStub(MainRoutineStateWork.party[partyIdx], amount);
-}
+#include "field/party_add_pp.c"
 
 /* Changes each party member's HP by amount, or by that percentage of maximum HP
    when scaled is set; a loss flashes the screen orange. */

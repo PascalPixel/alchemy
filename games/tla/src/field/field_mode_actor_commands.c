@@ -78,15 +78,7 @@ void fdActorWatchAndSetScript(Sint32 actorId, Sint32 watchedActorId)
 	}
 }
 
-/* Waits, at most 300 ticks, for an actor's script to reach its end
-   (SC_END). */
-void fdActorWaitForScriptEndById(Uint32 actorId)
-{
-	ACTOR *actor = fdActorLookup(actorId);
-
-	if(actor != NULL)
-		fdActorWaitForScriptEndStub(actor);
-}
+#include "field/actor_wait_for_script_end_by_id.c"
 
 /* Starts a movement type or supplied actor script, as
    fdActorSetMovementTypeById does, then waits up to 300 ticks for its script
@@ -102,32 +94,7 @@ void fdActorSetMovementTypeAndWaitById(Sint32 actorId, const void *script)
 	}
 }
 
-/* The script command "set actor destination": the actor heads for (x, z), in
-   pixels, keeping its current animation. */
-void fdActorSetDestinationById(Uint32 actorId, Sint32 x, Sint32 z)
-{
-	ACTOR *actor = fdActorLookup(actorId);
-
-	if(actor != NULL) {
-		actor->paused = 0;
-		fdActorStartIdleStub(actor);
-		fdActorSetMoveTargetStub(actor, toFIXED(x), actor->y.fixed, toFIXED(z));
-	}
-}
-
-/* The script command "move actor and wait": as fdActorSetDestinationById, then
-   waits (at most 600 ticks) for the actor to arrive. */
-void fdActorMoveToAndWaitById(Uint32 actorId, Sint32 x, Sint32 z)
-{
-	ACTOR *actor = fdActorLookup(actorId);
-
-	if(actor != NULL) {
-		actor->paused = 0;
-		fdActorStartIdleStub(actor);
-		fdActorSetMoveTargetStub(actor, toFIXED(x), actor->y.fixed, toFIXED(z));
-		fdActorWaitForMoveStub(actor);
-	}
-}
+#include "field/actor_set_destination.c"
 
 /* The script command "walk actor to": the actor walks toward (x, z), in
    pixels. */
@@ -159,36 +126,7 @@ void fdActorWalkToAndWaitById(Sint32 actorId, Sint32 x, Sint32 z)
 	}
 }
 
-/* The script command "center actor and walk": walks the actor sideways to the
-   middle of its 16-pixel column, sets its sprite priority to priority
-   (fdActorSetSprPriority), then sends it zOfs pixels along z. */
-void fdActorCenterOnColumn(Uint32 actorId, Sint32 pri, Sint32 zOfs)
-{
-	ACTOR *actor;
-	Sint16 pixelX;
-	Sint32 columnX;
-	Sint16 ofsInColumn;
-
-	actor = fdActorLookup(actorId);
-	if(actor != NULL) {
-		/* The column's left edge, from a division by 16 that rounds toward zero
-		   (left of x = 0 it finds the edge to the right); its middle is 8
-		   pixels in. */
-		pixelX = actor->x.part[0].integer;
-		columnX = pixelX / 16 * 16;
-		ofsInColumn = pixelX - columnX;
-		actor->paused = 0;
-		fdActorStartIdleStub(actor);
-		fdActorSelectAnimationStub(actor, ANIM_WALK);
-		fdActorSetMoveTargetStub(actor,
-			actor->x.fixed + toFIXED(8 - ofsInColumn), actor->y.fixed,
-			actor->z.fixed);
-		fdActorWaitForMoveStub(actor);
-		fdActorSetSprPriority(actorId, pri);
-		fdActorSetMoveTargetStub(actor, actor->x.fixed, actor->y.fixed,
-			actor->z.fixed + toFIXED(zOfs));
-	}
-}
+#include "field/actor_center_on_column.c"
 
 /* The script command "set actor destination offset": the actor heads (xOfs,
    zOfs) pixels from where it stands. */
@@ -219,18 +157,7 @@ void fdActorWalkByById(Uint32 actorId, Sint32 xOfs, Sint32 zOfs)
 	}
 }
 
-/* Walks the actor (xOfs, zOfs) pixels, waits for it to arrive and stands
-   it still. */
-void fdActorWalkByAndWaitById(Uint32 actorId, Sint32 xOfs, Sint32 zOfs)
-{
-	ACTOR *actor = fdActorLookup(actorId);
-
-	fdActorWalkByById(actorId, xOfs, zOfs);
-	if(actor != NULL) {
-		fdActorWaitForMoveStub(actor);
-		fdActorSelectAnimationStub(actor, ANIM_STAND);
-	}
-}
+#include "field/actor_walk_by_and_wait_by_id.c"
 
 /* Places an actor on the leader, a pixel nearer the back, and sends it walking
    (xOfs, zOfs) pixels away at speed 0.8 and acceleration 0.4, through the
@@ -351,15 +278,7 @@ void fdActorPlaceOnActor(Uint32 actorId, Uint32 otherId)
 	}
 }
 
-/* The script command "set actor animation" (an ACTOR_ANIMATION: ANIM_STAND,
-   ANIM_WALK, ANIM_NOD, ANIM_SHAKE_HEAD and so on). */
-void fdActorSetAnimationById(Uint32 actorId, Sint32 anm)
-{
-	ACTOR *actor = fdActorLookup(actorId);
-
-	if(actor != NULL)
-		fdActorSelectAnimationStub(actor, anm);
-}
+#include "field/actor_set_animation_by_id.c"
 
 /* Sets the animation timer steps of each of an actor's sprites. */
 void fdActorSetAnimationSpeedById(Sint32 actorId, Sint32 steps)
@@ -447,13 +366,7 @@ void fdActorStartRepeatedMotion(Uint32 actorId, Sint32 cnt)
 	}
 }
 
-/* The script command "run repeated motion": as fdActorStartRepeatedMotion, then
-   waits for it to end. */
-void fdActorRunRepeatedMotion(Uint32 actorId, Sint32 cnt)
-{
-	fdActorStartRepeatedMotion(actorId, cnt);
-	fdActorWaitForScriptEndById(actorId);
-}
+#include "field/actor_run_repeated_motion.c"
 
 /* Moves a dust puff of fdEffectSpawnDustPuff: it drifts with its x and z
    velocity (kept in speed and acceleration), which drag slows each tick, and
@@ -579,80 +492,7 @@ void fdActorJumpDownLedge(Sint32 actorId, Sint32 pose, Sint32 dust)
 	fdScriptNoOperation();
 }
 
-/* The script command "actor face actor": turns the first actor at once to face
-   the second, then waits the given number of ticks. */
-void fdActorFaceActorById(Sint32 firstId, Sint32 secondId, Sint32 ticks)
-{
-	ACTOR *first;
-	ACTOR *second;
-
-	first = fdActorLookup(firstId);
-	second = fdActorLookup(secondId);
-	if(first != 0 && second != 0) {
-		first->facing = syAtan(
-			second->z.fixed - first->z.fixed, second->x.fixed - first->x.fixed);
-		fdScriptWait(ticks);
-	}
-}
-
-/* The script command "actors face each other": turns two actors toward each
-   other, then waits the given number of ticks. */
-void fdActorTurnToFaceEachOther(Sint32 firstId, Sint32 secondId, Sint32 ticks)
-{
-	void *first = fdActorLookup(firstId);
-	void *second = fdActorLookup(secondId);
-
-	if(first != NULL && second != NULL) {
-		fdActorTurnPairToFaceEachOther(first, second);
-		fdScriptWait(ticks);
-	}
-}
-
-/* Turns two actors to face each other, at most 1/16 turn a tick each, until
-   both do (at most 60 ticks). */
-void fdActorTurnPairToFaceEachOther(ACTOR *first, ACTOR *second)
-{
-	Sint32 firstTgtAng;
-	Sint32 secondTgtAng;
-	Sint32 frm;
-	Sint32 actorsTurning;
-	Sint32 angDifference;
-
-	if(first == NULL || second == NULL)
-		return;
-	firstTgtAng = (Uint16)syAtan(
-		second->z.fixed - first->z.fixed, second->x.fixed - first->x.fixed);
-	/* The second actor faces the opposite way, half a turn round. */
-	secondTgtAng = firstTgtAng + DEGtoANG(180);
-	for(frm = 0; frm < 60; frm++) {
-		/* Each actor that already faces its way takes one off the count; both
-		   facing ends the turn early. */
-		actorsTurning = 2;
-		angDifference = (Sint16)(firstTgtAng - first->facing);
-		if(angDifference != 0) {
-			if(angDifference > FACING_STEP)
-				angDifference = FACING_STEP;
-			if(angDifference < -FACING_STEP)
-				angDifference = -FACING_STEP;
-			first->facing += angDifference;
-		} else {
-			actorsTurning = 1;
-		}
-		angDifference = (Sint16)(secondTgtAng - second->facing);
-		if(angDifference != 0) {
-			if(angDifference > FACING_STEP)
-				angDifference = FACING_STEP;
-			if(angDifference < -FACING_STEP)
-				angDifference = -FACING_STEP;
-			second->facing += angDifference;
-		} else {
-			actorsTurning--;
-		}
-		if(actorsTurning == 0)
-			break;
-		sySynch(1);
-	}
-}
+#include "field/actor_face_each_other.c"
 
 /* The script command "release actor": releases the actor and empties its slot
    in the field state's actor table. */

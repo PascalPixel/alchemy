@@ -72,24 +72,7 @@ void btEffectArmPaletteHBlankDMA(void)
 		DMA_HBLANK_HALFWORD_PER_LINE, (volatile Uint32 *)channel);
 }
 
-/* The battle dissolves into a starfield and a meteor falls through it in flames
-   among falling fireballs, then bursts in embers and flashes.
-
-   Abilities: Meteor. */
-void btEffectRunMeteor(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunStarfieldFall(args, STARFIELD_FALL_METEOR);
-}
-
-/* The Fusion Dragon leaps out of sight and falls back through a starfield in
-   flames, then bursts in embers and flashes, all in the lightning bolt's
-   colours.
-
-   Abilities: Outer Space, the Fusion Dragon's. */
-void btEffectRunOuterSpace(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunStarfieldFall(args, STARFIELD_FALL_OUTER_SPACE);
-}
+#include "battle_effect/effect_meteor_outer_space.c"
 
 /* The burst's flashes in PARTICLES, then its embers, and how many of each it
    draws. */

@@ -136,11 +136,7 @@ void btBackgroundInit(void)
 	view->mode = BATTLE_BACKGROUND_NONE;
 }
 
-/* Frees the zoomed background's scanline state. */
-void btBackgroundFree(void)
-{
-	syHeapSlotRelease(HEAP_SLOT_BATTLE_SCANLINES);
-}
+#include "battle/background_free.c"
 
 /* The bit decoder btBackgroundLoad copies to RAM and runs. It returns the
    source after the last halfword it read. */

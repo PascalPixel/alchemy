@@ -80,23 +80,9 @@ void btEffectRunStormBlessing(BATTLE_EFFECT_PARM *args)
 	btEffectRunBurstShower(args, BURST_SHOWER_MODE_LIGHTNING);
 }
 
-/* The user fires a stream of demon faces at the targets, from 16 pixels in
-   front of it.
+#include "battle_effect/effect_evil_blessing.c"
 
-   Abilities: Evil Blessing. */
-void btEffectRunEvilBlessing(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunBurstShower(args, BURST_SHOWER_MODE_FACES);
-}
-
-/* The user fires a stream of Mars-coloured bursts at the targets, from 28
-   pixels in front of it.
-
-   Abilities: Deadly Gas. */
-void btEffectRunDeadlyGas(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunBurstShower(args, BURST_SHOWER_MODE_DJINNI);
-}
+#include "battle_effect/effect_deadly_gas.c"
 
 /* The user fires one burst a tick at a point near one of the targets, taking
    them in turn, and each target is hit in turn. */

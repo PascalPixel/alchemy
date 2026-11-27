@@ -56,43 +56,7 @@ void fdRequestDjinnBattle(Sint32 actorAndHop, Sint32 djinni)
 
 #undef DJINN_ACTOR_MASK
 
-/* Sets the after-battle destination (MainRoutineStateWork.afterBattleScene and
-   afterBattleEntrance), where the party goes once the coming battle is won. */
-void fdScriptSetAfterBattleDestination(Sint32 sceneId, Sint32 entrance)
-{
-	MainRoutineStateWork.afterBattleScene = sceneId;
-	MainRoutineStateWork.afterBattleEntrance = entrance;
-}
-
-/* Sets where the party wakes up after losing a battle
-   (MainRoutineStateWork.defeatScene and defeatEntrance). */
-void fdScriptSetDefeatDestination(Sint32 sceneId, Sint32 entrance)
-{
-	MainRoutineStateWork.defeatScene = sceneId;
-	MainRoutineStateWork.defeatEntrance = entrance;
-}
-
-/* Sends the party to an entrance of another scene: the field mode leaves on its
-   next pass (EXIT_KEEP_DESTINATION). */
-void fdScriptLeaveFor(Uint16 sceneId, Uint16 entrance)
-{
-	FIELD_STATE *state = FieldStateWork;
-	MainRoutineStateWork.next = sceneId;
-	MainRoutineStateWork.entrance = entrance;
-	state->exit = EXIT_KEEP_DESTINATION;
-}
-
-/* Changes the scene's music to sndId and remembers it for fdPlayQueuedMusic;
-   -1 fades the music out and remembers none. */
-void fdQueueMusic(Sint32 sndId)
-{
-	FieldStateWork->queuedSnd = sndId;
-	if((Sint16)sndId == -1) {
-		sndId = SOUND_FADE_OUT_ACTION_SE;
-	}
-	sySndPlayStub(SE_STOP_EXIT_SE);
-	sySndPlayStub(sndId);
-}
+#include "field/script_battle_destinations.c"
 
 /* Plays the sound fdQueueMusic remembered, if any. */
 void fdPlayQueuedMusic(void)

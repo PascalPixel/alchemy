@@ -61,11 +61,6 @@ void mnAreaNameWindowHide(void)
 
 void gmPartyInventoryRemoveStub(Sint32 item);
 
-/* Removes itemId from the party's inventory and returns 0. */
-Sint32 mnItemRemoveFromInventory(Sint32 unused, Sint32 itemId)
-{
-	gmPartyInventoryRemoveStub(itemId);
-	return 0;
-}
+#include "window/item_remove_from_inventory.c"
 
 #undef FieldStateWork

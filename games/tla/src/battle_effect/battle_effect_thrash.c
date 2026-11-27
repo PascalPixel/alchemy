@@ -27,16 +27,7 @@ typedef enum FLASHING_STRIKE_MODE {
 	FLASHING_STRIKE_TWIN_SHEAR /* the arc fragments, each with its reflection */
 } FLASHING_STRIKE_MODE;
 
-/* The user leaps high at the first target, then sparks burst beneath it.
-
-   Abilities: Thrash. */
-void btEffectRunThrash(BATTLE_EFFECT_PARM *args)
-{
-	btMotionApproachTargetStub(args->user, args->tgts[0], 24, toFIXED(61) / 5);
-	sySynch(29);
-	args->variant = SPARK_GROUPS_THRASH;
-	btEffectRunSparkGroups(args, SPARK_GROUPS_RISING);
-}
+#include "battle_effect/effect_thrash.c"
 
 /* The user leaps high at the first target, as in Thrash, then sparks burst
    beneath it, many more than Thrash's.
@@ -62,23 +53,7 @@ void btEffectRunSevereBlow(BATTLE_EFFECT_PARM *args)
 	btEffectRunSparkGroups(args, SPARK_GROUPS_RISING);
 }
 
-/* The user leaps at the first target, four pictures flash across the effect
-   layer, then it fills with one colour as the target is struck.
-
-   Abilities: Quick Strike. */
-void btEffectRunQuickStrike(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunFlashingStrike(args, FLASHING_STRIKE_QUICK_STRIKE);
-}
-
-/* The user steps up to the first target, four pictures flash across the effect
-   layer, then it fills with one colour as the target is struck.
-
-   Abilities: Vorpal Slash. */
-void btEffectRunVorpalSlash(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunFlashingStrike(args, FLASHING_STRIKE_VORPAL_SLASH);
-}
+#include "battle_effect/effect_quick_strikes.c"
 
 /* The user leaps where it stands, four pictures flash over the battle, then the
    effect layer fills with one colour as the target is struck and Weaken

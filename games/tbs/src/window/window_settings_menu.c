@@ -363,13 +363,7 @@ void mnSettingsMenuInitState(void)
 	sySetEvent(mnSettingsMenuAnimateCursors, EVENT_PASS_TICK);
 }
 
-/* Stops the settings menu's per-tick event and frees its state block. The
-   event goes first, since it reads the state block. */
-void mnSettingsMenuRelease(void)
-{
-	syCloseEvent(mnSettingsMenuAnimateCursors);
-	syHeapSlotRelease(HEAP_SLOT_SETTINGS_MENU);
-}
+#include "window/settings_menu_release.c"
 
 /* The sprite palettes of the sliders' ends, which SettingsMenuSliderPalette
    fills. */

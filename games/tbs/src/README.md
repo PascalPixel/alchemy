@@ -103,6 +103,11 @@ guide to its parts followed by a list of them, and the code is in
 part is never built on its own; the file that lists it includes it at its
 place, and the guide at the top of that file is the place to start.
 
+A function both games write the same is a part too, kept once for both in
+[`games/common`](../../common/README.md#functions-both-games-write-the-same):
+the file it belongs to here includes it where it stands, so it is still
+compiled into this game's object, at its place on the cartridge.
+
 ### Overlays
 
 A scene's code is in an [overlay](../../../docs/tbs/glossary.md#overlay),

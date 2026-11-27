@@ -134,23 +134,7 @@ Sint32 gmPartyRemoveMember(Sint32 unitId)
 	return gmPartyCountMembers();
 }
 
-/* Writes the party members to `unitIds`, ended by BATTLE_UNIT_LIST_END, and
-   returns how many there are. */
-Sint32 gmPartyListMembers(Sint16 *unitIds)
-{
-	Sint32 cnt = 0;
-
-	if(unitIds != NULL) {
-		Sint32 idx;
-
-		cnt = gmPartyCountMembers();
-		for(idx = 0; idx != cnt; idx++) {
-			*unitIds++ = MainRoutineStateWork.party[idx];
-		}
-		*unitIds = BATTLE_UNIT_LIST_END;
-	}
-	return cnt;
-}
+#include "game/party_list_members.c"
 
 /* Adds `amount` to the party's coins, kept between 0 and COIN_MAX, and returns
    the new total. */

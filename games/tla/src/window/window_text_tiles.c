@@ -412,10 +412,7 @@ void mnTextUseExtraTiles(Sint32 allowAlternateTiles)
 	}
 }
 
-/* Unused: does nothing. */
-UNUSED void mnWindowReservedNoOperation(void)
-{
-}
+#include "window/window_reserved_no_operation.c"
 
 /* Draws a divider from (x1, y1) to (x2, y2), one of which must agree, joining
    it to the tick and divider tiles already on the tilemap. */
@@ -576,14 +573,7 @@ void mnWindowDrawDividerLine(
 	}
 }
 
-/* Sets the text colour (TEXT_COL) of drawn text. The menus colour the HP
-   figures with it, and set TEXT_COLOR_WHITE back after. */
-void mnTextSetCol(Sint32 col)
-{
-	WIN_STATE *state = WINDOW_STATE;
-
-	state->colour = col & (PALETTE_COLORS - 1);
-}
+#include "window/text_set_col.c"
 
 /* Sets the text style (TXT_STYLE) of drawn text: outlined, or a motion of the
    glyph sprites. Reached only through a bare entry of the window stub table. */

@@ -20,55 +20,9 @@
 typedef Sint32 (*DOT3_FN)(
 	Sint32 ax, Sint32 bx, Sint32 ay, Sint32 by, Sint32 az, Sint32 bz);
 
-/* Allocates the one-level save area (heap slot HEAP_SLOT_MATRIX_STACK), clears
-   MatrixStackDepth and resets CurrentMatrix to the unit matrix. */
-void syInitMatrix(void)
-{
-	MatrixStackTop =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_MATRIX_STACK, sizeof(CurrentMatrix));
-	MatrixStackDepth = 0;
-	syUnitMatrixCurrentInline();
-}
+#include "system/init_matrix.c"
 
-/* Saves CurrentMatrix into the save area (one level deep; a second save is
-   ignored). */
-void syPushMatrix(void)
-{
-	if(MatrixStackDepth <= 0) {
-		syDMAXCopy(CurrentMatrix, MatrixStackTop, MATRIX_DMA, REG_DMA3);
-		MatrixStackDepth++;
-		MatrixStackTop += sizeof(CurrentMatrix);
-	}
-}
-
-/* Copies CurrentMatrix to `dst`. */
-void syGetMatrix(MATRIX dst)
-{
-	syDMAXCopy(CurrentMatrix, dst, MATRIX_DMA, REG_DMA3);
-}
-
-/* Copies the matrix at `src` into CurrentMatrix. */
-void syLoadMatrix(const MATRIX src)
-{
-	syDMAXCopy(src, CurrentMatrix, MATRIX_DMA, REG_DMA3);
-}
-
-/* Restores CurrentMatrix from the save area, if syPushMatrix saved it. */
-void syPopMatrix(void)
-{
-	if(MatrixStackDepth > 0) {
-		--MatrixStackDepth;
-		MatrixStackTop -= sizeof(CurrentMatrix);
-		syDMAXCopy(MatrixStackTop, CurrentMatrix, MATRIX_DMA, REG_DMA3);
-	}
-}
-
-/* Resets CurrentMatrix to the unit matrix. Reached through the stub call
-   table. */
-void syUnitMatrixCurrent(void)
-{
-	syUnitMatrixCurrentInline();
-}
+#include "system/matrix_stack.c"
 
 /* Rotates CurrentMatrix by angles[0], angles[1] and angles[2] about the X, Y
    and Z axes, in that order, with one combined matrix. */
@@ -308,11 +262,7 @@ void syMatrixBuildLookAt(POINT eye, POINT tgt, MATRIX out)
 	out[MATRIX_TRANSLATION_Z] = -dot(ex, dx, ey, dy, ez, dz);
 }
 
-/* Makes the camera at `eye` looking at `tgt` the whole of CurrentMatrix. */
-void syLookAtLoad(POINT eye, POINT tgt)
-{
-	syMatrixBuildLookAt(eye, tgt, CurrentMatrix);
-}
+#include "system/look_at_load.c"
 
 /* Multiplies the camera at `eye` looking at `tgt` into CurrentMatrix. */
 void syLookAt(POINT eye, POINT tgt)
@@ -342,15 +292,7 @@ void syPerspective(Uint32 fieldOfView, FIXED nearDepth, FIXED farDepth)
 	ProjectionWork.far = farDepth;
 }
 
-/* Sets ProjectionWork's focal length and depth range directly. */
-void sySetScreenDist(Uint32 focal, Uint32 nearDepth, Uint32 farDepth)
-{
-	PROJECTION *projection = &ProjectionWork;
-
-	projection->focal = focal;
-	projection->near = nearDepth;
-	projection->far = farDepth;
-}
+#include "system/set_screen_dist.c"
 
 /* Reads three word-aligned coordinates from `point`, transforms them by
    CurrentMatrix and projects them to the screen: screen[0] and screen[1] are

@@ -3,11 +3,7 @@
 
 #include "script_commands_internal.h"
 
-/* Runs Catch cast on a target, through fdPsynergyCatch. */
-void fdPsynergyCatchOnTarget(Sint32 unused)
-{
-	fdPsynergyCatch();
-}
+#include "field/psynergy_catch_on_target.c"
 
 /* A hand (SPRITE_MOVE_HAND) reaches from 16 pixels above the caster to the
    target over GROW_STEPS ticks, growing from a quarter to full size, clenches

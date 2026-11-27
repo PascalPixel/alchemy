@@ -59,73 +59,7 @@
    screen (battle_background.c's BACKGROUND_PAN_X, in whole pixels). */
 #define BACKGROUND_SCROLL_X			((BG_SCREEN_WIDTH * 8 - DISPLAY_WIDTH) / 2)
 
-/* Fades the screen to black over sixteen ticks as every background's mosaic
-   blocks grow wider, then shows no layer. */
-Sint32 btTransitionRunMosaicFadeOut(void)
-{
-	Uint16			 bg0cnt;
-	Uint16			 bg1cnt;
-	Uint16			 bg2cnt;
-	Uint16			 bg3cnt;
-	Sint32			 mosaicSize;
-	volatile Uint16 *registerCursor;
-
-	syIORead16(&REG_BG0CNT, &bg0cnt);
-	REG_BG0CNT = bg0cnt | BGCNT_MOSAIC;
-	registerCursor = &REG_BG0CNT;
-	syIORead16(++registerCursor, &bg1cnt);
-	*registerCursor = bg1cnt | BGCNT_MOSAIC;
-	syIORead16(++registerCursor, &bg2cnt);
-	*registerCursor = bg2cnt | BGCNT_MOSAIC;
-	syIORead16(++registerCursor, &bg3cnt);
-	*registerCursor = bg3cnt | BGCNT_MOSAIC;
-	registerCursor += &REG_BLDCNT - &REG_BG3CNT;
-	*registerCursor = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
-		BLDCNT_TGT1_BD | BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_BG1 |
-		BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD;
-
-	syScreenFadeToBlack(16);
-	for(mosaicSize = 0; mosaicSize <= MOSAIC_SIZE_MAX; mosaicSize++) {
-		/* Four random numbers a tick, drawn only to move the generator on. */
-		syRandom();
-		syRandom();
-		syRandom();
-		syRandom();
-		/* The backgrounds' and sprites' blocks grow wider, staying a line
-		   tall. */
-		REG_MOSAIC = (mosaicSize << 8) | mosaicSize;
-		sySynch(1);
-	}
-
-	REG_DISPCNT = DISPCNT_MODE_1;
-	sySynch(4);
-	REG_BG0CNT = bg0cnt;
-	REG_BG1CNT = bg1cnt;
-	REG_BG2CNT = bg2cnt;
-	REG_BG3CNT = bg3cnt;
-	return 0;
-}
-
-/* Builds the zoomed background's 32 by 32 affine map, in which the background
-   picture's two halves come from character blocks 2 and 3. */
-void btTransitionBuildAffineTilemap(void *tilemap)
-{
-	Uint32 *words = tilemap;
-	Uint32	tiles;
-	Uint32	i;
-
-	tiles = AFFINE_MAP_ENTRIES(0, 1, 2, 3);
-	for(i = 0; i < BACKGROUND_UPPER_TILES / 4; i++) {
-		*words++ = tiles;
-		tiles += AFFINE_MAP_ENTRIES(4, 4, 4, 4);
-	}
-	tiles = AFFINE_MAP_ENTRIES(0, 1, 2, 3);
-	for(i = 0; i < BACKGROUND_LOWER_TILES / 4; i++) {
-		*words++ = tiles;
-		tiles += AFFINE_MAP_ENTRIES(4, 4, 4, 4);
-	}
-	syWordsFill(words, BACKGROUND_AFFINE_MAP_BYTES - BACKGROUND_TILES, -1);
-}
+#include "battle/transition_mosaic_fade.c"
 
 /* Builds BG1's flat map of the same picture: its tiles in rows 6 to 20, from
    screen line 16 at BATTLE_BACKGROUND_SCROLL_Y, and the last tile in the rows

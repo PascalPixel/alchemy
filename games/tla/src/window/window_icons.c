@@ -31,19 +31,7 @@ typedef enum ICON_MARK {
 
 void mnIconDecode(ICON_TRANSFER *glyph, Sint32 overlay);
 
-/* Returns how many item icons the icon table holds; mnIconBuildItemIconTiles
-   draws icon 0 for a number past them. */
-Sint32 mnIconCountItemIcons(void)
-{
-	return ItemIconsEnd - ItemIcons;
-}
-
-/* Returns how many Psynergy icons the icon table holds;
-   mnIconBuildAbilityIconTiles draws icon 0 for a number past them. */
-Sint32 mnIconCountPsynergyIcons(void)
-{
-	return PsynergyIconsEnd - PsynergyIcons;
-}
+#include "window/icon_count.c"
 
 /* Builds a command icon (overlay overlayIcon over base baseIcon) and loads it
    into a sprite tile slot: *slot, or a free one when reuse is 0. */
@@ -68,15 +56,7 @@ void mnIconBuildCommandIconTiles(Sint32 overlayIcon, Sint32 baseIcon,
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 }
 
-/* Unused: builds the icon of a battle action as an item's icon
-   (mnIconBuildItemIconTiles), where mnAbilityBuildIconTiles builds its Psynergy
-   icon. */
-UNUSED void mnAbilityBuildItemIconTiles(
-	Sint32 action, Sint32 withBase, Sint32 *slot, Sint32 *tile, Sint32 reuse)
-{
-	mnIconBuildItemIconTiles(
-		gmAbilityGetDirectStub(action)->icon, withBase, slot, tile, reuse);
-}
+#include "window/ability_build_item_icon_tiles.c"
 
 /* Builds item icon glyph, over the icon base when withBase is set, and loads it
    into *cacheSlot (a free slot unless reuse is set). Returns the tile in
@@ -190,32 +170,7 @@ Sint32 mnItemIconCompose(Uint32 code, Uint32 layers)
 	return 256;
 }
 
-/* Draws an item's icon from its inventory code with the layers asked for
-   (mnItemIconCompose) and loads it into VRAM cache entry cacheSlot. */
-Sint32 mnItemIconLoadLayersIntoSlot(
-	Sint32 inventoryCode, Sint32 layers, Sint32 cacheSlot)
-{
-	ICON_TRANSFER *state;
-
-	state = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
-	mnItemIconCompose(inventoryCode, layers);
-	syVRAMCacheLoad(cacheSlot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
-	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
-	return 1;
-}
-
-/* Draws one of the other icons (ICON_KIND_PATTERN) and loads it into cacheSlot,
-   as mnItemIconLoadLayersIntoSlot does an item's. */
-Sint32 mnIconBuildMiscIconTiles(Sint32 icon, Sint32 unused, Sint32 cacheSlot)
-{
-	ICON_TRANSFER *state;
-
-	state = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
-	mnIconDrawMisc(icon);
-	syVRAMCacheLoad(cacheSlot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
-	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
-	return 1;
-}
+#include "window/icon_layers_and_misc_tiles.c"
 
 /* Decodes item code's icon (the first icon for code 0) into the glyph
    buffer. */
@@ -233,14 +188,7 @@ void mnIconDrawItem(Sint32 code)
 	mnIconDecode(state, 0);
 }
 
-/* Builds the Psynergy icon of a battle action, as
-   mnIconBuildAbilityIconTiles. */
-void mnAbilityBuildIconTiles(
-	Sint32 action, Sint32 withBase, Sint32 *slot, Sint32 *tile, Sint32 reuse)
-{
-	mnIconBuildAbilityIconTiles(
-		gmAbilityGetDirectStub(action)->icon, withBase, slot, tile, reuse);
-}
+#include "window/ability_build_icon_tiles.c"
 
 /* Builds Psynergy icon glyph, over the icon base when withBase is set, and
    loads it into *cacheSlot (a free slot unless reuse is set). Returns the tile
@@ -326,10 +274,7 @@ void mnIconLoadWithPalette(Uint32 icon, Sint32 unused, Sint32 *slot,
 		DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
 }
 
-/* Unused: does nothing. */
-UNUSED void mnIconReservedNoOperation(void)
-{
-}
+#include "window/icon_reserved_no_operation.c"
 
 /* The tile functions RAM_CODE_LOAD copies to RAM to run, and their sizes, as
    these symbols' addresses. */

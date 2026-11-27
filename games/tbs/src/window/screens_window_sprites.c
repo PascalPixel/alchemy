@@ -61,36 +61,7 @@ WINDOW_SPR *mnWindowSprCreate(
 	return spr;
 }
 
-/* Loads resource `resource` in loading mode `mode` into a VRAM slot and shows
-   it as a 16x16 sprite at (x, y) in `win`. */
-WINDOW_SPR *mnWindowSprCreateFromResource(
-	Sint32 mode, Sint32 resource, WINDOW *win, Sint32 x, Sint32 y)
-{
-	Sint32 slot;
-
-	slot = mnSelectionIconLoad(mode, resource);
-	if(slot < 0) {
-		return NULL;
-	}
-	return mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_16X16, win, x, y);
-}
-
-/* Copies icon `icon` (with `layers` passed on to the copier) into a free VRAM
-   slot and shows it as a 16x16 sprite at (x, y) in `win`. */
-WINDOW_SPR *mnWindowSprCreateLoaded(
-	Sint32 icon, Sint32 layers, WINDOW *win, Sint32 x, Sint32 y)
-{
-	Sint32		slot;
-	WINDOW_SPR *spr;
-
-	slot = syVRAMCacheFindFreeEntry();
-	spr = NULL;
-	if(slot != VRAM_CACHE_ENTRY_COUNT) {
-		mnItemIconLoadLayersIntoSlot(icon, layers, slot);
-		spr = mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_16X16, win, x, y);
-	}
-	return spr;
-}
+#include "window/window_spr_create.c"
 
 /* Builds a 16x16 icon from tick pattern 1 with overlay pattern `icon` drawn
    over it, and shows it at (x, y) in `win` on draw layer 251. */
@@ -225,14 +196,7 @@ void mnWindowSprSetMotion(WINDOW_SPR *spr, Sint32 mode)
 	}
 }
 
-/* Sets the draw layer of the window sprite `spr` to 255 - `pri`, so a
-   higher priority draws on a lower layer. Does nothing when `spr` is
-   NULL. */
-void mnWindowSprSetPriority(void *spr, Sint32 pri)
-{
-	if(spr != NULL)
-		((WINDOW_SPR *)spr)->depth = ~pri;
-}
+#include "window/window_spr_set_priority.c"
 
 typedef void (*WINDOW_SPAN_ROUTINE)(Uint16 *spans, Uint16 *tilemap);
 

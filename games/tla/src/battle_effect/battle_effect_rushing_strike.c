@@ -271,23 +271,11 @@ void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	btEffectEndCanvasLayer();
 }
 
-/* Abilities: Spasm. */
-void btEffectRunSpasm(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunMirroredWall(args, MIRRORED_WALL_SPASM);
-}
+#include "battle_effect/effect_spasm.c"
 
-/* Abilities: Berserk. */
-void btEffectRunBerserk(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunMirroredWall(args, MIRRORED_WALL_BERSERK);
-}
+#include "battle_effect/effect_berserk.c"
 
-/* Abilities: Recovery. */
-void btEffectRunRecovery(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunMirroredWall(args, MIRRORED_WALL_RECOVERY);
-}
+#include "battle_effect/effect_recovery.c"
 
 /* Abilities: Sack. */
 void btEffectRunSack(BATTLE_EFFECT_PARM *args)

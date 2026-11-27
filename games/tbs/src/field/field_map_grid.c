@@ -38,16 +38,7 @@
 /* A map's palette: the first 14 of the 16 BG palettes, 224 colours. */
 #define MAP_PALETTE_BYTES			 (14 * PALETTE_COLORS * sizeof(Uint16))
 
-/* Remaps byteCnt bytes in place through SpriteColorGreyTable. */
-void fdSprColRemapPixels(Uint8 *bytes, Sint32 byteCnt)
-{
-	Uint8 *remapTbl = (Uint8 *)SpriteColorGreyTable;
-
-	while(byteCnt-- != 0) {
-		*bytes = remapTbl[*bytes];
-		bytes++;
-	}
-}
+#include "field/spr_col_remap_pixels.c"
 
 /* Unpacks the staged metatile tiles into MetatileTiles. */
 void fdTileMapDecodeStagedBuffer(Sint32 size)
@@ -725,26 +716,7 @@ typedef struct MAP_GRID_METATILE_ANIMATION_STEP {
 
 STATIC_ASSERT(sizeof(MAP_GRID_METATILE_ANIMATION_STEP) == 10);
 
-/* Plays a map edit (MAP_GRID_METATILE_ANIMATION_STEP entries, ended by a source
-   of MAPGRID_ANIMATION_STEPS_END): copies each entry's rectangle of metatile
-   tiles numbers to (dstX, dstY) and waits its delay in
-   ticks. */
-void fdMapGridPlayMapEdit(Uint16 *steps, Sint32 dstX, Uint32 dstY)
-{
-	/* Each entry is read in turn: its source, then its signed y, width, height
-	   and delay (MAP_GRID_METATILE_ANIMATION_STEP). */
-	while(*steps != MAPGRID_ANIMATION_STEPS_END) {
-		Uint16 src = *steps++;
-		Sint32 srcY = (Sint16)*steps++;
-		Sint32 width = (Sint16)*steps++;
-		Sint32 height = (Sint16)*steps++;
-		Sint32 delay = (Sint16)*steps++;
-
-		fdMapGridCopyMetatileTilesIndicesRect(
-			src, (Uint16)srcY, dstX, dstY, (Uint16)width, (Uint16)height);
-		sySynch((Uint16)delay);
-	}
-}
+#include "field/map_grid_play_map_edit.c"
 
 /* Copies a rectangle of metatiles (16x16 pixels each) as they are, from
    (srcX, srcY) to (dstX, dstY), width by height metatiles. */

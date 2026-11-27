@@ -18,18 +18,7 @@
 #define NEPTUNE_SPLASH_TICK		  214
 #define NEPTUNE_BURST_TICK		  222
 
-/* Sets BG2's horizontal scale back to one texel a pixel above the stretched
-   lines. */
-void btEffectResetBg2Pa(void)
-{
-	REG_BG2PA = Q_8_8(1);
-}
-
-/* Stretches BG2 to twice its width from the current line down. */
-void btEffectSetBg2AffineScaleHalf(void)
-{
-	REG_BG2PA = Q_8_8(0.5);
-}
+#include "battle_effect/effect_bg2_affine_scale.c"
 
 #define NEPTUNE_FLARE_SHEET 20000 /* the flare pictures, after the spray */
 /* The splash where the beam meets the head, growing and curling. */

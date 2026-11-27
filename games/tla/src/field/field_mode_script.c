@@ -27,14 +27,7 @@ void fdScriptUpdateDebugSkip(void)
 	}
 }
 
-/* Waits the requested ticks through sySynch(), unless debug fast-forward
-   (fdScriptUpdateDebugSkip) is on: the wait scripts use. */
-void fdScriptWait(Sint32 ticks)
-{
-	if(FieldStateWork->fastForward == 0 && ticks != 0) {
-		sySynch(ticks);
-	}
-}
+#include "field/script_wait.c"
 
 /* Stops the leader where it stands: no horizontal velocity, the normal walking
    speed (1.0) and acceleration (0.5), no destination, and the standing pose, or
@@ -343,13 +336,7 @@ Sint32 fdPartyInventoryGiveItem(Sint32 item, Sint32 unused)
 	return owner;
 }
 
-/* Gives item to one party member. Returns unit, or -1 if its bag is full. */
-Sint32 fdInventoryTryAddAndReturnMember(Sint32 item, Sint32 unused, Sint32 unit)
-{
-	if(gmInventoryAddItemStub(unit, item) >= 0)
-		return unit;
-	return -1;
-}
+#include "field/inventory_try_add_and_return_member.c"
 
 /* An empty function nothing calls. */
 UNUSED void fdInventoryNoOperationCallback(void)
@@ -435,12 +422,7 @@ Sint32 fdScriptAskYesNoWithActorAnimation(Sint32 actor, Sint32 forceBottom)
 	return answer;
 }
 
-/* Asks yes or no at the top of the screen, or at the bottom with atBottom set.
-   Returns 0 for yes, 1 for no. */
-Sint32 fdYesNoAsk(Sint32 atBottom)
-{
-	return mnYesNoMenuRunStub(atBottom, 0, 0, 0);
-}
+#include "field/yes_no_ask.c"
 
 /* Gives the party item from actor: with no room it shows the item, says it was
    found and left behind and returns -1; otherwise it adds the item, sets flag
@@ -501,22 +483,7 @@ void fdScriptFinishScreenTransition(void)
 	field->transitionActive = 0;
 }
 
-/* The script command "wait for screen": waits as long as the transition runs
-   (transitionFrm). */
-void fdScriptWaitTransitionTicks(void)
-{
-	sySynch(FieldStateWork->transitionFrm);
-}
-
-/* Makes the script leave for the given entrance of the given scene: raises the
-   exit request EXIT_KEEP_DESTINATION and writes MainRoutineStateWork.next and
-   entrance. */
-void fdScriptSetDestination(Sint32 sceneId, Sint32 entrance)
-{
-	FieldStateWork->exit = EXIT_KEEP_DESTINATION;
-	MainRoutineStateWork.next = sceneId;
-	MainRoutineStateWork.entrance = entrance;
-}
+#include "field/script_wait_and_destination.c"
 
 /* Makes the script leave and records sceneId and entrance as the restart
    point. */

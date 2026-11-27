@@ -49,34 +49,7 @@ typedef enum HEALING_MOTES_MODE {
 	HEALING_MODE_REVERSE_STAR /* sparkles turning on the view's axis */
 } HEALING_MOTES_MODE;
 
-/* Sparkles of light swirl around each target and close in on it, in the ice
-   shard's or ice block's colours, with the canvas shown at its own width and
-   centred on the first target.
-
-   Abilities: Ply, Ply Well, Pure Ply, Herb, Nut, Vial, Potion, Soothing Water,
-   Pixie, Faery, Weird Nymph, Succubus, Earnest Ply, Fizz. */
-void btEffectRunPly(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunHealingMotes(args, HEALING_MODE_PLY);
-}
-
-/* Healing motes tumble in on each target from all around it.
-
-   Abilities: Wish, Wish Well, Pure Wish, Mist Potion, Elder Wood, Estre Wood,
-   Regenerate, Reflect, Spritz. */
-void btEffectRunWish(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunHealingMotes(args, HEALING_MODE_WISH);
-}
-
-/* A ring of healing motes below each target closes in on it, in the blast
-   sprite sheet's colours.
-
-   Abilities: Cure, Cure Well, Potent Cure, Corn, Flower, Worms. */
-void btEffectRunCure(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunHealingMotes(args, HEALING_MODE_CURE);
-}
+#include "battle_effect/effect_healing_motes.c"
 
 /* After a Mercury Djinni appears, Ply's sparkles, twice as many, swirl in on
    each target.
@@ -96,34 +69,7 @@ void btEffectRunBreath(BATTLE_EFFECT_PARM *args)
 	btEffectRunHealingMotes(args, HEALING_MODE_BREATH);
 }
 
-/* Sparkles twinkle around each target, four more a tick, and go out one by one
-   instead of closing in.
-
-   Abilities: Cure Poison, Restore. */
-void btEffectRunCurePoison(BATTLE_EFFECT_PARM *args)
-{
-	if(args->variant == EFFECT_VARIANT_BASIC) {
-		btEffectRunHealingMotes(args, HEALING_MODE_CURE_POISON);
-		return;
-	}
-	btEffectRunHealingMotes(args, HEALING_MODE_RESTORE);
-}
-
-/* Plays the healing motes as Restore shows them; no effect table entry reaches
-   this one. */
-UNUSED void btEffectRunUnusedRestoreMotes(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunHealingMotes(args, HEALING_MODE_RESTORE);
-}
-
-/* Sparkles twinkle around each target, turning on two axes, and go out one by
-   one; the runner plays HEALING_MODE_TONIC exactly as HEALING_MODE_RESTORE.
-
-   Abilities: Tonic. */
-void btEffectRunTonic(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunHealingMotes(args, HEALING_MODE_TONIC);
-}
+#include "battle_effect/effect_healing_cure_poison.c"
 
 /* After a Venus Djinni appears, sparkles burst up and out from each target's
    feet, their colours turning from the blast sprite sheet's to cyan, and go out
@@ -135,14 +81,7 @@ void btEffectRunSalt(BATTLE_EFFECT_PARM *args)
 	btEffectRunHealingMotes(args, HEALING_MODE_SALT);
 }
 
-/* Healing motes gather around each target in orange; with a prelude, a Mars
-   Djinni appears first.
-
-   Abilities: Psy Crystal, Adept Ring, Ember. */
-void btEffectRunPsyCrystal(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunHealingMotes(args, HEALING_MODE_PSY_CRYSTAL);
-}
+#include "battle_effect/effect_psy_crystal.c"
 
 /* After a Jupiter Djinni appears, motes in the Jupiter Djinn's colours swirl in
    on each target.

@@ -757,23 +757,7 @@ void btEffectRunBoneCharge(BATTLE_EFFECT_PARM *args)
 	btEffectRunRushingStrike(args, RUSHING_STRIKE_STUN_MUSCLE);
 }
 
-/* Abilities: Brute Force, Troll. */
-void btEffectRunBruteForce(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunRushingStrike(args, RUSHING_STRIKE_BRUTE_FORCE);
-}
-
-/* Abilities: Onslaught. */
-void btEffectRunOnslaught(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunRushingStrike(args, RUSHING_STRIKE_ONSLAUGHT);
-}
-
-/* Abilities: Headbutt. */
-void btEffectRunHeadbutt(BATTLE_EFFECT_PARM *args)
-{
-	btEffectRunRushingStrike(args, RUSHING_STRIKE_HEADBUTT);
-}
+#include "battle_effect/effect_rushing_sparks.c"
 
 /* Abilities: Stun Muscle. */
 void btEffectRunStunMuscle(BATTLE_EFFECT_PARM *args)

@@ -314,18 +314,7 @@ void fdRevealEmitSparkles(ACTOR *actor)
 	fdActorInitSparkle(object);
 }
 
-/* Returns 1 while Reveal is active, else 0. */
-Bool fdIsRevealActive(ACTOR *interpreter)
-{
-	FIELD_STATE *state = FieldStateWork;
-
-	if(state == NULL)
-		return FALSE;
-	if(state->revealActive != 0)
-		return TRUE;
-	else
-		return FALSE;
-}
+#include "field/is_reveal_active.c"
 
 /* Reveal: marks with sparkles the hidden things within 8 metatiles left or
    right and 5 up or down of the leader: treasure spots (ids 100 to 239) with no

@@ -186,54 +186,9 @@ void sySndVSync(void)
 	m4aSoundVSync();
 }
 
-/* Sets the BGM tempo scale directly; BGM_UNITY_SCALE preserves its native
-   tempo. */
-void sySndSetBGMTempo(Uint16 tempoScale)
-{
-	m4aMPlayTempoControl(&MPlayInfoBGM, tempoScale);
-}
+#include "sound/snd_bgm_tempo_and_volume.c"
 
-/* Applies a pitch offset, in 1/256 semitone, to the music's tracks 0 to 7. */
-void sySndSetBGMPitch(Uint16 pitch)
-{
-	m4aMPlayPitchControl(&MPlayInfoBGM, TRACKS_ALL, pitch);
-}
-
-/* Sets the target and per-VBlank step of the combined BGM tempo/pitch ramp
-   (BGM_UNITY_SCALE the music's own). */
-void sySndSetBGMTempoPitchTarget(Uint16 tgtScale, Uint16 step)
-{
-	BgmTempoPitchTarget = tgtScale;
-	BgmTempoPitchStep = step;
-}
-
-/* Sets BGM volume (BGM_UNITY_SCALE full) immediately and cancels any
-   outstanding volume ramp. */
-void sySndSetBGMVolume(Sint16 volume)
-{
-	m4aMPlayVolumeControl(&MPlayInfoBGM, TRACKS_ALL, volume);
-	BgmVolumeTarget = volume;
-	BgmVolume = volume;
-}
-
-/* Sets the BGM volume target (BGM_UNITY_SCALE full) and its per-VBlank step. */
-void sySndSetBGMVolumeTarget(Uint16 tgtVolume, Uint16 step)
-{
-	BgmVolumeTarget = tgtVolume;
-	BgmVolumeStep = step;
-}
-
-/* Stops every sound player while preserving its state for a later resume. */
-void sySndStopAllMusicPlayers(void)
-{
-	m4aMPlayAllStop();
-}
-
-/* Resumes every player, each from where m4aMPlayAllStop stopped it. */
-void sySndResumeAllMusicPlayers(void)
-{
-	m4aMPlayAllContinue();
-}
+#include "sound/snd_music_players.c"
 
 /* Returns nonzero while a jingle holds the music: from its start until its
    player falls silent and the music begins to fade back in. */
@@ -242,19 +197,7 @@ Uint8 sySndGetBGMRestoreDelay(void)
 	return BgmRestoreDelay;
 }
 
-/* Waits until a jingle has ended and the music has begun to come back, giving
-   up after BGM_WAIT_TIMEOUT_TICKS. */
-void sySndWaitForBGMRestore(void)
-{
-	Sint32 ticksWaited = 0;
-
-	do {
-		if(BgmRestoreDelay == 0)
-			break;
-		sySynch(1);
-		ticksWaited++;
-	} while(ticksWaited < BGM_WAIT_TIMEOUT_TICKS);
-}
+#include "sound/snd_wait_for_bgm_restore.c"
 
 /* Stops the sound DMA and its timer; the soft reset calls it first. */
 void sySndSuspendDirectSnd(void)

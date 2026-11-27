@@ -63,54 +63,7 @@ void fdSprDissolveStep(Uint8 *rawSpr, Uint32 step)
 	}
 }
 
-/* Dissolves a sprite pixel by pixel, four steps a tick, over 32 ticks. */
-void fdSprDissolveRun(Uint8 *spr)
-{
-	Uint32 step;
-
-	step = 0;
-	/* Finish all four dissolve steps before waiting for the next video
-	   frame. */
-	do {
-		fdSprDissolveStep(spr, step);
-		fdSprDissolveStep(spr, step + 1);
-		fdSprDissolveStep(spr, step + 2);
-		fdSprDissolveStep(spr, step + 3);
-		step += 4;
-		sySynch(1);
-	} while(step <= DISSOLVE_STEPS - 1);
-}
-
-/* Dissolves count sprites together, pixel by pixel, over 32 ticks. */
-void fdSprDissolveRunMany(Uint8 **sprs, Sint32 cnt)
-{
-	Uint8 **firstSpr;
-	Uint8 **sprCursor;
-	Sint32	sprsRemaining;
-	Uint32	step;
-	Uint32	secondDissolveStep;
-	Uint32	thirdDissolveStep;
-	Uint32	fourthDissolveStep;
-
-	firstSpr = sprs;
-	for(step = 0; step <= DISSOLVE_STEPS - 1U; step += 4) {
-		if(cnt > 0) {
-			secondDissolveStep = step + 1;
-			thirdDissolveStep = step + 2;
-			sprCursor = firstSpr;
-			fourthDissolveStep = step + 3;
-			sprsRemaining = cnt;
-			do {
-				fdSprDissolveStep(*sprCursor, step);
-				fdSprDissolveStep(*sprCursor, secondDissolveStep);
-				fdSprDissolveStep(*sprCursor, thirdDissolveStep);
-				sprsRemaining -= 1;
-				fdSprDissolveStep(*sprCursor++, fourthDissolveStep);
-			} while(sprsRemaining != 0);
-		}
-		sySynch(1U);
-	}
-}
+#include "field/spr_dissolve.c"
 
 /* Writes the actor's screen position, in pixels, to screenPos[0..1] and
    returns 0 when it is on or near the screen; otherwise writes 0, 0 and returns
@@ -176,14 +129,7 @@ void fdActorSystemInit(Sint32 controlMode)
 	system->fill = 0;
 }
 
-/* Unused: two empty functions. */
-UNUSED void fdActorSystemReservedNoOperationA(void)
-{
-}
-
-UNUSED void fdActorSystemReservedNoOperationB(void)
-{
-}
+#include "field/actor_system_reserved.c"
 
 /* Returns the first of the 64 actors not in use (with no script), or 0. */
 void *fdActorFindFree(void)
@@ -203,30 +149,7 @@ void *fdActorFindFree(void)
 	return freeActor;
 }
 
-/* Releases an actor's sprites and zeroes it, releasing its slot. Clearing the
-   script lets fdActorFindFree hand the actor out again. */
-void fdActorRelease(ACTOR *actor)
-{
-	Sint32 sprsRemaining;
-	void **sprs;
-
-	if(actor) {
-		switch(actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) {
-		case ACTOR_SPRITE_ONE:
-			fdSprDestroy(actor->spr);
-			break;
-		case ACTOR_SPRITE_GROUP:
-			sprs = (void **)actor->spr;
-			for(sprsRemaining = 0; sprsRemaining < 4; sprsRemaining++) {
-				SPR *spr = *sprs++;
-				if(spr)
-					fdSprDestroy(spr);
-			}
-			break;
-		}
-		DMA_FILL32(0, actor, sizeof(ACTOR));
-	}
-}
+#include "field/actor_release.c"
 
 /* Creates an actor at (x, y, z), in 16.16 pixels, or returns 0 when every slot
    is in use. encodedSpr / 4096 is its ACTOR_CREATE and the low 12 bits its
@@ -303,18 +226,7 @@ ACTOR *fdActorCreate(Sint32 encodedSpr, FIXED x, FIXED y, FIXED z)
 	return actor;
 }
 
-/* Gives an actor a script and starts it from the top. Sets the script and
-   clears the cursor, the pause, the loop count and the last flag test. */
-void fdActorStartScript(ACTOR *actor, const Sint32 *script)
-{
-	if(actor != 0) {
-		actor->scriptCursor = 0;
-		actor->script = script;
-		actor->paused = 0;
-		actor->repeatCnt = 0;
-		actor->conditionResult = 0;
-	}
-}
+#include "field/actor_start_script.c"
 
 /* Defines name(actor, value), which calls apply(sprite, value) on an actor's
    one sprite, or on each sprite of its group. */
@@ -350,33 +262,7 @@ ACTOR_DEFINE_APPLY(fdActorSelectAnimation, void *, fdSprStartAnimation)
 /* Sets the animation speed (timer step) of all of an actor's sprites. */
 ACTOR_DEFINE_APPLY(fdActorSetAnimationSpeed, ACTOR *, fdSprSetAnimationSpeed)
 
-/* Both of the above: switches all of an actor's sprites to animation and sets
-   their timer step to step. */
-void fdActorSetAnimationAndSpeed(ACTOR *actor, Sint32 anm, Sint32 step)
-{
-	void **sprs;
-	void  *spr;
-	Sint32 part;
-
-	if(actor != 0) {
-		switch(actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) {
-		case ACTOR_SPRITE_ONE:
-			fdSprStartAnimation(actor->spr, anm);
-			fdSprSetAnimationSpeed(actor->spr, step);
-			break;
-		case ACTOR_SPRITE_GROUP:
-			sprs = (void **)actor->spr;
-			for(part = 0; part < 4; part++) {
-				spr = *sprs++;
-				if(spr != 0) {
-					fdSprStartAnimation(spr, anm);
-					fdSprSetAnimationSpeed(spr, step);
-				}
-			}
-			break;
-		}
-	}
-}
+#include "field/actor_set_animation_and_speed.c"
 
 /* Sets the rotation of an actor's sprite, when it has just one. */
 void fdActorSetSprRotation(ACTOR *actor, Uint32 rotation)
@@ -402,17 +288,7 @@ void fdActorSetFirstSprAnimation(ACTOR *actor, Sint32 anmId)
 	}
 }
 
-/* Adds a layer playing anmId to a one-sprite actor's sprite. A negative
-   anmId does nothing. */
-void fdActorRegisterSprMetadata(ACTOR *actor, Sint32 anmId)
-{
-	if(actor != 0 &&
-		(actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
-		SPR *spr = actor->spr;
-		if(anmId >= 0)
-			fdSprAddAnimation(spr, anmId);
-	}
-}
+#include "field/actor_register_spr_metadata.c"
 
 /* Starts an actor on the script that approaches its watched actor
    (SC_APPROACH_WATCHED), watching watchedActorHandle. */
@@ -496,14 +372,7 @@ void fdActorSetSprFlags(ACTOR *actor, Uint32 flg)
 	}
 }
 
-/* Sets the OAM blend mode of a one-sprite actor's sprite. */
-void fdActorSetBlendMode(ACTOR *actor, Uint32 mode)
-{
-	if(actor != 0 && actor->sprStorageKind == ACTOR_SPRITE_ONE) {
-		SPR *spr = actor->spr;
-		spr->image.objMode = mode;
-	}
-}
+#include "field/actor_set_blend_mode.c"
 
 /* Makes the fixed camera draw a one-sprite actor at its own scale instead of
    scaling it by distance. */
@@ -537,19 +406,6 @@ void fdActorSystemSuspendProjectionAndShowSprs(void)
 		DISPCNT_OBJ_ON;
 }
 
-/* Resumes the actor camera updates and hides BG1-3 and the sprites. */
-void fdActorSystemResumeProjectionAndHideLayers(void)
-{
-	syResumeEvent(fdActorSystemPlaceSprs);
-	syResumeEvent(fdActorSystemProjectSprs);
-	REG_DISPCNT &=
-		~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON);
-}
-
-/* Unused: returns 1. */
-UNUSED Sint32 fdActorReturnTrue(void)
-{
-	return 1;
-}
+#include "field/actor_system_resume_projection.c"
 
 #undef ACTOR_DEFINE_APPLY

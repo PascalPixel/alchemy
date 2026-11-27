@@ -1,14 +1,7 @@
 /* Running summon and table effects, and shared target helpers. Part of
    battle_effect.c. */
 
-/* Calls the empty btEffectNoOperation count times: a busy delay. */
-void btEffectCallNoOperation(Sint32 cnt)
-{
-	Sint32 i;
-
-	for(i = 0; i != cnt; i++)
-		btEffectNoOperation();
-}
+#include "battle_effect/effect_call_no_operation.c"
 
 /* Runs one of the large battle effects, the summons and the scenes of a few
    abilities: takes the effect's sprite sheet, state and canvas, runs the effect

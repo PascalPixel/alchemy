@@ -70,7 +70,7 @@ typedef enum ENEMY_TARGET_STRATEGY {
 } ENEMY_TARGET_STRATEGY;
 
 /* ENEMY_DEFINITION.actionStrategy: how btAIChooseAction picks a place in the
-   enemy's eight actions. The first three roll against BattleAI_ActionWeights;
+   enemy's eight actions. The first three roll against BattleAIActionWeights;
    the next two remember the place in the unit's AI state. */
 typedef enum ENEMY_ACTION_STRATEGY {
 	ACTION_STRATEGY_EVEN,			/* 32 in 256 each */
@@ -101,7 +101,7 @@ typedef struct ENEMY_DEFINITION {
 	Uint8  ppRegen;		   /* PP restored at each turn's end */
 	Uint16 items[4];	   /* items the enemy carries, 0 for none */
 	Uint8  cnts[4];		   /* how many of each item it carries */
-	Uint8  elementPreset;  /* row of Enemy_ElementPresetTable */
+	Uint8  elementPreset;  /* row of EnemyElementPresetTable */
 	Sint8  tgtStrategy;	   /* whom a single-target attack favours */
 	Sint8  actionStrategy; /* how the action is chosen from abilities */
 	/* One bit per place in `abilities` (ITEM_ACTION): use an item held
@@ -126,7 +126,7 @@ STATIC_ASSERT(offsetof(ENEMY_DEFINITION, experience) == 72);
 /* ENEMY_DEFINITION.itemActions' bit for `place` in its abilities. */
 #define ITEM_ACTION(place) (1 << (place))
 
-/* An enemy's element preset in Enemy_ElementPresetTable: the element it attacks
+/* An enemy's element preset in EnemyElementPresetTable: the element it attacks
    with, its level in each element, and its base power and resistance in
    each. */
 typedef struct ENEMY_ELEMENT_PRESET {
@@ -140,7 +140,7 @@ typedef struct ENEMY_ELEMENT_PRESET {
 	BATTLE_ELEMENT_STATS stats[4];
 } ENEMY_ELEMENT_PRESET;
 
-/* The rows of Enemy_ElementPresetTable (ENEMY_DEFINITION.elementPreset), each
+/* The rows of EnemyElementPresetTable (ENEMY_DEFINITION.elementPreset), each
    named by the first enemy that has it, as The Broken Seal names its own. Rows
    10, 22, 28 and 35 are spares no enemy has. */
 typedef enum ENEMY_ELEMENT_PRESET_ID {
@@ -192,7 +192,7 @@ typedef enum ENEMY_ELEMENT_PRESET_ID {
 	ELEMENT_PRESET_DOOM_DRAGON = 47
 } ENEMY_ELEMENT_PRESET_ID;
 
-/* How many element presets Enemy_ElementPresetTable holds; an enemy naming one
+/* How many element presets EnemyElementPresetTable holds; an enemy naming one
    past the last reads the first. */
 #define ENEMY_ELEMENT_PRESET_COUNT 48
 

@@ -1,4 +1,4 @@
-/* Shakes the camera round the leader: every third frame it moves a pixel
+/* Shakes the camera round the leader: every third tick it moves a pixel
    diagonally from him, one of the four ways at random. */
 void scWorldMapJitterTransitionCamera(void)
 {
@@ -6,7 +6,7 @@ void scWorldMapJitterTransitionCamera(void)
 	Sint32 x = actor->x.part[0].integer;
 	Sint32 z = actor->z.part[0].integer;
 
-	if(FrameCount % 3 == 0) {
+	if(TickCount % 3 == 0) {
 		switch(syRandomBelow(4)) {
 		case 0:
 			fdCameraMoveToFX(toFIXED(x) - toFIXED(1), CAMERA_KEEP,

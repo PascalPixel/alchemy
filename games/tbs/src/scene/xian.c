@@ -74,24 +74,24 @@
 #define FLAG_XIAN_TREE_JUMPED		   FLAG_SCENE_TEMP_03
 
 Sint32				  scInit(void);
-extern Sint32		  Xian_WaterCarrierRoute[];
-extern Sint32		  Xian_TrainingTreeJump[];
-extern Sint32		  Xian_TreeImpactScript[];
-extern Sint32		  Xian_TrainingParticleScript[];
-extern Uint16		  Xian_HouseDoorOpens[];
-extern Uint16		  Xian_NorthHouseDoorOpens[];
-extern Uint16		  Xian_InnDoorOpens[];
-extern Uint16		  Xian_SanctumDoorOpens[];
-extern Uint16		  Xian_SchoolDoorOpens[];
-extern SCENE_ENTRANCE Xian_Entrances[];
-extern Uint32		  Xian_Exits[];
-extern ACTOR_PLACE	  Xian_ActorPlacements[];
-extern CUE			  Xian_Cues[];
+extern Sint32		  XianWaterCarrierRoute[];
+extern Sint32		  XianTrainingTreeJump[];
+extern Sint32		  XianTreeImpactScript[];
+extern Sint32		  XianTrainingParticleScript[];
+extern Uint16		  XianHouseDoorOpens[];
+extern Uint16		  XianNorthHouseDoorOpens[];
+extern Uint16		  XianInnDoorOpens[];
+extern Uint16		  XianSanctumDoorOpens[];
+extern Uint16		  XianSchoolDoorOpens[];
+extern SCENE_ENTRANCE XianEntrances[];
+extern Uint32		  XianExits[];
+extern ACTOR_PLACE	  XianActorPlacements[];
+extern CUE			  XianCues[];
 
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
 
-/* The actors, numbering the rows of Xian_ActorPlacements. Each person is named
+/* The actors, numbering the rows of XianActorPlacements. Each person is named
    by what their sprite shows and what they talk of before Xian hears of Hsu. */
 typedef enum XIAN_ACTOR_ID {
 	/* A young man in a blue jacket. */
@@ -131,11 +131,11 @@ typedef enum XIAN_ACTOR_ID {
 } XIAN_ACTOR_ID;
 
 /* The script the water carrier raises when the leader has stood in her way for
-   XIAN_CARRIER_BLOCKED_FRAMES. */
+   XIAN_CARRIER_BLOCKED_TICKS. */
 typedef enum XIAN_RAISED_CUE { RAISED_CARRIER_BLOCKED = 200 } XIAN_RAISED_CUE;
 
 /* Xian's own metatile behaviors. The doors' metatiles carry the numbers of
-   their exits, so their rows of Xian_Cues name them by the exit. */
+   their exits, so their rows of XianCues name them by the exit. */
 typedef enum XIAN_METATILE_BEHAVIOR {
 	/* The water carrier's street, metatiles (19, 14) to (27, 14), and the
 	   metatiles beside it, where Isaac hops over the spilled water. */
@@ -149,11 +149,11 @@ typedef enum XIAN_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_XIAN_JAR = 101
 } XIAN_METATILE_BEHAVIOR;
 
-/* The frames the leader must stand in the water carrier's way before she raises
+/* The ticks the leader must stand in the water carrier's way before she raises
    RAISED_CARRIER_BLOCKED. */
-enum { XIAN_CARRIER_BLOCKED_FRAMES = 120 };
+enum { XIAN_CARRIER_BLOCKED_TICKS = 120 };
 
-/* The water carrier's round (Xian_WaterCarrierRoute) runs along map row 14
+/* The water carrier's round (XianWaterCarrierRoute) runs along map row 14
    between columns 17 and 26, where she turns north and back. */
 enum {
 	CARRIER_ROUTE_ROW = 14,
@@ -191,13 +191,13 @@ static void scXianSpawnTrainingParticles(void)
 {
 	ACTOR *student = fdActorGet(ACTOR_KUNG_FU_STUDENT);
 
-	if((FrameCount & 3) == 0) {
+	if((TickCount & 3) == 0) {
 		EFFECT_OPTIONS options;
 
 		options.pri = 1;
 		options.pal = SPRITE_COLOR_BLUE_TINT;
 		options.type = SPRITE_GIRL_IN_PINK;
-		options.script = Xian_TrainingParticleScript;
+		options.script = XianTrainingParticleScript;
 		fdEffectSpawn(student->x.fixed, student->y.fixed,
 			student->z.fixed - toFIXED(1), 0, -toFIXED(1), -toFIXED(1),
 			EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE | EFFECT_USE_TYPE |
@@ -208,7 +208,7 @@ static void scXianSpawnTrainingParticles(void)
 
 #include "shared/actor_distance.c"
 
-/* Stops the water carrier where she stands while `target` is within
+/* Stops the water carrier where she stands while `tgt` is within
    `distanceLimit` pixels of her and no more than a sixteenth of a turn off her
    heading, or whenever `alwaysStop` is set, and sets her walking on otherwise.
    Returns whether she is stopped.
@@ -216,7 +216,7 @@ static void scXianSpawnTrainingParticles(void)
    `paused` holds her still, and `timer` is 1 while this function holds her;
    paused with `timer` 0, she stays put whatever the leader does. */
 static Sint32 scXianStopCarrierBeforeLeader(
-	ACTOR *actor, ACTOR *target, Sint32 distanceLimit, Sint32 alwaysStop)
+	ACTOR *actor, ACTOR *tgt, Sint32 distanceLimit, Sint32 alwaysStop)
 {
 	Sint32 stopped = 0;
 
@@ -225,12 +225,12 @@ static Sint32 scXianStopCarrierBeforeLeader(
 		return 1;
 	}
 
-	if(fdActorDistance(target, actor) < distanceLimit || alwaysStop != 0) {
-		Uint16 angle = syAtan(
-			target->z.fixed - actor->z.fixed, target->x.fixed - actor->x.fixed);
-		Sint32 previousHeading = FACING_SIXTEENTH(angle - FACING_STEP);
-		Sint32 nextHeading = FACING_SIXTEENTH(angle + FACING_STEP);
-		Sint32 targetHeading = FACING_SIXTEENTH(angle);
+	if(fdActorDistance(tgt, actor) < distanceLimit || alwaysStop != 0) {
+		Uint16 ang = syAtan(
+			tgt->z.fixed - actor->z.fixed, tgt->x.fixed - actor->x.fixed);
+		Sint32 previousHeading = FACING_SIXTEENTH(ang - FACING_STEP);
+		Sint32 nextHeading = FACING_SIXTEENTH(ang + FACING_STEP);
+		Sint32 targetHeading = FACING_SIXTEENTH(ang);
 		Sint32 currentHeading = FACING_SIXTEENTH(actor->facing);
 
 		if(targetHeading == currentHeading || nextHeading == currentHeading ||
@@ -277,8 +277,8 @@ static UNREAD_RESULT scXianWatchWaterCarrierPath(ACTOR *carrier)
 	} else {
 		carrier->sceneCnt = 0;
 	}
-	/* sceneCnt counts the frames he has stood there. */
-	if(near && carrier->sceneCnt > XIAN_CARRIER_BLOCKED_FRAMES - 1) {
+	/* sceneCnt counts the ticks he has stood there. */
+	if(near && carrier->sceneCnt > XIAN_CARRIER_BLOCKED_TICKS - 1) {
 		FieldStateWork->raisedCue = RAISED_CARRIER_BLOCKED;
 		carrier->sceneCnt = 0;
 	}
@@ -293,7 +293,7 @@ static UNREAD_RESULT scXianWatchWaterCarrierPath(ACTOR *carrier)
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return Xian_Entrances;
+	return XianEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -303,7 +303,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return Xian_Exits;
+	return XianExits;
 }
 
 /* Once Xian has heard Hsu is trapped, the muscular man turns to face the party
@@ -311,10 +311,10 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(gmFlagGet(FLAG_XIAN_HEARD_HSU_TRAPPED) != 0)
-		Xian_ActorPlacements[ACTOR_MUSCULAR_MAN_ON_DISASTERS -
+		XianActorPlacements[ACTOR_MUSCULAR_MAN_ON_DISASTERS -
 			ACTOR_FIRST_PLACED]
 			.talkFacing = TALK_FACING_PARTY;
-	return Xian_ActorPlacements;
+	return XianActorPlacements;
 }
 
 /* A villager in Xian asks whether the young warriors came through Mogall
@@ -509,7 +509,7 @@ static void scXianFreezeSpilledWater(void)
 	puddle = fdActorGet(ACTOR_SPILLED_WATER);
 	fdMapGridCopyMetatileAttributes(3, 17, 1, 1, FIELD_METATILE(puddleX),
 		(FIELD_METATILE(puddle->z.fixed)));
-	sySetFrameEvent(scXianUpdateFrozenWaterLayer, EVENT_PASS_FRAME);
+	sySetTickEvent(scXianUpdateFrozenWaterLayer, EVENT_PASS_TICK);
 	gmFlagSet(FLAG_XIAN_SPILLED_WATER_FROZEN);
 	fdActorSetSprPriority(ACTOR_SPILLED_WATER, 2);
 	fdScriptEnd();
@@ -521,8 +521,8 @@ static void scXianFreezeSpilledWater(void)
    drops back. "Heh heh heh..." After that she only boasts of her kung fu. */
 static void scXianTalkToKungFuStudent(void)
 {
-	FIXED		   reboundVelocity;
-	Sint32		   stepBackOffset[3];
+	FIXED		   reboundVel;
+	Sint32		   stepBackOfs[3];
 	EFFECT_OPTIONS options;
 
 	fdScriptStart();
@@ -540,12 +540,12 @@ static void scXianTalkToKungFuStudent(void)
 		fdScriptShowMessage(ACTOR_KUNG_FU_STUDENT, 0);
 		fdActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 		fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
-		SET_VECTOR(stepBackOffset, 0, 0, 0);
+		SET_VECTOR(stepBackOfs, 0, 0, 0);
 		syFieldVectorAddPolarOffset(-8, fdActorGet(ACTOR_PARTY_LEADER)->facing,
-			(FIELD_POS *)stepBackOffset);
+			(FIELD_POS *)stepBackOfs);
 		fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 		fdActorSetDestinationOffset(ACTOR_PARTY_LEADER,
-			stepBackOffset[0] / toFIXED(1), stepBackOffset[2] / toFIXED(1));
+			stepBackOfs[0] / toFIXED(1), stepBackOfs[2] / toFIXED(1));
 		fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 		fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg |= ACTOR_FACES_MOTION;
 		fdScriptWait(30);
@@ -556,7 +556,7 @@ static void scXianTalkToKungFuStudent(void)
 		fdEffectSpawn(toFIXED(192), 0, toFIXED(312), toFIXED(1) / 5,
 			toFIXED(1) / 10, 0, EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
 		sySndPlay(SE_WATER);
-		sySetFrameEvent(scXianSpawnTrainingParticles, EVENT_PASS_FRAME);
+		sySetTickEvent(scXianSpawnTrainingParticles, EVENT_PASS_TICK);
 		fdActorGet(ACTOR_KUNG_FU_STUDENT)->velY = toFIXED(6);
 		fdActorGet(ACTOR_KUNG_FU_STUDENT)->gravity = toFIXED(1);
 		fdActorGet(ACTOR_KUNG_FU_STUDENT)->bounce = 0;
@@ -564,10 +564,10 @@ static void scXianTalkToKungFuStudent(void)
 		fdActorSetDestination(ACTOR_KUNG_FU_STUDENT, 168, 312);
 		fdActorWaitForMoveById(ACTOR_KUNG_FU_STUDENT);
 		sySndPlay(SE_HEAVY_IMPACT);
-		fdActorSetScript(ACTOR_TRAINING_TREE, Xian_TrainingTreeJump);
-		sySetFrameEvent(scXianRotateTrainingTree, EVENT_PASS_FRAME);
+		fdActorSetScript(ACTOR_TRAINING_TREE, XianTrainingTreeJump);
+		sySetTickEvent(scXianRotateTrainingTree, EVENT_PASS_TICK);
 		options.type = SPRITE_STAR_BURST;
-		options.script = Xian_TreeImpactScript;
+		options.script = XianTreeImpactScript;
 		options.rotation = DEGtoANG(90);
 		fdEffectSpawn(toFIXED(168), 0, toFIXED(332), 0, 0, 0,
 			EFFECT_USE_PRIORITY | EFFECT_USE_TYPE | EFFECT_USE_SCRIPT |
@@ -580,10 +580,10 @@ static void scXianTalkToKungFuStudent(void)
 			EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
 		fdEffectSpawn(toFIXED(144), 0, toFIXED(312), -toFIXED(1) / 5,
 			toFIXED(1) / 10, 0, EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-		/* Half a pixel a frame back east, and below as a rotation: half a turn,
+		/* Half a pixel a tick back east, and below as a rotation: half a turn,
 		   which stands the post upright again. */
-		reboundVelocity = -toFIXED(1) / 2;
-		fdEffectSpawn(toFIXED(144), 0, toFIXED(312), reboundVelocity, 0, 0,
+		reboundVel = -toFIXED(1) / 2;
+		fdEffectSpawn(toFIXED(144), 0, toFIXED(312), reboundVel, 0, 0,
 			EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
 		fdActorWaitForScriptEndById(ACTOR_TRAINING_TREE);
 		sySndPlay(SE_CHEST_OPEN);
@@ -594,7 +594,7 @@ static void scXianTalkToKungFuStudent(void)
 		fdEffectSpawn(toFIXED(168), toFIXED(8), toFIXED(312), -toFIXED(1) / 5,
 			0, 0, EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
 		syCloseEvent(scXianRotateTrainingTree);
-		fdActorGet(ACTOR_TRAINING_TREE)->spr->rotation = reboundVelocity;
+		fdActorGet(ACTOR_TRAINING_TREE)->spr->rotation = reboundVel;
 		fdActorGet(ACTOR_KUNG_FU_STUDENT)->bounce = toFIXED(1) / 4;
 		fdActorGet(ACTOR_KUNG_FU_STUDENT)->gravity = toFIXED(1);
 		fdScriptWait(30);
@@ -626,21 +626,19 @@ static void scXianTalkToFeizhi(void)
    metatiles on if nothing stands there. */
 static void scXianJumpOverSpilledWater(void)
 {
-	Sint32	  savedMotionFlags;
+	Sint32	  savedMotionFlg;
 	ACTOR	 *leader;
-	FIELD_POS landingPosition;
+	FIELD_POS landingPos;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	savedMotionFlags = leader->motionFlg;
+	savedMotionFlg = leader->motionFlg;
 	if(gmFlagGet(FLAG_XIAN_WATER_SPILLED) != 0) {
-		landingPosition.x =
-			(leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-		landingPosition.y = leader->y.fixed;
-		landingPosition.z =
-			(leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+		landingPos.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+		landingPos.y = leader->y.fixed;
+		landingPos.z = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 		syFieldVectorAddPolarOffset(
-			32, FACING_NEAREST_CARDINAL(leader->facing), &landingPosition);
-		if(syFieldActorCheckMovementCollision(leader, &landingPosition) == 0) {
+			32, FACING_NEAREST_CARDINAL(leader->facing), &landingPos);
+		if(syFieldActorCheckMovementCollision(leader, &landingPos) == 0) {
 			fdScriptStart();
 			fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 			sySynch(6);
@@ -651,11 +649,11 @@ static void scXianJumpOverSpilledWater(void)
 			leader->velY = toFIXED(4);
 			leader->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
 			fdActorSetSprFlags(leader, 0);
-			fdActorMoveToAndWait(ACTOR_PARTY_LEADER,
-				FIXEDtoINT(landingPosition.x), FIXEDtoINT(landingPosition.z));
+			fdActorMoveToAndWait(ACTOR_PARTY_LEADER, FIXEDtoINT(landingPos.x),
+				FIXEDtoINT(landingPos.z));
 			fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 			fdActorSetSprFlags(leader, SPRITE_FLAG_SHADOW);
-			leader->motionFlg = savedMotionFlags;
+			leader->motionFlg = savedMotionFlg;
 			fdScriptEnd();
 		}
 	}
@@ -663,18 +661,18 @@ static void scXianJumpOverSpilledWater(void)
 
 /* Walks the leader through a doorway and leaves by its exit. Through the
    Sanctum's door the leader walks straight in, without centering on it. */
-static void scXianWalkThroughExit(Sint32 exitNumber)
+static void scXianWalkThroughExit(Sint32 exitNum)
 {
 	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
-	if(exitNumber == XIAN_TO_SANCTUM) {
+	if(exitNum == XIAN_TO_SANCTUM) {
 		fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 		fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
 	} else {
 		fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
 	}
-	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
-	syImportScriptSetExitRequest(exitNumber);
+	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
+	syImportScriptSetExitRequest(exitNum);
 }
 
 /* Walking north into one of Xian's doors opens it with a creak, or the
@@ -688,31 +686,31 @@ static void scXianOpenDoorAndLeave(void)
 	switch(state->stepCue) {
 	case XIAN_TO_HOUSE:
 		sySndPlay(SE_DOOR_OPEN);
-		fdMapGridPlayMapEdit(Xian_HouseDoorOpens, 81, 18);
+		fdMapGridPlayMapEdit(XianHouseDoorOpens, 81, 18);
 		break;
 	case XIAN_TO_HOUSE_NORTH:
 		sySndPlay(SE_DOOR_OPEN);
-		fdMapGridPlayMapEdit(Xian_NorthHouseDoorOpens, 83, 11);
+		fdMapGridPlayMapEdit(XianNorthHouseDoorOpens, 83, 11);
 		break;
 	case XIAN_TO_LACQUER_ROOMS_B_EAST:
 		sySndPlay(SE_DOOR_OPEN);
-		fdMapGridPlayMapEdit(Xian_NorthHouseDoorOpens, 86, 11);
+		fdMapGridPlayMapEdit(XianNorthHouseDoorOpens, 86, 11);
 		break;
 	case XIAN_TO_INN:
 		sySndPlay(SE_DOOR_OPEN);
-		fdMapGridPlayMapEdit(Xian_InnDoorOpens, 84, 24);
+		fdMapGridPlayMapEdit(XianInnDoorOpens, 84, 24);
 		break;
 	case XIAN_TO_WEAPON_AND_ARMOR_SHOP:
 		sySndPlay(SE_DOOR_OPEN);
-		fdMapGridPlayMapEdit(Xian_InnDoorOpens, 72, 7);
+		fdMapGridPlayMapEdit(XianInnDoorOpens, 72, 7);
 		break;
 	case XIAN_TO_SANCTUM:
 		sySndPlay(SE_THUMP);
-		fdMapGridPlayMapEdit(Xian_SanctumDoorOpens, 69, 11);
+		fdMapGridPlayMapEdit(XianSanctumDoorOpens, 69, 11);
 		break;
 	case XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL:
 		sySndPlay(SE_DOOR_OPEN);
-		fdMapGridPlayMapEdit(Xian_SchoolDoorOpens, 83, 7);
+		fdMapGridPlayMapEdit(XianSchoolDoorOpens, 83, 7);
 		break;
 	default:
 		break;
@@ -731,9 +729,9 @@ static void scXianStrikeTrainingTreeWithForce(void)
 	EVENT_FUNC rotate;
 
 	fdScriptStart();
-	fdActorSetScript(ACTOR_TRAINING_TREE, Xian_TrainingTreeJump);
+	fdActorSetScript(ACTOR_TRAINING_TREE, XianTrainingTreeJump);
 	rotate = scXianRotateTrainingTree;
-	sySetFrameEvent(rotate, EVENT_PASS_FRAME);
+	sySetTickEvent(rotate, EVENT_PASS_TICK);
 	fdActorWaitForScriptEndById(ACTOR_TRAINING_TREE);
 	sySndPlay(SE_CHEST_OPEN);
 	fdEffectSpawn(toFIXED(168), toFIXED(8), toFIXED(312), 0, 0, 0,
@@ -784,14 +782,14 @@ static void scXianWaterCarrierStartsRoundAgain(void)
 	fdActorWaitForMoveById(ACTOR_WOMAN_CARRYING_WATER);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
 	fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-	fdActorSetScript(ACTOR_WOMAN_CARRYING_WATER, Xian_WaterCarrierRoute);
+	fdActorSetScript(ACTOR_WOMAN_CARRYING_WATER, XianWaterCarrierRoute);
 	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->update = XIAN_WATER_CARRIER_UPDATE;
 	fdScriptEnd();
 }
 
 const CUE *scGetCues(void)
 {
-	return Xian_Cues;
+	return XianCues;
 }
 
 /* Plays the village's wind and sets up the village as the story and this visit
@@ -799,7 +797,7 @@ const CUE *scGetCues(void)
 Sint32 scInit(void)
 {
 	ACTOR *actor;
-	Uint32 crateIndex;
+	Uint32 crateIdx;
 
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdQueueMusic(SE_AMBIENT_WIND);
@@ -825,8 +823,8 @@ Sint32 scInit(void)
 	/* Set the three crates up as fdActorCreateConfigured sets up its actors:
 	   still, not solid, never a target and hidden. XXX (no evidence): what the
 	   crates are for; nothing reads them again. */
-	for(crateIndex = 0; crateIndex <= 2; crateIndex++) {
-		ACTOR *crate = fdActorGet(crateIndex + ACTOR_FIRST_CRATE);
+	for(crateIdx = 0; crateIdx <= 2; crateIdx++) {
+		ACTOR *crate = fdActorGet(crateIdx + ACTOR_FIRST_CRATE);
 		crate->spr->image.pri = 1;
 		crate->motionFlg = 0;
 		crate->collisionFlg = ACTOR_NOT_TARGETED;
@@ -848,7 +846,7 @@ Sint32 scInit(void)
 				FIELD_METATILE(puddleX),
 				FIELD_METATILE(fdActorGet(ACTOR_SPILLED_WATER)->z.fixed));
 		}
-		sySetFrameEvent(scXianUpdateFrozenWaterLayer, EVENT_PASS_FRAME);
+		sySetTickEvent(scXianUpdateFrozenWaterLayer, EVENT_PASS_TICK);
 	}
 	/* The water carrier's sprite is drawn with its green and blue swapped. */
 	fdActorSetSprColById(ACTOR_WOMAN_CARRYING_WATER, SPRITE_COLOR_RBG);
@@ -869,16 +867,16 @@ Sint32 scInit(void)
 
 #include "shared/field_effect_duration_scripts.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 /* The water carrier's round: from the pool at the street's west end, metatile
    (17, 14), east to metatile (26, 14), up to the east house's door and back,
    pausing at each end. */
-Sint32 Xian_WaterCarrierRoute[] = {
+Sint32 XianWaterCarrierRoute[] = {
 	SC_SPEED(0.4),
 	SC_ACCELERATION(0.1),
 	SC_WAIT(60),
@@ -909,7 +907,7 @@ Sint32 Xian_WaterCarrierRoute[] = {
 };
 
 /* The struck post jumps 32 pixels into the air and drops back. */
-Sint32 Xian_TrainingTreeJump[] = {
+Sint32 XianTrainingTreeJump[] = {
 	SC_SET(SW_SNAP, 0),
 	SC_SPEED(3),
 	SC_ACCELERATION(1.5),
@@ -923,8 +921,8 @@ Sint32 Xian_TrainingTreeJump[] = {
 	SC_END,
 };
 
-/* The effect at the tree's foot when the student strikes it: 18 frames. */
-Sint32 Xian_TreeImpactScript[] = {
+/* The effect at the tree's foot when the student strikes it: 18 ticks. */
+Sint32 XianTreeImpactScript[] = {
 	SC_WAIT(18),
 	SC_WAIT(1),
 	SC_POSITION(0, 0, 0),
@@ -932,8 +930,8 @@ Sint32 Xian_TreeImpactScript[] = {
 	SC_RELEASE,
 };
 
-/* Each particle beside the leaping student, facing west: 16 frames. */
-Sint32 Xian_TrainingParticleScript[] = {
+/* Each particle beside the leaping student, facing west: 16 ticks. */
+Sint32 XianTrainingParticleScript[] = {
 	SC_SET(SW_FACING, FACING_WEST),
 	SC_WAIT(16),
 	SC_WAIT(1),
@@ -942,34 +940,34 @@ Sint32 Xian_TrainingParticleScript[] = {
 	SC_RELEASE,
 };
 
-/* The doors' opening frames, copied from map metatiles. */
-Uint16 Xian_HouseDoorOpens[] = {
+/* The doors' opening ticks, copied from map metatiles. */
+Uint16 XianHouseDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(64, 48, 1, 2, 4),
 	MAPGRID_ANIMATION_STEP(63, 48, 1, 2, 4),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Xian_NorthHouseDoorOpens[] = {
+Uint16 XianNorthHouseDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(69, 50, 2, 2, 4),
 	MAPGRID_ANIMATION_STEP(65, 50, 2, 2, 4),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Xian_InnDoorOpens[] = {
+Uint16 XianInnDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(66, 46, 3, 2, 4),
 	MAPGRID_ANIMATION_STEP(63, 46, 3, 2, 4),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Xian_SanctumDoorOpens[] = {
+Uint16 XianSanctumDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(67, 50, 4, 2, 4),
 	MAPGRID_ANIMATION_STEP(63, 50, 4, 2, 4),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Xian_SchoolDoorOpens[] = {
+Uint16 XianSchoolDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(66, 44, 3, 2, 4),
 	MAPGRID_ANIMATION_STEP(63, 44, 3, 2, 4),
 	MAPGRID_ANIMATION_STEPS_END,
 };
 
-SCENE_ENTRANCE Xian_Entrances[] = {
+SCENE_ENTRANCE XianEntrances[] = {
 	{0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{XIAN_FROM_HOUSE, CONDITION_ALWAYS, 376, 0, 504, FACING_NORTH, 0, -1, -1,
 		-1, -1, 0},
@@ -990,7 +988,7 @@ SCENE_ENTRANCE Xian_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 Xian_Exits[] = {
+Uint32 XianExits[] = {
 	SCENE_EXITS(Xian),
 	SCENE_EXIT(XIAN_TO_HOUSE, LacquerRoomsB, LACQUER_ROOMS_B_HOUSE),
 	SCENE_EXIT(XIAN_TO_HOUSE_NORTH, LacquerRoomsB, LACQUER_ROOMS_B_HOUSE_NORTH),
@@ -1007,7 +1005,7 @@ Uint32 Xian_Exits[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE Xian_ActorPlacements[] = {
+ACTOR_PLACE XianActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_IN_BLUE_JACKET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		328, 0, 448, FACING_EAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1028,7 +1026,7 @@ ACTOR_PLACE Xian_ActorPlacements[] = {
 		200, 0, 440, FACING_NORTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_FEIZHI, IF_FLAG_SET(FLAG_FEIZHI_WENT_TO_HSU), MOVEMENT_TYPE_STAND,
 		368, 0, 496, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
-	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, (Sint32)Xian_WaterCarrierRoute,
+	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, (Sint32)XianWaterCarrierRoute,
 		280, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
 		168, 0, 312, FACING_WEST, TALK_FACING_PARTY, 0),
@@ -1047,7 +1045,7 @@ ACTOR_PLACE Xian_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE Xian_Cues[] = {
+CUE XianCues[] = {
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), XIAN_TO_HOUSE, CONDITION_ALWAYS, SCRIPT_REF(scXianOpenDoorAndLeave) },
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), XIAN_TO_HOUSE_NORTH, CONDITION_ALWAYS, SCRIPT_REF(scXianOpenDoorAndLeave) },
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), XIAN_TO_LACQUER_ROOMS_B_EAST, CONDITION_ALWAYS, SCRIPT_REF(scXianOpenDoorAndLeave) },

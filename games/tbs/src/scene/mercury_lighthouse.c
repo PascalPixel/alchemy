@@ -88,22 +88,22 @@
 #include "game/system_call.h"
 #include "text/msg_ids.h"
 
-extern Sint32		  MercuryLighthouse_RippleScript[];
-extern Sint32		  Glint_TwinkleScript[];
-extern Sint32		  MercuryLighthouse_StatueSlideWest[];
-extern Sint32		  MercuryLighthouse_StatueSlideSouth[];
-extern Sint32		  MercuryLighthouse_StatueSlideIntoHole[];
-extern Sint32		  MercuryLighthouse_StatueStaysPut[];
-extern Uint16		  MercuryLighthouse_GateMetatiles[];
-extern Uint16		  MercuryLighthouse_GateCloseMetatiles[];
-extern Uint16		  MercuryLighthouse_UpperGateMetatiles[];
-extern Uint16		  MercuryLighthouse_UpperGateCloseMetatiles[];
-extern Uint16		  MercuryLighthouse_ColumnMetatiles[];
+extern Sint32		  MercuryLighthouseRippleScript[];
+extern Sint32		  GlintTwinkleScript[];
+extern Sint32		  MercuryLighthouseStatueSlideWest[];
+extern Sint32		  MercuryLighthouseStatueSlideSouth[];
+extern Sint32		  MercuryLighthouseStatueSlideIntoHole[];
+extern Sint32		  MercuryLighthouseStatueStaysPut[];
+extern Uint16		  MercuryLighthouseGateMetatiles[];
+extern Uint16		  MercuryLighthouseGateCloseMetatiles[];
+extern Uint16		  MercuryLighthouseUpperGateMetatiles[];
+extern Uint16		  MercuryLighthouseUpperGateCloseMetatiles[];
+extern Uint16		  MercuryLighthouseColumnMetatiles[];
 extern SCENE_ENTRANCE MercuryLighthouseLowerEntrances[];
 extern SCENE_ENTRANCE MercuryLighthouseMiddleEntrances[];
 extern SCENE_ENTRANCE MercuryLighthouseUpperEntrances[];
 extern SCENE_ENTRANCE MercuryLighthouseExteriorEntrances[];
-extern Uint32		  MercuryLighthouse_Exits[];
+extern Uint32		  MercuryLighthouseExits[];
 extern ACTOR_PLACE	  MercuryLighthouseNoActorPlacements[];
 extern ACTOR_PLACE	  MercuryLighthouseLowerActorPlacements[];
 extern ACTOR_PLACE	  MercuryLighthouseMiddleActorPlacements[];
@@ -142,7 +142,7 @@ static void scMercuryLighthouseSparkleAroundLeader(void);
 static void scMercuryLighthouseSparkleAt(Sint32 x, Sint32 y, Sint32 z);
 static void scMercuryLighthouseSparkleNear(Sint32 x, Sint32 y, Sint32 z);
 static void scMercuryLighthouseSparkleBurst(
-	Sint32 x, Sint32 y, Sint32 z, Sint32 angle);
+	Sint32 x, Sint32 y, Sint32 z, Sint32 ang);
 static void scMercuryLighthouseRideLift(void);
 static void scMercuryLighthouseMiaCastsPlyOnEntrance(void);
 static void scInventoryReplaceItem(Sint32 oldItem, Sint32 newItem);
@@ -399,7 +399,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 /* The four scenes share one exit table. */
 const Uint32 *scGetExits(void)
 {
-	return MercuryLighthouse_Exits;
+	return MercuryLighthouseExits;
 }
 
 /* Each scene's people, statues and pipes; the empty table is for no scene. */
@@ -555,7 +555,7 @@ static void scMercuryLighthouseExitWhenChannelsOpen(void)
 		FieldStateWork->transition =
 			SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		fdScriptFinishScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		sySndPlay(SOUND_FADE_OUT_ACTION_SE);
 		fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 		fdMapGridWaitForShakeToSettle();
@@ -659,7 +659,7 @@ static void scMercuryLighthousePushLeaderOutOfSpout(void)
 
 	state = FieldStateWork;
 	fdScriptStart();
-	sySetFrameEvent(scMercuryLighthouseSparkleAroundLeader, EVENT_PASS_FRAME);
+	sySetTickEvent(scMercuryLighthouseSparkleAroundLeader, EVENT_PASS_TICK);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 2.5);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
@@ -716,7 +716,7 @@ static void scMercuryLighthouseOpenGateWithMovedStatue(void)
 			fdActorGet(ACTOR_GATE_STATUE)->y.fixed;
 		fdMapGridCopyMetatilesTo(5, 2, 5, 11, 1, 1);
 		sySndPlay(SE_FLOOR_SWITCH);
-		fdMapGridPlayMapEdit(MercuryLighthouse_GateMetatiles, 9, 7);
+		fdMapGridPlayMapEdit(MercuryLighthouseGateMetatiles, 9, 7);
 		fdMapGridCopyMetatileAttributes(9, 5, 1, 1, 9, 10);
 		gmFlagSet(FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN);
 	}
@@ -746,7 +746,7 @@ static void scMercuryLighthousePressGateFloorSwitch(void)
 				fdActorGet(ACTOR_PARTY_LEADER)->y.fixed;
 			fdMapGridCopyMetatilesTo(5, 2, 5, 11, 1, 1);
 			sySndPlay(SE_FLOOR_SWITCH);
-			fdMapGridPlayMapEdit(MercuryLighthouse_GateMetatiles, 9, 7);
+			fdMapGridPlayMapEdit(MercuryLighthouseGateMetatiles, 9, 7);
 			fdScriptEnd();
 		}
 	}
@@ -765,36 +765,36 @@ static void scMercuryLighthouseReleaseGateFloorSwitch(void)
 		fdScriptWait(5);
 		fdMapGridCopyMetatilesTo(7, 2, 5, 11, 1, 1);
 		sySndPlay(SE_FLOOR_SWITCH);
-		fdMapGridAnimateMetatiles(MercuryLighthouse_GateCloseMetatiles, 9, 7);
+		fdMapGridAnimateMetatiles(MercuryLighthouseGateCloseMetatiles, 9, 7);
 		fdScriptEnd();
 	}
 }
 
 /* Draws the jet along the north wall of the room with the Nut chest a step at a
-   time, the floor shaking at each step when delayFrames is not 0, and copies in
+   time, the floor shaking at each step when delayTicks is not 0, and copies in
    the doorway that opens in the wall above it,
    MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTH_NORTHEAST, with
    its metatiles. */
 static void scMercuryLighthouseDrawNorthJetTiles(
-	Sint32 delayFrames, Sint32 firstStep, Sint32 endStep)
+	Sint32 delayTicks, Sint32 firstStep, Sint32 endStep)
 {
 	Uint32 step;
-	Sint32 sourceColumn;
+	Sint32 srcColumn;
 
-	if(delayFrames != 0) {
+	if(delayTicks != 0) {
 		sySndPlay(SE_GUSH);
 	}
 	for(step = firstStep; step < endStep; step++) {
 		fdMapGridCopyMetatilesTo(
 			45 - (step << 1), 32, 44 - (step << 1), 32, (step + 1), 6);
 		fdMapGridCopyMetatilesTo(45 - step, 51, 45 - step, 32, 1, 6);
-		sourceColumn = 109 - step;
-		fdMapGridCopyMetatilesTo(sourceColumn, 32, 108 - step, 32, 1, 4);
-		fdMapGridCopyMetatilesTo(sourceColumn, 51, sourceColumn, 32, 1, 4);
-		if(delayFrames != 0) {
+		srcColumn = 109 - step;
+		fdMapGridCopyMetatilesTo(srcColumn, 32, 108 - step, 32, 1, 4);
+		fdMapGridCopyMetatilesTo(srcColumn, 51, srcColumn, 32, 1, 4);
+		if(delayTicks != 0) {
 			fdMapGridSetShake(5, 5, 1);
 			fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-			fdScriptWait(delayFrames);
+			fdScriptWait(delayTicks);
 		}
 	}
 	fdMapGridCopyMetatileAttributes(42, 52, 4, 5, 42, 33);
@@ -802,11 +802,11 @@ static void scMercuryLighthouseDrawNorthJetTiles(
 
 /* Takes the jet and its doorway away again a step at a time, the floor shaking,
    as the pipe is pushed back. */
-static void scMercuryLighthouseRestoreNorthJetTiles(Sint32 delayFrames)
+static void scMercuryLighthouseRestoreNorthJetTiles(Sint32 delayTicks)
 {
 	Uint32 step;
-	Sint32 destinationColumn;
-	Sint32 sourceColumn;
+	Sint32 dstColumn;
+	Sint32 srcColumn;
 	Sint32 column;
 
 	sySndPlay(SE_GUSH);
@@ -815,29 +815,29 @@ static void scMercuryLighthouseRestoreNorthJetTiles(Sint32 delayFrames)
 		Sint32 height = 6;
 
 		step = 0;
-		destinationColumn = 41;
-		sourceColumn = 40;
+		dstColumn = 41;
+		srcColumn = 40;
 		do {
 			fdMapGridCopyMetatilesTo(
-				sourceColumn, 32, destinationColumn, 32, 3 - step, height);
+				srcColumn, 32, dstColumn, 32, 3 - step, height);
 			{
 				Sint32 width = 2;
 
-				fdMapGridCopyMetatilesTo(39, 51, sourceColumn, 32, 1, height);
+				fdMapGridCopyMetatilesTo(39, 51, srcColumn, 32, 1, height);
 				column = step + 106;
 				{
 					Sint32 stripHeight = 4;
 
 					fdMapGridCopyMetatileTilesIndicesRect(
 						105, 51, column, 32, width, stripHeight);
-					if(delayFrames != 0) {
+					if(delayTicks != 0) {
 						fdMapGridSetShake(5, 5, 1);
 						fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-						fdScriptWait(delayFrames);
+						fdScriptWait(delayTicks);
 					}
 					step++;
-					destinationColumn += 2;
-					sourceColumn += 2;
+					dstColumn += 2;
+					srcColumn += 2;
 				}
 			}
 		} while(step <= 2);
@@ -855,16 +855,16 @@ static void scMercuryLighthouseSparkleOnNorthJet(void)
 
 /* Starts the jet along the north wall of the room with the Nut chest, its
    leading edge throwing up spray and sparkles, and keeps it sparkling. */
-static void scMercuryLighthouseStartNorthJet(Sint32 delayFrames)
+static void scMercuryLighthouseStartNorthJet(Sint32 delayTicks)
 {
 	Uint32		   row;
-	Sint32		   rowOffset;
+	Sint32		   rowOfs;
 	FIXED		   particleX;
-	Uint32		   particleIndex;
-	Sint32		   sparkleOffset;
+	Uint32		   particleIdx;
+	Sint32		   sparkleOfs;
 	Sint32		   rowShift;
-	FIXED		   velocityX;
-	FIXED		   velocityZ;
+	FIXED		   velX;
+	FIXED		   velZ;
 	Uint32		   nextRow;
 	EFFECT_OPTIONS options;
 
@@ -876,40 +876,37 @@ static void scMercuryLighthouseStartNorthJet(Sint32 delayFrames)
 	row = 0;
 	/* Each row's edge sparkles and throws up spray as it opens. */
 	do {
-		rowOffset = row << 4;
-		particleIndex = 0;
+		rowOfs = row << 4;
+		particleIdx = 0;
 		rowShift = -(row * toFIXED(16));
 		particleX = toFIXED(728) + rowShift;
 		do {
-			if((particleIndex & 1) != 0) {
-				velocityX =
-					syRandomBelow(8) * (toFIXED(1) / 5) - toFIXED(4) / 5;
-				sparkleOffset = -particleIndex;
-				velocityZ =
-					syRandomBelow(8) * (toFIXED(1) / 5) - toFIXED(4) / 5;
-				fdEffectSpawn(particleX, 0, toFIXED(584), velocityX, 0,
-					velocityZ, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
-					&options);
+			if((particleIdx & 1) != 0) {
+				velX = syRandomBelow(8) * (toFIXED(1) / 5) - toFIXED(4) / 5;
+				sparkleOfs = -particleIdx;
+				velZ = syRandomBelow(8) * (toFIXED(1) / 5) - toFIXED(4) / 5;
+				fdEffectSpawn(particleX, 0, toFIXED(584), velX, 0, velZ,
+					EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
 				fdScriptWait(1);
 			} else {
-				sparkleOffset = -particleIndex;
+				sparkleOfs = -particleIdx;
 			}
 			scMercuryLighthouseSparkleAt(
-				MERCURY_LIGHTHOUSE_OFFSET_FIXED(sparkleOffset - rowOffset) +
+				MERCURY_LIGHTHOUSE_OFFSET_FIXED(sparkleOfs - rowOfs) +
 					toFIXED(728),
 				0, toFIXED(584));
-			particleIndex++;
+			particleIdx++;
 			particleX -= toFIXED(1);
-		} while(particleIndex <= 7);
+		} while(particleIdx <= 7);
 		fdMapGridCopyMetatilesTo(76, 59, 108 - row, 36, 2, 1);
 		nextRow = row + 1;
-		scMercuryLighthouseDrawNorthJetTiles(delayFrames, row, nextRow);
+		scMercuryLighthouseDrawNorthJetTiles(delayTicks, row, nextRow);
 		row = nextRow;
 	} while(nextRow <= 1);
-	fdScriptWait(delayFrames);
+	fdScriptWait(delayTicks);
 	scMercuryLighthouseDrawNorthJetTiles(0, nextRow, nextRow + 1);
 	sySndPlay(SE_MERCURY_LIGHTHOUSE_MECHANISM);
-	sySetFrameEvent(scMercuryLighthouseSparkleOnNorthJet, EVENT_PASS_FRAME);
+	sySetTickEvent(scMercuryLighthouseSparkleOnNorthJet, EVENT_PASS_TICK);
 	fdMapGridWaitForShakeToSettle();
 }
 
@@ -918,8 +915,8 @@ static void scMercuryLighthouseStartNorthJet(Sint32 delayFrames)
 static void scMercuryLighthouseStopNorthJet(void)
 {
 	Uint32		   row;
-	Uint32		   particleIndex;
-	FIXED		   offsetX;
+	Uint32		   particleIdx;
+	FIXED		   ofsX;
 	FIXED		   particleX;
 	FIXED		   particleZ;
 	EFFECT_OPTIONS options;
@@ -929,16 +926,16 @@ static void scMercuryLighthouseStopNorthJet(void)
 	options.startScaleX = toFIXED(1) / 2;
 	options.startScaleY = toFIXED(1) / 2;
 	for(row = 0; row <= 2; row++) {
-		offsetX = -toFIXED(2);
-		for(particleIndex = 1; particleIndex <= 7; particleIndex++) {
-			if((particleIndex & 1) != 0) {
+		ofsX = -toFIXED(2);
+		for(particleIdx = 1; particleIdx <= 7; particleIdx++) {
+			if((particleIdx & 1) != 0) {
 				particleZ = ((584 - syRandomBelow(5)) & 0xffff) << 16;
-				particleX = (offsetX - row * toFIXED(8)) + toFIXED(728);
+				particleX = (ofsX - row * toFIXED(8)) + toFIXED(728);
 				fdEffectSpawn(particleX, 0, particleZ, -toFIXED(1) / 4, 0, 0,
 					EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
 				fdScriptWait(1);
 			}
-			offsetX -= toFIXED(2);
+			ofsX -= toFIXED(2);
 		}
 		fdMapGridCopyMetatilesTo(111, 35, (109 - row), 36, 1, 1);
 	}
@@ -1057,7 +1054,7 @@ static void scMercuryLighthouseOpenUpperGateWithMovedStatue(void)
 			fdActorGet(ACTOR_FALLEN_STATUE)->y.fixed;
 		fdMapGridCopyMetatilesTo(6, 29, 10, 23, 1, 1);
 		sySndPlay(SE_FLOOR_SWITCH);
-		fdMapGridPlayMapEdit(MercuryLighthouse_UpperGateMetatiles, 10, 18);
+		fdMapGridPlayMapEdit(MercuryLighthouseUpperGateMetatiles, 10, 18);
 		fdMapGridCopyMetatileAttributes(10, 16, 1, 1, column, 19);
 		gmFlagSet(FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN);
 	}
@@ -1090,7 +1087,7 @@ static void scMercuryLighthousePressUpperGateFloorSwitch(void)
 		fdActorGet(ACTOR_PARTY_LEADER)->y.fixed;
 	fdMapGridCopyMetatilesTo(6, 29, 10, 23, 1, 1);
 	sySndPlay(SE_FLOOR_SWITCH);
-	fdMapGridPlayMapEdit(MercuryLighthouse_UpperGateMetatiles, 10, 18);
+	fdMapGridPlayMapEdit(MercuryLighthouseUpperGateMetatiles, 10, 18);
 	fdScriptEnd();
 }
 
@@ -1108,7 +1105,7 @@ static void scMercuryLighthouseReleaseUpperGateFloorSwitch(void)
 		fdMapGridCopyMetatilesTo(8, 29, 10, 23, 1, 1);
 		sySndPlay(SE_FLOOR_SWITCH);
 		fdMapGridAnimateMetatiles(
-			MercuryLighthouse_UpperGateCloseMetatiles, 10, 18);
+			MercuryLighthouseUpperGateCloseMetatiles, 10, 18);
 		fdScriptEnd();
 	}
 }
@@ -1143,7 +1140,7 @@ static inline Sint32 scMercuryLighthouseRandomSpraySpeed(void)
 static void scMercuryLighthouseStartJet(Sint32 jet)
 {
 	EFFECT_OPTIONS options;
-	Uint32		   particleIndex;
+	Uint32		   particleIdx;
 	Uint32		   row;
 
 	sySndPlay(SE_MERCURY_LIGHTHOUSE_MECHANISM);
@@ -1161,26 +1158,26 @@ static void scMercuryLighthouseStartJet(Sint32 jet)
 	options.startScaleX = toFIXED(1) / 2;
 	options.startScaleY = toFIXED(1) / 2;
 	for(row = 0; row <= 1; row++) {
-		for(particleIndex = 0; particleIndex <= 7; particleIndex++) {
-			if(particleIndex & 1) {
+		for(particleIdx = 0; particleIdx <= 7; particleIdx++) {
+			if(particleIdx & 1) {
 				if(jet == JET_SOUTHWARD) {
 					fdEffectSpawn(toFIXED(792), 0,
-						toFIXED(704) + (row * 16 + particleIndex) * toFIXED(1),
+						toFIXED(704) + (row * 16 + particleIdx) * toFIXED(1),
 						scMercuryLighthouseRandomSpraySpeed() - toFIXED(4) / 5,
 						0,
 						scMercuryLighthouseRandomSpraySpeed() - toFIXED(4) / 5,
 						EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
 				} else if(jet == JET_EASTWARD) {
 					fdEffectSpawn(
-						toFIXED(800) + (row * 16 + particleIndex) * toFIXED(1),
-						0, toFIXED(746),
+						toFIXED(800) + (row * 16 + particleIdx) * toFIXED(1), 0,
+						toFIXED(746),
 						scMercuryLighthouseRandomSpraySpeed() - toFIXED(4) / 5,
 						0,
 						scMercuryLighthouseRandomSpraySpeed() - toFIXED(4) / 5,
 						EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
 				} else {
 					fdEffectSpawn(
-						toFIXED(812) + (row * 16 + particleIndex) * -toFIXED(1),
+						toFIXED(812) + (row * 16 + particleIdx) * -toFIXED(1),
 						0, toFIXED(714),
 						scMercuryLighthouseRandomSpraySpeed() - toFIXED(4) / 5,
 						0,
@@ -1209,7 +1206,7 @@ static void scMercuryLighthouseStartJet(Sint32 jet)
 static void scMercuryLighthouseStopJet(Sint32 jet)
 {
 	EFFECT_OPTIONS options;
-	Uint32		   particleIndex, row;
+	Uint32		   particleIdx, row;
 
 	fdMapGridCopyMetatilesTo(112, 57, 113, 42, 1, 1);
 	fdMapGridCopyMetatilesTo(117, 58, 112, 46, 1, 1);
@@ -1219,21 +1216,21 @@ static void scMercuryLighthouseStopJet(Sint32 jet)
 	options.startScaleX = toFIXED(1) / 2;
 	options.startScaleY = toFIXED(1) / 2;
 	for(row = 0; row <= 2; row++) {
-		for(particleIndex = 1; particleIndex <= 7; particleIndex++) {
-			if((particleIndex & 1) != 0) {
+		for(particleIdx = 1; particleIdx <= 7; particleIdx++) {
+			if((particleIdx & 1) != 0) {
 				if(jet == JET_SOUTHWARD) {
 					fdEffectSpawn(toFIXED(793 - syRandomBelow(5)), 0,
-						(row * 4 + particleIndex) * toFIXED(2) + toFIXED(695),
-						0, jet, toFIXED(1) / 4,
+						(row * 4 + particleIdx) * toFIXED(2) + toFIXED(695), 0,
+						jet, toFIXED(1) / 4,
 						EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
 				} else if(jet == JET_EASTWARD) {
 					fdEffectSpawn(
-						(row * 4 + particleIndex) * toFIXED(2) + toFIXED(786),
-						0, toFIXED(syRandomBelow(5)) + toFIXED(744),
+						(row * 4 + particleIdx) * toFIXED(2) + toFIXED(786), 0,
+						toFIXED(syRandomBelow(5)) + toFIXED(744),
 						toFIXED(1) / 4, 0, 0,
 						EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
 				} else {
-					fdEffectSpawn(toFIXED(824) - particleIndex * toFIXED(2) -
+					fdEffectSpawn(toFIXED(824) - particleIdx * toFIXED(2) -
 							row * toFIXED(8),
 						0, toFIXED(syRandomBelow(5)) + toFIXED(712),
 						toFIXED(1) / 4, 0, 0,
@@ -1276,22 +1273,22 @@ static Bool scMercuryLighthouseStartStatueSlide(void)
 	if(!gmFlagGet(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL)) {
 		if(metatileX == 50 && gmFlagGet(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET)) {
 			fdActorSetScript(
-				ACTOR_SLIDING_STATUE, MercuryLighthouse_StatueSlideWest);
+				ACTOR_SLIDING_STATUE, MercuryLighthouseStatueSlideWest);
 		} else if(metatileX == 49) {
 			if(metatileZ == SLIDING_STATUE_UNDER_JET_ROW &&
 				!gmFlagGet(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET) &&
 				!gmFlagGet(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET) &&
 				!gmFlagGet(FLAG_SWITCH_PIPE_STOPS_JETS)) {
 				fdActorSetScript(
-					ACTOR_SLIDING_STATUE, MercuryLighthouse_StatueSlideSouth);
+					ACTOR_SLIDING_STATUE, MercuryLighthouseStatueSlideSouth);
 			} else if(metatileZ == SLIDING_STATUE_UNDER_JET_ROW &&
 				gmFlagGet(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET)) {
 				fdActorSetScript(
-					ACTOR_SLIDING_STATUE, MercuryLighthouse_StatueStaysPut);
+					ACTOR_SLIDING_STATUE, MercuryLighthouseStatueStaysPut);
 			} else if(metatileZ == 46 &&
 				gmFlagGet(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET)) {
-				fdActorSetScript(ACTOR_SLIDING_STATUE,
-					MercuryLighthouse_StatueSlideIntoHole);
+				fdActorSetScript(
+					ACTOR_SLIDING_STATUE, MercuryLighthouseStatueSlideIntoHole);
 				fdScriptWait(30);
 				return TRUE;
 			}
@@ -1314,7 +1311,7 @@ static void scMercuryLighthouseSparkleAboveStatue(void)
 /* The slide scripts start the sparkles as the statue sets off. */
 static Sint32 scMercuryLighthouseStartStatueSparkles(ACTOR *actor)
 {
-	sySetFrameEvent(scMercuryLighthouseSparkleAboveStatue, EVENT_PASS_FRAME);
+	sySetTickEvent(scMercuryLighthouseSparkleAboveStatue, EVENT_PASS_TICK);
 	return 0;
 }
 
@@ -1341,7 +1338,7 @@ static Sint32 scMercuryLighthouseStopStatueSparkles(void)
 static void scMercuryLighthousePushJetRoomPipes(void)
 {
 	PUSHED_ACTOR_PROBE probe;
-	Sint32			   destinationColumn;
+	Sint32			   dstColumn;
 	Sint32			   startColumn;
 
 	fdScriptStart();
@@ -1358,8 +1355,8 @@ static void scMercuryLighthousePushJetRoomPipes(void)
 			startColumn =
 				FIELD_METATILE(fdActorGet(ACTOR_JET_SWITCH_PIPE)->x.fixed);
 			scPushedActorRoll(probe);
-			destinationColumn = FIELD_METATILE(probe.pos.x);
-			if(destinationColumn == SWITCH_PIPE_WESTWARD_JET_COLUMN) {
+			dstColumn = FIELD_METATILE(probe.pos.x);
+			if(dstColumn == SWITCH_PIPE_WESTWARD_JET_COLUMN) {
 				gmFlagSet(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET);
 				gmFlagClear(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET);
 				gmFlagClear(FLAG_SWITCH_PIPE_STOPS_JETS);
@@ -1370,7 +1367,7 @@ static void scMercuryLighthousePushJetRoomPipes(void)
 					scMercuryLighthouseStopJet(JET_EASTWARD);
 				scMercuryLighthouseStartJet(JET_WESTWARD);
 				fdScriptWait(60);
-			} else if(destinationColumn == SWITCH_PIPE_EASTWARD_JET_COLUMN) {
+			} else if(dstColumn == SWITCH_PIPE_EASTWARD_JET_COLUMN) {
 				gmFlagSet(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET);
 				gmFlagClear(FLAG_SWITCH_PIPE_STOPS_JETS);
 				gmFlagClear(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET);
@@ -1398,7 +1395,7 @@ static void scMercuryLighthousePushJetRoomPipes(void)
 					FieldStateWork->transition =
 						SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 					fdScriptFinishScreenTransition();
-					fdScriptWaitTransitionFrames();
+					fdScriptWaitTransitionTicks();
 					syImportScriptSetExitRequest(
 						MERCURY_LIGHTHOUSE_UPPER_JETS_TO_GATE_STATUE_FALLS);
 				} else {
@@ -1411,7 +1408,7 @@ static void scMercuryLighthousePushJetRoomPipes(void)
 					scMercuryLighthouseStartJet(JET_EASTWARD);
 					fdScriptWait(60);
 				}
-			} else if(destinationColumn == SWITCH_PIPE_NO_JET_COLUMN) {
+			} else if(dstColumn == SWITCH_PIPE_NO_JET_COLUMN) {
 				gmFlagSet(FLAG_SWITCH_PIPE_STOPS_JETS);
 				gmFlagClear(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET);
 				gmFlagClear(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET);
@@ -1456,25 +1453,25 @@ static void scMercuryLighthousePushRowStatue(void)
    the gap in front of its alcove. */
 static void scMercuryLighthouseRecordRowStatues(void)
 {
-	Sint32 statueIndex;
-	Sint32 positionFlag;
+	Sint32 statueIdx;
+	Sint32 posFlg;
 	Sint32 column;
 
 	fdScriptStart();
 	/* Four statues use paired flags for their two saved stopping columns. */
-	for(statueIndex = 0, positionFlag = FLAG_FIRST_ROW_STATUE; statueIndex <= 3;
-		statueIndex++, positionFlag += 2) {
-		column = fdActorGet(statueIndex + ACTOR_FIRST_ROW_STATUE)->x.fixed /
+	for(statueIdx = 0, posFlg = FLAG_FIRST_ROW_STATUE; statueIdx <= 3;
+		statueIdx++, posFlg += 2) {
+		column = fdActorGet(statueIdx + ACTOR_FIRST_ROW_STATUE)->x.fixed /
 			toFIXED(16);
-		if(column == (statueIndex << 2) + 39) {
-			gmFlagSet(positionFlag);
-			gmFlagClear(positionFlag + 1);
-		} else if(column == (statueIndex << 2) + 41) {
-			gmFlagSet(positionFlag + 1);
-			gmFlagClear(positionFlag);
+		if(column == (statueIdx << 2) + 39) {
+			gmFlagSet(posFlg);
+			gmFlagClear(posFlg + 1);
+		} else if(column == (statueIdx << 2) + 41) {
+			gmFlagSet(posFlg + 1);
+			gmFlagClear(posFlg);
 		} else {
-			gmFlagClear(positionFlag);
-			gmFlagClear(positionFlag + 1);
+			gmFlagClear(posFlg);
+			gmFlagClear(posFlg + 1);
 		}
 	}
 	/* The last statue stands before the doorway to the room with the Nut chest.
@@ -1519,33 +1516,33 @@ static void scMercuryLighthouseMoveGapStatueOffDoorway(void)
 	fdScriptEnd();
 }
 
-/* Rotates the selected palette range once every eight frames. */
+/* Rotates the selected palette range once every eight ticks. */
 static inline void scMercuryLighthouseRotatePaletteRange(
-	Uint16 *colors, Uint32 colorCount)
+	Uint16 *cols, Uint32 colCnt)
 {
-	Uint32	colorIndex;
-	Uint16 *destination;
-	Uint16 *source;
-	Uint32	firstColor;
+	Uint32	colIdx;
+	Uint16 *dst;
+	Uint16 *src;
+	Uint32	firstCol;
 
-	if((FrameCount & 7) != 0) {
+	if((TickCount & 7) != 0) {
 		return;
 	}
 
-	destination = colors;
-	firstColor = *destination;
-	colorIndex = 0;
-	colors[colorCount - 1] = firstColor;
+	dst = cols;
+	firstCol = *dst;
+	colIdx = 0;
+	cols[colCnt - 1] = firstCol;
 
-	source = colors + 1;
-	while(colorIndex <= colorCount - 2) {
-		*destination++ = *source++;
-		colorIndex++;
+	src = cols + 1;
+	while(colIdx <= colCnt - 2) {
+		*dst++ = *src++;
+		colIdx++;
 	}
 }
 
 /* While the lighthouse door is sealed its light shimmers: background palette 2,
-   colors 8 to 15, rotates every eight frames. */
+   colors 8 to 15, rotates every eight ticks. */
 static void scMercuryLighthouseCycleEntrancePalette(void)
 {
 	scMercuryLighthouseRotatePaletteRange((Uint16 *)&BG_PLTT_COLOR(2, 8), 8);
@@ -1624,22 +1621,22 @@ static void scMercuryLighthouseMiaDiscussesBlockedEntrance(void)
 static void scMercuryLighthouseFadePaletteToWhite(void)
 {
 	volatile Uint16 *palette;
-	Uint32			 colorIndex;
-	Uint32			 whiteColors;
+	Uint32			 colIdx;
+	Uint32			 whiteCols;
 	Sint32			 red;
 	Sint32			 green;
 	Sint32			 blue;
 
 	do {
 		palette = &BG_PLTT_COLOR(2, 8);
-		whiteColors = 0;
-		for(colorIndex = 0; colorIndex <= 7; colorIndex++) {
+		whiteCols = 0;
+		for(colIdx = 0; colIdx <= 7; colIdx++) {
 			red = RGB_RED(*palette);
 			green = RGB_GREEN(*palette);
 			blue = RGB_BLUE(*palette);
 			if(red == RGB_LEVEL_MAX && green == RGB_LEVEL_MAX &&
 				blue == RGB_LEVEL_MAX) {
-				whiteColors++;
+				whiteCols++;
 			} else {
 				if(red < RGB_LEVEL_MAX)
 					red++;
@@ -1652,7 +1649,7 @@ static void scMercuryLighthouseFadePaletteToWhite(void)
 			palette++;
 		}
 		sySynch(2);
-	} while(whiteColors <= 7);
+	} while(whiteCols <= 7);
 }
 
 /* Move on the stone statue in front of the lighthouse door while Mia waits
@@ -1792,7 +1789,7 @@ static void scMercuryLighthouseMiaOpensEntranceWithPly(void)
 		sySndPlay(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
 		scMercuryLighthouseFadePaletteToWhite();
 		fdMapGridCopyMetatilesTo(126, 35, 116, 35, 1, 2);
-		fdMapGridPlayMapEdit(MercuryLighthouse_ColumnMetatiles, 116, 35);
+		fdMapGridPlayMapEdit(MercuryLighthouseColumnMetatiles, 116, 35);
 		syCloseEvent(scMercuryLighthouseCycleEntrancePalette);
 		fdScriptWait(20);
 		/* She nods, jumps up and goes in. */
@@ -1839,7 +1836,7 @@ static void scMercuryLighthouseMiaOpensEntranceWithPly(void)
 }
 
 /* The rainbow over the waterfall shimmers: background palette 6, colors 1 to 7,
-   rotates every eight frames. */
+   rotates every eight ticks. */
 static void scMercuryLighthouseCycleWaterfallPalette(void)
 {
 	scMercuryLighthouseRotatePaletteRange((Uint16 *)&BG_PLTT_COLOR(6, 1), 7);
@@ -1850,16 +1847,16 @@ static void scMercuryLighthouseFadePaletteToBlack(void)
 {
 	/* Palette RAM is hardware, read through a volatile pointer. */
 	volatile Uint16 *palette;
-	Uint32			 colorIndex;
-	Sint32			 blackColors;
+	Uint32			 colIdx;
+	Sint32			 blackCols;
 	Sint32			 red;
 	Sint32			 green;
 	Sint32			 blue;
 
 	do {
 		palette = &BG_PLTT_COLOR(6, 1);
-		blackColors = 0;
-		for(colorIndex = 0; colorIndex <= 6; colorIndex++) {
+		blackCols = 0;
+		for(colIdx = 0; colIdx <= 6; colIdx++) {
 			red = RGB_RED(*palette);
 			green = RGB_GREEN(*palette);
 			blue = RGB_BLUE(*palette);
@@ -1871,20 +1868,20 @@ static void scMercuryLighthouseFadePaletteToBlack(void)
 				blue--;
 			*palette = RGB(red, green, blue);
 			if(*palette == 0)
-				blackColors++;
+				blackCols++;
 			palette++;
 		}
 		sySynch(5);
-	} while(blackColors != 7);
+	} while(blackCols != 7);
 }
 
 /* Raises one of the party up the reversed waterfall in a shower of sparks,
-   faster and faster, for 96 frames. */
+   faster and faster, for 96 ticks. */
 static void scMercuryLighthouseRaiseActorWithSparks(Sint32 actorId)
 {
 	EFFECT_OPTIONS options;
 	ACTOR		  *actor;
-	Uint32		   frame;
+	Uint32		   frm;
 	FIXED		   particleX;
 	FIXED		   particleY;
 	FIXED		   riseSpeed;
@@ -1897,12 +1894,12 @@ static void scMercuryLighthouseRaiseActorWithSparks(Sint32 actorId)
 	options.pri = 1;
 	options.pal = SPRITE_COLOR_BRG;
 	options.type = SPRITE_GLINT;
-	options.script = Glint_TwinkleScript;
-	for(frame = 0; frame <= 47; frame++) {
-		if(frame <= 31)
+	options.script = GlintTwinkleScript;
+	for(frm = 0; frm <= 47; frm++) {
+		if(frm <= 31)
 			scMercuryLighthouseSparkleNear(
 				actor->x.fixed, actor->y.fixed, actor->z.fixed);
-		if(frame & 1) {
+		if(frm & 1) {
 			sySndPlay(SE_GLITTER);
 			particleX =
 				actor->x.fixed + toFIXED(syRandomBelow(24)) - toFIXED(12);
@@ -1914,7 +1911,7 @@ static void scMercuryLighthouseRaiseActorWithSparks(Sint32 actorId)
 					EFFECT_USE_PALETTE,
 				&options);
 		}
-		actor->y.fixed += frame * (toFIXED(1) / 10);
+		actor->y.fixed += frm * (toFIXED(1) / 10);
 		actor->tgtY = actor->y.fixed;
 		sySynch(2);
 	}
@@ -1938,11 +1935,11 @@ static void scMercuryLighthouseRaiseActorWithSparks(Sint32 actorId)
    MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_AERIE. */
 static void scMercuryLighthousePlyOpensWaterfallPassage(void)
 {
-	Sint32		   rowOffset;
+	Sint32		   rowOfs;
 	Uint32		   wave;
-	Uint32		   particleIndex;
+	Uint32		   particleIdx;
 	FIXED		   particleX;
-	FIXED		   particleVelocityX;
+	FIXED		   particleVelX;
 	EFFECT_OPTIONS options;
 
 	fdScriptStart();
@@ -1954,7 +1951,7 @@ static void scMercuryLighthousePlyOpensWaterfallPassage(void)
 	options.pri = 1;
 	options.pal = SPRITE_COLOR_BRG;
 	options.type = SPRITE_GLINT;
-	options.script = Glint_TwinkleScript;
+	options.script = GlintTwinkleScript;
 	/* Two bursts spread sparks across the water before it begins to part. */
 	for(wave = 0; wave < WATERFALL_BURST_SPARKS; wave++) {
 		Uint32 particleX, z;
@@ -2001,22 +1998,22 @@ static void scMercuryLighthousePlyOpensWaterfallPassage(void)
 		FIXED particleSpeed;
 
 		fdMapGridCopyMetatilesTo(59, (12 - wave), 48, (12 - wave), 3, 1);
-		particleIndex = 0;
-		rowOffset = (wave << 4);
+		particleIdx = 0;
+		rowOfs = (wave << 4);
 		do {
 			particleX = toFIXED(syRandomBelow(48)) + toFIXED(768);
-			particleVelocityX = ((toFIXED(1) / 10) * (syRandomBelow(8))) -
+			particleVelX = ((toFIXED(1) / 10) * (syRandomBelow(8))) -
 				4 * (toFIXED(1) / 10);
 			particleSpeed = (toFIXED(1) / 10) * (syRandomBelow(8));
 			fdEffectSpawn(particleX, 0,
-				toFIXED(-(particleIndex >> 1) - rowOffset) + toFIXED(192),
-				particleVelocityX, 0, particleSpeed,
+				toFIXED(-(particleIdx >> 1) - rowOfs) + toFIXED(192),
+				particleVelX, 0, particleSpeed,
 				EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET |
 					EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
 				&options);
-			particleIndex++;
+			particleIdx++;
 			fdScriptWait(2);
-		} while(particleIndex < WATERFALL_ROW_SPRAY);
+		} while(particleIdx < WATERFALL_ROW_SPRAY);
 	}
 	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -2238,24 +2235,24 @@ static void scMercuryLighthouseJumpDownPastCrystal(void)
 static void scMercuryLighthouseStartSpoutsWithSparkles(void)
 {
 	EFFECT_OPTIONS options;
-	Uint32		   particleIndex, row;
+	Uint32		   particleIdx, row;
 
 	fdMapGridCopyMetatilesTo(74, 58, 70, 34, 1, 1);
 	options.pal = SPRITE_COLOR_WHITE;
 	options.startScaleX = toFIXED(1) / 2;
 	options.startScaleY = toFIXED(1) / 2;
 	for(row = 0; row <= 1; row++) {
-		for(particleIndex = 0; particleIndex <= 7; particleIndex++) {
-			if((particleIndex & 1) != 0) {
-				FIXED velocityX =
+		for(particleIdx = 0; particleIdx <= 7; particleIdx++) {
+			if((particleIdx & 1) != 0) {
+				FIXED velX =
 					(syRandomBelow(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
-				FIXED velocityZ =
+				FIXED velZ =
 					(syRandomBelow(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
 
 				fdEffectSpawn(toFIXED(105), 0,
-					toFIXED(-particleIndex - (row << 4)) + toFIXED(544),
-					velocityX, 0, velocityZ,
-					EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
+					toFIXED(-particleIdx - (row << 4)) + toFIXED(544), velX, 0,
+					velZ, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
+					&options);
 				fdScriptWait(1);
 			}
 		}
@@ -2271,47 +2268,46 @@ static void scMercuryLighthouseStopSpoutsWithSparkles(void)
 {
 	EFFECT_OPTIONS options;
 	Uint32		   row;
-	Uint32		   particleIndex;
-	FIXED		   offsetZ;
+	Uint32		   particleIdx;
+	FIXED		   ofsZ;
 
 	fdMapGridCopyMetatilesTo(76, 61, 74, 38, 1, 1);
 	options.pal = SPRITE_COLOR_BRG;
 	options.startScaleX = toFIXED(1) / 2;
 	options.startScaleY = toFIXED(1) / 2;
 	for(row = 0; row <= 2; row++) {
-		offsetZ = -toFIXED(2);
-		for(particleIndex = 1; particleIndex <= 7; particleIndex++) {
-			if(particleIndex & 1) {
-				if(particleIndex & 2) {
+		ofsZ = -toFIXED(2);
+		for(particleIdx = 1; particleIdx <= 7; particleIdx++) {
+			if(particleIdx & 1) {
+				if(particleIdx & 2) {
 					fdEffectSpawn(toFIXED(105 - syRandomBelow(5)), 0,
-						offsetZ - row * toFIXED(8) + toFIXED(558), 0, 0,
+						ofsZ - row * toFIXED(8) + toFIXED(558), 0, 0,
 						-toFIXED(1) / 4,
 						EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
 				} else {
 					fdEffectSpawn(
-						(row * 4 + particleIndex) * toFIXED(2) + toFIXED(183),
-						0, toFIXED(620 - syRandomBelow(5)), toFIXED(1) / 4, 0,
-						0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
-						&options);
+						(row * 4 + particleIdx) * toFIXED(2) + toFIXED(183), 0,
+						toFIXED(620 - syRandomBelow(5)), toFIXED(1) / 4, 0, 0,
+						EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
 				}
 				fdScriptWait(1);
 			}
-			offsetZ -= toFIXED(2);
+			ofsZ -= toFIXED(2);
 		}
 		fdMapGridCopyMetatilesTo(71, 59, 70, 34 - row, 1, 1);
 		fdMapGridCopyMetatilesTo(71, 59, row + 75, 38, 1, 1);
 	}
 }
 
-/* Event: a sparkle from the leader every fourth frame, as a spout carries him
+/* Event: a sparkle from the leader every fourth tick, as a spout carries him
    back. */
 static void scMercuryLighthouseSparkleAroundLeader(void)
 {
 	EFFECT_OPTIONS options;
 	ACTOR		  *leader = fdActorGet(ACTOR_PARTY_LEADER);
-	Sint32		   framePhase = FrameCount & 3;
+	Sint32		   frmPhase = TickCount & 3;
 
-	if(framePhase == 0) {
+	if(frmPhase == 0) {
 		options.pal = SPRITE_COLOR_WHITE;
 		if(((syRandomBelow(2)) & 1) == 0)
 			options.pal = SPRITE_COLOR_BRG;
@@ -2319,37 +2315,33 @@ static void scMercuryLighthouseSparkleAroundLeader(void)
 		options.startScaleY = toFIXED(7) / 10;
 		{
 			FIXED y = leader->y.fixed + toFIXED(syRandomBelow(4));
-			FIXED velocityX =
-				(syRandomBelow(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
-			FIXED velocityY =
-				(syRandomBelow(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
+			FIXED velX = (syRandomBelow(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
+			FIXED velY = (syRandomBelow(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
 
-			fdEffectSpawn(leader->x.fixed, y, leader->z.fixed, velocityX,
-				velocityY, framePhase,
-				EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
+			fdEffectSpawn(leader->x.fixed, y, leader->z.fixed, velX, velY,
+				frmPhase, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
+				&options);
 		}
 	}
 }
 
-/* A sparkle at a point every fourth frame, from an event. */
+/* A sparkle at a point every fourth tick, from an event. */
 static void scMercuryLighthouseSparkleAt(Sint32 x, Sint32 y, Sint32 z)
 {
 	EFFECT_OPTIONS options;
-	Sint32		   framePhase = FrameCount & 3;
+	Sint32		   frmPhase = TickCount & 3;
 
-	if(framePhase == 0) {
+	if(frmPhase == 0) {
 		options.pal = SPRITE_COLOR_WHITE;
 		if(((syRandomBelow(2)) & 1) == 0)
 			options.pal = SPRITE_COLOR_BRG;
 		options.startScaleX = toFIXED(7) / 10;
 		options.startScaleY = toFIXED(7) / 10;
 		{
-			FIXED velocityX =
-				(syRandomBelow(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
-			FIXED velocityY =
-				(syRandomBelow(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
+			FIXED velX = (syRandomBelow(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
+			FIXED velY = (syRandomBelow(8)) * (toFIXED(1) / 5) - toFIXED(4) / 5;
 
-			fdEffectSpawn(x, y, z, velocityX, velocityY, framePhase,
+			fdEffectSpawn(x, y, z, velX, velY, frmPhase,
 				EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
 		}
 	}
@@ -2375,38 +2367,36 @@ static void scMercuryLighthouseSparkleNear(Sint32 x, Sint32 y, Sint32 z)
 		&options);
 }
 
-/* The sparkles of a burst, one every four frames. */
+/* The sparkles of a burst, one every four ticks. */
 #define BURST_SPARKLES 6
 
 /* BURST_SPARKLES sparkles, spraying the way angle points and slowing one by
    one, as the water runs through a joined pipe. */
 static void scMercuryLighthouseSparkleBurst(
-	Sint32 x, Sint32 y, Sint32 z, Sint32 angle)
+	Sint32 x, Sint32 y, Sint32 z, Sint32 ang)
 {
 	EFFECT_OPTIONS options;
-	Sint32		   velocity[3];
-	Uint32		   particleIndex;
+	Sint32		   vel[3];
+	Uint32		   particleIdx;
 
 	sySndPlay(SE_BURST);
-	for(particleIndex = 0; particleIndex < BURST_SPARKLES * 2;
-		particleIndex++) {
-		if((particleIndex & 1) != 0) {
+	for(particleIdx = 0; particleIdx < BURST_SPARKLES * 2; particleIdx++) {
+		if((particleIdx & 1) != 0) {
 			options.pal = SPRITE_COLOR_WHITE;
-			if((particleIndex & 2) != 0)
+			if((particleIdx & 2) != 0)
 				options.pal = SPRITE_COLOR_BRG;
 			options.startScaleX = toFIXED(3) / 5;
 			options.startScaleY = toFIXED(3) / 5;
-			SET_VECTOR(velocity, 0, 0, 0);
+			SET_VECTOR(vel, 0, 0, 0);
 			syVectorAddPolarOffset(
-				(BURST_SPARKLES - (particleIndex >> 1)) * (toFIXED(1) / 10),
-				angle, velocity);
+				(BURST_SPARKLES - (particleIdx >> 1)) * (toFIXED(1) / 10), ang,
+				vel);
 			{
 				FIXED particleX = x + toFIXED(6 - syRandomBelow(6));
 				FIXED particleZ = z + toFIXED(6 - syRandomBelow(6));
 
-				fdEffectSpawn(particleX, y, particleZ, velocity[0], velocity[1],
-					velocity[2], EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
-					&options);
+				fdEffectSpawn(particleX, y, particleZ, vel[0], vel[1], vel[2],
+					EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
 			}
 		}
 		sySynch(2);
@@ -2417,10 +2407,10 @@ static void scMercuryLighthouseSparkleBurst(
    script. */
 Sint32 scInit(void)
 {
-	Uint32 statueIndex;
-	Sint32 positionFlag;
+	Uint32 statueIdx;
+	Sint32 posFlg;
 	FIXED  statueX;
-	Sint32 keepPartyPosition;
+	Sint32 keepPartyPos;
 	Sint32 alpha;
 
 	gmFlagSet(FLAG_IN_MERCURY_LIGHTHOUSE);
@@ -2437,7 +2427,7 @@ Sint32 scInit(void)
 		(MERCURY_LIGHTHOUSE_LIGHTS *)SceneLocalState);
 	fdEffectStartGroundMask(0);
 	if(gmFlagGet(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
-		sySetFrameEvent(scMercuryLighthouseCyclePalette, EVENT_PASS_FRAME);
+		sySetTickEvent(scMercuryLighthouseCyclePalette, EVENT_PASS_TICK);
 	else
 		scMercuryLighthouseClearPalette();
 	if(MainRoutineStateWork.next == SCENE_MERCURY_LIGHTHOUSE_LOWER) {
@@ -2547,8 +2537,8 @@ Sint32 scInit(void)
 				fdMapGridCopyMetatileAttributes(9, 5, 1, 1, 9, 10);
 			}
 #if MERCURY_LIGHTHOUSE_GATE_TERRACE_UNMASKED
-			sySetFrameEvent(
-				scMercuryLighthouseUpdateLeaderEffectTarget, EVENT_PASS_FRAME);
+			sySetTickEvent(
+				scMercuryLighthouseUpdateLeaderEffectTarget, EVENT_PASS_TICK);
 #endif
 			break;
 		case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_NORTHEAST:
@@ -2577,18 +2567,18 @@ Sint32 scInit(void)
 			scSetActorSprPriority(fdActorGet(ACTOR_FIRST_ROW_STATUE + 3), 1);
 			scSetActorSprPriority(fdActorGet(ACTOR_LAST_ROW_STATUE), 1);
 			scSetActorSprPriority(fdActorGet(ACTOR_PARTY_LEADER), 1);
-			statueIndex = 0;
+			statueIdx = 0;
 			statueX = toFIXED(632);
-			positionFlag = FLAG_FIRST_ROW_STATUE;
-			for(; statueIndex <= 3; statueIndex++) {
-				if(gmFlagGet(positionFlag))
-					fdActorSetPosFX(statueIndex + ACTOR_FIRST_ROW_STATUE,
-						statueX, toFIXED(88));
-				else if(gmFlagGet(positionFlag + 1))
-					fdActorSetPosFX(statueIndex + ACTOR_FIRST_ROW_STATUE,
+			posFlg = FLAG_FIRST_ROW_STATUE;
+			for(; statueIdx <= 3; statueIdx++) {
+				if(gmFlagGet(posFlg))
+					fdActorSetPosFX(statueIdx + ACTOR_FIRST_ROW_STATUE, statueX,
+						toFIXED(88));
+				else if(gmFlagGet(posFlg + 1))
+					fdActorSetPosFX(statueIdx + ACTOR_FIRST_ROW_STATUE,
 						statueX + toFIXED(32), toFIXED(88));
 				statueX += toFIXED(64);
-				positionFlag += 2;
+				posFlg += 2;
 			}
 			/* The metatiles scMercuryLighthouseRecordRowStatues copies as it
 			   sets the flag, redrawn on arrival. */
@@ -2665,8 +2655,8 @@ Sint32 scInit(void)
 				scMercuryLighthouseStartJet(JET_WESTWARD);
 				if(FIELD_METATILE(fdActorGet(ACTOR_SLIDING_STATUE)->z.fixed) ==
 					SLIDING_STATUE_UNDER_JET_ROW)
-					sySetFrameEvent(scMercuryLighthouseSparkleAboveStatue,
-						EVENT_PASS_FRAME);
+					sySetTickEvent(
+						scMercuryLighthouseSparkleAboveStatue, EVENT_PASS_TICK);
 			} else if(gmFlagGet(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET)) {
 				scMercuryLighthouseStartJet(JET_EASTWARD);
 			} else if(!gmFlagGet(FLAG_SWITCH_PIPE_STOPS_JETS)) {
@@ -2706,8 +2696,8 @@ Sint32 scInit(void)
 				scMercuryLighthouseStartJet(JET_WESTWARD);
 				if(FIELD_METATILE(fdActorGet(ACTOR_SLIDING_STATUE)->z.fixed) ==
 					SLIDING_STATUE_UNDER_JET_ROW)
-					sySetFrameEvent(scMercuryLighthouseSparkleAboveStatue,
-						EVENT_PASS_FRAME);
+					sySetTickEvent(
+						scMercuryLighthouseSparkleAboveStatue, EVENT_PASS_TICK);
 			} else if(gmFlagGet(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET)) {
 				scMercuryLighthouseStartJet(JET_EASTWARD);
 			} else if(!gmFlagGet(FLAG_SWITCH_PIPE_STOPS_JETS)) {
@@ -2726,7 +2716,7 @@ Sint32 scInit(void)
 			FieldStateWork->transition =
 				SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 			fdScriptStartScreenTransition();
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 			fdActorGet(ACTOR_FALLEN_STATUE)->motionFlg =
 				ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 			sySndPlay(SE_STONE_GRIND);
@@ -2748,8 +2738,8 @@ Sint32 scInit(void)
 		   fountain. */
 		switch(MainRoutineStateWork.entrance) {
 		case MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_PATH:
-			sySetFrameEvent(
-				scMercuryLighthouseCycleWaterfallPalette, EVENT_PASS_FRAME);
+			sySetTickEvent(
+				scMercuryLighthouseCycleWaterfallPalette, EVENT_PASS_TICK);
 			if(gmFlagGet(FLAG_KEEP_PARTY_POSITION))
 				break;
 			scMercuryLighthouseArriveWithSparks();
@@ -2757,7 +2747,7 @@ Sint32 scInit(void)
 			fdPaletteFadeApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
 			fdPaletteFadeApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
 			fdPaletteFadeStartInterpolation(30);
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 			fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 			fdScriptWait(30);
 			mnFieldMessageShowCentered(MsgMercuryHonorsGoddessRainbows, 0, 0);
@@ -2772,22 +2762,22 @@ Sint32 scInit(void)
 			fdActorSetSprPriority(ACTOR_FIRST_VISITOR, 1);
 			fdActorSetSprPriority(ACTOR_FIRST_VISITOR + 1, 1);
 			fdActorSetSprPriority(ACTOR_FIRST_VISITOR + 2, 1);
-			keepPartyPosition = gmFlagGet(FLAG_KEEP_PARTY_POSITION);
+			keepPartyPos = gmFlagGet(FLAG_KEEP_PARTY_POSITION);
 			/* The lift's place with the lift gone back up, the two copies
 			   scMercuryLighthouseRideLift ends with; the arrivals from the
 			   entrance and the World Map below draw the same. */
-			if(keepPartyPosition) {
+			if(keepPartyPos) {
 				fdMapGridCopyMetatileAttributes(104, 34, 5, 4, 40, 34);
 				fdMapGridCopyMetatilesTo(45, 91, 40, 91, 5, 4);
 				break;
 			}
 			fdActorSetPos(ACTOR_DOOR_STATUE, 824, 600);
 			fdMapGridCopyMetatileAttributes(116, 36, 3, 4, 52, 36);
-			fdActorGet(ACTOR_DOOR_STATUE)->motionFlg = keepPartyPosition;
+			fdActorGet(ACTOR_DOOR_STATUE)->motionFlg = keepPartyPos;
 			scSetActorSprPriority(fdActorGet(ACTOR_DOOR_STATUE), 1);
 			fdScriptStart();
 			fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-			fdCameraGetActor()->motionFlg = keepPartyPosition;
+			fdCameraGetActor()->motionFlg = keepPartyPos;
 			fdActorSetSprPriority(ACTOR_PARTY_LEADER, 1);
 			fdActorSetSprPriority(ACTOR_LIFT_STATUE, 1);
 			scMercuryLighthouseRideLift();
@@ -2820,8 +2810,8 @@ Sint32 scInit(void)
 				fdActorSetSprPriority(ACTOR_DOOR_STATUE, 1);
 				fdMapGridCopyMetatileAttributes(116, 37, 3, 3, 52, 37);
 				fdMapGridCopyMetatilesTo(126, 35, 116, 35, 1, 2);
-				sySetFrameEvent(
-					scMercuryLighthouseCycleEntrancePalette, EVENT_PASS_FRAME);
+				sySetTickEvent(
+					scMercuryLighthouseCycleEntrancePalette, EVENT_PASS_TICK);
 				break;
 			}
 			if(!gmFlagGet(FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA)) {
@@ -2834,8 +2824,8 @@ Sint32 scInit(void)
 				}
 				scSetActorSprPriority(fdActorGet(ACTOR_MIA), 1);
 				fdMapGridCopyMetatilesTo(126, 35, 116, 35, 1, 2);
-				sySetFrameEvent(
-					scMercuryLighthouseCycleEntrancePalette, EVENT_PASS_FRAME);
+				sySetTickEvent(
+					scMercuryLighthouseCycleEntrancePalette, EVENT_PASS_TICK);
 			} else {
 				fdActorSetPos(ACTOR_MIA, 0, 0);
 				fdActorSetPos(ACTOR_DOOR_STATUE, 824, 600);
@@ -2862,15 +2852,15 @@ Sint32 scInit(void)
    to (114, 39). */
 static void scMercuryLighthouseMiaJoinsAfterRescue(void)
 {
-	Sint32 firstMessage;
-	Sint32 questionMessage;
+	Sint32 firstMsg;
+	Sint32 questionMsg;
 
 	if(fdActorGet(ACTOR_STATUE_BLOCKING_MIA)->x.fixed / toFIXED(16) != 48) {
 		return;
 	}
 	fdScriptStart();
-	firstMessage = MsgMercurySavedMeAgain;
-	fdScriptSetMessageId(firstMessage);
+	firstMsg = MsgMercurySavedMeAgain;
+	fdScriptSetMessageId(firstMsg);
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_MIA, 1);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
@@ -2908,9 +2898,9 @@ static void scMercuryLighthouseMiaJoinsAfterRescue(void)
 			/* She asks again until the party says yes: "Please tell me the
 			   truth!" the first time, then "Please, don't hide anything. Just
 			   tell me the truth!" */
-			questionMessage = firstMessage + 5;
+			questionMsg = firstMsg + 5;
 			for(;;) {
-				fdScriptSetMessageId(questionMessage);
+				fdScriptSetMessageId(questionMsg);
 				fdScriptOpenMessage(ACTOR_MIA, 0);
 				if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) !=
 					1) {
@@ -2920,7 +2910,7 @@ static void scMercuryLighthouseMiaJoinsAfterRescue(void)
 				MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT(
 					ACTOR_MIA, ANIM_SHAKE_HEAD);
 				fdScriptWait(20);
-				questionMessage = MsgMercuryDontHideTruth;
+				questionMsg = MsgMercuryDontHideTruth;
 			}
 		}
 	}
@@ -2986,7 +2976,7 @@ static void scMercuryLighthouseRideLift(void)
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(60);
 	fdBlendScriptSuspend();
 	sySndPlay(SE_LIFT);
@@ -3001,7 +2991,7 @@ static void scMercuryLighthouseRideLift(void)
 		fdActorGet(ACTOR_LIFT_STATUE)->tgtZ =
 			fdActorGet(ACTOR_LIFT_STATUE)->z.fixed;
 		if(liftLayer->ofsY > toFIXED(1024)) {
-			if((FrameCount & 15) == 0 && liftSpeed >= toFIXED(0.05))
+			if((TickCount & 15) == 0 && liftSpeed >= toFIXED(0.05))
 				liftSpeed -= toFIXED(0.021);
 			sySynch(1);
 			continue;
@@ -3043,7 +3033,7 @@ static void scMercuryLighthouseRideLift(void)
 			fdActorGet(ACTOR_LIFT_STATUE)->z.fixed;
 		if(liftLayer->ofsY >= toFIXED(1161))
 			break;
-		if((FrameCount & 7) == 0 && liftSpeed <= toFIXED(4) / 5)
+		if((TickCount & 7) == 0 && liftSpeed <= toFIXED(4) / 5)
 			liftSpeed += toFIXED(1) / 10;
 		sySynch(1);
 	}
@@ -3061,14 +3051,14 @@ static void scMercuryLighthouseRideLift(void)
 static void scMercuryLighthouseMiaCastsPlyOnEntrance(void)
 {
 	FIELD_EFFECT_STATE *effectState;
-	Uint8				flags;
+	Uint8				flg;
 
 	effectState = FieldEffectStateWork;
 	fdActorSetPos(ACTOR_PLY_TARGET, 840, 600);
 	fdPsynergyLoadResources(ABILITY_PLY, 1);
 	fdPsynergySetupActorPair(ACTOR_MIA, ACTOR_PLY_TARGET);
-	flags = (Uint8)effectState->msgMode | FIELD_MESSAGE_LOWER;
-	effectState->msgMode = flags;
+	flg = (Uint8)effectState->msgMode | FIELD_MESSAGE_LOWER;
+	effectState->msgMode = flg;
 	fdPsynergyStartCast();
 	fdPsynergyRunHandler(1);
 	fdPsynergyStopCasterUpdate();
@@ -3078,29 +3068,29 @@ static void scMercuryLighthouseMiaCastsPlyOnEntrance(void)
 
 #include "shared/mercury_lighthouse_lights.c"
 
-/* Spreads one blue ripple (SPRITE_RIPPLE) from an actor, for 30 frames. */
-static void scMercuryLighthouseSpawnRipple(ACTOR *source)
+/* Spreads one blue ripple (SPRITE_RIPPLE) from an actor, for 30 ticks. */
+static void scMercuryLighthouseSpawnRipple(ACTOR *src)
 {
 	ACTOR *effect;
-	SPR	  *sprite;
+	SPR	  *spr;
 
 	effect = syFieldActorCreate(
-		SPRITE_RIPPLE, source->x.fixed, source->y.fixed, source->z.fixed);
+		SPRITE_RIPPLE, src->x.fixed, src->y.fixed, src->z.fixed);
 	if(effect == NULL) {
 		return;
 	}
 
-	sprite = effect->spr;
-	fdActorStartScript(effect, MercuryLighthouse_RippleScript);
+	spr = effect->spr;
+	fdActorStartScript(effect, MercuryLighthouseRippleScript);
 
 	effect->motionFlg = 0;
 	effect->layer = 1;
 	effect->priFlg = ACTOR_PRIORITY_UNDERFOOT;
 
-	if(sprite != NULL) {
-		fdSprStartAnimation(sprite, 2);
-		sprite->flg = 0;
-		sprite->image.pri = 3;
+	if(spr != NULL) {
+		fdSprStartAnimation(spr, 2);
+		spr->flg = 0;
+		spr->image.pri = 3;
 	}
 }
 
@@ -3111,32 +3101,32 @@ static void scMercuryLighthouseSpawnRipple(ACTOR *source)
 #include "shared/pushed_actor_tables.c"
 /* clang-format off */
 
-Sint32 MercuryLighthouse_RippleScript[] = {
+Sint32 MercuryLighthouseRippleScript[] = {
 	SC_WAIT(30),
 	SC_RELEASE,
 };
 
-Sint32 MercuryLighthouse_SparkScript[] = {
+Sint32 MercuryLighthouseSparkScript[] = {
 	SC_CALL(scMercuryLighthouseRiseSpark),
 	SC_RELEASE,
 };
 
-Sint32 MercuryLighthouse_GrowLightScript[] = {
+Sint32 MercuryLighthouseGrowLightScript[] = {
 	SC_CALL(scMercuryLighthouseGrowLight),
 	SC_END,
 };
 
-Sint32 MercuryLighthouse_LightOutScript[] = {
+Sint32 MercuryLighthouseLightOutScript[] = {
 	SC_CALL(scMercuryLighthouseSwellLightOut),
 	SC_RELEASE,
 };
 
 #include "shared/mercury_lighthouse_pillar_tables.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 #include "shared/glint_twinkle_script.c"
@@ -3145,7 +3135,7 @@ const Sint32 *FieldEffect_DurationScripts[] = {
 /* second or a second after the jet starts: JET_WESTWARD pushes it west under */
 /* the falling jet's pipe end, JET_SOUTHWARD south to the row of the hole, */
 /* and JET_EASTWARD east into the hole. */
-Sint32 MercuryLighthouse_StatueSlideWest[] = {
+Sint32 MercuryLighthouseStatueSlideWest[] = {
 	SC_WAIT(45),
 	SC_SPEED(0.8),
 	SC_ACCELERATION(0.2),
@@ -3155,7 +3145,7 @@ Sint32 MercuryLighthouse_StatueSlideWest[] = {
 	SC_END,
 };
 
-Sint32 MercuryLighthouse_StatueSlideSouth[] = {
+Sint32 MercuryLighthouseStatueSlideSouth[] = {
 	SC_WAIT(60),
 	SC_SPEED(0.8),
 	SC_ACCELERATION(0.2),
@@ -3166,7 +3156,7 @@ Sint32 MercuryLighthouse_StatueSlideSouth[] = {
 	SC_END,
 };
 
-Sint32 MercuryLighthouse_StatueSlideIntoHole[] = {
+Sint32 MercuryLighthouseStatueSlideIntoHole[] = {
 	SC_WAIT(60),
 	SC_SPEED(0.8),
 	SC_ACCELERATION(0.2),
@@ -3179,7 +3169,7 @@ Sint32 MercuryLighthouse_StatueSlideIntoHole[] = {
 
 /* JET_WESTWARD again once the statue is under the falling jet's pipe end: */
 /* the sparkles start, but the statue stays where it is. */
-Sint32 MercuryLighthouse_StatueStaysPut[] = {
+Sint32 MercuryLighthouseStatueStaysPut[] = {
 	SC_WAIT(45),
 	SC_CALL(scMercuryLighthouseStartStatueSparkles),
 	SC_END,
@@ -3193,21 +3183,21 @@ Sint32 PaletteCycleBlue = 0;
 
 /* The gate room's sealed arch on the dais opening a column at a time, and */
 /* closing; then the upper gate room's middle arch, the same. */
-Uint16 MercuryLighthouse_GateMetatiles[] = {
+Uint16 MercuryLighthouseGateMetatiles[] = {
 	MAPGRID_ANIMATION_STEP(15, 1, 1, 2, 10), MAPGRID_ANIMATION_STEP(13, 1, 1, 2, 6), MAPGRID_ANIMATION_STEP(11, 1, 1, 2, 6), MAPGRID_ANIMATION_STEP(9, 1, 1, 2, 6), MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 MercuryLighthouse_GateCloseMetatiles[] = {
+Uint16 MercuryLighthouseGateCloseMetatiles[] = {
 	MAPGRID_ANIMATION_STEP(9, 1, 1, 2, 10), MAPGRID_ANIMATION_STEP(11, 1, 1, 2, 6), MAPGRID_ANIMATION_STEP(13, 1, 1, 2, 6), MAPGRID_ANIMATION_STEP(15, 1, 1, 2, 6), MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 MercuryLighthouse_UpperGateMetatiles[] = {
+Uint16 MercuryLighthouseUpperGateMetatiles[] = {
 	MAPGRID_ANIMATION_STEP(16, 28, 1, 2, 10), MAPGRID_ANIMATION_STEP(14, 28, 1, 2, 6), MAPGRID_ANIMATION_STEP(12, 28, 1, 2, 6), MAPGRID_ANIMATION_STEP(10, 28, 1, 2, 6), MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 MercuryLighthouse_UpperGateCloseMetatiles[] = {
+Uint16 MercuryLighthouseUpperGateCloseMetatiles[] = {
 	MAPGRID_ANIMATION_STEP(10, 28, 1, 2, 10), MAPGRID_ANIMATION_STEP(12, 28, 1, 2, 6), MAPGRID_ANIMATION_STEP(14, 28, 1, 2, 6), MAPGRID_ANIMATION_STEP(16, 28, 1, 2, 6), MAPGRID_ANIMATION_STEPS_END,
 };
 
 /* The lighthouse door opening in five steps as Mia casts Ply on it. */
-Uint16 MercuryLighthouse_ColumnMetatiles[] = {
+Uint16 MercuryLighthouseColumnMetatiles[] = {
 	MAPGRID_ANIMATION_STEP(126, 35, 1, 2, 2), MAPGRID_ANIMATION_STEP(126, 38, 1, 2, 2), MAPGRID_ANIMATION_STEP(126, 41, 1, 2, 2), MAPGRID_ANIMATION_STEP(126, 44, 1, 2, 2), MAPGRID_ANIMATION_STEP(126, 47, 1, 2, 2), MAPGRID_ANIMATION_STEPS_END,
 };
 
@@ -3278,7 +3268,7 @@ SCENE_ENTRANCE MercuryLighthouseExteriorEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-Uint32 MercuryLighthouse_Exits[] = {
+Uint32 MercuryLighthouseExits[] = {
 	SCENE_EXITS(MercuryLighthouseLower),
 	SCENE_EXIT(MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST, MercuryLighthouseEntrance, MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_WEST),
 	SCENE_EXIT(MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST, MercuryLighthouseEntrance, MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_WEST_NORTHWEST),

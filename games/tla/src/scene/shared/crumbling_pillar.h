@@ -24,8 +24,8 @@ void syCrumblingPillarPlace(Uint16 *list)
 	while(list[0] != ACTOR_LIST_END) {
 		Uint32		  id = list[0];
 		ACTOR		 *actor = fdActorGet(id);
-		Sint32		  flag = list[1];
-		Sint32		  next = flag + 1;
+		Sint32		  flg = list[1];
+		Sint32		  next = flg + 1;
 		MAP_METATILE *metatiles = map->layers[actor->layer].metatiles;
 		Uint8		 *shapes =
 			MapShapeGrid + (metatiles - (MAP_METATILE *)Ram_MapMetatileBuffer);
@@ -33,13 +33,13 @@ void syCrumblingPillarPlace(Uint16 *list)
 		if(fdScriptGetFlag(next)) {
 			fdActorSetPos(id, 0, 0);
 		} else {
-			Sint32		  index = fdActorGetMetatileIndex(actor);
+			Sint32		  idx = fdActorGetMetatileIndex(actor);
 			MAP_METATILE *metatile;
 			Uint8		 *slot;
 			Sint32		  shape, ground;
 
-			metatile = metatiles + index;
-			slot = shapes + index;
+			metatile = metatiles + idx;
+			slot = shapes + idx;
 			shape = fdMapGridGetTerrainKind(
 				actor->layer, actor->x.fixed, actor->z.fixed);
 			ground = fdMapGetTerrainHeight(
@@ -49,7 +49,7 @@ void syCrumblingPillarPlace(Uint16 *list)
 			metatile->attributeB = MAP_METATILE_JUMP;
 			*slot = fdMapShapeFindOrAdd(
 				actor->layer, shape, METATILE_HEIGHT_STEPS(ground) + 4);
-			if(fdScriptGetFlag(flag))
+			if(fdScriptGetFlag(flg))
 				fdActorSelectAnimation(actor, 0);
 		}
 		list += 2;
@@ -69,15 +69,15 @@ void scCrumblingPillarStep(Uint16 *list)
 {
 	ACTOR *leader;
 	ACTOR *pillar;
-	FIXED  position[3];
+	FIXED  pos[3];
 
 	if(fdTryJumpForward() != 0)
 		return;
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	position[0] = leader->x.fixed;
-	position[1] = leader->y.fixed;
-	position[2] = leader->z.fixed;
-	pillar = fdActorFindAtMetatile(position, 0);
+	pos[0] = leader->x.fixed;
+	pos[1] = leader->y.fixed;
+	pos[2] = leader->z.fixed;
+	pillar = fdActorFindAtMetatile(pos, 0);
 	if(pillar == 0)
 		return;
 	while(list[0] != ACTOR_LIST_END) {
@@ -140,7 +140,7 @@ void scCrumblingPillarCollapse(const void *data, Sint32 id)
 {
 	const TRAP_ENTRY *entry = data;
 	ACTOR			 *actor = fdActorGet(id);
-	Sint32			  flag;
+	Sint32			  flg;
 
 	while(entry->actor != ACTOR_LIST_END) {
 		if(entry->actor != id) {
@@ -148,9 +148,9 @@ void scCrumblingPillarCollapse(const void *data, Sint32 id)
 			continue;
 		}
 		{
-			flag = entry->flg;
+			flg = entry->flg;
 			fdScriptStart();
-			if(!fdScriptGetFlag(flag + 1)) {
+			if(!fdScriptGetFlag(flg + 1)) {
 				fdScriptPlaySnd(SE_PUSH);
 				fdMapGridSetShake(1, 4, 1);
 				scDustScatter(0);
@@ -166,8 +166,8 @@ void scCrumblingPillarCollapse(const void *data, Sint32 id)
 				fdScriptPlaySnd(SE_THUMP);
 				scDustBurst();
 				syWait(20);
-				fdScriptSetFlag(flag);
-				fdScriptSetFlag(flag + 1);
+				fdScriptSetFlag(flg);
+				fdScriptSetFlag(flg + 1);
 			}
 			fdScriptEnd();
 			break;
@@ -213,8 +213,8 @@ void scCrumblingPillarPlaceWithStandIn(Uint16 *list)
 	while(list[0] != ACTOR_LIST_END) {
 		Uint32		  id = list[0];
 		ACTOR		 *actor = fdActorGet(id);
-		Sint32		  flag = list[1];
-		Sint32		  next = flag + 1;
+		Sint32		  flg = list[1];
+		Sint32		  next = flg + 1;
 		MAP_METATILE *metatiles = map->layers[actor->layer].metatiles;
 		Uint8		 *shapes =
 			grid + (metatiles - (MAP_METATILE *)Ram_MapMetatileBuffer);
@@ -224,9 +224,9 @@ void scCrumblingPillarPlaceWithStandIn(Uint16 *list)
 		if(fdScriptGetFlag(next)) {
 			fdActorSetPos(id, 0, 0);
 		} else {
-			Sint32		  index = fdActorGetMetatileIndex(actor);
-			MAP_METATILE *metatile = metatiles + index;
-			Uint8		 *shape = shapes + index;
+			Sint32		  idx = fdActorGetMetatileIndex(actor);
+			MAP_METATILE *metatile = metatiles + idx;
+			Uint8		 *shape = shapes + idx;
 			Sint32		  kind, ground;
 
 			kind = fdMapGridGetTerrainKind(
@@ -238,7 +238,7 @@ void scCrumblingPillarPlaceWithStandIn(Uint16 *list)
 			metatile->attributeB = MAP_METATILE_JUMP;
 			*shape = fdMapShapeFindOrAdd(
 				actor->layer, kind, METATILE_HEIGHT_STEPS(ground) + 4);
-			if(fdScriptGetFlag(flag))
+			if(fdScriptGetFlag(flg))
 				fdActorCopyGraphics(id, ACTOR_CRACKED_PILLAR_SPRITE);
 		}
 		list += 2;
@@ -256,16 +256,16 @@ void scCrumblingPillarStepWithStandIn(Uint16 *list)
 	ACTOR *leader;
 	ACTOR *standIn;
 	ACTOR *pillar;
-	FIXED  position[3];
+	FIXED  pos[3];
 
 	if(fdTryJumpForward() != 0)
 		return;
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	standIn = fdActorGetById(ACTOR_PILLAR_STAND_IN);
-	position[0] = leader->x.fixed;
-	position[1] = leader->y.fixed;
-	position[2] = leader->z.fixed;
-	pillar = fdActorFindAtMetatile(position, 0);
+	pos[0] = leader->x.fixed;
+	pos[1] = leader->y.fixed;
+	pos[2] = leader->z.fixed;
+	pillar = fdActorFindAtMetatile(pos, 0);
 	if(pillar == 0)
 		return;
 	while(list[0] != ACTOR_LIST_END) {

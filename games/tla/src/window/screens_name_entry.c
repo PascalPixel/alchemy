@@ -14,24 +14,24 @@
 #define NAME_VOICED_KEY		254
 #define NAME_SEMIVOICED_KEY 255
 
-extern const Uint8 NameEntry_VoicedMarkRanges[];
-extern const Uint8 NameEntry_SemivoicedMarkRanges[];
+extern const Uint8 NameEntryVoicedMarkRanges[];
+extern const Uint8 NameEntrySemivoicedMarkRanges[];
 
-/* Returns whether `letter` may follow `previous` in a name: any character but a
+/* Returns whether `letter` may follow `prev` in a name: any character but a
    voicing mark may, and a voicing mark only after a kana in its table of ranges
    (pairs of first and last kana, ended by 0). */
-Bool mnNameEntryAcceptsMark(Sint32 letter, Sint32 previous)
+Bool mnNameEntryAcceptsMark(Sint32 letter, Sint32 prev)
 {
 	const Uint8 *range;
 
 	if(letter < TEXT_MARK_VOICED || letter > TEXT_MARK_SEMIVOICED)
 		return TRUE;
 	if(letter == TEXT_MARK_VOICED)
-		range = NameEntry_VoicedMarkRanges;
+		range = NameEntryVoicedMarkRanges;
 	else
-		range = NameEntry_SemivoicedMarkRanges;
+		range = NameEntrySemivoicedMarkRanges;
 	for(; *range != 0; range += 2) {
-		if(previous >= range[0] && previous <= range[1])
+		if(prev >= range[0] && prev <= range[1])
 			return TRUE;
 	}
 	return FALSE;
@@ -40,15 +40,15 @@ Bool mnNameEntryAcceptsMark(Sint32 letter, Sint32 previous)
 /* Returns how many letters `name` has, not counting its voicing marks. */
 Sint32 mnNameEntryCountLetters(const Uint8 *name)
 {
-	Sint32 count;
+	Sint32 cnt;
 
-	count = 0;
+	cnt = 0;
 	for(; *name != 0; name++) {
 		if((Uint8)(*name - TEXT_MARK_VOICED) >
 			TEXT_MARK_SEMIVOICED - TEXT_MARK_VOICED)
-			count++;
+			cnt++;
 	}
-	return count;
+	return cnt;
 }
 #else
 /* Unused: mnNameEntryAcceptsMark's place in the editions whose letters take no
@@ -62,37 +62,37 @@ UNUSED Sint32 mnNameEntryAcceptsAnyLetter(void)
 /* Decompresses a tilemap, such as the name entry's keyboard, and copies it over
    the window's rectangle, into the BG map in VRAM and the window state's copy
    of it. */
-void mnWindowCopyTilemapRegion(WINDOW *window, const void *resource)
+void mnWindowCopyTilemapRegion(WINDOW *win, const void *resource)
 {
 	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
-	Uint16	  *buffer = syHeapAllocEWRAM(768);
-	Sint32	   offset;
+	Uint16	  *buf = syHeapAllocEWRAM(768);
+	Sint32	   ofs;
 	Uint16	  *map;
 	Uint16	  *vram;
-	Uint16	  *source;
+	Uint16	  *src;
 	Sint32	   row;
 	Sint32	   col;
 
-	source = buffer;
-	syDecompressTaggedLZ(resource, buffer);
-	offset = ((window->y << 5) + window->x) * 2;
-	map = (Uint16 *)((Uint8 *)state->tilemap + offset);
-	vram = (Uint16 *)(offset + WINDOW_TILEMAP_VRAM);
-	for(row = 0; row < window->height; row++) {
-		for(col = 0; col < window->width;) {
-			Sint16 tile = *source;
+	src = buf;
+	syDecompressTaggedLZ(resource, buf);
+	ofs = ((win->y << 5) + win->x) * 2;
+	map = (Uint16 *)((Uint8 *)state->tilemap + ofs);
+	vram = (Uint16 *)(ofs + WINDOW_TILEMAP_VRAM);
+	for(row = 0; row < win->height; row++) {
+		for(col = 0; col < win->width;) {
+			Sint16 tile = *src;
 
 			col++;
 			*vram = tile;
 			*map = tile;
-			source++;
+			src++;
 			vram++;
 			map++;
 		}
-		vram += BG_SCREEN_WIDTH - window->width;
-		map += BG_SCREEN_WIDTH - window->width;
+		vram += BG_SCREEN_WIDTH - win->width;
+		map += BG_SCREEN_WIDTH - win->width;
 	}
-	syHeapRelease(buffer);
+	syHeapRelease(buf);
 }
 
 #include "screens_set_text_tile_rect.c"
@@ -128,31 +128,31 @@ Sint32 mnTextMeasureString(const Uint8 *str)
 {
 	WIN_STATE *state;
 	Uint16	  *dst;
-	Sint32	   count;
+	Sint32	   cnt;
 	Uint32	   width;
 	Uint32	   height;
 
 	state = (WIN_STATE *)Ram_HeapSlots->winState;
-	count = 0;
+	cnt = 0;
 	if(*str != 0) {
 		dst = state->textBuf;
 		do {
 			*dst = *str;
 			str++;
 			dst++;
-			count++;
+			cnt++;
 		} while(*str != 0);
 	}
-	state->textBuf[count] = 0;
+	state->textBuf[cnt] = 0;
 	mnTextMeasureDecoded(0, &width, &height, 0);
 	return width;
 }
 
-/* Draws the name being entered, `name`, at the top left of `window`, followed
+/* Draws the name being entered, `name`, at the top left of `win`, followed
    in TEXT_COLOR_RED by an underscore for each of the NAME_MAX_LETTERS places
    still free: the loop fills the text to 7 bytes, the name and the two-byte
    colour code before the underscores. */
-void mnNameEntryDrawName(Sint32 window, Uint8 *name)
+void mnNameEntryDrawName(Sint32 win, Uint8 *name)
 {
 	Uint8  text[20];
 	Sint32 length = 0;
@@ -175,7 +175,7 @@ void mnNameEntryDrawName(Sint32 window, Uint8 *name)
 	text[length++] = TEXT_COLOR_COMMAND;
 	text[length++] = TEXT_COLOR_WHITE;
 	text[length] = 0;
-	mnTextDrawString(text, window, 0, -2);
+	mnTextDrawString(text, win, 0, -2);
 }
 #endif
 
@@ -226,8 +226,8 @@ extern const Uint8 NameEntry_AlternateKeyboardTilemap[];
 
 #endif
 #if NAME_KEY_LABELS
-extern const Uint8 NameEntry_DeleteKeyLabel[];
-extern const Uint8 NameEntry_EndKeyLabel[];
+extern const Uint8 NameEntryDeleteKeyLabel[];
+extern const Uint8 NameEntryEndKeyLabel[];
 
 #endif
 
@@ -245,18 +245,18 @@ void mnCursorSetPosImmediateStub(void *cursor, Sint32 x, Sint32 y);
    which jumps there). */
 Sint32 mnNameEntryEditMemberName(Sint32 member)
 {
-	WINDOW		*nameWindow;
+	WINDOW		*nameWin;
 	Sint32		 result = 0;
 	Sint32		 page = 0;
-	Sint32		 byteCount = 0;
-	Sint32		 letterCount = 0;
+	Sint32		 byteCnt = 0;
+	Sint32		 letterCnt = 0;
 	Uint8		 text[NAME_MAX_BYTES + 2];
 	Uint8		*editedName = text + 1;
 	Uint8		*originalName = syUnitGet(member);
 	WIN_STATE	*render = (WIN_STATE *)Ram_HeapSlots->winState;
 	Bool		 textDirty = TRUE;
 	Bool		 cursorDirty = TRUE;
-	WINDOW		*keyboardWindow;
+	WINDOW		*keyboardWin;
 	NAME_CURSOR	 keyCursor;
 	NAME_CURSOR	 nameCaret;
 	Sint32		 keyColumn, keyRow, vramSlot, x;
@@ -269,12 +269,12 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 	syWindowLoadGraphics();
 	mnWindowColApply(
 		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
-	keyboardWindow =
+	keyboardWin =
 		mnWindowCreate(3, 6, 24, NAME_KEYBOARD_HEIGHT, WINDOW_FLAG_INSTANT);
-	nameWindow = mnWindowCreate(8, 3, 8, 3, WINDOW_FLAG_INSTANT);
+	nameWin = mnWindowCreate(8, 3, 8, 3, WINDOW_FLAG_INSTANT);
 	mnPortraitOpenWindow(member, 0, 3, 1);
-	mnWindowCopyTilemapRegion(keyboardWindow, NameEntry_KeyboardTilemap);
-	mnWindowDrawDividerLine(keyboardWindow, NAME_COMMAND_COLUMN, 0,
+	mnWindowCopyTilemapRegion(keyboardWin, NameEntry_KeyboardTilemap);
+	mnWindowDrawDividerLine(keyboardWin, NAME_COMMAND_COLUMN, 0,
 		NAME_COMMAND_COLUMN, NAME_DIVIDER_BOTTOM);
 	render->dirty = textDirty;
 	text[0] = result;
@@ -286,15 +286,15 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 
 			editedName[i] = letter;
 			if(letter != 0) {
-				byteCount++;
-				letterCount++;
+				byteCnt++;
+				letterCnt++;
 				if(IS_KANA_MARK(letter))
-					letterCount--;
+					letterCnt--;
 			}
 		}
 	}
 	editedName[NAME_MAX_BYTES] = 0;
-	mnTextDrawString(originalName, (Sint32)nameWindow, 0, 0);
+	mnTextDrawString(originalName, (Sint32)nameWin, 0, 0);
 	keyColumn = NAME_COMMAND_COLUMN;
 	vramSlot = syVRAMCacheFindFreeEntry();
 	keyRow = NAME_FINISH_ROW;
@@ -302,11 +302,11 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 		mnVRAMBlockLoadResourceStub(
 			vramSlot, ICON_TILE_BYTES, RESOURCE_UI_ICON_TILES);
 		output = mnWindowSprCreate(
-			vramSlot, WINDOW_SPRITE_SIZE_16X16, (WINDOW *)keyboardWindow, 0, 0);
+			vramSlot, WINDOW_SPRITE_SIZE_16X16, (WINDOW *)keyboardWin, 0, 0);
 		keyMotion = &keyCursor.cursor;
 		keyCursor.spr = output;
-		mnCursorSetPosImmediateStub(keyMotion, keyboardWindow->x * 8 + 140,
-			keyboardWindow->y * 8 + NAME_KEY_CURSOR_Y);
+		mnCursorSetPosImmediateStub(keyMotion, keyboardWin->x * 8 + 140,
+			keyboardWin->y * 8 + NAME_KEY_CURSOR_Y);
 	} else {
 		keyMotion = &keyCursor.cursor;
 	}
@@ -315,7 +315,7 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 		mnVRAMBlockLoadResourceStub(
 			vramSlot, ICON_TILE_BYTES, RESOURCE_NAME_CARET_TILES);
 		output = mnWindowSprCreate(
-			vramSlot, WINDOW_SPRITE_SIZE_16X16, (WINDOW *)keyboardWindow, 0, 0);
+			vramSlot, WINDOW_SPRITE_SIZE_16X16, (WINDOW *)keyboardWin, 0, 0);
 		nameCaret.spr = output;
 		output->depth = OAM_DEPTH_FRONT;
 		output->spr.oam.pri = 0;
@@ -326,7 +326,7 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 	syDMAXCopy((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
 		DMA_COPY_WORDS(8), REG_DMA3);
 	palette[WINDOW_BACKGROUND_COLOR] = RGB(24, 24, 24);
-	end = (Uint8 *)(byteCount + (Sint32)editedName) - 1;
+	end = (Uint8 *)(byteCnt + (Sint32)editedName) - 1;
 	while(1) {
 		Sint32 width = 1;
 
@@ -339,14 +339,14 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 				width = 3;
 		}
 		mnWindowSetTextTileRect(
-			keyboardWindow, keyColumn, keyRow, width, 1, HIGHLIGHT_PALETTE);
+			keyboardWin, keyColumn, keyRow, width, 1, HIGHLIGHT_PALETTE);
 		sySynch(1);
 		mnWindowSetTextTileRect(
-			keyboardWindow, keyColumn, keyRow, width, 1, WINDOW_PALETTE);
+			keyboardWin, keyColumn, keyRow, width, 1, WINDOW_PALETTE);
 		if(cursorDirty) {
 			cursorDirty = FALSE;
-			mnCursorSetStub(keyMotion, (keyboardWindow->x + keyColumn) * 8 - 7,
-				(keyboardWindow->y + keyRow) * 8 + 15, 3);
+			mnCursorSetStub(keyMotion, (keyboardWin->x + keyColumn) * 8 - 7,
+				(keyboardWin->y + keyRow) * 8 + 15, 3);
 		}
 		if(textDirty) {
 			textDirty = FALSE;
@@ -356,12 +356,11 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 		mnCursorAdvanceStub(keyMotion);
 		mnCursorMoveTowardTargetStub(&nameCaret.cursor);
 		{
-			Uint32 frame = (VBlankCount >> 1) & 7;
+			Uint32 frm = (FrameCount >> 1) & 7;
 
 			output = nameCaret.spr;
-			output->spr.oam.x = output->x + NameEntry_CaretWave[frame];
-			output->spr.oam.y =
-				output->y + NameEntry_CaretWave[(frame + 5) & 7];
+			output->spr.oam.x = output->x + NameEntryCaretWave[frm];
+			output->spr.oam.y = output->y + NameEntryCaretWave[(frm + 5) & 7];
 		}
 		if(PerWork.repeat & KEY_UP) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
@@ -438,11 +437,11 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 			page ^= 1;
 			if(page)
 				mnWindowCopyTilemapRegion(
-					keyboardWindow, NameEntry_AlternateKeyboardTilemap);
+					keyboardWin, NameEntry_AlternateKeyboardTilemap);
 			else
 				mnWindowCopyTilemapRegion(
-					keyboardWindow, NameEntry_KeyboardTilemap);
-			mnWindowDrawDividerLine(keyboardWindow, NAME_COMMAND_COLUMN, 0,
+					keyboardWin, NameEntry_KeyboardTilemap);
+			mnWindowDrawDividerLine(keyboardWin, NAME_COMMAND_COLUMN, 0,
 				NAME_COMMAND_COLUMN, NAME_DIVIDER_BOTTOM);
 			render->dirty = 1;
 			continue;
@@ -450,23 +449,23 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 		if(PerWork.repeat & KEY_B) {
 			sySndPlayStub(SE_MENU_CANCEL);
 		remove_character:
-			if(letterCount != 0) {
-				letterCount--;
+			if(letterCnt != 0) {
+				letterCnt--;
 				end--;
-				byteCount--;
+				byteCnt--;
 				letter = end[1];
 				end[1] = 0;
 				if(IS_KANA_MARK(letter)) {
 					end--;
-					byteCount--;
+					byteCnt--;
 					end[1] = 0;
 				}
 			} else {
 				result = -1;
 				break;
 			}
-			mnWindowSprPrepareForRedraw(nameWindow);
-			mnTextDrawString(editedName, (Sint32)nameWindow, 0, 0);
+			mnWindowSprPrepareForRedraw(nameWin);
+			mnTextDrawString(editedName, (Sint32)nameWin, 0, 0);
 			textDirty = TRUE;
 			continue;
 		}
@@ -475,10 +474,10 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 		sySndPlayStub(SE_MENU_CONFIRM);
 		if(keyColumn == NAME_COMMAND_COLUMN) {
 			if(keyRow == NAME_FINISH_ROW) {
-				if(letterCount == 0) {
+				if(letterCnt == 0) {
 					nameCaret.spr->motion = WINDOW_SPRITE_MOTION_HIDDEN;
-					mnWindowSprPrepareForRedraw(nameWindow);
-					mnTextDrawString(originalName, (Sint32)nameWindow, 0, 0);
+					mnWindowSprPrepareForRedraw(nameWin);
+					mnTextDrawString(originalName, (Sint32)nameWin, 0, 0);
 					sySynch(10);
 				} else {
 					Uint8 *dst = originalName;
@@ -497,41 +496,41 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 			continue;
 		}
 		{
-			Uint32 tx = keyboardWindow->x + keyColumn + 1;
+			Uint32 tx = keyboardWin->x + keyColumn + 1;
 			Uint8 *slot;
 
 			letter = ((Uint8 *)render->tilemap +
-				((keyboardWindow->y + keyRow + 1) << 6))[tx + tx];
+				((keyboardWin->y + keyRow + 1) << 6))[tx + tx];
 			if(letter == NAME_VOICED_KEY)
 				letter = TEXT_MARK_VOICED;
 			if(letter == NAME_SEMIVOICED_KEY)
 				letter = TEXT_MARK_SEMIVOICED;
-			if(letterCount == NAME_MAX_LETTERS && !IS_KANA_MARK(letter))
+			if(letterCnt == NAME_MAX_LETTERS && !IS_KANA_MARK(letter))
 				continue;
-			slot = editedName + byteCount;
+			slot = editedName + byteCnt;
 			if(!mnNameEntryAcceptsMark(letter, *end)) {
 				sySndPlayStub(SE_MENU_CANCEL);
 				continue;
 			}
 			*slot = letter;
 			end++;
-			byteCount++;
+			byteCnt++;
 			end[1] = 0;
-			letterCount++;
+			letterCnt++;
 			if(IS_KANA_MARK(letter))
-				letterCount--;
-			if(letterCount == NAME_MAX_LETTERS) {
+				letterCnt--;
+			if(letterCnt == NAME_MAX_LETTERS) {
 				keyColumn = NAME_COMMAND_COLUMN;
 				keyRow = NAME_FINISH_ROW;
 				cursorDirty = TRUE;
 			}
-			mnWindowSprPrepareForRedraw(nameWindow);
-			mnTextDrawString(editedName, (Sint32)nameWindow, 0, 0);
+			mnWindowSprPrepareForRedraw(nameWin);
+			mnTextDrawString(editedName, (Sint32)nameWin, 0, 0);
 			textDirty = TRUE;
 		}
 	}
-	mnWindowClose(keyboardWindow, 2);
-	mnWindowClose(nameWindow, 2);
+	mnWindowClose(keyboardWin, 2);
+	mnWindowClose(nameWin, 2);
 	mnPortraitCloseWindow(member);
 	sySynch(1);
 	return result;
@@ -542,17 +541,17 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
    which jumps there). B with no letters left cancels and returns -1. */
 Sint32 mnNameEntryEditMemberName(Sint32 member)
 {
-	WINDOW		*nameWindow;
+	WINDOW		*nameWin;
 	Sint32		 result = 0;
 	Sint32		 originalLength = 0;
-	Sint32		 letterCount = 0;
+	Sint32		 letterCnt = 0;
 	Uint8		 text[NAME_MAX_BYTES + 2];
 	Uint8		*editedName = text + 1;
 	Uint8		*originalName = syUnitGet(member);
 	WIN_STATE	*render = (WIN_STATE *)Ram_HeapSlots->winState;
 	Bool		 textDirty = TRUE;
 	Bool		 cursorDirty = TRUE;
-	WINDOW		*keyboardWindow;
+	WINDOW		*keyboardWin;
 	NAME_CURSOR	 keyCursor;
 	NAME_CURSOR	 nameCaret;
 	Sint32		 keyColumn, keyRow, vramSlot;
@@ -564,16 +563,16 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 	syWindowLoadGraphics();
 	mnWindowColApply(
 		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
-	keyboardWindow =
+	keyboardWin =
 		mnWindowCreate(3, 6, 24, NAME_KEYBOARD_HEIGHT, WINDOW_FLAG_INSTANT);
-	nameWindow = mnWindowCreate(8, 3, NAME_LABEL_WIDTH, 3, WINDOW_FLAG_INSTANT);
+	nameWin = mnWindowCreate(8, 3, NAME_LABEL_WIDTH, 3, WINDOW_FLAG_INSTANT);
 	mnPortraitOpenWindow(member, 0, 3, 1);
-	mnWindowCopyTilemapRegion(keyboardWindow, NameEntry_KeyboardTilemap);
+	mnWindowCopyTilemapRegion(keyboardWin, NameEntry_KeyboardTilemap);
 #if NAME_KEY_LABELS
-	mnTextDrawStringInWindow(NameEntry_DeleteKeyLabel, keyboardWindow, 144, 32);
-	mnTextDrawStringInWindow(NameEntry_EndKeyLabel, keyboardWindow, 144, 40);
+	mnTextDrawStringInWindow(NameEntryDeleteKeyLabel, keyboardWin, 144, 32);
+	mnTextDrawStringInWindow(NameEntryEndKeyLabel, keyboardWin, 144, 40);
 #endif
-	mnWindowDrawDividerLine(keyboardWindow, NAME_COMMAND_COLUMN, 0,
+	mnWindowDrawDividerLine(keyboardWin, NAME_COMMAND_COLUMN, 0,
 		NAME_COMMAND_COLUMN, NAME_DIVIDER_BOTTOM);
 	render->dirty = textDirty;
 	text[0] = result;
@@ -586,12 +585,12 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 			editedName[i] = c;
 			if(c != 0) {
 				originalLength++;
-				letterCount++;
+				letterCnt++;
 			}
 		}
 	}
 	editedName[NAME_MAX_BYTES] = 0;
-	mnNameEntryDrawName((Sint32)nameWindow, originalName);
+	mnNameEntryDrawName((Sint32)nameWin, originalName);
 	keyRow = NAME_FINISH_ROW;
 	vramSlot = syVRAMCacheFindFreeEntry();
 	keyColumn = NAME_COMMAND_COLUMN;
@@ -599,11 +598,11 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 		mnVRAMBlockLoadResourceStub(
 			vramSlot, ICON_TILE_BYTES, RESOURCE_UI_ICON_TILES);
 		output = mnWindowSprCreate(
-			vramSlot, WINDOW_SPRITE_SIZE_16X16, (WINDOW *)keyboardWindow, 0, 0);
+			vramSlot, WINDOW_SPRITE_SIZE_16X16, (WINDOW *)keyboardWin, 0, 0);
 		keyMotion = &keyCursor.cursor;
 		keyCursor.spr = output;
-		mnCursorSetPosImmediateStub(keyMotion, keyboardWindow->x * 8 + 140,
-			keyboardWindow->y * 8 + NAME_KEY_CURSOR_Y);
+		mnCursorSetPosImmediateStub(keyMotion, keyboardWin->x * 8 + 140,
+			keyboardWin->y * 8 + NAME_KEY_CURSOR_Y);
 	} else {
 		keyMotion = &keyCursor.cursor;
 	}
@@ -612,7 +611,7 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 		mnVRAMBlockLoadResourceStub(
 			vramSlot, ICON_TILE_BYTES, RESOURCE_NAME_CARET_TILES);
 		output = mnWindowSprCreate(
-			vramSlot, WINDOW_SPRITE_SIZE_16X16, (WINDOW *)keyboardWindow, 0, 0);
+			vramSlot, WINDOW_SPRITE_SIZE_16X16, (WINDOW *)keyboardWin, 0, 0);
 		nameCaret.spr = output;
 		output->depth = OAM_DEPTH_FRONT;
 		output->spr.oam.pri = 0;
@@ -634,14 +633,14 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 				width = NAME_FINISH_WIDTH;
 		}
 		mnWindowSetTextTileRect(
-			keyboardWindow, keyColumn, keyRow, width, 1, HIGHLIGHT_PALETTE);
+			keyboardWin, keyColumn, keyRow, width, 1, HIGHLIGHT_PALETTE);
 		sySynch(1);
 		mnWindowSetTextTileRect(
-			keyboardWindow, keyColumn, keyRow, width, 1, WINDOW_PALETTE);
+			keyboardWin, keyColumn, keyRow, width, 1, WINDOW_PALETTE);
 		if(cursorDirty) {
 			cursorDirty = FALSE;
-			mnCursorSetStub(keyMotion, (keyboardWindow->x + keyColumn) * 8 - 7,
-				(keyboardWindow->y + keyRow) * 8 + 15, 3);
+			mnCursorSetStub(keyMotion, (keyboardWin->x + keyColumn) * 8 - 7,
+				(keyboardWin->y + keyRow) * 8 + 15, 3);
 		}
 		if(textDirty) {
 			textDirty = FALSE;
@@ -651,12 +650,11 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 		mnCursorAdvanceStub(keyMotion);
 		mnCursorMoveTowardTargetStub(&nameCaret.cursor);
 		{
-			Uint32 frame = (VBlankCount >> 1) & 7;
+			Uint32 frm = (FrameCount >> 1) & 7;
 
 			output = nameCaret.spr;
-			output->spr.oam.x = output->x + NameEntry_CaretWave[frame];
-			output->spr.oam.y =
-				output->y + NameEntry_CaretWave[(frame + 5) & 7];
+			output->spr.oam.x = output->x + NameEntryCaretWave[frm];
+			output->spr.oam.y = output->y + NameEntryCaretWave[(frm + 5) & 7];
 		}
 		if(PerWork.repeat & KEY_UP) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
@@ -716,11 +714,11 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 		if(PerWork.repeat & KEY_B) {
 			sySndPlayStub(SE_MENU_CANCEL);
 		remove_character:
-			if(letterCount != 0) {
-				letterCount--;
+			if(letterCnt != 0) {
+				letterCnt--;
 				*--end = 0;
-				mnWindowSprPrepareForRedraw(nameWindow);
-				mnNameEntryDrawName((Sint32)nameWindow, editedName);
+				mnWindowSprPrepareForRedraw(nameWin);
+				mnNameEntryDrawName((Sint32)nameWin, editedName);
 				textDirty = TRUE;
 				continue;
 			}
@@ -732,10 +730,10 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 		sySndPlayStub(SE_MENU_CONFIRM);
 		if(keyColumn == NAME_COMMAND_COLUMN) {
 			if(keyRow == NAME_FINISH_ROW) {
-				if(letterCount == 0) {
+				if(letterCnt == 0) {
 					nameCaret.spr->motion = WINDOW_SPRITE_MOTION_HIDDEN;
-					mnWindowSprPrepareForRedraw(nameWindow);
-					mnNameEntryDrawName((Sint32)nameWindow, originalName);
+					mnWindowSprPrepareForRedraw(nameWin);
+					mnNameEntryDrawName((Sint32)nameWin, originalName);
 					sySynch(10);
 				} else {
 					Uint8 *dst = originalName;
@@ -752,27 +750,27 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 			continue;
 		}
 		{
-			Uint32 tx = keyboardWindow->x + keyColumn + 1;
+			Uint32 tx = keyboardWin->x + keyColumn + 1;
 			Uint32 letter = ((Uint8 *)render->tilemap +
-				((keyboardWindow->y + keyRow + 1) << 6))[tx << 1];
+				((keyboardWin->y + keyRow + 1) << 6))[tx << 1];
 
-			if(letterCount == NAME_MAX_LETTERS)
+			if(letterCnt == NAME_MAX_LETTERS)
 				continue;
 			*end++ = letter;
 			*end = 0;
-			letterCount++;
-			if(letterCount == NAME_MAX_LETTERS) {
+			letterCnt++;
+			if(letterCnt == NAME_MAX_LETTERS) {
 				keyColumn = NAME_COMMAND_COLUMN;
 				keyRow = NAME_FINISH_ROW;
 				cursorDirty = TRUE;
 			}
-			mnWindowSprPrepareForRedraw(nameWindow);
-			mnNameEntryDrawName((Sint32)nameWindow, editedName);
+			mnWindowSprPrepareForRedraw(nameWin);
+			mnNameEntryDrawName((Sint32)nameWin, editedName);
 			textDirty = TRUE;
 		}
 	}
-	mnWindowClose(keyboardWindow, 2);
-	mnWindowClose(nameWindow, 2);
+	mnWindowClose(keyboardWin, 2);
+	mnWindowClose(nameWin, 2);
 	mnPortraitCloseWindow(member);
 	sySynch(1);
 	while(PerWork.data != 0)

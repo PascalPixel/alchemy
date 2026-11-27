@@ -1,10 +1,10 @@
 /* The Nereid summon. Part of battle_effect.c. */
 
-#define NEREID_FRAMES			 124
+#define NEREID_TICKS			124
 /* The columns of water rise among the targets, from the crash to the
    clatter. */
-#define NEREID_COLUMNS_FRAME	 32
-#define NEREID_COLUMNS_END_FRAME 80
+#define NEREID_COLUMNS_TICK		32
+#define NEREID_COLUMNS_END_TICK 80
 
 #define NEREID_OBJECTS		  12 /* the sprites that draw Nereid on her turtle */
 /* Wrapping columns of water. */
@@ -45,9 +45,9 @@ void btEffectRunNereid(BATTLE_EFFECT_PARM *args)
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	{
 		POINT2_D  focus;
-		POINT2_D  velocity;
+		POINT2_D  vel;
 		Sint32	  rise;
-		Sint32	  frame;
+		Sint32	  frm;
 		Sint32	  k;
 		PARTICLE *point;
 		PARTICLE *drop;
@@ -57,8 +57,8 @@ void btEffectRunNereid(BATTLE_EFFECT_PARM *args)
 		rise = 0;
 		focus.x = toFIXED(256);
 		focus.y = toFIXED(88);
-		velocity.x = -toFIXED(16);
-		velocity.y = -toFIXED(4);
+		vel.x = -toFIXED(16);
+		vel.y = -toFIXED(4);
 		EFFECT_FREE_PARTICLES(k, state->particles, 64);
 		/* DEAD: particles NEREID_UNREAD_FIRST on get a place and delay nothing
 		   reads; the ROM keeps the stores. */
@@ -75,30 +75,30 @@ void btEffectRunNereid(BATTLE_EFFECT_PARM *args)
 		sySynch(1);
 		btEffectCreateSprs(NEREID_OBJECTS, SPRITE_NEREID, 2);
 
-		for(frame = 0; frame != NEREID_FRAMES; frame++) {
+		for(frm = 0; frm != NEREID_TICKS; frm++) {
 			if((PerWork.repeat & (KEY_A | KEY_B)) &&
-				frame > NEREID_COLUMNS_FRAME && frame <= 97)
-				frame = 98;
-			if(frame == 120)
+				frm > NEREID_COLUMNS_TICK && frm <= 97)
+				frm = 98;
+			if(frm == 120)
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			/* The waves rise. */
-			if(frame <= 15)
+			if(frm <= 15)
 				rise += 2;
 
 			/* She slows, and is pushed back right once she passes x = 120. */
-			if(frame <= 99) {
-				focus.x += velocity.x;
-				focus.y += velocity.y;
-				velocity.x = velocity.x * 58 / DAMPING_SCALE;
-				velocity.y = velocity.y * 56 / DAMPING_SCALE;
+			if(frm <= 99) {
+				focus.x += vel.x;
+				focus.y += vel.y;
+				vel.x = vel.x * 58 / DAMPING_SCALE;
+				vel.y = vel.y * 56 / DAMPING_SCALE;
 				if(focus.x < toFIXED(120))
-					velocity.x += toFIXED(1) / 2;
+					vel.x += toFIXED(1) / 2;
 			}
 			btEffectPlaceFormationSprs(
 				SUMMON_FORMATION_NEREID, focus.x, focus.y);
 
 			/* Drops burst up among the targets. */
-			if(frame == 28) {
+			if(frm == 28) {
 				for(k = 0; k != NEREID_BURST_DROPS; k++) {
 					drop = &drops[k];
 					if(drop->variant == -1) {
@@ -113,8 +113,7 @@ void btEffectRunNereid(BATTLE_EFFECT_PARM *args)
 					}
 				}
 			}
-			if(frame >= NEREID_COLUMNS_FRAME &&
-				frame < NEREID_COLUMNS_END_FRAME) {
+			if(frm >= NEREID_COLUMNS_TICK && frm < NEREID_COLUMNS_END_TICK) {
 				Sint32 spawned = 0;
 
 				for(k = 0; k != NEREID_DROPS; k++) {
@@ -129,47 +128,46 @@ void btEffectRunNereid(BATTLE_EFFECT_PARM *args)
 						drop->velY = (-(syRandom() & 63) - 8) << 13;
 						drop->variant = 0;
 						spawned++;
-						if(spawned == NEREID_DROPS_A_FRAME)
+						if(spawned == NEREID_DROPS_A_TICK)
 							break;
 					}
 				}
 			}
-			if(frame == 0)
+			if(frm == 0)
 				sySndPlayStub(SE_SCATTER);
-			if(frame == NEREID_COLUMNS_FRAME)
+			if(frm == NEREID_COLUMNS_TICK)
 				sySndPlayStub(SE_CRASH);
-			if(frame == NEREID_COLUMNS_END_FRAME)
+			if(frm == NEREID_COLUMNS_END_TICK)
 				sySndPlayStub(SE_CLATTER);
 
 			/* The columns of water scroll up. */
-			if(frame >= NEREID_COLUMNS_FRAME &&
-				frame < NEREID_COLUMNS_END_FRAME) {
+			if(frm >= NEREID_COLUMNS_TICK && frm < NEREID_COLUMNS_END_TICK) {
 				for(k = 0; k != NEREID_COLUMNS; k++) {
 					Sint32 span =
-						(frame * 16 - 256 + k * 25) % FIRE_PILLAR_HEIGHT;
+						(frm * 16 - 256 + k * 25) % FIRE_PILLAR_HEIGHT;
 
 					draw[0](canvas, state->sheet + NEREID_COLUMN_PICTURE,
-						Nereid_Columns[k * 2] - FIRE_PILLAR_WIDTH / 2,
-						Nereid_Columns[k * 2 + 1] - span - FIRE_PILLAR_HEIGHT,
+						NereidColumns[k * 2] - FIRE_PILLAR_WIDTH / 2,
+						NereidColumns[k * 2 + 1] - span - FIRE_PILLAR_HEIGHT,
 						FIRE_PILLAR_WIDTH, FIRE_PILLAR_HEIGHT);
 					draw[0](canvas, state->sheet + NEREID_COLUMN_PICTURE,
-						Nereid_Columns[k * 2] - FIRE_PILLAR_WIDTH / 2,
-						Nereid_Columns[k * 2 + 1] - span, FIRE_PILLAR_WIDTH,
+						NereidColumns[k * 2] - FIRE_PILLAR_WIDTH / 2,
+						NereidColumns[k * 2 + 1] - span, FIRE_PILLAR_WIDTH,
 						span);
 				}
 			}
 
 			/* The waves along the bottom. */
-			if(frame <= 95) {
+			if(frm <= 95) {
 				for(k = 0; k != 5; k++)
 					draw[0](canvas, state->sheet,
-						k * WATER_WAVE_WIDTH + ((frame / 4) & 31) -
+						k * WATER_WAVE_WIDTH + ((frm / 4) & 31) -
 							WATER_WAVE_WIDTH,
 						120 - rise, WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
 			}
 
 			/* Drops swell as they clear: they fall under gravity until
-			   NEREID_COLUMNS_END_FRAME, then rise away, and a falling drop that
+			   NEREID_COLUMNS_END_TICK, then rise away, and a falling drop that
 			   sinks into the waves is freed. */
 			for(k = 0; k != NEREID_DROPS; k++) {
 				drop = &drops[k];
@@ -178,25 +176,25 @@ void btEffectRunNereid(BATTLE_EFFECT_PARM *args)
 
 					if(drop->velY > 0)
 						size += 2;
-					if(frame > 68 && size <= 5)
+					if(frm > 68 && size <= 5)
 						size = 6;
-					if(frame > 70 && size <= 6)
+					if(frm > 70 && size <= 6)
 						size = 7;
-					if(frame > 72 && size <= 7)
+					if(frm > 72 && size <= 7)
 						size = 8;
-					if(frame > 74 && size <= 8)
+					if(frm > 74 && size <= 8)
 						size = 9;
-					if(frame > 76)
+					if(frm > 76)
 						size = MOTE_PICTURES;
 					EFFECT_DRAW_MOTE(draw[drop->velY > 0], canvas, graphics,
 						FIXED_INTEGER_PART(drop->x),
 						FIXED_INTEGER_PART(drop->y), size);
 					drop->x += drop->velX;
 					drop->y += drop->velY;
-					if(frame > NEREID_COLUMNS_END_FRAME)
+					if(frm > NEREID_COLUMNS_END_TICK)
 						drop->velY += -toFIXED(1) / 2;
 					else
-						drop->velY += Nereid_Gravity[k & 3];
+						drop->velY += NereidGravity[k & 3];
 					drop->velX = drop->velX * 62 / DAMPING_SCALE;
 					drop->velY = drop->velY * 62 / DAMPING_SCALE;
 					drop->variant++;
@@ -207,20 +205,19 @@ void btEffectRunNereid(BATTLE_EFFECT_PARM *args)
 			}
 
 			/* The targets bounce and flash white. */
-			if(frame < NEREID_COLUMNS_END_FRAME) {
+			if(frm < NEREID_COLUMNS_END_TICK) {
 				for(k = 0; k != args->tgtCnt; k++) {
-					if(frame > 29) {
-						Sint32 phase = frame % 12;
+					if(frm > 29) {
+						Sint32 phase = frm % 12;
 
 						if(phase == 0) {
-							MOTION_OBJECT *target =
+							MOTION_OBJECT *tgt =
 								btObjectGetStub(args->tgts[k])->obj;
 
 							btEffectTintBattler(args->tgts[k],
 								SPRITE_COLOR_WHITE, POSE_DAMAGE, TINT_KEEP, 0);
-							target->velY = toFIXED(9) / 2;
-							target->verticalMotionStrength =
-								BATTLE_UNIT_GRAVITY;
+							tgt->velY = toFIXED(9) / 2;
+							tgt->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
 						}
 						if(phase == 6)
 							btEffectTintBattler(args->tgts[k],
@@ -241,7 +238,7 @@ void btEffectRunNereid(BATTLE_EFFECT_PARM *args)
 	btEffectEndCanvasLayer();
 }
 
-/* NEREID_FRAMES, NEREID_COLUMNS_FRAME, NEREID_COLUMNS_END_FRAME,
+/* NEREID_TICKS, NEREID_COLUMNS_TICK, NEREID_COLUMNS_END_TICK,
    NEREID_OBJECTS, NEREID_COLUMNS, NEREID_DROPS, NEREID_COLUMN_PICTURE,
    NEREID_WAVES_Y, NEREID_UNREAD_FIRST and NEREID_UNREAD_COUNT stay defined:
    particle_streams.c's copy of Nereid runs by them. */

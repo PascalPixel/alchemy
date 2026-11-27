@@ -8,10 +8,10 @@
 
 /* Saves the field's background colours in the field state and tints them by
    `tint` (a fdPaletteFadeBuild mode, PALETTE_TINT_CUSTOM with a colour) over 16
-   frames. */
+   ticks. */
 void mnShopSaveAndTintFieldPaletteStub(Sint32 tint);
 /* Fades back to the colours mnShopSaveAndTintFieldPaletteStub saved, over 16
-   frames. */
+   ticks. */
 void mnShopRestoreFieldPaletteStub(void);
 
 /* Decompresses resource `resourceId` and loads its first `size` bytes into VRAM

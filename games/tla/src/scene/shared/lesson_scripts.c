@@ -4,7 +4,7 @@
    settle back as the lesson ends. */
 
 /* The tablet lifts 24 pixels. */
-Uint32 Lesson_TabletRiseScript[] = {
+Uint32 LessonTabletRiseScript[] = {
 	SC_MOVE_BY(0, 24, 0),
 	SC_SYNC,
 	SC_SET(SW_MOTION, 4),
@@ -12,7 +12,7 @@ Uint32 Lesson_TabletRiseScript[] = {
 };
 
 /* The Adept rises 16 pixels. */
-Uint32 Lesson_AdeptRiseScript[] = {
+Uint32 LessonAdeptRiseScript[] = {
 	SC_MOVE_BY(0, 16, 0),
 	SC_SYNC,
 	SC_SET(SW_MOTION, 4),
@@ -20,7 +20,7 @@ Uint32 Lesson_AdeptRiseScript[] = {
 };
 
 /* The tablet settles back on its stand. */
-Sint32 Lesson_TabletSettleScript[] = {
+Sint32 LessonTabletSettleScript[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_MOVE_BY(0, -24, 0),
 	SC_SYNC,
@@ -29,7 +29,7 @@ Sint32 Lesson_TabletSettleScript[] = {
 };
 
 /* The Adept settles back to the ground. */
-Sint32 Lesson_AdeptSettleScript[] = {
+Sint32 LessonAdeptSettleScript[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_MOVE_BY(0, -16, 0),
 	SC_SYNC,

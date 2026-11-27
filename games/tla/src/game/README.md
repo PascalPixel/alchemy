@@ -33,10 +33,10 @@ The mask has a bit for each character who can wield it. The other tables
 still keep each row at its place, with its name from the English release
 in a comment above it.
 
-The tables are `Item_DefinitionTable` (516 items),
-`AbilityDefinitions` (734 abilities), `Enemy_Definitions` (380
-enemies), `Class_DefinitionTable` (244 classes), `Djinn_DefinitionTable`,
-`Summon_DefinitionTable` and `Character_DefinitionTable`. A row's fields
+The tables are `ItemDefinitionTable` (516 items),
+`AbilityDefinitions` (734 abilities), `EnemyDefinitions` (380
+enemies), `ClassDefinitionTable` (244 classes), `DjinnDefinitionTable`,
+`SummonDefinitionTable` and `CharacterDefinitionTable`. A row's fields
 are documented where its struct is declared. With more than 255 abilities,
 a class lists the ones it teaches in halfwords.
 

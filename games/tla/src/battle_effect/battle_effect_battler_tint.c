@@ -28,30 +28,29 @@ void btEffectSetupBlendedDisp(void)
 
    palette: a SPR_COL_MODE, SPRITE_COLOR_NORMAL for the unit's own palette,
 			or TINT_KEEP.
-   animation: the pose to start, or TINT_KEEP. timerSlot: the state->actorTmrs
-   entry to set to timerFrames, or TINT_KEEP. */
-void btEffectTintBattler(Sint32 unitId, Sint32 palette, Sint32 animation,
-	Sint32 timerSlot, Sint32 timerFrames)
+   animation: the pose to start, or TINT_KEEP. tmrSlot: the state->actorTmrs
+   entry to set to tmrTicks, or TINT_KEEP. */
+void btEffectTintBattler(
+	Sint32 unitId, Sint32 palette, Sint32 anm, Sint32 tmrSlot, Sint32 tmrTicks)
 {
 	BATTLE_OBJECT		*slot;
 	SPR					*group;
 	BATTLE_EFFECT_STATE *state;
-	Sint32				 groupIndex;
+	Sint32				 groupIdx;
 
 	slot = btObjectGetStub(unitId);
 	state = Ram_HeapSlots->battleEff;
 
-	for(groupIndex = 0;
-		(group = btActorGetSprStub(slot->obj, groupIndex)) != NULL;
-		groupIndex++) {
-		if(timerSlot != TINT_KEEP)
-			state->actorTmrs[timerSlot] = timerFrames;
+	for(groupIdx = 0; (group = btActorGetSprStub(slot->obj, groupIdx)) != NULL;
+		groupIdx++) {
+		if(tmrSlot != TINT_KEEP)
+			state->actorTmrs[tmrSlot] = tmrTicks;
 		if(slot->fading == 0) {
 			if(palette != TINT_KEEP) {
-				Sint32 partIndex;
+				Sint32 partIdx;
 
-				for(partIndex = 0; partIndex != group->cnt; partIndex++) {
-					SPR_ANIMATION *part = group->entries[partIndex];
+				for(partIdx = 0; partIdx != group->cnt; partIdx++) {
+					SPR_ANIMATION *part = group->entries[partIdx];
 
 					if(part != NULL && part != slot->shadowEntry &&
 						part != slot->anmEntry) {
@@ -66,8 +65,8 @@ void btEffectTintBattler(Sint32 unitId, Sint32 palette, Sint32 animation,
 					}
 				}
 			}
-			if(animation != TINT_KEEP)
-				fdSprStartAnimationStub(group, animation);
+			if(anm != TINT_KEEP)
+				fdSprStartAnimationStub(group, anm);
 		}
 	}
 }

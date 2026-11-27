@@ -9,24 +9,24 @@
 Sint32 fdInputGetDpadAng(Uint32 unused)
 {
 	/* Indexed by the right, left, up and down bits. */
-	return Input_DpadAngles[DPAD_INDEX(PerData)];
+	return InputDpadAngles[DPAD_INDEX(PerData)];
 }
 
-/* Per-frame update of Move's hand (fdEffectSpawnMoveHand): turns it toward the
-   actor it watches, at most 1/16 turn a frame, and sheds a particle
+/* Per-tick update of Move's hand (fdEffectSpawnMoveHand): turns it toward the
+   actor it watches, at most 1/16 turn a tick, and sheds a particle
    (SPRITE_SPARKLE) round it. */
 void fdEffectUpdateMoveHand(ACTOR *hand)
 {
-	ACTOR  *target;
-	VECTOR3 position;
+	ACTOR  *tgt;
+	VECTOR3 pos;
 	ACTOR  *sparkle;
 	Sint32	turn;
 	Sint32	radius;
 
-	target = (ACTOR *)hand->watchedActor;
-	if(target != 0) {
-		FIXED dx = target->x.fixed - hand->x.fixed;
-		FIXED dz = target->z.fixed - hand->z.fixed;
+	tgt = (ACTOR *)hand->watchedActor;
+	if(tgt != 0) {
+		FIXED dx = tgt->x.fixed - hand->x.fixed;
+		FIXED dz = tgt->z.fixed - hand->z.fixed;
 
 		if(dx != 0 || dz != 0) {
 			turn = (Sint16)(syAtan(dz, dx) - hand->facing);
@@ -42,32 +42,32 @@ void fdEffectUpdateMoveHand(ACTOR *hand)
 
 	/* The particle starts 8 to 24 pixels lower and up to 48 pixels away in a
 	   random direction. */
-	position.x = hand->x.fixed;
-	position.y = hand->y.fixed - (syRandom() << 4) - toFIXED(8);
-	position.z = hand->z.fixed;
+	pos.x = hand->x.fixed;
+	pos.y = hand->y.fixed - (syRandom() << 4) - toFIXED(8);
+	pos.z = hand->z.fixed;
 	radius = syRandom() * 3;
 	radius <<= 4;
-	syVectorAddPolarOffset(radius, syRandom(), (FIXED *)&position);
+	syVectorAddPolarOffset(radius, syRandom(), (FIXED *)&pos);
 
-	sparkle = fdActorSpawn(SPRITE_SPARKLE, position.x, position.y, position.z);
+	sparkle = fdActorSpawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
 	fdEffectInitFallingFragment(sparkle);
 }
 
 /* When Move is cast on a target, the pushing hand appears beside it and pushes
    it 16 pixels the way the d-pad points, for as long as the player pushes; A,
    B, L or R end it. */
-void fdPsynergySteerPushedTarget(Sint32 targetId)
+void fdPsynergySteerPushedTarget(Sint32 tgtId)
 {
-	VECTOR3				position;
+	VECTOR3				pos;
 	VECTOR3				beyond;
 	FIELD_EFFECT_STATE *effectState;
 	ACTOR			   *caster;
-	ACTOR			   *target;
+	ACTOR			   *tgt;
 	ACTOR			   *pusher;
 	ACTOR			   *hit;
 	FIXED				x;
 	FIXED				z;
-	Sint32				angle;
+	Sint32				ang;
 	Sint32				moved;
 	Sint32				direction;
 	Sint32				keys;
@@ -76,16 +76,16 @@ void fdPsynergySteerPushedTarget(Sint32 targetId)
 
 	effectState = FieldEffectStateWork;
 	caster = effectState->caster;
-	target = effectState->tgt;
+	tgt = effectState->tgt;
 	/* effectState->ang is the way the caster faces; the hand's side of the
 	   target is the opposite way, toward the caster. */
-	angle = effectState->ang + DEGtoANG(180);
+	ang = effectState->ang + DEGtoANG(180);
 	moved = 0;
-	if(target == NULL)
+	if(tgt == NULL)
 		return;
 	fdPsynergyFadeToCastCol();
-	caster->watchedActor = (union ACTOR_OR_EFFECT *)target;
-	fdActorStartScriptStub(caster, FieldEffect_SourceHoldScript);
+	caster->watchedActor = (union ACTOR_OR_EFFECT *)tgt;
+	fdActorStartScriptStub(caster, FieldEffectSourceHoldScript);
 	pusher = fdEffectSpawnMoveHand(caster);
 	if(pusher == NULL) {
 		fdPsynergyFadeFromCastCol();
@@ -93,21 +93,20 @@ void fdPsynergySteerPushedTarget(Sint32 targetId)
 	}
 
 	/* The hand goes 16 pixels above the target and 16 pixels toward angle. */
-	pusher->watchedActor = (union ACTOR_OR_EFFECT *)target;
-	SET_POSITION(&position, target->x.fixed, target->y.fixed + toFIXED(16),
-		target->z.fixed);
-	syVectorAddPolarOffset(toFIXED(16), angle, (FIXED *)&position);
-	fdActorSetMoveTargetStub(pusher, position.x, position.y, position.z);
+	pusher->watchedActor = (union ACTOR_OR_EFFECT *)tgt;
+	SET_POSITION(&pos, tgt->x.fixed, tgt->y.fixed + toFIXED(16), tgt->z.fixed);
+	syVectorAddPolarOffset(toFIXED(16), ang, (FIXED *)&pos);
+	fdActorSetMoveTargetStub(pusher, pos.x, pos.y, pos.z);
 	fdEffectGrowHandAndWait(pusher);
-	/* The hand floats at up to 4 pixels a frame. */
+	/* The hand floats at up to 4 pixels a tick. */
 	pusher->speedLimit = toFIXED(4);
 	pusher->acceleration = toFIXED(1) / 2;
 	pusher->motionFlg = ACTOR_FLOATS;
-	target->update = fdActorCycleSprCols;
-	target->speedLimit = toFIXED(2) / 5;
-	target->acceleration = toFIXED(1) / 5;
-	target->steeringFlg = moved;
-	target->layer = MAPGRID_LAYER_OVERHEAD;
+	tgt->update = fdActorCycleSprCols;
+	tgt->speedLimit = toFIXED(2) / 5;
+	tgt->acceleration = toFIXED(1) / 5;
+	tgt->steeringFlg = moved;
+	tgt->layer = MAPGRID_LAYER_OVERHEAD;
 	for(;;) {
 		sySynch(1);
 		keys = PerPush & (KEY_A | KEY_B | KEYS_SHOULDERS);
@@ -117,12 +116,11 @@ void fdPsynergySteerPushedTarget(Sint32 targetId)
 		/* With the d-pad released, the hand goes back to its place. */
 		direction = (Uint16)fdInputGetDpadAng(PerData);
 		if(direction == DPAD_ANGLE_NONE) {
-			position.x = target->x.fixed;
-			position.y = target->y.fixed + toFIXED(16);
-			position.z = target->z.fixed;
-			syVectorAddPolarOffset(toFIXED(16), angle, (FIXED *)&position);
-			fdActorSetMoveTargetStub(
-				pusher, position.x, position.y, position.z);
+			pos.x = tgt->x.fixed;
+			pos.y = tgt->y.fixed + toFIXED(16);
+			pos.z = tgt->z.fixed;
+			syVectorAddPolarOffset(toFIXED(16), ang, (FIXED *)&pos);
+			fdActorSetMoveTargetStub(pusher, pos.x, pos.y, pos.z);
 			fdActorSelectAnimationStub(pusher, MOVE_HAND_ANIMATION_OPEN);
 			SET_VELOCITY(pusher, 0, 0, 0);
 			continue;
@@ -130,36 +128,35 @@ void fdPsynergySteerPushedTarget(Sint32 targetId)
 
 		/* The hand leans 2 pixels the way it pushes; check the metatiles 16 and
 		   32 pixels beyond the target. */
-		position.x = target->x.fixed;
-		position.y = target->y.fixed + toFIXED(16);
-		position.z = target->z.fixed;
-		syVectorAddPolarOffset(toFIXED(16), angle, (FIXED *)&position);
-		syVectorAddPolarOffset(toFIXED(2), direction, (FIXED *)&position);
-		fdActorSetMoveTargetStub(pusher, position.x, position.y, position.z);
+		pos.x = tgt->x.fixed;
+		pos.y = tgt->y.fixed + toFIXED(16);
+		pos.z = tgt->z.fixed;
+		syVectorAddPolarOffset(toFIXED(16), ang, (FIXED *)&pos);
+		syVectorAddPolarOffset(toFIXED(2), direction, (FIXED *)&pos);
+		fdActorSetMoveTargetStub(pusher, pos.x, pos.y, pos.z);
 		fdActorWaitForMoveStub(pusher);
-		position.x = target->x.fixed;
-		position.y = target->y.fixed;
-		position.z = target->z.fixed;
-		syVectorAddPolarOffset(toFIXED(16), direction, (FIXED *)&position);
-		beyond.x = target->x.fixed;
-		beyond.y = target->y.fixed;
-		beyond.z = target->z.fixed;
+		pos.x = tgt->x.fixed;
+		pos.y = tgt->y.fixed;
+		pos.z = tgt->z.fixed;
+		syVectorAddPolarOffset(toFIXED(16), direction, (FIXED *)&pos);
+		beyond.x = tgt->x.fixed;
+		beyond.y = tgt->y.fixed;
+		beyond.z = tgt->z.fixed;
 		syVectorAddPolarOffset(toFIXED(32), direction, (FIXED *)&beyond);
 		/* A wall or higher ground stops the push; level ground or a drop does
 		   not. */
-		if(fdMapGridCheckCollisionStub(target, (FIELD_POS *)&position) >
+		if(fdMapGridCheckCollisionStub(tgt, (FIELD_POS *)&pos) >
 			COLLISION_NONE) {
 			fdActorSelectAnimationStub(pusher, MOVE_HAND_ANIMATION_FLEX);
-			if((FrameCount & 15) == 0)
+			if((TickCount & 15) == 0)
 				sySndPlayStub(SE_MENU_ERROR);
 			continue;
 		}
-		hit =
-			fdActorScriptFindOverlappingActorStub(target, (Sint32 *)&position);
+		hit = fdActorScriptFindOverlappingActorStub(tgt, (Sint32 *)&pos);
 		if(hit != NULL) {
 			if(hit != caster) {
 				fdActorSelectAnimationStub(pusher, MOVE_HAND_ANIMATION_FLEX);
-				if((FrameCount & 15) == 0)
+				if((TickCount & 15) == 0)
 					sySndPlayStub(SE_MENU_ERROR);
 				continue;
 			}
@@ -170,10 +167,10 @@ void fdPsynergySteerPushedTarget(Sint32 targetId)
 			   along when the metatile beyond is free. */
 			metatileX = caster->x.fixed & FIELD_METATILE_MASK;
 			metatileZ = caster->z.fixed & FIELD_METATILE_MASK;
-			if(metatileX == (position.x & FIELD_METATILE_MASK) &&
-				metatileZ == (position.z & FIELD_METATILE_MASK)) {
+			if(metatileX == (pos.x & FIELD_METATILE_MASK) &&
+				metatileZ == (pos.z & FIELD_METATILE_MASK)) {
 				fdActorSelectAnimationStub(pusher, MOVE_HAND_ANIMATION_FLEX);
-				if((FrameCount & 15) == 0)
+				if((TickCount & 15) == 0)
 					sySndPlayStub(SE_MENU_ERROR);
 				continue;
 			}
@@ -184,7 +181,7 @@ void fdPsynergySteerPushedTarget(Sint32 targetId)
 					   caster->layer, beyond.x, beyond.z) != TERRAIN_FLAT) {
 					fdActorSelectAnimationStub(
 						pusher, MOVE_HAND_ANIMATION_FLEX);
-					if((FrameCount & 15) == 0)
+					if((TickCount & 15) == 0)
 						sySndPlayStub(SE_MENU_ERROR);
 					continue;
 				}
@@ -196,22 +193,21 @@ void fdPsynergySteerPushedTarget(Sint32 targetId)
 		   push (in quarter turns): 2 pushing away from its side, 3 drawing
 		   toward it, 1 sideways. */
 		sySndPlayStub(SE_NOTE_HIGH);
-		x = position.x;
-		z = position.z;
+		x = pos.x;
+		z = pos.z;
 		fdActorSelectAnimationStub(pusher,
-			FieldEffect_QuadrantModes[(Uint16)(angle - direction) /
+			FieldEffectQuadrantModes[(Uint16)(ang - direction) /
 				(TRIG_TURN / 4)]);
 		sySynch(15);
-		target->paused = 0;
-		target->speedLimit = toFIXED(1) / 5;
-		target->acceleration = toFIXED(1) / 5;
-		fdActorSetMoveTargetStub(target, position.x, position.y, position.z);
+		tgt->paused = 0;
+		tgt->speedLimit = toFIXED(1) / 5;
+		tgt->acceleration = toFIXED(1) / 5;
+		fdActorSetMoveTargetStub(tgt, pos.x, pos.y, pos.z);
 		pusher->motionFlg = 0;
 		pusher->speedLimit = toFIXED(1) / 5;
 		pusher->acceleration = toFIXED(1) / 5;
-		syVectorAddPolarOffset(toFIXED(16), direction, (FIXED *)&position);
-		fdActorSetMoveTargetStub(
-			pusher, position.x, position.y + toFIXED(16), position.z);
+		syVectorAddPolarOffset(toFIXED(16), direction, (FIXED *)&pos);
+		fdActorSetMoveTargetStub(pusher, pos.x, pos.y + toFIXED(16), pos.z);
 		if(moved == 1) {
 			fdActorGetById(effectState->casterId)->steeringFlg &=
 				~ACTOR_FACES_MOTION;
@@ -220,18 +216,18 @@ void fdPsynergySteerPushedTarget(Sint32 targetId)
 			fdActorSetMoveTargetStub(caster, beyond.x, beyond.y, beyond.z);
 		}
 		/* Land exactly on the metatile, whatever the braking left. */
-		fdActorWaitForMoveStub(target);
-		target->x.fixed = x;
-		target->z.fixed = z;
-		target->velX = 0;
-		target->velZ = 0;
+		fdActorWaitForMoveStub(tgt);
+		tgt->x.fixed = x;
+		tgt->z.fixed = z;
+		tgt->velX = 0;
+		tgt->velZ = 0;
 		break;
 	}
 
 	/* Restore the target's colours, script and update, and remove the hand. */
-	fdActorSetSprColModeStub(target, effectState->savedPal);
-	fdActorStartScriptStub(target, effectState->savedScript);
-	target->update = effectState->savedFunc;
+	fdActorSetSprColModeStub(tgt, effectState->savedPal);
+	fdActorStartScriptStub(tgt, effectState->savedScript);
+	tgt->update = effectState->savedFunc;
 	fdPsynergyStopCasterUpdate();
 	if(moved == 1)
 		fdActorGetById(effectState->casterId)->steeringFlg |=
@@ -244,20 +240,20 @@ void fdPsynergySteerPushedTarget(Sint32 targetId)
    where it started, comes back and is freed. */
 void fdEffectUpdateOutAndBack(FIELD_PARTICLE *effect)
 {
-	VECTOR3 position;
+	VECTOR3 pos;
 	Sint32	state;
 
 next_state:
 	state = effect->state;
 	if(state == OUT_AND_BACK_AIM_OUT) {
-		Uint32 angle;
+		Uint32 ang;
 
-		position.x = effect->originX;
-		position.z = effect->originZ;
-		angle = syRandom();
-		syVectorAddPolarOffset(toFIXED(30), (Uint16)angle, (FIXED *)&position);
-		effect->tgtX = position.x;
-		effect->tgtZ = position.z;
+		pos.x = effect->originX;
+		pos.z = effect->originZ;
+		ang = syRandom();
+		syVectorAddPolarOffset(toFIXED(30), (Uint16)ang, (FIXED *)&pos);
+		effect->tgtX = pos.x;
+		effect->tgtZ = pos.z;
 		effect->acceleration = toFIXED(4);
 		effect->speedMax = toFIXED(4);
 		effect->turnStepLimited = state;
@@ -288,7 +284,7 @@ next_state:
 }
 
 /* When Move is cast with no target, the hand appears beside the caster for 30
-   frames and then bursts into sparkles. */
+   ticks and then bursts into sparkles. */
 void fdPsynergyMove(void)
 {
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
@@ -322,14 +318,14 @@ ACTOR *fdEffectSpawnMoveHand(ACTOR *caster)
 {
 	ACTOR *hand;
 	ACTOR *sparkle;
-	Sint32 angle;
+	Sint32 ang;
 	FIXED  radius;
 	FIXED  speed;
-	Sint32 sparkleIndex;
+	Sint32 sparkleIdx;
 	Uint32 spread;
 	Uint32 jitter;
 
-	angle = FACING_NEAREST_CARDINAL(caster->facing);
+	ang = FACING_NEAREST_CARDINAL(caster->facing);
 	hand = fdActorSpawn(SPRITE_MOVE_HAND, caster->x.fixed,
 		caster->y.fixed + toFIXED(16), caster->z.fixed);
 	if(hand == 0)
@@ -341,15 +337,15 @@ ACTOR *fdEffectSpawnMoveHand(ACTOR *caster)
 	hand->acceleration = toFIXED(2);
 	hand->motionFlg = 0;
 	fdActorSelectAnimationStub(hand, MOVE_HAND_ANIMATION_GRIP);
-	fdActorSetTargetPosFromMagnitudeAng(hand, toFIXED(16), angle);
+	fdActorSetTargetPosFromMagnitudeAng(hand, toFIXED(16), ang);
 
 	/* Sparkles: 8 to 32 pixels within 1/8 turn of the way it faces, at 1 to 2
-	   pixels a frame. */
-	for(sparkleIndex = 0; sparkleIndex < 8; sparkleIndex++) {
+	   pixels a tick. */
+	for(sparkleIdx = 0; sparkleIdx < 8; sparkleIdx++) {
 		sparkle = fdActorSpawn(SPRITE_SPARKLE, caster->x.fixed,
 			caster->y.fixed + toFIXED(16), caster->z.fixed);
 		if(sparkle != 0) {
-			fdActorStartScriptStub(sparkle, FieldEffect_FragmentScript);
+			fdActorStartScriptStub(sparkle, FieldEffectFragmentScript);
 			speed = syRandom() + toFIXED(1);
 			sparkle->acceleration = toFIXED(1);
 			sparkle->speedLimit = speed;
@@ -369,7 +365,7 @@ ACTOR *fdEffectSpawnMoveHand(ACTOR *caster)
 
 /* Sets an actor's scale at once to full size (its first step of 1/16 past
    toFIXED(1) - 1: exactly toFIXED(1) from a multiple of 1/16) when it is
-   smaller, then waits, at most 600 frames, for it to arrive at its target. */
+   smaller, then waits, at most 600 ticks, for it to arrive at its target. */
 void fdEffectGrowHandAndWait(ACTOR *actor)
 {
 	FIXED next;
@@ -389,8 +385,8 @@ void fdEffectGrowHandAndWait(ACTOR *actor)
 	}
 }
 
-/* Ends a hand: over 31 frames it rises 1 pixel, turns 1/8 turn and shrinks by
-   1/32 of full size a frame, then bursts into 8 sparkles and is released. */
+/* Ends a hand: over 31 ticks it rises 1 pixel, turns 1/8 turn and shrinks by
+   1/32 of full size a tick, then bursts into 8 sparkles and is released. */
 void fdEffectBurstHand(ACTOR *hand)
 {
 	ACTOR *sparkle;
@@ -410,7 +406,7 @@ void fdEffectBurstHand(ACTOR *hand)
 		sparkle = fdActorSpawn(
 			SPRITE_SPARKLE, hand->x.fixed, hand->y.fixed, hand->z.fixed);
 		if(sparkle != 0) {
-			fdActorStartScriptStub(sparkle, FieldEffect_FragmentScript);
+			fdActorStartScriptStub(sparkle, FieldEffectFragmentScript);
 			sparkle->speedLimit = syRandom() + toFIXED(1);
 			sparkle->acceleration = toFIXED(1);
 			sparkle->motionFlg = ACTOR_FALLS;

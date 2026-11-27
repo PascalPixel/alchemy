@@ -23,7 +23,7 @@ typedef enum METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_ENCOUNTER_GROUND_A = 240,
 	METATILE_BEHAVIOR_ENCOUNTER_GROUND_B = 241,
 	/* 242 to 247: examine cues with lines of their own, the same on every map
-	   (fdExamineMetatile, Field_ExamineCueMessageOffsets). */
+	   (fdExamineMetatile, FieldExamineCueMessageOffsets). */
 	METATILE_BEHAVIOR_JAR = 242,
 	METATILE_BEHAVIOR_BARREL = 243,
 	METATILE_BEHAVIOR_WOODEN_BOX = 244,
@@ -61,21 +61,21 @@ typedef struct MAP_GRID_METATILE {
 #define MAPGRID_METATILE_TILES_ID_MASK 0x00000fff
 
 /* The map's running blend script, which sets the blend registers over time
-   (fdBlendScriptRun, each frame from fdBlendScriptStart). */
+   (fdBlendScriptRun, each tick from fdBlendScriptStart). */
 typedef struct BLEND_SCRIPT_STATE {
 	Uint16 *script; /* where 0xffff loops back to; null for none */
 	Uint16 *cursor; /* the next command */
-	Uint16	delay;	/* frames left before the next command */
+	Uint16	delay;	/* ticks left before the next command */
 	Uint16	paused; /* nonzero holds the script where it is */
 } BLEND_SCRIPT_STATE;
 
 /* One of the 16 tileset animations, which copy tiles into VRAM by script
    (fdTilesetAnimUpdate): groups of four halfwords, the source tile, the count,
-   the destination tile and the frames to wait. */
+   the destination tile and the ticks to wait. */
 typedef struct TILESET_ANIM {
 	const Uint16 *start;  /* where 0xffff loops back to; null for none */
 	const Uint16 *cursor; /* the next group */
-	Uint16		  tmr;	  /* frames left of the current wait */
+	Uint16		  tmr;	  /* ticks left of the current wait */
 	Uint16		  paused; /* nonzero, set by a scene, holds the animation */
 } TILESET_ANIM;
 
@@ -132,7 +132,7 @@ extern Uint8 BgTileBuffer[];
 /* A whole pixel coordinate's map metatile, in pixels. */
 #define MAPGRID_METATILE_PIXEL_MASK 0xfff0
 /* The low four bits of a shape's first byte: its kind, which height function
-   reads its samples (MapGrid_TerrainHeightFunctions). */
+   reads its samples (MapGridTerrainHeightFunctions). */
 #define MAPGRID_SHAPE_KIND_MASK		0xf
 
 /* HEAP_SLOT_WORLD_MAP_AFFINE under its own name, which no code reads; the world

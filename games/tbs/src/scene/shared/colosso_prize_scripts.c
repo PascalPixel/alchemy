@@ -3,8 +3,8 @@
 
 /* A sparkle beside the raised prize sinks for a second, then is released; a
    copy of the script of the sparkles by a found item
-   (FieldEffect_ParticleScript). */
-Sint32 Colosso_PrizeSparkleScript[] = {
+   (FieldEffectParticleScript). */
+Sint32 ColossoPrizeSparkleScript[] = {
 	SC_ADD(SW_Y, -toFIXED(1) / 4),
 	SC_WAIT(1),
 	SC_LOOP(60, SC_TOP),
@@ -13,7 +13,7 @@ Sint32 Colosso_PrizeSparkleScript[] = {
 
 /* The raised prize swells and shrinks back, twice, with sparkles about it
    (scColossoSparkleAroundPrize). */
-Sint32 Colosso_PrizeScript[] = {
+Sint32 ColossoPrizeScript[] = {
 	SC_SET(SW_HOOK, (Sint32)scColossoSparkleAroundPrize),
 	SC_LABEL(1),
 	SC_WAIT(10),

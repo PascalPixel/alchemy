@@ -1,10 +1,10 @@
-/* The register write queue that VBlank carries out after each finished frame.
+/* The register write queue that VBlank carries out after each finished tick.
    Part of system.c. */
 
 typedef void (*QUEUE_FLUSH_ROUTINE)(IO_WRITE_QUEUE *queue, Uint32 count);
 
 /* The queued register writers: each adds a write of `value` to `address` that
-   the VBlank handler carries out once the frame loop has finished the frame. */
+   the VBlank handler carries out once the tick loop has finished the tick. */
 #define IO_QUEUE_DEFINE_WRITE(name, control) \
 	void name(Uint32 address, Uint32 value) \
 	{ \
@@ -36,20 +36,20 @@ IO_QUEUE_DEFINE_WRITE(syIOWriteQueueClearBits32, IO_WRITE_CLEAR | IO_WRITE_WORD)
 void syIOWriteQueueFlushPending(void)
 {
 	IO_WRITE_QUEUE *queue;
-	Uint32			count;
+	Uint32			cnt;
 
 	queue = &IoWriteQueueWork;
-	count = queue->cnt;
-	if(count != 0) {
-		Uint32 wordCount = (Uint32)syResourceExecuteTransferCodeSize / 4;
-		Uint8  routineBytes[wordCount * 4];
+	cnt = queue->cnt;
+	if(cnt != 0) {
+		Uint32 wordCnt = (Uint32)syResourceExecuteTransferCodeSize / 4;
+		Uint8  routineBytes[wordCnt * 4];
 		QUEUE_FLUSH_ROUTINE routine = (QUEUE_FLUSH_ROUTINE)routineBytes;
 
 		/* The function runs from its copy on the stack, which lasts until it
 		   ends. */
-		syDMAXCopy(syResourceExecuteTransfer, routine,
-			DMA_COPY_WORDS(wordCount), REG_DMA3);
-		routine(queue, count);
+		syDMAXCopy(syResourceExecuteTransfer, routine, DMA_COPY_WORDS(wordCnt),
+			REG_DMA3);
+		routine(queue, cnt);
 		queue->cnt = 0;
 	}
 }

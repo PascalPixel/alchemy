@@ -7,7 +7,7 @@
 /* The Status screen's stops among its stats, each {help entry, column, row, */
 /* highlight column, highlight row, highlight width}: nine for a member with */
 /* Djinn, then seven for one without. */
-const BATTLE_SUMMARY_STAT_CURSOR OwnerStatus_StatCursors[] = {
+const BATTLE_SUMMARY_STAT_CURSOR OwnerStatusStatCursors[] = {
 	{.entry = 0, .column = 2, .row = 0, .highlightColumn = 0, .highlightRow = 0, .highlightWidth = 12},
 	{.entry = 2, .column = 8, .row = 1, .highlightColumn = 0, .highlightRow = 1, .highlightWidth = 13},
 	{.entry = 3, .column = 12, .row = 3, .highlightColumn = 5, .highlightRow = 3, .highlightWidth = 11},
@@ -27,7 +27,7 @@ const BATTLE_SUMMARY_STAT_CURSOR OwnerStatus_StatCursors[] = {
 };
 
 /* The stops on Attack, Defense, Agility and Luck. */
-const BATTLE_SUMMARY_CURSOR OwnerStatus_EquipmentCursors[] = {
+const BATTLE_SUMMARY_CURSOR OwnerStatusEquipmentCursors[] = {
 	{.entry = 10, .column = 19, .row = 1},
 	{.entry = 11, .column = 19, .row = 2},
 	{.entry = 12, .column = 19, .row = 3},
@@ -35,7 +35,7 @@ const BATTLE_SUMMARY_CURSOR OwnerStatus_EquipmentCursors[] = {
 };
 
 /* The stops on the status icons. */
-const BATTLE_SUMMARY_CURSOR OwnerStatus_ConditionCursors[] = {
+const BATTLE_SUMMARY_CURSOR OwnerStatusConditionCursors[] = {
 	{.entry = 14, .column = 13, .row = 0},
 	{.entry = 15, .column = 15, .row = 0},
 	{.entry = 16, .column = 17, .row = 0},
@@ -50,23 +50,23 @@ const BATTLE_SUMMARY_CURSOR OwnerStatus_ConditionCursors[] = {
 /* The Status screen's labels: the German, Spanish, French and Italian editions
    carry every language's level and HP abbreviations. */
 #if LANGUAGE != LANGUAGE_JAPANESE && LANGUAGE != LANGUAGE_ENGLISH
-const Uint8 OwnerStatus_NivString[] = "Niv"; /* level, in French */
-const Uint8 OwnerStatus_NvString[] = "Nv.";	 /* level, in Spanish */
+const Uint8 OwnerStatusNivString[] = "Niv"; /* level, in French */
+const Uint8 OwnerStatusNvString[] = "Nv.";	/* level, in Spanish */
 #endif
 /* level, in the other languages */
-const Uint8 OwnerStatus_LevelString[] = "Lv";
+const Uint8 OwnerStatusLevelString[] = "Lv";
 #if LANGUAGE != LANGUAGE_JAPANESE && LANGUAGE != LANGUAGE_ENGLISH
-const Uint8 OwnerStatus_KpString[] = "KP"; /* HP, in German */
-const Uint8 OwnerStatus_PvString[] = "PV"; /* HP, in French and Spanish */
-const Uint8 OwnerStatus_HpString[] = "PS"; /* HP, in Italian */
+const Uint8 OwnerStatusKpString[] = "KP"; /* HP, in German */
+const Uint8 OwnerStatusPvString[] = "PV"; /* HP, in French and Spanish */
+const Uint8 OwnerStatusHpString[] = "PS"; /* HP, in Italian */
 #else
-const Uint8 OwnerStatus_HpString[] = "HP"; /* HP */
+const Uint8 OwnerStatusHpString[] = "HP"; /* HP */
 #endif
 /* between a value and its maximum */
-const Uint8 OwnerStatus_SlashString[] = "/";
+const Uint8 OwnerStatusSlashString[] = "/";
 #if LANGUAGE != LANGUAGE_JAPANESE
-const Uint8 OwnerStatus_PpString[] = "PP"; /* PP */
+const Uint8 OwnerStatusPpString[] = "PP"; /* PP */
 #else
 /* PP, as the Japanese edition writes it. */
-const Uint8 OwnerStatus_PpString[] = "EP";
+const Uint8 OwnerStatusPpString[] = "EP";
 #endif

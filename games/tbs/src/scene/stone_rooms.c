@@ -34,12 +34,12 @@
 #include "graphics/graphics.h"
 #include "text/msg_ids.h"
 
-extern const SCENE_ENTRANCE StoneRooms_Entrances[];
-extern const Uint32			StoneRooms_Exits[];
-extern const ACTOR_PLACE	StoneRooms_ThiefActorPlacements[];
-extern const ACTOR_PLACE	StoneRooms_PrisonerActorPlacements[];
-extern const CUE			StoneRooms_ThiefCues[];
-extern const CUE			StoneRooms_PrisonerCues[];
+extern const SCENE_ENTRANCE StoneRoomsEntrances[];
+extern const Uint32			StoneRoomsExits[];
+extern const ACTOR_PLACE	StoneRoomsThiefActorPlacements[];
+extern const ACTOR_PLACE	StoneRoomsPrisonerActorPlacements[];
+extern const CUE			StoneRoomsThiefCues[];
+extern const CUE			StoneRoomsPrisonerCues[];
 
 /* The metatile behaviors the jail's cues answer. */
 typedef enum STONE_ROOMS_METATILE_BEHAVIOR {
@@ -56,8 +56,8 @@ typedef enum STONE_ROOMS_METATILE_BEHAVIOR {
 /* The placed actors, numbering the rows of the table scGetActorPlacements
    returns.
 
-   They are the three thieves of StoneRooms_ThiefActorPlacements, or the
-   prisoner of StoneRooms_PrisonerActorPlacements in the same first slot. */
+   They are the three thieves of StoneRoomsThiefActorPlacements, or the
+   prisoner of StoneRoomsPrisonerActorPlacements in the same first slot. */
 typedef enum JAIL_ACTOR_ID {
 	/* The thieves' leader (SPRITE_MAN_WITH_LONG_DARK_HAIR), in the middle of
 	   the metatile. */
@@ -81,7 +81,7 @@ enum { JAIL_REACH_ACROSS_BARS = ACTOR_NEAR_TALK | ACTOR_NEAR_PSYNERGY };
    scene. */
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return StoneRooms_Entrances;
+	return StoneRoomsEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -92,25 +92,25 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 /* Returns the exits to Vault, to Vault's revisit scene and to Lunpa. */
 const Uint32 *scGetExits(void)
 {
-	return StoneRooms_Exits;
+	return StoneRoomsExits;
 }
 
 /* Places the three jailed thieves, or the lone prisoner. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
-		return StoneRooms_PrisonerActorPlacements;
+		return StoneRoomsPrisonerActorPlacements;
 	}
-	return StoneRooms_ThiefActorPlacements;
+	return StoneRoomsThiefActorPlacements;
 }
 
 /* Returns the thieves' cues, or the prisoner's. */
 const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
-		return StoneRooms_PrisonerCues;
+		return StoneRoomsPrisonerCues;
 	}
-	return StoneRooms_ThiefCues;
+	return StoneRoomsThiefCues;
 }
 
 /* In Vault's jail, the thieves' leader silences his men and vows revenge. */
@@ -239,7 +239,7 @@ Sint32 scInit(void)
 }
 
 /* clang-format off */
-const SCENE_ENTRANCE StoneRooms_Entrances[] = {
+const SCENE_ENTRANCE StoneRoomsEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ STONE_ROOMS_FROM_VAULT, CONDITION_ALWAYS, 80, 0, 232, FACING_NORTH, 0, 16, 48, 304, 256, 0 },
 	{ STONE_ROOMS_FROM_LUNPA, CONDITION_ALWAYS, 544, 0, 280, FACING_NORTH, 0, 440, 48, 680, 312, 0 },
@@ -247,7 +247,7 @@ const SCENE_ENTRANCE StoneRooms_Entrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-const Uint32 StoneRooms_Exits[] = {
+const Uint32 StoneRoomsExits[] = {
 	SCENE_EXITS(StoneRooms),
 	SCENE_EXIT(STONE_ROOMS_TO_VAULT, Vault, VAULT_FROM_STONE_ROOMS),
 	SCENE_EXIT(STONE_ROOMS_TO_VAULT_REVISIT, VaultRevisit, VAULT_REVISIT_FROM_STONE_ROOMS),
@@ -255,7 +255,7 @@ const Uint32 StoneRooms_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-const ACTOR_PLACE StoneRooms_ThiefActorPlacements[] = {
+const ACTOR_PLACE StoneRoomsThiefActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_MAN_WITH_LONG_DARK_HAIR, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), MOVEMENT_TYPE_STAND,
 	  168, 0, 144, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_PERSON_IN_PURPLE, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), MOVEMENT_TYPE_STAND,
@@ -265,13 +265,13 @@ const ACTOR_PLACE StoneRooms_ThiefActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-const ACTOR_PLACE StoneRooms_PrisonerActorPlacements[] = {
+const ACTOR_PLACE StoneRoomsPrisonerActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 	  168, 0, 144, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	{ SCENE_TABLE_END },
 };
 
-const CUE StoneRooms_ThiefCues[] = {
+const CUE StoneRoomsThiefCues[] = {
 	{ CUE_STEP, METATILE_BEHAVIOR_VAULT_JAIL_DOOR, CONDITION_ALWAYS, SCRIPT_REF(scStoneRoomsLeaveForVault) },
 	{ CUE_EXIT, METATILE_BEHAVIOR_LUNPA_HIDDEN_ROOM_DOOR, CONDITION_ALWAYS, STONE_ROOMS_TO_LUNPA },
 	{ CUE_TALK, ACTOR_THIEF_LEADER, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
@@ -301,7 +301,7 @@ const CUE StoneRooms_ThiefCues[] = {
 };
 /* clang-format on */
 
-const CUE StoneRooms_PrisonerCues[] = {
+const CUE StoneRoomsPrisonerCues[] = {
 	{CUE_EXIT, METATILE_BEHAVIOR_VAULT_JAIL_DOOR, CONDITION_ALWAYS,
 		STONE_ROOMS_TO_VAULT_REVISIT},
 	{CUE_TALK, ACTOR_PRISONER, CONDITION_ALWAYS, MsgVaultPrisonerRegretsFight},

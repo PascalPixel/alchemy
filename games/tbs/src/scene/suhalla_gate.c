@@ -500,7 +500,7 @@ static void scSuhallaGateTalkToEastGuard(void)
 	fdScriptEnd();
 }
 
-/* The vanishing soldier's blinks: slow ones, four frames shown and four hidden,
+/* The vanishing soldier's blinks: slow ones, four ticks shown and four hidden,
    then fast ones, two and two. */
 enum { SOLDIER_SLOW_BLINKS = 6, SOLDIER_FAST_BLINKS = 12 };
 

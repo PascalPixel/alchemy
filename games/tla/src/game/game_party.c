@@ -16,24 +16,24 @@ Bool gmBattleUnitSet(Sint32 unitId, Sint32 enemyId, Sint32 suffix)
 	const ENEMY_DEFINITION *enemy;
 	Uint16					name[UNIT_NAME_SIZE];
 	Sint32					i;
-	Uint32					index;
+	Uint32					idx;
 	Sint32					copy;
-	Sint32					count;
+	Sint32					cnt;
 
-	index = enemyId - ENEMY_ID_FIRST;
+	idx = enemyId - ENEMY_ID_FIRST;
 	if(unitId < FIRST_ENEMY_UNIT)
 		return FALSE;
 	/* BUG: one too many: unit FIRST_ENEMY_UNIT + 6 passes, but syUnitGet has no
 	   seventh enemy unit and gives NULL. No caller passes it. */
 	if(unitId > FIRST_ENEMY_UNIT + 6)
 		return FALSE;
-	if(index > ENEMY_ID_MAX - ENEMY_ID_FIRST)
+	if(idx > ENEMY_ID_MAX - ENEMY_ID_FIRST)
 		return FALSE;
 	unit = syUnitGet(unitId);
 	syWordsClear(unit, BATTLE_UNIT_SIZE);
-	if(index >= ENEMY_COUNT)
-		index = 0;
-	enemy = &Enemy_Definitions[index];
+	if(idx >= ENEMY_COUNT)
+		idx = 0;
+	enemy = &EnemyDefinitions[idx];
 	unit->level = enemy->level;
 	unit->baseHp = enemy->hp;
 	unit->hp = enemy->hp;
@@ -50,7 +50,7 @@ Bool gmBattleUnitSet(Sint32 unitId, Sint32 enemyId, Sint32 suffix)
 	unit->baseActionCnt = enemy->actionCnt;
 	unit->baseHpRegen = enemy->hpRegen;
 	unit->basePpRegen = enemy->ppRegen;
-	mnMessageDecodeRawStub(index + (Sint32)MsgEnemyName, name, UNIT_NAME_SIZE);
+	mnMessageDecodeRawStub(idx + (Sint32)MsgEnemyName, name, UNIT_NAME_SIZE);
 	for(i = 0; i < UNIT_NAME_SIZE - 1 && name[i] != 0; i++)
 		unit->name[i] = name[i];
 	if(suffix <= NAME_SUFFIX_COUNT - 1) {
@@ -59,12 +59,12 @@ Bool gmBattleUnitSet(Sint32 unitId, Sint32 enemyId, Sint32 suffix)
 	}
 	unit->name[i] = 0;
 	unit->name[UNIT_NAME_SIZE - 1] = 0;
-	count = 0;
+	cnt = 0;
 	for(i = 0; i < (Sint32)ARRAY_COUNT(enemy->items); i++) {
 		if(enemy->items[i] != 0) {
 			for(copy = 0; copy < enemy->cnts[i]; copy++) {
-				if(count < INVENTORY_SLOTS)
-					unit->inventory[count++] = enemy->items[i];
+				if(cnt < INVENTORY_SLOTS)
+					unit->inventory[cnt++] = enemy->items[i];
 			}
 		}
 	}
@@ -89,14 +89,14 @@ Bool gmBattleUnitSet(Sint32 unitId, Sint32 enemyId, Sint32 suffix)
 Sint32 gmPartyCountMembers(void)
 {
 	Sint32 unitId;
-	Sint32 count;
+	Sint32 cnt;
 
-	count = 0;
+	cnt = 0;
 	for(unitId = 0; unitId <= PIERS; unitId++) {
 		if(syGameFlagGet(FLAG_IN_PARTY(unitId)) != 0)
-			count++;
+			cnt++;
 	}
-	return count;
+	return cnt;
 }
 
 /* Adds a character to the end of the party unless it is there already, and
@@ -104,14 +104,14 @@ Sint32 gmPartyCountMembers(void)
 Sint32 gmPartyAddMember(Sint32 unitId)
 {
 	Sint32 partySize = gmPartyCountMembers();
-	Sint32 partyIndex;
+	Sint32 partyIdx;
 
 	syGameFlagSet(FLAG_IN_PARTY(unitId));
-	for(partyIndex = 0; partyIndex < partySize; partyIndex++) {
-		if(MainRoutineStateWork.party[partyIndex] == unitId)
+	for(partyIdx = 0; partyIdx < partySize; partyIdx++) {
+		if(MainRoutineStateWork.party[partyIdx] == unitId)
 			return partySize;
 	}
-	MainRoutineStateWork.party[partyIndex] = unitId;
+	MainRoutineStateWork.party[partyIdx] = unitId;
 	return partySize + 1;
 }
 
@@ -120,17 +120,17 @@ Sint32 gmPartyAddMember(Sint32 unitId)
 Sint32 gmPartyRemoveMember(Sint32 unitId)
 {
 	Sint32 partySize = gmPartyCountMembers();
-	Sint32 removedIndex;
-	Sint32 partyIndex;
+	Sint32 removedIdx;
+	Sint32 partyIdx;
 
 	syGameFlagClear(FLAG_IN_PARTY(unitId));
-	for(removedIndex = 0; removedIndex < partySize; removedIndex++) {
-		if(MainRoutineStateWork.party[removedIndex] == unitId)
+	for(removedIdx = 0; removedIdx < partySize; removedIdx++) {
+		if(MainRoutineStateWork.party[removedIdx] == unitId)
 			break;
 	}
-	for(partyIndex = removedIndex; partyIndex < partySize - 1; partyIndex++)
-		MainRoutineStateWork.party[partyIndex] =
-			MainRoutineStateWork.party[partyIndex + 1];
+	for(partyIdx = removedIdx; partyIdx < partySize - 1; partyIdx++)
+		MainRoutineStateWork.party[partyIdx] =
+			MainRoutineStateWork.party[partyIdx + 1];
 	return gmPartyCountMembers();
 }
 
@@ -138,18 +138,18 @@ Sint32 gmPartyRemoveMember(Sint32 unitId)
    returns how many there are. */
 Sint32 gmPartyListMembers(Sint16 *unitIds)
 {
-	Sint32 count = 0;
+	Sint32 cnt = 0;
 
 	if(unitIds != NULL) {
-		Sint32 index;
+		Sint32 idx;
 
-		count = gmPartyCountMembers();
-		for(index = 0; index != count; index++) {
-			*unitIds++ = MainRoutineStateWork.party[index];
+		cnt = gmPartyCountMembers();
+		for(idx = 0; idx != cnt; idx++) {
+			*unitIds++ = MainRoutineStateWork.party[idx];
 		}
 		*unitIds = BATTLE_UNIT_LIST_END;
 	}
-	return count;
+	return cnt;
 }
 
 /* Adds `amount` to the party's coins, kept between 0 and COIN_MAX, and returns
@@ -197,9 +197,9 @@ PARTY_DEFINE_ADJUST(gmPartyAdjustShopGifts, shopGifts, SHOP_GIFTS_MAX)
    SUMMON_END, and returns how many. */
 Sint32 gmSummonListLearned(Uint8 *output)
 {
-	const Uint8 *summon = Summon_OrderList;
-	const Uint8 *last = &Summon_OrderList[SUMMON_COUNT - 1];
-	Sint32		 count = 0;
+	const Uint8 *summon = SummonOrderList;
+	const Uint8 *last = &SummonOrderList[SUMMON_COUNT - 1];
+	Sint32		 cnt = 0;
 
 	do {
 		Uint8 summonId = *summon++;
@@ -207,11 +207,11 @@ Sint32 gmSummonListLearned(Uint8 *output)
 		if(gmDjinnGetRecoveryTable(DJINN_RECOVERY_PARTY)->summonMask &
 			(1 << summonId)) {
 			*output++ = summonId;
-			count++;
+			cnt++;
 		}
 	} while(summon <= last);
 	*output = SUMMON_END;
-	return count;
+	return cnt;
 }
 
 /* Returns summon `summonId`'s definition, or NULL past the last. */
@@ -219,7 +219,7 @@ const SUMMON_DEFINITION *gmSummonDefinitionGetNear(Uint32 summonId)
 {
 	if(summonId > SUMMON_COUNT - 1)
 		return NULL;
-	return &Summon_DefinitionTable[summonId];
+	return &SummonDefinitionTable[summonId];
 }
 
 /* Lets the party call summon `summonId` from now on, setting its bit in the

@@ -49,20 +49,20 @@
 #include "scene/walk_into_leader.h"
 #include "text/msg_ids.h"
 
-extern SCENE_ENTRANCE	 BabiLighthouse_EntryEntrances[];
-extern SCENE_ENTRANCE	 BabiLighthouse_LuffEntrances[];
-extern SCENE_ENTRANCE	 BabiLighthouse_StoneDoorEntrances[];
-extern SCENE_ENTRANCE	 BabiLighthouse_RoadEntrances[];
-extern SCENE_EXIT_REGION BabiLighthouse_EntryRegions[];
-extern Uint32			 BabiLighthouse_Exits[];
-extern ACTOR_PLACE		 BabiLighthouse_EntryActorPlacements[];
-extern ACTOR_PLACE		 BabiLighthouse_LuffActorPlacements[];
-extern ACTOR_PLACE		 BabiLighthouse_StoneDoorActorPlacements[];
-extern ACTOR_PLACE		 BabiLighthouse_RoadActorPlacements[];
-extern CUE				 BabiLighthouse_EntryCues[];
-extern CUE				 BabiLighthouse_LuffCues[];
-extern CUE				 BabiLighthouse_StoneDoorCues[];
-extern CUE				 BabiLighthouse_RoadCues[];
+extern SCENE_ENTRANCE	 BabiLighthouseEntryEntrances[];
+extern SCENE_ENTRANCE	 BabiLighthouseLuffEntrances[];
+extern SCENE_ENTRANCE	 BabiLighthouseStoneDoorEntrances[];
+extern SCENE_ENTRANCE	 BabiLighthouseRoadEntrances[];
+extern SCENE_EXIT_REGION BabiLighthouseEntryRegions[];
+extern Uint32			 BabiLighthouseExits[];
+extern ACTOR_PLACE		 BabiLighthouseEntryActorPlacements[];
+extern ACTOR_PLACE		 BabiLighthouseLuffActorPlacements[];
+extern ACTOR_PLACE		 BabiLighthouseStoneDoorActorPlacements[];
+extern ACTOR_PLACE		 BabiLighthouseRoadActorPlacements[];
+extern CUE				 BabiLighthouseEntryCues[];
+extern CUE				 BabiLighthouseLuffCues[];
+extern CUE				 BabiLighthouseStoneDoorCues[];
+extern CUE				 BabiLighthouseRoadCues[];
 
 /* The cave before the stone door (BabiLighthouseStoneDoor): the door's two
    halves, Iodem, the strongman who saw the kidnappers go through, a grey-haired
@@ -131,7 +131,7 @@ enum { SPIRAL_PILLAR_ANIMATION_ROAD = 2 };
 
 /* The metatiles that start a script, by place. An exit's metatile carries its
    exit's number, except inside the lighthouse, where the first exits' metatiles
-   are numbered otherwise (BabiLighthouse_LuffCues). */
+   are numbered otherwise (BabiLighthouseLuffCues). */
 typedef enum BABI_LIGHTHOUSE_METATILE_BEHAVIOR {
 	/* The Entry: the metatiles round each grey pillar, from which Isaac pushes
 	   it. */
@@ -217,7 +217,7 @@ static void scBabiLighthouseLandWithParticles(void)
 	Uint32		   particle;
 	ACTOR		  *leader;
 	EFFECT_OPTIONS options;
-	Sint32		   velocity[3];
+	Sint32		   vel[3];
 
 	fdScriptStart();
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -228,7 +228,7 @@ static void scBabiLighthouseLandWithParticles(void)
 	fdActorGet(ACTOR_PARTY_LEADER)->bounce = 0;
 	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(30);
 	sySndPlay(SE_DUST_PUFF);
 	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg =
@@ -240,11 +240,11 @@ static void scBabiLighthouseLandWithParticles(void)
 	options.startScaleX = toFIXED(4) / 5;
 	options.startScaleY = toFIXED(4) / 5;
 	for(particle = 0; particle <= TRIG_TURN / FACING_STEP; particle++) {
-		SET_VECTOR(velocity, syCos(particle * FACING_STEP), 0,
+		SET_VECTOR(vel, syCos(particle * FACING_STEP), 0,
 			sySin(particle * FACING_STEP));
-		velocity[0] += velocity[0] / 2;
-		fdEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-			velocity[0], velocity[1], velocity[2],
+		vel[0] += vel[0] / 2;
+		fdEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, vel[0],
+			vel[1], vel[2],
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
 				EFFECT_SCRIPT_MEDIUM,
 			&options);
@@ -278,7 +278,7 @@ static void scBabiLighthouseFallToExit(Sint32 exit)
 	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
 	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(10);
 	sySndPlay(SE_DUST_PUFF);
 	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg =
@@ -295,15 +295,15 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_BABI_LIGHTHOUSE_ENTRY) {
-		return BabiLighthouse_EntryEntrances;
+		return BabiLighthouseEntryEntrances;
 	}
 	if(sceneId == SCENE_BABI_LIGHTHOUSE_LUFF) {
-		return BabiLighthouse_LuffEntrances;
+		return BabiLighthouseLuffEntrances;
 	}
 	if(sceneId == SCENE_BABI_LIGHTHOUSE_STONE_DOOR) {
-		return BabiLighthouse_StoneDoorEntrances;
+		return BabiLighthouseStoneDoorEntrances;
 	}
-	return BabiLighthouse_RoadEntrances;
+	return BabiLighthouseRoadEntrances;
 }
 
 /* Only the Entry has regions: the three holes with ladders down to the Tunnel
@@ -312,7 +312,7 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 const SCENE_EXIT_REGION *scGetExitRegions(void)
 {
 	if(MainRoutineStateWork.next == SCENE_BABI_LIGHTHOUSE_ENTRY) {
-		return BabiLighthouse_EntryRegions;
+		return BabiLighthouseEntryRegions;
 	}
 	return 0;
 }
@@ -320,7 +320,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 /* The four scenes share one exit table. */
 const Uint32 *scGetExits(void)
 {
-	return BabiLighthouse_Exits;
+	return BabiLighthouseExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
@@ -328,15 +328,15 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_BABI_LIGHTHOUSE_ENTRY) {
-		return BabiLighthouse_EntryActorPlacements;
+		return BabiLighthouseEntryActorPlacements;
 	}
 	if(sceneId == SCENE_BABI_LIGHTHOUSE_LUFF) {
-		return BabiLighthouse_LuffActorPlacements;
+		return BabiLighthouseLuffActorPlacements;
 	}
 	if(sceneId == SCENE_BABI_LIGHTHOUSE_STONE_DOOR) {
-		return BabiLighthouse_StoneDoorActorPlacements;
+		return BabiLighthouseStoneDoorActorPlacements;
 	}
-	return BabiLighthouse_RoadActorPlacements;
+	return BabiLighthouseRoadActorPlacements;
 }
 
 /* The holes with ladders down to the Tunnel Ruins at the Babi Lighthouse Entry,
@@ -436,7 +436,7 @@ static void scBabiLighthouseJumpIntoPit(void)
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	syFieldActorJumpDownLedge(ACTOR_PARTY_LEADER, 6, 0);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 }
 
 /* Walking south onto the east slide of the second floor's pit, metatile (11,
@@ -1207,7 +1207,7 @@ static void scBabiLighthouseInspectTruthDoorSwitch(void)
 static inline void scBabiLighthouseFindMetatileAhead(
 	FIELD_POS *ahead, ACTOR *actor)
 {
-	Sint32 step = PushedActor_DirectionSteps[FACING_INDEX(actor->facing)];
+	Sint32 step = PushedActorDirectionSteps[FACING_INDEX(actor->facing)];
 
 	ahead->x = actor->x.fixed + DIRECTION_STEP_X_FIXED(step);
 	ahead->z = actor->z.fixed + DIRECTION_STEP_Z_FIXED(step);
@@ -1251,10 +1251,10 @@ static void scBabiLighthouseUpdateMovedPillar(void)
 			pillar->groundHeight = toFIXED(48);
 			pillar->priFlg = ACTOR_PRIORITY_UNDERFOOT;
 			{
-				Sint32 targetColumn = column, targetRow = row;
+				Sint32 tgtColumn = column, tgtRow = row;
 
 				fdMapGridCopyMetatileAttributes(
-					38, 12, 1, 1, targetColumn, targetRow);
+					38, 12, 1, 1, tgtColumn, tgtRow);
 			}
 		}
 	}
@@ -1313,15 +1313,15 @@ const CUE *scGetCues(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_BABI_LIGHTHOUSE_ENTRY) {
-		return BabiLighthouse_EntryCues;
+		return BabiLighthouseEntryCues;
 	}
 	if(sceneId == SCENE_BABI_LIGHTHOUSE_LUFF) {
-		return BabiLighthouse_LuffCues;
+		return BabiLighthouseLuffCues;
 	}
 	if(sceneId == SCENE_BABI_LIGHTHOUSE_STONE_DOOR) {
-		return BabiLighthouse_StoneDoorCues;
+		return BabiLighthouseStoneDoorCues;
 	}
-	return BabiLighthouse_RoadCues;
+	return BabiLighthouseRoadCues;
 }
 
 /* Growth on the sprout in the north-east corner of the Babi Lighthouse Entry,
@@ -1364,29 +1364,29 @@ static void scBabiLighthouseRedrawPillarMetatiles(void)
    otherwise, so that he passes behind a pillar south of him. */
 static void scBabiLighthouseMatchLeaderPriority(ACTOR *updated)
 {
-	SPR	  *sprite;
+	SPR	  *spr;
 	ACTOR *actor;
-	Sint32 priority;
+	Sint32 pri;
 
-	sprite = fdActorGet(ACTOR_PARTY_LEADER)->spr;
+	spr = fdActorGet(ACTOR_PARTY_LEADER)->spr;
 	if(fdActorGet(ACTOR_LEFT_PILLAR)->z.fixed <
 		fdActorGet(ACTOR_PARTY_LEADER)->z.fixed) {
-		fdActorSetSprPriority(ACTOR_LEFT_PILLAR, sprite->image.pri);
+		fdActorSetSprPriority(ACTOR_LEFT_PILLAR, spr->image.pri);
 	} else {
-		priority = sprite->image.pri;
-		if(priority != 1)
-			priority--;
-		fdActorSetSprPriority(ACTOR_LEFT_PILLAR, priority);
+		pri = spr->image.pri;
+		if(pri != 1)
+			pri--;
+		fdActorSetSprPriority(ACTOR_LEFT_PILLAR, pri);
 		fdActorGet(ACTOR_LEFT_PILLAR)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
 	}
 	if(fdActorGet(ACTOR_RIGHT_PILLAR)->z.fixed <
 		fdActorGet(ACTOR_PARTY_LEADER)->z.fixed) {
-		fdActorSetSprPriority(ACTOR_RIGHT_PILLAR, sprite->image.pri);
+		fdActorSetSprPriority(ACTOR_RIGHT_PILLAR, spr->image.pri);
 	} else {
-		priority = sprite->image.pri;
-		if(priority != 1)
-			priority--;
-		fdActorSetSprPriority(ACTOR_RIGHT_PILLAR, priority);
+		pri = spr->image.pri;
+		if(pri != 1)
+			pri--;
+		fdActorSetSprPriority(ACTOR_RIGHT_PILLAR, pri);
 		fdActorGet(ACTOR_RIGHT_PILLAR)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
 	}
 }
@@ -1580,15 +1580,15 @@ Sint32 scInit(void)
 
 #include "shared/field_effect_duration_scripts.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 /* The four the kidnappers knocked down tremble where they lie: two quick
    twitches, narrower and taller and back, then two seconds still. */
-Sint32 BabiLighthouse_TrembleScript[] = {
+Sint32 BabiLighthouseTrembleScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1)),
 	SC_SET(SW_SCALE_Y, toFIXED(1)),
 	SC_LABEL(1),
@@ -1620,7 +1620,7 @@ Sint32 BabiLighthouse_TrembleScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-SCENE_ENTRANCE BabiLighthouse_EntryEntrances[] = {
+SCENE_ENTRANCE BabiLighthouseEntryEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 136, 0, 376, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE, CONDITION_ALWAYS, 200,
@@ -1638,7 +1638,7 @@ SCENE_ENTRANCE BabiLighthouse_EntryEntrances[] = {
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE BabiLighthouse_LuffEntrances[] = {
+SCENE_ENTRANCE BabiLighthouseLuffEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 136, 0, 376, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_WEST_STEPS,
@@ -1678,7 +1678,7 @@ SCENE_ENTRANCE BabiLighthouse_LuffEntrances[] = {
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE BabiLighthouse_StoneDoorEntrances[] = {
+SCENE_ENTRANCE BabiLighthouseStoneDoorEntrances[] = {
 	{BABI_LIGHTHOUSE_STONE_DOOR_FROM_TUNNEL_RUINS_GREAT_STATUE,
 		CONDITION_ALWAYS, 248, 0, 120, FACING_SOUTH, 0, 96, 48, 384, 432, 0},
 	{BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_WEST,
@@ -1688,7 +1688,7 @@ SCENE_ENTRANCE BabiLighthouse_StoneDoorEntrances[] = {
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE BabiLighthouse_RoadEntrances[] = {
+SCENE_ENTRANCE BabiLighthouseRoadEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 328, 0, 240, FACING_NORTH, 0, 0, 0,
 		464, 400, 0},
 	{ROAD_TO_BABI_LIGHTHOUSE_FROM_WORLD_MAP, CONDITION_ALWAYS, 112, 0, 360,
@@ -1698,7 +1698,7 @@ SCENE_ENTRANCE BabiLighthouse_RoadEntrances[] = {
 	{SCENE_TABLE_END},
 };
 
-SCENE_EXIT_REGION BabiLighthouse_EntryRegions[] = {
+SCENE_EXIT_REGION BabiLighthouseEntryRegions[] = {
 	{96, -20, 320, 112, -4, 336, CONDITION_ALWAYS,
 		BABI_LIGHTHOUSE_ENTRY_TO_TUNNEL_RUINS_LADY_STATUES_WEST},
 	{288, -20, 320, 304, -4, 336, CONDITION_ALWAYS,
@@ -1708,7 +1708,7 @@ SCENE_EXIT_REGION BabiLighthouse_EntryRegions[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 BabiLighthouse_Exits[] = {
+Uint32 BabiLighthouseExits[] = {
 	SCENE_EXITS(BabiLighthouseEntry),
 	SCENE_EXIT(BABI_LIGHTHOUSE_ENTRY_TO_ROAD_TO_BABI_LIGHTHOUSE,
 		RoadToBabiLighthouse,
@@ -1799,11 +1799,11 @@ Uint32 BabiLighthouse_Exits[] = {
 };
 
 /* Unused: an empty actor placement table nothing returns. */
-ACTOR_PLACE BabiLighthouse_NoActorPlacements[] = {
+ACTOR_PLACE BabiLighthouseNoActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE BabiLighthouse_EntryActorPlacements[] = {
+ACTOR_PLACE BabiLighthouseEntryActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_CAPPED_PILLAR, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_RESET_ACTION, 88, 0, 328, FACING_SOUTH, TALK_FACING_KEEP,
 		0),
@@ -1813,21 +1813,21 @@ ACTOR_PLACE BabiLighthouse_EntryActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296,
 		0, 130, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS,
-		(Sint32)BabiLighthouse_TrembleScript, 176, 0, 360, FACING_SOUTH,
+		(Sint32)BabiLighthouseTrembleScript, 176, 0, 360, FACING_SOUTH,
 		TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS,
-		(Sint32)BabiLighthouse_TrembleScript, 240, 0, 240, FACING_SOUTH,
+		(Sint32)BabiLighthouseTrembleScript, 240, 0, 240, FACING_SOUTH,
 		TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS,
-		(Sint32)BabiLighthouse_TrembleScript, 216, 0, 280, FACING_SOUTH,
+		(Sint32)BabiLighthouseTrembleScript, 216, 0, 280, FACING_SOUTH,
 		TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS,
-		(Sint32)BabiLighthouse_TrembleScript, 184, 0, 248, FACING_SOUTH,
+		(Sint32)BabiLighthouseTrembleScript, 184, 0, 248, FACING_SOUTH,
 		TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE BabiLighthouse_LuffActorPlacements[] = {
+ACTOR_PLACE BabiLighthouseLuffActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_LUFF),
 		MOVEMENT_TYPE_STAND, 472, 0, 184, FACING_SOUTHEAST, TALK_FACING_PARTY,
 		0),
@@ -1835,7 +1835,7 @@ ACTOR_PLACE BabiLighthouse_LuffActorPlacements[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE BabiLighthouse_StoneDoorActorPlacements[] = {
+ACTOR_PLACE BabiLighthouseStoneDoorActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -64, 0, -64, FACING_EAST,
 		TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -64, 0, -64, FACING_EAST, TALK_FACING_PARTY,
@@ -1857,7 +1857,7 @@ ACTOR_PLACE BabiLighthouse_StoneDoorActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE BabiLighthouse_RoadActorPlacements[] = {
+ACTOR_PLACE BabiLighthouseRoadActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 128, 0, 264, FACING_WEST,
 		TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 96, 0, 184, FACING_EAST, TALK_FACING_PARTY,
@@ -1871,7 +1871,7 @@ ACTOR_PLACE BabiLighthouse_RoadActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-CUE BabiLighthouse_EntryCues[] = {
+CUE BabiLighthouseEntryCues[] = {
 	{CUE_EXIT, BABI_LIGHTHOUSE_ENTRY_TO_ROAD_TO_BABI_LIGHTHOUSE, CONDITION_ALWAYS, BABI_LIGHTHOUSE_ENTRY_TO_ROAD_TO_BABI_LIGHTHOUSE},
 	{CUE_EXIT, BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_EAST, CONDITION_ALWAYS, BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_EAST},
 	{CUE_EXIT, BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_WEST, CONDITION_ALWAYS, BABI_LIGHTHOUSE_ENTRY_TO_BABI_LIGHTHOUSE_LUFF_WEST},
@@ -1896,7 +1896,7 @@ CUE BabiLighthouse_EntryCues[] = {
 };
 
 /* Inside, the first seven exits' metatiles carry numbers of their own. */
-CUE BabiLighthouse_LuffCues[] = {
+CUE BabiLighthouseLuffCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_STEPS},
 	{CUE_EXIT, 6, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_ENTRY_EAST},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_WEST_ROOM_STEPS},
@@ -1917,7 +1917,7 @@ CUE BabiLighthouse_LuffCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE BabiLighthouse_StoneDoorCues[] = {
+CUE BabiLighthouseStoneDoorCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE, CONDITION_ALWAYS, BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE},
 	{CUE_EXIT, BABI_LIGHTHOUSE_STONE_DOOR_TO_BABI_LIGHTHOUSE_LUFF_WEST, CONDITION_ALWAYS, BABI_LIGHTHOUSE_STONE_DOOR_TO_BABI_LIGHTHOUSE_LUFF_WEST},
 	{CUE_STEP, METATILE_BEHAVIOR_BABI_LIGHTHOUSE_CAVE_MOUTH, FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW, SCRIPT_REF(scBabiLighthouseFaranAsksPartyToOpenDoor)},
@@ -1960,7 +1960,7 @@ CUE BabiLighthouse_StoneDoorCues[] = {
 };
 /* clang-format on */
 
-CUE BabiLighthouse_RoadCues[] = {
+CUE BabiLighthouseRoadCues[] = {
 	{CUE_STEP | STEP_CUE_FLAG_WALKING,
 		METATILE_BEHAVIOR_BABI_LIGHTHOUSE_PILLAR_LEDGE, CONDITION_ALWAYS,
 		SCRIPT_REF(scBabiLighthousePushRoadPillar)},

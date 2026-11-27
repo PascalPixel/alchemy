@@ -33,7 +33,7 @@ typedef struct DJINN_MENU_BACKDROP {
 	DJINN_LIST_TABLE list;
 	Uint8			 tiles[8192]; /* BG character block 1's first 8 KB */
 	Uint16			 pal[64];	  /* BG palettes 4 to 7 */
-	Sint32			 tutorialTmr; /* frames into the tutorial's current step */
+	Sint32			 tutorialTmr; /* ticks into the tutorial's current step */
 	/* The Djinn tutorial's step (DJINN_TUTORIAL_ in menu_internal.h), chosen to
 	   start by FLAG_DJINN_LESSON_PART_A and FLAG_DJINN_LESSON_PART_B. */
 	long tutorialStep;

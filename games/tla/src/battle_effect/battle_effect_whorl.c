@@ -1,9 +1,9 @@
 /* The twisting column of Whorl, Gale, Lethe Albion, Poison Flow and Raging
    Flood, and the Djinn Core and Cannon. Part of battle_effect.c. */
 
-/* The frames Whorl and Gale last, and the others. */
-#define TWISTING_COLUMN_DJINN_FRAMES 38
-#define TWISTING_COLUMN_FRAMES		 52
+/* The ticks Whorl and Gale last, and the others. */
+#define TWISTING_COLUMN_DJINN_TICKS 38
+#define TWISTING_COLUMN_TICKS		52
 
 /* The column's rows of corners, two (x, y, z, pad) each, as the strip's quads
    join them: TWISTING_COLUMN_QUADS quads, one row more. They are built at the
@@ -34,16 +34,16 @@
 /* The motes that trail the funnel of Whorl and Gale. */
 #define TWISTING_COLUMN_MOTES 16
 
-/* The angle a frame the Jupiter Djinni's bob turns by as it rides the funnel,
-   about 18 degrees: a bob every 20 frames. */
+/* The angle a tick the Jupiter Djinni's bob turns by as it rides the funnel,
+   about 18 degrees: a bob every 20 ticks. */
 #define TWISTING_COLUMN_BOB_STEP 3304
 
 /* How far the Jupiter Djinni sways to either side as it rides the funnel, a
-   sway every 32 frames. */
+   sway every 32 ticks. */
 #define TWISTING_COLUMN_DJINNI_SWAY 16
 
-/* Whorl draws its target toward the Djinni, 1/128 of the way a frame at first,
-   then 1/16 a frame as it shrinks toward a quarter of its size. */
+/* Whorl draws its target toward the Djinni, 1/128 of the way a tick at first,
+   then 1/16 a tick as it shrinks toward a quarter of its size. */
 #define TWISTING_COLUMN_DRIFT_STEPS 128
 #define TWISTING_COLUMN_LIFT_STEPS	16
 
@@ -69,18 +69,18 @@
    TWISTING_COLUMN_WAVE_RISE pixels and settle again over the cast, half a turn
    of a sine. */
 #define TWISTING_COLUMN_WAVE_RISE	   64
-#define TWISTING_COLUMN_WAVE_RISE_STEP (TRIG_TURN / 2 / TWISTING_COLUMN_FRAMES)
+#define TWISTING_COLUMN_WAVE_RISE_STEP (TRIG_TURN / 2 / TWISTING_COLUMN_TICKS)
 
 /* How far Whorl's and Gale's funnel turns about its length from the upright,
    about 17 degrees: it slants down from the top right onto the target. */
 #define TWISTING_COLUMN_LEAN 3096
 
-/* The column's brightest shades (RENDER_MODEL.shade), and the frames it starts
+/* The column's brightest shades (RENDER_MODEL.shade), and the ticks it starts
    to fade out. */
-#define TWISTING_COLUMN_BAND_SHADE		  (-20)
-#define TWISTING_COLUMN_FLOOD_SHADE		  (-8)
-#define TWISTING_COLUMN_FADE_FRAME		  46
-#define TWISTING_COLUMN_FUNNEL_FADE_FRAME 30
+#define TWISTING_COLUMN_BAND_SHADE		 (-20)
+#define TWISTING_COLUMN_FLOOD_SHADE		 (-8)
+#define TWISTING_COLUMN_FADE_TICK		 46
+#define TWISTING_COLUMN_FUNNEL_FADE_TICK 30
 
 /* The twisting column shared by the Djinn Whorl and Gale, Lethe Albion, Poison
    Flow and Raging Flood, a textured strip turned about its length. For the
@@ -95,14 +95,14 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	BATTLE_EFFECT_STATE *state;
 	Uint8				*canvas;
 	/* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
-	 * frame reserves and never touches; as one DRAW_RECTANGLE. */
+	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE blit[2];
-	Sint32		   frame;
+	Sint32		   frm;
 	BATTLE_CAMERA *camera;
-	Uint8		  *sprites;
-	Sint32		   frames;
+	Uint8		  *sprs;
+	Sint32		   ticks;
 	UNIT		  *unit;
-	MOTION_OBJECT *target;
+	MOTION_OBJECT *tgt;
 	RENDER_MODEL  *model;
 	MODEL_TEXTURE  texture;
 	Sint32		   columns;
@@ -115,23 +115,23 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	Uint8 *sheet = TWISTING_COLUMN_SHEET;
 	void  *mesh = TWISTING_COLUMN_MESH;
 	/* Where the Jupiter Djinni's entrance leaves it, in the world and on the
-	   screen, and where it rides the funnel this frame. Lethe Albion and Raging
+	   screen, and where it rides the funnel this tick. Lethe Albion and Raging
 	   Flood set djinniPlace to the caster's place, which they never read. */
 	Sint32		 djinniStart[3];
 	Sint32		 djinniScreen[3];
 	Sint32		 djinniPlace[3];
 	SCREEN_POINT moteScreen;
-	SCREEN_POINT targetScreen;
+	SCREEN_POINT tgtScreen;
 	SCREEN_POINT casterScreen;
 
 	state = Ram_HeapSlots->battleEff;
 	canvas = Ram_HeapSlots->battleCanvas;
 	camera = Ram_HeapSlots->cameraState;
-	sprites = Ram_HeapSlots->battleSheet;
+	sprs = Ram_HeapSlots->battleSheet;
 	unit = syUnitGet(args->tgts[0]);
 	btEffectStartCanvasLayer(0);
 	if(mode <= TWISTING_COLUMN_GALE) {
-		frames = TWISTING_COLUMN_DJINN_FRAMES;
+		ticks = TWISTING_COLUMN_DJINN_TICKS;
 		btEffectRunDjinniEntrance(args,
 			DJINNI_ENTRANCE(
 				ELEMENT_JUPITER, args->side, DJINNI_ANCHOR_HIGH_USER_X),
@@ -174,11 +174,11 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 		djinniPlace[2] = caster->z;
 		btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
 			Ram_MapMetatileBuffer + TWISTING_COLUMN_FLASH_BURST, 1, 0);
-		frames = TWISTING_COLUMN_FRAMES;
+		ticks = TWISTING_COLUMN_TICKS;
 	} else {
 		REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
 			BGCNT_SCREEN_BASE(7);
-		frames = TWISTING_COLUMN_FRAMES;
+		ticks = TWISTING_COLUMN_TICKS;
 	}
 	if(!args->side) {
 		EFFECT_LOAD_BLITTER(
@@ -190,12 +190,12 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	blit[0] = Ram_HeapSlots->ramCode;
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-	target = btObjectGetStub(args->tgts[0])->obj;
-	state->particles[TWISTING_COLUMN_SAVED_TARGET].x = target->x;
-	state->particles[TWISTING_COLUMN_SAVED_TARGET].y = target->y;
-	state->particles[TWISTING_COLUMN_SAVED_TARGET].z = target->z;
-	state->particles[TWISTING_COLUMN_SAVED_TARGET].velX = target->scaleX;
-	state->particles[TWISTING_COLUMN_SAVED_TARGET].velY = target->scaleY;
+	tgt = btObjectGetStub(args->tgts[0])->obj;
+	state->particles[TWISTING_COLUMN_SAVED_TARGET].x = tgt->x;
+	state->particles[TWISTING_COLUMN_SAVED_TARGET].y = tgt->y;
+	state->particles[TWISTING_COLUMN_SAVED_TARGET].z = tgt->z;
+	state->particles[TWISTING_COLUMN_SAVED_TARGET].velX = tgt->scaleX;
+	state->particles[TWISTING_COLUMN_SAVED_TARGET].velY = tgt->scaleY;
 	if(mode == TWISTING_COLUMN_LETHE_ALBION ||
 		mode == TWISTING_COLUMN_RAGING_FLOOD) {
 		btResourceLoadAndDecompress(RESOURCE_EMBER_TEXTURE, state->sheet, 0, 0);
@@ -203,7 +203,7 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 		btResourceLoadAndDecompress(
 			RESOURCE_STREAK_TEXTURE, state->sheet, 0, 0);
 	}
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_JUPITER_DJINN_SMALL_SHEET,
 		state->sheet + TWISTING_COLUMN_JUPITER_DJINN_SMALL_PICTURES, 1, 1);
 	if(mode == TWISTING_COLUMN_POISON_FLOW) {
@@ -223,22 +223,22 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 		: 4;
 	btRenderBuildQuadStrip(mesh, columns, 32, TWISTING_COLUMN_QUADS);
 
-	frame = 0;
-	if(frames != 0) {
+	frm = 0;
+	if(ticks != 0) {
 		do {
-			if(frame == 0) {
+			if(frm == 0) {
 				sySndPlayStub(SE_WATER_COLUMN);
 			}
-			if(frame == 32) {
+			if(frm == 32) {
 				sySndPlayStub(SE_CURSE_FALL);
 			}
-			if(frame == 0) {
-				target->x = state->particles[TWISTING_COLUMN_SAVED_TARGET].x;
-				target->y = state->particles[TWISTING_COLUMN_SAVED_TARGET].y;
-				target->z = state->particles[TWISTING_COLUMN_SAVED_TARGET].z;
-				target->scaleX =
+			if(frm == 0) {
+				tgt->x = state->particles[TWISTING_COLUMN_SAVED_TARGET].x;
+				tgt->y = state->particles[TWISTING_COLUMN_SAVED_TARGET].y;
+				tgt->z = state->particles[TWISTING_COLUMN_SAVED_TARGET].z;
+				tgt->scaleX =
 					state->particles[TWISTING_COLUMN_SAVED_TARGET].velX;
-				target->scaleY =
+				tgt->scaleY =
 					state->particles[TWISTING_COLUMN_SAVED_TARGET].velY;
 				if(mode == TWISTING_COLUMN_WHORL) {
 					for(i = 0; i != TWISTING_COLUMN_SAVED_TARGET; i++) {
@@ -279,17 +279,16 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 				Sint32 k;
 
 				djinniPlace[0] = djinniStart[0] +
-					sySin(frame * (TRIG_TURN / 32)) *
-						TWISTING_COLUMN_DJINNI_SWAY;
+					sySin(frm * (TRIG_TURN / 32)) * TWISTING_COLUMN_DJINNI_SWAY;
 				k = 4;
-				if(frame > 39) {
-					k = frame - 36;
+				if(frm > 39) {
+					k = frm - 36;
 				}
 				djinniPlace[1] = djinniStart[1] + toFIXED(k) -
-					syCos(frame * TWISTING_COLUMN_BOB_STEP) * k;
-				if(frame > 27) {
+					syCos(frm * TWISTING_COLUMN_BOB_STEP) * k;
+				if(frm > 27) {
 					djinniPlace[1] =
-						djinniPlace[1] + frame * toFIXED(4) - toFIXED(112);
+						djinniPlace[1] + frm * toFIXED(4) - toFIXED(112);
 				}
 				djinniPlace[2] = djinniStart[2];
 				btEffectPosProjectPoint(
@@ -299,97 +298,97 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 					djinniScreen[0] / 2 - 10, djinniScreen[1] - 20,
 					SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
 			}
-			if(frame > 7) {
-				if(mode <= TWISTING_COLUMN_GALE && frame <= 47) {
+			if(frm > 7) {
+				if(mode <= TWISTING_COLUMN_GALE && frm <= 47) {
 					state->shakeFrm = 3;
 				}
 				if(mode == TWISTING_COLUMN_WHORL) {
-					if(frame == 32) {
+					if(frm == 32) {
 						if(args->variant == EFFECT_VARIANT_STRONGER) {
-							target->y = toFIXED(124);
+							tgt->y = toFIXED(124);
 						} else {
 							state->shakeFrm = 8;
 							EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-							target->scaleX =
+							tgt->scaleX =
 								state->particles[TWISTING_COLUMN_SAVED_TARGET]
 									.velX;
-							target->scaleY =
+							tgt->scaleY =
 								state->particles[TWISTING_COLUMN_SAVED_TARGET]
 									.velY;
 							btEffectStartActorMotion(args->tgts[0], 1,
 								toFIXED(2), toFIXED(8), toFIXED(4), 150);
 						}
-					} else if(frame <= 19) {
-						target->verticalMotionStrength = 0;
-						target->x +=
+					} else if(frm <= 19) {
+						tgt->verticalMotionStrength = 0;
+						tgt->x +=
 							(djinniPlace[0] -
 								state->particles[TWISTING_COLUMN_SAVED_TARGET]
 									.x) /
 							TWISTING_COLUMN_DRIFT_STEPS;
-						target->y +=
+						tgt->y +=
 							(djinniPlace[1] -
 								state->particles[TWISTING_COLUMN_SAVED_TARGET]
 									.y) /
 							TWISTING_COLUMN_DRIFT_STEPS;
-						target->z +=
+						tgt->z +=
 							(djinniPlace[2] -
 								state->particles[TWISTING_COLUMN_SAVED_TARGET]
 									.z) /
 							TWISTING_COLUMN_DRIFT_STEPS;
-					} else if(frame <= 31 &&
+					} else if(frm <= 31 &&
 						(args->variant == EFFECT_VARIANT_STRONGER ||
-							frame <= 23)) {
-						target->x +=
+							frm <= 23)) {
+						tgt->x +=
 							(djinniPlace[0] -
 								state->particles[TWISTING_COLUMN_SAVED_TARGET]
 									.x) /
 							TWISTING_COLUMN_LIFT_STEPS;
-						target->y +=
+						tgt->y +=
 							(djinniPlace[1] -
 								state->particles[TWISTING_COLUMN_SAVED_TARGET]
 									.y) /
 							TWISTING_COLUMN_LIFT_STEPS;
-						target->z +=
+						tgt->z +=
 							(djinniPlace[2] -
 								state->particles[TWISTING_COLUMN_SAVED_TARGET]
 									.z) /
 							TWISTING_COLUMN_LIFT_STEPS;
-						target->scaleX +=
+						tgt->scaleX +=
 							(toFIXED(1) / 4 -
 								state->particles[TWISTING_COLUMN_SAVED_TARGET]
 									.velX) /
 							TWISTING_COLUMN_LIFT_STEPS;
-						target->scaleY +=
+						tgt->scaleY +=
 							(toFIXED(1) / 4 -
 								state->particles[TWISTING_COLUMN_SAVED_TARGET]
 									.velY) /
 							TWISTING_COLUMN_LIFT_STEPS;
 					}
 				} else if(mode == TWISTING_COLUMN_GALE) {
-					target->verticalMotionStrength = 0;
-					if(frame > 55) {
-						target->y = toFIXED(144);
-					} else if(frame <= 31) {
-						if(target->x > 0) {
-							target->x += toFIXED(1) / 2;
+					tgt->verticalMotionStrength = 0;
+					if(frm > 55) {
+						tgt->y = toFIXED(144);
+					} else if(frm <= 31) {
+						if(tgt->x > 0) {
+							tgt->x += toFIXED(1) / 2;
 						} else {
-							target->x -= toFIXED(1) / 2;
+							tgt->x -= toFIXED(1) / 2;
 						}
 					} else {
-						if(target->x > 0) {
-							target->x += toFIXED(16);
+						if(tgt->x > 0) {
+							tgt->x += toFIXED(16);
 						} else {
-							target->x -= toFIXED(16);
+							tgt->x -= toFIXED(16);
 						}
 					}
 				}
 			}
-			if(frame > 0 && mode <= TWISTING_COLUMN_GALE) {
+			if(frm > 0 && mode <= TWISTING_COLUMN_GALE) {
 				{
 					PARTICLE *mote = state->particles;
 
 					for(i = 0; i != TWISTING_COLUMN_MOTES; i++, mote++) {
-						if(frame >= i && frame < i + 30) {
+						if(frm >= i && frm < i + 30) {
 							Sint32 size = (i & 3) + 1;
 
 							if(mode == TWISTING_COLUMN_WHORL) {
@@ -401,7 +400,7 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 									mote, 62, toFIXED(1) / 64);
 							}
 							btEffectPosProjectPoint(mote, &moteScreen);
-							EFFECT_DRAW_MOTE(blit[0], canvas, sprites,
+							EFFECT_DRAW_MOTE(blit[0], canvas, sprs,
 								moteScreen.x / 2, moteScreen.y, size);
 						}
 					}
@@ -423,7 +422,7 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 							-j * 4 + TWISTING_COLUMN_BAND_HALF_LENGTH;
 						TWISTING_COLUMN_CORNERS[j][i][1] =
 							(FIXEDtoINT(syCos(j * (TRIG_TURN / 64) -
-											frame * (TRIG_TURN / 32)) *
+											frm * (TRIG_TURN / 32)) *
 								ripple)) +
 							i * width - width / 2;
 						TWISTING_COLUMN_CORNERS[j][i][2] = 0;
@@ -441,7 +440,7 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 						TWISTING_COLUMN_CORNERS[j][i][0] = -j * 3;
 						TWISTING_COLUMN_CORNERS[j][i][1] =
 							(FIXEDtoINT(syCos(j * (TRIG_TURN / 64) -
-											frame * (TRIG_TURN / 32)) *
+											frm * (TRIG_TURN / 32)) *
 								ripple)) +
 							(i * w << 1) - w;
 						TWISTING_COLUMN_CORNERS[j][i][2] = 0;
@@ -462,7 +461,7 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 						TWISTING_COLUMN_CORNERS[j][i][0] = -(j * 2) << 1;
 						TWISTING_COLUMN_CORNERS[j][i][1] =
 							(FIXEDtoINT(
-								syCos((frame + j * 2) * (TRIG_TURN / 64)) *
+								syCos((frm + j * 2) * (TRIG_TURN / 64)) *
 								ripple)) +
 							(i * w << 1) - w;
 						TWISTING_COLUMN_CORNERS[j][i][2] = 0;
@@ -471,27 +470,27 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			}
 
 			model = btRenderAllocateModelList(1);
-			/* The bands fade in four levels a frame from MODEL_SHADE_INVISIBLE
+			/* The bands fade in four levels a tick from MODEL_SHADE_INVISIBLE
 			   to their brightest, Lethe Albion's TWISTING_COLUMN_BAND_SHADE and
 			   Raging Flood's TWISTING_COLUMN_FLOOD_SHADE. From
-			   TWISTING_COLUMN_FADE_FRAME Lethe Albion's fade out eight levels a
-			   frame; Raging Flood's count up from beyond their brightest, and
+			   TWISTING_COLUMN_FADE_TICK Lethe Albion's fade out eight levels a
+			   tick; Raging Flood's count up from beyond their brightest, and
 			   so stay at it. */
 			if(mode == TWISTING_COLUMN_RAGING_FLOOD) {
-				if(frame < TWISTING_COLUMN_FADE_FRAME) {
-					shade = frame * 4 - 64;
+				if(frm < TWISTING_COLUMN_FADE_TICK) {
+					shade = frm * 4 - 64;
 				} else {
-					shade = (frame - (TWISTING_COLUMN_FADE_FRAME + 1)) * 8;
+					shade = (frm - (TWISTING_COLUMN_FADE_TICK + 1)) * 8;
 				}
 				if(shade > TWISTING_COLUMN_FLOOD_SHADE) {
 					shade = TWISTING_COLUMN_FLOOD_SHADE;
 				}
 			} else {
-				if(frame < TWISTING_COLUMN_FADE_FRAME) {
-					shade = frame * 4 - 64;
+				if(frm < TWISTING_COLUMN_FADE_TICK) {
+					shade = frm * 4 - 64;
 				} else {
 					shade = TWISTING_COLUMN_BAND_SHADE -
-						(frame - TWISTING_COLUMN_FADE_FRAME) * 8;
+						(frm - TWISTING_COLUMN_FADE_TICK) * 8;
 				}
 				if(shade > TWISTING_COLUMN_BAND_SHADE) {
 					shade = TWISTING_COLUMN_BAND_SHADE;
@@ -515,8 +514,8 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			model->shade = shade;
 			if(mode == TWISTING_COLUMN_LETHE_ALBION ||
 				mode == TWISTING_COLUMN_RAGING_FLOOD) {
-				btEffectPosProjectBattler(args->tgts[0], &targetScreen);
-				if(frame == 16) {
+				btEffectPosProjectBattler(args->tgts[0], &tgtScreen);
+				if(frm == 16) {
 					EFFECT_SHOW_DAMAGE(SE_CLATTER);
 					btEffectStartActorMotion(
 						args->tgts[0], 1, 0, 0, toFIXED(7), 100);
@@ -524,7 +523,7 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 					btEffectTintBattler(
 						args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
 				}
-				if(frame == 0) {
+				if(frm == 0) {
 					{
 						PARTICLE *spray = state->particles;
 
@@ -535,15 +534,15 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 
 							spray->velX = (sySin(angle) * speed) >> 7;
 							spray->velY = (syCos(angle) * speed) >> 7;
-							spray->x = toFIXED(targetScreen.x / 2);
-							spray->y = INTtoFIXED(targetScreen.y - 8);
+							spray->x = toFIXED(tgtScreen.x / 2);
+							spray->y = INTtoFIXED(tgtScreen.y - 8);
 							spray->variant = 0;
 						}
 					}
 				}
 				/* Clouds of spray: FlashBurstSheet's bursts in the water
-				   spray's colours, four frames a picture. */
-				if(frame > 15) {
+				   spray's colours, four ticks a picture. */
+				if(frm > 15) {
 					{
 						PARTICLE *spray = state->particles;
 
@@ -566,12 +565,11 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 						}
 					}
 				}
-				model->scrollU = ~(frame << 3) & TEXTURE_SCROLL_MASK;
+				model->scrollU = ~(frm << 3) & TEXTURE_SCROLL_MASK;
 				model->scrollV = 0;
 				for(i = 0; i != 3; i++) {
 					Sint32 y = TWISTING_COLUMN_WAVE_RISE -
-						FIXEDtoINT(
-							sySin(frame * TWISTING_COLUMN_WAVE_RISE_STEP) *
+						FIXEDtoINT(sySin(frm * TWISTING_COLUMN_WAVE_RISE_STEP) *
 							TWISTING_COLUMN_WAVE_RISE);
 
 					syPushMatrix();
@@ -580,7 +578,7 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 						syRotY(DEGtoANG(180));
 					}
 					syRotZ(i * (TRIG_TURN / 64) + TRIG_TURN / 256);
-					syRotX(i * (TRIG_TURN / 8) - frame * (TRIG_TURN / 32));
+					syRotX(i * (TRIG_TURN / 8) - frm * (TRIG_TURN / 32));
 					syScale(
 						TWISTING_COLUMN_BAND_STRETCH, toFIXED(1), toFIXED(1));
 					btRenderTransformVertices(MapGridMetatileBuffer, vertices,
@@ -590,14 +588,14 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 				}
 				texture.logWidth = 6;
 				texture.logHeight = 6;
-				model->mesh = BattleEffect_SquareMesh;
+				model->mesh = BattleEffectSquareMesh;
 				model->vertices = vertices;
 				model->shade = shade;
 				model->scrollU = 0;
 				model->scrollV = 0;
 				texture.pixels = sheet;
 				for(i = 0; i != 2; i++) {
-					Sint32 age = frame - i * 4 - 16;
+					Sint32 age = frm - i * 4 - 16;
 
 					if(age >= 0) {
 						Sint32 scale = age * 3 * (toFIXED(1) / 16);
@@ -609,29 +607,29 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 						model->shade = shade;
 						if(shade > MODEL_SHADE_INVISIBLE) {
 							syInitMatrix();
-							syTranslate(INTtoFIXED(targetScreen.x / 2 - 64),
-								INTtoFIXED(targetScreen.y - 64), 0);
+							syTranslate(INTtoFIXED(tgtScreen.x / 2 - 64),
+								INTtoFIXED(tgtScreen.y - 64), 0);
 							syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 							syRotZ(i * (DEGtoANG(90)) + DEGtoANG(45));
 							syRotX(-TRIG_TURN / 16);
-							syRotY(frame * (TRIG_TURN / 16));
+							syRotY(frm * (TRIG_TURN / 16));
 							syMatrixScaleUniform(scale);
 							btRenderTransformVertices(
-								BattleEffect_GroundSquareCorners, vertices, 4);
+								BattleEffectGroundSquareCorners, vertices, 4);
 							btRenderDrawModelList(model);
 						}
 					}
 				}
 			} else if(mode == TWISTING_COLUMN_POISON_FLOW) {
 				btEffectPosProjectScaledBattler(args->user, &casterScreen);
-				if(frame == 8) {
+				if(frm == 8) {
 					sySndPlayStub(SE_CLATTER);
 				}
-				if(frame == 16) {
+				if(frm == 16) {
 					EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 				}
 				for(i = 0; i != args->tgtCnt; i++) {
-					if(frame == i * 4 + 16) {
+					if(frm == i * 4 + 16) {
 						sySndPlayStub(SE_HEAVY_IMPACT);
 						btEffectStartActorMotion(
 							args->tgts[i], 1, 0, 0, toFIXED(7), 100);
@@ -644,7 +642,7 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 				/* A once-only loop: its i terms are the other modes' ring
 				   index, here always 0. */
 				for(i = 0; i != 1; i++) {
-					Sint32 scroll = ~((frame + i * 6) << 3);
+					Sint32 scroll = ~((frm + i * 6) << 3);
 
 					scroll &= TEXTURE_SCROLL_MASK;
 					model->scrollU = scroll;
@@ -655,9 +653,8 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 						syRotY(DEGtoANG(180));
 					}
 					syRotX(i * (TRIG_TURN / 2));
-					syRotZ(
-						FIXEDtoINT(sySin((frame + i * 8) * (TRIG_TURN / 32)) *
-							(TRIG_TURN / 32)));
+					syRotZ(FIXEDtoINT(sySin((frm + i * 8) * (TRIG_TURN / 32)) *
+						(TRIG_TURN / 32)));
 					syScale(TWISTING_COLUMN_SWIRL_STRETCH, toFIXED(1) / 2,
 						toFIXED(1));
 					btRenderTransformVertices(MapGridMetatileBuffer, vertices,
@@ -666,12 +663,12 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 				}
 			} else {
 				/* The funnel and Poison Flow's stream fade in alike, and out
-				   from TWISTING_COLUMN_FUNNEL_FADE_FRAME. */
-				if(frame < TWISTING_COLUMN_FUNNEL_FADE_FRAME) {
-					shade = frame * 4 - 64;
+				   from TWISTING_COLUMN_FUNNEL_FADE_TICK. */
+				if(frm < TWISTING_COLUMN_FUNNEL_FADE_TICK) {
+					shade = frm * 4 - 64;
 				} else {
 					shade = TWISTING_COLUMN_BAND_SHADE -
-						(frame - TWISTING_COLUMN_FUNNEL_FADE_FRAME) * 8;
+						(frm - TWISTING_COLUMN_FUNNEL_FADE_TICK) * 8;
 				}
 				if(shade > TWISTING_COLUMN_BAND_SHADE) {
 					shade = TWISTING_COLUMN_BAND_SHADE;
@@ -681,9 +678,9 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 					syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1));
 					ProjectionWork.centerX = 60;
 					if(mode == TWISTING_COLUMN_WHORL) {
-						model->scrollU = (frame << 3) & TEXTURE_SCROLL_MASK;
+						model->scrollU = (frm << 3) & TEXTURE_SCROLL_MASK;
 					} else {
-						model->scrollU = ~(frame << 3) & TEXTURE_SCROLL_MASK;
+						model->scrollU = ~(frm << 3) & TEXTURE_SCROLL_MASK;
 					}
 					model->scrollV = 0;
 					syMatrixTranslateVector(djinniPlace);
@@ -695,10 +692,10 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 						}
 						syRotZ(i * (TRIG_TURN / 64) + TWISTING_COLUMN_LEAN);
 						if(mode != TWISTING_COLUMN_GALE) {
-							syRotX((frame + i * 4) * (TRIG_TURN / 32));
+							syRotX((frm + i * 4) * (TRIG_TURN / 32));
 						} else {
 							syRotX(
-								i * (TRIG_TURN / 8) - frame * (TRIG_TURN / 32));
+								i * (TRIG_TURN / 8) - frm * (TRIG_TURN / 32));
 						}
 						syScale(toFIXED(4), toFIXED(1), toFIXED(1));
 						btRenderProjectVertices(MapGridMetatileBuffer, vertices,
@@ -716,18 +713,18 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			} else {
 				btCameraShake(4, 4);
 			}
-			EFFECT_END_FRAME(state);
-			frame++;
-		} while(frame != frames);
+			EFFECT_END_TICK(state);
+			frm++;
+		} while(frm != ticks);
 	}
 
 	if(unit->classId != CLASS_NONE && mode == TWISTING_COLUMN_WHORL &&
 		args->variant == EFFECT_VARIANT_STRONGER) {
-		target->x = state->particles[TWISTING_COLUMN_SAVED_TARGET].x;
-		target->y = state->particles[TWISTING_COLUMN_SAVED_TARGET].y;
-		target->z = state->particles[TWISTING_COLUMN_SAVED_TARGET].z;
-		target->scaleX = state->particles[TWISTING_COLUMN_SAVED_TARGET].velX;
-		target->scaleY = state->particles[TWISTING_COLUMN_SAVED_TARGET].velY;
+		tgt->x = state->particles[TWISTING_COLUMN_SAVED_TARGET].x;
+		tgt->y = state->particles[TWISTING_COLUMN_SAVED_TARGET].y;
+		tgt->z = state->particles[TWISTING_COLUMN_SAVED_TARGET].z;
+		tgt->scaleX = state->particles[TWISTING_COLUMN_SAVED_TARGET].velX;
+		tgt->scaleY = state->particles[TWISTING_COLUMN_SAVED_TARGET].velY;
 	}
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 	syCloseEvent(btEffectTransferCanvas);
@@ -746,8 +743,8 @@ void btEffectRunCannon(BATTLE_EFFECT_PARM *args)
 	btEffectRunDjinniCharge(args, DJINNI_CHARGE_CANNON);
 }
 
-#undef TWISTING_COLUMN_DJINN_FRAMES
-#undef TWISTING_COLUMN_FRAMES
+#undef TWISTING_COLUMN_DJINN_TICKS
+#undef TWISTING_COLUMN_TICKS
 #undef TWISTING_COLUMN_CORNERS
 #undef TWISTING_COLUMN_QUADS
 #undef TWISTING_COLUMN_ROWS
@@ -776,5 +773,5 @@ void btEffectRunCannon(BATTLE_EFFECT_PARM *args)
 #undef TWISTING_COLUMN_SWIRL_STRETCH
 #undef TWISTING_COLUMN_BAND_SHADE
 #undef TWISTING_COLUMN_FLOOD_SHADE
-#undef TWISTING_COLUMN_FADE_FRAME
-#undef TWISTING_COLUMN_FUNNEL_FADE_FRAME
+#undef TWISTING_COLUMN_FADE_TICK
+#undef TWISTING_COLUMN_FUNNEL_FADE_TICK

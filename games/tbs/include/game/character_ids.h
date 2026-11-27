@@ -3,7 +3,7 @@
 
 /* Character numbers, with each character's Japanese name, and the portraits. */
 
-/* The characters, one for each row of Character_DefinitionTable
+/* The characters, one for each row of CharacterDefinitionTable
    (character_table.c) in order; unit ids below ENEMY_ID_FIRST are these. */
 typedef enum CHARACTER_ID {
 	ISAAC, /* Robin */
@@ -22,7 +22,7 @@ typedef enum CHARACTER_ID {
    mnIconLoadWithPalette takes a portrait number below PORTRAIT_SPRITE_MAP_FIRST
    as its row, and the other speakers' portraits, numbered from it
    (mnPortraitGetForSpeaker), as the rows from PORTRAIT_JUPITER_DJINNI on; each
-   of those is the face of the speaker whose sprite Portrait_SpriteMap pairs
+   of those is the face of the speaker whose sprite PortraitSpriteMap pairs
    with it, and takes that sprite's name. */
 typedef enum PORTRAIT_ID {
 	PORTRAIT_ISAAC,
@@ -79,14 +79,14 @@ typedef enum PORTRAIT_ID {
 	PORTRAIT_JENNA_CHILD,
 	PORTRAIT_FELIX_MASKED,
 	PORTRAIT_TRET_WRATHFUL,
-	/* The row Portrait_SpriteMap pairs with SPRITE_FELIX, drawn from
+	/* The row PortraitSpriteMap pairs with SPRITE_FELIX, drawn from
 	   icons.tsv's FELIX, as PORTRAIT_FELIX is. */
 	PORTRAIT_FELIX_UNMASKED,
 	PORTRAIT_INVISIBLE_BABI,
 	PORTRAIT_FARAN
 } PORTRAIT_ID;
 
-/* The portrait number of Portrait_SpriteMap's first speaker: the speakers that
+/* The portrait number of PortraitSpriteMap's first speaker: the speakers that
    are no playable character are numbered from it. */
 #define PORTRAIT_SPRITE_MAP_FIRST 128
 

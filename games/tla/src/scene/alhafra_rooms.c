@@ -29,8 +29,8 @@
    on the map; only then are the sailors of the Crossbone Isle tale placed. */
 #define FLAG_ENTERED_IN_THE_EAST FLAG_SCENE_TEMP_00
 
-EFFECT_SPR AlhafraRooms_SecondGuestSprite BSS_DATA ALIGNED(16);
-EFFECT_SPR AlhafraRooms_FirstGuestSprite BSS_DATA  ALIGNED(16);
+EFFECT_SPR AlhafraRoomsSecondGuestSprite BSS_DATA ALIGNED(16);
+EFFECT_SPR AlhafraRoomsFirstGuestSprite BSS_DATA  ALIGNED(16);
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -104,7 +104,7 @@ typedef enum ALHAFRA_ROOMS_ACTOR_ID {
 	ACTOR_ALEX
 } ALHAFRA_ROOMS_ACTOR_ID;
 
-/* The last rows of AlhafraRooms_ActorPlacementsOnceTheMastIsCleared:
+/* The last rows of AlhafraRoomsActorPlacementsOnceTheMastIsCleared:
    two sailors in Alex's room, one telling the other of Crossbone Isle. */
 typedef enum ALHAFRA_ROOMS_SAILORS_ACTOR_ID {
 	ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE = ACTOR_ALEX,
@@ -113,20 +113,20 @@ typedef enum ALHAFRA_ROOMS_SAILORS_ACTOR_ID {
 } ALHAFRA_ROOMS_SAILORS_ACTOR_ID;
 
 extern ACTOR_PLACE ActorPlacements[];
-extern ACTOR_PLACE AlhafraRooms_ActorPlacementsOnceBriggsIsCaught[];
-extern ACTOR_PLACE AlhafraRooms_ActorPlacementsOnceTheMastIsCleared[];
-extern CUE		   AlhafraRooms_Cues[];
-extern CUE		   AlhafraRooms_CuesOnceBriggsIsCaught[];
-extern CUE		   AlhafraRooms_CuesOnceTheMastIsCleared[];
+extern ACTOR_PLACE AlhafraRoomsActorPlacementsOnceBriggsIsCaught[];
+extern ACTOR_PLACE AlhafraRoomsActorPlacementsOnceTheMastIsCleared[];
+extern CUE		   AlhafraRoomsCues[];
+extern CUE		   AlhafraRoomsCuesOnceBriggsIsCaught[];
+extern CUE		   AlhafraRoomsCuesOnceTheMastIsCleared[];
 
 /* The houses' people: before Briggs is caught, after, and once the mast is
    cleared. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(fdScriptGetFlag(FLAG_ALHAFRA_MAST_CLEARED))
-		return AlhafraRooms_ActorPlacementsOnceTheMastIsCleared;
+		return AlhafraRoomsActorPlacementsOnceTheMastIsCleared;
 	if(fdScriptGetFlag(FLAG_BRIGGS_CAUGHT))
-		return AlhafraRooms_ActorPlacementsOnceBriggsIsCaught;
+		return AlhafraRoomsActorPlacementsOnceBriggsIsCaught;
 	return ActorPlacements;
 }
 
@@ -363,10 +363,10 @@ void scAlhafraRoomsAlexHearsOfBriggs(Sint32 actor)
 const CUE *scGetCues(void)
 {
 	if(fdScriptGetFlag(FLAG_ALHAFRA_MAST_CLEARED))
-		return AlhafraRooms_CuesOnceTheMastIsCleared;
+		return AlhafraRoomsCuesOnceTheMastIsCleared;
 	if(fdScriptGetFlag(FLAG_BRIGGS_CAUGHT))
-		return AlhafraRooms_CuesOnceBriggsIsCaught;
-	return AlhafraRooms_Cues;
+		return AlhafraRoomsCuesOnceBriggsIsCaught;
+	return AlhafraRoomsCues;
 }
 
 /* The old houseguest's update: draws his head and upper body again, 12 pixels
@@ -374,7 +374,7 @@ const CUE *scGetCues(void)
    crates cover him from the waist up and only his legs show. */
 Sint32 scAlhafraRoomsDrawFirstGuestSpr(ACTOR *guest)
 {
-	fdEffectSprDrawAtWorldXYZ(&AlhafraRooms_FirstGuestSprite, guest->x.fixed,
+	fdEffectSprDrawAtWorldXYZ(&AlhafraRoomsFirstGuestSprite, guest->x.fixed,
 		guest->y.fixed + toFIXED(12), guest->z.fixed);
 	return 0;
 }
@@ -383,7 +383,7 @@ Sint32 scAlhafraRoomsDrawFirstGuestSpr(ACTOR *guest)
    the crates. */
 Sint32 scAlhafraRoomsDrawSecondGuestSpr(ACTOR *guest)
 {
-	fdEffectSprDrawAtWorldXYZ(&AlhafraRooms_SecondGuestSprite, guest->x.fixed,
+	fdEffectSprDrawAtWorldXYZ(&AlhafraRoomsSecondGuestSprite, guest->x.fixed,
 		guest->y.fixed + toFIXED(8), guest->z.fixed);
 	return 0;
 }
@@ -406,10 +406,10 @@ Sint32 scInit(void)
 	scFieldActorSetSprPriority(ACTOR_DEMANDING_GUESTS_WIFE, 3);
 	fdFadeOverlayFillTiles(0);
 	Call4((void (*)())fdEffectSprInitWithFadeOverlay,
-		(Sint32)&AlhafraRooms_FirstGuestSprite, 8, 15, OBJ_SIZE_16X16);
+		(Sint32)&AlhafraRoomsFirstGuestSprite, 8, 15, OBJ_SIZE_16X16);
 	Call4((void (*)())fdEffectSprInitWithFadeOverlay,
-		(Sint32)&AlhafraRooms_SecondGuestSprite, 8, 15, OBJ_SIZE_16X16);
-	AlhafraRooms_SecondGuestSprite.scaleY = toFIXED(3) / 2;
+		(Sint32)&AlhafraRoomsSecondGuestSprite, 8, 15, OBJ_SIZE_16X16);
+	AlhafraRoomsSecondGuestSprite.scaleY = toFIXED(3) / 2;
 	fdActorGet(ACTOR_DEMANDING_GUEST)->update = scAlhafraRoomsDrawFirstGuestSpr;
 	fdActorGet(ACTOR_DEMANDING_GUESTS_WIFE)->update =
 		scAlhafraRoomsDrawSecondGuestSpr;
@@ -454,10 +454,10 @@ Sint32 scInit(void)
 	scFieldActorSetSprPriority(ACTOR_DEMANDING_GUESTS_WIFE, 3);
 	fdFadeOverlayFillTiles(0);
 	Call4((void (*)())fdEffectSprInitWithFadeOverlay,
-		(Sint32)&AlhafraRooms_FirstGuestSprite, 8, 15, OBJ_SIZE_16X16);
+		(Sint32)&AlhafraRoomsFirstGuestSprite, 8, 15, OBJ_SIZE_16X16);
 	Call4((void (*)())fdEffectSprInitWithFadeOverlay,
-		(Sint32)&AlhafraRooms_SecondGuestSprite, 8, 15, OBJ_SIZE_16X16);
-	AlhafraRooms_SecondGuestSprite.scaleY = toFIXED(3) / 2;
+		(Sint32)&AlhafraRoomsSecondGuestSprite, 8, 15, OBJ_SIZE_16X16);
+	AlhafraRoomsSecondGuestSprite.scaleY = toFIXED(3) / 2;
 	fdActorGet(ACTOR_DEMANDING_GUEST)->update = scAlhafraRoomsDrawFirstGuestSpr;
 	fdActorGet(ACTOR_DEMANDING_GUESTS_WIFE)->update =
 		scAlhafraRoomsDrawSecondGuestSpr;
@@ -485,7 +485,7 @@ Sint32 scPrepareMap(void)
 	return 0;
 }
 
-extern Uint32 AlhafraRooms_TravelersWalkOffScript[];
+extern Uint32 AlhafraRoomsTravelersWalkOffScript[];
 
 /* In a game carried over from Golden Sun in which Isaac beat Deadbeard, Felix
    walks into Alex's old room upstairs in the inn after the mast is cleared
@@ -608,10 +608,10 @@ void scAlhafraRoomsOverhearCrossboneIsleTale(void)
 	fdActorFaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
 	syFieldScriptWait(10);
 	fdActorSetScript(
-		ACTOR_SAILOR_EAGER_TO_JOIN, AlhafraRooms_TravelersWalkOffScript);
+		ACTOR_SAILOR_EAGER_TO_JOIN, AlhafraRoomsTravelersWalkOffScript);
 	syFieldScriptWait(10);
 	fdActorSetScript(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
-		AlhafraRooms_TravelersWalkOffScript);
+		AlhafraRoomsTravelersWalkOffScript);
 	syFieldScriptWait(10);
 	scFieldActorWatchAndSetScript(ACTOR_FELIX, ACTOR_SAILOR_EAGER_TO_JOIN);
 	syFieldScriptWait(60);
@@ -630,7 +630,7 @@ void scAlhafraRoomsOverhearCrossboneIsleTale(void)
 }
 
 /* clang-format off */
-Uint32 AlhafraRooms_TravelersWalkOffScript[] = {
+Uint32 AlhafraRoomsTravelersWalkOffScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(520, 0, 328),
 	SC_SYNC,
@@ -687,7 +687,7 @@ ACTOR_PLACE ActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE AlhafraRooms_ActorPlacementsOnceBriggsIsCaught[] = {
+ACTOR_PLACE AlhafraRoomsActorPlacementsOnceBriggsIsCaught[] = {
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_TEAL_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 88, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0, 544, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 184, 0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -715,7 +715,7 @@ ACTOR_PLACE AlhafraRooms_ActorPlacementsOnceBriggsIsCaught[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE AlhafraRooms_ActorPlacementsOnceTheMastIsCleared[] = {
+ACTOR_PLACE AlhafraRoomsActorPlacementsOnceTheMastIsCleared[] = {
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_TEAL_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 88, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0, 544, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 184, 0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -745,7 +745,7 @@ ACTOR_PLACE AlhafraRooms_ActorPlacementsOnceTheMastIsCleared[] = {
 };
 /* clang-format on */
 
-CUE AlhafraRooms_Cues[] = {
+CUE AlhafraRoomsCues[] = {
 	{CUE_EXIT | CUE_FLAG_FACING | FACING_SOUTH, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT | CUE_FLAG_FACING | FACING_SOUTH, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT | CUE_FLAG_FACING | FACING_SOUTH, 5, CONDITION_ALWAYS, 5},
@@ -878,7 +878,7 @@ CUE AlhafraRooms_Cues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE AlhafraRooms_CuesOnceBriggsIsCaught[] = {
+CUE AlhafraRoomsCuesOnceBriggsIsCaught[] = {
 	{CUE_EXIT | CUE_FLAG_FACING | FACING_SOUTH, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT | CUE_FLAG_FACING | FACING_SOUTH, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT | CUE_FLAG_FACING | FACING_SOUTH, 5, CONDITION_ALWAYS, 5},
@@ -985,7 +985,7 @@ CUE AlhafraRooms_CuesOnceBriggsIsCaught[] = {
 	{CUE_TABLE_END},
 };
 
-CUE AlhafraRooms_CuesOnceTheMastIsCleared[] = {
+CUE AlhafraRoomsCuesOnceTheMastIsCleared[] = {
 	{CUE_EXIT | CUE_FLAG_FACING | FACING_SOUTH, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT | CUE_FLAG_FACING | FACING_SOUTH, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT | CUE_FLAG_FACING | FACING_SOUTH, 5, CONDITION_ALWAYS, 5},

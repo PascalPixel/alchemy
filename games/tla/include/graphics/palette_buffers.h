@@ -35,13 +35,13 @@ typedef struct TITLE_PALETTE_FADE {
 	Uint16 cur[TITLE_PALETTE_FADE_CHANNELS];
 	/* the colours current moves toward, as current */
 	Uint16 tgt[TITLE_PALETTE_FADE_CHANNELS];
-	/* added to each current channel each frame */
+	/* added to each current channel each tick */
 	Uint16 delta[TITLE_PALETTE_FADE_CHANNELS];
 	/* Two pages of RGB555 colours: one is built while the other is queued. */
 	Uint16 packed[2][512];
-	Uint8  page;	 /* the packed page queued this frame */
-	Sint8  duration; /* frames; 0 when the colours are not moving */
-	Uint8  step;	 /* frames */
+	Uint8  page;	 /* the packed page queued this tick */
+	Sint8  duration; /* ticks; 0 when the colours are not moving */
+	Uint8  step;	 /* ticks */
 	Uint8  padding;
 } TITLE_PALETTE_FADE;
 
@@ -53,8 +53,8 @@ STATIC_ASSERT(offsetof(TITLE_PALETTE_FADE, packed) == 10240);
 STATIC_ASSERT(offsetof(TITLE_PALETTE_FADE, page) == 12288);
 
 /* The palette fade (HEAP_SLOT_PALETTE_FADE) that fades the BG and OBJ palettes:
-   the source palette, the shown and target colour channels, their per-frame
-   steps, and two pages of packed RGB555 colours queued each frame. */
+   the source palette, the shown and target colour channels, their per-tick
+   steps, and two pages of packed RGB555 colours queued each tick. */
 typedef struct PALETTE_FADE {
 	/* The source palette, RGB555: 224 BG colours, then 224 OBJ colours;
 	   palette[0] is the backdrop. */
@@ -64,13 +64,13 @@ typedef struct PALETTE_FADE {
 	Uint16 cur[PALETTE_FADE_CHANNELS];
 	/* the colours current moves toward, as current */
 	Uint16 tgt[PALETTE_FADE_CHANNELS];
-	/* added to each current channel each frame */
+	/* added to each current channel each tick */
 	Uint16 delta[PALETTE_FADE_CHANNELS];
 	/* Two pages of RGB555 colours: one is built while the other is queued. */
 	Uint16 packed[2][448];
-	Uint8  page;	 /* the packed page queued this frame */
-	Sint8  duration; /* frames; 0 when the colours are not moving */
-	Sint8  step;	 /* frames */
+	Uint8  page;	 /* the packed page queued this tick */
+	Sint8  duration; /* ticks; 0 when the colours are not moving */
+	Sint8  step;	 /* ticks */
 	Uint8  padding;
 } PALETTE_FADE;
 
@@ -82,15 +82,15 @@ STATIC_ASSERT(offsetof(PALETTE_FADE, packed) == 8960);
 STATIC_ASSERT(offsetof(PALETTE_FADE, page) == 10752);
 
 void mnTitlePaletteFadeBuildCols(
-	Uint32 tint, Uint16 *source, Uint16 *destination, Sint32 selectedPalettes);
+	Uint32 tint, Uint16 *src, Uint16 *dst, Sint32 selectedPalettes);
 
 void mnTitlePaletteFadeInit(void);
 void mnTitlePaletteFadeUpdate(void);
 void mnTitlePaletteFadeSetTarget(Sint32 tint, Sint32 selectedPalettes);
-void mnTitlePaletteFadeSetBackdrop(Sint32 color);
-void mnTitlePaletteFadeStart(Sint32 frames);
+void mnTitlePaletteFadeSetBackdrop(Sint32 col);
+void mnTitlePaletteFadeStart(Sint32 ticks);
 void mnTitlePaletteFadeCalcSteps(
-	Sint16 *current, Sint16 *target, Sint16 *step, Sint32 frames);
+	Sint16 *cur, Sint16 *tgt, Sint16 *step, Sint32 ticks);
 void mnTitlePaletteFadeRelease(void);
 
 /* A palette tint, a palette fade's build mode: up to RGB_WHITE, one RGB555

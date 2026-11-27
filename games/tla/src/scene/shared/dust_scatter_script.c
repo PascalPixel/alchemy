@@ -9,8 +9,8 @@
 #define DUST_SCRIPT_SECTION
 #endif
 
-/* It lasts 33 frames, then stops and is gone. */
-DUST_SCRIPT_SECTION Uint32 Dust_ScatterScript[] = {
+/* It lasts 33 ticks, then stops and is gone. */
+DUST_SCRIPT_SECTION Uint32 DustScatterScript[] = {
 	SC_WAIT(33),
 	SC_SET(SW_HOOK, 0),
 	SC_POSITION(0, 0, 0),

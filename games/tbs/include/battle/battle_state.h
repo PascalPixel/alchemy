@@ -14,24 +14,24 @@
 #include "system.h"
 
 /* One OAM entry in a sprite list: the arrow that waits for the player to
-   advance a battle message. The playback pushes it each frame it waits
+   advance a battle message. The playback pushes it each tick it waits
    (syOAMAddSprAtDepth), and the three halfwords after the link are OAM
    attributes 0 to 2 as bit-fields. */
 typedef struct ADVANCE_ARROW_SPR {
 	/* The depth slot's next entry, set by syOAMAddSprAtDepth. */
 	struct ADVANCE_ARROW_SPR *next;
-	Uint16 y : 8; /* pixels; bobs with a sine of the frame count */
+	Uint16 y : 8; /* pixels; bobs with a sine of the tick count */
 	/* attribute 0's high byte: 0xa0, a tall 256-colour sprite */
 	Uint16 flg : 8;
 	Uint16 x : 9; /* pixels */
 	/* Attribute 1's flip and size bits; 0, which with the tall shape is 8 by 16
 	   pixels. */
 	Uint16 size : 7;
-	Uint16 tile : 10; /* the arrow picture's VRAM tile, reloaded each frame */
+	Uint16 tile : 10; /* the arrow picture's VRAM tile, reloaded each tick */
 	/* Attribute 2's priority (bits 1..0) and palette (bits 5..2); 0 here. */
 	Uint16 pal : 6;
 	/* OAM's fourth halfword, the affine parameter slot; cleared with the tile
-	   word each frame. */
+	   word each tick. */
 	Uint16 affineParam;
 } ADVANCE_ARROW_SPR;
 
@@ -68,7 +68,7 @@ typedef struct BATTLE_PLAYBACK_STATE {
 	BATTLE_PLAYBACK_QUEUE queue; /* the action's playback, in play order */
 	Sint32				  phase; /* BATTLE_PLAYBACK_PHASE, or a message phase */
 	Sint32				  eventIdx; /* the next queued entry to play */
-	Sint32 tmr; /* frames to wait, or frames waited for the advance key */
+	Sint32 tmr; /* ticks to wait, or ticks waited for the advance key */
 	ADVANCE_ARROW_SPR arrow; /* the advance arrow */
 	Sint32 arrowResource; /* the arrow's resource entry; -1 until it is shown */
 	Sint32 unitId;		  /* the unit of the hit or defeat being played */
@@ -89,10 +89,10 @@ enum { BATTLE_ACTION_CAPACITY = 20 };
    black. */
 #define BACKGROUND_LEVEL_STEP	 (toFIXED(1) / 60)
 
-/* The frames a link battle tolerates without a connection before it gives up: a
+/* The ticks a link battle tolerates without a connection before it gives up: a
    count above it pauses the battle (BATTLE_STATE.linkPaused) or fails the sync,
    transfer or wait for the partner's commands under way. */
-#define LINK_MAX_MISSED_FRAMES 24
+#define LINK_MAX_MISSED_TICKS 24
 
 /* BATTLE_STATE.challengeFlg's bit: the challenge effect landed on a party
    member ("This is no time to be running away!"). */
@@ -143,7 +143,7 @@ typedef struct BATTLE_STATE {
 	   FIRST_ENEMY_UNIT; 0xff for none. */
 	Uint8 opponentSlots[8];
 	Uint8 linkSide;	  /* this console's multiplayer id */
-	Uint8 linkMisses; /* frames the link has been down */
+	Uint8 linkMisses; /* ticks the link has been down */
 	Uint8 linkPaused; /* set when the link drops or the console's id changes */
 	Uint8 paddingAfterLink; /* up to the word arrowTiles starts on */
 	Sint32
@@ -171,7 +171,7 @@ typedef struct BATTLE_STATE {
 	FIXED  brightness;
 	Uint16 bg;				 /* the battle background's id */
 	Uint8  unusedAfterBg[4]; /* no code names it */
-	Uint16 highlightStep;	 /* index into BattleHighlight_BlendRamp */
+	Uint16 highlightStep;	 /* index into BattleHighlightBlendRamp */
 	Uint16 highlightMode;	 /* nonzero while the units are highlighted */
 	Uint8  paddingAfterHighlight[2]; /* up to the word actionRun starts on */
 	/* The action being carried out, as btActionRunBuild lays it out. */

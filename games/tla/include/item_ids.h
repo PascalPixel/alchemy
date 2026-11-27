@@ -3,7 +3,7 @@
 
 /* Item numbers, named from the English release. */
 
-/* Item ids, one for each row of Item_DefinitionTable (item_table.c) in order,
+/* Item ids, one for each row of ItemDefinitionTable (item_table.c) in order,
    named from the English release: an item's name is the message MsgItemName +
    its id. Each kind of item leaves spare ids after its last, whose rows are
    blank and whose names in the text are "?"; a kind's first id is written where

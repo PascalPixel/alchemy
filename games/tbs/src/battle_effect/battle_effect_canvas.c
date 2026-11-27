@@ -5,12 +5,12 @@
 /* How far a row of btEffectWipeCanvas's wipe lags behind its front, at most:
    each row lags a random 0 to WIPE_LAG_MAX pixels. */
 #define WIPE_LAG_MAX	63
-/* Where the across wipe's front stops, three frames past */
+/* Where the across wipe's front stops, three ticks past */
 /* CANVAS_SIZE + WIPE_LAG_MAX, where the wipe is finished. */
 #define WIPE_ACROSS_END 256
 
-/* Wipes the whole canvas to one colour with a ragged edge, a frame at a time:
-   23 frames across, 15 down. */
+/* Wipes the whole canvas to one colour with a ragged edge, a tick at a time:
+   23 ticks across, 15 down. */
 void btEffectWipeCanvas(Sint32 direction, Sint32 fill)
 {
 	BATTLE_EFFECT_STATE *state;
@@ -18,7 +18,7 @@ void btEffectWipeCanvas(Sint32 direction, Sint32 fill)
 	Uint8				 delay[CANVAS_SIZE];
 	Sint32				 x;
 	Sint32				 y;
-	Sint32				 wipePosition;
+	Sint32				 wipePos;
 
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -37,11 +37,10 @@ void btEffectWipeCanvas(Sint32 direction, Sint32 fill)
 			speed++;
 			for(; x != front; x++) {
 				for(y = 0; y != CANVAS_SIZE; y++) {
-					wipePosition = x - delay[y];
-					if(wipePosition >= 0)
-						if(wipePosition < CANVAS_SIZE)
-							canvas[CANVAS_PIXEL_OFFSET(wipePosition, y)] =
-								1 - fill;
+					wipePos = x - delay[y];
+					if(wipePos >= 0)
+						if(wipePos < CANVAS_SIZE)
+							canvas[CANVAS_PIXEL_OFFSET(wipePos, y)] = 1 - fill;
 				}
 			}
 			EFFECT_PRESENT_CANVAS(state);
@@ -58,11 +57,10 @@ void btEffectWipeCanvas(Sint32 direction, Sint32 fill)
 			speed += 4;
 			for(; y != front; y++) {
 				for(x = 0; x != CANVAS_SIZE; x++) {
-					wipePosition = y - delay[x];
-					if(wipePosition >= 0)
-						if(wipePosition < CANVAS_SIZE)
-							canvas[CANVAS_PIXEL_OFFSET(x, wipePosition)] =
-								1 - fill;
+					wipePos = y - delay[x];
+					if(wipePos >= 0)
+						if(wipePos < CANVAS_SIZE)
+							canvas[CANVAS_PIXEL_OFFSET(x, wipePos)] = 1 - fill;
 				}
 			}
 			EFFECT_PRESENT_CANVAS(state);
@@ -70,86 +68,86 @@ void btEffectWipeCanvas(Sint32 direction, Sint32 fill)
 	}
 }
 
-/* Copies the canvas to VRAM once the effect has finished a frame, then clears,
+/* Copies the canvas to VRAM once the effect has finished a tick, then clears,
    fades, darkens or brightens it as transferMode says. */
 void btEffectTransferCanvas(void)
 {
 	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-	void				*source;
+	void				*src;
 	Sint32				*counter;
 	Sint32				 nextCounter;
 
 	if(state->transferPending == 1) {
-		source = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+		src = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
 		switch(state->transferMode) {
 		case CANVAS_COPY:
-			syWordsCopy(BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
+			syWordsCopy(BG_CHAR_BLOCK(1), src, CANVAS_BYTES);
 			break;
 		case CANVAS_COPY_AND_CLEAR:
-			syWordsCopy(BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
-			syWordsFill(source, CANVAS_BYTES, state->transferValue);
+			syWordsCopy(BG_CHAR_BLOCK(1), src, CANVAS_BYTES);
+			syWordsFill(src, CANVAS_BYTES, state->transferValue);
 			break;
 		case CANVAS_COPY_AND_FADE:
 			if(state->transferValue == CANVAS_FADE_HALF) {
 				syCanvasCopyAndHalve(
-					source, (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
+					src, (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
 			} else {
 				syCanvasCopyAndScaleThreeQuarters(
-					source, (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
+					src, (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
 			}
 			break;
 		case CANVAS_COPY_AND_DARKEN:
-			syCanvasCopyAndDarken(source, state->transferValue,
+			syCanvasCopyAndDarken(src, state->transferValue,
 				(void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
 			break;
 		case CANVAS_COPY_AND_BRIGHTEN:
-			syCanvasCopyAndBrighten(source, state->transferValue,
+			syCanvasCopyAndBrighten(src, state->transferValue,
 				(void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
 			break;
 		}
 		state->transferPending = 0;
-		counter = &state->vblanksSinceTransfer;
+		counter = &state->framesSinceTransfer;
 		nextCounter = 1;
 	} else {
-		counter = &state->vblanksSinceTransfer;
+		counter = &state->framesSinceTransfer;
 		nextCounter = *counter + 1;
 	}
 	*counter = nextCounter;
 }
 
-/* Copies a full-screen image to VRAM once the effect has finished a frame, as
+/* Copies a full-screen image to VRAM once the effect has finished a tick, as
    transferMode says. */
 void btEffectTransferFullScreenImage(void)
 {
 	BATTLE_EFFECT_STATE *state;
-	void				*source;
+	void				*src;
 	Sint32				 transferMode;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-	source = Ram_MapGridMetatileBuffer;
+	src = Ram_MapGridMetatileBuffer;
 	if(state->transferPending != 1)
 		return;
 
 	transferMode = state->transferMode;
 	switch(transferMode) {
 	case CANVAS_COPY:
-		syWordsCopy(BG_CHAR_BLOCK(2), source, BATTLE_BACKGROUND_BYTES);
+		syWordsCopy(BG_CHAR_BLOCK(2), src, BATTLE_BACKGROUND_BYTES);
 		break;
 	case CANVAS_COPY_AND_CLEAR:
-		syWordsCopy(BG_CHAR_BLOCK(2), source, BATTLE_BACKGROUND_BYTES);
-		syWordsFill(source, BATTLE_BACKGROUND_BYTES, state->transferValue);
+		syWordsCopy(BG_CHAR_BLOCK(2), src, BATTLE_BACKGROUND_BYTES);
+		syWordsFill(src, BATTLE_BACKGROUND_BYTES, state->transferValue);
 		break;
 	case CANVAS_COPY_AND_FADE:
 		if(state->transferValue == CANVAS_FADE_HALF) {
 			syCanvasCopyAndHalve(
-				source, (void *)BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES);
+				src, (void *)BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES);
 		} else {
 			syCanvasCopyAndScaleThreeQuarters(
-				source, (void *)BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES);
+				src, (void *)BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES);
 		}
 		break;
 	case CANVAS_COPY_AND_DARKEN:
-		syCanvasCopyAndDarken(source, state->transferValue,
+		syCanvasCopyAndDarken(src, state->transferValue,
 			(void *)BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES);
 		break;
 	}
@@ -186,7 +184,7 @@ void btEffectApplyBg2Reference(void)
 	REG_BG2Y = state->bg2y;
 }
 
-/* Darkens the battle background a step each frame while the canvas is open, so
+/* Darkens the battle background a step each tick while the canvas is open, so
    the effect stands out. */
 void btEffectDarkenBackgroundStep(void)
 {
@@ -217,15 +215,14 @@ void btEffectClearTintTimers(void)
 void btEffectCountDownBattlerTints(void)
 {
 	BATTLE_EFFECT_STATE *state;
-	Sint32				 actorIndex;
+	Sint32				 actorIdx;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-	for(actorIndex = 0; actorIndex != ARRAY_COUNT(state->actorTmrs);
-		actorIndex++) {
-		if(state->actorTmrs[actorIndex] != 0) {
-			if((state->actorTmrs[actorIndex] =
-					   state->actorTmrs[actorIndex] - 1) == 0) {
-				btEffectTintBattler(state->args->tgts[actorIndex],
+	for(actorIdx = 0; actorIdx != ARRAY_COUNT(state->actorTmrs); actorIdx++) {
+		if(state->actorTmrs[actorIdx] != 0) {
+			if((state->actorTmrs[actorIdx] = state->actorTmrs[actorIdx] - 1) ==
+				0) {
+				btEffectTintBattler(state->args->tgts[actorIdx],
 					SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
 			}
 		}
@@ -256,7 +253,7 @@ void btEffectStartCanvasLayer(Sint32 bgControl)
 	btBackgroundSetModeStub(BATTLE_BACKGROUND_FIXED, battle->bg, 0);
 	state->fadeFrm = 0;
 	state->fadeStep = 0;
-	sySetEvent(btEffectDarkenBackgroundStep, EVENT_PASS_FRAME);
+	sySetEvent(btEffectDarkenBackgroundStep, EVENT_PASS_TICK);
 
 	/* Change BG2's settings while it is hidden. */
 	IO_WRITE_QUEUE_PUSH((Uint32)&REG_DISPCNT,
@@ -284,10 +281,10 @@ void btEffectStartCanvasLayer(Sint32 bgControl)
 		(Uint32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
 
 	{
-		Sint32 offset = 0;
+		Sint32 ofs = 0;
 
 		for(row = 0; row != CANVAS_TILES; row++) {
-			EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
+			EFFECT_WRITE_CANVAS_MAP_ROW(row, column, ofs);
 		}
 
 		syWordsClear(canvas, CANVAS_BYTES);
@@ -323,9 +320,9 @@ void btEffectOpenCanvasLayer(Sint32 bgControl)
 	sySynch(1);
 	btBackgroundSetModeStub(
 		BATTLE_BACKGROUND_FIXED, battle->bg, BATTLE_BACKGROUND_FADE_RESTORE);
-	state->fadeFrm = BACKGROUND_DARKEN_FRAMES;
+	state->fadeFrm = BACKGROUND_DARKEN_TICKS;
 	state->fadeStep = 0;
-	sySetEvent(btEffectDarkenBackgroundStep, EVENT_PASS_FRAME);
+	sySetEvent(btEffectDarkenBackgroundStep, EVENT_PASS_TICK);
 	IO_WRITE_QUEUE_PUSH((Uint32)&REG_DISPCNT,
 		DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
 			DISPCNT_OBJ_ON,
@@ -353,10 +350,10 @@ void btEffectOpenCanvasLayer(Sint32 bgControl)
 	sySynch(1);
 
 	{
-		Sint32 offset = 0;
+		Sint32 ofs = 0;
 
 		for(row = 0; row != CANVAS_TILES; row++) {
-			EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
+			EFFECT_WRITE_CANVAS_MAP_ROW(row, column, ofs);
 		}
 
 		syWordsClear(canvas, CANVAS_BYTES);
@@ -372,21 +369,21 @@ void btEffectStartTiledCanvas(Sint32 bgControl)
 {
 	Sint32 row;
 	Sint32 column;
-	Sint32 offset;
+	Sint32 ofs;
 
 	btEffectStartCanvasLayer(bgControl);
 	REG_BG2CNT = bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
 		BGCNT_SCREEN_BASE(7) | BGCNT_WRAP | BGCNT_SIZE(1);
-	offset = 0;
+	ofs = 0;
 	for(row = 0; row != CANVAS_TILES; row++) {
-		EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
-		for(column = 0; column != 8; column++, offset += 2) {
-			*(volatile Uint16 *)((Uint8 *)BG_CANVAS_MAP + offset) = 0;
+		EFFECT_WRITE_CANVAS_MAP_ROW(row, column, ofs);
+		for(column = 0; column != 8; column++, ofs += 2) {
+			*(volatile Uint16 *)((Uint8 *)BG_CANVAS_MAP + ofs) = 0;
 		}
 	}
 }
 
-/* The levels the battle background brightens by each frame as the canvas
+/* The levels the battle background brightens by each tick as the canvas
    closes, back to its own colours. */
 #define BACKGROUND_RESTORE_STEP 3
 
@@ -419,7 +416,7 @@ void btEffectEndCanvasLayer(void)
 	btBackgroundSetModeStub(BATTLE_BACKGROUND_ZOOMED, battle->bg, 7);
 	sySynch(1);
 	/* The background brightens from the darkened level back to its own colours
-	   over eight frames. */
+	   over eight ticks. */
 	for(i = 0; i != BACKGROUND_DARKENED_LEVEL / BACKGROUND_RESTORE_STEP; i++) {
 		btBackgroundSetPaletteLevelStub(battle->bg,
 			BACKGROUND_DARKENED_LEVEL - BACKGROUND_RESTORE_STEP -
@@ -487,7 +484,7 @@ void btEffectSetupCanvasTileMap(void)
 #endif
 	Sint32 row;
 	Sint32 column;
-	Sint32 byteOffset;
+	Sint32 byteOfs;
 
 	btEffectClearTintTimers();
 	btBackgroundSetModeStub(BATTLE_BACKGROUND_ZOOMED, screen->bg, 0);
@@ -501,15 +498,15 @@ void btEffectSetupCanvasTileMap(void)
 		(CANVAS_BG1_TOP_ROW - BATTLE_BACKGROUND_SCROLL_Y / 8) * MAP_ROW_BYTES,
 		-1);
 	/* The canvas's tiles, then the blank tile across the rest of each row. */
-	byteOffset = 0;
+	byteOfs = 0;
 	for(row = 0; row != CANVAS_TILES; row++) {
-		for(column = 0; column != BG_SCREEN_WIDTH; column++, byteOffset += 2) {
+		for(column = 0; column != BG_SCREEN_WIDTH; column++, byteOfs += 2) {
 			if(column >= CANVAS_TILES)
 				*(volatile Uint16 *)(BG1_MAP_ROW(CANVAS_BG1_TOP_ROW) +
-					byteOffset) = CANVAS_BG1_BLANK_TILE;
+					byteOfs) = CANVAS_BG1_BLANK_TILE;
 			else
 				*(volatile Uint16 *)(BG1_MAP_ROW(CANVAS_BG1_TOP_ROW) +
-					byteOffset) =
+					byteOfs) =
 					row * CANVAS_TILES + CANVAS_BG1_FIRST_TILE + column;
 		}
 	}
@@ -530,7 +527,7 @@ void btEffectSetupCanvasTileMap(void)
 /* Draws a line on the canvas, keeping the brighter colour where it crosses what
    is drawn; the line's ends are clipped to the canvas's rows only. */
 void btEffectDrawClippedCanvasLine(
-	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 color)
+	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 col)
 {
 	Sint32 dx = x1 - x0;
 	Sint32 dy = y1 - y0;
@@ -543,7 +540,7 @@ void btEffectDrawClippedCanvasLine(
 	Sint32 x;
 	Sint32 y;
 	Sint32 tmp;
-	Uint32 offset;
+	Uint32 ofs;
 
 	CLAMP(y0, 0, CANVAS_SIZE - 1);
 	CLAMP(y1, 0, CANVAS_SIZE - 1);
@@ -565,9 +562,9 @@ void btEffectDrawClippedCanvasLine(
 		step = ABS(x1 - x0) * Q_8_8(1) / ABS(y1 - y0);
 		x = x0;
 		for(i = y0; i != y1; i++) {
-			offset = CANVAS_PIXEL_OFFSET((Uint32)x, (Uint32)i);
-			if(canvas[offset] < color)
-				canvas[offset] = color;
+			ofs = CANVAS_PIXEL_OFFSET((Uint32)x, (Uint32)i);
+			if(canvas[ofs] < col)
+				canvas[ofs] = col;
 			frac += step;
 			if(frac & Q_8_8(1)) {
 				if(dx > 0)
@@ -594,9 +591,9 @@ void btEffectDrawClippedCanvasLine(
 		step = ABS(y1 - y0) * Q_8_8(1) / ABS(x1 - x0);
 		y = y0;
 		for(i = x0; i != x1; i++) {
-			offset = CANVAS_PIXEL_OFFSET((Uint32)i, (Uint32)y);
-			if(canvas[offset] < color)
-				canvas[offset] = color;
+			ofs = CANVAS_PIXEL_OFFSET((Uint32)i, (Uint32)y);
+			if(canvas[ofs] < col)
+				canvas[ofs] = col;
 			frac += step;
 			if(frac & Q_8_8(1)) {
 				if(dy > 0)

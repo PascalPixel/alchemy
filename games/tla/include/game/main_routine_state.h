@@ -45,8 +45,8 @@ typedef enum BATTLE_TYPE {
 typedef enum HAZARD_MODE {
 	/* The distance the leader walks on MAP_METATILE_HAZARD ground. */
 	HAZARD_COUNT_ON_METATILES = 0,
-	/* One each frame the field mode runs; no code in the game sets it. */
-	HAZARD_COUNT_FRAMES = 1
+	/* One each tick the field mode runs; no code in the game sets it. */
+	HAZARD_COUNT_TICKS = 1
 } HAZARD_MODE;
 
 /* MainRoutineStateWork.hazardDamage's bit 8: its low byte is a percentage of
@@ -54,7 +54,7 @@ typedef enum HAZARD_MODE {
 #define HAZARD_DAMAGE_PERCENT 0x100
 
 /* The most Game Tickets counted in MAIN_ROUTINE_STATE.shopGifts, the last of
-   Shop_GameTicketCreditCosts' prices that is used. */
+   ShopGameTicketCreditCosts' prices that is used. */
 #define SHOP_GIFTS_MAX 28
 
 /* The first pending Djinni battle script: DJINNI_BATTLE_SCRIPT_FIRST plus the

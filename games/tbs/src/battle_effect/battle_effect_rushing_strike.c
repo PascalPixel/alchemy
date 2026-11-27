@@ -2,31 +2,31 @@
    battle_effect.c. */
 
 /* Packs the six yellow orb pictures to half width, keeping every second byte.
-   Its rows are always the orbs' own; rowCount is not read. */
+   Its rows are always the orbs' own; rowCnt is not read. */
 void btEffectPackYellowOrbs(
-	Uint8 *src, Uint8 *dst, Sint32 stride, Sint32 rowCount)
+	Uint8 *src, Uint8 *dst, Sint32 stride, Sint32 rowCnt)
 {
 	Sint32 row = 0;
 	Sint32 rows = YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT;
-	Sint32 offset = 0;
+	Sint32 ofs = 0;
 
 	for(; row != rows; row++) {
 		Sint32 x;
 
 		for(x = 0; x != YELLOW_ORB_WIDTH; x++) {
-			dst[offset / 2 + x / 2] = src[offset + x];
+			dst[ofs / 2 + x / 2] = src[ofs + x];
 		}
-		offset += stride;
+		ofs += stride;
 	}
 }
 
-#define RUSHING_STRIKE_SPARK_COUNT	64
-/* The first pair of sparks' frames of life; each pair after lives a frame
+#define RUSHING_STRIKE_SPARK_COUNT 64
+/* The first pair of sparks' ticks of life; each pair after lives a tick
    longer. */
-#define RUSHING_STRIKE_SPARK_FRAMES 16
+#define RUSHING_STRIKE_SPARK_TICKS 16
 /* One ring picture: a yellow orb packed to half width, in the map grid
    buffer. */
-#define RUSHING_STRIKE_RING_BYTES	PICTURE_BYTES(YELLOW_ORB_PACKED)
+#define RUSHING_STRIKE_RING_BYTES  PICTURE_BYTES(YELLOW_ORB_PACKED)
 
 /* The rushing strike's sparks' palettes (btEffectRunRushingStrike), each named
    for the effect that plays it. */
@@ -71,13 +71,13 @@ void btEffectRunHeadbutt(BATTLE_EFFECT_PARM *args)
 
 /* BlueBurstSheet's one picture, the top half of a burst: drawn as it is and
    mirrored top to bottom beneath, a 40x64 burst that follows the user in. */
-#define BLUE_BURST_WIDTH			40
-#define BLUE_BURST_HEIGHT			32
-#define RUSHING_STRIKE_FRAMES		60
-#define RUSHING_STRIKE_BURST_FRAMES 15 /* the burst follows the user in */
-#define RUSHING_STRIKE_RING_FRAME	8  /* the ring flares at the target */
-#define RUSHING_STRIKE_RING_FRAMES	12 /* its pictures, two frames each */
-#define RUSHING_STRIKE_FRAME		10 /* the user strikes */
+#define BLUE_BURST_WIDTH		   40
+#define BLUE_BURST_HEIGHT		   32
+#define RUSHING_STRIKE_TICKS	   60
+#define RUSHING_STRIKE_BURST_TICKS 15 /* the burst follows the user in */
+#define RUSHING_STRIKE_RING_TICK   8  /* the ring flares at the target */
+#define RUSHING_STRIKE_RING_TICKS  12 /* its pictures, two ticks each */
+#define RUSHING_STRIKE_TICK		   10 /* the user strikes */
 
 /* The user rushes at the first target; a ring flares where it hits and sparks
    scatter. */
@@ -93,11 +93,11 @@ void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	SCREEN_POINT		 origin;
 	SCREEN_POINT		 screen;
 	SCREEN_POINT		 sparkScreen;
-	ACTOR				*target;
-	Sint32				 frame;
+	ACTOR				*tgt;
+	Sint32				 frm;
 	Sint32				 i;
 	Sint32				 size;
-	Sint32				 ringFrame;
+	Sint32				 ringFrm;
 	Sint32				 paletteId;
 	Uint8				*rings;
 
@@ -149,23 +149,23 @@ void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 	/* Send the user in, and ready the sparks at the target. */
 	btEffectSetApproachMotion(state->args->user, state->args->tgts[0], 10);
-	target = btObjectGetStub(state->args->tgts[0])->actor;
+	tgt = btObjectGetStub(state->args->tgts[0])->actor;
 	for(i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {
 		newSpark = &state->particles[i];
-		newSpark->x = target->x.fixed;
-		newSpark->y = target->y.fixed + toFIXED(10);
-		newSpark->z = target->z.fixed;
+		newSpark->x = tgt->x.fixed;
+		newSpark->y = tgt->y.fixed + toFIXED(10);
+		newSpark->z = tgt->z.fixed;
 		SET_VELOCITY(newSpark, (syRandom() & 0x1ff) << 11,
 			((syRandom() & 255) - 64) << 11, ((syRandom() & 255) - 128) << 11);
 		if(newSpark->x > 0)
 			newSpark->velX = -newSpark->velX;
-		newSpark->variant = i / 2 + RUSHING_STRIKE_SPARK_FRAMES;
+		newSpark->variant = i / 2 + RUSHING_STRIKE_SPARK_TICKS;
 	}
 	btProjectionUnit(state->args->tgts[0], &origin);
 
-	for(frame = 0; frame != RUSHING_STRIKE_FRAMES; frame++) {
+	for(frm = 0; frm != RUSHING_STRIKE_TICKS; frm++) {
 		/* The burst at the user as it rushes in. */
-		if(frame < RUSHING_STRIKE_BURST_FRAMES) {
+		if(frm < RUSHING_STRIKE_BURST_TICKS) {
 			btProjectionUnit(state->args->user, &screen);
 			draw[0](canvas, state->sheet, screen.x / 2 - 16,
 				screen.y - 16 - BLUE_BURST_HEIGHT, BLUE_BURST_WIDTH,
@@ -173,7 +173,7 @@ void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			draw[1](canvas, state->sheet, screen.x / 2 - 16, screen.y - 16,
 				BLUE_BURST_WIDTH, BLUE_BURST_HEIGHT);
 		}
-		if(frame == RUSHING_STRIKE_FRAME) {
+		if(frm == RUSHING_STRIKE_TICK) {
 			btEffectTintBattler(
 				state->args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
 			btMotionApplyKnockbackStub(state->args->tgts[0], KNOCKBACK_HURL);
@@ -181,15 +181,15 @@ void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			state->shakeFrm = 8;
 		}
 		/* The ring where it hits. */
-		ringFrame = frame - RUSHING_STRIKE_RING_FRAME;
-		if(ringFrame >= 0 && ringFrame < RUSHING_STRIKE_RING_FRAMES) {
-			Sint32 ring = ringFrame / 2;
+		ringFrm = frm - RUSHING_STRIKE_RING_TICK;
+		if(ringFrm >= 0 && ringFrm < RUSHING_STRIKE_RING_TICKS) {
+			Sint32 ring = ringFrm / 2;
 			draw[0](canvas, rings + ring * RUSHING_STRIKE_RING_BYTES,
 				origin.x / 2 - 16, screen.y - 40, YELLOW_ORB_PACKED_WIDTH,
 				YELLOW_ORB_PACKED_HEIGHT);
 		}
 		/* The sparks fly and shrink. */
-		if(ringFrame >= 0 && ringFrame <= 55) {
+		if(ringFrm >= 0 && ringFrm <= 55) {
 			EFFECT_VIEW_FROM_CAMERA(camera);
 			for(i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {
 				spark = &state->particles[i];
@@ -208,18 +208,18 @@ void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		}
 		btCameraShake(8, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 	EFFECT_FINISH_CANVAS();
 }
 
 #undef RUSHING_STRIKE_SPARK_COUNT
-#undef RUSHING_STRIKE_SPARK_FRAMES
-#undef RUSHING_STRIKE_BURST_FRAMES
-#undef RUSHING_STRIKE_RING_FRAME
-#undef RUSHING_STRIKE_RING_FRAMES
+#undef RUSHING_STRIKE_SPARK_TICKS
+#undef RUSHING_STRIKE_BURST_TICKS
+#undef RUSHING_STRIKE_RING_TICK
+#undef RUSHING_STRIKE_RING_TICKS
 #undef RUSHING_STRIKE_RING_BYTES
-#undef RUSHING_STRIKE_FRAMES
-#undef RUSHING_STRIKE_FRAME
+#undef RUSHING_STRIKE_TICKS
+#undef RUSHING_STRIKE_TICK
 #undef BLUE_BURST_WIDTH
 #undef BLUE_BURST_HEIGHT

@@ -7,7 +7,7 @@
 /* clang-format off */
 
 /* What fdScoopDigUpItem can find, one of the 16 at random. */
-const Uint16 Scoop_DugItems[16] = {
+const Uint16 ScoopDugItems[16] = {
 	ITEM_HERB, ITEM_HERB, ITEM_HERB, ITEM_HERB,
 	ITEM_ANTIDOTE, ITEM_ANTIDOTE, ITEM_ANTIDOTE,
 	ITEM_SMOKE_BOMB, ITEM_SMOKE_BOMB,
@@ -16,9 +16,9 @@ const Uint16 Scoop_DugItems[16] = {
 	ITEM_NUT, ITEM_NUT,
 };
 
-/* Hover's glow level by frame (fdHoverGlowGetCol): 32 steps down from 31, */
-/* 32 frames of 0 and 32 steps back up. */
-const Uint8 HoverGlow_Levels[96] = {
+/* Hover's glow level by tick (fdHoverGlowGetCol): 32 steps down from 31, */
+/* 32 ticks of 0 and 32 steps back up. */
+const Uint8 HoverGlowLevels[96] = {
 	31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16,
 	15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -30,8 +30,8 @@ const Uint8 HoverGlow_Levels[96] = {
 /* clang-format on */
 
 /* Sets full size, then squashes and stretches for ever, as the variant motion
-   scripts (Actor_VariantScripts) do (fdSummonTabletPlayRunes). */
-const Sint32 SummonTablet_SquashScript[] = {
+   scripts (ActorVariantScripts) do (fdSummonTabletPlayRunes). */
+const Sint32 SummonTabletSquashScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1)),
 	SC_SET(SW_SCALE_Y, toFIXED(1)),
 	SC_LABEL(1),
@@ -53,9 +53,9 @@ const Sint32 SummonTablet_SquashScript[] = {
 };
 
 /* The World Map markers' blend weight in sixteenths, against the picture's 16
-   less it ((FrameCount >> 1) & 31, fdMapScreenUpdateMarkers): solid for 32
-   frames, then down to half and back over the next 32; as The Broken Seal's. */
-const Uint8 WorldMap_MarkerBlendCycle[32] = {
+   less it ((TickCount >> 1) & 31, fdMapScreenUpdateMarkers): solid for 32
+   ticks, then down to half and back over the next 32; as The Broken Seal's. */
+const Uint8 WorldMapMarkerBlendCycle[32] = {
 	16,
 	16,
 	16,

@@ -11,60 +11,60 @@
 Sint32 mnShopSelectBuy(void)
 {
 	SHOP_STATE		*shop = MenuState;
-	WINDOW			*priceWindow = 0;
-	WINDOW			*stockWindow;
-	WINDOW			*messageWindow;
-	WINDOW			*partyWindow;
+	WINDOW			*priceWin = 0;
+	WINDOW			*stockWin;
+	WINDOW			*msgWin;
+	WINDOW			*partyWin;
 	Sint32			 selected = 0;
 	Sint32			 quantity;
 	ITEM_DEFINITION *selectedDefinition;
 	Bool			 repromptRecipient;
-	WINDOW			*itemWindow;
+	WINDOW			*itemWin;
 	Bool			 redraw;
-	Sint32			 selectionIndex;
-	Sint32			 stockCount;
+	Sint32			 selectionIdx;
+	Sint32			 stockCnt;
 	Sint32			 itemId;
 	ITEM_DEFINITION *stockDefinition;
 	Sint32			 selectionResult;
-	Sint32			 previousIndex;
+	Sint32			 prevIdx;
 	Sint32			 unitId;
 	Sint32			 capacitySlot;
-	Sint32			 removedCount;
+	Sint32			 removedCnt;
 	Sint16			*stockIds;
 
 	shop->itemWin = 0;
 	shop->moneyWin = mnWindowCreateStub(30 - SHOP_MONEY_WINDOW_WIDTH, 7,
 		SHOP_MONEY_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
 	mnShopDrawMoney();
-	priceWindow =
+	priceWin =
 		mnWindowCreateStub(0, 8, SHOP_PRICE_WIDTH, 4, WINDOW_FLAG_INSTANT);
 
 next_page:
-	selectionIndex = selected;
-	stockWindow = mnWindowCreateStub(0, 12, 30, 4, WINDOW_FLAG_INSTANT);
+	selectionIdx = selected;
+	stockWin = mnWindowCreateStub(0, 12, 30, 4, WINDOW_FLAG_INSTANT);
 	shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
-	shop->cursorFrm = SHOP_CURSOR_ENTER_FRAMES;
-	messageWindow = mnWindowCreateStub(0, 17, 30, 3, WINDOW_FLAG_INSTANT);
+	shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
+	msgWin = mnWindowCreateStub(0, 17, 30, 3, WINDOW_FLAG_INSTANT);
 	redraw = TRUE;
 
 	while(1) {
-		stockCount = shop->stockCnt;
+		stockCnt = shop->stockCnt;
 		if(redraw != 0) {
 			stockIds = shop->stockItemIds;
-			itemId = stockIds[selectionIndex];
+			itemId = stockIds[selectionIdx];
 			stockDefinition = gmItemGetDirectStub(itemId);
 			redraw = FALSE;
-			mnCursorPlace(stockWindow,
-				selectionIndex % SHOP_STOCK_PAGE_ITEMS * 32 - 8, 8);
+			mnCursorPlace(
+				stockWin, selectionIdx % SHOP_STOCK_PAGE_ITEMS * 32 - 8, 8);
 			shop->cursorFrm = 4;
-			mnShopDrawStock(stockWindow, selectionIndex);
-			mnShopDrawMessage(messageWindow, itemId + MsgItemPlainName);
-			mnWindowSprRedrawSavedRectStub(priceWindow);
-			mnShopDrawItemPrice(priceWindow, itemId, stockDefinition->price,
-				SHOP_PRICE_KIND_BUY);
+			mnShopDrawStock(stockWin, selectionIdx);
+			mnShopDrawMessage(msgWin, itemId + MsgItemPlainName);
+			mnWindowSprRedrawSavedRectStub(priceWin);
+			mnShopDrawItemPrice(
+				priceWin, itemId, stockDefinition->price, SHOP_PRICE_KIND_BUY);
 		}
 		if((PerPush & KEY_A) != 0) {
-			selected = selectionIndex;
+			selected = selectionIdx;
 			sySndPlayStub(SE_MENU_CONFIRM);
 			selectionResult = 0;
 			break;
@@ -75,43 +75,43 @@ next_page:
 			break;
 		}
 		if((PerRepeat & KEY_LEFT) != 0) {
-			previousIndex = selectionIndex;
-			selectionIndex--;
-			selectionIndex = (selectionIndex + stockCount) % stockCount;
-			if(previousIndex != selectionIndex) {
+			prevIdx = selectionIdx;
+			selectionIdx--;
+			selectionIdx = (selectionIdx + stockCnt) % stockCnt;
+			if(prevIdx != selectionIdx) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				redraw = TRUE;
 			}
 		}
 		if((PerRepeat & KEY_RIGHT) != 0) {
-			previousIndex = selectionIndex;
-			selectionIndex++;
-			selectionIndex = (selectionIndex + stockCount) % stockCount;
-			if(previousIndex != selectionIndex) {
+			prevIdx = selectionIdx;
+			selectionIdx++;
+			selectionIdx = (selectionIdx + stockCnt) % stockCnt;
+			if(prevIdx != selectionIdx) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				redraw = TRUE;
 			}
 		}
 		if((PerRepeat & KEY_UP) != 0 &&
-			selectionIndex - SHOP_STOCK_PAGE_ITEMS >= 0) {
-			selectionIndex -= SHOP_STOCK_PAGE_ITEMS;
+			selectionIdx - SHOP_STOCK_PAGE_ITEMS >= 0) {
+			selectionIdx -= SHOP_STOCK_PAGE_ITEMS;
 			redraw = TRUE;
 		}
 		if((PerRepeat & KEY_DOWN) != 0) {
-			if(selectionIndex + SHOP_STOCK_PAGE_ITEMS <
-				(stockCount + (SHOP_STOCK_PAGE_ITEMS - 1)) /
+			if(selectionIdx + SHOP_STOCK_PAGE_ITEMS <
+				(stockCnt + (SHOP_STOCK_PAGE_ITEMS - 1)) /
 					SHOP_STOCK_PAGE_ITEMS * SHOP_STOCK_PAGE_ITEMS) {
-				selectionIndex += SHOP_STOCK_PAGE_ITEMS;
+				selectionIdx += SHOP_STOCK_PAGE_ITEMS;
 				redraw = TRUE;
 			}
-			if(selectionIndex > stockCount - 1)
-				selectionIndex = stockCount - 1;
+			if(selectionIdx > stockCnt - 1)
+				selectionIdx = stockCnt - 1;
 		}
 		sySynch(1);
 	}
 
-	mnWindowCloseStub(messageWindow, 2);
-	mnWindowCloseStub(stockWindow, 2);
+	mnWindowCloseStub(msgWin, 2);
+	mnWindowCloseStub(stockWin, 2);
 	sySynch(1);
 	if(selectionResult != 0)
 		goto close;
@@ -123,12 +123,12 @@ next_page:
 	quantity = 1;
 	unitId = 0;
 	repromptRecipient = FALSE;
-	selectionIndex = 0;
-	partyWindow = mnWindowCreateStub(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
+	selectionIdx = 0;
+	partyWin = mnWindowCreateStub(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
 	shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-	shop->cursorFrm = SHOP_CURSOR_ENTER_FRAMES;
-	mnCreatePartyFiguresStub(partyWindow, 2, 0, 8, 0);
-	itemWindow = mnWindowCreateStub(16, 11, 14, 9, WINDOW_FLAG_INSTANT);
+	shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
+	mnCreatePartyFiguresStub(partyWin, 2, 0, 8, 0);
+	itemWin = mnWindowCreateStub(16, 11, 14, 9, WINDOW_FLAG_INSTANT);
 	redraw = TRUE;
 
 	while(1) {
@@ -139,18 +139,17 @@ next_page:
 		}
 		if(redraw != 0) {
 			redraw = FALSE;
-			selectionIndex =
-				(selectionIndex + shop->partyMemberCnt) % shop->partyMemberCnt;
-			unitId = shop->partyMemberIds[selectionIndex];
-			mnCursorPlace(partyWindow, selectionIndex * 24 - 12, 0);
+			selectionIdx =
+				(selectionIdx + shop->partyMemberCnt) % shop->partyMemberCnt;
+			unitId = shop->partyMemberIds[selectionIdx];
+			mnCursorPlace(partyWin, selectionIdx * 24 - 12, 0);
 			shop->cursorFrm = 3;
-			mnShopDrawParty(partyWindow, selectionIndex, shop->selectedItem);
+			mnShopDrawParty(partyWin, selectionIdx, shop->selectedItem);
 			if(gmItemGetEquipmentGroupStub(shop->selectedItem) ==
 				EQUIPMENT_GROUP_NONE)
-				mnShopDrawCarriedItem(itemWindow, unitId, shop->selectedItem);
+				mnShopDrawCarriedItem(itemWin, unitId, shop->selectedItem);
 			else
-				mnShopDrawEquipComparison(
-					itemWindow, unitId, shop->selectedItem);
+				mnShopDrawEquipComparison(itemWin, unitId, shop->selectedItem);
 		}
 		if((PerPush & KEY_A) != 0) {
 			/* Test for room by adding one and taking it out again, before the
@@ -200,7 +199,7 @@ next_page:
 			if(quantity == -1)
 				continue;
 			mnShopBuyDone(unitId, shop->selectedItem, quantity);
-			mnShopGiveGameTicket(partyWindow, itemWindow);
+			mnShopGiveGameTicket(partyWin, itemWin);
 			selectionResult = 0;
 			break;
 		}
@@ -211,25 +210,25 @@ next_page:
 		}
 		if((PerRepeat & KEY_LEFT) != 0) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
-			selectionIndex--;
+			selectionIdx--;
 			redraw = TRUE;
 		}
 		if((PerRepeat & KEY_RIGHT) != 0) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
-			selectionIndex++;
+			selectionIdx++;
 			redraw = TRUE;
 		}
 		sySynch(1);
 	}
 
 	mnReleasePartyFiguresStub();
-	mnWindowCloseStub(itemWindow, 2);
-	mnWindowCloseStub(partyWindow, 2);
+	mnWindowCloseStub(itemWin, 2);
+	mnWindowCloseStub(partyWin, 2);
 	sySynch(1);
 	/* An artifact bought leaves the world's stock, one for each bought, and the
 	   list is made again without what is gone. */
 	if(selectionResult == 0 && shop->action == SHOP_ACTION_ARTIFACTS) {
-		for(removedCount = 0; removedCount < quantity; removedCount++)
+		for(removedCnt = 0; removedCnt < quantity; removedCnt++)
 			gmItemAdjustRareItemStockStub(shop->selectedItem, -1);
 		if(mnShopListAvailableArtifacts() == 0)
 			goto close;
@@ -241,7 +240,7 @@ next_page:
 	goto next_page;
 
 close:
-	mnWindowCloseStub(priceWindow, 2);
+	mnWindowCloseStub(priceWin, 2);
 	mnWindowCloseStub(shop->moneyWin, 2);
 	sySynch(1);
 	return 0;
@@ -249,12 +248,12 @@ close:
 
 /* Draws a page of seven stock items with their prices, the page arrows, and the
    chosen item lifted and pulsing. */
-void mnShopDrawStock(WINDOW *window, Sint32 selected)
+void mnShopDrawStock(WINDOW *win, Sint32 selected)
 {
 	SHOP_STATE		*shop;
 	Sint16			*itemIds;
-	Sint32			 itemCount;
-	Sint32			 stockIndex;
+	Sint32			 itemCnt;
+	Sint32			 stockIdx;
 	Uint32			 pageSlot;
 	Sint16			 itemId;
 	ITEM_DEFINITION *item;
@@ -262,44 +261,44 @@ void mnShopDrawStock(WINDOW *window, Sint32 selected)
 
 	shop = MenuState;
 	itemIds = shop->stockItemIds;
-	itemCount = shop->stockCnt;
-	stockIndex = selected - selected % SHOP_STOCK_PAGE_ITEMS;
-	if(window != 0) {
-		mnWindowSprPrepareForRedrawStub(window);
+	itemCnt = shop->stockCnt;
+	stockIdx = selected - selected % SHOP_STOCK_PAGE_ITEMS;
+	if(win != 0) {
+		mnWindowSprPrepareForRedrawStub(win);
 		/* The arrows show the shop's own icons, which closing the window
 		   leaves. */
-		if(stockIndex != 0) {
+		if(stockIdx != 0) {
 			icon = mnWindowSprCreateStub(
-				shop->prevPageIcon, WINDOW_SPRITE_SIZE_16X16, window, 216, -16);
+				shop->prevPageIcon, WINDOW_SPRITE_SIZE_16X16, win, 216, -16);
 			icon->kind = WINDOW_SPRITE_PLAIN;
 			icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
 			icon->anmStep = 0;
 		}
-		if(stockIndex + SHOP_STOCK_PAGE_ITEMS < itemCount) {
+		if(stockIdx + SHOP_STOCK_PAGE_ITEMS < itemCnt) {
 			icon = mnWindowSprCreateStub(
-				shop->nextPageIcon, WINDOW_SPRITE_SIZE_16X16, window, 216, 24);
+				shop->nextPageIcon, WINDOW_SPRITE_SIZE_16X16, win, 216, 24);
 			icon->kind = WINDOW_SPRITE_PLAIN;
 			icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
 			icon->anmStep = 0;
 		}
 		pageSlot = 0;
-		if(stockIndex < (Uint32)itemCount) {
+		if(stockIdx < (Uint32)itemCnt) {
 			/* Each price sits 16 pixels right of its item. */
-			for(; pageSlot < SHOP_STOCK_PAGE_ITEMS &&
-				stockIndex < (Uint32)itemCount;
-				pageSlot++, stockIndex++) {
-				itemId = itemIds[stockIndex];
+			for(;
+				pageSlot < SHOP_STOCK_PAGE_ITEMS && stockIdx < (Uint32)itemCnt;
+				pageSlot++, stockIdx++) {
+				itemId = itemIds[stockIdx];
 				item = gmItemGetDirectStub(itemId);
 				icon = mnWindowSprCreateLoadedStub(
-					itemId, ICON_BASE, window, pageSlot * 32, 0);
+					itemId, ICON_BASE, win, pageSlot * 32, 0);
 				icon->depth = OAM_DEPTH_FRONT - 3;
-				if(stockIndex == selected) {
+				if(stockIdx == selected) {
 					icon->motion = WINDOW_SPRITE_MOTION_SWELL;
 					icon->anmStep = 10;
 					icon->depth = OAM_DEPTH_FRONT - 2;
 				}
 				icon = mnShopCreatePriceSpr(
-					item->price, window, pageSlot * 32 + 16, 0);
+					item->price, win, pageSlot * 32 + 16, 0);
 				icon->depth = OAM_DEPTH_FRONT - 4;
 			}
 		}
@@ -310,22 +309,22 @@ void mnShopDrawStock(WINDOW *window, Sint32 selected)
 void mnShopDrawMoney(void)
 {
 	SHOP_STATE *shop;
-	WINDOW	   *window;
+	WINDOW	   *win;
 
 	shop = MenuState;
-	window = shop->moneyWin;
-	if(window != 0) {
+	win = shop->moneyWin;
+	if(win != 0) {
 #if LANGUAGE != LANGUAGE_JAPANESE
-		mnTextDrawMessageAsTilesStub(MsgYourCoins, window, 0, 0);
+		mnTextDrawMessageAsTilesStub(MsgYourCoins, win, 0, 0);
 		mnTextDrawNumInWindowStub(
-			MainRoutineStateWork.holdings.coins, 6, window, 32, 8);
+			MainRoutineStateWork.holdings.coins, 6, win, 32, 8);
 #else
 		Sint32 msg = MsgYourCoins;
 
-		mnTextDrawMessageAsTilesStub(msg, window, 0, 0);
+		mnTextDrawMessageAsTilesStub(msg, win, 0, 0);
 		mnTextDrawNumInWindowStub(
-			MainRoutineStateWork.holdings.coins, 6, window, 0, 8);
-		mnTextDrawMessageAsTilesStub(msg - 2, window, 48, 8); /* MsgCoins */
+			MainRoutineStateWork.holdings.coins, 6, win, 0, 8);
+		mnTextDrawMessageAsTilesStub(msg - 2, win, 48, 8); /* MsgCoins */
 #endif
 	}
 }
@@ -334,75 +333,74 @@ void mnShopDrawMoney(void)
    instead that the shop does not buy it (SHOP_PRICE_KIND_SELL) or that it is
    not broken (SHOP_PRICE_KIND_REPAIR). */
 void mnShopDrawItemPrice(
-	WINDOW *window, Sint32 itemId, Sint32 price, Sint32 priceKind)
+	WINDOW *win, Sint32 itemId, Sint32 price, Sint32 priceKind)
 {
-	Sint32 labelMessage;
+	Sint32 labelMsg;
 
-	if(window == 0)
+	if(win == 0)
 		return;
 	goto draw;
 cannot_buy:
-	mnTextDrawMessageAsTilesStub(MsgCannotBuyThat, window, SHOP_ITEM_NOTE_X, 8);
+	mnTextDrawMessageAsTilesStub(MsgCannotBuyThat, win, SHOP_ITEM_NOTE_X, 8);
 	return;
 show_price:
-	labelMessage = MsgPrice;
-	mnTextDrawMessageAsTilesStub(labelMessage, window, SHOP_ITEM_NOTE_X, 8);
-	labelMessage -= 3; /* MsgCoins */
-	mnTextDrawNumInWindowStub(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
-	mnTextDrawMessageAsTilesStub(labelMessage, window, SHOP_PRICE_LABEL_X, 8);
+	labelMsg = MsgPrice;
+	mnTextDrawMessageAsTilesStub(labelMsg, win, SHOP_ITEM_NOTE_X, 8);
+	labelMsg -= 3; /* MsgCoins */
+	mnTextDrawNumInWindowStub(price, 5, win, SHOP_PRICE_NUMBER_X, 8);
+	mnTextDrawMessageAsTilesStub(labelMsg, win, SHOP_PRICE_LABEL_X, 8);
 	return;
 draw:
-	mnWindowSprRedrawSavedRectStub(window);
-	mnTextDrawMessageAsTilesStub(itemId + MsgItemName, window, 0, 0);
+	mnWindowSprRedrawSavedRectStub(win);
+	mnTextDrawMessageAsTilesStub(itemId + MsgItemName, win, 0, 0);
 	if(price != 0)
 		goto show_price;
 	switch(priceKind) {
 	case SHOP_PRICE_KIND_SELL:
 		goto cannot_buy;
 	case SHOP_PRICE_KIND_REPAIR:
-		mnTextDrawMessageAsTilesStub(MsgNotBroken, window, SHOP_ITEM_NOTE_X, 8);
+		mnTextDrawMessageAsTilesStub(MsgNotBroken, win, SHOP_ITEM_NOTE_X, 8);
 		break;
 	default:
 		goto show_price;
 	}
 }
 
-/* Shows `message`, an item's description, in the help window; a NULL window is
+/* Shows `msg`, an item's description, in the help window; a NULL window is
    ignored. */
-void mnShopDrawMessage(WINDOW *window, Sint32 message)
+void mnShopDrawMessage(WINDOW *win, Sint32 msg)
 {
-	if(window != 0) {
+	if(win != 0) {
 #if LANGUAGE != LANGUAGE_JAPANESE
-		mnWindowSprRedrawSavedRectStub(window);
+		mnWindowSprRedrawSavedRectStub(win);
 #else
-		mnWindowSprClearListStub(window);
+		mnWindowSprClearListStub(win);
 		sySynch(1);
 #endif
-		SHOP_DRAW_MESSAGE(message, window, 0, 0);
+		SHOP_DRAW_MESSAGE(msg, win, 0, 0);
 	}
 }
 
 /* Shows the chosen party member running in place and the others standing, and
    draws at four fifths of their size the party members who cannot equip
    `itemId`. */
-void mnShopDrawParty(WINDOW *window, Sint32 selected, Sint32 itemId)
+void mnShopDrawParty(WINDOW *win, Sint32 selected, Sint32 itemId)
 {
 	SHOP_STATE *shop = MenuState;
-	Sint32		memberIndex;
+	Sint32		memberIdx;
 
-	if(window != 0) {
-		for(memberIndex = 0; memberIndex < shop->partyMemberCnt;
-			memberIndex++) {
-			if(memberIndex == selected)
+	if(win != 0) {
+		for(memberIdx = 0; memberIdx < shop->partyMemberCnt; memberIdx++) {
+			if(memberIdx == selected)
 				fdSprStartAnimationStub(
-					shop->partyMemberIcons[memberIndex], ANIM_PARTY_RUN);
+					shop->partyMemberIcons[memberIdx], ANIM_PARTY_RUN);
 			else
 				fdSprStartAnimationStub(
-					shop->partyMemberIcons[memberIndex], ANIM_STAND);
-			shop->partyMemberScale[memberIndex] = toFIXED(1);
+					shop->partyMemberIcons[memberIdx], ANIM_STAND);
+			shop->partyMemberScale[memberIdx] = toFIXED(1);
 			if(!gmItemIsCompatibleWithUnitStub(
-				   shop->partyMemberIds[memberIndex], itemId))
-				shop->partyMemberScale[memberIndex] = toFIXED(4) / 5;
+				   shop->partyMemberIds[memberIdx], itemId))
+				shop->partyMemberScale[memberIdx] = toFIXED(4) / 5;
 		}
 	}
 }
@@ -411,7 +409,7 @@ void mnShopDrawParty(WINDOW *window, Sint32 selected, Sint32 itemId)
    the item, with an arrow up or down beside each that changes and the name of
    the item it would replace. The item is tried on in that item's slot and the
    slot put back. */
-void mnShopDrawEquipComparison(WINDOW *window, Sint32 unitId, Sint32 itemId)
+void mnShopDrawEquipComparison(WINDOW *win, Sint32 unitId, Sint32 itemId)
 {
 	SHOP_STATE		*shop = MenuState;
 	UNIT			*unit = gmUnitGetStub(unitId);
@@ -419,35 +417,35 @@ void mnShopDrawEquipComparison(WINDOW *window, Sint32 unitId, Sint32 itemId)
 	Sint32			 replacedItemId = -1;
 	Sint32			 previewSlot;
 	Sint32			 savedEntry;
-	Sint32			 index;
+	Sint32			 idx;
 	Sint32			 baseStats[4];
 	Sint32			 previewStats[4];
 
-	if(window == 0)
+	if(win == 0)
 		return;
-	mnWindowSprPrepareForRedrawStub(window);
+	mnWindowSprPrepareForRedrawStub(win);
 	if(!gmItemCanUnitEquipDirectStub(unitId, itemId)) {
-		mnTextDrawMessageStub(MsgShopCannotEquip, window, 8, 24);
+		mnTextDrawMessageStub(MsgShopCannotEquip, win, 8, 24);
 		return;
 	}
 	previewSlot = gmInventoryFindEquippedStub(unitId, item->type);
 	/* With nothing of the type equipped, borrow the first slot that is not
 	   equipped, else the first Psynergy item's, else slot 0. */
 	if(previewSlot == -1) {
-		for(index = 0; index < INVENTORY_SLOTS; index++) {
-			if(!(unit->inventory[index] & INVENTORY_EQUIPPED))
+		for(idx = 0; idx < INVENTORY_SLOTS; idx++) {
+			if(!(unit->inventory[idx] & INVENTORY_EQUIPPED))
 				break;
 		}
-		if(index == INVENTORY_SLOTS) {
-			for(index = 0; index < INVENTORY_SLOTS; index++) {
-				if(gmItemGetDirectStub(unit->inventory[index])->type ==
+		if(idx == INVENTORY_SLOTS) {
+			for(idx = 0; idx < INVENTORY_SLOTS; idx++) {
+				if(gmItemGetDirectStub(unit->inventory[idx])->type ==
 					ITEM_TYPE_PSYNERGY)
 					break;
 			}
-			if(index == INVENTORY_SLOTS)
-				index = 0;
+			if(idx == INVENTORY_SLOTS)
+				idx = 0;
 		}
-		previewSlot = index;
+		previewSlot = idx;
 	} else {
 		replacedItemId = unit->inventory[previewSlot] & INVENTORY_ITEM_ID_MASK;
 	}
@@ -466,73 +464,68 @@ void mnShopDrawEquipComparison(WINDOW *window, Sint32 unitId, Sint32 itemId)
 	baseStats[2] = unit->agility;
 	baseStats[3] = unit->luck;
 	/* Attack, Defense and Agility, each with the shop's own arrow icon. */
-	for(index = 0; index <= 2; index++) {
-		if(baseStats[index] > previewStats[index])
+	for(idx = 0; idx <= 2; idx++) {
+		if(baseStats[idx] > previewStats[idx])
 			mnWindowSprCreateStub(shop->statDownIcon, WINDOW_SPRITE_SIZE_16X16,
-				window, 56, index * 16 - 4)
+				win, 56, idx * 16 - 4)
 				->kind = WINDOW_SPRITE_PLAIN;
-		else if(baseStats[index] < previewStats[index])
+		else if(baseStats[idx] < previewStats[idx])
 			mnWindowSprCreateStub(shop->statUpIcon, WINDOW_SPRITE_SIZE_16X16,
-				window, 56, index * 16 - 4)
+				win, 56, idx * 16 - 4)
 				->kind = WINDOW_SPRITE_PLAIN;
-		mnTextDrawNumInWindowStub(baseStats[index], 3, window, 32, index * 16);
-		if(baseStats[index] != previewStats[index])
-			mnTextDrawNumInWindowStub(
-				previewStats[index], 3, window, 72, index * 16);
-		mnTextDrawMessageAsTilesStub(
-			MsgShopStatLabel + index, window, 0, index * 16);
-		mnWindowDrawDividerLineStub(
-			window, 0, index * 2 + 2, 13, index * 2 + 2);
+		mnTextDrawNumInWindowStub(baseStats[idx], 3, win, 32, idx * 16);
+		if(baseStats[idx] != previewStats[idx])
+			mnTextDrawNumInWindowStub(previewStats[idx], 3, win, 72, idx * 16);
+		mnTextDrawMessageAsTilesStub(MsgShopStatLabel + idx, win, 0, idx * 16);
+		mnWindowDrawDividerLineStub(win, 0, idx * 2 + 2, 13, idx * 2 + 2);
 	}
 	if(replacedItemId != -1)
-		mnTextDrawMessageAsTilesStub(
-			replacedItemId + MsgItemName, window, 0, 48);
+		mnTextDrawMessageAsTilesStub(replacedItemId + MsgItemName, win, 0, 48);
 }
 
 /* Shows the quantity already carried and the party member's inventory icons. */
-void mnShopDrawCarriedItem(WINDOW *window, Sint32 unitId, Sint32 itemId)
+void mnShopDrawCarriedItem(WINDOW *win, Sint32 unitId, Sint32 itemId)
 {
 	UNIT	   *unit;
 	Sint32		x;
 	Sint32		y;
-	Sint32		itemIndex;
+	Sint32		itemIdx;
 	Sint32		slot;
 	WINDOW_SPR *icon;
 
 	unit = gmUnitGetStub(unitId);
 	x = 8;
 	y = 8;
-	if(window != 0) {
-		mnWindowSprPrepareForRedrawStub(window);
+	if(win != 0) {
+		mnWindowSprPrepareForRedrawStub(win);
 		slot = gmInventoryFindStub(unitId, itemId);
 		if(slot != -1) {
 			mnMessageArgumentPushStub(
 				(unit->inventory[slot] >> INVENTORY_QUANTITY_SHIFT) + 1,
 				MESSAGE_ARGUMENT_NUMBER);
-			mnTextDrawMessageAsTilesStub(MsgYouHave, window, 0, 0);
+			mnTextDrawMessageAsTilesStub(MsgYouHave, win, 0, 0);
 		} else {
-			mnTextDrawMessageAsTilesStub(MsgShopNoneInStock, window, 0, 0);
+			mnTextDrawMessageAsTilesStub(MsgShopNoneInStock, win, 0, 0);
 		}
-		itemIndex = 0;
-		if(unit->inventory[itemIndex] != 0) {
+		itemIdx = 0;
+		if(unit->inventory[itemIdx] != 0) {
 			for(;;) {
-				icon = mnWindowSprCreateLoadedStub(unit->inventory[itemIndex],
+				icon = mnWindowSprCreateLoadedStub(unit->inventory[itemIdx],
 					ICON_BASE | ICON_COUNT_ABOVE_ONE | ICON_BROKEN |
 						ICON_EQUIPPED,
-					window, x, y);
+					win, x, y);
 				icon->depth = OAM_DEPTH_FRONT - 3;
 				x += 16;
-				if(itemIndex == SHOP_INVENTORY_COLUMNS - 1) {
+				if(itemIdx == SHOP_INVENTORY_COLUMNS - 1) {
 					x = 8;
 					y += 16;
 				}
-				if(itemIndex == SHOP_INVENTORY_COLUMNS * 2 - 1) {
+				if(itemIdx == SHOP_INVENTORY_COLUMNS * 2 - 1) {
 					x = 8;
 					y += 16;
 				}
-				itemIndex++;
-				if(itemIndex >= INVENTORY_SLOTS ||
-					unit->inventory[itemIndex] == 0)
+				itemIdx++;
+				if(itemIdx >= INVENTORY_SLOTS || unit->inventory[itemIdx] == 0)
 					break;
 			}
 		}
@@ -584,7 +577,7 @@ Sint32 mnShopSelectBuyCount(Sint32 unitId, Sint32 itemId)
 		if(quantityLimit > INVENTORY_STACK_MAX)
 			quantityLimit = INVENTORY_STACK_MAX;
 
-		shop->cursorFrm = SHOP_CURSOR_ENTER_FRAMES;
+		shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
 		mnCursorPlace(0, SHOP_QUANTITY_CURSOR_X, 48);
 		selectedQuantity =
 			mnShopSelectQuantity(carriedQuantity, quantityLimit, item->price);
@@ -602,37 +595,37 @@ Sint32 mnShopSelectBuyCount(Sint32 unitId, Sint32 itemId)
    Returns the number, or -1 for B. */
 Sint32 mnShopSelectQuantity(Sint32 minimum, Sint32 maximum, Sint32 price)
 {
-	void	   *tileBuffer;
-	WINDOW	   *window;
+	void	   *tileBuf;
+	WINDOW	   *win;
 	Bool		redraw;
 	Sint32		resourceSlot;
-	Sint32		quantityIndex;
+	Sint32		quantityIdx;
 	Sint32		selectedQuantity;
-	WINDOW_SPR *quantitySprite;
+	WINDOW_SPR *quantitySpr;
 #if LANGUAGE == LANGUAGE_JAPANESE
-	Sint32 unitMessageBase;
+	Sint32 unitMsgBase;
 #endif
 
-	tileBuffer = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
+	tileBuf = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
 	redraw = TRUE;
 	maximum -= minimum;
 	selectedQuantity = -1;
-	quantityIndex = 0;
-	window = mnWindowCreateStub(7, 4, 23, 3, WINDOW_FLAG_INSTANT);
-	if(window != 0) {
+	quantityIdx = 0;
+	win = mnWindowCreateStub(7, 4, 23, 3, WINDOW_FLAG_INSTANT);
+	if(win != 0) {
 		resourceSlot = syVRAMCacheFindFreeEntry();
 		if(resourceSlot != VRAM_CACHE_ENTRY_COUNT) {
 			/* The bar is one 8-tile entry shown as two 32x8 sprites
 			   (OBJ_SIZE_32X8); the second starts at the entry's tile 4 */
 			syVRAMCacheLoad(resourceSlot, 8 * TILE_SIZE_4BPP, 0);
-			mnWindowSprCreateStub(resourceSlot, OUTPUT_SIZE_32X8, window, 0, 0);
-			quantitySprite = mnWindowSprCreateStub(
-				resourceSlot, OUTPUT_SIZE_32X8, window, 32, 0);
-			quantitySprite->spr.oam.idx += 4;
+			mnWindowSprCreateStub(resourceSlot, OUTPUT_SIZE_32X8, win, 0, 0);
+			quantitySpr = mnWindowSprCreateStub(
+				resourceSlot, OUTPUT_SIZE_32X8, win, 32, 0);
+			quantitySpr->spr.oam.idx += 4;
 			for(;;) {
 				if(PerPush & KEY_A) {
 					sySndPlayStub(SE_MENU_CONFIRM);
-					selectedQuantity = quantityIndex + 1;
+					selectedQuantity = quantityIdx + 1;
 					break;
 				}
 				if(PerPush & KEY_B) {
@@ -643,52 +636,48 @@ Sint32 mnShopSelectQuantity(Sint32 minimum, Sint32 maximum, Sint32 price)
 				if(PerRepeat & KEY_LEFT) {
 					sySndPlayStub(SE_MENU_CURSOR_MOVE);
 					redraw = TRUE;
-					quantityIndex--;
+					quantityIdx--;
 				}
 				if(PerRepeat & KEY_RIGHT) {
 					sySndPlayStub(SE_MENU_CURSOR_MOVE);
 					redraw = TRUE;
-					quantityIndex++;
+					quantityIdx++;
 				}
 				if(redraw) {
 					redraw = FALSE;
-					quantityIndex = (quantityIndex + maximum) % maximum;
-					syDMAXCopy(Shop_QuantityTiles, tileBuffer,
+					quantityIdx = (quantityIdx + maximum) % maximum;
+					syDMAXCopy(Shop_QuantityTiles, tileBuf,
 						DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4), REG_DMA3);
 					mnQuantityBarFill(INVENTORY_STACK_MAX,
-						QUANTITY_BAR_OUT_OF_REACH, tileBuffer);
+						QUANTITY_BAR_OUT_OF_REACH, tileBuf);
 					mnQuantityBarFill(
-						minimum + maximum, QUANTITY_BAR_CHOOSABLE, tileBuffer);
-					mnQuantityBarFill(minimum + quantityIndex + 1,
-						QUANTITY_BAR_CHOSEN, tileBuffer);
-					mnQuantityBarFill(minimum, QUANTITY_BAR_HELD, tileBuffer);
-					syVRAMCacheLoad(
-						resourceSlot, 8 * TILE_SIZE_4BPP, tileBuffer);
-					selectedQuantity = quantityIndex + 1;
+						minimum + maximum, QUANTITY_BAR_CHOOSABLE, tileBuf);
+					mnQuantityBarFill(minimum + quantityIdx + 1,
+						QUANTITY_BAR_CHOSEN, tileBuf);
+					mnQuantityBarFill(minimum, QUANTITY_BAR_HELD, tileBuf);
+					syVRAMCacheLoad(resourceSlot, 8 * TILE_SIZE_4BPP, tileBuf);
+					selectedQuantity = quantityIdx + 1;
 #if LANGUAGE != LANGUAGE_JAPANESE
 					mnTextDrawNumInWindowStub(
-						selectedQuantity, 2, window, SHOP_QUANTITY_NUMBER_X, 0);
-					mnTextDrawNumInWindowStub(price * selectedQuantity, 6,
-						window, SHOP_QUANTITY_NUMBER_X + 16, 0);
+						selectedQuantity, 2, win, SHOP_QUANTITY_NUMBER_X, 0);
+					mnTextDrawNumInWindowStub(price * selectedQuantity, 6, win,
+						SHOP_QUANTITY_NUMBER_X + 16, 0);
 					mnTextDrawMessageAsTilesStub(
-						MsgCoins, window, SHOP_QUANTITY_COIN_LABEL_X, 0);
+						MsgCoins, win, SHOP_QUANTITY_COIN_LABEL_X, 0);
 #else
+					mnTextDrawNumInWindowStub(selectedQuantity, 2, win, 64, 0);
+					unitMsgBase = MsgPiece;
+					mnTextDrawMessageAsTilesStub(unitMsgBase, win, 80, 0);
 					mnTextDrawNumInWindowStub(
-						selectedQuantity, 2, window, 64, 0);
-					unitMessageBase = MsgPiece;
-					mnTextDrawMessageAsTilesStub(
-						unitMessageBase, window, 80, 0);
-					mnTextDrawNumInWindowStub(
-						price * selectedQuantity, 6, window, 96, 0);
+						price * selectedQuantity, 6, win, 96, 0);
 					/* MsgCoins */
-					mnTextDrawMessageAsTilesStub(
-						unitMessageBase - 1, window, 144, 0);
+					mnTextDrawMessageAsTilesStub(unitMsgBase - 1, win, 144, 0);
 #endif
 				}
 				sySynch(1);
 			}
 			sySynch(1);
-			mnWindowCloseStub(window, 2);
+			mnWindowCloseStub(win, 2);
 		}
 	}
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
@@ -732,7 +721,7 @@ Bool mnShopConfirmEquip(Sint32 unitId, Sint32 slot)
 	Sint32			 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
 	ITEM_DEFINITION *item = gmItemGetDirectStub(itemId);
 	Sint32			 replacedSlot;
-	WINDOW			*itemWindow;
+	WINDOW			*itemWin;
 
 	if(unit->inventory[slot] & INVENTORY_EQUIPPED)
 		return FALSE;
@@ -756,9 +745,9 @@ Bool mnShopConfirmEquip(Sint32 unitId, Sint32 slot)
 		return FALSE;
 
 	gmInventoryEquipStub(unitId, slot);
-	itemWindow = shop->itemWin;
-	if(itemWindow != 0)
-		mnShopDrawMemberItems(itemWindow, unitId);
+	itemWin = shop->itemWin;
+	if(itemWin != 0)
+		mnShopDrawMemberItems(itemWin, unitId);
 
 	if(item->flg & ITEM_CURSED) {
 		sySndPlayStub(SE_CURSE);

@@ -32,13 +32,13 @@ typedef struct WORLD_MAP_VIEW {
 	Sint8 anmActive;
 	Uint8 unused[3];
 	/* Screen rows, 0 and 159 at load and 200 and 255 from
-	   fdWorldMapStartStillImage; each frame copies them to shownTop and
+	   fdWorldMapStartStillImage; each tick copies them to shownTop and
 	   shownBottom and picks BG mode 2 or 0 from them. */
 	Uint16 winTop;
 	Uint16 winBottom;
-	Uint16 shownTop;	/* windowTop as the frame update last applied it */
-	Uint16 shownBottom; /* winBottom as the frame update last applied it */
-	Uint16 winPending;	/* cleared by the frame update; not set by name */
+	Uint16 shownTop;	/* windowTop as the tick update last applied it */
+	Uint16 shownBottom; /* winBottom as the tick update last applied it */
+	Uint16 winPending;	/* cleared by the tick update; not set by name */
 	Uint8  unusedAfterWin[6];
 	/* The world map's tile offsets (ResourceId_PerspectiveDataA), each tile
 	   LZ-compressed. */
@@ -46,7 +46,7 @@ typedef struct WORLD_MAP_VIEW {
 	Uint8  unusedAfterTiles[4];
 	Uint16 pitch; /* 1/65536 turns */
 	Uint16 yaw;	  /* 1/65536 turns */
-	/* A row of WorldMap_GraphicsResources, by the region the party is in. */
+	/* A row of WorldMapGraphicsResources, by the region the party is in. */
 	const Uint32 *resources;
 	Uint8		  unusedAfterResources[36];
 	/* the world map tile in each of 32 by 32 metatiles */
@@ -55,26 +55,26 @@ typedef struct WORLD_MAP_VIEW {
 	   quarter is not decoded again. */
 	Uint16 quarterTiles[8];
 	/* Steps left of reloading the area's graphics after the region changed, one
-	   a frame from 12 (fdWorldMapPreloadCurrentTileBlock). */
+	   a tick from 12 (fdWorldMapPreloadCurrentTileBlock). */
 	Sint32 reloadSteps;
 	Sint32 farPlane;		   /* 510 pixels at load */
 	Sint32 distance;		   /* farPlane scaled by the zoom */
 	Sint32 prevZoom;		   /* the zoom a transition starts from */
 	FIXED  zoom;			   /* 16.16 fixed point, toFIXED(1) full size */
 	Uint16 zoomTransitionFrm;  /* a zoom transition's length; 0 when none */
-	Sint16 zoomTransitionStep; /* frames of the transition done */
+	Sint16 zoomTransitionStep; /* ticks of the transition done */
 	/* Set when a field Psynergy cast on the World Map has used the second half
 	   of the BG tile buffer; the still image then decodes it again. */
 	Sint8 tileBufUsed;
 	/* Set while BG1 shows the still image: the view then only shakes BG1. */
 	Sint8 stillImageShown;
 	/* Set while the view is held for the still image or the map screen:
-	   no tile is preloaded, and without a shake the frame does nothing. */
+	   no tile is preloaded, and without a shake the tick does nothing. */
 	Sint8 viewHeld;
 	Sint8 tintRegion; /* the encounter region the tint was chosen for */
 	Sint8 tint;		  /* brightness steps, darker when negative */
 	Sint8 tintTgt;	  /* the tint the region asks for */
-	Sint8 fixedEye;	  /* set: the frame update leaves the eye where it is */
+	Sint8 fixedEye;	  /* set: the tick update leaves the eye where it is */
 } WORLD_MAP_VIEW;
 
 STATIC_ASSERT(offsetof(WORLD_MAP_VIEW, view) == 228);

@@ -7,7 +7,7 @@
 
 /* clang-format off */
 /* The title lettering's moves, in COLOSSO_LETTERING_ commands. */
-Sint16 Colosso_LetteringTitle[] = {
+Sint16 ColossoLetteringTitle[] = {
 #if LANGUAGE == LANGUAGE_JAPANESE
 	COLOSSO_LETTERING_PLACE, -188, 2048,
 	COLOSSO_LETTERING_SCALE, 256, 1,
@@ -26,7 +26,7 @@ Sint16 Colosso_LetteringTitle[] = {
 };
 
 /* `GO`'s moves. */
-Sint16 Colosso_LetteringGo[] = {
+Sint16 ColossoLetteringGo[] = {
 #if LANGUAGE == LANGUAGE_FRENCH
 	COLOSSO_LETTERING_SCALE, 512, 1,
 	COLOSSO_LETTERING_FADE, 0, 1,
@@ -109,7 +109,7 @@ Sint16 Colosso_LetteringGo[] = {
 };
 
 /* `WIN`'s moves. */
-Sint16 Colosso_LetteringWin[] = {
+Sint16 ColossoLetteringWin[] = {
 	COLOSSO_LETTERING_SCALE, 128, 1,
 	COLOSSO_LETTERING_FADE, 0, 1,
 	COLOSSO_LETTERING_SCALE, 256, 6,

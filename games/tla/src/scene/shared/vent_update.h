@@ -1,5 +1,5 @@
 /* Runs the room's hook, then steps the vents: each active one puffs every ten
-   frames. */
+   ticks. */
 void scVentUpdate(void)
 {
 	VENT_WORK  *state = VENT_STATE;

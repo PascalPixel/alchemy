@@ -1,16 +1,16 @@
-/* Lets an actor fall, waits up to sixty frames for it to land and ten more,
+/* Lets an actor fall, waits up to sixty ticks for it to land and ten more,
    then holds it still. */
 void scActorWaitToLand(Sint32 id)
 {
-	Sint32 remainingFrames = 60;
+	Sint32 remainingTicks = 60;
 	ACTOR *actor = fdActorGet(id);
 
 	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	while(remainingFrames != 0) {
+	while(remainingTicks != 0) {
 		syWait(1);
 		if(actor->velY == 0)
 			break;
-		remainingFrames--;
+		remainingTicks--;
 	}
 	syWait(10);
 	actor->motionFlg = 0;

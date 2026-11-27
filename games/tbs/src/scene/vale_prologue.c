@@ -48,7 +48,7 @@
 
    Every way out goes through scValeRequestBackdropExit (shared/vale.c), which
    stops the lightning first, and each door plays its opening metatiles before
-   it. ValePrologue_Exits gives each exit's destination.
+   it. ValePrologueExits gives each exit's destination.
 
    Two monsters attack once each, at the west end of the rope bridge west of
    Isaac's house and past the east end of the bridge in the south (slots 2 and 3
@@ -66,40 +66,40 @@
 #include "scene/walk_into_leader.h"
 #include "text/msg_ids.h"
 
-extern Uint8		  ValePrologue_FlashColorModes[];
-extern Sint32		  ValePrologue_ShovingManScript[];
-extern Sint32		  ValePrologue_UnusedGaretRunsUpScript[];
-extern Sint32		  ValePrologue_UnusedGaretPantingScript[];
-extern Sint32		  ValePrologue_BoulderWaits[];
-extern Sint32		  ValePrologue_BoulderFallLeaderPath[];
-extern Sint32		  ValePrologue_BoulderFallGaretPath[];
-extern Sint32		  ValePrologue_DoraRunsIntoRiversideHouse[];
-extern Sint32		  ValePrologue_JennaRunsIntoRiversideHouse[];
-extern Sint32		  ValePrologue_DoraComesOutOfRiversideHouse[];
-extern Sint32		  ValePrologue_JennaComesOutOfRiversideHouse[];
-extern Sint32		  ValePrologue_DoraHeadsNorth[];
-extern Sint32		  ValePrologue_JennaHeadsForPlaza[];
-extern Sint32		  ValePrologue_DoraLeavesForHelp[];
-extern Sint32		  ValePrologue_DoraRunsToRiver[];
-extern Sint32		  ValePrologue_ToRiverbankPath[];
-extern Sint32		  ValePrologue_ExhaustedStrongmanGatherPath[];
-extern Sint32		  ValePrologue_JennaGatherPath[];
-extern Sint32		  ValePrologue_LeaderGatherPath[];
-extern Sint32		  ValePrologue_GaretGatherPath[];
-extern Sint32		  ValePrologue_LookAroundScript[];
-extern Sint32		  ValePrologue_SquashAndStretchScript[];
-extern Sint32		  ValePrologue_BoulderRollsDownriver[];
-extern SCENE_ENTRANCE ValePrologue_Entrances[];
-extern Uint32		  ValePrologue_Exits[];
-extern ACTOR_PLACE	  ValePrologue_ActorPlacements[];
-extern ACTOR_PLACE	  ValePrologue_BoulderElders[];
-extern CUE			  ValePrologue_Cues[];
-extern Uint16		  ValePrologue_SanctumDoorOpens[];
-extern Uint16		  ValePrologue_IsaacsDoorOpens[];
-extern Uint16		  ValePrologue_GrandparentsDoorOpens[];
-extern Uint16		  ValePrologue_WestHouseDoorOpens[];
-extern Uint16		  ValePrologue_IsaacsDoorCloses[];
-extern Uint16		  ValePrologue_GrandparentsDoorCloses[];
+extern Uint8		  ValePrologueFlashColorModes[];
+extern Sint32		  ValePrologueShovingManScript[];
+extern Sint32		  ValePrologueUnusedGaretRunsUpScript[];
+extern Sint32		  ValePrologueUnusedGaretPantingScript[];
+extern Sint32		  ValePrologueBoulderWaits[];
+extern Sint32		  ValePrologueBoulderFallLeaderPath[];
+extern Sint32		  ValePrologueBoulderFallGaretPath[];
+extern Sint32		  ValePrologueDoraRunsIntoRiversideHouse[];
+extern Sint32		  ValePrologueJennaRunsIntoRiversideHouse[];
+extern Sint32		  ValePrologueDoraComesOutOfRiversideHouse[];
+extern Sint32		  ValePrologueJennaComesOutOfRiversideHouse[];
+extern Sint32		  ValePrologueDoraHeadsNorth[];
+extern Sint32		  ValePrologueJennaHeadsForPlaza[];
+extern Sint32		  ValePrologueDoraLeavesForHelp[];
+extern Sint32		  ValePrologueDoraRunsToRiver[];
+extern Sint32		  ValePrologueToRiverbankPath[];
+extern Sint32		  ValePrologueExhaustedStrongmanGatherPath[];
+extern Sint32		  ValePrologueJennaGatherPath[];
+extern Sint32		  ValePrologueLeaderGatherPath[];
+extern Sint32		  ValePrologueGaretGatherPath[];
+extern Sint32		  ValePrologueLookAroundScript[];
+extern Sint32		  ValePrologueSquashAndStretchScript[];
+extern Sint32		  ValePrologueBoulderRollsDownriver[];
+extern SCENE_ENTRANCE ValePrologueEntrances[];
+extern Uint32		  ValePrologueExits[];
+extern ACTOR_PLACE	  ValePrologueActorPlacements[];
+extern ACTOR_PLACE	  ValePrologueBoulderElders[];
+extern CUE			  ValePrologueCues[];
+extern Uint16		  ValePrologueSanctumDoorOpens[];
+extern Uint16		  ValePrologueIsaacsDoorOpens[];
+extern Uint16		  ValePrologueGrandparentsDoorOpens[];
+extern Uint16		  ValePrologueWestHouseDoorOpens[];
+extern Uint16		  ValePrologueIsaacsDoorCloses[];
+extern Uint16		  ValePrologueGrandparentsDoorCloses[];
 
 static void scValePrologueDoraSendsIsaacToThePlaza(void);
 static void scValePrologueApplyFirstRockCollision(void);
@@ -122,8 +122,8 @@ static void scValePrologueUpdateBoulderMapEffects(void);
 static void scValePrologueCycleBoulderPalette(void);
 static void scValePrologueCopyLeaderSprPriority(void);
 
-/* The placed actors, numbered in the order of ValePrologue_ActorPlacements. The
-   elders holding back the Boulder (ValePrologue_BoulderElders) follow them. */
+/* The placed actors, numbered in the order of ValePrologueActorPlacements. The
+   elders holding back the Boulder (ValePrologueBoulderElders) follow them. */
 typedef enum STORM_NIGHT_ACTOR_ID {
 	/* The strongman who comes back to the river with Jenna, his Psynergy
 	   restored at the Psynergy Stone (vale_plaza.c). After the Boulder has
@@ -155,13 +155,13 @@ typedef enum STORM_NIGHT_ACTOR_ID {
 	ACTOR_JENNAS_MOTHER,
 	ACTOR_JENNA_CHILD,
 	/* The Boulder's shadow (SPRITE_BLANK_LARGE, a black blob). It is drawn on
-	   alternate frames under the Boulder as it comes down the river, swelling
+	   alternate ticks under the Boulder as it comes down the river, swelling
 	   and shrinking with its bounds (scValePrologueUpdateBoulderShadow). During
 	   the frozen flashes it is twice its size
 	   (scValePrologueFlickerBoulderShadow). */
 	ACTOR_BOULDER_SHADOW,
 	/* The elders holding back the Boulder with their Psynergy ("Go aid the
-	   elders!", vale_plaza.c), from ValePrologue_BoulderElders, which
+	   elders!", vale_plaza.c), from ValePrologueBoulderElders, which
 	   scValePrologueWatchBoulderFall places after the scene's own actors and
 	   removes. Two invisible actors stand on the spots of ACTOR_ELDER_EAST and
 	   ACTOR_ELDER_WEST, and some of the elders' lines come from them. The
@@ -262,7 +262,7 @@ typedef enum VALE_PROLOGUE_METATILE_BEHAVIOR {
 } VALE_PROLOGUE_METATILE_BEHAVIOR;
 
 /* Animations of the night's own sprites beyond ACTOR_ANIMATION, as each
-   sprite's animation table and frames under graphics/sprite draw them. */
+   sprite's animation table and ticks under graphics/sprite draw them. */
 typedef enum STORM_NIGHT_ANIMATION {
 	/* Garet leaning into his chest to drag it (garet_child.png). */
 	ANIM_GARET_DRAG = 5,
@@ -315,34 +315,34 @@ typedef enum STORM_NIGHT_AREA_FLAG {
 	 rope bridge over the river. */
 
 /* 0 while the westernmost elder strains at the Boulder, 1 once he lets go. */
-static Sint32 sShakeDone;
+static Sint32 ShakeDone;
 /* 0 to 2, raised and lowered as the Boulder lurches and settles: each step puts
-   RINGS_INTERVAL_STEP more frames between the elders' rings. */
-static Sint32 sShakeShift;
+   RINGS_INTERVAL_STEP more ticks between the elders' rings. */
+static Sint32 ShakeShift;
 
 /* How long the elders call up their Psynergy once the camera reaches the
-   Boulder, in frames. */
-#define ELDERS_FLASH_FRAMES 40
-/* Frames between an elder's rings: RINGS_INTERVAL, and RINGS_INTERVAL_STEP more
-   for each step of sShakeShift. */
+   Boulder, in ticks. */
+#define ELDERS_FLASH_TICKS	40
+/* Ticks between an elder's rings: RINGS_INTERVAL, and RINGS_INTERVAL_STEP more
+   for each step of ShakeShift. */
 #define RINGS_INTERVAL		16
 #define RINGS_INTERVAL_STEP 8
 /* The colour modes an elder or the Boulder cycles through: plain colours and
    their five swaps, SPRITE_COLOR_NORMAL to SPRITE_COLOR_BRG. */
 #define SWAPPED_COLOR_MODES (SPRITE_COLOR_BRG + 1)
 
-/* A random pause of 20 to 39 frames between the glances of
-   ValePrologue_LookAroundScript. */
+/* A random pause of 20 to 39 ticks between the glances of
+   ValePrologueLookAroundScript. */
 #define VALE_PROLOGUE_GLANCE_PAUSE() \
 	(syMathRemainderUnsigned(syRandomNext(), 20) + 20)
 
-/* The step of ValePrologue_LookAroundScript. */
+/* The step of ValePrologueLookAroundScript. */
 static Sint32 scValePrologueLookAround(ACTOR *actor)
 {
-	Sint32 timer = actor->tmr;
-	Sint32 countdown = (Sint16)timer;
+	Sint32 tmr = actor->tmr;
+	Sint32 countdown = (Sint16)tmr;
 
-	if(timer == 0) {
+	if(tmr == 0) {
 		actor->facing = syRandomNext();
 		countdown = VALE_PROLOGUE_GLANCE_PAUSE();
 		actor->tmr = countdown;
@@ -363,7 +363,7 @@ static Sint32 scValePrologueLookAround(ACTOR *actor)
 /* Returns where the party appears. */
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return ValePrologue_Entrances;
+	return ValePrologueEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -373,17 +373,17 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return ValePrologue_Exits;
+	return ValePrologueExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return ValePrologue_ActorPlacements;
+	return ValePrologueActorPlacements;
 }
 
 const CUE *scGetCues(void)
 {
-	return ValePrologue_Cues;
+	return ValePrologueCues;
 }
 
 /* Nothing visible happens as Isaac steps up to either end of the rope bridge
@@ -431,7 +431,7 @@ static void scValePrologueStepOffBridge(void)
 UNUSED static void scValePrologueUnusedOpenSanctumDoor(void)
 {
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridPlayMapEdit(ValePrologue_SanctumDoorOpens, 45, 11);
+	fdMapGridPlayMapEdit(ValePrologueSanctumDoorOpens, 45, 11);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 257, 420);
 	fdScriptWait(3);
 	scValeRequestBackdropExit(
@@ -443,7 +443,7 @@ UNUSED static void scValePrologueUnusedOpenSanctumDoor(void)
    out in the plaza, outside the door of the house at its top.
 
    By day the steps lead to Sol Sanctum by exit 1 (VALE_TO_SOL_ENTRANCE). The
-   script asks for the same exit 1, which ValePrologue_Exits does not list, and
+   script asks for the same exit 1, which ValePrologueExits does not list, and
    the running game brings Isaac out at the plaza's first entrance,
    VALE_PLAZA_FROM_COTTAGE_ROOMS_A_NORTH, instead. */
 static void scValePrologueLeaveNorthwestToValePlaza(void)
@@ -489,7 +489,7 @@ static void scValePrologueLeaveToValePlaza(void)
 static void scValePrologueLeaveToCottageRoomsAEast(void)
 {
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridPlayMapEdit(ValePrologue_IsaacsDoorOpens, 54, 32);
+	fdMapGridPlayMapEdit(ValePrologueIsaacsDoorOpens, 54, 32);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 406, 727);
 	fdScriptWait(3);
 	scValeRequestBackdropExit(VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_EAST);
@@ -503,7 +503,7 @@ static void scValePrologueLeaveToCottageRoomsA(void)
 {
 	if(fdScriptGetFlag(FLAG_VALE_SHOVING_MANS_DOOR_OPEN) == 0) {
 		sySndPlay(SE_DOOR_OPEN);
-		fdMapGridAnimateMetatiles(ValePrologue_GrandparentsDoorOpens, 45, 39);
+		fdMapGridAnimateMetatiles(ValePrologueGrandparentsDoorOpens, 45, 39);
 	}
 	if(gmFlagGet(FLAG_VALE_STORM_BUMPED_INTO_VILLAGER) == 0 &&
 		gmFlagGet(FLAG_VALE_STORM_SECOND_ROCK_FELL) == 0) {
@@ -523,7 +523,7 @@ static void scValePrologueLeaveToIsaacsHouse(void)
 {
 	if(gmFlagGet(FLAG_VALE_ISAACS_DOOR_OPEN) == 0) {
 		sySndPlay(SE_DOOR_OPEN);
-		fdMapGridPlayMapEdit(ValePrologue_IsaacsDoorOpens, 50, 44);
+		fdMapGridPlayMapEdit(ValePrologueIsaacsDoorOpens, 50, 44);
 	}
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 340, 888);
 	fdScriptWait(3);
@@ -535,7 +535,7 @@ static void scValePrologueLeaveToIsaacsHouse(void)
 static void scValePrologueLeaveToCottageRoomsANorth(void)
 {
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridPlayMapEdit(ValePrologue_GrandparentsDoorOpens, 49, 69);
+	fdMapGridPlayMapEdit(ValePrologueGrandparentsDoorOpens, 49, 69);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 326, 1126);
 	fdScriptWait(3);
 	scValeRequestBackdropExit(VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_NORTH);
@@ -546,7 +546,7 @@ static void scValePrologueLeaveToCottageRoomsANorth(void)
 static void scValePrologueLeaveToCottageRoomsAWest(void)
 {
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridPlayMapEdit(ValePrologue_WestHouseDoorOpens, 52, 76);
+	fdMapGridPlayMapEdit(ValePrologueWestHouseDoorOpens, 52, 76);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 374, 1238);
 	fdScriptWait(3);
 	scValeRequestBackdropExit(VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST);
@@ -558,7 +558,7 @@ static void scValePrologueLeaveToCottageRoomsAWest(void)
 static void scValePrologueUnusedLeaveToCottageRoomsAWestByWestBankDoor(void)
 {
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridAnimateMetatiles(ValePrologue_IsaacsDoorOpens, 35, 74);
+	fdMapGridAnimateMetatiles(ValePrologueIsaacsDoorOpens, 35, 74);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 102, 1206);
 	fdScriptWait(3);
 	scValeRequestBackdropExit(
@@ -570,7 +570,7 @@ static void scValePrologueUnusedLeaveToCottageRoomsAWestByWestBankDoor(void)
 static void scValePrologueLeaveToCottageRoomsBWest(void)
 {
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridAnimateMetatiles(ValePrologue_IsaacsDoorOpens, 35, 73);
+	fdMapGridAnimateMetatiles(ValePrologueIsaacsDoorOpens, 35, 73);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 102, 1206);
 	fdScriptWait(3);
 	scValeRequestBackdropExit(VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_WEST);
@@ -582,7 +582,7 @@ static void scValePrologueLeaveToCottageRoomsBWest(void)
 static void scValePrologueLeaveToCottageRoomsBEast(void)
 {
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridAnimateMetatiles(ValePrologue_GrandparentsDoorOpens, 38, 72);
+	fdMapGridAnimateMetatiles(ValePrologueGrandparentsDoorOpens, 38, 72);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 146, 1182);
 	fdScriptWait(3);
 	scValeRequestBackdropExit(VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_EAST);
@@ -639,10 +639,10 @@ Sint32 scInit(void)
 	if(gmFlagGet(FLAG_VALE_BOULDER_FELL) != 0) {
 		fdActorSetPos(ACTOR_BOULDER, 114, 333);
 	} else {
-		fdActorSetScript(ACTOR_BOULDER, ValePrologue_BoulderWaits);
+		fdActorSetScript(ACTOR_BOULDER, ValePrologueBoulderWaits);
 	}
 	if(gmFlagGet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
-		const Sint32 *table;
+		const Sint32 *tbl;
 		scValePrologueRebuildRiverbank();
 		fdActorSetPos(ACTOR_DORA, 165, 1229);
 		{
@@ -651,9 +651,9 @@ Sint32 scInit(void)
 			actor = fdActorGet(ACTOR_DORA);
 			actor->facing = FACING_NORTHEAST;
 			actor->tmr = SQUASH_AND_STRETCH_PAUSE();
-			table = ValePrologue_SquashAndStretchScript;
+			tbl = ValePrologueSquashAndStretchScript;
 			actor->userValue = 1;
-			fdActorSetScript(ACTOR_DORA, table);
+			fdActorSetScript(ACTOR_DORA, tbl);
 		}
 		fdActorSetPos(ACTOR_JENNA_CHILD, 165, 1254);
 		{
@@ -663,7 +663,7 @@ Sint32 scInit(void)
 			actor->facing = FACING_NORTHEAST;
 			actor->tmr = SQUASH_AND_STRETCH_PAUSE();
 			actor->userValue = 2;
-			fdActorSetScript(ACTOR_JENNA_CHILD, table);
+			fdActorSetScript(ACTOR_JENNA_CHILD, tbl);
 		}
 		fdActorSetPos(ACTOR_GARET_CHILD, 152, 1285);
 		{
@@ -673,7 +673,7 @@ Sint32 scInit(void)
 			actor->facing = FACING_NORTHEAST;
 			actor->tmr = SQUASH_AND_STRETCH_PAUSE();
 			actor->userValue = 3;
-			fdActorSetScript(ACTOR_GARET_CHILD, table);
+			fdActorSetScript(ACTOR_GARET_CHILD, tbl);
 		}
 		fdActorSetPos(ACTOR_EXHAUSTED_STRONGMAN, 184, 1304);
 		{
@@ -683,14 +683,14 @@ Sint32 scInit(void)
 			actor->facing = FACING_NORTHEAST;
 			actor->tmr = SQUASH_AND_STRETCH_PAUSE();
 			actor->userValue = 4;
-			fdActorSetScript(ACTOR_EXHAUSTED_STRONGMAN, table);
+			fdActorSetScript(ACTOR_EXHAUSTED_STRONGMAN, tbl);
 		}
 		fdActorSetAnimation(
 			ACTOR_EXHAUSTED_STRONGMAN, STRONGMAN_ANIMATION_SPRAWLED);
 		fdActorGet(ACTOR_GARET_CHILD)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
 		fdActorGet(ACTOR_EXHAUSTED_STRONGMAN)->priFlg &=
 			~ACTOR_PRIORITY_AUTOMATIC;
-		sySetFrameEvent(scValePrologueCopyLeaderSprPriority, EVENT_PASS_FRAME);
+		sySetTickEvent(scValePrologueCopyLeaderSprPriority, EVENT_PASS_TICK);
 		fdActorSetPos(ACTOR_JENNAS_FATHER, 0, 0);
 		fdActorSetPos(ACTOR_JENNAS_MOTHER, 0, 0);
 		fdActorSetPos(ACTOR_FELIX_CHILD, 0, 0);
@@ -701,7 +701,7 @@ Sint32 scInit(void)
 		/* While they try to save Felix: Kyle and Jenna's parents at the river,
 		   Felix in it. */
 	} else if(gmFlagGet(FLAG_VALE_STORM_SAW_FELIX_HANGING_ON) != 0) {
-		const Sint32 *table;
+		const Sint32 *tbl;
 		fdActorSetPos(ACTOR_KYLE, 192, 1214);
 		fdActorFaceDirection(ACTOR_KYLE, FACING_SOUTHEAST, 0);
 		fdActorSetAnimation(ACTOR_KYLE, ANIM_KYLE_REACH_OUT);
@@ -711,8 +711,8 @@ Sint32 scInit(void)
 			actor = fdActorGet(ACTOR_KYLE);
 			actor->tmr = SQUASH_AND_STRETCH_PAUSE();
 		}
-		table = ValePrologue_SquashAndStretchScript;
-		fdActorSetScript(ACTOR_KYLE, table);
+		tbl = ValePrologueSquashAndStretchScript;
+		fdActorSetScript(ACTOR_KYLE, tbl);
 		fdActorSetPos(ACTOR_JENNAS_FATHER, 227, 1214);
 		fdActorFaceDirection(ACTOR_JENNAS_FATHER, FACING_SOUTH, 0);
 		fdActorSetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_REACH_OUT);
@@ -722,7 +722,7 @@ Sint32 scInit(void)
 			actor = fdActorGet(ACTOR_JENNAS_FATHER);
 			actor->tmr = SQUASH_AND_STRETCH_PAUSE();
 		}
-		fdActorSetScript(ACTOR_JENNAS_FATHER, table);
+		fdActorSetScript(ACTOR_JENNAS_FATHER, tbl);
 		fdActorSetPos(ACTOR_JENNAS_MOTHER, 247, 1214);
 		fdActorFaceDirection(ACTOR_JENNAS_MOTHER, FACING_SOUTH, 0);
 		fdActorSetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_REACH_OUT);
@@ -732,7 +732,7 @@ Sint32 scInit(void)
 			actor = fdActorGet(ACTOR_JENNAS_MOTHER);
 			actor->tmr = SQUASH_AND_STRETCH_PAUSE();
 		}
-		fdActorSetScript(ACTOR_JENNAS_MOTHER, table);
+		fdActorSetScript(ACTOR_JENNAS_MOTHER, tbl);
 		fdActorSetPos(ACTOR_FELIX_CHILD, 243, 1277);
 		fdActorFaceDirection(ACTOR_FELIX_CHILD, FACING_NORTH, 0);
 		fdActorSetSprFlags(fdActorGet(ACTOR_FELIX_CHILD), 0);
@@ -798,7 +798,7 @@ Sint32 scInit(void)
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	FieldStateWork->transitionFrm = 24;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdWeatherResumeLightning();
 	return 0;
 }
@@ -807,7 +807,7 @@ Sint32 scInit(void)
    Kyle, and the two send Isaac on to the plaza while they go to help. */
 static void scValePrologueDoraSendsIsaacToThePlaza(void)
 {
-	Sint32 message;
+	Sint32 msg;
 
 	fdScriptStart();
 	fdWeatherStartRain();
@@ -821,13 +821,13 @@ static void scValePrologueDoraSendsIsaacToThePlaza(void)
 	fdActorSetPos(ACTOR_KYLE, 294, 868);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 0, 0);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdWeatherResumeLightning();
 	/* Dora and Isaac come out of the door. */
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridAnimateMetatiles(ValePrologue_IsaacsDoorOpens, 50, 44);
+	fdMapGridAnimateMetatiles(ValePrologueIsaacsDoorOpens, 50, 44);
 	fdActorSetAttachedEffect(
 		ACTOR_GARET_CHILD, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	fdActorSetSpeed(ACTOR_DORA, 0.8);
@@ -846,8 +846,8 @@ static void scValePrologueDoraSendsIsaacToThePlaza(void)
 	fdActorFaceDirection(ACTOR_DORA, FACING_NORTH, 60);
 	/* Kyle does not think the elders can hold the Boulder, and sends the two to
 	   take refuge in the plaza. */
-	message = MsgValeKyleAbleStop;
-	fdScriptSetMessageId(message);
+	msg = MsgValeKyleAbleStop;
+	fdScriptSetMessageId(msg);
 	/* "Kyle... Will they be able to stop the Boulder?" */
 	fdScriptShowMessage(ACTOR_DORA, 0);
 	fdActorWalkToAndWait(ACTOR_KYLE, 294, 838);
@@ -886,7 +886,7 @@ static void scValePrologueDoraSendsIsaacToThePlaza(void)
 	fdScriptShowMessageThenWait(ACTOR_DORA, 0, 10);
 	fdActorFaceDirection(ACTOR_DORA, FACING_SOUTHEAST, 10);
 	/* She asks again on every no. */
-	fdScriptSetMessageId(message + 8);
+	fdScriptSetMessageId(msg + 8);
 	/* "You can find your way, can't you, Isaac?" */
 	fdScriptOpenMessage(ACTOR_DORA, 0);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 302, 905);
@@ -924,30 +924,30 @@ static void scValePrologueDoraSendsIsaacToThePlaza(void)
 static void scValePrologueFirstRockFalls(void)
 {
 	ACTOR *rock;
-	FIXED  targetHeight;
-	SPR	  *rockSprite;
+	FIXED  tgtHeight;
+	SPR	  *rockSpr;
 
 	if(fdScriptGetFlag(FLAG_VALE_STORM_FIRST_ROCK_PASSED) == 0) {
 		fdScriptStart();
 		if(fdScriptGetFlag(FLAG_VALE_STORM_FIRST_ROCK_FELL) == 0) {
 			rock = fdActorGet(ACTOR_FIRST_ROCK);
-			rockSprite = rock->spr;
+			rockSpr = rock->spr;
 			/* A rumble, a crash, and the rock bounces down from the east. */
 			fdMapGridSetShake(4, 4, 1);
 			sySndPlay(SE_RUMBLE);
 			sySynch(40);
 			sySndPlay(SE_CRASH);
 			rock->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-			rockSprite->image.pri = 1;
+			rockSpr->image.pri = 1;
 			fdActorSetPos(ACTOR_FIRST_ROCK, 473, 932);
 			rock->speedLimit = toFIXED(3) / 2;
 			rock->acceleration = toFIXED(3) / 2;
-			targetHeight = (rock->y.fixed + toFIXED(240));
+			tgtHeight = (rock->y.fixed + toFIXED(240));
 			rock->y.fixed += toFIXED(240);
-			rock->tgtY = targetHeight;
+			rock->tgtY = tgtHeight;
 			rock->bounce = toFIXED(2) / 5;
 			fdActorWalkToAndWait(ACTOR_FIRST_ROCK, 344, 932);
-			rockSprite->image.pri = 3;
+			rockSpr->image.pri = 3;
 			rock->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
 			fdScriptWait(40);
 			/* It lands: the rumble fades and the shaking dies down. */
@@ -995,7 +995,7 @@ static void scValePrologueApplyFirstRockCollision(void)
 static void scValePrologueSecondRockFalls(void)
 {
 	ACTOR *rock;
-	FIXED  targetHeight;
+	FIXED  tgtHeight;
 
 	if(fdScriptGetFlag(FLAG_VALE_STORM_SECOND_ROCK_PASSED) == 0) {
 		fdScriptStart();
@@ -1010,9 +1010,9 @@ static void scValePrologueSecondRockFalls(void)
 			fdActorSetPos(ACTOR_FIRST_ROCK + 1, 381, 808);
 			rock->speedLimit = toFIXED(3) / 2;
 			rock->acceleration = toFIXED(3) / 2;
-			targetHeight = (rock->y.fixed + toFIXED(256));
+			tgtHeight = (rock->y.fixed + toFIXED(256));
 			rock->y.fixed += toFIXED(256);
-			rock->tgtY = targetHeight;
+			rock->tgtY = tgtHeight;
 			rock->bounce = toFIXED(1) / 2;
 			fdActorWalkToAndWait(ACTOR_FIRST_ROCK + 1, 290, 833);
 			fdActorSetSprPriority(ACTOR_FIRST_ROCK + 1, 1);
@@ -1073,8 +1073,8 @@ static void scValePrologueThirdRockFalls(void)
 		if(fdScriptGetFlag(FLAG_VALE_STORM_THIRD_ROCK_FELL) == 0) {
 			ACTOR *actor = fdActorGet(ACTOR_FIRST_ROCK + 2);
 			ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
-			Uint16 priority = leader->spr->image.pri;
-			Uint8  flags = leader->priFlg;
+			Uint16 pri = leader->spr->image.pri;
+			Uint8  flg = leader->priFlg;
 
 			/* A rumble, then the rock drops in from the west while Isaac is
 			   drawn behind it. */
@@ -1098,9 +1098,9 @@ static void scValePrologueThirdRockFalls(void)
 			fdMapGridWaitForShakeToSettle();
 			fdPlayQueuedMusic();
 			gmFlagSet(FLAG_VALE_STORM_THIRD_ROCK_FELL);
-			fdActorSetSprPriority(ACTOR_PARTY_LEADER, priority);
+			fdActorSetSprPriority(ACTOR_PARTY_LEADER, pri);
 			fdActorGet(ACTOR_PARTY_LEADER)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-			leader->priFlg = flags;
+			leader->priFlg = flg;
 		}
 		scValePrologueApplyThirdRockCollision();
 		gmFlagSet(FLAG_VALE_STORM_THIRD_ROCK_PASSED);
@@ -1140,7 +1140,7 @@ static void scValePrologueApplyThirdRockCollision(void)
 static void scValePrologueFourthRockFalls(void)
 {
 	ACTOR *rock;
-	FIXED  targetHeight;
+	FIXED  tgtHeight;
 
 	if(fdScriptGetFlag(FLAG_VALE_STORM_FOURTH_ROCK_PASSED) == 0) {
 		fdScriptStart();
@@ -1154,9 +1154,9 @@ static void scValePrologueFourthRockFalls(void)
 			fdActorSetPos(ACTOR_FIRST_ROCK + 3, 474, 1147);
 			rock->speedLimit = toFIXED(1);
 			rock->acceleration = toFIXED(1);
-			targetHeight = (rock->y.fixed + toFIXED(72));
+			tgtHeight = (rock->y.fixed + toFIXED(72));
 			rock->y.fixed += toFIXED(72);
-			rock->tgtY = targetHeight;
+			rock->tgtY = tgtHeight;
 			rock->bounce = toFIXED(1) / 2;
 			fdActorWalkToAndWait(ACTOR_FIRST_ROCK + 3, 432, 1147);
 			fdScriptWait(40);
@@ -1206,7 +1206,7 @@ static void scValePrologueApplyFourthRockCollision(void)
    they had better get to the plaza before the Boulder hits, and runs off. */
 static void scValePrologueBumpIntoShovingMan(void)
 {
-	Sint32 message;
+	Sint32 msg;
 
 	fdScriptStart();
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 262, 810);
@@ -1222,8 +1222,8 @@ static void scValePrologueBumpIntoShovingMan(void)
 	fdScriptWait(30);
 	fdActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	fdActorShowEmote(ACTOR_SHOVING_MAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-	message = MsgValeHuh;
-	fdScriptSetMessageId(message);
+	msg = MsgValeHuh;
+	fdScriptSetMessageId(msg);
 	/* "Huh? Isaac?" */
 	fdScriptShowMessage(ACTOR_SHOVING_MAN, 0);
 	fdScriptWait(20);
@@ -1231,10 +1231,10 @@ static void scValePrologueBumpIntoShovingMan(void)
 	   "This isn't the time for games! Foolish boy!" */
 	fdScriptAskYesNo(ACTOR_SHOVING_MAN, 0);
 	fdActorRunRepeatedMotion(ACTOR_SHOVING_MAN, 2);
-	fdScriptSetMessageId(message + 4);
+	fdScriptSetMessageId(msg + 4);
 	/* "Well...we'd better get to the plaza before the Boulder hits." */
 	fdScriptShowMessageThenWait(ACTOR_SHOVING_MAN, 0, 20);
-	fdActorRunScriptAndWait(ACTOR_SHOVING_MAN, ValePrologue_ShovingManScript);
+	fdActorRunScriptAndWait(ACTOR_SHOVING_MAN, ValePrologueShovingManScript);
 	gmFlagSet(FLAG_VALE_STORM_BUMPED_INTO_VILLAGER);
 	fdScriptEnd();
 }
@@ -1343,14 +1343,14 @@ static void scValePrologueGaretLeavesHisChest(void)
    game never plays. */
 static void scValePrologueUnusedGaretJoinsIsaac(void)
 {
-	Sint32 message;
+	Sint32 msg;
 
 	if(fdScriptGetFlag(FLAG_VALE_STORM_GARET_JOINED) == 0) {
 		fdScriptStart();
 		fdActorSetAttachedEffect(ACTOR_GARET_CHILD,
 			ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-		message = MsgValeHey;
-		fdScriptSetMessageId(message);
+		msg = MsgValeHey;
+		fdScriptSetMessageId(msg);
 		/* "Hey! Isaac!" */
 		fdScriptShowMessage(ACTOR_GARET_CHILD, 0);
 		fdActorShowEmote(
@@ -1360,11 +1360,11 @@ static void scValePrologueUnusedGaretJoinsIsaac(void)
 		fdCameraMoveTo(256, CAMERA_KEEP, 588, 1);
 		fdActorSetSpeed(ACTOR_GARET_CHILD, 2);
 		fdActorRunScriptAndWait(
-			ACTOR_GARET_CHILD, ValePrologue_UnusedGaretRunsUpScript);
+			ACTOR_GARET_CHILD, ValePrologueUnusedGaretRunsUpScript);
 		fdActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
 		fdScriptWait(30);
 		fdActorSetScript(
-			ACTOR_GARET_CHILD, ValePrologue_UnusedGaretPantingScript);
+			ACTOR_GARET_CHILD, ValePrologueUnusedGaretPantingScript);
 		/* "*Hah* *Hah*" */
 		fdScriptShowMessage(ACTOR_GARET_CHILD, 0);
 		fdActorGet(ACTOR_GARET_CHILD)->scaleY = toFIXED(1);
@@ -1376,7 +1376,7 @@ static void scValePrologueUnusedGaretJoinsIsaac(void)
 		fdScriptAskYesNo(ACTOR_GARET_CHILD, 0);
 		fdScriptWait(40);
 		fdActorRunRepeatedMotion(ACTOR_GARET_CHILD, 1);
-		fdScriptSetMessageId(message + 5);
+		fdScriptSetMessageId(msg + 5);
 		/* "You came just in time... We can go together." */
 		fdScriptShowMessageThenWait(ACTOR_GARET_CHILD, 0, 20);
 		fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1402,13 +1402,13 @@ static void scValePrologueUnusedGaretJoinsIsaac(void)
    walks back from the steps. */
 static void scValePrologueWarnAboutMtAleph(void)
 {
-	ACTOR *initialLeader;
+	ACTOR *initLeader;
 
 	fdScriptStart();
-	initialLeader = fdActorGet(ACTOR_PARTY_LEADER);
-	if(initialLeader != NULL) {
+	initLeader = fdActorGet(ACTOR_PARTY_LEADER);
+	if(initLeader != NULL) {
 		fdActorSetPosFX(
-			ACTOR_GARET_CHILD, initialLeader->x.fixed, initialLeader->z.fixed);
+			ACTOR_GARET_CHILD, initLeader->x.fixed, initLeader->z.fixed);
 	}
 	fdActorSetSpeed(ACTOR_GARET_CHILD, 1);
 	fdActorWalkToAndWait(ACTOR_GARET_CHILD, 281, 507);
@@ -1474,7 +1474,7 @@ static void scValePrologueWatchBoulderFall(void)
 
 	if(gmFlagGet(FLAG_VALE_BOULDER_FELL) == 0) {
 		fdScriptStart();
-		fdScriptAppendActorPlacements(ValePrologue_BoulderElders);
+		fdScriptAppendActorPlacements(ValePrologueBoulderElders);
 		scStartScriptPsynergy();
 		sySynch(1);
 		sySndPlay(SE_RUMBLE);
@@ -1489,10 +1489,9 @@ static void scValePrologueWatchBoulderFall(void)
 		}
 		fdActorSetSpeed(ACTOR_PARTY_LEADER, 2);
 		fdActorSetSpeed(ACTOR_GARET_CHILD, 2);
-		fdActorSetScript(
-			ACTOR_PARTY_LEADER, ValePrologue_BoulderFallLeaderPath);
+		fdActorSetScript(ACTOR_PARTY_LEADER, ValePrologueBoulderFallLeaderPath);
 		fdActorRunScriptAndWait(
-			ACTOR_GARET_CHILD, ValePrologue_BoulderFallGaretPath);
+			ACTOR_GARET_CHILD, ValePrologueBoulderFallGaretPath);
 		fdActorWaitForScriptEndById(ACTOR_PARTY_LEADER);
 		fdActorShowEmote(
 			ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1528,7 +1527,7 @@ static void scValePrologueWatchBoulderFall(void)
 		fdCameraSetSpeed(4);
 		fdCameraMoveTo(112, CAMERA_KEEP, 331, 1);
 		fdCameraWaitForMove();
-		for(i = 0; i < ELDERS_FLASH_FRAMES; i++) {
+		for(i = 0; i < ELDERS_FLASH_TICKS; i++) {
 			scValePrologueFlashPaletteAndSpawnEffects(
 				fdActorGet(ACTOR_ELDER_EAST));
 			scValePrologueFlashPaletteAndSpawnEffects(
@@ -1539,12 +1538,12 @@ static void scValePrologueWatchBoulderFall(void)
 				fdActorGet(ACTOR_ELDER_FAR_WEST));
 			sySynch(1);
 		}
-		shakeShift = &sShakeShift;
+		shakeShift = &ShakeShift;
 		updateEffects = scValePrologueUpdateBoulderMapEffects;
-		sShakeDone = 0;
+		ShakeDone = 0;
 		*shakeShift = 0;
-		sySetOrUpdateFrameEvent(updateEffects, EVENT_PASS_FRAME);
-		sySetFrameEvent(scValePrologueCycleBoulderPalette, EVENT_PASS_FRAME);
+		sySetOrUpdateTickEvent(updateEffects, EVENT_PASS_TICK);
+		sySetTickEvent(scValePrologueCycleBoulderPalette, EVENT_PASS_TICK);
 		fdScriptWait(40);
 		*shakeShift = 1;
 		fdScriptWait(30);
@@ -1602,7 +1601,7 @@ static void scValePrologueWatchBoulderFall(void)
 		fdScriptShowMessage(ACTOR_ELDER_FAR_EAST, 0);
 		/* The westernmost elder stops straining, looks about and calls to the
 		   boys, and the camera returns to Isaac. */
-		sShakeDone = 1;
+		ShakeDone = 1;
 		fdActorSetAnimation(ACTOR_ELDER_FAR_WEST, ANIM_STAND);
 		sySynch(1);
 		fdActorSetSprColById(ACTOR_ELDER_FAR_WEST, SPRITE_COLOR_NORMAL);
@@ -1655,40 +1654,39 @@ static void scValePrologueWatchBoulderFall(void)
 }
 
 /* Sets the colour mode of every part of a one-sprite actor to `mode` - 1, or
-   with mode 0 flashes it white and plain in turn, two frames each
-   (ValePrologue_FlashColorModes). */
+   with mode 0 flashes it white and plain in turn, two ticks each
+   (ValePrologueFlashColorModes). */
 static void scValePrologueSetActorColMode(ACTOR *actor, Sint32 mode)
 {
 	if((actor->sprStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
-		SPR	  *animation = actor->spr;
-		Sint32 animationParameter = mode - 1;
-		Uint8  count;
+		SPR	  *anm = actor->spr;
+		Sint32 anmParameter = mode - 1;
+		Uint8  cnt;
 		if(mode == 0) {
-			animationParameter =
-				ValePrologue_FlashColorModes[(FrameCount >> 1) &
-					(actor->sprStorageKind & 0xf)];
+			anmParameter = ValePrologueFlashColorModes[(TickCount >> 1) &
+				(actor->sprStorageKind & 0xf)];
 		}
-		count = animation->cnt;
-		if(count != 0) {
-			SPR_ANIMATION **entries = animation->entries;
-			Sint32			remainingEntries = count;
+		cnt = anm->cnt;
+		if(cnt != 0) {
+			SPR_ANIMATION **entries = anm->entries;
+			Sint32			remainingEntries = cnt;
 			do {
 				SPR_ANIMATION *entry = *entries++;
 				if(entry != NULL && entry->script != NULL) {
-					entry->colMode = animationParameter;
+					entry->colMode = anmParameter;
 				}
 				remainingEntries--;
 			} while(remainingEntries != 0);
 		}
-		animation->dirty = 1;
+		anm->dirty = 1;
 	}
 }
 
 /* Unused: flashes the four elders white one beat in four, a beat lasting 2 to
-   the power sShakeShift frames, as the Boulder slips. */
+   the power ShakeShift ticks, as the Boulder slips. */
 UNUSED static void scValePrologueFlashBoulderMapAnimationEntries(void)
 {
-	if(((FrameCount >> sShakeShift) & 3) != 0) {
+	if(((TickCount >> ShakeShift) & 3) != 0) {
 		scValePrologueSetActorColMode(fdActorGet(ACTOR_ELDER_EAST), 1);
 		scValePrologueSetActorColMode(fdActorGet(ACTOR_ELDER_WEST), 1);
 		scValePrologueSetActorColMode(fdActorGet(ACTOR_ELDER_FAR_EAST), 1);
@@ -1720,7 +1718,7 @@ static void scValePrologueWatchAttemptToSaveFelix(void)
 		Sint32 pulseDelay;
 		actor = fdActorGet(ACTOR_KYLE);
 		pulseDelay = SQUASH_AND_STRETCH_PAUSE();
-		pulseScript = ValePrologue_SquashAndStretchScript;
+		pulseScript = ValePrologueSquashAndStretchScript;
 		actor->tmr = pulseDelay;
 		fdActorSetScript(ACTOR_KYLE, pulseScript);
 	}
@@ -1967,8 +1965,8 @@ static void scValePrologueDoraGoesForHelp(void)
 {
 	ACTOR		 *villager;
 	const Sint32 *script;
-	Sint32		  northMessage;
-	Sint32		  helpMessage;
+	Sint32		  northMsg;
+	Sint32		  helpMsg;
 
 	fdActorFaceDirection(ACTOR_JENNA_CHILD, FACING_SOUTH_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_JENNAS_FATHER, FACING_NORTH_NORTHEAST, 0);
@@ -1986,11 +1984,10 @@ static void scValePrologueDoraGoesForHelp(void)
 	fdActorSetSpeed(ACTOR_JENNA_CHILD, 1.6);
 	fdActorSetSpeed(ACTOR_DORA, 1.6);
 	fdActorSetScript(
-		ACTOR_JENNA_CHILD, ValePrologue_JennaRunsIntoRiversideHouse);
-	fdActorRunScriptAndWait(
-		ACTOR_DORA, ValePrologue_DoraRunsIntoRiversideHouse);
+		ACTOR_JENNA_CHILD, ValePrologueJennaRunsIntoRiversideHouse);
+	fdActorRunScriptAndWait(ACTOR_DORA, ValePrologueDoraRunsIntoRiversideHouse);
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridAnimateMetatiles(ValePrologue_GrandparentsDoorOpens, 38, 72);
+	fdMapGridAnimateMetatiles(ValePrologueGrandparentsDoorOpens, 38, 72);
 	fdScriptWait(10);
 	fdActorWalkToAndWait(ACTOR_DORA, 149, 1175);
 	fdActorSetPos(ACTOR_DORA, 0, 0);
@@ -2008,33 +2005,33 @@ static void scValePrologueDoraGoesForHelp(void)
 	villager->tmr = SQUASH_AND_STRETCH_PAUSE();
 	villager = fdActorGet(ACTOR_JENNAS_MOTHER);
 	villager->tmr = SQUASH_AND_STRETCH_PAUSE();
-	script = ValePrologue_SquashAndStretchScript;
+	script = ValePrologueSquashAndStretchScript;
 	fdActorSetScript(ACTOR_KYLE, script);
 	fdActorSetScript(ACTOR_JENNAS_FATHER, script);
 	fdActorSetScript(ACTOR_JENNAS_MOTHER, script);
 	fdActorWaitForScriptEndById(ACTOR_JENNA_CHILD);
 	fdScriptWait(10);
 	sySndPlay(SE_DOOR_CLOSE);
-	fdMapGridAnimateMetatiles(ValePrologue_GrandparentsDoorCloses, 38, 72);
+	fdMapGridAnimateMetatiles(ValePrologueGrandparentsDoorCloses, 38, 72);
 	fdScriptWait(30);
 	fdPlayQueuedMusic();
 	fdCameraMoveTo(112, CAMERA_KEEP, 1225, 1);
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridAnimateMetatiles(ValePrologue_IsaacsDoorOpens, 35, 73);
+	fdMapGridAnimateMetatiles(ValePrologueIsaacsDoorOpens, 35, 73);
 	fdScriptWait(20);
 	fdPlayQueuedMusic();
-	fdActorSetScript(ACTOR_DORA, ValePrologue_DoraComesOutOfRiversideHouse);
+	fdActorSetScript(ACTOR_DORA, ValePrologueDoraComesOutOfRiversideHouse);
 	fdScriptWait(20);
 	fdActorSetScript(
-		ACTOR_JENNA_CHILD, ValePrologue_JennaComesOutOfRiversideHouse);
+		ACTOR_JENNA_CHILD, ValePrologueJennaComesOutOfRiversideHouse);
 	fdScriptWait(40);
 	sySndPlay(SE_DOOR_CLOSE);
-	fdMapGridAnimateMetatiles(ValePrologue_IsaacsDoorCloses, 35, 73);
+	fdMapGridAnimateMetatiles(ValePrologueIsaacsDoorCloses, 35, 73);
 	fdActorWaitForScriptEndById(ACTOR_JENNA_CHILD);
 	fdPlayQueuedMusic();
 	fdScriptWait(40);
-	northMessage = MsgValeGoLookNorth;
-	fdScriptSetMessageId(northMessage);
+	northMsg = MsgValeGoLookNorth;
+	fdScriptSetMessageId(northMsg);
 	/* "I'll go look up north... You head for the plaza, all right?" */
 	fdScriptShowMessageThenWait(ACTOR_DORA, 0, 20);
 	fdActorSetAnimationAndWait(ACTOR_JENNA_CHILD, ANIM_NOD);
@@ -2044,8 +2041,8 @@ static void scValePrologueDoraGoesForHelp(void)
 	fdActorSetAnimation(ACTOR_DORA, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_JENNA_CHILD, ANIM_NOD);
 	fdScriptWait(30);
-	fdActorSetScript(ACTOR_DORA, ValePrologue_DoraHeadsNorth);
-	fdActorSetScript(ACTOR_JENNA_CHILD, ValePrologue_JennaHeadsForPlaza);
+	fdActorSetScript(ACTOR_DORA, ValePrologueDoraHeadsNorth);
+	fdActorSetScript(ACTOR_JENNA_CHILD, ValePrologueJennaHeadsForPlaza);
 	fdScriptWait(40);
 	fdCameraSetSpeed(2);
 	fdCameraMoveTo(105, CAMERA_KEEP, 1086, 1);
@@ -2063,21 +2060,21 @@ static void scValePrologueDoraGoesForHelp(void)
 	fdActorFaceDirection(ACTOR_GARET_CHILD, FACING_EAST, 0);
 	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
 		fdActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
-		fdScriptSetMessageId(northMessage + 4);
+		fdScriptSetMessageId(northMsg + 4);
 	} else {
 		fdActorRunRepeatedMotion(ACTOR_DORA, 2);
-		fdScriptSetMessageId(northMessage + 5);
+		fdScriptSetMessageId(northMsg + 5);
 	}
 	fdScriptShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
 	fdActorFaceDirection(ACTOR_GARET_CHILD, FACING_WEST, 40);
 	fdActorShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-	helpMessage = MsgValeDontSupposeTwo;
-	fdScriptSetMessageId(helpMessage);
+	helpMsg = MsgValeDontSupposeTwo;
+	fdScriptSetMessageId(helpMsg);
 	/* "I don't suppose... Could the two of you help me?" */
 	fdScriptOpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
 	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
 		fdActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
-		fdScriptSetMessageId(helpMessage + 1);
+		fdScriptSetMessageId(helpMsg + 1);
 		/* "Jenna has gone to the plaza to get help. Go join her." */
 		fdScriptShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0, 30);
 		fdActorFaceDirection(ACTOR_GARET_CHILD, FACING_WEST, 20);
@@ -2089,11 +2086,11 @@ static void scValePrologueDoraGoesForHelp(void)
 		fdActorShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 90);
 		fdActorShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
 		fdActorSetAnimation(ACTOR_DORA, ANIM_SHAKE_HEAD);
-		fdScriptSetMessageId(helpMessage + 2);
+		fdScriptSetMessageId(helpMsg + 2);
 		/* "You don't have to if you don't want to... Just get..." */
 		fdScriptShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
 	}
-	fdActorSetScript(ACTOR_DORA, ValePrologue_DoraLeavesForHelp);
+	fdActorSetScript(ACTOR_DORA, ValePrologueDoraLeavesForHelp);
 	fdScriptWait(90);
 	fdActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
 	fdScriptWait(40);
@@ -2133,7 +2130,7 @@ static void scValePrologueTalkAboutSavingFelix(void)
 		Sint32 pulseDelay;
 		villager = fdActorGet(ACTOR_KYLE);
 		pulseDelay = SQUASH_AND_STRETCH_PAUSE();
-		pulseScript = ValePrologue_SquashAndStretchScript;
+		pulseScript = ValePrologueSquashAndStretchScript;
 		villager->tmr = pulseDelay;
 		fdActorSetScript(ACTOR_KYLE, pulseScript);
 	}
@@ -2205,7 +2202,7 @@ static void scValePrologueBoulderSweepsThemAway(void)
 			fdCameraSetSpeed(1.2);
 			fdCameraMoveTo(101, CAMERA_KEEP, 1197, 1);
 			fdActorSetSpeed(ACTOR_DORA, 1.4);
-			fdActorSetScript(ACTOR_DORA, ValePrologue_DoraRunsToRiver);
+			fdActorSetScript(ACTOR_DORA, ValePrologueDoraRunsToRiver);
 			fdScriptWait(60);
 			fdCameraSetSpeed(0.6);
 			fdCameraMoveTo(187, CAMERA_KEEP, 1328, 1);
@@ -2271,35 +2268,35 @@ static void scValePrologueBoulderSweepsThemAway(void)
 
 /* Places an actor and its targets at once, x doubling as its height. */
 static inline void scValeProloguePlaceActor(
-	ACTOR *actor, FIXED horizontalPosition, FIXED groundPosition)
+	ACTOR *actor, FIXED horizontalPos, FIXED groundPos)
 {
-	actor->x.fixed = horizontalPosition;
-	actor->y.fixed = horizontalPosition;
-	actor->tgtX = horizontalPosition;
-	actor->tgtY = horizontalPosition;
-	actor->z.fixed = groundPosition;
-	actor->tgtZ = groundPosition;
+	actor->x.fixed = horizontalPos;
+	actor->y.fixed = horizontalPos;
+	actor->tgtX = horizontalPos;
+	actor->tgtY = horizontalPos;
+	actor->z.fixed = groundPos;
+	actor->tgtZ = groundPos;
 }
 
 /* One crash of the Boulder coming down, made of a shake of shakeAmplitude
    pixels, SE_CRASH and a wait. */
 static inline void scValeProloguePlayImpactBeat(
-	Sint32 shakeAmplitude, Sint32 frames)
+	Sint32 shakeAmplitude, Sint32 ticks)
 {
 	fdMapGridSetShakeFX(
 		toFIXED(shakeAmplitude), toFIXED(shakeAmplitude), toFIXED(1));
 	sySndPlay(SE_CRASH);
-	fdScriptWait(frames);
+	fdScriptWait(ticks);
 }
 
 /* The Boulder comes down the river and carries Felix, his parents and Kyle
    away. */
 static void scValePrologueShowBoulderSweepingDownriver(void)
 {
-	SPR *boulderSprite;
+	SPR *boulderSpr;
 	/* The actor being set up and its sprite: the Boulder's shadow, and while
 	   the lightning flashes Kyle and each of Jenna's parents in turn. */
-	SPR			 *figureSprite;
+	SPR			 *figureSpr;
 	ACTOR		 *actor;
 	ACTOR		 *lookingActor;
 	ACTOR		 *figure;
@@ -2309,15 +2306,15 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 
 	actor = fdActorGet(ACTOR_BOULDER);
 	figure = fdActorGet(ACTOR_BOULDER_SHADOW);
-	boulderSprite = actor->spr;
-	figureSprite = figure->spr;
+	boulderSpr = actor->spr;
+	figureSpr = figure->spr;
 	fdCameraSetSpeed(1);
 	fdCameraMoveTo(110, CAMERA_KEEP, 1419, 1);
 	fdActorSetSpeed(ACTOR_EXHAUSTED_STRONGMAN, 1.2);
 	fdActorSetSpeed(ACTOR_JENNA_CHILD, 1.2);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1.2);
 	fdActorSetSpeed(ACTOR_GARET_CHILD, 1.2);
-	entryActions = ValePrologue_ToRiverbankPath;
+	entryActions = ValePrologueToRiverbankPath;
 	fdActorSetScript(ACTOR_EXHAUSTED_STRONGMAN, entryActions);
 	fdScriptWait(10);
 	fdActorSetScript(ACTOR_JENNA_CHILD, entryActions);
@@ -2336,10 +2333,10 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 	fdActorFaceDirection(ACTOR_DORA, FACING_SOUTHEAST, 0);
 	fdActorWaitForScriptEndById(ACTOR_EXHAUSTED_STRONGMAN);
 	fdActorSetScript(
-		ACTOR_EXHAUSTED_STRONGMAN, ValePrologue_ExhaustedStrongmanGatherPath);
-	fdActorSetScript(ACTOR_JENNA_CHILD, ValePrologue_JennaGatherPath);
-	fdActorSetScript(ACTOR_PARTY_LEADER, ValePrologue_LeaderGatherPath);
-	fdActorRunScriptAndWait(ACTOR_GARET_CHILD, ValePrologue_GaretGatherPath);
+		ACTOR_EXHAUSTED_STRONGMAN, ValePrologueExhaustedStrongmanGatherPath);
+	fdActorSetScript(ACTOR_JENNA_CHILD, ValePrologueJennaGatherPath);
+	fdActorSetScript(ACTOR_PARTY_LEADER, ValePrologueLeaderGatherPath);
+	fdActorRunScriptAndWait(ACTOR_GARET_CHILD, ValePrologueGaretGatherPath);
 	scValeProloguePlayImpactBeat(4, 20);
 	fdMapGridSetShake(1, 1, 1);
 	fdScriptWait(60);
@@ -2362,7 +2359,7 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 	lookingActor->tmr = VALE_PROLOGUE_GLANCE_PAUSE();
 	lookingActor = fdActorGet(ACTOR_DORA);
 	lookingActor->tmr = VALE_PROLOGUE_GLANCE_PAUSE();
-	lookAroundActions = ValePrologue_LookAroundScript;
+	lookAroundActions = ValePrologueLookAroundScript;
 	fdActorSetScript(ACTOR_DORA, lookAroundActions);
 	fdScriptWait(30);
 	fdActorSetScript(ACTOR_PARTY_LEADER, lookAroundActions);
@@ -2398,11 +2395,11 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 	figure->scaleX = toFIXED(4) / 5;
 	figure->scaleY = toFIXED(4) / 5;
 	figure->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	figureSprite->image.pri = 1;
+	figureSpr->image.pri = 1;
 	scValeProloguePlaceActor(actor, toFIXED(200), toFIXED(898));
 	actor->motionFlg = 0;
 	actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	boulderSprite->image.pri = 0;
+	boulderSpr->image.pri = 0;
 	fdCameraGetActor()->tgtX = ACTOR_NO_TARGET;
 	fdCameraGetActor()->tgtY = ACTOR_NO_TARGET;
 	fdCameraGetActor()->tgtZ = ACTOR_NO_TARGET;
@@ -2417,8 +2414,8 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_SPRITES);
 	fdPaletteFadeStartInterpolation(30);
 	sySynch(30);
-	sySetFrameEvent(scValePrologueUpdateBoulderShadow, EVENT_PASS_FRAME);
-	fdActorSetScript(ACTOR_BOULDER, ValePrologue_BoulderRollsDownriver);
+	sySetTickEvent(scValePrologueUpdateBoulderShadow, EVENT_PASS_TICK);
+	fdActorSetScript(ACTOR_BOULDER, ValePrologueBoulderRollsDownriver);
 	fdCameraSetSpeedAndAcceleration(2, 0.03);
 	fdCameraMoveTo(175, 96, 1086, 1);
 	do {
@@ -2440,8 +2437,8 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 	fdActorSetAnimation(ACTOR_BOULDER, ANIM_STILL);
 	figure->scaleX = toFIXED(5) / 4;
 	figure->scaleY = toFIXED(5) / 4;
-	figureSprite->ofsY = 2;
-	figureSprite->scale = toFIXED(5) / 4;
+	figureSpr->ofsY = 2;
+	figureSpr->scale = toFIXED(5) / 4;
 	actor->scaleX = toFIXED(2);
 	actor->scaleY = toFIXED(2);
 	actor->x.fixed = 0;
@@ -2477,7 +2474,7 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 	fdMapGridCenterOnFollowedPoint();
 	figure->scaleX = toFIXED(2);
 	figure->scaleY = toFIXED(2);
-	sySetFrameEvent(scValePrologueFlickerBoulderShadow, EVENT_PASS_FRAME);
+	sySetTickEvent(scValePrologueFlickerBoulderShadow, EVENT_PASS_TICK);
 	fdActorStop(ACTOR_KYLE);
 	fdActorStop(ACTOR_JENNAS_FATHER);
 	fdActorStop(ACTOR_JENNAS_MOTHER);
@@ -2485,31 +2482,31 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 	/* Kyle and Jenna's parents freeze in the flash, drawn in front of all
 	   else. */
 	figure = fdActorGet(ACTOR_KYLE);
-	figureSprite = figure->spr;
+	figureSpr = figure->spr;
 	figure->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
 	figure->scaleX = toFIXED(1);
 	figure->scaleY = toFIXED(1);
 	figure->facing = FACING_NORTH_NORTHEAST;
-	figureSprite->image.pri = 0;
+	figureSpr->image.pri = 0;
 	fdActorSetAnimation(ACTOR_KYLE, ANIM_STILL);
 	figure = fdActorGet(ACTOR_JENNAS_FATHER);
-	figureSprite = figure->spr;
+	figureSpr = figure->spr;
 	figure->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
 	figure->scaleX = toFIXED(1);
 	figure->scaleY = toFIXED(1);
 	figure->facing = FACING_NORTH_NORTHWEST;
-	figureSprite->image.pri = 0;
+	figureSpr->image.pri = 0;
 	fdActorSetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_RECOIL);
 	figure = fdActorGet(ACTOR_JENNAS_MOTHER);
-	figureSprite = figure->spr;
+	figureSpr = figure->spr;
 	figure->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
 	figure->scaleX = toFIXED(1);
 	figure->scaleY = toFIXED(1);
 	figure->facing = FACING_NORTH_NORTHWEST;
-	figureSprite->image.pri = 0;
+	figureSpr->image.pri = 0;
 	fdActorSetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_RECOIL);
 	figure = fdActorGet(ACTOR_BOULDER_SHADOW);
-	figureSprite = figure->spr;
+	figureSpr = figure->spr;
 	scValePrologueFlashLightning();
 	actor->y.fixed = toFIXED(48);
 	actor->x.fixed = toFIXED(214);
@@ -2517,7 +2514,7 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 	actor->tgtX = ACTOR_NO_TARGET;
 	actor->tgtY = ACTOR_NO_TARGET;
 	actor->tgtZ = ACTOR_NO_TARGET;
-	figureSprite->image.pri = 1;
+	figureSpr->image.pri = 1;
 	fdActorSetPos(ACTOR_BOULDER_SHADOW, 214, 1216);
 	fdActorFaceDirection(ACTOR_JENNAS_FATHER, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_JENNAS_MOTHER, FACING_NORTH, 20);
@@ -2538,7 +2535,7 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 	fdScriptWait(80);
 	fdScriptWait(100);
 	syCloseEvent(scValePrologueFlickerBoulderShadow);
-	figureSprite->scale = figure->scaleX;
+	figureSpr->scale = figure->scaleX;
 	gmFlagClear(FLAG_WEATHER_HELD);
 	fdTilesetAnimResume(0);
 	fdTilesetAnimResume(1);
@@ -2552,7 +2549,7 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 	actor = fdActorGet(ACTOR_DORA);
 	actor->facing = FACING_NORTHEAST;
 	actor->tmr = SQUASH_AND_STRETCH_PAUSE();
-	departureActions = ValePrologue_SquashAndStretchScript;
+	departureActions = ValePrologueSquashAndStretchScript;
 	actor->userValue = 1;
 	fdActorSetScript(ACTOR_DORA, departureActions);
 	fdActorSetPos(ACTOR_JENNA_CHILD, 165, 1254);
@@ -2579,7 +2576,7 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 		ACTOR_EXHAUSTED_STRONGMAN, STRONGMAN_ANIMATION_SPRAWLED);
 	fdActorGet(ACTOR_GARET_CHILD)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
 	fdActorGet(ACTOR_EXHAUSTED_STRONGMAN)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	sySetFrameEvent(scValePrologueCopyLeaderSprPriority, EVENT_PASS_FRAME);
+	sySetTickEvent(scValePrologueCopyLeaderSprPriority, EVENT_PASS_TICK);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 181, 1273);
 	fdActorGet(ACTOR_PARTY_LEADER)->facing = FACING_NORTHEAST;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -2635,36 +2632,36 @@ static void scValePrologueFlashLightning(void)
    river. */
 static void scValePrologueUpdateBoulderShadow(void)
 {
-	ACTOR  *source;
+	ACTOR  *src;
 	ACTOR  *shadow;
-	SPR	   *sprite;
-	Sint16 *timer;
+	SPR	   *spr;
+	Sint16 *tmr;
 
-	source = fdActorGet(ACTOR_BOULDER);
+	src = fdActorGet(ACTOR_BOULDER);
 	shadow = fdActorGet(ACTOR_BOULDER_SHADOW);
-	sprite = shadow->spr;
-	timer = &source->tmr;
-	if(*timer != 0) {
-		if(*timer == 60) {
+	spr = shadow->spr;
+	tmr = &src->tmr;
+	if(*tmr != 0) {
+		if(*tmr == 60) {
 			fdMapGridSetShake(3, 3, 1);
 		}
-		if(*timer == 40) {
+		if(*tmr == 40) {
 			fdMapGridSetShake(4, 4, 1);
 		}
-		if(*timer == 30) {
+		if(*tmr == 30) {
 			fdMapGridSetShake(2, 2, 1);
 		}
-		if(*timer == 20) {
+		if(*tmr == 20) {
 			fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 		}
-		(*timer)--;
+		(*tmr)--;
 	}
-	shadow->x.fixed = source->x.fixed;
-	shadow->z.fixed = source->z.fixed;
+	shadow->x.fixed = src->x.fixed;
+	shadow->z.fixed = src->z.fixed;
 	shadow->tgtX = shadow->x.fixed;
-	sprite->ofsY = 10;
-	if(FrameCount & 1) {
-		switch(source->userValue) {
+	spr->ofsY = 10;
+	if(TickCount & 1) {
+		switch(src->userValue) {
 		case 1:
 		case 5:
 			shadow->scaleX += toFIXED(1) / 25;
@@ -2684,24 +2681,24 @@ static void scValePrologueUpdateBoulderShadow(void)
 			shadow->scaleY -= toFIXED(3) / 100;
 			break;
 		}
-		sprite->scale = shadow->scaleX;
+		spr->scale = shadow->scaleX;
 	} else {
-		sprite->scale = 0;
+		spr->scale = 0;
 	}
 }
 
 /* The event that moves ACTOR_BOULDER_SHADOW between two heights on alternate
-   frames, during the frozen flashes. */
+   ticks, during the frozen flashes. */
 static void scValePrologueFlickerBoulderShadow(void)
 {
 	ACTOR *actor = fdActorGet(ACTOR_BOULDER_SHADOW);
-	Uint32 frame = FrameCount;
-	SPR	  *sprite = actor->spr;
+	Uint32 frm = TickCount;
+	SPR	  *spr = actor->spr;
 
-	if(frame & 1) {
-		sprite->ofsY = 2;
+	if(frm & 1) {
+		spr->ofsY = 2;
 	} else {
-		sprite->ofsY = 64;
+		spr->ofsY = 64;
 	}
 }
 
@@ -2732,7 +2729,7 @@ static void scValePrologueStrongmanTriesToGoForHelp(void)
 		/* "It's no use. I can't move... Isaac, please get help!" */
 		fdScriptShowMessage(ACTOR_EXHAUSTED_STRONGMAN, 0);
 		fdActorSetScript(
-			ACTOR_EXHAUSTED_STRONGMAN, ValePrologue_SquashAndStretchScript);
+			ACTOR_EXHAUSTED_STRONGMAN, ValePrologueSquashAndStretchScript);
 		fdActorSetAnimation(
 			ACTOR_EXHAUSTED_STRONGMAN, STRONGMAN_ANIMATION_SPRAWLED);
 	} else {
@@ -2772,7 +2769,7 @@ static void scValePrologueStrongmanTriesToGoForHelp(void)
 		/* "It's no use. I can't move... Isaac, please get help!" */
 		fdScriptShowMessage(ACTOR_EXHAUSTED_STRONGMAN, 0);
 		fdActorSetScript(
-			ACTOR_EXHAUSTED_STRONGMAN, ValePrologue_SquashAndStretchScript);
+			ACTOR_EXHAUSTED_STRONGMAN, ValePrologueSquashAndStretchScript);
 		fdActorSetAnimation(
 			ACTOR_EXHAUSTED_STRONGMAN, STRONGMAN_ANIMATION_SPRAWLED);
 		gmFlagSet(FLAG_VALE_STORM_STRONGMAN_TRIED_TO_GO);
@@ -2878,22 +2875,22 @@ static void scValePrologueFightFourthMonster(void)
 	fdScriptEnd();
 }
 
-/* An elder calling up Psynergy, for ELDERS_FLASH_FRAMES once the camera reaches
-   the Boulder: white two frames in four, sending up rings. */
+/* An elder calling up Psynergy, for ELDERS_FLASH_TICKS once the camera reaches
+   the Boulder: white two ticks in four, sending up rings. */
 static void scValePrologueFlashPaletteAndSpawnEffects(ACTOR *actor)
 {
 	Sint32 spawnInterval;
 
-	if((FrameCount & 2) != 0) {
+	if((TickCount & 2) != 0) {
 		fdActorSetColMode(actor, SPRITE_COLOR_WHITE);
 	} else {
 		fdActorSetColMode(actor, SPRITE_COLOR_NORMAL);
 	}
 	{
-		volatile Uint32 *frame = &FrameCount;
+		volatile Uint32 *frm = &TickCount;
 
-		spawnInterval = sShakeShift * RINGS_INTERVAL_STEP + RINGS_INTERVAL;
-		if(syMathRemainderUnsigned(*frame, spawnInterval) == 0) {
+		spawnInterval = ShakeShift * RINGS_INTERVAL_STEP + RINGS_INTERVAL;
+		if(syMathRemainderUnsigned(*frm, spawnInterval) == 0) {
 			scSpawnPsynergyRings(actor);
 		}
 	}
@@ -2904,30 +2901,30 @@ static void scValePrologueFlashPaletteAndSpawnEffects(ACTOR *actor)
    scValePrologueFlashPaletteAndSpawnEffects. */
 static void scValePrologueCyclePaletteAndSpawnEffects(ACTOR *actor)
 {
-	Sint32 paletteFrame;
+	Sint32 paletteFrm;
 	Sint32 spawnInterval;
 
-	if((FrameCount & 1) != 0) {
-		paletteFrame = (FrameCount >> 1);
+	if((TickCount & 1) != 0) {
+		paletteFrm = (TickCount >> 1);
 		fdActorSetColMode(
-			actor, syMathRemainderUnsigned(paletteFrame, SWAPPED_COLOR_MODES));
+			actor, syMathRemainderUnsigned(paletteFrm, SWAPPED_COLOR_MODES));
 	}
-	spawnInterval = sShakeShift * RINGS_INTERVAL_STEP + RINGS_INTERVAL;
-	if(syMathRemainderUnsigned(FrameCount, spawnInterval) == 0) {
+	spawnInterval = ShakeShift * RINGS_INTERVAL_STEP + RINGS_INTERVAL;
+	if(syMathRemainderUnsigned(TickCount, spawnInterval) == 0) {
 		scSpawnPsynergyRings(actor);
 	}
 }
 
 /* Cycles the sprite through the SWAPPED_COLOR_MODES, a step every second
-   frame. */
+   tick. */
 static void scValePrologueCycleActorPalettes(ACTOR *actor)
 {
-	Sint32 paletteFrame;
+	Sint32 paletteFrm;
 
-	if((FrameCount & 1) != 0) {
-		paletteFrame = (FrameCount >> 1);
+	if((TickCount & 1) != 0) {
+		paletteFrm = (TickCount >> 1);
 		fdActorSetColMode(
-			actor, syMathRemainderUnsigned(paletteFrame, SWAPPED_COLOR_MODES));
+			actor, syMathRemainderUnsigned(paletteFrm, SWAPPED_COLOR_MODES));
 	}
 }
 
@@ -2938,13 +2935,13 @@ static void scValePrologueCycleActorPalettes(ACTOR *actor)
 #include "shared/script_psynergy.c"
 
 /* Cycles the four elders' palettes and effects while they hold the Boulder. The
-   westernmost elder's stop once that elder lets go (sShakeDone). */
+   westernmost elder's stop once that elder lets go (ShakeDone). */
 static void scValePrologueUpdateBoulderMapEffects(void)
 {
 	scValePrologueCyclePaletteAndSpawnEffects(fdActorGet(ACTOR_ELDER_EAST));
 	scValePrologueCyclePaletteAndSpawnEffects(fdActorGet(ACTOR_ELDER_WEST));
 	scValePrologueCyclePaletteAndSpawnEffects(fdActorGet(ACTOR_ELDER_FAR_EAST));
-	if(sShakeDone == 0) {
+	if(ShakeDone == 0) {
 		scValePrologueCyclePaletteAndSpawnEffects(
 			fdActorGet(ACTOR_ELDER_FAR_WEST));
 	}
@@ -2960,21 +2957,21 @@ static void scValePrologueCycleBoulderPalette(void)
    leader's sprite priority while they stand by the river. */
 static void scValePrologueCopyLeaderSprPriority(void)
 {
-	SPR *sourceSprite;
+	SPR *srcSpr;
 #if !VALE_PROLOGUE_SHADOWS_TAKE_LEADER_PRIORITY
-	SPR *targetSprite;
-	SPR *secondTargetSprite;
+	SPR *tgtSpr;
+	SPR *secondTgtSpr;
 #endif
 
-	sourceSprite = fdActorGet(ACTOR_PARTY_LEADER)->spr;
+	srcSpr = fdActorGet(ACTOR_PARTY_LEADER)->spr;
 #if VALE_PROLOGUE_SHADOWS_TAKE_LEADER_PRIORITY
-	fdActorSetSprPriority(ACTOR_GARET_CHILD, sourceSprite->image.pri);
-	fdActorSetSprPriority(ACTOR_EXHAUSTED_STRONGMAN, sourceSprite->image.pri);
+	fdActorSetSprPriority(ACTOR_GARET_CHILD, srcSpr->image.pri);
+	fdActorSetSprPriority(ACTOR_EXHAUSTED_STRONGMAN, srcSpr->image.pri);
 #else
-	targetSprite = fdActorGet(ACTOR_GARET_CHILD)->spr;
-	targetSprite->image.pri = sourceSprite->image.pri;
-	secondTargetSprite = fdActorGet(ACTOR_EXHAUSTED_STRONGMAN)->spr;
-	secondTargetSprite->image.pri = sourceSprite->image.pri;
+	tgtSpr = fdActorGet(ACTOR_GARET_CHILD)->spr;
+	tgtSpr->image.pri = srcSpr->image.pri;
+	secondTgtSpr = fdActorGet(ACTOR_EXHAUSTED_STRONGMAN)->spr;
+	secondTgtSpr->image.pri = srcSpr->image.pri;
 #endif
 }
 
@@ -2999,14 +2996,14 @@ static void scValePrologueSearchValuablesChest(void)
 }
 
 /* The colour modes scValePrologueSetActorColMode's mode 0 steps through, a step
-   every two frames. */
-Uint8 ValePrologue_FlashColorModes[] = {SPRITE_COLOR_WHITE, SPRITE_COLOR_NORMAL,
+   every two ticks. */
+Uint8 ValePrologueFlashColorModes[] = {SPRITE_COLOR_WHITE, SPRITE_COLOR_NORMAL,
 	SPRITE_COLOR_NORMAL, SPRITE_COLOR_NORMAL};
 
 /* The actors' scripts, positions in pixels. */
 
 /* The stout man runs off toward the plaza after shoving Isaac. */
-Sint32 ValePrologue_ShovingManScript[] = {
+Sint32 ValePrologueShovingManScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(185, 0, 824),
 	SC_SYNC,
@@ -3022,7 +3019,7 @@ Sint32 ValePrologue_ShovingManScript[] = {
 };
 
 /* Garet runs up to Isaac (scValePrologueUnusedGaretJoinsIsaac). */
-Sint32 ValePrologue_UnusedGaretRunsUpScript[] = {
+Sint32 ValePrologueUnusedGaretRunsUpScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(345, 0, 612),
 	SC_SYNC,
@@ -3034,9 +3031,9 @@ Sint32 ValePrologue_UnusedGaretRunsUpScript[] = {
 	SC_END,
 };
 
-/* Garet heaves for breath. His sprite stretches over 24 frames and settles over
+/* Garet heaves for breath. His sprite stretches over 24 ticks and settles over
    12, for ever. */
-Sint32 ValePrologue_UnusedGaretPantingScript[] = {
+Sint32 ValePrologueUnusedGaretPantingScript[] = {
 	SC_LABEL(1),
 	SC_ADD(SW_SCALE_X, toFIXED(3) / 1024),
 	SC_ADD(SW_SCALE_Y, toFIXED(3) / 512),
@@ -3052,14 +3049,14 @@ Sint32 ValePrologue_UnusedGaretPantingScript[] = {
 };
 
 /* The Boulder on the mountainside, in animation 2 until it slips. */
-Sint32 ValePrologue_BoulderWaits[] = {
+Sint32 ValePrologueBoulderWaits[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_END,
 };
 
 /* Isaac and Garet run to where they see the elders hold the Boulder
    (scValePrologueWatchBoulderFall), and face each other. */
-Sint32 ValePrologue_BoulderFallLeaderPath[] = {
+Sint32 ValePrologueBoulderFallLeaderPath[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(94, 0, 564),
 	SC_SYNC,
@@ -3069,7 +3066,7 @@ Sint32 ValePrologue_BoulderFallLeaderPath[] = {
 	SC_END,
 };
 
-Sint32 ValePrologue_BoulderFallGaretPath[] = {
+Sint32 ValePrologueBoulderFallGaretPath[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(76, 0, 564),
 	SC_SYNC,
@@ -3083,7 +3080,7 @@ Sint32 ValePrologue_BoulderFallGaretPath[] = {
    by its east door and come out by its west door; Jenna then heads for the
    plaza and Dora north. */
 
-Sint32 ValePrologue_DoraRunsIntoRiversideHouse[] = {
+Sint32 ValePrologueDoraRunsIntoRiversideHouse[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(178, 0, 1190),
 	SC_SYNC,
@@ -3093,7 +3090,7 @@ Sint32 ValePrologue_DoraRunsIntoRiversideHouse[] = {
 	SC_END,
 };
 
-Sint32 ValePrologue_JennaRunsIntoRiversideHouse[] = {
+Sint32 ValePrologueJennaRunsIntoRiversideHouse[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(198, 0, 1176),
 	SC_SYNC,
@@ -3108,7 +3105,7 @@ Sint32 ValePrologue_JennaRunsIntoRiversideHouse[] = {
 	SC_END,
 };
 
-Sint32 ValePrologue_DoraComesOutOfRiversideHouse[] = {
+Sint32 ValePrologueDoraComesOutOfRiversideHouse[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_SET(SW_FACING, FACING_SOUTH),
 	SC_WAIT(30),
@@ -3123,7 +3120,7 @@ Sint32 ValePrologue_DoraComesOutOfRiversideHouse[] = {
 	SC_END,
 };
 
-Sint32 ValePrologue_JennaComesOutOfRiversideHouse[] = {
+Sint32 ValePrologueJennaComesOutOfRiversideHouse[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_SET(SW_FACING, FACING_SOUTH),
 	SC_WAIT(30),
@@ -3138,7 +3135,7 @@ Sint32 ValePrologue_JennaComesOutOfRiversideHouse[] = {
 	SC_END,
 };
 
-Sint32 ValePrologue_DoraHeadsNorth[] = {
+Sint32 ValePrologueDoraHeadsNorth[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(50, 0, 1214),
 	SC_SYNC,
@@ -3150,7 +3147,7 @@ Sint32 ValePrologue_DoraHeadsNorth[] = {
 	SC_END,
 };
 
-Sint32 ValePrologue_JennaHeadsForPlaza[] = {
+Sint32 ValePrologueJennaHeadsForPlaza[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(153, 0, 1251),
 	SC_SYNC,
@@ -3162,7 +3159,7 @@ Sint32 ValePrologue_JennaHeadsForPlaza[] = {
 };
 
 /* Dora leaves to the west once she has asked the boys to help. */
-Sint32 ValePrologue_DoraLeavesForHelp[] = {
+Sint32 ValePrologueDoraLeavesForHelp[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(123, 0, 1078),
 	SC_SYNC,
@@ -3179,7 +3176,7 @@ Sint32 ValePrologue_DoraLeavesForHelp[] = {
 
 /* Dora runs down to the river when Jenna comes back
    (scValePrologueBoulderSweepsThemAway). */
-Sint32 ValePrologue_DoraRunsToRiver[] = {
+Sint32 ValePrologueDoraRunsToRiver[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(102, 0, 1236),
 	SC_SYNC,
@@ -3193,7 +3190,7 @@ Sint32 ValePrologue_DoraRunsToRiver[] = {
 
 /* The way down to the riverbank that each of the party and the strongman takes
    in turn as the Boulder comes, then each one's place there. */
-Sint32 ValePrologue_ToRiverbankPath[] = {
+Sint32 ValePrologueToRiverbankPath[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(137, 0, 1379),
 	SC_SYNC,
@@ -3214,7 +3211,7 @@ Sint32 ValePrologue_ToRiverbankPath[] = {
 
 /* Where each one stops on the bank to hear the Boulder coming. */
 
-Sint32 ValePrologue_ExhaustedStrongmanGatherPath[] = {
+Sint32 ValePrologueExhaustedStrongmanGatherPath[] = {
 	SC_MOVE(184, 0, 1309),
 	SC_SYNC,
 	SC_ANIMATION(ANIM_STAND),
@@ -3222,7 +3219,7 @@ Sint32 ValePrologue_ExhaustedStrongmanGatherPath[] = {
 	SC_END,
 };
 
-Sint32 ValePrologue_JennaGatherPath[] = {
+Sint32 ValePrologueJennaGatherPath[] = {
 	SC_MOVE(165, 0, 1306),
 	SC_SYNC,
 	SC_ANIMATION(ANIM_STAND),
@@ -3230,7 +3227,7 @@ Sint32 ValePrologue_JennaGatherPath[] = {
 	SC_END,
 };
 
-Sint32 ValePrologue_LeaderGatherPath[] = {
+Sint32 ValePrologueLeaderGatherPath[] = {
 	SC_MOVE(183, 0, 1325),
 	SC_SYNC,
 	SC_ANIMATION(ANIM_STAND),
@@ -3238,7 +3235,7 @@ Sint32 ValePrologue_LeaderGatherPath[] = {
 	SC_END,
 };
 
-Sint32 ValePrologue_GaretGatherPath[] = {
+Sint32 ValePrologueGaretGatherPath[] = {
 	SC_MOVE(166, 0, 1325),
 	SC_SYNC,
 	SC_ANIMATION(ANIM_STAND),
@@ -3247,14 +3244,14 @@ Sint32 ValePrologue_GaretGatherPath[] = {
 };
 
 /* Everyone on the bank looks about (scValePrologueLookAround). */
-Sint32 ValePrologue_LookAroundScript[] = {
+Sint32 ValePrologueLookAroundScript[] = {
 	SC_CALL(scValePrologueLookAround),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/* A squash and stretch every 60 to 149 frames (scSquashAndStretch), for the
+/* A squash and stretch every 60 to 149 ticks (scSquashAndStretch), for the
    people straining at the river and, after the Boulder, those on the bank. */
-Sint32 ValePrologue_SquashAndStretchScript[] = {
+Sint32 ValePrologueSquashAndStretchScript[] = {
 	SC_CALL(scSquashAndStretch),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -3263,7 +3260,7 @@ Sint32 ValePrologue_SquashAndStretchScript[] = {
    SW_USER_VALUE, which scValePrologueUpdateBoulderShadow reads and
    scValePrologueShowBoulderSweepingDownriver waits on, and two of its landings
    start a shake countdown in SW_TIMER. */
-Sint32 ValePrologue_BoulderRollsDownriver[] = {
+Sint32 ValePrologueBoulderRollsDownriver[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_SPEED(3),
 	SC_ACCELERATION(1),
@@ -3314,7 +3311,7 @@ Sint32 ValePrologue_BoulderRollsDownriver[] = {
 	SC_END,
 };
 
-SCENE_ENTRANCE ValePrologue_Entrances[] = {
+SCENE_ENTRANCE ValePrologueEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 167, 0, 1281, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{VALE_PROLOGUE_DEBUG_BY_STONE_BUILDING, CONDITION_ALWAYS, 257, 0, 456,
@@ -3350,7 +3347,7 @@ SCENE_ENTRANCE ValePrologue_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 ValePrologue_Exits[] = {
+Uint32 ValePrologueExits[] = {
 	SCENE_EXITS(ValePrologue),
 	SCENE_EXIT(VALE_PROLOGUE_TO_VALE_PLAZA, ValePlaza, VALE_PLAZA_FROM_VALE),
 	SCENE_EXIT(VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_NORTH, ValeKradensCottage,
@@ -3381,7 +3378,7 @@ Uint32 ValePrologue_Exits[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE ValePrologue_ActorPlacements[] = {
+ACTOR_PLACE ValePrologueActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3425,7 +3422,7 @@ ACTOR_PLACE ValePrologue_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE ValePrologue_BoulderElders[] = {
+ACTOR_PLACE ValePrologueBoulderElders[] = {
 	ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
 		124, 0, 375, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3442,7 +3439,7 @@ ACTOR_PLACE ValePrologue_BoulderElders[] = {
 };
 /* clang-format on */
 
-CUE ValePrologue_Cues[] = {
+CUE ValePrologueCues[] = {
 	{CUE_STEP, METATILE_BEHAVIOR_VALE_STEPS_UP_MT_ALEPH, CONDITION_ALWAYS,
 		SCRIPT_REF(scValePrologueLeaveNorthwestToValePlaza)},
 	{CUE_STEP, METATILE_BEHAVIOR_VALE_NORTH_WAY_TO_KRADEN, CONDITION_ALWAYS,
@@ -3542,49 +3539,49 @@ CUE ValePrologue_Cues[] = {
 };
 
 /* The doors' metatile animations: two pictures of a door opening, from the
-   map's metatiles below the village, each shown for two frames. The four kinds
+   map's metatiles below the village, each shown for two ticks. The four kinds
    of door are the day map's (vale.c), and each table takes the name of a door
    it opens. */
 
 /* The Sanctum's door (scValePrologueUnusedOpenSanctumDoor). */
-Uint16 ValePrologue_SanctumDoorOpens[] = {
+Uint16 ValePrologueSanctumDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(0, 98, 2, 2, 2),
 	MAPGRID_ANIMATION_STEP(2, 98, 2, 2, 2),
 	MAPGRID_ANIMATION_STEPS_END,
 };
 
 /* The door of Isaac's house, and of Garet's and the house by the river. */
-Uint16 ValePrologue_IsaacsDoorOpens[] = {
+Uint16 ValePrologueIsaacsDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(0, 96, 2, 2, 2),
 	MAPGRID_ANIMATION_STEP(2, 96, 2, 2, 2),
 	MAPGRID_ANIMATION_STEPS_END,
 };
 
 /* The door of the house of Jenna's grandparents, and two more of the kind. */
-Uint16 ValePrologue_GrandparentsDoorOpens[] = {
+Uint16 ValePrologueGrandparentsDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(4, 98, 2, 2, 2),
 	MAPGRID_ANIMATION_STEP(6, 98, 2, 2, 2),
 	MAPGRID_ANIMATION_STEPS_END,
 };
 
 /* The door VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST goes through. */
-Uint16 ValePrologue_WestHouseDoorOpens[] = {
+Uint16 ValePrologueWestHouseDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(4, 96, 2, 2, 2),
 	MAPGRID_ANIMATION_STEP(6, 96, 2, 2, 2),
 	MAPGRID_ANIMATION_STEPS_END,
 };
 
-/* Shuts a door of ValePrologue_IsaacsDoorOpens's kind, with the shut picture of
+/* Shuts a door of ValePrologueIsaacsDoorOpens's kind, with the shut picture of
    Isaac's door, after Dora and Jenna come out of the house by the river. */
-Uint16 ValePrologue_IsaacsDoorCloses[] = {
+Uint16 ValePrologueIsaacsDoorCloses[] = {
 	MAPGRID_ANIMATION_STEP(0, 96, 2, 2, 2),
 	MAPGRID_ANIMATION_STEP(50, 44, 2, 2, 2),
 	MAPGRID_ANIMATION_STEPS_END,
 };
 
-/* Shuts a door of ValePrologue_GrandparentsDoorOpens's kind behind Dora and
+/* Shuts a door of ValePrologueGrandparentsDoorOpens's kind behind Dora and
    Jenna as they go into the house by the river. */
-Uint16 ValePrologue_GrandparentsDoorCloses[] = {
+Uint16 ValePrologueGrandparentsDoorCloses[] = {
 	MAPGRID_ANIMATION_STEP(4, 98, 2, 2, 2),
 	MAPGRID_ANIMATION_STEP(44, 108, 2, 2, 2),
 	MAPGRID_ANIMATION_STEPS_END,

@@ -158,12 +158,12 @@ typedef enum SHAMAN_VILLAGE_CAVE_ACTOR_ID {
 	/* The placement table's last row, in Isaac's sprite, is ACTOR_ISAAC. */
 } SHAMAN_VILLAGE_CAVE_ACTOR_ID;
 
-extern Uint32 ShamanVillageCave_GladiatorLeaves[];
+extern Uint32 ShamanVillageCaveGladiatorLeaves[];
 
-extern Sint32 ShamanVillageCave_GladiatorFollowsOut[];
+extern Sint32 ShamanVillageCaveGladiatorFollowsOut[];
 
-extern Sint32 ShamanVillageCave_WeedsScript[];
-extern Uint32 ShamanVillageCave_PillarScript[];
+extern Sint32 ShamanVillageCaveWeedsScript[];
+extern Uint32 ShamanVillageCavePillarScript[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -203,14 +203,14 @@ void scShamanVillageCaveScatterWeeds(Sint32 unused, Sint32 weeds)
 void scShamanVillageCaveDropPillarIntoGap(Sint32 id)
 {
 	ACTOR *actor = fdActorGet(id);
-	Sint32 frames = 60;
+	Sint32 ticks = 60;
 
 	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	while(frames != 0) {
+	while(ticks != 0) {
 		syWait(1);
 		if(actor->velY == 0)
 			break;
-		frames--;
+		ticks--;
 	}
 	syWait(10);
 	fdActorSetSprFlags(actor, 0);
@@ -409,24 +409,23 @@ void scShamanVillageCaveTakeGoldenShirt(void)
    them. */
 void scShamanVillageCavePlaceGladiators(void)
 {
-	Sint32 angle;
+	Sint32 ang;
 
-	angle = FACING_SOUTH_SOUTHWEST;
-	fdActorSetPosAndFacing(ACTOR_SATRAGE, toFIXED(231), toFIXED(199), angle);
-	fdActorSetPosAndFacing(ACTOR_AZART, toFIXED(220), toFIXED(191), angle);
-	fdActorSetPosAndFacing(ACTOR_NAVAMPA, toFIXED(204), toFIXED(191), angle);
+	ang = FACING_SOUTH_SOUTHWEST;
+	fdActorSetPosAndFacing(ACTOR_SATRAGE, toFIXED(231), toFIXED(199), ang);
+	fdActorSetPosAndFacing(ACTOR_AZART, toFIXED(220), toFIXED(191), ang);
+	fdActorSetPosAndFacing(ACTOR_NAVAMPA, toFIXED(204), toFIXED(191), ang);
 }
 
 /* The Golden Shirt lies where the gladiators left it
    (FLAG_SHAMAN_VILLAGE_CAVE_GOLDEN_SHIRT_LEFT). */
 void scShamanVillageCavePlaceGoldenShirt(void)
 {
-	Sint32 angle;
+	Sint32 ang;
 
 	scFieldActorShowItemIconById(ACTOR_GOLDEN_SHIRT, ITEM_GOLDEN_SHIRT);
-	angle = FACING_NORTH;
-	fdActorSetPosAndFacing(
-		ACTOR_GOLDEN_SHIRT, toFIXED(212), toFIXED(199), angle);
+	ang = FACING_NORTH;
+	fdActorSetPosAndFacing(ACTOR_GOLDEN_SHIRT, toFIXED(212), toFIXED(199), ang);
 	fdScriptSetFlag(FLAG_SHAMAN_VILLAGE_CAVE_GOLDEN_SHIRT_LEFT);
 }
 
@@ -436,7 +435,7 @@ void scShamanVillageCavePlaceGoldenShirt(void)
    out of the middle passage, call the win a cheat and fight the party. */
 void scShamanVillageCaveMeetGladiators(void)
 {
-	Sint32 angle;
+	Sint32 ang;
 
 	if(fdScriptGetFlag(FLAG_TRANSFERRED_WON_COLOSSO) == 0)
 		return;
@@ -468,14 +467,14 @@ void scShamanVillageCaveMeetGladiators(void)
 	fdActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
 	fdCameraMoveTo(199, CAMERA_KEEP, 177, 1);
 	fdCameraWaitForArrival();
-	angle = FACING_SOUTH;
-	fdActorSetPosAndFacing(ACTOR_SATRAGE, toFIXED(199), toFIXED(130), angle);
+	ang = FACING_SOUTH;
+	fdActorSetPosAndFacing(ACTOR_SATRAGE, toFIXED(199), toFIXED(130), ang);
 	fdActorWalkTo(ACTOR_SATRAGE, 231, 199);
 	syFieldScriptWait(20);
-	fdActorSetPosAndFacing(ACTOR_AZART, toFIXED(199), toFIXED(130), angle);
+	fdActorSetPosAndFacing(ACTOR_AZART, toFIXED(199), toFIXED(130), ang);
 	fdActorWalkTo(ACTOR_AZART, 220, 191);
 	syFieldScriptWait(20);
-	fdActorSetPosAndFacing(ACTOR_NAVAMPA, toFIXED(199), toFIXED(130), angle);
+	fdActorSetPosAndFacing(ACTOR_NAVAMPA, toFIXED(199), toFIXED(130), ang);
 	fdActorWalkTo(ACTOR_NAVAMPA, 204, 191);
 	fdCameraMoveTo(199, CAMERA_KEEP, 225, 1);
 	fdCameraWaitForArrival();
@@ -598,7 +597,7 @@ void scShamanVillageCaveLoseToGladiators(void)
 	fdActorSetAnimation(ACTOR_FELIX, ANIM_COLLAPSE);
 	fdActorSetAnimation(ACTOR_ISAAC, 39);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorRunRepeatedMotion(ACTOR_NAVAMPA, 2);
 	syFieldScriptWait(5);
 	fdActorShowEmote(ACTOR_NAVAMPA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
@@ -663,7 +662,7 @@ void scShamanVillageCaveBeatGladiators(void)
 	fdActorSetAnimation(ACTOR_SATRAGE, 8);
 	fdActorSetAnimation(ACTOR_NAVAMPA, 8);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorRunRepeatedMotion(ACTOR_AZART, 2);
 	syFieldScriptWait(5);
 	/* "These guys were phenomenal!" */
@@ -733,11 +732,11 @@ void scShamanVillageCaveBeatGladiators(void)
 	fdActorSetSpeed(ACTOR_SATRAGE, 1);
 	fdActorSetSpeed(ACTOR_AZART, 1);
 	fdActorSetSpeed(ACTOR_NAVAMPA, 1);
-	fdActorSetScript(ACTOR_SATRAGE, ShamanVillageCave_GladiatorLeaves);
+	fdActorSetScript(ACTOR_SATRAGE, ShamanVillageCaveGladiatorLeaves);
 	syFieldScriptWait(20);
-	fdActorSetScript(ACTOR_AZART, ShamanVillageCave_GladiatorFollowsOut);
+	fdActorSetScript(ACTOR_AZART, ShamanVillageCaveGladiatorFollowsOut);
 	syFieldScriptWait(20);
-	fdActorSetScript(ACTOR_NAVAMPA, ShamanVillageCave_GladiatorFollowsOut);
+	fdActorSetScript(ACTOR_NAVAMPA, ShamanVillageCaveGladiatorFollowsOut);
 	syFieldScriptWait(100);
 	fdActorFaceEachOther(ACTOR_ISAAC, ACTOR_FELIX, 0);
 	fdActorFaceActor(ACTOR_KRADEN, ACTOR_FELIX, 0);
@@ -790,7 +789,7 @@ void scShamanVillageCaveEnterPassage(void)
 	fdScriptPlaySnd(SE_MAP_EXIT);
 	syFieldScriptSetExitRequest(state->stepCue);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -914,7 +913,7 @@ Uint32 SceneExits[] = {
 
 /* The weeds' script: they stand half as tall again, and are set up by
    scShamanVillageCaveSetUpWeeds. */
-Sint32 ShamanVillageCave_WeedsScript[] = {
+Sint32 ShamanVillageCaveWeedsScript[] = {
 	SC_SET(SW_SCALE_Y_DUPLICATE, toFIXED(3) / 2),
 	SC_CALL(scShamanVillageCaveSetUpWeeds),
 	SC_END,
@@ -922,20 +921,20 @@ Sint32 ShamanVillageCave_WeedsScript[] = {
 
 /* clang-format off */
 /* The pillar's script: it stands still. */
-Uint32 ShamanVillageCave_PillarScript[] = {
+Uint32 ShamanVillageCavePillarScript[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_END,
 };
 
 ACTOR_PLACE ActorPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, (Sint32)ShamanVillageCave_WeedsScript, 40, 0, 128, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, (Sint32)ShamanVillageCaveWeedsScript, 40, 0, 128, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, (Sint32)ShamanVillageCave_WeedsScript, 232, 0, 608, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, (Sint32)ShamanVillageCaveWeedsScript, 232, 0, 608, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 808, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 808, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 792, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 792, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, (Sint32)ShamanVillageCave_PillarScript, 584, 0, 312, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, (Sint32)ShamanVillageCavePillarScript, 584, 0, 312, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_EDDY), MOVEMENT_TYPE_STAND, 264, 0, 760, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -984,7 +983,7 @@ CUE SceneCues[] = {
 
 /* The beaten gladiators walk off south through the first room, one after */
 /* another. */
-Uint32 ShamanVillageCave_GladiatorLeaves[] = {
+Uint32 ShamanVillageCaveGladiatorLeaves[] = {
 	SC_ANIMATION(2),
 	SC_MOVE_XZ(232, 227),
 	SC_SYNC,
@@ -998,9 +997,9 @@ Uint32 ShamanVillageCave_GladiatorLeaves[] = {
 
 /* The gladiator behind the others steps up to their path and follows them
    out. */
-Sint32 ShamanVillageCave_GladiatorFollowsOut[] = {
+Sint32 ShamanVillageCaveGladiatorFollowsOut[] = {
 	SC_ANIMATION(2),
 	SC_MOVE_XZ(224, 195),
 	SC_SYNC,
-	SC_GOTO(ShamanVillageCave_GladiatorLeaves),
+	SC_GOTO(ShamanVillageCaveGladiatorLeaves),
 };

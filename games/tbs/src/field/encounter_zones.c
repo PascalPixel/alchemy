@@ -1,7 +1,7 @@
 /* The 104 encounter zones, by zone number. A field zone's comment gives its
    area name (Area_NameRules) and the scenes and entrances that take it
    (Scene_EncounterRules); a World Map zone's, its encounter region and the
-   battle environments that take it (WorldMap_EncounterRules); a zone that code
+   battle environments that take it (WorldMapEncounterRules); a zone that code
    names, its name (ENCOUNTER_ZONE_ID). Over each zone's formations
    (battle/formations.c) are the monsters they bring, by their English names:
    for a zone code picks a slot from, what each slot fights. */

@@ -18,7 +18,7 @@ enum {
 /* clang-format off */
 /* The saving screen's progress bar by step, a row of its 12 tiles for each of */
 /* its seven steps. */
-const Uint8 Window_ProgressBarRows[7 * 12] = {
+const Uint8 WindowProgressBarRows[7 * 12] = {
 	BAR_LEFT_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_RIGHT_EMPTY,
 	BAR_LEFT_FULL, BAR_FULL, BAR_FRONT, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_RIGHT_EMPTY,
 	BAR_LEFT_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FRONT, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_RIGHT_EMPTY,

@@ -50,18 +50,18 @@
 #include "scene/walk_into_leader.h"
 #include "text/msg_ids.h"
 
-extern Sint32			 TimberRoomsBC_InnWorkerChores[];
-extern SCENE_ENTRANCE	 TimberRoomsBC_Entrances[];
-extern SCENE_EXIT_REGION TimberRoomsB_Regions[];
-extern SCENE_EXIT_REGION TimberRoomsC_Regions[];
-extern Uint32			 TimberRoomsBC_Exits[];
-extern ACTOR_PLACE		 TimberRoomsB_ActorPlacements[];
-extern ACTOR_PLACE		 TimberRoomsC_ActorPlacements[];
-extern ACTOR_PLACE		 TimberRoomsC_ActorPlacementsAfterLighthouse[];
-extern CUE				 TimberRoomsB_Cues[];
-extern CUE				 TimberRoomsB_CuesAfterLighthouse[];
-extern CUE				 TimberRoomsC_Cues[];
-extern CUE				 TimberRoomsC_CuesAfterLighthouse[];
+extern Sint32			 TimberRoomsBCInnWorkerChores[];
+extern SCENE_ENTRANCE	 TimberRoomsBCEntrances[];
+extern SCENE_EXIT_REGION TimberRoomsBRegions[];
+extern SCENE_EXIT_REGION TimberRoomsCRegions[];
+extern Uint32			 TimberRoomsBCExits[];
+extern ACTOR_PLACE		 TimberRoomsBActorPlacements[];
+extern ACTOR_PLACE		 TimberRoomsCActorPlacements[];
+extern ACTOR_PLACE		 TimberRoomsCActorPlacementsAfterLighthouse[];
+extern CUE				 TimberRoomsBCues[];
+extern CUE				 TimberRoomsBCuesAfterLighthouse[];
+extern CUE				 TimberRoomsCCues[];
+extern CUE				 TimberRoomsCCuesAfterLighthouse[];
 
 static void scTimberRoomsBCTellFaranAboutJenna(void);
 
@@ -73,7 +73,7 @@ static void scTimberRoomsBCTellFaranAboutJenna(void);
    scene selector, which exits to any entrance from 0 to 99, reaches it. */
 enum { TIMBER_ROOMS_ENTRANCE_AFTER_LIGHTHOUSE = 90 };
 
-/* The shops' stock rows, whose type column in sStockTable says they sell
+/* The shops' stock rows, whose type column in StockTable says they sell
    weapons, armor and items, and the inn. */
 enum {
 	LALIVERO_WEAPON_STOCK = 32,
@@ -202,20 +202,20 @@ static Sint32 scTimberRoomsBCInnWorkerSighs(ACTOR *actor)
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return TimberRoomsBC_Entrances;
+	return TimberRoomsBCEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
 {
 	if(MainRoutineStateWork.next == SCENE_TIMBER_ROOMS_B) {
-		return TimberRoomsB_Regions;
+		return TimberRoomsBRegions;
 	}
-	return TimberRoomsC_Regions;
+	return TimberRoomsCRegions;
 }
 
 const Uint32 *scGetExits(void)
 {
-	return TimberRoomsBC_Exits;
+	return TimberRoomsBCExits;
 }
 
 /* The people of each scene. */
@@ -224,11 +224,11 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	if(MainRoutineStateWork.next == SCENE_TIMBER_ROOMS_C) {
 		/* Faran's house and the inn. */
 		if(gmFlagGet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
-			return TimberRoomsC_ActorPlacementsAfterLighthouse;
+			return TimberRoomsCActorPlacementsAfterLighthouse;
 		}
-		return TimberRoomsC_ActorPlacements;
+		return TimberRoomsCActorPlacements;
 	}
-	return TimberRoomsB_ActorPlacements;
+	return TimberRoomsBActorPlacements;
 }
 
 /* The side the leader faces, which is the facing rounded to the nearest of
@@ -375,7 +375,7 @@ static void scTimberRoomsBCTalkToInnWorker(void)
 		fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 		fdScriptWait(20);
 	}
-	fdActorSetScript(ACTOR_INN_WORKER, TimberRoomsBC_InnWorkerChores);
+	fdActorSetScript(ACTOR_INN_WORKER, TimberRoomsBCInnWorkerChores);
 	fdScriptEnd();
 }
 
@@ -419,14 +419,14 @@ const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.next == SCENE_TIMBER_ROOMS_C) {
 		if(gmFlagGet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
-			return TimberRoomsC_CuesAfterLighthouse;
+			return TimberRoomsCCuesAfterLighthouse;
 		}
-		return TimberRoomsC_Cues;
+		return TimberRoomsCCues;
 	}
 	if(gmFlagGet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
-		return TimberRoomsB_CuesAfterLighthouse;
+		return TimberRoomsBCuesAfterLighthouse;
 	}
-	return TimberRoomsB_Cues;
+	return TimberRoomsBCues;
 }
 
 /* In Lalivero (TimberRoomsC), back from Venus Lighthouse, the party reports to
@@ -442,7 +442,7 @@ static void scTimberRoomsBCReportToFaran(void)
 	fdActorFaceDirection(ACTOR_IODEM, FACING_WEST, 0);
 	fdScriptSetMessageId(MsgLaliveroHowDidSearchForSheba);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(10);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1);
 	fdActorWalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
@@ -878,7 +878,7 @@ Sint32 scInit(void)
 		actor->priFlg = 0;
 		actor->spr->image.pri = 2;
 		if(gmFlagGet(FLAG_LALIVERO_INN_WORKER_APOLOGIZED) != 0) {
-			fdActorSetScript(ACTOR_INN_WORKER, TimberRoomsBC_InnWorkerChores);
+			fdActorSetScript(ACTOR_INN_WORKER, TimberRoomsBCInnWorkerChores);
 		}
 		if(MainRoutineStateWork.entrance ==
 			TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE) {
@@ -899,7 +899,7 @@ Sint32 scInit(void)
 /* The inn worker's chores once she has apologized.
 
    She paces between two spots, turning to each side, and sighs now and then. */
-Sint32 TimberRoomsBC_InnWorkerChores[] = {
+Sint32 TimberRoomsBCInnWorkerChores[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
 	SC_SPEED(2.4),
 	SC_ACCELERATION(1.2),
@@ -933,7 +933,7 @@ Sint32 TimberRoomsBC_InnWorkerChores[] = {
 	SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-SCENE_ENTRANCE TimberRoomsBC_Entrances[] = {
+SCENE_ENTRANCE TimberRoomsBCEntrances[] = {
 	{TIMBER_ROOMS_B_FROM_LALIVERO_WEST, CONDITION_ALWAYS, 144, 0, 168,
 		FACING_NORTH, 0, 0, 8, 240, 192, 0},
 	{TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST, CONDITION_ALWAYS, 400, 0, 168,
@@ -986,17 +986,17 @@ SCENE_ENTRANCE TimberRoomsBC_Entrances[] = {
 };
 
 /* clang-format off */
-SCENE_EXIT_REGION TimberRoomsB_Regions[] = {
+SCENE_EXIT_REGION TimberRoomsBRegions[] = {
 	{196, 28, 595, 204, 36, 603, CONDITION_ALWAYS, TIMBER_ROOMS_B_TO_LALIVERO_EAST_SOUTHEAST},
 	{SCENE_TABLE_END},
 };
 
-SCENE_EXIT_REGION TimberRoomsC_Regions[] = {
+SCENE_EXIT_REGION TimberRoomsCRegions[] = {
 	{212, 28, 83, 220, 36, 91, CONDITION_ALWAYS, TIMBER_ROOMS_C_TO_LALIVERO_SOUTH},
 	{SCENE_TABLE_END},
 };
 
-Uint32 TimberRoomsBC_Exits[] = {
+Uint32 TimberRoomsBCExits[] = {
 	SCENE_EXITS(TimberRoomsB),
 	SCENE_EXIT(TIMBER_ROOMS_B_TO_LALIVERO_WEST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_WEST),
 	SCENE_EXIT(TIMBER_ROOMS_B_TO_LALIVERO_SOUTHEAST, Lalivero, LALIVERO_FROM_TIMBER_ROOMS_B_SOUTHEAST),
@@ -1024,7 +1024,7 @@ Uint32 TimberRoomsBC_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE TimberRoomsB_ActorPlacements[] = {
+ACTOR_PLACE TimberRoomsBActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
 		176, 0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1056,7 +1056,7 @@ ACTOR_PLACE TimberRoomsB_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE TimberRoomsC_ActorPlacements[] = {
+ACTOR_PLACE TimberRoomsCActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		168, 0, 112, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1076,7 +1076,7 @@ ACTOR_PLACE TimberRoomsC_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE TimberRoomsC_ActorPlacementsAfterLighthouse[] = {
+ACTOR_PLACE TimberRoomsCActorPlacementsAfterLighthouse[] = {
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		168, 0, 112, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1102,7 +1102,7 @@ ACTOR_PLACE TimberRoomsC_ActorPlacementsAfterLighthouse[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE TimberRoomsB_Cues[] = {
+CUE TimberRoomsBCues[] = {
 	{ CUE_STEP, TIMBER_ROOMS_B_TO_LALIVERO_WEST, CONDITION_ALWAYS, SCRIPT_REF(scLeaveByExit) },
 	{ CUE_STEP, TIMBER_ROOMS_B_TO_LALIVERO_SOUTHEAST, CONDITION_ALWAYS, SCRIPT_REF(scLeaveByExit) },
 	{ CUE_STEP, TIMBER_ROOMS_B_ITEM_SHOP_UPSTAIRS_TO_ITEM_SHOP, CONDITION_ALWAYS, SCRIPT_REF(scLeaveByExit) },
@@ -1149,7 +1149,7 @@ CUE TimberRoomsB_Cues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE TimberRoomsB_CuesAfterLighthouse[] = {
+CUE TimberRoomsBCuesAfterLighthouse[] = {
 	{ CUE_STEP, TIMBER_ROOMS_B_TO_LALIVERO_WEST, CONDITION_ALWAYS, SCRIPT_REF(scLeaveByExit) },
 	{ CUE_STEP, TIMBER_ROOMS_B_TO_LALIVERO_SOUTHEAST, CONDITION_ALWAYS, SCRIPT_REF(scLeaveByExit) },
 	{ CUE_STEP, TIMBER_ROOMS_B_ITEM_SHOP_UPSTAIRS_TO_ITEM_SHOP, CONDITION_ALWAYS, SCRIPT_REF(scLeaveByExit) },
@@ -1196,7 +1196,7 @@ CUE TimberRoomsB_CuesAfterLighthouse[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE TimberRoomsC_Cues[] = {
+CUE TimberRoomsCCues[] = {
 	{ CUE_STEP, TIMBER_ROOMS_C_TO_LALIVERO_SOUTHWEST, CONDITION_ALWAYS, SCRIPT_REF(scLeaveByExit) },
 	{ CUE_STEP, TIMBER_ROOMS_C_TO_LALIVERO_NORTHEAST, CONDITION_ALWAYS, SCRIPT_REF(scLeaveByExit) },
 	{ CUE_STEP, TIMBER_ROOMS_C_INN_TO_INN_UPSTAIRS, CONDITION_ALWAYS, SCRIPT_REF(scLeaveByExit) },
@@ -1228,7 +1228,7 @@ CUE TimberRoomsC_Cues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE TimberRoomsC_CuesAfterLighthouse[] = {
+CUE TimberRoomsCCuesAfterLighthouse[] = {
 	{ CUE_STEP, TIMBER_ROOMS_C_TO_LALIVERO_SOUTHWEST, CONDITION_ALWAYS, SCRIPT_REF(scLeaveByExit) },
 	{ CUE_STEP, TIMBER_ROOMS_C_TO_LALIVERO_NORTHEAST, CONDITION_ALWAYS, SCRIPT_REF(scLeaveByExit) },
 	{ CUE_STEP, TIMBER_ROOMS_C_INN_TO_INN_UPSTAIRS, CONDITION_ALWAYS, SCRIPT_REF(scLeaveByExit) },

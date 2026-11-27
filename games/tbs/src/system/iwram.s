@@ -6,8 +6,8 @@
 	.global OamDepthLists
 OamDepthLists:
 	.space 1024
-	.global VBlankCount
-VBlankCount:
+	.global FrameCount
+FrameCount:
 	.space 4
 	.global SavedStackSize
 SavedStackSize:
@@ -21,8 +21,8 @@ EventsRunning:
 	.global EventBuf
 EventBuf:
 	.space 160
-	.global ScreenFadeVBlanksLeft
-ScreenFadeVBlanksLeft:
+	.global ScreenFadeFramesLeft
+ScreenFadeFramesLeft:
 	.space 4
 	.global DebugTextEnabled
 DebugTextEnabled:
@@ -63,11 +63,11 @@ DecodeFillByte:
 	.global PerPush
 PerPush:
 	.space 4
-	.global ScreenFadeVBlanks
-ScreenFadeVBlanks:
+	.global ScreenFadeFrames
+ScreenFadeFrames:
 	.space 4
-	.global PlayTimeFrames
-PlayTimeFrames:
+	.global PlayTimeTicks
+PlayTimeTicks:
 	.space 4
 	.global SleepDisabled
 SleepDisabled:
@@ -90,8 +90,8 @@ ResetRequested:
 	.global DebugTextCursor
 DebugTextCursor:
 	.space 4
-	.global Camera_UnreadWordA
-Camera_UnreadWordA:
+	.global CameraUnreadWordA
+CameraUnreadWordA:
 	.space 4
 	.global MatrixStackDepth
 MatrixStackDepth:
@@ -99,11 +99,11 @@ MatrixStackDepth:
 	.global SleepRequested
 SleepRequested:
 	.space 4
-	.global FrameVBlanks
-FrameVBlanks:
+	.global TickFrames
+TickFrames:
 	.space 4
-	.global LastFrameVBlanks
-LastFrameVBlanks:
+	.global LastTickFrames
+LastTickFrames:
 	.space 4
 	.global ScreenFadeToWhite
 ScreenFadeToWhite:
@@ -139,14 +139,14 @@ PerDataAtVBlank:
 	.global OamCopyEnabled
 OamCopyEnabled:
 	.space 4
-	.global Camera_UnreadWordB
-Camera_UnreadWordB:
+	.global CameraUnreadWordB
+CameraUnreadWordB:
 	.space 4
 	.global DebugPaused
 DebugPaused:
 	.space 4
-	.global IdleFrames
-IdleFrames:
+	.global IdleTicks
+IdleTicks:
 	.space 4
 	.global VBlankDone
 VBlankDone:
@@ -164,13 +164,13 @@ EventsInitialized:
 	.global OamMatrices
 OamMatrices:
 	.space 256
-	.global FrameCount
-FrameCount:
-	.global FrameCount
-FrameCount:
+	.global TickCount
+TickCount:
+	.global TickCount
+TickCount:
 	.space 4
-	.global FrameRenderPending
-FrameRenderPending:
+	.global TickRenderPending
+TickRenderPending:
 	.space 12
 	.global HeapSlots
 HeapSlots:
@@ -291,8 +291,8 @@ DebugMode:
 	.global CpuLoadDisplayEnabled
 CpuLoadDisplayEnabled:
 	.space 4
-	.global SleepComboFrames
-SleepComboFrames:
+	.global SleepComboTicks
+SleepComboTicks:
 	.space 4
 	.global ScanlineAngle
 ScanlineAngle:

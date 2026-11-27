@@ -24,7 +24,7 @@
 #define FLAG_MIKASALLA_GALAHAD_MET_THIS_VISIT FLAG_AREA_TEMP_41
 
 /* Mikasalla's houses and inn (MikasallaRoomsHouses), by the rows of
-   MikasallaRooms_HousesPlacements. */
+   MikasallaRoomsHousesPlacements. */
 typedef enum MIKASALLA_ROOMS_ACTOR_ID {
 	/* The family of the explorer who founded the village: his son, the son's
 	   wife, and the grandson who asks whether the leader is an explorer too. */
@@ -49,7 +49,7 @@ typedef enum MIKASALLA_ROOMS_ACTOR_ID {
 } MIKASALLA_ROOMS_ACTOR_ID;
 
 /* The sanctums: Mikasalla's, and those of the Apojii Islands and Yallam, which
-   this scene also holds; by the rows of `MikasallaRooms_SanctumPlacements`. */
+   this scene also holds; by the rows of `MikasallaRoomsSanctumPlacements`. */
 typedef enum MIKASALLA_ROOMS_SANCTUM_ACTOR_ID {
 	/* The healers of Mikasalla's and the Apojii Islands' sanctums. */
 	ACTOR_MIKASALLA_HEALER = ACTOR_FIRST_PLACED,
@@ -68,15 +68,15 @@ typedef enum MIKASALLA_ROOMS_SANCTUM_ACTOR_ID {
 /* Mikasalla's shop and inn, as `mnShopRun` and `mnInnCheckIn` number them. */
 enum { SHOP_MIKASALLA = 13, MIKASALLA_INN = 4 };
 
-extern ACTOR_PLACE MikasallaRooms_HousesPlacements[];
-extern ACTOR_PLACE MikasallaRooms_SanctumPlacements[];
-extern CUE		   MikasallaRooms_HousesCues[];
-extern CUE		   MikasallaRooms_SanctumCues[];
+extern ACTOR_PLACE MikasallaRoomsHousesPlacements[];
+extern ACTOR_PLACE MikasallaRoomsSanctumPlacements[];
+extern CUE		   MikasallaRoomsHousesCues[];
+extern CUE		   MikasallaRoomsSanctumCues[];
 
 void scFadeInAndClearFlag(void);
 
-extern Sint32 MikasallaRooms_DaughterInLawPaces[];
-extern Sint32 MikasallaRooms_WorriedWifePaces[];
+extern Sint32 MikasallaRoomsDaughterInLawPaces[];
+extern Sint32 MikasallaRoomsWorriedWifePaces[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -96,8 +96,8 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.next == SCENE_MIKASALLA_ROOMS_SANCTUM)
-		return MikasallaRooms_SanctumPlacements;
-	return MikasallaRooms_HousesPlacements;
+		return MikasallaRoomsSanctumPlacements;
+	return MikasallaRoomsHousesPlacements;
 }
 
 /* Felix casts Mind Read on the counter of Mikasalla's Sanctum and reads the
@@ -132,8 +132,8 @@ Sint32 scMikasallaRoomsReadApojiiHealersMind(void)
 const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.next == SCENE_MIKASALLA_ROOMS_SANCTUM)
-		return MikasallaRooms_SanctumCues;
-	return MikasallaRooms_HousesCues;
+		return MikasallaRoomsSanctumCues;
+	return MikasallaRoomsHousesCues;
 }
 
 /* The boy in a blue shirt in the explorer's family's house, behind the
@@ -407,7 +407,7 @@ void scMikasallaRoomsMeetGalahad(void)
 
 /* clang-format off */
 /* The explorer's son's wife paces her house, stopping to look east. */
-Sint32 MikasallaRooms_DaughterInLawPaces[] = {
+Sint32 MikasallaRoomsDaughterInLawPaces[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
 	SC_ACCELERATION(0.1),
 	SC_SPEED(0.3),
@@ -431,7 +431,7 @@ Sint32 MikasallaRooms_DaughterInLawPaces[] = {
 };
 
 /* The worried wife paces her house, stopping to look east. */
-Sint32 MikasallaRooms_WorriedWifePaces[] = {
+Sint32 MikasallaRoomsWorriedWifePaces[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
 	SC_ACCELERATION(0.1),
 	SC_SPEED(0.3),
@@ -486,12 +486,12 @@ Uint32 SceneExits[] = {
 };
 
 /* Mikasalla's houses and inn (MIKASALLA_ROOMS_ACTOR_ID). */
-ACTOR_PLACE MikasallaRooms_HousesPlacements[] = {
+ACTOR_PLACE MikasallaRoomsHousesPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 152, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_WHITE_DRESS, CONDITION_ALWAYS, MikasallaRooms_DaughterInLawPaces, 616, 0, 104, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_WHITE_DRESS, CONDITION_ALWAYS, MikasallaRoomsDaughterInLawPaces, 616, 0, 104, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_BOY_IN_BLUE_SHIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 136, FACING_NORTH, TALK_FACING_PARTY_THEN_WATCH, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_BLUE_COAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 120, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_IN_GREEN_SHAWL, CONDITION_ALWAYS, MikasallaRooms_WorriedWifePaces, 360, 0, 88, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_IN_GREEN_SHAWL, CONDITION_ALWAYS, MikasallaRoomsWorriedWifePaces, 360, 0, 88, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 392, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -502,7 +502,7 @@ ACTOR_PLACE MikasallaRooms_HousesPlacements[] = {
 };
 
 /* The three sanctums (MIKASALLA_ROOMS_SANCTUM_ACTOR_ID). */
-ACTOR_PLACE MikasallaRooms_SanctumPlacements[] = {
+ACTOR_PLACE MikasallaRoomsSanctumPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 147, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 466, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 520, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -516,7 +516,7 @@ ACTOR_PLACE MikasallaRooms_SanctumPlacements[] = {
 
 /* clang-format off */
 /* The houses' and inn's talk and Mind Read, Galahad, and what is cooking. */
-CUE MikasallaRooms_HousesCues[] = {
+CUE MikasallaRoomsHousesCues[] = {
 	{CUE_EXIT, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_NORTHEAST, CONDITION_ALWAYS, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_NORTHEAST},
 	{CUE_EXIT, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_NORTHWEST, CONDITION_ALWAYS, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_NORTHWEST},
 	{CUE_EXIT, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_EAST, CONDITION_ALWAYS, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_EAST},
@@ -554,7 +554,7 @@ CUE MikasallaRooms_HousesCues[] = {
 /* clang-format on */
 
 /* The three sanctums' healers, the islanders and the counters' Mind Read. */
-CUE MikasallaRooms_SanctumCues[] = {
+CUE MikasallaRoomsSanctumCues[] = {
 	{CUE_EXIT, MIKASALLA_ROOMS_SANCTUM_TO_MIKASALLA, CONDITION_ALWAYS,
 		MIKASALLA_ROOMS_SANCTUM_TO_MIKASALLA},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},

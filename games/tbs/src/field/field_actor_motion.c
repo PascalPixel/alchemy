@@ -1,4 +1,4 @@
-/* Actor motion, each frame, and the first actor script commands. Part of
+/* Actor motion, each tick, and the first actor script commands. Part of
    field.c. */
 
 #include "field_internal.h"
@@ -27,16 +27,15 @@ Sint32 fdActorScriptShowSpr(ACTOR *interpreter)
 	return 1;
 }
 
-/* Waits a frame at a time until an actor has arrived at its target, at most 600
-   frames (ten seconds), after which it returns with the actor still on its
+/* Waits a tick at a time until an actor has arrived at its target, at most 600
+   ticks (ten seconds), after which it returns with the actor still on its
    way. */
 void fdActorWaitForMove(void *actor)
 {
-	Sint32 waitedFrames;
+	Sint32 waitedTicks;
 
-	for(waitedFrames = 0;
-		waitedFrames < 600 && fdActorIsTargetUnset(actor) == 0;
-		waitedFrames++) {
+	for(waitedTicks = 0; waitedTicks < 600 && fdActorIsTargetUnset(actor) == 0;
+		waitedTicks++) {
 		sySynch(1);
 	}
 }
@@ -65,10 +64,10 @@ Bool fdActorIsTargetUnset(ACTOR *actor)
 	return TRUE;
 }
 
-/* A floating actor's bob, one cycle of ActorScript_CycleTable over this many
-   frames; its rise and fall each frame is the table's value times its gravity
+/* A floating actor's bob, one cycle of ActorScriptCycleTable over this many
+   ticks; its rise and fall each tick is the table's value times its gravity
    over FLOAT_DIVISOR, or FLOAT_HIGH_DIVISOR with ACTOR_FLOATS_HIGH. */
-#define FLOAT_CYCLE_FRAMES 64
+#define FLOAT_CYCLE_TICKS  64
 #define FLOAT_DIVISOR	   64
 #define FLOAT_HIGH_DIVISOR 16
 
@@ -77,7 +76,7 @@ static __inline__ Sint32 fdActorSquare(Sint32 value)
 	return value * value;
 }
 
-/* Advances all 64 actors by one frame, as fdActorUpdateAll does for the eight
+/* Advances all 64 actors by one tick, as fdActorUpdateAll does for the eight
    script-driven actors, with the field's extras: free flight in 3D, following
    the ground, floating, and solid actors that refuse to overlap. */
 void fdActorUpdateAllOnField(void)
@@ -89,14 +88,14 @@ void fdActorUpdateAllOnField(void)
 	FIXED		  y;
 	FIXED		  z;
 	FIXED		  ground;
-	Sint32		  arrivedAtTarget;
+	Sint32		  arrivedAtTgt;
 	Sint32		  pos[3];
 	Sint32		  dx;
 	Sint32		  dy;
 	Sint32		  dz;
-	FIXED		  velocityX;
-	Sint32		  velocityY;
-	FIXED		  velocityZ;
+	FIXED		  velX;
+	Sint32		  velY;
+	FIXED		  velZ;
 	Sint32		  distance;
 	FIXED		  speed;
 	FIXED		  ratio;
@@ -108,7 +107,7 @@ void fdActorUpdateAllOnField(void)
 
 	actor = ActorsWork;
 	for(actorsLeft = ACTOR_COUNT - 1; actorsLeft >= 0; actorsLeft--, actor++) {
-		arrivedAtTarget = 0;
+		arrivedAtTgt = 0;
 
 		script = actor->script;
 		if(script == NULL)
@@ -125,7 +124,7 @@ void fdActorUpdateAllOnField(void)
 		if(actor->paused != 0)
 			continue;
 
-		/* Count down a wait, or run commands until one waits for this frame. */
+		/* Count down a wait, or run commands until one waits for this tick. */
 		if(actor->wait != 0) {
 			actor->wait--;
 		} else {
@@ -135,7 +134,7 @@ void fdActorUpdateAllOnField(void)
 				script += actor->scriptCursor;
 				command = *script;
 				if(command <= SCRIPT_COMMAND_MAX) {
-					if(ActorScript_CommandTable[command]((ACTOR *)actor) == 0)
+					if(ActorScriptCommandTable[command]((ACTOR *)actor) == 0)
 						break;
 				} else {
 					actor->scriptCursor++;
@@ -172,23 +171,21 @@ void fdActorUpdateAllOnField(void)
 						actor->velX += dx * ratio;
 						actor->velY += dy * ratio;
 						actor->velZ += dz * ratio;
-						velocityX = actor->velX;
-						velocityY = actor->velY;
-						velocityZ = actor->velZ;
-						speed = sySquartFX(syMulFX(velocityX, velocityX) +
-							syMulFX(velocityY, velocityY) +
-							syMulFX(velocityZ, velocityZ));
+						velX = actor->velX;
+						velY = actor->velY;
+						velZ = actor->velZ;
+						speed = sySquartFX(syMulFX(velX, velX) +
+							syMulFX(velY, velY) + syMulFX(velZ, velZ));
 						/* Too fast: scale the velocity by speedLimit /
 						   speed. */
 						if(speed > actor->speedLimit) {
 							ratio = syDivFX(speed, actor->speedLimit);
-							SET_VELOCITY(actor, syMulFX(velocityX, ratio),
-								syMulFX(velocityY, ratio),
-								syMulFX(velocityZ, ratio));
+							SET_VELOCITY(actor, syMulFX(velX, ratio),
+								syMulFX(velY, ratio), syMulFX(velZ, ratio));
 						}
 					}
 				} else {
-					/* No target: take acceleration off the speed each frame,
+					/* No target: take acceleration off the speed each tick,
 					   keeping the direction, until it stops. */
 					dx = actor->velX;
 					dy = actor->velY;
@@ -228,14 +225,14 @@ void fdActorUpdateAllOnField(void)
 						ratio = syDivFX(distance, actor->acceleration);
 						actor->velX += syMulFX(dx, ratio);
 						actor->velZ += syMulFX(dz, ratio);
-						velocityX = actor->velX;
-						velocityZ = actor->velZ;
-						speed = sySquartFX(syMulFX(velocityX, velocityX) +
-							syMulFX(velocityZ, velocityZ));
+						velX = actor->velX;
+						velZ = actor->velZ;
+						speed = sySquartFX(
+							syMulFX(velX, velX) + syMulFX(velZ, velZ));
 						if(speed > actor->speedLimit) {
 							ratio = syDivFX(speed, actor->speedLimit);
-							actor->velX = syMulFX(velocityX, ratio);
-							actor->velZ = syMulFX(velocityZ, ratio);
+							actor->velX = syMulFX(velX, ratio);
+							actor->velZ = syMulFX(velZ, ratio);
 						}
 					}
 				} else {
@@ -259,20 +256,20 @@ void fdActorUpdateAllOnField(void)
 				   going and move with its change, unless the actor is 4 or more
 				   pixels above the ground. */
 				if((actor->motionFlg & ACTOR_FOLLOWS_TERRAIN) != 0) {
-					velocityX = x + actor->velX;
-					velocityZ = z + actor->velZ;
-					ground = fdMapGridGetTerrainHeight(
-						actor->layer, velocityX, velocityZ);
-					velocityY = ground - actor->groundHeight;
+					velX = x + actor->velX;
+					velZ = z + actor->velZ;
+					ground =
+						fdMapGridGetTerrainHeight(actor->layer, velX, velZ);
+					velY = ground - actor->groundHeight;
 					if(ground - y > -toFIXED(4))
-						y += velocityY;
-					if(velocityY < 0)
-						velocityY = -velocityY;
+						y += velY;
+					if(velY < 0)
+						velY = -velY;
 					maxTerrainChange = actor->acceleration / 2;
-					if(velocityY > maxTerrainChange)
-						velocityY = maxTerrainChange;
-					velocityY *= 3;
-					if(velocityY != 0 &&
+					if(velY > maxTerrainChange)
+						velY = maxTerrainChange;
+					velY *= 3;
+					if(velY != 0 &&
 						(actor->motionFlg & ACTOR_KEEPS_SPEED_ON_SLOPES) == 0) {
 						dx = actor->velX;
 						dy = actor->velY;
@@ -280,7 +277,7 @@ void fdActorUpdateAllOnField(void)
 						speed = sySquartFX(syMulFX(dx, dx) + syMulFX(dy, dy) +
 							syMulFX(dz, dz));
 						if(speed != 0) {
-							reducedSpeed = speed - velocityY;
+							reducedSpeed = speed - velY;
 							if(reducedSpeed < 0)
 								reducedSpeed = 0;
 							ratio = syDivFX(speed, reducedSpeed);
@@ -299,7 +296,7 @@ void fdActorUpdateAllOnField(void)
 					} else if(actor->velY < 0) {
 						y = ground;
 						actor->velY = -syMulFX(actor->velY, actor->bounce);
-						/* A rebound no faster than one frame of gravity ends
+						/* A rebound no faster than one tick of gravity ends
 						   the bouncing. */
 						if((actor->velY < 0 ? -actor->velY : actor->velY) <=
 							actor->gravity)
@@ -310,12 +307,12 @@ void fdActorUpdateAllOnField(void)
 				/* Float: bob up and down on a triangle wave (ACTOR_FLOATS_HIGH
 				   makes it bigger). */
 				if((actor->motionFlg & ACTOR_FLOATS) != 0) {
-					phase = actor->bounce & (FLOAT_CYCLE_FRAMES - 1);
+					phase = actor->bounce & (FLOAT_CYCLE_TICKS - 1);
 					if((actor->motionFlg & ACTOR_FLOATS_HIGH) != 0)
-						actor->velY = ActorScript_CycleTable[phase >> 1] *
+						actor->velY = ActorScriptCycleTable[phase >> 1] *
 							actor->gravity / FLOAT_HIGH_DIVISOR;
 					else
-						actor->velY = ActorScript_CycleTable[phase >> 1] *
+						actor->velY = ActorScriptCycleTable[phase >> 1] *
 							actor->gravity / FLOAT_DIVISOR;
 					actor->bounce++;
 				}
@@ -342,23 +339,23 @@ void fdActorUpdateAllOnField(void)
 		case ARRIVAL_AXIS_X:
 			if(x == actor->tgtX ||
 				((actor->x.fixed - actor->tgtX) ^ (x - actor->tgtX)) < 0)
-				arrivedAtTarget = 1;
+				arrivedAtTgt = 1;
 			break;
 		case ARRIVAL_AXIS_Y:
 			if(y == actor->tgtY ||
 				((actor->y.fixed - actor->tgtY) ^ (y - actor->tgtY)) < 0)
-				arrivedAtTarget = 1;
+				arrivedAtTgt = 1;
 			break;
 		case ARRIVAL_AXIS_Z:
 			if(z == actor->tgtZ ||
 				((actor->z.fixed - actor->tgtZ) ^ (z - actor->tgtZ)) < 0)
-				arrivedAtTarget = 1;
+				arrivedAtTgt = 1;
 			break;
 		default:
 			break;
 		}
 
-		if(arrivedAtTarget != 0) {
+		if(arrivedAtTgt != 0) {
 			if(actor->snapToTgt != 0) {
 				x = actor->tgtX;
 				actor->velX = 0;
@@ -377,7 +374,7 @@ void fdActorUpdateAllOnField(void)
 
 		SET_ACTOR_POSITION(actor, x, y, z);
 
-		/* Turn to face the direction of travel, at most FACING_STEP a frame. */
+		/* Turn to face the direction of travel, at most FACING_STEP a tick. */
 		if((actor->steeringFlg & ACTOR_FACES_MOTION) != 0) {
 			x = actor->velX;
 			z = actor->velZ;
@@ -494,7 +491,7 @@ UNUSED void fdActorRunUpdateAllFromHeap(void)
 	syHeapRelease(updateActors);
 }
 
-/* Advances the battle's actors by one frame, without running their scripts:
+/* Advances the battle's actors by one tick, without running their scripts:
    steering towards a target or braking, gravity and bouncing, arrival, and
    turning to face the direction of travel. */
 void fdActorUpdateAllMotion(void)
@@ -502,12 +499,12 @@ void fdActorUpdateAllMotion(void)
 	ACTOR *actor;
 	Sint32 actorsLeft;
 	FIXED  y;
-	Sint32 arrivedAtTarget;
+	Sint32 arrivedAtTgt;
 	FIXED  x;
 	FIXED  z;
 	Sint32 dx;
 	Sint32 dz;
-	FIXED  velocityX;
+	FIXED  velX;
 	Sint32 distance;
 	FIXED  ratio;
 	Sint32 facingStep;
@@ -524,11 +521,11 @@ void fdActorUpdateAllMotion(void)
 		/* UB: a frozen actor otherwise reads an uninitialized arrival flag, or
 		   inherits the preceding actor's flag. */
 #if FIX_UNINITIALIZED_READ
-		arrivedAtTarget = 0;
+		arrivedAtTgt = 0;
 #endif
 		if(actor->frozen == 0) {
 #if !FIX_UNINITIALIZED_READ
-			arrivedAtTarget = 0;
+			arrivedAtTgt = 0;
 #endif
 			/* Steer in the XZ plane as fdActorUpdateAllOnField does on the
 			   ground, or brake; this loop has no free flight, ground following
@@ -550,16 +547,16 @@ void fdActorUpdateAllMotion(void)
 					z = actor->tgtZ;
 				} else {
 					ratio = syDivFX(distance, actor->acceleration);
-					velocityX = actor->velX + syMulFX(dx, ratio);
-					actor->velX = velocityX;
+					velX = actor->velX + syMulFX(dx, ratio);
+					actor->velX = velX;
 					dx = actor->velZ + syMulFX(dz, ratio);
 					actor->velZ = dx;
-					distance = sySquartIWRAM(syMulFX(velocityX, velocityX) +
-								   syMulFX(dx, dx))
+					distance =
+						sySquartIWRAM(syMulFX(velX, velX) + syMulFX(dx, dx))
 						<< 8;
 					if(distance > actor->speedLimit) {
 						ratio = syDivFX(distance, actor->speedLimit);
-						actor->velX = syMulFX(velocityX, ratio);
+						actor->velX = syMulFX(velX, ratio);
 						actor->velZ = syMulFX(dx, ratio);
 					}
 				}
@@ -607,20 +604,20 @@ void fdActorUpdateAllMotion(void)
 			case ARRIVAL_AXIS_X:
 				if(x == actor->tgtX ||
 					((actor->x.fixed - actor->tgtX) ^ (x - actor->tgtX)) < 0)
-					arrivedAtTarget = 1;
+					arrivedAtTgt = 1;
 				break;
 			case ARRIVAL_AXIS_Y:
 				if(y == actor->tgtY ||
 					((actor->y.fixed - actor->tgtY) ^ (y - actor->tgtY)) < 0)
-					arrivedAtTarget = 1;
+					arrivedAtTgt = 1;
 				break;
 			case ARRIVAL_AXIS_Z:
 				if(z == actor->tgtZ ||
 					((actor->z.fixed - actor->tgtZ) ^ (z - actor->tgtZ)) < 0)
-					arrivedAtTarget = 1;
+					arrivedAtTgt = 1;
 				break;
 			}
-		if(arrivedAtTarget) {
+		if(arrivedAtTgt) {
 			if(actor->snapToTgt) {
 				actor->velX = 0;
 				actor->velZ = 0;
@@ -637,7 +634,7 @@ void fdActorUpdateAllMotion(void)
 			actor->arrivalAxis = ARRIVAL_AXIS_NONE;
 		}
 		SET_ACTOR_POSITION(actor, x, y, z);
-		/* Turn to face the direction of travel, at most FACING_STEP a frame,
+		/* Turn to face the direction of travel, at most FACING_STEP a tick,
 		   the shorter way round. */
 		if(actor->steeringFlg & ACTOR_FACES_MOTION) {
 			x = actor->velX;
@@ -654,6 +651,6 @@ void fdActorUpdateAllMotion(void)
 	}
 }
 
-#undef FLOAT_CYCLE_FRAMES
+#undef FLOAT_CYCLE_TICKS
 #undef FLOAT_DIVISOR
 #undef FLOAT_HIGH_DIVISOR

@@ -23,76 +23,76 @@ enum {
 	BASIC_SPRITE_COLORS = 14 * PALETTE_COLORS
 };
 
-/* Loads the pictures of animation `number` into picture cache `slot`, at
-   `buffer`: the resource SpritePictureCache_Sources lists for it, decoded, its
+/* Loads the pictures of animation `num` into picture cache `slot`, at
+   `buf`: the resource SpritePictureCache_Sources lists for it, decoded, its
    picture offsets turned into pointers, and for variant 1 to 5 its colours of
    the basic sprite palettes recoloured through that variant's table (a variant
    above 5 takes variant 1's). Returns the size of one picture in pixels, or 0
    when nothing was loaded. */
 Sint32 fdSprPictureCacheLoad(
-	Uint32 slot, Uint32 *buffer, Sint32 number, Uint32 variant)
+	Uint32 slot, Uint32 *buf, Sint32 num, Uint32 variant)
 {
 	ANIMATION_METADATA		 *metadata;
 	ACTOR_SYSTEM_STATE		 *system;
 	SPR_PICTURE_CACHE		 *record;
 	SPR_PICTURE_CACHE_SOURCE *entry;
-	Uint32					 *offset;
+	Uint32					 *ofs;
 	Uint8					 *pixels;
 	Uint8					 *end;
-	Uint8					 *colorMap;
+	Uint8					 *colMap;
 	Uint32					  size;
-	Uint32					  count;
-	Uint32					  index;
-	Uint16					  entryNumber;
+	Uint32					  cnt;
+	Uint32					  idx;
+	Uint16					  entryNum;
 	Sint32					  resource;
 
 	if(slot >= RESOURCE_SLOT_COUNT)
 		return 0;
 	system = ActorSystemStateWork;
 	record = &system->pictureCaches[slot];
-	metadata = syResourceGetMetadataRecordStub(number);
-	record->tag = (slot << PICTURE_CACHE_TAG_SLOT_SHIFT) | number;
-	record->pictures = buffer;
+	metadata = syResourceGetMetadataRecordStub(num);
+	record->tag = (slot << PICTURE_CACHE_TAG_SLOT_SHIFT) | num;
+	record->pictures = buf;
 
 	/* Resolve the animation number to its packed resource. */
 	entry = SpritePictureCache_Sources;
-	for(count = 0; count < PICTURE_CACHE_SOURCES_MAX; count++) {
+	for(cnt = 0; cnt < PICTURE_CACHE_SOURCES_MAX; cnt++) {
 		Sint16 *numbers = &entry->num;
 
 		resource = entry->resource;
-		entryNumber = *numbers;
+		entryNum = *numbers;
 		entry++;
-		if(entryNumber == 0)
+		if(entryNum == 0)
 			return 0;
-		if(entryNumber == number)
+		if(entryNum == num)
 			break;
 	}
-	size = syDecompressTaggedLZ(syResourceGetTableEntry(resource), buffer);
+	size = syDecompressTaggedLZ(syResourceGetTableEntry(resource), buf);
 
 	/* Turn the picture-offset directory into pointers before the pixel
 	   payload. */
-	offset = buffer;
-	for(count = 0; count < PICTURE_CACHE_PICTURES_MAX; count++) {
-		if(*offset == 0)
+	ofs = buf;
+	for(cnt = 0; cnt < PICTURE_CACHE_PICTURES_MAX; cnt++) {
+		if(*ofs == 0)
 			break;
-		*offset += (Uint32)buffer;
-		offset++;
+		*ofs += (Uint32)buf;
+		ofs++;
 	}
 	if(variant != 0) {
-		index = variant - 1;
-		pixels = (Uint8 *)(offset + 1);
-		end = (Uint8 *)buffer + size;
-		if(index > 4)
-			index = 0;
+		idx = variant - 1;
+		pixels = (Uint8 *)(ofs + 1);
+		end = (Uint8 *)buf + size;
+		if(idx > 4)
+			idx = 0;
 		/* Colours of palettes 14 and 15 are kept; only the basic palettes'
 		   change. */
-		colorMap = (Uint8 *)SpriteColorTables[index];
+		colMap = (Uint8 *)SpriteColorTables[idx];
 		for(; pixels < end; pixels++) {
-			Uint32 colorIndex = *pixels;
+			Uint32 colIdx = *pixels;
 
-			if(colorIndex < BASIC_SPRITE_COLORS) {
-				colorIndex = colorMap[colorIndex];
-				*pixels = colorIndex;
+			if(colIdx < BASIC_SPRITE_COLORS) {
+				colIdx = colMap[colIdx];
+				*pixels = colIdx;
 			}
 		}
 	}
@@ -116,12 +116,12 @@ Sint32 fdSprPictureCacheFindByTag(Sint32 tag)
 /* Resets each sprite animation of a sprite from its animation's metadata: its
    facing kind, pictures, scripts and codec, with no picture shown and no script
    running. */
-Sint32 fdSprResetAnimations(SPR *sprite)
+Sint32 fdSprResetAnimations(SPR *spr)
 {
 	Sint32 i;
 
-	for(i = 0; i < sprite->cnt; i++) {
-		SPR_ANIMATION	   *layer = sprite->entries[i];
+	for(i = 0; i < spr->cnt; i++) {
+		SPR_ANIMATION	   *layer = spr->entries[i];
 		ANIMATION_METADATA *metadata =
 			syResourceGetMetadataRecordStub(layer->anmId);
 		void **pictures;
@@ -132,11 +132,11 @@ Sint32 fdSprResetAnimations(SPR *sprite)
 		if(i == 0) {
 			/* The first sprite animation supplies the dimensions and origin of
 			   the whole sprite. */
-			sprite->width = metadata->width;
-			sprite->height = metadata->height;
-			sprite->scale = metadata->scale << 8;
-			sprite->ofsY = metadata->adjustY;
-			sprite->ofsX = metadata->adjustX;
+			spr->width = metadata->width;
+			spr->height = metadata->height;
+			spr->scale = metadata->scale << 8;
+			spr->ofsY = metadata->adjustY;
+			spr->ofsX = metadata->adjustX;
 		}
 
 		/* An animation whose metadata has no pictures takes them from the
@@ -188,119 +188,119 @@ void fdSprAnimationReset(SPR_ANIMATION *layer)
 /* Adds a sprite animation of animation `id` to a sprite, in the first of its
    four slots that is free. Returns the new sprite animation, 0 when none is
    free, or -1 when the sprite's four slots are taken. */
-Sint32 fdSprAddAnimation(SPR *sprite, Sint32 id)
+Sint32 fdSprAddAnimation(SPR *spr, Sint32 id)
 {
-	Sint32				layerHandle = (Sint32)sprite->entries[0];
-	Sint32				freeIndex = 0;
+	Sint32				layerHandle = (Sint32)spr->entries[0];
+	Sint32				freeIdx = 0;
 	SPR_ANIMATION	  **entry;
 	ANIMATION_METADATA *metadata;
 
 	/* Find an unused sprite animation slot before reserving a sprite
 	   animation. */
 	if(layerHandle != 0) {
-		entry = &sprite->entries[0];
+		entry = &spr->entries[0];
 		do {
-			freeIndex++;
-			if(freeIndex >= ANIM_LAYER_COUNT)
+			freeIdx++;
+			if(freeIdx >= ANIM_LAYER_COUNT)
 				break;
 			entry++;
 			layerHandle = (Sint32)*entry;
 		} while(layerHandle != 0);
 	}
-	if(freeIndex == ANIM_LAYER_COUNT)
+	if(freeIdx == ANIM_LAYER_COUNT)
 		return -1;
 	layerHandle = (Sint32)fdSprAnimationAlloc(id);
 	if(layerHandle == 0)
 		return 0;
-	sprite->entries[freeIndex] = (SPR_ANIMATION *)layerHandle;
+	spr->entries[freeIdx] = (SPR_ANIMATION *)layerHandle;
 	metadata = syResourceGetMetadataRecordStub(id);
 	/* Only the first registered sprite animation establishes the sprite's
 	   geometry. */
-	if(sprite->cnt == 0) {
-		sprite->width = metadata->width;
-		sprite->height = metadata->height;
-		sprite->scale = metadata->scale << 8;
-		sprite->ofsY = metadata->adjustY;
-		sprite->ofsX = metadata->adjustX;
+	if(spr->cnt == 0) {
+		spr->width = metadata->width;
+		spr->height = metadata->height;
+		spr->scale = metadata->scale << 8;
+		spr->ofsY = metadata->adjustY;
+		spr->ofsX = metadata->adjustX;
 	}
-	if(freeIndex == sprite->cnt)
-		sprite->cnt = freeIndex + 1;
+	if(freeIdx == spr->cnt)
+		spr->cnt = freeIdx + 1;
 	return layerHandle;
 }
 
 /* Removes the sprite animation handle from a sprite and clears it, trimming the
    sprite's animation count when no later sprite animation remains. */
-void fdSprRemoveAnimation(SPR *sprite, Sint32 layer)
+void fdSprRemoveAnimation(SPR *spr, Sint32 layer)
 {
 	Sint32 laterLayers;
-	Uint32 index;
+	Uint32 idx;
 	Uint32 i;
 
-	if(sprite != NULL && layer != 0) {
+	if(spr != NULL && layer != 0) {
 		fdSprAnimationClear((SPR_ANIMATION *)layer);
 		/* Locate the handle, then trim only empty slots at the end of the
 		   list. */
-		for(index = 0; index < ANIM_LAYER_COUNT; index++) {
-			if(layer == (Sint32)sprite->entries[index])
+		for(idx = 0; idx < ANIM_LAYER_COUNT; idx++) {
+			if(layer == (Sint32)spr->entries[idx])
 				break;
 		}
-		if(index != ANIM_LAYER_COUNT) {
-			sprite->entries[index] = 0;
+		if(idx != ANIM_LAYER_COUNT) {
+			spr->entries[idx] = 0;
 			laterLayers = 0;
-			for(i = index + 1; i < ANIM_LAYER_COUNT; i++) {
-				if(sprite->entries[i] != 0)
+			for(i = idx + 1; i < ANIM_LAYER_COUNT; i++) {
+				if(spr->entries[i] != 0)
 					laterLayers++;
 			}
 			if(laterLayers == 0)
-				sprite->cnt = index;
+				spr->cnt = idx;
 		}
 	}
 }
 
-/* Removes and clears a sprite's sprite animation `index` (0 to 3), trimming the
+/* Removes and clears a sprite's sprite animation `idx` (0 to 3), trimming the
    sprite's animation count when no later sprite animation remains. */
-void fdSprRemoveAnimationAt(SPR *sprite, Uint32 index)
+void fdSprRemoveAnimationAt(SPR *spr, Uint32 idx)
 {
 	SPR_ANIMATION *layer;
 	Sint32		   laterLayers;
 	Uint32		   i;
 
-	if(sprite != NULL && index < ANIM_LAYER_COUNT) {
-		layer = sprite->entries[index];
+	if(spr != NULL && idx < ANIM_LAYER_COUNT) {
+		layer = spr->entries[idx];
 		if(layer != NULL) {
 			fdSprAnimationClear(layer);
-			sprite->entries[index] = NULL;
+			spr->entries[idx] = NULL;
 			laterLayers = 0;
 			/* Interior holes stay available; only trailing holes reduce the
 			   count. */
-			for(i = index + 1; i < ANIM_LAYER_COUNT; i++) {
-				if(sprite->entries[i] != NULL)
+			for(i = idx + 1; i < ANIM_LAYER_COUNT; i++) {
+				if(spr->entries[i] != NULL)
 					laterLayers++;
 			}
 			if(laterLayers == 0)
-				sprite->cnt = index;
+				spr->cnt = idx;
 		}
 	}
 }
 
-/* Starts animation `animation` on one sprite animation, when its set has that
+/* Starts animation `anm` on one sprite animation, when its set has that
    many; SPRITE_ANIMATION_KEEP_PLACE keeps its place and timer. */
-void fdSprAnimationStart(SPR_ANIMATION *layer, Sint32 animation)
+void fdSprAnimationStart(SPR_ANIMATION *layer, Sint32 anm)
 {
 	Sint32				keepPlace;
 	ANIMATION_METADATA *metadata;
-	Sint32				scriptAddress;
+	Sint32				scriptAdr;
 
 	/* Unlike fdSprStartAnimation it leaves SPRITE_ANIMATION_KEEP_PLACE in the
 	   index, so with that bit set the animation starts only in a set of more
 	   than 128 animations. */
-	keepPlace = SPRITE_ANIMATION_KEEP_PLACE & animation;
+	keepPlace = SPRITE_ANIMATION_KEEP_PLACE & anm;
 	if(layer->scripts != 0) {
 		metadata = syResourceGetMetadataRecordStub(layer->anmId);
-		if(animation < metadata->anmCnt) {
-			scriptAddress = (Sint32)layer->scripts[animation];
+		if(anm < metadata->anmCnt) {
+			scriptAdr = (Sint32)layer->scripts[anm];
 			layer->kind = metadata->drawKind;
-			layer->script = (Uint8 *)scriptAddress;
+			layer->script = (Uint8 *)scriptAdr;
 			layer->step = SPRITE_ANIMATION_NORMAL_STEP;
 			if(keepPlace == 0) {
 				layer->scriptOfs = keepPlace;
@@ -310,71 +310,71 @@ void fdSprAnimationStart(SPR_ANIMATION *layer, Sint32 animation)
 	}
 }
 
-/* Starts `animation` (its SPRITE_ANIMATION_INDEX_MASK bits) on every sprite
+/* Starts `anm` (its SPRITE_ANIMATION_INDEX_MASK bits) on every sprite
    animation of a sprite, unless the sprite plays it already;
    SPRITE_ANIMATION_KEEP_PLACE keeps each one's place and timer. */
-Sint32 fdSprStartAnimation(SPR *sprite, Sint32 animation)
+Sint32 fdSprStartAnimation(SPR *spr, Sint32 anm)
 {
 	Sint32 keepPlace;
 	Sint32 i;
 
-	keepPlace = animation & SPRITE_ANIMATION_KEEP_PLACE;
-	animation &= SPRITE_ANIMATION_INDEX_MASK;
+	keepPlace = anm & SPRITE_ANIMATION_KEEP_PLACE;
+	anm &= SPRITE_ANIMATION_INDEX_MASK;
 
-	if(sprite->lastNo != animation) {
+	if(spr->lastNo != anm) {
 		i = 0;
 		goto test_entry;
 	entry_loop:
 		/* Only the first sprite animation supplies the sprite's offsets. */
 		{
-			SPR_ANIMATION	   *layer = sprite->entries[i];
+			SPR_ANIMATION	   *layer = spr->entries[i];
 			ANIMATION_METADATA *metadata;
-			Sint32				selectedAnimation;
+			Sint32				selectedAnm;
 
 			if(layer != 0 && layer->scripts != 0) {
 				metadata = syResourceGetMetadataRecordStub(layer->anmId);
-				if(animation < metadata->anmCnt) {
-					selectedAnimation = (Sint32)layer->scripts[animation];
+				if(anm < metadata->anmCnt) {
+					selectedAnm = (Sint32)layer->scripts[anm];
 					layer->kind = metadata->drawKind;
-					layer->script = (Uint8 *)selectedAnimation;
+					layer->script = (Uint8 *)selectedAnm;
 					layer->step = SPRITE_ANIMATION_NORMAL_STEP;
 					if(keepPlace == 0) {
 						layer->scriptOfs = 0;
 						layer->tmr = 0;
 					}
 					if(i == 0) {
-						sprite->ofsY = metadata->adjustY;
-						sprite->ofsX = metadata->adjustX;
+						spr->ofsY = metadata->adjustY;
+						spr->ofsX = metadata->adjustX;
 					}
 				}
 			}
 		}
 		i++;
 	test_entry:
-		if(i < sprite->cnt)
+		if(i < spr->cnt)
 			goto entry_loop;
-		sprite->lastNo = animation;
+		spr->lastNo = anm;
 	}
 	return 0;
 }
 
-/* Sets each playing sprite animation's timer to the given duration in frames.
+/* Sets each playing sprite animation's timer to the given duration in ticks.
    Returns 0. */
-Sint32 fdSprSetAnimationTimers(SPR *sprite, Sint32 frames)
+Sint32 fdSprSetAnimationTimers(SPR *spr, Sint32 ticks)
 {
-	Uint8			count = sprite->cnt;
+	Uint8			cnt = spr->cnt;
 	SPR_ANIMATION **layerList;
 	Sint32			remaining;
 
-	if(count != 0) {
-		/* The sprite animation timer counts sixteenths of a frame. */
-		frames <<= 4;
-		layerList = sprite->entries;
-		remaining = count;
+	if(cnt != 0) {
+		/* The sprite animation timer counts sixteenths of a tick. */
+		ticks <<= 4;
+		layerList = spr->entries;
+		remaining = cnt;
 		do {
 			SPR_ANIMATION *layer = *layerList++;
 			if(layer != 0 && layer->scripts != 0)
-				layer->tmr = frames;
+				layer->tmr = ticks;
 			remaining--;
 		} while(remaining != 0);
 	}
@@ -383,12 +383,12 @@ Sint32 fdSprSetAnimationTimers(SPR *sprite, Sint32 frames)
 
 /* Sets the timer step, the animation speed, of each playing sprite animation of
    a sprite (16 is normal speed). */
-void fdSprSetAnimationSpeed(SPR *sprite, Sint32 step)
+void fdSprSetAnimationSpeed(SPR *spr, Sint32 step)
 {
-	Uint8 count = sprite->cnt;
-	if(count != 0) {
-		SPR_ANIMATION **layerList = sprite->entries;
-		Sint32			remaining = count;
+	Uint8 cnt = spr->cnt;
+	if(cnt != 0) {
+		SPR_ANIMATION **layerList = spr->entries;
+		Sint32			remaining = cnt;
 		do {
 			SPR_ANIMATION *layer = *layerList++;
 			if(layer != 0 && layer->scripts != 0)
@@ -405,7 +405,7 @@ void fdSprSetAnimationSpeed(SPR *sprite, Sint32 step)
    the sprite tile uploader in RAM. */
 void fdActorSystemConfigure(Sint32 mode)
 {
-	void		   *sprites;
+	void		   *sprs;
 	void		   *layers;
 	volatile Uint32 zero;
 
@@ -413,12 +413,12 @@ void fdActorSystemConfigure(Sint32 mode)
 	   EWRAM first; elsewhere from IWRAM first, though a battle has already
 	   taken both from EWRAM. */
 	if(mode == ACTOR_SYSTEM_WORLD_MAP) {
-		sprites = syHeapSlotAllocEWRAM(
+		sprs = syHeapSlotAllocEWRAM(
 			HEAP_SLOT_SPRITES, ANIM_OBJECT_COUNT * sizeof(SPR));
 		layers = syHeapSlotAllocEWRAM(HEAP_SLOT_SPRITE_ANIMATIONS,
 			ANIM_OBJECT_COUNT * sizeof(SPR_ANIMATION));
 	} else {
-		sprites =
+		sprs =
 			syHeapSlotAlloc(HEAP_SLOT_SPRITES, ANIM_OBJECT_COUNT * sizeof(SPR));
 		layers = syHeapSlotAlloc(HEAP_SLOT_SPRITE_ANIMATIONS,
 			ANIM_OBJECT_COUNT * sizeof(SPR_ANIMATION));
@@ -427,7 +427,7 @@ void fdActorSystemConfigure(Sint32 mode)
 	   shadow (128 bytes: the two 8x8 tiles of a 16x8, 256-colour sprite) and
 	   the tile uploader. */
 	syPaletteLoadBasicSprCols();
-	DMA_FILL32_CELL(zero, 0, sprites, ANIM_OBJECT_COUNT * sizeof(SPR));
+	DMA_FILL32_CELL(zero, 0, sprs, ANIM_OBJECT_COUNT * sizeof(SPR));
 	DMA_FILL32_CELL(zero, 0, layers, ANIM_OBJECT_COUNT * sizeof(SPR_ANIMATION));
 	syVRAMCacheLoad(VRAM_CACHE_ENTRY_ACTOR_SHADOW, ANIM_SHADOW_TILE_BYTES,
 		Actor_ShadowTiles);
@@ -504,8 +504,8 @@ void fdSprAnimationClear(SPR_ANIMATION *record)
 SPR *fdSprCreate(Sint32 id)
 {
 	ANIMATION_METADATA *metadata;
-	SPR				   *sprite;
-	SPR				   *freeSprite;
+	SPR				   *spr;
+	SPR				   *freeSpr;
 #if FIX_TYPE_PUNNING
 	Uint32 attributes[2 * sizeof(ANIMATION_SPR_PART) / sizeof(Uint32)];
 #else
@@ -516,20 +516,20 @@ SPR *fdSprCreate(Sint32 id)
 	Sint32 i;
 	Uint32 shape;
 
-	freeSprite = NULL;
+	freeSpr = NULL;
 	metadata = syResourceGetMetadataRecordStub(id);
 	slot = syVRAMCacheFindFreeEntry();
-	sprite = SpritesWork;
+	spr = SpritesWork;
 	if(metadata->width == 0)
 		return NULL;
 	/* A width of 0 marks a free sprite. */
-	for(i = 0; i < ANIM_OBJECT_COUNT; i++, sprite++) {
-		if(sprite->width == 0) {
-			freeSprite = sprite;
+	for(i = 0; i < ANIM_OBJECT_COUNT; i++, spr++) {
+		if(spr->width == 0) {
+			freeSpr = spr;
 			break;
 		}
 	}
-	if(freeSprite == NULL)
+	if(freeSpr == NULL)
 		return NULL;
 	if(slot == VRAM_CACHE_ENTRY_COUNT)
 		return NULL;
@@ -539,9 +539,9 @@ SPR *fdSprCreate(Sint32 id)
 	tile = syVRAMCacheLoad(slot, 0, 0);
 	if(tile == 0)
 		return NULL;
-	freeSprite->slot = slot;
-	freeSprite->rotation = 0;
-	freeSprite->flg = SPRITE_FLAG_SHADOW;
+	freeSpr->slot = slot;
+	freeSpr->rotation = 0;
+	freeSpr->flg = SPRITE_FLAG_SHADOW;
 
 	/* The OAM shape and size bits (attributes 0 and 1) for the image's width
 	   and height in pixels. */
@@ -593,9 +593,9 @@ SPR *fdSprCreate(Sint32 id)
 	attributes[4] = OBJ_SIZE_16X8 | OBJ_256_COLORS;
 	attributes[5] = (VramCacheEntries[VRAM_CACHE_ENTRY_ACTOR_SHADOW].ofs >> 5) |
 		ANIM_OAM_FIELD_PRIORITY;
-	memcpy(freeSprite, attributes, sizeof(attributes));
+	memcpy(freeSpr, attributes, sizeof(attributes));
 #else
-	attribute = (Uint32 *)freeSprite;
+	attribute = (Uint32 *)freeSpr;
 	*attribute++ = 0;
 	*attribute++ = shape | OBJ_256_COLORS;
 	*attribute++ = tile | ANIM_OAM_FIELD_PRIORITY;
@@ -606,36 +606,35 @@ SPR *fdSprCreate(Sint32 id)
 #endif
 	/* DEAD: a test of the call's result for -1 that does nothing either way;
 	   the ROM keeps the -1 it builds after the call. */
-	if(fdSprAddAnimation(sprite, id) == -1) {
+	if(fdSprAddAnimation(spr, id) == -1) {
 		/* FAKEMATCH(dead): a store of the byte it reloads. */
-		freeSprite->dirty = freeSprite->dirty;
+		freeSpr->dirty = freeSpr->dirty;
 	}
-	return freeSprite;
+	return freeSpr;
 }
 
 /* Releases a sprite: its VRAM cache entry (unless retainCacheEntry is set), its
    four sprite animations, and then zeroes its 56 bytes. */
-void fdSprDestroy(SPR *sprite)
+void fdSprDestroy(SPR *spr)
 {
 	Sint32 i;
 
-	if(sprite) {
+	if(spr) {
 		/* Release its VRAM cache entry and sprite animations before clearing
 		   the sprite itself. */
-		if(!sprite->retainCacheEntry)
-			syVRAMCacheFreeEntry(sprite->slot);
+		if(!spr->retainCacheEntry)
+			syVRAMCacheFreeEntry(spr->slot);
 		for(i = 0; i < ANIM_LAYER_COUNT; i++)
-			fdSprAnimationClear(sprite->entries[i]);
-		DMA_FILL32(0, sprite, sizeof(*sprite));
+			fdSprAnimationClear(spr->entries[i]);
+		DMA_FILL32(0, spr, sizeof(*spr));
 	}
 }
 
-/* Returns how long, in frames, the first `timedCount` timed commands of
-   animation `animation` of animation `id` last: the sum of the arguments of its
-   picture, wait and blank commands, up to timedCount of them or the first play,
+/* Returns how long, in ticks, the first `timedCnt` timed commands of
+   animation `anm` of animation `id` last: the sum of the arguments of its
+   picture, wait and blank commands, up to timedCnt of them or the first play,
    hold, jump or end command. */
-Sint32 fdSprAnimationSumCommandLengths(
-	Sint32 id, Uint32 animation, Sint32 timedCount)
+Sint32 fdSprAnimationSumCommandLengths(Sint32 id, Uint32 anm, Sint32 timedCnt)
 {
 	ANIMATION_METADATA *metadata;
 	Uint8			   *script;
@@ -644,10 +643,10 @@ Sint32 fdSprAnimationSumCommandLengths(
 	Sint32				durationSum = 0;
 
 	metadata = syResourceGetMetadataRecordStub(id);
-	if(animation >= metadata->anmCnt) {
+	if(anm >= metadata->anmCnt) {
 		return 0;
 	}
-	script = ((Uint8 **)metadata->anm)[animation];
+	script = ((Uint8 **)metadata->anm)[anm];
 	/* Only timed commands count; control-flow commands terminate this scan. */
 	for(;;) {
 		command = script[0];
@@ -660,8 +659,8 @@ Sint32 fdSprAnimationSumCommandLengths(
 		if(command == ANIMCMD_WAIT || command == ANIMCMD_BLANK ||
 			command < ANIMCMD_END) {
 			durationSum += duration;
-			timedCount--;
-			if(timedCount == 0) {
+			timedCnt--;
+			if(timedCnt == 0) {
 				break;
 			}
 		}

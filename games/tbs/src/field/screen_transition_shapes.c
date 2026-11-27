@@ -15,7 +15,7 @@
 
 /* clang-format off */
 /* One shape for each step of the transition before the screen is open. */
-TRANSITION_SHAPE ScreenTransition_Shapes[TRANSITION_OPEN] = {
+TRANSITION_SHAPE ScreenTransitionShapes[TRANSITION_OPEN] = {
 	{WINOUT_WIN01_BG0, TRANSITION_SHOW_ALL, {SPAN_FILL(160, 255, 255)}},
 	{WINOUT_WIN01_BG0, TRANSITION_SHOW_ALL, {SPAN_SLOPE(80, 120, 120, 134, 120), SPAN_FILL(80, 255, 255)}},
 	{WINOUT_WIN01_BG0, TRANSITION_SHOW_ALL, {SPAN_SLOPE(80, 120, 120, 150, 120), SPAN_FILL(80, 255, 255)}},
@@ -52,4 +52,4 @@ TRANSITION_SHAPE ScreenTransition_Shapes[TRANSITION_OPEN] = {
 /* clang-format on */
 
 /* Unused: twelve bytes after the shapes that no code names. */
-Uint8 ScreenTransition_UnusedBytes[] = {0, 2, 4, 2, 0, 2, 4, 2, 0, 2, 4, 2};
+Uint8 ScreenTransitionUnusedBytes[] = {0, 2, 4, 2, 0, 2, 4, 2, 0, 2, 4, 2};

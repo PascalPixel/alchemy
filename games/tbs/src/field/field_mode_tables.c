@@ -14,7 +14,7 @@
 
 /* The message of each searchable metatile behavior from 242 to 247, as an
    offset from MsgTileChecked and MsgTileResult. */
-const Uint8 Field_ExamineCueMessageOffsets[6] = {
+const Uint8 FieldExamineCueMessageOffsets[6] = {
 	2,	/* a jar */
 	3,	/* a barrel */
 	13, /* a wooden box */
@@ -26,7 +26,7 @@ const Uint8 Field_ExamineCueMessageOffsets[6] = {
 /* {field Psynergy kind, range in pixels}, ended by -1; a kind not listed
    reaches 16 pixels. */
 /* clang-format off */
-const Sint16 FieldEffect_TargetRangeByMode[25] = {
+const Sint16 FieldEffectTargetRangeByMode[25] = {
 	FIELD_PSYNERGY_PLY, 16,
 	FIELD_PSYNERGY_FROST, 16,
 	FIELD_PSYNERGY_LIFT, 16,
@@ -43,11 +43,11 @@ const Sint16 FieldEffect_TargetRangeByMode[25] = {
 };
 
 /* The palette cycle of Mind Read's caster (fdActorSetLayersColMode, */
-/* (FrameCount >> 1) & 7): palettes 1 to 4 and back to 0, two frames each. */
-const Uint8 MindRead_CasterPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};
+/* (TickCount >> 1) & 7): palettes 1 to 4 and back to 0, two ticks each. */
+const Uint8 MindReadCasterPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};
 
-/* Grows from half size to full size, a step every 2 frames. */
-const Sint32 ItemDisplay_GrowInScript[] = {
+/* Grows from half size to full size, a step every 2 ticks. */
+const Sint32 ItemDisplayGrowInScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1) / 2),
 	SC_SET(SW_SCALE_Y, toFIXED(1) / 2),
 	SC_WAIT(2),
@@ -67,7 +67,7 @@ const Sint32 ItemDisplay_GrowInScript[] = {
 
 /* Pulses twice, to 1.5 times full size, then rests, over and over: the found */
 /* item's picture held over the leader (field_mode_item_display.c). */
-const Sint32 ItemDisplay_PulseScript[] = {
+const Sint32 ItemDisplayPulseScript[] = {
 	SC_WAIT(10),
 	SC_SET(SW_SCALE_X, toFIXED(11) / 8),
 	SC_SET(SW_SCALE_Y, toFIXED(11) / 8),
@@ -98,8 +98,8 @@ const Sint32 ItemDisplay_PulseScript[] = {
 	SC_END,
 };
 
-/* Sinks a quarter pixel a frame for 60 frames, then disappears. */
-const Sint32 FieldEffect_ParticleScript[] = {
+/* Sinks a quarter pixel a tick for 60 ticks, then disappears. */
+const Sint32 FieldEffectParticleScript[] = {
 	SC_ADD(SW_Y, -toFIXED(1) / 4),
 	SC_WAIT(1),
 	SC_LOOP(60, SC_TOP),
@@ -107,26 +107,26 @@ const Sint32 FieldEffect_ParticleScript[] = {
 };
 
 /* A Reveal marker: stays while fdIsRevealActive returns nonzero (SC_CALL */
-/* runs it again each frame), and releases itself once Reveal ends. */
-const Sint32 Reveal_MarkerScript[] = {
+/* runs it again each tick), and releases itself once Reveal ends. */
+const Sint32 RevealMarkerScript[] = {
 	SC_CALL(fdIsRevealActive),
 	SC_RELEASE,
 };
 
 /* The width of the bars of WINDOW_TRANSITION_BARS, by progress. */
-const Uint8 ScreenTransition_NoiseWidths[34] = {
+const Uint8 ScreenTransitionNoiseWidths[34] = {
 	0, 1, 2, 2, 2, 2, 3, 3, 4, 4, 5, 6, 7, 8, 9, 11, 13,
 	16, 18, 22, 26, 30, 36, 43, 51, 60, 72, 85, 101, 120, 143, 170, 202, 240,
 };
 
 /* The wobble of the circle edge of WINDOW_TRANSITION_RIPPLE. */
-const Sint8 ScreenTransition_EdgeOffsets[32] = {
+const Sint8 ScreenTransitionEdgeOffsets[32] = {
 	-4, -3, -3, -3, -2, -2, -1, 0, 0, 0, 1, 2, 2, 3, 3, 3,
 	4, 3, 3, 3, 2, 2, 1, 0, 0, 0, -1, -2, -2, -3, -3, -3,
 };
 
 /* 0 to 63 shuffled: the order in which the dissolve sets the pixels. */
-const Uint8 ScreenTransition_DitherTable[64] = {
+const Uint8 ScreenTransitionDitherTable[64] = {
 	0, 12, 35, 3, 29, 39, 6, 7, 50, 59, 4, 11, 18, 40, 46, 31,
 	16, 42, 47, 51, 20, 23, 43, 32, 8, 52, 17, 41, 54, 15, 63, 24,
 	58, 5, 2, 26, 36, 61, 9, 34, 56, 27, 10, 48, 53, 30, 28, 22,
@@ -136,21 +136,21 @@ const Uint8 ScreenTransition_DitherTable[64] = {
 /* Colour channel curves of the palette tints (field_mode_palette_fade.c): */
 /* each maps a 5-bit channel (0 to 31) to a palette fade channel, shifted up */
 /* 10 bits, so 31 is 31 << 10 (31744). */
-const Uint16 ColorBuffer_ChannelCurve[32] = {
+const Uint16 ColorBufferChannelCurve[32] = {
 	0, 524, 1071, 1643, 2240, 2863, 3513, 4191,
 	4898, 5635, 6403, 7202, 8035, 8901, 9803, 10740,
 	11715, 12729, 13783, 14877, 16014, 17195, 18422, 19694,
 	21015, 22386, 23808, 25283, 26812, 28397, 30041, 31744,
 };
 
-const Uint16 ColorBuffer_ChannelCurveLight[32] = {
+const Uint16 ColorBufferChannelCurveLight[32] = {
 	0, 613, 1247, 1902, 2580, 3281, 4005, 4753,
 	5526, 6324, 7148, 7999, 8876, 9782, 10716, 11680,
 	12674, 13699, 14755, 15843, 16965, 18121, 19312, 20538,
 	21801, 23101, 24440, 25818, 27237, 28697, 30199, 31744,
 };
 
-const Uint16 ColorBuffer_ChannelCurveContrast[32] = {
+const Uint16 ColorBufferChannelCurveContrast[32] = {
 	0, 360, 759, 1201, 1689, 2226, 2817, 3466,
 	4178, 4957, 5808, 6738, 7752, 8856, 10058, 11365,
 	12784, 14325, 15996, 17806, 19767, 21888, 24183, 26662,
@@ -296,7 +296,7 @@ const SPEAKER_DEFINITION SpeakerDefinitions[131] = {
 /* Squashes as many times as the variant (1 to 3): variant v starts at word */
 /* (3 - v) * 32 and runs to the end. field.h declares it const Uint8[], and */
 /* script_commands.c adds (3 - v) << 7 bytes and reads it through an Sint32 *. */
-const Sint32 Actor_VariantScripts[97] = {
+const Sint32 ActorVariantScripts[97] = {
 	/* variant 3 */
 	SC_ADD(SW_SCALE_X, -toFIXED(1) / 4),
 	SC_ADD(SW_SCALE_Y, toFIXED(1) / 8),
@@ -339,19 +339,19 @@ const Sint32 Actor_VariantScripts[97] = {
 	SC_END,
 };
 
-/* A blinking actor's colour mode by frame ((FrameCount >> 1) & 3, */
-/* fdActorUpdateBlink): white for two frames out of eight. */
-const Uint8 Actor_BlinkSpriteColors[4] = {
+/* A blinking actor's colour mode by tick ((TickCount >> 1) & 3, */
+/* fdActorUpdateBlink): white for two ticks out of eight. */
+const Uint8 ActorBlinkSpriteColors[4] = {
 	SPRITE_COLOR_WHITE, SPRITE_COLOR_NORMAL, SPRITE_COLOR_NORMAL, SPRITE_COLOR_NORMAL,
 };
 
-const Sint16 LineScroll_WaveSine[256] = {
+const Sint16 LineScrollWaveSine[256] = {
 	LINE_SCROLL_WAVE_SINE};
 
 /* {dx, dy, tile, shape, size} for each of the 16 frames of a raindrop's */
 /* splash (script_commands_weather.c): dx and dy in screen pixels from its */
 /* spot, tile from its first tile. */
-const Sint16 Weather_RainSplashFrames[80] = {
+const Sint16 WeatherRainSplashFrames[80] = {
 	-8, -12, 20, 0, 1,
 	-8, -12, 20, 0, 1,
 	-8, -12, 20, 0, 1,
@@ -371,8 +371,8 @@ const Sint16 Weather_RainSplashFrames[80] = {
 };
 
 /* {dy, tile} of a sparkle (script_commands_weather.c): dy in screen pixels */
-/* from its spot, a row every two frames. */
-const SPARKLE_PICTURE FieldEffect_SparklePictures[32] = {
+/* from its spot, a row every two ticks. */
+const SPARKLE_PICTURE FieldEffectSparklePictures[32] = {
 	{-2, 12},
 	{-4, 12},
 	{-6, 12},
@@ -407,31 +407,31 @@ const SPARKLE_PICTURE FieldEffect_SparklePictures[32] = {
 	{-120, 0},
 };
 
-/* Two scales that alternate ((VBlankCount >> 2) & 1): full size and 0.97 of */
+/* Two scales that alternate ((FrameCount >> 2) & 1): full size and 0.97 of */
 /* it (fdEffectPulseActorScale, script_commands_jupiter.c); nothing reads the */
 /* third word. */
-const Uint32 FieldEffect_PulseScales[3] = {toFIXED(1), toFIXED(97) / 100, 16};
+const Uint32 FieldEffectPulseScales[3] = {toFIXED(1), toFIXED(97) / 100, 16};
 
 /* [0] only releases the actor, +1 waits for it to arrive and releases it; +3 */
-/* is FieldEffect_SourceHoldScript, which follows. */
-const Sint32 FieldEffect_SharedParticleScript[] = {
+/* is FieldEffectSourceHoldScript, which follows. */
+const Sint32 FieldEffectSharedParticleScript[] = {
 	SC_RELEASE,
 	SC_SYNC,
 	SC_RELEASE,
 };
 
-/* Faces the watched actor every frame, forever: the caster holding its */
+/* Faces the watched actor every tick, forever: the caster holding its */
 /* target while Move, Carry or Lift has it (each gives the caster its target */
 /* first). */
-const Sint32 FieldEffect_SourceHoldScript[] = {
+const Sint32 FieldEffectSourceHoldScript[] = {
 	SC_FACE_WATCHED,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/* A shard or particle: waits to arrive, slows to 1/16 pixel a frame, and */
-/* releases itself 10 frames later. */
-const Sint32 FieldEffect_FragmentScript[] = {
+/* A shard or particle: waits to arrive, slows to 1/16 pixel a tick, and */
+/* releases itself 10 ticks later. */
+const Sint32 FieldEffectFragmentScript[] = {
 	SC_SYNC,
 	SC_SPEED(0.0625),
 	SC_ANIMATION(0),
@@ -442,7 +442,7 @@ const Sint32 FieldEffect_FragmentScript[] = {
 /* An angle for each value of the right, left, up and down bits of the */
 /* +Control Pad; DPAD_ANGLE_NONE for none (fdInputGetDpadAng, */
 /* script_commands_move.c). */
-const Uint16 Input_DpadAngles[16] = {
+const Uint16 InputDpadAngles[16] = {
 	DPAD_ANGLE_NONE, FACING_EAST,     FACING_WEST,     DPAD_ANGLE_NONE,
 	FACING_NORTH,    DPAD_ANGLE_NONE, DPAD_ANGLE_NONE, FACING_NORTH,
 	FACING_SOUTH,    DPAD_ANGLE_NONE, DPAD_ANGLE_NONE, FACING_SOUTH,
@@ -452,38 +452,38 @@ const Uint16 Input_DpadAngles[16] = {
 /* Move's hand animation by the quarter turns from its side of the target to */
 /* the push (script_commands_move.c): 3 toward its side, 2 away from it, 1 */
 /* either way across. */
-const Uint8 FieldEffect_QuadrantModes[4] = {3, 1, 2, 1};
+const Uint8 FieldEffectQuadrantModes[4] = {3, 1, 2, 1};
 
-/* Waits 60 frames and releases the actor. Word +4 is */
-/* Force_FistScript. */
-const Sint32 Growth_LeafScript[] = {
+/* Waits 60 ticks and releases the actor. Word +4 is */
+/* ForceFistScript. */
+const Sint32 GrowthLeafScript[] = {
 	SC_WAIT(60),
 	SC_RELEASE,
 };
 
-/* The same four bytes as FieldEffect_QuadrantModes; nothing reads them. */
-const Uint8 Unused_BattleEffectBytes[4] = {3, 1, 2, 1};
+/* The same four bytes as FieldEffectQuadrantModes; nothing reads them. */
+const Uint8 UnusedBattleEffectBytes[4] = {3, 1, 2, 1};
 
 /* Waits to arrive, sets off fdEffectSpawnHeavyImpact */
 /* (script_commands_lift.c) and releases the actor. */
-const Sint32 Force_FistScript[] = {
+const Sint32 ForceFistScript[] = {
 	SC_SYNC,
 	SC_CALL(fdEffectSpawnHeavyImpact),
 	SC_RELEASE,
 };
 
-/* The three scripts of FieldEffect_DurationScripts. */
-const Sint32 FieldEffect_ShortEffectScript[] = {
+/* The three scripts of FieldEffectDurationScripts. */
+const Sint32 FieldEffectShortEffectScript[] = {
 	SC_WAIT(24),
 	SC_RELEASE,
 };
 
-const Sint32 FieldEffect_MediumEffectScript[] = {
+const Sint32 FieldEffectMediumEffectScript[] = {
 	SC_WAIT(46),
 	SC_RELEASE,
 };
 
-const Sint32 FieldEffect_LongEffectScript[] = {
+const Sint32 FieldEffectLongEffectScript[] = {
 	SC_WAIT(128),
 	SC_RELEASE,
 };
@@ -491,22 +491,22 @@ const Sint32 FieldEffect_LongEffectScript[] = {
 /* The colour modes a Halted actor flickers through at random */
 /* (fdPsynergyUpdateHaltedActor, script_commands_halt.c): its own colours */
 /* twice as often as each of the five channel swaps and grey. */
-const Sint8 Halt_FlickerColorModes[8] = {
+const Sint8 HaltFlickerColorModes[8] = {
 	SPRITE_COLOR_NORMAL, SPRITE_COLOR_NORMAL, SPRITE_COLOR_GRB, SPRITE_COLOR_RBG,
 	SPRITE_COLOR_BGR, SPRITE_COLOR_GBR, SPRITE_COLOR_BRG, SPRITE_COLOR_GREY,
 };
 
 /* The World Map markers' blend weight in sixteenths, against the picture's */
-/* 16 less it ((FrameCount >> 1) & 31, fdMapScreenUpdateMarkers): solid */
-/* for 32 frames, then down to half and back over the next 32. */
-const Uint8 WorldMap_MarkerBlendCycle[32] = {
+/* 16 less it ((TickCount >> 1) & 31, fdMapScreenUpdateMarkers): solid */
+/* for 32 ticks, then down to half and back over the next 32. */
+const Uint8 WorldMapMarkerBlendCycle[32] = {
 	16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
 	16, 15, 15, 14, 12, 10, 9, 9, 8, 9, 9, 10, 12, 14, 14, 15,
 };
 
 /* An angle for each +Control Pad direction (eight of them); DPAD_ANGLE_NONE */
 /* for none. */
-const Uint16 WorldMap_CursorDirectionAngles[16] = {
+const Uint16 WorldMapCursorDirectionAngles[16] = {
 	DPAD_ANGLE_NONE, FACING_EAST, FACING_WEST, DPAD_ANGLE_NONE,
 	FACING_NORTH, FACING_NORTHEAST, FACING_NORTHWEST, FACING_NORTH,
 	FACING_SOUTH, FACING_SOUTHEAST, FACING_SOUTHWEST, FACING_SOUTH,

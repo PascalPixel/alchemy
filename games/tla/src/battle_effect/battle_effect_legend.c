@@ -21,23 +21,23 @@
    white, tilted LEGEND_FAN_TILT. */
 #define LEGEND_FAN_FLAMES		8
 #define LEGEND_FAN_TILT			18384
-/* Each sword's ring of fire grows by this share of its size a frame, from
+/* Each sword's ring of fire grows by this share of its size a tick, from
    half. */
 #define LEGEND_FIRE_RING_GROWTH 12384
 
-/* The swords set out LEGEND_SWORD_INTERVAL frames apart; each falls from
-   LEGEND_SWORD_FALL_FRAME frames after it sets out, rings out at
-   LEGEND_SWORD_SOUND_FRAME and strikes at LEGEND_SWORD_STRIKE_FRAME. */
+/* The swords set out LEGEND_SWORD_INTERVAL ticks apart; each falls from
+   LEGEND_SWORD_FALL_TICK ticks after it sets out, rings out at
+   LEGEND_SWORD_SOUND_TICK and strikes at LEGEND_SWORD_STRIKE_TICK. */
 #define LEGEND_SWORD_INTERVAL		16
-#define LEGEND_SWORD_FALL_FRAME		50
-#define LEGEND_SWORD_SOUND_FRAME	54
-#define LEGEND_SWORD_STRIKE_FRAME	59
-/* Each sword falls for LEGEND_SWORD_FALL_FRAMES frames, from
+#define LEGEND_SWORD_FALL_TICK		50
+#define LEGEND_SWORD_SOUND_TICK		54
+#define LEGEND_SWORD_STRIKE_TICK	59
+/* Each sword falls for LEGEND_SWORD_FALL_TICKS ticks, from
    LEGEND_SWORD_START_DISTANCE pixels above and beside the target. */
-#define LEGEND_SWORD_FALL_FRAMES	12
+#define LEGEND_SWORD_FALL_TICKS		12
 #define LEGEND_SWORD_START_DISTANCE 80
 /* with one sword; each further one adds an interval */
-#define LEGEND_FRAMES				86
+#define LEGEND_TICKS				86
 
 /* Legend, Excalibur's unleash: a fan of flames opens over the target until the
    first sword falls, while a rune, mirrored from one corner, rises and turns
@@ -51,11 +51,11 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	DRAW_RECTANGLE		 draw[2];
 	Uint8				*graphics;
 	SCREEN_POINT		 start;
-	SCREEN_POINT		 target;
+	SCREEN_POINT		 tgt;
 	MODEL_TEXTURE		 texture;
 	PARTICLE			*step;
 	Sint32				 i;
@@ -88,38 +88,37 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, cells, 0, 0);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-	for(frame = 0;
-		frame != args->variant * LEGEND_SWORD_INTERVAL + LEGEND_FRAMES;
-		frame++) {
-		/* Frame 0: the swords set out from above and beside the target, on the
+	for(frm = 0; frm != args->variant * LEGEND_SWORD_INTERVAL + LEGEND_TICKS;
+		frm++) {
+		/* Tick 0: the swords set out from above and beside the target, on the
 		   user's side, toward it. */
-		if(frame == 0) {
-			btEffectPosProjectBattler(args->tgts[0], &target);
+		if(frm == 0) {
+			btEffectPosProjectBattler(args->tgts[0], &tgt);
 			if(args->side == EFFECT_SIDE_ENEMIES)
-				start.x = target.x + LEGEND_SWORD_START_DISTANCE;
+				start.x = tgt.x + LEGEND_SWORD_START_DISTANCE;
 			else
-				start.x = target.x - LEGEND_SWORD_START_DISTANCE;
-			start.y = target.y - LEGEND_SWORD_START_DISTANCE;
+				start.x = tgt.x - LEGEND_SWORD_START_DISTANCE;
+			start.y = tgt.y - LEGEND_SWORD_START_DISTANCE;
 			for(i = 0; i != 3; i++) {
 				step = &state->particles[i];
 				step->x = start.x * (toFIXED(1) / 2);
 				step->y = toFIXED(start.y);
-				step->velX = (target.x - start.x) * (toFIXED(1) / 32);
-				step->velY = (target.y - start.y) * (toFIXED(1) / 16);
+				step->velX = (tgt.x - start.x) * (toFIXED(1) / 32);
+				step->velY = (tgt.y - start.y) * (toFIXED(1) / 16);
 				step->variant = 0;
 			}
 			EFFECT_FREE_PARTICLES(i, EXTRA_PARTICLES, LEGEND_SPARK_COUNT);
 		}
 
-		/* The swords, one each LEGEND_SWORD_INTERVAL frames. */
+		/* The swords, one each LEGEND_SWORD_INTERVAL ticks. */
 		for(i = 0; i != args->variant + 1; i++) {
 			step = &state->particles[i];
-			if(frame == i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_SOUND_FRAME)
+			if(frm == i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_SOUND_TICK)
 				sySndPlayStub(SE_POWER_UP);
 
 			/* The strike: the target reels and flashes, and sparks fly up from
 			   it. The last sword ends the action. */
-			if(frame == i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_STRIKE_FRAME) {
+			if(frm == i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_STRIKE_TICK) {
 				if(i == args->variant)
 					EFFECT_SHOW_DAMAGE(SE_CLATTER);
 				else
@@ -131,22 +130,22 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 				for(j = 0; j != LEGEND_SWORD_SPARKS; j++) {
 					PARTICLE *spark =
 						&EXTRA_PARTICLES[i * LEGEND_SWORD_SPARKS + j];
-					Sint32 angle;
+					Sint32 ang;
 					Sint32 force;
 
-					spark->x = target.x * (toFIXED(1) / 2);
+					spark->x = tgt.x * (toFIXED(1) / 2);
 					spark->y = toFIXED(96);
-					angle = syRandom() % (TRIG_TURN * 3 / 4) + DEGtoANG(45);
+					ang = syRandom() % (TRIG_TURN * 3 / 4) + DEGtoANG(45);
 					force = syRandom() & 127;
-					spark->velX = (sySin(angle) * force) >> 4;
-					spark->velY = (syCos(angle) * force) >> 3;
+					spark->velX = (sySin(ang) * force) >> 4;
+					spark->velY = (syCos(ang) * force) >> 3;
 					spark->variant = (syRandom() & 7) + 16;
 				}
 			}
 
-			/* The sword falls, faster each frame, until it sticks in the
+			/* The sword falls, faster each tick, until it sticks in the
 			   ground. */
-			if(frame >= i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_FALL_FRAME) {
+			if(frm >= i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_FALL_TICK) {
 				Sint32 x = FIXED_INTEGER_PART(step->x) - LEGEND_SWORD_WIDTH / 2;
 				Sint32 y = FIXED_INTEGER_PART(step->y) - 50;
 				Sint32 height = LEGEND_SWORD_HEIGHT;
@@ -155,11 +154,11 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 					height = SPARK_GROUND_Y - y;
 				draw[0](canvas, state->sheet + LEGEND_BLADE_PICTURES, x, y,
 					LEGEND_SWORD_WIDTH, height);
-				if(step->variant <= LEGEND_SWORD_FALL_FRAMES) {
+				if(step->variant <= LEGEND_SWORD_FALL_TICKS) {
 					step->x += step->velX;
 					step->y += step->velY;
-					step->velX += (target.x - start.x) * (toFIXED(1) / 128);
-					step->velY += (target.y - start.y) * (toFIXED(1) / 64);
+					step->velX += (tgt.x - start.x) * (toFIXED(1) / 128);
+					step->velY += (tgt.y - start.y) * (toFIXED(1) / 64);
 				}
 				step->variant++;
 			}
@@ -183,7 +182,7 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		/* This frame's models: one quad, retextured for each part. */
+		/* This tick's models: one quad, retextured for each part. */
 		{
 			RENDER_MODEL *model;
 			void		 *vertices;
@@ -194,25 +193,25 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 			texture.logWidth = 7;
 			texture.logHeight = 7;
 			texture.pixels = state->sheet;
-			model->mesh = BattleEffect_LargeSquareMesh;
+			model->mesh = BattleEffectLargeSquareMesh;
 			model->kind = MODEL_SHADED_ADDITIVE;
 			model->texture = &texture;
 			model->vertices = vertices;
 
-			/* Frames 16-107: the rune rises behind the target, turning, then
+			/* Ticks 16-107: the rune rises behind the target, turning, then
 			   fades. */
-			if(frame >= 16 && frame <= 107) {
-				Sint32 height = frame * 2 - 96;
+			if(frm >= 16 && frm <= 107) {
+				Sint32 height = frm * 2 - 96;
 				Sint32 alpha = 0;
 
-				scale = frame * (toFIXED(1) / 8) - toFIXED(2);
+				scale = frm * (toFIXED(1) / 8) - toFIXED(2);
 				if(height > -48)
 					height = -48;
-				/* It fades from 60 frames after the last sword sets out, four
-				   levels a frame. */
-				if(frame >= args->variant * LEGEND_SWORD_INTERVAL + 60)
+				/* It fades from 60 ticks after the last sword sets out, four
+				   levels a tick. */
+				if(frm >= args->variant * LEGEND_SWORD_INTERVAL + 60)
 					alpha =
-						-((frame - args->variant * LEGEND_SWORD_INTERVAL) * 4 +
+						-((frm - args->variant * LEGEND_SWORD_INTERVAL) * 4 +
 							-240);
 				if(scale > toFIXED(2))
 					scale = toFIXED(2);
@@ -225,22 +224,21 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 					syRotY(TRIG_TURN * 25 / 256);
 				else
 					syRotY(-TRIG_TURN * 25 / 256);
-				syRotZ(frame * (TRIG_TURN / 128));
+				syRotZ(frm * (TRIG_TURN / 128));
 				syMatrixScaleUniform(scale);
 				syScale(toFIXED(1), toFIXED(1), toFIXED(1));
 				btRenderTransformVertices(
-					BattleEffect_SquareCorners, vertices, 4);
+					BattleEffectSquareCorners, vertices, 4);
 				btRenderDrawModelList(model);
 			}
 
 			/* Each sword's ring of fire, FireRingTexture's, grows where it
-			   lands, holds 8 frames and fades over 8. */
+			   lands, holds 8 ticks and fades over 8. */
 			texture.pixels = cells;
 			for(i = 0; i != args->variant + 1; i++) {
-				if(frame >=
-					i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_FALL_FRAME) {
-					Sint32 age = frame - i * LEGEND_SWORD_INTERVAL -
-						LEGEND_SWORD_FALL_FRAME;
+				if(frm >= i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_FALL_TICK) {
+					Sint32 age = frm - i * LEGEND_SWORD_INTERVAL -
+						LEGEND_SWORD_FALL_TICK;
 					Sint32 alpha = -MODEL_SHADE_INVISIBLE - age * 8;
 
 					if(alpha > 0)
@@ -256,10 +254,10 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 							syRotY(TRIG_TURN * 25 / 256);
 						else
 							syRotY(-TRIG_TURN * 25 / 256);
-						syRotZ(frame * (TRIG_TURN / 128));
+						syRotZ(frm * (TRIG_TURN / 128));
 						syMatrixScaleUniform(scale);
 						btRenderTransformVertices(
-							BattleEffect_SquareCorners, vertices, 4);
+							BattleEffectSquareCorners, vertices, 4);
 						btRenderDrawModelList(model);
 					}
 				}
@@ -267,27 +265,27 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 
 			/* Until the swords fall: the fan of flames opens, pulsing, and
 			   closes. */
-			if(frame < LEGEND_SWORD_FALL_FRAME) {
+			if(frm < LEGEND_SWORD_FALL_TICK) {
 				texture.logWidth = 5;
 				texture.logHeight = 6;
 				texture.pixels = state->sheet + LEGEND_FLAME_GRADIENT;
-				model->mesh = BattleEffect_TallMesh;
+				model->mesh = BattleEffectTallMesh;
 				for(i = 0; i != LEGEND_FAN_FLAMES; i++) {
 					model->shade = 0;
 					syInitMatrix();
 					syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 					syTranslate(INTtoFIXED(start.x - 128), -toFIXED(80), 0);
 					syRotX(LEGEND_FAN_TILT);
-					syRotZ((frame + i * 16) << 9);
-					scale = frame * (toFIXED(1) / 16) - toFIXED(1) / 4;
+					syRotZ((frm + i * 16) << 9);
+					scale = frm * (toFIXED(1) / 16) - toFIXED(1) / 4;
 					if(scale > toFIXED(1))
 						scale = toFIXED(1);
-					if(frame > 31)
-						scale = toFIXED(3) - frame * (toFIXED(1) / 16);
+					if(frm > 31)
+						scale = toFIXED(3) - frm * (toFIXED(1) / 16);
 					syScale(toFIXED(1) / 2, toFIXED(1),
-						(sySin((frame + i * 8) << 9) / 8 + scale) * 2);
+						(sySin((frm + i * 8) << 9) / 8 + scale) * 2);
 					btRenderTransformVertices(
-						Legend_FanFlameCorners, vertices, 4);
+						LegendFanFlameCorners, vertices, 4);
 					btRenderDrawModelList(model);
 				}
 			}
@@ -295,7 +293,7 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 			syHeapRelease(vertices);
 		}
 		btCameraShake(4, 4);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();
@@ -342,19 +340,19 @@ void btEffectRunThunderCard(BATTLE_EFFECT_PARM *args)
 #define CARD_SPARKS_PER_TARGET 64
 #define CARD_STRIKE_SPARKS	   16
 
-/* The card rises and grows for CARD_RISE_FRAMES frames, then shows its picture;
-   from CARD_SHRINK_FRAME it rises faster and shrinks away. It swings from side
-   to side once every 96 frames as it rises, and leans CARD_TILT. */
-#define CARD_RISE_FRAMES		   48
-#define CARD_SHRINK_FRAME		   96
+/* The card rises and grows for CARD_RISE_TICKS ticks, then shows its picture;
+   from CARD_SHRINK_TICK it rises faster and shrinks away. It swings from side
+   to side once every 96 ticks as it rises, and leans CARD_TILT. */
+#define CARD_RISE_TICKS			   48
+#define CARD_SHRINK_TICK		   96
 #define CARD_TILT				   6000
 /* The shards and smoke land on the ground at CARD_GROUND_Y. A Frost Card's
-   shard starts tumbling CARD_SHARD_TUMBLE_SPEED a frame, slowing by one every
-   other frame, and is drawn until its tumble reaches CARD_SHARD_TUMBLE_END. */
+   shard starts tumbling CARD_SHARD_TUMBLE_SPEED a tick, slowing by one every
+   other tick, and is drawn until its tumble reaches CARD_SHARD_TUMBLE_END. */
 #define CARD_GROUND_Y			   96
 #define CARD_SHARD_TUMBLE_SPEED	   32
 #define CARD_SHARD_TUMBLE_END	   1024
-/* The frames the strikes run between: the Thunder Card's start first and the
+/* The ticks the strikes run between: the Thunder Card's start first and the
    Bramble Card's end first. */
 #define CARD_STRIKES_FROM		   68
 #define CARD_THUNDER_STRIKES_FROM  52
@@ -371,18 +369,18 @@ void btEffectRunThunderCard(BATTLE_EFFECT_PARM *args)
    and the background takes its colours. The Frost Card throws crystal shards
    and the Flame Card puffs of fiery smoke at the targets, while the Bramble
    Card's thorny vines and the Thunder Card's bolts of lightning reach out over
-   them. Each target is struck every five frames for a while, reeling, flashing
+   them. Each target is struck every five ticks for a while, reeling, flashing
    and throwing up sparks, before the card shrinks away. */
 void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	DRAW_RECTANGLE		 draw[2];
 	Uint8				*graphics;
 	FIXED				 scale;
 	SCREEN_POINT		 card;
-	SCREEN_POINT		 targets[8];
+	SCREEN_POINT		 tgts[8];
 	SCREEN_POINT		 aim;
 	MODEL_TEXTURE		 texture;
 	RENDER_MODEL		*model;
@@ -430,10 +428,10 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	REG_BLDCNT = 0;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 
-	for(frame = 0; frame != ElementCards_Frames[mode]; frame++) {
-		/* Frame 0: clear the particles, give each member a strike countdown,
+	for(frm = 0; frm != ElementCardsTicks[mode]; frm++) {
+		/* Tick 0: clear the particles, give each member a strike countdown,
 		   and find the user and every target. */
-		if(frame == 0) {
+		if(frm == 0) {
 			sySndPlayStub(SE_WARP);
 			EFFECT_FREE_PARTICLES(i, state->particles, CARD_PIECES);
 			for(i = 0; i != args->tgtCnt; i++)
@@ -442,26 +440,26 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			EFFECT_FREE_PARTICLES(i, EXTRA_PARTICLES, LEGEND_SPARK_COUNT);
 			btEffectPosProjectSpr(args->user, &card);
 			for(i = 0; i != args->tgtCnt; i++)
-				btEffectPosProjectScaledBattler(args->tgts[i], &targets[i]);
+				btEffectPosProjectScaledBattler(args->tgts[i], &tgts[i]);
 			REG_BLDCNT = 0;
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 			scale = toFIXED(1) / 4;
 		}
 
 		/* The card rises and grows, and later rises faster and shrinks. */
-		if(frame < CARD_RISE_FRAMES) {
+		if(frm < CARD_RISE_TICKS) {
 			card.y--;
 			scale += toFIXED(1) / 128;
 			if(scale > toFIXED(1) / 2)
 				scale = toFIXED(1) / 2;
 		}
-		if(frame >= CARD_SHRINK_FRAME) {
+		if(frm >= CARD_SHRINK_TICK) {
 			scale -= toFIXED(1) / 128;
 			card.y -= 2;
 		}
 
 		/* The card shows its picture. */
-		if(frame == CARD_RISE_FRAMES) {
+		if(frm == CARD_RISE_TICKS) {
 			if(mode == CARD_BRAMBLE)
 				sySndPlayStub(SE_BOSS_ROAR);
 			if(mode == CARD_FROST)
@@ -478,7 +476,7 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		}
 
-		if(frame >= CARD_RISE_FRAMES) {
+		if(frm >= CARD_RISE_TICKS) {
 			/* The background steps toward the card's colours. */
 			if(mode != CARD_BRAMBLE) {
 				if(mode == CARD_FROST)
@@ -490,17 +488,17 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 
 			/* The Frost and Flame cards throw one shard or puff of smoke a
-			   frame at a target in turn, until the card shrinks. */
+			   tick at a target in turn, until the card shrinks. */
 			if(mode == CARD_FROST || mode == CARD_FLAME) {
-				Sint32 member = frame % args->tgtCnt;
+				Sint32 member = frm % args->tgtCnt;
 
-				aim.x = targets[member].x + (syRandom() & 63) - 32;
+				aim.x = tgts[member].x + (syRandom() & 63) - 32;
 				if(mode == CARD_FROST)
-					aim.y = targets[member].y + (syRandom() & 255) - 96;
+					aim.y = tgts[member].y + (syRandom() & 255) - 96;
 				else if(mode == CARD_FLAME)
-					aim.y = targets[member].y + (syRandom() & 63) + 32;
-				if(frame < CARD_SHRINK_FRAME) {
-					PARTICLE *step = &state->particles[frame % CARD_PIECES];
+					aim.y = tgts[member].y + (syRandom() & 63) + 32;
+				if(frm < CARD_SHRINK_TICK) {
+					PARTICLE *step = &state->particles[frm % CARD_PIECES];
 
 					step->x = card.x * (toFIXED(1) / 2);
 					step->y = toFIXED(card.y);
@@ -523,28 +521,28 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							i % 5 * 3 + step->variant / SHARD_TURN % 3;
 
 						/* UB: a fifth of the shards (i % 5 == 4) take cells 12
-						   to 14, past the end of Prism_ShardPictures' twelve;
+						   to 14, past the end of PrismShardPictures' twelve;
 						   the heights read there are 0, so they draw
 						   nothing. */
 #if FIX_CRYSTAL_SHARD_TABLE_OVERRUN
 						if(i % 5 != 4)
 #endif
 							draw[0](canvas,
-								state->sheet + Prism_ShardPictures[cell] +
+								state->sheet + PrismShardPictures[cell] +
 									ELEMENT_CARDS_PICTURES +
 									CRYSTAL_SHARD_PICTURES,
 								FIXED_INTEGER_PART(step->x) -
-									Prism_ShardWidths[cell] / 2,
+									PrismShardWidths[cell] / 2,
 								FIXED_INTEGER_PART(step->y) -
-									Prism_ShardHeights[cell] / 2,
-								Prism_ShardWidths[cell],
-								Prism_ShardHeights[cell]);
+									PrismShardHeights[cell] / 2,
+								PrismShardWidths[cell],
+								PrismShardHeights[cell]);
 						btParticleAdvanceWithGravity2D(
 							step, PARTICLE_DAMPING_NONE, 0);
 						if(step->y > toFIXED(CARD_GROUND_Y))
 							step->velY = -step->velY / 2;
 						step->variant += step->z;
-						if(step->z > 1 && (frame & 1))
+						if(step->z > 1 && (frm & 1))
 							step->z--;
 					}
 				}
@@ -569,14 +567,14 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							step->velY = 0;
 						}
 						step->variant++;
-						if(step->variant == SMOKE_PUFF_FRAMES)
+						if(step->variant == SMOKE_PUFF_TICKS)
 							step->variant = -1;
 					}
 				}
 			}
 		}
 
-		/* The strikes: every five frames each target in turn reels, flashes and
+		/* The strikes: every five ticks each target in turn reels, flashes and
 		   throws up 16 sparks. */
 		if(mode == CARD_THUNDER)
 			firstHit = CARD_THUNDER_STRIKES_FROM;
@@ -588,8 +586,8 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			lastHit = CARD_BRAMBLE_STRIKES_UNTIL;
 		else
 			lastHit = CARD_STRIKES_UNTIL;
-		if(frame >= firstHit && frame < lastHit) {
-			Sint32 speed = (frame - CARD_STRIKES_FROM) * 3;
+		if(frm >= firstHit && frm < lastHit) {
+			Sint32 speed = (frm - CARD_STRIKES_FROM) * 3;
 
 			for(i = 0; i != args->tgtCnt; i++) {
 				PARTICLE *step = &state->particles[CARD_STRIKE_TIMERS + i];
@@ -619,16 +617,16 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							&EXTRA_PARTICLES[i * CARD_SPARKS_PER_TARGET + j];
 
 						if(spark->variant < 0) {
-							Sint32 angle;
+							Sint32 ang;
 							Sint32 force;
 
 							spark->x = aim.x * (toFIXED(1) / 2);
 							spark->y = INTtoFIXED(aim.y + 8);
-							angle =
+							ang =
 								syRandom() % (TRIG_TURN * 3 / 4) + DEGtoANG(45);
 							force = syRandom() & 127;
-							spark->velX = (sySin(angle) * force) >> 5;
-							spark->velY = (syCos(angle) * force) >> 4;
+							spark->velX = (sySin(ang) * force) >> 5;
+							spark->velY = (syCos(ang) * force) >> 4;
 							if(mode == CARD_THUNDER) {
 								spark->velX /= 2;
 								spark->velY /= 2;
@@ -642,7 +640,7 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		}
 
-		/* This frame's models: the card, then the textures. */
+		/* This tick's models: the card, then the textures. */
 		vertices = syHeapAllocEWRAM(32);
 		model = btRenderAllocateModelList(1);
 		texture.logWidth = 5;
@@ -650,55 +648,55 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		texture.pixels = state->sheet;
 		model->kind = MODEL_TEXTURED;
 		model->texture = &texture;
-		model->mesh = BattleEffect_TallMesh;
+		model->mesh = BattleEffectTallMesh;
 		model->vertices = vertices;
-		/* DEAD: frame is never negative; the ROM keeps the test. */
-		if(frame >= 0) {
+		/* DEAD: tick is never negative; the ROM keeps the test. */
+		if(frm >= 0) {
 			/* The card: it swings from side to side as it rises, tilted
 			   back. */
 			syInitMatrix();
 			syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 			syTranslate(toFIXED(card.x) - toFIXED(128),
 				toFIXED(card.y) - toFIXED(64), 0);
-			if(frame < CARD_RISE_FRAMES) {
-				syRotX((CARD_RISE_FRAMES - frame) * (TRIG_TURN / 64));
+			if(frm < CARD_RISE_TICKS) {
+				syRotX((CARD_RISE_TICKS - frm) * (TRIG_TURN / 64));
 				if(args->side == EFFECT_SIDE_ENEMIES)
-					syTranslate(-sySin(frame * (TRIG_TURN / 96)) << 7, 0, 0);
+					syTranslate(-sySin(frm * (TRIG_TURN / 96)) << 7, 0, 0);
 				else
-					syTranslate(sySin(frame * (TRIG_TURN / 96)) << 7, 0, 0);
+					syTranslate(sySin(frm * (TRIG_TURN / 96)) << 7, 0, 0);
 			}
 			syRotY(CARD_TILT);
-			syRotZ(frame * (TRIG_TURN / 64));
+			syRotZ(frm * (TRIG_TURN / 64));
 			syMatrixScaleUniform(scale);
 			syScale(toFIXED(1), toFIXED(2), toFIXED(1));
-			btRenderTransformVertices(BattleEffect_SquareCorners, vertices, 4);
+			btRenderTransformVertices(BattleEffectSquareCorners, vertices, 4);
 			btRenderDrawModelList(model);
 			if(mode == CARD_BRAMBLE || mode == CARD_THUNDER) {
 				syMatrixScaleUniform(toFIXED(1) / 4);
 				btRenderTransformVertices(
-					BattleEffect_SquareCorners, vertices, 4);
+					BattleEffectSquareCorners, vertices, 4);
 			}
 		}
 
 		/* The Bramble Card's vines and the Thunder Card's bolts reach out from
-		   the card's corners for 64 frames; the bolts fade as the card
+		   the card's corners for 64 ticks; the bolts fade as the card
 		   shrinks. */
 		if((mode == CARD_THUNDER || mode == CARD_BRAMBLE) &&
-			(frame >= CARD_RISE_FRAMES && frame <= 111)) {
+			(frm >= CARD_RISE_TICKS && frm <= 111)) {
 			Sint32 alpha = 0;
 
-			if(mode == CARD_THUNDER && frame >= CARD_SHRINK_FRAME)
-				alpha = frame * -4 + 384;
+			if(mode == CARD_THUNDER && frm >= CARD_SHRINK_TICK)
+				alpha = frm * -4 + 384;
 			texture.logWidth = 5;
 			texture.logHeight = 7;
 			model->shade = alpha;
 			model->texture = &texture;
-			model->mesh = BattleEffect_ColumnMesh;
+			model->mesh = BattleEffectColumnMesh;
 			model->vertices = vertices;
 			if(mode == CARD_BRAMBLE) {
 				/* The vines sway, each from its own phase. */
 				model->kind = MODEL_SHADED;
-				if(frame == 48) {
+				if(frm == 48) {
 					Sint32 first = syRandom();
 
 					for(i = 0; i != 4; i++) {
@@ -712,14 +710,14 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				for(i = 0; i != 4; i++) {
 					PARTICLE *step = &state->particles[i];
 
-					step->velZ = sySin(step->velY + frame * (TRIG_TURN / 64)) /
+					step->velZ = sySin(step->velY + frm * (TRIG_TURN / 64)) /
 							CARD_VINE_SWAY +
 						CARD_VINE_ANGLE;
 				}
 			} else {
-				/* The bolts flicker every other frame. */
+				/* The bolts flicker every other tick. */
 				model->kind = MODEL_SHADED_ADDITIVE;
-				if((frame & 1) == 0) {
+				if((frm & 1) == 0) {
 					Sint32 first = syRandom();
 
 					for(i = 0; i != 4; i++) {
@@ -748,19 +746,17 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					syRotY(DEGtoANG(180));
 				syRotZ(step->velZ);
 				if(mode == CARD_BRAMBLE) {
-					Sint32 length = frame * (toFIXED(1) / 8) - toFIXED(6);
+					Sint32 length = frm * (toFIXED(1) / 8) - toFIXED(6);
 
 					if(length > toFIXED(2))
 						length = toFIXED(2);
-					if(frame >= CARD_SHRINK_FRAME)
-						length =
-							length - frame * (toFIXED(1) / 8) + toFIXED(12);
+					if(frm >= CARD_SHRINK_TICK)
+						length = length - frm * (toFIXED(1) / 8) + toFIXED(12);
 					syScale(toFIXED(4), length, toFIXED(1));
 				} else {
 					syScale(toFIXED(2), toFIXED(2), toFIXED(1));
 				}
-				btRenderTransformVertices(
-					BattleEffect_BeamCorners, vertices, 4);
+				btRenderTransformVertices(BattleEffectBeamCorners, vertices, 4);
 				btRenderDrawModelList(model);
 			}
 		}
@@ -779,7 +775,7 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					size += 1;
 				else
 					size += 3;
-				for(j = 0; j != ElementCards_SparkMotions[mode].steps; j++) {
+				for(j = 0; j != ElementCardsSparkMotions[mode].steps; j++) {
 					EFFECT_DRAW_MOTE(draw[0], canvas, graphics,
 						FIXED_INTEGER_PART(step->x),
 						FIXED_INTEGER_PART(step->y), size);
@@ -788,14 +784,14 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						step->velY = -step->velY / 2;
 					}
 					btParticleAdvanceWithGravity2D(step,
-						ElementCards_SparkMotions[mode].damping,
-						ElementCards_SparkMotions[mode].gravity);
+						ElementCardsSparkMotions[mode].damping,
+						ElementCardsSparkMotions[mode].gravity);
 				}
 				step->variant--;
 			}
 		}
 		btCameraShake(4, 4);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();
@@ -836,12 +832,12 @@ void btEffectRunSwordCard(BATTLE_EFFECT_PARM *args)
 #undef LEGEND_FAN_TILT
 #undef LEGEND_FIRE_RING_GROWTH
 #undef LEGEND_SWORD_INTERVAL
-#undef LEGEND_SWORD_FALL_FRAME
-#undef LEGEND_SWORD_SOUND_FRAME
-#undef LEGEND_SWORD_STRIKE_FRAME
-#undef LEGEND_SWORD_FALL_FRAMES
+#undef LEGEND_SWORD_FALL_TICK
+#undef LEGEND_SWORD_SOUND_TICK
+#undef LEGEND_SWORD_STRIKE_TICK
+#undef LEGEND_SWORD_FALL_TICKS
 #undef LEGEND_SWORD_START_DISTANCE
-#undef LEGEND_FRAMES
+#undef LEGEND_TICKS
 #undef CARD_STREAK_WIDTH
 #undef CARD_STREAK_HEIGHT
 #undef ELEMENT_CARDS_PICTURES
@@ -849,8 +845,8 @@ void btEffectRunSwordCard(BATTLE_EFFECT_PARM *args)
 #undef CARD_STRIKE_TIMERS
 #undef CARD_SPARKS_PER_TARGET
 #undef CARD_STRIKE_SPARKS
-#undef CARD_RISE_FRAMES
-#undef CARD_SHRINK_FRAME
+#undef CARD_RISE_TICKS
+#undef CARD_SHRINK_TICK
 #undef CARD_TILT
 #undef CARD_GROUND_Y
 #undef CARD_SHARD_TUMBLE_SPEED

@@ -1,7 +1,7 @@
 /* Twenty-four scenes, and the main image's field Psynergy
    (script_commands_whirlwind.c, with EFFECT_SPAWN_RESIDENT): fdEffectSpawn,
    which places a small effect moving at a velocity, its script one of
-   FieldEffect_DurationScripts and its options chosen by the EFFECT_USE_
+   FieldEffectDurationScripts and its options chosen by the EFFECT_USE_
    flags. */
 
 #include "field/field_effect.h"
@@ -20,17 +20,17 @@ void scFieldEffectUpdateMotionScaleAndSpin(ACTOR *actor)
 	effect->spr->rotation += effect->spin;
 }
 
-extern const Sint32 *FieldEffect_DurationScripts[];
+extern const Sint32 *FieldEffectDurationScripts[];
 
 /* Sets the effect moving at its velocity, drawn at the leader's sprite
    priority, with no growth or spin until the options give them. */
-static inline void scFieldEffectInitMotion(FIELD_EFFECT *effect, SPR *sprite,
-	ACTOR *leader, Sint32 velocityX, Sint32 velocityY, Sint32 velocityZ)
+static inline void scFieldEffectInitMotion(FIELD_EFFECT *effect, SPR *spr,
+	ACTOR *leader, Sint32 velX, Sint32 velY, Sint32 velZ)
 {
-	effect->vel.x = velocityX;
-	effect->vel.y = velocityY;
-	effect->vel.z = velocityZ;
-	sprite->image.pri = leader->spr->image.pri;
+	effect->vel.x = velX;
+	effect->vel.y = velY;
+	effect->vel.z = velZ;
+	spr->image.pri = leader->spr->image.pri;
 	effect->scaleRateX = 0;
 	effect->scaleRateY = 0;
 	effect->spin = 0;
@@ -61,7 +61,7 @@ static inline void scFieldEffectInitMotion(FIELD_EFFECT *effect, SPR *sprite,
 		sprite = effect->spr; \
 		selectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK); \
 		startScript((void *)effect, \
-			FieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]); \
+			FieldEffectDurationScripts[flags & EFFECT_SCRIPT_MASK]); \
 		effect->motionFlg = 0; \
 		sprite->flg = 0; \
 		effect->update = scFieldEffectUpdateMotionScaleAndSpin; \
@@ -81,7 +81,7 @@ static inline void scFieldEffectInitMotion(FIELD_EFFECT *effect, SPR *sprite,
 			effect->scaleY = options->startScaleY; \
 		} \
 		if((flags & EFFECT_SCALE_TO_TARGET) != 0) { \
-			script = FieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]; \
+			script = FieldEffectDurationScripts[flags & EFFECT_SCRIPT_MASK]; \
 			if((flags & EFFECT_USE_START_SCALE) != 0) { \
 				effect->scaleRateX = (options->tgtScaleX - effect->scaleX) / \
 					script[EFFECT_SCRIPT_REPEAT_COUNT]; \

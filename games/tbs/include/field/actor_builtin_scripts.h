@@ -7,12 +7,12 @@
 #include "types.h"
 #include "field/field.h"
 
-extern const Sint32 Actor_KeyCheckScript[];
-extern const Sint32 Actor_KeysScript[];
-extern const Sint32 Actor_PlayerScript[];
-extern const Sint32 Actor_WorldMapScript[];
-extern const Sint32 Actor_CameraScript[];
-extern const Sint32 Actor_ApproachWatchedScript[];
-extern const Sint32 Actor_IdleScript[];
+extern const Sint32 ActorKeyCheckScript[];
+extern const Sint32 ActorKeysScript[];
+extern const Sint32 ActorPlayerScript[];
+extern const Sint32 ActorWorldMapScript[];
+extern const Sint32 ActorCameraScript[];
+extern const Sint32 ActorApproachWatchedScript[];
+extern const Sint32 ActorIdleScript[];
 
 #endif

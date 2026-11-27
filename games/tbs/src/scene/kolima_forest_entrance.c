@@ -9,7 +9,7 @@
    dying forest. Five sparkles lie on the ground until Tret lifts the curse
    (FLAG_KOLIMA_CURSE_LIFTED).
 
-   The fields flicker. The leader's and Mia's show on even frames and Ivan's and
+   The fields flicker. The leader's and Mia's show on even ticks and Ivan's and
    Garet's on odd ones, each lifted out of sight on the others
    (scKolimaForestEntranceFlickerPsynergyFields). A sparkle bursts where it
    lands only inside the boxes scKolimaForestEntranceBurstOnPsynergyField tests,
@@ -38,20 +38,20 @@
 #include "scene/kolima_curse_dust.h"
 #include "text/msg_ids.h"
 
-extern Sint32		  KolimaForestEntrance_GaretAction[];
-extern Sint32		  KolimaForestEntrance_IvanAction[];
-extern Sint32		  KolimaForestEntrance_MiaAction[];
-extern Sint32		  KolimaForestEntrance_PsynergyFieldGrowAction[];
-extern Sint32		  KolimaForestEntrance_PsynergyFieldShrinkAction[];
-extern Sint32		  KolimaForestEntrance_GroundSparkleAction[];
-extern SCENE_ENTRANCE KolimaForestEntrance_Entrances[];
-extern Uint32		  KolimaForestEntrance_Exits[];
-extern ACTOR_PLACE	  KolimaForestEntrance_ActorPlacements[];
-extern CUE			  KolimaForestEntrance_Cues[];
-extern Sint32		  KolimaForestEntrance_SparkleScript[];
+extern Sint32		  KolimaForestEntranceGaretAction[];
+extern Sint32		  KolimaForestEntranceIvanAction[];
+extern Sint32		  KolimaForestEntranceMiaAction[];
+extern Sint32		  KolimaForestEntrancePsynergyFieldGrowAction[];
+extern Sint32		  KolimaForestEntrancePsynergyFieldShrinkAction[];
+extern Sint32		  KolimaForestEntranceGroundSparkleAction[];
+extern SCENE_ENTRANCE KolimaForestEntranceEntrances[];
+extern Uint32		  KolimaForestEntranceExits[];
+extern ACTOR_PLACE	  KolimaForestEntranceActorPlacements[];
+extern CUE			  KolimaForestEntranceCues[];
+extern Sint32		  KolimaForestEntranceSparkleScript[];
 
 /* The scene's actors after Garet's, Ivan's and Mia's party slots, numbering the
-   rows of KolimaForestEntrance_ActorPlacements from ACTOR_FIRST_PLACED. */
+   rows of KolimaForestEntranceActorPlacements from ACTOR_FIRST_PLACED. */
 enum {
 	/* The three logs. The last is the one that can reach the river. */
 	ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
@@ -74,9 +74,9 @@ enum {
 
 static void scKolimaForestEntranceWitnessForestCurse(void);
 static void scKolimaForestEntranceShowMessageAndWait(
-	Sint32 speaker, Sint32 frames);
+	Sint32 speaker, Sint32 ticks);
 static void scKolimaForestEntranceFaceActorAndWait(
-	Sint32 actorId, Sint32 facing, Sint32 waitFrames);
+	Sint32 actorId, Sint32 facing, Sint32 waitTicks);
 static void scKolimaForestEntranceSpawnCurseSparkle(void);
 static void scKolimaForestEntranceFlickerPsynergyFields(void);
 
@@ -93,7 +93,7 @@ static void scKolimaForestEntranceFlickerPsynergyFields(void);
    takes its next pose. */
 static Sint32 scKolimaForestEntranceFlashHitPsynergyFields(ACTOR *actor)
 {
-	Sint32 *pending = &KolimaForestEntrance_PsynergyFieldHit;
+	Sint32 *pending = &KolimaForestEntrancePsynergyFieldHit;
 	if(*pending) {
 		fdActorSelectAnimation(actor, 2);
 		*pending = 0;
@@ -101,7 +101,7 @@ static Sint32 scKolimaForestEntranceFlashHitPsynergyFields(ACTOR *actor)
 	return 1;
 }
 
-/* Each frame, a ground sparkle's timer runs on at random. */
+/* Each tick, a ground sparkle's timer runs on at random. */
 static Sint32 scKolimaForestEntranceTwinkleGroundSparkle(ACTOR *actor)
 {
 	actor->tmr = (actor->tmr + (syRandomBelow(100)));
@@ -119,7 +119,7 @@ static Sint32 scKolimaForestEntranceTwinkleGroundSparkle(ACTOR *actor)
    (SceneId_KolimaForestGlade) and from the World Map. */
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return KolimaForestEntrance_Entrances;
+	return KolimaForestEntranceEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -131,14 +131,14 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
    Map. */
 const Uint32 *scGetExits(void)
 {
-	return KolimaForestEntrance_Exits;
+	return KolimaForestEntranceExits;
 }
 
 /* The party's companions, the logs, Tret, Laurel, the Psynergy fields and the
    ground sparkles. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return KolimaForestEntrance_ActorPlacements;
+	return KolimaForestEntranceActorPlacements;
 }
 
 /* In Kolima Forest (SceneId_KolimaForestEntrance), walking into a log rolls it
@@ -176,7 +176,7 @@ static void scKolimaForestEntrancePushLog(void)
 /* The logs, the hop east from the bank and the two ways out. */
 const CUE *scGetCues(void)
 {
-	return KolimaForestEntrance_Cues;
+	return KolimaForestEntranceCues;
 }
 
 /* On entry a log already in the river floats there again and the logs mark the
@@ -226,7 +226,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	sySynch(1);
 	fdCameraMoveTo(246, CAMERA_KEEP, 604, 0);
-	party = &KolimaForestEntrance_MiaInParty;
+	party = &KolimaForestEntranceMiaInParty;
 	*party = gmFlagGet(FLAG_IN_PARTY(MIA));
 	fdActorSetSprFlags(fdActorGet(ACTOR_LEADER_PSYNERGY_FIELD), 0);
 	fdActorSetSprFlags(fdActorGet(ACTOR_IVAN_PSYNERGY_FIELD), 0);
@@ -237,7 +237,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_GROUND_SPARKLE + 2), 0);
 	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_GROUND_SPARKLE + 3), 0);
 	fdActorSetSprFlags(fdActorGet(ACTOR_LAST_GROUND_SPARKLE), 0);
-	sparkleAction = KolimaForestEntrance_GroundSparkleAction;
+	sparkleAction = KolimaForestEntranceGroundSparkleAction;
 	fdActorSetScript(ACTOR_FIRST_GROUND_SPARKLE, sparkleAction);
 	fdActorSetScript(ACTOR_FIRST_GROUND_SPARKLE + 1, sparkleAction);
 	fdActorSetScript(ACTOR_FIRST_GROUND_SPARKLE + 2, sparkleAction);
@@ -248,7 +248,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 254, 593);
 	fdActorSetSpeed(ACTOR_GARET, 0.6);
@@ -267,8 +267,8 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 			fdActorSetPosFX(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
 		}
 	}
-	fdActorSetScript(ACTOR_GARET, KolimaForestEntrance_GaretAction);
-	fdActorSetScript(ACTOR_IVAN, KolimaForestEntrance_IvanAction);
+	fdActorSetScript(ACTOR_GARET, KolimaForestEntranceGaretAction);
+	fdActorSetScript(ACTOR_IVAN, KolimaForestEntranceIvanAction);
 	if(*party != 0) {
 		fdActorSetSpeed(ACTOR_MIA, 0.6);
 		{
@@ -278,7 +278,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 				fdActorSetPosFX(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
 			}
 		}
-		fdActorSetScript(ACTOR_MIA, KolimaForestEntrance_MiaAction);
+		fdActorSetScript(ACTOR_MIA, KolimaForestEntranceMiaAction);
 	}
 	fdActorWaitForScriptEndById(ACTOR_IVAN);
 	scKolimaForestEntranceFaceActorAndWait(ACTOR_IVAN, FACING_SOUTHEAST, 40);
@@ -329,14 +329,14 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(1);
 	sySynch(1);
-	KolimaForestEntrance_SparkleSoundOn = 1;
-	sySetFrameEvent(scKolimaForestEntranceSpawnCurseSparkle, EVENT_PASS_FRAME);
+	KolimaForestEntranceSparkleSoundOn = 1;
+	sySetTickEvent(scKolimaForestEntranceSpawnCurseSparkle, EVENT_PASS_TICK);
 	sySynch(20);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_BLEND | RGB(16, 16, 20), PALETTES_BG);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_SPRITES);
 	fdPaletteFadeStartInterpolation(120);
 	sySynch(60);
-	squashAction = Kolima_PartySquashScript;
+	squashAction = KolimaPartySquashScript;
 	fdActorSetScript(ACTOR_PARTY_LEADER, squashAction);
 	fdActorSetScript(ACTOR_GARET, squashAction);
 	fdActorSetScript(ACTOR_IVAN, squashAction);
@@ -346,7 +346,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	scKolimaForestEntranceShowMessageAndWait(ACTOR_GARET, 20);
 	/* "My mind!!! Someone is attacking my-" */
 	scKolimaForestEntranceShowMessageAndWait(ACTOR_IVAN, 40);
-	if(KolimaForestEntrance_MiaInParty != 0) {
+	if(KolimaForestEntranceMiaInParty != 0) {
 		fdScriptWait(40);
 		fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
 		fdScriptWait(40);
@@ -356,12 +356,12 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 		FieldStateWork->msg += 1;
 	}
 	fdScriptWait(20);
-	if(KolimaForestEntrance_MiaInParty != 0) {
+	if(KolimaForestEntranceMiaInParty != 0) {
 		fdActorGet(ACTOR_MIA)->velY = toFIXED(2);
 		fdScriptWait(10);
 		fdActorSetSpeedAndAcceleration(ACTOR_MIA, 2, 2);
 		fdActorSetDestinationOffset(ACTOR_MIA, -2, 0);
-		fdActorSetScript(ACTOR_MIA, Kolima_PartyRestoreScaleScript);
+		fdActorSetScript(ACTOR_MIA, KolimaPartyRestoreScaleScript);
 		fdActorSetSprFlags(fdActorGet(ACTOR_MIA), 0);
 		fdActorSetAnimation(ACTOR_MIA, ANIM_COLLAPSE);
 		fdScriptWait(10);
@@ -369,7 +369,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	fdActorGet(ACTOR_PARTY_LEADER)->velY = toFIXED(2);
 	fdScriptWait(10);
 	fdActorSetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 2);
-	restoreScaleAction = Kolima_PartyRestoreScaleScript;
+	restoreScaleAction = KolimaPartyRestoreScaleScript;
 	fdActorSetScript(ACTOR_PARTY_LEADER, restoreScaleAction);
 	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
@@ -386,17 +386,17 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	fdActorSetScript(ACTOR_IVAN, restoreScaleAction);
 	fdActorSetSprFlags(fdActorGet(ACTOR_IVAN), 0);
 	fdActorSetAnimation(ACTOR_IVAN, ANIM_COLLAPSE);
-	KolimaForestEntrance_SparkleSoundOn = 0;
+	KolimaForestEntranceSparkleSoundOn = 0;
 	fdScriptWait(160);
 	syCloseEvent(scKolimaForestEntranceSpawnCurseSparkle);
 	fdScriptWait(120);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
 	fdPaletteFadeStartInterpolation(60);
 	sySynch(60);
-	Kolima_CurseDustWidth = 0;
-	Kolima_CurseDustOffset = toFIXED(128);
-	Kolima_CurseDustState = KOLIMA_DUST_CLOSING;
-	sySetFrameEvent(scKolimaUpdateCurseDust, EVENT_PASS_FRAME);
+	KolimaCurseDustWidth = 0;
+	KolimaCurseDustOffset = toFIXED(128);
+	KolimaCurseDustState = KOLIMA_DUST_CLOSING;
+	sySetTickEvent(scKolimaUpdateCurseDust, EVENT_PASS_TICK);
 	fdScriptWait(180);
 	sySndPlay(MUS_FOREST_THEME);
 	/* "What is that? Something's falling from the sky!" */
@@ -410,7 +410,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	fdScriptWait(60);
 	/* "We've got to get out of here!" */
 	scKolimaForestEntranceShowMessageAndWait(ACTOR_IVAN, 20);
-	Kolima_CurseDustState = KOLIMA_DUST_CLOSING_WIDE;
+	KolimaCurseDustState = KOLIMA_DUST_CLOSING_WIDE;
 	fdActorStartRepeatedMotion(ACTOR_IVAN, 2);
 	fdScriptWait(20);
 	fdActorStartRepeatedMotion(ACTOR_GARET, 1);
@@ -428,14 +428,14 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
 	/* "I can't! I can't move!!" */
 	scKolimaForestEntranceShowMessageAndWait(ACTOR_GARET, 20);
-	if(KolimaForestEntrance_MiaInParty != 0) {
+	if(KolimaForestEntranceMiaInParty != 0) {
 		fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
 		/* "Oh, no... If it touches us, we'll turn into trees!" */
 		scKolimaForestEntranceShowMessageAndWait(ACTOR_MIA, 10);
 	} else {
 		FieldStateWork->msg += 1;
 	}
-	Kolima_CurseDustState = KOLIMA_DUST_DRIFTING;
+	KolimaCurseDustState = KOLIMA_DUST_DRIFTING;
 	fdActorGet(ACTOR_PARTY_LEADER)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
 	fdActorGet(ACTOR_GARET)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
 	fdActorGet(ACTOR_IVAN)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -444,21 +444,21 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	fdActorSetSprPriority(ACTOR_GARET, 3);
 	fdActorSetSprPriority(ACTOR_IVAN, 3);
 	fdActorSetSprPriority(ACTOR_MIA, 3);
-	KolimaForestEntrance_PsynergyFieldHit = 0;
-	sySetFrameEvent(
-		scKolimaForestEntranceFlickerPsynergyFields, EVENT_PASS_FRAME);
+	KolimaForestEntrancePsynergyFieldHit = 0;
+	sySetTickEvent(
+		scKolimaForestEntranceFlickerPsynergyFields, EVENT_PASS_TICK);
 	sySndPlay(SE_SHIMMER);
 	fdActorGet(ACTOR_LEADER_PSYNERGY_FIELD)->priFlg &=
 		~ACTOR_PRIORITY_AUTOMATIC;
 	fdActorSetSprPriority(ACTOR_LEADER_PSYNERGY_FIELD, 2);
 	fdActorSetPos(ACTOR_LEADER_PSYNERGY_FIELD, 253, 603);
-	growFieldAction = KolimaForestEntrance_PsynergyFieldGrowAction;
+	growFieldAction = KolimaForestEntrancePsynergyFieldGrowAction;
 	fdActorSetScript(ACTOR_LEADER_PSYNERGY_FIELD, growFieldAction);
 	fdActorGet(ACTOR_IVAN_PSYNERGY_FIELD)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
 	fdActorSetSprPriority(ACTOR_IVAN_PSYNERGY_FIELD, 2);
 	fdActorSetPos(ACTOR_IVAN_PSYNERGY_FIELD, 233, 629);
 	fdActorSetScript(ACTOR_IVAN_PSYNERGY_FIELD, growFieldAction);
-	if(KolimaForestEntrance_MiaInParty != 0) {
+	if(KolimaForestEntranceMiaInParty != 0) {
 		fdActorGet(ACTOR_MIA_PSYNERGY_FIELD)->priFlg &=
 			~ACTOR_PRIORITY_AUTOMATIC;
 		fdActorSetSprPriority(ACTOR_MIA_PSYNERGY_FIELD, 2);
@@ -469,7 +469,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	fdActorSetSprPriority(ACTOR_GARET_PSYNERGY_FIELD, 2);
 	fdActorSetPos(ACTOR_GARET_PSYNERGY_FIELD, 227, 580);
 	fdActorSetScript(ACTOR_GARET_PSYNERGY_FIELD, growFieldAction);
-	while(Kolima_CurseDustState != KOLIMA_DUST_CENTRED) {
+	while(KolimaCurseDustState != KOLIMA_DUST_CENTRED) {
 		sySynch(1);
 	}
 	fdScriptWait(300);
@@ -481,15 +481,15 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	sySynch(60);
 	fdActorStop(ACTOR_LEADER_PSYNERGY_FIELD);
 	fdActorStop(ACTOR_IVAN_PSYNERGY_FIELD);
-	if(KolimaForestEntrance_MiaInParty != 0) {
+	if(KolimaForestEntranceMiaInParty != 0) {
 		fdActorStop(ACTOR_MIA_PSYNERGY_FIELD);
 	}
 	fdActorStop(ACTOR_GARET_PSYNERGY_FIELD);
 	sySynch(1);
-	shrinkFieldAction = KolimaForestEntrance_PsynergyFieldShrinkAction;
+	shrinkFieldAction = KolimaForestEntrancePsynergyFieldShrinkAction;
 	fdActorSetScript(ACTOR_LEADER_PSYNERGY_FIELD, shrinkFieldAction);
 	fdActorSetScript(ACTOR_IVAN_PSYNERGY_FIELD, shrinkFieldAction);
-	if(KolimaForestEntrance_MiaInParty != 0) {
+	if(KolimaForestEntranceMiaInParty != 0) {
 		fdActorSetScript(ACTOR_MIA_PSYNERGY_FIELD, shrinkFieldAction);
 	}
 	fdActorRunScriptAndWait(ACTOR_GARET_PSYNERGY_FIELD, shrinkFieldAction);
@@ -511,7 +511,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	/* Yes: "I think so, too, Isaac. I think I know what those domes..." No:
 	   "No, I think Garet is right. I think I know what those..." */
 	scKolimaForestEntranceShowMessageAndWait(ACTOR_IVAN, 20);
-	if(KolimaForestEntrance_MiaInParty != 0) {
+	if(KolimaForestEntranceMiaInParty != 0) {
 		fdActorRunRepeatedMotion(ACTOR_MIA, 2);
 		fdScriptWait(10);
 		fdScriptSetMessageId(MsgKolimaKnowThoseFieldsWere);
@@ -555,7 +555,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	fdScriptWait(20);
 	/* "Hey... I can stand... I can move again!" */
 	scKolimaForestEntranceShowMessageAndWait(ACTOR_GARET, 20);
-	if(KolimaForestEntrance_MiaInParty != 0) {
+	if(KolimaForestEntranceMiaInParty != 0) {
 		fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 		fdScriptWait(60);
 		fdActorRunRepeatedMotion(ACTOR_MIA, 2);
@@ -646,7 +646,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
 	/* "Well, maybe it's just easier for you, but when I use Psynergy..." */
 	scKolimaForestEntranceShowMessageAndWait(ACTOR_IVAN, 10);
-	if(KolimaForestEntrance_MiaInParty != 0) {
+	if(KolimaForestEntranceMiaInParty != 0) {
 		fdActorRunRepeatedMotion(ACTOR_MIA, 2);
 		scKolimaForestEntranceFaceActorAndWait(ACTOR_MIA, FACING_EAST, 20);
 		scKolimaForestEntranceFaceActorAndWait(ACTOR_MIA, FACING_SOUTHEAST, 10);
@@ -717,10 +717,10 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	fdPaletteFadeApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
 	fdPaletteFadeStartInterpolation(60);
 	sySynch(60);
-	Kolima_CurseDustWidth = 0;
-	Kolima_CurseDustOffset = toFIXED(128);
-	Kolima_CurseDustState = KOLIMA_DUST_CLOSING;
-	sySetFrameEvent(scKolimaUpdateCurseDust, EVENT_PASS_FRAME);
+	KolimaCurseDustWidth = 0;
+	KolimaCurseDustOffset = toFIXED(128);
+	KolimaCurseDustState = KOLIMA_DUST_CLOSING;
+	sySetTickEvent(scKolimaUpdateCurseDust, EVENT_PASS_TICK);
 	fdScriptWait(80);
 	fdActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	fdActorStartRepeatedMotion(ACTOR_GARET, 2);
@@ -734,7 +734,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	scKolimaForestEntranceFaceActorAndWait(ACTOR_GARET, FACING_NORTH, 10);
 	scKolimaForestEntranceFaceActorAndWait(
 		ACTOR_PARTY_LEADER, FACING_NORTH, 10);
-	if(KolimaForestEntrance_MiaInParty != 0) {
+	if(KolimaForestEntranceMiaInParty != 0) {
 		scKolimaForestEntranceFaceActorAndWait(ACTOR_MIA, FACING_NORTH, 10);
 	}
 	fdActorGet(ACTOR_PARTY_LEADER)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -745,24 +745,24 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	fdActorSetSprPriority(ACTOR_GARET, 3);
 	fdActorSetSprPriority(ACTOR_IVAN, 3);
 	fdActorSetSprPriority(ACTOR_MIA, 3);
-	Kolima_CurseDustState = KOLIMA_DUST_CLOSING_WIDE;
+	KolimaCurseDustState = KOLIMA_DUST_CLOSING_WIDE;
 	sySndPlay(SE_SHIMMER);
 	fdActorSetPos(ACTOR_LEADER_PSYNERGY_FIELD, 253, 603);
-	growFieldAction = KolimaForestEntrance_PsynergyFieldGrowAction;
+	growFieldAction = KolimaForestEntrancePsynergyFieldGrowAction;
 	fdActorSetScript(ACTOR_LEADER_PSYNERGY_FIELD, growFieldAction);
 	fdActorSetPos(ACTOR_IVAN_PSYNERGY_FIELD, 233, 629);
 	fdActorSetScript(ACTOR_IVAN_PSYNERGY_FIELD, growFieldAction);
-	if(KolimaForestEntrance_MiaInParty != 0) {
+	if(KolimaForestEntranceMiaInParty != 0) {
 		fdActorSetPos(ACTOR_MIA_PSYNERGY_FIELD, 207, 609);
 		fdActorSetScript(ACTOR_MIA_PSYNERGY_FIELD, growFieldAction);
 	}
 	fdActorSetPos(ACTOR_GARET_PSYNERGY_FIELD, 227, 580);
 	fdActorSetScript(ACTOR_GARET_PSYNERGY_FIELD, growFieldAction);
 	fdScriptWait(120);
-	Kolima_CurseDustState = KOLIMA_DUST_DRIFTING;
+	KolimaCurseDustState = KOLIMA_DUST_DRIFTING;
 	do {
 		sySynch(1);
-	} while(Kolima_CurseDustState != KOLIMA_DUST_CENTRED);
+	} while(KolimaCurseDustState != KOLIMA_DUST_CENTRED);
 	/* "Hroom! Why? Why don't they turn into trees...?" */
 	scKolimaForestEntranceShowMessageAndWait(ACTOR_TRET, 80);
 	/* "Who are they?" */
@@ -883,11 +883,11 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	sySynch(80);
 	fdActorStop(ACTOR_LEADER_PSYNERGY_FIELD);
 	fdActorStop(ACTOR_IVAN_PSYNERGY_FIELD);
-	miaInParty = &KolimaForestEntrance_MiaInParty;
+	miaInParty = &KolimaForestEntranceMiaInParty;
 	fdActorStop(ACTOR_MIA_PSYNERGY_FIELD);
 	fdActorStop(ACTOR_GARET_PSYNERGY_FIELD);
 	sySynch(1);
-	shrinkFieldAction = KolimaForestEntrance_PsynergyFieldShrinkAction;
+	shrinkFieldAction = KolimaForestEntrancePsynergyFieldShrinkAction;
 	fdActorSetScript(ACTOR_LEADER_PSYNERGY_FIELD, shrinkFieldAction);
 	fdActorSetScript(ACTOR_IVAN_PSYNERGY_FIELD, shrinkFieldAction);
 	if(*miaInParty != 0) {
@@ -996,7 +996,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 			fdScriptWait(120);
 			/* "I guess I really don't know what to do." */
 			scKolimaForestEntranceShowMessageAndWait(ACTOR_IVAN, 40);
-			if(KolimaForestEntrance_MiaInParty != 0) {
+			if(KolimaForestEntranceMiaInParty != 0) {
 				scKolimaForestEntranceFaceActorAndWait(
 					ACTOR_MIA, FACING_SOUTHEAST, 10);
 				fdActorSetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
@@ -1007,7 +1007,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 			}
 			fdScriptWait(60);
 			fdActorRunRepeatedMotion(ACTOR_IVAN, 2);
-			if(KolimaForestEntrance_MiaInParty != 0) {
+			if(KolimaForestEntranceMiaInParty != 0) {
 				scKolimaForestEntranceFaceActorAndWait(
 					ACTOR_IVAN, FACING_NORTHWEST, 40);
 				scKolimaForestEntranceFaceActorAndWait(
@@ -1054,7 +1054,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 			fdScriptWait(80);
 			/* "I really don't have any idea right now..." */
 			scKolimaForestEntranceShowMessageAndWait(ACTOR_IVAN, 40);
-			if(KolimaForestEntrance_MiaInParty != 0) {
+			if(KolimaForestEntranceMiaInParty != 0) {
 				scKolimaForestEntranceFaceActorAndWait(
 					ACTOR_MIA, FACING_SOUTHEAST, 20);
 				fdActorSetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
@@ -1101,7 +1101,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	}
 	fdActorWaitForMoveById(ACTOR_IVAN);
 	fdActorSetPos(ACTOR_IVAN, 0, 0);
-	if(KolimaForestEntrance_MiaInParty != 0) {
+	if(KolimaForestEntranceMiaInParty != 0) {
 		fdActorSetAnimation(ACTOR_MIA, ANIM_WALK);
 		{
 			ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
@@ -1121,52 +1121,52 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	fdScriptEnd();
 }
 
-/* Shows the script's next message at speaker, then waits frames. */
+/* Shows the script's next message at speaker, then waits ticks. */
 static void scKolimaForestEntranceShowMessageAndWait(
-	Sint32 speaker, Sint32 frames)
+	Sint32 speaker, Sint32 ticks)
 {
 	fdScriptShowMessage(speaker, 0);
-	fdScriptWait(frames);
+	fdScriptWait(ticks);
 }
 
 /* Turns an actor at once, then leaves time for the next beat. */
 static void scKolimaForestEntranceFaceActorAndWait(
-	Sint32 actorId, Sint32 facing, Sint32 waitFrames)
+	Sint32 actorId, Sint32 facing, Sint32 waitTicks)
 {
 	fdActorFaceDirection(actorId, facing, 0);
-	fdScriptWait(waitFrames);
+	fdScriptWait(waitTicks);
 }
 
 #include "shared/kolima_grow.c"
 
-/* Every eighth frame a sparkle of Tret's glamour (SPRITE_GOLDEN_RINGS) falls
+/* Every eighth tick a sparkle of Tret's glamour (SPRITE_GOLDEN_RINGS) falls
    toward the party, with its tinkle while the rain is at its height. */
 static void scKolimaForestEntranceSpawnCurseSparkle(void)
 {
 	ACTOR *sparkle;
-	SPR	  *sprite;
-	Sint32 framePhase;
+	SPR	  *spr;
+	Sint32 frmPhase;
 
-	framePhase = FrameCount & 7;
-	if(framePhase != 0)
+	frmPhase = TickCount & 7;
+	if(frmPhase != 0)
 		return;
-	if(KolimaForestEntrance_SparkleSoundOn != 0)
+	if(KolimaForestEntranceSparkleSoundOn != 0)
 		sySndPlay(SE_SPARKLE_FALL);
 	sparkle =
 		syFieldActorCreate(SPRITE_GOLDEN_RINGS, toFIXED(231), 0, toFIXED(460));
 	if(sparkle == NULL)
 		return;
-	sprite = sparkle->spr;
-	sprite->flg = framePhase;
+	spr = sparkle->spr;
+	spr->flg = frmPhase;
 	sparkle->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	sprite->image.pri = 1;
+	spr->image.pri = 1;
 	sparkle->scaleX = toFIXED(1) / 10;
 	sparkle->speedLimit = toFIXED(8);
 	sparkle->acceleration = toFIXED(8);
-	sparkle->motionFlg = framePhase;
+	sparkle->motionFlg = frmPhase;
 	fdActorSelectAnimation(sparkle, 2);
 	syFieldActorSetMoveTargetFX(sparkle, toFIXED(231), 0, toFIXED(624));
-	fdActorStartScript(sparkle, KolimaForestEntrance_SparkleScript);
+	fdActorStartScript(sparkle, KolimaForestEntranceSparkleScript);
 }
 
 #include "shared/kolima_blink.c"
@@ -1178,7 +1178,7 @@ static Sint32 scKolimaForestEntranceBurstOnPsynergyField(ACTOR *sparkle)
 {
 	FIXED x;
 
-	if(!(KolimaForestEntrance_MiaInParty != 0
+	if(!(KolimaForestEntranceMiaInParty != 0
 			   ? (x = sparkle->x.fixed,
 					 (x > toFIXED(192) && x < toFIXED(274) &&
 						 sparkle->z.fixed > toFIXED(566) &&
@@ -1201,21 +1201,21 @@ static Sint32 scKolimaForestEntranceBurstOnPsynergyField(ACTOR *sparkle)
 	sySndPlay(SE_DRIP);
 	/* UB: this function returns void; call it through its declared type. */
 #if FIX_FUNCTION_SIGNATURES
-	fdActorStartScript(sparkle, Kolima_SparkleBurstScript);
+	fdActorStartScript(sparkle, KolimaSparkleBurstScript);
 #else
 	((Sint32 (*)())fdActorStartScript)(
-		(Sint32)sparkle, (Sint32)Kolima_SparkleBurstScript);
+		(Sint32)sparkle, (Sint32)KolimaSparkleBurstScript);
 #endif
-	KolimaForestEntrance_PsynergyFieldHit = 1;
+	KolimaForestEntrancePsynergyFieldHit = 1;
 	return 0;
 }
 
 #include "shared/kolima_curse_dust.c"
-Sint32 KolimaForestEntrance_PsynergyFieldHit BSS_DATA;
-Sint32 KolimaForestEntrance_MiaInParty		 BSS_DATA;
-Sint32 KolimaForestEntrance_SparkleSoundOn	 BSS_DATA;
+Sint32 KolimaForestEntrancePsynergyFieldHit BSS_DATA;
+Sint32 KolimaForestEntranceMiaInParty		BSS_DATA;
+Sint32 KolimaForestEntranceSparkleSoundOn	BSS_DATA;
 
-/* Each frame the Psynergy fields flicker: two show on even frames and two on
+/* Each tick the Psynergy fields flicker: two show on even ticks and two on
    odd, the hidden ones lifted 500 pixels out of sight. */
 static void scKolimaForestEntranceFlickerPsynergyFields(void)
 {
@@ -1224,7 +1224,7 @@ static void scKolimaForestEntranceFlickerPsynergyFields(void)
 	p = fdActorGet(ACTOR_LEADER_PSYNERGY_FIELD);
 	if(p != NULL) {
 		p->motionFlg = 0;
-		if((FrameCount & 1) == 0) {
+		if((TickCount & 1) == 0) {
 			p->y.fixed = 0;
 		} else {
 			p->y.fixed = toFIXED(500);
@@ -1233,7 +1233,7 @@ static void scKolimaForestEntranceFlickerPsynergyFields(void)
 	p = fdActorGet(ACTOR_IVAN_PSYNERGY_FIELD);
 	if(p != NULL) {
 		p->motionFlg = 0;
-		if((FrameCount & 1) != 0) {
+		if((TickCount & 1) != 0) {
 			p->y.fixed = 0;
 		} else {
 			p->y.fixed = toFIXED(500);
@@ -1242,7 +1242,7 @@ static void scKolimaForestEntranceFlickerPsynergyFields(void)
 	p = fdActorGet(ACTOR_MIA_PSYNERGY_FIELD);
 	if(p != NULL) {
 		p->motionFlg = 0;
-		if((FrameCount & 1) == 0) {
+		if((TickCount & 1) == 0) {
 			p->y.fixed = 0;
 		} else {
 			p->y.fixed = toFIXED(500);
@@ -1251,7 +1251,7 @@ static void scKolimaForestEntranceFlickerPsynergyFields(void)
 	p = fdActorGet(ACTOR_GARET_PSYNERGY_FIELD);
 	if(p != NULL) {
 		p->motionFlg = 0;
-		if((FrameCount & 1) != 0) {
+		if((TickCount & 1) != 0) {
 			p->y.fixed = 0;
 		} else {
 			p->y.fixed = toFIXED(500);
@@ -1262,7 +1262,7 @@ static void scKolimaForestEntranceFlickerPsynergyFields(void)
 #include "shared/pushed_actor_tables.c"
 
 /* Garet, Ivan and Mia walk to their places beside the leader. */
-Sint32 KolimaForestEntrance_GaretAction[] = {
+Sint32 KolimaForestEntranceGaretAction[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(234, 0, 576),
 	SC_SYNC,
@@ -1271,7 +1271,7 @@ Sint32 KolimaForestEntrance_GaretAction[] = {
 	SC_END,
 };
 
-Sint32 KolimaForestEntrance_IvanAction[] = {
+Sint32 KolimaForestEntranceIvanAction[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(234, 0, 623),
 	SC_SYNC,
@@ -1280,7 +1280,7 @@ Sint32 KolimaForestEntrance_IvanAction[] = {
 	SC_END,
 };
 
-Sint32 KolimaForestEntrance_MiaAction[] = {
+Sint32 KolimaForestEntranceMiaAction[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(211, 0, 602),
 	SC_SYNC,
@@ -1291,8 +1291,8 @@ Sint32 KolimaForestEntrance_MiaAction[] = {
 
 #include "shared/kolima_squash.c"
 
-/* A field grows from a tenth of its size over 70 frames. */
-Sint32 KolimaForestEntrance_PsynergyFieldGrowAction[] = {
+/* A field grows from a tenth of its size over 70 ticks. */
+Sint32 KolimaForestEntrancePsynergyFieldGrowAction[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1) / 10),
 	SC_SET(SW_SCALE_Y, toFIXED(1) / 10),
 	SC_WAIT(1),
@@ -1305,8 +1305,8 @@ Sint32 KolimaForestEntrance_PsynergyFieldGrowAction[] = {
 	SC_END,
 };
 
-/* A field sinks and shrinks away over 90 frames. */
-Sint32 KolimaForestEntrance_PsynergyFieldShrinkAction[] = {
+/* A field sinks and shrinks away over 90 ticks. */
+Sint32 KolimaForestEntrancePsynergyFieldShrinkAction[] = {
 	SC_ANIMATION(1),
 	SC_ADD(SW_Z, -toFIXED(1) / 10),
 	SC_ADD(SW_SCALE_X, -toFIXED(3) / 200),
@@ -1318,7 +1318,7 @@ Sint32 KolimaForestEntrance_PsynergyFieldShrinkAction[] = {
 	SC_END,
 };
 
-Sint32 KolimaForestEntrance_GroundSparkleAction[] = {
+Sint32 KolimaForestEntranceGroundSparkleAction[] = {
 	SC_SET(SW_SCALE_X, toFIXED(3) / 4),
 	SC_SET(SW_SCALE_Y, toFIXED(3) / 4),
 	SC_SET(SW_COLLISION, 0),
@@ -1328,7 +1328,7 @@ Sint32 KolimaForestEntrance_GroundSparkleAction[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-SCENE_ENTRANCE KolimaForestEntrance_Entrances[] = {
+SCENE_ENTRANCE KolimaForestEntranceEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 384, 0, 312, FACING_NORTH, 0, -1, -1,
 		-1, -1, 0},
 	{KOLIMA_FOREST_ENTRANCE_FROM_KOLIMA_FOREST_GLADE, CONDITION_ALWAYS, 24, 0,
@@ -1340,7 +1340,7 @@ SCENE_ENTRANCE KolimaForestEntrance_Entrances[] = {
 
 /* On into the forest (SceneId_KolimaForestGlade) and out to the World Map
    (SceneId_WorldMap), with two exits no cue uses back into this scene. */
-Uint32 KolimaForestEntrance_Exits[] = {
+Uint32 KolimaForestEntranceExits[] = {
 	SCENE_EXITS(KolimaForestEntrance),
 	SCENE_EXIT(KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE, KolimaForestGlade,
 		KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_ENTRANCE),
@@ -1356,7 +1356,7 @@ Uint32 KolimaForestEntrance_Exits[] = {
 /* Garet, Ivan and Mia for the curse; the three logs; Tret and Laurel; the four
    Psynergy fields; and the five ground sparkles. */
 /* clang-format off */
-ACTOR_PLACE KolimaForestEntrance_ActorPlacements[] = {
+ACTOR_PLACE KolimaForestEntranceActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
@@ -1393,7 +1393,7 @@ ACTOR_PLACE KolimaForestEntrance_ActorPlacements[] = {
 };
 /* clang-format on */
 
-CUE KolimaForestEntrance_Cues[] = {
+CUE KolimaForestEntranceCues[] = {
 	{CUE_STEP | STEP_CUE_FLAG_WALKING, 10, CONDITION_ALWAYS,
 		SCRIPT_REF(scKolimaForestEntrancePushLog)},
 	{STEP_CUE_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS,
@@ -1404,14 +1404,14 @@ CUE KolimaForestEntrance_Cues[] = {
 	{CUE_TABLE_END},
 };
 
-Sint32 KolimaForestEntrance_SparkleScript[] = {
+Sint32 KolimaForestEntranceSparkleScript[] = {
 	SC_CALL(scFieldEffectStretchUntilArrived),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 #include "shared/kolima_sparkle_burst_script.c"
 
-Sint32 Kolima_CurseDustScript[] = {
+Sint32 KolimaCurseDustScript[] = {
 	SC_ADD(SW_Y, -toFIXED(2)),
 	SC_CALL(scKolimaFlickerCurseDust),
 	SC_WAIT(1),

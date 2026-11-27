@@ -16,7 +16,7 @@ typedef struct MAP_GRID_LAYER_SCROLL {
 	FIXED ofsX, ofsY; /* 16.16 fixed-point pixels */
 	/* 16.16 fixed point, toFIXED(1) moves with the view */
 	FIXED  scaleX, scaleY;
-	FIXED  speedX, speedY; /* 16.16 fixed-point pixels per frame */
+	FIXED  speedX, speedY; /* 16.16 fixed-point pixels per tick */
 	FIXED  phaseX, phaseY; /* 16.16 fixed-point pixels */
 	Uint16 maskX, maskY;   /* a drifting layer's wrap mask, in 8-pixel tiles */
 	MAP_GRID_METATILE
@@ -30,7 +30,7 @@ typedef struct MAP_GRID_SCROLL_STATE {
 	   fdCameraFollowActor points it at the camera's position. */
 	FIXED *origin;
 	/* Screen shake amplitudes in 16.16 fixed-point pixels, and the 16.16 factor
-	   that scales them each frame. */
+	   that scales them each tick. */
 	FIXED  shakeX, shakeY, shakeDecay;
 	Uint8 *markers; /* the layout's treasure spots, for fdPlaceTreasureSpots */
 	Uint16 flg;		/* REG_DISPCNT bits: sprites and the BG1 to BG3 shown */
@@ -77,7 +77,7 @@ typedef struct BG_SCROLL {
 } BG_SCROLL;
 
 /* BG0 to BG3's scroll offsets, which the VBlank handler copies to REG_BG0HOFS
-   to REG_BG3VOFS in the VBlank after sySynch() sets FrameRenderPending. */
+   to REG_BG3VOFS in the VBlank after sySynch() sets TickRenderPending. */
 extern BG_SCROLL BgScrollWork[];
 
 #endif

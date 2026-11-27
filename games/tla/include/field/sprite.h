@@ -38,7 +38,7 @@ typedef enum SPR_COL_MODE {
 } SPR_COL_MODE;
 
 /* Passed to fdActorConfigureSprCol in place of a SPR_COL_MODE: the actor blinks
-   white every few frames (fdActorUpdateBlink) until it is given a mode
+   white every few ticks (fdActorUpdateBlink) until it is given a mode
    again. */
 #define SPRITE_COLOR_BLINK 0x100
 
@@ -58,8 +58,8 @@ typedef enum SPR_COL_MODE {
    and timer. */
 typedef struct SPR_ANIMATION {
 	Sint16 anmId; /* the sprite id whose metadata and pictures it uses */
-	/* Time left on the current picture in sixteenths of a frame, read signed:
-	   each timed command adds its argument times 16, each frame takes off
+	/* Time left on the current picture in sixteenths of a tick, read signed:
+	   each timed command adds its argument times 16, each tick takes off
 	   step. */
 	Uint16 tmr;
 	/* The facing table its pictures follow (from the metadata, or animation
@@ -74,7 +74,7 @@ typedef struct SPR_ANIMATION {
 	Uint8 **scripts;
 	Uint8  *script;	   /* the running script; null once command 239 ends it */
 	Uint8	scriptOfs; /* byte offset of the next command in script */
-	Uint8	step;	   /* taken off timer each frame; ANIM_STEP_NORMAL */
+	Uint8	step;	   /* taken off timer each tick; ANIM_STEP_NORMAL */
 	Uint8
 		/* picture shown, pictureBase plus the facing offset; 255 none */
 		  picture;
@@ -221,20 +221,20 @@ typedef struct PLACED_SPR {
 } PLACED_SPR;
 
 /* SPR_ANIMATION.step at normal speed, as fdActorSetAnimationSpeed sets it:
-   a timed command's frames run as written. */
+   a timed command's ticks run as written. */
 #define ANIM_STEP_NORMAL 16
 
 /* Animation script commands. */
 typedef enum ANIMATION_COMMAND {
 	ANIMCMD_END = 239,		/* blank the layer and stop its script */
 	ANIMCMD_SET_KIND = 240, /* use facing table `arg` */
-	ANIMCMD_HOLD = 241,		/* stay on this command and frame for good */
+	ANIMCMD_HOLD = 241,		/* stay on this command and tick for good */
 	ANIMCMD_OFFSET_Y = 242, /* set the sprite's offsetY to `arg` */
 	ANIMCMD_OFFSET_X = 243, /* set the sprite's offsetX to `arg` */
 	/* The commands from here to ANIMCMD_UNUSED_LAST no script uses, skipped
 	   (ANIMCMD_WAIT lies among them); 251 is not one: it shows as a picture. */
 	ANIMCMD_UNUSED_FIRST = ANIMCMD_OFFSET_X + 1,
-	ANIMCMD_WAIT = 245, /* keep the current frame `arg` frames longer */
+	ANIMCMD_WAIT = 245, /* keep the current tick `arg` ticks longer */
 	ANIMCMD_UNUSED_LAST = 250,
 	ANIMCMD_SOUND = 252, /* play sound `arg` */
 	ANIMCMD_JUMP = 253,	 /* continue at script position `arg` */
@@ -252,7 +252,7 @@ typedef enum ACTOR_ANIMATION {
 	ANIM_WALK = 2,
 	ANIM_NOD = 3,
 	ANIM_SHAKE_HEAD = 4,
-	/* Running, leaning forward, four frames a step to the walk's six. This and
+	/* Running, leaning forward, four ticks a step to the walk's six. This and
 	   the leader's other poses below are as the leader's sprite draws them. */
 	ANIM_LEADER_RUN = 5,
 	ANIM_LEADER_SPRING = 6, /* leaning back for a moment before a jump */
@@ -287,7 +287,7 @@ typedef enum ACTOR_ANIMATION {
 	ANIM_CAST_PSYNERGY_START = 20,
 	ANIM_CAST_PSYNERGY_END = 21,
 	ANIM_LEADER_LEAN_BACK = 22, /* leaning back, his head thrown back */
-	/* The arrivals and leavings of the animated exits, each four frames of the
+	/* The arrivals and leavings of the animated exits, each four ticks of the
 	   leader turning: an arrival grows from a small figure seen side-on to full
 	   size facing the player, a leaving turns from his back to side-on as he
 	   shrinks and is then hidden. */
@@ -338,10 +338,10 @@ typedef enum ACTOR_ANIMATION {
 /* SPRITE_PARTICLE's animations. */
 typedef enum PARTICLE_ANIMATION {
 	ANIM_PARTICLE_FADE = 2, /* its glow shrinking to a speck and gone */
-	/* Its full glow and the next size down in turn, 3 frames each. */
+	/* Its full glow and the next size down in turn, 3 ticks each. */
 	ANIM_PARTICLE_TWINKLE = 7,
-	/* Its swells, from a speck to its full glow, held 32 frames, and back:
-	   slowly, 12 frames a step, or quickly, 6. Jupiter Lighthouse's sparks and
+	/* Its swells, from a speck to its full glow, held 32 ticks, and back:
+	   slowly, 12 ticks a step, or quickly, 6. Jupiter Lighthouse's sparks and
 	   the motes of light inside Air's Rock take turns at them. */
 	ANIM_PARTICLE_SLOW_SWELL = 9,
 	ANIM_PARTICLE_QUICK_SWELL = 10

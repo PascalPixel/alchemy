@@ -10,10 +10,10 @@ UNUSED void btEffectInitTilemapAndFlushQueue(void)
 	btEffectEndCanvasLayer();
 }
 
-#define CYBELE_FRAMES		 366
-/* The first target lands on its spreading ring, sixteen frames after it is
+#define CYBELE_TICKS		366
+/* The first target lands on its spreading ring, sixteen ticks after it is
    dropped; the others follow. */
-#define CYBELE_LANDING_FRAME 302
+#define CYBELE_LANDING_TICK 302
 
 /* Where the blast pictures start in state->sheet, after the yellow ring's. */
 #define CYBELE_BLAST_PICTURES	 5760
@@ -24,10 +24,10 @@ UNUSED void btEffectInitTilemapAndFlushQueue(void)
 #define CYBELE_FIRST_SPARK		 16 /* the first spark in state->particles */
 #define CYBELE_FIRST_THORN		 32 /* the first thorn in state->particles */
 #define CYBELE_FIRST_CHIP		 16 /* the first chip in state->particles */
-#define CYBELE_DUST_PICTURE		 6	/* the dust cloud in Cybele_BlastPictures */
+#define CYBELE_DUST_PICTURE		 6	/* the dust cloud in CybeleBlastPictures */
 #define CYBELE_SPRITES			 8
 /* The left and right sprites of Cybele's middle row, her mouth, which take the
-   poses of Cybele_ObjectPoses as it opens and shuts. */
+   poses of CybeleObjectPoses as it opens and shuts. */
 #define CYBELE_MOUTH_LEFT		 3
 #define CYBELE_MOUTH_RIGHT		 4
 /* How far right of the screen's left edge the canvas shows until the chips fly,
@@ -36,30 +36,30 @@ UNUSED void btEffectInitTilemapAndFlushQueue(void)
 /* The order the canvas dissolves in: shuffled runs of the canvas's columns, row
    y taking run y % CYBELE_DISSOLVE_RUNS. */
 #define CYBELE_DISSOLVE_RUNS	 8
-/* The dissolve clears CYBELE_DISSOLVE_PIXELS pixels a frame from each of the
+/* The dissolve clears CYBELE_DISSOLVE_PIXELS pixels a tick from each of the
    CYBELE_DISSOLVE_BAND rows it moves down the canvas. */
 #define CYBELE_DISSOLVE_BAND	 32
 #define CYBELE_DISSOLVE_PIXELS	 4
-/* The vines are drawn for CYBELE_VINE_FRAMES frames from the chips' first,
-   growing for the first CYBELE_VINE_GROW_FRAMES. */
-#define CYBELE_VINE_FRAMES		 96
-#define CYBELE_VINE_GROW_FRAMES	 80
+/* The vines are drawn for CYBELE_VINE_TICKS ticks from the chips' first,
+   growing for the first CYBELE_VINE_GROW_TICKS. */
+#define CYBELE_VINE_TICKS		 96
+#define CYBELE_VINE_GROW_TICKS	 80
 /* The vines drawn, of the CYBELE_VINES set out. */
 #define CYBELE_VINES_DRAWN		 10
 /* The chips that fly, from the first after the sparks. */
 #define CYBELE_FLYING_CHIPS		 32
 #define CYBELE_FIRST_FLYING_CHIP 32
 /* The sparks round each target, from CYBELE_FIRST_SPARK, flashing from the
-   vines' first frame to CYBELE_SPARKS_END frames after it. */
+   vines' first tick to CYBELE_SPARKS_END ticks after it. */
 #define CYBELE_TARGET_SPARKS	 6
 #define CYBELE_SPARKS_END		 172
 /* Each target's dust puffs, from state->particles[target * CYBELE_TARGET_DUST]:
    set out a fifth of a turn apart (rounded up), the first
-   CYBELE_TARGET_DUST_DRAWN drawn until their CYBELE_DUST_LAST_FRAME. */
+   CYBELE_TARGET_DUST_DRAWN drawn until their CYBELE_DUST_LAST_TICK. */
 #define CYBELE_TARGET_DUST		 10
 #define CYBELE_TARGET_DUST_DRAWN 5
 #define CYBELE_DUST_SPREAD		 ((TRIG_TURN + 4) / 5)
-#define CYBELE_DUST_LAST_FRAME	 26
+#define CYBELE_DUST_LAST_TICK	 26
 
 /* The vine pictures in the thorn vine sprite sheet, below a tip at 0; the
    flowers, thorns and sparks follow. */
@@ -90,7 +90,7 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	Uint8				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	FIXED				 cybeleX = toFIXED(128);
 	FIXED				 height;
 	FIXED				 speed;
@@ -168,28 +168,27 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 
 	height = -toFIXED(64);
 	speed = 0;
-	for(frame = 0; frame != CYBELE_FRAMES; frame++) {
+	for(frm = 0; frm != CYBELE_TICKS; frm++) {
 		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
 
 		/* A or B skips the vines straight to the drop. */
-		if((PerWork.repeat & (KEY_A | KEY_B)) != 0 && frame > 190 &&
-			frame <= 285) {
+		if((PerWork.repeat & (KEY_A | KEY_B)) != 0 && frm > 190 && frm <= 285) {
 			syWordsClearEntry(canvas, CANVAS_BYTES);
-			frame = 286;
+			frm = 286;
 		}
-		if(frame == 224)
+		if(frm == 224)
 			state->transferMode = CANVAS_COPY;
 		EFFECT_VIEW_FROM_CAMERA(camera);
 		/* Cybele lands; the screen shakes and the targets flinch. */
-		if(frame == 31) {
+		if(frm == 31) {
 			state->shakeFrm = 8;
 			sySndPlayStub(SE_GATE_MOVE);
 			EFFECT_FOR_EACH_TARGET(i, args)
 				btMotionApplyKnockbackStub(args->tgts[i], KNOCKBACK_BOUNCE);
 		}
-		if(frame == 72)
+		if(frm == 72)
 			sySndPlayStub(SE_WHOOSH);
-		if(frame == 140)
+		if(frm == 140)
 			sySndPlayStub(SE_SWITCH_MECHANISM);
 
 		/* Cybele settles, and her mouth opens as the thorns fly and shuts
@@ -199,31 +198,31 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 		if(height > toFIXED(64))
 			height = toFIXED(64);
 		btEffectPlaceFormationSprs(SUMMON_FORMATION_CYBELE, cybeleX, height);
-		if(frame >= 48 && frame <= 96) {
-			Sint32 pose = (frame - 48) / 24 % 3;
+		if(frm >= 48 && frm <= 96) {
+			Sint32 pose = (frm - 48) / 24 % 3;
 
 			fdSprStartAnimationStub(
-				state->sprs[CYBELE_MOUTH_LEFT], Cybele_ObjectPoses[pose * 2]);
+				state->sprs[CYBELE_MOUTH_LEFT], CybeleObjectPoses[pose * 2]);
 			fdSprStartAnimationStub(state->sprs[CYBELE_MOUTH_RIGHT],
-				Cybele_ObjectPoses[pose * 2 + 1]);
+				CybeleObjectPoses[pose * 2 + 1]);
 		}
 
 		/* Thorns fly from her mouth to the ground. */
-		if(frame >= 72 && frame <= 127) {
+		if(frm >= 72 && frm <= 127) {
 			for(i = 0; i != CYBELE_THORNS; i++) {
 				PARTICLE *thorn = &state->particles[CYBELE_FIRST_THORN + i];
 
-				if(frame >= i + 72 && thorn->y < toFIXED(104)) {
-					Sint32 pictureIndex = (frame + i) / 4 % 5;
+				if(frm >= i + 72 && thorn->y < toFIXED(104)) {
+					Sint32 pictureIdx = (frm + i) / 4 % 5;
 					Sint32 x = FIXED_INTEGER_PART(thorn->x);
 					Sint32 y = FIXEDtoINT(thorn->y);
 					Uint8 *picture =
-						state->sheet + Cybele_ThornPictures[pictureIndex];
-					Uint32 width = Cybele_ThornWidths[pictureIndex];
+						state->sheet + CybeleThornPictures[pictureIdx];
+					Uint32 width = CybeleThornWidths[pictureIdx];
 					Uint32 tall;
 
 					x -= width >> 1;
-					tall = Cybele_ThornHeights[pictureIndex];
+					tall = CybeleThornHeights[pictureIdx];
 					y -= tall >> 1;
 					draw[0](canvas, picture, x, y, width, tall);
 					btParticleAdvanceWithGravity2D(
@@ -231,7 +230,7 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 				}
 			}
 		}
-		if(frame == 128) {
+		if(frm == 128) {
 			for(i = 0; i != CYBELE_CHIPS; i++) {
 				PARTICLE *chip = &state->particles[CYBELE_FIRST_CHIP + i];
 
@@ -245,11 +244,11 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* Grow the vines, shaking the screen while they grow. */
-		phase = frame - 128;
-		if(phase >= 0 && phase <= CYBELE_VINE_FRAMES) {
+		phase = frm - 128;
+		if(phase >= 0 && phase <= CYBELE_VINE_TICKS) {
 			rise = phase;
-			if(rise > CYBELE_VINE_GROW_FRAMES)
-				rise = CYBELE_VINE_GROW_FRAMES;
+			if(rise > CYBELE_VINE_GROW_TICKS)
+				rise = CYBELE_VINE_GROW_TICKS;
 			else
 				state->shakeFrm = 2;
 			for(i = 0; i != CYBELE_VINES_DRAWN; i++) {
@@ -295,39 +294,38 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 					if((i & 1) != 0) {
 						Sint32 y = ((vine->y - top) & 127) - 16;
 						Sint32 kind = i % 3;
-						Sint32 full = Cybele_FlowerSizes[kind];
+						Sint32 full = CybeleFlowerSizes[kind];
 						Sint32 rows = full;
 
 						if(y + rows > vine->y)
 							rows -= y + rows - vine->y;
 						if(rows > 0)
 							draw[i & 1](canvas,
-								state->sheet + Cybele_FlowerPictures[kind],
+								state->sheet + CybeleFlowerPictures[kind],
 								vine->x + 8, y, full, rows);
 					}
 				}
 			}
 		}
 		/* Chips fly up. */
-		if(phase >= 0 && phase < CYBELE_VINE_FRAMES) {
+		if(phase >= 0 && phase < CYBELE_VINE_TICKS) {
 			for(i = 0; i != CYBELE_FLYING_CHIPS; i++) {
 				PARTICLE *chip =
 					&state->particles[CYBELE_FIRST_FLYING_CHIP + i];
 
 				if(chip->variant >= 0) {
-					Sint32 pictureIndex = i % 5;
+					Sint32 pictureIdx = i % 5;
 
 					draw[0](canvas,
-						state->sheet + Cybele_ChipPictures[pictureIndex],
+						state->sheet + CybeleChipPictures[pictureIdx],
 						FIXED_INTEGER_PART(chip->x),
 						FIXED_INTEGER_PART(chip->y),
-						Cybele_ChipWidths[pictureIndex],
-						Cybele_ChipHeights[pictureIndex]);
+						CybeleChipWidths[pictureIdx],
+						CybeleChipHeights[pictureIdx]);
 					chip->x += chip->velX;
 					chip->y += chip->velY;
 					chip->velY += toFIXED(1) / 4;
-					if((chip->y < 0 || chip->y > toFIXED(120)) &&
-						frame <= 159) {
+					if((chip->y < 0 || chip->y > toFIXED(120)) && frm <= 159) {
 						chip->x = toFIXED(syRandom() % 96);
 						chip->y = INTtoFIXED((syRandom() & 7) + 88);
 						chip->velX = ((syRandom() & 255) - 128) << 11;
@@ -339,7 +337,7 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The colours fade to grey. */
-		if(frame >= 224 && frame <= 247 && (frame & 3) == 0) {
+		if(frm >= 224 && frm <= 247 && (frm & 3) == 0) {
 			Uint16 *color = (Uint16 *)BG_PLTT;
 
 			for(i = 0; i != SHEET_PALETTE_COLORS; i++) {
@@ -367,11 +365,11 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 		/* Six sparks keep flashing around each target's body. */
 		if(phase >= 0 && phase <= CYBELE_SPARKS_END) {
 			EFFECT_FOR_EACH_TARGET(i, args) {
-				MOTION_OBJECT *target = btObjectGetStub(args->tgts[i])->obj;
+				MOTION_OBJECT *tgt = btObjectGetStub(args->tgts[i])->obj;
 
-				point[0] = target->x;
-				point[1] = target->y;
-				point[2] = target->z;
+				point[0] = tgt->x;
+				point[1] = tgt->y;
+				point[2] = tgt->z;
 				btEffectPosProjectPoint(point, &screen);
 				for(j = 0; j != CYBELE_TARGET_SPARKS; j++) {
 					PARTICLE *spark = &state->particles[CYBELE_FIRST_SPARK +
@@ -383,23 +381,23 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 					}
 					if(spark->variant >= 0 && spark->variant <= 4) {
 						Uint8 *picture =
-							state->sheet + Cybele_SparkPictures[spark->variant];
-						Uint32 size = Cybele_SparkSizes[spark->variant];
+							state->sheet + CybeleSparkPictures[spark->variant];
+						Uint32 size = CybeleSparkSizes[spark->variant];
 						Uint32 half = size >> 1;
 
 						draw[0](canvas, picture, spark->x - half,
 							spark->y - half, size, size);
 					}
 					spark->variant++;
-					if(frame <= 199 && spark->variant == 5)
+					if(frm <= 199 && spark->variant == 5)
 						spark->variant = -(syRandom() & 7);
 				}
 			}
 		}
 
 		/* The canvas dissolves pixel by pixel from the top. */
-		if(frame > 232) {
-			Sint32 row = frame * 2 - 496;
+		if(frm > 232) {
+			Sint32 row = frm * 2 - 496;
 
 			for(i = 0; i != CYBELE_DISSOLVE_BAND; i++) {
 				for(j = 0; j != CYBELE_DISSOLVE_PIXELS; j++) {
@@ -431,18 +429,18 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The vines lift the targets. */
-		if(frame >= 161 && frame <= 223) {
+		if(frm >= 161 && frm <= 223) {
 			EFFECT_FOR_EACH_TARGET(i, args) {
-				if(frame > i * 8 + 160) {
+				if(frm > i * 8 + 160) {
 					BATTLE_OBJECT *slot = btObjectGetStub(args->tgts[i]);
-					MOTION_OBJECT *target = slot->obj;
+					MOTION_OBJECT *tgt = slot->obj;
 					void		  *record;
 					Sint32		   n;
 
-					target->y += toFIXED(8);
-					if(target->y > toFIXED(128))
-						target->y = toFIXED(128);
-					target->verticalMotionStrength = 0;
+					tgt->y += toFIXED(8);
+					if(tgt->y > toFIXED(128))
+						tgt->y = toFIXED(128);
+					tgt->verticalMotionStrength = 0;
 					for(n = 0; (record = btActorGetSprStub(slot->obj, n)) != 0;
 						n++)
 						fdSprStartAnimationStub(record, POSE_DAMAGE);
@@ -451,13 +449,13 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 		}
 		/* The targets drop. */
 		EFFECT_FOR_EACH_TARGET(i, args) {
-			if(frame == i * 5 + CYBELE_LANDING_FRAME - 16) {
-				MOTION_OBJECT *target = btObjectGetStub(args->tgts[i])->obj;
+			if(frm == i * 5 + CYBELE_LANDING_TICK - 16) {
+				MOTION_OBJECT *tgt = btObjectGetStub(args->tgts[i])->obj;
 
-				target->y = toFIXED(96);
-				target->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
+				tgt->y = toFIXED(96);
+				tgt->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
 			}
-			if(frame == i * 5 + CYBELE_LANDING_FRAME) {
+			if(frm == i * 5 + CYBELE_LANDING_TICK) {
 				btEffectTintBattler(
 					args->tgts[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 8);
 				sySndPlayStub(SE_HEAVY_IMPACT);
@@ -465,7 +463,7 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		if(frame == CYBELE_LANDING_FRAME) {
+		if(frm == CYBELE_LANDING_TICK) {
 			EFFECT_RELEASE_BLITTERS();
 			btResourceLoadAndDecompress(
 				RESOURCE_YELLOW_RING_SHEET, state->sheet, 1, 0);
@@ -486,13 +484,13 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 			EFFECT_START_TRANSFER(
 				state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 			EFFECT_FOR_EACH_TARGET(i, args) {
-				MOTION_OBJECT *target = btObjectGetStub(args->tgts[i])->obj;
+				MOTION_OBJECT *tgt = btObjectGetStub(args->tgts[i])->obj;
 
 				for(j = 0; j != CYBELE_TARGET_DUST; j++) {
 					PARTICLE *dust =
 						&state->particles[i * CYBELE_TARGET_DUST + j];
 
-					SET_POSITION(dust, target->x, toFIXED(20), target->z);
+					SET_POSITION(dust, tgt->x, toFIXED(20), tgt->z);
 					dust->velX = sySin(j * CYBELE_DUST_SPREAD) * 4;
 					dust->velY = (syRandom() & 0x7fff) + toFIXED(1);
 					dust->velZ = syCos(j * CYBELE_DUST_SPREAD) * 4;
@@ -501,33 +499,32 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		/* Each target lands on a spreading ring. */
-		if(frame >= CYBELE_LANDING_FRAME) {
+		if(frm >= CYBELE_LANDING_TICK) {
 			EFFECT_FOR_EACH_TARGET(i, args) {
-				Sint32 start = i * 4 + CYBELE_LANDING_FRAME;
+				Sint32 start = i * 4 + CYBELE_LANDING_TICK;
 
-				if(frame >= start &&
-					frame < i * 4 + CYBELE_LANDING_FRAME + 12) {
-					Sint32		   pictureIndex = (frame - start) / 2;
-					MOTION_OBJECT *target = btObjectGetStub(args->tgts[i])->obj;
+				if(frm >= start && frm < i * 4 + CYBELE_LANDING_TICK + 12) {
+					Sint32		   pictureIdx = (frm - start) / 2;
+					MOTION_OBJECT *tgt = btObjectGetStub(args->tgts[i])->obj;
 
-					point[0] = target->x;
+					point[0] = tgt->x;
 					point[1] = 0;
-					point[2] = target->z;
+					point[2] = tgt->z;
 					btEffectPosProjectPoint(point, &screen);
 					screen.x >>= 1;
 					draw[0](canvas,
 						state->sheet +
-							pictureIndex * PICTURE_BYTES(CYBELE_RING_HALF),
+							pictureIdx * PICTURE_BYTES(CYBELE_RING_HALF),
 						screen.x - CYBELE_RING_HALF_WIDTH,
 						screen.y - CYBELE_RING_HALF_HEIGHT,
 						CYBELE_RING_HALF_WIDTH, CYBELE_RING_HALF_HEIGHT);
 					draw[1](canvas,
 						state->sheet +
-							pictureIndex * PICTURE_BYTES(CYBELE_RING_HALF),
+							pictureIdx * PICTURE_BYTES(CYBELE_RING_HALF),
 						screen.x, screen.y - CYBELE_RING_HALF_HEIGHT,
 						CYBELE_RING_HALF_WIDTH, CYBELE_RING_HALF_HEIGHT);
 				}
-				if(frame >= start + 6) {
+				if(frm >= start + 6) {
 					for(j = 0; j != CYBELE_TARGET_DUST_DRAWN; j++) {
 						PARTICLE *dust =
 							&state->particles[i * CYBELE_TARGET_DUST + j];
@@ -535,13 +532,13 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 						btEffectPosProjectPoint(&dust->x, &screen);
 						screen.x >>= 1;
 						if(dust->variant >= 0 &&
-							dust->variant <= CYBELE_DUST_LAST_FRAME) {
-							Sint32 pictureIndex = CYBELE_DUST_PICTURE;
-							Uint8 *source = state->sheet +
-								Cybele_BlastPictures[pictureIndex];
-							Uint32 size = Cybele_BlastSizes[pictureIndex];
+							dust->variant <= CYBELE_DUST_LAST_TICK) {
+							Sint32 pictureIdx = CYBELE_DUST_PICTURE;
+							Uint8 *src =
+								state->sheet + CybeleBlastPictures[pictureIdx];
+							Uint32 size = CybeleBlastSizes[pictureIdx];
 
-							draw[0](canvas, source, screen.x - (size >> 1),
+							draw[0](canvas, src, screen.x - (size >> 1),
 								screen.y - (size >> 1), size, size);
 						}
 						btParticleAdvanceWithGravity2D(
@@ -552,13 +549,13 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		if(frame <= 127)
+		if(frm <= 127)
 			btCameraShake(4, 16);
-		else if(frame < CYBELE_LANDING_FRAME)
+		else if(frm < CYBELE_LANDING_TICK)
 			btCameraShake(4, 4);
 		else
 			btCameraShake(4, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	syCloseEvent(btEffectTransferCanvas);
@@ -570,8 +567,8 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 	btEffectEndCanvasLayer();
 }
 
-#undef CYBELE_FRAMES
-#undef CYBELE_LANDING_FRAME
+#undef CYBELE_TICKS
+#undef CYBELE_LANDING_TICK
 #undef CYBELE_BLAST_PICTURES
 #undef CYBELE_VINES
 #undef CYBELE_SPARKS
@@ -588,8 +585,8 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 #undef CYBELE_DISSOLVE_RUNS
 #undef CYBELE_DISSOLVE_BAND
 #undef CYBELE_DISSOLVE_PIXELS
-#undef CYBELE_VINE_FRAMES
-#undef CYBELE_VINE_GROW_FRAMES
+#undef CYBELE_VINE_TICKS
+#undef CYBELE_VINE_GROW_TICKS
 #undef CYBELE_VINES_DRAWN
 #undef CYBELE_FLYING_CHIPS
 #undef CYBELE_FIRST_FLYING_CHIP
@@ -598,7 +595,7 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 #undef CYBELE_TARGET_DUST
 #undef CYBELE_TARGET_DUST_DRAWN
 #undef CYBELE_DUST_SPREAD
-#undef CYBELE_DUST_LAST_FRAME
+#undef CYBELE_DUST_LAST_TICK
 #undef CYBELE_VINE_WIDTH
 #undef CYBELE_VINE_TIP_HEIGHT
 #undef CYBELE_VINE_STEM_HEIGHT

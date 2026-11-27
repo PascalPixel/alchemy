@@ -77,23 +77,23 @@
 #include "scene/catch_nut.h"
 #include "text/msg_ids.h"
 
-extern Sint32		  MogallForest_ActorScript[];
-extern SCENE_ENTRANCE MogallForestSign_Entrances[];
-extern SCENE_ENTRANCE MogallForestQuartz_Entrances[];
-extern SCENE_ENTRANCE MogallForestKillerApe_Entrances[];
-extern SCENE_ENTRANCE MogallForestSidePaths_Entrances[];
-extern Uint32		  MogallForest_Exits[];
-extern ACTOR_PLACE	  MogallForestSign_ActorPlacements[];
-extern ACTOR_PLACE	  MogallForestQuartz_ActorPlacements[];
-extern ACTOR_PLACE	  MogallForestKillerApe_ActorPlacements[];
-extern ACTOR_PLACE	  MogallForestSidePaths_ActorPlacements[];
-extern CUE			  MogallForestSign_Cues[];
-extern CUE			  MogallForestQuartz_Cues[];
-extern CUE			  MogallForestKillerApe_Cues[];
-extern CUE			  MogallForestSidePaths_Cues[];
+extern Sint32		  MogallForestActorScript[];
+extern SCENE_ENTRANCE MogallForestSignEntrances[];
+extern SCENE_ENTRANCE MogallForestQuartzEntrances[];
+extern SCENE_ENTRANCE MogallForestKillerApeEntrances[];
+extern SCENE_ENTRANCE MogallForestSidePathsEntrances[];
+extern Uint32		  MogallForestExits[];
+extern ACTOR_PLACE	  MogallForestSignActorPlacements[];
+extern ACTOR_PLACE	  MogallForestQuartzActorPlacements[];
+extern ACTOR_PLACE	  MogallForestKillerApeActorPlacements[];
+extern ACTOR_PLACE	  MogallForestSidePathsActorPlacements[];
+extern CUE			  MogallForestSignCues[];
+extern CUE			  MogallForestQuartzCues[];
+extern CUE			  MogallForestKillerApeCues[];
+extern CUE			  MogallForestSidePathsCues[];
 
 /* Actors of the first area (SceneId_MogallForestSign), numbered in the order of
-   MogallForestSign_ActorPlacements. */
+   MogallForestSignActorPlacements. */
 typedef enum MOGALL_FOREST_SIGN_ACTOR_ID {
 	/* A log lying north to south at (488, 464), pushed as the river log is but
 	   with nothing happening where it stops. */
@@ -118,7 +118,7 @@ typedef enum MOGALL_FOREST_SIGN_ACTOR_ID {
 } MOGALL_FOREST_SIGN_ACTOR_ID;
 
 /* Actors of the second area (SceneId_MogallForestQuartz), numbered in the order
-   of MogallForestQuartz_ActorPlacements. */
+   of MogallForestQuartzActorPlacements. */
 typedef enum MOGALL_FOREST_QUARTZ_ACTOR_ID {
 	/* The upper log lying west to east by the river, held by the rock below
 	   it. */
@@ -149,7 +149,7 @@ typedef enum MOGALL_FOREST_QUARTZ_ACTOR_ID {
 } MOGALL_FOREST_QUARTZ_ACTOR_ID;
 
 /* Actors of the third area (SceneId_MogallForestKillerApe), numbered in the
-   order of MogallForestKillerApe_ActorPlacements. */
+   order of MogallForestKillerApeActorPlacements. */
 typedef enum MOGALL_FOREST_KILLER_APE_ACTOR_ID {
 	/* The log lying north to south beside the Elven Shirt's chest. */
 	ACTOR_THIRD_AREA_LOG = ACTOR_FIRST_PLACED,
@@ -281,11 +281,11 @@ static void scMogallForestStartDjinnBattle(void)
 
 /* The leader springs and leaps to a spot (in 16.16 pixels). Returns 0, and does
    nothing, when the spot is blocked. */
-static Bool scMogallForestTryJumpLeaderTo(FIELD_POS *position)
+static Bool scMogallForestTryJumpLeaderTo(FIELD_POS *pos)
 {
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
-	Sint32 savedMotionFlags = leader->motionFlg;
-	Sint32 collision = syFieldActorCheckMovementCollision(leader, position);
+	Sint32 savedMotionFlg = leader->motionFlg;
+	Sint32 collision = syFieldActorCheckMovementCollision(leader, pos);
 
 	if(collision == 0) {
 		fdScriptStart();
@@ -298,11 +298,11 @@ static Bool scMogallForestTryJumpLeaderTo(FIELD_POS *position)
 		leader->velY = toFIXED(4);
 		leader->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
 		fdActorSetSprFlags(leader, 0);
-		fdActorMoveToAndWait(ACTOR_PARTY_LEADER, FIXEDtoINT(position->x),
-			FIXEDtoINT(position->z));
+		fdActorMoveToAndWait(
+			ACTOR_PARTY_LEADER, FIXEDtoINT(pos->x), FIXEDtoINT(pos->z));
 		fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 		fdActorSetSprFlags(leader, SPRITE_FLAG_SHADOW);
-		leader->motionFlg = savedMotionFlags;
+		leader->motionFlg = savedMotionFlg;
 		fdScriptEnd();
 		return TRUE;
 	}
@@ -344,7 +344,7 @@ static void scMogallForestHopActorToWithSpeedFX(
 	actor->gravity = toFIXED(1);
 }
 
-/* Hops an actor with a vertical speed in pixels a frame:
+/* Hops an actor with a vertical speed in pixels a tick:
    `scMogallForestHopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 88, 120, 6)`. */
 #define scMogallForestHopActorTo(actorId, targetX, targetZ, verticalSpeed) \
 	scMogallForestHopActorToWithSpeedFX( \
@@ -354,7 +354,7 @@ static void scMogallForestHopActorToWithSpeedFX(
    ape makes popping out of a stump or diving back in. */
 static void scMogallForestSpawnPuffRing(Sint32 id)
 {
-	VECTOR3		   velocity;
+	VECTOR3		   vel;
 	EFFECT_OPTIONS options;
 	ACTOR		  *actor;
 	Uint32		   direction;
@@ -365,26 +365,25 @@ static void scMogallForestSpawnPuffRing(Sint32 id)
 	/* Seventeen puffs a sixteenth of a turn apart, the first and last together,
 	   spread a third wider east to west. */
 	for(direction = 0; direction <= TRIG_TURN / FACING_STEP; direction++) {
-		velocity.x = syCos(direction * FACING_STEP);
-		velocity.y = 0;
-		velocity.z = sySin(direction * FACING_STEP);
-		velocity.x += velocity.x / 3;
-		fdEffectSpawn(actor->x.fixed, toFIXED(16), actor->z.fixed, velocity.x,
-			velocity.y + toFIXED(1) / 10, velocity.z, EFFECT_USE_PRIORITY,
-			&options);
+		vel.x = syCos(direction * FACING_STEP);
+		vel.y = 0;
+		vel.z = sySin(direction * FACING_STEP);
+		vel.x += vel.x / 3;
+		fdEffectSpawn(actor->x.fixed, toFIXED(16), actor->z.fixed, vel.x,
+			vel.y + toFIXED(1) / 10, vel.z, EFFECT_USE_PRIORITY, &options);
 	}
 }
 
 /* Pans the camera to an ape's stump and, half a second later, brings the ape
    out in a puff of dust, drawn in the colour mode given. */
-static void scMogallForestApeComesOut(Sint32 actorId, Sint32 color)
+static void scMogallForestApeComesOut(Sint32 actorId, Sint32 col)
 {
 	fdCameraSetSpeedParms(toFIXED(2), toFIXED(1) / 4);
 	fdCameraMoveToActorById(actorId, 1);
 	fdCameraWaitForArrival();
 	fdScriptWait(30);
 	scMogallForestSpawnPuffRing(actorId);
-	fdActorSetSprColById(actorId, color);
+	fdActorSetSprColById(actorId, col);
 }
 
 /* The ape turns to the leader, hops on the spot and gestures the way on. */
@@ -404,15 +403,15 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_MOGALL_FOREST_SIGN) {
-		return MogallForestSign_Entrances;
+		return MogallForestSignEntrances;
 	}
 	if(scene == SCENE_MOGALL_FOREST_QUARTZ) {
-		return MogallForestQuartz_Entrances;
+		return MogallForestQuartzEntrances;
 	}
 	if(scene == SCENE_MOGALL_FOREST_KILLER_APE) {
-		return MogallForestKillerApe_Entrances;
+		return MogallForestKillerApeEntrances;
 	}
-	return MogallForestSidePaths_Entrances;
+	return MogallForestSidePathsEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -423,7 +422,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 /* Returns the exits, one table for all four scenes. */
 const Uint32 *scGetExits(void)
 {
-	return MogallForest_Exits;
+	return MogallForestExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
@@ -431,15 +430,15 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_MOGALL_FOREST_SIGN) {
-		return MogallForestSign_ActorPlacements;
+		return MogallForestSignActorPlacements;
 	}
 	if(scene == SCENE_MOGALL_FOREST_QUARTZ) {
-		return MogallForestQuartz_ActorPlacements;
+		return MogallForestQuartzActorPlacements;
 	}
 	if(scene == SCENE_MOGALL_FOREST_KILLER_APE) {
-		return MogallForestKillerApe_ActorPlacements;
+		return MogallForestKillerApeActorPlacements;
 	}
-	return MogallForestSidePaths_ActorPlacements;
+	return MogallForestSidePathsActorPlacements;
 }
 
 /* The map rows and columns where a pushed log reaches the water and rolls in,
@@ -497,19 +496,19 @@ static void scMogallForestFirstAreaPushLog(void)
    the big stump. */
 static void scMogallForestFirstAreaJumpNorth(void)
 {
-	FIELD_POS position;
+	FIELD_POS pos;
 #if JUMP_LANDS_ON_CELL_CENTER
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
 
-	position.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-	position.y = leader->y.fixed;
-	position.z = (leader->z.fixed & FIELD_METATILE_MASK) - toFIXED(24);
+	pos.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	pos.y = leader->y.fixed;
+	pos.z = (leader->z.fixed & FIELD_METATILE_MASK) - toFIXED(24);
 #else
-	position.x = fdActorGet(ACTOR_PARTY_LEADER)->x.fixed;
-	position.y = fdActorGet(ACTOR_PARTY_LEADER)->y.fixed;
-	position.z = fdActorGet(ACTOR_PARTY_LEADER)->z.fixed - toFIXED(32);
+	pos.x = fdActorGet(ACTOR_PARTY_LEADER)->x.fixed;
+	pos.y = fdActorGet(ACTOR_PARTY_LEADER)->y.fixed;
+	pos.z = fdActorGet(ACTOR_PARTY_LEADER)->z.fixed - toFIXED(32);
 #endif
-	scMogallForestTryJumpLeaderTo(&position);
+	scMogallForestTryJumpLeaderTo(&pos);
 }
 
 /* Walking south off the edge of the first area's raised meadow (metatiles (31,
@@ -519,20 +518,20 @@ static void scMogallForestFirstAreaJumpNorth(void)
    The ground and the leader sink a pixel, then another, and rise back. */
 static void scMogallForestFirstAreaJumpSouth(void)
 {
-	FIELD_POS position;
+	FIELD_POS pos;
 	ACTOR	 *leader = fdActorGet(ACTOR_PARTY_LEADER);
-	Sint32	  savedMotionFlags = leader->motionFlg;
+	Sint32	  savedMotionFlg = leader->motionFlg;
 
 #if JUMP_LANDS_ON_CELL_CENTER
-	position.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-	position.y = leader->y.fixed;
-	position.z = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(40);
+	pos.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	pos.y = leader->y.fixed;
+	pos.z = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(40);
 #else
-	position.x = fdActorGet(ACTOR_PARTY_LEADER)->x.fixed;
-	position.y = fdActorGet(ACTOR_PARTY_LEADER)->y.fixed;
-	position.z = fdActorGet(ACTOR_PARTY_LEADER)->z.fixed + toFIXED(32);
+	pos.x = fdActorGet(ACTOR_PARTY_LEADER)->x.fixed;
+	pos.y = fdActorGet(ACTOR_PARTY_LEADER)->y.fixed;
+	pos.z = fdActorGet(ACTOR_PARTY_LEADER)->z.fixed + toFIXED(32);
 #endif
-	if(scMogallForestTryJumpLeaderTo(&position) != 0) {
+	if(scMogallForestTryJumpLeaderTo(&pos) != 0) {
 		fdScriptStart();
 		leader->motionFlg = 0;
 		fdActorSetAnimation(
@@ -548,7 +547,7 @@ static void scMogallForestFirstAreaJumpSouth(void)
 		sySynch(4);
 		leader->y.fixed += toFIXED(1);
 		leader->groundHeight += toFIXED(1);
-		leader->motionFlg = savedMotionFlags;
+		leader->motionFlg = savedMotionFlg;
 		fdScriptEnd();
 	}
 }
@@ -702,8 +701,8 @@ static void scMogallForestCatchNut(void)
 static void scMogallForestSecondAreaPushLog(void)
 {
 	PUSHED_ACTOR_PROBE probe;
-	Sint32			   destinationColumn;
-	Sint32			   destinationRow;
+	Sint32			   dstColumn;
+	Sint32			   dstRow;
 
 	fdScriptStart();
 
@@ -712,10 +711,9 @@ static void scMogallForestSecondAreaPushLog(void)
 
 		if(probe.actorSlot == ACTOR_SECOND_AREA_LOG &&
 			(FIELD_METATILE(probe.pos.z)) == SECOND_AREA_LOG_OPENS_WAY_ROW) {
-			destinationColumn = 35;
-			destinationRow = 68;
-			fdMapGridCopyMetatileAttributes(
-				35, 67, 4, 1, destinationColumn, destinationRow);
+			dstColumn = 35;
+			dstRow = 68;
+			fdMapGridCopyMetatileAttributes(35, 67, 4, 1, dstColumn, dstRow);
 		} else if(probe.actorSlot == ACTOR_SECOND_AREA_RIVER_LOG &&
 			(FIELD_METATILE(probe.pos.x)) == SECOND_AREA_RIVER_BANK_COLUMN) {
 			gmFlagSet(FLAG_MOGALL_FOREST_SECOND_AREA_LOG_ROLLED);
@@ -731,10 +729,9 @@ static void scMogallForestSecondAreaPushLog(void)
 			fdActorGet(ACTOR_SECOND_AREA_RIVER_LOG)->priFlg =
 				ACTOR_PRIORITY_UNDERFOOT;
 
-			destinationColumn = 34;
-			destinationRow = 30;
-			fdMapGridCopyMetatileAttributes(
-				44, 30, 2, 4, destinationColumn, destinationRow);
+			dstColumn = 34;
+			dstRow = 30;
+			fdMapGridCopyMetatileAttributes(44, 30, 2, 4, dstColumn, dstRow);
 			scMapGridFillCollisionRectangle(2, 35, 30, 1, 4, 0);
 		}
 	}
@@ -989,17 +986,17 @@ static void scMogallForestThirdAreaPushLog(void)
 static void scMogallForestThirdAreaJumpWest(void)
 {
 	ACTOR	 *leader;
-	Uint8	  savedMotionFlags;
-	FIELD_POS position;
+	Uint8	  savedMotionFlg;
+	FIELD_POS pos;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	savedMotionFlags = leader->motionFlg;
+	savedMotionFlg = leader->motionFlg;
 
-	position.x = fdActorGet(ACTOR_PARTY_LEADER)->x.fixed - toFIXED(32);
-	position.y = fdActorGet(ACTOR_PARTY_LEADER)->y.fixed;
-	position.z = fdActorGet(ACTOR_PARTY_LEADER)->z.fixed;
+	pos.x = fdActorGet(ACTOR_PARTY_LEADER)->x.fixed - toFIXED(32);
+	pos.y = fdActorGet(ACTOR_PARTY_LEADER)->y.fixed;
+	pos.z = fdActorGet(ACTOR_PARTY_LEADER)->z.fixed;
 
-	if(scMogallForestTryJumpLeaderTo(&position) != 0) {
+	if(scMogallForestTryJumpLeaderTo(&pos) != 0) {
 		fdScriptStart();
 
 		leader->motionFlg = 0;
@@ -1021,7 +1018,7 @@ static void scMogallForestThirdAreaJumpWest(void)
 		leader->y.fixed += toFIXED(1);
 		leader->groundHeight += toFIXED(1);
 
-		leader->motionFlg = savedMotionFlags;
+		leader->motionFlg = savedMotionFlg;
 		fdScriptEnd();
 	}
 }
@@ -1302,9 +1299,9 @@ static void scMogallForestApeLeadsToKillerApe(void)
    blue ape, bursts out, roars, leaps at Isaac and its battle begins. */
 static void scMogallForestKillerApeAttacks(void)
 {
-	VECTOR3 velocity;
+	VECTOR3 vel;
 	ACTOR  *actor;
-	Uint32	directionIndex;
+	Uint32	directionIdx;
 	Sint32	x;
 	FIXED	z;
 
@@ -1337,16 +1334,16 @@ static void scMogallForestKillerApeAttacks(void)
 	fdScriptWait(15);
 	/* The larger reveal uses a wider, level ring of puffs. */
 	fdMapGridSetShake(5, 5, 1);
-	for(directionIndex = 0; directionIndex <= TRIG_TURN / FACING_STEP;
-		directionIndex++) {
-		velocity.x = syCos(directionIndex * FACING_STEP);
-		velocity.y = 0;
-		z = sySin(directionIndex * FACING_STEP);
-		x = velocity.x;
-		velocity.z = z;
+	for(directionIdx = 0; directionIdx <= TRIG_TURN / FACING_STEP;
+		directionIdx++) {
+		vel.x = syCos(directionIdx * FACING_STEP);
+		vel.y = 0;
+		z = sySin(directionIdx * FACING_STEP);
+		x = vel.x;
+		vel.z = z;
 		x += x / 2;
-		velocity.x = x;
-		fdEffectSpawn(actor->x.fixed, 0, actor->z.fixed, x, velocity.y, z,
+		vel.x = x;
+		fdEffectSpawn(actor->x.fixed, 0, actor->z.fixed, x, vel.y, z,
 			EFFECT_SCRIPT_MEDIUM, NULL);
 	}
 	fdScriptWait(30);
@@ -1376,15 +1373,15 @@ const CUE *scGetCues(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_MOGALL_FOREST_SIGN) {
-		return MogallForestSign_Cues;
+		return MogallForestSignCues;
 	}
 	if(scene == SCENE_MOGALL_FOREST_QUARTZ) {
-		return MogallForestQuartz_Cues;
+		return MogallForestQuartzCues;
 	}
 	if(scene == SCENE_MOGALL_FOREST_KILLER_APE) {
-		return MogallForestKillerApe_Cues;
+		return MogallForestKillerApeCues;
 	}
-	return MogallForestSidePaths_Cues;
+	return MogallForestSidePathsCues;
 }
 
 /* Sets up the clearing entered. On the first arrival in the forest it plays the
@@ -1417,7 +1414,7 @@ Sint32 scInit(void)
 				fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.4);
 				fdActorWalkTo(ACTOR_PARTY_LEADER, 136, 64);
 				fdScriptStartScreenTransition();
-				fdScriptWaitTransitionFrames();
+				fdScriptWaitTransitionTicks();
 				fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 				fdScriptWait(30);
 				fdActorShowEmote(ACTOR_FIRST_AREA_NORTH_APE,
@@ -1656,7 +1653,7 @@ Sint32 scInit(void)
 		case MOGALL_FOREST_KILLER_APE_BRIDGES_FROM_RIVER:
 		case MOGALL_FOREST_KILLER_APE_FROM_WORLD_MAP:
 			fdActorSetScript(
-				ACTOR_THIRD_AREA_EAST_APE, MogallForest_ActorScript);
+				ACTOR_THIRD_AREA_EAST_APE, MogallForestActorScript);
 			if(gmFlagGet(FLAG_NYUNPA_TAUGHT_FORCE) == 0) {
 				break;
 			}
@@ -1681,14 +1678,14 @@ Sint32 scInit(void)
 
 #include "shared/field_effect_duration_scripts.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 /* The script of each rock moved with Move, which draws it in greys. */
-Sint32 MogallForest_RockScript[] = {
+Sint32 MogallForestRockScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_SET(SW_TIMER, SPRITE_COLOR_GREY),
 	SC_CALL(scMogallForestSetColFromTimer),
@@ -1697,7 +1694,7 @@ Sint32 MogallForest_RockScript[] = {
 
 /* The script of each ape, at four fifths of its size, hidden while it hides, */
 /* and with its shadow off. */
-Sint32 MogallForest_ActorScript[] = {
+Sint32 MogallForestActorScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(4) / 5),
 	SC_SET(SW_SCALE_Y, toFIXED(4) / 5),
 	SC_SET(SW_TIMER, SPRITE_COLOR_HIDDEN),
@@ -1708,7 +1705,7 @@ Sint32 MogallForest_ActorScript[] = {
 
 /* The script of each stump's blank actor, the target of Force, which stays */
 /* still with its sprite hidden. */
-Sint32 MogallForest_HidingPlaceScript[] = {
+Sint32 MogallForestHidingPlaceScript[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_SET(SW_Y, 0),
 	SC_SET(SW_TARGET_Y, ACTOR_NO_TARGET),
@@ -1717,7 +1714,7 @@ Sint32 MogallForest_HidingPlaceScript[] = {
 	SC_END,
 };
 
-SCENE_ENTRANCE MogallForestSign_Entrances[] = {
+SCENE_ENTRANCE MogallForestSignEntrances[] = {
 	{ MOGALL_FOREST_SIGN_FROM_WORLD_MAP, CONDITION_ALWAYS, 136, 0, 24, FACING_SOUTH, 0, 0, 0, 272, 224, 0 },
 	{ MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_WEST, CONDITION_ALWAYS, 24, 0, 128, FACING_EAST, 0, 0, 0, 272, 224, 0 },
 	{ MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH, CONDITION_ALWAYS, 248, 0, 128, FACING_WEST, 0, 0, 0, 272, 224, 0 },
@@ -1730,7 +1727,7 @@ SCENE_ENTRANCE MogallForestSign_Entrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-SCENE_ENTRANCE MogallForestQuartz_Entrances[] = {
+SCENE_ENTRANCE MogallForestQuartzEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIGN, CONDITION_ALWAYS, 24, 0, 128, FACING_EAST, 0, 0, 0, 272, 224, 0 },
 	{ MOGALL_FOREST_QUARTZ_NORTHWEST_CLEARING_FROM_STUMPS, CONDITION_ALWAYS, 248, 0, 128, FACING_WEST, 0, 0, 0, 272, 224, 0 },
@@ -1747,7 +1744,7 @@ SCENE_ENTRANCE MogallForestQuartz_Entrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-SCENE_ENTRANCE MogallForestKillerApe_Entrances[] = {
+SCENE_ENTRANCE MogallForestKillerApeEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ MOGALL_FOREST_KILLER_APE_NORTHWEST_CLEARING_FROM_STUMPS, CONDITION_ALWAYS, 24, 0, 128, FACING_EAST, 0, 0, 0, 272, 224, 0 },
 	{ MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_QUARTZ, CONDITION_ALWAYS, 248, 0, 128, FACING_WEST, 0, 0, 0, 272, 224, 0 },
@@ -1766,7 +1763,7 @@ SCENE_ENTRANCE MogallForestKillerApe_Entrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-SCENE_ENTRANCE MogallForestSidePaths_Entrances[] = {
+SCENE_ENTRANCE MogallForestSidePathsEntrances[] = {
 	{ MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_SIGN_NORTH, CONDITION_ALWAYS, 312, 0, 128, FACING_EAST, 0, 288, 0, 560, 224, 0 },
 	{ MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_SIGN_WEST, CONDITION_ALWAYS, 248, 0, 368, FACING_WEST, 0, 0, 240, 272, 464, 0 },
 	{ MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_QUARTZ_NORTH, CONDITION_ALWAYS, 424, 0, 440, FACING_NORTH, 0, 288, 240, 560, 464, 0 },
@@ -1780,7 +1777,7 @@ SCENE_ENTRANCE MogallForestSidePaths_Entrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-Uint32 MogallForest_Exits[] = {
+Uint32 MogallForestExits[] = {
 	SCENE_EXITS(MogallForestSign),
 	SCENE_EXIT(MOGALL_FOREST_SIGN_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_MOGALL_FOREST_SIGN),
 	SCENE_EXIT(MOGALL_FOREST_SIGN_TO_MOGALL_FOREST_SIDE_PATHS_WEST, MogallForestSidePaths, MOGALL_FOREST_SIDE_PATHS_FROM_MOGALL_FOREST_SIGN_WEST),
@@ -1840,55 +1837,55 @@ Uint32 MogallForest_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE MogallForestSign_ActorPlacements[] = {
+ACTOR_PLACE MogallForestSignActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
 		488, 0, 464, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
 		528, 0, 504, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_APE, FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT, (Sint32)MogallForest_ActorScript,
+	ACTOR_PLACEMENT(SPRITE_APE, FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT, (Sint32)MogallForestActorScript,
 		136, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_APE, FLAG_MOGALL_FOREST_FIRST_AREA_ATTACKING_APE_OUT, (Sint32)MogallForest_ActorScript,
+	ACTOR_PLACEMENT(SPRITE_APE, FLAG_MOGALL_FOREST_FIRST_AREA_ATTACKING_APE_OUT, (Sint32)MogallForestActorScript,
 		376, 0, 432, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_APE, FLAG_MOGALL_FOREST_FIRST_AREA_EAST_APE_OUT, (Sint32)MogallForest_ActorScript,
+	ACTOR_PLACEMENT(SPRITE_APE, FLAG_MOGALL_FOREST_FIRST_AREA_EAST_APE_OUT, (Sint32)MogallForestActorScript,
 		504, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT, (Sint32)MogallForest_HidingPlaceScript,
+	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT, (Sint32)MogallForestHidingPlaceScript,
 		136, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_FIRST_AREA_ATTACKING_APE_OUT, (Sint32)MogallForest_HidingPlaceScript,
+	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_FIRST_AREA_ATTACKING_APE_OUT, (Sint32)MogallForestHidingPlaceScript,
 		376, 0, 432, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_FIRST_AREA_EAST_APE_OUT, (Sint32)MogallForest_HidingPlaceScript,
+	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_FIRST_AREA_EAST_APE_OUT, (Sint32)MogallForestHidingPlaceScript,
 		504, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
 	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_NUT_CAUGHT, 7,
 		632, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE MogallForestQuartz_ActorPlacements[] = {
+ACTOR_PLACE MogallForestQuartzActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
 		592, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
 		592, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
 		648, 0, 512, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_TURNING_ROCK, CONDITION_ALWAYS, (Sint32)MogallForest_RockScript,
+	ACTOR_PLACEMENT(SPRITE_TURNING_ROCK, CONDITION_ALWAYS, (Sint32)MogallForestRockScript,
 		584, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_APE, FLAG_MOGALL_FOREST_SECOND_AREA_WEST_APE_OUT, (Sint32)MogallForest_ActorScript,
+	ACTOR_PLACEMENT(SPRITE_APE, FLAG_MOGALL_FOREST_SECOND_AREA_WEST_APE_OUT, (Sint32)MogallForestActorScript,
 		360, 0, 80, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_APE, FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT, (Sint32)MogallForest_ActorScript,
+	ACTOR_PLACEMENT(SPRITE_APE, FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT, (Sint32)MogallForestActorScript,
 		488, 0, 80, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_APE, FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT, (Sint32)MogallForest_ActorScript,
+	ACTOR_PLACEMENT(SPRITE_APE, FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT, (Sint32)MogallForestActorScript,
 		504, 0, 480, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_SECOND_AREA_WEST_APE_OUT, (Sint32)MogallForest_HidingPlaceScript,
+	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_SECOND_AREA_WEST_APE_OUT, (Sint32)MogallForestHidingPlaceScript,
 		360, 0, 80, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT, (Sint32)MogallForest_HidingPlaceScript,
+	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT, (Sint32)MogallForestHidingPlaceScript,
 		488, 0, 80, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT, (Sint32)MogallForest_HidingPlaceScript,
+	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT, (Sint32)MogallForestHidingPlaceScript,
 		504, 0, 480, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
 	ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_QUARTZ), MOVEMENT_TYPE_STAND,
 		488, 0, 568, FACING_EAST, TALK_FACING_PARTY, 0),
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE MogallForestKillerApe_ActorPlacements[] = {
+ACTOR_PLACE MogallForestKillerApeActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
 		680, 0, 96, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
@@ -1899,34 +1896,34 @@ ACTOR_PLACE MogallForestKillerApe_ActorPlacements[] = {
 		600, 0, 544, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
 		544, 0, 536, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_TURNING_ROCK, CONDITION_ALWAYS, (Sint32)MogallForest_RockScript,
+	ACTOR_PLACEMENT(SPRITE_TURNING_ROCK, CONDITION_ALWAYS, (Sint32)MogallForestRockScript,
 		696, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_TURNING_ROCK, CONDITION_ALWAYS, (Sint32)MogallForest_RockScript,
+	ACTOR_PLACEMENT(SPRITE_TURNING_ROCK, CONDITION_ALWAYS, (Sint32)MogallForestRockScript,
 		632, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_APE, FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT, (Sint32)MogallForest_ActorScript,
+	ACTOR_PLACEMENT(SPRITE_APE, FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT, (Sint32)MogallForestActorScript,
 		488, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_APE, FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT, (Sint32)MogallForest_ActorScript,
+	ACTOR_PLACEMENT(SPRITE_APE, FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT, (Sint32)MogallForestActorScript,
 		424, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_APE, FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT, (Sint32)MogallForest_ActorScript,
+	ACTOR_PLACEMENT(SPRITE_APE, FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT, (Sint32)MogallForestActorScript,
 		360, 0, 80, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_APE, MOGALL_FOREST_EAST_ACTOR_CONDITION, (Sint32)MogallForest_ActorScript,
+	ACTOR_PLACEMENT(SPRITE_APE, MOGALL_FOREST_EAST_ACTOR_CONDITION, (Sint32)MogallForestActorScript,
 		744, 0, 400, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT, (Sint32)MogallForest_HidingPlaceScript,
+	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT, (Sint32)MogallForestHidingPlaceScript,
 		488, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT, (Sint32)MogallForest_HidingPlaceScript,
+	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT, (Sint32)MogallForestHidingPlaceScript,
 		424, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT, (Sint32)MogallForest_HidingPlaceScript,
+	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT, (Sint32)MogallForestHidingPlaceScript,
 		360, 0, 80, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_BLANK, MOGALL_FOREST_EAST_SHARED_SPRITE_CONDITION, (Sint32)MogallForest_HidingPlaceScript,
+	ACTOR_PLACEMENT(SPRITE_BLANK, MOGALL_FOREST_EAST_SHARED_SPRITE_CONDITION, (Sint32)MogallForestHidingPlaceScript,
 		744, 0, 400, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE MogallForestSidePaths_ActorPlacements[] = {
+ACTOR_PLACE MogallForestSidePathsActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE MogallForestSign_Cues[] = {
+CUE MogallForestSignCues[] = {
 	EXIT_METATILE(MOGALL_FOREST_SIGN_TO_WORLD_MAP),
 	EXIT_METATILE(MOGALL_FOREST_SIGN_TO_MOGALL_FOREST_SIDE_PATHS_WEST),
 	EXIT_METATILE(MOGALL_FOREST_SIGN_TO_MOGALL_FOREST_SIDE_PATHS_NORTH),
@@ -1947,7 +1944,7 @@ CUE MogallForestSign_Cues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE MogallForestQuartz_Cues[] = {
+CUE MogallForestQuartzCues[] = {
 	EXIT_METATILE(MOGALL_FOREST_QUARTZ_TO_MOGALL_FOREST_SIGN),
 	EXIT_METATILE(MOGALL_FOREST_QUARTZ_NORTHWEST_CLEARING_TO_STUMPS),
 	EXIT_METATILE(MOGALL_FOREST_QUARTZ_TO_MOGALL_FOREST_SIDE_PATHS_NORTH),
@@ -1972,7 +1969,7 @@ CUE MogallForestQuartz_Cues[] = {
 };
 /* clang-format on */
 
-CUE MogallForestKillerApe_Cues[] = {
+CUE MogallForestKillerApeCues[] = {
 	EXIT_METATILE(MOGALL_FOREST_KILLER_APE_NORTHWEST_CLEARING_TO_STUMPS),
 	EXIT_METATILE(MOGALL_FOREST_KILLER_APE_TO_MOGALL_FOREST_QUARTZ),
 	EXIT_METATILE(MOGALL_FOREST_KILLER_APE_TO_MOGALL_FOREST_SIDE_PATHS_WEST),
@@ -2021,7 +2018,7 @@ CUE MogallForestKillerApe_Cues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE MogallForestSidePaths_Cues[] = {
+CUE MogallForestSidePathsCues[] = {
 	EXIT_METATILE(MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_SIGN_NORTH),
 	EXIT_METATILE(MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_SIGN_WEST),
 	EXIT_METATILE(MOGALL_FOREST_SIDE_PATHS_TO_MOGALL_FOREST_QUARTZ_NORTH),

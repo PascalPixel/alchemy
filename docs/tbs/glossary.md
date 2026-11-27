@@ -180,7 +180,7 @@ Djinn), setto (セット, Set), sutanbai (スタンバイ, Standby) and rikabari
 | --- | --- |
 | mode | one kind of play the main routine runs ([mode](#mode)) |
 | sequence | a piece of music the sound driver plays |
-| event | a function run once a frame from a list ([event](#event)) |
+| event | a function run once a tick from a list ([event](#event)) |
 | trigger | a button of the pad, which is why a scene's signal is a [cue](#cue) |
 | work | a function's memory |
 | transfer | copying to video memory |
@@ -190,7 +190,7 @@ Djinn), setto (セット, Set), sutanbai (スタンバイ, Standby) and rikabari
 | cell | an 8 by 8 square, our tile, which is why a map's square is a [metatile](#metatile) |
 | backup | the save memory ([flash chip](#flash-chip)) |
 | encount | an encounter |
-| wait | frames to hold ([wait](#wait)) |
+| wait | ticks to hold ([wait](#wait)) |
 
 Sources: the game: エナジー, ジン, セット, スタンバイ and リカバリー. SGL: the
 names and layout of its reference and its sample code. GBATEK: none.
@@ -279,10 +279,10 @@ function, clear away what that one set up when it returns, and call the
 next. Walk into a battle, win it and walk on, and the main routine has run
 three: the cave, the battle, the cave again. It is a loop, but one trip
 round it is a whole mode: the loop that goes round once a
-[frame](#frame) is inside [`sySynch()`](#wait)
+[tick](#tick) is inside [`sySynch()`](#wait)
 ([The system library](system.md#the-main-routine)).
 
-Sources: the game: none. SGL: メインループ, the loop run once a frame. GBATEK: none.
+Sources: the game: none. SGL: メインループ, the loop run once a tick. GBATEK: none.
 
 ### Mode
 
@@ -339,27 +339,41 @@ with it, the [game flags](#game-flag) and the snapshot of where a scene's
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
+### Tick
+
+A tick is one step of the game's own work: one pass of its loop, in which
+every [event](#event) runs once and the code that waits goes on by one.
+Everything that takes time is counted in ticks. When Dora, at her door in
+Vale, says `Isaac... That's a lie!`, the script at her door then calls
+[`sySynch()`](#wait) for 60 ticks before going on: one second, when nothing
+slows the game down and each tick takes one [frame](#frame)
+([System library code](../../games/tbs/src/system/README.md#the-tick-loop)).
+
+Sources: the game: none. SGL: none. GBATEK: none.
+
 ### Frame
 
-A frame is one image on the screen and the game's work to prepare it,
-about a sixtieth of a second. Everything that takes time is counted in
-frames. When Dora, at her door in Vale, says `Isaac... That's a lie!`, the
-script at her door then calls [`sySynch()`](#wait) for 60 frames before going
-on: one second, when nothing slows the game down
-([System library code](../../games/tbs/src/system/README.md#the-frame-loop)).
+A frame is one drawing of the screen by the console, about a sixtieth of a
+second, and it is the unit the code counts in when it counts the console's
+time rather than the game's: one [VBlank](#vblank) ends each frame.
+`FrameCount` counts every frame there has been, a screen fade lasts a number
+of frames, and the sound keeps its time in frames. A [tick](#tick) usually
+takes one frame, and two or more in [slowdown](#slowdown). One drawing of an
+animation is not a frame but a [picture](#picture)
+([System library code](../../games/tbs/src/system/README.md#what-vblank-does)).
 
 Sources: the game: none. SGL: フレーム, one picture shown. GBATEK: "Frame 0-1", a
 bitmap buffer.
 
 ### Wait
 
-To wait is to let [frames](#frame) go by in the middle of a piece of code.
-`sySynch(10)` runs ten frames of the game, there inside the call, and then
-carries on with the next line: the game's frame loop is this function, and
+To wait is to let [ticks](#tick) go by in the middle of a piece of code.
+`sySynch(10)` runs ten ticks of the game, there inside the call, and then
+carries on with the next line: the game's tick loop is this function, and
 there is no other. One piece of code waits at a time. An
 [actor script](#actor-script)'s `SC_WAIT` is another thing, a count kept in
 the actor. When a woman in Vale feels a tremor, her code starts the screen
-shaking, waits ten frames, and only then goes on to her line. So a scene can
+shaking, waits ten ticks, and only then goes on to her line. So a scene can
 be written top to bottom, in the order things happen
 ([The system library](system.md#waiting-and-events)).
 
@@ -369,12 +383,12 @@ Sources: the game: none. SGL: `wait`, which waits for the next picture
 ### Event
 
 An event is a function on a list that [`sySynch()`](#wait) calls once in every
-[frame](#frame), until it is taken off the list. Events run only while some
+[tick](#tick), until it is taken off the list. Events run only while some
 code is waiting, and an event never waits itself. An event is a whole piece
 of work, such as moving every [actor](#actor) a step, not one thing in the
 world. The event that types a villager's line into its window letter by
 letter is one. Each event has a rank, which the code calls its `pri`,
-and a higher rank runs earlier in the frame. A few events are called by the
+and a higher rank runs earlier in the tick. A few events are called by the
 [VBlank](#vblank) handler instead, once a VBlank. The list, `EventBuf`, has
 room for 20. The record is `EVENT`, and the calls take SGL's names, the verb
 first: `sySetEvent`, `syCloseEvent`, `sySuspendEvent`, `syResumeEvent`,
@@ -387,24 +401,25 @@ and `EventBuf` is its list; its タスク is the second processor's. GBATEK: non
 
 ### VBlank
 
-VBlank is the short gap after the console has drawn the screen and before
-it starts drawing it again, about 60 times a second. At each one the console
+VBlank is the short gap after the console has drawn the screen and before it
+starts drawing it again, about 60 times a second. At each one the console
 breaks off whatever the game is doing and runs one small piece of its code.
-That piece puts the finished [frame](#frame) on screen, prepares the sound
-and reads the buttons
+That piece puts what the last [tick](#tick) prepared on screen, prepares the
+sound and reads the buttons
 ([System library code](../../games/tbs/src/system/README.md#what-vblank-does)).
 
 Sources: the game: none. SGL: ブランキング. GBATEK: "V-Blank", "VBlank".
 
 ### Slowdown
 
-The game has about a sixtieth of a second to get each [frame](#frame)
-ready, before the console starts drawing the screen again. Slowdown is what
-happens when a frame's work is not done in time: the frame stays on screen
-while the console draws the screen twice or more. Everything counted in
-frames, every walk, pause and animation, drags together. The music does
+The game has one [frame](#frame), about a sixtieth of a second, to do each
+[tick](#tick)'s work before the console starts drawing the screen again.
+Slowdown is what happens when a tick's work is not done in time: the last
+tick's image stays on screen while the console draws it twice or more, and
+the tick takes two frames or more. Everything counted in
+ticks, every walk, pause and animation, drags together. The music does
 not, because the sound is prepared at every [VBlank](#vblank) whether the
-frame is ready or not. So the tune keeps its speed while the image on
+tick is done or not. So the tune keeps its speed while the image on
 screen falls behind it
 ([System library code](../../games/tbs/src/system/README.md#what-vblank-does)).
 
@@ -650,8 +665,8 @@ people are sprites, and so are the pointing hand in a menu and the letters
 of a spoken line. GBATEK calls a sprite an OBJ, and the code's names for
 the console's sprite fields start `OBJ_`. OAM, the object attribute memory,
 is the console's list of where each one sits, and the game writes it afresh
-every [frame](#frame)
-([System library code](../../games/tbs/src/system/README.md#the-frames-sprites)).
+every [tick](#tick)
+([System library code](../../games/tbs/src/system/README.md#the-ticks-sprites)).
 
 Sources: the game: none. SGL: スプライト, the small figure moved freely over the
 scrolls, which `SPRITE` records as a command. GBATEK: "OBJ", "OAM - Object
@@ -689,7 +704,7 @@ pose of Isaac's walk. It is the stored drawing; the
 [sprite](#sprite-and-oam) is what shows it on screen, or a
 [battle effect](#battle-effect)'s blitter copies it onto the canvas the
 effect draws on. A [sprite animation](#sprite-animation) shows a picture for
-a number of [frames](#frame) before the next one takes its place, and the
+a number of [ticks](#tick) before the next one takes its place, and the
 animation of a map's tiles steps through pictures the same way
 ([Field code](../../games/tbs/src/field/README.md#sprites-and-their-animation)).
 
@@ -727,7 +742,7 @@ Sources: the game: none. SGL: パレットナンバー. GBATEK: "Palette Number"
 ### Palette fade
 
 A palette fade moves every colour on screen a little closer to a target
-colour each [frame](#frame), in equal steps, so that they all arrive
+colour each [tick](#tick), in equal steps, so that they all arrive
 together. Vale fading in as the party arrives is one, and so is the tint
 that comes over the screen while field Psynergy is cast
 ([Field code](../../games/tbs/src/field/README.md#the-palette-fade)).
@@ -906,14 +921,14 @@ Sources: the game: none. SGL: none. GBATEK: none.
 ### Actor script
 
 An actor script is the list of small orders an [actor](#actor) follows, a
-little each [frame](#frame): move here, wait, jump, go back to the start.
+little each [tick](#tick): move here, wait, jump, go back to the start.
 These pages call its items orders, and keep "command" for an
 [script command](#script-command). The orders' names start `SC_`, for script
 command, the code's own word. A script does not run by itself: one
-[event](#event) steps every actor's script each frame, and a script's wait,
+[event](#event) steps every actor's script each tick, and a script's wait,
 `SC_WAIT`, is a count in the actor, not [`sySynch()`](#wait). A villager who
 wanders near home is running one. An order can also hand the actor to a
-piece of the field's own code that steers it each frame, and the player's
+piece of the field's own code that steers it each tick, and the player's
 control of the leader is one of those, `SC_PLAYER`
 ([Field code](../../games/tbs/src/field/README.md#how-an-actor-script-runs)).
 
@@ -1007,7 +1022,7 @@ for the Pause menu. The field mode's own function sets the ones for
 where the leader has stepped. And a [script](#script) or a menu sets one for
 something the field must do after it has returned. The
 [field mode](#field-mode) reads the requests each time its
-`sySynch(1)` returns, never in the middle of a frame, and answers the most
+`sySynch(1)` returns, never in the middle of a tick, and answers the most
 urgent first ([Field code](../../games/tbs/src/field/README.md#the-twelve-requests)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
@@ -1144,7 +1159,7 @@ Sources: the game: none. SGL: none. GBATEK: none.
 The game works out what an [action](#turns-and-actions) does before it
 shows any of it. The playback queue is the list of what is left to show for
 each target: the flinch, the line such as `Isaac takes 27 damage!`, the HP
-going down. An [event](#event) plays it, a little each frame, once the
+going down. An [event](#event) plays it, a little each tick, once the
 [battle effect](#battle-effect) has called `btPlaybackStart` to say
 the blow has landed
 ([Battles](../../games/tbs/src/battle/README.md#how-outcomes-reach-the-screen)).
@@ -1155,8 +1170,8 @@ Sources: the game: none. SGL: none. GBATEK: none.
 
 A battle effect is the show an ability puts on over a battle, such as
 Quake's shaking ground or a summon's arrival. Each is a piece of code that
-moves and draws its parts [frame](#frame) by frame: a loop that draws one
-frame and calls [`sySynch(1)`](#wait). It decides when a hit is shown, never
+moves and draws its parts [tick](#tick) by tick: a loop that draws one
+tick and calls [`sySynch(1)`](#wait). It decides when a hit is shown, never
 what the hit does
 ([Battle effects](../../games/tbs/src/battle_effect/README.md)).
 
@@ -1167,7 +1182,7 @@ Sources: the game: the credits' "Battle Effects". SGL: none. GBATEK: none.
 A mote is one of the small specks an effect scatters by the dozen: the
 specks of light that tumble in on each target of Wish, or the ring of them
 the summon Thor draws. Each has its own place, speed and life, and the
-effect moves every one of them each [frame](#frame). A
+effect moves every one of them each [tick](#tick). A
 [battle effect](#battle-effect)'s mote is not a [sprite](#sprite-and-oam):
 the effect's blitter copies its [picture](#picture) onto the canvas the
 effect draws on, most often a round glowing dot at one of ten sizes, often

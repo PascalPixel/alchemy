@@ -16,8 +16,8 @@ typedef struct MENU_CURSOR {
 	Uint16		y;		/* screen pixels: where the current move started */
 	Sint16		tgtX;	/* screen pixels */
 	Sint16		tgtY;	/* screen pixels */
-	Sint8		frm; /* frames of the current move done; reset when it ends */
-	Sint8		frames; /* frames the move takes; 0 when the cursor is still */
+	Sint8		frm;	/* ticks of the current move done; reset when it ends */
+	Sint8		ticks;	/* ticks the move takes; 0 when the cursor is still */
 } MENU_CURSOR;
 
 STATIC_ASSERT(sizeof(MENU_CURSOR) == 16);

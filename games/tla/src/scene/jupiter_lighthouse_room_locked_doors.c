@@ -258,11 +258,11 @@ const CUE *scGetCues(void)
    front of the beam while the sine is negative and behind it otherwise. */
 void scJupiterLighthouseCircleUpTheBeam(ACTOR *actor)
 {
-	Sint16 angle = actor->tmr;
+	Sint16 ang = actor->tmr;
 	Sint16 height = actor->userValue;
 
 	SET_ACTOR_POSITION(actor,
-		syMulFX(syCos(angle), actor->speedLimit) + toFIXED(BEAM_X),
+		syMulFX(syCos(ang), actor->speedLimit) + toFIXED(BEAM_X),
 		(height * toFIXED(3)) - toFIXED(BEAM_DEPTH), toFIXED(BEAM_Z));
 	if(actor->userValue == 1)
 		fdActorSelectAnimation(actor, ANIM_PARTICLE_TWINKLE);
@@ -270,7 +270,7 @@ void scJupiterLighthouseCircleUpTheBeam(ACTOR *actor)
 		fdActorSelectAnimation(actor, ANIM_PARTICLE_FADE);
 	if(actor->y.fixed > 0)
 		actor->userValue = -1;
-	if(syMathSin(angle) < 0)
+	if(syMathSin(ang) < 0)
 		((FIELD_SPR *)actor->spr)->pri = 1;
 	else
 		((FIELD_SPR *)actor->spr)->pri = 3;
@@ -394,18 +394,18 @@ Sint32 scPrepareMap(void)
 
 #include "shared/scene_set_arrival_flags.c"
 
-void syGameFlagSetByte(Sint32 flag, Sint32 value);
+void syGameFlagSetByte(Sint32 flg, Sint32 value);
 
 extern Sint32 PaletteCyclePausesInScripts;
 
 #include "shared/palette_cycle_set_pauses_in_scripts.h"
 
-extern Sint32 PaletteCycleFrame;
+extern Sint32 PaletteCycleTick;
 
-/* Sets the palette cycle's frame counter. */
-static inline void scPaletteCycleSetFrame(Sint32 value)
+/* Sets the palette cycle's tick counter. */
+static inline void scPaletteCycleSetTick(Sint32 value)
 {
-	PaletteCycleFrame = value;
+	PaletteCycleTick = value;
 }
 
 #include "shared/palette_cycle_step.h"
@@ -425,9 +425,8 @@ Sint32 fdMapGridGetMetatileBehavior(Sint32 x, Sint32 z, Sint32 layer);
 
 #include "shared/whirlwind_update.h"
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 #include "shared/whirlwind_spawn.h"
 
@@ -455,8 +454,8 @@ void scLightSprsSetPriority(Sint32 value)
 
 #include "../field/actor_set_sprite_priority.c"
 
-extern Uint32 FieldEffect_ShortScript[];
-extern Uint32 FieldEffect_MediumScript[];
+extern Uint32 FieldEffectShortScript[];
+extern Uint32 FieldEffectMediumScript[];
 
 /* clang-format off */
 #include "shared/field_effect_duration_scripts.c"
@@ -523,7 +522,7 @@ CUE SceneCues[] = {
 	{CUE_TABLE_END},
 };
 
-Sint32 PaletteCycleFrame = -1;
+Sint32 PaletteCycleTick = -1;
 
 Sint32 PaletteCyclePausesInScripts = 1;
 
@@ -534,10 +533,10 @@ Sint32 WhirlwindEndScript[] = {
 };
 /* clang-format on */
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 #include "../field/field_effect_move.c"
@@ -547,9 +546,9 @@ const Sint32 *FieldEffect_DurationScripts[] = {
 #undef FLAG_BRIDGE_BLOCK_RAISED
 
 void scLeaderCenterInMetatile(void);
-void scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
+void scCrackedTileCrack(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry);
 
-extern const Sint32 *FieldEffect_DurationScripts[];
+extern const Sint32 *FieldEffectDurationScripts[];
 
 #define EFFECT_SET_MODE	  fdActorSelectAnimation
 #define EFFECT_SET_SCRIPT fdActorStartScript
@@ -572,7 +571,7 @@ extern const Sint32 *FieldEffect_DurationScripts[];
 
 #include "shared/cracked_tile_drop_in.h"
 
-void syGameFlagSetByte(Sint32 flag, Sint32 value);
+void syGameFlagSetByte(Sint32 flg, Sint32 value);
 
 /* Watches the leader's steps over the cracked tiles: the first step on one
    cracks it, a second step after leaving it drops the party through, saving the

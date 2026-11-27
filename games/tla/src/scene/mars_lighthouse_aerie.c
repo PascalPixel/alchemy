@@ -32,7 +32,7 @@
 /* The voice has asked for the Mars Star; stepping back from the beacon asks
    again. */
 #define FLAG_ASKED_FOR_MARS_STAR  FLAG_SCENE_TEMP_02
-/* The beacon's light has broken through: its orbs rise every frame. */
+/* The beacon's light has broken through: its orbs rise every tick. */
 #define FLAG_BEACON_BROKE_THROUGH FLAG_SCENE_TEMP_00
 
 /* The aerie's actors, by the rows of its three actor placement tables; the
@@ -47,7 +47,7 @@ enum {
 	   floating before the battle. */
 	ACTOR_FIRST_PLATFORM,
 	ACTOR_LAST_PLATFORM = ACTOR_FIRST_PLATFORM + 6,
-	/* Before the battle (MarsLighthouseAerie_Placements) and after it: the Doom
+	/* Before the battle (MarsLighthouseAeriePlacements) and after it: the Doom
 	   Dragon and the Wise One, the voice that calls the party betrayers. */
 	ACTOR_DOOM_DRAGON,
 	ACTOR_WISE_ONE,
@@ -84,7 +84,7 @@ enum {
    beacon (MARS_LIGHTHOUSE_AERIE_FROM_MARS_LIGHTHOUSE_AERIE). */
 #define EXIT_TO_THE_BEACON 2
 
-/* After the battle (MarsLighthouseAerie_AfterBattlePlacements): the party but
+/* After the battle (MarsLighthouseAerieAfterBattlePlacements): the party but
    the leader stand in on their smaller sprites (SPRITE_JENNA_SMALL and the
    rest), the dragon's three heads fall, and under each lies one of the three it
    was. */
@@ -104,7 +104,7 @@ enum {
 	ACTOR_FREED_KYLE
 };
 
-/* At the beacon (MarsLighthouseAerie_BeaconPlacements), entered from
+/* At the beacon (MarsLighthouseAerieBeaconPlacements), entered from
    MARS_LIGHTHOUSE_AERIE_FROM_MARS_LIGHTHOUSE_AERIE on:
    the three lie dying, and an unseen actor beside each answers for them when
    talked to. */
@@ -142,16 +142,16 @@ extern Uint8	   MsgUhhhhnnnICan[];
 extern Uint8	   MsgKoffKoffYou[];
 extern Uint8	   MsgUnnnnIAm[];
 extern Uint8	   MsgIUnderstandYour[];
-extern ACTOR_PLACE MarsLighthouseAerie_Placements[];
-extern ACTOR_PLACE MarsLighthouseAerie_AfterBattlePlacements[];
-extern ACTOR_PLACE MarsLighthouseAerie_BeaconPlacements[];
-Uint32 MarsLighthouseAerie_BeaconFlameFrame				BSS_DATA;
-Uint32 MarsLighthouseAerie_FlickerFrame					BSS_DATA;
-Uint32 MarsLighthouseAerie_BeaconFireFrames				BSS_DATA;
-Uint32 MarsLighthouseAerie_FlickerRate					BSS_DATA;
-SPARKLE_STATE MarsLighthouseAerie_RisingRingsB BSS_DATA ALIGNED(16);
-SPARKLE_STATE MarsLighthouseAerie_RisingRingsA BSS_DATA ALIGNED(16);
-Uint32 MarsLighthouseAerie_BeaconFireFrame				BSS_DATA;
+extern ACTOR_PLACE MarsLighthouseAeriePlacements[];
+extern ACTOR_PLACE MarsLighthouseAerieAfterBattlePlacements[];
+extern ACTOR_PLACE MarsLighthouseAerieBeaconPlacements[];
+Uint32 MarsLighthouseAerieBeaconFlameTick			   BSS_DATA;
+Uint32 MarsLighthouseAerieFlickerTick				   BSS_DATA;
+Uint32 MarsLighthouseAerieBeaconFireTicks			   BSS_DATA;
+Uint32 MarsLighthouseAerieFlickerRate				   BSS_DATA;
+SPARKLE_STATE MarsLighthouseAerieRisingRingsB BSS_DATA ALIGNED(16);
+SPARKLE_STATE MarsLighthouseAerieRisingRingsA BSS_DATA ALIGNED(16);
+Uint32 MarsLighthouseAerieBeaconFireTick			   BSS_DATA;
 /* The teleport circle's shimmer, a palette cycle that fdPaletteCycleFade
    steps. */
 Uint16 PaletteCycleBright		  BSS_DATA;
@@ -171,24 +171,24 @@ extern Uint8 MsgMarsLighthouseAerieDoNotLetYourSadness[];
 
 Sint32 syListCountEntries(Uint16 *list);
 
-/* Each frame while waiting in the storm: now and then the actor looks another
+/* Each tick while waiting in the storm: now and then the actor looks another
    way. */
 void scMarsLighthouseAerieLookAround(ACTOR *actor)
 {
-	Uint8 *timer = &actor->sceneCnt;
+	Uint8 *tmr = &actor->sceneCnt;
 
-	if(*timer != 0) {
-		(*timer)--;
+	if(*tmr != 0) {
+		(*tmr)--;
 	} else {
-		*timer = (syRandomBelow(80)) + 60;
+		*tmr = (syRandomBelow(80)) + 60;
 		actor->facing = syRandom();
 	}
 }
 
-/* The actor flickers: hidden for two frames, shown for two. */
+/* The actor flickers: hidden for two ticks, shown for two. */
 void scMarsLighthouseAerieFlicker(ACTOR *actor)
 {
-	if((FrameCount >> 1) & 1)
+	if((TickCount >> 1) & 1)
 		scFieldActorSetSprCol(actor, SPRITE_COLOR_HIDDEN);
 	else
 		scFieldActorSetSprCol(actor, SPRITE_COLOR_NORMAL);
@@ -197,18 +197,18 @@ void scMarsLighthouseAerieFlicker(ACTOR *actor)
 /* The actor swells now and then and shrinks back, as if breathing. */
 void scMarsLighthouseAerieThrob(ACTOR *actor)
 {
-	Uint8 *timer;
+	Uint8 *tmr;
 	Sint32 scale = actor->scaleX;
 
 	if(scale > toFIXED(1)) {
 		actor->scaleX = scale - toFIXED(1) / 32;
 		actor->scaleY -= toFIXED(1) / 64;
 	}
-	timer = &actor->sceneCnt;
-	if(*timer != 0) {
-		(*timer)--;
+	tmr = &actor->sceneCnt;
+	if(*tmr != 0) {
+		(*tmr)--;
 	} else {
-		*timer = *timer + syRandomBelow(80) + 40;
+		*tmr = *tmr + syRandomBelow(80) + 40;
 		actor->scaleX = toFIXED(9) / 8;
 		actor->scaleY = toFIXED(17) / 16;
 	}
@@ -219,18 +219,18 @@ void scMarsLighthouseAerieOrbitBeaconFire(ACTOR *actor)
 {
 	ACTOR  *anchor = fdActorGetById(ACTOR_BEACON_FIRE);
 	Uint16 *pangle = (Uint16 *)&actor->tmr;
-	Sint32	angle = *pangle;
+	Sint32	ang = *pangle;
 	FIXED	cosine;
 	FIXED	sine;
 	FIXED	along;
 	FIXED	across;
 	Uint8  *counter;
 
-	cosine = syCos(angle);
+	cosine = syCos(ang);
 	counter = &actor->sceneCnt;
 	along = anchor->x.fixed + cosine * (actor->speedLimit + *counter + 6);
 	actor->x.fixed = along;
-	sine = syMathSin(angle);
+	sine = syMathSin(ang);
 	across = anchor->z.fixed + sine * (*counter + 4);
 	actor->z.fixed = across;
 	actor->tgtX = actor->x.fixed;
@@ -256,12 +256,12 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.entrance == ENTRANCE_DRAGON_BEATEN)
-		return MarsLighthouseAerie_AfterBattlePlacements;
+		return MarsLighthouseAerieAfterBattlePlacements;
 	/* From the fallen dragon, for the beacon's lighting, or back from Mercury
 	   Lighthouse: the three entrances that arrive at the beacon. */
 	if(MainRoutineStateWork.entrance >= 3 && MainRoutineStateWork.entrance <= 5)
-		return MarsLighthouseAerie_BeaconPlacements;
-	return MarsLighthouseAerie_Placements;
+		return MarsLighthouseAerieBeaconPlacements;
+	return MarsLighthouseAeriePlacements;
 }
 
 /* Teleport takes the party back down to the inscriptions room, in a shimmer of
@@ -281,10 +281,10 @@ const CUE *scGetCues(void)
 	return SceneCues;
 }
 
-extern Uint16 TeleportCircle_PaletteSlots[];
-extern Uint16 TeleportCircle_Colors[];
-extern Uint16 TeleportCircle_ShimmerColors[];
-extern Uint16 TeleportCircle_ShimmerSlots[];
+extern Uint16 TeleportCirclePaletteSlots[];
+extern Uint16 TeleportCircleColors[];
+extern Uint16 TeleportCircleShimmerColors[];
+extern Uint16 TeleportCircleShimmerSlots[];
 
 void scPaletteSetColsFade(Uint16 *slots, Uint16 *colours, Uint16 *a, Uint16 *b);
 void scMarsLighthouseAerieSpawnBeaconFlames(void);
@@ -295,8 +295,8 @@ void scMarsLighthouseAerieSetUpBeacon(void)
 	ACTOR *actor;
 	Sint32 i;
 
-	scPaletteSetColsFade(TeleportCircle_PaletteSlots, TeleportCircle_Colors,
-		TeleportCircle_ShimmerColors, TeleportCircle_ShimmerSlots);
+	scPaletteSetColsFade(TeleportCirclePaletteSlots, TeleportCircleColors,
+		TeleportCircleShimmerColors, TeleportCircleShimmerSlots);
 	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
 		ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 	for(i = ACTOR_FIRST_PLATFORM; i <= ACTOR_LAST_PLATFORM; i++) {
@@ -327,9 +327,9 @@ void scMarsLighthouseAerieSetUpBeacon(void)
 	actor->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
 	actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
 	fdActorSetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
-	MarsLighthouseAerie_BeaconFlameFrame = 0;
-	syFieldSetFrameEvent(
-		scMarsLighthouseAerieSpawnBeaconFlames, EVENT_PASS_FRAME);
+	MarsLighthouseAerieBeaconFlameTick = 0;
+	syFieldSetTickEvent(
+		scMarsLighthouseAerieSpawnBeaconFlames, EVENT_PASS_TICK);
 }
 
 /* Sets the scene up for the entrance the party arrived by: the Golden Sun
@@ -362,7 +362,7 @@ Sint32 scInit(void)
 		fdMapGridCenterOnFollowedPoint();
 		syWait(1);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		syFieldScriptWait(40);
 		scMarsLighthouseAerieLightBeacon();
 		fdScriptEnd();
@@ -390,7 +390,7 @@ Sint32 scPrepareMap(void)
 	return 0;
 }
 
-extern Sint32 MarsLighthouseAerie_BeaconFlameScript[];
+extern Sint32 MarsLighthouseAerieBeaconFlameScript[];
 
 void scMarsLighthouseAerieSwingBeaconFlame(ACTOR *actor);
 
@@ -399,52 +399,52 @@ void scMarsLighthouseAerieSwingBeaconFlame(ACTOR *actor);
 #define BEACON_FLAME_SWING_RADIUS 28
 #define BEACON_FLAME_SWING_SPREAD 24
 
-/* Every sixteenth frame a flame rises from the beacon's fire. */
+/* Every sixteenth tick a flame rises from the beacon's fire. */
 void scMarsLighthouseAerieSpawnBeaconFlames(void)
 {
 	ACTOR	  *anchor = fdActorGet(ACTOR_BEACON_FIRE);
 	FIXED	   offset = toFIXED(syRandomBelow(48));
 	ACTOR	  *actor;
-	FIELD_SPR *sprite;
+	FIELD_SPR *spr;
 	Uint32	   phase;
-	Sint32	   angle;
+	Sint32	   ang;
 
 	if(anchor != NULL &&
-		(phase = MarsLighthouseAerie_BeaconFlameFrame & 15) == 0) {
+		(phase = MarsLighthouseAerieBeaconFlameTick & 15) == 0) {
 		actor =
 			scFieldActorCreate(SPRITE_PARTICLE, anchor->x.fixed + toFIXED(8),
 				anchor->y.fixed + offset + toFIXED(8), anchor->z.fixed);
 		offset = INTtoFIXED(offset / toFIXED(6));
 		if(actor != NULL) {
 
-			sprite = actor->spr;
-			fdActorStartScript(actor, MarsLighthouseAerie_BeaconFlameScript);
+			spr = actor->spr;
+			fdActorStartScript(actor, MarsLighthouseAerieBeaconFlameScript);
 			scFieldActorSetSprCol(actor, SPRITE_COLOR_RED_TINT);
 			actor->motionFlg = phase;
-			angle = syRandom() & 0xffff000;
-			actor->tmr = angle;
+			ang = syRandom() & 0xffff000;
+			actor->tmr = ang;
 			actor->userValue = phase;
 			actor->update = scMarsLighthouseAerieSwingBeaconFlame;
 			actor->watchedActor = (union FIELD_OBJECT *)anchor;
 			actor->speedLimit = FIXEDtoINT(
 				syMathSin((offset & 0xfffff) >> 4) * BEACON_FLAME_SWING_SPREAD);
-			sprite->flg = 0;
-			sprite->pri = ((FIELD_SPR *)anchor->spr)->pri;
+			spr->flg = 0;
+			spr->pri = ((FIELD_SPR *)anchor->spr)->pri;
 		}
 	}
-	MarsLighthouseAerie_BeaconFlameFrame++;
+	MarsLighthouseAerieBeaconFlameTick++;
 }
 
 /* A flame swings round the beacon's fire, behind it and then in front. */
 void scMarsLighthouseAerieSwingBeaconFlame(ACTOR *actor)
 {
 	Uint16 *pangle = (Uint16 *)&actor->tmr;
-	Uint16	angle = *pangle;
+	Uint16	ang = *pangle;
 	ACTOR  *parent = (ACTOR *)actor->watchedActor;
 
 	actor->x.fixed = parent->x.fixed +
-		syCos(angle) * (actor->speedLimit + BEACON_FLAME_SWING_RADIUS);
-	actor->z.fixed = (syMathSin(angle) << 4) + toFIXED(264);
+		syCos(ang) * (actor->speedLimit + BEACON_FLAME_SWING_RADIUS);
+	actor->z.fixed = (syMathSin(ang) << 4) + toFIXED(264);
 	actor->tgtX = actor->x.fixed;
 	actor->tgtZ = actor->z.fixed;
 	if(actor->z.fixed < toFIXED(264))
@@ -471,21 +471,21 @@ void scMarsLighthouseAerieStopLookingAround(Sint32 id)
 	fdActorFaceDirection(id, FACING_NORTH, 0);
 }
 
-extern Sint32 MarsLighthouseAerie_JennaApproachScript[];
-extern Sint32 MarsLighthouseAerie_ShebaApproachScript[];
-extern Sint32 MarsLighthouseAerie_PiersApproachScript[];
-extern Sint32 MarsLighthouseAerie_IvanApproachScript[];
-extern Sint32 MarsLighthouseAerie_KradenApproachScript[];
-extern Sint32 MarsLighthouseAerie_VoiceFadeScript[];
-extern Sint32 MarsLighthouseAerie_DoomDragonRiseScript[];
-extern Sint32 MarsLighthouseAerie_LeaderReadyScript[];
-extern Sint32 MarsLighthouseAerie_IsaacReadyScript[];
-extern Sint32 MarsLighthouseAerie_JennaReadyScript[];
-extern Sint32 MarsLighthouseAerie_ShebaReadyScript[];
-extern Sint32 MarsLighthouseAerie_PiersReadyScript[];
-extern Sint32 MarsLighthouseAerie_IvanReadyScript[];
-extern Sint32 MarsLighthouseAerie_MiaReadyScript[];
-extern Sint32 MarsLighthouseAerie_GaretReadyScript[];
+extern Sint32 MarsLighthouseAerieJennaApproachScript[];
+extern Sint32 MarsLighthouseAerieShebaApproachScript[];
+extern Sint32 MarsLighthouseAeriePiersApproachScript[];
+extern Sint32 MarsLighthouseAerieIvanApproachScript[];
+extern Sint32 MarsLighthouseAerieKradenApproachScript[];
+extern Sint32 MarsLighthouseAerieVoiceFadeScript[];
+extern Sint32 MarsLighthouseAerieDoomDragonRiseScript[];
+extern Sint32 MarsLighthouseAerieLeaderReadyScript[];
+extern Sint32 MarsLighthouseAerieIsaacReadyScript[];
+extern Sint32 MarsLighthouseAerieJennaReadyScript[];
+extern Sint32 MarsLighthouseAerieShebaReadyScript[];
+extern Sint32 MarsLighthouseAeriePiersReadyScript[];
+extern Sint32 MarsLighthouseAerieIvanReadyScript[];
+extern Sint32 MarsLighthouseAerieMiaReadyScript[];
+extern Sint32 MarsLighthouseAerieGaretReadyScript[];
 
 /* The party walks up to the unlit beacon in the storm (metatiles (32, 20) to
    (34, 20)), and the voice calls them betrayers before the Doom Dragon's
@@ -493,11 +493,11 @@ extern Sint32 MarsLighthouseAerie_GaretReadyScript[];
 void scMarsLighthouseAerieFaceDoomDragon(void)
 {
 	MAIN_ROUTINE_STATE *state;
-	Uint16			   *textColor;
+	Uint16			   *textCol;
 	ACTOR			   *actor;
 
 	actor = fdActorGet(MainRoutineStateWork.leaderActorId);
-	textColor = (Uint16 *)&CENTERED_TEXT_COLOR;
+	textCol = (Uint16 *)&CENTERED_TEXT_COLOR;
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	scFieldActorSetSprCol(fdActorGet(ACTOR_WISE_ONE), SPRITE_COLOR_HIDDEN);
@@ -559,11 +559,11 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	fdActorSetSpeed(ACTOR_PIERS, 1.6);
 	fdActorSetSpeed(ACTOR_IVAN, 1.6);
 	fdActorSetSpeed(ACTOR_KRADEN, 1.6);
-	fdActorSetScript(ACTOR_JENNA, MarsLighthouseAerie_JennaApproachScript);
-	fdActorSetScript(ACTOR_SHEBA, MarsLighthouseAerie_ShebaApproachScript);
-	fdActorSetScript(ACTOR_PIERS, MarsLighthouseAerie_PiersApproachScript);
-	fdActorSetScript(ACTOR_KRADEN, MarsLighthouseAerie_KradenApproachScript);
-	fdActorRunScriptAndWait(ACTOR_IVAN, MarsLighthouseAerie_IvanApproachScript);
+	fdActorSetScript(ACTOR_JENNA, MarsLighthouseAerieJennaApproachScript);
+	fdActorSetScript(ACTOR_SHEBA, MarsLighthouseAerieShebaApproachScript);
+	fdActorSetScript(ACTOR_PIERS, MarsLighthouseAeriePiersApproachScript);
+	fdActorSetScript(ACTOR_KRADEN, MarsLighthouseAerieKradenApproachScript);
+	fdActorRunScriptAndWait(ACTOR_IVAN, MarsLighthouseAerieIvanApproachScript);
 	syFieldScriptWait(10);
 	fdActorReleaseById(ACTOR_LAST_PLATFORM);
 	fdActorReleaseById(ACTOR_FIRST_PLATFORM + 5);
@@ -622,7 +622,7 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	fdActorMoveToAndWait(MainRoutineStateWork.leaderActorId, 504, 320);
 	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlg |=
 		ACTOR_FACES_MOTION;
-	*textColor = RGB_WHITE;
+	*textCol = RGB_WHITE;
 	syWait(1);
 	/* "So, you are still intent on lighting the beacon of Mars Lighthouse?" */
 	fdScriptShowMessage(ACTOR_WISE_ONE, 0);
@@ -853,7 +853,7 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	scFieldActorSetAnimation(ACTOR_WISE_ONE, 6);
 	syFieldScriptWait(10);
 	scMarsLighthouseAerieStartRisingRings(
-		actor, &MarsLighthouseAerie_RisingRingsA);
+		actor, &MarsLighthouseAerieRisingRingsA);
 	syFieldScriptWait(80);
 	scFieldActorSetAnimation(ACTOR_WISE_ONE, 3);
 	syFieldScriptWait(10);
@@ -1119,7 +1119,7 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	scFieldActorSetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
 	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
 	actor->update = (OBJECT_UPDATE)scMarsLighthouseAerieFlicker;
-	fdActorSetScript(ACTOR_WISE_ONE, MarsLighthouseAerie_VoiceFadeScript);
+	fdActorSetScript(ACTOR_WISE_ONE, MarsLighthouseAerieVoiceFadeScript);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
 	fdPaletteFadeInterpolate(20);
 	syWait(20);
@@ -1150,7 +1150,7 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	fdPaletteFadeInterpolate(20);
 	fdScriptPlaySnd(MUS_ALEX);
 	fdActorRunScriptAndWait(
-		ACTOR_DOOM_DRAGON, MarsLighthouseAerie_DoomDragonRiseScript);
+		ACTOR_DOOM_DRAGON, MarsLighthouseAerieDoomDragonRiseScript);
 	REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
 	fdPaletteFadeInterpolate(40);
@@ -1254,15 +1254,15 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	fdActorSetSpeed(ACTOR_JENNA, 1.6);
 	fdActorSetSpeed(ACTOR_IVAN, 1.6);
 	fdActorSetSpeed(ACTOR_MIA, 1.6);
-	fdActorSetScript(ACTOR_PIERS, MarsLighthouseAerie_PiersReadyScript);
+	fdActorSetScript(ACTOR_PIERS, MarsLighthouseAeriePiersReadyScript);
 	fdActorSetScript(
-		state->leaderActorId, MarsLighthouseAerie_LeaderReadyScript);
-	fdActorSetScript(ACTOR_ISAAC, MarsLighthouseAerie_IsaacReadyScript);
-	fdActorSetScript(ACTOR_SHEBA, MarsLighthouseAerie_ShebaReadyScript);
-	fdActorSetScript(ACTOR_JENNA, MarsLighthouseAerie_JennaReadyScript);
-	fdActorSetScript(ACTOR_IVAN, MarsLighthouseAerie_IvanReadyScript);
-	fdActorSetScript(ACTOR_MIA, MarsLighthouseAerie_MiaReadyScript);
-	fdActorRunScriptAndWait(ACTOR_GARET, MarsLighthouseAerie_GaretReadyScript);
+		state->leaderActorId, MarsLighthouseAerieLeaderReadyScript);
+	fdActorSetScript(ACTOR_ISAAC, MarsLighthouseAerieIsaacReadyScript);
+	fdActorSetScript(ACTOR_SHEBA, MarsLighthouseAerieShebaReadyScript);
+	fdActorSetScript(ACTOR_JENNA, MarsLighthouseAerieJennaReadyScript);
+	fdActorSetScript(ACTOR_IVAN, MarsLighthouseAerieIvanReadyScript);
+	fdActorSetScript(ACTOR_MIA, MarsLighthouseAerieMiaReadyScript);
+	fdActorRunScriptAndWait(ACTOR_GARET, MarsLighthouseAerieGaretReadyScript);
 	fdActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
 	/* "Wait a second... Wasn't that two-headed dragon actually... So
 	   that..." */
@@ -1290,31 +1290,29 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 /* The Doom Dragon's parts flicker white, ever faster. */
 void scMarsLighthouseAerieFlickerDragon(ACTOR *actor)
 {
-	if((MarsLighthouseAerie_FlickerFrame >> MarsLighthouseAerie_FlickerRate) &
-		1)
+	if((MarsLighthouseAerieFlickerTick >> MarsLighthouseAerieFlickerRate) & 1)
 		scFieldActorSetSprCol(actor, SPRITE_COLOR_HIDDEN);
 	else
 		scFieldActorSetSprCol(actor, SPRITE_COLOR_NORMAL);
-	MarsLighthouseAerie_FlickerFrame++;
+	MarsLighthouseAerieFlickerTick++;
 }
 
 /* The three it was flicker white out of step with the dragon. */
 void scMarsLighthouseAerieFlickerParent(ACTOR *actor)
 {
-	if((MarsLighthouseAerie_FlickerFrame >> MarsLighthouseAerie_FlickerRate) &
-		1)
+	if((MarsLighthouseAerieFlickerTick >> MarsLighthouseAerieFlickerRate) & 1)
 		scFieldActorSetSprCol(actor, SPRITE_COLOR_NORMAL);
 	else
 		scFieldActorSetSprCol(actor, SPRITE_COLOR_HIDDEN);
 }
 
-extern Sint32 MarsLighthouseAerie_ShebaToThosePeopleScript[];
-extern Sint32 MarsLighthouseAerie_JennaToThosePeopleScript[];
-extern Sint32 MarsLighthouseAerie_JennaTurnScript[];
-extern Sint32 MarsLighthouseAerie_LeaderTurnScript[];
-extern Sint32 MarsLighthouseAerie_IsaacTurnScript[];
-extern Sint32 MarsLighthouseAerie_GaretTurnScript[];
-extern Sint32 MarsLighthouseAerie_MiaTurnScript[];
+extern Sint32 MarsLighthouseAerieShebaToThosePeopleScript[];
+extern Sint32 MarsLighthouseAerieJennaToThosePeopleScript[];
+extern Sint32 MarsLighthouseAerieJennaTurnScript[];
+extern Sint32 MarsLighthouseAerieLeaderTurnScript[];
+extern Sint32 MarsLighthouseAerieIsaacTurnScript[];
+extern Sint32 MarsLighthouseAerieGaretTurnScript[];
+extern Sint32 MarsLighthouseAerieMiaTurnScript[];
 
 /* The Doom Dragon falls, and the party finds who it was: Felix and Jenna's
    parents and Isaac's father, Kyle, freed. */
@@ -1363,15 +1361,15 @@ void scMarsLighthouseAerieFindWhoTheDragonWas(void)
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 	FieldStateWork->transitionFrm = 1;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
 	fdPaletteFadeInterpolate(16);
 	syWait(16);
 	syFieldScriptWait(80);
-	MarsLighthouseAerie_FlickerFrame = 0;
-	MarsLighthouseAerie_FlickerRate = 4;
+	MarsLighthouseAerieFlickerTick = 0;
+	MarsLighthouseAerieFlickerRate = 4;
 	fdActorGet(ACTOR_DOOM_DRAGON)->update =
 		(OBJECT_UPDATE)scMarsLighthouseAerieFlickerDragon;
 	fdActorGet(ACTOR_DRAGON_HEAD_A)->update =
@@ -1393,9 +1391,9 @@ void scMarsLighthouseAerieFindWhoTheDragonWas(void)
 	syWait(10);
 	fdScriptPlaySnd(SE_DRAGON_FLICKER);
 	syWait(40);
-	MarsLighthouseAerie_FlickerRate = 3;
+	MarsLighthouseAerieFlickerRate = 3;
 	syWait(30);
-	MarsLighthouseAerie_FlickerRate = 2;
+	MarsLighthouseAerieFlickerRate = 2;
 	syWait(20);
 	fdActorSetPos(ACTOR_DOOM_DRAGON, 0, 0);
 	fdActorSetPos(ACTOR_DRAGON_HEAD_A, 0, 0);
@@ -1493,9 +1491,9 @@ void scMarsLighthouseAerieFindWhoTheDragonWas(void)
 	fdActorSetSpeed(ACTOR_SHEBA_STAND_IN, 0.8);
 	fdActorSetSpeed(ACTOR_JENNA_STAND_IN, 0.8);
 	fdActorSetScript(
-		ACTOR_SHEBA_STAND_IN, MarsLighthouseAerie_ShebaToThosePeopleScript);
+		ACTOR_SHEBA_STAND_IN, MarsLighthouseAerieShebaToThosePeopleScript);
 	fdActorSetScript(
-		ACTOR_JENNA_STAND_IN, MarsLighthouseAerie_JennaToThosePeopleScript);
+		ACTOR_JENNA_STAND_IN, MarsLighthouseAerieJennaToThosePeopleScript);
 	fdActorSetSpeed(ACTOR_KRADEN, 2.4);
 	fdActorWalkToAndWait(ACTOR_KRADEN, 540, 340);
 	scFieldActorJump(ACTOR_KRADEN, 4, 10);
@@ -1605,12 +1603,12 @@ void scMarsLighthouseAerieFindWhoTheDragonWas(void)
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 2.4);
 	fdActorSetSpeed(ACTOR_ISAAC_STAND_IN, 2.4);
 	fdActorSetSpeed(ACTOR_GARET_STAND_IN, 2.4);
-	fdActorSetScript(ACTOR_JENNA_STAND_IN, MarsLighthouseAerie_JennaTurnScript);
+	fdActorSetScript(ACTOR_JENNA_STAND_IN, MarsLighthouseAerieJennaTurnScript);
 	fdActorSetScript(MainRoutineStateWork.leaderActorId,
-		MarsLighthouseAerie_LeaderTurnScript);
-	fdActorSetScript(ACTOR_ISAAC_STAND_IN, MarsLighthouseAerie_IsaacTurnScript);
+		MarsLighthouseAerieLeaderTurnScript);
+	fdActorSetScript(ACTOR_ISAAC_STAND_IN, MarsLighthouseAerieIsaacTurnScript);
 	fdActorRunScriptAndWait(
-		ACTOR_GARET_STAND_IN, MarsLighthouseAerie_GaretTurnScript);
+		ACTOR_GARET_STAND_IN, MarsLighthouseAerieGaretTurnScript);
 	syFieldScriptWait(20);
 	fdActorSetSpeed(ACTOR_PIERS_STAND_IN, 1.6);
 	fdActorWalkToAndWait(ACTOR_PIERS_STAND_IN, 528, 320);
@@ -1620,7 +1618,7 @@ void scMarsLighthouseAerieFindWhoTheDragonWas(void)
 	fdScriptShowMessage(
 		SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | ACTOR_PIERS_STAND_IN, 0);
 	fdActorSetSpeed(ACTOR_MIA_STAND_IN, 1.6);
-	fdActorSetScript(ACTOR_MIA_STAND_IN, MarsLighthouseAerie_MiaTurnScript);
+	fdActorSetScript(ACTOR_MIA_STAND_IN, MarsLighthouseAerieMiaTurnScript);
 	fdActorWalkToAndWait(ACTOR_PIERS_STAND_IN, 486, 308);
 	fdActorFaceDirectionAndWait(ACTOR_PIERS_STAND_IN, FACING_NORTHWEST);
 	fdActorSetSpeed(ACTOR_SHEBA_STAND_IN, 2.4);
@@ -1633,9 +1631,9 @@ void scMarsLighthouseAerieFindWhoTheDragonWas(void)
 	fdActorFaceDirectionAndWait(ACTOR_PIERS_STAND_IN, FACING_EAST);
 	scFieldActorSetSprPriority(ACTOR_PIERS_STAND_IN, 1);
 	scMarsLighthouseAerieStartRisingRings(
-		fdActorGet(ACTOR_PIERS_STAND_IN), &MarsLighthouseAerie_RisingRingsA);
+		fdActorGet(ACTOR_PIERS_STAND_IN), &MarsLighthouseAerieRisingRingsA);
 	scMarsLighthouseAerieStartRisingRings(
-		fdActorGet(ACTOR_MIA_STAND_IN), &MarsLighthouseAerie_RisingRingsB);
+		fdActorGet(ACTOR_MIA_STAND_IN), &MarsLighthouseAerieRisingRingsB);
 	syFieldScriptWait(40);
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
 	/* "If only... If only I'd realized it sooner..." */
@@ -1673,12 +1671,12 @@ void scMarsLighthouseAerieUrgeOnToBeacon(void)
 	fdActorSetPos(MainRoutineStateWork.leaderActorId, 506, 280);
 	syWait(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	scFieldActorSetSprPriority(ACTOR_MIA, 1);
 	scMarsLighthouseAerieStartRisingRings(
-		fdActorGet(ACTOR_PIERS), &MarsLighthouseAerie_RisingRingsA);
+		fdActorGet(ACTOR_PIERS), &MarsLighthouseAerieRisingRingsA);
 	scMarsLighthouseAerieStartRisingRings(
-		fdActorGet(ACTOR_MIA), &MarsLighthouseAerie_RisingRingsB);
+		fdActorGet(ACTOR_MIA), &MarsLighthouseAerieRisingRingsB);
 	syFieldScriptWait(120);
 	scMarsLighthouseAerieEndRisingRings(fdActorGet(ACTOR_PIERS));
 	scMarsLighthouseAerieEndRisingRings(fdActorGet(ACTOR_MIA));
@@ -1931,13 +1929,13 @@ void scMarsLighthouseAerieUrgeOnToBeacon(void)
 void scOrbUpdateRising(ACTOR *self)
 {
 	ACTOR *centre = fdActorGet(ACTOR_BEAM_BOTTOM);
-	Uint16 angle = self->tmr;
+	Uint16 ang = self->tmr;
 	FIXED  sine;
 	FIXED  x;
 	FIXED  z;
 
-	self->x.fixed = centre->x.fixed + syCos(angle) * (self->speedLimit + 3);
-	sine = syMathSin(angle);
+	self->x.fixed = centre->x.fixed + syCos(ang) * (self->speedLimit + 3);
+	sine = syMathSin(ang);
 	z = centre->z.fixed;
 	x = self->x.fixed;
 	z += sine * 2;
@@ -1947,16 +1945,16 @@ void scOrbUpdateRising(ACTOR *self)
 	self->tmr += -(TRIG_TURN / 32);
 }
 
-/* Every third frame, or every frame once the light has broken through, an orb
+/* Every third tick, or every tick once the light has broken through, an orb
    starts to rise round the beacon's beam. */
 void scOrbSpawnRising(void)
 {
 	ACTOR	  *center;
 	ACTOR	  *effect;
-	FIELD_SPR *sprite;
-	Sint32	   angle;
+	FIELD_SPR *spr;
+	Sint32	   ang;
 
-	if(fdScriptGetFlag(FLAG_BEACON_BROKE_THROUGH) == 0 && FrameCount % 3 != 0)
+	if(fdScriptGetFlag(FLAG_BEACON_BROKE_THROUGH) == 0 && TickCount % 3 != 0)
 		return;
 	center = fdActorGet(ACTOR_BEAM_BOTTOM);
 	if(fdScriptGetFlag(FLAG_BEACON_BROKE_THROUGH) != 0) {
@@ -1977,18 +1975,18 @@ void scOrbSpawnRising(void)
 			center->z.fixed);
 	}
 	if(effect != 0) {
-		sprite = effect->spr;
-		fdActorStartScript(effect, Orb_RisingScript);
+		spr = effect->spr;
+		fdActorStartScript(effect, OrbRisingScript);
 		scFieldActorSetSprCol(effect, SPRITE_COLOR_GRB);
 		effect->motionFlg = 0;
-		angle = syRandom() & 0xffff000;
-		effect->tmr = angle;
+		ang = syRandom() & 0xffff000;
+		effect->tmr = ang;
 		effect->userValue = 0;
 		effect->update = (OBJECT_UPDATE)scOrbUpdateRising;
 		effect->speedLimit =
 			syMathSin((Uint32)(syRandom() * 65535) >> 20) * 24 >> 16;
-		sprite->flg = 0;
-		sprite->pri = 2;
+		spr->flg = 0;
+		spr->pri = 2;
 	}
 }
 
@@ -1996,7 +1994,7 @@ void scOrbSpawnRising(void)
 
 void fdTeleportPlayWhirl(void);
 
-extern Sint32 MarsLighthouseAerie_BeaconFireScript[];
+extern Sint32 MarsLighthouseAerieBeaconFireScript[];
 
 /* The beacon's fire: a flash and a quake, then it falls from above into the
    beacon with glittering sparks. */
@@ -2005,11 +2003,11 @@ void scMarsLighthouseAerieRaiseBeaconFire(void)
 	ACTOR					  *anchor = fdActorGetById(ACTOR_BEACON_FIRE);
 	Sint32					   spawn = 0;
 	ACTOR					  *actor;
-	MARS_LIGHTHOUSE_AERIE_SPR *sprite;
-	Sint32					   angle;
+	MARS_LIGHTHOUSE_AERIE_SPR *spr;
+	Sint32					   ang;
 	Uint8					   phase;
 
-	switch(MarsLighthouseAerie_BeaconFireFrame) {
+	switch(MarsLighthouseAerieBeaconFireTick) {
 	case 0:
 		fdScriptPlaySnd(SE_SHIMMER);
 		fdMapGridSetShake(6, 6, 1);
@@ -2032,29 +2030,29 @@ void scMarsLighthouseAerieRaiseBeaconFire(void)
 		anchor->scaleY = toFIXED(1);
 		fdActorStopWhereItStands(anchor);
 		fdActorSetScript(
-			ACTOR_BEACON_FIRE, MarsLighthouseAerie_BeaconFireScript);
+			ACTOR_BEACON_FIRE, MarsLighthouseAerieBeaconFireScript);
 		break;
 	case 25:
-		MarsLighthouseAerie_BeaconFireFrame--;
+		MarsLighthouseAerieBeaconFireTick--;
 		if(anchor->y.fixed > 0) {
 			fdPaletteFadeApplyTarget(
 				PALETTE_TINT_CUSTOM | RGB(16, 16, 12), PALETTES_ALL);
 			fdPaletteFadeInterpolate(16);
-			MarsLighthouseAerie_BeaconFireFrame++;
+			MarsLighthouseAerieBeaconFireTick++;
 		} else {
-			if((FrameCount & 7) == 0)
+			if((TickCount & 7) == 0)
 				fdScriptPlaySnd(SE_GLITTER);
 			spawn = 1;
 			anchor->y.fixed += toFIXED(9) / 4;
 		}
 		break;
 	case 26:
-		MarsLighthouseAerie_BeaconFireFrame--;
+		MarsLighthouseAerieBeaconFireTick--;
 		if(anchor->y.fixed > toFIXED(20)) {
-			MarsLighthouseAerie_BeaconFireFrame = 999;
+			MarsLighthouseAerieBeaconFireTick = 999;
 			syFieldCloseEvent(scMarsLighthouseAerieRaiseBeaconFire);
 		} else {
-			if((FrameCount & 7) == 0)
+			if((TickCount & 7) == 0)
 				fdScriptPlaySnd(SE_GLITTER);
 			anchor->y.fixed += toFIXED(9) / 4;
 			spawn = 1;
@@ -2066,24 +2064,23 @@ void scMarsLighthouseAerieRaiseBeaconFire(void)
 			anchor->y.fixed - ((syRandomBelow(80)) << 16) - toFIXED(8),
 			anchor->z.fixed);
 		if(actor != NULL) {
-			sprite = actor->spr;
-			fdActorStartScript(actor, MarsLighthouseAerie_BeaconSparkScript);
+			spr = actor->spr;
+			fdActorStartScript(actor, MarsLighthouseAerieBeaconSparkScript);
 			scFieldActorSetSprCol(actor, SPRITE_COLOR_GRB);
 			actor->motionFlg = 0;
-			angle = syRandom() & 0xffff000;
-			actor->tmr = angle;
+			ang = syRandom() & 0xffff000;
+			actor->tmr = ang;
 			actor->userValue = 0;
 			phase = syRandom() >> 13;
 			actor->sceneCnt = phase;
 			actor->update = scMarsLighthouseAerieOrbitBeaconFire;
 			actor->speedLimit = syMathSin(syRandom() * 0xffff >> 20) * 24;
 			actor->speedLimit = FIXEDtoINT(anchor->speedLimit);
-			sprite->flg = 0;
-			((FIELD_SPR *)sprite)->pri = 1;
+			spr->flg = 0;
+			((FIELD_SPR *)spr)->pri = 1;
 		}
 	}
-	if(++MarsLighthouseAerie_BeaconFireFrame >
-		MarsLighthouseAerie_BeaconFireFrames)
+	if(++MarsLighthouseAerieBeaconFireTick > MarsLighthouseAerieBeaconFireTicks)
 		syFieldCloseEvent(scMarsLighthouseAerieRaiseBeaconFire);
 }
 
@@ -2115,13 +2112,13 @@ void scMarsLighthouseAerieHoldStill(Sint32 id)
 
 void		  scMarsLighthouseAerieStartLookingAround(Sint32 id);
 void		  scMarsLighthouseAerieStopLookingAround(Sint32 id);
-extern Sint32 MarsLighthouseAerie_BeamNarrowScript[];
+extern Sint32 MarsLighthouseAerieBeamNarrowScript[];
 
 /* The Mars Star is cast into the beacon: the beam rises, the fire falls into it
    and the beacon is lit. */
 void scMarsLighthouseAerieLightBeacon(void)
 {
-	MARS_LIGHTHOUSE_AERIE_SPR *sprite;
+	MARS_LIGHTHOUSE_AERIE_SPR *spr;
 	ACTOR					  *star;
 	ACTOR					  *anchor;
 	ICON_TRANSFER			  *icon;
@@ -2162,11 +2159,11 @@ void scMarsLighthouseAerieLightBeacon(void)
 	star = scFieldActorCreate(SPRITE_UNSEEN_MARKER, anchor->x.fixed,
 		anchor->y.fixed + toFIXED(8), anchor->z.fixed);
 	if(star != NULL) {
-		sprite = (MARS_LIGHTHOUSE_AERIE_SPR *)star->spr;
-		sprite->fullCol = 0;
-		sprite->layerCnt = 0;
-		sprite->pal = 0;
-		sprite->pri = 2;
+		spr = (MARS_LIGHTHOUSE_AERIE_SPR *)star->spr;
+		spr->fullCol = 0;
+		spr->layerCnt = 0;
+		spr->pal = 0;
+		spr->pri = 2;
 		star->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
 		star->motionFlg = 0;
 		star->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
@@ -2177,7 +2174,7 @@ void scMarsLighthouseAerieLightBeacon(void)
 		star->gravity = toFIXED(1) / 2;
 		icon = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		gmItemLoadIcon(ITEM_MARS_STAR);
-		mnVRAMLoad(sprite->vramBlock, ICON_TILE_BYTES, icon->tiles);
+		mnVRAMLoad(spr->vramBlock, ICON_TILE_BYTES, icon->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 		star->motionFlg = 0;
 		scFieldActorSetMoveTarget(star, 512, 128, 280);
@@ -2215,7 +2212,7 @@ void scMarsLighthouseAerieLightBeacon(void)
 	lowerBeam->motionFlg = 0;
 	scFieldActorSetPosAndResetMotion(
 		lowerBeam, toFIXED(512), toFIXED(96), toFIXED(204));
-	sySetFrameEvent(scOrbSpawnRising, EVENT_PASS_FRAME);
+	sySetTickEvent(scOrbSpawnRising, EVENT_PASS_TICK);
 	fdActorFaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
@@ -2224,8 +2221,8 @@ void scMarsLighthouseAerieLightBeacon(void)
 	fdActorFaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHWEST, 80);
-	fdActorSetScript(ACTOR_BEAM_BOTTOM, MarsLighthouseAerie_BeamWidenScript);
-	fdActorSetScript(ACTOR_BEAM_LOWER, MarsLighthouseAerie_BeamWidenScript);
+	fdActorSetScript(ACTOR_BEAM_BOTTOM, MarsLighthouseAerieBeamWidenScript);
+	fdActorSetScript(ACTOR_BEAM_LOWER, MarsLighthouseAerieBeamWidenScript);
 	fdScriptPlaySnd(SE_CRASH);
 	fdMapGridSetShake(6, 6, 1);
 	fdPaletteFadeApplyTarget(
@@ -2282,11 +2279,11 @@ void scMarsLighthouseAerieLightBeacon(void)
 	fdPaletteFadeApplyTarget(
 		PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
 	fdPaletteFadeInterpolate(120);
-	fdActorSetScript(ACTOR_BEAM_BOTTOM, MarsLighthouseAerie_BeamNarrowScript);
-	fdActorSetScript(ACTOR_BEAM_LOWER, MarsLighthouseAerie_BeamNarrowScript);
-	fdActorSetScript(ACTOR_BEAM_MIDDLE, MarsLighthouseAerie_BeamNarrowScript);
-	fdActorSetScript(ACTOR_BEAM_UPPER, MarsLighthouseAerie_BeamNarrowScript);
-	fdActorSetScript(ACTOR_BEAM_TOP, MarsLighthouseAerie_BeamNarrowScript);
+	fdActorSetScript(ACTOR_BEAM_BOTTOM, MarsLighthouseAerieBeamNarrowScript);
+	fdActorSetScript(ACTOR_BEAM_LOWER, MarsLighthouseAerieBeamNarrowScript);
+	fdActorSetScript(ACTOR_BEAM_MIDDLE, MarsLighthouseAerieBeamNarrowScript);
+	fdActorSetScript(ACTOR_BEAM_UPPER, MarsLighthouseAerieBeamNarrowScript);
+	fdActorSetScript(ACTOR_BEAM_TOP, MarsLighthouseAerieBeamNarrowScript);
 	syWait(120);
 	fdMapGridSetShake(3, 3, 1);
 	fdPaletteFadeApplyTarget(
@@ -2300,28 +2297,28 @@ void scMarsLighthouseAerieLightBeacon(void)
 	fdMapGridSetShake(1, 1, 1);
 	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
 	fdActorGet(ACTOR_BEAM_BOTTOM)->scaleY = toFIXED(1) / 50;
-	fdActorSetScript(ACTOR_BEAM_LOWER, MarsLighthouseAerie_BeamShootUpScript);
-	fdActorSetScript(ACTOR_BEAM_MIDDLE, MarsLighthouseAerie_BeamShootUpScript);
-	fdActorSetScript(ACTOR_BEAM_UPPER, MarsLighthouseAerie_BeamShootUpScript);
+	fdActorSetScript(ACTOR_BEAM_LOWER, MarsLighthouseAerieBeamShootUpScript);
+	fdActorSetScript(ACTOR_BEAM_MIDDLE, MarsLighthouseAerieBeamShootUpScript);
+	fdActorSetScript(ACTOR_BEAM_UPPER, MarsLighthouseAerieBeamShootUpScript);
 	fdActorRunScriptAndWait(
-		ACTOR_BEAM_TOP, MarsLighthouseAerie_BeamShootUpScript);
+		ACTOR_BEAM_TOP, MarsLighthouseAerieBeamShootUpScript);
 	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
 	scFieldActorSetSprCol(fdActorGet(ACTOR_BEAM_BOTTOM), SPRITE_COLOR_HIDDEN);
 	syFieldScriptWait(20);
 	fdActorRunScriptAndWait(
-		ACTOR_BEAM_BOTTOM, MarsLighthouseAerie_BeamRiseScript);
+		ACTOR_BEAM_BOTTOM, MarsLighthouseAerieBeamRiseScript);
 	syFieldCloseEvent(scOrbSpawnRising);
 	actor = fdActorGet(ACTOR_BEACON_FIRE);
 	actor->motionFlg = 0;
 	fdActorSetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
 	scFieldActorSetSprCol(fdActorGet(ACTOR_BEACON_FIRE), SPRITE_COLOR_WHITE);
 	scFieldActorSetSprPriority(ACTOR_BEACON_FIRE, 2);
-	MarsLighthouseAerie_BeaconFireFrame = 0;
-	MarsLighthouseAerie_BeaconFireFrames = 240;
-	sySetFrameEvent(scMarsLighthouseAerieRaiseBeaconFire, EVENT_PASS_FRAME);
+	MarsLighthouseAerieBeaconFireTick = 0;
+	MarsLighthouseAerieBeaconFireTicks = 240;
+	sySetTickEvent(scMarsLighthouseAerieRaiseBeaconFire, EVENT_PASS_TICK);
 	do {
 		syWait(1);
-	} while(MarsLighthouseAerie_BeaconFireFrame <= 100);
+	} while(MarsLighthouseAerieBeaconFireTick <= 100);
 	fdScriptPlaySnd(MUS_MERCURY_LIGHTHOUSE);
 	syFieldScriptWait(120);
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
@@ -2421,7 +2418,7 @@ void scMarsLighthouseAerieSpawnBeaconFlames(void);
 /* All look up as the beam widens and the Golden Sun begins to rise. */
 void scMarsLighthouseAerieWatchGoldenSunRise(void)
 {
-	Sint32 frame;
+	Sint32 frm;
 	ACTOR *actor;
 
 	fdScriptStart();
@@ -2450,7 +2447,7 @@ void scMarsLighthouseAerieWatchGoldenSunRise(void)
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syFieldScriptWait(20);
 	fdActorFaceDirection(ACTOR_PIERS, FACING_EAST, 0);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
@@ -2644,8 +2641,8 @@ void scMarsLighthouseAerieWatchGoldenSunRise(void)
 	actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
 	scFieldActorSetPosAndResetMotion(
 		actor, toFIXED(512), toFIXED(64), toFIXED(204));
-	for(frame = 0; (Uint32)frame < 40; frame++) {
-		if(frame == 20) {
+	for(frm = 0; (Uint32)frm < 40; frm++) {
+		if(frm == 20) {
 			fdMapGridSetShake(2, 2, 1);
 			scFieldActorShowEmote(MainRoutineStateWork.leaderActorId,
 				EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2680,7 +2677,7 @@ void scMarsLighthouseAerieWatchGoldenSunRise(void)
 	}
 	fdScriptPlaySnd(MUS_ALCHEMY_UNLEASHED);
 	fdActorSetScript(
-		ACTOR_BEAM_BOTTOM, MarsLighthouseAerie_WatchGoldenSunRiseScript);
+		ACTOR_BEAM_BOTTOM, MarsLighthouseAerieWatchGoldenSunRiseScript);
 	syFieldScriptWait(80);
 	scFieldActorJump(ACTOR_GARET, 4, 10);
 	scFieldActorJump(ACTOR_GARET, 6, 10);
@@ -2996,14 +2993,14 @@ void scMarsLighthouseAerieHaltSpeaker(Sint32 spot, Sint32 speaker)
 {
 	ACTOR			   *found = fdActorGet(spot);
 	ACTOR			   *actor;
-	ACTOR			   *target;
+	ACTOR			   *tgt;
 	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 
 	party->pausedColMode = 0;
 	actor = found;
 	party->haltedActor = speaker;
-	target = fdActorGet(speaker);
-	target->update = actor->update;
+	tgt = fdActorGet(speaker);
+	tgt->update = actor->update;
 	actor->update = NULL;
 }
 #endif
@@ -3043,28 +3040,28 @@ void scMarsLighthouseAerieHaltJennasFather(void)
 
 #include "shared/teleport_shimmer.c"
 
-/* Each frame of an actor's rings: a ring climbs RING_CLIMB pixels up the actor,
+/* Each tick of an actor's rings: a ring climbs RING_CLIMB pixels up the actor,
    swelling and shrinking as it goes, and the next starts with a chime
-   RING_INTERVAL frames later, two at a time, while the actor's colours cycle.
+   RING_INTERVAL ticks later, two at a time, while the actor's colours cycle.
    Once stopped, the rings climb out and the actor's colours come back. The
    Psynergy test's dbPsynergyTestUpdateRings is the same function. */
 void scMarsLighthouseAerieUpdateRisingRings(ACTOR *actor)
 {
-	VECTOR3		   position;
+	VECTOR3		   pos;
 	Sint32		   x, z;
 	FIXED		   sine;
 	Sint32		   i, j;
 	SPARKLE_STATE *state = (SPARKLE_STATE *)actor->watchedActor;
-	Uint8		  *count = &actor->sceneByte;
-	EFFECT_SPR	  *sprite;
+	Uint8		  *cnt = &actor->sceneByte;
+	EFFECT_SPR	  *spr;
 
-	/* Every other frame, the next of the normal colours and the five swaps. */
-	if(*count & 1)
+	/* Every other tick, the next of the normal colours and the five swaps. */
+	if(*cnt & 1)
 		fdActorSetSprColMode(actor,
-			(Uint8)((Uint32)((COUNTER_BITS *)count)->rest %
+			(Uint8)((Uint32)((COUNTER_BITS *)cnt)->rest %
 				(SPRITE_COLOR_BRG + 1)));
 	if(actor->sceneCnt == 0) {
-		if((*count & (RING_INTERVAL - 1)) == 0) {
+		if((*cnt & (RING_INTERVAL - 1)) == 0) {
 			fdScriptPlaySnd(SE_RISING_RINGS);
 			state->heights[state->nextPair] = 0;
 			state->nextPair ^= 1;
@@ -3077,34 +3074,34 @@ void scMarsLighthouseAerieUpdateRisingRings(ACTOR *actor)
 			return;
 		}
 	}
-	(*count)++;
+	(*cnt)++;
 	for(i = 0; i < 2; i++) {
 		/* Its size: half a turn of sine over the climb. */
 		sine = syMathSin(state->heights[i] * (DEGtoANG(180) / RING_CLIMB));
 		if(state->heights[i] >= 0) {
 			if(state->heights[i] < RING_CLIMB) {
 
-				SET_POSITION(&position, actor->x.fixed,
+				SET_POSITION(&pos, actor->x.fixed,
 					actor->y.fixed + toFIXED(state->heights[i]),
 					actor->z.fixed);
-				fdCameraWorldToScreen(&position);
-				x = position.x;
-				z = position.z;
-				sprite = &state->sprs[i * 2];
+				fdCameraWorldToScreen(&pos);
+				x = pos.x;
+				z = pos.z;
+				spr = &state->sprs[i * 2];
 				for(j = 0; j <= 1; j++) {
-					sprite->x = x;
-					sprite->y = z;
-					sprite->scaleX = sine;
-					sprite->scaleY = sine;
+					spr->x = x;
+					spr->y = z;
+					spr->scaleX = sine;
+					spr->scaleY = sine;
 					if(j == 0) {
-						sprite->depth = fdActorGetSprDepth(actor) - 1;
+						spr->depth = fdActorGetSprDepth(actor) - 1;
 					} else {
-						sprite->depth = fdActorGetSprDepth(actor) + 1;
-						sprite->y -= toFIXED(1);
-						sprite->scaleY = -sprite->scaleY;
+						spr->depth = fdActorGetSprDepth(actor) + 1;
+						spr->y -= toFIXED(1);
+						spr->scaleY = -spr->scaleY;
 					}
-					fdEffectSprDraw(sprite);
-					sprite++;
+					fdEffectSprDraw(spr);
+					spr++;
 				}
 				state->heights[i]++;
 			}
@@ -3116,15 +3113,15 @@ void scMarsLighthouseAerieUpdateRisingRings(ACTOR *actor)
    scMarsLighthouseAerieUpdateRisingRings to the actor. */
 void scMarsLighthouseAerieStartRisingRings(ACTOR *actor, SPARKLE_STATE *state)
 {
-	EFFECT_SPR *sprite;
+	EFFECT_SPR *spr;
 	Sint32		tile;
 	Sint32		row;
 	Sint32		col;
-	Sint32		offset;
+	Sint32		ofs;
 
 	state->vramEntry = syVRAMCacheFindFreeEntry();
 	mnVRAMLoad(state->vramEntry, 8 * TILE_SIZE_4BPP,
-		MarsLighthouseAerie_RisingRingTiles);
+		MarsLighthouseAerieRisingRingTiles);
 	state->nextPair = 0;
 	state->heights[0] = RING_NOT_STARTED;
 	state->heights[1] = RING_NOT_STARTED;
@@ -3136,14 +3133,14 @@ void scMarsLighthouseAerieStartRisingRings(ACTOR *actor, SPARKLE_STATE *state)
 	actor->watchedActor = (union FIELD_OBJECT *)state;
 	for(row = 0; row <= 1; row++) {
 		col = 1;
-		offset = (row * 2) * sizeof(EFFECT_SPR);
-		sprite = (EFFECT_SPR *)(offset + (Sint32)state);
+		ofs = (row * 2) * sizeof(EFFECT_SPR);
+		spr = (EFFECT_SPR *)(ofs + (Sint32)state);
 		for(; col >= 0; col--) {
-			fdEffectSprInit(sprite, 16, 16, OBJ_SIZE_32X16, tile);
-			sprite->oam.fullCol = 0;
-			sprite->oam.pal = 0;
-			sprite->oam.pri = fdActorGetSprPriority(actor);
-			sprite++;
+			fdEffectSprInit(spr, 16, 16, OBJ_SIZE_32X16, tile);
+			spr->oam.fullCol = 0;
+			spr->oam.pal = 0;
+			spr->oam.pri = fdActorGetSprPriority(actor);
+			spr++;
 		}
 	}
 }
@@ -3158,7 +3155,7 @@ void scMarsLighthouseAerieEndRisingRings(ACTOR *actor)
 /* The rings' tiles: half a ring of light, 32 by 16 pixels of 16 colours, */
 /* which scMarsLighthouseAerieUpdateRisingRings draws twice, the second */
 /* flipped, for the whole ring; only the first 8 tiles are loaded. */
-Sint32 MarsLighthouseAerie_RisingRingTiles[] = {
+Sint32 MarsLighthouseAerieRisingRingTiles[] = {
 	0x00000000, 0x00000000, 0x00000000, 0x00000000,
 	0x00000000, 0x00000000, 0x70000000, 0xf7700000,
 	0x00000000, 0x00000000, 0x00000000, 0x00000000,
@@ -3210,7 +3207,7 @@ Sint32 MarsLighthouseAerie_RisingRingTiles[] = {
 #define TELEPORT_CIRCLE_FIRST_ENTRY 137
 #include "shared/teleport_circle_palette.c"
 
-Sint32 MarsLighthouseAerie_BeaconFireScript[] = {
+Sint32 MarsLighthouseAerieBeaconFireScript[] = {
 	SC_LABEL(1),
 	SC_ADD(SW_SCALE_X, -(toFIXED(3) / 128)),
 	SC_WAIT(1),
@@ -3222,7 +3219,7 @@ Sint32 MarsLighthouseAerie_BeaconFireScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-Sint32 MarsLighthouseAerie_JennaApproachScript[] = {
+Sint32 MarsLighthouseAerieJennaApproachScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(496, 0, 328),
 	SC_SYNC,
@@ -3230,7 +3227,7 @@ Sint32 MarsLighthouseAerie_JennaApproachScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_ShebaApproachScript[] = {
+Sint32 MarsLighthouseAerieShebaApproachScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(480, 0, 328),
 	SC_SYNC,
@@ -3238,7 +3235,7 @@ Sint32 MarsLighthouseAerie_ShebaApproachScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_PiersApproachScript[] = {
+Sint32 MarsLighthouseAeriePiersApproachScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(488, 0, 320),
 	SC_SYNC,
@@ -3246,7 +3243,7 @@ Sint32 MarsLighthouseAerie_PiersApproachScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_IvanApproachScript[] = {
+Sint32 MarsLighthouseAerieIvanApproachScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(528, 0, 328),
 	SC_SYNC,
@@ -3254,7 +3251,7 @@ Sint32 MarsLighthouseAerie_IvanApproachScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_KradenApproachScript[] = {
+Sint32 MarsLighthouseAerieKradenApproachScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(512, 0, 328),
 	SC_SYNC,
@@ -3262,7 +3259,7 @@ Sint32 MarsLighthouseAerie_KradenApproachScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_VoiceFadeScript[] = {
+Sint32 MarsLighthouseAerieVoiceFadeScript[] = {
 	SC_ADD(SW_SCALE_X, -toFIXED(1) / 64),
 	SC_ADD(SW_SCALE_Y, -toFIXED(1) / 64),
 	SC_WAIT(1),
@@ -3272,7 +3269,7 @@ Sint32 MarsLighthouseAerie_VoiceFadeScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_DoomDragonRiseScript[] = {
+Sint32 MarsLighthouseAerieDoomDragonRiseScript[] = {
 	SC_ADD(SW_SCALE_X, toFIXED(1) / 128),
 	SC_ADD(SW_SCALE_Y, toFIXED(1) / 128),
 	SC_ADD(SW_Y, toFIXED(1) / 8),
@@ -3281,7 +3278,7 @@ Sint32 MarsLighthouseAerie_DoomDragonRiseScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_LeaderReadyScript[] = {
+Sint32 MarsLighthouseAerieLeaderReadyScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(500, 0, 306),
 	SC_SYNC,
@@ -3292,7 +3289,7 @@ Sint32 MarsLighthouseAerie_LeaderReadyScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_IsaacReadyScript[] = {
+Sint32 MarsLighthouseAerieIsaacReadyScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(524, 0, 306),
 	SC_SYNC,
@@ -3303,7 +3300,7 @@ Sint32 MarsLighthouseAerie_IsaacReadyScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_JennaReadyScript[] = {
+Sint32 MarsLighthouseAerieJennaReadyScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(488, 0, 320),
 	SC_SYNC,
@@ -3314,7 +3311,7 @@ Sint32 MarsLighthouseAerie_JennaReadyScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_ShebaReadyScript[] = {
+Sint32 MarsLighthouseAerieShebaReadyScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(472, 0, 304),
 	SC_SYNC,
@@ -3325,7 +3322,7 @@ Sint32 MarsLighthouseAerie_ShebaReadyScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_PiersReadyScript[] = {
+Sint32 MarsLighthouseAeriePiersReadyScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(464, 0, 280),
 	SC_SYNC,
@@ -3336,7 +3333,7 @@ Sint32 MarsLighthouseAerie_PiersReadyScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_IvanReadyScript[] = {
+Sint32 MarsLighthouseAerieIvanReadyScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(538, 0, 320),
 	SC_SYNC,
@@ -3347,7 +3344,7 @@ Sint32 MarsLighthouseAerie_IvanReadyScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_MiaReadyScript[] = {
+Sint32 MarsLighthouseAerieMiaReadyScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(552, 0, 304),
 	SC_SYNC,
@@ -3358,7 +3355,7 @@ Sint32 MarsLighthouseAerie_MiaReadyScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_GaretReadyScript[] = {
+Sint32 MarsLighthouseAerieGaretReadyScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(560, 0, 280),
 	SC_SYNC,
@@ -3369,7 +3366,7 @@ Sint32 MarsLighthouseAerie_GaretReadyScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_ShebaToThosePeopleScript[] = {
+Sint32 MarsLighthouseAerieShebaToThosePeopleScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(472, 0, 320),
 	SC_SYNC,
@@ -3380,7 +3377,7 @@ Sint32 MarsLighthouseAerie_ShebaToThosePeopleScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_JennaToThosePeopleScript[] = {
+Sint32 MarsLighthouseAerieJennaToThosePeopleScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(476, 0, 328),
 	SC_SYNC,
@@ -3391,7 +3388,7 @@ Sint32 MarsLighthouseAerie_JennaToThosePeopleScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_JennaTurnScript[] = {
+Sint32 MarsLighthouseAerieJennaTurnScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(486, 0, 286),
 	SC_SYNC,
@@ -3402,7 +3399,7 @@ Sint32 MarsLighthouseAerie_JennaTurnScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_LeaderTurnScript[] = {
+Sint32 MarsLighthouseAerieLeaderTurnScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(504, 0, 300),
 	SC_SYNC,
@@ -3410,7 +3407,7 @@ Sint32 MarsLighthouseAerie_LeaderTurnScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_IsaacTurnScript[] = {
+Sint32 MarsLighthouseAerieIsaacTurnScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(528, 0, 292),
 	SC_SYNC,
@@ -3418,9 +3415,9 @@ Sint32 MarsLighthouseAerie_IsaacTurnScript[] = {
 	SC_END,
 };
 
-/* The same script as MarsLighthouseAerie_GaretReadyScript, under another */
+/* The same script as MarsLighthouseAerieGaretReadyScript, under another */
 /* name. */
-Sint32 MarsLighthouseAerie_GaretTurnScript[] = {
+Sint32 MarsLighthouseAerieGaretTurnScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(560, 0, 280),
 	SC_SYNC,
@@ -3431,7 +3428,7 @@ Sint32 MarsLighthouseAerie_GaretTurnScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_MiaTurnScript[] = {
+Sint32 MarsLighthouseAerieMiaTurnScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(548, 0, 292),
 	SC_SYNC,
@@ -3442,7 +3439,7 @@ Sint32 MarsLighthouseAerie_MiaTurnScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_BeamWidenScript[] = {
+Sint32 MarsLighthouseAerieBeamWidenScript[] = {
 	SC_ADD(SW_SCALE_X, toFIXED(1) / 16),
 	SC_WAIT(1),
 	SC_LOOP(32, SC_TOP),
@@ -3453,14 +3450,14 @@ Sint32 MarsLighthouseAerie_BeamWidenScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_BeamNarrowScript[] = {
+Sint32 MarsLighthouseAerieBeamNarrowScript[] = {
 	SC_ADD(SW_SCALE_X, -896),
 	SC_WAIT(1),
 	SC_LOOP(160, SC_TOP),
 	SC_END,
 };
 
-Uint32 MarsLighthouseAerie_BeamShootUpScript[] = {
+Uint32 MarsLighthouseAerieBeamShootUpScript[] = {
 	SC_ADD(SW_Y, toFIXED(4)),
 	SC_WAIT(1),
 	SC_LOOP(30, SC_TOP),
@@ -3469,7 +3466,7 @@ Uint32 MarsLighthouseAerie_BeamShootUpScript[] = {
 	SC_END,
 };
 
-Uint32 MarsLighthouseAerie_BeamRiseScript[] = {
+Uint32 MarsLighthouseAerieBeamRiseScript[] = {
 	SC_ADD(SW_Y, toFIXED(2)),
 	SC_WAIT(1),
 	SC_LOOP(160, SC_TOP),
@@ -3478,7 +3475,7 @@ Uint32 MarsLighthouseAerie_BeamRiseScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseAerie_BeaconSparkScript[] = {
+Sint32 MarsLighthouseAerieBeaconSparkScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(0.8)),
 	SC_SET(SW_SCALE_Y, toFIXED(0.8)),
 	SC_ANIMATION(1),
@@ -3491,7 +3488,7 @@ Sint32 MarsLighthouseAerie_BeaconSparkScript[] = {
 	SC_RELEASE,
 };
 
-Sint32 MarsLighthouseAerie_WatchGoldenSunRiseScript[] = {
+Sint32 MarsLighthouseAerieWatchGoldenSunRiseScript[] = {
 	SC_ADD(SW_SCALE_X, toFIXED(1) / 16),
 	SC_WAIT(1),
 	SC_LOOP(8, SC_TOP),
@@ -3516,7 +3513,7 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE MarsLighthouseAerie_Placements[] = {
+ACTOR_PLACE MarsLighthouseAeriePlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 584, 16, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3539,7 +3536,7 @@ ACTOR_PLACE MarsLighthouseAerie_Placements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE MarsLighthouseAerie_AfterBattlePlacements[] = {
+ACTOR_PLACE MarsLighthouseAerieAfterBattlePlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3568,7 +3565,7 @@ ACTOR_PLACE MarsLighthouseAerie_AfterBattlePlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE MarsLighthouseAerie_BeaconPlacements[] = {
+ACTOR_PLACE MarsLighthouseAerieBeaconPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_BLUE_ORB, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_BLUE_ORB, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
 	ACTOR_PLACEMENT(SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 584, 16, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3632,7 +3629,7 @@ CUE SceneCues[] = {
 	{CUE_TABLE_END},
 };
 
-Sint32 MarsLighthouseAerie_BeaconFlameScript[] = {
+Sint32 MarsLighthouseAerieBeaconFlameScript[] = {
 	SC_SET(SW_SCALE_Y, toFIXED(1.4)),
 	SC_SET(SW_SCALE_X, toFIXED(1.4)),
 	SC_ANIMATION(4),

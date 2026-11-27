@@ -13,6 +13,6 @@
 /* The bit of its byte that holds `flag`: the low three bits of its number. */
 #define GAME_FLAG_BIT(flag) (1 << ((flag) & 7))
 
-Uint32 syGameFlagSetByte(Uint32 flag, Uint8 value);
+Uint32 syGameFlagSetByte(Uint32 flg, Uint8 value);
 
 #endif

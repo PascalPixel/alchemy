@@ -1,7 +1,7 @@
-/* Whether flame thrower `index` is active. */
-UNUSED Sint32 scFlameThrowerIsActive(Sint32 index)
+/* Whether flame thrower `idx` is active. */
+UNUSED Sint32 scFlameThrowerIsActive(Sint32 idx)
 {
 	FLAME_HIT_STATE *state = FLAME_THROWERS_STATE;
 
-	return (state->entries + index)->active;
+	return (state->entries + idx)->active;
 }

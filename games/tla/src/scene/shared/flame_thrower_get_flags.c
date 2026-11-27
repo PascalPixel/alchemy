@@ -1,8 +1,8 @@
-/* Flame thrower `index`'s flags: which flame it sends, or none
+/* Flame thrower `idx`'s flags: which flame it sends, or none
    (FLAME_THROWER_DRY). */
-Sint32 scFlameThrowerGetFlags(Sint32 index)
+Sint32 scFlameThrowerGetFlags(Sint32 idx)
 {
 	FLAME_HIT_STATE *state = FLAME_THROWERS_STATE;
 
-	return (state->entries + index)->flg;
+	return (state->entries + idx)->flg;
 }

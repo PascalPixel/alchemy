@@ -15,15 +15,15 @@
 #include "scene/scene.h"
 #include "shop/shop.h"
 
-extern ACTOR_PLACE ChampaRooms_ActorPlacements[];
-extern ACTOR_PLACE ChampaRooms_IsletActorPlacements[];
-extern CUE		   ChampaRooms_Cues[];
-extern CUE		   ChampaRooms_CuesOnceBriggsSailed[];
-extern CUE		   ChampaRooms_IsletCues[];
+extern ACTOR_PLACE ChampaRoomsActorPlacements[];
+extern ACTOR_PLACE ChampaRoomsIsletActorPlacements[];
+extern CUE		   ChampaRoomsCues[];
+extern CUE		   ChampaRoomsCuesOnceBriggsSailed[];
+extern CUE		   ChampaRoomsIsletCues[];
 
 void scFadeInAndClearFlag(void);
 
-/* The houses' actors, numbering the rows of ChampaRooms_ActorPlacements. */
+/* The houses' actors, numbering the rows of ChampaRoomsActorPlacements. */
 typedef enum CHAMPA_ROOMS_ACTOR_ID {
 	ACTOR_RAFT_FISHERMAN = ACTOR_FIRST_PLACED,
 	ACTOR_RAFT_DWELLER,
@@ -74,8 +74,8 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(IN_ISLET_ROOMS())
-		return ChampaRooms_IsletActorPlacements;
-	return ChampaRooms_ActorPlacements;
+		return ChampaRoomsIsletActorPlacements;
+	return ChampaRoomsActorPlacements;
 }
 
 /* Champa's shops, as mnShopRun numbers them. */
@@ -99,10 +99,10 @@ void scChampaRoomsTalkToInnkeeper(Sint32 actorId)
 const CUE *scGetCues(void)
 {
 	if(IN_ISLET_ROOMS())
-		return ChampaRooms_IsletCues;
+		return ChampaRoomsIsletCues;
 	if(syGameFlagGet(FLAG_BRIGGS_SAILED_FROM_ALHAFRA))
-		return ChampaRooms_CuesOnceBriggsSailed;
-	return ChampaRooms_Cues;
+		return ChampaRoomsCuesOnceBriggsSailed;
+	return ChampaRoomsCues;
 }
 
 Sint32 scInit(void)
@@ -160,7 +160,7 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE ChampaRooms_ActorPlacements[] = {
+ACTOR_PLACE ChampaRoomsActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_STAND, 128, 0, 72, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS,
@@ -203,14 +203,14 @@ ACTOR_PLACE ChampaRooms_ActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE ChampaRooms_IsletActorPlacements[] = {
+ACTOR_PLACE ChampaRoomsIsletActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_AUBURN_HAIR, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_WANDER_NEAR, 608, 0, 612, FACING_SOUTH, TALK_FACING_PARTY,
 		0),
 	{SCENE_TABLE_END},
 };
 
-CUE ChampaRooms_Cues[] = {
+CUE ChampaRoomsCues[] = {
 	{CUE_EXIT, CHAMPA_ROOMS_TO_CHAMPA_SOUTHWEST_A, CONDITION_ALWAYS,
 		CHAMPA_ROOMS_TO_CHAMPA_SOUTHWEST_A},
 	{CUE_EXIT, CHAMPA_ROOMS_TO_CHAMPA_SOUTHWEST_B, CONDITION_ALWAYS,
@@ -285,7 +285,7 @@ CUE ChampaRooms_Cues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE ChampaRooms_CuesOnceBriggsSailed[] = {
+CUE ChampaRoomsCuesOnceBriggsSailed[] = {
 	{CUE_EXIT, CHAMPA_ROOMS_TO_CHAMPA_SOUTHWEST_A, CONDITION_ALWAYS,
 		CHAMPA_ROOMS_TO_CHAMPA_SOUTHWEST_A},
 	{CUE_EXIT, CHAMPA_ROOMS_TO_CHAMPA_SOUTHWEST_B, CONDITION_ALWAYS,
@@ -359,7 +359,7 @@ CUE ChampaRooms_CuesOnceBriggsSailed[] = {
 	{CUE_TABLE_END},
 };
 
-CUE ChampaRooms_IsletCues[] = {
+CUE ChampaRoomsIsletCues[] = {
 	{CUE_EXIT, CHAMPA_ROOMS_TO_SOUTHEAST_ANGARA_ISLET, CONDITION_ALWAYS,
 		CHAMPA_ROOMS_TO_SOUTHEAST_ANGARA_ISLET},
 	{CUE_EXIT, CHAMPA_ROOMS_TO_WEST_INDRA_ISLET, CONDITION_ALWAYS,

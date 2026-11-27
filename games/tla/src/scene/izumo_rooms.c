@@ -38,12 +38,12 @@
    where the heroes' welcome starts. */
 enum { METATILE_EAST_SIDE_OF_THE_HALL = 22, METATILE_WEST_SIDE_OF_THE_HALL };
 
-extern ACTOR_PLACE IzumoRooms_ActorPlacements[];
-extern ACTOR_PLACE IzumoRooms_SusasHouseActorPlacements[];
-extern ACTOR_PLACE IzumoRooms_ActorPlacementsOnceTheSerpentIsSlain[];
-extern CUE		   IzumoRooms_Cues[];
-extern CUE		   IzumoRooms_SusasHouseCues[];
-extern CUE		   IzumoRooms_CuesOnceTheSerpentIsSlain[];
+extern ACTOR_PLACE IzumoRoomsActorPlacements[];
+extern ACTOR_PLACE IzumoRoomsSusasHouseActorPlacements[];
+extern ACTOR_PLACE IzumoRoomsActorPlacementsOnceTheSerpentIsSlain[];
+extern CUE		   IzumoRoomsCues[];
+extern CUE		   IzumoRoomsSusasHouseCues[];
+extern CUE		   IzumoRoomsCuesOnceTheSerpentIsSlain[];
 
 /* The side of the hall of Susa's house Felix came up for the heroes'
    welcome. */
@@ -52,9 +52,9 @@ enum { HEROES_FROM_THE_EAST, HEROES_FROM_THE_WEST };
 void scIzumoRoomsRecognizeTheHeroes(Sint32 side);
 
 void		  scIzumoRoomsShowMove(void);
-extern Sint32 IzumoRooms_FirstDancerScript[];
-extern Sint32 IzumoRooms_SecondDancerScript[];
-extern Sint32 IzumoRooms_HeavingScript[];
+extern Sint32 IzumoRoomsFirstDancerScript[];
+extern Sint32 IzumoRoomsSecondDancerScript[];
+extern Sint32 IzumoRoomsHeavingScript[];
 
 /* Whether the other of the two women dancing in Susa's house is clear of the
    spot by the doorway this one steps to; each one's dance waits on it. */
@@ -100,19 +100,19 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(syGameFlagGet(FLAG_SERPENT_SLAIN))
-		return IzumoRooms_ActorPlacementsOnceTheSerpentIsSlain;
+		return IzumoRoomsActorPlacementsOnceTheSerpentIsSlain;
 	if(MainRoutineStateWork.entrance == IZUMO_ROOMS_FROM_IZUMO_NORTH)
-		return IzumoRooms_SusasHouseActorPlacements;
-	return IzumoRooms_ActorPlacements;
+		return IzumoRoomsSusasHouseActorPlacements;
+	return IzumoRoomsActorPlacements;
 }
 
 const CUE *scGetCues(void)
 {
 	if(syGameFlagGet(FLAG_SERPENT_SLAIN))
-		return IzumoRooms_CuesOnceTheSerpentIsSlain;
+		return IzumoRoomsCuesOnceTheSerpentIsSlain;
 	if(MainRoutineStateWork.entrance == IZUMO_ROOMS_FROM_IZUMO_NORTH)
-		return IzumoRooms_SusasHouseCues;
-	return IzumoRooms_Cues;
+		return IzumoRoomsSusasHouseCues;
+	return IzumoRoomsCues;
 }
 
 /* Before the Serpent is slain: Kushinada, whose turn it is to be offered to it,
@@ -475,7 +475,7 @@ typedef enum SUSAS_REWARD_MESSAGE {
 void scIzumoRoomsRecognizeTheHeroes(Sint32 side)
 {
 	ACTOR *leader;
-	Sint32 answer, message;
+	Sint32 answer, msg;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
@@ -1036,8 +1036,8 @@ void scIzumoRoomsRecognizeTheHeroes(Sint32 side)
 		   Felix." */
 		fdScriptShowMessageAndWait(ACTOR_UZUME, 0);
 	}
-	message = (Sint32)MsgYouReNotImplying;
-	fdScriptSetMessageId(message);
+	msg = (Sint32)MsgYouReNotImplying;
+	fdScriptSetMessageId(msg);
 	fdActorStartRepeatedMotion(ACTOR_KRADEN, 1);
 	fdScriptWait(30);
 	/* "You're...not implying that we defeated the serpent, are you?" */
@@ -1096,20 +1096,20 @@ void scIzumoRoomsRecognizeTheHeroes(Sint32 side)
 	answer = fdScriptAskYesNoWithActorAnimation(
 		MainRoutineStateWork.leaderActorId, 0);
 	if(answer == 0) {
-		fdScriptSetMessageId(message + SUSA_ALL_I_DID_WAS_STAB_IT);
+		fdScriptSetMessageId(msg + SUSA_ALL_I_DID_WAS_STAB_IT);
 		fdActorSetAnimationById(ACTOR_SUSA, ANIM_SHAKE_HEAD);
 		fdScriptWait(30);
 		/* "Finishing blow? All I did was stab it with the Cloud Brand." */
 		fdScriptShowMessageAndWait(ACTOR_SUSA, 0);
 	} else {
-		fdScriptSetMessageId(message + SUSA_HARDLY_A_FINISHING_BLOW);
+		fdScriptSetMessageId(msg + SUSA_HARDLY_A_FINISHING_BLOW);
 		fdActorSetAnimationById(ACTOR_SUSA, ANIM_NOD);
 		fdScriptWait(30);
 		/* "That's right. Piercing it with the Cloud Brand was hardly a..." */
 		fdScriptShowMessageAndWait(ACTOR_SUSA, 0);
 	}
-	message = (Sint32)MsgIDisagree;
-	fdScriptSetMessageId(message);
+	msg = (Sint32)MsgIDisagree;
+	fdScriptSetMessageId(msg);
 	fdActorFaceActorById(ACTOR_KRADEN, ACTOR_SUSA, 0);
 	fdActorShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
 	/* "I disagree..." */
@@ -1137,7 +1137,7 @@ void scIzumoRoomsRecognizeTheHeroes(Sint32 side)
 	answer = fdScriptAskYesNoWithActorAnimation(
 		MainRoutineStateWork.leaderActorId, 0);
 	if(answer == 0) {
-		fdScriptSetMessageId(message + PARTY_WANTS_NO_REWARD);
+		fdScriptSetMessageId(msg + PARTY_WANTS_NO_REWARD);
 		fdActorSetAnimationById(ACTOR_JENNA, ANIM_NOD);
 		fdActorSetAnimationById(ACTOR_SHEBA, ANIM_NOD);
 		fdActorSetAnimationById(ACTOR_PIERS, ANIM_NOD);
@@ -1149,7 +1149,7 @@ void scIzumoRoomsRecognizeTheHeroes(Sint32 side)
 		/* "We'll be satisfied just learning your Psynergy." */
 		fdScriptShowMessageAndWait(ACTOR_PIERS, 0);
 	} else {
-		fdScriptSetMessageId(message + PARTY_CALLS_FELIX_GREEDY);
+		fdScriptSetMessageId(msg + PARTY_CALLS_FELIX_GREEDY);
 		fdActorSetAnimationById(ACTOR_JENNA, ANIM_SHAKE_HEAD);
 		fdActorSetAnimationById(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
 		fdActorSetAnimationById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
@@ -1479,12 +1479,12 @@ Sint32 scPrepareMap(void)
 	return 0;
 }
 
-extern Sint32 IzumoRooms_KushinadaHeavingScript[];
+extern Sint32 IzumoRoomsKushinadaHeavingScript[];
 
 /* The two women dancing in Susa's house before the Serpent is slain step to the
    doorway and back with a hop, each waiting until the other is clear of the
    spot. */
-Sint32 IzumoRooms_FirstDancerScript[] = {
+Sint32 IzumoRoomsFirstDancerScript[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
 	SC_ACCELERATION(0.2),
 	SC_SET(SW_GRAVITY, toFIXED(0.4)),
@@ -1533,7 +1533,7 @@ Sint32 IzumoRooms_FirstDancerScript[] = {
 	-1,
 };
 
-Sint32 IzumoRooms_SecondDancerScript[] = {
+Sint32 IzumoRoomsSecondDancerScript[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
 	SC_ACCELERATION(0.2),
 	SC_SET(SW_GRAVITY, toFIXED(0.4)),
@@ -1586,7 +1586,7 @@ Sint32 IzumoRooms_SecondDancerScript[] = {
 /* A girl in the Sanctum heaves with sobs ("*Sniff* How could we sacrifice */
 /* our beloved Kushinada?"): her sprite is squashed and stretched three */
 /* times, then rests. */
-Sint32 IzumoRooms_HeavingScript[] = {
+Sint32 IzumoRoomsHeavingScript[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
 	SC_ANIMATION(0),
 	SC_LABEL(1),
@@ -1646,7 +1646,7 @@ Sint32 IzumoRooms_HeavingScript[] = {
 
 /* Kushinada on her seat of stones heaves with sobs as the girl in the */
 /* Sanctum does, with longer rests. */
-Sint32 IzumoRooms_KushinadaHeavingScript[] = {
+Sint32 IzumoRoomsKushinadaHeavingScript[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
 	SC_LABEL(1),
 	SC_ADD(SW_SCALE_X, -toFIXED(1) / 4),
@@ -1722,7 +1722,7 @@ Uint32 SceneExits[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE IzumoRooms_ActorPlacements[] = {
+ACTOR_PLACE IzumoRoomsActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 120, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 152, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 88, 0, 88, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1732,23 +1732,23 @@ ACTOR_PLACE IzumoRooms_ActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 84, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 136, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 120, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_KUSHINADA, CONDITION_ALWAYS, (Sint32)IzumoRooms_KushinadaHeavingScript, 352, 0, 328, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_KUSHINADA, CONDITION_ALWAYS, (Sint32)IzumoRoomsKushinadaHeavingScript, 352, 0, 328, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_CREAM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 362, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_MAN_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 108, 0, 320, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_ORANGE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 632, 0, 88, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 328, FACING_SOUTH, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, (Sint32)IzumoRooms_HeavingScript, 504, 0, 360, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, (Sint32)IzumoRoomsHeavingScript, 504, 0, 360, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 392, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 	{SCENE_TABLE_END},
 };
 /* clang-format on */
 
 /* clang-format off */
-ACTOR_PLACE IzumoRooms_SusasHouseActorPlacements[] = {
+ACTOR_PLACE IzumoRoomsSusasHouseActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_LADY_UZUME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 520, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (Sint32)IzumoRooms_FirstDancerScript, 136, 0, 624, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (Sint32)IzumoRooms_SecondDancerScript, 152, 0, 624, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (Sint32)IzumoRoomsFirstDancerScript, 136, 0, 624, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (Sint32)IzumoRoomsSecondDancerScript, 152, 0, 624, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 90, 0, 622, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 198, 0, 622, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
 	{SCENE_TABLE_END},
@@ -1756,13 +1756,13 @@ ACTOR_PLACE IzumoRooms_SusasHouseActorPlacements[] = {
 /* clang-format on */
 
 /* clang-format off */
-ACTOR_PLACE IzumoRooms_ActorPlacementsOnceTheSerpentIsSlain[] = {
+ACTOR_PLACE IzumoRoomsActorPlacementsOnceTheSerpentIsSlain[] = {
 	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_CREAM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 362, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_MAN_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 108, 0, 320, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_ORANGE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 632, 0, 88, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 328, FACING_SOUTH, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, (Sint32)IzumoRooms_HeavingScript, 600, 0, 360, FACING_WEST, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, (Sint32)IzumoRoomsHeavingScript, 600, 0, 360, FACING_WEST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 376, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_LADY_UZUME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 624, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1781,7 +1781,7 @@ ACTOR_PLACE IzumoRooms_ActorPlacementsOnceTheSerpentIsSlain[] = {
 };
 /* clang-format on */
 
-CUE IzumoRooms_Cues[] = {
+CUE IzumoRoomsCues[] = {
 	{CUE_EXIT, IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_A, CONDITION_ALWAYS,
 		IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_A},
 	{CUE_EXIT, IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_B, CONDITION_ALWAYS,
@@ -1849,7 +1849,7 @@ CUE IzumoRooms_Cues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE IzumoRooms_SusasHouseCues[] = {
+CUE IzumoRoomsSusasHouseCues[] = {
 	{CUE_EXIT, IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_A, CONDITION_ALWAYS,
 		IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_A},
 	{CUE_EXIT, IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_B, CONDITION_ALWAYS,
@@ -1887,7 +1887,7 @@ CUE IzumoRooms_SusasHouseCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE IzumoRooms_CuesOnceTheSerpentIsSlain[] = {
+CUE IzumoRoomsCuesOnceTheSerpentIsSlain[] = {
 	{CUE_EXIT, IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_A, CONDITION_ALWAYS,
 		IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_A},
 	{CUE_EXIT, IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_B, CONDITION_ALWAYS,

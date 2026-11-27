@@ -1,16 +1,16 @@
 /* The Procne summon. Part of battle_effect.c. */
 
-#define PROCNE_FRAMES		  400 /* frames of Procne */
+#define PROCNE_TICKS		  400 /* ticks of Procne */
 /* Procne appears in the violet sky, and the targets it lifted drop. */
-#define PROCNE_ARRIVAL_FRAME  160
-#define PROCNE_DROP_FRAME	  395
-/* The first comet leaves Procne, and the next each 12 frames after. */
-#define PROCNE_COMET_FRAME	  330
+#define PROCNE_ARRIVAL_TICK	  160
+#define PROCNE_DROP_TICK	  395
+/* The first comet leaves Procne, and the next each 12 ticks after. */
+#define PROCNE_COMET_TICK	  330
 #define PROCNE_COMET_INTERVAL 12
 
-#define PROCNE_SPRITES 9 /* Procne's sprites, on Procne_GridX and _GridY */
+#define PROCNE_SPRITES 9 /* Procne's sprites, on ProcneGridX, ProcneGridY */
 
-/* The whirlwind sheet: three whirlwind pictures, shown 4 frames each, then the
+/* The whirlwind sheet: three whirlwind pictures, shown 4 ticks each, then the
    dust. */
 #define PROCNE_WHIRLWIND_WIDTH	48
 #define PROCNE_WHIRLWIND_HEIGHT 64
@@ -23,20 +23,20 @@
 #define PROCNE_COMET_PICTURES		 13824
 
 #define PROCNE_DUST_MOTES	  24 /* dust motes that swirl up the whirlwind */
-/* How much faster a dust mote circles the whirlwind each frame, up to
-   PROCNE_DUST_SPIN_MAX, in 1/65536 turns a frame. */
+/* How much faster a dust mote circles the whirlwind each tick, up to
+   PROCNE_DUST_SPIN_MAX, in 1/65536 turns a tick. */
 #define PROCNE_DUST_SPIN_GAIN 50
 #define PROCNE_DUST_SPIN_MAX  (TRIG_TURN / 16)
 /* The distance from the whirlwind's centre, in half pixels, that the lifted
    targets spiral in to. */
 #define PROCNE_CORE_RADIUS	  16
-/* How much faster the lifted targets circle each frame, in 1/65536 turns a
-   frame, and how fast they circle once Procne arrives. */
+/* How much faster the lifted targets circle each tick, in 1/65536 turns a
+   tick, and how fast they circle once Procne arrives. */
 #define PROCNE_SPIN_GAIN	  48
 #define PROCNE_SKY_SPIN		  6000
 
-/* Procne's sway: sixty-fourths of the wave's sine, as 16.16 pixels a frame,
-   across and up and down; it bobs twice as far over its first 64 frames. */
+/* Procne's sway: sixty-fourths of the wave's sine, as 16.16 pixels a tick,
+   across and up and down; it bobs twice as far over its first 64 ticks. */
 #define PROCNE_SWAY 32
 #define PROCNE_BOB	16
 
@@ -47,7 +47,7 @@
 #define PROCNE_RING_MOTES		28
 #define PROCNE_COMET_PARTICLES	(PROCNE_RING + PROCNE_RING_MOTES)
 
-/* The four strikes, at Procne_Frames: each throws out its sparks from its own
+/* The four strikes, at ProcneTicks: each throws out its sparks from its own
    rows of PARTICLES. */
 #define PROCNE_STRIKES			 4
 #define PROCNE_STRIKE_SPARKS	 96
@@ -77,7 +77,7 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 	BATTLE_CAMERA		*camera;
 	BATTLE_EFFECT_STATE *state;
 	BLITTER_PAIR		 draw;
-	Sint32				 frame;
+	Sint32				 frm;
 	Uint8				*motes;
 	POINT2_D			 procne;
 	POINT2_D			 drift;
@@ -88,7 +88,7 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 	PARTICLE			*comet;
 	Uint8				*resource;
 	Uint8				*image;
-	Sint32				 index;
+	Sint32				 idx;
 	Sint32				 slot;
 	Sint32				 size;
 	Sint32				 moteSize;
@@ -103,7 +103,7 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 	Sint32				 homeFacing[8];
 	VECTOR3				 world;
 	SCREEN_POINT		 screen;
-	VECTOR3				 depthOffset;
+	VECTOR3				 depthOfs;
 	SPR_PLACEMENT		 place;
 	SPR_SCALE			 scale;
 
@@ -141,23 +141,23 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 	drift.y = 0;
 
 	/* Each target's place, for the whirlwind to turn it. */
-	EFFECT_FOR_EACH_TARGET(index, state->args) {
-		battleObject = btObjectGetStub(state->args->tgts[index]);
+	EFFECT_FOR_EACH_TARGET(idx, state->args) {
+		battleObject = btObjectGetStub(state->args->tgts[idx]);
 		actor = battleObject->actor;
-		home[index].x = actor->x.fixed;
-		home[index].y = actor->z.fixed;
-		homeFacing[index] = actor->facing;
-		heading[index] = (Uint16)syAtan(actor->x.fixed, actor->z.fixed);
-		radius[index] =
+		home[idx].x = actor->x.fixed;
+		home[idx].y = actor->z.fixed;
+		homeFacing[idx] = actor->facing;
+		heading[idx] = (Uint16)syAtan(actor->x.fixed, actor->z.fixed);
+		radius[idx] =
 			sySquartIWRAM((actor->x.fixed >> 8) * (actor->x.fixed >> 8) +
 				(actor->z.fixed >> 8) * (actor->z.fixed >> 8)) >>
 			7;
-		spin[index] = 0;
+		spin[idx] = 0;
 		actor->gravity = 0;
 	}
 
-	for(index = 0; index != ARRAY_COUNT(state->particles); index++) {
-		point = &state->particles[index];
+	for(idx = 0; idx != ARRAY_COUNT(state->particles); idx++) {
+		point = &state->particles[idx];
 		point->z = 120;
 		point->y = 0;
 		syRandom(); /* drawn and thrown away */
@@ -165,42 +165,42 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 		point->velX = 0;
 		point->variant = syRandom() & 63;
 	}
-	for(frame = 0; frame != PROCNE_FRAMES; frame++) {
+	for(frm = 0; frm != PROCNE_TICKS; frm++) {
 		if((PerRepeat & (KEY_A | KEY_B)) != 0) {
-			if(frame < PROCNE_ARRIVAL_FRAME)
-				frame = PROCNE_ARRIVAL_FRAME;
-			else if(frame < PROCNE_DROP_FRAME)
-				frame = PROCNE_DROP_FRAME;
+			if(frm < PROCNE_ARRIVAL_TICK)
+				frm = PROCNE_ARRIVAL_TICK;
+			else if(frm < PROCNE_DROP_TICK)
+				frm = PROCNE_DROP_TICK;
 		}
 
 		EFFECT_VIEW_FROM_CAMERA(camera);
 
-		if(frame == 16)
+		if(frm == 16)
 			sySndPlayStub(SE_RUMBLE);
-		if(frame == 256)
+		if(frm == 256)
 			sySndPlayStub(SE_SPIN);
-		if(frame == 334)
+		if(frm == 334)
 			sySndPlayStub(SE_POWER_UP);
-		if(frame == 347)
+		if(frm == 347)
 			sySndPlayStub(SE_POWER_UP);
-		if(frame == 359)
+		if(frm == 359)
 			sySndPlayStub(SE_POWER_UP);
-		if(frame == 372)
+		if(frm == 372)
 			sySndPlayStub(SE_POWER_UP);
 
-		/* The targets, one every 16 frames, spiral in toward the centre and
+		/* The targets, one every 16 ticks, spiral in toward the centre and
 		   rise, spinning faster; each strike flashes them. */
-		EFFECT_FOR_EACH_TARGET(index, state->args) {
-			if(frame > index * 16) {
-				battleObject = btObjectGetStub(state->args->tgts[index]);
+		EFFECT_FOR_EACH_TARGET(idx, state->args) {
+			if(frm > idx * 16) {
+				battleObject = btObjectGetStub(state->args->tgts[idx]);
 				actor = battleObject->actor;
-				actor->x.fixed = (radius[index] * sySin(heading[index])) >> 1;
-				actor->z.fixed = (radius[index] * syCos(heading[index])) >> 1;
+				actor->x.fixed = (radius[idx] * sySin(heading[idx])) >> 1;
+				actor->z.fixed = (radius[idx] * syCos(heading[idx])) >> 1;
 
-				if(frame < PROCNE_ARRIVAL_FRAME) {
-					if(frame > index * 16 + 16)
-						spin[index] += PROCNE_SPIN_GAIN;
-					if(radius[index] <= 31)
+				if(frm < PROCNE_ARRIVAL_TICK) {
+					if(frm > idx * 16 + 16)
+						spin[idx] += PROCNE_SPIN_GAIN;
+					if(radius[idx] <= 31)
 						actor->y.fixed += toFIXED(6);
 					else
 						actor->y.fixed += toFIXED(1) / 2;
@@ -208,101 +208,101 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 						actor->y.fixed = toFIXED(124);
 				}
 
-				/* DEAD: always true, as the effect ends at frame 399; the ROM
+				/* DEAD: always true, as the effect ends at tick 399; the ROM
 				   keeps the test. */
-				if(frame <= 490) {
-					heading[index] += spin[index];
-					if(heading[index] > TRIG_TURN)
-						heading[index] -= TRIG_TURN;
-					actor->facing += spin[index] / 4;
+				if(frm <= 490) {
+					heading[idx] += spin[idx];
+					if(heading[idx] > TRIG_TURN)
+						heading[idx] -= TRIG_TURN;
+					actor->facing += spin[idx] / 4;
 				}
 
-				if(frame == PROCNE_DROP_FRAME)
+				if(frm == PROCNE_DROP_TICK)
 					actor->gravity = BATTLE_UNIT_GRAVITY;
 
 				for(slot = 0; slot != PROCNE_STRIKES; slot++) {
-					if(frame == Procne_Frames[slot]) {
+					if(frm == ProcneTicks[slot]) {
 						actor->velY = 0;
-						btEffectTintBattler(state->args->tgts[index],
-							SPRITE_COLOR_WHITE, POSE_DAMAGE, index, 8);
+						btEffectTintBattler(state->args->tgts[idx],
+							SPRITE_COLOR_WHITE, POSE_DAMAGE, idx, 8);
 					}
 				}
 
-				if(radius[index] > PROCNE_CORE_RADIUS)
-					radius[index] -= 2;
+				if(radius[idx] > PROCNE_CORE_RADIUS)
+					radius[idx] -= 2;
 			}
 		}
 
-		/* The whirlwind's foot grows from frame 16, its top from 48; once
+		/* The whirlwind's foot grows from tick 16, its top from 48; once
 		   Procne arrives it stands two pictures high. */
-		if(frame >= 16 && frame < PROCNE_ARRIVAL_FRAME) {
-			size = frame * 2 - 32;
+		if(frm >= 16 && frm < PROCNE_ARRIVAL_TICK) {
+			size = frm * 2 - 32;
 			if(size > footHeight)
 				size = footHeight;
 			draw[0](canvas,
-				&state->sheet[frame / 4 % 3 * PROCNE_WHIRLWIND_PICTURE +
+				&state->sheet[frm / 4 % 3 * PROCNE_WHIRLWIND_PICTURE +
 					(footHeight - size) * PROCNE_WHIRLWIND_WIDTH],
 				32, 112 - size, width, size);
 		}
 
-		if(frame >= 48 && frame < PROCNE_ARRIVAL_FRAME) {
-			size = frame * 2 - 96;
+		if(frm >= 48 && frm < PROCNE_ARRIVAL_TICK) {
+			size = frm * 2 - 96;
 			if(size > PROCNE_WHIRLWIND_HEIGHT)
 				size = PROCNE_WHIRLWIND_HEIGHT;
 			draw[0](canvas,
-				&state->sheet[frame / 4 % 3 * PROCNE_WHIRLWIND_PICTURE +
+				&state->sheet[frm / 4 % 3 * PROCNE_WHIRLWIND_PICTURE +
 					(PROCNE_WHIRLWIND_HEIGHT - size) * PROCNE_WHIRLWIND_WIDTH],
 				32, 64 - size, width, size);
 		}
 
-		if(frame >= PROCNE_ARRIVAL_FRAME && frame < PROCNE_FRAMES) {
-			image = state->sheet + frame / 4 % 3 * PROCNE_WHIRLWIND_PICTURE;
+		if(frm >= PROCNE_ARRIVAL_TICK && frm < PROCNE_TICKS) {
+			image = state->sheet + frm / 4 % 3 * PROCNE_WHIRLWIND_PICTURE;
 			draw[0](canvas, image, 8, 0, width, PROCNE_WHIRLWIND_HEIGHT);
 			draw[0](canvas, image, 8, 64, width, PROCNE_WHIRLWIND_HEIGHT);
 		}
 
 		/* The dust spirals in and up. */
-		if(frame < PROCNE_ARRIVAL_FRAME) {
+		if(frm < PROCNE_ARRIVAL_TICK) {
 			point = state->particles;
-			for(index = 0; index != PROCNE_DUST_MOTES; index++) {
-				if(point[index].variant == 0) {
-					world.x = point[index].z * sySin(point[index].velY);
-					world.y = point[index].y;
-					world.z = point[index].z * syCos(point[index].velY);
+			for(idx = 0; idx != PROCNE_DUST_MOTES; idx++) {
+				if(point[idx].variant == 0) {
+					world.x = point[idx].z * sySin(point[idx].velY);
+					world.y = point[idx].y;
+					world.z = point[idx].z * syCos(point[idx].velY);
 					btProjectionPoint(&world.x, &screen);
 					screen.x >>= 1;
 					/* DEAD: always true, as a mote restarts once past 48 pixels
-					   up and climbs little more than 2 pixels a frame; the ROM
+					   up and climbs little more than 2 pixels a tick; the ROM
 					   keeps the test. */
-					if(point[index].y < toFIXED(64)) {
+					if(point[idx].y < toFIXED(64)) {
 						draw[0](canvas, state->sheet + PROCNE_DUST,
 							screen.x - 12, screen.y - 12, 16, 16);
 					}
-					if(point[index].z > 24)
-						point[index].z -= 4;
-					point[index].velY += point[index].velX * 2;
-					if(point[index].velY > TRIG_TURN)
-						point[index].velY -= TRIG_TURN;
-					point[index].velX += PROCNE_DUST_SPIN_GAIN;
-					if(point[index].velX > PROCNE_DUST_SPIN_MAX)
-						point[index].velX = PROCNE_DUST_SPIN_MAX;
-					point[index].velY += TRIG_TURN / 32;
-					point[index].y += point[index].velY * 2;
-					if(point[index].y > toFIXED(48)) {
-						point[index].y = 0;
-						point[index].z = 100;
-						point[index].velY = 0;
-						point[index].velX = 0;
+					if(point[idx].z > 24)
+						point[idx].z -= 4;
+					point[idx].velY += point[idx].velX * 2;
+					if(point[idx].velY > TRIG_TURN)
+						point[idx].velY -= TRIG_TURN;
+					point[idx].velX += PROCNE_DUST_SPIN_GAIN;
+					if(point[idx].velX > PROCNE_DUST_SPIN_MAX)
+						point[idx].velX = PROCNE_DUST_SPIN_MAX;
+					point[idx].velY += TRIG_TURN / 32;
+					point[idx].y += point[idx].velY * 2;
+					if(point[idx].y > toFIXED(48)) {
+						point[idx].y = 0;
+						point[idx].z = 100;
+						point[idx].velY = 0;
+						point[idx].velX = 0;
 					}
 				} else {
-					point[index].variant--;
+					point[idx].variant--;
 				}
 			}
 		}
 
-		if(frame == PROCNE_ARRIVAL_FRAME) {
+		if(frm == PROCNE_ARRIVAL_TICK) {
 			Sint32 speed;
-			Sint32 angle;
+			Sint32 ang;
 
 			btBackgroundLoadStub(
 				BATTLE_BACKGROUND_FIXED, RESOURCE_VIOLET_SKY_BACKDROP, 0);
@@ -317,45 +317,44 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 			syDecompressTaggedLZ(
 				resource, state->sheet + PROCNE_COMET_PICTURES);
 
-			for(index = 0; index != PROCNE_STRIKES * PROCNE_STRIKE_SPARK_ROWS;
-				index++) {
-				PARTICLES[index].variant = 0;
+			for(idx = 0; idx != PROCNE_STRIKES * PROCNE_STRIKE_SPARK_ROWS;
+				idx++) {
+				PARTICLES[idx].variant = 0;
 			}
 
-			EFFECT_FOR_EACH_TARGET(index, state->args) {
-				battleObject = btObjectGetStub(state->args->tgts[index]);
+			EFFECT_FOR_EACH_TARGET(idx, state->args) {
+				battleObject = btObjectGetStub(state->args->tgts[idx]);
 				actor = battleObject->actor;
 				actor->y.fixed = INTtoFIXED((syRandom() & 15) + 8);
 			}
 
 			ProjectionWork.centerX = 72;
 
-			for(index = 0; index != PROCNE_GATHERING_SPARKS; index++) {
+			for(idx = 0; idx != PROCNE_GATHERING_SPARKS; idx++) {
 				speed = syRandom() & 127;
-				angle = (syRandom() & 0x7fff) + DEGtoANG(225) - 1;
-				state->particles[index].x = sySin(angle) * speed;
-				state->particles[index].y = syCos(angle) * speed;
-				state->particles[index].z = toFIXED(syRandom() % 200 - 100);
-				state->particles[index].variant = 0;
+				ang = (syRandom() & 0x7fff) + DEGtoANG(225) - 1;
+				state->particles[idx].x = sySin(ang) * speed;
+				state->particles[idx].y = syCos(ang) * speed;
+				state->particles[idx].z = toFIXED(syRandom() % 200 - 100);
+				state->particles[idx].variant = 0;
 			}
 
-			EFFECT_FOR_EACH_TARGET(index, state->args) {
-				radius[index] = PROCNE_CORE_RADIUS;
-				spin[index] = PROCNE_SKY_SPIN;
+			EFFECT_FOR_EACH_TARGET(idx, state->args) {
+				radius[idx] = PROCNE_CORE_RADIUS;
+				spin[idx] = PROCNE_SKY_SPIN;
 			}
 		}
 
 		/* Procne sways, pushed by each comet. */
-		if(frame >= PROCNE_ARRIVAL_FRAME) {
+		if(frm >= PROCNE_ARRIVAL_TICK) {
 			scale = unitScale;
 			size = PROCNE_BOB;
-			if(frame - PROCNE_ARRIVAL_FRAME <= 64)
+			if(frm - PROCNE_ARRIVAL_TICK <= 64)
 				size = PROCNE_BOB * 2;
 
 			procne.x -=
-				(sySin((frame - PROCNE_ARRIVAL_FRAME) << 7) * PROCNE_SWAY) >> 6;
-			procne.y +=
-				(sySin((frame - PROCNE_ARRIVAL_FRAME) << 9) * size) >> 6;
+				(sySin((frm - PROCNE_ARRIVAL_TICK) << 7) * PROCNE_SWAY) >> 6;
+			procne.y += (sySin((frm - PROCNE_ARRIVAL_TICK) << 9) * size) >> 6;
 			procne.x += drift.x;
 			procne.y += drift.y;
 			drift.x /= 2;
@@ -366,34 +365,34 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 			place.groundHeight = 0;
 			/* Sprite i stands lower and higher by the same amount, which cancel
 			   on the screen but give it a later draw slot. */
-			for(index = 0; index != PROCNE_SPRITES; index++) {
-				place.x = toFIXED(Procne_GridX[index]) + procne.x + toFIXED(40);
-				place.height = toFIXED(255) + index * toFIXED(64);
-				place.y = toFIXED(Procne_GridY[index] + index * 64) + procne.y;
+			for(idx = 0; idx != PROCNE_SPRITES; idx++) {
+				place.x = toFIXED(ProcneGridX[idx]) + procne.x + toFIXED(40);
+				place.height = toFIXED(255) + idx * toFIXED(64);
+				place.y = toFIXED(ProcneGridY[idx] + idx * 64) + procne.y;
 				fdRenderApplyProjectedPlacementStub(
-					state->sprs[index], &place, &scale, 0);
+					state->sprs[idx], &place, &scale, 0);
 			}
 
-			if(frame > 255) {
+			if(frm > 255) {
 				Sint32 launch;
 
-				depthOffset.z = toFIXED(256);
+				depthOfs.z = toFIXED(256);
 				arrived = 0;
-				depthOffset.x = 0;
-				depthOffset.y = 0;
+				depthOfs.x = 0;
+				depthOfs.y = 0;
 				syInitMatrix();
-				syMatrixTranslateVector(syVector3Coordinates(&depthOffset));
+				syMatrixTranslateVector(syVector3Coordinates(&depthOfs));
 
 				/* Until the first comet, the sparks gather on Procne, each a
-				   part of its distance a frame; those that have arrived make
+				   part of its distance a tick; those that have arrived make
 				   one spark that grows with their number. */
-				if(frame < PROCNE_COMET_FRAME) {
-					for(index = 0; index != PROCNE_GATHERING_SPARKS; index++) {
+				if(frm < PROCNE_COMET_TICK) {
+					for(idx = 0; idx != PROCNE_GATHERING_SPARKS; idx++) {
 						Sint32 xx;
 						Sint32 yy;
 						Sint32 zz;
 
-						point = &state->particles[index];
+						point = &state->particles[idx];
 						xx = (point->x >> 8) * (point->x >> 8);
 						yy = (point->y >> 8) * (point->y >> 8);
 						zz = (point->z >> 8) * (point->z >> 8);
@@ -422,7 +421,7 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 					if(arrived > 0) {
 						moteSize = arrived / 10 + 1;
 						draw[1](canvas,
-							motes + BattleEffect_MotePictures[moteSize - 1],
+							motes + BattleEffectMotePictures[moteSize - 1],
 							(FIXEDtoINT(procne.x) >> 1) - moteSize / 2 + 32,
 							FIXEDtoINT(procne.y) - moteSize - 4, moteSize,
 							moteSize * 2);
@@ -431,17 +430,17 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 
 				/* Each strike throws out sparks. */
 				for(slot = 0; slot != PROCNE_STRIKES; slot++) {
-					if(frame == Procne_Frames[slot]) {
+					if(frm == ProcneTicks[slot]) {
 						Sint32 speed;
-						Sint32 angle;
+						Sint32 ang;
 
-						for(index = 0; index != PROCNE_STRIKE_SPARKS; index++) {
+						for(idx = 0; idx != PROCNE_STRIKE_SPARKS; idx++) {
 							speed = (syRandom() & 127) + 16;
-							angle = syRandom() & TRIG_ANGLE_MASK;
+							ang = syRandom() & TRIG_ANGLE_MASK;
 							spark = &PARTICLES[slot * PROCNE_STRIKE_SPARK_ROWS +
-								index];
-							spark->velX = (sySin(angle) * speed) >> 6;
-							spark->velY = -(syCos(angle) * speed) >> 6;
+								idx];
+							spark->velX = (sySin(ang) * speed) >> 6;
+							spark->velY = -(syCos(ang) * speed) >> 6;
 							/* BUG: the random depth speed is stored over
 							   velocityY, not in velocityZ as the other bursts
 							   store it, and z moves by velocityY: the
@@ -458,14 +457,14 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 					}
 
 					/* Inside the strikes' loop, so the sparks move and fade
-					   four steps a frame. */
-					if(frame >= Procne_Frames[0]) {
+					   four steps a tick. */
+					if(frm >= ProcneTicks[0]) {
 						spark = PARTICLES;
-						for(index = 0;
-							index != PROCNE_STRIKES * PROCNE_STRIKE_SPARK_ROWS;
-							index++) {
-							if(spark[index].variant > 0) {
-								btProjectionPoint(&spark[index].x, &screen);
+						for(idx = 0;
+							idx != PROCNE_STRIKES * PROCNE_STRIKE_SPARK_ROWS;
+							idx++) {
+							if(spark[idx].variant > 0) {
+								btProjectionPoint(&spark[idx].x, &screen);
 								screen.x = (FIXEDtoINT(screen.x) >> 1) + 32;
 								screen.y = FIXEDtoINT(screen.y) + 56;
 								screen.depth = FIXEDtoINT(screen.depth);
@@ -474,14 +473,14 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 								moteSize = PROCNE_SPARK_SIZE(screen.depth, 3);
 								EFFECT_DRAW_MOTE(draw[0], canvas, motes,
 									screen.x, screen.y, moteSize);
-								spark[index].x += spark[index].velX;
-								spark[index].y += spark[index].velY;
+								spark[idx].x += spark[idx].velX;
+								spark[idx].y += spark[idx].velY;
 #if FIX_PROCNE_SPARK_DEPTH
-								spark[index].z += spark[index].velZ;
+								spark[idx].z += spark[idx].velZ;
 #else
-								spark[index].z += spark[index].velY;
+								spark[idx].z += spark[idx].velY;
 #endif
-								spark[index].variant--;
+								spark[idx].variant--;
 							}
 						}
 					}
@@ -489,10 +488,10 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 
 				/* The comets leave Procne one after another; each pushes it
 				   back and shakes the screen. */
-				for(index = 0; index != PROCNE_STRIKES; index++) {
-					comet = &state->particles[index + PROCNE_COMET_PARTICLES];
-					launch = index * PROCNE_COMET_INTERVAL + PROCNE_COMET_FRAME;
-					if(frame == launch) {
+				for(idx = 0; idx != PROCNE_STRIKES; idx++) {
+					comet = &state->particles[idx + PROCNE_COMET_PARTICLES];
+					launch = idx * PROCNE_COMET_INTERVAL + PROCNE_COMET_TICK;
+					if(frm == launch) {
 						comet->x = (FIXEDtoINT(procne.x) >> 1) + 32;
 						comet->y = FIXEDtoINT(procne.y) - 4;
 						/* Where it leaves Procne, kept for the ring of
@@ -509,21 +508,21 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 						state->shakeFrm = 8;
 					}
 
-					if(frame >= launch) {
+					if(frm >= launch) {
 						Sint32 picture;
 
-						/* The comet grows over its first frames as it flies. */
-						picture = (frame - launch) / 2;
+						/* The comet grows over its first ticks as it flies. */
+						picture = (frm - launch) / 2;
 						if(picture > 2)
 							picture = 2;
-						draw[1](canvas, state->sheet + Procne_Pictures[picture],
-							comet->x, comet->y - Procne_PictureBiasY[picture],
-							Procne_PictureWidths[picture],
-							Procne_PictureHeights[picture]);
+						draw[1](canvas, state->sheet + ProcnePictures[picture],
+							comet->x, comet->y - ProcnePictureBiasY[picture],
+							ProcnePictureWidths[picture],
+							ProcnePictureHeights[picture]);
 						comet->x -= 8;
 						comet->y += 2;
 
-						if(frame < launch + 8) {
+						if(frm < launch + 8) {
 							/* A ring of light grows where the comet left
 							   Procne. */
 							syRotZ(-DEGtoANG(11.25));
@@ -545,12 +544,12 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 								btProjectionPoint(&world.x, &screen);
 								screen.x = (FIXEDtoINT(screen.x) >> 1) +
 									state
-										->particles[index +
+										->particles[idx +
 											PROCNE_COMET_PARTICLES]
 										.velX;
 								screen.y = FIXEDtoINT(screen.y) +
 									state
-										->particles[index +
+										->particles[idx +
 											PROCNE_COMET_PARTICLES]
 										.velY;
 								screen.depth = FIXEDtoINT(screen.depth);
@@ -566,37 +565,37 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
 	/* Put the targets back. */
-	EFFECT_FOR_EACH_TARGET(index, state->args) {
+	EFFECT_FOR_EACH_TARGET(idx, state->args) {
 		ACTOR *actor;
 
-		battleObject = btObjectGetStub(state->args->tgts[index]);
+		battleObject = btObjectGetStub(state->args->tgts[idx]);
 		actor = battleObject->actor;
-		actor->x.fixed = home[index].x;
-		actor->z.fixed = home[index].y;
-		actor->facing = homeFacing[index];
+		actor->x.fixed = home[idx].x;
+		actor->z.fixed = home[idx].y;
+		actor->facing = homeFacing[idx];
 	}
 
 	ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X;
 
 	btEffectSetupBlendedDisp();
 
-	for(index = 0; index != PROCNE_SPRITES; index++) {
-		fdSprDestroyStub(state->sprs[index]);
+	for(idx = 0; idx != PROCNE_SPRITES; idx++) {
+		fdSprDestroyStub(state->sprs[idx]);
 	}
 
 	EFFECT_FINISH_CANVAS();
 }
 
-#undef PROCNE_FRAMES
-#undef PROCNE_ARRIVAL_FRAME
-#undef PROCNE_DROP_FRAME
-#undef PROCNE_COMET_FRAME
+#undef PROCNE_TICKS
+#undef PROCNE_ARRIVAL_TICK
+#undef PROCNE_DROP_TICK
+#undef PROCNE_COMET_TICK
 #undef PROCNE_COMET_INTERVAL
 #undef PROCNE_SPRITES
 #undef PROCNE_WHIRLWIND_WIDTH

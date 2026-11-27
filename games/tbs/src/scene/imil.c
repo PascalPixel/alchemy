@@ -104,34 +104,34 @@
 #include "scene/walk_into_leader.h"
 #include "text/msg_ids.h"
 
-extern Sint16		  Ice_KeyHeadings[];
-extern Sint16		  Imil_SlideHeadings[];
-extern Sint32		  Imil_TrembleScript[];
-extern Sint32		  Imil_OldWomanHurryScript[];
-extern Sint32		  Imil_LeaderStepAsideScript[];
-extern Sint32		  Imil_BobScript[];
-extern Sint32		  Imil_SparkScript[];
-extern Sint32		  Imil_MiaCheckRoomScript[];
-extern Sint32		  Imil_MiaRunOutScript[];
-extern Sint32		  Imil_FaceTargetScript[];
-extern Sint32		  Imil_FollowMiaOutScript[];
-extern SCENE_ENTRANCE Imil_TownEntrances[];
-extern SCENE_ENTRANCE Imil_RoomEntrances[];
-extern Uint32		  Imil_Exits[];
-extern ACTOR_PLACE	  Imil_TownActorPlacements[];
-extern ACTOR_PLACE	  Imil_TownActorPlacementsCured[];
-extern ACTOR_PLACE	  Imil_RoomActorPlacements[];
-extern CUE			  Imil_TownCues[];
-extern CUE			  Imil_RoomCues[];
-extern Uint16		 *Imil_DoorMetatileSteps[];
-extern Sint16		  Imil_DoorMetatilePoints[][2];
-extern Uint16		  Imil_OldManSitUpSteps[];
-extern Uint16		  Imil_OldManLieBackSteps[];
+extern Sint16		  IceKeyHeadings[];
+extern Sint16		  ImilSlideHeadings[];
+extern Sint32		  ImilTrembleScript[];
+extern Sint32		  ImilOldWomanHurryScript[];
+extern Sint32		  ImilLeaderStepAsideScript[];
+extern Sint32		  ImilBobScript[];
+extern Sint32		  ImilSparkScript[];
+extern Sint32		  ImilMiaCheckRoomScript[];
+extern Sint32		  ImilMiaRunOutScript[];
+extern Sint32		  ImilFaceTargetScript[];
+extern Sint32		  ImilFollowMiaOutScript[];
+extern SCENE_ENTRANCE ImilTownEntrances[];
+extern SCENE_ENTRANCE ImilRoomEntrances[];
+extern Uint32		  ImilExits[];
+extern ACTOR_PLACE	  ImilTownActorPlacements[];
+extern ACTOR_PLACE	  ImilTownActorPlacementsCured[];
+extern ACTOR_PLACE	  ImilRoomActorPlacements[];
+extern CUE			  ImilTownCues[];
+extern CUE			  ImilRoomCues[];
+extern Uint16		 *ImilDoorMetatileSteps[];
+extern Sint16		  ImilDoorMetatilePoints[][2];
+extern Uint16		  ImilOldManSitUpSteps[];
+extern Uint16		  ImilOldManLieBackSteps[];
 /* The point (x, y, z) the unused spiral and sway move around. */
-extern Sint32 Imil_EffectCenter[];
+extern Sint32 ImilEffectCenter[];
 
-/* The village's actors (Imil), numbering Imil_TownActorPlacements' rows, and
-   Imil_TownActorPlacementsCured's, from ACTOR_FIRST_PLACED. */
+/* The village's actors (Imil), numbering ImilTownActorPlacements' rows, and
+   ImilTownActorPlacementsCured's, from ACTOR_FIRST_PLACED. */
 typedef enum IMIL_VILLAGE_ACTOR_ID {
 	/* A young man by the north-west house, shivering and sneezing. */
 	ACTOR_FREEZING_YOUNG_MAN = ACTOR_FIRST_PLACED,
@@ -146,7 +146,7 @@ typedef enum IMIL_VILLAGE_ACTOR_ID {
 } IMIL_VILLAGE_ACTOR_ID;
 
 /* The actors of the houses and the Sanctum (IceRooms), numbering
-   Imil_RoomActorPlacements' rows from ACTOR_FIRST_PLACED.
+   ImilRoomActorPlacements' rows from ACTOR_FIRST_PLACED.
 
    The rows of Garet, Ivan and Mia take those characters' own slots. */
 typedef enum ICE_ROOMS_ACTOR_ID {
@@ -260,7 +260,7 @@ static void scImilMiaCastsPlyOnOldMan(void);
 static void scImilSpawnChimneySmoke(void);
 
 /* Isaac leaves no footprints on the frozen river or on the raised ground under
-   the big tree, and leaves them everywhere else in the snow; checked each frame
+   the big tree, and leaves them everywhere else in the snow; checked each tick
    while the party is in the village. */
 static void scImilUpdateFootprints(void);
 
@@ -326,9 +326,9 @@ static Sint32 scImilUpdateTremble(ACTOR *actor)
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
 	if(MainRoutineStateWork.next == SCENE_ICE_ROOMS) {
-		return Imil_RoomEntrances;
+		return ImilRoomEntrances;
 	}
-	return Imil_TownEntrances;
+	return ImilTownEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -338,7 +338,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return Imil_Exits;
+	return ImilExits;
 }
 
 /* Once Saturos is beaten at Mercury Lighthouse, the villagers are well
@@ -346,25 +346,24 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.next == SCENE_ICE_ROOMS) {
-		fdAssignViewFlags(Imil_RoomActorPlacements);
+		fdAssignViewFlags(ImilRoomActorPlacements);
 		if(gmFlagGet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
-			Imil_RoomActorPlacements[ACTOR_RESTAURANT_OWNER -
-				ACTOR_FIRST_PLACED]
+			ImilRoomActorPlacements[ACTOR_RESTAURANT_OWNER - ACTOR_FIRST_PLACED]
 				.talkFacing = TALK_FACING_PARTY;
-			Imil_RoomActorPlacements[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED]
-				.x = toFIXED(182);
-			Imil_RoomActorPlacements[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED]
-				.z = toFIXED(564);
-			Imil_RoomActorPlacements[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED]
+			ImilRoomActorPlacements[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED].x =
+				toFIXED(182);
+			ImilRoomActorPlacements[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED].z =
+				toFIXED(564);
+			ImilRoomActorPlacements[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED]
 				.movement = MOVEMENT_TYPE_WANDER;
 		}
-		return Imil_RoomActorPlacements;
+		return ImilRoomActorPlacements;
 	}
 
 	if(gmFlagGet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
-		return Imil_TownActorPlacementsCured;
+		return ImilTownActorPlacementsCured;
 	}
-	return Imil_TownActorPlacements;
+	return ImilTownActorPlacements;
 }
 
 /* Isaac steps onto the frozen river running down the middle of Imil and slides
@@ -379,9 +378,9 @@ static void scImilSlideOnIce(void)
 const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.next == SCENE_ICE_ROOMS) {
-		return Imil_RoomCues;
+		return ImilRoomCues;
 	}
-	return Imil_TownCues;
+	return ImilTownCues;
 }
 
 /* Isaac talks to the young man shivering by the north-west house, before
@@ -509,18 +508,18 @@ static void scImilTalkToOldMan(void)
 			fdScriptStart();
 			fdActorSetAnimation(
 				ACTOR_OLD_MAN, OLD_MAN_WITH_CANE_ANIMATION_SIT_UP);
-			fdMapGridPlayMapEdit(Imil_OldManSitUpSteps, 10, 69);
+			fdMapGridPlayMapEdit(ImilOldManSitUpSteps, 10, 69);
 			fdScriptSetMessageId(MsgMercuryFeelMuchBetter);
 			/* "I feel much better, thanks to Mia. I should be fine now." */
 			fdScriptShowMessage(ACTOR_OLD_MAN, 0);
 			fdActorSetAnimation(
 				ACTOR_OLD_MAN, OLD_MAN_WITH_CANE_ANIMATION_LIE_BACK);
-			fdMapGridAnimateMetatiles(Imil_OldManLieBackSteps, 10, 69);
+			fdMapGridAnimateMetatiles(ImilOldManLieBackSteps, 10, 69);
 			fdScriptEnd();
 		} else {
 			fdScriptStart();
 			fdActorGet(ACTOR_OLD_MAN)->tmr = 10;
-			fdActorSetScript(ACTOR_OLD_MAN, Imil_TrembleScript);
+			fdActorSetScript(ACTOR_OLD_MAN, ImilTrembleScript);
 			fdScriptSetMessageId(MsgMercuryOoohHelpMe);
 			/* "Oooh... Help me..." */
 			fdScriptShowMessage(ACTOR_OLD_MAN, 0);
@@ -531,9 +530,9 @@ static void scImilTalkToOldMan(void)
 			fdActorStartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
 			/* "Grandpa! Grandpa! Hold on!" */
 			fdScriptShowMessageThenWait(ACTOR_OLD_WOMAN, 0, 20);
-			fdActorSetScript(ACTOR_PARTY_LEADER, Imil_LeaderStepAsideScript);
+			fdActorSetScript(ACTOR_PARTY_LEADER, ImilLeaderStepAsideScript);
 			fdActorSetSpeed(ACTOR_OLD_WOMAN, 1.6);
-			fdActorRunScriptAndWait(ACTOR_OLD_WOMAN, Imil_OldWomanHurryScript);
+			fdActorRunScriptAndWait(ACTOR_OLD_WOMAN, ImilOldWomanHurryScript);
 			fdScriptWait(40);
 			fdActorJump(ACTOR_OLD_WOMAN, 2, 0);
 			fdActorStartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
@@ -713,10 +712,10 @@ static void scImilOpenDoorAndExit(void)
 		sySndPlay(SE_DOOR_OPEN);
 	}
 	{
-		Sint32 x = Imil_DoorMetatilePoints[exit - 1][0];
-		Sint32 y = Imil_DoorMetatilePoints[exit - 1][1];
+		Sint32 x = ImilDoorMetatilePoints[exit - 1][0];
+		Sint32 y = ImilDoorMetatilePoints[exit - 1][1];
 
-		fdMapGridPlayMapEdit(Imil_DoorMetatileSteps[exit - 1], x, y);
+		fdMapGridPlayMapEdit(ImilDoorMetatileSteps[exit - 1], x, y);
 	}
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -765,7 +764,7 @@ static void scImilTalkToWeaponMerchant(void)
 			fdCameraMoveTo(426, CAMERA_KEEP, 492, 1);
 			fdCameraWaitForMove();
 			fdScriptWait(20);
-			fdActorRunScriptAndWait(ACTOR_WEAPON_MERCHANT, Imil_BobScript);
+			fdActorRunScriptAndWait(ACTOR_WEAPON_MERCHANT, ImilBobScript);
 			fdScriptSetMessageId(MsgMercuryStoreClosedUntilWell);
 			/* "Our store is closed until we get well..." */
 			fdScriptShowMessage(ACTOR_WEAPON_MERCHANT, 0);
@@ -807,7 +806,7 @@ static void scImilTalkToArmorMerchant(void)
 			fdCameraMoveTo(426, CAMERA_KEEP, 492, 1);
 			fdCameraWaitForMove();
 			fdScriptWait(20);
-			fdActorRunScriptAndWait(ACTOR_ARMOR_MERCHANT, Imil_BobScript);
+			fdActorRunScriptAndWait(ACTOR_ARMOR_MERCHANT, ImilBobScript);
 			fdScriptSetMessageId(MsgMercuryTooSickBusiness);
 			/* "Sorry, but I'm too sick to do business today. Try again..." */
 			fdScriptShowMessage(ACTOR_ARMOR_MERCHANT, 0);
@@ -949,8 +948,8 @@ Sint32 scInit(void)
 		}
 		leader->tmr = 0;
 		leader->userValue = 0;
-		sySetFrameEvent(scImilSpawnChimneySmoke, EVENT_PASS_FRAME);
-		sySetFrameEvent(scImilUpdateFootprints, EVENT_PASS_FRAME);
+		sySetTickEvent(scImilSpawnChimneySmoke, EVENT_PASS_TICK);
+		sySetTickEvent(scImilUpdateFootprints, EVENT_PASS_TICK);
 		fdActorSetSprPriority(ACTOR_SNOWMAN, 1);
 		if(gmFlagGet(FLAG_IMIL_SNOWMAN_MOVED)) {
 			scImilPlaceMovedSnowman();
@@ -997,7 +996,7 @@ Sint32 scInit(void)
 					fdActorSetPos(ACTOR_OLD_WOMAN, 149, 116);
 					fdActorGet(ACTOR_OLD_WOMAN)->facing = FACING_EAST;
 					fdActorGet(ACTOR_OLD_MAN)->userValue = 0;
-					fdActorSetScript(ACTOR_OLD_MAN, Imil_TrembleScript);
+					fdActorSetScript(ACTOR_OLD_MAN, ImilTrembleScript);
 				} else {
 					fdActorSetMovementTypeById(
 						ACTOR_OLD_WOMAN, MOVEMENT_TYPE_WANDER);
@@ -1006,7 +1005,7 @@ Sint32 scInit(void)
 		} else if(entrance == ICE_ROOMS_FROM_IMIL_WEST_SOUTHWEST) {
 			if(!gmFlagGet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
 				fdActorGet(ACTOR_SICK_OLD_MAN)->userValue = 1;
-				fdActorSetScript(ACTOR_SICK_OLD_MAN, Imil_TrembleScript);
+				fdActorSetScript(ACTOR_SICK_OLD_MAN, ImilTrembleScript);
 			}
 		} else if(entrance == ICE_ROOMS_HOUSE_NORTHEAST) {
 			if(gmFlagGet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
@@ -1066,7 +1065,7 @@ Sint32 scInit(void)
 
 static void scImilMeetMiaAtOldCouplesHouse(void)
 {
-	const Sint32 *table;
+	const Sint32 *tbl;
 	FIELD_STATE	 *state;
 
 	fdScriptStart();
@@ -1090,14 +1089,14 @@ static void scImilMeetMiaAtOldCouplesHouse(void)
 	fdActorWalkToAndWait(ACTOR_IVAN, 134, 234);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_STAND);
 	syFieldActorWatchAndStartScript(ACTOR_PARTY_LEADER,
-		ACTOR_WATCH_KEEP_MOTION | ACTOR_MIA, Imil_FaceTargetScript);
-	syFieldActorWatchAndStartScript(ACTOR_GARET,
-		ACTOR_WATCH_KEEP_MOTION | ACTOR_MIA, Imil_FaceTargetScript);
+		ACTOR_WATCH_KEEP_MOTION | ACTOR_MIA, ImilFaceTargetScript);
 	syFieldActorWatchAndStartScript(
-		ACTOR_IVAN, ACTOR_WATCH_KEEP_MOTION | ACTOR_MIA, Imil_FaceTargetScript);
+		ACTOR_GARET, ACTOR_WATCH_KEEP_MOTION | ACTOR_MIA, ImilFaceTargetScript);
+	syFieldActorWatchAndStartScript(
+		ACTOR_IVAN, ACTOR_WATCH_KEEP_MOTION | ACTOR_MIA, ImilFaceTargetScript);
 	fdCameraWaitForMove();
-	table = Imil_BobScript;
-	fdActorSetScript(ACTOR_OLD_MAN, table);
+	tbl = ImilBobScript;
+	fdActorSetScript(ACTOR_OLD_MAN, tbl);
 	fdScriptWait(40);
 	fdActorSetAttachedEffect(
 		ACTOR_MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1106,7 +1105,7 @@ static void scImilMeetMiaAtOldCouplesHouse(void)
 	fdScriptSetMessageId(MSGNO(MsgImilHowFeeling));
 	/* "How are you feeling?" */
 	fdScriptShowMessageThenWait(ACTOR_MIA, 0, 20);
-	fdActorSetScript(ACTOR_OLD_MAN, table);
+	fdActorSetScript(ACTOR_OLD_MAN, tbl);
 	/* "Cough... Cough..." */
 	fdScriptShowMessageThenWait(ACTOR_OLD_MAN, 0, 20);
 	fdActorFaceDirection(ACTOR_MIA, FACING_WEST, 20);
@@ -1120,7 +1119,7 @@ static void scImilMeetMiaAtOldCouplesHouse(void)
 	fdActorFaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTH_SOUTHEAST, 20);
 	/* "You'll feel better soon." */
 	fdScriptShowMessageThenWait(ACTOR_MIA, 0, 10);
-	fdActorSetScript(ACTOR_OLD_MAN, table);
+	fdActorSetScript(ACTOR_OLD_MAN, tbl);
 
 	scImilMiaCastsPlyOnOldMan();
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
@@ -1130,7 +1129,7 @@ static void scImilMeetMiaAtOldCouplesHouse(void)
 	fdScriptShowMessageThenWait(ACTOR_OLD_MAN, 0, 20);
 	fdActorShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
 	fdActorSetAnimation(ACTOR_OLD_MAN, OLD_MAN_WITH_CANE_ANIMATION_SIT_UP);
-	fdMapGridAnimateMetatiles(Imil_OldManSitUpSteps, 10, 69);
+	fdMapGridAnimateMetatiles(ImilOldManSitUpSteps, 10, 69);
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_MIA, 2);
 	fdActorSetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
@@ -1139,7 +1138,7 @@ static void scImilMeetMiaAtOldCouplesHouse(void)
 	fdActorRunRepeatedMotion(ACTOR_OLD_MAN, 1);
 	fdScriptWait(40);
 	fdActorSetAnimation(ACTOR_OLD_MAN, OLD_MAN_WITH_CANE_ANIMATION_LIE_BACK);
-	fdMapGridAnimateMetatiles(Imil_OldManLieBackSteps, 10, 69);
+	fdMapGridAnimateMetatiles(ImilOldManLieBackSteps, 10, 69);
 	fdScriptWait(40);
 	fdActorSetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
 	fdScriptWait(20);
@@ -1159,7 +1158,7 @@ static void scImilMeetMiaAtOldCouplesHouse(void)
 	fdScriptWait(40);
 	fdActorSetSpeed(ACTOR_MIA, 1);
 	fdActorGet(ACTOR_MIA)->tmr = 0;
-	fdActorSetScript(ACTOR_MIA, Imil_MiaCheckRoomScript);
+	fdActorSetScript(ACTOR_MIA, ImilMiaCheckRoomScript);
 	while(fdActorGet(ACTOR_MIA)->tmr == 0) {
 		sySynch(1);
 	}
@@ -1210,7 +1209,7 @@ static void scImilMeetMiaAtOldCouplesHouse(void)
 	fdActorStop(ACTOR_IVAN);
 	fdActorSetSpeed(ACTOR_MIA, 3);
 	fdActorGet(ACTOR_MIA)->tmr = 0;
-	fdActorSetScript(ACTOR_MIA, Imil_MiaRunOutScript);
+	fdActorSetScript(ACTOR_MIA, ImilMiaRunOutScript);
 	while(fdActorGet(ACTOR_MIA)->tmr == 0) {
 		sySynch(1);
 	}
@@ -1235,9 +1234,9 @@ static void scImilMeetMiaAtOldCouplesHouse(void)
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
 	fdActorSetSpeed(ACTOR_GARET, 0.8);
 	fdActorSetSpeed(ACTOR_IVAN, 0.8);
-	table = Imil_FollowMiaOutScript;
-	fdActorSetScript(ACTOR_GARET, table);
-	fdActorRunScriptAndWait(ACTOR_IVAN, table);
+	tbl = ImilFollowMiaOutScript;
+	fdActorSetScript(ACTOR_GARET, tbl);
+	fdActorRunScriptAndWait(ACTOR_IVAN, tbl);
 	fdScriptWait(20);
 	state = FieldStateWork;
 	state->transition =
@@ -1248,7 +1247,7 @@ static void scImilMeetMiaAtOldCouplesHouse(void)
 }
 
 /* Unused: an update function that spirals an actor in to a point 8 pixels above
-   Imil_EffectCenter, a pixel nearer and a 32nd of a turn round each frame, and
+   ImilEffectCenter, a pixel nearer and a 32nd of a turn round each tick, and
    releases it there. No actor is given it. */
 UNUSED static void scImilUpdateSpiralIn(ACTOR *actor)
 {
@@ -1263,9 +1262,9 @@ UNUSED static void scImilUpdateSpiralIn(ACTOR *actor)
 		actor->tmr = n;
 		t = (Sint16)n;
 		if(t != 0) {
-			buf[0] = Imil_EffectCenter[0];
-			buf[1] = Imil_EffectCenter[1] + toFIXED(8);
-			buf[2] = Imil_EffectCenter[2];
+			buf[0] = ImilEffectCenter[0];
+			buf[1] = ImilEffectCenter[1] + toFIXED(8);
+			buf[2] = ImilEffectCenter[2];
 			syVectorAddPolarOffset(
 				toFIXED(t), t * (TRIG_TURN / 32) + actor->userValue, buf);
 			actor->x.fixed = buf[0];
@@ -1278,19 +1277,19 @@ UNUSED static void scImilUpdateSpiralIn(ACTOR *actor)
 }
 
 /* Unused: an update function that sways an actor 6 pixels either side of
-   Imil_EffectCenter every 64 frames and, every third frame, sheds a sparkle
-   beside it (Imil_SparkScript). No actor is given it. */
+   ImilEffectCenter every 64 ticks and, every third tick, sheds a sparkle
+   beside it (ImilSparkScript). No actor is given it. */
 UNUSED static void scImilSwayAndSpark(ACTOR *actor)
 {
 	Sint32 pos[3];
 	ACTOR *spark;
 	Sint32 radius;
 
-	actor->x.fixed = Imil_EffectCenter[0] +
+	actor->x.fixed = ImilEffectCenter[0] +
 		syMulFX(toFIXED(6), sySin(actor->tmr * (TRIG_TURN / 64)));
 	actor->tmr++;
 	actor->tmr = (actor->tmr + 64) % 64;
-	if(FrameCount % 3 == 0) {
+	if(TickCount % 3 == 0) {
 		SET_VECTOR(
 			pos, actor->x.fixed, actor->y.fixed + toFIXED(2), actor->z.fixed);
 		radius = syRandomNext();
@@ -1305,7 +1304,7 @@ UNUSED static void scImilSwayAndSpark(ACTOR *actor)
 			spark->priFlg = ACTOR_PRIORITY_UNDERFOOT;
 			spark->motionFlg = 0;
 			fdActorSetSprCol(spark, SPRITE_COLOR_BLUE_TINT);
-			fdActorStartScript(spark, Imil_SparkScript);
+			fdActorStartScript(spark, ImilSparkScript);
 		}
 	}
 }
@@ -1313,7 +1312,7 @@ UNUSED static void scImilSwayAndSpark(ACTOR *actor)
 /* The old man bobs and speaks as Ply ends (its finishFunc). */
 static void scImilOldManBobsAndSpeaks(void)
 {
-	fdActorSetScript(ACTOR_OLD_MAN, Imil_BobScript);
+	fdActorSetScript(ACTOR_OLD_MAN, ImilBobScript);
 	/* "Cough cough... Cough... Cough... Cough..." */
 	fdScriptShowMessage(ACTOR_OLD_MAN, 0);
 }
@@ -1336,14 +1335,14 @@ static void scImilMiaCastsPlyOnOldMan(void)
    tinted blue and half its size. */
 static void scImilInitSmoke(ACTOR *smoke)
 {
-	SPR *sprite;
+	SPR *spr;
 
 	smoke->motionFlg = 0;
 	smoke->tmr = 0;
 	smoke->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
 
-	sprite = smoke->spr;
-	sprite->image.pri = 1;
+	spr = smoke->spr;
+	spr->image.pri = 1;
 
 	fdActorSetSprCol(smoke, SPRITE_COLOR_BLUE_TINT);
 	fdActorSetSprFlags(smoke, 0);
@@ -1352,7 +1351,7 @@ static void scImilInitSmoke(ACTOR *smoke)
 	smoke->scaleY = toFIXED(1) / 2;
 }
 
-/* A smoke puff's update: it drifts east ever faster, rises half a pixel a frame
+/* A smoke puff's update: it drifts east ever faster, rises half a pixel a tick
    and grows, and is released when its second is up. */
 static void scImilDriftSmoke(ACTOR *actor)
 {
@@ -1383,27 +1382,27 @@ static void scImilSpawnChimneySmoke(void)
 {
 	ACTOR *actor;
 
-	if(FrameCount % 60 == 0) {
+	if(TickCount % 60 == 0) {
 		actor = (ACTOR *)syFieldActorCreate(
 			SPRITE_DUST_PUFF, toFIXED(463), 0, toFIXED(292));
 		scImilStartSmoke(actor);
 	}
-	if((FrameCount + 30) % 60 == 0) {
+	if((TickCount + 30) % 60 == 0) {
 		actor = (ACTOR *)syFieldActorCreate(
 			SPRITE_DUST_PUFF, toFIXED(320), toFIXED(32), toFIXED(356));
 		scImilStartSmoke(actor);
 	}
-	if((FrameCount + 10) % 60 == 0) {
+	if((TickCount + 10) % 60 == 0) {
 		actor = (ACTOR *)syFieldActorCreate(
 			SPRITE_DUST_PUFF, toFIXED(118), 0, toFIXED(70));
 		scImilStartSmoke(actor);
 	}
-	if((FrameCount + 50) % 60 == 0) {
+	if((TickCount + 50) % 60 == 0) {
 		actor = (ACTOR *)syFieldActorCreate(
 			SPRITE_DUST_PUFF, toFIXED(342), 0, toFIXED(124));
 		scImilStartSmoke(actor);
 	}
-	if((FrameCount + 80) % 60 == 0) {
+	if((TickCount + 80) % 60 == 0) {
 		actor = (ACTOR *)syFieldActorCreate(
 			SPRITE_DUST_PUFF, toFIXED(431), 0, toFIXED(171));
 		scImilStartSmoke(actor);
@@ -1416,8 +1415,8 @@ static void scImilUpdateFootprints(void)
 	FIXED				   x;
 	Sint32				   column;
 	Sint32				   isSet;
-	Sint32				   zoneFlag = FLAG_IMIL_NO_FOOTPRINTS;
-	Sint32				   otherZoneFlag = FLAG_IMIL_FOOTPRINTS;
+	Sint32				   zoneFlg = FLAG_IMIL_NO_FOOTPRINTS;
+	Sint32				   otherZoneFlg = FLAG_IMIL_FOOTPRINTS;
 	MAP_GRID_SCROLL_STATE *grid;
 
 	actor = fdActorGet(ACTOR_PARTY_LEADER);
@@ -1428,12 +1427,12 @@ static void scImilUpdateFootprints(void)
 		((FIELD_HALF_METATILE(actor->z.fixed) >= 36 &&
 			 FIELD_HALF_METATILE(actor->z.fixed) <= 45) &&
 			(column >= 22 && column <= 31))) {
-		isSet = gmFlagGet(zoneFlag);
+		isSet = gmFlagGet(zoneFlg);
 		if(isSet != 0)
 			return;
 		((MAP_GRID_SCROLL_STATE *)MapGridState[0])->footprints = isSet;
-		syImportGameFlagSet(zoneFlag);
-		gmFlagClear(otherZoneFlag);
+		syImportGameFlagSet(zoneFlg);
+		gmFlagClear(otherZoneFlg);
 		return;
 	}
 	/* On the raised ground under the big tree. */
@@ -1441,17 +1440,17 @@ static void scImilUpdateFootprints(void)
 		actor->z.fixed > toFIXED(212)) {
 		grid = MapGridState[0];
 		grid->footprints = 0;
-		syImportGameFlagSet(zoneFlag);
-		gmFlagClear(otherZoneFlag);
+		syImportGameFlagSet(zoneFlg);
+		gmFlagClear(otherZoneFlg);
 		return;
 	}
-	isSet = gmFlagGet(otherZoneFlag);
+	isSet = gmFlagGet(otherZoneFlg);
 	if(isSet != 0)
 		return;
 	grid = MapGridState[0];
 	grid->footprints = 1;
-	syImportGameFlagSet(otherZoneFlag);
-	gmFlagClear(zoneFlag);
+	syImportGameFlagSet(otherZoneFlg);
+	gmFlagClear(zoneFlg);
 	return;
 }
 
@@ -1489,7 +1488,7 @@ static void scImilLeaveNorth(void)
 	fdActorGet(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
 	sySndPlay(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(IMIL_TO_IMIL_FALLS_CAVE);
 }
 
@@ -1672,7 +1671,7 @@ static void scImilMiaSaysFarewellToApprentices(void)
 	fdScriptEnd();
 }
 
-#define ICE_SLIDE_HEADINGS Imil_SlideHeadings
+#define ICE_SLIDE_HEADINGS ImilSlideHeadings
 #include "shared/leader_slide_on_ice.c"
 
 /* clang-format off */
@@ -1680,7 +1679,7 @@ static void scImilMiaSaysFarewellToApprentices(void)
 
 /* The way the leader slides on the ice for each combination of held */
 /* directions (DPAD_INDEX); a diagonal slides east or west. */
-Sint16 Imil_SlideHeadings[] = {
+Sint16 ImilSlideHeadings[] = {
 	KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, FACING_EAST, FACING_WEST, FACING_NORTH,
 	FACING_SOUTH, FACING_EAST, FACING_WEST, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
 };
@@ -1688,12 +1687,12 @@ Sint16 Imil_SlideHeadings[] = {
 #include "shared/tremble_script.c"
 
 /* A sick person trembles (scImilUpdateTremble) for as long as it runs. */
-Sint32 Imil_TrembleScript[] = {
+Sint32 ImilTrembleScript[] = {
 	SC_CALL(scImilUpdateTremble),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-Sint32 Imil_OldWomanHurryScript[] = {
+Sint32 ImilOldWomanHurryScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(136, 0, 192),
 	SC_SYNC,
@@ -1706,14 +1705,14 @@ Sint32 Imil_OldWomanHurryScript[] = {
 	SC_END,
 };
 
-Sint32 Imil_LeaderStepAsideScript[] = {
+Sint32 ImilLeaderStepAsideScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(155, 0, 135),
 	SC_SYNC,
 	SC_ANIMATION(ANIM_STAND),
 	SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
 	SC_END,
-	/* Unused: past its end, one bob of Imil_BobScript. */
+	/* Unused: past its end, one bob of ImilBobScript. */
 	SC_ADD(SW_SCALE_Y, toFIXED(3) / 8),
 	SC_WAIT(2),
 	SC_ADD(SW_SCALE_Y, -toFIXED(3) / 16),
@@ -1727,7 +1726,7 @@ Sint32 Imil_LeaderStepAsideScript[] = {
 
 /* Stretches an actor three eighths taller and lets it settle back, twice: */
 /* the old man and the sick sellers bob up as they talk. */
-Sint32 Imil_BobScript[] = {
+Sint32 ImilBobScript[] = {
 	SC_ADD(SW_SCALE_Y, toFIXED(3) / 8),
 	SC_WAIT(2),
 	SC_ADD(SW_SCALE_Y, -toFIXED(3) / 16),
@@ -1740,16 +1739,16 @@ Sint32 Imil_BobScript[] = {
 	SC_END,
 };
 
-/* A sparkle scImilSwayAndSpark sheds sinks two fifths of a pixel a frame for */
-/* 72 frames, then is released. */
-Sint32 Imil_SparkScript[] = {
+/* A sparkle scImilSwayAndSpark sheds sinks two fifths of a pixel a tick for */
+/* 72 ticks, then is released. */
+Sint32 ImilSparkScript[] = {
 	SC_ADD(SW_Y, -toFIXED(2) / 5),
 	SC_WAIT(1),
 	SC_LOOP(72, SC_TOP),
 	SC_RELEASE,
 };
 
-Sint32 Imil_MiaCheckRoomScript[] = {
+Sint32 ImilMiaCheckRoomScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(177, 0, 136),
 	SC_SYNC,
@@ -1764,7 +1763,7 @@ Sint32 Imil_MiaCheckRoomScript[] = {
 	SC_END,
 };
 
-Sint32 Imil_MiaRunOutScript[] = {
+Sint32 ImilMiaRunOutScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(165, 0, 207),
 	SC_SYNC,
@@ -1778,12 +1777,12 @@ Sint32 Imil_MiaRunOutScript[] = {
 	SC_END,
 };
 
-Sint32 Imil_FaceTargetScript[] = {
+Sint32 ImilFaceTargetScript[] = {
 	SC_CALL(scTurnTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-Sint32 Imil_FollowMiaOutScript[] = {
+Sint32 ImilFollowMiaOutScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(132, 0, 206),
 	SC_SYNC,
@@ -1792,7 +1791,7 @@ Sint32 Imil_FollowMiaOutScript[] = {
 	SC_END,
 };
 
-SCENE_ENTRANCE Imil_TownEntrances[] = {
+SCENE_ENTRANCE ImilTownEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 380, 0, 433, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ IMIL_FROM_HOUSE_SOUTHWEST, CONDITION_ALWAYS, 288, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ IMIL_EAST_UNUSED, CONDITION_ALWAYS, 480, 0, 280, FACING_WEST, 0, -1, -1, -1, -1, 0 },
@@ -1806,7 +1805,7 @@ SCENE_ENTRANCE Imil_TownEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-SCENE_ENTRANCE Imil_RoomEntrances[] = {
+SCENE_ENTRANCE ImilRoomEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 136, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ ICE_ROOMS_HOUSE_SOUTHWEST, CONDITION_ALWAYS, 144, 0, 242, FACING_NORTH, 0, 32, 52, 256, 280, 0 },
 	{ ICE_ROOMS_FROM_IMIL_WEST_SOUTHWEST, CONDITION_ALWAYS, 143, 0, 596, FACING_NORTH, 0, 42, 424, 256, 631, 0 },
@@ -1819,7 +1818,7 @@ SCENE_ENTRANCE Imil_RoomEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-Uint32 Imil_Exits[] = {
+Uint32 ImilExits[] = {
 	SCENE_EXITS(Imil),
 	SCENE_EXIT(IMIL_TO_HOUSE_SOUTHWEST, IceRooms, ICE_ROOMS_HOUSE_SOUTHWEST),
 	SCENE_EXIT(IMIL_TO_INN, IceRooms, ICE_ROOMS_INN),
@@ -1842,8 +1841,8 @@ Uint32 Imil_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE Imil_TownActorPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (Sint32)Actor_TrembleScript,
+ACTOR_PLACE ImilTownActorPlacements[] = {
+	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (Sint32)ActorTrembleScript,
 		99, 0, 234, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
 		376, 0, 408, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
@@ -1854,7 +1853,7 @@ ACTOR_PLACE Imil_TownActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE Imil_TownActorPlacementsCured[] = {
+ACTOR_PLACE ImilTownActorPlacementsCured[] = {
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		99, 0, 234, FACING_EAST_NORTHEAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
@@ -1866,7 +1865,7 @@ ACTOR_PLACE Imil_TownActorPlacementsCured[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE Imil_RoomActorPlacements[] = {
+ACTOR_PLACE ImilRoomActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
 		111, 0, 215, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
@@ -1904,7 +1903,7 @@ ACTOR_PLACE Imil_RoomActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE Imil_TownCues[] = {
+CUE ImilTownCues[] = {
 	{ CUE_EXIT, 60, CONDITION_ALWAYS, IMIL_TO_WORLD_MAP_SOUTH },
 	{ CUE_EXIT, 61, CONDITION_ALWAYS, IMIL_TO_WORLD_MAP_NORTH },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SNOWMAN, FLAG_IMIL_NO_FOOTPRINTS, SCRIPT_REF(scImilPlaceMovedSnowman) },
@@ -1933,7 +1932,7 @@ CUE Imil_TownCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE Imil_RoomCues[] = {
+CUE ImilRoomCues[] = {
 	{ CUE_TALK, ACTOR_OLD_WOMAN, FLAG_IMIL_MIA_SENT_FOR, MSGNO(MsgImilTheresBeenAnEpidemicGoingAround) },
 	{ CUE_TALK, ACTOR_OLD_WOMAN, FLAG_IMIL_MET_MIA, MSGNO(MsgImilGetMiaHurry) },
 	{ CUE_TALK, ACTOR_OLD_WOMAN, FLAG_SATUROS_BEATEN_AT_MERCURY, SCRIPT_REF(scImilTalkToOldWoman) },
@@ -2007,53 +2006,53 @@ CUE Imil_RoomCues[] = {
 };
 
 /* Each door's opening, as map grid animations. */
-Uint16 Imil_SanctumDoorSteps[] = {
+Uint16 ImilSanctumDoorSteps[] = {
 	MAPGRID_ANIMATION_STEP(40, 37, 4, 2, 5), MAPGRID_ANIMATION_STEP(40, 39, 4, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 	MAPGRID_ANIMATION_STEP(35, 35, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 35, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Imil_RoomsEastDoorSteps[] = {
+Uint16 ImilRoomsEastDoorSteps[] = {
 	MAPGRID_ANIMATION_STEP(35, 37, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 37, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Imil_InnDoorSteps[] = {
+Uint16 ImilInnDoorSteps[] = {
 	MAPGRID_ANIMATION_STEP(35, 43, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 43, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Imil_HouseSouthwestDoorSteps[] = {
+Uint16 ImilHouseSouthwestDoorSteps[] = {
 	MAPGRID_ANIMATION_STEP(35, 39, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 39, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Imil_HouseWestDoorSteps[] = {
+Uint16 ImilHouseWestDoorSteps[] = {
 	MAPGRID_ANIMATION_STEP(42, 48, 2, 2, 5), MAPGRID_ANIMATION_STEP(40, 48, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Imil_HouseNortheastDoorSteps[] = {
+Uint16 ImilHouseNortheastDoorSteps[] = {
 	MAPGRID_ANIMATION_STEP(42, 46, 2, 2, 5), MAPGRID_ANIMATION_STEP(40, 46, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
 /* Each door's opening, in the order of its exit (IMIL_TO_HOUSE_SOUTHWEST */
 /* first), as scImilOpenDoorAndExit reads it. */
-Uint16 *Imil_DoorMetatileSteps[] = {
-	Imil_HouseSouthwestDoorSteps,
-	Imil_InnDoorSteps,
-	Imil_HouseWestDoorSteps,
-	Imil_HouseNortheastDoorSteps,
-	Imil_RoomsEastDoorSteps,
-	Imil_SanctumDoorSteps,
+Uint16 *ImilDoorMetatileSteps[] = {
+	ImilHouseSouthwestDoorSteps,
+	ImilInnDoorSteps,
+	ImilHouseWestDoorSteps,
+	ImilHouseNortheastDoorSteps,
+	ImilRoomsEastDoorSteps,
+	ImilSanctumDoorSteps,
 };
 
 /* Metatile position (x, y) for each exit. */
-Sint16 Imil_DoorMetatilePoints[][2] = {
+Sint16 ImilDoorMetatilePoints[][2] = {
 	{ 50, 24 }, { 57, 22 }, { 59, 13 }, { 54, 10 }, { 38, 8 }, { 34, 19 },
 };
 /* clang-format on */
 
 /* The old man's bed as he sits up in it, and as he lies back. */
-Uint16 Imil_OldManSitUpSteps[] = {
+Uint16 ImilOldManSitUpSteps[] = {
 	MAPGRID_ANIMATION_STEP(1, 125, 1, 2, 10),
 	MAPGRID_ANIMATION_STEP(0, 125, 1, 2, 10),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Imil_OldManLieBackSteps[] = {
+Uint16 ImilOldManLieBackSteps[] = {
 	MAPGRID_ANIMATION_STEP(1, 125, 1, 2, 10),
 	MAPGRID_ANIMATION_STEP(2, 125, 1, 2, 10),
 	MAPGRID_ANIMATION_STEPS_END,
 };
 
-Sint32 Imil_EffectCenter[3];
+Sint32 ImilEffectCenter[3];

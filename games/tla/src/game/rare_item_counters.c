@@ -7,7 +7,7 @@
    and so what the numbers are; no object of the main image or of any overlay
    reads SceneLocalState or RareItemStock that far in or holds the copy's
    address, and The Broken Seal has no such table. */
-const Uint8 NewGame_SceneStateTable[4][5] = {
+const Uint8 NewGameSceneStateTable[4][5] = {
 	{15, 16, 10, 11, 12},
 	{1, 8, 15, 16, 17},
 	{5, 6, 7, 8, 9},
@@ -17,7 +17,7 @@ const Uint8 NewGame_SceneStateTable[4][5] = {
 /* clang-format off */
 /* Each item's rare item counter number plus one, 0 for an ordinary item; the */
 /* shops' stock of a rare item is counted by it (gmItemAdjustRareItemStock). */
-const Uint16 Item_RareItemCounters[512] = {
+const Uint16 ItemRareItemCounters[512] = {
 	0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 0, 0, 0, 0,
 	0, 0, 0, 0, 8, 9, 10, 11, 12, 13, 14, 15, 0, 0, 0, 0,
 	0, 0, 16, 17, 18, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 21,
@@ -55,5 +55,5 @@ const Uint16 Item_RareItemCounters[512] = {
 
 /* The characters gmPartyInitCharacters gives their starting equipment, ended by
    -1. */
-const Sint32 Character_NewGameIds[] = {
+const Sint32 CharacterNewGameIds[] = {
 	ISAAC, GARET, IVAN, MIA, FELIX, JENNA, SHEBA, PIERS, -1};

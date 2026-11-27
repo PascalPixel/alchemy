@@ -32,16 +32,16 @@ typedef struct FIELD_EFFECT {
 	Uint8 priFlg;
 	/* Actor's velocityX to velocityZ; effects move by velocity instead. */
 	VECTOR3 objVel;
-	/* Added to scaleX each frame by the update hooks, in 16.16 fixed point a
-	   frame; zeroed by the spawner. */
+	/* Added to scaleX each tick by the update hooks, in 16.16 fixed point a
+	   tick; zeroed by the spawner. */
 	FIXED  scaleRateX;
 	Sint32 scaleRateY; /* as scaleRateX, for scaleY */
 	/* Actor's targetX to targetZ. */
 	Sint32 tgtX;
 	Sint32 tgtY;
 	Sint32 tgtZ;
-	/* Added to x, y and z each frame by the update hooks, in 16.16 fixed-point
-	   pixels per frame. */
+	/* Added to x, y and z each tick by the update hooks, in 16.16 fixed-point
+	   pixels per tick. */
 	VECTOR3	   vel;
 	FIELD_SPR *spr;			   /* the sprite spin turns */
 	Uint8	   sprStorageKind; /* Actor's */
@@ -61,12 +61,12 @@ typedef struct FIELD_EFFECT {
 	Uint8  frozen;
 	Uint8  sceneCnt;
 	Uint8  sceneByte;
-	/* Added to the sprite's rotation each frame by the update hooks, in 1/65536
-	   turns per frame; zeroed by the spawner. */
+	/* Added to the sprite's rotation each tick by the update hooks, in 1/65536
+	   turns per tick; zeroed by the spawner. */
 	Uint16 spin;
 	Sint16 userValue; /* Actor's */
 	Sint32 countdown; /* no code names it */
-	/* Called each frame while the effect is live: the spawner sets
+	/* Called each tick while the effect is live: the spawner sets
 	   fdEffectUpdateMotionScaleAndSpin, or options.update. */
 	void (*update)(union FIELD_OBJECT *object);
 } FIELD_EFFECT;
@@ -109,15 +109,15 @@ typedef enum EFFECT_SPAWN_FLAGS {
    (sprite_ids.h). */
 #define EFFECT_DEFAULT_TYPE SPRITE_DUST_CLOUD
 
-/* The scripts EFFECT_SCRIPT_MASK picks from FieldEffect_DurationScripts: each
+/* The scripts EFFECT_SCRIPT_MASK picks from FieldEffectDurationScripts: each
    holds the effect for a while, then releases it. */
 typedef enum EFFECT_DURATION {
-	EFFECT_SCRIPT_SHORT = 0,  /* held 24 frames */
-	EFFECT_SCRIPT_MEDIUM = 1, /* held 46 frames */
-	EFFECT_SCRIPT_LONG = 2	  /* held 128 frames */
+	EFFECT_SCRIPT_SHORT = 0,  /* held 24 ticks */
+	EFFECT_SCRIPT_MEDIUM = 1, /* held 46 ticks */
+	EFFECT_SCRIPT_LONG = 2	  /* held 128 ticks */
 } EFFECT_DURATION;
 
-/* The word of a duration script that holds its repeat count, the frames
+/* The word of a duration script that holds its repeat count, the ticks
    EFFECT_SCALE_TO_TARGET grows over. */
 #define EFFECT_SCRIPT_REPEAT_COUNT 3
 
@@ -127,10 +127,10 @@ typedef enum EFFECT_DURATION {
    picks from. The scene names EFFECT_SET_MODE and EFFECT_SET_SCRIPT itself. */
 #define EFFECT_SPAWN   scFieldEffectSpawn
 #define EFFECT_CREATE  syImportActorCreate
-#define EFFECT_SCRIPTS FieldEffect_DurationScripts
+#define EFFECT_SCRIPTS FieldEffectDurationScripts
 
 /* A drifting effect loses a FIELD_EFFECT_DRAG_X-th of its x speed and a
-   FIELD_EFFECT_DRAG_Z-th of its z speed each frame. */
+   FIELD_EFFECT_DRAG_Z-th of its z speed each tick. */
 #define FIELD_EFFECT_DRAG_X 18
 #define FIELD_EFFECT_DRAG_Z 16
 
@@ -150,7 +150,7 @@ typedef struct EFFECT_OPTIONS {
 	Sint16		  type;		   /* the object type to create */
 	const Sint32 *script;	   /* the object script, run in mode 1 */
 	Uint16		  rotation;	   /* 1/65536 turns */
-	Uint16		  spin;		   /* 1/65536 turns per frame */
+	Uint16		  spin;		   /* 1/65536 turns per tick */
 	void		 *update;	   /* replaces the update hook */
 } EFFECT_OPTIONS;
 
@@ -159,8 +159,7 @@ STATIC_ASSERT(offsetof(EFFECT_OPTIONS, update) == 36);
 
 void fdEffectUpdateMotionScaleAndSpin(FIELD_OBJECT *object);
 
-void fdEffectSpawnResident(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void fdEffectSpawnResident(Sint32 x, Sint32 y, Sint32 z, Sint32 velX,
+	Sint32 velY, Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 #endif

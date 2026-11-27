@@ -5,7 +5,7 @@
 
 /* The scale of mnWindowSprPulse's eight steps: about 1.10 up to 1.22 and
    back. */
-const FIXED WindowSprite_PulseScales[] = {
+const FIXED WindowSpritePulseScales[] = {
 	toFIXED(1.1),
 	toFIXED(1.13),
 	toFIXED(1.16),
@@ -19,7 +19,7 @@ const FIXED WindowSprite_PulseScales[] = {
 /* A row of 4-bit pixels for the centre tile and one for the end tile, colour 5
    where the pattern marks (mnRangeIconBuildTiles); a word's lowest nibble is
    its leftmost pixel. */
-const TILE_MASK Menu_BarPatternRows[] = {
+const TILE_MASK MenuBarPatternRows[] = {
 	{0x00055000, 0x00000000},
 	{0x05055050, 0x00000000},
 	{0x05055050, 0x00000005},

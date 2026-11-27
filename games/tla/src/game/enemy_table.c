@@ -2,13 +2,13 @@
    release's; the name field itself is blank, and gmBattleUnitSet takes the name
    from the messages. An enemy leaves its item one time in 2^(itemChance - 1), 1
    in 32 for 6, four times as likely with btEnemyRecordDefeat's djinnBonus.
-   elementPreset is a row of Enemy_ElementPresetTable (element_table.c): the
+   elementPreset is a row of EnemyElementPresetTable (element_table.c): the
    element it attacks with, its element levels, power and resistance. Part of
    game.c. */
 
 /* The enemies' definitions, a row an enemy (gmEnemyGetDefinition). */
 /* clang-format off */
-const ENEMY_DEFINITION Enemy_Definitions[] = {
+const ENEMY_DEFINITION EnemyDefinitions[] = {
 	/* ??? */
 	{
 		.name = "              ",

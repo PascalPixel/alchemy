@@ -1,6 +1,6 @@
 /* Event: the drops of rain falling about the stone Douse has struck
    (scGroundParticlesSetAnchor), the overlay's copy of fdGroundParticlesUpdate.
-   Each plays its frames of GroundParticleFrames, falling and then splashing on
+   Each plays its ticks of GroundParticleFrames, falling and then splashing on
    the ground (held while FLAG_WEATHER_HELD is set), and falls again at a random
    spot within a screen of that actor, or at the origin when there is none. */
 void fdGroundParticlesDraw(void)
@@ -13,7 +13,7 @@ void fdGroundParticlesDraw(void)
 	Uint32				   i;
 
 	for(i = 0; i < ARRAY_COUNT(state->particles); i++, particle++) {
-		Sint16 *frame;
+		Sint16 *frm;
 		Sint32	x;
 		Sint32	y;
 
@@ -21,17 +21,17 @@ void fdGroundParticlesDraw(void)
 			continue;
 		if(syGameFlagGet(FLAG_WEATHER_HELD))
 			particle->tmr++;
-		frame = &GroundParticleFrames[5 * particle->tmr];
-		x = (particle->posX - cameraX) / toFIXED(1) + *frame++;
-		y = (particle->posZ - particle->posY - cameraZ) / toFIXED(1) + *frame++;
+		frm = &GroundParticleFrames[5 * particle->tmr];
+		x = (particle->posX - cameraX) / toFIXED(1) + *frm++;
+		y = (particle->posZ - particle->posY - cameraZ) / toFIXED(1) + *frm++;
 		if(x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT) {
 			particle->pri = 1;
 			particle->x = x;
 			particle->y = y;
-			particle->tile = state->tileBase + *(Uint16 *)frame;
-			frame++;
-			particle->shape = *(Uint8 *)frame;
-			particle->size = *(Uint8 *)(frame + 1);
+			particle->tile = state->tileBase + *(Uint16 *)frm;
+			frm++;
+			particle->shape = *(Uint8 *)frm;
+			particle->size = *(Uint8 *)(frm + 1);
 			syOAMAddSprAtDepth(particle, OAM_DEPTH_WINDOW);
 		}
 		if(particle->tmr == 0) {

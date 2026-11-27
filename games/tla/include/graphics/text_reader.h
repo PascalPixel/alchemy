@@ -21,6 +21,6 @@ STATIC_ASSERT(offsetof(TEXT_READER, bytes) == 4);
 STATIC_ASSERT(offsetof(TEXT_READER, bits) == 8);
 
 /* Points reader at the start of message. */
-void mnMessageFind(TEXT_READER *reader, Sint32 message);
+void mnMessageFind(TEXT_READER *reader, Sint32 msg);
 
 #endif

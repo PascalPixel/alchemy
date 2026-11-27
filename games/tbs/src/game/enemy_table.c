@@ -11,7 +11,7 @@
 
 /* clang-format off */
 /* The enemies, by enemy id less ENEMY_ID_FIRST. */
-const ENEMY_DEFINITION Enemy_Definitions[] = {
+const ENEMY_DEFINITION EnemyDefinitions[] = {
 	/* ??? */
 	{
 		.name = BLANK_NAME,

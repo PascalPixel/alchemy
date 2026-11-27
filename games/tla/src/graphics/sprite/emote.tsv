@@ -1,4 +1,4 @@
-animation	command	value	frames
+animation	command	value	ticks
 0	picture	1	11
 0	hold
 1	picture	2	11

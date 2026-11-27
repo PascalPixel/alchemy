@@ -181,15 +181,15 @@ typedef enum MOVEMENT_TYPE {
 	MOVEMENT_TYPE_WANDER_CLOSE = 4,
 	MOVEMENT_TYPE_FOLLOW_WATCHED = 5, /* moves toward the watched actor */
 	MOVEMENT_TYPE_FACE_LEADER = 6, /* watches the leader and turns toward it */
-	/* MovementType_ClearCollisionScript: clears the actor's child and collision
+	/* MovementTypeClearCollisionScript: clears the actor's child and collision
 	   flags (fdActorClearSprAndCollisionFlags). */
 	MOVEMENT_TYPE_CLEAR_COLLISION = 7,
-	/* MovementType_SquashScript: squashes and stretches for ever. */
+	/* MovementTypeSquashScript: squashes and stretches for ever. */
 	MOVEMENT_TYPE_SQUASH = 8,
-	/* MovementType_TakeLeaderLayerScript */
+	/* MovementTypeTakeLeaderLayerScript */
 	MOVEMENT_TYPE_TAKE_LEADER_LAYER = 9,
-	MOVEMENT_TYPE_IGNORE_RISES = 10, /* MovementType_IgnoreRisesScript */
-	/* MovementType_ClearSpriteFlagsScript */
+	MOVEMENT_TYPE_IGNORE_RISES = 10, /* MovementTypeIgnoreRisesScript */
+	/* MovementTypeClearSpriteFlagsScript */
 	MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS = 11
 } MOVEMENT_TYPE;
 
@@ -201,7 +201,7 @@ typedef enum ACTOR_TALK_FACING {
 	TALK_FACING_PARTY_AND_BACK = 1,
 	TALK_FACING_KEEP = 2,
 	/* Faces the party, then keeps turning to face the leader once the talk is
-	   over (Actor_FaceWatchedScript). */
+	   over (ActorFaceWatchedScript). */
 	TALK_FACING_PARTY_THEN_WATCH = 3
 } ACTOR_TALK_FACING;
 
@@ -267,9 +267,9 @@ typedef struct CUE_VIEW {
    sixteenths of a turn. */
 #define CUE_FACING_MASK			0xf000
 /* A step cue that needs the leader to have pushed against it for more than
-   FIELD_PUSH_FRAMES, or 2 frames with STEP_CUE_FLAG_QUICK. */
+   FIELD_PUSH_TICKS, or 2 ticks with STEP_CUE_FLAG_QUICK. */
 #define STEP_CUE_FLAG_WALKING	0x200
-/* With STEP_CUE_FLAG_WALKING, 2 frames of pushing are enough. */
+/* With STEP_CUE_FLAG_WALKING, 2 ticks of pushing are enough. */
 #define STEP_CUE_FLAG_QUICK		0x800
 /* A script that needs the leader to face within an eighth of a turn of the
    heading in control bits 15..12. */
@@ -401,9 +401,9 @@ typedef enum PSYNERGY_PHASE {
 /* The stage Pound's acting scripts get: 0 until the fist lands, then
    POUND_STAGE_LANDED. */
 #define POUND_STAGE_LANDED		1
-/* The stages Scoop's acting scripts get on a frame of the dig, 0 on the rest:
-   SCOOP_STAGE_DUG on the frame the ground is dug (SCOOP_DUG_FRAME), and
-   SCOOP_STAGE_DUG_UP on frame 50, as what was buried comes up. */
+/* The stages Scoop's acting scripts get on a tick of the dig, 0 on the rest:
+   SCOOP_STAGE_DUG on the tick the ground is dug (SCOOP_DUG_TICK), and
+   SCOOP_STAGE_DUG_UP on tick 50, as what was buried comes up. */
 #define SCOOP_STAGE_DUG			1
 #define SCOOP_STAGE_DUG_UP		2
 
@@ -490,14 +490,14 @@ typedef struct SCENE_ENTRY_TABLE {
 	Sint32 (*prepareMap)(void);
 } SCENE_ENTRY_TABLE;
 
-/* The bit that marks a song in Encounter_BattleMusic; encounter keys have it
+/* The bit that marks a song in EncounterBattleMusic; encounter keys have it
    clear. */
 #define ENCOUNTER_BATTLE_MUSIC_MARKER 0x8000
-/* A song's row in Encounter_BattleMusic, before the encounters that take it:
+/* A song's row in EncounterBattleMusic, before the encounters that take it:
    the song (a MUS_ id) with ENCOUNTER_BATTLE_MUSIC_MARKER set. */
 #define ENCOUNTER_BATTLE_MUSIC(song) \
 	(Sint16)(ENCOUNTER_BATTLE_MUSIC_MARKER | (song))
-/* An encounter's row in Encounter_BattleMusic: slot of encounter zone. */
+/* An encounter's row in EncounterBattleMusic: slot of encounter zone. */
 #define ENCOUNTER_KEY(zone, slot) (((zone) << 4) + (slot))
 
 #endif

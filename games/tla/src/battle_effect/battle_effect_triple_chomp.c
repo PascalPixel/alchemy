@@ -1,8 +1,8 @@
 /* Triple Chomp, and the entry points of Beam, Rolling Flame, Ghost Soldier and
    Blast Breath. Part of battle_effect.c. */
 
-#define TRIPLE_CHOMP_FRAMES		 50
-/* The bites, closing at TripleChomp_BiteFrames' three frames. */
+#define TRIPLE_CHOMP_TICKS		 50
+/* The bites, closing at TripleChompBiteTicks' three ticks. */
 #define TRIPLE_CHOMP_BITES		 3
 /* The canvas line each bite closes on, this far above the target's place. */
 #define TRIPLE_CHOMP_BITE_HEIGHT 24
@@ -16,16 +16,16 @@
 
 /* Each bite's ring, FireRingTexture on a square: the first three particles hold
    where each is spark. A ring swells from a quarter of its size by
-   TRIPLE_CHOMP_RING_GROWTH a frame for TRIPLE_CHOMP_RING_FRAMES, spark whole
+   TRIPLE_CHOMP_RING_GROWTH a tick for TRIPLE_CHOMP_RING_TICKS, spark whole
    for the first half and then losing TRIPLE_CHOMP_RING_FADE of its shade a
-   frame. */
+   tick. */
 #define BITE_RING(bite)			 (&state->particles[bite])
-#define TRIPLE_CHOMP_RING_FRAMES 16
+#define TRIPLE_CHOMP_RING_TICKS	 16
 #define TRIPLE_CHOMP_RING_GROWTH toFIXED(0.15552)
 #define TRIPLE_CHOMP_RING_FADE	 8
 
 /* The user lunges most of the way to the target, and three bites close on it,
-   TripleChomp_BiteFrames apart. Each throws blue sparks that fly off away from
+   TripleChompBiteTicks apart. Each throws blue sparks that fly off away from
    the user, jolts the target back and flashes it, and swells a ring of light
    over it, tilted back and turned a quarter further each bite, that fades as it
    grows. The last bite shows the damage.
@@ -35,14 +35,14 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	/* LEFTOVER(frame): draw[1], the idle half of the pair. */
 	BLITTER_PAIR  draw;
 	Uint8		 *graphics;
 	void		 *vertices;
 	RENDER_MODEL *model;
 	MODEL_TEXTURE texture;
-	SCREEN_POINT  position;
+	SCREEN_POINT  pos;
 	PARTICLE	 *spark;
 	Sint32		  i;
 	Sint32		  j;
@@ -70,21 +70,21 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args)
 		syResourceGetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
 		SHEET_PALETTE_BYTES);
 
-	for(frame = 0; frame != TRIPLE_CHOMP_FRAMES; frame++) {
-		if(frame == 0) {
+	for(frm = 0; frm != TRIPLE_CHOMP_TICKS; frm++) {
+		if(frm == 0) {
 			for(i = 0; i != TRIPLE_CHOMP_SPARK_COUNT; i++)
 				EXTRA_PARTICLES[i].variant = -1;
 		}
 
-		/* This frame's ring: one model drawing the square with the 128x128
+		/* This tick's ring: one model drawing the square with the 128x128
 		   texture. */
 		vertices = syHeapAllocEWRAM(32);
 		model = btRenderAllocateModelList(1);
-		btEffectPosProjectBattler(args->tgts[0], &position);
+		btEffectPosProjectBattler(args->tgts[0], &pos);
 		texture.logWidth = 7;
 		texture.logHeight = 7;
 		texture.pixels = pixels;
-		model->mesh = BattleEffect_LargeSquareMesh;
+		model->mesh = BattleEffectLargeSquareMesh;
 		model->kind = MODEL_SHADED_ADDITIVE;
 		model->texture = &texture;
 		model->vertices = vertices;
@@ -92,26 +92,25 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args)
 		for(i = 0; i != TRIPLE_CHOMP_BITES; i++) {
 			/* The bite closes: its sparks fly from the target's middle, and the
 			   target jolts and flashes. The last bite shows the damage. */
-			if(frame == TripleChomp_BiteFrames[i]) {
+			if(frm == TripleChompBiteTicks[i]) {
 				for(j = 0; j != TRIPLE_CHOMP_BITE_SPARKS; j++) {
 					PARTICLE *spark =
 						&EXTRA_PARTICLES[i * TRIPLE_CHOMP_BITE_SPARK_SLOTS + j];
-					Sint32 angle;
+					Sint32 ang;
 					Sint32 force;
 
-					spark->x = toFIXED(position.x / 2);
-					spark->y =
-						INTtoFIXED(position.y - TRIPLE_CHOMP_BITE_HEIGHT);
-					angle = syRandom();
+					spark->x = toFIXED(pos.x / 2);
+					spark->y = INTtoFIXED(pos.y - TRIPLE_CHOMP_BITE_HEIGHT);
+					ang = syRandom();
 					force = (syRandom() & 255) + 32;
-					spark->velX = (sySin(angle) * force) >> 8;
-					spark->velY = (syCos(angle) * force) >> 6;
+					spark->velX = (sySin(ang) * force) >> 8;
+					spark->velY = (syCos(ang) * force) >> 6;
 					if(args->side == EFFECT_SIDE_ENEMIES)
 						spark->velX += -toFIXED(1) / 2;
 					else
 						spark->velX += toFIXED(1) / 2;
-					BITE_RING(i)->x = position.x;
-					BITE_RING(i)->y = position.y - TRIPLE_CHOMP_BITE_HEIGHT;
+					BITE_RING(i)->x = pos.x;
+					BITE_RING(i)->y = pos.y - TRIPLE_CHOMP_BITE_HEIGHT;
 					spark->variant = (syRandom() & 7) + 16;
 				}
 				if(i == TRIPLE_CHOMP_BITES - 1)
@@ -126,11 +125,11 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args)
 			}
 
 			/* The bite's ring swells and fades. */
-			if(frame >= TripleChomp_BiteFrames[i] &&
-				frame < TripleChomp_BiteFrames[i] + TRIPLE_CHOMP_RING_FRAMES) {
-				Sint32 age = frame - TripleChomp_BiteFrames[i];
+			if(frm >= TripleChompBiteTicks[i] &&
+				frm < TripleChompBiteTicks[i] + TRIPLE_CHOMP_RING_TICKS) {
+				Sint32 age = frm - TripleChompBiteTicks[i];
 				Sint32 shade =
-					TRIPLE_CHOMP_RING_FRAMES / 2 * TRIPLE_CHOMP_RING_FADE -
+					TRIPLE_CHOMP_RING_TICKS / 2 * TRIPLE_CHOMP_RING_FADE -
 					age * TRIPLE_CHOMP_RING_FADE;
 				FIXED scale = age * TRIPLE_CHOMP_RING_GROWTH + toFIXED(1) / 4;
 
@@ -146,13 +145,13 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args)
 					syRotX(-TRIG_TURN / 16);
 					syMatrixScaleUniform(scale);
 					btRenderTransformVertices(
-						BattleEffect_GroundSquareCorners, vertices, 4);
+						BattleEffectGroundSquareCorners, vertices, 4);
 					btRenderDrawModelList(model);
 				}
 			}
 		}
 
-		/* Each spark is spark and moved twice a frame, shrinking as it dies. */
+		/* Each spark is spark and moved twice a tick, shrinking as it dies. */
 		spark = EXTRA_PARTICLES;
 		for(i = 0; i != TRIPLE_CHOMP_SPARK_COUNT; i++) {
 			Sint32 life = spark->variant;
@@ -176,7 +175,7 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args)
 		syHeapRelease(model);
 		syHeapRelease(vertices);
 		btCameraShake(8, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
@@ -223,13 +222,13 @@ void btEffectRunBlastBreath(BATTLE_EFFECT_PARM *args)
 	btEffectRunBreaths(args, BREATH_BLAST);
 }
 
-#undef TRIPLE_CHOMP_FRAMES
+#undef TRIPLE_CHOMP_TICKS
 #undef TRIPLE_CHOMP_BITES
 #undef TRIPLE_CHOMP_BITE_HEIGHT
 #undef TRIPLE_CHOMP_SPARK_COUNT
 #undef TRIPLE_CHOMP_BITE_SPARKS
 #undef TRIPLE_CHOMP_BITE_SPARK_SLOTS
 #undef BITE_RING
-#undef TRIPLE_CHOMP_RING_FRAMES
+#undef TRIPLE_CHOMP_RING_TICKS
 #undef TRIPLE_CHOMP_RING_GROWTH
 #undef TRIPLE_CHOMP_RING_FADE

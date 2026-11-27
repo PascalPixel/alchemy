@@ -1,4 +1,4 @@
-/* The per-frame message update: typing text and running its control codes. Part
+/* The per-tick message update: typing text and running its control codes. Part
    of window.c. */
 
 /* The text canvas: 30 columns of tiles, 32 words to a column. */
@@ -8,14 +8,14 @@
 
 /* What mnMessageType reports. */
 enum {
-	MESSAGE_STEP_RUNNING = 0, /* the text goes on next frame */
+	MESSAGE_STEP_RUNNING = 0, /* the text goes on next tick */
 	MESSAGE_STEP_ENDED = 8,	  /* the text has ended; the window stays open */
 	MESSAGE_STEP_CLOSE = 9,	  /* the text is dismissed: close the window */
 };
 
 /* Scrolls the message canvas up by 6 pixel rows per step, below its top
    CANVAS_KEPT_ROWS, and clears the rows this uncovers. A typing message calls
-   it with step 1 on each frame of a line scroll. */
+   it with step 1 on each tick of a line scroll. */
 void mnTextScrollCanvasUp(Sint32 step)
 {
 	Sint32	shift = step * 6;
@@ -32,53 +32,53 @@ void mnTextScrollCanvasUp(Sint32 step)
 	}
 }
 
-Sint32 mnMessageType(MESSAGE *message);
-void   mnWindowStepSwellEffect(MESSAGE *message);
+Sint32 mnMessageType(MESSAGE *msg);
+void   mnWindowStepSwellEffect(MESSAGE *msg);
 
-/* The per-frame message update: each message whose window is fully open runs
+/* The per-tick message update: each message whose window is fully open runs
    its window animation or types more text, and on the text's end marks the
    window typed out (state 1) or closes it. */
 void mnMessageUpdateAll(void)
 {
-	MESSAGE *message = WINDOW_STATE->msgs;
+	MESSAGE *msg = WINDOW_STATE->msgs;
 	Sint32	 i = 0;
 
 	do {
-		WINDOW *current = message->win;
+		WINDOW *cur = msg->win;
 
 		/* A zooming window is left alone until its zoom ends. */
-		if(current != NULL && *(Sint32 *)&current->zoomStage == 0) {
-			Uint16 flags = current->flg;
+		if(cur != NULL && *(Sint32 *)&cur->zoomStage == 0) {
+			Uint16 flg = cur->flg;
 
 			/* Flags 0 with no zoom left: the window has closed. */
-			if(flags == 0) {
-				message->win = NULL;
+			if(flg == 0) {
+				msg->win = NULL;
 			} else {
-				Sint32 pending = current->anm;
+				Sint32 pending = cur->anm;
 				Sint32 step;
 
 				if(pending != 0) {
-					mnWindowStepSwellEffect(message);
+					mnWindowStepSwellEffect(msg);
 				} else {
-					step = mnMessageType(message);
+					step = mnMessageType(msg);
 					switch(step) {
 					case MESSAGE_STEP_ENDED:
-						message->win->state = 1;
+						msg->win->state = 1;
 						break;
 					case MESSAGE_STEP_CLOSE: {
-						WINDOW *window = message->win;
+						WINDOW *win = msg->win;
 
-						mnWindowClose(window,
-							(Uint16)(window->flg & WINDOW_FLAG_INSTANT));
+						mnWindowClose(
+							win, (Uint16)(win->flg & WINDOW_FLAG_INSTANT));
 						/* pending is 0 here: it clears the message. */
-						message->x = pending;
-						message->y = pending;
-						message->textIdx = pending;
-						message->countdown = pending;
-						message->colour = pending;
-						message->outline = pending;
-						message->lineSpacing = pending;
-						message->win->state = 1;
+						msg->x = pending;
+						msg->y = pending;
+						msg->textIdx = pending;
+						msg->countdown = pending;
+						msg->colour = pending;
+						msg->outline = pending;
+						msg->lineSpacing = pending;
+						msg->win->state = 1;
 						break;
 					}
 					}
@@ -86,31 +86,31 @@ void mnMessageUpdateAll(void)
 			}
 		}
 		i++;
-		message++;
+		msg++;
 	} while(i != MESSAGE_COUNT);
 }
 
-void mnTextStartCanvasScroll(MESSAGE *message);
-void mnMessageApplyStyle(MESSAGE *message);
-Bool mnTextCheckPauseSkipped(MESSAGE *message);
-Bool mnTextCheckTextDismissed(MESSAGE *message);
+void mnTextStartCanvasScroll(MESSAGE *msg);
+void mnMessageApplyStyle(MESSAGE *msg);
+Bool mnTextCheckPauseSkipped(MESSAGE *msg);
+Bool mnTextCheckTextDismissed(MESSAGE *msg);
 
 #define TEXT_SPEED MainRoutineStateWork.msgSpeed
 
-/* Types one frame's share of a message's text: runs control codes (new line,
+/* Types one tick's share of a message's text: runs control codes (new line,
    new page, pauses, colours) and draws characters, playing the speaker's voice
    blips. Returns a MESSAGE_STEP_ result. The share is the message speed's
-   glyphs a frame (MessageSpeed_Steps) outside battle, where a space or a
-   control code also ends it; in battle it is 8 glyphs, 13 after a frame that
-   took two VBlanks and 18 after one that took three or more. */
+   glyphs a tick (MessageSpeedSteps) outside battle, where a space or a
+   control code also ends it; in battle it is 8 glyphs, 13 after a tick that
+   took two frames and 18 after one that took three or more. */
 Sint32 mnMessageType(MESSAGE *message)
 {
 	WIN_STATE *state = WINDOW_STATE;
 	/* DEAD: the held keys are read here and never used; the ROM keeps the
 	   load. */
 	Uint32	keys = PerWork.data;
-	Sint32	glyphsLeft = MessageSpeed_Steps[TEXT_SPEED];
-	Sint32	frameVBlanks;
+	Sint32	glyphsLeft = MessageSpeedSteps[TEXT_SPEED];
+	Sint32	tickFrames;
 	Uint32	code;
 	Uint32	nextCode;
 	WINDOW *window;
@@ -130,13 +130,13 @@ Sint32 mnMessageType(MESSAGE *message)
 
 	(void)keys;
 
-	/* In battle, text runs at 3 glyphs a frame and 5 more for each VBlank the
-	   last frame took (LastFrameVBlanks, 1 for a frame on time), counting at
+	/* In battle, text runs at 3 glyphs a tick and 5 more for each VBlank the
+	   last tick took (LastTickFrames, 1 for a tick on time), counting at
 	   most three. The count is read as the interrupt may change it. */
 	if(state->battleMode != WINDOW_FIELD) {
-		frameVBlanks = *(volatile Uint16 *)&LastFrameVBlanks;
-		CLAMP(frameVBlanks, 0, 3);
-		glyphsLeft = frameVBlanks * 5 + 3;
+		tickFrames = *(volatile Uint16 *)&LastTickFrames;
+		CLAMP(tickFrames, 0, 3);
+		glyphsLeft = tickFrames * 5 + 3;
 	}
 
 	if(message->scrollFrm != 0) {
@@ -178,8 +178,7 @@ Sint32 mnMessageType(MESSAGE *message)
 
 			case TEXT_PAGE:
 				if(message->countdown == 0) {
-					message->countdown =
-						MessageSpeed_HeldPageDelays[TEXT_SPEED];
+					message->countdown = MessageSpeedHeldPageDelays[TEXT_SPEED];
 					if(state->mindRead != 0)
 						PerWork.pendingPush = 0;
 				}
@@ -247,8 +246,7 @@ Sint32 mnMessageType(MESSAGE *message)
 
 			case TEXT_WAIT_KEY:
 				if(message->countdown == 0) {
-					message->countdown =
-						MessageSpeed_HeldPageDelays[TEXT_SPEED];
+					message->countdown = MessageSpeedHeldPageDelays[TEXT_SPEED];
 					if(state->mindRead != 0)
 						PerWork.pendingPush = 0;
 				}
@@ -319,7 +317,7 @@ Sint32 mnMessageType(MESSAGE *message)
 		} else {
 			pixelX = (message->x + 128) / 256;
 			pixelY = (message->y + 128) / 256;
-			voiceGap = MessageSpeed_VoiceGaps[TEXT_SPEED];
+			voiceGap = MessageSpeedVoiceGaps[TEXT_SPEED];
 			nextEntryIndex = message->textIdx;
 #if !MIND_READ_TEXT_NOT_INDENTED
 			if(state->mindRead != 0)
@@ -369,7 +367,7 @@ Sint32 mnMessageType(MESSAGE *message)
 				pixelY = (message->y + 128) / 320 - 3;
 			glyphWidth = mnGlyphDraw(
 				message->win, code, pixelX, pixelY, GLYPH_DRAW_CHARACTER);
-			message->glyphDelay = MessageSpeed_Delays[TEXT_SPEED];
+			message->glyphDelay = MessageSpeedDelays[TEXT_SPEED];
 			if(glyphWidth == 0)
 				return MESSAGE_STEP_CLOSE;
 			if(state->speakerVoiceSnd != 0) {

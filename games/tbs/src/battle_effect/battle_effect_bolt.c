@@ -3,26 +3,26 @@
 /* The second blitter, made anew for each glint with its random flip. */
 #define BOLT_GLINT_BLITTER EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)
 
-/* The columns of a Bolt_Counts row. */
+/* The columns of a BoltCounts row. */
 enum {
 	/* sparks thrown from each bolt's foot, at most BOLT_SPARKS_PER_TARGET */
 	BOLT_SPARKS,
-	BOLT_GLINTS,	   /* glints a frame around each target */
+	BOLT_GLINTS,	   /* glints a tick around each target */
 	BOLT_GLINT_SPREAD, /* how high and wide the glints spread, in pixels */
 	BOLT_STRIKES	   /* bolts drawn over each other */
 };
 
 /* Where the bolt pictures start in the sprite sheet, after the six glints. */
-#define BOLT_PICTURES			 GLINT_SET_BYTES
-/* The targets are struck this many frames apart. */
-#define BOLT_INTERVAL			 8
+#define BOLT_PICTURES			GLINT_SET_BYTES
+/* The targets are struck this many ticks apart. */
+#define BOLT_INTERVAL			8
 /* Each target's run of PARTICLES for its sparks. */
-#define BOLT_SPARKS_PER_TARGET	 128
+#define BOLT_SPARKS_PER_TARGET	128
 /* The canvas row the bolts reach down to and the sparks bounce off. */
-#define BOLT_GROUND_Y			 104
-/* A spark is drawn a size smaller for every this many frames less it has to
+#define BOLT_GROUND_Y			104
+/* A spark is drawn a size smaller for every this many ticks less it has to
    live. */
-#define BOLT_SPARK_SHRINK_FRAMES 16
+#define BOLT_SPARK_SHRINK_TICKS 16
 
 /* A bolt of lightning strikes each target in turn, and sparks fly up from where
    it lands while glints flicker there.
@@ -33,16 +33,16 @@ void btEffectRunBolt(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	Sint32				 i;
-	Sint32				 frame;
+	Sint32				 frm;
 	/* LEFTOVER(frame): draw[1], the idle half of the pair. */
 	BLITTER_PAIR draw;
-	Uint8		*sprites;
+	Uint8		*sprs;
 	SCREEN_POINT screen;
 	Sint32		 j;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-	sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+	sprs = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
 	state->args = args;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	EFFECT_LOAD_BLITTER(
@@ -52,19 +52,19 @@ void btEffectRunBolt(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 0);
 	btResourceLoadAndDecompress(
 		RESOURCE_LIGHTNING_BOLT_SHEET, state->sheet + BOLT_PICTURES, 1, 1);
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 	for(j = 0; j != PARTICLE_POOL_COUNT; j++)
 		PARTICLES[j].variant = 0;
 	EFFECT_FREE_PARTICLES(j, state->particles, 64);
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	sySndPlayStub(SE_ITEM_BREAK);
-	for(frame = 0; frame != state->args->tgtCnt * BOLT_INTERVAL + 40; frame++) {
-		if(frame == 24)
+	for(frm = 0; frm != state->args->tgtCnt * BOLT_INTERVAL + 40; frm++) {
+		if(frm == 24)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 		/* The canvas flashes as each target's turn starts. */
 		EFFECT_FOR_EACH_TARGET(i, state->args) {
-			if(frame == i * BOLT_INTERVAL)
+			if(frm == i * BOLT_INTERVAL)
 				syWordsFill(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
 		}
 		EFFECT_FOR_EACH_TARGET(i, state->args) {
@@ -72,9 +72,9 @@ void btEffectRunBolt(BATTLE_EFFECT_PARM *args)
 
 			btProjectionUnit(state->args->tgts[i], &screen);
 			screen.x /= 2;
-			if(frame == start + 1)
+			if(frm == start + 1)
 				state->shakeFrm = 4;
-			if(frame == start + 4) {
+			if(frm == start + 4) {
 				btEffectTintBattler(state->args->tgts[i], SPRITE_COLOR_WHITE,
 					POSE_DAMAGE, i, 6);
 				btMotionApplyKnockbackStub(
@@ -82,16 +82,16 @@ void btEffectRunBolt(BATTLE_EFFECT_PARM *args)
 			}
 
 			/* The bolt drops from the top. */
-			if(frame >= start && frame < start + 16) {
-				Sint32 height = (frame - start) << 6;
+			if(frm >= start && frm < start + 16) {
+				Sint32 height = (frm - start) << 6;
 
 				if(height > BOLT_GROUND_Y)
 					height = BOLT_GROUND_Y;
-				for(j = 0; j != Bolt_Counts[state->args->variant][BOLT_STRIKES];
+				for(j = 0; j != BoltCounts[state->args->variant][BOLT_STRIKES];
 					j++) {
 					draw[0](canvas,
 						state->sheet +
-							(((i + frame + j) / 2) & 3) *
+							(((i + frm + j) / 2) & 3) *
 								LIGHTNING_BOLT_PICTURE_BYTES +
 							BOLT_PICTURES,
 						screen.x - LIGHTNING_BOLT_WIDTH / 2, 0,
@@ -99,9 +99,9 @@ void btEffectRunBolt(BATTLE_EFFECT_PARM *args)
 				}
 
 				/* Sparks fly up from its foot. */
-				if(frame == start + 2) {
+				if(frm == start + 2) {
 					for(j = 0;
-						j != Bolt_Counts[state->args->variant][BOLT_SPARKS];
+						j != BoltCounts[state->args->variant][BOLT_SPARKS];
 						j++) {
 						PARTICLE *spark =
 							&PARTICLES[i * BOLT_SPARKS_PER_TARGET + j];
@@ -118,31 +118,31 @@ void btEffectRunBolt(BATTLE_EFFECT_PARM *args)
 			}
 
 			/* Glints flicker at the foot. */
-			if(frame >= start + 2 && frame < start + 24) {
-				for(j = 0; j != Bolt_Counts[state->args->variant][BOLT_GLINTS];
+			if(frm >= start + 2 && frm < start + 24) {
+				for(j = 0; j != BoltCounts[state->args->variant][BOLT_GLINTS];
 					j++) {
 					Sint32 kind = j & 3;
 					Sint32 drop = syRandom() %
-						Bolt_Counts[state->args->variant][BOLT_GLINT_SPREAD];
+						BoltCounts[state->args->variant][BOLT_GLINT_SPREAD];
 					Sint32 spread =
-						Bolt_Counts[state->args->variant][BOLT_GLINT_SPREAD] -
+						BoltCounts[state->args->variant][BOLT_GLINT_SPREAD] -
 						drop + 1;
 					Sint32 y = screen.y - drop -
-						(BattleEffect_GlintPictureHeights[kind] >> 1) + 8;
+						(BattleEffectGlintPictureHeights[kind] >> 1) + 8;
 					Uint32 random = syRandom();
 					Sint32 x = screen.x;
 
 					x += random % spread;
 					x -= spread / 2;
-					x -= (BattleEffect_GlintPictureWidths[kind] >> 1);
+					x -= (BattleEffectGlintPictureWidths[kind] >> 1);
 
 					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-						Bolt_GlintFlips[syRandom() & 3] | EFFECT_CLIP_BOUNDS,
-						Bolt_GlintModes[state->args->variant]);
+						BoltGlintFlips[syRandom() & 3] | EFFECT_CLIP_BOUNDS,
+						BoltGlintModes[state->args->variant]);
 					BOLT_GLINT_BLITTER(canvas,
-						state->sheet + BattleEffect_GlintPictures[kind], x, y,
-						BattleEffect_GlintPictureWidths[kind],
-						BattleEffect_GlintPictureHeights[kind]);
+						state->sheet + BattleEffectGlintPictures[kind], x, y,
+						BattleEffectGlintPictureWidths[kind],
+						BattleEffectGlintPictureHeights[kind]);
 					syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 				}
 			}
@@ -159,16 +159,16 @@ void btEffectRunBolt(BATTLE_EFFECT_PARM *args)
 					spark->velY = -spark->velY / 2;
 				} else if((spark->x >= 0 && spark->x < toFIXED(127)) &&
 					spark->y >= 0) {
-					Sint32 size = spark->variant / BOLT_SPARK_SHRINK_FRAMES + 1;
+					Sint32 size = spark->variant / BOLT_SPARK_SHRINK_TICKS + 1;
 					Sint32 x = FIXEDtoINT(spark->x);
 					Sint32 y = FIXEDtoINT(spark->y);
 
-					EFFECT_DRAW_MOTE(draw[0], canvas, sprites, x, y, size);
+					EFFECT_DRAW_MOTE(draw[0], canvas, sprs, x, y, size);
 				}
 			}
 		}
 		btCameraShake(2, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
@@ -178,4 +178,4 @@ void btEffectRunBolt(BATTLE_EFFECT_PARM *args)
 #undef BOLT_INTERVAL
 #undef BOLT_SPARKS_PER_TARGET
 #undef BOLT_GROUND_Y
-#undef BOLT_SPARK_SHRINK_FRAMES
+#undef BOLT_SPARK_SHRINK_TICKS

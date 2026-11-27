@@ -21,9 +21,9 @@
 
 /* Turns two actors toward each other, as a conversation between them begins. */
 static inline void fdActorFaceEachOther(
-	Sint32 actorId, Sint32 other, Sint32 frames)
+	Sint32 actorId, Sint32 other, Sint32 ticks)
 {
-	fdActorTurnToFaceEachOther(actorId, other, frames);
+	fdActorTurnToFaceEachOther(actorId, other, ticks);
 }
 
 /* Holds the script until the camera's pan is done. */
@@ -33,10 +33,10 @@ static inline void fdCameraWaitForMove(void)
 }
 
 /* Runs a script's palette fade, from the source colours to the target ones,
-   over frames. */
-static inline void fdPaletteFadeInterpolate(Sint32 frames)
+   over ticks. */
+static inline void fdPaletteFadeInterpolate(Sint32 ticks)
 {
-	fdPaletteFadeStartInterpolation(frames);
+	fdPaletteFadeStartInterpolation(ticks);
 }
 
 /* Draws an item's icon, ready for a script to show it. */
@@ -46,9 +46,9 @@ static inline void gmItemLoadIcon(Sint32 item)
 }
 
 /* Holds an item's picture up over the leader, as when the party finds it. */
-static inline void gmItemShowFound(Sint32 item, Sint32 flags)
+static inline void gmItemShowFound(Sint32 item, Sint32 flg)
 {
-	fdItemDispShowItem(item, flags);
+	fdItemDispShowItem(item, flg);
 }
 
 /* Redraws the room around the point the camera follows, after a script has
@@ -60,16 +60,16 @@ static inline void fdMapGridRedraw(void)
 
 /* Shows a message in the middle of the screen rather than in a speech
    window. */
-static inline void mnMessageShowCentered(Sint32 message, Sint32 flags)
+static inline void mnMessageShowCentered(Sint32 msg, Sint32 flg)
 {
-	mnFieldMessageShow(message, flags);
+	mnFieldMessageShow(msg, flg);
 }
 
 /* Gives the party an item from a script and says who got it; -1 when it was
    left behind. */
-static inline Sint32 gmPartyGiveItem(Sint32 item, Sint32 flags)
+static inline Sint32 gmPartyGiveItem(Sint32 item, Sint32 flg)
 {
-	return fdPartyInventoryGiveItem(item, flags);
+	return fdPartyInventoryGiveItem(item, flg);
 }
 
 /* Ends a script's wave effect and restores the colours it changed. */
@@ -87,15 +87,15 @@ static inline Sint32 mnVRAMLoad(Sint32 block, Sint32 size, const void *data)
 
 /* fdActorSetDestinationOffset, by a second inline over the same function. */
 static inline void syFieldActorSetDestinationOffset(
-	Sint32 actorId, Sint32 xOffset, Sint32 zOffset)
+	Sint32 actorId, Sint32 xOfs, Sint32 zOfs)
 {
-	fdActorSetDestinationOffsetById(actorId, xOffset, zOffset);
+	fdActorSetDestinationOffsetById(actorId, xOfs, zOfs);
 }
 
-/* sySetFrameEvent (system_call.h) under a second name. */
-static inline Sint32 sySetOrUpdateFrameEvent(EVENT_FUNC func, Sint32 priority)
+/* sySetTickEvent (system_call.h) under a second name. */
+static inline Sint32 sySetOrUpdateTickEvent(EVENT_FUNC func, Sint32 pri)
 {
-	return sySetFrameEvent(func, priority);
+	return sySetTickEvent(func, pri);
 }
 
 /* Changes the metatile behavior of the metatile at (x, y), in whole pixels,
@@ -126,9 +126,9 @@ static inline void syFieldActorLaunchFromLeader(
 /* Makes an actor follow another and starts a script on it
    (fdActorWatchAndStartScript). */
 static inline void syFieldActorWatchAndStartScript(
-	Sint32 object, Sint32 target, const Sint32 *actions)
+	Sint32 object, Sint32 tgt, const Sint32 *actions)
 {
-	fdActorWatchAndStartScript(object, target, actions);
+	fdActorWatchAndStartScript(object, tgt, actions);
 }
 
 /* Moves a point radius, in 16.16 fixed point, along a heading on the ground

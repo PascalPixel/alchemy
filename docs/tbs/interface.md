@@ -14,7 +14,7 @@ code that waits.
 
 A box is a [window](glossary.md#window). The code that wants one only
 asks for it, because the drawing is done by the windows' own
-[event](glossary.md#event), which runs once in every frame from inside whatever code is waiting. Each frame
+[event](glossary.md#event), which runs once in every tick from inside whatever code is waiting. Each tick
 it grows every opening window a little, shrinks every closing one, and
 types the next letters into any that have text coming. That is why a line
 and the portrait beside it can both be on the move while the conversation
@@ -37,8 +37,8 @@ player gave Isaac.
 
 Showing one is two steps. First the whole message is decoded: unpacked,
 with its blanks filled from the game's state at that moment. Then the
-windows' event types it a few letters a frame, stops at the end of each
-page, and each frame after that looks for a button.
+windows' event types it a few letters a tick, stops at the end of each
+page, and each tick after that looks for a button.
 
 [Decoding a message](../../games/tbs/src/window/README.md#decoding-a-message) shows the
 packing and what a blank can hold.

@@ -15,11 +15,11 @@
 #define JUDGMENT_RING_MOTES		  128
 #define JUDGMENT_FLASH_RING_MOTES 256
 
-#define JUDGMENT_GATHER_FRAMES		   160 /* frames of the gathering */
-#define JUDGMENT_SWEEP_FRAMES		   320
-/* The gathering's crash: the canvas fills to JUDGMENT_CRASH_LEVEL the frame
+#define JUDGMENT_GATHER_TICKS		   160 /* ticks of the gathering */
+#define JUDGMENT_SWEEP_TICKS		   320
+/* The gathering's crash: the canvas fills to JUDGMENT_CRASH_LEVEL the tick
    before, then the beams fall. */
-#define JUDGMENT_BEAM_FRAME			   144
+#define JUDGMENT_BEAM_TICK			   144
 #define JUDGMENT_CRASH_LEVEL		   42
 #define JUDGMENT_FORMATION_OBJECTS	   16 /* sprites in the formation, 4x4 */
 #define JUDGMENT_FORMATION_COLUMNS	   4
@@ -43,7 +43,7 @@
 #define JUDGMENT_MOTE_SIZE_DEPTH  20
 /* The unused sparks stage's depths, and the depth it starts its nearest from,
    above any a spark can have. The sparks start on a ring a quarter of
-   JUDGMENT_SPARK_AMPLITUDE out, and at frame 64 burst outward by an eighth of
+   JUDGMENT_SPARK_AMPLITUDE out, and at tick 64 burst outward by an eighth of
    it. */
 #define JUDGMENT_SPARK_DEPTH_NEAR 100
 #define JUDGMENT_SPARK_DEPTH_FAR  900
@@ -55,12 +55,12 @@
 /* The burst's seven quarter pictures (JudgmentBurstSheet), after the beam. */
 #define JUDGMENT_SHEET_BURST	  PICTURE_BYTES(JUDGMENT_BEAM)
 /* The tornado sprite sheet, after the burst's seven quarter pictures; its six
-   glint pictures are the burst's shards (Judgment_ShardPictures counts from the
+   glint pictures are the burst's shards (JudgmentShardPictures counts from the
    sprite sheet's start). */
 #define JUDGMENT_SHEET_TORNADO \
 	(JUDGMENT_SHEET_BURST + 2 * 4 + 3 * 6 + 4 * 8 + 6 * 12 + 10 * 20 + \
 		11 * 22 + 12 * 24)
-/* The explosion's four pictures, loaded over the flares on the sweep's frame
+/* The explosion's four pictures, loaded over the flares on the sweep's tick
    64. */
 #define JUDGMENT_SHEET_EXPLOSION 16384
 /* The two flare pictures, from the crescent sprite sheet the sweep loads. */
@@ -86,10 +86,10 @@
 #define JUDGMENT_EXPLOSION_HEIGHT		 54
 #define JUDGMENT_EXPLOSION_PICTURE_BYTES PICTURE_BYTES(JUDGMENT_EXPLOSION)
 
-/* The sweep's scenes, by the frame each opens on: the flare lands on the aerial
+/* The sweep's scenes, by the tick each opens on: the flare lands on the aerial
    view and it explodes, the wave crosses the beach, the debris rises in the
    forest, and the battle returns. A or B skips to the next scene from five
-   frames into one. */
+   ticks into one. */
 #define JUDGMENT_SWEEP_EXPLOSION 64
 #define JUDGMENT_SWEEP_BEACH	 150
 #define JUDGMENT_SWEEP_FOREST	 214
@@ -134,7 +134,7 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 {
 	static SPR_SCALE		 unitScale = {{{toFIXED(1), toFIXED(1)}}};
 	Sint32					 anchor[3];
-	SCREEN_POINT			 projectedPosition;
+	SCREEN_POINT			 projectedPos;
 	SPR_PLACEMENT			 place;
 	volatile Uint32			 fill;
 	SPR_PLACEMENT			 debrisPlace;
@@ -144,7 +144,7 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE		*state;
 	BATTLE_BACKGROUND_STATE *view;
 	DRAW_RECTANGLE			 draw[2];
-	Sint32					 frame;
+	Sint32					 frm;
 	Uint8					*motes;
 	BATTLE_CAMERA			*camera;
 	FIXED					 depth;
@@ -234,15 +234,15 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 	}
 
 	for(i = 0; i != JUDGMENT_SPARK_COUNT; i++) {
-		Sint32 angle = syRandom() & TRIG_ANGLE_MASK;
+		Sint32 ang = syRandom() & TRIG_ANGLE_MASK;
 		Sint32 amplitude = JUDGMENT_SPARK_AMPLITUDE;
 		Sint32 speed = 0;
-		JUDGMENT_SPARKS[i].x = (sySin(angle) * amplitude) >> 2;
-		JUDGMENT_SPARKS[i].z = (syCos(angle) * amplitude) >> 2;
+		JUDGMENT_SPARKS[i].x = (sySin(ang) * amplitude) >> 2;
+		JUDGMENT_SPARKS[i].z = (syCos(ang) * amplitude) >> 2;
 		JUDGMENT_SPARKS[i].y = INTtoFIXED((syRandom() & 63) + 32);
 		JUDGMENT_SPARKS[i].velX = speed;
 		JUDGMENT_SPARKS[i].velY = speed;
-		JUDGMENT_SPARKS[i].variant = angle;
+		JUDGMENT_SPARKS[i].variant = ang;
 	}
 
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -250,23 +250,23 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 		BGCNT_SCREEN_BASE(7);
 
 	/* The gathering. */
-	for(frame = 0; frame != JUDGMENT_GATHER_FRAMES &&
-		(frame <= 4 || !(PerRepeat & (KEY_A | KEY_B)));
-		frame++) {
+	for(frm = 0; frm != JUDGMENT_GATHER_TICKS &&
+		(frm <= 4 || !(PerRepeat & (KEY_A | KEY_B)));
+		frm++) {
 		blitters = EFFECT_BLITTERS;
-		if(frame == JUDGMENT_BEAM_FRAME - 1) {
+		if(frm == JUDGMENT_BEAM_TICK - 1) {
 			syWordsFill(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(JUDGMENT_CRASH_LEVEL));
 			sySndPlayStub(SE_CRASH);
 		}
-		if(frame == 80) {
+		if(frm == 80) {
 			sySndPlayStub(SE_SWIRL);
 		}
 
-		/* DEAD: the sparks stage never runs, as frame starts at 0 and only
+		/* DEAD: the sparks stage never runs, as tick starts at 0 and only
 		   grows; the ROM keeps its signed test against 0 and the whole
 		   stage. */
-		if(frame < 0) {
+		if(frm < 0) {
 			EFFECT_VIEW_FROM_CAMERA(camera);
 			for(i = 0; i != JUDGMENT_SPARK_COUNT; i++) {
 				Sint32 z;
@@ -274,13 +274,13 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 
 				btParticleAdvanceWithGravity3D(
 					&JUDGMENT_SPARKS[i], 60, -toFIXED(1) / 64);
-				btProjectionPoint(&JUDGMENT_SPARKS[i], &projectedPosition);
-				projectedPosition.x >>= 1;
-				projectedPosition.y -= 120;
-				CLAMP(projectedPosition.depth, JUDGMENT_SPARK_DEPTH_NEAR,
+				btProjectionPoint(&JUDGMENT_SPARKS[i], &projectedPos);
+				projectedPos.x >>= 1;
+				projectedPos.y -= 120;
+				CLAMP(projectedPos.depth, JUDGMENT_SPARK_DEPTH_NEAR,
 					JUDGMENT_SPARK_DEPTH_FAR);
-				z = projectedPosition.depth - JUDGMENT_SPARK_DEPTH_NEAR;
-				projectedPosition.depth = z;
+				z = projectedPos.depth - JUDGMENT_SPARK_DEPTH_NEAR;
+				projectedPos.depth = z;
 				size = (z / 100) + 1;
 				if(minimumDepth > z) {
 					minimumDepth = z;
@@ -288,9 +288,9 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 				if(maximumDepth < z) {
 					maximumDepth = z;
 				}
-				EFFECT_DRAW_MOTE(draw[0], canvas, motes, projectedPosition.x,
-					projectedPosition.y, size);
-				if(frame == 64) {
+				EFFECT_DRAW_MOTE(draw[0], canvas, motes, projectedPos.x,
+					projectedPos.y, size);
+				if(frm == 64) {
 					JUDGMENT_SPARKS[i].velX +=
 						(sySin(JUDGMENT_SPARKS[i].variant) *
 							JUDGMENT_SPARK_AMPLITUDE) >>
@@ -303,37 +303,37 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		if(frame == 72) {
-			state->fadeFrm = BACKGROUND_DARKEN_FRAMES;
+		if(frm == 72) {
+			state->fadeFrm = BACKGROUND_DARKEN_TICKS;
 			state->fadeStep = 0;
 		}
 
 		/* The first half of the motes gather into Judgment's shield, four more
-		   each frame from frame 80. */
+		   each tick from tick 80. */
 		anchor[2] = 0;
 		anchor[1] = 0;
 		for(i = 0; i != JUDGMENT_MOTES / 2; i++) {
-			if(frame > i / 4 + 80 && PARTICLES[i].x > 0) {
+			if(frm > i / 4 + 80 && PARTICLES[i].x > 0) {
 				Sint32 size;
 
 				syInitMatrix();
 				syRotZ(PARTICLES[i].velY);
 				syRotX(PARTICLES[i].velX);
-				syRotY(PARTICLES[i].velY + frame * (TRIG_TURN / 128));
+				syRotY(PARTICLES[i].velY + frm * (TRIG_TURN / 128));
 				anchor[0] = PARTICLES[i].x;
 				PARTICLES[i].x -= 2;
 				if(PARTICLES[i].x < 0) {
 					PARTICLES[i].x = 0;
 				}
-				btProjectionPoint(anchor, &projectedPosition);
-				CLAMP(projectedPosition.depth, -JUDGMENT_MOTE_DEPTH,
+				btProjectionPoint(anchor, &projectedPos);
+				CLAMP(projectedPos.depth, -JUDGMENT_MOTE_DEPTH,
 					JUDGMENT_MOTE_DEPTH);
-				projectedPosition.depth += JUDGMENT_MOTE_DEPTH;
-				size = projectedPosition.depth / JUDGMENT_MOTE_SIZE_DEPTH + 2;
-				projectedPosition.x += JUDGMENT_BURST_X;
-				projectedPosition.y += JUDGMENT_BURST_Y;
-				EFFECT_DRAW_MOTE(draw[0], canvas, motes, projectedPosition.x,
-					projectedPosition.y, size);
+				projectedPos.depth += JUDGMENT_MOTE_DEPTH;
+				size = projectedPos.depth / JUDGMENT_MOTE_SIZE_DEPTH + 2;
+				projectedPos.x += JUDGMENT_BURST_X;
+				projectedPos.y += JUDGMENT_BURST_Y;
+				EFFECT_DRAW_MOTE(draw[0], canvas, motes, projectedPos.x,
+					projectedPos.y, size);
 			}
 		}
 
@@ -354,41 +354,41 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 		}
 
 		depth += zoom;
-		if(frame <= 47) {
+		if(frm <= 47) {
 			zoom -= toFIXED(1) / 4;
 		}
-		if(frame > 32) {
+		if(frm > 32) {
 			zoom = zoom * 60 / DAMPING_SCALE;
 		}
-		if(frame == JUDGMENT_BEAM_FRAME) {
+		if(frm == JUDGMENT_BEAM_TICK) {
 			zoom = -toFIXED(8);
 		}
-		if(frame == 146) {
+		if(frm == 146) {
 			zoom = toFIXED(1);
 		}
 
-		if(frame == 72) {
+		if(frm == 72) {
 			for(i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
 				fdSprStartAnimationStub(
 					state->sprs[i], i + JUDGMENT_POSE_SHIELD_SWINGING);
 			}
 		}
-		if(frame == 76) {
+		if(frm == 76) {
 			for(i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
 				fdSprStartAnimationStub(
 					state->sprs[i], i + JUDGMENT_POSE_SHIELD_FORWARD);
 			}
 		}
 
-		if(frame >= 116 && frame < JUDGMENT_BEAM_FRAME) {
+		if(frm >= 116 && frm < JUDGMENT_BEAM_TICK) {
 			Sint32 high;
 			Sint32 picture;
-			Sint32 n = (frame - 116) / 4;
+			Sint32 n = (frm - 116) / 4;
 			if(n > 6) {
 				n = 6;
 			}
-			high = Judgment_BurstHeights[n];
-			picture = Judgment_ShieldSprites[n] + JUDGMENT_SHEET_BURST;
+			high = JudgmentBurstHeights[n];
+			picture = JudgmentShieldSprites[n] + JUDGMENT_SHEET_BURST;
 
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
 				COMPOSITE_LIGHTEN);
@@ -418,21 +418,21 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 
 			for(i = 0; i != 6; i++) {
 				Sint32 k = i & 3;
-				Sint32 angle = syRandom() & TRIG_ANGLE_MASK;
-				Sint32 x = FIXEDtoINT(sySin(angle) * JUDGMENT_SHARD_RADIUS) -
-					Judgment_ShardWidths[k] / 2;
-				Sint32 y = FIXEDtoINT(syCos(angle) * JUDGMENT_SHARD_RADIUS) -
-					Judgment_ShardHeights[k] / 2;
-				draw[0](canvas, state->sheet + Judgment_ShardPictures[k],
+				Sint32 ang = syRandom() & TRIG_ANGLE_MASK;
+				Sint32 x = FIXEDtoINT(sySin(ang) * JUDGMENT_SHARD_RADIUS) -
+					JudgmentShardWidths[k] / 2;
+				Sint32 y = FIXEDtoINT(syCos(ang) * JUDGMENT_SHARD_RADIUS) -
+					JudgmentShardHeights[k] / 2;
+				draw[0](canvas, state->sheet + JudgmentShardPictures[k],
 					x + JUDGMENT_BURST_X, y + JUDGMENT_BURST_Y,
-					Judgment_ShardWidths[k], Judgment_ShardHeights[k]);
+					JudgmentShardWidths[k], JudgmentShardHeights[k]);
 			}
 		}
 
-		if(frame >= JUDGMENT_BEAM_FRAME) {
-			/* Two beams fall 16 pixels a frame onto the shield, and a ring of
-			   motes spreads from it 10 pixels a frame. */
-			Sint32 top = (frame << 4) - 2272;
+		if(frm >= JUDGMENT_BEAM_TICK) {
+			/* Two beams fall 16 pixels a tick onto the shield, and a ring of
+			   motes spreads from it 10 pixels a tick. */
+			Sint32 top = (frm << 4) - 2272;
 			Sint32 n;
 			Sint32 r;
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
@@ -448,21 +448,21 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 				JUDGMENT_BEAM_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 
-			n = (frame - JUDGMENT_BEAM_FRAME) / 2;
-			r = frame * 10 - 1424;
+			n = (frm - JUDGMENT_BEAM_TICK) / 2;
+			r = frm * 10 - 1424;
 			state->transferValue = CANVAS_FADE_THREE_QUARTERS;
 			if(n <= 6) {
 				Sint32 picture = n * MOTE_SET_BYTES +
-					BattleEffect_MotePictures[7] + JUDGMENT_SHEET_BYTES;
+					BattleEffectMotePictures[7] + JUDGMENT_SHEET_BYTES;
 				Sint32 high = 8;
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 					EFFECT_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
 				blit = blitters[HEAP_SLOT_RAM_CODE_PAIRED];
 				for(i = 0; i != JUDGMENT_RING_MOTES; i++) {
-					Sint32 angle = i * (TRIG_TURN / JUDGMENT_RING_MOTES);
+					Sint32 ang = i * (TRIG_TURN / JUDGMENT_RING_MOTES);
 					/* The ring lies flat, half as tall as it is wide. */
-					Sint32 x = FIXEDtoINT(r * sySin(angle)) - high / 2;
-					Sint32 y = FIXEDtoINT(r * syCos(angle)) >> 1;
+					Sint32 x = FIXEDtoINT(r * sySin(ang)) - high / 2;
+					Sint32 y = FIXEDtoINT(r * syCos(ang)) >> 1;
 					blit(canvas, state->sheet + picture, x + JUDGMENT_BURST_X,
 						y + JUDGMENT_BURST_Y - high, high, high * 2);
 				}
@@ -481,11 +481,11 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 	}
 
 	for(i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
-		SPR *sprite = fdSprCreateStub(SPRITE_BATTLE_ROCKS);
-		state->sprs[i] = sprite;
-		if(sprite != 0) {
-			sprite->flg = 0;
-			fdSprStartAnimationStub(sprite, (i % 3));
+		SPR *spr = fdSprCreateStub(SPRITE_BATTLE_ROCKS);
+		state->sprs[i] = spr;
+		if(spr != 0) {
+			spr->flg = 0;
+			fdSprStartAnimationStub(spr, (i % 3));
 			state->sprs[i]->image.pri = 0;
 		}
 	}
@@ -531,44 +531,44 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 	DMA_FILL32_CELL(
 		fill, shift, state, JUDGMENT_WAVE_SIZE * JUDGMENT_WAVE_SIZE);
 
-	/* The sweep, on its own frame clock. */
-	for(frame = 0; frame != JUDGMENT_SWEEP_FRAMES; frame++) {
-		if(frame == 66) {
+	/* The sweep, on its own tick clock. */
+	for(frm = 0; frm != JUDGMENT_SWEEP_TICKS; frm++) {
+		if(frm == 66) {
 			sySndPlayStub(SE_CRASH);
 			sySndPlayStub(SE_RUMBLE);
 		}
-		if(frame == 155) {
+		if(frm == 155) {
 			sySndPlayStub(SE_WAVE);
 		}
-		if(frame == 217) {
+		if(frm == 217) {
 			sySndPlayStub(SE_SWITCH_MECHANISM);
 		}
-		if(frame == JUDGMENT_SWEEP_RETURN) {
+		if(frm == JUDGMENT_SWEEP_RETURN) {
 			sySndPlayStub(SE_GATE_MOVE);
 		}
-		if(frame == 300) {
+		if(frm == 300) {
 			EFFECT_SHOW_DAMAGE(SE_CRASH);
 		}
 
 		if(PerRepeat & (KEY_A | KEY_B)) {
-			if(frame >= 5 && frame < JUDGMENT_SWEEP_BEACH) {
-				frame = JUDGMENT_SWEEP_BEACH;
+			if(frm >= 5 && frm < JUDGMENT_SWEEP_BEACH) {
+				frm = JUDGMENT_SWEEP_BEACH;
 				IO_WRITE_QUEUE_PUSH_IME(
 					ime, (Uint32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
 				IO_WRITE_QUEUE_PUSH_IME(
 					ime, (Uint32)&REG_BG2X, 0, IO_WRITE_WORD);
 				btResourceLoadAndDecompress(RESOURCE_EXPLOSION_SHEET,
 					state->sheet + JUDGMENT_SHEET_EXPLOSION, 1, 0);
-			} else if(frame >= JUDGMENT_SWEEP_BEACH + 5 &&
-				frame < JUDGMENT_SWEEP_FOREST) {
-				frame = JUDGMENT_SWEEP_FOREST;
-			} else if(frame >= JUDGMENT_SWEEP_FOREST + 5 &&
-				frame < JUDGMENT_SWEEP_RETURN) {
-				frame = JUDGMENT_SWEEP_RETURN;
+			} else if(frm >= JUDGMENT_SWEEP_BEACH + 5 &&
+				frm < JUDGMENT_SWEEP_FOREST) {
+				frm = JUDGMENT_SWEEP_FOREST;
+			} else if(frm >= JUDGMENT_SWEEP_FOREST + 5 &&
+				frm < JUDGMENT_SWEEP_RETURN) {
+				frm = JUDGMENT_SWEEP_RETURN;
 			}
 		}
 
-		if(frame == JUDGMENT_SWEEP_EXPLOSION) {
+		if(frm == JUDGMENT_SWEEP_EXPLOSION) {
 			IO_WRITE_QUEUE_PUSH_IME(
 				ime, (Uint32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
 			IO_WRITE_QUEUE_PUSH_IME(ime, (Uint32)&REG_BG2X, 0, IO_WRITE_WORD);
@@ -579,7 +579,7 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 				state->sheet + JUDGMENT_SHEET_FLASH_SMALL, 0, 0);
 		}
 
-		if(frame == 66) {
+		if(frm == 66) {
 			/* Invert the battle background's colours, background palettes 6 to
 			   13. */
 			Uint16 *pal = (Uint16 *)&BG_PLTT_COLOR(6, 0);
@@ -588,20 +588,20 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		if(frame == 69) {
+		if(frm == 69) {
 			DMA_FILL32_CELL(fill, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST),
 				canvas, CANVAS_BYTES);
 		}
 
 		/* Undo the inversion, rewriting the battle background's palette from
 		   the battle's copy with every channel 7 levels darker. */
-		if(frame == 70) {
+		if(frm == 70) {
 			btBackgroundSetModeStub(
 				BATTLE_BACKGROUND_FIXED, RESOURCE_AERIAL_VIEW_BACKDROP, 7);
 		}
 
-		/* The beach: the rings restart, four a frame. */
-		if(frame == JUDGMENT_SWEEP_BEACH) {
+		/* The beach: the rings restart, four a tick. */
+		if(frm == JUDGMENT_SWEEP_BEACH) {
 			cx = JUDGMENT_BEACH_RINGS_X;
 			cy = JUDGMENT_BEACH_RINGS_Y;
 			ring = 0;
@@ -616,7 +616,7 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The forest. */
-		if(frame == JUDGMENT_SWEEP_FOREST) {
+		if(frm == JUDGMENT_SWEEP_FOREST) {
 			DMA_FILL32_CELL(
 				fill, 0, state, JUDGMENT_WAVE_SIZE * JUDGMENT_WAVE_SIZE);
 			DMA_FILL32_CELL(fill, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST),
@@ -633,7 +633,7 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		if(frame == JUDGMENT_SWEEP_RETURN) {
+		if(frm == JUDGMENT_SWEEP_RETURN) {
 			/* Back to the battle. */
 			btEffectSetupBlendedDisp();
 			DMA_FILL32_CELL(
@@ -653,7 +653,7 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The canvas's colours brighten to white. */
-		if(frame >= JUDGMENT_SWEEP_RETURN) {
+		if(frm >= JUDGMENT_SWEEP_RETURN) {
 			volatile Uint16 *pal = &BG_PLTT_COLOR(0, 1);
 			for(i = 0; i != SHEET_PALETTE_COLORS - 1; i++, pal++) {
 				Sint32 c = *pal;
@@ -676,17 +676,17 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		if(frame == 182) {
+		if(frm == 182) {
 			DMA_FILL32_CELL(fill, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST),
 				canvas, CANVAS_BYTES);
 		}
 
 		/* A flare falls onto the aerial view, drawn as four mirrored quarters,
-		   its picture flickering every 4 frames. */
-		if(frame < JUDGMENT_SWEEP_EXPLOSION) {
+		   its picture flickering every 4 ticks. */
+		if(frm < JUDGMENT_SWEEP_EXPLOSION) {
 			Uint8 *sheet;
-			Sint32 top = frame - 4;
-			if((frame & 7) < 4) {
+			Sint32 top = frm - 4;
+			if((frm & 7) < 4) {
 				sheet = state->sheet + JUDGMENT_SHEET_FLARE_A;
 			} else {
 				sheet = state->sheet + JUDGMENT_SHEET_FLARE_B;
@@ -719,16 +719,16 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 		}
 
-		if(frame >= 64 && frame < 66) {
+		if(frm >= 64 && frm < 66) {
 			EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 				JUDGMENT_SHEET_FLASH_SMALL, 52, 51);
 		}
-		if(frame >= 66 && frame < 68) {
+		if(frm >= 66 && frm < 68) {
 			EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 				JUDGMENT_SHEET_FLASH_LARGE, 48, 40);
 		}
-		if(frame >= 68 && frame < 76) {
-			Sint32 d = 76 - frame;
+		if(frm >= 68 && frm < 76) {
+			Sint32 d = 76 - frm;
 			EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 				JUDGMENT_SHEET_FLASH_GLOW, 49 - d / 2, 38 - d);
 			EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
@@ -738,16 +738,16 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 			EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 				JUDGMENT_SHEET_FLASH_GLOW, d / 2 + 49, d + 38);
 		}
-		if(frame >= 78 && frame < 80) {
+		if(frm >= 78 && frm < 80) {
 			EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 				JUDGMENT_SHEET_FLASH_SMALL, 52, 51);
 		}
-		if(frame >= 80 && frame < 82) {
+		if(frm >= 80 && frm < 82) {
 			EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 				JUDGMENT_SHEET_FLASH_LARGE, 48, 40);
 		}
-		if(frame >= 82 && frame < 86) {
-			Sint32 d = frame * 2 - 164;
+		if(frm >= 82 && frm < 86) {
+			Sint32 d = frm * 2 - 164;
 			EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 				JUDGMENT_SHEET_FLASH_GLOW, 49 - d / 4, 38 - d);
 			EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
@@ -758,21 +758,21 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 				JUDGMENT_SHEET_FLASH_GLOW, d / 4 + 49, d + 38);
 		}
 
-		if(frame >= 72 && frame < 76) {
-			Sint32 radius = (frame - 71) * 16;
+		if(frm >= 72 && frm < 76) {
+			Sint32 radius = (frm - 71) * 16;
 			Sint32 size = MOTE_SIZE_MAX;
 			for(i = 0; i != JUDGMENT_FLASH_RING_MOTES; i++) {
-				Sint32 angle = i * (TRIG_TURN / JUDGMENT_FLASH_RING_MOTES);
-				Sint32 x = FIXEDtoINT(sySin(angle) * radius) - (size >> 1);
-				Sint32 y = FIXEDtoINT(syCos(angle) * radius) >> 1;
-				draw[0](canvas, motes + BattleEffect_MotePictures[size - 1],
+				Sint32 ang = i * (TRIG_TURN / JUDGMENT_FLASH_RING_MOTES);
+				Sint32 x = FIXEDtoINT(sySin(ang) * radius) - (size >> 1);
+				Sint32 y = FIXEDtoINT(syCos(ang) * radius) >> 1;
+				draw[0](canvas, motes + BattleEffectMotePictures[size - 1],
 					x + 60, y + 50, size, size * 2);
 			}
 		}
 
-		if(frame > 85) {
-			/* More rings each frame, each one pixel wider than the last. */
-			if(frame < JUDGMENT_SWEEP_FOREST) {
+		if(frm > 85) {
+			/* More rings each tick, each one pixel wider than the last. */
+			if(frm < JUDGMENT_SWEEP_FOREST) {
 				for(i = 0; i != rings; i++, ring++) {
 					Sint32 radius = ring;
 					Sint32 slope = 0;
@@ -852,15 +852,14 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The explosion: nine blasts fan out below where the flare struck. */
-		if(frame >= 86 && frame < JUDGMENT_SWEEP_BEACH) {
-			Sint32 angle = -DEGtoANG(90);
-			for(i = 0; i != 9; i++, angle += TRIG_TURN / 16) {
-				Sint32 x = FIXEDtoINT((frame - 86) * sySin(angle));
-				Sint32 y = FIXEDtoINT((frame - 70) * syCos(angle));
+		if(frm >= 86 && frm < JUDGMENT_SWEEP_BEACH) {
+			Sint32 ang = -DEGtoANG(90);
+			for(i = 0; i != 9; i++, ang += TRIG_TURN / 16) {
+				Sint32 x = FIXEDtoINT((frm - 86) * sySin(ang));
+				Sint32 y = FIXEDtoINT((frm - 70) * syCos(ang));
 				draw[0](canvas,
 					state->sheet +
-						((frame / 2 + i) % 4) *
-							JUDGMENT_EXPLOSION_PICTURE_BYTES +
+						((frm / 2 + i) % 4) * JUDGMENT_EXPLOSION_PICTURE_BYTES +
 						JUDGMENT_SHEET_EXPLOSION,
 					x + 44, y + 17, JUDGMENT_EXPLOSION_WIDTH,
 					JUDGMENT_EXPLOSION_HEIGHT);
@@ -870,40 +869,40 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
 		draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
-		if(frame > 85) {
+		if(frm > 85) {
 			draw[1](canvas, state->sheet, 0, 0, JUDGMENT_WAVE_SIZE,
 				JUDGMENT_WAVE_SIZE);
 		}
 
-		if(frame >= JUDGMENT_SWEEP_RETURN) {
+		if(frm >= JUDGMENT_SWEEP_RETURN) {
 			shift -= 8;
 		}
 
-		/* DEAD: never true, as the sweep's last frame is JUDGMENT_SWEEP_FRAMES
+		/* DEAD: never true, as the sweep's last tick is JUDGMENT_SWEEP_TICKS
 		   - 1; the ROM keeps the test and the tint. */
-		if(frame >= JUDGMENT_SWEEP_FRAMES) {
+		if(frm >= JUDGMENT_SWEEP_TICKS) {
 			EFFECT_FOR_EACH_TARGET(i, state->args) {
 				btEffectTintBattler(state->args->tgts[i], SPRITE_COLOR_BLACK,
 					POSE_DAMAGE, TINT_KEEP, 0);
 			}
 		}
 
-		if(frame == 238) {
+		if(frm == 238) {
 			DMA_FILL32_CELL(fill, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST),
 				canvas, CANVAS_BYTES);
 		}
 
-		if(frame >= JUDGMENT_SWEEP_FOREST && frame < JUDGMENT_SWEEP_RETURN) {
+		if(frm >= JUDGMENT_SWEEP_FOREST && frm < JUDGMENT_SWEEP_RETURN) {
 			BgScrollWork[1].x += 8;
 		}
 
-		if(frame >= 246 && frame < JUDGMENT_SWEEP_RETURN) {
+		if(frm >= 246 && frm < JUDGMENT_SWEEP_RETURN) {
 			shift += 8;
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY, CANVAS_FADE_THREE_QUARTERS);
 		}
 
 		/* Debris rises from the field. */
-		if(frame >= JUDGMENT_SWEEP_FOREST) {
+		if(frm >= JUDGMENT_SWEEP_FOREST) {
 			debrisPlace.groundHeight = 0;
 			debrisPlace.height = 0;
 			for(i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
@@ -921,16 +920,16 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 						state->sprs[i], &debrisPlace, &scale, 0);
 					particle->y -= particle->velY;
 					if(particle->y < toFIXED(16)) {
-						if(frame < JUDGMENT_SWEEP_RETURN) {
+						if(frm < JUDGMENT_SWEEP_RETURN) {
 							particle->x =
 								INTtoFIXED((syRandom() & 63) + shift + 32);
 						} else {
 							particle->x =
 								toFIXED((syRandom() & 63) + shift - 32);
 						}
-						if(frame > 301) {
+						if(frm > 301) {
 							particle->variant = 0;
-						} else if(frame > 245) {
+						} else if(frm > 245) {
 							particle->y = toFIXED(96);
 						} else {
 							particle->y = toFIXED(192) - particle->x;
@@ -939,14 +938,14 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 				}
 			}
 
-			if(frame < JUDGMENT_SWEEP_RETURN) {
+			if(frm < JUDGMENT_SWEEP_RETURN) {
 				for(i = 0; i != 8; i++) {
 					Sint32 x = (i & 1) * 20 - (syRandom() & 15) + (i / 2) * 4 +
 						shift / 2 - 16;
 					Sint32 y = (i / 2) * 32 - (syRandom() & 15);
 					draw[1](canvas,
 						state->sheet +
-							((frame / 2 + i) % 4) *
+							((frm / 2 + i) % 4) *
 								JUDGMENT_EXPLOSION_PICTURE_BYTES +
 							JUDGMENT_SHEET_EXPLOSION,
 						x, y, JUDGMENT_EXPLOSION_WIDTH,
@@ -959,7 +958,7 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 					Sint32 y = (i / 2) * 32 - (syRandom() & 15);
 					draw[1](canvas,
 						state->sheet +
-							((frame / 2 + i) % 4) *
+							((frm / 2 + i) % 4) *
 								JUDGMENT_EXPLOSION_PICTURE_BYTES +
 							JUDGMENT_SHEET_EXPLOSION,
 						x, y, JUDGMENT_EXPLOSION_WIDTH,
@@ -971,7 +970,7 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 		syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 
 		/* The battle background shakes up and down. */
-		if(frame >= JUDGMENT_SWEEP_EXPLOSION) {
+		if(frm >= JUDGMENT_SWEEP_EXPLOSION) {
 			Sint32 shake = (syRandom() & 3) + 30;
 
 			BgScrollWork[1].y = shake;
@@ -997,8 +996,8 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 #undef JUDGMENT_BEACH_RINGS_Y
 #undef JUDGMENT_RETURN_BLAST_X
 #undef JUDGMENT_SHEET_TORNADO
-#undef JUDGMENT_GATHER_FRAMES
-#undef JUDGMENT_SWEEP_FRAMES
+#undef JUDGMENT_GATHER_TICKS
+#undef JUDGMENT_SWEEP_TICKS
 #undef JUDGMENT_SHEET_FLARE_B
 #undef JUDGMENT_FORMATION_OBJECTS
 #undef JUDGMENT_DEBRIS_OBJECTS

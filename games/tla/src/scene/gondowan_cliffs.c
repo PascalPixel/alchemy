@@ -23,8 +23,8 @@
 #include "field/call.h"
 #include "macros.h"
 
-extern SCENE_ENTRANCE GondowanCliffs_Entrances[];
-extern SCENE_ENTRANCE GondowanCliffs_PassEntrances[];
+extern SCENE_ENTRANCE GondowanCliffsEntrances[];
+extern SCENE_ENTRANCE GondowanCliffsPassEntrances[];
 
 #include "shared/tile_sprite_reset.h"
 
@@ -91,8 +91,8 @@ void scGondowanCliffsFightKindle(void)
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
 	if(MainRoutineStateWork.next == SCENE_GONDOWAN_CLIFFS_PASS)
-		return GondowanCliffs_PassEntrances;
-	return GondowanCliffs_Entrances;
+		return GondowanCliffsPassEntrances;
+	return GondowanCliffsEntrances;
 }
 
 const SCENE_REGION *scGetExitRegions(void)
@@ -105,14 +105,14 @@ const Uint32 *scGetExits(void)
 	return SceneExits;
 }
 
-extern ACTOR_PLACE GondowanCliffs_ActorPlacements[];
-extern ACTOR_PLACE GondowanCliffs_PassActorPlacements[];
+extern ACTOR_PLACE GondowanCliffsActorPlacements[];
+extern ACTOR_PLACE GondowanCliffsPassActorPlacements[];
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.next == SCENE_GONDOWAN_CLIFFS_PASS)
-		return GondowanCliffs_PassActorPlacements;
-	return GondowanCliffs_ActorPlacements;
+		return GondowanCliffsPassActorPlacements;
+	return GondowanCliffsActorPlacements;
 }
 
 /* clang-format off */
@@ -158,15 +158,15 @@ typedef struct MAP_GROUND_EFFECTS {
    platform at its top, as Yampi Desert's geyser does. */
 typedef struct GEYSER {
 	Sint16 id;			   /* its actor; 0 for a free entry */
-	Sint16 tmr;			   /* frames into its period */
+	Sint16 tmr;			   /* ticks into its period */
 	Sint16 height;		   /* pixels it has risen */
-	Sint16 period;		   /* frames in one rise and fall */
+	Sint16 period;		   /* ticks in one rise and fall */
 	Sint16 riseAt;		   /* the timer it starts to rise at */
 	Sint16 fallAt;		   /* the timer it starts to fall at */
 	Sint16 max;			   /* pixels it rises to */
 	Sint16 min;			   /* pixels it falls to */
 	Sint16 unreadSetToOne; /* set to 1 by scGeyserAdd and never read */
-	Sint16 step;		   /* pixels a frame: 4 rising, -8 falling, 0 at rest */
+	Sint16 step;		   /* pixels a tick: 4 rising, -8 falling, 0 at rest */
 	Sint16 unreadCleared;  /* cleared by scGeyserAdd and never read */
 	Sint16 phase;		   /* the platform's bob, 1/65536 turns */
 	ACTOR *rider;		   /* the platform at its top, which the leader rides */
@@ -185,23 +185,22 @@ typedef struct GEYSER_WORK {
 
 void scGondowanCliffsFreezeSecondPuddle(void);
 void scGondowanCliffsBlowAwayWeeds(void);
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 void scGeyserStart(Sint32 unused, Sint32 firstTerrain);
 
-/* The leaping stump's update: its sprite turns a 32nd of a turn a frame. */
+/* The leaping stump's update: its sprite turns a 32nd of a turn a tick. */
 void scGondowanCliffsSpinStump(ACTOR *actor)
 {
-	FIELD_SPR *sprite = actor->spr;
+	FIELD_SPR *spr = actor->spr;
 
-	sprite->rotation -= TRIG_TURN / 32;
+	spr->rotation -= TRIG_TURN / 32;
 }
 
 /* Waits until the actor has come down to height (16.16), a second at most. */
 void scGondowanCliffsWaitToLand(ACTOR *actor, Sint32 height)
 {
-	Sint32 count = FRAMES_PER_SECOND;
+	Sint32 count = TICKS_PER_SECOND;
 
 	while(count != 0) {
 		syWait(1);
@@ -226,7 +225,7 @@ void scGondowanCliffsLeapStumpIntoWater(Sint32 mode, Sint32 id)
 	 * touches. */
 	Sint32		   unused[3];
 	EFFECT_OPTIONS options;
-	FIELD_SPR	  *sprite;
+	FIELD_SPR	  *spr;
 	Uint32		   i;
 
 	if(FIELD_METATILE(actor->x.fixed) != 76)
@@ -239,8 +238,8 @@ void scGondowanCliffsLeapStumpIntoWater(Sint32 mode, Sint32 id)
 		actor->collisionFlg = 0;
 		for(i = 0; i <= 17; i++) {
 			syWait(1);
-			sprite = actor->spr;
-			sprite->rotation -= TRIG_TURN / 256;
+			spr = actor->spr;
+			spr->rotation -= TRIG_TURN / 256;
 			actor->x.fixed -= syCos(((FIELD_SPR *)actor->spr)->rotation) / 2;
 			actor->tgtX = ACTOR_NO_TARGET;
 		}
@@ -324,14 +323,14 @@ void scGondowanCliffsBlowAwayWeeds(void)
    (119, 45), digs up a geyser that from then on rises and falls there, a lift
    Felix can ride up to the cliffs above.
 
-   The Scoop row runs the script every frame of the dig; at `SCOOP_DUG_FRAME` it
+   The Scoop row runs the script every tick of the dig; at `SCOOP_DUG_TICK` it
    redraws the dug ground from a spare metatile of the map and moves the
    geyser's unseen point onto it. */
-void scGondowanCliffsScoopUpGeyser(Sint32 stage, Sint32 frame)
+void scGondowanCliffsScoopUpGeyser(Sint32 stage, Sint32 frm)
 {
 	ACTOR *actor;
 
-	if(frame == SCOOP_DUG_FRAME) {
+	if(frm == SCOOP_DUG_TICK) {
 		actor = fdActorGet(ACTOR_GEYSER);
 		fdMapGridCopyMetatilesLayered(124, 1, 1, 1, 119, 43);
 		fdActorSetPos(ACTOR_GEYSER, 1912, 728);
@@ -353,15 +352,15 @@ void scGondowanCliffsTalkToDog(void)
 
 	struct {
 		Sint32 x, y, z;
-	} position;
+	} pos;
 
-	Sint32 *out = (Sint32 *)&position;
+	Sint32 *out = (Sint32 *)&pos;
 
 	out[0] = actor->x.fixed;
 	out[1] = actor->y.fixed;
 	out[2] = actor->z.fixed;
 	syFieldVectorAddPolarOffset(16, actor->facing, out);
-	if(FIELD_METATILE(position.x) == 119 && FIELD_METATILE(position.z) == 45) {
+	if(FIELD_METATILE(pos.x) == 119 && FIELD_METATILE(pos.z) == 45) {
 		FieldStateWork->fieldMenu = 1;
 	} else {
 		fdScriptStart();
@@ -375,8 +374,8 @@ void scGondowanCliffsTalkToDog(void)
 	}
 }
 
-extern CUE GondowanCliffs_PassCues[];
-extern CUE GondowanCliffs_Cues[];
+extern CUE GondowanCliffsPassCues[];
+extern CUE GondowanCliffsCues[];
 
 /* Grind on the tall brown boulder standing in the river channel grinds it away
    for good, so the ship can sail on through. */
@@ -389,26 +388,26 @@ void scGondowanCliffsGrindTheRock(Sint32 unused, Sint32 id)
 const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.next == SCENE_GONDOWAN_CLIFFS_PASS)
-		return GondowanCliffs_PassCues;
-	return GondowanCliffs_Cues;
+		return GondowanCliffsPassCues;
+	return GondowanCliffsCues;
 }
 
 /* The water's colours as the map loads them, which the shimmer turns
    through. */
-Uint16 GondowanCliffs_SavedWaterColors[WATER_COLORS] BSS_DATA;
+Uint16 GondowanCliffsSavedWaterColors[WATER_COLORS] BSS_DATA;
 
-/* Makes the water shimmer: its four colours turn one step every 16 frames. */
+/* Makes the water shimmer: its four colours turn one step every 16 ticks. */
 void scGondowanCliffsCycleWaterCols(void)
 {
 	Uint16 *color = (Uint16 *)&BG_PLTT_COLOR(0, FIRST_WATER_COLOR);
-	Uint32	phase = FrameCount >> 4;
+	Uint32	phase = TickCount >> 4;
 	Sint32	i;
 
 	for(i = 0; i < WATER_COLORS; i++) {
-		Uint32 index = 3;
+		Uint32 idx = 3;
 
-		index &= phase;
-		*color++ = GondowanCliffs_SavedWaterColors[index];
+		idx &= phase;
+		*color++ = GondowanCliffsSavedWaterColors[idx];
 		phase++;
 	}
 }
@@ -426,10 +425,10 @@ void scGondowanCliffsSetUpPass(void)
 	fdTightropeInit();
 	fdTightropePlace(
 		0, ACTOR_PASS_TIGHTROPE_POST_A, ACTOR_PASS_TIGHTROPE_POST_B);
-	syWordsCopy((Sint32)GondowanCliffs_SavedWaterColors,
+	syWordsCopy((Sint32)GondowanCliffsSavedWaterColors,
 		(Sint32)&BG_PLTT_COLOR(0, FIRST_WATER_COLOR),
-		sizeof(GondowanCliffs_SavedWaterColors));
-	sySetFrameEvent(scGondowanCliffsCycleWaterCols, EVENT_PASS_FRAME);
+		sizeof(GondowanCliffsSavedWaterColors));
+	sySetTickEvent(scGondowanCliffsCycleWaterCols, EVENT_PASS_TICK);
 }
 
 /* Coming back to the cliffs after meeting Piers in Kibombo, before the ceremony
@@ -442,7 +441,7 @@ void scGondowanCliffsTurnBackToHelpPiers(void)
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 552, 488);
 	fdActorPlaceOnActor(ACTOR_JENNA, MainRoutineStateWork.leaderActorId);
 	scFieldActorWatchAndSetScript(
@@ -493,12 +492,12 @@ void scGondowanCliffsTurnBackToHelpPiers(void)
 	fdScriptFinishScreenTransition();
 	fdScriptPlaySnd(SE_MAP_EXIT);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 512, 488);
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syFieldScriptSetExitRequest(GONDOWAN_CLIFFS_TO_WORLD_MAP_A);
 }
 
 GEYSER *scGeyserAdd(
-	Sint32 slot, Sint32 id, Sint32 timer, Sint32 low, Sint32 high);
+	Sint32 slot, Sint32 id, Sint32 tmr, Sint32 low, Sint32 high);
 
 /* Sets up the scene being entered. The river channel has its own set-up; the
    cliffs turn the party back while Piers still needs their help, and otherwise
@@ -559,22 +558,22 @@ Sint32 scInit(void)
 		} else {
 			fdActorGetById(ACTOR_STUMP)->collisionFlg |= ACTOR_NEAR_PSYNERGY;
 		}
-		syWordsCopyEntry(((Uint8 *)GondowanCliffs_SavedWaterColors),
+		syWordsCopyEntry(((Uint8 *)GondowanCliffsSavedWaterColors),
 			(void *)&BG_PLTT_COLOR(0, FIRST_WATER_COLOR),
-			sizeof(GondowanCliffs_SavedWaterColors));
-		sySetFrameEvent(scGondowanCliffsCycleWaterCols, EVENT_PASS_FRAME);
+			sizeof(GondowanCliffsSavedWaterColors));
+		sySetTickEvent(scGondowanCliffsCycleWaterCols, EVENT_PASS_TICK);
 		((MAP_GROUND_EFFECTS *)Ram_HeapSlots->mapGrid)->wading = 1;
 	}
 	return 0;
 }
 
-extern Sint16 GondowanCliffs_CameraBoxes[];
+extern Sint16 GondowanCliffsCameraBoxes[];
 
 Sint32 scPrepareMap(void)
 {
 	if(MainRoutineStateWork.next == SCENE_GONDOWAN_CLIFFS)
 		((MAP_STATE *)Ram_HeapSlots->mapGrid)->cameraBoxes =
-			GondowanCliffs_CameraBoxes;
+			GondowanCliffsCameraBoxes;
 	return 0;
 }
 
@@ -586,8 +585,7 @@ Sint32 scPrepareMap(void)
 
 /* Makes actor id the geyser of entry slot, rising from low to high pixels every
    six seconds, with an unseen platform at its top for the leader. */
-GEYSER *scGeyserAdd(
-	Sint32 slot, Sint32 id, Sint32 timer, Sint32 low, Sint32 high)
+GEYSER *scGeyserAdd(Sint32 slot, Sint32 id, Sint32 tmr, Sint32 low, Sint32 high)
 {
 	GEYSER_WORK *state = GEYSER_STATE;
 	GEYSER		*entry = &state->entries[slot];
@@ -605,11 +603,11 @@ GEYSER *scGeyserAdd(
 		}
 		entry->id = id;
 		entry->height = 0;
-		entry->tmr = timer;
-		entry->period = GEYSER_PERIOD_FRAMES;
+		entry->tmr = tmr;
+		entry->period = GEYSER_PERIOD_TICKS;
 		entry->max = high;
-		entry->riseAt = GEYSER_RISE_FRAME;
-		entry->fallAt = GEYSER_FALL_FRAME;
+		entry->riseAt = GEYSER_RISE_TICK;
+		entry->fallAt = GEYSER_FALL_TICK;
 		entry->min = low;
 		entry->unreadSetToOne = 1;
 		actor->motionFlg = 0;
@@ -634,15 +632,15 @@ GEYSER *scGeyserAdd(
 
 /* The Gondowan Cliffs' tables, which the scene's getters return. */
 
-extern Sint32 GondowanCliffs_ResetTileSpriteScript[];
+extern Sint32 GondowanCliffsResetTileSpriteScript[];
 
-LATE_DATA Sint32 GondowanCliffs_ResetTileSpriteScript[] = {
+LATE_DATA Sint32 GondowanCliffsResetTileSpriteScript[] = {
 	SC_CALL(scTileSprReset),
 	SC_END,
 };
 
 /* clang-format off */
-LATE_DATA SCENE_ENTRANCE GondowanCliffs_Entrances[] = {
+LATE_DATA SCENE_ENTRANCE GondowanCliffsEntrances[] = {
 	{0, CONDITION_ALWAYS, 680, 0, 280, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{GONDOWAN_CLIFFS_FROM_WORLD_MAP_A, CONDITION_ALWAYS, 536, 0, 488, FACING_EAST, 0, 512, 0, 2048, 864, 0},
 	{GONDOWAN_CLIFFS_FROM_WORLD_MAP_B, CONDITION_ALWAYS, 2024, 0, 792, FACING_WEST, 0, 512, 0, 2048, 864, 0},
@@ -651,7 +649,7 @@ LATE_DATA SCENE_ENTRANCE GondowanCliffs_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-LATE_DATA SCENE_ENTRANCE GondowanCliffs_PassEntrances[] = {
+LATE_DATA SCENE_ENTRANCE GondowanCliffsPassEntrances[] = {
 	{0, CONDITION_ALWAYS, 168, 0, 280, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{SCENE_TABLE_END},
 };
@@ -667,7 +665,7 @@ LATE_DATA Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-LATE_DATA ACTOR_PLACE GondowanCliffs_ActorPlacements[] = {
+LATE_DATA ACTOR_PLACE GondowanCliffsActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1560, 0, 760, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -688,28 +686,28 @@ LATE_DATA ACTOR_PLACE GondowanCliffs_ActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-LATE_DATA ACTOR_PLACE GondowanCliffs_PassActorPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, (Sint32)GondowanCliffs_ResetTileSpriteScript, 330, 0, 79, FACING_EAST, TALK_FACING_KEEP, 0),
+LATE_DATA ACTOR_PLACE GondowanCliffsPassActorPlacements[] = {
+	ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, (Sint32)GondowanCliffsResetTileSpriteScript, 330, 0, 79, FACING_EAST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 232, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SEA_ROCK, FLAG_GONDOWAN_CLIFFS_ROCK_GROUND, MOVEMENT_TYPE_STAND, 304, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
 
-LATE_DATA const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+LATE_DATA const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
-LATE_DATA CUE GondowanCliffs_PassCues[] = {
+LATE_DATA CUE GondowanCliffsPassCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_PASS_SEA_ROCK, CONDITION_ALWAYS, SCRIPT_REF(scGondowanCliffsGrindTheRock)},
 	{CUE_TABLE_END},
 };
 
-LATE_DATA CUE GondowanCliffs_Cues[] = {
+LATE_DATA CUE GondowanCliffsCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT | EXIT_STYLE_HIDDEN_LAYER, 3, IF_FLAG_SET(FLAG_GONDOWAN_CLIFFS_WEEDS_BLOWN), 3},
@@ -732,7 +730,7 @@ LATE_DATA CUE GondowanCliffs_Cues[] = {
 
 /* The parts of the cliffs the camera keeps out of, left, top, right and */
 /* bottom in pixels. */
-LATE_DATA Sint16 GondowanCliffs_CameraBoxes[] ALIGNED(4) = {
+LATE_DATA Sint16 GondowanCliffsCameraBoxes[] ALIGNED(4) = {
 	512, 512, 1024, 864,
 	1536, 0, 4096, 352,
 	-1, -1, -1, -1,

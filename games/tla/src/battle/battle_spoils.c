@@ -19,22 +19,22 @@ typedef enum LEVEL_UP_GAIN {
    none. */
 Uint32 btSpoilsRankItem(Uint32 inventoryEntry)
 {
-	Uint32 priority = 0;
+	Uint32 pri = 0;
 	Uint32 itemId = inventoryEntry & INVENTORY_ITEM_ID_MASK;
 	if(itemId == 0)
 		return 0;
 	{
-		Uint8 flags = gmItemGetDirectStub(itemId)->flg;
+		Uint8 flg = gmItemGetDirectStub(itemId)->flg;
 
-		if(flags & ITEM_INDISPENSABLE)
-			priority = 1;
-		priority <<= 1;
-		if(flags & ITEM_RARE)
-			priority++;
-		priority <<= 9;
-		priority += itemId;
+		if(flg & ITEM_INDISPENSABLE)
+			pri = 1;
+		pri <<= 1;
+		if(flg & ITEM_RARE)
+			pri++;
+		pri <<= 9;
+		pri += itemId;
 	}
-	return priority;
+	return pri;
 }
 
 /* Above every item's rank: the search for the lowest of the spoils' four starts
@@ -47,15 +47,15 @@ void btSpoilsClear(void)
 	BATTLE_STATE  *battle = Ram_HeapSlots->battleState;
 	BATTLE_SPOILS *spoils = &battle->spoils;
 	Uint16		  *items;
-	Sint32		   index;
+	Sint32		   idx;
 
 	MainRoutineStateWork.pendingItem = 0;
 	spoils->coins = 0;
 	spoils->experience = 0;
 	spoils->defeated = 0;
 	items = battle->spoils.items;
-	for(index = 3; index >= 0; index--)
-		items[index] = 0;
+	for(idx = 3; idx >= 0; idx--)
+		items[idx] = 0;
 }
 
 /* The name suffixes the scan reads back (NAME_SUFFIX_COUNT of them): the digits
@@ -80,12 +80,12 @@ Sint32 btStringFindFirstDigit(Uint8 *name)
    for every ten levels and one more, at least 30 percent of its own. */
 static __inline__ Sint32 btEnemyCalcCoinReward(UNIT *unit, Uint16 *reward)
 {
-	Sint32 rollIndex;
+	Sint32 rollIdx;
 	Sint32 bonus = 0;
 	Sint32 base;
 	Sint32 minimumBonus;
 
-	for(rollIndex = 0; rollIndex < (Uint8)(unit->level / 10U) + 1; rollIndex++)
+	for(rollIdx = 0; rollIdx < (Uint8)(unit->level / 10U) + 1; rollIdx++)
 		bonus += (syRandomBelow(6)) + 1;
 	base = *reward;
 	minimumBonus = base * 3 / 10;
@@ -98,12 +98,12 @@ static __inline__ Sint32 btEnemyCalcCoinReward(UNIT *unit, Uint16 *reward)
    die for every ten levels and one more, at least 30 percent more. */
 static __inline__ Sint32 btEnemyCalcExperienceReward(UNIT *unit, Uint16 *reward)
 {
-	Sint32 rollIndex;
+	Sint32 rollIdx;
 	Sint32 bonus = 0;
 	Sint32 base;
 	Sint32 minimumBonus;
 
-	for(rollIndex = 0; rollIndex < (Uint8)(unit->level / 10U) + 1; rollIndex++)
+	for(rollIdx = 0; rollIdx < (Uint8)(unit->level / 10U) + 1; rollIdx++)
 		bonus += (syRandomBelow(4)) + 1;
 	base = *reward;
 	minimumBonus = base * 3 / 10;
@@ -124,14 +124,14 @@ Sint32 btEnemyRecordDefeat(Sint32 unitId, Sint32 djinnBonus)
 	const ENEMY_DEFINITION *enemy;
 	BATTLE_STATE		   *battle;
 	BATTLE_SPOILS		   *spoils;
-	Sint32					itemIndex;
+	Sint32					itemIdx;
 	Sint32					dropShift;
 	Sint32					classSlot;
-	Sint32					lowestItemPriority;
+	Sint32					lowestItemPri;
 	Sint32					lowestSlot;
-	Sint32					itemPriority;
+	Sint32					itemPri;
 	Sint32					slot;
-	Sint32					classIndex;
+	Sint32					classIdx;
 
 	unit = syUnitGet(unitId);
 	battle = Ram_HeapSlots->battleState;
@@ -148,17 +148,17 @@ Sint32 btEnemyRecordDefeat(Sint32 unitId, Sint32 djinnBonus)
 	if(spoils->queueCnt <= 1)
 		spoils->queueCnt++;
 	classSlot = 0;
-	classIndex = 0;
+	classIdx = 0;
 	/* UB: the search runs to a sixth kind, one past enemyKinds: it reads
 	   kindsEnd, the halfword after them. */
 	if(battle->enemyKinds[0] != unit->enemyId) {
 		do {
-			if(++classIndex > (ENEMY_BATTLE_SIZE - 1))
+			if(++classIdx > (ENEMY_BATTLE_SIZE - 1))
 				break;
-		} while(battle->enemyKinds[classIndex] != unit->enemyId);
+		} while(battle->enemyKinds[classIdx] != unit->enemyId);
 	}
-	if(classIndex != ENEMY_BATTLE_SIZE)
-		classSlot = classIndex;
+	if(classIdx != ENEMY_BATTLE_SIZE)
+		classSlot = classIdx;
 	/* The first class to fall names the victory message. XXX (no evidence):
 	   whether DEFEAT_BY_PARTY_MEMBER was meant; no state is 2, so the test
 	   never fails. */
@@ -186,14 +186,14 @@ Sint32 btEnemyRecordDefeat(Sint32 unitId, Sint32 djinnBonus)
 	}
 	if(enemy->item == 0 || enemy->itemChance == 0)
 		return 0;
-	itemIndex = 0;
+	itemIdx = 0;
 	if(spoils->items[0] != enemy->item) {
 		do {
-			if(++itemIndex > 3)
+			if(++itemIdx > 3)
 				break;
-		} while(spoils->items[itemIndex] != enemy->item);
+		} while(spoils->items[itemIdx] != enemy->item);
 	}
-	if(itemIndex == 4) {
+	if(itemIdx == 4) {
 		dropShift = enemy->itemChance;
 		if(djinnBonus != 0)
 			dropShift -= 2;
@@ -203,15 +203,15 @@ Sint32 btEnemyRecordDefeat(Sint32 unitId, Sint32 djinnBonus)
 		   1). */
 		if((toFIXED(2) >> dropShift) > (gmBattleRandomStub() & 0xffff)) {
 			lowestSlot = -1;
-			lowestItemPriority = SPOILS_RANK_CEILING;
-			for(itemIndex = 0; itemIndex <= 3; itemIndex++) {
-				itemPriority = btSpoilsRankItem(spoils->items[itemIndex]);
-				if(itemPriority < lowestItemPriority) {
-					lowestItemPriority = itemPriority;
-					lowestSlot = itemIndex;
+			lowestItemPri = SPOILS_RANK_CEILING;
+			for(itemIdx = 0; itemIdx <= 3; itemIdx++) {
+				itemPri = btSpoilsRankItem(spoils->items[itemIdx]);
+				if(itemPri < lowestItemPri) {
+					lowestItemPri = itemPri;
+					lowestSlot = itemIdx;
 				}
 			}
-			if((Sint32)btSpoilsRankItem(enemy->item) > lowestItemPriority)
+			if((Sint32)btSpoilsRankItem(enemy->item) > lowestItemPri)
 				spoils->items[lowestSlot] = enemy->item;
 		}
 	}
@@ -226,7 +226,7 @@ void btAwardSpoils(void)
 	BATTLE_SPOILS *spoils;
 	Sint32		   living;
 	Uint16		  *list;
-	Sint32		   count;
+	Sint32		   cnt;
 	Sint32		   i;
 	Sint32		   unitId;
 	UNIT		  *unit;
@@ -251,9 +251,9 @@ void btAwardSpoils(void)
 	}
 	list = units;
 	living = btUnitListLiving(BATTLE_SIDE_MASK_PARTY, list);
-	count = btUnitListLivingWithReserve(BATTLE_SIDE_MASK_PARTY, list);
+	cnt = btUnitListLivingWithReserve(BATTLE_SIDE_MASK_PARTY, list);
 	backup = syHeapAllocEWRAM(sizeof(UNIT));
-	for(i = 0; i < count; i++) {
+	for(i = 0; i < cnt; i++) {
 		unitId = list[i];
 		unit = syUnitGet(unitId);
 		if(i >= living)

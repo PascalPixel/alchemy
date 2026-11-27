@@ -7,7 +7,7 @@
 static void scMercuryLighthouseArriveWithSparks(void)
 {
 	ACTOR *actor;
-	SPR	  *sprite;
+	SPR	  *spr;
 
 	actor = fdActorGetById(ACTOR_PARTY_LEADER);
 	if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -19,15 +19,15 @@ static void scMercuryLighthouseArriveWithSparks(void)
 		fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
 		fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		sySndPlay(SE_SPARKLING_PASSAGE);
 		actor->update = (void (*)(ACTOR *))scMercuryLighthouseTrailSparks;
 		fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.4);
 		fdActorWalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
 		fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
 		fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
-		sprite = actor->spr;
-		sprite->image.pri = 1;
+		spr = actor->spr;
+		spr->image.pri = 1;
 		fdActorWalkByAndWait(ACTOR_PARTY_LEADER, 0, 10);
 		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		actor->update = NULL;

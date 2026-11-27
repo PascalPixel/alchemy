@@ -20,7 +20,7 @@ void scLeaderSinkAway(Sint32 entrance)
 	fdActorSetSprFlags(fdActorGet(*owner), 0);
 	leader->update = 0;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syFieldScriptSetExitRequest(entrance);
 	fdScriptEnd();
 }

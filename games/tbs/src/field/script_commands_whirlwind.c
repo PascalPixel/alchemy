@@ -4,19 +4,19 @@
 #include "script_commands_internal.h"
 
 /* Whirlwind's particles: the ring that spreads from the caster, the leaves that
-   circle the orb 8 pixels out, a 32nd of a turn a frame, for 121 frames before
+   circle the orb 8 pixels out, a 32nd of a turn a tick, for 121 ticks before
    they wander off for 101, the target shrinking to half its size, and the orb's
-   10 frames from caster to target. */
+   10 ticks from caster to target. */
 enum {
 	WHIRLWIND_RADIAL_DIRECTIONS = 16,
 	WHIRLWIND_ORBIT_PARTICLES = 16,
 	WHIRLWIND_ORBIT_RADIUS = toFIXED(8),
 	WHIRLWIND_ORBIT_ANGLE_STEP = TRIG_TURN / 32,
-	WHIRLWIND_ORBIT_FRAMES = 121,
-	WHIRLWIND_WANDER_FRAMES = 101,
+	WHIRLWIND_ORBIT_TICKS = 121,
+	WHIRLWIND_WANDER_TICKS = 101,
 	WHIRLWIND_TARGET_SCALE_STEP = toFIXED(1) / 512,
 	WHIRLWIND_TARGET_MIN_SCALE = toFIXED(1) / 2,
-	WHIRLWIND_TRAVEL_FRAMES = 10
+	WHIRLWIND_TRAVEL_TICKS = 10
 };
 
 /* The shared effect-spawning source, at its place in the ROM. */
@@ -33,7 +33,7 @@ void fdEffectSpawnRadialParticleRing(ACTOR *origin)
 	EFFECT_OPTIONS opt;
 	FIXED		   vel[3];
 	FIXED		   vz;
-	Sint32		   angle;
+	Sint32		   ang;
 	Uint32		   i;
 
 	opt.pal = 0;
@@ -41,10 +41,10 @@ void fdEffectSpawnRadialParticleRing(ACTOR *origin)
 	opt.startScaleX = toFIXED(4) / 5;
 	opt.startScaleY = toFIXED(4) / 5;
 	for(i = 0; i <= WHIRLWIND_RADIAL_DIRECTIONS; i++) {
-		angle = i * (TRIG_TURN / WHIRLWIND_RADIAL_DIRECTIONS);
-		vel[0] = syCos(angle) * 3 / 2;
+		ang = i * (TRIG_TURN / WHIRLWIND_RADIAL_DIRECTIONS);
+		vel[0] = syCos(ang) * 3 / 2;
 		vel[1] = 0;
-		vz = sySin(angle);
+		vz = sySin(ang);
 		vel[2] = vz;
 		fdEffectSpawnResident(origin->x.fixed, origin->y.fixed, origin->z.fixed,
 			vel[0], vel[1], vz,
@@ -54,36 +54,36 @@ void fdEffectSpawnRadialParticleRing(ACTOR *origin)
 	}
 }
 
-/* Per-frame update: wanders away from the anchor, 2 to 3 pixels a frame, now
-   and then turning sharply; after 101 frames it hands over to the shared
+/* Per-tick update: wanders away from the anchor, 2 to 3 pixels a tick, now
+   and then turning sharply; after 101 ticks it hands over to the shared
    particle script. */
 void fdEffectWanderAroundAnchor(ACTOR *effect)
 {
 	FIXED  len;
-	Sint32 angle;
+	Sint32 ang;
 	FIXED  dx;
 	FIXED  dz;
 
 	/* syRandom is 0 to 1 in 16.16, so 2 to 3 pixels. */
 	len = syRandom() + toFIXED(2);
-	angle = effect->facing;
-	dx = syMulFX(len, syCos(angle));
-	dz = syMulFX(len, sySin(angle));
+	ang = effect->facing;
+	dx = syMulFX(len, syCos(ang));
+	dz = syMulFX(len, sySin(ang));
 	effect->x.fixed += dx;
 	effect->z.fixed += dz;
-	/* A small backwards drift, a 4096th of a turn a frame. */
+	/* A small backwards drift, a 4096th of a turn a tick. */
 	effect->facing += -(TRIG_TURN / 4096);
 	if(effect->turnFrm != 0) {
 		effect->turnFrm--;
 		effect->facing += TRIG_TURN / 32;
 	} else if(syRandom16Below(32) == 0) {
-		effect->turnFrm = syRandom16Below(16) + 8; /* 8 to 23 frames */
+		effect->turnFrm = syRandom16Below(16) + 8; /* 8 to 23 ticks */
 	}
-	if(++effect->swirlFrm == WHIRLWIND_WANDER_FRAMES)
-		fdActorStartScriptStub(effect, FieldEffect_SharedParticleScript);
+	if(++effect->swirlFrm == WHIRLWIND_WANDER_TICKS)
+		fdActorStartScriptStub(effect, FieldEffectSharedParticleScript);
 }
 
-/* Per-frame update: circles the anchor at 8 pixels; after 121 frames it starts
+/* Per-tick update: circles the anchor at 8 pixels; after 121 ticks it starts
    to wander (fdEffectWanderAroundAnchor). */
 void fdEffectCircleAnchor(ACTOR *effect)
 {
@@ -102,7 +102,7 @@ void fdEffectCircleAnchor(ACTOR *effect)
 		effect->x.fixed = anchor->x.fixed + dx;
 		effect->z.fixed = anchor->z.fixed + dz;
 		effect->facing += WHIRLWIND_ORBIT_ANGLE_STEP;
-		if(++effect->swirlFrm == WHIRLWIND_ORBIT_FRAMES) {
+		if(++effect->swirlFrm == WHIRLWIND_ORBIT_TICKS) {
 			/* The field engine integrates height after this update function. */
 			effect->update = fdEffectWanderAroundAnchor;
 			effect->swirlFrm = 0;
@@ -114,7 +114,7 @@ void fdEffectCircleAnchor(ACTOR *effect)
 	}
 }
 
-/* Shrinks an event-selected Whirlwind target each frame; below half size, moves
+/* Shrinks an event-selected Whirlwind target each tick; below half size, moves
    it to the origin, stops it and removes the update. */
 void fdWhirlwindUpdateTarget(ACTOR *actor)
 {
@@ -137,21 +137,21 @@ void fdPsynergyWhirlwindOnTarget(Sint32 unused)
 }
 
 /* Whirlwind: an orb grows as it flies from the caster to 4 pixels below the
-   Psynergy's position in 10 frames, swells and gusts; cast at a target a cue
+   Psynergy's position in 10 ticks, swells and gusts; cast at a target a cue
    names, it shrinks the target away and sends 16 leaves circling, then it
    whooshes off. */
 void fdPsynergyWhirlwind(void)
 {
 	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
 	ACTOR			   *caster = effectState->caster;
-	ACTOR			   *target = effectState->tgt;
+	ACTOR			   *tgt = effectState->tgt;
 	VECTOR3				pos;
 	VECTOR3				from;
 	VECTOR3				to;
 	ACTOR			   *orb;
 	Sint32				step;
 	ACTOR			   *leaf;
-	Sint32				steps = WHIRLWIND_TRAVEL_FRAMES + 1;
+	Sint32				steps = WHIRLWIND_TRAVEL_TICKS + 1;
 
 	step = 0;
 	from.x = caster->x.fixed;
@@ -166,18 +166,15 @@ void fdPsynergyWhirlwind(void)
 	}
 	fdPsynergyFadeToCastCol();
 	fdActorSelectAnimationStub(orb, 2);
-	/* Both ends of the ten-frame flight. */
+	/* Both ends of the ten-tick flight. */
 	for(; step < steps; step++) {
 		FIXED scale;
-		orb->x.fixed =
-			from.x + step * (to.x - from.x) / WHIRLWIND_TRAVEL_FRAMES;
-		orb->y.fixed =
-			from.y + step * (to.y - from.y) / WHIRLWIND_TRAVEL_FRAMES;
-		orb->z.fixed =
-			from.z + step * (to.z - from.z) / WHIRLWIND_TRAVEL_FRAMES;
+		orb->x.fixed = from.x + step * (to.x - from.x) / WHIRLWIND_TRAVEL_TICKS;
+		orb->y.fixed = from.y + step * (to.y - from.y) / WHIRLWIND_TRAVEL_TICKS;
+		orb->z.fixed = from.z + step * (to.z - from.z) / WHIRLWIND_TRAVEL_TICKS;
 		/* from 0.25 to 1.3 */
-		scale = toFIXED(1) / 4 +
-			step * (toFIXED(21) / 20) / WHIRLWIND_TRAVEL_FRAMES;
+		scale =
+			toFIXED(1) / 4 + step * (toFIXED(21) / 20) / WHIRLWIND_TRAVEL_TICKS;
 		orb->scaleX = scale;
 		orb->scaleY = scale;
 		sySynch(1);
@@ -189,8 +186,8 @@ void fdPsynergyWhirlwind(void)
 	/* Cleared by fdPsynergyDispatch: cast on a target a cue names, the target
 	   is blown away. */
 	if(effectState->aimAhead == 0) {
-		if(target != 0)
-			target->update = fdWhirlwindUpdateTarget;
+		if(tgt != 0)
+			tgt->update = fdWhirlwindUpdateTarget;
 
 		/* Leaves from 4 pixels above the orb, each 0.8 pixel higher, 3 to 8
 		   pixels away. */

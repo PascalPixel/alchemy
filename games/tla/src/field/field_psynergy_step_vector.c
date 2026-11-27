@@ -17,18 +17,18 @@ void fdBattleEffectStepVector3(Sint32 *vector, Sint32 damping, Sint32 gravity)
 }
 
 /* Plots a pixel of colour color at (x, y) on the 64-pixel canvas. */
-void fdBattleEffectPlotHalfCanvasPixel(Sint32 x, Sint32 y, Sint32 color)
+void fdBattleEffectPlotHalfCanvasPixel(Sint32 x, Sint32 y, Sint32 col)
 {
 	Uint16 *map = Ram_HeapSlots->canvasMap;
 	Uint8  *canvas;
 
 	canvas = Ram_HeapSlots->battleCanvas;
-	canvas[map[(y << 6) + x]] = color;
+	canvas[map[(y << 6) + x]] = col;
 }
 
 /* Plots a pixel of colour color at (x, y) on the 128-pixel-wide canvas pair: x
    from 64 lands on the second canvas. */
-void fdBattleEffectPlotCanvasPixel(Sint32 x, Sint32 y, Sint32 color)
+void fdBattleEffectPlotCanvasPixel(Sint32 x, Sint32 y, Sint32 col)
 {
 	Uint16 *map = Ram_HeapSlots->canvasMap;
 	Uint8  *canvas = Ram_HeapSlots->battleCanvas;
@@ -37,13 +37,13 @@ void fdBattleEffectPlotCanvasPixel(Sint32 x, Sint32 y, Sint32 color)
 		canvas += CANVAS_SPRITE_BYTES;
 		x -= 64;
 	}
-	canvas[map[(y << 6) + x]] = color;
+	canvas[map[(y << 6) + x]] = col;
 }
 
 /* Draws a line of half canvas pixels from x0, y0 to x1, y1, Bresenham's way:
    one pixel per step along the longer axis. */
 void fdBattleEffectDrawHalfCanvasLine(
-	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 color)
+	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 col)
 {
 	Sint32 dx = x1 - x0;
 	Sint32 dy;
@@ -71,7 +71,7 @@ void fdBattleEffectDrawHalfCanvasLine(
 	y = y0;
 	if(dx > dy) {
 		for(i = 0; i < dx; i++) {
-			fdBattleEffectPlotHalfCanvasPixel(x, y, color);
+			fdBattleEffectPlotHalfCanvasPixel(x, y, col);
 			err += dy;
 			if(err >= dx) {
 				err -= dx;
@@ -81,7 +81,7 @@ void fdBattleEffectDrawHalfCanvasLine(
 		}
 	} else {
 		for(i = 0; i < dy; i++) {
-			fdBattleEffectPlotHalfCanvasPixel(x, y, color);
+			fdBattleEffectPlotHalfCanvasPixel(x, y, col);
 			err += dx;
 			if(err >= dy) {
 				err -= dy;
@@ -95,20 +95,20 @@ void fdBattleEffectDrawHalfCanvasLine(
 /* Draws a circle of the given radius round (cx, cy) on the half canvas, by the
    midpoint method: each step plots the eight symmetric points. */
 void fdBattleEffectDrawHalfCanvasCircle(
-	Sint32 cx, Sint32 cy, Sint32 radius, Sint32 color)
+	Sint32 cx, Sint32 cy, Sint32 radius, Sint32 col)
 {
 	Sint32 x = radius;
 	Sint32 y;
 
 	for(y = 0; x >= y; y++) {
-		fdBattleEffectPlotHalfCanvasPixel(cx + x, cy + y, color);
-		fdBattleEffectPlotHalfCanvasPixel(cx + x, cy - y, color);
-		fdBattleEffectPlotHalfCanvasPixel(cx - x, cy + y, color);
-		fdBattleEffectPlotHalfCanvasPixel(cx - x, cy - y, color);
-		fdBattleEffectPlotHalfCanvasPixel(cx + y, cy + x, color);
-		fdBattleEffectPlotHalfCanvasPixel(cx + y, cy - x, color);
-		fdBattleEffectPlotHalfCanvasPixel(cx - y, cy + x, color);
-		fdBattleEffectPlotHalfCanvasPixel(cx - y, cy - x, color);
+		fdBattleEffectPlotHalfCanvasPixel(cx + x, cy + y, col);
+		fdBattleEffectPlotHalfCanvasPixel(cx + x, cy - y, col);
+		fdBattleEffectPlotHalfCanvasPixel(cx - x, cy + y, col);
+		fdBattleEffectPlotHalfCanvasPixel(cx - x, cy - y, col);
+		fdBattleEffectPlotHalfCanvasPixel(cx + y, cy + x, col);
+		fdBattleEffectPlotHalfCanvasPixel(cx + y, cy - x, col);
+		fdBattleEffectPlotHalfCanvasPixel(cx - y, cy + x, col);
+		fdBattleEffectPlotHalfCanvasPixel(cx - y, cy - x, col);
 		radius = radius - y * 2 + 1;
 		if(radius < 0) {
 			Sint32 next = x - 1;
@@ -146,51 +146,51 @@ void fdBattleEffectDrawCanvasBlock(
 #define CANVAS_RAMP_COLORS 32
 
 /* Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
-   ColorBuffer_DarkenOneLevelMap, one level darker down the ramp of colours 224
+   ColorBufferDarkenOneLevelMap, one level darker down the ramp of colours 224
    to 254. */
-void fdColBufferDarkenOneLevel(Uint8 *buffer, Sint32 count)
+void fdColBufferDarkenOneLevel(Uint8 *buf, Sint32 cnt)
 {
-	if(count > 0) {
-		const Uint8 *table = ColorBuffer_DarkenOneLevelMap;
+	if(cnt > 0) {
+		const Uint8 *tbl = ColorBufferDarkenOneLevelMap;
 
 		do {
-			if(*buffer != 0)
-				*buffer = table[*buffer & (CANVAS_RAMP_COLORS - 1)];
-			count--;
-			buffer++;
-		} while(count != 0);
+			if(*buf != 0)
+				*buf = tbl[*buf & (CANVAS_RAMP_COLORS - 1)];
+			cnt--;
+			buf++;
+		} while(cnt != 0);
 	}
 }
 
 /* Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
-   ColorBuffer_DarkenTwoLevelsMap, two levels darker. */
-void fdColBufferDarkenTwoLevels(Uint8 *buffer, Sint32 count)
+   ColorBufferDarkenTwoLevelsMap, two levels darker. */
+void fdColBufferDarkenTwoLevels(Uint8 *buf, Sint32 cnt)
 {
-	if(count > 0) {
-		const Uint8 *table = ColorBuffer_DarkenTwoLevelsMap;
+	if(cnt > 0) {
+		const Uint8 *tbl = ColorBufferDarkenTwoLevelsMap;
 
 		do {
-			if(*buffer != 0)
-				*buffer = table[*buffer & (CANVAS_RAMP_COLORS - 1)];
-			count--;
-			buffer++;
-		} while(count != 0);
+			if(*buf != 0)
+				*buf = tbl[*buf & (CANVAS_RAMP_COLORS - 1)];
+			cnt--;
+			buf++;
+		} while(cnt != 0);
 	}
 }
 
 /* Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
-   ColorBuffer_DarkenFourLevelsMap, four levels darker. */
-void fdColBufferDarkenFourLevels(Uint8 *buffer, Sint32 count)
+   ColorBufferDarkenFourLevelsMap, four levels darker. */
+void fdColBufferDarkenFourLevels(Uint8 *buf, Sint32 cnt)
 {
-	if(count > 0) {
-		const Uint8 *table = ColorBuffer_DarkenFourLevelsMap;
+	if(cnt > 0) {
+		const Uint8 *tbl = ColorBufferDarkenFourLevelsMap;
 
 		do {
-			if(*buffer != 0)
-				*buffer = table[*buffer & (CANVAS_RAMP_COLORS - 1)];
-			count--;
-			buffer++;
-		} while(count != 0);
+			if(*buf != 0)
+				*buf = tbl[*buf & (CANVAS_RAMP_COLORS - 1)];
+			cnt--;
+			buf++;
+		} while(cnt != 0);
 	}
 }
 
@@ -203,7 +203,7 @@ void fdColBufferDarkenFourLevels(Uint8 *buffer, Sint32 count)
 /* The canvas in words, as one 32-bit DMA. */
 #define CANVAS_DMA DMA_COPY_WORDS(CANVAS_SPRITE_BYTES / 4)
 
-/* The canvas's frame callback: counts the frame and carries out the command the
+/* The canvas's tick callback: counts the tick and carries out the command the
    effect left for it, copying the canvas into the sprite's tiles (or to the
    start of BG VRAM), and clearing or fading it after the copy. */
 void fdBattleEffectUploadCanvas(void)
@@ -241,7 +241,7 @@ void fdBattleEffectUploadCanvas(void)
 	state->command = 0;
 }
 
-/* The canvas sprite's frame callback: places the sprite at the state's position
+/* The canvas sprite's tick callback: places the sprite at the state's position
    (whole pixels), scale and angle, and draws it. A sprite scaled to nothing is
    not drawn. */
 void fdBattleEffectDrawCanvasSpr(void)
@@ -298,11 +298,11 @@ void fdBattleEffectDrawCanvasSpr(void)
 /* Starts the canvas sprite of the field Psynergy scenes: its state, a cleared
    64x64 canvas copied into the sprite's tiles, and a map from each canvas pixel
    (row by row) to its place in the tiles. fdBattleEffectDrawCanvasSpr draws the
-   sprite and fdBattleEffectUploadCanvas uploads the canvas each frame;
+   sprite and fdBattleEffectUploadCanvas uploads the canvas each tick;
    fdBattleEffectEndCanvasSpr ends it. */
 void fdBattleEffectStartCanvasSpr(void)
 {
-	WIN_STATE		 *windowState = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE		 *winState = (WIN_STATE *)Ram_HeapSlots->winState;
 	CANVAS_SPR_STATE *state =
 		syHeapSlotAlloc(HEAP_SLOT_CANVAS_SPRITE, sizeof(*state));
 	Uint8 *canvas =
@@ -312,7 +312,7 @@ void fdBattleEffectStartCanvasSpr(void)
 	Sint32	x;
 
 	IWRAM_FILL_WORDS(state, sizeof(*state), 0);
-	state->tile = windowState->glyphTiles;
+	state->tile = winState->glyphTiles;
 	state->mode = CANVAS_SPRITE_16_COLORS;
 	state->command = 0;
 	state->x = 16;
@@ -336,11 +336,11 @@ void fdBattleEffectStartCanvasSpr(void)
 		}
 	}
 
-	sySetEvent(fdBattleEffectDrawCanvasSpr, EVENT_PASS_FRAME);
+	sySetEvent(fdBattleEffectDrawCanvasSpr, EVENT_PASS_TICK);
 	sySetEvent(fdBattleEffectUploadCanvas, EVENT_PASS_VBLANK - 20);
 }
 
-/* Ends the canvas sprite: stops its draw and upload callbacks, waits a frame
+/* Ends the canvas sprite: stops its draw and upload callbacks, waits a tick
    and frees its sprite state, canvas and pixel map. */
 void fdBattleEffectEndCanvasSpr(void)
 {
@@ -363,20 +363,20 @@ typedef struct APPEAR_SPARKS_STATE {
 	EFFECT_SPR	sprs[APPEAR_SPARK_COUNT];
 } APPEAR_SPARKS_STATE;
 
-#define SPARK_LIFE			50
-#define PHASE_DONE			999 /* the appearance's phases are over */
+#define SPARK_LIFE		   50
+#define PHASE_DONE		   999 /* the appearance's phases are over */
 /* RESOURCE_SPARKLE_FADE's sparkles, each smaller and fainter than the last. */
-#define SPARKLE_PICTURES	4
-/* The frames the sparks keep coming, and the frames the actor then takes to
+#define SPARKLE_PICTURES   4
+/* The ticks the sparks keep coming, and the ticks the actor then takes to
    widen from nothing to full width. */
-#define APPEAR_SPAWN_FRAMES 10
-#define APPEAR_WIDEN_FRAMES 64
+#define APPEAR_SPAWN_TICKS 10
+#define APPEAR_WIDEN_TICKS 64
 
 /* An actor appears in a whirl of sparks, as Alex does on Venus Lighthouse:
    APPEAR_SPARK_COUNT sparkles (RESOURCE_SPARKLE_FADE) circle round where it
-   stands, each rising and closing in for SPARK_LIFE frames. The actor spins and
-   widens from nothing to full width over APPEAR_WIDEN_FRAMES, when its shadow
-   shows again, and the sparks stop coming APPEAR_SPAWN_FRAMES later. */
+   stands, each rising and closing in for SPARK_LIFE ticks. The actor spins and
+   widens from nothing to full width over APPEAR_WIDEN_TICKS, when its shadow
+   shows again, and the sparks stop coming APPEAR_SPAWN_TICKS later. */
 void fdActorAppearInSparks(Sint32 actorId)
 {
 	APPEAR_SPARKS_STATE *state =
@@ -387,13 +387,13 @@ void fdActorAppearInSparks(Sint32 actorId)
 	Sint32		 spawning;
 	ACTOR		*actor = fdActorLookup(actorId);
 	Sint32		 depth = fdActorGetSprDepth(actor);
-	Sint32		 angle = (Uint16)actor->facing;
+	Sint32		 ang = (Uint16)actor->facing;
 	WHIRL_SPARK *spark;
-	EFFECT_SPR	*sprite;
+	EFFECT_SPR	*spr;
 	Sint32		 i;
 	Sint32		 next;
-	Sint32		 frame;
-	Sint32		 position[3];
+	Sint32		 frm;
+	Sint32		 pos[3];
 
 	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_SPARKLE_FADE), state);
 	entry = syVRAMCacheFindFreeEntry();
@@ -402,15 +402,15 @@ void fdActorAppearInSparks(Sint32 actorId)
 	i = 0;
 	spark = state->sparks;
 	for(; i < APPEAR_SPARK_COUNT; i++, spark++) {
-		sprite = &state->sprs[i];
+		spr = &state->sprs[i];
 		/* Set up as Teleport's sparks are; each draw picks its sparkle
 		   again. */
-		fdEffectSprInit(sprite, 4, 4, 0,
+		fdEffectSprInit(spr, 4, 4, 0,
 			tiles + (i & (ORB_PICTURES - 1)) * OBJ_TILES_PER_8BPP_TILE);
-		sprite->oam.fullCol = 1;
-		sprite->oam.pal = 0;
-		sprite->depth = fdActorGetSprDepth(actor);
-		sprite->oam.pri = fdActorGetSprPriority(actor);
+		spr->oam.fullCol = 1;
+		spr->oam.pal = 0;
+		spr->depth = fdActorGetSprDepth(actor);
+		spr->oam.pri = fdActorGetSprPriority(actor);
 		spark->age = -1;
 	}
 	actor->scaleX = 0;
@@ -419,11 +419,11 @@ void fdActorAppearInSparks(Sint32 actorId)
 	spawning = 1;
 	phase = 0;
 	next = 0;
-	frame = 0;
+	frm = 0;
 	do {
 		if(spawning != 0) {
 			for(i = spawning; i != 0; i--) {
-				Sint32 sparkAngle = syRandom();
+				Sint32 sparkAng = syRandom();
 				Sint32 radius = syRandom() * 6 + toFIXED(12);
 
 				spark = &state->sparks[next];
@@ -432,9 +432,9 @@ void fdActorAppearInSparks(Sint32 actorId)
 				spark->x = actor->x.fixed;
 				spark->y = actor->y.fixed + toFIXED(20);
 				spark->z = actor->z.fixed;
-				syVectorAddPolarOffset(syRandom(), sparkAngle, &spark->x);
+				syVectorAddPolarOffset(syRandom(), sparkAng, &spark->x);
 				next++;
-				spark->ang = sparkAngle;
+				spark->ang = sparkAng;
 				spark->radius = radius;
 				next %= APPEAR_SPARK_COUNT;
 			}
@@ -442,26 +442,26 @@ void fdActorAppearInSparks(Sint32 actorId)
 		spark = state->sparks;
 		for(i = 0; i < APPEAR_SPARK_COUNT; i++, spark++) {
 			if(spark->age >= 0) {
-				sprite = &state->sprs[i];
+				spr = &state->sprs[i];
 				if((Uint32)spark->age < SPARK_LIFE) {
-					Sint32 sparkAngle = spark->ang;
+					Sint32 sparkAng = spark->ang;
 					FIXED  radius = spark->radius;
 
-					position[0] = spark->x;
-					position[1] = spark->y;
-					position[2] = spark->z;
-					syVectorAddPolarOffset(radius, sparkAngle, position);
-					if(position[2] > actor->z.fixed)
-						sprite->depth = depth + 2;
+					pos[0] = spark->x;
+					pos[1] = spark->y;
+					pos[2] = spark->z;
+					syVectorAddPolarOffset(radius, sparkAng, pos);
+					if(pos[2] > actor->z.fixed)
+						spr->depth = depth + 2;
 					else
-						sprite->depth = depth - 2;
-					fdCameraWorldToScreen(position);
-					sprite->x = position[0];
-					sprite->y = position[2];
-					sprite->oam.idx = tiles +
+						spr->depth = depth - 2;
+					fdCameraWorldToScreen(pos);
+					spr->x = pos[0];
+					spr->y = pos[2];
+					spr->oam.idx = tiles +
 						(spark->age & (SPARKLE_PICTURES - 1)) *
 							OBJ_TILES_PER_8BPP_TILE;
-					fdEffectSprDraw(sprite);
+					fdEffectSprDraw(spr);
 					spark->ang += TRIG_TURN / 32;
 					spark->radius -= toFIXED(1) / 5;
 					spark->y -= toFIXED(1) / 4;
@@ -472,30 +472,30 @@ void fdActorAppearInSparks(Sint32 actorId)
 		}
 		switch(phase) {
 		case 0:
-			if(frame == APPEAR_SPAWN_FRAMES) {
+			if(frm == APPEAR_SPAWN_TICKS) {
 				phase = 1;
-				frame = -1;
+				frm = -1;
 			}
 			break;
 		case 1:
-			if(frame < APPEAR_WIDEN_FRAMES) {
+			if(frm < APPEAR_WIDEN_TICKS) {
 				actor->facing -= FACING_STEP;
-				actor->scaleX = frame * (toFIXED(1) / APPEAR_WIDEN_FRAMES);
+				actor->scaleX = frm * (toFIXED(1) / APPEAR_WIDEN_TICKS);
 				if(actor->scaleX > toFIXED(1))
 					actor->scaleX = toFIXED(1);
 			}
-			if(frame == APPEAR_WIDEN_FRAMES) {
-				actor->facing = angle;
+			if(frm == APPEAR_WIDEN_TICKS) {
+				actor->facing = ang;
 				fdActorSetSprFlagsStub(actor, SPRITE_FLAG_SHADOW);
 			}
-			if(frame == APPEAR_SPAWN_FRAMES)
+			if(frm == APPEAR_SPAWN_TICKS)
 				spawning = 0;
-			if(frame == APPEAR_WIDEN_FRAMES + APPEAR_SPAWN_FRAMES)
+			if(frm == APPEAR_WIDEN_TICKS + APPEAR_SPAWN_TICKS)
 				phase = PHASE_DONE;
 			break;
 		}
 		sySynch(1);
-		frame++;
+		frm++;
 	} while(phase != PHASE_DONE);
 	syVRAMCacheFreeEntry(entry);
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
@@ -525,26 +525,26 @@ void fdParticleUpdate(FIELD_PARTICLE *effect)
    exclusive. */
 void fdEffectDrawScaledActor(FIELD_PARTICLE *object)
 {
-	SPR	  *sprite;
-	Sint32 offset;
+	SPR	  *spr;
+	Sint32 ofs;
 	FIXED  scale[2];
-	Sint32 position[4];
+	Sint32 pos[4];
 
-	sprite = object->spr;
-	offset = 0;
+	spr = object->spr;
+	ofs = 0;
 	if(object->flg & FIELD_PARTICLE_LIFTED_BY_Z)
-		offset = toFIXED(508) - object->z;
-	scale[0] = syMulFX(object->scaleX, sprite->scale);
-	scale[1] = syMulFX(object->scaleY, sprite->scale);
-	SET_VECTOR(position, object->x, offset, object->z + offset);
-	position[3] = 0;
+		ofs = toFIXED(508) - object->z;
+	scale[0] = syMulFX(object->scaleX, spr->scale);
+	scale[1] = syMulFX(object->scaleY, spr->scale);
+	SET_VECTOR(pos, object->x, ofs, object->z + ofs);
+	pos[3] = 0;
 	if(object->x > -toFIXED(32) && object->x < toFIXED(272) &&
 		object->z > -toFIXED(32) && object->z < toFIXED(224))
-		fdRenderApplyProjectedPlacementStub(sprite, position, scale, 0);
+		fdRenderApplyProjectedPlacementStub(spr, pos, scale, 0);
 }
 
 /* Moves a field effect sprite toward its target, turning at most turnStepMax a
-   frame when turnStepLimited is set and speeding up by acceleration to
+   tick when turnStepLimited is set and speeding up by acceleration to
    speedMax. One that stops at its target lands on it once within 8 pixels. */
 void fdParticleUpdateMotion(FIELD_PARTICLE *effect)
 {
@@ -554,7 +554,7 @@ void fdParticleUpdateMotion(FIELD_PARTICLE *effect)
 	Sint32 ix;
 	Sint32 iz;
 	Sint32 speed;
-	Sint16 angle;
+	Sint16 ang;
 	Sint32 heading;
 	Sint32 facing;
 	Sint16 turn;
@@ -574,10 +574,10 @@ void fdParticleUpdateMotion(FIELD_PARTICLE *effect)
 			return;
 		}
 	}
-	angle = syAtan(dz, dx);
+	ang = syAtan(dz, dx);
 	if(effect->turnStepLimited != 0) {
 		heading = effect->heading;
-		turn = angle - heading;
+		turn = ang - heading;
 		if((turn >= 0 ? turn : -turn) >= effect->turnStepMax) {
 			if(turn < 0) {
 				if(-turn > effect->turnStepMax)
@@ -585,18 +585,18 @@ void fdParticleUpdateMotion(FIELD_PARTICLE *effect)
 			} else if(turn > effect->turnStepMax) {
 				turn = effect->turnStepMax;
 			}
-			angle = turn + heading;
+			ang = turn + heading;
 		}
 	}
-	facing = (Uint16)angle;
+	facing = (Uint16)ang;
 	effect->heading = facing;
 	speed = effect->speed + effect->acceleration;
 	if(speed > effect->speedMax)
 		speed = effect->speedMax;
-	angle = (Sint16)facing;
+	ang = (Sint16)facing;
 	effect->speed = speed;
-	effect->x += syMulFX(syCos(angle), speed);
-	effect->z += syMulFX(sySin(angle), speed);
+	effect->x += syMulFX(syCos(ang), speed);
+	effect->z += syMulFX(sySin(ang), speed);
 }
 
 /* Reports an unfinished target only for effects that stop on arrival. */
@@ -625,10 +625,10 @@ void fdParticleSetAnimation(FIELD_PARTICLE *effect, Sint32 mode)
 	fdSprStartAnimationStub(effect->spr, mode);
 }
 
-/* Gives a field effect sprite its per-frame callback, starting at state 0. */
-void fdParticleSetCallback(FIELD_PARTICLE *effect, EFFECT_CALLBACK callback)
+/* Gives a field effect sprite its per-tick callback, starting at state 0. */
+void fdParticleSetCallback(FIELD_PARTICLE *effect, EFFECT_CALLBACK func)
 {
-	effect->func = callback;
+	effect->func = func;
 	effect->funcDelay = 0;
 	effect->age = 0;
 	effect->state = 0;
@@ -636,16 +636,16 @@ void fdParticleSetCallback(FIELD_PARTICLE *effect, EFFECT_CALLBACK callback)
 
 /* Starts a field particle with a sprite of the given kind at (x, z), at full
    size and in front of everything: it will fly to its target at up to 2 pixels
-   a frame, turning a limited step at a time, and stop there. */
+   a tick, turning a limited step at a time, and stop there. */
 void fdParticleInit(FIELD_PARTICLE *effect, Sint32 kind, Sint32 x, Sint32 z)
 {
-	SPR *animation;
+	SPR *anm;
 
 	DMA_FILL32(0, effect, sizeof *effect);
-	animation = fdSprCreateStub(kind);
-	effect->spr = animation;
-	if(animation != NULL)
-		animation->image.pri = 0;
+	anm = fdSprCreateStub(kind);
+	effect->spr = anm;
+	if(anm != NULL)
+		anm->image.pri = 0;
 	fdParticleSetPos(effect, x, z);
 	effect->scaleX = toFIXED(1);
 	effect->speedMax = toFIXED(2);
@@ -658,8 +658,8 @@ void fdParticleInit(FIELD_PARTICLE *effect, Sint32 kind, Sint32 x, Sint32 z)
 	   guarding this store alone would not establish allocation-failure
 	   recovery. */
 	{
-		SPR *sprite = effect->spr;
-		sprite->flg = 0;
+		SPR *spr = effect->spr;
+		spr->flg = 0;
 	}
 	effect->stopAtTgt = 1;
 	effect->turnStepLimited = 1;

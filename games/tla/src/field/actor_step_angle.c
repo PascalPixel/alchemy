@@ -9,15 +9,15 @@ Sint32 fdActorStepAng(ACTOR *actor)
 	Sint32 delta = 0;
 
 	if(actor != NULL) {
-		Sint32 targetAngle = (Uint16)actor->tmr;
-		Sint32 currentAngle = actor->facing;
-		delta = (Sint16)(targetAngle - currentAngle);
+		Sint32 tgtAng = (Uint16)actor->tmr;
+		Sint32 curAng = actor->facing;
+		delta = (Sint16)(tgtAng - curAng);
 		if(delta != 0) {
 			if(delta > TRIG_TURN / 16)
 				delta = TRIG_TURN / 32;
 			if(delta < -(TRIG_TURN / 16))
 				delta = -(TRIG_TURN / 32);
-			actor->facing = currentAngle + delta;
+			actor->facing = curAng + delta;
 		}
 	}
 	return delta;

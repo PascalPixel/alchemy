@@ -1,7 +1,7 @@
 /* The leader's leap from stump to stump in Fuchin Falls Cave; Fuchin Temple
    keeps it for three hops nothing calls. */
 
-/* The leader leaps the given pixels, two and a half a frame, and lands with a
+/* The leader leaps the given pixels, two and a half a tick, and lands with a
    spring. */
 static void scHopLeaderBy(Sint32 dx, Sint32 dz)
 {

@@ -97,8 +97,8 @@ extern SCENE_ENTRANCE MercuryLighthouseAerieEntrances[];
 extern Uint32		  MercuryLighthouseAerieExits[];
 extern ACTOR_PLACE	  MercuryLighthouseAerieActorPlacements[];
 extern CUE			  MercuryLighthouseAerieCues[];
-extern Sint32		  MercuryLighthouseAerie_LandedPlatform;
-extern Sint32		  Beacon_SparkScript[];
+extern Sint32		  MercuryLighthouseAerieLandedPlatform;
+extern Sint32		  BeaconSparkScript[];
 
 /* The aerie's actors.
 
@@ -130,7 +130,7 @@ typedef enum MERCURY_LIGHTHOUSE_AERIE_ACTOR_ID {
 } MERCURY_LIGHTHOUSE_AERIE_ACTOR_ID;
 
 /* Animations of the aerie's sprites beyond ACTOR_ANIMATION, as their animation
-   tables and frames under graphics/sprite draw them. */
+   tables and ticks under graphics/sprite draw them. */
 typedef enum MERCURY_LIGHTHOUSE_AERIE_ANIMATION {
 	/* Mia seen side-on, her head bowed and her hands clasped at her chest
 	   (mia.png). */
@@ -210,8 +210,7 @@ Sint32 scInit(void)
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 	if(MainRoutineStateWork.next == SCENE_MERCURY_LIGHTHOUSE_AERIE) {
 		gmFlagSet(FLAG_RETREAT_BLOCKED);
-		sySetFrameEvent(
-			scMercuryLighthouseAerieFlickerBeacon, EVENT_PASS_FRAME);
+		sySetTickEvent(scMercuryLighthouseAerieFlickerBeacon, EVENT_PASS_TICK);
 		fdActorSetSprPriority(ACTOR_PARTY_LEADER, 1);
 		fdActorSetSprPriority(ACTOR_GARET, 1);
 		fdActorSetSprPriority(ACTOR_IVAN, 1);
@@ -303,7 +302,7 @@ static void scMercuryLighthouseAeriePartyArrives(void)
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdMapGridWaitForShakeToSettle();
 	fdScriptWait(30);
 	fdCameraGetActor()->motionFlg = 0;
@@ -396,17 +395,17 @@ static void scMercuryLighthouseAeriePartyArrives(void)
 static void scMercuryLighthouseAerieJumpToNextPlatform(void)
 {
 	ACTOR	 *actor;
-	FIELD_POS position;
-	Sint32	  angle;
-	Uint8	  flags;
+	FIELD_POS pos;
+	Sint32	  ang;
+	Uint8	  flg;
 
 	actor = fdActorGet(ACTOR_PARTY_LEADER);
-	angle = FACING_NEAREST_EIGHTH(actor->facing);
-	flags = actor->motionFlg;
-	SET_POSITION(&position, (actor->x.fixed & FIELD_METATILE_MASK) + toFIXED(8),
+	ang = FACING_NEAREST_EIGHTH(actor->facing);
+	flg = actor->motionFlg;
+	SET_POSITION(&pos, (actor->x.fixed & FIELD_METATILE_MASK) + toFIXED(8),
 		actor->y.fixed, (actor->z.fixed & FIELD_METATILE_MASK) + toFIXED(8));
-	syVectorAddPolarOffset(toFIXED(32), angle, (FIXED *)&position);
-	if(syFieldActorCheckMovementCollision(actor, &position) == 0) {
+	syVectorAddPolarOffset(toFIXED(32), ang, (FIXED *)&pos);
+	if(syFieldActorCheckMovementCollision(actor, &pos) == 0) {
 		gmFlagClear(FLAG_ON_PLATFORM);
 		scMercuryLighthouseAerieFloatPlatforms();
 		fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
@@ -419,10 +418,10 @@ static void scMercuryLighthouseAerieJumpToNextPlatform(void)
 		actor->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
 		fdActorSetSprFlags(actor, 0);
 		fdActorMoveToAndWait(
-			ACTOR_PARTY_LEADER, FIXEDtoINT(position.x), FIXEDtoINT(position.z));
+			ACTOR_PARTY_LEADER, FIXEDtoINT(pos.x), FIXEDtoINT(pos.z));
 		fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
 		fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW);
-		actor->motionFlg = flags;
+		actor->motionFlg = flg;
 	}
 }
 
@@ -442,10 +441,10 @@ static void scMercuryLighthouseAerieLandOnPlatform(void)
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	fdScriptStart();
 	platformId = scActorFindNearestFloatingPlatform();
-	MercuryLighthouseAerie_LandedPlatform = platformId;
+	MercuryLighthouseAerieLandedPlatform = platformId;
 	if(platformId != 0) {
 		gmFlagSet(FLAG_ON_PLATFORM);
-		platform = fdActorGet(MercuryLighthouseAerie_LandedPlatform);
+		platform = fdActorGet(MercuryLighthouseAerieLandedPlatform);
 		platform->motionFlg = 0;
 		leader->motionFlg &= ~ACTOR_FOLLOWS_TERRAIN;
 		platform->y.fixed -= toFIXED(3);
@@ -1016,7 +1015,7 @@ static void scMercuryLighthouseAerieAlexAppears(void)
 
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(60);
 	fdActorRunRepeatedMotion(ACTOR_GARET, 2);
 	fdScriptWait(20);
@@ -1690,7 +1689,7 @@ static void scMercuryLighthouseAerieSaturosAndAlexWarpOut(void)
 	EFFECT_OPTIONS options;
 	ACTOR		  *left;
 	ACTOR		  *right;
-	Uint32		   frame;
+	Uint32		   frm;
 	FIXED		   x;
 	FIXED		   r;
 
@@ -1706,9 +1705,9 @@ static void scMercuryLighthouseAerieSaturosAndAlexWarpOut(void)
 	options.type = SPRITE_PARTICLE;
 	options.startScaleX = toFIXED(2) / 5;
 	options.startScaleY = toFIXED(3);
-	for(frame = 0; frame < WARP_FRAMES; frame++) {
+	for(frm = 0; frm < WARP_TICKS; frm++) {
 		fdScriptWait(1);
-		if(frame & 1) {
+		if(frm & 1) {
 			r = toFIXED(syRandomBelow(24));
 			x = left->x.fixed;
 			x += r;
@@ -1743,7 +1742,7 @@ static void scMercuryLighthouseAerieSaturosAndAlexWarpIn(void)
 	EFFECT_OPTIONS options;
 	ACTOR		  *left;
 	ACTOR		  *right;
-	Uint32		   frame;
+	Uint32		   frm;
 	FIXED		   x;
 	FIXED		   r;
 
@@ -1757,9 +1756,9 @@ static void scMercuryLighthouseAerieSaturosAndAlexWarpIn(void)
 	options.type = SPRITE_PARTICLE;
 	options.startScaleX = toFIXED(2) / 5;
 	options.startScaleY = toFIXED(3);
-	for(frame = 0; frame < WARP_FRAMES; frame++) {
+	for(frm = 0; frm < WARP_TICKS; frm++) {
 		fdScriptWait(1);
-		if(frame & 1) {
+		if(frm & 1) {
 			r = toFIXED(syRandomBelow(24));
 			x = left->x.fixed;
 			x += r;
@@ -1782,7 +1781,7 @@ static void scMercuryLighthouseAerieSaturosAndAlexWarpIn(void)
 					EFFECT_USE_PALETTE,
 				&options);
 		}
-		if(frame == WARP_IN_BLINK_FRAME) {
+		if(frm == WARP_IN_BLINK_TICK) {
 			fdActorSetSprColById(ACTOR_SATUROS, SPRITE_COLOR_BLINK);
 			fdActorSetSprColById(ACTOR_ALEX, SPRITE_COLOR_BLINK);
 		}
@@ -1816,13 +1815,13 @@ static void scMercuryLighthouseAerieFindActorsOnLift(Sint32 *out, Sint32 y)
 	}
 }
 
-/* How long the lift takes to sink, speeding up every fourth frame. */
-#define LIFT_DOWN_FRAMES 228
+/* How long the lift takes to sink, speeding up every fourth tick. */
+#define LIFT_DOWN_TICKS 228
 
-/* How long the lift takes to rise, and the last frames of it in which it slows
-   every fourth frame. */
-#define LIFT_UP_FRAMES		86
-#define LIFT_SLOWING_FRAMES 10
+/* How long the lift takes to rise, and the last ticks of it in which it slows
+   every fourth tick. */
+#define LIFT_UP_TICKS	   86
+#define LIFT_SLOWING_TICKS 10
 
 /* The lift sinks with everything standing on it, speeding up. */
 static void scMercuryLighthouseAerieLowerLift(void)
@@ -1847,7 +1846,7 @@ static void scMercuryLighthouseAerieLowerLift(void)
 		n++;
 	}
 	sySndPlay(SE_LIFT);
-	for(i = 0; i < LIFT_DOWN_FRAMES; i++) {
+	for(i = 0; i < LIFT_DOWN_TICKS; i++) {
 		lift->ofsY -= speed;
 		for(j = 0; j < n; j++) {
 			fdActorGet(ids[j])->z.fixed += speed;
@@ -1886,13 +1885,13 @@ static void scMercuryLighthouseAerieRaiseLift(void)
 		n++;
 	}
 	sySndPlay(SE_LIFT);
-	for(i = 0; i < LIFT_UP_FRAMES; i++) {
+	for(i = 0; i < LIFT_UP_TICKS; i++) {
 		lift->ofsY += speed;
 		for(j = 0; j < n; j++) {
 			fdActorGet(ids[j])->z.fixed -= speed;
 			fdActorGet(ids[j])->tgtZ = fdActorGet(ids[j])->z.fixed;
 		}
-		if((i & 3) == 3 && i >= LIFT_UP_FRAMES - LIFT_SLOWING_FRAMES)
+		if((i & 3) == 3 && i >= LIFT_UP_TICKS - LIFT_SLOWING_TICKS)
 			speed -= toFIXED(1) / 5;
 		if(speed < toFIXED(1) / 20)
 			speed = toFIXED(1) / 20;
@@ -1932,19 +1931,19 @@ UNUSED static void scMercuryLighthouseAerieUnusedAlexCastsPly(void)
 static void scMercuryLighthouseAerieUpdateBeaconSpark(ACTOR *spark)
 {
 	ACTOR *beacon;
-	Uint16 angle;
+	Uint16 ang;
 
 	beacon = (ACTOR *)spark->watchedActor;
-	angle = spark->tmr;
-	spark->x.fixed = beacon->x.fixed +
-		syCos(angle) * (spark->speedLimit + SPARK_ORBIT_RADIUS);
-	spark->z.fixed = (sySin(angle) << 4) + toFIXED(144);
+	ang = spark->tmr;
+	spark->x.fixed =
+		beacon->x.fixed + syCos(ang) * (spark->speedLimit + SPARK_ORBIT_RADIUS);
+	spark->z.fixed = (sySin(ang) << 4) + toFIXED(144);
 	spark->tgtX = spark->x.fixed;
 	spark->tgtZ = spark->z.fixed;
 	spark->tmr -= 512;
 }
 
-/* Flickers the beacon and sheds its sparks, every frame. */
+/* Flickers the beacon and sheds its sparks, every tick. */
 static void scMercuryLighthouseAerieFlickerBeacon(void)
 {
 	ACTOR				  *beacon;
@@ -1953,14 +1952,14 @@ static void scMercuryLighthouseAerieFlickerBeacon(void)
 	MAP_GRID_SCROLL_STATE *grid;
 	Sint32				   height;
 	FIXED				   scale;
-	Sint32				   cycleFrame;
+	Sint32				   cycleTick;
 	Uint32				   angle;
 
 	beacon = fdActorGet(ACTOR_BEACON);
 	grid = MapGridState[0];
 	height = toFIXED(syRandomBelow(48));
 	if((Sint16)FIXEDtoINT(grid->view[1]) <= BEACON_SHOWN_VIEW_TOP) {
-		if(FrameCount & 1) {
+		if(TickCount & 1) {
 			syImportActorSetPos(ACTOR_BEACON, toFIXED(304), toFIXED(144));
 			scale = toFIXED(1);
 			fdActorGet(ACTOR_BEACON)->scaleX = scale;
@@ -1976,8 +1975,8 @@ static void scMercuryLighthouseAerieFlickerBeacon(void)
 	if(beacon == NULL) {
 		return;
 	}
-	cycleFrame = FrameCount & 15;
-	if(cycleFrame != 0) {
+	cycleTick = TickCount & 15;
+	if(cycleTick != 0) {
 		return;
 	}
 	spark = syFieldActorCreate(SPRITE_PARTICLE, beacon->x.fixed + toFIXED(8),
@@ -1988,12 +1987,12 @@ static void scMercuryLighthouseAerieFlickerBeacon(void)
 		return;
 	}
 	sprite = spark->spr;
-	fdActorStartScript(spark, Beacon_SparkScript);
+	fdActorStartScript(spark, BeaconSparkScript);
 	fdActorSetSprCol(spark, SPRITE_COLOR_BGR);
-	spark->motionFlg = cycleFrame;
+	spark->motionFlg = cycleTick;
 	angle = syRandomNext() & 0x0ffff000;
 	spark->tmr = angle;
-	spark->userValue = cycleFrame;
+	spark->userValue = cycleTick;
 	spark->watchedActor = (ACTOR_OR_EFFECT *)beacon;
 	spark->update = scMercuryLighthouseAerieUpdateBeaconSpark;
 	spark->speedLimit =
@@ -2004,10 +2003,10 @@ static void scMercuryLighthouseAerieFlickerBeacon(void)
 
 #include "shared/field_effect_duration_scripts.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 SCENE_ENTRANCE MercuryLighthouseAerieEntrances[] = {
@@ -2101,6 +2100,6 @@ CUE MercuryLighthouseAerieCues[] = {
 };
 
 /* The floating platform the leader has landed on, 0 when none. */
-Sint32 MercuryLighthouseAerie_LandedPlatform = 0;
+Sint32 MercuryLighthouseAerieLandedPlatform = 0;
 
 #include "shared/beacon_spark_script.c"

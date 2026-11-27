@@ -3,7 +3,7 @@
 
 /* clang-format off */
 /* The 80 Djinn, 20 of each element in element order. */
-const DJINN_DEFINITION Djinn_DefinitionTable[] = {
+const DJINN_DEFINITION DjinnDefinitionTable[] = {
 	[DJINNI_FLINT] = {
 		.abilityId = ABILITY_DJINNI_FIRST,
 		.hp = 8,

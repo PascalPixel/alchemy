@@ -2,7 +2,7 @@
    the opponent who races Isaac by running a recorded path, and the race gauge
    that shows how near each of them is to the finish. */
 
-/* The halfwords of the opponent's path: x and z for 7,200 frames, the last pair
+/* The halfwords of the opponent's path: x and z for 7,200 ticks, the last pair
    the (0, 0) that ends it, as scColossoUpdatePathOpponent records it. */
 #define COLOSSO_PATH_HALFWORDS (7200 * 2)
 
@@ -10,18 +10,18 @@
    starts: the gauge, then the opponent's path. */
 typedef struct COLOSSO_RACE_STATE {
 	COLOSSO_GAUGE_STATE gauge;
-	/* Pixels, as pairs of x and z, one pair a frame, ending with (0, 0):
+	/* Pixels, as pairs of x and z, one pair a tick, ending with (0, 0):
 	   decoded from the map's resource, or recorded (PATH_RECORDER_RECORD). */
 	Sint16 path[COLOSSO_PATH_HALFWORDS];
 } COLOSSO_RACE_STATE;
 
 STATIC_ASSERT(sizeof(COLOSSO_RACE_STATE) == 29040);
 
-/* The opponent's event, each frame. Playing, it puts him on the next point of
-   his path, turning at most FACING_STEP a frame to face the way he runs and
-   standing once he has kept still three frames; at the path's end he walks to
+/* The opponent's event, each tick. Playing, it puts him on the next point of
+   his path, turning at most FACING_STEP a tick to face the way he runs and
+   standing once he has kept still three ticks; at the path's end he walks to
    the first prize, or the second when Isaac is there first, and holds it up.
-   Recording, it keeps the recorded actor's place each frame, and once the path
+   Recording, it keeps the recorded actor's place each tick, and once the path
    is full (two minutes) plays it back on the opponent. */
 static void scColossoUpdatePathOpponent(void)
 {
@@ -59,7 +59,7 @@ static void scColossoUpdatePathOpponent(void)
 			actor->speedLimit = toFIXED(1);
 			syFieldActorSetMoveTargetFX(actor, x, 0, finishZ);
 			gmFlagSet(FLAG_ARENA_REACHED);
-			fdActorStartScript(actor, Colosso_OpponentFinishScript);
+			fdActorStartScript(actor, ColossoOpponentFinishScript);
 			return;
 		}
 		x = toFIXED(x);
@@ -69,8 +69,8 @@ static void scColossoUpdatePathOpponent(void)
 		}
 		if(actor->x.fixed != x || actor->z.fixed != z) {
 			{
-				Uint16 angle = syAtan(z - actor->z.fixed, x - actor->x.fixed);
-				turn = (Sint16)(angle - actor->facing);
+				Uint16 ang = syAtan(z - actor->z.fixed, x - actor->x.fixed);
+				turn = (Sint16)(ang - actor->facing);
 			}
 			if(turn > FACING_STEP) {
 				turn = FACING_STEP;
@@ -223,7 +223,7 @@ static void scColossoDrawGauge(void)
 		(tile + GAUGE_TILE_END) | OBJ_PRIORITY(1) | OBJ_PALETTE(GAUGE_PALETTE);
 	syOAMAddSprAtDepth(entry++, OAM_DEPTH_FRONT);
 
-	if((FrameCount & 15) > 4) {
+	if((TickCount & 15) > 4) {
 		shape = OBJ_SIZE_16X16;
 		actor = fdActorLookup(gauge->opponentActorId);
 		if(actor != NULL) {

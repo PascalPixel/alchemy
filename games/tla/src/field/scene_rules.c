@@ -6,7 +6,7 @@
 #include "field/scene_tables.h"
 #include "field/script_commands.h"
 
-/* A backdrop's row in Scene_BattleBackgroundRules: its resource number with bit
+/* A backdrop's row in SceneBattleBackgroundRules: its resource number with bit
    31 set, before the scenes that take it. */
 #define BATTLE_BACKGROUND(resource) (Sint32)(0x80000000 + (resource))
 
@@ -15,7 +15,7 @@
 /* The battle background by scene (fdBattleBackgroundSelectForMap): a scene */
 /* takes the last backdrop listed before it, and one not listed the last */
 /* backdrop of all; 0 ends the table. */
-const Sint32 Scene_BattleBackgroundRules[] = {
+const Sint32 SceneBattleBackgroundRules[] = {
 	BATTLE_BACKGROUND(RESOURCE_DENSE_FOREST_BACKDROP),
 		SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
 	BATTLE_BACKGROUND(RESOURCE_CANYON_MEADOW_BACKDROP),
@@ -253,7 +253,7 @@ const Sint32 Scene_BattleBackgroundRules[] = {
 /* (fdEncounterSelectBattleMusic): a battle takes the music listed last */
 /* before its key. The search stops at the key or at the end (0), so a battle */
 /* not listed takes the last music, 0, and the function chooses its own. */
-const Sint16 Encounter_BattleMusic[] = {
+const Sint16 EncounterBattleMusic[] = {
 	ENCOUNTER_BATTLE_MUSIC(MUS_BATTLE_WITH_DULLAHAN),
 	ENCOUNTER_KEY(ENCOUNTER_ZONE_HIDDEN_BOSSES, HIDDEN_BOSS_ANEMOS),
 	ENCOUNTER_BATTLE_MUSIC(MUS_BATTLE_WITH_SENTINEL),

@@ -23,8 +23,8 @@ typedef enum SCENE_TYPE {
 typedef enum HAZARD_MODE {
 	/* The distance the leader walks on METATILE_BEHAVIOR_DESERT_SAND ground. */
 	HAZARD_COUNT_ON_METATILES = 0,
-	/* One each frame the field mode runs; no code in the game sets it. */
-	HAZARD_COUNT_FRAMES = 1
+	/* One each tick the field mode runs; no code in the game sets it. */
+	HAZARD_COUNT_TICKS = 1
 } HAZARD_MODE;
 
 /* MainRoutineStateWork.hazardDamage's bit 8: its low byte is a percentage of
@@ -84,9 +84,9 @@ typedef struct PARTY_HOLDINGS {
 typedef struct MAIN_ROUTINE_STATE {
 	/* gmBuildStampGetTime's value when the game was last saved; its low half
 	   goes into the file's summary. */
-	Uint32 buildStamp;
-	Uint32 playTime; /* frames, copied from PlayTimeFrames when saving */
-	Uint8  unused[4];
+	Uint32		   buildStamp;
+	Uint32		   playTime; /* ticks, copied from PlayTimeTicks when saving */
+	Uint8		   unused[4];
 	PARTY_HOLDINGS holdings;
 	Uint8		   unusedAfterPrizes[132];
 	/* What the main routine runs next: a scene (a SceneId_ row of ScenesWork),
@@ -162,7 +162,7 @@ typedef struct MAIN_ROUTINE_STATE {
 	Uint8  battleType;		 /* an BATTLE_TYPE */
 	/* Hazardous ground (the Lamakan Desert's heat): when hazardSteps reaches
 	   hazardLimit the party takes hazardDamage and the count starts again.
-	   pixels walked on hazard metatiles, or frames, by hazardMode */
+	   pixels walked on hazard metatiles, or ticks, by hazardMode */
 	Sint16 hazardLimit;
 	Sint16 hazardMode; /* an HAZARD_MODE */
 	/* bits: 8 the amount is a percentage of maximum HP | 7..0 the amount */
@@ -188,7 +188,7 @@ typedef struct MAIN_ROUTINE_STATE {
 	Sint8  haltedColMode;
 	Sint16 haltedActor; /* Halt: the stopped actor; -1 for none */
 	Sint16 cloaked;		/* 1 under Cloak, which prevents battles */
-	/* Halt: the stopped actor's per-frame update, put back when it resumes. */
+	/* Halt: the stopped actor's per-tick update, put back when it resumes. */
 	Uint32 haltedUpdate;
 	Uint8  unusedAfterHalt[80];
 	/* The Battle Arena's tallies: 4 the total wins and 7 the consecutive wins

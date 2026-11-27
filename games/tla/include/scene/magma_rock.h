@@ -32,50 +32,50 @@ typedef struct MAGMA_ROCK_CRUMBLING_PILLAR {
 
 Sint32 fdMapMetatileGetAttributes(Uint32 layer, Sint32 x, Sint32 z);
 
-extern Sint16 MagmaRock_SlidePillars[];
+extern Sint16 MagmaRockSlidePillars[];
 
-extern Sint16 MagmaRock_SalamanderTailHighWestPillars[];
+extern Sint16 MagmaRockSalamanderTailHighWestPillars[];
 
-extern Sint16 MagmaRock_SalamanderTailHighEastPillars[];
-extern Sint16 MagmaRock_SalamanderTailLowWestPillars[];
-extern Sint16 MagmaRock_SalamanderTailLowEastPillars[];
+extern Sint16 MagmaRockSalamanderTailHighEastPillars[];
+extern Sint16 MagmaRockSalamanderTailLowWestPillars[];
+extern Sint16 MagmaRockSalamanderTailLowEastPillars[];
 
 void scMagmaRockMoveFireball(struct ACTOR *actor);
 
-extern Uint32 MagmaRock_EmberScript[];
+extern Uint32 MagmaRockEmberScript[];
 
 void scMagmaRockBurnStatue(struct ACTOR *actor);
 
-extern Sint16 MagmaRock_SlideStatues[];
-extern Sint16 MagmaRock_SalamanderTailHighWestStatues[];
-extern Sint16 MagmaRock_SalamanderTailHighEastStatues[];
-extern Sint16 MagmaRock_SalamanderTailLowWestStatues[];
-extern Sint16 MagmaRock_SalamanderTailLowEastStatues[];
-extern Sint16 MagmaRock_StatueStatues[];
+extern Sint16 MagmaRockSlideStatues[];
+extern Sint16 MagmaRockSalamanderTailHighWestStatues[];
+extern Sint16 MagmaRockSalamanderTailHighEastStatues[];
+extern Sint16 MagmaRockSalamanderTailLowWestStatues[];
+extern Sint16 MagmaRockSalamanderTailLowEastStatues[];
+extern Sint16 MagmaRockStatueStatues[];
 
 void syStatueFlashUnderBurst(struct ACTOR *actor);
 
-void scMagmaRockDropRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 count);
+void scMagmaRockDropRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 cnt);
 void scMagmaRockStartFallingRocks(void);
 
 void scMagmaRockBurstCrackedPillar(Sint32 mode, Sint32 snd);
 
 void fdActorSetMetatileShape(Sint32 level, Sint32 layer, Sint32 id);
 
-struct ACTOR *fdActorFindInMetatile(Sint32 *position, struct ACTOR *self);
+struct ACTOR *fdActorFindInMetatile(Sint32 *pos, struct ACTOR *self);
 
-extern Sint16 MagmaRock_CrumblingPillars[];
+extern Sint16 MagmaRockCrumblingPillars[];
 
-void scMagmaRockRestoreCrumblingPillars(const Uint16 *table);
+void scMagmaRockRestoreCrumblingPillars(const Uint16 *tbl);
 
 /* Lays a tightrope between its two posts (fdTightropePlace, through the
    overlay's own import row). */
 void scMagmaRockPlaceTightrope();
 
 void		  scDustScatter(Sint32 spread);
-extern Uint32 Dust_ScatterScript[];
+extern Uint32 DustScatterScript[];
 
-extern Uint32 Dust_BurstScript[];
+extern Uint32 DustBurstScript[];
 
 void scMagmaRockFireStatue(void);
 
@@ -94,8 +94,8 @@ void scMagmaRockKnockLeaderOffWall(void);
 void scMagmaRockPushPillarEast(void);
 void scMagmaRockPushPillarWest(void);
 
-extern Uint32 FieldEffect_ShortScript[];
-extern Uint32 FieldEffect_MediumScript[];
-extern Uint32 FieldEffect_LongScript[];
+extern Uint32 FieldEffectShortScript[];
+extern Uint32 FieldEffectMediumScript[];
+extern Uint32 FieldEffectLongScript[];
 
 #endif

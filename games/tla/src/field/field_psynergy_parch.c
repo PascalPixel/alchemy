@@ -40,11 +40,11 @@ typedef enum PARCH_RESULT {
 typedef enum PARCH_PHASE {
 	/* the disc grows, to three quarters (a quarter on nothing) */
 	PARCH_SWELLS = 0,
-	/* On nothing: the disc holds for 30 frames, then shrinks away. */
+	/* On nothing: the disc holds for 30 ticks, then shrinks away. */
 	PARCH_HOLDS = 1,
 	PARCH_EMPTY_SHRINKS = 2,
-	/* On water: steam rises two puffs a frame, then one, and the disc shrinks
-	   away. Water that dries flashes white 40 frames into the steam, and the
+	/* On water: steam rises two puffs a tick, then one, and the disc shrinks
+	   away. Water that dries flashes white 40 ticks into the steam, and the
 	   cast ends with the thinner steam. */
 	PARCH_STEAMS = 1,
 	PARCH_STEAM_THINS = 2,
@@ -65,7 +65,7 @@ typedef struct PARCH_STATE {
 	PARCH_PUFF particles[PARCH_PUFF_COUNT];
 } PARCH_STATE;
 
-void fdBattleEffectFadeToSavedPalettes(Sint32 frames);
+void fdBattleEffectFadeToSavedPalettes(Sint32 ticks);
 
 /* Parch ("Evaporate standing water."): a glowing disc spreads 32 pixels before
    the caster and white puffs rise from it. On a puddle (SPRITE_PUDDLE), or on
@@ -76,19 +76,19 @@ void fdPsynergyParch(void)
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(PARCH_STATE));
 	HEAP_SLOTS		   *heap;
 	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
-	WIN_STATE		   *windowState = (WIN_STATE *)Ram_HeapSlots->winState;
-	Sint32				offset; /* into the field state's actor list */
+	WIN_STATE		   *winState = (WIN_STATE *)Ram_HeapSlots->winState;
+	Sint32				ofs; /* into the field state's actor list */
 	ACTOR			   *caster;
 	ACTOR			   *actor;
-	SPR				   *actorSprite;
-	EFFECT_SPR		   *sprite;
+	SPR				   *actorSpr;
+	EFFECT_SPR		   *spr;
 	EFFECT_SPR		   *fresh;
 	PARCH_PUFF		   *particle;
 	FIXED				screen[3];
 	FIXED				pos[3];
 	Sint32				phase;
-	Sint32				timer;
-	Sint32				frame;
+	Sint32				tmr;
+	Sint32				frm;
 	Sint32				entry;
 	Sint32				tile;
 	Sint32				next;
@@ -123,12 +123,12 @@ void fdPsynergyParch(void)
 	i = 0;
 	kind = SPRITE_PUDDLE;
 	heap = Ram_HeapSlots;
-	for(offset = offsetof(FIELD_STATE, actors); i < FIELD_ACTOR_COUNT;
-		i++, offset += sizeof(ACTOR *)) {
-		actor = *(ACTOR **)((Uint8 *)heap->fieldState + offset);
-		actorSprite = actor->spr;
-		if(actor->script != NULL && actorSprite->entries[0]->anmId == kind &&
-			actorSprite->lastNo == PUDDLE_ANIMATION_PUDDLE &&
+	for(ofs = offsetof(FIELD_STATE, actors); i < FIELD_ACTOR_COUNT;
+		i++, ofs += sizeof(ACTOR *)) {
+		actor = *(ACTOR **)((Uint8 *)heap->fieldState + ofs);
+		actorSpr = actor->spr;
+		if(actor->script != NULL && actorSpr->entries[0]->anmId == kind &&
+			actorSpr->lastNo == PUDDLE_ANIMATION_PUDDLE &&
 			fdPsynergyCheckOverlap(
 				pos, 4, &actor->x.fixed, actor->radius - 2) >= 0) {
 			result = PARCH_DRIES;
@@ -152,10 +152,10 @@ void fdPsynergyParch(void)
 		result = PARCH_NOTHING;
 	}
 loaded: {
-	void *source = syResourceGetTableEntry(RESOURCE_GLOW_DISC);
+	void *src = syResourceGetTableEntry(RESOURCE_GLOW_DISC);
 	dst = (Uint8 *)OBJ_VRAM0 + PARCH_DISC_TILE_OFFSET * TILE_SIZE_4BPP +
-		windowState->glyphTiles * TILE_SIZE_4BPP;
-	syDecompressTaggedLZ(source, state);
+		winState->glyphTiles * TILE_SIZE_4BPP;
+	syDecompressTaggedLZ(src, state);
 }
 	syDMAXCopy(state, dst, DMA_COPY_WORDS(1024), REG_DMA3);
 	screen[0] = pos[0];
@@ -185,14 +185,14 @@ loaded: {
 	next = 0;
 	spawn = 0;
 	phase = PARCH_SWELLS;
-	timer = 0;
-	frame = 0;
+	tmr = 0;
+	frm = 0;
 	do {
 		for(i = spawn; i != 0; i--) {
 			Sint32 slot = next & (PARCH_PUFF_COUNT - 1);
-			sprite = &state->sprs[slot];
-			sprite->scaleX = toFIXED(1) / 5;
-			sprite->scaleY = toFIXED(1) / 5;
+			spr = &state->sprs[slot];
+			spr->scaleX = toFIXED(1) / 5;
+			spr->scaleY = toFIXED(1) / 5;
 			particle = &state->particles[slot];
 			SET_POSITION(particle, pos[0], pos[1], pos[2]);
 			syVectorAddPolarOffset(
@@ -208,24 +208,24 @@ loaded: {
 			if(particle->tmr >= 0) {
 				Sint32 grown;
 
-				sprite = &state->sprs[i];
-				sprite->oam.idx = tile + ((particle->tmr >> 2) & 7) * 8;
-				grown = sprite->scaleX + toFIXED(1) / 10;
+				spr = &state->sprs[i];
+				spr->oam.idx = tile + ((particle->tmr >> 2) & 7) * 8;
+				grown = spr->scaleX + toFIXED(1) / 10;
 				/* DEAD: stored again after the clamp; the ROM keeps both
 				   stores. */
-				sprite->scaleX = grown;
+				spr->scaleX = grown;
 				if(grown > toFIXED(1))
 					grown = toFIXED(1);
-				sprite->scaleX = grown;
-				sprite->scaleY = grown;
+				spr->scaleX = grown;
+				spr->scaleY = grown;
 				screen[0] = particle->x;
 				screen[1] = particle->y;
 				screen[2] = particle->z;
 				fdCameraWorldToScreen(screen);
-				sprite->x = screen[0] +
+				spr->x = screen[0] +
 					(sySin(particle->sway * particle->swayRate) << 3);
-				sprite->y = screen[2];
-				fdEffectSprDraw(sprite);
+				spr->y = screen[2];
+				fdEffectSprDraw(spr);
 				particle->sway++;
 				particle->y += particle->rise;
 				if(++particle->tmr == 32)
@@ -238,10 +238,9 @@ loaded: {
 				add = 0;
 			else
 				add = fade / 4;
-			blue = sySin((frame / 2 + i) * (TRIG_TURN / 32)); /* green's sine */
+			blue = sySin((frm / 2 + i) * (TRIG_TURN / 32)); /* green's sine */
 			green = FIXEDtoINT(blue * GLOW_GREEN_SWING) + GLOW_GREEN;
-			blue =
-				sySin((frame / 4 + i) * (TRIG_TURN / 32) + TRIG_TURN * 9 / 32);
+			blue = sySin((frm / 4 + i) * (TRIG_TURN / 32) + TRIG_TURN * 9 / 32);
 			blue = FIXEDtoINT(blue * GLOW_BLUE_SWING) + GLOW_BLUE;
 			red = add + GLOW_RED;
 			if(red > RGB_LEVEL_MAX)
@@ -262,36 +261,35 @@ loaded: {
 		y = state->discY;
 		scaleX = state->discScaleX;
 		scaleY = state->discScaleY;
-		packed = windowState->glyphTiles + PARCH_DISC_TILE_OFFSET;
-		sprite = &state->disc;
-		fdEffectSprInit(sprite, 31, 31, OBJ_SIZE_64X64, packed);
-		sprite->oam.fullCol = 1;
-		sprite->oam.pal = 0;
-		sprite->oam.pri =
-			fdPsynergyGetCanvasPriority(scene->caster, scene->ang);
-		sprite->depth = 1;
-		sprite->x = x;
-		sprite->y = y;
-		sprite->scaleX = scaleX;
-		sprite->scaleY = scaleY;
-		fdEffectSprDraw(sprite);
+		packed = winState->glyphTiles + PARCH_DISC_TILE_OFFSET;
+		spr = &state->disc;
+		fdEffectSprInit(spr, 31, 31, OBJ_SIZE_64X64, packed);
+		spr->oam.fullCol = 1;
+		spr->oam.pal = 0;
+		spr->oam.pri = fdPsynergyGetCanvasPriority(scene->caster, scene->ang);
+		spr->depth = 1;
+		spr->x = x;
+		spr->y = y;
+		spr->scaleX = scaleX;
+		spr->scaleY = scaleY;
+		fdEffectSprDraw(spr);
 
 		if(result == PARCH_NOTHING) {
 			switch(phase) {
 			case PARCH_SWELLS:
-				if(timer == 10)
+				if(tmr == 10)
 					sySndPlayStub(SE_PARCH);
 				state->discScaleX += toFIXED(3) / 256;
 				state->discScaleY = state->discScaleX;
 				if(state->discScaleX > toFIXED(0.25) - 1) {
 					phase = PARCH_HOLDS;
-					timer = -1;
+					tmr = -1;
 				}
 				break;
 			case PARCH_HOLDS:
-				if(timer == 30) {
+				if(tmr == 30) {
 					phase = PARCH_EMPTY_SHRINKS;
-					timer = -1;
+					tmr = -1;
 				}
 				break;
 			case PARCH_EMPTY_SHRINKS:
@@ -306,27 +304,27 @@ loaded: {
 		if(result == PARCH_WATER) {
 			switch(phase) {
 			case PARCH_SWELLS:
-				if(timer == 30)
+				if(tmr == 30)
 					sySndPlayStub(SE_SPIN);
 				state->discScaleX += toFIXED(3) / 256;
 				state->discScaleY = state->discScaleX;
 				if(state->discScaleX > toFIXED(0.75) - 1) {
 					phase = PARCH_STEAMS;
-					timer = -1;
+					tmr = -1;
 				}
 				break;
 			case PARCH_STEAMS:
 				spawn = 2;
-				if(timer == 40) {
+				if(tmr == 40) {
 					phase = PARCH_STEAM_THINS;
-					timer = -1;
+					tmr = -1;
 				}
 				break;
 			case PARCH_STEAM_THINS:
 				spawn = 1;
-				if(timer == 40) {
+				if(tmr == 40) {
 					phase = PARCH_STEAM_SHRINKS;
-					timer = -1;
+					tmr = -1;
 				}
 				break;
 			case PARCH_STEAM_SHRINKS:
@@ -341,37 +339,37 @@ loaded: {
 		if(result == PARCH_DRIES) {
 			switch(phase) {
 			case PARCH_SWELLS:
-				if(timer == 40)
+				if(tmr == 40)
 					sySndPlayStub(SE_SPIN);
 				state->discScaleX += toFIXED(3) / 256;
 				state->discScaleY = state->discScaleX;
 				if(state->discScaleX > toFIXED(0.75) - 1) {
 					phase = PARCH_STEAMS;
-					timer = -1;
+					tmr = -1;
 				}
 				break;
 			case PARCH_STEAMS:
-				if(timer == 40) {
+				if(tmr == 40) {
 					fade = 0;
 					fdPaletteFadeSetTarget(RGB_WHITE, 0);
 					fdPaletteFadeStartInterpolation(100);
 				}
 				spawn = 2;
-				if(timer == 100) {
+				if(tmr == 100) {
 					phase = PARCH_STEAM_THINS;
-					timer = -1;
+					tmr = -1;
 				}
 				break;
 			case PARCH_STEAM_THINS:
 				spawn = 1;
-				if(timer == 80)
+				if(tmr == 80)
 					phase = FIELD_PSYNERGY_FINISHED;
 				break;
 			}
 		}
 		sySynch(1);
-		timer++;
-		frame++;
+		tmr++;
+		frm++;
 	} while(phase != FIELD_PSYNERGY_FINISHED);
 
 	if(found != -1) {
@@ -390,29 +388,27 @@ loaded: {
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-void fdBattleEffectPlotCanvasPixel(Sint32 x, Sint32 y, Sint32 color);
+void fdBattleEffectPlotCanvasPixel(Sint32 x, Sint32 y, Sint32 col);
 
 /* Plots one pixel of the 128x64 canvas on a circle around its bottom middle
    (63, 63): a radius (16.16) and an angle, the cosine leftward and the sine
    upward. */
-void fdCanvasPlotPolarPixel(
-	Sint32 unused, FIXED radius, Sint32 angle, Sint32 color)
+void fdCanvasPlotPolarPixel(Sint32 unused, FIXED radius, Sint32 ang, Sint32 col)
 {
-	fdBattleEffectPlotCanvasPixel(
-		63 - FIXEDtoINT(syMulFX(syCos(angle), radius)),
-		63 - FIXEDtoINT(syMulFX(sySin(angle), radius)), color);
+	fdBattleEffectPlotCanvasPixel(63 - FIXEDtoINT(syMulFX(syCos(ang), radius)),
+		63 - FIXEDtoINT(syMulFX(sySin(ang), radius)), col);
 }
 
-extern const Uint16 Parch_PictureTiles[];
+extern const Uint16 ParchPictureTiles[];
 
 /* The picture fdBgMapDrawClipped16x16 draws, 16 tiles square. */
 #define CLIPPED_PICTURE_TILES 16
 
-/* Copies Parch's 16x16-tile picture (Parch_PictureTiles) to BG0's map, leaving
+/* Copies Parch's 16x16-tile picture (ParchPictureTiles) to BG0's map, leaving
    out the tiles that would fall outside the 30x20-tile screen at (x, y). */
 void fdBgMapDrawClipped16x16(Sint32 x, Sint32 y)
 {
-	const Uint16 *tiles = Parch_PictureTiles;
+	const Uint16 *tiles = ParchPictureTiles;
 	Sint32		  row;
 	Sint32		  column;
 	Sint32		  sx;

@@ -15,17 +15,17 @@
 /* The gauge's source tiles (WorldMapPackedTilesC): a bar of four tiles with its
    PP line lit, the same bar dark, and a chequered one for no PP. The bar is
    filled a pixel a level, eight levels to a tile. */
-#define GAUGE_LIT_BAR	   0
-#define GAUGE_DARK_BAR	   4
-#define GAUGE_EMPTY_BAR	   8
-#define GAUGE_TILE_PIXELS  8
+#define GAUGE_LIT_BAR	  0
+#define GAUGE_DARK_BAR	  4
+#define GAUGE_EMPTY_BAR	  8
+#define GAUGE_TILE_PIXELS 8
 /* The PP line's rows in a bar tile, from the second. */
-#define GAUGE_LINE_ROWS	   3
+#define GAUGE_LINE_ROWS	  3
 /* A 4bpp tile row's byte holds two pixels, the left one in its low nibble. */
-#define LEFT_PIXEL		   0x0f
-#define RIGHT_PIXEL		   0xf0
-/* The frames between two PP drained while the ship is held aloft. */
-#define GAUGE_DRAIN_FRAMES 10
+#define LEFT_PIXEL		  0x0f
+#define RIGHT_PIXEL		  0xf0
+/* The ticks between two PP drained while the ship is held aloft. */
+#define GAUGE_DRAIN_TICKS 10
 
 /* Redraws the gauge for `progress`, the party's PP as a 16.16 fraction of its
    most; at half or less it blinks, and faster at a quarter. */
@@ -33,100 +33,100 @@ void scGaugeDraw(Sint32 progress)
 {
 	Sint32 level = FIXEDtoINT(progress * GAUGE_LEVELS + toFIXED(1) / 2) + 1;
 	Sint32 kind = GAUGE_EMPTY;
-	Sint32 count, base, i;
+	Sint32 cnt, base, i;
 
 	if(progress != 0)
 		kind = GAUGE_SHOWN;
-	if(level <= GAUGE_LEVELS / 2 && (FrameCount & 15) <= 1)
+	if(level <= GAUGE_LEVELS / 2 && (TickCount & 15) <= 1)
 		kind = GAUGE_LOW;
-	if(level <= GAUGE_LEVELS / 4 && (FrameCount & 7) <= 1)
+	if(level <= GAUGE_LEVELS / 4 && (TickCount & 7) <= 1)
 		kind = GAUGE_LOW;
-	if(kind + level == Gauge_Shown)
+	if(kind + level == GaugeShown)
 		return;
-	Gauge_Shown = kind + level;
-	syWordsClear((Sint32)(Gauge_Tiles), (Sint32)(GAUGE_SIZE));
+	GaugeShown = kind + level;
+	syWordsClear((Sint32)(GaugeTiles), (Sint32)(GAUGE_SIZE));
 	if(kind == GAUGE_EMPTY) {
-		GAUGE_COPY_WORDS(Gauge_Tiles, Gauge_SourceTiles[GAUGE_EMPTY_BAR],
-			4 * TILE_SIZE_4BPP);
+		GAUGE_COPY_WORDS(
+			GaugeTiles, GaugeSourceTiles[GAUGE_EMPTY_BAR], 4 * TILE_SIZE_4BPP);
 	} else {
 		if(kind == GAUGE_SHOWN)
-			GAUGE_COPY_WORDS(Gauge_Tiles, Gauge_SourceTiles[GAUGE_DARK_BAR],
+			GAUGE_COPY_WORDS(GaugeTiles, GaugeSourceTiles[GAUGE_DARK_BAR],
 				4 * TILE_SIZE_4BPP);
 		else
-			GAUGE_COPY_WORDS(Gauge_Tiles, Gauge_SourceTiles[GAUGE_EMPTY_BAR],
+			GAUGE_COPY_WORDS(GaugeTiles, GaugeSourceTiles[GAUGE_EMPTY_BAR],
 				4 * TILE_SIZE_4BPP);
 		/* Whole tiles of the lit bar first, then the rest a pixel at a time. */
 		base = 0;
-		count = level;
-		if(count >= GAUGE_TILE_PIXELS) {
+		cnt = level;
+		if(cnt >= GAUGE_TILE_PIXELS) {
 			GAUGE_COPY_WORDS(
-				Gauge_Tiles, Gauge_SourceTiles[GAUGE_LIT_BAR], TILE_SIZE_4BPP);
+				GaugeTiles, GaugeSourceTiles[GAUGE_LIT_BAR], TILE_SIZE_4BPP);
 			base = GAUGE_TILE_PIXELS;
-			count -= GAUGE_TILE_PIXELS;
+			cnt -= GAUGE_TILE_PIXELS;
 		}
 		if(level >= 2 * GAUGE_TILE_PIXELS) {
-			GAUGE_COPY_WORDS(Gauge_Tiles[1],
-				Gauge_SourceTiles[GAUGE_LIT_BAR + 1], TILE_SIZE_4BPP);
-			count = level;
+			GAUGE_COPY_WORDS(GaugeTiles[1], GaugeSourceTiles[GAUGE_LIT_BAR + 1],
+				TILE_SIZE_4BPP);
+			cnt = level;
 			base = 2 * GAUGE_TILE_PIXELS;
-			count -= 2 * GAUGE_TILE_PIXELS;
+			cnt -= 2 * GAUGE_TILE_PIXELS;
 		}
 		if(level >= 3 * GAUGE_TILE_PIXELS) {
-			GAUGE_COPY_WORDS(Gauge_Tiles[2],
-				Gauge_SourceTiles[GAUGE_LIT_BAR + 2], TILE_SIZE_4BPP);
-			count = level;
+			GAUGE_COPY_WORDS(GaugeTiles[2], GaugeSourceTiles[GAUGE_LIT_BAR + 2],
+				TILE_SIZE_4BPP);
+			cnt = level;
 			base = 3 * GAUGE_TILE_PIXELS;
-			count -= 3 * GAUGE_TILE_PIXELS;
+			cnt -= 3 * GAUGE_TILE_PIXELS;
 		}
 		if(level > GAUGE_LEVELS) {
-			GAUGE_COPY_WORDS(Gauge_Tiles[3],
-				Gauge_SourceTiles[GAUGE_LIT_BAR + 3], TILE_SIZE_4BPP);
+			GAUGE_COPY_WORDS(GaugeTiles[3], GaugeSourceTiles[GAUGE_LIT_BAR + 3],
+				TILE_SIZE_4BPP);
 			base = 0;
-			count = 0;
+			cnt = 0;
 		}
-		if(count != 0) {
-			for(i = 0; i < count; i++) {
-				Uint8 *source = &Gauge_SourceTiles[GAUGE_LIT_BAR +
-									base / GAUGE_TILE_PIXELS][4] +
+		if(cnt != 0) {
+			for(i = 0; i < cnt; i++) {
+				Uint8 *src = &GaugeSourceTiles[GAUGE_LIT_BAR +
+								 base / GAUGE_TILE_PIXELS][4] +
 					i / 2;
-				Uint8 *dest = &Gauge_Tiles[base / GAUGE_TILE_PIXELS][4] + i / 2;
+				Uint8 *dest = &GaugeTiles[base / GAUGE_TILE_PIXELS][4] + i / 2;
 				Sint32 j;
 
 				if((i & 1) == 0) {
 					for(j = 1; j <= GAUGE_LINE_ROWS; j++) {
-						*dest = (*dest & RIGHT_PIXEL) | (*source & LEFT_PIXEL);
-						source += 4;
+						*dest = (*dest & RIGHT_PIXEL) | (*src & LEFT_PIXEL);
+						src += 4;
 						dest += 4;
 					}
 				} else {
 					for(j = 0; j < GAUGE_LINE_ROWS; j++) {
-						*dest = (*dest & LEFT_PIXEL) | (*source & RIGHT_PIXEL);
-						source += 4;
+						*dest = (*dest & LEFT_PIXEL) | (*src & RIGHT_PIXEL);
+						src += 4;
 						dest += 4;
 					}
 				}
 			}
 		}
 	}
-	mnVRAMLoad(Gauge_Vram, GAUGE_SIZE, Gauge_Tiles);
+	mnVRAMLoad(GaugeVram, GAUGE_SIZE, GaugeTiles);
 }
 
 /* The Psynergy gauge over the leader as the ship flies: while A or B is held
-   aloft it drains a PP every ten frames, then redraws the gauge and queues its
+   aloft it drains a PP every ten ticks, then redraws the gauge and queues its
    sprite. */
 void scGaugeUpdate(void)
 {
-	Uint32 *oam = Gauge_Sprite;
-	Sint32	tile = VramCacheEntries[Gauge_Vram].ofs >> 5;
+	Uint32 *oam = GaugeSprite;
+	Sint32	tile = VramCacheEntries[GaugeVram].ofs >> 5;
 	ACTOR  *leader = fdActorGet(syFieldPartyGetLeaderActor());
 	Sint32	screen[3];
 	Uint32	attributes;
 
 	if((PerWork.data & (KEY_A | KEY_B)) != 0 &&
 		fdScriptGetFlag(FLAG_MENU_OPEN) == 0 && leader->y.fixed > toFIXED(4)) {
-		if(--Gauge_Countdown <= 0) {
+		if(--GaugeCountdown <= 0) {
 			gmPartyDrainPp(1);
-			Gauge_Countdown = GAUGE_DRAIN_FRAMES;
+			GaugeCountdown = GAUGE_DRAIN_TICKS;
 		}
 	}
 	scGaugeDraw(gmPartyGetPpRatio());
@@ -142,26 +142,26 @@ void scGaugeUpdate(void)
 		*oam++ = (y | OBJ_X(x)) | attributes;
 	}
 	*oam = tile | OBJ_PRIORITY(1);
-	syOAMAddSprAtDepthClamped(Gauge_Sprite, OAM_DEPTH_FRONT);
+	syOAMAddSprAtDepthClamped(GaugeSprite, OAM_DEPTH_FRONT);
 }
 
 /* Sets up the gauge. */
 void scGaugeInit(void)
 {
-	syDecompressTaggedLZ(WorldMapPackedTilesC, Gauge_SourceTiles);
-	Gauge_Vram = syVRAMCacheFindFreeEntry();
-	mnVRAMLoad(Gauge_Vram, GAUGE_SIZE, 0);
-	Gauge_Shown = -1;
-	Gauge_Countdown = GAUGE_DRAIN_FRAMES;
-	sySetFrameEvent(scGaugeUpdate, EVENT_PASS_FRAME - 10);
+	syDecompressTaggedLZ(WorldMapPackedTilesC, GaugeSourceTiles);
+	GaugeVram = syVRAMCacheFindFreeEntry();
+	mnVRAMLoad(GaugeVram, GAUGE_SIZE, 0);
+	GaugeShown = -1;
+	GaugeCountdown = GAUGE_DRAIN_TICKS;
+	sySetTickEvent(scGaugeUpdate, EVENT_PASS_TICK - 10);
 }
 
 /* Takes the gauge down. */
 void scGaugeEnd(void)
 {
-	syDecompressTaggedLZ(WorldMapPackedTilesC, Gauge_SourceTiles);
-	syVRAMCacheFreeEntry(Gauge_Vram);
-	Gauge_Shown = -1;
+	syDecompressTaggedLZ(WorldMapPackedTilesC, GaugeSourceTiles);
+	syVRAMCacheFreeEntry(GaugeVram);
+	GaugeShown = -1;
 	syFieldCloseEvent(scGaugeUpdate);
 }
 
@@ -172,4 +172,4 @@ void scGaugeEnd(void)
 #undef GAUGE_LINE_ROWS
 #undef LEFT_PIXEL
 #undef RIGHT_PIXEL
-#undef GAUGE_DRAIN_FRAMES
+#undef GAUGE_DRAIN_TICKS

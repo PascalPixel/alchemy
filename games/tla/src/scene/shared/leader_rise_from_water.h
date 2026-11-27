@@ -31,7 +31,7 @@ void scLeaderRiseFromWater(void)
 		leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		leader->update = NULL;
 		fdScriptNoOperation();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdScriptEnd();
 	}
 }

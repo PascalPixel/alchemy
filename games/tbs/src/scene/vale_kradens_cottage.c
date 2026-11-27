@@ -140,19 +140,19 @@ typedef enum VALE_KRADENS_COTTAGE_METATILE_BEHAVIOR {
 } VALE_KRADENS_COTTAGE_METATILE_BEHAVIOR;
 
 Sint32				  scInit(void);
-extern Sint32		  ValeKradensCottage_RockslideSurvivorEscapeActions[];
-extern Sint32		  ValeKradensCottage_RockslideSurvivorSquashes[];
-extern Sint32		  ValeKradensCottage_FaceTargetActions[];
-extern SCENE_ENTRANCE ValeKradensCottage_Entrances[];
-extern Uint32		  ValeKradensCottage_Exits[];
-extern ACTOR_PLACE	  ValeKradensCottage_ActorPlacements[];
-extern CUE			  ValeKradensCottage_Cues[];
-extern CUE			  ValeKradensCottage_StormCues[];
-extern CUE			  ValeKradensCottage_CuesAfterKalay[];
-extern Uint16		  ValeKradensCottage_DoorOpens[];
+extern Sint32		  ValeKradensCottageRockslideSurvivorEscapeActions[];
+extern Sint32		  ValeKradensCottageRockslideSurvivorSquashes[];
+extern Sint32		  ValeKradensCottageFaceTargetActions[];
+extern SCENE_ENTRANCE ValeKradensCottageEntrances[];
+extern Uint32		  ValeKradensCottageExits[];
+extern ACTOR_PLACE	  ValeKradensCottageActorPlacements[];
+extern CUE			  ValeKradensCottageCues[];
+extern CUE			  ValeKradensCottageStormCues[];
+extern CUE			  ValeKradensCottageCuesAfterKalay[];
+extern Uint16		  ValeKradensCottageDoorOpens[];
 
 /* The placed actors, numbered in the order of
-   ValeKradensCottage_ActorPlacements. Garet and Jenna, placed between Kraden
+   ValeKradensCottageActorPlacements. Garet and Jenna, placed between Kraden
    and Saturos, keep their own slots. */
 typedef enum VALE_KRADENS_COTTAGE_ACTOR_ID {
 	/* This is a boulder by the fence. It has the sprite of the boulder Lift
@@ -192,7 +192,7 @@ typedef enum VALE_KRADENS_COTTAGE_ACTOR_ID {
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return ValeKradensCottage_Entrances;
+	return ValeKradensCottageEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -202,26 +202,26 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return ValeKradensCottage_Exits;
+	return ValeKradensCottageExits;
 }
 
 /* Returns the one actor placement table for every visit. scInit removes the
    actors a visit does not use. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return ValeKradensCottage_ActorPlacements;
+	return ValeKradensCottageActorPlacements;
 }
 
 /* Selects the scripts for the current visit to Vale. */
 const CUE *scGetCues(void)
 {
 	if(gmFlagGet(FLAG_KALAY_REACHED) != 0) {
-		return ValeKradensCottage_CuesAfterKalay;
+		return ValeKradensCottageCuesAfterKalay;
 	}
 	if(gmFlagGet(FLAG_VALE_STORM) != 0) {
-		return ValeKradensCottage_StormCues;
+		return ValeKradensCottageStormCues;
 	}
-	return ValeKradensCottage_Cues;
+	return ValeKradensCottageCues;
 }
 
 /* Finishes the party's nod together before the next line of dialogue. */
@@ -251,7 +251,7 @@ static inline void scValeKradensCottageWalkTowardLeader(Sint32 companionId)
    the growls beyond it. */
 static void scValeKradensCottageTalkToBoyByTheFence(void)
 {
-	Sint32 message;
+	Sint32 msg;
 
 	fdScriptStart();
 	if(gmFlagGet(FLAG_VALE_PARTY_LEFT) != 0) {
@@ -259,17 +259,17 @@ static void scValeKradensCottageTalkToBoyByTheFence(void)
 		/* "Once I'm as old as you, Isaac, I'm going to climb that..." */
 		fdScriptShowMessage(ACTOR_BOY_BY_THE_FENCE, 0);
 	} else {
-		message = MsgValeHearAwfulGrowls;
-		fdScriptSetMessageId(message);
+		msg = MsgValeHearAwfulGrowls;
+		fdScriptSetMessageId(msg);
 		fdActorFaceActor(ACTOR_BOY_BY_THE_FENCE, ACTOR_PARTY_LEADER, 10);
 		fdActorRunRepeatedMotion(ACTOR_BOY_BY_THE_FENCE, 2);
 		fdScriptWait(6);
 		/* "Do you hear those awful growls coming from the other side of..." */
 		fdScriptOpenMessage(ACTOR_BOY_BY_THE_FENCE, 0);
 		if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-			fdScriptSetMessageId(message + 1);
+			fdScriptSetMessageId(msg + 1);
 		} else {
-			fdScriptSetMessageId(message + 2);
+			fdScriptSetMessageId(msg + 2);
 		}
 		fdActorStartRepeatedMotion(ACTOR_BOY_BY_THE_FENCE, 3);
 		fdScriptShowMessage(ACTOR_BOY_BY_THE_FENCE, 0);
@@ -284,7 +284,7 @@ static void scValeKradensCottageKradenPlansSanctumVisit(void)
 {
 	ACTOR *leader;
 	Sint32 x, z;
-	Sint32 sneakingMessage;
+	Sint32 sneakingMsg;
 
 	if(gmFlagGet(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
 		/* Isaac walks up to Kraden, who greets him. */
@@ -471,16 +471,16 @@ static void scValeKradensCottageKradenPlansSanctumVisit(void)
 		}
 		fdScriptShowMessageThenWait(ACTOR_KRADEN, 0, 20);
 		/* Garet asks Isaac whether it is fine if they are not seen. */
-		sneakingMessage = MsgValeFineIfTheyDontSee;
-		fdScriptSetMessageId(sneakingMessage);
+		sneakingMsg = MsgValeFineIfTheyDontSee;
+		fdScriptSetMessageId(sneakingMsg);
 		fdActorFaceDirection(ACTOR_GARET, FACING_EAST, 10);
 		fdActorRunRepeatedMotion(ACTOR_GARET, 2);
 		/* "We'll be fine if they don't see us, right?" */
 		fdScriptOpenMessage(ACTOR_GARET, 0);
 		if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-			fdScriptSetMessageId(sneakingMessage + 1);
+			fdScriptSetMessageId(sneakingMsg + 1);
 		} else {
-			fdScriptSetMessageId(sneakingMessage + 2);
+			fdScriptSetMessageId(sneakingMsg + 2);
 		}
 		fdScriptShowMessageThenWait(ACTOR_GARET, 0, 6);
 		/* Jenna makes it their secret; a yes earns the warning not even to tell
@@ -547,7 +547,7 @@ static void scValeKradensCottageKradenPlansSanctumVisit(void)
 		   the party follows him through
 		   VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG. */
 		sySndPlay(SE_DOOR_OPEN);
-		fdMapGridAnimateMetatiles(ValeKradensCottage_DoorOpens, 43, 8);
+		fdMapGridAnimateMetatiles(ValeKradensCottageDoorOpens, 43, 8);
 		fdActorSetSpeed(ACTOR_KRADEN, 1);
 		fdActorWalkToAndWait(ACTOR_KRADEN, 232, 218);
 		fdActorSetPos(ACTOR_KRADEN, 0, 0);
@@ -558,7 +558,7 @@ static void scValeKradensCottageKradenPlansSanctumVisit(void)
 		FieldStateWork->transition =
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 		fdScriptFinishScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		syImportScriptSetExitRequest(
 			VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG);
 		fdScriptEnd();
@@ -575,11 +575,11 @@ static void scValeKradensCottageKradenSetsOff(void)
 	fdActorSetPos(ACTOR_JENNA, 248, 264);
 	fdActorGet(ACTOR_GARET)->facing = FACING_NORTH;
 	fdActorGet(ACTOR_JENNA)->facing = FACING_NORTH;
-	fdMapGridAnimateMetatiles(ValeKradensCottage_DoorOpens, 43, 8);
+	fdMapGridAnimateMetatiles(ValeKradensCottageDoorOpens, 43, 8);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	/* Kraden comes out of the door: this is their best bet. */
 	fdActorSetSpeed(ACTOR_KRADEN, 0.8);
@@ -637,7 +637,7 @@ static void scValeKradensCottageEnterCottage(void)
 {
 	if(gmFlagGet(FLAG_VALE_KRADENS_DOOR_OPEN) == 0) {
 		sySndPlay(SE_DOOR_OPEN);
-		fdMapGridPlayMapEdit(ValeKradensCottage_DoorOpens, 43, 8);
+		fdMapGridPlayMapEdit(ValeKradensCottageDoorOpens, 43, 8);
 	}
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 229, 217);
 	syImportScriptSetExitRequest(VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH);
@@ -885,10 +885,10 @@ static void scValeKradensCottageMeetSaturosAndMenardi(void)
 	fdActorSetPos(ACTOR_JENNA, 0, 0);
 	syFieldActorWatchAndStartScript(ACTOR_SATUROS,
 		ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-		ValeKradensCottage_FaceTargetActions);
+		ValeKradensCottageFaceTargetActions);
 	syFieldActorWatchAndStartScript(ACTOR_MENARDI,
 		ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-		ValeKradensCottage_FaceTargetActions);
+		ValeKradensCottageFaceTargetActions);
 	gmPlayMusic();
 	fdScriptEnd();
 }
@@ -1006,7 +1006,7 @@ Sint32 scInit(void)
 			ACTOR_ROCKSLIDE_SURVIVOR, YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_LIE);
 		fdActorGet(ACTOR_ROCKSLIDE_SURVIVOR)->radius = 12;
 		fdActorSetScript(ACTOR_ROCKSLIDE_SURVIVOR,
-			ValeKradensCottage_RockslideSurvivorSquashes);
+			ValeKradensCottageRockslideSurvivorSquashes);
 		if(gmFlagGet(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) != 0) {
 			fdActorSetPos(ACTOR_ROCKSLIDE_SURVIVOR, 0, 0);
 		}
@@ -1039,10 +1039,10 @@ Sint32 scInit(void)
 				fdActorSetPos(ACTOR_MENARDI, 376, 376);
 				syFieldActorWatchAndStartScript(ACTOR_SATUROS,
 					ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-					ValeKradensCottage_FaceTargetActions);
+					ValeKradensCottageFaceTargetActions);
 				syFieldActorWatchAndStartScript(ACTOR_MENARDI,
 					ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-					ValeKradensCottage_FaceTargetActions);
+					ValeKradensCottageFaceTargetActions);
 			}
 		}
 		if(gmFlagGet(FLAG_KALAY_REACHED) != 0) {
@@ -1058,7 +1058,7 @@ Sint32 scInit(void)
 static void scValeKradensCottageTalkToRockslideSurvivor(void)
 {
 	ACTOR *leader;
-	Sint32 message;
+	Sint32 msg;
 
 	if(fdScriptGetFlag(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) == 0) {
 		if(fdScriptGetFlag(FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP) != 0) {
@@ -1074,8 +1074,8 @@ static void scValeKradensCottageTalkToRockslideSurvivor(void)
 			fdActorRunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 1);
 			/* He gasps out the rockslide and the monsters; Isaac and Garet
 			   hurry over to him. */
-			message = MsgValeRockslideDestroyedFence;
-			fdScriptSetMessageId(message);
+			msg = MsgValeRockslideDestroyedFence;
+			fdScriptSetMessageId(msg);
 			/* "Rockslide...destroyed fence... Monsters everywhere..." */
 			fdScriptShowMessageThenWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 20);
 			fdActorShowEmote(
@@ -1098,7 +1098,7 @@ static void scValeKradensCottageTalkToRockslideSurvivor(void)
 			if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
 				fdActorRunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
 				fdScriptWait(20);
-				fdScriptSetMessageId(message + 2);
+				fdScriptSetMessageId(msg + 2);
 				/* "I knew it... This is it for me. Save yourselves..." */
 				fdScriptShowMessage(ACTOR_ROCKSLIDE_SURVIVOR, 0);
 				gmFlagSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP);
@@ -1107,7 +1107,7 @@ static void scValeKradensCottageTalkToRockslideSurvivor(void)
 				   and warns them of the monsters on the way to the plaza. */
 				fdActorRunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
 				fdScriptWait(20);
-				fdScriptSetMessageId(message + 3);
+				fdScriptSetMessageId(msg + 3);
 				/* "This is awful. I'm left here for the monsters to..." */
 				fdScriptShowMessageThenWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 40);
 				fdActorFaceActor(
@@ -1129,12 +1129,12 @@ static void scValeKradensCottageTalkToRockslideSurvivor(void)
 				fdActorSetAnimationAndWait(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_NOD);
 				syFieldActorWatchAndStartScript(ACTOR_PARTY_LEADER,
 					ACTOR_WATCH_KEEP_MOTION | ACTOR_ROCKSLIDE_SURVIVOR,
-					ValeKradensCottage_FaceTargetActions);
+					ValeKradensCottageFaceTargetActions);
 				syFieldActorWatchAndStartScript(ACTOR_GARET,
 					ACTOR_WATCH_KEEP_MOTION | ACTOR_ROCKSLIDE_SURVIVOR,
-					ValeKradensCottage_FaceTargetActions);
+					ValeKradensCottageFaceTargetActions);
 				fdActorRunScriptAndWait(ACTOR_ROCKSLIDE_SURVIVOR,
-					ValeKradensCottage_RockslideSurvivorEscapeActions);
+					ValeKradensCottageRockslideSurvivorEscapeActions);
 				fdActorStop(ACTOR_PARTY_LEADER);
 				fdActorStop(ACTOR_GARET);
 				fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -1202,7 +1202,7 @@ static void scValeKradensCottageTalkToCottageVisitor(void)
 }
 
 /* Leads the party away from the broken fence, then leaves the scene. */
-Sint32 ValeKradensCottage_RockslideSurvivorEscapeActions[] = {
+Sint32 ValeKradensCottageRockslideSurvivorEscapeActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(72, 0, 294),
 	SC_SYNC,
@@ -1214,9 +1214,9 @@ Sint32 ValeKradensCottage_RockslideSurvivorEscapeActions[] = {
 	SC_END,
 };
 
-/* The survivor squashes flat and recovers every 68 frames as he lies by the
+/* The survivor squashes flat and recovers every 68 ticks as he lies by the
    fence. */
-Sint32 ValeKradensCottage_RockslideSurvivorSquashes[] = {
+Sint32 ValeKradensCottageRockslideSurvivorSquashes[] = {
 	SC_ADD(SW_SCALE_Y, -toFIXED(1) / 16),
 	SC_ADD(SW_SCALE_X, toFIXED(1) / 32),
 	SC_WAIT(2),
@@ -1236,12 +1236,12 @@ Sint32 ValeKradensCottage_RockslideSurvivorSquashes[] = {
 };
 
 /* Keeps a watched actor facing its current target. */
-Sint32 ValeKradensCottage_FaceTargetActions[] = {
+Sint32 ValeKradensCottageFaceTargetActions[] = {
 	SC_CALL(scTurnTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-SCENE_ENTRANCE ValeKradensCottage_Entrances[] = {
+SCENE_ENTRANCE ValeKradensCottageEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 228, 0, 172, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{VALE_KRADENS_COTTAGE_FROM_VALE_NORTH, CONDITION_ALWAYS, 454, 0, 290,
@@ -1259,7 +1259,7 @@ SCENE_ENTRANCE ValeKradensCottage_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 ValeKradensCottage_Exits[] = {
+Uint32 ValeKradensCottageExits[] = {
 	SCENE_EXITS(ValeKradensCottage),
 	SCENE_EXIT(VALE_KRADENS_COTTAGE_TO_VALE_NORTH, Vale,
 		VALE_FROM_VALE_KRADENS_COTTAGE_NORTH),
@@ -1281,14 +1281,14 @@ Uint32 ValeKradensCottage_Exits[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE ValeKradensCottage_ActorPlacements[] = {
+ACTOR_PLACE ValeKradensCottageActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		72, 0, 256, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		240, 0, 353, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		384, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (Sint32)ValeKradensCottage_RockslideSurvivorSquashes,
+	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (Sint32)ValeKradensCottageRockslideSurvivorSquashes,
 		83, 0, 273, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		92, 0, 268, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1307,7 +1307,7 @@ ACTOR_PLACE ValeKradensCottage_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE ValeKradensCottage_Cues[] = {
+CUE ValeKradensCottageCues[] = {
 	{ CUE_TALK, ACTOR_KRADEN, CONDITION_ALWAYS, SCRIPT_REF(scValeKradensCottageKradenPlansSanctumVisit) },
 	{ CUE_TALK, ACTOR_BOY_BY_THE_FENCE, CONDITION_ALWAYS, SCRIPT_REF(scValeKradensCottageTalkToBoyByTheFence) },
 	{ CUE_TALK, ACTOR_SATUROS, CONDITION_ALWAYS, MSGNO(MsgValeDoNotKeepKradenWaiting) },
@@ -1325,7 +1325,7 @@ CUE ValeKradensCottage_Cues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE ValeKradensCottage_StormCues[] = {
+CUE ValeKradensCottageStormCues[] = {
 	{ CUE_EXIT, METATILE_BEHAVIOR_KRADENS_COTTAGE_NORTH_WAY_TO_VALE, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_PROLOGUE_NORTH },
 	{ CUE_EXIT, METATILE_BEHAVIOR_KRADENS_COTTAGE_SOUTH_WAY_TO_VALE, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_PROLOGUE_SOUTH },
 	{ CUE_TALK, ACTOR_WEST_ROCK, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
@@ -1338,7 +1338,7 @@ CUE ValeKradensCottage_StormCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE ValeKradensCottage_CuesAfterKalay[] = {
+CUE ValeKradensCottageCuesAfterKalay[] = {
 	{ CUE_EXIT, METATILE_BEHAVIOR_KRADENS_COTTAGE_NORTH_WAY_TO_VALE, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_NORTH },
 	{ CUE_EXIT, METATILE_BEHAVIOR_KRADENS_COTTAGE_SOUTH_WAY_TO_VALE, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_SOUTH },
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), METATILE_BEHAVIOR_KRADENS_COTTAGE_DOOR, CONDITION_ALWAYS, SCRIPT_REF(scValeKradensCottageEnterCottage) },
@@ -1359,7 +1359,7 @@ CUE ValeKradensCottage_CuesAfterKalay[] = {
 /* The cottage's arched front door opening. It is two pictures from the layout's
    metatiles below the village, drawn over the closed door on the middle
    layer. */
-Uint16 ValeKradensCottage_DoorOpens[] = {
+Uint16 ValeKradensCottageDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(2, 36, 2, 2, 1),
 	MAPGRID_ANIMATION_STEP(4, 36, 2, 2, 1),
 	MAPGRID_ANIMATION_STEPS_END,

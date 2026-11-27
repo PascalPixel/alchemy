@@ -49,7 +49,7 @@ enum { ENTRANCE_FOOT_OF_STAIRS = 3, ENTRANCE_AFTER_BRIGGS_BATTLE = 99 };
 enum { METATILE_BELOW_THE_STAIRS = 20 };
 
 /* The people and things aboard, numbering the rows of
-   EasternAlhafraShip_ActorPlacements whose sprites are not the party's. */
+   EasternAlhafraShipActorPlacements whose sprites are not the party's. */
 typedef enum EASTERN_ALHAFRA_SHIP_ACTOR_ID {
 	ACTOR_BRIGGS = ACTOR_FIRST_PLACED,
 	/* Briggs's mate in the cabin: "He knew we needed a ship, and he knew we
@@ -83,10 +83,10 @@ typedef enum EASTERN_ALHAFRA_SHIP_ACTOR_ID {
 	ACTOR_KRADEN
 } EASTERN_ALHAFRA_SHIP_ACTOR_ID;
 
-extern ACTOR_PLACE EasternAlhafraShip_ActorPlacements[];
+extern ACTOR_PLACE EasternAlhafraShipActorPlacements[];
 void			   scEasternAlhafraShipBriggsIsCaught(void);
-extern Uint32	   EasternAlhafraShip_BriggsRunsScript[];
-extern Sint32	   EasternAlhafraShip_MateRunsScript[];
+extern Uint32	   EasternAlhafraShipBriggsRunsScript[];
+extern Sint32	   EasternAlhafraShipMateRunsScript[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -105,7 +105,7 @@ const Uint32 *scGetExits(void)
 
 Sint32 scGetActorPlacements(void)
 {
-	return (Sint32)EasternAlhafraShip_ActorPlacements;
+	return (Sint32)EasternAlhafraShipActorPlacements;
 }
 
 /* Nothing visible happens as Felix begins to push or Move the tall crate in
@@ -170,7 +170,7 @@ void scEasternAlhafraShipTakeTheBread(Sint32 id)
 void scEasternAlhafraShipEoleoLifts(Sint32 id)
 {
 	ACTOR *actor = fdActorGetById(ACTOR_VASE);
-	Uint8 *flags;
+	Uint8 *flg;
 	Sint32 i;
 
 	fdScriptStart();
@@ -185,8 +185,8 @@ void scEasternAlhafraShipEoleoLifts(Sint32 id)
 		(Sint32)fdActorGetById(id), CASTER_LOOK_CYCLING_COLORS);
 	sySndPlay(SE_ASCEND);
 	fdScriptWait(30);
-	flags = &actor->motionFlg;
-	*flags = ACTOR_FLOATS;
+	flg = &actor->motionFlg;
+	*flg = ACTOR_FLOATS;
 	for(i = 0; i < 40; i++) {
 		actor->y.fixed += toFIXED(1) / 5;
 		fdScriptWait(1);
@@ -197,7 +197,7 @@ void scEasternAlhafraShipEoleoLifts(Sint32 id)
 	fdBattleEffectWaitForArcGroups();
 	fdBattleEffectEndArcEffect();
 	fdStartPaletteTransition(8);
-	*flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	*flg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	actor->gravity = toFIXED(1) / 2;
 	fdScriptWait(5);
 	sySndPlay(SE_WATER);
@@ -283,13 +283,13 @@ Sint32 scPrepareMap(void)
 	return 0;
 }
 
-extern Uint32 QuestionMark_Script[];
+extern Uint32 QuestionMarkScript[];
 
 #include "shared/question_mark_pop.h"
 
 #include "shared/actor_pop_question_marks.h"
 
-extern Uint32 EasternAlhafraShip_LeaveUpTheStairsScript[];
+extern Uint32 EasternAlhafraShipLeaveUpTheStairsScript[];
 
 /* Walking down from the foot of the stairs (metatiles (28, 24) and (29, 24)) on
    the first visit, the party overhears Briggs and his mate: Madra's mayor has
@@ -449,10 +449,10 @@ void scEasternAlhafraShipMayorArrives(void)
 	fdActorSetSpeed(ACTOR_BRIGGS, 1.5);
 	fdActorSetSpeed(ACTOR_BRIGGS_MATE, 1.5);
 	fdActorSetMovementTypeById(
-		ACTOR_BRIGGS_MATE, (Sint32)EasternAlhafraShip_MateRunsScript);
+		ACTOR_BRIGGS_MATE, (Sint32)EasternAlhafraShipMateRunsScript);
 	fdScriptWait(5);
 	fdActorSetMovementTypeById(
-		ACTOR_BRIGGS, (Sint32)EasternAlhafraShip_BriggsRunsScript);
+		ACTOR_BRIGGS, (Sint32)EasternAlhafraShipBriggsRunsScript);
 	fdActorWaitForScriptEndById(ACTOR_BRIGGS);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
@@ -617,7 +617,7 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdActorSetSpeed(ACTOR_THIRD_PIRATE, 1);
 	fdCameraMoveTo(464, CAMERA_KEEP, 408, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
 	fdScriptWait(10);
@@ -1426,22 +1426,22 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdActorSetAnimationAndWait(ACTOR_BRIGGS, ANIM_NOD);
 	fdScriptWait(20);
 	fdActorSetMovementTypeById(ACTOR_SECOND_ALHAFRAN_SOLDIER,
-		EasternAlhafraShip_LeaveUpTheStairsScript);
+		EasternAlhafraShipLeaveUpTheStairsScript);
 	fdScriptWait(10);
 	fdActorSetMovementTypeById(
-		ACTOR_BRIGGS, EasternAlhafraShip_LeaveUpTheStairsScript);
+		ACTOR_BRIGGS, EasternAlhafraShipLeaveUpTheStairsScript);
 	fdScriptWait(10);
 	fdActorSetMovementTypeById(
-		ACTOR_BRIGGS_MATE, EasternAlhafraShip_LeaveUpTheStairsScript);
+		ACTOR_BRIGGS_MATE, EasternAlhafraShipLeaveUpTheStairsScript);
 	fdScriptWait(10);
 	fdActorSetMovementTypeById(
-		ACTOR_FIRST_PIRATE, EasternAlhafraShip_LeaveUpTheStairsScript);
+		ACTOR_FIRST_PIRATE, EasternAlhafraShipLeaveUpTheStairsScript);
 	fdScriptWait(10);
 	fdActorSetMovementTypeById(
-		ACTOR_SECOND_PIRATE, EasternAlhafraShip_LeaveUpTheStairsScript);
+		ACTOR_SECOND_PIRATE, EasternAlhafraShipLeaveUpTheStairsScript);
 	fdScriptWait(10);
 	fdActorSetMovementTypeById(
-		ACTOR_THIRD_PIRATE, EasternAlhafraShip_LeaveUpTheStairsScript);
+		ACTOR_THIRD_PIRATE, EasternAlhafraShipLeaveUpTheStairsScript);
 	fdScriptWait(75);
 	fdActorWalkByAndWaitById(ACTOR_ALHAFRAN_SOLDIER, 16, 0);
 	fdActorWalkByAndWait(ACTOR_ALHAFRAN_SOLDIER, 0, -32);
@@ -1785,7 +1785,7 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 /* clang-format off */
 /* Briggs and his mate running out to the party once Jenna gives it away */
 /* (scEasternAlhafraShipMayorArrives). */
-Uint32 EasternAlhafraShip_BriggsRunsScript[] = {
+Uint32 EasternAlhafraShipBriggsRunsScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE_BY(32, 0, 0),
 	SC_SYNC,
@@ -1803,7 +1803,7 @@ Uint32 EasternAlhafraShip_BriggsRunsScript[] = {
 	SC_END,
 };
 
-Sint32 EasternAlhafraShip_MateRunsScript[] = {
+Sint32 EasternAlhafraShipMateRunsScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE_BY(32, 0, 0),
 	SC_SYNC,
@@ -1823,7 +1823,7 @@ Sint32 EasternAlhafraShip_MateRunsScript[] = {
 
 /* The way up the stairs and off the ship that Briggs, his crew and their */
 /* guard take once he is caught. */
-Uint32 EasternAlhafraShip_LeaveUpTheStairsScript[] = {
+Uint32 EasternAlhafraShipLeaveUpTheStairsScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(472, 0, 264),
 	SC_SYNC,
@@ -1847,7 +1847,7 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE EasternAlhafraShip_ActorPlacements[] = {
+ACTOR_PLACE EasternAlhafraShipActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_BRIGGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 396, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_CHAUCHA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 88, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1906,6 +1906,6 @@ CUE SceneCues[] = {
 	{CUE_TABLE_END},
 };
 
-Uint32 QuestionMark_Script[] = {
+Uint32 QuestionMarkScript[] = {
 	SC_RELEASE,
 };

@@ -7,7 +7,7 @@ void scWhirlwindUpdate(ACTOR *self)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	ACTOR		*leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	FIXED		 position[3];
+	FIXED		 pos[3];
 	FIXED		 distance;
 	Sint32		 near;
 
@@ -23,12 +23,12 @@ void scWhirlwindUpdate(ACTOR *self)
 	((FIELD_SPR *)self->spr)->pri = ((FIELD_SPR *)leader->spr)->pri;
 	if(fdMapGridGetMetatileBehavior(self->x.fixed, self->z.fixed,
 		   MAPGRID_LAYER_OVERHEAD) != METATILE_BEHAVIOR_WALL) {
-		position[0] = self->x.fixed;
-		position[1] = self->y.fixed;
-		position[2] = self->z.fixed;
-		fdCameraWorldToScreen(position);
-		if(position[0] <= toFIXED(DISPLAY_WIDTH + 32)) {
-			if(position[0] >= -toFIXED(32)) {
+		pos[0] = self->x.fixed;
+		pos[1] = self->y.fixed;
+		pos[2] = self->z.fixed;
+		fdCameraWorldToScreen(pos);
+		if(pos[0] <= toFIXED(DISPLAY_WIDTH + 32)) {
+			if(pos[0] >= -toFIXED(32)) {
 				if(self->sceneCnt == 0) {
 					distance = leader->y.fixed - self->y.fixed;
 					if(distance < 0)

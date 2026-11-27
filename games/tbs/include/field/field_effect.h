@@ -30,16 +30,16 @@ typedef struct FIELD_EFFECT {
 	Uint8 priFlg;
 	/* Actor's velocityX to velocityZ; effects move by velocity instead. */
 	VECTOR3 objVel;
-	/* Added to scaleX each frame by the update functions, in 16.16 fixed point
-	   a frame; zeroed by the spawner. */
+	/* Added to scaleX each tick by the update functions, in 16.16 fixed point
+	   a tick; zeroed by the spawner. */
 	FIXED  scaleRateX;
 	Sint32 scaleRateY;
 	/* Actor's targetX to targetZ; not named by this view. */
 	Sint32 tgtX;
 	Sint32 tgtY;
 	Sint32 tgtZ;
-	/* Added to x, y and z each frame by the update functions, in 16.16
-	   fixed-point pixels per frame; Actor's bounce, gravity and sceneWord. */
+	/* Added to x, y and z each tick by the update functions, in 16.16
+	   fixed-point pixels per tick; Actor's bounce, gravity and sceneWord. */
 	VECTOR3 vel;
 	SPR	   *spr;			/* the sprite spin turns */
 	Uint8	sprStorageKind; /* Actor's; not named by this view */
@@ -60,15 +60,15 @@ typedef struct FIELD_EFFECT {
 	Uint8  frozen;
 	Uint8  sceneCnt;
 	Uint8  sceneByte;
-	/* Added to the sprite's rotation each frame by the update functions, in
-	   1/65536 turns per frame; Imil's rising effects keep a drift here
+	/* Added to the sprite's rotation each tick by the update functions, in
+	   1/65536 turns per tick; Imil's rising effects keep a drift here
 	   instead. */
 	Uint16 spin;
 	Sint16 userValue; /* Actor's; not named by this view */
-	/* Frames until a scene's update function releases the effect: 20 for Altin
+	/* Ticks until a scene's update function releases the effect: 20 for Altin
 	   Peak's spray, 60 for Imil's rising effects. */
 	Sint32 countdown;
-	/* Called each frame while the effect is live: the spawner sets
+	/* Called each tick while the effect is live: the spawner sets
 	   scFieldEffectUpdateMotionScaleAndSpin, or options.update. */
 	void (*update)(ACTOR *actor);
 } FIELD_EFFECT;
@@ -91,7 +91,7 @@ typedef union ACTOR_OR_EFFECT {
    scene/shared/field_effect_spawn.c): a script number in the low bits and which
    of EFFECT_OPTIONS' fields to use. */
 typedef enum EFFECT_SPAWN_FLAGS {
-	/* An EFFECT_DURATION, picking one of FieldEffect_DurationScripts; the
+	/* An EFFECT_DURATION, picking one of FieldEffectDurationScripts; the
 	   actor's mode is this plus 1. */
 	EFFECT_SCRIPT_MASK = 0x0f,
 	EFFECT_USE_PALETTE = 0x10000,  /* options.pal, as its group child value */
@@ -114,27 +114,27 @@ typedef enum EFFECT_SPAWN_FLAGS {
    (sprite_ids.h). */
 #define EFFECT_DEFAULT_TYPE SPRITE_DUST_PUFF
 
-/* The scripts EFFECT_SCRIPT_MASK picks from FieldEffect_DurationScripts, in a
+/* The scripts EFFECT_SCRIPT_MASK picks from FieldEffectDurationScripts, in a
    scene's spawner and the resident one alike: each holds the effect for a
    while, then releases it. */
 typedef enum EFFECT_DURATION {
-	/* 22 one-frame repeats in a scene, 24 frames resident */
+	/* 22 one-tick repeats in a scene, 24 ticks resident */
 	EFFECT_SCRIPT_SHORT = 0,
-	EFFECT_SCRIPT_MEDIUM = 1, /* 44 repeats in a scene, 46 frames resident */
-	EFFECT_SCRIPT_LONG = 2	  /* 126 repeats in a scene, 128 frames resident */
+	EFFECT_SCRIPT_MEDIUM = 1, /* 44 repeats in a scene, 46 ticks resident */
+	EFFECT_SCRIPT_LONG = 2	  /* 126 repeats in a scene, 128 ticks resident */
 } EFFECT_DURATION;
 
-/* The word of a duration script that holds its repeat count, the frames
+/* The word of a duration script that holds its repeat count, the ticks
    EFFECT_SCALE_TO_TARGET grows over. */
 #define EFFECT_SCRIPT_REPEAT_COUNT 3
 
 /* The resident scripts, by EFFECT_DURATION (field_mode_tables.c). */
-extern const Sint32 FieldEffect_ShortEffectScript[];
-extern const Sint32 FieldEffect_MediumEffectScript[];
-extern const Sint32 FieldEffect_LongEffectScript[];
+extern const Sint32 FieldEffectShortEffectScript[];
+extern const Sint32 FieldEffectMediumEffectScript[];
+extern const Sint32 FieldEffectLongEffectScript[];
 
 /* The three scripts a scene's own effect spawner picks from by
-   EFFECT_SCRIPT_MASK, wrapped so that the spawner can copy them into its frame
+   EFFECT_SCRIPT_MASK, wrapped so that the spawner can copy them into its tick
    whole. */
 typedef struct EFFECT_DURATION_SCRIPTS {
 	const Sint32 *script[3];
@@ -152,15 +152,14 @@ typedef struct EFFECT_OPTIONS {
 	Sint16		  type;		/* the sprite, SPRITE_DUST_PUFF without the flag */
 	const Sint32 *script;	/* the actor script, run in mode 1 */
 	Uint16		  rotation; /* 1/65536 turns */
-	Uint16		  spin;		/* 1/65536 turns per frame */
+	Uint16		  spin;		/* 1/65536 turns per tick */
 	void (*update)(struct ACTOR *actor); /* replaces the update function */
 } EFFECT_OPTIONS;
 
 STATIC_ASSERT(offsetof(EFFECT_OPTIONS, type) == 24);
 STATIC_ASSERT(offsetof(EFFECT_OPTIONS, update) == 36);
 
-void fdEffectSpawnResident(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void fdEffectSpawnResident(Sint32 x, Sint32 y, Sint32 z, Sint32 velX,
+	Sint32 velY, Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 #endif

@@ -1,6 +1,6 @@
 /* Readies a flame thrower's spark (FLAME_SPARK): it stops, shadowless and
    tinted SPRITE_COLOR_RED_TINT, and breaks up (the dust cloud's animation 2)
-   without spinning or growing until ScriptedPart_Script releases it, half a
+   without spinning or growing until ScriptedPartScript releases it, half a
    second on. */
 void scActorSetupScriptedFor(ACTOR *actor, Sint32 unused)
 {
@@ -8,7 +8,7 @@ void scActorSetupScriptedFor(ACTOR *actor, Sint32 unused)
 	actor->collisionFlg = 0;
 	fdActorSetSprFlags(actor, 0);
 	fdActorSelectAnimation(actor, 2);
-	fdActorStartScript(actor, ScriptedPart_Script);
+	fdActorStartScript(actor, ScriptedPartScript);
 	scFieldActorSetSprCol(actor, SPRITE_COLOR_RED_TINT);
 	actor->tmr = 0;
 	actor->speedLimit = 0;

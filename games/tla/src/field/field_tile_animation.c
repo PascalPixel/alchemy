@@ -46,15 +46,15 @@
    all but 10. */
 #define WORLD_MAP_COLLISION_FLYABLE_LAST 8
 
-/* The frames a world map graphics set takes to reload, one step a frame,
+/* The ticks a world map graphics set takes to reload, one step a tick,
    counted down from this: its palette, animations and shapes, then each tile
    set decoded and copied to VRAM. */
 #define WORLD_MAP_RELOAD_STEPS 12
 
 /* Loads the first of the 2x2 world map tiles around the player that is not
-   shown yet (at most one a frame), without drawing it. When the region under
+   shown yet (at most one a tick), without drawing it. When the region under
    the party picks another graphics set, reloads that set over the next
-   WORLD_MAP_RELOAD_STEPS frames, unless a screen transition is running. */
+   WORLD_MAP_RELOAD_STEPS ticks, unless a screen transition is running. */
 void fdWorldMapPreloadCurrentTileBlock(void)
 {
 	WORLD_MAP_VIEW	   *perspective = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
@@ -69,7 +69,7 @@ void fdWorldMapPreloadCurrentTileBlock(void)
 	WORLD_MAP_METATILE *block;
 	const Uint32	   *resources;
 	Sint32				value;
-	Uint8			   *buffer;
+	Uint8			   *buf;
 
 	if(perspective->origin != NULL) {
 		Sint32 *p = perspective->origin;
@@ -101,7 +101,7 @@ void fdWorldMapPreloadCurrentTileBlock(void)
 				WORLD_MAP_VIEW_METATILES));
 	fdWorldMapUpdateRegionTint(block->region, 1);
 	value = block->region;
-	resources = WorldMap_GraphicsResources[fdWorldMapGetRegionGroupGraphics(
+	resources = WorldMapGraphicsResources[fdWorldMapGetRegionGroupGraphics(
 		value / WORLD_MAP_REGION_GROUP)];
 	if(resources != perspective->resources) {
 		perspective->resources = resources;
@@ -112,19 +112,19 @@ void fdWorldMapPreloadCurrentTileBlock(void)
 		return;
 	if(value != 0)
 		return;
-	buffer = syHeapAlloc(BG_PLTT_SIZE);
+	buf = syHeapAlloc(BG_PLTT_SIZE);
 	switch(perspective->reloadSteps) {
 	case WORLD_MAP_RELOAD_STEPS: {
 		Sint16 backdropColor = *(Sint16 *)BG_PLTT;
 
 		syDecompressByteLZ(
-			syResourceGetTableEntry(resources[WORLD_MAP_SET_PALETTE]), buffer);
-		*(Sint16 *)buffer = backdropColor;
-		syDMAXCopy(buffer, (void *)BG_PLTT,
+			syResourceGetTableEntry(resources[WORLD_MAP_SET_PALETTE]), buf);
+		*(Sint16 *)buf = backdropColor;
+		syDMAXCopy(buf, (void *)BG_PLTT,
 			DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2), REG_DMA3);
 		{
 			Uint8 *anim = MAPGRID_ANIMATION_SCRIPT;
-			fdPaletteFadeLoadPaletteStub(buffer);
+			fdPaletteFadeLoadPaletteStub(buf);
 			syDecompressTaggedLZ(
 				syResourceGetTableEntry(resources[WORLD_MAP_SET_ANIMATION]),
 				anim);
@@ -185,7 +185,7 @@ void fdWorldMapPreloadCurrentTileBlock(void)
 		break;
 	}
 	perspective->reloadSteps--;
-	syHeapRelease(buffer);
+	syHeapRelease(buf);
 }
 
 /* VBlank: shows BG1 and copies the decoded picture's tiles into VRAM. */
@@ -232,7 +232,7 @@ void fdWorldMapStartStillImage(void)
 		DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
 	sySynch(1);
 	fdTileMapDrawRowsFromRam(
-		affineState->pages[FrameCount & 1], Ram_MapMetatileBuffer);
+		affineState->pages[TickCount & 1], Ram_MapMetatileBuffer);
 	perspective->winTop = STILL_IMAGE_WINDOW_TOP;
 	perspective->winBottom = STILL_IMAGE_WINDOW_BOTTOM;
 	VBlankCallback = fdWorldMapPresentStillImage;
@@ -259,18 +259,18 @@ void fdWorldMapLoadAreaGraphics(void)
 {
 	WORLD_MAP_VIEW *perspective;
 	const Uint32   *resources;
-	Uint8		   *buffer;
-	Sint16			backdropColor;
+	Uint8		   *buf;
+	Sint16			backdropCol;
 
 	perspective = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
-	buffer = Ram_MapMetatileBuffer;
+	buf = Ram_MapMetatileBuffer;
 	resources = perspective->resources;
-	backdropColor = *(Sint16 *)BG_PLTT;
+	backdropCol = *(Sint16 *)BG_PLTT;
 	syDecompressByteLZ(
-		syResourceGetTableEntry(resources[WORLD_MAP_SET_PALETTE]), buffer);
-	*(Sint16 *)buffer = backdropColor;
-	syDMAXCopy(buffer, (void *)BG_PLTT,
-		DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2), REG_DMA3);
+		syResourceGetTableEntry(resources[WORLD_MAP_SET_PALETTE]), buf);
+	*(Sint16 *)buf = backdropCol;
+	syDMAXCopy(buf, (void *)BG_PLTT, DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2),
+		REG_DMA3);
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(resources[WORLD_MAP_SET_TILES_1]),
 		BgTileBuffer);
@@ -289,14 +289,14 @@ void fdWorldMapLoadAreaGraphics(void)
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(resources[WORLD_MAP_SET_TILES_6]),
 		&WorldMapStateWork);
-	/* The VBlank copies the tiles back and the next frame shows the ground;
+	/* The VBlank copies the tiles back and the next tick shows the ground;
 	   only then is the still image's buffer refilled with the metatiles. */
 	VBlankCallback = fdWorldMapEndStillImage;
 	perspective->winTop = 0;
 	perspective->winBottom = DISPLAY_HEIGHT - 1;
 	sySynch(1);
 	syDecompressTaggedLZ(
-		syResourceGetTableEntry(RESOURCE_DEFAULT_MAP_METATILES), buffer);
+		syResourceGetTableEntry(RESOURCE_DEFAULT_MAP_METATILES), buf);
 	fdWorldMapUpdateCurrentTileBlock();
 	perspective->anmActive = 0;
 	syResumeEvent(fdTilesetAnimUpdate);
@@ -324,110 +324,109 @@ void fdWorldMapLoadDefaultMetatilesAndUpdateBlock(void)
 	sySynch(1);
 }
 
-/* Each frame: runs the 16 tileset animations. */
+/* Each tick: runs the 16 tileset animations. */
 void fdTilesetAnimUpdate(void)
 {
 	MAP_STATE *map = Ram_HeapSlots->mapGrid;
-	Uint32	   channelIndex;
+	Uint32	   channelIdx;
 
-	for(channelIndex = 0; channelIndex < ARRAY_COUNT(map->anim);
-		channelIndex++) {
+	for(channelIdx = 0; channelIdx < ARRAY_COUNT(map->anim); channelIdx++) {
 		const Uint16 *commands;
-		Uint32		  sourceTileOrOpcode;
-		Uint32		  tileCount;
-		Uint32		  destinationTile;
+		Uint32		  srcTileOrOpcode;
+		Uint32		  tileCnt;
+		Uint32		  dstTile;
 
 		/* A tileset animation with no script, or paused by a script, keeps its
 		   place. */
-		if((map->anim + channelIndex)->start == NULL ||
-			(map->anim + channelIndex)->paused != 0)
+		if((map->anim + channelIdx)->start == NULL ||
+			(map->anim + channelIdx)->paused != 0)
 			continue;
 		/* While the wait lasts the tileset animation only counts down; when it
-		   is over, commands run in this same frame until one sets a new wait or
+		   is over, commands run in this same tick until one sets a new wait or
 		   stops. */
 	next:
-		if((map->anim + channelIndex)->tmr == 0) {
-			commands = (map->anim + channelIndex)->cursor;
-			sourceTileOrOpcode = *commands++;
-			if(sourceTileOrOpcode == TILESET_ANIM_LOOP) {
-				(map->anim + channelIndex)->cursor =
-					(map->anim + channelIndex)->start;
+		if((map->anim + channelIdx)->tmr == 0) {
+			commands = (map->anim + channelIdx)->cursor;
+			srcTileOrOpcode = *commands++;
+			if(srcTileOrOpcode == TILESET_ANIM_LOOP) {
+				(map->anim + channelIdx)->cursor =
+					(map->anim + channelIdx)->start;
 				goto next;
 			}
 			/* TILESET_ANIM_STOP leaves the cursor on itself, so the tileset
 			   animation stays stopped until it is started again;
 			   TILESET_ANIM_JUMP jumps to the halfword pair its low byte
 			   names. */
-			if((sourceTileOrOpcode & TILESET_ANIM_OPCODE_MASK) ==
+			if((srcTileOrOpcode & TILESET_ANIM_OPCODE_MASK) ==
 				TILESET_ANIM_JUMP) {
-				if((sourceTileOrOpcode & TILESET_ANIM_ARGUMENT_MASK) ==
+				if((srcTileOrOpcode & TILESET_ANIM_ARGUMENT_MASK) ==
 					TILESET_ANIM_STOP)
 					continue;
-				(map->anim + channelIndex)->cursor =
-					(map->anim + channelIndex)->start +
-					(sourceTileOrOpcode & TILESET_ANIM_ARGUMENT_MASK) * 2;
+				(map->anim + channelIdx)->cursor =
+					(map->anim + channelIdx)->start +
+					(srcTileOrOpcode & TILESET_ANIM_ARGUMENT_MASK) * 2;
 				goto next;
 			}
-			tileCount = *commands++;
-			destinationTile = commands[0];
-			(map->anim + channelIndex)->tmr = commands[1];
+			tileCnt = *commands++;
+			dstTile = commands[0];
+			(map->anim + channelIdx)->tmr = commands[1];
 			/* A source tile from TILESET_ANIM_RAM_TILE
 			   (TILESET_ANIM_RAM_WIDE_TILE for 64-byte tiles) is read from RAM,
 			   at the start of MapGridAnimTiles. */
 			if(map->wideTiles == 0) {
-				if(sourceTileOrOpcode >= TILESET_ANIM_RAM_TILE)
+				if(srcTileOrOpcode >= TILESET_ANIM_RAM_TILE)
 					syDMAXCopy(
-						Ram_DecodeBuffer + sourceTileOrOpcode * TILE_SIZE_4BPP,
-						BG_CHAR_BLOCK(1) + destinationTile * TILE_SIZE_4BPP,
-						DMA_COPY_WORDS(tileCount * (TILE_SIZE_4BPP / 4)),
+						Ram_DecodeBuffer + srcTileOrOpcode * TILE_SIZE_4BPP,
+						BG_CHAR_BLOCK(1) + dstTile * TILE_SIZE_4BPP,
+						DMA_COPY_WORDS(tileCnt * (TILE_SIZE_4BPP / 4)),
 						REG_DMA3);
 				else
 					syDMAXCopy(
-						BG_CHAR_BLOCK(1) + sourceTileOrOpcode * TILE_SIZE_4BPP,
-						BG_CHAR_BLOCK(1) + destinationTile * TILE_SIZE_4BPP,
-						DMA_COPY_WORDS(tileCount * (TILE_SIZE_4BPP / 4)),
+						BG_CHAR_BLOCK(1) + srcTileOrOpcode * TILE_SIZE_4BPP,
+						BG_CHAR_BLOCK(1) + dstTile * TILE_SIZE_4BPP,
+						DMA_COPY_WORDS(tileCnt * (TILE_SIZE_4BPP / 4)),
 						REG_DMA3);
 			} else {
-				if(sourceTileOrOpcode >= TILESET_ANIM_RAM_WIDE_TILE)
+				if(srcTileOrOpcode >= TILESET_ANIM_RAM_WIDE_TILE)
 					syDMAXCopy(syRamMapBlocks +
-							sourceTileOrOpcode * TILESET_ANIM_WIDE_TILE_BYTES,
+							srcTileOrOpcode * TILESET_ANIM_WIDE_TILE_BYTES,
 						BG_CHAR_BLOCK(2) +
-							destinationTile * TILESET_ANIM_WIDE_TILE_BYTES,
+							dstTile * TILESET_ANIM_WIDE_TILE_BYTES,
 						DMA_COPY_WORDS(
-							tileCount * (TILESET_ANIM_WIDE_TILE_BYTES / 4)),
+							tileCnt * (TILESET_ANIM_WIDE_TILE_BYTES / 4)),
 						REG_DMA3);
 				else
 					syDMAXCopy(BG_CHAR_BLOCK(2) +
-							sourceTileOrOpcode * TILESET_ANIM_WIDE_TILE_BYTES,
+							srcTileOrOpcode * TILESET_ANIM_WIDE_TILE_BYTES,
 						BG_CHAR_BLOCK(2) +
-							destinationTile * TILESET_ANIM_WIDE_TILE_BYTES,
+							dstTile * TILESET_ANIM_WIDE_TILE_BYTES,
 						DMA_COPY_WORDS(
-							tileCount * (TILESET_ANIM_WIDE_TILE_BYTES / 4)),
+							tileCnt * (TILESET_ANIM_WIDE_TILE_BYTES / 4)),
 						REG_DMA3);
 			}
 			/* A copy with a wait of 0 lets the next command run at once. */
-			(map->anim + channelIndex)->cursor += 4;
+			(map->anim + channelIdx)->cursor += 4;
 			goto next;
 		} else {
-			(map->anim + channelIndex)->tmr--;
+			(map->anim + channelIdx)->tmr--;
 		}
 	}
 }
 
-/* Resumes tileset animation channelIndex. */
-void fdTilesetAnimResume(Uint32 channelIndex)
+/* Resumes tileset animation channelIdx. */
+void fdTilesetAnimResume(Uint32 channelIdx)
 {
 	MAP_STATE	  *map = Ram_HeapSlots->mapGrid;
-	MAP_ANIMATION *channel = &map->anim[channelIndex];
+	MAP_ANIMATION *channel = &map->anim[channelIdx];
 
 	channel->paused = 0;
 }
 
-/* Pauses tileset animation channelIndex. */
-void fdTilesetAnimPause(Uint32 channelIndex)
+/* Pauses tileset animation channelIdx. */
+void fdTilesetAnimPause(Uint32 channelIdx)
 {
 	MAP_STATE	  *map = Ram_HeapSlots->mapGrid;
-	MAP_ANIMATION *channel = &map->anim[channelIndex];
+	MAP_ANIMATION *channel = &map->anim[channelIdx];
 
 	channel->paused = 1;
 }
@@ -452,12 +451,12 @@ void fdTilesetAnimStartAll(const Uint16 *script)
 	while(marker != TILESET_ANIM_LOOP) {
 		if((marker & TILESET_ANIM_OPCODE_MASK) == TILESET_ANIM_MARKER) {
 			MAP_ANIMATION *channel;
-			Uint32 channelIndex = marker & TILESET_ANIM_MARKER_ANIMATION_MASK;
+			Uint32 channelIdx = marker & TILESET_ANIM_MARKER_ANIMATION_MASK;
 			Uint32 paused = 0;
 
 			if(marker & TILESET_ANIM_MARKER_PAUSED)
 				paused = 1;
-			channel = &map->anim[channelIndex];
+			channel = &map->anim[channelIdx];
 			channel->start = script;
 			channel->cursor = script;
 			channel->tmr = 0;
@@ -469,7 +468,7 @@ void fdTilesetAnimStartAll(const Uint16 *script)
 	/* A map with no tileset animations never adds the update, nor adds it
 	   twice. */
 	if(channelsStarted != 0 && syFindEvent(fdTilesetAnimUpdate) == -1)
-		sySetEvent(fdTilesetAnimUpdate, EVENT_PASS_FRAME);
+		sySetEvent(fdTilesetAnimUpdate, EVENT_PASS_TICK);
 }
 
 /* Suspends the tileset animations, unless the world map's still image is
@@ -488,14 +487,14 @@ void fdTilesetAnimResumeAll(void)
 		syResumeEvent(fdTilesetAnimUpdate);
 }
 
-/* Each frame: runs the map's blend script. */
+/* Each tick: runs the map's blend script. */
 void fdBlendScriptRun(void)
 {
 	MAP_STATE		   *map = Ram_HeapSlots->mapGrid;
 	BLEND_SCRIPT_STATE *blend;
 	Uint16			   *commands;
 	Uint32				instruction;
-	Uint32				delayOrJumpIndex;
+	Uint32				delayOrJumpIdx;
 	Uint16				delay;
 
 	blend = &map->blend;
@@ -504,11 +503,11 @@ void fdBlendScriptRun(void)
 	if(blend->paused != 0)
 		return;
 
-	/* As with the tileset animations, commands run in one frame until a level
+	/* As with the tileset animations, commands run in one tick until a level
 	   sets a wait; a BLDCNT command and the jumps take no time. */
 again:
-	delayOrJumpIndex = blend->delay;
-	delay = delayOrJumpIndex;
+	delayOrJumpIdx = blend->delay;
+	delay = delayOrJumpIdx;
 	if(delay == 0) {
 		commands = blend->cursor;
 		instruction = *commands;
@@ -519,10 +518,10 @@ again:
 		}
 
 		if((instruction & BLEND_SCRIPT_OPCODE_MASK) == BLEND_SCRIPT_JUMP) {
-			delayOrJumpIndex = instruction & BLEND_SCRIPT_ARGUMENT_MASK;
-			if(delayOrJumpIndex == BLEND_SCRIPT_STOP)
+			delayOrJumpIdx = instruction & BLEND_SCRIPT_ARGUMENT_MASK;
+			if(delayOrJumpIdx == BLEND_SCRIPT_STOP)
 				return;
-			blend->cursor = blend->script + delayOrJumpIndex * 2;
+			blend->cursor = blend->script + delayOrJumpIdx * 2;
 			goto again;
 		}
 
@@ -546,7 +545,7 @@ again:
 		goto again;
 	}
 	/* Counts the wait down by one. */
-	blend->delay = delayOrJumpIndex - 1;
+	blend->delay = delayOrJumpIdx - 1;
 }
 
 /* Starts a map's blend script, unless it is empty. Clears the map state's
@@ -572,7 +571,7 @@ void fdBlendScriptStart(Uint16 *script)
 		hasScript = 1;
 	}
 	if(hasScript)
-		sySetEvent(fdBlendScriptRun, EVENT_PASS_FRAME);
+		sySetEvent(fdBlendScriptRun, EVENT_PASS_TICK);
 }
 
 /* Suspends the blend script; scenes reach it through
@@ -600,47 +599,45 @@ UNUSED void fdPaletteQueueStop(void)
 	syHeapSlotRelease(HEAP_SLOT_PALETTE_CYCLES);
 }
 
-/* Unused: starts running the palette cycles each frame. */
+/* Unused: starts running the palette cycles each tick. */
 UNUSED void fdPaletteCycleStart(void)
 {
-	sySetEvent(fdPaletteCycleStep, EVENT_PASS_FRAME);
+	sySetEvent(fdPaletteCycleStep, EVENT_PASS_TICK);
 }
 
-/* Each frame: advances each palette cycle whose timer has run out by one
+/* Each tick: advances each palette cycle whose timer has run out by one
    colour, writing the rotated colours back to the palette. */
 void fdPaletteCycleStep(void)
 {
 	PALETTE_CYCLE_STATE *paletteQueue = Ram_HeapSlots->palCycles;
-	Uint8				 cycleIndex;
+	Uint8				 cycleIdx;
 	/* BUG: four queued cycles become zero here, so none advance. */
 	Uint16 activeCycles = paletteQueue->cnt & 3;
-	Uint16 rotatedColors[PALETTE_COLORS];
+	Uint16 rotatedCols[PALETTE_COLORS];
 
-	for(cycleIndex = 0; cycleIndex < activeCycles; cycleIndex++) {
-		PALETTE_CYCLE *cycle = &paletteQueue->entries[cycleIndex];
+	for(cycleIdx = 0; cycleIdx < activeCycles; cycleIdx++) {
+		PALETTE_CYCLE *cycle = &paletteQueue->entries[cycleIdx];
 		if(cycle->tmr == 0) {
-			Uint16	rotationOffset = cycle->pos;
-			Uint16	colorCount = cycle->cnt;
-			void   *paletteColors = cycle->src;
-			Uint16 *savedColors = cycle->cols;
-			Uint8	colorIndex;
+			Uint16	rotationOfs = cycle->pos;
+			Uint16	colCnt = cycle->cnt;
+			void   *paletteCols = cycle->src;
+			Uint16 *savedCols = cycle->cols;
+			Uint8	colIdx;
 
-			/* Each saved colour moves rotationOffset places down, the first
+			/* Each saved colour moves rotationOfs places down, the first
 			   ones wrapping round to the end. */
-			for(colorIndex = colorCount - rotationOffset;
-				colorIndex < colorCount; colorIndex++)
-				rotatedColors[colorIndex] = *savedColors++;
-			for(colorIndex = 0; colorIndex < colorCount - rotationOffset;
-				colorIndex++)
-				rotatedColors[colorIndex] = *savedColors++;
-			syDMAXCopy(rotatedColors, paletteColors,
-				DMA_COPY_HALFWORDS(colorCount), REG_DMA3);
+			for(colIdx = colCnt - rotationOfs; colIdx < colCnt; colIdx++)
+				rotatedCols[colIdx] = *savedCols++;
+			for(colIdx = 0; colIdx < colCnt - rotationOfs; colIdx++)
+				rotatedCols[colIdx] = *savedCols++;
+			syDMAXCopy(
+				rotatedCols, paletteCols, DMA_COPY_HALFWORDS(colCnt), REG_DMA3);
 			/* The next step rotates one place further, back to none after a
-			   full turn, and waits delay frames. */
-			rotationOffset++;
-			if(rotationOffset >= colorCount)
-				rotationOffset = 0;
-			cycle->pos = rotationOffset;
+			   full turn, and waits delay ticks. */
+			rotationOfs++;
+			if(rotationOfs >= colCnt)
+				rotationOfs = 0;
+			cycle->pos = rotationOfs;
 			cycle->tmr = cycle->delay;
 		} else {
 			cycle->tmr--;
@@ -657,7 +654,7 @@ void fdPaletteCycleStep(void)
 
 /* Tints the world map for the encounter region under the party, any region but
    TINT_BRIGHT_REGION and TINT_DARK_REGION clearing the tint. Gradually, the
-   tint moves one step every 16 frames; at once, it jumps there. While a menu is
+   tint moves one step every 16 ticks; at once, it jumps there. While a menu is
    open the tint stays as it is. */
 void fdWorldMapUpdateRegionTint(Sint32 region, Sint32 gradual)
 {
@@ -681,7 +678,7 @@ void fdWorldMapUpdateRegionTint(Sint32 region, Sint32 gradual)
 		region = perspective->tintTgt - perspective->tint;
 		if(region == 0)
 			return;
-		if(FrameCount & 15)
+		if(TickCount & 15)
 			return;
 		if(region < 0)
 			region = -1;
@@ -706,7 +703,7 @@ void fdWorldMapUpdateRegionTint(Sint32 region, Sint32 gradual)
 	}
 }
 
-/* The ground height functions (MapGrid_TerrainHeightFunctions): each takes a
+/* The ground height functions (MapGridTerrainHeightFunctions): each takes a
    metatile's height samples after its kind byte and a pixel (x, y) within the
    16x16 metatile, and returns the ground height there in 16.16 pixels. */
 FIXED fdTerrainGetFlatHeight(const Sint8 *samples)
@@ -716,26 +713,25 @@ FIXED fdTerrainGetFlatHeight(const Sint8 *samples)
 
 /* The height of a slope across x at position (0 to 15 of the metatile): a
    straight line from samples[0] to samples[1]. */
-FIXED fdTerrainGetSlopeXHeight(const Sint8 *samples, Sint32 position)
+FIXED fdTerrainGetSlopeXHeight(const Sint8 *samples, Sint32 pos)
 {
 	Sint32 start;
 	Sint32 delta;
 
 	start = samples[0] << CURVE_VALUE_SHIFT;
-	delta = ((samples[1] << CURVE_VALUE_SHIFT) - start) * position;
+	delta = ((samples[1] << CURVE_VALUE_SHIFT) - start) * pos;
 	return start + delta / CURVE_FULL_STEPS;
 }
 
 /* A slope along y: from sample 0 at the top to sample 1 at the bottom. */
-FIXED fdTerrainGetSlopeYHeight(
-	const Sint8 *samples, Sint32 unused, Sint32 position)
+FIXED fdTerrainGetSlopeYHeight(const Sint8 *samples, Sint32 unused, Sint32 pos)
 {
 	Sint32 base;
-	Sint32 offset;
+	Sint32 ofs;
 
 	base = samples[0] << CURVE_VALUE_SHIFT;
-	offset = ((samples[1] << CURVE_VALUE_SHIFT) - base) * position;
-	return base + offset / CURVE_FULL_STEPS;
+	ofs = ((samples[1] << CURVE_VALUE_SHIFT) - base) * pos;
+	return base + ofs / CURVE_FULL_STEPS;
 }
 
 /* A step across the diagonal x + y = 15: sample 0 before it, sample 1 after it
@@ -746,7 +742,7 @@ FIXED fdTerrainGetStepSumDiagonalHeight(
 	Sint32 first;
 	Sint32 second;
 	Sint32 maximum;
-	Uint32 position;
+	Uint32 pos;
 
 	first = samples[0] << CURVE_VALUE_SHIFT;
 	second = samples[1] << CURVE_VALUE_SHIFT;
@@ -754,11 +750,11 @@ FIXED fdTerrainGetStepSumDiagonalHeight(
 	if(second > first) {
 		maximum = second;
 	}
-	position = x + y;
-	if(position == CURVE_FULL_STEPS - 1) {
+	pos = x + y;
+	if(pos == CURVE_FULL_STEPS - 1) {
 		return maximum;
 	}
-	if(position < CURVE_FULL_STEPS - 1) {
+	if(pos < CURVE_FULL_STEPS - 1) {
 		second = first;
 	}
 	return second;
@@ -773,7 +769,7 @@ FIXED fdTerrainGetStepDifferenceDiagonalHeight(
 	Sint32 second;
 	Sint32 maximum;
 	Sint32 difference;
-	Uint32 position = x;
+	Uint32 pos = x;
 
 	first = samples[0] << CURVE_VALUE_SHIFT;
 	second = samples[1] << CURVE_VALUE_SHIFT;
@@ -781,12 +777,12 @@ FIXED fdTerrainGetStepDifferenceDiagonalHeight(
 	if(second > first) {
 		maximum = second;
 	}
-	difference = y - position;
-	position = difference + CURVE_FULL_STEPS - 1;
-	if(position == CURVE_FULL_STEPS - 1) {
+	difference = y - pos;
+	pos = difference + CURVE_FULL_STEPS - 1;
+	if(pos == CURVE_FULL_STEPS - 1) {
 		return maximum;
 	}
-	if(position < CURVE_FULL_STEPS - 1) {
+	if(pos < CURVE_FULL_STEPS - 1) {
 		second = first;
 	}
 	return second;
@@ -850,10 +846,10 @@ FIXED fdTerrainGetBendDifferenceDiagonalHeight(
 	}
 }
 
-/* A raised or sunken rounded square: sample 1 where Terrain_RoundedSquareMask
+/* A raised or sunken rounded square: sample 1 where TerrainRoundedSquareMask
    is 1, sample 0 in the corners. */
 FIXED fdTerrainGetRoundedSquareHeight(
-	const Sint8 *samples, Sint32 position, Sint32 row)
+	const Sint8 *samples, Sint32 pos, Sint32 row)
 {
 	Sint32 start;
 
@@ -862,15 +858,15 @@ FIXED fdTerrainGetRoundedSquareHeight(
 	   between. */
 	return start +
 		(((samples[1] << CURVE_VALUE_SHIFT) - start) *
-			Terrain_RoundedSquareMask[position + (row * CURVE_FULL_STEPS)]);
+			TerrainRoundedSquareMask[pos + (row * CURVE_FULL_STEPS)]);
 }
 
 /* The height of a step across x at position (0 to 15 of the metatile):
    samples[0] on the metatile's first half, samples[1] on its second. */
-FIXED fdTerrainGetStepXHeight(const Sint8 *samples, Uint32 position)
+FIXED fdTerrainGetStepXHeight(const Sint8 *samples, Uint32 pos)
 {
 	Sint32 value;
-	if(position < CURVE_HALF_STEPS)
+	if(pos < CURVE_HALF_STEPS)
 		value = samples[0];
 	else
 		value = samples[1];
@@ -878,11 +874,10 @@ FIXED fdTerrainGetStepXHeight(const Sint8 *samples, Uint32 position)
 }
 
 /* A step along y: sample 0 above the middle, sample 1 below it. */
-FIXED fdTerrainGetStepYHeight(
-	const Sint8 *samples, Uint32 unused, Uint32 position)
+FIXED fdTerrainGetStepYHeight(const Sint8 *samples, Uint32 unused, Uint32 pos)
 {
 	Sint32 value;
-	if(position < CURVE_HALF_STEPS)
+	if(pos < CURVE_HALF_STEPS)
 		value = samples[0];
 	else
 		value = samples[1];
@@ -893,41 +888,41 @@ FIXED fdTerrainGetStepYHeight(
 FIXED fdTerrainGetSampleTableTransposedHeight(
 	const Sint8 *samples, Uint32 pixelX, Uint32 pixelY)
 {
-	return samples[Terrain_SampleIndexTable[pixelY + (pixelX << 4)]]
+	return samples[TerrainSampleIndexTable[pixelY + (pixelX << 4)]]
 		<< CURVE_VALUE_SHIFT;
 }
 
 /* As fdTerrainGetSampleTableMirroredHeight with x and y swapped. */
 FIXED fdTerrainGetSampleTableTransposedMirroredHeight(
-	const Sint8 *samples, Uint32 row, Uint32 position)
+	const Sint8 *samples, Uint32 row, Uint32 pos)
 {
-	const Uint8 *table = Terrain_SampleIndexTable;
-	Uint32		 index;
+	const Uint8 *tbl = TerrainSampleIndexTable;
+	Uint32		 idx;
 
-	index = (row << 4) - position;
-	index += CURVE_FULL_STEPS - 1;
-	return samples[table[index]] << CURVE_VALUE_SHIFT;
+	idx = (row << 4) - pos;
+	idx += CURVE_FULL_STEPS - 1;
+	return samples[tbl[idx]] << CURVE_VALUE_SHIFT;
 }
 
-/* The sample Terrain_SampleIndexTable picks for (x, y): a byte per pixel of the
+/* The sample TerrainSampleIndexTable picks for (x, y): a byte per pixel of the
    metatile, row by row. */
 FIXED fdTerrainGetSampleTableHeight(
-	const Sint8 *samples, Uint32 position, Uint32 row)
+	const Sint8 *samples, Uint32 pos, Uint32 row)
 {
-	return samples[Terrain_SampleIndexTable[position + (row << 4)]]
+	return samples[TerrainSampleIndexTable[pos + (row << 4)]]
 		<< CURVE_VALUE_SHIFT;
 }
 
 /* The same, with the table mirrored left to right. */
 FIXED fdTerrainGetSampleTableMirroredHeight(
-	const Sint8 *samples, Uint32 position, Uint32 row)
+	const Sint8 *samples, Uint32 pos, Uint32 row)
 {
-	const Uint8 *table = Terrain_SampleIndexTable;
-	Uint32		 index;
+	const Uint8 *tbl = TerrainSampleIndexTable;
+	Uint32		 idx;
 
-	index = (row << 4) - position;
-	index += CURVE_FULL_STEPS - 1;
-	return samples[table[index]] << CURVE_VALUE_SHIFT;
+	idx = (row << 4) - pos;
+	idx += CURVE_FULL_STEPS - 1;
+	return samples[tbl[idx]] << CURVE_VALUE_SHIFT;
 }
 
 /* Above y 8 a step along x from the first sample to the second; below, the
@@ -966,7 +961,7 @@ FIXED fdTerrainGetSplitBottomStepHeight(
 
 typedef Sint32 (*TERRAIN_HEIGHT_FN)(Uint8 *heights, Sint32 x, Sint32 z);
 
-extern TERRAIN_HEIGHT_FN MapGrid_TerrainHeightFunctions[16];
+extern TERRAIN_HEIGHT_FN MapGridTerrainHeightFunctions[16];
 
 /* The ground height the shape at code gives at pixel (x, z) of its metatile, in
    16.16 pixels: its terrain kind's height function on its samples. */
@@ -974,13 +969,13 @@ extern TERRAIN_HEIGHT_FN MapGrid_TerrainHeightFunctions[16];
    unsequenced expression. */
 #if FIX_UNSEQUENCED_SIDE_EFFECT
 #define fdMapGridGetShapeHeight(code, x, z) \
-	MapGrid_TerrainHeightFunctions[(code)[0] & MAPGRID_SHAPE_KIND_MASK]( \
+	MapGridTerrainHeightFunctions[(code)[0] & MAPGRID_SHAPE_KIND_MASK]( \
 		(code) + 1, (x) & (MAPGRID_METATILE_PIXELS - 1), \
 		(z) & (MAPGRID_METATILE_PIXELS - 1))
 #else
 #define fdMapGridGetShapeHeight(code, x, z) \
-	MapGrid_TerrainHeightFunctions[*(code)++ & MAPGRID_SHAPE_KIND_MASK]( \
-		(code), (x) & (MAPGRID_METATILE_PIXELS - 1), \
+	MapGridTerrainHeightFunctions[*(code)++ & MAPGRID_SHAPE_KIND_MASK]((code), \
+		(x) & (MAPGRID_METATILE_PIXELS - 1), \
 		(z) & (MAPGRID_METATILE_PIXELS - 1))
 #endif
 
@@ -1191,7 +1186,7 @@ Sint32 fdMapGridCheckCollisionAt(
 	Uint8		*metatiles;
 	Uint8		*shapes;
 	Uint8		*code;
-	Sint32		 index;
+	Sint32		 idx;
 	Sint32		 rise;
 
 	if(map == NULL)
@@ -1205,9 +1200,9 @@ Sint32 fdMapGridCheckCollisionAt(
 		metatiles = MapGridMetatileBuffer;
 		shapes = MapShapeGrid;
 	}
-	index = x / MAPGRID_METATILE_PIXELS + (z / MAPGRID_METATILE_PIXELS << 7);
-	metatiles += index * 4;
-	shapes += index;
+	idx = x / MAPGRID_METATILE_PIXELS + (z / MAPGRID_METATILE_PIXELS << 7);
+	metatiles += idx * 4;
+	shapes += idx;
 	if(metatiles[2] == METATILE_BEHAVIOR_WALL)
 		return 2;
 	code = Ram_MapCollision + *shapes * 4;
@@ -1221,16 +1216,16 @@ Sint32 fdMapGridCheckCollisionAt(
 
 /* As fdMapGridCheckCollisionAt for the point position (16.16 pixels, read as
    its whole-pixel halves) on the actor's layer, against its ground height. */
-Sint32 fdMapGridCheckCollision(ACTOR *actor, POS *position)
+Sint32 fdMapGridCheckCollision(ACTOR *actor, POS *pos)
 {
-	Sint32		 x = ((FIELD_COORDINATE *)&position->x)->part[0].integer;
-	Sint32		 z = ((FIELD_COORDINATE *)&position->z)->part[0].integer;
+	Sint32		 x = ((FIELD_COORDINATE *)&pos->x)->part[0].integer;
+	Sint32		 z = ((FIELD_COORDINATE *)&pos->z)->part[0].integer;
 	MAP_STATE	*map = Ram_HeapSlots->mapGrid;
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	Uint8		*metatiles;
 	Uint8		*shapes;
 	Uint8		*code;
-	Sint32		 index;
+	Sint32		 idx;
 	Sint32		 rise;
 
 	if(map == NULL)
@@ -1244,9 +1239,9 @@ Sint32 fdMapGridCheckCollision(ACTOR *actor, POS *position)
 		metatiles = MapGridMetatileBuffer;
 		shapes = MapShapeGrid;
 	}
-	index = x / MAPGRID_METATILE_PIXELS + (z / MAPGRID_METATILE_PIXELS << 7);
-	metatiles += index * 4;
-	shapes += index;
+	idx = x / MAPGRID_METATILE_PIXELS + (z / MAPGRID_METATILE_PIXELS << 7);
+	metatiles += idx * 4;
+	shapes += idx;
 	if(metatiles[2] == METATILE_BEHAVIOR_WALL)
 		return 2;
 	code = Ram_MapCollision + *shapes * 4;
@@ -1260,16 +1255,16 @@ Sint32 fdMapGridCheckCollision(ACTOR *actor, POS *position)
 
 /* As fdMapGridCheckCollision, against the actor's height and with no -1: 2 on a
    wall, 1 when the ground rises more than 8 pixels above it, else 0. */
-Sint32 fdMapGridCheckCollisionAbove(ACTOR *actor, POS *position)
+Sint32 fdMapGridCheckCollisionAbove(ACTOR *actor, POS *pos)
 {
-	Sint32		 x = ((FIELD_COORDINATE *)&position->x)->part[0].integer;
-	Sint32		 z = ((FIELD_COORDINATE *)&position->z)->part[0].integer;
+	Sint32		 x = ((FIELD_COORDINATE *)&pos->x)->part[0].integer;
+	Sint32		 z = ((FIELD_COORDINATE *)&pos->z)->part[0].integer;
 	MAP_STATE	*map = Ram_HeapSlots->mapGrid;
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	Uint8		*metatiles;
 	Uint8		*shapes;
 	Uint8		*code;
-	Sint32		 index;
+	Sint32		 idx;
 
 	if(map == NULL)
 		return 0;
@@ -1282,9 +1277,9 @@ Sint32 fdMapGridCheckCollisionAbove(ACTOR *actor, POS *position)
 		metatiles = MapGridMetatileBuffer;
 		shapes = MapShapeGrid;
 	}
-	index = x / MAPGRID_METATILE_PIXELS + (z / MAPGRID_METATILE_PIXELS << 7);
-	metatiles += index * 4;
-	shapes += index;
+	idx = x / MAPGRID_METATILE_PIXELS + (z / MAPGRID_METATILE_PIXELS << 7);
+	metatiles += idx * 4;
+	shapes += idx;
 	if(metatiles[2] == METATILE_BEHAVIOR_WALL)
 		return 2;
 	code = Ram_MapCollision + *shapes * 4;
@@ -1295,11 +1290,10 @@ Sint32 fdMapGridCheckCollisionAbove(ACTOR *actor, POS *position)
 
 /* Returns -1 when the metatile under position (its x, and z less its height) in
    the overhead layer is a wall, else 0; also 0 before the map state exists. */
-Sint32 fdMapGridIsWallAt(Sint32 *position)
+Sint32 fdMapGridIsWallAt(Sint32 *pos)
 {
-	Sint32 x = position[0] / toFIXED(1);
-	Sint32 z = (Uint32)((position[2] & FIELD_METATILE_MASK) - position[1]) /
-		toFIXED(1);
+	Sint32 x = pos[0] / toFIXED(1);
+	Sint32 z = (Uint32)((pos[2] & FIELD_METATILE_MASK) - pos[1]) / toFIXED(1);
 	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
 	MAP_METATILE *metatile;
 
@@ -1316,30 +1310,30 @@ Sint32 fdMapGridIsWallAt(Sint32 *position)
    (world_map.c: STEP_CUE_AREA(AREA_DAILA) enters Daila,
    METATILE_BEHAVIOR_WORLD_MAP_IRON meets Iron), or METATILE_BEHAVIOR_WALL where
    the map has no block. */
-Sint32 fdWorldMapGetBlockMetatileBehavior(WORLD_POS *position)
+Sint32 fdWorldMapGetBlockMetatileBehavior(WORLD_POS *pos)
 {
-	Sint32 z = position->y;
-	Sint32 x = position->x;
-	Uint32 index;
+	Sint32 z = pos->y;
+	Sint32 x = pos->x;
+	Uint32 idx;
 
-	index = ((x / toFIXED(WORLD_MAP_METATILE_PIXELS)) &
-				(WORLD_MAP_VIEW_METATILES - 1)) +
+	idx = ((x / toFIXED(WORLD_MAP_METATILE_PIXELS)) &
+			  (WORLD_MAP_VIEW_METATILES - 1)) +
 		((z / toFIXED(WORLD_MAP_METATILE_PIXELS)) &
 			(WORLD_MAP_VIEW_METATILES - 1)) *
 			WORLD_MAP_VIEW_METATILES;
-	return ((WORLD_MAP_BLOCKS *)MetatileTiles)->blocks[index].place;
+	return ((WORLD_MAP_BLOCKS *)MetatileTiles)->blocks[idx].place;
 }
 
 /* Returns the world map's collision value (1-15) at position: from the upper
    collision layer where it has one, else the lower, else
    WORLD_MAP_COLLISION_DEFAULT. */
-Sint32 fdWorldMapGetCollision(WORLD_POS *position)
+Sint32 fdWorldMapGetCollision(WORLD_POS *pos)
 {
-	Sint32 halfPixelX = FIXEDtoINT(position->x) >> 1;
-	Sint32 y = position->y;
+	Sint32 halfPixelX = FIXEDtoINT(pos->x) >> 1;
+	Sint32 y = pos->y;
 	Sint32 halfPixelY = FIXEDtoINT(y) >> 1;
 	Uint32 collisionMetatile;
-	Uint32 pixelOffset;
+	Uint32 pixelOfs;
 	Uint8  collisionTile;
 	Uint8  packedCollisions;
 	Uint32 result;
@@ -1348,13 +1342,13 @@ Sint32 fdWorldMapGetCollision(WORLD_POS *position)
 	collisionMetatile = ((halfPixelY / 8) & (WORLD_MAP_TILE_MAP_WIDTH - 1)) *
 			WORLD_MAP_TILE_MAP_WIDTH +
 		((halfPixelX / 8) & (WORLD_MAP_TILE_MAP_WIDTH - 1));
-	pixelOffset = (((halfPixelY / 2) & 3) << 1) + ((halfPixelX / 4) & 1);
+	pixelOfs = (((halfPixelY / 2) & 3) << 1) + ((halfPixelX / 4) & 1);
 
 	/* The upper layer's collision tiles follow the lower layer's. */
 	collisionTile = WORLD_MAP_UPPER_TILE_MAP[collisionMetatile];
 	packedCollisions = *(Ram_MapCollision +
 		WORLD_MAP_COLLISION_TILES * WORLD_MAP_COLLISION_TILE_BYTES +
-		collisionTile * WORLD_MAP_COLLISION_TILE_BYTES + pixelOffset);
+		collisionTile * WORLD_MAP_COLLISION_TILE_BYTES + pixelOfs);
 	if(packedCollisions != 0) {
 		if(halfPixelX & 2)
 			result = packedCollisions >> 4;
@@ -1367,7 +1361,7 @@ Sint32 fdWorldMapGetCollision(WORLD_POS *position)
 	/* The lower layer's, at the start of the buffer. */
 	collisionTile = WORLD_MAP_LOWER_TILE_MAP[collisionMetatile];
 	packedCollisions = *(Ram_MapCollision +
-		collisionTile * WORLD_MAP_COLLISION_TILE_BYTES + pixelOffset);
+		collisionTile * WORLD_MAP_COLLISION_TILE_BYTES + pixelOfs);
 	if(packedCollisions != 0) {
 		if(halfPixelX & 2)
 			result = packedCollisions >> 4;
@@ -1383,10 +1377,10 @@ Sint32 fdWorldMapGetCollision(WORLD_POS *position)
 /* Returns 0 when the world map at position can be walked on (a place there, and
    collision WORLD_MAP_COLLISION_WALKABLE_FIRST to
    WORLD_MAP_COLLISION_WALKABLE_LAST), else -1. */
-Sint32 fdWorldMapIsWalkable(void *mover, WORLD_POS *position)
+Sint32 fdWorldMapIsWalkable(void *mover, WORLD_POS *pos)
 {
-	if(fdWorldMapGetBlockMetatileBehavior(position) != METATILE_BEHAVIOR_WALL) {
-		if((Uint32)(fdWorldMapGetCollision(position) -
+	if(fdWorldMapGetBlockMetatileBehavior(pos) != METATILE_BEHAVIOR_WALL) {
+		if((Uint32)(fdWorldMapGetCollision(pos) -
 			   WORLD_MAP_COLLISION_WALKABLE_FIRST) <=
 			WORLD_MAP_COLLISION_WALKABLE_LAST -
 				WORLD_MAP_COLLISION_WALKABLE_FIRST)
@@ -1396,10 +1390,10 @@ Sint32 fdWorldMapIsWalkable(void *mover, WORLD_POS *position)
 }
 
 /* Returns 0 where the ship can sail (the sea or shallow water), else -1. */
-Sint32 fdWorldMapIsSailable(void *mover, WORLD_POS *position)
+Sint32 fdWorldMapIsSailable(void *mover, WORLD_POS *pos)
 {
-	if(fdWorldMapGetBlockMetatileBehavior(position) != METATILE_BEHAVIOR_WALL) {
-		Sint32		 collision = fdWorldMapGetCollision(position);
+	if(fdWorldMapGetBlockMetatileBehavior(pos) != METATILE_BEHAVIOR_WALL) {
+		Sint32		 collision = fdWorldMapGetCollision(pos);
 		FIELD_STATE *state = Ram_HeapSlots->fieldState;
 		Sint32		 mode;
 
@@ -1431,10 +1425,10 @@ Sint32 fdWorldMapIsSailable(void *mover, WORLD_POS *position)
 
 /* Returns 0 where the flying ship can go, else -1: low down, where it can sail;
    higher, more of the ground by the kind it last flew over. */
-Sint32 fdWorldMapIsFlyable(ACTOR *mover, WORLD_POS *position)
+Sint32 fdWorldMapIsFlyable(ACTOR *mover, WORLD_POS *pos)
 {
-	if(fdWorldMapGetBlockMetatileBehavior(position) != METATILE_BEHAVIOR_WALL) {
-		Sint32		 collision = fdWorldMapGetCollision(position);
+	if(fdWorldMapGetBlockMetatileBehavior(pos) != METATILE_BEHAVIOR_WALL) {
+		Sint32		 collision = fdWorldMapGetCollision(pos);
 		FIELD_STATE *state = Ram_HeapSlots->fieldState;
 
 		Sint32 height = mover->y.fixed;

@@ -40,27 +40,27 @@ typedef struct TRANSITION_SHAPE {
 
 /* The found item's picture over the leader: growing in from half size, then
    pulsing to 1.5 times its size and resting, over and over. */
-extern const Sint32 ItemDisplay_GrowInScript[];
-extern const Sint32 ItemDisplay_PulseScript[];
+extern const Sint32 ItemDisplayGrowInScript[];
+extern const Sint32 ItemDisplayPulseScript[];
 
 /* A Reveal marker's script, which releases it once fdIsRevealActive returns 0,
    Reveal having ended. */
-extern const Sint32 Reveal_MarkerScript[];
+extern const Sint32 RevealMarkerScript[];
 Bool				fdIsRevealActive(struct ACTOR *interpreter);
 
 /* The palette tints' colour channel curves: each maps a 5-bit channel to a
    palette fade channel, shifted up 10 bits. */
-extern Uint16 FieldEffect_ChannelCurve[];
-extern Uint16 FieldEffect_ChannelCurveLight[];
-extern Uint16 FieldEffect_ChannelCurveContrast[];
+extern Uint16 FieldEffectChannelCurve[];
+extern Uint16 FieldEffectChannelCurveLight[];
+extern Uint16 FieldEffectChannelCurveContrast[];
 
 /* The width of the bars of WINDOW_TRANSITION_BARS, by progress. */
-extern const Uint8 ScreenTransition_NoiseWidths[];
+extern const Uint8 ScreenTransitionNoiseWidths[];
 /* The wobble of the circle edge of WINDOW_TRANSITION_RIPPLE. */
-extern const Sint8 ScreenTransition_EdgeOffsets[];
+extern const Sint8 ScreenTransitionEdgeOffsets[];
 /* The window shape of each step of WINDOW_TRANSITION_SHAPE. */
-extern TRANSITION_SHAPE ScreenTransition_Shapes[];
+extern TRANSITION_SHAPE ScreenTransitionShapes[];
 /* 0 to 63 shuffled: the order in which the dissolve sets the pixels. */
-extern const Uint8 ScreenTransition_DitherTable[];
+extern const Uint8 ScreenTransitionDitherTable[];
 
 #endif

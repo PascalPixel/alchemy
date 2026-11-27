@@ -16,9 +16,9 @@ typedef struct PENDING_CUE {
 	Sint32 action;
 } PENDING_CUE;
 
-void   fdScriptRunMessage(Sint32 actor, Sint32 message);
+void   fdScriptRunMessage(Sint32 actor, Sint32 msg);
 Sint32 fdRunPsynergyEndScripts(Uint32 action);
-Sint32 fdRunPsynergyScript(PENDING_CUE *event, Sint32 argument, Sint32 target);
+Sint32 fdRunPsynergyScript(PENDING_CUE *event, Sint32 argument, Sint32 tgt);
 void   fdScriptUpdateDebugSkip(void);
 void   fdScriptNoOperationCallback(void);
 

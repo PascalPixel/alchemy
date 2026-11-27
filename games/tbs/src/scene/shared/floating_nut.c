@@ -4,18 +4,18 @@
    McCoy's palace garden, Mogall Forest and Vale: a Nut floating where it lies,
    until it is taken. */
 
-/* The Nut's callback, each frame: it sways up to two pixels either side of its
+/* The Nut's callback, each tick: it sways up to two pixels either side of its
    spot and dips up to two pixels below it, at a random pace. */
 static Sint32 scUpdateFloatingNut(ORBITING_MAP_ACTOR *nut)
 {
-	SPR	 *sprite = (SPR *)nut->spr;
+	SPR	 *spr = (SPR *)nut->spr;
 	FIXED dip = sySin(nut->orbitAng) * 2;
 
 	if(dip > 0)
 		dip = -dip;
 	nut->x = nut->orbitCenterX + syCos(nut->orbitAng) * 2;
 	nut->y = nut->orbitCenterY + dip;
-	sprite->rotation = syCos(nut->orbitAng + DEGtoANG(180)) / 8;
+	spr->rotation = syCos(nut->orbitAng + DEGtoANG(180)) / 8;
 	/* The pace: a sixty-fourth of a turn and two random steps under 1/128
 	   each. */
 	nut->orbitAng += syRandomBelow(512) + syRandomBelow(512) + TRIG_TURN / 64;
@@ -27,16 +27,16 @@ static Sint32 scUpdateFloatingNut(ORBITING_MAP_ACTOR *nut)
 void scFloatNut(Sint32 id)
 {
 	ORBITING_MAP_ACTOR	   *actor;
-	ORBITING_MAP_ACTOR_SPR *sprite;
+	ORBITING_MAP_ACTOR_SPR *spr;
 	ICON_TRANSFER		   *glyph;
 
 	actor = (ORBITING_MAP_ACTOR *)fdActorGetById(id);
-	sprite = actor->spr;
-	sprite->pri = 1;
-	sprite->fullCol = 0;
-	sprite->palNum = 0;
+	spr = actor->spr;
+	spr->pri = 1;
+	spr->fullCol = 0;
+	spr->palNum = 0;
 
-	sprite->cnt = 0;
+	spr->cnt = 0;
 	fdActorSetSprFlags((ACTOR *)actor, 0);
 	actor->retainSprCache = 0;
 	actor->motionFlg = 0;
@@ -49,7 +49,7 @@ void scFloatNut(Sint32 id)
 
 	glyph = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	mnIconDrawItem(ITEM_NUT);
-	syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
+	syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 
 	actor->orbitCenterX = actor->x;

@@ -49,7 +49,7 @@ extern char MaxLines[];
 
 /* What the driver calls outside it, which each game's system library provides:
    the BIOS's CpuSet and the compiler's signed division. */
-void Bios_CpuSet(const void *source, void *destination, u32 control);
+void Bios_CpuSet(const void *src, void *dst, u32 control);
 s32	 __divsi3(s32 numerator, s32 denominator);
 
 /* Starting the driver and running it each VBlank. */
@@ -80,7 +80,7 @@ u32 umul3232H32(u32 left, u32 right);
 /* Songs and music players. */
 void m4aSongNumStart(u16 id);
 void MPlayOpen(
-	struct MusicPlayerInfo *player, struct MusicPlayerTrack *tracks, u8 count);
+	struct MusicPlayerInfo *player, struct MusicPlayerTrack *tracks, u8 cnt);
 void MPlayStart(
 	struct MusicPlayerInfo *player, const struct SongHeader *header);
 void MPlayContinue(struct MusicPlayerInfo *player);
@@ -115,7 +115,7 @@ void RealClearChain(struct SoundChannel *note);
 /* Clears 64 bytes (Clear64byte, through the jump table). */
 void SoundMainBTM(void *block);
 /* Copies the driver's jump table, MPlayJumpTableTemplate, into table. */
-void MPlayJumpTableCopy(MPlayFunc *table);
+void MPlayJumpTableCopy(MPlayFunc *tbl);
 void CgbSound(void);
 void CgbOscOff(u8 channel);
 void CgbModVol(struct CgbChannel *note);

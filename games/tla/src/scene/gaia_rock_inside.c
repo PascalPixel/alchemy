@@ -322,33 +322,33 @@ typedef struct METATILE_POINT {
 
 /* The platforms' sway (scGaiaRockInsideSwayPlatforms). */
 typedef struct SWAY_STATE {
-	Uint16 frm;		/* frames into the sway's 240 */
-	Uint16 pending; /* frames still to run, which a push holds back */
+	Uint16 frm;		/* ticks into the sway's 240 */
+	Uint16 pending; /* ticks still to run, which a push holds back */
 } SWAY_STATE;
 
-extern Uint32 GaiaRockInside_BurstScript[];
-extern Sint32 GaiaRockInside_CaskTossedLeftScript[];
-extern Sint32 GaiaRockInside_CaskTossedRightScript[];
+extern Uint32 GaiaRockInsideBurstScript[];
+extern Sint32 GaiaRockInsideCaskTossedLeftScript[];
+extern Sint32 GaiaRockInsideCaskTossedRightScript[];
 
-extern ACTOR_PLACE GaiaRockInside_Placements[];
-extern ACTOR_PLACE GaiaRockInside_LairPlacements[];
-extern ACTOR_PLACE GaiaRockInside_TwinAltarsActorPlacements[];
-extern ACTOR_PLACE GaiaRockInside_PlatformsActorPlacements[];
-extern ACTOR_PLACE GaiaRockInside_AltarActorPlacements[];
-extern Sint32	   GaiaRockInside_SquashYScript[];
+extern ACTOR_PLACE GaiaRockInsidePlacements[];
+extern ACTOR_PLACE GaiaRockInsideLairPlacements[];
+extern ACTOR_PLACE GaiaRockInsideTwinAltarsActorPlacements[];
+extern ACTOR_PLACE GaiaRockInsidePlatformsActorPlacements[];
+extern ACTOR_PLACE GaiaRockInsideAltarActorPlacements[];
+extern Sint32	   GaiaRockInsideSquashYScript[];
 
-extern Uint32 GaiaRockInside_LeaderStepsBackScript[];
-extern Sint32 GaiaRockInside_AltarShakesScript[];
-extern Sint32 GaiaRockInside_AltarDropsScript[];
+extern Uint32 GaiaRockInsideLeaderStepsBackScript[];
+extern Sint32 GaiaRockInsideAltarShakesScript[];
+extern Sint32 GaiaRockInsideAltarDropsScript[];
 
-ACTOR GaiaRockInside_SavedSusa				 BSS_DATA;
-Sint32 GaiaRockInside_SavedSusaX			 BSS_DATA;
-Sint32 GaiaRockInside_SavedSusaZ			 BSS_DATA;
-Sint32 GaiaRockInside_SavedSusaAnimation	 BSS_DATA;
-Sint32 GaiaRockInside_SavedSusaAnimationStep BSS_DATA;
+ACTOR GaiaRockInsideSavedSusa				BSS_DATA;
+Sint32 GaiaRockInsideSavedSusaX				BSS_DATA;
+Sint32 GaiaRockInsideSavedSusaZ				BSS_DATA;
+Sint32 GaiaRockInsideSavedSusaAnimation		BSS_DATA;
+Sint32 GaiaRockInsideSavedSusaAnimationStep BSS_DATA;
 
-extern Sint32 GaiaRockInside_CaskThrownScript[];
-extern Sint32 GaiaRockInside_CaskEmptiesScript[];
+extern Sint32 GaiaRockInsideCaskThrownScript[];
+extern Sint32 GaiaRockInsideCaskEmptiesScript[];
 
 void scGaiaRockInsideSaveSusa(void);
 void scGaiaRockInsideRestoreSusa(void);
@@ -360,7 +360,7 @@ void scGaiaRockInsideSwayPlatforms(void);
 
 void scGaiaRockInsideBlankLayer(Sint32 layer, Sint32 keep);
 
-extern Uint16 GaiaRockInside_LairBlendScript[12];
+extern Uint16 GaiaRockInsideLairBlendScript[12];
 
 void   scGaiaRockInsideLayMaze(Sint32 level);
 void   scGaiaRockInsideDrawMazeRoom(void);
@@ -373,21 +373,21 @@ static inline void scMapGridCopyRawMetatiles(Sint32 x, Sint32 z, Sint32 width,
 	fdMapCopyRawMetatilesRect(x, z, width, height, metatileX, metatileZ);
 }
 
-extern Uint32 FieldEffect_ShortScript[];
-extern Uint32 FieldEffect_MediumScript[];
-extern Uint32 FieldEffect_LongScript[];
+extern Uint32 FieldEffectShortScript[];
+extern Uint32 FieldEffectMediumScript[];
+extern Uint32 FieldEffectLongScript[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
 	return SceneEntrances;
 }
 
-extern SCENE_REGION GaiaRockInside_AltarExitRegions[];
+extern SCENE_REGION GaiaRockInsideAltarExitRegions[];
 
 const SCENE_REGION *scGetExitRegions(void)
 {
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_INSIDE_ALTAR)
-		return GaiaRockInside_AltarExitRegions;
+		return GaiaRockInsideAltarExitRegions;
 	return 0;
 }
 
@@ -448,7 +448,7 @@ void scGaiaRockInsideRaiseDust(void)
 	actor->motionFlg = 0;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptPlaySnd(SE_DUST_PUFF);
 	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	syFieldScriptWait(24);
@@ -457,20 +457,20 @@ void scGaiaRockInsideRaiseDust(void)
 	options.startScaleX = toFIXED(16) / 25;
 	options.startScaleY = toFIXED(16) / 25;
 	for(i = 0; i <= DUST_RING_PUFFS; i++) {
-		Sint32 angle;
-		FIXED  velocity[3];
+		Sint32 ang;
+		FIXED  vel[3];
 		FIXED  cosine;
 
-		angle = i * FACING_STEP;
-		cosine = syCos(angle);
-		velocity[0] = cosine;
-		velocity[1] = 0;
-		velocity[2] = syMathSin(angle);
-		velocity[0] += velocity[0] >> 1;
-		velocity[0] += (syRandomBelow(toFIXED(3) / 4)) - toFIXED(3) / 8;
-		velocity[2] += (syRandomBelow(toFIXED(3) / 8)) - toFIXED(3) / 16;
+		ang = i * FACING_STEP;
+		cosine = syCos(ang);
+		vel[0] = cosine;
+		vel[1] = 0;
+		vel[2] = syMathSin(ang);
+		vel[0] += vel[0] >> 1;
+		vel[0] += (syRandomBelow(toFIXED(3) / 4)) - toFIXED(3) / 8;
+		vel[2] += (syRandomBelow(toFIXED(3) / 8)) - toFIXED(3) / 16;
 		scFieldEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
-			velocity[0], velocity[1], velocity[2],
+			vel[0], vel[1], vel[2],
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
 			&options);
 	}
@@ -499,7 +499,7 @@ const Uint32 *scGetExits(void)
 }
 
 /* Susa feeds the Serpent Dragonsbane cask by cask, over and over
-   (GaiaRockInside_SusaFeedsSerpentScript): he sets a cask down among the others
+   (GaiaRockInsideSusaFeedsSerpentScript): he sets a cask down among the others
    south of the Serpent, pushes it a metatile east, and throws it up onto the
    cup at the Serpent's feet, where it tips and pours; then he tosses the empty
    cask aside, where it bursts. The functions below are its steps.
@@ -525,18 +525,18 @@ Sint32 scGaiaRockInsideCaskTips(void)
 	return 0;
 }
 
-extern Uint32 GaiaRockInside_PourScript[];
+extern Uint32 GaiaRockInsidePourScript[];
 
 /* The cask rights itself a step. */
 Sint32 scGaiaRockInsideCaskRights(void)
 {
-	FIELD_SPR *sprite = fdActorGet(ACTOR_CASK)->spr;
+	FIELD_SPR *spr = fdActorGet(ACTOR_CASK)->spr;
 
-	sprite->rotation -= TRIG_TURN * 3 / 256;
+	spr->rotation -= TRIG_TURN * 3 / 256;
 	return 0;
 }
 
-/* Each frame the pour's size varies at random; shrunk below a sixteenth, it
+/* Each tick the pour's size varies at random; shrunk below a sixteenth, it
    jumps back to an eighth. */
 void scGaiaRockInsideFlickerPour(ACTOR *actor)
 {
@@ -562,43 +562,42 @@ void scGaiaRockInsideFlickerPour(ACTOR *actor)
    (scGaiaRockInsideFlickerPour). */
 Sint32 scGaiaRockInsideCaskPours(void)
 {
-	ACTOR	  *source = fdActorGet(ACTOR_CASK);
+	ACTOR	  *src = fdActorGet(ACTOR_CASK);
 	ACTOR	  *actor;
-	FIELD_SPR *sprite;
+	FIELD_SPR *spr;
 
-	actor =
-		(scFieldActorCreate(SPRITE_WADING_SPLASH, source->x.fixed + toFIXED(8),
-			source->y.fixed - toFIXED(2), source->z.fixed));
+	actor = (scFieldActorCreate(SPRITE_WADING_SPLASH, src->x.fixed + toFIXED(8),
+		src->y.fixed - toFIXED(2), src->z.fixed));
 	actor->motionFlg = 0;
 	fdActorSetSprFlags(actor, 0);
-	fdActorStartScript(actor, GaiaRockInside_PourScript);
+	fdActorStartScript(actor, GaiaRockInsidePourScript);
 	actor->scaleX = toFIXED(2) / 5;
 	actor->scaleY = toFIXED(2) / 5;
-	sprite = actor->spr;
-	sprite->pri = 1;
+	spr = actor->spr;
+	spr->pri = 1;
 	actor->bounce = 0;
 	actor->sceneWord = 0;
 	actor->update = (OBJECT_UPDATE)scGaiaRockInsideFlickerPour;
 	return 0;
 }
 
-extern Sint32 GaiaRockInside_CaskSetDownScript[];
+extern Sint32 GaiaRockInsideCaskSetDownScript[];
 
 /* Susa sets a new cask down at his feet. */
 Sint32 scGaiaRockInsideSetDownCask(void)
 {
 	fdActorStartScript(((Sint32)fdActorGet(ACTOR_CASK)),
-		(Sint32)GaiaRockInside_CaskSetDownScript);
+		(Sint32)GaiaRockInsideCaskSetDownScript);
 	return 0;
 }
 
-extern Uint32 GaiaRockInside_CaskPushedScript[];
+extern Uint32 GaiaRockInsideCaskPushedScript[];
 
 /* Susa pushes the cask a metatile east, straining. */
 Sint32 scGaiaRockInsideSusaPushesCask(void)
 {
 	fdActorStartScript(((Sint32)fdActorGet(ACTOR_CASK)),
-		(Sint32)GaiaRockInside_CaskPushedScript);
+		(Sint32)GaiaRockInsideCaskPushedScript);
 	fdActorSetAttachedEffect(
 		ACTOR_SUSA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	return 0;
@@ -610,7 +609,7 @@ Sint32 scGaiaRockInsideSusaThrowsCask(void)
 	ACTOR *actor;
 
 	actor = fdActorGet(ACTOR_CASK);
-	fdActorStartScript(actor, (Sint32)GaiaRockInside_CaskThrownScript);
+	fdActorStartScript(actor, (Sint32)GaiaRockInsideCaskThrownScript);
 	actor->x.fixed = toFIXED(472);
 	fdActorSetAnimationSpeed(actor, ANIM_STEP_NORMAL);
 	fdActorSetAttachedEffect(
@@ -624,7 +623,7 @@ Sint32 scGaiaRockInsideCaskEmpties(void)
 	ACTOR *cask;
 
 	cask = fdActorGet(ACTOR_CASK);
-	fdActorStartScript(cask, (Sint32)GaiaRockInside_CaskEmptiesScript);
+	fdActorStartScript(cask, (Sint32)GaiaRockInsideCaskEmptiesScript);
 	fdActorSetAnimationSpeed(cask, 0);
 	fdActorSetAttachedEffect(
 		ACTOR_SUSA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -638,21 +637,21 @@ Sint32 scGaiaRockInsideCaskEmpties(void)
 /* The tossed cask bursts in four puffs of dust. */
 Sint32 scGaiaRockInsideCaskBursts(void)
 {
-	ACTOR *source = fdActorGet(ACTOR_CASK);
+	ACTOR *src = fdActorGet(ACTOR_CASK);
 	Sint32 i;
 
 	fdScriptPlaySnd(SE_FLAME_FLARE);
 	for(i = 0; i < 4; i++) {
 		{
-			ACTOR *dust = (scFieldActorCreate(SPRITE_DUST_CLOUD,
-				source->x.fixed, source->y.fixed, source->z.fixed));
+			ACTOR *dust = (scFieldActorCreate(
+				SPRITE_DUST_CLOUD, src->x.fixed, src->y.fixed, src->z.fixed));
 
 			if(dust != 0) {
 				dust->motionFlg = 0;
 				dust->collisionFlg = 0;
 				fdActorSetSprFlags(dust, 0);
 				fdActorSelectAnimation(dust, 1);
-				fdActorStartScript(dust, GaiaRockInside_BurstScript);
+				fdActorStartScript(dust, GaiaRockInsideBurstScript);
 				((FIELD_SPR *)dust->spr)->pri = 1;
 				dust->bounce = syCos(syRandomBelow(8) << 14) >> 1;
 				dust->sceneWord = syMathSin(syRandomBelow(8) << 14) >> 1;
@@ -676,41 +675,41 @@ Sint32 scGaiaRockInsideTossCask(void)
 
 	if(FIELD_HALF_METATILE(leader->z.fixed) <= 45 &&
 		FIELD_HALF_METATILE(leader->x.fixed) <= 57)
-		fdActorStartScript(actor, GaiaRockInside_CaskTossedRightScript);
+		fdActorStartScript(actor, GaiaRockInsideCaskTossedRightScript);
 	else
-		fdActorStartScript(actor, GaiaRockInside_CaskTossedLeftScript);
+		fdActorStartScript(actor, GaiaRockInsideCaskTossedLeftScript);
 	return 0;
 }
 
-/* The frames Susa or the cask may be held up by the party before he tells it to
+/* The ticks Susa or the cask may be held up by the party before he tells it to
    move, and the most the count keeps. */
-enum { SUSA_BLOCKED_FRAMES = 30, SUSA_BLOCKED_FRAMES_MAX = 35 };
+enum { SUSA_BLOCKED_TICKS = 30, SUSA_BLOCKED_TICKS_MAX = 35 };
 
 /* Susa's hook while he works: when the party has stood in his or the cask's way
-   for SUSA_BLOCKED_FRAMES, he tells them to move
+   for SUSA_BLOCKED_TICKS, he tells them to move
    (scGaiaRockInsideSusaSaysMoveAside); while one is held up the other waits. */
 void scGaiaRockInsideCheckBlocked(ACTOR *actor)
 {
 	ACTOR *other = fdActorGet(ACTOR_CASK);
 
-	if(actor->refused == SUSA_BLOCKED_FRAMES ||
-		other->refused == SUSA_BLOCKED_FRAMES) {
+	if(actor->refused == SUSA_BLOCKED_TICKS ||
+		other->refused == SUSA_BLOCKED_TICKS) {
 		FieldStateWork->raisedCue = RAISED_SUSA_BLOCKED;
-		if(actor->refused == SUSA_BLOCKED_FRAMES)
-			actor->refused = SUSA_BLOCKED_FRAMES + 1;
-		if(other->refused == SUSA_BLOCKED_FRAMES)
-			other->refused = SUSA_BLOCKED_FRAMES + 1;
+		if(actor->refused == SUSA_BLOCKED_TICKS)
+			actor->refused = SUSA_BLOCKED_TICKS + 1;
+		if(other->refused == SUSA_BLOCKED_TICKS)
+			other->refused = SUSA_BLOCKED_TICKS + 1;
 	}
 	if(actor->refused > 2) {
 		other->paused = 1;
 		fdScriptSetFlag(FLAG_CASK_WAITS_FOR_SUSA);
 	}
 	{
-		Uint8 *otherCount = &other->refused;
+		Uint8 *otherCnt = &other->refused;
 
-		if(*otherCount > 2 && !fdScriptGetFlag(FLAG_CASK_WAITS_FOR_SUSA) &&
-			other->script != GaiaRockInside_CaskTossedLeftScript &&
-			other->script != GaiaRockInside_CaskTossedRightScript) {
+		if(*otherCnt > 2 && !fdScriptGetFlag(FLAG_CASK_WAITS_FOR_SUSA) &&
+			other->script != GaiaRockInsideCaskTossedLeftScript &&
+			other->script != GaiaRockInsideCaskTossedRightScript) {
 			actor->paused = 1;
 			fdScriptSetFlag(FLAG_SUSA_WAITS_FOR_CASK);
 		}
@@ -718,37 +717,37 @@ void scGaiaRockInsideCheckBlocked(ACTOR *actor)
 			other->paused = 0;
 			fdScriptClearFlag(FLAG_CASK_WAITS_FOR_SUSA);
 		}
-		if(*otherCount == 0) {
+		if(*otherCnt == 0) {
 			actor->paused = 0;
 			fdScriptClearFlag(FLAG_SUSA_WAITS_FOR_CASK);
 		}
-		if(actor->refused > SUSA_BLOCKED_FRAMES_MAX)
-			actor->refused = SUSA_BLOCKED_FRAMES_MAX;
-		if(*otherCount > SUSA_BLOCKED_FRAMES_MAX)
-			*otherCount = SUSA_BLOCKED_FRAMES_MAX;
+		if(actor->refused > SUSA_BLOCKED_TICKS_MAX)
+			actor->refused = SUSA_BLOCKED_TICKS_MAX;
+		if(*otherCnt > SUSA_BLOCKED_TICKS_MAX)
+			*otherCnt = SUSA_BLOCKED_TICKS_MAX;
 	}
 }
 
-extern ACTOR_PLACE GaiaRockInside_FirstAltarActorPlacements[];
+extern ACTOR_PLACE GaiaRockInsideFirstAltarActorPlacements[];
 
-extern Sint32 GaiaRockInside_ArrowFrame;
-extern Sint32 GaiaRockInside_SquashXScript[];
+extern Sint32 GaiaRockInsideArrowTick;
+extern Sint32 GaiaRockInsideSquashXScript[];
 
 /* Returns the current room's actors; the maze's rooms and the lair share a
    scene, told apart by entrance. */
 const void *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_INSIDE_FIRST_ALTAR)
-		return GaiaRockInside_FirstAltarActorPlacements;
+		return GaiaRockInsideFirstAltarActorPlacements;
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_INSIDE_TWIN_ALTARS)
-		return GaiaRockInside_TwinAltarsActorPlacements;
+		return GaiaRockInsideTwinAltarsActorPlacements;
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_INSIDE_PLATFORMS)
-		return GaiaRockInside_PlatformsActorPlacements;
+		return GaiaRockInsidePlatformsActorPlacements;
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_INSIDE_ALTAR)
-		return GaiaRockInside_AltarActorPlacements;
+		return GaiaRockInsideAltarActorPlacements;
 	if(MainRoutineStateWork.entrance >= ENTRANCE_LAIR)
-		return GaiaRockInside_LairPlacements;
-	return GaiaRockInside_Placements;
+		return GaiaRockInsideLairPlacements;
+	return GaiaRockInsidePlacements;
 }
 
 /* The arrow plant's animation for the heading of the way on: east, south, west
@@ -762,33 +761,33 @@ const void *scGetActorPlacements(void)
    up and down in scGaiaRockInsidePulseUpDownArrow. */
 void scGaiaRockInsidePulseSidewaysArrow(ACTOR *actor)
 {
-	Sint32 colorMode = 0;
+	Sint32 colMode = 0;
 
-	if((GaiaRockInside_ArrowFrame & 7) <= 0)
-		colorMode = 7;
-	fdActorSetSprColMode(actor, colorMode & 7);
-	if((GaiaRockInside_ArrowFrame & 31) == 0) {
+	if((GaiaRockInsideArrowTick & 7) <= 0)
+		colMode = 7;
+	fdActorSetSprColMode(actor, colMode & 7);
+	if((GaiaRockInsideArrowTick & 31) == 0) {
 		actor->scaleX = toFIXED(1);
-		fdActorStartScript(actor, GaiaRockInside_SquashXScript);
+		fdActorStartScript(actor, GaiaRockInsideSquashXScript);
 		fdScriptPlaySnd(SE_DRIP);
 	}
-	GaiaRockInside_ArrowFrame++;
+	GaiaRockInsideArrowTick++;
 }
 
 /* As scGaiaRockInsidePulseSidewaysArrow, for an arrow pointing up or down. */
 void scGaiaRockInsidePulseUpDownArrow(ACTOR *actor)
 {
-	Sint32 colorMode = 0;
+	Sint32 colMode = 0;
 
-	if((GaiaRockInside_ArrowFrame & 7) <= 0)
-		colorMode = 7;
-	fdActorSetSprColMode(actor, colorMode & 7);
-	if((GaiaRockInside_ArrowFrame & 31) == 0) {
+	if((GaiaRockInsideArrowTick & 7) <= 0)
+		colMode = 7;
+	fdActorSetSprColMode(actor, colMode & 7);
+	if((GaiaRockInsideArrowTick & 31) == 0) {
 		actor->scaleY = toFIXED(1);
-		fdActorStartScript(actor, GaiaRockInside_SquashYScript);
+		fdActorStartScript(actor, GaiaRockInsideSquashYScript);
 		fdScriptPlaySnd(SE_DRIP);
 	}
-	GaiaRockInside_ArrowFrame++;
+	GaiaRockInsideArrowTick++;
 }
 
 /* Felix casts Growth on the little plant in the middle of a maze room, and it
@@ -853,16 +852,16 @@ void scGaiaRockInsideCycloneClearsTwinAltarsBushes(void)
 	}
 }
 
-static __inline__ Sint32 scGameFlagTest(Sint32 flag)
+static __inline__ Sint32 scGameFlagTest(Sint32 flg)
 {
-	return syGameFlagGet(flag);
+	return syGameFlagGet(flg);
 }
 
 /* A Mad Plant leaps out at the leader (fdMadPlantLeapAtLeader). */
 static __inline__ void scGaiaRockInsideMadPlantLeaps(
-	Sint32 sprite, Sint32 x, Sint32 z)
+	Sint32 spr, Sint32 x, Sint32 z)
 {
-	fdMadPlantLeapAtLeader(sprite, x, z);
+	fdMadPlantLeapAtLeader(spr, x, z);
 }
 
 /* Felix casts Cyclone on the patch of bushes in the platforms' room, metatiles
@@ -910,7 +909,7 @@ void scGaiaRockInsideCycloneClearsMadPlantBushes(void)
 	syFieldCycloneCopyTouchedMetatiles(18, 17, 0, 3, 3, 31, 0);
 }
 
-extern METATILE_POINT GaiaRockInside_CobwebMetatiles[12];
+extern METATILE_POINT GaiaRockInsideCobwebMetatiles[12];
 
 /* Felix casts Cyclone on the great cobweb in the altar room's east part, at any
    of its edge metatiles around (40, 20) to (47, 27). The web tears; the altar
@@ -921,25 +920,24 @@ void scGaiaRockInsideCycloneClearsCobweb(void)
 {
 	ACTOR *altar;
 	ACTOR *leader;
-	Sint16 count;
+	Sint16 cnt;
 	Sint16 i;
 	Sint32 height = 8;
-	Sint32 sourceX = 117;
-	Sint32 sourceY = 20;
+	Sint32 srcX = 117;
+	Sint32 srcY = 20;
 
-	fdCycloneCopyTouchedMetatiles(
-		104, sourceY, 1, height, height, sourceX, sourceY);
+	fdCycloneCopyTouchedMetatiles(104, srcY, 1, height, height, srcX, srcY);
 	if(syGameFlagGet(FLAG_ALTAR_FELL))
 		return;
-	count = 0;
-	for(i = 0; i < (Sint16)ARRAY_COUNT(GaiaRockInside_CobwebMetatiles); i++) {
+	cnt = 0;
+	for(i = 0; i < (Sint16)ARRAY_COUNT(GaiaRockInsideCobwebMetatiles); i++) {
 		if(fdMapGridGetMetatileBehaviorAt(2,
-			   FIELD_METATILE_ORIGIN(GaiaRockInside_CobwebMetatiles[i].pos[0]),
+			   FIELD_METATILE_ORIGIN(GaiaRockInsideCobwebMetatiles[i].pos[0]),
 			   FIELD_METATILE_ORIGIN(
-				   GaiaRockInside_CobwebMetatiles[i].pos[1])) == 0)
-			count++;
+				   GaiaRockInsideCobwebMetatiles[i].pos[1])) == 0)
+			cnt++;
 	}
-	if(count <= 0)
+	if(cnt <= 0)
 		return;
 	altar = fdActorGet(ACTOR_FALLING_ALTAR);
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
@@ -952,11 +950,11 @@ void scGaiaRockInsideCycloneClearsCobweb(void)
 		fdActorShowEmote(MainRoutineStateWork.leaderActorId,
 			EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 		fdActorSetScript(MainRoutineStateWork.leaderActorId,
-			GaiaRockInside_LeaderStepsBackScript);
+			GaiaRockInsideLeaderStepsBackScript);
 	}
-	fdActorSetScript(ACTOR_FALLING_ALTAR, GaiaRockInside_AltarShakesScript);
+	fdActorSetScript(ACTOR_FALLING_ALTAR, GaiaRockInsideAltarShakesScript);
 	syFieldScriptWait(60);
-	fdActorSetScript(ACTOR_FALLING_ALTAR, GaiaRockInside_AltarDropsScript);
+	fdActorSetScript(ACTOR_FALLING_ALTAR, GaiaRockInsideAltarDropsScript);
 	syFieldScriptWait(30);
 	fdMapGridCopyMetatilesLayered(117, 20, 7, 8, 104, 20);
 	fdMapGridCopyMetatilesLayered(111, 12, 1, 6, 111, 20);
@@ -995,20 +993,20 @@ void scGaiaRockInsideSaveSusa(void)
 {
 	ACTOR		  *walker = fdActorGet(ACTOR_CASK);
 	ACTOR		  *actor = fdActorGet(ACTOR_SUSA);
-	FIELD_SPR	  *sprite = actor->spr;
-	SPR_ANIMATION *animation = sprite->record;
+	FIELD_SPR	  *spr = actor->spr;
+	SPR_ANIMATION *anm = spr->record;
 
-	syWordsCopyEntry(&GaiaRockInside_SavedSusa, actor, sizeof(ACTOR));
-	GaiaRockInside_SavedSusaAnimationStep = animation->step;
-	GaiaRockInside_SavedSusaAnimation = sprite->lastNo;
+	syWordsCopyEntry(&GaiaRockInsideSavedSusa, actor, sizeof(ACTOR));
+	GaiaRockInsideSavedSusaAnimationStep = anm->step;
+	GaiaRockInsideSavedSusaAnimation = spr->lastNo;
 	{
 		FIXED x = actor->x.fixed;
 		FIXED z;
 
-		GaiaRockInside_SavedSusaX = x;
+		GaiaRockInsideSavedSusaX = x;
 		z = actor->z.fixed;
 		actor->update = 0;
-		GaiaRockInside_SavedSusaZ = z;
+		GaiaRockInsideSavedSusaZ = z;
 		actor->velZ = 0;
 		actor->velY = 0;
 		actor->velX = 0;
@@ -1019,8 +1017,8 @@ void scGaiaRockInsideSaveSusa(void)
 	fdActorResetTargetsAndVelocity(ACTOR_SUSA);
 	fdActorSetAnimationSpeed(actor, ANIM_STEP_NORMAL * 5 / 8);
 	actor->speedLimit = toFIXED(1);
-	if(walker->script == GaiaRockInside_CaskThrownScript ||
-		walker->script == GaiaRockInside_CaskPushedScript) {
+	if(walker->script == GaiaRockInsideCaskThrownScript ||
+		walker->script == GaiaRockInsideCaskPushedScript) {
 		walker->paused = 1;
 		fdActorSetAnimationSpeed(walker, 0);
 	}
@@ -1033,22 +1031,22 @@ void scGaiaRockInsideRestoreSusa(void)
 	ACTOR *walker = fdActorGet(ACTOR_CASK);
 	ACTOR *actor = fdActorGet(ACTOR_SUSA);
 
-	if(GaiaRockInside_SavedSusaX != actor->x.fixed ||
-		GaiaRockInside_SavedSusaZ != actor->z.fixed) {
-		Sint16 *savedZ = (Sint16 *)&GaiaRockInside_SavedSusaZ;
+	if(GaiaRockInsideSavedSusaX != actor->x.fixed ||
+		GaiaRockInsideSavedSusaZ != actor->z.fixed) {
+		Sint16 *savedZ = (Sint16 *)&GaiaRockInsideSavedSusaZ;
 
 		fdActorWalkTo(
-			ACTOR_SUSA, FIXEDtoINT(GaiaRockInside_SavedSusaX), savedZ[1]);
+			ACTOR_SUSA, FIXEDtoINT(GaiaRockInsideSavedSusaX), savedZ[1]);
 		scFieldActorWaitForMoveById(ACTOR_SUSA);
 	}
-	if(walker->script == GaiaRockInside_CaskThrownScript ||
-		walker->script == GaiaRockInside_CaskPushedScript) {
+	if(walker->script == GaiaRockInsideCaskThrownScript ||
+		walker->script == GaiaRockInsideCaskPushedScript) {
 		walker->paused = 0;
 		fdActorSetAnimationSpeed(walker, ANIM_STEP_NORMAL);
 	}
-	syWordsCopyEntry(actor, &GaiaRockInside_SavedSusa, sizeof(ACTOR));
-	fdActorSetAnimation(ACTOR_SUSA, GaiaRockInside_SavedSusaAnimation);
-	fdActorSetAnimationSpeed(actor, GaiaRockInside_SavedSusaAnimationStep);
+	syWordsCopyEntry(actor, &GaiaRockInsideSavedSusa, sizeof(ACTOR));
+	fdActorSetAnimation(ACTOR_SUSA, GaiaRockInsideSavedSusaAnimation);
+	fdActorSetAnimationSpeed(actor, GaiaRockInsideSavedSusaAnimationStep);
 }
 
 /* Felix reaches the steps just east of where Susa works in the lair, metatile
@@ -1064,8 +1062,8 @@ void scGaiaRockInsideMeetSusa(void)
 	syFieldScriptEndLastingPsynergy(0);
 	syFieldScriptSetMessageId((Sint32)MsgGaiaRockInsideWhoAreYouHowDid);
 	syScriptCameraFollowActor(ACTOR_SUSA, 1);
-	if(actor->script == GaiaRockInside_CaskEmptiesScript ||
-		actor->script == GaiaRockInside_CaskPushedScript)
+	if(actor->script == GaiaRockInsideCaskEmptiesScript ||
+		actor->script == GaiaRockInsideCaskPushedScript)
 		scFieldActorWaitForScriptEndById(ACTOR_CASK);
 	scGaiaRockInsideSaveSusa();
 	fdActorSetAnimation(ACTOR_SUSA, ANIM_STAND);
@@ -1100,12 +1098,12 @@ void scGaiaRockInsideMeetSusa(void)
 	fdActorSetAnimationAndWait(ACTOR_SUSA, ANIM_NOD);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	fdScriptSetFlag(FLAG_MET_SUSA);
-	if(actor->script == GaiaRockInside_CaskTossedLeftScript ||
-		actor->script == GaiaRockInside_CaskTossedRightScript) {
-		GaiaRockInside_SavedSusa.x.fixed = GaiaRockInside_SavedSusaX =
-			GaiaRockInside_SavedSusa.tgtX;
-		GaiaRockInside_SavedSusa.z.fixed = GaiaRockInside_SavedSusaZ =
-			GaiaRockInside_SavedSusa.tgtZ;
+	if(actor->script == GaiaRockInsideCaskTossedLeftScript ||
+		actor->script == GaiaRockInsideCaskTossedRightScript) {
+		GaiaRockInsideSavedSusa.x.fixed = GaiaRockInsideSavedSusaX =
+			GaiaRockInsideSavedSusa.tgtX;
+		GaiaRockInsideSavedSusa.z.fixed = GaiaRockInsideSavedSusaZ =
+			GaiaRockInsideSavedSusa.tgtZ;
 	}
 	scGaiaRockInsideRestoreSusa();
 	fdScriptEnd();
@@ -1138,7 +1136,7 @@ void scGaiaRockInsideTalkToSusa(void)
 				(Sint32)MsgGaiaRockInsideTheSerpentIsStillToo);
 		fdScriptShowMessage(ACTOR_SUSA, 0);
 	} else {
-		if(fdActorGet(ACTOR_CASK)->script == GaiaRockInside_CaskEmptiesScript)
+		if(fdActorGet(ACTOR_CASK)->script == GaiaRockInsideCaskEmptiesScript)
 			scFieldActorWaitForScriptEndById(ACTOR_CASK);
 		scGaiaRockInsideSaveSusa();
 		syFieldScriptSetMessageId(
@@ -1173,7 +1171,7 @@ void scGaiaRockInsideReadSusasMind(void)
 		fdScriptShowMessage(ACTOR_SUSA, 0);
 	} else {
 		actor = fdActorGet(ACTOR_CASK);
-		if(actor->script == (Sint32)GaiaRockInside_CaskEmptiesScript) {
+		if(actor->script == (Sint32)GaiaRockInsideCaskEmptiesScript) {
 			scFieldActorWaitForScriptEndById(ACTOR_CASK);
 		}
 		scGaiaRockInsideSaveSusa();
@@ -1185,7 +1183,7 @@ void scGaiaRockInsideReadSusasMind(void)
 	fdScriptEnd();
 }
 
-extern Uint32 OrbitSpark_Script[];
+extern Uint32 OrbitSparkScript[];
 
 #include "shared/orbit_spark_spawn.h"
 
@@ -1198,19 +1196,18 @@ extern Uint32 OrbitSpark_Script[];
 
 #include "shared/actor_step_to_watched.h"
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 #include "shared/actor_emit_sparkles.h"
 
-extern Uint32 Lesson_TabletRiseScript[];
-extern Uint32 GaiaRockInside_RisingSparkScript[];
-extern Sint32 GaiaRockInside_CirclingSparkScript[];
-extern Uint32 Lesson_AdeptRiseScript[];
-extern Sint32 Lesson_SeekingSparkScript[];
-extern Sint32 Lesson_TabletSettleScript[];
-extern Sint32 Lesson_AdeptSettleScript[];
+extern Uint32 LessonTabletRiseScript[];
+extern Uint32 GaiaRockInsideRisingSparkScript[];
+extern Sint32 GaiaRockInsideCirclingSparkScript[];
+extern Uint32 LessonAdeptRiseScript[];
+extern Sint32 LessonSeekingSparkScript[];
+extern Sint32 LessonTabletSettleScript[];
+extern Sint32 LessonAdeptSettleScript[];
 
 /* Felix touches the slate in the lair and learns Sand: the screen warms to
    gold, the slate and then Felix rise among circling sparks, a white flash, and
@@ -1220,7 +1217,7 @@ void scGaiaRockInsideFelixLearnsSand(Sint32 tabletId, Sint32 adeptId)
 	ACTOR  *tablet = fdActorGetById(tabletId);
 	ACTOR  *adept = fdActorGetById(adeptId);
 	Sint32	i;
-	Sint16 *angle;
+	Sint16 *ang;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
 	UNUSED Sint32 unused[3];
@@ -1239,7 +1236,7 @@ void scGaiaRockInsideFelixLearnsSand(Sint32 tabletId, Sint32 adeptId)
 	tablet->motionFlg = 0;
 	tablet->acceleration = toFIXED(1) / 5;
 	tablet->speedLimit = toFIXED(1) / 5;
-	fdActorSetMovementTypeById(tabletId, Lesson_TabletRiseScript);
+	fdActorSetMovementTypeById(tabletId, LessonTabletRiseScript);
 	sySndPlay(SE_TABLET_RISE);
 	fdScriptWait(45);
 	fdActorConfigureSprCol(tabletId, SPRITE_COLOR_BLINK);
@@ -1259,7 +1256,7 @@ void scGaiaRockInsideFelixLearnsSand(Sint32 tabletId, Sint32 adeptId)
 		fdActorSelectAnimation(spark, 7);
 		fdActorSetSprFlags(spark, 0);
 		fdActorSetBlendMode(spark, 1);
-		fdActorStartScript(spark, GaiaRockInside_RisingSparkScript);
+		fdActorStartScript(spark, GaiaRockInsideRisingSparkScript);
 		REG_BLDALPHA = BLEND_ALPHA(4, 16);
 		sySynch(2);
 		REG_BLDALPHA = BLEND_ALPHA(10, 16);
@@ -1275,28 +1272,27 @@ void scGaiaRockInsideFelixLearnsSand(Sint32 tabletId, Sint32 adeptId)
 		ACTOR *spark = scFieldActorCreate(
 			SPRITE_PARTICLE, adept->x.fixed, adept->y.fixed, adept->z.fixed);
 		sySndPlay(SE_SPARKS);
-		angle = &spark->tmr;
-		*angle = (syRandom() & 0x7fff) + DEGtoANG(180);
+		ang = &spark->tmr;
+		*ang = (syRandom() & 0x7fff) + DEGtoANG(180);
 		spark->userValue = ((i & 1) * 2 - 1) << ((syRandom() & 3) + 9);
 		spark->motionFlg = 0;
 		spark->sceneWord = toFIXED(122);
 		spark->watchedActor = (FIELD_OBJECT *)adept;
 		spark->sceneCnt =
-			(LEARN_SPARKS - i) * LEARN_SPARK_INTERVAL + LEARN_SPIRAL_FRAMES;
+			(LEARN_SPARKS - i) * LEARN_SPARK_INTERVAL + LEARN_SPIRAL_TICKS;
 		fdActorSetSprCol(spark, 2);
 		fdSetActorSprPriority(spark, 1);
 		fdActorSelectAnimation(spark, 7);
 		fdActorSetSprFlags(spark, 0);
 		fdActorSetBlendMode(spark, 1);
-		syFieldVectorAddPolarOffsetFX(
-			spark->sceneWord, *angle, &spark->x.fixed);
-		fdActorStartScript(spark, GaiaRockInside_CirclingSparkScript);
+		syFieldVectorAddPolarOffsetFX(spark->sceneWord, *ang, &spark->x.fixed);
+		fdActorStartScript(spark, GaiaRockInsideCirclingSparkScript);
 		if(i == 3) {
 			fdActorSetSprColById(adeptId, SPRITE_COLOR_BLINK);
 			adept->motionFlg = 0;
 			adept->acceleration = toFIXED(1) / 5;
 			adept->speedLimit = toFIXED(1) / 5;
-			fdActorSetMovementTypeById(adeptId, Lesson_AdeptRiseScript);
+			fdActorSetMovementTypeById(adeptId, LessonAdeptRiseScript);
 		}
 		sySynch(LEARN_SPARK_INTERVAL);
 	}
@@ -1319,7 +1315,7 @@ void scGaiaRockInsideFelixLearnsSand(Sint32 tabletId, Sint32 adeptId)
 		fdActorSelectAnimation(spark, 7);
 		fdActorSetSprFlags(spark, 0);
 		fdActorSetBlendMode(spark, 1);
-		fdActorStartScript(spark, Lesson_SeekingSparkScript);
+		fdActorStartScript(spark, LessonSeekingSparkScript);
 	}
 	sySndPlay(SE_SHIMMER);
 	sySynch(50);
@@ -1332,8 +1328,8 @@ void scGaiaRockInsideFelixLearnsSand(Sint32 tabletId, Sint32 adeptId)
 	sySndPlay(SE_FLASH);
 	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, 0);
 	fdPaletteFadeStartInterpolation(80);
-	fdActorSetMovementTypeById(tabletId, Lesson_TabletSettleScript);
-	fdActorSetMovementTypeById(adeptId, Lesson_AdeptSettleScript);
+	fdActorSetMovementTypeById(tabletId, LessonTabletSettleScript);
+	fdActorSetMovementTypeById(adeptId, LessonAdeptSettleScript);
 	adept->update = scActorEmitSparkles;
 	sySynch(120);
 	adept->update = 0;
@@ -1351,12 +1347,12 @@ void scGaiaRockInsideReadSandTablet(void)
 {
 	ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	Uint16 level;
-	Sint32 message;
+	Sint32 msg;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	message = (Sint32)MsgGaiaRockInsideSearchedTheSlateThereIs;
-	((Sint32 (*)())mnFieldMessageShow)(message, 1);
+	msg = (Sint32)MsgGaiaRockInsideSearchedTheSlateThereIs;
+	((Sint32 (*)())mnFieldMessageShow)(msg, 1);
 	fdActorShowEmote(MainRoutineStateWork.leaderActorId,
 		EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	if(FIELD_HALF_METATILE(leader->z.fixed) <= 39) {
@@ -1370,7 +1366,7 @@ void scGaiaRockInsideReadSandTablet(void)
 	scFieldActorWaitForMoveById(ACTOR_KRADEN);
 	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
-	syFieldScriptSetMessageId(message + 1);
+	syFieldScriptSetMessageId(msg + 1);
 	/* "Wielder of Earth's might... That'd be you, Felix. Touch it. Go on..." */
 	fdScriptShowMessage(ACTOR_KRADEN, 0);
 	syFieldScriptWait(10);
@@ -1385,7 +1381,7 @@ void scGaiaRockInsideReadSandTablet(void)
 	syFieldScriptWait(10);
 	fdActorWalkTo(MainRoutineStateWork.leaderActorId, 466, 342);
 	scFieldActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
-	mnMessageShowCentered(message + 2, 1);
+	mnMessageShowCentered(msg + 2, 1);
 	fdMapGridSetShake(5, 7, 1);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	syFieldMapGridWaitForShakeToSettle();
@@ -1429,40 +1425,39 @@ void scGaiaRockInsideReadSandTablet(void)
 
 /* The same function as fdEffectAdvanceMotion, under another name. The dust's
    update: it moves by its velocity, slowing a little across the ground each
-   frame, and grows and spins. */
+   tick, and grows and spins. */
 void scEffectAdvanceMotionLocal(FIELD_OBJECT *object)
 {
 	FIELD_EFFECT *effect = &object->eff;
-	Sint32		  velocityX;
-	Sint32		  velocityZ;
+	Sint32		  velX;
+	Sint32		  velZ;
 	Sint32		  scaleRateX;
-	FIELD_SPR	 *sprite;
+	FIELD_SPR	 *spr;
 
-	velocityX = effect->vel.x;
-	effect->x += velocityX;
+	velX = effect->vel.x;
+	effect->x += velX;
 	effect->y += effect->vel.y;
-	velocityZ = effect->vel.z;
-	effect->z += velocityZ;
+	velZ = effect->vel.z;
+	effect->z += velZ;
 
-	effect->vel.x = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
-	effect->vel.z = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
+	effect->vel.x = velX - velX / FIELD_EFFECT_DRAG_X;
+	effect->vel.z = velZ - velZ / FIELD_EFFECT_DRAG_Z;
 
 	scaleRateX = effect->scaleRateX;
 	effect->scaleX += scaleRateX;
-	sprite = effect->spr;
+	spr = effect->spr;
 	effect->scaleY += effect->scaleRateY;
-	sprite->rotation += effect->spin;
+	spr->rotation += effect->spin;
 }
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 /* A ring of dust spreads from where the slate rises, one puff every eighth of a
    turn. */
 void scGaiaRockInsideRingOfDust(void)
 {
-	FIXED		   velocity[3];
+	FIXED		   vel[3];
 	EFFECT_OPTIONS options;
 	Uint32		   i;
 
@@ -1470,21 +1465,20 @@ void scGaiaRockInsideRingOfDust(void)
 	i = 0;
 	do {
 		{
-			Sint32 angle = i * FACING_STEP;
+			Sint32 ang = i * FACING_STEP;
 
-			velocity[0] = syCos(angle);
-			velocity[1] = 0;
-			velocity[2] = syMathSin(angle);
-			velocity[0] += velocity[0] / 3;
-			scFieldEffectSpawn(toFIXED(464), toFIXED(-32), toFIXED(328),
-				velocity[0], velocity[1], velocity[2], EFFECT_USE_UPDATE | 1,
-				&options);
+			vel[0] = syCos(ang);
+			vel[1] = 0;
+			vel[2] = syMathSin(ang);
+			vel[0] += vel[0] / 3;
+			scFieldEffectSpawn(toFIXED(464), toFIXED(-32), toFIXED(328), vel[0],
+				vel[1], vel[2], EFFECT_USE_UPDATE | 1, &options);
 			i += 2;
 		}
 	} while(i <= TRIG_TURN / FACING_STEP);
 }
 
-/* The pixels the slate rises from the lair's floor, one every 2 frames. */
+/* The pixels the slate rises from the lair's floor, one every 2 ticks. */
 enum { TABLET_RISE_PIXELS = 20 };
 
 /* Felix steps onto the floor before the slain Serpent, metatiles (29, 24) to
@@ -1563,7 +1557,7 @@ void scGaiaRockInsideRaiseSandTablet(void)
    almost alive". */
 void scGaiaRockInsideChallengeSerpent(void)
 {
-	Sint32 count;
+	Sint32 cnt;
 
 	if(fdScriptGetFlag(FLAG_SERPENT_SLAIN)) {
 		/* "The serpent, with its eyes closed, looks almost alive." */
@@ -1575,19 +1569,19 @@ void scGaiaRockInsideChallengeSerpent(void)
 		Sint32 eastAltarBeam = fdScriptGetFlag(FLAG_EAST_ALTAR_SUNBEAM);
 		Sint32 scene;
 
-		count = altarRoomBeam + westAltarBeam + eastAltarBeam +
+		cnt = altarRoomBeam + westAltarBeam + eastAltarBeam +
 			fdScriptGetFlag(FLAG_BUSHES_SUNBEAM);
 		SET_BATTLE_TYPE(BATTLE_TYPE_NO_ESCAPE);
 		scene = SCENE_GAIA_ROCK_INSIDE_MAZE;
 		syFieldScriptSetAfterBattleDestination(scene, ENTRANCE_SERPENT_BEATEN);
 		if(syFieldPartyInventoryFindMember(ITEM_DANCING_IDOL) != -1) {
-			if(count == 0)
+			if(cnt == 0)
 				fdScriptSetDefeatDestination(
 					scene, ENTRANCE_BEATEN_HOLDING_IDOL);
 		} else {
 			fdScriptSetDefeatDestination(scene, ENTRANCE_BEATEN_BY_SERPENT);
 		}
-		fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SERPENT, count);
+		fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SERPENT, cnt);
 	}
 }
 
@@ -1627,13 +1621,13 @@ void scGaiaRockInsideFindCloudBrand(void)
    Dancing Idol, the field menu then opens so that he can use it. */
 void scGaiaRockInsideCheckAltar(void)
 {
-	const Uint8 *message = MsgCheckedTheAltar;
+	const Uint8 *msg = MsgCheckedTheAltar;
 	const Uint8 *next;
 	Sint32		 owner;
 
-	mnMessageShowCentered(message, 1);
+	mnMessageShowCentered(msg, 1);
 	owner = syFieldPartyInventoryFindMember(ITEM_DANCING_IDOL);
-	next = message + 2;
+	next = msg + 2;
 	if(owner != -1) {
 		FIELD_STATE *state = Ram_HeapSlots->fieldState;
 
@@ -1645,14 +1639,14 @@ void scGaiaRockInsideCheckAltar(void)
 }
 
 /* How a stone face trembles while the doll dances on its altar: for
-   FACE_TREMBLE_FRAMES, then on as it slides aside, for FACE_SLIDE_FRAMES_MAX at
-   most, and FACE_SETTLE_FRAMES more once there; a face already slid aside only
-   trembles, for FACE_TREMBLE_LONG_FRAMES. */
+   FACE_TREMBLE_TICKS, then on as it slides aside, for FACE_SLIDE_TICKS_MAX at
+   most, and FACE_SETTLE_TICKS more once there; a face already slid aside only
+   trembles, for FACE_TREMBLE_LONG_TICKS. */
 enum {
-	FACE_TREMBLE_FRAMES = 20,
-	FACE_SLIDE_FRAMES_MAX = 300,
-	FACE_SETTLE_FRAMES = 10,
-	FACE_TREMBLE_LONG_FRAMES = 120
+	FACE_TREMBLE_TICKS = 20,
+	FACE_SLIDE_TICKS_MAX = 300,
+	FACE_SETTLE_TICKS = 10,
+	FACE_TREMBLE_LONG_TICKS = 120
 };
 
 /* Felix uses the Dancing Idol on the altar in the first altar's room. The doll
@@ -1697,7 +1691,7 @@ void scGaiaRockInsidePlaceDollOnFirstAltar(void)
 	syFieldScriptWait(40);
 	fdScriptPlaySnd(SE_TABLET_RISE_HIGH);
 	if(!fdScriptGetFlag(FLAG_FIRST_ALTAR_FACES_MOVED)) {
-		for(i = 0; i < FACE_TREMBLE_FRAMES; i++) {
+		for(i = 0; i < FACE_TREMBLE_TICKS; i++) {
 			westFace->velY = syRandom();
 			eastFace->velY = syRandom();
 			syWait(1);
@@ -1706,13 +1700,13 @@ void scGaiaRockInsidePlaceDollOnFirstAltar(void)
 		fdActorSetSpeedAndAcceleration(ACTOR_FIRST_ALTAR_EAST_FACE, 0.25, 0.05);
 		fdActorSetDestinationOffset(ACTOR_FIRST_ALTAR_WEST_FACE, 24, 0);
 		fdActorSetDestinationOffset(ACTOR_FIRST_ALTAR_EAST_FACE, -24, 0);
-		for(i = 0; i < FACE_SLIDE_FRAMES_MAX && westFace->arrivalAxis != 0;
+		for(i = 0; i < FACE_SLIDE_TICKS_MAX && westFace->arrivalAxis != 0;
 			i++) {
 			westFace->velY = syRandom();
 			eastFace->velY = syRandom();
 			syWait(1);
 		}
-		for(i = 0; i < FACE_SETTLE_FRAMES; i++) {
+		for(i = 0; i < FACE_SETTLE_TICKS; i++) {
 			westFace->velY = syRandom();
 			eastFace->velY = syRandom();
 			syWait(1);
@@ -1721,7 +1715,7 @@ void scGaiaRockInsidePlaceDollOnFirstAltar(void)
 		fdMapGridCopyMetatiles(119, 31, 1, 2, 100, 40);
 		fdScriptSetFlag(FLAG_FIRST_ALTAR_FACES_MOVED);
 	} else {
-		for(i = 0; i < FACE_TREMBLE_LONG_FRAMES; i++) {
+		for(i = 0; i < FACE_TREMBLE_LONG_TICKS; i++) {
 			westFace->velY = syRandom();
 			eastFace->velY = syRandom();
 			syWait(1);
@@ -1780,7 +1774,7 @@ void scGaiaRockInsidePlaceDollOnWestAltar(void)
 	fdScriptWait(40);
 	sySndPlay(SE_TABLET_RISE_HIGH);
 	if(!syGameFlagGet(FLAG_WEST_ALTAR_SUNBEAM)) {
-		for(i = 0; i < FACE_TREMBLE_FRAMES; i++) {
+		for(i = 0; i < FACE_TREMBLE_TICKS; i++) {
 			face->velY = syRandom();
 			sySynch(1);
 		}
@@ -1793,12 +1787,12 @@ void scGaiaRockInsidePlaceDollOnWestAltar(void)
 			do {
 				face->velY = syRandom();
 				sySynch(1);
-				if(++i >= FACE_SLIDE_FRAMES_MAX)
+				if(++i >= FACE_SLIDE_TICKS_MAX)
 					break;
 			} while(face->arrivalAxis != 0);
 		}
 		fdMapGridCopyMetatiles(2, 93, 1, 5, 28, 85);
-		for(i = 0; i < FACE_SETTLE_FRAMES; i++) {
+		for(i = 0; i < FACE_SETTLE_TICKS; i++) {
 			face->velY = syRandom();
 			sySynch(1);
 		}
@@ -1823,7 +1817,7 @@ void scGaiaRockInsidePlaceDollOnWestAltar(void)
 			fdScriptEnd();
 		}
 	} else {
-		for(i = 0; i < FACE_TREMBLE_LONG_FRAMES; i++) {
+		for(i = 0; i < FACE_TREMBLE_LONG_TICKS; i++) {
 			face->velY = syRandom();
 			sySynch(1);
 		}
@@ -1877,7 +1871,7 @@ void scGaiaRockInsidePlaceDollOnEastAltar(void)
 	fdScriptWait(40);
 	sySndPlay(SE_TABLET_RISE_HIGH);
 	if(!syGameFlagGet(FLAG_EAST_ALTAR_SUNBEAM)) {
-		for(i = 0; i < FACE_TREMBLE_FRAMES; i++) {
+		for(i = 0; i < FACE_TREMBLE_TICKS; i++) {
 			face->velY = syRandom();
 			sySynch(1);
 		}
@@ -1890,12 +1884,12 @@ void scGaiaRockInsidePlaceDollOnEastAltar(void)
 			do {
 				face->velY = syRandom();
 				sySynch(1);
-				if(++i >= FACE_SLIDE_FRAMES_MAX)
+				if(++i >= FACE_SLIDE_TICKS_MAX)
 					break;
 			} while(face->arrivalAxis != 0);
 		}
 		fdMapGridCopyMetatiles(2, 93, 1, 5, 36, 85);
-		for(i = 0; i < FACE_SETTLE_FRAMES; i++) {
+		for(i = 0; i < FACE_SETTLE_TICKS; i++) {
 			face->velY = syRandom();
 			sySynch(1);
 		}
@@ -1920,7 +1914,7 @@ void scGaiaRockInsidePlaceDollOnEastAltar(void)
 			fdScriptEnd();
 		}
 	} else {
-		for(i = 0; i < FACE_TREMBLE_LONG_FRAMES; i++) {
+		for(i = 0; i < FACE_TREMBLE_LONG_TICKS; i++) {
 			face->velY = syRandom();
 			sySynch(1);
 		}
@@ -1973,7 +1967,7 @@ void scGaiaRockInsidePlaceDollOnAltarAltar(void)
 	fdScriptWait(40);
 	sySndPlay(SE_TABLET_RISE_HIGH);
 	if(!syGameFlagGet(FLAG_ALTAR_ROOM_SUNBEAM)) {
-		for(i = 0; i < FACE_TREMBLE_FRAMES; i++) {
+		for(i = 0; i < FACE_TREMBLE_TICKS; i++) {
 			face->velY = syRandom();
 			sySynch(1);
 		}
@@ -1986,12 +1980,12 @@ void scGaiaRockInsidePlaceDollOnAltarAltar(void)
 			do {
 				face->velY = syRandom();
 				sySynch(1);
-				if(++i >= FACE_SLIDE_FRAMES_MAX)
+				if(++i >= FACE_SLIDE_TICKS_MAX)
 					break;
 			} while(face->arrivalAxis != 0);
 		}
 		fdMapGridCopyMetatiles(1, 85, 1, 4, 25, 85);
-		for(i = 0; i < FACE_SETTLE_FRAMES; i++) {
+		for(i = 0; i < FACE_SETTLE_TICKS; i++) {
 			face->velY = syRandom();
 			sySynch(1);
 		}
@@ -2016,7 +2010,7 @@ void scGaiaRockInsidePlaceDollOnAltarAltar(void)
 			fdScriptEnd();
 		}
 	} else {
-		for(i = 0; i < FACE_TREMBLE_LONG_FRAMES; i++) {
+		for(i = 0; i < FACE_TREMBLE_LONG_TICKS; i++) {
 			face->velY = syRandom();
 			sySynch(1);
 		}
@@ -2034,10 +2028,10 @@ void scGaiaRockInsidePlaceDollOnAltarAltar(void)
 	}
 }
 
-/* The spots listed in GaiaRockInside_StumpSpots, from 1; 0 is none. */
+/* The spots listed in GaiaRockInsideStumpSpots, from 1; 0 is none. */
 enum { STUMP_SPOTS = 11 };
 
-extern Sint16 GaiaRockInside_StumpSpots[][2];
+extern Sint16 GaiaRockInsideStumpSpots[][2];
 
 /* Felix Moves or pushes one of the two stumps on the way to the maze in the
    first altar's room, east of the altar. Nothing more shows than the stump
@@ -2047,9 +2041,9 @@ extern Sint16 GaiaRockInside_StumpSpots[][2];
 Sint32 scGaiaRockInsideRecordStumpSpots(void)
 {
 	ACTOR *first = fdActorGet(ACTOR_STUMP_A);
-	Sint8  firstIndex = 0;
+	Sint8  firstIdx = 0;
 	Sint32 firstX = FIELD_HALF_METATILE(first->x.fixed);
-	Sint8  secondIndex = 0;
+	Sint8  secondIdx = 0;
 	Sint32 firstZ = FIELD_HALF_METATILE(first->z.fixed);
 	ACTOR *second = fdActorGet(ACTOR_STUMP_B);
 	Sint32 secondX = FIELD_HALF_METATILE(second->x.fixed);
@@ -2057,15 +2051,15 @@ Sint32 scGaiaRockInsideRecordStumpSpots(void)
 	Sint8  i;
 
 	for(i = 1; i <= STUMP_SPOTS; i++) {
-		if(firstX == GaiaRockInside_StumpSpots[i][0] &&
-			firstZ == GaiaRockInside_StumpSpots[i][1])
-			firstIndex = i;
-		if(secondX == GaiaRockInside_StumpSpots[i][0] &&
-			secondZ == GaiaRockInside_StumpSpots[i][1])
-			secondIndex = i;
+		if(firstX == GaiaRockInsideStumpSpots[i][0] &&
+			firstZ == GaiaRockInsideStumpSpots[i][1])
+			firstIdx = i;
+		if(secondX == GaiaRockInsideStumpSpots[i][0] &&
+			secondZ == GaiaRockInsideStumpSpots[i][1])
+			secondIdx = i;
 	}
 	{
-		Sint8 spots = firstIndex | secondIndex << 4;
+		Sint8 spots = firstIdx | secondIdx << 4;
 
 		return syGameFlagSetByte(FLAG_STUMP_SPOTS, spots);
 	}
@@ -2098,31 +2092,31 @@ void scGaiaRockInsideClimbOntoEastStoneHead(void)
 	scStoneHeadBurstOut(ACTOR_EAST_STONE_HEAD, FLAG_EAST_STONE_HEAD_RISEN);
 }
 
-extern CUE GaiaRockInside_Cues[];
-extern CUE GaiaRockInside_LairCues[];
-extern CUE GaiaRockInside_SlainLairCues[];
-extern CUE GaiaRockInside_FirstAltarCues[];
-extern CUE GaiaRockInside_TwinAltarsCues[];
-extern CUE GaiaRockInside_PlatformsCues[];
-extern CUE GaiaRockInside_AltarCues[];
+extern CUE GaiaRockInsideCues[];
+extern CUE GaiaRockInsideLairCues[];
+extern CUE GaiaRockInsideSlainLairCues[];
+extern CUE GaiaRockInsideFirstAltarCues[];
+extern CUE GaiaRockInsideTwinAltarsCues[];
+extern CUE GaiaRockInsidePlatformsCues[];
+extern CUE GaiaRockInsideAltarCues[];
 
 /* Returns the current room's cues: the lair has one table while the Serpent
    lives and the party comes in by its way in, another after the battle. */
 const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_INSIDE_FIRST_ALTAR)
-		return GaiaRockInside_FirstAltarCues;
+		return GaiaRockInsideFirstAltarCues;
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_INSIDE_TWIN_ALTARS)
-		return GaiaRockInside_TwinAltarsCues;
+		return GaiaRockInsideTwinAltarsCues;
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_INSIDE_PLATFORMS)
-		return GaiaRockInside_PlatformsCues;
+		return GaiaRockInsidePlatformsCues;
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_INSIDE_ALTAR)
-		return GaiaRockInside_AltarCues;
+		return GaiaRockInsideAltarCues;
 	if(MainRoutineStateWork.entrance == ENTRANCE_LAIR)
-		return GaiaRockInside_LairCues;
+		return GaiaRockInsideLairCues;
 	if(MainRoutineStateWork.entrance > ENTRANCE_LAIR)
-		return GaiaRockInside_SlainLairCues;
-	return GaiaRockInside_Cues;
+		return GaiaRockInsideSlainLairCues;
+	return GaiaRockInsideCues;
 }
 
 /* Turns a stone face toward its altar and lays its glowing eyes over its
@@ -2171,14 +2165,14 @@ void scGaiaRockInsidePlacePlatform(Sint32 id, Sint32 dx, Sint32 dz)
 /* The scene's view of SceneStateWork (system/globals.h). */
 #define SceneStateWork (*(SWAY_STATE *)SceneStateWork)
 
-/* The platforms' frame event: every four seconds each platform glides three
+/* The platforms' tick event: every four seconds each platform glides three
    metatiles out one way, and two seconds later back home. They all stop while
    the menu is open or Psynergy is cast. */
 void scGaiaRockInsideSwayPlatforms(void)
 {
 	SWAY_STATE	*state = &SceneStateWork;
 	Uint16		*pending = &state->pending;
-	Uint16		*frame = &state->frm;
+	Uint16		*frm = &state->frm;
 	FIELD_STATE *fieldState = Ram_HeapSlots->fieldState;
 	Sint32		 stopped = fdScriptGetFlag(FLAG_MENU_OPEN);
 	Sint32		 id;
@@ -2197,7 +2191,7 @@ void scGaiaRockInsideSwayPlatforms(void)
 	if(*pending == 0)
 		return;
 	do {
-		switch(*frame) {
+		switch(*frm) {
 		case 60:
 			scGaiaRockInsidePlacePlatform(ACTOR_FIRST_PLATFORM, 0, 3);
 			scGaiaRockInsidePlacePlatform(ACTOR_FIRST_PLATFORM + 1, 3, 0);
@@ -2215,38 +2209,37 @@ void scGaiaRockInsideSwayPlatforms(void)
 			}
 			break;
 		}
-		if(++*frame == 240)
-			*frame = 0;
+		if(++*frm == 240)
+			*frm = 0;
 	} while(--*pending != 0);
 }
 
-extern Sint16 GaiaRockInside_PlatformPlaces[][2];
+extern Sint16 GaiaRockInsidePlatformPlaces[][2];
 
 /* Sets the platforms swaying: unless the party keeps its place, clears the
-   sway's frame and places each platform, then starts the sway's event. */
+   sway's tick and places each platform, then starts the sway's event. */
 void scGaiaRockInsideStartPlatforms(Uint8 mode)
 {
-	Uint16 *frame = &SceneStateWork.frm;
+	Uint16 *frm = &SceneStateWork.frm;
 	Uint16 *pending = &SceneStateWork.pending;
 
 	if(!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION)) {
 		Sint32 i;
 		Sint32 id;
 
-		*frame = 0;
+		*frm = 0;
 		*pending = 0;
 		fdActorGet(syFieldPartyGetLeaderActor())->priFlg |=
 			ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 		for(i = 0, id = ACTOR_FIRST_PLATFORM; id <= ACTOR_LAST_PLATFORM;
 			i++, id++) {
 			fdActorSetPosFX(id,
-				FIELD_HALF_METATILE_ORIGIN(GaiaRockInside_PlatformPlaces[i][0]),
-				FIELD_HALF_METATILE_ORIGIN(
-					GaiaRockInside_PlatformPlaces[i][1]));
+				FIELD_HALF_METATILE_ORIGIN(GaiaRockInsidePlatformPlaces[i][0]),
+				FIELD_HALF_METATILE_ORIGIN(GaiaRockInsidePlatformPlaces[i][1]));
 			scGaiaRockInsideSetPlatformMode(id, mode);
 		}
 	}
-	sySetFrameEvent(scGaiaRockInsideSwayPlatforms, EVENT_PASS_FRAME);
+	sySetTickEvent(scGaiaRockInsideSwayPlatforms, EVENT_PASS_TICK);
 }
 
 /* Draws the beams of sunlight let into the lair, pale shafts slanting down from
@@ -2318,10 +2311,10 @@ void scGaiaRockInsideDrawSunbeams(void)
 }
 
 #define Test(flag) fdScriptGetFlag(flag)
-extern Uint32 GaiaRockInside_SerpentGlowScript[];
-extern Uint32 GaiaRockInside_SerpentSmokeScript[];
-extern Uint32 GaiaRockInside_AltarShadowScript[];
-extern Sint32 GaiaRockInside_SusaFeedsSerpentScript[];
+extern Uint32 GaiaRockInsideSerpentGlowScript[];
+extern Uint32 GaiaRockInsideSerpentSmokeScript[];
+extern Uint32 GaiaRockInsideAltarShadowScript[];
+extern Sint32 GaiaRockInsideSusaFeedsSerpentScript[];
 
 /* The stone heads and the wall of handholds, which scInit sets up, come later,
    with the code the altar room shares with Gaia Rock's cliffs. */
@@ -2364,7 +2357,7 @@ Sint32 scInit(void)
 			fdActorStop(ACTOR_CASK);
 			fdActorStop(ACTOR_SUSA);
 			fdScriptStartScreenTransition();
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 			fdScriptWait(60);
 			{
 				Sint32 ending = EXIT_NO_SUNBEAM;
@@ -2426,7 +2419,7 @@ Sint32 scInit(void)
 				sySndPlay(MUS_BATTLE_WITH_FLAME_DRAGON);
 				found = syFieldPartyInventoryFindMember(ITEM_DANCING_IDOL);
 				if(found != -1) {
-					Sint32 flag;
+					Sint32 flg;
 					ACTOR *susa;
 					ACTOR *serpent;
 					Sint32 width;
@@ -2440,8 +2433,8 @@ Sint32 scInit(void)
 					ACTOR *actor;
 					ACTOR *shards[4];
 
-					flag = Test(FLAG_SUSA_ATTACKED_SERPENT);
-					if(flag != 0) {
+					flg = Test(FLAG_SUSA_ATTACKED_SERPENT);
+					if(flg != 0) {
 						fdActorSetAnimationById(ACTOR_SERPENT, 2);
 						fdActorSetPos(ACTOR_CASK, 0, 0);
 						fdActorSetPos(ACTOR_SUSA, 432, 320);
@@ -2465,7 +2458,7 @@ Sint32 scInit(void)
 						fdActorFaceDirection(ACTOR_SUSA, FACING_NORTHEAST, 0);
 						fdActorSetAnimationById(ACTOR_SERPENT, 2);
 						fdScriptStartScreenTransition();
-						fdScriptWaitTransitionFrames();
+						fdScriptWaitTransitionTicks();
 						fdCameraMoveToFX(toFIXED(488), -1, toFIXED(384), 1);
 						fdCameraWaitForArrival();
 						fdActorShowEmoteById(
@@ -2559,7 +2552,7 @@ Sint32 scInit(void)
 							toFIXED(488), -toFIXED(16), toFIXED(345));
 						fdActorSetSprFlags(actor, 0);
 						fdActorStartScript(
-							actor, GaiaRockInside_SerpentSmokeScript);
+							actor, GaiaRockInsideSerpentSmokeScript);
 						fdActorSelectAnimation(actor, 1);
 						fdActorSetSprColMode(actor, 6);
 						fdActorJump(ACTOR_SUSA, 2, 0);
@@ -2573,7 +2566,7 @@ Sint32 scInit(void)
 							toFIXED(488), -toFIXED(16), toFIXED(345));
 						fdActorSetSprFlags(actor, 0);
 						fdActorStartScript(
-							actor, GaiaRockInside_SerpentGlowScript);
+							actor, GaiaRockInsideSerpentGlowScript);
 						((FIELD_SPR *)actor->spr)->rotation = DEGtoANG(45);
 						actor->speedLimit = toFIXED(3) / 2;
 						*(Uint8 *)&actor->motionFlg = 0;
@@ -2602,7 +2595,7 @@ Sint32 scInit(void)
 							fdActorSelectAnimation(shards[i], 2);
 							fdActorSetSprFlags(shards[i], 0);
 							fdActorStartScript(
-								shards[i], GaiaRockInside_SerpentSmokeScript);
+								shards[i], GaiaRockInsideSerpentSmokeScript);
 						}
 						susa->velY = toFIXED(10);
 						fdActorGetById(ACTOR_SUSA)->steeringFlg &=
@@ -2614,7 +2607,7 @@ Sint32 scInit(void)
 						fdScriptWait(30);
 						fdCameraMoveToActorById(ACTOR_SUSA, 1);
 						fdCameraWaitForArrival();
-						movement = (Sint32)GaiaRockInside_SquashXScript;
+						movement = (Sint32)GaiaRockInsideSquashXScript;
 						fdActorSetMovementTypeById(ACTOR_SUSA, movement);
 						fdActorWaitForScriptEndById(ACTOR_SUSA);
 						fdScriptWait(20);
@@ -2636,12 +2629,12 @@ Sint32 scInit(void)
 					if(!Test(FLAG_KEEP_PARTY_POSITION)) {
 						fdActorSetPos(ACTOR_SUSA, 472, 456);
 						fdActorSetMovementTypeById(
-							ACTOR_SUSA, GaiaRockInside_SusaFeedsSerpentScript);
+							ACTOR_SUSA, GaiaRockInsideSusaFeedsSerpentScript);
 					}
 				}
 			}
 		} else if(*entrance == ENTRANCE_SERPENT_BEATEN) {
-			Sint32			flag;
+			Sint32			flg;
 			ACTOR		   *susa;
 			Sint32			slow;
 			Sint32		   *owner;
@@ -2651,8 +2644,8 @@ Sint32 scInit(void)
 			Sint32			i;
 
 			sySndPlay(MUS_IZUMO);
-			flag = Test(FLAG_SERPENT_SLAIN);
-			if(flag == 0) {
+			flg = Test(FLAG_SERPENT_SLAIN);
+			if(flg == 0) {
 				fdScriptStart();
 				fdScriptEndLastingPsynergy(0);
 				syGameFlagSet(FLAG_SERPENT_SLAIN);
@@ -2671,7 +2664,7 @@ Sint32 scInit(void)
 				fdActorFaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
 				fdActorFaceDirection(ACTOR_SUSA, FACING_NORTH, 0);
 				fdScriptStartScreenTransition();
-				fdScriptWaitTransitionFrames();
+				fdScriptWaitTransitionTicks();
 				fdActorShowEmoteById(
 					ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
 				fdScriptPlaySnd(SE_SEA_OF_TIME_OPENS);
@@ -2846,13 +2839,13 @@ Sint32 scInit(void)
 				scFieldActorSetAnimation(*lead, ANIM_COLLAPSE);
 			}
 			fdScriptStartScreenTransition();
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 			fdScriptSetMessageId((Sint32)MsgFieldYouYouCannotFightThe);
 			/* "You! You cannot fight the serpent! Not while it's still in
 			   full..." */
 			fdScriptShowMessageAndWait(ACTOR_SUSA, 0);
 			fdScriptFinishScreenTransition();
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 			fdScriptSetDestination(
 				(Sint16)room->restartScene, (Sint16)room->restartEntrance);
 #if DEFEAT_SCENE_RESTART_MOVES_SHIP
@@ -2867,7 +2860,7 @@ Sint32 scInit(void)
 			fdActorSetAnimationById(ACTOR_SUSA, 5);
 			fdActorSetAnimationById(room->leaderActorId, ANIM_COLLAPSE);
 			fdScriptStartScreenTransition();
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 			fdScriptWait(30);
 			fdActorStartRepeatedMotion(ACTOR_SUSA, 2);
 			fdScriptWait(30);
@@ -2876,7 +2869,7 @@ Sint32 scInit(void)
 			   it..." */
 			fdScriptShowMessageAndWait(ACTOR_SUSA, 0);
 			fdScriptFinishScreenTransition();
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 			fdScriptSetDestination(
 				(Sint16)room->restartScene, (Sint16)room->restartEntrance);
 #if DEFEAT_SCENE_RESTART_MOVES_SHIP
@@ -2912,14 +2905,14 @@ Sint32 scInit(void)
 		high = (Uint8)(scFieldGameFlagGetByte(FLAG_STUMP_SPOTS) >> 4);
 		if(low != 0)
 			fdActorSetHorizontalPosWithTerrain(ACTOR_STUMP_A,
-				FIELD_HALF_METATILE_ORIGIN(GaiaRockInside_StumpSpots[low][0]),
-				FIELD_HALF_METATILE_ORIGIN(GaiaRockInside_StumpSpots[low][1]));
+				FIELD_HALF_METATILE_ORIGIN(GaiaRockInsideStumpSpots[low][0]),
+				FIELD_HALF_METATILE_ORIGIN(GaiaRockInsideStumpSpots[low][1]));
 		if((Sint8)high != 0)
 			fdActorSetHorizontalPosWithTerrain(ACTOR_STUMP_B,
 				FIELD_HALF_METATILE_ORIGIN(
-					GaiaRockInside_StumpSpots[(Sint8)high][0]),
+					GaiaRockInsideStumpSpots[(Sint8)high][0]),
 				FIELD_HALF_METATILE_ORIGIN(
-					GaiaRockInside_StumpSpots[(Sint8)high][1]));
+					GaiaRockInsideStumpSpots[(Sint8)high][1]));
 	} else if(state->next == SCENE_GAIA_ROCK_INSIDE_PLATFORMS) {
 		if(Test(FLAG_PLATFORMS_SWAYING))
 			scGaiaRockInsideStartPlatforms(1);
@@ -2961,7 +2954,7 @@ Sint32 scInit(void)
 		}
 		if(state->entrance ==
 			GAIA_ROCK_INSIDE_TWIN_ALTARS_FROM_GAIA_ROCK_INSIDE_ALTAR_SOUTHEAST_B) {
-			Sint32 frames = 60;
+			Sint32 ticks = 60;
 
 			fdScriptStart();
 			fdScriptEndLastingPsynergy(0);
@@ -2977,7 +2970,7 @@ Sint32 scInit(void)
 				SPRITE_LIGHT, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 			if(other != NULL) {
 				fdActorSetSprFlags(other, 0);
-				fdActorStartScript(other, GaiaRockInside_AltarShadowScript);
+				fdActorStartScript(other, GaiaRockInsideAltarShadowScript);
 				fdActorSelectAnimation(other, 1);
 				fdActorSetSprColMode(other, SPRITE_COLOR_BLACK);
 				/* The high byte of its OAM attribute 2: drawn at priority 3. */
@@ -2986,7 +2979,7 @@ Sint32 scInit(void)
 				other->scaleY = toFIXED(6) / 5;
 			}
 			actor->y.fixed += toFIXED(128);
-			for(; frames != 0; frames--) {
+			for(; ticks != 0; ticks--) {
 				sySynch(1);
 				if(actor->velY > -1)
 					break;
@@ -3103,11 +3096,11 @@ Sint32 scPrepareMap(void)
 				fdActorSetPos(ACTOR_RUSTY_MACE_CHEST, 104, 72);
 			if(syGameFlagGet(FLAG_MAZE_PLANT_POINTED(*stage))) {
 				ACTOR *plant = fdActorGetById(ACTOR_ARROW_PLANT);
-				Uint32 angle = scGaiaRockInsideGetMazeWayOn();
+				Uint32 ang = scGaiaRockInsideGetMazeWayOn();
 
 				plant->collisionFlg = 0;
-				fdActorSelectAnimation(plant, ARROW_ANIMATION(angle));
-				plant->update = ARROW_UP_OR_DOWN(angle) != 0
+				fdActorSelectAnimation(plant, ARROW_ANIMATION(ang));
+				plant->update = ARROW_UP_OR_DOWN(ang) != 0
 					? (void *)scGaiaRockInsidePulseUpDownArrow
 					: (void *)scGaiaRockInsidePulseSidewaysArrow;
 				plant->collisionFlg = 1;
@@ -3132,8 +3125,8 @@ Sint32 scPrepareMap(void)
 				layer->ofsY;
 			fdMapGridCenterOnFollowedPoint();
 			syWait(1);
-			syWordsCopy(MAPGRID_BLEND_SCRIPT, GaiaRockInside_LairBlendScript,
-				sizeof(GaiaRockInside_LairBlendScript));
+			syWordsCopy(MAPGRID_BLEND_SCRIPT, GaiaRockInsideLairBlendScript,
+				sizeof(GaiaRockInsideLairBlendScript));
 			fdBlendScriptStart((Uint16 *)MAPGRID_BLEND_SCRIPT);
 		}
 	} else if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_INSIDE_FIRST_ALTAR) {
@@ -3439,15 +3432,15 @@ void scGaiaRockInsideTakeMazeExit(Sint32 direction)
 	fdScriptPlaySnd(SE_MAP_EXIT);
 }
 
-extern Sint8 GaiaRockInside_MazeOrigins[][2];
+extern Sint8 GaiaRockInsideMazeOrigins[][2];
 
 /* Draws the maze room the party stands in, a 15 by 10 metatile screen copied
-   from the room's own place in the map (GaiaRockInside_MazeOrigins), on both
+   from the room's own place in the map (GaiaRockInsideMazeOrigins), on both
    layers; the first room is drawn where it stands. */
 void scGaiaRockInsideDrawMazeRoom(void)
 {
 	Sint32	   state = PathWork->cur;
-	Sint8	  *origin = GaiaRockInside_MazeOrigins[state];
+	Sint8	  *origin = GaiaRockInsideMazeOrigins[state];
 	MAP_STATE *map = Ram_HeapSlots->mapGrid;
 
 	if(state > 1) {
@@ -3523,24 +3516,24 @@ void scGaiaRockInsideBlankLayer(Sint32 layer, Sint32 keep)
 
 #include "shared/stone_head_place.h"
 
-extern Sint32 StoneHead_RiseScript[];
-extern Uint32 Debris_Script[];
+extern Sint32 StoneHeadRiseScript[];
+extern Uint32 DebrisScript[];
 
 #include "shared/stone_head_burst_out.h"
 
-/* Starts scGaiaRockCueWallMetatile each frame. */
+/* Starts scGaiaRockCueWallMetatile each tick. */
 void scGaiaRockInsideStartWallCues(void)
 {
-	sySetFrameEvent((Sint32)scGaiaRockCueWallMetatile, EVENT_PASS_FRAME);
+	sySetTickEvent((Sint32)scGaiaRockCueWallMetatile, EVENT_PASS_TICK);
 }
 
-extern Uint32 GaiaRockInside_IdleScript[];
-extern Uint32 GaiaRockInside_StumpScript[];
+extern Uint32 GaiaRockInsideIdleScript[];
+extern Uint32 GaiaRockInsideStumpScript[];
 
 /* clang-format off */
 #include "shared/field_effect_duration_scripts.c"
 
-Uint32 GaiaRockInside_PourScript[] = {
+Uint32 GaiaRockInsidePourScript[] = {
 	SC_WAIT(230),
 	SC_SET(SW_HOOK, 0),
 	SC_POSITION_ORIGIN,
@@ -3548,7 +3541,7 @@ Uint32 GaiaRockInside_PourScript[] = {
 	SC_RELEASE,
 };
 
-Uint32 GaiaRockInside_BurstScript[] = {
+Uint32 GaiaRockInsideBurstScript[] = {
 	SC_WAIT(25),
 	SC_SET(SW_HOOK, 0),
 	SC_POSITION_ORIGIN,
@@ -3556,7 +3549,7 @@ Uint32 GaiaRockInside_BurstScript[] = {
 	SC_RELEASE,
 };
 
-Sint32 GaiaRockInside_AltarShakesScript[] = {
+Sint32 GaiaRockInsideAltarShakesScript[] = {
 	SC_MOVE_BY(0, 0, 2),
 	SC_SYNC,
 	SC_MOVE_BY(0, 0, -4),
@@ -3567,7 +3560,7 @@ Sint32 GaiaRockInside_AltarShakesScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-Sint32 GaiaRockInside_AltarDropsScript[] = {
+Sint32 GaiaRockInsideAltarDropsScript[] = {
 	SC_MOVE_BY(0, 0, 4),
 	SC_SYNC,
 	SC_MOVE_BY(0, 0, -8),
@@ -3578,7 +3571,7 @@ Sint32 GaiaRockInside_AltarDropsScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-Uint32 GaiaRockInside_LeaderStepsBackScript[] = {
+Uint32 GaiaRockInsideLeaderStepsBackScript[] = {
 	SC_MOVE(744, 0, 432),
 	SC_SYNC,
 	SC_ANIMATION(1),
@@ -3587,25 +3580,25 @@ Uint32 GaiaRockInside_LeaderStepsBackScript[] = {
 
 /* The twelve metatiles of the cobweb, as column and row; Cyclone clears the */
 /* web when it reaches one of them (scGaiaRockInsideCycloneClearsCobweb). */
-METATILE_POINT GaiaRockInside_CobwebMetatiles[] = {
+METATILE_POINT GaiaRockInsideCobwebMetatiles[] = {
 	{{42, 30}}, {{44, 20}}, {{46, 21}}, {{47, 23}}, {{47, 24}}, {{46, 26}},
 	{{44, 27}}, {{43, 27}}, {{41, 26}}, {{40, 24}}, {{40, 23}}, {{41, 21}},
 };
 
-Uint32 OrbitSpark_Script[] = {
+Uint32 OrbitSparkScript[] = {
 	SC_WAIT(6),
 	SC_RELEASE,
 	SC_END,
 };
 
-Uint32 GaiaRockInside_RisingSparkScript[] = {
+Uint32 GaiaRockInsideRisingSparkScript[] = {
 	SC_MOVE_BY(0, 160, 0),
 	SC_SYNC,
 	SC_RELEASE,
 	SC_END,
 };
 
-Sint32 GaiaRockInside_CirclingSparkScript[] = {
+Sint32 GaiaRockInsideCirclingSparkScript[] = {
 	SC_CALL(syOrbiterSpiral),
 	SC_RELEASE,
 	SC_END,
@@ -3617,13 +3610,13 @@ Sint32 GaiaRockInside_CirclingSparkScript[] = {
 
 /* The metatiles the two stumps may be moved onto, numbered from 1; row 0 is */
 /* none. */
-Sint16 GaiaRockInside_StumpSpots[][2] = {{0, 0}, {113, 47}, {115, 47}, {115, 45}, {117, 45}, {119, 45}, {119, 47}, {121, 47}, {117, 49}, {119, 49}, {119, 51}, {121, 51}};
+Sint16 GaiaRockInsideStumpSpots[][2] = {{0, 0}, {113, 47}, {115, 47}, {115, 45}, {117, 45}, {119, 45}, {119, 47}, {121, 47}, {117, 49}, {119, 49}, {119, 51}, {121, 51}};
 
 /* The swaying platforms' places, in metatiles. */
-Sint16 GaiaRockInside_PlatformPlaces[][2] = {{45, 51}, {31, 53}, {31, 57}, {39, 59}, {41, 59}, {43, 63}, {45, 63}, {35, 69}, {37, 69}};
+Sint16 GaiaRockInsidePlatformPlaces[][2] = {{45, 51}, {31, 53}, {31, 57}, {39, 59}, {41, 59}, {43, 63}, {45, 63}, {35, 69}, {37, 69}};
 
-/* The same script as FieldEffect_MediumScript, under another name. */
-Uint32 GaiaRockInside_SerpentGlowScript[] = {
+/* The same script as FieldEffectMediumScript, under another name. */
+Uint32 GaiaRockInsideSerpentGlowScript[] = {
 	SC_WAIT(1),
 	SC_LOOP(44, SC_TOP),
 	SC_WAIT(1),
@@ -3633,8 +3626,8 @@ Uint32 GaiaRockInside_SerpentGlowScript[] = {
 	SC_END,
 };
 
-/* The same script as FieldEffect_MediumScript, under another name. */
-Uint32 GaiaRockInside_SerpentSmokeScript[] = {
+/* The same script as FieldEffectMediumScript, under another name. */
+Uint32 GaiaRockInsideSerpentSmokeScript[] = {
 	SC_WAIT(1),
 	SC_LOOP(44, SC_TOP),
 	SC_WAIT(1),
@@ -3646,15 +3639,15 @@ Uint32 GaiaRockInside_SerpentSmokeScript[] = {
 
 /* The dark shadow under the east altar as it drops into the twin altars' */
 /* room. */
-Uint32 GaiaRockInside_AltarShadowScript[] = {
+Uint32 GaiaRockInsideAltarShadowScript[] = {
 	SC_WAIT(1),
 	SC_END,
 };
 
 /* The lair's blend, copied over the map's own blend script: the overhead */
-/* layer blended over the rest at 4, 6, 8 and 6 sixteenths, 30 frames each, */
+/* layer blended over the rest at 4, 6, 8 and 6 sixteenths, 30 ticks each, */
 /* over and over. */
-Uint16 GaiaRockInside_LairBlendScript[12] ALIGNED(4) = {
+Uint16 GaiaRockInsideLairBlendScript[12] ALIGNED(4) = {
 	BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
 	BLEND_ALPHA(4, 16),
 	30,
@@ -3669,12 +3662,12 @@ Uint16 GaiaRockInside_LairBlendScript[12] ALIGNED(4) = {
 };
 
 /* Each maze room's place in the map, in metatiles. */
-Sint8 GaiaRockInside_MazeOrigins[][2] = {{0, 0}, {1, 1}, {17, 1}, {33, 1}, {49, 1}, {49, 12}, {49, 23}, {49, 34}, {49, 45}, {33, 45}, {17, 45}, {1, 45}, {1, 34}, {1, 23}, {1, 12}, {0, 0}};
+Sint8 GaiaRockInsideMazeOrigins[][2] = {{0, 0}, {1, 1}, {17, 1}, {33, 1}, {49, 1}, {49, 12}, {49, 23}, {49, 34}, {49, 45}, {33, 45}, {17, 45}, {1, 45}, {1, 34}, {1, 23}, {1, 12}, {0, 0}};
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 SCENE_ENTRANCE SceneEntrances[] = {
@@ -3684,7 +3677,7 @@ SCENE_ENTRANCE SceneEntrances[] = {
 
 /* A region below the floor of the altar room's cobweb pit, which leads down */
 /* to the twin altars' room. */
-SCENE_REGION GaiaRockInside_AltarExitRegions[] = {
+SCENE_REGION GaiaRockInsideAltarExitRegions[] = {
 	{700, -30, 330, 720, -10, 350, CONDITION_ALWAYS,
 	 GAIA_ROCK_INSIDE_ALTAR_TO_GAIA_ROCK_INSIDE_TWIN_ALTARS_SOUTHEAST_A_B},
 	{SCENE_TABLE_END},
@@ -3737,13 +3730,13 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-Uint32 GaiaRockInside_IdleScript[] = {
+Uint32 GaiaRockInsideIdleScript[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_SET(SW_Y, 0),
 	SC_END,
 };
 
-Sint32 GaiaRockInside_CaskSetDownScript[] = {
+Sint32 GaiaRockInsideCaskSetDownScript[] = {
 	SC_SPEED(1),
 	SC_SET(SW_COLLISION, 129),
 	SC_SET(SW_MOTION, 0),
@@ -3755,14 +3748,14 @@ Sint32 GaiaRockInside_CaskSetDownScript[] = {
 	SC_END,
 };
 
-Uint32 GaiaRockInside_CaskPushedScript[] = {
+Uint32 GaiaRockInsideCaskPushedScript[] = {
 	SC_SPEED(0.25),
 	SC_MOVE_BY(16, 0, 0),
 	SC_SYNC,
 	SC_END,
 };
 
-Sint32 GaiaRockInside_CaskThrownScript[] = {
+Sint32 GaiaRockInsideCaskThrownScript[] = {
 	SC_SPEED(0.5),
 	SC_SET(SW_COLLISION, 129),
 	SC_SET(SW_MOTION, 3),
@@ -3773,7 +3766,7 @@ Sint32 GaiaRockInside_CaskThrownScript[] = {
 	SC_END,
 };
 
-Sint32 GaiaRockInside_CaskEmptiesScript[] = {
+Sint32 GaiaRockInsideCaskEmptiesScript[] = {
 	SC_SPEED(1),
 	SC_SET(SW_MOTION, 0),
 	SC_SET(SW_COLLISION, 0),
@@ -3796,7 +3789,7 @@ Sint32 GaiaRockInside_CaskEmptiesScript[] = {
 	SC_END,
 };
 
-Sint32 GaiaRockInside_CaskTossedLeftScript[] = {
+Sint32 GaiaRockInsideCaskTossedLeftScript[] = {
 	SC_SPEED(2),
 	SC_MOVE(424, 0, 344),
 	SC_SET(SW_VELOCITY_Y, toFIXED(8)),
@@ -3809,7 +3802,7 @@ Sint32 GaiaRockInside_CaskTossedLeftScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-Sint32 GaiaRockInside_CaskTossedRightScript[] = {
+Sint32 GaiaRockInsideCaskTossedRightScript[] = {
 	SC_SPEED(2),
 	SC_MOVE(512, 0, 384),
 	SC_SET(SW_VELOCITY_Y, toFIXED(8)),
@@ -3822,7 +3815,7 @@ Sint32 GaiaRockInside_CaskTossedRightScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-Sint32 GaiaRockInside_SusaFeedsSerpentScript[] = {
+Sint32 GaiaRockInsideSusaFeedsSerpentScript[] = {
 	SC_SPEED(1),
 	SC_SET(SW_HOOK, (Sint32)scGaiaRockInsideCheckBlocked),
 	SC_SET(SW_COLLISION, 129),
@@ -3874,12 +3867,12 @@ Sint32 GaiaRockInside_SusaFeedsSerpentScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-ACTOR_PLACE GaiaRockInside_Placements[] = {
+ACTOR_PLACE GaiaRockInsidePlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_ARROW_PLANT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE GaiaRockInside_LairPlacements[] = {
+ACTOR_PLACE GaiaRockInsideLairPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_SERPENT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_BARREL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SUSA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3888,24 +3881,24 @@ ACTOR_PLACE GaiaRockInside_LairPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 GaiaRockInside_StumpScript[] = {
+Uint32 GaiaRockInsideStumpScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(3) / 4),
 	SC_SET(SW_SCALE_Y, toFIXED(3) / 4),
 	SC_WAIT(1),
 	SC_END,
 };
 
-ACTOR_PLACE GaiaRockInside_FirstAltarActorPlacements[] = {
+ACTOR_PLACE GaiaRockInsideFirstAltarActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_DEMON_MASK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 688, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_DEMON_MASK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 688, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_STUMP, CONDITION_ALWAYS, (Sint32)GaiaRockInside_StumpScript, 920, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_STUMP, CONDITION_ALWAYS, (Sint32)GaiaRockInside_StumpScript, 952, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_STUMP, CONDITION_ALWAYS, (Sint32)GaiaRockInsideStumpScript, 920, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_STUMP, CONDITION_ALWAYS, (Sint32)GaiaRockInsideStumpScript, 952, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_ALTAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 496, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_DOLL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE GaiaRockInside_TwinAltarsActorPlacements[] = {
+ACTOR_PLACE GaiaRockInsideTwinAltarsActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_DEMON_MASK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 352, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_DEMON_MASK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 352, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_ALTAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 528, 0, 384, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3914,7 +3907,7 @@ ACTOR_PLACE GaiaRockInside_TwinAltarsActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE GaiaRockInside_PlatformsActorPlacements[] = {
+ACTOR_PLACE GaiaRockInsidePlatformsActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_LEAFY_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_LEAFY_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_LEAFY_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3927,7 +3920,7 @@ ACTOR_PLACE GaiaRockInside_PlatformsActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE GaiaRockInside_AltarActorPlacements[] = {
+ACTOR_PLACE GaiaRockInsideAltarActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_DEMON_MASK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 400, 0, 368, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_ALTAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 336, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 648, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3935,12 +3928,12 @@ ACTOR_PLACE GaiaRockInside_AltarActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_STONE_HEAD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_HEAD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_DOLL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_ALTAR, CONDITION_ALWAYS, (Sint32)GaiaRockInside_IdleScript, 704, 0, 384, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_GANGWAY, CONDITION_ALWAYS, (Sint32)GaiaRockInside_IdleScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_ALTAR, CONDITION_ALWAYS, (Sint32)GaiaRockInsideIdleScript, 704, 0, 384, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_GANGWAY, CONDITION_ALWAYS, (Sint32)GaiaRockInsideIdleScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
 
-Sint32 GaiaRockInside_SquashYScript[] = {
+Sint32 GaiaRockInsideSquashYScript[] = {
 	SC_LABEL(1),
 	SC_ADD(SW_SCALE_Y, toFIXED(3) / 32),
 	SC_WAIT(1),
@@ -3964,7 +3957,7 @@ Sint32 GaiaRockInside_SquashYScript[] = {
 	SC_END,
 };
 
-Sint32 GaiaRockInside_SquashXScript[] = {
+Sint32 GaiaRockInsideSquashXScript[] = {
 	SC_LABEL(1),
 	SC_ADD(SW_SCALE_X, toFIXED(3) / 32),
 	SC_WAIT(1),
@@ -3988,10 +3981,10 @@ Sint32 GaiaRockInside_SquashXScript[] = {
 	SC_END,
 };
 
-/* The frames the arrow plants flash and pulse by. */
-Sint32 GaiaRockInside_ArrowFrame = 0;
+/* The ticks the arrow plants flash and pulse by. */
+Sint32 GaiaRockInsideArrowTick = 0;
 
-CUE GaiaRockInside_Cues[] = {
+CUE GaiaRockInsideCues[] = {
 	{CUE_STEP, METATILE_BEHAVIOR_MAZE_SOUTH, CONDITION_ALWAYS, SCRIPT_REF(scGaiaRockInsideTakeMazeExit)},
 	{CUE_STEP, METATILE_BEHAVIOR_MAZE_WEST, CONDITION_ALWAYS, SCRIPT_REF(scGaiaRockInsideTakeMazeExit)},
 	{CUE_STEP, METATILE_BEHAVIOR_MAZE_EAST, CONDITION_ALWAYS, SCRIPT_REF(scGaiaRockInsideTakeMazeExit)},
@@ -4000,7 +3993,7 @@ CUE GaiaRockInside_Cues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE GaiaRockInside_LairCues[] = {
+CUE GaiaRockInsideLairCues[] = {
 	{CUE_RAISED, RAISED_SUSA_BLOCKED, CONDITION_ALWAYS, SCRIPT_REF(scGaiaRockInsideSusaSaysMoveAside)},
 	{CUE_EXIT, 9, CONDITION_ALWAYS, 9},
 	{CUE_STEP, METATILE_BEHAVIOR_BY_SUSA, FLAG_MET_SUSA, SCRIPT_REF(scGaiaRockInsideMeetSusa)},
@@ -4016,7 +4009,7 @@ CUE GaiaRockInside_LairCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE GaiaRockInside_SlainLairCues[] = {
+CUE GaiaRockInsideSlainLairCues[] = {
 	{CUE_EXIT, 9, CONDITION_ALWAYS, 9},
 	{CUE_STEP, METATILE_BEHAVIOR_BEFORE_SERPENT, CONDITION_ALWAYS, SCRIPT_REF(scGaiaRockInsideRaiseSandTablet)},
 	{CUE_TALK, ACTOR_SAND_TABLET, CONDITION_ALWAYS, SCRIPT_REF(scGaiaRockInsideReadSandTablet)},
@@ -4028,7 +4021,7 @@ CUE GaiaRockInside_SlainLairCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE GaiaRockInside_FirstAltarCues[] = {
+CUE GaiaRockInsideFirstAltarCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -4047,7 +4040,7 @@ CUE GaiaRockInside_FirstAltarCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE GaiaRockInside_TwinAltarsCues[] = {
+CUE GaiaRockInsideTwinAltarsCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -4059,7 +4052,7 @@ CUE GaiaRockInside_TwinAltarsCues[] = {
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), -1, 0, 0},
 };
 
-CUE GaiaRockInside_PlatformsCues[] = {
+CUE GaiaRockInsidePlatformsCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -4067,7 +4060,7 @@ CUE GaiaRockInside_PlatformsCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE GaiaRockInside_AltarCues[] = {
+CUE GaiaRockInsideAltarCues[] = {
 	{CUE_EXIT | STEP_CUE_FLAG_WALKING | STEP_CUE_FLAG_QUICK | CUE_FLAG_FACING | FACING_NORTH, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT | STEP_CUE_FLAG_WALKING | STEP_CUE_FLAG_QUICK | CUE_FLAG_FACING | FACING_NORTH, 3, CONDITION_ALWAYS, 3},

@@ -21,19 +21,19 @@ void fdActorClearDestinationAndStand(Uint32 actorId)
 
 /* The script command "actor face direction": the actor turns toward angle
    (TRIG_TURN a full turn; fdActorStepAng), then the script waits the given
-   number of frames. */
-void fdActorFaceDirectionById(Sint32 actorId, Sint32 angle, Sint32 frames)
+   number of ticks. */
+void fdActorFaceDirectionById(Sint32 actorId, Sint32 ang, Sint32 ticks)
 {
 	ACTOR *actor = fdActorLookup(actorId);
 
 	if(actor != NULL) {
-		actor->tmr = angle;
-		fdActorStartScriptStub(actor, (const Sint32 *)Actor_StepAngleScript);
-		fdScriptWait(frames);
+		actor->tmr = ang;
+		fdActorStartScriptStub(actor, (const Sint32 *)ActorStepAngleScript);
+		fdScriptWait(ticks);
 	}
 }
 
-/* Turns an actor a step toward angle (Actor_StepAngleScript) and waits for the
+/* Turns an actor a step toward angle (ActorStepAngleScript) and waits for the
    script to end. */
 void fdActorFaceDirectionAndRefreshById(Sint32 actorId, Sint32 angle)
 {
@@ -41,7 +41,7 @@ void fdActorFaceDirectionAndRefreshById(Sint32 actorId, Sint32 angle)
 
 	if(actor != NULL) {
 		actor->tmr = angle;
-		fdActorStartScriptStub(actor, (const Sint32 *)Actor_StepAngleScript);
+		fdActorStartScriptStub(actor, (const Sint32 *)ActorStepAngleScript);
 		fdActorWaitForScriptEndById(actorId);
 	}
 }
@@ -65,22 +65,22 @@ void fdActorSetSprPriority(Uint32 actorId, Sint32 priority)
 
 /* Makes the target actor's sprite show the source actor's graphics (its VRAM
    block and tile). Neither actor is checked for NULL. */
-void fdActorCopyGraphics(Uint32 targetId, Uint32 sourceId)
+void fdActorCopyGraphics(Uint32 tgtId, Uint32 srcId)
 {
 	ACTOR *actor;
-	SPR	  *sprite;
+	SPR	  *spr;
 	Uint8  vramBlock;
 	Uint32 tile;
 
-	actor = fdActorGetById(sourceId);
-	sprite = actor->spr;
-	vramBlock = sprite->slot;
-	tile = sprite->image.tile;
+	actor = fdActorGetById(srcId);
+	spr = actor->spr;
+	vramBlock = spr->slot;
+	tile = spr->image.tile;
 
-	actor = fdActorGetById(targetId);
-	sprite = actor->spr;
-	sprite->slot = vramBlock;
-	sprite->image.tile = tile;
+	actor = fdActorGetById(tgtId);
+	spr = actor->spr;
+	spr->slot = vramBlock;
+	spr->image.tile = tile;
 }
 
 /* Stops actor id moving and colliding and hides it. */
@@ -97,100 +97,100 @@ void fdActorDisableById(Uint32 id)
 void fdActorSetSprRotationById(Sint32 id, Sint32 rotation)
 {
 	ACTOR *actor = fdActorGetById(id);
-	SPR	  *sprite = actor->spr;
+	SPR	  *spr = actor->spr;
 
-	if(actor != NULL && sprite != NULL)
-		sprite->rotation = rotation;
+	if(actor != NULL && spr != NULL)
+		spr->rotation = rotation;
 }
 
-/* Lays actor id down along angle, a quarter turn rounded: shows its first frame
+/* Lays actor id down along angle, a quarter turn rounded: shows its first tick
    turned, shifted by the side it falls to, and blocks its metatile and the
    metatile beyond it. */
-void fdActorFallOverById(Uint32 id, Uint32 angle)
+void fdActorFallOverById(Uint32 id, Uint32 ang)
 {
-	FIXED  position[3];
+	FIXED  pos[3];
 	ACTOR *actor = fdActorGetById(id);
-	SPR	  *sprite = actor->spr;
+	SPR	  *spr = actor->spr;
 
-	if(actor != NULL && sprite != NULL) {
+	if(actor != NULL && spr != NULL) {
 		fdActorSelectAnimationStub(actor, ANIM_STILL);
-		angle = (angle + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
-		position[0] = actor->x.fixed;
-		position[2] = actor->z.fixed;
+		ang = (ang + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
+		pos[0] = actor->x.fixed;
+		pos[2] = actor->z.fixed;
 		fdMapGridSetMetatileBehaviorAtStub(
-			actor->layer, position[0], position[2], METATILE_BEHAVIOR_WALL);
-		syVectorAddPolarOffset(toFIXED(16), angle, position);
+			actor->layer, pos[0], pos[2], METATILE_BEHAVIOR_WALL);
+		syVectorAddPolarOffset(toFIXED(16), ang, pos);
 		fdMapGridSetMetatileBehaviorAtStub(
-			actor->layer, position[0], position[2], METATILE_BEHAVIOR_WALL);
-		switch(angle) {
+			actor->layer, pos[0], pos[2], METATILE_BEHAVIOR_WALL);
+		switch(ang) {
 		case FACING_EAST:
-			sprite->ofsX -= 3;
-			sprite->ofsY += 5;
+			spr->ofsX -= 3;
+			spr->ofsY += 5;
 			break;
 		case FACING_WEST:
-			sprite->ofsX += 2;
-			sprite->ofsY += 4;
+			spr->ofsX += 2;
+			spr->ofsY += 4;
 			break;
 		case FACING_NORTH:
-			sprite->ofsY += 1;
+			spr->ofsY += 1;
 			break;
 		case FACING_SOUTH:
-			sprite->ofsY += 5;
+			spr->ofsY += 5;
 			break;
 		}
 		actor->collisionFlg = 0;
 		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-		sprite->flg = 0;
-		sprite->rotation = angle + DEGtoANG(90);
+		spr->flg = 0;
+		spr->rotation = ang + DEGtoANG(90);
 	}
 }
 
 /* fdActorFallOverById with an animation of the actor's sprite sheet (-1 for
    none) and the fall moving the actor itself half a metatile the way it
    falls. */
-void fdActorFallOverWithAnimationById(Sint32 id, Uint32 angle, Sint32 animation)
+void fdActorFallOverWithAnimationById(Sint32 id, Uint32 ang, Sint32 anm)
 {
 	ACTOR *actor = fdActorGetById(id);
-	SPR	  *sprite = actor->spr;
-	FIXED  position[3];
+	SPR	  *spr = actor->spr;
+	FIXED  pos[3];
 
-	if(actor == NULL || sprite == NULL)
+	if(actor == NULL || spr == NULL)
 		return;
-	if(animation != -1)
-		fdActorSelectAnimationStub(actor, animation);
-	position[0] = actor->x.fixed;
-	angle = (angle + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
-	position[2] = actor->z.fixed;
+	if(anm != -1)
+		fdActorSelectAnimationStub(actor, anm);
+	pos[0] = actor->x.fixed;
+	ang = (ang + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
+	pos[2] = actor->z.fixed;
 	fdMapGridSetMetatileBehaviorAtStub(
-		actor->layer, position[0], position[2], METATILE_BEHAVIOR_WALL);
-	syVectorAddPolarOffset(toFIXED(16), angle, position);
+		actor->layer, pos[0], pos[2], METATILE_BEHAVIOR_WALL);
+	syVectorAddPolarOffset(toFIXED(16), ang, pos);
 	fdMapGridSetMetatileBehaviorAtStub(
-		actor->layer, position[0], position[2], METATILE_BEHAVIOR_WALL);
-	switch(angle) {
+		actor->layer, pos[0], pos[2], METATILE_BEHAVIOR_WALL);
+	switch(ang) {
 	case FACING_EAST:
 		actor->x.fixed += toFIXED(8);
 		actor->z.fixed += toFIXED(1);
-		sprite->ofsX -= 4;
-		sprite->ofsY += 15;
+		spr->ofsX -= 4;
+		spr->ofsY += 15;
 		break;
 	case FACING_WEST:
 		actor->x.fixed -= toFIXED(8);
 		actor->z.fixed += toFIXED(1);
-		sprite->ofsX += 3;
-		sprite->ofsY += 16;
+		spr->ofsX += 3;
+		spr->ofsY += 16;
 		break;
 	case FACING_NORTH:
-		sprite->ofsY += 1;
+		spr->ofsY += 1;
 		break;
 	case FACING_SOUTH:
 		actor->z.fixed += toFIXED(8);
-		sprite->ofsY += 13;
+		spr->ofsY += 13;
 		break;
 	}
 	actor->collisionFlg = 0;
 	actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-	sprite->flg = 0;
-	sprite->rotation = angle + DEGtoANG(90);
+	spr->flg = 0;
+	spr->rotation = ang + DEGtoANG(90);
 }
 
 /* Item 0's icon, a gold coin, which an actor shows for coins. */
@@ -201,7 +201,7 @@ void fdActorFallOverWithAnimationById(Sint32 id, Uint32 angle, Sint32 animation)
 void fdActorShowItemIconById(Sint32 id, Sint32 item)
 {
 	ACTOR		  *actor = fdActorGetById(id);
-	SPR			  *sprite;
+	SPR			  *spr;
 	ICON_TRANSFER *icon;
 	Sint32		   tile;
 	Uint8		   kind;
@@ -209,7 +209,7 @@ void fdActorShowItemIconById(Sint32 id, Sint32 item)
 	if(actor != NULL) {
 		kind = actor->sprStorageKind;
 		if(kind == ACTOR_SPRITE_ONE) {
-			sprite = actor->spr;
+			spr = actor->spr;
 			if(item & SCOOPED_COINS)
 				item = COIN_ICON_ITEM;
 			icon =
@@ -222,25 +222,25 @@ void fdActorShowItemIconById(Sint32 id, Sint32 item)
 			   tiles too. */
 			((void (*)(Sint32, Uint8 *))mnIconDrawItemStub)(item, icon->tiles);
 #endif
-			tile = syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, icon->tiles);
+			tile = syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, icon->tiles);
 			syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 			actor->retainSprCache = kind;
-			fdSprAnimationClearStub(sprite->entries[0]);
-			sprite->entries[0] = NULL;
-			sprite->cnt = 0;
-			sprite->image.fullCol = 0;
-			sprite->image.tile = tile;
-			sprite->dirty = 0;
-			sprite->flg = 0;
+			fdSprAnimationClearStub(spr->entries[0]);
+			spr->entries[0] = NULL;
+			spr->cnt = 0;
+			spr->image.fullCol = 0;
+			spr->image.tile = tile;
+			spr->dirty = 0;
+			spr->flg = 0;
 		}
 	}
 }
 
 /* The script command "set message": the number of the script's next message,
    written to the field state's message. */
-void fdScriptSetMessageId(Sint32 message)
+void fdScriptSetMessageId(Sint32 msg)
 {
-	FieldStateWork->msg = message;
+	FieldStateWork->msg = msg;
 }
 
 /* Returns the sprite (the first animation's id) of the actor whose id is key's
@@ -257,19 +257,19 @@ Sint32 fdActorGetSprById(Sint32 key)
 }
 
 /* Returns the first of the scene's placed actors (from ACTOR_FIRST_PLACED)
-   showing spriteId, or -1. */
-Sint32 fdActorFindBySpr(Sint32 spriteId)
+   showing sprId, or -1. */
+Sint32 fdActorFindBySpr(Sint32 sprId)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	Sint32		 result = -1;
-	Sint32		 index;
+	Sint32		 idx;
 	ACTOR		*actor;
 
-	for(index = ACTOR_FIRST_PLACED; index < FIELD_ACTOR_COUNT; index++) {
-		actor = state->actors[index];
+	for(idx = ACTOR_FIRST_PLACED; idx < FIELD_ACTOR_COUNT; idx++) {
+		actor = state->actors[idx];
 		if(actor != NULL && actor->sprStorageKind == ACTOR_SPRITE_ONE &&
-			((SPR *)actor->spr)->entries[0]->anmId == spriteId) {
-			result = index;
+			((SPR *)actor->spr)->entries[0]->anmId == sprId) {
+			result = idx;
 			break;
 		}
 	}

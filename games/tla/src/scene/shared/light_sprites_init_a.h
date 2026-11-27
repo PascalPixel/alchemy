@@ -3,14 +3,14 @@
    priority. */
 UNUSED void scLightSprsInitA(void)
 {
-	Uint8 *buffer = syHeapCallAlternatePool(syHeapAlloc, 3072);
+	Uint8 *buf = syHeapCallAlternatePool(syHeapAlloc, 3072);
 
 	syWordsClearEntry(LightSpriteActors, sizeof(LightSpriteActors));
-	syDecompressTaggedLZ(Field_CachedTilesA, buffer);
+	syDecompressTaggedLZ(Field_CachedTilesA, buf);
 	LightSpriteTile = syVRAMCacheFindFreeEntry();
-	syVRAMCacheLoad(LightSpriteTile, 3072, buffer);
-	syHeapRelease(buffer);
-	sySetEvent(scLightSprsDraw, EVENT_PASS_FRAME);
+	syVRAMCacheLoad(LightSpriteTile, 3072, buf);
+	syHeapRelease(buf);
+	sySetEvent(scLightSprsDraw, EVENT_PASS_TICK);
 	LightSpriteCount = 0;
 	LightSpritesLarge = 0;
 	LightSpritePriority = -1;

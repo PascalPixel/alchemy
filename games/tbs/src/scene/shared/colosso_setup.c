@@ -46,7 +46,7 @@ void scColossoStartRaceGauge(Sint32 playerActorId, Sint32 opponentActorId,
 	syVRAMCacheLoad(
 		(Sint16)vramSlot, GAUGE_TILE_COUNT * TILE_SIZE_4BPP, graphics);
 
-	sySetFrameEvent(scColossoDrawGauge, EVENT_PASS_FRAME - 10);
+	sySetTickEvent(scColossoDrawGauge, EVENT_PASS_TICK - 10);
 
 	syHeapRelease(graphics);
 }
@@ -67,5 +67,5 @@ void scColossoStartOpponent(Sint32 resource)
 		recorder->still = 0;
 		recorder->pathIdx = 0;
 	}
-	sySetFrameEvent(scColossoUpdatePathOpponent, EVENT_PASS_FRAME + 5);
+	sySetTickEvent(scColossoUpdatePathOpponent, EVENT_PASS_TICK + 5);
 }

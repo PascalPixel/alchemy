@@ -2,7 +2,7 @@
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
 @ r11 (fp) as an ordinary register: it holds a row counter
-@ (rsb fp, ip, #16; mov lr, fp), not a frame.
+@ (rsb fp, ip, #16; mov lr, fp), not a tick.
 .syntax unified
 	.thumb
 	.global BlitterTemplate

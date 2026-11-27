@@ -1,6 +1,6 @@
 /* A debug sprite viewer. Part of field.c. */
 
-extern const Uint16 SpriteViewer_BackdropColors[8];
+extern const Uint16 SpriteViewerBackdropColors[8];
 
 void   fdSprViewerSetLayerPriority(Sint32 slot, Sint32 value);
 void   fdSprViewerSetLayerColMode(Sint32 slot, Sint32 value);
@@ -20,9 +20,9 @@ enum {
 	/* A sprite animation priority above 3, which fdSprComposePicture skips. */
 	UI_SPRITE_VIEWER_HIDDEN_PRIORITY = 8,
 	/* The sprite ids L and R step by while Start is held: any step past one
-	   goes to the next stop of SpriteViewer_SkipStops. */
+	   goes to the next stop of SpriteViewerSkipStops. */
 	UI_SPRITE_VIEWER_FAST_STEP = 10,
-	/* SpriteViewer_SkipStops' entries, its end marker the last. */
+	/* SpriteViewerSkipStops' entries, its end marker the last. */
 	UI_SPRITE_VIEWER_SKIP_STOPS = 10,
 	/* The colour SPRITE_COLOR_FILL paints in the viewer (DecodeFillByte):
 	   colour 3 of the basic sprite palette, orange. */
@@ -68,7 +68,7 @@ void fdSprViewerRun(void)
 	void			   *ring;
 	Uint32				selectedLayer;
 	Uint32				i;
-	Sint32				spriteId;
+	Sint32				sprId;
 	Sint32				changed;
 
 	x = 144;
@@ -81,11 +81,11 @@ void fdSprViewerRun(void)
 	DecodeFillByte = UI_SPRITE_VIEWER_FILL_COLOR;
 	DMA_FILL32_CELL(zero, 0, ring, 4);
 	DMA_FILL32_CELL(zero, 0, layers, sizeof(layers));
-	spriteId = fdSprViewerStepSprId(-1, 1);
+	sprId = fdSprViewerStepSprId(-1, 1);
 	for(i = 0; i < SPRITE_ANIMATION_COUNT; i++) {
 		layers[i].anmIdx = 1;
 		layers[i].pri = 1;
-		layers[i].sprId = spriteId;
+		layers[i].sprId = sprId;
 	}
 	layers[0].enabled = 1;
 	DebugMode = UI_SPRITE_VIEWER_DEBUG_MODE;
@@ -105,18 +105,18 @@ restart:
 		ANIM_FACING_TWO_PART)
 		fdSprPictureCacheLoad(1, ActorSpriteSlots, layers[0].sprId + 1, 0);
 	for(i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
-		SPR	  *sprite;
+		SPR	  *spr;
 		Sint32 part = 0;
 
 		if(fdResourceGetMetadataRecordStub(layers[0].sprId)->drawKind ==
 				ANIM_FACING_TWO_PART &&
 			(i & 1))
 			part = 1;
-		sprite = fdSprCreate(SPRITE_PICTURE_TAG(part, layers[0].sprId + part));
-		fdSprAddAnimation(sprite, layers[1].sprId);
-		fdSprAddAnimation(sprite, layers[2].sprId);
-		fdSprAddAnimation(sprite, layers[3].sprId);
-		sprite->flg = shadowsEnabled;
+		spr = fdSprCreate(SPRITE_PICTURE_TAG(part, layers[0].sprId + part));
+		fdSprAddAnimation(spr, layers[1].sprId);
+		fdSprAddAnimation(spr, layers[2].sprId);
+		fdSprAddAnimation(spr, layers[3].sprId);
+		spr->flg = shadowsEnabled;
 	}
 	for(i = 0; i < SPRITE_ANIMATION_COUNT; i++) {
 		if(layers[i].enabled != 0)
@@ -127,7 +127,7 @@ restart:
 		fdSprViewerStartStaggeredAnimations(i, layers[i].anmIdx);
 	}
 	fdSprViewerLayOutRing(x, y, ring);
-	sySetEvent(fdSprViewerPlaceRing, EVENT_PASS_FRAME);
+	sySetEvent(fdSprViewerPlaceRing, EVENT_PASS_TICK);
 
 next:
 	sySynch(1);
@@ -159,12 +159,12 @@ next:
 		}
 
 		if(PerWork.push & KEY_START) {
-			SPR *sprites = Ram_HeapSlots->sprs;
+			SPR *sprs = Ram_HeapSlots->sprs;
 
 			shadowsEnabled ^= 1;
 			for(i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
-				sprites->flg = shadowsEnabled;
-				sprites++;
+				sprs->flg = shadowsEnabled;
+				sprs++;
 			}
 		}
 
@@ -298,21 +298,21 @@ next:
 		}
 		if(PerWork.push & KEY_B) {
 			volatile Uint16 *palette = (volatile Uint16 *)BG_PLTT;
-			const Uint16	*colors = SpriteViewer_BackdropColors;
+			const Uint16	*cols = SpriteViewerBackdropColors;
 			backdrop++;
 			backdrop &= 7;
 			/* B steps the backdrop through its eight colours. */
-			*palette = *(const Uint16 *)((Uint32)colors + (backdrop << 1));
+			*palette = *(const Uint16 *)((Uint32)cols + (backdrop << 1));
 		}
 		sySynch(1);
 	}
 }
 
-extern const Uint16 SpriteViewer_SkipStops[];
+extern const Uint16 SpriteViewerSkipStops[];
 
 /* Steps a sprite id (0 to 715) by delta: a step of one wraps around the range,
    a larger step forward goes to the next stop above value and one back to the
-   last stop below it (SpriteViewer_SkipStops, ended by (Uint16)-1, from which a
+   last stop below it (SpriteViewerSkipStops, ended by (Uint16)-1, from which a
    step forward wraps to 0). A delta of 0 returns value unchanged. */
 Sint32 fdSprViewerStepSprId(Sint32 value, Sint32 delta)
 {
@@ -332,21 +332,21 @@ Sint32 fdSprViewerStepSprId(Sint32 value, Sint32 delta)
 			Uint32 i;
 
 			for(i = 0; i < UI_SPRITE_VIEWER_SKIP_STOPS; i++) {
-				if(value < SpriteViewer_SkipStops[i]) {
-					value = SpriteViewer_SkipStops[i];
+				if(value < SpriteViewerSkipStops[i]) {
+					value = SpriteViewerSkipStops[i];
 					if(value == (Uint16)-1)
 						value = 0;
 					break;
 				}
 			}
 		} else if(value == 0) {
-			value = SpriteViewer_SkipStops[UI_SPRITE_VIEWER_SKIP_STOPS - 2];
+			value = SpriteViewerSkipStops[UI_SPRITE_VIEWER_SKIP_STOPS - 2];
 		} else {
 			Sint32 i;
 
 			for(i = UI_SPRITE_VIEWER_SKIP_STOPS - 2; i >= 0; i--) {
-				if(value > SpriteViewer_SkipStops[i]) {
-					value = SpriteViewer_SkipStops[i];
+				if(value > SpriteViewerSkipStops[i]) {
+					value = SpriteViewerSkipStops[i];
 					break;
 				}
 			}
@@ -370,26 +370,26 @@ void fdSprViewerLayOutRing(
 	Sint32 centerX, Sint32 centerY, SPR_PLACEMENT *positions)
 {
 	SPR_PLACEMENT *pair;
-	Sint32		   angle;
+	Sint32		   ang;
 	Sint32		   i;
 	Uint16		   turn;
 	Uint8		   kind;
 
-	angle = 0;
+	ang = 0;
 	kind = ((SPR *)Ram_HeapSlots->sprs)->entries[0]->kind;
 	if((PerWork.data & KEY_B) != 0)
-		angle = (Sint16)(VBlankCount << 8);
+		ang = (Sint16)(FrameCount << 8);
 	switch((Uint32)kind) {
 	case ANIM_FACING_THREE_PICTURES:
 		for(i = 0; i < 6; i++) {
-			angle <<= ANGLE_BITS;
+			ang <<= ANGLE_BITS;
 			positions->x = toFIXED(centerX);
-			angle = (Uint32)angle >> ANGLE_BITS;
+			ang = (Uint32)ang >> ANGLE_BITS;
 			positions->height = 0;
 			positions->y = toFIXED(centerY);
-			syVectorAddPolarOffset(toFIXED(56), (Uint16)angle, &positions->x);
+			syVectorAddPolarOffset(toFIXED(56), (Uint16)ang, &positions->x);
 			positions++;
-			angle = (Sint16)(angle + DEGtoANG(60));
+			ang = (Sint16)(ang + DEGtoANG(60));
 		}
 		for(; i < UI_SPRITE_VIEWER_COPY_COUNT; i++)
 			positions++;
@@ -399,14 +399,14 @@ void fdSprViewerLayOutRing(
 	case ANIM_FACING_EIGHT_NO_TABLE:
 	case ANIM_FACING_EIGHT_PICTURES_MIRRORED:
 		for(i = 0; i < 8; i++) {
-			angle = (Uint32)angle << ANGLE_BITS;
+			ang = (Uint32)ang << ANGLE_BITS;
 			positions->x = toFIXED(centerX);
-			angle = (Uint32)angle >> ANGLE_BITS;
+			ang = (Uint32)ang >> ANGLE_BITS;
 			positions->height = 0;
 			positions->y = toFIXED(centerY);
-			syVectorAddPolarOffset(toFIXED(56), (Uint16)angle, &positions->x);
+			syVectorAddPolarOffset(toFIXED(56), (Uint16)ang, &positions->x);
 			positions++;
-			angle = (Sint16)(angle + DEGtoANG(45));
+			ang = (Sint16)(ang + DEGtoANG(45));
 		}
 		for(; i < UI_SPRITE_VIEWER_COPY_COUNT; i++)
 			positions++;
@@ -414,54 +414,54 @@ void fdSprViewerLayOutRing(
 	case ANIM_FACING_FOUR_PICTURES:
 	case ANIM_FACING_SIX_PICTURES:
 		for(i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
-			angle <<= ANGLE_BITS;
+			ang <<= ANGLE_BITS;
 			positions->x = toFIXED(centerX);
-			angle = (Uint32)angle >> ANGLE_BITS;
+			ang = (Uint32)ang >> ANGLE_BITS;
 			positions->height = 0;
 			positions->y = toFIXED(centerY);
-			syVectorAddPolarOffset(toFIXED(56), (Uint16)angle, &positions->x);
+			syVectorAddPolarOffset(toFIXED(56), (Uint16)ang, &positions->x);
 			positions++;
-			angle = (Sint16)(angle + DEGtoANG(36));
+			ang = (Sint16)(ang + DEGtoANG(36));
 		}
 		break;
 	case ANIM_FACING_TWO_PART:
-		turn = angle;
-		angle = (Sint16)(turn + DEGtoANG(90));
+		turn = ang;
+		ang = (Sint16)(turn + DEGtoANG(90));
 		i = 0;
 		pair = positions;
 		while(i < 2) {
 			pair[i * 2].x = toFIXED(centerX);
 			pair[i * 2].height = 0;
 			pair[i * 2].y = toFIXED(centerY);
-			angle <<= ANGLE_BITS;
-			angle = (Uint32)angle >> ANGLE_BITS;
-			syVectorAddPolarOffset(toFIXED(40), angle, &positions[0].x);
+			ang <<= ANGLE_BITS;
+			ang = (Uint32)ang >> ANGLE_BITS;
+			syVectorAddPolarOffset(toFIXED(40), ang, &positions[0].x);
 			pair[i * 2 + 1].x = toFIXED(centerX);
 			{
 				Sint32 *point = sySprPlacementValues(&positions[1]);
 				pair[i * 2 + 1].height = 0;
 				pair[i * 2 + 1].y = toFIXED(centerY);
-				syVectorAddPolarOffset(toFIXED(40), (Uint16)angle, point);
+				syVectorAddPolarOffset(toFIXED(40), (Uint16)ang, point);
 			}
-			angle = ((Uint32)angle + DEGtoANG(180)) << ANGLE_BITS;
+			ang = ((Uint32)ang + DEGtoANG(180)) << ANGLE_BITS;
 			i++;
 			positions += 2;
-			angle >>= ANGLE_BITS;
+			ang >>= ANGLE_BITS;
 		}
 		break;
 	default:
-		angle = (Sint32)(((Uint32)angle << ANGLE_BITS) +
-					((Uint32)DEGtoANG(45) << ANGLE_BITS)) >>
+		ang = (Sint32)(((Uint32)ang << ANGLE_BITS) +
+				  ((Uint32)DEGtoANG(45) << ANGLE_BITS)) >>
 			ANGLE_BITS;
 		for(i = 0; i < 4; i++) {
-			angle = (Uint32)angle << ANGLE_BITS;
-			angle = (Uint32)angle >> ANGLE_BITS;
+			ang = (Uint32)ang << ANGLE_BITS;
+			ang = (Uint32)ang >> ANGLE_BITS;
 			positions->x = toFIXED(centerX);
 			positions->height = 0;
 			positions->y = toFIXED(centerY);
-			syVectorAddPolarOffset(toFIXED(56), (Uint16)angle, &positions->x);
+			syVectorAddPolarOffset(toFIXED(56), (Uint16)ang, &positions->x);
 			positions++;
-			angle = (Sint16)(angle + DEGtoANG(90));
+			ang = (Sint16)(ang + DEGtoANG(90));
 		}
 		for(i = 4; i < UI_SPRITE_VIEWER_COPY_COUNT; i++)
 			positions++;
@@ -473,12 +473,12 @@ void fdSprViewerLayOutRing(
    mode value. */
 void fdSprViewerSetLayerColMode(Sint32 slot, Sint32 value)
 {
-	SPR	  *sprites = Ram_HeapSlots->sprs;
-	Sint32 count;
+	SPR	  *sprs = Ram_HeapSlots->sprs;
+	Sint32 cnt;
 
-	for(count = 0; count < 10; count++) {
-		sprites->entries[slot & 3]->colMode = value;
-		sprites++;
+	for(cnt = 0; cnt < 10; cnt++) {
+		sprs->entries[slot & 3]->colMode = value;
+		sprs++;
 	}
 }
 
@@ -486,39 +486,39 @@ void fdSprViewerSetLayerColMode(Sint32 slot, Sint32 value)
    order value. */
 void fdSprViewerSetLayerPriority(Sint32 slot, Sint32 value)
 {
-	SPR	  *sprites = Ram_HeapSlots->sprs;
-	Sint32 count;
+	SPR	  *sprs = Ram_HeapSlots->sprs;
+	Sint32 cnt;
 
-	for(count = 0; count < 10; count++) {
-		sprites->entries[slot & 3]->pri = value;
-		sprites++;
+	for(cnt = 0; cnt < 10; cnt++) {
+		sprs->entries[slot & 3]->pri = value;
+		sprs++;
 	}
 }
 
 /* Starts animation value on sprite animation slot of each of the viewer's ten
-   sprites, each one a frame (16 timer units) behind the last, so the copies are
+   sprites, each one a tick (16 timer units) behind the last, so the copies are
    staggered. */
 Sint32 fdSprViewerStartStaggeredAnimations(Sint32 slot, Sint32 value)
 {
 	Sint32				zero;
-	Sint32				count;
-	Sint32				offset;
+	Sint32				cnt;
+	Sint32				ofs;
 	ANIMATION_METADATA *metadata;
 	SPR_ANIMATION	   *entry;
 	Uint8			   *state;
 
 	state = Ram_HeapSlots->sprs;
-	count = 0;
-	offset = (3 & slot) * sizeof(SPR_ANIMATION *) + offsetof(SPR, entries);
+	cnt = 0;
+	ofs = (3 & slot) * sizeof(SPR_ANIMATION *) + offsetof(SPR, entries);
 	zero = 0;
 	do {
-		entry = *(SPR_ANIMATION **)(state + offset);
+		entry = *(SPR_ANIMATION **)(state + ofs);
 		if(entry->scripts != 0) {
 			metadata = fdResourceGetMetadataRecordStub(entry->anmId);
 			if(value < metadata->anmCnt) {
 				entry->kind = metadata->drawKind;
 				entry->script = entry->scripts[value];
-				entry->tmr = count * SPRITE_ANIMATION_NORMAL_STEP;
+				entry->tmr = cnt * SPRITE_ANIMATION_NORMAL_STEP;
 				entry->step = SPRITE_ANIMATION_NORMAL_STEP;
 				entry->scriptOfs = zero;
 				entry->pictureBase = zero;
@@ -527,9 +527,9 @@ Sint32 fdSprViewerStartStaggeredAnimations(Sint32 slot, Sint32 value)
 			((SPR *)state)->ofsY = metadata->adjustY;
 			((SPR *)state)->rotation = zero;
 		}
-		count += 1;
+		cnt += 1;
 		state += sizeof(SPR);
-	} while(count <= 9);
+	} while(cnt <= 9);
 #if FIX_FUNCTION_SIGNATURES
 	return 0;
 #else
@@ -542,78 +542,77 @@ Sint32 fdSprViewerStartStaggeredAnimations(Sint32 slot, Sint32 value)
    and resets each sprite animation from its new metadata. */
 void fdSprViewerSetLayerSpr(Sint32 slot, Sint32 no)
 {
-	SPR	  *sprites = Ram_HeapSlots->sprs;
-	Sint32 count;
+	SPR	  *sprs = Ram_HeapSlots->sprs;
+	Sint32 cnt;
 
 	fdResourceGetMetadataRecordStub(no);
-	for(count = 0; count < 10; count++) {
-		SPR_ANIMATION *entry = sprites->entries[slot & 3];
+	for(cnt = 0; cnt < 10; cnt++) {
+		SPR_ANIMATION *entry = sprs->entries[slot & 3];
 
 		entry->anmId = no;
 		fdSprAnimationReset(entry);
-		sprites++;
+		sprs++;
 	}
 }
 
-extern const SPR_SCALE SpriteViewer_Scale;
+extern const SPR_SCALE SpriteViewerScale;
 
-/* Each frame in the sprite viewer: places each copy of the sprite at its ring
+/* Each tick in the sprite viewer: places each copy of the sprite at its ring
    position, facing the way that position stands for. */
 void fdSprViewerPlaceRing(void)
 {
-	SPR		 *sprites = Ram_HeapSlots->sprs;
-	Uint32	  kind = sprites->entries[0]->kind;
+	SPR		 *sprs = Ram_HeapSlots->sprs;
+	Uint32	  kind = sprs->entries[0]->kind;
 	SPR_SCALE scale;
-	Uint8	 *table;
-	Uint16	  angle;
+	Uint8	 *tbl;
+	Uint16	  ang;
 	Uint16	  step;
 	Uint16	  odd = 0;
-	Uint32	  count;
+	Uint32	  cnt;
 	Uint32	  i;
 
-	scale = SpriteViewer_Scale;
-	table = (Uint8 *)Ram_HeapSlots->battleState;
+	scale = SpriteViewerScale;
+	tbl = (Uint8 *)Ram_HeapSlots->battleState;
 
 	switch(kind) {
 	case ANIM_FACING_THREE_PICTURES:
-		angle = 0;
+		ang = 0;
 		step = DEGtoANG(60);
-		count = 6;
+		cnt = 6;
 		break;
 	case ANIM_FACING_FIVE_PICTURES:
 	case ANIM_FACING_EIGHT_PICTURES:
 	case ANIM_FACING_EIGHT_NO_TABLE:
 	case ANIM_FACING_EIGHT_PICTURES_MIRRORED:
-		angle = 0;
+		ang = 0;
 		step = DEGtoANG(45);
-		count = 8;
+		cnt = 8;
 		break;
 	case ANIM_FACING_FOUR_PICTURES:
 	case ANIM_FACING_SIX_PICTURES:
-		angle = 0;
+		ang = 0;
 		step = DEGtoANG(36);
-		count = UI_SPRITE_VIEWER_COPY_COUNT;
+		cnt = UI_SPRITE_VIEWER_COPY_COUNT;
 		break;
 	case ANIM_FACING_TWO_PART:
-		angle = 0;
+		ang = 0;
 		step = 0;
 		odd = DEGtoANG(180);
-		count = 4;
+		cnt = 4;
 		break;
 	default:
-		angle = DEGtoANG(45);
+		ang = DEGtoANG(45);
 		step = DEGtoANG(90);
-		count = 4;
+		cnt = 4;
 		break;
 	}
 
-	for(i = 0; i < count; i++) {
-		fdRenderApplyProjectedPlacement(sprites,
-			(Sint32 *)(table + i * sizeof(SPR_PLACEMENT)), (Sint32 *)&scale,
-			angle);
-		sprites++;
-		angle += step;
+	for(i = 0; i < cnt; i++) {
+		fdRenderApplyProjectedPlacement(sprs,
+			(Sint32 *)(tbl + i * sizeof(SPR_PLACEMENT)), (Sint32 *)&scale, ang);
+		sprs++;
+		ang += step;
 		if(i & 1)
-			angle += odd;
+			ang += odd;
 	}
 }

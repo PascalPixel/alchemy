@@ -45,7 +45,7 @@
    and the house by the rope bridge. Six gravestones stand south of the inn,
    where the dog sits.
 
-   The doors open with an animation (Vault_*DoorMetatiles). They lead into the
+   The doors open with an animation (Vault*DoorMetatiles). They lead into the
    houses, shops and inn (SceneId_LogRoomsA), the jail (SceneId_StoneRooms) and
    the Vault Sanctum (VAULT_TO_SANCTUM). The metatile behaviors the scripts
    answer are VAULT_METATILE_BEHAVIOR (vault.h).
@@ -65,16 +65,16 @@
 #include "scene/walk_into_leader.h"
 #include "text/msg_ids.h"
 
-extern SCENE_ENTRANCE Vault_Entrances[];
-extern Uint32		  Vault_Exits[];
-extern ACTOR_PLACE	  Vault_ActorPlacements[];
-extern ACTOR_PLACE	  Vault_ActorPlacementsAfterThieves[];
-extern CUE			  Vault_Cues[];
-extern CUE			  Vault_CuesAfterThieves[];
-extern Sint32		  Vault_DriftScriptA[];
-extern Sint32		  Vault_DriftScriptB[];
+extern SCENE_ENTRANCE VaultEntrances[];
+extern Uint32		  VaultExits[];
+extern ACTOR_PLACE	  VaultActorPlacements[];
+extern ACTOR_PLACE	  VaultActorPlacementsAfterThieves[];
+extern CUE			  VaultCues[];
+extern CUE			  VaultCuesAfterThieves[];
+extern Sint32		  VaultDriftScriptA[];
+extern Sint32		  VaultDriftScriptB[];
 
-/* The unit of the unused drift's random speeds: a tenth of a pixel a frame. */
+/* The unit of the unused drift's random speeds: a tenth of a pixel a tick. */
 enum { VAULT_DRIFT_RATE = toFIXED(1) / 10 };
 
 /* The townspeople, named by what they say. */
@@ -94,7 +94,7 @@ enum {
 	/* An old woman who wanders east of the inn's door. */
 	ACTOR_OLD_WOMAN_ON_THE_TRAVELERS = 13,
 	/* The two children who walk round the well, half a circle apart
-	   (Vault_BoyRoundTheWellRoute, Vault_GirlRoundTheWellRoute). */
+	   (VaultBoyRoundTheWellRoute, VaultGirlRoundTheWellRoute). */
 	ACTOR_BOY_ROUND_THE_WELL = 14,
 	ACTOR_GIRL_ROUND_THE_WELL = 15,
 	/* A stocky, muscular man who wanders near the west end of the rope
@@ -134,7 +134,7 @@ static void scVaultFaceEachOtherAndWait(
    or while he talks to someone or reads a mind. */
 static UNREAD_RESULT scVaultUpdateWomanWantingRoofFixed(ACTOR *woman)
 {
-	WIN_STATE	*window = (WIN_STATE *)WindowStateWork[0];
+	WIN_STATE	*win = (WIN_STATE *)WindowStateWork[0];
 	FIELD_STATE *state = FieldStateWork;
 	Sint32		 force = 0;
 	Sint32		 range = STOP_RANGE;
@@ -144,7 +144,7 @@ static UNREAD_RESULT scVaultUpdateWomanWantingRoofFixed(ACTOR *woman)
 		RETURN_UNREAD(0);
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	if((Sint16)state->talk != 0 || window->mindRead != 0) {
+	if((Sint16)state->talk != 0 || win->mindRead != 0) {
 		range = TALK_STOP_RANGE;
 		force = 1;
 	}
@@ -154,7 +154,7 @@ static UNREAD_RESULT scVaultUpdateWomanWantingRoofFixed(ACTOR *woman)
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return Vault_Entrances;
+	return VaultEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -164,14 +164,14 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return Vault_Exits;
+	return VaultExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(gmFlagGet(FLAG_VAULT_THIEVES_JAILED) != 0)
-		return Vault_ActorPlacementsAfterThieves;
-	return Vault_ActorPlacements;
+		return VaultActorPlacementsAfterThieves;
+	return VaultActorPlacements;
 }
 
 /* Counts the Venus Djinn that must leave Ivan before he leaves the party. */
@@ -234,7 +234,7 @@ static void scVaultIvanStaysBehind(void)
 	syImportScriptSetExitRequest(state->stepCue -
 		(METATILE_BEHAVIOR_VAULT_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -251,8 +251,8 @@ static void scVaultPeerIntoWell(void)
 const CUE *scGetCues(void)
 {
 	if(gmFlagGet(FLAG_VAULT_THIEVES_JAILED) != 0)
-		return Vault_CuesAfterThieves;
-	return Vault_Cues;
+		return VaultCuesAfterThieves;
+	return VaultCues;
 }
 
 /* Asks the current question and selects its ordinary or alternate reply. */
@@ -707,13 +707,13 @@ static void scVaultClimbIntoInnLoft(void)
 	scVaultWalkThroughExit(152, 264, VAULT_TO_LOG_ROOMS_A_WEST);
 }
 
-/* Moves an actor through a jump and waits up to sixty frames for it to
+/* Moves an actor through a jump and waits up to sixty ticks for it to
    settle. */
 static void scVaultJumpActorToAndWait(
 	Sint32 actorId, Sint32 x, Sint32 z, Sint32 verticalSpeed)
 {
 	ACTOR *actor = fdActorGet(actorId);
-	int	   frames;
+	int	   ticks;
 	fdActorSetSpeed(actorId, 3);
 	actor->gravity = toFIXED(1) / 2;
 	actor->bounce = 0;
@@ -721,7 +721,7 @@ static void scVaultJumpActorToAndWait(
 	fdActorSetSprFlags(actor, 0);
 	fdActorMoveToAndWait(actorId, x, z);
 	fdActorSetPos(actorId, x, z);
-	for(frames = 60; frames != 0; --frames) {
+	for(ticks = 60; ticks != 0; --ticks) {
 		sySynch(1);
 		if((FIXEDtoINT(actor->velY)) == 0)
 			break;
@@ -822,7 +822,7 @@ Sint32 scInit(void)
 	   gates': the default one inside the north gate, the south gate's and the
 	   unused one inside the north gate. */
 	/* XXX: the World Map's north exit leads to VAULT_FROM_WORLD_MAP_NORTH (3),
-	   which Vault_Entrances lacks, so the party stands at the default row's
+	   which VaultEntrances lacks, so the party stands at the default row's
 	   place but keeps entrance 3 and fails this test, and Ivan's welcome back
 	   would not play there; a recording of that exit into Vault with
 	   FLAG_VAULT_IVAN_JOINED_ROD_SEARCH set, Ivan out of the party, settles
@@ -847,7 +847,7 @@ Sint32 scInit(void)
 					fdActorTurnToFaceEachOther(
 						ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
 					fdScriptStartScreenTransition();
-					fdScriptWaitTransitionFrames();
+					fdScriptWaitTransitionTicks();
 					fdScriptWait(30);
 					fdActorRunRepeatedMotion(ACTOR_IVAN, 2);
 					fdScriptSetMessageId(MsgVaultWelcomeBackTwo);
@@ -876,7 +876,7 @@ Sint32 scInit(void)
 					fdActorTurnToFaceEachOther(
 						ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
 					fdScriptStartScreenTransition();
-					fdScriptWaitTransitionFrames();
+					fdScriptWaitTransitionTicks();
 					fdScriptWait(30);
 					fdActorRunRepeatedMotion(ACTOR_IVAN, 2);
 					fdScriptSetMessageId(MsgVaultWelcomeBackTwo);
@@ -917,7 +917,7 @@ static void scVaultFaceEachOtherAndWait(
 	fdScriptWait(delay);
 }
 
-/* A drifting sprite loses this share of each rate a frame: a 28th. */
+/* A drifting sprite loses this share of each rate a tick: a 28th. */
 #define DRIFT_DAMPING 28
 
 /* Applies drift and gradually damps both rates toward zero. */
@@ -948,11 +948,11 @@ static void scVaultUpdateDriftingEffect(ACTOR *effect)
 }
 
 /* Spawns a drifting sprite near the dog, sharing its drawing priority. */
-UNUSED static void scVaultSpawnDriftingEffect(Sint32 flags)
+UNUSED static void scVaultSpawnDriftingEffect(Sint32 flg)
 {
 	ACTOR *anchor;
 	ACTOR *effect;
-	SPR	  *sprite;
+	SPR	  *spr;
 	Sint32 x;
 	FIXED  y;
 	Sint32 z;
@@ -980,37 +980,37 @@ UNUSED static void scVaultSpawnDriftingEffect(Sint32 flags)
 	effect = fdActorCreate(SPRITE_NO_IMAGE, x, y, z);
 	if(effect == NULL)
 		return;
-	sprite = effect->spr;
+	spr = effect->spr;
 	/* UB: fdSprCreate makes no sprite for SPRITE_NO_IMAGE, so sprite is NULL
 	   and the two stores through it below write near address 0. */
 #if FIX_NULL_DEREFERENCE
-	if(sprite == NULL)
+	if(spr == NULL)
 		return;
 #endif
 	switch(syRandomNext() & 1) {
 	case 1:
 		fdActorSelectAnimation(effect, 3);
-		fdActorStartScript(effect, Vault_DriftScriptA);
+		fdActorStartScript(effect, VaultDriftScriptA);
 		break;
 	default:
 		fdActorSelectAnimation(effect, 2);
-		fdActorStartScript(effect, Vault_DriftScriptB);
+		fdActorStartScript(effect, VaultDriftScriptB);
 		break;
 	}
 	effect->motionFlg = 0;
-	if(flags & 2) {
+	if(flg & 2) {
 		Sint32 driftMultiplier;
 		Sint32 directionBias;
 
 		driftMultiplier = (Uint32)syRandomNext() % 10 + 5;
 		/* x, done with once the effect is placed, carries the 1. */
 		x = 1;
-		flags &= x;
-		directionBias = flags ^ x;
+		flg &= x;
+		directionBias = flg ^ x;
 		directionBias <<= 2;
 		driftMultiplier += directionBias;
 		effect->acceleration =
-			(2 * VAULT_DRIFT_RATE * flags - VAULT_DRIFT_RATE) * driftMultiplier;
+			(2 * VAULT_DRIFT_RATE * flg - VAULT_DRIFT_RATE) * driftMultiplier;
 		driftMultiplier = (Uint32)syRandomNext() % 15 - 7;
 		effect->speedLimit = VAULT_DRIFT_RATE * driftMultiplier;
 		effect->tmr = 0;
@@ -1019,29 +1019,29 @@ UNUSED static void scVaultSpawnDriftingEffect(Sint32 flags)
 
 		driftMultiplier = (Uint32)syRandomNext() % 10 + 8;
 		effect->speedLimit =
-			(2 * VAULT_DRIFT_RATE * flags - VAULT_DRIFT_RATE) * driftMultiplier;
+			(2 * VAULT_DRIFT_RATE * flg - VAULT_DRIFT_RATE) * driftMultiplier;
 		driftMultiplier = (Uint32)syRandomNext() % 14 + 1;
 		effect->acceleration = VAULT_DRIFT_RATE * driftMultiplier;
 		effect->tmr = 1;
 	}
 	effect->update = scVaultUpdateDriftingEffect;
-	sprite->flg = 0;
-	sprite->image.pri = anchor->spr->image.pri;
+	spr->flg = 0;
+	spr->image.pri = anchor->spr->image.pri;
 }
 
 #include "shared/field_effect_duration_scripts.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 /* ACTOR_WOMAN_WANTING_THE_ROOF_FIXED's search for the young man fixing the
    roof, in front of the inn's west end. She walks to one end of her
    two-metatile path and the other, looks west and east, then shakes her head,
    for as long as the party stays on the map. */
-Sint32 Vault_WomanWantingTheRoofFixedRoute[] = {
+Sint32 VaultWomanWantingTheRoofFixedRoute[] = {
 	SC_SPEED(0.4),
 	SC_ACCELERATION(0.2),
 	SC_LABEL(1),
@@ -1101,7 +1101,7 @@ Sint32 Vault_WomanWantingTheRoofFixedRoute[] = {
 
 #include "shared/vault_well_routes.c"
 
-SCENE_ENTRANCE Vault_Entrances[] = {
+SCENE_ENTRANCE VaultEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 223, 0, 135, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{VAULT_FROM_WORLD_MAP_SOUTH, CONDITION_ALWAYS, 400, 0, 472, FACING_NORTH, 0,
@@ -1129,7 +1129,7 @@ SCENE_ENTRANCE Vault_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 Vault_Exits[] = {
+Uint32 VaultExits[] = {
 	SCENE_EXITS(Vault),
 	SCENE_EXIT(VAULT_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_VAULT_SOUTH),
 	SCENE_EXIT(VAULT_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_VAULT_NORTH),
@@ -1154,7 +1154,7 @@ Uint32 Vault_Exits[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE Vault_ActorPlacements[] = {
+ACTOR_PLACE VaultActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1169,9 +1169,9 @@ ACTOR_PLACE Vault_ActorPlacements[] = {
 		124, 0, 196, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
 		244, 0, 300, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, (Sint32)Vault_BoyRoundTheWellRoute,
+	ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, (Sint32)VaultBoyRoundTheWellRoute,
 		132, 0, 380, FACING_WEST, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, (Sint32)Vault_GirlRoundTheWellRoute,
+	ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, (Sint32)VaultGirlRoundTheWellRoute,
 		132, 0, 420, FACING_EAST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
 		332, 0, 412, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
@@ -1183,7 +1183,7 @@ ACTOR_PLACE Vault_ActorPlacements[] = {
 		216, 0, 392, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, FLAG_VAULT_SUSPECTS_MIND_READ, MOVEMENT_TYPE_STAND,
 		152, 0, 296, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, IF_FLAG_SET(FLAG_VAULT_SUSPECTS_MIND_READ), (Sint32)Vault_WomanWantingTheRoofFixedRoute,
+	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, IF_FLAG_SET(FLAG_VAULT_SUSPECTS_MIND_READ), (Sint32)VaultWomanWantingTheRoofFixedRoute,
 		168, 0, 312, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
 	/* XXX (no evidence): what this ivy was for; it stands above the map's */
 	/* top edge where no camera shows it, is not solid, and only the field's */
@@ -1195,7 +1195,7 @@ ACTOR_PLACE Vault_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE Vault_ActorPlacementsAfterThieves[] = {
+ACTOR_PLACE VaultActorPlacementsAfterThieves[] = {
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		381, 0, 342, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1208,9 +1208,9 @@ ACTOR_PLACE Vault_ActorPlacementsAfterThieves[] = {
 		124, 0, 196, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
 		244, 0, 300, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, (Sint32)Vault_BoyRoundTheWellRoute,
+	ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, (Sint32)VaultBoyRoundTheWellRoute,
 		132, 0, 380, FACING_WEST, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, (Sint32)Vault_GirlRoundTheWellRoute,
+	ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, (Sint32)VaultGirlRoundTheWellRoute,
 		132, 0, 420, FACING_EAST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
 		332, 0, 412, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
@@ -1222,7 +1222,7 @@ ACTOR_PLACE Vault_ActorPlacementsAfterThieves[] = {
 		216, 0, 440, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		152, 0, 296, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, FLAG_VAULT_THIEVES_JAILED, (Sint32)Vault_WomanWantingTheRoofFixedRoute,
+	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, FLAG_VAULT_THIEVES_JAILED, (Sint32)VaultWomanWantingTheRoofFixedRoute,
 		168, 0, 312, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
 		0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
@@ -1231,7 +1231,7 @@ ACTOR_PLACE Vault_ActorPlacementsAfterThieves[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE Vault_Cues[] = {
+CUE VaultCues[] = {
 	{ CUE_STEP, METATILE_BEHAVIOR_VAULT_SOUTH_GATE, CONDITION_ALWAYS, SCRIPT_REF(scVaultIvanStaysBehind) },
 	{ CUE_STEP, METATILE_BEHAVIOR_VAULT_NORTH_GATE, CONDITION_ALWAYS, SCRIPT_REF(scVaultIvanStaysBehind) },
 	{ CUE_STEP, METATILE_BEHAVIOR_VAULT_BRIDGE_END, CONDITION_ALWAYS, SCRIPT_REF(scVaultRaisePathToBridge) },
@@ -1279,7 +1279,7 @@ CUE Vault_Cues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE Vault_CuesAfterThieves[] = {
+CUE VaultCuesAfterThieves[] = {
 	{ CUE_STEP, METATILE_BEHAVIOR_VAULT_SOUTH_GATE, CONDITION_ALWAYS, SCRIPT_REF(scVaultIvanStaysBehind) },
 	{ CUE_STEP, METATILE_BEHAVIOR_VAULT_NORTH_GATE, CONDITION_ALWAYS, SCRIPT_REF(scVaultIvanStaysBehind) },
 	{ CUE_STEP, METATILE_BEHAVIOR_VAULT_BRIDGE_END, CONDITION_ALWAYS, SCRIPT_REF(scVaultRaisePathToBridge) },
@@ -1327,13 +1327,13 @@ CUE Vault_CuesAfterThieves[] = {
 
 #include "shared/vault_door_metatiles.c"
 
-Sint32 Vault_DriftScriptA[] = {
+Sint32 VaultDriftScriptA[] = {
 	SC_WAIT(1),
 	SC_LOOP(118, SC_TOP),
 	SC_RELEASE,
 };
 
-Sint32 Vault_DriftScriptB[] = {
+Sint32 VaultDriftScriptB[] = {
 	SC_WAIT(1),
 	SC_LOOP(38, SC_TOP),
 	SC_RELEASE,

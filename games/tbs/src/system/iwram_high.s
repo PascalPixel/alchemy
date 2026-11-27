@@ -6,8 +6,8 @@ CartridgeResetMarker:
 	.global BuildStampWork
 BuildStampWork:
 	.space 508
-	.global FrameWaitStackTop
-FrameWaitStackTop:
+	.global TickWaitStackTop
+TickWaitStackTop:
 	.space 1532
 	.global IrqVector
 IrqVector:

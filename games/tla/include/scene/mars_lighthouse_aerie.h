@@ -49,20 +49,20 @@ void scMarsLighthouseAerieEndRisingRings(struct ACTOR *actor);
 
 void scOrbUpdateRising(struct ACTOR *self);
 
-extern Uint32 Orb_RisingScript[];
+extern Uint32 OrbRisingScript[];
 
-extern Sint32 MarsLighthouseAerie_BeaconSparkScript[];
+extern Sint32 MarsLighthouseAerieBeaconSparkScript[];
 
 void scOrbSpawnRising(void);
 
-extern Sint32 MarsLighthouseAerie_BeamWidenScript[];
-extern Uint32 MarsLighthouseAerie_BeamShootUpScript[];
-extern Uint32 MarsLighthouseAerie_BeamRiseScript[];
-extern Sint32 MarsLighthouseAerie_WatchGoldenSunRiseScript[];
+extern Sint32 MarsLighthouseAerieBeamWidenScript[];
+extern Uint32 MarsLighthouseAerieBeamShootUpScript[];
+extern Uint32 MarsLighthouseAerieBeamRiseScript[];
+extern Sint32 MarsLighthouseAerieWatchGoldenSunRiseScript[];
 
 void scTeleportArriveWhirling(void);
 
-extern Sint32 MarsLighthouseAerie_RisingRingTiles[];
+extern Sint32 MarsLighthouseAerieRisingRingTiles[];
 
 void scMarsLighthouseAerieUpdateRisingRings(struct ACTOR *actor);
 void scMarsLighthouseAerieHoldBackFromParents(void);

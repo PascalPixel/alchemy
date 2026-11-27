@@ -9,7 +9,7 @@
 /* The World Map's encounter zones (WORLD_MAP_ENCOUNTER_RULE): {encounter
    region, battle environment (-1 for any), flag (-1, or a flag that turns the
    rule off once set), zone}, ended by region -1. */
-const WORLD_MAP_ENCOUNTER_RULE WorldMap_EncounterRules[] = {
+const WORLD_MAP_ENCOUNTER_RULE WorldMapEncounterRules[] = {
 	{WORLD_MAP_ENCOUNTER_REGION_VALE_VAULT, BATTLE_ENVIRONMENT_BEACH, -1,
 		ENCOUNTER_ZONE_WORLD_MAP_VALE_VAULT},
 	{WORLD_MAP_ENCOUNTER_REGION_VALE_VAULT, BATTLE_ENVIRONMENT_SHALLOWS, -1,
@@ -79,7 +79,7 @@ const WORLD_MAP_ENCOUNTER_RULE WorldMap_EncounterRules[] = {
 
 /* The encounter of each Djinni battle (fdEncounterGetDjinnFormation): {zone,
    slot}, by Djinni number (element * 20 + index). */
-const DJINNI_BATTLE Encounter_DjinnBattles[] = {
+const DJINNI_BATTLE EncounterDjinnBattles[] = {
 	[DJINNI_FLINT] = {ENCOUNTER_ZONE_VENUS_DJINN, 0},
 	[DJINNI_GRANITE] = {ENCOUNTER_ZONE_VENUS_DJINN, 1},
 	[DJINNI_QUARTZ] = {ENCOUNTER_ZONE_VENUS_DJINN, 2},

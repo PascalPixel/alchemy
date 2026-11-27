@@ -62,9 +62,9 @@ integer(const char *s, bool sign, unsigned max)
  * field reads (enum AnimationCommand in games/tbs/src/field/field_internal.h).
  * A row of the sprite's table is one of them:
  *
- *   picture N D   show picture N for D frames (N below 239)
- *   wait D        keep the current picture D frames longer
- *   blank D       show nothing for D frames
+ *   picture N D   show picture N for D ticks (N below 239)
+ *   wait D        keep the current picture D ticks longer
+ *   blank D       show nothing for D ticks
  *   kind N        use facing table N
  *   play N        switch to animation N
  *   loop          continue at the first command
@@ -136,10 +136,10 @@ animationScript(Strings commands)
 
 /*
  * A sprite's animations as a table, one row a command: the animation it
- * belongs to, counted from 0, the command, its value and its frames, as
- * the commands above take them (picture N D is value N, frames D).
+ * belongs to, counted from 0, the command, its value and its ticks, as
+ * the commands above take them (picture N D is value N, ticks D).
  */
-#define ANIMATION_COLUMNS "animation\tcommand\tvalue\tframes"
+#define ANIMATION_COLUMNS "animation\tcommand\tvalue\tticks"
 
 static void
 animationTable(Sprite *sprite, const Strings *lines)
@@ -229,7 +229,7 @@ metadata(Sprite *sprite, const char *table)
 	Buffer data = readFile(table);
 	Strings lines = split((char *) data.data, '\n');
 	if (!lines.len || strcmp(lines.items[0], ANIMATION_COLUMNS))
-		fail("a sprite's columns are animation, command, value and frames");
+		fail("a sprite's columns are animation, command, value and ticks");
 	animationTable(sprite, &lines);
 	freeStrings(&lines);
 	free(data.data);

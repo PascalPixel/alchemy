@@ -1,8 +1,8 @@
 /* Actor script commands: waits, jumps, flags, moves and work values.
 
-   Each `SC_` handler here is reached through ActorScript_CommandTable
+   Each `SC_` handler here is reached through ActorScriptCommandTable
    (map_grid_data.c), which fdActorUpdateAllOnField calls for each live actor;
-   each returns 1 to run on and 0 to end the actor's frame (the protocol is in
+   each returns 1 to run on and 0 to end the actor's tick (the protocol is in
    this folder's README). Part of field.c. */
 
 #include "sounds.h"
@@ -10,8 +10,8 @@
 /* The actor script commands' limits, angles and distances. */
 enum {
 	SCRIPT_LABEL_SEARCH_WORDS = 1024, /* script words a jump searches */
-	SCRIPT_BLOCKED_MOVE_FRAMES = 60,  /* refused frames SC_SYNC waits through */
-	SCRIPT_WANDER_TRIES = 7,		  /* random points a wander tries a frame */
+	SCRIPT_BLOCKED_MOVE_TICKS = 60,	  /* refused ticks SC_SYNC waits through */
+	SCRIPT_WANDER_TRIES = 7,		  /* random points a wander tries a tick */
 	/* The wander probes' distance, 8 pixels in 16.16: past the point for
 	   ground, and along the heading for solid actors (SC_WANDER_HOME). */
 	SCRIPT_WANDER_PROBE_DISTANCE = toFIXED(8),
@@ -33,7 +33,7 @@ enum {
 #define SCRIPT_LABEL_KEY_MASK 0xbfffffff
 
 /* Advances the motion of those of the first RUNNING_LIST_SLOTS actors whose
-   script is running by one frame, without running their scripts: steering
+   script is running by one tick, without running their scripts: steering
    towards a target or braking, gravity and bouncing, arrival, and turning to
    face the direction of travel. */
 void fdActorUpdateAllMotion(void)
@@ -42,7 +42,7 @@ void fdActorUpdateAllMotion(void)
 	ACTOR **next;
 	ACTOR  *actor;
 	FIXED	y;
-	Sint32	arrivedAtTarget;
+	Sint32	arrivedAtTgt;
 	FIXED	x;
 	FIXED	z;
 	Sint32	dx;
@@ -63,11 +63,11 @@ void fdActorUpdateAllMotion(void)
 		/* UB: a frozen actor otherwise reads an uninitialized arrival flag, or
 		   inherits the preceding actor's flag. */
 #if FIX_UNINITIALIZED_READ
-		arrivedAtTarget = 0;
+		arrivedAtTgt = 0;
 #endif
 		if(actor->frozen == 0) {
 #if !FIX_UNINITIALIZED_READ
-			arrivedAtTarget = 0;
+			arrivedAtTgt = 0;
 #endif
 			/* Steer in the XZ plane towards the target, or brake. */
 			if(actor->tgtX != ACTOR_NO_TARGET) {
@@ -143,20 +143,20 @@ void fdActorUpdateAllMotion(void)
 			case ARRIVAL_AXIS_X:
 				if(x == actor->tgtX ||
 					((actor->x.fixed - actor->tgtX) ^ (x - actor->tgtX)) < 0)
-					arrivedAtTarget = 1;
+					arrivedAtTgt = 1;
 				break;
 			case ARRIVAL_AXIS_Y:
 				if(y == actor->tgtY ||
 					((actor->y.fixed - actor->tgtY) ^ (y - actor->tgtY)) < 0)
-					arrivedAtTarget = 1;
+					arrivedAtTgt = 1;
 				break;
 			case ARRIVAL_AXIS_Z:
 				if(z == actor->tgtZ ||
 					((actor->z.fixed - actor->tgtZ) ^ (z - actor->tgtZ)) < 0)
-					arrivedAtTarget = 1;
+					arrivedAtTgt = 1;
 				break;
 			}
-		if(arrivedAtTarget) {
+		if(arrivedAtTgt) {
 			if(actor->snapToTgt) {
 				actor->velX = 0;
 				actor->velZ = 0;
@@ -174,7 +174,7 @@ void fdActorUpdateAllMotion(void)
 		}
 		SET_ACTOR_POSITION(actor, x, y, z);
 		/* Turn to face the direction of travel, at most a sixteenth of a turn a
-		   frame, the shorter way round. */
+		   tick, the shorter way round. */
 		if(actor->steeringFlg & ACTOR_FACES_MOTION) {
 			x = actor->velX;
 			z = actor->velZ;
@@ -191,7 +191,7 @@ void fdActorUpdateAllMotion(void)
 	}
 }
 
-/* SC_WAIT(n): waits n frames; this frame counts as the first. */
+/* SC_WAIT(n): waits n ticks; this tick counts as the first. */
 Sint32 fdActorScriptWait(ACTOR *interpreter)
 {
 	Sint16 commandCursor = interpreter->scriptCursor;
@@ -202,13 +202,13 @@ Sint32 fdActorScriptWait(ACTOR *interpreter)
 }
 
 /* SC_SYNC: waits until the actor arrives at its target, or until a solid actor
-   has blocked it for SCRIPT_BLOCKED_MOVE_FRAMES frames (refused is the blocked
+   has blocked it for SCRIPT_BLOCKED_MOVE_TICKS ticks (refused is the blocked
    count, which fdActorUpdateAllOnField raises), when its target is cleared. */
 Bool fdActorScriptWaitForArrival(ACTOR *interpreter)
 {
 	WAITING_ACTOR *actor = (WAITING_ACTOR *)interpreter;
 
-	if(actor->refused > SCRIPT_BLOCKED_MOVE_FRAMES - 1) {
+	if(actor->refused > SCRIPT_BLOCKED_MOVE_TICKS - 1) {
 		actor->refused = 0;
 		actor->tgtX = ACTOR_NO_TARGET;
 		actor->tgtY = ACTOR_NO_TARGET;
@@ -227,13 +227,12 @@ Bool fdActorScriptWaitForArrival(ACTOR *interpreter)
 /* SC_CALL(fn): calls fn with the actor. */
 Bool fdActorScriptInvokeCallback(ACTOR *interpreter)
 {
-	Sint16		   initialCursor = interpreter->scriptCursor;
-	SCRIPT_COMMAND callback =
-		(SCRIPT_COMMAND)interpreter->script[initialCursor + 1];
+	Sint16		   initCursor = interpreter->scriptCursor;
+	SCRIPT_COMMAND func = (SCRIPT_COMMAND)interpreter->script[initCursor + 1];
 
-	if(callback(interpreter) != 0)
+	if(func(interpreter) != 0)
 		return FALSE;
-	if(interpreter->scriptCursor == initialCursor)
+	if(interpreter->scriptCursor == initCursor)
 		interpreter->scriptCursor = interpreter->scriptCursor + 2;
 	return TRUE;
 }
@@ -245,7 +244,7 @@ Bool fdActorScriptInvokeCallback(ACTOR *interpreter)
 Sint32 fdActorScriptFindLabel(ACTOR *interpreter, Uint32 labelKey)
 {
 	Uint32 *scriptWords;
-	Sint32	wordIndex;
+	Sint32	wordIdx;
 
 	interpreter->wait = 0;
 	if(labelKey == 0) {
@@ -254,9 +253,9 @@ Sint32 fdActorScriptFindLabel(ACTOR *interpreter, Uint32 labelKey)
 
 	labelKey &= SCRIPT_LABEL_KEY_MASK;
 	scriptWords = (Uint32 *)interpreter->script;
-	for(wordIndex = 0; wordIndex < SCRIPT_LABEL_SEARCH_WORDS; wordIndex++) {
+	for(wordIdx = 0; wordIdx < SCRIPT_LABEL_SEARCH_WORDS; wordIdx++) {
 		if(*scriptWords++ == labelKey) {
-			return wordIndex + 1;
+			return wordIdx + 1;
 		}
 	}
 	return 0;
@@ -269,8 +268,8 @@ Sint32 fdActorScriptRepeatOrJump(ACTOR *interpreter)
 	const Sint32 *arguments;
 	Sint32		  repeatLimit;
 	Sint32		  jumpKey;
-	Uint8		 *repeatCount;
-	Sint32		  nextCount;
+	Uint8		 *repeatCnt;
+	Sint32		  nextCnt;
 
 	arguments = &interpreter->script[interpreter->scriptCursor + 1];
 	repeatLimit = *arguments++;
@@ -279,14 +278,14 @@ Sint32 fdActorScriptRepeatOrJump(ACTOR *interpreter)
 		interpreter->scriptCursor =
 			fdActorScriptFindLabel(interpreter, jumpKey);
 	} else {
-		repeatCount = &interpreter->repeatCnt;
-		nextCount = *repeatCount + 1;
-		*repeatCount = nextCount;
-		if((Sint32)(Uint8)nextCount < (Sint32)(Sint16)repeatLimit) {
+		repeatCnt = &interpreter->repeatCnt;
+		nextCnt = *repeatCnt + 1;
+		*repeatCnt = nextCnt;
+		if((Sint32)(Uint8)nextCnt < (Sint32)(Sint16)repeatLimit) {
 			interpreter->scriptCursor =
 				fdActorScriptFindLabel(interpreter, jumpKey);
 		} else {
-			*repeatCount = 0;
+			*repeatCnt = 0;
 			interpreter->scriptCursor += 3;
 		}
 	}
@@ -333,13 +332,13 @@ Sint32 fdActorScriptJumpIfFalse(ACTOR *interpreter)
 	return 1;
 }
 
-/* SC_END: hands the actor back to the idle script, ActorScript_IdleScript,
-   whose lone SC_END runs again each frame. Returns 0. */
+/* SC_END: hands the actor back to the idle script, ActorScriptIdleScript,
+   whose lone SC_END runs again each tick. Returns 0. */
 Sint32 fdActorScriptEnd(ACTOR *interpreter)
 {
 	Sint32 result;
 
-	interpreter->script = ActorScript_IdleScript;
+	interpreter->script = ActorScriptIdleScript;
 	interpreter->scriptCursor = (result = 0);
 	return result;
 }
@@ -441,10 +440,10 @@ Sint32 fdActorScriptPlaySndInView(ACTOR *interpreter)
    radius less 2 pixels; otherwise 0. */
 Sint32 fdActorScriptCheckOverlap(ACTOR *actor, Sint32 *values)
 {
-	Sint32 actorIndex;
+	Sint32 actorIdx;
 	ACTOR *candidate = ((ACTOR *)Ram_HeapSlots->actors);
 
-	for(actorIndex = 0; actorIndex < ACTOR_COUNT; actorIndex++, candidate++) {
+	for(actorIdx = 0; actorIdx < ACTOR_COUNT; actorIdx++, candidate++) {
 		if(candidate->script != NULL &&
 			(candidate->collisionFlg & ACTOR_SOLID) && candidate != actor) {
 			if(fdCheckSpheresOverlap(&candidate->x.fixed, candidate->radius - 2,
@@ -459,10 +458,10 @@ Sint32 fdActorScriptCheckOverlap(ACTOR *actor, Sint32 *values)
    as fdActorScriptCheckOverlap tests, or NULL. */
 ACTOR *fdActorScriptFindOverlappingActor(ACTOR *actor, Sint32 *values)
 {
-	Sint32 actorIndex;
+	Sint32 actorIdx;
 	ACTOR *candidate = ((ACTOR *)Ram_HeapSlots->actors);
 
-	for(actorIndex = 0; actorIndex < ACTOR_COUNT; actorIndex++, candidate++) {
+	for(actorIdx = 0; actorIdx < ACTOR_COUNT; actorIdx++, candidate++) {
 		if(candidate->script != NULL &&
 			(candidate->collisionFlg & ACTOR_SOLID) && candidate != actor) {
 			if(fdCheckSpheresOverlap(&candidate->x.fixed, candidate->radius - 2,
@@ -558,11 +557,11 @@ Sint32 fdActorScriptApplyRelativePos(ACTOR *actor)
 Sint32 fdActorScriptStoreAngToWatchedActor(ACTOR *actor)
 {
 
-	ACTOR *target;
+	ACTOR *tgt;
 
-	target = (ACTOR *)actor->watchedActor;
+	tgt = (ACTOR *)actor->watchedActor;
 	actor->facing = syAtan(
-		(target->z.fixed - actor->z.fixed), (target->x.fixed - actor->x.fixed));
+		(tgt->z.fixed - actor->z.fixed), (tgt->x.fixed - actor->x.fixed));
 	actor->scriptCursor++;
 	return 1;
 }
@@ -571,11 +570,10 @@ Sint32 fdActorScriptStoreAngToWatchedActor(ACTOR *actor)
 Sint32 fdActorScriptApplyWatchedActorPos(ACTOR *actor)
 {
 
-	ACTOR *target;
+	ACTOR *tgt;
 
-	target = (ACTOR *)actor->watchedActor;
-	fdActorSetMoveTarget(
-		actor, target->x.fixed, target->y.fixed, target->z.fixed);
+	tgt = (ACTOR *)actor->watchedActor;
+	fdActorSetMoveTarget(actor, tgt->x.fixed, tgt->y.fixed, tgt->z.fixed);
 	actor->scriptCursor++;
 	return 1;
 }
@@ -585,15 +583,15 @@ Sint32 fdActorScriptApplyWatchedActorPos(ACTOR *actor)
 Sint32 fdActorScriptApplyLocalOffsetPos(ACTOR *actor)
 {
 
-	Sint32 localOffset[3];
+	Sint32 localOfs[3];
 
 	/* BUG: offset is never set, so the target is the position plus whatever the
 	   stack held. */
 #if FIX_UNINITIALIZED_READ
-	localOffset[0] = localOffset[1] = localOffset[2] = 0;
+	localOfs[0] = localOfs[1] = localOfs[2] = 0;
 #endif
-	fdActorSetMoveTarget(actor, actor->x.fixed + localOffset[0],
-		actor->y.fixed + localOffset[1], actor->z.fixed + localOffset[2]);
+	fdActorSetMoveTarget(actor, actor->x.fixed + localOfs[0],
+		actor->y.fixed + localOfs[1], actor->z.fixed + localOfs[2]);
 	actor->scriptCursor += 3;
 	return 1;
 }
@@ -806,7 +804,7 @@ Sint32 fdCameraFollowWatchedInBounds(ACTOR *camera)
 
 /* SC_APPROACH_WATCHED: follows the watched actor at its speed. Further than
    SCRIPT_APPROACH_DISTANCE away it walks to that distance short of it and runs
-   on; nearer, it stands and waits for the next frame. */
+   on; nearer, it stands and waits for the next tick. */
 Bool fdActorApproachWatchedActor(ACTOR *actor)
 {
 	Sint32 distancePixels;
@@ -847,11 +845,11 @@ Bool fdActorApproachWatchedActor(ACTOR *actor)
    solid actor or wall blocks, with clear ground SCRIPT_WANDER_PROBE_DISTANCE
    further at SCRIPT_WANDER_DIAGONAL_ANGLE either side, and within limit pixels
    of home. After SCRIPT_WANDER_TRIES failed tries it turns around and waits for
-   the next frame. */
+   the next tick. */
 Bool fdActorWander(ACTOR *actor)
 {
-	POS			  candidatePosition;
-	POS			  probePosition;
+	POS			  candidatePos;
+	POS			  probePos;
 	Sint32		  minimumDistance;
 	const Sint32 *operands;
 	Sint32		  distanceRange;
@@ -871,55 +869,54 @@ Bool fdActorWander(ACTOR *actor)
 	for(;;) {
 		attempts++;
 		if(attempts <= SCRIPT_WANDER_TRIES) {
-			SET_POSITION(&candidatePosition, actor->x.fixed, actor->y.fixed,
-				actor->z.fixed);
+			SET_POSITION(
+				&candidatePos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 			travelDistance =
 				minimumDistance + syMulFX(syRandom(), distanceRange);
 			heading = actor->facing + (syRandom() >> 2) - (syRandom() >> 2);
-			syVectorAddPolarOffset(travelDistance, heading, &candidatePosition);
-			if(fdActorScriptCheckOverlap(actor, (Sint32 *)&candidatePosition) !=
-					0 ||
-				fdMapGridCheckCollision(actor, &candidatePosition) != 0)
+			syVectorAddPolarOffset(travelDistance, heading, &candidatePos);
+			if(fdActorScriptCheckOverlap(actor, (Sint32 *)&candidatePos) != 0 ||
+				fdMapGridCheckCollision(actor, &candidatePos) != 0)
 				continue;
 			travelDistance += SCRIPT_WANDER_PROBE_DISTANCE;
 			SET_POSITION(
-				&probePosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+				&probePos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 			/* BUG: the probe straight ahead is placed but never tested, so only
 			   the two at SCRIPT_WANDER_DIAGONAL_ANGLE need clear ground;
 			   SC_WANDER_HOME tests all three. */
-			syVectorAddPolarOffset(travelDistance, heading, &probePosition);
+			syVectorAddPolarOffset(travelDistance, heading, &probePos);
 			SET_POSITION(
-				&probePosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+				&probePos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 			syVectorAddPolarOffset(travelDistance,
-				heading + SCRIPT_WANDER_DIAGONAL_ANGLE, &probePosition);
-			if(fdMapGridCheckCollision(actor, &probePosition) != 0)
+				heading + SCRIPT_WANDER_DIAGONAL_ANGLE, &probePos);
+			if(fdMapGridCheckCollision(actor, &probePos) != 0)
 				continue;
 			SET_POSITION(
-				&probePosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+				&probePos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 			syVectorAddPolarOffset(travelDistance,
-				heading - SCRIPT_WANDER_DIAGONAL_ANGLE, &probePosition);
-			if(fdMapGridCheckCollision(actor, &probePosition) != 0)
+				heading - SCRIPT_WANDER_DIAGONAL_ANGLE, &probePos);
+			if(fdMapGridCheckCollision(actor, &probePos) != 0)
 				continue;
 			/* FAKEMATCH(dead): the offsets in both arms of a test of actor; as
 			 * the two lines alone. */
 			if(actor != 0) {
-				dx = candidatePosition.x / toFIXED(1) - actor->homeX;
-				dz = candidatePosition.z / toFIXED(1) - actor->homeZ;
+				dx = candidatePos.x / toFIXED(1) - actor->homeX;
+				dz = candidatePos.z / toFIXED(1) - actor->homeZ;
 			} else {
-				dx = candidatePosition.x / toFIXED(1) - actor->homeX;
-				dz = candidatePosition.z / toFIXED(1) - actor->homeZ;
+				dx = candidatePos.x / toFIXED(1) - actor->homeX;
+				dz = candidatePos.z / toFIXED(1) - actor->homeZ;
 			}
 			if(dx * dx + dz * dz > homeRadiusSquared)
 				continue;
 		} else {
 			/* Out of tries: face the other way and stay on this command, to try
-			   again next frame. */
+			   again next tick. */
 			actor->facing += SCRIPT_HALF_TURN;
 			actor->wait = 1;
 			return FALSE;
 		}
-		fdActorSetMoveTarget(actor, candidatePosition.x, candidatePosition.y,
-			candidatePosition.z);
+		fdActorSetMoveTarget(
+			actor, candidatePos.x, candidatePos.y, candidatePos.z);
 		actor->scriptCursor += 4;
 		return TRUE;
 	}
@@ -1099,7 +1096,7 @@ typedef enum SCRIPT_OPERAND_OPERATION {
 	}
 
 /* The work value handlers, one for each entry of ACTOR_SCRIPT_VALUE (see
-   ActorScript_OperandHandlerTable in map_grid_data.c); each names the actor
+   ActorScriptOperandHandlerTable in map_grid_data.c); each names the actor
    field it sets, adds to or compares. */
 SCRIPT_DEFINE_OPERAND_ADDRESS(fdActorScriptSetOrCompareScriptAddress, script)
 
@@ -1190,7 +1187,7 @@ static __inline__ Sint32 fdActorScriptApplyOperandCommand(
 	Sint16		  commandCursor = operands->cursor;
 	const Sint32 *arguments =
 		(const Sint32 *)operands->script + commandCursor + 1;
-	OPERAND_FUNC handler = ActorScript_OperandHandlerTable[arguments[0]];
+	OPERAND_FUNC handler = ActorScriptOperandHandlerTable[arguments[0]];
 
 	if(handler != 0)
 		handler(operands, operation, arguments[1]);
@@ -1230,122 +1227,119 @@ UNUSED void fdActorSetUpdate(ACTOR *actor, void (*update)(void))
 }
 
 /* The heading of each direction-pad combination, -1 for none. */
-extern const Sint16 WorldMap_KeyHeadings[16];
+extern const Sint16 WorldMapKeyHeadings[16];
 
 /* SC_HOVER: the leader hovering (the Hover Psynergy), moved by the direction
    pad over what lies below. */
 Bool fdActorUpdateHoverCtrl(ACTOR *actor)
 {
-	POS	   position;
-	POS	   testPosition;
+	POS	   pos;
+	POS	   testPos;
 	POS	   contact;
-	Sint16 angleOffsets[22];
+	Sint16 angOffsets[22];
 	Sint32 collision;
 	Sint16 heading;
-	Sint32 angle;
-	Sint32 movementAnimation;
+	Sint32 ang;
+	Sint32 movementAnm;
 	Uint16 direction;
-	Sint32 angleIndex;
-	Sint32 headingCount;
+	Sint32 angIdx;
+	Sint32 headingCnt;
 	ACTOR *other;
 	Bool   pressed;
 
-	movementAnimation = ANIM_WALK;
+	movementAnm = ANIM_WALK;
 	collision = 0;
 	actor->motionFlg = ACTOR_FLOATS;
 	/* Hovering, the dash button changes only the animation, not the speed. */
 	if(PerWork.data & MainRoutineStateWork.dashKeys) {
 		actor->speedLimit = toFIXED(1) / 2;
 		actor->acceleration = toFIXED(1) / 8;
-		movementAnimation = ANIM_LEADER_RUN;
+		movementAnm = ANIM_LEADER_RUN;
 	} else {
 		actor->speedLimit = toFIXED(1) / 2;
 		actor->acceleration = toFIXED(1) / 8;
 	}
 
-	angle = WorldMap_KeyHeadings[DPAD_INDEX(PerWork.data)];
-	if((Uint16)angle == WORLD_MAP_KEY_HEADING_NONE) {
+	ang = WorldMapKeyHeadings[DPAD_INDEX(PerWork.data)];
+	if((Uint16)ang == WORLD_MAP_KEY_HEADING_NONE) {
 		collision |= PLAYER_STEP_STOPPED;
 	} else {
 		collision = 0;
-		SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-		syVectorAddPolarOffset(toFIXED(8), (Uint16)angle, &position);
+		SET_POSITION(&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+		syVectorAddPolarOffset(toFIXED(8), (Uint16)ang, &pos);
 		if(DebugMode != 0 && (PerWork.data & KEY_L)) {
-			heading = angle;
+			heading = ang;
 		} else {
-			if(fdMapGridCheckCollisionAbove(actor, &position) == 0) {
-				SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-					actor->z.fixed);
-				syVectorAddPolarOffset(toFIXED(8),
-					(Uint16)angle + FIELD_PROBE_ANGLE, &testPosition);
-				if(fdMapGridCheckCollisionAbove(actor, &testPosition) == 0) {
-					SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
+			if(fdMapGridCheckCollisionAbove(actor, &pos) == 0) {
+				SET_POSITION(
+					&testPos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+				syVectorAddPolarOffset(
+					toFIXED(8), (Uint16)ang + FIELD_PROBE_ANGLE, &testPos);
+				if(fdMapGridCheckCollisionAbove(actor, &testPos) == 0) {
+					SET_POSITION(&testPos, actor->x.fixed, actor->y.fixed,
 						actor->z.fixed);
-					syVectorAddPolarOffset(toFIXED(8),
-						(Uint16)angle - FIELD_PROBE_ANGLE, &testPosition);
-					if(fdMapGridCheckCollisionAbove(actor, &testPosition) ==
-						0) {
-						SET_POSITION(&testPosition, actor->x.fixed,
-							actor->y.fixed, actor->z.fixed);
-						syVectorAddPolarOffset(toFIXED(8),
-							(Uint16)angle + DEGtoANG(45), &testPosition);
-						if(fdMapGridCheckCollisionAbove(actor, &testPosition) ==
-							0) {
-							SET_POSITION(&testPosition, actor->x.fixed,
+					syVectorAddPolarOffset(
+						toFIXED(8), (Uint16)ang - FIELD_PROBE_ANGLE, &testPos);
+					if(fdMapGridCheckCollisionAbove(actor, &testPos) == 0) {
+						SET_POSITION(&testPos, actor->x.fixed, actor->y.fixed,
+							actor->z.fixed);
+						syVectorAddPolarOffset(
+							toFIXED(8), (Uint16)ang + DEGtoANG(45), &testPos);
+						if(fdMapGridCheckCollisionAbove(actor, &testPos) == 0) {
+							SET_POSITION(&testPos, actor->x.fixed,
 								actor->y.fixed, actor->z.fixed);
 							syVectorAddPolarOffset(toFIXED(8),
-								(Uint16)angle - DEGtoANG(45), &testPosition);
-							if(fdMapGridCheckCollisionAbove(
-								   actor, &testPosition) == 0) {
-								heading = angle;
+								(Uint16)ang - DEGtoANG(45), &testPos);
+							if(fdMapGridCheckCollisionAbove(actor, &testPos) ==
+								0) {
+								heading = ang;
 								goto check_objects;
 							}
 						}
 					}
 				}
 			}
-			direction = angle;
-			headingCount = 0;
-			angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE;
-			angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE;
-			angleOffsets[headingCount++] = direction + DEGtoANG(45);
-			angleOffsets[headingCount++] = direction - DEGtoANG(45);
-			angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE * 3;
-			angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE * 3;
-			for(angleIndex = 0; angleIndex < headingCount; angleIndex++) {
-				heading = angleOffsets[angleIndex];
+			direction = ang;
+			headingCnt = 0;
+			angOffsets[headingCnt++] = direction + FIELD_PROBE_ANGLE;
+			angOffsets[headingCnt++] = direction - FIELD_PROBE_ANGLE;
+			angOffsets[headingCnt++] = direction + DEGtoANG(45);
+			angOffsets[headingCnt++] = direction - DEGtoANG(45);
+			angOffsets[headingCnt++] = direction + FIELD_PROBE_ANGLE * 3;
+			angOffsets[headingCnt++] = direction - FIELD_PROBE_ANGLE * 3;
+			for(angIdx = 0; angIdx < headingCnt; angIdx++) {
+				heading = angOffsets[angIdx];
 				SET_POSITION(
-					&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-				syVectorAddPolarOffset(toFIXED(8), (Uint16)heading, &position);
-				if(fdMapGridCheckCollisionAbove(actor, &position) != 0)
+					&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+				syVectorAddPolarOffset(toFIXED(8), (Uint16)heading, &pos);
+				if(fdMapGridCheckCollisionAbove(actor, &pos) != 0)
 					continue;
-				SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-					actor->z.fixed);
-				syVectorAddPolarOffset(toFIXED(8),
-					(Uint16)heading + FIELD_PROBE_ANGLE, &testPosition);
-				if(fdMapGridCheckCollisionAbove(actor, &testPosition) != 0)
-					continue;
-				SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-					actor->z.fixed);
-				syVectorAddPolarOffset(toFIXED(8),
-					(Uint16)heading - FIELD_PROBE_ANGLE, &testPosition);
-				if(fdMapGridCheckCollisionAbove(actor, &testPosition) != 0)
-					continue;
-				SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-					actor->z.fixed);
+				SET_POSITION(
+					&testPos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 				syVectorAddPolarOffset(
-					toFIXED(8), (Uint16)heading + DEGtoANG(45), &testPosition);
-				if(fdMapGridCheckCollisionAbove(actor, &testPosition) != 0)
+					toFIXED(8), (Uint16)heading + FIELD_PROBE_ANGLE, &testPos);
+				if(fdMapGridCheckCollisionAbove(actor, &testPos) != 0)
 					continue;
-				SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-					actor->z.fixed);
+				SET_POSITION(
+					&testPos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 				syVectorAddPolarOffset(
-					toFIXED(8), (Uint16)heading - DEGtoANG(45), &testPosition);
-				if(fdMapGridCheckCollisionAbove(actor, &testPosition) == 0)
+					toFIXED(8), (Uint16)heading - FIELD_PROBE_ANGLE, &testPos);
+				if(fdMapGridCheckCollisionAbove(actor, &testPos) != 0)
+					continue;
+				SET_POSITION(
+					&testPos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+				syVectorAddPolarOffset(
+					toFIXED(8), (Uint16)heading + DEGtoANG(45), &testPos);
+				if(fdMapGridCheckCollisionAbove(actor, &testPos) != 0)
+					continue;
+				SET_POSITION(
+					&testPos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+				syVectorAddPolarOffset(
+					toFIXED(8), (Uint16)heading - DEGtoANG(45), &testPos);
+				if(fdMapGridCheckCollisionAbove(actor, &testPos) == 0)
 					goto check_objects;
 			}
-			SET_POSITION(
-				&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+			SET_POSITION(&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 			collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 
 		check_objects:
@@ -1353,8 +1347,7 @@ Bool fdActorUpdateHoverCtrl(ACTOR *actor)
 				&contact, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 			syVectorAddPolarOffset(toFIXED(4), (Uint16)heading, &contact);
 			other = Ram_HeapSlots->actors;
-			for(angleIndex = 0; angleIndex < ACTOR_COUNT;
-				angleIndex++, other++) {
+			for(angIdx = 0; angIdx < ACTOR_COUNT; angIdx++, other++) {
 				Sint32 radius;
 
 				radius = actor->radius - 2;
@@ -1388,7 +1381,7 @@ Bool fdActorUpdateHoverCtrl(ACTOR *actor)
 			action = ANIM_LEADER_LEAN_BACK;
 		fdActorSelectAnimation(actor, action);
 	} else {
-		fdActorSelectAnimation(actor, movementAnimation);
+		fdActorSelectAnimation(actor, movementAnm);
 	}
 
 	if(collision != 0) {
@@ -1398,7 +1391,7 @@ Bool fdActorUpdateHoverCtrl(ACTOR *actor)
 		if(collision & PLAYER_STEP_BLOCKED) {
 			Sint32 difference;
 
-			difference = (Uint16)angle - actor->facing;
+			difference = (Uint16)ang - actor->facing;
 			difference = (Sint16)difference;
 			if(difference > FIELD_BLOCKED_TURN_MAX)
 				difference = FIELD_BLOCKED_TURN_MAX;
@@ -1409,7 +1402,7 @@ Bool fdActorUpdateHoverCtrl(ACTOR *actor)
 		actor->tmr = 0;
 		actor->userValue = FOOTPRINT_BOTH_FEET;
 	} else {
-		fdActorSetMoveTarget(actor, position.x, position.y, position.z);
+		fdActorSetMoveTarget(actor, pos.x, pos.y, pos.z);
 		if(actor->tmr != 0)
 			actor->tmr--;
 	}

@@ -134,12 +134,12 @@ enum { SW_VENUS_IMMOVABLE = SW_SCENE_COUNTER };
 #define fdActorSetSprCol ((void (*)(ACTOR *, Sint32))fdActorSetSprCol)
 
 /* Sets up a passage effect's motion, collision and colour mode. */
-void scVenusLighthouseConfigurePassageEffect(ACTOR *actor, Sint32 colorMode)
+void scVenusLighthouseConfigurePassageEffect(ACTOR *actor, Sint32 colMode)
 {
 	actor->motionFlg = 0;
 	actor->collisionFlg = ACTOR_NOT_TARGETED;
 	fdActorSetSprFlags(actor, 0);
-	scFieldActorSetSprCol(actor, colorMode);
+	scFieldActorSetSprCol(actor, colMode);
 }
 
 /* Unused: creates a mask over a hole, an actor of sprite type drawn solid black
@@ -180,23 +180,22 @@ UNUSED ACTOR *scVenusLighthouseCreateOccludingPassageEffect(
 
 #undef fdActorSetSprFlags
 
-extern const Sint32 *FieldEffect_DurationScripts[];
+extern const Sint32 *FieldEffectDurationScripts[];
 
 /* Puts a short-lived effect sprite, dust unless `options` names another, at a
    point, moving off at the velocity given and drawn at the leader's priority:
    this overlay's own copy of field_effect_spawn.c. */
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options)
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options)
 {
 	FIELD_EFFECT *party =
 		(FIELD_EFFECT *)fdActorGetById(MainRoutineStateWork.leaderActorId);
 	FIELD_EFFECT *effect;
-	FIELD_SPR	 *sprite;
+	FIELD_SPR	 *spr;
 	const Sint32 *script;
 	Uint32		  start;
 
-	if((flags & EFFECT_USE_TYPE) != 0 && options != 0)
+	if((flg & EFFECT_USE_TYPE) != 0 && options != 0)
 		effect = (FIELD_EFFECT *)syImportActorCreate(options->type, x, y, z);
 	else
 		effect =
@@ -204,59 +203,59 @@ void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
 	if(effect == 0)
 		return;
 
-	sprite = effect->spr;
-	fdActorSelectAnimation((void *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+	spr = effect->spr;
+	fdActorSelectAnimation((void *)effect, (flg + 1) & EFFECT_SCRIPT_MASK);
 	fdActorStartScript(
-		effect, FieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
+		effect, FieldEffectDurationScripts[flg & EFFECT_SCRIPT_MASK]);
 	effect->motionFlg = 0;
-	sprite->flg = 0;
+	spr->flg = 0;
 	effect->update = fdEffectUpdateMotionScaleAndSpin;
-	effect->vel.x = velocityX;
-	effect->vel.y = velocityY;
-	effect->vel.z = velocityZ;
+	effect->vel.x = velX;
+	effect->vel.y = velY;
+	effect->vel.z = velZ;
 	fdSetActorSprPriority(effect, party->spr->pri);
 	effect->scaleRateX = 0;
 	effect->scaleRateY = 0;
 	effect->spin = 0;
 
-	if((flags & EFFECT_OPTION_MASK) == 0 || options == 0)
+	if((flg & EFFECT_OPTION_MASK) == 0 || options == 0)
 		return;
-	if((flags & EFFECT_USE_PALETTE) != 0)
+	if((flg & EFFECT_USE_PALETTE) != 0)
 		scFieldActorSetSprCol(effect, options->pal);
-	if((flags & EFFECT_USE_PRIORITY) != 0) {
+	if((flg & EFFECT_USE_PRIORITY) != 0) {
 		effect->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
 		fdSetActorSprPriority(effect, options->pri);
 	}
-	start = flags & EFFECT_USE_START_SCALE;
+	start = flg & EFFECT_USE_START_SCALE;
 	if(start != 0) {
 		effect->scaleX = options->startScaleX;
 		effect->scaleY = options->startScaleY;
 	}
-	if((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-		FIXED  targetX;
-		Sint32 count;
+	if((flg & EFFECT_SCALE_TO_TARGET) != 0) {
+		FIXED  tgtX;
+		Sint32 cnt;
 
-		script = FieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
-		targetX = options->tgtScaleX;
-		count = script[3];
+		script = FieldEffectDurationScripts[flg & EFFECT_SCRIPT_MASK];
+		tgtX = options->tgtScaleX;
+		cnt = script[3];
 		if(start != 0) {
-			effect->scaleRateX = (targetX - effect->scaleX) / count;
+			effect->scaleRateX = (tgtX - effect->scaleX) / cnt;
 			effect->scaleRateY =
 				(options->tgtScaleY - effect->scaleY) / script[3];
 		} else {
-			effect->scaleRateX = (targetX - toFIXED(1)) / count;
+			effect->scaleRateX = (tgtX - toFIXED(1)) / cnt;
 			effect->scaleRateY = (options->tgtScaleY - toFIXED(1)) / script[3];
 		}
 	}
-	if((flags & EFFECT_USE_SCRIPT) != 0) {
+	if((flg & EFFECT_USE_SCRIPT) != 0) {
 		fdActorSelectAnimation((void *)effect, 1);
 		fdActorStartScript(effect, options->script);
 	}
-	if((flags & EFFECT_USE_ROTATION) != 0)
-		sprite->rotation = options->rotation;
-	if((flags & EFFECT_USE_SPIN) != 0)
+	if((flg & EFFECT_USE_ROTATION) != 0)
+		spr->rotation = options->rotation;
+	if((flg & EFFECT_USE_SPIN) != 0)
 		effect->spin = options->spin;
-	if((flags & EFFECT_USE_UPDATE) != 0)
+	if((flg & EFFECT_USE_UPDATE) != 0)
 		effect->update = options->update;
 }
 
@@ -272,49 +271,49 @@ extern Sint32 PushLeaderSteps[];
    calls it. */
 UNUSED void scPushedActorAdvancePair(void)
 {
-	POS	   targetPosition;
+	POS	   tgtPos;
 	ACTOR *leader;
 	ACTOR *pillar;
 	ACTOR *blockingActor;
-	Sint32 directionIndex;
+	Sint32 directionIdx;
 	Uint32 step;
 	FIXED  moveRate;
 	Sint32 transitionBusy;
 
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	directionIndex = FACING_INDEX(leader->facing);
-	step = PushLeaderSteps[directionIndex];
-	targetPosition.x = leader->x.fixed + (step & FIELD_PIXEL_MASK);
-	targetPosition.y = leader->y.fixed;
+	directionIdx = FACING_INDEX(leader->facing);
+	step = PushLeaderSteps[directionIdx];
+	tgtPos.x = leader->x.fixed + (step & FIELD_PIXEL_MASK);
+	tgtPos.y = leader->y.fixed;
 	step = toFIXED(step);
-	targetPosition.z = leader->z.fixed + step;
-	pillar = fdActorFindInMetatile((Sint32 *)&targetPosition, leader);
+	tgtPos.z = leader->z.fixed + step;
+	pillar = fdActorFindInMetatile((Sint32 *)&tgtPos, leader);
 	if(pillar == 0)
 		return;
 
-	step = PushLeaderSteps[directionIndex];
-	targetPosition.x = pillar->x.fixed + (step & FIELD_PIXEL_MASK);
-	targetPosition.y = pillar->y.fixed;
+	step = PushLeaderSteps[directionIdx];
+	tgtPos.x = pillar->x.fixed + (step & FIELD_PIXEL_MASK);
+	tgtPos.y = pillar->y.fixed;
 	step = toFIXED(step);
-	targetPosition.z = pillar->z.fixed + step;
-	blockingActor = fdActorFindInMetatile((Sint32 *)&targetPosition, pillar);
+	tgtPos.z = pillar->z.fixed + step;
+	blockingActor = fdActorFindInMetatile((Sint32 *)&tgtPos, pillar);
 	if(blockingActor != 0 && (blockingActor->collisionFlg & ACTOR_SOLID) != 0)
 		return;
 
-	targetPosition.x = pillar->x.fixed;
-	targetPosition.y = pillar->y.fixed + toFIXED(16);
-	targetPosition.z = pillar->z.fixed;
-	blockingActor = fdActorFindInMetatile((Sint32 *)&targetPosition, pillar);
+	tgtPos.x = pillar->x.fixed;
+	tgtPos.y = pillar->y.fixed + toFIXED(16);
+	tgtPos.z = pillar->z.fixed;
+	blockingActor = fdActorFindInMetatile((Sint32 *)&tgtPos, pillar);
 	if(blockingActor != 0 && (blockingActor->collisionFlg & ACTOR_SOLID) != 0)
 		return;
 
 	pillar->layer = 2;
-	step = PushLeaderSteps[directionIndex];
-	targetPosition.x = pillar->x.fixed + (step & FIELD_PIXEL_MASK);
-	targetPosition.y = pillar->y.fixed;
+	step = PushLeaderSteps[directionIdx];
+	tgtPos.x = pillar->x.fixed + (step & FIELD_PIXEL_MASK);
+	tgtPos.y = pillar->y.fixed;
 	step = toFIXED(step);
-	targetPosition.z = pillar->z.fixed + step;
-	if(fdMapGridCheckCollision(pillar, &targetPosition) > 0)
+	tgtPos.z = pillar->z.fixed + step;
+	if(fdMapGridCheckCollision(pillar, &tgtPos) > 0)
 		return;
 
 	transitionBusy = pillar->sceneCnt;
@@ -327,16 +326,14 @@ UNUSED void scPushedActorAdvancePair(void)
 	fdScriptPlaySnd(SE_PUSH);
 	pillar->speedLimit = moveRate;
 	pillar->acceleration = moveRate;
-	scFieldActorSetMoveTargetFX(
-		pillar, targetPosition.x, targetPosition.y, targetPosition.z);
+	scFieldActorSetMoveTargetFX(pillar, tgtPos.x, tgtPos.y, tgtPos.z);
 	leader->speedLimit = moveRate;
 	leader->acceleration = moveRate;
-	scFieldActorSetMoveTargetFX(
-		leader, targetPosition.x, targetPosition.y, targetPosition.z);
+	scFieldActorSetMoveTargetFX(leader, tgtPos.x, tgtPos.y, tgtPos.z);
 	scFieldActorWaitForMove(pillar);
 	fdScriptNoOperation();
-	pillar->x.fixed = targetPosition.x;
-	pillar->z.fixed = targetPosition.z;
+	pillar->x.fixed = tgtPos.x;
+	pillar->z.fixed = tgtPos.z;
 	pillar->velX = transitionBusy;
 	pillar->velZ = transitionBusy;
 	leader->tgtX = ACTOR_NO_TARGET;
@@ -357,28 +354,28 @@ UNUSED void scVenusLighthouseNoOperation(void)
 
 #define scFieldActorSetSprCol ((void (*)(void *, Sint32))fdActorSetSprCol)
 
-/* Flashes the leader white every fourth frame, with the sound of a breaking
+/* Flashes the leader white every fourth tick, with the sound of a breaking
    item every eighth. */
 Sint32 scVenusLighthouseFlashStruckLeader(void *actor)
 {
-	if((FrameCount & 3) == 0)
+	if((TickCount & 3) == 0)
 		scFieldActorSetSprCol(actor, SPRITE_COLOR_WHITE);
 	else
 		scFieldActorSetSprCol(actor, SPRITE_COLOR_NORMAL);
 
-	if((FrameCount & 7) == 0)
+	if((TickCount & 7) == 0)
 		fdScriptPlaySnd(SE_ITEM_BREAK);
 	return 0;
 }
 
-/* Emits a rising particle near the actor every eight frames. */
+/* Emits a rising particle near the actor every eight ticks. */
 Sint32 scVenusLighthouseEmitRisingParticles(ACTOR *actor)
 {
 	EFFECT_OPTIONS options;
-	Sint32		   framePhase;
+	Sint32		   frmPhase;
 	FIXED		   particleX, particleY, riseSpeed;
-	framePhase = FrameCount & 7;
-	if(framePhase == 0) {
+	frmPhase = TickCount & 7;
+	if(frmPhase == 0) {
 		options.pri = 3 - (Sint32)(syRandomBelow(2));
 		options.startScaleX = toFIXED(2) / 5;
 		options.startScaleY = toFIXED(2) / 5;
@@ -387,7 +384,7 @@ Sint32 scVenusLighthouseEmitRisingParticles(ACTOR *actor)
 		particleY = actor->y.fixed + toFIXED(32 - (Sint32)(syRandomBelow(32)));
 		riseSpeed = (toFIXED((Sint32)(syRandomBelow(5))) + toFIXED(5)) / 10;
 		scFieldEffectSpawn(particleX, particleY, actor->z.fixed, 0, riseSpeed,
-			framePhase,
+			frmPhase,
 			EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
 			&options);
 	}
@@ -446,8 +443,8 @@ void scVenusLighthouseRepelLeader(void);
 
 void scVenusLighthouseStepOnFloorSwitch(void);
 
-extern Uint32 FieldEffect_ShortScript[];
-extern Uint32 FieldEffect_MediumScript[];
+extern Uint32 FieldEffectShortScript[];
+extern Uint32 FieldEffectMediumScript[];
 extern Sint32 VenusGreyStatueScript[];
 extern Sint32 VenusMiniatureLighthouseScript[];
 
@@ -750,7 +747,7 @@ void scVenusLighthouseFelixLeaves(void)
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	state->transitionFrm = 60;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syFieldScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
 	syFieldScriptWait(20);
@@ -1287,14 +1284,14 @@ void scVenusLighthouseDoubtLeaving(void)
 	state->transitionFrm = 60;
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syFieldScriptSetExitRequest(VENUS_LIGHTHOUSE_FLOOR_SWITCH_TO_PILLARS);
 }
 
-extern Uint32 FieldEffect_LongScript[];
+extern Uint32 FieldEffectLongScript[];
 
 /* clang-format off */
-Uint32 FieldEffect_ShortScript[] = {
+Uint32 FieldEffectShortScript[] = {
 	SC_WAIT(1),
 	SC_LOOP(22, SC_TOP),
 	SC_WAIT(1),
@@ -1303,7 +1300,7 @@ Uint32 FieldEffect_ShortScript[] = {
 	SC_RELEASE,
 };
 
-Uint32 FieldEffect_MediumScript[] = {
+Uint32 FieldEffectMediumScript[] = {
 	SC_WAIT(1),
 	SC_LOOP(44, SC_TOP),
 	SC_WAIT(1),
@@ -1312,7 +1309,7 @@ Uint32 FieldEffect_MediumScript[] = {
 	SC_RELEASE,
 };
 
-Uint32 FieldEffect_LongScript[] = {
+Uint32 FieldEffectLongScript[] = {
 	SC_WAIT(1),
 	SC_LOOP(126, SC_TOP),
 	SC_WAIT(1),
@@ -1324,10 +1321,10 @@ Uint32 FieldEffect_LongScript[] = {
 #include "shared/push_leader_steps.c"
 /* clang-format on */
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 /* The leader's actor script as the statue throws him back

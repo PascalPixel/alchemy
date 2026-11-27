@@ -12,11 +12,11 @@
 #define FIELD_EFFECT_SPRITE_NO_TARGET ((Sint32)0x80000000)
 
 struct FIELD_PARTICLE;
-/* A field effect sprite's per-frame function (FIELD_PARTICLE.func). */
+/* A field effect sprite's per-tick function (FIELD_PARTICLE.func). */
 typedef void (*EFFECT_CALLBACK)(struct FIELD_PARTICLE *);
 
 /* A particle a field Psynergy moves and draws: its sprite, its position and
-   target, its speed, scale and heading, and its per-frame function. */
+   target, its speed, scale and heading, and its per-tick function. */
 typedef struct FIELD_PARTICLE {
 	void *spr; /* the sprite it draws, released with it */
 	FIXED x;   /* 16.16 fixed-point pixels */
@@ -27,26 +27,26 @@ typedef struct FIELD_PARTICLE {
 	FIXED  tgtZ;
 	FIXED  originX;	 /* 16.16 fixed-point pixels; where the sprite started */
 	FIXED  originZ;	 /* 16.16 fixed-point pixels; where the sprite started */
-	FIXED  speed;	 /* 16.16 fixed-point pixels per frame */
-	FIXED  speedMax; /* 16.16 fixed-point pixels per frame */
-	FIXED  acceleration;  /* 16.16 fixed-point pixels per frame, each frame */
+	FIXED  speed;	 /* 16.16 fixed-point pixels per tick */
+	FIXED  speedMax; /* 16.16 fixed-point pixels per tick */
+	FIXED  acceleration;  /* 16.16 fixed-point pixels per tick, each tick */
 	FIXED  scaleX;		  /* 16.16 fixed point, toFIXED(1) full size */
 	FIXED  scaleY;		  /* 16.16 fixed point, toFIXED(1) full size */
 	Uint16 heading;		  /* 1/65536 turns */
-	Sint16 turnStepMax;	  /* 1/65536 turns a frame */
-	EFFECT_CALLBACK func; /* run each frame once funcDelay is 0 */
-	Sint16			age;  /* frames */
-	Sint16			funcDelay;	 /* frames */
+	Sint16 turnStepMax;	  /* 1/65536 turns a tick */
+	EFFECT_CALLBACK func; /* run each tick once funcDelay is 0 */
+	Sint16			age;  /* ticks */
+	Sint16			funcDelay;	 /* ticks */
 	Sint16			orbitRadius; /* pixels */
 	Sint16			orbitAng;	 /* 1/32 turns */
 	Sint8			state; /* the function's own step; 0 when it is given */
 	Sint8 stopAtTgt;	   /* nonzero: lands on the target within 8 pixels */
 	/* Nonzero turns the heading toward the target by at most turnStepMax a
-	   frame; zero faces the target at once. */
+	   tick; zero faces the target at once. */
 	Sint8 turnStepLimited;
-	/* nonzero: fdParticleUpdateMotion moves it each frame */
+	/* nonzero: fdParticleUpdateMotion moves it each tick */
 	Sint8 updateMotion;
-	Sint8 render;	   /* nonzero: drawn each frame */
+	Sint8 render;	   /* nonzero: drawn each tick */
 	Sint8 active;	   /* nonzero while the sprite is in use */
 	Uint8 randomValue; /* random when filled */
 	Uint8 flg;		   /* FIELD_PARTICLE_FLAG bits */

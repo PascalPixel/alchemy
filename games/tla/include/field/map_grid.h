@@ -12,7 +12,7 @@
 #include "system.h"
 
 /* The map's running blend script, which sets the blend registers over time
-   (fdBlendScriptRun, each frame from fdBlendScriptStart). */
+   (fdBlendScriptRun, each tick from fdBlendScriptStart). */
 typedef struct BLEND_SCRIPT_STATE {
 	Uint16 *script;
 	Uint16 *cursor;
@@ -21,7 +21,7 @@ typedef struct BLEND_SCRIPT_STATE {
 } BLEND_SCRIPT_STATE;
 
 /* One of a map's 16 tile animations (fdTilesetAnimStartAll): the start of its
-   script, where it is, the frames left before its next step, and whether it is
+   script, where it is, the ticks left before its next step, and whether it is
    paused. */
 typedef struct MAP_ANIMATION {
 	const Uint16 *start;
@@ -39,7 +39,7 @@ typedef struct MAP_ANIMATION {
 /* The bytes between one layer's BG map and the next, from screen block 5. */
 #define MAPGRID_LAYER_SCREEN_BYTES		2048
 /* The low four bits of a shape's first byte: its kind (TERRAIN_KIND), which
-   height function reads its samples (MapGrid_TerrainHeightFunctions). */
+   height function reads its samples (MapGridTerrainHeightFunctions). */
 #define MAPGRID_SHAPE_KIND_MASK			0xf
 /* A 16.16 height in the 8-pixel steps fdMapGridSetMetatileHeight and the
    collision tags take. */
@@ -95,7 +95,7 @@ typedef enum METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_CYCLONE_LIFT = 235,
 	METATILE_BEHAVIOR_HOVER = 236, /* Hover holds the leader up over it */
 	/* 242 to 247: examine cues with lines of their own, the same on every map
-	   (fdExamineMetatile, Field_ExamineCueMessageOffsets). */
+	   (fdExamineMetatile, FieldExamineCueMessageOffsets). */
 	METATILE_BEHAVIOR_JAR = 242,
 	METATILE_BEHAVIOR_BARREL = 243,
 	METATILE_BEHAVIOR_WOODEN_BOX = 244,
@@ -169,7 +169,7 @@ typedef struct MAP_LAYER {
 	FIXED ofsX, ofsY; /* 16.16 fixed-point pixels */
 	/* 16.16 fixed point, toFIXED(1) moves with the view */
 	FIXED scaleX, scaleY;
-	FIXED speedX, speedY; /* 16.16 fixed-point pixels per frame */
+	FIXED speedX, speedY; /* 16.16 fixed-point pixels per tick */
 	FIXED phaseX, phaseY; /* 16.16 fixed-point pixels */
 	/* The window's wrap masks over its metatile columns and rows, maskY's a row
 	   times MAPGRID_SIZE: MAPGRID_SIZE - 1 and MAPGRID_ROW_MASK for the whole
@@ -189,7 +189,7 @@ typedef struct MAP_STATE {
 	/* The followed point, read as x, height and z in 16.16 fixed-point
 	   pixels. */
 	FIXED *origin;
-	/* Screen shake amplitudes and the factor that scales them each frame;
+	/* Screen shake amplitudes and the factor that scales them each tick;
 	   fdMapGridSetScreenShake keeps a component given as negative. */
 	Sint32 shakeX, shakeY, shakeDecay;
 	Uint8 *script;
@@ -311,7 +311,7 @@ typedef enum WORLD_MAP_COLLISION {
 	WORLD_MAP_COLLISION_WALKABLE_LAST = 12
 } WORLD_MAP_COLLISION;
 
-/* A world map battle environment (WorldMap_TerrainBehaviorTable,
+/* A world map battle environment (WorldMapTerrainBehaviorTable,
    fdWorldMapGetBattleEnvironment): what its ground means for battles, named by
    the battle background fdBattleBackgroundSelectForEnvironment gives it. */
 typedef enum BATTLE_ENVIRONMENT {
@@ -329,7 +329,7 @@ typedef enum BATTLE_ENVIRONMENT {
 	   (WORLD_MAP_COLLISION_SHALLOW_WATER). */
 	BATTLE_ENVIRONMENT_SHALLOWS = 7,
 	/* The sea the ship sails, collisions 1 to 3 outside the snowfields, where
-	   its encounters are (WorldMap_ShipEncounterRules);
+	   its encounters are (WorldMapShipEncounterRules);
 	   ResourceId_ShipDeckBackdrop. */
 	BATTLE_ENVIRONMENT_SEA = 8,
 	/* All the sea of the snowfield regions, where no rule gives encounters. */

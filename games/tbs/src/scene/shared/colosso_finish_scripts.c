@@ -4,7 +4,7 @@
    raised, then turns south. */
 
 /* The opponent's, from scColossoUpdatePathOpponent. */
-Sint32 Colosso_OpponentFinishScript[] = {
+Sint32 ColossoOpponentFinishScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_SYNC,
 	SC_ANIMATION(ANIM_STAND),
@@ -19,7 +19,7 @@ Sint32 Colosso_OpponentFinishScript[] = {
 };
 
 /* Isaac's, from scColossoTakePrize. */
-Sint32 Colosso_LeaderFinishScript[] = {
+Sint32 ColossoLeaderFinishScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_SYNC,
 	SC_ANIMATION(ANIM_STAND),

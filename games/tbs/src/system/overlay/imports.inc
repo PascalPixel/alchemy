@@ -283,7 +283,7 @@
 	stub fdPaletteFadeStartInterpolation, fdPaletteFadeStartInterpolationStub
 	stub fdScriptStartScreenTransition, fdScriptStartScreenTransitionStub
 	stub fdScriptFinishScreenTransition, fdScriptFinishScreenTransitionStub
-	stub fdScriptWaitTransitionFrames, fdScriptWaitTransitionFramesStub
+	stub fdScriptWaitTransitionTicks, fdScriptWaitTransitionTicksStub
 	stub scLineScrollInitWave, scLineScrollInitWaveStub
 	stub fdLineScrollStop, fdLineScrollStopStub
 	stub fdChestOpenAndShowItem, fdChestOpenAndShowItemStub

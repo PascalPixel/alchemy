@@ -64,7 +64,7 @@
 /* The Broken Seal's Djinn of each element. */
 #define TRANSFERRED_DJINN_PER_ELEMENT					   7
 /* The six flags gmDataTransferApply copies from The Broken Seal's
-   (DataTransfer_Flags), named for those. */
+   (DataTransferFlags), named for those. */
 #define FLAG_TRANSFERRED_DODONPA_LOCKED_UP				   0x820
 #define FLAG_TRANSFERRED_WON_COLOSSO					   0x821
 /* The opposite of The Broken Seal's FLAG_HSU_RESCUED_WITHOUT_PARTY: set when
@@ -74,11 +74,11 @@
 #define FLAG_TRANSFERRED_ISAAC_SAVED_ULMUCH				   0x822
 #define FLAG_TRANSFERRED_VISITED_SICK_DORA				   0x824
 #define FLAG_TRANSFERRED_VAULT_WARNED_OF_ESCAPED_THIEVES   0x825
-/* How many flags DataTransfer_Flags lists. */
+/* How many flags DataTransferFlags lists. */
 #define TRANSFERRED_FLAG_COUNT							   6
 /* Flags of The Broken Seal's save, by its own names and numbers:
-   gmDataTransferApply reads them (DataTransfer_Flags), and the Clear scene sets
-   them from a password (Clear_ImportedFlags). */
+   gmDataTransferApply reads them (DataTransferFlags), and the Clear scene sets
+   them from a password (ClearImportedFlags). */
 #define FLAG_BROKEN_SEAL_VISITED_SICK_DORA				   0x81e
 #define FLAG_BROKEN_SEAL_VAULT_WARNED_OF_ESCAPED_THIEVES   0x868
 #define FLAG_BROKEN_SEAL_HSU_RESCUED_WITHOUT_PARTY		   0x8b3
@@ -109,7 +109,7 @@
    fdStartColTransition until fdStartPaletteTransition. */
 #define FLAG_PSYNERGY_TINTED		   0x108
 /* Set, the highest of these picks the tint a field Psynergy fades toward,
-   FieldPsynergy_CastColors[n], in place of the frame counter's pick
+   FieldPsynergyCastColors[n], in place of the tick counter's pick
    (fdPsynergyFadeToCastCol). */
 #define FLAG_PSYNERGY_TINT(n)		   (0x148 + (n))
 /* Set while the field mode handles its requests, and cleared while the party
@@ -155,7 +155,7 @@
 /* The next layout keeps the palette and tiles already loaded, once
    (fdMapGridLoadMap). */
 #define FLAG_KEEP_LAYER_GRAPHICS	   0x170
-/* With it set, holding B on the World Map moves the party at 4 pixels a frame.
+/* With it set, holding B on the World Map moves the party at 4 pixels a tick.
    Nothing in the game sets it. */
 #define FLAG_FAST_WALK				   0x17f
 #define FLAG_ITEM_USED_UP			   0x143 /* the item just used is removed afterwards */
@@ -313,7 +313,7 @@
 #define FLAG_GAROH_SECRET_SHARED	  0x91b
 
 /* Set while it is night in Garoh: its scenes fade the palette to night and play
-   a howl every 1,024 frames, and its inn shows its night layers. The party
+   a howl every 1,024 ticks, and its inn shows its night layers. The party
    walks into the night as it climbs to the village, and the morning after the
    night with Maha (FLAG_GAROH_SECRET_SHARED) clears it. */
 #define FLAG_GAROH_NIGHT 0x310

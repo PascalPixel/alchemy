@@ -92,52 +92,52 @@ typedef enum COLOSSEUM_AZART_MATCH_STAGE {
    the shared files that use it say what each holds: the guide's pointer
    (colosso_guide.c), the lettering (colosso_task.c) and where Isaac stood
    before he was shown on a stage (colosso_guide.c). */
-Sint16 Colosso_PointerStep					   BSS_DATA;
-Sint16 Colosso_LetteringScaleDuration BSS_DATA ALIGNED(4);
-Sint16 Colosso_PointerFlip BSS_DATA			   ALIGNED(4);
+Sint16 ColossoPointerStep					  BSS_DATA;
+Sint16 ColossoLetteringScaleDuration BSS_DATA ALIGNED(4);
+Sint16 ColossoPointerFlip BSS_DATA			  ALIGNED(4);
 /* Isaac's z before he is shown on the stage, 16.16 fixed-point pixels. */
-FIXED Colosso_WarriorStartZ					  BSS_DATA;
-Sint16 Colosso_PointerEndX					  BSS_DATA;
-Sint16 Colosso_LetteringParameter BSS_DATA	  ALIGNED(4);
-Sint16 Colosso_LetteringScaleStart BSS_DATA	  ALIGNED(4);
-Sint16 Colosso_LetteringMoveDuration BSS_DATA ALIGNED(4);
-Sint32 Colosso_LetteringPosition			  BSS_DATA;
-Sint16 Colosso_PointerBlink					  BSS_DATA;
-Sint16 Colosso_LetteringScaleTarget BSS_DATA  ALIGNED(4);
-Sint16 Colosso_LetteringMoveStep BSS_DATA	  ALIGNED(4);
-Sint16 Colosso_PointerY BSS_DATA			  ALIGNED(4);
-Sint16 Colosso_LetteringFadeStep BSS_DATA	  ALIGNED(4);
+FIXED ColossoWarriorStartZ					 BSS_DATA;
+Sint16 ColossoPointerEndX					 BSS_DATA;
+Sint16 ColossoLetteringParameter BSS_DATA	 ALIGNED(4);
+Sint16 ColossoLetteringScaleStart BSS_DATA	 ALIGNED(4);
+Sint16 ColossoLetteringMoveDuration BSS_DATA ALIGNED(4);
+Sint32 ColossoLetteringPosition				 BSS_DATA;
+Sint16 ColossoPointerBlink					 BSS_DATA;
+Sint16 ColossoLetteringScaleTarget BSS_DATA	 ALIGNED(4);
+Sint16 ColossoLetteringMoveStep BSS_DATA	 ALIGNED(4);
+Sint16 ColossoPointerY BSS_DATA				 ALIGNED(4);
+Sint16 ColossoLetteringFadeStep BSS_DATA	 ALIGNED(4);
 /* Isaac's facing before scColossoFadeInWarrior, which scColossoRestoreWarrior
    puts back. */
-Sint32 Colosso_WarriorStartAngle			  BSS_DATA;
-Sint16 Colosso_PointerSteps					  BSS_DATA;
-Sint16 Colosso_LetteringMode BSS_DATA		  ALIGNED(4);
-Sint16 Colosso_LetteringFadeTarget BSS_DATA	  ALIGNED(4);
-Sint16 Colosso_LetteringFadeStart BSS_DATA	  ALIGNED(4);
-Sint16 Colosso_LetteringTimer BSS_DATA		  ALIGNED(4);
-Sint16 *Colosso_LetteringScript				  BSS_DATA;
-POINTER_COORDINATE Colosso_PointerStartX	  BSS_DATA;
-Sint16 Colosso_LetteringFadeDuration BSS_DATA ALIGNED(4);
-Uint8 ColosseumAzartMatch_UnusedAfterBlendDuration[6] BSS_DATA;
+Sint32 ColossoWarriorStartAngle				 BSS_DATA;
+Sint16 ColossoPointerSteps					 BSS_DATA;
+Sint16 ColossoLetteringMode BSS_DATA		 ALIGNED(4);
+Sint16 ColossoLetteringFadeTarget BSS_DATA	 ALIGNED(4);
+Sint16 ColossoLetteringFadeStart BSS_DATA	 ALIGNED(4);
+Sint16 ColossoLetteringTimer BSS_DATA		 ALIGNED(4);
+Sint16 *ColossoLetteringScript				 BSS_DATA;
+POINTER_COORDINATE ColossoPointerStartX		 BSS_DATA;
+Sint16 ColossoLetteringFadeDuration BSS_DATA ALIGNED(4);
+Uint8 ColosseumAzartMatchUnusedAfterBlendDuration[6] BSS_DATA;
 /* The blinking pointer's sprite part: the queue link and attributes 0 to 2. */
-Sint32									 Colosso_PointerOam[3] BSS_DATA;
-POINTER_COORDINATE Colosso_PointerStartY BSS_DATA;
-/* The lettering's sprite parts, three words each, written every frame. */
-Uint32							  Colosso_LetteringSprites[12] BSS_DATA;
-Sint16 Colosso_LetteringMoveStart BSS_DATA;
-Sint16 Colosso_PointerX BSS_DATA  ALIGNED(4);
-Sint16 Colosso_LetteringMoveTarget BSS_DATA ALIGNED(4);
-Sint16 Colosso_LetteringScaleStep BSS_DATA	ALIGNED(4);
-Sint16 Colosso_PointerEndY BSS_DATA			ALIGNED(4);
+Sint32									ColossoPointerOam[3] BSS_DATA;
+POINTER_COORDINATE ColossoPointerStartY BSS_DATA;
+/* The lettering's sprite parts, three words each, written every tick. */
+Uint32									   ColossoLetteringSprites[12] BSS_DATA;
+Sint16 ColossoLetteringMoveStart		   BSS_DATA;
+Sint16 ColossoPointerX BSS_DATA			   ALIGNED(4);
+Sint16 ColossoLetteringMoveTarget BSS_DATA ALIGNED(4);
+Sint16 ColossoLetteringScaleStep BSS_DATA  ALIGNED(4);
+Sint16 ColossoPointerEndY BSS_DATA		   ALIGNED(4);
 /* Isaac's x before he is shown on the stage, 16.16 fixed-point pixels. */
-FIXED Colosso_WarriorStartX BSS_DATA;
+FIXED ColossoWarriorStartX BSS_DATA;
 
 Sint32				  scInit(void);
-extern SCENE_ENTRANCE ColosseumAzartMatch_Entrances[];
-extern Uint32		  ColosseumAzartMatch_Exits[];
-extern ACTOR_PLACE	  ColosseumAzartMatch_ActorPlacements[];
-extern Uint32		  ColosseumAzartMatch_BridgeTimer;
-extern CUE			  ColosseumAzartMatch_Cues[];
+extern SCENE_ENTRANCE ColosseumAzartMatchEntrances[];
+extern Uint32		  ColosseumAzartMatchExits[];
+extern ACTOR_PLACE	  ColosseumAzartMatchActorPlacements[];
+extern Uint32		  ColosseumAzartMatchBridgeTimer;
+extern CUE			  ColosseumAzartMatchCues[];
 extern char			  HexDigits[20];
 
 /* UB: each of these calls a void function through an Sint32 function type, the
@@ -294,9 +294,9 @@ typedef enum COLOSSEUM_AZART_MATCH_PICTURE_METATILE {
 	WATER_PICTURE_ROW = 29
 } COLOSSEUM_AZART_MATCH_PICTURE_METATILE;
 
-/* The Broken Bridge's cycle, in frames, counted down: the bridge lies down,
+/* The Broken Bridge's cycle, in ticks, counted down: the bridge lies down,
    walkable, for the last 60 of each. */
-#define BRIDGE_CYCLE_FRAMES 120
+#define BRIDGE_CYCLE_TICKS 120
 
 /* The Lumber Water Crossing Area's logs float on fixed lines. The north-south
    log lies across columns 64 to 66 and floats three metatiles between row 8 and
@@ -333,7 +333,7 @@ typedef enum PAN_ANIMATION {
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return ColosseumAzartMatch_Entrances;
+	return ColosseumAzartMatchEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -343,19 +343,19 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return ColosseumAzartMatch_Exits;
+	return ColosseumAzartMatchExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return ColosseumAzartMatch_ActorPlacements;
+	return ColosseumAzartMatchActorPlacements;
 }
 
 /* Advances the bridge animation and the metatile behaviors that make it
    walkable. */
 static void scColosseumAzartMatchUpdateBrokenBridge(void)
 {
-	switch(ColosseumAzartMatch_BridgeTimer) {
+	switch(ColosseumAzartMatchBridgeTimer) {
 	case 66:
 		fdMapGridCopyMetatilesLayered(
 			BRIDGE_PICTURE_COLUMN, BRIDGE_SWINGING_PICTURE_ROW, 2, 2, 50, 38);
@@ -391,18 +391,18 @@ static void scColosseumAzartMatchUpdateBrokenBridge(void)
 		fdActorSetAnimation(
 			ACTOR_BRIDGE_OPERATOR, BRIDGE_OPERATOR_ANIMATION_BRIDGE_UP);
 		fdMapGridCopyMetatileAttributes(50, BRIDGE_UP_ROW, 6, 1, 50, 12);
-		ColosseumAzartMatch_BridgeTimer = BRIDGE_CYCLE_FRAMES;
+		ColosseumAzartMatchBridgeTimer = BRIDGE_CYCLE_TICKS;
 		break;
 	}
-	ColosseumAzartMatch_BridgeTimer--;
+	ColosseumAzartMatchBridgeTimer--;
 }
 
-/* Stops the bridge event and restores its closed frame. */
+/* Stops the bridge event and restores its closed tick. */
 static void scColosseumAzartMatchResetBrokenBridge(void)
 {
 	MAP_TASK task;
 
-	ColosseumAzartMatch_BridgeTimer = 0;
+	ColosseumAzartMatchBridgeTimer = 0;
 	task = scColosseumAzartMatchUpdateBrokenBridge;
 	syCloseEvent(task);
 	task();
@@ -411,8 +411,8 @@ static void scColosseumAzartMatchResetBrokenBridge(void)
 /* Starts the broken bridge opening and closing, over and over. */
 static void scColosseumAzartMatchStartBrokenBridge(void)
 {
-	ColosseumAzartMatch_BridgeTimer = 66;
-	sySetFrameEvent(scColosseumAzartMatchUpdateBrokenBridge, EVENT_PASS_FRAME);
+	ColosseumAzartMatchBridgeTimer = 66;
+	sySetTickEvent(scColosseumAzartMatchUpdateBrokenBridge, EVENT_PASS_TICK);
 }
 
 /* Waits for the crossing window, bounded by one bridge cycle. */
@@ -421,7 +421,7 @@ static void scColosseumAzartMatchWaitForBridgeOpening(void)
 	Sint32 i;
 
 	sySynch(10);
-	for(i = 0; i < BRIDGE_CYCLE_FRAMES && ColosseumAzartMatch_BridgeTimer != 22;
+	for(i = 0; i < BRIDGE_CYCLE_TICKS && ColosseumAzartMatchBridgeTimer != 22;
 		i++)
 		sySynch(1);
 }
@@ -564,19 +564,18 @@ static void scColosseumAzartMatchRollLogNorthSouth(void)
 {
 	ACTOR *actor;
 	Sint32 row;
-	Sint32 offset;
+	Sint32 ofs;
 
 	actor = fdActorGet(MainRoutineStateWork.leaderActorId);
 	row = FIELD_METATILE(actor->z.fixed);
-	offset = -LOG_NORTH_SOUTH_FLOAT;
+	ofs = -LOG_NORTH_SOUTH_FLOAT;
 	if(row <= LOG_NORTH_ROW) {
-		offset = LOG_NORTH_SOUTH_FLOAT;
+		ofs = LOG_NORTH_SOUTH_FLOAT;
 	}
 	/* Its row goes back to water, three metatiles of the pool beside the log's
 	   north line, and its new row is the log's. */
 	fdMapGridCopyMetatileAttributes(67, 8, 3, 1, 64, row);
-	scColosseumAzartMatchMoveActorPairByOffset(
-		ACTOR_LOG_NORTH_SOUTH, 0, offset);
+	scColosseumAzartMatchMoveActorPairByOffset(ACTOR_LOG_NORTH_SOUTH, 0, ofs);
 	actor = fdActorGet(ACTOR_LOG_NORTH_SOUTH);
 	row = FIELD_METATILE(actor->z.fixed);
 	fdMapGridCopyMetatileAttributes(
@@ -587,7 +586,7 @@ static void scColosseumAzartMatchRollLogNorthSouth(void)
 static void scColosseumAzartMatchRollLogEastWest(void)
 {
 	Sint32 column;
-	Sint32 offset;
+	Sint32 ofs;
 	Sint32 direction;
 
 	column =
@@ -598,35 +597,35 @@ static void scColosseumAzartMatchRollLogEastWest(void)
 	if((PerData & KEY_RIGHT) != 0) {
 		direction = 1;
 	}
-	offset = FIELD_METATILE(fdActorGet(ACTOR_LOG_NORTH_SOUTH)->z.fixed);
+	ofs = FIELD_METATILE(fdActorGet(ACTOR_LOG_NORTH_SOUTH)->z.fixed);
 	if(column == 63) {
-		if(offset == LOG_SOUTH_ROW) {
+		if(ofs == LOG_SOUTH_ROW) {
 			return;
 		}
-		offset = LOG_EAST_WEST_FLOAT;
+		ofs = LOG_EAST_WEST_FLOAT;
 	} else if(column == 67) {
-		if(offset == LOG_SOUTH_ROW && direction == -1) {
+		if(ofs == LOG_SOUTH_ROW && direction == -1) {
 			return;
 		}
-		offset = LOG_EAST_WEST_SHORT_FLOAT;
+		ofs = LOG_EAST_WEST_SHORT_FLOAT;
 	} else {
-		if(offset == LOG_SOUTH_ROW) {
-			offset = LOG_EAST_WEST_SHORT_FLOAT;
+		if(ofs == LOG_SOUTH_ROW) {
+			ofs = LOG_EAST_WEST_SHORT_FLOAT;
 		} else {
-			offset = LOG_EAST_WEST_FLOAT;
+			ofs = LOG_EAST_WEST_FLOAT;
 		}
-		offset = -offset;
+		ofs = -ofs;
 	}
 	/* Its column goes back to water, three metatiles of the pool, and its new
 	   column is the log's. */
 	fdMapGridCopyMetatileAttributes(72, 9, 1, 3, column, 9);
-	scColosseumAzartMatchMoveActorPairByOffset(ACTOR_LOG_EAST_WEST, offset, 0);
+	scColosseumAzartMatchMoveActorPairByOffset(ACTOR_LOG_EAST_WEST, ofs, 0);
 	column = FIELD_METATILE(fdActorGet(ACTOR_LOG_EAST_WEST)->x.fixed);
 	fdMapGridCopyMetatileAttributes(
 		LOG_EAST_WEST_COLUMN, LOG_EAST_WEST_ROW, 1, 3, column, 9);
 }
 
-/* Runs the five frames that show water entering the Pipeworks channel. */
+/* Runs the five ticks that show water entering the Pipeworks channel. */
 static inline void scColosseumAzartMatchAnimatePipeworksWater(void)
 {
 	fdMapGridCopyMetatiles(
@@ -744,7 +743,7 @@ static void scColosseumAzartMatchReachArena(void)
 	fdScriptStart();
 	opponentFirst = scColossoTakePrize(ITEM_IRON_SHIELD, ITEM_PADDED_GLOVES);
 	scColossoWaitForOpponentToFinish();
-	/* Up to ten waits of 300 frames while the opponent holds up his prize. */
+	/* Up to ten waits of 300 ticks while the opponent holds up his prize. */
 	for(i = 0; i < 10; i++) {
 		fdActorWaitForScriptEndById(ACTOR_OPPONENT);
 	}
@@ -790,7 +789,7 @@ static void scColosseumAzartMatchPushRockOrHopAcross(void)
 
 const CUE *scGetCues(void)
 {
-	return ColosseumAzartMatch_Cues;
+	return ColosseumAzartMatchCues;
 }
 
 /* Back from the battle, Isaac and Azart stand in the arena as the result is
@@ -830,16 +829,16 @@ static void scColosseumAzartMatchRestoreMatchResult(Sint32 result)
    the plant itself stands on. */
 static void scColosseumAzartMatchSetLayerOnVineMetatile(Sint32 actorId)
 {
-	ACTOR *target;
+	ACTOR *tgt;
 	Sint32 column;
 	Sint32 row;
 
-	target = fdActorGet(actorId);
-	if(target != NULL) {
-		column = FIELD_HALF_METATILE(target->x.fixed);
-		row = FIELD_HALF_METATILE(target->z.fixed);
+	tgt = fdActorGet(actorId);
+	if(tgt != NULL) {
+		column = FIELD_HALF_METATILE(tgt->x.fixed);
+		row = FIELD_HALF_METATILE(tgt->z.fixed);
 		if(column >= 94 && column <= 95 && row > 23 && row <= 26) {
-			target->layer = 1;
+			tgt->layer = 1;
 		}
 	}
 }
@@ -872,7 +871,7 @@ Sint32 scInit(void)
 	actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
 	fdMapGridCopyMetatileAttributes(
 		HOP_SQUARE_COLUMN, HOP_SQUARE_ROW, 1, 1, x, 12);
-	sySetFrameEvent(scColosseumAzartMatchUpdateBrokenBridge, EVENT_PASS_FRAME);
+	sySetTickEvent(scColosseumAzartMatchUpdateBrokenBridge, EVENT_PASS_TICK);
 	actor = fdActorGet(ACTOR_GROWTH_PLANT);
 	actor->layer = 1;
 	if(gmFlagGet(FLAG_PLANT_GROWN)) {
@@ -944,7 +943,7 @@ Sint32 scInit(void)
 		scColossoStartOpponent(RESOURCE_AZART_OPPONENT_PATH);
 		break;
 	case COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST:
-		sySetFrameEvent(scColossoRaiseTakePlaceOnPsynergy, EVENT_PASS_FRAME);
+		sySetTickEvent(scColossoRaiseTakePlaceOnPsynergy, EVENT_PASS_TICK);
 		fdActorReleaseById(ACTOR_PRIZE_A);
 		fdActorReleaseById(ACTOR_PRIZE_B);
 		if(!gmFlagGet(FLAG_KEEP_PARTY_POSITION)) {
@@ -999,7 +998,7 @@ static void scColosseumAzartMatchExplainFinalsRules(Sint32 guide)
 	actor->facing = FACING_NORTH;
 	fdCameraFollowActor(ACTOR_PARTY_LEADER, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptSetMessageId(MsgColossoSiteFirstFinalsBattle);
 	/* "This is the site of the first finals battle." */
 	fdScriptShowMessage(guide, 0);
@@ -1425,13 +1424,13 @@ char HexDigits[20] = "0123456789ABCDEF";
 
 #include "shared/pushed_actor_direction_steps.c"
 
-SCENE_ENTRANCE ColosseumAzartMatch_Entrances[] = {
+SCENE_ENTRANCE ColosseumAzartMatchEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 920, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND, CONDITION_ALWAYS, 312, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-Uint32 ColosseumAzartMatch_Exits[] = {
+Uint32 ColosseumAzartMatchExits[] = {
 	SCENE_EXITS(ColosseumAzartMatch),
 	SCENE_EXIT(COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE, ColosseumAzartMatch, COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND),
 	SCENE_EXIT(COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST, Colosseum, COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST),
@@ -1440,7 +1439,7 @@ Uint32 ColosseumAzartMatch_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE ColosseumAzartMatch_ActorPlacements[] = {
+ACTOR_PLACE ColosseumAzartMatchActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_PARTY_LEADER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		312, 0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1488,10 +1487,10 @@ ACTOR_PLACE ColosseumAzartMatch_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-/* The frames left in the broken bridge's cycle (BRIDGE_CYCLE_FRAMES). */
-Uint32 ColosseumAzartMatch_BridgeTimer = 0;
+/* The ticks left in the broken bridge's cycle (BRIDGE_CYCLE_TICKS). */
+Uint32 ColosseumAzartMatchBridgeTimer = 0;
 
-CUE ColosseumAzartMatch_Cues[] = {
+CUE ColosseumAzartMatchCues[] = {
 	{ STEP_CUE_WALKING, METATILE_BEHAVIOR_ROCK_CHALLENGE_SQUARE_EDGE, CONDITION_ALWAYS, SCRIPT_REF(scColosseumAzartMatchPushRockOrHopAcross) },
 	{ STEP_CUE_WALKING, METATILE_BEHAVIOR_ROCK_CHALLENGE_FLOOR, CONDITION_ALWAYS, SCRIPT_REF(scColosseumAzartMatchPushRock) },
 	{ STEP_CUE_WALKING, METATILE_BEHAVIOR_ROCK_CHALLENGE_EAST_END, CONDITION_ALWAYS, SCRIPT_REF(scColosseumAzartMatchPushRock) },
@@ -1526,12 +1525,12 @@ CUE ColosseumAzartMatch_Cues[] = {
 
 /* The VRAM cache entry holding the lettering's tiles, -1 when none is */
 /* loaded. */
-Sint16 Colosso_LetteringSlot = -1;
+Sint16 ColossoLetteringSlot = -1;
 
 #include "shared/colosso_lettering_scripts.c"
 /* clang-format on */
 
 /* The VRAM cache entry holding the marker's tiles, -1 when none is loaded. */
-Sint16 Colosso_PointerSlot = -1;
+Sint16 ColossoPointerSlot = -1;
 
 #include "shared/colosso_finish_scripts.c"

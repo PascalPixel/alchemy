@@ -5,7 +5,7 @@
 
 /* Finds where an actor is on screen: position[0] and position[1] receive its x
    and y in pixels, y at the top of its sprite. */
-Sint32 fdActorGetScreenPos(Sint32 actorId, Sint32 *position)
+Sint32 fdActorGetScreenPos(Sint32 actorId, Sint32 *pos)
 {
 	ACTOR				  *actor = fdActorLookup(actorId);
 	MAP_GRID_SCROLL_STATE *grid;
@@ -21,12 +21,11 @@ Sint32 fdActorGetScreenPos(Sint32 actorId, Sint32 *position)
 	cameraZ = syMapGridScrollStateView(grid)[1] & FIELD_PIXEL_MASK;
 	x = actor->x.fixed - cameraX;
 	z = actor->z.fixed - cameraZ - actor->y.fixed;
-	*position++ = x / toFIXED(1);
-	*position = z / toFIXED(1);
+	*pos++ = x / toFIXED(1);
+	*pos = z / toFIXED(1);
 	if((actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE)
-		*position -=
-			syResourceGetMetadataRecordStub(actor->spr->entries[0]->anmId)
-				->sprTop;
+		*pos -= syResourceGetMetadataRecordStub(actor->spr->entries[0]->anmId)
+					->sprTop;
 	return 0;
 }
 
@@ -34,12 +33,12 @@ UNUSED void fdExitNoOperation(void)
 {
 }
 
-/* The encounter's screen closes over ENCOUNTER_CLOSE_FRAMES, and its white
-   flash then fades to black over ENCOUNTER_FADE_FRAMES, ENCOUNTER_FADE_STEP
-   levels a frame from just below RGB_LEVEL_MAX. */
-#define ENCOUNTER_CLOSE_FRAMES 16
-#define ENCOUNTER_FADE_FRAMES  16
-#define ENCOUNTER_FADE_STEP	   2
+/* The encounter's screen closes over ENCOUNTER_CLOSE_TICKS, and its white
+   flash then fades to black over ENCOUNTER_FADE_TICKS, ENCOUNTER_FADE_STEP
+   levels a tick from just below RGB_LEVEL_MAX. */
+#define ENCOUNTER_CLOSE_TICKS 16
+#define ENCOUNTER_FADE_TICKS  16
+#define ENCOUNTER_FADE_STEP	  2
 
 /* Starts the transition into a random battle: plays the scene's battle music
    and the encounter sounds, closes the screen and flashes the backdrop white,
@@ -62,10 +61,10 @@ UNREAD_RESULT fdStartEncounterTransition(Sint32 unused)
 			(Uint16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BLACK_COLOR));
 		fdScreenTransitionFinish(
 			SCENE_TRANSITION(TRANSITION_CENTER_LINE, CENTER_LINE_FLICKER),
-			ENCOUNTER_CLOSE_FRAMES);
+			ENCOUNTER_CLOSE_TICKS);
 		state->transitionActive = 0;
-		sySynch(ENCOUNTER_CLOSE_FRAMES);
-		for(i = 0; i < ENCOUNTER_FADE_FRAMES; i++) {
+		sySynch(ENCOUNTER_CLOSE_TICKS);
+		for(i = 0; i < ENCOUNTER_FADE_TICKS; i++) {
 			level = RGB_LEVEL_MAX - 1 - i * ENCOUNTER_FADE_STEP;
 			IO_WRITE16(RGB(level, level, level),
 				(Uint16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BLACK_COLOR));
@@ -75,10 +74,10 @@ UNREAD_RESULT fdStartEncounterTransition(Sint32 unused)
 		IO_WRITE16(RGB_WHITE, &PLTT_BACKDROP);
 		fdScreenTransitionFinish(SCENE_TRANSITION(TRANSITION_WINDOW,
 									 WINDOW_TRANSITION_LEADER_INVERSE),
-			ENCOUNTER_CLOSE_FRAMES);
+			ENCOUNTER_CLOSE_TICKS);
 		state->transitionActive = 0;
-		sySynch(ENCOUNTER_CLOSE_FRAMES);
-		for(i = 0; i < ENCOUNTER_FADE_FRAMES; i++) {
+		sySynch(ENCOUNTER_CLOSE_TICKS);
+		for(i = 0; i < ENCOUNTER_FADE_TICKS; i++) {
 			level = RGB_LEVEL_MAX - 1 - i * ENCOUNTER_FADE_STEP;
 			IO_WRITE16(RGB(level, level, level), &PLTT_BACKDROP);
 			sySynch(1);
@@ -88,22 +87,22 @@ UNREAD_RESULT fdStartEncounterTransition(Sint32 unused)
 
 /* Starts the leader's animation for leaving through an exit: centres it on its
    metatile, at the metatile's south edge, stops it and plays animation over 18
-   frames. */
-void fdExitPrepareAnimation(Sint32 animation)
+   ticks. */
+void fdExitPrepareAnimation(Sint32 anm)
 {
 	ACTOR		  *actor;
-	SPR			  *sprite;
+	SPR			  *spr;
 	SPR_ANIMATION *doorway;
 
 	actor = fdActorLookup(MainRoutineStateWork.leaderActorId);
-	sprite = actor->spr;
-	doorway = (SPR_ANIMATION *)fdSprAddAnimationStub(sprite, SPRITE_DOORWAY);
+	spr = actor->spr;
+	doorway = (SPR_ANIMATION *)fdSprAddAnimationStub(spr, SPRITE_DOORWAY);
 	{
 		Uint32 cleared = 0;
 		Uint8  hidden = SPRITE_COLOR_HIDDEN;
 
 		/* No shadow as the leader leaves. */
-		sprite->flg = cleared;
+		spr->flg = cleared;
 		doorway->colMode = hidden;
 		/* Keep the metatile and put the leader at its middle in x and its south
 		   edge in z. */
@@ -113,7 +112,7 @@ void fdExitPrepareAnimation(Sint32 animation)
 		actor->velZ = cleared;
 		actor->tgtX = ACTOR_NO_TARGET;
 		actor->tgtZ = ACTOR_NO_TARGET;
-		fdActorSelectAnimationStub(actor, animation);
+		fdActorSelectAnimationStub(actor, anm);
 		sySynch(18);
 	}
 }
@@ -136,26 +135,26 @@ void fdExitStartStairsDown(void)
 }
 
 /* Plays the leader's arrival animation through an exit: centred on its metatile
-   at the metatile's north edge, the leader plays animation for 30 frames, loses
+   at the metatile's north edge, the leader plays animation for 30 ticks, loses
    the hidden doorway part and walks 8 pixels south. */
-void fdEntrancePlayArrivalAnimation(Sint32 animation)
+void fdEntrancePlayArrivalAnimation(Sint32 anm)
 {
 	ACTOR		  *leader = fdActorLookup(MainRoutineStateWork.leaderActorId);
-	SPR			  *sprite = leader->spr;
+	SPR			  *spr = leader->spr;
 	SPR_ANIMATION *doorway =
-		(SPR_ANIMATION *)fdSprAddAnimationStub(sprite, SPRITE_DOORWAY);
-	sprite->flg = 0;
+		(SPR_ANIMATION *)fdSprAddAnimationStub(spr, SPRITE_DOORWAY);
+	spr->flg = 0;
 	doorway->colMode = SPRITE_COLOR_HIDDEN;
 	leader->x.fixed = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 	leader->z.fixed &= FIELD_METATILE_MASK;
-	fdActorSelectAnimationStub(leader, animation);
+	fdActorSelectAnimationStub(leader, anm);
 	sySynch(30);
 	/* Back to one sprite part, with its shadow, walking 8 pixels south at 1
-	   pixel a frame. */
-	sprite->cnt = 1;
-	fdSprAnimationClearStub(sprite->entries[1]);
-	sprite->entries[1] = NULL;
-	sprite->flg = SPRITE_FLAG_SHADOW;
+	   pixel a tick. */
+	spr->cnt = 1;
+	fdSprAnimationClearStub(spr->entries[1]);
+	spr->entries[1] = NULL;
+	spr->flg = SPRITE_FLAG_SHADOW;
 	leader->acceleration = toFIXED(1);
 	leader->speedLimit = toFIXED(1);
 	fdActorSetMoveTargetStub(
@@ -199,7 +198,7 @@ Sint32 fdEntrancePlayArrival(void)
 				leader->y.fixed += toFIXED(160);
 				fdCameraMoveWithinMapBounds(
 					CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-				/* Until the next frame's fall would reach the ground. */
+				/* Until the next tick's fall would reach the ground. */
 				while(leader->y.fixed + leader->velY > leader->groundHeight) {
 					sySynch(1);
 				}
@@ -215,6 +214,6 @@ Sint32 fdEntrancePlayArrival(void)
 	return result;
 }
 
-#undef ENCOUNTER_CLOSE_FRAMES
-#undef ENCOUNTER_FADE_FRAMES
+#undef ENCOUNTER_CLOSE_TICKS
+#undef ENCOUNTER_FADE_TICKS
 #undef ENCOUNTER_FADE_STEP

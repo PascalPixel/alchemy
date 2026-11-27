@@ -74,7 +74,7 @@ typedef struct DJINN_MENU_BACKDROP {
 	Sint8  cnts[DJINN_LIST_MEMBERS];
 	Uint8  tiles[8192];	 /* BG character block 1's first 8 KB */
 	Uint8  pal[128];	 /* BG palettes 4 to 7 */
-	Sint32 tutorialTmr;	 /* frames into the tutorial's current step */
+	Sint32 tutorialTmr;	 /* ticks into the tutorial's current step */
 	Sint32 tutorialStep; /* DJINN_TUTORIAL_STEP */
 } DJINN_MENU_BACKDROP;
 

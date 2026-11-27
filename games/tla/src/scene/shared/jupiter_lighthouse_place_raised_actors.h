@@ -9,7 +9,7 @@ void scJupiterLighthousePlaceRaisedActors(void)
 	ACTOR	  *leftAngel = fdActorGet(ACTOR_LEFT_ANGEL);
 	ACTOR	  *rightAngel = fdActorGet(ACTOR_RIGHT_ANGEL);
 	ACTOR	  *lid = fdActorGet(ACTOR_LID);
-	FIELD_SPR *sprite = lid->spr;
+	FIELD_SPR *spr = lid->spr;
 
 	fdActorSetPos(ACTOR_UNSEEN_LID, 512, 248);
 	fdActorSetPos(ACTOR_LID, 512, 248);
@@ -23,36 +23,36 @@ void scJupiterLighthousePlaceRaisedActors(void)
 	rightAngel->motionFlg = 0;
 	rightAngel->y.fixed = rightAngel->groundHeight;
 	if(fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_SHOT)) {
-		leftAngel->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(1) / 10);
+		leftAngel->y.fixed += ANGEL_RISE_TICKS * (toFIXED(1) / 10);
 		{
-			Sint32 step = ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
+			Sint32 step = ANGEL_RISE_TICKS * (toFIXED(3) / 100);
 
 			lid->y.fixed += step;
 		}
-		lid->x.fixed -= ANGEL_RISE_FRAMES * (toFIXED(1) / 25);
-		sprite->rotation += TRIG_TURN / 32;
+		lid->x.fixed -= ANGEL_RISE_TICKS * (toFIXED(1) / 25);
+		spr->rotation += TRIG_TURN / 32;
 		fdActorSetSprColMode(fdActorGet(ACTOR_LEFT_ANGEL), SPRITE_COLOR_GBR);
 		fdActorSetSprColMode(fdActorGet(ACTOR_LEFT_ARCHER), SPRITE_COLOR_GBR);
 	}
 	if(fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_SHOT)) {
-		rightAngel->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(1) / 10);
+		rightAngel->y.fixed += ANGEL_RISE_TICKS * (toFIXED(1) / 10);
 		{
-			Sint32 step = ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
+			Sint32 step = ANGEL_RISE_TICKS * (toFIXED(3) / 100);
 
 			lid->y.fixed += step;
 		}
-		lid->x.fixed += ANGEL_RISE_FRAMES * (toFIXED(1) / 25);
-		sprite->rotation -= TRIG_TURN / 32;
+		lid->x.fixed += ANGEL_RISE_TICKS * (toFIXED(1) / 25);
+		spr->rotation -= TRIG_TURN / 32;
 		fdActorSetSprColMode(fdActorGet(ACTOR_RIGHT_ANGEL), SPRITE_COLOR_GBR);
 		fdActorSetSprColMode(fdActorGet(ACTOR_RIGHT_ARCHER), SPRITE_COLOR_GBR);
 	}
 	if(fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_SHOT) &&
 		fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_SHOT)) {
-		leftAngel->y.fixed += LID_LIFT_FRAMES * (toFIXED(1) / 10);
-		rightAngel->y.fixed += LID_LIFT_FRAMES * (toFIXED(1) / 10);
+		leftAngel->y.fixed += LID_LIFT_TICKS * (toFIXED(1) / 10);
+		rightAngel->y.fixed += LID_LIFT_TICKS * (toFIXED(1) / 10);
 		{
-			FIXED step = ANGEL_RISE_FRAMES * (toFIXED(3) / 100) +
-				LID_LIFT_FRAMES * (toFIXED(1) / 10);
+			FIXED step = ANGEL_RISE_TICKS * (toFIXED(3) / 100) +
+				LID_LIFT_TICKS * (toFIXED(1) / 10);
 
 			lid->y.fixed += step;
 		}

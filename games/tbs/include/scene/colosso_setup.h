@@ -29,9 +29,9 @@ void scColossoStartOpponent(Sint32 resource);
 /* The scripts of the finish: the raised prize and its sparkles
    (shared/colosso_prize_scripts.c), and each warrior's as he reaches the prize
    (shared/colosso_finish_scripts.c). */
-extern Sint32 Colosso_PrizeSparkleScript[];
-extern Sint32 Colosso_PrizeScript[];
-extern Sint32 Colosso_OpponentFinishScript[];
-extern Sint32 Colosso_LeaderFinishScript[];
+extern Sint32 ColossoPrizeSparkleScript[];
+extern Sint32 ColossoPrizeScript[];
+extern Sint32 ColossoOpponentFinishScript[];
+extern Sint32 ColossoLeaderFinishScript[];
 
 #endif

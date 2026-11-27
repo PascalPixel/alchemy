@@ -11,15 +11,15 @@
 #define WORLD_MAP_PROBE_RADIUS \
 	WHEN(WORLD_MAP_SHORTCUT_FOLLOWS_PRESSED_KEY, toFIXED(7), toFIXED(8))
 
-/* The leader's speeds and accelerations, in pixels a frame as 16.16 fixed
+/* The leader's speeds and accelerations, in pixels a tick as 16.16 fixed
    point: the top 16 bits are whole pixels, so toFIXED(1) is one pixel. */
-#define FIELD_WALK_SPEED toFIXED(1)		  /* 1 pixel a frame */
+#define FIELD_WALK_SPEED toFIXED(1)		  /* 1 pixel a tick */
 #define FIELD_RUN_SPEED	 (toFIXED(3) / 2) /* 1.5, with a dash key held */
 #define FIELD_ACCELERATION \
-	(toFIXED(1) / 4) /* a quarter pixel faster each frame */
+	(toFIXED(1) / 4) /* a quarter pixel faster each tick */
 #define FIELD_FAST_WALK_SPEED		 toFIXED(4) /* 4, B held with FLAG_FAST_WALK */
 #define FIELD_FAST_WALK_ACCELERATION toFIXED(1)
-#define WORLD_MAP_WALK_SPEED		 (toFIXED(1) / 2) /* half a pixel a frame */
+#define WORLD_MAP_WALK_SPEED		 (toFIXED(1) / 2) /* half a pixel a tick */
 #define WORLD_MAP_RUN_SPEED			 toFIXED(1) /* 1, with a dash key held */
 #define WORLD_MAP_RUN_ACCELERATION	 (toFIXED(5) / 4)
 #define WORLD_MAP_ACCELERATION		 (toFIXED(1) / 4)
@@ -28,12 +28,12 @@
 /* 22.5 degrees: a step is probed this far either side of its heading, and a
    blocked step tries headings one, two and three times this far off. */
 #define FIELD_PROBE_ANGLE		(TRIG_TURN / 16)
-/* A blocked leader turns toward the pad at most 22.5 degrees a frame. */
+/* A blocked leader turns toward the pad at most 22.5 degrees a tick. */
 #define FIELD_BLOCKED_TURN_MAX	(TRIG_TURN / 16)
 /* The World Map camera turns toward the pad's yaw by at most about 2.8 degrees
-   a frame. */
+   a tick. */
 #define WORLD_MAP_YAW_STEP_MAX	(TRIG_TURN / 128)
-/* The frames between footprints, running and walking. */
+/* The ticks between footprints, running and walking. */
 #define FOOTPRINT_RUN_INTERVAL	12
 #define FOOTPRINT_WALK_INTERVAL 18
 
@@ -61,7 +61,7 @@ typedef enum FIELD_SHORTCUT_KIND {
    this. */
 #define WORLD_MAP_YAW_STEP_MIN 16
 
-/* What stopped the leader's step this frame (fdActorUpdatePlayerCtrl,
+/* What stopped the leader's step this tick (fdActorUpdatePlayerCtrl,
    fdActorMoveOnWorldMap). */
 typedef enum PLAYER_STEP_BLOCK {
 	PLAYER_STEP_BLOCKED_BY_MAP = 1, /* every heading tried runs into the map */
@@ -150,10 +150,10 @@ Sint32 fdCheckConfiguredKeys(void)
 /* Returns 0 when two spheres overlap: at positions a and b (16.16 pixels) with
    radii radiusA and radiusB (pixels); -1 otherwise. */
 Sint32 fdCheckSpheresOverlap(
-	FIXED *firstPosition, Sint32 radiusA, FIXED *secondPosition, Sint32 radiusB)
+	FIXED *firstPos, Sint32 radiusA, FIXED *secondPos, Sint32 radiusB)
 {
-	const FIELD_POS *firstPoint = (const FIELD_POS *)firstPosition;
-	const FIELD_POS *secondPoint = (const FIELD_POS *)secondPosition;
+	const FIELD_POS *firstPoint = (const FIELD_POS *)firstPos;
+	const FIELD_POS *secondPoint = (const FIELD_POS *)secondPos;
 	const Sint32	*firstCoordinate = &firstPoint->x;
 	const Sint32	*secondCoordinate = &secondPoint->x;
 	Sint32			 dx = FIXEDtoINT(*firstCoordinate++ - *secondCoordinate++);
@@ -175,19 +175,19 @@ Sint32 fdCheckSpheresOverlap(
    matching animation and leaving footprints. */
 Sint32 fdActorUpdatePlayerCtrl(ACTOR *actor)
 {
-	FIELD_POS position;
-	FIELD_POS testPosition;
+	FIELD_POS pos;
+	FIELD_POS testPos;
 	FIELD_POS contact;
-	Sint16	  angleOffsets[22];
+	Sint16	  angOffsets[22];
 	Sint32	  collision;
 	Sint32	  pushed;
 	Sint16	  heading;
-	Sint32	  angle;
-	Sint32	  movementAnimation;
+	Sint32	  ang;
+	Sint32	  movementAnm;
 	Uint16	  direction;
-	Sint32	  footprintAngle;
-	Sint32	  angleIndex;
-	Sint32	  headingCount;
+	Sint32	  footprintAng;
+	Sint32	  angIdx;
+	Sint32	  headingCnt;
 	ACTOR	 *pushedActor;
 
 	collision = 0;
@@ -196,17 +196,17 @@ Sint32 fdActorUpdatePlayerCtrl(ACTOR *actor)
 	   free. */
 	if(DebugMode != 0 && gmFlagGetStub(FLAG_DEBUG_RESOURCE_BEEP) != 0) {
 		Sint32 freeBlocks;
-		Sint32 blockIndex;
+		Sint32 blockIdx;
 
 		freeBlocks = 0;
-		for(blockIndex = 0; blockIndex < VRAM_BLOCK_COUNT; blockIndex++) {
-			if(VramCacheBlockOwners[blockIndex] == VRAM_BLOCK_OWNER_FREE)
+		for(blockIdx = 0; blockIdx < VRAM_BLOCK_COUNT; blockIdx++) {
+			if(VramCacheBlockOwners[blockIdx] == VRAM_BLOCK_OWNER_FREE)
 				freeBlocks++;
 		}
 		if(freeBlocks - DEBUG_RESOURCE_BEEP_FREE_BLOCKS < 0)
 			sySndPlayStub(SE_CLICK);
 	}
-	/* Debug: holding L stalls each frame in four empty loops, the last three
+	/* Debug: holding L stalls each tick in four empty loops, the last three
 	   counting in a halfword. */
 	if(DebugMode != 0) {
 		if(PerData & KEY_L) {
@@ -228,48 +228,47 @@ Sint32 fdActorUpdatePlayerCtrl(ACTOR *actor)
 	if(PerData & MainRoutineStateWork.dashKeys) {
 		actor->speedLimit = FIELD_RUN_SPEED;
 		actor->acceleration = FIELD_ACCELERATION;
-		movementAnimation = ANIM_LEADER_RUN;
+		movementAnm = ANIM_LEADER_RUN;
 	} else {
 		actor->speedLimit = FIELD_WALK_SPEED;
 		actor->acceleration = FIELD_ACCELERATION;
-		movementAnimation = ANIM_WALK;
+		movementAnm = ANIM_WALK;
 	}
 	if(gmFlagGetStub(FLAG_FAST_WALK) != 0 && (PerData & KEY_B)) {
 		actor->speedLimit = FIELD_FAST_WALK_SPEED;
 		actor->acceleration = FIELD_FAST_WALK_ACCELERATION;
-		movementAnimation = ANIM_LEADER_RUN;
+		movementAnm = ANIM_LEADER_RUN;
 	}
 
 	/* Step 8 pixels the way the direction pad points, when that step and the
 	   ones 22.5 and 45 degrees either side are clear (debug L walks through
 	   walls); otherwise try headings up to 67.5 degrees off. */
-	angle = WorldMap_KeyHeadings[DPAD_INDEX(PerData)];
-	if((Uint16)angle == WORLD_MAP_KEY_HEADING_NONE) {
+	ang = WorldMapKeyHeadings[DPAD_INDEX(PerData)];
+	if((Uint16)ang == WORLD_MAP_KEY_HEADING_NONE) {
 		collision |= PLAYER_STEP_STOPPED;
 	} else {
 		collision = 0;
-		PROBE_FROM(actor, toFIXED(8), (Uint16)angle, position);
+		PROBE_FROM(actor, toFIXED(8), (Uint16)ang, pos);
 		if(DebugMode != 0 && (PerData & KEY_L)) {
-			heading = angle;
+			heading = ang;
 		} else {
-			if(fdMapGridCheckCollision(actor, &position) == COLLISION_NONE) {
-				PROBE_FROM(actor, toFIXED(8), (Uint16)angle + FIELD_PROBE_ANGLE,
-					testPosition);
-				if(fdMapGridCheckCollision(actor, &testPosition) ==
-					COLLISION_NONE) {
+			if(fdMapGridCheckCollision(actor, &pos) == COLLISION_NONE) {
+				PROBE_FROM(actor, toFIXED(8), (Uint16)ang + FIELD_PROBE_ANGLE,
+					testPos);
+				if(fdMapGridCheckCollision(actor, &testPos) == COLLISION_NONE) {
 					PROBE_FROM(actor, toFIXED(8),
-						(Uint16)angle - FIELD_PROBE_ANGLE, testPosition);
-					if(fdMapGridCheckCollision(actor, &testPosition) ==
+						(Uint16)ang - FIELD_PROBE_ANGLE, testPos);
+					if(fdMapGridCheckCollision(actor, &testPos) ==
 						COLLISION_NONE) {
 						PROBE_FROM(actor, toFIXED(8),
-							(Uint16)angle + DEGtoANG(45), testPosition);
-						if(fdMapGridCheckCollision(actor, &testPosition) ==
+							(Uint16)ang + DEGtoANG(45), testPos);
+						if(fdMapGridCheckCollision(actor, &testPos) ==
 							COLLISION_NONE) {
 							PROBE_FROM(actor, toFIXED(8),
-								(Uint16)angle - DEGtoANG(45), testPosition);
-							if(fdMapGridCheckCollision(actor, &testPosition) ==
+								(Uint16)ang - DEGtoANG(45), testPos);
+							if(fdMapGridCheckCollision(actor, &testPos) ==
 								COLLISION_NONE) {
-								heading = angle;
+								heading = ang;
 								goto push_actors;
 							}
 						}
@@ -278,44 +277,40 @@ Sint32 fdActorUpdatePlayerCtrl(ACTOR *actor)
 			}
 			/* The pad's way is blocked: try 22.5, 45 and 67.5 degrees off,
 			   nearest first, each needing the same five clear probes. */
-			direction = angle;
-			headingCount = 0;
-			angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE;
-			angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE;
-			angleOffsets[headingCount++] = direction + DEGtoANG(45);
-			angleOffsets[headingCount++] = direction - DEGtoANG(45);
-			angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE * 3;
-			angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE * 3;
-			for(angleIndex = 0; angleIndex < headingCount; angleIndex++) {
-				heading = angleOffsets[angleIndex];
-				PROBE_FROM(actor, toFIXED(8), (Uint16)heading, position);
-				if(fdMapGridCheckCollision(actor, &position) != COLLISION_NONE)
+			direction = ang;
+			headingCnt = 0;
+			angOffsets[headingCnt++] = direction + FIELD_PROBE_ANGLE;
+			angOffsets[headingCnt++] = direction - FIELD_PROBE_ANGLE;
+			angOffsets[headingCnt++] = direction + DEGtoANG(45);
+			angOffsets[headingCnt++] = direction - DEGtoANG(45);
+			angOffsets[headingCnt++] = direction + FIELD_PROBE_ANGLE * 3;
+			angOffsets[headingCnt++] = direction - FIELD_PROBE_ANGLE * 3;
+			for(angIdx = 0; angIdx < headingCnt; angIdx++) {
+				heading = angOffsets[angIdx];
+				PROBE_FROM(actor, toFIXED(8), (Uint16)heading, pos);
+				if(fdMapGridCheckCollision(actor, &pos) != COLLISION_NONE)
 					continue;
 				PROBE_FROM(actor, toFIXED(8),
-					(Uint16)heading + FIELD_PROBE_ANGLE, testPosition);
-				if(fdMapGridCheckCollision(actor, &testPosition) !=
-					COLLISION_NONE)
+					(Uint16)heading + FIELD_PROBE_ANGLE, testPos);
+				if(fdMapGridCheckCollision(actor, &testPos) != COLLISION_NONE)
 					continue;
 				PROBE_FROM(actor, toFIXED(8),
-					(Uint16)heading - FIELD_PROBE_ANGLE, testPosition);
-				if(fdMapGridCheckCollision(actor, &testPosition) !=
-					COLLISION_NONE)
+					(Uint16)heading - FIELD_PROBE_ANGLE, testPos);
+				if(fdMapGridCheckCollision(actor, &testPos) != COLLISION_NONE)
 					continue;
-				PROBE_FROM(actor, toFIXED(8), (Uint16)heading + DEGtoANG(45),
-					testPosition);
-				if(fdMapGridCheckCollision(actor, &testPosition) !=
-					COLLISION_NONE)
+				PROBE_FROM(
+					actor, toFIXED(8), (Uint16)heading + DEGtoANG(45), testPos);
+				if(fdMapGridCheckCollision(actor, &testPos) != COLLISION_NONE)
 					continue;
-				PROBE_FROM(actor, toFIXED(8), (Uint16)heading - DEGtoANG(45),
-					testPosition);
-				if(fdMapGridCheckCollision(actor, &testPosition) ==
-					COLLISION_NONE)
+				PROBE_FROM(
+					actor, toFIXED(8), (Uint16)heading - DEGtoANG(45), testPos);
+				if(fdMapGridCheckCollision(actor, &testPos) == COLLISION_NONE)
 					goto push_actors;
 			}
 			/* Nothing passed: the step is the actor's own position. */
-			position.x = actor->x.fixed;
-			position.y = actor->y.fixed;
-			position.z = actor->z.fixed;
+			pos.x = actor->x.fixed;
+			pos.y = actor->y.fixed;
+			pos.z = actor->z.fixed;
 			collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 
 		push_actors:
@@ -324,8 +319,7 @@ Sint32 fdActorUpdatePlayerCtrl(ACTOR *actor)
 			   the step (bit 1 of collision). Pushing slows the player down. */
 			PROBE_FROM(actor, toFIXED(4), (Uint16)heading, contact);
 			pushedActor = ActorsWork;
-			for(angleIndex = 0; angleIndex < ACTOR_COUNT;
-				angleIndex++, pushedActor++) {
+			for(angIdx = 0; angIdx < ACTOR_COUNT; angIdx++, pushedActor++) {
 				Sint32 radius;
 
 				radius = actor->radius - 2;
@@ -346,30 +340,29 @@ Sint32 fdActorUpdatePlayerCtrl(ACTOR *actor)
 					pushedActor->paused == 0) {
 					direction = syAtan(pushedActor->z.fixed - actor->z.fixed,
 						pushedActor->x.fixed - actor->x.fixed);
-					testPosition.x = pushedActor->x.fixed;
-					testPosition.y = pushedActor->y.fixed;
-					testPosition.z = pushedActor->z.fixed;
+					testPos.x = pushedActor->x.fixed;
+					testPos.y = pushedActor->y.fixed;
+					testPos.z = pushedActor->z.fixed;
 					heading = direction;
 					syVectorAddPolarOffset(
-						toFIXED(1) / 4, direction, (FIXED *)&testPosition);
+						toFIXED(1) / 4, direction, (FIXED *)&testPos);
 					if(!fdActorScriptCheckOverlap(
-						   pushedActor, (Sint32 *)&testPosition)) {
+						   pushedActor, (Sint32 *)&testPos)) {
 						PROBE_FROM(
-							pushedActor, toFIXED(10), direction, testPosition);
-						if(fdMapGridCheckCollision(
-							   pushedActor, &testPosition) == COLLISION_NONE) {
+							pushedActor, toFIXED(10), direction, testPos);
+						if(fdMapGridCheckCollision(pushedActor, &testPos) ==
+							COLLISION_NONE) {
 							PROBE_FROM(pushedActor, toFIXED(10),
-								direction + FIELD_PROBE_ANGLE, testPosition);
+								direction + FIELD_PROBE_ANGLE, testPos);
 							/* The same probe is tested twice. */
-							if(fdMapGridCheckCollision(pushedActor,
-								   &testPosition) == COLLISION_NONE &&
-								fdMapGridCheckCollision(pushedActor,
-									&testPosition) == COLLISION_NONE) {
+							if(fdMapGridCheckCollision(pushedActor, &testPos) ==
+									COLLISION_NONE &&
+								fdMapGridCheckCollision(
+									pushedActor, &testPos) == COLLISION_NONE) {
 								PROBE_FROM(pushedActor, toFIXED(10),
-									direction - FIELD_PROBE_ANGLE,
-									testPosition);
+									direction - FIELD_PROBE_ANGLE, testPos);
 								if(fdMapGridCheckCollision(pushedActor,
-									   &testPosition) == COLLISION_NONE) {
+									   &testPos) == COLLISION_NONE) {
 									syVectorAddPolarOffset(toFIXED(1) / 4,
 										direction,
 										(FIXED *)&pushedActor->x.fixed);
@@ -385,7 +378,7 @@ Sint32 fdActorUpdatePlayerCtrl(ACTOR *actor)
 				}
 				collision |= PLAYER_STEP_BLOCKED_BY_ACTOR;
 			}
-			/* Pushing: a quarter pixel a frame. */
+			/* Pushing: a quarter pixel a tick. */
 			if(collision == 0 && pushed != 0) {
 				actor->speedLimit = toFIXED(1) / 4;
 				actor->acceleration = toFIXED(1) / 8;
@@ -411,10 +404,10 @@ Sint32 fdActorUpdatePlayerCtrl(ACTOR *actor)
 			action = ANIM_LEADER_LEAN_BACK;
 		fdActorSelectAnimation(actor, action);
 	} else {
-		fdActorSelectAnimation(actor, movementAnimation);
+		fdActorSelectAnimation(actor, movementAnm);
 	}
 
-	/* Blocked: stop and turn towards the pad, at most 22.5 degrees a frame; the
+	/* Blocked: stop and turn towards the pad, at most 22.5 degrees a tick; the
 	   next footprint is the pair. */
 	if(collision != 0) {
 		actor->tgtX = ACTOR_NO_TARGET;
@@ -425,7 +418,7 @@ Sint32 fdActorUpdatePlayerCtrl(ACTOR *actor)
 		if(collision & PLAYER_STEP_BLOCKED) {
 			Sint32 difference;
 
-			difference = (Uint16)angle - actor->facing;
+			difference = (Uint16)ang - actor->facing;
 			difference = (Sint16)difference;
 			if(difference > FIELD_BLOCKED_TURN_MAX)
 				difference = FIELD_BLOCKED_TURN_MAX;
@@ -438,7 +431,7 @@ Sint32 fdActorUpdatePlayerCtrl(ACTOR *actor)
 	} else {
 		FIXED speed;
 
-		fdActorSetMoveTarget(actor, position.x, position.y, position.z);
+		fdActorSetMoveTarget(actor, pos.x, pos.y, pos.z);
 		speed = sySquartFX(syMulFX(actor->velX, actor->velX) +
 			syMulFX(actor->velZ, actor->velZ));
 		actor->velX = 0;
@@ -448,10 +441,10 @@ Sint32 fdActorUpdatePlayerCtrl(ACTOR *actor)
 			actor->tmr--;
 	}
 
-	/* Leave a footprint every 18 walking or 12 running frames on maps that show
-	   them, alternating left and right; timer counts down the frames to the
+	/* Leave a footprint every 18 walking or 12 running ticks on maps that show
+	   them, alternating left and right; timer counts down the ticks to the
 	   next. */
-	footprintAngle = (Uint16)angle;
+	footprintAng = (Uint16)ang;
 	if(((MAP_GRID_SCROLL_STATE *)MapGridState[0])->footprints != 0 &&
 		actor->tmr == 0 && collision == 0) {
 		ACTOR *effect;
@@ -459,30 +452,30 @@ Sint32 fdActorUpdatePlayerCtrl(ACTOR *actor)
 		effect = fdActorCreate(FIELD_SPRITE_FOOTPRINT, actor->x.fixed,
 			actor->y.fixed, actor->z.fixed);
 		if(effect != 0) {
-			SPR *animation;
+			SPR *anm;
 
 			/* collision is 0 here: the footprint takes no motion flags (it
 			   stays where it is laid) and its sprite no shadow. */
 			effect->groundHeight = actor->groundHeight;
-			animation = effect->spr;
-			fdActorStartScript(effect, WorldMap_FootprintActions);
+			anm = effect->spr;
+			fdActorStartScript(effect, WorldMapFootprintActions);
 			effect->priFlg = ACTOR_PRIORITY_UNDERFOOT;
 			effect->motionFlg = collision;
-			if(animation != 0) {
-				fdSprStartAnimation(animation, FOOTPRINT_ONE_FOOT);
-				animation->flg = collision;
-				animation->rotation = footprintAngle + DEGtoANG(90);
-				animation->image.pri = 3;
+			if(anm != 0) {
+				fdSprStartAnimation(anm, FOOTPRINT_ONE_FOOT);
+				anm->flg = collision;
+				anm->rotation = footprintAng + DEGtoANG(90);
+				anm->image.pri = 3;
 			}
 			/* The first footprint after a stop is the pair and restarts the
 			   sides; each second one faces a half turn round. */
 			if(actor->userValue == FOOTPRINT_BOTH_FEET) {
-				fdSprStartAnimation(animation, FOOTPRINT_BOTH_FEET);
+				fdSprStartAnimation(anm, FOOTPRINT_BOTH_FEET);
 				actor->userValue = collision;
 			}
 			if(actor->userValue != 0)
 				effect->facing = DEGtoANG(180);
-			if(movementAnimation == ANIM_LEADER_RUN)
+			if(movementAnm == ANIM_LEADER_RUN)
 				actor->tmr = FOOTPRINT_RUN_INTERVAL;
 			else
 				actor->tmr = FOOTPRINT_WALK_INTERVAL;
@@ -540,7 +533,7 @@ Sint32 fdActorMoveOnWorldMap(ACTOR *actor)
 	if((PerRepeat & KEY_L) != 0)
 		actor->speedLimit = WORLD_MAP_FAST_SPEED;
 
-	angle = WorldMap_KeyHeadings[DPAD_INDEX(PerData)];
+	angle = WorldMapKeyHeadings[DPAD_INDEX(PerData)];
 	direction = angle;
 	if(direction == WORLD_MAP_KEY_HEADING_NONE) {
 		collision |= PLAYER_STEP_STOPPED;
@@ -695,10 +688,10 @@ update_actor:
 	}
 
 	/* Turn the camera towards the pad's yaw by an eighth of the difference a
-	   frame, at most WORLD_MAP_YAW_STEP_MAX, finishing the turn once the step
+	   tick, at most WORLD_MAP_YAW_STEP_MAX, finishing the turn once the step
 	   falls under WORLD_MAP_YAW_STEP_MIN. */
 	perspective = MapGridState[0];
-	targetCameraYaw = WorldMap_KeyYaws[DPAD_INDEX(PerData)];
+	targetCameraYaw = WorldMapKeyYaws[DPAD_INDEX(PerData)];
 	yawStep = (Sint16)(targetCameraYaw - perspective->yaw) / 8;
 	if(yawStep > WORLD_MAP_YAW_STEP_MAX)
 		yawStep = WORLD_MAP_YAW_STEP_MAX;
@@ -721,8 +714,8 @@ update_actor:
 			playerSprite->entries[1]->pri = 9;
 			playerSprite->flg = SPRITE_FLAG_SHADOW;
 		}
-		/* In shallow water a ripple follows every 10 frames of walking: it
-		   lasts 30 frames, takes no motion flags, and its sprite, with no
+		/* In shallow water a ripple follows every 10 ticks of walking: it
+		   lasts 30 ticks, takes no motion flags, and its sprite, with no
 		   shadow, is drawn semi-transparent at priority 2. */
 		if(terrainCollision == WORLD_MAP_COLLISION_SHALLOW_WATER &&
 			actor->tmr == 0 && collision == 0) {
@@ -730,7 +723,7 @@ update_actor:
 				actor->y.fixed, actor->z.fixed);
 			if(ripple != 0) {
 				rippleSprite = ripple->spr;
-				fdActorStartScript(ripple, WorldMap_FootprintActions + 3);
+				fdActorStartScript(ripple, WorldMapFootprintActions + 3);
 				ripple->motionFlg = collision;
 				ripple->layer = 1;
 				if(rippleSprite != 0) {
@@ -776,7 +769,7 @@ Sint32 fdActorMoveByKeys(ACTOR *actor)
 	actor->speedLimit = toFIXED(1) / 2;
 	actor->acceleration = toFIXED(1) / 4;
 	animation = ANIM_LEADER_CLING;
-	angle = WorldMap_KeyHeadings[DPAD_INDEX(PerData)];
+	angle = WorldMapKeyHeadings[DPAD_INDEX(PerData)];
 	if(angle == WORLD_MAP_KEY_HEADING_NONE) {
 		collisionFlags = PLAYER_STEP_STOPPED;
 	} else {

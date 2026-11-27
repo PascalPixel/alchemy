@@ -55,8 +55,8 @@ typedef enum JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_BESIDE_COLUMNS = 30
 } JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_METATILE_BEHAVIOR;
 
-/* The frames the dropped pillar is given to land. */
-#define PILLAR_LANDING_FRAMES 30
+/* The ticks the dropped pillar is given to land. */
+#define PILLAR_LANDING_TICKS 30
 
 struct ACTOR;
 Bool   scCrackedTileStep(void);
@@ -110,8 +110,8 @@ typedef struct PUSH_TARGET {
 	void  *func;
 } PUSH_TARGET;
 
-Bool scPushTargetFindStop(PUSH_TARGET *target);
-void scPushTargetPush(PUSH_TARGET target);
+Bool scPushTargetFindStop(PUSH_TARGET *tgt);
+void scPushTargetPush(PUSH_TARGET tgt);
 
 /* Felix steps on a cracked tile in the room above the columns. The first step
    only cracks it further; on the second it gives way and the party falls
@@ -126,10 +126,10 @@ void scJupiterLighthouseStepOnCrackedTile(void)
    it: it rolls until something stops it (scPushTargetFindStop). */
 void scJupiterLighthousePushColumn(void)
 {
-	PUSH_TARGET target;
+	PUSH_TARGET tgt;
 
-	if(scPushTargetFindStop(&target))
-		scPushTargetPush(target);
+	if(scPushTargetFindStop(&tgt))
+		scPushTargetPush(tgt);
 }
 
 /* Nothing visible happens as Move takes hold of the standing pillar in the room
@@ -158,7 +158,7 @@ void scJupiterLighthouseFinishMovingPillar(Sint32 unused, Sint32 id)
 			do {
 				syWait(1);
 				i++;
-				if(i > PILLAR_LANDING_FRAMES - 1)
+				if(i > PILLAR_LANDING_TICKS - 1)
 					break;
 			} while(actor->y.fixed > actor->groundHeight || actor->velY != 0);
 		}
@@ -236,18 +236,18 @@ Sint32 scPrepareMap(void)
 
 #include "shared/scene_set_arrival_flags.c"
 
-void syGameFlagSetByte(Sint32 flag, Sint32 value);
+void syGameFlagSetByte(Sint32 flg, Sint32 value);
 
 extern Sint32 PaletteCyclePausesInScripts;
 
 #include "shared/palette_cycle_set_pauses_in_scripts.h"
 
-extern Sint32 PaletteCycleFrame;
+extern Sint32 PaletteCycleTick;
 
-/* Sets the palette cycle's frame (PaletteCycleFrame). */
-static inline void scPaletteCycleSetFrame(Sint32 value)
+/* Sets the palette cycle's tick (PaletteCycleTick). */
+static inline void scPaletteCycleSetTick(Sint32 value)
 {
-	PaletteCycleFrame = value;
+	PaletteCycleTick = value;
 }
 
 #include "shared/palette_cycle_step.h"
@@ -267,9 +267,8 @@ extern Sint32 WhirlwindEndScript[];
 Sint32 fdMapGridGetMetatileBehavior(Sint32 x, Sint32 z, Sint32 layer);
 #include "shared/whirlwind_update.h"
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 #include "shared/whirlwind_spawn.h"
 
@@ -285,9 +284,9 @@ extern Sint8 PushRectangles[][4];
 
 extern Sint32 PushLeaderSteps[];
 
-static inline Sint32 scPushTargetCheckCollision(ACTOR *actor, Sint32 *position)
+static inline Sint32 scPushTargetCheckCollision(ACTOR *actor, Sint32 *pos)
 {
-	return fdMapGridCheckCollision(actor, position);
+	return fdMapGridCheckCollision(actor, pos);
 }
 
 #include "shared/push_target_find_stop.h"
@@ -327,9 +326,9 @@ void scLightSprsSetPriority(Sint32 value)
 #include "../field/field_effect_move.c"
 
 void scLeaderCenterInMetatile(void);
-void scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
+void scCrackedTileCrack(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry);
 
-extern const Sint32 *FieldEffect_DurationScripts[];
+extern const Sint32 *FieldEffectDurationScripts[];
 
 #define EFFECT_SET_MODE	  fdActorSelectAnimation
 #define EFFECT_SET_SCRIPT fdActorStartScript
@@ -356,9 +355,9 @@ extern const Sint32 *FieldEffect_DurationScripts[];
 
 #include "shared/cracked_tile_place_landing.h"
 
-extern Uint32 FieldEffect_ShortScript[];
-extern Uint32 FieldEffect_MediumScript[];
-extern Uint32 FieldEffect_LongScript[];
+extern Uint32 FieldEffectShortScript[];
+extern Uint32 FieldEffectMediumScript[];
+extern Uint32 FieldEffectLongScript[];
 
 /* clang-format off */
 #define FIELD_EFFECT_DURATION_SCRIPT_SECTION LATE_DATA
@@ -419,7 +418,7 @@ LATE_DATA CUE SceneCues[] = {
 	{CUE_TABLE_END},
 };
 
-LATE_DATA Sint32 PaletteCycleFrame = -1;
+LATE_DATA Sint32 PaletteCycleTick = -1;
 
 LATE_DATA Sint32 PaletteCyclePausesInScripts = 1;
 
@@ -430,8 +429,8 @@ LATE_DATA Sint32 WhirlwindEndScript[] = {
 };
 /* clang-format on */
 
-LATE_DATA const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+LATE_DATA const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };

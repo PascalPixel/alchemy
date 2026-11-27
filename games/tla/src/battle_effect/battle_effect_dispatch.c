@@ -2,11 +2,11 @@
    battle_effect.c. */
 
 /* Calls the empty btEffectNoOperation count times: a busy delay. */
-void btEffectCallNoOperation(Sint32 count)
+void btEffectCallNoOperation(Sint32 cnt)
 {
 	Sint32 i;
 
-	for(i = 0; i != count; i++)
+	for(i = 0; i != cnt; i++)
 		btEffectNoOperation();
 }
 
@@ -22,7 +22,7 @@ void btEffectRunSummon(BATTLE_EFFECT_PARM *args)
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 	state = Ram_HeapSlots->battleEff;
 	state->args = args;
-	state->vblanksSinceTransfer = 1;
+	state->framesSinceTransfer = 1;
 	if(args->kind == SUMMON_EFFECT_NONE) {
 		btEffectRunMeteor(args);
 	} else {
@@ -121,7 +121,7 @@ void btEffectRunSummon(BATTLE_EFFECT_PARM *args)
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_SHEET);
 }
 
-/* Runs an ordinary battle effect from BattleEffect_Handlers, with the sprite
+/* Runs an ordinary battle effect from BattleEffectHandlers, with the sprite
    sheet, state and canvas it lends. */
 void btEffectRunFromTable(BATTLE_EFFECT_PARM *args)
 {
@@ -132,8 +132,8 @@ void btEffectRunFromTable(BATTLE_EFFECT_PARM *args)
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 	state = Ram_HeapSlots->battleEff;
 	state->args = args;
-	state->vblanksSinceTransfer = 1;
-	BattleEffect_Handlers[args->kind - 1](args);
+	state->framesSinceTransfer = 1;
+	BattleEffectHandlers[args->kind - 1](args);
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_CANVAS);
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_SHEET);
@@ -176,14 +176,14 @@ void btEffectBuildWindowEdgeTable(void)
 void btEffectShowLivingTargets(BATTLE_EFFECT_PARM *args)
 {
 	Sint16 list[UNIT_MAX];
-	Sint32 count;
+	Sint32 cnt;
 	Sint32 i;
 
-	count = 0;
+	cnt = 0;
 	for(i = 0; i != args->tgtCnt; i++) {
 		if(syUnitGet(args->tgts[i])->hp > 0)
-			list[count++] = args->tgts[i];
+			list[cnt++] = args->tgts[i];
 	}
-	list[count] = BATTLE_UNIT_LIST_END;
+	list[cnt] = BATTLE_UNIT_LIST_END;
 	btActorSpawnObjectsForListStub(list, 0);
 }

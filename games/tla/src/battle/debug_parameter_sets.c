@@ -10,7 +10,7 @@
 #include "game/character_ids.h"
 
 /* clang-format off */
-DEBUG_PARTY_ENTRY Debug_ParameterSets[] ALIGNED(4) = {
+DEBUG_PARTY_ENTRY DebugParameterSets[] ALIGNED(4) = {
 	/* Set 0 */
 	{
 		.owner = FELIX,

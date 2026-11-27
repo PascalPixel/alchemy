@@ -192,7 +192,7 @@ enum {
 };
 
 /* The battle lists' two page arrow tiles in VRAM, which mnPageArrowsDraw draws
-   each frame (LIST_TILE_PAGES_LEFT and LIST_TILE_PAGES_RIGHT). */
+   each tick (LIST_TILE_PAGES_LEFT and LIST_TILE_PAGES_RIGHT). */
 #define LIST_PAGE_ARROW_VRAM \
 	((Sint32)BG_CHAR_BLOCK(0) + \
 		(LIST_TILE_PAGES_LEFT & TILE_NUMBER_MASK) * TILE_SIZE_4BPP)
@@ -273,9 +273,9 @@ typedef struct BATTLE_COMMAND_ROW_STATE {
 	WINDOW				   *win; /* shows the selected command's name */
 	Sint32					iconCnt;
 	/* The selected icon's scale, 8.8 fixed point: it pulses between 304 and 336
-	   (1.19 and 1.31 times) every 16 frames. */
+	   (1.19 and 1.31 times) every 16 ticks. */
 	AFFINE_TRANSFORM affine;
-	/* affineIndex: the OAM matrix built from affine this frame. selectedIndex:
+	/* affineIndex: the OAM matrix built from affine this tick. selectedIndex:
 	   the icon under the cursor. drawnIdx: the icon whose name the window
 	   shows, -1 before the first is drawn. */
 	Sint32 affineIdx, selectedIdx, drawnIdx;
@@ -287,7 +287,7 @@ typedef struct BATTLE_COMMAND_ROW_STATE {
 /* The Djinn menu's blinking arrow (djinn_blink.s), and where each element's
    standby count sits in the party status window (window_labels.s). The arrow
    tile mnBattleDjinnMenuRun copies to the two BG tiles from
-   DJINN_MENU_ARROW_TILE each frame: the first blinks (four frames shown, four
+   DJINN_MENU_ARROW_TILE each tick: the first blinks (four ticks shown, four
    blank), the second stays. */
 extern const Uint8 DjinnMenu_BlinkTile[32];
 /* The two BG tiles of the Djinn menu's arrow: DJINN_MENU_ARROW_TILE blinks, the
@@ -299,7 +299,7 @@ extern const Uint8 DjinnMenu_BlinkTile[32];
    Djinn column, a two-by-two grid of tiles: it blinks while the Djinni under
    the Djinn menu's cursor is of that element, on standby and ready to
    summon. */
-extern const Uint8 DjinnMenu_ElementXOffsets[4];
-extern const Uint8 DjinnMenu_ElementYOffsets[4];
+extern const Uint8 DjinnMenuElementXOffsets[4];
+extern const Uint8 DjinnMenuElementYOffsets[4];
 
 #endif

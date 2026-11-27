@@ -14,7 +14,7 @@ struct ACTOR *fdActorGetByIdStub(Sint32 actorId);
 void gmMainRoutineRunStub(Sint32 start);
 /* The script command "wait for screen": waits as long as the transition
    runs. */
-void fdScriptWaitTransitionFramesStub(void);
+void fdScriptWaitTransitionTicksStub(void);
 /* The script command "open screen": starts the script's screen transition. */
 void fdScriptStartScreenTransitionStub(void);
 /* Places a field effect sprite at (x, z), at rest with no target. */
@@ -26,9 +26,9 @@ void fdParticleUpdateStub(void *effect);
 /* Starts a field effect sprite with a sprite of the given kind at (x, z). */
 void fdParticleInitStub(
 	struct FIELD_PARTICLE *effect, Sint32 kind, Sint32 x, Sint32 z);
-/* Gives a field effect sprite its per-frame callback, starting at state 0. */
+/* Gives a field effect sprite its per-tick callback, starting at state 0. */
 void fdParticleSetCallbackStub(
-	struct FIELD_PARTICLE *effect, void (*callback)(struct FIELD_PARTICLE *));
+	struct FIELD_PARTICLE *effect, void (*func)(struct FIELD_PARTICLE *));
 /* Sets the animation of a field effect sprite. */
 void fdParticleSetAnimationStub(struct FIELD_PARTICLE *effect, Sint32 mode);
 /* Makes the script leave for entrance of scene. */

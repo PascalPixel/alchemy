@@ -11,8 +11,8 @@
 #include "system/iwram_call.h"
 #include "system/mul_fx.h"
 
-#define ACTOR_SLOTS 8 /* script-driven actors updated each frame */
-#define TURN_MAX	(TRIG_TURN / 16) /* the most an actor turns in one frame */
+#define ACTOR_SLOTS 8 /* script-driven actors updated each tick */
+#define TURN_MAX	(TRIG_TURN / 16) /* the most an actor turns in one tick */
 
 /* Calls a resident IWRAM function at its absolute address, which this code
    still reaches when it runs from its copy in RAM. */
@@ -26,7 +26,7 @@ ANGLE  fdTrigAtanStubArm(FIXED z, FIXED x);
 Sint32 fdMathSqrtStubArm(Sint32 value);
 Sint32 fdFixedDivStubArm(Sint32 divisor, Sint32 value);
 
-/* Advances the eight script-driven actors by one frame. */
+/* Advances the eight script-driven actors by one tick. */
 void fdActorUpdateAll(void)
 {
 	ACTOR_ARM_VIEW *actor;
@@ -39,13 +39,13 @@ void fdActorUpdateAll(void)
 	Sint32			z;
 	Sint32			deltaX;
 	Sint32			deltaZ;
-	FIXED			velocityX;
-	FIXED			velocityZ;
+	FIXED			velX;
+	FIXED			velZ;
 	Sint32			distance;
 	Sint32			speedRatio;
 	Sint32			groundY;
 	Sint32			turnDelta;
-	Uint16			travelAngle;
+	Uint16			travelAng;
 
 	for(slot = 0, actor = HEAP_SLOT_BLOCK(HEAP_SLOT_ACTORS); slot < ACTOR_SLOTS;
 		slot = nextSlot, actor = nextActor) {
@@ -60,7 +60,7 @@ void fdActorUpdateAll(void)
 		if(actor->paused != 0)
 			continue;
 
-		/* Count down a wait, or run commands until one waits for this frame. */
+		/* Count down a wait, or run commands until one waits for this tick. */
 		if(actor->wait != 0) {
 			actor->wait--;
 		} else {
@@ -73,7 +73,7 @@ void fdActorUpdateAll(void)
 #endif
 
 				if(command <= SCRIPT_COMMAND_MAX) {
-					if(ActorScript_CommandTable[command](
+					if(ActorScriptCommandTable[command](
 						   (struct ACTOR *)actor) == 0)
 						break;
 				} else {
@@ -112,21 +112,21 @@ void fdActorUpdateAll(void)
 				} else {
 					/* speedRatio is acceleration / distance in 16.16. */
 					speedRatio = syIWRAMDivFX(distance, actor->acceleration);
-					velocityX = actor->velX + syMulFXArm(deltaX, speedRatio);
-					actor->velX = velocityX;
+					velX = actor->velX + syMulFXArm(deltaX, speedRatio);
+					actor->velX = velX;
 					/* Limit the combined horizontal velocity after accelerating
 					   both axes. */
-					velocityZ = actor->velZ + syMulFXArm(deltaZ, speedRatio);
-					actor->velZ = velocityZ;
-					distance = syIWRAMSquart(syMulFXArm(velocityX, velocityX) +
-								   syMulFXArm(velocityZ, velocityZ))
+					velZ = actor->velZ + syMulFXArm(deltaZ, speedRatio);
+					actor->velZ = velZ;
+					distance = syIWRAMSquart(syMulFXArm(velX, velX) +
+								   syMulFXArm(velZ, velZ))
 						<< 8;
 					if(distance > actor->speedLimit) {
 						/* Too fast: scale the velocity back to the speed
 						   limit. */
 						speedRatio = syIWRAMDivFX(distance, actor->speedLimit);
-						actor->velX = syMulFXArm(velocityX, speedRatio);
-						actor->velZ = syMulFXArm(velocityZ, speedRatio);
+						actor->velX = syMulFXArm(velX, speedRatio);
+						actor->velZ = syMulFXArm(velZ, speedRatio);
 					}
 				}
 			} else {
@@ -177,7 +177,7 @@ void fdActorUpdateAll(void)
 		z += actor->velZ;
 
 		/* Arrived: the watched axis reached the target, or crossed it this
-		   frame (the sign of the offset changed). */
+		   tick (the sign of the offset changed). */
 		switch(actor->arrivalAxis) {
 		case ARRIVAL_AXIS_X:
 			if(x == actor->tgtX ||
@@ -221,10 +221,10 @@ void fdActorUpdateAll(void)
 			x = actor->velX;
 			z = actor->velZ;
 			if(x != 0 || z != 0) {
-				travelAngle = fdTrigAtanStubArm(z, x);
+				travelAng = fdTrigAtanStubArm(z, x);
 				/* As a signed halfword the difference is the shorter way
 				   round. */
-				turnDelta = (Sint16)(travelAngle - actor->facing);
+				turnDelta = (Sint16)(travelAng - actor->facing);
 				if(turnDelta > TURN_MAX)
 					turnDelta = TURN_MAX;
 				if(turnDelta < -TURN_MAX)

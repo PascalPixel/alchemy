@@ -72,14 +72,14 @@ UNUSED Sint32 syVRAMCacheGetLongestFreeRun(void)
    cache's VRAM_BLOCK_COUNT. */
 Sint32 syVRAMCacheCountFreeBlocks(void)
 {
-	Sint32 freeCount = 0;
+	Sint32 freeCnt = 0;
 	Sint32 i;
 
 	for(i = 0; i < VRAM_BLOCK_COUNT; i++) {
 		if(VramCacheBlockOwners[i] == VRAM_BLOCK_OWNER_FREE)
-			freeCount++;
+			freeCnt++;
 	}
-	return freeCount;
+	return freeCnt;
 }
 
 /* Frees every block entry `id` owns in VramCacheBlockOwners. Returns -1 when it
@@ -141,7 +141,7 @@ Sint32 syVRAMCacheReleaseVRAM(Uint32 id)
 Sint32 syVRAMCacheLoad(Uint32 id, Uint32 size, const void *src)
 {
 	VRAM_CACHE_ENTRY *entry;
-	Sint32			  offset;
+	Sint32			  ofs;
 	void			 *dst;
 
 	entry = &VramCacheEntries[id];
@@ -153,27 +153,27 @@ Sint32 syVRAMCacheLoad(Uint32 id, Uint32 size, const void *src)
 	if(entry->size > VRAM_CACHE_SIZE_NO_BLOCKS) {
 		if(entry->size != size) {
 			syVRAMCacheFreeEntry(id);
-			offset = syVRAMCacheAllocateBlocks(id, size);
+			ofs = syVRAMCacheAllocateBlocks(id, size);
 		} else {
-			offset = entry->ofs;
+			ofs = entry->ofs;
 		}
 	} else {
-		offset = syVRAMCacheAllocateBlocks(id, size);
+		ofs = syVRAMCacheAllocateBlocks(id, size);
 	}
 
-	if(offset != -1) {
+	if(ofs != -1) {
 		/* Commit the allocation before copying, clearing or leaving its
 		   pixels. */
-		dst = (void *)(OBJ_VRAM0 + offset);
+		dst = (void *)(OBJ_VRAM0 + ofs);
 		entry->size = size;
-		entry->ofs = offset;
+		entry->ofs = ofs;
 		if(src != 0) {
 			if(src == (const void *)-1)
 				syWordsClearEntry(dst, size);
 			else
 				syDMAXCopy(src, dst, DMA_COPY_WORDS(size >> 2), REG_DMA3);
 		}
-		return (Uint32)offset / TILE_SIZE_4BPP;
+		return (Uint32)ofs / TILE_SIZE_4BPP;
 	}
 	return 0;
 }
@@ -183,12 +183,12 @@ void syVRAMCacheReset(void)
 {
 	VRAM_CACHE_ENTRY *entry;
 	Uint8			 *owner = VramCacheBlockOwners;
-	Uint32			  count;
+	Uint32			  cnt;
 
-	for(count = 0; count < VRAM_BLOCK_COUNT; count++)
+	for(cnt = 0; cnt < VRAM_BLOCK_COUNT; cnt++)
 		*owner++ = VRAM_BLOCK_OWNER_FREE;
 	entry = VramCacheEntries;
-	for(count = 0; count < VRAM_CACHE_ENTRY_COUNT; count++, entry++) {
+	for(cnt = 0; cnt < VRAM_CACHE_ENTRY_COUNT; cnt++, entry++) {
 		entry->ofs |= VRAM_CACHE_OFFSET_FREE;
 		entry->size = 0;
 	}
@@ -233,20 +233,20 @@ Sint32 syVRAMCacheReload(Sint32 id, Sint32 src)
    fills it with a rotation by angle and the scales; returns its index, or the
    last matrix's when all are taken. The body is
    syOAMMatrixAllocFromTransform's. */
-Sint32 syAffineMatrixBuild(Sint32 angle, Sint32 xScale, Sint32 yScale)
+Sint32 syAffineMatrixBuild(Sint32 ang, Sint32 xScale, Sint32 yScale)
 {
 	AFFINE_MATRIX *matrix;
 	Sint16		  *coefficient;
-	Uint8		   index;
+	Uint8		   idx;
 
-	index = OamMatrixCount;
-	if(index >= OBJ_AFFINE_MATRIX_COUNT)
+	idx = OamMatrixCount;
+	if(idx >= OBJ_AFFINE_MATRIX_COUNT)
 		return OBJ_AFFINE_MATRIX_COUNT - 1;
 
-	matrix = &OamMatrices[index];
+	matrix = &OamMatrices[idx];
 	coefficient = matrix->coefficients;
-	OamMatrixCount = index + 1;
-	if((xScale == yScale || xScale == -yScale) && angle == 0) {
+	OamMatrixCount = idx + 1;
+	if((xScale == yScale || xScale == -yScale) && ang == 0) {
 		/* Unrotated and evenly scaled (or mirrored): pa and pd are the scale's
 		   reciprocals (toFIXED(1) / scale, the 8.8 inverse of an 8.8 scale), pb
 		   and pc 0, two halfwords to a row. */
@@ -266,8 +266,8 @@ Sint32 syAffineMatrixBuild(Sint32 angle, Sint32 xScale, Sint32 yScale)
 		FIXED sine;
 		FIXED cosine;
 
-		sine = sySin(angle);
-		cosine = syCos(angle);
+		sine = sySin(ang);
+		cosine = syCos(ang);
 		*coefficient = cosine / xScale;
 		coefficient++;
 		*coefficient = sine / xScale;
@@ -277,5 +277,5 @@ Sint32 syAffineMatrixBuild(Sint32 angle, Sint32 xScale, Sint32 yScale)
 		*coefficient = cosine / yScale;
 	}
 
-	return index;
+	return idx;
 }

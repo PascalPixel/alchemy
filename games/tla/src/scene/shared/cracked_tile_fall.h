@@ -1,14 +1,14 @@
 /* Drops the leader through a cracked tile: it gives way and the leader spins
    down into it while the screen fades. */
-void scCrackedTileFall(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry)
+void scCrackedTileFall(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry)
 {
 	ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	Sint32 x = (FIELD_METATILE(leader->x.fixed)) | (Sint16)(table->x & 64);
-	Sint32 z = (FIELD_METATILE(leader->z.fixed)) | (Sint16)(table->z & 64);
+	Sint32 x = (FIELD_METATILE(leader->x.fixed)) | (Sint16)(tbl->x & 64);
+	Sint32 z = (FIELD_METATILE(leader->z.fixed)) | (Sint16)(tbl->z & 64);
 
 	scLeaderCenterInMetatile();
 	fdScriptPlaySnd(SE_SPLASH);
-	fdMapGridCopyMetatiles(table->x, table->z + 2, 1, 1, x, z);
+	fdMapGridCopyMetatiles(tbl->x, tbl->z + 2, 1, 1, x, z);
 	syFieldScriptWait(12);
 	leader->facing = FACING_SOUTH;
 	leader->motionFlg = 0;
@@ -18,7 +18,7 @@ void scCrackedTileFall(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry)
 			WINOUT_WINOBJ_BG1 | WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_BG3,
 		&REG_WINOUT);
 	REG_DISPCNT |= DISPCNT_OBJWIN_ON;
-	table->shown = 1;
+	tbl->shown = 1;
 	fdActorSetAnimation(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
 	syFieldScriptWait(16);
@@ -31,8 +31,8 @@ void scCrackedTileFall(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry)
 		syWait(1);
 	}
 	fdActorGet(MainRoutineStateWork.leaderActorId)->sprStorageKind = 0;
-	table->shown = 0;
+	tbl->shown = 0;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 }

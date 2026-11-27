@@ -11,7 +11,7 @@ enum { METATILE_BEHAVIOR_BREAKABLE_ICE = 77 };
    watchedActor, then shrinks away in crumbs. */
 void scActorRollAndCrumble(ACTOR *actor)
 {
-	VECTOR3		 position;
+	VECTOR3		 pos;
 	FIELD_STATE *field = Ram_HeapSlots->fieldState;
 	Sint32		 state = actor->tmr;
 
@@ -21,13 +21,13 @@ void scActorRollAndCrumble(ACTOR *actor)
 		Sint32			 tileX;
 		MAP_METATILE	*middleMetatiles;
 		MAP_METATILE	*overheadMetatiles;
-		Sint32			 middleOffsetX;
-		Sint32			 overheadOffsetX;
-		Sint32			 offset;
+		Sint32			 middleOfsX;
+		Sint32			 overheadOfsX;
+		Sint32			 ofs;
 		Sint32			 overheadZ;
 		Sint32			 tileZ;
-		Sint32			 middleOffsetZ;
-		Sint32			 overheadOffsetZ;
+		Sint32			 middleOfsZ;
+		Sint32			 overheadOfsZ;
 		Sint32			 x;
 		Sint32			 z;
 		Sint32			 middleX;
@@ -45,11 +45,11 @@ void scActorRollAndCrumble(ACTOR *actor)
 			paused |= 1;
 		actor->paused = paused;
 
-		position.x = actor->x.fixed;
-		position.y = actor->y.fixed;
-		position.z = actor->z.fixed;
-		syFieldVectorAddPolarOffset(8, actor->facing, &position);
-		if(fdMapGridGetTerrainKindOrBumpAt(0, position.x, position.z) ==
+		pos.x = actor->x.fixed;
+		pos.y = actor->y.fixed;
+		pos.z = actor->z.fixed;
+		syFieldVectorAddPolarOffset(8, actor->facing, &pos);
+		if(fdMapGridGetTerrainKindOrBumpAt(0, pos.x, pos.z) ==
 			TERRAIN_ROUNDED_SQUARE) {
 			actor->tgtZ = ACTOR_NO_TARGET;
 			actor->tgtY = ACTOR_NO_TARGET;
@@ -70,21 +70,19 @@ void scActorRollAndCrumble(ACTOR *actor)
 							   .metatiles[tileX + tileZ * MAPGRID_SIZE];
 		overheadMetatiles = &map->layers[MAPGRID_LAYER_OVERHEAD]
 								 .metatiles[tileX + tileZ * MAPGRID_SIZE];
-		middleOffsetX = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].ofsX);
-		middleOffsetZ = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].ofsY);
-		overheadOffsetX =
-			FIELD_METATILE(map->layers[MAPGRID_LAYER_OVERHEAD].ofsX);
-		overheadOffsetZ =
-			FIELD_METATILE(map->layers[MAPGRID_LAYER_OVERHEAD].ofsY);
+		middleOfsX = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].ofsX);
+		middleOfsZ = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].ofsY);
+		overheadOfsX = FIELD_METATILE(map->layers[MAPGRID_LAYER_OVERHEAD].ofsX);
+		overheadOfsZ = FIELD_METATILE(map->layers[MAPGRID_LAYER_OVERHEAD].ofsY);
 
-		for(dz = -1, overheadZ = tileZ + overheadOffsetZ - 2, z = tileZ - 1,
-		middleZ = tileZ + middleOffsetZ - 1;
+		for(dz = -1, overheadZ = tileZ + overheadOfsZ - 2, z = tileZ - 1,
+		middleZ = tileZ + middleOfsZ - 1;
 			dz <= 1; overheadZ++, z++, middleZ++, dz++) {
-			for(dx = -1, overheadX = tileX + overheadOffsetX - 1, x = tileX - 1,
-			middleX = tileX + middleOffsetX - 1;
+			for(dx = -1, overheadX = tileX + overheadOfsX - 1, x = tileX - 1,
+			middleX = tileX + middleOfsX - 1;
 				dx <= 1; overheadX++, x++, middleX++, dx++) {
-				offset = ((dz << 7) + dx) * 4;
-				metatile = (MAP_METATILE *)(offset + (Sint32)middleMetatiles);
+				ofs = ((dz << 7) + dx) * 4;
+				metatile = (MAP_METATILE *)(ofs + (Sint32)middleMetatiles);
 				if(metatile->collisionCode == METATILE_BEHAVIOR_BREAKABLE_ICE) {
 					metatile->collisionCode = METATILE_BEHAVIOR_NORMAL;
 					fdMapGridCopyMetatilesLayered(
@@ -94,7 +92,7 @@ void scActorRollAndCrumble(ACTOR *actor)
 					scIceChipsSpawn(FIELD_METATILE_CENTER(x), actor->y.fixed,
 						FIELD_METATILE_CENTER(z), actor->facing);
 				}
-				metatile = (MAP_METATILE *)(offset + (Sint32)overheadMetatiles);
+				metatile = (MAP_METATILE *)(ofs + (Sint32)overheadMetatiles);
 				if(metatile->collisionCode == METATILE_BEHAVIOR_BREAKABLE_ICE) {
 					metatile->collisionCode = METATILE_BEHAVIOR_NORMAL;
 					fdMapGridCopyMetatilesLayered(
@@ -111,7 +109,7 @@ void scActorRollAndCrumble(ACTOR *actor)
 			actor->scaleX += toFIXED(1) / 16;
 			actor->scaleY += toFIXED(1) / 16;
 		}
-		scFieldActorSetMoveTargetFX(actor, position.x, position.y, position.z);
+		scFieldActorSetMoveTargetFX(actor, pos.x, pos.y, pos.z);
 
 		fieldState = Ram_HeapSlots->fieldState;
 		hit = FLAME_THROWERS_STATE;

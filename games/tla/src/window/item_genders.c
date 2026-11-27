@@ -1,6 +1,6 @@
 /* The grammatical gender of each item's name in the German and Italian
    releases, which picks the possessive ("your") a message writes before the
-   item (LocalizedWord_ItemPossessives): "dein" or "deine" in German, "Il tuo"
+   item (LocalizedWordItemPossessives): "dein" or "deine" in German, "Il tuo"
    or "la tua" in Italian. The names in the comments are the English
    release's. */
 
@@ -20,7 +20,7 @@ typedef enum ITEM_GENDER {
 /* BUG: the rows start at the Long Sword, not at item 0, so each item takes the */
 /* gender of the one after it ("dein Silberklinge", for the neuter Fire Brand); */
 /* the last row is for no item. BUGFIX adds item 0's row. */
-const Sint8 LocalizedWord_ItemGenders[] = {
+const Sint8 LocalizedWordItemGenders[] = {
 #if FIX_GERMAN_ITEM_GENDER_OFF_BY_ONE
 	ITEM_MASCULINE, /* ??? */
 #endif
@@ -493,7 +493,7 @@ const Sint8 LocalizedWord_ItemGenders[] = {
 /* in German. The names here are The Broken Seal's. */
 /* UB: an item past the Cleric's Ring, the last of its 269 rows, reads beyond */
 /* the table; UBFIX gives every item of this game a row. */
-const Sint8 LocalizedWord_ItemGenders[] = {
+const Sint8 LocalizedWordItemGenders[] = {
 	ITEM_MASCULINE, /* ??? */
 	ITEM_NEUTER, /* Long Sword */
 	ITEM_NEUTER, /* Broad Sword */

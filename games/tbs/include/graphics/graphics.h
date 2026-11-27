@@ -34,7 +34,7 @@
 extern Uint8 PageArrowTiles[];
 /* A one-entry table of sprite tiles: the pointing hand cursor
    (PointingHandTiles), returned by mnWindowSprGetPointerTiles. */
-extern Sint32 WindowSprite_PointerTiles[];
+extern Sint32 WindowSpritePointerTiles[];
 /* The compressed item icons, indexed by an item's icon field. */
 extern Uint8 *ItemIcons[];
 /* The end of ItemIcons, so mnIconCountItemIcons can count them. */
@@ -68,10 +68,10 @@ typedef struct TILE_MASK {
 
 /* The six row patterns that mark the battle menus' range icons, colour 5 over a
    colour-4 fill, read by mnRangeIconBuildTiles. */
-extern const TILE_MASK Menu_BarPatternRows[];
+extern const TILE_MASK MenuBarPatternRows[];
 /* The row masks mnBuildPatternTiles XORs into the range icons' tile pairs
    (menu_tiles.s). */
-extern const TILE_MASK Menu_PatternRowMasks[];
+extern const TILE_MASK MenuPatternRowMasks[];
 
 /* One row of a tile XORed with a row's mask: how mnBuildPatternTiles and
    mnRangeIconBuildTiles mark each tile of a pair, at all four of their XORs, as
@@ -84,19 +84,19 @@ static __inline__ Uint32 mnXorWord(Uint32 word, Uint32 mask)
 /* The credits' 8x8 one-bit font, ASCII 32 to 127. */
 extern const Uint8 Credits_Font[];
 /* The order in which the dissolve sets the 64 pixels of its tile. */
-extern const Uint8 ScreenTransition_DitherTable[];
+extern const Uint8 ScreenTransitionDitherTable[];
 /* Pixels: how far each line's edge of Reveal's rippling ellipse moves out. */
-extern const Sint8 ScreenTransition_EdgeOffsets[];
+extern const Sint8 ScreenTransitionEdgeOffsets[];
 /* Pixels: the width of WINDOW_TRANSITION_BARS' bar on each line, by
    progress. */
-extern const Uint8 ScreenTransition_NoiseWidths[];
+extern const Uint8 ScreenTransitionNoiseWidths[];
 /* HEAP_SLOT_PALETTE_CYCLES: the queue of palette cycles, which no code in the
    game ever starts. */
 #define PaletteCycleStateWork \
 	(*(struct PALETTE_CYCLE_STATE **)&HeapSlots[HEAP_SLOT_PALETTE_CYCLES])
 /* Two 16-entry colour maps for 4bpp pixels: the first draws colour 1 as colour
    10, the second leaves every colour as it is. */
-extern const Uint16 Graphics_ExpandNibbleTable[];
+extern const Uint16 GraphicsExpandNibbleTable[];
 /* HEAP_SLOT_SPRITES: the actor system's sprite pool, which the field animation
    and the sprite viewer walk. */
 #define SpritesWork (*(struct SPR **)&HeapSlots[HEAP_SLOT_SPRITES])
@@ -122,7 +122,7 @@ extern const Uint8 Text_DecodeSymbol[];
    HEAP_SLOT_MESSAGE_DECODER. */
 extern Uint8 Text_DecodeSymbolCodeSize[];
 /* mnScanlineWindowBuildEdges, copied to the heap by mnScanlineWindowFillSpans
-   for each frame of a window transition. */
+   for each tick of a window transition. */
 extern Uint8 mnScanlineWindowBuildEdgesCodeSize[];
 /* Interleaves a layout's three decoded cell planes into cell words, for
    fdTileMapConvertBuffer. */
@@ -148,32 +148,32 @@ extern Uint8 Tile_ExpandOpaqueCodeSize[];
 extern const Uint8 Title_PromptTiles[];
 /* The eight scales, in 1/65536, that mnWindowSprPulse pulses the settings
    menu's selected icon through. */
-extern const Sint32 WindowSprite_PulseScales[];
+extern const Sint32 WindowSpritePulseScales[];
 /* The pixel offsets mnTitleBob moves a sprite pair up and down by. */
 extern const Uint8 MenuTitleBobOffsets[];
 /* The icon count's digits: 0 to 9, then the tens 1 to 3. */
-extern Uint8 *Icon_DigitPointers[];
+extern Uint8 *IconDigitPointers[];
 /* The three icon bases; base 2 is the one item and Psynergy icons share. */
-extern Uint8 *Icon_BasePointerTable[];
+extern Uint8 *IconBasePointerTable[];
 /* The three marks mnItemIconCompose draws over an item icon: 0 on a broken
    item, 1 on an equipped one and 2 on a cursed one. */
-extern Uint8 *Icon_MarkPointers[];
+extern Uint8 *IconMarkPointers[];
 /* The command icons' overlays, all 43 entries the same picture. */
 extern Uint8 *Icon_OverlayPointerTable[];
 /* The menus' hand cursor and gem, 16x16 4bpp sprites; the hand is loaded by
    mnIconCreateHandCursor. */
 extern Uint8 Icon_ResourceTiles[];
-/* Pixels: the hop a window's sprite makes, one step a frame. */
-extern const Sint8 WindowSprite_BounceOffsets[];
+/* Pixels: the hop a window's sprite makes, one step a tick. */
+extern const Sint8 WindowSpriteBounceOffsets[];
 /* The animated page arrow's pictures, 8x16 sprites of 256 colours, 128 bytes
    each. */
 extern const Uint8 WindowSprite_PageArrowTiles[];
 /* Pixels: the x and y a window's wobbling sprite is moved by, one step every
-   other frame. */
-extern const Sint8 WindowSprite_WobbleOffsets[][2];
+   other tick. */
+extern const Sint8 WindowSpriteWobbleOffsets[][2];
 /* For each of the 16 text colours, the pen the font's light shade takes in the
    UI palette. */
-extern const Uint8 Font_ColorPens[];
+extern const Uint8 FontColorPens[];
 /* mnGlyphDrawArm, copied to the heap for each character drawn. */
 extern Uint8 mnGlyphDrawCodeSize[];
 /* Each main font glyph's width in pixels, from the space (32) on. */
@@ -184,11 +184,11 @@ extern const Uint8 mnMessageFindArm[];
 extern Uint8 mnMessageFindCodeSize[];
 /* The party status window's column lines, ended by -1: the Djinn column's
    first, then one between members. */
-extern const Sint8 Window_PartyColumnOffsets[];
+extern const Sint8 WindowPartyColumnOffsets[];
 /* The battle effect module's stub table, declared as a function so that a call
    reaches its first stub, btEffectBuildBlitterStub; nothing in this game calls
    it by this name. */
 Sint32 btStubsBattleEffect(Sint32 slot, Sint32 width_shift, Sint32 height_shift,
-	Sint32 flags, Uint32 mode);
+	Sint32 flg, Uint32 mode);
 
 #endif

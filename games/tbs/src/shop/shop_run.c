@@ -10,11 +10,11 @@ Sint32 mnShopListAvailableArtifacts(void)
 	SHOP_STATE *shop;
 	Sint16	   *stockItems;
 	Sint32		itemId;
-	Sint32		count;
+	Sint32		cnt;
 	Sint8		equipmentGroup;
 
 	shop = MenuState;
-	count = 0;
+	cnt = 0;
 	itemId = 0;
 	stockItems = shop->stockItemIds;
 	/* The shop's type is the equipment group it sells (SHOP_TYPE). Every 9-bit
@@ -24,16 +24,16 @@ Sint32 mnShopListAvailableArtifacts(void)
 		if(equipmentGroup == gmItemGetEquipmentGroupStub(itemId) &&
 			gmItemAdjustRareItemStockStub(itemId, 0) != 0) {
 			*stockItems = itemId;
-			count++;
+			cnt++;
 			stockItems++;
 		}
 	}
-	shop->stockItemIds[count] = 0;
-	shop->stockCnt = count;
-	return count;
+	shop->stockItemIds[cnt] = 0;
+	shop->stockCnt = cnt;
+	return cnt;
 }
 
-/* Advances the hand cursor one frame. Runs every frame as an event while a
+/* Advances the hand cursor one tick. Runs every tick as an event while a
    counter is open. */
 void mnCursorStep(void)
 {
@@ -50,7 +50,7 @@ void mnShopInitState(void)
 	shop = syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(SHOP_STATE));
 	fdEndBusyAndRevealStub();
 	DMA_FILL32(0, shop, sizeof(SHOP_STATE));
-	shop->cursorFrm = SHOP_CURSOR_ENTER_FRAMES;
+	shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
 	shop->partyMemberCnt = gmPartyListMembersStub(shop->partyMemberIds);
 	/* Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite */
 	resourceSlot = syVRAMCacheFindFreeEntry();
@@ -71,7 +71,7 @@ void mnShopInitState(void)
 	resourceSlot = syVRAMCacheFindFreeEntry();
 	shop->statUpIcon = resourceSlot;
 	syVRAMCacheLoad(resourceSlot, 128, Shop_SmallUpArrowTiles);
-	sySetEvent(mnCursorStep, EVENT_PASS_FRAME);
+	sySetEvent(mnCursorStep, EVENT_PASS_TICK);
 }
 
 /* Stops the cursor event, frees the six cursor icons and the state block. Every
@@ -99,7 +99,7 @@ Sint32 mnShopRun(Sint32 stockRow, Sint32 keeperId)
 {
 	SHOP_STATE *shop;
 	WINDOW_SPR *anchor;
-	WINDOW	   *window;
+	WINDOW	   *win;
 	Sint32		action = 0;
 
 	if(stockRow >= mnShopStockGetRowCount() || stockRow < 0)
@@ -122,11 +122,11 @@ Sint32 mnShopRun(Sint32 stockRow, Sint32 keeperId)
 		(fdActorGetByIdStub(keeperId))->spr->entries[0]->anmId;
 	/* The shopkeeper's portrait window, or an empty one off the left edge when
 	   there is no portrait. */
-	window = mnPortraitOpenWindowStub(shop->keeperGraphics, 0, 0, 0);
-	if(window == 0)
-		window = mnWindowCreateStub(-5, 0, 5, 5, WINDOW_FLAG_INSTANT);
+	win = mnPortraitOpenWindowStub(shop->keeperGraphics, 0, 0, 0);
+	if(win == 0)
+		win = mnWindowCreateStub(-5, 0, 5, 5, WINDOW_FLAG_INSTANT);
 	anchor = mnWindowSprCreateStub(
-		shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
+		shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, win, 0, 0);
 	anchor->motion = WINDOW_SPRITE_MOTION_STILL;
 	/* The hand's icon is the shop's, freed by mnShopReleaseState, not the
 	   sprite's. */
@@ -172,7 +172,7 @@ Sint32 mnShopRun(Sint32 stockRow, Sint32 keeperId)
 	}
 	/* "Feel free to drop in anytime." */
 	mnShopShowKeeperMessage(MsgShopFarewell);
-	mnWindowCloseStub(window, 2);
+	mnWindowCloseStub(win, 2);
 	mnShopReleaseState();
 	return 0;
 }
@@ -208,7 +208,7 @@ Sint32 mnShopOpenDebugShop(Sint32 unused)
 	return 0;
 }
 
-/* Waits a frame at a time while a jingle holds back the music, as the inn's
+/* Waits a tick at a time while a jingle holds back the music, as the inn's
    does through the night. */
 void mnSndWaitForJingle(void)
 {
@@ -220,23 +220,23 @@ void mnSndWaitForJingle(void)
 /* Shows a shopkeeper's line and waits until it is typed out. The line is given
    as a weapon shop's: an armor or item shop says its own, the same distance on
    in the text, and a warriors' shop its own beyond that. */
-void mnShopShowKeeperMessage(Sint32 messageId)
+void mnShopShowKeeperMessage(Sint32 msgId)
 {
 	SHOP_STATE *shop = MenuState;
 	Sint32		voice = fdSpeakerGetVoiceStub(shop->keeperGraphics);
-	Sint32		resolvedMessage = messageId;
+	Sint32		resolvedMsg = msgId;
 	Sint8		shopType;
 
 	mnMessageCloseFinishedWindowsStub();
 	shopType = shop->shopType;
 	if(shopType == SHOP_TYPE_ARMOR)
-		resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;
+		resolvedMsg += MsgArmorShopWelcome - MsgWeaponShopWelcome;
 	if(shopType == SHOP_TYPE_ITEMS)
-		resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
+		resolvedMsg += MsgItemShopWelcome - MsgWeaponShopWelcome;
 	/* A warriors' shop adds its distance on top of its type's */
 	if((Sint8)shop->warriorShop != 0)
-		resolvedMessage += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
-	mnMessageOpenWindowStub(resolvedMessage, 5, 0,
+		resolvedMsg += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
+	mnMessageOpenWindowStub(resolvedMsg, 5, 0,
 		MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_FIXED_X |
 			MESSAGE_WINDOW_UNREAD);
 	while(mnMessageAllTypedStub() == 0)
@@ -246,10 +246,10 @@ void mnShopShowKeeperMessage(Sint32 messageId)
 
 /* Shows a shopkeeper's line as mnShopShowKeeperMessage does, hiding the hand
    cursor while it shows and putting back its motion after. */
-void mnShopShowKeeperMessageHidingCursor(Sint32 messageId)
+void mnShopShowKeeperMessageHidingCursor(Sint32 msgId)
 {
 	Sint32		 voice;
-	Sint32		 resolvedMessage;
+	Sint32		 resolvedMsg;
 	Sint8		 shopType;
 	Sint8		 warriorShop;
 	Uint8		 savedCursorMode;
@@ -259,22 +259,22 @@ void mnShopShowKeeperMessageHidingCursor(Sint32 messageId)
 	shop = MenuState;
 	cursorSlot = &shop->cursor.anchor;
 	savedCursorMode = (*cursorSlot)->motion;
-	resolvedMessage = messageId;
+	resolvedMsg = msgId;
 	voice = fdSpeakerGetVoiceStub(shop->keeperGraphics);
 	shopType = shop->shopType;
 	if(shopType == SHOP_TYPE_ARMOR) {
-		resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;
+		resolvedMsg += MsgArmorShopWelcome - MsgWeaponShopWelcome;
 	}
 	if(shopType == SHOP_TYPE_ITEMS) {
-		resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
+		resolvedMsg += MsgItemShopWelcome - MsgWeaponShopWelcome;
 	}
 	warriorShop = shop->warriorShop;
 	if(warriorShop != 0) {
-		resolvedMessage += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
+		resolvedMsg += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
 	}
 	(*cursorSlot)->motion = WINDOW_SPRITE_MOTION_HIDDEN;
 	mnMessageCloseFinishedWindowsStub();
-	mnMessageOpenWindowStub(resolvedMessage, 5, 0,
+	mnMessageOpenWindowStub(resolvedMsg, 5, 0,
 		MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_FIXED_X |
 			MESSAGE_WINDOW_UNREAD);
 	while(mnMessageAllTypedStub() == 0) {
@@ -314,9 +314,9 @@ UNUSED SELECTION_NODE_LINK_VIEW *syNodeChainGetNodeAtIndex(
 	SELECTION_MENU_CURSOR_VIEW *state)
 {
 	SELECTION_NODE_LINK_VIEW *node = state->node;
-	Sint32					  linkIndex;
+	Sint32					  linkIdx;
 
-	for(linkIndex = 0; linkIndex != state->cnt; ++linkIndex) {
+	for(linkIdx = 0; linkIdx != state->cnt; ++linkIdx) {
 		node = node->next;
 	}
 	return node;

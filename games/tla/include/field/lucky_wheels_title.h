@@ -5,7 +5,7 @@
 
 #include "types.h"
 
-extern const Uint8 LuckyWheels_TitleLetterTiles[];
-extern const Uint8 LuckyWheels_TitleLetterWidths[];
+extern const Uint8 LuckyWheelsTitleLetterTiles[];
+extern const Uint8 LuckyWheelsTitleLetterWidths[];
 
 #endif

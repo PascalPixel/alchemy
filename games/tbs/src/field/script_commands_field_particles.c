@@ -29,28 +29,28 @@ void fdParticleUpdate(FIELD_PARTICLE *effect)
    exclusive. */
 void fdEffectDrawScaledActor(FIELD_PARTICLE *particle)
 {
-	SPR			 *sprite;
-	FIXED		  offset;
+	SPR			 *spr;
+	FIXED		  ofs;
 	SPR_SCALE	  scale;
-	SPR_PLACEMENT position;
+	SPR_PLACEMENT pos;
 
-	sprite = particle->spr;
-	offset = 0;
+	spr = particle->spr;
+	ofs = 0;
 	if(particle->flg & FIELD_PARTICLE_LIFTED_BY_Z)
-		offset = toFIXED(508) - particle->z;
-	scale.x = syMulFX(particle->scaleX, sprite->scale);
-	scale.y = syMulFX(particle->scaleY, sprite->scale);
-	position.x = particle->x;
-	position.height = offset;
-	position.y = particle->z + offset;
-	position.groundHeight = 0;
+		ofs = toFIXED(508) - particle->z;
+	scale.x = syMulFX(particle->scaleX, spr->scale);
+	scale.y = syMulFX(particle->scaleY, spr->scale);
+	pos.x = particle->x;
+	pos.height = ofs;
+	pos.y = particle->z + ofs;
+	pos.groundHeight = 0;
 	if(particle->x > -toFIXED(32) && particle->x < toFIXED(272) &&
 		particle->z > -toFIXED(32) && particle->z < toFIXED(224))
-		fdRenderApplyProjectedPlacementStub(sprite, &position, &scale, 0);
+		fdRenderApplyProjectedPlacementStub(spr, &pos, &scale, 0);
 }
 
 /* Moves a field effect sprite toward its target, turning at most turnStepMax a
-   frame when turnStepLimited is set and speeding up by acceleration to
+   tick when turnStepLimited is set and speeding up by acceleration to
    speedMax. One that stops at its target lands on it once within 8 pixels. */
 void fdParticleUpdateMotion(FIELD_PARTICLE *effect)
 {
@@ -60,7 +60,7 @@ void fdParticleUpdateMotion(FIELD_PARTICLE *effect)
 	Sint32 pixelX;
 	Sint32 pixelZ;
 	Sint32 speed;
-	Sint16 angle;
+	Sint16 ang;
 	Sint32 heading;
 	Sint32 facing;
 	Sint16 turn;
@@ -83,10 +83,10 @@ void fdParticleUpdateMotion(FIELD_PARTICLE *effect)
 			return;
 		}
 	}
-	angle = syAtan(deltaZ, deltaX);
+	ang = syAtan(deltaZ, deltaX);
 	if(effect->turnStepLimited != 0) {
 		heading = effect->heading;
-		turn = angle - heading;
+		turn = ang - heading;
 		if((turn >= 0 ? turn : -turn) >= effect->turnStepMax) {
 			if(turn < 0) {
 				if(-turn > effect->turnStepMax)
@@ -94,18 +94,18 @@ void fdParticleUpdateMotion(FIELD_PARTICLE *effect)
 			} else if(turn > effect->turnStepMax) {
 				turn = effect->turnStepMax;
 			}
-			angle = turn + heading;
+			ang = turn + heading;
 		}
 	}
-	facing = (Uint16)angle;
+	facing = (Uint16)ang;
 	effect->heading = facing;
 	speed = effect->speed + effect->acceleration;
 	if(speed > effect->speedMax)
 		speed = effect->speedMax;
-	angle = facing;
+	ang = facing;
 	effect->speed = speed;
-	effect->x += syMulFX(syCos(angle), speed);
-	effect->z += syMulFX(sySin(angle), speed);
+	effect->x += syMulFX(syCos(ang), speed);
+	effect->z += syMulFX(sySin(ang), speed);
 }
 
 /* Returns 1 while a field effect sprite that stops at its target still has one
@@ -136,10 +136,10 @@ void fdParticleSetAnimation(FIELD_PARTICLE *effect, Sint32 mode)
 	fdSprStartAnimationStub(effect->spr, mode);
 }
 
-/* Gives a field effect sprite its per-frame callback, starting at state 0. */
-void fdParticleSetCallback(FIELD_PARTICLE *effect, EFFECT_CALLBACK callback)
+/* Gives a field effect sprite its per-tick callback, starting at state 0. */
+void fdParticleSetCallback(FIELD_PARTICLE *effect, EFFECT_CALLBACK func)
 {
-	effect->func = callback;
+	effect->func = func;
 	effect->funcDelay = 0;
 	effect->age = 0;
 	effect->state = 0;
@@ -149,13 +149,13 @@ void fdParticleSetCallback(FIELD_PARTICLE *effect, EFFECT_CALLBACK callback)
    target, top speed 2, acceleration and scale 1, drawn, animation 1. */
 void fdParticleInit(FIELD_PARTICLE *effect, Sint32 kind, Sint32 x, FIXED z)
 {
-	SPR *sprite;
+	SPR *spr;
 
 	DMA_FILL32(0, effect, sizeof *effect);
-	sprite = fdSprCreateStub(kind);
-	effect->spr = sprite;
-	if(sprite != NULL)
-		sprite->image.pri = 0;
+	spr = fdSprCreateStub(kind);
+	effect->spr = spr;
+	if(spr != NULL)
+		spr->image.pri = 0;
 	fdParticleSetPos(effect, x, z);
 	effect->scaleX = toFIXED(1);
 	effect->speedMax = toFIXED(2);

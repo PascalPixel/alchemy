@@ -1,5 +1,5 @@
 /* Battle effect tables, in the order of the effect code that reads them. Each
-   is read only by the effect its prefix names, except the BattleEffect_ tables,
+   is read only by the effect its prefix names, except the BattleEffect tables,
    which many effects share. Picture offsets count bytes from the start of a
    sheet; widths and heights are pixels; corners are signed x, y and z bytes. */
 
@@ -18,109 +18,109 @@
 /* A face of no corners ends a textured mesh. */
 #define MESH_END 0, 0, 0, 0, 0, 0
 
-/* A row of LobbedShells_Styles, the four bytes battle_effect_djinn_beams.c
+/* A row of LobbedShellsStyles, the four bytes battle_effect_djinn_beams.c
    reads through its LOBBED_SHELLS_ macros: whether the shells burst into shards
    rather than smoke; the blitter they are drawn with, 0 keeping the brighter
-   level and 1 adding; the shells lobbed at each target; and the frames the
+   level and 1 adding; the shells lobbed at each target; and the ticks the
    effect runs past the targets' share. */
-#define LOBBED_SHELLS_STYLE(shatter, blitter, shells, frames) \
-	(shatter), (blitter), (shells), (frames)
+#define LOBBED_SHELLS_STYLE(shatter, blitter, shells, ticks) \
+	(shatter), (blitter), (shells), (ticks)
 
 /* Each mote size's picture: its byte offset in the particle sheet, by size. */
-const Uint16 BattleEffect_MotePictures[] = {
+const Uint16 BattleEffectMotePictures[] = {
 	0, 2, 10, 28, 60, 110, 182, 280, 408, 570};
 
 /* Each flare size's picture: its byte offset in the spark sprite sheet, by size
    less one. */
-const Uint16 BattleEffect_FlarePictures[] = {
+const Uint16 BattleEffectFlarePictures[] = {
 	0, 4, 20, 56, 120, 220, 364, 560, 816, 1140};
 
 /* Each circle picture's byte offset in Cruel Ruin's sprite sheet. */
-const Uint16 CruelRuin_CirclePictures[] = {
+const Uint16 CruelRuinCirclePictures[] = {
 	0, 8, 40, 112, 240, 440, 728, 1120, 1632, 2280};
 
 /* Each sparkle picture's byte offset in the sprite sheet
-   (BattleEffect_SparkleSizes gives its side). */
-const Uint16 BattleEffect_SparklePictures[] = {
+   (BattleEffectSparkleSizes gives its side). */
+const Uint16 BattleEffectSparklePictures[] = {
 	0, 25, 74, 123, 172, 221, 246, 255, 256};
 
 /* Each sparkle picture's side, in pixels. */
-const Uint8 BattleEffect_SparkleSizes[] = {5, 7, 7, 7, 7, 5, 3, 1, 1};
+const Uint8 BattleEffectSparkleSizes[] = {5, 7, 7, 7, 7, 5, 3, 1, 1};
 
 /* EmberStreakSheet's six pictures, a puff of flame drawing out into a trail of
    embers as it rises: each one's width, in pixels. */
-const Uint8 BattleEffect_EmberStreakPictureWidths[] = {24, 29, 30, 27, 24, 16};
+const Uint8 BattleEffectEmberStreakPictureWidths[] = {24, 29, 30, 27, 24, 16};
 
 /* Each ember streak picture's height, in pixels. */
-const Uint8 BattleEffect_EmberStreakPictureHeights[] = {23, 32, 37, 49, 53, 52};
+const Uint8 BattleEffectEmberStreakPictureHeights[] = {23, 32, 37, 49, 53, 52};
 
 /* How far below its anchor each ember streak picture's top goes, in pixels: the
    bottoms stay within ten pixels of 64 below. */
-const Uint8 BattleEffect_EmberStreakPictureBiasY[] = {41, 32, 26, 11, 4, 2};
+const Uint8 BattleEffectEmberStreakPictureBiasY[] = {41, 32, 26, 11, 4, 2};
 
 /* Each ember streak picture's byte offset in the sheet. */
-const Uint16 BattleEffect_EmberStreakPictures[] = {
+const Uint16 BattleEffectEmberStreakPictures[] = {
 	0, 552, 1480, 2590, 3913, 5185};
 
 /* Each glint picture's byte offset in the sprite sheet. */
-const Uint16 BattleEffect_GlintPictures[] = {0, 589, 1302, 2015, 2414, 2750};
+const Uint16 BattleEffectGlintPictures[] = {0, 589, 1302, 2015, 2414, 2750};
 
 /* Each glint picture's width, in pixels. */
-const Uint8 BattleEffect_GlintPictureWidths[] = {19, 23, 23, 19, 16, 17};
+const Uint8 BattleEffectGlintPictureWidths[] = {19, 23, 23, 19, 16, 17};
 
 /* Each glint picture's height, in pixels. */
-const Uint8 BattleEffect_GlintPictureHeights[] = {31, 31, 31, 21, 21, 24};
+const Uint8 BattleEffectGlintPictureHeights[] = {31, 31, 31, 21, 21, 24};
 
 /* Each shard picture's width, in pixels. */
-const Uint8 Spire_ShardWidths[] = {
+const Uint8 SpireShardWidths[] = {
 	5, 11, 10, 7, 7, 12, 13, 9, 19, 12, 17, 22, 15, 16, 14};
 
 /* Each shard picture's height, in pixels. */
-const Uint8 Spire_ShardHeights[] = {
+const Uint8 SpireShardHeights[] = {
 	11, 6, 10, 11, 10, 7, 17, 21, 12, 21, 17, 13, 16, 16, 15};
 
 /* Each shard picture's byte offset in Spire's sprite sheet. */
-const Uint16 Spire_ShardPictures[] = {0, 55, 121, 221, 298, 368, 452, 673, 862,
+const Uint16 SpireShardPictures[] = {0, 55, 121, 221, 298, 368, 452, 673, 862,
 	1090, 1342, 1631, 1917, 2157, 2413, 2623};
 
 /* Each shard picture's byte offset in a shade of the stat change's sprite
    sheet. */
-const Uint16 StatChange_ShardPictures[] = {
+const Uint16 StatChangeShardPictures[] = {
 	0, 120, 180, 258, 298, 352, 408, 471, 567, 607, 631, 661};
 
 /* Each shard picture's width, in pixels. */
-const Uint8 StatChange_ShardWidths[] = {10, 5, 6, 5, 6, 7, 9, 8, 4, 6, 6, 7};
+const Uint8 StatChangeShardWidths[] = {10, 5, 6, 5, 6, 7, 9, 8, 4, 6, 6, 7};
 
 /* Each shard picture's height, in pixels. */
-const Uint8 StatChange_ShardHeights[] = {
+const Uint8 StatChangeShardHeights[] = {
 	12, 12, 13, 8, 9, 8, 7, 12, 10, 4, 5, 5};
 
 /* The reaper's seven panels: their x in the canvas, in pixels, seven for each
    side. */
-const Uint8 Reaper_PictureX[] = {10, 30, 0, 0, 0, 6, 52, 60, 0, 0, 0, 0, 0, 0};
+const Uint8 ReaperPictureX[] = {10, 30, 0, 0, 0, 6, 52, 60, 0, 0, 0, 0, 0, 0};
 
 /* The reaper's seven panels: their y in the canvas, in pixels. */
-const Uint8 Reaper_PictureY[] = {0, 20, 2, 2, 34, 64, 68};
+const Uint8 ReaperPictureY[] = {0, 20, 2, 2, 34, 64, 68};
 
-/* Ice's shards and frames, a pair for each variant (ICE_SHARDS, ICE_FRAMES). */
-const Uint8 Ice_Counts[] = {16, 46, 20, 52, 32, 80};
+/* Ice's shards and ticks, a pair for each variant (ICE_SHARDS, ICE_TICKS). */
+const Uint8 IceCounts[] = {16, 46, 20, 52, 32, 80};
 
 /* Douse's drops, four bytes for each variant: the drops that fall, the droplets
-   each splashes into, their spacing in pixels and the frames
+   each splashes into, their spacing in pixels and the ticks
    (battle_effect_falling.c's DOUSE_ macros). */
-const Uint8 Douse_Counts[] = {6, 8, 32, 80, 8, 16, 24, 80, 32, 4, 8, 80};
+const Uint8 DouseCounts[] = {6, 8, 32, 80, 8, 16, 24, 80, 32, 4, 8, 80};
 
 /* The streak styles, four flags for each (STREAK_ANIMATE, STREAK_HIT,
    STREAK_MOTION, STREAK_SHAKE). */
-const Sint8 Streak_Styles[] = {
+const Sint8 StreakStyles[] = {
 	0, 1, 0, 0, 0, 1, 4, 0, 0, 1, -1, 1, 1, 1, -1, 1, 1, 1, 4, 0};
 
-/* The struck target's sideways tremble, in pixels, one a frame. */
-const Sint8 Streak_Tremble[] = {-1, -1, 1, 1, 1, 1, -1, -1};
+/* The struck target's sideways tremble, in pixels, one a tick. */
+const Sint8 StreakTremble[] = {-1, -1, 1, 1, 1, 1, -1, -1};
 
 /* The target strike styles, one row a style (TARGET_STRIKE_STYLE), one byte a
    column (TARGET_STRIKE_COLUMN). */
-const Uint8 TargetStrike_Styles[][7] = {{1, 2, 8, 0, 6, 0, 70},
+const Uint8 TargetStrikeStyles[][7] = {{1, 2, 8, 0, 6, 0, 70},
 	{1, 1, 1, 1, 6, 1, 54}, {1, 3, 1, 2, 6, 1, 96}, {1, 3, 2, 3, 4, 1, 96},
 	{1, 3, 2, 4, 4, 1, 96}, {1, 3, 4, 5, 4, 0, 60}, {0, 1, 4, 5, 4, 0, 38},
 	{0, 2, 8, 5, 2, 0, 48}, {0, 1, 24, 4, 2, 0, 50}, {0, 1, 1, 1, 2, 0, 46},
@@ -130,122 +130,122 @@ const Uint8 TargetStrike_Styles[][7] = {{1, 2, 8, 0, 6, 0, 70},
 	{0, 1, 64, 4, 2, 0, 22}, {1, 1, 8, 0, 6, 0, 70}};
 
 /* Each slash picture's width, in pixels. */
-const Uint8 TargetStrike_Widths[] = {38, 54, 71, 74, 77, 65};
+const Uint8 TargetStrikeWidths[] = {38, 54, 71, 74, 77, 65};
 
 /* Each slash picture's height, in pixels. */
-const Uint8 TargetStrike_Heights[] = {7, 9, 11, 13, 13, 11};
+const Uint8 TargetStrikeHeights[] = {7, 9, 11, 13, 13, 11};
 
 /* Each Target Strike picture's byte offset in Target Strike's sprite sheet. */
-const Uint16 TargetStrike_Pictures[] = {3200, 3466, 3952, 4733, 5695, 6696};
+const Uint16 TargetStrikePictures[] = {3200, 3466, 3952, 4733, 5695, 6696};
 
 /* How far each slash picture reaches past its middle, in pixels. */
-const Uint8 TargetStrike_Reach[] = {58, 42, 25, 13, 5, 0};
+const Uint8 TargetStrikeReach[] = {58, 42, 25, 13, 5, 0};
 
 /* Which stage of the closing fangs each bite picture shows. */
-const Uint8 TargetStrike_BiteStages[] = {0, 1, 2, 3, 2};
+const Uint8 TargetStrikeBiteStages[] = {0, 1, 2, 3, 2};
 
 /* The flips a glint may be drawn with, one picked at random. */
-const Uint8 TargetStrike_GlintDrawFlags[] = {0, 4, 8, 12};
+const Uint8 TargetStrikeGlintDrawFlags[] = {0, 4, 8, 12};
 
 /* The 33 pieces of the shattered screen: each one's width; the tables after it
    give their heights, places in the sprite sheet and starting points. */
-const Uint8 ShatteringOpening_PieceWidths[] = {21, 20, 24, 30, 35, 69, 19, 23,
-	9, 22, 33, 10, 18, 9, 7, 9, 17, 55, 30, 25, 40, 29, 10, 28, 14, 5, 32, 23,
-	19, 32, 8, 43, 15};
+const Uint8 ShatteringOpeningPieceWidths[] = {21, 20, 24, 30, 35, 69, 19, 23, 9,
+	22, 33, 10, 18, 9, 7, 9, 17, 55, 30, 25, 40, 29, 10, 28, 14, 5, 32, 23, 19,
+	32, 8, 43, 15};
 
 /* Each piece picture's height, in pixels. */
-const Uint8 ShatteringOpening_PieceHeights[] = {23, 47, 25, 40, 20, 53, 28, 29,
+const Uint8 ShatteringOpeningPieceHeights[] = {23, 47, 25, 40, 20, 53, 28, 29,
 	23, 14, 35, 17, 18, 14, 15, 12, 13, 37, 38, 41, 60, 41, 15, 45, 59, 41, 26,
 	50, 21, 35, 12, 57, 11, 0};
 
 /* Each piece picture's byte offset in Death Plunge's sprite sheet. */
-const Uint16 ShatteringOpening_PiecePictures[] = {0, 483, 1423, 2023, 3223,
-	3923, 7580, 8112, 8779, 8986, 9294, 10449, 10619, 10943, 11069, 11174,
-	11282, 11503, 13538, 14678, 15703, 18103, 19292, 19442, 20702, 21528, 21733,
-	22565, 23715, 24114, 25234, 25330, 27781, 27946};
+const Uint16 ShatteringOpeningPiecePictures[] = {0, 483, 1423, 2023, 3223, 3923,
+	7580, 8112, 8779, 8986, 9294, 10449, 10619, 10943, 11069, 11174, 11282,
+	11503, 13538, 14678, 15703, 18103, 19292, 19442, 20702, 21528, 21733, 22565,
+	23715, 24114, 25234, 25330, 27781, 27946};
 
 /* Each piece's starting x, in pixels. */
-const Uint8 ShatteringOpening_PieceStartX[] = {0, 21, 28, 46, 70, 51, 0, 13, 37,
+const Uint8 ShatteringOpeningPieceStartX[] = {0, 21, 28, 46, 70, 51, 0, 13, 37,
 	77, 87, 19, 25, 35, 44, 45, 48, 65, 0, 0, 0, 5, 33, 15, 36, 46, 47, 50, 53,
 	65, 72, 77, 105};
 
 /* Each piece's starting y, in pixels. */
-const Uint8 ShatteringOpening_PieceStartY[] = {0, 0, 0, 0, 0, 0, 19, 17, 23, 28,
+const Uint8 ShatteringOpeningPieceStartY[] = {0, 0, 0, 0, 0, 0, 19, 17, 23, 28,
 	8, 36, 43, 43, 40, 47, 48, 37, 42, 67, 60, 79, 62, 75, 61, 62, 60, 70, 74,
 	85, 108, 63, 74};
 
 /* The four corner sparks: their x about the target, in pixels. */
-const Sint8 ElementBurst_SparkX[] = {0, 32, 0, 32};
+const Sint8 ElementBurstSparkX[] = {0, 32, 0, 32};
 
 /* The four corner sparks: their y about the target, in pixels. */
-const Sint8 ElementBurst_SparkY[] = {0, 0, 32, 32};
+const Sint8 ElementBurstSparkY[] = {0, 0, 32, 32};
 
 /* The four corner sparks' flips. */
-const Uint8 ElementBurst_GlintFlips[] = {0, 4, 8, 12};
+const Uint8 ElementBurstGlintFlips[] = {0, 4, 8, 12};
 
 /* The streak's corners, as signed x, y and z. */
-const MODEL_VERTEX CruelRuin_StreakCorners[] = {
+const MODEL_VERTEX CruelRuinStreakCorners[] = {
 	{-4, 127, 0}, {4, 127, 0}, {-6, 0, 0}, {6, 0, 0}};
 
 /* Each disc's pitch, in 65,536ths of a turn. */
-const Uint16 CruelRuin_DiscPitches[] = {10240, 56579, 56579, 58880};
+const Uint16 CruelRuinDiscPitches[] = {10240, 56579, 56579, 58880};
 
 /* Each disc's yaw, in 65,536ths of a turn. */
-const Uint16 CruelRuin_DiscYaws[] = {39680, 42496, 32768, 22016};
+const Uint16 CruelRuinDiscYaws[] = {39680, 42496, 32768, 22016};
 
 /* How far each pillar sways, in pixels. */
-const Uint8 CruelRuin_PillarSways[] = {24, 48};
+const Uint8 CruelRuinPillarSways[] = {24, 48};
 
 /* Each pillar picture's width, in pixels. */
-const Uint8 CruelRuin_PillarWidths[] = {24, 32};
+const Uint8 CruelRuinPillarWidths[] = {24, 32};
 
-/* The frame each blast goes off on. */
-const Uint8 CruelRuin_BlastFrames[] = {7, 37, 45, 58, 74, 80};
+/* The tick each blast goes off on. */
+const Uint8 CruelRuinBlastTicks[] = {7, 37, 45, 58, 74, 80};
 
 /* Each blast's size, in pixels. */
-const Uint8 CruelRuin_BlastSizes[] = {96, 48, 64, 64, 96, 128};
+const Uint8 CruelRuinBlastSizes[] = {96, 48, 64, 64, 96, 128};
 
 /* Each blast's x, in pixels. */
-const Uint8 CruelRuin_BlastX[] = {48, 48, 32, 0, 0, 24};
+const Uint8 CruelRuinBlastX[] = {48, 48, 32, 0, 0, 24};
 
 /* Each blast's y, in pixels. */
-const Uint8 CruelRuin_BlastY[] = {96, 96, 96, 96, 120, 120};
+const Uint8 CruelRuinBlastY[] = {96, 96, 96, 96, 120, 120};
 
-/* The frame each streak starts on. */
-const Uint8 CruelRuin_StreakStarts[] = {2, 26, 104, 150};
+/* The tick each streak starts on. */
+const Uint8 CruelRuinStreakStarts[] = {2, 26, 104, 150};
 
 /* Each streak's size, in pixels. */
-const Uint8 CruelRuin_StreakSizes[] = {32, 16, 24, 64};
+const Uint8 CruelRuinStreakSizes[] = {32, 16, 24, 64};
 
 /* Each streak's x, in pixels. */
-const Uint8 CruelRuin_StreakX[] = {96, 48, 24, 16};
+const Uint8 CruelRuinStreakX[] = {96, 48, 24, 16};
 
 /* Each streak step's x, in pixels. */
-const Uint8 CruelRuin_StreakStepX[] = {16, 8, 12, 8};
+const Uint8 CruelRuinStreakStepX[] = {16, 8, 12, 8};
 
 /* Each streak step's y, in pixels. */
-const Uint8 CruelRuin_StreakStepY[] = {16, 4, 16, 24};
+const Uint8 CruelRuinStreakStepY[] = {16, 4, 16, 24};
 
 /* Each streak end's y, in pixels. */
-const Uint8 CruelRuin_StreakEndY[] = {96, 96, 96, 120};
+const Uint8 CruelRuinStreakEndY[] = {96, 96, 96, 120};
 
 /* Each streak's roll as it falls. */
-const Sint32 CruelRuin_StreakRolls[] = {
+const Sint32 CruelRuinStreakRolls[] = {
 	DEGtoANG(202.5), DEGtoANG(225), DEGtoANG(202.5), DEGtoANG(202.5)};
 
 /* The flips a glint may be drawn with, one picked at random. */
-const Uint8 Eclipse_GlintFlips[] = {0, 4, 8, 12};
+const Uint8 EclipseGlintFlips[] = {0, 4, 8, 12};
 
 /* The dragon's sprites that take their tiles anew as it turns. */
-const Uint8 Eclipse_TileObjects[] = {8, 9, 25, 14, 15, 20, 21};
+const Uint8 EclipseTileObjects[] = {8, 9, 25, 14, 15, 20, 21};
 
-/* The frames the canvas is filled anew on, a level from Eclipse_FillLevels each
+/* The ticks the canvas is filled anew on, a level from EclipseFillLevels each
    time. */
-const Uint8 Eclipse_FillFrames[] = {148, 160, 162, 164, 170, 174, 178, 182, 188,
+const Uint8 EclipseFillTicks[] = {148, 160, 162, 164, 170, 174, 178, 182, 188,
 	194, 196, 200, 202, 206, 208, 210, 220};
 
-/* The level the canvas is filled with at each of Eclipse_FillFrames. */
-const Uint32 Eclipse_FillLevels[] = {CANVAS_FILL_WORD(24), CANVAS_FILL_WORD(16),
+/* The level the canvas is filled with at each of EclipseFillTicks. */
+const Uint32 EclipseFillLevels[] = {CANVAS_FILL_WORD(24), CANVAS_FILL_WORD(16),
 	CANVAS_FILL_WORD(16), CANVAS_FILL_WORD(24), CANVAS_FILL_WORD(44),
 	CANVAS_FILL_WORD(44), CANVAS_FILL_WORD(44), CANVAS_FILL_WORD(44),
 	CANVAS_FILL_WORD(44), CANVAS_FILL_WORD(44), CANVAS_FILL_WORD(16),
@@ -253,71 +253,71 @@ const Uint32 Eclipse_FillLevels[] = {CANVAS_FILL_WORD(24), CANVAS_FILL_WORD(16),
 	CANVAS_FILL_WORD(44), CANVAS_FILL_WORD(16), CANVAS_FILL_WORD(16)};
 
 /* Each sprite's x, in pixels. */
-const Uint8 Eclipse_ObjectX[] = {0, 32, 64, 96, 160, 192, 0, 32, 64, 96, 128,
+const Uint8 EclipseObjectX[] = {0, 32, 64, 96, 160, 192, 0, 32, 64, 96, 128,
 	160, 192, 224, 64, 96, 128, 160, 192, 224, 64, 96, 128, 160, 192, 224, 64,
 	96, 128, 160, 192, 224};
 
 /* Each sprite's depth, in pixels. */
-const Uint8 Eclipse_ObjectZ[] = {0, 0, 0, 0, 0, 0, 32, 32, 32, 32, 32, 32, 32,
+const Uint8 EclipseObjectZ[] = {0, 0, 0, 0, 0, 0, 32, 32, 32, 32, 32, 32, 32,
 	32, 64, 64, 64, 64, 64, 64, 96, 96, 96, 96, 96, 96, 128, 128, 128, 128, 128,
 	128};
 
-/* How fast each ring grows: its scale gains this many 64ths a frame, from a
+/* How fast each ring grows: its scale gains this many 64ths a tick, from a
    quarter. */
-const Uint8 Eclipse_RingGrowth[] = {4, 3, 5, 3};
+const Uint8 EclipseRingGrowth[] = {4, 3, 5, 3};
 
 /* How far each ring sits along its band's axis, in the band's own pixels before
    the ring is scaled and stretched. */
-const Sint8 Eclipse_RingHeights[] = {16, 12, 4, -8};
+const Sint8 EclipseRingHeights[] = {16, 12, 4, -8};
 
-/* The four crystals: the frame each starts after 48; the tables after it give
+/* The four crystals: the tick each starts after 48; the tables after it give
    how fast each grows and how tall. */
-const Uint8 FormChange_WaveStarts[] = {0, 4, 9, 10};
+const Uint8 FormChangeWaveStarts[] = {0, 4, 9, 10};
 
-/* How fast each wave grows: its scale gains this many times 2000/65536 a frame,
+/* How fast each wave grows: its scale gains this many times 2000/65536 a tick,
    from a quarter. */
-const Uint8 FormChange_WaveGrowth[] = {3, 4, 3, 5};
+const Uint8 FormChangeWaveGrowth[] = {3, 4, 3, 5};
 
 /* How much taller than wide each wave is drawn, multiplying its scale. */
-const Uint8 FormChange_WaveStretch[] = {3, 4, 5, 6};
+const Uint8 FormChangeWaveStretch[] = {3, 4, 5, 6};
 
 /* Each shard's place in the crystal, x and y, in pixels. */
-const Uint8 Prism_ShardStarts[] = {32, 60, 33, 82, 49, 94, 41, 89, 49, 76, 32,
+const Uint8 PrismShardStarts[] = {32, 60, 33, 82, 49, 94, 41, 89, 49, 76, 32,
 	99, 54, 69, 34, 82, 45, 71, 31, 91, 32, 69, 26, 80, 40, 68, 41, 60, 46, 60,
 	36, 63, 0, 0};
 
 /* Each shard picture's width, in pixels. */
-const Uint8 Prism_ShardWidths[] = {
+const Uint8 PrismShardWidths[] = {
 	5, 10, 11, 14, 12, 11, 19, 18, 23, 12, 22, 22};
 
 /* Each shard picture's height, in pixels. */
-const Uint8 Prism_ShardHeights[] = {
+const Uint8 PrismShardHeights[] = {
 	14, 10, 7, 13, 14, 14, 32, 30, 24, 38, 20, 20, 0, 0};
 
 /* Each crystal shard picture's byte offset in Prism's sprite sheet. */
-const Sint32 Prism_ShardPictures[] = {
+const Sint32 PrismShardPictures[] = {
 	0, 70, 170, 247, 429, 597, 751, 1359, 1899, 2451, 2907, 3347};
 
-/* By mode: how many motes each target gets, and the frames before the targets'
+/* By mode: how many motes each target gets, and the ticks before the targets'
    share. */
-const Uint8 GatheringLights_Counts[] = {16, 88, 8, 72, 12, 80, 16, 88};
+const Uint8 GatheringLightsCounts[] = {16, 88, 8, 72, 12, 80, 16, 88};
 
 /* The mote's picture for each step of its sway. */
-const Uint8 DjinnBeams_MotePictures[] = {2, 1, 0, 1, 2, 3, 4, 3};
+const Uint8 DjinnBeamsMotePictures[] = {2, 1, 0, 1, 2, 3, 4, 3};
 
 /* The beam's head, EarthWallSheet's three half walls of flame (the mirrored
    wall's EARTH_WALL_ pictures): their byte offsets in the sheet. */
-const Uint16 DjinnBeams_HeadPictures[] = {2702, 3535, 4580};
+const Uint16 DjinnBeamsHeadPictures[] = {2702, 3535, 4580};
 
 /* Each head picture's width, in pixels. */
-const Uint8 DjinnBeams_HeadWidths[] = {17, 19, 20};
+const Uint8 DjinnBeamsHeadWidths[] = {17, 19, 20};
 
 /* Each head picture's height, in pixels. */
-const Uint8 DjinnBeams_HeadHeights[] = {49, 55, 64};
+const Uint8 DjinnBeamsHeadHeights[] = {49, 55, 64};
 
 /* The lobbed shells' styles, one LOBBED_SHELLS_STYLE row a mode (enum
    LOBBED_SHELLS_MODE). */
-const Sint8 LobbedShells_Styles[] = {
+const Sint8 LobbedShellsStyles[] = {
 	LOBBED_SHELLS_STYLE(0, 0, 1, 72), /* Bone Chiller */
 	LOBBED_SHELLS_STYLE(0, 0, 1, 72), /* Sticky Goo */
 	LOBBED_SHELLS_STYLE(0, 0, 1, 72), /* Sticky Poison */
@@ -331,98 +331,98 @@ const Sint8 LobbedShells_Styles[] = {
 };
 
 /* Each shard picture's width, in pixels. */
-const Uint8 LobbedShells_ShardWidths[] = {
+const Uint8 LobbedShellsShardWidths[] = {
 	9, 10, 9, 9, 9, 11, 11, 11, 12, 6, 7, 7, 7, 6, 6, 8, 8, 8};
 
 /* Each shard picture's height, in pixels. */
-const Uint8 LobbedShells_ShardHeights[] = {
+const Uint8 LobbedShellsShardHeights[] = {
 	12, 12, 12, 12, 12, 12, 12, 12, 12, 8, 7, 6, 6, 8, 6, 4, 3, 3};
 
 /* Each shard picture's byte offset in the sprite sheet. */
-const Uint16 LobbedShells_ShardPictures[] = {0, 108, 228, 336, 444, 552, 684,
+const Uint16 LobbedShellsShardPictures[] = {0, 108, 228, 336, 444, 552, 684,
 	816, 948, 1092, 1140, 1189, 1231, 1273, 1321, 1357, 1389, 1413};
 
 /* The reaper's seven panels as Condemn draws them: their x in the canvas, in
-   pixels, seven for each side; the same as Reaper_PictureX, Condemn keeping its
+   pixels, seven for each side; the same as ReaperPictureX, Condemn keeping its
    own copy. */
-const Uint8 Condemn_PictureX[] = {10, 30, 0, 0, 0, 6, 52, 60, 0, 0, 0, 0, 0, 0};
+const Uint8 CondemnPictureX[] = {10, 30, 0, 0, 0, 6, 52, 60, 0, 0, 0, 0, 0, 0};
 
 /* The reaper's panels: their y in the canvas, in pixels, seven for each
    side. */
-const Uint8 Condemn_PictureY[] = {0, 20, 2, 2, 34, 64, 68, 0, 9, 4, 4, 4, 4, 4};
+const Uint8 CondemnPictureY[] = {0, 20, 2, 2, 34, 64, 68, 0, 9, 4, 4, 4, 4, 4};
 
 /* The triangle's first corner, (0, 24, 0), in pixels. */
-const Sint32 Bind_Vertex[] = {0, 24, 0};
+const Sint32 BindVertex[] = {0, 24, 0};
 
 /* The striking triangle's first corner, (0, 24, 0), in pixels; the same as
-   Bind_Vertex, read by the strike's own code. */
-const Sint32 Bind_TriangleStrikeVertex[] = {0, 24, 0};
+   BindVertex, read by the strike's own code. */
+const Sint32 BindTriangleStrikeVertex[] = {0, 24, 0};
 
 /* The two ring points, alternating, x, y and z in 16.16 pixels. */
-const Sint32 Star_Points[] = {0, toFIXED(48), 0, 0, toFIXED(28), 0};
+const Sint32 StarPoints[] = {0, toFIXED(48), 0, 0, toFIXED(28), 0};
 
 /* The ring radii, alternating, in pixels. */
-const Uint8 Star_Radii[] = {32, 16};
+const Uint8 StarRadii[] = {32, 16};
 
 /* The grid Procne's nine sprites sit on: each one's x, in pixels. */
-const Uint8 Procne_GridX[] = {0, 32, 64, 0, 32, 64, 0, 32, 64};
+const Uint8 ProcneGridX[] = {0, 32, 64, 0, 32, 64, 0, 32, 64};
 
 /* The grid Procne's nine sprites sit on: each one's depth, in pixels. */
-const Uint8 Procne_GridY[] = {0, 0, 0, 32, 32, 32, 64, 64, 64};
+const Uint8 ProcneGridY[] = {0, 0, 0, 32, 32, 32, 64, 64, 64};
 
-/* The frames of the four comet strikes. */
-const Uint16 Procne_Frames[] = {334, 347, 359, 372};
+/* The ticks of the four comet strikes. */
+const Uint16 ProcneTicks[] = {334, 347, 359, 372};
 
 /* A strike's three pictures: their widths, in pixels. */
-const Uint8 Procne_PictureWidths[] = {14, 24, 48};
+const Uint8 ProcnePictureWidths[] = {14, 24, 48};
 
 /* A strike's three pictures: their heights, in pixels. */
-const Uint8 Procne_PictureHeights[] = {14, 19, 24};
+const Uint8 ProcnePictureHeights[] = {14, 19, 24};
 
 /* A strike's three pictures: how far each is raised above its mark, in
    pixels. */
-const Uint8 Procne_PictureBiasY[] = {8, 12, 17};
+const Uint8 ProcnePictureBiasY[] = {8, 12, 17};
 
 /* A strike's three pictures: their byte offsets in the sprite sheet. */
-const Uint16 Procne_Pictures[] = {13824, 14020, 14476};
+const Uint16 ProcnePictures[] = {13824, 14020, 14476};
 
 /* What each grain adds to its random speed of 0 to 127, in 32nds of a pixel a
-   frame. */
-const Uint8 Tiamat_EmberSpeeds[] = {0, 8, 12, 16};
+   tick. */
+const Uint8 TiamatEmberSpeeds[] = {0, 8, 12, 16};
 
 /* A spark's picture: one pixel wide and two tall, both at level 32. */
-const Uint8 Tiamat_SparkPixels[] = {32, 32};
+const Uint8 TiamatSparkPixels[] = {32, 32};
 
 /* Each grain's size: the width of its mote picture, in pixels, which is twice
    as tall. */
-const Uint8 Tiamat_EmberSizes[] = {1, 1, 2, 3};
+const Uint8 TiamatEmberSizes[] = {1, 1, 2, 3};
 
 /* The ember streak's pictures again, as Tiamat's fireballs read them: the same
-   as BattleEffect_EmberStreakPictureWidths and the three tables after it,
+   as BattleEffectEmberStreakPictureWidths and the three tables after it,
    Tiamat keeping its own copy among its tables. Each picture's width, in
    pixels. */
-const Uint8 Tiamat_EmberStreakWidths[] = {24, 29, 30, 27, 24, 16};
+const Uint8 TiamatEmberStreakWidths[] = {24, 29, 30, 27, 24, 16};
 
 /* Each ember streak picture's height, in pixels. */
-const Uint8 Tiamat_EmberStreakHeights[] = {23, 32, 37, 49, 53, 52};
+const Uint8 TiamatEmberStreakHeights[] = {23, 32, 37, 49, 53, 52};
 
 /* How far below its anchor each ember streak picture's top goes, in pixels. */
-const Uint8 Tiamat_EmberStreakBiasY[] = {41, 32, 26, 11, 4, 2};
+const Uint8 TiamatEmberStreakBiasY[] = {41, 32, 26, 11, 4, 2};
 
 /* Each ember streak picture's byte offset in the sheet. */
-const Uint16 Tiamat_EmberStreakPictures[] = {0, 552, 1480, 2590, 3913, 5185};
+const Uint16 TiamatEmberStreakPictures[] = {0, 552, 1480, 2590, 3913, 5185};
 
 /* The water columns' feet, x and y, in pixels; NEREID_COLUMNS of the four pairs
    are read. */
-const Uint8 Nereid_Columns[] = {16, 104, 32, 104, 48, 104, 64, 104};
+const Uint8 NereidColumns[] = {16, 104, 32, 104, 48, 104, 64, 104};
 
-/* Each falling spark's gravity, in pixels a frame each frame. */
-const Sint32 Nereid_Gravity[] = {
+/* Each falling spark's gravity, in pixels a tick each tick. */
+const Sint32 NereidGravity[] = {
 	toFIXED(0.5), toFIXED(0.25), toFIXED(0.25), toFIXED(0.125)};
 
 /* Froth, by variant: the FROTH_ columns. */
-const Uint8 Vortices_Counts[][2] = {
-	/* bubbles (at most 30, battle_effect_vortices.c), frames */
+const Uint8 VorticesCounts[][2] = {
+	/* bubbles (at most 30, battle_effect_vortices.c), ticks */
 	[EFFECT_VARIANT_BASIC] = {6, 140},		/* Froth */
 	[EFFECT_VARIANT_STRONGER] = {12, 160},	/* Froth Sphere */
 	[EFFECT_VARIANT_STRONGEST] = {30, 200}, /* Froth Spiral */
@@ -431,72 +431,72 @@ const Uint8 Vortices_Counts[][2] = {
 /* Whirlwind, by variant: the WHIRLWIND_ columns. The sway is in pixels each
    way; the shake is btCameraShake's horizontal range, the vertical twice
    that. */
-const Uint8 Vortices_Shapes[][3] = {
+const Uint8 VorticesShapes[][3] = {
 	/* tornadoes, sway, screen shake */
 	[EFFECT_VARIANT_BASIC] = {1, 16, 2},	 /* Whirlwind, Gale */
 	[EFFECT_VARIANT_STRONGER] = {2, 24, 2},	 /* Tornado, Typhoon */
 	[EFFECT_VARIANT_STRONGEST] = {4, 32, 4}, /* Tempest, Hurricane */
 };
 
-/* The crystals, the frames and the frame the damage shows, three for each
-   variant (PRISM_CRYSTAL_COUNT, PRISM_FRAMES, PRISM_DAMAGE_FRAME). */
-const Uint8 Prism_Counts[] = {1, 85, 30, 4, 124, 54, 12, 166, 86};
+/* The crystals, the ticks and the tick the damage shows, three for each
+   variant (PRISM_CRYSTAL_COUNT, PRISM_TICKS, PRISM_DAMAGE_TICK). */
+const Uint8 PrismCounts[] = {1, 85, 30, 4, 124, 54, 12, 166, 86};
 
-/* The sparks each lightning pillar throws and the frames the screen shakes at
-   each strike, a pair for each variant (PLASMA_SPARKS, PLASMA_SHAKE_FRAMES). */
-const Uint16 Plasma_Sparks[] = {384, 2, 256, 3, 192, 4};
+/* The sparks each lightning pillar throws and the ticks the screen shakes at
+   each strike, a pair for each variant (PLASMA_SPARKS, PLASMA_SHAKE_TICKS). */
+const Uint16 PlasmaSparks[] = {384, 2, 256, 3, 192, 4};
 
 /* The columns' x, in pixels, seven for each side. */
-const Uint8 Plasma_Columns[] = {
+const Uint8 PlasmaColumns[] = {
 	32, 64, 16, 48, 72, 96, 64, 88, 56, 104, 72, 48, 24, 56};
 
 /* The lightning pillars, by variant. */
-const Uint8 Plasma_Counts[] = {1, 3, 7};
+const Uint8 PlasmaCounts[] = {1, 3, 7};
 
 /* Five halfwords for each variant: the sparks in each burst, the bursts, and
    each burst's x offset in pixels. */
-const Uint16 SparkGroups_Shapes[][5] = {{128, 1, 16, 0, 0}, {255, 1, 16, 0, 0},
+const Uint16 SparkGroupsShapes[][5] = {{128, 1, 16, 0, 0}, {255, 1, 16, 0, 0},
 	{192, 3, 0, 24, 48}, {340, 1, 16, 24, 48}, {32, 1, 16, 0, 0},
 	{200, 1, 16, 24, 48}};
 
-/* The flash burst's picture for each three frames of a flash, by number. */
-const Uint8 Plasma_FlashPictures[] = {5, 5, 4, 3, 2, 1};
+/* The flash burst's picture for each three ticks of a flash, by number. */
+const Uint8 PlasmaFlashPictures[] = {5, 5, 4, 3, 2, 1};
 
 /* The pillars of fire, by variant. */
-const Uint8 Volcano_Counts[] = {1, 2, 4};
+const Uint8 VolcanoCounts[] = {1, 2, 4};
 
 /* Each pillar's depth on the field, in pixels, by variant. */
-const Sint8 Volcano_Depths[][4] = {
+const Sint8 VolcanoDepths[][4] = {
 	{0, 0, 0, 0}, {24, -24, 0, 0}, {-20, 20, -60, 60}};
 
-/* The frame each pillar erupts on. */
-const Uint8 Volcano_StartFrames[] = {8, 18, 24, 30, 34};
+/* The tick each pillar erupts on. */
+const Uint8 VolcanoStartTicks[] = {8, 18, 24, 30, 34};
 
 /* The flips a glint may be drawn with, one picked at random. */
-const Uint8 TargetMotes_GlintFlips[] = {0, 4, 8, 12};
+const Uint8 TargetMotesGlintFlips[] = {0, 4, 8, 12};
 
 /* Where each sprite of the charging Zagan sits, x and y, in pixels. */
-const Uint16 Zagan_ChargePoints[][2] = {{0, 0}, {0, 32}, {32, 0}, {32, 32},
+const Uint16 ZaganChargePoints[][2] = {{0, 0}, {0, 32}, {32, 0}, {32, 32},
 	{32, 64}, {64, 0}, {64, 32}, {64, 64}, {96, 0}, {96, 32}, {96, 64}};
 
 /* Where each sprite of the galloping Zagan sits, x and y, in pixels. */
-const Uint16 Zagan_GallopPoints[][2] = {{0, 16}, {0, 48}, {32, 0}, {32, 32},
+const Uint16 ZaganGallopPoints[][2] = {{0, 16}, {0, 48}, {32, 0}, {32, 32},
 	{32, 64}, {64, 0}, {64, 32}, {64, 64}, {64, 96}, {96, 0}, {96, 64},
 	{96, 96}};
 
-/* The frame each dust ring starts on, counted from the blow. */
-const Uint8 Zagan_RingStarts[] = {0, 6, 8, 9};
+/* The tick each dust ring starts on, counted from the blow. */
+const Uint8 ZaganRingStarts[] = {0, 6, 8, 9};
 
 /* How fast each dust ring grows: its scale gains this many times 2000/65536 a
-   frame. */
-const Uint8 Zagan_RingGrowth[] = {5, 8, 7, 3};
+   tick. */
+const Uint8 ZaganRingGrowth[] = {5, 8, 7, 3};
 
 /* Each dust ring's height, in pixels. */
-const Sint8 Zagan_RingHeights[] = {32, 12, -24, 0};
+const Sint8 ZaganRingHeights[] = {32, 12, -24, 0};
 
 /* One handler for each battle effect, by its kind less one; the kinds with no
    handler are left empty. */
-void (*const BattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1])(
+void (*const BattleEffectHandlers[BATTLE_EFFECT_COUNT - 1])(
 	BATTLE_EFFECT_PARM *args) = {
 	[BATTLE_EFFECT_QUAKE - 1] = btEffectRunQuake,
 	[BATTLE_EFFECT_SPIRE - 1] = btEffectRunSpire,
@@ -827,272 +827,272 @@ void (*const BattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1])(
 };
 
 /* The poses Cybele's sprites take, a pair for each pose. */
-const Uint8 Cybele_ObjectPoses[] = {8, 10, 9, 11, 3, 4};
+const Uint8 CybeleObjectPoses[] = {8, 10, 9, 11, 3, 4};
 
 /* Each thorn picture's byte offset in Cybele's sprite sheet. */
-const Uint16 Cybele_ThornPictures[] = {3920, 3932, 3947, 3955, 3970};
+const Uint16 CybeleThornPictures[] = {3920, 3932, 3947, 3955, 3970};
 
 /* Each thorn picture's width, in pixels. */
-const Uint8 Cybele_ThornWidths[] = {2, 5, 2, 5, 3};
+const Uint8 CybeleThornWidths[] = {2, 5, 2, 5, 3};
 
 /* Each thorn picture's height, in pixels. */
-const Uint8 Cybele_ThornHeights[] = {6, 3, 4, 3, 3};
+const Uint8 CybeleThornHeights[] = {6, 3, 4, 3, 3};
 
 /* Each flower picture's byte offset in Cybele's sprite sheet. */
-const Uint16 Cybele_FlowerPictures[] = {3456, 3712, 3856};
+const Uint16 CybeleFlowerPictures[] = {3456, 3712, 3856};
 
 /* Each flower's size, in pixels. */
-const Uint8 Cybele_FlowerSizes[] = {16, 12, 8};
+const Uint8 CybeleFlowerSizes[] = {16, 12, 8};
 
-/* The same five pictures as Cybele_ThornPictures and the two tables after it,
+/* The same five pictures as CybeleThornPictures and the two tables after it,
    as the falling chips read them: each one's byte offset in Cybele's sprite
    sheet. */
-const Uint16 Cybele_ChipPictures[] = {3920, 3932, 3947, 3955, 3970};
+const Uint16 CybeleChipPictures[] = {3920, 3932, 3947, 3955, 3970};
 
 /* Each chip picture's width, in pixels. */
-const Uint8 Cybele_ChipWidths[] = {2, 5, 2, 5, 3};
+const Uint8 CybeleChipWidths[] = {2, 5, 2, 5, 3};
 
 /* Each chip picture's height, in pixels. */
-const Uint8 Cybele_ChipHeights[] = {6, 3, 4, 3, 3};
+const Uint8 CybeleChipHeights[] = {6, 3, 4, 3, 3};
 
 /* Each spark picture's byte offset in Cybele's sprite sheet. */
-const Uint16 Cybele_SparkPictures[] = {3979, 4043, 4268, 4389, 4470};
+const Uint16 CybeleSparkPictures[] = {3979, 4043, 4268, 4389, 4470};
 
 /* Each spark's size, in pixels. */
-const Uint8 Cybele_SparkSizes[] = {8, 15, 11, 9, 5};
+const Uint8 CybeleSparkSizes[] = {8, 15, 11, 9, 5};
 
 /* BlastSheet's seven pictures, decoded behind YellowRingSheet at
    CYBELE_BLAST_PICTURES: each one's byte offset from the start of Cybele's
    pictures. */
-const Uint16 Cybele_BlastPictures[] = {
+const Uint16 CybeleBlastPictures[] = {
 	5760, 6016, 7040, 9344, 11648, 13952, 16256};
 
 /* Each blast picture's side, in pixels. */
-const Uint16 Cybele_BlastSizes[] = {16, 32, 48, 48, 48, 48, 48};
+const Uint16 CybeleBlastSizes[] = {16, 32, 48, 48, 48, 48, 48};
 
 /* Each crystal's point, x and y, in pixels. */
-const Uint8 Boreas_Points[][2] = {{57, 130}, {75, 128}, {71, 104}, {101, 130},
+const Uint8 BoreasPoints[][2] = {{57, 130}, {75, 128}, {71, 104}, {101, 130},
 	{86, 126}, {85, 98}, {64, 98}, {98, 96}, {77, 87}, {84, 88}, {68, 67},
 	{81, 49}, {94, 70}, {70, 51}, {93, 36}, {81, 50}};
 
-/* The shake after the block lands, in pixels, one a frame: y moves by it and x
+/* The shake after the block lands, in pixels, one a tick: y moves by it and x
    by as much the other way. */
-const Sint8 Boreas_ShakeOffsets[] = {-4, -3, -2, 0};
+const Sint8 BoreasShakeOffsets[] = {-4, -3, -2, 0};
 
 /* Each crystal picture's byte offset in Boreas's sprite sheet. */
-const Uint16 Boreas_CrystalPictures[] = {0, 1152, 2064};
+const Uint16 BoreasCrystalPictures[] = {0, 1152, 2064};
 
 /* Each crystal picture's width, in pixels. */
-const Uint8 Boreas_CrystalWidths[] = {24, 24, 20};
+const Uint8 BoreasCrystalWidths[] = {24, 24, 20};
 
 /* Each crystal picture's height, in pixels. */
-const Uint8 Boreas_CrystalHeights[] = {48, 38, 26};
+const Uint8 BoreasCrystalHeights[] = {48, 38, 26};
 
-/* The animations Boreas's sprites cycle through, one every four frames. */
-const Uint8 Boreas_Animations[] = {2, 9, 10, 11};
+/* The animations Boreas's sprites cycle through, one every four ticks. */
+const Uint8 BoreasAnimations[] = {2, 9, 10, 11};
 
 /* Each debris picture's width, in pixels. */
-const Uint8 Boreas_DebrisWidths[] = {12, 11, 8, 10, 8, 12, 5, 7, 7, 6, 7};
+const Uint8 BoreasDebrisWidths[] = {12, 11, 8, 10, 8, 12, 5, 7, 7, 6, 7};
 
 /* Each debris picture's height, in pixels. */
-const Uint8 Boreas_DebrisHeights[] = {10, 16, 14, 15, 4, 4, 3, 4, 6, 12, 10};
+const Uint8 BoreasDebrisHeights[] = {10, 16, 14, 15, 4, 4, 3, 4, 6, 12, 10};
 
 /* Each debris picture's byte offset in Boreas's sprite sheet. */
-const Uint16 Boreas_DebrisPictures[] = {
+const Uint16 BoreasDebrisPictures[] = {
 	2584, 2704, 2880, 2992, 5062, 5094, 5142, 5157, 5185, 5227, 5299};
 
 /* Each spray picture's width, in pixels. */
-const Uint8 Boreas_SprayWidths[] = {16, 16, 16};
+const Uint8 BoreasSprayWidths[] = {16, 16, 16};
 
 /* Each spray picture's height, in pixels. */
-const Uint8 Boreas_SprayHeights[] = {16, 16, 16};
+const Uint8 BoreasSprayHeights[] = {16, 16, 16};
 
 /* Each spray picture's byte offset in Boreas's sprite sheet. */
-const Uint16 Boreas_SprayPictures[] = {4294, 4550, 4806};
+const Uint16 BoreasSprayPictures[] = {4294, 4550, 4806};
 
-/* The same three ice block pictures as Boreas_CrystalPictures and the two
+/* The same three ice block pictures as BoreasCrystalPictures and the two
    tables after it, as the rising crystals read them: each one's byte offset in
    Boreas's sprite sheet. */
-const Uint16 Boreas_RisingCrystalPictures[] = {0, 1152, 2064};
+const Uint16 BoreasRisingCrystalPictures[] = {0, 1152, 2064};
 
 /* Each ice block picture's width, in pixels. */
-const Uint8 Boreas_RisingCrystalWidths[] = {24, 24, 20};
+const Uint8 BoreasRisingCrystalWidths[] = {24, 24, 20};
 
 /* Each ice block picture's height, in pixels. */
-const Uint8 Boreas_RisingCrystalHeights[] = {48, 38, 26};
+const Uint8 BoreasRisingCrystalHeights[] = {48, 38, 26};
 
-/* The same three ice block pictures as Boreas_CrystalPictures and the two
+/* The same three ice block pictures as BoreasCrystalPictures and the two
    tables after it, as the falling crystals read them: each one's width, in
    pixels. */
-const Uint8 Boreas_FallWidths[] = {24, 24, 20};
+const Uint8 BoreasFallWidths[] = {24, 24, 20};
 
 /* Each ice block picture's height, in pixels. */
-const Uint8 Boreas_FallHeights[] = {48, 38, 26};
+const Uint8 BoreasFallHeights[] = {48, 38, 26};
 
 /* Each ice block picture's byte offset in Boreas's sprite sheet. */
-const Uint16 Boreas_FallPictures[] = {0, 1152, 2064};
+const Uint16 BoreasFallPictures[] = {0, 1152, 2064};
 
-/* The gravities Drain's motes fall with, in pixels a frame each frame. */
-const Sint32 Drain_Gravities[] = {
+/* The gravities Drain's motes fall with, in pixels a tick each tick. */
+const Sint32 DrainGravities[] = {
 	toFIXED(0.25), toFIXED(0.125), toFIXED(0.25), toFIXED(0.5)};
 
 /* The mote's width, in pixels, by mode; it is drawn twice as tall. */
-const Uint8 DrainMotes_Sizes[] = {6, 6, 10};
+const Uint8 DrainMotesSizes[] = {6, 6, 10};
 
-/* Each variant's timing: its frames, the frames each rock pillar rises, and the
+/* Each variant's timing: its ticks, the ticks each rock pillar rises, and the
    screen shake's range. */
-const Uint8 Quake_Timings[][3] = {{80, 32, 2}, {112, 64, 4}, {144, 96, 8}};
+const Uint8 QuakeTimings[][3] = {{80, 32, 2}, {112, 64, 4}, {144, 96, 8}};
 
-/* Fire's embers, by variant; the effect lasts 132 frames and half this many
+/* Fire's embers, by variant; the effect lasts 132 ticks and half this many
    more. */
-const Uint8 Fire_Counts[] = {16, 32, 64};
+const Uint8 FireCounts[] = {16, 32, 64};
 
 /* The ember streak's pictures again, as Fire's embers read them: the same as
-   BattleEffect_EmberStreakPictureWidths and the three tables after it, Fire
+   BattleEffectEmberStreakPictureWidths and the three tables after it, Fire
    keeping its own copy among its tables. Each picture's width, in pixels. */
-const Uint8 Fire_EmberStreakWidths[] = {24, 29, 30, 27, 24, 16};
+const Uint8 FireEmberStreakWidths[] = {24, 29, 30, 27, 24, 16};
 
 /* Each ember streak picture's height, in pixels. */
-const Uint8 Fire_EmberStreakHeights[] = {23, 32, 37, 49, 53, 52};
+const Uint8 FireEmberStreakHeights[] = {23, 32, 37, 49, 53, 52};
 
 /* How far below its anchor each ember streak picture's top goes, in pixels. */
-const Uint8 Fire_EmberStreakBiasY[] = {41, 32, 26, 11, 4, 2};
+const Uint8 FireEmberStreakBiasY[] = {41, 32, 26, 11, 4, 2};
 
 /* Each ember streak picture's byte offset in the sheet. */
-const Uint16 Fire_EmberStreakPictures[] = {0, 552, 1480, 2590, 3913, 5185};
+const Uint16 FireEmberStreakPictures[] = {0, 552, 1480, 2590, 3913, 5185};
 
 /* Where each frost mound rises, x and its foot's y, in pixels. */
-const Uint8 Frost_MoundSpots[] = {53, 108, 73, 110, 29, 110, 73, 108, 33, 104,
+const Uint8 FrostMoundSpots[] = {53, 108, 73, 110, 29, 110, 73, 108, 33, 104,
 	96, 106, 8, 109, 62, 98, 33, 100, 87, 100, 21, 95, 53, 90, 33, 90, 72, 91,
 	82, 91, 77, 86, 52, 84, 18, 92, 56, 81};
 
 /* Each variant's timing, three bytes (FROST_TIMING_MOTES, FROST_TIMING_COLUMNS,
-   FROST_TIMING_BURST_FRAME). */
-const Uint8 Frost_Timings[] = {32, 8, 85, 48, 12, 97, 64, 19, 109};
+   FROST_TIMING_BURST_TICK). */
+const Uint8 FrostTimings[] = {32, 8, 85, 48, 12, 97, 64, 19, 109};
 
 /* IceChipSheet's eight chips, after its three mounds, as Frost's motes read
    them: each one's width, in pixels. */
-const Uint8 Frost_MoteWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
+const Uint8 FrostMoteWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
 
 /* Each ice chip picture's height, in pixels. */
-const Uint8 Frost_MoteHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
+const Uint8 FrostMoteHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
 
 /* Each ice chip picture's byte offset in the sheet. */
-const Uint16 Frost_MoteCells[] = {
+const Uint16 FrostMoteCells[] = {
 	1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500};
 
 /* Each mound picture's byte offset in Frost's sprite sheet. */
-const Uint16 Frost_MoundPictures[] = {0, 768, 1280};
+const Uint16 FrostMoundPictures[] = {0, 768, 1280};
 
 /* Each mound picture's height, in pixels. */
-const Uint8 Frost_MoundHeights[] = {24, 16, 16};
+const Uint8 FrostMoundHeights[] = {24, 16, 16};
 
-/* The same eight ice chip pictures as Frost_MoteWidths and the two tables after
+/* The same eight ice chip pictures as FrostMoteWidths and the two tables after
    it, as Frost's chips read them: each one's width, in pixels. */
-const Uint8 Frost_ChipWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
+const Uint8 FrostChipWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
 
 /* Each ice chip picture's height, in pixels. */
-const Uint8 Frost_ChipHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
+const Uint8 FrostChipHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
 
 /* Each ice chip picture's byte offset in the sheet. */
-const Uint16 Frost_ChipCells[] = {
+const Uint16 FrostChipCells[] = {
 	1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500};
 
 /* Each variant's sparks: a byte nothing reads, then the sparks each bolt throws
-   a frame. */
-const Uint8 Ray_Sparks[][2] = {{2, 4}, {2, 6}, {4, 8}};
+   a tick. */
+const Uint8 RaySparks[][2] = {{2, 4}, {2, 6}, {4, 8}};
 
 /* Eruption's counts, by variant. */
-const Uint8 Eruption_Counts[][3] = {{16, 8, 72}, {32, 16, 80}, {128, 32, 88}};
+const Uint8 EruptionCounts[][3] = {{16, 8, 72}, {32, 16, 80}, {128, 32, 88}};
 
 /* BlastSheet's seven pictures, an explosion flaring up and fading to smoke:
    each one's byte offset in the sheet. */
-const Uint16 Eruption_PuffPictures[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
+const Uint16 EruptionPuffPictures[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
 
 /* Each blast picture's side, in pixels; each is square. */
-const Uint16 Eruption_PuffSizes[] = {16, 32, 48, 48, 48, 48, 48};
+const Uint16 EruptionPuffSizes[] = {16, 32, 48, 48, 48, 48, 48};
 
 /* The flips a glint may be drawn with, one picked at random. */
-const Uint8 BurstShower_GlintFlips[] = {0, 4, 8, 12};
+const Uint8 BurstShowerGlintFlips[] = {0, 4, 8, 12};
 
 /* Atalanta's sprites' scale, one to one. */
-const Sint32 Atalanta_UnitScale[] = {toFIXED(1), toFIXED(1)};
+const Sint32 AtalantaUnitScale[] = {toFIXED(1), toFIXED(1)};
 
 /* Each vine picture's width, in pixels. */
-const Uint8 Growth_VineWidths[] = {21, 28, 19};
+const Uint8 GrowthVineWidths[] = {21, 28, 19};
 
 /* The tallest a column grows, in pixels, by column in threes. */
-const Uint8 Growth_HeightLimits[] = {119, 119, 102};
+const Uint8 GrowthHeightLimits[] = {119, 119, 102};
 
 /* Each vine picture's byte offset in Growth's sprite sheet. */
-const Uint16 Growth_VinePictures[] = {0, 2499, 5831};
+const Uint16 GrowthVinePictures[] = {0, 2499, 5831};
 
 /* Each pillar picture's width, in pixels. */
-const Uint8 Growth_PillarWidths[] = {10, 8, 9};
+const Uint8 GrowthPillarWidths[] = {10, 8, 9};
 
 /* Each pillar picture's byte offset in Growth's sprite sheet. */
-const Uint16 Growth_PillarPictures[] = {0, 1080, 1888};
+const Uint16 GrowthPillarPictures[] = {0, 1080, 1888};
 
 /* The columns, by strength. */
-const Uint8 Growth_ColumnCounts[] = {4, 8, 12};
+const Uint8 GrowthColumnCounts[] = {4, 8, 12};
 
 /* Each column's root, its x in the canvas, in pixels. */
-const Uint8 Growth_ColumnX[] = {
+const Uint8 GrowthColumnX[] = {
 	64, 72, 56, 80, 48, 88, 40, 96, 32, 104, 24, 72, 56, 80, 48, 88};
 
 /* Each pillar picture's height, in pixels. */
-const Sint8 Growth_PillarHeights[] = {100, 60, 88, 96, 64, 104, 82, 98};
+const Sint8 GrowthPillarHeights[] = {100, 60, 88, 96, 64, 104, 82, 98};
 
 /* Each puff picture's width, in pixels. */
-const Sint8 Growth_PuffWidths[] = {5, 7, 11, 16, 23, 27, 16};
+const Sint8 GrowthPuffWidths[] = {5, 7, 11, 16, 23, 27, 16};
 
 /* Each puff picture's height, in pixels. */
-const Uint8 Growth_PuffHeights[] = {10, 14, 21, 32, 45, 50, 32};
+const Uint8 GrowthPuffHeights[] = {10, 14, 21, 32, 45, 50, 32};
 
 /* Each dust puff picture's byte offset in Growth's sprite sheet. */
-const Uint16 Growth_PuffPictures[] = {0, 50, 148, 379, 891, 1926, 3276};
+const Uint16 GrowthPuffPictures[] = {0, 50, 148, 379, 891, 1926, 3276};
 
 /* Each vine's x about the middle of the targets, in pixels. */
-const Sint8 Vine_ColumnOffsets[] = {
+const Sint8 VineColumnOffsets[] = {
 	0, 14, -32, 8, 32, -48, 4, 12, -24, 24, -12, -40, -4, -16, -32, 12};
 
 /* Each thorn's kind: 0 and 1 large, 2 and 3 small; the odd ones grow to the
    left. */
-const Uint8 Thorn_Kinds[] = {0, 3, 2, 1, 2, 3, 2, 1};
+const Uint8 ThornKinds[] = {0, 3, 2, 1, 2, 3, 2, 1};
 
 /* Each thorn's root, its x in the canvas, in pixels. */
 const Sint8 Thorn_X[] = {24, 80, 24, 48, 88, 40, 8, 96};
 
 /* The thorns, by strength. */
-const Uint8 Thorn_Counts[] = {3, 5, 8};
+const Uint8 ThornCounts[] = {3, 5, 8};
 
 /* Each thorn puff picture's width, in pixels. */
-const Sint8 Thorn_PuffWidths[] = {5, 7, 11, 17, 32, 32, 19};
+const Sint8 ThornPuffWidths[] = {5, 7, 11, 17, 32, 32, 19};
 
 /* Each dust puff picture's height, in pixels, as a thorn bursts out. */
-const Uint8 Thorn_PuffHeights[] = {10, 14, 21, 34, 59, 60, 38};
+const Uint8 ThornPuffHeights[] = {10, 14, 21, 34, 59, 60, 38};
 
 /* Each thorn puff picture's byte offset in Growth's sprite sheet. */
-const Uint16 Thorn_PuffPictures[] = {5888, 5938, 6036, 6267, 6845, 8733, 10653};
+const Uint16 ThornPuffPictures[] = {5888, 5938, 6036, 6267, 6845, 8733, 10653};
 
 /* Four bytes for each strength: the sparks, the glints, the glints' spread and
    the bolts. */
-const Uint8 Bolt_Counts[] = {16, 0, 15, 1, 32, 3, 31, 1, 128, 5, 48, 3};
+const Uint8 BoltCounts[] = {16, 0, 15, 1, 32, 3, 31, 1, 128, 5, 48, 3};
 
 /* The flips a glint may be drawn with, one picked at random. */
-const Uint8 Bolt_GlintFlips[] = {0, 4, 8, 12};
+const Uint8 BoltGlintFlips[] = {0, 4, 8, 12};
 
 /* How the glints are blended, by variant. */
-const Uint8 Bolt_GlintModes[] = {1, 1, 0};
+const Uint8 BoltGlintModes[] = {1, 1, 0};
 
 /* How tall each kind of comet is drawn above its point, in pixels. */
-const Uint8 ProjectileVolley_CometHeights[] = {24, 36, 48};
+const Uint8 ProjectileVolleyCometHeights[] = {24, 36, 48};
 
 /* The projectile volley's modes, one row a mode (PROJECTILE_VOLLEY_MODE), one
-   byte a column (VOLLEY_FIELD): the shots at each target, the frames a shot
-   takes to reach it, the frames between shots and between targets, and the
+   byte a column (VOLLEY_FIELD): the shots at each target, the ticks a shot
+   takes to reach it, the ticks between shots and between targets, and the
    sparks each hit throws. */
-const Uint8 ProjectileVolley_Modes[][PROJECTILE_VOLLEY_COLUMNS] = {
+const Uint8 ProjectileVolleyModes[][PROJECTILE_VOLLEY_COLUMNS] = {
 	[PROJECTILE_VOLLEY_SLASH] = {[PROJECTILE_VOLLEY_SHOTS] = 6,
 		[PROJECTILE_VOLLEY_STEPS] = 10,
 		[PROJECTILE_VOLLEY_STAGGER] = 3,
@@ -1207,87 +1207,87 @@ const Uint8 ProjectileVolley_Modes[][PROJECTILE_VOLLEY_COLUMNS] = {
 };
 
 /* Each flash picture's width, in pixels. */
-const Uint8 ProjectileVolley_FlashWidths[] = {12, 18, 24, 30, 36, 39, 40};
+const Uint8 ProjectileVolleyFlashWidths[] = {12, 18, 24, 30, 36, 39, 40};
 
 /* Each flash picture's height, in pixels. */
-const Uint8 ProjectileVolley_FlashHeights[] = {10, 15, 18, 22, 27, 28, 30};
+const Uint8 ProjectileVolleyFlashHeights[] = {10, 15, 18, 22, 27, 28, 30};
 
 /* How far each step of the flash spreads, in pixels. */
-const Uint8 ProjectileVolley_FlashSteps[] = {2, 3, 4, 4, 5, 6, 6};
+const Uint8 ProjectileVolleyFlashSteps[] = {2, 3, 4, 4, 5, 6, 6};
 
 /* How far each step of the flash rises, in pixels. */
-const Uint8 ProjectileVolley_FlashRises[] = {0, 3, 5, 7, 10, 12, 12, 0};
+const Uint8 ProjectileVolleyFlashRises[] = {0, 3, 5, 7, 10, 12, 12, 0};
 
 /* Each flash picture's byte offset in Projectile Volley's sprite sheet. */
-const Uint16 ProjectileVolley_FlashPictures[] = {
+const Uint16 ProjectileVolleyFlashPictures[] = {
 	8192, 8312, 8582, 9014, 9674, 10646, 11738};
 
-/* The four small ice chip pictures, as Hail_Pictures gives them, the volley
+/* The four small ice chip pictures, as HailPictures gives them, the volley
    keeping its own copy: their byte offsets in the sheet. */
-const Uint16 ProjectileVolley_PelletPictures[] = {2308, 2372, 2436, 2500};
+const Uint16 ProjectileVolleyPelletPictures[] = {2308, 2372, 2436, 2500};
 
 /* The glints' flips, one picked at random. */
-const Uint8 ProjectileVolley_GlintFlips[] = {0, 4, 8, 12};
+const Uint8 ProjectileVolleyGlintFlips[] = {0, 4, 8, 12};
 
-/* The frames the Djinni throws its five flames on. */
-const Uint8 DjinnAttacks_LaunchFrames[] = {4, 7, 10, 21, 34};
+/* The ticks the Djinni throws its five flames on. */
+const Uint8 DjinnAttacksLaunchTicks[] = {4, 7, 10, 21, 34};
 
 /* IceChipSheet's last four pictures, the small 8x8 ice chips, as Hail reads
    them: their widths, in pixels; the tables after it give their heights and
    offsets. */
-const Uint8 Hail_PictureWidths[] = {8, 8, 8, 8};
+const Uint8 HailPictureWidths[] = {8, 8, 8, 8};
 
 /* Each ice chip picture's height, in pixels. */
-const Uint8 Hail_PictureHeights[] = {8, 8, 8, 8};
+const Uint8 HailPictureHeights[] = {8, 8, 8, 8};
 
-/* Each ice chip picture's byte offset in the sheet, as Frost_MoteCells' last
+/* Each ice chip picture's byte offset in the sheet, as FrostMoteCells' last
    four give them. */
-const Uint16 Hail_Pictures[] = {2308, 2372, 2436, 2500};
+const Uint16 HailPictures[] = {2308, 2372, 2436, 2500};
 
 /* The chips' flips, a blitter's flags; the tables after it give, by shape,
    their pictures, places and sizes. */
-const Uint8 Ground_CrackleFlips[] = {3, 7, 11, 15};
+const Uint8 GroundCrackleFlips[] = {3, 7, 11, 15};
 
 /* Each portal picture's width, in pixels. */
-const Uint8 Ground_PortalWidths[] = {24, 7, 7, 8, 6, 13, 10, 11, 7};
+const Uint8 GroundPortalWidths[] = {24, 7, 7, 8, 6, 13, 10, 11, 7};
 
 /* Each portal picture's height, in pixels. */
-const Uint8 Ground_PortalHeights[] = {48, 13, 14, 24, 24, 17, 20, 14, 20};
+const Uint8 GroundPortalHeights[] = {48, 13, 14, 24, 24, 17, 20, 14, 20};
 
 /* Each portal picture's byte offset in Hail's sprite sheet. */
-const Uint16 Ground_PortalPictures[] = {
+const Uint16 GroundPortalPictures[] = {
 	0, 1152, 1243, 1341, 1533, 1677, 1898, 2098, 2252};
 
 /* Each portal's x, in pixels. */
-const Uint8 Ground_PortalX[] = {0, 9, 9, 11, 10, 0, 3, 13, 7};
+const Uint8 GroundPortalX[] = {0, 9, 9, 11, 10, 0, 3, 13, 7};
 
 /* Each portal's y, in pixels. */
-const Uint8 Ground_PortalY[] = {0, 18, 18, 0, 24, 20, 5, 22, 26};
+const Uint8 GroundPortalY[] = {0, 18, 18, 0, 24, 20, 5, 22, 26};
 
 /* The palettes a struck target flashes in, one picked at random. */
-const Uint8 Thor_TargetPalettes[] = {7, 14, 10, 4};
+const Uint8 ThorTargetPalettes[] = {7, 14, 10, 4};
 
 /* The flips a crackle may be drawn with, one picked at random. */
-const Uint8 Thor_CrackleFlips[] = {0, 4, 8, 12};
+const Uint8 ThorCrackleFlips[] = {0, 4, 8, 12};
 
 /* Each shard's place in the boulder, x and y, in pixels. */
-const Uint8 Spire_ShardOffsets[] = {65, 104, 68, 95, 64, 93, 61, 93, 64, 87, 72,
+const Uint8 SpireShardOffsets[] = {65, 104, 68, 95, 64, 93, 61, 93, 64, 87, 72,
 	85, 56, 88, 51, 80, 61, 75, 72, 81, 69, 71, 66, 70, 71, 64, 49, 71, 59, 69,
 	53, 68, 78, 73, 55, 67, 75, 62, 61, 65, 53, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 /* Each boulder's x about the middle of the canvas, in pixels. */
-const Sint8 Spire_RockX[] = {0, -12, 12, -8, 16};
+const Sint8 SpireRockX[] = {0, -12, 12, -8, 16};
 
-/* The frame each boulder is dropped on; it lands SPIRE_FALL_FRAMES later. */
-const Uint8 Spire_DropFrames[] = {8, 16, 20, 24, 32};
+/* The tick each boulder is dropped on; it lands SPIRE_FALL_TICKS later. */
+const Uint8 SpireDropTicks[] = {8, 16, 20, 24, 32};
 
 /* The boulders, by variant. */
-const Uint8 Spire_RockCounts[] = {1, 3, 5};
+const Uint8 SpireRockCounts[] = {1, 3, 5};
 
 /* A flurry's style, one row a mode (FLURRY_MODE), one byte a column (enum
    FLURRY_COLUMN). */
-const Uint8 Flurry_Styles[][8] = {{1, 0, 5, 16, 12, 80, 0, 0},
+const Uint8 FlurryStyles[][8] = {{1, 0, 5, 16, 12, 80, 0, 0},
 	{1, 1, 7, 16, 12, 104, 0, 0}, {1, 2, 9, 16, 12, 128, 0, 0},
 	{1, 3, 1, 16, 16, 36, 0, 0}, {1, 3, 2, 20, 16, 52, 0, 0},
 	{1, 3, 3, 24, 16, 68, 0, 0}, {0, 2, 1, 32, 12, 28, 1, 0},
@@ -1296,74 +1296,74 @@ const Uint8 Flurry_Styles[][8] = {{1, 0, 5, 16, 12, 80, 0, 0},
 	{1, 0, 1, 16, 12, 80, 0, 2}, {1, 3, 1, 16, 16, 30, 0, 0}};
 
 /* A glint's four flips. */
-const Uint8 Flurry_GlintFlips[] = {0, 4, 8, 12, 0};
+const Uint8 FlurryGlintFlips[] = {0, 4, 8, 12, 0};
 
 /* Each row picture's byte offset in Gaia's sprite sheet. */
-const Uint16 Gaia_RowPictures[] = {
+const Uint16 GaiaRowPictures[] = {
 	0, 160, 352, 640, 1024, 1504, 2080, 2752, 3776};
 
 /* The growing wall's nine rows: their widths, in pixels. */
-const Uint8 Gaia_RowWidths[] = {5, 6, 9, 12, 15, 18, 21, 32, 40};
+const Uint8 GaiaRowWidths[] = {5, 6, 9, 12, 15, 18, 21, 32, 40};
 
 /* The flame, EarthWallSheet's three half walls of flame as
-   DjinnBeams_HeadPictures has them: their byte offsets where Gaia decodes the
+   DjinnBeamsHeadPictures has them: their byte offsets where Gaia decodes the
    sheet. */
-const Uint16 Gaia_FlamePictures[] = {10672, 11505, 12550};
+const Uint16 GaiaFlamePictures[] = {10672, 11505, 12550};
 
 /* The flame's three pictures: their widths, in pixels. */
-const Uint8 Gaia_FlameWidths[] = {17, 19, 20};
+const Uint8 GaiaFlameWidths[] = {17, 19, 20};
 
 /* The flame's three pictures: their heights, in pixels. */
-const Uint8 Gaia_FlameHeights[] = {49, 55, 64};
+const Uint8 GaiaFlameHeights[] = {49, 55, 64};
 
 /* The wall layer's shift, in pixels, by side and variant. */
-const Sint8 Gaia_Bg2Shifts[][3] = {{-8, 0, 12}, {-72, -40, -16}};
+const Sint8 GaiaBg2Shifts[][3] = {{-8, 0, 12}, {-72, -40, -16}};
 
 /* The x of each rock that falls late, in pixels. */
-const Uint8 Gaia_LateRockColumns[] = {136, 40, 120, 56, 104, 72};
+const Uint8 GaiaLateRockColumns[] = {136, 40, 120, 56, 104, 72};
 
 /* Each sprite's x, in pixels. */
-const Uint8 Ulysses_ObjectX[] = {0, 32, 0, 32, 0, 32, 32};
+const Uint8 UlyssesObjectX[] = {0, 32, 0, 32, 0, 32, 32};
 
 /* Each sprite's depth, in pixels. */
-const Uint8 Ulysses_ObjectZ[] = {8, 0, 40, 32, 72, 64, 96};
+const Uint8 UlyssesObjectZ[] = {8, 0, 40, 32, 72, 64, 96};
 
 /* Each Ulysses picture's width, in pixels. */
-const Uint8 Ulysses_PictureWidths[] = {
+const Uint8 UlyssesPictureWidths[] = {
 	12, 9, 6, 5, 8, 9, 12, 9, 8, 8, 8, 10, 11, 10, 8, 6, 6, 9};
 
 /* Each Ulysses picture's height, in pixels. */
-const Uint8 Ulysses_PictureHeights[] = {
+const Uint8 UlyssesPictureHeights[] = {
 	18, 17, 15, 12, 14, 15, 16, 13, 8, 4, 4, 6, 9, 9, 10, 10, 13, 16};
 
 /* Each Ulysses picture's byte offset in Ulysses's sprite sheet. */
-const Uint16 Ulysses_Pictures[] = {0, 216, 369, 459, 519, 631, 766, 958, 1075,
+const Uint16 UlyssesPictures[] = {0, 216, 369, 459, 519, 631, 766, 958, 1075,
 	1139, 1171, 1203, 1263, 1362, 1452, 1532, 1592, 1670};
 
 /* Where each of the six particles starts: x and y in pixels, z in 1024ths of a
-   pixel, and its x and y speeds in halves of a pixel a frame. */
-const Sint8 Ulysses_ParticleStarts[][5] = {{100, 60, 64, -6, -6},
+   pixel, and its x and y speeds in halves of a pixel a tick. */
+const Sint8 UlyssesParticleStarts[][5] = {{100, 60, 64, -6, -6},
 	{112, 44, -64, -6, 4}, {96, 28, 64, -6, -5}, {112, 80, -64, -6, 4},
 	{104, 32, 64, -6, 5}, {102, 68, -64, -6, 4}};
 
 /* Each Swirl Swipe picture's width, in pixels. */
-const Uint8 SwirlSwipe_PictureWidths[] = {40, 112, 112, 112, 88, 64};
+const Uint8 SwirlSwipePictureWidths[] = {40, 112, 112, 112, 88, 64};
 
 /* Each Swirl Swipe picture's height, in pixels. */
-const Uint8 SwirlSwipe_PictureHeights[] = {56, 80, 64, 64, 80, 88};
+const Uint8 SwirlSwipePictureHeights[] = {56, 80, 64, 64, 80, 88};
 
 /* The swirl's six pictures: their byte offsets; the tables after it give their
    x (six for each side), widths, rise and heights. */
-const Uint16 SwirlSwipe_Pictures[] = {0, 2240, 11200, 18368, 0, 7040};
+const Uint16 SwirlSwipePictures[] = {0, 2240, 11200, 18368, 0, 7040};
 
 /* Each picture's x, in pixels. */
-const Uint8 SwirlSwipe_PictureX[] = {72, 0, 0, 0, 32, 64, 16, 16, 16, 16, 8, 0};
+const Uint8 SwirlSwipePictureX[] = {72, 0, 0, 0, 32, 64, 16, 16, 16, 16, 8, 0};
 
 /* How far below its anchor each picture's top goes, in pixels. */
-const Sint8 SwirlSwipe_PictureBiasY[] = {0, 4, 24, -6, -20, -28};
+const Sint8 SwirlSwipePictureBiasY[] = {0, 4, 24, -6, -20, -28};
 
 /* Each part's point, x and y, in pixels. */
-const Uint8 Azul_PartPoints[][2] = {{23, 13}, {0, 0}, {42, 0}, {28, 41},
+const Uint8 AzulPartPoints[][2] = {{23, 13}, {0, 0}, {42, 0}, {28, 41},
 	{28, 41}, {48, 28}, {42, 0}, {78, 31}, {28, 41}, {28, 41}, {66, 7}, {42, 0},
 	{79, 0}, {78, 31}, {78, 31}, {94, 8}, {79, 0}, {128, 0}, {78, 31}, {78, 31},
 	{112, 28}, {128, 0}, {132, 48}, {78, 31}, {78, 31}, {162, 12}, {182, 0},
@@ -1388,395 +1388,394 @@ const Uint8 Azul_PartPoints[][2] = {{23, 13}, {0, 0}, {42, 0}, {28, 41},
 	{175, 119}, {169, 106}, {185, 93}, {175, 119}, {137, 104}, {137, 104}};
 
 /* The serpent's sprites' scale, one to one. */
-const SCALE Azul_UnitScale = {toFIXED(1), toFIXED(1)};
+const SCALE AzulUnitScale = {toFIXED(1), toFIXED(1)};
 
 /* Each sprite's x, in pixels. */
-const Uint8 Azul_ObjectX[] = {35, 45, 14, 1, 1, 40, 9, 40, 9, 25, 39, 8};
+const Uint8 AzulObjectX[] = {35, 45, 14, 1, 1, 40, 9, 40, 9, 25, 39, 8};
 
 /* Each sprite's depth, in pixels. */
-const Uint8 Azul_ObjectZ[] = {0, 32, 32, 64, 96, 51, 51, 83, 83, 106, 129, 129};
+const Uint8 AzulObjectZ[] = {0, 32, 32, 64, 96, 51, 51, 83, 83, 106, 129, 129};
 
 /* The late sprites' scale, one to one. */
-const SCALE Azul_LateUnitScale = {toFIXED(1), toFIXED(1)};
+const SCALE AzulLateUnitScale = {toFIXED(1), toFIXED(1)};
 
 /* Each late sprite's x, in pixels. */
-const Sint8 Azul_LateObjectX[] = {0, 32, 32, 64, 96, 50, 51, 82};
+const Sint8 AzulLateObjectX[] = {0, 32, 32, 64, 96, 50, 51, 82};
 
 /* Each late sprite's depth, in pixels. */
-const Sint8 Azul_LateObjectZ[] = {10, 0, 32, 45, 45, 5, 36, 5};
+const Sint8 AzulLateObjectZ[] = {10, 0, 32, 45, 45, 5, 36, 5};
 
-/* The same six slash pictures as TargetStrike_Widths and the tables after it,
+/* The same six slash pictures as TargetStrikeWidths and the tables after it,
    where the beam decodes BeamImage: each one's width, in pixels. */
-const Uint8 Beam_PictureWidths[] = {38, 54, 71, 74, 77, 65};
+const Uint8 BeamPictureWidths[] = {38, 54, 71, 74, 77, 65};
 
 /* Each slash picture's height, in pixels. */
-const Uint8 Beam_PictureHeights[] = {7, 9, 11, 13, 13, 11};
+const Uint8 BeamPictureHeights[] = {7, 9, 11, 13, 13, 11};
 
 /* Each slash picture's byte offset in the beam's pictures. */
-const Uint16 Beam_Pictures[] = {0, 266, 752, 1533, 2495, 3496};
+const Uint16 BeamPictures[] = {0, 266, 752, 1533, 2495, 3496};
 
 /* How far each slash picture reaches past its middle, in pixels. */
-const Uint8 Beam_PictureReaches[] = {58, 42, 25, 13, 5, 0};
+const Uint8 BeamPictureReaches[] = {58, 42, 25, 13, 5, 0};
 
 /* The flips a glint may be drawn with, one picked at random. */
-const Uint8 CastingImpact_SquallGlintFlips[] = {0, 4, 8, 12};
+const Uint8 CastingImpactSquallGlintFlips[] = {0, 4, 8, 12};
 
 /* The flips a glint may be drawn with, one picked at random. */
-const Uint8 CastingImpact_SapGlintFlips[] = {0, 4, 8, 12};
+const Uint8 CastingImpactSapGlintFlips[] = {0, 4, 8, 12};
 
-/* The fangs' picture for each two of their first eight frames, by number. */
-const Uint8 CastingImpact_BitePictures[] = {0, 1, 2, 3};
+/* The fangs' picture for each two of their first eight ticks, by number. */
+const Uint8 CastingImpactBitePictures[] = {0, 1, 2, 3};
 
 /* Each Raiden's Wrath picture's byte offset in the casting impacts' sprite
    sheet. */
-const Uint16 CastingImpact_RaidensWrathPictures[] = {
+const Uint16 CastingImpactRaidensWrathPictures[] = {
 	8448, 8712, 11462, 16646, 16646, 24351, 24351, 28201, 28201, 28201};
 
 /* Each Raiden's Wrath picture's width, in pixels. */
-const Uint16 CastingImpact_RaidensWrathWidths[] = {
+const Uint16 CastingImpactRaidensWrathWidths[] = {
 	24, 55, 64, 115, 115, 70, 70, 22, 22, 22};
 
 /* Each Raiden's Wrath picture's height, in pixels. */
-const Uint16 CastingImpact_RaidensWrathHeights[] = {
+const Uint16 CastingImpactRaidensWrathHeights[] = {
 	11, 50, 81, 67, 67, 55, 55, 29, 29, 29};
 
 /* Each Raiden's Wrath's x, in pixels. */
-const Uint16 CastingImpact_RaidensWrathX[] = {
+const Uint16 CastingImpactRaidensWrathX[] = {
 	58, 19, 0, 6, 6, 50, 50, 100, 100, 100};
 
 /* Each Raiden's Wrath's y, in pixels. */
-const Uint16 CastingImpact_RaidensWrathY[] = {
+const Uint16 CastingImpactRaidensWrathY[] = {
 	17, 19, 24, 44, 44, 42, 42, 37, 37, 37};
 
 /* Each Apocalypse picture's byte offset in the casting impacts' sprite
    sheet. */
-const Uint16 CastingImpact_ApocalypsePictures[] = {
+const Uint16 CastingImpactApocalypsePictures[] = {
 	5700, 7128, 10414, 14089, 19152, 23148, 26752};
 
 /* Each Apocalypse picture's width, in pixels. */
-const Uint16 CastingImpact_ApocalypseWidths[] = {42, 62, 75, 83, 54, 68, 37};
+const Uint16 CastingImpactApocalypseWidths[] = {42, 62, 75, 83, 54, 68, 37};
 
 /* Each Apocalypse picture's height, in pixels. */
-const Uint16 CastingImpact_ApocalypseHeights[] = {34, 53, 49, 61, 74, 53, 28};
+const Uint16 CastingImpactApocalypseHeights[] = {34, 53, 49, 61, 74, 53, 28};
 
 /* Each Apocalypse's x, in pixels. */
-const Uint16 CastingImpact_ApocalypseX[] = {85, 65, 50, 19, 0, 0, 58};
+const Uint16 CastingImpactApocalypseX[] = {85, 65, 50, 19, 0, 0, 58};
 
 /* Each Apocalypse's y, in pixels. */
-const Uint16 CastingImpact_ApocalypseY[] = {62, 66, 78, 41, 19, 0, 5};
+const Uint16 CastingImpactApocalypseY[] = {62, 66, 78, 41, 19, 0, 5};
 
 /* Each Apocalypse burst picture's byte offset in the casting impacts' sprite
    sheet. */
-const Uint16 CastingImpact_ApocalypseBurstPictures[] = {27788, 28464, 29724};
+const Uint16 CastingImpactApocalypseBurstPictures[] = {27788, 28464, 29724};
 
 /* Each Apocalypse burst picture's width, in pixels. */
-const Uint8 CastingImpact_ApocalypseBurstWidths[] = {26, 35, 52};
+const Uint8 CastingImpactApocalypseBurstWidths[] = {26, 35, 52};
 
 /* Each Apocalypse burst picture's height, in pixels. */
-const Uint8 CastingImpact_ApocalypseBurstHeights[] = {26, 36, 48};
+const Uint8 CastingImpactApocalypseBurstHeights[] = {26, 36, 48};
 
 /* Each Apocalypse burst's point, x and y, in pixels. */
-const Uint8 CastingImpact_ApocalypseBurstPoints[][2] = {
+const Uint8 CastingImpactApocalypseBurstPoints[][2] = {
 	{37, 104}, {19, 81}, {20, 47}};
 
-/* The four small ice chip pictures, as Hail_Pictures gives them, the casting
+/* The four small ice chip pictures, as HailPictures gives them, the casting
    impacts keeping their own copy: their byte offsets in the sheet. */
-const Uint16 CastingImpact_IceChipPictures[] = {2308, 2372, 2436, 2500};
+const Uint16 CastingImpactIceChipPictures[] = {2308, 2372, 2436, 2500};
 
 /* The flips a glint may be drawn with, one picked at random. */
-const Uint8 CastingImpact_StunBoltGlintFlips[] = {0, 4, 8, 12};
+const Uint8 CastingImpactStunBoltGlintFlips[] = {0, 4, 8, 12};
 
-/* The frame each Stun Jip band starts on, counted from the impact's fourth
-   frame. */
-const Uint8 CastingImpact_StunJipBandStarts[] = {0, 2, 9, 10};
+/* The tick each Stun Jip band starts on, counted from the impact's fourth
+   tick. */
+const Uint8 CastingImpactStunJipBandStarts[] = {0, 2, 9, 10};
 
 /* How fast each Stun Jip band grows: its scale gains this many times 1500/65536
-   a frame. */
-const Uint8 CastingImpact_StunJipBandGrowth[] = {5, 8, 10, 8};
+   a tick. */
+const Uint8 CastingImpactStunJipBandGrowth[] = {5, 8, 10, 8};
 
 /* Each Stun Jip band's height, in pixels. */
-const Sint8 CastingImpact_StunJipBandHeights[] = {32, 16, 24, 32};
+const Sint8 CastingImpactStunJipBandHeights[] = {32, 16, 24, 32};
 
-/* The frame each Armor Crush wave starts on, counted from the impact's fourth
-   frame. */
-const Uint8 CastingImpact_ArmorCrushWaveStarts[] = {0, 4, 9, 10};
+/* The tick each Armor Crush wave starts on, counted from the impact's fourth
+   tick. */
+const Uint8 CastingImpactArmorCrushWaveStarts[] = {0, 4, 9, 10};
 
 /* How fast each Armor Crush wave grows: its scale gains this many times
-   2000/65536 a frame, from a quarter. */
-const Uint8 CastingImpact_ArmorCrushWaveGrowth[] = {3, 4, 3, 5};
+   2000/65536 a tick, from a quarter. */
+const Uint8 CastingImpactArmorCrushWaveGrowth[] = {3, 4, 3, 5};
 
 /* How much taller than wide each Armor Crush wave is drawn, multiplying its
    scale. */
-const Uint8 CastingImpact_ArmorCrushWaveStretch[] = {3, 4, 5, 6};
+const Uint8 CastingImpactArmorCrushWaveStretch[] = {3, 4, 5, 6};
 
-/* The water columns' feet, x and y, in pixels: Nereid_Columns' pairs and a pair
+/* The water columns' feet, x and y, in pixels: NereidColumns' pairs and a pair
    of zeros, the particle streams keeping their own copy; the first three are
    read. */
-const Uint8 NereidCopy_Columns[] = {16, 104, 32, 104, 48, 104, 64, 104, 0, 0};
+const Uint8 NereidCopyColumns[] = {16, 104, 32, 104, 48, 104, 64, 104, 0, 0};
 
-/* Each falling spark's gravity, in pixels a frame each frame; the same as
-   Nereid_Gravity, the particle streams keeping their own copy. */
-const Sint32 NereidCopy_Gravity[] = {
+/* Each falling spark's gravity, in pixels a tick each tick; the same as
+   NereidGravity, the particle streams keeping their own copy. */
+const Sint32 NereidCopyGravity[] = {
 	toFIXED(0.5), toFIXED(0.25), toFIXED(0.25), toFIXED(0.125)};
 
 /* The twelve-sprite formation: each sprite's x, in pixels. */
-const Uint8 SummonFormation_NereidX[] = {
+const Uint8 SummonFormationNereidX[] = {
 	52, 25, 57, 89, 7, 39, 71, 103, 21, 53, 85, 117};
 
 /* The twelve-sprite formation: each sprite's depth, in pixels. */
-const Uint8 SummonFormation_NereidZ[] = {
+const Uint8 SummonFormationNereidZ[] = {
 	0, 32, 32, 32, 64, 64, 64, 64, 96, 96, 96, 96};
 
 /* The eight-sprite formation facing right: each sprite's x, in pixels. */
-const Uint8 SummonFormation_CybeleX[] = {0, 32, 64, 16, 48, 0, 32, 64};
+const Uint8 SummonFormationCybeleX[] = {0, 32, 64, 16, 48, 0, 32, 64};
 
 /* The eight-sprite formation facing right: each sprite's depth, in pixels. */
-const Uint8 SummonFormation_CybeleZ[] = {0, 0, 0, 32, 32, 64, 64, 64};
+const Uint8 SummonFormationCybeleZ[] = {0, 0, 0, 32, 32, 64, 64, 64};
 
 /* The other eight-sprite formation: each sprite's x, in pixels. */
-const Uint8 SummonFormation_TiamatAlternateX[] = {0, 32, 64, 0, 32, 64, 32, 64};
+const Uint8 SummonFormationTiamatAlternateX[] = {0, 32, 64, 0, 32, 64, 32, 64};
 
 /* The other eight-sprite formation: each sprite's depth, in pixels. */
-const Uint8 SummonFormation_TiamatAlternateZ[] = {10, 0, 0, 42, 32, 32, 64, 64};
+const Uint8 SummonFormationTiamatAlternateZ[] = {10, 0, 0, 42, 32, 32, 64, 64};
 
 /* The small eight-sprite formation: each sprite's x, in pixels. */
-const Uint8 SummonFormation_TiamatX[] = {0, 40, 80, 0, 40, 80, 40, 80};
+const Uint8 SummonFormationTiamatX[] = {0, 40, 80, 0, 40, 80, 40, 80};
 
 /* The small eight-sprite formation: each sprite's depth, in pixels. */
-const Uint8 SummonFormation_TiamatZ[] = {13, 0, 0, 53, 40, 40, 80, 80};
+const Uint8 SummonFormationTiamatZ[] = {13, 0, 0, 53, 40, 40, 80, 80};
 
 /* The wide formation: each sprite's x, in pixels. */
-const Sint8 SummonFormation_MegaeraX[] = {
+const Sint8 SummonFormationMegaeraX[] = {
 	16, 48, 80, 16, 48, 80, -16, 16, 48, 80, 42};
 
 /* The wide formation: each sprite's depth, in pixels. */
-const Uint8 SummonFormation_MegaeraZ[] = {
+const Uint8 SummonFormationMegaeraZ[] = {
 	0, 0, 0, 32, 32, 32, 50, 64, 64, 64, 96};
 
 /* Each impact burst picture's width, in pixels. */
-const Uint8 ImpactBurst_PictureWidths[] = {48, 48, 46, 36, 36, 32, 26, 6};
+const Uint8 ImpactBurstPictureWidths[] = {48, 48, 46, 36, 36, 32, 26, 6};
 
 /* Each impact burst picture's height, in pixels. */
-const Uint8 ImpactBurst_PictureHeights[] = {96, 96, 90, 74, 74, 62, 52, 12};
+const Uint8 ImpactBurstPictureHeights[] = {96, 96, 90, 74, 74, 62, 52, 12};
 
 /* Each impact burst picture's byte offset in Helm Splitter's sprite sheet. */
-const Uint16 ImpactBurst_Pictures[] = {
+const Uint16 ImpactBurstPictures[] = {
 	0, 4608, 9216, 13356, 16020, 18684, 20668, 22020};
 
 /* Each orbit's point, x, y and z, in pixels; x and z are halved. */
-const Sint16 StarfieldFall_OrbitPoints[][3] = {{-64, -96, 24}, {-48, -120, 32},
+const Sint16 StarfieldFallOrbitPoints[][3] = {{-64, -96, 24}, {-48, -120, 32},
 	{-32, -80, -48}, {-16, -72, -24}, {16, -80, 16}, {32, -112, -32},
 	{48, -96, 56}};
 
 /* Each fireball's point, x and y, in pixels. */
-const Sint16 StarfieldFall_FireballPoints[][2] = {
+const Sint16 StarfieldFallFireballPoints[][2] = {
 	{32, 32}, {48, 96}, {80, 80}, {112, 100}, {176, 80}, {196, 64}, {204, 96}};
 
-/* BlastSheet's seven pictures, as Eruption_PuffPictures gives them, the
+/* BlastSheet's seven pictures, as EruptionPuffPictures gives them, the
    particle streams keeping their own copy: each one's byte offset in the
    sheet. */
-const Uint16 StarfieldFall_FlashPictures[] = {
+const Uint16 StarfieldFallFlashPictures[] = {
 	0, 256, 1280, 3584, 5888, 8192, 10496};
 
 /* Each blast picture's side, in pixels. */
-const Uint16 StarfieldFall_FlashSizes[] = {16, 32, 48, 48, 48, 48, 48};
+const Uint16 StarfieldFallFlashSizes[] = {16, 32, 48, 48, 48, 48, 48};
 
 /* Each of the statue's sprites: its x in the statue, in pixels. */
-const Uint8 Ramses_StatueColumns[] = {12, 44, 28, 60, 0, 32, 64, 0, 32};
+const Uint8 RamsesStatueColumns[] = {12, 44, 28, 60, 0, 32, 64, 0, 32};
 
 /* Each of the statue's sprites: its y in the statue, in pixels. */
-const Uint8 Ramses_StatueRows[] = {0, 0, 32, 32, 64, 64, 64, 32, 32};
+const Uint8 RamsesStatueRows[] = {0, 0, 32, 32, 64, 64, 64, 32, 32};
 
-/* BlastSheet's seven pictures, as Eruption_PuffPictures gives them, Ramses
+/* BlastSheet's seven pictures, as EruptionPuffPictures gives them, Ramses
    keeping its own copy: each one's byte offset in the sheet. */
-const Uint16 Ramses_PuffPictures[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
+const Uint16 RamsesPuffPictures[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
 
 /* Each blast picture's side, in pixels. */
-const Uint16 Ramses_PuffSizes[] = {16, 32, 48, 48, 48, 48, 48};
+const Uint16 RamsesPuffSizes[] = {16, 32, 48, 48, 48, 48, 48};
 
 /* The strike columns' x, in pixels, three for each side. */
-const Uint8 Ragnarok_StrikeColumns[] = {32, 24, 0, 96, 104, 128};
+const Uint8 RagnarokStrikeColumns[] = {32, 24, 0, 96, 104, 128};
 
-/* The flash burst's picture for each three frames of a flash, by number. */
-const Uint8 Ragnarok_FlashPictures[] = {5, 5, 4, 3, 2, 1};
+/* The flash burst's picture for each three ticks of a flash, by number. */
+const Uint8 RagnarokFlashPictures[] = {5, 5, 4, 3, 2, 1};
 
-/* The flash burst's picture for each three frames of a flash, by number. */
-const Uint8 TitanBlade_FlashPictures[] = {5, 5, 4, 3, 2, 1};
+/* The flash burst's picture for each three ticks of a flash, by number. */
+const Uint8 TitanBladeFlashPictures[] = {5, 5, 4, 3, 2, 1};
 
-/* The dust's four gravities, in pixels a frame each frame. */
-const Sint32 TitanBlade_DustGravity[] = {
+/* The dust's four gravities, in pixels a tick each tick. */
+const Sint32 TitanBladeDustGravity[] = {
 	toFIXED(0.5), toFIXED(0.25), toFIXED(0.25), toFIXED(0.125)};
 
 /* The sprite each 32x32 cell of the shield's sheet is copied into, in order. */
-const Uint8 Judgment_ShieldSprites[] = {
+const Uint8 JudgmentShieldSprites[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 14, 0};
 
 /* Each shard picture's byte offset in Judgment's sprite sheet. */
-const Uint16 Judgment_ShardPictures[] = {1536, 2125, 2838, 3551, 3950, 4286};
+const Uint16 JudgmentShardPictures[] = {1536, 2125, 2838, 3551, 3950, 4286};
 
 /* Each shard picture's width, in pixels. */
-const Uint8 Judgment_ShardWidths[] = {19, 23, 23, 19, 16, 17};
+const Uint8 JudgmentShardWidths[] = {19, 23, 23, 19, 16, 17};
 
 /* Each shard picture's height, in pixels. */
-const Uint8 Judgment_ShardHeights[] = {31, 31, 31, 21, 21, 24};
+const Uint8 JudgmentShardHeights[] = {31, 31, 31, 21, 21, 24};
 
 /* Each of Kirin's sprites: its x, in pixels. */
-const Uint8 Kirin_Columns[] = {8, 40, 72, 104, 8, 40, 72, 104, 0};
+const Uint8 KirinColumns[] = {8, 40, 72, 104, 8, 40, 72, 104, 0};
 
 /* Each of Kirin's sprites: its y, in pixels. */
-const Uint8 Kirin_Rows[] = {0, 0, 0, 24, 32, 32, 32, 56, 64};
+const Uint8 KirinRows[] = {0, 0, 0, 24, 32, 32, 32, 56, 64};
 
-/* The spray's four gravities, in pixels a frame each frame. */
-const Sint32 Neptune_Gravity[] = {
+/* The spray's four gravities, in pixels a tick each tick. */
+const Sint32 NeptuneGravity[] = {
 	toFIXED(0.5), toFIXED(0.25), toFIXED(0.25), toFIXED(0.125)};
 
-/* BlastSheet's seven pictures, as Eruption_PuffPictures gives them, Undead
+/* BlastSheet's seven pictures, as EruptionPuffPictures gives them, Undead
    Sword keeping its own copy: each one's byte offset in the sheet. */
-const Uint16 UndeadSword_PuffPictures[] = {
+const Uint16 UndeadSwordPuffPictures[] = {
 	0, 256, 1280, 3584, 5888, 8192, 10496};
 
 /* Each blast picture's side, in pixels; the six words after the seventh are
    never read. */
-const Uint16 UndeadSword_PuffSizes[] = {
+const Uint16 UndeadSwordPuffSizes[] = {
 	16, 32, 48, 48, 48, 48, 48, 1536, 2312, 2053, 775, 8224, 8224};
 
 /* The funnels, by mode. */
-const Uint8 WindFunnel_Counts[] = {3, 3};
+const Uint8 WindFunnelCounts[] = {3, 3};
 
-/* The frame each ripple starts on, counted from the sixth. */
-const Uint8 DiamondBerg_RingStarts[4] = {0, 2, 4, 5};
+/* The tick each ripple starts on, counted from the sixth. */
+const Uint8 DiamondBergRingStarts[4] = {0, 2, 4, 5};
 
 /* How fast each ripple grows: its scale gains this many times
-   DIAMOND_BERG_RIPPLE_GROWTH a frame. */
-const Uint8 DiamondBerg_RingGrowth[4] = {6, 7, 6, 8};
+   DIAMOND_BERG_RIPPLE_GROWTH a tick. */
+const Uint8 DiamondBergRingGrowth[4] = {6, 7, 6, 8};
 
 /* Each ripple's height, in pixels. */
-const Sint8 DiamondBerg_RingHeights[4] = {32, 16, -8, -24};
+const Sint8 DiamondBergRingHeights[4] = {32, 16, -8, -24};
 
 /* Each flash's roll. */
-const Sint16 DiamondBerg_ShardRolls[8] = {DEGtoANG(45), DEGtoANG(135),
+const Sint16 DiamondBergShardRolls[8] = {DEGtoANG(45), DEGtoANG(135),
 	DEGtoANG(45), DEGtoANG(135), DEGtoANG(45), DEGtoANG(135), DEGtoANG(45),
 	DEGtoANG(135)};
 
 /* Each flash's pitch. */
-const Sint16 DiamondBerg_ShardPitches[8] = {-DEGtoANG(11.25), -DEGtoANG(11.25),
+const Sint16 DiamondBergShardPitches[8] = {-DEGtoANG(11.25), -DEGtoANG(11.25),
 	-DEGtoANG(11.25), -DEGtoANG(11.25), -DEGtoANG(11.25), -DEGtoANG(11.25),
 	-DEGtoANG(11.25), -DEGtoANG(11.25)};
 
-/* The frame each wave starts on, counted from the crash. */
-const Uint8 Geode_WaveStarts[] = {0, 6, 8, 9};
+/* The tick each wave starts on, counted from the crash. */
+const Uint8 GeodeWaveStarts[] = {0, 6, 8, 9};
 
-/* How fast each wave grows: its scale gains this many times 2000/65536 a frame,
+/* How fast each wave grows: its scale gains this many times 2000/65536 a tick,
    from a half. */
-const Uint8 Geode_WaveGrowth[] = {5, 8, 7, 3};
+const Uint8 GeodeWaveGrowth[] = {5, 8, 7, 3};
 
 /* Each wave's height, in pixels. */
-const Sint8 Geode_WaveHeights[] = {32, 32, 32, 32};
+const Sint8 GeodeWaveHeights[] = {32, 32, 32, 32};
 
-/* BlastSheet's seven pictures, as Eruption_PuffPictures gives them, Soul
+/* BlastSheet's seven pictures, as EruptionPuffPictures gives them, Soul
    Shatter keeping its own copy: each one's byte offset in the sheet. */
-const Uint16 SoulShatter_SparkPictures[] = {
+const Uint16 SoulShatterSparkPictures[] = {
 	0, 256, 1280, 3584, 5888, 8192, 10496};
 
 /* Each blast picture's side, in pixels. */
-const Uint16 SoulShatter_SparkSizes[] = {16, 32, 48, 48, 48, 48, 48};
+const Uint16 SoulShatterSparkSizes[] = {16, 32, 48, 48, 48, 48, 48};
 
 /* The heights of the cone's rings, in pixels, the tip first. */
-const Sint8 Serac_RowHeights[] = {-96, -88, -72, -64, -48, -32, -8, 0};
+const Sint8 SeracRowHeights[] = {-96, -88, -72, -64, -48, -32, -8, 0};
 
 /* The radii of the cone's rings, in pixels. */
-const Sint8 Serac_RowRadii[] = {1, 6, 10, 12, 16, 24, 30, 32};
+const Sint8 SeracRowRadii[] = {1, 6, 10, 12, 16, 24, 30, 32};
 
-/* Each ripple's delay, in frames. */
-const Uint8 Serac_RingStarts[] = {6, 8, 10, 11};
+/* Each ripple's delay, in ticks. */
+const Uint8 SeracRingStarts[] = {6, 8, 10, 11};
 
 /* How fast each ripple grows: its scale gains this many times SERAC_RING_GROWTH
-   a frame. */
-const Uint8 Serac_RingGrowth[] = {8, 7, 6, 3};
+   a tick. */
+const Uint8 SeracRingGrowth[] = {8, 7, 6, 3};
 
 /* Each ripple's height, in pixels. */
-const Sint8 Serac_RingHeights[] = {16, 32, 56, 72};
+const Sint8 SeracRingHeights[] = {16, 32, 56, 72};
 
-/* The frame of the strike, by mode. */
-const Uint8 HeavyBlow_StrikeFrames[] = {38, 40};
+/* The tick of the strike, by mode. */
+const Uint8 HeavyBlowStrikeTicks[] = {38, 40};
 
 /* The chips, by mode. */
-const Uint8 HeavyBlow_ChipCounts[] = {128, 32};
+const Uint8 HeavyBlowChipCounts[] = {128, 32};
 
 /* A chip's two pixels. */
-const Uint8 HeavyBlow_ChipPixels[] = {58, 58};
+const Uint8 HeavyBlowChipPixels[] = {58, 58};
 
 /* The columns, by number: their x, in pixels; the tables after it give their
-   start frames, full heights and leans. */
-const Sint16 Cool_ColumnX[] = {92, 72, 32, 48, 88, 56, 80, 88, -8, 132};
+   start ticks, full heights and leans. */
+const Sint16 CoolColumnX[] = {92, 72, 32, 48, 88, 56, 80, 88, -8, 132};
 
-/* The frame each column starts on. */
-const Uint8 Cool_ColumnStarts[] = {0, 4, 7, 10, 13, 16, 20, 23, 25, 27};
+/* The tick each column starts on. */
+const Uint8 CoolColumnStarts[] = {0, 4, 7, 10, 13, 16, 20, 23, 25, 27};
 
 /* Each column's full height, in pixels. */
-const Uint8 Cool_ColumnHeights[] = {64, 64, 48, 64, 64, 56, 62, 64, 46, 52};
+const Uint8 CoolColumnHeights[] = {64, 64, 48, 64, 64, 56, 62, 64, 46, 52};
 
 /* Each column's lean. */
-const Uint8 Cool_ColumnLeans[] = {0, 3, 1, 2, 3, 0, 1, 2, 1, 0};
+const Uint8 CoolColumnLeans[] = {0, 3, 1, 2, 3, 0, 1, 2, 1, 0};
 
-/* BlastSheet's seven pictures, as Eruption_PuffPictures gives them, Cool
+/* BlastSheet's seven pictures, as EruptionPuffPictures gives them, Cool
    keeping its own copy: each one's byte offset in the sheet. */
-const Uint16 Cool_SparkPictures[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
+const Uint16 CoolSparkPictures[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
 
 /* Each blast picture's side, in pixels. */
-const Uint16 Cool_SparkSizes[] = {16, 32, 48, 48, 48, 48, 48};
+const Uint16 CoolSparkSizes[] = {16, 32, 48, 48, 48, 48, 48};
 
-/* The drops' sideways speeds as they bounce, in eighths of a pixel a frame. */
-const Sint8 WyrdCurse_DropBounces[] = {-12, 4, -8, 14};
-
-/* The flips a glint may be drawn with, one picked at random. */
-const Uint8 BoltTrail_GlintFlips[] = {0, 4, 8, 12, 0, 0};
+/* The drops' sideways speeds as they bounce, in eighths of a pixel a tick. */
+const Sint8 WyrdCurseDropBounces[] = {-12, 4, -8, 14};
 
 /* The flips a glint may be drawn with, one picked at random. */
-const Uint8 Megaera_GlintFlips[] = {0, 4, 8, 12};
+const Uint8 BoltTrailGlintFlips[] = {0, 4, 8, 12, 0, 0};
+
+/* The flips a glint may be drawn with, one picked at random. */
+const Uint8 MegaeraGlintFlips[] = {0, 4, 8, 12};
 
 /* How the glints are blended, by variant. */
-const Uint8 Megaera_GlintModes[] = {1, 1, 0, 0};
+const Uint8 MegaeraGlintModes[] = {1, 1, 0, 0};
 
 /* Each ring's full scale, in 65536ths, which its growth multiplies. */
-const Sint32 LightSurge_RingSizes[4] = {18000, 12000, 30000, 40000};
+const Sint32 LightSurgeRingSizes[4] = {18000, 12000, 30000, 40000};
 
 /* Each ring's shade, before it dims. */
-const Sint8 LightSurge_RingShades[4] = {-2, -8, -4, 0};
+const Sint8 LightSurgeRingShades[4] = {-2, -8, -4, 0};
 
 /* How far each ring sways, in pixels at the sway's widest. */
-const Sint8 LightSurge_RingSways[4] = {-24, -8, 24, 48};
+const Sint8 LightSurgeRingSways[4] = {-24, -8, 24, 48};
 
 /* Each mode's flags for the Djinni's entrance. */
-const Uint8 DjinniCharge_EntranceFlags[] = {2, 10, 0, 0};
+const Uint8 DjinniChargeEntranceFlags[] = {2, 10, 0, 0};
 
-/* The debris's gravities, in pixels a frame each frame: negative, so it
+/* The debris's gravities, in pixels a tick each tick: negative, so it
    rises. */
-const Sint32 DjinniCharge_DebrisGravity[4] = {
+const Sint32 DjinniChargeDebrisGravity[4] = {
 	-toFIXED(1) / 8, -toFIXED(1) / 16, -toFIXED(1) / 32, -toFIXED(1) / 64};
 
 /* How far along its path the streak's head is at each step, in sixteenths. */
-const Sint8 GaspFamily_StreakSteps[] = {0, 0, 1, 2, 4, 6, 9, 12, 16, 0, 0, 0};
+const Sint8 GaspFamilyStreakSteps[] = {0, 0, 1, 2, 4, 6, 9, 12, 16, 0, 0, 0};
 
 /* The streak's mesh. */
-const Uint16 GaspFamily_StreakMesh[] = {
-	MESH_FACE(1, 3, 2, 31, 0, 31, 31, 0, 31),
+const Uint16 GaspFamilyStreakMesh[] = {MESH_FACE(1, 3, 2, 31, 0, 31, 31, 0, 31),
 	MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 31), MESH_END, MESH_END};
 
 /* Gasp Family's counts, by variant. */
-const Uint8 GaspFamily_Counts[] = {32, 64, 255};
+const Uint8 GaspFamilyCounts[] = {32, 64, 255};
 
-/* The frames the backdrop flashes on. */
-const Uint8 Charon_FlashFrames[] = {16, 60, 108, 0, 0};
+/* The ticks the backdrop flashes on. */
+const Uint8 CharonFlashTicks[] = {16, 60, 108, 0, 0};
 
 /* A band of sixteen corners: an octagon below and one above. */
-const MODEL_VERTEX BattleEffect_OctagonBandCorners[] = {{0, -8, 32},
+const MODEL_VERTEX BattleEffectOctagonBandCorners[] = {{0, -8, 32},
 	{22, -8, 22}, {31, -8, 0}, {22, -8, -22}, {0, -8, -31}, {-22, -8, -22},
 	{-31, -8, 0}, {-22, -8, 22}, {0, 8, 32}, {22, 8, 22}, {31, 8, 0},
 	{22, 8, -22}, {0, 8, -31}, {-22, 8, -22}, {-31, 8, 0}, {-22, 8, 22}};
 
 /* The ripple's 32 corners: a ring of sixteen below and one above. */
-const MODEL_VERTEX BattleEffect_CylinderCorners[] = {{0, -8, 31}, {12, -8, 29},
+const MODEL_VERTEX BattleEffectCylinderCorners[] = {{0, -8, 31}, {12, -8, 29},
 	{22, -8, 22}, {29, -8, 12}, {31, -8, 0}, {29, -8, -12}, {22, -8, -22},
 	{12, -8, -29}, {0, -8, -31}, {-13, -8, -29}, {-23, -8, -22}, {-30, -8, -12},
 	{-32, -8, 0}, {-30, -8, 13}, {-23, -8, 23}, {-13, -8, 30}, {0, 8, 31},
@@ -1785,7 +1784,7 @@ const MODEL_VERTEX BattleEffect_CylinderCorners[] = {{0, -8, 31}, {12, -8, 29},
 	{-30, 8, -12}, {-32, 8, 0}, {-30, 8, 13}, {-23, 8, 23}, {-13, 8, 30}};
 
 /* The band's mesh. */
-const Uint16 CastingImpact_BandMesh[] = {
+const Uint16 CastingImpactBandMesh[] = {
 	MESH_FACE(1, 9, 8, 31, 0, 31, 15, 0, 15),
 	MESH_FACE(0, 1, 8, 0, 0, 31, 0, 0, 15),
 	MESH_FACE(2, 10, 9, 63, 0, 63, 15, 32, 15),
@@ -1804,7 +1803,7 @@ const Uint16 CastingImpact_BandMesh[] = {
 	MESH_FACE(7, 0, 15, 96, 0, 127, 0, 96, 15), MESH_END};
 
 /* The geyser's mesh. */
-const Uint16 Geyser_Mesh[] = {MESH_FACE(1, 9, 8, 31, 0, 31, 63, 0, 63),
+const Uint16 GeyserMesh[] = {MESH_FACE(1, 9, 8, 31, 0, 31, 63, 0, 63),
 	MESH_FACE(0, 1, 8, 0, 0, 31, 0, 0, 63),
 	MESH_FACE(2, 10, 9, 63, 0, 63, 63, 32, 63),
 	MESH_FACE(1, 2, 9, 32, 0, 63, 0, 32, 63),
@@ -1822,7 +1821,7 @@ const Uint16 Geyser_Mesh[] = {MESH_FACE(1, 9, 8, 31, 0, 31, 63, 0, 63),
 	MESH_FACE(7, 0, 15, 96, 0, 127, 0, 96, 63), MESH_END};
 
 /* The ripple's mesh. */
-const Uint16 BattleEffect_CylinderMesh[] = {
+const Uint16 BattleEffectCylinderMesh[] = {
 	MESH_FACE(1, 17, 16, 15, 0, 15, 15, 0, 15),
 	MESH_FACE(0, 1, 16, 0, 0, 15, 0, 0, 15),
 	MESH_FACE(2, 18, 17, 31, 0, 31, 15, 15, 15),
@@ -1857,20 +1856,19 @@ const Uint16 BattleEffect_CylinderMesh[] = {
 	MESH_FACE(15, 0, 31, 111, 0, 127, 0, 111, 15), MESH_END};
 
 /* The ring's corners, as signed x, y and z. */
-const MODEL_VERTEX Geode_RingCorners[] = {{0, -8, 64}, {44, -8, 44},
-	{62, -8, 0}, {44, -8, -44}, {0, -8, -62}, {-44, -8, -44}, {-62, -8, 0},
-	{-44, -8, 44}, {0, 0, 32}, {22, 0, 22}, {31, 0, 0}, {22, 0, -22},
-	{0, 0, -31}, {-22, 0, -22}, {-31, 0, 0}, {-22, 0, 22}};
+const MODEL_VERTEX GeodeRingCorners[] = {{0, -8, 64}, {44, -8, 44}, {62, -8, 0},
+	{44, -8, -44}, {0, -8, -62}, {-44, -8, -44}, {-62, -8, 0}, {-44, -8, 44},
+	{0, 0, 32}, {22, 0, 22}, {31, 0, 0}, {22, 0, -22}, {0, 0, -31},
+	{-22, 0, -22}, {-31, 0, 0}, {-22, 0, 22}};
 
 /* A ring's corners: eight about the edge and eight within. */
-const MODEL_VERTEX BattleEffect_RingCorners[] = {{0, -8, 38}, {26, -8, 26},
+const MODEL_VERTEX BattleEffectRingCorners[] = {{0, -8, 38}, {26, -8, 26},
 	{37, -8, 0}, {26, -8, -26}, {0, -8, -37}, {-26, -8, -26}, {-37, -8, 0},
 	{-26, -8, 26}, {0, 0, 32}, {22, 0, 22}, {31, 0, 0}, {22, 0, -22},
 	{0, 0, -31}, {-22, 0, -22}, {-31, 0, 0}, {-22, 0, 22}};
 
 /* The ring's mesh. */
-const Uint16 BattleEffect_RingMesh[] = {
-	MESH_FACE(1, 9, 8, 31, 0, 31, 63, 0, 63),
+const Uint16 BattleEffectRingMesh[] = {MESH_FACE(1, 9, 8, 31, 0, 31, 63, 0, 63),
 	MESH_FACE(0, 1, 8, 0, 0, 31, 0, 0, 63),
 	MESH_FACE(2, 10, 9, 63, 0, 63, 63, 32, 63),
 	MESH_FACE(1, 2, 9, 31, 0, 63, 0, 32, 63),
@@ -1889,466 +1887,465 @@ const Uint16 BattleEffect_RingMesh[] = {
 
 /* A solid triangle's mesh, as the solid renderers read it, a word a face: the
    face of corners 0, 1 and 2, and the empty face that ends it. */
-const Uint16 BattleEffect_TriangleMesh[] = {256, 2, 0, 0};
+const Uint16 BattleEffectTriangleMesh[] = {256, 2, 0, 0};
 
 /* A small triangle lying on the ground: its three corners. */
-const MODEL_VERTEX BattleEffect_TriangleCorners[] = {
+const MODEL_VERTEX BattleEffectTriangleCorners[] = {
 	{-6, 0, -6}, {6, 0, -6}, {-6, 0, 6}};
 
 /* A beam 127 tall, 12 wide at the top and 4 at its foot: its four corners. */
-const MODEL_VERTEX BattleEffect_TaperedBeamCorners[] = {
+const MODEL_VERTEX BattleEffectTaperedBeamCorners[] = {
 	{-6, 127, 0}, {6, 127, 0}, {-2, 0, 0}, {2, 0, 0}};
 
 /* A beam 127 tall and 12 wide standing on the origin: its four corners. */
-const MODEL_VERTEX BattleEffect_BeamCorners[] = {
+const MODEL_VERTEX BattleEffectBeamCorners[] = {
 	{-6, 127, 0}, {6, 127, 0}, {-6, 0, 0}, {6, 0, 0}};
 
 /* A beam 131 tall and 12 wide reaching below the origin: its four corners. */
-const MODEL_VERTEX BattleEffect_LongBeamCorners[] = {
+const MODEL_VERTEX BattleEffectLongBeamCorners[] = {
 	{6, 127, 0}, {-6, 127, 0}, {6, -4, 0}, {-6, -4, 0}};
 
 /* A 64 by 64 square about the origin: its four corners. */
-const MODEL_VERTEX BattleEffect_SquareCorners[] = {
+const MODEL_VERTEX BattleEffectSquareCorners[] = {
 	{-32, -32, 0}, {32, -32, 0}, {-32, 32, 0}, {32, 32, 0}};
 
 /* A 64 by 64 square standing on the origin: its four corners. */
-const MODEL_VERTEX BattleEffect_StandingSquareCorners[] = {
+const MODEL_VERTEX BattleEffectStandingSquareCorners[] = {
 	{-32, -64, 0}, {32, -64, 0}, {-32, 0, 0}, {32, 0, 0}};
 
 /* The fan flame's corners, as signed x, y and z. */
-const MODEL_VERTEX Legend_FanFlameCorners[] = {
+const MODEL_VERTEX LegendFanFlameCorners[] = {
 	{-16, 64, -64}, {16, 64, -64}, {-16, 56, 0}, {16, 56, 0}};
 
 /* A 128 by 128 square lying on the ground about the origin: its four
    corners. */
-const MODEL_VERTEX BattleEffect_GroundSquareCorners[] = {
+const MODEL_VERTEX BattleEffectGroundSquareCorners[] = {
 	{-64, 0, -64}, {64, 0, -64}, {-64, 0, 64}, {64, 0, 64}};
 
 /* A small square's mesh. */
-const Uint16 BattleEffect_SmallSquareMesh[] = {
+const Uint16 BattleEffectSmallSquareMesh[] = {
 	MESH_FACE(1, 3, 2, 31, 0, 31, 31, 0, 31),
 	MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 31), MESH_END};
 
 /* The small square's mesh with its triangles wound the other way. */
-const Uint16 BattleEffect_SmallSquareMeshReversed[] = {
+const Uint16 BattleEffectSmallSquareMeshReversed[] = {
 	MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 31),
 	MESH_FACE(1, 3, 2, 31, 0, 31, 31, 0, 31), MESH_END};
 
 /* A column's mesh. */
-const Uint16 BattleEffect_ColumnMesh[] = {
+const Uint16 BattleEffectColumnMesh[] = {
 	MESH_FACE(1, 3, 2, 31, 0, 31, 119, 0, 119),
 	MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 119), MESH_END};
 
 /* The sword's mesh. */
-const Uint16 HeavyBlow_SwordMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 127),
+const Uint16 HeavyBlowSwordMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 127),
 	MESH_FACE(1, 3, 2, 31, 0, 31, 127, 0, 127), MESH_END};
 
 /* A tall quad's mesh. */
-const Uint16 BattleEffect_TallMesh[] = {MESH_FACE(0, 1, 2, 0, 1, 31, 1, 0, 63),
+const Uint16 BattleEffectTallMesh[] = {MESH_FACE(0, 1, 2, 0, 1, 31, 1, 0, 63),
 	MESH_FACE(1, 3, 2, 31, 1, 31, 63, 0, 63), MESH_END,
 	MESH_FACE(0, 1, 2, 0, 0, 15, 0, 0, 63),
 	MESH_FACE(1, 3, 2, 15, 0, 15, 63, 0, 63), MESH_END};
 
 /* The band's mesh. */
-const Uint16 Haures_BandMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 63, 0, 0, 31),
+const Uint16 HauresBandMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 63, 0, 0, 31),
 	MESH_FACE(1, 3, 2, 63, 0, 63, 31, 0, 31), MESH_END};
 
 /* The burst's mesh. */
-const Uint16 Catastrophe_ForkMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 47),
+const Uint16 CatastropheForkMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 47),
 	MESH_FACE(1, 3, 2, 31, 0, 31, 47, 0, 47), MESH_END};
 
 /* A square's mesh. */
-const Uint16 BattleEffect_SquareMesh[] = {
+const Uint16 BattleEffectSquareMesh[] = {
 	MESH_FACE(1, 3, 2, 63, 1, 63, 63, 1, 63),
 	MESH_FACE(0, 1, 2, 1, 1, 63, 1, 1, 63), MESH_END};
 
 /* A large square's mesh. */
-const Uint16 BattleEffect_LargeSquareMesh[] = {
+const Uint16 BattleEffectLargeSquareMesh[] = {
 	MESH_FACE(1, 3, 2, 127, 0, 127, 127, 0, 127),
 	MESH_FACE(0, 1, 2, 0, 0, 127, 0, 0, 127), MESH_END};
 
 /* The burst's mesh. */
-const Uint16 Haures_BurstMesh[] = {MESH_FACE(1, 3, 2, 47, 0, 47, 71, 0, 71),
+const Uint16 HauresBurstMesh[] = {MESH_FACE(1, 3, 2, 47, 0, 47, 71, 0, 71),
 	MESH_FACE(0, 1, 2, 0, 0, 47, 0, 0, 71), MESH_END,
 	MESH_FACE(1, 3, 2, 47, 16, 47, 47, 16, 47),
 	MESH_FACE(0, 1, 2, 16, 16, 47, 16, 16, 47), MESH_END};
 
 /* The spark burst's pictures: their widths; the tables after it give their
    heights and offsets, and the heart burn's heights, y offsets and offsets. */
-const Uint8 Heartbreak_SparkBurstWidths[] = {32, 39, 42, 71};
+const Uint8 HeartbreakSparkBurstWidths[] = {32, 39, 42, 71};
 
 /* Each spark burst picture's height, in pixels. */
-const Uint8 Heartbreak_SparkBurstHeights[] = {29, 32, 48, 57};
+const Uint8 HeartbreakSparkBurstHeights[] = {29, 32, 48, 57};
 
 /* Each spark burst picture's byte offset in Heartbreak's sprite sheet. */
-const Uint16 Heartbreak_SparkBurstPictures[] = {0, 928, 2176, 4192};
+const Uint16 HeartbreakSparkBurstPictures[] = {0, 928, 2176, 4192};
 
 /* Each heart burn picture's height, in pixels. */
-const Uint8 Heartbreak_HeartBurnHeights[] = {29, 37, 48, 47, 52, 32, 22, 17};
+const Uint8 HeartbreakHeartBurnHeights[] = {29, 37, 48, 47, 52, 32, 22, 17};
 
 /* Each heart burn picture's y, in pixels. */
-const Uint8 Heartbreak_HeartBurnY[] = {34, 26, 15, 14, 7, 11, 8, 6};
+const Uint8 HeartbreakHeartBurnY[] = {34, 26, 15, 14, 7, 11, 8, 6};
 
 /* Each heart burn picture's byte offset in Heartbreak's sprite sheet. */
-const Uint16 Heartbreak_HeartBurnPictures[] = {
+const Uint16 HeartbreakHeartBurnPictures[] = {
 	0, 928, 2112, 3648, 5152, 6816, 7840, 8544};
 
 /* By level (effect->variant): the sparks, their spread, the rings' size and the
    embers. */
-const Uint8 RagingHeat_Styles[][4] = {
+const Uint8 RagingHeatStyles[][4] = {
 	{8, 127, 64, 32}, {12, 191, 96, 64}, {16, 255, 128, 255}};
 
 /* Juggle's style, one row a mode. */
-const Uint8 Juggle_Styles[][7] = {{1, 24, 4, 64, 32, 4, 0},
+const Uint8 JuggleStyles[][7] = {{1, 24, 4, 64, 32, 4, 0},
 	{2, 32, 8, 32, 64, 8, 0}, {2, 48, 16, 32, 128, 16, 0}};
 
 /* Each petal's size, in pixels. */
-const Uint8 Flora_PetalSizes[] = {4, 8, 16, 24, 0};
+const Uint8 FloraPetalSizes[] = {4, 8, 16, 24, 0};
 
 /* Each petal picture's byte offset in Flora's sprite sheet. */
-const Uint16 Flora_PetalPictures[] = {0, 32, 160, 672};
+const Uint16 FloraPetalPictures[] = {0, 32, 160, 672};
 
-/* The frame each ring of light starts on. */
-const Uint16 Flora_BloomFrames[] = {114, 117, 120, 250};
+/* The tick each ring of light starts on. */
+const Uint16 FloraBloomTicks[] = {114, 117, 120, 250};
 
 /* Each ring of light's roll; the third, off the 256ths of a turn the others
    keep, is in 65,536ths. */
-const Sint16 Flora_BloomRolls[] = {
-	0, DEGtoANG(135), -28576, DEGtoANG(60.46875)};
+const Sint16 FloraBloomRolls[] = {0, DEGtoANG(135), -28576, DEGtoANG(60.46875)};
 
 /* Each ring of light's pitch; the third is in 65,536ths of a turn. */
-const Sint16 Flora_BloomPitches[] = {
+const Sint16 FloraBloomPitches[] = {
 	DEGtoANG(90), DEGtoANG(22.5), 2096, -DEGtoANG(39.375)};
 
 /* Each bloom's x, in pixels. */
-const Sint8 Flora_BloomX[] = {16, 16, 16, -16};
+const Sint8 FloraBloomX[] = {16, 16, 16, -16};
 
 /* Each bloom's y, in pixels. */
-const Sint8 Flora_BloomY[] = {0, 0, 0, 12, 0, 0};
+const Sint8 FloraBloomY[] = {0, 0, 0, 12, 0, 0};
 
 /* The dagger's mesh. */
-const Uint16 SabreDance_DaggerMesh[] = {MESH_FACE(0, 1, 2, 6, 0, 25, 0, 6, 31),
+const Uint16 SabreDanceDaggerMesh[] = {MESH_FACE(0, 1, 2, 6, 0, 25, 0, 6, 31),
 	MESH_FACE(1, 3, 2, 25, 0, 25, 31, 6, 31), MESH_END};
 
 /* The dagger, 32 by 80 pixels from (-16, -16) to (16, 64), the point down: its
    four corners. */
-const MODEL_VERTEX SabreDance_DaggerCorners[] = {
+const MODEL_VERTEX SabreDanceDaggerCorners[] = {
 	{-16, -16, 0}, {16, -16, 0}, {-16, 64, 0}, {16, 64, 0}};
 
 /* Each Fume level's row, one column a FUME_LEVEL_COLUMN. */
-const Uint16 Fume_Levels[][FUME_COLUMNS] = {{16384, 16, 24, 96, 8, 4096},
+const Uint16 FumeLevels[][FUME_COLUMNS] = {{16384, 16, 24, 96, 8, 4096},
 	{24576, 16, 48, 192, 16, 8192}, {40768, 32, 38, 256, 32, 16384}};
 
-/* The early drops' gravities, in pixels a frame each frame: negative, so they
+/* The early drops' gravities, in pixels a tick each tick: negative, so they
    rise. */
-const Sint32 OceanFist_DropGravity[4] = {
+const Sint32 OceanFistDropGravity[4] = {
 	-toFIXED(1) / 8, -toFIXED(1) / 4, -toFIXED(1) / 4, -toFIXED(1) / 2};
 
 /* The size of the burst at the user, by mode (RUSHING_STRIKE_MODE): it is drawn
    twice this wide and tall. Stun Muscle's and Living Armor's are the
    largest. */
-const Sint32 RushingStrike_Scales[] = {toFIXED(0.5), toFIXED(0.5), toFIXED(0.5),
+const Sint32 RushingStrikeScales[] = {toFIXED(0.5), toFIXED(0.5), toFIXED(0.5),
 	toFIXED(0.5), toFIXED(0.84742), toFIXED(0.80518)};
 
 /* The wall's size, by mode (MIRRORED_WALL_MODE): it is drawn at twice this,
    Spasm's the smallest, Berserk's and Recovery's a ninth larger, and Sack's two
    fifths larger. */
-const Sint32 MirroredWall_Scales[] = {
+const Sint32 MirroredWallScales[] = {
 	toFIXED(0.60682), toFIXED(0.67371), toFIXED(0.67371), toFIXED(0.84742)};
 
 /* The wall's shade, by mode. */
-const Sint32 MirroredWall_Shades[] = {-8, -8, -8, 0};
+const Sint32 MirroredWallShades[] = {-8, -8, -8, 0};
 
-/* The shake, in pixels, one a frame of state->shakeFrm: what it moves rises by
+/* The shake, in pixels, one a tick of state->shakeFrm: what it moves rises by
    it. */
-const Sint8 Daedalus_ShakeOffsets[] = {0, -1, 1, -1, 0, 2, 1, 0, -1, -1, -2, -2,
+const Sint8 DaedalusShakeOffsets[] = {0, -1, 1, -1, 0, 2, 1, 0, -1, -1, -2, -2,
 	-3, -3, -4, -4, -4, -3, -3, -3, -2, -2, -1, -1};
 
-/* A bird's picture for each four frames of its wing beat, by number. */
-const Uint8 Daedalus_WingBeatPictures[] = {0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1};
+/* A bird's picture for each four ticks of its wing beat, by number. */
+const Uint8 DaedalusWingBeatPictures[] = {0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1};
 
 /* Where each bird starts, x and y in the canvas, in pixels. */
-const Uint8 Daedalus_BirdStarts[][2] = {{112, 128}, {128, 112}, {112, 128},
+const Uint8 DaedalusBirdStarts[][2] = {{112, 128}, {128, 112}, {112, 128},
 	{128, 112}, {128, 112}, {112, 112}, {180, 120}, {140, 120}, {140, 120},
 	{136, 120}};
 
-/* Each bird's speed, x and y, in 65,536ths of a pixel a frame: up and to the
+/* Each bird's speed, x and y, in 65,536ths of a pixel a tick: up and to the
    left. */
-const Sint32 Daedalus_BirdSpeeds[][2] = {{-120000, -70000}, {-117000, -68000},
+const Sint32 DaedalusBirdSpeeds[][2] = {{-120000, -70000}, {-117000, -68000},
 	{-120000, -70000}, {-117000, -68000}, {-80000, -80000}, {-80000, -95000},
 	{-100000, -80000}, {-100000, -90000}, {-120000, -95000}, {-100000, -95000}};
 
-/* The frame each bird appears on. */
-const Uint8 Daedalus_BirdFrames[] = {16, 16, 40, 40, 40, 68, 40, 72, 72, 96};
+/* The tick each bird appears on. */
+const Uint8 DaedalusBirdTicks[] = {16, 16, 40, 40, 40, 68, 40, 72, 72, 96};
 
-/* The frames the machine clatters on. */
-const Uint16 Daedalus_ClatterFrames[] = {16, 115, 243, 371, 499};
+/* The ticks the machine clatters on. */
+const Uint16 DaedalusClatterTicks[] = {16, 115, 243, 371, 499};
 
-/* The frame each ring starts on. */
-const Uint16 Daedalus_RingStarts[] = {568, 5};
+/* The tick each ring starts on. */
+const Uint16 DaedalusRingStarts[] = {568, 5};
 
 /* Each ring's x, in pixels. */
-const Sint8 Daedalus_RingX[] = {66, 64};
+const Sint8 DaedalusRingX[] = {66, 64};
 
 /* Each sprite of the right leg: its point, x and y, in pixels. */
-const Uint8 Daedalus_RightLegPoints[][2] = {
+const Uint8 DaedalusRightLegPoints[][2] = {
 	{0, 0}, {32, 0}, {0, 32}, {32, 32}, {32, 64}};
 
 /* Each splash's point, x and y, in pixels. */
-const Uint8 Daedalus_SplashPoints[][6][2] = {
+const Uint8 DaedalusSplashPoints[][6][2] = {
 	{{60, 64}, {58, 72}, {56, 80}, {54, 88}, {54, 96}, {56, 104}},
 	{{78, 56}, {78, 64}, {80, 72}, {82, 80}, {84, 88}, {84, 96}},
 	{{76, 60}, {74, 60}, {72, 60}, {70, 60}, {68, 60}, {66, 60}},
 	{{60, 64}, {61, 64}, {62, 63}, {63, 62}, {64, 61}, {66, 60}}};
 
-/* The frame each particle starts on. */
-const Uint16 Daedalus_DiveStarts[] = {
+/* The tick each particle starts on. */
+const Uint16 DaedalusDiveStarts[] = {
 	0, 24, 8, 52, 16, 40, 36, 28, 32, 4, 20, 56, 60, 12, 44, 48};
 
-/* The frames of the seven strikes. */
-const Uint8 DaedalusStrike_HitFrames[] = {80, 84, 86, 88, 90, 92, 94};
+/* The ticks of the seven strikes. */
+const Uint8 DaedalusStrikeHitTicks[] = {80, 84, 86, 88, 90, 92, 94};
 
 /* By level: which of the seven arrows strike. */
-const Uint8 Vengeance_ArrowStrikes[][7] = {
+const Uint8 VengeanceArrowStrikes[][7] = {
 	{0, 0, 1, 0, 0, 0, 1}, {1, 0, 1, 1, 0, 0, 1}, {1, 1, 1, 1, 1, 1, 1}};
 
 /* The pale blade's mesh. */
-const Uint16 LifeShear_PaleBladeMesh[] = {
+const Uint16 LifeShearPaleBladeMesh[] = {
 	MESH_FACE(1, 3, 2, 127, 14, 127, 53, 0, 53),
 	MESH_FACE(0, 1, 2, 0, 14, 127, 14, 0, 53), MESH_END};
 
 /* The orange blade's mesh. */
-const Uint16 LifeShear_OrangeBladeMesh[] = {
+const Uint16 LifeShearOrangeBladeMesh[] = {
 	MESH_FACE(1, 3, 2, 127, 0, 127, 31, 0, 31),
 	MESH_FACE(0, 1, 2, 0, 0, 127, 0, 0, 31), MESH_END};
 
 /* The scythe, 128 by 32 pixels: its four corners. */
-const MODEL_VERTEX LifeShear_BladeCorners[] = {
+const MODEL_VERTEX LifeShearBladeCorners[] = {
 	{-81, -16, 0}, {47, -16, 0}, {-81, 16, 0}, {47, 16, 0}};
 
 /* The drops' gravity, by mode (GEYSER_MODE). */
-const Sint32 Geyser_DropGravity[] = {
+const Sint32 GeyserDropGravity[] = {
 	-toFIXED(1) / 4, -toFIXED(1) / 2, -toFIXED(1) / 2};
 
 /* The drops' smallest picture size, by mode. */
-const Sint8 Geyser_DropMinSizes[] = {1, 4, 5};
+const Sint8 GeyserDropMinSizes[] = {1, 4, 5};
 
 /* The fifteen pictures of a glowing oval, from 16 by 32 down to 3 by 4: their
    widths, in pixels. */
-const Uint8 BubbleColumn_PictureWidths[] = {
+const Uint8 BubbleColumnPictureWidths[] = {
 	16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 4, 3};
 
 /* The glowing oval's fifteen pictures: their heights, in pixels. */
-const Uint8 BubbleColumn_PictureHeights[] = {
+const Uint8 BubbleColumnPictureHeights[] = {
 	32, 30, 28, 26, 24, 22, 20, 18, 16, 14, 12, 10, 8, 6, 4, 0};
 
 /* The glowing oval's fifteen pictures: their byte offsets in the sprite
    sheet. */
-const Uint16 BubbleColumn_Pictures[] = {0, 512, 962, 1354, 1692, 1980, 2222,
+const Uint16 BubbleColumnPictures[] = {0, 512, 962, 1354, 1692, 1980, 2222,
 	2422, 2584, 2712, 2810, 2882, 2932, 2964, 2988};
 
 /* Each Coatlicue picture's width, in pixels. */
-const Uint8 Coatlicue_PictureWidths[] = {
+const Uint8 CoatlicuePictureWidths[] = {
 	16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 4, 3};
 
 /* Each Coatlicue picture's height, in pixels. */
-const Uint8 Coatlicue_PictureHeights[] = {
+const Uint8 CoatlicuePictureHeights[] = {
 	32, 30, 28, 26, 24, 22, 20, 18, 16, 14, 12, 10, 8, 6, 4};
 
 /* Each Coatlicue picture's byte offset in Coatlicue's sprite sheet. */
-const Uint16 Coatlicue_Pictures[] = {0, 512, 962, 1354, 1692, 1980, 2222, 2422,
+const Uint16 CoatlicuePictures[] = {0, 512, 962, 1354, 1692, 1980, 2222, 2422,
 	2584, 2712, 2810, 2882, 2932, 2964, 2988};
 
-/* The frame each burst of bubbles starts on. */
-const Uint16 Coatlicue_BurstFrames[] = {0, 0, 10, 78, 82, 112, 250, 254, 284};
+/* The tick each burst of bubbles starts on. */
+const Uint16 CoatlicueBurstTicks[] = {0, 0, 10, 78, 82, 112, 250, 254, 284};
 
 /* Each burst's x, in pixels. */
-const Uint8 Coatlicue_BurstX[] = {32, 64, 80, 32, 16, 88, 32, 16, 88};
+const Uint8 CoatlicueBurstX[] = {32, 64, 80, 32, 16, 88, 32, 16, 88};
 
 /* Each burst's y, in pixels. */
-const Uint8 Coatlicue_BurstY[] = {80, 96, 120, 120, 120, 120, 120, 120, 120};
+const Uint8 CoatlicueBurstY[] = {80, 96, 120, 120, 120, 120, 120, 120, 120};
 
 /* How widely each burst scatters in x, in pixels. */
-const Uint8 Coatlicue_BurstSpreadX[] = {32, 8, 32, 8, 16, 16, 8, 16, 16};
+const Uint8 CoatlicueBurstSpreadX[] = {32, 8, 32, 8, 16, 16, 8, 16, 16};
 
 /* How far apart each burst's bubbles start in y, in pixels. */
-const Uint8 Coatlicue_BurstSpacingY[] = {16, 8, 16, 8, 12, 12, 8, 12, 12};
+const Uint8 CoatlicueBurstSpacingY[] = {16, 8, 16, 8, 12, 12, 8, 12, 12};
 
-/* Each burst's speed in x, in 16ths of a pixel a frame. */
-const Sint8 Coatlicue_BurstVelocityX[] = {-24, 4, 20, 0, -2, 2, 0, -2, 2};
+/* Each burst's speed in x, in 16ths of a pixel a tick. */
+const Sint8 CoatlicueBurstVelocityX[] = {-24, 4, 20, 0, -2, 2, 0, -2, 2};
 
-/* Each burst's speed in y, in 16ths of a pixel a frame. */
-const Sint8 Coatlicue_BurstVelocityY[] = {
+/* Each burst's speed in y, in 16ths of a pixel a tick. */
+const Sint8 CoatlicueBurstVelocityY[] = {
 	-64, -32, -64, -16, -32, -32, -16, -32, -32};
 
 /* Each burst's depth, in pixels. */
-const Sint8 Coatlicue_BurstZ[] = {1, 0, 4, -2, 1, 0, -2, 1, 0};
+const Sint8 CoatlicueBurstZ[] = {1, 0, 4, -2, 1, 0, -2, 1, 0};
 
-/* Each burst's speed in depth, in 64ths of a pixel a frame. */
-const Sint8 Coatlicue_BurstVelocityZ[] = {16, 1, 12, 0, 0, 0, 0, 0, 0};
+/* Each burst's speed in depth, in 64ths of a pixel a tick. */
+const Sint8 CoatlicueBurstVelocityZ[] = {16, 1, 12, 0, 0, 0, 0, 0, 0};
 
 /* The smallest bubble picture for each kind of bubble. */
-const Uint8 Coatlicue_PictureBias[] = {3, 5, 7, 9};
+const Uint8 CoatlicuePictureBias[] = {3, 5, 7, 9};
 
-/* The frame each flash of the fire ring starts on. */
-const Uint16 Coatlicue_RingFrames[] = {81, 209, 518, 540};
+/* The tick each flash of the fire ring starts on. */
+const Uint16 CoatlicueRingTicks[] = {81, 209, 518, 540};
 
-/* The frames the screen flashes on. */
-const Uint16 Coatlicue_FlashFrames[] = {498, 503, 508};
+/* The ticks the screen flashes on. */
+const Uint16 CoatlicueFlashTicks[] = {498, 503, 508};
 
-/* The frame the cog's glow starts on. */
-const Uint16 Coatlicue_GlowFrames[] = {518};
+/* The tick the cog's glow starts on. */
+const Uint16 CoatlicueGlowTicks[] = {518};
 
-/* The frame each coil starts to grow on. */
-const Uint8 Coatlicue_CoilStarts[] = {0, 82};
+/* The tick each coil starts to grow on. */
+const Uint8 CoatlicueCoilStarts[] = {0, 82};
 
 /* Each coil's first scale, in 65,536ths. */
-const Uint16 Coatlicue_CoilScales[] = {4096, 18384};
+const Uint16 CoatlicueCoilScales[] = {4096, 18384};
 
-/* Each coil's roll as it starts; it turns a 256th of a turn a frame. */
-const Uint16 Coatlicue_CoilRolls[] = {DEGtoANG(45), DEGtoANG(225)};
+/* Each coil's roll as it starts; it turns a 256th of a turn a tick. */
+const Uint16 CoatlicueCoilRolls[] = {DEGtoANG(45), DEGtoANG(225)};
 
-/* How fast each coil grows, in 65,536ths of its scale a frame. */
-const Uint16 Coatlicue_CoilGrowth[] = {256, 572};
+/* How fast each coil grows, in 65,536ths of its scale a tick. */
+const Uint16 CoatlicueCoilGrowth[] = {256, 572};
 
 /* Each coil's largest scale, in 65,536ths. */
-const Uint16 Coatlicue_CoilMaxScales[] = {44160, 52720};
+const Uint16 CoatlicueCoilMaxScales[] = {44160, 52720};
 
-/* The frame each flash of the first act starts on. */
-const Uint16 Catastrophe_FlashFrames[] = {4, 26, 30, 34, 104, 112, 116, 120,
-	150, 154, 202, 214, 244, 278, 400, 402, 404, 420};
+/* The tick each flash of the first act starts on. */
+const Uint16 CatastropheFlashTicks[] = {4, 26, 30, 34, 104, 112, 116, 120, 150,
+	154, 202, 214, 244, 278, 400, 402, 404, 420};
 
-/* How long each flash of the first act lasts, in frames. */
-const Uint16 Catastrophe_FlashLengths[] = {
+/* How long each flash of the first act lasts, in ticks. */
+const Uint16 CatastropheFlashLengths[] = {
 	8, 2, 2, 16, 2, 2, 2, 10, 2, 16, 4, 8, 10, 12, 2, 2, 10, 4};
 
 /* Each of the demon's sprites: its x, in pixels. */
-const Uint8 Catastrophe_DemonX[] = {0, 32, 64, 96, 32, 64, 96, 128, 64, 96, 128,
+const Uint8 CatastropheDemonX[] = {0, 32, 64, 96, 32, 64, 96, 128, 64, 96, 128,
 	160, 32, 64, 96, 128, 25, 57, 89, 121, 153, 32, 64, 96, 128, 160, 48, 96};
 
 /* Each of the demon's sprites: its depth, in pixels. */
-const Uint8 Catastrophe_DemonZ[] = {0, 0, 0, 0, 32, 32, 32, 32, 64, 64, 64, 64,
+const Uint8 CatastropheDemonZ[] = {0, 0, 0, 0, 32, 32, 32, 32, 64, 64, 64, 64,
 	96, 96, 96, 96, 128, 128, 128, 128, 128, 160, 160, 160, 160, 160, 192, 192};
 
 /* Each of the armour's sprites: its x, in pixels. */
-const Uint8 Catastrophe_ArmourX[] = {
+const Uint8 CatastropheArmourX[] = {
 	16, 0, 32, 0, 32, 16, 16, 16, 16, 16, 16, 0};
 
 /* Each of the armour's sprites: its depth, in pixels. */
-const Uint16 Catastrophe_ArmourZ[] = {
+const Uint16 CatastropheArmourZ[] = {
 	0, 32, 32, 64, 64, 96, 128, 160, 192, 224, 256};
 
 /* Each of the mirrored demon's sprites: its x, in pixels. */
-const Uint8 Catastrophe_MirroredDemonX[] = {224, 192, 160, 128, 192, 160};
+const Uint8 CatastropheMirroredDemonX[] = {224, 192, 160, 128, 192, 160};
 
 /* Each of the mirrored demon's sprites: its depth, in pixels. */
-const Uint8 Catastrophe_MirroredDemonZ[] = {0, 0, 0, 0, 32, 32};
+const Uint8 CatastropheMirroredDemonZ[] = {0, 0, 0, 0, 32, 32};
 
-/* The frame each fork of lightning strikes on. */
-const Uint16 Catastrophe_ForkStarts[] = {26, 104, 116, 216, 278, 402, 416};
+/* The tick each fork of lightning strikes on. */
+const Uint16 CatastropheForkStarts[] = {26, 104, 116, 216, 278, 402, 416};
 
 /* Each fork's x, in pixels. */
-const Uint8 Catastrophe_ForkX[] = {16, 96, 20, 40, 50, 10, 96};
+const Uint8 CatastropheForkX[] = {16, 96, 20, 40, 50, 10, 96};
 
 /* Each fork's y, in pixels. */
-const Uint8 Catastrophe_ForkY[] = {64, 80, 30, 40, 80, 60, 20};
+const Uint8 CatastropheForkY[] = {64, 80, 30, 40, 80, 60, 20};
 
 /* Each fork's picture of lightning, by number. */
-const Uint8 Catastrophe_ForkPictures[] = {0, 1, 0, 1, 0, 0, 1, 0};
+const Uint8 CatastropheForkPictures[] = {0, 1, 0, 1, 0, 0, 1, 0};
 
-/* The frames the canvas flashes on. */
-const Uint16 Catastrophe_CanvasFlashFrames[] = {246, 249, 254, 258, 260, 264,
-	266, 269, 272, 275, 278, 280, 282, 284, 287, 290, 292};
+/* The ticks the canvas flashes on. */
+const Uint16 CatastropheCanvasFlashTicks[] = {246, 249, 254, 258, 260, 264, 266,
+	269, 272, 275, 278, 280, 282, 284, 287, 290, 292};
 
 /* Each step's x, in pixels, a row of twelve for each strike. */
-const Uint8 Catastrophe_StrikeX[] = {71, 71, 71, 70, 70, 70, 70, 70, 70, 69, 69,
+const Uint8 CatastropheStrikeX[] = {71, 71, 71, 70, 70, 70, 70, 70, 70, 69, 69,
 	0, 67, 67, 67, 70, 67, 68, 70, 69, 70, 69, 67, 0, 69, 69, 69, 68, 67, 68,
 	70, 69, 69, 69, 0, 0};
 
 /* Each step's y, in pixels, a row of twelve for each strike. */
-const Uint8 Catastrophe_StrikeY[] = {92, 92, 92, 120, 120, 120, 154, 154, 154,
+const Uint8 CatastropheStrikeY[] = {92, 92, 92, 120, 120, 120, 154, 154, 154,
 	220, 200, 0, 100, 100, 100, 120, 120, 154, 154, 154, 154, 220, 240, 0, 120,
 	100, 100, 140, 120, 154, 154, 154, 184, 220, 0, 0};
 
-/* The strike frames, a row of steps for each of the three strikes; 65535 ends a
-   row, a frame that never comes. */
-const Uint16 Catastrophe_StrikeFrames[] = {492, 506, 526, 528, 542, 562, 572,
-	578, 598, 600, 608, 65535, 0, 504, 518, 526, 546, 548, 554, 562, 564, 570,
-	590, 594, 596, 65535, 510, 524, 544, 546, 548, 558, 560, 580, 582, 596, 616,
+/* The strike ticks, a row of steps for each of the three strikes; 65535 ends a
+   row, a tick that never comes. */
+const Uint16 CatastropheStrikeTicks[] = {492, 506, 526, 528, 542, 562, 572, 578,
+	598, 600, 608, 65535, 0, 504, 518, 526, 546, 548, 554, 562, 564, 570, 590,
+	594, 596, 65535, 510, 524, 544, 546, 548, 558, 560, 580, 582, 596, 616,
 	65535, 0};
 
-/* How fast each step's bolt falls, in quarters of a pixel a frame. */
-const Uint8 Catastrophe_StrikeSpeedsY[] = {6, 4, 0, 8, 8, 0, 10, 20, 0, 20, 0,
-	0, 6, 4, 0, 8, 8, 0, 10, 20, 8, 20, 0, 0, 6, 4, 0, 8, 8, 20, 0, 0, 20, 20,
-	0, 0};
+/* How fast each step's bolt falls, in quarters of a pixel a tick. */
+const Uint8 CatastropheStrikeSpeedsY[] = {6, 4, 0, 8, 8, 0, 10, 20, 0, 20, 0, 0,
+	6, 4, 0, 8, 8, 0, 10, 20, 8, 20, 0, 0, 6, 4, 0, 8, 8, 20, 0, 0, 20, 20, 0,
+	0};
 
 /* Each step's roll, in 256ths of a turn (the code shifts it into 65,536ths); 0
    leaves the bolt where the step before put it. */
-const Sint16 Catastrophe_StrikeRolls[] = {144, 0, 0, 128, 0, 0, 180, 0, 0, 150,
+const Sint16 CatastropheStrikeRolls[] = {144, 0, 0, 128, 0, 0, 180, 0, 0, 150,
 	0, 0, 112, 0, 0, 0, 112, 48, 0, 86, 0, 0, 112, 0, 96, 0, 0, 96, 0, 112, 128,
 	0, 104, 0, 0, 0};
 
-/* How fast each step's bolt turns, in 32,768ths of a turn a frame. */
-const Sint16 Catastrophe_StrikeTurns[] = {256, 64, 0, 712, 500, 0, 0, 0, 0, 356,
+/* How fast each step's bolt turns, in 32,768ths of a turn a tick. */
+const Sint16 CatastropheStrikeTurns[] = {256, 64, 0, 712, 500, 0, 0, 0, 0, 356,
 	0, 0, -356, -124, -256, 712, -64, 256, 0, 0, -228, 356, 0, 0, 406, 64, -256,
 	0, -64, 0, 128, 0, 328, -356, 0, 0};
 
 /* Which of the three jagged streak pictures each step draws; -1 draws none. */
-const Sint16 Catastrophe_StrikePictures[] = {0, 1, -1, 0, 1, -1, 0, 1, -1, 0,
-	-1, 0, 2, 1, 0, -1, 2, 2, -1, 0, 1, -1, 2, -1, 0, 1, -1, 0, -1, 0, 1, -1, 0,
-	1, -1, 0};
+const Sint16 CatastropheStrikePictures[] = {0, 1, -1, 0, 1, -1, 0, 1, -1, 0, -1,
+	0, 2, 1, 0, -1, 2, 2, -1, 0, 1, -1, 2, -1, 0, 1, -1, 0, -1, 0, 1, -1, 0, 1,
+	-1, 0};
 
 /* The flips a glint may be drawn with, one picked at random. */
-const Uint8 Catastrophe_GlintFlips[] = {0, 4, 8, 12};
+const Uint8 CatastropheGlintFlips[] = {0, 4, 8, 12};
 
 /* Each bolt's roll as it shoots out, in 65,536ths of a turn: scattered, all
    within a quarter turn of 0 either way. */
-const Sint16 Catastrophe_BoltRolls[] = {14797, -1097, -8198, 4962, 15494, -5489,
+const Sint16 CatastropheBoltRolls[] = {14797, -1097, -8198, 4962, 15494, -5489,
 	-9298, 3744, 11252, -9996, 15443, -4373, -15930, 15898, -13623, 3906};
 
 /* Where each of Haures's eleven pieces is drawn, x and y, on a 32-pixel
    grid. */
-const Uint16 Haures_BodyPiecePoints[][2] = {{0, 0}, {0, 32}, {32, 32}, {64, 32},
+const Uint16 HauresBodyPiecePoints[][2] = {{0, 0}, {0, 32}, {32, 32}, {64, 32},
 	{96, 42}, {0, 64}, {32, 64}, {64, 64}, {96, 74}, {32, 96}, {64, 96}};
 
 /* Each particle's x, in pixels. */
-const Uint8 Haures_ParticleX[] = {120, 88, 144, 112, 0, 0};
+const Uint8 HauresParticleX[] = {120, 88, 144, 112, 0, 0};
 
 /* Haures's sprites' scale, one to one. */
-const Sint32 Haures_UnitScale[] = {toFIXED(1), toFIXED(1)};
+const Sint32 HauresUnitScale[] = {toFIXED(1), toFIXED(1)};
 
 /* The wings' shapes, 32 heights a shape, in pixels; the wings morph from one to
    the next. */
-const Uint8 Haures_MoundShapes[] = {0, 0, 0, 2, 6, 9, 10, 11, 13, 14, 15, 16,
-	17, 18, 18, 16, 16, 16, 17, 16, 15, 14, 13, 12, 11, 9, 8, 5, 0, 0, 0, 0, 0,
-	2, 8, 12, 13, 16, 18, 21, 24, 27, 31, 34, 36, 34, 32, 28, 18, 18, 21, 29,
-	35, 40, 40, 38, 37, 32, 25, 15, 10, 8, 4, 0, 0, 8, 11, 14, 17, 19, 22, 24,
-	28, 31, 35, 45, 58, 54, 49, 46, 47, 56, 103, 120, 118, 98, 52, 45, 49, 49,
-	38, 32, 26, 18, 8, 0, 0, 8, 13, 16, 20, 22, 26, 29, 31, 36, 42, 47, 52, 59,
-	65, 69, 70, 69, 66, 63, 59, 56, 53, 49, 46, 42, 37, 32, 27, 18, 7, 0, 0, 8,
-	13, 18, 22, 26, 40, 54, 59, 57, 39, 31, 32, 37, 48, 66, 73, 61, 49, 54, 48,
-	45, 45, 31, 32, 44, 41, 32, 24, 20, 14, 0, 0, 8, 11, 16, 22, 27, 55, 90, 87,
-	76, 66, 55, 45, 45, 53, 58, 58, 50, 31, 37, 42, 48, 57, 56, 37, 29, 31, 31,
-	32, 31, 27, 0, 0, 10, 17, 25, 32, 42, 46, 48, 51, 55, 60, 66, 72, 77, 80,
-	84, 85, 83, 76, 63, 53, 49, 45, 43, 39, 35, 32, 27, 22, 18, 10, 0, 0, 10,
-	16, 21, 26, 29, 36, 46, 58, 69, 77, 78, 74, 67, 59, 52, 52, 59, 65, 69, 71,
-	72, 71, 70, 59, 66, 62, 44, 26, 20, 13, 0, 0, 9, 15, 21, 27, 29, 34, 43, 47,
-	51, 53, 55, 58, 62, 67, 69, 72, 72, 71, 67, 63, 60, 56, 53, 51, 45, 38, 26,
-	17, 10, 8, 0, 0, 8, 12, 20, 27, 52, 73, 74, 68, 60, 53, 46, 41, 40, 48, 61,
-	72, 77, 78, 82, 88, 93, 97, 32, 35, 40, 44, 40, 28, 15, 8, 0, 0, 8, 16, 34,
-	44, 50, 56, 60, 65, 69, 73, 77, 79, 82, 83, 77, 72, 68, 63, 59, 54, 40, 26,
-	23, 26, 29, 31, 32, 26, 18, 8, 0, 0, 8, 11, 18, 30, 56, 77, 86, 92, 93, 92,
-	90, 88, 85, 82, 79, 76, 72, 70, 66, 62, 60, 56, 51, 47, 42, 36, 24, 15, 10,
-	8, 0, 0, 8, 83, 96, 104, 110, 115, 118, 120, 116, 114, 114, 115, 116, 119,
-	121, 120, 117, 114, 111, 108, 106, 102, 100, 97, 87, 30, 22, 15, 10, 8, 0};
+const Uint8 HauresMoundShapes[] = {0, 0, 0, 2, 6, 9, 10, 11, 13, 14, 15, 16, 17,
+	18, 18, 16, 16, 16, 17, 16, 15, 14, 13, 12, 11, 9, 8, 5, 0, 0, 0, 0, 0, 2,
+	8, 12, 13, 16, 18, 21, 24, 27, 31, 34, 36, 34, 32, 28, 18, 18, 21, 29, 35,
+	40, 40, 38, 37, 32, 25, 15, 10, 8, 4, 0, 0, 8, 11, 14, 17, 19, 22, 24, 28,
+	31, 35, 45, 58, 54, 49, 46, 47, 56, 103, 120, 118, 98, 52, 45, 49, 49, 38,
+	32, 26, 18, 8, 0, 0, 8, 13, 16, 20, 22, 26, 29, 31, 36, 42, 47, 52, 59, 65,
+	69, 70, 69, 66, 63, 59, 56, 53, 49, 46, 42, 37, 32, 27, 18, 7, 0, 0, 8, 13,
+	18, 22, 26, 40, 54, 59, 57, 39, 31, 32, 37, 48, 66, 73, 61, 49, 54, 48, 45,
+	45, 31, 32, 44, 41, 32, 24, 20, 14, 0, 0, 8, 11, 16, 22, 27, 55, 90, 87, 76,
+	66, 55, 45, 45, 53, 58, 58, 50, 31, 37, 42, 48, 57, 56, 37, 29, 31, 31, 32,
+	31, 27, 0, 0, 10, 17, 25, 32, 42, 46, 48, 51, 55, 60, 66, 72, 77, 80, 84,
+	85, 83, 76, 63, 53, 49, 45, 43, 39, 35, 32, 27, 22, 18, 10, 0, 0, 10, 16,
+	21, 26, 29, 36, 46, 58, 69, 77, 78, 74, 67, 59, 52, 52, 59, 65, 69, 71, 72,
+	71, 70, 59, 66, 62, 44, 26, 20, 13, 0, 0, 9, 15, 21, 27, 29, 34, 43, 47, 51,
+	53, 55, 58, 62, 67, 69, 72, 72, 71, 67, 63, 60, 56, 53, 51, 45, 38, 26, 17,
+	10, 8, 0, 0, 8, 12, 20, 27, 52, 73, 74, 68, 60, 53, 46, 41, 40, 48, 61, 72,
+	77, 78, 82, 88, 93, 97, 32, 35, 40, 44, 40, 28, 15, 8, 0, 0, 8, 16, 34, 44,
+	50, 56, 60, 65, 69, 73, 77, 79, 82, 83, 77, 72, 68, 63, 59, 54, 40, 26, 23,
+	26, 29, 31, 32, 26, 18, 8, 0, 0, 8, 11, 18, 30, 56, 77, 86, 92, 93, 92, 90,
+	88, 85, 82, 79, 76, 72, 70, 66, 62, 60, 56, 51, 47, 42, 36, 24, 15, 10, 8,
+	0, 0, 8, 83, 96, 104, 110, 115, 118, 120, 116, 114, 114, 115, 116, 119, 121,
+	120, 117, 114, 111, 108, 106, 102, 100, 97, 87, 30, 22, 15, 10, 8, 0};
 
-/* How many frames each morph of the wings takes. */
-const Uint8 Haures_MoundMorphSteps[] = {
+/* How many ticks each morph of the wings takes. */
+const Uint8 HauresMoundMorphSteps[] = {
 	27, 15, 13, 5, 14, 16, 11, 13, 8, 18, 24, 26, 100};
 
 /* Each shard's points, its middle then its four corners, x and y in screen
    pixels. */
-const Uint8 Haures_PartPoints[] = {23, 13, 0, 0, 42, 0, 28, 41, 28, 41, 48, 28,
+const Uint8 HauresPartPoints[] = {23, 13, 0, 0, 42, 0, 28, 41, 28, 41, 48, 28,
 	42, 0, 78, 31, 28, 41, 28, 41, 66, 7, 42, 0, 79, 0, 78, 31, 78, 31, 94, 8,
 	79, 0, 128, 0, 78, 31, 78, 31, 112, 28, 128, 0, 132, 48, 78, 31, 78, 31,
 	162, 12, 182, 0, 174, 42, 128, 0, 128, 0, 145, 39, 128, 0, 174, 42, 134, 71,
@@ -2367,294 +2364,294 @@ const Uint8 Haures_PartPoints[] = {23, 13, 0, 0, 42, 0, 28, 41, 28, 41, 48, 28,
 	239, 52, 239, 119, 205, 88, 205, 88, 200, 108, 185, 93, 205, 88, 239, 119,
 	175, 119, 169, 106, 185, 93, 175, 119, 137, 104, 137, 104};
 
-/* The frame each band starts on. */
-const Uint8 Haures_BandStarts[] = {10, 30};
+/* The tick each band starts on. */
+const Uint8 HauresBandStarts[] = {10, 30};
 
 /* Each Helm Splitter picture's width, in pixels. */
-const Uint8 HelmSplitter_PictureWidths[] = {26, 46, 63, 77, 60, 39, 32};
+const Uint8 HelmSplitterPictureWidths[] = {26, 46, 63, 77, 60, 39, 32};
 
 /* Each Helm Splitter picture's height, in pixels. */
-const Uint8 HelmSplitter_PictureHeights[] = {11, 20, 37, 65, 65, 54, 39, 0};
+const Uint8 HelmSplitterPictureHeights[] = {11, 20, 37, 65, 65, 54, 39, 0};
 
 /* Each Helm Splitter picture's byte offset in Helm Splitter's sprite sheet. */
-const Uint16 HelmSplitter_Pictures[] = {0, 286, 1206, 3537, 8542, 12442, 14548};
+const Uint16 HelmSplitterPictures[] = {0, 286, 1206, 3537, 8542, 12442, 14548};
 
 /* How far right of its anchor each picture is drawn, in pixels, mirrored on the
    other side. */
-const Sint8 HelmSplitter_PictureBiasX[] = {53, 36, 16, 2, 2, 2, 2};
+const Sint8 HelmSplitterPictureBiasX[] = {53, 36, 16, 2, 2, 2, 2};
 
 /* How far below its anchor each picture's top goes, in pixels. */
-const Sint8 HelmSplitter_PictureBiasY[] = {2, 3, 3, 3, 4, 14, 29};
+const Sint8 HelmSplitterPictureBiasY[] = {2, 3, 3, 3, 4, 14, 29};
 
 /* How many of the 56 embers are sparks, by variant; the rest are flashes. */
-const Uint8 DragonCloud_SparkCounts[] = {48, 40, 0, 0};
+const Uint8 DragonCloudSparkCounts[] = {48, 40, 0, 0};
 
-/* Each card's length, in frames. */
-const Uint8 ElementCards_Frames[] = {124, 140, 132, 130};
+/* Each card's length, in ticks. */
+const Uint8 ElementCardsTicks[] = {124, 140, 132, 130};
 
 /* How each card's sparks move. */
-const SPARK_MOTION ElementCards_SparkMotions[] = {{toFIXED(0.125), 62, 1},
+const SPARK_MOTION ElementCardsSparkMotions[] = {{toFIXED(0.125), 62, 1},
 	{toFIXED(0.125), 62, 1}, {-toFIXED(0.125), 62, 1}, {2048, 64, 4}};
 
-/* The three bites' frames. */
-const Uint8 TripleChomp_BiteFrames[] = {0, 12, 24};
+/* The three bites' ticks. */
+const Uint8 TripleChompBiteTicks[] = {0, 12, 24};
 
-/* Each breath's length, the frame its burst starts, and the glow's widest size
+/* Each breath's length, the tick its burst starts, and the glow's widest size
    by variant. */
-const Uint8 Breath_Frames[] = {90, 38, 32, 48};
+const Uint8 BreathTicks[] = {90, 38, 32, 48};
 
-/* The frame the burst starts on, by breath. */
-const Uint8 Breath_BurstFrames[] = {56, 0, 0, 0};
+/* The tick the burst starts on, by breath. */
+const Uint8 BreathBurstTicks[] = {56, 0, 0, 0};
 
 /* The glow's widest size, in pixels, by variant. */
-const Uint8 Breath_MaxSizes[] = {24, 32, 32, 24};
+const Uint8 BreathMaxSizes[] = {24, 32, 32, 24};
 
-/* The four jaws of variant 2, by breath: their start frames; the tables after
+/* The four jaws of variant 2, by breath: their start ticks; the tables after
    it give their growth and their x from the mouth. */
-const Uint8 Breath_RingStarts[] = {56, 58, 60, 61, 8, 12, 16, 20, 0, 2, 4, 5};
+const Uint8 BreathRingStarts[] = {56, 58, 60, 61, 8, 12, 16, 20, 0, 2, 4, 5};
 
 /* How fast each jaw grows: its scale gains this many times BREATH_RING_GROWTH a
-   frame. */
-const Uint8 Breath_RingGrowth[] = {5, 6, 7, 6, 10, 9, 11, 10, 5, 6, 7, 6};
+   tick. */
+const Uint8 BreathRingGrowth[] = {5, 6, 7, 6, 10, 9, 11, 10, 5, 6, 7, 6};
 
 /* Each jaw's x from the mouth, in pixels. */
-const Sint8 Breath_RingX[] = {
+const Sint8 BreathRingX[] = {
 	-32, -48, -56, -72, -16, -32, -64, -72, -32, -48, -56, -72};
 
-/* The frame each breath hits the targets. */
-const Uint8 Breath_FlashFrames[] = {56, 14, 6, 56};
+/* The tick each breath hits the targets. */
+const Uint8 BreathFlashTicks[] = {56, 14, 6, 56};
 
-/* The frame each ring starts on. */
-const Uint8 Trident_RingStarts[] = {8, 10, 12, 13, 64, 67, 70, 72};
+/* The tick each ring starts on. */
+const Uint8 TridentRingStarts[] = {8, 10, 12, 13, 64, 67, 70, 72};
 
 /* How fast each ring grows: its scale gains this many times
-   CYLINDER_RING_GROWTH a frame. */
-const Uint8 Trident_RingGrowth[] = {8, 7, 6, 7, 8, 8, 9, 8};
+   CYLINDER_RING_GROWTH a tick. */
+const Uint8 TridentRingGrowth[] = {8, 7, 6, 7, 8, 8, 9, 8};
 
 /* Each ring's height, in pixels. */
-const Sint8 Trident_RingHeights[] = {16, 0, -24, -40, 16, 0, -24, -40, 0};
+const Sint8 TridentRingHeights[] = {16, 0, -24, -40, 16, 0, -24, -40, 0};
 
-/* Each bolt's roll as it spins in, then how far it rolls each frame, both in
+/* Each bolt's roll as it spins in, then how far it rolls each tick, both in
    65,536ths of a turn: scattered round the circle. */
-const Sint32 Trident_Spins[] = {5528, 488, 62272, 308, 52392, -698, 34584, 634,
+const Sint32 TridentSpins[] = {5528, 488, 62272, 308, 52392, -698, 34584, 634,
 	19692, 736, 28062, 746, 48958, -694, 1508, -576};
 
 /* The prong's corners, as signed x, y and z. */
-const MODEL_VERTEX Trident_ProngCorners[] = {{-6, 127, 0}, {6, 127, 0},
+const MODEL_VERTEX TridentProngCorners[] = {{-6, 127, 0}, {6, 127, 0},
 	{-6, -4, 0}, {6, -4, 0}, {-6, 127, 0}, {6, 127, 0}, {-6, 0, 0}, {6, 0, 0},
 	{-10, 127, 0}, {2, 127, 0}, {-10, -1, 0}, {2, -1, 0}};
 
 /* The flips a glint may be drawn with, one picked at random. */
-const Uint8 Trident_GlintFlips[] = {0, 4, 8, 12};
+const Uint8 TridentGlintFlips[] = {0, 4, 8, 12};
 
-/* The frame each wave starts on, counted from LEAPING_STRIKE_WAVE_FRAME. */
-const Uint8 LeapingStrike_WaveStarts[] = {0, 4, 8, 9};
+/* The tick each wave starts on, counted from LEAPING_STRIKE_WAVE_TICK. */
+const Uint8 LeapingStrikeWaveStarts[] = {0, 4, 8, 9};
 
 /* How fast each wave grows: its scale gains this many times
-   LEAPING_STRIKE_WAVE_GROWTH a frame, from a half. */
-const Uint8 LeapingStrike_WaveGrowth[] = {9, 8, 9, 3};
+   LEAPING_STRIKE_WAVE_GROWTH a tick, from a half. */
+const Uint8 LeapingStrikeWaveGrowth[] = {9, 8, 9, 3};
 
 /* Each wave's height, in pixels. */
-const Sint8 LeapingStrike_WaveHeights[] = {32, 32, 32, 32};
+const Sint8 LeapingStrikeWaveHeights[] = {32, 32, 32, 32};
 
-/* The frame each ring starts on, counted from LEAPING_STRIKE_PILLAR_FRAME. */
-const Uint8 LeapingStrike_RingStarts[] = {0, 4, 12, 19};
+/* The tick each ring starts on, counted from LEAPING_STRIKE_PILLAR_TICK. */
+const Uint8 LeapingStrikeRingStarts[] = {0, 4, 12, 19};
 
 /* How fast each ring grows: its scale gains this many times
-   CYLINDER_RING_GROWTH a frame. */
-const Uint8 LeapingStrike_RingGrowth[] = {7, 8, 7, 8};
+   CYLINDER_RING_GROWTH a tick. */
+const Uint8 LeapingStrikeRingGrowth[] = {7, 8, 7, 8};
 
 /* Each ring's height, in pixels. */
-const Sint8 LeapingStrike_RingHeights[] = {32, 16, 16, 24};
+const Sint8 LeapingStrikeRingHeights[] = {32, 16, 16, 24};
 
 /* Each Meteor Blow picture's width, in pixels. */
-const Uint8 MeteorBlow_PictureWidths[] = {30, 16, 16, 16, 10, 8, 8};
+const Uint8 MeteorBlowPictureWidths[] = {30, 16, 16, 16, 10, 8, 8};
 
 /* Each Meteor Blow picture's height, in pixels. */
-const Uint8 MeteorBlow_PictureHeights[] = {30, 16, 16, 16, 16, 8, 8};
+const Uint8 MeteorBlowPictureHeights[] = {30, 16, 16, 16, 16, 8, 8};
 
 /* Each Meteor Blow picture's byte offset in Meteor Blow's sprite sheet. */
-const Uint16 MeteorBlow_Pictures[] = {0, 900, 1156, 1412, 1668, 1828, 1892};
+const Uint16 MeteorBlowPictures[] = {0, 900, 1156, 1412, 1668, 1828, 1892};
 
-/* The frame each wave starts on, counted from METEOR_BLOW_BURST_FRAME. */
-const Uint8 MeteorBlow_WaveStarts[] = {0, 4, 9, 10};
+/* The tick each wave starts on, counted from METEOR_BLOW_BURST_TICK. */
+const Uint8 MeteorBlowWaveStarts[] = {0, 4, 9, 10};
 
 /* How fast each wave grows: its scale gains this many times 2000/65536 a
-   frame. */
-const Uint8 MeteorBlow_WaveGrowth[] = {3, 4, 3, 5};
+   tick. */
+const Uint8 MeteorBlowWaveGrowth[] = {3, 4, 3, 5};
 
 /* How much taller than wide each wave is drawn, multiplying its scale. */
-const Uint8 MeteorBlow_WaveStretch[] = {3, 4, 5, 6};
+const Uint8 MeteorBlowWaveStretch[] = {3, 4, 5, 6};
 
-/* The frame each ring starts on, counted from the eighth. */
-const Uint8 MeteorBlow_RingStarts[] = {0, 3, 16, 7};
+/* The tick each ring starts on, counted from the eighth. */
+const Uint8 MeteorBlowRingStarts[] = {0, 3, 16, 7};
 
 /* How fast each ring grows: its scale gains this many times 1500/65536 a
-   frame. */
-const Uint8 MeteorBlow_RingGrowth[] = {5, 8, 10, 8};
+   tick. */
+const Uint8 MeteorBlowRingGrowth[] = {5, 8, 10, 8};
 
 /* Each ring's height, in pixels. */
-const Sint8 MeteorBlow_RingHeights[] = {-40, 24, 24, 24};
+const Sint8 MeteorBlowRingHeights[] = {-40, 24, 24, 24};
 
 /* The splash's corners, as signed x, y and z. */
-const MODEL_VERTEX Liquifier_SplashCorners[] = {
+const MODEL_VERTEX LiquifierSplashCorners[] = {
 	{-48, -64, 0}, {48, -64, 0}, {-32, 4, 0}, {32, 4, 0}};
 
-/* The frame each splash starts on. */
-const Uint8 Liquifier_SplashStarts[] = {18, 21, 16, 17, 22, 19, 23, 18};
+/* The tick each splash starts on. */
+const Uint8 LiquifierSplashStarts[] = {18, 21, 16, 17, 22, 19, 23, 18};
 
 /* How tall each splash leaps, as a scale in 32nds. */
-const Uint8 Liquifier_SplashHeights[] = {40, 56, 70, 48, 64, 80, 58, 64, 72};
+const Uint8 LiquifierSplashHeights[] = {40, 56, 70, 48, 64, 80, 58, 64, 72};
 
-/* The flame's picture for each three frames of its life, by number. */
-const Uint8 CanvasBurst_FlamePictures[] = {5, 5, 4, 3, 2, 1, 0};
+/* The flame's picture for each three ticks of its life, by number. */
+const Uint8 CanvasBurstFlamePictures[] = {5, 5, 4, 3, 2, 1, 0};
 
 /* Each ring's pitch. */
-const Sint16 Megiddo_FlashPitches[] = {
+const Sint16 MegiddoFlashPitches[] = {
 	0, -DEGtoANG(56.25), 0, -DEGtoANG(56.25), DEGtoANG(56.25)};
 
 /* Each ring's yaw. */
-const Sint16 Megiddo_FlashYaws[] = {
+const Sint16 MegiddoFlashYaws[] = {
 	0, -DEGtoANG(26.71875), 0, -DEGtoANG(26.71875), -DEGtoANG(26.71875)};
 
-/* The frame each of the five rings starts on. */
-const Uint16 Megiddo_FlashStarts[] = {4, 8, 171, 175, 176};
+/* The tick each of the five rings starts on. */
+const Uint16 MegiddoFlashStarts[] = {4, 8, 171, 175, 176};
 
 /* Each ray's pitch. */
-const Sint16 Megiddo_RayPitches[] = {-DEGtoANG(68.90625), -DEGtoANG(57.65625),
+const Sint16 MegiddoRayPitches[] = {-DEGtoANG(68.90625), -DEGtoANG(57.65625),
 	-DEGtoANG(47.8125), DEGtoANG(47.8125), -DEGtoANG(46.40625),
 	DEGtoANG(70.3125), DEGtoANG(59.0625), DEGtoANG(61.875)};
 
 /* Each ray's yaw. */
-const Sint16 Megiddo_RayYaws[] = {0, DEGtoANG(64.6875), 0, -DEGtoANG(78.75),
+const Sint16 MegiddoRayYaws[] = {0, DEGtoANG(64.6875), 0, -DEGtoANG(78.75),
 	DEGtoANG(61.875), -DEGtoANG(109.6875), -DEGtoANG(120.9375),
 	-DEGtoANG(122.34375)};
 
 /* Each ray's roll, mirrored on the other side; the third ray's, a little off
    its neighbours' 256ths of a turn, is in 65,536ths. */
-const Sint16 Megiddo_RayRolls[] = {-DEGtoANG(118.125), DEGtoANG(73.125), 22224,
+const Sint16 MegiddoRayRolls[] = {-DEGtoANG(118.125), DEGtoANG(73.125), 22224,
 	-DEGtoANG(104.0625), -DEGtoANG(180), DEGtoANG(46.40625), DEGtoANG(140.625),
 	-DEGtoANG(158.90625)};
 
 /* Each ray's x, in pixels. */
-const Sint8 Megiddo_RayX[] = {6, 9, 6, 2, 6, 3, 6, 7};
+const Sint8 MegiddoRayX[] = {6, 9, 6, 2, 6, 3, 6, 7};
 
 /* Each ray's y, in pixels. */
-const Sint8 Megiddo_RayY[] = {-6, -4, -7, -9, -6, -7, -9, -7};
+const Sint8 MegiddoRayY[] = {-6, -4, -7, -9, -6, -7, -9, -7};
 
 /* Each flash's pitch: Megiddo's first two rings'. */
-const Sint16 Odyssey_FlashPitches[] = {0, -DEGtoANG(56.25)};
+const Sint16 OdysseyFlashPitches[] = {0, -DEGtoANG(56.25)};
 
 /* Each flash's yaw: Megiddo's first two rings', and a third nothing reads. */
-const Sint16 Odyssey_FlashYaws[] = {0, -DEGtoANG(26.71875), 0};
+const Sint16 OdysseyFlashYaws[] = {0, -DEGtoANG(26.71875), 0};
 
-/* The frame each ring starts on, counted from MOLOCH_SPREAD_FRAME. */
-const Uint8 Moloch_RingStarts[] = {0, 6, 8, 9};
+/* The tick each ring starts on, counted from MOLOCH_SPREAD_TICK. */
+const Uint8 MolochRingStarts[] = {0, 6, 8, 9};
 
-/* How fast each ring grows: its scale gains this many times 2000/65536 a frame,
+/* How fast each ring grows: its scale gains this many times 2000/65536 a tick,
    from a half. */
-const Uint8 Moloch_RingGrowth[] = {7, 8, 7, 8};
+const Uint8 MolochRingGrowth[] = {7, 8, 7, 8};
 
 /* Each ring's height, in pixels. */
-const Sint8 Moloch_RingHeights[] = {24, 12, -24, 0};
+const Sint8 MolochRingHeights[] = {24, 12, -24, 0};
 
 /* A splash's size, a large one's then a small one's: its ring starts twice this
-   many pixels out and closes a pixel a frame, then its drops spread out for
-   this many frames. */
-const Sint32 Iris_SplashRadii[] = {24, 16};
+   many pixels out and closes a pixel a tick, then its drops spread out for
+   this many ticks. */
+const Sint32 IrisSplashRadii[] = {24, 16};
 
 /* How far below the splash's point its wider ring of drops is centred, in steps
    of two pixels: a large one's, then a small one's. */
-const Uint8 Iris_SplashOffsetsY[] = {7, 5, 0, 0};
+const Uint8 IrisSplashOffsetsY[] = {7, 5, 0, 0};
 
 /* The pillar's mesh. */
-const Uint16 Iris_PillarMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 15, 0, 0, 15),
+const Uint16 IrisPillarMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 15, 0, 0, 15),
 	MESH_FACE(2, 1, 3, 0, 15, 15, 0, 15, 15),
 	MESH_FACE(2, 3, 4, 0, 14, 15, 14, 0, 15),
 	MESH_FACE(4, 3, 5, 0, 15, 15, 14, 15, 15), MESH_END};
 
 /* The particle's corners, as signed x, y and z. */
-const MODEL_VERTEX Iris_ParticleCorners[] = {
+const MODEL_VERTEX IrisParticleCorners[] = {
 	{-4, -8, 0}, {4, -8, 0}, {-4, 8, 0}, {4, 8, 0}};
 
 /* The particle's mesh. */
-const Uint16 Iris_ParticleMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 63),
+const Uint16 IrisParticleMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 63),
 	MESH_FACE(2, 1, 3, 0, 63, 31, 0, 31, 63), MESH_END};
 
-/* The frames the Psynergy sound plays on. */
-const Uint8 Iris_PsynergySoundFrames[] = {
+/* The ticks the Psynergy sound plays on. */
+const Uint8 IrisPsynergySoundTicks[] = {
 	84, 93, 108, 111, 116, 132, 135, 141, 153, 158, 171, 0};
 
-/* The frames the door sound plays on. */
-const Uint16 Iris_DoorSoundFrames[] = {231, 244, 259, 265, 270};
+/* The ticks the door sound plays on. */
+const Uint16 IrisDoorSoundTicks[] = {231, 244, 259, 265, 270};
 
-/* The frames the power up sound plays on. */
-const Uint16 Iris_PowerUpSoundFrames[] = {279, 287, 293, 298, 302, 307};
+/* The ticks the power up sound plays on. */
+const Uint16 IrisPowerUpSoundTicks[] = {279, 287, 293, 298, 302, 307};
 
 /* Each streak's x as it sets out, in pixels. */
-const Sint8 Iris_StreakX[] = {
+const Sint8 IrisStreakX[] = {
 	-10, 80, 110, -10, 76, 50, 110, 80, 40, 30, 80, 20, 50, 80, 20};
 
 /* Each streak's y as it sets out, in pixels. */
-const Uint8 Iris_StreakY[] = {
+const Uint8 IrisStreakY[] = {
 	116, 136, 128, 112, 136, 136, 128, 136, 136, 136, 136, 136, 136, 136, 136};
 
 /* Each streak's heading as it sets out, 0 straight up and DEGtoANG(90) to the
    right: each a little off one of those, by a number of 65,536ths of a turn. */
-const Uint16 Iris_StreakAngles[] = {DEGtoANG(90) + 2000, TRIG_TURN - 3048,
+const Uint16 IrisStreakAngles[] = {DEGtoANG(90) + 2000, TRIG_TURN - 3048,
 	DEGtoANG(270) + 2000, DEGtoANG(90), TRIG_TURN - 3048, 3048,
 	DEGtoANG(270) + 2000, TRIG_TURN - 3048, 4048, 6048, TRIG_TURN - 5048, 7048,
 	3048, TRIG_TURN - 3048, 6048};
 
 /* How far each streak's heading turns, in 65,536ths of a turn, two thirds of
-   this a frame. */
-const Sint16 Iris_StreakSpeeds[] = {
+   this a tick. */
+const Sint16 IrisStreakSpeeds[] = {
 	-406, 64, 380, -326, 64, -64, 380, 64, -84, -64, 94, -94, -64, 64, -64};
 
 /* The spray picture's columns, left to right: the level each is filled with,
    dimmest at the edges. */
-const Uint8 Iris_LineShades[] = {23, 47, 56, 63, 63, 56, 47, 23};
+const Uint8 IrisLineShades[] = {23, 47, 56, 63, 63, 56, 47, 23};
 
 /* Each mote's size: the width of its mote picture, in pixels, which is twice as
    tall. */
-const Sint32 Iris_MoteSizes[] = {7, 5};
+const Sint32 IrisMoteSizes[] = {7, 5};
 
-/* The frame each splash starts on. */
-const Uint16 Iris_SplashStarts[] = {230, 238, 260, 265, 253, 258};
+/* The tick each splash starts on. */
+const Uint16 IrisSplashStarts[] = {230, 238, 260, 265, 253, 258};
 
-/* The frame each splash ends on. */
-const Uint16 Iris_SplashEnds[] = {320, 328, 330, 335, 326, 332};
+/* The tick each splash ends on. */
+const Uint16 IrisSplashEnds[] = {320, 328, 330, 335, 326, 332};
 
 /* Each splash's x, in pixels. */
-const Uint8 Iris_SplashX[] = {34, 86, 18, 102, 8, 112};
+const Uint8 IrisSplashX[] = {34, 86, 18, 102, 8, 112};
 
 /* Each splash's y, in pixels. */
-const Uint8 Iris_SplashY[] = {64, 62, 32, 32, 80, 80};
+const Uint8 IrisSplashY[] = {64, 62, 32, 32, 80, 80};
 
 /* Whether each splash is a small one. */
-const Uint8 Iris_SplashSmall[] = {0, 0, 1, 1, 0, 0};
+const Uint8 IrisSplashSmall[] = {0, 0, 1, 1, 0, 0};
 
-/* How fast each drop rises, in half pixels a frame. */
-const Uint8 Iris_DropSpeeds[] = {8, 4, 1, 2, 4, 8};
+/* How fast each drop rises, in half pixels a tick. */
+const Uint8 IrisDropSpeeds[] = {8, 4, 1, 2, 4, 8};
 
-/* How long each drop rises, in frames, from its splash's end. */
-const Uint8 Iris_DropFrames[] = {16, 16, 16, 16, 32, 32};
+/* How long each drop rises, in ticks, from its splash's end. */
+const Uint8 IrisDropTicks[] = {16, 16, 16, 16, 32, 32};
 
-/* How many frames each drop shows each picture. */
-const Uint8 Iris_DropPictureSteps[] = {1, 1, 1, 1, 2, 2};
+/* How many ticks each drop shows each picture. */
+const Uint8 IrisDropPictureSteps[] = {1, 1, 1, 1, 2, 2};
 
 /* The left strip's corners, as signed x, y and z. */
-const MODEL_VERTEX Iris_LeftStripCorners[] = {{-6, -64, 0}, {18, -64, 0},
+const MODEL_VERTEX IrisLeftStripCorners[] = {{-6, -64, 0}, {18, -64, 0},
 	{-9, -32, 0}, {15, -32, 0}, {-13, 0, 0}, {8, 0, 0}, {-19, 32, 0},
 	{-1, 32, 0}, {-28, 64, 0}, {-12, 64, 0}};
 
 /* The right strip's corners, as signed x, y and z. */
-const MODEL_VERTEX Iris_RightStripCorners[] = {{35, -64, 0}, {72, -64, 0},
+const MODEL_VERTEX IrisRightStripCorners[] = {{35, -64, 0}, {72, -64, 0},
 	{28, -32, 0}, {66, -32, 0}, {18, 0, 0}, {51, 0, 0}, {6, 32, 0}, {33, 32, 0},
 	{-12, 64, 0}, {9, 64, 0}};
 
 /* The strip's mesh. */
-const Uint16 Iris_StripMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 15),
+const Uint16 IrisStripMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 15),
 	MESH_FACE(2, 1, 3, 0, 15, 31, 0, 31, 15),
 	MESH_FACE(2, 3, 4, 0, 15, 31, 15, 0, 31),
 	MESH_FACE(4, 3, 5, 0, 31, 31, 15, 31, 31),
@@ -2664,11 +2661,11 @@ const Uint16 Iris_StripMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 15),
 	MESH_FACE(8, 7, 9, 0, 63, 31, 47, 31, 63), MESH_END};
 
 /* The cone's corners, as signed x, y and z. */
-const MODEL_VERTEX Iris_ConeCorners[] = {{0, -40, 0}, {-5, -4, 0}, {5, -4, 0},
+const MODEL_VERTEX IrisConeCorners[] = {{0, -40, 0}, {-5, -4, 0}, {5, -4, 0},
 	{-10, 16, 0}, {10, 16, 0}, {-20, 32, 0}, {20, 32, 0}, {0, 0, 0}};
 
 /* The cone's mesh. */
-const Uint16 Iris_ConeMesh[] = {MESH_FACE(1, 0, 7, 0, 31, 0, 0, 15, 31),
+const Uint16 IrisConeMesh[] = {MESH_FACE(1, 0, 7, 0, 31, 0, 0, 15, 31),
 	MESH_FACE(1, 2, 3, 0, 0, 31, 0, 0, 31),
 	MESH_FACE(3, 2, 4, 0, 31, 31, 0, 31, 31),
 	MESH_FACE(3, 4, 5, 0, 0, 31, 0, 0, 31),

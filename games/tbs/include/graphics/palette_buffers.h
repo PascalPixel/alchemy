@@ -31,13 +31,13 @@ typedef struct TITLE_PALETTE_FADE {
 	Uint16 cur[TITLE_PALETTE_FADE_CHANNELS];
 	/* the colours current moves toward, as current */
 	Uint16 tgt[TITLE_PALETTE_FADE_CHANNELS];
-	/* added to each current channel each frame */
+	/* added to each current channel each tick */
 	Uint16 delta[TITLE_PALETTE_FADE_CHANNELS];
 	/* Two pages of RGB555 colours: one is built while the other is queued. */
 	Uint16 packed[2][PLTT_COLORS];
-	Uint8  page;	 /* the packed page queued this frame */
-	Sint8  duration; /* frames; 0 when the colours are not moving */
-	Uint8  step;	 /* frames */
+	Uint8  page;	 /* the packed page queued this tick */
+	Sint8  duration; /* ticks; 0 when the colours are not moving */
+	Uint8  step;	 /* ticks */
 	Uint8  padding;
 } TITLE_PALETTE_FADE;
 
@@ -50,7 +50,7 @@ STATIC_ASSERT(offsetof(TITLE_PALETTE_FADE, page) == 12288);
 
 /* The palette fade (HEAP_SLOT_PALETTE_FADE) that fades the BG and sprite
    palettes: the source palette, the shown and target colour channels, their
-   per-frame steps, and two pages of packed RGB555 colours queued each frame. */
+   per-tick steps, and two pages of packed RGB555 colours queued each tick. */
 typedef struct PALETTE_FADE {
 	/* The source palette, RGB555: the BG colours, then as many sprite colours;
 	   palette[0] is the backdrop. */
@@ -60,13 +60,13 @@ typedef struct PALETTE_FADE {
 	Uint16 cur[PALETTE_FADE_CHANNELS];
 	/* the colours current moves toward, as current */
 	Uint16 tgt[PALETTE_FADE_CHANNELS];
-	/* added to each current channel each frame */
+	/* added to each current channel each tick */
 	Uint16 delta[PALETTE_FADE_CHANNELS];
 	/* Two pages of RGB555 colours: one is built while the other is queued. */
 	Uint16 packed[2][2 * PALETTE_FADE_BG_COLORS];
-	Uint8  page;			/* the packed page queued this frame */
-	Sint8  duration;		/* frames; 0 when the colours are not moving */
-	Sint8  step;			/* frames */
+	Uint8  page;			/* the packed page queued this tick */
+	Sint8  duration;		/* ticks; 0 when the colours are not moving */
+	Sint8  step;			/* ticks */
 	Uint8  unusedAfterStep; /* never read; two scenes set it to 1 with step */
 } PALETTE_FADE;
 
@@ -80,9 +80,9 @@ STATIC_ASSERT(offsetof(PALETTE_FADE, page) == 10752);
 /* The title intro's own copies of the colour channel curves its tints read:
    each maps a 5-bit channel to a fade channel shifted up 10 bits, plain,
    lighter, or with more contrast. */
-extern Uint16 TitlePaletteFade_ChannelCurve[32];
-extern Uint16 TitlePaletteFade_ChannelCurveLight[32];
-extern Uint16 TitlePaletteFade_ChannelCurveContrast[32];
+extern Uint16 TitlePaletteFadeChannelCurve[32];
+extern Uint16 TitlePaletteFadeChannelCurveLight[32];
+extern Uint16 TitlePaletteFadeChannelCurveContrast[32];
 
 /* A palette tint, a palette fade's build mode: below PALETTE_TINT_FROM_SOURCE,
    one RGB555 colour for all. */

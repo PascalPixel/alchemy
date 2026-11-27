@@ -23,7 +23,7 @@ typedef enum SCREEN_TRANSITION_STYLE {
 /* TRANSITION_CENTER_LINE's variants. */
 typedef enum CENTER_LINE_TRANSITION {
 	CENTER_LINE_STEADY = 0, /* the lines open or close steadily */
-	/* The lines show only every other frame, as the World Map closes into a
+	/* The lines show only every other tick, as the World Map closes into a
 	   battle. */
 	CENTER_LINE_FLICKER = 1
 } CENTER_LINE_TRANSITION;
@@ -70,12 +70,12 @@ typedef struct ACTOR {
 	   ACTOR_PRIORITY_AUTOMATIC for placed actors, ACTOR_PRIORITY_UNDERFOOT for
 	   footprints. */
 	Uint8 priFlg;
-	FIXED velX;		  /* 16.16 fixed-point pixels per frame */
-	FIXED velY;		  /* 16.16 fixed-point pixels per frame */
-	FIXED velZ;		  /* 16.16 fixed-point pixels per frame */
-	FIXED speedLimit; /* 16.16 fixed-point pixels per frame */
-	/* Added toward the target each frame, or taken off the speed when there is
-	   none, in 16.16 fixed-point pixels per frame; toFIXED(1) when created. */
+	FIXED velX;		  /* 16.16 fixed-point pixels per tick */
+	FIXED velY;		  /* 16.16 fixed-point pixels per tick */
+	FIXED velZ;		  /* 16.16 fixed-point pixels per tick */
+	FIXED speedLimit; /* 16.16 fixed-point pixels per tick */
+	/* Added toward the target each tick, or taken off the speed when there is
+	   none, in 16.16 fixed-point pixels per tick; toFIXED(1) when created. */
 	FIXED acceleration;
 	FIXED tgtX; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
 	FIXED tgtY; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
@@ -83,8 +83,8 @@ typedef struct ACTOR {
 	/* The share of its falling speed kept as it bounces on landing, 16.16 fixed
 	   point (a quarter when created); a floating actor's phase instead. */
 	FIXED bounce;
-	/* Taken off velocityY each frame while it is above the ground, in 16.16
-	   fixed-point pixels per frame (toFIXED(1) when created); also scales a
+	/* Taken off velocityY each tick while it is above the ground, in 16.16
+	   fixed-point pixels per tick (toFIXED(1) when created); also scales a
 	   floating actor's bob. */
 	FIXED gravity;
 	/* Zeroed by syFieldActorCreate and not read by the field engine; scene code
@@ -109,8 +109,8 @@ typedef struct ACTOR {
 	   or it is off screen (fdActorSystemPlaceSprs). */
 	Uint8  retainSprCache;
 	Uint8  repeatCnt; /* the actor script's SC_LOOP count */
-	Sint16 wait;	  /* the actor script's wait, in frames */
-	/* Frames in a row a solid actor has refused its move; SC_SYNC stops waiting
+	Sint16 wait;	  /* the actor script's wait, in ticks */
+	/* Ticks in a row a solid actor has refused its move; SC_SYNC stops waiting
 	   after 60. */
 	Uint8 refused;
 	/* Nonzero skips steering, terrain, gravity and floating; its velocity still
@@ -124,7 +124,7 @@ typedef struct ACTOR {
 	union {
 		struct {
 			/* The parameter its actor script reads (a follow distance or an
-			   angle to face), the player's frames to its next footprint, or
+			   angle to face), the player's ticks to its next footprint, or
 			   scene scratch. */
 			Sint16 tmr;
 			/* The side of the player's next footprint (2 after a stop), or
@@ -141,33 +141,33 @@ typedef struct ACTOR {
 
 		/* Avoid's caster (fdEffectUpdateAvoidCaster). */
 		struct {
-			Sint16 arcPhase; /* 1 spins the caster 3/64 turn a frame */
-			Sint16 arcFrm;	 /* frames since the arcs started */
+			Sint16 arcPhase; /* 1 spins the caster 3/64 turn a tick */
+			Sint16 arcFrm;	 /* ticks since the arcs started */
 		};
 
 		/* A Venus Djinni's falling motes
 		   (fdEffectUpdateDescendingOrbitActor). */
 		struct {
-			Uint16 orbitFrm; /* frames left of the spiral, 100 at the start */
+			Uint16 orbitFrm; /* ticks left of the spiral, 100 at the start */
 			Sint16 orbitAng; /* its start on the circle, 1/65536 turns */
 		};
 
 		/* A Whirlwind particle (fdEffectCircleAnchor,
 		   fdEffectWanderAroundAnchor). */
 		struct {
-			Uint16 swirlFrm; /* frames it has circled or wandered so far */
-			Sint16 turnFrm;	 /* frames left of a sharp turn */
+			Uint16 swirlFrm; /* ticks it has circled or wandered so far */
+			Sint16 turnFrm;	 /* ticks left of a sharp turn */
 		};
 
 		/* A spin that speeds up (fdEffectAdvanceAngWithRamp). */
 		struct {
-			Sint16 spinRampFrm; /* frames the spin has been speeding up for */
+			Sint16 spinRampFrm; /* ticks the spin has been speeding up for */
 		};
 	};
 	/* The object (an actor or a field effect) its actor script follows or
 	   faces; field code also keeps an actor handle here. */
 	union ACTOR_OR_EFFECT *watchedActor;
-	/* Called each frame before its script, while the actor is live. */
+	/* Called each tick before its script, while the actor is live. */
 	void (*update)(struct ACTOR *actor);
 } ACTOR;
 
@@ -261,9 +261,9 @@ STATIC_ASSERT(sizeof(ACTOR_SNAPSHOT) == 3712);
 extern ACTOR_SNAPSHOT ActorSnapshotWork;
 
 /* Sets bits in one of an actor's flag bytes. */
-static inline void syActorFlagsSet(Uint8 *flags, Uint8 bits)
+static inline void syActorFlagsSet(Uint8 *flg, Uint8 bits)
 {
-	*flags |= bits;
+	*flg |= bits;
 }
 
 #endif

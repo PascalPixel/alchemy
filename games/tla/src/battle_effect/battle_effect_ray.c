@@ -1,19 +1,19 @@
 /* Ray. Part of battle_effect.c. */
 
-#define RAY_FRAMES 64
+#define RAY_TICKS 64
 
 #define RAY_SPARK_COUNT PARTICLE_POOL_COUNT /* sparks in PARTICLES */
 
-/* The columns of a Ray_Sparks row, one row a variant. */
+/* The columns of a RaySparks row, one row a variant. */
 enum {
 	RAY_SPARKS_UNREAD,	 /* Unused: nothing reads it */
-	RAY_SPARKS_PER_BOLT, /* sparks each bolt throws a frame */
+	RAY_SPARKS_PER_BOLT, /* sparks each bolt throws a tick */
 };
 
 #define RAY_PICTURES 1550 /* the bolt pictures in the sprite sheet */
 #define RAY_COUNT	 4	  /* bolts */
 
-/* The level the canvas flashes to every five frames while the bolts strike. */
+/* The level the canvas flashes to every five ticks while the bolts strike. */
 #define RAY_FLASH_LEVEL		  16
 /* How far Destruct Ray's canvas, at twice its width, is scrolled towards the
    targets' side, in canvas pixels. */
@@ -27,7 +27,7 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	Uint8				*sheet;
 	Sint32				 bolt;
 	Sint32				 edgeShift;
@@ -84,13 +84,13 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 	for(i = 0; i != RAY_SPARK_COUNT; i++) {
 		PARTICLE *spark = &PARTICLES[i];
 		Sint32	  speed;
-		Sint32	  angle;
+		Sint32	  ang;
 
 		speed = (syRandom() & 0x3ff) + 256;
-		angle = (syRandom() & 0x7fff) - DEGtoANG(90);
+		ang = (syRandom() & 0x7fff) - DEGtoANG(90);
 		SET_POSITION(spark, toFIXED(1) / 4, toFIXED(7) / 16,
-			FIXEDtoINT(sySin(angle) * speed));
-		spark->velZ = FIXEDtoINT(-(syCos(angle) * speed * 2));
+			FIXEDtoINT(sySin(ang) * speed));
+		spark->velZ = FIXEDtoINT(-(syCos(ang) * speed * 2));
 		spark->variant = 0;
 	}
 
@@ -98,25 +98,25 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	sySndPlayStub(SE_ITEM_BREAK);
 
-	for(frame = 0; frame != RAY_FRAMES; frame++) {
-		if(frame == 20)
+	for(frm = 0; frm != RAY_TICKS; frm++) {
+		if(frm == 20)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
-		/* The bolts, over the first 16 frames. */
-		if(frame < 16) {
-			if(frame % 5 == 2)
+		/* The bolts, over the first 16 ticks. */
+		if(frm < 16) {
+			if(frm % 5 == 2)
 				syWordsFillEntry(
 					canvas, CANVAS_BYTES, CANVAS_FILL_WORD(RAY_FLASH_LEVEL));
 			for(bolt = 0; bolt != RAY_COUNT; bolt++) {
-				Sint32 angle;
+				Sint32 ang;
 				Sint32 x;
 				Sint32 y;
 
 				/* The bolts close in from 32 pixels either side, a pixel a
-				   frame, each turning at its own rate. */
+				   tick, each turning at its own rate. */
 				thrown = 0;
-				angle = (frame * (TRIG_TURN / 32) + DEGtoANG(90)) * bolt;
-				x = FIXEDtoINT((32 - frame) * sySin(angle)) + 64;
-				y = -FIXEDtoINT(syCos(angle) * 8) - 8;
+				ang = (frm * (TRIG_TURN / 32) + DEGtoANG(90)) * bolt;
+				x = FIXEDtoINT((32 - frm) * sySin(ang)) + 64;
+				y = -FIXEDtoINT(syCos(ang) * 8) - 8;
 				if(args->variant == EFFECT_VARIANT_BASIC)
 					draw[0](canvas,
 						state->sheet +
@@ -149,7 +149,7 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 						spark->variant = (syRandom() & 7) + 32;
 						thrown++;
 						if(thrown ==
-							Ray_Sparks[args->variant][RAY_SPARKS_PER_BOLT])
+							RaySparks[args->variant][RAY_SPARKS_PER_BOLT])
 							break;
 					}
 				}
@@ -178,21 +178,21 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		if(frame >= 4 && frame < 96) {
+		if(frm >= 4 && frm < 96) {
 			EFFECT_FOR_EACH_TARGET(i, args) {
-				if(frame == i * 4 + 4)
+				if(frm == i * 4 + 4)
 					btEffectTintBattler(
 						args->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 10);
 			}
 		}
 		btCameraShake(2, 4);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS();
 }
 
-#undef RAY_FRAMES
+#undef RAY_TICKS
 #undef RAY_SPARK_COUNT
 #undef RAY_PICTURES
 #undef RAY_COUNT

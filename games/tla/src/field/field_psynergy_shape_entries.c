@@ -13,7 +13,7 @@ void fdFlagBlockPlaceAllMarkingEdges(ACTOR_FLAG *list)
 
 	for(; list->actor != ACTOR_LIST_END; list++) {
 		ACTOR		 *actor = fdActorGetById(list->actor);
-		Uint16		  flag = list->flg;
+		Uint16		  flg = list->flg;
 		Sint32		  slot = fdActorGetMetatileIndex(actor);
 		MAP_METATILE *metatile = &map->layers[actor->layer].metatiles[slot];
 
@@ -33,9 +33,9 @@ void fdFlagBlockPlaceAllMarkingEdges(ACTOR_FLAG *list)
 		fdMapGridMarkJumpIfOpen(actor->x.fixed,
 			actor->z.fixed - toFIXED(MAPGRID_METATILE_PIXELS), actor->layer,
 			actor->groundHeight);
-		if(syGameFlagGet(flag)) {
+		if(syGameFlagGet(flg)) {
 			fdActorSelectAnimationStub(actor, PUDDLE_ANIMATION_FROZEN);
-			syGameFlagClear(flag);
+			syGameFlagClear(flg);
 		} else {
 			fdActorSelectAnimationStub(actor, PUDDLE_ANIMATION_PUDDLE);
 		}
@@ -63,14 +63,14 @@ void fdFlagBlockApplyFlags(ACTOR_FLAG *list)
 	for(; list->actor != ACTOR_LIST_END; list++) {
 		Sint32 change = 0;
 		ACTOR *actor = fdActorGetById(list->actor);
-		Uint8  animation = ((SPR *)actor->spr)->lastNo;
-		Uint16 flag = list->flg;
+		Uint8  anm = ((SPR *)actor->spr)->lastNo;
+		Uint16 flg = list->flg;
 
-		if(syGameFlagGet(flag)) {
-			if(animation != PUDDLE_ANIMATION_FROZEN)
+		if(syGameFlagGet(flg)) {
+			if(anm != PUDDLE_ANIMATION_FROZEN)
 				change = 1;
 		} else {
-			if(animation != PUDDLE_ANIMATION_PUDDLE)
+			if(anm != PUDDLE_ANIMATION_PUDDLE)
 				change = 1;
 		}
 		if(change) {
@@ -91,19 +91,19 @@ void fdFlagBlockApplyFlags(ACTOR_FLAG *list)
 				actor->layer, actor->x.fixed, actor->z.fixed));
 
 			field->movedBlock = actor;
-			if(syGameFlagGet(flag)) {
+			if(syGameFlagGet(flg)) {
 				height -= METATILE_HEIGHT_STEPS(toFIXED(32));
-				syGameFlagClear(flag);
+				syGameFlagClear(flg);
 			} else {
 				height += METATILE_HEIGHT_STEPS(toFIXED(32));
-				syGameFlagSet(flag);
+				syGameFlagSet(flg);
 			}
 			if((actor->x.fixed | actor->z.fixed) != 0) {
 
 				metatiles += slot;
 				shapes += slot;
 				*shapes = fdMapShapeFindOrAdd(actor->layer, kind, height);
-				if(syGameFlagGet(flag)) {
+				if(syGameFlagGet(flg)) {
 					Sint32 bits;
 
 					metatiles->collisionCode = METATILE_BEHAVIOR_NORMAL;

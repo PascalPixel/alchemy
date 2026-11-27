@@ -11,7 +11,7 @@
 /* A drop's frames, five halfwords each, played from the last to the first: its
    offset from where it lands, x and y in pixels, its first tile, its OAM shape
    and its size. Nine frames of a streak falling slantwise down to the ground, 8
-   pixels across and 16 down a frame, then seven of its splash. */
+   pixels across and 16 down a tick, then seven of its splash. */
 GROUND_PARTICLE_FRAMES_SECTION Sint16 GroundParticleFrames[] = {
 	-8,
 	-12,

@@ -34,15 +34,15 @@ Bool gmUnitKnowsPsynergy(Sint32 unitId, Sint32 abilityId)
 	UNIT		   *unit = gmUnitGet(unitId);
 	PSYNERGY_ENTRY *entry;
 	Sint32			actionMask = PSYNERGY_ABILITY_MASK;
-	Sint32			index = 0;
+	Sint32			idx = 0;
 
 	entry = unit->psynergy;
-	for(; index < PSYNERGY_SLOTS; index++) {
-		Sint32 currentAction = entry->encodedAction;
+	for(; idx < PSYNERGY_SLOTS; idx++) {
+		Sint32 curAction = entry->encodedAction;
 
-		currentAction &= actionMask;
+		curAction &= actionMask;
 		entry++;
-		if(currentAction == abilityId) {
+		if(curAction == abilityId) {
 			return TRUE;
 		}
 	}
@@ -63,8 +63,8 @@ Sint32 gmUnitRefreshPsynergy(Sint32 unitId)
 	CLASS_DEFINITION	  *classDefinition;
 	const ITEM_DEFINITION *item;
 	Sint32				   slot;
-	Sint32				   sourceIndex;
-	Uint16				   originFlag;
+	Sint32				   srcIdx;
+	Uint16				   originFlg;
 	CLASS_ABILITY		  *classAbility;
 
 	unit = gmUnitGet(unitId);
@@ -73,51 +73,49 @@ Sint32 gmUnitRefreshPsynergy(Sint32 unitId)
 	if(unit->classId == CLASS_NONE)
 		return 0;
 	/* Remove actions inherited from the previous class and equipment. */
-	originFlag = PSYNERGY_FROM_CLASS;
-	for(sourceIndex = 0; sourceIndex < PSYNERGY_SLOTS; sourceIndex++) {
-		if(PSYNERGY_ACTION_AT(abilities, sourceIndex) & originFlag)
-			PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
+	originFlg = PSYNERGY_FROM_CLASS;
+	for(srcIdx = 0; srcIdx < PSYNERGY_SLOTS; srcIdx++) {
+		if(PSYNERGY_ACTION_AT(abilities, srcIdx) & originFlg)
+			PSYNERGY_ACTION_AT(abilities, srcIdx) = 0;
 	}
-	originFlag = PSYNERGY_FROM_ITEM;
-	for(sourceIndex = 0; sourceIndex < PSYNERGY_SLOTS; sourceIndex++) {
-		if(PSYNERGY_ACTION_AT(abilities, sourceIndex) & originFlag)
-			PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
+	originFlg = PSYNERGY_FROM_ITEM;
+	for(srcIdx = 0; srcIdx < PSYNERGY_SLOTS; srcIdx++) {
+		if(PSYNERGY_ACTION_AT(abilities, srcIdx) & originFlg)
+			PSYNERGY_ACTION_AT(abilities, srcIdx) = 0;
 	}
 	/* Pack permanent actions at the end to leave room for class abilities. */
-	for(slot = PSYNERGY_SLOTS - 1, sourceIndex = PSYNERGY_SLOTS - 1;
-		slot >= 0;) {
+	for(slot = PSYNERGY_SLOTS - 1, srcIdx = PSYNERGY_SLOTS - 1; slot >= 0;) {
 		if(abilities[slot].encodedAction == 0) {
 			slot--;
 		} else {
-			abilities[sourceIndex].encodedAction =
-				abilities[slot].encodedAction;
+			abilities[srcIdx].encodedAction = abilities[slot].encodedAction;
 			slot--;
-			sourceIndex--;
+			srcIdx--;
 		}
 	}
-	for(; sourceIndex >= 0; sourceIndex--)
-		PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
+	for(; srcIdx >= 0; srcIdx--)
+		PSYNERGY_ACTION_AT(abilities, srcIdx) = 0;
 
 	/* Add level-eligible class abilities, followed by equipped-item
 	   abilities. */
-	originFlag = PSYNERGY_FROM_CLASS;
-	for(sourceIndex = 0; sourceIndex < CLASS_ABILITY_SLOTS; sourceIndex++) {
-		classAbility = &classDefinition->abilities[sourceIndex];
-		if(classDefinition->abilities[sourceIndex].ability == 0)
+	originFlg = PSYNERGY_FROM_CLASS;
+	for(srcIdx = 0; srcIdx < CLASS_ABILITY_SLOTS; srcIdx++) {
+		classAbility = &classDefinition->abilities[srcIdx];
+		if(classDefinition->abilities[srcIdx].ability == 0)
 			continue;
-		if(unit->level < classDefinition->abilities[sourceIndex].level)
+		if(unit->level < classDefinition->abilities[srcIdx].level)
 			continue;
 		slot = 0;
 		while(slot < PSYNERGY_SLOTS &&
 			PSYNERGY_ACTION_AT(abilities, slot) !=
-				classDefinition->abilities[sourceIndex].ability)
+				classDefinition->abilities[srcIdx].ability)
 			slot++;
 		if(slot != PSYNERGY_SLOTS)
 			continue;
 		for(slot = 0; slot < PSYNERGY_SLOTS; slot++) {
 			if(PSYNERGY_ACTION_AT(abilities, slot) == 0) {
 				PSYNERGY_ACTION_AT(abilities, slot) =
-					classAbility->ability | originFlag;
+					classAbility->ability | originFlg;
 				break;
 			}
 		}
@@ -125,12 +123,12 @@ Sint32 gmUnitRefreshPsynergy(Sint32 unitId)
 			break;
 	}
 
-	for(sourceIndex = 0; sourceIndex < INVENTORY_SLOTS; sourceIndex++) {
-		if(unit->inventory[sourceIndex] == 0)
+	for(srcIdx = 0; srcIdx < INVENTORY_SLOTS; srcIdx++) {
+		if(unit->inventory[srcIdx] == 0)
 			continue;
-		if(!(unit->inventory[sourceIndex] & INVENTORY_EQUIPPED))
+		if(!(unit->inventory[srcIdx] & INVENTORY_EQUIPPED))
 			continue;
-		item = gmItemGetDirect(unit->inventory[sourceIndex]);
+		item = gmItemGetDirect(unit->inventory[srcIdx]);
 		if(item->useType != ITEM_USE_TEACHES)
 			continue;
 		for(slot = 0; slot < PSYNERGY_SLOTS; slot++) {
@@ -152,18 +150,17 @@ Sint32 gmUnitRefreshPsynergy(Sint32 unitId)
 	}
 
 	/* Restore a dense display list with empty slots at the end. */
-	for(slot = 0, sourceIndex = 0; slot < PSYNERGY_SLOTS;) {
+	for(slot = 0, srcIdx = 0; slot < PSYNERGY_SLOTS;) {
 		if(abilities[slot].encodedAction == 0) {
 			slot++;
 		} else {
-			abilities[sourceIndex].encodedAction =
-				abilities[slot].encodedAction;
+			abilities[srcIdx].encodedAction = abilities[slot].encodedAction;
 			slot++;
-			sourceIndex++;
+			srcIdx++;
 		}
 	}
-	for(; sourceIndex < PSYNERGY_SLOTS; sourceIndex++)
-		PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
+	for(; srcIdx < PSYNERGY_SLOTS; srcIdx++)
+		PSYNERGY_ACTION_AT(abilities, srcIdx) = 0;
 	return 0;
 }
 
@@ -184,29 +181,29 @@ Sint32 gmUnitLearnPsynergy(Sint32 unitId, Sint32 abilityId)
 	UNIT  *unit = gmUnitGet(unitId);
 	Sint32 ability = abilityId & PSYNERGY_ABILITY_MASK;
 	Sint32 found = -1;
-	Sint32 index;
+	Sint32 idx;
 
 	/* Learning never takes the list's last slot. */
-	for(index = 0; index < PSYNERGY_SLOTS - 1; index++) {
+	for(idx = 0; idx < PSYNERGY_SLOTS - 1; idx++) {
 		Sint32 masked =
-			unit->psynergy[index].encodedAction & PSYNERGY_ABILITY_MASK;
+			unit->psynergy[idx].encodedAction & PSYNERGY_ABILITY_MASK;
 
 		/* FAKEMATCH(dead): the test written as an XOR; as masked == ability,
 		 * which stores ability in place of masked. */
 		if((masked ^ ability) == 0) {
-			unit->psynergy[index].encodedAction = masked;
-			found = index;
+			unit->psynergy[idx].encodedAction = masked;
+			found = idx;
 			break;
 		}
 	}
 
 	if(found < 0) {
-		for(index = 0; index < PSYNERGY_SLOTS - 1; index++) {
-			Sint32 action = unit->psynergy[index].encodedAction;
+		for(idx = 0; idx < PSYNERGY_SLOTS - 1; idx++) {
+			Sint32 action = unit->psynergy[idx].encodedAction;
 
 			if(action == 0) {
-				unit->psynergy[index].encodedAction = ability;
-				found = index;
+				unit->psynergy[idx].encodedAction = ability;
+				found = idx;
 				break;
 			}
 		}
@@ -216,12 +213,12 @@ Sint32 gmUnitLearnPsynergy(Sint32 unitId, Sint32 abilityId)
 	}
 
 	gmUnitRefreshPsynergy(unitId);
-	for(index = 0; index < PSYNERGY_SLOTS; index++) {
-		if(unit->psynergy[index].encodedAction == ability) {
+	for(idx = 0; idx < PSYNERGY_SLOTS; idx++) {
+		if(unit->psynergy[idx].encodedAction == ability) {
 			break;
 		}
 	}
-	return index;
+	return idx;
 }
 
 /* Levels the character up once if it has the experience, and returns gains, or
@@ -237,7 +234,7 @@ const CHARACTER_DEFINITION *gmCharacterGetDefinition(Sint32 characterId)
 {
 	const CHARACTER_DEFINITION *definitions;
 
-	definitions = Character_DefinitionTable;
+	definitions = CharacterDefinitionTable;
 	return &definitions[characterId];
 }
 
@@ -250,7 +247,7 @@ void gmPartyInitCharacters(void)
 	const CHARACTER_DEFINITION *character;
 	Uint16						nameBuf[16];
 	Sint32						unitId;
-	const Sint32			   *startingUnitId = Character_NewGameIds;
+	const Sint32			   *startingUnitId = CharacterNewGameIds;
 	Sint32						i;
 	Sint32						slot;
 	Uint8					   *name;
@@ -272,7 +269,7 @@ void gmPartyInitCharacters(void)
 		unit->name[UNIT_NAME_SIZE - 1] = 0;
 	}
 
-	/* Character_NewGameIds lists the characters given starting equipment, ended
+	/* CharacterNewGameIds lists the characters given starting equipment, ended
 	   by -1 (starting_equipment.c). */
 	for(; *startingUnitId != -1; startingUnitId++) {
 		unit = gmUnitGet(*startingUnitId);
@@ -316,7 +313,7 @@ Uint32 gmUnitGetExperienceForLevel(Sint32 unitId, Sint32 level)
 			return 0;
 		}
 		if(level <= UNIT_LEVEL_MAX && unit->id <= PIERS) {
-			return Character_LevelExpTable[unit->id * UNIT_LEVEL_MAX + level -
+			return CharacterLevelExpTable[unit->id * UNIT_LEVEL_MAX + level -
 				1];
 		}
 	}
@@ -428,16 +425,15 @@ LEVEL_UP_RESULT *gmUnitTryLevelUp(Sint32 unitId, LEVEL_UP_RESULT *gains)
 	return 0;
 }
 
-/* Levels character `unitId` up one level at a time until `targetLevel`, then
+/* Levels character `unitId` up one level at a time until `tgtLevel`, then
    recomputes its stats. */
-void gmUnitLevelUpTo(Sint32 unitId, Sint32 targetLevel)
+void gmUnitLevelUpTo(Sint32 unitId, Sint32 tgtLevel)
 {
 	/* Each level's gains are discarded. */
 	LEVEL_UP_RESULT gains;
-	Sint32			currentLevel;
+	Sint32			curLevel;
 
-	for(currentLevel = gmUnitGet(unitId)->level; currentLevel < targetLevel;
-		currentLevel++) {
+	for(curLevel = gmUnitGet(unitId)->level; curLevel < tgtLevel; curLevel++) {
 		gmUnitLevelUp(unitId, &gains);
 	}
 	gmUnitCalc(unitId);

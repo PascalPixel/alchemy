@@ -6,7 +6,7 @@
 /* Rows 0 to 8 with Djinn in the party, 9 to 15 without, which leave out the */
 /* class and Djinn stops: {help, column, row, highlight column, highlight row, */
 /* highlight width}. */
-const BATTLE_SUMMARY_STAT_CURSOR BattleStatusScreen_StatCursors[] = {
+const BATTLE_SUMMARY_STAT_CURSOR BattleStatusScreenStatCursors[] = {
 	{OWNER_STATUS_HELP_NAME,          2,  0,  0, 0,  12},
 	{OWNER_STATUS_HELP_EXPERIENCE,    8,  1,  0, 1,  13},
 	{OWNER_STATUS_HELP_HP,            12, 3,  5, 3,  11},
@@ -26,7 +26,7 @@ const BATTLE_SUMMARY_STAT_CURSOR BattleStatusScreen_StatCursors[] = {
 };
 
 /* {help, column, row} */
-const BATTLE_SUMMARY_CURSOR BattleStatusScreen_EquipmentCursors[] = {
+const BATTLE_SUMMARY_CURSOR BattleStatusScreenEquipmentCursors[] = {
 	{OWNER_STATUS_HELP_ATTACK,  19, 1},
 	{OWNER_STATUS_HELP_DEFENSE, 19, 2},
 	{OWNER_STATUS_HELP_AGILITY, 19, 3},
@@ -34,7 +34,7 @@ const BATTLE_SUMMARY_CURSOR BattleStatusScreen_EquipmentCursors[] = {
 };
 
 /* The eight status icons' places: {help, column, row} */
-const BATTLE_SUMMARY_CURSOR BattleStatusScreen_ConditionCursors[] = {
+const BATTLE_SUMMARY_CURSOR BattleStatusScreenConditionCursors[] = {
 	{OWNER_STATUS_HELP_CONDITION + 0, 13, 0},
 	{OWNER_STATUS_HELP_CONDITION + 1, 15, 0},
 	{OWNER_STATUS_HELP_CONDITION + 2, 17, 0},

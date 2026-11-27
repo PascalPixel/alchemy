@@ -2,8 +2,8 @@
    motes, rain, rising sparkles, and the flashes of the palettes. Part of
    script_commands.c. */
 
-/* The frames the first motes and sparkles are spread over as they start. */
-#define FIRST_SPAWN_FRAMES 16
+/* The ticks the first motes and sparkles are spread over as they start. */
+#define FIRST_SPAWN_TICKS 16
 
 #define syDecompressByteLZ ((void (*)(const void *, void *))syDecompressByteLZ)
 
@@ -52,13 +52,13 @@ void fdMotesStart(void)
 		mote->posX = (Sint32)p;
 		mote->posZ = z;
 		mote->posY = fdMapGridGetTerrainHeightStub(0, (Sint32)p, z);
-		mote->tmr = (i & (FIRST_SPAWN_FRAMES - 1)) + 1;
+		mote->tmr = (i & (FIRST_SPAWN_TICKS - 1)) + 1;
 		mote++;
 	}
 	syIOWrite16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
 	syIOWrite16(BLEND_ALPHA(8, 16), &REG_BLDALPHA);
 	syIOWrite16(0, &REG_BLDY);
-	sySetEvent(fdMotesUpdate, EVENT_PASS_FRAME);
+	sySetEvent(fdMotesUpdate, EVENT_PASS_TICK);
 }
 
 #undef syDecompressByteLZ
@@ -117,7 +117,7 @@ void fdWeatherStartRain(Sint32 withSnd)
 	syIOWrite16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
 	syIOWrite16(BLEND_ALPHA(16, 16), &REG_BLDALPHA);
 	syIOWrite16(0, &REG_BLDY);
-	sySetEvent(fdWeatherUpdateRain, EVENT_PASS_FRAME);
+	sySetEvent(fdWeatherUpdateRain, EVENT_PASS_TICK);
 	if(withSnd != 0)
 		fdQueueMusic(SE_KIRIN);
 }
@@ -129,9 +129,9 @@ void fdWeatherStopRain(void)
 	syCloseEvent(fdWeatherUpdateRain);
 }
 
-/* The sparkles each frame: now and then a burst of four rises from a random
-   spot within 128 pixels of the map's focus, each a frame of
-   FieldEffect_SparklePictures every two frames and started 4 frames after the
+/* The sparkles each tick: now and then a burst of four rises from a random
+   spot within 128 pixels of the map's focus, each a tick of
+   FieldEffectSparklePictures every two ticks and started 4 ticks after the
    one before; FLAG_WEATHER_HELD holds them where they are. */
 void fdEffectUpdateSparkles(void)
 {
@@ -143,7 +143,7 @@ void fdEffectUpdateSparkles(void)
 	Sint32			  spawnX;
 	Sint32			  spawnZ;
 	WEATHER_PARTICLE *sparkle;
-	const Uint16	 *frame;
+	const Uint16	 *frm;
 	Sint32			 *leader;
 	Sint32			  cameraX;
 	Sint32			  cameraZ;
@@ -153,7 +153,7 @@ void fdEffectUpdateSparkles(void)
 	Sint32			  x;
 	Uint32			  a;
 	Uint32			  b;
-	Uint32			  frames;
+	Uint32			  ticks;
 
 	state = Ram_HeapSlots->weather;
 	spawned = 0;
@@ -172,31 +172,31 @@ void fdEffectUpdateSparkles(void)
 			cameraZ = camera[1];
 			if(syGameFlagGet(FLAG_WEATHER_HELD) != 0)
 				sparkle->tmr++;
-			frame =
-				(const Uint16 *)&FieldEffect_SparklePictures[sparkle->tmr >> 1];
+			frm =
+				(const Uint16 *)&FieldEffectSparklePictures[sparkle->tmr >> 1];
 			a = syRandom();
 			b = syRandom();
 			x = FIXEDtoINT(sparkle->posX - cameraX) +
 				(((a & 1) + (b & 1)) >> 1);
 			screenX = x - 1;
 			screenY = (sparkle->posZ - sparkle->posY - cameraZ) / toFIXED(1) +
-				*(const Sint16 *)frame;
-			frame++;
+				*(const Sint16 *)frm;
+			frm++;
 			if(x >= -15 && x <= DISPLAY_WIDTH && screenY >= -32 &&
 				screenY < DISPLAY_HEIGHT) {
-				sparkle->tile = state->tileBase + *frame;
+				sparkle->tile = state->tileBase + *frm;
 				sparkle->x = screenX;
 				sparkle->shape = OBJ_SHAPE_SQUARE;
 				sparkle->size = OAM_SIZE_16X16;
 #if FIX_TYPE_PUNNING
-				frames = FrameCount;
+				ticks = TickCount;
 #else
 				/* UB: this reads a Uint32 as unsigned long; UBFIX reads the
 				   declared type. */
-				frames = *(unsigned long *)&FrameCount;
+				ticks = *(unsigned long *)&TickCount;
 #endif
 				sparkle->y = screenY;
-				sparkle->affineIdx = ((frames >> 1) & 1) << 3;
+				sparkle->affineIdx = ((ticks >> 1) & 1) << 3;
 				syOAMAddSprAtDepthClamped(sparkle, OAM_DEPTH_WINDOW);
 			}
 			sparkle->tmr--;
@@ -293,16 +293,16 @@ void fdEffectInitSparkles(void)
 		p->posX = clear;
 		p->posZ = clear;
 		p->posY = fdMapGridGetTerrainHeightStub(0, attr, z);
-		p->tmr = (i & (FIRST_SPAWN_FRAMES - 1)) + 1;
+		p->tmr = (i & (FIRST_SPAWN_TICKS - 1)) + 1;
 		i++;
 		p++;
 	} while(i < WEATHER_PARTICLE_COUNT);
-	sySetEvent(fdEffectUpdateSparkles, EVENT_PASS_FRAME);
+	sySetEvent(fdEffectUpdateSparkles, EVENT_PASS_TICK);
 }
 
 /* Starts the storm's lightning (fdWeatherUpdateLightning): builds the dark
    (PALETTE_TINT_WARM) and lit (PALETTE_TINT_PALE) BG colours and their 12-step
-   fade, and arms the first burst to end in 600 frames, repeating. */
+   fade, and arms the first burst to end in 600 ticks, repeating. */
 void fdWeatherStartLightning(void)
 {
 	FIELD_BLEND_STATE *state;
@@ -321,10 +321,10 @@ void fdWeatherStartLightning(void)
 	fdPaletteFadeBuild((Sint32)state, 0, buffers->tgt, 1);
 	state->tmr = 600;
 	state->enabled = 1;
-	sySetEvent(fdWeatherUpdateLightning, EVENT_PASS_FRAME);
+	sySetEvent(fdWeatherUpdateLightning, EVENT_PASS_TICK);
 }
 
-/* Stops the lightning: no flash for 32767 frames, and none after. */
+/* Stops the lightning: no flash for 32767 ticks, and none after. */
 void fdWeatherStopLightning(void)
 {
 	FIELD_BLEND_STATE *state =
@@ -333,7 +333,7 @@ void fdWeatherStopLightning(void)
 	state->enabled = 0;
 }
 
-/* One last burst of lightning, its first flash two frames from now (timer 12;
+/* One last burst of lightning, its first flash two ticks from now (timer 12;
    fdWeatherUpdateLightning flashes at 11), then no more. */
 void fdWeatherLastLightning(void)
 {
@@ -343,7 +343,7 @@ void fdWeatherLastLightning(void)
 	state->enabled = 0;
 }
 
-/* Restarts the lightning: the next burst ends in 128 frames, and bursts
+/* Restarts the lightning: the next burst ends in 128 ticks, and bursts
    repeat. */
 void fdWeatherResumeLightning(void)
 {
@@ -355,26 +355,26 @@ void fdWeatherResumeLightning(void)
 
 /* Flashes the palette with the storm's event: one burst of three flashes of
    palette to, each fading back to palette from (fdPaletteFadeBuild modes) on
-   the BG colours, ending 120 frames from now, and no more after. */
+   the BG colours, ending 120 ticks from now, and no more after. */
 void fdWeatherStartLightningFlash(Sint32 from, Sint32 to)
 {
 	FIELD_BLEND_STATE *state;
 	PALETTE_FADE	  *buffers;
 	volatile Uint32	   zero;
-	Sint16			  *target;
+	Sint16			  *tgt;
 
 	state =
 		syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD_BLEND, sizeof(FIELD_BLEND_STATE));
 	buffers = Ram_HeapSlots->palFade;
 	DMA_FILL32_CELL(zero, 0, state, sizeof(*state));
 	fdPaletteFadeBuild(from, (Uint16 *)buffers, (Uint16 *)state, 1);
-	target = state->to;
-	fdPaletteFadeBuild(to, (Uint16 *)buffers, (Uint16 *)target, 1);
-	fdPaletteFadeCalcSteps(target, state->from, state->delta, 12);
+	tgt = state->to;
+	fdPaletteFadeBuild(to, (Uint16 *)buffers, (Uint16 *)tgt, 1);
+	fdPaletteFadeCalcSteps(tgt, state->from, state->delta, 12);
 	fdPaletteFadeBuild((Sint32)state, 0, buffers->tgt, 1);
 	state->tmr = 120;
 	state->enabled = 0;
-	sySetEvent(fdWeatherUpdateLightning, EVENT_PASS_FRAME);
+	sySetEvent(fdWeatherUpdateLightning, EVENT_PASS_TICK);
 }
 
-#undef FIRST_SPAWN_FRAMES
+#undef FIRST_SPAWN_TICKS

@@ -4,14 +4,14 @@ HeapSlotsWork:
 	.space 0x00000070
 	.section .sym_iwram,"aw",%nobits
 	.space 0x00000060
-	.global VBlankCount
-VBlankCount:
+	.global FrameCount
+FrameCount:
 	.space 0x00000008
 	.global EventsRunning
 EventsRunning:
 	.space 0x00000004
-	.global ScreenFadeVBlanksLeft
-ScreenFadeVBlanksLeft:
+	.global ScreenFadeFramesLeft
+ScreenFadeFramesLeft:
 	.space 0x00000004
 	.global DebugTextEnabled
 DebugTextEnabled:
@@ -37,11 +37,11 @@ PerWork:
 	.global DecodeFillByte
 DecodeFillByte:
 	.space 0x00000004
-	.global ScreenFadeVBlanks
-ScreenFadeVBlanks:
+	.global ScreenFadeFrames
+ScreenFadeFrames:
 	.space 0x00000004
-	.global PlayTimeFrames
-PlayTimeFrames:
+	.global PlayTimeTicks
+PlayTimeTicks:
 	.space 0x00000004
 	.global SleepDisabled
 SleepDisabled:
@@ -73,11 +73,11 @@ MatrixStackDepth:
 	.global SleepRequested
 SleepRequested:
 	.space 0x00000004
-	.global FrameVBlanks
-FrameVBlanks:
+	.global TickFrames
+TickFrames:
 	.space 0x00000004
-	.global LastFrameVBlanks
-LastFrameVBlanks:
+	.global LastTickFrames
+LastTickFrames:
 	.space 0x00000004
 	.global ScreenFadeToWhite
 ScreenFadeToWhite:
@@ -109,8 +109,8 @@ OamCopyEnabled:
 	.global DebugPaused
 DebugPaused:
 	.space 0x00000004
-	.global IdleFrames
-IdleFrames:
+	.global IdleTicks
+IdleTicks:
 	.space 0x00000004
 	.global VBlankDone
 VBlankDone:
@@ -121,11 +121,11 @@ MatrixStackTop:
 	.global EventsInitialized
 EventsInitialized:
 	.space 0x00000004
-	.global FrameCount
-FrameCount:
+	.global TickCount
+TickCount:
 	.space 0x00000004
-	.global FrameRenderPending
-FrameRenderPending:
+	.global TickRenderPending
+TickRenderPending:
 	.space 0x00000008
 	.global DebugMode
 DebugMode:

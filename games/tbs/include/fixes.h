@@ -85,7 +85,7 @@
 #endif
 
 /* Boreas's unused copy of its point table copies the table's 16 rows instead of
-   32, so it no longer reads the 32 bytes after Boreas_Points. Nothing reads the
+   32, so it no longer reads the 32 bytes after BoreasPoints. Nothing reads the
    copy, so nothing on screen changes. */
 #ifndef FIX_BOREAS_POINTS_OVERRUN
 #define FIX_BOREAS_POINTS_OVERRUN 0
@@ -106,7 +106,7 @@
 
 /* In Lucky Dice (both games) and Super Lucky Dice (The Lost Age), two touching
    dice whose whole-pixel separation comes out as 0 get no push apart that
-   frame, instead of dividing by that zero. That happens when they are less than
+   tick, instead of dividing by that zero. That happens when they are less than
    a pixel apart on every axis, measured toward the other die. */
 #ifndef FIX_DICE_DIVIDE_BY_ZERO
 #define FIX_DICE_DIVIDE_BY_ZERO 0
@@ -366,11 +366,11 @@
 #define FIX_SAND_PUFF_ROW 0
 #endif
 
-/* The ship scenes' camera helper waits for the frames in the flags' wait field
-   (SHIP_CAMERA_WAIT_FRAMES, 0xffff) instead of masking them with 0x1111, which
-   kept only bits 0, 4, 8 and 12. The ROM's mask turned the callers' 20-frame
-   waits into 16 and their 40-frame wait into none. SHIP_CAMERA_JUMP sits in bit
-   0, so it still adds one frame. */
+/* The ship scenes' camera helper waits for the ticks in the flags' wait field
+   (SHIP_CAMERA_WAIT_TICKS, 0xffff) instead of masking them with 0x1111, which
+   kept only bits 0, 4, 8 and 12. The ROM's mask turned the callers' 20-tick
+   waits into 16 and their 40-tick wait into none. SHIP_CAMERA_JUMP sits in bit
+   0, so it still adds one tick. */
 #ifndef FIX_SHIP_CAMERA_WAIT_MASK
 #define FIX_SHIP_CAMERA_WAIT_MASK 0
 #endif
@@ -387,7 +387,7 @@
 /* Arithmetic that can overflow a signed int is done unsigned. One case is
    negating a negative number in the message decoder's signed-number argument:
    the magnitude becomes u32, 0U - (u32)value. The other is the file list glow's
-   sine phase, VBlankCount times 768, which overflows after about 13 hours: it
+   sine phase, FrameCount times 768, which overflows after about 13 hours: it
    is done in u32 and masked to an angle. */
 #ifndef FIX_SIGNED_OVERFLOW
 #define FIX_SIGNED_OVERFLOW 0
@@ -436,7 +436,7 @@
    that drop volatile. Halfword pairs are built with shifts or byte stores, and
    a 16.16 value's whole part is taken with a shift. Sprite and OAM words are
    written through their fields or copied in with memcpy. Pointers and function
-   pointers are read and stored as pointers, and FrameCount is read as
+   pointers are read and stored as pointers, and TickCount is read as
    declared. */
 #ifndef FIX_TYPE_PUNNING
 #define FIX_TYPE_PUNNING 0

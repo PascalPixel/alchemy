@@ -18,7 +18,7 @@
 /* The bubbles a stream carries along at once. */
 #define STREAM_BUBBLE_COUNT 64
 
-/* A bubble a stream carries: its place, its age in frames and its sprite's
+/* A bubble a stream carries: its place, its age in ticks and its sprite's
    attributes. */
 typedef struct BUBBLE {
 	Sint32			x;
@@ -47,15 +47,15 @@ void scAquaRockDrawRisingBubbles(void);
 void scAquaRockDrawFallingBubbles(void);
 void scAquaRockDrawBubbles(void);
 
-extern Uint32 WadingSplash_Script[];
+extern Uint32 WadingSplashScript[];
 extern Uint32 RippleScript[];
-/* The bubbles' four frames, compressed (graphics/aqua_rock/tiles.s). */
+/* The bubbles' four ticks, compressed (graphics/aqua_rock/tiles.s). */
 extern const Uint8	AquaRock_BubbleTiles[];
-extern SCENE_REGION AquaRock_SlopesRegions[];
-extern SCENE_REGION AquaRock_MistSabreChestRegions[];
-extern ACTOR_PLACE	AquaRock_Placements[];
-extern ACTOR_PLACE	AquaRock_SlopesPlacements[];
-extern ACTOR_PLACE	AquaRock_MistSabreChestPlacements[];
+extern SCENE_REGION AquaRockSlopesRegions[];
+extern SCENE_REGION AquaRockMistSabreChestRegions[];
+extern ACTOR_PLACE	AquaRockPlacements[];
+extern ACTOR_PLACE	AquaRockSlopesPlacements[];
+extern ACTOR_PLACE	AquaRockMistSabreChestPlacements[];
 
 /* Aqua Rock's lasting flags outside: the slopes' second pillar Moved into the
    hole in its ledge, the two rocks Moved into the Mist Sabre chest's room's
@@ -118,7 +118,7 @@ enum {
 	METATILE_BEHAVIOR_SPARKLING_PASSAGE = 4
 };
 
-/* The slopes (AquaRock_SlopesPlacements). */
+/* The slopes (AquaRockSlopesPlacements). */
 typedef enum AQUA_ROCK_SLOPES_ACTOR_ID {
 	/* The slopes' sixteen moai: four red ones, the first two at the top, then
 	   the dry one, two green ones and nine green ones lower down that share one
@@ -138,12 +138,12 @@ typedef enum AQUA_ROCK_SLOPES_ACTOR_ID {
 	ACTOR_LEDGE_PILLAR,
 	/* The Water Stone whose Douse turns the streams back uphill. */
 	ACTOR_WATER_STONE,
-	/* The three fish of the pools (AquaRock_FishScript and
-	   AquaRock_SlowFishScript). */
+	/* The three fish of the pools (AquaRockFishScript and
+	   AquaRockSlowFishScript). */
 	ACTOR_FIRST_FISH
 } AQUA_ROCK_SLOPES_ACTOR_ID;
 
-/* The Mist Sabre chest's room (AquaRock_MistSabreChestPlacements). */
+/* The Mist Sabre chest's room (AquaRockMistSabreChestPlacements). */
 typedef enum AQUA_ROCK_MIST_SABRE_CHEST_ACTOR_ID {
 	/* The Water Stone whose Douse opens the way inside. */
 	ACTOR_MIST_SABRE_WATER_STONE = ACTOR_FIRST_PLACED,
@@ -170,9 +170,9 @@ typedef enum AQUA_ROCK_MIST_SABRE_CHEST_WAY {
 	WAY_MIST_SABRE_CHEST_EAST_TO_WEST
 } AQUA_ROCK_MIST_SABRE_CHEST_WAY;
 
-extern CUE AquaRock_Cues[];
-extern CUE AquaRock_SlopesCues[];
-extern CUE AquaRock_MistSabreChestCues[];
+extern CUE AquaRockCues[];
+extern CUE AquaRockSlopesCues[];
+extern CUE AquaRockMistSabreChestCues[];
 
 #include "game/game.h"
 #include "scene/scene.h"
@@ -236,7 +236,7 @@ void scAquaRockDropDownFalls(void);
 
 /* One of the streams the moai pour, which stops and starts with its flag: each
    change runs down it as a wave, copying three metatiles a row from the flowing
-   or stopped pictures beside it, a row every four frames. */
+   or stopped pictures beside it, a row every four ticks. */
 typedef struct AQUA_ROCK_STREAM {
 	Sint16 pictureSrcX, pictureSrcY; /* its pictures, flowing then stopped */
 	/* its metatiles, flowing then stopped */
@@ -257,8 +257,8 @@ typedef struct AQUA_ROCK_STREAM {
 
 /* The five moai streams scAquaRockUpdateStreams stops and starts: the four red
    moai's and the dry moai's. */
-AQUA_ROCK_STREAM AquaRock_Streams[5] BSS_DATA ALIGNED(16);
-AQUA_ROCK_BUBBLES AquaRock_Bubbles			  BSS_DATA;
+AQUA_ROCK_STREAM AquaRockStreams[5] BSS_DATA ALIGNED(16);
+AQUA_ROCK_BUBBLES AquaRockBubbles			 BSS_DATA;
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -270,9 +270,9 @@ const SCENE_REGION *scGetExitRegions(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_AQUA_ROCK_MOAI)
-		return AquaRock_SlopesRegions;
+		return AquaRockSlopesRegions;
 	if(scene == SCENE_AQUA_ROCK_MIST_SABRE_CHEST)
-		return AquaRock_MistSabreChestRegions;
+		return AquaRockMistSabreChestRegions;
 	return 0;
 }
 
@@ -343,12 +343,12 @@ end:
 /* A fish's update: its sprite turns with its facing. */
 void scAquaRockTurnFish(ACTOR *actor)
 {
-	FIELD_SPR *sprite;
-	Sint32	   angle;
+	FIELD_SPR *spr;
+	Sint32	   ang;
 
-	angle = actor->facing;
-	sprite = actor->spr;
-	sprite->rotation = angle + DEGtoANG(90);
+	ang = actor->facing;
+	spr = actor->spr;
+	spr->rotation = ang + DEGtoANG(90);
 }
 
 /* A fish's script call: takes away its shadow and gives it its speed and its
@@ -368,10 +368,10 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_AQUA_ROCK_MOAI)
-		return AquaRock_SlopesPlacements;
+		return AquaRockSlopesPlacements;
 	if(scene == SCENE_AQUA_ROCK_MIST_SABRE_CHEST)
-		return AquaRock_MistSabreChestPlacements;
-	return AquaRock_Placements;
+		return AquaRockMistSabreChestPlacements;
+	return AquaRockPlacements;
 }
 
 /* Unused: a sparkle's update. It rises to the water's surface and then flows
@@ -410,37 +410,37 @@ UNUSED void scAquaRockSpawnSparkleAtRandom(ACTOR *actor)
 }
 
 /* A moai's stream stops or starts as a wave running down it from the moai's
-   mouth, a row every four frames. It runs every frame, sending a wave down each
+   mouth, a row every four ticks. It runs every tick, sending a wave down each
    stream whose flag has changed. */
 void scAquaRockUpdateStreams(void)
 {
 	AQUA_ROCK_STREAM *entry;
-	Sint32			  n, i, flag;
+	Sint32			  n, i, flg;
 
-	entry = AquaRock_Streams;
+	entry = AquaRockStreams;
 	for(n = 0; n <= 4; n++, entry++) {
-		flag = syGameFlagGet(entry->flg & (CONDITION_FLAG_SET - 1));
+		flg = syGameFlagGet(entry->flg & (CONDITION_FLAG_SET - 1));
 		if(entry->flg & CONDITION_FLAG_SET)
-			flag ^= 1;
-		if(entry->shown != flag) {
+			flg ^= 1;
+		if(entry->shown != flg) {
 			entry->waveRow[entry->nextWave] = 0;
-			entry->waveStops[entry->nextWave] = flag;
+			entry->waveStops[entry->nextWave] = flg;
 			if(++entry->nextWave > 1)
 				entry->nextWave = 0;
-			entry->shown = flag;
+			entry->shown = flg;
 		}
 		for(i = 0; i < 2; i++) {
 			Sint32 row = entry->waveRow[i];
 			if(row < entry->height * 4) {
 				Sint32 inverse;
 				row /= 4;
-				flag = entry->waveStops[i];
-				inverse = flag ^ 1;
+				flg = entry->waveStops[i];
+				inverse = flg ^ 1;
 				if(entry->waveRow[i] & 1) {
-					fdMapGridCopyMetatilesLayered(flag * 3 + entry->pictureSrcX,
+					fdMapGridCopyMetatilesLayered(flg * 3 + entry->pictureSrcX,
 						entry->pictureSrcY + row, 3, 1, entry->pictureX,
 						entry->pictureY + row);
-					fdMapGridCopyMetatiles(flag * 3 + entry->metatileSrcX,
+					fdMapGridCopyMetatiles(flg * 3 + entry->metatileSrcX,
 						entry->metatileSrcY + row, 3, 1, entry->metatileX,
 						entry->metatileY + row);
 				} else {
@@ -458,26 +458,26 @@ void scAquaRockUpdateStreams(void)
 	}
 }
 
-extern Sint32 AquaRock_FirstStreamTimer;
-extern Sint32 AquaRock_SecondStreamTimer;
-extern Sint32 AquaRock_ThirdStreamTimer;
-extern Sint32 AquaRock_FourthStreamTimer;
+extern Sint32 AquaRockFirstStreamTimer;
+extern Sint32 AquaRockSecondStreamTimer;
+extern Sint32 AquaRockThirdStreamTimer;
+extern Sint32 AquaRockFourthStreamTimer;
 
-/* The frames of a red moai's stream's cycle, and the last of them it stops
+/* The ticks of a red moai's stream's cycle, and the last of them it stops
    for. */
-#define STREAM_CYCLE_FRAMES 240
-#define STREAM_STOP_FRAMES	90
+#define STREAM_CYCLE_TICKS 240
+#define STREAM_STOP_TICKS  90
 
 /* The four red moai's streams flow for two and a half seconds and stop for one
    and a half, over and over, and the top two stay stopped while the pillar
-   stands before them. It runs every frame while no script runs, setting each
+   stands before them. It runs every tick while no script runs, setting each
    stream's stopped flag, which scAquaRockUpdateStreams turns into the wave down
    the stream. */
 void scAquaRockTimeStreams(void)
 {
 	if(syGameFlagGet(FLAG_FIELD_HANDLING_REQUESTS))
 		return;
-	if(AquaRock_FirstStreamTimer < STREAM_CYCLE_FRAMES - STREAM_STOP_FRAMES) {
+	if(AquaRockFirstStreamTimer < STREAM_CYCLE_TICKS - STREAM_STOP_TICKS) {
 		if(syGameFlagGet(FLAG_PILLAR_BEFORE_WEST_MOAI))
 			syGameFlagSet(FLAG_WEST_MOAI_STREAM_STOPPED);
 		else
@@ -485,9 +485,9 @@ void scAquaRockTimeStreams(void)
 	} else {
 		syGameFlagSet(FLAG_WEST_MOAI_STREAM_STOPPED);
 	}
-	if(++AquaRock_FirstStreamTimer >= STREAM_CYCLE_FRAMES)
-		AquaRock_FirstStreamTimer = 0;
-	if(AquaRock_SecondStreamTimer < STREAM_CYCLE_FRAMES - STREAM_STOP_FRAMES) {
+	if(++AquaRockFirstStreamTimer >= STREAM_CYCLE_TICKS)
+		AquaRockFirstStreamTimer = 0;
+	if(AquaRockSecondStreamTimer < STREAM_CYCLE_TICKS - STREAM_STOP_TICKS) {
 		if(syGameFlagGet(FLAG_PILLAR_BEFORE_EAST_MOAI))
 			syGameFlagSet(FLAG_EAST_MOAI_STREAM_STOPPED);
 		else
@@ -495,20 +495,20 @@ void scAquaRockTimeStreams(void)
 	} else {
 		syGameFlagSet(FLAG_EAST_MOAI_STREAM_STOPPED);
 	}
-	if(++AquaRock_SecondStreamTimer >= STREAM_CYCLE_FRAMES)
-		AquaRock_SecondStreamTimer = 0;
-	if(AquaRock_ThirdStreamTimer < STREAM_CYCLE_FRAMES - STREAM_STOP_FRAMES)
+	if(++AquaRockSecondStreamTimer >= STREAM_CYCLE_TICKS)
+		AquaRockSecondStreamTimer = 0;
+	if(AquaRockThirdStreamTimer < STREAM_CYCLE_TICKS - STREAM_STOP_TICKS)
 		syGameFlagClear(FLAG_LOWER_WEST_MOAI_STREAM_STOPPED);
 	else
 		syGameFlagSet(FLAG_LOWER_WEST_MOAI_STREAM_STOPPED);
-	if(++AquaRock_ThirdStreamTimer >= STREAM_CYCLE_FRAMES)
-		AquaRock_ThirdStreamTimer = 0;
-	if(AquaRock_FourthStreamTimer < STREAM_CYCLE_FRAMES - STREAM_STOP_FRAMES)
+	if(++AquaRockThirdStreamTimer >= STREAM_CYCLE_TICKS)
+		AquaRockThirdStreamTimer = 0;
+	if(AquaRockFourthStreamTimer < STREAM_CYCLE_TICKS - STREAM_STOP_TICKS)
 		syGameFlagClear(FLAG_LOWER_EAST_MOAI_STREAM_STOPPED);
 	else
 		syGameFlagSet(FLAG_LOWER_EAST_MOAI_STREAM_STOPPED);
-	if(++AquaRock_FourthStreamTimer >= STREAM_CYCLE_FRAMES)
-		AquaRock_FourthStreamTimer = 0;
+	if(++AquaRockFourthStreamTimer >= STREAM_CYCLE_TICKS)
+		AquaRockFourthStreamTimer = 0;
 }
 
 /* Sets up a stream (AQUA_ROCK_STREAM) to show its flag's opposite, so that its
@@ -535,7 +535,7 @@ void scAquaRockTimeStreams(void)
    the top two the pillar stands before, and starts the streams' events. */
 void scAquaRockSetUpStreams(void)
 {
-	AQUA_ROCK_STREAM *entry = AquaRock_Streams;
+	AQUA_ROCK_STREAM *entry = AquaRockStreams;
 
 	STREAM_SET(entry, 64, 74, 76, 74, 70, 10, 6, 74, 36,
 		FLAG_WEST_MOAI_STREAM_STOPPED);
@@ -560,7 +560,7 @@ void scAquaRockSetUpStreams(void)
 	else
 		syGameFlagClear(FLAG_EAST_MOAI_STREAM_STOPPED);
 	if(syGameFlagGet(FLAG_WEST_MOAI_STREAM_STOPPED)) {
-		AQUA_ROCK_STREAM *stream = &AquaRock_Streams[0];
+		AQUA_ROCK_STREAM *stream = &AquaRockStreams[0];
 		fdMapGridCopyMetatilesLayered(stream->pictureSrcX + 3,
 			stream->pictureSrcY, 3, stream->height, stream->pictureX,
 			stream->pictureY);
@@ -571,7 +571,7 @@ void scAquaRockSetUpStreams(void)
 		stream->shown = 1;
 	}
 	if(syGameFlagGet(FLAG_EAST_MOAI_STREAM_STOPPED)) {
-		AQUA_ROCK_STREAM *stream = &AquaRock_Streams[1];
+		AQUA_ROCK_STREAM *stream = &AquaRockStreams[1];
 		fdMapGridCopyMetatilesLayered(stream->pictureSrcX + 3,
 			stream->pictureSrcY, 3, stream->height, stream->pictureX,
 			stream->pictureY);
@@ -581,16 +581,16 @@ void scAquaRockSetUpStreams(void)
 		stream->waveRow[0] = STREAM_NO_WAVE;
 		stream->shown = 1;
 	}
-	sySetFrameEvent(scAquaRockTimeStreams, EVENT_PASS_FRAME);
-	sySetEvent(scAquaRockUpdateStreams, EVENT_PASS_FRAME);
+	sySetTickEvent(scAquaRockTimeStreams, EVENT_PASS_TICK);
+	sySetEvent(scAquaRockUpdateStreams, EVENT_PASS_TICK);
 }
 
 #include "shared/actor_flash_white.h"
 
-/* Unused: a moai's update while it flashes, grey every other two frames. */
+/* Unused: a moai's update while it flashes, grey every other two ticks. */
 UNUSED void scAquaRockFlashMoai(ACTOR *actor)
 {
-	if(FrameCount & 2)
+	if(TickCount & 2)
 		fdActorSetSprColMode(actor, SPRITE_COLOR_GREY);
 	else
 		fdActorSetSprColMode(actor, SPRITE_COLOR_NORMAL);
@@ -658,7 +658,7 @@ void scAquaRockDouseWaterStone(Sint32 unused, Sint32 id)
 	fdScriptEnd();
 }
 
-void syGameFlagSetByte(Sint32 flag, Sint32 value);
+void syGameFlagSetByte(Sint32 flg, Sint32 value);
 
 /* Move on a pillar. The pillar by the top's red moai keeps its metatile in the
    area's flags, and stopped before one of them stops that moai's stream; the
@@ -696,11 +696,11 @@ void scAquaRockMovePillar(Sint32 unused, Sint32 id)
 /* Unused: waits until the actor has come down to `height`, a second at most. */
 UNUSED void scActorWaitBelowHeight(ACTOR *actor, FIXED height)
 {
-	Sint32 frames = 60;
+	Sint32 ticks = 60;
 
-	while(frames != 0) {
+	while(ticks != 0) {
 		sySynch(1);
-		frames--;
+		ticks--;
 		if(actor->y.fixed <= height)
 			break;
 	}
@@ -710,7 +710,7 @@ UNUSED void scActorWaitBelowHeight(ACTOR *actor, FIXED height)
    carried up it, splashing, once the stone has been Doused; at the head of the
    slopes' stream he spins up out of the water and away into the Mist Sabre
    chest's room. Until then, or once Doused again, the stream carries him down
-   instead (scLeaderFlowWithStream). It runs every frame he stands on the
+   instead (scLeaderFlowWithStream). It runs every tick he stands on the
    stream's metatiles, moving him and the camera two pixels north, and leaping
    him up each ledge the stream climbs. */
 void scAquaRockRideStreamUp(void)
@@ -733,7 +733,7 @@ void scAquaRockRideStreamUp(void)
 		ahead.y = leader->y.fixed;
 		ahead.z = leader->z.fixed + toFIXED(2);
 		result = fdMapGridCheckCollision(leader, &ahead);
-		if((FrameCount & 4) == 0)
+		if((TickCount & 4) == 0)
 			scActorSpawnWadingSplash(leader);
 		if(result < 0) {
 			fdActorSetAttachedEffect(
@@ -806,7 +806,7 @@ static inline Uint8 MetatileAttribute(
 /* Felix, stepping into the stream one of the red moai pours, is swept away down
    the slopes, tumbling over the ledges, and where it carries him over the edge
    of the falls he drops down them, flailing, to the pool below
-   (scAquaRockDropDownFalls). It runs every frame he stands on the stream's
+   (scAquaRockDropDownFalls). It runs every tick he stands on the stream's
    metatiles while it flows; the top two moai's streams take him only while the
    pillar does not stop them. */
 void scAquaRockStepIntoCurrent(void)
@@ -982,14 +982,14 @@ const CUE *scGetCues(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_AQUA_ROCK_MOAI)
-		return AquaRock_SlopesCues;
+		return AquaRockSlopesCues;
 	if(scene == SCENE_AQUA_ROCK_MIST_SABRE_CHEST)
-		return AquaRock_MistSabreChestCues;
-	return AquaRock_Cues;
+		return AquaRockMistSabreChestCues;
+	return AquaRockCues;
 }
 
 /* On the slopes Felix is drawn behind the falls while a current carries him,
-   and in front of them otherwise. It runs every frame, giving his sprite
+   and in front of them otherwise. It runs every tick, giving his sprite
    priority 2 while he is carried and 1 otherwise. */
 void scAquaRockKeepLeaderPriority(void)
 {
@@ -997,14 +997,13 @@ void scAquaRockKeepLeaderPriority(void)
 
 	if(actor != 0 &&
 		(actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
-		FIELD_SPR *sprite;
-		Sint32	   priority;
+		FIELD_SPR *spr;
+		Sint32	   pri;
 
-		sprite = actor->spr;
-		priority =
-			MainRoutineStateWork.movementMode == LEADER_MOVEMENT_KEYS ? 2 : 1;
-		sprite->pri = priority;
-		sprite->partPri = priority;
+		spr = actor->spr;
+		pri = MainRoutineStateWork.movementMode == LEADER_MOVEMENT_KEYS ? 2 : 1;
+		spr->pri = pri;
+		spr->partPri = pri;
 		actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
 	}
 }
@@ -1016,7 +1015,7 @@ void scAquaRockArriveFromInside(void)
 	ACTOR *actor = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	Sint32 saved = actor->motionFlg;
 	Sint32 i;
-	Sint32 angle;
+	Sint32 ang;
 	Sint32 up;
 	MAIN_ROUTINE_STATE *state;
 
@@ -1030,9 +1029,9 @@ void scAquaRockArriveFromInside(void)
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 2);
 	for(i = 0; i < 16; i++) {
 		actor->y.fixed += toFIXED(1);
-		angle = actor->facing;
-		angle += DEGtoANG(45);
-		actor->facing = angle;
+		ang = actor->facing;
+		ang += DEGtoANG(45);
+		actor->facing = ang;
 		sySynch(1);
 	}
 	scActorSpawnWadingSplash(actor);
@@ -1055,7 +1054,7 @@ void scAquaRockArriveUpStream(void)
 	ACTOR *actor = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	Sint32 saved = actor->motionFlg;
 	Sint32 i;
-	Sint32 angle;
+	Sint32 ang;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -1066,9 +1065,9 @@ void scAquaRockArriveUpStream(void)
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 2);
 	for(i = 0; i < 24; i++) {
 		actor->y.fixed += toFIXED(2);
-		angle = actor->facing;
-		angle += DEGtoANG(45);
-		actor->facing = angle;
+		ang = actor->facing;
+		ang += DEGtoANG(45);
+		actor->facing = ang;
 		sySynch(1);
 	}
 	scActorSpawnWadingSplash(actor);
@@ -1083,21 +1082,21 @@ void scAquaRockArriveUpStream(void)
 #define MOAI_SHAKE (TRIG_TURN / 128)
 
 /* A guardian moai's update as it moves aside: it shakes, the swing growing over
-   16 frames to MOAI_SHAKE. */
+   16 ticks to MOAI_SHAKE. */
 void scAquaRockShakeMoai(ACTOR *actor)
 {
-	FIELD_SPR *sprite = actor->spr;
+	FIELD_SPR *spr = actor->spr;
 
 	/* timer is the phase of the shake and userValue its swing. */
 	actor->tmr += DEGtoANG(45);
 	actor->userValue += MOAI_SHAKE / 16;
 	if(actor->userValue > MOAI_SHAKE)
 		actor->userValue = MOAI_SHAKE;
-	sprite->rotation = syMulFX(sySin(actor->tmr), actor->userValue);
+	spr->rotation = syMulFX(sySin(actor->tmr), actor->userValue);
 }
 
 /* A guardian moai's update once it has moved: the swing dies away over 32
-   frames. */
+   ticks. */
 void scAquaRockStopShakingMoai(ACTOR *actor)
 {
 	FIELD_SPR *sprite = actor->spr;
@@ -1140,7 +1139,7 @@ void scAquaRockMoaiStepAside(void)
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	fdActorSetPos(MainRoutineStateWork.leaderActorId, 0, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	sySndPlay(SE_POP_UP);
 	for(i = ACTOR_FIRST_GUARDIAN_MOAI; i <= ACTOR_FIRST_GUARDIAN_MOAI + 4;
 		i++) {
@@ -1176,7 +1175,7 @@ void scAquaRockMoaiStepAside(void)
 		actor->tmr = 0;
 	}
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syGameFlagSet(FLAG_KEEP_PARTY_POSITION);
 	syGameFlagClear(FLAG_SHOW_AREA_NAME);
 	syImportScriptSetExitRequest(AQUA_ROCK_MOAI_TO_APOJII_ISLANDS);
@@ -1245,7 +1244,7 @@ Sint32 scInit(void)
 				FIELD_METATILE_CENTER(x), FIELD_METATILE_CENTER(z));
 		fdActorGetById(fdPartyGetLeaderActor())->priFlg |=
 			ACTOR_PRIORITY_IGNORES_RISES;
-		sySetEvent(scAquaRockKeepLeaderPriority, EVENT_PASS_FRAME);
+		sySetEvent(scAquaRockKeepLeaderPriority, EVENT_PASS_TICK);
 		fdActorSetSprPriority(ACTOR_FIRST_FISH + 1, 1);
 		fdActorSetSprPriority(ACTOR_MOAI_PILLAR, 1);
 		scAquaRockStartBubbles();
@@ -1387,7 +1386,7 @@ void scAquaRockSinkInside(Sint32 exit)
 {
 	ACTOR *actor = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	Sint32 i;
-	Sint32 angle;
+	Sint32 ang;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -1401,9 +1400,9 @@ void scAquaRockSinkInside(Sint32 exit)
 		if(i == 30)
 			fdScriptFinishScreenTransition();
 		actor->y.fixed -= toFIXED(1) / 4;
-		angle = actor->facing;
-		angle += TRIG_TURN / 16;
-		actor->facing = angle;
+		ang = actor->facing;
+		ang += TRIG_TURN / 16;
+		actor->facing = ang;
 		if((i & 7) == 0)
 			scActorSpawnWadingSplash(fdActorGetById(ACTOR_WAY_INSIDE));
 		sySynch(1);
@@ -1434,7 +1433,7 @@ void scAquaRockEnterSparklingPassage(Sint32 entrance)
 	fdActorSetSprFlags(fdActorGetById(*owner), 0);
 	leader->update = 0;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(entrance);
 	fdScriptEnd();
 }
@@ -1444,14 +1443,14 @@ void scAquaRockEnterSparklingPassage(Sint32 entrance)
 void scAquaRockArriveFromPassage(void)
 {
 	ACTOR  *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	Sint32	flag = syGameFlagGet(FLAG_KEEP_PARTY_POSITION);
+	Sint32	flg = syGameFlagGet(FLAG_KEEP_PARTY_POSITION);
 	Sint32 *owner = &MainRoutineStateWork.leaderActorId;
 
-	if(flag == 0) {
+	if(flg == 0) {
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
 		fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-		leader->motionFlg = flag;
+		leader->motionFlg = flg;
 		fdActorSetHorizontalPosWithTerrain(*owner,
 			toFIXED(leader->x.part[0].integer),
 			toFIXED(leader->z.part[0].integer) - toFIXED(16));
@@ -1467,14 +1466,14 @@ void scAquaRockArriveFromPassage(void)
 		((FIELD_SPR *)leader->spr)->pri = 1;
 		fdActorWalkByAndWaitById(*owner, 0, 10);
 		leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-		leader->update = (OBJECT_UPDATE)flag;
+		leader->update = (OBJECT_UPDATE)flg;
 		fdScriptNoOperation();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdScriptEnd();
 	}
 }
 
-/* Each frame, for bubbles going up: now and then one starts from the actor they
+/* Each tick, for bubbles going up: now and then one starts from the actor they
    come from, and each rises up the stream, north, until it reaches the top;
    those in view are drawn. */
 void scAquaRockDrawRisingBubbles(void)
@@ -1483,17 +1482,17 @@ void scAquaRockDrawRisingBubbles(void)
 	Sint32			   viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	Sint32			   viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	Sint32			   lift = map->origin[1];
-	AQUA_ROCK_BUBBLES *state = &AquaRock_Bubbles;
+	AQUA_ROCK_BUBBLES *state = &AquaRockBubbles;
 	Uint32			   tile = VramCacheEntries[state->vramEntry].ofs >> 5;
-	ACTOR			  *source;
+	ACTOR			  *src;
 	BUBBLE			  *entry;
 	Sint32			   i, x, y, z, screenX, screenY;
 
-	if(syRandom() < 4096 && (source = state->anchor) != 0) {
+	if(syRandom() < 4096 && (src = state->anchor) != 0) {
 		entry = &state->bubbles[state->next];
-		entry->x = source->x.fixed + syRandom() * 3 * 16 - toFIXED(24);
-		entry->y = source->y.fixed;
-		entry->z = source->z.fixed;
+		entry->x = src->x.fixed + syRandom() * 3 * 16 - toFIXED(24);
+		entry->y = src->y.fixed;
+		entry->z = src->z.fixed;
 		entry->age = 0;
 		if(++state->next > STREAM_BUBBLE_COUNT - 1)
 			state->next = 0;
@@ -1541,7 +1540,7 @@ void scAquaRockDrawRisingBubbles(void)
 	}
 }
 
-/* Each frame, for bubbles going down: now and then one starts from the actor
+/* Each tick, for bubbles going down: now and then one starts from the actor
    they come from, and each falls down the stream, south, until it reaches the
    bottom; those in view are drawn. */
 void scAquaRockDrawFallingBubbles(void)
@@ -1550,17 +1549,17 @@ void scAquaRockDrawFallingBubbles(void)
 	Sint32			   viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	Sint32			   viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	Sint32			   lift = map->origin[1];
-	AQUA_ROCK_BUBBLES *state = &AquaRock_Bubbles;
+	AQUA_ROCK_BUBBLES *state = &AquaRockBubbles;
 	Uint32			   tile = VramCacheEntries[state->vramEntry].ofs >> 5;
-	ACTOR			  *source;
+	ACTOR			  *src;
 	BUBBLE			  *bubble;
 	Sint32			   i, x, y, depth, screenX, screenY, z, row;
 
-	if(syRandom() < 4096 && (source = state->anchor) != 0) {
+	if(syRandom() < 4096 && (src = state->anchor) != 0) {
 		bubble = &state->bubbles[state->next];
-		bubble->x = source->x.fixed + syRandom() * 3 * 8 - toFIXED(12);
-		bubble->y = source->y.fixed;
-		bubble->z = source->z.fixed;
+		bubble->x = src->x.fixed + syRandom() * 3 * 8 - toFIXED(12);
+		bubble->y = src->y.fixed;
+		bubble->z = src->z.fixed;
 		bubble->age = 0;
 		if(++state->next > STREAM_BUBBLE_COUNT - 1)
 			state->next = 0;
@@ -1603,10 +1602,10 @@ void scAquaRockDrawFallingBubbles(void)
 	}
 }
 
-/* Each frame: the bubbles go up or down the stream, as their direction says. */
+/* Each tick: the bubbles go up or down the stream, as their direction says. */
 void scAquaRockDrawBubbles(void)
 {
-	if(AquaRock_Bubbles.dir > 0)
+	if(AquaRockBubbles.dir > 0)
 		scAquaRockDrawRisingBubbles();
 	else
 		scAquaRockDrawFallingBubbles();
@@ -1616,23 +1615,23 @@ void scAquaRockDrawBubbles(void)
    returns the drawing event (sySetEvent). */
 Sint32 scAquaRockStartBubbles(void)
 {
-	AQUA_ROCK_BUBBLES *state = &AquaRock_Bubbles;
-	void			  *buffer;
+	AQUA_ROCK_BUBBLES *state = &AquaRockBubbles;
+	void			  *buf;
 
 	syWordsClearEntry(state, sizeof(AQUA_ROCK_BUBBLES));
-	buffer = syHeapCallAlternatePool(syHeapAlloc, 256);
-	syDecompressTaggedLZ(AquaRock_BubbleTiles, buffer);
+	buf = syHeapCallAlternatePool(syHeapAlloc, 256);
+	syDecompressTaggedLZ(AquaRock_BubbleTiles, buf);
 	state->vramEntry = syVRAMCacheFindFreeEntry();
-	syVRAMCacheLoad(state->vramEntry, 256, buffer);
-	syHeapRelease(buffer);
-	return sySetEvent(scAquaRockDrawBubbles, EVENT_PASS_FRAME);
+	syVRAMCacheLoad(state->vramEntry, 256, buf);
+	syHeapRelease(buf);
+	return sySetEvent(scAquaRockDrawBubbles, EVENT_PASS_TICK);
 }
 
 /* Sets the actor the bubbles come from, or with 0 none: they fall from the Mist
    Sabre chest's room's Water Stone and rise from any other. */
 void scAquaRockSetBubbleAnchor(Sint32 id)
 {
-	AQUA_ROCK_BUBBLES *state = &AquaRock_Bubbles;
+	AQUA_ROCK_BUBBLES *state = &AquaRockBubbles;
 
 	if(id == 0) {
 		state->anchor = 0;
@@ -1655,7 +1654,7 @@ void scAquaRockSetBubbleAnchor(Sint32 id)
 #include "shared/field_effect_duration_scripts.c"
 
 /* A fish's script: it swims to random spots, resting between. */
-Sint32 AquaRock_FishScript[] = {
+Sint32 AquaRockFishScript[] = {
 	SC_CALL((Sint32)scAquaRockStartFish),
 	SC_LABEL(1),
 	SC_ANIMATION(2),
@@ -1678,7 +1677,7 @@ Sint32 AquaRock_FishScript[] = {
 };
 
 /* A fish's script: it swims to random spots, resting longer between. */
-Sint32 AquaRock_SlowFishScript[] = {
+Sint32 AquaRockSlowFishScript[] = {
 	SC_CALL((Sint32)scAquaRockStartFish),
 	SC_LABEL(1),
 	SC_WAIT(60),
@@ -1701,8 +1700,8 @@ Sint32 AquaRock_SlowFishScript[] = {
 	SC_END,
 };
 
-/* A splash's script: it shows for 20 frames, then is released. */
-Uint32 WadingSplash_Script[] = {
+/* A splash's script: it shows for 20 ticks, then is released. */
+Uint32 WadingSplashScript[] = {
 	SC_WAIT(20),
 	SC_RELEASE,
 };
@@ -1720,10 +1719,10 @@ Uint32 WadingSplash_Script[] = {
 #define GROUND_PARTICLE_FRAMES_SECTION LATE_DATA
 #include "shared/ground_particle_frames.c"
 
-LATE_DATA const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+LATE_DATA const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 #define SCENE_ENTRANCES_SECTION LATE_DATA
@@ -1731,7 +1730,7 @@ LATE_DATA const Sint32 *FieldEffect_DurationScripts[] = {
 
 /* The slopes' exit regions: the two ways up into the Mist Sabre chest's */
 /* room. */
-LATE_DATA SCENE_REGION AquaRock_SlopesRegions[] = {
+LATE_DATA SCENE_REGION AquaRockSlopesRegions[] = {
 	{176, 424, 544, 192, 440, 560, CONDITION_ALWAYS,
 	 AQUA_ROCK_MOAI_TO_AQUA_ROCK_MIST_SABRE_CHEST_A},
 	{272, 424, 544, 288, 440, 560, CONDITION_ALWAYS,
@@ -1741,7 +1740,7 @@ LATE_DATA SCENE_REGION AquaRock_SlopesRegions[] = {
 
 /* The Mist Sabre chest's room's exit regions: the ways back down to the */
 /* slopes. */
-LATE_DATA SCENE_REGION AquaRock_MistSabreChestRegions[] = {
+LATE_DATA SCENE_REGION AquaRockMistSabreChestRegions[] = {
 	{48, -56, 960, 64, -40, 976, CONDITION_ALWAYS,
 	 AQUA_ROCK_MIST_SABRE_CHEST_TO_AQUA_ROCK_MOAI_A},
 	{144, -56, 960, 160, -40, 976, CONDITION_ALWAYS,
@@ -1772,12 +1771,12 @@ LATE_DATA Uint32 SceneExits[] = {
 };
 
 /* The scene's other rooms' actors. */
-LATE_DATA ACTOR_PLACE AquaRock_Placements[] = {
+LATE_DATA ACTOR_PLACE AquaRockPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
 /* The slopes' actors, in AQUA_ROCK_SLOPES_ACTOR_ID's order. */
-LATE_DATA ACTOR_PLACE AquaRock_SlopesPlacements[] = {
+LATE_DATA ACTOR_PLACE AquaRockSlopesPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_MOAI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 551, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_MOAI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 551, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_MOAI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 615, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1797,15 +1796,15 @@ LATE_DATA ACTOR_PLACE AquaRock_SlopesPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_WATER_DROP_LARGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 600, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FISH, CONDITION_ALWAYS, (Sint32)AquaRock_FishScript, 376, 0, 960, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FISH, CONDITION_ALWAYS, (Sint32)AquaRock_FishScript, 136, 0, 904, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FISH, CONDITION_ALWAYS, (Sint32)AquaRock_SlowFishScript, 144, 0, 912, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_FISH, CONDITION_ALWAYS, (Sint32)AquaRockFishScript, 376, 0, 960, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_FISH, CONDITION_ALWAYS, (Sint32)AquaRockFishScript, 136, 0, 904, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_FISH, CONDITION_ALWAYS, (Sint32)AquaRockSlowFishScript, 144, 0, 912, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
 
 /* The Mist Sabre chest's room's actors, in */
 /* AQUA_ROCK_MIST_SABRE_CHEST_ACTOR_ID's order. */
-LATE_DATA ACTOR_PLACE AquaRock_MistSabreChestPlacements[] = {
+LATE_DATA ACTOR_PLACE AquaRockMistSabreChestPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_WATER_DROP_LARGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1817,21 +1816,21 @@ LATE_DATA ACTOR_PLACE AquaRock_MistSabreChestPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-/* The frame counts of the four red moai's streams' cycles */
+/* The tick counts of the four red moai's streams' cycles */
 /* (scAquaRockTimeStreams). */
-LATE_DATA Sint32 AquaRock_FirstStreamTimer = 0;
-LATE_DATA Sint32 AquaRock_SecondStreamTimer = 0;
-LATE_DATA Sint32 AquaRock_ThirdStreamTimer = 0;
-LATE_DATA Sint32 AquaRock_FourthStreamTimer = 0;
+LATE_DATA Sint32 AquaRockFirstStreamTimer = 0;
+LATE_DATA Sint32 AquaRockSecondStreamTimer = 0;
+LATE_DATA Sint32 AquaRockThirdStreamTimer = 0;
+LATE_DATA Sint32 AquaRockFourthStreamTimer = 0;
 
 /* The scene's other rooms' cues. */
-LATE_DATA CUE AquaRock_Cues[] = {
+LATE_DATA CUE AquaRockCues[] = {
 	{CUE_TABLE_END},
 };
 
 /* The slopes' exits, currents and streams, Move on the pillars and Douse on */
 /* the dry moai and the Water Stone. */
-LATE_DATA CUE AquaRock_SlopesCues[] = {
+LATE_DATA CUE AquaRockSlopesCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, AQUA_ROCK_MOAI_TO_WORLD_MAP_SOUTH},
 	{STEP_CUE_FACING(FACING_NORTH), METATILE_BEHAVIOR_SPARKLING_PASSAGE, CONDITION_ALWAYS, SCRIPT_REF(scAquaRockEnterSparklingPassage)},
 	{CUE_STEP, METATILE_BEHAVIOR_WEST_MOAI_STREAM, FLAG_PILLAR_BEFORE_WEST_MOAI, SCRIPT_REF(scAquaRockStepIntoCurrent)},
@@ -1851,7 +1850,7 @@ LATE_DATA CUE AquaRock_SlopesCues[] = {
 
 /* The Mist Sabre chest's room's way inside, exits, streams, puddles to */
 /* Frost, rocks to drop and Water Stone to Douse. */
-LATE_DATA CUE AquaRock_MistSabreChestCues[] = {
+LATE_DATA CUE AquaRockMistSabreChestCues[] = {
 	{CUE_STEP, AQUA_ROCK_MIST_SABRE_CHEST_TO_AQUA_ROCK_INSIDE_VIAL_CHEST, CONDITION_ALWAYS, SCRIPT_REF(scAquaRockSinkInside)},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, AQUA_ROCK_MIST_SABRE_CHEST_TO_AQUA_ROCK_MOAI_A},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, AQUA_ROCK_MIST_SABRE_CHEST_TO_AQUA_ROCK_MOAI_B},

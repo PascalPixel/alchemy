@@ -10,9 +10,9 @@
 #define BURST_EXPLOSION_PICTURE_TILES 4
 /* The OBJ palette the explosions are drawn in. */
 #define BURST_EXPLOSION_PALETTE		  15
-/* How much of a screen shake is kept each frame. */
+/* How much of a screen shake is kept each tick. */
 #define BURST_SHAKE_DECAY			  (toFIXED(9) / 10)
-/* The explosions the last and largest blast starts, on its first frame and
+/* The explosions the last and largest blast starts, on its first tick and
    again on its fifth. */
 #define BURST_FINAL_EXPLOSIONS		  10
 /* The sparks drawn when Burst is cast at nothing. */
@@ -30,31 +30,31 @@ typedef struct BURST_STATE {
 	FIELD_PSYNERGY_PARTICLE bursts[BURST_EXPLOSION_COUNT];
 	/* the stage of the cast; FIELD_PSYNERGY_FINISHED once it ends */
 	Sint16 phase;
-	Sint16 tmr;	  /* frames into the stage */
-	Sint16 shake; /* passed to the target's script each frame (BURST_STAGE) */
+	Sint16 tmr;	  /* ticks into the stage */
+	Sint16 shake; /* passed to the target's script each tick (BURST_STAGE) */
 	Uint16 burstTile; /* the explosion's first tile */
 	Sint16 nextBurst; /* the explosion slot used next */
-	Sint16 newBursts; /* explosions to start this frame */
+	Sint16 newBursts; /* explosions to start this tick */
 	Sint8  palMode;	  /* an BURST_PALETTE_MODE */
 } BURST_STATE;
 
 /* BURST_STATE.palMode: what fdPsynergyUpdateBurst does to the palettes. */
 typedef enum BURST_PALETTE_MODE {
 	BURST_PALETTE_KEPT,		 /* nothing */
-	BURST_PALETTE_SHINE,	 /* cycles the glow's greens each frame */
+	BURST_PALETTE_SHINE,	 /* cycles the glow's greens each tick */
 	BURST_PALETTE_EXPLOSIONS /* loads the explosions' palette, once */
 } BURST_PALETTE_MODE;
 
-/* BURST_STATE.phase: the stages of the cast, each lasting the frames its case
+/* BURST_STATE.phase: the stages of the cast, each lasting the ticks its case
    counts. */
 typedef enum BURST_PHASE {
 	BURST_PHASE_START,		  /* SE_SPIN */
 	BURST_PHASE_SWELL,		  /* the glow grows */
 	BURST_PHASE_GATHER,		  /* the sparks fly into it */
 	BURST_PHASE_FIRST_BLASTS, /* explosions start, the screen darkens */
-	BURST_PHASE_BLASTS,		  /* an explosion every 8 frames */
+	BURST_PHASE_BLASTS,		  /* an explosion every 8 ticks */
 	BURST_PHASE_HUSH,		  /* a pause */
-	BURST_PHASE_GREAT_BLAST	  /* ten explosions, ten more 4 frames on */
+	BURST_PHASE_GREAT_BLAST	  /* ten explosions, ten more 4 ticks on */
 } BURST_PHASE;
 
 /* The palette of Burst's explosions, loaded into BURST_EXPLOSION_PALETTE. */
@@ -63,7 +63,7 @@ extern const Uint16 Burst_ExplosionPalette[];
 /* Moves the state on to its next phase, its timer restarted. */
 #define BURST_NEXT_PHASE(state) ((state)->phase++, (state)->tmr = -1)
 
-/* Burst each frame: shines the glow, draws the sparks and the explosions, and
+/* Burst each tick: shines the glow, draws the sparks and the explosions, and
    moves the cast on through its stages, shaking the screen at each blast. */
 void fdPsynergyUpdateBurst(void)
 {
@@ -71,7 +71,7 @@ void fdPsynergyUpdateBurst(void)
 	FIELD_EFFECT_STATE		*scene = Ram_HeapSlots->fieldEffState;
 	CANVAS_SPR_STATE		*canvas = Ram_HeapSlots->canvasSpr;
 	FIELD_PSYNERGY_PARTICLE *particle;
-	EFFECT_SPR				*sprite;
+	EFFECT_SPR				*spr;
 	volatile Uint16			*palette;
 	Sint32					 pos[3];
 	Sint32					 i;
@@ -81,15 +81,15 @@ void fdPsynergyUpdateBurst(void)
 		palette = (volatile Uint16 *)&OBJ_PLTT_COLOR(CANVAS_PALETTE, 0);
 		/* The glow's 32 colours: red and blue full, green on a sine wave a 32nd
 		   of a turn on from colour to colour, which moves on a colour every two
-		   frames. */
+		   ticks. */
 		for(i = 0; i < PALETTE_COLORS * 2; i++) {
 			Sint32 red = RGB_LEVEL_MAX;
 			Sint32 blue = RGB(0, 0, RGB_LEVEL_MAX);
-			Uint32 angle = ((((Uint32)canvas->drawnFrm >> 1) + i) * TRIG_TURN +
-							   TRIG_TURN * 9) /
+			Uint32 ang = ((((Uint32)canvas->drawnFrm >> 1) + i) * TRIG_TURN +
+							 TRIG_TURN * 9) /
 				32;
 			Sint32 green = RGB(0,
-				FIXEDtoINT(sySin(angle) * CANVAS_SHINE_SWING) +
+				FIXEDtoINT(sySin(ang) * CANVAS_SHINE_SWING) +
 					CANVAS_SHINE_MIDDLE,
 				0);
 
@@ -112,10 +112,10 @@ void fdPsynergyUpdateBurst(void)
 		particle = state->sparks;
 		for(i = 0; i < BURST_SPARK_COUNT; i++) {
 			if((Uint32)particle->tmr <= 29) {
-				sprite = &state->sparkSprs[i];
-				sprite->x = particle->x + toFIXED(canvas->x);
-				sprite->y = particle->y + toFIXED(canvas->y);
-				fdEffectSprDraw(sprite);
+				spr = &state->sparkSprs[i];
+				spr->x = particle->x + toFIXED(canvas->x);
+				spr->y = particle->y + toFIXED(canvas->y);
+				fdEffectSprDraw(spr);
 				fdAdvanceWithGravity2D(&particle->x, 60, 0);
 			}
 			particle->tmr++;
@@ -140,38 +140,37 @@ void fdPsynergyUpdateBurst(void)
 		for(; i < BURST_EXPLOSION_COUNT; i++, particle++) {
 			if((Uint32)particle->tmr > 71)
 				continue;
-			sprite = &state->burstSprs[i];
+			spr = &state->burstSprs[i];
 			switch(particle->tmr) {
 			case 6:
-				sprite->oam.idx =
-					state->burstTile + BURST_EXPLOSION_PICTURE_TILES;
+				spr->oam.idx = state->burstTile + BURST_EXPLOSION_PICTURE_TILES;
 				break;
 			case 12:
-				sprite->oam.idx =
+				spr->oam.idx =
 					state->burstTile + BURST_EXPLOSION_PICTURE_TILES * 2;
 				break;
 			case 22:
-				sprite->oam.idx =
+				spr->oam.idx =
 					state->burstTile + BURST_EXPLOSION_PICTURE_TILES * 3;
 				break;
 			case 32:
-				sprite->oam.idx =
+				spr->oam.idx =
 					state->burstTile + BURST_EXPLOSION_PICTURE_TILES * 4;
 				break;
 			case 42:
-				sprite->oam.idx =
+				spr->oam.idx =
 					state->burstTile + BURST_EXPLOSION_PICTURE_TILES * 5;
 				break;
 			case 52:
-				sprite->oam.idx =
+				spr->oam.idx =
 					state->burstTile + BURST_EXPLOSION_PICTURE_TILES * 6;
 				break;
 			case 62:
-				sprite->oam.idx =
+				spr->oam.idx =
 					state->burstTile + BURST_EXPLOSION_PICTURE_TILES * 7;
 				break;
 			}
-			fdEffectSprDrawAtWorldPos(sprite, particle);
+			fdEffectSprDrawAtWorldPos(spr, particle);
 			particle->tmr++;
 		}
 		switch(state->phase) {
@@ -248,10 +247,10 @@ void fdPsynergyUpdateBurst(void)
 		particle = state->sparks;
 		for(i = 0; i < BURST_SPARKS_AT_NOTHING; i++) {
 			if((Uint32)particle->tmr <= 29) {
-				sprite = &state->sparkSprs[i];
-				sprite->x = particle->x + toFIXED(canvas->x);
-				sprite->y = particle->y + toFIXED(canvas->y);
-				fdEffectSprDraw(sprite);
+				spr = &state->sparkSprs[i];
+				spr->x = particle->x + toFIXED(canvas->x);
+				spr->y = particle->y + toFIXED(canvas->y);
+				fdEffectSprDraw(spr);
 				fdAdvanceWithGravity2D(&particle->x, 60, 0);
 			}
 			particle->tmr++;
@@ -274,38 +273,37 @@ void fdPsynergyUpdateBurst(void)
 		for(; i < BURST_EXPLOSION_COUNT; i++, particle++) {
 			if((Uint32)particle->tmr > 47)
 				continue;
-			sprite = &state->burstSprs[i];
+			spr = &state->burstSprs[i];
 			switch(particle->tmr) {
 			case 4:
-				sprite->oam.idx =
-					state->burstTile + BURST_EXPLOSION_PICTURE_TILES;
+				spr->oam.idx = state->burstTile + BURST_EXPLOSION_PICTURE_TILES;
 				break;
 			case 8:
-				sprite->oam.idx =
+				spr->oam.idx =
 					state->burstTile + BURST_EXPLOSION_PICTURE_TILES * 2;
 				break;
 			case 14:
-				sprite->oam.idx =
+				spr->oam.idx =
 					state->burstTile + BURST_EXPLOSION_PICTURE_TILES * 3;
 				break;
 			case 22:
-				sprite->oam.idx =
+				spr->oam.idx =
 					state->burstTile + BURST_EXPLOSION_PICTURE_TILES * 4;
 				break;
 			case 28:
-				sprite->oam.idx =
+				spr->oam.idx =
 					state->burstTile + BURST_EXPLOSION_PICTURE_TILES * 5;
 				break;
 			case 35:
-				sprite->oam.idx =
+				spr->oam.idx =
 					state->burstTile + BURST_EXPLOSION_PICTURE_TILES * 6;
 				break;
 			case 41:
-				sprite->oam.idx =
+				spr->oam.idx =
 					state->burstTile + BURST_EXPLOSION_PICTURE_TILES * 7;
 				break;
 			}
-			fdEffectSprDrawAtWorldPos(sprite, particle);
+			fdEffectSprDrawAtWorldPos(spr, particle);
 			particle->tmr++;
 		}
 		switch(state->phase) {
@@ -373,7 +371,7 @@ Sint32 fdPsynergyGetCanvasPriority(ACTOR *actor, Sint32 facing);
 
 /* Burst: a glow disc swells in front of the caster as sparks fly into it, then
    explosions burst round the target, shaking the screen, the last and largest
-   at 12 pixels; the target's script runs each frame with the stage (shake).
+   at 12 pixels; the target's script runs each tick with the stage (shake).
    Cast at nothing (FIELD_EFFECT_STATE.aimAhead still set), it is shorter: 12
    sparks and one small explosion. */
 void fdPsynergyBurst(void)
@@ -382,7 +380,7 @@ void fdPsynergyBurst(void)
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(BURST_STATE));
 	FIELD_EFFECT_STATE		*scene = Ram_HeapSlots->fieldEffState;
 	CANVAS_SPR_STATE		*canvas;
-	EFFECT_SPR				*sprite;
+	EFFECT_SPR				*spr;
 	FIELD_PSYNERGY_PARTICLE *particle;
 	void					*pending;
 	Sint32					 pos[3];
@@ -391,11 +389,11 @@ void fdPsynergyBurst(void)
 	Sint32					 burstEntry;
 	Sint32					 tile;
 	Sint32					 radius;
-	Sint32					 angle;
+	Sint32					 ang;
 	Sint32					 kind;
-	Sint32					 frame;
+	Sint32					 frm;
 	Sint32 (*mul)(Sint32, Sint32);
-	EFFECT_SPR *burstSprite;
+	EFFECT_SPR *burstSpr;
 	Sint32		i;
 
 	scene->y += toFIXED(10);
@@ -418,26 +416,25 @@ void fdPsynergyBurst(void)
 
 	sparkEntry = syVRAMCacheFindFreeEntry();
 	sparkTile = syVRAMCacheLoad(sparkEntry, TILE_SIZE_8BPP, Burst_GlowTiles);
-	for(i = 0, particle = state->sparks, mul = syMulFX,
-	sprite = state->sparkSprs;
+	for(i = 0, particle = state->sparks, mul = syMulFX, spr = state->sparkSprs;
 		i < BURST_SPARK_COUNT;) {
-		fdEffectSprInit(sprite, 4, 4, OBJ_SIZE_8X8, sparkTile);
-		sprite->oam.fullCol = 1;
-		sprite->oam.pal = 0;
-		sprite->oam.pri = canvas->pri;
-		sprite->depth = canvas->depth + 1;
-		sprite->scaleY = sprite->scaleX = toFIXED(1);
+		fdEffectSprInit(spr, 4, 4, OBJ_SIZE_8X8, sparkTile);
+		spr->oam.fullCol = 1;
+		spr->oam.pal = 0;
+		spr->oam.pri = canvas->pri;
+		spr->depth = canvas->depth + 1;
+		spr->scaleY = spr->scaleX = toFIXED(1);
 		radius = syRandom() * 20 + toFIXED(20);
-		angle = syRandom();
-		particle->x = mul(syCos(angle), radius);
-		particle->y = mul(sySin(angle), radius);
+		ang = syRandom();
+		particle->x = mul(syCos(ang), radius);
+		particle->y = mul(sySin(ang), radius);
 		radius /= 12;
-		angle += DEGtoANG(180);
-		particle->velX = mul(syCos(angle), radius);
-		particle->velY = mul(sySin(angle), radius);
+		ang += DEGtoANG(180);
+		particle->velX = mul(syCos(ang), radius);
+		particle->velY = mul(sySin(ang), radius);
 		particle->tmr = -i * 2;
 		i++;
-		sprite++;
+		spr++;
 		particle++;
 	}
 
@@ -447,15 +444,15 @@ void fdPsynergyBurst(void)
 	tile = syVRAMCacheLoad(burstEntry, sizeof(state->tiles), state);
 	state->burstTile = tile;
 	particle = state->bursts;
-	burstSprite = state->burstSprs;
+	burstSpr = state->burstSprs;
 	for(i = 0; i < BURST_EXPLOSION_COUNT; i++) {
-		fdEffectSprInit(burstSprite, 8, 8, OBJ_SIZE_16X16, tile);
-		burstSprite->depth = canvas->depth + 1;
-		burstSprite->oam.pri = canvas->pri;
-		burstSprite->oam.fullCol = 0;
-		burstSprite->oam.pal = BURST_EXPLOSION_PALETTE;
+		fdEffectSprInit(burstSpr, 8, 8, OBJ_SIZE_16X16, tile);
+		burstSpr->depth = canvas->depth + 1;
+		burstSpr->oam.pri = canvas->pri;
+		burstSpr->oam.fullCol = 0;
+		burstSpr->oam.pal = BURST_EXPLOSION_PALETTE;
 		particle->tmr = -1;
-		burstSprite++;
+		burstSpr++;
 		particle++;
 	}
 	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_GLOW_DISC),
@@ -468,17 +465,17 @@ void fdPsynergyBurst(void)
 	state->palMode = BURST_PALETTE_SHINE;
 	state->nextBurst = 0;
 	state->newBursts = 0;
-	sySetEvent(fdPsynergyUpdateBurst, EVENT_PASS_FRAME);
+	sySetEvent(fdPsynergyUpdateBurst, EVENT_PASS_TICK);
 	kind = scene->fieldPsynergy;
 	pending = fdFindPsynergyCue(
 		PSYNERGY_CUE(PSYNERGY_PHASE_ACTS), kind, fdSelectPsynergyTarget(kind));
-	frame = 0;
+	frm = 0;
 	while(state->phase != FIELD_PSYNERGY_FINISHED) {
 		sySynch(1);
 		if(state->phase == FIELD_PSYNERGY_FINISHED)
-			frame = FIELD_PSYNERGY_FINISHED;
-		fdRunPsynergyScript(pending, state->shake, frame);
-		frame++;
+			frm = FIELD_PSYNERGY_FINISHED;
+		fdRunPsynergyScript(pending, state->shake, frm);
+		frm++;
 	}
 	syCloseEvent(fdPsynergyUpdateBurst);
 	syVRAMCacheFreeEntry(sparkEntry);

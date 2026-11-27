@@ -133,70 +133,70 @@ typedef enum COLOSSEUM_NAVAMPA_MATCH_SPARE_METATILE {
 	LOG_LANE_STORE_ROW = 60
 } COLOSSEUM_NAVAMPA_MATCH_SPARE_METATILE;
 
-Sint32 ColosseumNavampaMatch_SleepFrame BSS_DATA ALIGNED(16);
-/* Unused: twelve bytes after the sleep frame that nothing reads. */
-Uint8 ColosseumNavampaMatch_UnusedAfterSleepFrame[12] BSS_DATA;
+Sint32 ColosseumNavampaMatchSleepTick BSS_DATA ALIGNED(16);
+/* Unused: twelve bytes after the sleep tick that nothing reads. */
+Uint8 ColosseumNavampaMatchUnusedAfterSleepTick[12] BSS_DATA;
 /* The shared Colosso code's state, in the order the scene's memory lays it out;
    the shared files that use it say what each holds: the guide's pointer
    (colosso_guide.c), the lettering (colosso_task.c) and where Isaac stood
    before he was shown on a stage (colosso_guide.c). */
-Sint16 Colosso_PointerStep					   BSS_DATA;
-Sint16 Colosso_LetteringScaleDuration BSS_DATA ALIGNED(4);
-Sint16 Colosso_PointerFlip BSS_DATA			   ALIGNED(4);
+Sint16 ColossoPointerStep					  BSS_DATA;
+Sint16 ColossoLetteringScaleDuration BSS_DATA ALIGNED(4);
+Sint16 ColossoPointerFlip BSS_DATA			  ALIGNED(4);
 /* Isaac's z before he is shown on the stage, 16.16 fixed-point pixels. */
-FIXED Colosso_WarriorStartZ					  BSS_DATA;
-Sint16 Colosso_PointerEndX					  BSS_DATA;
-Sint16 Colosso_LetteringParameter BSS_DATA	  ALIGNED(4);
-Sint16 Colosso_LetteringScaleStart BSS_DATA	  ALIGNED(4);
-Sint16 Colosso_LetteringMoveDuration BSS_DATA ALIGNED(4);
-Sint32 Colosso_LetteringPosition			  BSS_DATA;
-Sint16 Colosso_PointerBlink					  BSS_DATA;
-Sint16 Colosso_LetteringScaleTarget BSS_DATA  ALIGNED(4);
-Sint16 Colosso_LetteringMoveStep BSS_DATA	  ALIGNED(4);
-Sint16 Colosso_PointerY BSS_DATA			  ALIGNED(4);
-Sint16 Colosso_LetteringFadeStep BSS_DATA	  ALIGNED(4);
+FIXED ColossoWarriorStartZ					 BSS_DATA;
+Sint16 ColossoPointerEndX					 BSS_DATA;
+Sint16 ColossoLetteringParameter BSS_DATA	 ALIGNED(4);
+Sint16 ColossoLetteringScaleStart BSS_DATA	 ALIGNED(4);
+Sint16 ColossoLetteringMoveDuration BSS_DATA ALIGNED(4);
+Sint32 ColossoLetteringPosition				 BSS_DATA;
+Sint16 ColossoPointerBlink					 BSS_DATA;
+Sint16 ColossoLetteringScaleTarget BSS_DATA	 ALIGNED(4);
+Sint16 ColossoLetteringMoveStep BSS_DATA	 ALIGNED(4);
+Sint16 ColossoPointerY BSS_DATA				 ALIGNED(4);
+Sint16 ColossoLetteringFadeStep BSS_DATA	 ALIGNED(4);
 /* Isaac's facing before scColossoFadeInWarrior, which scColossoRestoreWarrior
    puts back. */
-Sint32 Colosso_WarriorStartAngle			  BSS_DATA;
-Sint16 Colosso_PointerSteps					  BSS_DATA;
-Sint16 Colosso_LetteringMode BSS_DATA		  ALIGNED(4);
-Sint16 Colosso_LetteringFadeTarget BSS_DATA	  ALIGNED(4);
-Sint16 Colosso_LetteringFadeStart BSS_DATA	  ALIGNED(4);
-Sint16 Colosso_LetteringTimer BSS_DATA		  ALIGNED(4);
-Sint16 *Colosso_LetteringScript				  BSS_DATA;
-POINTER_COORDINATE Colosso_PointerStartX	  BSS_DATA;
-Sint16 Colosso_LetteringFadeDuration BSS_DATA ALIGNED(4);
-Uint8 ColosseumNavampaMatch_UnusedAfterBlendDuration[6] BSS_DATA;
+Sint32 ColossoWarriorStartAngle				 BSS_DATA;
+Sint16 ColossoPointerSteps					 BSS_DATA;
+Sint16 ColossoLetteringMode BSS_DATA		 ALIGNED(4);
+Sint16 ColossoLetteringFadeTarget BSS_DATA	 ALIGNED(4);
+Sint16 ColossoLetteringFadeStart BSS_DATA	 ALIGNED(4);
+Sint16 ColossoLetteringTimer BSS_DATA		 ALIGNED(4);
+Sint16 *ColossoLetteringScript				 BSS_DATA;
+POINTER_COORDINATE ColossoPointerStartX		 BSS_DATA;
+Sint16 ColossoLetteringFadeDuration BSS_DATA ALIGNED(4);
+Uint8 ColosseumNavampaMatchUnusedAfterBlendDuration[6] BSS_DATA;
 /* The blinking pointer's sprite part: the queue link and attributes 0 to 2. */
-Sint32									 Colosso_PointerOam[3] BSS_DATA;
-POINTER_COORDINATE Colosso_PointerStartY BSS_DATA;
-/* The lettering's sprite parts, three words each, written every frame. */
-Uint32							  Colosso_LetteringSprites[12] BSS_DATA;
-Sint16 Colosso_LetteringMoveStart BSS_DATA;
-Sint16 Colosso_PointerX BSS_DATA  ALIGNED(4);
-Sint16 Colosso_LetteringMoveTarget BSS_DATA ALIGNED(4);
-Sint16 Colosso_LetteringScaleStep BSS_DATA	ALIGNED(4);
-Sint16 Colosso_PointerEndY BSS_DATA			ALIGNED(4);
+Sint32									ColossoPointerOam[3] BSS_DATA;
+POINTER_COORDINATE ColossoPointerStartY BSS_DATA;
+/* The lettering's sprite parts, three words each, written every tick. */
+Uint32									   ColossoLetteringSprites[12] BSS_DATA;
+Sint16 ColossoLetteringMoveStart		   BSS_DATA;
+Sint16 ColossoPointerX BSS_DATA			   ALIGNED(4);
+Sint16 ColossoLetteringMoveTarget BSS_DATA ALIGNED(4);
+Sint16 ColossoLetteringScaleStep BSS_DATA  ALIGNED(4);
+Sint16 ColossoPointerEndY BSS_DATA		   ALIGNED(4);
 /* Isaac's x before he is shown on the stage, 16.16 fixed-point pixels. */
-FIXED Colosso_WarriorStartX BSS_DATA;
+FIXED ColossoWarriorStartX BSS_DATA;
 
 Sint32				  scInit(void);
-extern const Sint32	  ColosseumNavampaMatch_SidewalkLogOffBelt[];
-extern const Sint8	  ColosseumNavampaMatch_WallWedgeCycle[][6];
-extern const Uint16	  ColosseumNavampaMatch_FacingAngles[];
-extern const Sint32	  ColosseumNavampaMatch_SidewalkLogScript[];
+extern const Sint32	  ColosseumNavampaMatchSidewalkLogOffBelt[];
+extern const Sint8	  ColosseumNavampaMatchWallWedgeCycle[][6];
+extern const Uint16	  ColosseumNavampaMatchFacingAngles[];
+extern const Sint32	  ColosseumNavampaMatchSidewalkLogScript[];
 extern SCENE_ENTRANCE ColosseumNavampaMatchEntrances[];
 extern Uint32		  ColosseumNavampaMatchExits[];
 extern ACTOR_PLACE	  ColosseumNavampaMatchActorPlacements[];
-extern Sint32		  ColosseumNavampaMatch_WallWedgeStep;
-extern Uint32		  ColosseumNavampaMatch_WallWedgeTimer;
+extern Sint32		  ColosseumNavampaMatchWallWedgeStep;
+extern Uint32		  ColosseumNavampaMatchWallWedgeTimer;
 extern CUE			  ColosseumNavampaMatchCues[];
-extern Sint32		  ColosseumNavampaMatch_OpponentAfterBattle[];
-extern Sint32		  ColosseumNavampaMatch_LeaderActionA[];
-extern Sint32		  ColosseumNavampaMatch_LeaderActionB[];
-extern Sint32		  ColosseumNavampaMatch_LeaderActionC[];
-extern Sint32		  ColosseumNavampaMatch_LeaderScaleScript[];
-extern Sint32		  ColosseumNavampaMatch_SleepZScript[];
+extern Sint32		  ColosseumNavampaMatchOpponentAfterBattle[];
+extern Sint32		  ColosseumNavampaMatchLeaderActionA[];
+extern Sint32		  ColosseumNavampaMatchLeaderActionB[];
+extern Sint32		  ColosseumNavampaMatchLeaderActionC[];
+extern Sint32		  ColosseumNavampaMatchLeaderScaleScript[];
+extern Sint32		  ColosseumNavampaMatchSleepZScript[];
 extern char			  HexDigits[20];
 
 /* UB: this calls a void function through an Sint32 function type, the call the
@@ -379,7 +379,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 }
 
 /* The Wall Wedge's event steps its pistons through their cycle, a step every 18
-   frames. */
+   ticks. */
 static void scColosseumNavampaMatchUpdateWallWedge(void)
 {
 	FIELD_STATE *state = FieldStateWork;
@@ -388,12 +388,12 @@ static void scColosseumNavampaMatchUpdateWallWedge(void)
 	Sint32		 i;
 	Sint32		 kind;
 
-	if(ColosseumNavampaMatch_WallWedgeTimer == 0) {
-		ColosseumNavampaMatch_WallWedgeStep =
-			(ColosseumNavampaMatch_WallWedgeStep + 1) & 3;
+	if(ColosseumNavampaMatchWallWedgeTimer == 0) {
+		ColosseumNavampaMatchWallWedgeStep =
+			(ColosseumNavampaMatchWallWedgeStep + 1) & 3;
 		for(i = ACTOR_FIRST_PISTON; i <= ACTOR_LAST_PISTON; i++) {
-			kind = ColosseumNavampaMatch_WallWedgeCycle
-				[ColosseumNavampaMatch_WallWedgeStep][i - ACTOR_FIRST_PISTON];
+			kind = ColosseumNavampaMatchWallWedgeCycle
+				[ColosseumNavampaMatchWallWedgeStep][i - ACTOR_FIRST_PISTON];
 			fdActorSetAnimation(i, kind);
 			fdActorSetAnimation(i + PISTON_COUNT, kind + PISTON_ANIMATION_TIP);
 			/* Each piston's column, (33 + 2n, 11..12), takes the walkway's (32,
@@ -406,12 +406,12 @@ static void scColosseumNavampaMatchUpdateWallWedge(void)
 			}
 		}
 		fdActorSetAnimation(ACTOR_WALL_OPERATOR,
-			ColosseumNavampaMatch_WallWedgeCycle
-				[ColosseumNavampaMatch_WallWedgeStep][PISTON_COUNT]);
+			ColosseumNavampaMatchWallWedgeCycle
+				[ColosseumNavampaMatchWallWedgeStep][PISTON_COUNT]);
 	} else {
 		for(i = ACTOR_FIRST_PISTON; i <= ACTOR_LAST_PISTON; i++) {
-			kind = ColosseumNavampaMatch_WallWedgeCycle
-				[ColosseumNavampaMatch_WallWedgeStep][i - ACTOR_FIRST_PISTON];
+			kind = ColosseumNavampaMatchWallWedgeCycle
+				[ColosseumNavampaMatchWallWedgeStep][i - ACTOR_FIRST_PISTON];
 			/* The leader stands in the piston's column, which starts 48 pixels
 			   west of i * PISTON_SPACING. */
 			if((actor->x.fixed - toFIXED(i * PISTON_SPACING) > -toFIXED(50) &&
@@ -424,8 +424,8 @@ static void scColosseumNavampaMatchUpdateWallWedge(void)
 			}
 		}
 	}
-	if(++ColosseumNavampaMatch_WallWedgeTimer > 17) {
-		ColosseumNavampaMatch_WallWedgeTimer = 0;
+	if(++ColosseumNavampaMatchWallWedgeTimer > 17) {
+		ColosseumNavampaMatchWallWedgeTimer = 0;
 	}
 }
 
@@ -434,9 +434,9 @@ static void scColosseumNavampaMatchResetWallWedge(void)
 {
 	MAP_TASK_ENTRY entry;
 
-	ColosseumNavampaMatch_WallWedgeTimer = 0;
+	ColosseumNavampaMatchWallWedgeTimer = 0;
 	entry = scColosseumNavampaMatchUpdateWallWedge;
-	ColosseumNavampaMatch_WallWedgeStep = 0;
+	ColosseumNavampaMatchWallWedgeStep = 0;
 	syCloseEvent(entry);
 	entry();
 }
@@ -444,23 +444,23 @@ static void scColosseumNavampaMatchResetWallWedge(void)
 /* Resumes cycling the Wall Wedge's pistons. */
 static void scColosseumNavampaMatchStartWallWedge(void)
 {
-	sySetFrameEvent(scColosseumNavampaMatchUpdateWallWedge, EVENT_PASS_FRAME);
+	sySetTickEvent(scColosseumNavampaMatchUpdateWallWedge, EVENT_PASS_TICK);
 }
 
 /* Waits, at most two seconds, for the step of the Wall Wedge's cycle that its
    attendant's demonstration passes through. */
 static void scColosseumNavampaMatchWaitForWallWedgeOpening(void)
 {
-	Sint32 frames;
+	Sint32 ticks;
 
 	sySynch(10);
 
-	frames = 0;
-	while(ColosseumNavampaMatch_WallWedgeStep != 3 ||
-		ColosseumNavampaMatch_WallWedgeTimer != 1) {
+	ticks = 0;
+	while(ColosseumNavampaMatchWallWedgeStep != 3 ||
+		ColosseumNavampaMatchWallWedgeTimer != 1) {
 		sySynch(1);
-		frames++;
-		if(frames > 119) {
+		ticks++;
+		if(ticks > 119) {
 			return;
 		}
 	}
@@ -762,7 +762,7 @@ static void scColosseumNavampaMatchRollLongLog(void)
 	ACTOR		*rider;
 	ACTOR		*log;
 	FIELD_STATE *state;
-	Sint32		 angle;
+	Sint32		 ang;
 	Sint32		 actorId;
 	FIXED		 x;
 	FIXED		 z;
@@ -770,19 +770,18 @@ static void scColosseumNavampaMatchRollLongLog(void)
 	FIXED		 nextX;
 	Sint32		 column;
 	FIXED		 acceleration;
-	Sint32		 rollAnimation;
+	Sint32		 rollAnm;
 	Sint32		 step;
 	Sint32		 ahead[3];
 
 	rider = fdActorGet(MainRoutineStateWork.leaderActorId);
 	log = fdActorGet(ACTOR_LONG_LOG);
 	steps = 0;
-	angle =
-		ColosseumNavampaMatch_FacingAngles[FACING_EIGHTH_INDEX(rider->facing)];
+	ang = ColosseumNavampaMatchFacingAngles[FACING_EIGHTH_INDEX(rider->facing)];
 	actorId = MainRoutineStateWork.leaderActorId;
 	SET_VECTOR(ahead, (rider->x.fixed & FIELD_METATILE_MASK) + toFIXED(8),
 		rider->y.fixed, (rider->z.fixed & FIELD_METATILE_MASK) + toFIXED(8));
-	syVectorAddPolarOffset(toFIXED(16), angle, ahead);
+	syVectorAddPolarOffset(toFIXED(16), ang, ahead);
 	x = log->x.fixed;
 	z = log->z.fixed;
 	/* Only a nearby rider rolls the log; other interactions push the actor
@@ -792,7 +791,7 @@ static void scColosseumNavampaMatchRollLongLog(void)
 		goto far;
 	}
 	if(PerData & KEY_LEFT) {
-		rollAnimation = LONG_LOG_ANIMATION_ROLL_WEST;
+		rollAnm = LONG_LOG_ANIMATION_ROLL_WEST;
 		step = -8;
 		for(;;) {
 			nextX = x - toFIXED(16);
@@ -807,7 +806,7 @@ static void scColosseumNavampaMatchRollLongLog(void)
 		if(!(PerData & KEY_RIGHT)) {
 			return;
 		}
-		rollAnimation = LOG_ANIMATION_ROLL_WEST;
+		rollAnm = LOG_ANIMATION_ROLL_WEST;
 		step = 8;
 		for(;;) {
 			nextX = x + toFIXED(16);
@@ -834,7 +833,7 @@ static void scColosseumNavampaMatchRollLongLog(void)
 	log->speedLimit = toFIXED(1) / 2;
 	acceleration = toFIXED(1) / 5;
 	log->acceleration = acceleration;
-	fdActorSelectAnimation(log, rollAnimation);
+	fdActorSelectAnimation(log, rollAnm);
 	syFieldActorSetMoveTargetFX(log, x, 0, z);
 	fdScriptWait(6);
 	fdActorSetAnimation(actorId, ANIM_WALK);
@@ -905,7 +904,7 @@ static void scColosseumNavampaMatchForceSidewalkLog(void)
 	effect->acceleration = moveRate;
 	effect->speedLimit = moveRate;
 	fdActorSelectAnimation(effect, STANDING_LOG_ANIMATION_TOPPLE);
-	fdActorStartScript(effect, ColosseumNavampaMatch_SidewalkLogScript);
+	fdActorStartScript(effect, ColosseumNavampaMatchSidewalkLogScript);
 	gmFlagSet(FLAG_SIDEWALK_LOG_KNOCKED_OFF);
 }
 
@@ -916,8 +915,8 @@ static void scColosseumNavampaMatchHaltWall(void)
 	fdPsynergyHaltActor(ACTOR_WALL_OPERATOR);
 	gmFlagSet(FLAG_WALL_WEDGE_HALTED);
 	sySynch(10);
-	while(ColosseumNavampaMatch_WallWedgeStep != 1 &&
-		ColosseumNavampaMatch_WallWedgeStep != 3)
+	while(ColosseumNavampaMatchWallWedgeStep != 1 &&
+		ColosseumNavampaMatchWallWedgeStep != 3)
 		sySynch(1);
 	sySynch(1);
 	syCloseEvent(scColosseumNavampaMatchUpdateWallWedge);
@@ -993,7 +992,7 @@ UNUSED static void scColosseumNavampaMatchUnusedAskToCtrlCharacter(
 {
 	FIELD_STATE *state;
 	Sint32		 actorId;
-	Sint32		 messageOffset;
+	Sint32		 msgOfs;
 	Sint32		 entrance;
 
 	state = FieldStateWork;
@@ -1001,24 +1000,22 @@ UNUSED static void scColosseumNavampaMatchUnusedAskToCtrlCharacter(
 	entrance = MainRoutineStateWork.entrance;
 	if(entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
 		fdScriptStart();
-		messageOffset = characterId * 3;
-		fdScriptSetMessageId(messageOffset + MsgColossoDidntThinkBattles);
+		msgOfs = characterId * 3;
+		fdScriptSetMessageId(msgOfs + MsgColossoDidntThinkBattles);
 		fdScriptOpenMessage(characterId, 0);
 		if(fdScriptAskYesNoWithActorAnimation(actorId, 0) == 0) {
-			fdScriptSetMessageId(
-				messageOffset + MsgColossoDidntThinkBattles + 1);
+			fdScriptSetMessageId(msgOfs + MsgColossoDidntThinkBattles + 1);
 			fdScriptShowMessage(characterId, 0);
 			state->transition =
 				SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
 			state->transitionFrm = 15;
 			fdScriptFinishScreenTransition();
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 			scColossoCtrlCharacterAlone(characterId);
 			fdScriptStartScreenTransition();
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 		} else {
-			fdScriptSetMessageId(
-				messageOffset + MsgColossoDidntThinkBattles + 2);
+			fdScriptSetMessageId(msgOfs + MsgColossoDidntThinkBattles + 2);
 			fdScriptShowMessage(characterId, 0);
 		}
 		fdScriptEnd();
@@ -1036,7 +1033,7 @@ static void scColosseumNavampaMatchReachArena(void)
 	fdScriptStart();
 	opponentFirst = scColossoTakePrize(ITEM_CLAYMORE, ITEM_HUNTERS_SWORD);
 	scColossoWaitForOpponentToFinish();
-	/* Up to ten waits of 300 frames while the opponent holds up his prize. */
+	/* Up to ten waits of 300 ticks while the opponent holds up his prize. */
 	for(i = 0; i < 10; i++) {
 		fdActorWaitForScriptEndById(ACTOR_OPPONENT);
 	}
@@ -1105,8 +1102,8 @@ Sint32 scInit(void)
 
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	gmFlagSet(FLAG_RETREAT_BLOCKED);
-	sySetFrameEvent(
-		scColosseumNavampaMatchUpdateEastEndCollision, EVENT_PASS_FRAME);
+	sySetTickEvent(
+		scColosseumNavampaMatchUpdateEastEndCollision, EVENT_PASS_TICK);
 	fdMapGridCopyMetatileAttributes(
 		74, 60, 8, 6, LOG_LANE_STORE_COLUMN, LOG_LANE_STORE_ROW);
 
@@ -1215,8 +1212,7 @@ Sint32 scInit(void)
 			actor->motionFlg = 0;
 			actor->y.fixed = toFIXED(32);
 		}
-		sySetFrameEvent(
-			scColosseumNavampaMatchUpdateWallWedge, EVENT_PASS_FRAME);
+		sySetTickEvent(scColosseumNavampaMatchUpdateWallWedge, EVENT_PASS_TICK);
 	}
 
 	if(gmFlagGet(FLAG_PLANT_GROWN) != 0) {
@@ -1232,7 +1228,7 @@ Sint32 scInit(void)
 		actor->z.fixed = toFIXED(184);
 		fdActorSetSprFlags(actor, 0);
 		fdActorSelectAnimation(actor, STANDING_LOG_ANIMATION_FALLEN);
-		fdActorStartScript(actor, ColosseumNavampaMatch_SidewalkLogOffBelt);
+		fdActorStartScript(actor, ColosseumNavampaMatchSidewalkLogOffBelt);
 	} else {
 		fdTilesetAnimPause(SIDEWALK_STOPPED_ANIMATION);
 	}
@@ -1296,7 +1292,7 @@ Sint32 scInit(void)
 		break;
 
 	case COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH:
-		sySetFrameEvent(scColossoRaiseTakePlaceOnPsynergy, EVENT_PASS_FRAME);
+		sySetTickEvent(scColossoRaiseTakePlaceOnPsynergy, EVENT_PASS_TICK);
 		fdActorReleaseById(ACTOR_PRIZE_A);
 		fdActorReleaseById(ACTOR_PRIZE_B);
 		if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) != 0) {
@@ -1355,15 +1351,15 @@ static void scColosseumNavampaMatchSpawnSleepZ(void)
 	FIXED  x;
 	FIXED  y;
 	Sint32 actorId;
-	Sint32 frame;
+	Sint32 tick;
 
 	particle = fdActorGet(ACTOR_PARTY_LEADER);
-	frame = ColosseumNavampaMatch_SleepFrame + 1;
+	tick = ColosseumNavampaMatchSleepTick + 1;
 	actorId = ACTOR_FIRST_SLEEP_Z;
 	x = particle->x.fixed;
 	y = particle->y.fixed;
-	ColosseumNavampaMatch_SleepFrame = frame;
-	switch(frame % 180) {
+	ColosseumNavampaMatchSleepTick = tick;
+	switch(tick % 180) {
 	case 10:
 		break;
 	case 20:
@@ -1395,10 +1391,10 @@ static void scColosseumNavampaMatchSpawnSleepZ(void)
 		particle->tgtY = height;
 	}
 	/* It drifts east ever faster and rises ever slower, from half a pixel a
-	   frame. */
+	   tick. */
 	particle->tmr = 25;
 	particle->userValue = SLEEP_Z_STEPS_PER_PIXEL / 2;
-	fdActorSetScript(actorId, ColosseumNavampaMatch_SleepZScript);
+	fdActorSetScript(actorId, ColosseumNavampaMatchSleepZScript);
 }
 
 /* After the last match, Garet, Ivan and Mia run to Isaac in the arena, but he
@@ -1419,10 +1415,10 @@ static void scColosseumNavampaMatchPlayPostBattleReunion(Sint32 battleResult)
 	} else {
 		fdActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_DEFEATED);
 	}
-	fdActorSetScript(ACTOR_OPPONENT, ColosseumNavampaMatch_OpponentAfterBattle);
+	fdActorSetScript(ACTOR_OPPONENT, ColosseumNavampaMatchOpponentAfterBattle);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 1504, 192);
 	fdActorGet(ACTOR_PARTY_LEADER)->facing = FACING_EAST;
-	fdActorSetScript(ACTOR_PARTY_LEADER, ColosseumNavampaMatch_LeaderActionA);
+	fdActorSetScript(ACTOR_PARTY_LEADER, ColosseumNavampaMatchLeaderActionA);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CROUCH);
 	fdActorSetSpeed(ACTOR_GARET, 1);
 	fdActorSetSpeed(ACTOR_IVAN, 1);
@@ -1438,10 +1434,10 @@ static void scColosseumNavampaMatchPlayPostBattleReunion(Sint32 battleResult)
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptSetMessageId(MsgColossoIsaac);
 	fdScriptWait(60);
-	leaderScaleScript = ColosseumNavampaMatch_LeaderScaleScript;
+	leaderScaleScript = ColosseumNavampaMatchLeaderScaleScript;
 	fdActorSetScript(ACTOR_PARTY_LEADER, leaderScaleScript);
 	fdActorGet(ACTOR_PARTY_LEADER)->scaleX = toFIXED(1);
 	fdActorGet(ACTOR_PARTY_LEADER)->scaleY = toFIXED(1);
@@ -1450,7 +1446,7 @@ static void scColosseumNavampaMatchPlayPostBattleReunion(Sint32 battleResult)
 	fdScriptWait(10);
 	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	fdScriptWait(20);
-	fdActorSetScript(ACTOR_PARTY_LEADER, ColosseumNavampaMatch_LeaderActionB);
+	fdActorSetScript(ACTOR_PARTY_LEADER, ColosseumNavampaMatchLeaderActionB);
 	/* Let each companion react before the leader settles back to sleep.
 	   "Isaac!!!" */
 	fdScriptShowMessage(ACTOR_GARET, 0);
@@ -1492,7 +1488,7 @@ static void scColosseumNavampaMatchPlayPostBattleReunion(Sint32 battleResult)
 	fdScriptWait(20);
 	/* "Isaac..." */
 	fdScriptShowMessage(ACTOR_MIA, 0);
-	fdActorSetScript(ACTOR_PARTY_LEADER, ColosseumNavampaMatch_LeaderActionC);
+	fdActorSetScript(ACTOR_PARTY_LEADER, ColosseumNavampaMatchLeaderActionC);
 	fdActorRunRepeatedMotion(ACTOR_GARET, 2);
 	fdActorWatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
 	fdScriptWait(20);
@@ -1511,27 +1507,27 @@ static void scColosseumNavampaMatchPlayPostBattleReunion(Sint32 battleResult)
 	fdActorSetScript(ACTOR_PARTY_LEADER, leaderScaleScript);
 	fdScriptWait(60);
 	sleepZTask = scColosseumNavampaMatchSpawnSleepZ;
-	/* A Z rises from Isaac on the event's first frame (frame 10 of the
+	/* A Z rises from Isaac on the event's first tick (tick 10 of the
 	   cycle). */
-	ColosseumNavampaMatch_SleepFrame = 9;
-	sySetFrameEvent(sleepZTask, EVENT_PASS_FRAME);
+	ColosseumNavampaMatchSleepTick = 9;
+	sySetTickEvent(sleepZTask, EVENT_PASS_TICK);
 	fdScriptWait(5);
 	syCloseEvent(sleepZTask);
 	fdScriptWait(55);
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-	sySetFrameEvent(sleepZTask, EVENT_PASS_FRAME);
+	sySetTickEvent(sleepZTask, EVENT_PASS_TICK);
 	fdScriptWait(20);
 	syCloseEvent(sleepZTask);
 	fdScriptWait(40);
 	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-	ColosseumNavampaMatch_SleepFrame = 9;
-	sySetFrameEvent(sleepZTask, EVENT_PASS_FRAME);
+	ColosseumNavampaMatchSleepTick = 9;
+	sySetTickEvent(sleepZTask, EVENT_PASS_TICK);
 	fdScriptWait(35);
 	syCloseEvent(sleepZTask);
 	fdScriptWait(25);
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-	ColosseumNavampaMatch_SleepFrame = 9;
-	sySetFrameEvent(sleepZTask, EVENT_PASS_FRAME);
+	ColosseumNavampaMatchSleepTick = 9;
+	sySetTickEvent(sleepZTask, EVENT_PASS_TICK);
 	fdScriptWait(35);
 	syCloseEvent(sleepZTask);
 	fdScriptWait(25);
@@ -1541,8 +1537,8 @@ static void scColosseumNavampaMatchPlayPostBattleReunion(Sint32 battleResult)
 	fdScriptWait(60);
 	fdActorWatchAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
 	fdActorWatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
-	ColosseumNavampaMatch_SleepFrame = 9;
-	sySetFrameEvent(sleepZTask, EVENT_PASS_FRAME);
+	ColosseumNavampaMatchSleepTick = 9;
+	sySetTickEvent(sleepZTask, EVENT_PASS_TICK);
 	fdScriptWait(35);
 	syCloseEvent(sleepZTask);
 	fdScriptWait(25);
@@ -1552,8 +1548,8 @@ static void scColosseumNavampaMatchPlayPostBattleReunion(Sint32 battleResult)
 	fdActorRunRepeatedMotion(ACTOR_MIA, 3);
 	fdActorWatchAndSetScript(ACTOR_MIA, ACTOR_IVAN);
 	fdActorWatchAndSetScript(ACTOR_GARET, ACTOR_IVAN);
-	ColosseumNavampaMatch_SleepFrame = 9;
-	sySetFrameEvent(sleepZTask, EVENT_PASS_FRAME);
+	ColosseumNavampaMatchSleepTick = 9;
+	sySetTickEvent(sleepZTask, EVENT_PASS_TICK);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_NOD);
 	fdActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
 	fdActorSetAnimation(ACTOR_MIA, ANIM_NOD);
@@ -1573,7 +1569,7 @@ static void scColosseumNavampaMatchPlayPostBattleReunion(Sint32 battleResult)
 	fdActorWalkToAndWait(ACTOR_MIA, 1432, 200);
 	fdActorWalkTo(ACTOR_MIA, 1368, 184);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(30);
 	fdActorSetPos(ACTOR_GARET, 1512, 176);
 	fdActorSetPos(ACTOR_IVAN, 1464, 192);
@@ -1621,7 +1617,7 @@ static void scColosseumNavampaMatchIntroduceThirdFinals(Sint32 guideId)
 	fdActorGet(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
 	fdCameraFollowActor(ACTOR_PARTY_LEADER, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptSetMessageId(MsgColossoSiteThirdFinals);
 	fdActorSetAnimationAndWait(guideId, ANIM_NOD);
 	/* "This is the site of the third finals match." */
@@ -1831,7 +1827,7 @@ static void scColosseumNavampaMatchTalkToWallWedgeAttendant(Sint32 guideId)
 			scColosseumNavampaMatchWaitForWallWedgeOpening();
 			fdActorSetSpeed(ACTOR_PARTY_LEADER, 1.5);
 			scColossoWalkActorTo(ACTOR_PARTY_LEADER, 680, 200);
-			for(promptResult = 0; promptResult < 4 * FRAMES_PER_SECOND &&
+			for(promptResult = 0; promptResult < 4 * TICKS_PER_SECOND &&
 				state->raisedCue != PISTON_ANIMATION_PUSH_OUT;
 				promptResult++)
 				sySynch(1);
@@ -2104,7 +2100,7 @@ static void scColosseumNavampaMatchTalkToLogRollingAttendant(Sint32 actorId)
 
 /* The Moving Sidewalk Stage's log where Force has knocked it off the belt,
    bobbing a pixel up and down. */
-const Sint32 ColosseumNavampaMatch_SidewalkLogOffBelt[] = {
+const Sint32 ColosseumNavampaMatchSidewalkLogOffBelt[] = {
 	SC_SET(SW_Y, toFIXED(1)),
 	SC_WAIT(10),
 	SC_SET(SW_Y, 0),
@@ -2115,7 +2111,7 @@ const Sint32 ColosseumNavampaMatch_SidewalkLogOffBelt[] = {
 /* The Wall Wedge's cycle of four steps.
 
    Each holds each piston's animation, west to east, then the operator's. */
-const Sint8 ColosseumNavampaMatch_WallWedgeCycle[][6] = {
+const Sint8 ColosseumNavampaMatchWallWedgeCycle[][6] = {
 	{PISTON_ANIMATION_PULL_IN, PISTON_ANIMATION_PUSH_OUT,
 		PISTON_ANIMATION_PULL_IN, PISTON_ANIMATION_PUSH_OUT,
 		PISTON_ANIMATION_PULL_IN, WALL_OPERATOR_ANIMATION_ODD_PISTONS_IN},
@@ -2134,11 +2130,11 @@ const Sint8 ColosseumNavampaMatch_WallWedgeCycle[][6] = {
 
 /* clang-format off */
 /* The way the long log rolls for each eighth of its rider's facing. */
-const Uint16 ColosseumNavampaMatch_FacingAngles[] = {
+const Uint16 ColosseumNavampaMatchFacingAngles[] = {
 	0, 0, FACING_SOUTH, FACING_WEST, FACING_WEST, FACING_WEST, FACING_NORTH, 0,
 };
 
-const Sint32 ColosseumNavampaMatch_SidewalkLogScript[] = {
+const Sint32 ColosseumNavampaMatchSidewalkLogScript[] = {
 	SC_MOVE(1088, 0, 184),
 	SC_SYNC,
 	SC_MOVE(1130, 0, 184),
@@ -2263,10 +2259,10 @@ ACTOR_PLACE ColosseumNavampaMatchActorPlacements[] = {
 };
 
 /* The Wall Wedge's step in its four-step piston cycle. */
-Sint32 ColosseumNavampaMatch_WallWedgeStep = 0;
+Sint32 ColosseumNavampaMatchWallWedgeStep = 0;
 
-/* The frames into the Wall Wedge's step, 0 to 17. */
-Uint32 ColosseumNavampaMatch_WallWedgeTimer = 0;
+/* The ticks into the Wall Wedge's step, 0 to 17. */
+Uint32 ColosseumNavampaMatchWallWedgeTimer = 0;
 
 CUE ColosseumNavampaMatchCues[] = {
 	{ STEP_CUE_WALKING, METATILE_BEHAVIOR_LOG_AREA_END, CONDITION_ALWAYS, SCRIPT_REF(scColosseumNavampaMatchHopFromLogAreaEnd) },
@@ -2316,7 +2312,7 @@ CUE ColosseumNavampaMatchCues[] = {
 /* (scColosseumNavampaMatchPlayPostBattleReunion). */
 /* */
 /* His sprite grows taller and narrower and back, over and over. */
-Sint32 ColosseumNavampaMatch_OpponentAfterBattle[] = {
+Sint32 ColosseumNavampaMatchOpponentAfterBattle[] = {
 	SC_ADD(SW_SCALE_Y, 512),
 	SC_ADD(SW_SCALE_X, -256),
 	SC_WAIT(2),
@@ -2339,7 +2335,7 @@ Sint32 ColosseumNavampaMatch_OpponentAfterBattle[] = {
 	SC_END,
 };
 
-Sint32 ColosseumNavampaMatch_LeaderActionA[] = {
+Sint32 ColosseumNavampaMatchLeaderActionA[] = {
 	SC_ADD(SW_SCALE_Y, 512),
 	SC_ADD(SW_SCALE_X, -256),
 	SC_WAIT(2),
@@ -2362,7 +2358,7 @@ Sint32 ColosseumNavampaMatch_LeaderActionA[] = {
 	SC_END,
 };
 
-Sint32 ColosseumNavampaMatch_LeaderActionB[] = {
+Sint32 ColosseumNavampaMatchLeaderActionB[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1)),
 	SC_SET(SW_SCALE_Y, toFIXED(1)),
 	SC_LABEL(1),
@@ -2382,7 +2378,7 @@ Sint32 ColosseumNavampaMatch_LeaderActionB[] = {
 	SC_END,
 };
 
-Sint32 ColosseumNavampaMatch_LeaderActionC[] = {
+Sint32 ColosseumNavampaMatchLeaderActionC[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1)),
 	SC_SET(SW_SCALE_Y, toFIXED(1)),
 	SC_LABEL(1),
@@ -2402,13 +2398,13 @@ Sint32 ColosseumNavampaMatch_LeaderActionC[] = {
 	SC_END,
 };
 
-Sint32 ColosseumNavampaMatch_LeaderScaleScript[] = {
+Sint32 ColosseumNavampaMatchLeaderScaleScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1)),
 	SC_SET(SW_SCALE_Y, toFIXED(1)),
 	SC_END,
 };
 
-Sint32 ColosseumNavampaMatch_SleepZScript[] = {
+Sint32 ColosseumNavampaMatchSleepZScript[] = {
 	SC_CALL(scColosseumNavampaMatchAdvanceSleepZ),
 	SC_WAIT(1),
 	SC_LOOP(60, SC_TOP),
@@ -2417,11 +2413,11 @@ Sint32 ColosseumNavampaMatch_SleepZScript[] = {
 	SC_END,
 };
 
-Sint16 Colosso_LetteringSlot = -1;
+Sint16 ColossoLetteringSlot = -1;
 
 #include "shared/colosso_lettering_scripts.c"
 /* clang-format on */
 
-Sint16 Colosso_PointerSlot = -1;
+Sint16 ColossoPointerSlot = -1;
 
 #include "shared/colosso_finish_scripts.c"

@@ -1,4 +1,4 @@
-animation	command	value	count	destination	frames
+animation	command	value	count	destination	ticks
 0	picture	0	2	0	4
 0	picture	2	2	0	4
 0	jump	0

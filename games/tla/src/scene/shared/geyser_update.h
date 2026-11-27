@@ -1,4 +1,4 @@
-/* Each frame, raises or lowers each geyser on its timer, writes its height to
+/* Each tick, raises or lowers each geyser on its timer, writes its height to
    the collision and metatile maps, and carries its platform with a bob. */
 void scGeyserUpdate(void)
 {
@@ -16,7 +16,7 @@ void scGeyserUpdate(void)
 		ACTOR		 *actor;
 		ACTOR		 *rider;
 		MAP_METATILE *metatile;
-		Sint32		  index;
+		Sint32		  idx;
 
 		if(entry->id == 0)
 			continue;
@@ -48,11 +48,11 @@ void scGeyserUpdate(void)
 			if(++entry->tmr >= entry->period)
 				entry->tmr = 0;
 		}
-		index = FIELD_METATILE(actor->x.fixed) +
+		idx = FIELD_METATILE(actor->x.fixed) +
 			FIELD_METATILE(actor->z.fixed) * MAPGRID_SIZE;
-		terrain[index] = (Uint8)state->firstTerrain + i;
+		terrain[idx] = (Uint8)state->firstTerrain + i;
 		*collision = ((actor->y.part[0].integer + entry->height) / 8) << 8;
-		metatile = &metatiles[index];
+		metatile = &metatiles[idx];
 		if(entry->step != 0)
 			metatile->attributeB = 0;
 		else

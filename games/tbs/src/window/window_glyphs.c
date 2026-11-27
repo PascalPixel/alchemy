@@ -129,7 +129,7 @@ Sint32 mnTextDrawGlyphPair(Uint32 code, Uint32 *out)
 
 	state = WINDOW_STATE;
 	markGlyph = 0;
-	markCode = Font_MarkGlyphCodes[code >> TEXT_CODE_MARK_SHIFT];
+	markCode = FontMarkGlyphCodes[code >> TEXT_CODE_MARK_SHIFT];
 	if(markCode != 0)
 		markGlyph =
 			(const Uint8 *)((const GLYPH *)((const Uint8 *)Font_Glyphs +
@@ -227,7 +227,7 @@ Sint32 mnTextGetWideStringWidth(Uint16 *text)
 	Uint16 *cursor;
 	Uint32	code;
 #if !WIDE_STRING_FIXED_WIDTH
-	Uint32 glyphIndex;
+	Uint32 glyphIdx;
 #endif
 
 	code = *text;
@@ -242,11 +242,11 @@ Sint32 mnTextGetWideStringWidth(Uint16 *text)
 			   and the codes above them as nothing. */
 			width += 10;
 #else
-			glyphIndex = code - TEXT_MARK_VOICED;
-			if(glyphIndex > 1U) {
+			glyphIdx = code - TEXT_MARK_VOICED;
+			if(glyphIdx > 1U) {
 				/* The font starts at the space. */
-				glyphIndex += TEXT_MARK_VOICED - TEXT_SPACE;
-				width += FONT_GLYPH(glyphIndex)->width;
+				glyphIdx += TEXT_MARK_VOICED - TEXT_SPACE;
+				width += FONT_GLYPH(glyphIdx)->width;
 			}
 		} else {
 			width += KANJI_WIDTH;
@@ -261,8 +261,7 @@ Sint32 mnTextGetWideStringWidth(Uint16 *text)
 /* Draws a zero-terminated string of 16-bit character codes into a text canvas
    window at pixel (x, y), running its colour, outline, line spacing and new
    line codes; other control codes are skipped with their arguments. */
-void mnTextDrawWideStringAtOffset(
-	Uint16 *text, WINDOW *window, Sint32 x, Sint32 y)
+void mnTextDrawWideStringAtOffset(Uint16 *text, WINDOW *win, Sint32 x, Sint32 y)
 {
 	WIN_STATE *state;
 	Uint32	   code;
@@ -333,7 +332,7 @@ void mnTextDrawWideStringAtOffset(
 #if LANGUAGE != LANGUAGE_JAPANESE
 			/* Pair two narrow characters into one cell, as mnMessageType
 			   does. */
-			if((window->flg & WINDOW_FLAG_TEXT_CANVAS) == 0) {
+			if((win->flg & WINDOW_FLAG_TEXT_CANVAS) == 0) {
 				nextCode = *text;
 #if OUTLINED_GLYPH_PAIRS_FIT_CELL
 				if(code > TEXT_SPACE && nextCode > TEXT_SPACE) {
@@ -369,27 +368,27 @@ void mnTextDrawWideStringAtOffset(
 				text++;
 			}
 #endif
-			x += mnGlyphDraw(window, code, x, y, GLYPH_DRAW_CHARACTER);
+			x += mnGlyphDraw(win, code, x, y, GLYPH_DRAW_CHARACTER);
 		}
 	}
 }
 
 /* Unused: draws a string of 16-bit character codes as tiles in a window at tile
-   (offsetX, offsetY) of its interior, as mnTextDrawMessageAsTiles draws a
+   (ofsX, ofsY) of its interior, as mnTextDrawMessageAsTiles draws a
    message; a NULL string draws the decoded text in WIN_STATE.textBuf. */
 UNUSED void mnTextDrawWideStringAsTiles(
-	Uint16 *buffer, const WINDOW *window, Sint32 offsetX, Sint32 offsetY)
+	Uint16 *buf, const WINDOW *win, Sint32 ofsX, Sint32 ofsY)
 {
 	WIN_STATE *state = WINDOW_STATE;
 	Uint32	   cell;
 
-	if(buffer == NULL) {
-		buffer = state->textBuf;
+	if(buf == NULL) {
+		buf = state->textBuf;
 		state->textBuf[state->textBufEnd] = 0;
 		state->textBufEnd = (state->textBufEnd + 1) & TEXT_BUFFER_MASK;
 	}
 
-	cell = ((window->y + offsetY + 1) << 5) + (window->x + offsetX) + 1;
+	cell = ((win->y + ofsY + 1) << 5) + (win->x + ofsX) + 1;
 	if(cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) {
 		/* Inside the tilemap. */
 		Sint32 src;
@@ -400,15 +399,14 @@ UNUSED void mnTextDrawWideStringAsTiles(
 		src = (Sint32)state->tilemap + cell;
 
 		mnTextDrawStringAsTiles(
-			buffer, (Uint16 *)src, (Uint16 *)dst, (Sint32)WINDOW_TILEMAP_VRAM);
+			buf, (Uint16 *)src, (Uint16 *)dst, (Sint32)WINDOW_TILEMAP_VRAM);
 	}
 }
 
 /* Draws a zero-terminated string of 16-bit character codes into a window's
    tilemap at tile (x, y) of its interior, one tile per character, skipping
    control codes; a NULL text draws the decoded text in WIN_STATE.textBuf. */
-void mnTextDrawWideStringInWindow(
-	Sint16 *text, WINDOW *window, Sint32 x, Sint32 y)
+void mnTextDrawWideStringInWindow(Sint16 *text, WINDOW *win, Sint32 x, Sint32 y)
 {
 	WIN_STATE *state;
 	Uint16	   code;
@@ -449,7 +447,7 @@ void mnTextDrawWideStringInWindow(
 					break;
 				}
 			} else {
-				mnWindowPutGlyph(window, code, x, y, GLYPH_DRAW_CHARACTER);
+				mnWindowPutGlyph(win, code, x, y, GLYPH_DRAW_CHARACTER);
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH || \
 	LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 				x++;
@@ -469,9 +467,9 @@ void mnTextDrawWideStringInWindow(
 
 /* Writes value as decimal text into buffer (NUMBER_DIGITS + 2 bytes) and
    returns where the text starts. */
-Uint8 *mnStringFormatNum(Uint8 *buffer, Sint32 input, Sint32 width)
+Uint8 *mnStringFormatNum(Uint8 *buf, Sint32 input, Sint32 width)
 {
-	Sint32 offset;
+	Sint32 ofs;
 	Sint32 value;
 	Sint32 negative;
 	Sint32 spaceCharacter;
@@ -489,20 +487,20 @@ Uint8 *mnStringFormatNum(Uint8 *buffer, Sint32 input, Sint32 width)
 
 	/* The digits, then spaces for the leading zeros (the last digit stays) and
 	   the sign in front; the byte after them ends the text. */
-	buffer[0] = ' ';
-	for(offset = NUMBER_DIGITS; offset != 0; offset--) {
-		buffer[offset] = value % 10 + '0';
+	buf[0] = ' ';
+	for(ofs = NUMBER_DIGITS; ofs != 0; ofs--) {
+		buf[ofs] = value % 10 + '0';
 		value = value / 10;
 	}
 
-	offset = 0;
-	buffer[NUMBER_DIGITS + 1] = offset;
+	ofs = 0;
+	buf[NUMBER_DIGITS + 1] = ofs;
 	spaceCharacter = ' ';
-	offset = 1;
+	ofs = 1;
 	minusCharacter = '-';
-	for(leading = buffer; offset != NUMBER_DIGITS + 1; leading++, offset++) {
+	for(leading = buf; ofs != NUMBER_DIGITS + 1; leading++, ofs++) {
 		if(leading[1] == '0') {
-			if(offset != NUMBER_DIGITS)
+			if(ofs != NUMBER_DIGITS)
 				leading[1] = spaceCharacter;
 		} else {
 			if(negative != 0)
@@ -512,20 +510,20 @@ Uint8 *mnStringFormatNum(Uint8 *buffer, Sint32 input, Sint32 width)
 	}
 
 	if(width == 0) {
-		offset = 0;
-		if(buffer[0] == ' ') {
-			trim = buffer;
+		ofs = 0;
+		if(buf[0] == ' ') {
+			trim = buf;
 			do {
-				offset++;
-				if(offset == NUMBER_DIGITS)
+				ofs++;
+				if(ofs == NUMBER_DIGITS)
 					break;
 				trim++;
 			} while(*trim == ' ');
 		}
-		return buffer + offset;
+		return buf + ofs;
 	}
 
 	if(width < 0 || width > NUMBER_DIGITS)
 		width = NUMBER_DIGITS;
-	return buffer + NUMBER_DIGITS + 1 - width;
+	return buf + NUMBER_DIGITS + 1 - width;
 }

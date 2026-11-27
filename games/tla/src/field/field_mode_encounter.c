@@ -25,12 +25,12 @@ void fdWorldMapMarkPlaceVisited(Sint32 id, Sint32 variant)
 
 /* Returns the value of the flag entry whose flag is flag, or 1 when there is
    none or its value is 0. */
-Sint32 fdFlagEntriesGetValue(Sint32 flag)
+Sint32 fdFlagEntriesGetValue(Sint32 flg)
 {
 	const WORLD_MAP_PLACE *entry = fdWorldMapPlacesGetTable();
 
 	for(; entry->flg != 0; entry++) {
-		if(entry->flg == flag && entry->value != 0)
+		if(entry->flg == flg && entry->value != 0)
 			return entry->value;
 	}
 	return 1;
@@ -84,11 +84,11 @@ void fdEncounterSelectMapZones(Sint32 useRules)
 /* Returns the World Map encounter zone for the ground at position (0 for none),
    and chooses the battle background for its battle environment
    (MainRoutineStateWork.battleBg). Flying, there are none; aboard the ship, the
-   zones are WorldMap_ShipEncounterRules'; a rule's flag must be set for it to
+   zones are WorldMapShipEncounterRules'; a rule's flag must be set for it to
    apply. */
-Sint32 fdEncounterResolveWorldMapZoneAndBackdrop(void *position)
+Sint32 fdEncounterResolveWorldMapZoneAndBackdrop(void *pos)
 {
-	const WORLD_MAP_ENCOUNTER_RULE *rule = WorldMap_EncounterRules;
+	const WORLD_MAP_ENCOUNTER_RULE *rule = WorldMapEncounterRules;
 	Sint32							environment;
 	Uint32							region;
 	Sint32							zone;
@@ -97,9 +97,8 @@ Sint32 fdEncounterResolveWorldMapZoneAndBackdrop(void *position)
 	if(party->movementMode == LEADER_MOVEMENT_FLYING_SHIP)
 		return 0;
 	if(party->movementMode == LEADER_MOVEMENT_SHIP)
-		rule = WorldMap_ShipEncounterRules;
-	environment =
-		fdWorldMapGetBattleEnvironmentStub(position, (Sint32 *)&region);
+		rule = WorldMapShipEncounterRules;
+	environment = fdWorldMapGetBattleEnvironmentStub(pos, (Sint32 *)&region);
 	region %= WORLD_MAP_ENCOUNTER_REGIONS;
 	zone = 0;
 	for(; rule->region != -1; rule++) {
@@ -231,7 +230,7 @@ Uint16 fdEncounterGetFormationAtSlot(Sint32 zone, Sint32 slot)
    zone and slot. */
 Uint16 fdEncounterGetDjinnFormation(Sint32 djinni)
 {
-	Uint16 *zoneAndSlot = (Uint16 *)(Encounter_DjinnBattles + djinni * 4);
+	Uint16 *zoneAndSlot = (Uint16 *)(EncounterDjinnBattles + djinni * 4);
 
 #if FIX_FUNCTION_SIGNATURES
 	return fdEncounterGetFormationAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
@@ -389,26 +388,26 @@ Sint16 fdBattleBackgroundGetSelected(void)
 #define BATTLE_BACKGROUND_RULE_RESOURCE 0xffff
 
 /* Chooses the battle background for the current scene.
-   Scene_BattleBackgroundRules lists each battle background (a word with bit 31
+   SceneBattleBackgroundRules lists each battle background (a word with bit 31
    set) followed by the scenes that use it, ended by 0; a scene takes the one
    listed last before it, and a scene not listed takes the last one. Once the
    Mars Lighthouse has thawed, the second dragon hall backdrop becomes the
    first. */
 void fdBattleBackgroundSelectForMap(void)
 {
-	Sint32		  target = MainRoutineStateWork.next;
-	const Sint32 *table = Scene_BattleBackgroundRules;
-	Sint32		  entry = *table++;
+	Sint32		  tgt = MainRoutineStateWork.next;
+	const Sint32 *tbl = SceneBattleBackgroundRules;
+	Sint32		  entry = *tbl++;
 	/* The first scene_rules.c word names a battle background. */
 	Sint32 backdrop;
 
-	if(entry != 0 && entry != target) {
+	if(entry != 0 && entry != tgt) {
 		do {
 			if(entry & BATTLE_BACKGROUND_RULE) {
 				backdrop = entry & BATTLE_BACKGROUND_RULE_RESOURCE;
 			}
-			entry = *table++;
-		} while(entry != 0 && entry != target);
+			entry = *tbl++;
+		} while(entry != 0 && entry != tgt);
 	}
 	if(backdrop == RESOURCE_DRAGON_HALL_B_BACKDROP &&
 		syGameFlagGet(FLAG_MARS_LIGHTHOUSE_THAWED))
@@ -456,12 +455,12 @@ void fdBattleBackgroundSelectForEnvironment(Sint32 environment)
    the ones in battle. */
 Bool fdPartyIsInFrontRow(Sint32 owner)
 {
-	Sint32 count = gmPartyCountMembersStub();
+	Sint32 cnt = gmPartyCountMembersStub();
 	Sint32 i;
 
-	if(count > PARTY_BATTLE_SIZE)
-		count = PARTY_BATTLE_SIZE;
-	for(i = 0; i < count; i++) {
+	if(cnt > PARTY_BATTLE_SIZE)
+		cnt = PARTY_BATTLE_SIZE;
+	for(i = 0; i < cnt; i++) {
 		if(MainRoutineStateWork.party[i] == owner)
 			return TRUE;
 	}
@@ -469,7 +468,7 @@ Bool fdPartyIsInFrontRow(Sint32 owner)
 }
 
 /* Chooses the battle music for slot of zone (MainRoutineStateWork.battleMusic):
-   a key takes the song listed last before it in Encounter_BattleMusic, and a
+   a key takes the song listed last before it in EncounterBattleMusic, and a
    link battle (FLAG_LINK_BATTLE) keeps the music playing. With no song found,
    it is MUS_BATTLE_ON_THE_SEA on the ship before it flies, else by the front
    row: MUS_BATTLE_THE_LOST_AGE with Felix, MUS_BATTLE_THE_BROKEN_SEAL with
@@ -477,7 +476,7 @@ Bool fdPartyIsInFrontRow(Sint32 owner)
 void fdEncounterSelectBattleMusic(Sint32 zone, Sint32 slot)
 {
 	Sint16		  key = (zone << 4) + slot;
-	const Sint16 *table = Encounter_BattleMusic;
+	const Sint16 *tbl = EncounterBattleMusic;
 	Uint16		  music;
 	Uint16		  value;
 
@@ -485,7 +484,7 @@ void fdEncounterSelectBattleMusic(Sint32 zone, Sint32 slot)
 		music = SOUND_KEEP_BGM;
 	} else {
 		for(;;) {
-			value = *table++;
+			value = *tbl++;
 			if(value == 0)
 				break;
 			if(value == (Uint16)key)

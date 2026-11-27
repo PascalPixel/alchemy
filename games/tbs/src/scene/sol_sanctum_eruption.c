@@ -56,31 +56,31 @@ enum { EMBER_COUNT = 16 };
 enum { RISING_LIGHT_COUNT = 10 };
 
 /* Unused: eight bytes before the embers' states that nothing reads. */
-Uint8 SolSanctumEruption_UnusedBeforeEmberState[8] BSS_DATA;
+Uint8 SolSanctumEruptionUnusedBeforeEmberState[8] BSS_DATA;
 /* Each ember's state, and the shake an ember's landing starts: ten times its
-   pixels, three less each frame. */
+   pixels, three less each tick. */
 Sint32			  EmberState[EMBER_COUNT] BSS_DATA;
 Sint32 EmberTimer BSS_DATA;
 /* Unused: twelve bytes after the ember timer that nothing reads. */
-Uint8 SolSanctumEruption_UnusedAfterEmberTimer[12] BSS_DATA;
+Uint8 SolSanctumEruptionUnusedAfterEmberTimer[12] BSS_DATA;
 /* The elemental lights the chamber throws out: each one's actor, and its age in
-   frames, 0 for none. */
+   ticks, 0 for none. */
 ACTOR *RisingLights[RISING_LIGHT_COUNT] BSS_DATA;
 /* Unused: eight bytes after the lights' actors that nothing reads. */
-Uint8				   SolSanctumEruption_UnusedAfterRisingLights[8] BSS_DATA;
+Uint8				   SolSanctumEruptionUnusedAfterRisingLights[8] BSS_DATA;
 Sint32				   RisingLightTimers[RISING_LIGHT_COUNT] BSS_DATA;
 Sint32 EmberMask	   BSS_DATA;
 Sint32 EmberLevel	   BSS_DATA;
 Sint32 EmberLevelTimer BSS_DATA;
 
-extern Sint32	   Eruption_RisingLightOrigins[];
-extern Uint32	   SolSanctumEruption_Exits[];
-extern ACTOR_PLACE SolSanctumEruption_ActorPlacements[];
-extern CUE		   SolSanctumEruption_Cues[];
-extern Sint32	   Eruption_EmberScript[];
+extern Sint32	   EruptionRisingLightOrigins[];
+extern Uint32	   SolSanctumEruptionExits[];
+extern ACTOR_PLACE SolSanctumEruptionActorPlacements[];
+extern CUE		   SolSanctumEruptionCues[];
+extern Sint32	   EruptionEmberScript[];
 
 /* The eruption's actors, numbered in the order of
-   SolSanctumEruption_ActorPlacements. */
+   SolSanctumEruptionActorPlacements. */
 typedef enum COLLAPSE_ACTOR_ID {
 	/* The shadow on the platform under each who leaves with Saturos: a blank
 	   actor, whose sprite draws only its shadow, shrunk with the departing
@@ -116,7 +116,7 @@ static void scSolSanctumEruptionUpdateElementalLights(void);
 static void scSolSanctumEruptionFadeCameraTo(Sint32 x, Sint32 z);
 static void scSolSanctumEruptionClearStatueMetatiles(void);
 static void scSolSanctumEruptionSetPaleTint(
-	Sint32 enabled, Sint32 frames, Sint32 waitFrames);
+	Sint32 enabled, Sint32 ticks, Sint32 waitTicks);
 static void scSolSanctumEruptionFlashWiseOne(ACTOR *actor);
 static void scSolSanctumEruptionSpawnEffectPair(ACTOR *parent);
 static void scSolSanctumEruptionUpdateWiseOnePalette(void);
@@ -150,15 +150,15 @@ enum { BLUE_CRYSTAL_ANIMATION_GLINT = 2, BLUE_CRYSTAL_ANIMATION_SHATTER = 3 };
    idle. */
 enum { WISE_ONE_ANIMATION_LOWER_EYE = 2, WISE_ONE_ANIMATION_RAISE_EYE = 3 };
 
-/* A light stretches for ELEMENTAL_LIGHT_STRETCH_FRAMES, narrowing by nine
+/* A light stretches for ELEMENTAL_LIGHT_STRETCH_TICKS, narrowing by nine
    tenths of its width, then is lifted out of view until it is done with at
-   ELEMENTAL_LIGHT_FRAMES. */
-#define ELEMENTAL_LIGHT_STRETCH_FRAMES 8
-#define ELEMENTAL_LIGHT_FRAMES		   14
+   ELEMENTAL_LIGHT_TICKS. */
+#define ELEMENTAL_LIGHT_STRETCH_TICKS 8
+#define ELEMENTAL_LIGHT_TICKS		  14
 #define ELEMENTAL_LIGHT_SCALE_X_DECREASE \
-	(toFIXED(9) / 10 / ELEMENTAL_LIGHT_STRETCH_FRAMES)
+	(toFIXED(9) / 10 / ELEMENTAL_LIGHT_STRETCH_TICKS)
 
-/* EmberState: free, in flight, then counting frames from its landing, when it
+/* EmberState: free, in flight, then counting ticks from its landing, when it
    bursts, until it is put away and then freed. */
 enum {
 	EMBER_FREE = 0,
@@ -168,15 +168,15 @@ enum {
 	EMBER_DONE = 20
 };
 
-/* EmberMask for an ember every `frames` frames, a power of two: one is launched
-   when the frame count has none of the mask's bits. */
-#define EMBER_EVERY(frames)		((frames) - 1)
+/* EmberMask for an ember every `ticks` ticks, a power of two: one is launched
+   when the tick count has none of the mask's bits. */
+#define EMBER_EVERY(ticks)		((ticks) - 1)
 #define EMBER_EMISSION_DISABLED 999
 #define LIGHT_SCAN_STILL_ACTIVE 888
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return SolSanctum_StarRoomEntrances;
+	return SolSanctumStarRoomEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -186,19 +186,19 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return SolSanctumEruption_Exits;
+	return SolSanctumEruptionExits;
 }
 
 /* Returns everyone the script moves, all placed off the map until it does. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return SolSanctumEruption_ActorPlacements;
+	return SolSanctumEruptionActorPlacements;
 }
 
 /* Returns the empty cue table, because the scene is one script. */
 const CUE *scGetCues(void)
 {
-	return SolSanctumEruption_Cues;
+	return SolSanctumEruptionCues;
 }
 
 /* Stages Saturos, Menardi, Alex and Felix around Jenna and Kraden. */
@@ -234,7 +234,7 @@ static void scSolSanctumEruptionPlayHostageScript(void)
 	fdMapGridCenterOnFollowedPoint();
 	FieldStateWork->transitionFrm = 8;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(4);
 	fdScriptWait(4);
@@ -352,8 +352,8 @@ static void scSolSanctumEruptionPlayHostageScript(void)
 	fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 30);
 	/* Embers start to rain from the Wise One. */
 	scSolSanctumEruptionResetEmberEmission();
-	sySetFrameEvent(scSolSanctumEruptionStepEmbers, EVENT_PASS_FRAME);
-	sySetFrameEvent(scSolSanctumEruptionUpdateEmberFrequency, EVENT_PASS_FRAME);
+	sySetTickEvent(scSolSanctumEruptionStepEmbers, EVENT_PASS_TICK);
+	sySetTickEvent(scSolSanctumEruptionUpdateEmberFrequency, EVENT_PASS_TICK);
 	fdScriptWait(240);
 	/* Saturos: "It must be the guardian of the Elemental Stars!" The camera
 	   moves to his group, all facing west. */
@@ -602,7 +602,7 @@ static void scSolSanctumEruptionRaiseAndShrinkActor(Sint32 actorId)
 {
 	ACTOR *actor;
 	ACTOR *shadow;
-	Uint8  frame;
+	Uint8  frm;
 
 	shadow = fdActorGet(ACTOR_PLATFORM_SHADOW);
 	shadow->scaleX = toFIXED(1);
@@ -616,12 +616,12 @@ static void scSolSanctumEruptionRaiseAndShrinkActor(Sint32 actorId)
 	fdActorSetSprColById(actorId, SPRITE_COLOR_BLINK);
 	actor->motionFlg = 0;
 	sySndPlay(SE_ASCEND);
-	for(frame = 0; frame != 60; frame++) {
+	for(frm = 0; frm != 60; frm++) {
 		actor->y.fixed += toFIXED(1) / 2;
 		fdScriptWait(1);
 	}
 	sySndPlay(SE_WARP);
-	for(frame = 0; frame != 90; frame++) {
+	for(frm = 0; frm != 90; frm++) {
 		actor->y.fixed += toFIXED(1) / 10;
 		actor->scaleX -= toFIXED(1) / 100;
 		actor->scaleY -= toFIXED(1) / 100;
@@ -667,16 +667,16 @@ static void scSolSanctumEruptionThrowEruptionRing(void)
 {
 	ACTOR *actor;
 	ACTOR *spun;
-	Uint32 crystalIndex;
-	Sint32 angle;
-	SPR	  *sprite;
-	FIXED  offsetX;
-	FIXED  offsetZ;
+	Uint32 crystalIdx;
+	Sint32 ang;
+	SPR	  *spr;
+	FIXED  ofsX;
+	FIXED  ofsZ;
 
-	for(crystalIndex = ACTOR_FIRST_CRYSTAL;
-		crystalIndex < ACTOR_FIRST_CRYSTAL + CRYSTAL_COUNT; crystalIndex++) {
-		actor = fdActorGet(crystalIndex);
-		fdActorStop(crystalIndex);
+	for(crystalIdx = ACTOR_FIRST_CRYSTAL;
+		crystalIdx < ACTOR_FIRST_CRYSTAL + CRYSTAL_COUNT; crystalIdx++) {
+		actor = fdActorGet(crystalIdx);
+		fdActorStop(crystalIdx);
 		fdActorSetSprFlags(actor, 0);
 		fdActorSelectAnimation(actor, BLUE_CRYSTAL_ANIMATION_GLINT);
 		actor->spr->image.pri = 0;
@@ -690,22 +690,22 @@ static void scSolSanctumEruptionThrowEruptionRing(void)
 		actor->z.fixed = toFIXED(132);
 	}
 	sySndPlay(SE_CRASH);
-	for(crystalIndex = 0; crystalIndex < CRYSTAL_COUNT; crystalIndex++) {
-		spun = fdActorGet(crystalIndex + ACTOR_FIRST_CRYSTAL);
-		sprite = spun->spr;
-		angle = crystalIndex * FACING_STEP;
-		sprite->rotation = angle - DEGtoANG(90);
-		offsetX = syMulFX(syCos(angle), toFIXED(256));
-		offsetZ = syMulFX(sySin(angle), toFIXED(256));
-		syFieldActorSetMoveTargetFX(spun, spun->x.fixed + offsetX,
-			spun->y.fixed, spun->z.fixed + offsetZ);
+	for(crystalIdx = 0; crystalIdx < CRYSTAL_COUNT; crystalIdx++) {
+		spun = fdActorGet(crystalIdx + ACTOR_FIRST_CRYSTAL);
+		spr = spun->spr;
+		ang = crystalIdx * FACING_STEP;
+		spr->rotation = ang - DEGtoANG(90);
+		ofsX = syMulFX(syCos(ang), toFIXED(256));
+		ofsZ = syMulFX(sySin(ang), toFIXED(256));
+		syFieldActorSetMoveTargetFX(
+			spun, spun->x.fixed + ofsX, spun->y.fixed, spun->z.fixed + ofsZ);
 	}
 	fdScriptWait(20);
 	fdActorWaitForMoveById(ACTOR_FIRST_CRYSTAL);
-	for(crystalIndex = ACTOR_FIRST_CRYSTAL;
-		crystalIndex < ACTOR_FIRST_CRYSTAL + CRYSTAL_COUNT; crystalIndex++) {
-		actor = fdActorGet(crystalIndex);
-		fdActorStop(crystalIndex);
+	for(crystalIdx = ACTOR_FIRST_CRYSTAL;
+		crystalIdx < ACTOR_FIRST_CRYSTAL + CRYSTAL_COUNT; crystalIdx++) {
+		actor = fdActorGet(crystalIdx);
+		fdActorStop(crystalIdx);
 		actor->scaleX = toFIXED(1);
 		actor->scaleY = toFIXED(1);
 		actor->x.fixed = 0;
@@ -721,14 +721,14 @@ static void scSolSanctumEruptionThrowEruptionRing(void)
 /* Resets the sixteen ember slots and their emission timers. */
 static void scSolSanctumEruptionResetEmberEmission(void)
 {
-	Uint32 emberIndex;
+	Uint32 emberIdx;
 
 	EmberMask = EMBER_EVERY(64);
 	EmberTimer = 0;
 	EmberLevel = 0;
 	EmberLevelTimer = 120;
-	for(emberIndex = 0; emberIndex < EMBER_COUNT; emberIndex++) {
-		EmberState[emberIndex] = EMBER_FREE;
+	for(emberIdx = 0; emberIdx < EMBER_COUNT; emberIdx++) {
+		EmberState[emberIdx] = EMBER_FREE;
 	}
 }
 
@@ -737,10 +737,10 @@ static void scSolSanctumEruptionStepEmbers(void)
 {
 	WEATHER_STATE *sparkles;
 	Sint32		   shakePixels;
-	Uint8		   emberIndex;
+	Uint8		   emberIdx;
 	ACTOR		  *landedEmber;
 	ACTOR		  *ember;
-	Sint16		   angle;
+	Sint16		   ang;
 	FIXED		   x;
 	FIXED		   z;
 
@@ -757,16 +757,16 @@ static void scSolSanctumEruptionStepEmbers(void)
 	if(EmberTimer != 0)
 		EmberTimer -= 3;
 
-	for(emberIndex = 0; emberIndex < EMBER_COUNT; emberIndex++) {
-		if(EmberState[emberIndex] != EMBER_FREE) {
-			landedEmber = fdActorGet(emberIndex + ACTOR_FIRST_EMBER);
+	for(emberIdx = 0; emberIdx < EMBER_COUNT; emberIdx++) {
+		if(EmberState[emberIdx] != EMBER_FREE) {
+			landedEmber = fdActorGet(emberIdx + ACTOR_FIRST_EMBER);
 			if(landedEmber->tgtX == ACTOR_NO_TARGET &&
 				landedEmber->tgtZ == ACTOR_NO_TARGET) {
-				EmberState[emberIndex]++;
-				if(EmberState[emberIndex] == EMBER_LANDED)
+				EmberState[emberIdx]++;
+				if(EmberState[emberIdx] == EMBER_LANDED)
 					fdActorSelectAnimation(
 						landedEmber, BLUE_CRYSTAL_ANIMATION_SHATTER);
-				if(EmberState[emberIndex] == EMBER_PUT_AWAY) {
+				if(EmberState[emberIdx] == EMBER_PUT_AWAY) {
 					landedEmber->x.fixed = 0;
 					landedEmber->y.fixed = 0;
 					landedEmber->z.fixed = 0;
@@ -775,8 +775,8 @@ static void scSolSanctumEruptionStepEmbers(void)
 					landedEmber->tgtY = ACTOR_NO_TARGET;
 					landedEmber->tgtZ = ACTOR_NO_TARGET;
 					fdActorSetSprCol(landedEmber, SPRITE_COLOR_HIDDEN);
-				} else if(EmberState[emberIndex] == EMBER_DONE) {
-					EmberState[emberIndex] = EMBER_FREE;
+				} else if(EmberState[emberIdx] == EMBER_DONE) {
+					EmberState[emberIdx] = EMBER_FREE;
 				}
 			}
 		}
@@ -784,33 +784,33 @@ static void scSolSanctumEruptionStepEmbers(void)
 
 	if(EmberMask == EMBER_EMISSION_DISABLED)
 		return;
-	if(EmberMask & FrameCount)
+	if(EmberMask & TickCount)
 		return;
-	for(emberIndex = 0; emberIndex < EMBER_COUNT; emberIndex++) {
-		angle = syMathRemainderUnsigned(syRandomNext(), TRIG_TURN - 1);
-		ember = fdActorGet(emberIndex + ACTOR_FIRST_EMBER);
-		if(EmberState[emberIndex] == EMBER_FREE) {
+	for(emberIdx = 0; emberIdx < EMBER_COUNT; emberIdx++) {
+		ang = syMathRemainderUnsigned(syRandomNext(), TRIG_TURN - 1);
+		ember = fdActorGet(emberIdx + ACTOR_FIRST_EMBER);
+		if(EmberState[emberIdx] == EMBER_FREE) {
 			if(gmFlagGet(FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING) == 0)
 				sySndPlay(SE_GLITTER);
-			EmberState[emberIndex] = EMBER_FLYING;
+			EmberState[emberIdx] = EMBER_FLYING;
 			ember->motionFlg = 0;
 			ember->speedLimit = toFIXED(8);
 			ember->acceleration = toFIXED(1);
 			fdActorSetSprFlags(ember, 0);
 			ember->spr->image.pri = 1;
 			fdActorSelectAnimation(ember, BLUE_CRYSTAL_ANIMATION_GLINT);
-			fdActorStartScript(ember, Eruption_EmberScript);
-			ember->x.fixed = syMulFX(syCos((Uint16)angle),
+			fdActorStartScript(ember, EruptionEmberScript);
+			ember->x.fixed = syMulFX(syCos((Uint16)ang),
 								 toFIXED(syRandomBelow(256)) + toFIXED(256)) +
 				toFIXED(325);
 			ember->y.fixed = 0;
-			ember->z.fixed = syMulFX(sySin((Uint16)angle),
+			ember->z.fixed = syMulFX(sySin((Uint16)ang),
 								 toFIXED(syRandomBelow(256)) + toFIXED(256)) +
 				toFIXED(302);
-			x = syMulFX(syCos((Uint16)angle),
-				toFIXED(syRandomNext() & 63) + toFIXED(8));
-			z = syMulFX(sySin((Uint16)angle),
-				toFIXED(syRandomNext() & 63) + toFIXED(8));
+			x = syMulFX(
+				syCos((Uint16)ang), toFIXED(syRandomNext() & 63) + toFIXED(8));
+			z = syMulFX(
+				sySin((Uint16)ang), toFIXED(syRandomNext() & 63) + toFIXED(8));
 			syFieldActorSetMoveTargetFX(
 				ember, x + toFIXED(325), 0, z + toFIXED(286));
 			fdActorSetSprCol(ember, SPRITE_COLOR_NORMAL);
@@ -873,13 +873,13 @@ static void scSolSanctumEruptionPlayWiseOneRescue(void)
 	ACTOR		  *leader;
 	ACTOR		  *starOrigin;
 	ACTOR		  *garet;
-	SPR			  *leaderSprite;
-	SPR			  *garetSprite;
+	SPR			  *leaderSpr;
+	SPR			  *garetSpr;
 	ACTOR		  *star;
-	SPR			  *starSprite;
+	SPR			  *starSpr;
 	ICON_TRANSFER *glyph;
-	Uint8		   crystalIndex;
-	Uint32		   frame;
+	Uint8		   crystalIdx;
+	Uint32		   frm;
 	Sint32		   flickerDelay;
 
 	sparkles = WeatherStateWork;
@@ -892,8 +892,8 @@ static void scSolSanctumEruptionPlayWiseOneRescue(void)
 	fdPaletteFadeStartInterpolation(40);
 	fdScriptWait(40);
 	syCloseEvent(scSolSanctumEruptionStepEmbers);
-	for(crystalIndex = 0; crystalIndex < CRYSTAL_COUNT; crystalIndex++) {
-		fdActorSetPos(ACTOR_FIRST_CRYSTAL + crystalIndex, 0, 0);
+	for(crystalIdx = 0; crystalIdx < CRYSTAL_COUNT; crystalIdx++) {
+		fdActorSetPos(ACTOR_FIRST_CRYSTAL + crystalIdx, 0, 0);
 	}
 	sySynch(1);
 	fdActorSetPos(ACTOR_WISE_ONE, 0, 0);
@@ -924,11 +924,11 @@ static void scSolSanctumEruptionPlayWiseOneRescue(void)
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	garet = fdActorGet(ACTOR_GARET);
-	leaderSprite = leader->spr;
-	garetSprite = garet->spr;
-	for(frame = 0; frame < 20; frame++) {
-		leaderSprite->rotation += TRIG_TURN / 256;
-		garetSprite->rotation -= TRIG_TURN / 256;
+	leaderSpr = leader->spr;
+	garetSpr = garet->spr;
+	for(frm = 0; frm < 20; frm++) {
+		leaderSpr->rotation += TRIG_TURN / 256;
+		garetSpr->rotation -= TRIG_TURN / 256;
 		leader->x.fixed += toFIXED(3) / 8;
 		garet->x.fixed -= toFIXED(3) / 8;
 		sySynch(1);
@@ -1219,8 +1219,8 @@ static void scSolSanctumEruptionPlayWiseOneRescue(void)
 	/* The floor by the Wise One starts to break up; the Wise One glows and
 	   holds it together with Psynergy. */
 	sySndPlay(SE_TREMOR);
-	sySetFrameEvent(
-		scSolSanctumEruptionFlickerFirstCollapseTiles, EVENT_PASS_FRAME);
+	sySetTickEvent(
+		scSolSanctumEruptionFlickerFirstCollapseTiles, EVENT_PASS_TICK);
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_WISE_ONE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdScriptWait(40);
@@ -1237,11 +1237,11 @@ static void scSolSanctumEruptionPlayWiseOneRescue(void)
 	fdScriptWait(20);
 	scStartScriptPsynergy();
 	fdActorSetAnimationAndWait(ACTOR_WISE_ONE, WISE_ONE_ANIMATION_LOWER_EYE);
-	for(frame = 0; frame < 40; frame++) {
+	for(frm = 0; frm < 40; frm++) {
 		scSolSanctumEruptionFlashWiseOne(wiseOne);
 		sySynch(1);
 	}
-	sySetFrameEvent(scSolSanctumEruptionUpdateWiseOnePalette, EVENT_PASS_FRAME);
+	sySetTickEvent(scSolSanctumEruptionUpdateWiseOnePalette, EVENT_PASS_TICK);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
 	fdPaletteFadeStartInterpolation(60);
 	fdScriptWait(30);
@@ -1308,14 +1308,14 @@ static void scSolSanctumEruptionPlayWiseOneRescue(void)
 		starOrigin->y.fixed + toFIXED(36), starOrigin->z.fixed);
 	if(star != NULL) {
 		glyph = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
-		starSprite = star->spr;
-		starSprite->flg = 0;
-		starSprite->cnt = 0;
-		starSprite->image.fullCol = 0;
-		starSprite->image.pal = 0;
-		starSprite->image.pri = 1;
+		starSpr = star->spr;
+		starSpr->flg = 0;
+		starSpr->cnt = 0;
+		starSpr->image.fullCol = 0;
+		starSpr->image.pal = 0;
+		starSpr->image.pri = 1;
 		mnIconDrawItem(ITEM_MARS_STAR);
-		syVRAMCacheLoad(starSprite->slot, ICON_TILE_BYTES, glyph->tiles);
+		syVRAMCacheLoad(starSpr->slot, ICON_TILE_BYTES, glyph->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 		fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
 		fdItemDispShowPicture(
@@ -1323,7 +1323,7 @@ static void scSolSanctumEruptionPlayWiseOneRescue(void)
 		fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
 	}
 	scSolSanctumEruptionSetPaleTint(1, 20, 0);
-	for(frame = 0; frame < 24; frame++) {
+	for(frm = 0; frm < 24; frm++) {
 		scSolSanctumEruptionFlashWiseOne(wiseOne);
 		sySynch(1);
 		scSolSanctumEruptionFlashWiseOne(wiseOne);
@@ -1397,8 +1397,8 @@ static void scSolSanctumEruptionPlayWiseOneRescue(void)
 	/* The floor breaks up again in two places; the Wise One floats to each and
 	   holds it together. */
 	sySndPlay(SE_TREMOR);
-	sySetFrameEvent(
-		scSolSanctumEruptionFlickerSecondCollapseTiles, EVENT_PASS_FRAME);
+	sySetTickEvent(
+		scSolSanctumEruptionFlickerSecondCollapseTiles, EVENT_PASS_TICK);
 	fdScriptWait(20);
 	fdCameraSetSpeed(1);
 	fdCameraMoveTo(184, CAMERA_KEEP, 132, 1);
@@ -1417,11 +1417,11 @@ static void scSolSanctumEruptionPlayWiseOneRescue(void)
 	fdActorFaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_WISE_ONE, WISE_ONE_ANIMATION_LOWER_EYE);
-	for(frame = 0; frame < 40; frame++) {
+	for(frm = 0; frm < 40; frm++) {
 		scSolSanctumEruptionFlashWiseOne(wiseOne);
 		sySynch(1);
 	}
-	sySetFrameEvent(scSolSanctumEruptionUpdateWiseOnePalette, EVENT_PASS_FRAME);
+	sySetTickEvent(scSolSanctumEruptionUpdateWiseOnePalette, EVENT_PASS_TICK);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
 	fdPaletteFadeStartInterpolation(60);
 	fdScriptWait(30);
@@ -1445,18 +1445,18 @@ static void scSolSanctumEruptionPlayWiseOneRescue(void)
 	fdPaletteFadeStartInterpolation(20);
 	fdScriptWait(20);
 	sySndPlay(SE_TREMOR);
-	sySetFrameEvent(
-		scSolSanctumEruptionFlickerFirstCollapseTiles, EVENT_PASS_FRAME);
+	sySetTickEvent(
+		scSolSanctumEruptionFlickerFirstCollapseTiles, EVENT_PASS_TICK);
 	fdScriptWait(40);
 	fdActorMoveToAndWait(ACTOR_WISE_ONE, 127, 110);
 	fdActorFaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_WISE_ONE, WISE_ONE_ANIMATION_LOWER_EYE);
-	for(frame = 0; frame < 40; frame++) {
+	for(frm = 0; frm < 40; frm++) {
 		scSolSanctumEruptionFlashWiseOne(wiseOne);
 		sySynch(1);
 	}
-	sySetFrameEvent(scSolSanctumEruptionUpdateWiseOnePalette, EVENT_PASS_FRAME);
+	sySetTickEvent(scSolSanctumEruptionUpdateWiseOnePalette, EVENT_PASS_TICK);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
 	fdPaletteFadeStartInterpolation(60);
 	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
@@ -1479,8 +1479,8 @@ static void scSolSanctumEruptionPlayWiseOneRescue(void)
 	fdPaletteFadeStartInterpolation(20);
 	fdScriptWait(20);
 	sySndPlay(SE_TREMOR);
-	sySetFrameEvent(
-		scSolSanctumEruptionFlickerSecondCollapseTiles, EVENT_PASS_FRAME);
+	sySetTickEvent(
+		scSolSanctumEruptionFlickerSecondCollapseTiles, EVENT_PASS_TICK);
 	scSolSanctumEruptionStopWiseOnePalette();
 	fdScriptWait(60);
 	fdActorMoveToAndWait(ACTOR_WISE_ONE, 184, 87);
@@ -1503,11 +1503,11 @@ static void scSolSanctumEruptionPlayWiseOneRescue(void)
 	fdScriptWait(20);
 	fdScriptShowMessage(ACTOR_WISE_ONE, 0);
 	fdScriptWait(20);
-	for(frame = 0; frame < 40; frame++) {
+	for(frm = 0; frm < 40; frm++) {
 		scSolSanctumEruptionFlashWiseOne(wiseOne);
 		sySynch(1);
 	}
-	sySetFrameEvent(scSolSanctumEruptionUpdateWiseOnePalette, EVENT_PASS_FRAME);
+	sySetTickEvent(scSolSanctumEruptionUpdateWiseOnePalette, EVENT_PASS_TICK);
 	fdScriptWait(20);
 	fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_SPRITES);
 	fdPaletteFadeStartInterpolation(60);
@@ -1584,11 +1584,11 @@ static void scSolSanctumEruptionDrawSecondCollapseTiles(Sint32 broken)
 	fdMapGridCenterOnFollowedPoint();
 }
 
-/* The first patch of floor breaking up: every other frame it is drawn broken or
+/* The first patch of floor breaking up: every other tick it is drawn broken or
    whole at random. */
 static void scSolSanctumEruptionFlickerFirstCollapseTiles(void)
 {
-	if((FrameCount & 1) == 0) {
+	if((TickCount & 1) == 0) {
 		if(syMathRemainderUnsigned(syRandomNext(), 100) > 50) {
 			scSolSanctumEruptionDrawFirstCollapseTiles(1);
 		} else {
@@ -1600,7 +1600,7 @@ static void scSolSanctumEruptionFlickerFirstCollapseTiles(void)
 /* The second patch of floor breaking up, as the first. */
 static void scSolSanctumEruptionFlickerSecondCollapseTiles(void)
 {
-	if((FrameCount & 1) == 0) {
+	if((TickCount & 1) == 0) {
 		if(syMathRemainderUnsigned(syRandomNext(), 100) > 50) {
 			scSolSanctumEruptionDrawSecondCollapseTiles(1);
 		} else {
@@ -1613,16 +1613,16 @@ static void scSolSanctumEruptionFlickerSecondCollapseTiles(void)
    four corners, then waits until the last has risen out of view. */
 static void scSolSanctumEruptionRaiseElementalLights(Uint32 corner)
 {
-	Uint32	lightIndex, clear;
+	Uint32	lightIdx, clear;
 	FIXED	x;
 	Sint32	y;
 	FIXED	z;
 	Sint32 *origin;
 	ACTOR  *actor;
-	SPR	   *sprite;
+	SPR	   *spr;
 
-	for(lightIndex = 0; lightIndex < CRYSTAL_COUNT; lightIndex++)
-		fdActorReleaseById(lightIndex + ACTOR_FIRST_CRYSTAL);
+	for(lightIdx = 0; lightIdx < CRYSTAL_COUNT; lightIdx++)
+		fdActorReleaseById(lightIdx + ACTOR_FIRST_CRYSTAL);
 	switch(corner) {
 	case CHAMBER_NORTHWEST:
 		fdPaletteFadeApplyTarget(
@@ -1643,10 +1643,10 @@ static void scSolSanctumEruptionRaiseElementalLights(Uint32 corner)
 	}
 	fdPaletteFadeStartInterpolation(60);
 	sySndPlay(SE_RISING_CHIMES);
-	lightIndex = 0;
-	clear = lightIndex;
-	for(origin = &Eruption_RisingLightOrigins[0];
-		lightIndex < RISING_LIGHT_COUNT; lightIndex++, origin += 2) {
+	lightIdx = 0;
+	clear = lightIdx;
+	for(origin = &EruptionRisingLightOrigins[0]; lightIdx < RISING_LIGHT_COUNT;
+		lightIdx++, origin += 2) {
 		x = origin[0];
 		y = origin[1];
 		z = 0;
@@ -1668,13 +1668,13 @@ static void scSolSanctumEruptionRaiseElementalLights(Uint32 corner)
 			z = toFIXED(464);
 			break;
 		}
-		RisingLightTimers[lightIndex] = clear;
+		RisingLightTimers[lightIdx] = clear;
 		actor = syFieldActorCreate(SPRITE_PARTICLE, x, y, z);
-		RisingLights[lightIndex] = actor;
+		RisingLights[lightIdx] = actor;
 		actor->motionFlg = clear;
-		sprite = actor->spr;
-		sprite->flg = clear;
-		sprite->image.pri = 1;
+		spr = actor->spr;
+		spr->flg = clear;
+		spr->image.pri = 1;
 		fdActorSelectAnimation(actor, 6);
 		sySynch(6);
 	}
@@ -1684,10 +1684,9 @@ static void scSolSanctumEruptionRaiseElementalLights(Uint32 corner)
 		fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	}
 	sySynch(20);
-	sySetFrameEvent(
-		scSolSanctumEruptionUpdateElementalLights, EVENT_PASS_FRAME);
+	sySetTickEvent(scSolSanctumEruptionUpdateElementalLights, EVENT_PASS_TICK);
 	sySndPlay(SE_GLITTER);
-	/* The lights rise in turn, six frames apart. */
+	/* The lights rise in turn, six ticks apart. */
 	RisingLightTimers[0] = 1;
 	sySynch(6);
 	RisingLightTimers[1] = 1;
@@ -1709,13 +1708,13 @@ static void scSolSanctumEruptionRaiseElementalLights(Uint32 corner)
 	RisingLightTimers[9] = 1;
 	sySynch(6);
 	for(;;) {
-		for(lightIndex = 0; lightIndex < RISING_LIGHT_COUNT; lightIndex++) {
-			if(RisingLightTimers[lightIndex] != 0) {
-				lightIndex = LIGHT_SCAN_STILL_ACTIVE;
+		for(lightIdx = 0; lightIdx < RISING_LIGHT_COUNT; lightIdx++) {
+			if(RisingLightTimers[lightIdx] != 0) {
+				lightIdx = LIGHT_SCAN_STILL_ACTIVE;
 				break;
 			}
 		}
-		if(lightIndex != LIGHT_SCAN_STILL_ACTIVE)
+		if(lightIdx != LIGHT_SCAN_STILL_ACTIVE)
 			break;
 		sySynch(1);
 	}
@@ -1725,19 +1724,19 @@ static void scSolSanctumEruptionRaiseElementalLights(Uint32 corner)
 	fdPaletteFadeStartInterpolation(40);
 }
 
-/* Stretches each active light for ELEMENTAL_LIGHT_STRETCH_FRAMES, then lifts it
+/* Stretches each active light for ELEMENTAL_LIGHT_STRETCH_TICKS, then lifts it
    out of view. */
 static void scSolSanctumEruptionUpdateElementalLights(void)
 {
-	Uint32 lightIndex;
+	Uint32 lightIdx;
 	Uint32 age;
 	ACTOR *actor;
 
-	for(lightIndex = 0; lightIndex < RISING_LIGHT_COUNT; lightIndex++) {
-		age = RisingLightTimers[lightIndex];
+	for(lightIdx = 0; lightIdx < RISING_LIGHT_COUNT; lightIdx++) {
+		age = RisingLightTimers[lightIdx];
 		if(age != 0) {
-			actor = RisingLights[lightIndex];
-			if(age <= ELEMENTAL_LIGHT_STRETCH_FRAMES) {
+			actor = RisingLights[lightIdx];
+			if(age <= ELEMENTAL_LIGHT_STRETCH_TICKS) {
 				actor->scaleX -= ELEMENTAL_LIGHT_SCALE_X_DECREASE;
 				actor->scaleY += toFIXED(1) / 2;
 				actor->y.fixed += toFIXED(3) / 10;
@@ -1746,10 +1745,10 @@ static void scSolSanctumEruptionUpdateElementalLights(void)
 				actor->y.fixed += toFIXED(20);
 				actor->tgtY += toFIXED(20);
 			}
-			age = RisingLightTimers[lightIndex] + 1;
-			RisingLightTimers[lightIndex] = age;
-			if(age > ELEMENTAL_LIGHT_FRAMES) {
-				RisingLightTimers[lightIndex] = 0;
+			age = RisingLightTimers[lightIdx] + 1;
+			RisingLightTimers[lightIdx] = age;
+			if(age > ELEMENTAL_LIGHT_TICKS) {
+				RisingLightTimers[lightIdx] = 0;
 			}
 		}
 	}
@@ -1801,7 +1800,7 @@ static void scSolSanctumEruptionClearStatueMetatiles(void)
 
 /* Fades the backgrounds into or out of the pale tint the room flashes. */
 static void scSolSanctumEruptionSetPaleTint(
-	Sint32 enabled, Sint32 frames, Sint32 waitFrames)
+	Sint32 enabled, Sint32 ticks, Sint32 waitTicks)
 {
 	if(enabled == 1) {
 		sySndPlay(SE_MATERIALIZE);
@@ -1811,34 +1810,34 @@ static void scSolSanctumEruptionSetPaleTint(
 		sySndPlay(SOUND_FADE_OUT_ACTION_SE);
 		fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
 	}
-	fdPaletteFadeStartInterpolation(frames);
-	if(waitFrames != 0) {
-		fdScriptWait(waitFrames);
+	fdPaletteFadeStartInterpolation(ticks);
+	if(waitTicks != 0) {
+		fdScriptWait(waitTicks);
 	}
 }
 
 /* Makes the Wise One flash white as it uses Psynergy, golden rings rising round
-   it every sixteen frames. */
+   it every sixteen ticks. */
 static void scSolSanctumEruptionFlashWiseOne(ACTOR *actor)
 {
-	if((FrameCount & 2) != 0) {
+	if((TickCount & 2) != 0) {
 		fdActorSetColMode(actor, SPRITE_COLOR_WHITE);
 	} else {
 		fdActorSetColMode(actor, SPRITE_COLOR_NORMAL);
 	}
-	if((FrameCount & 15) == 0) {
+	if((TickCount & 15) == 0) {
 		scSolSanctumEruptionSpawnEffectPair(actor);
 	}
 }
 
 /* Cycles the actor through its colours swapped six ways as it glows, golden
-   rings rising round it every sixteen frames. */
+   rings rising round it every sixteen ticks. */
 static void scSolSanctumEruptionCycleActorPalette(ACTOR *actor)
 {
-	if(FrameCount & 1) {
-		fdActorSetColMode(actor, syMathRemainderUnsigned(FrameCount >> 1, 6));
+	if(TickCount & 1) {
+		fdActorSetColMode(actor, syMathRemainderUnsigned(TickCount >> 1, 6));
 	}
-	if((FrameCount & 15) == 0) {
+	if((TickCount & 15) == 0) {
 		scSolSanctumEruptionSpawnEffectPair(actor);
 	}
 }
@@ -1851,33 +1850,33 @@ static void scSolSanctumEruptionSpawnEffectPair(ACTOR *parent)
 {
 	ACTOR			   *pair[2];
 	ACTOR			   *child;
-	SPR				   *sprite;
+	SPR				   *spr;
 	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
-	Sint32				effectIndex;
+	Sint32				effectIdx;
 
 	sySndPlay(SE_ERUPTION_COLUMNS);
-	for(effectIndex = 0; effectIndex < 2; ++effectIndex) {
+	for(effectIdx = 0; effectIdx < 2; ++effectIdx) {
 		child = syFieldActorCreate(SPRITE_GOLDEN_RINGS, parent->x.fixed,
 			parent->y.fixed, parent->z.fixed);
-		pair[effectIndex] = child;
+		pair[effectIdx] = child;
 		if(child != NULL) {
 			child->groundHeight = parent->groundHeight;
-			sprite = child->spr;
+			spr = child->spr;
 			child->motionFlg = 0;
 			child->tmr = 0;
 			child->watchedActor = (ACTOR_OR_EFFECT *)parent;
-			if(sprite != NULL) {
-				fdSprStartAnimation(sprite, 0);
-				sprite->flg = 0;
-				syVRAMCacheFreeEntry(sprite->slot);
-				sprite->slot = effectState->tileSlot;
-				sprite->retainCacheEntry = 1;
-				sprite->image.tile =
-					(VramCacheEntries[sprite->slot].ofs >> 5) & OBJ_TILE_MASK;
-				sprite->image.fullCol = 0;
-				sprite->image.shape = RING_HALF_SHAPE;
-				sprite->image.size = RING_HALF_SIZE;
-				sprite->entries[0]->picture = 0;
+			if(spr != NULL) {
+				fdSprStartAnimation(spr, 0);
+				spr->flg = 0;
+				syVRAMCacheFreeEntry(spr->slot);
+				spr->slot = effectState->tileSlot;
+				spr->retainCacheEntry = 1;
+				spr->image.tile =
+					(VramCacheEntries[spr->slot].ofs >> 5) & OBJ_TILE_MASK;
+				spr->image.fullCol = 0;
+				spr->image.shape = RING_HALF_SHAPE;
+				spr->image.size = RING_HALF_SIZE;
+				spr->entries[0]->picture = 0;
 			}
 		}
 	}
@@ -1904,9 +1903,9 @@ static void scSolSanctumEruptionUpdateWiseOnePalette(void)
 #include "shared/sol_sanctum_elemental_star_lights.c"
 
 /* Unused: an actor script nothing starts. It sends an actor up at 6 pixels a
-   frame, growing it by a 25th each frame of its loop, then sets it back to full
+   tick, growing it by a 25th each tick of its loop, then sets it back to full
    size. */
-Sint32 SolSanctumEruption_UnusedRiseAndGrowScript[] = {
+Sint32 SolSanctumEruptionUnusedRiseAndGrowScript[] = {
 	SC_SET(SW_VELOCITY_Y, toFIXED(6)),
 	SC_LABEL(1),
 	SC_ADD(SW_SCALE_X, toFIXED(1) / 25),
@@ -1921,7 +1920,7 @@ Sint32 SolSanctumEruption_UnusedRiseAndGrowScript[] = {
 /* clang-format off */
 /* Where each of the ten elemental lights springs from: its x from its */
 /* chamber's, and its height, in 16.16 pixels. */
-Sint32 Eruption_RisingLightOrigins[] = {
+Sint32 EruptionRisingLightOrigins[] = {
 	-toFIXED(6), 0,
 	toFIXED(10), toFIXED(10),
 	toFIXED(8), toFIXED(25),
@@ -1936,13 +1935,13 @@ Sint32 Eruption_RisingLightOrigins[] = {
 
 #include "shared/sol_sanctum_star_room_entrances.c"
 
-Uint32 SolSanctumEruption_Exits[] = {
+Uint32 SolSanctumEruptionExits[] = {
 	SCENE_EXITS(SolSanctumEruption),
 	SCENE_EXIT(SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS, SolSanctumLunaSolRooms, SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION),
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE SolSanctumEruption_ActorPlacements[] = {
+ACTOR_PLACE SolSanctumEruptionActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1998,13 +1997,13 @@ ACTOR_PLACE SolSanctumEruption_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE SolSanctumEruption_Cues[] = {
+CUE SolSanctumEruptionCues[] = {
 	{ CUE_TABLE_END },
 };
 
 #include "shared/sol_sanctum_star_metatiles.c"
 
-Sint32 Eruption_EmberScript[] = {
+Sint32 EruptionEmberScript[] = {
 	SC_CALL(scSolSanctumEruptionAlignEmberToHeading),
 	SC_END,
 };

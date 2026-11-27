@@ -54,7 +54,7 @@ Sint32 mnItemMenuRun(void)
 #endif
 	ITEM_MENU_STATE *screen;
 	Sint32			 item;
-	Sint32			 target;
+	Sint32			 tgt;
 	Sint32			 member;
 	Sint32			 result;
 #if ITEM_MENU_EXTRA_TEXT_TILES
@@ -87,7 +87,7 @@ Sint32 mnItemMenuRun(void)
 
 	/* Let the player choose. */
 	mnStartWatchingStart();
-	result = mnItemMenuRunCommands(&member, &target, &item);
+	result = mnItemMenuRunCommands(&member, &tgt, &item);
 	mnStopWatchingStart();
 	if(result == 1) {
 		FIELD_STATE *selection = FieldStateWork;
@@ -836,13 +836,13 @@ Sint32 mnItemMenuUse(void)
 void mnItemMenuInit(Sint32 x, Sint32 y, Sint32 mode, Sint32 columns)
 {
 	ITEM_MENU_STATE *menu = MenuState;
-	Sint32			 memberIndex;
+	Sint32			 memberIdx;
 
 	mnCreatePartyFigures(mnCursorCreate(menu), 2, 2, 8, 0);
 	/* The four figures stand at screen y 30; the screens raise the party member
 	   chosen to 26. */
-	for(memberIndex = 0; memberIndex < 4; memberIndex++)
-		menu->memberY[memberIndex] = MENU_MEMBER_Y;
+	for(memberIdx = 0; memberIdx < 4; memberIdx++)
+		menu->memberY[memberIdx] = MENU_MEMBER_Y;
 
 	menu->buttonHelpWin = NULL;
 	menu->statWin = NULL;
@@ -858,7 +858,7 @@ void mnItemMenuInit(Sint32 x, Sint32 y, Sint32 mode, Sint32 columns)
 /* Creates the 32 item icon sprites in window, off screen until placed: slots 0
    to 7 at MENU_ICON_HIDDEN_X, the rest 8 pixels further, all at
    MENU_ICON_HIDDEN_Y, each showing item graphic slot of the same number. */
-void mnSpawnIconEntries(ITEM_MENU_STATE *menu, WINDOW *window)
+void mnSpawnIconEntries(ITEM_MENU_STATE *menu, WINDOW *win)
 {
 	WINDOW_SPR **firstIcons;
 	Sint32		 firstSlot;
@@ -874,7 +874,7 @@ void mnSpawnIconEntries(ITEM_MENU_STATE *menu, WINDOW *window)
 		firstIcons = &menu->entryIcons[0];
 		for(; firstSlot < ICON_GRID_ROW; firstSlot++) {
 			*firstIcons++ = mnWindowSprCreateFromResourceStub(
-				ICON_KIND_ITEM, firstSlot, window, MENU_ICON_HIDDEN_X, y);
+				ICON_KIND_ITEM, firstSlot, win, MENU_ICON_HIDDEN_X, y);
 		}
 	}
 
@@ -885,7 +885,7 @@ void mnSpawnIconEntries(ITEM_MENU_STATE *menu, WINDOW *window)
 		secondIcons = &menu->entryIcons[ICON_GRID_ROW];
 		for(; secondSlot < 2 * ICON_GRID_ROW; secondSlot++) {
 			*secondIcons++ = mnWindowSprCreateFromResourceStub(
-				ICON_KIND_ITEM, secondSlot, window, 256, y);
+				ICON_KIND_ITEM, secondSlot, win, 256, y);
 		}
 	}
 
@@ -896,7 +896,7 @@ void mnSpawnIconEntries(ITEM_MENU_STATE *menu, WINDOW *window)
 		remainingIcons = &menu->entryIcons[2 * ICON_GRID_ROW];
 		for(; remainingSlot < MENU_ENTRY_ICONS; remainingSlot++) {
 			*remainingIcons++ = mnWindowSprCreateFromResourceStub(
-				ICON_KIND_ITEM, remainingSlot, window, 256, y);
+				ICON_KIND_ITEM, remainingSlot, win, 256, y);
 		}
 	}
 }
@@ -967,19 +967,19 @@ Sint32 mnItemMenuSelectMember(Sint32 side)
 {
 	ITEM_MENU_STATE *menu = MenuState;
 	Sint32			 result = 0;
-	Sint32			 memberIndex;
+	Sint32			 memberIdx;
 	UNIT			*unit;
 
-	memberIndex = menu->sideIdx[side];
+	memberIdx = menu->sideIdx[side];
 	mnWindowSprClearListStub(menu->descriptionWin);
 	menu->sideCnt[side] = menu->partyCnt;
-	if(memberIndex == -1) {
+	if(memberIdx == -1) {
 		menu->sideIdx[side] = result;
-		memberIndex = 0;
+		memberIdx = 0;
 	} else {
-		mnCursorSlide(MENU_MEMBER_CURSOR_X(memberIndex), 16);
+		mnCursorSlide(MENU_MEMBER_CURSOR_X(memberIdx), 16);
 	}
-	unit = gmUnitGetStub(menu->memberIds[memberIndex]);
+	unit = gmUnitGetStub(menu->memberIds[memberIdx]);
 	menu->itemCnt = mnItemMenuCollectItems(unit, menu->items, 0);
 	result = mnItemMenuRunMemberSelection(menu->memberIds, menu->items);
 	mnIconShow(menu->sideIcons[side]);
@@ -992,18 +992,18 @@ Sint32 mnItemMenuRunMemberSelection(Uint16 *memberIds, Uint16 *items)
 {
 	ITEM_MENU_STATE *menu;
 	Sint32			 selection;
-	Sint32			 memberCount;
+	Sint32			 memberCnt;
 	Sint32			 result;
 	UNIT			*unit;
 	Uint8			 sortMode;
 	Sint32			 showEquipment;
 	Bool			 redraw;
-	WINDOW			*window;
-	Sint32			 memberIndex;
+	WINDOW			*win;
+	Sint32			 memberIdx;
 
 	menu = MenuState;
 	selection = menu->sideIdx[0];
-	memberCount = menu->sideCnt[0];
+	memberCnt = menu->sideCnt[0];
 	redraw = TRUE;
 	result = 0;
 	sortMode = 0;
@@ -1026,37 +1026,37 @@ Sint32 mnItemMenuRunMemberSelection(Uint16 *memberIds, Uint16 *items)
 		MsgArrangeItemsHelp + 1, menu->buttonHelpWin, 0, 8);
 #else
 	mnTextDrawStringInWindowStub(
-		ItemMenu_ArrangeKeysString, menu->buttonHelpWin, 0, 0);
+		ItemMenuArrangeKeysString, menu->buttonHelpWin, 0, 0);
 	mnTextDrawMessageAsTilesStub(
 		MsgArrangeItemsHelp, menu->buttonHelpWin, 32, 0);
 	mnTextDrawStringInWindowStub(
-		ItemMenu_EquipmentKeyString, menu->buttonHelpWin, 16, 8);
+		ItemMenuEquipmentKeyString, menu->buttonHelpWin, 16, 8);
 	mnTextDrawMessageAsTilesStub(
 		MsgArrangeItemsHelp + 1, menu->buttonHelpWin, 32, 8);
 #endif
 	menu->sideIcons[0]->motion = redraw; /* ICON_SHOWN */
 	while(!gmFlagGetStub(FLAG_MENU_START_PRESSED)) {
-		selection = (selection + memberCount) % memberCount;
+		selection = (selection + memberCnt) % memberCnt;
 		mnCursorPos(MENU_MEMBER_CURSOR_X(selection), 16);
 		if(redraw) {
 			sortMode = 0;
 			redraw = FALSE;
-			window = menu->statWin;
+			win = menu->statWin;
 			unit = gmUnitGetStub(memberIds[selection]);
 			if(showEquipment) {
 				menu->itemCnt = mnItemMenuCollectItems(
 					gmUnitGetStub(memberIds[selection]), menu->items, 0);
 				mnItemMenuShowEquipment(memberIds[selection]);
 				mnStatPanelDraw(
-					window, memberIds[selection], 0, STATUS_PANEL_STATS);
+					win, memberIds[selection], 0, STATUS_PANEL_STATS);
 			} else {
 				mnItemMenuRefreshMember(memberIds[selection], 0);
 				mnStatPanelDraw(
-					window, memberIds[selection], 0, STATUS_PANEL_EXPERIENCE);
+					win, memberIds[selection], 0, STATUS_PANEL_EXPERIENCE);
 			}
 			/* Raise the chosen party member's figure. */
-			for(memberIndex = 0; memberIndex < 4; memberIndex++)
-				menu->memberY[memberIndex] = MENU_MEMBER_Y;
+			for(memberIdx = 0; memberIdx < 4; memberIdx++)
+				menu->memberY[memberIdx] = MENU_MEMBER_Y;
 			menu->memberY[selection] = MENU_MEMBER_RAISED_Y;
 		}
 		sySynch(1);
@@ -1124,88 +1124,88 @@ Sint32 mnItemMenuSelectTarget(Sint32 mode)
 {
 
 	ITEM_MENU_STATE *menu;
-	WINDOW			*window;
-	Sint32			 memberCount;
-	Sint32			 memberIndex;
+	WINDOW			*win;
+	Sint32			 memberCnt;
+	Sint32			 memberIdx;
 	Bool			 redraw;
 	Uint8			 result;
 	Bool			 descriptionShown;
-	Sint32			 heldCount;
-	WINDOW_SPR		*targetMarker;
+	Sint32			 heldCnt;
+	WINDOW_SPR		*tgtMarker;
 
 	menu = MenuState;
-	window = menu->itemWin;
-	memberIndex = menu->sideIdx[1];
-	memberCount = menu->partyCnt;
+	win = menu->itemWin;
+	memberIdx = menu->sideIdx[1];
+	memberCnt = menu->partyCnt;
 	redraw = TRUE;
 	result = 0;
 	descriptionShown = FALSE;
-	mnWindowSetBounds(window, 13, 5, 17, 12);
+	mnWindowSetBounds(win, 13, 5, 17, 12);
 	mnWindowSprRedrawSavedRectStub((void *)menu->itemWin);
 	gmUnitGetStub(menu->memberIds[menu->sideIdx[0]]);
-	sySetEvent(mnEquipmentMenuUpdateCompatibilityIndicators, EVENT_PASS_FRAME);
+	sySetEvent(mnEquipmentMenuUpdateCompatibilityIndicators, EVENT_PASS_TICK);
 	while(!gmFlagGetStub(FLAG_MENU_START_PRESSED)) {
 		if(redraw) {
 			redraw = FALSE;
-			memberIndex = (memberIndex + memberCount) % memberCount;
-			window = menu->itemWin;
-			gmUnitGetStub(menu->memberIds[memberIndex]);
+			memberIdx = (memberIdx + memberCnt) % memberCnt;
+			win = menu->itemWin;
+			gmUnitGetStub(menu->memberIds[memberIdx]);
 			/* The marker over the chosen party member, three tiles a party
 			   member; no screen makes it, so it is NULL (mnCursorCreate). */
-			targetMarker = menu->sideIcons[1];
-			targetMarker->spr.oam.x = targetMarker->x =
-				((menu->mainWin->x + memberIndex * 3) << 3) - 2;
+			tgtMarker = menu->sideIcons[1];
+			tgtMarker->spr.oam.x = tgtMarker->x =
+				((menu->mainWin->x + memberIdx * 3) << 3) - 2;
 			/* Giving: the party member's items and how many of this one they
 			   hold. */
 			if(mode == ITEM_TARGET_GIVE) {
-				mnItemMenuRefreshMember(menu->memberIds[memberIndex], 1);
-				mnWindowDrawDividerLineStub(window, 0, 9, 16, 9);
-				mnWindowClearInteriorTilesStub((void *)window, 0, 72, 120, 80);
-				if(memberIndex != menu->sideIdx[0]) {
-					heldCount =
-						mnItemMenuGetItemQuantity(menu->memberIds[memberIndex],
+				mnItemMenuRefreshMember(menu->memberIds[memberIdx], 1);
+				mnWindowDrawDividerLineStub(win, 0, 9, 16, 9);
+				mnWindowClearInteriorTilesStub((void *)win, 0, 72, 120, 80);
+				if(memberIdx != menu->sideIdx[0]) {
+					heldCnt =
+						mnItemMenuGetItemQuantity(menu->memberIds[memberIdx],
 							menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
 #if GIVE_TRADE_PROMPT_REPLACES_STOCK
-					if(mnItemMenuCountItems(menu->memberIds[memberIndex]) ==
+					if(mnItemMenuCountItems(menu->memberIds[memberIdx]) ==
 							INVENTORY_SLOTS &&
-						heldCount == 0)
+						heldCnt == 0)
 						mnTextDrawMessageAsTilesStub(
-							MsgTradeForWhat, window, 0, 72);
-					else if(heldCount != 0) {
-						mnTextDrawNumInWindowStub(heldCount, 2, window, 8, 72);
+							MsgTradeForWhat, win, 0, 72);
+					else if(heldCnt != 0) {
+						mnTextDrawNumInWindowStub(heldCnt, 2, win, 8, 72);
 						mnTextDrawMessageAsTilesStub(
-							MsgInStock, window, STOCK_LABEL_X, 72);
+							MsgInStock, win, STOCK_LABEL_X, 72);
 					} else {
 						mnTextDrawMessageAsTilesStub(
-							MsgNoneInStock, window, 16, 72);
+							MsgNoneInStock, win, 16, 72);
 					}
 #else
-					if(heldCount != 0) {
-						mnTextDrawNumInWindowStub(heldCount, 2, window, 8, 72);
+					if(heldCnt != 0) {
+						mnTextDrawNumInWindowStub(heldCnt, 2, win, 8, 72);
 						mnTextDrawMessageAsTilesStub(
-							MsgInStock, window, STOCK_LABEL_X, 72);
+							MsgInStock, win, STOCK_LABEL_X, 72);
 					} else {
 						mnTextDrawMessageAsTilesStub(
-							MsgNoneInStock, window, 16, 72);
+							MsgNoneInStock, win, 16, 72);
 					}
-					if(mnItemMenuCountItems(menu->memberIds[memberIndex]) ==
+					if(mnItemMenuCountItems(menu->memberIds[memberIdx]) ==
 							INVENTORY_SLOTS &&
-						heldCount == 0)
+						heldCnt == 0)
 						mnTextDrawMessageAsTilesStub(
-							MsgTradeForWhat, window, ITEM_TRADE_PROMPT_X, 72);
+							MsgTradeForWhat, win, ITEM_TRADE_PROMPT_X, 72);
 #endif
 				}
 				mnItemMenuDrawEquipPreview(menu->sideMember[0],
-					menu->selectedSlots[0], 0, menu->memberIds[memberIndex]);
+					menu->selectedSlots[0], 0, menu->memberIds[memberIdx]);
 			}
 			/* Using: the party member's status, and the item's name once. */
 			if(mode == ITEM_TARGET_USE) {
 				if(mnItemMenuIsStatRaisingItem(
 					   menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK))
-					mnStatPanelDraw(menu->statWin, menu->memberIds[memberIndex],
+					mnStatPanelDraw(menu->statWin, menu->memberIds[memberIdx],
 						menu->selectedSlots[0], STATUS_PANEL_STATS);
 				else
-					mnStatPanelDraw(menu->statWin, menu->memberIds[memberIndex],
+					mnStatPanelDraw(menu->statWin, menu->memberIds[memberIdx],
 						menu->selectedSlots[0], STATUS_PANEL_EXPERIENCE);
 				if(!gmFlagGetStub(FLAG_MENU_INFO_KEPT) && !descriptionShown) {
 					MENU_RESET_DESCRIPTION_WINDOW((void *)menu->descriptionWin);
@@ -1219,15 +1219,15 @@ Sint32 mnItemMenuSelectTarget(Sint32 mode)
 				}
 			}
 		}
-		mnCursorPos(MENU_MEMBER_CURSOR_X(memberIndex), 16);
+		mnCursorPos(MENU_MEMBER_CURSOR_X(memberIdx), 16);
 		sySynch(1);
 		if(PerPush & KEY_A) {
-			if(mode == ITEM_TARGET_GIVE && memberIndex == menu->sideIdx[0]) {
+			if(mode == ITEM_TARGET_GIVE && memberIdx == menu->sideIdx[0]) {
 				sySndPlayStub(SE_MENU_ERROR);
 				continue;
 			}
 			sySndPlayStub(SE_MENU_CONFIRM);
-			result = menu->memberIds[memberIndex];
+			result = menu->memberIds[memberIdx];
 			break;
 		}
 		if(PerPush & KEY_B) {
@@ -1237,51 +1237,51 @@ Sint32 mnItemMenuSelectTarget(Sint32 mode)
 		}
 		if(PerRepeat & KEY_LEFT) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
-			memberIndex--;
+			memberIdx--;
 			redraw = TRUE;
 		}
 		if(PerRepeat & KEY_RIGHT) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
 			redraw = TRUE;
-			memberIndex++;
+			memberIdx++;
 		}
 	}
 	/* The marker, still NULL. */
-	targetMarker = menu->sideIcons[1];
-	menu->sideIdx[1] = memberIndex;
-	mnIconShow(targetMarker);
-	targetMarker->motion = ICON_HIDDEN;
+	tgtMarker = menu->sideIcons[1];
+	menu->sideIdx[1] = memberIdx;
+	mnIconShow(tgtMarker);
+	tgtMarker->motion = ICON_HIDDEN;
 	mnEquipmentMenuStopCompatibilityIndicators();
 	sySynch(1);
-	menu->sideIdx[1] = memberIndex;
-	menu->selectedMember = menu->memberIds[memberIndex];
-	menu->sideMember[1] = menu->memberIds[memberIndex];
+	menu->sideIdx[1] = memberIdx;
+	menu->selectedMember = menu->memberIds[memberIdx];
+	menu->sideMember[1] = menu->memberIds[memberIdx];
 	return (Sint8)result;
 }
 
 /* Event while mnItemMenuSelectTarget chooses a party member to use or give the
-   item to, and while the command grid's cursor is on Give: every 32 frames, has
+   item to, and while the command grid's cursor is on Give: every 32 ticks, has
    each party figure nod (ANIM_NOD) if that party member can equip the item, or
    stand (ANIM_STAND) if not. */
 void mnEquipmentMenuUpdateCompatibilityIndicators(void)
 {
 	ITEM_MENU_STATE *menu;
-	Sint8			 memberIndex;
+	Sint8			 memberIdx;
 
 	menu = MenuState;
-	if((FrameCount & 31) == 0 && menu->partyCnt != 0) {
-		memberIndex = 0;
+	if((TickCount & 31) == 0 && menu->partyCnt != 0) {
+		memberIdx = 0;
 		do {
-			if(gmItemCanUnitEquipDirectStub(menu->memberIds[memberIndex],
+			if(gmItemCanUnitEquipDirectStub(menu->memberIds[memberIdx],
 				   menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) != 0) {
-				SPR *partyFigure = menu->memberSprs[memberIndex];
+				SPR *partyFigure = menu->memberSprs[memberIdx];
 				fdSprStartAnimationStub(partyFigure, ANIM_NOD);
 			} else {
-				SPR *partyFigure = menu->memberSprs[memberIndex];
+				SPR *partyFigure = menu->memberSprs[memberIdx];
 				fdSprStartAnimationStub(partyFigure, ANIM_STAND);
 			}
-			memberIndex++;
-		} while(memberIndex < menu->partyCnt);
+			memberIdx++;
+		} while(memberIdx < menu->partyCnt);
 	}
 }
 
@@ -1290,16 +1290,16 @@ void mnEquipmentMenuUpdateCompatibilityIndicators(void)
 void mnEquipmentMenuStopCompatibilityIndicators(void)
 {
 	ITEM_MENU_STATE *menu;
-	Sint8			 memberIndex;
+	Sint8			 memberIdx;
 
 	menu = MenuState;
 	if(menu->partyCnt != 0) {
-		memberIndex = 0;
+		memberIdx = 0;
 		do {
-			SPR *partyFigure = menu->memberSprs[memberIndex];
+			SPR *partyFigure = menu->memberSprs[memberIdx];
 			fdSprStartAnimationStub(partyFigure, ANIM_STAND);
-			memberIndex++;
-		} while(memberIndex < menu->partyCnt);
+			memberIdx++;
+		} while(memberIdx < menu->partyCnt);
 	}
 	syCloseEvent(&mnEquipmentMenuUpdateCompatibilityIndicators);
 }
@@ -1319,13 +1319,13 @@ Bool mnItemMenuIsStatRaisingItem(Sint32 itemId)
 }
 
 /* Clears the message window and writes message into it. */
-void mnItemMenuDrawMessage(Sint32 unused, Sint32 message)
+void mnItemMenuDrawMessage(Sint32 unused, Sint32 msg)
 {
 	ITEM_MENU_STATE *menu;
 
 	menu = MenuState;
 	mnWindowSprRedrawSavedRectStub(menu->questionWin);
-	mnTextDrawMessageAsTilesStub(message, menu->questionWin, 0, 0);
+	mnTextDrawMessageAsTilesStub(msg, menu->questionWin, 0, 0);
 }
 
 /* Hides the icon of each of the 32 list entries whose item is 0. Each of the 32
@@ -1347,15 +1347,15 @@ void mnHideEmptyEntryIcons(const Uint16 *items)
    item. */
 Sint32 mnItemMenuCountItems(Sint32 memberId)
 {
-	Sint32	count = 0;
+	Sint32	cnt = 0;
 	Uint16 *inventory = gmUnitGetStub(memberId)->inventory;
 	Sint32	slot;
 
 	for(slot = 0; slot < INVENTORY_SLOTS; slot++) {
 		if((*inventory++ & INVENTORY_ITEM_ID_MASK) != 0)
-			count++;
+			cnt++;
 	}
-	return count;
+	return cnt;
 }
 
 /* Returns how many of itemId the unit memberId holds: the quantity of its first
@@ -1363,21 +1363,20 @@ Sint32 mnItemMenuCountItems(Sint32 memberId)
 Sint32 mnItemMenuGetItemQuantity(Sint32 memberId, Sint32 itemId)
 {
 	UNIT  *unit;
-	Sint32 slotIndex;
+	Sint32 slotIdx;
 	Sint32 quantity;
 
 	quantity = 0;
 	unit = gmUnitGetStub(memberId);
-	for(slotIndex = 0; slotIndex < INVENTORY_SLOTS; slotIndex++) {
-		if(unit->inventory[slotIndex] != 0 &&
-			(unit->inventory[slotIndex] & INVENTORY_ITEM_ID_MASK) == itemId) {
+	for(slotIdx = 0; slotIdx < INVENTORY_SLOTS; slotIdx++) {
+		if(unit->inventory[slotIdx] != 0 &&
+			(unit->inventory[slotIdx] & INVENTORY_ITEM_ID_MASK) == itemId) {
 #if ITEM_QUANTITY_ADDS_ALL_STACKS
-			quantity +=
-				(unit->inventory[slotIndex] & INVENTORY_QUANTITY_MASK) >>
+			quantity += (unit->inventory[slotIdx] & INVENTORY_QUANTITY_MASK) >>
 				INVENTORY_QUANTITY_SHIFT;
 			quantity++;
 #else
-			quantity = (unit->inventory[slotIndex] & INVENTORY_QUANTITY_MASK) >>
+			quantity = (unit->inventory[slotIdx] & INVENTORY_QUANTITY_MASK) >>
 				INVENTORY_QUANTITY_SHIFT;
 			quantity++;
 			break;
@@ -1391,21 +1390,21 @@ Sint32 mnItemMenuGetItemQuantity(Sint32 memberId, Sint32 itemId)
    slots and clearing the rest. Returns how many there are. mode is not used. */
 Sint32 mnItemMenuCollectItems(UNIT *unit, Uint16 *items, Sint32 mode)
 {
-	Sint32 itemCount;
-	Sint32 slotIndex;
+	Sint32 itemCnt;
+	Sint32 slotIdx;
 
-	for(slotIndex = 0; slotIndex < MENU_ENTRY_ICONS; slotIndex++) {
-		items[slotIndex] = 0;
+	for(slotIdx = 0; slotIdx < MENU_ENTRY_ICONS; slotIdx++) {
+		items[slotIdx] = 0;
 	}
-	itemCount = 0;
-	for(slotIndex = 0; slotIndex < INVENTORY_SLOTS; slotIndex++) {
-		items[slotIndex] = 0;
-		if(unit->inventory[slotIndex] != 0) {
-			items[itemCount] = unit->inventory[slotIndex];
-			itemCount++;
+	itemCnt = 0;
+	for(slotIdx = 0; slotIdx < INVENTORY_SLOTS; slotIdx++) {
+		items[slotIdx] = 0;
+		if(unit->inventory[slotIdx] != 0) {
+			items[itemCnt] = unit->inventory[slotIdx];
+			itemCnt++;
 		}
 	}
-	return itemCount;
+	return itemCnt;
 }
 
 /* Loads each listed item's icon into its item icon sprite, the first 15 entries
@@ -1464,7 +1463,7 @@ UNUSED void mnItemMenuNoOperation(void)
    to member target: for a usable item, target's status; for equipment, target's
    stats with it equipped; for a Psynergy item, the Psynergy it teaches. */
 void mnItemMenuDrawEquipPreview(
-	Sint32 member, Sint32 slot, Sint32 mode, Sint32 target)
+	Sint32 member, Sint32 slot, Sint32 mode, Sint32 tgt)
 {
 	ITEM_MENU_STATE *menu = MenuState;
 	Sint32			 panelStyle = 0;
@@ -1478,7 +1477,7 @@ void mnItemMenuDrawEquipPreview(
 		panelStyle = STATUS_PANEL_LOWER_ONLY;
 	switch(gmItemGetDirectStub(inventoryEntry & INVENTORY_ITEM_ID_MASK)->type) {
 	case ITEM_TYPE_NONE: /* usable items */
-		mnStatPanelDraw(menu->statWin, target, slot, panelStyle);
+		mnStatPanelDraw(menu->statWin, tgt, slot, panelStyle);
 		break;
 	case ITEM_TYPE_WEAPON:
 	case ITEM_TYPE_ARMOR:
@@ -1488,64 +1487,64 @@ void mnItemMenuDrawEquipPreview(
 	case ITEM_TYPE_UNUSED:
 	case ITEM_TYPE_RING:
 	case ITEM_TYPE_SHIRT:
-		if(member == target) {
+		if(member == tgt) {
 			panelStyle |= STATUS_PANEL_EQUIP;
-			mnStatPanelDraw(menu->statWin, target, slot, panelStyle);
+			mnStatPanelDraw(menu->statWin, tgt, slot, panelStyle);
 		} else {
 			Sint32 size;
 
-			unit = gmUnitGetStub(target);
+			unit = gmUnitGetStub(tgt);
 			size = BATTLE_UNIT_SIZE;
 			member = (Sint32)syHeapAlloc(size);
 			syWordsCopy((void *)member, unit, size);
 			/* With room made, add the item unequipped and preview it in its new
 			   slot; otherwise the panel shows target's status without a
 			   preview. */
-			previewSlot = mnInventoryRemoveFirstUnflagged(target);
+			previewSlot = mnInventoryRemoveFirstUnflagged(tgt);
 			if(previewSlot != 0) {
 				inventoryEntry &= ~INVENTORY_EQUIPPED;
-				previewSlot = gmInventoryAddItemStub(target, inventoryEntry);
+				previewSlot = gmInventoryAddItemStub(tgt, inventoryEntry);
 				if(previewSlot != -1) {
 					panelStyle |= STATUS_PANEL_EQUIP;
 					mnStatPanelDraw(
-						menu->statWin, target, previewSlot, panelStyle);
+						menu->statWin, tgt, previewSlot, panelStyle);
 				} else {
-					mnStatPanelDraw(menu->statWin, target, slot, panelStyle);
+					mnStatPanelDraw(menu->statWin, tgt, slot, panelStyle);
 				}
 			} else {
-				mnStatPanelDraw(menu->statWin, target, slot, panelStyle);
+				mnStatPanelDraw(menu->statWin, tgt, slot, panelStyle);
 			}
 			syWordsCopy(unit, (void *)member, size);
 			syHeapRelease((void *)member);
 		}
 		break;
 	case ITEM_TYPE_PSYNERGY:
-		if(target == member) {
+		if(tgt == member) {
 			panelStyle |= STATUS_PANEL_LEARN;
-			mnStatPanelDraw(menu->statWin, target, slot, panelStyle);
+			mnStatPanelDraw(menu->statWin, tgt, slot, panelStyle);
 		} else {
 			Sint32 size;
-			void  *buffer;
+			void  *buf;
 
-			unit = gmUnitGetStub(target);
+			unit = gmUnitGetStub(tgt);
 			size = BATTLE_UNIT_SIZE;
-			buffer = syHeapAlloc(size);
-			syWordsCopy(buffer, unit, size);
-			previewSlot = mnInventoryRemoveFirstUnflagged(target);
+			buf = syHeapAlloc(size);
+			syWordsCopy(buf, unit, size);
+			previewSlot = mnInventoryRemoveFirstUnflagged(tgt);
 			if(previewSlot != 0) {
-				previewSlot = gmInventoryAddItemStub(target, inventoryEntry);
+				previewSlot = gmInventoryAddItemStub(tgt, inventoryEntry);
 				if(previewSlot != -1) {
 					panelStyle |= STATUS_PANEL_LEARN;
 					mnStatPanelDraw(
-						menu->statWin, target, previewSlot, panelStyle);
+						menu->statWin, tgt, previewSlot, panelStyle);
 				} else {
-					mnStatPanelDraw(menu->statWin, target, slot, panelStyle);
+					mnStatPanelDraw(menu->statWin, tgt, slot, panelStyle);
 				}
 			} else {
-				mnStatPanelDraw(menu->statWin, target, slot, panelStyle);
+				mnStatPanelDraw(menu->statWin, tgt, slot, panelStyle);
 			}
-			syWordsCopy(unit, buffer, size);
-			syHeapRelease(buffer);
+			syWordsCopy(unit, buf, size);
+			syHeapRelease(buf);
 		}
 		break;
 	}
@@ -1557,23 +1556,23 @@ Sint32 mnInventoryRemoveFirstUnflagged(Sint32 memberId)
 {
 	UNIT  *unit = gmUnitGetStub(memberId);
 	Sint32 result = 0;
-	Sint32 slotIndex;
+	Sint32 slotIdx;
 
-	for(slotIndex = 0; slotIndex < INVENTORY_SLOTS; slotIndex++) {
-		if(unit->inventory[slotIndex] == 0) {
+	for(slotIdx = 0; slotIdx < INVENTORY_SLOTS; slotIdx++) {
+		if(unit->inventory[slotIdx] == 0) {
 			result = 1;
 			break;
 		}
-		if((unit->inventory[slotIndex] & INVENTORY_EQUIPPED) == 0) {
+		if((unit->inventory[slotIdx] & INVENTORY_EQUIPPED) == 0) {
 			Sint32 quantity =
-				unit->inventory[slotIndex] >> INVENTORY_QUANTITY_SHIFT;
-			Sint32 count = quantity + 1;
-			Sint32 removedCount;
+				unit->inventory[slotIdx] >> INVENTORY_QUANTITY_SHIFT;
+			Sint32 cnt = quantity + 1;
+			Sint32 removedCnt;
 
 			if(quantity == 0)
-				count = 1;
-			for(removedCount = 0; removedCount < count; removedCount++)
-				result = gmInventoryRemoveStub(memberId, slotIndex);
+				cnt = 1;
+			for(removedCnt = 0; removedCnt < cnt; removedCnt++)
+				result = gmInventoryRemoveStub(memberId, slotIdx);
 			if(result != INVENTORY_REMOVE_LAST)
 				return 0;
 			result = 1;
@@ -1598,7 +1597,7 @@ Sint32 mnItemMenuCommandCursorX(Sint32 column, Sint32 row)
 {
 	if(column > 2 || row > 2 || column < 0 || row < 0)
 		return 0;
-	return ItemMenu_CommandColumnXTable[row * 3 + column];
+	return ItemMenuCommandColumnXTable[row * 3 + column];
 }
 
 /* Returns the y of the item command cursor: its top row, or the row below for
@@ -1630,14 +1629,14 @@ Sint32 mnItemMenuChooseCommand(void)
 	Sint32			 column;
 	Sint32			 lastCommand;
 	Sint32			 row;
-	Sint32			 commandIndex;
+	Sint32			 commandIdx;
 	Bool			 redraw;
 #if LANGUAGE != LANGUAGE_JAPANESE
 	Sint32 cursorX;
 	Sint32 cursorY;
 #endif
 
-	commandIndex = 0;
+	commandIdx = 0;
 	column = 0;
 	row = 0;
 	menu = MenuState;
@@ -1645,16 +1644,16 @@ Sint32 mnItemMenuChooseCommand(void)
 	mnItemMenuBuildCommands(commandStates);
 	/* Draw the item's name and the command grid, unless they are up already. */
 	if(menu->flg != 1) {
-		WINDOW *messageWindow;
+		WINDOW *msgWin;
 
 		mnItemMenuHideAllIcons();
 		mnWindowSprRedrawSavedRectStub((void *)menu->listWin);
-		messageWindow = menu->questionWin;
+		msgWin = menu->questionWin;
 		mnItemMenuFitMessageWindowToItemChoices();
-		mnWindowSprRedrawSavedRectStub((void *)messageWindow);
-		mnWindowDrawDividerLineStub(messageWindow, 0, 3, 16, 3);
+		mnWindowSprRedrawSavedRectStub((void *)msgWin);
+		mnWindowDrawDividerLineStub(msgWin, 0, 3, 16, 3);
 		mnItemMenuDrawItemHead();
-		mnItemMenuDrawCommands(commandStates, messageWindow);
+		mnItemMenuDrawCommands(commandStates, msgWin);
 		MENU_RESET_DESCRIPTION_WINDOW((void *)menu->descriptionWin);
 		MENU_DRAW_DESCRIPTION(
 			(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) +
@@ -1692,7 +1691,7 @@ Sint32 mnItemMenuChooseCommand(void)
 	} else {
 		column = (Sint8)(lastCommand % 3);
 		row = (Sint8)(lastCommand / 3);
-		commandIndex = row * 3 + column;
+		commandIdx = row * 3 + column;
 	}
 #if LANGUAGE != LANGUAGE_JAPANESE
 	cursorX = mnItemMenuCommandCursorX(column, row);
@@ -1709,21 +1708,21 @@ Sint32 mnItemMenuChooseCommand(void)
 			redraw = FALSE;
 			column = (column + 3) % 3;
 			row = (row + 2) % 2;
-			commandIndex = row * 3 + column;
+			commandIdx = row * 3 + column;
 			mnEquipmentMenuStopCompatibilityIndicators();
 			/* Preview the item in the status panel for the command under the
 			   cursor:
 			   the bottom row (Give, Remove, Drop) without it, Equip and Details
 			   with it, Use the party member's status. */
-			if(commandIndex > 2) {
+			if(commandIdx > 2) {
 				menu->equipPreview = 1;
 				mnItemMenuDrawEquipPreview(menu->sideMember[0],
 					menu->selectedSlots[0], 0, menu->sideMember[0]);
-				if(commandIndex == ITEM_COMMAND_GIVE) {
+				if(commandIdx == ITEM_COMMAND_GIVE) {
 					sySetEvent(&mnEquipmentMenuUpdateCompatibilityIndicators,
-						EVENT_PASS_FRAME);
+						EVENT_PASS_TICK);
 				}
-			} else if(commandIndex != 0) {
+			} else if(commandIdx != 0) {
 				menu->equipPreview = 0;
 				mnItemMenuDrawEquipPreview(menu->sideMember[0],
 					menu->selectedSlots[0], 0, menu->sideMember[0]);
@@ -1742,10 +1741,10 @@ Sint32 mnItemMenuChooseCommand(void)
 		sySynch(1);
 
 		if((PerPush & KEY_A) != 0) {
-			if(commandStates[commandIndex] == ITEM_COMMAND_STATE_DISABLED) {
+			if(commandStates[commandIdx] == ITEM_COMMAND_STATE_DISABLED) {
 				sySndPlayStub(SE_MENU_ERROR);
 			} else {
-				switch(commandIndex) {
+				switch(commandIdx) {
 				/* Use */
 				case ITEM_COMMAND_USE:
 					sySndPlayStub(SE_NOTE_MID);
@@ -1767,14 +1766,14 @@ Sint32 mnItemMenuChooseCommand(void)
 					sySndPlayStub(SE_MENU_CONFIRM);
 					break;
 				}
-				menu->listMode = commandIndex;
+				menu->listMode = commandIdx;
 				break;
 			}
 		}
 		if((PerPush & KEY_B) != 0) {
 			sySndPlayStub(SE_MENU_CANCEL);
-			commandIndex = -1;
-			menu->listMode = commandIndex;
+			commandIdx = -1;
+			menu->listMode = commandIdx;
 			break;
 		}
 
@@ -1799,7 +1798,7 @@ Sint32 mnItemMenuChooseCommand(void)
 
 	menu->equipPreview = 0;
 	mnEquipmentMenuStopCompatibilityIndicators();
-	return commandIndex;
+	return commandIdx;
 }
 
 /* Fills commandStates (indexed by ITEM_MENU_COMMAND) with
@@ -1871,46 +1870,46 @@ void mnItemMenuBuildCommands(Sint8 *commandStates)
 	TEXT_COLOR_GREY /* the grey of a command that refuses A */
 
 /* Writes the six command names into window, the disabled ones in grey. */
-void mnItemMenuDrawCommands(const Sint8 *commandStates, WINDOW *window)
+void mnItemMenuDrawCommands(const Sint8 *commandStates, WINDOW *win)
 {
 	Sint32 useState;
-	Uint32 firstCommandMessage;
+	Uint32 firstCommandMsg;
 
 	mnTextSetColStub(TEXT_COLOR_NORMAL);
 	useState = commandStates[ITEM_COMMAND_USE];
 	if(useState == ITEM_COMMAND_STATE_DISABLED)
 		mnTextSetColStub(TEXT_COLOR_DISABLED);
 
-	firstCommandMessage = MsgItemCommandUse;
+	firstCommandMsg = MsgItemCommandUse;
 	/* "Use" */
-	mnTextDrawMessageAsTilesStub(firstCommandMessage, window, 0, 24);
+	mnTextDrawMessageAsTilesStub(firstCommandMsg, win, 0, 24);
 	mnTextSetColStub(TEXT_COLOR_NORMAL);
 	if(commandStates[ITEM_COMMAND_EQUIP] == ITEM_COMMAND_STATE_DISABLED)
 		mnTextSetColStub(TEXT_COLOR_DISABLED);
 	/* "Equip" */
 	mnTextDrawMessageAsTilesStub(
-		firstCommandMessage + 1, window, ITEM_COMMAND_TEXT_X, 24);
+		firstCommandMsg + 1, win, ITEM_COMMAND_TEXT_X, 24);
 	mnTextSetColStub(TEXT_COLOR_NORMAL);
 	if(commandStates[ITEM_COMMAND_GIVE] == ITEM_COMMAND_STATE_DISABLED)
 		mnTextSetColStub(TEXT_COLOR_DISABLED);
 	/* "Give" */
-	mnTextDrawMessageAsTilesStub(firstCommandMessage + 2, window, 0, 32);
+	mnTextDrawMessageAsTilesStub(firstCommandMsg + 2, win, 0, 32);
 	mnTextSetColStub(TEXT_COLOR_NORMAL);
 	if(commandStates[ITEM_COMMAND_DROP] == ITEM_COMMAND_STATE_DISABLED)
 		mnTextSetColStub(TEXT_COLOR_DISABLED);
 	/* "Drop" */
-	mnTextDrawMessageAsTilesStub(firstCommandMessage + 3, window, 80, 32);
+	mnTextDrawMessageAsTilesStub(firstCommandMsg + 3, win, 80, 32);
 	mnTextSetColStub(TEXT_COLOR_NORMAL);
 	if(commandStates[ITEM_COMMAND_DETAILS] == ITEM_COMMAND_STATE_DISABLED)
 		mnTextSetColStub(TEXT_COLOR_DISABLED);
 	/* "Details" */
-	mnTextDrawMessageAsTilesStub(firstCommandMessage + 4, window, 80, 24);
+	mnTextDrawMessageAsTilesStub(firstCommandMsg + 4, win, 80, 24);
 	mnTextSetColStub(TEXT_COLOR_NORMAL);
 	if(commandStates[ITEM_COMMAND_REMOVE] == ITEM_COMMAND_STATE_DISABLED)
 		mnTextSetColStub(TEXT_COLOR_DISABLED);
 	/* "Remove" */
 	mnTextDrawMessageAsTilesStub(
-		firstCommandMessage + 5, window, ITEM_COMMAND_TEXT_X, 32);
+		firstCommandMsg + 5, win, ITEM_COMMAND_TEXT_X, 32);
 	mnTextSetColStub(TEXT_COLOR_NORMAL);
 }
 
@@ -1946,16 +1945,16 @@ Sint32 mnItemClassifyUseMode(Sint32 memberId, Sint32 inventoryEntry)
 
 			if(result == ITEM_USE_MODE_CHOOSE_MEMBER) {
 				Sint32 mask = ABILITY_USABLE_IN_BATTLE;
-				Uint8  flags = action->flg;
+				Uint8  flg = action->flg;
 
-				if((flags & ABILITY_USABLE_IN_FIELD) != 0) {
+				if((flg & ABILITY_USABLE_IN_FIELD) != 0) {
 					Uint8 range = action->range;
 					result = (range == ABILITY_RANGE_ALL)
 						? ITEM_USE_MODE_WHOLE_PARTY
 						: ITEM_USE_MODE_CHOOSE_MEMBER;
 				} else {
-					result = (flags & mask) ? ITEM_USE_MODE_UNUSABLE
-											: ITEM_USE_MODE_FROM_FIELD;
+					result = (flg & mask) ? ITEM_USE_MODE_UNUSABLE
+										  : ITEM_USE_MODE_FROM_FIELD;
 				}
 			}
 		}
@@ -1986,17 +1985,16 @@ void mnItemMenuTryBreak(void)
 }
 
 /* Opens the details window (top left, 13 by 10 tiles) and describes the item in
-   side itemIndex there. Returns 1. */
-Sint32 mnItemMenuOpenDetail(Sint32 itemIndex)
+   side itemIdx there. Returns 1. */
+Sint32 mnItemMenuOpenDetail(Sint32 itemIdx)
 {
 	ITEM_MENU_STATE *menu = MenuState;
 
 	mnWindowUpdateOrCreate(&menu->equipWin, 0, 0, 13, 10, WINDOW_FLAG_INSTANT);
 	mnPaletteLoadIconsIntoHighlight();
 
-	if(menu->selectedItems[itemIndex] != 0)
-		mnItemMenuDrawItemDetails(
-			menu->equipWin, menu->selectedItems[itemIndex]);
+	if(menu->selectedItems[itemIdx] != 0)
+		mnItemMenuDrawItemDetails(menu->equipWin, menu->selectedItems[itemIdx]);
 
 	return 1;
 }
@@ -2014,13 +2012,13 @@ Sint32 mnItemMenuShowDetails(Sint32 inventoryEntry)
 	ITEM_MENU_STATE *menu = MenuState;
 	Sint32			 changed = TRUE;
 #endif
-	WINDOW *window;
+	WINDOW *win;
 	Sint32	page = 0;
 
 #if LANGUAGE != LANGUAGE_JAPANESE
 	itemIcon->motion = ICON_HIDDEN;
 #endif
-	window = mnWindowCreateStub(
+	win = mnWindowCreateStub(
 		0, 0, ITEM_QUANTITY_WINDOW_WIDTH, 10, WINDOW_FLAG_INSTANT);
 	/* Hide the party figures (without their placement event they are not drawn)
 	   and the status panel's portrait (the state's cursor), which the window
@@ -2041,7 +2039,7 @@ Sint32 mnItemMenuShowDetails(Sint32 inventoryEntry)
 		if(changed != 0) {
 			changed = FALSE;
 			page = (page + 5) % 5;
-			mnItemMenuDrawItemDetails(window, inventoryEntry);
+			mnItemMenuDrawItemDetails(win, inventoryEntry);
 		}
 
 		if(PerPush & KEY_A)
@@ -2063,21 +2061,21 @@ Sint32 mnItemMenuShowDetails(Sint32 inventoryEntry)
 	}
 
 	/* Close the window and bring the menu back. */
-	mnWindowSprRedrawSavedRectStub(window);
+	mnWindowSprRedrawSavedRectStub(win);
 	sySynch(1);
-	mnWindowCloseStub((void *)window, 1);
+	mnWindowCloseStub((void *)win, 1);
 	mnWindowSprRedrawSavedRectStub(menu->mainWin);
 	mnPaletteLightenHighlight(HIGHLIGHT_PALETTE);
 	/* As mnCreatePartyFigures schedules it. */
 	{
-		Sint32 priority = EVENT_PASS_FRAME;
+		Sint32 priority = EVENT_PASS_TICK;
 
 		sySetEvent(mnPlacePartyFigures, priority);
 	}
 
 	/* The Japanese window, 13 tiles wide, leaves the command grid at tile 13
 	   up, so flags 1 tells mnItemMenuChooseCommand not to draw it again; the
-	   international one, 30 wide, covers it, and the grid's frame is
+	   international one, 30 wide, covers it, and the grid's tick is
 	   redrawn. */
 	{
 		WINDOW_SPR *cursor = menu->cursor;
@@ -2101,7 +2099,7 @@ Sint32 mnItemMenuShowDetails(Sint32 inventoryEntry)
    icon, and the effects that are only text), whether it is cursed or bestows
    Psynergy, whether it is used up or may break, and for a stack how many there
    are. */
-void mnItemMenuDrawItemDetails(WINDOW *window, Sint32 inventoryEntry)
+void mnItemMenuDrawItemDetails(WINDOW *win, Sint32 inventoryEntry)
 {
 	ITEM_DEFINITION *def;
 	Sint32			 i;
@@ -2127,19 +2125,19 @@ void mnItemMenuDrawItemDetails(WINDOW *window, Sint32 inventoryEntry)
 			hasEffects = 1;
 		}
 		if(hasEffects == 1) {
-			mnTextDrawMessageAsTilesStub(MsgEquipEffectHeading, window, 16, 0);
+			mnTextDrawMessageAsTilesStub(MsgEquipEffectHeading, win, 16, 0);
 			row = 1;
 		}
 		if(def->attack != 0) {
-			mnTextDrawMessageAsTilesStub(MsgStatLabel, window, 0, row * 8);
+			mnTextDrawMessageAsTilesStub(MsgStatLabel, win, 0, row * 8);
 			amount = def->attack;
-			mnItemMenuDrawStat(amount, 3, window, 64, row * 8);
+			mnItemMenuDrawStat(amount, 3, win, 64, row * 8);
 			row++;
 		}
 		if(def->defense != 0) {
-			mnTextDrawMessageAsTilesStub(MsgDefenseLabel, window, 0, row * 8);
+			mnTextDrawMessageAsTilesStub(MsgDefenseLabel, win, 0, row * 8);
 			amount = def->defense;
-			mnItemMenuDrawStat(amount, 3, window, 64, row * 8);
+			mnItemMenuDrawStat(amount, 3, win, 64, row * 8);
 			row++;
 		}
 	}
@@ -2158,20 +2156,20 @@ void mnItemMenuDrawItemDetails(WINDOW *window, Sint32 inventoryEntry)
 		case EQUIP_EFFECT_ADD_LUCK:
 		case EQUIP_EFFECT_ADD_ACTIONS:
 			mnTextDrawMessageAsTilesStub(
-				def->effs[i].kind + MsgEquipEffectName, window, 0, row * 8);
-			mnItemMenuDrawStat(amount, 3, window, 64, row * 8);
+				def->effs[i].kind + MsgEquipEffectName, win, 0, row * 8);
+			mnItemMenuDrawStat(amount, 3, win, 64, row * 8);
 			break;
 		/* Power and Resist in each of the four elements, after the element's
 		   icon. */
 		case EQUIP_EFFECT_ADD_VENUS_POWER ... EQUIP_EFFECT_ADD_JUPITER_RESIST:
-			mnWindowSetTilemapEntryStub(window,
+			mnWindowSetTilemapEntryStub(win,
 				(Uint8)((def->effs[i].kind - EQUIP_EFFECT_ADD_VENUS_POWER) %
 					ELEMENT_COUNT) +
 					1,
 				0, row, TILEMAP_ENTRY_HIGHLIGHT);
 			mnTextDrawMessageAsTilesStub(
-				def->effs[i].kind + MsgEquipEffectName, window, 8, row * 8);
-			mnItemMenuDrawStat(amount, 3, window, 64, row * 8);
+				def->effs[i].kind + MsgEquipEffectName, win, 8, row * 8);
+			mnItemMenuDrawStat(amount, 3, win, 64, row * 8);
 			break;
 		/* Rates, in tenths: shown as a multiplier from 0.0 to 1.9. */
 		case EQUIP_EFFECT_SCALE_HP:
@@ -2183,54 +2181,49 @@ void mnItemMenuDrawItemDetails(WINDOW *window, Sint32 inventoryEntry)
 		case EQUIP_EFFECT_SCALE_AGILITY:
 		case EQUIP_EFFECT_SCALE_LUCK:
 			mnTextDrawMessageAsTilesStub(
-				def->effs[i].kind + MsgEquipEffectName, window, 0, row * 8);
+				def->effs[i].kind + MsgEquipEffectName, win, 0, row * 8);
 #if LANGUAGE != LANGUAGE_JAPANESE
-			mnTextDrawStringInWindowStub(Menu_TimesString, window, 64, row * 8);
+			mnTextDrawStringInWindowStub(MenuTimesString, win, 64, row * 8);
 			if(amount >= STAT_SCALE_ONE) {
-				mnTextDrawNumInWindowStub(1, 1, window, 72, row * 8);
-				mnTextDrawStringInWindowStub(
-					Menu_PointString, window, 80, row * 8);
+				mnTextDrawNumInWindowStub(1, 1, win, 72, row * 8);
+				mnTextDrawStringInWindowStub(MenuPointString, win, 80, row * 8);
 				mnTextDrawNumInWindowStub(
-					amount - STAT_SCALE_ONE, 1, window, 88, row * 8);
+					amount - STAT_SCALE_ONE, 1, win, 88, row * 8);
 			} else {
-				mnTextDrawNumInWindowStub(0, 1, window, 72, row * 8);
-				mnTextDrawStringInWindowStub(
-					Menu_PointString, window, 80, row * 8);
-				mnTextDrawNumInWindowStub(amount, 1, window, 88, row * 8);
+				mnTextDrawNumInWindowStub(0, 1, win, 72, row * 8);
+				mnTextDrawStringInWindowStub(MenuPointString, win, 80, row * 8);
+				mnTextDrawNumInWindowStub(amount, 1, win, 88, row * 8);
 			}
 #else
 			if(amount >= STAT_SCALE_ONE) {
-				mnTextDrawNumInWindowStub(1, 1, window, 48, row * 8);
-				mnTextDrawStringInWindowStub(
-					Menu_PointString, window, 56, row * 8);
+				mnTextDrawNumInWindowStub(1, 1, win, 48, row * 8);
+				mnTextDrawStringInWindowStub(MenuPointString, win, 56, row * 8);
 				mnTextDrawNumInWindowStub(
-					amount - STAT_SCALE_ONE, 1, window, 64, row * 8);
+					amount - STAT_SCALE_ONE, 1, win, 64, row * 8);
 			} else {
-				mnTextDrawNumInWindowStub(0, 1, window, 48, row * 8);
-				mnTextDrawStringInWindowStub(
-					Menu_PointString, window, 56, row * 8);
-				mnTextDrawNumInWindowStub(amount, 1, window, 64, row * 8);
+				mnTextDrawNumInWindowStub(0, 1, win, 48, row * 8);
+				mnTextDrawStringInWindowStub(MenuPointString, win, 56, row * 8);
+				mnTextDrawNumInWindowStub(amount, 1, win, 64, row * 8);
 			}
-			mnTextDrawMessageAsTilesStub(
-				MsgEffectRateSuffix, window, 72, row * 8);
+			mnTextDrawMessageAsTilesStub(MsgEffectRateSuffix, win, 72, row * 8);
 #endif
 			break;
 		case EQUIP_EFFECT_ADD_UNLEASH_CHANCE: /* "Critical Hits increase" */
 		case EQUIP_EFFECT_CURSE_REMOVABLE:
 		case EQUIP_EFFECT_LURE: /* "Boosts monster encounters" */
 			mnTextDrawMessageAsTilesStub(
-				def->effs[i].kind + MsgEquipEffectName, window, 0, row * 8);
+				def->effs[i].kind + MsgEquipEffectName, win, 0, row * 8);
 			break;
 		}
 		row++;
 	}
 	/* Curses, bestowed Psynergy and how the item is used up. */
 	if(def->flg & ITEM_CURSED) {
-		mnTextDrawMessageAsTilesStub(MsgItemCursed, window, 0, row * 8);
+		mnTextDrawMessageAsTilesStub(MsgItemCursed, win, 0, row * 8);
 		row++;
 	}
 	if(def->useType == ITEM_USE_TEACHES) {
-		mnTextDrawMessageAsTilesStub(MsgBestowsPsynergy, window, 0, row * 8);
+		mnTextDrawMessageAsTilesStub(MsgBestowsPsynergy, win, 0, row * 8);
 		bestowsPsynergy = 1;
 		row++;
 	}
@@ -2239,14 +2232,14 @@ void mnItemMenuDrawItemDetails(WINDOW *window, Sint32 inventoryEntry)
 	   heading and no line. */
 	if(def->useType != ITEM_USE_EMPTIES && def->useType != ITEM_USE_FREE) {
 		if(!bestowsPsynergy) {
-			mnTextDrawMessageAsTilesStub(MsgUsesHeading, window, 16, row * 8);
+			mnTextDrawMessageAsTilesStub(MsgUsesHeading, win, 16, row * 8);
 			row++;
 		}
 		switch(def->useType) {
 		case ITEM_USE_FREE:
 			break;
 		case ITEM_USE_CONSUMED:
-			mnTextDrawMessageAsTilesStub(MsgSingleUse, window, 0, row * 8);
+			mnTextDrawMessageAsTilesStub(MsgSingleUse, win, 0, row * 8);
 			row++;
 			break;
 		case ITEM_USE_MAY_BREAK: {
@@ -2256,17 +2249,17 @@ void mnItemMenuDrawItemDetails(WINDOW *window, Sint32 inventoryEntry)
 			   might break" / "if used in battle". */
 			if(inventoryEntry & INVENTORY_BROKEN) {
 				m = MsgBrokenNotice;
-				mnTextDrawMessageAsTilesStub(m, window, 0, row * 8);
+				mnTextDrawMessageAsTilesStub(m, win, 0, row * 8);
 				row++;
 				m++;
-				mnTextDrawMessageAsTilesStub(m, window, 0, row * 8);
+				mnTextDrawMessageAsTilesStub(m, win, 0, row * 8);
 				row++;
 			} else {
 				m = MsgMightBreak;
-				mnTextDrawMessageAsTilesStub(m, window, 0, row * 8);
+				mnTextDrawMessageAsTilesStub(m, win, 0, row * 8);
 				row++;
 				m++;
-				mnTextDrawMessageAsTilesStub(m, window, 0, row * 8);
+				mnTextDrawMessageAsTilesStub(m, win, 0, row * 8);
 				row++;
 			}
 			break;
@@ -2278,17 +2271,17 @@ void mnItemMenuDrawItemDetails(WINDOW *window, Sint32 inventoryEntry)
 		if(row != 0)
 			row++;
 		i = MsgNumberHeading;
-		mnTextDrawMessageAsTilesStub(i, window, 16, row * 8);
+		mnTextDrawMessageAsTilesStub(i, win, 16, row * 8);
 		row++;
 		amount = (inventoryEntry & INVENTORY_QUANTITY_MASK) /
 			INVENTORY_QUANTITY_STEP;
 		/* The quantity field holds the count less one. */
 #if LANGUAGE != LANGUAGE_JAPANESE
 		mnMessageArgumentPushStub(amount + 1, MESSAGE_ARGUMENT_NUMBER);
-		mnTextDrawMessageAsTilesStub(i + 1, window, 0, row * 8);
+		mnTextDrawMessageAsTilesStub(i + 1, win, 0, row * 8);
 #else
-		mnTextDrawNumInWindowStub(amount + 1, 2, window, 0, row * 8);
-		mnTextDrawMessageAsTilesStub(i + 1, window, 16, row * 8);
+		mnTextDrawNumInWindowStub(amount + 1, 2, win, 0, row * 8);
+		mnTextDrawMessageAsTilesStub(i + 1, win, 16, row * 8);
 #endif
 		row++;
 	}
@@ -2296,16 +2289,16 @@ void mnItemMenuDrawItemDetails(WINDOW *window, Sint32 inventoryEntry)
 	hasEffects = 0;
 	if(row == 0) {
 		if(def->flg & ITEM_RARE) {
-			mnTextDrawMessageAsTilesStub(MsgRareItem, window, 0, 0);
+			mnTextDrawMessageAsTilesStub(MsgRareItem, win, 0, 0);
 			hasEffects = 1;
 		}
 		if(!hasEffects) {
 			if(def->flg & ITEM_INDISPENSABLE) {
-				mnTextDrawMessageAsTilesStub(MsgImportantItem, window, 0, 0);
+				mnTextDrawMessageAsTilesStub(MsgImportantItem, win, 0, 0);
 				hasEffects = 1;
 			}
 			if(!hasEffects)
-				mnTextDrawMessageAsTilesStub(MsgDetailsUnknown, window, 0, 0);
+				mnTextDrawMessageAsTilesStub(MsgDetailsUnknown, win, 0, 0);
 		}
 	}
 }
@@ -2313,12 +2306,12 @@ void mnItemMenuDrawItemDetails(WINDOW *window, Sint32 inventoryEntry)
 /* Writes a signed stat change at (x, y) of window: the number, with a plus or
    minus sign just before its first digit. */
 void mnItemMenuDrawStat(
-	Sint32 statChange, Sint32 unused, WINDOW *window, Sint32 x, Sint32 y)
+	Sint32 statChange, Sint32 unused, WINDOW *win, Sint32 x, Sint32 y)
 {
 	Sint32 digits;
 	Sint32 magnitude;
 
-	mnTextDrawNumInWindowStub(statChange, 3, window, x, y);
+	mnTextDrawNumInWindowStub(statChange, 3, win, x, y);
 	/* Count the digits of |statChange| to place the sign. */
 	digits = 1;
 	magnitude = statChange;
@@ -2337,10 +2330,10 @@ void mnItemMenuDrawStat(
 	}
 	if(statChange > 0) {
 		mnTextDrawStringInWindowStub(
-			&Menu_PlusSignString, window, x - digits * 8 + 16, y);
+			&MenuPlusSignString, win, x - digits * 8 + 16, y);
 	} else {
 		mnTextDrawStringInWindowStub(
-			&Menu_MinusSignString, window, x - digits * 8 + 16, y);
+			&MenuMinusSignString, win, x - digits * 8 + 16, y);
 	}
 }
 
@@ -2402,43 +2395,42 @@ Sint32 mnItemMenuSelectGiveQuantity(
 	Sint32			 quantity = baseQuantity;
 	Sint32			 block;
 	Sint32			 changed;
-	Sint32			 receiverCount;
-	Sint32			 memberCount;
+	Sint32			 receiverCnt;
+	Sint32			 memberCnt;
 	ITEM_MENU_STATE *menu = MenuState;
 	/* 1 KB of HEAP_SLOT_TILE_SCRATCH to draw the dial's digits in, released
 	   before returning. */
 	void	   *tiles = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
-	WINDOW	   *window;
+	WINDOW	   *win;
 	WINDOW_SPR *rightDial;
 
 	changed = 1;
-	receiverCount = 0;
-	window = menu->questionWin;
+	receiverCnt = 0;
+	win = menu->questionWin;
 	mnItemMenuFitMessageWindowToItemChoices();
-	mnWindowSprRedrawSavedRectStub(window);
+	mnWindowSprRedrawSavedRectStub(win);
 	/* How many each party member holds now. */
 	if(dropMode == 0)
-		receiverCount = mnItemMenuGetItemQuantity(menu->sideMember[1],
+		receiverCnt = mnItemMenuGetItemQuantity(menu->sideMember[1],
 			menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
-	memberCount = mnItemMenuGetItemQuantity(
+	memberCnt = mnItemMenuGetItemQuantity(
 		menu->sideMember[0], menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
 	/* Two dial sprites, left and right of the number. */
 	block = syVRAMCacheFindFreeEntry();
 	/* VRAM_CACHE_ENTRY_COUNT: no free VRAM block, and no dial. */
 	if(block != VRAM_CACHE_ENTRY_COUNT) {
 		syVRAMCacheLoad(block, 256, 0);
-		mnWindowSprCreateStub(block, OUTPUT_SIZE_32X8, window, 48, 32);
-		rightDial =
-			mnWindowSprCreateStub(block, OUTPUT_SIZE_32X8, window, 80, 32);
+		mnWindowSprCreateStub(block, OUTPUT_SIZE_32X8, win, 48, 32);
+		rightDial = mnWindowSprCreateStub(block, OUTPUT_SIZE_32X8, win, 80, 32);
 		rightDial->spr.oam.idx += 4;
 		mnCursorSlide(ITEM_GIVE_CURSOR_X, 40);
 		while(!gmFlagGetStub(FLAG_MENU_START_PRESSED)) {
 			if(changed) {
 				changed = 0;
 				quantity = (quantityRange + quantity) % quantityRange;
-				mnWindowSprRedrawSavedRectStub(window);
+				mnWindowSprRedrawSavedRectStub(win);
 				mnTextDrawMessageAsTilesStub(
-					MsgGiveHowMany, window, ITEM_GIVE_ASK_X, ITEM_GIVE_ASK_Y);
+					MsgGiveHowMany, win, ITEM_GIVE_ASK_X, ITEM_GIVE_ASK_Y);
 				syDMAXCopy(
 					Menu_QuantityTiles, tiles, DMA_COPY_WORDS(64), REG_DMA3);
 				mnQuantityBarFillStub(
@@ -2449,32 +2441,30 @@ Sint32 mnItemMenuSelectGiveQuantity(
 					baseQuantity + quantity + 1, QUANTITY_BAR_CHOSEN, tiles);
 				mnQuantityBarFillStub(baseQuantity, QUANTITY_BAR_HELD, tiles);
 				syVRAMCacheLoad(block, 256, tiles);
-				mnTextDrawNumInWindowStub(quantity + 1, 2, window, 32, 32);
+				mnTextDrawNumInWindowStub(quantity + 1, 2, win, 32, 32);
 				mnTextDrawMessageAsTilesStub(
 					(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) +
 						MsgItemName,
-					window, 16, 8);
+					win, 16, 8);
 				mnTextDrawNumInWindowStub(
-					memberCount - quantity - 1, 2, window, 16, 24);
+					memberCnt - quantity - 1, 2, win, 16, 24);
 #if LANGUAGE != LANGUAGE_JAPANESE
 				if(dropMode == 0)
 					mnTextDrawNumInWindowStub(
-						receiverCount + quantity + 1, 2, window, 80, 24);
+						receiverCnt + quantity + 1, 2, win, 80, 24);
 #else
-				mnTextDrawMessageAsTilesStub(MsgItemCounter, window, 32, 24);
+				mnTextDrawMessageAsTilesStub(MsgItemCounter, win, 32, 24);
 				if(dropMode == 0) {
 					mnTextDrawNumInWindowStub(
-						receiverCount + quantity + 1, 2, window, 80, 24);
-					mnTextDrawMessageAsTilesStub(
-						MsgItemCounter, window, 96, 24);
+						receiverCnt + quantity + 1, 2, win, 80, 24);
+					mnTextDrawMessageAsTilesStub(MsgItemCounter, win, 96, 24);
 				}
 #endif
 				mnTextDrawStringAtOffsetStub(
-					gmUnitGetStub(menu->sideMember[0])->name, window, 16, 16);
+					gmUnitGetStub(menu->sideMember[0])->name, win, 16, 16);
 				if(dropMode == 0)
 					mnTextDrawStringAtOffsetStub(
-						gmUnitGetStub(menu->sideMember[1])->name, window, 80,
-						16);
+						gmUnitGetStub(menu->sideMember[1])->name, win, 80, 16);
 			}
 			/* A confirms, B backs out, Left and Right change the number. */
 			if(PerPush & KEY_A) {
@@ -2500,8 +2490,8 @@ Sint32 mnItemMenuSelectGiveQuantity(
 			sySynch(1);
 		}
 	}
-	mnWindowSprRedrawSavedRectStub(window);
-	mnWindowSprClearListStub((void *)window);
+	mnWindowSprRedrawSavedRectStub(win);
+	mnWindowSprClearListStub((void *)win);
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
 	menu->selectedItemIcon->motion = ICON_HIDDEN;
 	if(gmFlagGetStub(FLAG_MENU_START_PRESSED))
@@ -2532,7 +2522,7 @@ void mnItemMenuDrawItemHead(void)
    Yes or No, No first. Returns 0 for Yes and 1 for No, B or Start. */
 Sint32 mnItemMenuConfirmDrop(Sint32 item)
 {
-	WINDOW *window;
+	WINDOW *win;
 	Sint32	itemId;
 	Sint32	question;
 	Sint32	answer;
@@ -2540,18 +2530,18 @@ Sint32 mnItemMenuConfirmDrop(Sint32 item)
 	Sint32	selection = 1;
 	Bool	changed = TRUE;
 
-	window = mnWindowCreateStub(13, 3, 17, 10, WINDOW_FLAG_INSTANT);
+	win = mnWindowCreateStub(13, 3, 17, 10, WINDOW_FLAG_INSTANT);
 	itemId = item & INVENTORY_ITEM_ID_MASK;
 	gmItemGetDirectStub(itemId);
-	mnTextDrawMessageAsTilesStub(itemId + MsgItemName, window, 24, 0);
+	mnTextDrawMessageAsTilesStub(itemId + MsgItemName, win, 24, 0);
 	question = MsgConfirmDrop;
-	mnTextDrawMessageAsTilesStub(question, window, ITEM_DROP_QUESTION_X, 16);
+	mnTextDrawMessageAsTilesStub(question, win, ITEM_DROP_QUESTION_X, 16);
 	question++;
-	mnTextDrawMessageAsTilesStub(question, window, ITEM_DROP_QUESTION_X, 24);
+	mnTextDrawMessageAsTilesStub(question, win, ITEM_DROP_QUESTION_X, 24);
 	answer = MsgYes;
-	mnTextDrawMessageAsTilesStub(answer, window, 24, 40);
+	mnTextDrawMessageAsTilesStub(answer, win, 24, 40);
 	answer++;
-	mnTextDrawMessageAsTilesStub(answer, window, 24, 56);
+	mnTextDrawMessageAsTilesStub(answer, win, 24, 56);
 	mnCursorSlide(104, 86);
 	for(;;) {
 		if(gmFlagGetStub(FLAG_MENU_START_PRESSED))
@@ -2585,7 +2575,7 @@ Sint32 mnItemMenuConfirmDrop(Sint32 item)
 	if(gmFlagGetStub(FLAG_MENU_START_PRESSED)) {
 		selection = 1;
 	}
-	mnWindowCloseStub((void *)window, 1);
+	mnWindowCloseStub((void *)win, 1);
 	return selection;
 }
 
@@ -2697,33 +2687,33 @@ void mnLoadStatArrows(void)
 /* Fills result with the item list of the party member in side index: their
    unit, how many items they hold, and the page and row of the item chosen last
    for them (kept within the list), five items to a page. Returns 1. */
-Sint32 mnItemMenuBuildPagedList(PAGED_LIST *result, Sint32 index)
+Sint32 mnItemMenuBuildPagedList(PAGED_LIST *result, Sint32 idx)
 {
 	Sint32			 unit;
 	ITEM_MENU_STATE *menu = MenuState;
-	Sint32			 itemCount;
+	Sint32			 itemCnt;
 	Sint32			 row;
 	Sint32			 page;
-	Sint32			 pageCount;
+	Sint32			 pageCnt;
 	Sint32			 selected;
 
-	itemCount = mnItemMenuCountItems(menu->sideMember[index]);
-	unit = (Sint32)gmUnitGetStub(menu->sideMember[index]);
-	selected = menu->selectedIdxByMember[menu->sideMember[index]];
-	if((selected + 1) > itemCount) {
-		selected = itemCount - 1;
+	itemCnt = mnItemMenuCountItems(menu->sideMember[idx]);
+	unit = (Sint32)gmUnitGetStub(menu->sideMember[idx]);
+	selected = menu->selectedIdxByMember[menu->sideMember[idx]];
+	if((selected + 1) > itemCnt) {
+		selected = itemCnt - 1;
 	}
 	page = selected / LIST_PAGE_SIZE;
 	row = selected % LIST_PAGE_SIZE;
-	pageCount = itemCount / LIST_PAGE_SIZE;
-	if(itemCount % LIST_PAGE_SIZE != 0) {
-		pageCount++;
+	pageCnt = itemCnt / LIST_PAGE_SIZE;
+	if(itemCnt % LIST_PAGE_SIZE != 0) {
+		pageCnt++;
 	}
 	result->memberState = unit;
 	result->page = page;
-	result->pageCnt = pageCount;
+	result->pageCnt = pageCnt;
 	result->row = row;
-	result->entryCnt = itemCount;
+	result->entryCnt = itemCnt;
 	result->selectedIdx = selected;
 	return 1;
 }
@@ -2732,26 +2722,26 @@ Sint32 mnItemMenuBuildPagedList(PAGED_LIST *result, Sint32 index)
    plain name in the info window and highlights its row of the five. window and
    memberState are not used. */
 Sint32 mnItemMenuShowSelectedRow(
-	WINDOW *window, void *memberState, PAGED_LIST *pageState)
+	WINDOW *win, void *memberState, PAGED_LIST *pageState)
 {
 	ITEM_MENU_STATE *menu;
 	Sint32			 page;
-	Sint32			 index;
+	Sint32			 idx;
 	Sint32			 row;
 
 	page = pageState->page;
 	menu = MenuState;
-	index = page * LIST_PAGE_SIZE;
-	index += pageState->row;
-	pageState->selectedIdx = index;
+	idx = page * LIST_PAGE_SIZE;
+	idx += pageState->row;
+	pageState->selectedIdx = idx;
 
 	MENU_RESET_DESCRIPTION_WINDOW(menu->descriptionWin);
 	sySynch(1);
 
-	index = pageState->selectedIdx;
-	if(menu->items[index] != 0) {
+	idx = pageState->selectedIdx;
+	if(menu->items[idx] != 0) {
 		Sint32 name =
-			(menu->items[index] & INVENTORY_ITEM_ID_MASK) + MsgItemPlainName;
+			(menu->items[idx] & INVENTORY_ITEM_ID_MASK) + MsgItemPlainName;
 		MENU_DRAW_DESCRIPTION(name, menu->descriptionWin, 0, 0);
 	}
 
@@ -2772,34 +2762,33 @@ Sint32 mnItemMenuShowSelectedRow(
 /* Draws one page of the item list into window: up to five item names with their
    icons, and the page numbers when there is more than one page. */
 Sint32 mnItemMenuDrawListPage(
-	WINDOW *window, Sint32 unused, const PAGED_LIST *pageState)
+	WINDOW *win, Sint32 unused, const PAGED_LIST *pageState)
 {
 	ITEM_MENU_STATE *menu = MenuState;
 	Uint32			 page;
 	Uint32			 firstEntry;
-	Uint32			 visibleCount;
+	Uint32			 visibleCnt;
 	Uint8			 row;
 	const Uint16	*entry;
 
 	(void)unused;
 
-	mnWindowSprRedrawSavedRectStub(window);
-	mnWindowDrawDividerLineStub(window, 0, 11, 16, 11);
+	mnWindowSprRedrawSavedRectStub(win);
+	mnWindowDrawDividerLineStub(win, 0, 11, 16, 11);
 
 	page = pageState->page;
 	firstEntry = page * LIST_PAGE_SIZE;
-	visibleCount = (Uint8)(pageState->entryCnt - firstEntry);
-	if(visibleCount > LIST_PAGE_SIZE) {
-		visibleCount = LIST_PAGE_SIZE;
+	visibleCnt = (Uint8)(pageState->entryCnt - firstEntry);
+	if(visibleCnt > LIST_PAGE_SIZE) {
+		visibleCnt = LIST_PAGE_SIZE;
 	}
 
-	mnSetPageIcons(
-		LIST_PAGE_SIZE, firstEntry, window, ITEM_LIST_PAGE_ICONS_X, 34);
-	mnPagedListDrawPageNumbers(window, pageState->entryCnt, LIST_PAGE_SIZE,
+	mnSetPageIcons(LIST_PAGE_SIZE, firstEntry, win, ITEM_LIST_PAGE_ICONS_X, 34);
+	mnPagedListDrawPageNumbers(win, pageState->entryCnt, LIST_PAGE_SIZE,
 		pageState->page, PAGE_NUMBERS_RIGHT);
 
 	row = 0;
-	if(visibleCount > row) {
+	if(visibleCnt > row) {
 		entry = &menu->items[firstEntry];
 		do {
 			mnTextDrawMessageAsTilesStub(
@@ -2807,7 +2796,7 @@ Sint32 mnItemMenuDrawListPage(
 				menu->itemWin, ITEM_LIST_NAME_X, row * 16 + 8);
 			row++;
 			entry++;
-		} while(visibleCount > row);
+		} while(visibleCnt > row);
 	}
 
 	return 1;
@@ -2822,12 +2811,12 @@ UNUSED void mnItemMenuItemNamePageNoOperation(void)
 {
 }
 
-/* The item list of the party member in sideIndex (0: the holder, 1: the
+/* The item list of the party member in sideIdx (0: the holder, 1: the
    receiver of a trade), five items a page. */
-Sint32 mnItemMenuRunList(Sint32 sideIndex)
+Sint32 mnItemMenuRunList(Sint32 sideIdx)
 {
 	ITEM_MENU_STATE *menu;
-	WINDOW			*window;
+	WINDOW			*win;
 	Bool			 changed;
 	Sint32			 moved;
 	Sint32			 member;
@@ -2836,25 +2825,25 @@ Sint32 mnItemMenuRunList(Sint32 sideIndex)
 	Bool			 redraw;
 	Bool			 done;
 	UNIT			*memberUnit;
-	Sint32			 previous;
+	Sint32			 prev;
 	WINDOW_SPR		*icon;
 	Sint32			 memberState[5];
 	PAGED_LIST		 state;
 
 	menu = MenuState;
 	result = 0;
-	previous = 0;
+	prev = 0;
 	menu->equipPreview = result;
 	mnWindowUpdateOrCreate(&menu->listWin, 13, 3, 17, 14, WINDOW_FLAG_INSTANT);
-	window = menu->listWin;
+	win = menu->listWin;
 	done = FALSE;
 
 	while(done == 0 && gmFlagGetStub(FLAG_MENU_START_PRESSED) == 0) {
-		memberUnit = gmUnitGetStub(menu->sideMember[sideIndex]);
+		memberUnit = gmUnitGetStub(menu->sideMember[sideIdx]);
 		menu->itemCnt = mnItemMenuCollectItems(memberUnit, menu->items, 0);
 		mnItemMenuDrawIcons(menu->items, 0);
 		menu->selectedItemIcon->motion = ICON_HIDDEN;
-		mnItemMenuBuildPagedList(&state, sideIndex);
+		mnItemMenuBuildPagedList(&state, sideIdx);
 		mnCursorPos(98, state.selectedIdx * 16 + 36);
 		changed = TRUE;
 		redraw = TRUE;
@@ -2866,23 +2855,23 @@ Sint32 mnItemMenuRunList(Sint32 sideIndex)
 
 			if(changed != 0) {
 				changed = FALSE;
-				if(memberUnit->inventory[previous] != 0) {
-					icon = menu->entryIcons[previous];
+				if(memberUnit->inventory[prev] != 0) {
+					icon = menu->entryIcons[prev];
 					mnIconShow(icon);
 				}
 				if(redraw != 0) {
 					sySynch(1);
-					mnItemMenuDrawListPage(window, 0, &state);
-					if(sideIndex == 0) {
+					mnItemMenuDrawListPage(win, 0, &state);
+					if(sideIdx == 0) {
 						mnTextDrawMessageAsTilesStub(MsgChangeCharacterHelp,
-							window, CHANGE_CHARACTER_HELP_X, 88);
+							win, CHANGE_CHARACTER_HELP_X, 88);
 					}
 					redraw = FALSE;
 				}
-				mnItemMenuShowSelectedRow(window, memberState, &state);
-				menu->selectedItems[sideIndex] = menu->items[state.selectedIdx];
-				mnItemMenuDrawEquipPreview(menu->sideMember[sideIndex],
-					state.selectedIdx, 0, menu->sideMember[sideIndex]);
+				mnItemMenuShowSelectedRow(win, memberState, &state);
+				menu->selectedItems[sideIdx] = menu->items[state.selectedIdx];
+				mnItemMenuDrawEquipPreview(menu->sideMember[sideIdx],
+					state.selectedIdx, 0, menu->sideMember[sideIdx]);
 				if(menu->items[state.selectedIdx] != 0) {
 					icon = menu->entryIcons[state.selectedIdx];
 					/* Swell the selected icon from its first step, in depth
@@ -2897,8 +2886,8 @@ Sint32 mnItemMenuRunList(Sint32 sideIndex)
 				}
 			}
 
-			/* Every 32 frames, the party members who can equip the item nod. */
-			if((FrameCount & 31) == 0) {
+			/* Every 32 ticks, the party members who can equip the item nod. */
+			if((TickCount & 31) == 0) {
 				for(i = 0; i < menu->partyCnt; i++) {
 					if(gmItemCanUnitEquipDirectStub(menu->memberIds[i],
 						   INVENTORY_ITEM_ID_MASK &
@@ -2909,7 +2898,7 @@ Sint32 mnItemMenuRunList(Sint32 sideIndex)
 			}
 
 			sySynch(1);
-			previous = state.selectedIdx;
+			prev = state.selectedIdx;
 			moved = mnPagedListHandleInput(
 				0, state.entryCnt, LIST_PAGE_SIZE, &state.row, &state.page);
 			if(moved == 1) {
@@ -2938,14 +2927,14 @@ Sint32 mnItemMenuRunList(Sint32 sideIndex)
 			/* L and R: the previous or next party member who has items (side 0
 			   only). */
 			if((PerRepeat & KEY_R) != 0 || (PerRepeat & KEY_L) != 0) {
-				if(sideIndex == 1) {
+				if(sideIdx == 1) {
 					sySndPlayStub(SE_MENU_ERROR);
 					sySynch(1);
 				} else {
 					sySndPlayStub(SE_MENU_CURSOR_MOVE);
-					menu->selectedIdxByMember[menu->sideMember[sideIndex]] =
+					menu->selectedIdxByMember[menu->sideMember[sideIdx]] =
 						state.selectedIdx;
-					member = menu->sideIdx[sideIndex];
+					member = menu->sideIdx[sideIdx];
 					do {
 						if((PerRepeat & KEY_R) != 0) {
 							member++;
@@ -2954,10 +2943,10 @@ Sint32 mnItemMenuRunList(Sint32 sideIndex)
 						}
 						member = (member + menu->partyCnt) % menu->partyCnt;
 						menu->selectedMember = menu->memberIds[member];
-						menu->sideMember[sideIndex] = menu->memberIds[member];
-						menu->sideIdx[sideIndex] = member;
+						menu->sideMember[sideIdx] = menu->memberIds[member];
+						menu->sideIdx[sideIdx] = member;
 						menu->itemCnt = mnItemMenuCollectItems(
-							gmUnitGetStub(menu->sideMember[sideIndex]),
+							gmUnitGetStub(menu->sideMember[sideIdx]),
 							menu->items, 0);
 					} while(menu->itemCnt == 0);
 					for(i = 0; i <= 3; i++) {
@@ -2970,11 +2959,11 @@ Sint32 mnItemMenuRunList(Sint32 sideIndex)
 		}
 	}
 
-	mnWindowClearInteriorTilesStub((void *)window, 0, 88, 120, 96);
+	mnWindowClearInteriorTilesStub((void *)win, 0, 88, 120, 96);
 	mnIconShow(menu->gridCursor);
-	menu->selectedSlots[sideIndex] = state.selectedIdx;
-	menu->selectedIdxByMember[menu->sideMember[sideIndex]] = state.selectedIdx;
-	menu->selectedItems[sideIndex] = result;
+	menu->selectedSlots[sideIdx] = state.selectedIdx;
+	menu->selectedIdxByMember[menu->sideMember[sideIdx]] = state.selectedIdx;
+	menu->selectedItems[sideIdx] = result;
 	if(gmFlagGetStub(FLAG_MENU_START_PRESSED) != 0) {
 		result = -1;
 	}

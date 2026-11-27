@@ -54,5 +54,5 @@ void scVentsStart(Uint16 *points, Uint16 *ids, void (*cycle)(void))
 			REG_BLDCNT = cnt;
 		}
 	}
-	sySetFrameEvent(scVentUpdate, EVENT_PASS_FRAME);
+	sySetTickEvent(scVentUpdate, EVENT_PASS_TICK);
 }

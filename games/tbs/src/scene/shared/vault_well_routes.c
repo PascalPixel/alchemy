@@ -3,7 +3,7 @@
 
 /* ACTOR_BOY_ROUND_THE_WELL's walk, round eight points for as long as the party
    stays on the map. */
-Sint32 Vault_BoyRoundTheWellRoute[] = {
+Sint32 VaultBoyRoundTheWellRoute[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_SPEED(0.8),
 	SC_ACCELERATION(0.2),
@@ -30,7 +30,7 @@ Sint32 Vault_BoyRoundTheWellRoute[] = {
 
 /* ACTOR_GIRL_ROUND_THE_WELL's walk round the same eight points, half a circle
    apart. */
-Sint32 Vault_GirlRoundTheWellRoute[] = {
+Sint32 VaultGirlRoundTheWellRoute[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_SPEED(0.8),
 	SC_ACCELERATION(0.2),

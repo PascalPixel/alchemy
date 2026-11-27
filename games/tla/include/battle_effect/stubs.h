@@ -10,7 +10,7 @@ struct BATTLE_PRESENTATION_STATE;
 /* Runs a battle effect from the second range of kinds: the casting impacts, the
    plain attacks' beams and their critical hits. */
 void btEffectRunByIdRangeStub(struct BATTLE_PRESENTATION_STATE *state);
-/* Runs an ordinary battle effect from BattleEffect_Handlers, with the sprite
+/* Runs an ordinary battle effect from BattleEffectHandlers, with the sprite
    sheet, state and canvas it lends. */
 void btEffectRunFromTableStub(struct BATTLE_PRESENTATION_STATE *state);
 /* A pillar of light in an element's colours stands at a unit's feet while motes
@@ -31,6 +31,6 @@ void btEffectStartElementStreaksStub(Sint32 element);
 void btEffectEndElementStreaksStub(void);
 /* Loads a blitter for a 128 by 128 canvas into a heap slot, the flags and the
    mode packed into one word: mode << 4 | flags. */
-Sint32 btEffectLoadBlitterStub(Sint32 slot, Sint32 modeAndFlags);
+Sint32 btEffectLoadBlitterStub(Sint32 slot, Sint32 modeAndFlg);
 
 #endif

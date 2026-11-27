@@ -10,7 +10,7 @@
 void btObjectReset(BATTLE_OBJECT *battleObject, Sint32 keep)
 {
 	MOTION_OBJECT *object;
-	Sint32		   facingAngle;
+	Sint32		   facingAng;
 
 	if(battleObject->obj == 0)
 		object = (MOTION_OBJECT *)fdActorCreateStub(
@@ -42,12 +42,12 @@ void btObjectReset(BATTLE_OBJECT *battleObject, Sint32 keep)
 	battleObject->active = 0;
 	battleObject->selectedCondition = 0;
 	battleObject->fading = 0;
-	facingAngle = syAtan(0, 0) + DEGtoANG(180);
-	object->ang = facingAngle;
+	facingAng = syAtan(0, 0) + DEGtoANG(180);
+	object->ang = facingAng;
 	object->collisionFlg = ACTOR_SOLID | ACTOR_PUSHABLE;
 	object->motionFlg = ACTOR_FALLS;
 	battleObject->visible = 1;
-	fdActorStartScriptStub((ACTOR *)object, BattleObject_EmptyScript);
+	fdActorStartScriptStub((ACTOR *)object, BattleObjectEmptyScript);
 }
 
 /* Creates the battle object of a unit at (x, y) on the battlefield: its sprite,
@@ -58,12 +58,12 @@ void btObjectMake(
 	FIXED		   fixedX;
 	FIXED		   fixedZ;
 	Sint32		   palette;
-	Sint32		   sprite;
-	Sint32		   registeredSprite;
+	Sint32		   spr;
+	Sint32		   registeredSpr;
 	UNIT		  *unit;
 	MOTION_OBJECT *object;
-	Sint32		   facingAngle;
-	Sint32		   weaponSprite;
+	Sint32		   facingAng;
+	Sint32		   weaponSpr;
 
 	fixedX = toFIXED(x);
 	fixedZ = toFIXED(y);
@@ -71,42 +71,42 @@ void btObjectMake(
 		ACTOR_CREATE_KIND(BATTLE_OBJECT_ACTOR_KIND), fixedX, 0, fixedZ);
 	unit = syUnitGet(unitId);
 	palette = 0;
-	registeredSprite = btEnemySprLoadIntoSlots(unitId);
+	registeredSpr = btEnemySprLoadIntoSlots(unitId);
 
 	/* The sprite: an enemy's from its class, a party member's by character; a
 	   character on the enemy side, a link opponent, takes palette 1. */
 	if(unit->classId == CLASS_NONE) {
-		sprite = btSprGetSpr(unit->enemyId);
-		if(registeredSprite == 0)
+		spr = btSprGetSpr(unit->enemyId);
+		if(registeredSpr == 0)
 			palette = btSprGetPalette(unit->enemyId);
 		else
-			sprite = registeredSprite;
+			spr = registeredSpr;
 	} else {
 		switch(unit->enemyId) {
 		case ISAAC:
-			sprite = SPRITE_BATTLE_ISAAC;
+			spr = SPRITE_BATTLE_ISAAC;
 			break;
 		case GARET:
-			sprite = SPRITE_BATTLE_GARET;
+			spr = SPRITE_BATTLE_GARET;
 			break;
 		case MIA:
-			sprite = SPRITE_BATTLE_MIA;
+			spr = SPRITE_BATTLE_MIA;
 			break;
 		case IVAN:
-			sprite = SPRITE_BATTLE_IVAN;
+			spr = SPRITE_BATTLE_IVAN;
 			break;
 		case FELIX:
-			sprite = SPRITE_BATTLE_FELIX;
+			spr = SPRITE_BATTLE_FELIX;
 			break;
 		case SHEBA:
-			sprite = SPRITE_BATTLE_SHEBA;
+			spr = SPRITE_BATTLE_SHEBA;
 			break;
 		case PIERS:
-			sprite = SPRITE_BATTLE_PIERS;
+			spr = SPRITE_BATTLE_PIERS;
 			break;
 		case JENNA:
 		default:
-			sprite = SPRITE_BATTLE_JENNA;
+			spr = SPRITE_BATTLE_JENNA;
 			break;
 		}
 		if((Uint32)unitId > ALLY_MAX)
@@ -410,13 +410,13 @@ void btObjectMake(
 	battleObject->anchorX = fixedX;
 	battleObject->anchorZ = fixedZ;
 	battleObject->pal = palette;
-	battleObject->resource = sprite;
-	weaponSprite = btUnitGetWeaponSpr(unitId);
+	battleObject->resource = spr;
+	weaponSpr = btUnitGetWeaponSpr(unitId);
 	battleObject->anm = 0;
 	battleObject->anmEntry = 0;
 	battleObject->shadowEntry = 0;
 	battleObject->active = 0;
-	battleObject->overlay = weaponSprite;
+	battleObject->overlay = weaponSpr;
 	battleObject->fading = 0;
 	battleObject->visible = 0;
 	/* Isaac and Garet draw a Machete as part of their own sprite, with no
@@ -424,19 +424,19 @@ void btObjectMake(
 	if(unit->enemyId <= GARET &&
 		gmInventoryGetEquippedItemStub(unit, EQUIP_WEAPON) == ITEM_MACHETE) {
 		if(unit->enemyId == ISAAC) {
-			sprite = SPRITE_ISAAC_MACHETE;
-			battleObject->resource = sprite;
+			spr = SPRITE_ISAAC_MACHETE;
+			battleObject->resource = spr;
 		} else {
-			sprite = SPRITE_GARET_MACHETE;
-			battleObject->resource = sprite;
+			spr = SPRITE_GARET_MACHETE;
+			battleObject->resource = spr;
 		}
 		battleObject->overlay = 0;
 	}
 
 	/* Face the centre of the battlefield; enemies are drawn at 1.3 times their
 	   size. */
-	facingAngle = syAtan(y / 8, x) + DEGtoANG(180);
-	object->ang = facingAngle;
+	facingAng = syAtan(y / 8, x) + DEGtoANG(180);
+	object->ang = facingAng;
 	object->collisionFlg = ACTOR_SOLID | ACTOR_PUSHABLE;
 	object->motionFlg = ACTOR_FALLS;
 	if(unit->classId == CLASS_NONE) {
@@ -446,15 +446,15 @@ void btObjectMake(
 		object->scaleX = toFIXED(1);
 		object->scaleY = toFIXED(1);
 	}
-	fdActorStartScriptStub((ACTOR *)object, BattleObject_EmptyScript);
+	fdActorStartScriptStub((ACTOR *)object, BattleObjectEmptyScript);
 }
 
 /* Unused: reads the battlefield position of a party place. */
 void btPlacementGetStepPair(Sint32 partyPlace, Sint32 *x, Sint32 *y)
 {
 	partyPlace *= 2;
-	*x = BattlePlacement_Spots[partyPlace];
-	*y = BattlePlacement_Spots[partyPlace + 1];
+	*x = BattlePlacementSpots[partyPlace];
+	*y = BattlePlacementSpots[partyPlace + 1];
 }
 
 /* BATTLE_STATE.enemyIds of an enemy that left the battle, and of a place held
@@ -476,26 +476,26 @@ void btPlacementGetStepPair(Sint32 partyPlace, Sint32 *x, Sint32 *y)
 /* Lays out count enemies in a column left of the centre, spaced by their size,
    from a rough estimate of the column's length. */
 void btPlacementLayoutEnemies(
-	Uint16 *actorIds, Sint32 count, Sint32 *xPositions, Sint32 *zPositions)
+	Uint16 *actorIds, Sint32 cnt, Sint32 *xPositions, Sint32 *zPositions)
 {
 	Sint32 totalSpacing =
-		count <= 4 ? ESTIMATED_ENEMY_SPACING : ENEMY_SPACING_SMALL;
-	Sint32 z = ((count - 1) * totalSpacing) / 2;
-	Sint32 index;
+		cnt <= 4 ? ESTIMATED_ENEMY_SPACING : ENEMY_SPACING_SMALL;
+	Sint32 z = ((cnt - 1) * totalSpacing) / 2;
+	Sint32 idx;
 
 	/* z starts half a line's estimated length up and steps down by half of each
 	   enemy's spacing before it (none for the first) and half after it. */
-	for(index = 0; index != count; index++) {
+	for(idx = 0; idx != cnt; idx++) {
 		Uint32 spacing = 0;
 
-		xPositions[index] = ENEMY_COLUMN_X;
-		if(index != 0) {
+		xPositions[idx] = ENEMY_COLUMN_X;
+		if(idx != 0) {
 			UNIT  *actor;
 			Uint32 enemy;
 
 			spacing = ENEMY_SPACING_EMPTY;
-			if(!IS_PLACEHOLDER_ID(actorIds[index])) {
-				actor = syUnitGet(actorIds[index]);
+			if(!IS_PLACEHOLDER_ID(actorIds[idx])) {
+				actor = syUnitGet(actorIds[idx]);
 				spacing = btSprIsSmall(actor->enemyId) ? ENEMY_SPACING_SMALL
 													   : ENEMY_SPACING_LARGE;
 				enemy = actor->enemyId;
@@ -506,15 +506,15 @@ void btPlacementLayoutEnemies(
 					enemy == ENEMY_SERPENT_THREE_BEAMS ||
 					enemy == ENEMY_SERPENT_FOUR_BEAMS ||
 					enemy == ENEMY_SERPENT_6 || enemy == ENEMY_SERPENT_7) {
-					xPositions[index] = ENEMY_COLUMN_NEAR_X;
+					xPositions[idx] = ENEMY_COLUMN_NEAR_X;
 				}
 			}
 		}
 		z -= spacing / 2;
-		zPositions[index] = z;
+		zPositions[idx] = z;
 		spacing = ENEMY_SPACING_EMPTY;
-		if(!IS_PLACEHOLDER_ID(actorIds[index])) {
-			UNIT *actor = syUnitGet(actorIds[index]);
+		if(!IS_PLACEHOLDER_ID(actorIds[idx])) {
+			UNIT *actor = syUnitGet(actorIds[idx]);
 
 			spacing = btSprIsSmall(actor->enemyId) ? ENEMY_SPACING_SMALL
 												   : ENEMY_SPACING_LARGE;
@@ -549,7 +549,7 @@ void btPlacementRelayoutEnemies(void)
 	Sint32		  x[ENEMY_BATTLE_SIZE];
 	Sint32		  z[ENEMY_BATTLE_SIZE];
 	Sint32		  last = -1;
-	Sint32		  count = 0;
+	Sint32		  cnt = 0;
 	Sint32		  i;
 	Sint32		  total;
 
@@ -557,13 +557,13 @@ void btPlacementRelayoutEnemies(void)
 		i < ENEMY_BATTLE_SIZE && battle->enemyIds[i] != BATTLE_UNIT_LIST_END;
 		i++) {
 		if(battle->enemyIds[i] == BATTLE_UNIT_REMOVED) {
-			if(count == 0)
+			if(cnt == 0)
 				continue;
 		} else {
-			last = count;
+			last = cnt;
 		}
-		unitIds[count] = battle->enemyIds[i];
-		count++;
+		unitIds[cnt] = battle->enemyIds[i];
+		cnt++;
 	}
 	total = last + 1;
 	btPlacementLayoutEnemies(unitIds, total, x, z);
@@ -586,7 +586,7 @@ void btUnitRefreshPlacement(void)
 	Uint16		  ids[UNIT_MAX];
 	Sint32		  x[ENEMY_BATTLE_SIZE];
 	Sint32		  z[ENEMY_BATTLE_SIZE];
-	Sint32		  count;
+	Sint32		  cnt;
 	Sint32		  i;
 	Sint32		  place;
 	Sint32		  stand;
@@ -598,8 +598,8 @@ void btUnitRefreshPlacement(void)
 	place = 0;
 	stand = 0;
 	battle = Ram_HeapSlots->battleState;
-	count = btPartyPrepareMembers(ids);
-	count += btPartyPrepareReserveOwners(ids + count);
+	cnt = btPartyPrepareMembers(ids);
+	cnt += btPartyPrepareReserveOwners(ids + cnt);
 	/* placement[0..7] is each party unit id's place and placement[8..13] the
 	   enemy places, numbered 8 to 13. */
 	value = BATTLE_OBJECT_NONE;
@@ -610,22 +610,22 @@ void btUnitRefreshPlacement(void)
 		n >= 0; n--, value--)
 		*p-- = value;
 
-	/* The party, at its fixed spots in pixels (BattlePlacement_Spots). */
-	for(i = 0; i < count; place++, i++) {
+	/* The party, at its fixed spots in pixels (BattlePlacementSpots). */
+	for(i = 0; i < cnt; place++, i++) {
 		Sint32 id = ids[i];
 
 		battle->placement[id] = place;
-		btObjectMake(btObjectGet(id), id, BattlePlacement_Spots[place * 2],
-			BattlePlacement_Spots[place * 2 + 1]);
+		btObjectMake(btObjectGet(id), id, BattlePlacementSpots[place * 2],
+			BattlePlacementSpots[place * 2 + 1]);
 	}
 	/* The enemies, laid out by size. */
 	for(i = 0;
 		i < ENEMY_BATTLE_SIZE && battle->enemyIds[i] != BATTLE_UNIT_LIST_END;
 		i++)
 		ids[i] = battle->enemyIds[i];
-	count = i;
-	btPlacementLayoutEnemies(ids, count, x, z);
-	for(i = 0; i < count; i++, stand++) {
+	cnt = i;
+	btPlacementLayoutEnemies(ids, cnt, x, z);
+	for(i = 0; i < cnt; i++, stand++) {
 		Sint32 id = battle->enemyIds[i];
 
 		if(id != BATTLE_UNIT_REMOVED)

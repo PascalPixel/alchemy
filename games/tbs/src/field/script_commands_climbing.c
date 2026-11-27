@@ -17,31 +17,31 @@ Sint32 fdTryJumpForward(void)
 	ACTOR		*leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	Sint32		 result = -1;
 	Sint32		 angle = FACING_NEAREST_CARDINAL(leader->facing);
-	Uint8		 savedMotionFlags = leader->motionFlg;
+	Uint8		 savedMotionFlg = leader->motionFlg;
 	FIELD_STATE *state = FieldStateWork;
-	Sint32		 spriteFlags = SPRITE_FLAG_SHADOW;
-	FIELD_COORDINATE position[3];
+	Sint32		 sprFlg = SPRITE_FLAG_SHADOW;
+	FIELD_COORDINATE pos[3];
 	ACTOR			*platform;
 
 again:
 	/* The middle of the metatile in front, then of the metatile beyond. */
-	position[0].fixed = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-	position[1].fixed = leader->y.fixed;
-	position[2].fixed = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-	syVectorAddPolarOffset(toFIXED(16), angle, &position[0].fixed);
-	if(fdMapGridCheckCollisionStub(leader, (FIELD_POS *)position) ==
+	pos[0].fixed = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	pos[1].fixed = leader->y.fixed;
+	pos[2].fixed = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	syVectorAddPolarOffset(toFIXED(16), angle, &pos[0].fixed);
+	if(fdMapGridCheckCollisionStub(leader, (FIELD_POS *)pos) ==
 		COLLISION_TOO_HIGH)
 		return -1;
-	position[0].fixed = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-	position[1].fixed = leader->y.fixed;
-	position[2].fixed = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-	syVectorAddPolarOffset(toFIXED(32), angle, &position[0].fixed);
-	if(fdMapGridCheckCollisionStub(leader, (FIELD_POS *)position) ==
+	pos[0].fixed = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	pos[1].fixed = leader->y.fixed;
+	pos[2].fixed = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	syVectorAddPolarOffset(toFIXED(32), angle, &pos[0].fixed);
+	if(fdMapGridCheckCollisionStub(leader, (FIELD_POS *)pos) ==
 		COLLISION_NONE) {
 		/* Suspend ground following and the shadow while airborne: 4 pixels a
-		   frame up, 3 a frame across. */
+		   tick up, 3 a tick across. */
 		if(leader->sprStorageKind == ACTOR_SPRITE_ONE)
-			spriteFlags = leader->spr->flg;
+			sprFlg = leader->spr->flg;
 		fdScriptStart();
 		fdActorSelectAnimationStub(leader, ANIM_LEADER_SPRING);
 		sySynch(6);
@@ -51,12 +51,11 @@ again:
 		leader->acceleration = toFIXED(2);
 		leader->velY = toFIXED(4);
 		leader->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
-		fdActorSetSprFlagsStub(
-			leader, spriteFlags & (Uint8)~SPRITE_FLAG_SHADOW);
+		fdActorSetSprFlagsStub(leader, sprFlg & (Uint8)~SPRITE_FLAG_SHADOW);
 		fdActorMoveToAndWaitById(MainRoutineStateWork.leaderActorId,
-			position[0].part[0].integer, position[2].part[0].integer);
+			pos[0].part[0].integer, pos[2].part[0].integer);
 		fdActorSelectAnimationStub(leader, ANIM_LEADER_SPRING);
-		fdActorSetSprFlagsStub(leader, spriteFlags);
+		fdActorSetSprFlagsStub(leader, sprFlg);
 
 		/* A log underfoot dips 2 pixels with the leader and comes back up. */
 		if((platform = fdActorFindNearestFacingTarget(
@@ -78,15 +77,15 @@ again:
 		} else {
 			sySynch(6);
 		}
-		leader->motionFlg = savedMotionFlags;
+		leader->motionFlg = savedMotionFlg;
 		fdScriptEnd();
 		if(state != NULL)
 			state->walkingDistance +=
 				syMulFX(state->walkingDistanceScale, toFIXED(32));
 		/* Landed on another jump spot: stand, then jump again, testing the gap
 		   and the landing afresh. */
-		if(fdMapGridGetMetatileBehaviorAtStub(leader->layer, position[0].fixed,
-			   position[2].fixed) == METATILE_BEHAVIOR_JUMP_FORWARD_UNREACHED) {
+		if(fdMapGridGetMetatileBehaviorAtStub(leader->layer, pos[0].fixed,
+			   pos[2].fixed) == METATILE_BEHAVIOR_JUMP_FORWARD_UNREACHED) {
 			fdActorSelectAnimationStub(leader, ANIM_STAND);
 			sySynch(6);
 			goto again;
@@ -119,19 +118,19 @@ Sint32 fdClimbDown(void)
 			/* LEFTOVER(frame): two positions, of which only the first is
 			 * used. */
 			FIELD_POS  positions[2];
-			FIELD_POS *position = positions;
+			FIELD_POS *pos = positions;
 
 			/* The ground under the point 16 pixels lower may not be a wall
 			   metatile of the overhead layer: the check returns nonzero for a
 			   wall. */
-			SET_POSITION(position, leader->x.fixed,
-				leader->y.fixed - toFIXED(16), leader->z.fixed);
-			result = fdMapGridIsWallAtStub((WORLD_POS *)position);
+			SET_POSITION(pos, leader->x.fixed, leader->y.fixed - toFIXED(16),
+				leader->z.fixed);
+			result = fdMapGridIsWallAtStub((WORLD_POS *)pos);
 			if(result != 0)
 				goto failure;
 
 			/* Step to the middle of the metatile, face north and climb down a
-			   metatile at 1 pixel a frame, in free flight (no motion flags)
+			   metatile at 1 pixel a tick, in free flight (no motion flags)
 			   with no shadow. */
 			fdActorMoveToAndWaitById(
 				MainRoutineStateWork.leaderActorId, gridX, gridZ);
@@ -152,7 +151,7 @@ Sint32 fdClimbDown(void)
 		}
 	} else {
 		/* Let go of the wall and fall: ground following and gravity again after
-		   a hop of 4 pixels a frame, the ground taken as where the leader is
+		   a hop of 4 pixels a tick, the ground taken as where the leader is
 		   until the ground is read, and the shadow back. */
 		fdActorSelectAnimationStub(leader, ANIM_LEADER_CLIMB);
 		leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -179,7 +178,7 @@ failure:
 Sint32 fdClimbUp(void)
 {
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	Sint16 spriteFlags = SPRITE_FLAG_SHADOW;
+	Sint16 sprFlg = SPRITE_FLAG_SHADOW;
 	Sint32 gridX = METATILE_MIDDLE(leader->x.part[0].integer);
 	Sint32 gridZ = METATILE_MIDDLE(leader->z.part[0].integer);
 	Sint32 result;
@@ -187,7 +186,7 @@ Sint32 fdClimbUp(void)
 	fdScriptStart();
 
 	if(leader->sprStorageKind == ACTOR_SPRITE_ONE)
-		spriteFlags = leader->spr->flg;
+		sprFlg = leader->spr->flg;
 
 	if(MainRoutineStateWork.movementMode == LEADER_MOVEMENT_WALK) {
 		Sint32 index = gridX / MAPGRID_METATILE_PIXELS +
@@ -198,13 +197,13 @@ Sint32 fdClimbUp(void)
 			/* LEFTOVER(frame): two positions, of which only the first is
 			 * used. */
 			FIELD_POS  positions[2];
-			FIELD_POS *position = positions;
+			FIELD_POS *pos = positions;
 
 			/* The ground under the leader may not be a wall metatile of the
 			   overhead layer. */
 			SET_POSITION(
-				position, leader->x.fixed, leader->y.fixed, leader->z.fixed);
-			result = fdMapGridIsWallAtStub((WORLD_POS *)position);
+				pos, leader->x.fixed, leader->y.fixed, leader->z.fixed);
+			result = fdMapGridIsWallAtStub((WORLD_POS *)pos);
 			if(result != 0)
 				goto failure;
 
@@ -219,8 +218,8 @@ Sint32 fdClimbUp(void)
 			leader->velY = toFIXED(4);
 			sySynch(4);
 			leader->motionFlg = 0;
-			spriteFlags &= (Uint8)~SPRITE_FLAG_SHADOW;
-			fdActorSetSprFlagsStub(leader, spriteFlags);
+			sprFlg &= (Uint8)~SPRITE_FLAG_SHADOW;
+			fdActorSetSprFlagsStub(leader, sprFlg);
 			leader->speedLimit = toFIXED(1);
 			leader->velY = 0;
 			fdActorSelectAnimationStub(leader, ANIM_LEADER_CLING);
@@ -239,9 +238,9 @@ Sint32 fdClimbUp(void)
 			leader->y.fixed + toFIXED(8), toFIXED(gridZ) - toFIXED(16));
 		fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 		leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-		spriteFlags |= SPRITE_FLAG_SHADOW;
+		sprFlg |= SPRITE_FLAG_SHADOW;
 		leader->groundHeight = leader->y.fixed;
-		fdActorSetSprFlagsStub(leader, spriteFlags);
+		fdActorSetSprFlagsStub(leader, sprFlg);
 		fdScriptWait(4);
 		MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WALK;
 		leader->steeringFlg = ACTOR_FACES_MOTION;

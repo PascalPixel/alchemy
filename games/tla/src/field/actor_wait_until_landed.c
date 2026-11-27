@@ -3,16 +3,16 @@
 #include "system.h"
 #include "field/actor.h"
 
-/* Waits until the actor stops rising or falling, sixty frames at most. */
+/* Waits until the actor stops rising or falling, sixty ticks at most. */
 void fdActorWaitUntilLanded(ACTOR *actor)
 {
-	Sint32 remainingFrames = 60;
+	Sint32 remainingTicks = 60;
 	Sint32 busy;
 
-	while(remainingFrames != 0) {
+	while(remainingTicks != 0) {
 		sySynch(1);
 		busy = actor->velY;
-		remainingFrames--;
+		remainingTicks--;
 		if(busy == 0)
 			break;
 	}

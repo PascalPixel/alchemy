@@ -1,10 +1,10 @@
 /* Kolima and Log Rooms A: Mind Read cast in a script. */
 
 /* The caster begins Mind Read on the target. */
-static void scStartMindRead(Sint32 casterId, Sint32 targetId)
+static void scStartMindRead(Sint32 casterId, Sint32 tgtId)
 {
 	fdPsynergyLoadResources(ABILITY_MIND_READ, 1);
-	fdPsynergySetupActorPair(casterId, targetId);
+	fdPsynergySetupActorPair(casterId, tgtId);
 	fdPsynergyStartCast();
 	fdPsynergyRunHandler(FIELD_PSYNERGY_HANDLER_ON_TARGET);
 	sySynch(1);

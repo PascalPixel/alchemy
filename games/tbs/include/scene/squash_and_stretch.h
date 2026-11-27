@@ -5,7 +5,7 @@
    (scSquashAndStretch). */
 
 /* A random pause before an actor's next squash and stretch: 60 to 149
-   frames. */
+   ticks. */
 #define SQUASH_AND_STRETCH_PAUSE() \
 	(syMathRemainderUnsigned(syRandomNext(), 90) + 60)
 

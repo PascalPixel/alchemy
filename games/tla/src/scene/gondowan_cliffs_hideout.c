@@ -21,9 +21,9 @@ typedef enum GONDOWAN_CLIFFS_HIDEOUT_ACTOR_ID {
 	ACTOR_WARRIOR_AWAITING_FRIENDS
 } GONDOWAN_CLIFFS_HIDEOUT_ACTOR_ID;
 
-extern ACTOR_PLACE GondowanCliffsHideout_PlacementsAfterBriggsCaught[];
-extern ACTOR_PLACE GondowanCliffsHideout_Placements[];
-extern Uint32	   GondowanCliffsHideout_FireMarkerScript[];
+extern ACTOR_PLACE GondowanCliffsHideoutPlacementsAfterBriggsCaught[];
+extern ACTOR_PLACE GondowanCliffsHideoutPlacements[];
+extern Uint32	   GondowanCliffsHideoutFireMarkerScript[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -45,8 +45,8 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(syGameFlagGet(FLAG_BRIGGS_CAUGHT))
-		return GondowanCliffsHideout_PlacementsAfterBriggsCaught;
-	return GondowanCliffsHideout_Placements;
+		return GondowanCliffsHideoutPlacementsAfterBriggsCaught;
+	return GondowanCliffsHideoutPlacements;
 }
 
 const CUE *scGetCues(void)
@@ -114,7 +114,7 @@ Sint32 scPrepareMap(void)
 }
 
 /* The fire marker's script: it shows its sprite sheet's blank first picture. */
-Uint32 GondowanCliffsHideout_FireMarkerScript[] = {
+Uint32 GondowanCliffsHideoutFireMarkerScript[] = {
 	SC_ANIMATION(0),
 	SC_END,
 };
@@ -133,8 +133,8 @@ Uint32 SceneExits[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE GondowanCliffsHideout_Placements[] = {
-	ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, (Sint32)GondowanCliffsHideout_FireMarkerScript, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
+ACTOR_PLACE GondowanCliffsHideoutPlacements[] = {
+	ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, (Sint32)GondowanCliffsHideoutFireMarkerScript, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	{SPRITE_KIBOMBO_WARRIOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_WEST, TALK_FACING_PARTY, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_KIBOMBO_WARRIOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_NORTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_AT_SCENE_POINT},
@@ -145,8 +145,8 @@ ACTOR_PLACE GondowanCliffsHideout_Placements[] = {
 /* clang-format on */
 
 /* clang-format off */
-ACTOR_PLACE GondowanCliffsHideout_PlacementsAfterBriggsCaught[] = {
-	ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, (Sint32)GondowanCliffsHideout_FireMarkerScript, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
+ACTOR_PLACE GondowanCliffsHideoutPlacementsAfterBriggsCaught[] = {
+	ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, (Sint32)GondowanCliffsHideoutFireMarkerScript, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	{SCENE_TABLE_END},
 };

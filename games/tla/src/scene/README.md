@@ -177,7 +177,7 @@ void scDailaEnterDoor(void) {
 	fdScriptWait(10);
 	syImportScriptSetExitRequest(state->stepCue);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 ```

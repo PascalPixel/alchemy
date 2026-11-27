@@ -10,22 +10,22 @@ void gmPartyTakeFallDamage(void)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	Sint32		 leader = syFieldPartyGetLeaderActor();
-	Sint32		 count;
+	Sint32		 cnt;
 	Sint32		 i;
 	Sint16		 hp[8];
 
 	/* DEAD: the leader's actor, looked up and not used (a hazard's damage makes
 	   him flinch with it); the ROM keeps the call. */
 	(void)fdActorGet(leader);
-	count = gmPartyCountMembers();
-	for(i = 0; i < count; i++)
+	cnt = gmPartyCountMembers();
+	for(i = 0; i < cnt; i++)
 		hp[i] = syUnitGet(MainRoutineStateWork.party[i])->hp;
 	fdPartyAddHp(-FALL_DAMAGE, 0);
 	state->fallenCnt = 0;
 	state->survivorCnt = 0;
 	fdActorSetAttachedEffect(
 		leader, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	for(i = 0; i < count; i++) {
+	for(i = 0; i < cnt; i++) {
 		MAIN_ROUTINE_STATE *main = &MainRoutineStateWork;
 		UNIT			   *unit = syUnitGet(main->party[i]);
 

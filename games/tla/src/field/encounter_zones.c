@@ -2,8 +2,8 @@
    and their weights. A field zone's comment gives its area name
    (Area_NameRules) and the scenes and entrances that take it
    (Scene_EncounterRules); a World Map zone's, its encounter regions and the
-   battle environments that take it (WorldMap_EncounterRules); a Djinni zone's,
-   the Djinn whose battles it holds (Encounter_DjinnBattles). */
+   battle environments that take it (WorldMapEncounterRules); a Djinni zone's,
+   the Djinn whose battles it holds (EncounterDjinnBattles). */
 
 #include "battle/formations.h"
 #include "field/encounter_zone.h"

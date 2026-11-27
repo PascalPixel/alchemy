@@ -28,8 +28,8 @@
    declaration in scope. */
 void mnWindowMapTextCanvasTiles(
 	Sint32 x, Sint32 y, Uint32 width, Uint32 height, Sint32 whole);
-MESSAGE *mnMessageStart(WINDOW *window, Sint32 entry, Sint32 x, Sint32 y,
-	Uint16 *spacing, Sint32 flags);
+MESSAGE *mnMessageStart(
+	WINDOW *win, Sint32 entry, Sint32 x, Sint32 y, Uint16 *spacing, Sint32 flg);
 
 /* The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
    parts"). */

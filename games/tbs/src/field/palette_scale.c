@@ -4,34 +4,33 @@
 /* Copies count RGB555 colours from source to destination with each channel
    multiplied by scale (16.16: 0 is black, toFIXED(1) unchanged), for fades. */
 static Sint32 fdPaletteScaleRGB555(
-	Uint16 *source, Uint16 *destination, FIXED scale, Sint32 count)
+	Uint16 *src, Uint16 *dst, FIXED scale, Sint32 cnt)
 {
 	Sint32 remaining;
-	Uint32 color;
+	Uint32 col;
 	Uint32 red;
 	Uint32 green;
 	Uint32 blue;
 
-	if(count > 0) {
+	if(cnt > 0) {
 		Uint32 redMask = RGB(31, 0, 0);
 		Uint32 greenMask = RGB(0, 31, 0);
 		Uint32 blueMask = RGB(0, 0, 31);
 
-		remaining = count;
+		remaining = cnt;
 		do {
-			color = *source;
-			red = color & redMask;
-			green = color & greenMask;
-			blue = blueMask & color;
+			col = *src;
+			red = col & redMask;
+			green = col & greenMask;
+			blue = blueMask & col;
 			red *= scale;
 			green *= scale;
 			blue *= scale;
-			color =
-				(FIXEDtoINT(red) & redMask) | (FIXEDtoINT(green) & greenMask);
-			color |= FIXEDtoINT(blue) & blueMask;
-			*destination = color;
-			source++;
-			destination++;
+			col = (FIXEDtoINT(red) & redMask) | (FIXEDtoINT(green) & greenMask);
+			col |= FIXEDtoINT(blue) & blueMask;
+			*dst = col;
+			src++;
+			dst++;
 			remaining--;
 		} while(remaining != 0);
 	}

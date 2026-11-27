@@ -210,7 +210,7 @@ typedef enum DJINN_MENU_RESULT {
 } DJINN_MENU_RESULT;
 
 /* DJINN_MENU_BACKDROP.tutorialStep: where the Djinn tutorial is. Each lesson's
-   own steps follow it: each waits its frames, then presses a key for the player
+   own steps follow it: each waits its ticks, then presses a key for the player
    and goes on to the next. mnDjinnMenuSelectDjinn runs most;
    mnDjinnMenuRunPreview presses A on each preview. */
 typedef enum DJINN_TUTORIAL_STEP {

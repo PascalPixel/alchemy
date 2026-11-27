@@ -8,7 +8,7 @@
    palette into BG palettes 0 to 13, the next four into the two halves of char
    blocks 2 and 3, and the last into MapGridAnimTiles, where the tileset
    animations copy their pictures from. */
-Uint32 WorldMap_GraphicsResources[2][6] = {
+Uint32 WorldMapGraphicsResources[2][6] = {
 	{
 		(Uint32)RESOURCE_WORLD_MAP_PALETTE_A,
 		(Uint32)RESOURCE_WORLD_MAP_TILES_A,

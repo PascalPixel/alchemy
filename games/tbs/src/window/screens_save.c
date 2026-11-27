@@ -38,10 +38,10 @@
 #define FILE_LIST_GLOW_GREEN 16
 #define FILE_LIST_GLOW_BLUE	 20
 
-/* Writes the play time `frames` (at 60 frames a second) into `out` as hours and
+/* Writes the play time `ticks` (at 60 ticks a second) into `out` as hours and
    minutes, "hhh:mm" with the hours right-aligned in three characters, and
    returns `out`. The time stops at 999:59. */
-void *mnStringFormatPlayTime(Sint32 frames, Uint8 *out)
+void *mnStringFormatPlayTime(Sint32 ticks, Uint8 *out)
 {
 	Uint8  digits[64];
 	Uint32 totalMinutes;
@@ -50,7 +50,7 @@ void *mnStringFormatPlayTime(Sint32 frames, Uint8 *out)
 	Uint8 *digitsCursor;
 	Uint8 *textCursor;
 
-	totalMinutes = (Uint32)frames / (FRAMES_PER_SECOND * SECONDS_PER_MINUTE);
+	totalMinutes = (Uint32)ticks / (TICKS_PER_SECOND * SECONDS_PER_MINUTE);
 	if(totalMinutes >
 		PLAY_TIME_HOURS_MAX * MINUTES_PER_HOUR + MINUTES_PER_HOUR - 1)
 		totalMinutes =
@@ -102,23 +102,23 @@ Uint32 mnSaveFindFreeFile(void)
 Sint32 mnSaveCountFilesExcludingSent(Sint32 excludeSent)
 {
 	Sint32			  file;
-	Sint32			  count;
+	Sint32			  cnt;
 	BUP_FILE_SUMMARY *summary;
 
 	if(syBupInitState() != 0) {
-		count = SAVE_ERROR_NO_MEMORY;
+		cnt = SAVE_ERROR_NO_MEMORY;
 	} else {
-		count = syBupLoadFileSummaries();
+		cnt = syBupLoadFileSummaries();
 		if(excludeSent != 0) {
 			summary = BupStateWork->summary;
 			for(file = 0; file < BUP_FILE_COUNT; file++) {
 				if(summary[file].sendFlg != 0)
-					count--;
+					cnt--;
 			}
 		}
 	}
 	syBupReleaseState();
-	return count;
+	return cnt;
 }
 
 /* Loads the save file summaries for the File Screen and returns how many files
@@ -127,24 +127,24 @@ Sint32 mnSaveCountFilesExcludingSent(Sint32 excludeSent)
 Sint32 mnSaveScanFileSummaries(void)
 {
 	Sint32 error;
-	Sint32 sentCount;
-	Sint32 fileCount;
+	Sint32 sentCnt;
+	Sint32 fileCnt;
 
 	error = syBupInitState();
-	sentCount = 0;
-	fileCount = SAVE_ERROR_NO_MEMORY;
+	sentCnt = 0;
+	fileCnt = SAVE_ERROR_NO_MEMORY;
 	if(error == 0) {
 		Sint32	   i;
 		BUP_STATE *state;
 
-		fileCount = syBupLoadFileSummaries();
+		fileCnt = syBupLoadFileSummaries();
 		state = BupStateWork;
 		TitleSendOptionEnabled = 0;
 		TitleBattleOptionEnabled = 0;
 		for(i = 0; i < BUP_FILE_COUNT; i++) {
 			if(state->summary[i].sendFlg != 0) {
 				TitleSendOptionEnabled = 1;
-				sentCount++;
+				sentCnt++;
 			}
 			if(state->summary[i].djinnCnt != 0) {
 				TitleBattleOptionEnabled = 1;
@@ -156,10 +156,10 @@ Sint32 mnSaveScanFileSummaries(void)
 		}
 	}
 	syBupReleaseState();
-	if(fileCount != 0 && sentCount == fileCount) {
-		return fileCount + SAVE_SCAN_ALL_CLEARED;
+	if(fileCnt != 0 && sentCnt == fileCnt) {
+		return fileCnt + SAVE_SCAN_ALL_CLEARED;
 	}
-	return fileCount;
+	return fileCnt;
 }
 
 /* Prepares the save buffer for writing: stamps the main routine's state with
@@ -173,8 +173,8 @@ Uint32 mnSaveBuildFileSummary(void)
 	Uint16			  members[14];
 	BUP_FILE_SUMMARY *summary;
 	UNIT			 *leader;
-	Uint8			 *source;
-	Uint8			 *destination;
+	Uint8			 *src;
+	Uint8			 *dst;
 	Uint32			 *word;
 	Sint32			  i;
 	Uint32			  sum = 0;
@@ -183,7 +183,7 @@ Uint32 mnSaveBuildFileSummary(void)
 	summary = (BUP_FILE_SUMMARY *)((Uint32)BupBuffer -
 		offsetof(BUP_FILE_SUMMARY, name));
 	MainRoutineStateWork.buildStamp = gmBuildStampGetTimeStub(0);
-	MainRoutineStateWork.playTime = PlayTimeFrames;
+	MainRoutineStateWork.playTime = PlayTimeTicks;
 	/* A second copy of the play time in the file's second part, which
 	   syBupLoadFileSummaries reads back into
 	   BUP_FILE_SUMMARY.secondPartPlayTime:
@@ -195,19 +195,19 @@ Uint32 mnSaveBuildFileSummary(void)
 #if FIX_POINTER_OUTSIDE_OBJECT
 		Uint32 *copy = (Uint32 *)InventorySnapshotWork;
 		copy[SECOND_PART_PLAY_TIME_WORD - SCENE_LOCAL_STATE_WORDS] =
-			PlayTimeFrames;
+			PlayTimeTicks;
 #else
 		Uint32 *copy = (Uint32 *)SceneLocalState;
-		copy[SECOND_PART_PLAY_TIME_WORD] = PlayTimeFrames;
+		copy[SECOND_PART_PLAY_TIME_WORD] = PlayTimeTicks;
 #endif
 	}
 	MainRoutineStateWork.idleSleepEnabled = IdleSleepEnabled;
 
 	leader = gmUnitGetStub(MainRoutineStateWork.leaderActorId);
-	destination = summary->name;
-	source = leader->name;
+	dst = summary->name;
+	src = leader->name;
 	for(i = 0; i < (Sint32)sizeof(summary->name); i++)
-		*destination++ = *source++;
+		*dst++ = *src++;
 	summary->level = leader->level;
 	summary->playTime = MainRoutineStateWork.playTime;
 	summary->area = fdAreaGetNameIndexStub(
@@ -237,15 +237,15 @@ Uint32 mnSaveBuildFileSummary(void)
 	summary->childhood = gmFlagGetStub(FLAG_CHILDHOOD) != 0;
 	{
 		Sint32 n;
-		Uint32 frames;
+		Uint32 ticks;
 
-		frames = MainRoutineStateWork.buildStamp;
+		ticks = MainRoutineStateWork.buildStamp;
 		/* The checksum's words, counted in fours and multiplied back below. */
 		n = BUP_CHECKSUM_WORDS / 4;
 		i = 0;
 		n <<= 2;
 		word = (Uint32 *)GameFlagBytes;
-		IO_WRITE32(frames, &summary->buildStamp);
+		IO_WRITE32(ticks, &summary->buildStamp);
 		/* A while loop, entered at its test. */
 		goto test;
 		do {
@@ -278,12 +278,12 @@ Sint16 mnSaveWriteCurrentFile(void)
 			mnSaveBuildFileSummary();
 			{
 				void  *half = &BupBuffer;
-				Sint32 current;
+				Sint32 cur;
 
 				error = syBupWritePart(BupSlot, half);
-				current = BupSlot;
+				cur = BupSlot;
 				half = (char *)half + BUP_PART_BYTES;
-				error |= syBupWritePart(current + BUP_FILE_COUNT, half);
+				error |= syBupWritePart(cur + BUP_FILE_COUNT, half);
 				if(error != 0) {
 					mnFieldMessageShow(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
 					result = SAVE_ERROR_WRITE;
@@ -488,26 +488,25 @@ Sint32 mnSaveEraseSelectedFile(void)
 #if FILE_LIST_GLOW_BAR_CURSOR
 
 /* An event that makes colours 8-11 of HIGHLIGHT_PALETTE glow: each follows a
-   sine wave of the frame counter, eight frames behind the one before. */
+   sine wave of the tick counter, eight ticks behind the one before. */
 void mnFileListUpdatePulse(void)
 {
-	Sint32			*vblankCount;
+	Sint32			*frameCnt;
 	volatile Uint16 *palette;
 	Sint32			 colour;
 	FIXED			 sine;
 	Sint32			 i;
 
-	vblankCount = (Sint32 *)&VBlankCount;
+	frameCnt = (Sint32 *)&FrameCount;
 	palette = &BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 8);
 	i = 0;
 	do {
 #if FIX_SIGNED_OVERFLOW
-		/* Wrap the frame phase before sySin takes its low sixteen bits. */
-		sine =
-			sySin((((Uint32)*vblankCount + i * 8U) * (TRIG_TURN * 3 / 256U)) &
-				TRIG_ANGLE_MASK);
+		/* Wrap the tick phase before sySin takes its low sixteen bits. */
+		sine = sySin((((Uint32)*frameCnt + i * 8U) * (TRIG_TURN * 3 / 256U)) &
+			TRIG_ANGLE_MASK);
 #else
-		sine = sySin((*vblankCount + i * 8) * (TRIG_TURN * 3 / 256));
+		sine = sySin((*frameCnt + i * 8) * (TRIG_TURN * 3 / 256));
 #endif
 		colour = sine / (toFIXED(1) / 4);
 		{
@@ -534,7 +533,7 @@ void mnFileListUpdatePulse(void)
 /* Starts the palette glow (mnFileListUpdatePulse) as an event. */
 void mnFileListStartPulse(void)
 {
-	sySetEvent(mnFileListUpdatePulse, EVENT_PASS_FRAME);
+	sySetEvent(mnFileListUpdatePulse, EVENT_PASS_TICK);
 }
 
 /* Stops the file list's glow (mnFileListUpdatePulse). */
@@ -543,19 +542,19 @@ void mnFileListStopPulse(void)
 	syCloseEvent(mnFileListUpdatePulse);
 }
 
-/* Fills the `width` x `height` tile rectangle at (x, y) inside `window`,
+/* Fills the `width` x `height` tile rectangle at (x, y) inside `win`,
    clipped to the screen as mnWindowSetInteriorPaletteBit clips, with the tile
    entry of tile 6 in HIGHLIGHT_PALETTE, the palette mnFileListUpdatePulse
    animates. */
 void mnWindowFillTilemapRect(
-	WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height)
+	WINDOW *win, Sint32 x, Sint32 y, Sint32 width, Sint32 height)
 {
 	Uint16 *tilemap = (Uint16 *)WindowStateWork[0];
 	Sint32	sum;
 
-	sum = x + window->x;
+	sum = x + win->x;
 	x = sum + 1;
-	sum = y + (window)->y;
+	sum = y + (win)->y;
 	y = sum + 1;
 
 	if(x < 0) {
@@ -581,16 +580,16 @@ void mnWindowFillTilemapRect(
 
 	if(width > 0 && height > 0) {
 		/* Byte offsets: BG_SCREEN_WIDTH entries of 2 bytes a row. */
-		Sint32 yOffset = y * (BG_SCREEN_WIDTH * 2);
-		Sint32 xOffset = x << 1;
-		Sint32 offset = yOffset + xOffset;
+		Sint32 yOfs = y * (BG_SCREEN_WIDTH * 2);
+		Sint32 xOfs = x << 1;
+		Sint32 ofs = yOfs + xOfs;
 		do {
 			Sint32	remaining = width;
-			Uint16 *cell = (Uint16 *)(offset + (Sint32)tilemap);
+			Uint16 *cell = (Uint16 *)(ofs + (Sint32)tilemap);
 			for(; remaining != 0; remaining--)
 				*cell++ = BG_TILE_PALETTE(HIGHLIGHT_PALETTE) | 6;
 			height--;
-			offset += BG_SCREEN_WIDTH * 2;
+			ofs += BG_SCREEN_WIDTH * 2;
 		} while(height != 0);
 		((WIN_STATE *)tilemap)->dirty = 1;
 	}
@@ -603,32 +602,32 @@ void mnWindowFillTilemapRect(
 #define FILE_LIST_SPRITE_SPACING 3
 
 /* Shows the party of save file `summary` (up to four party members) as sprites
-   in a row from tile (x, y) inside `window`, and starts placing them every
-   frame (mnFileListPlacePartySprs). */
+   in a row from tile (x, y) inside `win`, and starts placing them every
+   tick (mnFileListPlacePartySprs). */
 void mnFileListShowPartySprs(
-	WINDOW *window, Sint32 x, Sint32 y, BUP_FILE_SUMMARY *summary)
+	WINDOW *win, Sint32 x, Sint32 y, BUP_FILE_SUMMARY *summary)
 {
 	SHOP_STATE *menu = MenuState;
 	Sint32		i;
 
 	for(i = 0; i < 4 && summary->party[i] != -1; i++) {
-		SPR *sprite = fdSprCreateStub(fdPartyGetCharacterSprForChildhoodStub(
+		SPR *spr = fdSprCreateStub(fdPartyGetCharacterSprForChildhoodStub(
 			summary->party[i], summary->childhood));
 
-		if(sprite != NULL) {
-			fdSprStartAnimationStub(sprite, ANIM_STAND);
-			sprite->flg = 0;
-			sprite->image.pri = 0;
+		if(spr != NULL) {
+			fdSprStartAnimationStub(spr, ANIM_STAND);
+			spr->flg = 0;
+			spr->image.pri = 0;
 		}
 
-		menu->partyMemberIcons[i] = sprite;
+		menu->partyMemberIcons[i] = spr;
 		menu->partyMemberX[i] =
-			(x + window->x + i * FILE_LIST_SPRITE_SPACING) * 8 + 16;
-		menu->partyMemberY[i] = (y + window->y) * 8 + 16;
+			(x + win->x + i * FILE_LIST_SPRITE_SPACING) * 8 + 16;
+		menu->partyMemberY[i] = (y + win->y) * 8 + 16;
 		menu->partyMemberScale[i] = toFIXED(1);
 	}
 
-	sySetEvent(mnFileListPlacePartySprs, EVENT_PASS_FRAME);
+	sySetEvent(mnFileListPlacePartySprs, EVENT_PASS_TICK);
 }
 
 /* Stops placing the party sprites of the file list and releases them. */
@@ -647,60 +646,60 @@ void mnFileListHidePartySprs(void)
 }
 
 /* An event: draws each party sprite of the file list at its place and scale for
-   this frame. */
+   this tick. */
 void mnFileListPlacePartySprs(void)
 {
 	SHOP_STATE	 *menu = MenuState;
 	SPR_SCALE	  scale;
-	SPR_PLACEMENT position;
-	Sint32		  index = 0;
-	SPR			 *sprite;
+	SPR_PLACEMENT pos;
+	Sint32		  idx = 0;
+	SPR			 *spr;
 
 	while(1) {
-		sprite = menu->partyMemberIcons[index];
-		if(sprite != 0) {
+		spr = menu->partyMemberIcons[idx];
+		if(spr != 0) {
 			/* Offset height and y equally to keep the visible row fixed. */
-			scale.x = menu->partyMemberScale[index];
-			scale.y = menu->partyMemberScale[index];
-			position.x = toFIXED(menu->partyMemberX[index]);
-			position.height = toFIXED(500);
-			position.y = toFIXED(menu->partyMemberY[index]) + toFIXED(500);
-			position.groundHeight = 0;
+			scale.x = menu->partyMemberScale[idx];
+			scale.y = menu->partyMemberScale[idx];
+			pos.x = toFIXED(menu->partyMemberX[idx]);
+			pos.height = toFIXED(500);
+			pos.y = toFIXED(menu->partyMemberY[idx]) + toFIXED(500);
+			pos.groundHeight = 0;
 			fdRenderApplyProjectedPlacementStub(
-				sprite, &position, &scale, FACING_SOUTH);
+				spr, &pos, &scale, FACING_SOUTH);
 		}
-		index += 1;
-		if(index > 3) {
+		idx += 1;
+		if(idx > 3) {
 			break;
 		}
 	}
 }
 
 /* Shows the four Djinn sprites, one for each element, in a row from tile (x, y)
-   inside `window`, and starts placing them every frame
-   (mnFileListPlaceDjinnSprs). Does nothing when `window` is NULL. */
-void mnFileListShowDjinnSprs(WINDOW *window, Sint32 x, Sint32 y)
+   inside `win`, and starts placing them every tick
+   (mnFileListPlaceDjinnSprs). Does nothing when `win` is NULL. */
+void mnFileListShowDjinnSprs(WINDOW *win, Sint32 x, Sint32 y)
 {
 	ITEM_MENU_STATE *menu = MenuState;
 	Sint32			 i;
 
-	if(window != NULL) {
+	if(win != NULL) {
 		for(i = 0; i < 4; i++) {
-			SPR *sprite = fdSprCreateStub(FileList_DjinnSpriteIds[i]);
+			SPR *spr = fdSprCreateStub(FileListDjinnSpriteIds[i]);
 
-			if(sprite != NULL) {
-				fdSprStartAnimationStub(sprite, ANIM_WALK);
-				sprite->flg = 0;
-				sprite->image.pri = 0;
+			if(spr != NULL) {
+				fdSprStartAnimationStub(spr, ANIM_WALK);
+				spr->flg = 0;
+				spr->image.pri = 0;
 			}
 
-			menu->figures[i] = sprite;
+			menu->figures[i] = spr;
 			menu->figureX[i] =
-				(window->x + x + i * FILE_LIST_SPRITE_SPACING) * 8 + 16;
-			menu->figureY[i] = (window->y + y) * 8 + 16;
+				(win->x + x + i * FILE_LIST_SPRITE_SPACING) * 8 + 16;
+			menu->figureY[i] = (win->y + y) * 8 + 16;
 		}
 
-		sySetEvent(mnFileListPlaceDjinnSprs, EVENT_PASS_FRAME);
+		sySetEvent(mnFileListPlaceDjinnSprs, EVENT_PASS_TICK);
 	}
 }
 
@@ -720,43 +719,43 @@ void mnFileListHideDjinnSprs(void)
 }
 
 /* An event: draws each Djinn sprite of the file list at its place, at scale
-   1.0, for this frame. */
+   1.0, for this tick. */
 void mnFileListPlaceDjinnSprs(void)
 {
 	ITEM_MENU_STATE *menu = MenuState;
 	SPR_SCALE		 scale;
-	SPR_PLACEMENT	 position;
-	Sint32			 index;
+	SPR_PLACEMENT	 pos;
+	Sint32			 idx;
 
-	for(index = 0; index <= 3; index++) {
-		SPR *sprite = menu->figures[index];
+	for(idx = 0; idx <= 3; idx++) {
+		SPR *spr = menu->figures[idx];
 
-		if(sprite != NULL) {
+		if(spr != NULL) {
 			FIXED fullSize = toFIXED(1);
 			FIXED height = toFIXED(500);
 
 			scale.x = fullSize;
 			scale.y = fullSize;
-			position.x = toFIXED(menu->figureX[index]);
-			position.height = height;
-			position.y = toFIXED(menu->figureY[index]) + height;
-			position.groundHeight = 0;
+			pos.x = toFIXED(menu->figureX[idx]);
+			pos.height = height;
+			pos.y = toFIXED(menu->figureY[idx]) + height;
+			pos.groundHeight = 0;
 			fdRenderApplyProjectedPlacementStub(
-				sprite, &position, &scale, FACING_SOUTH);
+				spr, &pos, &scale, FACING_SOUTH);
 		}
 	}
 }
 
 /* Draws the Djinn counts of save file `summary`, one for each element, two
-   digits each, 24 pixels apart on row 16 of `window`, under the Djinn
+   digits each, 24 pixels apart on row 16 of `win`, under the Djinn
    sprites. */
-void mnFileListDrawDjinnCounts(WINDOW *window, BUP_FILE_SUMMARY *summary)
+void mnFileListDrawDjinnCounts(WINDOW *win, BUP_FILE_SUMMARY *summary)
 {
 	Sint32 i;
 
-	if(window != NULL) {
+	if(win != NULL) {
 		for(i = 0; i < 4; i++)
-			mnTextDrawNumAtOffset(summary->djinn[i], 2, window,
+			mnTextDrawNumAtOffset(summary->djinn[i], 2, win,
 				i * FILE_LIST_SPRITE_SPACING * 8, 16);
 	}
 }
@@ -769,48 +768,47 @@ void mnFileListDrawDjinnCounts(WINDOW *window, BUP_FILE_SUMMARY *summary)
 		mnTextDrawStringInWindow, mnTextDrawStringAtOffset, \
 		mnTextDrawStringAtOffset, mnTextDrawStringInWindow)
 
-/* Draws the summary of save file `summary` into `window`: the leader's name,
+/* Draws the summary of save file `summary` into `win`: the leader's name,
    level and class, the play time and the coins. */
-void mnFileListDrawSummary(WINDOW *window, BUP_FILE_SUMMARY *summary)
+void mnFileListDrawSummary(WINDOW *win, BUP_FILE_SUMMARY *summary)
 {
 	Uint32 playTime[4];
 	Sint32 y;
 
-	if(window != 0) {
-		mnWindowSprPrepareForRedraw(window);
-		mnWindowDrawDividerLine(window, 0, 4, 13, 4);
-		mnTextDrawStringAtOffset(summary->name, window, 0, 0);
+	if(win != 0) {
+		mnWindowSprPrepareForRedraw(win);
+		mnWindowDrawDividerLine(win, 0, 4, 13, 4);
+		mnTextDrawStringAtOffset(summary->name, win, 0, 0);
 		y = 0;
 		SUMMARY_DRAW_LEVEL(
-			StatusScreen_LevelLetterString, window, SUMMARY_LEVEL_X, 0);
-		mnTextDrawNumAtOffset(summary->level, 2, window, 80, y);
-		mnTextDrawMessageAsTiles(
-			summary->classId + MsgClassName, window, 0, 16);
+			StatusScreen_LevelLetterString, win, SUMMARY_LEVEL_X, 0);
+		mnTextDrawNumAtOffset(summary->level, 2, win, 80, y);
+		mnTextDrawMessageAsTiles(summary->classId + MsgClassName, win, 0, 16);
 #if LANGUAGE == LANGUAGE_JAPANESE
 		/* Coins on the third row, then "Play Time:" and the time. */
 		y = 32;
-		mnTextDrawNumInWindow(summary->coins, 6, window, 24, y);
-		mnTextDrawMessageAsTiles(MsgCoins, window, 72, 32);
-		mnTextDrawMessageAsTiles(MsgStatusLabel, window, 0, 48);
+		mnTextDrawNumInWindow(summary->coins, 6, win, 24, y);
+		mnTextDrawMessageAsTiles(MsgCoins, win, 72, 32);
+		mnTextDrawMessageAsTiles(MsgStatusLabel, win, 0, 48);
 		mnTextDrawStringInWindow(
-			mnStringFormatPlayTime(summary->playTime, (Uint8 *)playTime),
-			window, 48, 48);
+			mnStringFormatPlayTime(summary->playTime, (Uint8 *)playTime), win,
+			48, 48);
 #else
 		/* "Play Time:" with the time under it, then the coins. */
-		mnTextDrawMessageAsTiles(MsgStatusLabel, window, 0, 32);
+		mnTextDrawMessageAsTiles(MsgStatusLabel, win, 0, 32);
 		mnTextDrawStringInWindow(
-			mnStringFormatPlayTime(summary->playTime, (Uint8 *)playTime),
-			window, 48, 40);
+			mnStringFormatPlayTime(summary->playTime, (Uint8 *)playTime), win,
+			48, 40);
 		y = 48;
-		mnTextDrawNumInWindow(summary->coins, 6, window, 0, y);
+		mnTextDrawNumInWindow(summary->coins, 6, win, 0, y);
 #if LANGUAGE == LANGUAGE_FRENCH
 		/* French takes the singular "Pièce" for one coin or none. */
 		if(summary->coins > 1)
-			mnTextDrawMessageAsTiles(MsgCoins, window, SUMMARY_COINS_X, 48);
+			mnTextDrawMessageAsTiles(MsgCoins, win, SUMMARY_COINS_X, 48);
 		else
-			mnTextDrawMessageAsTiles(MsgPiece, window, SUMMARY_COINS_X, 48);
+			mnTextDrawMessageAsTiles(MsgPiece, win, SUMMARY_COINS_X, 48);
 #else
-		mnTextDrawMessageAsTiles(MsgCoins, window, SUMMARY_COINS_X, 48);
+		mnTextDrawMessageAsTiles(MsgCoins, win, SUMMARY_COINS_X, 48);
 #endif
 #endif
 	}
@@ -1261,9 +1259,9 @@ Sint32 mnSaveChooseAndLoadFile(Sint32 mode)
 				mnFieldMessageShow(MsgLoadFailed, FIELD_MESSAGE_ZOOM);
 				result = SAVE_ERROR_READ;
 			} else {
-				PlayTimeFrames = MainRoutineStateWork.playTime;
+				PlayTimeTicks = MainRoutineStateWork.playTime;
 				IdleSleepEnabled = MainRoutineStateWork.idleSleepEnabled;
-				IdleFrames = 0;
+				IdleTicks = 0;
 				BupSlot = file;
 			}
 		}

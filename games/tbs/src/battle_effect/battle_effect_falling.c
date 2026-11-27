@@ -29,21 +29,21 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 
 /* A falling shard or drop keeps falling while its y, in eighths of a pixel, is
    at most this. */
-#define FALLING_LAND_Y			   (80 * 8 - 1)
+#define FALLING_LAND_Y			  (80 * 8 - 1)
 /* IceShardSheet: the shard, then its shatter, each picture 32x32. */
-#define ICE_SHARD_WIDTH			   32
-#define ICE_SHARD_HEIGHT		   32
-/* A landed shard or drop counts its frames since landing up to one past
+#define ICE_SHARD_WIDTH			  32
+#define ICE_SHARD_HEIGHT		  32
+/* A landed shard or drop counts its ticks since landing up to one past
    this. */
-#define FALLING_LANDED_LAST_FRAME  14
-/* A landed shard shows its shatter's pictures from its first frame to
-   FALLING_LANDED_LAST_FRAME, ICE_SHATTER_PICTURE_FRAMES each, and kicks up a
-   puff on frames ICE_PUFF_FIRST_FRAME to ICE_PUFF_LAST_FRAME. */
-#define ICE_SHATTER_PICTURE_FRAMES 3
-#define ICE_PUFF_FIRST_FRAME	   9
-#define ICE_PUFF_LAST_FRAME		   11
-/* A puff's frames: the nine sparkle pictures, two frames each. */
-#define ICE_PUFF_FRAMES			   18
+#define FALLING_LANDED_LAST_TICK  14
+/* A landed shard shows its shatter's pictures from its first tick to
+   FALLING_LANDED_LAST_TICK, ICE_SHATTER_PICTURE_TICKS each, and kicks up a
+   puff on ticks ICE_PUFF_FIRST_TICK to ICE_PUFF_LAST_TICK. */
+#define ICE_SHATTER_PICTURE_TICKS 3
+#define ICE_PUFF_FIRST_TICK		  9
+#define ICE_PUFF_LAST_TICK		  11
+/* A puff's ticks: the nine sparkle pictures, two ticks each. */
+#define ICE_PUFF_TICKS			  18
 
 /* Ice shards rain down diagonally onto the targets' side of the field and
    shatter into puffs of sparkle, flashing and shaking each target as they land.
@@ -53,7 +53,7 @@ void btEffectRunIce(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	Uint8				*sparkles;
 	BLITTER_PAIR		 draw;
 	PARTICLE			*shard;
@@ -133,15 +133,13 @@ void btEffectRunIce(BATTLE_EFFECT_PARM *args)
 		state->transferValue = CANVAS_FADE_HALF;
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 
-	for(frame = 0; frame != Ice_Counts[state->args->variant][ICE_FRAMES];
-		frame++) {
-		if(frame == Ice_Counts[state->args->variant][ICE_FRAMES] - 16)
+	for(frm = 0; frm != IceCounts[state->args->variant][ICE_TICKS]; frm++) {
+		if(frm == IceCounts[state->args->variant][ICE_TICKS] - 16)
 			EFFECT_SHOW_DAMAGE(SE_WATER);
 
 		/* Shards fall down the slant, and on landing shatter, kicking up
 		   puffs. */
-		for(i = 0; i != Ice_Counts[state->args->variant][ICE_SHARD_COUNT];
-			i++) {
+		for(i = 0; i != IceCounts[state->args->variant][ICE_SHARD_COUNT]; i++) {
 			shard = &state->particles[i];
 			if(shard->variant == -1) {
 				Sint32 x = shard->x / 8;
@@ -172,21 +170,21 @@ void btEffectRunIce(BATTLE_EFFECT_PARM *args)
 				Sint32 y = shard->y / 8;
 
 				if(shard->variant >= 1 &&
-					shard->variant <= FALLING_LANDED_LAST_FRAME) {
+					shard->variant <= FALLING_LANDED_LAST_TICK) {
 					draw[state->args->variant == EFFECT_VARIANT_STRONGEST ? 1
 																		  : 0](
 						canvas,
 						state->sheet + PICTURE_BYTES(ICE_SHARD) +
-							shard->variant / ICE_SHATTER_PICTURE_FRAMES *
+							shard->variant / ICE_SHATTER_PICTURE_TICKS *
 								PICTURE_BYTES(ICE_SHARD),
 						x, y, ICE_SHARD_WIDTH, ICE_SHARD_HEIGHT);
 				}
-				if(shard->variant >= ICE_PUFF_FIRST_FRAME &&
-					shard->variant <= ICE_PUFF_LAST_FRAME) {
+				if(shard->variant >= ICE_PUFF_FIRST_TICK &&
+					shard->variant <= ICE_PUFF_LAST_TICK) {
 					for(k = 0; k != FALLING_SHARD_PUFF_COUNT; k++) {
 						puff = &state->particles[FALLING_SHARD_COUNT + k];
 						if(puff->variant == -1) {
-							puff->variant = ICE_PUFF_FRAMES;
+							puff->variant = ICE_PUFF_TICKS;
 							puff->x =
 								(((syRandom() & 31) + shard->x / 8) << 3) + 8;
 							puff->y = ((syRandom() & 15) + shard->y / 8 - 15)
@@ -195,7 +193,7 @@ void btEffectRunIce(BATTLE_EFFECT_PARM *args)
 						}
 					}
 				}
-				if(shard->variant <= FALLING_LANDED_LAST_FRAME)
+				if(shard->variant <= FALLING_LANDED_LAST_TICK)
 					shard->variant++;
 			}
 		}
@@ -204,18 +202,18 @@ void btEffectRunIce(BATTLE_EFFECT_PARM *args)
 		for(i = 0; i != FALLING_SHARD_PUFF_COUNT; i++) {
 			puff = &state->particles[FALLING_SHARD_COUNT + i];
 			if(puff->variant != -1) {
-				if(puff->variant < ICE_PUFF_FRAMES) {
+				if(puff->variant < ICE_PUFF_TICKS) {
 					Sint32 image = puff->variant / 2;
 					Sint32 x =
-						puff->x / 8 - (BattleEffect_SparkleSizes[image] >> 1);
+						puff->x / 8 - (BattleEffectSparkleSizes[image] >> 1);
 					Sint32 y =
-						puff->y / 8 - (BattleEffect_SparkleSizes[image] >> 1);
+						puff->y / 8 - (BattleEffectSparkleSizes[image] >> 1);
 
 					draw[state->args->variant == EFFECT_VARIANT_STRONGEST ? 1
 																		  : 0](
-						canvas, sparkles + BattleEffect_SparklePictures[image],
-						x, y, BattleEffect_SparkleSizes[image],
-						BattleEffect_SparkleSizes[image]);
+						canvas, sparkles + BattleEffectSparklePictures[image],
+						x, y, BattleEffectSparkleSizes[image],
+						BattleEffectSparkleSizes[image]);
 				}
 				if(puff->variant > -1)
 					puff->variant--;
@@ -256,7 +254,7 @@ typedef struct DROP_SPLASH_BUFFER {
 #define DOUSE_BURST_PICTURE		   (DOUSE_FLASH_PICTURE + PICTURE_BYTES(DOUSE_DROP))
 
 /* Drops of water fall diagonally onto the targets' side of the field, 8 pixels
-   down and 4 across a frame, each bursting in a splash that throws up droplets
+   down and 4 across a tick, each bursting in a splash that throws up droplets
    where it lands, while the targets flash; Deluge throws them higher.
 
    Abilities: Douse, Drench, Deluge. */
@@ -264,7 +262,7 @@ void btEffectRunDouse(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	DRAW_RECTANGLE		 drawDroplet;
 	DRAW_RECTANGLE		 drawDrop;
 	PARTICLE			*drop;
@@ -303,7 +301,7 @@ void btEffectRunDouse(BATTLE_EFFECT_PARM *args)
 
 		drop = &state->particles[i];
 		x = syRandom() & 63;
-		y = -(i * Douse_Counts[state->args->variant][DOUSE_DROP_SPACING] + 16);
+		y = -(i * DouseCounts[state->args->variant][DOUSE_DROP_SPACING] + 16);
 		if(state->args->side == EFFECT_SIDE_PARTY)
 			x = x + y / 2 - 48;
 		else
@@ -335,13 +333,12 @@ void btEffectRunDouse(BATTLE_EFFECT_PARM *args)
 	}
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 
-	for(frame = 0; frame != Douse_Counts[state->args->variant][DOUSE_FRAMES];
-		frame++) {
-		if(frame == Douse_Counts[state->args->variant][DOUSE_FRAMES] - 64)
+	for(frm = 0; frm != DouseCounts[state->args->variant][DOUSE_TICKS]; frm++) {
+		if(frm == DouseCounts[state->args->variant][DOUSE_TICKS] - 64)
 			EFFECT_SHOW_DAMAGE(SE_WATER);
 
 		/* Drops fall down the slant, then splash. */
-		for(i = 0; i != Douse_Counts[state->args->variant][DOUSE_DROP_COUNT];
+		for(i = 0; i != DouseCounts[state->args->variant][DOUSE_DROP_COUNT];
 			i++) {
 			Sint32 x;
 			Sint32 y;
@@ -362,12 +359,12 @@ void btEffectRunDouse(BATTLE_EFFECT_PARM *args)
 					/* Droplets fly up from the middle of the landed drop. */
 					drop->variant = 0;
 					for(k = 0; k !=
-						Douse_Counts[state->args->variant]
-									[DOUSE_DROPLETS_PER_DROP];
+						DouseCounts[state->args->variant]
+								   [DOUSE_DROPLETS_PER_DROP];
 						k++) {
 						droplet = &DOUSE_SPLASH_BUFFER->droplets[i *
-								Douse_Counts[state->args->variant]
-											[DOUSE_DROPLETS_PER_DROP] +
+								DouseCounts[state->args->variant]
+										   [DOUSE_DROPLETS_PER_DROP] +
 							k];
 						droplet->x = INTtoFIXED(x + DOUSE_DROP_WIDTH / 2);
 						droplet->y = toFIXED(y);
@@ -386,7 +383,7 @@ void btEffectRunDouse(BATTLE_EFFECT_PARM *args)
 							SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 2);
 				}
 			} else {
-				/* Four frames of the flash, four of the spreading splash. */
+				/* Four ticks of the flash, four of the spreading splash. */
 				if(drop->variant >= 0 && drop->variant <= 3)
 					drawDrop(canvas, state->sheet + DOUSE_FLASH_PICTURE, x, y,
 						DOUSE_DROP_WIDTH, DOUSE_DROP_HEIGHT);
@@ -397,7 +394,7 @@ void btEffectRunDouse(BATTLE_EFFECT_PARM *args)
 							(DOUSE_BURST_PICTURE_HEIGHT - DOUSE_DROP_HEIGHT) /
 								2,
 						DOUSE_BURST_PICTURE_WIDTH, DOUSE_BURST_PICTURE_HEIGHT);
-				if(drop->variant <= FALLING_LANDED_LAST_FRAME)
+				if(drop->variant <= FALLING_LANDED_LAST_TICK)
 					drop->variant++;
 			}
 		}
@@ -415,7 +412,7 @@ void btEffectRunDouse(BATTLE_EFFECT_PARM *args)
 				droplet->variant--;
 			}
 		}
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	syCloseEvent(btEffectArmWin0HBlankDMA);
@@ -425,11 +422,11 @@ void btEffectRunDouse(BATTLE_EFFECT_PARM *args)
 
 #undef FALLING_BUILD_SLANTED_WINDOW
 #undef FALLING_BAND
-#undef FALLING_LANDED_LAST_FRAME
-#undef ICE_SHATTER_PICTURE_FRAMES
-#undef ICE_PUFF_FIRST_FRAME
-#undef ICE_PUFF_LAST_FRAME
-#undef ICE_PUFF_FRAMES
+#undef FALLING_LANDED_LAST_TICK
+#undef ICE_SHATTER_PICTURE_TICKS
+#undef ICE_PUFF_FIRST_TICK
+#undef ICE_PUFF_LAST_TICK
+#undef ICE_PUFF_TICKS
 #undef FALLING_LAND_Y
 #undef DOUSE_SPLASH_BUFFER
 #undef DOUSE_DROP_WIDTH

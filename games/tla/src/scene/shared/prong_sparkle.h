@@ -1,10 +1,10 @@
 /* A Prong's update while it waits to be taken, the Left Prong in Ankohl Ruins
-   and the Right Prong in the Shrine of the Sea God: every eighth frame a
+   and the Right Prong in the Shrine of the Sea God: every eighth tick a
    sparkle rises somewhere about it. */
 void scProngSparkle(ACTOR *actor)
 {
 	EFFECT_OPTIONS options;
-	Uint32		   phase = FrameCount & 7;
+	Uint32		   phase = TickCount & 7;
 	Sint32		   dx;
 	Sint32		   dy;
 

@@ -22,8 +22,8 @@ void scWhirlwindCarryLeaderLower(void)
 		actor->z.fixed = linked->z.fixed;
 		if(i <= toFIXED(4) - 1)
 			i += toFIXED(0.1);
-		actor->facing = (Uint8)FrameCount * FACING_STEP;
-		actor->priFlg ^= ACTOR_PRIORITY_UNDERFOOT << (FrameCount & 1);
+		actor->facing = (Uint8)TickCount * FACING_STEP;
+		actor->priFlg ^= ACTOR_PRIORITY_UNDERFOOT << (TickCount & 1);
 		syWait(1);
 	}
 	state->glow = 1;

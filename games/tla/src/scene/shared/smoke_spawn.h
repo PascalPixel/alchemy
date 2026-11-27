@@ -1,5 +1,5 @@
 /* Adds one white puff of chimney smoke at (x, y, z), which scSmokeDrift moves
-   for SMOKE_FRAMES. */
+   for SMOKE_TICKS. */
 void scSmokeSpawn(Sint32 x, Sint32 y, Sint32 z)
 {
 	ACTOR *actor = scFieldActorCreate(SPRITE_DUST_CLOUD, x, y, z);
@@ -14,7 +14,7 @@ void scSmokeSpawn(Sint32 x, Sint32 y, Sint32 z)
 		fdActorSetSprFlags(actor, 0);
 		actor->scaleX = toFIXED(1) / 2;
 		actor->scaleY = toFIXED(1) / 2;
-		*(Sint32 *)&actor->watchedActor = SMOKE_FRAMES;
+		*(Sint32 *)&actor->watchedActor = SMOKE_TICKS;
 		actor->update = (OBJECT_UPDATE)scSmokeDrift;
 		fdActorSelectAnimation(actor, 5);
 		fdActorSetBlendMode(actor, 1);

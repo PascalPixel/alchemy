@@ -15,16 +15,16 @@ void fdCameraMoveWithinMapBounds(
 	Sint32		 maximumX;
 	FIXED		 height;
 	FIXED		 maximumZ;
-	FIXED		 positionX;
-	FIXED		 positionZ;
-	FIXED		 positionY;
+	FIXED		 posX;
+	FIXED		 posZ;
+	FIXED		 posY;
 	MAP_STATE	*map;
 	ACTOR		*actor;
 
-	positionX = requestedX;
-	positionY = requestedY;
+	posX = requestedX;
+	posY = requestedY;
 	panning = pan;
-	positionZ = requestedZ;
+	posZ = requestedZ;
 	state = syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
 	actor = state->camera;
 	map = Ram_HeapSlots->mapGrid;
@@ -38,35 +38,35 @@ void fdCameraMoveWithinMapBounds(
 	maximumZ = map->maxZ + height - toFIXED(64);
 	map->origin = &actor->x.fixed;
 	fdActorStartIdleStub(actor);
-	if(positionX == -1) {
-		positionX = actor->x.fixed;
+	if(posX == -1) {
+		posX = actor->x.fixed;
 	}
-	if(positionY == -1) {
-		positionY = actor->y.fixed;
+	if(posY == -1) {
+		posY = actor->y.fixed;
 	}
-	if(positionZ == -1) {
-		positionZ = actor->z.fixed;
+	if(posZ == -1) {
+		posZ = actor->z.fixed;
 	}
-	if(positionX < minimumX) {
-		positionX = minimumX;
+	if(posX < minimumX) {
+		posX = minimumX;
 	}
-	if(positionZ < minimumZ) {
-		positionZ = minimumZ;
+	if(posZ < minimumZ) {
+		posZ = minimumZ;
 	}
-	if(positionX > maximumX) {
-		positionX = maximumX;
+	if(posX > maximumX) {
+		posX = maximumX;
 	}
-	if(positionZ > maximumZ) {
-		positionZ = maximumZ;
+	if(posZ > maximumZ) {
+		posZ = maximumZ;
 	}
 	if(panning == 0) {
-		SET_ACTOR_POSITION(actor, positionX, positionY, positionZ);
+		SET_ACTOR_POSITION(actor, posX, posY, posZ);
 		sySynch(1U);
 		if(state->mode != ACTOR_SYSTEM_WORLD_MAP) {
 			fdMapGridCenterOnFollowedPointStub();
 		}
 	} else {
-		fdActorSetMoveTargetStub(actor, positionX, positionY, positionZ);
+		fdActorSetMoveTargetStub(actor, posX, posY, posZ);
 	}
 }
 
@@ -90,8 +90,8 @@ void fdCameraMoveToActor(Sint32 actorId, Sint32 pan)
 			actor->x.fixed, actor->y.fixed, actor->z.fixed, pan);
 }
 
-/* The script command "camera wait for move": waits (at most 600 frames) for the
-   camera to arrive, then 2 frames more. */
+/* The script command "camera wait for move": waits (at most 600 ticks) for the
+   camera to arrive, then 2 ticks more. */
 void fdCameraWaitForArrival(void)
 {
 	fdActorWaitForMoveStub(((FIELD_STATE *)syHeapSlotAllocEWRAM(
@@ -109,21 +109,21 @@ ACTOR *fdCameraGetActor(void)
 		->camera;
 }
 
-/* Unused: makes the camera follow target; unless keepCurrentPosition is set it
+/* Unused: makes the camera follow target; unless keepCurPos is set it
    jumps there at once. */
-UNUSED void fdCameraFollow(ACTOR *target, Sint32 keepCurrentPosition)
+UNUSED void fdCameraFollow(ACTOR *tgt, Sint32 keepCurPos)
 {
 	ACTOR *camera;
 
 	camera = ((FIELD_STATE *)syHeapSlotAllocEWRAM(
 				  HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))
 				 ->camera;
-	if(target != NULL) {
+	if(tgt != NULL) {
 		fdActorStartCameraStub(camera, 0);
-		camera->watchedActor = (union FIELD_OBJECT *)target;
-		if(keepCurrentPosition == 0) {
+		camera->watchedActor = (union FIELD_OBJECT *)tgt;
+		if(keepCurPos == 0) {
 			SET_ACTOR_POSITION(
-				camera, target->x.fixed, target->y.fixed, target->z.fixed);
+				camera, tgt->x.fixed, tgt->y.fixed, tgt->z.fixed);
 		}
 	}
 }

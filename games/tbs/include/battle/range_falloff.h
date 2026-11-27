@@ -10,28 +10,28 @@
 /* Percentages by a target's distance from the aimed position, 0 for the aimed
    target to 5 for the farthest: btAbilityApplyToTarget scales an amount by the
    entry and divides by 100, so an ability spread over a group weakens step by
-   step. RangeFalloff_EffectChance instead scales the effect's chance, through
+   step. RangeFalloffEffectChance instead scales the effect's chance, through
    gmBattleRollEffectSuccessStub. The share of an effect's chance to land
    (gmBattleRollEffectSuccess's successScale): 100, 60, then 30. */
-extern const Uint8 RangeFalloff_EffectChance[];
+extern const Uint8 RangeFalloffEffectChance[];
 /* PP loss (ABILITY_FORMULA_PP_DAMAGE), Crazy Voice's and Psy Drain's: 100, 50,
    30, then 10. */
-extern const Sint32 RangeFalloff_PpLoss[];
+extern const Sint32 RangeFalloffPpLoss[];
 /* HP healing (ABILITY_FORMULA_HEAL_HP): 100 down to 20 by 20, then 10. */
-extern const Sint32 RangeFalloff_HealHp[];
+extern const Sint32 RangeFalloffHealHp[];
 /* PP damage of the never-reached ability kind -1: 100, 50, 30, then 10. */
-extern const Sint32 RangeFalloff_PpDamage[];
+extern const Sint32 RangeFalloffPpDamage[];
 /* Psynergy damage (ABILITY_FORMULA_DAMAGE): 100 down to 20 by 20, then 10. */
-extern const Sint32 RangeFalloff_PsynergyDamage[];
+extern const Sint32 RangeFalloffPsynergyDamage[];
 /* Summon damage (ABILITY_FORMULA_SUMMON): 100, 70, 40, 30, 20, then 10. */
-extern const Sint32 RangeFalloff_SummonDamage[];
+extern const Sint32 RangeFalloffSummonDamage[];
 /* An enemy's unleashed damage (ABILITY_FORMULA_ENEMY_DAMAGE): 100, 50, 30, then
    10. */
-extern const Sint32 RangeFalloff_EnemyDamage[];
+extern const Sint32 RangeFalloffEnemyDamage[];
 /* PP healing (ABILITY_FORMULA_HEAL_PP): 100 down to 20 by 20, then 10. */
-extern const Sint32 RangeFalloff_HealPp[];
+extern const Sint32 RangeFalloffHealPp[];
 /* The damage of an effect ability whose effect lands (ABILITY_FORMULA_EFFECT):
    100, 50, 30, then 10. */
-extern const Sint32 RangeFalloff_EffectDamage[];
+extern const Sint32 RangeFalloffEffectDamage[];
 
 #endif

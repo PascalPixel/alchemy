@@ -12,7 +12,7 @@ void fdLeaderSlideOnIceAhead(void)
 	Sint32	nextBehavior;
 	Uint8  *layer;
 	ACTOR  *other;
-	Uint8  *flags;
+	Uint8  *flg;
 	Sint32	i;
 	FIXED	startX;
 	FIXED	startZ;
@@ -71,10 +71,10 @@ void fdLeaderSlideOnIceAhead(void)
 			{
 				Sint32 radius = actor->radius - 2;
 				other = Ram_HeapSlots->actors;
-				flags = &other->collisionFlg;
+				flg = &other->collisionFlg;
 				for(i = 0; i < ACTOR_COUNT;
-					i++, flags += sizeof(ACTOR), other++) {
-					if(other->script != NULL && (*flags & ACTOR_SOLID) &&
+					i++, flg += sizeof(ACTOR), other++) {
+					if(other->script != NULL && (*flg & ACTOR_SOLID) &&
 						other != actor) {
 						if(scScriptCheckSpheresOverlap(&other->x.fixed, radius,
 							   &probe.x, other->radius - 2) >= 0) {

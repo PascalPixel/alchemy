@@ -5,7 +5,7 @@
 
 #include "types.h"
 
-extern const Sint32 FieldEffect_SharedParticleScript[];
-extern const Sint32 FieldEffect_FragmentScript[];
+extern const Sint32 FieldEffectSharedParticleScript[];
+extern const Sint32 FieldEffectFragmentScript[];
 
 #endif

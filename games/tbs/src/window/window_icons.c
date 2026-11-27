@@ -18,15 +18,15 @@ Sint32 mnIconCountPsynergyIcons(void)
 	return PsynergyIconsEnd - PsynergyIcons;
 }
 
-/* Builds a command's icon, its picture over a frame (ICON_FRAME), and loads it
+/* Builds a command's icon, its picture over a tick (ICON_FRAME), and loads it
    into a sprite tile slot: *slot, or a free one when reuse is 0. */
-void mnIconBuildCommandIconTiles(Sint32 overlayIcon, Sint32 frame, Sint32 *slot,
-	Sint32 *tileOut, Sint32 reuse)
+void mnIconBuildCommandIconTiles(
+	Sint32 overlayIcon, Sint32 frm, Sint32 *slot, Sint32 *tileOut, Sint32 reuse)
 {
 	ICON_TRANSFER *state;
 
 	state = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
-	state->encoded = Icon_BasePointerTable[frame];
+	state->encoded = IconBasePointerTable[frm];
 	state->width = 2;
 	state->height = 2;
 	mnIconDecode(state, 0);
@@ -65,7 +65,7 @@ void mnIconBuildItemIconTiles(Uint32 icon, Sint32 withBase, Sint32 *cacheSlot,
 		icon = 0;
 
 	if(withBase != 0) {
-		state->encoded = Icon_BasePointerTable[ICON_FRAME_ITEM];
+		state->encoded = IconBasePointerTable[ICON_FRAME_ITEM];
 		state->width = 2;
 		state->height = 2;
 		mnIconDecode(state, 0);
@@ -86,7 +86,7 @@ void mnIconBuildItemIconTiles(Uint32 icon, Sint32 withBase, Sint32 *cacheSlot,
 }
 
 /* Draws an item's icon into the glyph transfer buffer from its inventory code
-   (INVENTORY_ENCODING) with the layers asked for (ICON_ flags): the frame, the
+   (INVENTORY_ENCODING) with the layers asked for (ICON_ flags): the tick, the
    equipped, broken and artifact marks, and the count. Returns -1 with no glyph
    transfer buffer and 256 otherwise; no caller reads the result. */
 Sint32 mnItemIconCompose(Uint32 code, Uint32 layers)
@@ -94,16 +94,16 @@ Sint32 mnItemIconCompose(Uint32 code, Uint32 layers)
 	Bool			 overlay;
 	ITEM_DEFINITION *item;
 	ICON_TRANSFER	*state;
-	Sint32			 count;
+	Sint32			 cnt;
 
 	overlay = FALSE;
-	count = 0;
+	cnt = 0;
 	item = gmItemGetDirectStub(code & INVENTORY_ITEM_ID_MASK);
 	state = GlyphState;
 	if(state == NULL)
 		return -1;
 	if(layers & ICON_BASE) {
-		state->encoded = Icon_BasePointerTable[ICON_FRAME_ITEM];
+		state->encoded = IconBasePointerTable[ICON_FRAME_ITEM];
 		state->width = 2;
 		state->height = 2;
 		mnIconDecode(state, 0);
@@ -114,46 +114,46 @@ Sint32 mnItemIconCompose(Uint32 code, Uint32 layers)
 	state->height = 2;
 	mnIconDecode(state, overlay);
 	if((layers & ICON_BROKEN) && (code & INVENTORY_BROKEN)) {
-		state->encoded = Icon_MarkPointers[ICON_MARK_BROKEN];
+		state->encoded = IconMarkPointers[ICON_MARK_BROKEN];
 		state->width = 2;
 		state->height = 2;
 		mnIconDecode(state, 1);
 	}
 	if((layers & ICON_EQUIPPED) && (code & INVENTORY_EQUIPPED)) {
-		state->encoded = Icon_MarkPointers[ICON_MARK_EQUIPPED];
+		state->encoded = IconMarkPointers[ICON_MARK_EQUIPPED];
 		state->width = 2;
 		state->height = 2;
 		mnIconDecode(state, 1);
 	}
 	if((layers & ICON_CURSED) && (code & INVENTORY_EQUIPPED) &&
 		(item->flg & ITEM_CURSED) && (item->flg & ITEM_CANNOT_UNEQUIP)) {
-		state->encoded = Icon_MarkPointers[ICON_MARK_CURSED];
+		state->encoded = IconMarkPointers[ICON_MARK_CURSED];
 		state->width = 2;
 		state->height = 2;
 		mnIconDecode(state, 1);
 	}
 	if(layers & ICON_COUNT_ABOVE_ONE) {
-		count = (code & INVENTORY_QUANTITY_MASK) >> INVENTORY_QUANTITY_SHIFT;
-		count++;
-		if(count <= 1)
-			count = 0;
+		cnt = (code & INVENTORY_QUANTITY_MASK) >> INVENTORY_QUANTITY_SHIFT;
+		cnt++;
+		if(cnt <= 1)
+			cnt = 0;
 	}
 	if(layers & ICON_COUNT) {
-		count = (code & INVENTORY_QUANTITY_MASK) >> INVENTORY_QUANTITY_SHIFT;
-		count++;
+		cnt = (code & INVENTORY_QUANTITY_MASK) >> INVENTORY_QUANTITY_SHIFT;
+		cnt++;
 	}
 	/* Counts up to a full stack show: the ones digit, and a tens digit from the
 	   second set (1 to 3) over it. */
-	if(count != 0 && count <= INVENTORY_STACK_MAX) {
-		Sint32 ones = count % 10;
+	if(cnt != 0 && cnt <= INVENTORY_STACK_MAX) {
+		Sint32 ones = cnt % 10;
 
-		state->encoded = Icon_DigitPointers[ones];
+		state->encoded = IconDigitPointers[ones];
 		state->width = 2;
 		state->height = 2;
 		mnIconDecode(state, 1);
-		if(count / 10 != 0) {
+		if(cnt / 10 != 0) {
 			state->encoded =
-				Icon_DigitPointers[ICON_DIGIT_TENS_FIRST - 1 + count / 10];
+				IconDigitPointers[ICON_DIGIT_TENS_FIRST - 1 + cnt / 10];
 			state->width = 2;
 			state->height = 2;
 			mnIconDecode(state, 1);
@@ -198,28 +198,28 @@ Sint32 mnTitleLoadFirstTile(Uint32 entry, Sint32 unused, Uint32 slot)
 	 * of them through other names for it; the plain form loads it directly. */
 	extern const Uint8 *MenuTitlePicturesCaseA[], *MenuTitlePicturesCaseB[],
 		*MenuTitlePicturesCaseC[];
-	void *source;
+	void *src;
 	switch(entry) {
 	case 1:
-		source = MenuTitlePicturesCaseA;
+		src = MenuTitlePicturesCaseA;
 		break;
 	case 2:
-		source = MenuTitlePicturesCaseB;
+		src = MenuTitlePicturesCaseB;
 		break;
 	case 3:
-		source = MenuTitlePicturesCaseC;
+		src = MenuTitlePicturesCaseC;
 		break;
 	case 0:
 	default:
-		source = MenuTitlePictures;
+		src = MenuTitlePictures;
 		break;
 	}
-	syVRAMCacheLoad(slot, 32, source);
+	syVRAMCacheLoad(slot, 32, src);
 	return 1;
 }
 
 /* Draws an item's icon from its inventory code into the glyph transfer buffer,
-   with no frame or marks; code 0 draws icon 0. The caller holds the buffer. */
+   with no tick or marks; code 0 draws icon 0. The caller holds the buffer. */
 void mnIconDrawItem(Sint32 code)
 {
 	ICON_TRANSFER	*glyph = GlyphState;
@@ -258,7 +258,7 @@ void mnIconBuildAbilityIconTiles(Uint32 icon, Sint32 withBase,
 		icon = 0;
 
 	if(withBase != 0) {
-		state->encoded = Icon_BasePointerTable[ICON_FRAME_ITEM];
+		state->encoded = IconBasePointerTable[ICON_FRAME_ITEM];
 		state->width = 2;
 		state->height = 2;
 		mnIconDecode(state, 0);
@@ -279,11 +279,11 @@ void mnIconBuildAbilityIconTiles(Uint32 icon, Sint32 withBase,
 }
 
 /* Draws one of the other icons into the glyph transfer buffer. */
-void mnIconDrawMisc(Uint32 iconIndex)
+void mnIconDrawMisc(Uint32 iconIdx)
 {
 	ICON_TRANSFER *glyph = GlyphState;
 
-	glyph->encoded = Icon_MiscIconPointers[iconIndex];
+	glyph->encoded = Icon_MiscIconPointers[iconIdx];
 	glyph->width = 2;
 	glyph->height = 2;
 	mnIconDecode(glyph, 0);
@@ -298,7 +298,7 @@ void mnIconLoadWithPalette(Uint32 icon, Sint32 unused, Sint32 *slot,
 	ICON_TRANSFER *state;
 	Uint16		  *offsets;
 	Uint8		  *encodedEntry;
-	Uint32		   index;
+	Uint32		   idx;
 
 	state = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	offsets = syResourceGetTableEntry(RESOURCE_ICONS);
@@ -307,10 +307,10 @@ void mnIconLoadWithPalette(Uint32 icon, Sint32 unused, Sint32 *slot,
 	   entries from PORTRAIT_JUPITER_DJINNI on. Each entry's colours come before
 	   its encoded tiles. */
 	if(icon < PORTRAIT_SPRITE_MAP_FIRST)
-		index = icon;
+		idx = icon;
 	else
-		index = icon - PORTRAIT_SPRITE_MAP_FIRST + PORTRAIT_JUPITER_DJINNI;
-	encodedEntry = (Uint8 *)offsets + offsets[index];
+		idx = icon - PORTRAIT_SPRITE_MAP_FIRST + PORTRAIT_JUPITER_DJINNI;
+	encodedEntry = (Uint8 *)offsets + offsets[idx];
 	state->encoded = encodedEntry + PALETTE_COLORS * sizeof(Uint16);
 	state->width = 4;
 	state->height = 4;

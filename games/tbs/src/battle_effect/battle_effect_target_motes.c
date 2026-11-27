@@ -90,7 +90,7 @@ void btEffectRunDrown(BATTLE_EFFECT_PARM *args)
 }
 
 /* Styles whose motes start in a wide ball, and run on TARGET_MOTES_WIDE_RUN_ON
-   frames after the last target's motes start. */
+   ticks after the last target's motes start. */
 #define TARGET_MOTES_START_WIDE(mode) \
 	((mode) <= TARGET_MOTES_PINK_SMOKE || \
 		(mode) == TARGET_MOTES_HEARTRENDER || \
@@ -109,29 +109,29 @@ void btEffectRunDrown(BATTLE_EFFECT_PARM *args)
 /* Where Paralyze keeps its glint images in state->sheet. */
 enum { TARGET_MOTES_GLINT_PICTURES = 9600 };
 
-#define TARGET_MOTES				   512 /* motes scattered at the start */
-#define TARGET_MOTES_SLOTS			   64 /* particles reserved for each target */
-#define TARGET_MOTES_CYCLE			   24 /* frames of a mote's image cycle */
+#define TARGET_MOTES				  512 /* motes scattered at the start */
+#define TARGET_MOTES_SLOTS			  64 /* particles reserved for each target */
+#define TARGET_MOTES_CYCLE			  24 /* ticks of a mote's image cycle */
 /* The motes about each target: TARGET_MOTES_PER_TARGET, or Demon Fire's orbs or
    Drown's drops. */
-#define TARGET_MOTES_PER_TARGET		   16
-#define DEMON_FIRE_ORBS				   24
-#define DROWN_DROPS					   32
-/* The frames between one target's motes starting and the next's. */
-#define TARGET_MOTES_STAGGER		   8
-/* The frames the effect runs on after the last target's motes start. */
-#define TARGET_MOTES_RUN_ON			   32
-#define TARGET_MOTES_WIDE_RUN_ON	   64
-/* The frames the effect runs on after the damage shows. Demon Fire's user sets
-   off DEMON_FIRE_LEAP_FRAMES before then and reaches the first target over
-   DEMON_FIRE_APPROACH_FRAMES, striking it as the damage shows. */
-#define TARGET_MOTES_DAMAGE_END_FRAMES 32
-#define DEMON_FIRE_LEAP_FRAMES		   14
-#define DEMON_FIRE_APPROACH_FRAMES	   16
+#define TARGET_MOTES_PER_TARGET		  16
+#define DEMON_FIRE_ORBS				  24
+#define DROWN_DROPS					  32
+/* The ticks between one target's motes starting and the next's. */
+#define TARGET_MOTES_STAGGER		  8
+/* The ticks the effect runs on after the last target's motes start. */
+#define TARGET_MOTES_RUN_ON			  32
+#define TARGET_MOTES_WIDE_RUN_ON	  64
+/* The ticks the effect runs on after the damage shows. Demon Fire's user sets
+   off DEMON_FIRE_LEAP_TICKS before then and reaches the first target over
+   DEMON_FIRE_APPROACH_TICKS, striking it as the damage shows. */
+#define TARGET_MOTES_DAMAGE_END_TICKS 32
+#define DEMON_FIRE_LEAP_TICKS		  14
+#define DEMON_FIRE_APPROACH_TICKS	  16
 /* VortexSheet's water drop, after its three 16x64 swirls. */
-#define DROWN_DROP_WIDTH			   12
-#define DROWN_DROP_HEIGHT			   24
-#define DROWN_DROP_PICTURE			   (3 * 16 * 64)
+#define DROWN_DROP_WIDTH			  12
+#define DROWN_DROP_HEIGHT			  24
+#define DROWN_DROP_PICTURE			  (3 * 16 * 64)
 
 /* Around each target in turn, motes (smoke, hearts, orbs) close in on it or
    rise, and the target flashes. */
@@ -139,10 +139,10 @@ void btEffectRunTargetMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 total;
 	Sint32				 member;
-	Sint32				 count;
+	Sint32				 cnt;
 	SCREEN_POINT		 screen;
 	Sint32				 point[3];
 	SCREEN_POINT		 base;
@@ -153,7 +153,7 @@ void btEffectRunTargetMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-	count = TARGET_MOTES_PER_TARGET;
+	cnt = TARGET_MOTES_PER_TARGET;
 	state->args = args;
 	btEffectStartCanvasLayer(0);
 	btResourceLoadAndDecompress(RESOURCE_SMOKE_SHEET, state->sheet, 1, 1);
@@ -172,12 +172,12 @@ void btEffectRunTargetMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			RESOURCE_GLOW_ORB_SHEET, state->sheet, 1, 0);
 		palette = syResourceGetTableEntry(RESOURCE_GLOW_ORB_SHEET);
 	} else if(mode == TARGET_MOTES_DEMON_FIRE) {
-		count = DEMON_FIRE_ORBS;
+		cnt = DEMON_FIRE_ORBS;
 		btResourceLoadAndDecompress(
 			RESOURCE_GLOW_ORB_SHEET, state->sheet, 1, 0);
 		palette = syResourceGetTableEntry(RESOURCE_MARS_DJINN_SHEET);
 	} else {
-		count = DROWN_DROPS;
+		cnt = DROWN_DROPS;
 		btResourceLoadAndDecompress(RESOURCE_VORTEX_SHEET, state->sheet, 1, 0);
 		palette = syResourceGetTableEntry(RESOURCE_VORTEX_SHEET);
 	}
@@ -215,58 +215,58 @@ void btEffectRunTargetMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	sySndPlayStub(SE_SWIRL);
 
-	for(frame = 0; frame != total; frame++) {
+	for(frm = 0; frm != total; frm++) {
 		BATTLE_CAMERA *camera = BattleCameraWork;
 
 		/* Demon Fire: the user steps up to the first target and strikes it. */
 		if(mode == TARGET_MOTES_DEMON_FIRE) {
-			if(frame ==
-				total - TARGET_MOTES_DAMAGE_END_FRAMES - DEMON_FIRE_LEAP_FRAMES)
+			if(frm ==
+				total - TARGET_MOTES_DAMAGE_END_TICKS - DEMON_FIRE_LEAP_TICKS)
 				btMotionApproachTargetStub(state->args->user,
-					state->args->tgts[0], DEMON_FIRE_APPROACH_FRAMES, 0);
-			if(frame == total - TARGET_MOTES_DAMAGE_END_FRAMES) {
+					state->args->tgts[0], DEMON_FIRE_APPROACH_TICKS, 0);
+			if(frm == total - TARGET_MOTES_DAMAGE_END_TICKS) {
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 				btMotionApplyKnockbackStub(
 					state->args->tgts[0], KNOCKBACK_HURL);
 				state->shakeFrm = 8;
 			}
-		} else if(frame == total - TARGET_MOTES_DAMAGE_END_FRAMES) {
+		} else if(frm == total - TARGET_MOTES_DAMAGE_END_TICKS) {
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 		}
 		row = state->bg2xLines;
 		for(i = 0; i != DISPLAY_HEIGHT; i++)
 			*row++ = CANVAS_WAVE_BG2X(toFIXED(4) -
-				sySin(frame * (TRIG_TURN / 16) + i * (TRIG_TURN / 32)) * 4);
+				sySin(frm * (TRIG_TURN / 16) + i * (TRIG_TURN / 32)) * 4);
 
 		EFFECT_FOR_EACH_TARGET(member, state->args) {
 			ACTOR *actor = btObjectGetStub(state->args->tgts[member])->actor;
 
 			/* Paralyze's glints sparkle near the target. */
 			if(mode == TARGET_MOTES_PARALYZE &&
-				frame > member * TARGET_MOTES_STAGGER &&
-				frame < member * TARGET_MOTES_STAGGER + 32) {
+				frm > member * TARGET_MOTES_STAGGER &&
+				frm < member * TARGET_MOTES_STAGGER + 32) {
 				btProjectionScaledUnit(state->args->tgts[member], &base);
 				for(i = 0; i != 2; i++) {
-					Sint32 angle;
+					Sint32 ang;
 					Sint32 radius;
 					Sint32 x;
 					Sint32 y;
 
-					angle = syRandom() & TRIG_ANGLE_MASK;
+					ang = syRandom() & TRIG_ANGLE_MASK;
 					radius = (syRandom() & 31) + 4;
-					x = base.x / 2 + (FIXEDtoINT(sySin(angle) * radius) >> 1) -
-						(BattleEffect_GlintPictureWidths[frame & 3] >> 1);
-					y = base.y - FIXEDtoINT(syCos(angle) * radius) -
-						(BattleEffect_GlintPictureHeights[frame & 3] >> 1);
+					x = base.x / 2 + (FIXEDtoINT(sySin(ang) * radius) >> 1) -
+						(BattleEffectGlintPictureWidths[frm & 3] >> 1);
+					y = base.y - FIXEDtoINT(syCos(ang) * radius) -
+						(BattleEffectGlintPictureHeights[frm & 3] >> 1);
 					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 						EFFECT_CLIP_BOUNDS |
-							TargetMotes_GlintFlips[syRandom() & 3],
+							TargetMotesGlintFlips[syRandom() & 3],
 						COMPOSITE_LIGHTEN);
 					EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(canvas,
-						state->sheet + BattleEffect_GlintPictures[frame & 3] +
+						state->sheet + BattleEffectGlintPictures[frm & 3] +
 							TARGET_MOTES_GLINT_PICTURES,
-						x, y + 16, BattleEffect_GlintPictureWidths[frame & 3],
-						BattleEffect_GlintPictureHeights[frame & 3]);
+						x, y + 16, BattleEffectGlintPictureWidths[frm & 3],
+						BattleEffectGlintPictureHeights[frm & 3]);
 					syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 				}
 			}
@@ -279,17 +279,17 @@ void btEffectRunTargetMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			EFFECT_VIEW_FROM_CAMERA(camera);
 			SET_VECTOR(point, actor->x.fixed, toFIXED(20), actor->z.fixed);
 			syMatrixTranslateVector(point);
-			if(frame > member * TARGET_MOTES_STAGGER) {
-				syRotY(frame * (TRIG_TURN / 128));
+			if(frm > member * TARGET_MOTES_STAGGER) {
+				syRotY(frm * (TRIG_TURN / 128));
 				if(mode <= TARGET_MOTES_PINK_SMOKE ||
 					mode == TARGET_MOTES_HEARTRENDER)
-					syRotX(frame * (TRIG_TURN / 128));
-				for(i = 0; i != count; i++) {
+					syRotX(frm * (TRIG_TURN / 128));
+				for(i = 0; i != cnt; i++) {
 					PARTICLE *mote =
 						&PARTICLES[member * TARGET_MOTES_SLOTS + i];
 					Sint32 distance;
 
-					if(frame > member * TARGET_MOTES_STAGGER + i) {
+					if(frm > member * TARGET_MOTES_STAGGER + i) {
 						Sint32 xx = (mote->x >> 8) * (mote->x >> 8);
 						Sint32 yy = (mote->y >> 8) * (mote->y >> 8);
 						Sint32 zz = (mote->z >> 8) * (mote->z >> 8);
@@ -350,8 +350,8 @@ void btEffectRunTargetMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 				}
 			}
 			EFFECT_RELEASE_BLITTERS();
-			if(frame == member * TARGET_MOTES_STAGGER + 16) {
-				Sint32 delay = total - frame;
+			if(frm == member * TARGET_MOTES_STAGGER + 16) {
+				Sint32 delay = total - frm;
 
 				if(delay > 31)
 					delay = 31;
@@ -360,7 +360,7 @@ void btEffectRunTargetMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			}
 		}
 		btCameraShake(16, 16);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	syCloseEvent(btEffectTransferCanvas);
@@ -369,23 +369,23 @@ void btEffectRunTargetMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	btEffectEndCanvasLayer();
 }
 
-#define SLEEP_FRAMES		 148
+#define SLEEP_TICKS			 148
 #define SLEEP_SEEDED		 32 /* particles cleared at the start */
 #define SLEEP_SHEEP			 12 /* sheep dropped */
-/* The sheep drop SLEEP_SHEEP_STAGGER frames apart; the targets fall asleep
-   SLEEP_TARGET_STAGGER frames apart from SLEEP_ASLEEP_FRAME, and the damage
-   shows at SLEEP_DAMAGE_FRAME. */
+/* The sheep drop SLEEP_SHEEP_STAGGER ticks apart; the targets fall asleep
+   SLEEP_TARGET_STAGGER ticks apart from SLEEP_ASLEEP_TICK, and the damage
+   shows at SLEEP_DAMAGE_TICK. */
 #define SLEEP_SHEEP_STAGGER	 4
-#define SLEEP_ASLEEP_FRAME	 64
+#define SLEEP_ASLEEP_TICK	 64
 #define SLEEP_TARGET_STAGGER 16
-#define SLEEP_DAMAGE_FRAME	 80
+#define SLEEP_DAMAGE_TICK	 80
 /* The ground the sheep were meant to bounce off. */
 #define SLEEP_GROUND_Y		 toFIXED(92)
 /* SheepSheet: four pictures, then the four drawn flipped. */
 #define SHEEP_WIDTH			 32
 #define SHEEP_HEIGHT		 32
 #define SHEEP_PICTURES		 4
-/* A sheep's variant counts its tumble, z a frame: it turns to its next picture
+/* A sheep's variant counts its tumble, z a tick: it turns to its next picture
    every SHEEP_TUMBLE_STEP. */
 #define SHEEP_TUMBLE_STEP	 16
 
@@ -401,7 +401,7 @@ void btEffectRunSleep(BATTLE_EFFECT_PARM *args)
 	PARTICLE			*current;
 	PARTICLE			*sheep;
 	Sint32				 particleIndex;
-	Sint32				 frame;
+	Sint32				 tick;
 	DRAW_RECTANGLE		 drawFlipped;
 	DRAW_RECTANGLE		 drawUpright;
 	Sint32				 targetIndex;
@@ -432,10 +432,10 @@ void btEffectRunSleep(BATTLE_EFFECT_PARM *args)
 		REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 	sySndPlayStub(SE_SWIRL);
-	for(frame = 0; frame != SLEEP_FRAMES; frame++) {
+	for(tick = 0; tick != SLEEP_TICKS; tick++) {
 		BATTLE_CAMERA *camera = BattleCameraWork;
 
-		if(frame == SLEEP_DAMAGE_FRAME)
+		if(tick == SLEEP_DAMAGE_TICK)
 			EFFECT_SHOW_DAMAGE(0);
 		EFFECT_FOR_EACH_TARGET(targetIndex, state->args) {
 			ACTOR *target;
@@ -444,13 +444,13 @@ void btEffectRunSleep(BATTLE_EFFECT_PARM *args)
 			EFFECT_VIEW_FROM_CAMERA(camera);
 			SET_VECTOR(anchor, target->x.fixed, toFIXED(40), target->z.fixed);
 			syMatrixTranslateVector(anchor);
-			if(frame == targetIndex * SLEEP_TARGET_STAGGER + SLEEP_ASLEEP_FRAME)
+			if(tick == targetIndex * SLEEP_TARGET_STAGGER + SLEEP_ASLEEP_TICK)
 				btEffectTintBattler(state->args->tgts[targetIndex],
 					SPRITE_COLOR_NORMAL, POSE_DAMAGE, TINT_KEEP, 0);
 		}
 		for(particleIndex = 0; particleIndex != SLEEP_SHEEP; particleIndex++) {
 			current = &sheep[particleIndex];
-			if(frame > particleIndex * SLEEP_SHEEP_STAGGER &&
+			if(tick > particleIndex * SLEEP_SHEEP_STAGGER &&
 				current->y <= toFIXED(CANVAS_SIZE) - 1) {
 				Sint32 picture;
 
@@ -493,11 +493,11 @@ void btEffectRunSleep(BATTLE_EFFECT_PARM *args)
 	EFFECT_FINISH_CANVAS();
 }
 
-#define CURSE_CANDLE_FRAMES	 72 /* how long each target's candle burns */
-/* The frames between one target's candle and the next's. */
-#define CURSE_STAGGER		 16
-/* The flame flickers through its pictures, CURSE_FLICKER_FRAMES a picture. */
-#define CURSE_FLICKER_FRAMES 6
+#define CURSE_CANDLE_TICKS	72 /* how long each target's candle burns */
+/* The ticks between one target's candle and the next's. */
+#define CURSE_STAGGER		16
+/* The flame flickers through its pictures, CURSE_FLICKER_TICKS a picture. */
+#define CURSE_FLICKER_TICKS 6
 
 /* FlameColumnSheet: the flame's nine pictures, then the candle. */
 #define CURSE_FLAME_WIDTH	 16
@@ -518,11 +518,11 @@ void btEffectRunCurse(BATTLE_EFFECT_PARM *args)
 	BLITTER_PAIR draw;
 	PARTICLE	*candle;
 	Sint32		 i;
-	Sint32		 frame;
+	Sint32		 frm;
 	Sint32		 start;
 	Sint32		 picture;
 	Sint32		 y;
-	SCREEN_POINT screenPosition;
+	SCREEN_POINT screenPos;
 
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -544,8 +544,8 @@ void btEffectRunCurse(BATTLE_EFFECT_PARM *args)
 	EFFECT_FOR_EACH_TARGET(i, state->args) {
 		state->particles[i].variant = syRandom() & 63;
 	}
-	for(frame = 0; frame != (state->args->tgtCnt << 5) + 32; frame++) {
-		if(frame == 32) {
+	for(frm = 0; frm != (state->args->tgtCnt << 5) + 32; frm++) {
+		if(frm == 32) {
 			EFFECT_SHOW_DAMAGE(0);
 		}
 		i = 0;
@@ -553,29 +553,28 @@ void btEffectRunCurse(BATTLE_EFFECT_PARM *args)
 			candle = state->particles;
 			do {
 				start = i * CURSE_STAGGER;
-				if(frame == start) {
+				if(frm == start) {
 					sySndPlayStub(SE_CRACK);
 				}
-				if(frame >= start && frame < start + CURSE_CANDLE_FRAMES) {
-					btProjectionScaledUnit(
-						state->args->tgts[i], &screenPosition);
+				if(frm >= start && frm < start + CURSE_CANDLE_TICKS) {
+					btProjectionScaledUnit(state->args->tgts[i], &screenPos);
 					if(state->args->side == EFFECT_SIDE_PARTY) {
-						screenPosition.x -= NARROW_CANVAS_PARTY_X;
+						screenPos.x -= NARROW_CANVAS_PARTY_X;
 					}
-					y = screenPosition.y;
-					screenPosition.y = y - 16;
+					y = screenPos.y;
+					screenPos.y = y - 16;
 					draw[0](canvas, state->sheet + CURSE_CANDLE_PICTURE,
-						screenPosition.x - CURSE_CANDLE_WIDTH / 2,
+						screenPos.x - CURSE_CANDLE_WIDTH / 2,
 						y - CURSE_CANDLE_HEIGHT, CURSE_CANDLE_WIDTH,
 						CURSE_CANDLE_HEIGHT);
 					/* DEAD: always true here; the ROM keeps the test. */
-					if(frame >= start) {
-						picture = ((frame - start) + candle->variant) /
-							CURSE_FLICKER_FRAMES % CURSE_FLAME_PICTURES;
+					if(frm >= start) {
+						picture = ((frm - start) + candle->variant) /
+							CURSE_FLICKER_TICKS % CURSE_FLAME_PICTURES;
 						draw[0](canvas,
 							state->sheet + picture * PICTURE_BYTES(CURSE_FLAME),
-							screenPosition.x - CURSE_FLAME_WIDTH / 2,
-							screenPosition.y - 16, CURSE_FLAME_WIDTH,
+							screenPos.x - CURSE_FLAME_WIDTH / 2,
+							screenPos.y - 16, CURSE_FLAME_WIDTH,
 							CURSE_FLAME_HEIGHT);
 					}
 				}
@@ -605,19 +604,19 @@ void btEffectRunCurse(BATTLE_EFFECT_PARM *args)
 #undef DROWN_DROP_PICTURE
 #undef SHEEP_PICTURES
 #undef SHEEP_TUMBLE_STEP
-#undef SLEEP_FRAMES
+#undef SLEEP_TICKS
 #undef SLEEP_SEEDED
 #undef SLEEP_SHEEP
-#undef TARGET_MOTES_DAMAGE_END_FRAMES
-#undef DEMON_FIRE_LEAP_FRAMES
-#undef DEMON_FIRE_APPROACH_FRAMES
+#undef TARGET_MOTES_DAMAGE_END_TICKS
+#undef DEMON_FIRE_LEAP_TICKS
+#undef DEMON_FIRE_APPROACH_TICKS
 #undef SLEEP_SHEEP_STAGGER
-#undef SLEEP_ASLEEP_FRAME
+#undef SLEEP_ASLEEP_TICK
 #undef SLEEP_TARGET_STAGGER
-#undef SLEEP_DAMAGE_FRAME
+#undef SLEEP_DAMAGE_TICK
 #undef SLEEP_GROUND_Y
-#undef CURSE_CANDLE_FRAMES
+#undef CURSE_CANDLE_TICKS
 #undef CURSE_STAGGER
-#undef CURSE_FLICKER_FRAMES
+#undef CURSE_FLICKER_TICKS
 #undef CURSE_FLAME_PICTURES
 #undef CURSE_CANDLE_PICTURE

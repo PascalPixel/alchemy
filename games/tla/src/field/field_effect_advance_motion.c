@@ -1,31 +1,31 @@
-/* A field effect's motion each frame. */
+/* A field effect's motion each tick. */
 
 #include "system/field_effect.h"
 #include "field/sprite.h"
 
 /* An effect's update function: move by its velocity, which loses an eighteenth
-   of its x and a sixteenth of its z each frame, and grow and spin at its
+   of its x and a sixteenth of its z each tick, and grow and spin at its
    rates. */
 void fdEffectAdvanceMotion(FIELD_OBJECT *object)
 {
 	FIELD_EFFECT *effect = &object->eff;
-	Sint32		  velocityX;
-	Sint32		  velocityZ;
+	Sint32		  velX;
+	Sint32		  velZ;
 	Sint32		  scaleRateX;
-	FIELD_SPR	 *sprite;
+	FIELD_SPR	 *spr;
 
-	velocityX = effect->vel.x;
-	effect->x += velocityX;
+	velX = effect->vel.x;
+	effect->x += velX;
 	effect->y += effect->vel.y;
-	velocityZ = effect->vel.z;
-	effect->z += velocityZ;
+	velZ = effect->vel.z;
+	effect->z += velZ;
 
-	effect->vel.x = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
-	effect->vel.z = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
+	effect->vel.x = velX - velX / FIELD_EFFECT_DRAG_X;
+	effect->vel.z = velZ - velZ / FIELD_EFFECT_DRAG_Z;
 
 	scaleRateX = effect->scaleRateX;
 	effect->scaleX += scaleRateX;
-	sprite = effect->spr;
+	spr = effect->spr;
 	effect->scaleY += effect->scaleRateY;
-	sprite->rotation += effect->spin;
+	spr->rotation += effect->spin;
 }

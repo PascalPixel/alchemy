@@ -35,7 +35,7 @@
 #include "shop/shop.h"
 
 /* The people at the south gate for the farewell after the ending, numbering the
-   rows of `Prox_SouthGateFarewellPlacements`; the party's rows go to their
+   rows of `ProxSouthGateFarewellPlacements`; the party's rows go to their
    party slots. */
 typedef enum PROX_SOUTH_GATE_ACTOR_ID {
 	/* Isaac's father. "Don't worry, Son. I'm sure Dora's doing fine." */
@@ -47,7 +47,7 @@ typedef enum PROX_SOUTH_GATE_ACTOR_ID {
 	ACTOR_SOUTH_GATE_KRADEN
 } PROX_SOUTH_GATE_ACTOR_ID;
 
-/* The people of the lower village, numbering the rows of `Prox_TownPlacements`.
+/* The people of the lower village, numbering the rows of `ProxTownPlacements`.
    Each villager is named for what they talk of while the lighthouse is
    unlit. */
 typedef enum PROX_TOWN_ACTOR_ID {
@@ -82,8 +82,8 @@ typedef enum PROX_TOWN_ACTOR_ID {
 	ACTOR_TOWN_CRATE
 } PROX_TOWN_ACTOR_ID;
 
-/* The people of the upper village, numbering the rows of `Prox_MoldPlacements`
-   and `Prox_MoldPlacementsOnceLit`; Isaac's row goes to his party slot. */
+/* The people of the upper village, numbering the rows of `ProxMoldPlacements`
+   and `ProxMoldPlacementsOnceLit`; Isaac's row goes to his party slot. */
 typedef enum PROX_MOLD_ACTOR_ID {
 	/* The two warriors Puelle ordered to free Felix's parents, who stand beside
 	   the upper house. "Puelle ordered me to set your parents free." */
@@ -111,7 +111,7 @@ typedef enum PROX_MOLD_ACTOR_ID {
 } PROX_MOLD_ACTOR_ID;
 
 /* The people inside the houses and the igloo, numbering the rows of
-   `Prox_HousesPlacements` and `Prox_HousesPlacementsOnceLit`; Isaac's and
+   `ProxHousesPlacements` and `ProxHousesPlacementsOnceLit`; Isaac's and
    Jenna's rows go to their party slots. */
 typedef enum PROX_HOUSES_ACTOR_ID {
 	/* "The rift at Mars Lighthouse gets wider every day." */
@@ -160,7 +160,7 @@ typedef enum PROX_HOUSES_ACTOR_ID {
 } PROX_HOUSES_ACTOR_ID;
 
 /* The people of the basements and the shop's cave room, numbering the rows of
-   `Prox_CaveHomesPlacements` and `Prox_CaveHomesPlacementsOnceLit`. */
+   `ProxCaveHomesPlacements` and `ProxCaveHomesPlacementsOnceLit`. */
 typedef enum PROX_CAVE_HOMES_ACTOR_ID {
 	/* "Prox originally flourished because concerned Adepts lit the fires..." */
 	ACTOR_VILLAGER_ON_PROXS_PURPOSE = ACTOR_FIRST_PLACED,
@@ -219,7 +219,7 @@ typedef enum PROX_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_DARK_MATTER = 100
 } PROX_METATILE_BEHAVIOR;
 
-extern const Sint32 *FieldEffect_DurationScripts[];
+extern const Sint32 *FieldEffectDurationScripts[];
 #define EFFECT_SET_MODE	  fdActorSelectAnimation
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
@@ -246,24 +246,24 @@ void scProxMercuryDjinniJoins(void)
 
 #include "shared/position_distance.h"
 
-extern ACTOR_PLACE Prox_SouthGateFarewellPlacements[];
-extern ACTOR_PLACE Prox_TownPlacements[];
-extern ACTOR_PLACE Prox_MoldPlacements[];
-extern ACTOR_PLACE Prox_MoldPlacementsOnceLit[];
-extern ACTOR_PLACE Prox_CaveHomesPlacements[];
-extern ACTOR_PLACE Prox_CaveHomesPlacementsOnceLit[];
-extern ACTOR_PLACE Prox_CavesPlacements[];
-extern CUE		   Prox_Cues[];
-extern CUE		   Prox_SouthGateCues[];
-extern CUE		   Prox_TownCues[];
-extern CUE		   Prox_MoldCues[];
-extern CUE		   Prox_CaveHomesCues[];
-extern CUE		   Prox_CavesCues[];
+extern ACTOR_PLACE ProxSouthGateFarewellPlacements[];
+extern ACTOR_PLACE ProxTownPlacements[];
+extern ACTOR_PLACE ProxMoldPlacements[];
+extern ACTOR_PLACE ProxMoldPlacementsOnceLit[];
+extern ACTOR_PLACE ProxCaveHomesPlacements[];
+extern ACTOR_PLACE ProxCaveHomesPlacementsOnceLit[];
+extern ACTOR_PLACE ProxCavesPlacements[];
+extern CUE		   ProxCues[];
+extern CUE		   ProxSouthGateCues[];
+extern CUE		   ProxTownCues[];
+extern CUE		   ProxMoldCues[];
+extern CUE		   ProxCaveHomesCues[];
+extern CUE		   ProxCavesCues[];
 
-extern Sint32 Prox_KradenStepsUpToPuelle[];
+extern Sint32 ProxKradenStepsUpToPuelle[];
 
-extern Sint32 Prox_StepBackFromPuelle[];
-extern Sint32 Leader_WalkThroughDoorScript[];
+extern Sint32 ProxStepBackFromPuelle[];
+extern Sint32 LeaderWalkThroughDoorScript[];
 
 /* Sets up the lower village: after the ending, its three children play chase
    outside the igloo. */
@@ -277,19 +277,19 @@ void scProxInitHouses(void);
 
 /* Sets up the basements: arriving from a house, Felix comes down its stairs. */
 void		  scProxInitCaveHomes(void);
-extern Sint32 Prox_FirstChildRuns[];
-extern Sint32 Prox_SecondChildRuns[];
-extern Sint32 Prox_ThirdChildRuns[];
+extern Sint32 ProxFirstChildRuns[];
+extern Sint32 ProxSecondChildRuns[];
+extern Sint32 ProxThirdChildRuns[];
 /* Felix comes down the stairs from a house into its basement. */
 void		  scProxComeDownStairs(Sint32 westOrSouth);
-extern Sint32 Prox_KradenStepsForward[];
-extern Sint32 Prox_JennasFatherWalksSouth[];
-extern Sint32 Prox_JennasMotherWalksSouth[];
-extern Sint32 Prox_LeftFileWalksSouth[];
-extern Sint32 Prox_JennaWalksSouth[];
-extern Sint32 Prox_LeaderWalksSouth[];
-extern Sint32 Prox_KradenWalksSouth[];
-extern Sint32 Prox_JennaRunsAhead[];
+extern Sint32 ProxKradenStepsForward[];
+extern Sint32 ProxJennasFatherWalksSouth[];
+extern Sint32 ProxJennasMotherWalksSouth[];
+extern Sint32 ProxLeftFileWalksSouth[];
+extern Sint32 ProxJennaWalksSouth[];
+extern Sint32 ProxLeaderWalksSouth[];
+extern Sint32 ProxKradenWalksSouth[];
+extern Sint32 ProxJennaRunsAhead[];
 void		  fdLeaderStopIfPending(void);
 void		  scParticleUpdateFalling(void);
 
@@ -344,31 +344,30 @@ void scProxSayFarewell(void);
    until a wall, a rise in the ground, a person or the end of the ice stops
    him. */
 void		  fdLeaderSlideOnIce(void);
-extern Uint32 FieldEffect_ShortScript[];
-extern Uint32 FieldEffect_MediumScript[];
+extern Uint32 FieldEffectShortScript[];
+extern Uint32 FieldEffectMediumScript[];
 
 /* After the ending, with the storm over, smoke rises from the chimneys of the
    lower village's houses and of the upper house. */
 void scProxSmokeFromChimneys(void);
 
 /* The sixteenth of a turn a heading points into, as a mask. */
-#define HEADING_SECTOR_MASK	  (TRIG_TURN - FACING_STEP)
-/* The frames the leader must have pushed against a chasing child before it
+#define HEADING_SECTOR_MASK	 (TRIG_TURN - FACING_STEP)
+/* The ticks the leader must have pushed against a chasing child before it
    gives way. */
-#define CHASE_GIVE_WAY_FRAMES 120
+#define CHASE_GIVE_WAY_TICKS 120
 /* How near, in pixels, a child chases another child or the leader, and how near
    the leader stops a child in its game (in every edition but the Japanese). */
-#define CHASE_CHILD_RANGE	  24
-#define CHASE_LEADER_RANGE	  32
-#define CHASE_STOP_RANGE	  11
+#define CHASE_CHILD_RANGE	 24
+#define CHASE_LEADER_RANGE	 32
+#define CHASE_STOP_RANGE	 11
 
 /* Runs a child at its target while it is near and ahead, and says whether it is
    chasing. */
-Sint32 scProxChaseTarget(
-	ACTOR *actor, ACTOR *target, Sint32 range, Sint32 force)
+Sint32 scProxChaseTarget(ACTOR *actor, ACTOR *tgt, Sint32 range, Sint32 force)
 {
 	Sint32	result = 0;
-	Sint32 *targetPos;
+	Sint32 *tgtPos;
 	Sint32 *objectPos;
 
 	/* A child being talked to holds still. */
@@ -376,18 +375,18 @@ Sint32 scProxChaseTarget(
 		actor->paused = 1;
 		return 1;
 	}
-	targetPos = &target->x.fixed;
+	tgtPos = &tgt->x.fixed;
 	objectPos = &actor->x.fixed;
-	if(scPosDistance(targetPos, objectPos) < range || force != 0) {
-		Uint32 angle = (Uint16)syAtan(
-			target->z.fixed - actor->z.fixed, *targetPos - *objectPos);
-		Uint32 left = (angle - FACING_STEP) & HEADING_SECTOR_MASK;
-		Uint32 right = (angle + FACING_STEP) & HEADING_SECTOR_MASK;
-		Uint32 ahead = angle & HEADING_SECTOR_MASK;
+	if(scPosDistance(tgtPos, objectPos) < range || force != 0) {
+		Uint32 ang =
+			(Uint16)syAtan(tgt->z.fixed - actor->z.fixed, *tgtPos - *objectPos);
+		Uint32 left = (ang - FACING_STEP) & HEADING_SECTOR_MASK;
+		Uint32 right = (ang + FACING_STEP) & HEADING_SECTOR_MASK;
+		Uint32 ahead = ang & HEADING_SECTOR_MASK;
 		Uint32 facing = actor->facing & HEADING_SECTOR_MASK;
 
 		if(ahead == facing || right == facing || left == facing || force != 0) {
-			if(FieldStateWork->blockedSteps > CHASE_GIVE_WAY_FRAMES) {
+			if(FieldStateWork->blockedSteps > CHASE_GIVE_WAY_TICKS) {
 				actor->paused = 0;
 				fdActorSelectAnimation(actor, ANIM_WALK);
 			} else {
@@ -408,30 +407,30 @@ Sint32 scProxChaseTarget(
    close. */
 Sint32 scProxPlayChase(ACTOR *actor)
 {
-	WIN_STATE	*window = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE	*win = (WIN_STATE *)Ram_HeapSlots->winState;
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
-	Bool		 flag = FALSE;
-	ACTOR		*target;
+	Bool		 flg = FALSE;
+	ACTOR		*tgt;
 
 #if CHILDREN_WALK_ON_WHEN_TOUCHING_LEADER
-	target = fdActorGet(MainRoutineStateWork.leaderActorId);
-	if(scPosDistance(&target->x.fixed, &actor->x.fixed) <= CHASE_STOP_RANGE) {
-		actor->paused = flag;
+	tgt = fdActorGet(MainRoutineStateWork.leaderActorId);
+	if(scPosDistance(&tgt->x.fixed, &actor->x.fixed) <= CHASE_STOP_RANGE) {
+		actor->paused = flg;
 		fdActorSelectAnimation(actor, ANIM_WALK);
 		return 0;
 	}
 #endif
 	if(actor->tmr == 0)
-		target = fdActorGet(ACTOR_TRAINING_CHILD);
+		tgt = fdActorGet(ACTOR_TRAINING_CHILD);
 	else if(actor->tmr == 1)
-		target = fdActorGet(ACTOR_PLAYING_CHILD);
+		tgt = fdActorGet(ACTOR_PLAYING_CHILD);
 	else
-		target = fdActorGet(ACTOR_CHILD_WHO_MISSES_RUNNING);
-	if(scProxChaseTarget(actor, target, CHASE_CHILD_RANGE, 0) == 0) {
-		target = fdActorGet(MainRoutineStateWork.leaderActorId);
-		if((state->talk != 0 || window->mindRead != 0) && (actor->tmr & 2))
-			flag = TRUE;
-		scProxChaseTarget(actor, target, CHASE_LEADER_RANGE, flag);
+		tgt = fdActorGet(ACTOR_CHILD_WHO_MISSES_RUNNING);
+	if(scProxChaseTarget(actor, tgt, CHASE_CHILD_RANGE, 0) == 0) {
+		tgt = fdActorGet(MainRoutineStateWork.leaderActorId);
+		if((state->talk != 0 || win->mindRead != 0) && (actor->tmr & 2))
+			flg = TRUE;
+		scProxChaseTarget(actor, tgt, CHASE_LEADER_RANGE, flg);
 	}
 	return 0;
 }
@@ -451,9 +450,9 @@ const Uint32 *scGetExits(void)
 	return SceneExits;
 }
 
-extern ACTOR_PLACE Prox_SouthGatePlacements[];
-extern ACTOR_PLACE Prox_HousesPlacements[];
-extern ACTOR_PLACE Prox_HousesPlacementsOnceLit[];
+extern ACTOR_PLACE ProxSouthGatePlacements[];
+extern ACTOR_PLACE ProxHousesPlacements[];
+extern ACTOR_PLACE ProxHousesPlacementsOnceLit[];
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
@@ -462,35 +461,35 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	if(scene == SCENE_PROX_SOUTH_GATE &&
 		fdScriptGetFlag(FLAG_THANKED_FOR_BEACON) &&
 		!fdScriptGetFlag(FLAG_SAID_FAREWELL))
-		return Prox_SouthGateFarewellPlacements;
+		return ProxSouthGateFarewellPlacements;
 	scene = MainRoutineStateWork.next;
 	if(scene == SCENE_PROX)
-		return Prox_TownPlacements;
+		return ProxTownPlacements;
 	if(scene == SCENE_PROX_MOLD) {
 		if(fdScriptGetFlag(FLAG_MARS_BEACON_LIT))
-			return Prox_MoldPlacementsOnceLit;
-		return Prox_MoldPlacements;
+			return ProxMoldPlacementsOnceLit;
+		return ProxMoldPlacements;
 	}
 	if(scene == SCENE_PROX_HOUSES) {
 		if(fdScriptGetFlag(FLAG_MARS_BEACON_LIT)) {
-			Prox_HousesPlacementsOnceLit[ACTOR_VILLAGER_TOLD_OF_THE_RIFT -
+			ProxHousesPlacementsOnceLit[ACTOR_VILLAGER_TOLD_OF_THE_RIFT -
 				ACTOR_FIRST_PLACED]
 				.talkFacing = TALK_FACING_PARTY_THEN_WATCH;
-			Prox_HousesPlacementsOnceLit[ACTOR_VILLAGER_FEARING_FOR_PROX -
+			ProxHousesPlacementsOnceLit[ACTOR_VILLAGER_FEARING_FOR_PROX -
 				ACTOR_FIRST_PLACED]
 				.talkFacing = TALK_FACING_PARTY_THEN_WATCH;
-			return Prox_HousesPlacementsOnceLit;
+			return ProxHousesPlacementsOnceLit;
 		}
-		return Prox_HousesPlacements;
+		return ProxHousesPlacements;
 	}
 	if(scene == SCENE_PROX_CAVE_HOMES) {
 		if(fdScriptGetFlag(FLAG_MARS_BEACON_LIT))
-			return Prox_CaveHomesPlacementsOnceLit;
-		return Prox_CaveHomesPlacements;
+			return ProxCaveHomesPlacementsOnceLit;
+		return ProxCaveHomesPlacements;
 	}
 	if(scene == SCENE_PROX_CAVES)
-		return Prox_CavesPlacements;
-	return Prox_SouthGatePlacements;
+		return ProxCavesPlacements;
+	return ProxSouthGatePlacements;
 }
 
 /* Felix casts Scoop on the hidden spot just east of the igloo, past its fence
@@ -501,25 +500,25 @@ void scProxScoopUpDarkMatter(Sint32 mode)
 	fdScriptDigUpTreasure(mode, FIELD_TREASURE_ACTOR, FLAG_DIG_SPOT_SCOOPED);
 }
 
-extern CUE Prox_HousesCues[];
+extern CUE ProxHousesCues[];
 
 const CUE *scGetCues(void)
 {
 	Sint32 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_PROX_SOUTH_GATE)
-		return Prox_SouthGateCues;
+		return ProxSouthGateCues;
 	if(scene == SCENE_PROX)
-		return Prox_TownCues;
+		return ProxTownCues;
 	if(scene == SCENE_PROX_MOLD)
-		return Prox_MoldCues;
+		return ProxMoldCues;
 	if(scene == SCENE_PROX_HOUSES)
-		return Prox_HousesCues;
+		return ProxHousesCues;
 	if(scene == SCENE_PROX_CAVE_HOMES)
-		return Prox_CaveHomesCues;
+		return ProxCaveHomesCues;
 	if(scene == SCENE_PROX_CAVES)
-		return Prox_CavesCues;
-	return Prox_Cues;
+		return ProxCavesCues;
+	return ProxCues;
 }
 
 /* The overlay's call to fdScriptEnd. */
@@ -620,7 +619,7 @@ void scProxTalkToPlayingChild(void)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	ACTOR		*actor = fdActorGet(ACTOR_PLAYING_CHILD);
-	Sint16		 angle = actor->facing;
+	Sint16		 ang = actor->facing;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
@@ -636,7 +635,7 @@ void scProxTalkToPlayingChild(void)
 	   stupid..." */
 	fdScriptShowMessage(ACTOR_PLAYING_CHILD, 0);
 	if(state->psynergy == 0)
-		actor->facing = angle;
+		actor->facing = ang;
 	actor->sceneByte = 0;
 	scProxEndScript();
 }
@@ -906,7 +905,7 @@ void scProxDecideToGoToLighthouse(void)
 	scProxEndScript();
 }
 
-extern Sint32 Prox_IsaacStepsUpToPuelle[];
+extern Sint32 ProxIsaacStepsUpToPuelle[];
 
 /* Felix reaches the top of the west path in the upper village, metatiles (7, 8)
    to (8, 10), and walks up to Puelle and the elder before the clan. The elder
@@ -947,8 +946,8 @@ void scProxMeetPuelle(void)
 		ACTOR_VILLAGER_FEELING_HELPLESS, FACING_NORTH_NORTHWEST, 0);
 	fdActorSetSpeed(ACTOR_MOLD_KRADEN, 0.8);
 	fdActorSetSpeed(ACTOR_ISAAC, 0.8);
-	fdActorSetScript(ACTOR_ISAAC, Prox_IsaacStepsUpToPuelle);
-	fdActorRunScriptAndWait(ACTOR_MOLD_KRADEN, Prox_KradenStepsUpToPuelle);
+	fdActorSetScript(ACTOR_ISAAC, ProxIsaacStepsUpToPuelle);
+	fdActorRunScriptAndWait(ACTOR_MOLD_KRADEN, ProxKradenStepsUpToPuelle);
 	fdActorFaceDirection(ACTOR_ELDER, FACING_SOUTH_SOUTHEAST, 0);
 	fdActorShowEmote(ACTOR_ELDER, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
 	/* "It seems he has brought some allies with him." */
@@ -1173,8 +1172,8 @@ void scProxMeetPuelle(void)
 	fdActorFaceDirectionAndWait(ACTOR_ISAAC, FACING_EAST);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
-	fdActorSetScript(ACTOR_ISAAC, Prox_StepBackFromPuelle);
-	fdActorRunScriptAndWait(ACTOR_MOLD_KRADEN, Prox_StepBackFromPuelle);
+	fdActorSetScript(ACTOR_ISAAC, ProxStepBackFromPuelle);
+	fdActorRunScriptAndWait(ACTOR_MOLD_KRADEN, ProxStepBackFromPuelle);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 160, 154);
 	fdActorFaceDirectionAndWait(
 		MainRoutineStateWork.leaderActorId, FACING_NORTH);
@@ -1306,18 +1305,18 @@ void scProxSmokeFromChimneys(void)
 	Sint32 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_PROX) {
-		if((FrameCount & 63) == 0)
+		if((TickCount & 63) == 0)
 			scSmokeSpawn(toFIXED(536), toFIXED(40), toFIXED(232));
-		if(((FrameCount + 60) & 63) == 0)
+		if(((TickCount + 60) & 63) == 0)
 			scSmokeSpawn(toFIXED(168), toFIXED(40), toFIXED(296));
-		if(((FrameCount + 20) & 63) == 0) {
+		if(((TickCount + 20) & 63) == 0) {
 			scSmokeSpawn(toFIXED(280), toFIXED(42), toFIXED(184));
 			scSmokeSpawn(toFIXED(152), toFIXED(48), toFIXED(424));
 		}
-		if(((FrameCount + 40) & 63) == 0)
+		if(((TickCount + 40) & 63) == 0)
 			scSmokeSpawn(toFIXED(336), toFIXED(42), toFIXED(362));
 	} else if(scene == SCENE_PROX_MOLD) {
-		if((FrameCount & 63) == 0)
+		if((TickCount & 63) == 0)
 			scSmokeSpawn(toFIXED(568), toFIXED(104), toFIXED(296));
 	}
 }
@@ -1327,11 +1326,11 @@ void scProxSmokeFromChimneys(void)
    growing smaller as he passes the doorway, and the screen fades.
 
    The open door is drawn by copying its picture over the door's metatiles, from
-   `sourceX`, `sourceY` to `x`, `y`, `width` by `height` metatiles; the copies
+   `srcX`, `srcY` to `x`, `y`, `width` by `height` metatiles; the copies
    sit on the map's upper layer, 45 columns east of the metatiles Felix walks
    on. */
-void scProxEnterDoor(Sint32 sourceX, Sint32 sourceY, Sint32 x, Sint32 y,
-	Sint32 width, Sint32 height)
+void scProxEnterDoor(
+	Sint32 srcX, Sint32 srcY, Sint32 x, Sint32 y, Sint32 width, Sint32 height)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	ACTOR		*actor;
@@ -1344,7 +1343,7 @@ void scProxEnterDoor(Sint32 sourceX, Sint32 sourceY, Sint32 x, Sint32 y,
 			fdScriptPlaySnd(SE_THUMP);
 		else
 			fdScriptPlaySnd(SE_DOOR_OPEN);
-		fdMapGridCopyMetatilesTo(sourceX, sourceY, x, y, width, height);
+		fdMapGridCopyMetatilesTo(srcX, srcY, x, y, width, height);
 		syFieldScriptWait(20);
 	}
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
@@ -1360,11 +1359,11 @@ void scProxEnterDoor(Sint32 sourceX, Sint32 sourceY, Sint32 x, Sint32 y,
 		actor->facing = FACING_NORTH;
 	}
 	fdActorSetScript(
-		MainRoutineStateWork.leaderActorId, Leader_WalkThroughDoorScript);
+		MainRoutineStateWork.leaderActorId, LeaderWalkThroughDoorScript);
 	syWait(12);
 	fdScriptPlaySnd(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syFieldScriptSetExitRequest(state->stepCue);
 }
 
@@ -1450,7 +1449,7 @@ void scProxClimbStairs(void)
 		fdActorSetAnimation(id, ANIM_LEADER_LEAVE);
 	syWait(4);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syFieldScriptSetExitRequest(stairsExit);
 }
 
@@ -1522,7 +1521,7 @@ void scProxGiveThanksForBeacon(void)
 	syWait(1);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdCameraSetSpeed(0.8);
 	fdCameraMoveTo(184, CAMERA_KEEP, 448, 1);
 	fdCameraWaitForArrival();
@@ -1875,7 +1874,7 @@ Sint32 scInit(void)
 	} else {
 		REG_BLDALPHA = BLEND_ALPHA(8, 12);
 		REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-		sySetEvent(scProxSmokeFromChimneys, EVENT_PASS_FRAME);
+		sySetEvent(scProxSmokeFromChimneys, EVENT_PASS_TICK);
 		fdTilesetAnimPause(0);
 		fdTilesetAnimPause(1);
 		fdTilesetAnimResume(2);
@@ -1927,10 +1926,10 @@ void scProxInitTown(void)
 				ACTOR_CHILD_WHO_MISSES_RUNNING, 536, 424, 1);
 			scProxStartPlayingChase(ACTOR_TRAINING_CHILD, 580, 420, 2);
 			syWait(1);
-			fdActorSetScript(ACTOR_PLAYING_CHILD, Prox_FirstChildRuns);
+			fdActorSetScript(ACTOR_PLAYING_CHILD, ProxFirstChildRuns);
 			fdActorSetScript(
-				ACTOR_CHILD_WHO_MISSES_RUNNING, Prox_SecondChildRuns);
-			fdActorSetScript(ACTOR_TRAINING_CHILD, Prox_ThirdChildRuns);
+				ACTOR_CHILD_WHO_MISSES_RUNNING, ProxSecondChildRuns);
+			fdActorSetScript(ACTOR_TRAINING_CHILD, ProxThirdChildRuns);
 			syWait(1);
 		}
 	}
@@ -1978,7 +1977,7 @@ void scProxInitMold(void)
 	}
 }
 
-/* Each frame, draws the child hiding from the wind in the igloo in front of or
+/* Each tick, draws the child hiding from the wind in the igloo in front of or
    behind things as Felix is. */
 void scProxMatchHousesPriority(void)
 {
@@ -1993,7 +1992,7 @@ void scProxInitHouses(void)
 {
 
 	fdEffectStartBlankOverlay(0);
-	sySetFrameEvent(scProxMatchHousesPriority, EVENT_PASS_FRAME);
+	sySetTickEvent(scProxMatchHousesPriority, EVENT_PASS_TICK);
 	if(MainRoutineStateWork.entrance ==
 		PROX_HOUSES_FROM_MARS_LIGHTHOUSE_AERIE) {
 		if(!fdScriptGetFlag(FLAG_THANKED_FOR_BEACON)) {
@@ -2002,7 +2001,7 @@ void scProxInitHouses(void)
 	}
 }
 
-/* Each frame, draws two of the basements' people in front of or behind things
+/* Each tick, draws two of the basements' people in front of or behind things
    as Felix is. */
 void scProxMatchCaveHomesPriority(void)
 {
@@ -2027,14 +2026,14 @@ void scProxInitCaveHomes(void)
 			scProxComeDownStairs(1);
 	}
 	fdEffectStartBlankOverlay(0);
-	sySetFrameEvent(scProxMatchCaveHomesPriority, EVENT_PASS_FRAME);
+	sySetTickEvent(scProxMatchCaveHomesPriority, EVENT_PASS_TICK);
 }
 
-extern Sint32 Prox_IsaacStepsForward[];
-extern Sint32 Prox_RightFileWalksSouth[];
-extern Sint32 Prox_GaretWalksSouth[];
-extern Sint32 Prox_IsaacWalksSouth[];
-extern Sint32 Prox_GaretRunsAhead[];
+extern Sint32 ProxIsaacStepsForward[];
+extern Sint32 ProxRightFileWalksSouth[];
+extern Sint32 ProxGaretWalksSouth[];
+extern Sint32 ProxIsaacWalksSouth[];
+extern Sint32 ProxGaretRunsAhead[];
 
 /* After the thanks in the big north-west house, Felix walks south through the
    south gate, metatiles (8, 9) and (9, 9), where everyone is waiting. Jenna
@@ -2074,9 +2073,9 @@ void scProxSayFarewell(void)
 		syWait(1);
 		fdActorSetSpeed(ACTOR_ISAAC, 0.8);
 		fdActorSetSpeed(ACTOR_SOUTH_GATE_KRADEN, 0.8);
-		fdActorSetScript(ACTOR_ISAAC, Prox_IsaacStepsForward);
+		fdActorSetScript(ACTOR_ISAAC, ProxIsaacStepsForward);
 		fdActorRunScriptAndWait(
-			ACTOR_SOUTH_GATE_KRADEN, Prox_KradenStepsForward);
+			ACTOR_SOUTH_GATE_KRADEN, ProxKradenStepsForward);
 		fdActorSetAnimationAndWait(ACTOR_JENNAS_FATHER, 3);
 		/* "Don't worry about us, Felix... Puelle and the others took good
 		   care..." */
@@ -2251,25 +2250,25 @@ void scProxSayFarewell(void)
 		scFieldActorSetSprPriority(ACTOR_GARET, 2);
 		fdCameraSetSpeed(0.4);
 		fdCameraMoveTo(144, CAMERA_KEEP, 246, 1);
-		fdActorSetScript(ACTOR_JENNAS_FATHER, Prox_JennasFatherWalksSouth);
-		fdActorSetScript(ACTOR_JENNAS_MOTHER, Prox_JennasMotherWalksSouth);
+		fdActorSetScript(ACTOR_JENNAS_FATHER, ProxJennasFatherWalksSouth);
+		fdActorSetScript(ACTOR_JENNAS_MOTHER, ProxJennasMotherWalksSouth);
 		syFieldScriptWait(10);
-		fdActorSetScript(ACTOR_KYLE, Prox_LeftFileWalksSouth);
-		fdActorSetScript(ACTOR_MIA, Prox_RightFileWalksSouth);
+		fdActorSetScript(ACTOR_KYLE, ProxLeftFileWalksSouth);
+		fdActorSetScript(ACTOR_MIA, ProxRightFileWalksSouth);
 		syFieldScriptWait(10);
-		fdActorSetScript(ACTOR_SHEBA, Prox_LeftFileWalksSouth);
-		fdActorSetScript(ACTOR_PIERS, Prox_LeftFileWalksSouth);
+		fdActorSetScript(ACTOR_SHEBA, ProxLeftFileWalksSouth);
+		fdActorSetScript(ACTOR_PIERS, ProxLeftFileWalksSouth);
 		syFieldScriptWait(10);
-		fdActorSetScript(ACTOR_IVAN, Prox_RightFileWalksSouth);
-		fdActorSetScript(ACTOR_GARET, Prox_GaretWalksSouth);
+		fdActorSetScript(ACTOR_IVAN, ProxRightFileWalksSouth);
+		fdActorSetScript(ACTOR_GARET, ProxGaretWalksSouth);
 		syFieldScriptWait(30);
-		fdActorSetScript(ACTOR_JENNA, Prox_JennaWalksSouth);
+		fdActorSetScript(ACTOR_JENNA, ProxJennaWalksSouth);
 		syFieldScriptWait(20);
-		fdActorSetScript(ACTOR_ISAAC, Prox_IsaacWalksSouth);
+		fdActorSetScript(ACTOR_ISAAC, ProxIsaacWalksSouth);
 		fdActorSetScript(
-			MainRoutineStateWork.leaderActorId, Prox_LeaderWalksSouth);
+			MainRoutineStateWork.leaderActorId, ProxLeaderWalksSouth);
 		syFieldScriptWait(10);
-		fdActorRunScriptAndWait(ACTOR_SOUTH_GATE_KRADEN, Prox_KradenWalksSouth);
+		fdActorRunScriptAndWait(ACTOR_SOUTH_GATE_KRADEN, ProxKradenWalksSouth);
 		fdActorShowEmote(
 			ACTOR_SOUTH_GATE_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
 		fdActorFaceDirection(
@@ -2439,8 +2438,8 @@ void scProxSayFarewell(void)
 		syFieldScriptWait(10);
 		fdActorSetSpeed(ACTOR_JENNA, 1.6);
 		fdActorSetSpeed(ACTOR_GARET, 1.6);
-		fdActorSetScript(ACTOR_JENNA, Prox_JennaRunsAhead);
-		fdActorRunScriptAndWait(ACTOR_GARET, Prox_GaretRunsAhead);
+		fdActorSetScript(ACTOR_JENNA, ProxJennaRunsAhead);
+		fdActorRunScriptAndWait(ACTOR_GARET, ProxGaretRunsAhead);
 		syFieldScriptWait(20);
 		fdActorFaceDirectionAndWait(
 			ACTOR_SOUTH_GATE_KRADEN, FACING_NORTH_NORTHWEST);
@@ -2615,7 +2614,7 @@ void scProxSayFarewell(void)
 	}
 }
 
-extern Sint16 SlideOnIce_SteerAngles[];
+extern Sint16 SlideOnIceSteerAngles[];
 
 #include "shared/actor_steer_by_pad.h"
 
@@ -2628,18 +2627,18 @@ typedef struct POSITION {
 	FIXED z;
 } POSITION;
 
-extern Sint16 SlideOnIce_AnglesByKey[];
+extern Sint16 SlideOnIceAnglesByKey[];
 
 #include "shared/leader_slide_on_ice.h"
 
-volatile Sint16 SlideOnIce_Stopped BSS_DATA;
+volatile Sint16 SlideOnIceStopped BSS_DATA;
 
 #include "shared/slide_on_ice_from_edge.c"
 
 /* Stops the leader's slide on the ice where it is (nonzero), or lets it run. */
 void scLeaderSetSlideStopped(Sint32 stopped)
 {
-	SlideOnIce_Stopped = stopped;
+	SlideOnIceStopped = stopped;
 }
 
 #include "shared/leader_slide_on_ice_ahead.h"
@@ -2651,7 +2650,7 @@ void scLeaderSetSlideStopped(Sint32 stopped)
 #include "shared/rock_spawn.h"
 /* The overlay's call to fdEffectSprInit: one rock's sprite, its size, pivot and
    attributes. */
-void scProxInitRockSpr(EFFECT_SPR *sprite, Sint32 pivotX, Sint32 pivotY,
+void scProxInitRockSpr(EFFECT_SPR *spr, Sint32 pivotX, Sint32 pivotY,
 	Uint32 attributes, Sint32 tile);
 
 /* Unused: loads the falling rocks' tiles and 64 sprites and starts their event,
@@ -2663,7 +2662,7 @@ UNUSED void scProxStartFallingRocks(void)
 	Sint32		tile;
 	Sint32		i;
 	ROCK	   *rock;
-	EFFECT_SPR *sprite;
+	EFFECT_SPR *spr;
 
 	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_FALLING_ROCK), state);
 	entry = syVRAMCacheFindFreeEntry();
@@ -2672,17 +2671,17 @@ UNUSED void scProxStartFallingRocks(void)
 	state->resource = entry;
 	rock = state->rocks;
 	for(i = 0; i < (Sint32)ARRAY_COUNT(state->rocks); i++) {
-		sprite = &state->sprs[i];
-		scProxInitRockSpr(sprite, 8, 8, OBJ_SIZE_16X16, tile);
-		sprite->oam.fullCol = 1;
-		sprite->oam.pal = 0;
-		sprite->oam.pri = 0;
-		sprite->depth = OAM_DEPTH_WINDOW;
+		spr = &state->sprs[i];
+		scProxInitRockSpr(spr, 8, 8, OBJ_SIZE_16X16, tile);
+		spr->oam.fullCol = 1;
+		spr->oam.pal = 0;
+		spr->oam.pri = 0;
+		spr->depth = OAM_DEPTH_WINDOW;
 		rock->tmr = -1;
 		rock++;
 	}
 	state->next = 0;
-	syFieldSetFrameEvent(scParticleUpdateFalling, EVENT_PASS_FRAME);
+	syFieldSetTickEvent(scParticleUpdateFalling, EVENT_PASS_TICK);
 }
 
 #include "shared/rock_end_falling.h"
@@ -2692,7 +2691,7 @@ void scProxAskAboutIgloos(void);
 void scProxTalkToInnkeeper(void);
 void scProxTalkToChildWhoMissesRunning(void);
 
-extern Uint32 FieldEffect_LongScript[];
+extern Uint32 FieldEffectLongScript[];
 
 /* clang-format off */
 #include "shared/field_effect_duration_scripts.c"
@@ -2701,13 +2700,13 @@ extern Uint32 FieldEffect_LongScript[];
 
 #include "shared/slide_on_ice_angles.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
-Sint32 Prox_FirstChildRuns[] = {
+Sint32 ProxFirstChildRuns[] = {
 	SC_ANIMATION(2),
 	SC_SPEED(1),
 	SC_ACCELERATION(0.4),
@@ -2726,7 +2725,7 @@ Sint32 Prox_FirstChildRuns[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-Sint32 Prox_SecondChildRuns[] = {
+Sint32 ProxSecondChildRuns[] = {
 	SC_ANIMATION(2),
 	SC_SPEED(1),
 	SC_ACCELERATION(0.4),
@@ -2745,7 +2744,7 @@ Sint32 Prox_SecondChildRuns[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-Sint32 Prox_ThirdChildRuns[] = {
+Sint32 ProxThirdChildRuns[] = {
 	SC_ANIMATION(2),
 	SC_SPEED(1),
 	SC_ACCELERATION(0.4),
@@ -2764,7 +2763,7 @@ Sint32 Prox_ThirdChildRuns[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-Sint32 Prox_KradenStepsUpToPuelle[] = {
+Sint32 ProxKradenStepsUpToPuelle[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(176, 0, 154),
 	SC_SYNC,
@@ -2775,7 +2774,7 @@ Sint32 Prox_KradenStepsUpToPuelle[] = {
 	SC_END,
 };
 
-Sint32 Prox_IsaacStepsUpToPuelle[] = {
+Sint32 ProxIsaacStepsUpToPuelle[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(160, 0, 154),
 	SC_SYNC,
@@ -2786,7 +2785,7 @@ Sint32 Prox_IsaacStepsUpToPuelle[] = {
 	SC_END,
 };
 
-Sint32 Prox_StepBackFromPuelle[] = {
+Sint32 ProxStepBackFromPuelle[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(144, 0, 154),
 	SC_SYNC,
@@ -2842,11 +2841,11 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE Prox_SouthGatePlacements[] = {
+ACTOR_PLACE ProxSouthGatePlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Prox_SouthGateFarewellPlacements[] = {
+ACTOR_PLACE ProxSouthGateFarewellPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 248, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 248, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_KYLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 248, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
@@ -2861,7 +2860,7 @@ ACTOR_PLACE Prox_SouthGateFarewellPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Prox_TownPlacements[] = {
+ACTOR_PLACE ProxTownPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_PROX_MAN_IN_GREEN_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 456, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
 	ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 336, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_PURPLE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 112, 0, 248, FACING_EAST, TALK_FACING_PARTY, 0),
@@ -2878,7 +2877,7 @@ ACTOR_PLACE Prox_TownPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Prox_MoldPlacements[] = {
+ACTOR_PLACE ProxMoldPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_PROX_MAN_IN_GREEN_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 540, 0, 388, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
 	ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 388, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_PUELLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 180, 0, 132, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
@@ -2896,7 +2895,7 @@ ACTOR_PLACE Prox_MoldPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Prox_MoldPlacementsOnceLit[] = {
+ACTOR_PLACE ProxMoldPlacementsOnceLit[] = {
 	ACTOR_PLACEMENT(SPRITE_PROX_MAN_IN_GREEN_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_PUELLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
@@ -2914,7 +2913,7 @@ ACTOR_PLACE Prox_MoldPlacementsOnceLit[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Prox_HousesPlacements[] = {
+ACTOR_PLACE ProxHousesPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_PROX_MAN_IN_GREEN_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 192, FACING_WEST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 106, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_PROX_BOY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 112, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
@@ -2935,7 +2934,7 @@ ACTOR_PLACE Prox_HousesPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Prox_HousesPlacementsOnceLit[] = {
+ACTOR_PLACE ProxHousesPlacementsOnceLit[] = {
 	ACTOR_PLACEMENT(SPRITE_PROX_MAN_IN_GREEN_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 104, 0, 196, FACING_WEST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 106, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_PROX_BOY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 112, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
@@ -2961,14 +2960,14 @@ ACTOR_PLACE Prox_HousesPlacementsOnceLit[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Prox_CaveHomesPlacements[] = {
+ACTOR_PLACE ProxCaveHomesPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_PURPLE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 628, 0, 200, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_PURPLE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 808, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
 	ACTOR_PLACEMENT(SPRITE_PROX_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 370, 0, 740, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Prox_CaveHomesPlacementsOnceLit[] = {
+ACTOR_PLACE ProxCaveHomesPlacementsOnceLit[] = {
 	ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_PURPLE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 666, 0, 124, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_WITH_PURPLE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 808, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
 	ACTOR_PLACEMENT(SPRITE_PROX_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 370, 0, 740, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -2976,23 +2975,23 @@ ACTOR_PLACE Prox_CaveHomesPlacementsOnceLit[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Prox_CavesPlacements[] = {
+ACTOR_PLACE ProxCavesPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 777, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 	{SCENE_TABLE_END},
 };
 
-CUE Prox_Cues[] = {
+CUE ProxCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Prox_SouthGateCues[] = {
+CUE ProxSouthGateCues[] = {
 	{CUE_EXIT, PROX_SOUTH_GATE_TO_WORLD_MAP, CONDITION_ALWAYS, PROX_SOUTH_GATE_TO_WORLD_MAP},
 	{CUE_EXIT, PROX_SOUTH_GATE_TO_PROX, CONDITION_ALWAYS, PROX_SOUTH_GATE_TO_PROX},
 	{CUE_STEP, METATILE_BEHAVIOR_FAREWELL, FLAG_SAID_FAREWELL, SCRIPT_REF(scProxSayFarewell)},
 	{CUE_TABLE_END},
 };
 
-CUE Prox_TownCues[] = {
+CUE ProxTownCues[] = {
 	{CUE_EXIT, PROX_TO_PROX_SOUTH_GATE, CONDITION_ALWAYS, PROX_TO_PROX_SOUTH_GATE},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), PROX_TO_PROX_HOUSES_SOUTHWEST, CONDITION_ALWAYS, SCRIPT_REF(scProxEnterInn)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), PROX_TO_PROX_HOUSES_SOUTH, CONDITION_ALWAYS, SCRIPT_REF(scProxEnterSouthHouse)},
@@ -3047,7 +3046,7 @@ CUE Prox_TownCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Prox_MoldCues[] = {
+CUE ProxMoldCues[] = {
 	{CUE_EXIT, PROX_MOLD_TO_PROX_WEST, CONDITION_ALWAYS, PROX_MOLD_TO_PROX_WEST},
 	{CUE_EXIT, PROX_MOLD_TO_PROX_EAST, CONDITION_ALWAYS, PROX_MOLD_TO_PROX_EAST},
 	{CUE_EXIT, PROX_MOLD_TO_WORLD_MAP, CONDITION_ALWAYS, PROX_MOLD_TO_WORLD_MAP},
@@ -3096,7 +3095,7 @@ CUE Prox_MoldCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Prox_HousesCues[] = {
+CUE ProxHousesCues[] = {
 	{CUE_EXIT, PROX_HOUSES_TO_PROX_SOUTH, CONDITION_ALWAYS, PROX_HOUSES_TO_PROX_SOUTH},
 	{CUE_EXIT, PROX_HOUSES_TO_PROX_EAST_B, CONDITION_ALWAYS, PROX_HOUSES_TO_PROX_EAST_B},
 	{CUE_EXIT, PROX_HOUSES_TO_PROX_CAVE_HOMES_NORTH, CONDITION_ALWAYS, PROX_HOUSES_TO_PROX_CAVE_HOMES_NORTH},
@@ -3174,7 +3173,7 @@ CUE Prox_HousesCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Prox_CaveHomesCues[] = {
+CUE ProxCaveHomesCues[] = {
 	{STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK | FACING_NORTH, PROX_CAVE_HOMES_TO_PROX_HOUSES_NORTH, CONDITION_ALWAYS, SCRIPT_REF(scProxClimbStairs)},
 	{STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK | FACING_NORTH, PROX_CAVE_HOMES_TO_PROX_HOUSES_WEST, CONDITION_ALWAYS, SCRIPT_REF(scProxClimbStairs)},
 	{STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK | FACING_NORTH, PROX_CAVE_HOMES_TO_PROX_HOUSES_SOUTH, CONDITION_ALWAYS, SCRIPT_REF(scProxClimbStairs)},
@@ -3199,7 +3198,7 @@ CUE Prox_CaveHomesCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Prox_CavesCues[] = {
+CUE ProxCavesCues[] = {
 	{CUE_EXIT, PROX_CAVES_TO_PROX, CONDITION_ALWAYS, PROX_CAVES_TO_PROX},
 	{CUE_TALK, ACTOR_HEALER, CONDITION_ALWAYS, SCRIPT_REF(scProxTalkToHealer)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxTheseCatastrophesAreResult)},
@@ -3207,7 +3206,7 @@ CUE Prox_CavesCues[] = {
 	{CUE_TABLE_END},
 };
 
-Sint32 Prox_IsaacStepsForward[] = {
+Sint32 ProxIsaacStepsForward[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(120, 0, 196),
 	SC_SYNC,
@@ -3218,7 +3217,7 @@ Sint32 Prox_IsaacStepsForward[] = {
 	SC_END,
 };
 
-Sint32 Prox_KradenStepsForward[] = {
+Sint32 ProxKradenStepsForward[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(152, 0, 196),
 	SC_SYNC,
@@ -3229,7 +3228,7 @@ Sint32 Prox_KradenStepsForward[] = {
 	SC_END,
 };
 
-Sint32 Prox_JennasFatherWalksSouth[] = {
+Sint32 ProxJennasFatherWalksSouth[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(136, 0, 348),
 	SC_SYNC,
@@ -3240,7 +3239,7 @@ Sint32 Prox_JennasFatherWalksSouth[] = {
 	SC_END,
 };
 
-Sint32 Prox_JennasMotherWalksSouth[] = {
+Sint32 ProxJennasMotherWalksSouth[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(152, 0, 348),
 	SC_SYNC,
@@ -3251,7 +3250,7 @@ Sint32 Prox_JennasMotherWalksSouth[] = {
 	SC_END,
 };
 
-Sint32 Prox_LeftFileWalksSouth[] = {
+Sint32 ProxLeftFileWalksSouth[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(136, 0, 248),
 	SC_SYNC,
@@ -3264,7 +3263,7 @@ Sint32 Prox_LeftFileWalksSouth[] = {
 	SC_END,
 };
 
-Sint32 Prox_RightFileWalksSouth[] = {
+Sint32 ProxRightFileWalksSouth[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(152, 0, 248),
 	SC_SYNC,
@@ -3277,7 +3276,7 @@ Sint32 Prox_RightFileWalksSouth[] = {
 	SC_END,
 };
 
-Sint32 Prox_GaretWalksSouth[] = {
+Sint32 ProxGaretWalksSouth[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(152, 0, 248),
 	SC_SYNC,
@@ -3288,7 +3287,7 @@ Sint32 Prox_GaretWalksSouth[] = {
 	SC_END,
 };
 
-Sint32 Prox_JennaWalksSouth[] = {
+Sint32 ProxJennaWalksSouth[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(168, 0, 272),
 	SC_SYNC,
@@ -3297,7 +3296,7 @@ Sint32 Prox_JennaWalksSouth[] = {
 	SC_END,
 };
 
-Sint32 Prox_IsaacWalksSouth[] = {
+Sint32 ProxIsaacWalksSouth[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(120, 0, 220),
 	SC_SYNC,
@@ -3314,7 +3313,7 @@ Sint32 Prox_IsaacWalksSouth[] = {
 	SC_END,
 };
 
-Sint32 Prox_LeaderWalksSouth[] = {
+Sint32 ProxLeaderWalksSouth[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(140, 0, 220),
 	SC_SYNC,
@@ -3331,7 +3330,7 @@ Sint32 Prox_LeaderWalksSouth[] = {
 	SC_END,
 };
 
-Sint32 Prox_KradenWalksSouth[] = {
+Sint32 ProxKradenWalksSouth[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(152, 0, 240),
 	SC_SYNC,
@@ -3340,7 +3339,7 @@ Sint32 Prox_KradenWalksSouth[] = {
 	SC_END,
 };
 
-Sint32 Prox_JennaRunsAhead[] = {
+Sint32 ProxJennaRunsAhead[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(168, 0, 348),
 	SC_SYNC,
@@ -3351,8 +3350,8 @@ Sint32 Prox_JennaRunsAhead[] = {
 	SC_END,
 };
 
-/* The same script as Prox_JennasMotherWalksSouth, under another name. */
-Sint32 Prox_GaretRunsAhead[] = {
+/* The same script as ProxJennasMotherWalksSouth, under another name. */
+Sint32 ProxGaretRunsAhead[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(152, 0, 348),
 	SC_SYNC,

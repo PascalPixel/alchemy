@@ -228,19 +228,19 @@ typedef enum TAOPO_SWAMP_STAR_DUST_ACTOR_ID {
 #define FLAG_TAOPO_SWAMP_LAST_ROCK_COOLED			FLAG_AREA_TEMP_42
 #define FLAG_TAOPO_SWAMP_LAST_ROCK_UNMOVABLE		FLAG_AREA_TEMP_43
 
-void syGameFlagSetByte(Sint32 flag, Sint32 value);
-void scVentSetGust(Sint32 index, FIXED speed);
+void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void scVentSetGust(Sint32 idx, FIXED speed);
 void scVentSetId(Sint32 slot, Sint32 id);
 
-extern Sint32 TaopoSwamp_SteamPuffs;
-extern Sint32 TaopoSwamp_PassageFrames;
-extern Sint32 TaopoSwamp_PoolFrames;
-extern Uint32 TaopoSwamp_PuffSteamScript[];
+extern Sint32 TaopoSwampSteamPuffs;
+extern Sint32 TaopoSwampPassageTicks;
+extern Sint32 TaopoSwampPoolTicks;
+extern Uint32 TaopoSwampPuffSteamScript[];
 void		  scTaopoSwampDarkenRoom(Sint32 fade);
 /* Shows message in a script; when someone in the party has Scoop, the field
    menu then opens (fdScriptShowMessageAndOfferScoop, through the overlay's own
    import row). */
-void   scTaopoSwampShowMessage(Sint32 message);
+void   scTaopoSwampShowMessage(Sint32 msg);
 Sint32 scVentGetCounter(void);
 #ifdef MODERN
 void scVentSetBlowing(Sint32 index, Sint32 blowing);
@@ -278,9 +278,9 @@ typedef struct SCENE_STATE {
    and how many the stump sinks before it is gone. */
 #define LEADER_SINK_ROWS 20
 #define STUMP_SINK_ROWS	 24
-/* Each frame the leader walks on the mud sinks them by this share of the full
+/* Each tick the leader walks on the mud sinks them by this share of the full
    depth, and 1 more. */
-#define MUD_SINK_FRAMES	 96
+#define MUD_SINK_TICKS	 96
 
 /* The vents' gusts: each vent blows south along a column of metatiles whose
    step cue is CUE_FIRST_GUST plus its place in its room's list
@@ -308,18 +308,18 @@ enum {
 enum { VENT_BESIDE_WEST_PILLAR = 2, VENT_BESIDE_EAST_PILLAR = 8 };
 
 void		  scVentBounce(ACTOR *actor);
-extern Uint32 Dust_BurstScript[];
-extern Sint32 TaopoSwamp_SparkleFrame;
+extern Uint32 DustBurstScript[];
+extern Sint32 TaopoSwampSparkleTick;
 void		  scTaopoSwampSparkleStarDust(void);
 void		  scTaopoSwampFocusMapOn(Sint32 x, Sint32 z);
 void		  scTaopoSwampSaveFirmGround(void);
 void		  scTaopoSwampFillDripSpot(Sint32 caster, Sint32 id);
-extern Sint32 TaopoSwamp_DripFromCeilingScript[];
-extern Sint32 TaopoSwamp_DropFalls[];
+extern Sint32 TaopoSwampDripFromCeilingScript[];
+extern Sint32 TaopoSwampDropFalls[];
 void		  scTaopoSwampShatterIcePillar(Sint32 id);
 void		  scTaopoSwampBlowAwayPuddle(Sint32 id);
-extern Uint32 TaopoSwamp_SparkFades[];
-extern Sint32 TaopoSwamp_DripAtRandomScript[];
+extern Uint32 TaopoSwampSparkFades[];
+extern Sint32 TaopoSwampDripAtRandomScript[];
 extern Uint8  MsgIThoughtI;
 void		  scTaopoSwampPuffSteam(void);
 void		  scTaopoSwampOpenPassage(void);
@@ -327,10 +327,10 @@ void		  scTaopoSwampFlickerPool(void);
 
 /* Copies what metatiles do and their flags, as the frozen spots do
    (fdMapGridCopyMetatileAttributes). */
-static __inline__ void scTaopoSwampCopyMetatileAttributes(Sint32 sourceX,
-	Sint32 sourceZ, Sint32 width, Sint32 height, Sint32 x, Sint32 z)
+static __inline__ void scTaopoSwampCopyMetatileAttributes(
+	Sint32 srcX, Sint32 srcZ, Sint32 width, Sint32 height, Sint32 x, Sint32 z)
 {
-	fdMapGridCopyMetatileAttributes(sourceX, sourceZ, width, height, x, z);
+	fdMapGridCopyMetatileAttributes(srcX, srcZ, width, height, x, z);
 }
 
 /* Actor id jumps down off the ledge before it (fdActorJumpDownLedge). */
@@ -342,12 +342,10 @@ static __inline__ void scTaopoSwampJumpDownLedge(
 
 /* Copies the map metatiles the leader's Psynergy touches
    (fdTileCopiesCopyTouchedMetatiles). */
-static __inline__ void scTaopoSwampCopyTouchedMetatiles(Sint32 sourceX,
-	Sint32 sourceZ, Sint32 width, Sint32 height, Sint32 x, Sint32 z,
-	Sint32 layer)
+static __inline__ void scTaopoSwampCopyTouchedMetatiles(Sint32 srcX,
+	Sint32 srcZ, Sint32 width, Sint32 height, Sint32 x, Sint32 z, Sint32 layer)
 {
-	fdTileCopiesCopyTouchedMetatiles(
-		sourceX, sourceZ, width, height, x, z, layer);
+	fdTileCopiesCopyTouchedMetatiles(srcX, srcZ, width, height, x, z, layer);
 }
 
 /* Cyclone scatters the Flower room's weeds where it touches them: the weeds' 14
@@ -365,13 +363,12 @@ static __inline__ ACTOR *scTaopoSwampCreateActor(
 
 /* The Mad Plant leaps out of the weeds at the leader
    (fdMadPlantLeapAtLeader). */
-static __inline__ void scTaopoSwampLeapAtLeader(
-	Sint32 sprite, Sint32 x, Sint32 z)
+static __inline__ void scTaopoSwampLeapAtLeader(Sint32 spr, Sint32 x, Sint32 z)
 {
-	fdMadPlantLeapAtLeader(sprite, x, z);
+	fdMadPlantLeapAtLeader(spr, x, z);
 }
 
-Sint32 scVentIsBlowing(Sint32 index);
+Sint32 scVentIsBlowing(Sint32 idx);
 
 void scTaopoSwampFocusMapMiddle();
 void scTaopoSwampJumpForward(void);
@@ -411,7 +408,7 @@ const Uint32 *scGetExits(void)
 	return SceneExits;
 }
 
-extern ACTOR_PLACE TaopoSwamp_Placements[];
+extern ACTOR_PLACE TaopoSwampPlacements[];
 extern ACTOR_PLACE TaopoSwampMudActorPlacements[];
 extern ACTOR_PLACE TaopoSwampFlowerActorPlacements[];
 extern ACTOR_PLACE TaopoSwampVentsActorPlacements[];
@@ -441,7 +438,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 		return TaopoSwampTremorActorPlacements;
 	if(scene == SCENE_TAOPO_SWAMP_STAR_DUST)
 		return TaopoSwampStarDustActorPlacements;
-	return TaopoSwamp_Placements;
+	return TaopoSwampPlacements;
 }
 
 /* Whirlwind on one of the five bushes of weeds at the foot of the swamp's
@@ -467,18 +464,18 @@ void scTaopoSwampGrowVine(void)
 
 struct CHILD_GROUP;
 
-extern Uint32 TaopoSwamp_SplashFades[];
+extern Uint32 TaopoSwampSplashFades[];
 
 /* Move pulling the stump at the east end of the broken plank bridge west into
    the gap at metatile (12, 16) drops it into the mud there: it slowly sinks,
    throwing up mud, two rings spread where it went under, and it stays gone, so
    Felix can hop across the gap. It sinks a row of its picture every three
-   frames, and FLAG_TAOPO_SWAMP_STUMP_SUNK keeps it from being placed again. */
+   ticks, and FLAG_TAOPO_SWAMP_STUMP_SUNK keeps it from being placed again. */
 void scTaopoSwampSinkStump(Sint32 unused, Sint32 id)
 {
 	ACTOR	  *actor = fdActorGetById(id);
 	ACTOR	  *splash, *spark;
-	FIELD_SPR *sprite, *splashSprite, *sparkSprite;
+	FIELD_SPR *spr, *splashSpr, *sparkSpr;
 	Sint32	   i;
 	FIXED	   x, z;
 	Sint32	   k;
@@ -492,13 +489,13 @@ void scTaopoSwampSinkStump(Sint32 unused, Sint32 id)
 	actor->motionFlg = 0;
 	actor->velY = 0;
 	actor->y.fixed = toFIXED(4);
-	sprite = actor->spr;
+	spr = actor->spr;
 	for(i = 0; i <= STUMP_SINK_ROWS; i++) {
-		((SPR *)sprite)->sunkRows = i;
-		sprite->flg |= SPRITE_FLAG_SUNK;
-		sprite->flg &= ~SPRITE_FLAG_SHADOW;
+		((SPR *)spr)->sunkRows = i;
+		spr->flg |= SPRITE_FLAG_SUNK;
+		spr->flg &= ~SPRITE_FLAG_SHADOW;
 		k = i;
-		sprite->dirty = 1;
+		spr->dirty = 1;
 		k &= 3;
 		if(k == 0) {
 			x = actor->x.fixed + syRandom() * 2 - syRandom() * 2;
@@ -506,16 +503,16 @@ void scTaopoSwampSinkStump(Sint32 unused, Sint32 id)
 			splash = (scFieldActorCreate(
 				SPRITE_WADING_SPLASH, x, actor->y.fixed, z));
 			if(splash != 0) {
-				splashSprite = splash->spr;
+				splashSpr = splash->spr;
 				splash->groundHeight = actor->groundHeight;
-				fdActorStartScript(splash, TaopoSwamp_SplashFades);
+				fdActorStartScript(splash, TaopoSwampSplashFades);
 				splash->motionFlg = 0;
-				if(splashSprite != 0) {
-					fdSprStartAnimation(splashSprite, 1);
-					splashSprite->flg = k;
-					splashSprite->pri = sprite->pri;
-					fdSprSetAnimationColModes(splashSprite, SPRITE_COLOR_FILL);
-					fdSprSetAnimationSpeed(splashSprite, ANIM_STEP_NORMAL / 2);
+				if(splashSpr != 0) {
+					fdSprStartAnimation(splashSpr, 1);
+					splashSpr->flg = k;
+					splashSpr->pri = spr->pri;
+					fdSprSetAnimationColModes(splashSpr, SPRITE_COLOR_FILL);
+					fdSprSetAnimationSpeed(splashSpr, ANIM_STEP_NORMAL / 2);
 				}
 			}
 		}
@@ -528,14 +525,14 @@ void scTaopoSwampSinkStump(Sint32 unused, Sint32 id)
 		spark = (scFieldActorCreate(SPRITE_SPLASH_RING, actor->x.fixed,
 			actor->y.fixed, actor->z.fixed));
 		if(spark != 0) {
-			sparkSprite = spark->spr;
-			fdActorStartScript(spark, TaopoSwamp_SplashFades);
+			sparkSpr = spark->spr;
+			fdActorStartScript(spark, TaopoSwampSplashFades);
 			spark->motionFlg = 0;
 			spark->layer = 1;
-			if(sparkSprite != 0) {
-				fdSprStartAnimation(sparkSprite, 2);
-				sparkSprite->flg = 0;
-				sparkSprite->pri = 2;
+			if(sparkSpr != 0) {
+				fdSprStartAnimation(sparkSpr, 2);
+				sparkSpr->flg = 0;
+				sparkSpr->pri = 2;
 			}
 		}
 		syWait(15);
@@ -663,7 +660,7 @@ extern Uint8 TaopoSwampPillarGapGustVents[];
 void scTaopoSwampStepIntoGust(Sint32 gust)
 {
 	ACTOR  *leader;
-	VECTOR3 position;
+	VECTOR3 pos;
 	Sint32	found, result, slip;
 
 	if(MainRoutineStateWork.next == SCENE_TAOPO_SWAMP_VENTS) {
@@ -699,13 +696,13 @@ void scTaopoSwampStepIntoGust(Sint32 gust)
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	/* The gust carries the leader south 2 pixels a frame, spinning, and draws
+	/* The gust carries the leader south 2 pixels a tick, spinning, and draws
 	   them to the middle of their column of metatiles. */
 	for(;;) {
-		position.x = leader->x.fixed;
-		position.y = leader->y.fixed;
-		position.z = leader->z.fixed + toFIXED(8);
-		result = fdMapGridCheckCollision(leader, &position);
+		pos.x = leader->x.fixed;
+		pos.y = leader->y.fixed;
+		pos.z = leader->z.fixed + toFIXED(8);
+		result = fdMapGridCheckCollision(leader, &pos);
 		if(result > 0)
 			break;
 		if(result < 0) {
@@ -984,13 +981,13 @@ void scTaopoSwampPushPillarRockIn(Sint32 unused, Sint32 id)
 }
 
 /* The update of the rock pile Tremor knocks off the pillar: it turns back a
-   thirty-second of a turn each frame as it rolls. */
+   thirty-second of a turn each tick as it rolls. */
 void scTaopoSwampSpinRockPile(ACTOR *actor)
 {
 	((FIELD_SPR *)actor->spr)->rotation -= TRIG_TURN / 32;
 }
 
-/* An event: one puff of steam from the cooling pool each frame, until the count
+/* An event: one puff of steam from the cooling pool each tick, until the count
    runs out. */
 void scTaopoSwampPuffSteam(void)
 {
@@ -999,28 +996,28 @@ void scTaopoSwampPuffSteam(void)
 	Sint32 z;
 	ACTOR *actor;
 
-	TaopoSwamp_SteamPuffs--;
+	TaopoSwampSteamPuffs--;
 	a = syRandom() * 32;
 	x = syRandom() * 16 + a + toFIXED(300);
 	z = syRandom() * 16 + a + toFIXED(260);
 	actor = scFieldActorCreate(SPRITE_DUST_CLOUD, x, 0, z);
-	fdActorStartScript(actor, TaopoSwamp_PuffSteamScript);
+	fdActorStartScript(actor, TaopoSwampPuffSteamScript);
 	fdActorSetSprFlags(actor, 0);
 	fdActorSetBlendMode(actor, 1);
-	if(TaopoSwamp_SteamPuffs == 0)
+	if(TaopoSwampSteamPuffs == 0)
 		syFieldCloseEvent(scTaopoSwampPuffSteam);
 }
 
 /* An event: the lava stream north of the pillar dries into a passage, from its
-   south end up, a row of metatiles every eight frames. */
+   south end up, a row of metatiles every eight ticks. */
 void scTaopoSwampOpenPassage(void)
 {
-	Sint32 timer = --TaopoSwamp_PassageFrames;
-	Sint32 step = timer / 8;
+	Sint32 tmr = --TaopoSwampPassageTicks;
+	Sint32 step = tmr / 8;
 
 	fdMapGridCopyMetatiles(
-		47 - (timer & 1) * 2, 64 - step, 2, step, 29, 15 - step);
-	if(TaopoSwamp_PassageFrames == 0)
+		47 - (tmr & 1) * 2, 64 - step, 2, step, 29, 15 - step);
+	if(TaopoSwampPassageTicks == 0)
 		syFieldCloseEvent(scTaopoSwampOpenPassage);
 }
 
@@ -1028,14 +1025,14 @@ void scTaopoSwampOpenPassage(void)
    out. */
 void scTaopoSwampFlickerPool(void)
 {
-	Sint32 n = --TaopoSwamp_PoolFrames;
+	Sint32 n = --TaopoSwampPoolTicks;
 
 	fdMapGridCopyMetatiles(50, (n & 1) * 5 + 59, 13, 5, 18, 15);
-	if(TaopoSwamp_PoolFrames == 0)
+	if(TaopoSwampPoolTicks == 0)
 		syFieldCloseEvent(scTaopoSwampFlickerPool);
 }
 
-extern Uint32 Debris_Script[];
+extern Uint32 DebrisScript[];
 
 /* Tremor on the pillar with the huge rock pile on top, in the middle of the
    Tremor room: the pile rolls off and lands with a thump, a glowing red rock
@@ -1048,7 +1045,7 @@ void scTaopoSwampTremorPillar(void)
 	ACTOR *clod;
 	Sint32 i, row;
 	FIXED  cosine;
-	Uint32 angle, speed, scale;
+	Uint32 ang, speed, scale;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
@@ -1082,16 +1079,16 @@ void scTaopoSwampTremorPillar(void)
 			rock->y.fixed + toFIXED(16), rock->z.fixed));
 		if(clod != 0) {
 
-			angle = syRandom();
+			ang = syRandom();
 			speed = syRandom();
 			scale = (syRandom() >> 2) + toFIXED(1) / 16;
-			fdActorStartScript(clod, Debris_Script);
+			fdActorStartScript(clod, DebrisScript);
 			fdActorSetSprFlags(clod, 0);
-			clod->velY = (angle << 2) + toFIXED(2);
-			cosine = syCos(angle);
+			clod->velY = (ang << 2) + toFIXED(2);
+			cosine = syCos(ang);
 			speed <<= 3;
 			clod->velZ = syMulFX(speed, cosine);
-			clod->velX = syMulFX(speed, syMathSin(angle));
+			clod->velX = syMulFX(speed, syMathSin(ang));
 			clod->acceleration = 0;
 			clod->gravity = toFIXED(0.33);
 			clod->scaleX = scale;
@@ -1100,7 +1097,7 @@ void scTaopoSwampTremorPillar(void)
 		}
 	}
 	syFieldMapGridWaitForShakeToSettle();
-	sySetFrameEvent(scTaopoSwampOpenPassage, EVENT_PASS_FRAME);
+	sySetTickEvent(scTaopoSwampOpenPassage, EVENT_PASS_TICK);
 	syWait(40);
 	fdCameraSetSpeed(0.9);
 	fdCameraMoveTo(336, CAMERA_KEEP, 280, 1);
@@ -1111,9 +1108,9 @@ void scTaopoSwampTremorPillar(void)
 		syWait(8);
 		row -= 5;
 	} while(--i > 0);
-	sySetFrameEvent(scTaopoSwampPuffSteam, EVENT_PASS_FRAME);
+	sySetTickEvent(scTaopoSwampPuffSteam, EVENT_PASS_TICK);
 	syWait(60);
-	sySetFrameEvent(scTaopoSwampFlickerPool, EVENT_PASS_FRAME);
+	sySetTickEvent(scTaopoSwampFlickerPool, EVENT_PASS_TICK);
 	syWait(24);
 	syFieldScriptWait(120);
 	fdScriptEnd();
@@ -1228,7 +1225,7 @@ void scTaopoSwampShowSparkleMessage(void)
 	scTaopoSwampShowMessage((Sint32)&MsgIThoughtI);
 }
 
-extern CUE TaopoSwamp_Cues[];
+extern CUE TaopoSwampCues[];
 extern CUE TaopoSwampEntranceCues[];
 extern CUE TaopoSwampMudCues[];
 extern CUE TaopoSwampTearStonesCues[];
@@ -1267,7 +1264,7 @@ const CUE *scGetCues(void)
 		return (const CUE *)TaopoSwampTremorCues;
 	if(scene == SCENE_TAOPO_SWAMP_STAR_DUST)
 		return (const CUE *)TaopoSwampStarDustCues;
-	return (const CUE *)TaopoSwamp_Cues;
+	return (const CUE *)TaopoSwampCues;
 }
 
 /* A falling drop splashes where it lands. */
@@ -1284,7 +1281,7 @@ Bool scTaopoSwampLandDrop(ACTOR *actor)
 		if(spark) {
 			spark->scaleX = scale;
 			spark->scaleY = scale;
-			fdActorStartScript(spark, TaopoSwamp_SparkFades);
+			fdActorStartScript(spark, TaopoSwampSparkFades);
 			fdActorSetSprFlags(spark, 0);
 			fdActorSelectAnimation(spark, 2);
 		}
@@ -1296,11 +1293,11 @@ Bool scTaopoSwampLandDrop(ACTOR *actor)
 	return TRUE;
 }
 
-/* An event: on one in four of every eighth frame, a drop falls into the swamp's
+/* An event: on one in four of every eighth tick, a drop falls into the swamp's
    water at a random place near its east end. */
 void scTaopoSwampDripAtRandom(void)
 {
-	if((FrameCount & 7) == 0 && (Uint32)syRandom() < 16384) {
+	if((TickCount & 7) == 0 && (Uint32)syRandom() < 16384) {
 		Sint32 x = (syRandom() << 5) + toFIXED(520);
 		Sint32 z = toFIXED(176) - (syRandom() << 3);
 		FIXED  y = toFIXED(160);
@@ -1311,7 +1308,7 @@ void scTaopoSwampDripAtRandom(void)
 			actor->scaleX = scale;
 			actor->scaleY = scale;
 			actor->gravity = toFIXED(0.45);
-			fdActorStartScript(actor, TaopoSwamp_DripAtRandomScript);
+			fdActorStartScript(actor, TaopoSwampDripAtRandomScript);
 			fdActorSetSprFlags(actor, 0);
 			fdActorSetSprPriorityDirect(actor, 3);
 		}
@@ -1320,20 +1317,20 @@ void scTaopoSwampDripAtRandom(void)
 
 /* The vents' cycle in the vents room, the round spot's room and the drips
    room. */
-#define VENT_CYCLE_FRAMES			480
-/* The lava rocks' room's vents blow for ROCK_ROOM_VENTS_BLOW_FRAMES of every
-   ROCK_ROOM_VENT_CYCLE_FRAMES. */
-#define ROCK_ROOM_VENTS_BLOW_FRAMES 180
-#define ROCK_ROOM_VENT_CYCLE_FRAMES 240
+#define VENT_CYCLE_TICKS		   480
+/* The lava rocks' room's vents blow for ROCK_ROOM_VENTS_BLOW_TICKS of every
+   ROCK_ROOM_VENT_CYCLE_TICKS. */
+#define ROCK_ROOM_VENTS_BLOW_TICKS 180
+#define ROCK_ROOM_VENT_CYCLE_TICKS 240
 
-/* The vents room's cycle of VENT_CYCLE_FRAMES: two sets of vents blow in turn,
+/* The vents room's cycle of VENT_CYCLE_TICKS: two sets of vents blow in turn,
    and while the second blows with the east pillar over its vent, Flower is
    blown off its ledge. */
 void scTaopoSwampCycleDjinniVents(void)
 {
-	Sint32 timer = scVentGetCounter();
+	Sint32 tmr = scVentGetCounter();
 
-	switch(timer) {
+	switch(tmr) {
 	case 0:
 		scVentSetBlowing(0, 1);
 		scVentSetBlowing(1, 1);
@@ -1367,24 +1364,24 @@ void scTaopoSwampCycleDjinniVents(void)
 		fdQueueMusic(-1);
 		break;
 	}
-	/* Frames 251 to 429: from 11 frames after the second set starts blowing to
+	/* Ticks 251 to 429: from 11 ticks after the second set starts blowing to
 	   9 after it stops. */
-	if((Uint32)(timer - 251) <= 178 &&
+	if((Uint32)(tmr - 251) <= 178 &&
 		fdScriptGetFlag(FLAG_TAOPO_SWAMP_EAST_PILLAR_OVER_VENT) &&
 		!fdScriptGetFlag(FLAG_DJINNI(DJINNI_FLOWER)) &&
 		!fdScriptGetFlag(FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE))
 		FieldStateWork->raisedCue = CUE_FLOWER_IN_GUST;
-	scVentAdvanceCounter(VENT_CYCLE_FRAMES);
+	scVentAdvanceCounter(VENT_CYCLE_TICKS);
 }
 
 /* The cycle of the vents by the round spot past the pool: they blow for 120
-   frames in VENT_CYCLE_FRAMES, and while they blow they break the spot's ice
+   ticks in VENT_CYCLE_TICKS, and while they blow they break the spot's ice
    pillar or blow its puddle away. */
 void scTaopoSwampCycleSpotVent(void)
 {
-	Sint32 timer = scVentGetCounter();
+	Sint32 tmr = scVentGetCounter();
 
-	switch(timer) {
+	switch(tmr) {
 	case 0:
 		scVentSetBlowing(0, 1);
 		scVentSetBlowing(1, 1);
@@ -1396,21 +1393,21 @@ void scTaopoSwampCycleSpotVent(void)
 		fdQueueMusic(-1);
 		break;
 	}
-	if((Uint32)(timer - 11) <= 118) {
+	if((Uint32)(tmr - 11) <= 118) {
 		if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN))
 			scTaopoSwampShatterIcePillar(ACTOR_GAP_PUDDLE);
 		else if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
 			scTaopoSwampBlowAwayPuddle(ACTOR_GAP_PUDDLE);
 	}
-	scVentAdvanceCounter(VENT_CYCLE_FRAMES);
+	scVentAdvanceCounter(VENT_CYCLE_TICKS);
 }
 
 /* As scTaopoSwampCycleSpotVent, for the spot the ceiling drips onto. */
 void scTaopoSwampCycleDripVent(void)
 {
-	Sint32 timer = scVentGetCounter();
+	Sint32 tmr = scVentGetCounter();
 
-	switch(timer) {
+	switch(tmr) {
 	case 0:
 		scVentSetBlowing(0, 1);
 		scVentSetBlowing(1, 1);
@@ -1422,13 +1419,13 @@ void scTaopoSwampCycleDripVent(void)
 		fdQueueMusic(-1);
 		break;
 	}
-	if((Uint32)(timer - 11) <= 118) {
+	if((Uint32)(tmr - 11) <= 118) {
 		if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN))
 			scTaopoSwampShatterDripIcePillar(ACTOR_DRIP_PUDDLE);
 		else if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
 			scTaopoSwampBlowAwayDripPuddle(ACTOR_DRIP_PUDDLE);
 	}
-	scVentAdvanceCounter(VENT_CYCLE_FRAMES);
+	scVentAdvanceCounter(VENT_CYCLE_TICKS);
 }
 
 /* The lava rocks' room's vents' cycle. */
@@ -1440,27 +1437,27 @@ void scTaopoSwampCycleRockRoomVents(void)
 		scVentSetBlowing(1, 1);
 		fdQueueMusic(SE_AMBIENT_WATER);
 		break;
-	case ROCK_ROOM_VENTS_BLOW_FRAMES:
+	case ROCK_ROOM_VENTS_BLOW_TICKS:
 		scVentSetBlowing(0, 0);
 		scVentSetBlowing(1, 0);
 		fdQueueMusic(-1);
 		break;
 	}
-	scVentAdvanceCounter(ROCK_ROOM_VENT_CYCLE_FRAMES);
+	scVentAdvanceCounter(ROCK_ROOM_VENT_CYCLE_TICKS);
 }
 
 /* A drop from the ceiling lands: it splashes and grows the puddle below by one,
    up to four. */
 Bool scTaopoSwampLandDrip(ACTOR *actor)
 {
-	Sint32 flag;
-	Sint32 count;
+	Sint32 flg;
+	Sint32 cnt;
 	ACTOR *spark;
 	FIXED  scale;
 
 	if(actor->y.fixed + actor->velY < actor->groundHeight) {
-		flag = fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN);
-		if(flag) {
+		flg = fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN);
+		if(flg) {
 			fdScriptPlaySnd(SE_DRIP);
 			return FALSE;
 		}
@@ -1470,7 +1467,7 @@ Bool scTaopoSwampLandDrip(ACTOR *actor)
 		if(spark) {
 			spark->scaleX = scale;
 			spark->scaleY = scale;
-			fdActorStartScript(spark, TaopoSwamp_SparkFades);
+			fdActorStartScript(spark, TaopoSwampSparkFades);
 			fdActorSetSprFlags(spark, 0);
 			fdActorSelectAnimation(spark, 2);
 		}
@@ -1478,27 +1475,27 @@ Bool scTaopoSwampLandDrip(ACTOR *actor)
 		actor->y.fixed = actor->groundHeight;
 		actor->velY = 0;
 		if(fdScriptGetFlag(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
-			count = scFieldGameFlagGetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT);
-			if(count <= 3) {
-				count++;
-				syGameFlagSetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT, count);
+			cnt = scFieldGameFlagGetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT);
+			if(cnt <= 3) {
+				cnt++;
+				syGameFlagSetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT, cnt);
 			}
-			if(count != 0)
+			if(cnt != 0)
 				scTaopoSwampFillDripSpot(0, ACTOR_DRIP_PUDDLE);
 			actor = fdActorGet(ACTOR_DRIP_PUDDLE);
-			actor->scaleX = count * (toFIXED(1) / 4);
-			actor->scaleY = count * (toFIXED(1) / 4);
+			actor->scaleX = cnt * (toFIXED(1) / 4);
+			actor->scaleY = cnt * (toFIXED(1) / 4);
 		}
 		return FALSE;
 	}
 	return TRUE;
 }
 
-/* An event: every 64 frames a drop falls from the ceiling onto the drips room's
+/* An event: every 64 ticks a drop falls from the ceiling onto the drips room's
    spot. */
 void scTaopoSwampDripFromCeiling(void)
 {
-	if((FrameCount & 63) == 0) {
+	if((TickCount & 63) == 0) {
 		FIXED  x = toFIXED(408);
 		FIXED  z = toFIXED(440);
 		FIXED  y = toFIXED(160);
@@ -1509,7 +1506,7 @@ void scTaopoSwampDripFromCeiling(void)
 			actor->scaleX = scale;
 			actor->scaleY = scale;
 			actor->gravity = toFIXED(0.45);
-			fdActorStartScript(actor, TaopoSwamp_DripFromCeilingScript);
+			fdActorStartScript(actor, TaopoSwampDripFromCeilingScript);
 			fdActorSetSprFlags(actor, 0);
 		}
 	}
@@ -1523,12 +1520,12 @@ Bool scTaopoSwampIsDropFalling(ACTOR *actor)
 	return TRUE;
 }
 
-/* An event: on one in four of every eighth frame, a drop falls from the ceiling
+/* An event: on one in four of every eighth tick, a drop falls from the ceiling
    at a random place on the 32 pixels running east and north from (x0, z0). */
 #define DEFINE_DRIP_AT_RANDOM(name, x0, z0) \
 	void name(void) \
 	{ \
-		if((FrameCount & 7) == 0 && (Uint32)syRandom() < 16384) { \
+		if((TickCount & 7) == 0 && (Uint32)syRandom() < 16384) { \
 			Sint32 offset = syRandom() << 5; \
 			Sint32 x = offset + x0; \
 			Sint32 z = z0 - offset; \
@@ -1542,7 +1539,7 @@ Bool scTaopoSwampIsDropFalling(ACTOR *actor)
 				actor->motionFlg = ACTOR_FALLS; \
 				actor->groundHeight = -toFIXED(64); \
 				actor->gravity = toFIXED(0.45); \
-				fdActorStartScript(actor, TaopoSwamp_DropFalls); \
+				fdActorStartScript(actor, TaopoSwampDropFalls); \
 				fdActorSetSprFlags(actor, 0); \
 			} \
 		} \
@@ -1558,7 +1555,7 @@ extern Uint16 TaopoSwampVentsVents[];
 extern Uint16 TaopoSwampVentsPillars[];
 extern Uint16 TaopoSwampPillarGapVents[];
 extern Uint16 TaopoSwampDripsVents[];
-extern Uint16 TaopoSwamp_RockRoomVents[];
+extern Uint16 TaopoSwampRockRoomVents[];
 void		  scTaopoSwampResetMud(void);
 void		  scVentsStart(Uint16 *points, Uint16 *ids, void (*cycle)(void));
 
@@ -1596,7 +1593,7 @@ Sint32 scInit(void)
 			stump->scaleY = toFIXED(3) / 4;
 			stump->motionFlg = 0;
 		}
-		sySetEvent(scTaopoSwampDripAtRandom, EVENT_PASS_FRAME);
+		sySetEvent(scTaopoSwampDripAtRandom, EVENT_PASS_TICK);
 		((MAP_STATE_GROUND_EFFECTS *)map)->wading = MAP_WADING_MUD;
 		DecodeFillByte = MUD_COLOR;
 	} else if(scene == SCENE_TAOPO_SWAMP_TEAR_STONES) {
@@ -1620,7 +1617,7 @@ Sint32 scInit(void)
 			scTaopoSwampCycleDjinniVents);
 	} else if(scene == SCENE_TAOPO_SWAMP_PILLAR_GAP) {
 		fdEffectStartBlankOverlay(0);
-		sySetEvent(TaopoSwamp_DripInPillarGap, EVENT_PASS_FRAME);
+		sySetEvent(TaopoSwamp_DripInPillarGap, EVENT_PASS_TICK);
 		/* Only the north room has the round spot and its vents. */
 		if(MainRoutineStateWork.entrance ==
 				TAOPO_SWAMP_PILLAR_GAP_FROM_TAOPO_SWAMP_DRIPS_NORTHWEST ||
@@ -1665,8 +1662,8 @@ Sint32 scInit(void)
 				(Sint32)scTaopoSwampCycleDripVent);
 			fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
 				ACTOR_PRIORITY_IGNORES_RISES;
-			syFieldSetFrameEvent(TaopoSwamp_DripInDripRoom, EVENT_PASS_FRAME);
-			syFieldSetFrameEvent(scTaopoSwampDripFromCeiling, EVENT_PASS_FRAME);
+			syFieldSetTickEvent(TaopoSwamp_DripInDripRoom, EVENT_PASS_TICK);
+			syFieldSetTickEvent(scTaopoSwampDripFromCeiling, EVENT_PASS_TICK);
 			actor = fdActorGetById(ACTOR_DRIP_PUDDLE);
 			actor->motionFlg = 0;
 			fdActorSetSprFlags(actor, 0);
@@ -1682,7 +1679,7 @@ Sint32 scInit(void)
 		}
 	} else if(scene == SCENE_TAOPO_SWAMP_LAVA_ROCKS) {
 		scVentsStart(
-			TaopoSwamp_RockRoomVents, 0, scTaopoSwampCycleRockRoomVents);
+			TaopoSwampRockRoomVents, 0, scTaopoSwampCycleRockRoomVents);
 		if(!fdScriptGetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_COOLED)) {
 			fdScriptSetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_UNMOVABLE);
 		} else if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_SUNK)) {
@@ -1809,7 +1806,7 @@ Sint32 scInit(void)
 			stump->scaleY = toFIXED(3) / 4;
 			stump->motionFlg = 0;
 		}
-		sySetEvent(scTaopoSwampDripAtRandom, EVENT_PASS_FRAME);
+		sySetEvent(scTaopoSwampDripAtRandom, EVENT_PASS_TICK);
 		((MAP_STATE_GROUND_EFFECTS *)map)->wading = MAP_WADING_MUD;
 		DecodeFillByte = MUD_COLOR;
 	} else if(scene == SCENE_TAOPO_SWAMP_TEAR_STONES) {
@@ -1844,7 +1841,7 @@ Sint32 scInit(void)
 		*effect = SCENE_TRANSITION(
 			TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 		fdEffectStartBlankOverlay(0);
-		sySetEvent(TaopoSwamp_DripInPillarGap, EVENT_PASS_FRAME);
+		sySetEvent(TaopoSwamp_DripInPillarGap, EVENT_PASS_TICK);
 		/* Only the north room has the round spot and its vents. */
 		if(MainRoutineStateWork.entrance ==
 				TAOPO_SWAMP_PILLAR_GAP_FROM_TAOPO_SWAMP_DRIPS_NORTHWEST ||
@@ -1891,8 +1888,8 @@ Sint32 scInit(void)
 				(Sint32)scTaopoSwampCycleDripVent);
 			fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
 				ACTOR_PRIORITY_IGNORES_RISES;
-			syFieldSetFrameEvent(TaopoSwamp_DripInDripRoom, EVENT_PASS_FRAME);
-			syFieldSetFrameEvent(scTaopoSwampDripFromCeiling, EVENT_PASS_FRAME);
+			syFieldSetTickEvent(TaopoSwamp_DripInDripRoom, EVENT_PASS_TICK);
+			syFieldSetTickEvent(scTaopoSwampDripFromCeiling, EVENT_PASS_TICK);
 			actor = fdActorGetById(ACTOR_DRIP_PUDDLE);
 			actor->motionFlg = 0;
 			fdActorSetSprFlags(actor, 0);
@@ -1910,7 +1907,7 @@ Sint32 scInit(void)
 		*effect = SCENE_TRANSITION(
 			TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 		scVentsStart(
-			TaopoSwamp_RockRoomVents, 0, scTaopoSwampCycleRockRoomVents);
+			TaopoSwampRockRoomVents, 0, scTaopoSwampCycleRockRoomVents);
 		if(!fdScriptGetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_COOLED)) {
 			fdScriptSetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_UNMOVABLE);
 		} else if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_SUNK)) {
@@ -2015,7 +2012,7 @@ Sint32 scPrepareMap(void)
 }
 
 /* An event: the Star Dust's sparkle in the dark, a 3 by 3 picture of metatiles
-   that steps through four pictures and back every 60 frames, until it is dug up
+   that steps through four pictures and back every 60 ticks, until it is dug up
    and the last picture stays (FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP). The pictures
    are stacked at x 45 of the map from row 50. */
 void scTaopoSwampSparkleStarDust(void)
@@ -2025,7 +2022,7 @@ void scTaopoSwampSparkleStarDust(void)
 	if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP)) {
 		row = 62;
 	} else {
-		switch(TaopoSwamp_SparkleFrame) {
+		switch(TaopoSwampSparkleTick) {
 		case 0:
 			row = 59;
 			break;
@@ -2041,8 +2038,8 @@ void scTaopoSwampSparkleStarDust(void)
 			row = 50;
 			break;
 		}
-		if(++TaopoSwamp_SparkleFrame > 59)
-			TaopoSwamp_SparkleFrame = 0;
+		if(++TaopoSwampSparkleTick > 59)
+			TaopoSwampSparkleTick = 0;
 	}
 	if(row != -1)
 		fdMapGridCopyMetatilesLayered(45, row, 3, 3, 76, 61);
@@ -2056,7 +2053,7 @@ void scTaopoSwampFocusMapOn(Sint32 x, Sint32 z)
 {
 	MAP_STATE *map = Ram_HeapSlots->mapGrid;
 	MAP_LAYER *layer;
-	Sint32	   index, fx = FIELD_HALF_METATILE_ORIGIN(x);
+	Sint32	   idx, fx = FIELD_HALF_METATILE_ORIGIN(x);
 
 	layer = &map->layers[2];
 	layer->ofsX = fx;
@@ -2069,17 +2066,17 @@ void scTaopoSwampFocusMapOn(Sint32 x, Sint32 z)
 	layer->speedY = 0;
 	layer->phaseX = 0;
 	layer->phaseY = 0;
-	index = (z / 2 << 7) + x / 2;
+	idx = (z / 2 << 7) + x / 2;
 	layer->scaleY = layer->scaleX = toFIXED(1);
-	layer->metatiles = (MAP_METATILE *)(MapGridMetatileBuffer + index * 4);
-	layer->terrainIds = MapShapeGrid + index;
+	layer->metatiles = (MAP_METATILE *)(MapGridMetatileBuffer + idx * 4);
+	layer->terrainIds = MapShapeGrid + idx;
 	layer->x = syMulFX(map->view[0], toFIXED(1)) + layer->ofsX;
 	layer->y = syMulFX(map->view[1], layer->scaleY) + layer->ofsY;
 	fdMapGridCenterOnFollowedPoint();
 	syWait(1);
 }
 
-/* The light goes out, over 50 frames when fade is set, from tile (100, 50) on,
+/* The light goes out, over 50 ticks when fade is set, from tile (100, 50) on,
    and in the last chamber the Star Dust's sparkle starts. */
 void scTaopoSwampDarkenRoom(Sint32 fade)
 {
@@ -2099,7 +2096,7 @@ void scTaopoSwampDarkenRoom(Sint32 fade)
 	scTaopoSwampFocusMapOn(100, 50);
 	syIOWrite16(BLEND_ALPHA(7, 12), (Uint16 *)&REG_BLDALPHA);
 	if(MainRoutineStateWork.entrance == STAR_DUST_LAST_CHAMBER_TO_MIDDLE)
-		syFieldSetFrameEvent(scTaopoSwampSparkleStarDust, EVENT_PASS_FRAME);
+		syFieldSetTickEvent(scTaopoSwampSparkleStarDust, EVENT_PASS_TICK);
 }
 
 /* Shows the Star Dust rooms' light lit, from tile (100, 100). */
@@ -2125,25 +2122,25 @@ void scTaopoSwampSinkInMud(void)
 {
 	SCENE_STATE *state = &SceneStateWork;
 	ACTOR		*actor = fdActorGet(syFieldPartyGetLeaderActor());
-	SPR			*sprite = actor->spr;
+	SPR			*spr = actor->spr;
 	ACTOR		*spark;
-	FIELD_SPR	*sparkSprite;
+	FIELD_SPR	*sparkSpr;
 	Sint32		 step, i;
 
-	if(sprite->entries[1] != 0)
-		sprite->entries[1]->pri = 1;
-	sprite->flg |= SPRITE_FLAG_SUNK;
-	sprite->flg &= ~SPRITE_FLAG_SHADOW;
-	syIOWrite8(1, &sprite->dirty);
-	/* Walking, the leader sinks all the way in about 95 frames; running, in
+	if(spr->entries[1] != 0)
+		spr->entries[1]->pri = 1;
+	spr->flg |= SPRITE_FLAG_SUNK;
+	spr->flg &= ~SPRITE_FLAG_SHADOW;
+	syIOWrite8(1, &spr->dirty);
+	/* Walking, the leader sinks all the way in about 95 ticks; running, in
 	   64. */
 	if(PerWork.data & KEYS_DPAD) {
 		step = LEADER_SINK_ROWS * MUD_DEPTH_ROW;
 		if(PerWork.data & KEY_B)
 			step = step * 3 >> 1;
-		state->depth += step / MUD_SINK_FRAMES + 1;
+		state->depth += step / MUD_SINK_TICKS + 1;
 	}
-	sprite->sunkRows = state->depth / MUD_DEPTH_ROW;
+	spr->sunkRows = state->depth / MUD_DEPTH_ROW;
 	state->footing = FOOTING_MUD;
 	if(state->depth < LEADER_SINK_ROWS * MUD_DEPTH_ROW)
 		return;
@@ -2154,22 +2151,22 @@ void scTaopoSwampSinkInMud(void)
 		spark = (scFieldActorCreate(SPRITE_SPLASH_RING, actor->x.fixed,
 			actor->y.fixed, actor->z.fixed));
 		if(spark != 0) {
-			sparkSprite = spark->spr;
-			fdActorStartScript(spark, TaopoSwamp_SplashFades);
+			sparkSpr = spark->spr;
+			fdActorStartScript(spark, TaopoSwampSplashFades);
 			spark->motionFlg = 0;
 			spark->layer = 1;
-			if(sparkSprite != 0) {
-				fdSprStartAnimation(sparkSprite, 2);
-				sparkSprite->flg = 0;
-				sparkSprite->pri = 2;
+			if(sparkSpr != 0) {
+				fdSprStartAnimation(sparkSpr, 2);
+				sparkSpr->flg = 0;
+				sparkSpr->pri = 2;
 			}
 		}
 		syWait(15);
 	}
 	syFieldScriptWait(30);
 	actor->sprStorageKind = 1;
-	sprite->sunkRows = 0;
-	sprite->flg = 0;
+	spr->sunkRows = 0;
+	spr->flg = 0;
 	fdScriptEnd();
 	actor->x.fixed = state->x;
 	actor->z.fixed = state->z;
@@ -2183,25 +2180,25 @@ void scTaopoSwampRiseOnBubble(void)
 {
 	SCENE_STATE *state = &SceneStateWork;
 	ACTOR		*actor;
-	SPR			*sprite;
+	SPR			*spr;
 
 	if(state->footing != FOOTING_BUBBLE) {
 		actor = fdActorGet(syFieldPartyGetLeaderActor());
-		sprite = actor->spr;
+		spr = actor->spr;
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
 		scFieldActorSetMoveTargetFX(actor,
 			(actor->x.fixed & -toFIXED(16)) + toFIXED(8), actor->y.fixed,
 			(actor->z.fixed & -toFIXED(16)) + toFIXED(8));
 		scFieldActorWaitForMove(actor);
-		while(sprite->sunkRows != 0) {
-			sprite->sunkRows--;
-			sprite->dirty = 1;
+		while(spr->sunkRows != 0) {
+			spr->sunkRows--;
+			spr->dirty = 1;
 			syWait(1);
 		}
 		fdScriptEnd();
-		sprite->flg |= SPRITE_FLAG_SUNK;
-		sprite->flg &= ~SPRITE_FLAG_SHADOW;
+		spr->flg |= SPRITE_FLAG_SUNK;
+		spr->flg &= ~SPRITE_FLAG_SHADOW;
 		state->footing = FOOTING_BUBBLE;
 		state->depth = 0;
 	}
@@ -2213,16 +2210,16 @@ void scTaopoSwampRiseOnBubble(void)
 void scTaopoSwampStepOnFirmGround(void)
 {
 	SCENE_STATE *state = &SceneStateWork;
-	SPR			*sprite;
+	SPR			*spr;
 
 	scTaopoSwampSaveFirmGround();
 	if(state->footing != FOOTING_FIRM_GROUND) {
-		sprite = fdActorGet(syFieldPartyGetLeaderActor())->spr;
-		if(sprite->entries[1])
-			sprite->entries[1]->pri = SPRITE_LAYER_NOT_DRAWN;
-		sprite->flg = (sprite->flg & ~SPRITE_FLAG_SUNK) | SPRITE_FLAG_SHADOW;
-		sprite->sunkRows = 0;
-		sprite->dirty = 1;
+		spr = fdActorGet(syFieldPartyGetLeaderActor())->spr;
+		if(spr->entries[1])
+			spr->entries[1]->pri = SPRITE_LAYER_NOT_DRAWN;
+		spr->flg = (spr->flg & ~SPRITE_FLAG_SUNK) | SPRITE_FLAG_SHADOW;
+		spr->sunkRows = 0;
+		spr->dirty = 1;
 		state->footing = FOOTING_FIRM_GROUND;
 		state->depth = 0;
 	}
@@ -2243,17 +2240,17 @@ void scTaopoSwampSaveFirmGround(void)
 #include "shared/actor_start_scripted.h"
 
 /* A puff of dust from a vent at position, as its gust blows. */
-void scVentPuff(Sint32 *position, Sint32 base)
+void scVentPuff(Sint32 *pos, Sint32 base)
 {
 	ACTOR *actor = scTaopoSwampCreateActor(
-		SPRITE_DUST_CLOUD, position[0], position[1], position[2] - toFIXED(2));
+		SPRITE_DUST_CLOUD, pos[0], pos[1], pos[2] - toFIXED(2));
 
 	if(actor != 0) {
 		actor->bounce =
 			syCos((syRandomBelow(TRIG_TURN * 3 / 16)) + TRIG_TURN * 3 / 16);
 		actor->gravity = (Uint16)syRandom();
 		actor->sceneWord = (Uint16)(syRandom() << 1) + base;
-		/* A spin of up to half a turn a frame, either way. */
+		/* A spin of up to half a turn a tick, either way. */
 		actor->tmr = syRandomBelow(TRIG_TURN) - DEGtoANG(180);
 		scActorStartScripted(actor, 3);
 		actor->update = (OBJECT_UPDATE)scVentBounce;
@@ -2268,15 +2265,15 @@ void scVentPuff(Sint32 *position, Sint32 base)
 #include "shared/vent_is_blowing.h"
 
 /* Starts or stops vent index's gust. */
-void scVentSetBlowing(Sint32 index, Sint32 blowing)
+void scVentSetBlowing(Sint32 idx, Sint32 blowing)
 {
 	VENT_WORK *state;
 
 	state = VENT_STATE;
-	VENT_AT(state, index)->entries[0].active = blowing;
+	VENT_AT(state, idx)->entries[0].active = blowing;
 }
 
-/* The vents' frame counter, which their cycles time their gusts by. */
+/* The vents' tick counter, which their cycles time their gusts by. */
 Sint32 scVentGetCounter(void)
 {
 	return VENT_STATE->cnt;
@@ -2321,7 +2318,7 @@ Uint8 TaopoSwampPillarGapGustVents[] = {
 };
 
 /* clang-format off */
-Uint32 TaopoSwamp_PuffSteamScript[] = {
+Uint32 TaopoSwampPuffSteamScript[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_ANIMATION(2),
 	SC_LABEL(1),
@@ -2333,22 +2330,22 @@ Uint32 TaopoSwamp_PuffSteamScript[] = {
 
 #include "shared/debris_script.c"
 
-Uint32 TaopoSwamp_SparkFades[] = {
+Uint32 TaopoSwampSparkFades[] = {
 	SC_WAIT(30),
 	SC_RELEASE,
 };
 
-Sint32 TaopoSwamp_DripAtRandomScript[] = {
+Sint32 TaopoSwampDripAtRandomScript[] = {
 	SC_CALL((Sint32)scTaopoSwampLandDrop),
 	SC_RELEASE,
 };
 
-Sint32 TaopoSwamp_DripFromCeilingScript[] = {
+Sint32 TaopoSwampDripFromCeilingScript[] = {
 	SC_CALL((Sint32)scTaopoSwampLandDrip),
 	SC_RELEASE,
 };
 
-Sint32 TaopoSwamp_DropFalls[] = {
+Sint32 TaopoSwampDropFalls[] = {
 	SC_CALL(scTaopoSwampIsDropFalling),
 	SC_RELEASE,
 };
@@ -2387,13 +2384,13 @@ Uint16 TaopoSwampDripsVents[] = {
 };
 
 /* The rock room's vents, as TaopoSwampVentsVents. */
-Uint16 TaopoSwamp_RockRoomVents[] = {
+Uint16 TaopoSwampRockRoomVents[] = {
 	216, 184, 4,
 	312, 136, 4,
 	0, 0,
 };
 
-Uint32 TaopoSwamp_SplashFades[] = {
+Uint32 TaopoSwampSplashFades[] = {
 	SC_WAIT(32),
 	SC_RELEASE,
 };
@@ -2469,7 +2466,7 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE TaopoSwamp_Placements[] = {
+ACTOR_PLACE TaopoSwampPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
@@ -2537,7 +2534,7 @@ ACTOR_PLACE TaopoSwampStarDustActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-CUE TaopoSwamp_Cues[] = {
+CUE TaopoSwampCues[] = {
 	{CUE_TABLE_END},
 };
 
@@ -2677,13 +2674,13 @@ CUE TaopoSwampDripsCues[] = {
 	{CUE_TABLE_END},
 };
 
-/* The cooled pool's countdowns: the steam puffs still to rise, one a frame
-   (scTaopoSwampPuffSteam); the frames the passage takes to dry, eight to a row
+/* The cooled pool's countdowns: the steam puffs still to rise, one a tick
+   (scTaopoSwampPuffSteam); the ticks the passage takes to dry, eight to a row
    (scTaopoSwampOpenPassage); and the pool's flickers
    (scTaopoSwampFlickerPool). */
-Sint32 TaopoSwamp_SteamPuffs = 112;
-Sint32 TaopoSwamp_PassageFrames = 120;
-Sint32 TaopoSwamp_PoolFrames = 24;
+Sint32 TaopoSwampSteamPuffs = 112;
+Sint32 TaopoSwampPassageTicks = 120;
+Sint32 TaopoSwampPoolTicks = 24;
 
 CUE TaopoSwampTremorCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS,
@@ -2767,5 +2764,5 @@ CUE TaopoSwampStarDustCues[] = {
 	{CUE_TABLE_END},
 };
 
-/* The Star Dust's sparkle, in frames from 0 to 59. */
-Sint32 TaopoSwamp_SparkleFrame = 0;
+/* The Star Dust's sparkle, in ticks from 0 to 59. */
+Sint32 TaopoSwampSparkleTick = 0;

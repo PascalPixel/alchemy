@@ -127,7 +127,7 @@ Sint32 syVRAMCacheReleaseVRAM(Uint32 id)
 Sint32 syVRAMCacheLoad(Uint32 id, Uint32 size, const void *src)
 {
 	VRAM_CACHE_ENTRY *entry;
-	Sint32			  offset;
+	Sint32			  ofs;
 	void			 *dst;
 
 	entry = &VramCacheEntries[id];
@@ -139,20 +139,20 @@ Sint32 syVRAMCacheLoad(Uint32 id, Uint32 size, const void *src)
 	if(entry->size > VRAM_CACHE_SIZE_NO_BLOCKS) {
 		if(entry->size != size) {
 			syVRAMCacheFreeEntry(id);
-			offset = syVRAMCacheAllocateBlocks(id, size);
+			ofs = syVRAMCacheAllocateBlocks(id, size);
 		} else {
-			offset = entry->ofs;
+			ofs = entry->ofs;
 		}
 	} else {
-		offset = syVRAMCacheAllocateBlocks(id, size);
+		ofs = syVRAMCacheAllocateBlocks(id, size);
 	}
 
-	if(offset != -1) {
+	if(ofs != -1) {
 		/* Commit the allocation before copying, clearing or leaving its
 		   pixels. */
-		dst = (void *)(OBJ_VRAM0 + offset);
+		dst = (void *)(OBJ_VRAM0 + ofs);
 		entry->size = size;
-		entry->ofs = offset;
+		entry->ofs = ofs;
 		if(src != 0) {
 			if(src == VRAM_CACHE_CLEAR) {
 				syWordsClear(dst, size);
@@ -160,7 +160,7 @@ Sint32 syVRAMCacheLoad(Uint32 id, Uint32 size, const void *src)
 				syDMAXCopy(src, dst, DMA_COPY_WORDS(size >> 2), REG_DMA3);
 			}
 		}
-		return (Uint32)offset / TILE_SIZE_4BPP;
+		return (Uint32)ofs / TILE_SIZE_4BPP;
 	}
 	return 0;
 }

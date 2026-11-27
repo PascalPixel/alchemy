@@ -9,7 +9,7 @@
 
    A large thing is a log, a pipe or a fallen column, lying west to east or
    north to south: one of six rectangles, by its sprite
-   (PushedActor_RectangleKinds), with its edges in PushedActor_Rectangles
+   (PushedActorRectangleKinds), with its edges in PushedActorRectangles
    (pushed_actor_tables.c). */
 
 #include "field/map_grid_scroll.h"
@@ -17,14 +17,13 @@
 #include "system.h"
 #include "game/system_call.h"
 
-extern PUSHED_ACTOR_RECTANGLE PushedActor_Rectangles[];
+extern PUSHED_ACTOR_RECTANGLE PushedActorRectangles[];
 
 #include "actor_distance.c"
 
 /* Returns the placed actor on the metatile of the 16.16 position and at its
    height (in whole pixels), or 0. origin is not read. */
-static ACTOR *scPushedActorFindAtTile(
-	const FIELD_POS *position, const ACTOR *origin)
+static ACTOR *scPushedActorFindAtTile(const FIELD_POS *pos, const ACTOR *origin)
 {
 	FIELD_STATE *state = FieldStateWork;
 	ACTOR	   **slots = state->actors;
@@ -39,9 +38,9 @@ static ACTOR *scPushedActorFindAtTile(
 		if(actor == NULL)
 			continue;
 #endif
-		if(FIELD_METATILE(position->x) == FIELD_METATILE(actor->x.fixed) &&
-			(position->y / toFIXED(1)) == (actor->y.fixed / toFIXED(1)) &&
-			FIELD_METATILE(position->z) == FIELD_METATILE(actor->z.fixed)) {
+		if(FIELD_METATILE(pos->x) == FIELD_METATILE(actor->x.fixed) &&
+			(pos->y / toFIXED(1)) == (actor->y.fixed / toFIXED(1)) &&
+			FIELD_METATILE(pos->z) == FIELD_METATILE(actor->z.fixed)) {
 			return actor;
 		}
 	}
@@ -63,12 +62,12 @@ UNUSED static void scPushedActorAdvancePair(void)
 
 	lead = fdActorGetById(ACTOR_PARTY_LEADER);
 	dir = FACING_INDEX(lead->facing);
-	fdActorStepFrom(&dst, lead, PushedActor_DirectionSteps[dir]);
+	fdActorStepFrom(&dst, lead, PushedActorDirectionSteps[dir]);
 	next = scPushedActorFindAtTile(&dst, lead);
 	if(next == NULL)
 		return;
 
-	fdActorStepFrom(&dst, next, PushedActor_DirectionSteps[dir]);
+	fdActorStepFrom(&dst, next, PushedActorDirectionSteps[dir]);
 	blocker = scPushedActorFindAtTile(&dst, next);
 	if(blocker != NULL && (blocker->collisionFlg & ACTOR_SOLID) != 0)
 		return;
@@ -81,7 +80,7 @@ UNUSED static void scPushedActorAdvancePair(void)
 		return;
 
 	next->layer = MAPGRID_LAYER_OVERHEAD;
-	fdActorStepFrom(&dst, next, PushedActor_DirectionSteps[dir]);
+	fdActorStepFrom(&dst, next, PushedActorDirectionSteps[dir]);
 	if(syFieldActorCheckMovementCollision(next, &dst) > 0)
 		return;
 
@@ -121,15 +120,15 @@ static UNREAD_RESULT scPushedActorStopBlockedMotion(ACTOR *actor)
 {
 	FIELD_POS probe;
 	Uint32	  dir;
-	ACTOR	 *target;
+	ACTOR	 *tgt;
 
 	dir = FACING_INDEX(actor->facing);
-	fdActorStepFrom(&probe, actor, PushedActor_DirectionSteps[dir]);
-	target = scPushedActorFindAtTile(&probe, actor);
-	if(target != NULL) {
+	fdActorStepFrom(&probe, actor, PushedActorDirectionSteps[dir]);
+	tgt = scPushedActorFindAtTile(&probe, actor);
+	if(tgt != NULL) {
 		Uint32	i = 0;
-		Sint32	kind = target->spr->entries[0]->anmId;
-		Sint32 *kinds = PushedActor_RectangleKinds;
+		Sint32	kind = tgt->spr->entries[0]->anmId;
+		Sint32 *kinds = PushedActorRectangleKinds;
 
 		do {
 			if(kind == *kinds++) {
@@ -142,7 +141,7 @@ static UNREAD_RESULT scPushedActorStopBlockedMotion(ACTOR *actor)
 		actor->tgtX = ACTOR_NO_TARGET;
 		actor->tgtZ = ACTOR_NO_TARGET;
 	}
-	fdActorStepFrom(&probe, actor, PushedActor_DirectionSteps[dir]);
+	fdActorStepFrom(&probe, actor, PushedActorDirectionSteps[dir]);
 	if(syFieldActorCheckMovementCollision(actor, &probe) > 0) {
 		actor->velX = 0;
 		actor->velZ = 0;
@@ -177,26 +176,26 @@ static ACTOR *scPushedActorFindLargeThingAhead(
 			continue;
 #endif
 		for(j = 0, kind = actor->spr->entries[0]->anmId; j < 6; j++) {
-			if(kind == PushedActor_RectangleKinds[j]) {
+			if(kind == PushedActorRectangleKinds[j]) {
 				Sint32 x, z, left, top, right, bottom;
 				*rectangle = j;
 				x = ((FIXEDtoINT(player->x.fixed)) +
-						(FIXEDtoINT(PushedActor_DirectionSteps[*direction]))) >>
+						(FIXEDtoINT(PushedActorDirectionSteps[*direction]))) >>
 					4;
 				z = ((FIXEDtoINT(player->z.fixed)) +
-						(Sint16)PushedActor_DirectionSteps[*direction]) >>
+						(Sint16)PushedActorDirectionSteps[*direction]) >>
 					4;
 				left =
-					(actor->x.part[0].integer + PushedActor_Rectangles[j].x0) >>
+					(actor->x.part[0].integer + PushedActorRectangles[j].x0) >>
 					4;
 				top =
-					(actor->z.part[0].integer + PushedActor_Rectangles[j].z0) >>
+					(actor->z.part[0].integer + PushedActorRectangles[j].z0) >>
 					4;
 				right =
-					(actor->x.part[0].integer + PushedActor_Rectangles[j].x1) >>
+					(actor->x.part[0].integer + PushedActorRectangles[j].x1) >>
 					4;
 				bottom =
-					(actor->z.part[0].integer + PushedActor_Rectangles[j].z1) >>
+					(actor->z.part[0].integer + PushedActorRectangles[j].z1) >>
 					4;
 				if(left <= x && x < right && top <= z && z < bottom) {
 					if(j & 1) {
@@ -223,14 +222,14 @@ static ACTOR *scPushedActorFindLargeThingAhead(
 UNUSED static Sint32 scPushedActorFindClearPos(PUSHED_ACTOR_PROBE *probe)
 {
 	Sint32	  direction;
-	FIELD_POS position;
+	FIELD_POS pos;
 	ACTOR	 *actor;
 	Sint32	  steps;
 	Sint32	  width, height;
 	Uint8	 *layer;
 	Sint32	  column, row;
 	Sint32	  nearEdge, farEdge;
-	Sint32	  index;
+	Sint32	  idx;
 
 	probe->func = 0;
 	actor = scPushedActorFindLargeThingAhead(
@@ -244,42 +243,42 @@ UNUSED static Sint32 scPushedActorFindClearPos(PUSHED_ACTOR_PROBE *probe)
 		Sint32 rectangle = probe->rectangleIdx;
 
 		steps = 0;
-		index = rectangle;
-		nearEdge = PushedActor_Rectangles[index].z0;
+		idx = rectangle;
+		nearEdge = PushedActorRectangles[idx].z0;
 		if(nearEdge < 0) {
 			nearEdge = -nearEdge;
 		}
-		farEdge = PushedActor_Rectangles[index].z1;
+		farEdge = PushedActorRectangles[idx].z1;
 		if(farEdge < 0) {
 			farEdge = -farEdge;
 		}
 		height = (nearEdge + farEdge) >> 4;
-		nearEdge = PushedActor_Rectangles[index].x0;
+		nearEdge = PushedActorRectangles[idx].x0;
 		if(nearEdge < 0) {
 			nearEdge = -nearEdge;
 		}
-		farEdge = PushedActor_Rectangles[index].x1;
+		farEdge = PushedActorRectangles[idx].x1;
 		if(farEdge < 0) {
 			farEdge = -farEdge;
 		}
 		width = (nearEdge + farEdge) >> 4;
 	}
-	position.x = actor->x.fixed +
-		DIRECTION_STEP_X_FIXED(PushedActor_DirectionSteps[direction]);
+	pos.x = actor->x.fixed +
+		DIRECTION_STEP_X_FIXED(PushedActorDirectionSteps[direction]);
 	{
 		FIXED y = actor->y.fixed;
 
-		position.y = y;
-		position.z = actor->z.fixed +
-			DIRECTION_STEP_Z_FIXED(PushedActor_DirectionSteps[direction]);
+		pos.y = y;
+		pos.z = actor->z.fixed +
+			DIRECTION_STEP_Z_FIXED(PushedActorDirectionSteps[direction]);
 		probe->pos.y = y;
 	}
 	for(;;) {
-		probe->pos.z = position.z +
-			toFIXED(PushedActor_Rectangles[probe->rectangleIdx].z0);
+		probe->pos.z =
+			pos.z + toFIXED(PushedActorRectangles[probe->rectangleIdx].z0);
 		for(row = 0; row < height; row++) {
-			probe->pos.x = position.x +
-				toFIXED(PushedActor_Rectangles[probe->rectangleIdx].x0);
+			probe->pos.x =
+				pos.x + toFIXED(PushedActorRectangles[probe->rectangleIdx].x0);
 			for(column = 0; column < width; column++) {
 				if(syFieldActorCheckMovementCollision(actor, &probe->pos) ==
 					2) {
@@ -290,10 +289,8 @@ UNUSED static Sint32 scPushedActorFindClearPos(PUSHED_ACTOR_PROBE *probe)
 			probe->pos.z += toFIXED(16);
 		}
 		steps++;
-		position.x +=
-			DIRECTION_STEP_X_FIXED(PushedActor_DirectionSteps[direction]);
-		position.z +=
-			DIRECTION_STEP_Z_FIXED(PushedActor_DirectionSteps[direction]);
+		pos.x += DIRECTION_STEP_X_FIXED(PushedActorDirectionSteps[direction]);
+		pos.z += DIRECTION_STEP_Z_FIXED(PushedActorDirectionSteps[direction]);
 	}
 found:
 	*layer = MAPGRID_LAYER_GROUND;
@@ -301,10 +298,10 @@ found:
 		return 0;
 	}
 	probe->pos.x = actor->x.fixed +
-		DIRECTION_STEP_X_FIXED(PushedActor_DirectionSteps[direction]) * steps;
+		DIRECTION_STEP_X_FIXED(PushedActorDirectionSteps[direction]) * steps;
 	probe->pos.y = actor->y.fixed;
 	probe->pos.z = actor->z.fixed +
-		DIRECTION_STEP_Z_FIXED(PushedActor_DirectionSteps[direction]) * steps;
+		DIRECTION_STEP_Z_FIXED(PushedActorDirectionSteps[direction]) * steps;
 	return 1;
 }
 
@@ -318,8 +315,8 @@ UNUSED static void scPushedActorRoll(PUSHED_ACTOR_PROBE probe)
 {
 	MAP_GRID_SCROLL_STATE *state;
 	ACTOR				  *actor;
-	FIELD_POS			   originalPosition;
-	FIELD_POS			   tilePosition;
+	FIELD_POS			   originalPos;
+	FIELD_POS			   tilePos;
 	Sint32				   direction;
 	Sint32				   horizontalExtent;
 	Sint32				   verticalExtent;
@@ -334,19 +331,19 @@ UNUSED static void scPushedActorRoll(PUSHED_ACTOR_PROBE probe)
 	direction = FACING_INDEX(fdActorGetById(ACTOR_PARTY_LEADER)->facing);
 	actor = fdActorGetById(probe.actorSlot);
 	{
-		Sint32 extentA = PushedActor_Rectangles[probe.rectangleIdx].z0;
+		Sint32 extentA = PushedActorRectangles[probe.rectangleIdx].z0;
 		Sint32 extentB;
 
 		if(extentA < 0)
 			extentA = -extentA;
-		extentB = PushedActor_Rectangles[probe.rectangleIdx].z1;
+		extentB = PushedActorRectangles[probe.rectangleIdx].z1;
 		if(extentB < 0)
 			extentB = -extentB;
 		verticalExtent = (extentA + extentB) >> 4;
-		extentA = PushedActor_Rectangles[probe.rectangleIdx].x0;
+		extentA = PushedActorRectangles[probe.rectangleIdx].x0;
 		if(extentA < 0)
 			extentA = -extentA;
-		extentB = PushedActor_Rectangles[probe.rectangleIdx].x1;
+		extentB = PushedActorRectangles[probe.rectangleIdx].x1;
 		if(extentB < 0)
 			extentB = -extentB;
 		horizontalExtent = (extentA + extentB) >> 4;
@@ -354,28 +351,26 @@ UNUSED static void scPushedActorRoll(PUSHED_ACTOR_PROBE probe)
 
 	actor->speedLimit = toFIXED(1) / 2;
 	actor->acceleration = toFIXED(1) / 10;
-	originalPosition.x = actor->x.fixed;
-	originalPosition.z = actor->z.fixed;
-	tilePosition.x =
-		actor->x.fixed + toFIXED(PushedActor_Rectangles[probe.rectangleIdx].x0);
-	tilePosition.z =
-		actor->z.fixed + toFIXED(PushedActor_Rectangles[probe.rectangleIdx].z0);
-	tilePosition.x = FIELD_METATILE(tilePosition.x);
-	tilePosition.z = FIELD_METATILE(tilePosition.z);
+	originalPos.x = actor->x.fixed;
+	originalPos.z = actor->z.fixed;
+	tilePos.x =
+		actor->x.fixed + toFIXED(PushedActorRectangles[probe.rectangleIdx].x0);
+	tilePos.z =
+		actor->z.fixed + toFIXED(PushedActorRectangles[probe.rectangleIdx].z0);
+	tilePos.x = FIELD_METATILE(tilePos.x);
+	tilePos.z = FIELD_METATILE(tilePos.z);
 
-	scMapGridFillCollisionRectangle(0, tilePosition.x, tilePosition.z,
-		horizontalExtent, verticalExtent, METATILE_BEHAVIOR_NORMAL);
+	scMapGridFillCollisionRectangle(0, tilePos.x, tilePos.z, horizontalExtent,
+		verticalExtent, METATILE_BEHAVIOR_NORMAL);
 	fdActorSetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.5, 0.1);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
 	fdScriptWait(15);
 
 	{
 		/* Half the thing's roll, in whole pixels. */
-		Sint32 horizontalDelta =
-			(probe.pos.x - originalPosition.x) / toFIXED(2);
+		Sint32 horizontalDelta = (probe.pos.x - originalPos.x) / toFIXED(2);
 		{
-			Sint32 verticalDelta =
-				(probe.pos.z - originalPosition.z) / toFIXED(2);
+			Sint32 verticalDelta = (probe.pos.z - originalPos.z) / toFIXED(2);
 
 			fdActorSetDestinationOffsetById(
 				ACTOR_PARTY_LEADER, horizontalDelta, verticalDelta);
@@ -398,7 +393,7 @@ UNUSED static void scPushedActorRoll(PUSHED_ACTOR_PROBE probe)
 	fdActorSetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.3, 0.1);
 
 	{
-		Sint32 packedOrientation = PushedActor_DirectionSteps[direction];
+		Sint32 packedOrientation = PushedActorDirectionSteps[direction];
 		fdActorSetDestinationOffsetById(ACTOR_PARTY_LEADER,
 			(Sint16)DIRECTION_STEP_X(packedOrientation) / 2,
 			DIRECTION_STEP_Z(packedOrientation) / 2);
@@ -423,8 +418,8 @@ UNUSED static void scPushedActorRoll(PUSHED_ACTOR_PROBE probe)
 		Sint32 horizontalOrigin;
 		Sint32 verticalOrigin;
 
-		probe.pos.x += toFIXED(PushedActor_Rectangles[probe.rectangleIdx].x0);
-		probe.pos.z += toFIXED(PushedActor_Rectangles[probe.rectangleIdx].z0);
+		probe.pos.x += toFIXED(PushedActorRectangles[probe.rectangleIdx].x0);
+		probe.pos.z += toFIXED(PushedActorRectangles[probe.rectangleIdx].z0);
 		probe.pos.x = FIELD_METATILE(probe.pos.x);
 		probe.pos.z = FIELD_METATILE(probe.pos.z);
 		horizontalOrigin = FIELD_METATILE(state->layers[1].ofsX);
@@ -438,21 +433,17 @@ UNUSED static void scPushedActorRoll(PUSHED_ACTOR_PROBE probe)
 		scMapGridFillCollisionRectangle(2, probe.pos.x, probe.pos.z,
 			horizontalExtent, verticalExtent, METATILE_BEHAVIOR_WALL);
 
-		originalPosition.x +=
-			toFIXED(PushedActor_Rectangles[probe.rectangleIdx].x0);
-		originalPosition.z +=
-			toFIXED(PushedActor_Rectangles[probe.rectangleIdx].z0);
-		originalPosition.x = FIELD_METATILE(originalPosition.x);
-		originalPosition.z = FIELD_METATILE(originalPosition.z);
-		horizontalOrigin += originalPosition.x;
-		verticalOrigin += originalPosition.z;
+		originalPos.x += toFIXED(PushedActorRectangles[probe.rectangleIdx].x0);
+		originalPos.z += toFIXED(PushedActorRectangles[probe.rectangleIdx].z0);
+		originalPos.x = FIELD_METATILE(originalPos.x);
+		originalPos.z = FIELD_METATILE(originalPos.z);
+		horizontalOrigin += originalPos.x;
+		verticalOrigin += originalPos.z;
 
 		fdMapGridCopyMetatileAttributeRect(horizontalOrigin, verticalOrigin,
-			horizontalExtent, verticalExtent, originalPosition.x,
-			originalPosition.z);
-		scMapGridFillCollisionRectangle(2, originalPosition.x,
-			originalPosition.z, horizontalExtent, verticalExtent,
-			METATILE_BEHAVIOR_NORMAL);
+			horizontalExtent, verticalExtent, originalPos.x, originalPos.z);
+		scMapGridFillCollisionRectangle(2, originalPos.x, originalPos.z,
+			horizontalExtent, verticalExtent, METATILE_BEHAVIOR_NORMAL);
 	}
 	fdPlayQueuedMusic();
 }
@@ -476,7 +467,7 @@ UNUSED static Sint32 scPushedActorBlockFootprint(Sint32 id)
 	Sint32				   dstZ;
 
 	for(idx = 0; idx <= 5; idx++) {
-		if(actor->spr->entries[0]->anmId == PushedActor_RectangleKinds[idx]) {
+		if(actor->spr->entries[0]->anmId == PushedActorRectangleKinds[idx]) {
 			probe.rectangleIdx = idx;
 			break;
 		}
@@ -489,22 +480,22 @@ UNUSED static Sint32 scPushedActorBlockFootprint(Sint32 id)
 	probe.pos.y = actor->y.fixed;
 	probe.pos.z = actor->z.fixed;
 	index = probe.rectangleIdx;
-	z0 = PushedActor_Rectangles[index].z0;
+	z0 = PushedActorRectangles[index].z0;
 	if(z0 < 0)
 		z0 = -z0;
-	z1 = PushedActor_Rectangles[index].z1;
+	z1 = PushedActorRectangles[index].z1;
 	if(z1 < 0)
 		z1 = -z1;
 	height = (z0 + z1) >> 4;
-	x0 = PushedActor_Rectangles[index].x0;
+	x0 = PushedActorRectangles[index].x0;
 	if(x0 < 0)
 		x0 = -x0;
-	x1 = PushedActor_Rectangles[index].x1;
+	x1 = PushedActorRectangles[index].x1;
 	if(x1 < 0)
 		x1 = -x1;
 	width = (x0 + x1) >> 4;
-	probe.pos.x += toFIXED(PushedActor_Rectangles[index].x0);
-	probe.pos.z += toFIXED(PushedActor_Rectangles[index].z0);
+	probe.pos.x += toFIXED(PushedActorRectangles[index].x0);
+	probe.pos.z += toFIXED(PushedActorRectangles[index].z0);
 	probe.pos.x = FIELD_METATILE(probe.pos.x);
 	probe.pos.z = FIELD_METATILE(probe.pos.z);
 	idx = FIELD_METATILE(grid->layers[1].ofsX);

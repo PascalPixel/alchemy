@@ -41,7 +41,7 @@ shop is not a mode. It is a function called from inside one, and it
 returns there.
 
 The main routine is a loop, but a slow one. One trip round it is a whole
-visit to a town or a whole battle. The loop that goes round once a frame is
+visit to a town or a whole battle. The loop that goes round once a tick is
 not here: it is inside `sySynch()`, which
 [Waiting and events](#waiting-and-events) comes to.
 
@@ -86,22 +86,22 @@ trip round it, and the function itself is `gmMainRoutineRun`.
 
 ![Felix talks to the man by the pond in Daila: a window opens at the top, the line is typed with a bobbing arrow, the next page follows, and the window closes. (No portrait: Daila's villagers have none.)](https://alchemy.pascalpixel.com/tla/guides/window/talk.gif)
 
-The game has no loop at the top that turns once a frame and calls
-everything else. Its frame loop is inside one function,
+The game has no loop at the top that turns once a tick and calls
+everything else. Its tick loop is inside one function,
 [`sySynch()`](glossary.md#wait), and this is all of its shape:
 
 ```c
-void sySynch(Sint32 frames) {
-	for(frame = 0; frame < frames; frame++) {
+void sySynch(Sint32 ticks) {
+	for(tick = 0; tick < ticks; tick++) {
 		/* every task runs once */
-		/* this frame's sprites are put in order */
-		/* sleep until VBlank, when the frame is copied to the screen */
+		/* this tick's sprites are put in order */
+		/* sleep until VBlank, when the tick is copied to the screen */
 	}
 }
 ```
 
 So `sySynch(10)` does not stand aside while something else runs the game. It
-runs ten frames of the game, there and then, and returns.
+runs ten ticks of the game, there and then, and returns.
 
 One piece of code calls it at a time: the code that is telling the story
 just now, a cutscene, a menu, the field's own function. That code is plain C.
@@ -113,22 +113,22 @@ still while the loop inside goes round.
 flowchart TD
   code(["The story's code runs until it calls wait"]) --> tasks(["Every task runs once"])
   tasks --> halt(["Sleep until VBlank"])
-  halt -- "frames left" --> tasks
+  halt -- "ticks left" --> tasks
   halt -- "done" --> back(["wait returns: the code's next line runs"])
   classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef tick fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   class code,back code
-  class tasks,halt frame
+  class tasks,halt tick
 ```
 
-So a frame is two stretches of work: what the story's code did since its
+So a tick is two stretches of work: what the story's code did since its
 last `sySynch()`, and then the events. Both have to be done before VBlank, or
-the frame is shown one VBlank late.
+the tick is shown one VBlank late.
 
 This is what lets a cutscene or a menu be written as a plain list, top to
 bottom, in the order things happen. A night at an inn is: wait, close the
 screen, play the tune and wait for it to end, wait, open the screen again.
-No state is kept between frames to remember how far the night has got: the
+No state is kept between ticks to remember how far the night has got: the
 line the code has reached is the memory.
 
 ### Events
@@ -136,7 +136,7 @@ line the code has reached is the memory.
 An [event](glossary.md#event) is a function on a short list, which holds 24,
 four more than The Broken Seal's. Each trip round the loop calls every event
 on it once, highest rank first (the code calls the rank `pri`). A
-event does one frame's worth of something and returns at once: move the
+event does one tick's worth of something and returns at once: move the
 actors a step, type the next letters into a window.
 
 Four things about events are easy to get wrong:
@@ -145,11 +145,11 @@ Four things about events are easy to get wrong:
   game moves. A window goes on typing because the code that asked for it is
   waiting for it to close.
 - An event must never call `sySynch()`. It is being called from inside one, and
-  must return for the frame to end.
+  must return for the tick to end.
 - An event is a whole piece of work, not a thing in the world. A villager is
   not an event, and neither is a puddle. They are
   [actors](glossary.md#actor), rows in a table, and one event visits all of
-  them each frame.
+  them each tick.
 - The list keeps a function, a rank and one flag, and nothing else. What a
   event needs to remember lives with whatever put it on the list: the
   field's state, a window's.
@@ -173,20 +173,20 @@ SC_ANIMATION(2),          /* walk */
 SC_WANDER_HOME(4, 8, 16), /* pick a spot near home and head for it */
 SC_SYNC,                  /* stay on this line until it arrives */
 SC_ANIMATION(1),          /* stand */
-SC_WAIT(20),              /* stand for 20 frames */
+SC_WAIT(20),              /* stand for 20 ticks */
 ```
 
 These are numbers in a table, not code that runs (`SC_` is for script
-command). Each frame the actors' event comes to this villager. If his count
+command). Each tick the actors' event comes to this villager. If his count
 is above zero it takes one off and goes on to the next actor; otherwise it
 reads his script on from where he stopped. Twenty villagers can all be
 part-way through a pause, each with a count of his own.
 
 | | `sySynch(20)` in C | `SC_WAIT(20)` in an actor script |
 | --- | --- | --- |
-| What it is | a function that runs 20 frames of the game | an order that sets a count to 20 |
+| What it is | a function that runs 20 ticks of the game | an order that sets a count to 20 |
 | Who uses it | the one piece of code telling the story | every actor, each for itself |
-| Does it hold anything up? | that code stands still | no: the event passes that actor by for 20 frames |
+| Does it hold anything up? | that code stands still | no: the event passes that actor by for 20 ticks |
 | How many at once | one | as many as there are actors |
 
 The second happens inside the first. The story's code is in `sySynch()`, the
@@ -212,7 +212,7 @@ fdActorWaitForMoveById(ACTOR_WEST_GUARD);         /* and then for the west */
 
 A script command whose name ends `AndWait` does two steps together: it
 starts the walk, then calls `sySynch(1)` until that actor has arrived. Both
-guards walk during those frames, whichever of them the code is waiting for.
+guards walk during those ticks, whichever of them the code is waiting for.
 
 Because an event cannot wait, it cannot start something long, like a
 conversation. It leaves a [request](glossary.md#field-request) instead, and
@@ -227,8 +227,8 @@ If you have used coroutines: the story's code is the one coroutine, and
 | Code | What calls it | May it call `sySynch()`? |
 | --- | --- | --- |
 | The story's code: a mode, a script, a menu, a shop, a battle effect | the main routine, and each other | yes |
-| An event | `sySynch()`, once a frame | no |
-| An order of an actor script | the actors' event, once a frame for each actor | no |
+| An event | `sySynch()`, once a tick | no |
+| An order of an actor script | the actors' event, once a tick for each actor | no |
 | The VBlank handler, and the few events it calls | the console, at every VBlank | no |
 
 No event puts another event on the list either. Adding one sorts the list
@@ -238,18 +238,18 @@ again, and that would upset the pass that is running.
 
 | Written as | Where | What it does |
 | --- | --- | --- |
-| `sySynch(n)` | the story's code | runs `n` frames of the game and returns |
+| `sySynch(n)` | the story's code | runs `n` ticks of the game and returns |
 | `fdScriptWait(n)` | a script | calls `sySynch(n)` |
 | a command that takes time, such as `fdScriptShowMessage` or one ending `AndWait` | a script | starts something, then calls `sySynch(1)` until it is over: a window has closed, an actor has arrived |
-| `SC_WAIT(n)` | an actor script | sets a count in the actor, which the actors' event takes one off each frame |
+| `SC_WAIT(n)` | an actor script | sets a count in the actor, which the actors' event takes one off each tick |
 | `SC_SYNC` | an actor script | holds the script on this order until the actor has arrived |
-| a count in its owner's state | an event | the event looks at it each frame and returns: a pause in the middle of a line, the time a hit flashes in a battle |
+| a count in its owner's state | an event | the event looks at it each tick and returns: a pause in the middle of a line, the time a hit flashes in a battle |
 
 Only the first three hold any code up, and they are all `sySynch()`. The rest
-are numbers that an event looks at once a frame. `fdActorWalkToAndWait` gives
-up after 600 frames, ten seconds, and goes on with the actor still walking.
+are numbers that an event looks at once a tick. `fdActorWalkToAndWait` gives
+up after 600 ticks, ten seconds, and goes on with the actor still walking.
 
-### A talk, frame by frame
+### A talk, tick by tick
 
 Felix walks up to the man by the pond in Daila and the player presses A.
 This is who runs what.
@@ -259,17 +259,17 @@ This is who runs what.
 2. Inside one `sySynch(1)` the actors' event comes to Felix. His script is on
    the order that reads the D-pad and the buttons, `SC_PLAYER`. It sees the
    A Button and sets a request in the field's state. The event goes on to the
-   man and carries his script on by a frame as well.
+   man and carries his script on by a tick as well.
 3. `sySynch(1)` returns. The field's function finds a request and leaves its
    walking loop. It puts Felix on the idle script, finds that the nearest
    actor in reach is the man and that the scene has a talk cue for him,
-   and turns the request into a talk. No frame has passed.
+   and turns the request into a talk. No tick has passed.
 4. It answers the talk. It marks the man paused, turns the two as his row
    in the scene's list asks, and asks for a window with his line. Asking
    returns at once.
 5. The same code now calls `sySynch(1)` until the window has closed. Over
-   those frames the windows' event grows the window, types the line a few
-   letters a frame, and then looks each frame for the A Button. The actors'
+   those ticks the windows' event grows the window, types the line a few
+   letters a tick, and then looks each tick for the A Button. The actors'
    event passes the man by, because he is paused, so his script stays where
    it was.
 6. The player presses A. The windows' event shrinks the window and closes
@@ -283,17 +283,17 @@ function and what it called. Everything else was an event's visit.
 ### When nothing waits
 
 Code that works for a long time without calling `sySynch()` holds the whole
-game still. No event runs, so no actor moves and no window grows. The frame
+game still. No event runs, so no actor moves and no window grows. The tick
 it is building is never marked finished, so the picture on screen is left
 as it is.
 
 The VBlank handler is not held up. The console calls it at every VBlank
 whatever the code is doing, and it goes on reading the buttons, running its
-own events and preparing the sound. So a frame that takes two VBlanks is
+own events and preparing the sound. So a tick that takes two frames is
 [slowdown](glossary.md#slowdown), with the music at its proper speed, and
 code that never waited would be a still image with the tune playing on.
 
-[The frame loop](../../games/tla/src/system/README.md#the-frame-loop) has a frame's order
+[The tick loop](../../games/tla/src/system/README.md#the-tick-loop) has a tick's order
 in full, and [The event runner](../../games/tla/src/system/README.md#the-event-runner) says
 which event goes first and how an event comes and goes.
 
@@ -344,7 +344,7 @@ whole. [Saving](../../games/tla/src/system/README.md#saving) follows a save onto
 ## The rest of the system library
 
 - [The system library's code](../../games/tla/src/system/README.md) is the detail behind this page:
-  start-up, the frame, the event list, the heap, saving and the link cable.
+  start-up, the tick, the event list, the heap, saving and the link cable.
 - [The Game Pak](../../games/tla/src/system/README.md) is the cartridge: how its contents
   are laid out and found, and the flash chip.
 - [Graphics](../../games/tla/src/graphics/README.md) is how a picture gets from a PNG to

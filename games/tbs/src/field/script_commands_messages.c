@@ -13,11 +13,11 @@
    actor, with the speaker's portrait beside it when it has one, and moves on to
    the next message. speaker is the actor id with SPEAKER_ bits above it; the
    script's flags argument is not read. */
-WINDOW *fdMessageShowAtActor(Sint32 speaker, Sint32 unusedFlags)
+WINDOW *fdMessageShowAtActor(Sint32 speaker, Sint32 unusedFlg)
 {
-	WIN_STATE	*windowState;
+	WIN_STATE	*winState;
 	FIELD_STATE *state;
-	Sint32		 sprite;
+	Sint32		 spr;
 	Sint32		 extra;
 	Sint32		 portraitTop;
 	Sint32		 portraitReach;
@@ -26,10 +26,10 @@ WINDOW *fdMessageShowAtActor(Sint32 speaker, Sint32 unusedFlags)
 	Sint32		 top;
 	Sint32		 left;
 	Sint32		 pos[3];
-	WINDOW		*window;
+	WINDOW		*win;
 	Sint32		 portrait;
-	Sint32		 flags;
-	Sint32		 message;
+	Sint32		 flg;
+	Sint32		 msg;
 	ACTOR		*actor;
 	Sint32		 x;
 	Sint32		 y;
@@ -39,16 +39,16 @@ WINDOW *fdMessageShowAtActor(Sint32 speaker, Sint32 unusedFlags)
 	Sint32 portraitId;
 #endif
 
-	windowState = WINDOW_STATE;
+	winState = WINDOW_STATE;
 	state = FieldStateWork;
-	window = 0;
+	win = 0;
 	portrait = 0;
-	sprite = fdActorGetSprById(speaker);
+	spr = fdActorGetSprById(speaker);
 	extra = 0;
 	portraitTop = 0;
 	portraitReach = PORTRAIT_WINDOW_TILES - 1;
-	flags = speaker & SPEAKER_FLAGS;
-	message = state->msg;
+	flg = speaker & SPEAKER_FLAGS;
+	msg = state->msg;
 	speaker &= SPEAKER_ACTOR_MASK;
 	x = 0;
 	actor = fdActorLookup(speaker);
@@ -73,7 +73,7 @@ WINDOW *fdMessageShowAtActor(Sint32 speaker, Sint32 unusedFlags)
 				y = pos[1] >> 3;
 			}
 		} else if(speaker < ACTOR_FIRST_PLACED) {
-			sprite = speaker;
+			spr = speaker;
 			actor = fdActorLookup(MainRoutineStateWork.leaderActorId);
 			if(state->mode == ACTOR_SYSTEM_WORLD_MAP) {
 				syConvert3Dto2D(&actor->x.fixed, pos);
@@ -100,11 +100,11 @@ WINDOW *fdMessageShowAtActor(Sint32 speaker, Sint32 unusedFlags)
 			left = 0;
 			top = 0;
 			mnTextGetMessageSizeAllPagesStub(
-				message, &left, &top, (Uint32 *)&width, (Uint32 *)&height);
+				msg, &left, &top, (Uint32 *)&width, (Uint32 *)&height);
 			left = x - width / 2;
-			if(flags & SPEAKER_WINDOW_ABOVE)
+			if(flg & SPEAKER_WINDOW_ABOVE)
 				top = y - height - 1;
-			else if(!(flags & SPEAKER_WINDOW_BELOW) && y <= 8)
+			else if(!(flg & SPEAKER_WINDOW_BELOW) && y <= 8)
 				top = y - height - 1;
 			else
 				top = y + 4;
@@ -115,14 +115,14 @@ WINDOW *fdMessageShowAtActor(Sint32 speaker, Sint32 unusedFlags)
 		   edge. */
 		/* XXX: why Mind Read keeps a tile more; a Mind Read photo of a speaker
 		   at the screen's right edge would show what that tile holds. */
-		if(windowState->mindRead != 0)
+		if(winState->mindRead != 0)
 			portraitReach = PORTRAIT_WINDOW_TILES;
 		column = x;
-		if(flags & SPEAKER_PORTRAIT_LEFT) {
+		if(flg & SPEAKER_PORTRAIT_LEFT) {
 			column = x - portraitReach - 2;
 			if(column < 0)
 				column = 0;
-		} else if(flags & SPEAKER_PORTRAIT_RIGHT) {
+		} else if(flg & SPEAKER_PORTRAIT_RIGHT) {
 			column += 2;
 			if(column + portraitReach > DISPLAY_TILE_WIDTH - 1)
 				column = DISPLAY_TILE_WIDTH - 1 - portraitReach;
@@ -140,11 +140,11 @@ WINDOW *fdMessageShowAtActor(Sint32 speaker, Sint32 unusedFlags)
 		   message, within the screen's rows, and grow the message to the
 		   portrait's height. */
 #if SPEECH_WINDOW_ANCHOR_FOLLOWS_PORTRAIT
-		found = mnPortraitGetForSpeakerStub(sprite);
+		found = mnPortraitGetForSpeakerStub(spr);
 		if(found != -1) {
 			mnTextGetMessageSizeAllPagesStub(
-				message, &left, &top, (Uint32 *)&width, (Uint32 *)&height);
-			message = -1;
+				msg, &left, &top, (Uint32 *)&width, (Uint32 *)&height);
+			msg = -1;
 			if(top > y)
 				portraitTop = top - PORTRAIT_WINDOW_TILES;
 			else
@@ -158,25 +158,25 @@ WINDOW *fdMessageShowAtActor(Sint32 speaker, Sint32 unusedFlags)
 				Sint32 lines = height;
 
 				mnTextGetMessageSizeStub(
-					message, &left, &top, (Uint32 *)&width, (Uint32 *)&height);
-				message = -1;
+					msg, &left, &top, (Uint32 *)&width, (Uint32 *)&height);
+				msg = -1;
 				extra = lines - height + 1;
 			}
 		} else if(top < y) {
 			Sint32 lines = height;
 
 			mnTextGetMessageSizeStub(
-				message, &left, &top, (Uint32 *)&width, (Uint32 *)&height);
+				msg, &left, &top, (Uint32 *)&width, (Uint32 *)&height);
 			extra = lines - height + 1;
-			message = found;
+			msg = found;
 		}
 #else
-		portraitId = mnPortraitGetForSpeakerStub(sprite);
+		portraitId = mnPortraitGetForSpeakerStub(spr);
 		found = -1;
 		if(portraitId != found) {
 			mnTextGetMessageSizeAllPagesStub(
-				message, &left, &top, (Uint32 *)&width, (Uint32 *)&height);
-			message = found;
+				msg, &left, &top, (Uint32 *)&width, (Uint32 *)&height);
+			msg = found;
 			if(top > y)
 				portraitTop = top - PORTRAIT_WINDOW_TILES;
 			else
@@ -191,8 +191,8 @@ WINDOW *fdMessageShowAtActor(Sint32 speaker, Sint32 unusedFlags)
 			Sint32 lines = height;
 
 			mnTextGetMessageSizeStub(
-				message, &left, &top, (Uint32 *)&width, (Uint32 *)&height);
-			message = -1;
+				msg, &left, &top, (Uint32 *)&width, (Uint32 *)&height);
+			msg = -1;
 			extra = lines - height + 1;
 		}
 #endif
@@ -203,74 +203,74 @@ WINDOW *fdMessageShowAtActor(Sint32 speaker, Sint32 unusedFlags)
 
 		/* Open the message and the portrait, and wait until the text is typed
 		   out. */
-		if(windowState->mindRead != 0) {
+		if(winState->mindRead != 0) {
 			sySynch(8);
 			if(extra != 0)
-				window = mnMessageOpenWindowStub(message, left, top + extra - 1,
+				win = mnMessageOpenWindowStub(msg, left, top + extra - 1,
 					MESSAGE_WINDOW_ANCHOR_BOTTOM | MESSAGE_WINDOW_UNREAD);
 			else
-				window = mnMessageOpenWindowStub(
-					message, left, top, MESSAGE_WINDOW_UNREAD);
+				win = mnMessageOpenWindowStub(
+					msg, left, top, MESSAGE_WINDOW_UNREAD);
 		} else {
-			Sint32 voice = fdSpeakerGetVoice(sprite);
+			Sint32 voice = fdSpeakerGetVoice(spr);
 
 			if(extra != 0)
-				window = mnMessageOpenWindowStub(message, left, top + extra - 1,
+				win = mnMessageOpenWindowStub(msg, left, top + extra - 1,
 					MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_ANCHOR_BOTTOM |
 						MESSAGE_WINDOW_ZOOM);
 			else
-				window = mnMessageOpenWindowStub(message, left, top,
+				win = mnMessageOpenWindowStub(msg, left, top,
 					MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_ZOOM);
 		}
 		/* DEAD: both arms open the same portrait behind a test of
-		   windowState->mindRead; the ROM keeps the test's load of mindRead. */
-		if(windowState->mindRead != 0)
-			portrait = (Sint32)mnPortraitOpenWindowStub(
-				sprite, 0, column, portraitTop);
+		   winState->mindRead; the ROM keeps the test's load of mindRead. */
+		if(winState->mindRead != 0)
+			portrait =
+				(Sint32)mnPortraitOpenWindowStub(spr, 0, column, portraitTop);
 		else
-			portrait = (Sint32)mnPortraitOpenWindowStub(
-				sprite, 0, column, portraitTop);
+			portrait =
+				(Sint32)mnPortraitOpenWindowStub(spr, 0, column, portraitTop);
 		while(!mnMessageAllTypedStub())
 			sySynch(1);
 	}
-	state->msgWin = (Sint32)window;
+	state->msgWin = (Sint32)win;
 	state->sideWin = portrait;
 	state->msg++;
-	return window;
+	return win;
 }
 
 /* Opens the current message at actorId (fdMessageShowAtActor) and waits until
    it has been read and its window has closed; the speaker's portrait is closed
    once the text is typed out. */
-void fdScriptShowMessageAndWait(Sint32 actorId, Sint32 flags)
+void fdScriptShowMessageAndWait(Sint32 actorId, Sint32 flg)
 {
 	Sint32		 member;
 	FIELD_STATE *fieldState = FieldStateWork;
-	WINDOW		*window = fdMessageShowAtActor(actorId, flags);
-	Sint32		 sprite;
-	Uint32		 frames;
+	WINDOW		*win = fdMessageShowAtActor(actorId, flg);
+	Sint32		 spr;
+	Uint32		 ticks;
 
-	frames = 0;
+	ticks = 0;
 	sySynch(1);
 	/* A party member the scene does not place has its portrait under its
 	   character id, as fdMessageShowAtActor opened it. */
-	sprite = fdActorGetSprById(actorId);
+	spr = fdActorGetSprById(actorId);
 	if(actorId < ACTOR_FIRST_PLACED) {
 		member = actorId & SPEAKER_ACTOR_MASK;
 
 		if(fdFindActorPlacement(member) == 0) {
-			sprite = member;
+			spr = member;
 		}
 	}
-	mnPortraitCloseWindowStub(sprite);
+	mnPortraitCloseWindowStub(spr);
 
 	if(fieldState->fastForward == 0) {
-		while(mnWindowIsClosedStub(window) == 0) {
+		while(mnWindowIsClosedStub(win) == 0) {
 			sySynch(1);
-			frames++;
-			/* After 600 frames, or at once with Select, L, R and A held, the
+			ticks++;
+			/* After 600 ticks, or at once with Select, L, R and A held, the
 			   windows whose text is typed out close. */
-			if(frames > 600 ||
+			if(ticks > 600 ||
 				((PerData & KEY_SELECT) && (PerData & KEY_R) &&
 					(PerData & KEY_L) && (PerData & KEY_A))) {
 				mnMessageCloseFinishedWindowsStub();
@@ -281,32 +281,32 @@ void fdScriptShowMessageAndWait(Sint32 actorId, Sint32 flags)
 	sySynch(1);
 }
 
-/* Shows the message, then waits the given number of frames. */
-void fdScriptShowMessageThenWait(Sint32 actorId, Sint32 flags, Sint32 frames)
+/* Shows the message, then waits the given number of ticks. */
+void fdScriptShowMessageThenWait(Sint32 actorId, Sint32 flg, Sint32 ticks)
 {
-	fdScriptShowMessageAndWait(actorId, flags);
-	fdScriptWait(frames);
+	fdScriptShowMessageAndWait(actorId, flg);
+	fdScriptWait(ticks);
 }
 
 /* Opens the question at actorId, lets the leader answer, then shows the next
    message for yes or the one after it for no. */
-Sint32 fdScriptAskYesNoAndShowResponse(Sint32 actorId, Sint32 flags)
+Sint32 fdScriptAskYesNoAndShowResponse(Sint32 actorId, Sint32 flg)
 {
 	Sint32				answer;
 	FIELD_STATE		   *fieldState;
 	MAIN_ROUTINE_STATE *mainState;
 
-	fdMessageShowAtActor(actorId, flags);
+	fdMessageShowAtActor(actorId, flg);
 	mainState = &MainRoutineStateWork;
 	answer = fdScriptAskYesNoWithActorAnimation(mainState->leaderActorId, 0);
 	if(answer == 0) {
-		fdScriptShowMessageAndWait(actorId, flags);
+		fdScriptShowMessageAndWait(actorId, flg);
 		fieldState = FieldStateWork;
 		fieldState->msg += 1;
 	} else {
 		fieldState = FieldStateWork;
 		fieldState->msg += 1;
-		fdScriptShowMessageAndWait(actorId, flags);
+		fdScriptShowMessageAndWait(actorId, flg);
 	}
 	return answer;
 }
@@ -372,31 +372,29 @@ void fdScriptShowSpeakerMessage(Sint32 speaker)
 				positionFound = fdActorGetScreenPos(speaker, pos) != -1;
 		}
 		if(positionFound) {
-			Sint32 windowX = pos[0];
-			Sint32 windowY = pos[1];
+			Sint32 winX = pos[0];
+			Sint32 winY = pos[1];
 			Sint32 win;
 #else
-		Sint32 windowX = pos.x;
-		Sint32 windowY = pos.y;
+		Sint32 winX = pos.x;
+		Sint32 winY = pos.y;
 		Sint32 win;
 #endif
 
-			if(windowY > MESSAGE_POSITION_HEIGHT / 2 - 1)
-				windowY += MESSAGE_POSITION_SHIFT;
+			if(winY > MESSAGE_POSITION_HEIGHT / 2 - 1)
+				winY += MESSAGE_POSITION_SHIFT;
 			else
-				windowY -= MESSAGE_POSITION_SHIFT;
-			windowX = windowX < MESSAGE_POSITION_MARGIN_X
-				? MESSAGE_POSITION_MARGIN_X
-				: windowX;
-			if(windowX > MESSAGE_POSITION_WIDTH - MESSAGE_POSITION_MARGIN_X)
-				windowX = MESSAGE_POSITION_WIDTH - MESSAGE_POSITION_MARGIN_X;
-			windowY = windowY < MESSAGE_POSITION_MARGIN_Y
-				? MESSAGE_POSITION_MARGIN_Y
-				: windowY;
-			if(windowY > MESSAGE_POSITION_HEIGHT - MESSAGE_POSITION_MARGIN_Y)
-				windowY = MESSAGE_POSITION_HEIGHT - MESSAGE_POSITION_MARGIN_Y;
+				winY -= MESSAGE_POSITION_SHIFT;
+			winX = winX < MESSAGE_POSITION_MARGIN_X ? MESSAGE_POSITION_MARGIN_X
+													: winX;
+			if(winX > MESSAGE_POSITION_WIDTH - MESSAGE_POSITION_MARGIN_X)
+				winX = MESSAGE_POSITION_WIDTH - MESSAGE_POSITION_MARGIN_X;
+			winY = winY < MESSAGE_POSITION_MARGIN_Y ? MESSAGE_POSITION_MARGIN_Y
+													: winY;
+			if(winY > MESSAGE_POSITION_HEIGHT - MESSAGE_POSITION_MARGIN_Y)
+				winY = MESSAGE_POSITION_HEIGHT - MESSAGE_POSITION_MARGIN_Y;
 			win = (Sint32)mnMessageOpenWindowStub(
-				fieldState->msg, windowX, windowY, MESSAGE_WINDOW_ZOOM);
+				fieldState->msg, winX, winY, MESSAGE_WINDOW_ZOOM);
 			fieldState->msgWin = win;
 			while(mnWindowIsClosedStub((WINDOW *)win) == 0)
 				sySynch(1);
@@ -423,26 +421,26 @@ void fdScriptShowMessageAtPos(
 	Sint32 unusedA, Sint32 unusedB, Sint32 x, Sint32 y)
 {
 	FIELD_STATE *fieldState = FieldStateWork;
-	Sint32		 windowY = y;
-	Sint32		 windowX = x;
+	Sint32		 winY = y;
+	Sint32		 winX = x;
 	Sint32		 minX = MESSAGE_POSITION_MARGIN_X;
 	Sint32		 minY = MESSAGE_POSITION_MARGIN_Y;
-	Sint32		 window;
+	Sint32		 win;
 
-	if(windowY > MESSAGE_POSITION_HEIGHT / 2 - 1)
-		windowY += MESSAGE_POSITION_SHIFT;
+	if(winY > MESSAGE_POSITION_HEIGHT / 2 - 1)
+		winY += MESSAGE_POSITION_SHIFT;
 	else
-		windowY -= MESSAGE_POSITION_SHIFT;
+		winY -= MESSAGE_POSITION_SHIFT;
 
 	if(x < minX)
-		windowX = minX;
-	if(windowX > MESSAGE_POSITION_WIDTH - MESSAGE_POSITION_MARGIN_X)
-		windowX = MESSAGE_POSITION_WIDTH - MESSAGE_POSITION_MARGIN_X;
-	CLAMP(windowY, minY, MESSAGE_POSITION_HEIGHT - MESSAGE_POSITION_MARGIN_Y);
+		winX = minX;
+	if(winX > MESSAGE_POSITION_WIDTH - MESSAGE_POSITION_MARGIN_X)
+		winX = MESSAGE_POSITION_WIDTH - MESSAGE_POSITION_MARGIN_X;
+	CLAMP(winY, minY, MESSAGE_POSITION_HEIGHT - MESSAGE_POSITION_MARGIN_Y);
 
-	window = (Sint32)mnMessageOpenWindowStub(
-		fieldState->msg, windowX, windowY, MESSAGE_WINDOW_ZOOM);
-	while(mnWindowIsClosedStub((WINDOW *)window) == 0)
+	win = (Sint32)mnMessageOpenWindowStub(
+		fieldState->msg, winX, winY, MESSAGE_WINDOW_ZOOM);
+	while(mnWindowIsClosedStub((WINDOW *)win) == 0)
 		sySynch(1);
 	fieldState->msg++;
 }
@@ -450,11 +448,11 @@ void fdScriptShowMessageAtPos(
 /* Closes the portrait of an actor's sprite, if it has one. */
 void fdActorClosePortrait(Sint32 actorId)
 {
-	Sint32 sprite;
+	Sint32 spr;
 
-	sprite = fdActorGetSprById(actorId);
-	if(sprite != -1)
-		mnPortraitCloseWindowStub(sprite);
+	spr = fdActorGetSprById(actorId);
+	if(spr != -1)
+		mnPortraitCloseWindowStub(spr);
 }
 
 /* Two actors speak at once, each message at its own (x, y) with its portrait at
@@ -465,18 +463,18 @@ void fdScriptShowTwoMessagesAndWait(Sint32 first, Sint32 firstX, Sint32 firstY,
 	Sint32 secondY, Sint32 secondPortraitX, Sint32 secondPortraitY)
 {
 	FIELD_STATE *state = FieldStateWork;
-	Sint32		 firstSprite = fdActorGetSprById(first);
-	Sint32		 secondSprite = fdActorGetSprById(second);
-	Sint32		 firstWindow;
-	Sint32		 secondWindow;
+	Sint32		 firstSpr = fdActorGetSprById(first);
+	Sint32		 secondSpr = fdActorGetSprById(second);
+	Sint32		 firstWin;
+	Sint32		 secondWin;
 
-	firstWindow = (Sint32)mnMessageOpenWindowStub(state->msg++, firstX, firstY,
-		MESSAGE_WINDOW_VOICE(fdSpeakerGetVoice(firstSprite)));
-	mnPortraitOpenWindowStub(firstSprite, 0, firstPortraitX, firstPortraitY);
+	firstWin = (Sint32)mnMessageOpenWindowStub(state->msg++, firstX, firstY,
+		MESSAGE_WINDOW_VOICE(fdSpeakerGetVoice(firstSpr)));
+	mnPortraitOpenWindowStub(firstSpr, 0, firstPortraitX, firstPortraitY);
 
-	secondWindow = (Sint32)mnMessageOpenWindowStub(state->msg++, secondX,
-		secondY, MESSAGE_WINDOW_VOICE(fdSpeakerGetVoice(secondSprite)));
-	mnPortraitOpenWindowStub(secondSprite, 0, secondPortraitX, secondPortraitY);
+	secondWin = (Sint32)mnMessageOpenWindowStub(state->msg++, secondX, secondY,
+		MESSAGE_WINDOW_VOICE(fdSpeakerGetVoice(secondSpr)));
+	mnPortraitOpenWindowStub(secondSpr, 0, secondPortraitX, secondPortraitY);
 
 	while(mnMessageAllTypedStub() == 0)
 		sySynch(1);
@@ -486,21 +484,21 @@ void fdScriptShowTwoMessagesAndWait(Sint32 first, Sint32 firstX, Sint32 firstY,
 		sySynch(1);
 
 	sySynch(1);
-	mnPortraitCloseWindowStub(firstSprite);
-	mnPortraitCloseWindowStub(secondSprite);
+	mnPortraitCloseWindowStub(firstSpr);
+	mnPortraitCloseWindowStub(secondSpr);
 	mnMessageCloseFinishedWindowsStub();
 	sySynch(1);
 
-	while(mnWindowIsClosedStub((WINDOW *)firstWindow) == 0)
+	while(mnWindowIsClosedStub((WINDOW *)firstWin) == 0)
 		sySynch(1);
-	while(mnWindowIsClosedStub((WINDOW *)secondWindow) == 0)
+	while(mnWindowIsClosedStub((WINDOW *)secondWin) == 0)
 		sySynch(1);
 
 	sySynch(1);
 }
 
 /* Sets the voice of the messages that follow to that of actorId's sprite, at
-   the rate the message speed option picks (MessageSpeed_VoiceRates);
+   the rate the message speed option picks (MessageSpeedVoiceRates);
    MESSAGE_VOICE_NONE clears it. */
 void fdMessageSetVoiceFromActor(Sint32 actorId)
 {
@@ -513,7 +511,7 @@ void fdMessageSetVoiceFromActor(Sint32 actorId)
 		windowState->voiceCountdown = 0;
 	} else {
 		voice = fdSpeakerGetVoice(fdActorGetSprById(actorId));
-		rate = MessageSpeed_VoiceRates[MainRoutineStateWork.msgSpeed];
+		rate = MessageSpeedVoiceRates[MainRoutineStateWork.msgSpeed];
 		windowState->voiceSnd = voice;
 		windowState->voiceCountdown = rate;
 	}

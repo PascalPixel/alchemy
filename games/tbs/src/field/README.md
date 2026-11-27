@@ -16,18 +16,18 @@ battles, clear room for 64 actors, take the scene's tables, place the party
 and the people, put out the chests, run the scene's own set-up, fade in.
 
 Then it walks. The walking loop is three lines: call `sySynch(1)`, which is
-one frame; look at the ground the leader now stands on; go round again
+one tick; look at the ground the leader now stands on; go round again
 unless a request is set. The function is the code that waits, and everything
-that moves during that frame is an event's doing
+that moves during that tick is an event's doing
 ([Waiting and events](../../../../docs/tbs/system.md#waiting-and-events)).
 
 ### The field's events
 
 Setting a scene up puts these [events](../../../../docs/tbs/glossary.md#event) on the list,
 and they stay there until the party leaves. A higher rank runs earlier in
-the frame.
+the tick.
 
-| Rank | Event | Each frame it |
+| Rank | Event | Each tick it |
 | --- | --- | --- |
 | 15 | `fdPaletteFadeUpdate` | moves the colours a step toward their target |
 | 10 | `fdActorUpdateAllOnField` | carries every actor's script on and moves the actor |
@@ -52,7 +52,7 @@ field's state, 0 while nothing is asked. Three kinds of code set one.
 - The leader's script. Its order `SC_PLAYER`, which the actors' event runs,
   looks at the buttons and sets the request for A, the field menu, the
   Pause menu, or the Psynergy or item on a shortcut button.
-- The field mode's function. After each frame it looks at where the leader
+- The field mode's function. After each tick it looks at where the leader
   stands and sets a step, a push, an exit or a battle.
 - A script or a menu, when the field engine has to carry something out
   after it has returned: a script sets an exit, and the field menu sets a field
@@ -109,16 +109,16 @@ An [actor script](../../../../docs/tbs/glossary.md#actor-script) is a list of or
 written with `SC_` macros (script command): set an animation, set a speed,
 move to a spot, wait, loop. It is a table of numbers, not code. One
 [event](../../../../docs/tbs/glossary.md#event), `fdActorUpdateAllOnField`, visits every actor
-each frame and reads its script on from where it stopped. In a battle the
+each tick and reads its script on from where it stopped. In a battle the
 event is `fdActorUpdateAllMotion`. An order that takes no time runs at once,
 and one that takes time holds the script there until it is done:
 `SC_WAIT(20)` sets a count in the actor that the event takes one off each
-frame, which is not the `sySynch()` a script calls
+tick, which is not the `sySynch()` a script calls
 ([Two kinds of waiting](../../../../docs/tbs/system.md#two-kinds-of-waiting)). The boy
 running round Vault's well is a few lines in [vault.c](../scene/vault.c).
 
 Moving is eased. An actor has a top speed and an acceleration, gains speed
-toward its target each frame, and starts braking early enough to stop on
+toward its target each tick, and starts braking early enough to stop on
 the spot.
 
 ### Who runs which script
@@ -129,10 +129,10 @@ from.
 Most townspeople never get one written for them. The scene lists each
 person once, with a spot and one of seven stock behaviours: stand, wander
 near home, and so on. Each behaviour is a script the field engine keeps
-ready, such as `MovementType_WanderScript`.
+ready, such as `MovementTypeWanderScript`.
 
 The leader's script, while the player steers, is the single order
-`SC_PLAYER`. Each frame that order reads the D-pad and the buttons. An
+`SC_PLAYER`. Each tick that order reads the D-pad and the buttons. An
 script takes control by giving the leader another script, and the field
 engine gives `SC_PLAYER` back when the script has returned.
 
@@ -143,10 +143,10 @@ whoever is watching whomever.
 
 ## Walking and running
 
-Each frame the leader's `SC_PLAYER` order reads the D-pad, picks a speed,
+Each tick the leader's `SC_PLAYER` order reads the D-pad, picks a speed,
 and probes the ground a few pixels ahead and to either side. If the way is
 blocked it tries the directions a little further round and takes the first
-that is clear, which is why Isaac slides along a wall. A frame with no
+that is clear, which is why Isaac slides along a wall. A tick with no
 clear direction counts as a push, and doors and ledges answer only after
 several in a row.
 
@@ -176,11 +176,11 @@ a battle Isaac is three: body, weapon and shadow. An animation never says
 which way the figure faces. That is chosen when it is drawn
 ([Graphics](../graphics/README.md#sprites-and-their-animations)).
 
-Order matters inside a frame: every actor moves, then the map scrolls to
+Order matters inside a tick: every actor moves, then the map scrolls to
 the camera actor, then each sprite is placed. Those are three events, and
 their ranks, 10, 5 and 0, put them in that order
 ([The field's events](#the-fields-events)). Any other order and Isaac would
-trail a frame behind himself.
+trail a tick behind himself.
 
 ## Towns and dungeons on screen
 
@@ -210,7 +210,7 @@ down.
 
 A counter fills as the leader walks, at a rate the ground sets, and a
 battle starts when it is full. The field mode's function does the
-counting, after each frame of its walking loop, and sets the battle
+counting, after each tick of its walking loop, and sets the battle
 request. So
 battles come after a distance, not a time, with some luck mixed in after
 each one. The ground also names its zone: the groups of enemies that can
@@ -234,7 +234,7 @@ that thing. Where no row fits, the cast simply plays and ends.
 ### The palette fade
 
 When Halt tints the screen, nothing is redrawn. The fade changes the
-palette, the list of colours every picture indexes, a step each frame.
+palette, the list of colours every picture indexes, a step each tick.
 Scenes fade in the same way.
 
 ## Lucky Dice and Lucky Wheels

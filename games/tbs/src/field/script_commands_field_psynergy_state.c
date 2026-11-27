@@ -3,8 +3,8 @@
 
 #include "script_commands_internal.h"
 
-/* The frames fdPsynergyEnd waits at most for the swelling arcs to end. */
-#define END_ARC_WAIT_FRAMES 30
+/* The ticks fdPsynergyEnd waits at most for the swelling arcs to end. */
+#define END_ARC_WAIT_TICKS 30
 
 /* The caster's casting animations on the party's sprite sheets:
    ANIM_CAST_PSYNERGY's first two pictures, held on the second, and from the
@@ -68,40 +68,40 @@ void fdPsynergyLoadResources(Sint32 abilityId, Sint32 mode)
 		fieldState->effTmrRunning = running;
 	effectState->tileSlot = syVRAMCacheFindFreeEntry();
 	syVRAMCacheLoad(effectState->tileSlot, 256, FieldEffect_SparkTiles);
-	sySetEvent(fdEffectUpdateAllEffectSlots, EVENT_PASS_FRAME);
+	sySetEvent(fdEffectUpdateAllEffectSlots, EVENT_PASS_TICK);
 }
 
 /* Records the caster and the target of a field Psynergy, and where it takes
    place: on the target, or 16 pixels in front of the caster with none. */
-void fdPsynergySetupActorPair(Sint32 userId, Sint32 targetId)
+void fdPsynergySetupActorPair(Sint32 userId, Sint32 tgtId)
 {
 	ACTOR			   *user;
-	ACTOR			   *target;
+	ACTOR			   *tgt;
 	Sint32				facing;
 	FIELD_EFFECT_STATE *effectState;
 
 	effectState = FieldEffectStateWork;
 	effectState->casterId = userId;
 	user = fdActorLookup((Sint16)userId);
-	effectState->tgtId = targetId;
+	effectState->tgtId = tgtId;
 	effectState->caster = user;
-	target = fdActorLookup((Sint16)targetId);
+	tgt = fdActorLookup((Sint16)tgtId);
 	facing = FACING_NEAREST_CARDINAL(user->facing);
-	effectState->tgt = target;
+	effectState->tgt = tgt;
 	effectState->ang = facing;
-	if(target != NULL) {
+	if(tgt != NULL) {
 		/* Keep the target's motion and colours, to restore them later. */
-		effectState->savedFunc = target->update;
-		effectState->savedScript = (const Sint32 *)target->script;
+		effectState->savedFunc = tgt->update;
+		effectState->savedScript = (const Sint32 *)tgt->script;
 		{
-			SPR	 *sprite = target->spr;
-			Uint8 colorMode = sprite->entries[0]->colMode;
+			SPR	 *spr = tgt->spr;
+			Uint8 colMode = spr->entries[0]->colMode;
 
-			effectState->savedPal = colorMode;
+			effectState->savedPal = colMode;
 		}
-		effectState->x = target->x.fixed;
-		effectState->z = target->z.fixed;
-		effectState->y = target->y.fixed;
+		effectState->x = tgt->x.fixed;
+		effectState->z = tgt->z.fixed;
+		effectState->y = tgt->y.fixed;
 		return;
 	}
 	effectState->x = user->x.fixed;
@@ -111,7 +111,7 @@ void fdPsynergySetupActorPair(Sint32 userId, Sint32 targetId)
 }
 
 /* Stops the caster's update function and restores its colours, then waits a
-   frame. */
+   tick. */
 void fdPsynergyStopCasterUpdate(void)
 {
 	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
@@ -123,7 +123,7 @@ void fdPsynergyStopCasterUpdate(void)
 }
 
 /* Ends a field Psynergy: frees the field effect sprites still in use and,
-   unless another is being resolved, waits (at most END_ARC_WAIT_FRAMES) for the
+   unless another is being resolved, waits (at most END_ARC_WAIT_TICKS) for the
    swelling arcs to end, stops the slot event, releases its tiles, restores the
    map's shake, plays the queued sound and releases its state. */
 void fdPsynergyEnd(void)
@@ -172,7 +172,7 @@ void fdPsynergyEnd(void)
 				waited++;
 				sySynch(1);
 			}
-		} while(active != 0 && waited < END_ARC_WAIT_FRAMES);
+		} while(active != 0 && waited < END_ARC_WAIT_TICKS);
 
 		fieldState->castStarted = 0;
 		syCloseEvent(fdEffectUpdateAllEffectSlots);
@@ -232,8 +232,8 @@ void fdPsynergyStartCast(void)
 }
 
 /* Saves the palettes for the Psynergy and fades them toward one of the eight
-   cast colours (FieldPsynergy_CastColors), picked by the frame counter or
-   forced by FLAG_PSYNERGY_TINT(0) to (7), over 8 frames. */
+   cast colours (FieldPsynergyCastColors), picked by the tick counter or
+   forced by FLAG_PSYNERGY_TINT(0) to (7), over 8 ticks. */
 void fdPsynergyFadeToCastCol(void)
 {
 	FIELD_STATE	 *fieldState;
@@ -254,7 +254,7 @@ void fdPsynergyFadeToCastCol(void)
 		fade->tgt, fade->cur, DMA_COPY_WORDS(sizeof fade->cur / 4), REG_DMA3);
 
 	/* Of the forcing flags, the highest one set wins. */
-	tint = FrameCount & 7;
+	tint = TickCount & 7;
 	if(gmFlagGetStub(FLAG_PSYNERGY_TINT(0)))
 		tint = 0;
 	if(gmFlagGetStub(FLAG_PSYNERGY_TINT(1)))
@@ -271,12 +271,12 @@ void fdPsynergyFadeToCastCol(void)
 		tint = 6;
 	if(gmFlagGetStub(FLAG_PSYNERGY_TINT(7)))
 		tint = 7;
-	fdPaletteFadeSetTarget(FieldPsynergy_CastColors[tint], PALETTES_BG);
+	fdPaletteFadeSetTarget(FieldPsynergyCastColors[tint], PALETTES_BG);
 	fdPaletteFadeStartInterpolation(8);
 }
 
 /* Fades the palettes back from a cast's colours to the saved ones over 8
-   frames; while Reveal is active the BG half fades to Reveal's grey instead
+   ticks; while Reveal is active the BG half fades to Reveal's grey instead
    (PALETTE_TINT_GRAYSCALE). */
 void fdPsynergyFadeFromCastCol(void)
 {
@@ -333,7 +333,7 @@ void fdCameraWorldToScreen(VECTOR3 *position)
 	}
 }
 
-#undef END_ARC_WAIT_FRAMES
+#undef END_ARC_WAIT_TICKS
 #undef ANIM_CAST_PSYNERGY_START
 #undef ANIM_CAST_PSYNERGY_END
 #undef FADE_HALF_COLORS

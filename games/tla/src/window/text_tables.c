@@ -7,7 +7,7 @@
 /* clang-format off */
 /* Each glyph's width in pixels from character 0x20: 224 in the Latin fonts, */
 /* 96 in the Japanese one. */
-const Uint8 Font_GlyphWidths[] = {
+const Uint8 FontGlyphWidths[] = {
 #if LANGUAGE != LANGUAGE_JAPANESE
 	5, 4, 7, 7, 8, 8, 8, 4, 5, 5, 5, 6, 4, 5, 4, 6,
 	7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 5, 5, 5, 6, 5, 6,
@@ -36,7 +36,7 @@ const Uint8 Font_GlyphWidths[] = {
 
 /* clang-format off */
 /* The {background, foreground} pens of the eight text colours. */
-const Uint8 Font_ColorPens[16] = {
+const Uint8 FontColorPens[16] = {
 	0, 3,
 	13, 13,
 	14, 15,
@@ -51,7 +51,7 @@ const Uint8 Font_ColorPens[16] = {
 /* The party status's divider columns, in tiles: the Djinn column's line first,
    then the members', ending at -1; mnWindowDrawColumnBorders reads from index 0
    or 1 to that end. A second list follows, which it never reaches. */
-const Sint8 Window_PartyColumnOffsets[] = {
+const Sint8 WindowPartyColumnOffsets[] = {
 	0,
 	6,
 	12,
@@ -69,7 +69,7 @@ const Sint8 Window_PartyColumnOffsets[] = {
 /* Unused: the HP and PP labels' tile numbers (WINDOW_TILE_HP_LABEL and
    WINDOW_TILE_PP_LABEL, each with its second tile and a 0), which nothing
    reads; the French edition drops them. */
-const Uint8 Window_UnusedPartyColumnBytes[] = {
+const Uint8 WindowUnusedPartyColumnBytes[] = {
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
 	29,
 	30,

@@ -63,7 +63,7 @@ script defines, `sySndMainRAMRom` and `Mixer_CallViaR3Rom`.
 - `src/system/channel_update_entry.s`, `resident_mixer.s` and
   `resident_mixer_interpolate.s` are Camelot's own mixer, resident in IWRAM
   beside `mixer_render.s`. The two games' code differs: The Lost Age mixes
-  528 samples a VBlank to The Broken Seal's 352, with other instructions.
+  528 samples a frame to The Broken Seal's 352, with other instructions.
 - `games/tla/src/sdk/sound/` holds kit bytes only The Lost Age's cartridge
   has: its live `MPlayMain` and `ply_note` in `mplay_main.s`, older copies
   of driver code (`leftover_driver.s`, `player_work_copy.c`,

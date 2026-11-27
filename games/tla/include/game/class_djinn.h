@@ -19,7 +19,7 @@ typedef struct CLASS_ABILITY {
 
 /* CLASS_DEFINITION.series, each named by its first class. The ten The Broken
    Seal has are the series a character's elements choose
-   (Class_SeriesByElements); 11 is in no row, 12 holds class 0, "NPC", an
+   (ClassSeriesByElements); 11 is in no row, 12 holds class 0, "NPC", an
    enemy's (CLASS_NONE), and the five after are The Lost Age's own, which
    gmClassDetermine gives for a character or an item. */
 typedef enum CLASS_SERIES {
@@ -56,7 +56,7 @@ typedef enum CLASS_SERIES {
 /* How many actions a class can teach (CLASS_DEFINITION.abilities). */
 #define CLASS_ABILITY_SLOTS 16
 
-/* How many classes Class_DefinitionTable holds. */
+/* How many classes ClassDefinitionTable holds. */
 #define CLASS_COUNT 244
 
 /* A class: its series, the element levels it needs, its stat multipliers and
@@ -76,7 +76,7 @@ typedef struct CLASS_DEFINITION {
 	Uint8		  weakEffs[4]; /* the ability effects the class is weak to */
 } CLASS_DEFINITION;
 
-extern const CLASS_DEFINITION Class_DefinitionTable[];
+extern const CLASS_DEFINITION ClassDefinitionTable[];
 
 STATIC_ASSERT(sizeof(CLASS_DEFINITION) == 84);
 STATIC_ASSERT(offsetof(DJINN_RECOVERY_TABLE, list) == 8);

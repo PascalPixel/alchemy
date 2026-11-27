@@ -17,7 +17,7 @@ void fdDjinnRunVenusJoinEffect(Sint32 djinniId)
 	FIELD_PARTICLE	   *effect;
 	Sint32				remaining;
 	FIXED				scale;
-	VECTOR3				position;
+	VECTOR3				pos;
 
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	djinni = fdActorGetById(djinniId);
@@ -55,16 +55,16 @@ void fdDjinnRunVenusJoinEffect(Sint32 djinniId)
 	sySynch(30);
 	fdMapGridSetScreenShakeStub(toFIXED(8) / 5, toFIXED(8) / 5, toFIXED(1));
 
-	position.x = djinni->x.fixed;
-	position.y = djinni->y.fixed;
-	position.z = djinni->z.fixed;
-	fdCameraWorldToScreen(&position);
+	pos.x = djinni->x.fixed;
+	pos.y = djinni->y.fixed;
+	pos.z = djinni->z.fixed;
+	fdCameraWorldToScreen(&pos);
 
-	/* One rising particle a frame into each of the 24 field effect sprites. */
+	/* One rising particle a tick into each of the 24 field effect sprites. */
 	effect = effectState->particles;
 	for(remaining = 0; remaining < (Sint32)ARRAY_COUNT(effectState->particles);
 		remaining++) {
-		fdParticleInit(effect, SPRITE_PARTICLE, position.x, position.z);
+		fdParticleInit(effect, SPRITE_PARTICLE, pos.x, pos.z);
 		fdParticleSetCallback(effect, fdEffectUpdateRadialSpread);
 		fdParticleSetAnimation(effect, ANIM_PARTICLE_TWINKLE);
 		fdSprSetAnimationColModesStub(effect->spr, SPRITE_COLOR_GREEN_TINT);
@@ -74,7 +74,7 @@ void fdDjinnRunVenusJoinEffect(Sint32 djinniId)
 		effect++;
 	}
 
-	/* After 140 frames every particle still in use stops rising. */
+	/* After 140 ticks every particle still in use stops rising. */
 	sySynch(140);
 	for(remaining = 0; remaining < PSYNERGY_EFFECT_SLOT_COUNT; remaining++) {
 		if(effectState->particles[remaining].active)
@@ -88,11 +88,10 @@ void fdDjinnRunVenusJoinEffect(Sint32 djinniId)
 
 	/* The motes, evenly spread round a circle, 120 pixels above the leader. */
 	for(remaining = 0; remaining < VENUS_JOIN_MOTES; remaining++) {
-		position.x = leader->x.fixed;
-		position.y = leader->y.fixed + toFIXED(120);
-		position.z = leader->z.fixed;
-		djinni =
-			fdActorSpawn(SPRITE_PARTICLE, position.x, position.y, position.z);
+		pos.x = leader->x.fixed;
+		pos.y = leader->y.fixed + toFIXED(120);
+		pos.z = leader->z.fixed;
+		djinni = fdActorSpawn(SPRITE_PARTICLE, pos.x, pos.y, pos.z);
 		if(djinni != NULL) {
 			scale = syRandom() / 3 + toFIXED(1);
 			djinni->scaleY = scale;
@@ -110,16 +109,15 @@ void fdDjinnRunVenusJoinEffect(Sint32 djinniId)
 	sySndPlayStub(SE_STOP_EXIT_SE);
 	sySynch(1);
 	sySndPlayStub(SE_LIGHT_APPEAR);
-	position.x = leader->x.fixed;
-	position.y = leader->y.fixed + toFIXED(18);
-	position.z = leader->z.fixed;
+	pos.x = leader->x.fixed;
+	pos.y = leader->y.fixed + toFIXED(18);
+	pos.z = leader->z.fixed;
 	/* 8 sparks from 18 pixels above the leader, each thrown 32 pixels in a
-	   random direction at 1.4 to 2.4 pixels a frame and 5 up (gravity is
-	   ACTOR.velY), falling, and released after 8 frames; stop at the first that
+	   random direction at 1.4 to 2.4 pixels a tick and 5 up (gravity is
+	   ACTOR.velY), falling, and released after 8 ticks; stop at the first that
 	   cannot be spawned. */
 	for(remaining = 0; remaining <= 7; remaining++) {
-		djinni =
-			fdActorSpawn(SPRITE_PARTICLE, position.x, position.y, position.z);
+		djinni = fdActorSpawn(SPRITE_PARTICLE, pos.x, pos.y, pos.z);
 		if(djinni == NULL)
 			break;
 		djinni->scaleY = toFIXED(3) / 5;
@@ -131,7 +129,7 @@ void fdDjinnRunVenusJoinEffect(Sint32 djinniId)
 		fdActorSetTargetPosFromMagnitudeAng(djinni, toFIXED(32), syRandom());
 		fdActorSetSprColModeStub(djinni, SPRITE_COLOR_GREEN_TINT);
 		djinni->wait = 8;
-		fdActorStartScriptStub(djinni, FieldEffect_ReleaseScript);
+		fdActorStartScriptStub(djinni, FieldEffectReleaseScript);
 	}
 
 	sySynch(15);
@@ -141,31 +139,30 @@ void fdDjinnRunVenusJoinEffect(Sint32 djinniId)
 
 /* Field effect sprite callback of a Mercury Djinni's droplets: each falls from
    100 pixels above (on screen) to a random point 2 to 8 pixels round a spot 15
-   to 20 pixels over the leader, at 3 to 6 pixels a frame, and where it lands
+   to 20 pixels over the leader, at 3 to 6 pixels a tick, and where it lands
    splashes 12 pixels in a random direction, at half size, with SE_CRACK. It
-   then falls again 6 frames later, until fdDjinnRunMercuryJoinEffect sets its
+   then falls again 6 ticks later, until fdDjinnRunMercuryJoinEffect sets its
    state to MERCURY_DROPLET_LAST_FALL: its next splash is its last. */
 void fdEffectUpdateRandomTargetParticle(FIELD_PARTICLE *effect)
 {
-	ACTOR  *source;
-	VECTOR3 position;
+	ACTOR  *src;
+	VECTOR3 pos;
 	Sint32	state;
 
-	source = fdActorGetById(MainRoutineStateWork.leaderActorId);
+	src = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	state = effect->state;
 
 	if(state == MERCURY_DROPLET_AIM) {
-		position.x = source->x.fixed;
-		position.y = source->y.fixed + syRandom() * 5 + toFIXED(15);
-		position.z = source->z.fixed;
-		fdCameraWorldToScreen(&position);
-		syVectorAddPolarOffset(
-			syRandom() * 6 + toFIXED(2), syRandom(), &position);
+		pos.x = src->x.fixed;
+		pos.y = src->y.fixed + syRandom() * 5 + toFIXED(15);
+		pos.z = src->z.fixed;
+		fdCameraWorldToScreen(&pos);
+		syVectorAddPolarOffset(syRandom() * 6 + toFIXED(2), syRandom(), &pos);
 
-		effect->tgtX = position.x;
-		effect->tgtZ = position.z;
-		effect->x = position.x;
-		effect->z = position.z - toFIXED(100);
+		effect->tgtX = pos.x;
+		effect->tgtZ = pos.z;
+		effect->x = pos.x;
+		effect->z = pos.z - toFIXED(100);
 		effect->acceleration = toFIXED(3);
 		effect->speedMax = syRandom() * 3 + toFIXED(3);
 		effect->scaleX = toFIXED(1);
@@ -176,11 +173,11 @@ void fdEffectUpdateRandomTargetParticle(FIELD_PARTICLE *effect)
 	} else if((Uint8)(effect->state - MERCURY_DROPLET_FALLING) <=
 		MERCURY_DROPLET_LAST_FALL - MERCURY_DROPLET_FALLING) {
 		if(fdParticleHasPendingTarget(effect) == 0) {
-			position.x = effect->x;
-			position.z = effect->z;
-			syVectorAddPolarOffset(toFIXED(12), syRandom(), &position);
-			effect->tgtX = position.x;
-			effect->tgtZ = position.z;
+			pos.x = effect->x;
+			pos.z = effect->z;
+			syVectorAddPolarOffset(toFIXED(12), syRandom(), &pos);
+			effect->tgtX = pos.x;
+			effect->tgtZ = pos.z;
 			effect->stopAtTgt = 0;
 			effect->speed = toFIXED(1);
 			effect->acceleration = 0;

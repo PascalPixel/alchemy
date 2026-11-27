@@ -464,7 +464,7 @@ typedef enum SPR_ID {
 	   thrower. */
 	SPRITE_DRAGON_HEAD_SIDE,
 	SPRITE_ROBED_STATUE,
-	/* A flame as wide as it is tall, 32 pixels, in three frames. */
+	/* A flame as wide as it is tall, 32 pixels, in three ticks. */
 	SPRITE_BROAD_FLAME,
 	SPRITE_MARS_TORCH_LIT,
 	SPRITE_MARS_TORCH,

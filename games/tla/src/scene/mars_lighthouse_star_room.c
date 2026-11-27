@@ -151,7 +151,7 @@ void scMarsLighthouseStarRoomEndBlazeOnWestTorch(void)
 {
 }
 
-void scActorSetupScriptedPart(ACTOR *actor, Sint32 priority);
+void scActorSetupScriptedPart(ACTOR *actor, Sint32 pri);
 
 /* Creates one of the dragon hall's effects at a point in the room. */
 static __inline__ ACTOR *scMarsLighthouseStarRoomCreateActor(
@@ -160,23 +160,23 @@ static __inline__ ACTOR *scMarsLighthouseStarRoomCreateActor(
 	return syImportActorCreate(kind, x, y, z);
 }
 
-extern Sint16 SlideOnIce_SteerAngles[];
+extern Sint16 SlideOnIceSteerAngles[];
 
-extern Uint32 Debris_Script[];
+extern Uint32 DebrisScript[];
 
 /* Six chips of ice burst from an actor and bounce away: the wind stone's
    sprite, tinted to ice. Each flies off on a random heading at up to 8 pixels a
-   frame, and rises at 2 to 6, higher the further round its heading is. */
+   tick, and rises at 2 to 6, higher the further round its heading is. */
 void scMarsLighthouseStarRoomScatterIceChips(Sint32 id)
 {
-	ACTOR *source = fdActorGet(id);
+	ACTOR *src = fdActorGet(id);
 	Sint32 i;
 
 	for(i = 0; i < 6; i++) {
-		FIXED  x = source->x.fixed + (syRandom() << 4) - (syRandom() << 4);
+		FIXED  x = src->x.fixed + (syRandom() << 4) - (syRandom() << 4);
 		ACTOR *actor = scMarsLighthouseStarRoomCreateActor(SPRITE_WIND_STONE, x,
-			(syRandom() << 3) + source->y.fixed + toFIXED(4),
-			source->z.fixed + (syRandom() << 4) - (syRandom() << 4));
+			(syRandom() << 3) + src->y.fixed + toFIXED(4),
+			src->z.fixed + (syRandom() << 4) - (syRandom() << 4));
 
 		if(actor != NULL) {
 			Sint32 heading;
@@ -186,7 +186,7 @@ void scMarsLighthouseStarRoomScatterIceChips(Sint32 id)
 			heading = syRandom();
 			speed = syRandom();
 			scale = ((Uint32)syRandom() >> 1) + toFIXED(1) / 4;
-			fdActorStartScript(actor, Debris_Script);
+			fdActorStartScript(actor, DebrisScript);
 			fdActorSetSprFlags(actor, 0);
 			actor->velY = heading * 4 + toFIXED(2);
 			actor->velZ = syMulFX(speed * 8, syCos(heading));
@@ -256,7 +256,7 @@ void scMarsLighthouseStarRoomClearDragonIce(void);
 /* Felix casts Burst on the cracked ice the Flame Dragons sleep in, metatiles
    (41, 14) to (43, 14): a flash, the ice gone, chips flying, and the dragons
    wake. */
-void scMarsLighthouseStarRoomBurstIce(Sint32 phase, Sint32 frame)
+void scMarsLighthouseStarRoomBurstIce(Sint32 phase, Sint32 frm)
 {
 	if(phase == 1) {
 		fdScriptPlaySnd(SE_FLASH);
@@ -269,10 +269,10 @@ void scMarsLighthouseStarRoomBurstIce(Sint32 phase, Sint32 frame)
 #endif
 		FieldStateWork->raisedCue = DRAGON_WAKE_CUE;
 	}
-	/* From frame 97 to 271, chips burst from the ice every 30 frames. */
-	if((Uint32)(frame - 97) <= 174 && frame % 30 == 0)
+	/* From tick 97 to 271, chips burst from the ice every 30 ticks. */
+	if((Uint32)(frm - 97) <= 174 && frm % 30 == 0)
 		scMarsLighthouseStarRoomScatterIceChips(ACTOR_ICE_CRACK);
-	if(frame == 276) {
+	if(frm == 276) {
 		fdPaletteFadeApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
 		fdPaletteFadeInterpolate(20);
 	}
@@ -290,7 +290,7 @@ void scMarsLighthouseStarRoomCreateMarsStar(Sint32 rise);
 void scMarsLighthouseStarRoomLayDownAdept(Sint32 actor);
 void scFlameThrowersCreate(void);
 void scCrackedTileDropIn(void);
-ACTOR *MarsLighthouseStarRoom_MarsStar BSS_DATA;
+ACTOR *MarsLighthouseStarRoomMarsStar BSS_DATA;
 
 Sint32 scInit(void)
 {
@@ -299,7 +299,7 @@ Sint32 scInit(void)
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	MarsLighthouseStarRoom_MarsStar = NULL;
+	MarsLighthouseStarRoomMarsStar = NULL;
 	fdScriptSetFlag(FLAG_IN_MARS_LIGHTHOUSE);
 	scFlameThrowersCreate();
 	scFlameThrowersStart(0, 0, 0, STEP_CUE_FLAME_HIT);
@@ -439,10 +439,10 @@ void scMarsLighthouseStarRoomWakeFlameDragons(void)
 }
 
 extern Uint8  MsgMarsLighthouseStarRoomWhyWhyAmILying[];
-extern Sint32 MarsLighthouseStarRoom_LightRiseScript[];
-extern Sint32 MarsLighthouseStarRoom_LightSinkScript[];
-extern Sint32 MarsLighthouseStarRoom_AgatioDragonShrinkScript[];
-extern Sint32 MarsLighthouseStarRoom_KarstDragonShrinkScript[];
+extern Sint32 MarsLighthouseStarRoomLightRiseScript[];
+extern Sint32 MarsLighthouseStarRoomLightSinkScript[];
+extern Sint32 MarsLighthouseStarRoomAgatioDragonShrinkScript[];
+extern Sint32 MarsLighthouseStarRoomKarstDragonShrinkScript[];
 
 /* After the battle the dragons shrink into two lights that sink to the floor,
    and Agatio and Karst lie there: lost in the frozen lighthouse, its eye took
@@ -478,7 +478,7 @@ void scMarsLighthouseStarRoomWakeAfterBattle(void)
 	fdMapGridCenterOnFollowedPoint();
 	syWait(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
 	syFieldScriptWait(20);
 	fdScriptPlaySnd(SE_LIGHT_APPEAR);
@@ -492,19 +492,19 @@ void scMarsLighthouseStarRoomWakeAfterBattle(void)
 	fdActorPlaceOnActor(ACTOR_KARST_LIGHT, ACTOR_KARST_DRAGON);
 	syWait(1);
 	fdActorSetScript(ACTOR_AGATIO_DRAGON,
-		(Sint32)&MarsLighthouseStarRoom_AgatioDragonShrinkScript);
+		(Sint32)&MarsLighthouseStarRoomAgatioDragonShrinkScript);
 	fdActorSetScript(ACTOR_KARST_DRAGON,
-		(Sint32)&MarsLighthouseStarRoom_KarstDragonShrinkScript);
+		(Sint32)&MarsLighthouseStarRoomKarstDragonShrinkScript);
 	fdActorSetScript(
-		ACTOR_AGATIO_LIGHT, (Sint32)&MarsLighthouseStarRoom_LightRiseScript);
+		ACTOR_AGATIO_LIGHT, (Sint32)&MarsLighthouseStarRoomLightRiseScript);
 	fdActorRunScriptAndWait(
-		ACTOR_KARST_LIGHT, (Sint32)&MarsLighthouseStarRoom_LightRiseScript);
+		ACTOR_KARST_LIGHT, (Sint32)&MarsLighthouseStarRoomLightRiseScript);
 	scMarsLighthouseStarRoomLayDownAdept(ACTOR_AGATIO);
 	scMarsLighthouseStarRoomLayDownAdept(ACTOR_KARST);
 	fdActorSetScript(
-		ACTOR_AGATIO_LIGHT, (Sint32)&MarsLighthouseStarRoom_LightSinkScript);
+		ACTOR_AGATIO_LIGHT, (Sint32)&MarsLighthouseStarRoomLightSinkScript);
 	fdActorRunScriptAndWait(
-		ACTOR_KARST_LIGHT, (Sint32)&MarsLighthouseStarRoom_LightSinkScript);
+		ACTOR_KARST_LIGHT, (Sint32)&MarsLighthouseStarRoomLightSinkScript);
 	syFieldScriptWait(10);
 	scFieldActorSetSprCol(fdActorGet(ACTOR_AGATIO), SPRITE_COLOR_NORMAL);
 	scFieldActorSetSprCol(fdActorGet(ACTOR_KARST), SPRITE_COLOR_NORMAL);
@@ -598,10 +598,10 @@ void scMarsLighthouseStarRoomDrawStarWithLeader(ACTOR *actor)
 /* The Mars Star as an actor on the floor by Agatio, rising first when asked. */
 void scMarsLighthouseStarRoomCreateMarsStar(Sint32 rise)
 {
-	ACTOR		 **slot = &MarsLighthouseStarRoom_MarsStar;
+	ACTOR		 **slot = &MarsLighthouseStarRoomMarsStar;
 	ICON_TRANSFER *glyph;
 	ACTOR		  *actor;
-	FIELD_SPR	  *sprite;
+	FIELD_SPR	  *spr;
 	Sint32		   size;
 	Uint8		   clear = 0;
 
@@ -610,19 +610,19 @@ void scMarsLighthouseStarRoomCreateMarsStar(Sint32 rise)
 	*slot = actor;
 	if(actor == NULL)
 		return;
-	sprite = actor->spr;
-	sprite->fullCol = 0;
-	sprite->pal = 0;
-	sprite->pri = 1;
+	spr = actor->spr;
+	spr->fullCol = 0;
+	spr->pal = 0;
+	spr->pri = 1;
 	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	actor->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
 	actor->update = scMarsLighthouseStarRoomDrawStarWithLeader;
 	size = sizeof(ICON_TRANSFER);
-	sprite->flg = clear;
-	sprite->cnt = clear;
+	spr->flg = clear;
+	spr->cnt = clear;
 	glyph = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, size);
 	gmItemLoadIcon(ITEM_MARS_STAR);
-	mnVRAMLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
+	mnVRAMLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	if(rise) {
 		syWait(1);
@@ -675,13 +675,13 @@ void scMarsLighthouseStarRoomTakeMarsStar(void)
 			MainRoutineStateWork.leaderActorId, FACING_SOUTH);
 		fdActorSetAnimation(
 			MainRoutineStateWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
-		actor = MarsLighthouseStarRoom_MarsStar;
+		actor = MarsLighthouseStarRoomMarsStar;
 		actor->motionFlg = 0;
 		actor->speedLimit = toFIXED(4);
 		actor->acceleration = toFIXED(2);
 		scFieldActorSetMoveTargetFX(actor, leader->x.fixed,
 			leader->y.fixed + toFIXED(32), leader->z.fixed);
-		scFieldActorWaitForMove(MarsLighthouseStarRoom_MarsStar);
+		scFieldActorWaitForMove(MarsLighthouseStarRoomMarsStar);
 		fdScriptPlaySnd(MUS_TREASURE_FOUND);
 		gmPartyInventoryRemove(ITEM_MYTHRIL_BAG);
 		gmInventoryAddItem(FELIX, ITEM_MYTHRIL_BAG_MARS_STAR);
@@ -698,9 +698,9 @@ void scMarsLighthouseStarRoomTakeMarsStar(void)
 		fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_STAND);
 		fdScriptSetFlag(FLAG_MARS_STAR_TAKEN);
 		scFieldActorSetPosAndResetMotion(
-			MarsLighthouseStarRoom_MarsStar, 0, 0, 0);
+			MarsLighthouseStarRoomMarsStar, 0, 0, 0);
 		syWait(1);
-		fdActorRelease(MarsLighthouseStarRoom_MarsStar);
+		fdActorRelease(MarsLighthouseStarRoomMarsStar);
 		syWait(1);
 		fdCameraSetSpeed(4.8);
 		fdCameraMoveTo(680, CAMERA_KEEP, 146, 1);
@@ -775,7 +775,7 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
 {
 	ACTOR		 **slot;
 	ACTOR		  *actor;
-	FIELD_SPR	  *sprite;
+	FIELD_SPR	  *spr;
 	ICON_TRANSFER *glyph;
 	PALETTE_FADE  *fade;
 
@@ -788,23 +788,23 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
 	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
 	syWait(1);
 	fdScriptPlaySnd(SE_GEM_SET);
-	slot = &MarsLighthouseStarRoom_MarsStar;
+	slot = &MarsLighthouseStarRoomMarsStar;
 	actor = scFieldActorCreate(
 		SPRITE_UNSEEN_MARKER, toFIXED(680), toFIXED(8), toFIXED(147));
 	*slot = actor;
 	if(actor != 0) {
-		sprite = actor->spr;
-		sprite->flg = 0;
-		sprite->fullCol = 0;
-		sprite->pal = 0;
-		sprite->pri = 2;
+		spr = actor->spr;
+		spr->flg = 0;
+		spr->fullCol = 0;
+		spr->pal = 0;
+		spr->pri = 2;
 		actor->motionFlg = 0;
 		actor->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
-		sprite->cnt = 0;
+		spr->cnt = 0;
 		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
 		glyph = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		gmItemLoadIcon(ITEM_MARS_STAR);
-		mnVRAMLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
+		mnVRAMLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	}
 	syFieldScriptWait(20);
@@ -823,8 +823,7 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
 	fdPaletteFadeApplyTarget(PALETTE_TINT_RED, PALETTES_ALL);
 	fdPaletteFadeInterpolate(80);
 	syFieldScriptWait(80);
-	sySetFrameEvent(
-		scMarsLighthouseStarRoomSpawnRisingSparks, EVENT_PASS_FRAME);
+	sySetTickEvent(scMarsLighthouseStarRoomSpawnRisingSparks, EVENT_PASS_TICK);
 	fdCameraSetSpeed(4.8);
 	fdCameraMoveTo(680, CAMERA_KEEP, 480, 1);
 	fdCameraWaitForArrival();
@@ -898,15 +897,15 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
    back out. */
 void scMarsLighthouseStarRoomUseMarsStar(void)
 {
-	Sint32		   flag;
+	Sint32		   flg;
 	ACTOR		 **slot, **placedStarSlot;
 	ACTOR		  *actor, *placedStar;
-	FIELD_SPR	  *sprite, *placedStarSprite;
+	FIELD_SPR	  *spr, *placedStarSpr;
 	ICON_TRANSFER *glyph, *placedStarGlyph;
 	Uint16		  *palette;
 
-	flag = fdScriptGetFlag(FLAG_MARS_STAR_SET);
-	if(flag == 0) {
+	flg = fdScriptGetFlag(FLAG_MARS_STAR_SET);
+	if(flg == 0) {
 	} else {
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
@@ -916,24 +915,24 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
 		fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
 		syWait(1);
 		fdScriptPlaySnd(SE_GEM_SET);
-		slot = &MarsLighthouseStarRoom_MarsStar;
+		slot = &MarsLighthouseStarRoomMarsStar;
 		actor = (ACTOR *)scFieldActorCreate(
 			SPRITE_UNSEEN_MARKER, toFIXED(680), toFIXED(8), toFIXED(147));
 		*slot = actor;
 		if(actor != 0) {
-			sprite = actor->spr;
-			sprite->flg = 0;
-			sprite->fullCol = 0;
-			sprite->pal = 0;
-			sprite->pri = 2;
+			spr = actor->spr;
+			spr->flg = 0;
+			spr->fullCol = 0;
+			spr->pal = 0;
+			spr->pri = 2;
 			actor->motionFlg = 0;
 			actor->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
-			sprite->cnt = 0;
+			spr->cnt = 0;
 			actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
 			glyph =
 				syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 			gmItemLoadIcon(ITEM_MARS_STAR);
-			mnVRAMLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
+			mnVRAMLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
 			syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 		}
 		syFieldScriptWait(20);
@@ -985,17 +984,17 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
 	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
 	syWait(1);
 	fdScriptPlaySnd(SE_GEM_SET);
-	placedStarSlot = &MarsLighthouseStarRoom_MarsStar;
+	placedStarSlot = &MarsLighthouseStarRoomMarsStar;
 	placedStar = scFieldActorCreate(
 		SPRITE_UNSEEN_MARKER, toFIXED(680), toFIXED(8), toFIXED(147));
 	*placedStarSlot = placedStar;
 	if(placedStar != 0) {
-		placedStarSprite = placedStar->spr;
-		placedStarSprite->flg = 0;
-		placedStarSprite->cnt = 0;
-		placedStarSprite->fullCol = 0;
-		placedStarSprite->pal = 0;
-		placedStarSprite->pri = 2;
+		placedStarSpr = placedStar->spr;
+		placedStarSpr->flg = 0;
+		placedStarSpr->cnt = 0;
+		placedStarSpr->fullCol = 0;
+		placedStarSpr->pal = 0;
+		placedStarSpr->pri = 2;
 		placedStar->motionFlg = 0;
 		placedStar->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
 		placedStar->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
@@ -1003,7 +1002,7 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
 			syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		gmItemLoadIcon(ITEM_MARS_STAR);
 		mnVRAMLoad(
-			placedStarSprite->slot, ICON_TILE_BYTES, placedStarGlyph->tiles);
+			placedStarSpr->slot, ICON_TILE_BYTES, placedStarGlyph->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	}
 	syFieldScriptWait(20);
@@ -1022,8 +1021,7 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
 	fdPaletteFadeApplyTarget(PALETTE_TINT_RED, PALETTES_ALL);
 	fdPaletteFadeInterpolate(80);
 	syFieldScriptWait(80);
-	sySetFrameEvent(
-		scMarsLighthouseStarRoomSpawnRisingSparks, EVENT_PASS_FRAME);
+	sySetTickEvent(scMarsLighthouseStarRoomSpawnRisingSparks, EVENT_PASS_TICK);
 	fdCameraSetSpeed(4.8);
 	fdCameraMoveTo(680, CAMERA_KEEP, 480, 1);
 	fdCameraWaitForArrival();
@@ -1088,10 +1086,10 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
 
 #endif
 
-#define RISING_SPARK_FRAMES				60 /* a spark's life */
-/* The frames a rising spark has left, kept where an actor keeps its watched
+#define RISING_SPARK_TICKS			   60 /* a spark's life */
+/* The ticks a rising spark has left, kept where an actor keeps its watched
    actor. */
-#define RISING_SPARK_FRAMES_LEFT(actor) (*(Sint32 *)&(actor)->watchedActor)
+#define RISING_SPARK_TICKS_LEFT(actor) (*(Sint32 *)&(actor)->watchedActor)
 
 /* A spark rises and grows for a second, then is gone. */
 void scMarsLighthouseStarRoomUpdateRisingSpark(ACTOR *actor)
@@ -1102,10 +1100,10 @@ void scMarsLighthouseStarRoomUpdateRisingSpark(ACTOR *actor)
 	growth = toFIXED(1) / 50;
 	actor->scaleX += growth;
 	actor->scaleY += growth;
-	RISING_SPARK_FRAMES_LEFT(actor)--;
-	if(RISING_SPARK_FRAMES_LEFT(actor) == 1)
+	RISING_SPARK_TICKS_LEFT(actor)--;
+	if(RISING_SPARK_TICKS_LEFT(actor) == 1)
 		scFieldActorSetPosAndResetMotion(actor, 0, 0, 0);
-	else if(RISING_SPARK_FRAMES_LEFT(actor) == 0)
+	else if(RISING_SPARK_TICKS_LEFT(actor) == 0)
 		fdActorRelease(actor);
 }
 
@@ -1115,21 +1113,21 @@ void scMarsLighthouseStarRoomUpdateRisingSpark(ACTOR *actor)
 #define EAST_SPARKS_X 712
 #define SPARKS_Z	  460
 
-/* While the lighthouse thaws, sparks rise from the floor every other frame. */
+/* While the lighthouse thaws, sparks rise from the floor every other tick. */
 void scMarsLighthouseStarRoomSpawnRisingSparks(void)
 {
-	Uint32	   frame = FrameCount;
+	Uint32	   frm = TickCount;
 	ACTOR	  *actor;
-	FIELD_SPR *sprite;
+	FIELD_SPR *spr;
 	Uint32	   x, r;
 	Sint32	   z;
 	Sint32	   left;
 
-	if(frame & 1)
+	if(frm & 1)
 		return;
 	/* Each side makes its own spark, in turn: x is a random 28 pixels from the
 	   strip's west edge, z a random 120 from SPARKS_Z. */
-	if((frame >> 1) & 1) {
+	if((frm >> 1) & 1) {
 		r = syRandom();
 		x = r << 3;
 		x -= r;
@@ -1167,20 +1165,20 @@ void scMarsLighthouseStarRoomSpawnRisingSparks(void)
 		actor->motionFlg = 0;
 		actor->tmr = 0;
 		actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-		sprite = actor->spr;
-		sprite->pri = 2;
+		spr = actor->spr;
+		spr->pri = 2;
 		fdActorSetSprFlags(actor, 0);
 		actor->scaleX = toFIXED(1) / 2;
 		actor->scaleY = toFIXED(1) / 2;
-		RISING_SPARK_FRAMES_LEFT(actor) = RISING_SPARK_FRAMES;
+		RISING_SPARK_TICKS_LEFT(actor) = RISING_SPARK_TICKS;
 		actor->update = scMarsLighthouseStarRoomUpdateRisingSpark;
 		fdActorSelectAnimation(actor, 5);
 		fdActorSetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
 	}
 }
 
-extern Sint32 MarsLighthouseStarRoom_WestSparkleRoute[];
-extern Sint32 MarsLighthouseStarRoom_EastSparkleRoute[];
+extern Sint32 MarsLighthouseStarRoomWestSparkleRoute[];
+extern Sint32 MarsLighthouseStarRoomEastSparkleRoute[];
 
 /* The west torch sends its two sparkles round the hall, west and east; each
    launches its fireball at the ice, the west one rolling east and the east one
@@ -1188,9 +1186,9 @@ extern Sint32 MarsLighthouseStarRoom_EastSparkleRoute[];
 void scMarsLighthouseStarRoomShootFireballs(void)
 {
 	scActorAttach(ACTOR_WEST_TORCH, ACTOR_WEST_SPARKLE, ACTOR_WEST_FIREBALL,
-		FACING_EAST, MarsLighthouseStarRoom_WestSparkleRoute);
+		FACING_EAST, MarsLighthouseStarRoomWestSparkleRoute);
 	scActorAttach(ACTOR_WEST_TORCH, ACTOR_EAST_SPARKLE, ACTOR_EAST_FIREBALL,
-		FACING_WEST, MarsLighthouseStarRoom_EastSparkleRoute);
+		FACING_WEST, MarsLighthouseStarRoomEastSparkleRoute);
 }
 
 #include "shared/actor_is_touching.h"
@@ -1199,16 +1197,16 @@ void scMarsLighthouseStarRoomShootFireballs(void)
 
 #include "shared/flame_update_forward.h"
 
-extern Sint32 ScriptedPart_Script[];
+extern Sint32 ScriptedPartScript[];
 
 #include "shared/actor_reset_scripted_for.h"
 
-/* A flame thrower's flame sent forward from `position` at `speed`; `flag` keeps
+/* A flame thrower's flame sent forward from `pos` at `speed`; `flg` keeps
    its sprite when off screen. */
-void scFlameThrowerSendForward(Sint32 *position, Sint32 speed, Sint32 flag)
+void scFlameThrowerSendForward(Sint32 *pos, Sint32 speed, Sint32 flg)
 {
-	ACTOR *actor = scFieldActorCreate(
-		SPRITE_BLAZE_FLAME, position[0], position[1], position[2]);
+	ACTOR *actor =
+		scFieldActorCreate(SPRITE_BLAZE_FLAME, pos[0], pos[1], pos[2]);
 
 	if(actor != NULL) {
 		actor->bounce = 0;
@@ -1216,7 +1214,7 @@ void scFlameThrowerSendForward(Sint32 *position, Sint32 speed, Sint32 flag)
 		actor->sceneWord = speed;
 		scActorResetScriptedFor(actor, 2);
 		actor->update = scFlameUpdateForward;
-		if(flag != 0)
+		if(flg != 0)
 			actor->retainSprCache = ACTOR_COMPOSE_OFF_SCREEN;
 		fdActorSelectAnimation(actor, 2);
 	}
@@ -1251,11 +1249,11 @@ Bool fdActorIsBeside(ACTOR *a, ACTOR *b);
 
 DEFINE_RIDE_SPAWN_BACKWARD(scFlameThrowerSendBackward, scFlameUpdateForward)
 
-/* A flame thrower's flame that lands as it goes forward from `position`. */
-void scFlameThrowerSendEast(Sint32 *position, Sint32 speed, Sint32 flag)
+/* A flame thrower's flame that lands as it goes forward from `pos`. */
+void scFlameThrowerSendEast(Sint32 *pos, Sint32 speed, Sint32 flg)
 {
-	ACTOR *actor = scFieldActorCreate(
-		SPRITE_BLAZE_FLAME, position[0], position[1], position[2]);
+	ACTOR *actor =
+		scFieldActorCreate(SPRITE_BLAZE_FLAME, pos[0], pos[1], pos[2]);
 
 	if(actor != NULL) {
 		actor->bounce = 0;
@@ -1263,7 +1261,7 @@ void scFlameThrowerSendEast(Sint32 *position, Sint32 speed, Sint32 flag)
 		actor->sceneWord = speed;
 		scActorSetupScriptedPart(actor, 3);
 		actor->update = scFlameUpdateSideways;
-		if(flag != 0)
+		if(flg != 0)
 			actor->retainSprCache = ACTOR_COMPOSE_OFF_SCREEN;
 		fdActorSelectAnimation(actor, 2);
 	}
@@ -1280,10 +1278,10 @@ DEFINE_RIDE_SPAWN_BACKWARD(scFlameThrowerSendWest, scFlameUpdateSideways)
 void scFlameThrowerUpdateSpark();
 
 /* A spark puffed from a flame thrower, drifting off in a random direction. */
-void scFlameThrowerSendSpark(Sint32 *position, Sint32 base, Sint32 mode)
+void scFlameThrowerSendSpark(Sint32 *pos, Sint32 base, Sint32 mode)
 {
 	ACTOR *actor = scMarsLighthouseStarRoomCreateActor(
-		SPRITE_DUST_CLOUD, position[0], position[1], position[2] - toFIXED(2));
+		SPRITE_DUST_CLOUD, pos[0], pos[1], pos[2] - toFIXED(2));
 	Sint32 spin;
 
 	if(actor != 0) {
@@ -1350,7 +1348,7 @@ void scMarsLighthouseStarRoomKnockBackIfHit(void)
    beaten: he is hurt, sits down blinking, and is carried along with the
    fireball until it stops.
 
-   The fireball is the hit state's `car`; Felix moves by its step each frame,
+   The fireball is the hit state's `car`; Felix moves by its step each tick,
    stopping at the centre of a metatile where the floor ends. */
 Sint32 scFireballCarryLeader(void)
 {
@@ -1421,11 +1419,11 @@ Sint32 scMarsLighthouseStarRoomIsLeaderHit(void)
 	return FLAME_THROWERS_STATE->active;
 }
 
-extern Uint32 Crumbs_Script[];
+extern Uint32 CrumbsScript[];
 
 #include "shared/actor_scatter_crumbs.c"
 
-extern Uint32 IceChips_Script[];
+extern Uint32 IceChipsScript[];
 
 #include "shared/ice_chips_spawn.h"
 
@@ -1449,19 +1447,19 @@ Sint32 fdMapGetTerrainHeight(Sint32 layer, Sint32 x, Sint32 z);
 
 #include "shared/leader_stop_if_pending.h"
 
-extern Sint16 SlideOnIce_AnglesByKey[];
+extern Sint16 SlideOnIceAnglesByKey[];
 
 #include "shared/leader_slide_on_ice.h"
 
-volatile Sint16 SlideOnIce_Stopped BSS_DATA;
-METATILE_TARGET CrackedTiles	   BSS_DATA;
+volatile Sint16 SlideOnIceStopped BSS_DATA;
+METATILE_TARGET CrackedTiles	  BSS_DATA;
 
 #include "shared/slide_on_ice_from_edge.c"
 
 /* Stops the leader's slide on the ice where it is (nonzero), or lets it run. */
 void scLeaderSetSlideStopped(Sint32 value)
 {
-	SlideOnIce_Stopped = value;
+	SlideOnIceStopped = value;
 }
 
 #include "shared/leader_slide_on_ice_ahead.h"
@@ -1474,7 +1472,7 @@ void scLeaderSetSlideStopped(Sint32 value)
 #undef IWRAM
 #undef STATE
 #undef Position
-extern const Sint32 *FieldEffect_DurationScripts[];
+extern const Sint32 *FieldEffectDurationScripts[];
 #define EFFECT_SET_MODE	  fdActorSelectAnimation
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
@@ -1497,20 +1495,20 @@ extern const Sint32 *FieldEffect_DurationScripts[];
 #undef METATILE_PUSH_SLOT_ENTRY
 #include "shared/cracked_tile_drop_in.h"
 
-void syGameFlagSetByte(Sint32 flag, Sint32 value);
+void syGameFlagSetByte(Sint32 flg, Sint32 value);
 
 #include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"
 
-extern Sint32 MarsLighthouseStarRoom_TorchScript[];
+extern Sint32 MarsLighthouseStarRoomTorchScript[];
 
 #include "shared/debris_script.c"
 
 /* clang-format off */
 /* The west sparkle's way from the west torch round the west side of the hall */
 /* and up to the ice, where it leaves its fireball to roll in. */
-Sint32 MarsLighthouseStarRoom_WestSparkleRoute[] = {
+Sint32 MarsLighthouseStarRoomWestSparkleRoute[] = {
 	SC_CALL(scActorPopUp),
 	SC_MOVE(616, 0, 264),
 	SC_SYNC,
@@ -1542,7 +1540,7 @@ Sint32 MarsLighthouseStarRoom_WestSparkleRoute[] = {
 };
 
 /* The east sparkle's longer way round the east side of the hall to the ice. */
-Sint32 MarsLighthouseStarRoom_EastSparkleRoute[] = {
+Sint32 MarsLighthouseStarRoomEastSparkleRoute[] = {
 	SC_CALL(scActorPopUp),
 	SC_MOVE(680, 0, 264),
 	SC_SYNC,
@@ -1594,13 +1592,13 @@ Sint32 MarsLighthouseStarRoom_EastSparkleRoute[] = {
 
 #include "shared/field_effect_duration_scripts.c"
 
-Sint32 MarsLighthouseStarRoom_TorchScript[] = {
+Sint32 MarsLighthouseStarRoomTorchScript[] = {
 	SC_CALL(scMarsLighthouseStarRoomSetUpTorch),
 	SC_END,
 };
 
-/* A light rises from a shrinking dragon, growing, for 40 frames. */
-Sint32 MarsLighthouseStarRoom_LightRiseScript[] = {
+/* A light rises from a shrinking dragon, growing, for 40 ticks. */
+Sint32 MarsLighthouseStarRoomLightRiseScript[] = {
 	SC_ADD(SW_SCALE_X, toFIXED(1) / 64),
 	SC_ADD(SW_SCALE_Y, toFIXED(1) / 64),
 	SC_ADD(SW_Y, -toFIXED(1) / 4),
@@ -1610,7 +1608,7 @@ Sint32 MarsLighthouseStarRoom_LightRiseScript[] = {
 };
 
 /* The light sinks to the floor, shrinking, and is put away. */
-Sint32 MarsLighthouseStarRoom_LightSinkScript[] = {
+Sint32 MarsLighthouseStarRoomLightSinkScript[] = {
 	SC_ADD(SW_SCALE_X, -toFIXED(1) / 32),
 	SC_ADD(SW_SCALE_Y, -toFIXED(1) / 32),
 	SC_ADD(SW_Y, toFIXED(1) / 4),
@@ -1621,9 +1619,9 @@ Sint32 MarsLighthouseStarRoom_LightSinkScript[] = {
 	SC_END,
 };
 
-/* The dragons shrink to nothing over 40 frames and are put away; Karst's, */
+/* The dragons shrink to nothing over 40 ticks and are put away; Karst's, */
 /* which faces the other way, mirrored. */
-Sint32 MarsLighthouseStarRoom_AgatioDragonShrinkScript[] = {
+Sint32 MarsLighthouseStarRoomAgatioDragonShrinkScript[] = {
 	SC_ADD(SW_SCALE_X, -toFIXED(1) / 64),
 	SC_ADD(SW_SCALE_Y, -toFIXED(1) / 64),
 	SC_WAIT(1),
@@ -1633,7 +1631,7 @@ Sint32 MarsLighthouseStarRoom_AgatioDragonShrinkScript[] = {
 	SC_END,
 };
 
-Sint32 MarsLighthouseStarRoom_KarstDragonShrinkScript[] = {
+Sint32 MarsLighthouseStarRoomKarstDragonShrinkScript[] = {
 	SC_ADD(SW_SCALE_X, toFIXED(1) / 64),
 	SC_ADD(SW_SCALE_Y, -toFIXED(1) / 64),
 	SC_WAIT(1),
@@ -1680,10 +1678,10 @@ Uint32 SceneExits[] = {
 
 ACTOR_PLACE ActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS,
-		(Sint32)MarsLighthouseStarRoom_TorchScript, 712, 0, 264, FACING_SOUTH,
+		(Sint32)MarsLighthouseStarRoomTorchScript, 712, 0, 264, FACING_SOUTH,
 		TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS,
-		(Sint32)MarsLighthouseStarRoom_TorchScript, 648, 0, 264, FACING_SOUTH,
+		(Sint32)MarsLighthouseStarRoomTorchScript, 648, 0, 264, FACING_SOUTH,
 		TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_ICE_CRACK, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_CLEAR_COLLISION, 680, 0, 240, FACING_SOUTH,
@@ -1765,8 +1763,8 @@ CUE SceneCues[] = {
 	{CUE_TABLE_END},
 };
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };

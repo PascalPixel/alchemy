@@ -21,7 +21,7 @@ struct BATTLE_EFFECT_PARM;
    heap slot `slot`, built from BlitterTemplate for one clip, mirroring and
    blend mode. */
 Sint32 btEffectBuildBlitter(Sint32 slot, Sint32 widthShift, Sint32 heightShift,
-	Sint32 flags, Uint32 mode);
+	Sint32 flg, Uint32 mode);
 /* Runs a battle effect from the second range of kinds: the casting impacts, the
    plain attacks' beams and their critical hits' ring and sparks, and the canvas
    burst. */
@@ -30,7 +30,7 @@ void btEffectRunByIdRange(struct BATTLE_EFFECT_PARM *args);
    abilities: takes the effect's sprite sheet, state and canvas, runs the effect
    of args->kind (SUMMON_EFFECT_ID) and frees them again. */
 void btEffectRunSummon(struct BATTLE_EFFECT_PARM *args);
-/* Runs an ordinary battle effect from BattleEffect_Handlers, with the sprite
+/* Runs an ordinary battle effect from BattleEffectHandlers, with the sprite
    sheet, state and canvas it lends. */
 void btEffectRunFromTable(struct BATTLE_EFFECT_PARM *args);
 /* A pillar of light in an element's colours stands at a unit's feet while motes
@@ -53,7 +53,7 @@ void btEffectStartElementStreaks(Sint32 kind);
 void btEffectEndElementStreaks(void);
 /* btEffectBuildBlitter for a 128 by 128 canvas, its mode and flags packed as
    mode << 4 | flags. */
-Sint32 btEffectLoadBlitter(Sint32 slot, Sint32 modeAndFlags);
+Sint32 btEffectLoadBlitter(Sint32 slot, Sint32 modeAndFlg);
 /* The Doom Dragon's change of form, played over the dragon once a form is
    beaten. A glow widens over it while rays of light spin out from it, and it
    flashes white; at FORM_CHANGE_BURST the screen shakes, flashes burst upward
@@ -117,17 +117,17 @@ typedef enum EFFECT_VARIANT {
 	EFFECT_VARIANT_STRONGEST /* Quake Sphere, Deluge, Blue Bolt */
 } EFFECT_VARIANT;
 
-/* btMotionApplyKnockback's knockbacks, the columns of the BattleKnockback_*
+/* btMotionApplyKnockback's knockbacks, the columns of the BattleKnockback*
    tables. Each is named by how far and how high it sends the unit, as percent
-   of its spot's distance from the centre and its hop in pixels a frame; all but
-   KNOCKBACK_HURL and KNOCKBACK_HURL_FAR accelerate by 1 pixel a frame to at
+   of its spot's distance from the centre and its hop in pixels a tick; all but
+   KNOCKBACK_HURL and KNOCKBACK_HURL_FAR accelerate by 1 pixel a tick to at
    most 4. */
 typedef enum BATTLE_KNOCKBACK {
 	KNOCKBACK_NUDGE,  /* 140 percent, a hop of 3 */
 	KNOCKBACK_HOP,	  /* 140 percent, a hop of 6 */
 	KNOCKBACK_LEAP,	  /* 150 percent, a hop of 7 */
 	KNOCKBACK_LAUNCH, /* 200 percent, a hop of 10 */
-	/* The hardest: 200 percent at 8 pixels a frame more each frame, to at most
+	/* The hardest: 200 percent at 8 pixels a tick more each tick, to at most
 	   20, with a hop of 5. */
 	KNOCKBACK_HURL,
 	/* 150 percent, a hop of 2. From here on a unit already in the air takes the
@@ -143,10 +143,10 @@ typedef enum BATTLE_KNOCKBACK {
 } BATTLE_KNOCKBACK;
 
 /* Rebuilds the background palette's first ramp as a grey whose channels sway
-   with the frame, each at its own phase, so the effect shimmers through
+   with the tick, each at its own phase, so the effect shimmers through
    colours. */
 void btEffectUpdatePhasePalette(
-	Sint32 frame, Sint32 redPhase, Sint32 greenPhase, Sint32 bluePhase);
+	Sint32 frm, Sint32 redPhase, Sint32 greenPhase, Sint32 bluePhase);
 /* Opens the canvas layer over the battle, darkening the battle background
    behind it. */
 void btEffectStartCanvasLayer(Sint32 bgControl);
@@ -156,8 +156,8 @@ void btEffectEndCanvasLayer(void);
    one runs out. */
 void btEffectCountDownBattlerTints(void);
 /* Tints a unit's battle object, sets its pose and starts its flash timer. */
-void btEffectTintBattler(Sint32 actor, Sint32 palette, Sint32 pose,
-	Sint32 timerSlot, Sint32 timerFrames);
+void btEffectTintBattler(
+	Sint32 actor, Sint32 palette, Sint32 pose, Sint32 tmrSlot, Sint32 tmrTicks);
 /* Draws the upper left quarter of a shaded disc into `map`, its rings darker
    outward by a cosine falloff scaled by `scale`. */
 void btEffectDrawShadedCircles(Uint8 *map, Sint32 size, FIXED scale);
@@ -172,40 +172,38 @@ void btEffectRunDjinniEntrance(struct BATTLE_EFFECT_PARM *effect, Uint32 packed,
 	Sint32 *screen, Sint32 *world);
 /* Draws a quarter picture four times into the canvas, mirrored about (x, y),
    keeping the brighter pixel: a whole glow centred there. */
-void btCanvasBlitMirroredQuarters(
-	void *source, Sint32 x, Sint32 y, Sint32 size);
-/* Allocates `count` model entries and a cleared one that ends the list. */
-struct RENDER_MODEL *btRenderAllocateModelList(Sint32 count);
-/* Runs `count` packed vertices through the current transform into screen
+void btCanvasBlitMirroredQuarters(void *src, Sint32 x, Sint32 y, Sint32 size);
+/* Allocates `cnt` model entries and a cleared one that ends the list. */
+struct RENDER_MODEL *btRenderAllocateModelList(Sint32 cnt);
+/* Runs `cnt` packed vertices through the current transform into screen
    coordinates, with the ARM kernel copied into the heap. */
-void btRenderTransformVertices(
-	const void *corners, void *vertices, Sint32 count);
+void btRenderTransformVertices(const void *corners, void *vertices, Sint32 cnt);
 /* Projects a unit's place onto the screen, 16 pixels higher. */
-void btEffectPosProjectBattler(Sint32 id, SCREEN_POINT *position);
-/* Creates `count` sprites of `spriteId` in the effect's state, the nth showing
+void btEffectPosProjectBattler(Sint32 id, SCREEN_POINT *pos);
+/* Creates `cnt` sprites of `sprId` in the effect's state, the nth showing
    its animation n. */
-void btEffectCreateSprs(Sint32 count, Sint32 spriteId, Uint32 priority);
+void btEffectCreateSprs(Sint32 cnt, Sint32 sprId, Uint32 pri);
 /* Shows the battle objects of every target with HP left. */
 void btEffectShowLivingTargets(struct BATTLE_EFFECT_PARM *args);
 /* Knocks a unit back in its damage pose with the caller's acceleration, top
    speed, hop and reach in percent, as btMotionApplyKnockback does from its
    tables. */
 void btEffectStartActorMotion(Sint32 id, Sint32 force, Sint32 acceleration,
-	Sint32 speedLimit, Sint32 velocityY, Sint32 percent);
+	Sint32 speedLimit, Sint32 velY, Sint32 percent);
 /* Builds the two usual canvas blitters, mirrored when `flip` is set: out[0]
    keeps the brighter level, out[1] adds the levels. */
 void btEffectBuildCanvasBlitters(Sint32 flip, DRAW_RECTANGLE *out);
 /* Shakes the battle view by random offsets in the two ranges, powers of two. */
 void btCameraShake(Sint32 rangeX, Uint32 rangeY);
-/* Moves a particle one frame on the screen: its velocity scaled by `damping`
+/* Moves a particle one tick on the screen: its velocity scaled by `damping`
    sixty-fourths, then `gravity` added to its y speed. */
 void btParticleAdvanceWithGravity2D(
 	PARTICLE *step, Sint32 damping, Sint32 gravity);
-/* Builds `count` quads of a vertex strip, each width by height texels, and ends
+/* Builds `cnt` quads of a vertex strip, each width by height texels, and ends
    the list with an empty triangle. */
 void btRenderBuildQuadStrip(
-	struct STRIP_QUAD *quad, Sint32 width, Sint32 height, Sint32 count);
-/* Moves a particle one frame in three dimensions: its velocity scaled by
+	struct STRIP_QUAD *quad, Sint32 width, Sint32 height, Sint32 cnt);
+/* Moves a particle one tick in three dimensions: its velocity scaled by
    `damping` sixty-fourths, then `gravity` added to its y speed. */
 void btParticleAdvanceWithGravity3D(
 	PARTICLE *step, Sint32 damping, Sint32 gravity);
@@ -217,7 +215,7 @@ void btEffectStartTiledCanvasFilled(Sint32 bgControl);
 /* Fills the canvas with a white band, its edges fading, that the summons sweep
    in from the right to white the battle out. */
 void btEffectFillWhiteBand(void);
-/* Scrolls BG1 a step every few VBlanks. */
+/* Scrolls BG1 a step every few frames. */
 void btEffectAdvanceScrollOnInterval(void);
 /* Brightens the battle background's colours by a step in each channel, or
    darkens them by a negative one. */
@@ -249,7 +247,7 @@ void btEffectClearTintTimers(void);
 /* Draws a line on the canvas, keeping the brighter colour where it crosses what
    is drawn. */
 void btEffectDrawClippedCanvasLine(
-	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 color);
+	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 col);
 /* Sets the registers that show the canvas on BG2. */
 void btEffectSetupCanvasWindows(void);
 /* Draws the whole disc btEffectDrawShadedCircles draws a quarter of. */
@@ -304,7 +302,7 @@ void btEffectRunDragonFire(struct BATTLE_EFFECT_PARM *effect, Sint32 mode);
    16.16 pixels. */
 void btEffectPlaceFormationSprs(Sint32 formation, Sint32 x, Sint32 y);
 /* Opens an impact flash and scatters sparks and fragments, keeping the effect's
-   sprites in formation for the first 36 frames. */
+   sprites in formation for the first 36 ticks. */
 void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y);
 /* Fires streaks at each target in turn from above the user. */
 void btEffectRunStreakVolley(struct BATTLE_EFFECT_PARM *effect, Sint32 mode);
@@ -318,9 +316,9 @@ void btEffectRunTumblingQuads(struct BATTLE_EFFECT_PARM *effect, Sint32 mode);
 /* The user strikes each target with the extras its mode's style chooses. */
 void btEffectRunTargetStrike(struct BATTLE_EFFECT_PARM *effect, Sint32 mode);
 /* Moves a unit's object `percent` percent of the way to the target's in
-   `frames` frames. */
+   `ticks` ticks. */
 void btEffectSetApproachMotion(
-	Sint32 actor, Sint32 target, Sint32 frames, Sint32 percent);
+	Sint32 actor, Sint32 tgt, Sint32 ticks, Sint32 percent);
 /* Unused: a turning cloud swirl on BG2 until A is pressed. */
 void btEffectRunCloudSwirl(struct BATTLE_EFFECT_PARM *effect);
 /* Turns the battle camera's yaw by the effect's delta, at least half of it
@@ -340,9 +338,9 @@ typedef struct BATTLE_EFFECT_INDEX_WINDOW {
 } BATTLE_EFFECT_INDEX_WINDOW;
 
 /* What btEffectRunDjinniEntrance takes added to its element; the element alone
-   plays the 55-frame entrance. */
+   plays the 55-tick entrance. */
 typedef enum DJINNI_ENTRANCE_LENGTH {
-	/* The long entrance: 84 frames instead of 55. */
+	/* The long entrance: 84 ticks instead of 55. */
 	DJINNI_ENTRANCE_LONG = ELEMENT_COUNT
 } DJINNI_ENTRANCE_LENGTH;
 
@@ -355,11 +353,11 @@ typedef enum DJINNI_ENTRANCE_ANCHOR {
 	DJINNI_ANCHOR_USER_X,	   /* at the user's x, at depth 0 */
 	DJINNI_ANCHOR_CENTRE,	   /* in the centre of the field */
 	DJINNI_ANCHOR_HIGH_USER_X, /* at the user's x, 80 pixels up */
-	/* In the centre: the entrance takes 40 frames with no fade, and the
-	   backdrop brightens from frame 24. */
+	/* In the centre: the entrance takes 40 ticks with no fade, and the
+	   backdrop brightens from tick 24. */
 	DJINNI_ANCHOR_CENTRE_BRIGHTENING,
 	DJINNI_ANCHOR_LOW_CENTRE, /* in the centre, 20 pixels up */
-	/* Over the first target: the entrance takes 54 frames. */
+	/* Over the first target: the entrance takes 54 ticks. */
 	DJINNI_ANCHOR_OVER_TARGET_SHORT,
 	DJINNI_ANCHOR_HIGH_TARGET_X, /* at the first target's x, 120 pixels up */
 	DJINNI_ANCHOR_LOW_USER_X	 /* at the user's x, 30 pixels up */
@@ -374,11 +372,11 @@ typedef enum DJINNI_ENTRANCE_ANCHOR {
 #define DJINNI_ENTRANCE_SIDE(packed)	  (((packed) >> 4) & 1)
 #define DJINNI_ENTRANCE_ANCHOR_OF(packed) (((packed) >> 5) & 0xf)
 
-/* A row of Quake_Timings, one for each variant. */
+/* A row of QuakeTimings, one for each variant. */
 enum {
-	QUAKE_TIMING_FRAMES,	  /* the whole effect */
-	QUAKE_TIMING_RISE_FRAMES, /* how long each pillar stands */
-	QUAKE_TIMING_SHAKE		  /* the camera shake */
+	QUAKE_TIMING_TICKS,		 /* the whole effect */
+	QUAKE_TIMING_RISE_TICKS, /* how long each pillar stands */
+	QUAKE_TIMING_SHAKE		 /* the camera shake */
 };
 
 /* The four rock pillars' heights, in pixels. */
@@ -405,15 +403,15 @@ typedef struct FOUR_SPANS {
 	} spans[4];
 } FOUR_SPANS;
 
-/* A row of Frost_Timings, one for each variant. */
+/* A row of FrostTimings, one for each variant. */
 enum {
-	FROST_TIMING_MOTES,		 /* the rising motes */
-	FROST_TIMING_COLUMNS,	 /* the pillars */
-	FROST_TIMING_BURST_FRAME /* the frame they burst */
+	FROST_TIMING_MOTES,		/* the rising motes */
+	FROST_TIMING_COLUMNS,	/* the pillars */
+	FROST_TIMING_BURST_TICK /* the tick they burst */
 };
 
-/* A row of Eruption_Counts, one for each variant. */
-enum { ERUPTION_COUNT_MOTES, ERUPTION_COUNT_PUFFS, ERUPTION_COUNT_FRAMES };
+/* A row of EruptionCounts, one for each variant. */
+enum { ERUPTION_COUNT_MOTES, ERUPTION_COUNT_PUFFS, ERUPTION_COUNT_TICKS };
 
 /* A growing column, laid over PARTICLE in state->particles. */
 typedef struct DUAL_COLUMN {
@@ -422,7 +420,7 @@ typedef struct DUAL_COLUMN {
 	Uint8  unused[8];			 /* no code names it */
 	Sint32 height;				 /* the full length */
 	Uint8  unusedAfterHeight[4]; /* no code names it */
-	Sint32 start;				 /* the frame it starts to grow */
+	Sint32 start;				 /* the tick it starts to grow */
 } DUAL_COLUMN;
 
 /* Steps background colours 0 to 63 one level towards a palette resource. */
@@ -432,20 +430,20 @@ void btEffectStepPaletteToResource(Sint32 resourceId);
 void btEffectWipeCanvas(Sint32 direction, Sint32 fill);
 /* Projects a unit's sprite onto the screen, raised by half its height and 16
    pixels more. */
-void btEffectPosProjectSpr(Sint32 id, SCREEN_POINT *position);
+void btEffectPosProjectSpr(Sint32 id, SCREEN_POINT *pos);
 /* Builds window 0's right edge for every line and restarts the DMA that writes
    it. */
 void btEffectBuildWindowEdgeTable(void);
 /* Motes burst out of each target in turn and are pulled into the user, who
    glows white as they arrive. */
 void btEffectRunDrainMotes(struct BATTLE_EFFECT_PARM *effect, Sint32 mode);
-/* Boreas's scale, copied each frame before his sprites are placed. */
-extern const SCALE Boreas_UnitScale;
+/* Boreas's scale, copied each tick before his sprites are placed. */
+extern const SCALE BoreasUnitScale;
 /* Flares of light swirl in to each target in turn and burst, and the mode's
    picture plays over it. */
 void btEffectRunStatBoost(struct BATTLE_EFFECT_PARM *effect, Uint32 mode);
 /* Each of the four rock pillars' heights in pixels. */
-extern const ROCK_WALL_HEIGHTS RockWall_Heights;
+extern const ROCK_WALL_HEIGHTS RockWallHeights;
 /* A fountain of motes and smoke bursts up beside the targets and falls back on
    them one after another. */
 void btEffectRunEruption(struct BATTLE_EFFECT_PARM *effect, Sint32 mode);
@@ -453,7 +451,7 @@ void btEffectRunEruption(struct BATTLE_EFFECT_PARM *effect, Sint32 mode);
    flaring at its root. */
 void btEffectRunGrowingColumns(struct BATTLE_EFFECT_PARM *effect, Sint32 mode);
 
-/* The effect handlers, in the order the handler table (BattleEffect_Handlers)
+/* The effect handlers, in the order the handler table (BattleEffectHandlers)
    first lists them. */
 
 void btEffectRunQuake(struct BATTLE_EFFECT_PARM *args);

@@ -29,7 +29,7 @@ Sint32 fdRopeTie();
    the rope and two posts and returns nothing. */
 Sint32 fdRopeLash();
 
-extern Uint32 OseniaCliffs_PaletteCycleStep[];
+extern Uint32 OseniaCliffsPaletteCycleStep[];
 
 #include "shared/field_rope_place.c"
 
@@ -94,9 +94,9 @@ Sint32 scInit(void)
 	MAP_BITS *map = (MAP_BITS *)Ram_HeapSlots->mapGrid;
 
 	map->wading = 1;
-	OseniaCliffs_PaletteCycleStep[0] = 0;
+	OseniaCliffsPaletteCycleStep[0] = 0;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	sySetEvent(scOseniaCliffsCyclePalette, EVENT_PASS_FRAME);
+	sySetEvent(scOseniaCliffsCyclePalette, EVENT_PASS_TICK);
 	{
 		ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 
@@ -118,26 +118,26 @@ Sint32 scInit(void)
 #define CYCLE_SOURCE_COLORS	 8
 #define SHORELINE_PALETTE	 6
 
-/* The sea shimmers where it meets the foot of the cliffs: every 16 frames, four
+/* The sea shimmers where it meets the foot of the cliffs: every 16 ticks, four
    of `CYCLE_SOURCE_PALETTE`'s eight colours, starting one further each time,
    are copied to colours 1 to 4 of `SHORELINE_PALETTE`. */
 void scOseniaCliffsCyclePalette(void)
 {
-	if((FrameCount & 15) == 0) {
-		volatile Uint16 *colors;
+	if((TickCount & 15) == 0) {
+		volatile Uint16 *cols;
 		Sint32			 i;
 
-		if(OseniaCliffs_PaletteCycleStep[0] == CYCLE_SOURCE_COLORS)
-			OseniaCliffs_PaletteCycleStep[0] = 0;
-		i = OseniaCliffs_PaletteCycleStep[0]++;
-		colors = (Uint16 *)&BG_PLTT_COLOR(CYCLE_SOURCE_PALETTE, 0);
-		BG_PLTT_COLOR(SHORELINE_PALETTE, 1) = colors[i];
+		if(OseniaCliffsPaletteCycleStep[0] == CYCLE_SOURCE_COLORS)
+			OseniaCliffsPaletteCycleStep[0] = 0;
+		i = OseniaCliffsPaletteCycleStep[0]++;
+		cols = (Uint16 *)&BG_PLTT_COLOR(CYCLE_SOURCE_PALETTE, 0);
+		BG_PLTT_COLOR(SHORELINE_PALETTE, 1) = cols[i];
 		BG_PLTT_COLOR(SHORELINE_PALETTE, 2) =
-			colors[(i + 1) & (CYCLE_SOURCE_COLORS - 1)];
+			cols[(i + 1) & (CYCLE_SOURCE_COLORS - 1)];
 		BG_PLTT_COLOR(SHORELINE_PALETTE, 3) =
-			colors[(i + 2) & (CYCLE_SOURCE_COLORS - 1)];
+			cols[(i + 2) & (CYCLE_SOURCE_COLORS - 1)];
 		BG_PLTT_COLOR(SHORELINE_PALETTE, 4) =
-			colors[(i + 3) & (CYCLE_SOURCE_COLORS - 1)];
+			cols[(i + 3) & (CYCLE_SOURCE_COLORS - 1)];
 	}
 }
 
@@ -147,7 +147,7 @@ Sint32 scPrepareMap(void)
 }
 
 /* The sea's shimmer, its step through the source colours. */
-Uint32 OseniaCliffs_PaletteCycleStep[] = {
+Uint32 OseniaCliffsPaletteCycleStep[] = {
 	0,
 };
 

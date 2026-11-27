@@ -37,7 +37,7 @@ void fdActorPlaceBlocks(Uint16 *actors)
 				(Sint32)grid);
 		MAP_METATILE *metatile;
 		Sint32		  tag;
-		Uint8		  flags;
+		Uint8		  flg;
 
 		actor->motionFlg = 0;
 		actor->collisionFlg = 0;
@@ -46,9 +46,9 @@ void fdActorPlaceBlocks(Uint16 *actors)
 		tag =
 			fdMapShapeFindOrAdd(actor->layer, key, level + BLOCK_HEIGHT_STEPS);
 		metatile = &metatiles[slot];
-		flags = metatile->attributeB;
-		actor->sceneWord = flags;
-		metatile->attributeB = flags | MAP_METATILE_JUMP;
+		flg = metatile->attributeB;
+		actor->sceneWord = flg;
+		metatile->attributeB = flg | MAP_METATILE_JUMP;
 		*shapes = tag;
 		metatile = &blocks[slot];
 		metatile->collisionCode = METATILE_BEHAVIOR_WALL;
@@ -68,39 +68,39 @@ void fdActorLiftTargetBlock(Uint16 *actors)
 {
 	FIELD_STATE		   *event = Ram_HeapSlots->fieldState;
 	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
-	ACTOR			   *target;
+	ACTOR			   *tgt;
 
 	if(state != NULL && event->psynergy != 0)
-		target = state->tgt;
+		tgt = state->tgt;
 	else
-		target = fdLeaderFindActorAhead();
+		tgt = fdLeaderFindActorAhead();
 	event->movedBlock = NULL;
 
 	for(; *actors != ACTOR_LIST_END; actors++) {
-		if(target == fdActorGetById(*actors)) {
+		if(tgt == fdActorGetById(*actors)) {
 			MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
 			Uint8		 *grid = MapShapeGrid;
-			MAP_METATILE *metatiles = map->layers[target->layer].metatiles;
+			MAP_METATILE *metatiles = map->layers[tgt->layer].metatiles;
 			MAP_METATILE *blocks =
 				map->layers[MAPGRID_LAYER_OVERHEAD].metatiles;
 			Uint8 *shapes =
 				&grid[((Sint32)metatiles - (Sint32)Ram_MapMetatileBuffer) >> 2];
 			Uint32 key = fdMapGridGetTerrainKindStub(
-				target->layer, target->x.fixed, target->z.fixed);
+				tgt->layer, tgt->x.fixed, tgt->z.fixed);
 			Sint32 level = fdMapGridGetTerrainHeightStub(
-				target->layer, target->x.fixed, target->z.fixed);
-			Sint32 slot = fdActorGetMetatileIndex(target);
+				tgt->layer, tgt->x.fixed, tgt->z.fixed);
+			Sint32 slot = fdActorGetMetatileIndex(tgt);
 			Sint32 tag;
 
 			shapes += slot;
 			tag = fdMapShapeFindOrAdd(
-				target->layer, key, HEIGHT_STEPS(level) - BLOCK_HEIGHT_STEPS);
+				tgt->layer, key, HEIGHT_STEPS(level) - BLOCK_HEIGHT_STEPS);
 			metatiles += slot;
 			blocks += slot;
 			((SHAPE_METATILE *)shapes)->shape = tag;
-			metatiles->attributeB = target->sceneWord;
+			metatiles->attributeB = tgt->sceneWord;
 			blocks->collisionCode = 0;
-			event->movedBlock = target;
+			event->movedBlock = tgt;
 		}
 	}
 }
@@ -109,28 +109,28 @@ void fdActorLiftTargetBlock(Uint16 *actors)
    metatile it has moved to, as fdActorPlaceBlocks places each. */
 void fdActorPlaceMovedBlock(void)
 {
-	ACTOR *target = FieldStateWork->movedBlock;
+	ACTOR *tgt = FieldStateWork->movedBlock;
 
-	if(target != NULL) {
+	if(tgt != NULL) {
 		MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
 		Uint8		 *grid = Ram_MapShapeGrid;
-		MAP_METATILE *metatiles = map->layers[target->layer].metatiles;
+		MAP_METATILE *metatiles = map->layers[tgt->layer].metatiles;
 		MAP_METATILE *blocks = map->layers[MAPGRID_LAYER_OVERHEAD].metatiles;
 		Uint8		 *shapes =
 			&grid[((Sint32)metatiles - (Sint32)Ram_MapMetatileBuffer) >> 2];
-		Uint32 key = fdMapGridGetTerrainKindStub(
-			target->layer, target->x.fixed, target->z.fixed);
+		Uint32 key =
+			fdMapGridGetTerrainKindStub(tgt->layer, tgt->x.fixed, tgt->z.fixed);
 		Sint32 level = fdMapGridGetTerrainHeightStub(
-			target->layer, target->x.fixed, target->z.fixed);
-		Sint32 slot = fdActorGetMetatileIndex(target);
+			tgt->layer, tgt->x.fixed, tgt->z.fixed);
+		Sint32 slot = fdActorGetMetatileIndex(tgt);
 		Sint32 tag;
 
 		shapes += slot;
 		tag = fdMapShapeFindOrAdd(
-			target->layer, key, HEIGHT_STEPS(level) + BLOCK_HEIGHT_STEPS);
+			tgt->layer, key, HEIGHT_STEPS(level) + BLOCK_HEIGHT_STEPS);
 		((SHAPE_METATILE *)shapes)->shape = tag;
 		metatiles += slot;
-		target->sceneWord = metatiles->attributeB;
+		tgt->sceneWord = metatiles->attributeB;
 		metatiles->attributeB |= MAP_METATILE_JUMP;
 		blocks += slot;
 		blocks->collisionCode = METATILE_BEHAVIOR_WALL;
@@ -142,24 +142,24 @@ void fdActorPlaceMovedBlock(void)
 ACTOR *fdLeaderFindActorAhead(void)
 {
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	FIXED  position[3];
+	FIXED  pos[3];
 	/* The leader's facing rounded to the nearest quarter turn, in
 	   sixteenths. */
-	Sint32 angle = (leader->facing / FACING_STEP + 2) & 0xc;
+	Sint32 ang = (leader->facing / FACING_STEP + 2) & 0xc;
 	ACTOR *found;
 
-	position[0] = leader->x.fixed;
-	position[1] = leader->y.fixed;
-	position[2] = leader->z.fixed;
-	syVectorAddPolarOffset(toFIXED(16), angle * FACING_STEP, position);
-	found = fdActorFindAtMetatile(position, 1);
+	pos[0] = leader->x.fixed;
+	pos[1] = leader->y.fixed;
+	pos[2] = leader->z.fixed;
+	syVectorAddPolarOffset(toFIXED(16), ang * FACING_STEP, pos);
+	found = fdActorFindAtMetatile(pos, 1);
 	if(found != NULL)
 		return found;
-	position[0] = leader->x.fixed;
-	position[1] = leader->y.fixed;
-	position[2] = leader->z.fixed;
-	syVectorAddPolarOffset(toFIXED(32), angle * FACING_STEP, position);
-	found = fdActorFindAtMetatile(position, 1);
+	pos[0] = leader->x.fixed;
+	pos[1] = leader->y.fixed;
+	pos[2] = leader->z.fixed;
+	syVectorAddPolarOffset(toFIXED(32), ang * FACING_STEP, pos);
+	found = fdActorFindAtMetatile(pos, 1);
 	if(found != NULL)
 		return found;
 	return NULL;
@@ -167,7 +167,7 @@ ACTOR *fdLeaderFindActorAhead(void)
 
 /* Returns the first of the placed actors (not the treasure spots) on position's
    metatile, at its height too when checkY is set, or NULL. */
-ACTOR *fdActorFindAtMetatile(Sint32 *position, Sint32 checkY)
+ACTOR *fdActorFindAtMetatile(Sint32 *pos, Sint32 checkY)
 {
 	Uint32 i;
 
@@ -176,13 +176,13 @@ ACTOR *fdActorFindAtMetatile(Sint32 *position, Sint32 checkY)
 		ACTOR		*actor = event->actors[i];
 
 		if(checkY) {
-			if(FIELD_METATILE(position[0]) == FIELD_METATILE(actor->x.fixed) &&
-				position[1] / toFIXED(1) == actor->y.fixed / toFIXED(1) &&
-				FIELD_METATILE(position[2]) == FIELD_METATILE(actor->z.fixed))
+			if(FIELD_METATILE(pos[0]) == FIELD_METATILE(actor->x.fixed) &&
+				pos[1] / toFIXED(1) == actor->y.fixed / toFIXED(1) &&
+				FIELD_METATILE(pos[2]) == FIELD_METATILE(actor->z.fixed))
 				return actor;
 		} else {
-			if(FIELD_METATILE(position[0]) == FIELD_METATILE(actor->x.fixed) &&
-				FIELD_METATILE(position[2]) == FIELD_METATILE(actor->z.fixed))
+			if(FIELD_METATILE(pos[0]) == FIELD_METATILE(actor->x.fixed) &&
+				FIELD_METATILE(pos[2]) == FIELD_METATILE(actor->z.fixed))
 				return actor;
 		}
 	}
@@ -191,7 +191,7 @@ ACTOR *fdActorFindAtMetatile(Sint32 *position, Sint32 checkY)
 
 /* The width and height of each OAM shape and size, in pixels, by the shape
    times 4 plus the size. */
-extern const Uint8 Oam_ShapeSizes[][2];
+extern const Uint8 OamShapeSizes[][2];
 /* Where an attr01 word holds a sprite's size (attribute 1's top two bits) and
    shape (attribute 0's). */
 #define OBJ_SIZE_SHIFT	30
@@ -200,31 +200,31 @@ extern const Uint8 Oam_ShapeSizes[][2];
 /* Fills an effect sprite: OAM attributes 0 and 1 as given (no affine matrix,
    256 colours), the tiles, unscaled and unrotated at depth 255, and the
    picture's size from its shape, pivoted at (pivotX, pivotY). */
-void fdEffectSprInit(EFFECT_SPR *sprite, Sint32 pivotX, Sint32 pivotY,
+void fdEffectSprInit(EFFECT_SPR *spr, Sint32 pivotX, Sint32 pivotY,
 	Uint32 attributes, Sint32 tile)
 {
 	Uint32 *words;
 	Sint32	shape;
 
-	if(sprite == NULL)
+	if(spr == NULL)
 		return;
-	syWordsFillEntry(sprite, sizeof(*sprite), 0);
-	sprite->scaleX = toFIXED(1);
-	sprite->scaleY = toFIXED(1);
-	sprite->depth = OAM_DEPTH_FRONT;
-	sprite->pivotX = pivotX;
-	sprite->pivotY = pivotY;
+	syWordsFillEntry(spr, sizeof(*spr), 0);
+	spr->scaleX = toFIXED(1);
+	spr->scaleY = toFIXED(1);
+	spr->depth = OAM_DEPTH_FRONT;
+	spr->pivotX = pivotX;
+	spr->pivotY = pivotY;
 	shape = ((attributes >> OBJ_SIZE_SHIFT) |
 				(attributes >> (OBJ_SHAPE_SHIFT - 2))) &
 		0xf;
-	sprite->width = Oam_ShapeSizes[shape][0];
-	sprite->height = Oam_ShapeSizes[shape][1];
-	words = (Uint32 *)&sprite->oam;
+	spr->width = OamShapeSizes[shape][0];
+	spr->height = OamShapeSizes[shape][1];
+	words = (Uint32 *)&spr->oam;
 	*words++ = attributes;
 	*words = 0;
 	/* Spelt through the OAM's address, as the two words above are written. */
-	(&sprite->oam)->fullCol = 1;
-	sprite->oam.idx = tile;
+	(&spr->oam)->fullCol = 1;
+	spr->oam.idx = tile;
 }
 
 /* Draws a field effect's sprite. An unscaled, unrotated sprite needs no affine
@@ -232,16 +232,16 @@ void fdEffectSprInit(EFFECT_SPR *sprite, Sint32 pivotX, Sint32 pivotY,
    box. The picture's pivot is turned and scaled with it, so the pivot stays on
    the sprite's position. A sprite wholly off screen is not queued; the rest
    join the OAM bucket of their depth. */
-void fdEffectSprDraw(EFFECT_SPR *sprite)
+void fdEffectSprDraw(EFFECT_SPR *spr)
 {
 	Sint32			 affineMode;
 	Sint32			 matrix;
-	FIXED			 x = sprite->x;
-	FIXED			 y = sprite->y;
-	Sint32			 scaleX = sprite->scaleX;
-	Sint32			 scaleY = sprite->scaleY;
-	Sint32			 width = sprite->width;
-	Sint32			 height = sprite->height;
+	FIXED			 x = spr->x;
+	FIXED			 y = spr->y;
+	Sint32			 scaleX = spr->scaleX;
+	Sint32			 scaleY = spr->scaleY;
+	Sint32			 width = spr->width;
+	Sint32			 height = spr->height;
 	Sint32			 left;
 	Sint32			 top;
 	Sint32			 screenX;
@@ -249,15 +249,15 @@ void fdEffectSprDraw(EFFECT_SPR *sprite)
 	Sint32			 magnitude;
 	AFFINE_TRANSFORM transform;
 
-	if(sprite->depth == EFFECT_SPRITE_HIDDEN || scaleX == 0 || scaleY == 0)
+	if(spr->depth == EFFECT_SPRITE_HIDDEN || scaleX == 0 || scaleY == 0)
 		return;
 
 	/* The affine matrix, unless the sprite is drawn as it is. */
-	if(scaleX == toFIXED(1) && scaleY == scaleX && sprite->ang == 0) {
+	if(scaleX == toFIXED(1) && scaleY == scaleX && spr->ang == 0) {
 		matrix = 0;
 		affineMode = OAM_AFFINE_OFF;
 	} else {
-		transform.ang = sprite->ang;
+		transform.ang = spr->ang;
 		transform.scaleX = scaleX >> 8;
 		transform.scaleY = scaleY >> 8;
 		matrix = syOAMMatrixAllocFromTransform(&transform);
@@ -276,27 +276,27 @@ void fdEffectSprDraw(EFFECT_SPR *sprite)
 	}
 
 	/* Where the pivot sits in the drawn box, from the box's top left. */
-	if(sprite->ang == 0) {
+	if(spr->ang == 0) {
 		if(scaleX == toFIXED(1) && scaleY == scaleX) {
-			left = sprite->pivotX - (sprite->width >> 1) + width / 2;
-			top = sprite->pivotY - (sprite->height >> 1) + height / 2;
+			left = spr->pivotX - (spr->width >> 1) + width / 2;
+			top = spr->pivotY - (spr->height >> 1) + height / 2;
 		} else {
-			left = FIXEDtoINT(scaleX * (sprite->pivotX - (sprite->width >> 1)) +
+			left = FIXEDtoINT(scaleX * (spr->pivotX - (spr->width >> 1)) +
 					   (toFIXED(1) - 1)) +
 				width / 2;
-			top = FIXEDtoINT(scaleY * (sprite->pivotY - (sprite->height >> 1)) +
+			top = FIXEDtoINT(scaleY * (spr->pivotY - (spr->height >> 1)) +
 					  (toFIXED(1) - 1)) +
 				height / 2;
 		}
 	} else {
-		FIXED  sin = sySin(sprite->ang);
-		FIXED  cos = syCos(sprite->ang);
-		Sint32 halfWidth = sprite->width * scaleX / 2;
-		Sint32 halfHeight = sprite->height * scaleY / 2;
+		FIXED  sin = sySin(spr->ang);
+		FIXED  cos = syCos(spr->ang);
+		Sint32 halfWidth = spr->width * scaleX / 2;
+		Sint32 halfHeight = spr->height * scaleY / 2;
 		FIXED  cornerX = syMulFX(cos, halfWidth) - syMulFX(sin, halfWidth);
 		FIXED  cornerY = syMulFX(cos, halfHeight) + syMulFX(sin, halfHeight);
-		Sint32 pivotX = scaleX * sprite->pivotX;
-		Sint32 pivotY = sprite->pivotY * scaleY;
+		Sint32 pivotX = scaleX * spr->pivotX;
+		Sint32 pivotY = spr->pivotY * scaleY;
 		Sint32 turnedX = syMulFX(cos, pivotX) - syMulFX(sin, pivotY);
 		Sint32 turnedY = syMulFX(cos, pivotY) + syMulFX(sin, pivotX);
 
@@ -311,27 +311,27 @@ void fdEffectSprDraw(EFFECT_SPR *sprite)
 		screenY + height <= 0 || screenY >= DISPLAY_HEIGHT)
 		return;
 
-	sprite->oam.x = screenX;
-	sprite->oam.y = screenY;
-	sprite->oam.affineMode = affineMode;
-	sprite->oam.matrix = matrix;
-	syOAMAddSprAtDepthClamped(sprite, sprite->depth);
+	spr->oam.x = screenX;
+	spr->oam.y = screenY;
+	spr->oam.affineMode = affineMode;
+	spr->oam.matrix = matrix;
+	syOAMAddSprAtDepthClamped(spr, spr->depth);
 }
 
 /* Places sprite at the screen position of world position and draws it. */
-void fdEffectSprDrawAtWorldPos(EFFECT_SPR *sprite, Sint32 *position)
+void fdEffectSprDrawAtWorldPos(EFFECT_SPR *spr, Sint32 *pos)
 {
 	Sint32 screen[3];
 
-	if(sprite != 0) {
+	if(spr != 0) {
 
-		screen[0] = position[0];
-		screen[1] = position[1];
-		screen[2] = position[2];
+		screen[0] = pos[0];
+		screen[1] = pos[1];
+		screen[2] = pos[2];
 		fdCameraWorldToScreen(screen);
-		sprite->x = screen[0];
-		sprite->y = screen[2];
-		fdEffectSprDraw(sprite);
+		spr->x = screen[0];
+		spr->y = screen[2];
+		fdEffectSprDraw(spr);
 	}
 }
 

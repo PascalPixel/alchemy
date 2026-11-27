@@ -55,19 +55,19 @@ static Bool scKolimaForestHopTo(FIELD_POS *request)
    east. */
 static void scKolimaForestHopEast(void)
 {
-	FIELD_POS target;
+	FIELD_POS tgt;
 #if !JUMP_LANDS_ON_CELL_CENTER
-	target.x = fdActorGetById(ACTOR_PARTY_LEADER)->x.fixed + toFIXED(30);
-	target.y = fdActorGetById(ACTOR_PARTY_LEADER)->y.fixed;
-	target.z = fdActorGetById(ACTOR_PARTY_LEADER)->z.fixed;
+	tgt.x = fdActorGetById(ACTOR_PARTY_LEADER)->x.fixed + toFIXED(30);
+	tgt.y = fdActorGetById(ACTOR_PARTY_LEADER)->y.fixed;
+	tgt.z = fdActorGetById(ACTOR_PARTY_LEADER)->z.fixed;
 #else
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	Uint32 base = leader->x.fixed & FIELD_METATILE_MASK;
 
-	target.x = base + toFIXED(8);
-	target.y = leader->y.fixed;
-	target.z = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-	target.x = base + toFIXED(40);
+	tgt.x = base + toFIXED(8);
+	tgt.y = leader->y.fixed;
+	tgt.z = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	tgt.x = base + toFIXED(40);
 #endif
-	scKolimaForestHopTo(&target);
+	scKolimaForestHopTo(&tgt);
 }

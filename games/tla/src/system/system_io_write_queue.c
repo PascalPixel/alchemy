@@ -1,8 +1,8 @@
-/* The register write queue that VBlank carries out after each finished frame.
+/* The register write queue that VBlank carries out after each finished tick.
    Part of system.c. */
 
 /* The queued register writers: each adds a write of `value` to `address` that
-   the VBlank handler carries out once the frame loop has finished the frame. */
+   the VBlank handler carries out once the tick loop has finished the tick. */
 #define IO_QUEUE_DEFINE_WRITE(name, control) \
 	void name(Uint32 address, Uint32 value) \
 	{ \
@@ -34,11 +34,11 @@ IO_QUEUE_DEFINE_WRITE(syIOWriteQueueClearBits32, IO_WRITE_CLEAR | IO_WRITE_WORD)
 void syIOWriteQueueFlushPending(void)
 {
 	IO_WRITE_QUEUE *queue;
-	Uint32			count;
+	Uint32			cnt;
 
 	queue = &IoWriteQueueWork;
-	count = queue->cnt;
-	if(count != 0) {
+	cnt = queue->cnt;
+	if(cnt != 0) {
 		QUEUE_FLUSH_ROUTINE routine;
 
 		{
@@ -49,7 +49,7 @@ void syIOWriteQueueFlushPending(void)
 			routine = (QUEUE_FLUSH_ROUTINE)routineBytes;
 			syDMAXCopy(Resource_ExecuteTransferCode, (void *)routine,
 				DMA_COPY_WORDS(sizeof(routineBytes) / 4), REG_DMA3);
-			routine(queue, count);
+			routine(queue, cnt);
 			queue->cnt = 0;
 		}
 	}

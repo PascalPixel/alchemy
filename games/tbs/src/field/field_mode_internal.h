@@ -122,7 +122,7 @@ typedef struct TRANSITION_SPAN {
 /* WININ or WINOUT showing BG0 alone, in both bytes. */
 #define TRANSITION_SHOW_BG0		 (WININ_WIN0_BG0 | WININ_WIN1_BG0)
 
-/* One step of WINDOW_TRANSITION_SHAPE, a row of ScreenTransition_Shapes chosen
+/* One step of WINDOW_TRANSITION_SHAPE, a row of ScreenTransitionShapes chosen
    by the progress: the WININ and WINOUT values, swapped as the transition opens
    or closes, and three runs of lines written one after another from the top of
    the screen. */
@@ -132,16 +132,16 @@ typedef struct TRANSITION_SHAPE {
 	TRANSITION_SPAN spans[3];
 } TRANSITION_SHAPE;
 
-extern TRANSITION_SHAPE ScreenTransition_Shapes[TRANSITION_OPEN];
+extern TRANSITION_SHAPE ScreenTransitionShapes[TRANSITION_OPEN];
 
 /* The party leader's actor placement table (leader_placement.c), which
    fdActorResetForLeader copies into the field state. */
-extern const ACTOR_PLACE Field_DefaultActorPlacements[2];
+extern const ACTOR_PLACE FieldDefaultActorPlacements[2];
 
 /* Curves mapping a 5-bit colour channel to the colour buffer's channel, shifted
    up 10 bits: plain, lightened and with more contrast. */
-extern Uint16 ColorBuffer_ChannelCurve[];
-extern Uint16 ColorBuffer_ChannelCurveLight[];
-extern Uint16 ColorBuffer_ChannelCurveContrast[];
+extern Uint16 ColorBufferChannelCurve[];
+extern Uint16 ColorBufferChannelCurveLight[];
+extern Uint16 ColorBufferChannelCurveContrast[];
 
 #endif

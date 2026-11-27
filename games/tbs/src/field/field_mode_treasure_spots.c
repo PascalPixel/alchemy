@@ -39,7 +39,7 @@ void fdPlaceTreasureSpots(void)
 	Uint32				   id;
 	MAP_GRID_SCROLL_STATE *grid = MapGridState[0];
 	FIELD_STATE			  *state = FieldStateWork;
-	Sint32				   markerCount = 0;
+	Sint32				   markerCnt = 0;
 	Uint8				  *list = grid->markers;
 	TREASURE_SPOT		  *marker = state->treasureSpots;
 	const CUE			  *cue;
@@ -96,8 +96,8 @@ void fdPlaceTreasureSpots(void)
 					marker->row =
 						markerActor->z.fixed / toFIXED(MAPGRID_METATILE_PIXELS);
 					marker++;
-					markerCount++;
-					if(markerCount >= TREASURE_SPOT_MAX)
+					markerCnt++;
+					if(markerCnt >= TREASURE_SPOT_MAX)
 						return;
 				} else if((cue->kind & EXAMINE_CUE_MASK) == CUE_EXAMINE) {
 					/* A Psynergy Stone not yet taken. */
@@ -126,8 +126,8 @@ void fdPlaceTreasureSpots(void)
 					marker->row =
 						markerActor->z.fixed / toFIXED(MAPGRID_METATILE_PIXELS);
 					marker++;
-					markerCount++;
-					if(markerCount >= TREASURE_SPOT_MAX)
+					markerCnt++;
+					if(markerCnt >= TREASURE_SPOT_MAX)
 						return;
 				} else {
 					continue;
@@ -144,16 +144,15 @@ void fdPlaceTreasureSpots(void)
    id, or -1. */
 Sint32 fdTreasureSpotFindSlot(Sint32 id)
 {
-	Sint32		   slotIndex;
+	Sint32		   slotIdx;
 	Sint32		   matchingSlot;
 	TREASURE_SPOT *marker;
 
 	marker = FieldStateWork->treasureSpots;
 	matchingSlot = -1;
-	for(slotIndex = 0; slotIndex <= TREASURE_SPOT_MAX - 1;
-		slotIndex++, marker++) {
+	for(slotIdx = 0; slotIdx <= TREASURE_SPOT_MAX - 1; slotIdx++, marker++) {
 		if(marker->id == id) {
-			matchingSlot = slotIndex;
+			matchingSlot = slotIdx;
 			break;
 		}
 	}
@@ -166,21 +165,21 @@ UNUSED void fdTreasureSpotReservedNoOperation(void)
 }
 
 /* Gives the actor of treasure spot id animation, plays sound and waits 12
-   frames. */
+   ticks. */
 static __inline__ void fdSetMarkerAnimAndPlaySnd(
-	Sint32 id, Sint32 animation, Sint32 sound)
+	Sint32 id, Sint32 anm, Sint32 snd)
 {
-	Sint32		   slotIndex;
+	Sint32		   slotIdx;
 	TREASURE_SPOT *marker;
 	ACTOR		  *actor;
 
-	slotIndex = fdTreasureSpotFindSlot(id);
-	if(slotIndex != -1) {
-		marker = &FieldStateWork->treasureSpots[slotIndex];
+	slotIdx = fdTreasureSpotFindSlot(id);
+	if(slotIdx != -1) {
+		marker = &FieldStateWork->treasureSpots[slotIdx];
 		actor = marker->actor;
 		if(actor != NULL)
-			fdActorSelectAnimationStub(actor, animation);
-		sySndPlayStub(sound);
+			fdActorSelectAnimationStub(actor, anm);
+		sySndPlayStub(snd);
 		sySynch(12);
 	}
 }
@@ -192,18 +191,18 @@ void fdTreasureSpotCloseChest(Sint32 id)
 	fdSetMarkerAnimAndPlaySnd(id, TREASURE_SPOT_CHEST_CLOSING, SE_CHEST_CLOSE);
 }
 
-/* Makes the chest of treasure spot id jump up as a mimic: after 18 frames it
+/* Makes the chest of treasure spot id jump up as a mimic: after 18 ticks it
    turns into the mimic with a cry (SE_ENEMY_CRY) and leaps up at 8 pixels a
-   frame, its shadow showing. */
+   tick, its shadow showing. */
 void fdTreasureSpotLaunchMimic(Sint32 id)
 {
-	Sint32		   slotIndex;
+	Sint32		   slotIdx;
 	TREASURE_SPOT *marker;
 	ACTOR		  *actor;
 
-	slotIndex = fdTreasureSpotFindSlot(id);
-	if(slotIndex != -1) {
-		marker = &FieldStateWork->treasureSpots[slotIndex];
+	slotIdx = fdTreasureSpotFindSlot(id);
+	if(slotIdx != -1) {
+		marker = &FieldStateWork->treasureSpots[slotIdx];
 		actor = marker->actor;
 		sySynch(18);
 		if(actor != NULL)
@@ -217,7 +216,7 @@ void fdTreasureSpotLaunchMimic(Sint32 id)
 }
 
 /* Opens the chest of treasure spot id with SE_CHEST_OPEN, and waits 12
-   frames. */
+   ticks. */
 void fdTreasureSpotOpenChest(Sint32 id)
 {
 	fdSetMarkerAnimAndPlaySnd(id, TREASURE_SPOT_CHEST_OPENING, SE_CHEST_OPEN);
@@ -226,13 +225,13 @@ void fdTreasureSpotOpenChest(Sint32 id)
 /* Shows the chest of treasure spot id open, with no sound. */
 void fdTreasureSpotShowOpened(Sint32 id)
 {
-	Sint32		   slotIndex;
+	Sint32		   slotIdx;
 	TREASURE_SPOT *marker;
 	ACTOR		  *actor;
 
-	slotIndex = fdTreasureSpotFindSlot(id);
-	if(slotIndex != -1) {
-		marker = &FieldStateWork->treasureSpots[slotIndex];
+	slotIdx = fdTreasureSpotFindSlot(id);
+	if(slotIdx != -1) {
+		marker = &FieldStateWork->treasureSpots[slotIdx];
 		actor = marker->actor;
 		if(actor != NULL)
 			fdActorSelectAnimationStub(actor, TREASURE_SPOT_CHEST_OPEN);
@@ -242,25 +241,25 @@ void fdTreasureSpotShowOpened(Sint32 id)
 /* Returns the actor of treasure spot id, or NULL when no slot has it. */
 ACTOR *fdTreasureSpotGetActor(Sint32 id)
 {
-	Sint32		   slotIndex = fdTreasureSpotFindSlot(id);
+	Sint32		   slotIdx = fdTreasureSpotFindSlot(id);
 	TREASURE_SPOT *marker;
 
-	if(slotIndex == -1)
+	if(slotIdx == -1)
 		return NULL;
-	marker = &FieldStateWork->treasureSpots[slotIndex];
+	marker = &FieldStateWork->treasureSpots[slotIdx];
 	return marker->actor;
 }
 
 /* Hides the actor of treasure spot id; the actor stays in its slot. */
 void fdTreasureSpotHide(Sint32 id)
 {
-	Sint32		   slotIndex;
+	Sint32		   slotIdx;
 	TREASURE_SPOT *marker;
 	ACTOR		  *actor;
 
-	slotIndex = fdTreasureSpotFindSlot(id);
-	if(slotIndex != -1) {
-		marker = &FieldStateWork->treasureSpots[slotIndex];
+	slotIdx = fdTreasureSpotFindSlot(id);
+	if(slotIdx != -1) {
+		marker = &FieldStateWork->treasureSpots[slotIdx];
 		actor = marker->actor;
 		if(actor != NULL)
 			actor->sprStorageKind = ACTOR_SPRITE_NONE;
@@ -271,7 +270,7 @@ void fdTreasureSpotHide(Sint32 id)
    centre of its metatile on that axis. Positions are 16.16. */
 void fdTreasureSpotSetActorPos(Sint32 id, FIXED x, FIXED z)
 {
-	Sint32		   slotIndex;
+	Sint32		   slotIdx;
 	Sint32		   groundHeight;
 	Sint32		   spotX;
 	Sint32		   spotZ;
@@ -280,9 +279,9 @@ void fdTreasureSpotSetActorPos(Sint32 id, FIXED x, FIXED z)
 
 	spotZ = z;
 	spotX = x;
-	slotIndex = fdTreasureSpotFindSlot(id);
-	if(slotIndex != -1) {
-		marker = &FieldStateWork->treasureSpots[slotIndex];
+	slotIdx = fdTreasureSpotFindSlot(id);
+	if(slotIdx != -1) {
+		marker = &FieldStateWork->treasureSpots[slotIdx];
 		actor = marker->actor;
 		if(actor != NULL) {
 			if(spotX == -1)

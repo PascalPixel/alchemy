@@ -4,7 +4,7 @@
    The scene before its door, also Hammet Palace in the game's area names, is
    kalay.c's HammetPalaceGrounds.
 
-   Two scripts in the room where Lady Layana stands frame the party's part in
+   Two scripts in the room where Lady Layana stands tick the party's part in
    Hammet's rescue from Lunpa. Between them three flags pick where she stands
    and what she says:
 
@@ -58,7 +58,7 @@
 #include "scene/kalay.h"
 #include "text/msg_ids.h"
 
-extern Sint32		  HammetPalace_PartyActions[];
+extern Sint32		  HammetPalacePartyActions[];
 extern SCENE_ENTRANCE HammetPalaceEntrancesOther[];
 extern SCENE_ENTRANCE HammetPalaceEntrances[];
 extern Uint32		  HammetPalaceExits[];
@@ -129,8 +129,8 @@ typedef enum HAMMET_PALACE_ACTOR_ID {
 
 static void scHammetPalaceSetUpEntrance(void);
 static void scHammetPalaceIvanReportsToLayana(void);
-static void scHammetPalaceFacePartyOutward(Sint32 waitFrames);
-static void scHammetPalaceFacePartyNorth(Sint32 waitFrames);
+static void scHammetPalaceFacePartyOutward(Sint32 waitTicks);
+static void scHammetPalaceFacePartyNorth(Sint32 waitTicks);
 static void scHammetPalaceHammetsHomecoming(void);
 
 /* Skips messages of the conversation, past an answer not taken. */
@@ -364,7 +364,7 @@ static void scHammetPalaceIvanReportsToLayana(void)
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	fdActorRunRepeatedMotion(ACTOR_LAYANA, 1);
 	fdActorSetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
@@ -927,12 +927,12 @@ static void scHammetPalaceIvanReportsToLayana(void)
 	fdActorSetSpeed(ACTOR_GARET, 1);
 	fdActorSetSpeed(ACTOR_IVAN, 1);
 	fdActorSetSpeed(ACTOR_MIA, 1);
-	partyScript = HammetPalace_PartyActions;
+	partyScript = HammetPalacePartyActions;
 	fdActorSetScript(ACTOR_GARET, partyScript);
 	fdActorSetScript(ACTOR_IVAN, partyScript);
 	fdActorRunScriptAndWait(ACTOR_MIA, partyScript);
 	state = FieldStateWork;
-	state->transitionFrm = MAP_TRANSITION_FRAMES;
+	state->transitionFrm = MAP_TRANSITION_TICKS;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	gmFlagClear(FLAG_SHOW_AREA_NAME);
@@ -941,26 +941,26 @@ static void scHammetPalaceIvanReportsToLayana(void)
 }
 
 /* Turns the party outward from the group, then optionally waits. */
-static void scHammetPalaceFacePartyOutward(Sint32 waitFrames)
+static void scHammetPalaceFacePartyOutward(Sint32 waitTicks)
 {
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
-	if(waitFrames != 0) {
-		fdScriptWait(waitFrames);
+	if(waitTicks != 0) {
+		fdScriptWait(waitTicks);
 	}
 }
 
 /* Turns all four party members north toward Layana, then optionally waits. */
-static void scHammetPalaceFacePartyNorth(Sint32 waitFrames)
+static void scHammetPalaceFacePartyNorth(Sint32 waitTicks)
 {
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-	if(waitFrames != 0) {
-		fdScriptWait(waitFrames);
+	if(waitTicks != 0) {
+		fdScriptWait(waitTicks);
 	}
 }
 
@@ -1160,12 +1160,12 @@ static void scHammetPalaceHammetsHomecoming(void)
 	fdActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
 	fdScriptWait(20);
-	partyScript = HammetPalace_PartyActions;
+	partyScript = HammetPalacePartyActions;
 	fdActorSetScript(ACTOR_GARET, partyScript);
 	fdActorSetScript(ACTOR_IVAN, partyScript);
 	fdActorRunScriptAndWait(ACTOR_MIA, partyScript);
 	state = FieldStateWork;
-	state->transitionFrm = MAP_TRANSITION_FRAMES;
+	state->transitionFrm = MAP_TRANSITION_TICKS;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	gmFlagClear(FLAG_SHOW_AREA_NAME);
@@ -1174,7 +1174,7 @@ static void scHammetPalaceHammetsHomecoming(void)
 }
 
 /* Garet, Ivan and Mia walk into Isaac and fall in behind him. */
-Sint32 HammetPalace_PartyActions[] = {
+Sint32 HammetPalacePartyActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(856, 0, 486),
 	SC_SYNC,

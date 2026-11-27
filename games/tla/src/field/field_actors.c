@@ -1,36 +1,36 @@
 /* Actors: a sprite dissolving pixel by pixel, the actor system, creating and
    releasing actors, their animations and scripts, and placing their sprites
-   each frame under the scrolling or the fixed camera. Part of field.c. */
+   each tick under the scrolling or the fixed camera. Part of field.c. */
 
 #include "field/actor_script.h"
 #include "field/map_grid.h"
 #include "field/script_operands.h"
 #include "graphics/glyph.h"
 
-/* The frames fdSprWaitForTrackEnd waits at most. */
-#define TRACK_END_WAIT_FRAMES 90
+/* The ticks fdSprWaitForTrackEnd waits at most. */
+#define TRACK_END_WAIT_TICKS 90
 /* The longest an actor's script or move is waited for: 10 seconds. */
-#define ACTOR_WAIT_FRAMES_MAX 600
+#define ACTOR_WAIT_TICKS_MAX 600
 
-/* Waits, at most TRACK_END_WAIT_FRAMES, for a sprite's animation to change or
+/* Waits, at most TRACK_END_WAIT_TICKS, for a sprite's animation to change or
    for its first layer's script to reach ANIMCMD_HOLD. */
-void fdSprWaitForTrackEnd(SPR *sprite)
+void fdSprWaitForTrackEnd(SPR *spr)
 {
-	Uint8		   animation = sprite->lastNo;
-	SPR_ANIMATION *entry = sprite->entries[0];
+	Uint8		   anm = spr->lastNo;
+	SPR_ANIMATION *entry = spr->entries[0];
 	Sint32		   i;
 
-	if(sprite != NULL) {
+	if(spr != NULL) {
 		i = 0;
 		if(entry->script[entry->scriptOfs] != ANIMCMD_HOLD) {
 			do {
 				sySynch(1);
 				i++;
-				if(i > TRACK_END_WAIT_FRAMES - 1)
+				if(i > TRACK_END_WAIT_TICKS - 1)
 					break;
 				if(entry->script[entry->scriptOfs] == ANIMCMD_HOLD)
 					break;
-			} while(sprite->lastNo == animation);
+			} while(spr->lastNo == anm);
 		}
 	}
 }
@@ -45,23 +45,23 @@ void fdSprWaitForTrackEnd(SPR *sprite)
 void fdSprDissolveStep(Uint8 *obj, Uint32 pos)
 {
 	Uint16		*tile;
-	Sint32		 tileCount;
+	Sint32		 tileCnt;
 	Uint32		 i;
 	const Uint8 *order;
 
-	SPR *sprite = (SPR *)obj;
+	SPR *spr = (SPR *)obj;
 
-	tile = (Uint16 *)(OBJ_VRAM0 + VramCacheEntries[sprite->slot].ofs);
-	tileCount = (sprite->width * sprite->height) / DISSOLVE_TILE_PIXELS;
+	tile = (Uint16 *)(OBJ_VRAM0 + VramCacheEntries[spr->slot].ofs);
+	tileCnt = (spr->width * spr->height) / DISSOLVE_TILE_PIXELS;
 	i = 0;
 
-	if(i < tileCount) {
-		order = SpriteDissolve_PixelOrder;
+	if(i < tileCnt) {
+		order = SpriteDissolvePixelOrder;
 		{
 			Uint32 highMask = PIXEL_PAIR_ODD_MASK;
-			Uint32 indexMask = DISSOLVE_TILE_PIXELS - 1;
+			Uint32 idxMask = DISSOLVE_TILE_PIXELS - 1;
 
-			for(; i < tileCount; i++, tile += TILE_SIZE_8BPP / 2, pos++) {
+			for(; i < tileCnt; i++, tile += TILE_SIZE_8BPP / 2, pos++) {
 				if((pos - DISSOLVE_FIRST_STEP) <= DISSOLVE_TILE_PIXELS - 1) {
 					Uint8	pixel;
 					Uint16 *pixelPair;
@@ -70,8 +70,7 @@ void fdSprDissolveStep(Uint8 *obj, Uint32 pos)
 					/* Each tile reads the order 17 entries on from the tile
 					   before, so neighbouring tiles lose different pixels at
 					   the same step. */
-					pixel =
-						order[(pos + i * DISSOLVE_ORDER_STRIDE) & indexMask];
+					pixel = order[(pos + i * DISSOLVE_ORDER_STRIDE) & idxMask];
 					/* The halfword holding the pixel: its offset rounded down
 					   to even. */
 					pixelPair = (Uint16 *)((Uint8 *)tile +
@@ -88,8 +87,8 @@ void fdSprDissolveStep(Uint8 *obj, Uint32 pos)
 	}
 }
 
-/* Dissolves a sprite pixel by pixel, four steps a frame, over 32 frames. */
-void fdSprDissolveRun(Uint8 *sprite)
+/* Dissolves a sprite pixel by pixel, four steps a tick, over 32 ticks. */
+void fdSprDissolveRun(Uint8 *spr)
 {
 	Uint32 step;
 
@@ -97,50 +96,50 @@ void fdSprDissolveRun(Uint8 *sprite)
 	/* Finish all four dissolve steps before waiting for the next video
 	   frame. */
 	do {
-		fdSprDissolveStep(sprite, step);
-		fdSprDissolveStep(sprite, step + 1);
-		fdSprDissolveStep(sprite, step + 2);
-		fdSprDissolveStep(sprite, step + 3);
+		fdSprDissolveStep(spr, step);
+		fdSprDissolveStep(spr, step + 1);
+		fdSprDissolveStep(spr, step + 2);
+		fdSprDissolveStep(spr, step + 3);
 		step += 4;
 		sySynch(1);
 	} while(step <= DISSOLVE_STEPS - 1);
 }
 
-/* Dissolves count sprites together, pixel by pixel, over 32 frames. */
-void fdSprDissolveRunMany(Uint8 **sprites, Sint32 count)
+/* Dissolves count sprites together, pixel by pixel, over 32 ticks. */
+void fdSprDissolveRunMany(Uint8 **sprs, Sint32 cnt)
 {
-	Uint8 **firstSprite;
-	Uint8 **spriteCursor;
-	Sint32	spritesRemaining;
+	Uint8 **firstSpr;
+	Uint8 **sprCursor;
+	Sint32	sprsRemaining;
 	Uint32	step;
 	Uint32	secondDissolveStep;
 	Uint32	thirdDissolveStep;
 	Uint32	fourthDissolveStep;
 
-	firstSprite = sprites;
+	firstSpr = sprs;
 	for(step = 0; step <= DISSOLVE_STEPS - 1U; step += 4) {
-		if(count > 0) {
+		if(cnt > 0) {
 			secondDissolveStep = step + 1;
 			thirdDissolveStep = step + 2;
-			spriteCursor = firstSprite;
+			sprCursor = firstSpr;
 			fourthDissolveStep = step + 3;
-			spritesRemaining = count;
+			sprsRemaining = cnt;
 			do {
-				fdSprDissolveStep(*spriteCursor, step);
-				fdSprDissolveStep(*spriteCursor, secondDissolveStep);
-				fdSprDissolveStep(*spriteCursor, thirdDissolveStep);
-				spritesRemaining -= 1;
-				fdSprDissolveStep(*spriteCursor++, fourthDissolveStep);
-			} while(spritesRemaining != 0);
+				fdSprDissolveStep(*sprCursor, step);
+				fdSprDissolveStep(*sprCursor, secondDissolveStep);
+				fdSprDissolveStep(*sprCursor, thirdDissolveStep);
+				sprsRemaining -= 1;
+				fdSprDissolveStep(*sprCursor++, fourthDissolveStep);
+			} while(sprsRemaining != 0);
 		}
 		sySynch(1U);
 	}
 }
 
-/* Writes the actor's screen position, in pixels, to screenPosition[0..1] and
+/* Writes the actor's screen position, in pixels, to screenPos[0..1] and
    returns 0 when it is on or near the screen; otherwise writes 0, 0 and returns
    -1. */
-Sint32 fdMapGridGetScreenRelativePos(ACTOR *actor, Sint32 *screenPosition)
+Sint32 fdMapGridGetScreenRelativePos(ACTOR *actor, Sint32 *screenPos)
 {
 	MAP_STATE *map = Ram_HeapSlots->mapGrid;
 	Sint32	   viewX;
@@ -156,12 +155,12 @@ Sint32 fdMapGridGetScreenRelativePos(ACTOR *actor, Sint32 *screenPosition)
 	   the view's top and above 224. */
 	if((x >= -(toFIXED(32) - 1) && x <= toFIXED(272) - 1) && y > 0 &&
 		y < toFIXED(224)) {
-		*screenPosition++ = FIXEDtoINT(x);
-		*screenPosition = FIXEDtoINT(y);
+		*screenPos++ = FIXEDtoINT(x);
+		*screenPos = FIXEDtoINT(y);
 		return 0;
 	}
-	*screenPosition++ = 0;
-	*screenPosition = 0;
+	*screenPos++ = 0;
+	*screenPos = 0;
 	return -1;
 }
 
@@ -170,7 +169,7 @@ Sint32 fdMapGridGetScreenRelativePos(ACTOR *actor, Sint32 *screenPosition)
 #define OUTLINE_EDGE_COLOR 15
 
 /* Sets up the actor system: allocates and zeroes the 64 actors and the system's
-   state, sets the outline's colours and registers the per-frame updates (mode
+   state, sets the outline's colours and registers the per-tick updates (mode
    is an ACTOR_SYSTEM_MODE). A battle moves its actors with
    fdActorUpdateAllMotion; the World Map and a battle place their sprites with
    the fixed camera. */
@@ -187,15 +186,15 @@ void fdActorSystemInit(Sint32 mode)
 	DMA_FILL32_CELL(zero, 0, pool, ACTOR_COUNT * sizeof(*pool));
 	DMA_FILL32_CELL(zero, 0, system, sizeof(*system));
 	if(mode == ACTOR_SYSTEM_BATTLE) {
-		sySetEvent(fdActorUpdateAllMotion, EVENT_PASS_FRAME + 10);
+		sySetEvent(fdActorUpdateAllMotion, EVENT_PASS_TICK + 10);
 	} else {
-		sySetEvent(fdActorUpdateAllOnField, EVENT_PASS_FRAME + 11);
-		sySetEvent(fdActorMoveWithCarriers, EVENT_PASS_FRAME + 10);
+		sySetEvent(fdActorUpdateAllOnField, EVENT_PASS_TICK + 11);
+		sySetEvent(fdActorMoveWithCarriers, EVENT_PASS_TICK + 10);
 	}
 	if(mode == ACTOR_SYSTEM_WORLD_MAP || mode == ACTOR_SYSTEM_BATTLE)
-		sySetEvent(fdActorSystemProjectSprs, EVENT_PASS_FRAME);
+		sySetEvent(fdActorSystemProjectSprs, EVENT_PASS_TICK);
 	else
-		sySetEvent(fdActorSystemPlaceSprs, EVENT_PASS_FRAME);
+		sySetEvent(fdActorSystemPlaceSprs, EVENT_PASS_TICK);
 	system->edge = OUTLINE_EDGE_COLOR;
 	system->fill = 0;
 }
@@ -218,14 +217,14 @@ void *fdActorFindFree(void)
 {
 	ACTOR *actor = ((ACTOR *)Ram_HeapSlots->actors);
 	void  *freeActor = 0;
-	Sint32 actorIndex = 0;
+	Sint32 actorIdx = 0;
 
-	while(actorIndex <= ACTOR_COUNT - 1) {
+	while(actorIdx <= ACTOR_COUNT - 1) {
 		if(actor->script == 0) {
 			freeActor = actor;
 			break;
 		}
-		actorIndex++;
+		actorIdx++;
 		actor++;
 	}
 	return freeActor;
@@ -235,8 +234,8 @@ void *fdActorFindFree(void)
    script lets fdActorFindFree hand the actor out again. */
 void fdActorRelease(ACTOR *actor)
 {
-	Sint32 spritesRemaining;
-	void **sprites;
+	Sint32 sprsRemaining;
+	void **sprs;
 
 	if(actor) {
 		switch(actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) {
@@ -244,12 +243,11 @@ void fdActorRelease(ACTOR *actor)
 			fdSprDestroy(actor->spr);
 			break;
 		case ACTOR_SPRITE_GROUP:
-			sprites = (void **)actor->spr;
-			for(spritesRemaining = 0; spritesRemaining < 4;
-				spritesRemaining++) {
-				SPR *sprite = *sprites++;
-				if(sprite)
-					fdSprDestroy(sprite);
+			sprs = (void **)actor->spr;
+			for(sprsRemaining = 0; sprsRemaining < 4; sprsRemaining++) {
+				SPR *spr = *sprs++;
+				if(spr)
+					fdSprDestroy(spr);
 			}
 			break;
 		}
@@ -258,30 +256,29 @@ void fdActorRelease(ACTOR *actor)
 }
 
 /* Creates an actor at (x, y, z), in 16.16 pixels, or returns 0 when every slot
-   is in use. encodedSprite / 4096 is the kind of actor (enum ACTOR_CREATE) and
+   is in use. encodedSpr / 4096 is the kind of actor (enum ACTOR_CREATE) and
    its low 12 bits the sprite's animation id. */
-ACTOR *fdActorCreate(Sint32 encodedSprite, FIXED x, FIXED y, FIXED z)
+ACTOR *fdActorCreate(Sint32 encodedSpr, FIXED x, FIXED y, FIXED z)
 {
 	ACTOR		   *actor;
-	void		   *sprite;
-	Sint32			spriteStorageKind;
-	void		  **spriteSlots;
+	void		   *spr;
+	Sint32			sprStorageKind;
+	void		  **sprSlots;
 	volatile Uint32 zero;
 
-	spriteStorageKind = encodedSprite / (ACTOR_CREATE_SPRITE_MASK + 1);
-	encodedSprite &= ACTOR_CREATE_SPRITE_MASK;
+	sprStorageKind = encodedSpr / (ACTOR_CREATE_SPRITE_MASK + 1);
+	encodedSpr &= ACTOR_CREATE_SPRITE_MASK;
 	actor = fdActorFindFree();
 	if(actor != NULL) {
 		actor->radius = 16;
-		switch(spriteStorageKind) {
+		switch(sprStorageKind) {
 		case ACTOR_CREATE_ONE_SPRITE:
-			sprite = fdSprCreate(encodedSprite);
-			if(sprite != NULL) {
+			spr = fdSprCreate(encodedSpr);
+			if(spr != NULL) {
 				actor->sprStorageKind = ACTOR_SPRITE_ONE;
-				actor->spr = sprite;
+				actor->spr = spr;
 				actor->radius =
-					fdResourceGetMetadataRecordStub(encodedSprite)->footprint >>
-					1;
+					fdResourceGetMetadataRecordStub(encodedSpr)->footprint >> 1;
 			} else {
 				actor->sprStorageKind = ACTOR_SPRITE_NONE;
 			}
@@ -289,29 +286,28 @@ ACTOR *fdActorCreate(Sint32 encodedSprite, FIXED x, FIXED y, FIXED z)
 		case ACTOR_CREATE_GROUP:
 			/* Take a zeroed list of four sprites, and fill it with id and id +
 			   1. */
-			spriteSlots = (void **)((Uint32 *)Ram_HeapSlots->actorSystem +
+			sprSlots = (void **)((Uint32 *)Ram_HeapSlots->actorSystem +
 				Ram_HeapSlots->actorSystem->cnt++ + 2);
-			actor->sprStorageKind = spriteStorageKind;
-			actor->spr = spriteSlots;
+			actor->sprStorageKind = sprStorageKind;
+			actor->spr = sprSlots;
 			zero = 0;
-			syDMAXCopy(&zero, spriteSlots, DMA_FILL_WORDS(4), REG_DMA3);
-			sprite = fdSprCreate(encodedSprite);
-			if(sprite != NULL) {
+			syDMAXCopy(&zero, sprSlots, DMA_FILL_WORDS(4), REG_DMA3);
+			spr = fdSprCreate(encodedSpr);
+			if(spr != NULL) {
 				actor->radius =
-					fdResourceGetMetadataRecordStub(encodedSprite)->footprint >>
-					1;
-				*spriteSlots = sprite;
-				spriteSlots++;
+					fdResourceGetMetadataRecordStub(encodedSpr)->footprint >> 1;
+				*sprSlots = spr;
+				sprSlots++;
 			}
-			sprite = fdSprCreate(encodedSprite + 1);
-			if(sprite != NULL)
-				*spriteSlots = sprite;
+			spr = fdSprCreate(encodedSpr + 1);
+			if(spr != NULL)
+				*sprSlots = spr;
 			break;
 		}
 	}
 	if(actor != NULL) {
 		fdActorSetPosAndResetMotion(actor, x, y, z);
-		actor->script = (Sint32 *)ActorScript_EndScript;
+		actor->script = (Sint32 *)ActorScriptEndScript;
 		actor->speedLimit = toFIXED(2);
 		actor->scriptCursor = 0;
 		actor->scaleX = toFIXED(1);
@@ -353,7 +349,7 @@ void fdActorSelectAnimation(ACTOR *actor, Sint32 argument)
 {
 	SPR	 **items;
 	SPR	  *item;
-	Sint32 count;
+	Sint32 cnt;
 
 	if(actor != 0) {
 		switch(actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) {
@@ -362,7 +358,7 @@ void fdActorSelectAnimation(ACTOR *actor, Sint32 argument)
 			break;
 		case ACTOR_SPRITE_GROUP:
 			items = ((SPR **)actor->spr);
-			for(count = 0; count < 4; count++) {
+			for(cnt = 0; cnt < 4; cnt++) {
 				item = *items++;
 				if(item != 0)
 					fdSprStartAnimation(item, argument);
@@ -376,7 +372,7 @@ void fdActorSelectAnimation(ACTOR *actor, Sint32 argument)
    sprite of a group (ANIM_STEP_NORMAL is normal speed). */
 void fdActorSetAnimationSpeed(ACTOR *actor, Sint32 value)
 {
-	Sint32 count;
+	Sint32 cnt;
 	SPR	  *child;
 	SPR	 **children;
 
@@ -387,7 +383,7 @@ void fdActorSetAnimationSpeed(ACTOR *actor, Sint32 value)
 			return;
 		case ACTOR_SPRITE_GROUP:
 			children = ((SPR **)actor->spr);
-			for(count = 0; count < 4; count++) {
+			for(cnt = 0; cnt < 4; cnt++) {
 				child = *children++;
 				if(child != 0)
 					fdSprSetAnimationSpeed(child, value);
@@ -399,25 +395,25 @@ void fdActorSetAnimationSpeed(ACTOR *actor, Sint32 value)
 
 /* Both of the above: switches all of an actor's sprites to animation and sets
    their timer step to step. */
-void fdActorSetAnimationAndSpeed(ACTOR *actor, Sint32 animation, Sint32 step)
+void fdActorSetAnimationAndSpeed(ACTOR *actor, Sint32 anm, Sint32 step)
 {
-	void **sprites;
-	void  *sprite;
+	void **sprs;
+	void  *spr;
 	Sint32 part;
 
 	if(actor != 0) {
 		switch(actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) {
 		case ACTOR_SPRITE_ONE:
-			fdSprStartAnimation(actor->spr, animation);
+			fdSprStartAnimation(actor->spr, anm);
 			fdSprSetAnimationSpeed(actor->spr, step);
 			break;
 		case ACTOR_SPRITE_GROUP:
-			sprites = (void **)actor->spr;
+			sprs = (void **)actor->spr;
 			for(part = 0; part < 4; part++) {
-				sprite = *sprites++;
-				if(sprite != 0) {
-					fdSprStartAnimation(sprite, animation);
-					fdSprSetAnimationSpeed(sprite, step);
+				spr = *sprs++;
+				if(spr != 0) {
+					fdSprStartAnimation(spr, anm);
+					fdSprSetAnimationSpeed(spr, step);
 				}
 			}
 			break;
@@ -433,31 +429,31 @@ void fdActorSetSprRotation(ACTOR *actor, Uint32 value)
 		((SPR *)actor->spr)->rotation = value;
 }
 
-/* Gives a one-sprite actor's first sprite animation animation id animationId
-   and restarts its animations. A negative animationId does nothing. */
-void fdActorSetFirstSprAnimation(ACTOR *actor, Sint32 animationId)
+/* Gives a one-sprite actor's first sprite animation animation id anmId
+   and restarts its animations. A negative anmId does nothing. */
+void fdActorSetFirstSprAnimation(ACTOR *actor, Sint32 anmId)
 {
 	SPR *child;
 
 	if(actor != NULL &&
 		(actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
 		child = ((SPR *)actor->spr);
-		if(animationId >= 0) {
-			child->entries[0]->anmId = animationId;
+		if(anmId >= 0) {
+			child->entries[0]->anmId = anmId;
 			fdSprResetAnimations(child);
 		}
 	}
 }
 
-/* Adds a sprite animation of animation id animationId to a one-sprite actor's
-   sprite. A negative animationId does nothing. */
-void fdActorRegisterSprMetadata(ACTOR *actor, Sint32 animationId)
+/* Adds a sprite animation of animation id anmId to a one-sprite actor's
+   sprite. A negative anmId does nothing. */
+void fdActorRegisterSprMetadata(ACTOR *actor, Sint32 anmId)
 {
 	if(actor != 0 &&
 		(actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
-		SPR *sprite = actor->spr;
-		if(animationId >= 0)
-			fdSprAddAnimation(sprite, animationId);
+		SPR *spr = actor->spr;
+		if(anmId >= 0)
+			fdSprAddAnimation(spr, anmId);
 	}
 }
 
@@ -465,12 +461,12 @@ void fdActorRegisterSprMetadata(ACTOR *actor, Sint32 animationId)
    (SC_APPROACH_WATCHED), watching watchedActorHandle. */
 void fdActorStartApproachWatched(ACTOR *actor, Sint32 watchedActorHandle)
 {
-	fdActorStartScript(actor, Actor_ApproachWatchedScript);
+	fdActorStartScript(actor, ActorApproachWatchedScript);
 	actor->watchedActor = (union FIELD_OBJECT *)watchedActorHandle;
 }
 
 /* Starts the leader's control script for the way the party moves now
-   (MainRoutineStateWork.movementMode), waiting a frame first for Sand on the
+   (MainRoutineStateWork.movementMode), waiting a tick first for Sand on the
    World Map. */
 void fdActorStartMovementModeScript(ACTOR *actor)
 {
@@ -479,47 +475,47 @@ void fdActorStartMovementModeScript(ACTOR *actor)
 
 	switch(party->movementMode) {
 	case LEADER_MOVEMENT_WALK:
-		script = Actor_PlayerScript;
+		script = ActorPlayerScript;
 		break;
 	case LEADER_MOVEMENT_WORLD_MAP:
-		script = Actor_WorldMapScript;
+		script = ActorWorldMapScript;
 		break;
 	case LEADER_MOVEMENT_KEYS:
-		script = Actor_KeysScript;
+		script = ActorKeysScript;
 		break;
 	case LEADER_MOVEMENT_ROPE:
-		script = Actor_RopeScript;
+		script = ActorRopeScript;
 		break;
 	case LEADER_MOVEMENT_TIGHTROPE:
-		script = Actor_TightropeScript;
+		script = ActorTightropeScript;
 		break;
 	case LEADER_MOVEMENT_SAND:
-		script = Actor_SandScript;
+		script = ActorSandScript;
 		break;
 	case LEADER_MOVEMENT_SHIP_ON_MAP:
-		script = Actor_SailOnMapScript;
+		script = ActorSailOnMapScript;
 		break;
 	case LEADER_MOVEMENT_SHIP:
-		script = Actor_SailScript;
+		script = ActorSailScript;
 		break;
 	case LEADER_MOVEMENT_FLYING_SHIP:
-		script = Actor_FlyScript;
+		script = ActorFlyScript;
 		break;
 	case LEADER_MOVEMENT_WORLD_SAND:
 		sySynch(1);
-		script = Actor_SandOnWorldMapScript;
+		script = ActorSandOnWorldMapScript;
 		break;
 	case LEADER_MOVEMENT_HOVER:
-		script = Actor_HoverScript;
+		script = ActorHoverScript;
 		break;
 	case LEADER_MOVEMENT_WALKING:
-		script = Actor_WalkingScript;
+		script = ActorWalkingScript;
 		break;
 	case LEADER_MOVEMENT_NONE:
-		script = ActorScript_EndScript;
+		script = ActorScriptEndScript;
 		break;
 	default:
-		script = Actor_KeyCheckScript;
+		script = ActorKeyCheckScript;
 		break;
 	}
 	fdActorStartScript(actor, script);
@@ -528,14 +524,14 @@ void fdActorStartMovementModeScript(ACTOR *actor)
 /* Starts an actor on the idle script (a lone SC_END). */
 void fdActorStartIdle(ACTOR *actor)
 {
-	fdActorStartScript(actor, ActorScript_EndScript);
+	fdActorStartScript(actor, ActorScriptEndScript);
 }
 
 /* Starts an actor on the camera script (SC_CAMERA). With a leader to follow, it
-   also gets a speed limit of 4 pixels a frame and an acceleration of 0.5. */
+   also gets a speed limit of 4 pixels a tick and an acceleration of 0.5. */
 void fdActorStartCamera(ACTOR *actor, Sint32 watchedActorHandle)
 {
-	fdActorStartScript(actor, Actor_CameraScript);
+	fdActorStartScript(actor, ActorCameraScript);
 	if(watchedActorHandle != 0) {
 		actor->acceleration = toFIXED(1) / 2;
 		actor->speedLimit = toFIXED(4);
@@ -544,19 +540,19 @@ void fdActorStartCamera(ACTOR *actor, Sint32 watchedActorHandle)
 	}
 }
 
-/* Waits until the actor's script reaches SC_END, at most ACTOR_WAIT_FRAMES_MAX
-   frames; it returns as soon as the script idles, and after the limit whether
+/* Waits until the actor's script reaches SC_END, at most ACTOR_WAIT_TICKS_MAX
+   ticks; it returns as soon as the script idles, and after the limit whether
    or not it has. */
 void fdActorWaitForScriptEnd(ACTOR *actor)
 {
-	Sint32 waitedFrames = 0;
+	Sint32 waitedTicks = 0;
 
 	if(actor->script != 0 &&
 		((const Sint32 *)actor->script)[actor->scriptCursor] != SC_END) {
 		do {
 			sySynch(1);
-			waitedFrames++;
-			if(waitedFrames >= ACTOR_WAIT_FRAMES_MAX)
+			waitedTicks++;
+			if(waitedTicks >= ACTOR_WAIT_TICKS_MAX)
 				break;
 		} while(actor->script != 0 &&
 			((const Sint32 *)actor->script)[actor->scriptCursor] != SC_END);
@@ -575,8 +571,8 @@ void fdActorSetSprFlags(ACTOR *actor, Uint32 value)
 void fdActorSetBlendMode(ACTOR *actor, Uint32 mode)
 {
 	if(actor != 0 && actor->sprStorageKind == ACTOR_SPRITE_ONE) {
-		SPR *sprite = actor->spr;
-		sprite->image.objMode = mode;
+		SPR *spr = actor->spr;
+		spr->image.objMode = mode;
 	}
 }
 
@@ -598,16 +594,16 @@ void fdActorSetSprColMode(ACTOR *actor, Uint32 value)
 
 /* Fixes the priority of a one-sprite actor's sprite and its shadow, which then
    no longer follow the metatiles under it (ACTOR_PRIORITY_AUTOMATIC). */
-void fdActorSetSprPriorityDirect(ACTOR *actor, Sint32 priority)
+void fdActorSetSprPriorityDirect(ACTOR *actor, Sint32 pri)
 {
-	SPR *sprite;
+	SPR *spr;
 
 	if(actor == NULL || actor->sprStorageKind != ACTOR_SPRITE_ONE) {
 		return;
 	}
-	sprite = actor->spr;
-	sprite->image.pri = priority;
-	sprite->shadow.pri = priority;
+	spr = actor->spr;
+	spr->image.pri = pri;
+	spr->shadow.pri = pri;
 	actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
 }
 
@@ -615,7 +611,7 @@ void fdActorSetSprPriorityDirect(ACTOR *actor, Sint32 priority)
    16-colour palette 0. */
 void fdActorSetItemIcon(ACTOR *owner, Sint32 id)
 {
-	SPR			  *sprite;
+	SPR			  *spr;
 	ICON_TRANSFER *transfer;
 	Sint32		   tile;
 
@@ -623,33 +619,33 @@ void fdActorSetItemIcon(ACTOR *owner, Sint32 id)
 		return;
 	owner->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
 	owner->iconItem = id;
-	sprite = owner->spr;
-	if(sprite == 0)
+	spr = owner->spr;
+	if(spr == 0)
 		return;
 	transfer = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	mnIconDrawItemStub(id);
-	tile = syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
+	tile = syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, transfer->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
-	sprite->cnt = 0;
-	sprite->dirty = 0;
-	sprite->width = 16;
-	sprite->height = 16;
-	sprite->ofsX = 0;
-	sprite->ofsY = 4;
-	sprite->scale = toFIXED(1);
-	sprite->image.tile = tile;
-	sprite->image.fullCol = 0;
-	sprite->image.pal = 0;
+	spr->cnt = 0;
+	spr->dirty = 0;
+	spr->width = 16;
+	spr->height = 16;
+	spr->ofsX = 0;
+	spr->ofsY = 4;
+	spr->scale = toFIXED(1);
+	spr->image.tile = tile;
+	spr->image.fullCol = 0;
+	spr->image.pal = 0;
 }
 
 /* The sprite id an actor is drawn with (the first halfword of its sprite's
    definition), or 0 for none. */
 Sint32 fdActorGetSprId(ACTOR *actor)
 {
-	SPR *sprite = actor->spr;
+	SPR *spr = actor->spr;
 
-	if(actor != NULL && sprite != NULL && sprite->entries != NULL)
-		return sprite->entries[0]->anmId;
+	if(actor != NULL && spr != NULL && spr->entries != NULL)
+		return spr->entries[0]->anmId;
 	return 0;
 }
 
@@ -661,7 +657,7 @@ void fdActorWaitForTrackEnd(ACTOR *actor)
 }
 
 /* Suspends the actor camera updates, starts the palette back to normal and, a
-   frame later, shows the sprites with BG1-3 hidden, leaving BG0 unchanged. */
+   tick later, shows the sprites with BG1-3 hidden, leaving BG0 unchanged. */
 void fdActorSystemSuspendProjectionAndShowSprs(void)
 {
 	Uint16 dispcnt;
@@ -700,7 +696,7 @@ UNUSED Sint32 fdActorReturnTrue(void)
 #define METATILE_LAYER(metatiles, x, z) \
 	((metatiles)[(FIELD_METATILE(z) << 7) + FIELD_METATILE(x)].actorLayer)
 
-/* Each frame, with the scrolling camera: places every actor's sprite on the
+/* Each tick, with the scrolling camera: places every actor's sprite on the
    screen. */
 void fdActorSystemPlaceSprs(void)
 {
@@ -708,7 +704,7 @@ void fdActorSystemPlaceSprs(void)
 	ACTOR_CAMERA_POINT	unusedPoints[3];
 	SPR_PLACEMENT		point;
 	SPR_SCALE			scale;
-	Sint32				objectIndex;
+	Sint32				objectIdx;
 	MAP_STATE		   *map;
 	Sint32				viewX;
 	Sint32				viewZ;
@@ -718,23 +714,23 @@ void fdActorSystemPlaceSprs(void)
 	FIXED				dx;
 	FIXED				dz;
 	Sint32				originY;
-	SPR				   *sprite;
+	SPR				   *spr;
 	FIXED				screenTop;
-	Uint8			   *priorityFlags;
+	Uint8			   *priFlg;
 	Sint32				layer;
 	Uint8			   *terrainId;
 	MAP_METATILE	   *metatiles;
 	FIXED				feetZ;
 	Sint32				objectHeight;
 	FIXED				probeX;
-	Sint32				priority;
-	Sint32				leftPriority;
-	Sint32				rightPriority;
-	Sint32				middlePriority;
+	Sint32				pri;
+	Sint32				leftPri;
+	Sint32				rightPri;
+	Sint32				middlePri;
 	Sint32				height;
 	Sint32				rise;
 	Uint32				layerPlusOne;
-	Sint8			   *basePriority;
+	Sint8			   *basePri;
 
 	map = Ram_HeapSlots->mapGrid;
 	viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
@@ -744,7 +740,7 @@ void fdActorSystemPlaceSprs(void)
 	btRenderLoadDecoder();
 	system->used = 0;
 	actor = Ram_HeapSlots->actors;
-	for(objectIndex = 0; objectIndex < ACTOR_COUNT; objectIndex++, actor++) {
+	for(objectIdx = 0; objectIdx < ACTOR_COUNT; objectIdx++, actor++) {
 		if(actor->script == NULL)
 			continue;
 		if(actor->x.fixed != 0 || actor->z.fixed != 0) {
@@ -761,7 +757,7 @@ void fdActorSystemPlaceSprs(void)
 				frozen->dirty = kind;
 				continue;
 			}
-			sprite = actor->spr;
+			spr = actor->spr;
 			dx = actor->x.fixed - viewX;
 			dz = actor->z.fixed - viewZ;
 			screenTop = dz - actor->y.fixed;
@@ -772,10 +768,10 @@ void fdActorSystemPlaceSprs(void)
 				   the loop body's first statements create. Reload orders slots
 				   by pseudo number, so the source declared a local holding this
 				   address; its type, name and spelling here are not known. */
-				(priorityFlags = &actor->priFlg,
-					!(*priorityFlags & ACTOR_PRIORITY_NOT_DRAWN))) {
+				(priFlg = &actor->priFlg,
+					!(*priFlg & ACTOR_PRIORITY_NOT_DRAWN))) {
 				/* &actor->layer in a declared local, by the same stack-slot
-				   evidence as priorityFlags above; its type and name are not
+				   evidence as priFlg above; its type and name are not
 				   known. */
 				terrainId = &actor->layer;
 				layer = *terrainId & 3;
@@ -787,25 +783,25 @@ void fdActorSystemPlaceSprs(void)
 				   ground a metatile in front, or two metatiles in front less a
 				   metatile's height, rises above its own; with
 				   ACTOR_PRIORITY_IGNORES_RISES, it keeps its own. */
-				if(*priorityFlags & ACTOR_PRIORITY_AUTOMATIC) {
+				if(*priFlg & ACTOR_PRIORITY_AUTOMATIC) {
 					probeX = actor->x.fixed - toFIXED(7);
 					feetZ = actor->z.fixed + toFIXED(2);
 					objectHeight = FIXEDtoINT(actor->groundHeight);
-					priority = 0;
-					leftPriority = 0;
-					rightPriority = 0;
-					if(!(*priorityFlags & ACTOR_PRIORITY_IGNORES_RISES)) {
+					pri = 0;
+					leftPri = 0;
+					rightPri = 0;
+					if(!(*priFlg & ACTOR_PRIORITY_IGNORES_RISES)) {
 						/* &map->basePri in a declared local, by the same
 						   evidence:
 						   set inside this arm, yet numbered before the loop
 						   body's first statements, so declared at function
 						   level or at the loop body's head. Its type and name
 						   are not known. */
-						basePriority = &map->basePri;
-						priority = *basePriority;
+						basePri = &map->basePri;
+						pri = *basePri;
 						if(fdMapGridGetTerrainHeight(layer, probeX, feetZ) ==
 							actor->groundHeight) {
-							leftPriority =
+							leftPri =
 								METATILE_PRIORITY(metatiles, probeX, feetZ);
 							height = FIXEDtoINT(
 								fdMapGridGetTerrainHeight(layer, probeX,
@@ -819,12 +815,12 @@ void fdActorSystemPlaceSprs(void)
 							if(rise > height)
 								height = rise;
 							if(height > objectHeight)
-								priority = map->basePri + 1;
+								pri = map->basePri + 1;
 						}
 						probeX += toFIXED(13);
 						if(fdMapGridGetTerrainHeight(layer, probeX, feetZ) ==
 							actor->groundHeight) {
-							rightPriority =
+							rightPri =
 								METATILE_PRIORITY(metatiles, probeX, feetZ);
 							height = FIXEDtoINT(
 								fdMapGridGetTerrainHeight(layer, probeX,
@@ -838,11 +834,10 @@ void fdActorSystemPlaceSprs(void)
 							if(rise > height)
 								height = rise;
 							if(height > objectHeight)
-								priority = map->basePri + 1;
+								pri = map->basePri + 1;
 						}
 						probeX -= toFIXED(6);
-						middlePriority =
-							METATILE_PRIORITY(metatiles, probeX, feetZ);
+						middlePri = METATILE_PRIORITY(metatiles, probeX, feetZ);
 						height = FIXEDtoINT(fdMapGridGetTerrainHeight(layer,
 							probeX, feetZ + toFIXED(MAPGRID_METATILE_PIXELS)));
 						rise =
@@ -852,78 +847,75 @@ void fdActorSystemPlaceSprs(void)
 						if(rise > height)
 							height = rise;
 						if(height > objectHeight)
-							priority = map->basePri + 1;
+							pri = map->basePri + 1;
 					} else {
 						if(actor->groundHeight ==
 							fdMapGridGetTerrainHeight(layer, probeX, feetZ))
-							leftPriority =
+							leftPri =
 								METATILE_PRIORITY(metatiles, probeX, feetZ);
 						probeX += toFIXED(13);
 						if(actor->groundHeight ==
 							fdMapGridGetTerrainHeight(layer, probeX, feetZ))
-							rightPriority =
+							rightPri =
 								METATILE_PRIORITY(metatiles, probeX, feetZ);
 						probeX -= toFIXED(6);
-						middlePriority =
-							METATILE_PRIORITY(metatiles, probeX, feetZ);
+						middlePri = METATILE_PRIORITY(metatiles, probeX, feetZ);
 					}
 					/* An odd priority is preferred: the left's, the right's,
 					   the middle's. */
-					if(leftPriority != 0 || rightPriority != 0 ||
-						middlePriority != 0) {
-						priority = leftPriority;
-						if(!(priority & 1)) {
-							if(rightPriority != 0)
-								priority = rightPriority;
-							if(!(priority & 1) && middlePriority != 0)
-								priority = middlePriority;
+					if(leftPri != 0 || rightPri != 0 || middlePri != 0) {
+						pri = leftPri;
+						if(!(pri & 1)) {
+							if(rightPri != 0)
+								pri = rightPri;
+							if(!(pri & 1) && middlePri != 0)
+								pri = middlePri;
 						}
 					}
-					if(priority != 0 &&
-						actor->sprStorageKind == ACTOR_SPRITE_ONE) {
+					if(pri != 0 && actor->sprStorageKind == ACTOR_SPRITE_ONE) {
 						SPR *placed = actor->spr;
 
-						if((Uint32)priority > 3)
-							priority = 3;
-						placed->image.pri = priority;
-						placed->shadow.pri = priority;
+						if((Uint32)pri > 3)
+							pri = 3;
+						placed->image.pri = pri;
+						placed->shadow.pri = pri;
 					}
 				}
 				layerPlusOne =
 					METATILE_LAYER(metatiles, actor->x.fixed, actor->z.fixed);
 				if(layerPlusOne != 0)
 					*terrainId = layerPlusOne - 1;
-				scale.x = syMulFX(actor->scaleX, sprite->scale);
-				scale.y = syMulFX(actor->scaleY, sprite->scale);
+				scale.x = syMulFX(actor->scaleX, spr->scale);
+				scale.y = syMulFX(actor->scaleY, spr->scale);
 				point.x = dx;
 				point.height = actor->y.fixed - originY;
 				point.y = dz - originY;
 				point.groundHeight = actor->groundHeight - originY;
-				if(*priorityFlags & ACTOR_PRIORITY_UNDERFOOT) {
+				if(*priFlg & ACTOR_PRIORITY_UNDERFOOT) {
 					point.height -= toFIXED(320);
 					point.y -= toFIXED(320);
 					point.groundHeight -= toFIXED(320);
 				}
-				if(*priorityFlags & ACTOR_PRIORITY_OVERHEAD) {
+				if(*priFlg & ACTOR_PRIORITY_OVERHEAD) {
 					point.height += toFIXED(320);
 					point.y += toFIXED(320);
 					point.groundHeight += toFIXED(320);
 				}
-				if(*priorityFlags & ACTOR_PRIORITY_OWN_DEPTH)
-					fdRenderApplyProjectedPlacementAtDepth(sprite, &point,
+				if(*priFlg & ACTOR_PRIORITY_OWN_DEPTH)
+					fdRenderApplyProjectedPlacementAtDepth(spr, &point,
 						scale.values, actor->facing, actor->sceneByte);
 				else
-					fdRenderApplyProjectedPlacement(sprite,
+					fdRenderApplyProjectedPlacement(spr,
 						sySprPlacementValues(&point), scale.values,
 						actor->facing);
 				continue;
 			}
 			if(actor->retainSprCache & ACTOR_COMPOSE_OFF_SCREEN) {
-				fdSprComposePicture(sprite, actor->facing);
+				fdSprComposePicture(spr, actor->facing);
 			} else if(!(actor->retainSprCache & ACTOR_KEEP_SPRITE_VRAM) &&
-				!sprite->retainCacheEntry) {
-				syVRAMCacheReleaseVRAM(sprite->slot);
-				sprite->dirty = 1;
+				!spr->retainCacheEntry) {
+				syVRAMCacheReleaseVRAM(spr->slot);
+				spr->dirty = 1;
 			}
 		} else {
 			/* At (0, 0): not placed; only the sprite's VRAM is given up. */
@@ -938,10 +930,10 @@ void fdActorSystemPlaceSprs(void)
 			}
 		}
 	}
-	syHeapSlotRelease(HEAP_SLOT_FRAME_SCRATCH);
+	syHeapSlotRelease(HEAP_SLOT_TICK_SCRATCH);
 }
 
-/* The fixed camera, on the World Map and in battle: each frame it places every
+/* The fixed camera, on the World Map and in battle: each tick it places every
    actor's sprites, facing them by the angle from the eye to the target. */
 
 /* Unused: returns 1. */
@@ -953,31 +945,31 @@ UNUSED Sint32 fdActorCameraReturnTrue(void)
 /* Places an actor's sprite (unless ACTOR_PRIORITY_NOT_DRAWN hides it) or each
    of its group's four sprites, turned by angle. While battle commands are
    chosen (FLAG_CHOOSING_COMMANDS) the sprites are drawn at 1.0 scale. */
-void fdActorPlaceSprs(ACTOR *actor, Sint32 angle)
+void fdActorPlaceSprs(ACTOR *actor, Sint32 ang)
 {
 	const Sint32 *scale = &actor->scaleX;
 	Sint32		 *point;
-	void		 *sprite;
-	void		**sprites;
+	void		 *spr;
+	void		**sprs;
 	Sint32		  remaining;
 
 	if(syGameFlagGet(FLAG_CHOOSING_COMMANDS))
-		scale = ActorSprite_FullScale;
+		scale = ActorSpriteFullScale;
 	switch(actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) {
 	case ACTOR_SPRITE_ONE:
 		point = &actor->x.fixed;
-		sprite = actor->spr;
+		spr = actor->spr;
 		if(!(actor->priFlg & ACTOR_PRIORITY_NOT_DRAWN))
 			fdRenderPlaceProjectedSpr(
-				sprite, point, scale, actor->facing + angle, actor->layer);
+				spr, point, scale, actor->facing + ang, actor->layer);
 		break;
 	case ACTOR_SPRITE_GROUP:
-		sprites = actor->spr;
+		sprs = actor->spr;
 		for(remaining = 0; remaining < 4; remaining++) {
-			sprite = *sprites++;
-			if(sprite != NULL)
-				fdRenderPlaceProjectedSpr(sprite, &actor->x.fixed, scale,
-					actor->facing + angle, actor->layer);
+			spr = *sprs++;
+			if(spr != NULL)
+				fdRenderPlaceProjectedSpr(spr, &actor->x.fixed, scale,
+					actor->facing + ang, actor->layer);
 		}
 		break;
 	case ACTOR_SPRITE_NONE:
@@ -985,7 +977,7 @@ void fdActorPlaceSprs(ACTOR *actor, Sint32 angle)
 	}
 }
 
-/* Each frame, with the fixed camera: places every actor in use, from the 64th
+/* Each tick, with the fixed camera: places every actor in use, from the 64th
    down. While battle commands are chosen (FLAG_CHOOSING_COMMANDS) it uses the
    fixed view matrix and turns the objects by an eighth of a turn less. */
 void fdActorSystemProjectSprs(void)
@@ -993,9 +985,9 @@ void fdActorSystemProjectSprs(void)
 	ACTOR_CAMERA_FIXED *camera = Ram_HeapSlots->cameraState;
 	ACTOR_SYSTEM_STATE *system = Ram_HeapSlots->actorSystem;
 	ACTOR_CAMERA_POINT *eye;
-	ACTOR_CAMERA_POINT *target;
+	ACTOR_CAMERA_POINT *tgt;
 	ACTOR			   *actor;
-	Sint32				angle;
+	Sint32				ang;
 	Sint32				i;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
@@ -1003,34 +995,34 @@ void fdActorSystemProjectSprs(void)
 
 	btRenderLoadDecoder();
 	eye = &camera->eye;
-	target = &camera->tgt;
+	tgt = &camera->tgt;
 	if(camera->followEye != NULL)
 		eye = camera->followEye;
 	if(camera->followPos != NULL)
-		target = camera->followPos;
-	angle = (Sint16)syAtan(
-		FIXEDtoINT(eye->x - target->x), FIXEDtoINT(eye->z - target->z));
+		tgt = camera->followPos;
+	ang = (Sint16)syAtan(
+		FIXEDtoINT(eye->x - tgt->x), FIXEDtoINT(eye->z - tgt->z));
 	system->used = 0;
 	if(syGameFlagGet(FLAG_CHOOSING_COMMANDS)) {
 		syInitMatrix();
-		angle -= DEGtoANG(45);
-		syMultiMatrixEntry(Camera_FixedViewMatrix);
-		syLookAt((Sint32 *)eye, (Sint32 *)target);
+		ang -= DEGtoANG(45);
+		syMultiMatrixEntry(CameraFixedViewMatrix);
+		syLookAt((Sint32 *)eye, (Sint32 *)tgt);
 	} else {
 		syMatrixRewindStack();
-		syLookAtLoad((Sint32 *)eye, (Sint32 *)target);
+		syLookAtLoad((Sint32 *)eye, (Sint32 *)tgt);
 	}
 	actor = Ram_HeapSlots->actors;
 	actor += ACTOR_COUNT - 1;
 	for(i = ACTOR_COUNT - 1; i >= 0; i--, actor--) {
 		/* The upper half of a script's address in ROM is never zero. */
 		if(((Uint16 *)&actor->script)[1] != 0)
-			fdActorPlaceSprs(actor, angle);
+			fdActorPlaceSprs(actor, ang);
 	}
-	syHeapSlotRelease(HEAP_SLOT_FRAME_SCRATCH);
+	syHeapSlotRelease(HEAP_SLOT_TICK_SCRATCH);
 }
 
-/* SC_GOTO(script): goes on in script, from its first command, this frame. */
+/* SC_GOTO(script): goes on in script, from its first command, this tick. */
 Sint32 fdActorScriptGoto(ACTOR *interpreter)
 {
 	interpreter->script =
@@ -1057,15 +1049,15 @@ Sint32 fdActorScriptShowSpr(ACTOR *interpreter)
 	return 1;
 }
 
-/* Waits, at most ACTOR_WAIT_FRAMES_MAX frames, for an actor to reach where it
+/* Waits, at most ACTOR_WAIT_TICKS_MAX ticks, for an actor to reach where it
    is going. */
 void fdActorWaitForMove(ACTOR *actor)
 {
-	Sint32 waitedFrames;
+	Sint32 waitedTicks;
 
-	for(waitedFrames = 0; waitedFrames < ACTOR_WAIT_FRAMES_MAX &&
-		fdActorIsTargetUnset(actor) == 0;
-		waitedFrames++) {
+	for(waitedTicks = 0;
+		waitedTicks < ACTOR_WAIT_TICKS_MAX && fdActorIsTargetUnset(actor) == 0;
+		waitedTicks++) {
 		sySynch(1);
 	}
 }

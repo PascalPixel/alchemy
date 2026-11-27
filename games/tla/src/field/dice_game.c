@@ -45,10 +45,10 @@
 #define GLOW_LEVELS 16
 
 /* The x the choices, Higher and Lower or Double Up and Cash Out, rest at; once
-   A is pressed the one not chosen slides away 12 pixels a frame. */
+   A is pressed the one not chosen slides away 12 pixels a tick. */
 #define CHOICE_COLUMN_X	 64
 /* The chosen choice's number bobs by a sine shifted down this far: up to 4
-   pixels and back every 32 frames. */
+   pixels and back every 32 ticks. */
 #define CHOICE_BOB_SHIFT 14
 
 /* Where the total and the result's banner come to rest after sliding in from
@@ -58,7 +58,7 @@
 #define RESULT_BANNER_X		60
 #define RESULT_BANNER_Y		64
 /* Offered the hi-lo game, the total arcs up and over to the left on an ellipse
-   this wide and high, a sixteenth of a turn a frame. */
+   this wide and high, a sixteenth of a turn a tick. */
 #define TOTAL_ARC_RADIUS_X	40
 #define TOTAL_ARC_RADIUS_Y	48
 /* Unused: the circle a won total would ride. */
@@ -117,7 +117,7 @@ typedef enum SUPER_DICE_RESULT {
 #define DICE_MIDDLE_TOTAL  ((DICE_LOWEST_TOTAL + DICE_HIGHEST_TOTAL) / 2)
 
 /* The pictures a state asks fdSuperLuckyDiceRun to load before the next
-   frame. */
+   tick. */
 typedef enum SUPER_LUCKY_DICE_PICTURES {
 	DICE_PICTURES_NONE = -1,
 	/* Higher and Lower, and the glowing digits */
@@ -140,7 +140,7 @@ Sint32 fdSuperLuckyDiceStart(void)
 void fdSuperLuckyDiceResetViewDefaults(void)
 {
 	BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
-	Sint32		   offset[3];
+	Sint32		   ofs[3];
 	Uint32		   nearPlane;
 
 	camera->pitch = TRIG_TURN * 147 / 256;
@@ -158,8 +158,8 @@ void fdSuperLuckyDiceResetViewDefaults(void)
 	syRotY(camera->yaw);
 	syRotX(camera->pitch);
 
-	SET_VECTOR(offset, 0, 0, camera->distance);
-	syCalcPoint(offset, camera->eye);
+	SET_VECTOR(ofs, 0, 0, camera->distance);
+	syCalcPoint(ofs, camera->eye);
 
 	nearPlane = syDivFX(toFIXED(250), toFIXED(3) / 4);
 	sySetScreenDist(toFIXED(250), nearPlane, toFIXED(32767));
@@ -169,7 +169,7 @@ void fdSuperLuckyDiceResetViewDefaults(void)
    multiplied by scale (16.16: 0 is black, toFIXED(1) unchanged), for fades.
    Returns 0. */
 Sint32 fdSuperLuckyDiceScaleRGB555Buffer(
-	Uint16 *source, Uint16 *destination, FIXED scale, Sint32 count)
+	Uint16 *src, Uint16 *dst, FIXED scale, Sint32 cnt)
 {
 	Sint32 remaining;
 	Uint32 redMask;
@@ -180,13 +180,13 @@ Sint32 fdSuperLuckyDiceScaleRGB555Buffer(
 	Uint32 green;
 	Uint32 blue;
 
-	if(count > 0) {
+	if(cnt > 0) {
 		redMask = RGB(31, 0, 0);
 		greenMask = RGB(0, 31, 0);
 		blueMask = RGB(0, 0, 31);
-		remaining = count;
+		remaining = cnt;
 		do {
-			pixel = *source;
+			pixel = *src;
 			red = pixel & redMask;
 			green = pixel & greenMask;
 			blue = blueMask & pixel;
@@ -196,9 +196,9 @@ Sint32 fdSuperLuckyDiceScaleRGB555Buffer(
 			pixel =
 				(FIXEDtoINT(red) & redMask) | (FIXEDtoINT(green) & greenMask);
 			pixel |= FIXEDtoINT(blue) & blueMask;
-			*destination = pixel;
-			source++;
-			destination++;
+			*dst = pixel;
+			src++;
+			dst++;
 			remaining--;
 		} while(remaining != 0);
 	}
@@ -210,16 +210,16 @@ Sint32 fdSuperLuckyDiceScaleRGB555Buffer(
    unchanged at angle 0 and brightest at a half turn, so a picture glows and
    fades as angle turns. */
 void fdSuperLuckyDiceBrightenCols(
-	Uint16 *source, Uint16 *destination, Uint32 count, Sint32 angle)
+	Uint16 *src, Uint16 *dst, Uint32 cnt, Sint32 ang)
 {
 	Sint32 add;
 	Uint32 i;
 
-	add = FIXEDtoINT(-syCos(angle) * GLOW_LEVELS) + GLOW_LEVELS;
-	for(i = 0; i != count; i++) {
-		Sint32 r = RGB_RED(*source) + add;
-		Sint32 g = RGB_GREEN(*source) + add;
-		Sint32 b = RGB_BLUE(*source) + add;
+	add = FIXEDtoINT(-syCos(ang) * GLOW_LEVELS) + GLOW_LEVELS;
+	for(i = 0; i != cnt; i++) {
+		Sint32 r = RGB_RED(*src) + add;
+		Sint32 g = RGB_GREEN(*src) + add;
+		Sint32 b = RGB_BLUE(*src) + add;
 
 		if(r > RGB_LEVEL_MAX)
 			r = RGB_LEVEL_MAX;
@@ -227,25 +227,25 @@ void fdSuperLuckyDiceBrightenCols(
 			g = RGB_LEVEL_MAX;
 		if(b > RGB_LEVEL_MAX)
 			b = RGB_LEVEL_MAX;
-		*destination = RGB(r, g, b);
-		source++;
-		destination++;
+		*dst = RGB(r, g, b);
+		src++;
+		dst++;
 	}
 }
 
 /* Draws value as digits small digit sprites, from PINK_DIGIT_TILES in palette,
    ending at x, 10 pixels apart, leading zeros skipped but for the last. Returns
    the next free sprite. */
-Sint32 fdSuperLuckyDiceDrawNum(Sint32 sprite, Sint32 x, Sint32 y, Sint32 value,
-	Sint32 palette, Sint32 digits)
+Sint32 fdSuperLuckyDiceDrawNum(
+	Sint32 spr, Sint32 x, Sint32 y, Sint32 value, Sint32 palette, Sint32 digits)
 {
-	DICE_SPR *sprites;
+	DICE_SPR *sprs;
 	Sint32	  started;
 	Sint32	  digit;
 	Sint32	  i;
 	Sint32	  k;
 
-	sprites = (DICE_SPR *)Ram_HeapSlots->canvasMap;
+	sprs = (DICE_SPR *)Ram_HeapSlots->canvasMap;
 	started = 0;
 	x -= digits * 10;
 	for(i = 0; i != digits; i++) {
@@ -257,30 +257,30 @@ Sint32 fdSuperLuckyDiceDrawNum(Sint32 sprite, Sint32 x, Sint32 y, Sint32 value,
 			started = 1;
 		else if(!started && i != digits - 1)
 			continue;
-		sprites->oam[sprite].attr01 =
+		sprs->oam[spr].attr01 =
 			OBJ_POSITION(x + i * 10 + 10 + OBJ_X_TURN, y + OBJ_Y_TURN) |
 			OBJ_SIZE_16X16;
-		sprites->oam[sprite].attr2 =
+		sprs->oam[spr].attr2 =
 			(digit * SPRITE_TILES(16, 16) + PINK_DIGIT_TILES) |
 			OBJ_PALETTE(palette);
-		sprite++;
+		spr++;
 	}
-	return sprite;
+	return spr;
 }
 
 /* Draws value as digits large digit sprites, from GREEN_DIGIT_TILES in palette,
    starting at x, 22 pixels apart, leading zeros skipped. Returns the next free
    sprite. */
-Sint32 fdSuperLuckyDiceDrawLargeNum(Sint32 sprite, Sint32 x, Sint32 y,
-	Sint32 value, Sint32 palette, Sint32 digits)
+Sint32 fdSuperLuckyDiceDrawLargeNum(
+	Sint32 spr, Sint32 x, Sint32 y, Sint32 value, Sint32 palette, Sint32 digits)
 {
-	DICE_SPR *sprites;
+	DICE_SPR *sprs;
 	Sint32	  started;
 	Sint32	  digit;
 	Sint32	  i;
 	Sint32	  k;
 
-	sprites = (DICE_SPR *)Ram_HeapSlots->canvasMap;
+	sprs = (DICE_SPR *)Ram_HeapSlots->canvasMap;
 	started = 0;
 	for(i = 0; i != digits; i++) {
 		digit = value;
@@ -291,15 +291,15 @@ Sint32 fdSuperLuckyDiceDrawLargeNum(Sint32 sprite, Sint32 x, Sint32 y,
 			started = 1;
 		else if(!started)
 			continue;
-		sprites->oam[sprite].attr01 =
+		sprs->oam[spr].attr01 =
 			OBJ_POSITION(x + i * 22 + OBJ_X_TURN, y + OBJ_Y_TURN) |
 			OBJ_SIZE_32X32;
-		sprites->oam[sprite].attr2 =
+		sprs->oam[spr].attr2 =
 			(digit * SPRITE_TILES(32, 32) + GREEN_DIGIT_TILES) |
 			OBJ_PALETTE(palette);
-		sprite++;
+		spr++;
 	}
-	return sprite;
+	return spr;
 }
 
 /* Scores the four dice's faces: SUPER_LUCKY_DICE_RESULT_PERFECT when all four
@@ -343,9 +343,9 @@ Sint32 fdSuperLuckyDiceScoreDice(Sint32 *dice)
 }
 
 /* The die face tile at each step of its roll, as Lucky Dice's
-   LuckyDice_FaceTiles: one for each DICE_ROLL_PER_TILE of the roll angle, three
+   LuckyDiceFaceTiles: one for each DICE_ROLL_PER_TILE of the roll angle, three
    to a face. */
-const Uint8 SuperLuckyDice_FaceTiles[] = {
+const Uint8 SuperLuckyDiceFaceTiles[] = {
 	0, 12, 16, 1, 14, 8, 2, 15, 10, 3, 9, 13, 4, 7, 6, 5, 17, 11};
 
 /* What differs between the editions: the windows' sizes and text columns by
@@ -437,48 +437,48 @@ void fdSuperLuckyDiceRun(void)
 	Uint16 bgPalette[BG_PLTT_COLORS];
 	Sint32 spinRate[SUPER_LUCKY_DICE_COUNT];
 	/* the dice, then their shadows */
-	Sint32	spriteDepth[SUPER_LUCKY_DICE_COUNT * 2];
+	Sint32	sprDepth[SUPER_LUCKY_DICE_COUNT * 2];
 	Sint32	numbers[SUPER_LUCKY_DICE_COUNT]; /* each die's face, 0 for a one */
 	Sint32	groundPoint[3];
 	Sint32	screen[3];
 	Sint32	drawOrder[SUPER_LUCKY_DICE_COUNT];
-	Uint16 *spritePalette;
-	Uint8  *metatileBuffer;
+	Uint16 *sprPalette;
+	Uint8  *metatileBuf;
 	DICE_STATE	*dice;
-	DICE_SPR	*sprites;
+	DICE_SPR	*sprs;
 	DICE_CAMERA *camera;
-	Uint8		*resourceAddress;
-	Sint32		 frame;
+	Uint8		*resourceAdr;
+	Sint32		 frm;
 	Sint32		 total;
 	Sint32		 resultKind;
 	Sint32		 state;
 	Sint32		 bet;
 	Sint32 hiLoGame; /* 0 for the first throw, then 1 to DICE_FINAL_GAME */
-	Sint32 timer;
+	Sint32 tmr;
 	Sint32 slide;
 	Sint32 winnings;
 	Sint32 lower;
 	Sint32 cashOut;
-	Sint32 target;
+	Sint32 tgt;
 	Sint32 multiplier;
 	Sint32 loadPictures;
 	Sint32 jingle;
-	Sint32 spriteCount;
+	Sint32 sprCnt;
 	Sint32 stoppedDice;
-	struct WINDOW *window;
+	struct WINDOW *win;
 	Sint32		   index;
-	Sint32		   otherIndex;
+	Sint32		   otherIdx;
 	Sint32		   digits;
 
-	spritePalette = syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, 512);
+	sprPalette = syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, 512);
 	dice = syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE_EFFECT, 31612);
-	sprites = syHeapSlotAllocEWRAM(HEAP_SLOT_CANVAS_MAP, 1556);
+	sprs = syHeapSlotAllocEWRAM(HEAP_SLOT_CANVAS_MAP, 1556);
 	camera = syHeapSlotAllocEWRAM(HEAP_SLOT_CAMERA, 76);
 	syResourceReservedNoOperation(RESOURCE_BATTLE_EFFECT_STUBS);
 	fdSuperLuckyDiceResetViewDefaults();
 	syInitEvent();
 	OamCopyEnabled = 0;
-	metatileBuffer = MapGridMetatileBuffer;
+	metatileBuf = MapGridMetatileBuffer;
 
 	/* Fill BG1's map (screen block 6) with a 30-tile-wide picture, then load
 	   the dome, the dice and the lettering with their palettes faded to
@@ -496,63 +496,62 @@ void fdSuperLuckyDiceRun(void)
 		}
 	}
 
-	resourceAddress = syResourceGetTableEntry(RESOURCE_SLOTS_DOME_PICTURE);
+	resourceAdr = syResourceGetTableEntry(RESOURCE_SLOTS_DOME_PICTURE);
 	syDMAXCopy((void *)BG_PLTT, bgPalette, DMA_COPY_WORDS(128), REG_DMA3);
-	syDMAXCopy(resourceAddress, bgPalette,
-		DMA_COPY_WORDS(DOME_PALETTE_COLORS / 2), REG_DMA3);
-	resourceAddress += DOME_PALETTE_COLORS * 2;
-	syDecompressTaggedLZ(resourceAddress, metatileBuffer);
-	syDMAXCopy(metatileBuffer, (void *)BG_CHAR_BLOCK(1), DMA_COPY_WORDS(9600),
+	syDMAXCopy(resourceAdr, bgPalette, DMA_COPY_WORDS(DOME_PALETTE_COLORS / 2),
 		REG_DMA3);
-	resourceAddress = syResourceGetTableEntry(RESOURCE_DICE_FACES);
+	resourceAdr += DOME_PALETTE_COLORS * 2;
+	syDecompressTaggedLZ(resourceAdr, metatileBuf);
+	syDMAXCopy(
+		metatileBuf, (void *)BG_CHAR_BLOCK(1), DMA_COPY_WORDS(9600), REG_DMA3);
+	resourceAdr = syResourceGetTableEntry(RESOURCE_DICE_FACES);
 	/* Six palettes: the faces' DICE_FACES_PALETTE_COLORS colours, then 32 read
 	   from the start of their tiles into palettes 4 and 5. */
-	syDMAXCopy(resourceAddress, spritePalette,
-		DMA_COPY_WORDS(6 * PALETTE_COLORS / 2), REG_DMA3);
-	resourceAddress += DICE_FACES_PALETTE_COLORS * 2;
-	syDecompressTaggedLZ(resourceAddress, metatileBuffer);
-	syDMAXCopy(
-		metatileBuffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(1216), REG_DMA3);
-	resourceAddress =
+	syDMAXCopy(resourceAdr, sprPalette, DMA_COPY_WORDS(6 * PALETTE_COLORS / 2),
+		REG_DMA3);
+	resourceAdr += DICE_FACES_PALETTE_COLORS * 2;
+	syDecompressTaggedLZ(resourceAdr, metatileBuf);
+	syDMAXCopy(metatileBuf, (void *)OBJ_VRAM0, DMA_COPY_WORDS(1216), REG_DMA3);
+	resourceAdr =
 		syResourceGetTableEntry(RESOURCE_SLOTS_SMALL_DOUBLE_UP_BANNER);
-	syDMAXCopy(resourceAddress,
-		spritePalette + DICE_PALETTE_SMALL_DOUBLE_UP * PALETTE_COLORS,
+	syDMAXCopy(resourceAdr,
+		sprPalette + DICE_PALETTE_SMALL_DOUBLE_UP * PALETTE_COLORS,
 		DMA_COPY_WORDS(8), REG_DMA3);
-	resourceAddress += PALETTE_BYTES;
-	syDecompressTaggedLZ(resourceAddress, metatileBuffer);
-	syDMAXCopy(metatileBuffer,
+	resourceAdr += PALETTE_BYTES;
+	syDecompressTaggedLZ(resourceAdr, metatileBuf);
+	syDMAXCopy(metatileBuf,
 		(void *)(OBJ_VRAM0 + SMALL_DOUBLE_UP_TILES * TILE_SIZE_4BPP),
 		DMA_COPY_WORDS(128), REG_DMA3);
-	resourceAddress = syResourceGetTableEntry(RESOURCE_SLOTS_FINAL_GAME_BANNER);
-	syDMAXCopy(resourceAddress,
-		spritePalette + DICE_PALETTE_FINAL_GAME * PALETTE_COLORS,
+	resourceAdr = syResourceGetTableEntry(RESOURCE_SLOTS_FINAL_GAME_BANNER);
+	syDMAXCopy(resourceAdr,
+		sprPalette + DICE_PALETTE_FINAL_GAME * PALETTE_COLORS,
 		DMA_COPY_WORDS(8), REG_DMA3);
-	resourceAddress += PALETTE_BYTES;
-	syDecompressTaggedLZ(resourceAddress, metatileBuffer);
-	syDMAXCopy(metatileBuffer,
+	resourceAdr += PALETTE_BYTES;
+	syDecompressTaggedLZ(resourceAdr, metatileBuf);
+	syDMAXCopy(metatileBuf,
 		(void *)(OBJ_VRAM0 + FINAL_GAME_TILES * TILE_SIZE_4BPP),
 		DMA_COPY_WORDS(256), REG_DMA3);
-	resourceAddress = syResourceGetTableEntry(RESOURCE_SLOTS_ORANGE_DIGITS);
-	syDMAXCopy(resourceAddress,
-		spritePalette + DICE_PALETTE_ORANGE_DIGITS * PALETTE_COLORS,
+	resourceAdr = syResourceGetTableEntry(RESOURCE_SLOTS_ORANGE_DIGITS);
+	syDMAXCopy(resourceAdr,
+		sprPalette + DICE_PALETTE_ORANGE_DIGITS * PALETTE_COLORS,
 		DMA_COPY_WORDS(8), REG_DMA3);
-	resourceAddress += PALETTE_BYTES;
-	syDecompressTaggedLZ(resourceAddress, metatileBuffer);
-	syDMAXCopy(metatileBuffer,
+	resourceAdr += PALETTE_BYTES;
+	syDecompressTaggedLZ(resourceAdr, metatileBuf);
+	syDMAXCopy(metatileBuf,
 		(void *)(OBJ_VRAM0 + ORANGE_DIGIT_TILES * TILE_SIZE_4BPP),
 		DMA_COPY_WORDS(640), REG_DMA3);
-	resourceAddress = syResourceGetTableEntry(RESOURCE_SLOTS_TIMES_SIGN);
-	syDMAXCopy(resourceAddress,
-		spritePalette + DICE_PALETTE_TIMES_SIGN * PALETTE_COLORS,
+	resourceAdr = syResourceGetTableEntry(RESOURCE_SLOTS_TIMES_SIGN);
+	syDMAXCopy(resourceAdr,
+		sprPalette + DICE_PALETTE_TIMES_SIGN * PALETTE_COLORS,
 		DMA_COPY_WORDS(8), REG_DMA3);
-	resourceAddress += PALETTE_BYTES;
-	syDecompressTaggedLZ(resourceAddress, metatileBuffer);
-	syDMAXCopy(metatileBuffer,
+	resourceAdr += PALETTE_BYTES;
+	syDecompressTaggedLZ(resourceAdr, metatileBuf);
+	syDMAXCopy(metatileBuf,
 		(void *)(OBJ_VRAM0 + TIMES_SIGN_TILES * TILE_SIZE_4BPP),
 		DMA_COPY_WORDS(96), REG_DMA3);
-	resourceAddress = syResourceGetTableEntry(RESOURCE_SLOTS_PINK_DIGITS);
-	syDMAXCopy(resourceAddress,
-		spritePalette + DICE_PALETTE_PINK_DIGITS * PALETTE_COLORS,
+	resourceAdr = syResourceGetTableEntry(RESOURCE_SLOTS_PINK_DIGITS);
+	syDMAXCopy(resourceAdr,
+		sprPalette + DICE_PALETTE_PINK_DIGITS * PALETTE_COLORS,
 		DMA_COPY_WORDS(8), REG_DMA3);
 	{
 		Uint16 *src;
@@ -562,8 +561,8 @@ void fdSuperLuckyDiceRun(void)
 
 		/* The pink digits' blue and red raised by four: red takes the blue, and
 		   green and blue the red. */
-		dst = spritePalette + DICE_PALETTE_PALE_DIGITS * PALETTE_COLORS;
-		src = (Uint16 *)resourceAddress;
+		dst = sprPalette + DICE_PALETTE_PALE_DIGITS * PALETTE_COLORS;
+		src = (Uint16 *)resourceAdr;
 		for(index = 0; index != PALETTE_COLORS; index++) {
 			blue = RGB_BLUE(*src) + 4;
 			red = RGB_RED(*src) + 4;
@@ -576,16 +575,15 @@ void fdSuperLuckyDiceRun(void)
 			dst++;
 		}
 	}
-	syDMAXCopy(spritePalette + DICE_PALETTE_PALE_DIGITS * PALETTE_COLORS,
+	syDMAXCopy(sprPalette + DICE_PALETTE_PALE_DIGITS * PALETTE_COLORS,
 		(void *)&OBJ_PLTT_COLOR(DICE_PALETTE_PALE_DIGITS, 0), DMA_COPY_WORDS(8),
 		REG_DMA3);
-	resourceAddress += PALETTE_BYTES;
-	syDecompressTaggedLZ(resourceAddress, metatileBuffer);
-	syDMAXCopy(metatileBuffer,
+	resourceAdr += PALETTE_BYTES;
+	syDecompressTaggedLZ(resourceAdr, metatileBuf);
+	syDMAXCopy(metatileBuf,
 		(void *)(OBJ_VRAM0 + PINK_DIGIT_TILES * TILE_SIZE_4BPP),
 		DMA_COPY_WORDS(320), REG_DMA3);
-	fdSuperLuckyDiceScaleRGB555Buffer(
-		spritePalette, (Uint16 *)OBJ_PLTT, 0, 256);
+	fdSuperLuckyDiceScaleRGB555Buffer(sprPalette, (Uint16 *)OBJ_PLTT, 0, 256);
 	fdSuperLuckyDiceScaleRGB555Buffer(bgPalette, (Uint16 *)BG_PLTT, 0, 256);
 
 	/* Show the dome on BG1, sprites and windows, with the dome blended. */
@@ -616,12 +614,12 @@ void fdSuperLuckyDiceRun(void)
 	resultKind = SUPER_LUCKY_DICE_RESULT_LOSE;
 	state = SUPER_LUCKY_DICE_THROW;
 	hiLoGame = 0;
-	timer = 0;
+	tmr = 0;
 	slide = 0;
 	winnings = 0;
 	lower = 0;
 	cashOut = 0;
-	target = DICE_MIDDLE_TOTAL;
+	tgt = DICE_MIDDLE_TOTAL;
 	multiplier = 1;
 	loadPictures = DICE_PICTURES_NONE;
 	jingle = -1;
@@ -650,76 +648,76 @@ void fdSuperLuckyDiceRun(void)
 	}
 
 	mnWindowSystemInitFieldStub();
-	window = mnWindowCreateStub(COIN_WINDOW_X, 0, COIN_WINDOW_WIDTH, 3, 6);
-	sprites->coinsWin = window;
+	win = mnWindowCreateStub(COIN_WINDOW_X, 0, COIN_WINDOW_WIDTH, 3, 6);
+	sprs->coinsWin = win;
 	mnTextDrawMessageAsTilesStub(
-		(Sint32)&MsgLuckyDiceCoins, window, COIN_TEXT_X, 0);
+		(Sint32)&MsgLuckyDiceCoins, win, COIN_TEXT_X, 0);
 	mnTextDrawNumInWindowStub(MainRoutineStateWork.coins, DICE_COIN_DIGITS,
-		(Sint32)sprites->coinsWin, 0, 0);
-	window = mnWindowCreateStub(BET_WINDOW_X, 3, BET_WINDOW_WIDTH, 3, 6);
-	sprites->betWin = window;
+		(Sint32)sprs->coinsWin, 0, 0);
+	win = mnWindowCreateStub(BET_WINDOW_X, 3, BET_WINDOW_WIDTH, 3, 6);
+	sprs->betWin = win;
 	/* "Bet", the message before. */
-	mnTextDrawMessageAsTilesStub((Sint32)&MsgLuckyDiceCoins - 1, window, 0, 0);
-	window = mnWindowCreateStub(SUPER_LUCKY_DICE_HELP_WINDOW_X, 16,
+	mnTextDrawMessageAsTilesStub((Sint32)&MsgLuckyDiceCoins - 1, win, 0, 0);
+	win = mnWindowCreateStub(SUPER_LUCKY_DICE_HELP_WINDOW_X, 16,
 		SUPER_LUCKY_DICE_HELP_WINDOW_WIDTH, 4, 6);
-	sprites->helpWin = window;
+	sprs->helpWin = win;
 	/* The Throw and Quit buttons. */
-	mnTextDrawMessageAsTilesStub((Sint32)&MsgDiceGameThrow, window, 0, 0);
+	mnTextDrawMessageAsTilesStub((Sint32)&MsgDiceGameThrow, win, 0, 0);
 	mnTextDrawMessageAsTilesStub(
-		(Sint32)&MsgDiceGameThrow + 1, sprites->helpWin, 0, 8);
+		(Sint32)&MsgDiceGameThrow + 1, sprs->helpWin, 0, 8);
 	bet = gmPartyGetAverageLevelStub() * DICE_BET_PER_LEVEL;
 #if !SUPER_LUCKY_DICE_NO_FIRST_BET_CLAMP
 	if((Uint32)bet > MainRoutineStateWork.coins)
 		bet = MainRoutineStateWork.coins;
 #endif
 	mnTextDrawNumInWindowStub(
-		bet, DICE_COIN_DIGITS, (Sint32)sprites->betWin, BET_TEXT_X, 5);
+		bet, DICE_COIN_DIGITS, (Sint32)sprs->betWin, BET_TEXT_X, 5);
 	sySndPlayStub(MUS_SUPER_LUCKY_DICE);
 
-	frame = 0;
+	frm = 0;
 	for(;;) {
-		spriteCount = 0;
-		if(frame <= DICE_FADE_FRAMES) {
-			fdSuperLuckyDiceScaleRGB555Buffer(spritePalette, (Uint16 *)OBJ_PLTT,
-				frame * (toFIXED(1) / DICE_FADE_FRAMES), 256);
+		sprCnt = 0;
+		if(frm <= DICE_FADE_TICKS) {
+			fdSuperLuckyDiceScaleRGB555Buffer(sprPalette, (Uint16 *)OBJ_PLTT,
+				frm * (toFIXED(1) / DICE_FADE_TICKS), 256);
 			fdSuperLuckyDiceScaleRGB555Buffer(bgPalette, (Uint16 *)BG_PLTT,
-				frame * (toFIXED(1) / DICE_FADE_FRAMES), 256);
+				frm * (toFIXED(1) / DICE_FADE_TICKS), 256);
 		}
 		syInitMatrix();
 		syLookAtLoad(camera->eye, camera->focus);
 
 		if(state == SUPER_LUCKY_DICE_THROW) {
-			if(frame > 17) {
+			if(frm > 17) {
 				if(MainRoutineStateWork.coins <
 					(Uint32)(gmPartyGetAverageLevelStub() *
 						DICE_BET_PER_LEVEL)) {
-					mnWindowCloseStub(sprites->helpWin, 1);
+					mnWindowCloseStub(sprs->helpWin, 1);
 					break;
 				}
 				if(PerWork.repeat & KEY_B) {
 					sySndPlayStub(SE_MENU_CANCEL);
-					mnWindowCloseStub(sprites->helpWin, 1);
+					mnWindowCloseStub(sprs->helpWin, 1);
 					break;
 				}
 				if(PerWork.repeat & KEY_A) {
 					sySndPlayStub(SE_LUCKY_DICE_THROW);
-					mnWindowCloseStub(sprites->helpWin, 1);
+					mnWindowCloseStub(sprs->helpWin, 1);
 					sySndPlayStub(SE_LUCKY_DICE_THROW);
 					DICE_GAME_THROW(dice, spinRate);
 					bet = gmPartyGetAverageLevelStub() * DICE_BET_PER_LEVEL;
 					if((Uint32)bet > MainRoutineStateWork.coins)
 						bet = MainRoutineStateWork.coins;
 					mnTextDrawNumInWindowStub(bet, DICE_COIN_DIGITS,
-						(Sint32)sprites->betWin, BET_TEXT_X, 5);
+						(Sint32)sprs->betWin, BET_TEXT_X, 5);
 					gmPartyAdjustCoinsStub(-bet);
 					mnTextDrawNumInWindowStub(MainRoutineStateWork.coins,
-						DICE_COIN_DIGITS, (Sint32)sprites->coinsWin, 0, 0);
+						DICE_COIN_DIGITS, (Sint32)sprs->coinsWin, 0, 0);
 					state = SUPER_LUCKY_DICE_ROLL;
-					timer = 0;
+					tmr = 0;
 					slide = 0;
 					bet = gmPartyGetAverageLevelStub() * DICE_BET_PER_LEVEL;
 					mnTextDrawNumInWindowStub(bet, DICE_COIN_DIGITS,
-						(Sint32)sprites->betWin, BET_TEXT_X, 5);
+						(Sint32)sprs->betWin, BET_TEXT_X, 5);
 				}
 			}
 		} else if(state == SUPER_LUCKY_DICE_GUESS) {
@@ -728,8 +726,8 @@ void fdSuperLuckyDiceRun(void)
 			   throwing for a new bet, the winnings lost. */
 			if(slide <= 7) {
 				slide++;
-			} else if(timer > 0) {
-				if(++timer == 16) {
+			} else if(tmr > 0) {
+				if(++tmr == 16) {
 					sySndPlayStub(SE_LUCKY_DICE_THROW);
 					DICE_GAME_THROW(dice, spinRate);
 					state = SUPER_LUCKY_DICE_ROLL;
@@ -738,14 +736,14 @@ void fdSuperLuckyDiceRun(void)
 				if(CANNOT_QUIT(hiLoGame)) {
 					sySndPlayStub(SE_MENU_ERROR);
 				} else {
-					mnWindowCloseStub(sprites->helpWin, 1);
-					window = mnWindowCreateStub(SUPER_LUCKY_DICE_HELP_WINDOW_X,
-						16, SUPER_LUCKY_DICE_HELP_WINDOW_WIDTH, 4, 6);
-					sprites->helpWin = window;
+					mnWindowCloseStub(sprs->helpWin, 1);
+					win = mnWindowCreateStub(SUPER_LUCKY_DICE_HELP_WINDOW_X, 16,
+						SUPER_LUCKY_DICE_HELP_WINDOW_WIDTH, 4, 6);
+					sprs->helpWin = win;
 					mnTextDrawMessageAsTilesStub(
-						(Sint32)&MsgDiceGameThrow, window, 0, 0);
+						(Sint32)&MsgDiceGameThrow, win, 0, 0);
 					mnTextDrawMessageAsTilesStub(
-						(Sint32)&MsgDiceGameThrow + 1, sprites->helpWin, 0, 8);
+						(Sint32)&MsgDiceGameThrow + 1, sprs->helpWin, 0, 8);
 					sySndPlayStub(SE_MENU_CANCEL);
 					state = SUPER_LUCKY_DICE_THROW;
 					/* BUG: the hi-lo game and its total are kept, so the next
@@ -754,13 +752,13 @@ void fdSuperLuckyDiceRun(void)
 					   here. */
 #if FIX_QUIT_HI_LO_KEEPS_GAME
 					hiLoGame = 0;
-					target = DICE_MIDDLE_TOTAL;
+					tgt = DICE_MIDDLE_TOTAL;
 #endif
 				}
 			} else if(PerWork.repeat & KEY_A) {
 				sySndPlayStub(SE_MENU_CONFIRM);
-				timer = 1;
-				mnWindowCloseStub(sprites->helpWin, 1);
+				tmr = 1;
+				mnWindowCloseStub(sprs->helpWin, 1);
 				/* Unused: a guess before the first throw would pay its bet
 				   here, and be told "If the dice total more than 15,"
 				   (MsgDiceGameHigher); the first hi-lo game comes only after a
@@ -770,80 +768,79 @@ void fdSuperLuckyDiceRun(void)
 					if((Uint32)bet > MainRoutineStateWork.coins)
 						bet = MainRoutineStateWork.coins;
 					mnTextDrawNumInWindowStub(bet, DICE_COIN_DIGITS,
-						(Sint32)sprites->betWin, BET_TEXT_X, 5);
+						(Sint32)sprs->betWin, BET_TEXT_X, 5);
 					gmPartyAdjustCoinsStub(-bet);
 					mnTextDrawNumInWindowStub(MainRoutineStateWork.coins,
-						DICE_COIN_DIGITS, (Sint32)sprites->coinsWin, 0, 0);
+						DICE_COIN_DIGITS, (Sint32)sprs->coinsWin, 0, 0);
 				}
 			} else {
-				Sint32 message = -1;
+				Sint32 msg = -1;
 
 				if((PerWork.repeat & KEY_UP) && lower == 1) {
-					if(target == DICE_HIGHEST_TOTAL) {
+					if(tgt == DICE_HIGHEST_TOTAL) {
 						sySndPlayStub(SE_MENU_CANCEL);
 					} else {
 						if(hiLoGame == 0)
-							message = (Sint32)&MsgDiceGameHigher;
+							msg = (Sint32)&MsgDiceGameHigher;
 						else
-							message = (Sint32)&MsgDiceGameHigherAgain;
+							msg = (Sint32)&MsgDiceGameHigherAgain;
 						sySndPlayStub(SE_MENU_CURSOR_MOVE);
 						lower = 0;
 					}
 				} else if((PerWork.repeat & KEY_DOWN) && lower == 0) {
-					if(target == DICE_LOWEST_TOTAL) {
+					if(tgt == DICE_LOWEST_TOTAL) {
 						sySndPlayStub(SE_MENU_CANCEL);
 					} else {
 						if(hiLoGame == 0)
-							message = (Sint32)&MsgDiceGameLower;
+							msg = (Sint32)&MsgDiceGameLower;
 						else
-							message = (Sint32)&MsgDiceGameLowerAgain;
+							msg = (Sint32)&MsgDiceGameLowerAgain;
 						sySndPlayStub(SE_MENU_CURSOR_MOVE);
 						lower = 1;
 					}
 				}
-				if(message != -1) {
+				if(msg != -1) {
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH || \
 	LANGUAGE == LANGUAGE_ITALIAN
-					mnWindowSprPrepareForRedrawStub(sprites->helpWin);
+					mnWindowSprPrepareForRedrawStub(sprs->helpWin);
 #endif
+					mnTextDrawMessageAsTilesStub(msg, sprs->helpWin, 0, 0);
 					mnTextDrawMessageAsTilesStub(
-						message, sprites->helpWin, 0, 0);
-					mnTextDrawMessageAsTilesStub(
-						(Sint32)&MsgDiceGameChoose, sprites->helpWin, 0, 8);
+						(Sint32)&MsgDiceGameChoose, sprs->helpWin, 0, 8);
 				}
 			}
 			if(lower == 0) {
 				fdSuperLuckyDiceBrightenCols(
-					spritePalette + DICE_PALETTE_RELOADED_A * PALETTE_COLORS,
+					sprPalette + DICE_PALETTE_RELOADED_A * PALETTE_COLORS,
 					(Uint16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_A, 0),
-					PALETTE_COLORS, timer * (TRIG_TURN / 16));
+					PALETTE_COLORS, tmr * (TRIG_TURN / 16));
 				fdSuperLuckyDiceScaleRGB555Buffer(
-					spritePalette + DICE_PALETTE_RELOADED_B * PALETTE_COLORS,
+					sprPalette + DICE_PALETTE_RELOADED_B * PALETTE_COLORS,
 					(Uint16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_B, 0),
 					toFIXED(1) / 2, PALETTE_COLORS);
 				fdSuperLuckyDiceBrightenCols(
-					spritePalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
+					sprPalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
 					(Uint16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_C, 0),
-					PALETTE_COLORS, timer * (TRIG_TURN / 16));
+					PALETTE_COLORS, tmr * (TRIG_TURN / 16));
 				fdSuperLuckyDiceScaleRGB555Buffer(
-					spritePalette + DICE_PALETTE_RELOADED_D * PALETTE_COLORS,
+					sprPalette + DICE_PALETTE_RELOADED_D * PALETTE_COLORS,
 					(Uint16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_D, 0),
 					toFIXED(1) / 2, PALETTE_COLORS);
 			} else {
 				fdSuperLuckyDiceBrightenCols(
-					spritePalette + DICE_PALETTE_RELOADED_B * PALETTE_COLORS,
+					sprPalette + DICE_PALETTE_RELOADED_B * PALETTE_COLORS,
 					(Uint16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_B, 0),
-					PALETTE_COLORS, timer * (TRIG_TURN / 16));
+					PALETTE_COLORS, tmr * (TRIG_TURN / 16));
 				fdSuperLuckyDiceScaleRGB555Buffer(
-					spritePalette + DICE_PALETTE_RELOADED_A * PALETTE_COLORS,
+					sprPalette + DICE_PALETTE_RELOADED_A * PALETTE_COLORS,
 					(Uint16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_A, 0),
 					toFIXED(1) / 2, PALETTE_COLORS);
 				fdSuperLuckyDiceBrightenCols(
-					spritePalette + DICE_PALETTE_RELOADED_D * PALETTE_COLORS,
+					sprPalette + DICE_PALETTE_RELOADED_D * PALETTE_COLORS,
 					(Uint16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_D, 0),
-					PALETTE_COLORS, timer * (TRIG_TURN / 16));
+					PALETTE_COLORS, tmr * (TRIG_TURN / 16));
 				fdSuperLuckyDiceScaleRGB555Buffer(
-					spritePalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
+					sprPalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
 					(Uint16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_C, 0),
 					toFIXED(1) / 2, PALETTE_COLORS);
 			}
@@ -860,10 +857,10 @@ void fdSuperLuckyDiceRun(void)
 				die->x += die->velX;
 				die->y += die->velY;
 				die->z += die->velZ;
-				for(otherIndex = 0; otherIndex != SUPER_LUCKY_DICE_COUNT;
-					otherIndex++) {
-					other = &dice->particles[otherIndex];
-					if(index != otherIndex) {
+				for(otherIdx = 0; otherIdx != SUPER_LUCKY_DICE_COUNT;
+					otherIdx++) {
+					other = &dice->particles[otherIdx];
+					if(index != otherIdx) {
 						Sint32 separationX, separationY, separationZ,
 							separation;
 
@@ -914,16 +911,16 @@ void fdSuperLuckyDiceRun(void)
 					die->velY = -die->velY * 48 / DAMPING_SCALE;
 					if((syRandom() & 3) == 0) {
 						Sint32 speed;
-						Sint32 angle;
+						Sint32 ang;
 						Sint32 speedX = die->velX >> 8;
 						Sint32 speedZ = die->velZ >> 8;
 
 						speed =
 							sySquartIWRAM(speedX * speedX + speedZ * speedZ) *
 							56 / DAMPING_SCALE;
-						angle = syRandom() & TRIG_ANGLE_MASK;
-						die->velX = sySin(angle) * speed >> 8;
-						die->velZ = syCos(angle) * speed >> 8;
+						ang = syRandom() & TRIG_ANGLE_MASK;
+						die->velX = sySin(ang) * speed >> 8;
+						die->velZ = syCos(ang) * speed >> 8;
 					} else {
 						die->velX = die->velX * 56 / DAMPING_SCALE;
 						die->velZ = die->velZ * 56 / DAMPING_SCALE;
@@ -963,27 +960,27 @@ void fdSuperLuckyDiceRun(void)
 			}
 			if(stoppedDice == SUPER_LUCKY_DICE_COUNT) {
 				state = SUPER_LUCKY_DICE_RESULT;
-				timer = 0;
+				tmr = 0;
 				total = 0;
 				for(index = 0; index != SUPER_LUCKY_DICE_COUNT; index++)
 					total = total + numbers[index] + 1;
 			}
 		} else if(state == SUPER_LUCKY_DICE_RESULT) {
-			/* The total and the banner fly in, with the result's music at frame
-			   40; a win moves on at frame 68, a loss at 90. */
-			timer++;
-			if(timer == 24)
+			/* The total and the banner fly in, with the result's music at tick
+			   40; a win moves on at tick 68, a loss at 90. */
+			tmr++;
+			if(tmr == 24)
 				sySndPlayStub(SE_JUMP);
-			if(timer == 70)
+			if(tmr == 70)
 				sySndPlayStub(SE_CURSE);
-			if(timer == 40) {
+			if(tmr == 40) {
 				if((Uint32)resultKind > SUPER_LUCKY_DICE_RESULT_WIN)
 					sySndPlayStub(MUS_TEST_YOUR_SKILLS);
 				else if(jingle != -1)
 					sySndPlayStub(jingle);
 				jingle = -1;
 			}
-			if(timer == 1) {
+			if(tmr == 1) {
 				loadPictures = DICE_PICTURES_RESULT;
 				resultKind = SUPER_LUCKY_DICE_RESULT_LOSE;
 				jingle = -1;
@@ -1008,9 +1005,9 @@ void fdSuperLuckyDiceRun(void)
 						break;
 					}
 				} else if(lower == 0) {
-					if(total > target)
+					if(total > tgt)
 						resultKind = SUPER_LUCKY_DICE_RESULT_WIN;
-				} else if(total < target) {
+				} else if(total < tgt) {
 					resultKind = SUPER_LUCKY_DICE_RESULT_WIN;
 				}
 				if(resultKind == SUPER_LUCKY_DICE_RESULT_WIN) {
@@ -1022,18 +1019,18 @@ void fdSuperLuckyDiceRun(void)
 						jingle = MUS_SUPER_LUCKY;
 				}
 			}
-			if(resultKind == SUPER_LUCKY_DICE_RESULT_LOSE ? timer == 90
-														  : timer == 68) {
+			if(resultKind == SUPER_LUCKY_DICE_RESULT_LOSE ? tmr == 90
+														  : tmr == 68) {
 				if(resultKind != SUPER_LUCKY_DICE_RESULT_LOSE) {
 					if(hiLoGame == 0)
 						bet *= multiplier;
 					else
 						bet <<= 1;
 					mnTextDrawNumInWindowStub(bet, DICE_COIN_DIGITS,
-						(Sint32)sprites->betWin, BET_TEXT_X, 5);
+						(Sint32)sprs->betWin, BET_TEXT_X, 5);
 					multiplier <<= 1;
 					if(hiLoGame == DICE_FINAL_GAME) {
-						target = DICE_MIDDLE_TOTAL;
+						tgt = DICE_MIDDLE_TOTAL;
 						hiLoGame = 0;
 						winnings = bet;
 						state = SUPER_LUCKY_DICE_PAYOUT;
@@ -1041,39 +1038,39 @@ void fdSuperLuckyDiceRun(void)
 						state = SUPER_LUCKY_DICE_DOUBLE_UP;
 						loadPictures = DICE_PICTURES_DOUBLE_UP;
 						cashOut = 0;
-						window = mnWindowCreateStub(4, 16, 20, 4, 6);
-						sprites->helpWin = window;
+						win = mnWindowCreateStub(4, 16, 20, 4, 6);
+						sprs->helpWin = win;
 						mnTextDrawMessageAsTilesStub(
-							(Sint32)&MsgDiceGameDoubleUp, window, 0, 0);
+							(Sint32)&MsgDiceGameDoubleUp, win, 0, 0);
 					}
-					timer = 0;
+					tmr = 0;
 					slide = 0;
 				} else {
-					target = DICE_MIDDLE_TOTAL;
+					tgt = DICE_MIDDLE_TOTAL;
 					hiLoGame = 0;
 					bet = gmPartyGetAverageLevelStub() * DICE_BET_PER_LEVEL;
 					mnTextDrawNumInWindowStub(bet, DICE_COIN_DIGITS,
-						(Sint32)sprites->betWin, BET_TEXT_X, 5);
+						(Sint32)sprs->betWin, BET_TEXT_X, 5);
 					multiplier = 0;
 					sySndPlayStub(MUS_SUPER_LUCKY_DICE);
 					state = SUPER_LUCKY_DICE_THROW;
-					window = mnWindowCreateStub(SUPER_LUCKY_DICE_HELP_WINDOW_X,
-						16, SUPER_LUCKY_DICE_HELP_WINDOW_WIDTH, 4, 6);
-					sprites->helpWin = window;
+					win = mnWindowCreateStub(SUPER_LUCKY_DICE_HELP_WINDOW_X, 16,
+						SUPER_LUCKY_DICE_HELP_WINDOW_WIDTH, 4, 6);
+					sprs->helpWin = win;
 					mnTextDrawMessageAsTilesStub(
-						(Sint32)&MsgDiceGameThrow, window, 0, 0);
+						(Sint32)&MsgDiceGameThrow, win, 0, 0);
 					mnTextDrawMessageAsTilesStub(
-						(Sint32)&MsgDiceGameThrow + 1, sprites->helpWin, 0, 8);
+						(Sint32)&MsgDiceGameThrow + 1, sprs->helpWin, 0, 8);
 					slide = 0;
-					timer = 0;
+					tmr = 0;
 					loadPictures = DICE_PICTURES_HIGHER_LOWER;
 				}
 			}
 		} else if(state == SUPER_LUCKY_DICE_PAYOUT) {
-			/* The winnings window opens at frame 20 and the winnings count into
-			   the coins a coin a frame; A pays the rest at once and goes back
+			/* The winnings window opens at tick 20 and the winnings count into
+			   the coins a coin a tick; A pays the rest at once and goes back
 			   to throwing. */
-			if(++timer == 20) {
+			if(++tmr == 20) {
 				if(winnings < 10)
 					digits = 1;
 				else if(winnings < 100)
@@ -1084,51 +1081,51 @@ void fdSuperLuckyDiceRun(void)
 					digits = 4;
 				else
 					digits = 5;
-				window = mnWindowCreateStub(
+				win = mnWindowCreateStub(
 					WINNINGS_WINDOW_X - ((Uint32)digits >> 1), 16,
 					digits + WINNINGS_WINDOW_MARGIN, 3, 6);
-				sprites->helpWin = window;
+				sprs->helpWin = win;
 				mnTextDrawMessageAsTilesStub(
-					(Sint32)&MsgLuckyDiceWinnings, window, 0, 0);
+					(Sint32)&MsgLuckyDiceWinnings, win, 0, 0);
 				mnTextDrawMessageAsTilesStub((Sint32)&MsgLuckyDiceWinnings - 1,
-					sprites->helpWin, digits * 8 + WINNINGS_LABEL_X, 0);
+					sprs->helpWin, digits * 8 + WINNINGS_LABEL_X, 0);
 				mnTextDrawNumInWindowStub(winnings, digits,
-					(Sint32)sprites->helpWin, WINNINGS_TEXT_X, 0);
+					(Sint32)sprs->helpWin, WINNINGS_TEXT_X, 0);
 			}
-			if(timer > 19) {
+			if(tmr > 19) {
 				if(PerWork.repeat & KEY_A) {
-					mnWindowCloseStub(sprites->helpWin, 1);
+					mnWindowCloseStub(sprs->helpWin, 1);
 					sySndPlayStub(MUS_SUPER_LUCKY_DICE);
 					sySndPlayStub(SE_MENU_CONFIRM);
 					state = SUPER_LUCKY_DICE_THROW;
-					window = mnWindowCreateStub(SUPER_LUCKY_DICE_HELP_WINDOW_X,
-						16, SUPER_LUCKY_DICE_HELP_WINDOW_WIDTH, 4, 6);
-					sprites->helpWin = window;
+					win = mnWindowCreateStub(SUPER_LUCKY_DICE_HELP_WINDOW_X, 16,
+						SUPER_LUCKY_DICE_HELP_WINDOW_WIDTH, 4, 6);
+					sprs->helpWin = win;
 					mnTextDrawMessageAsTilesStub(
-						(Sint32)&MsgDiceGameThrow, window, 0, 0);
+						(Sint32)&MsgDiceGameThrow, win, 0, 0);
 					mnTextDrawMessageAsTilesStub(
-						(Sint32)&MsgDiceGameThrow + 1, sprites->helpWin, 0, 8);
+						(Sint32)&MsgDiceGameThrow + 1, sprs->helpWin, 0, 8);
 					slide = 0;
-					timer = 0;
+					tmr = 0;
 					loadPictures = DICE_PICTURES_HIGHER_LOWER;
 					bet = gmPartyGetAverageLevelStub() * DICE_BET_PER_LEVEL;
 					mnTextDrawNumInWindowStub(bet, DICE_COIN_DIGITS,
-						(Sint32)sprites->betWin, BET_TEXT_X, 5);
+						(Sint32)sprs->betWin, BET_TEXT_X, 5);
 					if(winnings > 0) {
 						sySndPlayStub(SE_COIN_PAYOUT);
 						gmPartyAdjustCoinsStub(winnings);
 						mnTextDrawNumInWindowStub(MainRoutineStateWork.coins,
-							DICE_COIN_DIGITS, (Sint32)sprites->coinsWin, 0, 0);
+							DICE_COIN_DIGITS, (Sint32)sprs->coinsWin, 0, 0);
 					}
 				} else if(winnings > 0) {
 					if(--winnings == 0)
 						sySndPlayStub(SE_COIN_PAYOUT);
 					gmPartyAdjustCoinsStub(1);
 					mnTextDrawNumInWindowStub(MainRoutineStateWork.coins,
-						DICE_COIN_DIGITS, (Sint32)sprites->coinsWin, 0, 0);
+						DICE_COIN_DIGITS, (Sint32)sprs->coinsWin, 0, 0);
 					bet--;
 					mnTextDrawNumInWindowStub(bet, DICE_COIN_DIGITS,
-						(Sint32)sprites->betWin, BET_TEXT_X, 5);
+						(Sint32)sprs->betWin, BET_TEXT_X, 5);
 				}
 			}
 		} else if(state == SUPER_LUCKY_DICE_DOUBLE_UP) {
@@ -1138,39 +1135,39 @@ void fdSuperLuckyDiceRun(void)
 				sySndPlayStub(SE_NOTE_HIGH);
 			if(slide <= 7) {
 				slide++;
-			} else if(timer > 0) {
-				if(++timer == 16) {
-					mnWindowCloseStub(sprites->helpWin, 1);
+			} else if(tmr > 0) {
+				if(++tmr == 16) {
+					mnWindowCloseStub(sprs->helpWin, 1);
 					if(cashOut == 0) {
-						target = total;
+						tgt = total;
 						hiLoGame++;
 						state = SUPER_LUCKY_DICE_GUESS;
-						window = mnWindowCreateStub(
+						win = mnWindowCreateStub(
 							RESULT_WINDOW_X, 16, RESULT_WINDOW_WIDTH, 4, 6);
-						sprites->helpWin = window;
+						sprs->helpWin = win;
 						if(total == DICE_HIGHEST_TOTAL) {
 							lower = 1;
 							mnTextDrawMessageAsTilesStub(
-								(Sint32)&MsgDiceGameLowerAgain, window, 0, 0);
+								(Sint32)&MsgDiceGameLowerAgain, win, 0, 0);
 						} else {
 							lower = 0;
 							mnTextDrawMessageAsTilesStub(
-								(Sint32)&MsgDiceGameHigherAgain, window, 0, 0);
+								(Sint32)&MsgDiceGameHigherAgain, win, 0, 0);
 						}
 						mnTextDrawMessageAsTilesStub(
-							(Sint32)&MsgDiceGameChoose, sprites->helpWin, 0, 8);
+							(Sint32)&MsgDiceGameChoose, sprs->helpWin, 0, 8);
 						slide = 0;
 						loadPictures = DICE_PICTURES_HIGHER_LOWER;
 					} else {
-						target = DICE_MIDDLE_TOTAL;
+						tgt = DICE_MIDDLE_TOTAL;
 						hiLoGame = 0;
 						winnings = bet;
 						state = SUPER_LUCKY_DICE_PAYOUT;
 					}
-					timer = 0;
+					tmr = 0;
 				}
 			} else if(PerWork.repeat & KEY_A) {
-				timer = 1;
+				tmr = 1;
 				sySndPlayStub(SE_MENU_CONFIRM);
 			} else if((PerWork.repeat & KEY_UP) && cashOut == 1) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
@@ -1181,20 +1178,20 @@ void fdSuperLuckyDiceRun(void)
 			}
 			if(cashOut == 0) {
 				fdSuperLuckyDiceBrightenCols(
-					spritePalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
+					sprPalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
 					(Uint16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_C, 0),
-					PALETTE_COLORS, timer * (TRIG_TURN / 16));
+					PALETTE_COLORS, tmr * (TRIG_TURN / 16));
 				fdSuperLuckyDiceScaleRGB555Buffer(
-					spritePalette + DICE_PALETTE_RELOADED_D * PALETTE_COLORS,
+					sprPalette + DICE_PALETTE_RELOADED_D * PALETTE_COLORS,
 					(Uint16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_D, 0),
 					toFIXED(1) / 2, PALETTE_COLORS);
 			} else {
 				fdSuperLuckyDiceBrightenCols(
-					spritePalette + DICE_PALETTE_RELOADED_D * PALETTE_COLORS,
+					sprPalette + DICE_PALETTE_RELOADED_D * PALETTE_COLORS,
 					(Uint16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_D, 0),
-					PALETTE_COLORS, timer * (TRIG_TURN / 16));
+					PALETTE_COLORS, tmr * (TRIG_TURN / 16));
 				fdSuperLuckyDiceScaleRGB555Buffer(
-					spritePalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
+					sprPalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
 					(Uint16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_C, 0),
 					toFIXED(1) / 2, PALETTE_COLORS);
 			}
@@ -1203,33 +1200,33 @@ void fdSuperLuckyDiceRun(void)
 		/* Load the pictures the state asked for. */
 		if(loadPictures != DICE_PICTURES_NONE) {
 			if(loadPictures == DICE_PICTURES_HIGHER_LOWER) {
-				resourceAddress =
+				resourceAdr =
 					syResourceGetTableEntry(RESOURCE_SLOTS_HIGHER_BANNER);
-				syDMAXCopy(resourceAddress,
+				syDMAXCopy(resourceAdr,
 					(void *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_A, 0),
 					DMA_COPY_WORDS(8), REG_DMA3);
-				syDMAXCopy(resourceAddress,
-					spritePalette + DICE_PALETTE_RELOADED_A * PALETTE_COLORS,
+				syDMAXCopy(resourceAdr,
+					sprPalette + DICE_PALETTE_RELOADED_A * PALETTE_COLORS,
 					DMA_COPY_WORDS(8), REG_DMA3);
-				resourceAddress += PALETTE_BYTES;
-				syDecompressTaggedLZ(resourceAddress, metatileBuffer);
-				syDMAXCopy(metatileBuffer,
+				resourceAdr += PALETTE_BYTES;
+				syDecompressTaggedLZ(resourceAdr, metatileBuf);
+				syDMAXCopy(metatileBuf,
 					(void *)(OBJ_VRAM0 + HIGHER_TILES * TILE_SIZE_4BPP),
 					DMA_COPY_WORDS(384), REG_DMA3);
-				resourceAddress =
+				resourceAdr =
 					syResourceGetTableEntry(RESOURCE_SLOTS_LOWER_BANNER);
-				syDMAXCopy(resourceAddress,
+				syDMAXCopy(resourceAdr,
 					(void *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_B, 0),
 					DMA_COPY_WORDS(8), REG_DMA3);
-				syDMAXCopy(resourceAddress,
-					spritePalette + DICE_PALETTE_RELOADED_B * PALETTE_COLORS,
+				syDMAXCopy(resourceAdr,
+					sprPalette + DICE_PALETTE_RELOADED_B * PALETTE_COLORS,
 					DMA_COPY_WORDS(8), REG_DMA3);
-				resourceAddress += PALETTE_BYTES;
-				syDecompressTaggedLZ(resourceAddress, metatileBuffer);
-				syDMAXCopy(metatileBuffer,
+				resourceAdr += PALETTE_BYTES;
+				syDecompressTaggedLZ(resourceAdr, metatileBuf);
+				syDMAXCopy(metatileBuf,
 					(void *)(OBJ_VRAM0 + LOWER_TILES * TILE_SIZE_4BPP),
 					DMA_COPY_WORDS(384), REG_DMA3);
-				resourceAddress =
+				resourceAdr =
 					syResourceGetTableEntry(RESOURCE_SLOTS_PINK_DIGITS);
 				{
 					Uint16 *src;
@@ -1240,9 +1237,8 @@ void fdSuperLuckyDiceRun(void)
 					/* The glowing digits: the pink digits' blue and red raised
 					   by four, red and blue taking the blue and green the
 					   red. */
-					dst = spritePalette +
-						DICE_PALETTE_RELOADED_C * PALETTE_COLORS;
-					src = (Uint16 *)resourceAddress;
+					dst = sprPalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS;
+					src = (Uint16 *)resourceAdr;
 					for(index = 0; index != PALETTE_COLORS; index++) {
 						blue = RGB_BLUE(*src) + 4;
 						red = RGB_RED(*src) + 4;
@@ -1256,87 +1252,87 @@ void fdSuperLuckyDiceRun(void)
 					}
 				}
 				syDMAXCopy(
-					spritePalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
+					sprPalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
 					(void *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_C, 0),
 					DMA_COPY_WORDS(8), REG_DMA3);
 				syDMAXCopy(
-					spritePalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
+					sprPalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
 					(void *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_D, 0),
 					DMA_COPY_WORDS(8), REG_DMA3);
 				syDMAXCopy(
-					spritePalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
-					spritePalette + DICE_PALETTE_RELOADED_D * PALETTE_COLORS,
+					sprPalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
+					sprPalette + DICE_PALETTE_RELOADED_D * PALETTE_COLORS,
 					DMA_COPY_WORDS(8), REG_DMA3);
 			} else if(loadPictures == DICE_PICTURES_RESULT) {
 				switch(resultKind) {
 				case SUPER_LUCKY_DICE_RESULT_LOSE:
-					resourceAddress =
+					resourceAdr =
 						syResourceGetTableEntry(RESOURCE_SLOTS_YOU_LOSE_BANNER);
 					break;
 				case SUPER_LUCKY_DICE_RESULT_WIN:
-					resourceAddress =
+					resourceAdr =
 						syResourceGetTableEntry(RESOURCE_SLOTS_YOU_WIN_BANNER);
 					break;
 				case SUPER_LUCKY_DICE_RESULT_ONE_PAIR:
-					resourceAddress =
+					resourceAdr =
 						syResourceGetTableEntry(RESOURCE_SLOTS_ONE_PAIR_BANNER);
 					break;
 				case SUPER_LUCKY_DICE_RESULT_TWO_PAIR:
-					resourceAddress =
+					resourceAdr =
 						syResourceGetTableEntry(RESOURCE_SLOTS_TWO_PAIR_BANNER);
 					break;
 				case SUPER_LUCKY_DICE_RESULT_TRIPLE:
-					resourceAddress =
+					resourceAdr =
 						syResourceGetTableEntry(RESOURCE_SLOTS_TRIPLE_BANNER);
 					break;
 				case SUPER_LUCKY_DICE_RESULT_PERFECT:
-					resourceAddress =
+					resourceAdr =
 						syResourceGetTableEntry(RESOURCE_SLOTS_PERFECT_BANNER);
 					break;
 				}
-				syDMAXCopy(resourceAddress,
+				syDMAXCopy(resourceAdr,
 					(void *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_B, 0),
 					DMA_COPY_WORDS(8), REG_DMA3);
-				resourceAddress += PALETTE_BYTES;
-				syDecompressTaggedLZ(resourceAddress, metatileBuffer);
-				syDMAXCopy(metatileBuffer,
+				resourceAdr += PALETTE_BYTES;
+				syDecompressTaggedLZ(resourceAdr, metatileBuf);
+				syDMAXCopy(metatileBuf,
 					(void *)(OBJ_VRAM0 + RESULT_BANNER_TILES * TILE_SIZE_4BPP),
 					DMA_COPY_WORDS(1024), REG_DMA3);
-				resourceAddress =
+				resourceAdr =
 					syResourceGetTableEntry(RESOURCE_SLOTS_GREEN_DIGITS);
-				syDMAXCopy(resourceAddress,
+				syDMAXCopy(resourceAdr,
 					(void *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_A, 0),
 					DMA_COPY_WORDS(8), REG_DMA3);
-				resourceAddress += PALETTE_BYTES;
-				syDecompressTaggedLZ(resourceAddress, metatileBuffer);
-				syDMAXCopy(metatileBuffer,
+				resourceAdr += PALETTE_BYTES;
+				syDecompressTaggedLZ(resourceAdr, metatileBuf);
+				syDMAXCopy(metatileBuf,
 					(void *)(OBJ_VRAM0 + GREEN_DIGIT_TILES * TILE_SIZE_4BPP),
 					DMA_COPY_WORDS(1280), REG_DMA3);
 			} else if(loadPictures == DICE_PICTURES_DOUBLE_UP) {
-				resourceAddress =
+				resourceAdr =
 					syResourceGetTableEntry(RESOURCE_SLOTS_DOUBLE_UP_BANNER);
-				syDMAXCopy(resourceAddress,
+				syDMAXCopy(resourceAdr,
 					(void *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_C, 0),
 					DMA_COPY_WORDS(8), REG_DMA3);
-				syDMAXCopy(resourceAddress,
-					spritePalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
+				syDMAXCopy(resourceAdr,
+					sprPalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
 					DMA_COPY_WORDS(8), REG_DMA3);
-				resourceAddress += PALETTE_BYTES;
-				syDecompressTaggedLZ(resourceAddress, metatileBuffer);
-				syDMAXCopy(metatileBuffer,
+				resourceAdr += PALETTE_BYTES;
+				syDecompressTaggedLZ(resourceAdr, metatileBuf);
+				syDMAXCopy(metatileBuf,
 					(void *)(OBJ_VRAM0 + DOUBLE_UP_TILES * TILE_SIZE_4BPP),
 					DMA_COPY_WORDS(640), REG_DMA3);
-				resourceAddress =
+				resourceAdr =
 					syResourceGetTableEntry(RESOURCE_SLOTS_CASH_OUT_BANNER);
-				syDMAXCopy(resourceAddress,
+				syDMAXCopy(resourceAdr,
 					(void *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_D, 0),
 					DMA_COPY_WORDS(8), REG_DMA3);
-				syDMAXCopy(resourceAddress,
-					spritePalette + DICE_PALETTE_RELOADED_D * PALETTE_COLORS,
+				syDMAXCopy(resourceAdr,
+					sprPalette + DICE_PALETTE_RELOADED_D * PALETTE_COLORS,
 					DMA_COPY_WORDS(8), REG_DMA3);
-				resourceAddress += PALETTE_BYTES;
-				syDecompressTaggedLZ(resourceAddress, metatileBuffer);
-				syDMAXCopy(metatileBuffer,
+				resourceAdr += PALETTE_BYTES;
+				syDecompressTaggedLZ(resourceAdr, metatileBuf);
+				syDMAXCopy(metatileBuf,
 					(void *)(OBJ_VRAM0 + CASH_OUT_TILES * TILE_SIZE_4BPP),
 					DMA_COPY_WORDS(640), REG_DMA3);
 			}
@@ -1349,61 +1345,59 @@ void fdSuperLuckyDiceRun(void)
 			Sint32 multiplierDigits;
 
 			for(index = 0; index != 4; index++) {
-				sprites->oam[spriteCount].attr01 =
+				sprs->oam[sprCnt].attr01 =
 					OBJ_POSITION(OBJ_X_TURN + index * 16, 2) | OBJ_SIZE_16X16;
-				sprites->oam[spriteCount].attr2 =
+				sprs->oam[sprCnt].attr2 =
 					(SMALL_DOUBLE_UP_TILES + index * SPRITE_TILES(16, 16)) |
 					OBJ_PALETTE(DICE_PALETTE_SMALL_DOUBLE_UP);
-				spriteCount++;
+				sprCnt++;
 			}
 			if(hiLoGame == DICE_FINAL_GAME) {
 				for(index = 0; index != 5; index++) {
-					sprites->oam[spriteCount].attr01 =
+					sprs->oam[sprCnt].attr01 =
 						OBJ_POSITION(OBJ_X_TURN + 72 + index * 16, 2) |
 						OBJ_SIZE_16X16;
-					sprites->oam[spriteCount].attr2 =
+					sprs->oam[sprCnt].attr2 =
 						(FINAL_GAME_TILES + index * SPRITE_TILES(16, 16)) |
 						OBJ_PALETTE(DICE_PALETTE_FINAL_GAME);
-					spriteCount++;
+					sprCnt++;
 				}
 			} else {
 				for(index = 0; index != 3; index++) {
-					sprites->oam[spriteCount].attr01 =
+					sprs->oam[sprCnt].attr01 =
 						OBJ_POSITION(GAME_BANNER_X + index * 16, 2) |
 						OBJ_SIZE_16X16;
-					sprites->oam[spriteCount].attr2 =
+					sprs->oam[sprCnt].attr2 =
 						(GAME_TILES + index * SPRITE_TILES(16, 16)) |
 						OBJ_PALETTE(DICE_PALETTE_FINAL_GAME);
-					spriteCount++;
+					sprCnt++;
 				}
-				sprites->oam[spriteCount].attr01 = GAME_NUMBER_WORD;
-				sprites->oam[spriteCount].attr2 =
+				sprs->oam[sprCnt].attr01 = GAME_NUMBER_WORD;
+				sprs->oam[sprCnt].attr2 =
 					(hiLoGame * SPRITE_TILES(16, 32) + ORANGE_DIGIT_TILES) |
 					OBJ_PALETTE(DICE_PALETTE_ORANGE_DIGITS);
-				spriteCount++;
+				sprCnt++;
 #if LANGUAGE == LANGUAGE_SPANISH
 				if(hiLoGame == 1) {
-					sprites->oam[spriteCount].attr01 =
-						OBJ_X(80) | OBJ_SIZE_16X32;
-					sprites->oam[spriteCount].attr2 = ORANGE_DIGIT_TILES |
+					sprs->oam[sprCnt].attr01 = OBJ_X(80) | OBJ_SIZE_16X32;
+					sprs->oam[sprCnt].attr2 = ORANGE_DIGIT_TILES |
 						OBJ_PALETTE(DICE_PALETTE_ORANGE_DIGITS);
 				} else {
-					sprites->oam[spriteCount].attr01 =
-						OBJ_X(84) | OBJ_SIZE_16X32;
-					sprites->oam[spriteCount].attr2 = ORANGE_DIGIT_TILES |
+					sprs->oam[sprCnt].attr01 = OBJ_X(84) | OBJ_SIZE_16X32;
+					sprs->oam[sprCnt].attr2 = ORANGE_DIGIT_TILES |
 						OBJ_PALETTE(DICE_PALETTE_ORANGE_DIGITS);
 				}
-				spriteCount++;
+				sprCnt++;
 #endif
 			}
 			for(index = 0; index != 2; index++) {
-				sprites->oam[spriteCount].attr01 =
+				sprs->oam[sprCnt].attr01 =
 					OBJ_POSITION(OBJ_X_TURN + 64 + index * 16, 24) |
 					OBJ_SIZE_16X16;
-				sprites->oam[spriteCount].attr2 =
+				sprs->oam[sprCnt].attr2 =
 					(OR_TILES + index * SPRITE_TILES(16, 16)) |
 					OBJ_PALETTE(DICE_PALETTE_TIMES_SIGN);
-				spriteCount++;
+				sprCnt++;
 			}
 			if(multiplier < 10)
 				multiplierDigits = 1;
@@ -1415,16 +1409,16 @@ void fdSuperLuckyDiceRun(void)
 				multiplierDigits = 4;
 			else
 				multiplierDigits = 5;
-			sprites->oam[spriteCount].attr01 =
+			sprs->oam[sprCnt].attr01 =
 				OBJ_POSITION(OBJ_X_TURN + 48 - multiplierDigits * 10, 24) |
 				OBJ_SIZE_16X16;
-			sprites->oam[spriteCount].attr2 =
+			sprs->oam[sprCnt].attr2 =
 				TIMES_SIGN_TILES | OBJ_PALETTE(DICE_PALETTE_TIMES_SIGN);
-			spriteCount++;
-			spriteCount = fdSuperLuckyDiceDrawNum(
-				spriteCount, 48, 20, multiplier, DICE_PALETTE_PINK_DIGITS, 5);
-			spriteCount = fdSuperLuckyDiceDrawNum(spriteCount,
-				MULTIPLIER_ZERO_X, 20, 0, DICE_PALETTE_PALE_DIGITS, 1);
+			sprCnt++;
+			sprCnt = fdSuperLuckyDiceDrawNum(
+				sprCnt, 48, 20, multiplier, DICE_PALETTE_PINK_DIGITS, 5);
+			sprCnt = fdSuperLuckyDiceDrawNum(
+				sprCnt, MULTIPLIER_ZERO_X, 20, 0, DICE_PALETTE_PALE_DIGITS, 1);
 		}
 
 		/* Higher and Lower, each beside the nearest total it wins with; the
@@ -1435,53 +1429,52 @@ void fdSuperLuckyDiceRun(void)
 			Sint32 wobble;
 			Sint32 left;
 
-			x = (timer > 0 && lower == 1) ? timer * 12 + CHOICE_COLUMN_X
-										  : CHOICE_COLUMN_X;
+			x = (tmr > 0 && lower == 1) ? tmr * 12 + CHOICE_COLUMN_X
+										: CHOICE_COLUMN_X;
 			wobble = lower == 0
-				? sySin(frame * (TRIG_TURN / 64) & (TRIG_TURN / 2 - 1)) >>
+				? sySin(frm * (TRIG_TURN / 64) & (TRIG_TURN / 2 - 1)) >>
 					CHOICE_BOB_SHIFT
 				: 0;
 			left = x + slide * 15;
-			if(target < DICE_HIGHEST_TOTAL)
-				spriteCount = fdSuperLuckyDiceDrawNum(spriteCount, left - 110,
-					wobble + 60, target + 1, DICE_PALETTE_RELOADED_C, 2);
-			x = (timer > 0 && lower == 0) ? timer * 12 + CHOICE_COLUMN_X
-										  : CHOICE_COLUMN_X;
+			if(tgt < DICE_HIGHEST_TOTAL)
+				sprCnt = fdSuperLuckyDiceDrawNum(sprCnt, left - 110,
+					wobble + 60, tgt + 1, DICE_PALETTE_RELOADED_C, 2);
+			x = (tmr > 0 && lower == 0) ? tmr * 12 + CHOICE_COLUMN_X
+										: CHOICE_COLUMN_X;
 			wobble = lower == 1
-				? sySin(frame * (TRIG_TURN / 64) & (TRIG_TURN / 2 - 1)) >>
+				? sySin(frm * (TRIG_TURN / 64) & (TRIG_TURN / 2 - 1)) >>
 					CHOICE_BOB_SHIFT
 				: 0;
 			left = x + slide * 15;
-			if(target > DICE_LOWEST_TOTAL)
-				spriteCount = fdSuperLuckyDiceDrawNum(spriteCount, left - 110,
-					94 - wobble, target - 1, DICE_PALETTE_RELOADED_D, 2);
+			if(tgt > DICE_LOWEST_TOTAL)
+				sprCnt = fdSuperLuckyDiceDrawNum(sprCnt, left - 110,
+					94 - wobble, tgt - 1, DICE_PALETTE_RELOADED_D, 2);
 			for(index = 0; index != 3; index++) {
 				Sint32 column;
 
 				column = CHOICE_COLUMN_X;
-				if(timer > 0 && lower == 1)
-					column = timer * 12 + CHOICE_COLUMN_X;
+				if(tmr > 0 && lower == 1)
+					column = tmr * 12 + CHOICE_COLUMN_X;
 				column += slide * 15;
 				column -= 120;
-				sprites->oam[spriteCount].attr01 =
+				sprs->oam[sprCnt].attr01 =
 					OBJ_POSITION(column + index * 32 + OBJ_X_TURN, 52) |
 					OBJ_SIZE_32X32;
-				sprites->oam[spriteCount].attr2 =
-					OBJ_PALETTE(DICE_PALETTE_RELOADED_A) |
+				sprs->oam[sprCnt].attr2 = OBJ_PALETTE(DICE_PALETTE_RELOADED_A) |
 					(HIGHER_TILES + index * SPRITE_TILES(32, 32));
-				spriteCount++;
+				sprCnt++;
 				column = CHOICE_COLUMN_X;
-				if(timer > 0 && lower == 0)
-					column = timer * 12 + CHOICE_COLUMN_X;
+				if(tmr > 0 && lower == 0)
+					column = tmr * 12 + CHOICE_COLUMN_X;
 				column += slide * 15;
 				column -= 120;
-				sprites->oam[spriteCount].attr01 =
+				sprs->oam[sprCnt].attr01 =
 					OBJ_POSITION(column + index * 32 + OBJ_X_TURN, 92) |
 					OBJ_SIZE_32X32;
-				sprites->oam[spriteCount].attr2 =
+				sprs->oam[sprCnt].attr2 =
 					(LOWER_TILES + index * SPRITE_TILES(32, 32)) |
 					OBJ_PALETTE(DICE_PALETTE_RELOADED_B);
-				spriteCount++;
+				sprCnt++;
 			}
 		}
 
@@ -1492,34 +1485,34 @@ void fdSuperLuckyDiceRun(void)
 				Sint32 column;
 
 				column = CHOICE_COLUMN_X;
-				if(timer > 0 && cashOut == 1)
-					column = timer * 12 + CHOICE_COLUMN_X;
+				if(tmr > 0 && cashOut == 1)
+					column = tmr * 12 + CHOICE_COLUMN_X;
 				column += slide * 15;
 				column -= 120;
-				sprites->oam[spriteCount].attr01 =
+				sprs->oam[sprCnt].attr01 =
 					OBJ_POSITION(column + index * 32 + OBJ_X_TURN, 52) |
 					OBJ_SIZE_32X32;
-				sprites->oam[spriteCount].attr2 =
+				sprs->oam[sprCnt].attr2 =
 					(DOUBLE_UP_TILES + index * SPRITE_TILES(32, 32)) |
 					OBJ_PALETTE(DICE_PALETTE_RELOADED_C);
-				spriteCount++;
+				sprCnt++;
 				column = CHOICE_COLUMN_X;
-				if(timer > 0 && cashOut == 0)
-					column = timer * 12 + CHOICE_COLUMN_X;
+				if(tmr > 0 && cashOut == 0)
+					column = tmr * 12 + CHOICE_COLUMN_X;
 				column += slide * 15;
 				column -= 120;
-				sprites->oam[spriteCount].attr01 =
+				sprs->oam[sprCnt].attr01 =
 					OBJ_POSITION(column + index * 32 + OBJ_X_TURN, 84) |
 					OBJ_SIZE_32X32;
-				sprites->oam[spriteCount].attr2 =
+				sprs->oam[sprCnt].attr2 =
 					(CASH_OUT_TILES + index * SPRITE_TILES(32, 32)) |
 					OBJ_PALETTE(DICE_PALETTE_RELOADED_D);
-				spriteCount++;
+				sprCnt++;
 			}
 		}
 
 		/* The total and the result's banner, each sliding in from the left 16
-		   pixels a frame. Offered the hi-lo game, the total arcs over to the
+		   pixels a tick. Offered the hi-lo game, the total arcs over to the
 		   left and the banner slides off to the right; after a loss both sway
 		   ever wider and fall away. */
 		if(state == SUPER_LUCKY_DICE_RESULT ||
@@ -1527,80 +1520,79 @@ void fdSuperLuckyDiceRun(void)
 				resultKind != SUPER_LUCKY_DICE_RESULT_LOSE)) {
 			Sint32 x;
 			Sint32 y;
-			Sint32 angle;
+			Sint32 ang;
 			Sint32 doubled;
 			Sint32 swayWidth;
 
-			x = (timer << 4) - 376;
+			x = (tmr << 4) - 376;
 			y = TOTAL_Y;
 			if(x > TOTAL_X)
 				x = TOTAL_X;
 			if(state == SUPER_LUCKY_DICE_DOUBLE_UP) {
-				angle = slide * (TRIG_TURN / 16);
-				angle += TRIG_TURN / 16;
-				x = FIXEDtoINT(syCos(angle) * TOTAL_ARC_RADIUS_X) -
-					(timer << 4) + 56;
-				y = TOTAL_Y - FIXEDtoINT(sySin(angle) * TOTAL_ARC_RADIUS_Y);
+				ang = slide * (TRIG_TURN / 16);
+				ang += TRIG_TURN / 16;
+				x = FIXEDtoINT(syCos(ang) * TOTAL_ARC_RADIUS_X) - (tmr << 4) +
+					56;
+				y = TOTAL_Y - FIXEDtoINT(sySin(ang) * TOTAL_ARC_RADIUS_Y);
 			} else if(resultKind != SUPER_LUCKY_DICE_RESULT_LOSE) {
-				/* Unused: a win would circle from frame 68, a turn in 44
-				   frames, but it moves on at frame 68. */
-				if(timer > 67) {
-					Sint32 elapsed = timer - 68;
+				/* Unused: a win would circle from tick 68, a turn in 44
+				   ticks, but it moves on at tick 68. */
+				if(tmr > 67) {
+					Sint32 elapsed = tmr - 68;
 
-					angle = elapsed * (TRIG_TURN / 44);
-					x = FIXEDtoINT(syCos(angle) * TOTAL_CIRCLE_RADIUS) + 52;
-					y = TOTAL_Y -
-						FIXEDtoINT(sySin(angle) * TOTAL_CIRCLE_RADIUS);
+					ang = elapsed * (TRIG_TURN / 44);
+					x = FIXEDtoINT(syCos(ang) * TOTAL_CIRCLE_RADIUS) + 52;
+					y = TOTAL_Y - FIXEDtoINT(sySin(ang) * TOTAL_CIRCLE_RADIUS);
 				}
-			} else if(timer > 67) {
-				doubled = timer * 2;
+			} else if(tmr > 67) {
+				doubled = tmr * 2;
 				swayWidth = doubled - 128;
-				x = FIXEDtoINT(sySin(timer * (TRIG_TURN / 16) - TRIG_TURN * 4) *
+				x = FIXEDtoINT(sySin(tmr * (TRIG_TURN / 16) - TRIG_TURN * 4) *
 						swayWidth) +
 					TOTAL_X;
-				doubled += timer;
+				doubled += tmr;
 				doubled *= 2;
 				y = doubled - 360;
 			}
 			if(x >= -31)
-				spriteCount = fdSuperLuckyDiceDrawLargeNum(
-					spriteCount, x, y, total, DICE_PALETTE_RELOADED_A, 2);
-			if(timer > 30 ||
+				sprCnt = fdSuperLuckyDiceDrawLargeNum(
+					sprCnt, x, y, total, DICE_PALETTE_RELOADED_A, 2);
+			if(tmr > 30 ||
 				(state == SUPER_LUCKY_DICE_DOUBLE_UP &&
 					resultKind != SUPER_LUCKY_DICE_RESULT_LOSE)) {
 				Sint32 bannerX;
 				Sint32 bannerY;
 
 				bannerY = RESULT_BANNER_Y;
-				bannerX = timer > 37 ? RESULT_BANNER_X : (timer << 4) - 620;
+				bannerX = tmr > 37 ? RESULT_BANNER_X : (tmr << 4) - 620;
 				if(state == SUPER_LUCKY_DICE_DOUBLE_UP) {
 					bannerY = RESULT_BANNER_Y;
 					bannerX = slide * 24 + RESULT_BANNER_X;
-				} else if(timer > 67) {
-					doubled = timer * 2;
+				} else if(tmr > 67) {
+					doubled = tmr * 2;
 					swayWidth = doubled - 136;
-					bannerX = FIXEDtoINT(sySin(timer * (TRIG_TURN / 16) -
+					bannerX = FIXEDtoINT(sySin(tmr * (TRIG_TURN / 16) -
 											 TRIG_TURN * 17 / 4) *
 								  swayWidth) +
 						RESULT_BANNER_X;
-					doubled += timer;
+					doubled += tmr;
 					doubled *= 2;
 					bannerY = doubled - 344;
 				}
-				sprites->oam[spriteCount].attr01 =
+				sprs->oam[sprCnt].attr01 =
 					OBJ_POSITION(bannerX + OBJ_X_TURN, bannerY + OBJ_Y_TURN) |
 					OBJ_SIZE_64X64;
-				sprites->oam[spriteCount].attr2 =
+				sprs->oam[sprCnt].attr2 =
 					RESULT_BANNER_TILES | OBJ_PALETTE(DICE_PALETTE_RELOADED_B);
-				spriteCount++;
-				sprites->oam[spriteCount].attr01 =
+				sprCnt++;
+				sprs->oam[sprCnt].attr01 =
 					OBJ_POSITION(
 						bannerX + 64 + OBJ_X_TURN, bannerY + OBJ_Y_TURN) |
 					OBJ_SIZE_64X64;
-				sprites->oam[spriteCount].attr2 =
+				sprs->oam[sprCnt].attr2 =
 					(RESULT_BANNER_TILES + SPRITE_TILES(64, 64)) |
 					OBJ_PALETTE(DICE_PALETTE_RELOADED_B);
-				spriteCount++;
+				sprCnt++;
 			}
 		}
 
@@ -1612,12 +1604,12 @@ void fdSuperLuckyDiceRun(void)
 			Sint32 sortedDie;
 
 			sortedDie = drawOrder[index];
-			for(otherIndex = index - 1; otherIndex >= 0 &&
-				dice->particles[drawOrder[otherIndex]].z >
+			for(otherIdx = index - 1; otherIdx >= 0 &&
+				dice->particles[drawOrder[otherIdx]].z >
 					dice->particles[sortedDie].z;
-				otherIndex--)
-				drawOrder[otherIndex + 1] = drawOrder[otherIndex];
-			drawOrder[otherIndex + 1] = sortedDie;
+				otherIdx--)
+				drawOrder[otherIdx + 1] = drawOrder[otherIdx];
+			drawOrder[otherIdx + 1] = sortedDie;
 		}
 		for(index = 0; index != SUPER_LUCKY_DICE_COUNT; index++) {
 			DICE_PARTICLE *die;
@@ -1630,26 +1622,24 @@ void fdSuperLuckyDiceRun(void)
 				screen[2] = DICE_NEAREST_DEPTH;
 			if(screen[2] > DICE_FARTHEST_DEPTH)
 				screen[2] = DICE_FARTHEST_DEPTH;
-			spriteDepth[drawOrder[index]] = screen[2] - DICE_NEAREST_DEPTH;
+			sprDepth[drawOrder[index]] = screen[2] - DICE_NEAREST_DEPTH;
 			x = screen[0] -
 				DIE_CORNER_X * (DICE_NEAREST_SCALE / 2) /
-					(spriteDepth[drawOrder[index]] / 4 +
-						DICE_NEAREST_SCALE / 2);
+					(sprDepth[drawOrder[index]] / 4 + DICE_NEAREST_SCALE / 2);
 			y = screen[1] -
 				DIE_CORNER_Y * (DICE_NEAREST_SCALE / 2) /
-					(spriteDepth[drawOrder[index]] / 4 +
-						DICE_NEAREST_SCALE / 2);
+					(sprDepth[drawOrder[index]] / 4 + DICE_NEAREST_SCALE / 2);
 			if(y + 92 > -16) {
-				sprites->oam[spriteCount].attr01 =
+				sprs->oam[sprCnt].attr01 =
 					(OBJ_AFFINE_MATRIX(drawOrder[index]) |
 						OBJ_X((x + 632) & OBJ_X_MASK) | ((y + 348) & 255)) |
 					OBJ_SIZE_16X16 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE |
 					OBJ_AFFINE;
-				sprites->oam[spriteCount].attr2 =
-					(SuperLuckyDice_FaceTiles[die->variant / DICE_ROLL_PER_TILE]
+				sprs->oam[sprCnt].attr2 =
+					(SuperLuckyDiceFaceTiles[die->variant / DICE_ROLL_PER_TILE]
 						<< 3) |
 					OBJ_PRIORITY(1);
-				spriteCount++;
+				sprCnt++;
 			}
 		}
 		/* Each die's shadow on the dome below it, the smaller the higher the
@@ -1672,34 +1662,34 @@ void fdSuperLuckyDiceRun(void)
 					screen[2] = DICE_NEAREST_DEPTH;
 				if(screen[2] > DICE_FARTHEST_DEPTH)
 					screen[2] = DICE_FARTHEST_DEPTH;
-				spriteDepth[SUPER_LUCKY_DICE_COUNT + index] =
+				sprDepth[SUPER_LUCKY_DICE_COUNT + index] =
 					screen[2] - DICE_NEAREST_DEPTH;
-				spriteDepth[SUPER_LUCKY_DICE_COUNT + index] +=
+				sprDepth[SUPER_LUCKY_DICE_COUNT + index] +=
 					(Sint16)FIXEDtoINT(die->y);
-				scale = spriteDepth[SUPER_LUCKY_DICE_COUNT + index] / 2 +
+				scale = sprDepth[SUPER_LUCKY_DICE_COUNT + index] / 2 +
 					DICE_NEAREST_SCALE;
 				x = screen[0] - SHADOW_CORNER_X * DICE_NEAREST_SCALE / scale;
 				y = screen[1] - SHADOW_CORNER_Y * DICE_NEAREST_SCALE / scale;
 				if(y + 92 > -16) {
-					sprites->oam[spriteCount].attr01 =
+					sprs->oam[sprCnt].attr01 =
 						(OBJ_AFFINE_MATRIX(SUPER_LUCKY_DICE_COUNT + index) |
 							OBJ_X((x + DISPLAY_WIDTH / 2 + OBJ_X_TURN) &
 								OBJ_X_MASK)) |
 						((y + 92 + OBJ_Y_TURN) & OBJ_Y_MASK) | OBJ_SIZE_16X16 |
 						OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
-					sprites->oam[spriteCount].attr2 =
+					sprs->oam[sprCnt].attr2 =
 						DICE_SHADOW_TILE | OBJ_PRIORITY(2);
-					spriteCount++;
+					sprCnt++;
 				}
 			}
 		}
 		/* Hide the unused sprites, write the eight affine matrices (one for
 		   each die and each shadow, scaled by depth) and copy the sprites to
 		   OAM. */
-		for(; spriteCount != OAM_SIZE / sizeof(OAM_WORDS); spriteCount++) {
-			sprites->oam[spriteCount].attr01 =
+		for(; sprCnt != OAM_SIZE / sizeof(OAM_WORDS); sprCnt++) {
+			sprs->oam[sprCnt].attr01 =
 				OBJ_X(DISPLAY_WIDTH) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
-			sprites->oam[spriteCount].attr2 = 0;
+			sprs->oam[sprCnt].attr2 = 0;
 		}
 		for(index = 0; index != SUPER_LUCKY_DICE_COUNT * 2; index++) {
 			/* The sprite's matrix: its scale on the diagonal and no shear
@@ -1712,29 +1702,29 @@ void fdSuperLuckyDiceRun(void)
 			Sint16 scaleY;
 			Sint32 shear = 0;
 
-			scaleX = spriteDepth[index] / 4 + DICE_NEAREST_SCALE;
+			scaleX = sprDepth[index] / 4 + DICE_NEAREST_SCALE;
 			*&affineA = scaleX;
 			*&affineB = shear;
 			*&affineC = shear;
-			scaleY = spriteDepth[index] / 4 + DICE_NEAREST_SCALE;
+			scaleY = sprDepth[index] / 4 + DICE_NEAREST_SCALE;
 			*&affineD = scaleY;
-			sprites->oam[index * 4 + 0].attr2 |= OBJ_AFFINE_PARAMETER(affineA);
-			sprites->oam[index * 4 + 1].attr2 |= OBJ_AFFINE_PARAMETER(affineB);
-			sprites->oam[index * 4 + 2].attr2 |= OBJ_AFFINE_PARAMETER(affineC);
-			sprites->oam[index * 4 + 3].attr2 |= OBJ_AFFINE_PARAMETER(affineD);
+			sprs->oam[index * 4 + 0].attr2 |= OBJ_AFFINE_PARAMETER(affineA);
+			sprs->oam[index * 4 + 1].attr2 |= OBJ_AFFINE_PARAMETER(affineB);
+			sprs->oam[index * 4 + 2].attr2 |= OBJ_AFFINE_PARAMETER(affineC);
+			sprs->oam[index * 4 + 3].attr2 |= OBJ_AFFINE_PARAMETER(affineD);
 		}
 		syDMAXCopy(
-			sprites->oam, (void *)OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
+			sprs->oam, (void *)OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
 		sySynch(1);
-		frame++;
+		frm++;
 	}
 
 	/* Fade out and free the game's state. */
-	for(index = 0; index != DICE_FADE_FRAMES + 1; index++) {
-		fdSuperLuckyDiceScaleRGB555Buffer(spritePalette, (Uint16 *)OBJ_PLTT,
-			toFIXED(1) - index * (toFIXED(1) / DICE_FADE_FRAMES), 256);
+	for(index = 0; index != DICE_FADE_TICKS + 1; index++) {
+		fdSuperLuckyDiceScaleRGB555Buffer(sprPalette, (Uint16 *)OBJ_PLTT,
+			toFIXED(1) - index * (toFIXED(1) / DICE_FADE_TICKS), 256);
 		fdSuperLuckyDiceScaleRGB555Buffer(bgPalette, (Uint16 *)BG_PLTT,
-			toFIXED(1) - index * (toFIXED(1) / DICE_FADE_FRAMES), 256);
+			toFIXED(1) - index * (toFIXED(1) / DICE_FADE_TICKS), 256);
 		sySynch(1);
 	}
 	syHeapSlotRelease(HEAP_SLOT_CAMERA);

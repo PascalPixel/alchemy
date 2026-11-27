@@ -2,8 +2,8 @@
 
 struct RENDER_MODEL;
 
-/* Moloch's frames, and the frame A or B skips to. */
-#define MOLOCH_FRAMES		   296
+/* Moloch's ticks, and the tick A or B skips to. */
+#define MOLOCH_TICKS		   296
 #define MOLOCH_SKIP_TO		   232
 /* The motes, in the map cell buffer; the flame columns, four pixels apart from
    MOLOCH_FLAME_LEFT (MOLOCH_FLAMES_SET_UP are set up, the first MOLOCH_FLAMES
@@ -16,30 +16,30 @@ struct RENDER_MODEL;
 #define MOLOCH_FIRST_EMBER	   24
 #define MOLOCH_EMBERS		   16
 #define MOLOCH_SPRITES		   12
-/* A flame or ember lives four frames on each of FlashBurstSheet's six pictures;
+/* A flame or ember lives four ticks on each of FlashBurstSheet's six pictures;
    the ring texture follows them. */
 #define MOLOCH_FLAME_LIFE	   (6 * 4)
 #define MOLOCH_RING_TEXTURE	   (6 * PICTURE_BYTES(FLASH_BURST))
-/* The motes fall to the ground here; each falls a quarter pixel a frame for
+/* The motes fall to the ground here; each falls a quarter pixel a tick for
    every pixel of its size. */
 #define MOLOCH_GROUND_Y		   114
-/* At this frame the flame columns part and the rings start to spread. */
-#define MOLOCH_SPREAD_FRAME	   136
+/* At this tick the flame columns part and the rings start to spread. */
+#define MOLOCH_SPREAD_TICK	   136
 /* How far the rings lean back. */
 #define MOLOCH_RING_TILT	   3000
-/* The level the canvas is cleared to each frame as the screen brightens to
-   white, before its last two frames at the brightest. */
+/* The level the canvas is cleared to each tick as the screen brightens to
+   white, before its last two ticks at the brightest. */
 #define MOLOCH_WHITENING_LEVEL 16
 
-/* Moloch. A shower of 256 motes drifts down the screen and, from frame 91,
-   gathers toward the middle; from frame 97 flames rise in twelve columns and
-   from frame 136 four textured rings spread out from the summoned objects. At
-   frames 212 to 268 the targets are struck in turn, and the scene closes with a
-   glow of the whole palette. A or B skips to frame 232.
+/* Moloch. A shower of 256 motes drifts down the screen and, from tick 91,
+   gathers toward the middle; from tick 97 flames rise in twelve columns and
+   from tick 136 four textured rings spread out from the summoned objects. At
+   ticks 212 to 268 the targets are struck in turn, and the scene closes with a
+   glow of the whole palette. A or B skips to tick 232.
 
    The state's particles 0-11 are the flames (velocityZ picks the blitter, 2
    retires the column), particles 24-39 the embers of the closing glow; the map
-   cell buffer holds the motes (variant counts down the frames before a mote
+   cell buffer holds the motes (variant counts down the ticks before a mote
    appears, 0 is a live mote). */
 void btEffectRunMoloch(BATTLE_EFFECT_PARM *args)
 {
@@ -70,7 +70,7 @@ void btEffectRunMoloch(BATTLE_EFFECT_PARM *args)
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	{
 		POINT2_D focus;
-		Sint32	 frame;
+		Sint32	 frm;
 
 		focus.x = toFIXED(128);
 		focus.y = toFIXED(64);
@@ -78,15 +78,15 @@ void btEffectRunMoloch(BATTLE_EFFECT_PARM *args)
 		sySynch(1);
 		btEffectCreateSprs(MOLOCH_SPRITES, SPRITE_MOLOCH, 2);
 
-		frame = 0;
+		frm = 0;
 		do {
-			if((PerWork.repeat & (KEY_A | KEY_B)) && frame < MOLOCH_SKIP_TO &&
-				frame > 15) {
+			if((PerWork.repeat & (KEY_A | KEY_B)) && frm < MOLOCH_SKIP_TO &&
+				frm > 15) {
 				sySndPlayStub(SE_CLATTER);
-				frame = MOLOCH_SKIP_TO;
+				frm = MOLOCH_SKIP_TO;
 			}
 
-			if(frame == 0) {
+			if(frm == 0) {
 				EFFECT_FREE_PARTICLES(i, state->particles, 64);
 
 				/* The motes start along the top, each after its own delay. */
@@ -123,22 +123,22 @@ void btEffectRunMoloch(BATTLE_EFFECT_PARM *args)
 				}
 			}
 
-			if(frame <= 271) {
+			if(frm <= 271) {
 				motes = MapGridMetatileBuffer;
 				for(i = 0; i != MOLOCH_MOTES; i++) {
 					mote = &motes[i];
 					if(mote->variant == 0) {
-						Sint32 size = Moloch_MoteSizes[i & 7];
+						Sint32 size = MolochMoteSizes[i & 7];
 
 						draw[0](canvas,
-							graphics + BattleEffect_MotePictures[size - 1],
+							graphics + BattleEffectMotePictures[size - 1],
 							FIXED_INTEGER_PART(mote->x) - (size >> 1),
 							FIXED_INTEGER_PART(mote->y) - size, size, size * 2);
 
-						/* Frames 91-119: motes still at rest head for a random
+						/* Ticks 91-119: motes still at rest head for a random
 						   point of the middle, timed to arrive as they reach
 						   the ground. */
-						if((Uint32)(frame - 91) <= 28 && mote->velX == 0 &&
+						if((Uint32)(frm - 91) <= 28 && mote->velX == 0 &&
 							FIXED_INTEGER_PART(mote->y) < MOLOCH_GROUND_Y) {
 							Sint32 dx;
 
@@ -149,8 +149,8 @@ void btEffectRunMoloch(BATTLE_EFFECT_PARM *args)
 									(size * (toFIXED(1) / 4)));
 						}
 
-						/* Frames 142-161: they swirl about the centre line. */
-						if((Uint32)(frame - 142) <= 19) {
+						/* Ticks 142-161: they swirl about the centre line. */
+						if((Uint32)(frm - 142) <= 19) {
 							FIXED distance = mote->x - toFIXED(96);
 							FIXED pull;
 
@@ -170,7 +170,7 @@ void btEffectRunMoloch(BATTLE_EFFECT_PARM *args)
 						mote->x += mote->velX + sySin(mote->y >> 5) / 5;
 						mote->y += mote->velY + size * (toFIXED(1) / 4);
 						if(mote->y > toFIXED(MOLOCH_GROUND_Y)) {
-							if(frame > 215) {
+							if(frm > 215) {
 								/* Late motes fly back in from the right. */
 								mote->variant = 0;
 								mote->x = toFIXED(120);
@@ -189,17 +189,17 @@ void btEffectRunMoloch(BATTLE_EFFECT_PARM *args)
 						mote->variant--;
 					}
 
-					/* Frames 217-245: the wind turns. */
-					if((Uint32)(frame - 217) <= 28) {
+					/* Ticks 217-245: the wind turns. */
+					if((Uint32)(frm - 217) <= 28) {
 						mote->velX -= toFIXED(1) / 8;
 						mote->velY += toFIXED(1) / 8;
 					}
 				}
 			}
 
-			/* Frames 91-255: the flame columns, a 32x64 cell for every four
-			   frames. */
-			if((Uint32)(frame - 91) <= 164) {
+			/* Ticks 91-255: the flame columns, a 32x64 cell for every four
+			   ticks. */
+			if((Uint32)(frm - 91) <= 164) {
 				for(i = 0; i != MOLOCH_FLAMES; i++) {
 					flame = &state->particles[i];
 					if(flame->velZ != 2) {
@@ -221,12 +221,12 @@ void btEffectRunMoloch(BATTLE_EFFECT_PARM *args)
 							flame->variant = 0;
 							flame->velY = INTtoFIXED(-((syRandom() & 3) + 2));
 							flame->velZ = 0;
-							if((Uint32)(frame - 97) <= 42)
+							if((Uint32)(frm - 97) <= 42)
 								flame->velZ = 1;
-							else if(frame > 140)
+							else if(frm > 140)
 								flame->velZ = 2;
 						}
-						if(frame == MOLOCH_SPREAD_FRAME) {
+						if(frm == MOLOCH_SPREAD_TICK) {
 							if(flame->x < toFIXED(80))
 								flame->velX -= toFIXED(4);
 							else
@@ -236,9 +236,9 @@ void btEffectRunMoloch(BATTLE_EFFECT_PARM *args)
 				}
 			}
 
-			/* Frames 201-271: the embers of the closing glow. */
-			if((Uint32)(frame - 200) <= 71) {
-				if(frame > 200) {
+			/* Ticks 201-271: the embers of the closing glow. */
+			if((Uint32)(frm - 200) <= 71) {
+				if(frm > 200) {
 					for(i = 0; i != MOLOCH_EMBERS; i++) {
 						flame = &state->particles[MOLOCH_FIRST_EMBER + i];
 						if((Uint32)flame->variant < MOLOCH_FLAME_LIFE) {
@@ -263,57 +263,57 @@ void btEffectRunMoloch(BATTLE_EFFECT_PARM *args)
 				}
 			}
 
-			/* Four rings, each starting at its own frame, grow and fade out
-			   over eight frames. */
-			if(frame >= MOLOCH_SPREAD_FRAME) {
+			/* Four rings, each starting at its own tick, grow and fade out
+			   over eight ticks. */
+			if(frm >= MOLOCH_SPREAD_TICK) {
 				/* Room for 128 projected corners; a ring has 32. */
 				projected = syHeapAllocEWRAM(128 * sizeof(PROJECTED_VERTEX));
 				model = btRenderAllocateModelList(1);
 				texture.logWidth = 7;
 				texture.logHeight = 5;
 				texture.pixels = state->sheet + MOLOCH_RING_TEXTURE;
-				model->mesh = BattleEffect_CylinderMesh;
+				model->mesh = BattleEffectCylinderMesh;
 				model->kind = MODEL_SHADED_ADDITIVE;
 				model->texture = &texture;
 				model->vertices = projected;
 				model->scrollU = 0;
 				model->scrollV = 0;
-				for(i = 0; i != ARRAY_COUNT(Moloch_RingStarts); i++) {
-					Sint32 start = Moloch_RingStarts[i] + MOLOCH_SPREAD_FRAME;
+				for(i = 0; i != ARRAY_COUNT(MolochRingStarts); i++) {
+					Sint32 start = MolochRingStarts[i] + MOLOCH_SPREAD_TICK;
 					FIXED  scale;
 					Sint32 shade;
 
-					if(frame <= start)
+					if(frm <= start)
 						continue;
-					scale = (frame - start) * Moloch_RingGrowth[i] * 2000 +
+					scale = (frm - start) * MolochRingGrowth[i] * 2000 +
 						toFIXED(1) / 2;
-					shade = (start - frame) * 8 + 56;
+					shade = (start - frm) * 8 + 56;
 					if(shade > 0)
 						shade = 0;
 					if(shade <= MODEL_SHADE_INVISIBLE)
 						continue;
 					model->shade = shade;
 					syInitMatrix();
-					syTranslate(toFIXED(16), toFIXED(Moloch_RingHeights[i]), 0);
+					syTranslate(toFIXED(16), toFIXED(MolochRingHeights[i]), 0);
 					syScale(scale, scale, scale);
 					syRotX(MOLOCH_RING_TILT);
-					model->scrollU = ((frame + i * 5) & 7) << 4;
+					model->scrollU = ((frm + i * 5) & 7) << 4;
 					btRenderTransformVertices(
-						BattleEffect_CylinderCorners, projected, 32);
+						BattleEffectCylinderCorners, projected, 32);
 					btRenderDrawModelList(model);
 				}
 				syHeapRelease(model);
 				syHeapRelease(projected);
 			}
 
-			if(frame > 139)
+			if(frm > 139)
 				btEffectPlaceFormationSprs(
 					SUMMON_FORMATION_MOLOCH, focus.x, focus.y);
 
-			/* Frames 212-268, every eight: the targets flash and are thrown
+			/* Ticks 212-268, every eight: the targets flash and are thrown
 			   back, each strike's reach 16 percent further than the last's. */
 			for(i = 0; i != 8; i++) {
-				if(frame == i * 8 + 212) {
+				if(frm == i * 8 + 212) {
 					for(k = 0; k != state->args->tgtCnt; k++) {
 						btEffectTintBattler(state->args->tgts[k],
 							SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
@@ -322,31 +322,31 @@ void btEffectRunMoloch(BATTLE_EFFECT_PARM *args)
 					}
 				}
 			}
-			if((Uint32)(frame - 201) <= 54)
+			if((Uint32)(frm - 201) <= 54)
 				state->shakeFrm = 2;
 
-			if(frame == 32)
+			if(frm == 32)
 				sySndPlayStub(SE_GLITTER);
-			if(frame == 90)
+			if(frm == 90)
 				sySndPlayStub(SE_CLOUD_BILLOWS);
-			if(frame == 140)
+			if(frm == 140)
 				sySndPlayStub(SE_CAST);
-			if(frame == 200)
+			if(frm == 200)
 				sySndPlayStub(SE_BANE_ESCAPE);
-			if(frame == 232)
+			if(frm == 232)
 				sySndPlayStub(SE_CLATTER);
 
-			/* Frames 256-271 brighten the whole screen to white; at 272 the
+			/* Ticks 256-271 brighten the whole screen to white; at 272 the
 			   battle phase resumes and the canvas fades back. */
-			if(frame == 272) {
+			if(frm == 272) {
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 				EFFECT_SET_TRANSFER(
 					state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
 				btGraphicsLoadGreyRamp();
-			} else if((Uint32)(frame - 256) <= 15) {
+			} else if((Uint32)(frm - 256) <= 15) {
 				EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR,
 					CANVAS_FILL_WORD(MOLOCH_WHITENING_LEVEL));
-				if(frame > 269)
+				if(frm > 269)
 					state->transferValue =
 						CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
 				btPaletteBrightenBgEntries(2, 2, 2);
@@ -354,9 +354,9 @@ void btEffectRunMoloch(BATTLE_EFFECT_PARM *args)
 
 			btCameraShake(4, 8);
 			btEffectCountDownBattlerTints();
-			frame++;
+			frm++;
 			EFFECT_PRESENT_CANVAS(state);
-		} while(frame != MOLOCH_FRAMES);
+		} while(frm != MOLOCH_TICKS);
 
 		syCloseEvent(btEffectTransferCanvas);
 		EFFECT_RELEASE_BLITTERS();
@@ -402,12 +402,12 @@ void btIrisChangeBackdrop(void)
 
 	palette = (Uint16 *)&BG_PLTT_COLOR(6, 0);
 	for(i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
-		Sint32 color = *palette;
-		Sint32 blue = RGB_BLUE((Uint16)color);
-		Sint32 green = RGB_GREEN((Uint16)color);
+		Sint32 col = *palette;
+		Sint32 blue = RGB_BLUE((Uint16)col);
+		Sint32 green = RGB_GREEN((Uint16)col);
 		Sint32 red = RGB_LEVEL_MAX;
 
-		red &= color;
+		red &= col;
 		red -= 16;
 		green -= 24;
 		blue -= 20;
@@ -475,18 +475,18 @@ typedef enum IRIS_SPLASH_PICTURE {
 
 /* A splash's rings of dots are drawn at this many points around; its ring motes
    turn about it as spokes, taking their next picture every
-   IRIS_RING_FADE_FRAMES. */
-#define IRIS_SPLASH_POINTS	  64
-#define IRIS_SPLASH_SPOKES	  8
-#define IRIS_RING_FADE_FRAMES 12
+   IRIS_RING_FADE_TICKS. */
+#define IRIS_SPLASH_POINTS	 64
+#define IRIS_SPLASH_SPOKES	 8
+#define IRIS_RING_FADE_TICKS 12
 /* An angle of n 64ths of a turn (TRIG_TURN / 64 each): a splash's ring has
    IRIS_SPLASH_POINTS points about a turn. */
-#define IRIS_TURN_64THS(n)	  ((n) << 10)
+#define IRIS_TURN_64THS(n)	 ((n) << 10)
 
 /* Iris: draws one falling drop at (x, y), large (20x40) when small is 0 and
-   small (12x24) otherwise, its animation picture chosen by frame / 2, and under
+   small (12x24) otherwise, its animation picture chosen by tick / 2, and under
    it a trail of particles every half size down to row 112. */
-void btIrisDrawDrop(Uint32 frame, Sint32 x, Sint32 y, Sint32 small)
+void btIrisDrawDrop(Uint32 frm, Sint32 x, Sint32 y, Sint32 small)
 {
 	DRAW_RECTANGLE		 draw[2];
 	BATTLE_EFFECT_STATE *state;
@@ -504,13 +504,13 @@ void btIrisDrawDrop(Uint32 frame, Sint32 x, Sint32 y, Sint32 small)
 	/* The drop: one picture of its eight, large or small. */
 	if(small == 0)
 		draw[1](canvas,
-			state->sheet + IRIS_DROPS + frame / 2 * PICTURE_BYTES(IRIS_DROP),
+			state->sheet + IRIS_DROPS + frm / 2 * PICTURE_BYTES(IRIS_DROP),
 			x - IRIS_DROP_WIDTH / 2, y - IRIS_DROP_HEIGHT / 2, IRIS_DROP_WIDTH,
 			IRIS_DROP_HEIGHT);
 	else
 		draw[1](canvas,
 			state->sheet + IRIS_SMALL_DROPS +
-				frame / 2 * PICTURE_BYTES(IRIS_SMALL_DROP),
+				frm / 2 * PICTURE_BYTES(IRIS_SMALL_DROP),
 			x - IRIS_SMALL_DROP_WIDTH / 2, y - IRIS_SMALL_DROP_HEIGHT / 2,
 			IRIS_SMALL_DROP_WIDTH, IRIS_SMALL_DROP_HEIGHT);
 
@@ -525,7 +525,7 @@ void btIrisDrawDrop(Uint32 frame, Sint32 x, Sint32 y, Sint32 small)
 next:
 	draw[0](canvas,
 		state->sheet +
-			(BattleEffect_MotePictures[size - 1] + frame / 2 * MOTE_SET_BYTES),
+			(BattleEffectMotePictures[size - 1] + frm / 2 * MOTE_SET_BYTES),
 		x - size / 2, trailY, size, size * 2);
 	i++;
 	trailY = y + i * half;
@@ -533,10 +533,10 @@ next:
 		goto next;
 }
 
-extern const MODEL_VERTEX Iris_PillarVertices[6];
+extern const MODEL_VERTEX IrisPillarVertices[6];
 
 /* Iris: draws one rising pillar, a textured strip of six vertices whose two
-   lower rows come from Iris_PillarVertices and whose top row is raised to
+   lower rows come from IrisPillarVertices and whose top row is raised to
    height. x is the pillar's screen column (63 is the centre); the base sits
    height pixels below row 63, so the pillar grows upward from there. */
 void btIrisDrawPillar(Sint32 halfWidth, Sint32 x, Sint32 height)
@@ -546,11 +546,11 @@ void btIrisDrawPillar(Sint32 halfWidth, Sint32 x, Sint32 height)
 	RENDER_MODEL		*model;
 	MODEL_VERTEX		 vertices[6];
 	MODEL_TEXTURE		 texture;
-	VECTOR3				 position;
+	VECTOR3				 pos;
 
 	projected = syHeapAllocEWRAM(48);
 	model = btRenderAllocateModelList(1);
-	memcpy(vertices, Iris_PillarVertices, sizeof(vertices));
+	memcpy(vertices, IrisPillarVertices, sizeof(vertices));
 
 	texture.logWidth = 4;
 	texture.logHeight = 4;
@@ -567,12 +567,12 @@ void btIrisDrawPillar(Sint32 halfWidth, Sint32 x, Sint32 height)
 	vertices[4].y = height;
 
 	syInitMatrix();
-	SET_POSITION(&position, toFIXED(x) - toFIXED(63), toFIXED(63 - height), 0);
-	syMatrixTranslateVector(&position);
+	SET_POSITION(&pos, toFIXED(x) - toFIXED(63), toFIXED(63 - height), 0);
+	syMatrixTranslateVector(&pos);
 
 	model->kind = MODEL_TEXTURED_MAX;
 	model->texture = &texture;
-	model->mesh = Iris_PillarMesh;
+	model->mesh = IrisPillarMesh;
 	model->vertices = projected;
 	btRenderTransformVertices(vertices, projected, 6);
 	btRenderDrawModelList(model);
@@ -584,7 +584,7 @@ void btIrisDrawPillar(Sint32 halfWidth, Sint32 x, Sint32 height)
 
 /* Draws a 45-degree canvas line from (x + w/2, y - w/2) down-left toward (x,
    y), at most DIAGONAL_LINE_MAX pixels long, in the given colour. */
-void btEffectDrawDiagonalCanvasLine(Sint32 x, Sint32 y, Sint32 w, Uint8 color)
+void btEffectDrawDiagonalCanvasLine(Sint32 x, Sint32 y, Sint32 w, Uint8 col)
 {
 	Sint32 h = w >> 1;
 	Sint32 x1;
@@ -596,33 +596,33 @@ void btEffectDrawDiagonalCanvasLine(Sint32 x, Sint32 y, Sint32 w, Uint8 color)
 		h = DIAGONAL_LINE_MAX;
 	y1 = y + h;
 	x1 = x - h;
-	btEffectDrawClippedCanvasLine(x, y, x1, y1, color);
+	btEffectDrawClippedCanvasLine(x, y, x1, y1, col);
 }
 
 /* Iris's runs: the pink petals (PinkPetalsTiles, fifteen pictures of a petal
    tumbling), the motes in state->particles, and the opening's streaks, each a
    head and the points that trail it. */
-#define IRIS_PETALS		  36
-#define IRIS_PETAL_FRAMES 15
+#define IRIS_PETALS		 36
+#define IRIS_PETAL_TICKS 15
 #define IRIS_PETAL_SIZE \
 	16 /* a petal's 16-colour sprite, in IRIS_PETAL_PALETTE */
 #define IRIS_PETAL_BYTES		  (IRIS_PETAL_SIZE * IRIS_PETAL_SIZE / 2)
 #define IRIS_PETAL_PALETTE		  15
-/* One frame of a petal's life, which counts down in its high byte; the petal is
+/* One tick of a petal's life, which counts down in its high byte; the petal is
    drawn at twice its life's scale. */
-#define IRIS_PETAL_FRAME		  (1 << 8)
+#define IRIS_PETAL_TICK			  (1 << 8)
 /* As she appears her petals fly out, shrinking a 32nd of their size (toFIXED(1)
-   / 32) every two frames; IRIS_PETAL_SHRINK is how much after so many
-   frames. */
-#define IRIS_PETAL_SHRINK(frames) ((frames) >> 1 << 11)
+   / 32) every two ticks; IRIS_PETAL_SHRINK is how much after so many
+   ticks. */
+#define IRIS_PETAL_SHRINK(ticks)  ((ticks) >> 1 << 11)
 /* A canvas x as a 16.16 x on the screen, where the canvas is shown at twice its
    width. */
 #define IRIS_SCREEN_X_FX(canvasX) ((canvasX) << 17)
 #define IRIS_MOTES				  32
 /* A mote's variant: its size in pixels in the low bits; IRIS_MOTE_FADING to
-   fade through the faded mote sets once it is IRIS_MOTE_FADE_AGE frames old;
+   fade through the faded mote sets once it is IRIS_MOTE_FADE_AGE ticks old;
    IRIS_MOTE_GLOWING to be drawn instead as a glow, a textured quad that grows
-   and fades through the IRIS_GLOW_TEXTURES once it is IRIS_GLOW_FADE_AGE frames
+   and fades through the IRIS_GLOW_TEXTURES once it is IRIS_GLOW_FADE_AGE ticks
    old. */
 #define IRIS_MOTE_SIZE			  0xf
 #define IRIS_MOTE_FADING		  0x10
@@ -631,7 +631,7 @@ void btEffectDrawDiagonalCanvasLine(Sint32 x, Sint32 y, Sint32 w, Uint8 color)
 #define IRIS_GLOW_FADE_AGE		  24
 #define IRIS_GLOW_TEXTURES		  8
 /* The motes that burst from her as she appears, half each way, and the random
-   part of their speed, in sixteenths of a pixel a frame. */
+   part of their speed, in sixteenths of a pixel a tick. */
 #define IRIS_FIRST_MOTES		  12
 #define IRIS_MOTE_DRIFT_MASK	  31
 #define IRIS_STREAKS			  15
@@ -643,114 +643,114 @@ void btEffectDrawDiagonalCanvasLine(Sint32 x, Sint32 y, Sint32 w, Uint8 color)
 #define IRIS_GODDESS_TILE		  32
 /* A sprite of her 256-colour figure, a byte a pixel. */
 #define IRIS_GODDESS_SPRITE_BYTES (IRIS_GODDESS_TILE * IRIS_GODDESS_TILE)
-/* Whether frame is one of first to last, both included. */
-#define IRIS_DURING(frame, first, last) \
-	((Uint32)((frame) - (first)) <= (last) - (first))
+/* Whether tick is one of first to last, both included. */
+#define IRIS_DURING(tick, first, last) \
+	((Uint32)((tick) - (first)) <= (last) - (first))
 /* The summon's milestones. The opening's circle of light and streaks run to
-   IRIS_APPEAR_FRAME, when she appears; A or B skips the opening to it. */
-#define IRIS_APPEAR_FRAME		   176
-/* She comes to rest, and the next frame the drops' pictures are made. */
-#define IRIS_ARRIVAL_FRAME		   229
-#define IRIS_DROPS_FRAME		   230
+   IRIS_APPEAR_TICK, when she appears; A or B skips the opening to it. */
+#define IRIS_APPEAR_TICK		  176
+/* She comes to rest, and the next tick the drops' pictures are made. */
+#define IRIS_ARRIVAL_TICK		  229
+#define IRIS_DROPS_TICK			  230
 /* The sunset darkens from here. */
-#define IRIS_DARKEN_FRAME		   240
+#define IRIS_DARKEN_TICK		  240
 /* She turns white and sinks, then rises away, and is gone. */
-#define IRIS_LEAVE_FRAME		   351
-#define IRIS_RISE_FRAME			   366
-#define IRIS_GONE_FRAME			   386
+#define IRIS_LEAVE_TICK			  351
+#define IRIS_RISE_TICK			  366
+#define IRIS_GONE_TICK			  386
 /* The pillars of light climb, until a band of light rises over them. */
-#define IRIS_PILLARS_FRAME		   370
-#define IRIS_PILLARS_END_FRAME	   422
+#define IRIS_PILLARS_TICK		  370
+#define IRIS_PILLARS_END_TICK	  422
 /* The fountain starts under the starfield; A or B after her appearance skips to
    it. */
-#define IRIS_FOUNTAIN_FRAME		   446
+#define IRIS_FOUNTAIN_TICK		  446
 /* The rings of the healing. */
-#define IRIS_HEAL_FRAME			   639
-/* The glow's textures are made; the canvas flashes white for three frames, the
-   cone of light reaches out a frame later, and the tall ring of motes
+#define IRIS_HEAL_TICK			  639
+/* The glow's textures are made; the canvas flashes white for three ticks, the
+   cone of light reaches out a tick later, and the tall ring of motes
    follows. */
-#define IRIS_GLOW_FRAME			   754
-#define IRIS_CONE_FRAME			   759
-#define IRIS_TALL_RING_FRAME	   783
+#define IRIS_GLOW_TICK			  754
+#define IRIS_CONE_TICK			  759
+#define IRIS_TALL_RING_TICK		  783
 /* The backdrop whitens, and the summon ends. */
-#define IRIS_WHITE_OUT_FRAME	   817
-#define IRIS_END_FRAME			   850
-/* From her appearance to IRIS_ARRIVAL_FRAME she drops into place on a sine, a
-   1024th of a turn a frame and 64 pixels high; this is how far it has carried
+#define IRIS_WHITE_OUT_TICK		  817
+#define IRIS_END_TICK			  850
+/* From her appearance to IRIS_ARRIVAL_TICK she drops into place on a sine, a
+   1024th of a turn a tick and 64 pixels high; this is how far it has carried
    her by then, taken off so that she comes to rest there. */
-#define IRIS_ARRIVAL_DROP		   toFIXED(20.4453125)
-/* The five light bars of the fountain, 45-degree lines growing a pixel a frame
-   up and right from where they start. Each lasts IRIS_BAR_FRAMES from its own
-   first frame, fading over its last 31. */
-#define IRIS_BAR_FRAMES			   210
-#define IRIS_CORNER_BAR_FRAME	   513
-#define IRIS_INNER_LEFT_BAR_FRAME  522
-#define IRIS_INNER_LOWER_BAR_FRAME 531
-#define IRIS_OUTER_LEFT_BAR_FRAME  535
-#define IRIS_OUTER_LOWER_BAR_FRAME 554
-#define IRIS_BAR_SHOWN(frame, start) \
-	IRIS_DURING(frame, start, (start) + IRIS_BAR_FRAMES - 1)
-#define IRIS_BAR_SHADE(frame, start)  ((start) + IRIS_BAR_FRAMES - (frame))
-#define IRIS_BAR_LENGTH(frame, start) ((frame) - ((start) - 1))
+#define IRIS_ARRIVAL_DROP		  toFIXED(20.4453125)
+/* The five light bars of the fountain, 45-degree lines growing a pixel a tick
+   up and right from where they start. Each lasts IRIS_BAR_TICKS from its own
+   first tick, fading over its last 31. */
+#define IRIS_BAR_TICKS			  210
+#define IRIS_CORNER_BAR_TICK	  513
+#define IRIS_INNER_LEFT_BAR_TICK  522
+#define IRIS_INNER_LOWER_BAR_TICK 531
+#define IRIS_OUTER_LEFT_BAR_TICK  535
+#define IRIS_OUTER_LOWER_BAR_TICK 554
+#define IRIS_BAR_SHOWN(tick, start) \
+	IRIS_DURING(tick, start, (start) + IRIS_BAR_TICKS - 1)
+#define IRIS_BAR_SHADE(tick, start)	 ((start) + IRIS_BAR_TICKS - (tick))
+#define IRIS_BAR_LENGTH(tick, start) ((tick) - ((start) - 1))
 /* The opening's streaks rise until their heads reach this row. */
-#define IRIS_STREAK_TOP				  59
-/* The sounds at the frames of Iris_PsynergySoundFrames, Iris_DoorSoundFrames
-   and Iris_PowerUpSoundFrames. */
-#define IRIS_PSYNERGY_SOUNDS		  11
-#define IRIS_DOOR_SOUNDS			  5
-#define IRIS_POWER_UP_SOUNDS		  6
+#define IRIS_STREAK_TOP				 59
+/* The sounds at the ticks of IrisPsynergySoundTicks, IrisDoorSoundTicks
+   and IrisPowerUpSoundTicks. */
+#define IRIS_PSYNERGY_SOUNDS		 11
+#define IRIS_DOOR_SOUNDS			 5
+#define IRIS_POWER_UP_SOUNDS		 6
 /* As she appears, a ring of IRIS_APPEAR_RING_POINTS motes spreads about her, a
-   pixel a frame. */
-#define IRIS_APPEAR_RING_POINTS		  256
-#define IRIS_APPEAR_RING_MOTE		  4 /* its motes' size */
-/* The share of each pixel's level her canvas keeps a frame: any share but
+   pixel a tick. */
+#define IRIS_APPEAR_RING_POINTS		 256
+#define IRIS_APPEAR_RING_MOTE		 4 /* its motes' size */
+/* The share of each pixel's level her canvas keeps a tick: any share but
    CANVAS_FADE_HALF keeps three quarters. */
-#define IRIS_CANVAS_FADE_SHARE		  70
-/* The bands of light that rise up the canvas, eight rows a frame. */
-#define IRIS_BAND_HEIGHT			  40
-/* The fountain's first frame draws three shaded circles from this size, two
+#define IRIS_CANVAS_FADE_SHARE		 70
+/* The bands of light that rise up the canvas, eight rows a tick. */
+#define IRIS_BAND_HEIGHT			 40
+/* The fountain's first tick draws three shaded circles from this size, two
    pixels apart, that the mote fades overwrite before they are seen. */
-#define IRIS_UNSEEN_CIRCLE_SIZE		  14
+#define IRIS_UNSEEN_CIRCLE_SIZE		 14
 /* The pillars of light: those that widen or narrow change width every so many
    pixels they rise. */
-#define IRIS_WIDENING_STEP			  19
-#define IRIS_NARROWING_STEP			  21
+#define IRIS_WIDENING_STEP			 19
+#define IRIS_NARROWING_STEP			 21
 /* The healing's rings: IRIS_HEAL_RINGS of IRIS_HEAL_RING_POINTS motes each,
-   IRIS_HEAL_RING_GAP frames apart; then a wide arc and a tall ring of motes,
+   IRIS_HEAL_RING_GAP ticks apart; then a wide arc and a tall ring of motes,
    IRIS_SWEEP_STEP apart, of IRIS_SWEEP_MOTE pixels. */
-#define IRIS_HEAL_RINGS				  10
-#define IRIS_HEAL_RING_GAP			  8
-#define IRIS_HEAL_RING_FRAMES		  31 /* each ring's life */
-#define IRIS_HEAL_RING_POINTS		  128
-#define IRIS_WIDE_ARC_MOTES			  96
-#define IRIS_TALL_RING_MOTES		  197
-#define IRIS_SWEEP_STEP				  (TRIG_TURN * 3 / 512)
-#define IRIS_SWEEP_MOTE				  6
-/* A speed of n half pixels a frame, as 16.16 (toFIXED(n) / 2). */
-#define IRIS_HALF_PIXELS_FX(n)		  ((n) << 15)
+#define IRIS_HEAL_RINGS				 10
+#define IRIS_HEAL_RING_GAP			 8
+#define IRIS_HEAL_RING_TICKS		 31 /* each ring's life */
+#define IRIS_HEAL_RING_POINTS		 128
+#define IRIS_WIDE_ARC_MOTES			 96
+#define IRIS_TALL_RING_MOTES		 197
+#define IRIS_SWEEP_STEP				 (TRIG_TURN * 3 / 512)
+#define IRIS_SWEEP_MOTE				 6
+/* A speed of n half pixels a tick, as 16.16 (toFIXED(n) / 2). */
+#define IRIS_HALF_PIXELS_FX(n)		 ((n) << 15)
 /* The cone of light's texture, after the glow textures. */
 #define IRIS_CONE_TEXTURE \
 	(IRIS_TEXTURES + IRIS_GLOW_TEXTURES * IRIS_TEXTURE_BYTES)
-#define IRIS_CONE_TEXTURE_SIZE	 32
+#define IRIS_CONE_TEXTURE_SIZE	32
 /* How far the cone stretches toward its full size (toFIXED(1)) in so many
-   frames: a 64th a frame. */
-#define IRIS_CONE_GROWTH(frames) ((frames) << 10)
+   ticks: a 64th a tick. */
+#define IRIS_CONE_GROWTH(ticks) ((ticks) << 10)
 /* The battle camera's yaw (BATTLE_CAMERA.yaw), read as a signed halfword of the
    camera state. */
-#define IRIS_CAMERA_YAW			 (offsetof(BATTLE_CAMERA, yaw) / sizeof(Sint16))
+#define IRIS_CAMERA_YAW			(offsetof(BATTLE_CAMERA, yaw) / sizeof(Sint16))
 /* The 128 background colours the scene fades (entries 96 to 223). */
-#define IRIS_FADE_COLORS		 128
+#define IRIS_FADE_COLORS		128
 /* The colour they step toward, a level at a time, once the circle of light
    widens. */
-#define IRIS_FADE_TARGET_RED	 23
-#define IRIS_FADE_TARGET_GREEN	 1
-#define IRIS_FADE_TARGET_BLUE	 15
+#define IRIS_FADE_TARGET_RED	23
+#define IRIS_FADE_TARGET_GREEN	1
+#define IRIS_FADE_TARGET_BLUE	15
 
 /* The petal objects' state, in the map cell buffer at byte 8000. */
 typedef struct IRIS_PETAL_SET {
-	Sint16 life[IRIS_PETALS]; /* high byte: frames left; 0 frees the slot */
-	Uint16 tiles[IRIS_PETAL_FRAMES];
-	Uint16 frames[IRIS_PETALS];
+	Sint16 life[IRIS_PETALS]; /* high byte: ticks left; 0 frees the slot */
+	Uint16 tiles[IRIS_PETAL_TICKS];
+	Uint16 ticks[IRIS_PETALS];
 	Sint32 x[IRIS_PETALS];
 	Sint32 y[IRIS_PETALS];
 	Sint32 vx[IRIS_PETALS];
@@ -824,11 +824,11 @@ typedef struct IRIS_WORK {
 	((IRIS_POINT(*)[IRIS_STREAK_LENGTH])( \
 		Ram_MapMetatileBuffer + 12000 + offsetof(IRIS_WORK, streaks)))
 
-extern const FIVE_WIDTHS  Iris_RisingPillarWidths;
-extern const SEVEN_WIDTHS Iris_WideningPillarWidths;
-extern const SEVEN_WIDTHS Iris_NarrowingPillarWidths;
-extern const FOUR_SPANS	  Iris_LeftStripSpans;
-extern const FOUR_SPANS	  Iris_RightStripSpans;
+extern const FIVE_WIDTHS  IrisRisingPillarWidths;
+extern const SEVEN_WIDTHS IrisWideningPillarWidths;
+extern const SEVEN_WIDTHS IrisNarrowingPillarWidths;
+extern const FOUR_SPANS	  IrisLeftStripSpans;
+extern const FOUR_SPANS	  IrisRightStripSpans;
 
 /* Point j of streak i of the iris's streaks. */
 #define STREAK(i, j) \
@@ -845,7 +845,7 @@ static inline void btIrisDrawSplash(Sint32 t, Sint32 x, Sint32 y, Sint32 small)
 	Uint8				*canvas = Ram_HeapSlots->battleCanvas;
 	DRAW_RECTANGLE		 drawAlt;
 	DRAW_RECTANGLE		 draw;
-	Uint8				*sprites;
+	Uint8				*sprs;
 	Sint32				 r;
 	Sint32				 fade;
 	Sint32				 dotPicture;
@@ -855,11 +855,11 @@ static inline void btIrisDrawSplash(Sint32 t, Sint32 x, Sint32 y, Sint32 small)
 	Sint32				 column;
 	Sint32				 dead;
 
-	sprites = Ram_HeapSlots->battleSheet;
+	sprs = Ram_HeapSlots->battleSheet;
 	draw = Ram_HeapSlots->ramCode;
 	drawAlt = Ram_HeapSlots->ramCodePaired;
-	if(t < *(Iris_SplashRadii + small) * 2) {
-		r = *(Iris_SplashRadii + small) * 2 - t;
+	if(t < *(IrisSplashRadii + small) * 2) {
+		r = *(IrisSplashRadii + small) * 2 - t;
 		fade = r / 6;
 		dotPicture = fade * PICTURE_BYTES(IRIS_DOT);
 		moteFade = fade * MOTE_SET_BYTES;
@@ -870,23 +870,23 @@ static inline void btIrisDrawSplash(Sint32 t, Sint32 x, Sint32 y, Sint32 small)
 			a = IRIS_TURN_64THS(point);
 			px = (FIXEDtoINT(r * sySin(a) / 2)) + x;
 			py = (FIXEDtoINT(r * syCos(a))) + y;
-			draw(canvas, sprites + dotPicture + IRIS_DOTS, px, py - 2,
+			draw(canvas, sprs + dotPicture + IRIS_DOTS, px, py - 2,
 				IRIS_DOT_WIDTH, IRIS_DOT_HEIGHT);
 		}
 		if(small == 0) {
-			Sint32		   offset = 0;
+			Sint32		   ofs = 0;
 			Uint8		  *ring;
 			DRAW_RECTANGLE blit;
 			Sint32		   spoke;
 
-			if(t < IRIS_RING_FADE_FRAMES)
-				offset = IRIS_LARGE_RINGS + 2 * PICTURE_BYTES(IRIS_LARGE_RING);
-			else if(t < 2 * IRIS_RING_FADE_FRAMES)
-				offset = IRIS_LARGE_RINGS + PICTURE_BYTES(IRIS_LARGE_RING);
+			if(t < IRIS_RING_FADE_TICKS)
+				ofs = IRIS_LARGE_RINGS + 2 * PICTURE_BYTES(IRIS_LARGE_RING);
+			else if(t < 2 * IRIS_RING_FADE_TICKS)
+				ofs = IRIS_LARGE_RINGS + PICTURE_BYTES(IRIS_LARGE_RING);
 			/* FAKEMATCH(dead): t * 4 / 3 into dead. */
 			dead = t * 4;
 			dead /= 3;
-			ring = sprites + offset;
+			ring = sprs + ofs;
 			/* FAKEMATCH(temporary): draw copied into blit for the ring's
 			 * draws. */
 			blit = draw;
@@ -907,23 +907,23 @@ static inline void btIrisDrawSplash(Sint32 t, Sint32 x, Sint32 y, Sint32 small)
 					IRIS_LARGE_RING_HEIGHT);
 			}
 			draw(canvas,
-				state->sheet + (BattleEffect_MotePictures[8] + moteFade), x - 4,
+				state->sheet + (BattleEffectMotePictures[8] + moteFade), x - 4,
 				y - 9, 9, 18);
 		} else {
-			Sint32		   offset = IRIS_SMALL_RINGS;
+			Sint32		   ofs = IRIS_SMALL_RINGS;
 			Uint8		  *ring;
 			DRAW_RECTANGLE blit;
 			Sint32		   spoke;
 
-			if(t < IRIS_RING_FADE_FRAMES)
-				offset = IRIS_SMALL_RINGS + 2 * PICTURE_BYTES(IRIS_SMALL_RING);
-			else if(t < 2 * IRIS_RING_FADE_FRAMES)
-				offset = IRIS_SMALL_RINGS + PICTURE_BYTES(IRIS_SMALL_RING);
+			if(t < IRIS_RING_FADE_TICKS)
+				ofs = IRIS_SMALL_RINGS + 2 * PICTURE_BYTES(IRIS_SMALL_RING);
+			else if(t < 2 * IRIS_RING_FADE_TICKS)
+				ofs = IRIS_SMALL_RINGS + PICTURE_BYTES(IRIS_SMALL_RING);
 			/* FAKEMATCH(dead): t * 4 / 3 into dead, as in the large splash's
 			 * arm. */
 			dead = t * 4;
 			dead /= 3;
-			ring = sprites + offset;
+			ring = sprs + ofs;
 			/* FAKEMATCH(temporary): draw copied into blit for the ring's
 			 * draws. */
 			blit = draw;
@@ -944,14 +944,14 @@ static inline void btIrisDrawSplash(Sint32 t, Sint32 x, Sint32 y, Sint32 small)
 					IRIS_SMALL_RING_HEIGHT);
 			}
 			draw(canvas,
-				state->sheet + (BattleEffect_MotePictures[6] + moteFade), x - 3,
+				state->sheet + (BattleEffectMotePictures[6] + moteFade), x - 3,
 				y - 7, 7, 14);
 		}
 	} else {
-		if(t < *(Iris_SplashRadii + small) * 2 + *(Iris_SplashRadii + small)) {
+		if(t < *(IrisSplashRadii + small) * 2 + *(IrisSplashRadii + small)) {
 			Sint32 dots;
 
-			r = t - *(Iris_SplashRadii + small) * 2;
+			r = t - *(IrisSplashRadii + small) * 2;
 			dots = r / 3 * PICTURE_BYTES(IRIS_DOT);
 			if(dots == IRIS_DOT_FADES * PICTURE_BYTES(IRIS_DOT))
 				dots = (IRIS_DOT_FADES - 1) * PICTURE_BYTES(IRIS_DOT);
@@ -963,7 +963,7 @@ static inline void btIrisDrawSplash(Sint32 t, Sint32 x, Sint32 y, Sint32 small)
 				a = IRIS_TURN_64THS(point);
 				px = (FIXEDtoINT(r * sySin(a))) + x;
 				py = (FIXEDtoINT(r * syCos(a) * 2)) + y;
-				draw(canvas, sprites + dots, px - 1, py - 2, IRIS_DOT_WIDTH,
+				draw(canvas, sprs + dots, px - 1, py - 2, IRIS_DOT_WIDTH,
 					IRIS_DOT_HEIGHT);
 			}
 			for(point = 0; point != IRIS_SPLASH_POINTS; point++) {
@@ -973,19 +973,19 @@ static inline void btIrisDrawSplash(Sint32 t, Sint32 x, Sint32 y, Sint32 small)
 				a = IRIS_TURN_64THS(point);
 				px = (FIXEDtoINT(r * sySin(a) * 2)) + x;
 				py = (FIXEDtoINT(r * syCos(a))) + y +
-					Iris_SplashOffsetsY[small] * 2;
-				draw(canvas, sprites + dots, px - 1, py - 2, IRIS_DOT_WIDTH,
+					IrisSplashOffsetsY[small] * 2;
+				draw(canvas, sprs + dots, px - 1, py - 2, IRIS_DOT_WIDTH,
 					IRIS_DOT_HEIGHT);
 			}
 		}
-		for(segment = 0; segment < t - *(Iris_SplashRadii + small) * 2 &&
+		for(segment = 0; segment < t - *(IrisSplashRadii + small) * 2 &&
 			y + segment * IRIS_SPRAY_HEIGHT <= 112;
 			segment++)
-			draw(canvas, sprites + IRIS_SPRAY, x - IRIS_SPRAY_WIDTH / 2,
+			draw(canvas, sprs + IRIS_SPRAY, x - IRIS_SPRAY_WIDTH / 2,
 				y + segment * IRIS_SPRAY_HEIGHT, IRIS_SPRAY_WIDTH,
 				IRIS_SPRAY_HEIGHT);
-		if(t < *(Iris_SplashRadii + small) * 2 + 8) {
-			Sint32 shake = (*(Iris_SplashRadii + small) * 2 - t + 8) >> 1;
+		if(t < *(IrisSplashRadii + small) * 2 + 8) {
+			Sint32 shake = (*(IrisSplashRadii + small) * 2 - t + 8) >> 1;
 			typeof(BgScrollWork[0]) *scroll = BgScrollWork;
 			Sint16					 base = BATTLE_BACKGROUND_SCROLL_Y;
 
@@ -1018,13 +1018,13 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 	Uint8				*canvas = Ram_HeapSlots->battleCanvas;
 	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
 	SPR				   **objects = (SPR **)MapGridMetatileBuffer;
-	Uint8				*sprites = Ram_HeapSlots->battleSheet;
+	Uint8				*sprs = Ram_HeapSlots->battleSheet;
 	IRIS_PETAL_SET		*petals = &IRIS_PETAL_STATE;
 	BATTLE_STATE		*battle = Ram_HeapSlots->battleState;
 	Sint32				 savedScroll = BgScrollWork[1].x;
 	Sint16				*camera = Ram_HeapSlots->cameraState;
 	Sint32				 savedYaw;
-	Sint32				 frame;
+	Sint32				 frm;
 	DRAW_RECTANGLE		 draw[2];
 
 	/* The first petal slot with no life left, or -1. */
@@ -1068,12 +1068,12 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 					petals->life[i] = 0;
 					continue;
 				}
-				if(!(frame & 3))
-					petals->frames[i]++;
-				if(petals->frames[i] >= IRIS_PETAL_FRAMES)
-					petals->frames[i] = 0;
-				objects[i]->image.tile = petals->tiles[petals->frames[i]];
-				petals->life[i] -= IRIS_PETAL_FRAME;
+				if(!(frm & 3))
+					petals->ticks[i]++;
+				if(petals->ticks[i] >= IRIS_PETAL_TICKS)
+					petals->ticks[i] = 0;
+				objects[i]->image.tile = petals->tiles[petals->ticks[i]];
+				petals->life[i] -= IRIS_PETAL_TICK;
 			}
 		}
 	}
@@ -1096,7 +1096,7 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 	}
 
 	/* The motes: a picture of their size that fades once IRIS_MOTE_FADE_AGE
-	   frames old when IRIS_MOTE_FADING, or as IRIS_MOTE_GLOWING a glow that
+	   ticks old when IRIS_MOTE_FADING, or as IRIS_MOTE_GLOWING a glow that
 	   grows and fades. */
 	void DrawParticles(void)
 	{
@@ -1119,7 +1119,7 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 					continue;
 				}
 				if(state->particles[i].variant & IRIS_MOTE_FADING) {
-					Sint32 age = frame - state->particles[i].z;
+					Sint32 age = frm - state->particles[i].z;
 
 					if(age > IRIS_MOTE_FADE_AGE)
 						offset = (age - IRIS_MOTE_FADE_AGE) * MOTE_SET_BYTES;
@@ -1134,7 +1134,7 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 					Sint32		  age;
 
 					offset = 0;
-					age = frame - state->particles[i].z;
+					age = frm - state->particles[i].z;
 					if(age > IRIS_GLOW_FADE_AGE)
 						offset =
 							(age - IRIS_GLOW_FADE_AGE) * IRIS_TEXTURE_BYTES;
@@ -1152,9 +1152,9 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 					state->particles[i].velZ += toFIXED(1) / 8;
 					model->kind = MODEL_TEXTURED_MAX;
 					model->texture = &texture;
-					model->mesh = Iris_ParticleMesh;
+					model->mesh = IrisParticleMesh;
 					model->vertices = verts;
-					btRenderTransformVertices(Iris_ParticleCorners, verts, 4);
+					btRenderTransformVertices(IrisParticleCorners, verts, 4);
 					btRenderDrawModelList(model);
 					syHeapRelease(model);
 					syHeapRelease(verts);
@@ -1163,7 +1163,7 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 				} else {
 					draw[0](canvas,
 						state->sheet +
-							(BattleEffect_MotePictures[n - 1] + offset),
+							(BattleEffectMotePictures[n - 1] + offset),
 						px - n / 2, py - n, n, n * 2);
 				}
 				state->particles[i].x += state->particles[i].velX;
@@ -1173,7 +1173,7 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 	}
 
 	Sint32		  motesMask;
-	Uint8		 *tileBuffer;
+	Uint8		 *tileBuf;
 	FIXED		  pos[4];
 	SCALE		  scale;
 	SCALE		  shrink;
@@ -1247,19 +1247,19 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 
 		camera[IRIS_CAMERA_YAW] = yaw;
 	}
-	tileBuffer = Iris_TileBuffer;
+	tileBuf = IrisTileBuffer;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
 	draw[0] = Ram_HeapSlots->ramCode;
 	draw[1] = Ram_HeapSlots->ramCodePaired;
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, tileBuffer, 0, 0);
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, tileBuf, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 	for(i = 0; i != MOTE_SET_BYTES; i++)
-		sprites[i] >>= 1;
+		sprs[i] >>= 1;
 	btEffectDrawShadedCircles(state->sheet, 32, toFIXED(1));
 	btGraphicsLoadGreyRamp();
-	frame = 0;
+	frm = 0;
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 	syInitMatrix();
 
@@ -1267,15 +1267,15 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 		motesMask = IRIS_MOTE_DRIFT_MASK;
 		/* A or B: skips the opening, or the rest of the scene. */
 		if(PerWork.repeat & (KEY_A | KEY_B)) {
-			if(frame < IRIS_APPEAR_FRAME) {
-				frame = IRIS_APPEAR_FRAME;
-			} else if(IRIS_DURING(frame, IRIS_APPEAR_FRAME + 1,
-						  IRIS_FOUNTAIN_FRAME - 1)) {
+			if(frm < IRIS_APPEAR_TICK) {
+				frm = IRIS_APPEAR_TICK;
+			} else if(IRIS_DURING(
+						  frm, IRIS_APPEAR_TICK + 1, IRIS_FOUNTAIN_TICK - 1)) {
 				REG_BLDALPHA = EFFECT_BLEND_ADD;
 				IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
 					CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 				EFFECT_PRESENT_CANVAS(state);
-				if(frame <= IRIS_GONE_FRAME) {
+				if(frm <= IRIS_GONE_TICK) {
 					for(i = 0; i != IRIS_GODDESS_SPRITES; i++)
 						fdSprDestroyStub(state->sprs[i]);
 					btEffectShowLivingTargets(state->args);
@@ -1284,7 +1284,7 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 						btEffectTintBattler(state->args->tgts[i], TINT_KEEP,
 							POSE_DAMAGE, TINT_KEEP, 0);
 				}
-				frame = IRIS_FOUNTAIN_FRAME;
+				frm = IRIS_FOUNTAIN_TICK;
 			} else {
 				syWordsFillEntry(canvas, CANVAS_BYTES,
 					CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
@@ -1292,47 +1292,47 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 				break;
 			}
 		}
-		if(frame == IRIS_END_FRAME)
+		if(frm == IRIS_END_TICK)
 			break;
 
-		if(frame == 0)
+		if(frm == 0)
 			sySndPlayStub(SE_CURSE_FALL);
 		for(i = 0; i != IRIS_PSYNERGY_SOUNDS; i++)
-			if(frame == Iris_PsynergySoundFrames[i])
+			if(frm == IrisPsynergySoundTicks[i])
 				sySndPlayStub(SE_PSYNERGY_START);
-		if(frame == IRIS_APPEAR_FRAME - 1)
+		if(frm == IRIS_APPEAR_TICK - 1)
 			sySndPlayStub(SE_POWER_UP);
 		for(i = 0; i != IRIS_DOOR_SOUNDS; i++)
-			if(frame == Iris_DoorSoundFrames[i])
+			if(frm == IrisDoorSoundTicks[i])
 				sySndPlayStub(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
 		for(i = 0; i != IRIS_POWER_UP_SOUNDS; i++)
-			if(frame == Iris_PowerUpSoundFrames[i])
+			if(frm == IrisPowerUpSoundTicks[i])
 				sySndPlayStub(SE_POWER_UP);
-		if(frame == IRIS_PILLARS_FRAME - 1)
+		if(frm == IRIS_PILLARS_TICK - 1)
 			sySndPlayStub(SE_CURSE_FALL);
 		for(i = 0; i != 6; i++)
-			if(frame == 644 + i * 12)
+			if(frm == 644 + i * 12)
 				sySndPlayStub(SE_LAUNCH);
-		if(frame == IRIS_GLOW_FRAME + 1)
+		if(frm == IRIS_GLOW_TICK + 1)
 			sySndPlayStub(SE_POWER_UP);
 		for(i = 0; i != 6; i++)
-			if(frame == IRIS_CONE_FRAME + i * 9)
+			if(frm == IRIS_CONE_TICK + i * 9)
 				sySndPlayStub(SE_CRASH);
-		if(frame == 820)
+		if(frm == 820)
 			sySndPlayStub(SE_BANE_ESCAPE);
 
 		/* The opening: the circle and the streaks. */
-		if(frame == 0) {
+		if(frm == 0) {
 			scene->x = toFIXED(60);
 			scene->y = toFIXED(128);
 			scene->radius = toFIXED(12);
 			for(i = 0; i != IRIS_STREAKS; i++) {
 				IRIS_POINT *s = streaks[i];
 
-				s->x = INTtoFIXED(Iris_StreakX[i]);
-				s->y = INTtoFIXED(Iris_StreakY[i]);
-				s->ang = Iris_StreakAngles[i];
-				s->speed = Iris_StreakSpeeds[i];
+				s->x = INTtoFIXED(IrisStreakX[i]);
+				s->y = INTtoFIXED(IrisStreakY[i]);
+				s->ang = IrisStreakAngles[i];
+				s->speed = IrisStreakSpeeds[i];
 				s->unused = 0;
 				for(j = 1; j != IRIS_STREAK_LENGTH; j++) {
 					STREAK(i, j).x = toFIXED(150);
@@ -1341,18 +1341,18 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 			}
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 		}
-		if(frame < IRIS_APPEAR_FRAME) {
+		if(frm < IRIS_APPEAR_TICK) {
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
 				BLITTER_ADDITIVE);
 			draw[1] = Ram_HeapSlots->ramCodePaired;
 			for(i = 0; i != IRIS_STREAKS; i++) {
-				if(!(frame & 1)) {
+				if(!(frm & 1)) {
 					for(j = IRIS_STREAK_LENGTH - 1; j != 0; j--) {
 						STREAK(i, j).x = STREAK(i, j - 1).x;
 						STREAK(i, j).y = STREAK(i, j - 1).y;
 					}
 				}
-				if(frame >= i * 8 + 24) {
+				if(frm >= i * 8 + 24) {
 					IRIS_POINT *s = streaks[i];
 					if(s->yPixels > IRIS_STREAK_TOP) {
 						Sint32 size;
@@ -1364,7 +1364,7 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 						for(j = 0; j != IRIS_STREAK_LENGTH; j++) {
 							Uint8 *to = canvas;
 							Uint8 *cell =
-								sprites + BattleEffect_MotePictures[size - 1];
+								sprs + BattleEffectMotePictures[size - 1];
 							IRIS_POINT *p = &STREAK(i, j);
 
 							draw[1](to, cell, p->xPixels - (size >> 1),
@@ -1373,14 +1373,14 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 					}
 				}
 			}
-			/* To frame 71 the circle rises and narrows while the background
-			   brightens a level every 16 frames; then it widens, and every
-			   eight frames each background colour steps toward the
+			/* To tick 71 the circle rises and narrows while the background
+			   brightens a level every 16 ticks; then it widens, and every
+			   eight ticks each background colour steps toward the
 			   IRIS_FADE_TARGET colour. */
-			if(frame <= 71) {
+			if(frm <= 71) {
 				scene->y -= toFIXED(1);
 				scene->radius -= toFIXED(1) / 16;
-				if(!(frame & 15)) {
+				if(!(frm & 15)) {
 					{
 						Uint16 *fade = FADE_PLTT;
 
@@ -1397,7 +1397,7 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 				}
 			} else {
 				scene->radius += toFIXED(1) / 8;
-				if(!(frame & 7)) {
+				if(!(frm & 7)) {
 					{
 						Uint16 *fade = FADE_PLTT;
 
@@ -1430,7 +1430,7 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 				btCanvasBlitMirroredQuarters(
 					state->sheet, scene->xPixels, scene->yPixels, size);
 			}
-			if(frame == IRIS_APPEAR_FRAME - 1) {
+			if(frm == IRIS_APPEAR_TICK - 1) {
 				REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) |
 					BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 				IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
@@ -1440,9 +1440,9 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* Iris appears: her sixteen sprites, the petals and the first motes. */
-		if(frame == IRIS_APPEAR_FRAME) {
-			Uint8			 *colors;
-			VRAM_CACHE_ENTRY *table;
+		if(frm == IRIS_APPEAR_TICK) {
+			Uint8			 *cols;
+			VRAM_CACHE_ENTRY *tbl;
 
 			syWordsFillEntry(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
@@ -1450,12 +1450,12 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 			battle->keepBackdropPal = TRUE;
 			btBackgroundLoadStub(
 				BATTLE_BACKGROUND_FIXED, RESOURCE_SUNSET_BACKDROP, 0);
-			colors = syResourceGetTableEntry(RESOURCE_ROBED_GODDESS_TILES);
-			syDMAXCopy(colors, (void *)OBJ_PLTT,
+			cols = syResourceGetTableEntry(RESOURCE_ROBED_GODDESS_TILES);
+			syDMAXCopy(cols, (void *)OBJ_PLTT,
 				DMA_COPY_WORDS(OBJ_PLTT_SIZE / 4), REG_DMA3);
-			colors += OBJ_PLTT_SIZE;
-			syDecompressTaggedLZ(colors, tileBuffer);
-			tiles = Iris_TileBuffer;
+			cols += OBJ_PLTT_SIZE;
+			syDecompressTaggedLZ(cols, tileBuf);
+			tiles = IrisTileBuffer;
 			for(i = 0; i != IRIS_GODDESS_SPRITES; i++) {
 				SPR *obj = btEffectSprCreateWithTiles(IRIS_GODDESS_TILE,
 					IRIS_GODDESS_TILE, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
@@ -1466,14 +1466,14 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 					(void *)OBJ_TILES(obj),
 					DMA_COPY_WORDS(IRIS_GODDESS_SPRITE_BYTES / 4), REG_DMA3);
 			}
-			colors = syResourceGetTableEntry(RESOURCE_PINK_PETALS_TILES);
+			cols = syResourceGetTableEntry(RESOURCE_PINK_PETALS_TILES);
 			/* The petals are white: their palette is filled, not loaded. */
 			IWRAM_FILL_WORDS((void *)&OBJ_PLTT_COLOR(IRIS_PETAL_PALETTE, 0),
 				PALETTE_BANK_BYTES, -1);
-			colors += PALETTE_BANK_BYTES;
-			syDecompressTaggedLZ(colors, state->sheet);
-			table = VramCacheEntries;
-			for(i = 0; i != IRIS_PETAL_FRAMES; i++) {
+			cols += PALETTE_BANK_BYTES;
+			syDecompressTaggedLZ(cols, state->sheet);
+			tbl = VramCacheEntries;
+			for(i = 0; i != IRIS_PETAL_TICKS; i++) {
 				SPR *obj =
 					btEffectSprCreateWithTiles(IRIS_PETAL_SIZE, IRIS_PETAL_SIZE,
 						OBJ_SIZE_16X16, OBJ_PALETTE(IRIS_PETAL_PALETTE));
@@ -1481,9 +1481,9 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 				objects[i] = obj;
 				obj->image.pri = 1;
 				petals->tiles[i] = obj->image.tile;
-				petals->frames[i] = i;
+				petals->ticks[i] = i;
 				syDMAXCopy(state->sheet + i * IRIS_PETAL_BYTES,
-					(void *)(OBJ_VRAM0 + table[obj->slot].ofs),
+					(void *)(OBJ_VRAM0 + tbl[obj->slot].ofs),
 					DMA_COPY_WORDS(IRIS_PETAL_BYTES / 4), REG_DMA3);
 			}
 			for(; i != IRIS_PETALS; i++) {
@@ -1492,8 +1492,8 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 
 				objects[i] = obj;
 				syDMAXCopy(objects[0], obj, DMA_COPY_WORDS(6), REG_DMA3);
-				petals->frames[i] = syRandom() % IRIS_PETAL_FRAMES;
-				objects[i]->image.tile = petals->tiles[petals->frames[i]];
+				petals->ticks[i] = syRandom() % IRIS_PETAL_TICKS;
+				objects[i]->image.tile = petals->tiles[petals->ticks[i]];
 			}
 			for(i = 0; i != IRIS_PETALS / 2; i++) {
 				petals->x[i] = INTtoFIXED(syRandom() % 15) + toFIXED(57);
@@ -1526,12 +1526,12 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 			EFFECT_SET_TRANSFER(
 				state, CANVAS_COPY_AND_FADE, IRIS_CANVAS_FADE_SHARE);
 		}
-		if(IRIS_DURING(frame, IRIS_APPEAR_FRAME + 1, IRIS_GONE_FRAME + 7)) {
-			scale = Iris_UnitScale;
+		if(IRIS_DURING(frm, IRIS_APPEAR_TICK + 1, IRIS_GONE_TICK + 7)) {
+			scale = IrisUnitScale;
 			pos[3] = 0;
 			pos[1] = toFIXED(255);
 			lift = 0;
-			if(frame >= IRIS_LEAVE_FRAME) {
+			if(frm >= IRIS_LEAVE_TICK) {
 				Uint16 *pal = (Uint16 *)OBJ_PLTT;
 
 				/* Every sprite colour but the last steps toward white. */
@@ -1554,21 +1554,18 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 					*pal++ = RGB(r, g, b);
 				}
 			}
-			/* She drops into place on a sine until IRIS_ARRIVAL_FRAME; from
-			   IRIS_LEAVE_FRAME she sinks 64 pixels on a sine, a 64th of a turn
-			   a frame, then from IRIS_RISE_FRAME rises away ten pixels a
-			   frame. */
-			if(frame < IRIS_GONE_FRAME) {
-				if(IRIS_DURING(frame, IRIS_LEAVE_FRAME, IRIS_RISE_FRAME - 1))
-					lift =
-						sySin(IRIS_TURN_64THS(frame - (IRIS_LEAVE_FRAME - 1)))
+			/* She drops into place on a sine until IRIS_ARRIVAL_TICK; from
+			   IRIS_LEAVE_TICK she sinks 64 pixels on a sine, a 64th of a turn
+			   a tick, then from IRIS_RISE_TICK rises away ten pixels a
+			   tick. */
+			if(frm < IRIS_GONE_TICK) {
+				if(IRIS_DURING(frm, IRIS_LEAVE_TICK, IRIS_RISE_TICK - 1))
+					lift = sySin(IRIS_TURN_64THS(frm - (IRIS_LEAVE_TICK - 1)))
 						<< 6;
-				else if(frame >= IRIS_RISE_FRAME)
-					lift =
-						(IRIS_RISE_FRAME - frame) * toFIXED(10) + toFIXED(64);
-				if(frame <= IRIS_ARRIVAL_FRAME)
-					lift =
-						(sySin((frame << 6) - (IRIS_APPEAR_FRAME << 6)) << 6) -
+				else if(frm >= IRIS_RISE_TICK)
+					lift = (IRIS_RISE_TICK - frm) * toFIXED(10) + toFIXED(64);
+				if(frm <= IRIS_ARRIVAL_TICK)
+					lift = (sySin((frm << 6) - (IRIS_APPEAR_TICK << 6)) << 6) -
 						IRIS_ARRIVAL_DROP;
 				for(j = 0; j != IRIS_GODDESS_ROWS; j++) {
 					for(column = 0; column != IRIS_GODDESS_COLUMNS; column++) {
@@ -1583,7 +1580,7 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 				}
 			}
 			/* She is gone: the targets show again, in their damage pose. */
-			if(frame == IRIS_GONE_FRAME) {
+			if(frm == IRIS_GONE_TICK) {
 				for(i = 0; i != IRIS_GODDESS_SPRITES; i++)
 					fdSprDestroyStub(state->sprs[i]);
 				btEffectShowLivingTargets(state->args);
@@ -1592,12 +1589,12 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 					btEffectTintBattler(state->args->tgts[i], TINT_KEEP,
 						POSE_DAMAGE, TINT_KEEP, 0);
 			}
-			/* For her first frames a line of light crosses the canvas's middle,
+			/* For her first ticks a line of light crosses the canvas's middle,
 			   three rows of it. */
-			if(frame <= IRIS_APPEAR_FRAME + 15) {
+			if(frm <= IRIS_APPEAR_TICK + 15) {
 				for(i = 0; i != 3; i++) {
 					Sint32 y = i + 62;
-					Uint8  v = frame + (i & 1) * 47 + 80;
+					Uint8  v = frm + (i & 1) * 47 + 80;
 					Sint32 off;
 					Sint32 x;
 					Sint32 m;
@@ -1615,10 +1612,10 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		/* As she appears her petals fly out, shrinking. */
-		if(IRIS_DURING(frame, IRIS_APPEAR_FRAME + 1, IRIS_APPEAR_FRAME + 47)) {
+		if(IRIS_DURING(frm, IRIS_APPEAR_TICK + 1, IRIS_APPEAR_TICK + 47)) {
 			for(i = 0; i != IRIS_PETALS; i++) {
 				shrink.x = shrink.y = toFIXED(1) -
-					IRIS_PETAL_SHRINK(frame - (IRIS_APPEAR_FRAME + 1));
+					IRIS_PETAL_SHRINK(frm - (IRIS_APPEAR_TICK + 1));
 				pos[3] = 0;
 				pos[1] = toFIXED(255);
 				pos[0] = petals->x[i];
@@ -1627,17 +1624,17 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 					objects[i], pos, (Sint32 *)&shrink, 0);
 				petals->x[i] += petals->vx[i];
 				petals->y[i] += petals->vy[i];
-				if(!(frame & 3))
-					petals->frames[i]++;
-				if(petals->frames[i] >= IRIS_PETAL_FRAMES)
-					petals->frames[i] = 0;
-				objects[i]->image.tile = petals->tiles[petals->frames[i]];
+				if(!(frm & 3))
+					petals->ticks[i]++;
+				if(petals->ticks[i] >= IRIS_PETAL_TICKS)
+					petals->ticks[i] = 0;
+				objects[i]->image.tile = petals->tiles[petals->ticks[i]];
 			}
 		}
 		/* A ring of motes spreads about her and the first motes fly out, while
 		   the canvas's weight over the battle falls. */
-		if(IRIS_DURING(frame, IRIS_APPEAR_FRAME + 3, IRIS_APPEAR_FRAME + 41)) {
-			Sint32 radius = frame - 170;
+		if(IRIS_DURING(frm, IRIS_APPEAR_TICK + 3, IRIS_APPEAR_TICK + 41)) {
+			Sint32 radius = frm - 170;
 
 			for(i = 0; i != IRIS_APPEAR_RING_POINTS; i++) {
 				Sint32 a = i << 8;
@@ -1646,23 +1643,23 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 
 				draw[0](canvas,
 					state->sheet +
-						BattleEffect_MotePictures[IRIS_APPEAR_RING_MOTE - 1],
+						BattleEffectMotePictures[IRIS_APPEAR_RING_MOTE - 1],
 					(FIXEDtoINT(px)) + 58, (FIXEDtoINT(py * 2)) + 48,
 					IRIS_APPEAR_RING_MOTE, 2 * IRIS_APPEAR_RING_MOTE);
 			}
 			for(i = 0; i != IRIS_FIRST_MOTES; i++) {
-				draw[0](canvas, state->sheet + BattleEffect_MotePictures[1],
+				draw[0](canvas, state->sheet + BattleEffectMotePictures[1],
 					(FIXEDtoINT(state->particles[i].x)) - 2,
 					(FIXEDtoINT(state->particles[i].y)) - 2, 2, 4);
 				state->particles[i].x += state->particles[i].velX;
 			}
 		}
-		if(IRIS_DURING(frame, IRIS_APPEAR_FRAME + 3, IRIS_APPEAR_FRAME + 34))
-			REG_BLDALPHA = EFFECT_BLEND_CANVAS((210 - frame) >> 1);
+		if(IRIS_DURING(frm, IRIS_APPEAR_TICK + 3, IRIS_APPEAR_TICK + 34))
+			REG_BLDALPHA = EFFECT_BLEND_CANVAS((210 - frm) >> 1);
 
 		/* The drops: the motes' fading sets, the drops' pictures and the
 		   spray's column. */
-		if(frame == IRIS_DROPS_FRAME) {
+		if(frm == IRIS_DROPS_TICK) {
 			REG_BLDALPHA = EFFECT_BLEND_ADD;
 			REG_BG2CNT =
 				BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -1670,9 +1667,9 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 				Sint32 next;
 
 				for(j = 0; j != MOTE_PICTURES; j = next) {
-					Uint8 *src = state->sheet + BattleEffect_MotePictures[j];
+					Uint8 *src = state->sheet + BattleEffectMotePictures[j];
 					Uint8 *out = state->sheet +
-						(BattleEffect_MotePictures[j] + i * MOTE_SET_BYTES);
+						(BattleEffectMotePictures[j] + i * MOTE_SET_BYTES);
 					Sint32 off = 0;
 
 					next = j + 1;
@@ -1700,20 +1697,19 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 			}
 			for(i = 0; i != IRIS_PETALS; i++)
 				petals->life[i] = 0;
-			btResourceLoadAndDecompress(
-				RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
+			btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 			for(i = 0; i != IRIS_SPRAY_HEIGHT; i++)
 				for(j = 0; j != IRIS_SPRAY_WIDTH; j++)
-					sprites[IRIS_SPRAY + i * IRIS_SPRAY_WIDTH + j] =
-						Iris_LineShades[j];
-			dst = sprites;
+					sprs[IRIS_SPRAY + i * IRIS_SPRAY_WIDTH + j] =
+						IrisLineShades[j];
+			dst = sprs;
 			for(i = 0; i != 2; i++) {
 				for(j = 0; j != IRIS_RING_FADES; j++) {
 					Uint8 *src = state->sheet +
-						BattleEffect_MotePictures[Iris_MoteSizes[i] - 1];
+						BattleEffectMotePictures[IrisMoteSizes[i] - 1];
 
 					for(m = 0;
-						m != *(Iris_MoteSizes + i) * *(Iris_MoteSizes + i) * 2;
+						m != *(IrisMoteSizes + i) * *(IrisMoteSizes + i) * 2;
 						m++) {
 						Sint32 v = *src - j * IRIS_RING_FADE_STEP;
 
@@ -1726,8 +1722,8 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 				}
 			}
 			for(j = 0; j != IRIS_DOT_FADES; j++) {
-				Uint8 *src = state->sheet +
-					BattleEffect_MotePictures[IRIS_DOT_WIDTH - 1];
+				Uint8 *src =
+					state->sheet + BattleEffectMotePictures[IRIS_DOT_WIDTH - 1];
 
 				for(m = 0; m != PICTURE_BYTES(IRIS_DOT); m++) {
 					Sint32 v = *src - j * IRIS_DOT_FADE_STEP;
@@ -1742,48 +1738,47 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 		}
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-		/* The sunset steps darker every 16 frames, to seven levels below its
+		/* The sunset steps darker every 16 ticks, to seven levels below its
 		   own colours. */
-		if(IRIS_DURING(frame, IRIS_DARKEN_FRAME, IRIS_DARKEN_FRAME + 127) &&
-			!(frame & 15)) {
-			Sint32 v = (IRIS_DARKEN_FRAME - frame) / 16;
+		if(IRIS_DURING(frm, IRIS_DARKEN_TICK, IRIS_DARKEN_TICK + 127) &&
+			!(frm & 15)) {
+			Sint32 v = (IRIS_DARKEN_TICK - frm) / 16;
 
 			btPaletteBrightenSavedBattleBg(v, v, v);
 		}
 		for(j = 0; j != 6; j++) {
-			if(frame > Iris_SplashStarts[j]) {
-				if(frame < Iris_SplashEnds[j]) {
-					btIrisDrawSplash(frame - Iris_SplashStarts[j],
-						Iris_SplashX[j], Iris_SplashY[j], Iris_SplashSmall[j]);
-					if(Iris_SplashStarts[j] - Iris_SplashSmall[j] * 16 + 48 ==
-						frame) {
+			if(frm > IrisSplashStarts[j]) {
+				if(frm < IrisSplashEnds[j]) {
+					btIrisDrawSplash(frm - IrisSplashStarts[j], IrisSplashX[j],
+						IrisSplashY[j], IrisSplashSmall[j]);
+					if(IrisSplashStarts[j] - IrisSplashSmall[j] * 16 + 48 ==
+						frm) {
 						for(i = 0; i != 6; i++) {
 							Sint32 s = FindFreePetal();
 
-							petals->life[s] = 121 * IRIS_PETAL_FRAME;
-							petals->x[s] = IRIS_SCREEN_X_FX(Iris_SplashX[j]);
+							petals->life[s] = 121 * IRIS_PETAL_TICK;
+							petals->x[s] = IRIS_SCREEN_X_FX(IrisSplashX[j]);
 							petals->y[s] =
-								INTtoFIXED(Iris_SplashY[j]) + toFIXED(32);
+								INTtoFIXED(IrisSplashY[j]) + toFIXED(32);
 							petals->vx[s] = ((syRandom() & 31) - 16) << 12;
 							petals->vy[s] = -(syRandom() & 31) << 12;
 						}
 					}
-				} else if(frame < Iris_SplashEnds[j] + Iris_DropFrames[j]) {
-					Sint32 t = frame - Iris_SplashEnds[j];
+				} else if(frm < IrisSplashEnds[j] + IrisDropTicks[j]) {
+					Sint32 t = frm - IrisSplashEnds[j];
 
-					btIrisDrawDrop(t / Iris_DropPictureSteps[j],
-						Iris_SplashX[j],
-						Iris_SplashY[j] - Iris_DropSpeeds[j] * t / 2,
-						Iris_SplashSmall[j]);
+					btIrisDrawDrop(t / IrisDropPictureSteps[j], IrisSplashX[j],
+						IrisSplashY[j] - IrisDropSpeeds[j] * t / 2,
+						IrisSplashSmall[j]);
 				}
 			}
 		}
-		if(IRIS_DURING(frame, 279, 411) || frame > IRIS_FOUNTAIN_FRAME)
+		if(IRIS_DURING(frm, 279, 411) || frm > IRIS_FOUNTAIN_TICK)
 			UpdatePetals();
 		syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 
 		/* The pillars of light. */
-		if(frame == IRIS_PILLARS_FRAME) {
+		if(frm == IRIS_PILLARS_TICK) {
 			btEffectDrawShadedCircles(state->sheet + IRIS_PILLAR_CIRCLE,
 				IRIS_PILLAR_TEXTURE_SIZE, toFIXED(1));
 			for(i = 0; i != IRIS_PILLAR_TEXTURE_SIZE; i++) {
@@ -1797,38 +1792,38 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 			}
 			REG_BLDALPHA = EFFECT_BLEND_CANVAS(8);
 		}
-		/* Over the pillars' last eight frames the canvas's weight rises from 8
+		/* Over the pillars' last eight ticks the canvas's weight rises from 8
 		   to 15. */
 		if(IRIS_DURING(
-			   frame, IRIS_PILLARS_END_FRAME - 8, IRIS_PILLARS_END_FRAME - 1)) {
-			Sint32 alpha = frame - (IRIS_PILLARS_END_FRAME - 16);
+			   frm, IRIS_PILLARS_END_TICK - 8, IRIS_PILLARS_END_TICK - 1)) {
+			Sint32 alpha = frm - (IRIS_PILLARS_END_TICK - 16);
 			REG_BLDALPHA = BLEND_ALPHA(alpha, BLEND_WEIGHT_MAX);
 		}
-		/* Once she is gone the projection's centre climbs six lines a frame
-		   from SUMMON_PROJECTION_CENTER_Y, past the battle's own at frame
+		/* Once she is gone the projection's centre climbs six lines a tick
+		   from SUMMON_PROJECTION_CENTER_Y, past the battle's own at tick
 		   406. */
-		if(frame >= IRIS_GONE_FRAME)
+		if(frm >= IRIS_GONE_TICK)
 			ProjectionWork.centerY =
-				SUMMON_PROJECTION_CENTER_Y + IRIS_GONE_FRAME * 6 - frame * 6;
-		if(frame <= IRIS_PILLARS_END_FRAME) {
-			if(frame > IRIS_PILLARS_FRAME) {
-				Sint32 h = (frame - IRIS_PILLARS_FRAME) << 3;
+				SUMMON_PROJECTION_CENTER_Y + IRIS_GONE_TICK * 6 - frm * 6;
+		if(frm <= IRIS_PILLARS_END_TICK) {
+			if(frm > IRIS_PILLARS_TICK) {
+				Sint32 h = (frm - IRIS_PILLARS_TICK) << 3;
 
 				if(h > CANVAS_SIZE - 1)
 					h = CANVAS_SIZE - 1;
 				btIrisDrawPillar(3, 34, h);
 			}
-			if(frame > IRIS_PILLARS_FRAME + 5) {
-				FIVE_WIDTHS widths = Iris_RisingPillarWidths;
-				Sint32		h = (frame - (IRIS_PILLARS_FRAME + 5)) << 3;
+			if(frm > IRIS_PILLARS_TICK + 5) {
+				FIVE_WIDTHS widths = IrisRisingPillarWidths;
+				Sint32		h = (frm - (IRIS_PILLARS_TICK + 5)) << 3;
 
 				if(h > CANVAS_SIZE - 1)
 					h = CANVAS_SIZE - 1;
 				btIrisDrawPillar(widths.widths[h >> 5], (h >> 5) * 2 + 94, h);
 			}
-			if(frame > IRIS_PILLARS_FRAME + 10) {
-				SEVEN_WIDTHS widths = Iris_WideningPillarWidths;
-				Sint32		 h = (frame - (IRIS_PILLARS_FRAME + 10)) << 2;
+			if(frm > IRIS_PILLARS_TICK + 10) {
+				SEVEN_WIDTHS widths = IrisWideningPillarWidths;
+				Sint32		 h = (frm - (IRIS_PILLARS_TICK + 10)) << 2;
 				Sint32		 q;
 
 				if(h > CANVAS_SIZE - 1)
@@ -1836,9 +1831,9 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 				q = h / IRIS_WIDENING_STEP;
 				btIrisDrawPillar(widths.widths[q], q + 12, h);
 			}
-			if(frame > IRIS_PILLARS_FRAME + 12) {
-				SEVEN_WIDTHS widths = Iris_NarrowingPillarWidths;
-				Sint32		 h = (frame - (IRIS_PILLARS_FRAME + 12)) << 3;
+			if(frm > IRIS_PILLARS_TICK + 12) {
+				SEVEN_WIDTHS widths = IrisNarrowingPillarWidths;
+				Sint32		 h = (frm - (IRIS_PILLARS_TICK + 12)) << 3;
 				Sint32		 q;
 
 				if(h > CANVAS_SIZE - 1)
@@ -1846,22 +1841,22 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 				q = h / IRIS_NARROWING_STEP;
 				btIrisDrawPillar(widths.widths[q], q * 2 + 70, h);
 			}
-			if(frame > IRIS_PILLARS_FRAME + 15) {
-				Sint32 h = (frame - (IRIS_PILLARS_FRAME + 15)) << 2;
+			if(frm > IRIS_PILLARS_TICK + 15) {
+				Sint32 h = (frm - (IRIS_PILLARS_TICK + 15)) << 2;
 
 				if(h > CANVAS_SIZE - 1)
 					h = CANVAS_SIZE - 1;
 				btIrisDrawPillar(14, (h >> 3) + 48, h);
 			}
-			if(frame == IRIS_PILLARS_END_FRAME) {
+			if(frm == IRIS_PILLARS_END_TICK) {
 				EFFECT_SET_TRANSFER(state, CANVAS_COPY, 0);
 				REG_BLDALPHA = EFFECT_BLEND_ADD;
 			}
 		}
 		/* A band of light rises up the canvas. */
-		if(IRIS_DURING(frame, IRIS_PILLARS_END_FRAME + 1,
-			   IRIS_PILLARS_END_FRAME + 20)) {
-			Sint32 step = frame - IRIS_PILLARS_END_FRAME;
+		if(IRIS_DURING(
+			   frm, IRIS_PILLARS_END_TICK + 1, IRIS_PILLARS_END_TICK + 20)) {
+			Sint32 step = frm - IRIS_PILLARS_END_TICK;
 			Sint32 first;
 			Sint32 dead;
 			Sint32 top;
@@ -1895,7 +1890,7 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 				}
 			}
 		}
-		if(IRIS_DURING(frame, 401, 431) && (frame & 1)) {
+		if(IRIS_DURING(frm, 401, 431) && (frm & 1)) {
 			/* DEAD: the violet sky's entry is looked up and not used; the ROM
 			   keeps the call. */
 			syResourceGetTableEntry(RESOURCE_VIOLET_SKY_BACKDROP);
@@ -1924,7 +1919,7 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The fountain: the second backdrop, the motes and the light shafts. */
-		if(frame == IRIS_FOUNTAIN_FRAME) {
+		if(frm == IRIS_FOUNTAIN_TICK) {
 			syWordsFillEntry(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 			syInitMatrix();
@@ -1982,9 +1977,9 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 				Sint32 next;
 
 				for(j = 0; j != MOTE_PICTURES; j = next) {
-					Uint8 *src = state->sheet + BattleEffect_MotePictures[j];
+					Uint8 *src = state->sheet + BattleEffectMotePictures[j];
 					Uint8 *out = state->sheet +
-						(BattleEffect_MotePictures[j] + i * MOTE_SET_BYTES);
+						(BattleEffectMotePictures[j] + i * MOTE_SET_BYTES);
 					Sint32 off = 0;
 
 					next = j + 1;
@@ -2003,9 +1998,8 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 			EFFECT_SET_TRANSFER(
 				state, CANVAS_COPY_AND_FADE, IRIS_CANVAS_FADE_SHARE);
 		}
-		if(IRIS_DURING(
-			   frame, IRIS_FOUNTAIN_FRAME + 1, IRIS_FOUNTAIN_FRAME + 16)) {
-			Sint32 step = frame - IRIS_FOUNTAIN_FRAME;
+		if(IRIS_DURING(frm, IRIS_FOUNTAIN_TICK + 1, IRIS_FOUNTAIN_TICK + 16)) {
+			Sint32 step = frm - IRIS_FOUNTAIN_TICK;
 			Sint32 top;
 			Sint32 off;
 			Sint32 x;
@@ -2032,10 +2026,9 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 				}
 			}
 		}
-		if(frame > IRIS_FOUNTAIN_FRAME)
+		if(frm > IRIS_FOUNTAIN_TICK)
 			DrawParticles();
-		if(IRIS_DURING(
-			   frame, IRIS_FOUNTAIN_FRAME + 1, IRIS_FOUNTAIN_FRAME + 195)) {
+		if(IRIS_DURING(frm, IRIS_FOUNTAIN_TICK + 1, IRIS_FOUNTAIN_TICK + 195)) {
 			void		 *verts = syHeapAllocEWRAM(80);
 			RENDER_MODEL *model = btRenderAllocateModelList(1);
 			Sint32		  scroll;
@@ -2046,26 +2039,26 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 			texture.logHeight = 6;
 			syUnitMatrixCurrent();
 			model->kind = MODEL_TEXTURED_MAX;
-			model->mesh = Iris_StripMesh;
+			model->mesh = IrisStripMesh;
 			model->vertices = verts;
-			if(frame <= 563) {
+			if(frm <= 563) {
 				scroll = 2 * IRIS_TEXTURE_BYTES;
-				if(frame > 500) {
-					scroll = (Sint16)(scroll - (frame - 500) * 64);
+				if(frm > 500) {
+					scroll = (Sint16)(scroll - (frm - 500) * 64);
 					if(scroll < 0)
 						scroll = 0;
 				}
 				texture.pixels = state->sheet + IRIS_TEXTURES + scroll;
-				if(!(frame & 7)) {
+				if(!(frm & 7)) {
 					Sint32 s;
 
-					leftSpans = Iris_LeftStripSpans;
+					leftSpans = IrisLeftStripSpans;
 					s = FindFreePetal();
 
 					if(s != -1) {
 						Sint32 r = syRandom() & 127;
 
-						petals->life[s] = -124 * IRIS_PETAL_FRAME;
+						petals->life[s] = -124 * IRIS_PETAL_TICK;
 						petals->x[s] =
 							(leftSpans.spans[(r + 1) >> 5].left +
 								syRandom() %
@@ -2078,27 +2071,27 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 					}
 				}
 				model->texture = &texture;
-				btRenderTransformVertices(Iris_LeftStripCorners, verts, 10);
+				btRenderTransformVertices(IrisLeftStripCorners, verts, 10);
 				btRenderDrawModelList(model);
 			}
-			if(frame <= 563) {
+			if(frm <= 563) {
 				scroll = 2 * IRIS_TEXTURE_BYTES;
-				if(frame > 470) {
-					scroll = (Sint16)(scroll - (frame - 470) * 64);
+				if(frm > 470) {
+					scroll = (Sint16)(scroll - (frm - 470) * 64);
 					if(scroll < 0)
 						scroll = 0;
 				}
 				texture.pixels = state->sheet + IRIS_TEXTURES + scroll;
-				if(!(frame & 7) && frame <= 501) {
+				if(!(frm & 7) && frm <= 501) {
 					Sint32 s;
 
-					rightSpans = Iris_RightStripSpans;
+					rightSpans = IrisRightStripSpans;
 					s = FindFreePetal();
 
 					if(s != -1) {
 						Sint32 r = syRandom() & 127;
 
-						petals->life[s] = -124 * IRIS_PETAL_FRAME;
+						petals->life[s] = -124 * IRIS_PETAL_TICK;
 						petals->x[s] =
 							(rightSpans.spans[(r + 1) >> 5].left +
 								syRandom() %
@@ -2110,12 +2103,12 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 							-toFIXED(0.5) - ((syRandom() & 31) * 3 << 11);
 					}
 				}
-				if(!(frame & 3)) {
+				if(!(frm & 3)) {
 					Sint32 n = FindFreeParticle();
 
 					if(n != -1) {
 						state->particles[n].x = toFIXED(32);
-						if(frame <= 509)
+						if(frm <= 509)
 							state->particles[n].x +=
 								INTtoFIXED(syRandom() & 63);
 						else
@@ -2129,89 +2122,89 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 					}
 				}
 				model->texture = &texture;
-				btRenderTransformVertices(Iris_RightStripCorners, verts, 10);
+				btRenderTransformVertices(IrisRightStripCorners, verts, 10);
 				btRenderDrawModelList(model);
 			}
 			syHeapRelease(model);
 			syHeapRelease(verts);
 		}
 
-		/* The five light bars, each from its own frame: the corner's, then an
+		/* The five light bars, each from its own tick: the corner's, then an
 		   inner and an outer pair either side of it, one starting on the
 		   canvas's left edge and slipping down it, one on its bottom edge and
 		   slipping left. */
-		if(IRIS_BAR_SHOWN(frame, IRIS_CORNER_BAR_FRAME)) {
-			Sint16 shade = IRIS_BAR_SHADE(frame, IRIS_CORNER_BAR_FRAME);
+		if(IRIS_BAR_SHOWN(frm, IRIS_CORNER_BAR_TICK)) {
+			Sint16 shade = IRIS_BAR_SHADE(frm, IRIS_CORNER_BAR_TICK);
 
 			if(shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
 				shade = CANVAS_LEVEL_BRIGHTEST;
 			btEffectDrawDiagonalCanvasLine(
-				0, 127, IRIS_BAR_LENGTH(frame, IRIS_CORNER_BAR_FRAME), shade);
+				0, 127, IRIS_BAR_LENGTH(frm, IRIS_CORNER_BAR_TICK), shade);
 		}
-		if(IRIS_BAR_SHOWN(frame, IRIS_INNER_LEFT_BAR_FRAME)) {
-			Sint16 shade = IRIS_BAR_SHADE(frame, IRIS_INNER_LEFT_BAR_FRAME);
+		if(IRIS_BAR_SHOWN(frm, IRIS_INNER_LEFT_BAR_TICK)) {
+			Sint16 shade = IRIS_BAR_SHADE(frm, IRIS_INNER_LEFT_BAR_TICK);
 
 			if(shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
 				shade = CANVAS_LEVEL_BRIGHTEST;
 			btEffectDrawDiagonalCanvasLine(0,
 				FIXEDtoINT(
-					syMulFX(IRIS_BAR_LENGTH(frame, IRIS_INNER_LEFT_BAR_FRAME) *
+					syMulFX(IRIS_BAR_LENGTH(frm, IRIS_INNER_LEFT_BAR_TICK) *
 							toFIXED(1),
 						toFIXED(1) / 64) +
 					toFIXED(123)),
-				IRIS_BAR_LENGTH(frame, IRIS_INNER_LEFT_BAR_FRAME), shade);
+				IRIS_BAR_LENGTH(frm, IRIS_INNER_LEFT_BAR_TICK), shade);
 		}
-		if(IRIS_BAR_SHOWN(frame, IRIS_INNER_LOWER_BAR_FRAME)) {
+		if(IRIS_BAR_SHOWN(frm, IRIS_INNER_LOWER_BAR_TICK)) {
 			Sint32 x = toFIXED(4);
-			Sint16 shade = IRIS_BAR_SHADE(frame, IRIS_INNER_LOWER_BAR_FRAME);
+			Sint16 shade = IRIS_BAR_SHADE(frm, IRIS_INNER_LOWER_BAR_TICK);
 
 			if(shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
 				shade = CANVAS_LEVEL_BRIGHTEST;
 			x -= syMulFX(
-				IRIS_BAR_LENGTH(frame, IRIS_INNER_LOWER_BAR_FRAME) * toFIXED(1),
+				IRIS_BAR_LENGTH(frm, IRIS_INNER_LOWER_BAR_TICK) * toFIXED(1),
 				toFIXED(1) / 64);
 			btEffectDrawDiagonalCanvasLine(FIXEDtoINT(x), 127,
-				IRIS_BAR_LENGTH(frame, IRIS_INNER_LOWER_BAR_FRAME), shade);
+				IRIS_BAR_LENGTH(frm, IRIS_INNER_LOWER_BAR_TICK), shade);
 		}
-		if(IRIS_BAR_SHOWN(frame, IRIS_OUTER_LEFT_BAR_FRAME)) {
-			Sint16 shade = IRIS_BAR_SHADE(frame, IRIS_OUTER_LEFT_BAR_FRAME);
+		if(IRIS_BAR_SHOWN(frm, IRIS_OUTER_LEFT_BAR_TICK)) {
+			Sint16 shade = IRIS_BAR_SHADE(frm, IRIS_OUTER_LEFT_BAR_TICK);
 
 			if(shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
 				shade = CANVAS_LEVEL_BRIGHTEST;
 			btEffectDrawDiagonalCanvasLine(0,
 				FIXEDtoINT(
-					syMulFX(IRIS_BAR_LENGTH(frame, IRIS_OUTER_LEFT_BAR_FRAME) *
+					syMulFX(IRIS_BAR_LENGTH(frm, IRIS_OUTER_LEFT_BAR_TICK) *
 							toFIXED(1),
 						toFIXED(3) / 128) +
 					toFIXED(120)),
-				IRIS_BAR_LENGTH(frame, IRIS_OUTER_LEFT_BAR_FRAME), shade);
+				IRIS_BAR_LENGTH(frm, IRIS_OUTER_LEFT_BAR_TICK), shade);
 		}
-		if(IRIS_BAR_SHOWN(frame, IRIS_OUTER_LOWER_BAR_FRAME)) {
+		if(IRIS_BAR_SHOWN(frm, IRIS_OUTER_LOWER_BAR_TICK)) {
 			Sint32 x = toFIXED(6);
-			Sint16 shade = IRIS_BAR_SHADE(frame, IRIS_OUTER_LOWER_BAR_FRAME);
+			Sint16 shade = IRIS_BAR_SHADE(frm, IRIS_OUTER_LOWER_BAR_TICK);
 
 			if(shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
 				shade = CANVAS_LEVEL_BRIGHTEST;
 			x -= syMulFX(
-				IRIS_BAR_LENGTH(frame, IRIS_OUTER_LOWER_BAR_FRAME) * toFIXED(1),
+				IRIS_BAR_LENGTH(frm, IRIS_OUTER_LOWER_BAR_TICK) * toFIXED(1),
 				toFIXED(3) / 128);
 			btEffectDrawDiagonalCanvasLine(FIXEDtoINT(x), 127,
-				IRIS_BAR_LENGTH(frame, IRIS_OUTER_LOWER_BAR_FRAME), shade);
+				IRIS_BAR_LENGTH(frm, IRIS_OUTER_LOWER_BAR_TICK), shade);
 		}
 
 		/* The healing: rings turning about the centre, then the great glow. */
-		if(IRIS_DURING(frame, IRIS_HEAL_FRAME, IRIS_HEAL_FRAME + 110)) {
+		if(IRIS_DURING(frm, IRIS_HEAL_TICK, IRIS_HEAL_TICK + 110)) {
 			Sint32 sinT = sySin(TRIG_TURN * 15 / 32);
 			Sint32 cosT = syCos(TRIG_TURN * 15 / 32);
 
 			for(j = 0; j != IRIS_HEAL_RINGS * IRIS_HEAL_RING_GAP;
 				j += IRIS_HEAL_RING_GAP) {
-				if(IRIS_HEAL_FRAME - 1 + j < frame &&
-					frame < IRIS_HEAL_FRAME + IRIS_HEAL_RING_FRAMES + j) {
-					Sint32 t = frame - j - (IRIS_HEAL_FRAME - 1);
+				if(IRIS_HEAL_TICK - 1 + j < frm &&
+					frm < IRIS_HEAL_TICK + IRIS_HEAL_RING_TICKS + j) {
+					Sint32 t = frm - j - (IRIS_HEAL_TICK - 1);
 					Sint32 ry = t >> 1;
 					Sint32 tile =
-						BattleEffect_MotePictures[0] + t / 4 * MOTE_SET_BYTES;
+						BattleEffectMotePictures[0] + t / 4 * MOTE_SET_BYTES;
 
 					for(i = 0; i != IRIS_HEAL_RING_POINTS; i++) {
 						Sint32 a = i << 9;
@@ -2228,13 +2221,13 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 				}
 			}
 		}
-		/* The canvas flashes white for three frames after the glow is made, and
+		/* The canvas flashes white for three ticks after the glow is made, and
 		   once before the tall ring. */
-		if(IRIS_DURING(frame, IRIS_GLOW_FRAME + 1, IRIS_GLOW_FRAME + 3) ||
-			frame == IRIS_TALL_RING_FRAME - 2)
+		if(IRIS_DURING(frm, IRIS_GLOW_TICK + 1, IRIS_GLOW_TICK + 3) ||
+			frm == IRIS_TALL_RING_TICK - 2)
 			IWRAM_FILL_WORDS(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-		if(frame == IRIS_GLOW_FRAME) {
+		if(frm == IRIS_GLOW_TICK) {
 			Sint32 white;
 			btEffectBuildSteepShadeRampWave(state->sheet + IRIS_CONE_TEXTURE,
 				16, IRIS_CONE_TEXTURE_SIZE, toFIXED(1));
@@ -2281,11 +2274,11 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		/* The wide arc of motes, spreading with the cone. */
-		if(IRIS_DURING(frame, IRIS_CONE_FRAME, IRIS_CONE_FRAME + 30)) {
+		if(IRIS_DURING(frm, IRIS_CONE_TICK, IRIS_CONE_TICK + 30)) {
 			Sint32 sinT = sySin(TRIG_TURN * 11 / 32);
 			Sint32 cosT = syCos(TRIG_TURN * 11 / 32);
-			Sint32 t = frame - (IRIS_CONE_FRAME - 1);
-			Sint32 tile = BattleEffect_MotePictures[IRIS_SWEEP_MOTE - 1] +
+			Sint32 t = frm - (IRIS_CONE_TICK - 1);
+			Sint32 tile = BattleEffectMotePictures[IRIS_SWEEP_MOTE - 1] +
 				t / 4 * MOTE_SET_BYTES;
 
 			for(i = 0; i != IRIS_WIDE_ARC_MOTES; i++) {
@@ -2300,12 +2293,11 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		/* The tall ring of motes. */
-		if(IRIS_DURING(
-			   frame, IRIS_TALL_RING_FRAME, IRIS_TALL_RING_FRAME + 46)) {
+		if(IRIS_DURING(frm, IRIS_TALL_RING_TICK, IRIS_TALL_RING_TICK + 46)) {
 			FIXED  sinT = sySin(TRIG_TURN * 29 / 32);
 			FIXED  cosT = syCos(TRIG_TURN * 7 / 8);
-			Sint32 t = frame - (IRIS_TALL_RING_FRAME - 1);
-			Sint32 tile = BattleEffect_MotePictures[IRIS_SWEEP_MOTE - 1] +
+			Sint32 t = frm - (IRIS_TALL_RING_TICK - 1);
+			Sint32 tile = BattleEffectMotePictures[IRIS_SWEEP_MOTE - 1] +
 				t / 6 * MOTE_SET_BYTES;
 
 			for(i = 0; i != IRIS_TALL_RING_MOTES; i++) {
@@ -2320,8 +2312,8 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		/* The cone of light, stretching out to its full length over 64
-		   frames. */
-		if(frame >= IRIS_CONE_FRAME) {
+		   ticks. */
+		if(frm >= IRIS_CONE_TICK) {
 			void		 *verts = syHeapAllocEWRAM(64);
 			RENDER_MODEL *model = btRenderAllocateModelList(1);
 			FIXED		  place[3];
@@ -2338,16 +2330,16 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 			syMatrixTranslateVector(place);
 			syRotZ(TRIG_TURN * 19 / 32);
 			grow[0] = toFIXED(1);
-			grow[1] = IRIS_CONE_GROWTH(frame - (IRIS_CONE_FRAME - 1));
+			grow[1] = IRIS_CONE_GROWTH(frm - (IRIS_CONE_TICK - 1));
 			if(grow[1] > toFIXED(1))
 				grow[1] = toFIXED(1);
 			grow[2] = 0;
 			syMatrixScaleVector(grow);
 			model->kind = MODEL_TEXTURED_MAX;
-			model->mesh = Iris_ConeMesh;
+			model->mesh = IrisConeMesh;
 			model->texture = &coneTexture;
 			model->vertices = verts;
-			btRenderTransformVertices(Iris_ConeCorners, verts, 8);
+			btRenderTransformVertices(IrisConeCorners, verts, 8);
 			btRenderDrawModelList(model);
 			syHeapRelease(model);
 			syHeapRelease(verts);
@@ -2359,9 +2351,9 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 				petals->vx[s] = -(syRandom() & 31) << 12;
 				petals->vy[s] = ((syRandom() & 31) - 16) << 12;
 			}
-			/* Every four frames a mote flies out along the cone, one to two and
-			   a half pixels a frame, and a glow drifts down and to the left. */
-			if(!(frame & 3)) {
+			/* Every four ticks a mote flies out along the cone, one to two and
+			   a half pixels a tick, and a glow drifts down and to the left. */
+			if(!(frm & 3)) {
 				Sint32 n = FindFreeParticle();
 
 				if(n != -1) {
@@ -2370,7 +2362,7 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 					state->particles[n].x = toFIXED(96);
 					state->particles[n].y =
 						toFIXED(syRandom() & 7) + toFIXED(36);
-					state->particles[n].z = frame;
+					state->particles[n].z = frm;
 					state->particles[n].velX =
 						syMulFX(IRIS_HALF_PIXELS_FX(speed + 2),
 							sySin(TRIG_TURN * 19 / 32));
@@ -2385,7 +2377,7 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 					state->particles[n].x =
 						toFIXED(syRandom() & 31) + toFIXED(96);
 					state->particles[n].y = toFIXED(syRandom() & 31);
-					state->particles[n].z = frame;
+					state->particles[n].z = frm;
 					state->particles[n].velX = -((syRandom() & 15) << 13);
 					state->particles[n].velY = (syRandom() & 15) << 14;
 					state->particles[n].velZ = toFIXED(1) / 2;
@@ -2395,14 +2387,14 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		/* From the tall ring on the battle background shakes up and down. */
-		if(frame >= IRIS_TALL_RING_FRAME) {
-			if(frame & 2)
-				BgScrollWork[1].y = BgScrollWork[1].y + (frame & 1) + 2;
+		if(frm >= IRIS_TALL_RING_TICK) {
+			if(frm & 2)
+				BgScrollWork[1].y = BgScrollWork[1].y + (frm & 1) + 2;
 			else
-				BgScrollWork[1].y = BgScrollWork[1].y - (frame & 1) - 2;
+				BgScrollWork[1].y = BgScrollWork[1].y - (frm & 1) - 2;
 		}
 		/* At the end the battle background's colours step to white. */
-		if(frame >= IRIS_WHITE_OUT_FRAME) {
+		if(frm >= IRIS_WHITE_OUT_TICK) {
 			{
 				Uint16 *fade = FADE_PLTT;
 
@@ -2426,7 +2418,7 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 				}
 			}
 		}
-		frame++;
+		frm++;
 		EFFECT_PRESENT_CANVAS(state);
 	}
 
@@ -2446,7 +2438,7 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 	btEffectEndCanvasLayer();
 }
 
-#undef MOLOCH_FRAMES
+#undef MOLOCH_TICKS
 #undef MOLOCH_SKIP_TO
 #undef MOLOCH_MOTES
 #undef MOLOCH_FLAMES
@@ -2481,7 +2473,7 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 #undef IRIS_SPRAY_WIDTH
 #undef IRIS_SPRAY_HEIGHT
 #undef IRIS_PETALS
-#undef IRIS_PETAL_FRAMES
+#undef IRIS_PETAL_TICKS
 #undef IRIS_MOTES
 #undef IRIS_STREAKS
 #undef IRIS_STREAK_LENGTH

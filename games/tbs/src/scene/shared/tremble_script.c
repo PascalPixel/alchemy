@@ -2,8 +2,8 @@
    once the sea monster has landed beside him. */
 
 /* An actor trembles: squashed narrow and a little tall, then sprung back over
-   three frames, every four frames for as long as the script runs. */
-Sint32 Actor_TrembleScript[] = {
+   three ticks, every four ticks for as long as the script runs. */
+Sint32 ActorTrembleScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1)),
 	SC_SET(SW_SCALE_Y, toFIXED(1)),
 	SC_ADD(SW_SCALE_X, -toFIXED(5) / 16),

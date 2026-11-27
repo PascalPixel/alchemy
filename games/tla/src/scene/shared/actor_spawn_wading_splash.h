@@ -3,18 +3,18 @@ void scActorSpawnWadingSplash(ACTOR *actor)
 {
 	ACTOR	  *child = scFieldActorCreate(SPRITE_WADING_SPLASH, actor->x.fixed,
 			actor->y.fixed + toFIXED(4), actor->z.fixed + toFIXED(4));
-	FIELD_SPR *source = actor->spr;
+	FIELD_SPR *src = actor->spr;
 
 	if(child != 0) {
-		FIELD_SPR *sprite = child->spr;
+		FIELD_SPR *spr = child->spr;
 
 		child->groundHeight = actor->groundHeight;
-		fdActorStartScript(child, WadingSplash_Script);
+		fdActorStartScript(child, WadingSplashScript);
 		child->motionFlg = 0;
-		if(sprite != 0) {
-			fdSprStartAnimation(sprite, 1);
-			sprite->flg = 0;
-			sprite->pri = source->pri;
+		if(spr != 0) {
+			fdSprStartAnimation(spr, 1);
+			spr->flg = 0;
+			spr->pri = src->pri;
 		}
 	}
 }

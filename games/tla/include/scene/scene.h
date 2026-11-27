@@ -44,7 +44,7 @@ typedef struct SPR_ATTR2_HIGH {
 } SPR_ATTR2_HIGH;
 
 /* An actor spiralling round its anchor (syOrbiterSpiral): the circle it keeps
-   in the actor's scene-owned words, and the frames it has left. */
+   in the actor's scene-owned words, and the ticks it has left. */
 typedef struct ORBITER {
 	const Sint32 *script;
 	Sint16		  scriptCursor;
@@ -83,10 +83,10 @@ typedef struct ORBITER {
 	Sint16		  wait;
 	Uint8		  refused;
 	Uint8		  frozen;
-	Uint8		  countdown; /* frames left of the spiral */
+	Uint8		  countdown; /* ticks left of the spiral */
 	Uint8		  sceneByte;
 	Sint16		  ang;	  /* its place on the circle, 1/65536 turns */
-	Uint16		  speed;  /* twice its turn a frame, 1/65536 turns */
+	Uint16		  speed;  /* twice its turn a tick, 1/65536 turns */
 	struct ACTOR *anchor; /* the actor it circles, in watchedActor */
 } ORBITER;
 
@@ -131,9 +131,9 @@ typedef struct ORBIT {
 	Uint8		  refused;
 	Uint8		  frozen;
 	Uint8		  phase;  /* where the circle's growth starts, 1/64 turns */
-	Uint8		  growth; /* grows by 10 every other frame up to 141 */
+	Uint8		  growth; /* grows by 10 every other tick up to 141 */
 	Sint16		  ang;	  /* its place on the circle, 1/65536 turns */
-	Sint16 speed; /* its turn a frame, slowed by 128 a frame once grown */
+	Sint16		  speed;  /* its turn a tick, slowed by 128 a tick once grown */
 } ORBIT;
 
 /* Half a turn of an Orbit's phase, 64 to the turn: the sparks that rise round
@@ -146,12 +146,12 @@ typedef struct ORBIT {
 #define TABLET_RISING_SPARKS 16
 
 /* The LEARN_SPARKS that circle the one who learns a Psynergy start
-   LEARN_SPARK_INTERVAL frames apart, 122 pixels out, and close 8 pixels a frame
-   (syOrbiterSpiral) to 2 pixels in LEARN_SPIRAL_FRAMES; each one's countdown
+   LEARN_SPARK_INTERVAL ticks apart, 122 pixels out, and close 8 pixels a tick
+   (syOrbiterSpiral) to 2 pixels in LEARN_SPIRAL_TICKS; each one's countdown
    ends with the last's. */
 #define LEARN_SPARKS		 16
 #define LEARN_SPARK_INTERVAL 8
-#define LEARN_SPIRAL_FRAMES	 15
+#define LEARN_SPIRAL_TICKS	 15
 
 /* How far a pillar sinks, its top then level with the floor: into the floor as
    Blaze at a torch lowers it in Magma Rock, and into its gap as Move drops it
@@ -159,7 +159,7 @@ typedef struct ORBIT {
 #define PILLAR_SINK_DEPTH 32
 
 /* How long such a particle lives before it starts again: a slow swell and the
-   12 frames it stays gone after, or a quick one. */
+   12 ticks it stays gone after, or a quick one. */
 enum { PARTICLE_SLOW_LIFETIME = 212, PARTICLE_QUICK_LIFETIME = 116 };
 
 /* A glow sprite queued for the OAM: the link at its depth, attributes 0 and 1
@@ -183,7 +183,7 @@ typedef struct ANKOHL_RUINS_SPR {
 	Uint32 oam[3];
 } ANKOHL_RUINS_SPR;
 
-/* Ankohl Ruins' sand (AnkohlRuins_Sand): its sprites' VRAM cache entry, its
+/* Ankohl Ruins' sand (AnkohlRuinsSand): its sprites' VRAM cache entry, its
    level, map layer 1's offset before it rose, and its eight sprites. */
 typedef struct ANKOHL_RUINS_SPR_STATE {
 	/* No code names it as the sand's; the entrance tests read through the type
@@ -268,17 +268,17 @@ typedef union VIEW_COORDINATE {
 } VIEW_COORDINATE;
 
 /* A spark of the aerie's beam: where it is, how fast it drifts up and its age
-   in frames. */
+   in ticks. */
 typedef struct BEAM_SPARK {
 	Sint32 pos[3];
 	Sint32 unusedBeforeDrift; /* no code names it */
-	Sint32 drift;			  /* taken off its height each frame */
+	Sint32 drift;			  /* taken off its height each tick */
 	Sint32 unusedAfterDrift;  /* no code names it */
 	Uint32 age;
 } BEAM_SPARK;
 
-/* Lemuria spring's toss (LemuriaSpring_Toss): the frame the coin is let go, its
-   trail of positions and its shadow, its velocity, and the frames the spring
+/* Lemuria spring's toss (LemuriaSpringToss): the tick the coin is let go, its
+   trail of positions and its shadow, its velocity, and the ticks the spring
    still draws it in. */
 typedef struct SPRING_TOSS_MOTION {
 	Uint8	unused[2];
@@ -355,7 +355,7 @@ typedef struct TREASURE_ISLE_METATILE {
 } TREASURE_ISLE_METATILE;
 
 /* A spark of Venus Lighthouse's entrance: its position and velocity in 16.16
-   pixels, and its frame. */
+   pixels, and its tick. */
 typedef struct SPARK_STATE {
 	Sint32 x;
 	Sint32 y;
@@ -449,11 +449,11 @@ extern const Uint8 Field_GroundTiles[];
 extern const Uint16 Field_ExplosionPalette[];
 /* The sparks of the explosion that Loho's cannon blast and the Northern
    Reaches' shattered ice wall throw over the screen: how many, a spark's life
-   in frames (the explosion sprite sheet's eight pictures, four frames each),
+   in ticks (the explosion sprite sheet's eight pictures, four ticks each),
    the sprite palette their colours are loaded into (Field_ExplosionPalette),
    and their depth slot among the field engine's sprites. */
 #define EXPLOSION_SPARK_COUNT	96
-#define EXPLOSION_SPARK_FRAMES	32
+#define EXPLOSION_SPARK_TICKS	32
 #define EXPLOSION_SPARK_PALETTE 15
 #define EXPLOSION_SPARK_DEPTH	100
 
@@ -466,14 +466,14 @@ extern const Uint8 Field_GeyserTiles[];
 
 /* The geysers Scoop digs up in Gondowan Cliffs and in Yampi Desert's scorpion
    pit (each scene's GEYSER_WORK): the most sprites btGeyserDraw queues in a
-   frame, and the geysers a room can have. */
+   tick, and the geysers a room can have. */
 #define GEYSER_SPRITES		 80
 #define GEYSER_ENTRIES		 16
-/* A geyser's six-second round, and the frames of it at which it starts to rise
+/* A geyser's six-second round, and the ticks of it at which it starts to rise
    and to fall. */
-#define GEYSER_PERIOD_FRAMES 360
-#define GEYSER_RISE_FRAME	 60
-#define GEYSER_FALL_FRAME	 240
+#define GEYSER_PERIOD_TICKS	 360
+#define GEYSER_RISE_TICK	 60
+#define GEYSER_FALL_TICK	 240
 /* The pixels a geyser rises to. */
 #define GEYSER_MAX_HEIGHT	 64
 /* The terrain id and collision slot of the first geyser: the geysers take the
@@ -520,11 +520,11 @@ struct WINDOW;
 #define LIGHTNING_MAP_COLUMNS  4
 #define LIGHTNING_SCREEN_BLOCK 4
 
-/* Plays an actor's animation and lets frames pass before the script goes on. */
-#define fdActorAnimateThenWait(id, animation, frames) \
+/* Plays an actor's animation and lets ticks pass before the script goes on. */
+#define fdActorAnimateThenWait(id, animation, ticks) \
 	do { \
 		fdActorSetAnimation(id, animation); \
-		syFieldScriptWait(frames); \
+		syFieldScriptWait(ticks); \
 	} while(0)
 
 /* MapsWork holds Mars Lighthouse's nineteen maps twice, from its outside to its
@@ -556,10 +556,10 @@ extern char MapIndex_MarsLighthouseOutsideThawed;
 #define FIRST_WATER_COLOR	  12
 #define WATER_COLORS		  4
 
-/* The frames a puff of smoke from a chimney or a cooking fire rises and swells
+/* The ticks a puff of smoke from a chimney or a cooking fire rises and swells
    before it is released: Prox's, Kalt Island's (the Settlements), Shaman
    Village's and Kibombo's, each scene's own copy of the same drift. */
-#define SMOKE_FRAMES 60
+#define SMOKE_TICKS 60
 
 /* The raised cue a whirlwind raises as it catches the leader, which each scene
    with whirlwinds answers by carrying him off on it: the Jupiter Lighthouse
@@ -593,8 +593,8 @@ enum {
 #define VENT_MAX	 16
 #define VENT_IDS_MAX 4
 
-/* One vent: whether it blows, the frames to its next puff, its position and its
-   gust's speed, in 16.16 pixels a frame. */
+/* One vent: whether it blows, the ticks to its next puff, its position and its
+   gust's speed, in 16.16 pixels a tick. */
 typedef struct VENT_ENTRY {
 	Sint16 active;
 	Sint16 tmr;
@@ -605,7 +605,7 @@ typedef struct VENT_ENTRY {
 } VENT_ENTRY;
 
 /* The vents of the room, in the inventory snapshot's spare space (VENT_STATE):
-   their frame counter, the room's hook run each frame, its vents and the actors
+   their tick counter, the room's hook run each tick, its vents and the actors
    their puffs land on, besides the leader. */
 typedef struct VENT_WORK {
 	Sint32 cnt;

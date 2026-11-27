@@ -1,16 +1,16 @@
 /* Liquifier, and the canvas bursts: a glowing ball that strikes the target in
    flames and sparks. Part of battle_effect.c. */
 
-#define LIQUIFIER_FRAMES	   111
+#define LIQUIFIER_TICKS		  111
 /* The state's particles: the sparks, then the beams. */
-#define LIQUIFIER_SPARKS	   32
-#define LIQUIFIER_FIRST_BEAM   LIQUIFIER_SPARKS
-#define LIQUIFIER_BEAMS		   16
-/* The frame of the first beam and the first of the eight strikes. */
-#define LIQUIFIER_STRIKE_FRAME 54
+#define LIQUIFIER_SPARKS	  32
+#define LIQUIFIER_FIRST_BEAM  LIQUIFIER_SPARKS
+#define LIQUIFIER_BEAMS		  16
+/* The tick of the first beam and the first of the eight strikes. */
+#define LIQUIFIER_STRIKE_TICK 54
 /* The sparks' speeds: a sine times 512 to 1023, shifted down by this as they
    burst out, one less upward, and two more as they gather. */
-#define LIQUIFIER_BURST_SHIFT  8
+#define LIQUIFIER_BURST_SHIFT 8
 
 /* Where FlashBurstSheet is decoded: the map cell buffer's second 16 KB, where
    FireRingTexture, decoded to EffectScratch, replaces it. */
@@ -19,11 +19,11 @@
 /* Where GlowBandTextureA is decoded in the effect's pictures. */
 #define LIQUIFIER_GLOW_BAND 4096
 
-/* Sparks fall into the user as two rings of fire swell about it (frames 0 to
+/* Sparks fall into the user as two rings of fire swell about it (ticks 0 to
    15); then the sparks burst from it and eight flames fan out above it and sink
-   back. From frame 54 sixteen beams of light stab down about the target, one
-   every two frames, each narrowing away over a ring of fire that spreads on the
-   ground, and the target is struck every four frames; the eighth strike shows
+   back. From tick 54 sixteen beams of light stab down about the target, one
+   every two ticks, each narrowing away over a ring of fire that spreads on the
+   ground, and the target is struck every four ticks; the eighth strike shows
    the damage.
 
    Abilities: Liquifier. */
@@ -35,7 +35,7 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 	MODEL_TEXTURE		 texture;
 	void				*canvas;
 	BATTLE_EFFECT_STATE *state;
-	Sint32				 frame;
+	Sint32				 frm;
 	Uint8				*graphics;
 	Sint32				 i;
 
@@ -61,8 +61,8 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 	btEffectPosProjectBattler(args->user, &from);
 	btEffectPosProjectBattler(args->tgts[0], &to);
 
-	for(frame = 0; frame != LIQUIFIER_FRAMES; frame++) {
-		if(frame == 0) {
+	for(frm = 0; frm != LIQUIFIER_TICKS; frm++) {
+		if(frm == 0) {
 			PARTICLE *beam;
 
 			/* DEAD: the map cell buffer's particles marked free, which
@@ -77,49 +77,48 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 					toFIXED(to.y), (syRandom() & 8191) + toFIXED(7) / 16);
 			}
 		}
-		if(frame == 0) {
+		if(frm == 0) {
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 		}
-		if(frame == 12) {
+		if(frm == 12) {
 			EFFECT_SET_TRANSFER(
 				state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 		}
-		if(frame == LIQUIFIER_STRIKE_FRAME) {
+		if(frm == LIQUIFIER_STRIKE_TICK) {
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 		}
-		if(frame == 0)
+		if(frm == 0)
 			sySndPlayStub(SE_DJINNI_SET);
-		if(frame == 16)
+		if(frm == 16)
 			sySndPlayStub(SE_HEAVY_IMPACT);
 
-		if(frame > 15) {
+		if(frm > 15) {
 			/* The burst: sparks fly out of the user, upward and forward. */
-			if(frame == 16) {
+			if(frm == 16) {
 				PARTICLE *step = state->particles;
 
 				for(i = 0; i != LIQUIFIER_SPARKS; i++) {
-					Uint32 angle =
+					Uint32 ang =
 						syRandom() % (DEGtoANG(135) - 1) + TRIG_TURN * 5 / 16;
 					Sint32 speed = (syRandom() & 511) + 512;
 
-					step->velX =
-						(sySin(angle) * speed) >> LIQUIFIER_BURST_SHIFT;
+					step->velX = (sySin(ang) * speed) >> LIQUIFIER_BURST_SHIFT;
 					step->velY =
-						(syCos(angle) * speed) >> (LIQUIFIER_BURST_SHIFT - 1);
+						(syCos(ang) * speed) >> (LIQUIFIER_BURST_SHIFT - 1);
 					step->x = toFIXED(from.x / 2);
 					step->y = toFIXED(from.y - (syRandom() & 15) - 8);
 					step->variant = 0;
 					step++;
 				}
 			}
-			/* Two steps a frame, the n-th spark from frame n / 4. */
+			/* Two steps a tick, the n-th spark from tick n / 4. */
 			for(i = 0; i != LIQUIFIER_SPARKS; i++) {
 				/* FAKEMATCH(temporary): one, 1 held in a local; as 1 at its
 				 * uses. */
 				Sint32	  one = 1;
 				PARTICLE *step = &state->particles[i];
 
-				if(step->variant >= 0 && frame >= i / 4) {
+				if(step->variant >= 0 && frm >= i / 4) {
 					Sint32 odd = i & one;
 					Sint32 size = odd + 5;
 					Sint32 blend;
@@ -135,7 +134,7 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 					half = size / 2;
 					for(; j != 2; j++) {
 						(*(DRAW_RECTANGLE *)((Uint8 *)draw + blend))(canvas,
-							graphics + BattleEffect_MotePictures[size - 1],
+							graphics + BattleEffectMotePictures[size - 1],
 							FIXED_INTEGER_PART(step->x) - half,
 							FIXED_INTEGER_PART(step->y) - size, size, twice);
 						btParticleAdvanceWithGravity2D(
@@ -149,19 +148,19 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 
 			/* The gathering: sparks start 64 steps out and fall into the
 			   user. */
-			if(frame == 0) {
+			if(frm == 0) {
 				PARTICLE *step = state->particles;
 
 				for(i = 0; i != LIQUIFIER_SPARKS; i++) {
-					Sint32 angle =
+					Sint32 ang =
 						(syRandom() & (DEGtoANG(180) - 1)) - DEGtoANG(90);
 					Sint32 speed = (syRandom() & 511) + 512;
 					Sint32 y;
 
 					step->velX =
-						(sySin(angle) * speed) >> (LIQUIFIER_BURST_SHIFT + 2);
+						(sySin(ang) * speed) >> (LIQUIFIER_BURST_SHIFT + 2);
 					step->velY =
-						(syCos(angle) * speed) >> (LIQUIFIER_BURST_SHIFT + 1);
+						(syCos(ang) * speed) >> (LIQUIFIER_BURST_SHIFT + 1);
 					step->x = toFIXED(from.x / 2);
 					y = from.y - (syRandom() & 15) - 8;
 					step->x -= step->velX << 6;
@@ -170,7 +169,7 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 					step++;
 				}
 			}
-			/* Four steps a frame. */
+			/* Four steps a tick. */
 			for(i = 0, step = state->particles; i != LIQUIFIER_SPARKS;
 				i++, step++) {
 				if(step->variant >= 0) {
@@ -194,7 +193,7 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 			RENDER_MODEL *model = btRenderAllocateModelList(1);
 			void		 *fireRing = EffectScratch;
 
-			/* Eight flames fan out above the user, each for 16 frames from its
+			/* Eight flames fan out above the user, each for 16 ticks from its
 			   start, rising and sinking back on a sine. */
 			model->kind = MODEL_SHADED_MAX;
 			model->texture = &texture;
@@ -202,15 +201,15 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 			texture.logWidth = 6;
 			texture.logHeight = 6;
 			texture.pixels = state->sheet;
-			model->mesh = BattleEffect_TallMesh;
+			model->mesh = BattleEffectTallMesh;
 			for(i = 0; i != 8; i++) {
-				Sint32 start = Liquifier_SplashStarts[i];
+				Sint32 start = LiquifierSplashStarts[i];
 
-				if(frame >= start && frame < start + 16) {
+				if(frm >= start && frm < start + 16) {
 					Sint32 age;
 
 					model->shade = 0;
-					age = frame - start;
+					age = frm - start;
 					syInitMatrix();
 					syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 					syTranslate(
@@ -218,30 +217,30 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 					syRotZ(i * (TRIG_TURN / 16) - TRIG_TURN * 7 / 32);
 					syScale(toFIXED(1) / 3,
 						sySin(age * (TRIG_TURN / 32)) *
-							Liquifier_SplashHeights[i] / 64 * 2,
+							LiquifierSplashHeights[i] / 64 * 2,
 						toFIXED(1) / 2);
 					btRenderTransformVertices(
-						Liquifier_SplashCorners, projected, 4);
+						LiquifierSplashCorners, projected, 4);
 					btRenderDrawModelList(model);
 				}
 			}
 
-			/* The beams: each from two frames after the last, narrowing away
-			   over 16 frames. */
+			/* The beams: each from two ticks after the last, narrowing away
+			   over 16 ticks. */
 			texture.logWidth = 5;
 			texture.logHeight = 2;
 			texture.pixels = state->sheet + LIQUIFIER_GLOW_BAND;
-			model->mesh = BattleEffect_SmallSquareMesh;
+			model->mesh = BattleEffectSmallSquareMesh;
 			model->kind = MODEL_SHADED_ADDITIVE;
 			for(i = 0; i != LIQUIFIER_BEAMS; i++) {
 				Sint32	  shade = 0;
 				PARTICLE *step = &state->particles[LIQUIFIER_FIRST_BEAM + i];
-				Sint32	  start = i * 2 + LIQUIFIER_STRIKE_FRAME;
+				Sint32	  start = i * 2 + LIQUIFIER_STRIKE_TICK;
 
-				if(frame >= start && frame < start + 16) {
+				if(frm >= start && frm < start + 16) {
 					Sint32 scale;
 
-					scale = toFIXED(2) - (frame - start) * (toFIXED(1) / 8);
+					scale = toFIXED(2) - (frm - start) * (toFIXED(1) / 8);
 					model->shade = shade;
 					syInitMatrix();
 					syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
@@ -250,24 +249,24 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 					syRotZ(step->z);
 					syScale(scale, toFIXED(1), toFIXED(1) / 2);
 					btRenderTransformVertices(
-						BattleEffect_BeamCorners, projected, 4);
+						BattleEffectBeamCorners, projected, 4);
 					btRenderDrawModelList(model);
 				}
 			}
 
 			/* Their rings of fire spread on the ground, darkening, faster after
-			   eight frames. */
+			   eight ticks. */
 			texture.logWidth = 7;
 			texture.logHeight = 7;
 			texture.pixels = fireRing;
-			model->mesh = BattleEffect_LargeSquareMesh;
+			model->mesh = BattleEffectLargeSquareMesh;
 			model->kind = MODEL_SHADED_ADDITIVE;
 			for(i = 0; i != LIQUIFIER_BEAMS; i++) {
 				PARTICLE *step = &state->particles[i + LIQUIFIER_FIRST_BEAM];
-				Sint32	  age = frame - LIQUIFIER_STRIKE_FRAME - i * 2;
+				Sint32	  age = frm - LIQUIFIER_STRIKE_TICK - i * 2;
 
-				if(frame >= i * 2 + LIQUIFIER_STRIKE_FRAME &&
-					frame < i * 2 + LIQUIFIER_STRIKE_FRAME + 16) {
+				if(frm >= i * 2 + LIQUIFIER_STRIKE_TICK &&
+					frm < i * 2 + LIQUIFIER_STRIKE_TICK + 16) {
 					Sint32 shade = -age * 4;
 					Sint32 scale = age * (toFIXED(1) / 4);
 
@@ -283,16 +282,16 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 					syRotX(TRIG_TURN * 15 / 64);
 					syScale(scale, scale, scale);
 					btRenderTransformVertices(
-						BattleEffect_SquareCorners, projected, 4);
+						BattleEffectSquareCorners, projected, 4);
 					btRenderDrawModelList(model);
 				}
 			}
 
-			/* Two rings of fire about the user, from frames 0 and 4 for 12
-			   frames each, fading in as they close. */
+			/* Two rings of fire about the user, from ticks 0 and 4 for 12
+			   ticks each, fading in as they close. */
 			for(i = 0; i != 2; i++) {
-				if(frame >= i * 4 && frame < i * 4 + 12) {
-					Sint32 age = frame - i * 4;
+				if(frm >= i * 4 && frm < i * 4 + 12) {
+					Sint32 age = frm - i * 4;
 					Sint32 shade = age * 8 + MODEL_SHADE_INVISIBLE;
 					Sint32 scale = toFIXED(3) / 2 - age * (toFIXED(1) / 8);
 
@@ -307,14 +306,14 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 					syRotZ(TRIG_TURN * 3 / 8 - i * (TRIG_TURN / 4));
 					syRotX(-TRIG_TURN / 16);
 					btRenderTransformVertices(
-						BattleEffect_GroundSquareCorners, projected, 4);
+						BattleEffectGroundSquareCorners, projected, 4);
 					btRenderDrawModelList(model);
 				}
 			}
 
-			/* A strike every four frames; the last shows the damage. */
+			/* A strike every four ticks; the last shows the damage. */
 			for(i = 0; i != 8; i++) {
-				if(frame == i * 4 + LIQUIFIER_STRIKE_FRAME) {
+				if(frm == i * 4 + LIQUIFIER_STRIKE_TICK) {
 					if(i == 7)
 						EFFECT_SHOW_DAMAGE(SE_CLATTER);
 					else
@@ -330,7 +329,7 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 		}
 
 		btCameraShake(8, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS();
@@ -384,27 +383,27 @@ void btEffectRunMineBall(BATTLE_EFFECT_PARM *args)
 /* Draws a disc of the given size from the discs in the map cell buffer as its
    four quarters about (x, y), the same quarter mirrored each way. */
 static inline void DrawDisc(void *canvas, Sint16 *discs, Sint32 cells, Sint32 x,
-	Sint32 y, Sint32 size, Sint32 index)
+	Sint32 y, Sint32 size, Sint32 idx)
 {
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	(Ram_HeapSlots->ramCodePaired)(canvas, (Uint8 *)(discs[index] + cells),
+	(Ram_HeapSlots->ramCodePaired)(canvas, (Uint8 *)(discs[idx] + cells),
 		x - (size >> 1), y - size, size >> 1, size);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 	(Ram_HeapSlots->ramCodePaired)(
-		canvas, (Uint8 *)(discs[index] + cells), x, y - size, size >> 1, size);
+		canvas, (Uint8 *)(discs[idx] + cells), x, y - size, size >> 1, size);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-	(Ram_HeapSlots->ramCodePaired)(canvas, (Uint8 *)(discs[index] + cells),
+	(Ram_HeapSlots->ramCodePaired)(canvas, (Uint8 *)(discs[idx] + cells),
 		x - (size >> 1), y, size >> 1, size);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
 	(Ram_HeapSlots->ramCodePaired)(
-		canvas, (Uint8 *)(discs[index] + cells), x, y, size >> 1, size);
+		canvas, (Uint8 *)(discs[idx] + cells), x, y, size >> 1, size);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 }
 
@@ -416,7 +415,7 @@ static inline void DrawDisc(void *canvas, Sint16 *discs, Sint32 cells, Sint32 x,
 #define CANVAS_BURST_FLAMES				  16
 #define CANVAS_BURST_FIRST_SPARK		  CANVAS_BURST_FLAMES
 #define CANVAS_BURST_SPARKS				  47
-/* A flame's or spark's frames to live at the hit, one more for every third; a
+/* A flame's or spark's ticks to live at the hit, one more for every third; a
    flame shows its six pictures over its last 18. */
 #define CANVAS_BURST_LIFE				  17
 /* The shaded discs drawn into the map cell buffer, 2 to 64 pixels across. */
@@ -431,12 +430,12 @@ static inline void DrawDisc(void *canvas, Sint16 *discs, Sint32 cells, Sint32 x,
 #define CANVAS_BURST_RAY_MOTES			  16
 #define CANVAS_BURST_RAY_FIRST			  15
 #define CANVAS_BURST_RAY_LAST			  (-32)
-/* The ball steps a 64th of the screen's distance a frame (1 << 10 in 16.16). */
+/* The ball steps a 64th of the screen's distance a tick (1 << 10 in 16.16). */
 #define CANVAS_BURST_BALL_STEP_SHIFT	  10
 
 /* A glowing ball, or Shred's glow growing on the target as sixteen rays close
    on it, hits the target; at the hit the targets flash and recoil, sixteen
-   flames rise and 47 sparks scatter. Shred plays 78 frames, hits at 54 and runs
+   flames rise and 47 sparks scatter. Shred plays 78 ticks, hits at 54 and runs
    btEffectRunImpair after; the small ball plays 66, hits at 32, nudges the
    targets and throws its sparks at half speed, without flames; the large ball
    plays 66 and hits at 32; Mine Ball's flies to the targets' midpoint in its
@@ -448,15 +447,15 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	SCREEN_POINT		 to;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	/* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
-	 * frame reserves and never touches; as one DRAW_RECTANGLE. */
+	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE draw[2];
 	Uint8		  *graphics;
 	Sint16		  *discs;
-	Sint32		   frames;
-	Sint32		   hitFrame;
-	Sint32		   offset;
+	Sint32		   ticks;
+	Sint32		   hitFrm;
+	Sint32		   ofs;
 	Sint32		   i;
 	Sint32		   j;
 	Sint32		   cells = (Sint32)Ram_MapMetatileBuffer;
@@ -473,24 +472,24 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	draw[0] = Ram_HeapSlots->ramCode;
 	discs = (Sint16 *)state->sheet;
 	if(mode == CANVAS_BURST_SHRED)
-		frames = 78;
+		ticks = 78;
 	else if(mode == CANVAS_BURST_MINE_BALL)
-		frames = 58;
+		ticks = 58;
 	else
-		frames = 66;
+		ticks = 66;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
 
 	/* Discs of sizes 2 to 64 one after another in the map cell buffer, with
 	   their offsets at the start of the sheet. */
-	offset = 0;
+	ofs = 0;
 	for(i = 0; i != CANVAS_BURST_DISCS; i++) {
 		Sint32 size = i * 2 + 2;
 
 		btEffectDrawShadedCircles(
-			(Uint8 *)(offset + cells), size, toFIXED(2673) / 2048);
-		discs[i] = offset;
-		offset += (i * 2 + 3) * size / 2;
+			(Uint8 *)(ofs + cells), size, toFIXED(2673) / 2048);
+		discs[i] = ofs;
+		ofs += (i * 2 + 3) * size / 2;
 	}
 	if(mode == CANVAS_BURST_MINE_BALL)
 		syWordsCopy((void *)BG_PLTT,
@@ -503,16 +502,16 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
 		state->sheet + CANVAS_BURST_FLASH_BURST_PICTURES, 1, 0);
 
-	for(frame = 0; frame != frames; frame++) {
+	for(frm = 0; frm != ticks; frm++) {
 		btEffectPosProjectBattler(args->user, &from);
 		if(mode == CANVAS_BURST_MINE_BALL)
 			btEffectGetTargetsMidpoint(&to);
 		else
 			btEffectPosProjectBattler(args->tgts[0], &to);
-		if(mode == CANVAS_BURST_SHRED && frame == 0)
+		if(mode == CANVAS_BURST_SHRED && frm == 0)
 			sySndPlayStub(SE_SPIN);
 
-		if(frame == 0) {
+		if(frm == 0) {
 			if(mode == CANVAS_BURST_SHRED) {
 				PARTICLE *step;
 
@@ -538,9 +537,9 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 		}
 
 		if(mode == CANVAS_BURST_SHRED) {
-			/* Frames 18-54: the glow grows at the target. */
-			if((Uint32)(frame - 18) <= 36) {
-				Sint32 size = frame * 2 - 32;
+			/* Ticks 18-54: the glow grows at the target. */
+			if((Uint32)(frm - 18) <= 36) {
+				Sint32 size = frm * 2 - 32;
 				Sint32 x;
 				Sint32 y;
 
@@ -550,10 +549,10 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 				y = to.y - 32;
 				DrawDisc(canvas, discs, cells, x, y, size, (size - 2) >> 1);
 			}
-		} else if((Uint32)(frame - 2) <= 30) {
-			/* Frames 2-32: the ball flies, growing. */
-			Sint32 size = frame / 4 * 2 + 16;
-			Sint32 index;
+		} else if((Uint32)(frm - 2) <= 30) {
+			/* Ticks 2-32: the ball flies, growing. */
+			Sint32 size = frm / 4 * 2 + 16;
+			Sint32 idx;
 			Sint32 x;
 			Sint32 y;
 
@@ -563,17 +562,17 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			} else if(size > CANVAS_BURST_LARGE_BALL_SIZE) {
 				size = CANVAS_BURST_LARGE_BALL_SIZE;
 			}
-			index = (size - 2) >> 1;
+			idx = (size - 2) >> 1;
 			x = FIXEDtoINT(CANVAS_BURST_BALL->x);
 			y = FIXEDtoINT(CANVAS_BURST_BALL->y);
 			CANVAS_BURST_BALL->x += CANVAS_BURST_BALL->velX;
 			CANVAS_BURST_BALL->y += CANVAS_BURST_BALL->velY;
-			DrawDisc(canvas, discs, cells, x, y, size, index);
+			DrawDisc(canvas, discs, cells, x, y, size, idx);
 		}
 
-		/* Shred, frames 0-53: sixteen rays of motes close on the target, each
+		/* Shred, ticks 0-53: sixteen rays of motes close on the target, each
 		   from its own delay. */
-		if(mode == CANVAS_BURST_SHRED && frame <= 53) {
+		if(mode == CANVAS_BURST_SHRED && frm <= 53) {
 			PARTICLE *step = state->particles;
 
 			for(i = 0; i != CANVAS_BURST_RAYS; i++) {
@@ -595,7 +594,7 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 								to.y + (FIXEDtoINT(syCos(step->z) * radius));
 
 							draw[0](canvas,
-								graphics + BattleEffect_MotePictures[size - 1],
+								graphics + BattleEffectMotePictures[size - 1],
 								x - half, y - 32 - size, width, height);
 						}
 					}
@@ -605,18 +604,18 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 		}
 
 		if(mode == CANVAS_BURST_SHRED)
-			hitFrame = 54;
+			hitFrm = 54;
 		else if(mode == CANVAS_BURST_MINE_BALL)
-			hitFrame = 24;
+			hitFrm = 24;
 		else
-			hitFrame = 32;
-		if(frame >= hitFrame) {
+			hitFrm = 32;
+		if(frm >= hitFrm) {
 			PARTICLE *newFlame;
 			PARTICLE *newSpark;
 			PARTICLE *flame;
 			PARTICLE *spark;
 
-			if(frame == hitFrame) {
+			if(frm == hitFrm) {
 				/* The hit: the targets are hurled (the small ball nudges them)
 				   and flash. */
 				if(mode == CANVAS_BURST_SHRED ||
@@ -670,7 +669,7 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 				}
 			}
 
-			/* The flames: FlashBurstSheet's six pictures, three frames each. */
+			/* The flames: FlashBurstSheet's six pictures, three ticks each. */
 			if(mode == CANVAS_BURST_SHRED || mode == CANVAS_BURST_LARGE_BALL ||
 				mode == CANVAS_BURST_MINE_BALL) {
 				flame = state->particles;
@@ -682,7 +681,7 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 					if((Uint32)flame->variant <= CANVAS_BURST_LIFE)
 						draw[0](canvas,
 							state->sheet + CANVAS_BURST_FLASH_BURST_PICTURES +
-								CanvasBurst_FlamePictures[flame->variant / 3] *
+								CanvasBurstFlamePictures[flame->variant / 3] *
 									PICTURE_BYTES(FLASH_BURST),
 							x - FLASH_BURST_WIDTH / 2,
 							y - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
@@ -711,7 +710,7 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 		}
 
 		btCameraShake(8, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	syCloseEvent(btEffectTransferCanvas);

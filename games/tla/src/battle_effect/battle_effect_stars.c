@@ -1,7 +1,7 @@
 /* Astral Blast and Shining Star. Part of battle_effect.c. */
 
-#define SHINING_STAR_FRAMES 128
-#define ASTRAL_BLAST_FRAMES 60
+#define SHINING_STAR_TICKS 128
+#define ASTRAL_BLAST_TICKS 60
 
 /* Astral Blast flies three five-pointed stars at the target; Shining Star drops
    eight that bounce near it. Each outline's corners are projected onto the
@@ -12,10 +12,10 @@
 #define STAR_CORNERS	  10
 #define STAR_CORNER_ANGLE ((TRIG_TURN + STAR_CORNERS - 1) / STAR_CORNERS)
 
-/* How fast the camera swings round, in 1/65536 turns a frame, slowing from
-   frame 40 to a stop. */
+/* How fast the camera swings round, in 1/65536 turns a tick, slowing from
+   tick 40 to a stop. */
 #define ASTRAL_BLAST_TURN_SPEED	   128
-/* A new star leaves every 12 frames, spinning a 64th of a turn a frame. */
+/* A new star leaves every 12 ticks, spinning a 64th of a turn a tick. */
 #define ASTRAL_BLAST_STAR_INTERVAL 12
 #define ASTRAL_BLAST_SPIN		   (TRIG_TURN / 64)
 /* A star is drawn only while its farthest corner is no deeper than this. */
@@ -23,7 +23,7 @@
 /* The motes stamped along each edge of a star. */
 #define ASTRAL_BLAST_EDGE_MOTES	   16
 #define SHINING_STAR_EDGE_MOTES	   12
-/* How far a Shining Star turns each frame, a 32nd of a turn. */
+/* How far a Shining Star turns each tick, a 32nd of a turn. */
 #define SHINING_STAR_SPIN		   (TRIG_TURN / 32)
 
 /* Three pink stars of light fly from above the user at the first target,
@@ -33,14 +33,14 @@
    Abilities: Astral Blast. */
 void btEffectRunAstralBlast(BATTLE_EFFECT_PARM *args)
 {
-	SCREEN_POINT screenPosition;
+	SCREEN_POINT screenPos;
 #if !FIX_UNINITIALIZED_READ
 	SCREEN_POINT base;
 #endif
 	FIXED				 scale[3];
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	/* LEFTOVER(frame): draw[1], the idle half of the pair. */
 	BLITTER_PAIR   draw;
 	Sint32		   i;
@@ -48,7 +48,7 @@ void btEffectRunAstralBlast(BATTLE_EFFECT_PARM *args)
 	BATTLE_CAMERA *camera;
 	ACTOR		  *caster;
 	ACTOR		  *source;
-	ACTOR		  *target;
+	ACTOR		  *tgt;
 	PARTICLE	  *point;
 	PARTICLE	  *star;
 	Sint32		   start;
@@ -76,31 +76,31 @@ void btEffectRunAstralBlast(BATTLE_EFFECT_PARM *args)
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 
 	/* The stars leave from above the caster and reach the target in twelve
-	   frames; the second and third aim past it. */
+	   ticks; the second and third aim past it. */
 	source = (ACTOR *)btObjectGetStub(args->user)->obj;
-	target = (ACTOR *)btObjectGetStub(args->tgts[0])->obj;
+	tgt = (ACTOR *)btObjectGetStub(args->tgts[0])->obj;
 	for(i = 0, point = state->particles; i != 3; i++) {
 		SET_POSITION(point, source->x.fixed, source->y.fixed + toFIXED(40),
 			source->z.fixed);
 		if(i == 0)
-			point->velX = (target->x.fixed - point->x) / 12;
+			point->velX = (tgt->x.fixed - point->x) / 12;
 		else
-			point->velX = (target->x.fixed * 2 - point->x) / 12;
-		point->velY = (target->y.fixed - point->y + toFIXED(40)) / 12;
-		point->velZ = (target->z.fixed - point->z) / 12;
+			point->velX = (tgt->x.fixed * 2 - point->x) / 12;
+		point->velY = (tgt->y.fixed - point->y + toFIXED(40)) / 12;
+		point->velZ = (tgt->z.fixed - point->z) / 12;
 		point->variant = 0;
 		point++;
 	}
 
 	corners = (PARTICLE *)MapGridMetatileBuffer;
-	for(frame = 0; frame != ASTRAL_BLAST_FRAMES; frame++) {
-		if(frame <= 47) {
+	for(frm = 0; frm != ASTRAL_BLAST_TICKS; frm++) {
+		if(frm <= 47) {
 			Sint32 speed;
 
-			if(frame <= 39)
+			if(frm <= 39)
 				speed = ASTRAL_BLAST_TURN_SPEED;
 			else
-				speed = 768 - frame * 16;
+				speed = 768 - frm * 16;
 			if(args->side == EFFECT_SIDE_ENEMIES)
 				camera->yaw -= speed;
 			else
@@ -109,9 +109,9 @@ void btEffectRunAstralBlast(BATTLE_EFFECT_PARM *args)
 
 		for(i = 0; i != 3; i++) {
 			start = i * ASTRAL_BLAST_STAR_INTERVAL;
-			if(frame >= start) {
+			if(frm >= start) {
 				star = &state->particles[i];
-				size = (frame - start) / 4 + 2;
+				size = (frm - start) / 4 + 2;
 				if(size > MOTE_SIZE_MAX)
 					size = MOTE_SIZE_MAX;
 				EFFECT_VIEW_FROM_CAMERA(camera);
@@ -121,10 +121,10 @@ void btEffectRunAstralBlast(BATTLE_EFFECT_PARM *args)
 					Sint32 depth;
 
 					syPushMatrix();
-					syRotZ((frame - start) * ASTRAL_BLAST_SPIN);
+					syRotZ((frm - start) * ASTRAL_BLAST_SPIN);
 					syRotY(DEGtoANG(90));
 					scale[0] =
-						(frame - start) * (toFIXED(1) / 16) + toFIXED(1) / 16;
+						(frm - start) * (toFIXED(1) / 16) + toFIXED(1) / 16;
 					if(scale[0] > toFIXED(1))
 						scale[0] = toFIXED(1);
 					scale[1] = scale[0];
@@ -132,20 +132,18 @@ void btEffectRunAstralBlast(BATTLE_EFFECT_PARM *args)
 					syMatrixScaleVector(scale);
 					syRotZ(j * STAR_CORNER_ANGLE);
 					depth = btEffectPosProjectPoint(
-						&Star_Points[(j & 1) * 3], &screenPosition);
+						&StarPoints[(j & 1) * 3], &screenPos);
 					if(peak < depth)
 						peak = depth;
-					screenPosition.x >>= 1;
+					screenPos.x >>= 1;
 #if !FIX_UNINITIALIZED_READ
 					/* UB: these first stores read base, which is never set; the
 					   next two overwrite them. */
-					corners[i * STAR_CORNERS + j].velX =
-						screenPosition.x + base.x;
-					corners[i * STAR_CORNERS + j].velY =
-						screenPosition.y + base.y;
+					corners[i * STAR_CORNERS + j].velX = screenPos.x + base.x;
+					corners[i * STAR_CORNERS + j].velY = screenPos.y + base.y;
 #endif
-					corners[i * STAR_CORNERS + j].velX = screenPosition.x;
-					corners[i * STAR_CORNERS + j].velY = screenPosition.y;
+					corners[i * STAR_CORNERS + j].velX = screenPos.x;
+					corners[i * STAR_CORNERS + j].velY = screenPos.y;
 					syPopMatrix();
 				}
 				if(peak <= ASTRAL_BLAST_DEPTH_MAX) {
@@ -175,19 +173,19 @@ void btEffectRunAstralBlast(BATTLE_EFFECT_PARM *args)
 				star->y += star->velY;
 				star->z += star->velZ;
 				/* Each star knocks the target back and shakes the screen. */
-				if(frame == start + i + 10) {
-					target->acceleration = toFIXED(2);
-					target->speedLimit = toFIXED(8);
-					target->velY = toFIXED(5);
-					target->gravity = BATTLE_UNIT_GRAVITY;
-					target->steeringFlg = 0;
-					fdActorStartIdleStub(target);
-					if(target->x.fixed < 0)
-						fdActorSetMoveTargetStub(target,
-							target->x.fixed - toFIXED(40), 0, target->z.fixed);
+				if(frm == start + i + 10) {
+					tgt->acceleration = toFIXED(2);
+					tgt->speedLimit = toFIXED(8);
+					tgt->velY = toFIXED(5);
+					tgt->gravity = BATTLE_UNIT_GRAVITY;
+					tgt->steeringFlg = 0;
+					fdActorStartIdleStub(tgt);
+					if(tgt->x.fixed < 0)
+						fdActorSetMoveTargetStub(
+							tgt, tgt->x.fixed - toFIXED(40), 0, tgt->z.fixed);
 					else
-						fdActorSetMoveTargetStub(target,
-							target->x.fixed + toFIXED(40), 0, target->z.fixed);
+						fdActorSetMoveTargetStub(
+							tgt, tgt->x.fixed + toFIXED(40), 0, tgt->z.fixed);
 					if(i == 2) {
 						EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 					} else {
@@ -200,7 +198,7 @@ void btEffectRunAstralBlast(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		btCameraShake(8, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS();
@@ -214,17 +212,17 @@ void btEffectRunShiningStar(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	/* LEFTOVER(frame): draw[1], the idle half of the pair. */
 	BLITTER_PAIR   draw;
 	Sint32		   i;
 	Uint8		  *graphics;
 	BATTLE_CAMERA *camera;
 	MOTION_OBJECT *source;
-	MOTION_OBJECT *target;
+	MOTION_OBJECT *tgt;
 	PARTICLE	  *point;
 	PARTICLE	  *star;
-	SCREEN_POINT   screenPosition;
+	SCREEN_POINT   screenPos;
 	Sint32		   size;
 	Sint32		   j;
 	Sint32		   k;
@@ -245,53 +243,51 @@ void btEffectRunShiningStar(BATTLE_EFFECT_PARM *args)
 	/* Each star leaves from above the caster on its own course to the target,
 	   the later ones after a longer delay (held in variant). */
 	source = btObjectGetStub(args->user)->obj;
-	target = btObjectGetStub(args->tgts[0])->obj;
+	tgt = btObjectGetStub(args->tgts[0])->obj;
 	for(i = 0, point = state->particles; i != 8; i++) {
 		Sint32 delay = i * 8;
 
 		SET_POSITION(point, source->x / 2, source->y + toFIXED(120), source->z);
-		point->velX = (target->x + toFIXED((Sint32)((syRandom() & 0x7f) - 64)) -
-						  point->x) /
+		point->velX =
+			(tgt->x + toFIXED((Sint32)((syRandom() & 0x7f) - 64)) - point->x) /
 			12;
-		point->velY = (target->y - point->y + toFIXED(20)) / 12;
-		point->velZ = (target->z - point->z) / 12;
+		point->velY = (tgt->y - point->y + toFIXED(20)) / 12;
+		point->velZ = (tgt->z - point->z) / 12;
 		point->variant = (syRandom() & 15) + delay;
 		point++;
 	}
 
 	/* LEFTOVER(template): size holds 2, as btEffectRunAstralBlast
-	 * (battle_effect_stars.c) sizes the same edge motes by frame; as 2 at the
+	 * (battle_effect_stars.c) sizes the same edge motes by tick; as 2 at the
 	 * draw. */
 	size = 2;
 	corners = (PARTICLE *)MapGridMetatileBuffer;
-	for(frame = 0; frame != SHINING_STAR_FRAMES; frame++) {
+	for(frm = 0; frm != SHINING_STAR_TICKS; frm++) {
 		/* The stars run through the colours of the rainbow. */
 		btEffectUpdatePhasePalette(
-			frame, TRIG_TURN - DEGtoANG(120), DEGtoANG(120), 0);
-		if(frame == 96)
+			frm, TRIG_TURN - DEGtoANG(120), DEGtoANG(120), 0);
+		if(frm == 96)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 		for(i = 0; i != 8; i++) {
 			star = &state->particles[i];
-			if(frame >= star->variant) {
+			if(frm >= star->variant) {
 				EFFECT_VIEW_FROM_CAMERA(camera);
-				btEffectPosProjectPoint(star, &screenPosition);
-				screenPosition.x >>= 1;
-				if(screenPosition.x >= -8 &&
-					screenPosition.x <= CANVAS_SIZE - 1 &&
-					screenPosition.y <= CANVAS_SIZE - 1 &&
-					screenPosition.y >= -8) {
+				btEffectPosProjectPoint(star, &screenPos);
+				screenPos.x >>= 1;
+				if(screenPos.x >= -8 && screenPos.x <= CANVAS_SIZE - 1 &&
+					screenPos.y <= CANVAS_SIZE - 1 && screenPos.y >= -8) {
 					for(j = 0; j != STAR_CORNERS; j++) {
-						corners[i * STAR_CORNERS + j].velX = screenPosition.x +
+						corners[i * STAR_CORNERS + j].velX = screenPos.x +
 							FIXEDtoINT((sySin(j * STAR_CORNER_ANGLE -
-											(frame - star->variant) *
+											(frm - star->variant) *
 												SHINING_STAR_SPIN) *
-										   Star_Radii[j & 1]) /
+										   StarRadii[j & 1]) /
 								2);
-						corners[i * STAR_CORNERS + j].velY = screenPosition.y -
-							FIXEDtoINT(syCos(j * STAR_CORNER_ANGLE -
-										   (frame - star->variant) *
-											   SHINING_STAR_SPIN) *
-								Star_Radii[j & 1]);
+						corners[i * STAR_CORNERS + j].velY = screenPos.y -
+							FIXEDtoINT(
+								syCos(j * STAR_CORNER_ANGLE -
+									(frm - star->variant) * SHINING_STAR_SPIN) *
+								StarRadii[j & 1]);
 					}
 					for(j = 0; j != STAR_CORNERS; j++) {
 						PARTICLE *from = &corners[j + i * STAR_CORNERS];
@@ -329,14 +325,14 @@ void btEffectRunShiningStar(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		btCameraShake(4, 4);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS();
 }
 
-#undef SHINING_STAR_FRAMES
-#undef ASTRAL_BLAST_FRAMES
+#undef SHINING_STAR_TICKS
+#undef ASTRAL_BLAST_TICKS
 #undef STAR_CORNERS
 #undef STAR_CORNER_ANGLE
 #undef ASTRAL_BLAST_TURN_SPEED

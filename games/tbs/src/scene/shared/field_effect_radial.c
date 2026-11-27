@@ -7,10 +7,10 @@
 static void scFieldEffectSpawnNineRadialEffects(Sint32 actorId)
 {
 	ACTOR		  *actor;
-	VECTOR3		   velocity;
+	VECTOR3		   vel;
 	EFFECT_OPTIONS options;
 	Uint32		   sixteenth;
-	Sint32		   angle;
+	Sint32		   ang;
 	Sint32		   x;
 	FIXED		   z;
 
@@ -19,16 +19,16 @@ static void scFieldEffectSpawnNineRadialEffects(Sint32 actorId)
 	options.pal = SPRITE_COLOR_WHITE;
 	options.update = scFieldEffectAdvanceMotion;
 	for(sixteenth = 0; sixteenth <= TRIG_TURN / FACING_STEP; sixteenth += 2) {
-		angle = sixteenth * FACING_STEP;
-		velocity.x = syCos(angle);
-		velocity.y = 0;
-		z = sySin(angle);
-		x = velocity.x;
-		velocity.z = z;
+		ang = sixteenth * FACING_STEP;
+		vel.x = syCos(ang);
+		vel.y = 0;
+		z = sySin(ang);
+		x = vel.x;
+		vel.z = z;
 		x += syMathDivide(x, 3);
-		velocity.x = x;
-		fdEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, x,
-			velocity.y, z,
+		vel.x = x;
+		fdEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, x, vel.y,
+			z,
 			EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
 				EFFECT_SCRIPT_MEDIUM,
 			&options);

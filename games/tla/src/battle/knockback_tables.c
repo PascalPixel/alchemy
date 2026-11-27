@@ -4,7 +4,7 @@
 #include "battle_effect/battle_effect.h"
 
 /* clang-format off */
-const FIXED BattleKnockback_Acceleration[] = {
+const FIXED BattleKnockbackAcceleration[] = {
 	[KNOCKBACK_NUDGE]    = toFIXED(1),
 	[KNOCKBACK_HOP]      = toFIXED(1),
 	[KNOCKBACK_LEAP]     = toFIXED(1),
@@ -17,7 +17,7 @@ const FIXED BattleKnockback_Acceleration[] = {
 	[KNOCKBACK_HURL_FAR] = toFIXED(8),
 };
 
-const FIXED BattleKnockback_SpeedLimit[] = {
+const FIXED BattleKnockbackSpeedLimit[] = {
 	[KNOCKBACK_NUDGE]    = toFIXED(4),
 	[KNOCKBACK_HOP]      = toFIXED(4),
 	[KNOCKBACK_LEAP]     = toFIXED(4),
@@ -30,7 +30,7 @@ const FIXED BattleKnockback_SpeedLimit[] = {
 	[KNOCKBACK_HURL_FAR] = toFIXED(20),
 };
 
-const FIXED BattleKnockback_VelocityY[] = {
+const FIXED BattleKnockbackVelocityY[] = {
 	[KNOCKBACK_NUDGE]    = toFIXED(3),
 	[KNOCKBACK_HOP]      = toFIXED(6),
 	[KNOCKBACK_LEAP]     = toFIXED(7),
@@ -43,7 +43,7 @@ const FIXED BattleKnockback_VelocityY[] = {
 	[KNOCKBACK_HURL_FAR] = toFIXED(5),
 };
 
-const Sint32 BattleKnockback_DistancePercent[] = {
+const Sint32 BattleKnockbackDistancePercent[] = {
 	[KNOCKBACK_NUDGE]    = 140,
 	[KNOCKBACK_HOP]      = 140,
 	[KNOCKBACK_LEAP]     = 150,
@@ -58,4 +58,4 @@ const Sint32 BattleKnockback_DistancePercent[] = {
 /* clang-format on */
 
 /* Unused: three words after the knockback tables that no code names. */
-const Sint32 BattleKnockback_UnusedWords[] = {0, 20, 38};
+const Sint32 BattleKnockbackUnusedWords[] = {0, 20, 38};

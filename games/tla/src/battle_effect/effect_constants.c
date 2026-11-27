@@ -11,38 +11,38 @@
 /* A sprite drawn at its own size, which most effects place theirs at. */
 #define UNIT_SCALE {toFIXED(1), toFIXED(1)}
 
-/* Cruel Ruin's scale for the summon, copied each frame before it is placed. */
-const SCALE CruelRuin_UnitScale = UNIT_SCALE;
+/* Cruel Ruin's scale for the summon, copied each tick before it is placed. */
+const SCALE CruelRuinUnitScale = UNIT_SCALE;
 
-/* Eclipse's scale for the dragon's sprites, copied each frame before they are
+/* Eclipse's scale for the dragon's sprites, copied each tick before they are
    placed. */
-const SCALE Eclipse_DragonScale = UNIT_SCALE;
+const SCALE EclipseDragonScale = UNIT_SCALE;
 
 /* Unused: two more scales after Eclipse's, each word 0x55555556 (2^32 / 3
    rounded up); nothing reads them. */
-const SCALE Eclipse_UnusedScales[2] = {
+const SCALE EclipseUnusedScales[2] = {
 	{0x55555556, 0x55555556},
 	{0x55555556, 0x55555556},
 };
 
 /* The comets' scale. */
-const SCALE Procne_UnitScale = UNIT_SCALE;
+const SCALE ProcneUnitScale = UNIT_SCALE;
 
 /* Unused: three words after Procne's scale, 2^32 / 36 and twice 2^32 / 90, each
    rounded up; nothing reads them. */
-const Uint32 Procne_UnusedWords[3] = {0x071c71c8, 0x02d82d83, 0x02d82d83};
+const Uint32 ProcneUnusedWords[3] = {0x071c71c8, 0x02d82d83, 0x02d82d83};
 
-/* Zagan's scale, copied each frame before he is placed. */
-const SCALE Zagan_UnitScale = UNIT_SCALE;
+/* Zagan's scale, copied each tick before he is placed. */
+const SCALE ZaganUnitScale = UNIT_SCALE;
 
-/* Boreas's scale, copied each frame before his sprites are placed. */
-const SCALE Boreas_UnitScale = UNIT_SCALE;
+/* Boreas's scale, copied each tick before his sprites are placed. */
+const SCALE BoreasUnitScale = UNIT_SCALE;
 
 /* Each of the four pillars' heights in pixels. */
-const ROCK_WALL_HEIGHTS RockWall_Heights = {{-32, -32, -32, -32}};
+const ROCK_WALL_HEIGHTS RockWallHeights = {{-32, -32, -32, -32}};
 
 /* The three lines' end points, a pair of points each, in pixels. */
-const Sint16 Thor_Points[6][2] = {
+const Sint16 ThorPoints[6][2] = {
 	{8, 135},
 	{184, 135},
 	{128, 135},
@@ -52,43 +52,43 @@ const Sint16 Thor_Points[6][2] = {
 };
 
 /* The scale each of Gaia's rocks starts from before it grows. */
-const SCALE Gaia_UnitScale = UNIT_SCALE;
+const SCALE GaiaUnitScale = UNIT_SCALE;
 
 /* The white flake's scale as it flutters away at Ulysses's end. */
-const SPR_SCALE Ulysses_ParticleScale = {{UNIT_SCALE}};
+const SPR_SCALE UlyssesParticleScale = {{UNIT_SCALE}};
 
-/* The mage's sprite scale in Ulysses, copied each frame the mage stands. */
-const SCALE Ulysses_MageScale = UNIT_SCALE;
+/* The mage's sprite scale in Ulysses, copied each tick the mage stands. */
+const SCALE UlyssesMageScale = UNIT_SCALE;
 
 /* The scale of the formation's objects that are drawn at their size. */
-const SCALE SummonFormation_Scale = UNIT_SCALE;
+const SCALE SummonFormationScale = UNIT_SCALE;
 
 /* The scale of the formation's objects drawn a quarter larger. */
-const SCALE SummonFormation_LargeScale = {
+const SCALE SummonFormationLargeScale = {
 	toFIXED(5) / 4,
 	toFIXED(5) / 4,
 };
 
 /* The statue's scale in Ramses. */
-const SPR_SCALE Ramses_UnitScale = {{UNIT_SCALE}};
+const SPR_SCALE RamsesUnitScale = {{UNIT_SCALE}};
 
 /* The formation objects' scale in Judgment. */
-const SCALE Judgment_UnitScale = UNIT_SCALE;
+const SCALE JudgmentUnitScale = UNIT_SCALE;
 
 /* Kirin's scale as he bounds in and lifts away. */
-const SPR_SCALE Kirin_SweepScale = {{UNIT_SCALE}};
+const SPR_SCALE KirinSweepScale = {{UNIT_SCALE}};
 
-/* Kirin's scale while he charges, before it is changed by frame. */
-const SPR_SCALE Kirin_ChargeScale = {{UNIT_SCALE}};
+/* Kirin's scale while he charges, before it is changed by tick. */
+const SPR_SCALE KirinChargeScale = {{UNIT_SCALE}};
 
 /* The serpent's scale. */
-const SCALE Neptune_UnitScale = {toFIXED(3) / 2, toFIXED(3) / 2};
+const SCALE NeptuneUnitScale = {toFIXED(3) / 2, toFIXED(3) / 2};
 
 /* Megaera's scale as she falls, one and a half. */
-const SCALE Megaera_UnitScale = {toFIXED(3) / 2, toFIXED(3) / 2};
+const SCALE MegaeraUnitScale = {toFIXED(3) / 2, toFIXED(3) / 2};
 
 /* The hexagon's six corners, {z, y} in pixels. */
-const Sint8 VoidBeam_Corners[6][2] = {
+const Sint8 VoidBeamCorners[6][2] = {
 	{40, -40},
 	{0, 40},
 	{-40, -40},
@@ -98,62 +98,62 @@ const Sint8 VoidBeam_Corners[6][2] = {
 };
 
 /* Charon's swarm scale, before it is set to one and a quarter. */
-const SCALE Charon_SwarmScale = UNIT_SCALE;
+const SCALE CharonSwarmScale = UNIT_SCALE;
 
 /* Charon's pulse scale, before the pulse sets it from a sine. */
-const SCALE Charon_PulseScale = UNIT_SCALE;
+const SCALE CharonPulseScale = UNIT_SCALE;
 
 /* Charon's scale while he is revealed. */
-const SCALE Charon_RevealScale = UNIT_SCALE;
+const SCALE CharonRevealScale = UNIT_SCALE;
 
 /* Charon's scale in the finale. */
-const SCALE Charon_FinaleScale = UNIT_SCALE;
+const SCALE CharonFinaleScale = UNIT_SCALE;
 
 /* Flora's scale. */
-const SCALE Flora_UnitScale = UNIT_SCALE;
+const SCALE FloraUnitScale = UNIT_SCALE;
 
 /* The scale of the forest canopy Daedalus flies over. */
-const SCALE Daedalus_CanopyScale = UNIT_SCALE;
+const SCALE DaedalusCanopyScale = UNIT_SCALE;
 
 /* The scale of the pieces of Daedalus's machine. */
-const SCALE Daedalus_MachineScale = UNIT_SCALE;
+const SCALE DaedalusMachineScale = UNIT_SCALE;
 
 /* The scale of Daedalus's missiles, a tenth larger than their pictures. */
-const SCALE Daedalus_MissileScale = {
+const SCALE DaedalusMissileScale = {
 	toFIXED(11) / 10,
 	toFIXED(11) / 10,
 };
 
 /* The rocket's scale in Daedalus's second strike, twice its size. */
-const SCALE DaedalusStrike_RocketScale = {toFIXED(2), toFIXED(2)};
+const SCALE DaedalusStrikeRocketScale = {toFIXED(2), toFIXED(2)};
 
 /* Coatlicue's scale. */
-const SCALE Coatlicue_UnitScale = UNIT_SCALE;
+const SCALE CoatlicueUnitScale = UNIT_SCALE;
 
 /* Catastrophe's scale for the summon. */
-const SCALE Catastrophe_UnitScale = UNIT_SCALE;
+const SCALE CatastropheUnitScale = UNIT_SCALE;
 
 /* Haures's scale while he charges. */
-const SCALE Haures_ChargeScale = UNIT_SCALE;
+const SCALE HauresChargeScale = UNIT_SCALE;
 
 /* Haures's scale while he circles. */
-const SCALE Haures_OrbitScale = UNIT_SCALE;
+const SCALE HauresOrbitScale = UNIT_SCALE;
 
 /* Haures's scale in the opening, before it is flipped. */
-const SCALE Haures_OpeningScale = UNIT_SCALE;
+const SCALE HauresOpeningScale = UNIT_SCALE;
 
 /* The scale of Trident's four prongs. */
-const SCALE Trident_UnitScale = UNIT_SCALE;
+const SCALE TridentUnitScale = UNIT_SCALE;
 
 /* The summon's scale in Meteor Blow, twice its size. */
-const SCALE MeteorBlow_DoubleScale = {toFIXED(2), toFIXED(2)};
+const SCALE MeteorBlowDoubleScale = {toFIXED(2), toFIXED(2)};
 
 /* A mote's size by its number's low three bits. */
-const Uint8 Moloch_MoteSizes[8] = {2, 3, 5, 8, 7, 6, 4, 0};
+const Uint8 MolochMoteSizes[8] = {2, 3, 5, 8, 7, 6, 4, 0};
 
 /* A pillar's six corners, {x, y, z} in pixels: three rows of two, 16 either
    side of its centre, at y -16, 12 and 0. */
-const MODEL_VERTEX Iris_PillarVertices[6] = {
+const MODEL_VERTEX IrisPillarVertices[6] = {
 	{-16, -16, 0},
 	{16, -16, 0},
 	{-16, 12, 0},
@@ -163,23 +163,23 @@ const MODEL_VERTEX Iris_PillarVertices[6] = {
 };
 
 /* Iris's scale while she rises. */
-const SCALE Iris_UnitScale = UNIT_SCALE;
+const SCALE IrisUnitScale = UNIT_SCALE;
 
 /* The rising pillars' widths, left to right. */
-const FIVE_WIDTHS Iris_RisingPillarWidths = {{2, 3, 4, 5, 6}};
+const FIVE_WIDTHS IrisRisingPillarWidths = {{2, 3, 4, 5, 6}};
 
 /* The widening pillars' widths, left to right. */
-const SEVEN_WIDTHS Iris_WideningPillarWidths = {{2, 3, 4, 5, 6, 7, 8}};
+const SEVEN_WIDTHS IrisWideningPillarWidths = {{2, 3, 4, 5, 6, 7, 8}};
 
 /* The narrowing pillars' widths, left to right. */
-const SEVEN_WIDTHS Iris_NarrowingPillarWidths = {{8, 7, 6, 5, 4, 3, 2}};
+const SEVEN_WIDTHS IrisNarrowingPillarWidths = {{8, 7, 6, 5, 4, 3, 2}};
 
 /* The left strip's four spans where petals start, {left, width} in pixels. */
-const FOUR_SPANS Iris_LeftStripSpans = {
+const FOUR_SPANS IrisLeftStripSpans = {
 	{{112, 27}, {104, 28}, {92, 27}, {74, 27}},
 };
 
 /* The right strip's four spans where petals start, {left, width} in pixels. */
-const FOUR_SPANS Iris_RightStripSpans = {
+const FOUR_SPANS IrisRightStripSpans = {
 	{{196, 44}, {176, 48}, {152, 45}, {116, 45}},
 };

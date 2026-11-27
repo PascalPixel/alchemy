@@ -6,6 +6,6 @@
 #include "types.h"
 #include "graphics/render_placement.h"
 
-extern const SPR_SCALE SpriteViewer_Scale;
+extern const SPR_SCALE SpriteViewerScale;
 
 #endif

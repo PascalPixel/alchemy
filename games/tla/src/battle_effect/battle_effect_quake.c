@@ -16,7 +16,7 @@
 #define BACKGROUND_PIXEL_OFFSET(x, y) \
 	(((x) & 7) + (((x) / 8) << 6) + (((y) & 7) << 3) + (((y) / 8) << 11))
 
-/* Three rock pillars rise from the left, 4 frames apart, and sink again,
+/* Three rock pillars rise from the left, 4 ticks apart, and sink again,
    throwing the targets standing on them into the air.
 
    Abilities: Quake, Earthquake, Quake Sphere. */
@@ -24,11 +24,11 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *battleEffectState;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 column;
 	DRAW_RECTANGLE		 draw;
 	BATTLE_CAMERA		*camera;
-	Sint32				 xOffset;
+	Sint32				 xOfs;
 	ROCK_WALL_HEIGHTS	 heights;
 	Sint32				 point[3];
 	SCREEN_POINT		 screen;
@@ -63,9 +63,9 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 
 	if(args->side == EFFECT_SIDE_PARTY) {
 		REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
-		xOffset = -NARROW_CANVAS_PARTY_X;
+		xOfs = -NARROW_CANVAS_PARTY_X;
 	} else {
-		xOffset = 0;
+		xOfs = 0;
 	}
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
@@ -73,34 +73,33 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 	EFFECT_FOR_EACH_TARGET(member, args)
 		battleEffectState->particles[member].variant = 0;
 	EFFECT_START_TRANSFER(battleEffectState, CANVAS_COPY_AND_CLEAR, 0);
-	heights = RockWall_Heights;
+	heights = RockWallHeights;
 	battleEffectState->shakeFrm = 128;
 	sySndPlayStub(SE_RUMBLE);
 
-	for(frame = 0; frame != Quake_Timings[args->variant][QUAKE_TIMING_FRAMES];
-		frame++) {
+	for(frm = 0; frm != QuakeTimings[args->variant][QUAKE_TIMING_TICKS];
+		frm++) {
 		EFFECT_VIEW_FROM_CAMERA(camera);
-		if(frame == Quake_Timings[args->variant][QUAKE_TIMING_FRAMES] - 16)
+		if(frm == QuakeTimings[args->variant][QUAKE_TIMING_TICKS] - 16)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
 		for(column = 0; column != QUAKE_PILLARS; column++) {
-			Sint32 riseFrame = column * 4 + 16;
+			Sint32 riseFrm = column * 4 + 16;
 
-			/* DEAD: never true, as the left side is 32 or more and riseFrame at
+			/* DEAD: never true, as the left side is 32 or more and riseFrm at
 			   most 24; the ROM keeps the test and its store. */
-			if((frame & 31) + 32 == riseFrame)
+			if((frm & 31) + 32 == riseFrm)
 				heights.column[column] += 32;
-			if(frame >= riseFrame &&
-				frame < riseFrame +
-						Quake_Timings[args->variant]
-									 [QUAKE_TIMING_RISE_FRAMES]) {
+			if(frm >= riseFrm &&
+				frm < riseFrm +
+						QuakeTimings[args->variant][QUAKE_TIMING_RISE_TICKS]) {
 				Sint32 height;
 				Sint32 top;
 
 				/* A pillar rises and sinks along a sine, once, twice or three
 				   times by variant. */
 				height = FIXEDtoINT(heights.column[column] *
-					sySin((frame - riseFrame) * (TRIG_TURN / 64)));
+					sySin((frm - riseFrm) * (TRIG_TURN / 64)));
 				if(height < 0)
 					height = -height;
 				top = QUAKE_GROUND_Y - height;
@@ -119,7 +118,7 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 					object = btObjectGetStub(args->tgts[member])->obj;
 					SET_VECTOR(point, object->x, object->y, object->z);
 					btEffectPosProjectPoint(point, &screen);
-					screen.x += xOffset;
+					screen.x += xOfs;
 					if(screen.x >=
 							column * QUAKE_PILLAR_WIDTH + QUAKE_PILLARS_LEFT &&
 						screen.x <= column * QUAKE_PILLAR_WIDTH +
@@ -148,9 +147,9 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 					POSE_DAMAGE, member, 5);
 			}
 		}
-		btCameraShake(Quake_Timings[args->variant][QUAKE_TIMING_SHAKE],
-			Quake_Timings[args->variant][QUAKE_TIMING_SHAKE]);
-		EFFECT_END_FRAME(battleEffectState);
+		btCameraShake(QuakeTimings[args->variant][QUAKE_TIMING_SHAKE],
+			QuakeTimings[args->variant][QUAKE_TIMING_SHAKE]);
+		EFFECT_END_TICK(battleEffectState);
 	}
 
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();

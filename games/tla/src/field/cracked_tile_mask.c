@@ -28,33 +28,33 @@ void   METATILE_PUSH_SLOT_ENTRY(void *entry, Sint32 priority);
    the height of the ground there, unless it is off screen. */
 void fdCrackedTileUpdate(void)
 {
-	METATILE_TARGET		  *table = &CrackedTiles;
+	METATILE_TARGET		  *tbl = &CrackedTiles;
 	METATILE_TARGET_ENTRY *entry;
 	ACTOR				  *leader;
 	MAP_STATE			  *map;
 	Sint32				   viewX, viewZ, viewY, tile;
 	Sint32				   screenX, height, z, screenY, depth;
 
-	if(table->cur == -1)
+	if(tbl->cur == -1)
 		return;
-	entry = &table->entries[table->cur];
+	entry = &tbl->entries[tbl->cur];
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	if((FIELD_METATILE(leader->x.fixed)) != entry->x ||
 		(FIELD_METATILE(leader->z.fixed)) != entry->z)
-		table->cur = -1;
+		tbl->cur = -1;
 	{
-		Sint16 current = table->cur;
+		Sint16 cur = tbl->cur;
 
-		if(current == -1)
+		if(cur == -1)
 			return;
 	}
-	if(table->shown == 0)
+	if(tbl->shown == 0)
 		return;
 	map = Ram_HeapSlots->mapGrid;
 	viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	viewY = map->origin[1];
-	tile = VramCacheEntries[table->tile].ofs >> 5;
+	tile = VramCacheEntries[tbl->tile].ofs >> 5;
 	screenX = FIELD_METATILE_ORIGIN(entry->x) - viewX;
 	height = fdMapGetTerrainHeight(0, FIELD_METATILE_ORIGIN(entry->x),
 				 FIELD_METATILE_ORIGIN(entry->z)) -
@@ -74,11 +74,11 @@ void fdCrackedTileUpdate(void)
 		return;
 	screenX &= OBJ_X_MASK;
 	screenY &= OBJ_Y_MASK;
-	table->oam[0] = 0;
-	table->oam[1] =
+	tbl->oam[0] = 0;
+	tbl->oam[1] =
 		screenY | OBJ_X(screenX) | OBJ_SIZE_16X32 | OBJ_MODE(OBJ_MODE_WINDOW);
-	table->oam[2] = tile | OBJ_PRIORITY(1);
-	METATILE_PUSH_SLOT_ENTRY(table->oam, depth);
+	tbl->oam[2] = tile | OBJ_PRIORITY(1);
+	METATILE_PUSH_SLOT_ENTRY(tbl->oam, depth);
 }
 
 #undef HOLE_MASK_WIDTH

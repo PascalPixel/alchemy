@@ -57,12 +57,12 @@ enum { EPILOGUE_FROM_MT_ALEPH_SUMMIT = 1 };
 /* The palette fade's three channels of one 16-colour palette. */
 #define PALETTE_CHANNELS (3 * PALETTE_COLORS)
 
-extern const Sint32 *FieldEffect_DurationScripts[];
+extern const Sint32 *FieldEffectDurationScripts[];
 
-extern Uint32 FieldEffect_ShortScript[];
+extern Uint32 FieldEffectShortScript[];
 
-extern Uint32 FieldEffect_MediumScript[];
-extern Uint32 FieldEffect_LongScript[];
+extern Uint32 FieldEffectMediumScript[];
+extern Uint32 FieldEffectLongScript[];
 
 #define EFFECT_SET_MODE	  fdActorSelectAnimation
 #define EFFECT_SET_SCRIPT fdActorStartScript
@@ -97,19 +97,19 @@ const CUE *scGetCues(void)
 
 /* Moves each of count colours one step of red, green and blue toward its target
    colour. */
-void scMtAlephSummitStepColsToward(Uint16 *colors, Uint16 *target, Sint32 count)
+void scMtAlephSummitStepColsToward(Uint16 *cols, Uint16 *tgt, Sint32 cnt)
 {
 	Sint32 i = 0;
 
-	if(count == 0)
+	if(cnt == 0)
 		return;
 	do {
-		Sint32 to_r = RGB_RED(*target);
-		Sint32 to_g = RGB_GREEN(*target);
-		Sint32 to_b = RGB_BLUE(*target);
-		Sint32 r = RGB_RED(*colors);
-		Sint32 g = RGB_GREEN(*colors);
-		Sint32 b = RGB_BLUE(*colors);
+		Sint32 to_r = RGB_RED(*tgt);
+		Sint32 to_g = RGB_GREEN(*tgt);
+		Sint32 to_b = RGB_BLUE(*tgt);
+		Sint32 r = RGB_RED(*cols);
+		Sint32 g = RGB_GREEN(*cols);
+		Sint32 b = RGB_BLUE(*cols);
 
 		if(r < to_r)
 			r++;
@@ -123,27 +123,27 @@ void scMtAlephSummitStepColsToward(Uint16 *colors, Uint16 *target, Sint32 count)
 			b++;
 		else if(b > to_b)
 			b--;
-		*colors = RGB(r, g, b);
+		*cols = RGB(r, g, b);
 		i++;
-		target++;
-		colors++;
-	} while(i != count);
+		tgt++;
+		cols++;
+	} while(i != cnt);
 }
 
 /* Adds delta to each of count colours' red, green and blue, kept within 0 to
    31. */
-void scMtAlephSummitShiftCols(Uint16 *colors, Sint32 count, Sint32 delta)
+void scMtAlephSummitShiftCols(Uint16 *cols, Sint32 cnt, Sint32 delta)
 {
 	Sint32 i;
 	Sint32 r, g, b;
 
 	i = 0;
-	if(count == 0)
+	if(cnt == 0)
 		return;
-	for(; i != count; i++) {
-		r = RGB_RED(*colors) + delta;
-		g = RGB_GREEN(*colors) + delta;
-		b = RGB_BLUE(*colors) + delta;
+	for(; i != cnt; i++) {
+		r = RGB_RED(*cols) + delta;
+		g = RGB_GREEN(*cols) + delta;
+		b = RGB_BLUE(*cols) + delta;
 		if(r > RGB_LEVEL_MAX)
 			r = RGB_LEVEL_MAX;
 		if(r < 0)
@@ -156,18 +156,18 @@ void scMtAlephSummitShiftCols(Uint16 *colors, Sint32 count, Sint32 delta)
 			b = RGB_LEVEL_MAX;
 		if(b < 0)
 			b = 0;
-		*colors++ = RGB(r, g, b);
+		*cols++ = RGB(r, g, b);
 	}
 }
 
 /* An event: background palette 4's colours 1 to 15 pulse up to two levels
-   brighter and darker than palette 6's, once every 64 frames. */
+   brighter and darker than palette 6's, once every 64 ticks. */
 void scMtAlephSummitPulseCols(void)
 {
 	Uint16 *src = (Uint16 *)&BG_PLTT_COLOR(6, 1);
 	Uint16 *dst = (Uint16 *)&BG_PLTT_COLOR(4, 1);
-	/* The pulse turns a 64th of a turn a frame. */
-	Sint32 delta = FIXEDtoINT(syMathSin(FrameCount * (TRIG_TURN / 32) / 2) * 2);
+	/* The pulse turns a 64th of a turn a tick. */
+	Sint32 delta = FIXEDtoINT(syMathSin(TickCount * (TRIG_TURN / 32) / 2) * 2);
 	Sint32 i;
 
 	for(i = 0; i != PALETTE_COLORS - 1; i++, src++, dst++) {
@@ -195,10 +195,10 @@ void scMtAlephSummitPulseCols(void)
 #include "shared/field_effect_duration_scripts.c"
 /* clang-format on */
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 SCENE_ENTRANCE SceneEntrances[] = {
@@ -227,18 +227,17 @@ CUE SceneCues[] = {
 
 /* The summit's scripts: the Golden Sun's formation and what follows it. */
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 /* Scatters count dust puffs in a ring of radius around Alex. */
-void scMtAlephSummitScatterDustRing(Sint32 radius, Uint32 count)
+void scMtAlephSummitScatterDustRing(Sint32 radius, Uint32 cnt)
 {
 	ACTOR		  *actor;
 	EFFECT_OPTIONS options;
 	VECTOR3		   dir;
 	Uint32		   i;
-	Sint32		   angle;
+	Sint32		   ang;
 
 	actor = fdActorGet(ACTOR_ALEX);
 	options.update = fdEffectAdvanceMotion;
@@ -247,10 +246,10 @@ void scMtAlephSummitScatterDustRing(Sint32 radius, Uint32 count)
 	options.pri = ((FIELD_SPR *)actor->spr)->pri;
 	i = 0;
 	do {
-		angle = i * (TRIG_TURN / (Sint32)count);
-		dir.x = syCos(angle) * radius / 256;
+		ang = i * (TRIG_TURN / (Sint32)cnt);
+		dir.x = syCos(ang) * radius / 256;
 		dir.y = 0;
-		dir.z = syMathSin(angle) * radius / 256;
+		dir.z = syMathSin(ang) * radius / 256;
 		dir.x += dir.x >> 1;
 		dir.x += syRandomBelow(toFIXED(3) / 4) - toFIXED(3) / 8;
 		dir.z += syRandomBelow(toFIXED(3) / 8) - toFIXED(3) / 16;
@@ -260,18 +259,17 @@ void scMtAlephSummitScatterDustRing(Sint32 radius, Uint32 count)
 				EFFECT_SCRIPT_MEDIUM,
 			&options);
 		i++;
-	} while(i <= count);
+	} while(i <= cnt);
 }
 
-void scMtAlephSummitStepColsToward(
-	Uint16 *colors, Uint16 *target, Sint32 count);
-void scMtAlephSummitShiftCols(Uint16 *colors, Sint32 count, Sint32 delta);
+void scMtAlephSummitStepColsToward(Uint16 *cols, Uint16 *tgt, Sint32 cnt);
+void scMtAlephSummitShiftCols(Uint16 *cols, Sint32 cnt, Sint32 delta);
 void scMtAlephSummitPulseCols(void);
 
 /* Alex's climb as the Golden Sun forms: he creeps up the mountain's side a
-   pixel every 30 frames for CREEP_STEPS steps, the camera drifting after him
-   from the third; the sky turns gold in SKY_GOLD_STEPS steps of four frames;
-   then he climbs two pixels every eight frames for CLIMB_STEPS steps, the
+   pixel every 30 ticks for CREEP_STEPS steps, the camera drifting after him
+   from the third; the sky turns gold in SKY_GOLD_STEPS steps of four ticks;
+   then he climbs two pixels every eight ticks for CLIMB_STEPS steps, the
    camera panning up to the summit at CLIMB_CAMERA_STEP and the screen fading
    out at CLIMB_FADE_STEP. */
 #define CREEP_STEPS				 10
@@ -284,8 +282,8 @@ void scMtAlephSummitPulseCols(void);
 #define CLIMB_FADE_STEP			 19
 
 /* Alex takes the power. While the summit shakes, background 2 scrolls eight
-   pixels every five frames for BG2_SCROLL_STEPS steps. Then, in POWER_STEPS
-   steps of four frames, Alex turns golden at POWER_ALEX_GOLDEN and the column
+   pixels every five ticks for BG2_SCROLL_STEPS steps. Then, in POWER_STEPS
+   steps of four ticks, Alex turns golden at POWER_ALEX_GOLDEN and the column
    of light (background 1) blends in a level every two steps, up to 8 by
    POWER_BLEND_PAUSE and on from POWER_BLEND_RESUME to full strength by
    POWER_BLEND_FULL; the summit (palette 4) turns to palette 6's gold from
@@ -305,7 +303,7 @@ void scMtAlephSummitPulseCols(void);
 /* The Wise One's blinks at each of its four sways as Alex gathers his power. */
 #define WISE_ONE_BLINKS 10
 
-/* The passes of the other entrances' hold on the summit, which waits no frame
+/* The passes of the other entrances' hold on the summit, which waits no tick
    between them. */
 #define SUMMIT_HOLD_PASSES 320
 
@@ -315,19 +313,19 @@ void scMtAlephSummitPulseCols(void);
 Sint32 scInit(void)
 {
 	PALETTE_FADE	*fade;
-	void			*buffer;
+	void			*buf;
 	Sint32			 mode;
 	Sint32			 i, j;
 	FIXED			 scale;
 	Sint32			 r, g, b, value;
 	Sint32			 c;
-	Uint16			*color, *out;
+	Uint16			*col, *out;
 	ACTOR			*actor;
 	volatile Uint32 *held;
 	HEAP_SLOTS		*heap;
 	MAP_STATE		*map;
 
-	buffer = syHeapAllocEWRAM(BG_PLTT_SIZE);
+	buf = syHeapAllocEWRAM(BG_PLTT_SIZE);
 	syWindowLoadGraphics();
 	mnWindowColApply(
 		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
@@ -349,7 +347,7 @@ Sint32 scInit(void)
 		REG_BG3CNT &= ~BGCNT_PRIORITY(3);
 		REG_BG3CNT |= BGCNT_PRIORITY(2);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdCameraMoveTo(256, CAMERA_KEEP, 318, 1);
 		fdCameraWaitForArrival();
 		fdCameraMoveTo(316, CAMERA_KEEP, 318, 1);
@@ -365,14 +363,14 @@ Sint32 scInit(void)
 		fdActorSetAnimationSpeedById(ACTOR_ALEX, 0);
 		/* DEAD: nothing reads the buffer in this stretch; the ROM keeps the
 		   copy. */
-		syWordsCopy(buffer, (void *)&BG_PLTT_COLOR(0, 4), 14);
+		syWordsCopy(buf, (void *)&BG_PLTT_COLOR(0, 4), 14);
 		/* The sky, background palette 0's colours 7 to 14, turns gold: red
 		   rises and blue falls to no less than 8. */
 		for(j = 0; j != SKY_GOLD_STEPS; j++) {
 			out = (Uint16 *)&BG_PLTT_COLOR(0, 7);
-			color = out;
+			col = out;
 			for(i = 0; i != 8; i++) {
-				c = *color;
+				c = *col;
 				r = RGB_RED(c);
 				g = RGB_GREEN((Uint16)c);
 				b = RGB_BLUE((Uint16)c);
@@ -391,7 +389,7 @@ Sint32 scInit(void)
 				if(b > RGB_LEVEL_MAX)
 					b = RGB_LEVEL_MAX;
 				*out = RGB(r, g, b);
-				color++;
+				col++;
 				out++;
 			}
 			syWait(4);
@@ -422,7 +420,7 @@ Sint32 scInit(void)
 	} else if(mode == ENTRANCE_ALEX_TAKES_THE_POWER) {
 		heap = Ram_HeapSlots;
 		fade = heap->palFade;
-		syWordsCopy(buffer, (void *)&BG_PLTT_COLOR(0, 0),
+		syWordsCopy(buf, (void *)&BG_PLTT_COLOR(0, 0),
 			PALETTE_FADE_BG_COLORS * sizeof(Uint16));
 		fdCameraMoveTo(256, CAMERA_KEEP, 144, 0);
 		fdCameraSetSpeed(1);
@@ -445,7 +443,7 @@ Sint32 scInit(void)
 		((FIELD_STATE *)heap->fieldState)->transition = 0;
 		REG_DISPCNT &= ~DISPCNT_BG1_ON;
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdMapGridSetShake(4, 4, 1);
 		for(i = 0; i != BG2_SCROLL_STEPS; i++) {
 			BgScrollWork[2].y += 8;
@@ -466,7 +464,7 @@ Sint32 scInit(void)
 			}
 			if(j == POWER_TREMOR) {
 				fdScriptPlaySnd(SE_TREMOR);
-				syWordsCopyEntry(buffer, (void *)&BG_PLTT_COLOR(0, 0),
+				syWordsCopyEntry(buf, (void *)&BG_PLTT_COLOR(0, 0),
 					PALETTE_FADE_BG_COLORS * sizeof(Uint16));
 				syWordsCopyEntry(&fade->tgt[4 * PALETTE_CHANNELS],
 					&fade->tgt[6 * PALETTE_CHANNELS],
@@ -499,12 +497,12 @@ Sint32 scInit(void)
 			IO_WRITE_HALFWORD);
 		fdScriptPlaySnd(SE_POWER_UP);
 		syWait(1);
-		sySetFrameEvent(scMtAlephSummitPulseCols, EVENT_PASS_FRAME);
+		sySetTickEvent(scMtAlephSummitPulseCols, EVENT_PASS_TICK);
 		/* The background walks back to the saved colours, a level a step, as
 		   many steps as a channel has levels. */
 		for(j = 0; j != RGB_LEVEL_MAX + 1; j++) {
 			scMtAlephSummitStepColsToward(
-				(Uint16 *)&BG_PLTT_COLOR(0, 0), buffer, PALETTE_FADE_BG_COLORS);
+				(Uint16 *)&BG_PLTT_COLOR(0, 0), buf, PALETTE_FADE_BG_COLORS);
 			syWait(4);
 		}
 		scFieldActorSetSprPriority(ACTOR_ALEX, 1);
@@ -799,7 +797,7 @@ Sint32 scInit(void)
 	} else {
 		FieldStateWork->transition = 0;
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		for(j = 0; j != SUMMIT_HOLD_PASSES; j++) {
 			held = &PerWork.data;
 			if(*held & KEY_B)
@@ -813,7 +811,7 @@ Sint32 scInit(void)
 		}
 		fdScriptSetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_OPENING);
 	}
-	syHeapRelease(buffer);
+	syHeapRelease(buf);
 	return 0;
 }
 

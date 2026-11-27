@@ -167,15 +167,15 @@ extern const AREA_NAME_RULE Area_NameRules[];
 
 extern const Sint16 Scene_ReturnRules[];
 
-extern const Sint32 Scene_BattleBackgroundRules[];
+extern const Sint32 SceneBattleBackgroundRules[];
 
 /* The battle music table: each song as ENCOUNTER_BATTLE_MUSIC(song), followed
    by the encounters that use it as ENCOUNTER_KEY(zone, slot), ended by 0. */
-extern const Sint16 Encounter_BattleMusic[];
+extern const Sint16 EncounterBattleMusic[];
 
 extern Sint16 SceneItems[];
 
-extern const Uint8 Field_ExamineCueMessageOffsets[];
+extern const Uint8 FieldExamineCueMessageOffsets[];
 
 /* The chest sprite's animations, for the targets and treasure spot parts. */
 enum {

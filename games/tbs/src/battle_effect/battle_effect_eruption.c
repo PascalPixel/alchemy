@@ -25,11 +25,11 @@ void btEffectRunBlast(BATTLE_EFFECT_PARM *args)
 	btEffectRunEruption(args, ERUPTION_BLAST);
 }
 
-/* The columns of a Eruption_Counts row. */
+/* The columns of a EruptionCounts row. */
 enum {
 	ERUPTION_FIELD_MOTES, /* motes thrown */
 	ERUPTION_FIELD_PUFFS, /* puffs of smoke thrown */
-	ERUPTION_FIELD_FRAMES /* frames in the whole effect */
+	ERUPTION_FIELD_TICKS  /* ticks in the whole effect */
 };
 
 /* The mote pictures in the sprite sheet: two sets, MOTE_SET_BYTES apart. */
@@ -38,9 +38,9 @@ enum {
 /* The puffs of smoke given a start; the variant's ERUPTION_FIELD_PUFFS of them
    are thrown. */
 #define ERUPTION_PUFFS		  32
-/* A puff shows each of its seven pictures (Eruption_PuffPictures) for three
-   frames, then is gone. */
-#define ERUPTION_PUFF_FRAMES  21
+/* A puff shows each of its seven pictures (EruptionPuffPictures) for three
+   ticks, then is gone. */
+#define ERUPTION_PUFF_TICKS	  21
 /* A mote is drawn ERUPTION_MOTE_LARGEST pixels wide (and twice as tall) at
    MOTE_DEPTH_NEAR or nearer, a size smaller for every MOTE_DEPTH_STEP
    farther. */
@@ -56,7 +56,7 @@ void btEffectRunEruption(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	BLITTER_PAIR draw;
 	Sint32		 variant;
 	SCREEN_POINT screen;
-	Sint32		 frame;
+	Sint32		 frm;
 	Sint32		 i;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -114,18 +114,17 @@ void btEffectRunEruption(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-	for(frame = 0; frame != Eruption_Counts[variant][ERUPTION_FIELD_FRAMES];
-		frame++) {
+	for(frm = 0; frm != EruptionCounts[variant][ERUPTION_FIELD_TICKS]; frm++) {
 		BATTLE_CAMERA *camera = BattleCameraWork;
 
 		EFFECT_VIEW_FROM_CAMERA(camera);
-		if(frame == 2)
+		if(frm == 2)
 			sySndPlayStub(SE_CLATTER);
-		if(frame == Eruption_Counts[variant][ERUPTION_FIELD_FRAMES] - 48)
+		if(frm == EruptionCounts[variant][ERUPTION_FIELD_TICKS] - 48)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
 		/* The motes fall. */
-		for(i = 0; i != Eruption_Counts[variant][ERUPTION_FIELD_MOTES]; i++) {
+		for(i = 0; i != EruptionCounts[variant][ERUPTION_FIELD_MOTES]; i++) {
 			PARTICLE *mote = &PARTICLES[i];
 
 			if(mote->y >= 0) {
@@ -139,7 +138,7 @@ void btEffectRunEruption(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					(screen.depth - MOTE_DEPTH_NEAR) / MOTE_DEPTH_STEP;
 				draw[0](canvas,
 					state->sheet +
-						(BattleEffect_MotePictures[size - 1] +
+						(BattleEffectMotePictures[size - 1] +
 							(i & 1) * MOTE_SET_BYTES) +
 						ERUPTION_MOTE_PICTURES,
 					screen.x - size / 2, screen.y - size, size, size * 2);
@@ -149,37 +148,37 @@ void btEffectRunEruption(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		}
 
 		/* The puffs. */
-		if(frame > 2) {
-			for(i = 0; i != Eruption_Counts[variant][ERUPTION_FIELD_PUFFS];
+		if(frm > 2) {
+			for(i = 0; i != EruptionCounts[variant][ERUPTION_FIELD_PUFFS];
 				i++) {
 				PARTICLE *puff = &state->particles[i];
 
-				if(i < frame && puff->y >= 0) {
+				if(i < frm && puff->y >= 0) {
 					btProjectionPoint(puff, &screen);
 					screen.x >>= 1;
 					screen.x += state->args->side * 32 - 16;
 					if(puff->variant >= 0 &&
-						puff->variant < ERUPTION_PUFF_FRAMES) {
+						puff->variant < ERUPTION_PUFF_TICKS) {
 						Sint32 picture = puff->variant / 3;
 						Uint32 width;
 
 						/* UB: width is assigned in one argument and read in
 						   another. */
 #if FIX_UNSEQUENCED_SIDE_EFFECT
-						width = Eruption_PuffSizes[picture];
+						width = EruptionPuffSizes[picture];
 						draw[0](canvas,
-							state->sheet + Eruption_PuffPictures[picture],
+							state->sheet + EruptionPuffPictures[picture],
 							screen.x - (width >> 1), screen.y - (width >> 1),
 							width, width);
 #else
 						draw[0](canvas,
-							state->sheet + Eruption_PuffPictures[picture],
+							state->sheet + EruptionPuffPictures[picture],
 							screen.x -
-								((width = Eruption_PuffSizes[picture]) >> 1),
+								((width = EruptionPuffSizes[picture]) >> 1),
 							screen.y - (width >> 1), width, width);
 #endif
 					}
-					if(puff->variant < ERUPTION_PUFF_FRAMES)
+					if(puff->variant < ERUPTION_PUFF_TICKS)
 						puff->variant++;
 					btParticleAdvanceWithGravity3D(
 						puff, PARTICLE_DAMPING_NONE, -toFIXED(1) / 8);
@@ -187,10 +186,10 @@ void btEffectRunEruption(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		}
 
-		/* The hits, one target a frame; Blast's targets also recoil. */
+		/* The hits, one target a tick; Blast's targets also recoil. */
 		if(mode == ERUPTION_BLAST) {
 			EFFECT_FOR_EACH_TARGET(i, state->args) {
-				if(frame == i + 6) {
+				if(frm == i + 6) {
 					btEffectTintBattler(state->args->tgts[i],
 						SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 10);
 					btMotionApplyKnockbackStub(
@@ -199,39 +198,39 @@ void btEffectRunEruption(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		} else {
 			EFFECT_FOR_EACH_TARGET(i, state->args) {
-				if(frame == i + 6)
+				if(frm == i + 6)
 					btEffectTintBattler(state->args->tgts[i],
 						SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 10);
 			}
 		}
-		if(frame == 2)
+		if(frm == 2)
 			state->shakeFrm = 6;
 		btCameraShake(16, 16);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/* Creates the `count` sprites a summon's figure is drawn from, all of sprite
-   `spriteId`, into state->sprs: sprite n plays animation n, its piece of the
-   figure, at BG priority `priority`. */
-void btEffectCreateSprs(Sint32 count, Sint32 spriteId, Uint32 priority)
+/* Creates the `cnt` sprites a summon's figure is drawn from, all of sprite
+   `sprId`, into state->sprs: sprite n plays animation n, its piece of the
+   figure, at BG priority `pri`. */
+void btEffectCreateSprs(Sint32 cnt, Sint32 sprId, Uint32 pri)
 {
 	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	Sint32				 piece = 0;
 
-	if(count == 0) {
+	if(cnt == 0) {
 		return;
 	}
-	for(; piece != count; piece++) {
-		SPR *sprite = fdSprCreateStub(spriteId);
+	for(; piece != cnt; piece++) {
+		SPR *spr = fdSprCreateStub(sprId);
 
-		state->sprs[piece] = sprite;
-		if(sprite != 0) {
-			sprite->flg = 0;
-			fdSprStartAnimationStub(sprite, piece);
-			state->sprs[piece]->image.pri = priority;
+		state->sprs[piece] = spr;
+		if(spr != 0) {
+			spr->flg = 0;
+			fdSprStartAnimationStub(spr, piece);
+			state->sprs[piece]->image.pri = pri;
 		}
 	}
 }
@@ -244,5 +243,5 @@ void btEffectNoOperation(void)
 
 #undef ERUPTION_MOTE_PICTURES
 #undef ERUPTION_PUFFS
-#undef ERUPTION_PUFF_FRAMES
+#undef ERUPTION_PUFF_TICKS
 #undef ERUPTION_MOTE_LARGEST

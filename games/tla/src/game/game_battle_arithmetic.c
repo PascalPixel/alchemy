@@ -7,33 +7,33 @@ Sint32 gmBattleGetElementMultiplier(Sint32 difference, Sint32 halve)
 {
 	Sint32 minimumDifference;
 	Sint32 maximumDifference;
-	Sint32 pointCount;
-	Sint32 pointIndex;
+	Sint32 pointCnt;
+	Sint32 pointIdx;
 	Sint32 multiplier;
 	Sint32 differenceSpan;
 	Sint32 multiplierSpan;
 
-	maximumDifference = Element_PowerResistCurve[0][0];
-	pointCount = ARRAY_COUNT(Element_PowerResistCurve);
-	minimumDifference = Element_PowerResistCurve[pointCount - 1][0];
+	maximumDifference = ElementPowerResistCurve[0][0];
+	pointCnt = ARRAY_COUNT(ElementPowerResistCurve);
+	minimumDifference = ElementPowerResistCurve[pointCnt - 1][0];
 	if(difference > maximumDifference)
 		difference = maximumDifference;
 	else if(difference < minimumDifference)
 		difference = minimumDifference;
-	for(pointIndex = 0; pointIndex < pointCount; pointIndex++) {
-		if(difference > Element_PowerResistCurve[pointIndex][0])
+	for(pointIdx = 0; pointIdx < pointCnt; pointIdx++) {
+		if(difference > ElementPowerResistCurve[pointIdx][0])
 			break;
 	}
-	if(pointIndex == pointCount) {
-		multiplier = Element_PowerResistCurve[pointIndex - 1][1];
+	if(pointIdx == pointCnt) {
+		multiplier = ElementPowerResistCurve[pointIdx - 1][1];
 	} else {
-		differenceSpan = Element_PowerResistCurve[pointIndex - 1][0] -
-			Element_PowerResistCurve[pointIndex][0];
-		multiplierSpan = Element_PowerResistCurve[pointIndex - 1][1] -
-			Element_PowerResistCurve[pointIndex][1];
-		multiplier = (difference - Element_PowerResistCurve[pointIndex][0]) *
+		differenceSpan = ElementPowerResistCurve[pointIdx - 1][0] -
+			ElementPowerResistCurve[pointIdx][0];
+		multiplierSpan = ElementPowerResistCurve[pointIdx - 1][1] -
+			ElementPowerResistCurve[pointIdx][1];
+		multiplier = (difference - ElementPowerResistCurve[pointIdx][0]) *
 				multiplierSpan / differenceSpan +
-			Element_PowerResistCurve[pointIndex][1];
+			ElementPowerResistCurve[pointIdx][1];
 	}
 	switch(halve) {
 	case 0:
@@ -131,18 +131,17 @@ Sint32 gmEquipmentGetUnleashRateBonus(UNIT *unit)
 {
 	Sint32				   chanceBonus;
 	Sint32				   inventorySlot;
-	Sint32				   effectIndex;
+	Sint32				   effectIdx;
 	const ITEM_DEFINITION *item;
 
 	chanceBonus = 0;
 	for(inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
 		if(unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
 			item = gmItemGetDirect(unit->inventory[inventorySlot]);
-			for(effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS;
-				effectIndex++) {
-				if(item->effs[effectIndex].kind ==
+			for(effectIdx = 0; effectIdx < EQUIP_EFFECT_SLOTS; effectIdx++) {
+				if(item->effs[effectIdx].kind ==
 					EQUIP_EFFECT_ADD_UNLEASH_CHANCE)
-					chanceBonus += item->effs[effectIndex].amount;
+					chanceBonus += item->effs[effectIdx].amount;
 			}
 		}
 	}
@@ -237,25 +236,25 @@ Sint32 gmBattleGetEffectBaseSuccessRate(Sint32 effectId)
 	return -fixedChance;
 }
 
-/* Returns 1 when enemy `enemyId` is one of Enemy_DragonIds. */
+/* Returns 1 when enemy `enemyId` is one of EnemyDragonIds. */
 Bool gmEnemyIsDragon(Sint32 enemyId)
 {
 	Uint32 i;
 
 	for(i = 0; i < DRAGON_ENEMY_COUNT; i++) {
-		if(enemyId == Enemy_DragonIds[i])
+		if(enemyId == EnemyDragonIds[i])
 			return TRUE;
 	}
 	return FALSE;
 }
 
-/* Returns 1 when enemy `enemyId` is one of Enemy_SeaCreatureIds. */
+/* Returns 1 when enemy `enemyId` is one of EnemySeaCreatureIds. */
 Bool gmEnemyIsSeaCreature(Sint32 enemyId)
 {
 	Uint32 i;
 
 	for(i = 0; i < SEA_CREATURE_ENEMY_COUNT; i++) {
-		if(enemyId == Enemy_SeaCreatureIds[i])
+		if(enemyId == EnemySeaCreatureIds[i])
 			return TRUE;
 	}
 	return FALSE;
@@ -264,20 +263,20 @@ Bool gmEnemyIsSeaCreature(Sint32 enemyId)
 /* Returns 1 when the unit is weak to effect `effectId`: one of three listed for
    its enemy kind (ENEMY_DEFINITION.weakEffs) or class
    (CLASS_DEFINITION.weakEffs). Called by gmBattleRollEffectSuccess. */
-Bool gmBattleAbilityIsWeakToEffect(const UNIT *target, Sint32 effectId)
+Bool gmBattleAbilityIsWeakToEffect(const UNIT *tgt, Sint32 effectId)
 {
 	const Uint8 *entries;
 	Sint32		 i;
 
-	if(target->classId == CLASS_NONE) {
-		entries = gmEnemyGetDefinition(target->enemyId)->weakEffs;
+	if(tgt->classId == CLASS_NONE) {
+		entries = gmEnemyGetDefinition(tgt->enemyId)->weakEffs;
 		for(i = 0; i < 3; i++) {
 			if(*entries == effectId)
 				return TRUE;
 			entries++;
 		}
 	} else {
-		entries = gmClassGetDefinition(target->classId)->weakEffs;
+		entries = gmClassGetDefinition(tgt->classId)->weakEffs;
 		for(i = 0; i < 3; i++) {
 			if(*entries++ == effectId)
 				return TRUE;
@@ -303,7 +302,7 @@ Bool gmBattleIsReviveEffect(Sint32 effectId)
 /* The points of chance an effect gains against a target weak to it. */
 #define WEAKNESS_BONUS 25
 
-/* Rolls whether effect `effectId` takes hold on `target`: it fails at once when
+/* Rolls whether effect `effectId` takes hold on `tgt`: it fails at once when
    there is nothing for it to do. The chance is the base rate, plus three times
    the caster's lead over the target in `element`'s level less half the target's
    luck (so every two points of luck take off three), plus WEAKNESS_BONUS
@@ -314,10 +313,10 @@ Bool gmBattleIsReviveEffect(Sint32 effectId)
    and the Trident take hold only on a dragon or a sea creature; a target with
    LUCK_IMMUNITY Luck or more shrugs off poison, haunting, instant death, the
    curse, Leave One HP, Gasp and Gale, and a character Gale too. */
-Sint32 gmBattleRollEffectSuccess(Sint32 caster, Sint32 target, Sint32 element,
+Sint32 gmBattleRollEffectSuccess(Sint32 caster, Sint32 tgt, Sint32 element,
 	Sint32 effectId, Sint32 successScale)
 {
-	UNIT  *unit = syUnitGet(target);
+	UNIT  *unit = syUnitGet(tgt);
 	Sint32 attempts = 1;
 	Sint32 score;
 	Sint32 attempt;
@@ -401,7 +400,7 @@ restore_checked:
 	score = gmBattleGetEffectBaseSuccessRate(effectId);
 	if(score > 0) {
 		Sint32 difference = gmUnitGetElementLevel(caster, element) -
-			gmUnitGetElementLevel(target, element) - (*luck >> 1);
+			gmUnitGetElementLevel(tgt, element) - (*luck >> 1);
 		score += difference * 3;
 		if(gmBattleAbilityIsWeakToEffect(unit, effectId) != 0) {
 			score += WEAKNESS_BONUS;

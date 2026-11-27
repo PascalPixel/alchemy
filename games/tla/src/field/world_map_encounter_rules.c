@@ -64,7 +64,7 @@ typedef enum WORLD_MAP_ENCOUNTER_ZONE {
    environment, flag (-1 for always), zone (a row of EncounterZones)}, ended by
    region -1. */
 /* clang-format off */
-const WORLD_MAP_ENCOUNTER_RULE WorldMap_EncounterRules[] = {
+const WORLD_MAP_ENCOUNTER_RULE WorldMapEncounterRules[] = {
 	{WORLD_MAP_REGION_DAILA, BATTLE_ENVIRONMENT_BEACH, -1, ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND},
 	{WORLD_MAP_REGION_DAILA, BATTLE_ENVIRONMENT_SHALLOWS, -1, ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND},
 	{WORLD_MAP_REGION_DAILA, BATTLE_ENVIRONMENT_GRASSLAND, -1, ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND},
@@ -115,7 +115,7 @@ const WORLD_MAP_ENCOUNTER_RULE WorldMap_EncounterRules[] = {
 };
 
 /* The same aboard the ship (LEADER_MOVEMENT_SHIP). */
-const WORLD_MAP_ENCOUNTER_RULE WorldMap_ShipEncounterRules[] = {
+const WORLD_MAP_ENCOUNTER_RULE WorldMapShipEncounterRules[] = {
 	{WORLD_MAP_REGION_EASTERN_SEA, BATTLE_ENVIRONMENT_SEA, -1, ENCOUNTER_ZONE_WORLD_MAP_EASTERN_SEA},
 	{WORLD_MAP_REGION_WESTERN_SEA, BATTLE_ENVIRONMENT_SEA, -1, ENCOUNTER_ZONE_WORLD_MAP_WESTERN_SEA},
 	{WORLD_MAP_REGION_SEA_OF_TIME, BATTLE_ENVIRONMENT_SEA, -1, ENCOUNTER_ZONE_WORLD_MAP_EASTERN_SEA},
@@ -123,8 +123,8 @@ const WORLD_MAP_ENCOUNTER_RULE WorldMap_ShipEncounterRules[] = {
 };
 
 /* The encounter of each Djinni battle (fdEncounterGetDjinnFormation): {zone, */
-/* slot}, by Djinni number, as The Broken Seal's Encounter_DjinnBattles. */
-const Uint16 Encounter_DjinnBattles[][2] = {
+/* slot}, by Djinni number, as The Broken Seal's EncounterDjinnBattles. */
+const Uint16 EncounterDjinnBattles[][2] = {
 	[DJINNI_FLINT] = {ENCOUNTER_ZONE_VENUS_DJINN, 1},
 	[DJINNI_GRANITE] = {ENCOUNTER_ZONE_VENUS_DJINN, 2},
 	[DJINNI_QUARTZ] = {ENCOUNTER_ZONE_VENUS_DJINN, 3},

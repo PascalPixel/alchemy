@@ -49,7 +49,7 @@ typedef struct BOW_MOTION {
 	FIXED  x; /* 16.16 fixed-point pixels */
 	FIXED  y;
 	FIXED  z;
-	FIXED  velX; /* 16.16 fixed-point pixels a frame */
+	FIXED  velX; /* 16.16 fixed-point pixels a tick */
 	FIXED  velY;
 	FIXED  velZ;
 	Sint32 delay;
@@ -66,7 +66,7 @@ typedef struct BOW_MOTION {
 #define BOW_TILE_BYTES (6 * 32 * 32)
 
 /* BOW_STATE.frm while the bow holds its pose and is not drawing. */
-#define BOW_FRAME_IDLE 999
+#define BOW_TICK_IDLE 999
 
 /* The Arrow's state (fdPsynergyArrow, in heap slot */
 /* HEAP_SLOT_BATTLE_EFFECT): its 32 sparks, the arrow and the bow with their
@@ -158,8 +158,8 @@ extern const Uint8 FieldEffect_ArcSparkTiles[];
 
 void fdActorWaitForTrackEndStub(struct ACTOR *actor);
 
-extern const Sint32 Arrow_WobbleAngles[8];
-extern const Sint32 Arrow_WobbleFades[4];
+extern const Sint32 ArrowWobbleAngles[8];
+extern const Sint32 ArrowWobbleFades[4];
 
 /* Three 8 by 8 glints the Arrow draws into its canvas, a byte a pixel
    (arrow_glint.s). */
@@ -170,6 +170,6 @@ extern const Uint8 Arrow_GlintPixels[];
 
 /* The tile offsets of those metatiles from the caster, signed x, z pairs. */
 extern const Sint8
-	FieldPsynergy_NearbyMetatileOffsets[FIELD_PSYNERGY_NEARBY_METATILES * 2];
+	FieldPsynergyNearbyMetatileOffsets[FIELD_PSYNERGY_NEARBY_METATILES * 2];
 
 #endif

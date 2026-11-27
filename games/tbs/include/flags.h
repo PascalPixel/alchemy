@@ -145,7 +145,7 @@
    the colosseum's escorts as they swap Mia in for Jenna. */
 #define FLAG_DEBUG_BATTLE_KEYS		   0x16d
 /* The highest of these that is set picks the tint a field Psynergy fades
-   toward, FieldPsynergy_CastColors[n], in place of the frame counter's pick
+   toward, FieldPsynergyCastColors[n], in place of the tick counter's pick
    (fdPsynergyFadeToCastCol). */
 #define FLAG_PSYNERGY_TINT(n)		   (0x148 + (n))
 /* Holds the field's palette blend still (fdPaletteFadeUpdate), while a menu is
@@ -188,7 +188,7 @@
 /* Set when the cleared game's menu goes to the Battle Arena: there Psynergy has
    no effect and the Pause menu offers only Change settings. */
 #define FLAG_IN_BATTLE_ARENA		   0x17e
-/* With it set, holding B on the field walks the leader at 4 pixels a frame
+/* With it set, holding B on the field walks the leader at 4 pixels a tick
    (fdActorUpdatePlayerCtrl). Nothing in the game sets it. */
 #define FLAG_FAST_WALK				   0x17f
 /* The areas the party has visited, one flag for each, set by gmArrive as the

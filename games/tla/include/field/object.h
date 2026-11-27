@@ -29,8 +29,8 @@ typedef enum CYCLONE_METATILE_KIND {
 /* The actors' sprites: their depth and priority, a silhouette, a sprite id and
    graphics copied from another actor. */
 void fdActorSetTargetPosFromMagnitudeAng(
-	struct ACTOR *actor, Sint32 magnitude, Sint32 angle);
-void fdActorSetSprPriorityDirectStub(struct ACTOR *actor, Sint32 priority);
+	struct ACTOR *actor, Sint32 magnitude, Sint32 ang);
+void		  fdActorSetSprPriorityDirectStub(struct ACTOR *actor, Sint32 pri);
 struct ACTOR *fdActorCreateSilhouette(
 	Sint32 x, Sint32 y, Sint32 z, Sint32 type);
 
@@ -41,24 +41,24 @@ struct ACTOR *fdActorCreateSilhouette(
 
 /* The facing tables: the picture each heading draws, by how many pictures a
    sprite animation has for its facings. */
-extern const Uint8	AnimationFacing_OnePicture[16];
-extern const Uint8	AnimationFacing_FrontBackSwapped[8];
-extern const Uint8	AnimationFacing_FrontBack[8];
-extern const Uint8	AnimationFacing_ThreePictures[16];
-extern const Uint8	AnimationFacing_FivePictures[64];
-extern const Uint8	AnimationFacing_EightPictures[8];
-extern const Sint32 ActorSprite_FullScale[2];
+extern const Uint8	AnimationFacingOnePicture[16];
+extern const Uint8	AnimationFacingFrontBackSwapped[8];
+extern const Uint8	AnimationFacingFrontBack[8];
+extern const Uint8	AnimationFacingThreePictures[16];
+extern const Uint8	AnimationFacingFivePictures[64];
+extern const Uint8	AnimationFacingEightPictures[8];
+extern const Sint32 ActorSpriteFullScale[2];
 
 /* The actors' own scripts: launched, leaving footprints, ripples, sand grains,
    a wake and a splash. */
-extern const Sint32 Actor_LaunchScript[];
-extern const Sint32 Actor_FootprintScript[];
-extern const Sint32 Actor_RippleScript[];
-extern const Sint32 Sand_GrainScript[];
-extern const Sint32 Actor_WakeScript[];
-extern const Sint32 Actor_SplashScript[];
+extern const Sint32 ActorLaunchScript[];
+extern const Sint32 ActorFootprintScript[];
+extern const Sint32 ActorRippleScript[];
+extern const Sint32 SandGrainScript[];
+extern const Sint32 ActorWakeScript[];
+extern const Sint32 ActorSplashScript[];
 
-extern const ACTOR_PLACE Field_DefaultPlacements[];
+extern const ACTOR_PLACE FieldDefaultPlacements[];
 
 /* The arrival fdEntrancePlayArrival played, for the way the last scene was
    left. */
@@ -79,14 +79,14 @@ typedef enum ROPE_SLOT_STATE {
 	ROPE_THROWN	 /* thrown or laid tied from post to post */
 } ROPE_SLOT_STATE;
 
-Sint32 fdRopeFindById(Sint32 id, Sint32 *value, Sint32 *index);
-void fdRopeSwingBetween(Sint32 index, Sint32 fromId, Sint32 toId, FIXED height);
-Bool fdRopeIsLeaderAtEnd(Sint32 firstId, Sint32 secondId);
-Sint32 fdRopeLayTied(Sint32 index, Sint32 x1, Sint32 y1, Sint32 z1, Sint32 x2,
+Sint32 fdRopeFindById(Sint32 id, Sint32 *value, Sint32 *idx);
+void   fdRopeSwingBetween(Sint32 idx, Sint32 fromId, Sint32 toId, FIXED height);
+Bool   fdRopeIsLeaderAtEnd(Sint32 firstId, Sint32 secondId);
+Sint32 fdRopeLayTied(Sint32 idx, Sint32 x1, Sint32 y1, Sint32 z1, Sint32 x2,
 	Sint32 y2, Sint32 z2);
-Sint32 fdRopeLayCoil(Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
+Sint32 fdRopeLayCoil(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32 toY, Sint32 toZ);
-Sint32 fdRopeLayBowed(Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
+Sint32 fdRopeLayBowed(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32 toY, Sint32 toZ, FIXED height);
 void   fdRopeDraw(void);
 void   fdRopeUpdate(void);
@@ -94,13 +94,13 @@ void   fdRopeUpdate(void);
 /* The tightropes the party walks across, laid between two points or two posts
    as the ropes are. */
 void fdTightropeWobbleBetween(
-	Sint32 index, Sint32 fromId, Sint32 toId, FIXED height);
-Sint32 fdTightropeLay(Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
+	Sint32 idx, Sint32 fromId, Sint32 toId, FIXED height);
+Sint32 fdTightropeLay(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32 toY, Sint32 toZ);
-Sint32 fdTightropeLayBowed(Sint32 index, Sint32 x, Sint32 y, Sint32 z,
-	Sint32 toX, Sint32 toY, Sint32 toZ, FIXED height);
-Sint32 fdTightropeLayCoil(Sint32 index, Sint32 x, Sint32 y, Sint32 z,
-	Sint32 toX, Sint32 toY, Sint32 toZ);
+Sint32 fdTightropeLayBowed(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
+	Sint32 toY, Sint32 toZ, FIXED height);
+Sint32 fdTightropeLayCoil(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
+	Sint32 toY, Sint32 toZ);
 Sint32 fdTightropeRecoil(Sint32 slot, Sint32 x1, Sint32 y1, Sint32 z1,
 	Sint32 x2, Sint32 y2, Sint32 z2, Sint32 wave);
 void   fdTightropeDraw(void);
@@ -127,7 +127,7 @@ void		  fdEffectAdvanceAngWithRamp(struct ACTOR *actor);
 void		  fdEffectUpdateMarsSpark(struct FIELD_PARTICLE *effect);
 void		  fdItemDispEmitSparkles(struct ACTOR *emitter);
 
-/* The weather and the ground's particles, each frame. */
+/* The weather and the ground's particles, each tick. */
 void fdGroundParticlesUpdate(void);
 void fdMotesUpdate(void);
 void fdWeatherUpdateRain(void);
@@ -141,11 +141,11 @@ Sint32 fdPaletteFadeClampShiftedComponent(Sint32 value);
 
 /* The World Map's graphics, its fixed camera and the yaw its camera leans to
    for each state of the direction pad. */
-extern const Uint32 WorldMap_GraphicsResources[4][9];
-extern const FIXED	Camera_FixedViewMatrix[12];
-extern const Sint32 WorldMap_KeyYaws[16];
+extern const Uint32 WorldMapGraphicsResources[4][9];
+extern const FIXED	CameraFixedViewMatrix[12];
+extern const Sint32 WorldMapKeyYaws[16];
 
-/* WorldMap_KeyHeadings' entry when no direction is held, or only an opposite
+/* WorldMapKeyHeadings' entry when no direction is held, or only an opposite
    pair: no heading, since every real one is a multiple of an eighth turn. */
 #define WORLD_MAP_KEY_HEADING_NONE 65535
 

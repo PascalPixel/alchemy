@@ -15,7 +15,7 @@ struct FIELD_PARTICLE;
 typedef void (*EFFECT_CALLBACK)(struct FIELD_PARTICLE *);
 
 /* A particle a Psynergy effect moves and draws: its sprite, its position and
-   target, its speed, scale and heading, and its per-frame callback. */
+   target, its speed, scale and heading, and its per-tick callback. */
 typedef struct FIELD_PARTICLE {
 	void  *spr;		 /* the sprite it draws (SPR), released with it */
 	FIXED  x;		 /* 16.16 fixed-point pixels */
@@ -24,26 +24,26 @@ typedef struct FIELD_PARTICLE {
 	FIXED  tgtZ;	 /* 16.16 fixed-point pixels; EFFECT_NO_TARGET at rest */
 	FIXED  originX;	 /* 16.16 fixed-point pixels */
 	FIXED  originZ;	 /* 16.16 fixed-point pixels */
-	FIXED  speed;	 /* 16.16 fixed-point pixels per frame */
-	FIXED  speedMax; /* 16.16 fixed-point pixels per frame */
-	FIXED  acceleration;  /* 16.16 fixed-point pixels per frame, each frame */
+	FIXED  speed;	 /* 16.16 fixed-point pixels per tick */
+	FIXED  speedMax; /* 16.16 fixed-point pixels per tick */
+	FIXED  acceleration;  /* 16.16 fixed-point pixels per tick, each tick */
 	FIXED  scaleX;		  /* 16.16 fixed point, toFIXED(1) full size */
 	FIXED  scaleY;		  /* 16.16 fixed point, toFIXED(1) full size */
 	Uint16 heading;		  /* 1/65536 turns */
-	Sint16 turnStepMax;	  /* 1/65536 turns a frame */
-	EFFECT_CALLBACK func; /* run each frame once funcDelay is 0 */
-	Uint16			age;  /* frames */
-	Sint16			funcDelay;	 /* frames */
+	Sint16 turnStepMax;	  /* 1/65536 turns a tick */
+	EFFECT_CALLBACK func; /* run each tick once funcDelay is 0 */
+	Uint16			age;  /* ticks */
+	Sint16			funcDelay;	 /* ticks */
 	Sint16			orbitRadius; /* pixels */
 	Sint16			orbitAng;	 /* 1/32 turns */
 	Sint8			state;		 /* the callback's own step */
 	Sint8 stopAtTgt; /* nonzero: lands on the target within 8 pixels */
-	/* Nonzero turns it toward the target at most turnStepMax a frame; zero
+	/* Nonzero turns it toward the target at most turnStepMax a tick; zero
 	   faces it straight at the target. */
 	Sint8 turnStepLimited;
-	/* nonzero: fdParticleUpdateMotion moves it each frame */
+	/* nonzero: fdParticleUpdateMotion moves it each tick */
 	Sint8 updateMotion;
-	Sint8 render;	   /* nonzero: drawn each frame */
+	Sint8 render;	   /* nonzero: drawn each tick */
 	Sint8 active;	   /* nonzero while the slot is in use */
 	Uint8 randomValue; /* not read by name */
 	Uint8 flg;		   /* FIELD_PARTICLE_LIFTED_BY_Z */

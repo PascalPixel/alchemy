@@ -19,7 +19,7 @@ typedef enum CANVAS_TRANSFER_MODE {
 	CANVAS_COPY, /* copy as drawn */
 	/* copy, then fill the canvas with transferValue (0 clears it) */
 	CANVAS_COPY_AND_CLEAR,
-	/* copy, keeping half of each pixel's level for the next frame when
+	/* copy, keeping half of each pixel's level for the next tick when
 	   transferValue is CANVAS_FADE_HALF, and three quarters for any other
 	   value */
 	CANVAS_COPY_AND_FADE,
@@ -30,7 +30,7 @@ typedef enum CANVAS_TRANSFER_MODE {
 } CANVAS_TRANSFER_MODE;
 
 /* CANVAS_COPY_AND_FADE's transferValue: the percentage of each pixel's level
-   kept for the next frame. */
+   kept for the next tick. */
 typedef enum CANVAS_FADE_SHARE {
 	CANVAS_FADE_HALF = 50,
 	CANVAS_FADE_THREE_QUARTERS = 75
@@ -55,19 +55,19 @@ typedef struct BATTLE_EFFECT_STATE {
 	   CANVAS_FADE_SHARE) or the darken or brighten amount. */
 	Sint32 transferValue;
 	Sint32 unused;		   /* never read or written in either game */
-	Sint32 frm;			   /* frame counter some effects keep, from 0 */
-	Sint32 scrollTmr;	   /* frames since the last interval scroll step */
-	Sint32 scrollInterval; /* frames between interval scroll steps */
+	Sint32 frm;			   /* tick counter some effects keep, from 0 */
+	Sint32 scrollTmr;	   /* ticks since the last interval scroll step */
+	Sint32 scrollInterval; /* ticks between interval scroll steps */
 	Sint32 scrollStepX;	   /* added to BG1 or BG2 x at each step */
 	Sint32 scrollStepY;	   /* added to BG1 or BG2 y at each step */
 	Sint32 savedBg1X;	   /* BG1 scroll restored when a shake ends */
 	Sint32 savedBg1Y;	   /* BG1 scroll restored when a shake ends */
-	Sint32 shakeFrm;	/* shake frames left; Camera_ApplyShake counts down */
-	Sint32 cameraDelta; /* camera yaw turned per effect frame */
-	/* The effect sets 1 after a frame; btCameraApplyPhasedDelta then turns the
+	Sint32 shakeFrm;	   /* shake ticks left; Camera_ApplyShake counts down */
+	Sint32 cameraDelta;	   /* camera yaw turned per effect tick */
+	/* The effect sets 1 after a tick; btCameraApplyPhasedDelta then turns the
 	   whole cameraDelta and sets 0, else turns half and toggles 0 and 2. */
 	Sint32 cameraPhase;
-	Sint32 fadeFrm; /* backdrop fade frames left */
+	Sint32 fadeFrm; /* backdrop fade ticks left */
 	/* (btEffectDarkenBackgroundStep) */
 	Sint32 fadeStep; /* steps the backdrop has darkened so far */
 	/* Window, display and blend registers, which
@@ -93,17 +93,17 @@ typedef struct BATTLE_EFFECT_STATE {
 	volatile Uint16 bg2pa;
 	volatile Uint16 bg2pd;
 	void		   *sprs[64]; /* the effect's sprites */
-	/* Each target's flash timer in frames, for args->tgts[n]: set by
+	/* Each target's flash timer in ticks, for args->tgts[n]: set by
 	   btEffectTintBattler, counted down by btEffectCountDownBattlerTints. */
 	Uint8 actorTmrs[8];
 	/* 1 on a canvas copy's VBlank, then counts up. Volatile and unsigned: the
 	   VBlank handler counts it while an effect waits on it, each wait reads it
 	   afresh and compares it unsigned. */
-	volatile Uint32 vblanksSinceTransfer;
-	/* 1 once the effect has drawn a frame; the canvas transfer callback copies
+	volatile Uint32 framesSinceTransfer;
+	/* 1 once the effect has drawn a tick; the canvas transfer callback copies
 	   the canvas and clears it. */
 	Sint32 transferPending;
-	/* one draft sets 1 for a frame range; no reader found */
+	/* one draft sets 1 for a tick range; no reader found */
 	Sint32				stampPending;
 	BATTLE_EFFECT_PARM *args; /* the command being run */
 } BATTLE_EFFECT_STATE;

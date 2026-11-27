@@ -12,7 +12,7 @@
    scene takes the background listed last before it, and a scene not listed
    takes the last one. */
 /* clang-format off */
-Sint32 Scene_BattleBackgroundRules[] = {
+Sint32 SceneBattleBackgroundRules[] = {
 	BATTLE_BACKGROUND(RESOURCE_VALE_STORM_BACKDROP),
 		SCENE_VALE_PROLOGUE,
 		SCENE_VALE,

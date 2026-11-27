@@ -104,7 +104,7 @@ typedef enum BATTLE_MENU_ICON {
 /* The battle command menus' state, HEAP_SLOT_BATTLE_MENU (260 bytes), reached
    as BattleMenuStateWork. */
 typedef struct BATTLE_MENU_STATE {
-	/* The sprites mnBattleMenuUpdate draws each frame: the chosen command's
+	/* The sprites mnBattleMenuUpdate draws each tick: the chosen command's
 	   icon, the chosen ability's icon and the party member's portrait. */
 	MENU_SPR icons[BATTLE_MENU_ICON_COUNT];
 	/* whether each of icons is drawn */
@@ -113,7 +113,7 @@ typedef struct BATTLE_MENU_STATE {
 	/* Where the battle view slides to (btCameraSetCommandView's vertical
 	   offset): -2 or 16 by the target menu's mode, 0 otherwise. */
 	Sint32 tgtViewOfs;
-	/* where the slide has reached; a third of the way a frame */
+	/* where the slide has reached; a third of the way a tick */
 	Sint32 viewOfs;
 	Sint32 row;			 /* the list row chosen last */
 	Sint32 page;		 /* the list page chosen last */
@@ -125,7 +125,7 @@ typedef struct BATTLE_MENU_STATE {
 	WINDOW *tmrWin;
 	/* Set while the status screen is open, so the timer opens no window. */
 	Sint32 tmrHidden;
-	/* Frames left to choose commands in a link battle; -1 outside link battles.
+	/* Ticks left to choose commands in a link battle; -1 outside link battles.
 	   At 0 a menu ends as if cancelled, or takes the first command. */
 	Sint32 tmr;
 	Sint32 linkTmr; /* 1 while the link battle's timer runs */
@@ -137,7 +137,7 @@ typedef struct BATTLE_MENU_STATE {
 	/* The Djinn tutorial's step: 0 off, 1 from the start of each turn while
 	   FLAG_DJINN_LESSON is set, then one more for each hint shown. */
 	Sint32 tutorialStep;
-	Sint32 tutorialDelay; /* frames until the tutorial's next key press */
+	Sint32 tutorialDelay; /* ticks until the tutorial's next key press */
 	/* The party member whose commands are being chosen; -1 between members. */
 	Sint32 commandActor;
 	/* The Djinni each command has chosen, element << 8 | index, or
@@ -177,7 +177,7 @@ STATIC_ASSERT(offsetof(BATTLE_MENU_STATE, chosenDjinn) == 228);
 
 #define BattleMenuStateWork \
 	(*(BATTLE_MENU_STATE **)&HeapSlots[HEAP_SLOT_BATTLE_MENU])
-/* The animated cursor's frames, 16 by 16 at a byte a pixel
+/* The animated cursor's ticks, 16 by 16 at a byte a pixel
    (graphics/ui/sprite_cursors/spin). */
 extern const Uint8 Menu_AnimatedCursorTiles[];
 

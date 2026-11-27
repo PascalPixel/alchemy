@@ -90,12 +90,12 @@ typedef enum NARIBWE_ACTOR_ID {
 
 extern Uint32 SceneExits[];
 
-extern ACTOR_PLACE				   Naribwe_Placements[];
-extern ACTOR_PLACE				   Naribwe_FireLitPlacements[];
-extern ACTOR_PLACE				   Naribwe_PlacementsOnReturn[];
-extern CUE						   Naribwe_Cues[];
-extern CUE						   Naribwe_CuesOnReturn[];
-extern MAP_GRID_METATILE_ANIMATION Naribwe_Doors[];
+extern ACTOR_PLACE				   NaribwePlacements[];
+extern ACTOR_PLACE				   NaribweFireLitPlacements[];
+extern ACTOR_PLACE				   NaribwePlacementsOnReturn[];
+extern CUE						   NaribweCues[];
+extern CUE						   NaribweCuesOnReturn[];
+extern MAP_GRID_METATILE_ANIMATION NaribweDoors[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -115,10 +115,10 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.entrance == NARIBWE_FIRE_LIT_ENTRANCE)
-		return Naribwe_FireLitPlacements;
+		return NaribweFireLitPlacements;
 	if(fdScriptGetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
-		return Naribwe_PlacementsOnReturn;
-	return Naribwe_Placements;
+		return NaribwePlacementsOnReturn;
+	return NaribwePlacements;
 }
 
 /* Felix casts Blaze at the fire in the ring of stones in the middle of the
@@ -130,19 +130,19 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 void scNaribwePrepareBlaze(void)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
-	Sint8		*flag;
+	Sint8		*flg;
 
-	flag = &state->blazeLongSpray;
-	*flag = 1;
+	flg = &state->blazeLongSpray;
+	*flg = 1;
 	if(MainRoutineStateWork.entrance != NARIBWE_FIRE_LIT_ENTRANCE)
-		*flag = 0;
+		*flg = 0;
 }
 
 const CUE *scGetCues(void)
 {
 	if(fdScriptGetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
-		return Naribwe_CuesOnReturn;
-	return Naribwe_Cues;
+		return NaribweCuesOnReturn;
+	return NaribweCues;
 }
 
 /* The woman in a purple skirt just southwest of the fire tells Felix: "The
@@ -328,7 +328,7 @@ void scNaribweEnterDoor(void)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	Sint16		*cue;
-	Sint32		 index;
+	Sint32		 idx;
 	Uint32		 id;
 
 	fdScriptStart();
@@ -337,23 +337,23 @@ void scNaribweEnterDoor(void)
 		ACTOR *actor = fdActorGetById(id);
 
 		if(actor != NULL) {
-			Uint8 *flags = &actor->motionFlg;
+			Uint8 *flg = &actor->motionFlg;
 
-			*flags = 0;
+			*flg = 0;
 		}
 	}
 	cue = &state->stepCue;
-	index = *cue;
+	idx = *cue;
 	fdScriptPlaySnd(SE_DOOR_OPEN);
-	index -= NARIBWE_TO_NARIBWE_ROOMS_SOUTHEAST;
-	fdMapGridAnimateMetatiles(Naribwe_Doors[index].steps,
-		Naribwe_Doors[index].x, Naribwe_Doors[index].y);
+	idx -= NARIBWE_TO_NARIBWE_ROOMS_SOUTHEAST;
+	fdMapGridAnimateMetatiles(
+		NaribweDoors[idx].steps, NaribweDoors[idx].x, NaribweDoors[idx].y);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	syImportScriptSetExitRequest(*cue);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -422,11 +422,11 @@ Sint32 scPrepareMap(void)
 
 /* Naribwe's data: its scripts, door, placements and cues. */
 
-extern Sint32 Naribwe_BrazierBurns[];
-extern Sint32 Naribwe_HoldOverBrazier[];
+extern Sint32 NaribweBrazierBurns[];
+extern Sint32 NaribweHoldOverBrazier[];
 
-extern Sint32 Naribwe_WeedsAnimation[];
-extern Uint16 Naribwe_DoorOpening[];
+extern Sint32 NaribweWeedsAnimation[];
+extern Uint16 NaribweDoorOpening[];
 
 /* The village's placements, the same before and after the return with Piers. */
 #define DEFINE_NARIBWE_PLACEMENTS(name) \
@@ -435,16 +435,16 @@ extern Uint16 Naribwe_DoorOpening[];
 			MOVEMENT_TYPE_STAND, 232, 0, 246, FACING_SOUTH, TALK_FACING_PARTY, \
 			0), \
 		ACTOR_PLACEMENT(SPRITE_BRAZIER, CONDITION_ALWAYS, \
-			(Sint32)Naribwe_BrazierBurns, 316, 0, 132, FACING_SOUTH, \
+			(Sint32)NaribweBrazierBurns, 316, 0, 132, FACING_SOUTH, \
 			TALK_FACING_PARTY, 0), \
 		ACTOR_PLACEMENT(SPRITE_BRAZIER, CONDITION_ALWAYS, \
-			(Sint32)Naribwe_BrazierBurns, 372, 0, 132, FACING_SOUTH, \
+			(Sint32)NaribweBrazierBurns, 372, 0, 132, FACING_SOUTH, \
 			TALK_FACING_PARTY, 0), \
 		ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, \
-			(Sint32)Naribwe_HoldOverBrazier, 316, 0, 132, FACING_SOUTH, \
+			(Sint32)NaribweHoldOverBrazier, 316, 0, 132, FACING_SOUTH, \
 			TALK_FACING_PARTY, 0), \
 		ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, \
-			(Sint32)Naribwe_HoldOverBrazier, 372, 0, 132, FACING_SOUTH, \
+			(Sint32)NaribweHoldOverBrazier, 372, 0, 132, FACING_SOUTH, \
 			TALK_FACING_PARTY, 0), \
 		ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, \
 			MOVEMENT_TYPE_STAND, 248, 0, 344, FACING_SOUTH, \
@@ -477,7 +477,7 @@ extern Uint16 Naribwe_DoorOpening[];
 			MOVEMENT_TYPE_STAND, 168, 0, 360, FACING_EAST, \
 			TALK_FACING_PARTY_AND_BACK, 0), \
 		ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, \
-			(Sint32)Naribwe_WeedsAnimation, 40, 0, 168, FACING_SOUTH, \
+			(Sint32)NaribweWeedsAnimation, 40, 0, 168, FACING_SOUTH, \
 			TALK_FACING_KEEP, 0), \
 		ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, \
 			MOVEMENT_TYPE_STAND, 360, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, \
@@ -496,41 +496,41 @@ extern Uint16 Naribwe_DoorOpening[];
 /* clang-format off */
 /* Unused: a list of the pilgrim and FLAG_SCENE_TEMP_00, in a flag block's */
 /* pairs; nothing reads it. */
-Sint16 Naribwe_UnusedList[] = {
+Sint16 NaribweUnusedList[] = {
 	ACTOR_PILGRIM, FLAG_SCENE_TEMP_00, -1, 0,
 };
 
 /* The braziers burn. */
-Sint32 Naribwe_BrazierBurns[] = {
+Sint32 NaribweBrazierBurns[] = {
 	SC_ANIMATION(2),
 	SC_END,
 };
 
 /* The unseen actors over the braziers: nothing drawn, held 24 pixels up. */
-Sint32 Naribwe_HoldOverBrazier[] = {
+Sint32 NaribweHoldOverBrazier[] = {
 	SC_ANIMATION(0),
 	SC_SET(SW_MOTION, 0),
 	SC_ADD(SW_Y, toFIXED(24)),
 	SC_END,
 };
 
-Sint32 Naribwe_WeedsAnimation[] = {
+Sint32 NaribweWeedsAnimation[] = {
 	SC_ANIMATION(3),
 	SC_END,
 };
 
 /* How the inn's and the fortune-teller's doors open: the open door's */
-/* metatiles are copied over the closed one's, and held six frames. */
-Uint16 Naribwe_DoorOpening[] = {
+/* metatiles are copied over the closed one's, and held six ticks. */
+Uint16 NaribweDoorOpening[] = {
 	MAPGRID_ANIMATION_STEP(8, 42, 1, 2, 6),
 	MAPGRID_ANIMATION_STEPS_END,
 };
 
 /* The inn's door and the fortune-teller's, which open as the party walks */
 /* through, and the metatiles their opening is drawn at, by exit. */
-MAP_GRID_METATILE_ANIMATION Naribwe_Doors[] = {
-	{Naribwe_DoorOpening, 18, 51},
-	{Naribwe_DoorOpening, 21, 34},
+MAP_GRID_METATILE_ANIMATION NaribweDoors[] = {
+	{NaribweDoorOpening, 18, 51},
+	{NaribweDoorOpening, 21, 34},
 };
 
 SCENE_ENTRANCE SceneEntrances[] = {
@@ -551,9 +551,9 @@ Uint32 SceneExits[] = {
 };
 
 /* The village's people until Gabomba's message is carried. */
-DEFINE_NARIBWE_PLACEMENTS(Naribwe_Placements)
+DEFINE_NARIBWE_PLACEMENTS(NaribwePlacements)
 
-ACTOR_PLACE Naribwe_FireLitPlacements[] = {
+ACTOR_PLACE NaribweFireLitPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_LARGE_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 246, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 316, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 132, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -564,9 +564,9 @@ ACTOR_PLACE Naribwe_FireLitPlacements[] = {
 /* clang-format on */
 
 /* The same people once it has been. */
-DEFINE_NARIBWE_PLACEMENTS(Naribwe_PlacementsOnReturn)
+DEFINE_NARIBWE_PLACEMENTS(NaribwePlacementsOnReturn)
 
-CUE Naribwe_Cues[] = {
+CUE NaribweCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, NARIBWE_TO_NARIBWE_ROOMS_NORTHWEST},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, NARIBWE_TO_NARIBWE_ROOMS_WEST},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, NARIBWE_TO_NARIBWE_ROOMS_SOUTHWEST},
@@ -636,7 +636,7 @@ CUE Naribwe_Cues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Naribwe_CuesOnReturn[] = {
+CUE NaribweCuesOnReturn[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, NARIBWE_TO_NARIBWE_ROOMS_NORTHWEST},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, NARIBWE_TO_NARIBWE_ROOMS_WEST},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, NARIBWE_TO_NARIBWE_ROOMS_SOUTHWEST},

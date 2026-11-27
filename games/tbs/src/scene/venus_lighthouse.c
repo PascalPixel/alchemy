@@ -18,7 +18,7 @@
 	 rule of its own), the floor behind the front door, with three scholars.
    The great statue (METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_GREAT_STATUE) opens
    one  of two paths (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH). The
-   first time the frame counter's parity picks the path, and each later
+   first time the tick counter's parity picks the path, and each later
 	 search switches it. The statue lights the open path in gold lines between
 	 the floor lamps before it, where a small model of the lighthouse stands
 	 (VenusMiniatureLighthouseScript). The Tunnel Ruins under Babi Lighthouse
@@ -60,7 +60,7 @@
 	 (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED and _EAST_WALL_MOVED, which
 	 VenusLighthouseThirdFloor also redraws). Carry sets down four floating
 	 pillars on two balance platforms that sink and rise to their weight
-	 (Balance_PlatformHeights). Four pillars carrying track sink into
+	 (BalancePlatformHeights). Four pillars carrying track sink into
 	 eight sockets, and the lights run on to the pillar room's gate
 	 (FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN). A chest holds the Gaia Blade,
 	 and a Psynergy Stone lies here. A passage raises the leader on a
@@ -94,7 +94,7 @@
 #include "text/msg_ids.h"
 
 extern SWITCH_METATILE VenusThirdFloorSockets[];
-extern Uint32		   Balance_PlatformHeights[];
+extern Uint32		   BalancePlatformHeights[];
 extern SWITCH_METATILE VenusFourthFloorSockets[];
 
 /* A socket index past the third floor's four (VenusThirdFloorSockets) and the
@@ -106,7 +106,7 @@ extern Uint8		  VenusTracksMovingEast[];
 extern Uint8		  VenusTracksMovingNorth[];
 extern Uint8		  VenusTracksMovingSouth[];
 extern Sint32		  VenusLeaderShockedScript[];
-extern Sint32		  Glint_TwinkleScript[];
+extern Sint32		  GlintTwinkleScript[];
 extern Sint32		  VenusSecondFloorLightToGate[];
 extern Sint32		  VenusThirdFloorLightToNortheast[];
 extern Sint32		  VenusThirdFloorLightToSoutheast[];
@@ -390,7 +390,7 @@ enum {
 };
 
 /* An animation timer step for fdActorSetAnimationSpeedById, in sixteenths of a
-   frame taken off each frame. 16 plays an animation at its own speed, so 24
+   tick taken off each tick. 16 plays an animation at its own speed, so 24
    plays it half again as fast. */
 enum { ANIM_STEPS_FAST = 24 };
 
@@ -427,12 +427,12 @@ static UNUSED Sint32 scMapGridFillCollisionRectangle(Uint32 layer, Sint32 x,
 /* Makes a mask still, never a talk or Psynergy target, shadowless and drawn in
    the given colour mode. */
 static void scVenusLighthouseConfigurePassageEffect(
-	ACTOR *actor, Sint32 colorMode)
+	ACTOR *actor, Sint32 colMode)
 {
 	actor->motionFlg = 0;
 	actor->collisionFlg = ACTOR_NOT_TARGETED;
 	fdActorSetSprFlags(actor, 0);
-	fdActorSetSprCol(actor, colorMode);
+	fdActorSetSprCol(actor, colMode);
 }
 
 /* Creates a mask over a hole as the leader or a pillar falls through the floor.
@@ -464,7 +464,7 @@ static ACTOR *scVenusLighthouseCreateBlendedPassageEffect(
    sprite at priority 3.
 
    It is a SPRITE_CHEST drawn in SPRITE_COLOR_HIDDEN, so it shows nothing
-   itself. Without it the leader would vanish for the 20 frames the pillar takes
+   itself. Without it the leader would vanish for the 20 ticks the pillar takes
    to go down. */
 static ACTOR *scVenusLighthouseCreateOccludingPassageEffect(
 	Sint32 x, Sint32 y, Sint32 z, Sint32 type)
@@ -499,41 +499,38 @@ enum {
    him, leaning into it (ANIM_PUSH). */
 static void scVenusLighthousePushPillarAhead(void)
 {
-	FIELD_POS targetPosition;
+	FIELD_POS tgtPos;
 	ACTOR	 *leader;
 	ACTOR	 *pillar;
 	ACTOR	 *blockingActor;
-	Sint32	  directionIndex;
+	Sint32	  directionIdx;
 	FIXED	  moveRate;
 	Sint32	  rising;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	directionIndex = FACING_INDEX(leader->facing);
-	fdActorStepFrom(
-		&targetPosition, leader, PushedActor_DirectionSteps[directionIndex]);
-	pillar = scActorFindAtPos(&targetPosition, leader);
+	directionIdx = FACING_INDEX(leader->facing);
+	fdActorStepFrom(&tgtPos, leader, PushedActorDirectionSteps[directionIdx]);
+	pillar = scActorFindAtPos(&tgtPos, leader);
 	if(pillar == NULL)
 		return;
 
-	fdActorStepFrom(
-		&targetPosition, pillar, PushedActor_DirectionSteps[directionIndex]);
-	blockingActor = scActorFindAtPos(&targetPosition, pillar);
+	fdActorStepFrom(&tgtPos, pillar, PushedActorDirectionSteps[directionIdx]);
+	blockingActor = scActorFindAtPos(&tgtPos, pillar);
 	if(blockingActor != NULL &&
 		(blockingActor->collisionFlg & ACTOR_SOLID) != 0)
 		return;
 
-	targetPosition.x = pillar->x.fixed;
-	targetPosition.y = pillar->y.fixed + toFIXED(16);
-	targetPosition.z = pillar->z.fixed;
-	blockingActor = scActorFindAtPos(&targetPosition, pillar);
+	tgtPos.x = pillar->x.fixed;
+	tgtPos.y = pillar->y.fixed + toFIXED(16);
+	tgtPos.z = pillar->z.fixed;
+	blockingActor = scActorFindAtPos(&tgtPos, pillar);
 	if(blockingActor != NULL &&
 		(blockingActor->collisionFlg & ACTOR_SOLID) != 0)
 		return;
 
 	pillar->layer = 2;
-	fdActorStepFrom(
-		&targetPosition, pillar, PushedActor_DirectionSteps[directionIndex]);
-	if(syFieldActorCheckMovementCollision(pillar, &targetPosition) > 0)
+	fdActorStepFrom(&tgtPos, pillar, PushedActorDirectionSteps[directionIdx]);
+	if(syFieldActorCheckMovementCollision(pillar, &tgtPos) > 0)
 		return;
 
 	/* A pillar still sinking into its socket stays where it is. */
@@ -547,16 +544,14 @@ static void scVenusLighthousePushPillarAhead(void)
 	sySndPlay(SE_PUSH);
 	pillar->speedLimit = moveRate;
 	pillar->acceleration = moveRate;
-	syFieldActorSetMoveTargetFX(
-		pillar, targetPosition.x, targetPosition.y, targetPosition.z);
+	syFieldActorSetMoveTargetFX(pillar, tgtPos.x, tgtPos.y, tgtPos.z);
 	leader->speedLimit = moveRate;
 	leader->acceleration = moveRate;
-	syFieldActorSetMoveTargetFX(
-		leader, targetPosition.x, targetPosition.y, targetPosition.z);
+	syFieldActorSetMoveTargetFX(leader, tgtPos.x, tgtPos.y, tgtPos.z);
 	fdActorWaitForMove(pillar);
 	fdPlayQueuedMusic();
-	pillar->x.fixed = targetPosition.x;
-	pillar->z.fixed = targetPosition.z;
+	pillar->x.fixed = tgtPos.x;
+	pillar->z.fixed = tgtPos.z;
 	/* Both stop: rising is 0 here. */
 	pillar->velX = rising;
 	pillar->velZ = rising;
@@ -595,30 +590,30 @@ static Sint32 scVenusLighthouseApplyMarkedCol(ACTOR *actor)
 	return 0;
 }
 
-/* The leader flashes white one frame in four as the lightning strikes him, with
-   a crackle every eight frames. */
+/* The leader flashes white one tick in four as the lightning strikes him, with
+   a crackle every eight ticks. */
 static UNREAD_RESULT scVenusLighthouseFlashStruckLeader(ACTOR *actor)
 {
-	if((FrameCount & 3) == 0)
+	if((TickCount & 3) == 0)
 		fdActorSetSprCol(actor, SPRITE_COLOR_WHITE);
 	else
 		fdActorSetSprCol(actor, SPRITE_COLOR_NORMAL);
 
-	if((FrameCount & 7) == 0)
+	if((TickCount & 7) == 0)
 		sySndPlay(SE_ITEM_BREAK);
 	RETURN_UNREAD(0);
 }
 
-/* Small black puffs of smoke rise from the leader, one every eight frames,
+/* Small black puffs of smoke rise from the leader, one every eight ticks,
    after the lightning has struck him. */
 static UNREAD_RESULT scVenusLighthouseEmitRisingParticles(ACTOR *actor)
 {
 	EFFECT_OPTIONS options;
-	Sint32		   framePhase;
+	Sint32		   frmPhase;
 	FIXED		   particleX, particleY;
 	Sint32		   riseSpeed;
-	framePhase = FrameCount & 7;
-	if(framePhase == 0) {
+	frmPhase = TickCount & 7;
+	if(frmPhase == 0) {
 		options.pri = 3 - (syRandomBelow(2));
 		options.startScaleX = toFIXED(2) / 5;
 		options.startScaleY = toFIXED(2) / 5;
@@ -627,7 +622,7 @@ static UNREAD_RESULT scVenusLighthouseEmitRisingParticles(ACTOR *actor)
 		particleY = actor->y.fixed + toFIXED(32 - syRandomBelow(32));
 		riseSpeed = syMathDivide(toFIXED(syRandomBelow(5)) + toFIXED(5), 10);
 		fdEffectSpawn(particleX, particleY, actor->z.fixed, 0, riseSpeed,
-			framePhase,
+			frmPhase,
 			EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
 			&options);
 	}
@@ -642,27 +637,27 @@ static Sint32 scVenusLighthouseClearScriptedSprFlags(ACTOR *actor)
 }
 
 /* The sparks that trail the leader through a sparkling passage: a stream
-   falling from his shoulders every frame and a larger one every 16. */
+   falling from his shoulders every tick and a larger one every 16. */
 static UNREAD_RESULT scVenusLighthouseEmitPassageSparkTrail(ACTOR *actor)
 {
 	EFFECT_OPTIONS options;
 	FIXED		   fallSpeed;
-	Sint32		   framePhase;
+	Sint32		   frmPhase;
 
 	options.startScaleX = toFIXED(4) / 5;
 	options.startScaleY = toFIXED(4) / 5;
 	options.pri = 0;
 
 	fallSpeed = (syRandomBelow(8)) * (toFIXED(1) / 5);
-	framePhase = FrameCount & 15;
+	frmPhase = TickCount & 15;
 
 	fdEffectSpawn(
-		actor->x.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(8 - framePhase, 16),
+		actor->x.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(8 - frmPhase, 16),
 		actor->y.fixed + toFIXED(26), actor->z.fixed, 0, -fallSpeed, 0,
 		EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE, &options);
 
-	framePhase = FrameCount & 15;
-	if(framePhase == 0) {
+	frmPhase = TickCount & 15;
+	if(frmPhase == 0) {
 		options.startScaleX = toFIXED(1) / 2;
 		options.startScaleY = toFIXED(1) / 2;
 		fdEffectSpawn(actor->x.fixed + toFIXED(syRandomBelow(9) - 4),
@@ -699,7 +694,7 @@ static void scVenusLighthouseEnterSparklingPassage(void)
 	leader->update = 0;
 	fdScriptWait(30);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(state->stepCue);
 	fdScriptEnd();
 }
@@ -719,7 +714,7 @@ static void scVenusLighthouseArriveThroughSparkPassage(void)
 		fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
 		fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		sySndPlay(SE_SPARKLING_PASSAGE);
 		leader->update =
 			(void (*)(ACTOR *))scVenusLighthouseEmitPassageSparkTrail;
@@ -763,7 +758,7 @@ static void scVenusLighthouseLeaveCappedPillarRows(void)
 static void scVenusLighthouseLandWithRadialDust(void)
 {
 	ACTOR		  *leader;
-	Uint32		   particleIndex;
+	Uint32		   particleIdx;
 	EFFECT_OPTIONS options;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
@@ -776,7 +771,7 @@ static void scVenusLighthouseLandWithRadialDust(void)
 	leader->bounce = 0;
 	leader->motionFlg = 0;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(30);
 	sySndPlay(SE_DUST_PUFF);
 	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -786,16 +781,16 @@ static void scVenusLighthouseLandWithRadialDust(void)
 	options.startScaleX = toFIXED(4) / 5;
 	options.startScaleY = toFIXED(4) / 5;
 	/* A puff each sixteenth of a turn, the last over the first. */
-	for(particleIndex = 0; particleIndex <= TRIG_TURN / FACING_STEP;
-		particleIndex++) {
-		Sint32 angle;
-		Sint32 velocity[3];
+	for(particleIdx = 0; particleIdx <= TRIG_TURN / FACING_STEP;
+		particleIdx++) {
+		Sint32 ang;
+		Sint32 vel[3];
 
-		angle = particleIndex * FACING_STEP;
-		SET_VECTOR(velocity, syCos(angle), 0, sySin(angle));
-		velocity[0] += velocity[0] / 2;
-		fdEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-			velocity[0], velocity[1], velocity[2],
+		ang = particleIdx * FACING_STEP;
+		SET_VECTOR(vel, syCos(ang), 0, sySin(ang));
+		vel[0] += vel[0] / 2;
+		fdEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, vel[0],
+			vel[1], vel[2],
 			EFFECT_USE_PALETTE | EFFECT_USE_START_SCALE | EFFECT_USE_UPDATE |
 				EFFECT_SCRIPT_MEDIUM,
 			&options);
@@ -821,15 +816,15 @@ static void scVenusLighthouseLandWithRadialDust(void)
    lady statue and holds it down. */
 #define FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH FLAG_SCENE_TEMP_01
 
-/* A light's update function: every four frames a shrinking particle around it,
+/* A light's update function: every four ticks a shrinking particle around it,
    and now and then a sound while it moves. */
 static UNREAD_RESULT scVenusLighthouseTrailLight(ACTOR *actor)
 {
 	EFFECT_OPTIONS options;
-	Sint32		   velocityX;
-	Sint32		   velocityZ;
+	Sint32		   velX;
+	Sint32		   velZ;
 
-	if((FrameCount & 3) != 0) {
+	if((TickCount & 3) != 0) {
 		RETURN_UNREAD(0);
 	}
 	if(syRandomBelow(6) == 0) {
@@ -842,10 +837,10 @@ static UNREAD_RESULT scVenusLighthouseTrailLight(ACTOR *actor)
 	options.startScaleY = toFIXED(1);
 	options.tgtScaleX = -toFIXED(1) / 200;
 	options.tgtScaleY = -toFIXED(1) / 200;
-	velocityX = syMathDivide(toFIXED(syRandomBelow(9) - 4), 10);
-	velocityZ = syMathDivide(toFIXED(syRandomBelow(9) - 4), 10);
+	velX = syMathDivide(toFIXED(syRandomBelow(9) - 4), 10);
+	velZ = syMathDivide(toFIXED(syRandomBelow(9) - 4), 10);
 	fdEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed - toFIXED(1),
-		velocityX, 0, velocityZ,
+		velX, 0, velZ,
 		EFFECT_SCALE_TO_TARGET | EFFECT_USE_START_SCALE | EFFECT_USE_TYPE |
 			EFFECT_SCRIPT_MEDIUM,
 		&options);
@@ -892,14 +887,14 @@ static Bool scVenusLighthouseJumpAcrossGap(void)
 {
 	ACTOR	 *leader;
 	FIELD_POS landing;
-	Uint8	  savedMotionFlags;
+	Uint8	  savedMotionFlg;
 	Sint32	  direction;
 #if !JUMP_LANDS_ON_CELL_CENTER
 	Uint32 step;
 #endif
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	savedMotionFlags = leader->motionFlg;
+	savedMotionFlg = leader->motionFlg;
 #if JUMP_LANDS_ON_CELL_CENTER
 	landing.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 	landing.y = leader->y.fixed;
@@ -908,7 +903,7 @@ static Bool scVenusLighthouseJumpAcrossGap(void)
 	syVectorAddPolarOffset(toFIXED(16), direction, (FIXED *)&landing);
 #else
 	direction = FACING_INDEX(leader->facing);
-	fdActorStepFrom(&landing, leader, PushedActor_DirectionSteps[direction]);
+	fdActorStepFrom(&landing, leader, PushedActorDirectionSteps[direction]);
 #endif
 	if(syFieldActorCheckMovementCollision(leader, &landing) != 1 &&
 		scActorFindAtPos(&landing, leader) == 0) {
@@ -919,7 +914,7 @@ static Bool scVenusLighthouseJumpAcrossGap(void)
 		syVectorAddPolarOffset(toFIXED(32),
 			FACING_NEAREST_CARDINAL(leader->facing), (FIXED *)&landing);
 #else
-		step = PushedActor_DirectionSteps[direction];
+		step = PushedActorDirectionSteps[direction];
 		/* Two steps on. */
 		landing.x = leader->x.fixed + DIRECTION_STEP_X_FIXED(step) * 2;
 		landing.y = leader->y.fixed;
@@ -942,7 +937,7 @@ static Bool scVenusLighthouseJumpAcrossGap(void)
 				FIXEDtoINT(landing.z));
 			fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 			fdActorSetSprFlags(leader, SPRITE_FLAG_SHADOW);
-			leader->motionFlg = savedMotionFlags;
+			leader->motionFlg = savedMotionFlg;
 			fdScriptEnd();
 			return TRUE;
 		}
@@ -1036,7 +1031,7 @@ static void scVenusLighthouseSearchLockedDoor(void)
 }
 
 /* The times the soldier who tells of the attack flickers as he vanishes, the
-   pause after each a frame shorter than the last, from eight frames to
+   pause after each a tick shorter than the last, from eight ticks to
    three. */
 #define SOLDIER_FLICKERS 10
 
@@ -1123,20 +1118,19 @@ static void scVenusLighthouseCarryPillarPastWall(void)
    silent. */
 static void scVenusLighthouseReadRelief(void)
 {
-	Sint32 message;
+	Sint32 msg;
 #if !INNER_RELIEFS_SILENT
 	FIELD_STATE *state = FieldStateWork;
 #endif
 	fdScriptStart();
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 #if INNER_RELIEFS_SILENT
-	message = (Sint32)MSGNO(MsgVenusThereWordsCarvedIntoRelief);
+	msg = (Sint32)MSGNO(MsgVenusThereWordsCarvedIntoRelief);
 #else
-	message = state->examineMetatile +
-		MSGNO(MsgVenusThereWordsCarvedIntoRelief) -
+	msg = state->examineMetatile + MSGNO(MsgVenusThereWordsCarvedIntoRelief) -
 		METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF;
 #endif
-	mnFieldMessageShow(message, 1);
+	mnFieldMessageShow(msg, 1);
 	fdScriptEnd();
 }
 
@@ -1275,7 +1269,7 @@ static inline void scVenusLighthouseDrawSecondPath(void)
    when it clears the floor lamps before the statue are joined by gold lines
    along one of two paths, which the camera follows south and back.
 
-   The first time the frame counter's parity picks the path, and each later
+   The first time the tick counter's parity picks the path, and each later
    search switches it (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH). The
    Tunnel Ruins under Babi Lighthouse open their ways to match. */
 static void scVenusLighthouseSearchStatue(void)
@@ -1299,7 +1293,7 @@ static void scVenusLighthouseSearchStatue(void)
 	fdScriptWait(70);
 	if(fdScriptGetFlag(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) == 0) {
 		if(fdScriptGetFlag(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH) == 0) {
-			if((FrameCount & 1) != 0) {
+			if((TickCount & 1) != 0) {
 				gmFlagSet(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH);
 			} else {
 				gmFlagSet(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH);
@@ -1523,7 +1517,7 @@ static void scVenusLighthouseFallThroughFloor(void)
 	syImportScriptSetExitRequest(
 		VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM_HOLE);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -1536,25 +1530,23 @@ static void scVenusLighthouseFallThroughFloor(void)
    floor again. */
 static void scVenusLighthouseMoveCappedPillar(void)
 {
-	Uint32 pillarIndex;
+	Uint32 pillarIdx;
 	ACTOR *pillar;
-	Sint32 destinationColumn;
-	Sint32 destinationRow;
+	Sint32 dstColumn;
+	Sint32 dstRow;
 	Sint32 column;
 	Sint32 row;
 
 	fdActorGet(ACTOR_FIRST_CAPPED_PILLAR);
 	fdScriptStart();
-	destinationColumn = 12;
-	destinationRow = 44;
-	fdMapGridCopyMetatileAttributes(
-		19, 44, 4, 1, destinationColumn, destinationRow);
-	destinationColumn = 11;
-	destinationRow = 51;
-	fdMapGridCopyMetatileAttributes(
-		17, 51, 2, 2, destinationColumn, destinationRow);
-	for(pillarIndex = 0; pillarIndex <= 2; pillarIndex++) {
-		pillar = fdActorGet(pillarIndex + ACTOR_FIRST_CAPPED_PILLAR);
+	dstColumn = 12;
+	dstRow = 44;
+	fdMapGridCopyMetatileAttributes(19, 44, 4, 1, dstColumn, dstRow);
+	dstColumn = 11;
+	dstRow = 51;
+	fdMapGridCopyMetatileAttributes(17, 51, 2, 2, dstColumn, dstRow);
+	for(pillarIdx = 0; pillarIdx <= 2; pillarIdx++) {
+		pillar = fdActorGet(pillarIdx + ACTOR_FIRST_CAPPED_PILLAR);
 		column = FIELD_METATILE(pillar->x.fixed);
 		row = FIELD_METATILE(pillar->z.fixed);
 		fdMapGridCopyMetatileAttributes(12, 50, 1, 1, column, row);
@@ -1581,11 +1573,11 @@ static void scVenusLighthousePushCappedPillar(void)
    tries a jump or a push, since one of them is about to leave its metatile. */
 static void scVenusLighthouseUnblockCarryPillarMetatiles(void)
 {
-	Uint32 pillarIndex;
+	Uint32 pillarIdx;
 	ACTOR *pillar;
 
-	for(pillarIndex = 0; pillarIndex <= 1; pillarIndex++) {
-		pillar = fdActorGet(pillarIndex + ACTOR_FIRST_CARRY_PILLAR);
+	for(pillarIdx = 0; pillarIdx <= 1; pillarIdx++) {
+		pillar = fdActorGet(pillarIdx + ACTOR_FIRST_CARRY_PILLAR);
 		fdMapGridSetMetatileBehaviorAt(0, pillar->x.fixed, pillar->z.fixed,
 			METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_CARRY_PILLARS);
 	}
@@ -1597,11 +1589,11 @@ static void scVenusLighthouseUnblockCarryPillarMetatiles(void)
    up. */
 static void scVenusLighthouseMoveCarryPillar(void)
 {
-	Uint32 pillarIndex;
+	Uint32 pillarIdx;
 	ACTOR *pillar;
 
-	for(pillarIndex = 0; pillarIndex <= 1; pillarIndex++) {
-		pillar = fdActorGet(pillarIndex + ACTOR_FIRST_CARRY_PILLAR);
+	for(pillarIdx = 0; pillarIdx <= 1; pillarIdx++) {
+		pillar = fdActorGet(pillarIdx + ACTOR_FIRST_CARRY_PILLAR);
 		if(pillar->y.fixed > -toFIXED(16)) {
 			fdMapGridSetMetatileBehaviorAt(
 				0, pillar->x.fixed, pillar->z.fixed, METATILE_BEHAVIOR_WALL);
@@ -1641,12 +1633,12 @@ static void scVenusLighthouseFixPillarAtDestination(ACTOR *pillar)
    sight; a block still standing is made solid again. */
 static void scVenusLighthouseReleaseFallenCarryPillar(ACTOR *pillar)
 {
-	SPR	  *sprite;
+	SPR	  *spr;
 	ACTOR *passageEffect;
 
-	sprite = pillar->spr;
-	if(sprite->image.pri == 3) {
-		sprite->image.pri = 1;
+	spr = pillar->spr;
+	if(spr->image.pri == 3) {
+		spr->image.pri = 1;
 		pillar->bounce = 0;
 		passageEffect = scVenusLighthouseCreateBlendedPassageEffect(
 			pillar->x.fixed, 0, toFIXED(512), SPRITE_CRATE);
@@ -1693,7 +1685,7 @@ static void scVenusLighthouseCarryPillarAcrossGap(void)
    (scVenusLighthouseMoveFirstFloorSandFall).
 
    It counts only in the middle of the metatile, where the switch sinks under
-   him by 2 pixels. The wall's picture layer slides 96 pixels over 480 frames,
+   him by 2 pixels. The wall's picture layer slides 96 pixels over 480 ticks,
    and its metatiles follow every 40 (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED). */
 static void scVenusLighthouseStepOnWallSwitch(void)
 {
@@ -1703,7 +1695,7 @@ static void scVenusLighthouseStepOnWallSwitch(void)
 	Sint32				   column;
 	Sint32				   leaderZ;
 	Sint32				   tileDelay;
-	Uint32				   frame;
+	Uint32				   frm;
 	FIXED				   dustX;
 
 	layer = &((MAP_GRID_SCROLL_STATE *)MapGridState[0])->layers[2];
@@ -1725,7 +1717,7 @@ static void scVenusLighthouseStepOnWallSwitch(void)
 			dustX = toFIXED(288);
 			column = 29;
 			tileDelay = 40;
-			for(frame = 0; frame <= 479; frame++, tileDelay--) {
+			for(frm = 0; frm <= 479; frm++, tileDelay--) {
 				layer->ofsX += toFIXED(1) / 5;
 				dustX -= toFIXED(1) / 5;
 				options.pri = 2;
@@ -1735,16 +1727,16 @@ static void scVenusLighthouseStepOnWallSwitch(void)
 					(syRandomBelow(3)) * (toFIXED(1) / 5) + toFIXED(4) / 5;
 				options.spin = FIELD_EFFECT_RANDOM_SPIN();
 				fdEffectSpawn(dustX, 0, toFIXED(528), 0,
-					-toFIXED((FrameCount & 1) * 3), 0,
+					-toFIXED((TickCount & 1) * 3), 0,
 					EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE |
 						EFFECT_USE_SPIN,
 					&options);
-				if(frame == 240) {
+				if(frm == 240) {
 					dustX -= toFIXED(48);
 				}
 				if(tileDelay == 0) {
 					tileDelay = 40;
-					if(frame <= 240) {
+					if(frm <= 240) {
 						column -= 4;
 						fdMapGridCopyMetatilesTo(column, 50, 15, 32, 3, 4);
 					} else {
@@ -1880,9 +1872,9 @@ static void scVenusLighthouseMoveSwitchPillar(void)
 	ACTOR *firstGateEffect;
 	ACTOR *secondGateEffect;
 	Uint32 pillarId;
-	Uint32 candidateIndex;
-	Uint32 socketIndex;
-	Sint32 savedPriority;
+	Uint32 candidateIdx;
+	Uint32 socketIdx;
+	Sint32 savedPri;
 
 	fdScriptStart();
 	fdMapGridCopyMetatileAttributes(108, 39, 13, 7, 44, 39);
@@ -1898,38 +1890,38 @@ static void scVenusLighthouseMoveSwitchPillar(void)
 				FIELD_METATILE(pillar->x.fixed),
 				FIELD_METATILE(pillar->z.fixed));
 		}
-		socketIndex = NO_THIRD_FLOOR_SOCKET;
-		for(candidateIndex = 0; candidateIndex <= 3; candidateIndex++) {
+		socketIdx = NO_THIRD_FLOOR_SOCKET;
+		for(candidateIdx = 0; candidateIdx <= 3; candidateIdx++) {
 			if(FIELD_METATILE(pillar->x.fixed) ==
-					VenusThirdFloorSockets[candidateIndex].x &&
+					VenusThirdFloorSockets[candidateIdx].x &&
 				FIELD_METATILE(pillar->z.fixed) ==
-					VenusThirdFloorSockets[candidateIndex].z &&
+					VenusThirdFloorSockets[candidateIdx].z &&
 				pillar->y.fixed >= 0) {
-				socketIndex = candidateIndex;
+				socketIdx = candidateIdx;
 				break;
 			}
 		}
-		if(socketIndex == NO_THIRD_FLOOR_SOCKET) {
+		if(socketIdx == NO_THIRD_FLOOR_SOCKET) {
 			continue;
 		}
-		for(candidateIndex = ACTOR_FIRST_SWITCH_PILLAR;
-			candidateIndex <= ACTOR_FIRST_SWITCH_PILLAR + 2; candidateIndex++) {
-			other = fdActorGet(candidateIndex);
-			if(pillarId != candidateIndex &&
+		for(candidateIdx = ACTOR_FIRST_SWITCH_PILLAR;
+			candidateIdx <= ACTOR_FIRST_SWITCH_PILLAR + 2; candidateIdx++) {
+			other = fdActorGet(candidateIdx);
+			if(pillarId != candidateIdx &&
 				FIELD_METATILE(pillar->x.fixed) ==
 					FIELD_METATILE(other->x.fixed) &&
 				FIELD_METATILE(pillar->z.fixed) ==
 					FIELD_METATILE(other->z.fixed)) {
-				socketIndex = NO_THIRD_FLOOR_SOCKET;
+				socketIdx = NO_THIRD_FLOOR_SOCKET;
 				break;
 			}
 		}
-		if(socketIndex == NO_THIRD_FLOOR_SOCKET) {
+		if(socketIdx == NO_THIRD_FLOOR_SOCKET) {
 			continue;
 		}
-		savedPriority = leader->spr->image.pri;
+		savedPri = leader->spr->image.pri;
 		if(FIELD_METATILE(leader->z.fixed) <=
-			VenusThirdFloorSockets[socketIndex].z) {
+			VenusThirdFloorSockets[socketIdx].z) {
 			occlusionEffect = scVenusLighthouseCreateOccludingPassageEffect(
 				pillar->x.fixed, pillar->y.fixed, pillar->z.fixed - toFIXED(4),
 				SPRITE_CHEST);
@@ -1941,8 +1933,8 @@ static void scVenusLighthouseMoveSwitchPillar(void)
 		pillar->bounce = 0;
 		pillar->gravity = toFIXED(1) / 10;
 		fdMapGridCopyMetatileAttributes(42, 41, 1, 1,
-			VenusThirdFloorSockets[socketIndex].x,
-			VenusThirdFloorSockets[socketIndex].z);
+			VenusThirdFloorSockets[socketIdx].x,
+			VenusThirdFloorSockets[socketIdx].z);
 		scActorWaitUntilIdle(pillar);
 		sySndPlay(SE_THUMP);
 		pillar->collisionFlg = 0;
@@ -1951,9 +1943,9 @@ static void scVenusLighthouseMoveSwitchPillar(void)
 		fdActorSetSprPriority(pillarId, 3);
 		pillar->priFlg = ACTOR_PRIORITY_UNDERFOOT;
 		fdMapGridCopyMetatileAttributes(46, 39, 1, 1,
-			VenusThirdFloorSockets[socketIndex].x,
-			VenusThirdFloorSockets[socketIndex].z);
-		fdActorSetSprPriority(ACTOR_PARTY_LEADER, savedPriority);
+			VenusThirdFloorSockets[socketIdx].x,
+			VenusThirdFloorSockets[socketIdx].z);
+		fdActorSetSprPriority(ACTOR_PARTY_LEADER, savedPri);
 		fdActorGet(ACTOR_PARTY_LEADER)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
 		if(occlusionEffect != NULL) {
 			fdActorRelease(occlusionEffect);
@@ -2029,26 +2021,26 @@ static UNREAD_RESULT scVenusLighthouseFollowSupportingPillarHeight(
 /* The two balance platforms of the fourth floor's west room sink and rise to
    the heights their loads give them, with a grinding sound. A platform that
    ends between the floor and 30 pixels below it can be stepped on. */
-static void scVenusLighthouseLowerFloatingPillars(Sint32 waitFrames)
+static void scVenusLighthouseLowerFloatingPillars(Sint32 waitTicks)
 {
 	ACTOR *westSupport = fdActorGet(ACTOR_BALANCE_WEST);
 	ACTOR *eastSupport = fdActorGet(ACTOR_BALANCE_EAST);
-	Uint32 pillarIndex;
+	Uint32 pillarIdx;
 
 	fdActorSetSpeed(ACTOR_BALANCE_WEST, 0.5);
 	fdActorSetSpeed(ACTOR_BALANCE_EAST, 0.5);
-	if(waitFrames != 0) {
+	if(waitTicks != 0) {
 		sySndPlay(SE_SETTLE);
 	}
 	syFieldActorSetMoveTargetFX(westSupport, westSupport->x.fixed,
-		Balance_PlatformHeights[westSupport->tmr], westSupport->z.fixed);
+		BalancePlatformHeights[westSupport->tmr], westSupport->z.fixed);
 	syFieldActorSetMoveTargetFX(eastSupport, eastSupport->x.fixed,
-		Balance_PlatformHeights[eastSupport->tmr], eastSupport->z.fixed);
+		BalancePlatformHeights[eastSupport->tmr], eastSupport->z.fixed);
 	fdActorWaitForMoveById(ACTOR_BALANCE_WEST);
 	fdActorWaitForMoveById(ACTOR_BALANCE_EAST);
-	westSupport->y.fixed = Balance_PlatformHeights[westSupport->tmr];
-	eastSupport->y.fixed = Balance_PlatformHeights[eastSupport->tmr];
-	if(waitFrames != 0) {
+	westSupport->y.fixed = BalancePlatformHeights[westSupport->tmr];
+	eastSupport->y.fixed = BalancePlatformHeights[eastSupport->tmr];
+	if(waitTicks != 0) {
 		sySndPlay(SOUND_FADE_OUT_ACTION_SE);
 	}
 	/* The two platforms and the first three floating pillars: the fourth,
@@ -2057,8 +2049,8 @@ static void scVenusLighthouseLowerFloatingPillars(Sint32 waitFrames)
 	   when it ends in reach; a recording of the four blocks set down with the
 	   fourth last, on top of a stack that ends between the floor and 30 pixels
 	   below it, settles it. */
-	for(pillarIndex = 0; pillarIndex < 5; pillarIndex++) {
-		ACTOR *actor = fdActorGet(pillarIndex + ACTOR_BALANCE_WEST);
+	for(pillarIdx = 0; pillarIdx < 5; pillarIdx++) {
+		ACTOR *actor = fdActorGet(pillarIdx + ACTOR_BALANCE_WEST);
 
 		if(actor->y.fixed / toFIXED(1) < 0 &&
 			actor->y.fixed / toFIXED(1) > -30) {
@@ -2066,7 +2058,7 @@ static void scVenusLighthouseLowerFloatingPillars(Sint32 waitFrames)
 				FIELD_METATILE(actor->x.fixed), FIELD_METATILE(actor->z.fixed));
 		}
 	}
-	fdScriptWait(waitFrames);
+	fdScriptWait(waitTicks);
 }
 
 /* Sets a block Carry has dropped on a balance platform on top of whatever is
@@ -2076,10 +2068,10 @@ static void scVenusLighthouseStackFloatingPillar(Sint32 pillarId)
 	ACTOR *candidate;
 	FIXED  supportHeight = -toFIXED(80);
 	ACTOR *pillar = 0;
-	Uint32 candidateIndex;
+	Uint32 candidateIdx;
 
-	for(candidateIndex = 0; candidateIndex <= 5; candidateIndex++) {
-		Sint32 candidateId = candidateIndex + ACTOR_BALANCE_WEST;
+	for(candidateIdx = 0; candidateIdx <= 5; candidateIdx++) {
+		Sint32 candidateId = candidateIdx + ACTOR_BALANCE_WEST;
 		FIXED  candidateTop;
 
 		if(candidateId == pillarId) {
@@ -2260,7 +2252,7 @@ static void scVenusLighthouseStepOnWestWallSwitch(void)
 	Sint32				   column;
 	Sint32				   leaderZ;
 	Sint32				   tileDelay;
-	Uint32				   frame;
+	Uint32				   frm;
 	FIXED				   dustX;
 
 	layer = &((MAP_GRID_SCROLL_STATE *)MapGridState[0])->layers[2];
@@ -2282,9 +2274,9 @@ static void scVenusLighthouseStepOnWestWallSwitch(void)
 			dustX = toFIXED(616);
 			column = 0;
 			tileDelay = 60;
-			for(frame = 0; frame <= 319; frame++, tileDelay--) {
+			for(frm = 0; frm <= 319; frm++, tileDelay--) {
 				layer->ofsX += toFIXED(1) / 5;
-				if(dustX >= toFIXED(576) && frame > 40) {
+				if(dustX >= toFIXED(576) && frm > 40) {
 					dustX -= toFIXED(1) / 5;
 					options.pri = 2;
 					options.startScaleX =
@@ -2293,7 +2285,7 @@ static void scVenusLighthouseStepOnWestWallSwitch(void)
 						(syRandomBelow(3)) * (toFIXED(1) / 5) + toFIXED(4) / 5;
 					options.spin = FIELD_EFFECT_RANDOM_SPIN();
 					fdEffectSpawn(dustX, 0, toFIXED(288), 0,
-						-toFIXED((FrameCount & 1) * 3), 0,
+						-toFIXED((TickCount & 1) * 3), 0,
 						EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE |
 							EFFECT_USE_SPIN,
 						&options);
@@ -2331,7 +2323,7 @@ static void scVenusLighthouseStepOnEastWallSwitch(void)
 	Sint32				   column;
 	Sint32				   leaderZ;
 	Sint32				   tileDelay;
-	Uint32				   frame;
+	Uint32				   frm;
 	FIXED				   dustX;
 
 	layer = &((MAP_GRID_SCROLL_STATE *)MapGridState[0])->layers[2];
@@ -2352,7 +2344,7 @@ static void scVenusLighthouseStepOnEastWallSwitch(void)
 			dustX = toFIXED(704);
 			column = 61;
 			tileDelay = 60;
-			for(frame = 0; frame <= 319; frame++, tileDelay--) {
+			for(frm = 0; frm <= 319; frm++, tileDelay--) {
 				layer->ofsX -= toFIXED(1) / 5;
 				dustX += toFIXED(1) / 5;
 				if(dustX >= toFIXED(712) && dustX < toFIXED(752)) {
@@ -2363,7 +2355,7 @@ static void scVenusLighthouseStepOnEastWallSwitch(void)
 						(syRandomBelow(3)) * (toFIXED(1) / 5) + toFIXED(4) / 5;
 					options.spin = FIELD_EFFECT_RANDOM_SPIN();
 					fdEffectSpawn(dustX, 0, toFIXED(288), 0,
-						-toFIXED((FrameCount & 1) * 3), 0,
+						-toFIXED((TickCount & 1) * 3), 0,
 						EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE |
 							EFFECT_USE_SPIN,
 						&options);
@@ -2406,9 +2398,9 @@ static void scVenusLighthouseMoveSocketPillar(void)
 	ACTOR *thirdPillar;
 	ACTOR *fourthPillar;
 	Uint32 pillarId;
-	Uint32 candidateIndex;
-	Uint32 socketIndex;
-	Uint32 savedPriority;
+	Uint32 candidateIdx;
+	Uint32 socketIdx;
+	Uint32 savedPri;
 
 	occlusionEffect = 0;
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
@@ -2430,52 +2422,52 @@ static void scVenusLighthouseMoveSocketPillar(void)
 				FIELD_METATILE(pillar->x.fixed),
 				FIELD_METATILE(pillar->z.fixed));
 
-		socketIndex = NO_FOURTH_FLOOR_SOCKET;
-		for(candidateIndex = 0; candidateIndex < NO_FOURTH_FLOOR_SOCKET;
-			candidateIndex++) {
+		socketIdx = NO_FOURTH_FLOOR_SOCKET;
+		for(candidateIdx = 0; candidateIdx < NO_FOURTH_FLOOR_SOCKET;
+			candidateIdx++) {
 			if(FIELD_METATILE(pillar->x.fixed) ==
-					VenusFourthFloorSockets[candidateIndex].x &&
+					VenusFourthFloorSockets[candidateIdx].x &&
 				(FIELD_METATILE(pillar->z.fixed)) ==
-					VenusFourthFloorSockets[candidateIndex].z &&
+					VenusFourthFloorSockets[candidateIdx].z &&
 				pillar->y.fixed >= 0) {
-				socketIndex = candidateIndex;
+				socketIdx = candidateIdx;
 				break;
 			}
 		}
-		if(socketIndex == NO_FOURTH_FLOOR_SOCKET)
+		if(socketIdx == NO_FOURTH_FLOOR_SOCKET)
 			continue;
-		for(candidateIndex = ACTOR_FIRST_SOCKET_PILLAR;
-			candidateIndex <= ACTOR_FIRST_SOCKET_PILLAR + 3; candidateIndex++) {
-			otherPillar = fdActorGet(candidateIndex);
-			if(pillarId != candidateIndex &&
+		for(candidateIdx = ACTOR_FIRST_SOCKET_PILLAR;
+			candidateIdx <= ACTOR_FIRST_SOCKET_PILLAR + 3; candidateIdx++) {
+			otherPillar = fdActorGet(candidateIdx);
+			if(pillarId != candidateIdx &&
 				(FIELD_METATILE(pillar->x.fixed)) ==
 					FIELD_METATILE(otherPillar->x.fixed) &&
 				(FIELD_METATILE(pillar->z.fixed)) ==
 					FIELD_METATILE(otherPillar->z.fixed)) {
-				socketIndex = NO_FOURTH_FLOOR_SOCKET;
+				socketIdx = NO_FOURTH_FLOOR_SOCKET;
 				break;
 			}
 		}
-		if(socketIndex == NO_FOURTH_FLOOR_SOCKET)
+		if(socketIdx == NO_FOURTH_FLOOR_SOCKET)
 			continue;
 
-		savedPriority = leader->spr->image.pri;
+		savedPri = leader->spr->image.pri;
 		if(FIELD_METATILE(leader->z.fixed) <=
-			VenusFourthFloorSockets[socketIndex].z) {
+			VenusFourthFloorSockets[socketIdx].z) {
 			occlusionEffect = scVenusLighthouseCreateOccludingPassageEffect(
 				pillar->x.fixed, pillar->y.fixed, pillar->z.fixed - toFIXED(4),
 				SPRITE_CHEST);
 			fdActorSetSprPriority(ACTOR_PARTY_LEADER, 3);
 		}
-		for(candidateIndex = ACTOR_FIRST_SOCKET_PILLAR;
-			candidateIndex <= ACTOR_FIRST_SOCKET_PILLAR + 3; candidateIndex++) {
-			otherPillar = fdActorGet(candidateIndex);
-			if(pillarId != candidateIndex &&
+		for(candidateIdx = ACTOR_FIRST_SOCKET_PILLAR;
+			candidateIdx <= ACTOR_FIRST_SOCKET_PILLAR + 3; candidateIdx++) {
+			otherPillar = fdActorGet(candidateIdx);
+			if(pillarId != candidateIdx &&
 				(FIELD_METATILE(pillar->x.fixed)) ==
 					FIELD_METATILE(otherPillar->x.fixed) &&
 				(FIELD_METATILE(pillar->z.fixed)) - 1 ==
 					(FIELD_METATILE(otherPillar->z.fixed)))
-				fdActorSetSprPriority(candidateIndex, 3);
+				fdActorSetSprPriority(candidateIdx, 3);
 		}
 		fdActorSetSprFlags(fdActorGet(pillarId), 0);
 		pillar->layer = 0;
@@ -2483,8 +2475,8 @@ static void scVenusLighthouseMoveSocketPillar(void)
 		pillar->gravity = toFIXED(1) / 10;
 		pillar->bounce = 0;
 		fdMapGridCopyMetatileAttributes(6, 44, 1, 1,
-			VenusFourthFloorSockets[socketIndex].x,
-			VenusFourthFloorSockets[socketIndex].z);
+			VenusFourthFloorSockets[socketIdx].x,
+			VenusFourthFloorSockets[socketIdx].z);
 		scActorWaitUntilIdle(pillar);
 		sySndPlay(SE_THUMP);
 		pillar->collisionFlg = 0;
@@ -2493,20 +2485,20 @@ static void scVenusLighthouseMoveSocketPillar(void)
 		fdActorSetSprPriority(pillarId, 3);
 		pillar->priFlg = ACTOR_PRIORITY_UNDERFOOT;
 		fdMapGridCopyMetatileAttributes(73, 48, 1, 1,
-			VenusFourthFloorSockets[socketIndex].x,
-			VenusFourthFloorSockets[socketIndex].z);
-		fdActorSetSprPriority(ACTOR_PARTY_LEADER, savedPriority);
+			VenusFourthFloorSockets[socketIdx].x,
+			VenusFourthFloorSockets[socketIdx].z);
+		fdActorSetSprPriority(ACTOR_PARTY_LEADER, savedPri);
 		fdActorGet(ACTOR_PARTY_LEADER)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-		for(candidateIndex = ACTOR_FIRST_SOCKET_PILLAR;
-			candidateIndex <= ACTOR_FIRST_SOCKET_PILLAR + 3; candidateIndex++) {
-			otherPillar = fdActorGet(candidateIndex);
-			if(pillarId != candidateIndex &&
+		for(candidateIdx = ACTOR_FIRST_SOCKET_PILLAR;
+			candidateIdx <= ACTOR_FIRST_SOCKET_PILLAR + 3; candidateIdx++) {
+			otherPillar = fdActorGet(candidateIdx);
+			if(pillarId != candidateIdx &&
 				(FIELD_METATILE(pillar->x.fixed)) ==
 					FIELD_METATILE(otherPillar->x.fixed) &&
 				(FIELD_METATILE(pillar->z.fixed)) - 1 ==
 					(FIELD_METATILE(otherPillar->z.fixed))) {
-				fdActorSetSprPriority(candidateIndex, 1);
-				fdActorGet(candidateIndex)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+				fdActorSetSprPriority(candidateIdx, 1);
+				fdActorGet(candidateIdx)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
 			}
 		}
 		fdActorRelease(occlusionEffect);
@@ -2633,7 +2625,7 @@ static void scVenusLighthouseLayDownHurtActor(Sint32 actorId)
 	actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
 }
 
-/* An event that looks up the fourth floor's four socket pillars each frame and
+/* An event that looks up the fourth floor's four socket pillars each tick and
    does nothing with them. */
 static void scVenusLighthouseVisitPillarActors(void)
 {
@@ -2653,7 +2645,7 @@ Sint32 scInit(void)
 {
 	ACTOR *actor;
 	Sint32 sceneId;
-	Uint32 pillarIndex;
+	Uint32 pillarIdx;
 	Sint32 column;
 	Sint32 row;
 
@@ -2863,7 +2855,7 @@ Sint32 scInit(void)
 				VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH)
 				break;
 			fdScriptStartScreenTransition();
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 			FieldStateWork->transition = SCENE_TRANSITION(
 				TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 			break;
@@ -2891,15 +2883,15 @@ Sint32 scInit(void)
 				fdMapGridCopyMetatiles(53, 12, 3, 13, 26, 12);
 				fdMapGridCopyMetatilesTo(81, 41, 89, 14, 9, 2);
 				sySynch(1);
-				sySetFrameEvent(
-					scVenusLighthousePuffWestSlideHead, EVENT_PASS_FRAME);
+				sySetTickEvent(
+					scVenusLighthousePuffWestSlideHead, EVENT_PASS_TICK);
 			}
 			if(gmFlagGet(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED)) {
 				fdMapGridCopyMetatiles(58, 12, 3, 13, 34, 12);
 				fdMapGridCopyMetatilesTo(81, 41, 97, 14, 5, 2);
 				sySynch(1);
-				sySetFrameEvent(
-					scVenusLighthousePuffEastSlideHead, EVENT_PASS_FRAME);
+				sySetTickEvent(
+					scVenusLighthousePuffEastSlideHead, EVENT_PASS_TICK);
 			}
 			if(MainRoutineStateWork.entrance ==
 				VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_SOUTHWEST_ROOM)
@@ -2969,14 +2961,13 @@ Sint32 scInit(void)
 			if(gmFlagGet(FLAG_KEEP_PARTY_POSITION)) {
 				scVenusLighthouseLowerFloatingPillars(0);
 				scActorWaitUntilIdle(fdActorGet(ACTOR_PARTY_LEADER));
-				for(pillarIndex = 0; pillarIndex <= 3; pillarIndex++) {
-					actor =
-						fdActorGet(pillarIndex + ACTOR_FIRST_FLOATING_PILLAR);
+				for(pillarIdx = 0; pillarIdx <= 3; pillarIdx++) {
+					actor = fdActorGet(pillarIdx + ACTOR_FIRST_FLOATING_PILLAR);
 					column = FIELD_METATILE(actor->x.fixed);
 					if(column == 13) {
 						row = FIELD_METATILE(actor->z.fixed);
 						if(row == 7 &&
-							gmFlagGet(pillarIndex + FLAG_SCENE_TEMP_00)) {
+							gmFlagGet(pillarIdx + FLAG_SCENE_TEMP_00)) {
 							actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
 							actor->collisionFlg = 0;
 							actor->motionFlg = 0;
@@ -3074,7 +3065,7 @@ Sint32 scInit(void)
 				MainRoutineStateWork.entrance ==
 					VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST) {
 				fdScriptStartScreenTransition();
-				fdScriptWaitTransitionFrames();
+				fdScriptWaitTransitionTicks();
 				FieldStateWork->transition = SCENE_TRANSITION(
 					TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 			}
@@ -3085,8 +3076,7 @@ Sint32 scInit(void)
 		case VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_FROM_WALL_SWITCHES_SOUTH:
 		case VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_FROM_WALL_SWITCHES_EAST:
 			sySynch(1);
-			sySetFrameEvent(
-				scVenusLighthouseVisitPillarActors, EVENT_PASS_FRAME);
+			sySetTickEvent(scVenusLighthouseVisitPillarActors, EVENT_PASS_TICK);
 			actor = fdActorGet(ACTOR_SOCKET_STATUE);
 			actor->motionFlg = 0;
 			actor->y.fixed = 0;
@@ -3191,10 +3181,10 @@ static void scVenusLighthouseStepActorWithDust(VECTOR3 *direction)
 	Sint32		   actorId;
 	ACTOR		  *viewCenter;
 	ACTOR		  *actor;
-	FIELD_POS	   nextPosition;
+	FIELD_POS	   nextPos;
 	EFFECT_OPTIONS options;
 	Sint32		   collision;
-	Sint32		   framePhase;
+	Sint32		   frmPhase;
 	FIXED		   particleX;
 
 	{
@@ -3204,20 +3194,20 @@ static void scVenusLighthouseStepActorWithDust(VECTOR3 *direction)
 		viewCenter = state->camera;
 	}
 	actor = fdActorGet(actorId);
-	nextPosition.x =
+	nextPos.x =
 		actor->x.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15);
-	nextPosition.y = actor->y.fixed;
-	nextPosition.z =
+	nextPos.y = actor->y.fixed;
+	nextPos.z =
 		actor->z.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z * 3, 15);
-	collision = syFieldActorCheckMovementCollision(actor, &nextPosition);
-	framePhase = FrameCount & 4;
-	if(framePhase == 0) {
+	collision = syFieldActorCheckMovementCollision(actor, &nextPos);
+	frmPhase = TickCount & 4;
+	if(frmPhase == 0) {
 		options.spin = FIELD_EFFECT_RANDOM_SPIN();
 		particleX = actor->x.fixed + toFIXED(syRandomBelow(12)) - toFIXED(6);
 		fdEffectSpawn(particleX, actor->y.fixed, actor->z.fixed,
 			((syRandomBelow(5)) * (toFIXED(1) / 10) + 5 * (toFIXED(1) / 10)) *
 				direction->x,
-			framePhase,
+			frmPhase,
 			direction->z *
 				((syRandomBelow(5)) * (toFIXED(1) / 10) +
 					5 * (toFIXED(1) / 10)),
@@ -3239,32 +3229,32 @@ static void scVenusLighthouseStepActorWithDust(VECTOR3 *direction)
 		sySynch(3);
 		return;
 	}
-	nextPosition.x =
+	nextPos.x =
 		actor->x.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x, 19);
-	nextPosition.y = actor->y.fixed;
-	nextPosition.z =
+	nextPos.y = actor->y.fixed;
+	nextPos.z =
 		actor->z.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z, 19);
-	collision = syFieldActorCheckMovementCollision(actor, &nextPosition);
+	collision = syFieldActorCheckMovementCollision(actor, &nextPos);
 	if(collision > 0) {
 		return;
 	}
-	nextPosition.x = actor->x.fixed + direction->x * (toFIXED(57) / 10) -
+	nextPos.x = actor->x.fixed + direction->x * (toFIXED(57) / 10) -
 		direction->z * (toFIXED(57) / 10);
-	nextPosition.y = actor->y.fixed;
-	nextPosition.z = actor->z.fixed + direction->z * (toFIXED(57) / 10) -
+	nextPos.y = actor->y.fixed;
+	nextPos.z = actor->z.fixed + direction->z * (toFIXED(57) / 10) -
 		direction->x * (toFIXED(57) / 10);
-	collision = syFieldActorCheckMovementCollision(actor, &nextPosition);
+	collision = syFieldActorCheckMovementCollision(actor, &nextPos);
 	if(collision > 0) {
 		actor->x.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z * 3, 15);
 		actor->z.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15);
 		return;
 	}
-	nextPosition.x =
+	nextPos.x =
 		(direction->x + direction->z) * (toFIXED(57) / 10) + actor->x.fixed;
-	nextPosition.y = actor->y.fixed;
-	nextPosition.z =
+	nextPos.y = actor->y.fixed;
+	nextPos.z =
 		(direction->x + direction->z) * (toFIXED(57) / 10) + actor->z.fixed;
-	collision = syFieldActorCheckMovementCollision(actor, &nextPosition);
+	collision = syFieldActorCheckMovementCollision(actor, &nextPos);
 	if(collision > 0) {
 		actor->x.fixed -= VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z * 3, 15);
 		actor->z.fixed -= VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15);
@@ -3300,7 +3290,7 @@ static void scVenusLighthouseMoveFirstFloorSandFall(void)
 	EFFECT_OPTIONS options;
 	Uint32		   extraBursts;
 	Uint32		   row;
-	Uint32		   particleIndex;
+	Uint32		   particleIdx;
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -3309,18 +3299,16 @@ static void scVenusLighthouseMoveFirstFloorSandFall(void)
 	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
 	fdQueueMusic(SE_AMBIENT_WATER);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	sySndPlay(SE_WAVE);
 	extraBursts = 0;
 	for(row = 0; row < 10; row++) {
 		scVenusLighthouseSetSandParticleScaleAndSpin(&options);
 		for(;;) {
-			for(particleIndex = 0; particleIndex < 4 && row < 8;
-				particleIndex++) {
+			for(particleIdx = 0; particleIdx < 4 && row < 8; particleIdx++) {
 				fdEffectSpawn(((syRandomBelow(7)) << 19) + toFIXED(864), 0,
-					toFIXED(48) + row * toFIXED(16) +
-						particleIndex * toFIXED(4),
+					toFIXED(48) + row * toFIXED(16) + particleIdx * toFIXED(4),
 					0, 0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN,
 					&options);
 			}
@@ -3338,9 +3326,9 @@ static void scVenusLighthouseMoveFirstFloorSandFall(void)
 	fdMapGridCopyMetatilesTo(111, 7, 111, 10, 5, 2);
 	for(row = 0; row < 10; row++) {
 		scVenusLighthouseSetSandParticleScaleAndSpin(&options);
-		for(particleIndex = 0; particleIndex < 4 && row < 8; particleIndex++) {
+		for(particleIdx = 0; particleIdx < 4 && row < 8; particleIdx++) {
 			fdEffectSpawn(((syRandomBelow(7)) << 19) + toFIXED(768), 0,
-				toFIXED(48) + row * toFIXED(16) + particleIndex * toFIXED(4), 0,
+				toFIXED(48) + row * toFIXED(16) + particleIdx * toFIXED(4), 0,
 				0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
 		}
 		sySynch(3);
@@ -3354,7 +3342,7 @@ static void scVenusLighthouseMoveFirstFloorSandFall(void)
 }
 
 /* Puffs of sand at the head of a sand slide that has started to pour, about one
-   frame in four. */
+   tick in four. */
 static void scVenusLighthousePuffSandAtSlideHead(Sint32 x, Sint32 z)
 {
 	EFFECT_OPTIONS options;
@@ -3362,7 +3350,7 @@ static void scVenusLighthousePuffSandAtSlideHead(Sint32 x, Sint32 z)
 	options.startScaleX = toFIXED(7) / 10;
 	options.startScaleY = toFIXED(7) / 10;
 	options.spin = FIELD_EFFECT_RANDOM_SPIN();
-	if((FrameCount & 3) == 0) {
+	if((TickCount & 3) == 0) {
 		if((syRandomBelow(2)) != 0) {
 			fdEffectSpawn(toFIXED(x + (syRandomBelow(2) << 4)), 0,
 				FIELD_HALF_METATILE_ORIGIN(z), 0, 0,
@@ -3385,7 +3373,7 @@ static void scVenusLighthousePuffSandAtSlideHead(Sint32 x, Sint32 z)
 	}
 }
 
-/* Events, each frame once a slide pours: puffs of sand at the head of the west
+/* Events, each tick once a slide pours: puffs of sand at the head of the west
    slide, and of the east. */
 static void scVenusLighthousePuffWestSlideHead(void)
 {
@@ -3410,7 +3398,7 @@ static void scVenusLighthousePourWestSandSlide(void)
 	EFFECT_OPTIONS options;
 	Uint32		   extraBursts;
 	Uint32		   row;
-	Uint32		   particleIndex;
+	Uint32		   particleIdx;
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -3419,7 +3407,7 @@ static void scVenusLighthousePourWestSandSlide(void)
 	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
 	fdQueueMusic(SE_AMBIENT_WATER);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	sySndPlay(SE_WAVE);
 	fdCameraSetSpeed(0.5);
@@ -3432,10 +3420,10 @@ static void scVenusLighthousePourWestSandSlide(void)
 		/* One burst of sand: four puffs down the row, each over a random one of
 		   seven 8-pixel columns. */
 	burst:
-		for(particleIndex = 0; particleIndex <= 3; particleIndex++) {
+		for(particleIdx = 0; particleIdx <= 3; particleIdx++) {
 			fdEffectSpawn(((syRandomBelow(7)) << 19) + toFIXED(416), 0,
-				toFIXED(192) + row * toFIXED(16) + particleIndex * toFIXED(4),
-				0, 0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
+				toFIXED(192) + row * toFIXED(16) + particleIdx * toFIXED(4), 0,
+				0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
 		}
 		sySynch(3);
 		if(row == 3) {
@@ -3444,8 +3432,8 @@ static void scVenusLighthousePourWestSandSlide(void)
 				goto burst;
 			}
 			if(extraBursts == 3)
-				sySetFrameEvent(
-					scVenusLighthousePuffWestSlideHead, EVENT_PASS_FRAME);
+				sySetTickEvent(
+					scVenusLighthousePuffWestSlideHead, EVENT_PASS_TICK);
 		}
 		fdMapGridCopyMetatilesTo(53, row + 12, 26, row + 12, 3, 1);
 	}
@@ -3470,7 +3458,7 @@ static void scVenusLighthousePourEastSandSlide(void)
 	EFFECT_OPTIONS options;
 	Uint32		   extraBursts;
 	Uint32		   row;
-	Uint32		   particleIndex;
+	Uint32		   particleIdx;
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -3479,7 +3467,7 @@ static void scVenusLighthousePourEastSandSlide(void)
 	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
 	fdQueueMusic(SE_AMBIENT_WATER);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	sySndPlay(SE_WAVE);
 	fdCameraSetSpeed(0.5);
@@ -3490,17 +3478,17 @@ static void scVenusLighthousePourEastSandSlide(void)
 	for(row = 0; row <= 12; row++) {
 		scVenusLighthouseSetSandParticleScaleAndSpin(&options);
 	burst:
-		for(particleIndex = 0; particleIndex <= 3; particleIndex++) {
+		for(particleIdx = 0; particleIdx <= 3; particleIdx++) {
 			fdEffectSpawn(((syRandomBelow(7)) << 19) + toFIXED(544), 0,
-				toFIXED(192) + row * toFIXED(16) + particleIndex * toFIXED(4),
-				0, 0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
+				toFIXED(192) + row * toFIXED(16) + particleIdx * toFIXED(4), 0,
+				0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
 		}
 		sySynch(3);
 		if(row == 3 && extraBursts <= 2) {
 			extraBursts++;
 			goto burst;
 		}
-		sySetFrameEvent(scVenusLighthousePuffEastSlideHead, EVENT_PASS_FRAME);
+		sySetTickEvent(scVenusLighthousePuffEastSlideHead, EVENT_PASS_TICK);
 		fdMapGridCopyMetatilesTo(58, row + 12, 34, row + 12, 3, 1);
 	}
 	fdMapGridCopyMetatilesTo(86, 41, 97, 14, 5, 2);
@@ -3514,27 +3502,27 @@ static void scVenusLighthousePourEastSandSlide(void)
 }
 
 /* Sparkles rise around the leader as the platform lifts him, one every four
-   frames. */
+   ticks. */
 static UNREAD_RESULT scVenusLighthouseEmitRisingSparkles(ACTOR *actor)
 {
 	EFFECT_OPTIONS options;
-	Sint32		   framePhase;
+	Sint32		   frmPhase;
 	FIXED		   particleX, particleY, particleZ, riseSpeed;
 
 	options.pri = 1;
 	options.pal = SPRITE_COLOR_BRG;
 	options.type = SPRITE_GLINT;
-	options.script = Glint_TwinkleScript;
-	framePhase = FrameCount & 3;
-	if(framePhase == 0) {
-		if((FrameCount & 7) == 0) {
+	options.script = GlintTwinkleScript;
+	frmPhase = TickCount & 3;
+	if(frmPhase == 0) {
+		if((TickCount & 7) == 0) {
 			sySndPlay(SE_GLITTER);
 		}
 		particleX = actor->x.fixed + toFIXED(syRandomBelow(49) - 24);
 		particleY = actor->y.fixed + toFIXED(syRandomBelow(49) - 24);
 		particleZ = actor->z.fixed + toFIXED(syRandomBelow(49) - 24);
 		riseSpeed = ((syRandomBelow(4)) << 15) + toFIXED(1) / 2;
-		fdEffectSpawn(particleX, particleY, particleZ, 0, riseSpeed, framePhase,
+		fdEffectSpawn(particleX, particleY, particleZ, 0, riseSpeed, frmPhase,
 			EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
 				EFFECT_USE_SCRIPT,
 			&options);
@@ -3547,7 +3535,7 @@ static UNREAD_RESULT scVenusLighthouseEmitRisingSparkles(ACTOR *actor)
    the scene changes to the Lighthouse Aerie. */
 static void scVenusLighthouseRaiseLeaderInSparkles(void)
 {
-	Uint32 riseFrame;
+	Uint32 riseFrm;
 	ACTOR *leader;
 	ACTOR *platform;
 
@@ -3564,7 +3552,7 @@ static void scVenusLighthouseRaiseLeaderInSparkles(void)
 	leader->bounce = 0;
 	leader->motionFlg = 0;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	sySndPlay(SE_DUST_PUFF);
 	fdScriptWait(30);
 	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -3609,7 +3597,7 @@ static void scVenusLighthouseRaiseLeaderInSparkles(void)
 	sySndPlay(SOUND_FADE_OUT_BGM);
 	sySndPlay(SE_MATERIALIZE);
 	gmFlagSet(FLAG_SKIP_SCENE_CHANGE_SOUND);
-	for(riseFrame = 0; riseFrame < 128; riseFrame++) {
+	for(riseFrm = 0; riseFrm < 128; riseFrm++) {
 		leader->y.fixed += toFIXED(1);
 		leader->groundHeight += toFIXED(1);
 		platform->y.fixed += toFIXED(1);
@@ -3624,46 +3612,46 @@ static void scVenusLighthouseRaiseLeaderInSparkles(void)
    the edge it comes in by. */
 static Sint32 scVenusLighthouseRouteLight(ACTOR *light)
 {
-	FIELD_POS	 pillarPosition;
+	FIELD_POS	 pillarPos;
 	ACTOR		*pillar;
-	SPR			*sprite;
+	SPR			*spr;
 	const Uint8 *allowedTracks;
 	Uint8		 track;
 	Uint32		 socket;
-	Sint32		 pathIndex;
+	Sint32		 pathIdx;
 	const Uint8 *trackCursor;
 
-	pillarPosition.x = light->x.fixed;
-	pillarPosition.y = light->y.fixed - toFIXED(16);
-	pillarPosition.z = light->z.fixed;
-	pillar = scActorFindAtPos(&pillarPosition, 0);
+	pillarPos.x = light->x.fixed;
+	pillarPos.y = light->y.fixed - toFIXED(16);
+	pillarPos.z = light->z.fixed;
+	pillar = scActorFindAtPos(&pillarPos, 0);
 	/* A light does reach an empty socket: on the third floor one solution, the
 	   one FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY records, leaves that
 	   socket empty, and the light sent there always arrives. With no pillar the
 	   reads below go through address 0, into the BIOS, and that light goes out
 	   (VenusLightGoesOut) while the other opens the gate. */
-	sprite = pillar->spr;
-	if(sprite->entries[0]->anmId == SPRITE_SPIRAL_PILLAR) {
-		Sint32 velocityX = light->velX;
-		Sint32 speedX = velocityX < 0 ? -velocityX : velocityX;
-		Sint32 velocityZ = light->velZ;
-		Sint32 speedZ = velocityZ < 0 ? -velocityZ : velocityZ;
+	spr = pillar->spr;
+	if(spr->entries[0]->anmId == SPRITE_SPIRAL_PILLAR) {
+		Sint32 velX = light->velX;
+		Sint32 speedX = velX < 0 ? -velX : velX;
+		Sint32 velZ = light->velZ;
+		Sint32 speedZ = velZ < 0 ? -velZ : velZ;
 
 		if(speedX > speedZ) {
-			if(velocityX / toFIXED(1) < 0) {
+			if(velX / toFIXED(1) < 0) {
 				allowedTracks = VenusTracksMovingWest;
 			} else {
 				allowedTracks = VenusTracksMovingEast;
 			}
 		} else {
-			if(velocityZ / toFIXED(1) < 0) {
+			if(velZ / toFIXED(1) < 0) {
 				allowedTracks = VenusTracksMovingNorth;
 			} else {
 				allowedTracks = VenusTracksMovingSouth;
 			}
 		}
 		for(; *allowedTracks != VENUS_TRACK_END; allowedTracks++) {
-			if(sprite->lastNo == *allowedTracks) {
+			if(spr->lastNo == *allowedTracks) {
 				break;
 			}
 		}
@@ -3679,7 +3667,7 @@ static Sint32 scVenusLighthouseRouteLight(ACTOR *light)
 						VenusThirdFloorSockets[socket].z);
 				socket++) {
 			}
-			for(pathIndex = 0;; pathIndex++) {
+			for(pathIdx = 0;; pathIdx++) {
 				trackCursor = VenusThirdFloorSocketTracks[socket];
 				track = *trackCursor;
 				if(track == VENUS_TRACK_END) {
@@ -3692,7 +3680,7 @@ static Sint32 scVenusLighthouseRouteLight(ACTOR *light)
 				VenusThirdFloorSocketTracks[socket] = trackCursor + 1;
 			}
 			fdActorStartScript(
-				light, VenusThirdFloorSocketPaths[socket][pathIndex]);
+				light, VenusThirdFloorSocketPaths[socket][pathIdx]);
 		} else {
 			for(socket = 0; socket <= 7 &&
 				!(FIELD_METATILE(light->x.fixed) ==
@@ -3701,7 +3689,7 @@ static Sint32 scVenusLighthouseRouteLight(ACTOR *light)
 						VenusFourthFloorSockets[socket].z);
 				socket++) {
 			}
-			for(pathIndex = 0;; pathIndex++) {
+			for(pathIdx = 0;; pathIdx++) {
 				trackCursor = VenusFourthFloorSocketTracks[socket];
 				track = *trackCursor;
 				if(track == VENUS_TRACK_END) {
@@ -3714,7 +3702,7 @@ static Sint32 scVenusLighthouseRouteLight(ACTOR *light)
 				VenusFourthFloorSocketTracks[socket] = trackCursor + 1;
 			}
 			fdActorStartScript(
-				light, VenusFourthFloorSocketPaths[socket][pathIndex]);
+				light, VenusFourthFloorSocketPaths[socket][pathIdx]);
 		}
 	} else {
 		fdActorStartScript(light, VenusLightGoesOut);
@@ -3789,10 +3777,10 @@ Uint8 VenusFourthFloorTrackLists[] = {
 	VENUS_TRACK_NORTH_SOUTH, VENUS_TRACK_END, /* southeast */
 };
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 /* The lady statues' actor script. They are drawn grey (VENUS_COLOR_MARK), */
@@ -3932,7 +3920,7 @@ Sint32 VenusThirdFloorLightToSoutheast[] = {
 };
 
 /* A light that cannot go on. It stops trailing particles and is released ten */
-/* frames later. */
+/* ticks later. */
 Sint32 VenusLightGoesOut[] = {
 	SC_SET(SW_HOOK, 0),
 	SC_WAIT(10),

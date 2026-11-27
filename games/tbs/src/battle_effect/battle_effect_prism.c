@@ -5,7 +5,7 @@
 #define PRISM_SHARD_PICTURES \
 	PICTURE_BYTES(CRYSTAL)			/* the shards, after the crystal */
 #define PRISM_SHATTERED			  1 /* a crystal's z once it has hit the ground */
-/* The x in Prism_ShardStarts over the crystal's middle. */
+/* The x in PrismShardStarts over the crystal's middle. */
 #define PRISM_SHARD_START_MIDDLE  40
 /* The shard kinds a crystal breaks into, and the pictures of each as it spins:
    a shard turns to its next picture each PRISM_SHARD_SPIN_STEP of spin. */
@@ -13,13 +13,13 @@
 #define PRISM_SHARD_SPIN_PICTURES 3
 #define PRISM_SHARD_SPIN_STEP	  96
 
-/* The strongest Prism turns the camera over its first frames, at a steady speed
+/* The strongest Prism turns the camera over its first ticks, at a steady speed
    and then slowing to a stop over the last eight. */
-#define PRISM_TURN_FRAMES		  104
-#define PRISM_TURN_SPEED		  192
-#define PRISM_TURN_SLOWING_FRAMES 8
-/* How much the turn slows each of those frames. */
-#define PRISM_TURN_SLOWDOWN		  (PRISM_TURN_SPEED / PRISM_TURN_SLOWING_FRAMES)
+#define PRISM_TURN_TICKS		 104
+#define PRISM_TURN_SPEED		 192
+#define PRISM_TURN_SLOWING_TICKS 8
+/* How much the turn slows each of those ticks. */
+#define PRISM_TURN_SLOWDOWN		 (PRISM_TURN_SPEED / PRISM_TURN_SLOWING_TICKS)
 
 /* How far each channel of the phase palette sways either way, in colour
    levels. */
@@ -34,7 +34,7 @@ void btEffectRunPrism(BATTLE_EFFECT_PARM *args)
 	BLITTER_PAIR		 draw;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	PARTICLE			*seed;
 	PARTICLE			*crystal;
 	PARTICLE			*shards;
@@ -54,9 +54,9 @@ void btEffectRunPrism(BATTLE_EFFECT_PARM *args)
 	btEffectBuildCanvasBlitters(state->args->side, draw);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-	/* The crystals wait above the screen, each eight frames behind the last,
+	/* The crystals wait above the screen, each eight ticks behind the last,
 	   and drift sideways so that they land over the targets. */
-	for(j = 0; j != Prism_Counts[state->args->variant][PRISM_CRYSTAL_COUNT];
+	for(j = 0; j != PrismCounts[state->args->variant][PRISM_CRYSTAL_COUNT];
 		j++) {
 		seed = &state->particles[j];
 		/* DEAD: x keeps a first random number, drawn and never read; the ROM
@@ -76,32 +76,31 @@ void btEffectRunPrism(BATTLE_EFFECT_PARM *args)
 		seed->variant = j * 8;
 	}
 
-	for(frame = 0; frame != Prism_Counts[state->args->variant][PRISM_FRAMES];
-		frame++) {
+	for(frm = 0; frm != PrismCounts[state->args->variant][PRISM_TICKS]; frm++) {
 		if(state->args->variant == EFFECT_VARIANT_STRONGEST &&
-			frame < PRISM_TURN_FRAMES) {
+			frm < PRISM_TURN_TICKS) {
 			BATTLE_CAMERA *camera = BattleCameraWork;
 			Sint32		   speed;
 
-			if(frame < PRISM_TURN_FRAMES - PRISM_TURN_SLOWING_FRAMES)
+			if(frm < PRISM_TURN_TICKS - PRISM_TURN_SLOWING_TICKS)
 				speed = PRISM_TURN_SPEED;
 			else
-				speed = PRISM_TURN_FRAMES * PRISM_TURN_SLOWDOWN -
-					frame * PRISM_TURN_SLOWDOWN;
+				speed = PRISM_TURN_TICKS * PRISM_TURN_SLOWDOWN -
+					frm * PRISM_TURN_SLOWDOWN;
 			if(state->args->side == EFFECT_SIDE_ENEMIES)
 				camera->yaw -= speed;
 			else
 				camera->yaw += speed;
 		}
-		if(frame == Prism_Counts[state->args->variant][PRISM_FRAMES] - 80)
+		if(frm == PrismCounts[state->args->variant][PRISM_TICKS] - 80)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-		if(frame == Prism_Counts[state->args->variant][PRISM_FRAMES] - 8) {
+		if(frm == PrismCounts[state->args->variant][PRISM_TICKS] - 8) {
 			EFFECT_SET_TRANSFER(
 				state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
 		}
-		if(frame <= Prism_Counts[state->args->variant][PRISM_FRAMES] - 8) {
+		if(frm <= PrismCounts[state->args->variant][PRISM_TICKS] - 8) {
 			for(i = 0;
-				i != Prism_Counts[state->args->variant][PRISM_CRYSTAL_COUNT];
+				i != PrismCounts[state->args->variant][PRISM_CRYSTAL_COUNT];
 				i++) {
 				crystal = &state->particles[i];
 				if(crystal->z == PRISM_SHATTERED) {
@@ -119,21 +118,21 @@ void btEffectRunPrism(BATTLE_EFFECT_PARM *args)
 								PRISM_SHARD_SPIN_PICTURES;
 						shard = &shards[i * PRISM_SHARDS_PER_CRYSTAL + j];
 						draw[j <= 2](canvas,
-							state->sheet + Prism_ShardPictures[picture] +
+							state->sheet + PrismShardPictures[picture] +
 								PRISM_SHARD_PICTURES,
 							FIXEDtoINT(shard->x) -
-								Prism_ShardWidths[picture] / 2,
+								PrismShardWidths[picture] / 2,
 							FIXEDtoINT(shard->y) -
-								Prism_ShardHeights[picture] / 2,
-							Prism_ShardWidths[picture],
-							Prism_ShardHeights[picture]);
+								PrismShardHeights[picture] / 2,
+							PrismShardWidths[picture],
+							PrismShardHeights[picture]);
 						btParticleAdvanceWithGravity2D(
 							shard, PARTICLE_DAMPING_NONE, toFIXED(1) / 8);
 						shard->variant += shard->z;
-						if(shard->z > 1 && (frame & 1))
+						if(shard->z > 1 && (frm & 1))
 							shard->z--;
 					}
-				} else if(frame >= crystal->variant) {
+				} else if(frm >= crystal->variant) {
 					/* A falling crystal. */
 					draw[i & 1](canvas, state->sheet,
 						FIXEDtoINT(crystal->x) - CRYSTAL_WIDTH / 2,
@@ -148,11 +147,11 @@ void btEffectRunPrism(BATTLE_EFFECT_PARM *args)
 							shard = &shards[i * PRISM_SHARDS_PER_CRYSTAL + j];
 							shard->x =
 								INTtoFIXED(
-									Prism_ShardStarts[j][PRISM_SHARD_START_X] -
+									PrismShardStarts[j][PRISM_SHARD_START_X] -
 									PRISM_SHARD_START_MIDDLE) +
 								crystal->x;
 							shard->y = toFIXED(
-								Prism_ShardStarts[j][PRISM_SHARD_START_Y]);
+								PrismShardStarts[j][PRISM_SHARD_START_Y]);
 							shard->velX = ((syRandom() & 127) - 64) << 11;
 							shard->velY = -(syRandom() & 127) << 11;
 							if(i & 1) {
@@ -173,43 +172,42 @@ void btEffectRunPrism(BATTLE_EFFECT_PARM *args)
 		}
 		btCameraShake(
 			state->args->variant * 2 + 4, state->args->variant * 4 + 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS();
 }
 
 /* Rebuilds the background palette's first ramp as a grey whose channels sway
-   with the frame, so the effect shimmers through colours. */
+   with the tick, so the effect shimmers through colours. */
 void btEffectUpdatePhasePalette(
-	Sint32 frame, Sint32 redPhase, Sint32 greenPhase, Sint32 bluePhase)
+	Sint32 frm, Sint32 redPhase, Sint32 greenPhase, Sint32 bluePhase)
 {
 	Uint16	palette[CANVAS_LEVEL_BRIGHTEST + 1];
 	Uint16 *output;
 	Sint32	phase;
-	Sint32	redOffset;
-	Sint32	greenOffset;
-	Sint32	blueOffset;
-	Sint32	index;
+	Sint32	redOfs;
+	Sint32	greenOfs;
+	Sint32	blueOfs;
+	Sint32	idx;
 
-	phase = frame * (TRIG_TURN / 64);
+	phase = frm * (TRIG_TURN / 64);
 	/* Each channel's sway, in the half levels the ramp's index counts. */
-	redOffset = FIXEDtoINT_TWICE(sySin(phase + redPhase) * PHASE_SWAY_LEVELS);
-	greenOffset =
-		FIXEDtoINT_TWICE(sySin(phase + greenPhase) * PHASE_SWAY_LEVELS);
-	blueOffset = FIXEDtoINT_TWICE(sySin(phase + bluePhase) * PHASE_SWAY_LEVELS);
+	redOfs = FIXEDtoINT_TWICE(sySin(phase + redPhase) * PHASE_SWAY_LEVELS);
+	greenOfs = FIXEDtoINT_TWICE(sySin(phase + greenPhase) * PHASE_SWAY_LEVELS);
+	blueOfs = FIXEDtoINT_TWICE(sySin(phase + bluePhase) * PHASE_SWAY_LEVELS);
 
 	palette[0] = 0;
-	index = 1;
+	idx = 1;
 	output = &palette[1];
-	for(; index != CANVAS_LEVEL_BRIGHTEST + 1; index++) {
+	for(; idx != CANVAS_LEVEL_BRIGHTEST + 1; idx++) {
 		Sint32 red;
 		Sint32 green;
 		Sint32 blue;
 
-		red = (index + redOffset) / 2;
-		green = (index + greenOffset) / 2;
-		blue = (index + blueOffset) / 2;
+		red = (idx + redOfs) / 2;
+		green = (idx + greenOfs) / 2;
+		blue = (idx + blueOfs) / 2;
 
 		CLAMP(red, 0, RGB_LEVEL_MAX);
 		CLAMP(green, 0, RGB_LEVEL_MAX);
@@ -233,8 +231,8 @@ void btEffectUpdatePhasePalette(
 #undef PRISM_SHARD_KINDS
 #undef PRISM_SHARD_SPIN_PICTURES
 #undef PRISM_SHARD_SPIN_STEP
-#undef PRISM_TURN_FRAMES
+#undef PRISM_TURN_TICKS
 #undef PRISM_TURN_SPEED
-#undef PRISM_TURN_SLOWING_FRAMES
+#undef PRISM_TURN_SLOWING_TICKS
 #undef PRISM_TURN_SLOWDOWN
 #undef PHASE_SWAY_LEVELS

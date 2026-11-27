@@ -35,7 +35,7 @@ typedef struct SCREEN_TRANSITION_DISPLAY {
 	Uint16 irqFirstLine;
 	/* scanlines; secondLine as the HBlank interrupt reads it */
 	Uint16 irqSecondLine;
-	/* Where the HBlank interrupt is in the frame, an enum
+	/* Where the HBlank interrupt is in the tick, an enum
 	   SCREEN_TRANSITION_IRQ_PHASE. */
 	Uint16 irqPhase;
 } SCREEN_TRANSITION_DISPLAY;
@@ -71,7 +71,7 @@ typedef struct SCREEN_TRANSITION_STATE {
 	/* The window transition's shape, an WINDOW_TRANSITION_MODE, which
 	   fdScreenTransitionUpdateScanlineTable draws. */
 	Uint16 mode;
-	/* The progress, moved from start to end over duration frames: 0 is the
+	/* The progress, moved from start to end over duration ticks: 0 is the
 	   screen covered, TRANSITION_OPEN fully open and TRANSITION_CLOSED covered
 	   again. */
 	Uint16 value;
@@ -89,8 +89,8 @@ typedef struct SCREEN_TRANSITION_STATE {
 	Uint8  page;	 /* the pages entry shown; the next is built in the other */
 	Sint8  start;	 /* the value's first step */
 	Sint8  end;		 /* the value's last step */
-	Sint8  duration; /* frames; 0 when the value is not moving */
-	Sint8  step;	 /* frames */
+	Sint8  duration; /* ticks; 0 when the value is not moving */
+	Sint8  step;	 /* ticks */
 	/* The mode taken when the value reaches its end; 0 ends the transition. */
 	Sint8 nextMode;
 } SCREEN_TRANSITION_STATE;

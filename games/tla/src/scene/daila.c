@@ -70,7 +70,7 @@ typedef enum DAILA_METATILE {
 #define FLAG_DAILA_SIXTH_PUDDLE_PARCHED	 0x215
 /* The first of six flags, one for each of the drained village's puddles that
    Frost has frozen into a pillar for this visit, by
-   DailaRooms_PillarFrozenFlags. */
+   DailaRoomsPillarFrozenFlags. */
 #define FLAG_DAILA_PUDDLE_FROZEN_FIRST	 0x216
 
 /* The people and puddles the scripts move, numbering the rows of
@@ -129,9 +129,9 @@ extern ACTOR_PLACE	  DailaFloodedActorPlacements[];
 extern ACTOR_PLACE	  DailaActorPlacements[];
 extern CUE			  DailaFloodedCues[];
 extern CUE			  DailaCues[];
-extern Sint16		  DailaRooms_PillarFrozenFlags[];
-extern Sint32		  Daila_FallenOldManScript[];
-extern Uint32		  Daila_PuddleChildScript[];
+extern Sint16		  DailaRoomsPillarFrozenFlags[];
+extern Sint32		  DailaFallenOldManScript[];
+extern Uint32		  DailaPuddleChildScript[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -181,7 +181,7 @@ void scDailaEnterDoor(void)
 	fdScriptWait(10);
 	syImportScriptSetExitRequest(state->stepCue);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -644,7 +644,7 @@ Sint32 scInit(void)
 	if(MainRoutineStateWork.next == SCENE_DAILA_FLOODED)
 		fdActorFallOverById(ACTOR_FALLEN_OLD_MAN, FACING_EAST);
 	else if(MainRoutineStateWork.next == SCENE_DAILA)
-		fdFlagBlockPlaceAll(DailaRooms_PillarFrozenFlags);
+		fdFlagBlockPlaceAll(DailaRoomsPillarFrozenFlags);
 	fdActorSetSprPriority(ACTOR_ITEM_SHOPKEEPER, 1);
 	if(MainRoutineStateWork.next == SCENE_DAILA &&
 		syGameFlagGet(FLAG_DAILA_PSY_CRYSTAL_DUG) == 0)
@@ -682,7 +682,7 @@ void scDailaJumpForward(void)
 /* clang-format off */
 /* The six puddles Frost freezes into pillars, each with the flag set while */
 /* it stands (fdFlagBlockPlaceAll). */
-Sint16 DailaRooms_PillarFrozenFlags[] = {
+Sint16 DailaRoomsPillarFrozenFlags[] = {
 	ACTOR_FIRST_PUDDLE,  FLAG_DAILA_PUDDLE_FROZEN_FIRST + 0,
 	ACTOR_SECOND_PUDDLE, FLAG_DAILA_PUDDLE_FROZEN_FIRST + 1,
 	ACTOR_THIRD_PUDDLE,  FLAG_DAILA_PUDDLE_FROZEN_FIRST + 2,
@@ -692,7 +692,7 @@ Sint16 DailaRooms_PillarFrozenFlags[] = {
 	-1, 0,
 };
 
-Sint32 Daila_FallenOldManScript[] = {
+Sint32 DailaFallenOldManScript[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
 	SC_ANIMATION(0),
 	SC_LABEL(1),
@@ -736,7 +736,7 @@ Sint32 Daila_FallenOldManScript[] = {
 	SC_END,
 };
 
-Uint32 Daila_PuddleChildScript[] = {
+Uint32 DailaPuddleChildScript[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
 	SC_ACCELERATION(0.2),
 	SC_SET(SW_GRAVITY, toFIXED(0.1)),
@@ -787,7 +787,7 @@ Sint32 DailaExits[] = {
 };
 
 /* Unused: an empty placement table nothing reads. */
-ACTOR_PLACE Daila_UnusedPlacements[] = {
+ACTOR_PLACE DailaUnusedPlacements[] = {
 	{SCENE_TABLE_END},
 };
 /* clang-format on */
@@ -806,7 +806,7 @@ ACTOR_PLACE DailaFloodedActorPlacements[] = {
 		MOVEMENT_TYPE_STAND, 264, 0, 312, FACING_WEST,
 		TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS,
-		(Sint32)Daila_FallenOldManScript, 360, 0, 344, FACING_SOUTH,
+		(Sint32)DailaFallenOldManScript, 360, 0, 344, FACING_SOUTH,
 		TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND_SMALL, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_STAND, 568, 0, 424, FACING_NORTH,
@@ -826,7 +826,7 @@ ACTOR_PLACE DailaFloodedActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		136, 0, 184, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR_SMALL, CONDITION_ALWAYS,
-		(Sint32)Daila_PuddleChildScript, 584, 0, 384, FACING_SOUTH,
+		(Sint32)DailaPuddleChildScript, 584, 0, 384, FACING_SOUTH,
 		TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT_SMALL, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_STAND, 568, 0, 328, FACING_SOUTH,
@@ -871,7 +871,7 @@ ACTOR_PLACE DailaActorPlacements[] = {
 		MOVEMENT_TYPE_WANDER_NEAR, 120, 0, 216, FACING_WEST,
 		TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR_SMALL, CONDITION_ALWAYS,
-		(Sint32)Daila_PuddleChildScript, 584, 0, 384, FACING_SOUTH,
+		(Sint32)DailaPuddleChildScript, 584, 0, 384, FACING_SOUTH,
 		TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT_SMALL, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_STAND, 584, 0, 344, FACING_WEST,

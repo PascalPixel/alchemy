@@ -15,7 +15,7 @@ void fdEffectUpdateHaltParticle(FIELD_PARTICLE *effect)
 {
 	FIELD_EFFECT_STATE *effectState;
 	VECTOR3				pos;
-	Sint16				angle;
+	Sint16				ang;
 	Sint32				state;
 
 	effectState = FieldEffectStateWork;
@@ -24,9 +24,9 @@ top:
 	if(state == OUT_AND_BACK_AIM_OUT) {
 		pos.x = effect->originX;
 		pos.z = effect->originZ;
-		angle = syRandom();
+		ang = syRandom();
 		syVectorAddPolarOffset(
-			syRandom() * 30 + toFIXED(40), (Uint16)angle, (FIXED *)&pos);
+			syRandom() * 30 + toFIXED(40), (Uint16)ang, (FIXED *)&pos);
 		effect->tgtX = pos.x;
 		effect->tgtZ = pos.z;
 		effect->acceleration = toFIXED(4);
@@ -62,14 +62,14 @@ top:
 /* Pauses the target (effectState->tgt) and runs fdPsynergyHalt. */
 void fdPsynergyHaltOnTarget(Sint32 unused)
 {
-	ACTOR *target = ((FIELD_EFFECT_STATE *)FieldEffectStateWork)->tgt;
+	ACTOR *tgt = ((FIELD_EFFECT_STATE *)FieldEffectStateWork)->tgt;
 
-	target->paused = 1;
+	tgt->paused = 1;
 	fdPsynergyHalt();
 }
 
 /* A stopwatch (SPRITE_STOPWATCH) flies from over the caster to the Psynergy's
-   position over GROW_STEPS frames, growing, sounds three low tones and a high
+   position over GROW_STEPS ticks, growing, sounds three low tones and a high
    one, and bursts into HALT_SPARKLES sparkles that fly out and back. */
 void fdPsynergyHalt(void)
 {
@@ -117,7 +117,7 @@ void fdPsynergyHalt(void)
 			break;
 	}
 
-	/* Three low tones and a high one, 10 frames apart, as the stopwatch changes
+	/* Three low tones and a high one, 10 ticks apart, as the stopwatch changes
 	   to its second animation. */
 	sySynch(5);
 	fdActorSelectAnimationStub(stopwatch, 1);
@@ -154,17 +154,17 @@ void fdPsynergyHalt(void)
 	fdPsynergyFadeFromCastCol();
 }
 
-/* Per-frame update of a halted actor: gives its sprite one of eight colour
-   modes (Halt_FlickerColorModes) at random, so it flickers. */
+/* Per-tick update of a halted actor: gives its sprite one of eight colour
+   modes (HaltFlickerColorModes) at random, so it flickers. */
 void fdPsynergyUpdateHaltedActor(ACTOR *actor)
 {
 	void		*object = (void *)actor;
-	const Sint8 *table = Halt_FlickerColorModes;
+	const Sint8 *tbl = HaltFlickerColorModes;
 	Sint32		 random = syRandom();
-	fdActorSetSprColModeStub(object, table[(Uint32)(random * 8) >> 16]);
+	fdActorSetSprColModeStub(object, tbl[(Uint32)(random * 8) >> 16]);
 }
 
-/* Halts actorId, keeping its per-frame update and, if it is animated, its first
+/* Halts actorId, keeping its per-tick update and, if it is animated, its first
    animation's colour mode in MainRoutineStateWork. */
 void fdPsynergyHaltActor(Sint32 actorId)
 {

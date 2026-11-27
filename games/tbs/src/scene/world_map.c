@@ -9,7 +9,7 @@
    place. A few ways in are stretches of ground instead, such as the deserts'
    edges and the paths up to Venus Lighthouse.
 
-   scWorldMapUpdateAreaContacts runs every frame. It shows only the pictures
+   scWorldMapUpdateAreaContacts runs every tick. It shows only the pictures
    near the view and, when the leader touches one, raises that area's
    STEP_CUE_AREA, which the cue table turns into the area's exit.
 
@@ -154,13 +154,13 @@ extern Sint32		  IslandWakeScript[];
 /* The storm is done with, or put away while the Tolbi-bound Ship lies off the
    island, and catches no one. */
 #define FLAG_WORLD_MAP_STORM_GONE			 FLAG_SCENE_TEMP_F1
-/* The first flag of a byte counting the frames the storm keeps the party in the
+/* The first flag of a byte counting the ticks the storm keeps the party in the
    air. The byte is read and written with syFieldGameFlagGetByte and
    syFieldGameFlagSetByte. */
-#define FLAG_WORLD_MAP_STORM_FRAMES_LEFT	 FLAG_SCENE_TEMP_F8
-/* The frames the storm holds the party in the air before it drops them outside
+#define FLAG_WORLD_MAP_STORM_TICKS_LEFT		 FLAG_SCENE_TEMP_F8
+/* The ticks the storm holds the party in the air before it drops them outside
    Suhalla. */
-#define STORM_FRAMES_IN_AIR					 180
+#define STORM_TICKS_IN_AIR					 180
 
 static Sint32 scWorldMapAlignToMap(ACTOR *actor);
 static void	  scWorldMapBoardBunzasWagon(void);
@@ -436,7 +436,7 @@ static void scWorldMapMeetHail(void)
 }
 
 /* The update function of a sparkle around the Black Orb. It releases the
-   sparkle on its second frame. */
+   sparkle on its second tick. */
 static void scWorldMapReleaseSparkAfterDelay(ACTOR *actor)
 {
 	if(actor->tmr <= 0) {
@@ -447,7 +447,7 @@ static void scWorldMapReleaseSparkAfterDelay(ACTOR *actor)
 }
 
 /* The update function of the Black Orb held up over the wreck. It swells and
-   shrinks every four frames and gives off a sparkle every other frame. */
+   shrinks every four ticks and gives off a sparkle every other tick. */
 static void scWorldMapPulseOrbAndSpawnSparks(ACTOR *actor)
 {
 	ACTOR *spark;
@@ -455,14 +455,14 @@ static void scWorldMapPulseOrbAndSpawnSparks(ACTOR *actor)
 	FIXED  y;
 	FIXED  z;
 
-	if(FrameCount & 4) {
+	if(TickCount & 4) {
 		actor->scaleX = toFIXED(13) / 10;
 		actor->scaleY = toFIXED(13) / 10;
 	} else {
 		actor->scaleX = toFIXED(1);
 		actor->scaleY = toFIXED(1);
 	}
-	if(!(FrameCount & 2))
+	if(!(TickCount & 2))
 		return;
 	x = actor->x.fixed;
 	y = actor->y.fixed;
@@ -482,7 +482,7 @@ static void scWorldMapPulseOrbAndSpawnSparks(ACTOR *actor)
 /* Flint's update function until the party meets him (scWorldMapSetUpFlint). */
 static void scWorldMapCircleFlint(ACTOR *actor)
 {
-	if(FrameCount & 2)
+	if(TickCount & 2)
 		fdActorSetColMode(actor, SPRITE_COLOR_RED_TINT);
 	else
 		fdActorSetColMode(actor, SPRITE_COLOR_WHITE);
@@ -546,10 +546,10 @@ static Sint32 scWorldMapSetUpKolimaBridge(ACTOR *actor)
 static Sint32 scWorldMapAlignToMap(ACTOR *actor)
 {
 	WORLD_MAP_VIEW *state = MapGridState[0];
-	SPR			   *sprite = actor->spr;
+	SPR			   *spr = actor->spr;
 
-	sprite->rotation = state->yaw;
-	sprite->flg = 0;
+	spr->rotation = state->yaw;
+	spr->flg = 0;
 	return 1;
 }
 
@@ -558,10 +558,10 @@ static Sint32 scWorldMapAlignToMap(ACTOR *actor)
 static Sint32 scWorldMapSetUpIodem(ACTOR *actor)
 {
 	WORLD_MAP_VIEW *state = MapGridState[0];
-	SPR			   *sprite = actor->spr;
+	SPR			   *spr = actor->spr;
 
 	actor->collisionFlg |= ACTOR_SOLID;
-	sprite->rotation = state->yaw;
+	spr->rotation = state->yaw;
 	return 1;
 }
 
@@ -579,12 +579,12 @@ static Sint32 scWorldMapSetUpStorm(ACTOR *actor)
 	return 0;
 }
 
-/* Called each frame by the storm's actor script (WorldMapStormScript): it hides
-   the storm on odd frames, but scWorldMapUpdateAreaContacts shows it again in
-   the same frame, and it is drawn in every frame. */
-static Sint32 scWorldMapHideStormOnOddFrames(ACTOR *actor)
+/* Called each tick by the storm's actor script (WorldMapStormScript): it hides
+   the storm on odd ticks, but scWorldMapUpdateAreaContacts shows it again in
+   the same tick, and it is drawn in every tick. */
+static Sint32 scWorldMapHideStormOnOddTicks(ACTOR *actor)
 {
-	if((actor->sprStorageKind & ACTOR_SPRITE_ONE) && (FrameCount & 1))
+	if((actor->sprStorageKind & ACTOR_SPRITE_ONE) && (TickCount & 1))
 		actor->sprStorageKind ^= ACTOR_SPRITE_ONE;
 	return 1;
 }
@@ -718,7 +718,7 @@ const CUE *scGetCues(void)
 	return WorldCues;
 }
 
-/* Run each frame on the map, where scInit adds it: it shows only the area
+/* Run each tick on the map, where scInit adds it: it shows only the area
    pictures near the view and, when the leader touches one, raises that area's
    cue. */
 static void scWorldMapUpdateAreaContacts(void)
@@ -829,11 +829,11 @@ Sint32 scInit(void)
 		gmFlagSet(FLAG_RETREAT_BLOCKED);
 		FieldStateWork->transition =
 			SCENE_TRANSITION(TRANSITION_CENTER_LINE, CENTER_LINE_STEADY);
-		FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+		FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 		sySynch(1);
 		fdCameraSetSpeed(8);
 		gmFlagClear(FLAG_SHOW_AREA_NAME);
-		sySetFrameEvent(scWorldMapUpdateAreaContacts, EVENT_PASS_FRAME);
+		sySetTickEvent(scWorldMapUpdateAreaContacts, EVENT_PASS_TICK);
 		/* The bridge south of Vault, which the quake broke as Hammet's caravan
 		   left, lies broken until the Manticore of the Lamakan Desert is
 		   beaten. */
@@ -906,9 +906,9 @@ Sint32 scInit(void)
 		case WORLD_MAP_FROM_CROSSBONE_ISLE:
 		case WORLD_MAP_FROM_SUHALLA_DESERT_SANDSTORM:
 			gmFlagSet(FLAG_WORLD_MAP_LEFT);
-			if(syFieldGameFlagGetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT) != 0) {
+			if(syFieldGameFlagGetByte(FLAG_WORLD_MAP_STORM_TICKS_LEFT) != 0) {
 				MainRoutineStateWork.movementMode = LEADER_MOVEMENT_AIRBORNE;
-				sySetFrameEvent(scWorldMapUpdateStormTimer, EVENT_PASS_FRAME);
+				sySetTickEvent(scWorldMapUpdateStormTimer, EVENT_PASS_TICK);
 			}
 			break;
 		case WORLD_MAP_FROM_SHIP_ROOMS:
@@ -949,7 +949,7 @@ static void scWorldMapBoardBunzasWagon(void)
 
 	fdScriptStart();
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdWorldMapFreeze();
 	gmFlagSet(FLAG_BUNZAS_WAGON_LEFT);
 	fdActorSetPos(ACTOR_BUNZA, 5856, 1180);
@@ -1017,7 +1017,7 @@ static void scWorldMapBoardBunzasWagon(void)
 static void scWorldMapShowHammetsCaravan(void)
 {
 	ACTOR		 *actor;
-	ACTOR		 *spriteActor;
+	ACTOR		 *sprActor;
 	const Sint32 *action;
 
 	actor = fdActorGet(ACTOR_FALLING_ROCK);
@@ -1025,7 +1025,7 @@ static void scWorldMapShowHammetsCaravan(void)
 	fdWorldMapStartZoom(toFIXED(5) / 4, 1);
 	sySynch(4);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdWorldMapFreeze();
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	sySynch(1);
@@ -1051,10 +1051,9 @@ static void scWorldMapShowHammetsCaravan(void)
 	fdActorRunScriptAndWait(
 		ACTOR_CARAVAN_FIRST_WAGON + 3, CaravanFourthWagonArrives);
 	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
-	spriteActor = fdActorGet(ACTOR_PARTY_LEADER);
-	if(spriteActor != NULL) {
-		fdActorSetPosFX(
-			ACTOR_GARET, spriteActor->x.fixed, spriteActor->z.fixed);
+	sprActor = fdActorGet(ACTOR_PARTY_LEADER);
+	if(sprActor != NULL) {
+		fdActorSetPosFX(ACTOR_GARET, sprActor->x.fixed, sprActor->z.fixed);
 	}
 	fdActorWalkToAndWait(ACTOR_GARET, 5892, 1600);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
@@ -1186,7 +1185,7 @@ static void scWorldMapShowHammetsCaravan(void)
 	fdActorSelectAnimation(actor, FALLING_ROCK_ANIMATION_TUMBLE);
 	sySynch(1);
 	fdActorSetSprFlags(fdActorGet(ACTOR_FALLING_ROCK), 0);
-	sySetFrameEvent(scWorldMapUpdateFallingRock, EVENT_PASS_FRAME);
+	sySetTickEvent(scWorldMapUpdateFallingRock, EVENT_PASS_TICK);
 	do {
 		sySynch(1);
 	} while(actor->tmr == 0);
@@ -1292,14 +1291,14 @@ static void scWorldMapShowHammetsCaravan(void)
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 5848, 1576);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	gmFlagSet(FLAG_LUNPA_GUARDS_SUSPECT_KALAY);
 	syImportScriptSetExitRequest(WORLD_MAP_TO_VAULT_SOUTH);
 	fdScriptEnd();
 }
 
 /* Moves to the next camera-shake point, in whole pixels, and holds it for four
-   frames. */
+   ticks. */
 static inline void scWorldMapMoveShakeCamera(Sint32 x, Sint32 z)
 {
 	fdCameraMoveToFX(toFIXED(x), CAMERA_KEEP, toFIXED(z), 1);
@@ -1379,7 +1378,7 @@ static void scWorldMapSailToFirstMonsterAttack(void)
 	fdActorSetSpeed(ACTOR_CROSSING_SHIP, 0.4);
 	fdActorWalkToAndWait(ACTOR_CROSSING_SHIP, 5288, 2328);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	gmFlagSet(FLAG_TOLBI_SHIP_ROWING);
 	syImportScriptSetExitRequest(WORLD_MAP_TO_TOLBI_SHIP_MAST_FIRST_ATTACK);
 	fdScriptEnd();
@@ -1410,7 +1409,7 @@ static inline void scWorldMapSailCrossingLeg(Sint32 exit)
 		sySynch(1);
 	} while(actor->tmr == 0);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	gmFlagSet(FLAG_TOLBI_SHIP_ROWING);
 	syImportScriptSetExitRequest(exit);
 	fdScriptEnd();
@@ -1465,7 +1464,7 @@ static void scWorldMapSailUntilLandSighted(void)
 		sySynch(1);
 	} while(actor->tmr == 0);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	gmFlagSet(FLAG_TOLBI_SHIP_ROWING);
 	syImportScriptSetExitRequest(WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO);
 	fdScriptEnd();
@@ -1491,7 +1490,7 @@ static void scWorldMapSailIntoTolbi(void)
 	fdActorSetSpeed(ACTOR_CROSSING_SHIP, 0.4);
 	fdActorWalkToAndWait(ACTOR_CROSSING_SHIP, 5064, 2328);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	gmFlagSet(FLAG_TOLBI_SHIP_REACHED_TOLBI);
 	gmFlagClear(FLAG_TOLBI_SHIP_ROWING);
 	syImportScriptSetExitRequest(WORLD_MAP_TO_TOLBI_SHIP_DECK);
@@ -1529,8 +1528,8 @@ static void scWorldMapExplainSettingDjinn(void)
 		ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, ENCOUNTER_SLOT_DJINN_LESSON);
 }
 
-/* The frames Flint takes to grow to full size as he comes down to the party. */
-#define FLINT_GROW_FRAMES 16
+/* The ticks Flint takes to grow to full size as he comes down to the party. */
+#define FLINT_GROW_TICKS 16
 
 /* Walking up to Flint, the spark circling his spot just outside Vale: he cries
    "Oh!", drops down beside Isaac at full size, "A traveling warrior!", shimmers
@@ -1551,10 +1550,10 @@ static void scWorldMapMeetFlint(void)
 	ACTOR *leader;
 	FIXED  x;
 	FIXED  z;
-	Sint32 count;
+	Sint32 cnt;
 	Sint32 i;
 
-	count = 0;
+	cnt = 0;
 	djinni = fdActorGet(ACTOR_VENUS_DJINNI);
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	x = (leader->x.fixed - toFIXED(5584)) / 2 + toFIXED(5584);
@@ -1593,9 +1592,9 @@ static void scWorldMapMeetFlint(void)
 		djinni->groundHeight = 0;
 		syFieldActorSetMoveTarget(djinni, 5584, 0, 1328);
 		/* Flint grows from half size to full as he comes down. */
-		for(i = 0; i < FLINT_GROW_FRAMES; i++) {
-			djinni->scaleX += toFIXED(1) / 2 / FLINT_GROW_FRAMES;
-			djinni->scaleY += toFIXED(1) / 2 / FLINT_GROW_FRAMES;
+		for(i = 0; i < FLINT_GROW_TICKS; i++) {
+			djinni->scaleX += toFIXED(1) / 2 / FLINT_GROW_TICKS;
+			djinni->scaleY += toFIXED(1) / 2 / FLINT_GROW_TICKS;
 			sySynch(1);
 		}
 		fdActorFaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
@@ -1609,11 +1608,11 @@ static void scWorldMapMeetFlint(void)
 		sySndPlay(SE_PSYNERGY_SPARKLE);
 		fdPsynergyLoadResources(ABILITY_MOVE, 0);
 		for(i = 0; i < 60; i++) {
-			if(FrameCount & 2)
+			if(TickCount & 2)
 				fdActorSetColMode(djinni, SPRITE_COLOR_WHITE);
 			else
 				fdActorSetColMode(djinni, SPRITE_COLOR_NORMAL);
-			if((FrameCount & 15) == 0)
+			if((TickCount & 15) == 0)
 				scSpawnGoldenRing(djinni);
 			sySynch(1);
 		}
@@ -1683,12 +1682,12 @@ static void scWorldMapMeetFlint(void)
 		fdScriptOpenMessage(ACTOR_VENUS_DJINNI, 0);
 		/* Each "No" makes Flint plead again; the seventh time he gives up
 		   asking. */
-		count = 0;
+		cnt = 0;
 	plead:
 		if(fdScriptAskYesNoWithActorAnimation(0, 0) == 1) {
 			fdActorJump(ACTOR_VENUS_DJINNI, 2, 20);
 			fdActorJump(ACTOR_VENUS_DJINNI, 2, 20);
-			if(count == 6) {
+			if(cnt == 6) {
 				fdScriptSetMessageId(MsgWorldMapMeanieDontCare);
 				/* "Meanie! I don't care what you say! I'm coming along with
 				   you!" */
@@ -1697,9 +1696,9 @@ static void scWorldMapMeetFlint(void)
 			}
 			/* "Come on! I promise you won't regret it! Please take me with
 			   you!", and five more pleas, down to "Take me with you!" */
-			fdScriptSetMessageId(count + MsgWorldMapComePromiseWont);
+			fdScriptSetMessageId(cnt + MsgWorldMapComePromiseWont);
 			fdScriptOpenMessage(ACTOR_VENUS_DJINNI, 0);
-			count++;
+			cnt++;
 			goto plead;
 		}
 		fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
@@ -1711,10 +1710,10 @@ static void scWorldMapMeetFlint(void)
 	listened:
 		mnMessageArgumentPush(ABILITY_DJINNI_FIRST, MESSAGE_ARGUMENT_ABILITY);
 		sySndPlay(MUS_A_NEW_ALLY);
-		count = MsgWorldMapAbilityVenusDjinni;
+		cnt = MsgWorldMapAbilityVenusDjinni;
 		/* "Flint, the Venus Djinni, is now Isaac's ally!" */
-		mnMessageShowCentered(count++, 3);
-		fdScriptSetMessageId(count);
+		mnMessageShowCentered(cnt++, 3);
+		fdScriptSetMessageId(cnt);
 		fdActorJump(ACTOR_VENUS_DJINNI, 2, 20);
 		/* "Now, I'll briefly teach you how to use Djinn." */
 		fdScriptShowMessage(ACTOR_VENUS_DJINNI, 0);
@@ -1822,7 +1821,7 @@ static void scWorldMapStepDownFromBunzasWagon(void)
 	actor->scaleY = toFIXED(3) / 2;
 	actor->facing = FACING_SOUTH;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	fdActorSetPos(ACTOR_KALAY_WAGON, 5480, 2104);
 	sySynch(1);
@@ -1862,7 +1861,7 @@ static void scWorldMapStepDownFromBunzasWagon(void)
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 5592, 2136);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(WORLD_MAP_TO_KALAY_EAST);
 	fdScriptEnd();
 }
@@ -1877,7 +1876,7 @@ static void scWorldMapRunBlackOrbScript(void)
 	gWorldMapIodem = ACTOR_IODEM;
 	scWorldMapBlockGatewayCaveExit(ACTOR_IODEM);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdWorldMapFreeze();
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	if(leader != NULL) {
@@ -2057,8 +2056,8 @@ static void scWorldMapUseBlackOrb(void)
 	ACTOR		  *orb;
 	ACTOR		  *leader;
 	ACTOR		  *actor;
-	Sint32		   message;
-	SPR			  *sprite;
+	Sint32		   msg;
+	SPR			  *spr;
 	ICON_TRANSFER *icon;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
@@ -2097,17 +2096,17 @@ static void scWorldMapUseBlackOrb(void)
 		toFIXED(38), leader->z.fixed);
 	if(orb != NULL) {
 		orb->motionFlg = 0;
-		sprite = orb->spr;
-		sprite->flg = 0;
-		sprite->cnt = 0;
-		sprite->image.fullCol = 0;
-		sprite->image.pal = 0;
+		spr = orb->spr;
+		spr->flg = 0;
+		spr->cnt = 0;
+		spr->image.fullCol = 0;
+		spr->image.pal = 0;
 		/* LEFTOVER(template): the motion flags cleared again after the sprite
 		 * resets, as scImilFuchinFallsPlaceDragonsEye clears them. */
 		orb->motionFlg = 0;
 		icon = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		gmItemLoadIcon(ITEM_BLACK_ORB);
-		mnVRAMLoad(sprite->slot, ICON_TILE_BYTES, icon->tiles);
+		mnVRAMLoad(spr->slot, ICON_TILE_BYTES, icon->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 		fdScriptWait(20);
 		orb->update = scWorldMapPulseOrbAndSpawnSparks;
@@ -2116,8 +2115,8 @@ static void scWorldMapUseBlackOrb(void)
 	fdActorGet(gWorldMapIodem)->facing = FACING_SOUTH_SOUTHEAST;
 	fdActorShowEmote(gWorldMapIodem, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorRunRepeatedMotion(gWorldMapIodem, 2);
-	message = MsgWorldMapMatter;
-	fdScriptSetMessageId(message);
+	msg = MsgWorldMapMatter;
+	fdScriptSetMessageId(msg);
 	/* "What's the matter?" */
 	fdScriptShowMessageThenWait(gWorldMapIodem, 0, 80);
 	if(orb != NULL) {
@@ -2165,7 +2164,7 @@ static void scWorldMapUseBlackOrb(void)
 	fdActorWaitForMove(iodem);
 	fdActorSetAnimation(ACTOR_IODEM, ANIM_STAND);
 	/* "You returned the Black Orb." */
-	mnMessageShowCentered(message + 6, 1);
+	mnMessageShowCentered(msg + 6, 1);
 	FieldStateWork->msg++;
 	gmPartyInventoryDiscard(ITEM_BLACK_ORB);
 	fdScriptWait(20);
@@ -2243,7 +2242,7 @@ static void scWorldMapShowEndingScript(void)
 	fdWorldMapStartZoom(toFIXED(3) / 2, 16);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 	fdScriptStartScreenTransition();
 	fdScriptWaitForZoomTransition();
 	fdWorldMapFreeze();
@@ -2383,12 +2382,12 @@ static void scWorldMapShakeVenusLighthouse(void)
 	sySynch(2);
 	FieldStateWork->transitionFrm = 1;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
 	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	sySynch(1);
 	fdCameraSetSpeed(4);
-	sySetFrameEvent(scWorldMapUpdateLighthouseQuake, EVENT_PASS_FRAME);
+	sySetTickEvent(scWorldMapUpdateLighthouseQuake, EVENT_PASS_TICK);
 	fdPaletteFadeApplySource(RGB(0, 0, 0), PALETTES_ALL);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_MUTED, PALETTES_BG);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_SPRITES);
@@ -2402,7 +2401,7 @@ static void scWorldMapShakeVenusLighthouse(void)
 	fdScriptEnd();
 }
 
-/* Run each frame while Venus Lighthouse shakes. */
+/* Run each tick while Venus Lighthouse shakes. */
 static void scWorldMapUpdateLighthouseQuake(void)
 {
 	Uint32 x = syRandomBelow(QUAKE_DUST_WIDTH);
@@ -2413,18 +2412,18 @@ static void scWorldMapUpdateLighthouseQuake(void)
 		toFIXED(x) + toFIXED(QUAKE_DUST_LEFT), 0,
 		toFIXED(z) + toFIXED(QUAKE_DUST_TOP));
 	if(actor != NULL) {
-		SPR	 *sprite = actor->spr;
+		SPR	 *spr = actor->spr;
 		FIXED scale = syRandomBelow(toFIXED(1) / 2) + toFIXED(6) / 5;
 
-		sprite->flg = 0;
-		sprite->image.pri = 2;
+		spr->flg = 0;
+		spr->image.pri = 2;
 		actor->motionFlg = 0;
 		actor->scaleX = scale;
 		actor->scaleY = scale;
 		fdActorSelectAnimation(actor, 1);
 		fdActorStartScript(actor, QuakeCloudScript);
 	}
-	if(FrameCount % 3 == 0) {
+	if(TickCount % 3 == 0) {
 		switch(syRandomBelow(4)) {
 		case 0:
 			fdCameraMoveTo(6087, CAMERA_KEEP, 3177, 1);
@@ -2474,7 +2473,7 @@ static void scWorldMapSailTolbiShipToIsland(void)
 	fdActorSetAnimation(ACTOR_CROSSING_SHIP, ANIM_STAND);
 	fdScriptWait(40);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(WORLD_MAP_TO_SHIP_ROOMS_ROWING_DECK_ISLAND);
 }
 
@@ -2496,39 +2495,39 @@ static Sint32 scWorldMapGetRowingBalance(void)
    empty. */
 static Sint32 scWorldMapGetSeatRowValue(Uint32 seat)
 {
-	Sint32 flagBase = 0;
-	Uint32 offset;
+	Sint32 flgBase = 0;
+	Uint32 ofs;
 
 	switch(seat) {
 	case 0:
-		flagBase = FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS;
+		flgBase = FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS;
 		break;
 	case 1:
-		flagBase = FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS;
+		flgBase = FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS;
 		break;
 	case 2:
-		flagBase = FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS;
+		flgBase = FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS;
 		break;
 	case 3:
-		flagBase = FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS;
+		flgBase = FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS;
 		break;
 	}
-	for(offset = 0; offset < 9; offset++) {
-		if(gmFlagGet(flagBase + offset) != 0)
-			return TolbiShip_PassengerRowValues[offset];
+	for(ofs = 0; ofs < 9; ofs++) {
+		if(gmFlagGet(flgBase + ofs) != 0)
+			return TolbiShipPassengerRowValues[ofs];
 	}
 	return 0;
 }
 
-/* Spawns a puff of the wake behind ACTOR_DRIFTING_ISLAND every 16 frames. */
+/* Spawns a puff of the wake behind ACTOR_DRIFTING_ISLAND every 16 ticks. */
 static void scWorldMapSpawnIslandWake(void)
 {
 	ACTOR *island;
 	ACTOR *puff;
-	SPR	  *sprite;
+	SPR	  *spr;
 	Sint32 distance;
 
-	if((FrameCount & 15) != 0)
+	if((TickCount & 15) != 0)
 		return;
 	island = fdActorGet(ACTOR_DRIFTING_ISLAND);
 	puff = syFieldActorCreate(SPRITE_DUST_PUFF, island->x.fixed - toFIXED(32),
@@ -2537,7 +2536,7 @@ static void scWorldMapSpawnIslandWake(void)
 		return;
 	puff->scaleX = toFIXED(1) / 2;
 	puff->scaleY = toFIXED(1) / 2;
-	sprite = puff->spr;
+	spr = puff->spr;
 	/* Up to 48 pixels behind the island, or up to 32 to the side. */
 	if((syRandomBelow(2)) != 0) {
 		FIXED behind = toFIXED(syRandomBelow(48));
@@ -2550,8 +2549,8 @@ static void scWorldMapSpawnIslandWake(void)
 		distance /= 2;
 		puff->z.fixed += distance;
 	}
-	sprite->flg = 0;
-	sprite->image.pri = island->spr->image.pri;
+	spr->flg = 0;
+	spr->image.pri = island->spr->image.pri;
 	puff->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
 	puff->motionFlg = island->motionFlg;
 	fdActorSetSprCol(puff, SPRITE_COLOR_BLUE_TINT);
@@ -2582,7 +2581,7 @@ static void scWorldMapShowIslandDrifting(void)
 	fdActorSetSpeed(ACTOR_DRIFTING_ISLAND, 0.4);
 	actor->tmr = 0;
 	fdActorSetScript(ACTOR_DRIFTING_ISLAND, IslandDriftsEast);
-	sySetFrameEvent(scWorldMapSpawnIslandWake, EVENT_PASS_FRAME);
+	sySetTickEvent(scWorldMapSpawnIslandWake, EVENT_PASS_TICK);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
 	FieldStateWork->transitionFrm = 32;
@@ -2590,14 +2589,14 @@ static void scWorldMapShowIslandDrifting(void)
 	fdScriptWait(120);
 	fdWorldMapStartZoom(toFIXED(7) / 5, 300);
 	fdScriptWait(270);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 	PLTT_BACKDROP = RGB_WHITE;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT);
 }
 
-/* Run each frame while a storm holds the party in the air: it spins the leader
+/* Run each tick while a storm holds the party in the air: it spins the leader
    round and counts down the time left, which stands still while the menu is
    open. */
 static void scWorldMapUpdateStormTimer(void)
@@ -2608,9 +2607,9 @@ static void scWorldMapUpdateStormTimer(void)
 
 	actor = fdActorGet(MainRoutineStateWork.leaderActorId);
 	state = FieldStateWork;
-	actor->facing = FrameCount * FACING_STEP;
+	actor->facing = TickCount * FACING_STEP;
 
-	progress = syFieldGameFlagGetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT);
+	progress = syFieldGameFlagGetByte(FLAG_WORLD_MAP_STORM_TICKS_LEFT);
 	if(progress != 0) {
 		if(progress == 1) {
 			state->raisedCue = RAISED_STORM_TIME_UP;
@@ -2618,11 +2617,11 @@ static void scWorldMapUpdateStormTimer(void)
 			progress -= 1;
 		}
 	}
-	syFieldGameFlagSetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT, progress);
+	syFieldGameFlagSetByte(FLAG_WORLD_MAP_STORM_TICKS_LEFT, progress);
 }
 
 /* Draws the leader into the storm, lifts him and starts its timer. */
-static void scWorldMapCatchInStorm(Sint32 targetActorId)
+static void scWorldMapCatchInStorm(Sint32 tgtActorId)
 {
 	ACTOR *actor;
 	ACTOR *storm;
@@ -2635,14 +2634,14 @@ static void scWorldMapCatchInStorm(Sint32 targetActorId)
 		fdActorSetAttachedEffect(
 			id, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 		fdActorSetAnimation(id, ANIM_LEADER_LOOK_AROUND);
-		storm = fdActorGet(targetActorId);
+		storm = fdActorGet(tgtActorId);
 		if(storm != NULL) {
 			fdActorSetDestination(
 				id, storm->x.part[0].integer, storm->z.part[0].integer);
 		}
 		fdActorWaitForMoveById(id);
 		sySndPlay(SE_SANDSTORM);
-		sySetFrameEvent(scWorldMapUpdateStormTimer, EVENT_PASS_FRAME);
+		sySetTickEvent(scWorldMapUpdateStormTimer, EVENT_PASS_TICK);
 		actor->motionFlg = 0;
 		syFieldActorSetMoveTargetFX(actor, actor->x.fixed,
 			actor->y.fixed + toFIXED(32), actor->z.fixed);
@@ -2652,7 +2651,7 @@ static void scWorldMapCatchInStorm(Sint32 targetActorId)
 		MainRoutineStateWork.movementMode = LEADER_MOVEMENT_AIRBORNE;
 		gmFlagSet(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
 		syFieldGameFlagSetByte(
-			FLAG_WORLD_MAP_STORM_FRAMES_LEFT, STORM_FRAMES_IN_AIR);
+			FLAG_WORLD_MAP_STORM_TICKS_LEFT, STORM_TICKS_IN_AIR);
 		fdScriptEnd();
 		FieldStateWork->encounter = 0; /* drop any battle this step rolled */
 	}
@@ -2683,7 +2682,7 @@ static void scWorldMapDouseMapStorm(void)
 	}
 	gmFlagClear(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
 	gmFlagSet(FLAG_WORLD_MAP_STORM_GONE);
-	syFieldGameFlagSetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT, 0);
+	syFieldGameFlagSetByte(FLAG_WORLD_MAP_STORM_TICKS_LEFT, 0);
 	/* As in Suhalla Desert, the Tornado Lizard is asked for and then replaced
 	   by the Tempest Lizard. */
 	fdRequestBattleFromEncounterTable(
@@ -2701,7 +2700,7 @@ static void scWorldMapStormDropsParty(void)
 {
 	ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	ACTOR *storm = fdActorGet(ACTOR_STORM);
-	Sint32 frames;
+	Sint32 ticks;
 
 	fdScriptStart();
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -2712,26 +2711,26 @@ static void scWorldMapStormDropsParty(void)
 	leader->velY = 0;
 	leader->frozen = 1;
 	storm->frozen = 1;
-	for(frames = 0; frames < 60; frames++) {
+	for(ticks = 0; ticks < 60; ticks++) {
 		leader->velY += toFIXED(1) / 5;
 		storm->velY += toFIXED(1) / 5;
 		sySynch(1);
 	}
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 	gmFlagSet(FLAG_ARRIVE_FALLING);
 	fdScriptSetDestination(SCENE_WORLD_MAP, WORLD_MAP_FROM_SUHALLA);
 }
 
-/* Run each frame of the lighthouse transition: blends the ball of light over
+/* Run each tick of the lighthouse transition: blends the ball of light over
    the map, its own weight flickering between 12 and 16 sixteenths every two
-   frames over gWorldMapBlend. */
+   ticks over gWorldMapBlend. */
 static void scWorldMapUpdateTransitionBlend(void)
 {
 	syIOWriteQueueStore16((Uint32)&REG_BLDCNT,
 		BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
-	if((FrameCount & 2) != 0) {
+	if((TickCount & 2) != 0) {
 		syIOWriteQueueStore16(
 			(Uint32)&REG_BLDALPHA, gWorldMapBlend | BLEND_ALPHA(12, 0));
 	} else {
@@ -2740,8 +2739,8 @@ static void scWorldMapUpdateTransitionBlend(void)
 	}
 }
 
-/* Run each frame at the end of the lighthouse transition, as the ground
-   rumbles: every third frame it moves the camera a pixel diagonally from the
+/* Run each tick at the end of the lighthouse transition, as the ground
+   rumbles: every third tick it moves the camera a pixel diagonally from the
    leader. */
 static void scWorldMapJitterTransitionCamera(void)
 {
@@ -2753,7 +2752,7 @@ static void scWorldMapJitterTransitionCamera(void)
 	actor = fdActorGet(MainRoutineStateWork.leaderActorId);
 	x = actor->x.part[0].integer;
 	z = actor->z.part[0].integer;
-	if(FrameCount % 3 == 0) {
+	if(TickCount % 3 == 0) {
 		mode = syRandomBelow(4);
 		switch(mode) {
 		case 0:
@@ -2776,80 +2775,80 @@ static void scWorldMapJitterTransitionCamera(void)
 	}
 }
 
-/* Queues one picture of the lighthouse transition and waits frames. */
+/* Queues one picture of the lighthouse transition and waits ticks. */
 static inline void scWorldMapShowTransitionPicture(
-	Uint8 *buffer, Sint32 offset, Sint32 frames)
+	Uint8 *buf, Sint32 ofs, Sint32 ticks)
 {
-	WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, offset);
-	fdScriptWait(frames);
+	WORLD_MAP_QUEUE_TRANSITION_PICTURE(buf, ofs);
+	fdScriptWait(ticks);
 }
 
 /* The lighthouse transition, after a beacon is lit: on the World Map, darkened
    to a deep blue, a ball of light in the lighthouse's colours (blue for Mercury
-   Lighthouse) swells over the lighthouse's top, glows there for 140 frames and
+   Lighthouse) swells over the lighthouse's top, glows there for 140 ticks and
    shrinks away. The map brightens again as the camera shakes with a rumble,
    then the screen closes for the aerie, its beacon lit
    (https://alchemy.pascalpixel.com/story/venus-lighthouse-lit.gif).
 
-   The ball is seven frames, tile maps drawn on BG0 in the lighthouse's colours
+   The ball is seven ticks, tile maps drawn on BG0 in the lighthouse's colours
    (WorldMapPalettes, by WORLD_MAP_LIGHTHOUSE).
 
    It clears FLAG_KEEP_PARTY_POSITION and sets FLAG_SKIP_SCENE_CHANGE_SOUND. */
 static void scWorldMapPlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE lighthouse)
 {
-	Uint8 *buffer = syHeapAllocEWRAM(16384);
+	Uint8 *buf = syHeapAllocEWRAM(16384);
 
 	sySynch(1);
 	gmFlagClear(FLAG_KEEP_PARTY_POSITION);
 	fdWorldMapStartStillImage();
-	syFieldDecompressTaggedLZ(WorldMapPackedTiles, buffer);
+	syFieldDecompressTaggedLZ(WorldMapPackedTiles, buf);
 	syFieldDecompressTaggedLZ(
-		WorldMapPackedPictures, buffer + LIGHT_BALL_TILES_SIZE);
+		WorldMapPackedPictures, buf + LIGHT_BALL_TILES_SIZE);
 	IO_WRITE_QUEUE_PUSH((Uint32)&BG_PLTT_COLOR(LIGHT_BALL_PALETTE, 0),
 		(Uint32)(WorldMapPalettes +
 			lighthouse * PALETTE_COLORS * sizeof(Uint16)),
 		DMA_COPY_HALFWORDS(PALETTE_COLORS));
 	IO_WRITE_QUEUE_PUSH(
 		(Uint32)BG_CHAR_BLOCK(0) + LIGHT_BALL_FIRST_TILE * TILE_SIZE_4BPP,
-		(Uint32)buffer, DMA_COPY_WORDS(LIGHT_BALL_TILES_SIZE / 4));
-	sySetFrameEvent(scWorldMapUpdateTransitionBlend, EVENT_PASS_FRAME);
+		(Uint32)buf, DMA_COPY_WORDS(LIGHT_BALL_TILES_SIZE / 4));
+	sySetTickEvent(scWorldMapUpdateTransitionBlend, EVENT_PASS_TICK);
 	fdScriptStart();
-	WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, WORLD_MAP_LIGHT_BALL(7));
+	WORLD_MAP_QUEUE_TRANSITION_PICTURE(buf, WORLD_MAP_LIGHT_BALL(7));
 	fdActorGet(MainRoutineStateWork.leaderActorId)->sprStorageKind =
 		ACTOR_SPRITE_NONE;
-	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	sySndPlay(SE_GLITTER);
 
 	gWorldMapBlend = BLEND_ALPHA(0, 14);
-	scWorldMapShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(6), 2);
+	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(6), 2);
 	gWorldMapBlend = BLEND_ALPHA(0, 13);
-	scWorldMapShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(5), 2);
+	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(5), 2);
 	gWorldMapBlend = BLEND_ALPHA(0, 12);
-	scWorldMapShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(4), 2);
+	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(4), 2);
 	gWorldMapBlend = BLEND_ALPHA(0, 11);
-	scWorldMapShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(3), 2);
+	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(3), 2);
 	gWorldMapBlend = BLEND_ALPHA(0, 10);
-	scWorldMapShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(2), 2);
+	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(2), 2);
 	gWorldMapBlend = BLEND_ALPHA(0, 9);
-	scWorldMapShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(1), 2);
+	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(1), 2);
 	gWorldMapBlend = BLEND_ALPHA(0, 8);
-	scWorldMapShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(0), 140);
+	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(0), 140);
 
-	scWorldMapShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(1), 4);
-	scWorldMapShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(2), 4);
-	scWorldMapShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(3), 4);
+	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(1), 4);
+	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(2), 4);
+	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(3), 4);
 	gWorldMapBlend = BLEND_ALPHA(0, 9);
-	scWorldMapShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(4), 4);
+	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(4), 4);
 	gWorldMapBlend = BLEND_ALPHA(0, 10);
-	scWorldMapShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(5), 4);
+	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(5), 4);
 	gWorldMapBlend = BLEND_ALPHA(0, 11);
-	scWorldMapShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(6), 4);
+	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(6), 4);
 	gWorldMapBlend = BLEND_ALPHA(0, 12);
-	WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, WORLD_MAP_LIGHT_BALL(7));
+	WORLD_MAP_QUEUE_TRANSITION_PICTURE(buf, WORLD_MAP_LIGHT_BALL(7));
 	fdWorldMapLoadAreaGraphics();
-	sySetFrameEvent(scWorldMapJitterTransitionCamera, EVENT_PASS_FRAME);
+	sySetTickEvent(scWorldMapJitterTransitionCamera, EVENT_PASS_TICK);
 	sySndPlay(SE_RUMBLE);
 	gWorldMapBlend = BLEND_ALPHA(0, 13);
 	fdScriptWait(4);
@@ -2860,33 +2859,33 @@ static void scWorldMapPlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE lighthouse)
 	gWorldMapBlend = BLEND_ALPHA(0, 16);
 	fdScriptWait(45);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
-	syHeapRelease(buffer);
+	fdScriptWaitTransitionTicks();
+	syHeapRelease(buf);
 	gmFlagSet(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
-/* Unused: an actor's update function that flashes it white, two frames on and
-   two off, and every sixteenth frame creates its attached effects. */
+/* Unused: an actor's update function that flashes it white, two ticks on and
+   two off, and every sixteenth tick creates its attached effects. */
 UNUSED static void scWorldMapUpdateFlashingLinkedEffects(ACTOR *actor)
 {
-	if((FrameCount & 2) != 0) {
+	if((TickCount & 2) != 0) {
 		fdActorSetColMode(actor, SPRITE_COLOR_WHITE);
 	} else {
 		fdActorSetColMode(actor, SPRITE_COLOR_NORMAL);
 	}
-	if((FrameCount & 15) == 0) {
+	if((TickCount & 15) == 0) {
 		scSpawnGoldenRing(actor);
 	}
 }
 
 /* Unused: an actor's update function that cycles its colour modes and every
-   sixteenth frame creates its attached effects. */
+   sixteenth tick creates its attached effects. */
 UNUSED static void scWorldMapUpdateCyclingLinkedEffects(ACTOR *actor)
 {
-	if((FrameCount & 1) != 0) {
-		fdActorSetColMode(actor, (FrameCount >> 1) % 6);
+	if((TickCount & 1) != 0) {
+		fdActorSetColMode(actor, (TickCount >> 1) % 6);
 	}
-	if((FrameCount & 15) == 0) {
+	if((TickCount & 15) == 0) {
 		scSpawnGoldenRing(actor);
 	}
 }
@@ -3080,7 +3079,7 @@ Sint32 CaravanFourthWagonReturns[] = {
 };
 
 /* The invisible guide of the rock that falls beside the caravan: it grows from
-   a tenth of its size over 160 frames as it moves to where the rock lands. */
+   a tenth of its size over 160 ticks as it moves to where the rock lands. */
 Sint32 CaravanRockGuideScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1) / 10),
 	SC_SET(SW_SCALE_Y, toFIXED(1) / 10),
@@ -3171,7 +3170,7 @@ Sint32 EndingJennaWalk[] = {
 };
 
 /* A cloud of dust in the lighthouse quake (scWorldMapUpdateLighthouseQuake): it
-   lasts 16 frames. */
+   lasts 16 ticks. */
 Sint32 QuakeCloudScript[] = {
 	SC_WAIT(16),
 	SC_RELEASE,
@@ -3545,7 +3544,7 @@ Sint32 WorldMapIodemScript[] = {
 
 Sint32 WorldMapStormScript[] = {
 	SC_CALL(scWorldMapSetUpStorm),
-	SC_CALL(scWorldMapHideStormOnOddFrames),
+	SC_CALL(scWorldMapHideStormOnOddTicks),
 	SC_END,
 };
 

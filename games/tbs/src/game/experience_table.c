@@ -3,7 +3,7 @@
 
 #include "game/game.h"
 
-const Uint8 Character_LighthouseGroupTable[] = {
+const Uint8 CharacterLighthouseGroupTable[] = {
 	[ISAAC] = LIGHTHOUSE_GROUP_VENUS_MARS,
 	[GARET] = LIGHTHOUSE_GROUP_VENUS_MARS,
 	[IVAN] = LIGHTHOUSE_GROUP_MERCURY_JUPITER,
@@ -15,7 +15,7 @@ const Uint8 Character_LighthouseGroupTable[] = {
 };
 
 /* clang-format off */
-const Uint32 Character_LevelExpTable[] = {
+const Uint32 CharacterLevelExpTable[] = {
 	/* Isaac */
 	0, 24, 67, 144, 283, 519, 873, 1369,
 	2039, 2910, 3999, 5306, 6861, 8696, 10843, 13334,

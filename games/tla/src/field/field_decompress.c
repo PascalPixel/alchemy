@@ -31,7 +31,7 @@ enum {
 
 /* Decompresses an LZ stream from source into destination and returns
    destination. */
-Uint8 *fdDecompressLZ(const Uint8 *source, Uint8 *destination)
+Uint8 *fdDecompressLZ(const Uint8 *src, Uint8 *dst)
 {
 	Sint32		 token;
 	Uint32		 length;
@@ -44,14 +44,14 @@ Uint8 *fdDecompressLZ(const Uint8 *source, Uint8 *destination)
 
 	/* Uncompressed blocks borrow their payload; compressed blocks use the
 	   output. */
-	token = source[0] | (source[1] << 8);
-	literal = source + 2;
+	token = src[0] | (src[1] << 8);
+	literal = src + 2;
 	if(token == 0)
 		return (Uint8 *)literal;
-	command = source + token;
+	command = src + token;
 	control = *command;
 	base = literal;
-	start = destination;
+	start = dst;
 	command++;
 	/* A marker bit, shifted down as the flags are read. */
 	control |= LZ_FLAGS_MARKER;
@@ -60,7 +60,7 @@ Uint8 *fdDecompressLZ(const Uint8 *source, Uint8 *destination)
 		if((control & 1) != 0) {
 			/* Only the marker left means: read the next command byte. */
 			if(control != 1)
-				*destination++ = *literal++;
+				*dst++ = *literal++;
 		} else {
 			token = *command++ << 8;
 			token |= *command++;
@@ -80,7 +80,7 @@ Uint8 *fdDecompressLZ(const Uint8 *source, Uint8 *destination)
 			   them, use codec 3. */
 			copy = base - (token & LZ_DISTANCE_MASK);
 			while(length != 0) {
-				*destination++ = *copy++;
+				*dst++ = *copy++;
 				length--;
 			}
 		}

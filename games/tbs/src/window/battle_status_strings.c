@@ -3,25 +3,25 @@
 #include "types.h"
 
 #if BATTLE_LABELS_BY_HEADER_LANGUAGE
-const Uint8 BattleStatusScreen_NivString[] = "Niv";
-const Uint8 BattleStatusScreen_NvString[] = "Nv.";
+const Uint8 BattleStatusScreenNivString[] = "Niv";
+const Uint8 BattleStatusScreenNvString[] = "Nv.";
 #endif
 #if LANGUAGE == LANGUAGE_FRENCH
-const Uint8 BattleStatusScreen_LevelString[] = "Niv";
+const Uint8 BattleStatusScreenLevelString[] = "Niv";
 #else
-const Uint8 BattleStatusScreen_LevelString[] = "Lv";
+const Uint8 BattleStatusScreenLevelString[] = "Lv";
 #endif
 #if BATTLE_LABELS_BY_HEADER_LANGUAGE
-const Uint8 BattleStatusScreen_KpString[] = "KP";
-const Uint8 BattleStatusScreen_PvString[] = "PV";
+const Uint8 BattleStatusScreenKpString[] = "KP";
+const Uint8 BattleStatusScreenPvString[] = "PV";
 #endif
 #if LANGUAGE == LANGUAGE_GERMAN
-const Uint8 BattleStatusScreen_HpString[] = "KP";
+const Uint8 BattleStatusScreenHpString[] = "KP";
 #elif LANGUAGE == LANGUAGE_FRENCH
-const Uint8 BattleStatusScreen_HpString[] = "PV";
+const Uint8 BattleStatusScreenHpString[] = "PV";
 #elif LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
-const Uint8 BattleStatusScreen_HpString[] = "PS";
+const Uint8 BattleStatusScreenHpString[] = "PS";
 #else
-const Uint8 BattleStatusScreen_HpString[] = "HP";
+const Uint8 BattleStatusScreenHpString[] = "HP";
 #endif
-const Uint8 BattleStatusScreen_SlashString[] = "/";
+const Uint8 BattleStatusScreenSlashString[] = "/";

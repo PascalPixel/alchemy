@@ -28,6 +28,6 @@
 #define SPEAKER(actorId, bits) ((bits) | (actorId))
 
 /* The rowing seats' values (shared/tolbi_ship_rowing.c). */
-extern Uint32 TolbiShip_PassengerRowValues[];
+extern Uint32 TolbiShipPassengerRowValues[];
 
 #endif

@@ -8,10 +8,10 @@
 
 struct ACTOR;
 
-/* Frames a pair of swelling arcs shows for, rising a pixel a frame. */
-#define ARC_GROUP_FRAMES 32
+/* Ticks a pair of swelling arcs shows for, rising a pixel a tick. */
+#define ARC_GROUP_TICKS 32
 
-/* A pair's age before it is first spawned: past ARC_GROUP_FRAMES, so not
+/* A pair's age before it is first spawned: past ARC_GROUP_TICKS, so not
    drawn. */
 #define ARC_GROUP_UNSPAWNED 999
 
@@ -20,13 +20,13 @@ struct ACTOR;
    and target they were spawned with (fdBattleEffectSpawnScaledArcObjects). */
 typedef struct ARC_EFFECT_STATE {
 	EFFECT_SPR sprs[2][2];
-	/* frames since each group was spawned; ARC_GROUP_UNSPAWNED before */
+	/* ticks since each group was spawned; ARC_GROUP_UNSPAWNED before */
 	Sint16		  age[2];
 	Sint16		  resource; /* VRAM cache entry holding the arcs' tiles */
 	Sint16		  group;	/* the group spawned next */
 	struct ACTOR *tgt;		/* the actor the last group was spawned over */
 } ARC_EFFECT_STATE;
 
-void fdBattleEffectSpawnScaledArcObjects(struct ACTOR *target);
+void fdBattleEffectSpawnScaledArcObjects(struct ACTOR *tgt);
 
 #endif

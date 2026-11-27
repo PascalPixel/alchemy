@@ -45,20 +45,20 @@ enum {
 /* The tunnels' water, which Parch dries. */
 #define METATILE_TUNNEL_WATER  60
 
-extern SCENE_REGION Mikasalla_TunnelRegions[];
-extern ACTOR_PLACE	Mikasalla_VillagePlacements[];
-extern ACTOR_PLACE	Mikasalla_TunnelPlacements[];
+extern SCENE_REGION MikasallaTunnelRegions[];
+extern ACTOR_PLACE	MikasallaVillagePlacements[];
+extern ACTOR_PLACE	MikasallaTunnelPlacements[];
 
-extern CUE Mikasalla_TunnelCues[];
+extern CUE MikasallaTunnelCues[];
 
-extern CUE	  Mikasalla_VillageCues[];
-extern Uint16 Mikasalla_DoorOpening[];
-extern Uint16 Mikasalla_ThirdDoorOpening[];
-extern Uint16 Mikasalla_WideDoorOpening[];
-extern Sint32 Mikasalla_ChickenPaces[];
-extern Sint32 Mikasalla_SheepPaces[];
+extern CUE	  MikasallaVillageCues[];
+extern Uint16 MikasallaDoorOpening[];
+extern Uint16 MikasallaThirdDoorOpening[];
+extern Uint16 MikasallaWideDoorOpening[];
+extern Sint32 MikasallaChickenPaces[];
+extern Sint32 MikasallaSheepPaces[];
 
-/* The village's actors, numbering the rows of `Mikasalla_VillagePlacements`. */
+/* The village's actors, numbering the rows of `MikasallaVillagePlacements`. */
 typedef enum MIKASALLA_ACTOR_ID {
 	ACTOR_VILLAGER_NO_VISITORS = ACTOR_FIRST_PLACED,
 	/* scMikasallaAskLookingForSomeone's villager. */
@@ -84,7 +84,7 @@ const SCENE_REGION *scGetExitRegions(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_MIKASALLA_NORTH)
-		return Mikasalla_TunnelRegions;
+		return MikasallaTunnelRegions;
 	return 0;
 }
 
@@ -98,15 +98,15 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_MIKASALLA)
-		return Mikasalla_VillagePlacements;
-	return Mikasalla_TunnelPlacements;
+		return MikasallaVillagePlacements;
+	return MikasallaTunnelPlacements;
 }
 
 void scMikasallaClimbDownLadder(void);
 
 extern Uint8 MsgFieldAreYouLookingForSomeone[];
 
-extern MAP_GRID_METATILE_ANIMATION Mikasalla_Doors[];
+extern MAP_GRID_METATILE_ANIMATION MikasallaDoors[];
 
 /* Felix walks north into one of the village's doors: the inn's, the northeast
    door at metatile (20, 32); the general store's, to the northwest at (13, 36);
@@ -116,14 +116,14 @@ extern MAP_GRID_METATILE_ANIMATION Mikasalla_Doors[];
    in.
 
    Each door's metatile carries the number of the exit it leaves by, and
-   `Mikasalla_Doors` holds its opening, drawn over its metatiles. The Sanctum's
+   `MikasallaDoors` holds its opening, drawn over its metatiles. The Sanctum's
    door is entered without the walk. */
 void scMikasallaEnterDoor(void)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	Uint32		 id;
 	Sint16		*exit;
-	Sint32		 index;
+	Sint32		 idx;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -134,22 +134,22 @@ void scMikasallaEnterDoor(void)
 			actor->motionFlg = 0;
 	}
 	exit = &state->stepCue;
-	index = *exit;
+	idx = *exit;
 	fdScriptPlaySnd(SE_DOOR_OPEN);
-	index--;
-	fdMapGridAnimateMetatiles(Mikasalla_Doors[index].steps,
-		Mikasalla_Doors[index].x, Mikasalla_Doors[index].y);
+	idx--;
+	fdMapGridAnimateMetatiles(MikasallaDoors[idx].steps, MikasallaDoors[idx].x,
+		MikasallaDoors[idx].y);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
 
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
-	if(index != MIKASALLA_TO_MIKASALLA_ROOMS_SANCTUM - 1) {
+	if(idx != MIKASALLA_TO_MIKASALLA_ROOMS_SANCTUM - 1) {
 		fdActorCenterAndWalk(MainRoutineStateWork.leaderActorId, 2, -8);
 		fdScriptWait(10);
 	}
 	syImportScriptSetExitRequest(*exit);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -166,8 +166,8 @@ const CUE *scGetCues(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_MIKASALLA_NORTH)
-		return Mikasalla_TunnelCues;
-	return Mikasalla_VillageCues;
+		return MikasallaTunnelCues;
+	return MikasallaVillageCues;
 }
 
 /* The woman in a white dress south of the inn asks Felix whether he is looking
@@ -360,17 +360,17 @@ void scMikasallaStepOntoLadderAhead(void)
 
 /* The doors' openings: most doors, the east house's door with metatiles of its
    own, and the Sanctum's wide door, two metatiles across. */
-Uint16 Mikasalla_DoorOpening[] = {
+Uint16 MikasallaDoorOpening[] = {
 	MAPGRID_ANIMATION_STEP(81, 50, 1, 2, 6),
 	MAPGRID_ANIMATION_STEP(80, 50, 1, 2, 6),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Mikasalla_ThirdDoorOpening[] = {
+Uint16 MikasallaThirdDoorOpening[] = {
 	MAPGRID_ANIMATION_STEP(79, 50, 1, 2, 6),
 	MAPGRID_ANIMATION_STEP(78, 50, 1, 2, 6),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Mikasalla_WideDoorOpening[] = {
+Uint16 MikasallaWideDoorOpening[] = {
 	MAPGRID_ANIMATION_STEP(78, 52, 2, 2, 6),
 	MAPGRID_ANIMATION_STEP(78, 53, 2, 2, 6),
 	MAPGRID_ANIMATION_STEPS_END,
@@ -378,12 +378,12 @@ Uint16 Mikasalla_WideDoorOpening[] = {
 
 /* The village's doors, by exit number from the first (scMikasallaEnterDoor):
    each opening and the metatile it is drawn at. */
-MAP_GRID_METATILE_ANIMATION Mikasalla_Doors[] = {
-	{Mikasalla_DoorOpening, 84, 29},
-	{Mikasalla_DoorOpening, 77, 34},
-	{Mikasalla_ThirdDoorOpening, 86, 38},
-	{Mikasalla_DoorOpening, 75, 41},
-	{Mikasalla_WideDoorOpening, 69, 27},
+MAP_GRID_METATILE_ANIMATION MikasallaDoors[] = {
+	{MikasallaDoorOpening, 84, 29},
+	{MikasallaDoorOpening, 77, 34},
+	{MikasallaThirdDoorOpening, 86, 38},
+	{MikasallaDoorOpening, 75, 41},
+	{MikasallaWideDoorOpening, 69, 27},
 };
 
 /* clang-format off */
@@ -394,7 +394,7 @@ SCENE_ENTRANCE SceneEntrances[] = {
 
 /* The tunnels' ways out at the tops of their ladders: up to the sheep pen, */
 /* and up from the cave to the chamber. */
-SCENE_REGION Mikasalla_TunnelRegions[] = {
+SCENE_REGION MikasallaTunnelRegions[] = {
 	{68, 28, 404, 76, 36, 412, CONDITION_ALWAYS, MIKASALLA_NORTH_TO_MIKASALLA_SOUTH},
 	{244, 28, 100, 252, 36, 108, CONDITION_ALWAYS, MIKASALLA_NORTH_CAVE_LADDER},
 	{SCENE_TABLE_END},
@@ -424,7 +424,7 @@ Uint32 SceneExits[] = {
 /* clang-format on */
 
 /* One squash of an animal in the pen as it turns: it flattens to three quarters
-   of its width and springs back over ten frames. */
+   of its width and springs back over ten ticks. */
 #define PEN_SQUASH \
 	SC_ADD(SW_SCALE_X, -toFIXED(1) / 4), SC_ADD(SW_SCALE_Y, toFIXED(1) / 8), \
 		SC_WAIT(2), SC_ADD(SW_SCALE_X, toFIXED(1) / 8), \
@@ -441,7 +441,7 @@ Uint32 SceneExits[] = {
 		PEN_SQUASH, PEN_SQUASH, PEN_SQUASH
 
 /* The chicken paces between x 72 and 120 on its row, turning at each end. */
-Sint32 Mikasalla_ChickenPaces[] = {
+Sint32 MikasallaChickenPaces[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
 	SC_ACCELERATION(0.2),
 	SC_SPEED(0.6),
@@ -459,7 +459,7 @@ Sint32 Mikasalla_ChickenPaces[] = {
 };
 
 /* The sheep paces its pen more slowly, between x 88 and 120. */
-Sint32 Mikasalla_SheepPaces[] = {
+Sint32 MikasallaSheepPaces[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
 	SC_ACCELERATION(0.2),
 	SC_SPEED(0.3),
@@ -478,7 +478,7 @@ Sint32 Mikasalla_SheepPaces[] = {
 /* clang-format off */
 
 /* The village (`MIKASALLA_ACTOR_ID`). */
-ACTOR_PLACE Mikasalla_VillagePlacements[] = {
+ACTOR_PLACE MikasallaVillagePlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 552, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_WHITE_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 600, FACING_SOUTH, TALK_FACING_PARTY_THEN_WATCH, 0),
 	ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_ORANGE_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 504, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -487,21 +487,21 @@ ACTOR_PLACE Mikasalla_VillagePlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_IN_GREEN_SHAWL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 680, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_BOY_IN_BLUE_SHIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 632, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_GIRL_WITH_BLONDE_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 616, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_CHICKEN, CONDITION_ALWAYS, (Sint32)Mikasalla_ChickenPaces, 72, 0, 648, FACING_EAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_SHEEP, CONDITION_ALWAYS, (Sint32)Mikasalla_SheepPaces, 120, 0, 680, FACING_WEST, TALK_FACING_PARTY, 0),
+	ACTOR_PLACEMENT(SPRITE_CHICKEN, CONDITION_ALWAYS, (Sint32)MikasallaChickenPaces, 72, 0, 648, FACING_EAST, TALK_FACING_PARTY, 0),
+	ACTOR_PLACEMENT(SPRITE_SHEEP, CONDITION_ALWAYS, (Sint32)MikasallaSheepPaces, 120, 0, 680, FACING_WEST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_SPARK), MOVEMENT_TYPE_STAND, 312, 0, 168, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	{SCENE_TABLE_END},
 };
 
 /* The tunnels under the village. */
-ACTOR_PLACE Mikasalla_TunnelPlacements[] = {
+ACTOR_PLACE MikasallaTunnelPlacements[] = {
 	{SCENE_TABLE_END},
 };
 /* clang-format on */
 
 /* clang-format off */
 /* The village's doors, talk, Mind Read, the dug ladder, and Spark. */
-CUE Mikasalla_VillageCues[] = {
+CUE MikasallaVillageCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), MIKASALLA_TO_MIKASALLA_ROOMS_HOUSES_NORTHEAST, CONDITION_ALWAYS, SCRIPT_REF(scMikasallaEnterDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), MIKASALLA_TO_MIKASALLA_ROOMS_HOUSES_NORTHWEST, CONDITION_ALWAYS, SCRIPT_REF(scMikasallaEnterDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), MIKASALLA_TO_MIKASALLA_ROOMS_HOUSES_EAST, CONDITION_ALWAYS, SCRIPT_REF(scMikasallaEnterDoor)},
@@ -547,7 +547,7 @@ CUE Mikasalla_VillageCues[] = {
 /* The tunnels' exits, the hole in the chamber's floor, and the water Parch
    dries. The rows for a ladder top entered from the north, west or east answer
    no metatile of the tunnels' map: only the village's dug ladder has those. */
-CUE Mikasalla_TunnelCues[] = {
+CUE MikasallaTunnelCues[] = {
 	{CUE_EXIT, MIKASALLA_NORTH_CHAMBER_HOLE, CONDITION_ALWAYS,
 		MIKASALLA_NORTH_CHAMBER_HOLE},
 	{CUE_EXIT, 4, CONDITION_ALWAYS, 4},

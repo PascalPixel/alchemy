@@ -1,4 +1,4 @@
-@ The system library's module: frames and events, memory, resources and the
+@ The system library's module: ticks and events, memory, resources and the
 @ other services every team's code calls.
 	.include "games/tbs/src/system/stub_table.inc"
 	.global Stubs_System

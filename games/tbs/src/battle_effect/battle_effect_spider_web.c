@@ -3,8 +3,8 @@
 /* The swirl swipe's modes (btEffectRunSwirlSwipe), each named for the effect
    that plays it. */
 typedef enum SWIRL_SWIPE_MODE {
-	SWIRL_SWIPE_POISON_BEAT,  /* lime; the target recoils at once, 48 frames */
-	SWIRL_SWIPE_SPINNING_BEAT /* magenta; the target is thrown up, 74 frames */
+	SWIRL_SWIPE_POISON_BEAT,  /* lime; the target recoils at once, 48 ticks */
+	SWIRL_SWIPE_SPINNING_BEAT /* magenta; the target is thrown up, 74 ticks */
 } SWIRL_SWIPE_MODE;
 
 /* A lime swirl sweeps across the first target and knocks it back.
@@ -29,11 +29,11 @@ void btEffectRunSwirlSwipe(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	ACTOR				*actor;
-	SCREEN_POINT		 position;
+	SCREEN_POINT		 pos;
 	/* LEFTOVER(frame): draw[1], the idle half of the pair. */
 	BLITTER_PAIR draw;
-	Sint32		 frames;
-	Sint32		 frame;
+	Sint32		 ticks;
+	Sint32		 frm;
 	Sint32		 picture;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -60,34 +60,34 @@ void btEffectRunSwirlSwipe(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	actor = btObjectGetStub(state->args->tgts[0])->actor;
-	btProjectionScaledUnit(state->args->tgts[0], &position);
+	btProjectionScaledUnit(state->args->tgts[0], &pos);
 	if(state->args->side == EFFECT_SIDE_ENEMIES)
-		REG_BG2X = (16 - position.x) << 8;
+		REG_BG2X = (16 - pos.x) << 8;
 	else
-		REG_BG2X = (112 - position.x) << 8;
-	frames = 74;
+		REG_BG2X = (112 - pos.x) << 8;
+	ticks = 74;
 	if(mode != SWIRL_SWIPE_SPINNING_BEAT)
-		frames = 48;
-	for(frame = 0; frame != frames; frame++) {
-		/* The swirl's four pictures, then the two of its tail, four frames
+		ticks = 48;
+	for(frm = 0; frm != ticks; frm++) {
+		/* The swirl's four pictures, then the two of its tail, four ticks
 		   each. */
-		picture = frame / 4;
+		picture = frm / 4;
 		if(picture <= 5) {
 			if(picture <= 3)
-				draw[0](canvas, state->sheet + SwirlSwipe_Pictures[picture],
-					SwirlSwipe_PictureX[picture + state->args->side * 6],
-					SwirlSwipe_PictureBiasY[picture] + 32,
-					SwirlSwipe_PictureWidths[picture],
-					SwirlSwipe_PictureHeights[picture]);
+				draw[0](canvas, state->sheet + SwirlSwipePictures[picture],
+					SwirlSwipePictureX[picture + state->args->side * 6],
+					SwirlSwipePictureBiasY[picture] + 32,
+					SwirlSwipePictureWidths[picture],
+					SwirlSwipePictureHeights[picture]);
 			else
 				draw[0](canvas,
-					Ram_MapGridMetatileBuffer + SwirlSwipe_Pictures[picture],
-					SwirlSwipe_PictureX[picture + state->args->side * 6],
-					SwirlSwipe_PictureBiasY[picture] + 32,
-					SwirlSwipe_PictureWidths[picture],
-					SwirlSwipe_PictureHeights[picture]);
+					Ram_MapGridMetatileBuffer + SwirlSwipePictures[picture],
+					SwirlSwipePictureX[picture + state->args->side * 6],
+					SwirlSwipePictureBiasY[picture] + 32,
+					SwirlSwipePictureWidths[picture],
+					SwirlSwipePictureHeights[picture]);
 		}
-		if(frame == 8) {
+		if(frm == 8) {
 			if(mode == SWIRL_SWIPE_POISON_BEAT) {
 				EFFECT_SHOW_DAMAGE(SE_IMPACT);
 				btMotionApplyKnockbackStub(state->args->tgts[0], KNOCKBACK_HOP);
@@ -100,23 +100,23 @@ void btEffectRunSwirlSwipe(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		}
 		/* Spinning Beat throws the target into the air. */
 		if(mode == SWIRL_SWIPE_SPINNING_BEAT) {
-			if(frame == 13) {
+			if(frm == 13) {
 				actor->velY = toFIXED(12);
 				actor->gravity = toFIXED(47) / 100;
 				actor->bounce = toFIXED(1) / 4;
 			}
-			if(frame == 65) {
+			if(frm == 65) {
 				state->shakeFrm = 4;
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			}
 		}
 		btCameraShake(8, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-#define SPIDER_WEB_FRAMES		  63
+#define SPIDER_WEB_TICKS		  63
 /* SpiderWebSheet's quarter of the web, drawn four times mirrored. */
 #define SPIDER_WEB_QUARTER_WIDTH  32
 #define SPIDER_WEB_QUARTER_HEIGHT 32
@@ -136,7 +136,7 @@ void btEffectRunSpiderWeb(BATTLE_EFFECT_PARM *args)
 	SCREEN_POINT		 last;
 	void				*canvas;
 	BATTLE_EFFECT_STATE *state;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
@@ -152,11 +152,11 @@ void btEffectRunSpiderWeb(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_SPIDER_WEB_SHEET, state->sheet, 1, 1);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 	sySndPlayStub(SE_CRACK);
-	for(frame = 0; frame != SPIDER_WEB_FRAMES; frame++) {
-		if(frame <= 8)
-			REG_BLDALPHA = EFFECT_BLEND_CANVAS(frame << 1);
-		if(frame > 53)
-			REG_BLDALPHA = EFFECT_BLEND_CANVAS(124 - (frame << 1));
+	for(frm = 0; frm != SPIDER_WEB_TICKS; frm++) {
+		if(frm <= 8)
+			REG_BLDALPHA = EFFECT_BLEND_CANVAS(frm << 1);
+		if(frm > 53)
+			REG_BLDALPHA = EFFECT_BLEND_CANVAS(124 - (frm << 1));
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_TRANSPARENT);
 		EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, state->sheet,
@@ -181,20 +181,20 @@ void btEffectRunSpiderWeb(BATTLE_EFFECT_PARM *args)
 			SPIDER_WEB_CENTER_X, SPIDER_WEB_CENTER_Y, SPIDER_WEB_QUARTER_WIDTH,
 			SPIDER_WEB_QUARTER_HEIGHT);
 		syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
-		if(frame == 32)
+		if(frm == 32)
 			EFFECT_SHOW_DAMAGE(SE_CRACK);
 		EFFECT_FOR_EACH_TARGET(i, state->args) {
-			if(frame == 10)
+			if(frm == 10)
 				btEffectTintBattler(
 					state->args->tgts[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 8);
 		}
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 	syCloseEvent(btEffectTransferCanvas);
 	btEffectEndCanvasLayer();
 }
 
-#undef SPIDER_WEB_FRAMES
+#undef SPIDER_WEB_TICKS
 #undef SPIDER_WEB_CENTER_X
 #undef SPIDER_WEB_CENTER_Y
 #undef SPIDER_WEB_LEFT

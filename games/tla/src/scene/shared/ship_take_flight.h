@@ -1,4 +1,4 @@
-/* The ship takes flight: it powers up for at most 20 frames, less over a place
+/* The ship takes flight: it powers up for at most 20 ticks, less over a place
    a step cue answers, then glows in flight. */
 void scShipTakeFlight(void)
 {

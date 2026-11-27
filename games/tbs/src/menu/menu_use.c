@@ -16,10 +16,10 @@ UNUSED void mnItemUseNoOperation(void)
 {
 }
 
-/* Uses the item in memberId's inventory slot on targetId, or on every party
+/* Uses the item in memberId's inventory slot on tgtId, or on every party
    member when its action's range is ABILITY_RANGE_ALL: applies its action at
    its plain power (mnAbilityApplyToTargets with fixedScale 1). */
-Sint32 mnItemUse(Sint32 slot, Sint32 memberId, Sint32 targetId)
+Sint32 mnItemUse(Sint32 slot, Sint32 memberId, Sint32 tgtId)
 {
 	ITEM_MENU_STATE *menu;
 	Sint32			 useResult;
@@ -32,7 +32,7 @@ Sint32 mnItemUse(Sint32 slot, Sint32 memberId, Sint32 targetId)
 	itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
 	item = gmItemGetDirectStub(itemId);
 	useResult = mnAbilityApplyToTargets(
-		PSYNERGY_ABILITY_MASK & item->abilityId, memberId, targetId, 1);
+		PSYNERGY_ABILITY_MASK & item->abilityId, memberId, tgtId, 1);
 	if(useResult != -1) {
 		item = gmItemGetDirectStub(unit->inventory[slot]);
 		if(item->useType == ITEM_USE_CONSUMED) {
@@ -56,45 +56,45 @@ UNUSED Sint32 mnItemUseReturnTrue(void)
 }
 
 /* Applies the healing, curing, revival or lasting stat rise of action effectId,
-   used by party member sourceId, to targetId, or to every party member when the
+   used by party member srcId, to tgtId, or to every party member when the
    action's range is ABILITY_RANGE_ALL. */
 Sint32 mnAbilityApplyToTargets(
-	Sint32 effectId, Sint32 sourceId, Sint32 targetId, Sint32 fixedScale)
+	Sint32 effectId, Sint32 srcId, Sint32 tgtId, Sint32 fixedScale)
 {
 	ABILITY_DEFINITION *effect;
 	ITEM_MENU_STATE	   *menu;
-	UNIT			   *target;
+	UNIT			   *tgt;
 	UNIT			   *caster;
 	Sint32				partyResultShown;
 	Sint32				changed;
-	Uint8				targetIndex;
+	Uint8				tgtIdx;
 	Sint16				elementPower;
 	Sint32				randomAdjust;
 	Sint32				amount;
-	Sint32				messageOffset;
+	Sint32				msgOfs;
 
 	effect = gmAbilityGetDirectStub(effectId);
 	menu = MenuState;
 	changed = 0;
-	messageOffset = 0;
+	msgOfs = 0;
 	partyResultShown = 0;
 
-	if(targetId != MENU_TARGET_WHOLE_PARTY)
-		target = gmUnitGetStub(targetId);
+	if(tgtId != MENU_TARGET_WHOLE_PARTY)
+		tgt = gmUnitGetStub(tgtId);
 	else
-		target = gmUnitGetStub(ISAAC);
+		tgt = gmUnitGetStub(ISAAC);
 
 	/* FAKEMATCH(dead): a test that is never true (partyResultShown is still
 	 * 0). */
 	if(effect->range == ABILITY_RANGE_ALL && partyResultShown != 0)
-		messageOffset = ITEM_USE_RESULT_PARTY_HP_RECOVERED;
+		msgOfs = ITEM_USE_RESULT_PARTY_HP_RECOVERED;
 
 	/* A party-wide action keeps the first useful message while visiting
 	   targets. */
-	for(targetIndex = 0; targetIndex < menu->partyCnt; targetIndex++) {
+	for(tgtIdx = 0; tgtIdx < menu->partyCnt; tgtIdx++) {
 		if(effect->range == ABILITY_RANGE_ALL) {
-			targetId = menu->memberIds[targetIndex];
-			target = gmUnitGetStub(targetId);
+			tgtId = menu->memberIds[tgtIdx];
+			tgt = gmUnitGetStub(tgtId);
 		}
 
 		/* The ability kind first; the result messages are ITEM_USE_RESULT. */
@@ -103,7 +103,7 @@ Sint32 mnAbilityApplyToTargets(
 		case ABILITY_FORMULA_HEAL_HP:
 			if(fixedScale == 0) {
 				if(effect->element != ELEMENT_NONE) {
-					caster = gmUnitGetStub(sourceId);
+					caster = gmUnitGetStub(srcId);
 					elementPower = caster->element[effect->element].power;
 				} else
 					elementPower = HEALING_BASE_POWER;
@@ -111,28 +111,28 @@ Sint32 mnAbilityApplyToTargets(
 					amount, elementPower, BATTLE_MULTIPLIER_ONE);
 			}
 
-			if(target->hp <= 0) {
+			if(tgt->hp <= 0) {
 				if(partyResultShown == 0)
-					messageOffset = ITEM_USE_RESULT_HP_NOT_RECOVERED;
+					msgOfs = ITEM_USE_RESULT_HP_NOT_RECOVERED;
 			} else {
-				if(target->hp == target->hpMax) {
+				if(tgt->hp == tgt->hpMax) {
 					if(partyResultShown == 0)
-						messageOffset = ITEM_USE_RESULT_HP_FULL;
+						msgOfs = ITEM_USE_RESULT_HP_FULL;
 				} else {
-					target->hp += amount;
-					if(target->hp > target->hpMax) {
-						amount -= target->hp - target->hpMax;
-						target->hp = target->hpMax;
+					tgt->hp += amount;
+					if(tgt->hp > tgt->hpMax) {
+						amount -= tgt->hp - tgt->hpMax;
+						tgt->hp = tgt->hpMax;
 						if(partyResultShown == 0)
-							messageOffset = ITEM_USE_RESULT_HP_FULLY_RECOVERED;
+							msgOfs = ITEM_USE_RESULT_HP_FULLY_RECOVERED;
 					} else if(partyResultShown == 0) {
-						messageOffset = ITEM_USE_RESULT_HP_RECOVERED;
+						msgOfs = ITEM_USE_RESULT_HP_RECOVERED;
 					}
-					gmUnitRecalculateGaugesStub(targetId);
+					gmUnitRecalculateGaugesStub(tgtId);
 					changed = 1;
 					if(effect->range == ABILITY_RANGE_ALL) {
 						partyResultShown = 1;
-						messageOffset = ITEM_USE_RESULT_PARTY_HP_RECOVERED;
+						msgOfs = ITEM_USE_RESULT_PARTY_HP_RECOVERED;
 					}
 				}
 			}
@@ -151,62 +151,62 @@ Sint32 mnAbilityApplyToTargets(
 
 			switch(effectId & PSYNERGY_ABILITY_MASK) {
 			case ABILITY_POWER_BREAD:
-				target->baseHp += amount + randomAdjust;
-				messageOffset = ITEM_USE_RESULT_MAX_HP_UP;
+				tgt->baseHp += amount + randomAdjust;
+				msgOfs = ITEM_USE_RESULT_MAX_HP_UP;
 				changed = 1;
 				break;
 			case ABILITY_COOKIE:
-				target->basePp += amount + randomAdjust;
-				messageOffset = ITEM_USE_RESULT_MAX_PP_UP;
+				tgt->basePp += amount + randomAdjust;
+				msgOfs = ITEM_USE_RESULT_MAX_PP_UP;
 				changed = 1;
 				break;
 			case ABILITY_MINT:
-				target->baseAgility += amount + randomAdjust;
-				messageOffset = ITEM_USE_RESULT_AGILITY_UP;
+				tgt->baseAgility += amount + randomAdjust;
+				msgOfs = ITEM_USE_RESULT_AGILITY_UP;
 				changed = 1;
 				break;
 			case ABILITY_LUCKY_PEPPER:
-				target->baseLuck += amount;
-				messageOffset = ITEM_USE_RESULT_LUCK_UP;
+				tgt->baseLuck += amount;
+				msgOfs = ITEM_USE_RESULT_LUCK_UP;
 				changed = 1;
 				break;
 			/* No edition's "Your Attack increased!" or "Your Defense
 			   increased!" shows a number, so the 3 and the 4 pushed for them
 			   are never seen. */
 			case ABILITY_APPLE:
-				target->baseAttack += amount + randomAdjust;
+				tgt->baseAttack += amount + randomAdjust;
 				mnMessageArgumentPushStub(3, MESSAGE_ARGUMENT_NUMBER);
-				messageOffset = ITEM_USE_RESULT_ATTACK_UP;
+				msgOfs = ITEM_USE_RESULT_ATTACK_UP;
 				changed = 1;
 				break;
 			case ABILITY_HARD_NUT:
-				target->baseDefense += amount + randomAdjust;
+				tgt->baseDefense += amount + randomAdjust;
 				mnMessageArgumentPushStub(4, MESSAGE_ARGUMENT_NUMBER);
-				messageOffset = ITEM_USE_RESULT_DEFENSE_UP;
+				msgOfs = ITEM_USE_RESULT_DEFENSE_UP;
 				changed = 1;
 				break;
 			}
 			break;
 
 		case ABILITY_FORMULA_HEAL_PP:
-			if(target->pp == target->ppMax) {
+			if(tgt->pp == tgt->ppMax) {
 				if(partyResultShown == 0)
-					messageOffset = ITEM_USE_RESULT_PP_FULL;
+					msgOfs = ITEM_USE_RESULT_PP_FULL;
 			} else {
-				target->pp += amount;
-				if(target->pp > target->ppMax) {
-					amount -= target->pp - target->ppMax;
-					target->pp = target->ppMax;
+				tgt->pp += amount;
+				if(tgt->pp > tgt->ppMax) {
+					amount -= tgt->pp - tgt->ppMax;
+					tgt->pp = tgt->ppMax;
 					if(partyResultShown == 0)
-						messageOffset = ITEM_USE_RESULT_PP_FULLY_RECOVERED;
+						msgOfs = ITEM_USE_RESULT_PP_FULLY_RECOVERED;
 				} else if(partyResultShown == 0) {
-					messageOffset = ITEM_USE_RESULT_PP_RECOVERED;
+					msgOfs = ITEM_USE_RESULT_PP_RECOVERED;
 				}
-				gmUnitRecalculateGaugesStub(targetId);
+				gmUnitRecalculateGaugesStub(tgtId);
 				changed = 1;
 				if(effect->range == ABILITY_RANGE_ALL) {
 					partyResultShown = 1;
-					messageOffset = ITEM_USE_RESULT_PARTY_PP_RECOVERED;
+					msgOfs = ITEM_USE_RESULT_PARTY_PP_RECOVERED;
 				}
 			}
 			break;
@@ -225,50 +225,50 @@ Sint32 mnAbilityApplyToTargets(
 		/* Then the ability's effect (ABILITY_EFFECT). */
 		switch(effect->eff) {
 		case ABILITY_EFFECT_RESTORE_HP:
-			if(target->hp <= 0 || target->hp == target->hpMax) {
+			if(tgt->hp <= 0 || tgt->hp == tgt->hpMax) {
 				if(partyResultShown == 0)
-					messageOffset = ITEM_USE_RESULT_HP_NOT_RECOVERED;
+					msgOfs = ITEM_USE_RESULT_HP_NOT_RECOVERED;
 			} else {
-				target->hp += amount;
-				if(target->hp > target->hpMax) {
-					target->hp = target->hpMax;
+				tgt->hp += amount;
+				if(tgt->hp > tgt->hpMax) {
+					tgt->hp = tgt->hpMax;
 					if(partyResultShown == 0)
-						messageOffset = ITEM_USE_RESULT_HP_FULLY_RECOVERED;
+						msgOfs = ITEM_USE_RESULT_HP_FULLY_RECOVERED;
 				} else if(partyResultShown == 0) {
-					messageOffset = ITEM_USE_RESULT_HP_RECOVERED;
+					msgOfs = ITEM_USE_RESULT_HP_RECOVERED;
 				}
-				gmUnitRecalculateGaugesStub(targetId);
+				gmUnitRecalculateGaugesStub(tgtId);
 				changed = 1;
 			}
 			break;
 
 		case ABILITY_EFFECT_RESTORE_PP:
-			if(target->pp == target->ppMax) {
+			if(tgt->pp == tgt->ppMax) {
 				if(partyResultShown == 0)
-					messageOffset = ITEM_USE_RESULT_PP_FULL;
+					msgOfs = ITEM_USE_RESULT_PP_FULL;
 			} else {
-				target->pp += amount;
-				if(target->pp > target->ppMax) {
-					target->pp = target->ppMax;
+				tgt->pp += amount;
+				if(tgt->pp > tgt->ppMax) {
+					tgt->pp = tgt->ppMax;
 					if(partyResultShown == 0)
-						messageOffset = ITEM_USE_RESULT_PP_FULLY_RECOVERED;
+						msgOfs = ITEM_USE_RESULT_PP_FULLY_RECOVERED;
 				} else if(partyResultShown == 0) {
-					messageOffset = ITEM_USE_RESULT_PP_RECOVERED;
+					msgOfs = ITEM_USE_RESULT_PP_RECOVERED;
 				}
-				gmUnitRecalculateGaugesStub(targetId);
+				gmUnitRecalculateGaugesStub(tgtId);
 				changed = 1;
 			}
 			break;
 
 		case ABILITY_EFFECT_REVIVE:
-			if(target->hp == 0) {
-				target->hp = target->hpMax;
-				gmUnitRecalculateGaugesStub(targetId);
+			if(tgt->hp == 0) {
+				tgt->hp = tgt->hpMax;
+				gmUnitRecalculateGaugesStub(tgtId);
 				changed = 1;
 				if(partyResultShown == 0)
-					messageOffset = ITEM_USE_RESULT_REVIVED;
+					msgOfs = ITEM_USE_RESULT_REVIVED;
 			} else if(partyResultShown == 0) {
-				messageOffset = ITEM_USE_RESULT_NOT_DOWN;
+				msgOfs = ITEM_USE_RESULT_NOT_DOWN;
 			}
 			break;
 
@@ -276,35 +276,35 @@ Sint32 mnAbilityApplyToTargets(
 		   after reviving; no item has either action (item_table.c), and no
 		   Djinni is used from the menus. Dew gives 7/10 of maximum HP here. */
 		case ABILITY_EFFECT_REVIVE_HALF:
-			if(target->hp == 0) {
-				target->hp = target->hpMax / 2;
-				gmUnitRecalculateGaugesStub(targetId);
+			if(tgt->hp == 0) {
+				tgt->hp = tgt->hpMax / 2;
+				gmUnitRecalculateGaugesStub(tgtId);
 				if(partyResultShown == 0)
-					messageOffset = ITEM_USE_RESULT_REVIVED;
+					msgOfs = ITEM_USE_RESULT_REVIVED;
 			} else if(partyResultShown == 0) {
-				messageOffset = ITEM_USE_RESULT_NOT_DOWN;
+				msgOfs = ITEM_USE_RESULT_NOT_DOWN;
 			}
 			break;
 
 		case ABILITY_EFFECT_DEW:
-			if(target->hp == 0) {
-				target->hp = target->hpMax * 7 / 10;
-				gmUnitRecalculateGaugesStub(targetId);
+			if(tgt->hp == 0) {
+				tgt->hp = tgt->hpMax * 7 / 10;
+				gmUnitRecalculateGaugesStub(tgtId);
 				if(partyResultShown == 0)
-					messageOffset = ITEM_USE_RESULT_REVIVED;
+					msgOfs = ITEM_USE_RESULT_REVIVED;
 			} else if(partyResultShown == 0) {
-				messageOffset = ITEM_USE_RESULT_NOT_DOWN;
+				msgOfs = ITEM_USE_RESULT_NOT_DOWN;
 			}
 			break;
 
 		case ABILITY_EFFECT_CURE_POISON:
-			if(target->poison != 0) {
-				target->poison = 0;
+			if(tgt->poison != 0) {
+				tgt->poison = 0;
 				changed = 1;
 				if(partyResultShown == 0)
-					messageOffset = ITEM_USE_RESULT_POISON_PURGED;
+					msgOfs = ITEM_USE_RESULT_POISON_PURGED;
 			} else if(partyResultShown == 0) {
-				messageOffset = ITEM_USE_RESULT_NOT_POISONED;
+				msgOfs = ITEM_USE_RESULT_NOT_POISONED;
 			}
 			break;
 		}
@@ -314,13 +314,13 @@ Sint32 mnAbilityApplyToTargets(
 	}
 
 	if(changed == 0) {
-		menu->msgOfs = messageOffset;
+		menu->msgOfs = msgOfs;
 		return -1;
 	}
 
-	for(targetIndex = 0; targetIndex < menu->partyCnt; targetIndex++)
-		gmUnitCalcStub(menu->memberIds[targetIndex]);
-	menu->msgOfs = messageOffset;
+	for(tgtIdx = 0; tgtIdx < menu->partyCnt; tgtIdx++)
+		gmUnitCalcStub(menu->memberIds[tgtIdx]);
+	menu->msgOfs = msgOfs;
 	return 0;
 }
 
@@ -346,7 +346,7 @@ void mnAbilityPlayUseSnd(Sint32 action)
 		/* With no break the recovery sound is started twice, both times on
 		   music player 2 (SongTable's row for it), which sySndPlay never swaps
 		   for another: the second start restarts the first before the sound
-		   driver mixes a frame, so it is heard once. */
+		   driver mixes a tick, so it is heard once. */
 		mnSndPlayReturnOne(SE_RECOVERY);
 		/* Fall through. */
 	case ABILITY_FORMULA_HEAL_PP:

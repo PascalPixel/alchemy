@@ -9,7 +9,7 @@ typedef struct METEOR_STAR {
 	Sint32 kind;
 } METEOR_STAR;
 
-extern const SCALE MeteorBlow_DoubleScale;
+extern const SCALE MeteorBlowDoubleScale;
 
 /* The sky, drawn over the battle background's image in the map cell buffer:
    METEOR_BLOW_STAR_COUNT stars on a sphere METEOR_BLOW_SKY_RADIUS across,
@@ -30,15 +30,15 @@ extern const SCALE MeteorBlow_DoubleScale;
 	(METEOR_BLOW_BIG_ORB_SIZE * METEOR_BLOW_BIG_ORB_SIZE + 3 * 16 * 16 + \
 		10 * 16 + 2 * 8 * 8)
 /* The view starts turned up METEOR_BLOW_START_PITCH and round
-   METEOR_BLOW_START_YAW, and turns a 256th of a turn a frame on each. */
-#define METEOR_BLOW_START_PITCH		  3328
-#define METEOR_BLOW_START_YAW		  9472
-/* From frame 48 the turn round slows by 4 a frame, until it stops at
-   METEOR_BLOW_YAW_STILL_FRAME. The turn up would slow by 8 a frame from frame
-   160, as if it were to stop at METEOR_BLOW_PITCH_STILL_FRAME, but the sky is
-   drawn only to frame 115. */
-#define METEOR_BLOW_YAW_STILL_FRAME	  112
-#define METEOR_BLOW_PITCH_STILL_FRAME 152
+   METEOR_BLOW_START_YAW, and turns a 256th of a turn a tick on each. */
+#define METEOR_BLOW_START_PITCH		 3328
+#define METEOR_BLOW_START_YAW		 9472
+/* From tick 48 the turn round slows by 4 a tick, until it stops at
+   METEOR_BLOW_YAW_STILL_TICK. The turn up would slow by 8 a tick from tick
+   160, as if it were to stop at METEOR_BLOW_PITCH_STILL_TICK, but the sky is
+   drawn only to tick 115. */
+#define METEOR_BLOW_YAW_STILL_TICK	 112
+#define METEOR_BLOW_PITCH_STILL_TICK 152
 
 /* The sky's colour, the backdrop's a line at a time over the battle view: each
    line's level is a quarter of its line plus a base, half of state->frm (which
@@ -69,22 +69,22 @@ extern const SCALE MeteorBlow_DoubleScale;
 #define METEOR_BLOW_BILLOW			   16384
 #define METEOR_BLOW_FLAME_BAND		   20480
 
-/* The meteor's step on one axis each frame of its flight: its speed times the
+/* The meteor's step on one axis each tick of its flight: its speed times the
    heading's sine or cosine, times 64. */
 #define METEOR_BLOW_FLIGHT_STEP(trig, speed) (((trig) * (speed)) >> 10)
-/* The meteor's heading starts at DEGtoANG(135); from frame 24 it swings towards
-   0 by METEOR_BLOW_HEADING_TURN a frame, as if it had swung since
-   METEOR_BLOW_HEADING_TURN_FRAME, and stays at 0 from frame 102. */
+/* The meteor's heading starts at DEGtoANG(135); from tick 24 it swings towards
+   0 by METEOR_BLOW_HEADING_TURN a tick, as if it had swung since
+   METEOR_BLOW_HEADING_TURN_TICK, and stays at 0 from tick 102. */
 #define METEOR_BLOW_HEADING_TURN			 286
-#define METEOR_BLOW_HEADING_TURN_FRAME		 16
+#define METEOR_BLOW_HEADING_TURN_TICK		 16
 
 /* The landing: the meteor comes down on the foes from METEOR_BLOW_LANDING_X,
-   and METEOR_BLOW_SPARKS burst from it at METEOR_BLOW_BURST_FRAME. The battle
+   and METEOR_BLOW_SPARKS burst from it at METEOR_BLOW_BURST_TICK. The battle
    background is tinted dark orange for it, its red raised by
    METEOR_BLOW_LANDING_TINT_RED levels and its green and blue lowered. */
-#define METEOR_BLOW_FRAMES			   50
+#define METEOR_BLOW_TICKS			   50
 #define METEOR_BLOW_LANDING_X		   144
-#define METEOR_BLOW_BURST_FRAME		   16
+#define METEOR_BLOW_BURST_TICK		   16
 #define METEOR_BLOW_SPARKS			   256
 #define METEOR_BLOW_LANDING_TINT_RED   5
 #define METEOR_BLOW_LANDING_TINT_GREEN (-4)
@@ -106,9 +106,9 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state;
 	Uint8				*map;
 	/* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
-	 * frame reserves and never touches; as one DRAW_RECTANGLE. */
+	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE			 blit[2];
-	Uint8					*sprites;
+	Uint8					*sprs;
 	Uint8					*coneProjected;
 	Uint8					*coneCorners;
 	Uint8					*coneMesh;
@@ -126,12 +126,12 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 	Sint32					 billowX;
 	Sint32					 canvasX;
 	Sint32					 blank;
-	Sint32					 offset;
-	Sint32					 frame;
-	Sint32					 arcAngle;
+	Sint32					 ofs;
+	Sint32					 frm;
+	Sint32					 arcAng;
 	Sint32					 j;
 	Sint32					 i;
-	Sint32					 position[3];
+	Sint32					 pos[3];
 	Sint32					 screen[3];
 	Sint32					 point[3];
 	FIXED					 flightPlace[4];
@@ -144,7 +144,7 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 	canvas = Ram_HeapSlots->battleCanvas;
 	map = MapGridMetatileBuffer;
 	state = Ram_HeapSlots->battleEff;
-	sprites = Ram_HeapSlots->battleSheet;
+	sprs = Ram_HeapSlots->battleSheet;
 	state->args = args;
 	EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
 	btEffectConfigureEffectDisp();
@@ -159,7 +159,7 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 		RESOURCE_GLOW_ORB_SET_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_DUST_BLOB_SHEET,
 		state->sheet + METEOR_BLOW_DUST_BLOB_PICTURES, 1, 1);
-	syWordsCopyEntry(sprites,
+	syWordsCopyEntry(sprs,
 		state->sheet + METEOR_BLOW_BIG_ORB_SIZE / 2 * METEOR_BLOW_BIG_ORB_SIZE,
 		METEOR_BLOW_BIG_ORB_SIZE);
 	LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
@@ -186,7 +186,7 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 	coneMesh = state->sheet + METEOR_BLOW_CONE_MESH;
 	background = Ram_HeapSlots->battleBg;
 	stars = (METEOR_STAR *)(state->sheet + METEOR_BLOW_STARS);
-	/* Default: the flight sets these at frame 0. */
+	/* Default: the flight sets these at tick 0. */
 	pitch = 0;
 	yaw = 0;
 	x = 0;
@@ -194,14 +194,14 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 	size = 0;
 	scale = toFIXED(1);
 	btMeshBuildGrid(coneMesh, 2, METEOR_BLOW_CONE_ROWS, 32, 2);
-	for(offset = 0, frame = 0, arcAngle = 0; frame != METEOR_BLOW_CONE_ROWS;
-		arcAngle += DEGtoANG(6), offset += 2 * sizeof(MODEL_VERTEX), frame++) {
-		Sint32 y = FIXEDtoINT(-syCos(arcAngle) * METEOR_BLOW_CONE_RADIUS);
-		Sint32 r = FIXEDtoINT(sySin(arcAngle) * METEOR_BLOW_CONE_RADIUS);
+	for(ofs = 0, frm = 0, arcAng = 0; frm != METEOR_BLOW_CONE_ROWS;
+		arcAng += DEGtoANG(6), ofs += 2 * sizeof(MODEL_VERTEX), frm++) {
+		Sint32		  y = FIXEDtoINT(-syCos(arcAng) * METEOR_BLOW_CONE_RADIUS);
+		Sint32		  r = FIXEDtoINT(sySin(arcAng) * METEOR_BLOW_CONE_RADIUS);
 		MODEL_VERTEX *v;
 
 		j = 0;
-		v = (MODEL_VERTEX *)(coneCorners + offset);
+		v = (MODEL_VERTEX *)(coneCorners + ofs);
 		for(; j != 2; j++, v++) {
 			v->x = FIXEDtoINT(sySin(j * DEGtoANG(45)) * r);
 			v->y = y;
@@ -213,7 +213,7 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 		Sint32		 transferMode = CANVAS_COPY_AND_DARKEN;
 		Sint32		 star;
 		Sint32		*starKind;
-		METEOR_STAR *current;
+		METEOR_STAR *cur;
 
 		btEffectBuildBlitter(
 			HEAP_SLOT_RAM_CODE, 8, 7, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -226,19 +226,19 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 		BgScrollWork[1].x = 0;
 		background->busy = 1;
 		starKind = &stars->kind;
-		current = stars;
-		for(star = 0; star != METEOR_BLOW_STAR_COUNT; star++,
-		starKind += sizeof(METEOR_STAR) / sizeof(Sint32), current++) {
+		cur = stars;
+		for(star = 0; star != METEOR_BLOW_STAR_COUNT;
+			star++, starKind += sizeof(METEOR_STAR) / sizeof(Sint32), cur++) {
 			Sint32 a = (star & (METEOR_BLOW_STAR_COUNT - 1)) * (TRIG_TURN / 2) /
 				METEOR_BLOW_STAR_COUNT;
 			Sint32 r = METEOR_BLOW_SKY_RADIUS;
 			Sint32 b;
 
-			current->y = sySin(a) * r;
+			cur->y = sySin(a) * r;
 			r = FIXEDtoINT(syCos(a) * r);
 			b = syRandom() & (DEGtoANG(180) - 1);
-			current->x = sySin(b) * r;
-			current->z = syCos(b) * r;
+			cur->x = sySin(b) * r;
+			cur->z = syCos(b) * r;
 			if((star & (METEOR_BLOW_STARS_PER_ORB - 1)) == 0) {
 				*starKind = (star / METEOR_BLOW_STARS_PER_ORB) %
 					METEOR_BLOW_ORB_PICTURE_COUNT;
@@ -249,13 +249,13 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 	}
 
 	/* The flight through the stars. */
-	for(frame = 0;
-		frame != 160 && !(PerWork.repeat & KEY_A) && !(PerWork.repeat & KEY_B);
-		frame++) {
+	for(frm = 0;
+		frm != 160 && !(PerWork.repeat & KEY_A) && !(PerWork.repeat & KEY_B);
+		frm++) {
 		Sint32 fade;
 		Sint32 speed;
 
-		if(frame == 0) {
+		if(frm == 0) {
 			x = toFIXED(272);
 			z = toFIXED(88);
 			size = toFIXED(1) / 64;
@@ -264,17 +264,17 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 			state->frm = 8;
 			sySndPlayStub(SE_WAVE);
 		}
-		if(frame == 120) {
+		if(frm == 120) {
 			sySndPlayStub(SE_WAVE_HIGH);
 		}
-		fade = frame - 96;
+		fade = frm - 96;
 		if((Uint32)fade <= 16) {
 			REG_BLDALPHA = BLEND_ALPHA(16 - fade, BLEND_WEIGHT_MAX);
 		}
-		if(frame == 115) {
+		if(frm == 115) {
 			REG_BLDALPHA = EFFECT_BLEND_ADD;
 		}
-		if(frame == 116) {
+		if(frm == 116) {
 			syCloseEvent(btEffectTransferFullScreenImage);
 			sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 			IO_WRITE_QUEUE_PUSH(
@@ -283,23 +283,23 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 				BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7),
 				IO_WRITE_HALFWORD);
 		}
-		if(frame > 128) {
+		if(frm > 128) {
 			btEffectStepPaletteToResource(RESOURCE_ORANGE_PALETTE_B);
 		}
-		if(frame == 117) {
+		if(frm == 117) {
 			state->frm = 45;
 			EFFECT_FREE_PARTICLES(
 				i, state->particles, ARRAY_COUNT(state->particles));
 			scale = toFIXED(1);
 		}
-		/* DEAD: frame never reaches 1600 here; the ROM keeps the compare and
+		/* DEAD: tick never reaches 1600 here; the ROM keeps the compare and
 		   branch. */
-		if(frame <= 1599) {
+		if(frm <= 1599) {
 			Uint16 *dst = state->backdropLines;
 			Sint32	value = state->frm;
 			Sint32	base = value / 2 + METEOR_BLOW_SKY_BASE_LEVEL;
 
-			if(frame > 79) {
+			if(frm > 79) {
 				state->frm++;
 				if(state->frm > 236) {
 					state->frm = 236;
@@ -331,14 +331,14 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		if(frame > 115) {
+		if(frm > 115) {
 			RENDER_MODEL *model;
 			Sint32		  shade;
 			Sint32		  scroll;
-			Sint32		  angle;
+			Sint32		  ang;
 
 			model = btRenderAllocateModelList(1);
-			shade = frame * 4 - 528;
+			shade = frm * 4 - 528;
 			if(shade > 0) {
 				shade = 0;
 			}
@@ -351,8 +351,8 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 			model->vertices = coneProjected;
 			model->shade = shade;
 			model->scrollU = 0;
-			if(frame > 127) {
-				Sint32 d = (frame << 6) - toFIXED(1) / 8;
+			if(frm > 127) {
+				Sint32 d = (frm << 6) - toFIXED(1) / 8;
 
 				if(d > toFIXED(1) / 64 - 1) {
 					d = toFIXED(1) / 64;
@@ -361,8 +361,8 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 				syScale(scale, scale, scale);
 			}
 			i = 0;
-			angle = -DEGtoANG(90);
-			scroll = frame * 2;
+			ang = -DEGtoANG(90);
+			scroll = frm * 2;
 			for(; i != METEOR_BLOW_CONE_STRIPS; i++) {
 				model->scrollV = ~scroll & TEXTURE_SCROLL_MASK;
 				syInitMatrix();
@@ -370,35 +370,35 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 				syScale(toFIXED(2625) / 4096, toFIXED(9317) / 4096, toFIXED(1));
 				syScale(scale, scale, scale);
 				syRotZ(DEGtoANG(180));
-				syRotY(angle);
+				syRotY(ang);
 				btRenderTransformVertices(
 					coneCorners, coneProjected, 2 * METEOR_BLOW_CONE_ROWS);
 				btRenderDrawModelList(model);
-				angle += TRIG_TURN * 3 / 32;
+				ang += TRIG_TURN * 3 / 32;
 				scroll += METEOR_BLOW_CONE_STRIP_SCROLL;
 			}
 			syHeapRelease(model);
 		} else {
-			/* DEAD: frame is at most 115 here, so the second arm never runs;
+			/* DEAD: tick is at most 115 here, so the second arm never runs;
 			   the ROM keeps both compares and the arm. */
-			if(frame <= 159) {
+			if(frm <= 159) {
 				pitch += TRIG_TURN / 256;
-			} else if(frame <= 191) {
-				pitch = pitch - frame * 8 + METEOR_BLOW_PITCH_STILL_FRAME * 8;
+			} else if(frm <= 191) {
+				pitch = pitch - frm * 8 + METEOR_BLOW_PITCH_STILL_TICK * 8;
 			}
-			if(frame <= 47) {
+			if(frm <= 47) {
 				yaw += TRIG_TURN / 256;
-			} else if(frame <= 111) {
-				yaw = yaw - frame * 4 + METEOR_BLOW_YAW_STILL_FRAME * 4;
+			} else if(frm <= 111) {
+				yaw = yaw - frm * 4 + METEOR_BLOW_YAW_STILL_TICK * 4;
 			}
-			position[0] = METEOR_BLOW_SKY_CENTER_X;
-			position[1] = METEOR_BLOW_SKY_CENTER_Y;
-			position[2] = 0;
+			pos[0] = METEOR_BLOW_SKY_CENTER_X;
+			pos[1] = METEOR_BLOW_SKY_CENTER_Y;
+			pos[2] = 0;
 			syInitMatrix();
-			syMatrixTranslateVector(position);
+			syMatrixTranslateVector(pos);
 			syRotX(pitch);
 			syRotY(yaw);
-			if(frame <= 112) {
+			if(frm <= 112) {
 				METEOR_STAR *s = stars;
 
 				for(i = 0; i != METEOR_BLOW_STAR_COUNT; i++, s++) {
@@ -411,14 +411,14 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 					if(screen[2] > 0) {
 						if(kind == METEOR_BLOW_PIXEL_STAR) {
 							blit[0](MapGridMetatileBuffer,
-								sprites + i % METEOR_BLOW_BIG_ORB_SIZE,
-								screen[0], screen[1], 1, 1);
+								sprs + i % METEOR_BLOW_BIG_ORB_SIZE, screen[0],
+								screen[1], 1, 1);
 						} else {
 							blit[0](MapGridMetatileBuffer,
-								state->sheet + MeteorBlow_Pictures[kind],
+								state->sheet + MeteorBlowPictures[kind],
 								screen[0], screen[1],
-								MeteorBlow_PictureWidths[kind],
-								MeteorBlow_PictureHeights[kind]);
+								MeteorBlowPictureWidths[kind],
+								MeteorBlowPictureHeights[kind]);
 						}
 					}
 				}
@@ -440,15 +440,15 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 		{
 			Sint32 a = DEGtoANG(135);
 
-			if(frame > 23) {
-				a = a - frame * METEOR_BLOW_HEADING_TURN +
-					METEOR_BLOW_HEADING_TURN_FRAME * METEOR_BLOW_HEADING_TURN;
+			if(frm > 23) {
+				a = a - frm * METEOR_BLOW_HEADING_TURN +
+					METEOR_BLOW_HEADING_TURN_TICK * METEOR_BLOW_HEADING_TURN;
 				if(a < 0) {
 					a = 0;
 				}
 			}
-			if(frame > 87) {
-				speed = speed - (frame << 6) + toFIXED(11) / 128;
+			if(frm > 87) {
+				speed = speed - (frm << 6) + toFIXED(11) / 128;
 				if(speed < 0) {
 					speed = 0;
 				}
@@ -457,8 +457,8 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 			z += METEOR_BLOW_FLIGHT_STEP(syCos(a), speed);
 			size += toFIXED(1) / 128;
 		}
-		if(frame > 127) {
-			speed = frame * (toFIXED(1) / 8) - toFIXED(16);
+		if(frm > 127) {
+			speed = frm * (toFIXED(1) / 8) - toFIXED(16);
 			if(speed > toFIXED(2) - 1) {
 				speed = toFIXED(2);
 			}
@@ -473,14 +473,14 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 	sySynch(1);
 	background->busy = 0;
 	syCloseEvent(btEffectArmMeteorBlowPaletteDMA);
-	if(frame <= 115) {
+	if(frm <= 115) {
 		syCloseEvent(btEffectTransferFullScreenImage);
 	} else {
 		syCloseEvent(btEffectTransferCanvas);
 	}
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 	btEffectSetupBlendedDisp();
-	/* DEAD: frame 0 sets meteorX and meteorZ again before any read; the ROM
+	/* DEAD: tick 0 sets meteorX and meteorZ again before any read; the ROM
 	   keeps both moves. */
 	meteorX = 200;
 	meteorZ = 0;
@@ -498,7 +498,7 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	blit[0] = Ram_HeapSlots->ramCode;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 0);
 	btResourceLoadAndDecompress(
 		RESOURCE_BILLOW_TEXTURE, state->sheet + METEOR_BLOW_BILLOW, 0, 0);
@@ -511,24 +511,24 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 		METEOR_BLOW_LANDING_TINT_GREEN, METEOR_BLOW_LANDING_TINT_BLUE);
 
 	/* The landing: rings of fire and billows spread, and sparks fly. */
-	for(frame = 0; frame != METEOR_BLOW_FRAMES; frame++) {
+	for(frm = 0; frm != METEOR_BLOW_TICKS; frm++) {
 		RENDER_MODEL *model;
-		Sint32		  angle;
+		Sint32		  ang;
 		Sint32		  back;
 		Sint32		  shade;
 		Sint32		  step;
 
-		if(frame == 0) {
+		if(frm == 0) {
 			meteorX = METEOR_BLOW_LANDING_X;
 			meteorZ = 0;
 		}
-		if(frame <= 33) {
-			meteorScale = MeteorBlow_DoubleScale;
+		if(frm <= 33) {
+			meteorScale = MeteorBlowDoubleScale;
 			meteorPlace[3] = 0;
 			meteorPlace[1] = toFIXED(255);
 			meteorPlace[0] = toFIXED(meteorX);
 			meteorPlace[2] = toFIXED(meteorZ);
-			if(frame <= 15) {
+			if(frm <= 15) {
 				meteorX -= 1;
 				meteorZ += 9;
 			} else {
@@ -537,10 +537,10 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 			fdRenderApplyProjectedPlacementStub(
 				state->sprs[0], meteorPlace, (Sint32 *)&meteorScale, 0);
 		}
-		if(frame == 34) {
+		if(frm == 34) {
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 		}
-		if(frame == METEOR_BLOW_BURST_FRAME) {
+		if(frm == METEOR_BLOW_BURST_TICK) {
 			PARTICLE *p;
 			Sint32	  count = METEOR_BLOW_SPARKS;
 
@@ -586,43 +586,42 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 		landingTexture.logHeight = 6;
 		landingTexture.pixels = state->sheet + METEOR_BLOW_BILLOW;
 		model->kind = MODEL_SHADED_ADDITIVE;
-		model->mesh = BattleEffect_RingMesh;
+		model->mesh = BattleEffectRingMesh;
 		billowX = meteorX / 2 - 60;
-		step = frame * (TRIG_TURN / 32);
+		step = frm * (TRIG_TURN / 32);
 		i = 0;
 		back = -step;
-		angle = step;
-		for(; i != 4; i++, back += DEGtoANG(45), angle += DEGtoANG(45)) {
-			Sint32 start = MeteorBlow_WaveStarts[i] + METEOR_BLOW_BURST_FRAME;
+		ang = step;
+		for(; i != 4; i++, back += DEGtoANG(45), ang += DEGtoANG(45)) {
+			Sint32 start = MeteorBlowWaveStarts[i] + METEOR_BLOW_BURST_TICK;
 
-			if(frame > start) {
-				shade = (start - frame) * 8 + 56;
+			if(frm > start) {
+				shade = (start - frm) * 8 + 56;
 
 				if(shade > -16) {
 					shade = -16;
 				}
 				if(shade > MODEL_SHADE_INVISIBLE) {
-					Sint32 s =
-						(frame - start) * MeteorBlow_WaveGrowth[i] * 2000 +
+					Sint32 s = (frm - start) * MeteorBlowWaveGrowth[i] * 2000 +
 						toFIXED(2673) / 4096;
 
 					model->shade = shade;
 					syInitMatrix();
 					syTranslate(toFIXED(billowX), toFIXED(40), 0);
-					syScale(s, s * MeteorBlow_WaveStretch[i], s / 4);
+					syScale(s, s * MeteorBlowWaveStretch[i], s / 4);
 					syRotX(METEOR_BLOW_BILLOW_TILT);
 					if(i & 1) {
-						syRotY(angle);
+						syRotY(ang);
 					} else {
 						syRotY(back);
 					}
 					btRenderTransformVertices(
-						BattleEffect_RingCorners, verts, 32);
+						BattleEffectRingCorners, verts, 32);
 					btRenderDrawModelList(model);
 				}
 			}
 		}
-		model->mesh = BattleEffect_CylinderMesh;
+		model->mesh = BattleEffectCylinderMesh;
 		landingTexture.pixels = state->sheet + METEOR_BLOW_FLAME_BAND;
 		landingTexture.logWidth = 7;
 		landingTexture.logHeight = 7;
@@ -632,28 +631,27 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 		canvasX = ((meteorX + (Sint32)((Uint32)meteorX >> 31)) >> 1) -
 			CANVAS_SIZE / 2;
 		for(i = 0; i != 3; i++) {
-			Sint32 start = MeteorBlow_RingStarts[i] + 8;
+			Sint32 start = MeteorBlowRingStarts[i] + 8;
 
-			if(frame > start) {
-				shade = (start - frame) * 8 + 40;
+			if(frm > start) {
+				shade = (start - frm) * 8 + 40;
 
 				if(shade > 0) {
 					shade = 0;
 				}
 				if(shade > MODEL_SHADE_INVISIBLE) {
-					Sint32 s =
-						(frame - start) * MeteorBlow_RingGrowth[i] * 1500 +
+					Sint32 s = (frm - start) * MeteorBlowRingGrowth[i] * 1500 +
 						toFIXED(131) / 512;
 
 					model->shade = shade;
-					model->scrollU = ((frame + i * 5) & 7) << 4;
+					model->scrollU = ((frm + i * 5) & 7) << 4;
 					syInitMatrix();
-					syTranslate(toFIXED(canvasX),
-						toFIXED(MeteorBlow_RingHeights[i]), 0);
+					syTranslate(
+						toFIXED(canvasX), toFIXED(MeteorBlowRingHeights[i]), 0);
 					syScale(s, s * 2, s);
 					syRotX(METEOR_BLOW_RING_TILT);
 					btRenderTransformVertices(
-						BattleEffect_CylinderCorners, verts, 32);
+						BattleEffectCylinderCorners, verts, 32);
 					btRenderDrawModelList(model);
 				}
 			}
@@ -669,7 +667,7 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 				if(p->variant >= 0) {
 					Sint32 n = (p->variant >> 2) + 1;
 
-					blit[0](canvas, sprites + BattleEffect_MotePictures[n - 1],
+					blit[0](canvas, sprs + BattleEffectMotePictures[n - 1],
 						FIXED_INTEGER_PART(p->x) - n / 2,
 						FIXED_INTEGER_PART(p->y) - n, n, n * 2);
 					p->variant--;
@@ -678,7 +676,7 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		btCameraShake(8, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	syCloseEvent(btEffectTransferCanvas);

@@ -48,9 +48,9 @@ typedef struct METATILE_TARGET {
 
 /* The map metatile of a 16.16 coordinate with a watched metatile's 64 bit ORed
    in, as each scene's copy of the cracked tile handler builds its row. */
-static inline Sint32 syMetatileTargetMetatileOf(FIXED position, Sint16 bit)
+static inline Sint32 syMetatileTargetMetatileOf(FIXED pos, Sint16 bit)
 {
-	return FIELD_METATILE(position) | bit;
+	return FIELD_METATILE(pos) | bit;
 }
 
 #endif

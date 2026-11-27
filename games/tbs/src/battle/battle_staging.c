@@ -12,7 +12,7 @@
    plays. Nothing calls the function, so its other flags are unknown. */
 #define PLAIN_ATTACK_MISSED 2
 
-/* Plays one action of the turn, after delay frames facing the party: the action
+/* Plays one action of the turn, after delay ticks facing the party: the action
    is built and staged, its end effects run and every unit returns to its spot.
    Returns 1 when the party got away, -1 when the unit is already down, else
    0. */
@@ -26,8 +26,8 @@ Sint32 btStagingDispatchAction(BATTLE_ACTION *request, Sint32 delay)
 	Uint16					 unitIds[UNIT_MAX];
 	Bool					 fled;
 	Sint32					 result;
-	Sint32					 unitCount;
-	Sint32					 unitIndex;
+	Sint32					 unitCnt;
+	Sint32					 unitIdx;
 
 	fled = FALSE;
 	if(request->unitId == BATTLE_UNIT_LIST_END)
@@ -39,10 +39,10 @@ Sint32 btStagingDispatchAction(BATTLE_ACTION *request, Sint32 delay)
 	if(unit->classId == CLASS_NONE)
 		btAIChooseAction(request, 1);
 
-	/* The camera eases back over 60 frames, the background at full brightness,
+	/* The camera eases back over 60 ticks, the background at full brightness,
 	   the far depth well past the battlefield. */
 	view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-	view->frames = 60;
+	view->ticks = 60;
 	battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
 	view->keepRange = 0;
 	battle->brightness = toFIXED(1);
@@ -107,9 +107,9 @@ Sint32 btStagingDispatchAction(BATTLE_ACTION *request, Sint32 delay)
 	btObjectDestroyAll();
 	btUnitProcessActionEnd(&battle->actionRun);
 	btObjectPut();
-	unitCount = btUnitListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
-	for(unitIndex = 0; unitIndex < unitCount; unitIndex++)
-		btMotionReturnToSpot(unitIds[unitIndex]);
+	unitCnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
+	for(unitIdx = 0; unitIdx < unitCnt; unitIdx++)
+		btMotionReturnToSpot(unitIds[unitIdx]);
 	request->unitId = BATTLE_UNIT_LIST_END;
 finish:
 	btBackgroundSetMode(BATTLE_BACKGROUND_ZOOMED, BattleStateWork->bg, 0);
@@ -122,7 +122,7 @@ finish:
 UNREAD_RESULT btStagingBuildTargetList(
 	BATTLE_ACTION_RUN *plan, BATTLE_EFFECT_PARM *args)
 {
-	Sint32 count = 0;
+	Sint32 cnt = 0;
 	Sint32 i;
 
 	args->prelude = 0;
@@ -133,14 +133,14 @@ UNREAD_RESULT btStagingBuildTargetList(
 	for(i = 0; i < plan->tgtCnt; i++) {
 		if(gmUnitGetStub(plan->tgtIds[i])->hp != 0 ||
 			(plan->battleEff & EFFECT_ON_DOWNED))
-			args->tgts[count++] = plan->tgtIds[i];
+			args->tgts[cnt++] = plan->tgtIds[i];
 	}
-	if(count == 0) {
+	if(cnt == 0) {
 		args->tgts[0] = plan->tgtIds[0];
-		count = 1;
+		cnt = 1;
 	}
 	args->firstTgt = plan->tgtIds[0];
-	args->tgtCnt = count;
+	args->tgtCnt = cnt;
 	args->range = 1;
 }
 
@@ -160,7 +160,7 @@ Sint32 btStagingRunFlee(BATTLE_ACTION_RUN *plan)
 	btHighlightSetModes(0, HIGHLIGHT_OFF);
 
 	/* The party: each party member that can move runs, the last listed first,
-	   eight frames apart. */
+	   eight ticks apart. */
 	if(plan->unitId <= ALLY_MAX) {
 		rollSucceeded = completed;
 
@@ -174,17 +174,17 @@ Sint32 btStagingRunFlee(BATTLE_ACTION_RUN *plan)
 			btMessageWaitForAdvance();
 		} else {
 			Sint16 unitIds[UNIT_MAX];
-			Sint32 index =
+			Sint32 idx =
 				btUnitListLiving(BATTLE_SIDE_MASK_PARTY, (Uint16 *)unitIds) - 1;
 
-			while(index != -1) {
-				UNIT *unit = gmUnitGetStub(unitIds[index]);
+			while(idx != -1) {
+				UNIT *unit = gmUnitGetStub(unitIds[idx]);
 
 				if(unit->stun == 0 && unit->sleep == 0) {
-					btMotionSetupEscapeObject(unitIds[index]);
+					btMotionSetupEscapeObject(unitIds[idx]);
 					sySynch(8);
 				}
-				index--;
+				idx--;
 			}
 			sySynch(22);
 			completed = TRUE;
@@ -216,8 +216,8 @@ Sint32 btStagingRunFullScreen(BATTLE_ACTION_RUN *plan, Sint32 mode)
 	Uint16				 units[UNIT_MAX];
 	BATTLE_STAGING_STATE state;
 	Uint32				 userId;
-	Uint32				 targetId;
-	Uint32				 count;
+	Uint32				 tgtId;
+	Uint32				 cnt;
 	Sint32				 i;
 	Sint32				 n;
 	Uint32				 kept;
@@ -231,7 +231,7 @@ Sint32 btStagingRunFullScreen(BATTLE_ACTION_RUN *plan, Sint32 mode)
 	   the usual view. */
 	btStagingBuildTargetList(plan, &state.eff);
 	userId = plan->unitId;
-	targetId = plan->tgtIds[0];
+	tgtId = plan->tgtIds[0];
 	if(plan->battleEff & EFFECT_SUMMON) {
 		BATTLE_BACKGROUND_STATE *view;
 		Sint32					 yaw;
@@ -244,7 +244,7 @@ Sint32 btStagingRunFullScreen(BATTLE_ACTION_RUN *plan, Sint32 mode)
 		if(userId > ALLY_MAX)
 			yaw = YAW_BEHIND_ENEMIES;
 		view->tgtYaw = yaw;
-		view->frames = 60;
+		view->ticks = 60;
 	} else {
 		BATTLE_BACKGROUND_STATE *view;
 		Sint32					 yaw;
@@ -265,12 +265,12 @@ Sint32 btStagingRunFullScreen(BATTLE_ACTION_RUN *plan, Sint32 mode)
 	mnPartyStatDrawStub(BattleStateWork->partyStat & ~PARTY_STATUS_SHOW_PP);
 	userActor = btObjectGet(userId)->actor;
 	REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
-	count = btUnitListIds(BATTLE_SIDE_MASK_BOTH, units);
-	for(i = 0; i != count; i++) {
+	cnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, units);
+	for(i = 0; i != cnt; i++) {
 		if(units[i] == BATTLE_UNIT_REMOVED)
 			continue;
 		if(units[i] != userId) {
-			if((targetId <= ALLY_MAX) != (units[i] <= ALLY_MAX))
+			if((tgtId <= ALLY_MAX) != (units[i] <= ALLY_MAX))
 				btHighlightSetSprMode(units[i], SPRITE_SEMI_TRANSPARENT);
 		} else {
 			fdActorSelectAnimationStub(userActor, POSE_CAST);
@@ -298,12 +298,12 @@ Sint32 btStagingRunFullScreen(BATTLE_ACTION_RUN *plan, Sint32 mode)
 	} else {
 		/* Only the target side stays on the field. */
 		kept = 0;
-		for(i = 0; i < count; i++) {
+		for(i = 0; i < cnt; i++) {
 			Uint32 unit = units[i];
 			if(unit == userId) {
 				if(!(mode & STAGING_HIDE_ACTOR))
 					units[kept++] = userId;
-			} else if((targetId <= ALLY_MAX) == (unit <= ALLY_MAX)) {
+			} else if((tgtId <= ALLY_MAX) == (unit <= ALLY_MAX)) {
 				units[kept++] = unit;
 			}
 		}
@@ -315,17 +315,16 @@ Sint32 btStagingRunFullScreen(BATTLE_ACTION_RUN *plan, Sint32 mode)
 		/* Each target's colour modes are saved beside the effect command. XXX
 		   (no evidence): what for; nothing reads them back. */
 		for(i = 0; i != state.eff.tgtCnt; i++) {
-			SPR	  *animation;
+			SPR	  *anm;
 			Uint32 child;
 
-			animation = btActorGetSpr(btObjectGet(state.eff.tgts[i])->actor, 0);
-			for(child = 0; child != animation->cnt - 1; child++)
-				state.savedAnmPrms[i][child] =
-					animation->entries[child]->colMode;
+			anm = btActorGetSpr(btObjectGet(state.eff.tgts[i])->actor, 0);
+			for(child = 0; child != anm->cnt - 1; child++)
+				state.savedAnmPrms[i][child] = anm->entries[child]->colMode;
 		}
 		/* The side the battle effect plays on: the targets'. */
 		if(plan->battleEff & EFFECT_SUMMON) {
-			if(targetId > ALLY_MAX)
+			if(tgtId > ALLY_MAX)
 				state.eff.side = EFFECT_SIDE_ENEMIES;
 			else
 				state.eff.side = EFFECT_SIDE_PARTY;
@@ -338,8 +337,8 @@ Sint32 btStagingRunFullScreen(BATTLE_ACTION_RUN *plan, Sint32 mode)
 		if(plan->battleEff & EFFECT_OTHER_SIDE)
 			state.eff.side ^= 1;
 		/* The battle effect runs to its end while playback, an event, plays
-		   each target's outcome from the frame the blow lands. */
-		sySetEvent(btPlaybackRun, EVENT_PASS_FRAME);
+		   each target's outcome from the tick the blow lands. */
+		sySetEvent(btPlaybackRun, EVENT_PASS_TICK);
 		if(plan->battleEff & EFFECT_SUMMON)
 			btEffectRunSummonStub(&state.eff);
 		else
@@ -347,22 +346,22 @@ Sint32 btStagingRunFullScreen(BATTLE_ACTION_RUN *plan, Sint32 mode)
 		btPlaybackWaitForReady();
 	}
 
-	/* Everyone back: the faded units fade in over 16 frames and every colour
+	/* Everyone back: the faded units fade in over 16 ticks and every colour
 	   mode is cleared. */
 	btObjectPut();
-	count = btUnitListIds(BATTLE_SIDE_MASK_BOTH, units);
+	cnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, units);
 	REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
-	for(i = 0; i != count; i++) {
+	for(i = 0; i != cnt; i++) {
 		if(units[i] == BATTLE_UNIT_REMOVED || units[i] == userId)
 			continue;
-		if((targetId <= ALLY_MAX) != (units[i] <= ALLY_MAX))
+		if((tgtId <= ALLY_MAX) != (units[i] <= ALLY_MAX))
 			btHighlightSetSprMode(units[i], SPRITE_SEMI_TRANSPARENT);
 	}
 	for(i = 0; i != BLEND_WEIGHT_MAX; i++) {
 		REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
 		sySynch(1);
 	}
-	for(i = 0; i != count; i++)
+	for(i = 0; i != cnt; i++)
 		btHighlightSetSprMode(units[i], SPRITE_OPAQUE);
 	btCameraSetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
 	sySynch(1);
@@ -373,14 +372,14 @@ Sint32 btStagingRunFullScreen(BATTLE_ACTION_RUN *plan, Sint32 mode)
    plays its events; with no target, only waits for the player. */
 UNREAD_RESULT btStagingRunMessages(BATTLE_ACTION_RUN *plan, Sint32 unused)
 {
-	Sint32 targetIndex;
+	Sint32 tgtIdx;
 
 	btHighlightSetModes(0, HIGHLIGHT_OFF);
 	if(plan->tgtCnt == 0) {
 		btMessageWaitForAdvance();
 	} else {
-		for(targetIndex = 0; targetIndex < plan->tgtCnt; targetIndex++) {
-			btAbilityApplyToTarget(plan, targetIndex);
+		for(tgtIdx = 0; tgtIdx < plan->tgtCnt; tgtIdx++) {
+			btAbilityApplyToTarget(plan, tgtIdx);
 			btPlaybackRunAll();
 		}
 	}
@@ -394,19 +393,19 @@ Sint32 btStagingRunAttack(BATTLE_ACTION_RUN *plan, Sint32 mode)
 {
 	BATTLE_STAGING_STATE	 state;
 	ACTOR					*actor;
-	SPR						*animation;
+	SPR						*anm;
 	UNIT					*unit;
 	Sint16					 criticalPair[3];
 	Sint32					 critical;
 	BATTLE_BACKGROUND_STATE *view;
-	Sint32					 angle;
+	Sint32					 ang;
 	Sint32					 adjusted;
-	Sint32					 facingAngle;
+	Sint32					 facingAng;
 	FIXED					 x;
 	FIXED					 z;
-	Sint32					 frames;
+	Sint32					 ticks;
 	Sint32					 missed;
-	Sint32					 index;
+	Sint32					 idx;
 	Bool					 zoomOnCritical;
 
 	view = BattleBackgroundStateWork;
@@ -425,18 +424,18 @@ Sint32 btStagingRunAttack(BATTLE_ACTION_RUN *plan, Sint32 mode)
 	actor = btObjectGet(plan->unitId)->actor;
 	z = actor->z.fixed;
 	x = actor->x.fixed;
-	angle = (Uint16)syAtan(x, z);
-	adjusted = angle - DEGtoANG(45);
+	ang = (Uint16)syAtan(x, z);
+	adjusted = ang - DEGtoANG(45);
 	if(plan->unitId > ALLY_MAX)
-		adjusted = angle + TRIG_TURN * 3 / 8;
+		adjusted = ang + TRIG_TURN * 3 / 8;
 	adjusted &= TRIG_TURN / 2 - 1;
-	facingAngle = (adjusted - YAW_PARTY_ACTION) / 2 + YAW_PARTY_ACTION;
+	facingAng = (adjusted - YAW_PARTY_ACTION) / 2 + YAW_PARTY_ACTION;
 
-	if(view->tgtYaw == facingAngle) {
-		view->tgtYaw = facingAngle;
+	if(view->tgtYaw == facingAng) {
+		view->tgtYaw = facingAng;
 		sySynch(5);
 	} else {
-		view->tgtYaw = facingAngle;
+		view->tgtYaw = facingAng;
 		sySynch(10);
 	}
 
@@ -454,10 +453,9 @@ Sint32 btStagingRunAttack(BATTLE_ACTION_RUN *plan, Sint32 mode)
 
 	/* The run up: as long as the attacker's POSE_LEAP, with its class's hop
 	   height. */
-	animation = btActorGetSpr(btObjectGet(plan->unitId)->actor, 0);
-	frames =
-		fdSprAnimationSumCommandLengthsStub(animation->entries[0]->anmId, 2, 1);
-	btMotionApproachTarget(state.eff.user, state.eff.tgts[0], frames,
+	anm = btActorGetSpr(btObjectGet(plan->unitId)->actor, 0);
+	ticks = fdSprAnimationSumCommandLengthsStub(anm->entries[0]->anmId, 2, 1);
+	btMotionApproachTarget(state.eff.user, state.eff.tgts[0], ticks,
 		toFIXED(btSprGetAttackHop(unit->id)));
 	fdActorSetAnimationSpeedStub(
 		btObjectGet(state.eff.user)->actor, ANIM_STEP_NORMAL);
@@ -477,7 +475,7 @@ Sint32 btStagingRunAttack(BATTLE_ACTION_RUN *plan, Sint32 mode)
 	REG_WINOUT = BATTLE_WINOUT;
 	REG_DISPCNT |= DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
 
-	/* A miss: after 10 frames the target hops back; 16 frames later the dodge
+	/* A miss: after 10 ticks the target hops back; 16 ticks later the dodge
 	   is shown at once. */
 	if(missed != 0) {
 		sySynch(10);
@@ -507,28 +505,27 @@ Sint32 btStagingRunAttack(BATTLE_ACTION_RUN *plan, Sint32 mode)
 			btObjectSpawnObjectsForList(criticalPair, 0);
 		}
 
-		/* The battle effect starts 8 frames before the run up ends, at least
-		   one frame after it began. */
-		frames -= 8;
-		if(frames <= 0)
-			frames = 1;
+		/* The battle effect starts 8 ticks before the run up ends, at least
+		   one tick after it began. */
+		ticks -= 8;
+		if(ticks <= 0)
+			ticks = 1;
 		{
 			Sint32 first;
 			Sint32 second;
 
-			for(index = 0; index != frames; index++) {
+			for(idx = 0; idx != ticks; idx++) {
 				if(zoomOnCritical != 0) {
 					first = state.eff.user;
 					second = state.eff.firstTgt;
 					btCameraSetViewAtPairMidpoint(first, second,
-						index * CRITICAL_ZOOM_GAIN / frames +
-							CRITICAL_ZOOM_START);
+						idx * CRITICAL_ZOOM_GAIN / ticks + CRITICAL_ZOOM_START);
 				}
 				sySynch(1);
 			}
 		}
 
-		sySetEvent(btPlaybackRun, EVENT_PASS_FRAME);
+		sySetEvent(btPlaybackRun, EVENT_PASS_TICK);
 		if(state.eff.kind != 0) {
 			BATTLE_EFFECT_RUN(&state.eff, plan->battleEff);
 		}
@@ -547,19 +544,19 @@ Sint32 btStagingRunAttack(BATTLE_ACTION_RUN *plan, Sint32 mode)
 
 /* Unused: a plainer attack run, with no hop, no critical zoom and no dodge
    message. */
-UNUSED Sint32 btStagingRunPlainAttack(BATTLE_ACTION_RUN *input, Sint32 flags)
+UNUSED Sint32 btStagingRunPlainAttack(BATTLE_ACTION_RUN *input, Sint32 flg)
 {
 	BATTLE_STAGING_STATE	 state;
 	BATTLE_ACTION_RUN		*savedInput;
 	ACTOR					*actor;
-	SPR						*animation;
+	SPR						*anm;
 	BATTLE_BACKGROUND_STATE *view;
-	Sint32					 angle;
+	Sint32					 ang;
 	Sint32					 adjusted;
-	Sint32					 facingAngle;
+	Sint32					 facingAng;
 	FIXED					 x;
 	FIXED					 z;
-	Sint32					 frames;
+	Sint32					 ticks;
 	Sint32					 missed;
 
 	view = BattleBackgroundStateWork;
@@ -567,18 +564,18 @@ UNUSED Sint32 btStagingRunPlainAttack(BATTLE_ACTION_RUN *input, Sint32 flags)
 	actor = btObjectGet(savedInput->unitId)->actor;
 	z = actor->z.fixed;
 	x = actor->x.fixed;
-	angle = (Uint16)syAtan(x, z);
-	adjusted = angle - DEGtoANG(45);
+	ang = (Uint16)syAtan(x, z);
+	adjusted = ang - DEGtoANG(45);
 	if(savedInput->unitId > ALLY_MAX)
-		adjusted = angle + TRIG_TURN * 3 / 8;
+		adjusted = ang + TRIG_TURN * 3 / 8;
 	adjusted &= TRIG_TURN / 2 - 1;
-	facingAngle = (adjusted - YAW_PARTY_ACTION) / 2 + YAW_PARTY_ACTION;
+	facingAng = (adjusted - YAW_PARTY_ACTION) / 2 + YAW_PARTY_ACTION;
 
-	if(view->tgtYaw == facingAngle) {
-		view->tgtYaw = facingAngle;
+	if(view->tgtYaw == facingAng) {
+		view->tgtYaw = facingAng;
 		sySynch(5);
 	} else {
-		view->tgtYaw = facingAngle;
+		view->tgtYaw = facingAng;
 		sySynch(20);
 	}
 
@@ -587,11 +584,10 @@ UNUSED Sint32 btStagingRunPlainAttack(BATTLE_ACTION_RUN *input, Sint32 flags)
 	gmUnitGetStub(state.eff.user);
 	gmUnitGetStub(savedInput->tgtIds[0]);
 
-	missed = flags & PLAIN_ATTACK_MISSED;
-	animation = btActorGetSpr(btObjectGet(savedInput->unitId)->actor, 0);
-	frames =
-		fdSprAnimationSumCommandLengthsStub(animation->entries[0]->anmId, 2, 1);
-	btMotionApproachTarget(state.eff.user, savedInput->tgtIds[0], frames, 0);
+	missed = flg & PLAIN_ATTACK_MISSED;
+	anm = btActorGetSpr(btObjectGet(savedInput->unitId)->actor, 0);
+	ticks = fdSprAnimationSumCommandLengthsStub(anm->entries[0]->anmId, 2, 1);
+	btMotionApproachTarget(state.eff.user, savedInput->tgtIds[0], ticks, 0);
 	fdActorSetAnimationSpeedStub(
 		btObjectGet(state.eff.user)->actor, ANIM_STEP_NORMAL);
 	btObjectGet(savedInput->tgtIds[0]);
@@ -630,17 +626,17 @@ Sint32 btStagingRunItem(
 	UNIT					*unit;
 	ITEM_DEFINITION			*item;
 	BATTLE_BACKGROUND_STATE *view = BattleBackgroundStateWork;
-	Sint32					 targetYaw;
+	Sint32					 tgtYaw;
 
 	/* The camera turns to the user's side, and the user raises the item. XXX
 	   (no evidence): whether > 4 is a slip for > ALLY_MAX; only Jenna, Sheba
 	   and Piers would take the enemies' view, and none of them fights here. */
 	if(plan->unitId > 4)
-		targetYaw = YAW_ENEMY_ACTION;
+		tgtYaw = YAW_ENEMY_ACTION;
 	else
-		targetYaw = YAW_PARTY_ACTION;
-	if(view->tgtYaw != targetYaw)
-		view->tgtYaw = targetYaw;
+		tgtYaw = YAW_PARTY_ACTION;
+	if(view->tgtYaw != tgtYaw)
+		view->tgtYaw = tgtYaw;
 	btStagingBuildTargetList(plan, &state.eff);
 	btHighlightSetModes(0, HIGHLIGHT_OFF);
 	actor = btObjectGet(state.eff.user)->actor;
@@ -652,18 +648,16 @@ Sint32 btStagingRunItem(
 		state.eff.side = EFFECT_SIDE_ENEMIES;
 
 	for(i = 0; i != state.eff.tgtCnt; i++) {
-		SPR *animation =
-			btActorGetSpr(btObjectGet(state.eff.tgts[i])->actor, 0);
-		Sint32 entryIndex;
+		SPR	  *anm = btActorGetSpr(btObjectGet(state.eff.tgts[i])->actor, 0);
+		Sint32 entryIdx;
 
-		for(entryIndex = 0; entryIndex != animation->cnt - 1; entryIndex++)
-			state.savedAnmPrms[i][entryIndex] =
-				animation->entries[entryIndex]->colMode;
+		for(entryIdx = 0; entryIdx != anm->cnt - 1; entryIdx++)
+			state.savedAnmPrms[i][entryIdx] = anm->entries[entryIdx]->colMode;
 	}
 
 	/* An item with a battle effect dims the background, then plays it; one with
 	   none waits a second. */
-	sySetEvent(btPlaybackRun, EVENT_PASS_FRAME);
+	sySetEvent(btPlaybackRun, EVENT_PASS_TICK);
 	if(state.eff.kind != 0) {
 		FIXED fade;
 
@@ -700,7 +694,7 @@ Sint32 btStagingRunItem(
 	if(item->useType == ITEM_USE_CONSUMED) {
 		Sint32 result =
 			gmInventoryRemoveStub(selection->unitId, selection->prm);
-		Sint32 index = selection->prm;
+		Sint32 idx = selection->prm;
 		if(result == INVENTORY_REMOVE_LAST) {
 			BATTLE_STATE *battle = BattleStateWork;
 			Uint32		  row;
@@ -708,9 +702,9 @@ Sint32 btStagingRunItem(
 			for(row = 0; row < BATTLE_ACTION_CAPACITY; row++) {
 				if(battle->actions[row].command == COMMAND_ITEM &&
 					battle->actions[row].unitId == selection->unitId) {
-					if(battle->actions[row].prm == index)
+					if(battle->actions[row].prm == idx)
 						battle->actions[row].prm = -1;
-					else if(battle->actions[row].prm > index)
+					else if(battle->actions[row].prm > idx)
 						battle->actions[row].prm--;
 				}
 			}
@@ -733,27 +727,27 @@ Sint32 btStagingRunItem(
 	return 0;
 }
 
-/* Draws every sprite of an actor in a colour mode, its first layer in colorMode
+/* Draws every sprite of an actor in a colour mode, its first layer in colMode
    and the others plain. */
-UNREAD_RESULT btObjectSetColMode(ACTOR *actor, Sint32 colorMode)
+UNREAD_RESULT btObjectSetColMode(ACTOR *actor, Sint32 colMode)
 {
-	Sint32			recordIndex = 0;
-	Sint32			childIndex;
-	Sint32			entryCount;
+	Sint32			recordIdx = 0;
+	Sint32			childIdx;
+	Sint32			entryCnt;
 	SPR			   *record;
 	SPR_ANIMATION  *child;
 	SPR_ANIMATION **children;
 	Uint8			lastPictureMask = SPRITE_PICTURE_NONE;
-	Uint8			previousPicture;
+	Uint8			prevPicture;
 
-	for(; (record = btActorGetSpr(actor, recordIndex)) != NULL; recordIndex++) {
+	for(; (record = btActorGetSpr(actor, recordIdx)) != NULL; recordIdx++) {
 		children = &record->entries[1];
 		child = record->entries[0];
-		previousPicture = child->picture;
-		child->picture = previousPicture | lastPictureMask;
-		entryCount = record->cnt;
-		child->colMode = colorMode;
-		for(childIndex = 1; childIndex < entryCount; childIndex++) {
+		prevPicture = child->picture;
+		child->picture = prevPicture | lastPictureMask;
+		entryCnt = record->cnt;
+		child->colMode = colMode;
+		for(childIdx = 1; childIdx < entryCnt; childIdx++) {
 			child = *children++;
 			child->colMode = 0;
 			child->picture = SPRITE_PICTURE_NONE;
@@ -770,37 +764,37 @@ Sint32 btStagingRunPsynergyCast(BATTLE_ACTION_RUN *plan, Sint32 mode)
 	BATTLE_BACKGROUND_STATE *view = BattleBackgroundStateWork;
 	ACTOR					*object;
 	Sint32					 isDjinni;
-	Sint32					 targetIndex;
+	Sint32					 tgtIdx;
 
 	/* The camera turns toward the targets from the caster's side, or across. */
 	if(plan->battleEff & EFFECT_VIEW_ACROSS) {
 		view->tgtYaw =
 			plan->unitId <= ALLY_MAX ? YAW_ENEMY_ACTION : YAW_BEHIND_ENEMIES;
-		view->frames = 60;
+		view->ticks = 60;
 	} else {
 		ACTOR *actor = btObjectGet(plan->unitId)->actor;
-		Sint32 angle = (Uint16)syAtan(actor->x.fixed, actor->z.fixed);
-		Sint32 targetYaw;
+		Sint32 ang = (Uint16)syAtan(actor->x.fixed, actor->z.fixed);
+		Sint32 tgtYaw;
 
 		if(plan->unitId <= ALLY_MAX)
-			targetYaw = angle - TRIG_TURN * 3 / 32;
+			tgtYaw = ang - TRIG_TURN * 3 / 32;
 		else
-			targetYaw = angle + TRIG_TURN * 3 / 32;
-		targetYaw = (Sint16)targetYaw;
-		targetYaw +=
+			tgtYaw = ang + TRIG_TURN * 3 / 32;
+		tgtYaw = (Sint16)tgtYaw;
+		tgtYaw +=
 			((plan->unitId <= ALLY_MAX ? YAW_PARTY_ACTION : YAW_ENEMY_ACTION) -
-				targetYaw) *
+				tgtYaw) *
 			3 / 4;
 		if(!((plan->unitId <= ALLY_MAX) ^ (plan->tgtIds[0] <= ALLY_MAX)))
-			targetYaw = plan->unitId <= ALLY_MAX ? TRIG_TURN * 9 / 64
-												 : -(TRIG_TURN * 9 / 64);
-		if(view->tgtYaw != targetYaw)
-			view->tgtYaw = targetYaw;
+			tgtYaw = plan->unitId <= ALLY_MAX ? TRIG_TURN * 9 / 64
+											  : -(TRIG_TURN * 9 / 64);
+		if(view->tgtYaw != tgtYaw)
+			view->tgtYaw = tgtYaw;
 	}
 	if(plan->battleEff & EFFECT_VIEW_REVERSED) {
 		view->tgtYaw =
 			plan->unitId <= ALLY_MAX ? YAW_ENEMY_ACTION : YAW_PARTY_ACTION;
-		view->frames = 60;
+		view->ticks = 60;
 	}
 
 	/* The caster raises its hand and glows in its element; a Djinni plays its
@@ -824,14 +818,13 @@ Sint32 btStagingRunPsynergyCast(BATTLE_ACTION_RUN *plan, Sint32 mode)
 	else
 		state.eff.side = EFFECT_SIDE_ENEMIES;
 
-	for(targetIndex = 0; targetIndex != state.eff.tgtCnt; targetIndex++) {
-		SPR *animation =
-			btActorGetSpr(btObjectGet(state.eff.tgts[targetIndex])->actor, 0);
-		Sint32 entryIndex;
+	for(tgtIdx = 0; tgtIdx != state.eff.tgtCnt; tgtIdx++) {
+		SPR *anm = btActorGetSpr(btObjectGet(state.eff.tgts[tgtIdx])->actor, 0);
+		Sint32 entryIdx;
 
-		for(entryIndex = 0; entryIndex != animation->cnt - 1; entryIndex++)
-			state.savedAnmPrms[targetIndex][entryIndex] =
-				animation->entries[entryIndex]->colMode;
+		for(entryIdx = 0; entryIdx != anm->cnt - 1; entryIdx++)
+			state.savedAnmPrms[tgtIdx][entryIdx] =
+				anm->entries[entryIdx]->colMode;
 	}
 
 	/* A failed cast is shown at once; otherwise the battle effect plays during
@@ -847,7 +840,7 @@ Sint32 btStagingRunPsynergyCast(BATTLE_ACTION_RUN *plan, Sint32 mode)
 		btPlaybackRunAll();
 		btBackgroundRestorePalette();
 	} else {
-		sySetEvent(btPlaybackRun, EVENT_PASS_FRAME);
+		sySetEvent(btPlaybackRun, EVENT_PASS_TICK);
 		if(state.eff.kind) {
 			BATTLE_EFFECT_RUN(&state.eff, plan->battleEff);
 		} else {
@@ -855,8 +848,8 @@ Sint32 btStagingRunPsynergyCast(BATTLE_ACTION_RUN *plan, Sint32 mode)
 		}
 		btPlaybackWaitForReady();
 		fdActorSelectAnimationStub(object, POSE_STANDING);
-		for(targetIndex = 0; targetIndex != state.eff.tgtCnt; targetIndex++)
-			btMotionReturnToSpot(state.eff.tgts[targetIndex]);
+		for(tgtIdx = 0; tgtIdx != state.eff.tgtCnt; tgtIdx++)
+			btMotionReturnToSpot(state.eff.tgts[tgtIdx]);
 	}
 	return 0;
 }
@@ -891,19 +884,19 @@ void btMotionFlashHit(Sint32 unitId, Sint32 unusedA, Sint32 unusedB)
 void btObjectRemoveFromLists(Sint32 unitId)
 {
 	BATTLE_STATE *battle;
-	Sint32		  partyIndex;
+	Sint32		  partyIdx;
 	Uint32		  i;
 	Sint32		  listedUnit;
 
 	/* The party's list. */
 	battle = BattleStateWork;
 	gmUnitGetStub(unitId)->side = BATTLE_SIDE_NONE;
-	for(partyIndex = 0;; partyIndex++) {
-		if(battle->partyUnits[partyIndex] == unitId) {
-			battle->partyUnits[partyIndex] = BATTLE_UNIT_REMOVED;
+	for(partyIdx = 0;; partyIdx++) {
+		if(battle->partyUnits[partyIdx] == unitId) {
+			battle->partyUnits[partyIdx] = BATTLE_UNIT_REMOVED;
 			goto removed;
 		}
-		if(battle->partyUnits[partyIndex] == BATTLE_UNIT_LIST_END)
+		if(battle->partyUnits[partyIdx] == BATTLE_UNIT_LIST_END)
 			break;
 	}
 
@@ -936,12 +929,12 @@ void btMotionShowDowned(Sint32 unitId)
 	UNIT		  *unit;
 	SPR			  *record;
 	SPR_ANIMATION *entry;
-	Sint32		   recordCount;
+	Sint32		   recordCnt;
 
 	unit = gmUnitGetStub(unitId);
-	for(recordCount = 0;
-		(record = btActorGetSpr(btObjectGet(unitId)->actor, recordCount)) != 0;
-		recordCount++) {
+	for(recordCnt = 0;
+		(record = btActorGetSpr(btObjectGet(unitId)->actor, recordCnt)) != 0;
+		recordCnt++) {
 		if(unit->side != BATTLE_SIDE_ENEMY)
 			fdSprStartAnimationStub(record, POSE_PARTY_HELD);
 		else
@@ -949,18 +942,18 @@ void btMotionShowDowned(Sint32 unitId)
 	}
 
 	if(unit->side == BATTLE_SIDE_ENEMY) {
-		for(recordCount = 0; (record = btActorGetSpr(btObjectGet(unitId)->actor,
-								  recordCount)) != 0;
-			recordCount++) {
+		for(recordCnt = 0; (record = btActorGetSpr(
+								btObjectGet(unitId)->actor, recordCnt)) != 0;
+			recordCnt++) {
 			entry = record->entries[0];
-			records[recordCount] = record;
+			records[recordCnt] = record;
 			entry->colMode = SPRITE_COLOR_GREY;
 			entry->picture = SPRITE_PICTURE_NONE;
 		}
 		sySynch(4);
 		btObjectRemoveFromLists(unitId);
-		/* The whole dissolve, over 32 frames. */
-		fdSprDissolveRunManyStub((Uint8 **)records, recordCount);
+		/* The whole dissolve, over 32 ticks. */
+		fdSprDissolveRunManyStub((Uint8 **)records, recordCnt);
 		btObjectMarkForRelease(unitId);
 	}
 }

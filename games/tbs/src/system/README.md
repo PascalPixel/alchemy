@@ -1,7 +1,7 @@
 # System library code
 
 This folder is the base the rest of the game runs on: start-up, the main
-routine, the frame, events, the heap and the save.
+routine, the tick, events, the heap and the save.
 [The system library](../../../../docs/tbs/system.md) gives the four big ideas. This page goes one step
 closer, so you know what each file is for before you open it.
 
@@ -18,8 +18,8 @@ the main routine, which never returns. It is `syInit` in
 `gmMainRoutineRun` in `main_routine.c` goes round three steps for as long
 as the console is on: clear away the last mode, call the next one as a
 function, and when it returns work out what follows. One trip is a whole
-mode, not a frame. The loop that goes round once a frame is
-[inside `sySynch()`](#the-frame-loop).
+mode, not a tick. The loop that goes round once a tick is
+[inside `sySynch()`](#the-tick-loop).
 
 ### Clearing away the last mode
 
@@ -41,14 +41,14 @@ through the scene's exit table. Anything else ends with a result, and
 party stood, to the restart point after a defeat, or wherever a script
 named beforehand.
 
-## The frame loop
+## The tick loop
 
 ![Isaac talks to Garet's sister in Vale: a window opens at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out letter by letter with a bobbing arrow at the end, the next page `I wish I could go with you.` follows, and the window closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
 
-The frame loop is the inside of `sySynch()`, in `system_frame.c`. One trip
-round it is one frame.
+The tick loop is the inside of `sySynch()`, in `system_frame.c`. One trip
+round it is one tick.
 
-The rule that shapes everything here: during a frame the game never touches
+The rule that shapes everything here: during a tick the game never touches
 the screen. It only writes down, in ordinary memory, what the screen should
 become. The console signals when it has finished drawing a picture, the
 [VBlank](../../../../docs/tbs/glossary.md#vblank), and in that gap everything written down
@@ -58,48 +58,50 @@ goes up at once.
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart LR
   code(["The caller's code, up to its wait"]) --> tasks(["Tasks run"])
-  tasks --> list(["The frame's sprites are put in one list"])
+  tasks --> list(["The tick's sprites are put in one list"])
   list --> done(["Marked finished"])
   done --> vblank(["VBlank: it all goes up at once"])
-  vblank -- "frames left" --> tasks
+  vblank -- "ticks left" --> tasks
   vblank -- "done: wait returns" --> code
   classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef tick fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   class code code
-  class tasks,list,done frame
+  class tasks,list,done tick
   class vblank hardware
 ```
 
 One trip, in order:
 
-1. Every event of the frame pass runs, highest rank first.
+1. Every event of the tick pass runs, highest rank first.
 2. The sprites that were asked for are written into one list
-   ([The frame's sprites](#the-frames-sprites)).
-3. The frame is marked finished.
+   ([The tick's sprites](#the-ticks-sprites)).
+3. The tick is marked finished.
 4. The loop sleeps until the VBlank handler has run.
-5. The sprite slots are emptied, the frame count goes up by one and held
+5. The sprite slots are emptied, the tick count goes up by one and held
    buttons are turned into repeats.
 
-The caller's own work is part of the frame as well. What it did between its
+The caller's own work is part of the tick as well. What it did between its
 last `sySynch()` and this one came before step 1, and is shown with what the
-events do. So a frame's time is the caller's work and the events' together.
+events do. So a tick's time is the caller's work and the events' together.
 
 ### What VBlank does
 
-The VBlank handler does two kinds of work. If the frame was marked
-finished, it copies the frame to the screen. Whether or not it was, it runs
-the events of its own pass, reads the buttons and prepares the next stretch
-of sound.
+The VBlank handler does two kinds of work. If the tick was marked finished, it
+copies what the tick prepared to the screen. Whether or not it was, it runs
+the events of its own pass, reads the buttons and prepares the next stretch of
+sound. Each VBlank ends a [frame](../../../../docs/tbs/glossary.md#frame), and
+the handler counts it in `FrameCount`.
 
-That split is the game's [slowdown](../../../../docs/tbs/glossary.md#slowdown). A frame
-that runs long is simply shown one VBlank later, whole. Everything counted
-in frames stretches together, nothing is ever shown half moved, and the
+That split is the game's
+[slowdown](../../../../docs/tbs/glossary.md#slowdown). A tick that runs long
+is simply shown one frame later, whole: it takes two frames. Everything
+counted in ticks stretches together, nothing is ever shown half moved, and the
 music keeps its tempo.
 
 ### Buttons and sleep
 
-The frame loop also turns held buttons into repeats for the menus, and puts
+The tick loop also turns held buttons into repeats for the menus, and puts
 the console to sleep when L and R are held for three seconds, or when
 nothing is pressed for three minutes and idle sleep is on.
 
@@ -107,7 +109,7 @@ nothing is pressed for three minutes and idle sleep is on.
 
 Any function may call `sySynch()`, however deep in its own calls it is, but
 for an [event](../../../../docs/tbs/glossary.md#event) and the VBlank handler: an event is
-called from inside `sySynch()` and must return for the frame to end. Code that
+called from inside `sySynch()` and must return for the tick to end. Code that
 an event might reach checks first (`EventsRunning`).
 
 There is one line of execution throughout: `sySynch()` starts no second one.
@@ -118,15 +120,15 @@ use is copied aside first and put back when `sySynch()` returns.
 ## The event runner
 
 An [event](../../../../docs/tbs/glossary.md#event) is a function put on a list once and
-called every frame until it is taken off. The list holds 20. Each event has
+called every tick until it is taken off. The list holds 20. Each event has
 a rank, which the code calls its `pri`, and higher ranks run first.
-That is how one event gets to see another's finished work in the same frame.
+That is how one event gets to see another's finished work in the same tick.
 
-There are two passes. Most events run once a frame from the frame loop. A
+There are two passes. Most events run once a tick from the tick loop. A
 few run once a VBlank from the handler: the ones that copy something to the
-screen. When a frame runs long, those few run more than once in it. The
-rank says which pass as well: `EVENT_PASS_FRAME + 10` is rank 10 of the
-frame pass, and `EVENT_PASS_VBLANK` is rank 0 of the other.
+screen. When a tick runs long, those few run more than once in it. The
+rank says which pass as well: `EVENT_PASS_TICK + 10` is rank 10 of the
+tick pass, and `EVENT_PASS_VBLANK` is rank 0 of the other.
 [The field's events](../field/README.md#the-fields-events) lists the ones a
 town keeps on the list.
 
@@ -151,20 +153,20 @@ in its owner's [state](../../../../docs/tbs/glossary.md#state). No event adds an
 event calls `sySynch()` ([Who may wait](../../../../docs/tbs/system.md#who-may-wait)). It is
 all in `system_event.c`.
 
-## The frame's sprites
+## The tick's sprites
 
 The console draws sprites in the order of one list, and has no idea of
-"in front". So the game rebuilds that list from scratch every frame.
+"in front". So the game rebuilds that list from scratch every tick.
 Whatever wants a sprite shown drops it into one of 256 depth slots, and the
 list is written from the highest slot down.
 
-Because the slots are emptied every frame, a sprite shows only while
+Because the slots are emptied every tick, a sprite shows only while
 something keeps asking for it, so nothing ever has to take one down. It is
 `system_oam.c`.
 
 Screen settings follow the same rule as sprites. A change to a hardware
 register is queued, and the VBlank handler carries the queue out with the
-frame it belongs to (`system_io_write_queue.c`).
+tick it belongs to (`system_io_write_queue.c`).
 
 ## The heap
 
@@ -272,9 +274,9 @@ matrices are the manual's own, down to its quirks.
 | The projection is set from an angle, or as a distance | `slPerspective`, `slSetScreenDist` |
 | `syDMAXCopy` takes source, destination, count and a fourth word | `slDMAXCopy` |
 
-**The frame is SGL's too.** `wait` runs every registered function and then
+**The tick is SGL's too.** `wait` runs every registered function and then
 waits for the next frame, which on the Saturn is `slExecuteEvent` followed by
-`slSynch`. Register writes are queued during the frame as source, destination
+`slSynch`. Register writes are queued during the tick as source, destination
 and control, and carried out in the blanking interrupt, as `slTransferEntry`
 queues its transfers. A function is given to the interrupt, and taken away
 again with a null pointer, as with `slIntFunction`.
@@ -359,17 +361,17 @@ The tables follow the system library's stub table, which is the ROM's own
 list of its functions, and add the inlines the rest of the game calls
 everywhere.
 
-### Scripts and the frame
+### Scripts and the tick
 
 | Call | What it does | SGL |
 | --- | --- | --- |
-| `wait` | runs a number of frames, the frame pass's events in each, and returns | `slSynch`, which waits for one frame; here it is `slExecuteEvent` and `slSynch` in one |
+| `wait` | runs a number of ticks, the tick pass's events in each, and returns | `slSynch`, which waits for one frame; here it is `slExecuteEvent` and `slSynch` in one |
 | `syInitEvent` | empties the event table | `slInitEvent`, for 20 events where SGL keeps 64 events |
 | `sySetEvent` | adds an event at a priority and sorts the table; an event already there only gets the new priority | `slSetEvent`, which takes no priority and returns the script |
 | `syCloseEvent` | takes the event off the table | `slCloseEvent`, which is given the script rather than its function |
 | `sySuspendEvent` | suspends one event, or every event for a null function | none |
 | `syResumeEvent` | resumes one event, or every event | none |
-| `syExecuteEvent` | runs one pass of the events, the frame's or the VBlank's | `slExecuteEvent`, in two passes by priority where SGL runs one list in order |
+| `syExecuteEvent` | runs one pass of the events, the tick's or the VBlank's | `slExecuteEvent`, in two passes by priority where SGL runs one list in order |
 | `syIntFunction` | installs a function for one interrupt and enables it; a null function disables it | `slIntFunction`, for any interrupt where SGL's is for the blanking one |
 | `syInputResetKeyRepeat` | makes held buttons wait the full delay before they repeat | none |
 | `sySetEventFlags` | sets an event's flags, such as running on while the overlay's events are suspended | none |
@@ -440,12 +442,12 @@ everywhere.
 
 | Call | What it does | SGL |
 | --- | --- | --- |
-| `syScreenFadeToBlack` | fades to black over a number of VBlanks | none |
+| `syScreenFadeToBlack` | fades to black over a number of frames | none |
 | `syScreenFadeFromBlack` | fades in from black | none |
 | `syScreenFadeToWhite` | fades to white | none |
 | `syScreenFadeFromWhite` | fades in from white | none |
 | `syScreenFadeStart` | starts a fade of chosen layers, from one level to another | none; it does the job of `slColOffsetA`, which shifts every colour at once |
-| `syScreenFadeWait` | waits a frame at a time until the fade is done | none |
+| `syScreenFadeWait` | waits a tick at a time until the fade is done | none |
 
 The four short fades take every layer but BG0, where the debug text is, and
 start from wherever the last fade ended.
@@ -501,7 +503,7 @@ start from wherever the last fade ended.
 | `syVRAMCacheAllocEntry` | takes a free entry and gives it VRAM | none |
 | `syVRAMCacheReload` | copies tiles into an entry's VRAM again | none |
 | `syOAMMatrixAllocFromTransform` | hands out the next of 32 sprite matrices and fills it | none |
-| `syOAMAddSprAtDepth` | puts a sprite in one of 256 depth slots for this frame | none; `slDispSprite` takes a position instead |
+| `syOAMAddSprAtDepth` | puts a sprite in one of 256 depth slots for this tick | none; `slDispSprite` takes a position instead |
 | `syPaletteLoadBasicSprCols` | loads the basic sprite palettes | none |
 
 ### Print
@@ -521,7 +523,7 @@ start from wherever the last fade ended.
 
 | Call | What it does | SGL |
 | --- | --- | --- |
-| `sySerialInit` | sets the link port up and starts the exchange every frame | none |
+| `sySerialInit` | sets the link port up and starts the exchange every tick | none |
 | `sySerialPollAndTransfer` | looks for the partner and, once there, makes one exchange | none |
 | `sySerialWaitForStatMask` | waits for status bits, then returns this console's place in the link | none |
 | `sySerialRemoveIRQHandlers` | stops the exchange and takes the link's interrupts away | none |

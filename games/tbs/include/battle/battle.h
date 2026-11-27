@@ -17,11 +17,11 @@ struct ACTOR;
 /* Battlefield (x, y) pixel pairs by place: 0 to 3 the party's column at x 80,
    32 pixels apart, and 5 to 10 a column at x -80, 20 apart
    (battle_tables.c). */
-extern const Sint8 BattlePlacement_Spots[];
+extern const Sint8 BattlePlacementSpots[];
 /* Each weapon's kind: bits 15..9 the kind, which indexes the
    BattleUnit_WeaponAnimations tables, and 8..0 the item id; ended by 0xffff
    (btUnitGetWeaponKind). */
-extern const Uint16 BattleUnit_WeaponKinds[];
+extern const Uint16 BattleUnitWeaponKinds[];
 
 struct SPR_ANIMATION;
 struct SPR;
@@ -44,13 +44,13 @@ void   btCameraSetViewAtPairMidpoint(
 void   btBackgroundSetMode(Sint32 mode, Sint32 unusedResource, Sint32 fade);
 void   btBackgroundLoad(Sint32 mode, Sint32 resourceId, Sint32 level);
 void   btBackgroundSetPaletteLevel(Sint32 unused, Sint32 level);
-Sint32 btSprGetEffectHeight(Sint32 index);
-Sint32 btSprHasHeavyImpact(Sint32 index);
-Uint32 btSprGetAttackHop(Uint32 index);
-Sint32 btSprIsSmall(Sint32 index);
+Sint32 btSprGetEffectHeight(Sint32 idx);
+Sint32 btSprHasHeavyImpact(Sint32 idx);
+Uint32 btSprGetAttackHop(Uint32 idx);
+Sint32 btSprIsSmall(Sint32 idx);
 Sint32 btUnitGetEffectHeight(Sint32 unitId);
 void   btMotionApproachTarget(
-	  Sint32 unitId, Sint32 targetId, Sint32 frames, Sint32 initialVelocityY);
+	  Sint32 unitId, Sint32 tgtId, Sint32 ticks, Sint32 initVelY);
 void				  btMotionLeapBack(Sint32 unitId);
 void				  btMotionApplyKnockback(Sint32 unitId, Sint32 variant);
 Sint32				  btUnitListIds(Sint32 sideMask, Uint16 *unitIds);
@@ -61,12 +61,12 @@ Sint32 btMotionProjectScaledPos(Sint32 unitId, Sint32 *projected);
 Sint32 btMotionProjectCursorPoint(Sint32 unitId, Sint32 *projected);
 Sint32 btUnitListLiving(Sint32 sideMask, Uint16 *unitIds);
 Sint32 btPartyPrepareMembers(Uint16 *unitIds);
-void   btCameraSetCommandView(Sint32 verticalOffset);
-void  *btActorGetSpr(struct ACTOR *actor, Sint32 spriteIndex);
+void   btCameraSetCommandView(Sint32 verticalOfs);
+void  *btActorGetSpr(struct ACTOR *actor, Sint32 sprIdx);
 void   btHighlightSetModes(Uint16 *selectedUnits, Sint32 mode);
 void   btPlaybackStart(Sint32 snd);
 Sint32 btGraphicsScaleRGB555Clamped(
-	Uint16 *source, Uint16 *destination, FIXED scale, Sint32 count);
+	Uint16 *src, Uint16 *dst, FIXED scale, Sint32 cnt);
 Sint32		  btDjinnRecoveryCountDown(void);
 Sint32		  btObjectGetPalette(Sint32 id);
 Sint32		  btDjinnRecoveryCountDownTwenty(void);
@@ -74,42 +74,42 @@ Sint32		  btDebugParmSetLoad(Sint32 set);
 void		  btObjectPut(void);
 void		  btObjectDestroySprs(Sint32 unitId);
 UNREAD_RESULT btMessageWaitForAdvanceAt(Sint32 x, Sint32 y);
-Sint32		  btDjinnCountStandby(Uint32 unitId, Uint8 *counts);
+Sint32		  btDjinnCountStandby(Uint32 unitId, Uint8 *cnts);
 
 /* One of the star field's three rings, moving outward on the effect canvas. */
 typedef struct RING {
 	Sint32 x;	 /* 1/1024 canvas pixels */
 	Sint32 y;	 /* 1/1024 canvas pixels */
-	Sint32 velX; /* 1/1024 canvas pixels per frame */
-	Sint32 velY; /* 1/1024 canvas pixels per frame */
-	Sint32 age;	 /* frames */
+	Sint32 velX; /* 1/1024 canvas pixels per tick */
+	Sint32 velY; /* 1/1024 canvas pixels per tick */
+	Sint32 age;	 /* ticks */
 } RING;
 
 /* The weights an enemy picks among its eight actions by, one table for each
    weighted action strategy (ENEMY_ACTION_STRATEGY, battle_internal.h):
    even, falling by 6, or falling steeply from 113 to 5. */
-extern const Uint8 BattleAI_ActionWeights[3][8];
-/* The knockback's speed gained each frame by variant (BATTLE_KNOCKBACK), 16.16
-   pixels a frame: 1, but 8 for KNOCKBACK_HURL. */
-extern FIXED BattleKnockback_Acceleration[];
+extern const Uint8 BattleAIActionWeights[3][8];
+/* The knockback's speed gained each tick by variant (BATTLE_KNOCKBACK), 16.16
+   pixels a tick: 1, but 8 for KNOCKBACK_HURL. */
+extern FIXED BattleKnockbackAcceleration[];
 /* The knockback's reach by variant, in percent of the unit's distance from the
    centre: 140 to 200, 100 for KNOCKBACK_BOUNCE and KNOCKBACK_JOLT. */
-extern Sint32 BattleKnockback_DistancePercent[];
-/* The knockback's top speed by variant, 16.16 pixels a frame: 4, but 20 for
+extern Sint32 BattleKnockbackDistancePercent[];
+/* The knockback's top speed by variant, 16.16 pixels a tick: 4, but 20 for
    KNOCKBACK_HURL. */
-extern FIXED BattleKnockback_SpeedLimit[];
-/* The knockback's hop by variant, 16.16 pixels a frame upward: 2 to 10. */
-extern FIXED BattleKnockback_VelocityY[];
+extern FIXED BattleKnockbackSpeedLimit[];
+/* The knockback's hop by variant, 16.16 pixels a tick upward: 2 to 10. */
+extern FIXED BattleKnockbackVelocityY[];
 /* A fixed formation's places by order, as offsets from the middle place:
    0, -1, 1, -2, 2 and so on out to 4. */
-extern const Sint8 BattleFormation_CenteredOffsets[];
+extern const Sint8 BattleFormationCenteredOffsets[];
 /* Turn-end effects go to the party (BATTLE_SIDE_MASK_PARTY), then the enemies
    (BATTLE_SIDE_MASK_ENEMIES). */
-extern const struct BATTLE_SIDE_ORDER Battle_TurnEndSideOrder;
+extern const struct BATTLE_SIDE_ORDER BattleTurnEndSideOrder;
 /* A lone SC_END: a battle unit's actor script, which btObjectMake starts. */
-extern const Sint32 BattleObject_EmptyScript[];
+extern const Sint32 BattleObjectEmptyScript[];
 /* The advance arrow beside a battle message: eight 128-byte pictures of a
-   256-colour sprite, one every four frames. */
+   256-colour sprite, one every four ticks. */
 extern Uint8 BattleMessage_AdvanceArrowTiles[];
 /* The battle transition's curtain tiles, 32 bytes (one 4-bit tile) each. */
 extern const Uint8 BattleTransition_CurtainTiles[];
@@ -117,32 +117,32 @@ extern const Uint8 BattleTransition_CurtainTiles[];
    time into the curtain's first tile. */
 extern const Uint8 BattleTransition_CurtainVariants[];
 /* Garet's weapon sprite by weapon kind (btUnitGetWeaponSpr). */
-extern const Uint16 BattleUnit_WeaponAnimationsGaret[];
+extern const Uint16 BattleUnitWeaponAnimationsGaret[];
 /* Ivan's weapon sprite by weapon kind. */
-extern const Uint16 BattleUnit_WeaponAnimationsIvan[];
+extern const Uint16 BattleUnitWeaponAnimationsIvan[];
 /* Mia's weapon sprite by weapon kind. */
-extern const Uint16 BattleUnit_WeaponAnimationsMia[];
+extern const Uint16 BattleUnitWeaponAnimationsMia[];
 /* Jenna's weapon sprite by weapon kind; Felix draws none. */
-extern const Uint16 BattleUnit_WeaponAnimationsJenna[];
+extern const Uint16 BattleUnitWeaponAnimationsJenna[];
 /* The size of btBitDecoderDecodeImage, which btBackgroundLoad copies to
    HEAP_SLOT_RAM_CODE_TEMP; ld_script.ld defines it as an address equal to the
    size. */
 extern Uint8 BitDecoder_Size[];
 /* The extra matrix the battle camera's projection applies first while commands
    are chosen (FLAG_CHOOSING_COMMANDS), in 16.16 words. */
-extern const FIXED BattleCamera_CommandMatrix[];
-/* Where SPARK_STATE.sheet holds the spark's square picture for each frame of
+extern const FIXED BattleCameraCommandMatrix[];
+/* Where SPARK_STATE.sheet holds the spark's square picture for each tick of
    life left, 0 to 6: byte offsets, a byte a pixel. */
-extern Sint32 ElementGlow_SparkPictures[];
-/* The spark's width and height in pixels by frames of life left: 2 to 4, 4 from
+extern Sint32 ElementGlowSparkPictures[];
+/* The spark's width and height in pixels by ticks of life left: 2 to 4, 4 from
    three; a spark with no life left is not drawn. */
-extern Uint8 ElementGlow_SparkSizes[];
-/* Where SPARK_STATE.sheet holds the ring's four 32 by 32 frames: byte offsets,
+extern Uint8 ElementGlowSparkSizes[];
+/* Where SPARK_STATE.sheet holds the ring's four 32 by 32 ticks: byte offsets,
    1,024 apart. */
-extern Sint32 ElementGlow_RingPictures[];
+extern Sint32 ElementGlowRingPictures[];
 /* The highlighted units' BLDY lightening: 15 down to 0 once, then the second
    sixteen (a pulse up to 8 and back) over and over. */
-extern Sint8 BattleHighlight_BlendRamp[];
+extern Sint8 BattleHighlightBlendRamp[];
 /* The 104 encounter zones (encounter_zones.c), read as ENCOUNTER_ZONE rows. */
 extern Uint16 EncounterZones[];
 /* The HEAP_SLOT_MIND_READ heap slot: Mind Read's wave state while its effect
@@ -164,22 +164,22 @@ extern Uint16 EncounterZones[];
 	(*(struct BATTLE_BACKGROUND_STATE * \
 			*)&HeapSlots[HEAP_SLOT_BATTLE_BACKGROUND])
 /* Isaac's weapon sprite by weapon kind (btUnitGetWeaponSpr). */
-extern const Uint16 BattleUnit_WeaponAnimationsIsaac[];
+extern const Uint16 BattleUnitWeaponAnimationsIsaac[];
 /* The ARM decoder for a battle background's image, which btBackgroundLoad
    copies to RAM and runs as a BIT_DECODER. */
 void btBitDecoderDecodeImage(void);
 
-/* btMotionApplyKnockback's knockbacks, the columns of the BattleKnockback_*
+/* btMotionApplyKnockback's knockbacks, the columns of the BattleKnockback*
    tables in knockback_tables.c. Each is named by how far and how high it sends
    the unit, as percent of its spot's distance from the centre and its hop in
-   pixels a frame; all but KNOCKBACK_HURL accelerate by 1 pixel a frame to at
+   pixels a tick; all but KNOCKBACK_HURL accelerate by 1 pixel a tick to at
    most 4. */
 typedef enum BATTLE_KNOCKBACK {
 	KNOCKBACK_NUDGE,  /* 140 percent, a hop of 3 */
 	KNOCKBACK_HOP,	  /* 140 percent, a hop of 6 */
 	KNOCKBACK_LEAP,	  /* 150 percent, a hop of 7 */
 	KNOCKBACK_LAUNCH, /* 200 percent, a hop of 10 */
-	/* The hardest: 200 percent at 8 pixels a frame more each frame, to at most
+	/* The hardest: 200 percent at 8 pixels a tick more each tick, to at most
 	   20, with a hop of 5. */
 	KNOCKBACK_HURL,
 	/* 150 percent, a hop of 2. From here on a unit already in the air takes the
@@ -241,7 +241,7 @@ struct ACTOR;
 
 void						 btDebugBattleViewMessages(void);
 void						 btCameraUpdate(void);
-void						 btIntroAnnounceEncounter(Sint32 enemyCount);
+void						 btIntroAnnounceEncounter(Sint32 enemyCnt);
 void						 btUnitCollect(void);
 Sint32						 btShiftVRAMTiles(void);
 void						 btClearBg0Vofs(void);
@@ -253,7 +253,7 @@ void						 btSummonReservedNoOperation(void);
 Sint32						 btLinkBattleReceiveParty(void);
 UNREAD_RESULT				 btLinkBattleSendParty(void);
 Uint8						*btTextCopyFourCharsUnderscored(
-						  Uint32 unusedA, Uint32 unusedB, Uint16 *source);
+						  Uint32 unusedA, Uint32 unusedB, Uint16 *src);
 Sint32		  btLinkBattleWaitSync(void);
 Sint32		  btLinkBattleSyncTurn(void);
 UNREAD_RESULT btPartyAssignOpponentSlots(void);
@@ -273,7 +273,7 @@ Sint32 btUnitCountDownSleep(Sint32 unitId);
 /* Pushes a message to show, waiting for the player to read it. */
 #define PUSH_MESSAGE(message) btPlaybackPush(PLAYBACK_MESSAGE, (message))
 
-/* Defines a function that turns the battle camera a 128th of a turn each frame
+/* Defines a function that turns the battle camera a 128th of a turn each tick
    L or R is held, and centres the background's zoom unless a view holds it. Two
    such functions exist, one each in battle_auto_battle.c and battle_turn.c. */
 #define DEFINE_ADJUST_CAMERA(name) \
@@ -305,7 +305,7 @@ void		  btObjectMake(
 			 struct BATTLE_OBJECT *battleObject, Sint32 unitId, Sint32 x, Sint32 y);
 void btPlacementGetStepPair(Sint32 partyPlace, Sint32 *x, Sint32 *y);
 void btPlacementLayoutEnemies(
-	Uint16 *unitIds, Sint32 count, Sint32 *xPositions, Sint32 *zPositions);
+	Uint16 *unitIds, Sint32 cnt, Sint32 *xPositions, Sint32 *zPositions);
 Sint32		  btEnemyGetFreeUnitId(void);
 UNREAD_RESULT btPlacementRelayoutEnemies(void);
 void		  btUnitRefreshPlacement(void);
@@ -323,7 +323,7 @@ void btObjectDestroyAll(void);
 #else
 void *btObjectDestroyAll(void);
 #endif
-Sint32		  btObjectGetAnchor(Sint32 place, POS *position);
+Sint32		  btObjectGetAnchor(Sint32 place, POS *pos);
 UNREAD_RESULT btCameraApplyTransform(void);
 void		  btCameraSetDefaultView(void);
 void		  btMotionReturnToSpot(Sint32 unitId);
@@ -346,7 +346,7 @@ Sint32 btAutoBattleRunPsynergy(struct BATTLE_ACTION *action);
 Sint32 btAutoBattleRunApproachAttack(struct BATTLE_ACTION *input);
 Sint32 btAutoBattleRunAttackOrItem(struct BATTLE_ACTION *action);
 void   btAutoBattleApplyDamage(
-	  Uint32 unitId, Sint32 damage, Sint32 showMessage, Uint8 *context);
+	  Uint32 unitId, Sint32 damage, Sint32 showMsg, Uint8 *context);
 void   btMotionPlayFall(Sint32 unitId);
 Sint32 btAbilityReplaceDefeated(const struct BATTLE_ACTION *action);
 
@@ -355,9 +355,9 @@ void   btUnitResetGuardLevels(void);
 Sint32 btFleeCheckSuccess(void);
 Sint32 btBuildPartyActions(struct BATTLE_ACTION *entries);
 Sint32 btBuildEnemyActions(struct BATTLE_ACTION *entries);
-void   btActionOrderSort(struct BATTLE_ACTION *entries, Sint32 count);
-Sint32 btAppendLinkedActions(struct BATTLE_ACTION *actions, Sint32 count);
-void   btPaletteCopyWithBrightnessOffset(Sint32 offset);
+void   btActionOrderSort(struct BATTLE_ACTION *entries, Sint32 cnt);
+Sint32 btAppendLinkedActions(struct BATTLE_ACTION *actions, Sint32 cnt);
+void   btPaletteCopyWithBrightnessOffset(Sint32 ofs);
 Sint32 btGatherActions(struct BATTLE_ACTION *actions);
 Sint32 btGetUnitAtPlace(Sint32 taggedPlace);
 Sint32 btFindUnitPlace(Uint32 unitId);
@@ -371,7 +371,7 @@ Sint32 btStagingRunFullScreen(struct BATTLE_ACTION_RUN *plan, Sint32 mode);
 UNREAD_RESULT btStagingRunMessages(
 	struct BATTLE_ACTION_RUN *plan, Sint32 unused);
 Sint32 btStagingRunAttack(struct BATTLE_ACTION_RUN *plan, Sint32 mode);
-Sint32 btStagingRunPlainAttack(struct BATTLE_ACTION_RUN *input, Sint32 flags);
+Sint32 btStagingRunPlainAttack(struct BATTLE_ACTION_RUN *input, Sint32 flg);
 Sint32 btStagingRunItem(struct BATTLE_ACTION_RUN *plan, Sint32 unused,
 	struct BATTLE_ACTION *selection);
 UNREAD_RESULT btObjectSetColMode(struct ACTOR *actor, Sint32 palette);
@@ -400,7 +400,7 @@ UNREAD_RESULT btAbilityApplyToTarget(
 Uint32		  btAbilityIsPsynergy(Sint32 abilityId);
 UNREAD_RESULT btAIChooseAction(struct BATTLE_ACTION *request, Sint32 acting);
 void		  btDMAStopDMA3(void);
-Sint32		  btPlaybackSchedulePhase(Sint32 frames);
+Sint32		  btPlaybackSchedulePhase(Sint32 ticks);
 void		  btPlaybackRun(void);
 void		  btPlaybackReset(void);
 UNREAD_RESULT btPlaybackWaitForReady(void);
@@ -426,11 +426,11 @@ void btTransitionUploadTileVariant(void);
 void btTransitionAdvanceOpening(void);
 void btTransitionDrawRows(void);
 void btTransitionClearBg0Vofs(void);
-void btTransitionRun(Sint32 enemyCount, Sint32 encounterId);
+void btTransitionRun(Sint32 enemyCnt, Sint32 encounterId);
 void btBackgroundInit(void);
 void btBackgroundFree(void);
 void btCameraSetRange(
-	FIXED centerX, FIXED centerY, Sint32 offsetX, Sint32 offsetY, FIXED scale);
+	FIXED centerX, FIXED centerY, Sint32 ofsX, Sint32 ofsY, FIXED scale);
 #if FIX_UNINITIALIZED_READ
 void btCameraSetViewAtDepth(Sint32 x, Sint32 depth, Sint32 y, Sint32 zoom);
 #else
@@ -482,10 +482,10 @@ UNREAD_RESULT btEnemyLetterFirstOfKind(Sint32 enemyId);
 Sint32		  btFormationGetRandomMember(Sint32 formationId);
 Sint32		  btFormationBuildEnemyList(Sint32 formationId);
 
-Uint32 btSprGetDefeatSnd(Sint32 index);
-Sint32 btSprGetSpr(Sint32 index);
-Sint32 btSprGetPalette(Sint32 index);
-Uint32 btSprGetAttackEffect(Uint32 index);
+Uint32 btSprGetDefeatSnd(Sint32 idx);
+Sint32 btSprGetSpr(Sint32 idx);
+Sint32 btSprGetPalette(Sint32 idx);
+Uint32 btSprGetAttackEffect(Uint32 idx);
 
 Uint32 btSpoilsRankItem(Uint32 inventoryEntry);
 void   btSpoilsClear(void);

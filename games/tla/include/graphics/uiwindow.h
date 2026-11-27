@@ -24,7 +24,7 @@ typedef struct WINDOW {
 	   closing. */
 	Sint16 zoomStage;
 
-	Sint16 duration;   /* frames of the zoom under way; 0 when none */
+	Sint16 duration;   /* ticks of the zoom under way; 0 when none */
 	Sint16 prevX;	   /* tiles */
 	Sint16 prevY;	   /* tiles */
 	Sint16 prevWidth;  /* tiles */
@@ -37,7 +37,7 @@ STATIC_ASSERT(offsetof(WINDOW, zoomStage) == 24);
 STATIC_ASSERT(offsetof(WINDOW, prevHeight) == 34);
 
 /* A message, one of the three in WIN_STATE.msgs, which types decoded text into
-   a window a few characters a frame and runs its control codes. */
+   a window a few characters a tick and runs its control codes. */
 typedef struct MESSAGE {
 	WINDOW *win; /* the window typed into; NULL when free */
 	Uint16	x;	 /* pen, 8.8 fixed-point pixels */
@@ -48,14 +48,14 @@ typedef struct MESSAGE {
 	Uint16 spacing[4];
 	Uint16 line;		/* line of the page, indexes spacing; at most 3 */
 	Uint16 textIdx;		/* next code in WIN_STATE.textBuf */
-	Uint16 countdown;	/* frames left of a pause, a page wait or a swell */
+	Uint16 countdown;	/* ticks left of a pause, a page wait or a swell */
 	Uint16 colour;		/* text colour; TEXT_COLOR_WHITE at start */
 	Uint16 outline;		/* an TXT_STYLE; TEXT_STYLE_PLAIN at start */
 	Uint16 lineSpacing; /* TEXT_DEFAULT_LINE_SPACING at start */
-	Uint16 scrollFrm;	/* frames left of the canvas scrolling up a line */
+	Uint16 scrollFrm;	/* ticks left of the canvas scrolling up a line */
 	Uint16 startX; /* pen x each new line returns to, 8.8 fixed-point pixels */
 	Uint16 ended;  /* 1 once a TEXT_END code is reached */
-	/* frames to wait after a glyph while no button is held */
+	/* ticks to wait after a glyph while no button is held */
 	Uint16 glyphDelay;
 	Uint16 flg; /* nonzero keeps the window's size from page to page */
 	/* Copied from spacing[3] when the message starts; with WIN_STATE.textMode

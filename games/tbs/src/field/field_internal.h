@@ -32,8 +32,8 @@
 typedef enum ANIMATION_COMMAND {
 	ANIMCMD_END = 239,		/* blank the layer and stop its script */
 	ANIMCMD_SET_KIND = 240, /* use facing table `arg` */
-	ANIMCMD_HOLD = 241,		/* stay on this command and frame for good */
-	ANIMCMD_WAIT = 245,		/* keep the current frame `arg` frames longer */
+	ANIMCMD_HOLD = 241,		/* stay on this command and tick for good */
+	ANIMCMD_WAIT = 245,		/* keep the current tick `arg` ticks longer */
 	ANIMCMD_JUMP = 253,		/* continue at script position `arg` */
 	ANIMCMD_PLAY = 254,		/* switch to animation `arg` */
 	ANIMCMD_BLANK = 255		/* show nothing for `arg` */
@@ -45,8 +45,8 @@ enum {
 	RESOURCE_SLOT_COUNT = 8, /* ACTOR_SYSTEM_STATE.pictureCaches */
 	ANIM_OBJECT_COUNT = 64,	 /* sprites and sprite animations */
 	ANIM_LAYER_COUNT = 4,	 /* SPR.entries */
-	/* Sixteenths of a frame taken off a sprite animation's timer each frame:
-	   one frame. */
+	/* Sixteenths of a tick taken off a sprite animation's timer each tick:
+	   one tick. */
 	SPRITE_ANIMATION_NORMAL_STEP = 16
 };
 

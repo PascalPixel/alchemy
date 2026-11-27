@@ -15,9 +15,9 @@
 #define HEADING_TILE_BYTES	   (HEADING_COLUMNS * HEADING_ROWS * TILE_SIZE_4BPP)
 /* A blank BG0 metatile: tile 0 in the window palette. */
 #define HEADING_BLANK_METATILE BG_TILE_PALETTE(WINDOW_PALETTE)
-/* The frames the heading's window takes to open from the centre, and the pixels
-   it widens by on each side a frame. */
-#define HEADING_OPEN_FRAMES	   24
+/* The ticks the heading's window takes to open from the centre, and the pixels
+   it widens by on each side a tick. */
+#define HEADING_OPEN_TICKS	   24
 #define HEADING_OPEN_STEP	   5
 
 /* Unused: only the stub table refers to it. Draws heading picture `heading` of
@@ -33,7 +33,7 @@ void fdHeadingShow(Sint32 heading)
 	Sint32	left, right;
 
 	tile = HEADING_FIRST_TILE;
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	metatile = (Uint16 *)BG_SCREEN_BLOCK(4);
 	tiles = syHeapAllocEWRAM(HEADING_TILE_BYTES);
 	headings += headings[heading] / 4;
@@ -64,7 +64,7 @@ void fdHeadingShow(Sint32 heading)
 	REG_DISPCNT ^= DISPCNT_BG0_ON;
 	left = DISPLAY_WIDTH / 2;
 	right = DISPLAY_WIDTH / 2;
-	for(column = 0; column < HEADING_OPEN_FRAMES; column++) {
+	for(column = 0; column < HEADING_OPEN_TICKS; column++) {
 		left -= HEADING_OPEN_STEP;
 		right += HEADING_OPEN_STEP;
 		REG_WIN0H = WIN_RANGE(left, right);
@@ -77,7 +77,7 @@ void fdScriptWaitTwoSecondsOrPress(void)
 {
 	Uint32 i;
 
-	for(i = 0; i < 2 * FRAMES_PER_SECOND; i++) {
+	for(i = 0; i < 2 * TICKS_PER_SECOND; i++) {
 		sySynch(1);
 		if(PerWork.push != 0)
 			break;
@@ -111,14 +111,14 @@ void fdHeadingWipeTilePixel(Sint32 x, Sint32 y, Uint32 pixel)
 	}
 }
 
-extern Sint16 Heading_WipeSteps[];
-/* Heading_WipeSteps' last entry, after its last diagonal. */
+extern Sint16 HeadingWipeSteps[];
+/* HeadingWipeSteps' last entry, after its last diagonal. */
 #define HEADING_WIPE_END (-9)
 
 /* Unused: only the stub table refers to it. Closes fdHeadingShow's picture
    window: fades the palette out while wiping every one of the picture's 26 by 5
    tiles from its top left corner to its bottom right, a diagonal every two
-   frames (Heading_WipeSteps: a tile's pixels a diagonal at a time, each ended
+   ticks (HeadingWipeSteps: a tile's pixels a diagonal at a time, each ended
    by a negative entry and the last by HEADING_WIPE_END), then turns BG0 and the
    window off, clears the screen block, reloads the window tiles and turns BG0
    back on. */
@@ -132,14 +132,14 @@ void fdHeadingClose(void)
 	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, 0);
 	fdPaletteFadeStartInterpolation(24);
 	for(;;) {
-		for(; Heading_WipeSteps[step] >= 0; step++) {
+		for(; HeadingWipeSteps[step] >= 0; step++) {
 			for(x = 0; x < HEADING_COLUMNS; x++) {
 				for(y = 0; y < HEADING_ROWS; y++)
-					fdHeadingWipeTilePixel(x, y, Heading_WipeSteps[step]);
+					fdHeadingWipeTilePixel(x, y, HeadingWipeSteps[step]);
 			}
 		}
 		sySynch(2);
-		if(Heading_WipeSteps[step] == HEADING_WIPE_END)
+		if(HeadingWipeSteps[step] == HEADING_WIPE_END)
 			break;
 		step++;
 	}
@@ -159,6 +159,6 @@ void fdHeadingClose(void)
 #undef HEADING_TILES
 #undef HEADING_TILE_BYTES
 #undef HEADING_BLANK_METATILE
-#undef HEADING_OPEN_FRAMES
+#undef HEADING_OPEN_TICKS
 #undef HEADING_OPEN_STEP
 #undef HEADING_WIPE_END

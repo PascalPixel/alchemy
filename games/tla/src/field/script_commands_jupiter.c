@@ -1,4 +1,4 @@
-/* A Jupiter Djinni joining the party, and per-frame updates the field effects
+/* A Jupiter Djinni joining the party, and per-tick updates the field effects
    share: a pulse, a quickening spin, a slow shrink, and a Mars Djinni's sparks.
    Part of script_commands.c. */
 
@@ -8,7 +8,7 @@
    (ANIM_LEADER_ARMS_RAISED). */
 void fdDjinnRunJupiterJoinEffect(Sint32 djinniId)
 {
-	VECTOR3				position;
+	VECTOR3				pos;
 	ACTOR			   *djinni;
 	FIELD_EFFECT_STATE *effectState;
 	FIELD_PARTICLE	   *effect;
@@ -39,17 +39,17 @@ void fdDjinnRunJupiterJoinEffect(Sint32 djinniId)
 
 	/* A light particle in every slot the effect state has, from where the
 	   Djinni is on screen. */
-	position.x = djinni->x.fixed;
-	position.y = djinni->y.fixed;
-	position.z = djinni->z.fixed;
-	fdCameraWorldToScreen(&position);
+	pos.x = djinni->x.fixed;
+	pos.y = djinni->y.fixed;
+	pos.z = djinni->z.fixed;
+	fdCameraWorldToScreen(&pos);
 	fdActorReleaseStub(djinni);
 	sySndPlayStub(SE_SCATTER);
 	effect = effectState->particles;
-	/* One a frame, each in a random colour mode from SPRITE_COLOR_NORMAL to
+	/* One a tick, each in a random colour mode from SPRITE_COLOR_NORMAL to
 	   SPRITE_COLOR_GREY. */
 	for(i = 0; i < (Sint32)ARRAY_COUNT(effectState->particles); i++) {
-		fdParticleInit(effect, SPRITE_PARTICLE, position.x, position.z);
+		fdParticleInit(effect, SPRITE_PARTICLE, pos.x, pos.z);
 		fdParticleSetCallback(effect, fdEffectRunAngledApproachPhases);
 		fdParticleSetAnimation(effect, ANIM_PARTICLE_TWINKLE);
 		fdSprSetAnimationColModesStub(
@@ -75,20 +75,20 @@ void fdDjinnRunJupiterJoinEffect(Sint32 djinniId)
 	fdEffectReleaseSlots();
 }
 
-/* Per-frame update: makes an actor pulse, switching its scale between the two
-   values of FieldEffect_PulseScales every 4 frames. */
+/* Per-tick update: makes an actor pulse, switching its scale between the two
+   values of FieldEffectPulseScales every 4 ticks. */
 void fdEffectPulseActorScale(ACTOR *actor)
 {
-	const Uint32 *table = FieldEffect_PulseScales;
-	Uint32		  index = ((Uint32)VBlankCount >> 2) & 1;
-	Uint32		  scale = table[index];
+	const Uint32 *tbl = FieldEffectPulseScales;
+	Uint32		  idx = ((Uint32)FrameCount >> 2) & 1;
+	Uint32		  scale = tbl[idx];
 
 	actor->scaleX = scale;
 	actor->scaleY = scale;
 }
 
-/* Per-frame update: spins an actor ever faster, from 1/16 turn a frame up to
-   just over 1/8 (DEGtoANG(45) + 64), 80 more each frame for 52 frames. */
+/* Per-tick update: spins an actor ever faster, from 1/16 turn a tick up to
+   just over 1/8 (DEGtoANG(45) + 64), 80 more each tick for 52 ticks. */
 void fdEffectAdvanceAngWithRamp(ACTOR *actor)
 {
 	Uint32 step;
@@ -100,8 +100,8 @@ void fdEffectAdvanceAngWithRamp(ACTOR *actor)
 	}
 }
 
-/* Per-frame update: spins an actor 1/8 turn and shrinks it by 7/1024 a frame,
-   releasing it once its scale falls below 3/16, 119 frames from full size. The
+/* Per-tick update: spins an actor 1/8 turn and shrinks it by 7/1024 a tick,
+   releasing it once its scale falls below 3/16, 119 ticks from full size. The
    Mars Djinni's joining shrinks the Djinni away with it. */
 void fdEffectShrinkActorAndDestroySlow(void *obj)
 {
@@ -124,14 +124,14 @@ void fdEffectShrinkActorAndDestroySlow(void *obj)
 
 /* Field effect sprite callback of a Mars Djinni's sparks (enum
    MARS_SPARK_STATE): the spark flies 120 pixels up the screen (give or take
-   3/32 turn) from its origin at up to 5 pixels a frame and starts over, until
-   it stops where it arrives, hidden; 40 frames later it swarms to points within
+   3/32 turn) from its origin at up to 5 pixels a tick and starts over, until
+   it stops where it arrives, hidden; 40 ticks later it swarms to points within
    4 pixels of one 20 pixels over the leader, until it is freed once it
    arrives. */
 void fdEffectUpdateMarsSpark(FIELD_PARTICLE *effect)
 {
 	ACTOR  *owner;
-	VECTOR3 position;
+	VECTOR3 pos;
 	Sint32	state;
 
 	owner = fdActorGetById(MainRoutineStateWork.leaderActorId);
@@ -140,25 +140,25 @@ void fdEffectUpdateMarsSpark(FIELD_PARTICLE *effect)
 	if(state == MARS_SPARK_AIM) {
 		effect->x = effect->originX;
 		effect->z = effect->originZ;
-		position.x = effect->x;
-		position.z = effect->z;
+		pos.x = effect->x;
+		pos.z = effect->z;
 		syVectorAddPolarOffset(toFIXED(120),
 			syRandomBelow(TRIG_TURN * 3 / 32) -
 				syRandomBelow(TRIG_TURN * 3 / 32) + FACING_NORTH,
-			&position);
-		effect->tgtX = position.x;
-		effect->tgtZ = position.z;
+			&pos);
+		effect->tgtX = pos.x;
+		effect->tgtZ = pos.z;
 		effect->acceleration = toFIXED(5);
 		effect->speedMax = toFIXED(5);
 		effect->turnStepLimited = 0;
 		effect->state++;
 
 		/* At the leader's sprite priority, until MARS_SPARK_RISING brings it in
-		   front after 3 frames. */
+		   front after 3 ticks. */
 		((SPR *)effect->spr)->image.pri = (*(SPR **)&owner->spr)->image.pri;
 		effect->flg = 0;
 		effect->age = 0;
-		if((VBlankCount & 1) != 0)
+		if((FrameCount & 1) != 0)
 			sySndPlayStub(SE_HEAVY_IMPACT);
 	} else if(state == MARS_SPARK_RISING) {
 		if((Sint16)effect->age == 3) {
@@ -181,14 +181,14 @@ void fdEffectUpdateMarsSpark(FIELD_PARTICLE *effect)
 		effect->render = 1;
 		effect->x = effect->originX;
 		effect->z = effect->originZ;
-		SET_POSITION(&position, owner->x.fixed, owner->y.fixed + toFIXED(20),
-			owner->z.fixed);
-		fdCameraWorldToScreen(&position);
-		syVectorAddPolarOffset(toFIXED(4), syRandom(), &position);
-		effect->tgtX = position.x;
-		effect->tgtZ = position.z;
+		SET_POSITION(
+			&pos, owner->x.fixed, owner->y.fixed + toFIXED(20), owner->z.fixed);
+		fdCameraWorldToScreen(&pos);
+		syVectorAddPolarOffset(toFIXED(4), syRandom(), &pos);
+		effect->tgtX = pos.x;
+		effect->tgtZ = pos.z;
 		effect->state++;
-		if((VBlankCount & 1) != 0)
+		if((FrameCount & 1) != 0)
 			sySndPlayStub(SE_CRASH);
 	} else if(state == MARS_SPARK_SWARMING) {
 		if(fdParticleHasPendingTarget(effect) == 0)

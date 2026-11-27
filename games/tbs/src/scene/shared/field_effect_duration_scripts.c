@@ -1,8 +1,8 @@
 /* Twenty-four scenes: the three lifetimes fdEffectSpawn (field_effect_spawn.c)
-   gives its effects through FieldEffect_DurationScripts. An effect lasts 24, 46
-   or 128 frames: it waits a frame 22, 44 or 126 times, then twice more, placed
+   gives its effects through FieldEffectDurationScripts. An effect lasts 24, 46
+   or 128 ticks: it waits a tick 22, 44 or 126 times, then twice more, placed
    at 0, 0, 0 and stopped between the two, and is released. The repeated
-   one-frame wait keeps the count in each script's fourth word, by which
+   one-tick wait keeps the count in each script's fourth word, by which
    fdEffectSpawn divides a change of scale so the effect reaches its scale by
    the end of the repeats.
 
@@ -15,7 +15,7 @@
 #define FIELD_EFFECT_DURATION_SCRIPT_QUALIFIER
 #endif
 
-FIELD_EFFECT_DURATION_SCRIPT_QUALIFIER Sint32 FieldEffect_ShortScript[] = {
+FIELD_EFFECT_DURATION_SCRIPT_QUALIFIER Sint32 FieldEffectShortScript[] = {
 	SC_WAIT(1),
 	SC_LOOP(22, SC_TOP),
 	SC_WAIT(1),
@@ -24,7 +24,7 @@ FIELD_EFFECT_DURATION_SCRIPT_QUALIFIER Sint32 FieldEffect_ShortScript[] = {
 	SC_RELEASE,
 };
 
-FIELD_EFFECT_DURATION_SCRIPT_QUALIFIER Sint32 FieldEffect_MediumScript[] = {
+FIELD_EFFECT_DURATION_SCRIPT_QUALIFIER Sint32 FieldEffectMediumScript[] = {
 	SC_WAIT(1),
 	SC_LOOP(44, SC_TOP),
 	SC_WAIT(1),
@@ -33,7 +33,7 @@ FIELD_EFFECT_DURATION_SCRIPT_QUALIFIER Sint32 FieldEffect_MediumScript[] = {
 	SC_RELEASE,
 };
 
-FIELD_EFFECT_DURATION_SCRIPT_QUALIFIER Sint32 FieldEffect_LongScript[] = {
+FIELD_EFFECT_DURATION_SCRIPT_QUALIFIER Sint32 FieldEffectLongScript[] = {
 	SC_WAIT(1),
 	SC_LOOP(126, SC_TOP),
 	SC_WAIT(1),

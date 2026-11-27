@@ -54,8 +54,8 @@
 #include "field/field_effect.h"
 #include "graphics/graphics.h"
 
-extern Sint32		  CrossboneIsleKeys_BaneSquashScript[];
-extern Sint32		  CrossboneIsleKeys_BaneWalkTargets[][2];
+extern Sint32		  CrossboneIsleKeysBaneSquashScript[];
+extern Sint32		  CrossboneIsleKeysBaneWalkTargets[][2];
 extern SCENE_ENTRANCE CrossboneIsleKeysRoomEntrances[];
 extern SCENE_ENTRANCE CrossboneIsleStatuesEntrances[];
 extern SCENE_ENTRANCE CrossboneIsleBaneEntrances[];
@@ -68,8 +68,8 @@ extern CUE			  CrossboneIsleKeysCuesOther[];
 extern CUE			  CrossboneIsleKeysRoomCues[];
 extern CUE			  CrossboneIsleStatuesCues[];
 extern CUE			  CrossboneIsleBaneCues[];
-extern Uint32		  CrossboneIsleKeys_StatueColumns[];
-extern Sint32		  CrossboneIsleKeys_IconTimer;
+extern Uint32		  CrossboneIsleKeysStatueColumns[];
+extern Sint32		  CrossboneIsleKeysIconTimer;
 
 /* Bane's room: the pillar on the raised platform in the south-west has been
    pushed off it and stands lower down, until the party leaves the cave's area
@@ -127,7 +127,7 @@ typedef enum CROSSBONE_ISLE_STATUES_ACTOR_ID {
 	ACTOR_FIFTH_STATUE
 } CROSSBONE_ISLE_STATUES_ACTOR_ID;
 
-/* The scripts the statue room's per-frame checks raise when Isaac steps onto
+/* The scripts the statue room's per-tick checks raise when Isaac steps onto
    the tiles in front of the first, second or fifth statue.
 
    The third and fourth statues answer metatiles of their own instead
@@ -209,7 +209,7 @@ typedef enum CROSSBONE_ISLE_BANE_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_BANE_LAST_ESCAPE = 22,
 	/* The first of the twelve metatiles round the three spikes on the
 	   south-east ledge, (50..55, 51..54), one for each row of
-	   CrossboneIsleKeys_BaneWalkTargets. */
+	   CrossboneIsleKeysBaneWalkTargets. */
 	METATILE_BEHAVIOR_BANE_CORNER_FIRST = 30,
 	/* The south-west platform and the floor below it, where the third pillar is
 	   pushed. */
@@ -302,7 +302,7 @@ enum {
    to 05, which nothing sets. The statue room: a statue is after Isaac. */
 #define FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER			 FLAG_SCENE_TEMP_20
 
-/* Raises a script for the cue table to run on the next frame. */
+/* Raises a script for the cue table to run on the next tick. */
 static inline void scCrossboneIsleKeysRaiseScript(
 	Sint16 *raisedCue, Sint32 event)
 {
@@ -313,11 +313,11 @@ static inline void scCrossboneIsleKeysRaiseScript(
    column, and makes its top ground level with the back ledge, so that Isaac can
    walk onto it from there. */
 static inline void scCrossboneIsleKeysLiftFirstPillar(
-	Sint32 column, Uint8 motionFlags)
+	Sint32 column, Uint8 motionFlg)
 {
 	fdMapGridCopyMetatileAttributes(
 		RAISED_PILLAR_TOP_COLUMN, RAISED_PILLAR_TOP_ROW, 1, 1, column, 42);
-	fdActorGet(ACTOR_FIRST_PILLAR)->motionFlg = motionFlags;
+	fdActorGet(ACTOR_FIRST_PILLAR)->motionFlg = motionFlg;
 	fdActorGet(ACTOR_FIRST_PILLAR)->y.fixed = toFIXED(32);
 }
 
@@ -348,7 +348,7 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 	if(selector == SCENE_CROSSBONE_ISLE_BANE) {
 		return CrossboneIsleBaneEntrances;
 	}
-	return Scene_FallbackEntrances;
+	return SceneFallbackEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -386,7 +386,7 @@ static void scCrossboneIsleKeysHaltStatue(void)
 {
 }
 
-/* Keeps Bane turned toward Isaac on the spiked ledge, every frame. */
+/* Keeps Bane turned toward Isaac on the spiked ledge, every tick. */
 static UNREAD_RESULT scCrossboneIsleKeysFaceBaneTowardLeader(ACTOR *actor)
 {
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
@@ -430,7 +430,7 @@ static void scCrossboneIsleKeysBaneFirstEscape(void)
    The camera pans to Bane on the low ledge. It hops back up onto the back ledge
    and dashes east along it to the far end. It lands there with a thud that
    shakes the room (SE_BANE_ESCAPE) and is left tipped over, squashing and
-   stretching over and over (CrossboneIsleKeys_BaneSquashScript). */
+   stretching over and over (CrossboneIsleKeysBaneSquashScript). */
 static void scCrossboneIsleKeysBaneSecondEscape(void)
 {
 	ACTOR *spinningDjinni;
@@ -476,7 +476,7 @@ static void scCrossboneIsleKeysBaneSecondEscape(void)
 			spinningDjinni->facing = FACING_EAST;
 			fdActorSetAnimationSpeed(spinningDjinni, 0);
 			fdActorStartScript(
-				spinningDjinni, CrossboneIsleKeys_BaneSquashScript);
+				spinningDjinni, CrossboneIsleKeysBaneSquashScript);
 			fdScriptEnd();
 		}
 	}
@@ -543,25 +543,24 @@ static void scCrossboneIsleKeysBaneLastEscape(void)
    unless Halt holds it.
 
    Each metatile's behaviour, less METATILE_BEHAVIOR_BANE_CORNER_FIRST, picks
-   Bane's spot from CrossboneIsleKeys_BaneWalkTargets. */
+   Bane's spot from CrossboneIsleKeysBaneWalkTargets. */
 static void scCrossboneIsleKeysBaneKeepsAway(void)
 {
 	ACTOR		*djinni;
-	Sint32		 target;
+	Sint32		 tgt;
 	FIELD_STATE *state;
 
 	state = FieldStateWork;
 	if(gmFlagGet(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
 		if(MainRoutineStateWork.haltedActor != ACTOR_BANE) {
-			target = state->stepCue;
+			tgt = state->stepCue;
 			djinni = fdActorGet(ACTOR_BANE);
 			djinni->speedLimit = fdActorGet(ACTOR_PARTY_LEADER)->speedLimit;
 			djinni = fdActorGet(ACTOR_BANE);
 			djinni->acceleration = fdActorGet(ACTOR_PARTY_LEADER)->speedLimit;
-			target -= METATILE_BEHAVIOR_BANE_CORNER_FIRST;
-			fdActorWalkTo(ACTOR_BANE,
-				CrossboneIsleKeys_BaneWalkTargets[target][0],
-				CrossboneIsleKeys_BaneWalkTargets[target][1]);
+			tgt -= METATILE_BEHAVIOR_BANE_CORNER_FIRST;
+			fdActorWalkTo(ACTOR_BANE, CrossboneIsleKeysBaneWalkTargets[tgt][0],
+				CrossboneIsleKeysBaneWalkTargets[tgt][1]);
 		}
 	}
 }
@@ -611,9 +610,9 @@ static void scCrossboneIsleKeysUnusedJumpOntoPost(void)
    door is simply drawn open. */
 static void scCrossboneIsleKeysOpenBlueDoor(Sint32 passageInfo)
 {
-	Sint32 columnOffset = (passageInfo & PASSAGE_INDEX_MASK) * 4;
-	Sint32 metatileColumn = columnOffset + 77;
-	Sint32 attributeColumn = columnOffset + 13;
+	Sint32 columnOfs = (passageInfo & PASSAGE_INDEX_MASK) * 4;
+	Sint32 metatileColumn = columnOfs + 77;
+	Sint32 attributeColumn = columnOfs + 13;
 
 	if(passageInfo & PASSAGE_PLAY_OPENING) {
 		sySndPlay(SE_GATE_MOVE);
@@ -673,23 +672,23 @@ static void scCrossboneIsleKeysUseRedKey(void)
 
    Without a key, facing any other way, or once the door is open, nothing
    happens. */
-static void scCrossboneIsleKeysUseBlueKey(Sint32 doorIndex)
+static void scCrossboneIsleKeysUseBlueKey(Sint32 doorIdx)
 {
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
-	Sint32 flag;
+	Sint32 flg;
 
 	if(leader->facing != FACING_NORTH) {
 		return;
 	}
-	flag = doorIndex + FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN;
-	if(gmFlagGet(flag) != 0) {
+	flg = doorIdx + FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN;
+	if(gmFlagGet(flg) != 0) {
 		return;
 	}
 	if(gmPartyInventoryFindMember(ITEM_BLUE_KEY) == -1) {
 		return;
 	}
-	gmFlagSet(flag);
-	scCrossboneIsleKeysOpenBlueDoor(PASSAGE_PLAY_OPENING | doorIndex);
+	gmFlagSet(flg);
+	scCrossboneIsleKeysOpenBlueDoor(PASSAGE_PLAY_OPENING | doorIdx);
 	gmPartyInventoryRemove(ITEM_BLUE_KEY);
 }
 
@@ -723,7 +722,7 @@ static void scCrossboneIsleKeysOpenThirdBlueDoor(void)
 	scCrossboneIsleKeysUseBlueKey(2);
 	if(fdActorGet(ACTOR_PARTY_LEADER)->facing == FACING_SOUTH) {
 		blockedSteps = &FieldStateWork->blockedSteps;
-		if(*blockedSteps > FIELD_PUSH_FRAMES) {
+		if(*blockedSteps > FIELD_PUSH_TICKS) {
 			fdTryJumpForward();
 			*blockedSteps = resetSteps;
 		}
@@ -744,7 +743,7 @@ static void scCrossboneIsleKeysOpenFourthBlueDoor(void)
 	scCrossboneIsleKeysUseBlueKey(3);
 	if(fdActorGet(ACTOR_PARTY_LEADER)->facing == FACING_SOUTH) {
 		blockedSteps = &FieldStateWork->blockedSteps;
-		if(*blockedSteps > FIELD_PUSH_FRAMES) {
+		if(*blockedSteps > FIELD_PUSH_TICKS) {
 			fdTryJumpForward();
 			*blockedSteps = resetSteps;
 		}
@@ -779,13 +778,13 @@ static void scCrossboneIsleKeysHideRedKey(void)
 /* Gives the party a key that Catch has pulled in: "Isaac got the Blue Key." (or
    the Red Key), and the key's icon is gone from its post for good. */
 static inline void scCrossboneIsleKeysGetKey(
-	Sint32 actorId, Sint32 itemId, Sint32 collectedFlag)
+	Sint32 actorId, Sint32 itemId, Sint32 collectedFlg)
 {
 	gmItemShowFound(itemId, 3);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	gmPartyGiveItem(itemId, 0);
 	fdActorSetPos(actorId, 0, 0);
-	gmFlagSet(collectedFlag);
+	gmFlagSet(collectedFlg);
 }
 
 /* Catch on the Blue Key on the post just north of where Isaac comes into the
@@ -829,7 +828,7 @@ static void scCrossboneIsleKeysCatchRedKey(void)
 		ACTOR_RED_KEY, ITEM_RED_KEY, FLAG_CROSSBONE_ISLE_RED_KEY);
 }
 
-/* Watches, every frame, for Isaac on the tiles just south of the statue in the
+/* Watches, every tick, for Isaac on the tiles just south of the statue in the
    north-east, metatiles (21..23, 10..11), and sets it on him unless Cloak hides
    him, Halt holds the statue or another statue is already after him. */
 static void scCrossboneIsleKeysCheckFirstStatueCue(void)
@@ -882,7 +881,7 @@ static void scCrossboneIsleKeysFirstStatuePushesLeaderBack(void)
 	gmFlagClear(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
 }
 
-/* Watches, every frame, for Isaac on the narrow walk below the statue in the
+/* Watches, every tick, for Isaac on the narrow walk below the statue in the
    west, metatiles (10, 16..18), and sets it on him unless Cloak hides him, Halt
    holds the statue or another statue is already after him. */
 static void scCrossboneIsleKeysCheckSecondStatueCue(void)
@@ -935,24 +934,24 @@ static void scCrossboneIsleKeysSecondStatuePushesLeaderBack(void)
    stand right in front of Isaac's column, unless Halt holds it, and nudges him
    8 pixels south if he has got into the alcove's row.
 
-   CrossboneIsleKeys_StatueColumns keeps the column each statue stands in. */
-static void scCrossboneIsleKeysTrackStatueColumn(Sint32 statueIndex)
+   CrossboneIsleKeysStatueColumns keeps the column each statue stands in. */
+static void scCrossboneIsleKeysTrackStatueColumn(Sint32 statueIdx)
 {
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
 	Sint32 column = leader->x.fixed / toFIXED(16);
 	Sint32 row = leader->z.fixed / toFIXED(16);
-	Sint32 statueId = statueIndex + ACTOR_THIRD_STATUE;
+	Sint32 statueId = statueIdx + ACTOR_THIRD_STATUE;
 
 	if(MainRoutineStateWork.haltedActor == statueId)
 		return;
-	if(column == CrossboneIsleKeys_StatueColumns[statueIndex])
+	if(column == CrossboneIsleKeysStatueColumns[statueIdx])
 		return;
 
 	fdActorSetSpeed(statueId, 4.5);
 	sySndPlay(SE_THUMP);
 	fdActorSetDestination(statueId, (column << 4) + 8, 360);
 
-	CrossboneIsleKeys_StatueColumns[statueIndex] = column;
+	CrossboneIsleKeysStatueColumns[statueIdx] = column;
 
 	if(row <= 22) {
 		fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 8);
@@ -1058,7 +1057,7 @@ static void scCrossboneIsleKeysFourthStatuePushesLeaderBack(void)
 	}
 }
 
-/* Watches, every frame, for Isaac on the two tiles just south of the statue in
+/* Watches, every tick, for Isaac on the two tiles just south of the statue in
    the middle of the hall, metatiles (19, 15..16), and sets it on him unless
    Cloak hides him, Halt holds the statue or another statue is already after
    him. */
@@ -1150,11 +1149,11 @@ static void scCrossboneIsleKeysUseLadder(void)
 	if(facing == FACING_NORTH) {
 		if(gmFlagGet(FLAG_CROSSBONE_ISLE_BANE_CHEST_AT_LADDER) != 0) {
 			{
-				Sint32 destinationColumn = 45;
-				Sint32 destinationRow = 43;
+				Sint32 dstColumn = 45;
+				Sint32 dstRow = 43;
 				/* The plain ledge beside it, (46, 43). */
 				fdMapGridCopyMetatileAttributes(
-					46, 43, 1, 1, destinationColumn, destinationRow);
+					46, 43, 1, 1, dstColumn, dstRow);
 			}
 		}
 		gmFlagClear(FLAG_CROSSBONE_ISLE_BANE_JUMPED_EAST_FROM_LADDER);
@@ -1164,11 +1163,10 @@ static void scCrossboneIsleKeysUseLadder(void)
 	} else if(facing == FACING_EAST) {
 		if(gmFlagGet(FLAG_CROSSBONE_ISLE_BANE_CHEST_AT_LADDER) != 0) {
 			{
-				Sint32 destinationColumn = 45;
-				Sint32 destinationRow = 43;
+				Sint32 dstColumn = 45;
+				Sint32 dstRow = 43;
 				fdMapGridCopyMetatileAttributes(DEMON_AXE_CHEST_COLUMN,
-					DEMON_AXE_CHEST_ROW, 1, 1, destinationColumn,
-					destinationRow);
+					DEMON_AXE_CHEST_ROW, 1, 1, dstColumn, dstRow);
 			}
 		}
 		gmFlagSet(FLAG_CROSSBONE_ISLE_BANE_JUMPED_EAST_FROM_LADDER);
@@ -1196,11 +1194,11 @@ static void scCrossboneIsleKeysFreezePuddle(void)
 
 	fdMapGridCopyMetatileAttributes(40, 54, 1, 1, 40, 55);
 	if(puddle != NULL) {
-		Uint8 *motionFlags = &fdActorGet(ACTOR_PUDDLE)->motionFlg;
-		Uint8 *priorityFlags = &puddle->priFlg;
+		Uint8 *motionFlg = &fdActorGet(ACTOR_PUDDLE)->motionFlg;
+		Uint8 *priFlg = &puddle->priFlg;
 
-		*motionFlags = 0;
-		*priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+		*motionFlg = 0;
+		*priFlg = ACTOR_PRIORITY_UNDERFOOT;
 	}
 	gmFlagSet(FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN);
 }
@@ -1511,39 +1509,39 @@ UNUSED static void scCrossboneIsleKeysPushFifthPillar(void)
 }
 
 /* Keeps the Demon Axe's chest on top of the second pillar as it moves, every
-   frame. */
+   tick. */
 static void scCrossboneIsleKeysFollowSecondPillar(void)
 {
-	ACTOR *target = fdActorGet(ACTOR_SECOND_PILLAR_CHEST);
-	ACTOR *source = fdActorGet(ACTOR_SECOND_PILLAR);
+	ACTOR *tgt = fdActorGet(ACTOR_SECOND_PILLAR_CHEST);
+	ACTOR *src = fdActorGet(ACTOR_SECOND_PILLAR);
 
-	target->y.fixed = toFIXED(32);
-	target->x.fixed = source->x.fixed;
-	target->z.fixed = source->z.fixed + toFIXED(1);
+	tgt->y.fixed = toFIXED(32);
+	tgt->x.fixed = src->x.fixed;
+	tgt->z.fixed = src->z.fixed + toFIXED(1);
 }
 
 /* Puts the Demon Axe chest's examine cue where the second pillar stands. */
 static void scCrossboneIsleKeysPosSecondPillarMarker(void)
 {
-	ACTOR *frame = fdActorGet(ACTOR_SECOND_PILLAR);
+	ACTOR *frm = fdActorGet(ACTOR_SECOND_PILLAR);
 
 	fdTreasureSpotSetActorPos(
-		TREASURE_SPOT_DEMON_AXE, frame->x.fixed, frame->z.fixed + toFIXED(1));
+		TREASURE_SPOT_DEMON_AXE, frm->x.fixed, frm->z.fixed + toFIXED(1));
 }
 
-/* Draws the pillars in front of Isaac or behind him, every frame, by how high
+/* Draws the pillars in front of Isaac or behind him, every tick, by how high
    he stands and, for the third, how far south he is. */
 static void scCrossboneIsleKeysUpdatePillarPriorities(void)
 {
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
-	Uint8  priority;
+	Uint8  pri;
 
 	if(leader->y.fixed > toFIXED(16)) {
-		priority = ACTOR_PRIORITY_UNDERFOOT;
-		fdActorGet(ACTOR_FIRST_PILLAR)->priFlg = priority;
+		pri = ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_FIRST_PILLAR)->priFlg = pri;
 		if(fdActorGet(ACTOR_THIRD_PILLAR)->y.fixed == 0)
-			fdActorGet(ACTOR_THIRD_PILLAR)->priFlg = priority;
-		fdActorGet(ACTOR_FOURTH_PILLAR)->priFlg = priority;
+			fdActorGet(ACTOR_THIRD_PILLAR)->priFlg = pri;
+		fdActorGet(ACTOR_FOURTH_PILLAR)->priFlg = pri;
 	} else {
 		if(fdActorGet(ACTOR_THIRD_PILLAR)->y.fixed == 0 &&
 			fdActorGet(ACTOR_PARTY_LEADER)->z.fixed / toFIXED(16) > 56) {
@@ -1552,10 +1550,10 @@ static void scCrossboneIsleKeysUpdatePillarPriorities(void)
 			fdActorSetSprPriority(ACTOR_THIRD_PILLAR, 1);
 			fdActorGet(ACTOR_THIRD_PILLAR)->priFlg = ACTOR_PRIORITY_AUTOMATIC;
 		}
-		priority = 0;
-		fdActorGet(ACTOR_FOURTH_PILLAR)->priFlg = priority;
+		pri = 0;
+		fdActorGet(ACTOR_FOURTH_PILLAR)->priFlg = pri;
 	}
-	fdActorGet(ACTOR_FIFTH_PILLAR)->priFlg = priority;
+	fdActorGet(ACTOR_FIFTH_PILLAR)->priFlg = pri;
 }
 
 /* Sets up whichever of the three rooms the party enters: the keys and doors of
@@ -1579,16 +1577,16 @@ Sint32 scInit(void)
 
 /* Unused: nothing adds it as an event.
 
-   Every 17 frames it would put uncaught Blue Keys back on their metatiles and
-   redraw the five key actors, one every 2 frames from the Red Key to the first
+   Every 17 ticks it would put uncaught Blue Keys back on their metatiles and
+   redraw the five key actors, one every 2 ticks from the Red Key to the first
    Blue Key. It would draw them with item codes 0 and 1 (a gem and the Long
    Sword) rather than ITEM_BLUE_KEY and ITEM_RED_KEY. */
 UNUSED static void scCrossboneIsleKeysUnusedRedrawKeyActors(void)
 {
-	if(++CrossboneIsleKeys_IconTimer > 16) {
-		CrossboneIsleKeys_IconTimer = 0;
+	if(++CrossboneIsleKeysIconTimer > 16) {
+		CrossboneIsleKeysIconTimer = 0;
 	}
-	switch(CrossboneIsleKeys_IconTimer) {
+	switch(CrossboneIsleKeysIconTimer) {
 	case 12:
 		if(gmFlagGet(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY) == 0) {
 			fdActorSetPos(ACTOR_FIRST_BLUE_KEY, 232, 872);
@@ -1679,11 +1677,11 @@ static void scCrossboneIsleKeysInitStatues(void)
 	fdActorGet(ACTOR_THIRD_STATUE)->scaleX = toFIXED(7) / 10;
 	fdActorGet(ACTOR_FOURTH_STATUE)->scaleX = toFIXED(7) / 10;
 	fdActorGet(ACTOR_FIFTH_STATUE)->scaleX = toFIXED(7) / 10;
-	sySetOrUpdateFrameEvent(
-		scCrossboneIsleKeysCheckFifthStatueCue, EVENT_PASS_FRAME);
-	sySetOrUpdateFrameEvent(
-		scCrossboneIsleKeysCheckSecondStatueCue, EVENT_PASS_FRAME);
-	sySetFrameEvent(scCrossboneIsleKeysCheckFirstStatueCue, EVENT_PASS_FRAME);
+	sySetOrUpdateTickEvent(
+		scCrossboneIsleKeysCheckFifthStatueCue, EVENT_PASS_TICK);
+	sySetOrUpdateTickEvent(
+		scCrossboneIsleKeysCheckSecondStatueCue, EVENT_PASS_TICK);
+	sySetTickEvent(scCrossboneIsleKeysCheckFirstStatueCue, EVENT_PASS_TICK);
 	IO_WRITE16(
 		BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL, &REG_BLDCNT);
 	IO_WRITE16(BLEND_ALPHA(7, 6), &REG_BLDALPHA);
@@ -1699,10 +1697,9 @@ static void scCrossboneIsleKeysInitBane(void)
 	ACTOR *djinni;
 
 	fdActorGet(ACTOR_SECOND_PILLAR_CHEST)->motionFlg = 0;
-	sySetOrUpdateFrameEvent(
-		scCrossboneIsleKeysFollowSecondPillar, EVENT_PASS_FRAME);
-	sySetFrameEvent(
-		scCrossboneIsleKeysUpdatePillarPriorities, EVENT_PASS_FRAME);
+	sySetOrUpdateTickEvent(
+		scCrossboneIsleKeysFollowSecondPillar, EVENT_PASS_TICK);
+	sySetTickEvent(scCrossboneIsleKeysUpdatePillarPriorities, EVENT_PASS_TICK);
 	fdTreasureSpotSetPos(TREASURE_SPOT_DEMON_AXE, 0, 0);
 	if(gmFlagGet(FLAG_CROSSBONE_ISLE_DEMON_AXE) != 0) {
 		fdActorSetAnimation(
@@ -1745,7 +1742,7 @@ static void scCrossboneIsleKeysInitBane(void)
 #include "shared/pushed_actor_tables.c"
 /* clang-format off */
 
-Sint32 CrossboneIsleKeys_BaneSquashScript[] = {
+Sint32 CrossboneIsleKeysBaneSquashScript[] = {
 	SC_ADD(SW_SCALE_X, -toFIXED(1) / 4),
 	SC_ADD(SW_SCALE_Y, toFIXED(1) / 8),
 	SC_WAIT(2),
@@ -1777,7 +1774,7 @@ Sint32 CrossboneIsleKeys_BaneSquashScript[] = {
 /* metatiles round the three spikes on the south-east ledge, from */
 /* METATILE_BEHAVIOR_BANE_CORNER_FIRST on: always the spot across the spikes */
 /* from him. */
-Sint32 CrossboneIsleKeys_BaneWalkTargets[][2] = {
+Sint32 CrossboneIsleKeysBaneWalkTargets[][2] = {
 	{ 888, 856 },
 	{ 872, 856 },
 	{ 856, 856 },
@@ -2020,11 +2017,11 @@ CUE CrossboneIsleBaneCues[] = {
 /* The column the third and fourth statues stand in as they slide to stay in
    front of Isaac; the third entry is the fifth statue's, which nothing
    slides. */
-Uint32 CrossboneIsleKeys_StatueColumns[] = {
+Uint32 CrossboneIsleKeysStatueColumns[] = {
 	16,
 	21,
 	0,
 };
 
-/* Unused: the frame counter of scCrossboneIsleKeysUnusedRedrawKeyActors. */
-Sint32 CrossboneIsleKeys_IconTimer = 0;
+/* Unused: the tick counter of scCrossboneIsleKeysUnusedRedrawKeyActors. */
+Sint32 CrossboneIsleKeysIconTimer = 0;

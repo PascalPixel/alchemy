@@ -9,25 +9,25 @@ void fdPsynergyLiftOnTarget(Sint32 unused)
 {
 	FIELD_EFFECT_STATE *effectState;
 	ACTOR			   *caster;
-	ACTOR			   *target;
+	ACTOR			   *tgt;
 	void			   *hands[2]; /* right then left */
 	FIXED				pos[3];
 	Sint32				x;
 	FIXED				y;
 	Sint32				z;
-	Sint32				handIndex;
+	Sint32				handIdx;
 	FIXED				startY;
 
 	effectState = FieldEffectStateWork;
-	target = effectState->tgt;
+	tgt = effectState->tgt;
 	caster = effectState->caster;
-	if(target == NULL)
+	if(tgt == NULL)
 		return;
 
 	fdPsynergyFadeToCastCol();
 	/* The caster faces its target while Lift holds it. */
-	caster->watchedActor = (union ACTOR_OR_EFFECT *)target;
-	fdActorStartScriptStub(caster, FieldEffect_SourceHoldScript);
+	caster->watchedActor = (union ACTOR_OR_EFFECT *)tgt;
+	fdActorStartScriptStub(caster, FieldEffectSourceHoldScript);
 
 	x = effectState->x;
 	pos[0] = x;
@@ -42,25 +42,25 @@ void fdPsynergyLiftOnTarget(Sint32 unused)
 	/* Each hand faces the target (FACING_WEST on the right, FACING_EAST on the
 	   left) and moves 14 pixels that way. */
 	sySynch(15);
-	for(handIndex = 0; handIndex < 2; handIndex++) {
-		ACTOR *hand = hands[handIndex];
+	for(handIdx = 0; handIdx < 2; handIdx++) {
+		ACTOR *hand = hands[handIdx];
 		if(hand != NULL)
 			fdActorSetTargetPosFromMagnitudeAng(
 				hand, toFIXED(14), hand->facing);
 	}
 
 	fdActorWaitForMoveStub(hands[0]);
-	target->update = fdActorCycleSprCols;
+	tgt->update = fdActorCycleSprCols;
 	sySndPlayStub(SE_PSYNERGY_START);
-	target->motionFlg = ACTOR_FLOATS;
+	tgt->motionFlg = ACTOR_FLOATS;
 
 	/* Lift 32 pixels, a quarter pixel at a time. */
-	startY = target->y.fixed;
+	startY = tgt->y.fixed;
 	if(hands[0] != NULL && hands[1] != NULL) {
-		while(target->y.fixed <= startY + toFIXED(32)) {
+		while(tgt->y.fixed <= startY + toFIXED(32)) {
 			((ACTOR *)hands[0])->y.fixed += toFIXED(1) / 4;
 			((ACTOR *)hands[1])->y.fixed += toFIXED(1) / 4;
-			target->y.fixed += toFIXED(1) / 4;
+			tgt->y.fixed += toFIXED(1) / 4;
 			sySynch(1);
 		}
 	}
@@ -76,8 +76,8 @@ void fdPsynergyLiftOnTarget(Sint32 unused)
 DEFINE_CLAPPING_HANDS_CAST(fdPsynergyLift, fdEffectSpawnLiftHand)
 
 /* Spawns a hand (SPRITE_MOVE_HAND) and grows it, spinning, from a quarter to
-   full size over 24 frames; angle is the way it faces once grown. */
-ACTOR *fdEffectSpawnLiftHand(Sint32 x, Sint32 y, Sint32 z, Sint32 angle)
+   full size over 24 ticks; angle is the way it faces once grown. */
+ACTOR *fdEffectSpawnLiftHand(Sint32 x, Sint32 y, Sint32 z, Sint32 ang)
 {
 	ACTOR *hand;
 	FIXED  scale;
@@ -100,7 +100,7 @@ ACTOR *fdEffectSpawnLiftHand(Sint32 x, Sint32 y, Sint32 z, Sint32 angle)
 				scale = hand->scaleX;
 			} while(scale < toFIXED(1));
 		}
-		hand->facing = angle;
+		hand->facing = ang;
 	}
 	return hand;
 }
@@ -167,32 +167,31 @@ again:
 #define HEAVY_IMPACT_SPARKLES 12
 
 /* A heavy impact: places a star burst (SPRITE_STAR_BURST) 32 pixels below the
-   source for 20 frames and scatters HEAVY_IMPACT_SPARKLES sparkles
+   source for 20 ticks and scatters HEAVY_IMPACT_SPARKLES sparkles
    (SPRITE_SPARKLE) from it. */
-Sint32 fdEffectSpawnHeavyImpact(ACTOR *source)
+Sint32 fdEffectSpawnHeavyImpact(ACTOR *src)
 {
 	VECTOR3 pos;
 	ACTOR  *impact;
 	ACTOR  *sparkle;
-	Sint32	sparkleIndex;
+	Sint32	sparkleIdx;
 
 	sySndPlayStub(SE_HEAVY_IMPACT);
-	pos.x = source->x.fixed;
-	pos.y = source->y.fixed;
-	pos.z = source->z.fixed;
+	pos.x = src->x.fixed;
+	pos.y = src->y.fixed;
+	pos.z = src->z.fixed;
 	impact = fdActorSpawn(SPRITE_STAR_BURST, pos.x, pos.y - toFIXED(32), pos.z);
 	if(impact != NULL) {
 		impact->motionFlg = 0;
 		impact->wait = 20;
-		fdActorStartScriptStub(impact, FieldEffect_SharedParticleScript);
+		fdActorStartScriptStub(impact, FieldEffectSharedParticleScript);
 	}
 
-	/* Sparkles: 1 to 2 pixels a frame, 8 to 32 pixels in a random direction. */
-	for(sparkleIndex = 0; sparkleIndex < HEAVY_IMPACT_SPARKLES;
-		sparkleIndex++) {
+	/* Sparkles: 1 to 2 pixels a tick, 8 to 32 pixels in a random direction. */
+	for(sparkleIdx = 0; sparkleIdx < HEAVY_IMPACT_SPARKLES; sparkleIdx++) {
 		sparkle = fdActorSpawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
 		if(sparkle != NULL) {
-			fdActorStartScriptStub(sparkle, FieldEffect_FragmentScript);
+			fdActorStartScriptStub(sparkle, FieldEffectFragmentScript);
 			sparkle->speedLimit = syRandom() + toFIXED(1);
 			sparkle->acceleration = toFIXED(1);
 			sparkle->motionFlg = 0;

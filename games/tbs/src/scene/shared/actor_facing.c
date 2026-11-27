@@ -5,21 +5,21 @@
    who turn to keep someone in view. */
 
 /* An actor script call: an actor with a facing target turns towards it, at most
-   a sixteenth of a turn a frame. */
+   a sixteenth of a turn a tick. */
 static Sint32 scTurnTowardTarget(ACTOR *actor)
 {
 	Sint32 delta;
 	Uint16 facing;
-	Sint32 angle;
-	ACTOR *target;
+	Sint32 ang;
+	ACTOR *tgt;
 
-	target = (ACTOR *)actor->watchedActor;
-	if(target != NULL) {
+	tgt = (ACTOR *)actor->watchedActor;
+	if(tgt != NULL) {
 		actor->steeringFlg = ((Uint8)~ACTOR_FACES_MOTION & actor->steeringFlg);
-		angle = (Uint16)syAtan(
-			target->z.fixed - actor->z.fixed, target->x.fixed - actor->x.fixed);
+		ang = (Uint16)syAtan(
+			tgt->z.fixed - actor->z.fixed, tgt->x.fixed - actor->x.fixed);
 		facing = actor->facing;
-		delta = (Sint16)(angle - facing);
+		delta = (Sint16)(ang - facing);
 		if(delta != 0) {
 			if(delta > FACING_STEP) {
 				delta = FACING_STEP;

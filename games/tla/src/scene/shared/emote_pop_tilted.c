@@ -10,7 +10,7 @@
 
 /* Pops an emote up at (x, y, z), 16.16 pixels: SPRITE_EMOTE's animation 1,
    tilted by `rotation`, with the SE_LIGHT_APPEAR sound; its script keeps it 46
-   frames and releases it. Idejima and the Shaman Village each pop a pair,
+   ticks and releases it. Idejima and the Shaman Village each pop a pair,
    tilted either way, in a conversation. */
 void   syEmotePopTilted(x, y, z, rotation) Sint32 x, y, z;
 Sint16 rotation;
@@ -23,7 +23,7 @@ Sint16 rotation;
 		sprite = object->spr;
 		sySndPlay(SE_LIGHT_APPEAR);
 		syImportActorSelectAnimation(object, 1);
-		syImportActorStartScript(object, Emote_PopTiltedScript);
+		syImportActorStartScript(object, EmotePopTiltedScript);
 		object->motionFlg = 0;
 		sprite->flg = 0;
 		sprite->rotation = rotation;

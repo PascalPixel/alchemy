@@ -1,13 +1,13 @@
 /* Break and Drain. Part of battle_effect.c. */
 
-/* Break and Drain take the targets in turn, this many frames apart. */
-#define DRAIN_TARGET_FRAMES 20
+/* Break and Drain take the targets in turn, this many ticks apart. */
+#define DRAIN_TARGET_TICKS 20
 
 #define BREAK_SHARDS_PER_TARGET 128
-/* Break runs DRAIN_TARGET_FRAMES a target and then this many while the last
+/* Break runs DRAIN_TARGET_TICKS a target and then this many while the last
    shards fall. */
-#define BREAK_FALL_FRAMES		56
-#define BREAK_HIT_FRAME			32
+#define BREAK_FALL_TICKS		56
+#define BREAK_HIT_TICK			32
 /* The canvas row below which a falling shard goes out. */
 #define BREAK_SHARD_GROUND		112
 
@@ -24,7 +24,7 @@ void btEffectRunBreak(BATTLE_EFFECT_PARM *args)
 	Sint32				 point[3];
 	SCREEN_POINT		 screen;
 	Sint32				 member;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -47,27 +47,27 @@ void btEffectRunBreak(BATTLE_EFFECT_PARM *args)
 	/* Scatter the shards around the middle of each body. */
 	EFFECT_FOR_EACH_TARGET(member, state->args) {
 		ACTOR	 *actor;
-		Sint32	  offset;
+		Sint32	  ofs;
 		Sint32	  height;
 		PARTICLE *shard;
 
-		offset = member * BREAK_SHARDS_PER_TARGET * sizeof(PARTICLE);
+		ofs = member * BREAK_SHARDS_PER_TARGET * sizeof(PARTICLE);
 		actor = btObjectGetStub(state->args->tgts[member])->actor;
 		height = btUnitGetEffectHeightStub(state->args->tgts[member]) / 2;
 		SET_VECTOR(point, actor->x.fixed, height, actor->z.fixed);
 		btProjectionPoint(point, &screen);
 		screen.x >>= 1;
-		for(i = 0, shard = (PARTICLE *)(Ram_MapGridMetatileBuffer + offset);
+		for(i = 0, shard = (PARTICLE *)(Ram_MapGridMetatileBuffer + ofs);
 			i != BREAK_SHARDS_PER_TARGET; i++) {
 			Sint32 radius;
-			Sint32 angle;
+			Sint32 ang;
 			Sint32 lift;
 
 			radius = syRandom() & 0xff;
-			angle = syRandom() & TRIG_ANGLE_MASK;
-			shard->x = ((sySin(angle) * radius) >> 7) + toFIXED(screen.x);
-			shard->y = ((syCos(angle) * radius) >> 3) + toFIXED(screen.y);
-			/* Thrown up at 2 to 6 pixels a frame, and up to a pixel a frame
+			ang = syRandom() & TRIG_ANGLE_MASK;
+			shard->x = ((sySin(ang) * radius) >> 7) + toFIXED(screen.x);
+			shard->y = ((syCos(ang) * radius) >> 3) + toFIXED(screen.y);
+			/* Thrown up at 2 to 6 pixels a tick, and up to a pixel a tick
 			   aside. */
 			shard->velX = (128 - (syRandom() & 0xff)) << 9;
 			lift = syRandom() & 0xff;
@@ -79,26 +79,26 @@ void btEffectRunBreak(BATTLE_EFFECT_PARM *args)
 
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-	for(frame = 0;
-		frame != state->args->tgtCnt * DRAIN_TARGET_FRAMES + BREAK_FALL_FRAMES;
-		frame++) {
-		if(frame == BREAK_HIT_FRAME)
+	for(frm = 0;
+		frm != state->args->tgtCnt * DRAIN_TARGET_TICKS + BREAK_FALL_TICKS;
+		frm++) {
+		if(frm == BREAK_HIT_TICK)
 			EFFECT_SHOW_DAMAGE(0);
 		EFFECT_FOR_EACH_TARGET(member, state->args) {
-			Sint32 offset;
+			Sint32 ofs;
 
-			offset = member * BREAK_SHARDS_PER_TARGET * sizeof(PARTICLE);
-			if(frame == member * DRAIN_TARGET_FRAMES) {
+			ofs = member * BREAK_SHARDS_PER_TARGET * sizeof(PARTICLE);
+			if(frm == member * DRAIN_TARGET_TICKS) {
 				sySndPlayStub(SE_CRACK);
 				btEffectTintBattler(state->args->tgts[member],
 					SPRITE_COLOR_WHITE, TINT_KEEP, member, 20);
 			}
 			/* A shard falls and goes out below the ground. */
-			if(frame > member * DRAIN_TARGET_FRAMES) {
+			if(frm > member * DRAIN_TARGET_TICKS) {
 				PARTICLE *shard;
 
 				for(i = 0,
-				shard = (PARTICLE *)(Ram_MapGridMetatileBuffer + offset);
+				shard = (PARTICLE *)(Ram_MapGridMetatileBuffer + ofs);
 					i != BREAK_SHARDS_PER_TARGET; i++) {
 					if(shard->variant >= 0) {
 						Sint32 size;
@@ -107,7 +107,7 @@ void btEffectRunBreak(BATTLE_EFFECT_PARM *args)
 						EFFECT_DRAW_MOTE(draw, canvas, sheet,
 							FIXEDtoINT(shard->x), FIXEDtoINT(shard->y), size);
 						btParticleAdvanceWithGravity2D(
-							shard, 62, Drain_Gravities[i & 3]);
+							shard, 62, DrainGravities[i & 3]);
 						shard->variant++;
 						if(shard->velY > 0 &&
 							FIXEDtoINT(shard->y) > BREAK_SHARD_GROUND)
@@ -117,7 +117,7 @@ void btEffectRunBreak(BATTLE_EFFECT_PARM *args)
 				}
 			}
 		}
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();
@@ -126,15 +126,15 @@ void btEffectRunBreak(BATTLE_EFFECT_PARM *args)
 #define DRAIN_MOTES_PER_TARGET 128
 #define DRAIN_DRAWN			   32 /* motes drawn for each target */
 #define DRAIN_MOTE_SIZE		   6  /* a mote's size in pixels */
-/* Drain runs DRAIN_TARGET_FRAMES a target and then this many; the user glows
-   from DRAIN_GLOW_FRAME until DRAIN_GLOW_END_FRAMES before the end. */
-#define DRAIN_END_FRAMES	   72
-#define DRAIN_GLOW_FRAME	   40
-#define DRAIN_GLOW_END_FRAMES  20
-#define DRAIN_HIT_FRAME		   64
-/* A mote homes in on the user this many frames after its target's turn, each
-   mote a frame after the one before, gaining a 256th of the distance a
-   frame. */
+/* Drain runs DRAIN_TARGET_TICKS a target and then this many; the user glows
+   from DRAIN_GLOW_TICK until DRAIN_GLOW_END_TICKS before the end. */
+#define DRAIN_END_TICKS		   72
+#define DRAIN_GLOW_TICK		   40
+#define DRAIN_GLOW_END_TICKS   20
+#define DRAIN_HIT_TICK		   64
+/* A mote homes in on the user this many ticks after its target's turn, each
+   mote a tick after the one before, gaining a 256th of the distance a
+   tick. */
 #define DRAIN_PULL_DELAY	   10
 #define DRAIN_PULL(distance)   ((distance) >> 8)
 /* A mote goes out within this many pixels of the middle of the user, across and
@@ -155,7 +155,7 @@ void btEffectRunDrain(BATTLE_EFFECT_PARM *args)
 	SCREEN_POINT		 screen;
 	Sint32				 alternate;
 	Sint32				 member;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -201,30 +201,30 @@ void btEffectRunDrain(BATTLE_EFFECT_PARM *args)
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 	sySndPlayStub(SE_SWIRL);
 
-	for(frame = 0;
-		frame != state->args->tgtCnt * DRAIN_TARGET_FRAMES + DRAIN_END_FRAMES;
-		frame++) {
+	for(frm = 0;
+		frm != state->args->tgtCnt * DRAIN_TARGET_TICKS + DRAIN_END_TICKS;
+		frm++) {
 		ACTOR *user;
 		Sint32 halfHeight;
 
 		user = btObjectGetStub(state->args->user)->actor;
 		halfHeight = btUnitGetEffectHeightStub(state->args->user) / 2;
-		if(frame == DRAIN_HIT_FRAME)
+		if(frm == DRAIN_HIT_TICK)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 		EFFECT_VIEW_FROM_CAMERA(camera);
-		if(frame == DRAIN_GLOW_FRAME)
+		if(frm == DRAIN_GLOW_TICK)
 			btEffectTintBattler(
 				state->args->user, SPRITE_COLOR_WHITE, TINT_KEEP, TINT_KEEP, 0);
-		if(frame ==
-			state->args->tgtCnt * DRAIN_TARGET_FRAMES + DRAIN_END_FRAMES -
-				DRAIN_GLOW_END_FRAMES)
+		if(frm ==
+			state->args->tgtCnt * DRAIN_TARGET_TICKS + DRAIN_END_TICKS -
+				DRAIN_GLOW_END_TICKS)
 			btEffectTintBattler(state->args->user, SPRITE_COLOR_NORMAL,
 				TINT_KEEP, TINT_KEEP, 0);
 		EFFECT_FOR_EACH_TARGET(member, state->args) {
-			if(frame == member * DRAIN_TARGET_FRAMES)
+			if(frm == member * DRAIN_TARGET_TICKS)
 				btEffectTintBattler(state->args->tgts[member],
 					SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 42);
-			if(frame > member * DRAIN_TARGET_FRAMES) {
+			if(frm > member * DRAIN_TARGET_TICKS) {
 				for(i = 0; i != DRAIN_DRAWN; i++) {
 					PARTICLE *mote =
 						&PARTICLES[member * DRAIN_MOTES_PER_TARGET + i];
@@ -239,7 +239,7 @@ void btEffectRunDrain(BATTLE_EFFECT_PARM *args)
 						btParticleAdvanceWithGravity3D(mote, 62, 0);
 
 						/* After a moment a mote is pulled into the user. */
-						if(frame > member * DRAIN_TARGET_FRAMES + i +
+						if(frm > member * DRAIN_TARGET_TICKS + i +
 								DRAIN_PULL_DELAY) {
 							Sint32 dx;
 							Sint32 dy;
@@ -266,24 +266,24 @@ void btEffectRunDrain(BATTLE_EFFECT_PARM *args)
 				}
 			}
 		}
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-#undef DRAIN_TARGET_FRAMES
+#undef DRAIN_TARGET_TICKS
 #undef BREAK_SHARDS_PER_TARGET
-#undef BREAK_FALL_FRAMES
-#undef BREAK_HIT_FRAME
+#undef BREAK_FALL_TICKS
+#undef BREAK_HIT_TICK
 #undef BREAK_SHARD_GROUND
 #undef DRAIN_MOTES_PER_TARGET
 #undef DRAIN_DRAWN
 #undef DRAIN_MOTE_SIZE
-#undef DRAIN_END_FRAMES
-#undef DRAIN_GLOW_FRAME
-#undef DRAIN_GLOW_END_FRAMES
-#undef DRAIN_HIT_FRAME
+#undef DRAIN_END_TICKS
+#undef DRAIN_GLOW_TICK
+#undef DRAIN_GLOW_END_TICKS
+#undef DRAIN_HIT_TICK
 #undef DRAIN_PULL_DELAY
 #undef DRAIN_PULL
 #undef DRAIN_ARRIVAL_DISTANCE

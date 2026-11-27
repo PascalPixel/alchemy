@@ -37,7 +37,7 @@ Sint32 KNOCK_BACK(void)
 				   actor->z.fixed) == TERRAIN_ROUNDED_SQUARE) {
 				Sint32 i;
 
-				/* Sliding: 2 pixels a frame for up to 10 frames, until the
+				/* Sliding: 2 pixels a tick for up to 10 ticks, until the
 				   ground 8 pixels ahead stops them. */
 				actor->velX = (Sint16)state->dir.x * toFIXED(2);
 				actor->velZ = (Sint16)state->dir.z * toFIXED(2);

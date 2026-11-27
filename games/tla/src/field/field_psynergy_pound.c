@@ -14,7 +14,7 @@
 
 /* The stages of the fist's fall (POUND_STATE.state). */
 typedef enum POUND_STAGE {
-	POUND_FALLS = 0, /* the fist comes down; it lands on the eighth frame */
+	POUND_FALLS = 0, /* the fist comes down; it lands on the eighth tick */
 	POUND_SHINE_GROWS = 1, /* the shine spreads, its colours cycling */
 	POUND_SHINE_HOLDS = 2,
 	POUND_SETTLES = 3, /* the shaking stops */
@@ -32,9 +32,9 @@ typedef struct POUND_STATE {
 	ACTOR *actor; /* the fist, then what sinks into the ground */
 	/* the stage of the fall; FIELD_PSYNERGY_FINISHED once it ends */
 	Sint16 state;
-	Sint16 tmr;		 /* frames into the stage */
+	Sint16 tmr;		 /* ticks into the stage */
 	Sint8  sparkles; /* nonzero draws the sparks */
-	Sint8  landed;	 /* set on the frame the fist lands, passed to the script */
+	Sint8  landed;	 /* set on the tick the fist lands, passed to the script */
 } POUND_STATE;
 
 /* Event of a Pound that comes down: the fist falls and lands with a shake, the
@@ -44,21 +44,21 @@ void fdPsynergyUpdatePound(void)
 	POUND_STATE				*state = Ram_HeapSlots->battleEff;
 	CANVAS_SPR_STATE		*canvas = Ram_HeapSlots->canvasSpr;
 	FIELD_PSYNERGY_PARTICLE *particle;
-	EFFECT_SPR				*sprite;
+	EFFECT_SPR				*spr;
 	Sint32					 i;
 	Sint32					 red, green;
 
 	state->landed = 0;
 	if(state->state == POUND_SHINE_GROWS) {
 		/* Each colour is a 32nd of a turn further along the cycle, which moves
-		   on every other frame. */
+		   on every other tick. */
 		for(i = 0; i < POUND_SHINE_COLORS; i++) {
-			Uint32 angle = (INTtoFIXED(((Uint32)canvas->drawnFrm >> 1) + i) +
-							   toFIXED(9)) >>
+			Uint32 ang = (INTtoFIXED(((Uint32)canvas->drawnFrm >> 1) + i) +
+							 toFIXED(9)) >>
 				5;
 			Sint32 blue = RGB(0, 0, RGB_LEVEL_MAX);
 
-			red = sySin(angle) * CANVAS_SHINE_SWING;
+			red = sySin(ang) * CANVAS_SHINE_SWING;
 			green = sySin((INTtoFIXED(((Uint32)canvas->drawnFrm >> 1) + i) +
 							  toFIXED(9)) >>
 						5) *
@@ -71,12 +71,12 @@ void fdPsynergyUpdatePound(void)
 	}
 	if(state->sparkles) {
 		particle = state->particles;
-		sprite = state->sprs;
-		for(i = 0; i < POUND_DRAWN_SPARKS; i++, sprite++, particle++) {
+		spr = state->sprs;
+		for(i = 0; i < POUND_DRAWN_SPARKS; i++, spr++, particle++) {
 			if(particle->tmr >= 0 && particle->tmr < 16) {
-				sprite->x = particle->x;
-				sprite->y = particle->y;
-				fdEffectSprDraw(sprite);
+				spr->x = particle->x;
+				spr->y = particle->y;
+				fdEffectSprDraw(spr);
 				fdAdvanceWithGravity2D(particle, 64, 0);
 			}
 			particle->tmr++;
@@ -134,7 +134,7 @@ void fdPsynergyUpdatePound(void)
 }
 
 /* Event of a Pound that cannot come down: the fist sinks 2.5 pixels and shrinks
-   by 1/64 a frame for 8 frames, before it shatters. */
+   by 1/64 a tick for 8 ticks, before it shatters. */
 void fdPoundSinkFist(void)
 {
 	POUND_STATE *state = Ram_HeapSlots->battleEff;
@@ -175,7 +175,7 @@ void fdPsynergyPound(void)
 	ACTOR					*actor;
 	ACTOR					*fist;
 	CANVAS_SPR_STATE		*canvas;
-	EFFECT_SPR				*sprite;
+	EFFECT_SPR				*spr;
 	EFFECT_SPR				*glow;
 	void					*pending;
 	Sint32					 pos[3];
@@ -186,10 +186,10 @@ void fdPsynergyPound(void)
 	FIXED					 lift;
 	Sint32					 glowTile;
 	Sint32					 size = POUND_GLOW_SIZE * POUND_GLOW_SIZE / 2;
-	Sint32					 riseFrames;
+	Sint32					 riseTicks;
 	Sint32					 speed;
-	Sint32					 angle;
-	Sint32					 frame;
+	Sint32					 ang;
+	Sint32					 frm;
 	Sint32					 j;
 	FIELD_PSYNERGY_PARTICLE *particle;
 
@@ -286,32 +286,32 @@ void fdPsynergyPound(void)
 		starTile = syVRAMCacheLoad(starEntry, 256, state);
 		for(j = 0, particle = state->particles; j < POUND_SPARK_COUNT;
 			j++, particle++) {
-			sprite = &state->sprs[j];
+			spr = &state->sprs[j];
 			speed = syRandom() * 18 / 10;
 			speed += toFIXED(5) / 2;
-			angle = j * (DEGtoANG(30)) + (syRandom() >> 5);
+			ang = j * (DEGtoANG(30)) + (syRandom() >> 5);
 			pos[0] = scene->x;
 			pos[1] = scene->y;
 			pos[2] = scene->z;
-			syVectorAddPolarOffset(toFIXED(4), angle, pos);
+			syVectorAddPolarOffset(toFIXED(4), ang, pos);
 			fdCameraWorldToScreen(pos);
 			particle->x = pos[0];
 			particle->y = pos[2];
-			particle->velX = syMulFX(syCos(angle), speed);
-			particle->velY = syMulFX(sySin(angle), speed);
+			particle->velX = syMulFX(syCos(ang), speed);
+			particle->velY = syMulFX(sySin(ang), speed);
 			particle->tmr = -j;
-			fdEffectSprInit(sprite, 8, 8, OBJ_SIZE_16X16, starTile);
-			sprite->oam.fullCol = 1;
-			sprite->oam.pal = 0;
-			sprite->oam.pri = 0;
-			sprite->depth = OAM_DEPTH_WINDOW;
-			sprite->scaleY = sprite->scaleX = toFIXED(4) / 5;
+			fdEffectSprInit(spr, 8, 8, OBJ_SIZE_16X16, starTile);
+			spr->oam.fullCol = 1;
+			spr->oam.pal = 0;
+			spr->oam.pri = 0;
+			spr->depth = OAM_DEPTH_WINDOW;
+			spr->scaleY = spr->scaleX = toFIXED(4) / 5;
 		}
 		sySynch(1);
 		fdPsynergyGrowFromCaster(fist, scene->x, scene->y + lift, scene->z);
 		fdActorSelectAnimationStub(fist, 1);
 		sySynch(15);
-		for(riseFrames = 0; riseFrames < 25; riseFrames++) {
+		for(riseTicks = 0; riseTicks < 25; riseTicks++) {
 			fist->y.fixed += toFIXED(1) / 2;
 			sySynch(1);
 		}
@@ -320,7 +320,7 @@ void fdPsynergyPound(void)
 		state->tmr = 0;
 		state->sparkles = 0;
 		if(!inReach) {
-			sySetEvent(fdPoundSinkFist, EVENT_PASS_FRAME);
+			sySetEvent(fdPoundSinkFist, EVENT_PASS_TICK);
 			while(state->state != FIELD_PSYNERGY_FINISHED)
 				sySynch(1);
 			syCloseEvent(fdPoundSinkFist);
@@ -333,18 +333,18 @@ void fdPsynergyPound(void)
 			pending = fdFindPsynergyCue(PSYNERGY_CUE(PSYNERGY_PHASE_ACTS),
 				scene->fieldPsynergy,
 				fdSelectPsynergyTarget(scene->fieldPsynergy));
-			sySetEvent(fdPsynergyUpdatePound, EVENT_PASS_FRAME);
-			frame = 0;
+			sySetEvent(fdPsynergyUpdatePound, EVENT_PASS_TICK);
+			frm = 0;
 			while(state->state != FIELD_PSYNERGY_FINISHED) {
 				sySynch(1);
 				scene->stage = state->landed;
-				scene->frm = frame;
+				scene->frm = frm;
 				if(field->mode != ACTOR_SYSTEM_WORLD_MAP &&
 					!(field->psynergyDrawFlg & PSYNERGY_DRAW_NO_SCENE_SPRITE)) {
 					glow = &state->glow;
 					fdEffectSprDraw(glow);
 				}
-				fdRunPsynergyScript(pending, state->landed, frame++);
+				fdRunPsynergyScript(pending, state->landed, frm++);
 			}
 			syCloseEvent(fdPsynergyUpdatePound);
 			sySynch(10);
@@ -368,28 +368,27 @@ void fdPsynergyPound(void)
    four pixels apart, each column slid down by phase (1.6 pixels a step, from
    124 pixels up) less a sine wave across the columns; what falls outside is
    dropped. The Scoop draws its rising picture with it. */
-void fdPictureShiftColumnsByWave(
-	Uint8 *source, Uint8 *destination, Sint32 phase)
+void fdPictureShiftColumnsByWave(Uint8 *src, Uint8 *dst, Sint32 phase)
 {
 	Sint32 width = WAVE_PICTURE_SIZE;
 	Sint32 height = WAVE_PICTURE_SIZE;
 	Sint32 column;
 	Sint32 row;
 
-	syWordsClear(destination, WAVE_PICTURE_SIZE * WAVE_PICTURE_SIZE);
+	syWordsClear(dst, WAVE_PICTURE_SIZE * WAVE_PICTURE_SIZE);
 	for(column = 0; column < width; column++) {
 		FIXED wave = sySin(column * (TRIG_TURN / 8)) * 8 + toFIXED(8);
 
 		for(row = 0; row < height; row++) {
-			FIXED position =
+			FIXED pos =
 				phase * (toFIXED(8) / 5) - toFIXED(124) + row * (toFIXED(4));
 			/* In two steps: the wave subtracted, then the shift. */
-			Sint32 shift = position - wave;
+			Sint32 shift = pos - wave;
 			shift = FIXEDtoINT(shift);
 
 			if(shift >= 0 && shift < height)
-				destination[shift * WAVE_PICTURE_SIZE + column] =
-					source[row * width + column];
+				dst[shift * WAVE_PICTURE_SIZE + column] =
+					src[row * width + column];
 		}
 	}
 }

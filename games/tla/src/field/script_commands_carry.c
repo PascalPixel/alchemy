@@ -37,7 +37,7 @@ void fdPsynergyCarry(void)
 		SET_POSITION(&pos, state->x, state->y + toFIXED(16), state->z);
 		actor = fdActorSpawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
 		if(actor != 0) {
-			fdActorStartScriptStub(actor, FieldEffect_FragmentScript);
+			fdActorStartScriptStub(actor, FieldEffectFragmentScript);
 			actor->speedLimit = syRandom() + toFIXED(2);
 			actor->acceleration = toFIXED(2);
 			actor->motionFlg = 0;
@@ -52,9 +52,9 @@ void fdPsynergyCarry(void)
 }
 
 /* Spawns a hand (SPRITE_MOVE_HAND) with the item break sound and grows it,
-   spinning 1/8 turn a frame, from a quarter to full size over 24 frames; angle
+   spinning 1/8 turn a tick, from a quarter to full size over 24 ticks; angle
    is the way it faces once grown. */
-ACTOR *fdEffectSpawnCarryHand(Sint32 x, Sint32 y, Sint32 z, Sint32 angle)
+ACTOR *fdEffectSpawnCarryHand(Sint32 x, Sint32 y, Sint32 z, Sint32 ang)
 {
 	ACTOR *actor;
 	FIXED  scale;
@@ -79,7 +79,7 @@ ACTOR *fdEffectSpawnCarryHand(Sint32 x, Sint32 y, Sint32 z, Sint32 angle)
 				scale = actor->scaleX;
 			} while(scale < toFIXED(1));
 		}
-		actor->facing = angle;
+		actor->facing = ang;
 	}
 	return actor;
 }

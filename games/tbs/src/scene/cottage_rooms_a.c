@@ -49,11 +49,11 @@
 
    While Garet's grandfather dozes in scCottageRoomsAGaretComesHome, three
    letters Z (ACTOR_FIRST_SLEEP_Z and the two after it) rise from him. One
-   appears at each of frames 10, 20 and 30 of every 180
+   appears at each of ticks 10, 20 and 30 of every 180
    (scCottageRoomsASpawnSleepZ).
 
    Each starts 24 pixels above him at two fifths of its size. It grows a
-   fortieth a frame as it climbs ever more slowly and drifts right ever faster
+   fortieth a tick as it climbs ever more slowly and drifts right ever faster
    (scCottageRoomsAAdvanceSleepZ). */
 
 #include "ability_ids.h"
@@ -67,20 +67,20 @@
 #include "scene/sleep_z.h"
 #include "text/msg_ids.h"
 
-extern Sint32		  CottageRoomsA_FaceTargetScript[];
-extern Sint32		  CottageRoomsA_FatherPacingScript[];
-extern Sint32		  CottageRoomsA_PartyLeavesScript[];
-extern Sint32		  CottageRoomsA_SleepZScript[];
-extern SCENE_ENTRANCE CottageRoomsA_Entrances[];
-extern Uint32		  CottageRoomsA_Exits[];
-extern Uint32		  CottageRoomsA_StormExits[];
-extern ACTOR_PLACE	  CottageRoomsA_ActorPlacements[];
-extern ACTOR_PLACE	  CottageRoomsA_ActorPlacementsAfterLeaving[];
-extern ACTOR_PLACE	  CottageRoomsA_ActorPlacementsAfterKalay[];
-extern CUE			  CottageRoomsA_StormCues[];
-extern CUE			  CottageRoomsA_Cues[];
-extern CUE			  CottageRoomsA_CuesAfterLeaving[];
-extern CUE			  CottageRoomsA_CuesAfterKalay[];
+extern Sint32		  CottageRoomsAFaceTargetScript[];
+extern Sint32		  CottageRoomsAFatherPacingScript[];
+extern Sint32		  CottageRoomsAPartyLeavesScript[];
+extern Sint32		  CottageRoomsASleepZScript[];
+extern SCENE_ENTRANCE CottageRoomsAEntrances[];
+extern Uint32		  CottageRoomsAExits[];
+extern Uint32		  CottageRoomsAStormExits[];
+extern ACTOR_PLACE	  CottageRoomsAActorPlacements[];
+extern ACTOR_PLACE	  CottageRoomsAActorPlacementsAfterLeaving[];
+extern ACTOR_PLACE	  CottageRoomsAActorPlacementsAfterKalay[];
+extern CUE			  CottageRoomsAStormCues[];
+extern CUE			  CottageRoomsACues[];
+extern CUE			  CottageRoomsACuesAfterLeaving[];
+extern CUE			  CottageRoomsACuesAfterKalay[];
 
 /* The metatiles the rooms' things answer when searched: the barrel and the four
    jars (empty on the stormy night), and the bookcases and notebooks, by the
@@ -108,7 +108,7 @@ typedef enum COTTAGE_ROOMS_A_METATILE_BEHAVIOR {
 /* The placed actors, numbered in the order of the actor placement tables, which
    all place them alike.
 
-   CottageRoomsA_ActorPlacementsAfterKalay adds Garet, Ivan and Mia, who keep
+   CottageRoomsAActorPlacementsAfterKalay adds Garet, Ivan and Mia, who keep
    their characters' ids, and the drifting sprites.
 
    The villagers' notes quote what they say on the day the story begins. */
@@ -162,7 +162,7 @@ typedef enum COTTAGE_ROOMS_A_ACTOR_ID {
 } COTTAGE_ROOMS_A_ACTOR_ID;
 
 /* Animations of the houses' sprites beyond ACTOR_ANIMATION, as their animation
-   tables and frames under graphics/sprite draw them. */
+   tables and ticks under graphics/sprite draw them. */
 typedef enum COTTAGE_ROOMS_A_ANIMATION {
 	/* Garet's grandfather standing with his eyes shut, asleep
 	   (old_man_with_white_hair.png). */
@@ -201,7 +201,7 @@ static Sint32 scCottageRoomsAAdvanceSleepZ(ACTOR *actor)
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return CottageRoomsA_Entrances;
+	return CottageRoomsAEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -213,37 +213,37 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 const Uint32 *scGetExits(void)
 {
 	if(gmFlagGet(FLAG_VALE_STORM) != 0)
-		return CottageRoomsA_StormExits;
-	return CottageRoomsA_Exits;
+		return CottageRoomsAStormExits;
+	return CottageRoomsAExits;
 }
 
 /* Selects the actor placements for the current visit to Vale, and marks which
    of their actors are in view. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	ACTOR_PLACE *table;
+	ACTOR_PLACE *tbl;
 
 	if(gmFlagGet(FLAG_KALAY_REACHED)) {
-		table = CottageRoomsA_ActorPlacementsAfterKalay;
+		tbl = CottageRoomsAActorPlacementsAfterKalay;
 	} else if(gmFlagGet(FLAG_VALE_PARTY_LEFT)) {
-		table = CottageRoomsA_ActorPlacementsAfterLeaving;
+		tbl = CottageRoomsAActorPlacementsAfterLeaving;
 	} else {
-		table = CottageRoomsA_ActorPlacements;
+		tbl = CottageRoomsAActorPlacements;
 	}
-	fdAssignViewFlags(table);
-	return table;
+	fdAssignViewFlags(tbl);
+	return tbl;
 }
 
 /* Selects the cues for the current visit to Vale. */
 const CUE *scGetCues(void)
 {
 	if(gmFlagGet(FLAG_VALE_STORM) != 0)
-		return CottageRoomsA_StormCues;
+		return CottageRoomsAStormCues;
 	if(gmFlagGet(FLAG_KALAY_REACHED) != 0)
-		return CottageRoomsA_CuesAfterKalay;
+		return CottageRoomsACuesAfterKalay;
 	if(gmFlagGet(FLAG_VALE_PARTY_LEFT) != 0)
-		return CottageRoomsA_CuesAfterLeaving;
-	return CottageRoomsA_Cues;
+		return CottageRoomsACuesAfterLeaving;
+	return CottageRoomsACues;
 }
 
 /* A burly grey-haired man asks whether Isaac knew why Kraden came to Vale. */
@@ -286,7 +286,7 @@ static void scCottageRoomsAGiveFarewellHerb(void)
 		fdScriptShowMessage(ACTOR_ITEM_MERCHANT, 0);
 		syFieldActorWatchAndStartScript(ACTOR_ITEM_MERCHANT,
 			ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-			CottageRoomsA_FaceTargetScript);
+			CottageRoomsAFaceTargetScript);
 	} else {
 		gift = MsgValeThisIsMyFarewellGift;
 		fdScriptSetMessageId(gift);
@@ -336,17 +336,17 @@ static void scCottageRoomsAWorryAboutTravelersHealth(void)
 
 /* Leaves a house by its door, on the stormy night stopping the lightning
    first. */
-static void scCottageRoomsALeaveThroughDoor(Sint32 exitNumber)
+static void scCottageRoomsALeaveThroughDoor(Sint32 exitNum)
 {
 	if(gmFlagGet(FLAG_VALE_STORM) != 0)
 		fdWeatherStopLightning();
 	sySndPlay(SE_MAP_EXIT);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
-	syImportScriptSetExitRequest(exitNumber);
+	fdScriptWaitTransitionTicks();
+	syImportScriptSetExitRequest(exitNum);
 }
 
 /* The rooms' doors: stepping on a door's metatile, whose metatile behavior is
@@ -431,7 +431,7 @@ Sint32 scInit(void)
 		fdWeatherLastLightning();
 		sySynch(30);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdWeatherResumeLightning();
 	}
 	/* The returning party gets the household reunion only on its first
@@ -545,17 +545,17 @@ static inline void scCottageRoomsAFamilyNods(void)
 /* Has an actor squash and spring back once while it plays an animation
    through. */
 static inline void scCottageRoomsAPlayRepeatedAnimationAndWait(
-	Sint32 actorId, Sint32 animation)
+	Sint32 actorId, Sint32 anm)
 {
 	fdActorStartRepeatedMotion(actorId, 1);
-	fdActorSetAnimationAndWait(actorId, animation);
+	fdActorSetAnimationAndWait(actorId, anm);
 }
 
 /* In Garet's house in Vale, back from Kalay, Garet comes home. */
 static void scCottageRoomsAGaretComesHome(void)
 {
 	ACTOR		 *actor;
-	Sint32		  motionFlags = 0;
+	Sint32		  motionFlg = 0;
 	EVENT_FUNC	  timedUpdate;
 	const Sint32 *partyScript;
 
@@ -574,15 +574,15 @@ static void scCottageRoomsAGaretComesHome(void)
 	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_SLEEP_Z), 0);
 	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_SLEEP_Z + 1), 0);
 	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_SLEEP_Z + 2), 0);
-	fdActorGet(ACTOR_FIRST_SLEEP_Z)->motionFlg = motionFlags;
-	fdActorGet(ACTOR_FIRST_SLEEP_Z + 1)->motionFlg = motionFlags;
-	fdActorGet(ACTOR_FIRST_SLEEP_Z + 2)->motionFlg = motionFlags;
+	fdActorGet(ACTOR_FIRST_SLEEP_Z)->motionFlg = motionFlg;
+	fdActorGet(ACTOR_FIRST_SLEEP_Z + 1)->motionFlg = motionFlg;
+	fdActorGet(ACTOR_FIRST_SLEEP_Z + 2)->motionFlg = motionFlg;
 	timedUpdate = scCottageRoomsASpawnSleepZ;
-	sySetFrameEvent(timedUpdate, EVENT_PASS_FRAME);
+	sySetTickEvent(timedUpdate, EVENT_PASS_TICK);
 	sySynch(1);
 	FieldStateWork->transitionFrm = 32;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	actor = fdActorGet(ACTOR_PARTY_LEADER);
@@ -605,18 +605,18 @@ static void scCottageRoomsAGaretComesHome(void)
 	fdScriptWait(10);
 	syFieldActorWatchAndStartScript(ACTOR_PARTY_LEADER,
 		ACTOR_WATCH_KEEP_MOTION | ACTOR_GARETS_FATHER,
-		CottageRoomsA_FaceTargetScript);
+		CottageRoomsAFaceTargetScript);
 	syFieldActorWatchAndStartScript(ACTOR_GARET,
 		ACTOR_WATCH_KEEP_MOTION | ACTOR_GARETS_FATHER,
-		CottageRoomsA_FaceTargetScript);
+		CottageRoomsAFaceTargetScript);
 	syFieldActorWatchAndStartScript(ACTOR_IVAN,
 		ACTOR_WATCH_KEEP_MOTION | ACTOR_GARETS_FATHER,
-		CottageRoomsA_FaceTargetScript);
+		CottageRoomsAFaceTargetScript);
 	syFieldActorWatchAndStartScript(ACTOR_MIA,
 		ACTOR_WATCH_KEEP_MOTION | ACTOR_GARETS_FATHER,
-		CottageRoomsA_FaceTargetScript);
+		CottageRoomsAFaceTargetScript);
 	fdScriptWait(300);
-	fdCameraGetActor()->motionFlg = motionFlags;
+	fdCameraGetActor()->motionFlg = motionFlg;
 	/* The camera pans slowly up to Garet's parents. His father, pacing, asks
 	   whether they should look for Garet; Isaac still does not know about Dora.
 	   His mother teases that he misses Garet. */
@@ -875,11 +875,11 @@ static void scCottageRoomsAGaretComesHome(void)
 	fdActorSetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
 	fdScriptWait(20);
 	fdActorSetSpeed(ACTOR_IVAN, 1);
-	partyScript = CottageRoomsA_PartyLeavesScript;
+	partyScript = CottageRoomsAPartyLeavesScript;
 	fdActorSetScript(ACTOR_GARET, partyScript);
 	fdActorSetScript(ACTOR_IVAN, partyScript);
 	fdActorRunScriptAndWait(ACTOR_MIA, partyScript);
-	fdActorSetScript(ACTOR_GARETS_FATHER, CottageRoomsA_FatherPacingScript);
+	fdActorSetScript(ACTOR_GARETS_FATHER, CottageRoomsAFatherPacingScript);
 	fdActorWalkToAndWait(ACTOR_GARETS_MOTHER, 837, 376);
 	fdActorFaceDirection(ACTOR_GARETS_MOTHER, FACING_NORTH_NORTHEAST, 20);
 	gmFlagSet(FLAG_GARET_CAME_HOME);
@@ -890,13 +890,13 @@ static void scCottageRoomsAGaretComesHome(void)
 static void scCottageRoomsASpawnSleepZ(void)
 {
 	Sint32 actorId;
-	Uint32 cycleFrame;
+	Uint32 cycleFrm;
 	ACTOR *actor;
 	ACTOR *origin;
 
-	cycleFrame = FrameCount % 180;
+	cycleFrm = TickCount % 180;
 	actorId = ACTOR_FIRST_SLEEP_Z;
-	switch(cycleFrame) {
+	switch(cycleFrm) {
 	case 10:
 		break;
 	case 20:
@@ -928,15 +928,15 @@ static void scCottageRoomsASpawnSleepZ(void)
 		actor->tmr = 25;
 		actor->userValue = SLEEP_Z_STEPS_PER_PIXEL / 2;
 	}
-	fdActorSetScript(actorId, CottageRoomsA_SleepZScript);
+	fdActorSetScript(actorId, CottageRoomsASleepZScript);
 }
 
-Sint32 CottageRoomsA_FaceTargetScript[] = {
+Sint32 CottageRoomsAFaceTargetScript[] = {
 	SC_CALL(scTurnTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-Sint32 CottageRoomsA_FatherPacingScript[] = {
+Sint32 CottageRoomsAFatherPacingScript[] = {
 	SC_SPEED(0.6),
 	SC_ACCELERATION(0.3),
 	SC_ANIMATION(2),
@@ -965,7 +965,7 @@ Sint32 CottageRoomsA_FatherPacingScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-Sint32 CottageRoomsA_PartyLeavesScript[] = {
+Sint32 CottageRoomsAPartyLeavesScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(808, 0, 508),
 	SC_SYNC,
@@ -975,7 +975,7 @@ Sint32 CottageRoomsA_PartyLeavesScript[] = {
 	SC_END,
 };
 
-Sint32 CottageRoomsA_SleepZScript[] = {
+Sint32 CottageRoomsASleepZScript[] = {
 	SC_CALL(scCottageRoomsAAdvanceSleepZ),
 	SC_WAIT(1),
 	SC_LOOP(60, SC_TOP),
@@ -984,7 +984,7 @@ Sint32 CottageRoomsA_SleepZScript[] = {
 	SC_END,
 };
 
-SCENE_ENTRANCE CottageRoomsA_Entrances[] = {
+SCENE_ENTRANCE CottageRoomsAEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{COTTAGE_ROOMS_A_FROM_VALE_WEST, CONDITION_ALWAYS, 96, 0, 222, FACING_NORTH,
@@ -1006,7 +1006,7 @@ SCENE_ENTRANCE CottageRoomsA_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 CottageRoomsA_Exits[] = {
+Uint32 CottageRoomsAExits[] = {
 	SCENE_EXITS(CottageRoomsA),
 	SCENE_EXIT(
 		COTTAGE_ROOMS_A_TO_VALE_WEST, Vale, VALE_FROM_COTTAGE_ROOMS_A_WEST),
@@ -1027,7 +1027,7 @@ Uint32 CottageRoomsA_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-Uint32 CottageRoomsA_StormExits[] = {
+Uint32 CottageRoomsAStormExits[] = {
 	SCENE_EXITS(CottageRoomsA),
 	SCENE_EXIT(COTTAGE_ROOMS_A_TO_VALE_WEST, ValePrologue,
 		VALE_PROLOGUE_FROM_COTTAGE_ROOMS_A_WEST),
@@ -1049,7 +1049,7 @@ Uint32 CottageRoomsA_StormExits[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE CottageRoomsA_ActorPlacements[] = {
+ACTOR_PLACE CottageRoomsAActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
 		697, 0, 468, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
@@ -1083,7 +1083,7 @@ ACTOR_PLACE CottageRoomsA_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE CottageRoomsA_ActorPlacementsAfterLeaving[] = {
+ACTOR_PLACE CottageRoomsAActorPlacementsAfterLeaving[] = {
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
 		697, 0, 468, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
@@ -1117,7 +1117,7 @@ ACTOR_PLACE CottageRoomsA_ActorPlacementsAfterLeaving[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE CottageRoomsA_ActorPlacementsAfterKalay[] = {
+ACTOR_PLACE CottageRoomsAActorPlacementsAfterKalay[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1128,7 +1128,7 @@ ACTOR_PLACE CottageRoomsA_ActorPlacementsAfterKalay[] = {
 		697, 0, 468, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
 		726, 0, 486, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_MAN_IN_TEAL_SHIRT, CONDITION_IN_VIEW, (Sint32)CottageRoomsA_FatherPacingScript,
+	ACTOR_PLACEMENT(SPRITE_MAN_IN_TEAL_SHIRT, CONDITION_IN_VIEW, (Sint32)CottageRoomsAFatherPacingScript,
 		819, 0, 405, FACING_WEST_NORTHWEST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_HEADSCARF, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
 		841, 0, 370, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0),
@@ -1163,7 +1163,7 @@ ACTOR_PLACE CottageRoomsA_ActorPlacementsAfterKalay[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE CottageRoomsA_StormCues[] = {
+CUE CottageRoomsAStormCues[] = {
 	{ CUE_STEP, 1, CONDITION_ALWAYS, SCRIPT_REF(scCottageRoomsALeaveToValeWest) },
 	{ CUE_STEP, 2, CONDITION_ALWAYS, SCRIPT_REF(scCottageRoomsALeaveToValeNorth) },
 	{ CUE_STEP, 3, CONDITION_ALWAYS, SCRIPT_REF(scCottageRoomsALeaveToValePlazaWest) },
@@ -1192,7 +1192,7 @@ CUE CottageRoomsA_StormCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE CottageRoomsA_Cues[] = {
+CUE CottageRoomsACues[] = {
 	{ CUE_TALK, ACTOR_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeAtTheVeryLeastVisitorsShould) },
 	{ CUE_TALK, ACTOR_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIHearKradenHasGuestsAgain) },
 	{ CUE_TALK, ACTOR_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeGaretHasGrownQuiteStrongIn) },
@@ -1230,7 +1230,7 @@ CUE CottageRoomsA_Cues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE CottageRoomsA_CuesAfterLeaving[] = {
+CUE CottageRoomsACuesAfterLeaving[] = {
 	{ CUE_TALK, ACTOR_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeIsaacPleaseTakeCareOfMy) },
 	{ CUE_TALK, ACTOR_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeReceivingAQuestDirectlyFromThe) },
 	{ CUE_TALK, ACTOR_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeImProudOfYouGaretMy) },
@@ -1283,7 +1283,7 @@ CUE CottageRoomsA_CuesAfterLeaving[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE CottageRoomsA_CuesAfterKalay[] = {
+CUE CottageRoomsACuesAfterKalay[] = {
 	{ CUE_TALK, ACTOR_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeMiaIsSuchANiceGirl) },
 	{ CUE_TALK, ACTOR_GARETS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeThatIvanSeemsToBeA) },
 	{ CUE_TALK, ACTOR_GARETS_FATHER, CONDITION_ALWAYS, SCRIPT_REF(scCottageRoomsAAskAboutDora) },

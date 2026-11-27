@@ -7,7 +7,7 @@
 
 struct ACTOR;
 
-/* A footprint of the Shrine of the Sea God (ShrineOfTheSeaGod_Footprints):
+/* A footprint of the Shrine of the Sea God (ShrineOfTheSeaGodFootprintsTbl):
    where it lies in 16.16 pixels, its scale and its turn. */
 typedef struct SHRINE_OF_THE_SEA_GOD_SPOT {
 	Sint32 x;
@@ -61,7 +61,7 @@ void scShrineOfTheSeaGodChaseDjinni(void);
 void scShrineOfTheSeaGodCastSand(void);
 void scShrineOfTheSeaGodEndSand(void);
 
-extern Uint32 FieldEffect_MediumScript[];
+extern Uint32 FieldEffectMediumScript[];
 
 void scShrineOfTheSeaGodLandBrokenBridge(struct ACTOR *actor, Sint32 base);
 void scShrineOfTheSeaGodKeepFirstBridgeWithLeader(void);

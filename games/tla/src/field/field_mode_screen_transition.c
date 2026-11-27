@@ -12,7 +12,7 @@
 /* WINDOW_TRANSITION_RIPPLE measures a line further than this from its centre as
    this far. */
 #define TRANSITION_RIPPLE_LINES_MAX 120
-/* ScreenTransition_EdgeOffsets' entries, the ripple's period in lines. */
+/* ScreenTransitionEdgeOffsets' entries, the ripple's period in lines. */
 #define TRANSITION_EDGE_OFFSETS		32
 /* Where the centre-line transition puts its two lines once they meet: below the
    screen, so no switch happens. */
@@ -79,7 +79,7 @@ void fdEffectStartWindowHBlankDMA(void)
 		(volatile Uint32 *)dma0);
 }
 
-/* Each frame of a window transition: advances its value toward its end (and at
+/* Each tick of a window transition: advances its value toward its end (and at
    the end turns the windows off, or moves to the next mode), then builds the
    next page of window edges, WININ and WINOUT first and then a (left << 8 |
    right) pair for each of the 160 lines. */
@@ -93,7 +93,7 @@ void fdScreenTransitionUpdateScanlineTable(void)
 	ACTOR					*actor;
 	Uint32					 i;
 	Sint32					 k;
-	Sint32					 lineCount;
+	Sint32					 lineCnt;
 	Sint32					 value;
 	FIXED					 radiusSquaredFixed;
 	Sint32					 delta;
@@ -152,7 +152,7 @@ void fdScreenTransitionUpdateScanlineTable(void)
 			value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
 		else
 			value &= TRANSITION_OPEN - 1;
-		value = ScreenTransition_NoiseWidths[value];
+		value = ScreenTransitionNoiseWidths[value];
 		for(i = 0; i < DISPLAY_HEIGHT; i++) {
 			leftEdge = (syRandom() * (DISPLAY_WIDTH + 1 - value)) >> 16;
 			scanlineData[0] = ((leftEdge << 8) | (leftEdge + value));
@@ -162,7 +162,7 @@ void fdScreenTransitionUpdateScanlineTable(void)
 
 	case WINDOW_TRANSITION_SHAPE:
 		value = state->value;
-		shape = &ScreenTransition_Shapes[value & (TRANSITION_OPEN - 1)];
+		shape = &ScreenTransitionShapes[value & (TRANSITION_OPEN - 1)];
 		if(value & TRANSITION_OPEN) {
 			*scanlineData++ = shape->first;
 			*scanlineData++ = shape->second;
@@ -172,11 +172,11 @@ void fdScreenTransitionUpdateScanlineTable(void)
 		}
 		for(i = 0; i < 3; i++) {
 			span = &shape->spans[i];
-			lineCount = span->cnt;
+			lineCnt = span->cnt;
 			right = span->value;
-			if(lineCount != 0) {
+			if(lineCnt != 0) {
 				if(right != 0) {
-					for(k = 0; k < lineCount; k++) {
+					for(k = 0; k < lineCnt; k++) {
 						scanlineData[0] = right;
 						scanlineData += 2;
 					}
@@ -188,12 +188,12 @@ void fdScreenTransitionUpdateScanlineTable(void)
 					left = span->y0;
 					delta = span->x1;
 					right = span->y1;
-					for(k = 0; k < lineCount; k++) {
+					for(k = 0; k < lineCnt; k++) {
 						scanlineData[0] =
 							((radiusSquaredFixed +
-								 (delta - radiusSquaredFixed) * k / lineCount)
+								 (delta - radiusSquaredFixed) * k / lineCnt)
 								<< 8) +
-							(left + (right - left) * k / lineCount);
+							(left + (right - left) * k / lineCnt);
 						scanlineData += 2;
 					}
 				}
@@ -287,8 +287,8 @@ void fdScreenTransitionUpdateScanlineTable(void)
 			value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
 		else
 			value &= TRANSITION_OPEN - 1;
-		/* On odd frames the ellipse has no size: the flicker. */
-		if(FrameCount & 1)
+		/* On odd ticks the ellipse has no size: the flicker. */
+		if(TickCount & 1)
 			value = 0;
 		/* Squashed by 1.5: an ellipse 1.22 times as wide as it is tall. */
 		value *= 5;
@@ -303,11 +303,11 @@ void fdScreenTransitionUpdateScanlineTable(void)
 		cameraY8 = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	}
 		/* Centred on state->centerX and centerY; each line's edges move out by
-		   ScreenTransition_EdgeOffsets, indexed two entries a line and one a
-		   frame, so the outline ripples. */
+		   ScreenTransitionEdgeOffsets, indexed two entries a line and one a
+		   tick, so the outline ripples. */
 		centerX = (state->centerX - cameraX) / toFIXED(1);
 		centerY = (state->centerY - cameraY8) / toFIXED(1) - 16;
-		k = -centerY * 2 + FrameCount;
+		k = -centerY * 2 + TickCount;
 		*scanlineData++ = state->insideLayers;
 		*scanlineData++ = state->outsideLayers;
 		value = state->value;
@@ -331,7 +331,7 @@ void fdScreenTransitionUpdateScanlineTable(void)
 			right = centerX + horizontalExtent;
 			if(left < right) {
 				value = k & (TRANSITION_EDGE_OFFSETS - 1);
-				delta = ScreenTransition_EdgeOffsets[value];
+				delta = ScreenTransitionEdgeOffsets[value];
 				left -= delta;
 				right += delta;
 				/* An offset that closes the line leaves it with no window. */
@@ -411,7 +411,7 @@ void fdScreenTransitionStartWindowHeld(Sint32 mode)
 	state->value = 0;
 	state->insideLayers = WININ_WIN0_ALL | WININ_WIN1_ALL;
 	state->outsideLayers = (REG_WINOUT & WINOUT_WINOBJ_MASK) | WINOUT_WIN01_BG0;
-	sySetEvent(fdScreenTransitionUpdateScanlineTable, EVENT_PASS_FRAME);
+	sySetEvent(fdScreenTransitionUpdateScanlineTable, EVENT_PASS_TICK);
 	sySetEvent(fdEffectStartWindowHBlankDMA, EVENT_PASS_VBLANK - 10);
 }
 
@@ -434,11 +434,11 @@ SCREEN_TRANSITION_STATE *fdScreenTransitionAllocateAndClearState(void)
 	return state;
 }
 
-/* Fades the screen in over frames frames. mode is a SCENE_TRANSITION: its high
+/* Fades the screen in over ticks ticks. mode is a SCENE_TRANSITION: its high
    byte an SCREEN_TRANSITION_STYLE (from black, from the backdrop colour, a
    window transition whose low byte is an WINDOW_TRANSITION_MODE, a dissolve, or
    opening from the centre line, which a non-zero low byte makes flicker). */
-void fdScreenTransitionStart(Sint32 mode, Sint32 frames)
+void fdScreenTransitionStart(Sint32 mode, Sint32 ticks)
 {
 	MAP_VIEW_STATE *display;
 	Sint32			variant;
@@ -450,12 +450,12 @@ void fdScreenTransitionStart(Sint32 mode, Sint32 frames)
 	switch(style) {
 	case TRANSITION_FADE:
 		syScreenFadeToBlack(0);
-		syScreenFadeFromBlack(frames);
+		syScreenFadeFromBlack(ticks);
 		sySynch(1);
 		break;
 	case TRANSITION_BACKDROP_FADE:
 		fdPaletteFadeSetSource(PALETTE_TINT_FROM_SOURCE, PLTT_BACKDROP);
-		fdPaletteFadeStartInterpolation(frames);
+		fdPaletteFadeStartInterpolation(ticks);
 		sySynch(1);
 		IO_WRITE_QUEUE_PUSH((Uint32)&REG_DISPCNT,
 			REG_DISPCNT | display->dispcnt, IO_WRITE_HALFWORD);
@@ -469,14 +469,14 @@ void fdScreenTransitionStart(Sint32 mode, Sint32 frames)
 		state->insideLayers = WININ_WIN0_ALL;
 		state->outsideLayers =
 			(REG_WINOUT & WINOUT_WINOBJ_MASK) | WINOUT_WIN01_BG0;
-		sySetEvent(fdScreenTransitionUpdateScanlineTable, EVENT_PASS_FRAME);
+		sySetEvent(fdScreenTransitionUpdateScanlineTable, EVENT_PASS_TICK);
 		sySetEvent(fdEffectStartWindowHBlankDMA, EVENT_PASS_VBLANK - 10);
 		sySynch(1);
 		IO_WRITE_QUEUE_PUSH((Uint32)&REG_DISPCNT,
 			REG_DISPCNT | display->dispcnt, IO_WRITE_HALFWORD);
 		state->start = 0;
 		state->end = TRANSITION_OPEN;
-		state->duration = frames;
+		state->duration = ticks;
 		state->step = 0;
 		return;
 	}
@@ -487,12 +487,12 @@ void fdScreenTransitionStart(Sint32 mode, Sint32 frames)
 		state->value = TRANSITION_OPEN;
 		fdScreenTransitionFillTilemapAndColTile(DISSOLVE_COVER_COLOR);
 		sySynch(1);
-		sySetEvent(fdScreenTransitionUpdateDissolve, EVENT_PASS_FRAME);
+		sySetEvent(fdScreenTransitionUpdateDissolve, EVENT_PASS_TICK);
 		IO_WRITE_QUEUE_PUSH((Uint32)&REG_DISPCNT,
 			REG_DISPCNT | display->dispcnt, IO_WRITE_HALFWORD);
 		state->start = 0;
 		state->end = TRANSITION_OPEN;
-		state->duration = frames;
+		state->duration = ticks;
 		state->step = 0;
 		return;
 	}
@@ -505,18 +505,18 @@ void fdScreenTransitionStart(Sint32 mode, Sint32 frames)
 		display->winBottom = DISPLAY_HEIGHT / 2;
 		sySynch(1);
 		if(variant == CENTRE_LINE_STEADY) {
-			sySetEvent(fdScreenTransitionUpdate, EVENT_PASS_FRAME);
+			sySetEvent(fdScreenTransitionUpdate, EVENT_PASS_TICK);
 			syIntFunction(IRQ_HBLANK, 0, fdScreenTransitionUpdateScanline);
 			state->start = DISPLAY_HEIGHT / 2;
 			state->end = 0;
-			state->duration = frames;
+			state->duration = ticks;
 			state->step = 0;
 		} else {
-			sySetEvent(fdScreenTransitionUpdateFromCenter, EVENT_PASS_FRAME);
+			sySetEvent(fdScreenTransitionUpdateFromCenter, EVENT_PASS_TICK);
 			syIntFunction(IRQ_HBLANK, 0, fdScreenTransitionUpdateScanline);
 			state->start = DISPLAY_HEIGHT / 2;
 			state->end = 0;
-			state->duration = frames;
+			state->duration = ticks;
 			state->step = 0;
 		}
 		break;
@@ -526,9 +526,9 @@ void fdScreenTransitionStart(Sint32 mode, Sint32 frames)
 		IO_WRITE_HALFWORD);
 }
 
-/* Fades the screen out over frames frames, as fdScreenTransitionStart fades it
+/* Fades the screen out over ticks ticks, as fdScreenTransitionStart fades it
    in. */
-void fdScreenTransitionFinish(Sint32 mode, Sint32 frames)
+void fdScreenTransitionFinish(Sint32 mode, Sint32 ticks)
 {
 	Sint32 variant;
 	Sint32 style;
@@ -538,11 +538,11 @@ void fdScreenTransitionFinish(Sint32 mode, Sint32 frames)
 	switch(style) {
 	case TRANSITION_FADE:
 		syScreenFadeFromBlack(0);
-		syScreenFadeToBlack(frames);
+		syScreenFadeToBlack(ticks);
 		break;
 	case TRANSITION_BACKDROP_FADE:
 		fdPaletteFadeSetTarget(PALETTE_TINT_FROM_SOURCE, 0);
-		fdPaletteFadeStartInterpolation(frames);
+		fdPaletteFadeStartInterpolation(ticks);
 		break;
 	case TRANSITION_WINDOW: {
 		SCREEN_TRANSITION_STATE *state =
@@ -552,12 +552,12 @@ void fdScreenTransitionFinish(Sint32 mode, Sint32 frames)
 		state->insideLayers = WININ_WIN0_ALL;
 		state->outsideLayers =
 			(REG_WINOUT & WINOUT_WINOBJ_MASK) | WINOUT_WIN01_BG0;
-		sySetEvent(fdScreenTransitionUpdateScanlineTable, EVENT_PASS_FRAME);
+		sySetEvent(fdScreenTransitionUpdateScanlineTable, EVENT_PASS_TICK);
 		sySetEvent(fdEffectStartWindowHBlankDMA, EVENT_PASS_VBLANK - 10);
 		sySynch(1);
 		state->start = TRANSITION_OPEN;
 		state->end = TRANSITION_CLOSED;
-		state->duration = frames;
+		state->duration = ticks;
 		state->step = 0;
 		break;
 	}
@@ -568,10 +568,10 @@ void fdScreenTransitionFinish(Sint32 mode, Sint32 frames)
 		state->value = TRANSITION_OPEN;
 		fdScreenTransitionFillTilemapAndColTile(0);
 		sySynch(1);
-		sySetEvent(fdScreenTransitionUpdateDissolve, EVENT_PASS_FRAME);
+		sySetEvent(fdScreenTransitionUpdateDissolve, EVENT_PASS_TICK);
 		state->start = TRANSITION_OPEN;
 		state->end = TRANSITION_CLOSED;
-		state->duration = frames;
+		state->duration = ticks;
 		state->step = 0;
 		break;
 	}
@@ -581,18 +581,18 @@ void fdScreenTransitionFinish(Sint32 mode, Sint32 frames)
 
 		state->centreLine = 1;
 		if(variant == CENTRE_LINE_STEADY) {
-			sySetEvent(fdScreenTransitionUpdate, EVENT_PASS_FRAME);
+			sySetEvent(fdScreenTransitionUpdate, EVENT_PASS_TICK);
 			syIntFunction(IRQ_HBLANK, 0, fdScreenTransitionUpdateScanline);
 			state->start = 0;
 			state->end = DISPLAY_HEIGHT / 2;
-			state->duration = frames;
+			state->duration = ticks;
 			state->step = 0;
 		} else {
-			sySetEvent(fdScreenTransitionUpdateFromCenter, EVENT_PASS_FRAME);
+			sySetEvent(fdScreenTransitionUpdateFromCenter, EVENT_PASS_TICK);
 			syIntFunction(IRQ_HBLANK, 0, fdScreenTransitionUpdateScanline);
 			state->start = 0;
 			state->end = DISPLAY_HEIGHT / 2;
-			state->duration = frames;
+			state->duration = ticks;
 			state->step = 0;
 		}
 		break;
@@ -631,19 +631,19 @@ void fdScreenTransitionHideBackgrounds(
 	}
 }
 
-/* Each frame of the centre-line transition: moves the value toward its end and
+/* Each tick of the centre-line transition: moves the value toward its end and
    sets the two lines where the screen switches between shown and blank; at the
    end the map draws its usual three extra tiles again. */
 void fdScreenTransitionUpdate(void)
 {
 	SCREEN_TRANSITION_STATE *state;
-	MAP_VIEW_STATE			*window;
+	MAP_VIEW_STATE			*win;
 	Sint8					*duration;
 	Uint32					 edgeDistance;
 
 	state = Ram_HeapSlots->screenTransition;
 	duration = &state->duration;
-	window = (MAP_VIEW_STATE *)Ram_HeapSlots->mapGrid;
+	win = (MAP_VIEW_STATE *)Ram_HeapSlots->mapGrid;
 	if(*duration != 0) {
 		Sint8 *step = &state->step;
 
@@ -651,7 +651,7 @@ void fdScreenTransitionUpdate(void)
 			*duration = 0;
 			syCloseEvent(fdScreenTransitionUpdate);
 			syIntFunction(IRQ_HBLANK, 0, 0);
-			window->extraTiles = 3;
+			win->extraTiles = 3;
 			return;
 		} else {
 			Sint32 delta = state->end - state->start;
@@ -666,25 +666,25 @@ void fdScreenTransitionUpdate(void)
 	/* Once the lines meet at the centre they are put below the screen. */
 	edgeDistance = state->value;
 	if(edgeDistance >= DISPLAY_HEIGHT / 2) {
-		window->winTop = CENTER_LINE_HIDDEN_FIRST;
-		window->winBottom = CENTER_LINE_HIDDEN_SECOND;
+		win->winTop = CENTER_LINE_HIDDEN_FIRST;
+		win->winBottom = CENTER_LINE_HIDDEN_SECOND;
 	} else {
-		window->winTop = edgeDistance;
-		window->winBottom = DISPLAY_HEIGHT - 1 - edgeDistance;
+		win->winTop = edgeDistance;
+		win->winBottom = DISPLAY_HEIGHT - 1 - edgeDistance;
 	}
 }
 
-/* As fdScreenTransitionUpdate, but the lines flicker every other frame. */
+/* As fdScreenTransitionUpdate, but the lines flicker every other tick. */
 void fdScreenTransitionUpdateFromCenter(void)
 {
 	SCREEN_TRANSITION_STATE *state;
-	MAP_VIEW_STATE			*window;
+	MAP_VIEW_STATE			*win;
 	Sint8					*duration;
 	Uint16					 edgeDistance;
 
 	state = Ram_HeapSlots->screenTransition;
 	duration = &state->duration;
-	window = (MAP_VIEW_STATE *)Ram_HeapSlots->mapGrid;
+	win = (MAP_VIEW_STATE *)Ram_HeapSlots->mapGrid;
 	if(*duration != 0) {
 		Sint8 *step = &state->step;
 
@@ -695,24 +695,24 @@ void fdScreenTransitionUpdateFromCenter(void)
 			return;
 		} else {
 			Sint32 delta = state->end - state->start;
-			Sint32 edgeOffset;
+			Sint32 edgeOfs;
 
 			state->step++;
-			edgeOffset = syIntegerDivide(delta * state->step, state->duration);
-			state->value = state->start + edgeOffset;
+			edgeOfs = syIntegerDivide(delta * state->step, state->duration);
+			state->value = state->start + edgeOfs;
 		}
 	}
 
 	edgeDistance = state->value;
 	if(edgeDistance >= DISPLAY_HEIGHT / 2) {
-		window->winTop = CENTER_LINE_HIDDEN_FIRST;
-		window->winBottom = CENTER_LINE_HIDDEN_SECOND;
-	} else if(edgeDistance != 0 && (FrameCount & 1)) {
-		window->winTop = edgeDistance + DISPLAY_HEIGHT / 2;
-		window->winBottom = DISPLAY_HEIGHT / 2 - edgeDistance;
+		win->winTop = CENTER_LINE_HIDDEN_FIRST;
+		win->winBottom = CENTER_LINE_HIDDEN_SECOND;
+	} else if(edgeDistance != 0 && (TickCount & 1)) {
+		win->winTop = edgeDistance + DISPLAY_HEIGHT / 2;
+		win->winBottom = DISPLAY_HEIGHT / 2 - edgeDistance;
 	} else {
-		window->winTop = 0;
-		window->winBottom = DISPLAY_HEIGHT - 1;
+		win->winTop = 0;
+		win->winBottom = DISPLAY_HEIGHT - 1;
 	}
 }
 
@@ -775,8 +775,8 @@ again:
 	}
 }
 
-/* Each frame of the dissolve: moves the value toward its end and sets two more
-   of the solid tile's 64 pixels, in the order of ScreenTransition_DitherTable:
+/* Each tick of the dissolve: moves the value toward its end and sets two more
+   of the solid tile's 64 pixels, in the order of ScreenTransitionDitherTable:
    to colour 0 while the screen opens (values up to TRANSITION_OPEN clear the
    cover fdScreenTransitionStart filled with DISSOLVE_COVER_COLOR), and to
    DISSOLVE_COVER_COLOR while it closes (values after it fill the clear tile
@@ -785,8 +785,8 @@ void fdScreenTransitionUpdateDissolve(void)
 {
 	SCREEN_TRANSITION_DISSOLVE_STATE *state =
 		(SCREEN_TRANSITION_DISSOLVE_STATE *)Ram_HeapSlots->screenTransition;
-	Sint32 ditherIndex;
-	Sint32 colorIndex;
+	Sint32 ditherIdx;
+	Sint32 colIdx;
 	Uint32 i;
 
 	if(state->duration != 0) {
@@ -809,22 +809,21 @@ void fdScreenTransitionUpdateDissolve(void)
 		}
 	}
 
-	ditherIndex = state->value - 1;
+	ditherIdx = state->value - 1;
 	state->page ^= 1;
-	colorIndex = 0;
-	if(ditherIndex & TRANSITION_OPEN)
-		colorIndex = DISSOLVE_COVER_COLOR;
-	ditherIndex = (ditherIndex & (TRANSITION_OPEN - 1)) * 2;
+	colIdx = 0;
+	if(ditherIdx & TRANSITION_OPEN)
+		colIdx = DISSOLVE_COVER_COLOR;
+	ditherIdx = (ditherIdx & (TRANSITION_OPEN - 1)) * 2;
 	for(i = 0; i <= 1; i++) {
-		Uint8 pixelIndex =
-			ScreenTransition_DitherTable[ditherIndex & (8 * 8 - 1)];
-		Uint8 *tileByte = &state->solidTilePixels[pixelIndex >> 1];
+		Uint8  pixelIdx = ScreenTransitionDitherTable[ditherIdx & (8 * 8 - 1)];
+		Uint8 *tileByte = &state->solidTilePixels[pixelIdx >> 1];
 
-		if(pixelIndex & 1)
-			*tileByte = (*tileByte & 0x0f) | (colorIndex << 4);
+		if(pixelIdx & 1)
+			*tileByte = (*tileByte & 0x0f) | (colIdx << 4);
 		else
-			*tileByte = (*tileByte & 0xf0) | colorIndex;
-		ditherIndex++;
+			*tileByte = (*tileByte & 0xf0) | colIdx;
+		ditherIdx++;
 	}
 
 	IO_WRITE_QUEUE_PUSH((Uint32)BG_CHAR_BLOCK(0),
@@ -833,20 +832,20 @@ void fdScreenTransitionUpdateDissolve(void)
 
 /* Fills background screen block 4 with tile 0 in WINDOW_PALETTE and, unless
    color is -1, makes tile 0 solid color. */
-void fdScreenTransitionFillTilemapAndColTile(Sint32 color)
+void fdScreenTransitionFillTilemapAndColTile(Sint32 col)
 {
 	SCREEN_TRANSITION_STATE *state = Ram_HeapSlots->screenTransition;
 	DMA_FILL32(WINDOW_TILE_PAIR(BG_TILE_PALETTE(WINDOW_PALETTE)),
 		BG_SCREEN_BLOCK(4),
 		DISPLAY_TILE_HEIGHT * BG_SCREEN_WIDTH * sizeof(Uint16));
-	if(color != -1) {
+	if(col != -1) {
 		/* A row of eight pixels is a word of eight nibbles; a tile is eight
 		   rows. */
 		Uint32	pattern = 0;
 		Sint32	i;
 		Uint32 *tile;
 		for(i = 0; i < 8; i++)
-			pattern = (pattern << 4) | color;
+			pattern = (pattern << 4) | col;
 		tile = state->solidTile;
 		for(i = 0; i < 8; i++)
 			*tile++ = pattern;
@@ -866,7 +865,7 @@ void fdScreenTransitionStartDissolveHeld(Sint32 mode)
 	fdScreenTransitionFillTilemapAndColTile(0);
 	state->mode = mode;
 	state->value = 0;
-	sySetEvent(fdScreenTransitionUpdateDissolve, EVENT_PASS_FRAME);
+	sySetEvent(fdScreenTransitionUpdateDissolve, EVENT_PASS_TICK);
 	sySynch(120);
 }
 

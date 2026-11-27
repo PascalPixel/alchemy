@@ -5,7 +5,7 @@
    bounds. */
 
 /* Sets the x, y and z of a three-part vector: a position about to be projected,
-   a per-frame step, a camera point or a scale. */
+   a per-tick step, a camera point or a scale. */
 #define SET_VECTOR(v, x, y, z) ((v)[0] = (x), (v)[1] = (y), (v)[2] = (z))
 
 /* Sets the position or the velocity of a particle, a piece of debris or an

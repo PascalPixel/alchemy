@@ -1,12 +1,12 @@
-/* Smoke rising from an actor: every eighth frame a black puff at 0.7 of its
+/* Smoke rising from an actor: every eighth tick a black puff at 0.7 of its
    size rises from within 4 pixels of it, 13 to 32 pixels up, at half a pixel to
-   0.9 a frame. The energy block smokes so once lightning has struck it
+   0.9 a tick. The energy block smokes so once lightning has struck it
    (scJupiterLighthouseFlashSky). */
 Sint32 scActorEmitSmoke(ACTOR *actor)
 {
 	EFFECT_OPTIONS puff;
 
-	if((FrameCount & 7) == 0) {
+	if((TickCount & 7) == 0) {
 		FIXED x;
 		FIXED y;
 		FIXED speed;

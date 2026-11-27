@@ -13,9 +13,9 @@ typedef struct ARTICLE_TABLE {
 	Uint8 *text[ARTICLE_KINDS];
 } ARTICLE_TABLE;
 
-extern const ARTICLE_TABLE Article_Table;
+extern const ARTICLE_TABLE ArticleTable;
 #if (LANGUAGE == LANGUAGE_SPANISH)
-extern const ARTICLE_TABLE Article_Indefinite;
+extern const ARTICLE_TABLE ArticleIndefinite;
 #endif
 #if (LANGUAGE == LANGUAGE_FRENCH)
 /* The German "de" articles, elided and whole, copied whole (articles.c). */
@@ -23,7 +23,7 @@ typedef struct DE_ARTICLES {
 	Uint8 *text[2];
 } DE_ARTICLES;
 
-extern const struct DE_ARTICLES Text_DeArticles;
+extern const struct DE_ARTICLES TextDeArticles;
 #endif
 
 /* The control codes of a message as stored (the PO catalogs' names), which
@@ -133,17 +133,16 @@ enum {
 	ARTICLE_AN = 2 /* before a capital vowel */
 };
 
-/* Copies a name into the decoded text at writePosition and returns the position
+/* Copies a name into the decoded text at writePos and returns the position
    after it: with its article in front (ARTICLE_FORM_ARTICLE, or
    ARTICLE_FORM_BY_COUNT for one) and an s or es after it (ARTICLE_FORM_PLURAL,
    or ARTICLE_FORM_BY_COUNT for several). With mode set, a space and a line
    spacing of TEXT_DEFAULT_LINE_SPACING go before the name, and a line spacing
    of 8 and a space after it. suffix is left 1 when the name ends in s. */
-Uint32 mnMessageAppendArticleName(Sint32 mode, Uint16 *name,
-	Uint32 writePosition, Uint16 *entries, Sint32 articleForm, Sint32 plural,
-	Sint32 *suffix)
+Uint32 mnMessageAppendArticleName(Sint32 mode, Uint16 *name, Uint32 writePos,
+	Uint16 *entries, Sint32 articleForm, Sint32 plural, Sint32 *suffix)
 {
-	ARTICLE_TABLE table;
+	ARTICLE_TABLE tbl;
 	Sint32		  kind;
 	Uint16		  head;
 	Uint16		  c;
@@ -152,14 +151,14 @@ Uint32 mnMessageAppendArticleName(Sint32 mode, Uint16 *name,
 	Sint32		  letters;
 
 	if(mode != 0) {
-		TEXT_APPEND(entries, writePosition, ' ');
-		TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
-		TEXT_APPEND(entries, writePosition, TEXT_DEFAULT_LINE_SPACING);
+		TEXT_APPEND(entries, writePos, ' ');
+		TEXT_APPEND(entries, writePos, TEXT_LINE_SPACING);
+		TEXT_APPEND(entries, writePos, TEXT_DEFAULT_LINE_SPACING);
 	}
 	if(articleForm == ARTICLE_FORM_ARTICLE ||
 		(articleForm == ARTICLE_FORM_BY_COUNT && plural == 0)) {
 		kind = 0;
-		table = Article_Table;
+		tbl = ArticleTable;
 		head = name[0];
 		if(head == MESSAGE_ARTICLE_CLASS) {
 			kind = name[1] - 1;
@@ -172,11 +171,11 @@ Uint32 mnMessageAppendArticleName(Sint32 mode, Uint16 *name,
 			else
 				kind = ARTICLE_A;
 		}
-		article = table.text[kind & ARTICLE_KIND_MASK];
+		article = tbl.text[kind & ARTICLE_KIND_MASK];
 		for(letters = 0; letters < 8; letters++) {
 			if((letter = *article++) == 0)
 				break;
-			TEXT_APPEND(entries, writePosition, letter);
+			TEXT_APPEND(entries, writePos, letter);
 		}
 	} else {
 		head = name[0];
@@ -185,7 +184,7 @@ Uint32 mnMessageAppendArticleName(Sint32 mode, Uint16 *name,
 	}
 	while(*name != 0) {
 		c = *name++;
-		TEXT_APPEND(entries, writePosition, (Sint16)c);
+		TEXT_APPEND(entries, writePos, (Sint16)c);
 		if(c == 'S' || c == 's')
 			*suffix = 1;
 		else
@@ -194,20 +193,20 @@ Uint32 mnMessageAppendArticleName(Sint32 mode, Uint16 *name,
 	if(articleForm == ARTICLE_FORM_PLURAL ||
 		(articleForm == ARTICLE_FORM_BY_COUNT && plural != 0)) {
 		if(*suffix != 0) {
-			TEXT_APPEND(entries, writePosition, 'e');
+			TEXT_APPEND(entries, writePos, 'e');
 		}
-		TEXT_APPEND(entries, writePosition, 's');
+		TEXT_APPEND(entries, writePos, 's');
 	}
 	if(mode != 0) {
-		TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
-		TEXT_APPEND(entries, writePosition, 8);
-		TEXT_APPEND(entries, writePosition, ' ');
+		TEXT_APPEND(entries, writePos, TEXT_LINE_SPACING);
+		TEXT_APPEND(entries, writePos, 8);
+		TEXT_APPEND(entries, writePos, ' ');
 	}
-	return writePosition;
+	return writePos;
 }
 
 #elif (LANGUAGE != LANGUAGE_JAPANESE)
-/* Copies a name into the decoded text at writePosition and returns the position
+/* Copies a name into the decoded text at writePos and returns the position
    after it: ARTICLE_FORM_BARE and ARTICLE_FORM_DE take no article, the other
    forms the article of the name's class, its first letter a capital when suffix
    is 2 (a sentence's start); in French, ARTICLE_FORM_DE puts "de" (elided
@@ -248,7 +247,7 @@ Uint32 mnMessageAppendArticleName(Sint32 mode, Uint16 *name,
 		Sint32			   n;
 
 		head = name[0];
-		de = Text_DeArticles;
+		de = TextDeArticles;
 		if(head == 'A' || head == 'I' || head == 'U' || head == 'E' ||
 			head == 'O')
 			word = de.text[0];
@@ -271,9 +270,9 @@ Uint32 mnMessageAppendArticleName(Sint32 mode, Uint16 *name,
 			name += 2;
 	} else {
 		kind = 0;
-		table = Article_Table;
+		table = ArticleTable;
 #if (LANGUAGE == LANGUAGE_SPANISH)
-		indefiniteTable = Article_Indefinite;
+		indefiniteTable = ArticleIndefinite;
 #endif
 		if(name[0] == MESSAGE_ARTICLE_CLASS) {
 			kind = name[1];
@@ -338,34 +337,33 @@ extern Uint8 MsgClassName[], MsgItemName[], MsgAbilityName[],
 
 #if LANGUAGE != LANGUAGE_JAPANESE && LANGUAGE != LANGUAGE_ENGLISH
 #if LANGUAGE == LANGUAGE_FRENCH
-extern const Sint8 LocalizedWord_ItemPronoun[];
+extern const Sint8 LocalizedWordItemPronoun[];
 #else
 /* The possessives (articles.c), copied whole: Spanish {singular, plural},
-   German and Italian one for each item gender (LocalizedWord_ItemGenders). */
+   German and Italian one for each item gender (LocalizedWordItemGenders). */
 #define POSSESSIVE_COUNT SPANISH_OR(2, 4)
 
 /* The possessive endings, by kind, copied whole (articles.c). */
 struct POSSESSIVE_TABLE {
 	Sint8 *text[POSSESSIVE_COUNT];
 };
-extern const struct POSSESSIVE_TABLE LocalizedWord_ItemPossessives;
+extern const struct POSSESSIVE_TABLE LocalizedWordItemPossessives;
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_ITALIAN
-extern const Sint8 LocalizedWord_ItemGenders[];
+extern const Sint8 LocalizedWordItemGenders[];
 #endif
 #if LANGUAGE == LANGUAGE_GERMAN
-extern const Uint8 *const LocalizedWord_CountedNouns[];
+extern const Uint8 *const LocalizedWordCountedNouns[];
 #endif
 #endif
 #endif
 
 Uint32 mnMessageArgumentLookup(Uint32 name, Uint32 clear);
-Uint8 *mnStringFormatNum(Uint8 *buffer, Sint32 input, Sint32 width);
+Uint8 *mnStringFormatNum(Uint8 *buf, Sint32 input, Sint32 width);
 
 #if LANGUAGE != LANGUAGE_JAPANESE
 
-Uint32 mnMessageAppendArticleName(Sint32 mode, Uint16 *name,
-	Uint32 writePosition, Uint16 *entries, Sint32 articleForm, Sint32 plural,
-	Sint32 *suffix);
+Uint32 mnMessageAppendArticleName(Sint32 mode, Uint16 *name, Uint32 writePos,
+	Uint16 *entries, Sint32 articleForm, Sint32 plural, Sint32 *suffix);
 
 /* Decodes message into the ring of decoded text (WIN_STATE.textBuf) after the
    text decoded last, and returns where it starts; message -1 returns the last
@@ -773,7 +771,7 @@ Sint32 mnMessageDecode(Sint32 message, Sint32 clear)
 					case MESSAGE_LOCALIZED_WORD:
 						/* A counted noun, singular or plural, by its kind. */
 						articleForm = decode(&reader) - 1;
-						for(nameBytes = (Uint8 *)LocalizedWord_CountedNouns
+						for(nameBytes = (Uint8 *)LocalizedWordCountedNouns
 								[(articleForm & 7) * 2 + plural];
 							*nameBytes != 0; nameBytes++) {
 							TEXT_APPEND(entry, writePosition, *nameBytes);
@@ -815,17 +813,17 @@ Sint32 mnMessageDecode(Sint32 message, Sint32 clear)
 						argument =
 							mnMessageArgumentLookup(MESSAGE_ARGUMENT_ITEM, 0);
 						argument &= INVENTORY_ITEM_ID_MASK;
-						possessives = LocalizedWord_ItemPossessives;
-						c = LocalizedWord_ItemGenders[argument];
+						possessives = LocalizedWordItemPossessives;
+						c = LocalizedWordItemGenders[argument];
 						word = possessives.text[c & 3];
 #else
 						/* DEAD: the item argument is read and dropped; the ROM
 						   keeps the call. */
 						mnMessageArgumentLookup(MESSAGE_ARGUMENT_ITEM, 0);
 #if LANGUAGE == LANGUAGE_FRENCH
-						word = (Sint8 *)LocalizedWord_ItemPronoun;
+						word = (Sint8 *)LocalizedWordItemPronoun;
 #else
-						possessives = LocalizedWord_ItemPossessives;
+						possessives = LocalizedWordItemPossessives;
 						word = possessives.text[plural];
 #endif
 #endif
@@ -921,53 +919,53 @@ extern Uint8 MsgWaitingForOpponent[];
    なぞの女 ("Mystery Woman") follows it. */
 #define MYSTERY_MAN_MESSAGE ((Sint32)MsgWaitingForOpponent + 1)
 
-/* Copies a name into the decoded text at writePosition and returns the position
+/* Copies a name into the decoded text at writePos and returns the position
    after it. With mode set, a space and a line spacing of 10 go before the name,
    and a line spacing of 8 and a space after it. The other editions' function of
    this name, at the top of this file, also writes articles; Japanese has none,
    and its decoder inlines this copy. */
 static inline Uint32 mnMessageAppendArticleName(Sint32 mode, Uint16 *name,
-	Uint32 writePosition, Uint16 *entries, Sint32 articleForm, Sint32 plural,
+	Uint32 writePos, Uint16 *entries, Sint32 articleForm, Sint32 plural,
 	Sint32 *suffix)
 {
 	Uint16 c;
 
 	if(mode != 0) {
-		TEXT_APPEND(entries, writePosition, ' ');
-		TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
-		TEXT_APPEND(entries, writePosition, TEXT_DEFAULT_LINE_SPACING);
+		TEXT_APPEND(entries, writePos, ' ');
+		TEXT_APPEND(entries, writePos, TEXT_LINE_SPACING);
+		TEXT_APPEND(entries, writePos, TEXT_DEFAULT_LINE_SPACING);
 	}
 	while(*name != 0) {
 		c = *name++;
-		TEXT_APPEND(entries, writePosition, c);
+		TEXT_APPEND(entries, writePos, c);
 	}
 	if(mode != 0) {
-		TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
-		TEXT_APPEND(entries, writePosition, 8);
-		TEXT_APPEND(entries, writePosition, ' ');
+		TEXT_APPEND(entries, writePos, TEXT_LINE_SPACING);
+		TEXT_APPEND(entries, writePos, 8);
+		TEXT_APPEND(entries, writePos, ' ');
 	}
-	return writePosition;
+	return writePos;
 }
 
 /* The Japanese mnMessageDecode: no articles or plurals, and a battle message
    (WINDOW_BATTLE_MESSAGE) sets its names off and doubles each space. Outside
    the field, the Mystery Man and Mystery Woman are named from
    MYSTERY_MAN_MESSAGE and the message after it rather than their unit names. */
-Sint32 mnMessageDecode(Sint32 message, Sint32 clear)
+Sint32 mnMessageDecode(Sint32 msg, Sint32 clear)
 {
 	WIN_STATE *state = WINDOW_STATE;
 	Uint32	   code = 0;
 	Sint32	   lineStart = 1;
 	Uint32	   start = state->textBufEnd;
-	Uint32	   decodedCount = 0;
+	Uint32	   decodedCnt = 0;
 	Bool	   running = TRUE;
-	Uint32	   writePosition = start;
+	Uint32	   writePos = start;
 	Uint16	  *entry = state->textBuf;
 	Uint8	   mode = state->battleMode & WINDOW_BATTLE_MESSAGE;
 	Sint32 (*decode)(TEXT_READER *);
 	Bool		overflow = FALSE;
-	Uint32		previousCode;
-	Uint32		nextPosition;
+	Uint32		prevCode;
+	Uint32		nextPos;
 	Uint32		i;
 	Uint32		j;
 	Sint32		argument;
@@ -975,25 +973,25 @@ Sint32 mnMessageDecode(Sint32 message, Sint32 clear)
 	Sint32		value;
 	Uint32		length;
 	UNIT	   *unit;
-	Uint8	   *numberText;
+	Uint8	   *numText;
 	Uint8	   *nameBytes;
 	Uint16	   *nameOutput;
 	Uint16		name[MESSAGE_NAME_HALFWORDS];
-	Uint8		numberBuffer[TEXT_NUMBER_BUFFER_SIZE];
+	Uint8		numBuf[TEXT_NUMBER_BUFFER_SIZE];
 	TEXT_READER reader;
 	HEAP_SLOTS *heap;
 
-	if(message == -1) {
+	if(msg == -1) {
 		start = state->lastMsgStart;
 	} else {
 		RAM_CODE_LOAD_SLOT(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbolCode,
 			Text_DecodeSymbolCodeSize);
 		heap = Ram_HeapSlots;
 		decode = (Sint32 (*)(TEXT_READER *))heap->msgDecoder;
-		mnMessageFind(&reader, message);
+		mnMessageFind(&reader, msg);
 
 		do {
-			previousCode = code;
+			prevCode = code;
 			code = (Uint32)decode(&reader);
 
 			if(overflow != 0) {
@@ -1045,44 +1043,39 @@ Sint32 mnMessageDecode(Sint32 message, Sint32 clear)
 			} else {
 				if(state->haltingSpeech != 0 && lineStart == 0 &&
 					code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED) {
-					TEXT_APPEND(entry, writePosition, ENTRY_NARROW_GAP);
+					TEXT_APPEND(entry, writePos, ENTRY_NARROW_GAP);
 				}
 
 				if(state->spacingAfter != 0 && lineStart == 0 &&
 					code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED &&
-					previousCode <= WIDE_GAP_LAST &&
-					previousCode >= WIDE_GAP_FIRST &&
-					previousCode != TEXT_MARK_VOICED &&
-					previousCode != TEXT_MARK_SEMIVOICED &&
-					previousCode != TEXT_SPACE &&
-					previousCode != TEXT_JAPANESE_MIDDLE_DOT &&
-					previousCode != TEXT_JAPANESE_FULL_STOP &&
-					previousCode != TEXT_JAPANESE_COMMA) {
-					TEXT_APPEND(entry, writePosition, ENTRY_WIDE_GAP);
+					prevCode <= WIDE_GAP_LAST && prevCode >= WIDE_GAP_FIRST &&
+					prevCode != TEXT_MARK_VOICED &&
+					prevCode != TEXT_MARK_SEMIVOICED &&
+					prevCode != TEXT_SPACE &&
+					prevCode != TEXT_JAPANESE_MIDDLE_DOT &&
+					prevCode != TEXT_JAPANESE_FULL_STOP &&
+					prevCode != TEXT_JAPANESE_COMMA) {
+					TEXT_APPEND(entry, writePos, ENTRY_WIDE_GAP);
 				}
 
 				if(code >= TEXT_SPACE) {
 					if(mode != 0 && code == ' ') {
-						TEXT_APPEND(entry, writePosition, (Uint16)code);
+						TEXT_APPEND(entry, writePos, (Uint16)code);
 					}
 					/* The ellipsis here is three middle dots, then a full
 					   stop. */
 					if(state->haltingSpeech != 0 &&
 						(code == TEXT_SPACE ||
-							decodedCount > HALTING_SPEECH_LENGTH)) {
-						TEXT_APPEND(
-							entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
-						TEXT_APPEND(
-							entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
-						TEXT_APPEND(
-							entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
-						TEXT_APPEND(
-							entry, writePosition, TEXT_JAPANESE_FULL_STOP);
+							decodedCnt > HALTING_SPEECH_LENGTH)) {
+						TEXT_APPEND(entry, writePos, TEXT_JAPANESE_MIDDLE_DOT);
+						TEXT_APPEND(entry, writePos, TEXT_JAPANESE_MIDDLE_DOT);
+						TEXT_APPEND(entry, writePos, TEXT_JAPANESE_MIDDLE_DOT);
+						TEXT_APPEND(entry, writePos, TEXT_JAPANESE_FULL_STOP);
 						overflow = TRUE;
-						if(decodedCount > HALTING_SPEECH_LENGTH)
+						if(decodedCnt > HALTING_SPEECH_LENGTH)
 							code = TEXT_SPACE;
 					}
-					TEXT_APPEND(entry, writePosition, (Uint16)code);
+					TEXT_APPEND(entry, writePos, (Uint16)code);
 					lineStart = 0;
 				} else {
 					switch(code) {
@@ -1093,18 +1086,17 @@ Sint32 mnMessageDecode(Sint32 message, Sint32 clear)
 						break;
 					case MESSAGE_TEXT_COLOR:
 					case MESSAGE_TEXT_EFFECT:
-						TEXT_APPEND(entry, writePosition, (Uint16)code);
-						TEXT_APPEND(entry, writePosition,
-							decode(&reader) + OPERAND_UNBIAS);
+						TEXT_APPEND(entry, writePos, (Uint16)code);
+						TEXT_APPEND(
+							entry, writePos, decode(&reader) + OPERAND_UNBIAS);
 						break;
 					case MESSAGE_ARGUMENT_SIGNED_NUMBER:
 						value = mnMessageArgumentLookup(
 							MESSAGE_ARGUMENT_NUMBER, clear);
-						numberText = mnStringFormatNum(numberBuffer, value, 0);
-						i = numberText - numberBuffer;
-						while(i != TEXT_NUMBER_BUFFER_SIZE &&
-							numberBuffer[i] != 0) {
-							TEXT_APPEND(entry, writePosition, numberBuffer[i]);
+						numText = mnStringFormatNum(numBuf, value, 0);
+						i = numText - numBuf;
+						while(i != TEXT_NUMBER_BUFFER_SIZE && numBuf[i] != 0) {
+							TEXT_APPEND(entry, writePos, numBuf[i]);
 							i++;
 						}
 						break;
@@ -1113,8 +1105,8 @@ Sint32 mnMessageDecode(Sint32 message, Sint32 clear)
 							MESSAGE_ARGUMENT_CLASS, clear);
 						mnMessageDecodeRaw(argument + (Sint32)MsgClassName,
 							name, MESSAGE_NAME_HALFWORDS);
-						writePosition = mnMessageAppendArticleName(
-							mode, name, writePosition, entry, 0, 0, 0);
+						writePos = mnMessageAppendArticleName(
+							mode, name, writePos, entry, 0, 0, 0);
 						break;
 					case MESSAGE_ARGUMENT_ITEM_NAME:
 						argument = mnMessageArgumentLookup(
@@ -1122,16 +1114,16 @@ Sint32 mnMessageDecode(Sint32 message, Sint32 clear)
 						mnMessageDecodeRaw((argument & INVENTORY_ITEM_ID_MASK) +
 								(Sint32)MsgItemName,
 							name, MESSAGE_NAME_HALFWORDS);
-						writePosition = mnMessageAppendArticleName(
-							mode, name, writePosition, entry, 0, 0, 0);
+						writePos = mnMessageAppendArticleName(
+							mode, name, writePos, entry, 0, 0, 0);
 						break;
 					case MESSAGE_ARGUMENT_ABILITY_NAME:
 						argument = mnMessageArgumentLookup(
 							MESSAGE_ARGUMENT_ABILITY, clear);
 						mnMessageDecodeRaw(argument + (Sint32)MsgAbilityName,
 							name, MESSAGE_NAME_HALFWORDS);
-						writePosition = mnMessageAppendArticleName(
-							mode, name, writePosition, entry, 0, 0, 0);
+						writePos = mnMessageAppendArticleName(
+							mode, name, writePos, entry, 0, 0, 0);
 						break;
 					case MESSAGE_ARGUMENT_LOCATION_NAME:
 						mnMessageDecodeRaw(
@@ -1141,8 +1133,8 @@ Sint32 mnMessageDecode(Sint32 message, Sint32 clear)
 								1) +
 								(Sint32)MsgDebugAreaName,
 							name, MESSAGE_NAME_HALFWORDS);
-						writePosition = mnMessageAppendArticleName(
-							mode, name, writePosition, entry, 0, 0, 0);
+						writePos = mnMessageAppendArticleName(
+							mode, name, writePos, entry, 0, 0, 0);
 						break;
 					case MESSAGE_PROTAGONIST_NAME:
 						nameBytes =
@@ -1155,8 +1147,8 @@ Sint32 mnMessageDecode(Sint32 message, Sint32 clear)
 							nameBytes++;
 							nameOutput++;
 						} while(i < UNIT_NAME_SIZE);
-						writePosition = mnMessageAppendArticleName(
-							mode, name, writePosition, entry, 0, 0, 0);
+						writePos = mnMessageAppendArticleName(
+							mode, name, writePos, entry, 0, 0, 0);
 						break;
 					case MESSAGE_ARGUMENT_ACTOR_NAME:
 						unit = syUnitGet(mnMessageArgumentLookup(
@@ -1169,8 +1161,8 @@ Sint32 mnMessageDecode(Sint32 message, Sint32 clear)
 								mysteryName++;
 							mnMessageDecodeRaw(
 								mysteryName, name, MYSTERY_NAME_CAPACITY);
-							writePosition = mnMessageAppendArticleName(
-								mode, name, writePosition, entry, 0, 0, 0);
+							writePos = mnMessageAppendArticleName(
+								mode, name, writePos, entry, 0, 0, 0);
 						} else {
 							nameBytes = unit->name;
 							nameOutput = name;
@@ -1181,8 +1173,8 @@ Sint32 mnMessageDecode(Sint32 message, Sint32 clear)
 								nameBytes++;
 								nameOutput++;
 							} while(j < UNIT_NAME_SIZE);
-							writePosition = mnMessageAppendArticleName(
-								mode, name, writePosition, entry, 0, 0, 0);
+							writePos = mnMessageAppendArticleName(
+								mode, name, writePos, entry, 0, 0, 0);
 						}
 						break;
 					case MESSAGE_ACTOR_NAME:
@@ -1196,8 +1188,8 @@ Sint32 mnMessageDecode(Sint32 message, Sint32 clear)
 							nameBytes++;
 							nameOutput++;
 						} while(j < UNIT_NAME_SIZE);
-						writePosition = mnMessageAppendArticleName(
-							mode, name, writePosition, entry, 0, 0, 0);
+						writePos = mnMessageAppendArticleName(
+							mode, name, writePos, entry, 0, 0, 0);
 						break;
 					case MESSAGE_ACTOR_NAME_START:
 						argument = decode(&reader) - 1;
@@ -1211,8 +1203,8 @@ Sint32 mnMessageDecode(Sint32 message, Sint32 clear)
 								*nameOutput++ = *nameBytes++;
 						}
 						*nameOutput = 0;
-						writePosition = mnMessageAppendArticleName(
-							mode, name, writePosition, entry, 0, 0, 0);
+						writePos = mnMessageAppendArticleName(
+							mode, name, writePos, entry, 0, 0, 0);
 						break;
 					case -1:
 						break;
@@ -1220,18 +1212,18 @@ Sint32 mnMessageDecode(Sint32 message, Sint32 clear)
 					case MESSAGE_LINE_BREAK:
 						lineStart = 1;
 					default:
-						TEXT_APPEND(entry, writePosition, (Uint16)code);
+						TEXT_APPEND(entry, writePos, (Uint16)code);
 						break;
 					}
 				}
 			}
-			decodedCount++;
-		} while(running != 0 && decodedCount <= TEXT_BUFFER_MASK);
+			decodedCnt++;
+		} while(running != 0 && decodedCnt <= TEXT_BUFFER_MASK);
 
-		TEXT_APPEND(entry, writePosition, (Uint16)code);
-		entry[writePosition] = 0;
-		nextPosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-		state->textBufEnd = (Uint16)nextPosition;
+		TEXT_APPEND(entry, writePos, (Uint16)code);
+		entry[writePos] = 0;
+		nextPos = (writePos + 1) & TEXT_BUFFER_MASK;
+		state->textBufEnd = (Uint16)nextPos;
 		syHeapSlotRelease(HEAP_SLOT_MESSAGE_DECODER);
 		state->lastMsgStart = (Uint16)start;
 	}

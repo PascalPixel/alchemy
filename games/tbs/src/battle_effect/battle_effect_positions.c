@@ -1,12 +1,12 @@
 /* Effect positions, projection and id dispatch helpers. Part of
    battle_effect.c. */
 
-/* Particle motion and projection. A particle moves a frame by its velocity,
+/* Particle motion and projection. A particle moves a tick by its velocity,
    gravity on its vertical speed, and a damping out of DAMPING_SCALE; the
    projection helpers return a point 16 pixels above where a unit stands, where
    effects anchor on it. */
 
-/* Moves a particle one frame in three dimensions. */
+/* Moves a particle one tick in three dimensions. */
 void btParticleAdvanceWithGravity3D(
 	PARTICLE *particle, Sint32 damping, Sint32 gravity)
 {
@@ -19,7 +19,7 @@ void btParticleAdvanceWithGravity3D(
 		particle->velZ * damping / DAMPING_SCALE);
 }
 
-/* Moves a particle one frame on the screen. */
+/* Moves a particle one tick on the screen. */
 void btParticleAdvanceWithGravity2D(
 	PARTICLE *particle, Sint32 damping, Sint32 gravity)
 {
@@ -32,34 +32,34 @@ void btParticleAdvanceWithGravity2D(
 
 /* Projects a point in the current transform onto the screen, 16 pixels higher,
    and returns the projection's scale. */
-Sint32 btProjectionPoint(const void *point, SCREEN_POINT *position)
+Sint32 btProjectionPoint(const void *point, SCREEN_POINT *pos)
 {
-	Sint32 result = syConvert3Dto2D(point, syScreenPointCoordinates(position));
-	position->y -= 16;
+	Sint32 result = syConvert3Dto2D(point, syScreenPointCoordinates(pos));
+	pos->y -= 16;
 	return result;
 }
 
 /* The screen position of a unit's sprite, at its scaled height, 16 pixels
    higher. */
-void btProjectionSpr(Sint32 id, SCREEN_POINT *position)
+void btProjectionSpr(Sint32 id, SCREEN_POINT *pos)
 {
-	btUnitProjectToScreen(id, syScreenPointCoordinates(position));
-	position->y -= 16;
+	btUnitProjectToScreen(id, syScreenPointCoordinates(pos));
+	pos->y -= 16;
 }
 
 /* The screen position of a unit, scaled for the battle view, 16 pixels
    higher. */
-void btProjectionScaledUnit(Sint32 id, SCREEN_POINT *position)
+void btProjectionScaledUnit(Sint32 id, SCREEN_POINT *pos)
 {
-	btMotionProjectScaledPosStub(id, syScreenPointCoordinates(position));
-	position->y -= 16;
+	btMotionProjectScaledPosStub(id, syScreenPointCoordinates(pos));
+	pos->y -= 16;
 }
 
 /* The screen position of a unit, 16 pixels higher. */
-void btProjectionUnit(Sint32 id, SCREEN_POINT *position)
+void btProjectionUnit(Sint32 id, SCREEN_POINT *pos)
 {
-	btMotionProjectPosStub(id, syScreenPointCoordinates(position));
-	position->y -= 16;
+	btMotionProjectPosStub(id, syScreenPointCoordinates(pos));
+	pos->y -= 16;
 }
 
 /* Projects a unit onto the screen, raised by half its height, from the battle
@@ -68,16 +68,16 @@ Sint32 btUnitProjectToScreen(Sint32 unit, Sint32 *screen)
 {
 	BATTLE_CAMERA *camera = BattleCameraWork;
 	ACTOR		  *actor;
-	SPR			  *sprite;
+	SPR			  *spr;
 	FIXED		   scale;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
 	UNUSED Sint32 unused[3];
 
 	actor = btObjectGetStub(unit)->actor;
-	sprite = btActorGetSprStub(actor, 0);
+	spr = btActorGetSprStub(actor, 0);
 	EFFECT_VIEW_FROM_CAMERA(camera);
-	scale = syMulFX(syConvert3Dto2D(&actor->x.fixed, screen), sprite->scale);
+	scale = syMulFX(syConvert3Dto2D(&actor->x.fixed, screen), spr->scale);
 	screen[1] -=
 		syMulFX(scale, FIXEDtoINT(btUnitGetEffectHeightStub(unit)) >> 1);
 	return 0;

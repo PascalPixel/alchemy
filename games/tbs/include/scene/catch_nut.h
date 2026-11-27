@@ -6,11 +6,11 @@
 
 /* Catch on a floating Nut: the hand takes it off the map, its flag is set so it
    stays gone, and the leader holds it up and the party gets it. */
-static inline void scCatchNut(Sint32 actorId, Sint32 flag)
+static inline void scCatchNut(Sint32 actorId, Sint32 flg)
 {
 	fdScriptStart();
 	fdActorSetPos(actorId, 0, 0);
-	gmFlagSet(flag);
+	gmFlagSet(flg);
 	/* Called by the functions' own names, not through script_inline.h's
 	   gmItemShowFound and gmPartyGiveItem, because those inlines compile
 	   differently inside this one. */

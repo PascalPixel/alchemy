@@ -2,7 +2,7 @@
    its inside keep a copy of. */
 
 /* An ember's actor script. */
-Uint32 MagmaRock_EmberScript[] = {
+Uint32 MagmaRockEmberScript[] = {
 	SC_ANIMATION(2),
 	SC_WAIT(18),
 	SC_POSITION_ORIGIN,
@@ -12,7 +12,7 @@ Uint32 MagmaRock_EmberScript[] = {
 };
 
 /* A flame ember's actor script. */
-Sint32 MagmaRock_FlameEmberScript[] = {
+Sint32 MagmaRockFlameEmberScript[] = {
 	SC_ANIMATION(3),
 	SC_WAIT(23),
 	SC_POSITION_ORIGIN,

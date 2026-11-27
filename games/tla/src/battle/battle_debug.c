@@ -13,7 +13,7 @@ UNUSED void btDebugBattleRunForever(void)
 
 /* After the first two parts of Karst and Agatio's battle
    (FORMATION_KARST_AND_AGATIO_A and _B), snapshots the five units of
-   ScriptedBattle_Units that fought (Felix, Piers and Jenna, and the first two
+   ScriptedBattleUnits that fought (Felix, Piers and Jenna, and the first two
    enemies) for btScriptedBattleRestoreUnits to bring back as the next part
    begins. */
 void btScriptedBattleSaveUnits(void)
@@ -21,7 +21,7 @@ void btScriptedBattleSaveUnits(void)
 	Sint32		   j;
 	SNAPSHOT	  *snapshot = Ram_ScriptedBattleSnapshot;
 	Sint32		   i = 0;
-	Uint8		  *ids = ScriptedBattle_Units;
+	Uint8		  *ids = ScriptedBattleUnits;
 	SNAPSHOT_COPY *copies = Ram_ScriptedBattleSnapshot->statuses;
 
 	for(; i <= 4; i++, copies++) {
@@ -78,10 +78,9 @@ void btScriptedBattleRestoreUnits(void)
 	SNAPSHOT_COPY *copies = Ram_ScriptedBattleSnapshot->statuses;
 
 	for(i = 0; i <= 4; i++, copies++) {
-		UNIT *unit = syUnitGet(ScriptedBattle_Units[i]);
+		UNIT *unit = syUnitGet(ScriptedBattleUnits[i]);
 
-		if(btUnitIsListed(ScriptedBattle_Units[i]) &&
-			snapshot->listed[i] != 0) {
+		if(btUnitIsListed(ScriptedBattleUnits[i]) && snapshot->listed[i] != 0) {
 			if(i <= 2) {
 				for(j = 0; j < ELEMENT_COUNT; j++)
 					unit->summonBoost[j] = snapshot->summonBoosts[i][j];
@@ -126,7 +125,7 @@ void gmUnitUpdateClassStub(Sint32 owner);
    after it. */
 #define DEBUG_PAIRED_SETS_FIRST 70
 
-/* The last row of Debug_ParameterSets; the scan reports a missing parameter set
+/* The last row of DebugParameterSets; the scan reports a missing parameter set
    past it. */
 #define DEBUG_PARAMETER_SET_LAST_ROW 440
 
@@ -141,8 +140,8 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 	Sint32 unitId;
 	Bool   notFound;
 	Sint32 row;
-	Sint32 djinnIndex;
-	Sint32 currentSet;
+	Sint32 djinnIdx;
+	Sint32 curSet;
 	Sint32 i;
 
 	notFound = FALSE;
@@ -158,7 +157,7 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 	gmPartyRemoveMemberStub(PIERS);
 	gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_PARTY)->list.cnt = notFound;
 
-	currentSet = 0;
+	curSet = 0;
 	for(i = 0; i < ELEMENT_COUNT; i++)
 		nextDjinn[i] = 0;
 
@@ -166,26 +165,26 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 	   row; skip to the run numbered set and apply its rows, and from
 	   DEBUG_PAIRED_SETS_FIRST on the odd run after it too. */
 	for(row = 0;; row++) {
-		unitId = Debug_ParameterSets[row].owner;
+		unitId = DebugParameterSets[row].owner;
 		if((Uint32)row > DEBUG_PARAMETER_SET_LAST_ROW) {
 			notFound = TRUE;
 			break;
 		}
 		if(unitId == DEBUG_PARAMETER_SET_END) {
-			if(currentSet < DEBUG_PAIRED_SETS_FIRST) {
-				if(currentSet == set)
+			if(curSet < DEBUG_PAIRED_SETS_FIRST) {
+				if(curSet == set)
 					break;
-			} else if(currentSet == (set | 1)) {
+			} else if(curSet == (set | 1)) {
 				break;
 			}
-			currentSet++;
+			curSet++;
 			continue;
 		}
-		if(currentSet < set)
+		if(curSet < set)
 			continue;
 
 		gmPartyAddMemberStub(unitId);
-		gmUnitLevelUpToStub(unitId, Debug_ParameterSets[row].level);
+		gmUnitLevelUpToStub(unitId, DebugParameterSets[row].level);
 
 		/* Start from no Djinn and no abilities. */
 		member = syUnitGet(unitId);
@@ -198,18 +197,17 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 		for(i = 0; i < PSYNERGY_SLOTS; i++)
 			*&member->psynergy[i].encodedAction = 0;
 		for(i = 0; i < 2; i++) {
-			if(Debug_ParameterSets[row].actions[i] != 0)
+			if(DebugParameterSets[row].actions[i] != 0)
 				gmUnitLearnPsynergyStub(
-					unitId, Debug_ParameterSets[row].actions[i]);
+					unitId, DebugParameterSets[row].actions[i]);
 		}
 
 		/* Djinn are numbered across the party, so no two party members get the
 		   same: from this game's own first Djinni of each element, wrapping
 		   within its eighteen. */
 		for(i = 0; i < ELEMENT_COUNT; i++) {
-			for(djinnIndex = 0;
-				djinnIndex < Debug_ParameterSets[row].djinnCnts[i];
-				djinnIndex++) {
+			for(djinnIdx = 0; djinnIdx < DebugParameterSets[row].djinnCnts[i];
+				djinnIdx++) {
 				gmDjinnGiveStub(unitId, i,
 					(nextDjinn[i] + DJINN_OWN_FIRST) % DJINNI_SPARE_FIRST);
 				gmDjinnSetStub(unitId, i,
@@ -223,10 +221,10 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 		for(i = 0; i < (INVENTORY_SLOTS + 1); i++)
 			gmInventoryRemoveStub(unitId, 0);
 		for(i = 0; i < 6; i++) {
-			if(Debug_ParameterSets[row].items[i] != 0)
+			if(DebugParameterSets[row].items[i] != 0)
 				gmInventoryEquipStub(unitId,
 					gmInventoryAddItemStub(
-						unitId, Debug_ParameterSets[row].items[i]));
+						unitId, DebugParameterSets[row].items[i]));
 		}
 		gmUnitUpdateClassStub(unitId);
 	}

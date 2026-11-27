@@ -3,7 +3,7 @@
    Part of game.c. */
 
 /* Each character's element group, as The Broken Seal has it. */
-const Uint8 Character_ElementGroupTable[] = {
+const Uint8 CharacterElementGroupTable[] = {
 	[ISAAC] = ELEMENT_GROUP_VENUS_MARS,
 	[GARET] = ELEMENT_GROUP_VENUS_MARS,
 	[IVAN] = ELEMENT_GROUP_MERCURY_JUPITER,
@@ -16,7 +16,7 @@ const Uint8 Character_ElementGroupTable[] = {
 
 /* The six flags of The Broken Seal's save gmDataTransferApply copies into
    FLAG_TRANSFERRED_DODONPA_LOCKED_UP and the five after it, in that order. */
-const Uint16 DataTransfer_Flags[TRANSFERRED_FLAG_COUNT] = {
+const Uint16 DataTransferFlags[TRANSFERRED_FLAG_COUNT] = {
 	FLAG_BROKEN_SEAL_DODONPA_LOCKED_UP,
 	FLAG_BROKEN_SEAL_WON_COLOSSO,
 	FLAG_BROKEN_SEAL_HSU_RESCUED_WITHOUT_PARTY,
@@ -27,17 +27,17 @@ const Uint16 DataTransfer_Flags[TRANSFERRED_FLAG_COUNT] = {
 
 /* The percent chance that gmDataTransferGiveDefaultDjinn hands out each of The
    Broken Seal's seven Djinn of each element, one row per element. */
-const Sint16 DataTransfer_DjinnChances[ELEMENT_COUNT]
-									  [TRANSFERRED_DJINN_PER_ELEMENT] = {
-										  {100, 70, 70, 30, 40, 50, 20},
-										  {100, 50, 70, 70, 30, 30, 70},
-										  {70, 50, 30, 60, 70, 40, 70},
-										  {50, 50, 70, 50, 20, 70, 70},
+const Sint16 DataTransferDjinnChances[ELEMENT_COUNT]
+									 [TRANSFERRED_DJINN_PER_ELEMENT] = {
+										 {100, 70, 70, 30, 40, 50, 20},
+										 {100, 50, 70, 70, 30, 30, 70},
+										 {70, 50, 30, 60, 70, 40, 70},
+										 {50, 50, 70, 50, 20, 70, 70},
 };
 
 /* Experience per level, 99 levels for each character in turn. */
 /* clang-format off */
-const Uint32 Character_LevelExpTable[] = {
+const Uint32 CharacterLevelExpTable[] = {
 	/* Isaac */
 	0, 24, 67, 144, 283, 519, 873, 1369,
 	2039, 2910, 3999, 5306, 6861, 8696, 10843, 13334,
@@ -153,5 +153,5 @@ const Uint32 Character_LevelExpTable[] = {
 };
 /* clang-format on */
 
-/* Unused: a copy of String_OneTenth that nothing reads. */
-const Uint32 Experience_OneTenth = RECIPROCAL_OF(10);
+/* Unused: a copy of StringOneTenth that nothing reads. */
+const Uint32 ExperienceOneTenth = RECIPROCAL_OF(10);

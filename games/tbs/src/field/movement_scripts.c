@@ -9,7 +9,7 @@
 #include "window/message_speed.h"
 
 /* clang-format off */
-const Sint32 Actor_LaunchScript[] = {
+const Sint32 ActorLaunchScript[] = {
 	SC_SYNC,
 	SC_WAIT(1),
 	SC_ANIMATION(1),
@@ -18,34 +18,34 @@ const Sint32 Actor_LaunchScript[] = {
 };
 /* clang-format on */
 
-const Sint32 FieldEffect_BurstParticleScriptA[] = {
+const Sint32 FieldEffectBurstParticleScriptA[] = {
 	SC_WAIT(1),
 	SC_LOOP(38, SC_TOP),
 	SC_RELEASE,
 };
 
-const Sint32 FieldEffect_BurstParticleScriptB[] = {
+const Sint32 FieldEffectBurstParticleScriptB[] = {
 	SC_WAIT(1),
 	SC_LOOP(18, SC_TOP),
 	SC_RELEASE,
 };
 
-const Sint32 Actor_StepAngleScript[] = {
+const Sint32 ActorStepAngleScript[] = {
 	SC_CALL(fdActorStepAng),
 	SC_END,
 };
 
-/* The frames between the voice's sounds, by message speed option. */
-const Uint8 MessageSpeed_VoiceRates[] = {
+/* The ticks between the voice's sounds, by message speed option. */
+const Uint8 MessageSpeedVoiceRates[] = {
 	[MESSAGE_SPEED_SLOW] = 1,
 	[MESSAGE_SPEED_NORMAL] = 3,
 	[MESSAGE_SPEED_FAST] = 10,
 };
 
 /* The emote bubble's pop: it appears squashed to half its width and a quarter
-   taller, springs back in smaller swings every 2 frames until it is square,
-   stays 30 frames and is released. */
-const Sint32 Emote_BubbleScript[] = {
+   taller, springs back in smaller swings every 2 ticks until it is square,
+   stays 30 ticks and is released. */
+const Sint32 EmoteBubbleScript[] = {
 	SC_ADD(SW_SCALE_X, -toFIXED(1) / 2),
 	SC_ADD(SW_SCALE_Y, toFIXED(1) / 4),
 	SC_WAIT(2),
@@ -74,12 +74,12 @@ const Sint32 Emote_BubbleScript[] = {
 	SC_RELEASE,
 };
 
-const Sint32 Actor_WaitScript[] = {
+const Sint32 ActorWaitScript[] = {
 	SC_WAIT(40),
 	SC_RELEASE,
 };
 
-const Sint32 MovementType_WanderScript[] = {
+const Sint32 MovementTypeWanderScript[] = {
 	SC_SPEED(0.5),
 	SC_ACCELERATION(0.05),
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
@@ -103,14 +103,14 @@ const Sint32 MovementType_WanderScript[] = {
 	SC_END,
 };
 
-const Sint32 MovementType_StandScript[] = {SC_END};
+const Sint32 MovementTypeStandScript[] = {SC_END};
 
-const Sint32 MovementType_ResetActionScript[] = {
+const Sint32 MovementTypeResetActionScript[] = {
 	SC_CALL(fdActorClearSprAndCollisionFlags),
 	SC_END,
 };
 
-const Sint32 MovementType_WanderNearScript[] = {
+const Sint32 MovementTypeWanderNearScript[] = {
 	SC_SPEED(0.5),
 	SC_ACCELERATION(0.05),
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
@@ -134,7 +134,7 @@ const Sint32 MovementType_WanderNearScript[] = {
 	SC_END,
 };
 
-const Sint32 MovementType_WanderCloseScript[] = {
+const Sint32 MovementTypeWanderCloseScript[] = {
 	SC_SPEED(0.4),
 	SC_ACCELERATION(0.2),
 	SC_ANIMATION(2),
@@ -145,17 +145,17 @@ const Sint32 MovementType_WanderCloseScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-const Sint32 MovementType_FollowWatchedScript[] = {
+const Sint32 MovementTypeFollowWatchedScript[] = {
 	SC_CALL(fdActorMoveTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const Sint32 MovementType_FaceLeaderScript[] = {
+const Sint32 MovementTypeFaceLeaderScript[] = {
 	SC_CALL(fdActorTurnTowardWatchedActor),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const Sint32 Actor_FaceWatchedScript[] = {
+const Sint32 ActorFaceWatchedScript[] = {
 	SC_FACE_WATCHED,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),

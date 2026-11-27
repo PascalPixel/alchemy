@@ -53,21 +53,21 @@
 #include "text/msg_ids.h"
 
 Sint32						scInit(void);
-extern const SCENE_ENTRANCE TolbiSpring_Entrances[];
-extern const Uint32			TolbiSpring_Exits[];
+extern const SCENE_ENTRANCE TolbiSpringEntrances[];
+extern const Uint32			TolbiSpringExits[];
 extern const ACTOR_PLACE	TolbiSpringActorPlacements[];
 extern const ACTOR_PLACE	StuccoRoomsCActorPlacements[];
 extern const CUE			StuccoRoomsCTriggers[];
 extern const CUE			TolbiSpringCues[];
-extern const Uint16			TolbiSpring_AlphaSteps[];
-extern const Uint32			TolbiSpring_PrizeItems[];
-extern const Uint16			TolbiSpring_CoinPrizes[];
-extern const Uint32			StuccoRoomsC_LuckyWheelsPrizeItems[];
-extern const Uint8			TolbiSpring_CrabFrames[];
-extern const Uint8			TolbiSpring_CircleFrames[];
-extern const Uint8			TolbiSpring_ActorPixelX[];
-extern const Uint8			TolbiSpring_ActorPixelZ[];
-extern const Uint16			TolbiSpring_ActorHeadings[];
+extern const Uint16			TolbiSpringAlphaSteps[];
+extern const Uint32			TolbiSpringPrizeItems[];
+extern const Uint16			TolbiSpringCoinPrizes[];
+extern const Uint32			StuccoRoomsCLuckyWheelsPrizeItems[];
+extern const Uint8			TolbiSpringCrabFrames[];
+extern const Uint8			TolbiSpringCircleFrames[];
+extern const Uint8			TolbiSpringActorPixelX[];
+extern const Uint8			TolbiSpringActorPixelZ[];
+extern const Uint16			TolbiSpringActorHeadings[];
 
 /* The spring's water has sunk and faded away this visit. */
 #define FLAG_TOLBI_SPRING_DRAINED FLAG_SCENE_TEMP_00
@@ -79,10 +79,10 @@ extern const Uint16			TolbiSpring_ActorHeadings[];
 /* UB: the coin prizes are read through a one-element view of their table; UBFIX
    reads the table. */
 #if FIX_POINTER_OUTSIDE_OBJECT
-#define TOLBI_SPRING_COIN_PRIZE(ring) TolbiSpring_CoinPrizes[ring]
+#define TOLBI_SPRING_COIN_PRIZE(ring) TolbiSpringCoinPrizes[ring]
 #else
 #define TOLBI_SPRING_COIN_PRIZE(ring) \
-	(((struct { Uint16 coins[1]; } *)TolbiSpring_CoinPrizes)->coins[ring])
+	(((struct { Uint16 coins[1]; } *)TolbiSpringCoinPrizes)->coins[ring])
 #endif
 
 static void	  scTolbiSpringDrainSpring(void);
@@ -153,7 +153,7 @@ typedef enum TOLBI_SPRING_ACTOR_ID {
 	/* The Lucky Medal the party tosses (SPRITE_SPRING_LUCKY_MEDAL). */
 	ACTOR_TOLBI_SPRING_MEDAL,
 	/* The four obstacles that move in the spring during a toss, in the order of
-	   sObstacles.
+	   Obstacles.
 
 	   They are two crabs (SPRITE_CRAB), then two turtles (SPRITE_TURTLE). */
 	ACTOR_TOLBI_SPRING_FIRST_OBSTACLE,
@@ -163,7 +163,7 @@ typedef enum TOLBI_SPRING_ACTOR_ID {
 	ACTOR_TOLBI_SPRING_COIN_SIGN,
 	/* The tufts of grass at the foot of each sign.
 
-	   They are the signs' sprite in its second frame, mirrored and drawn
+	   They are the signs' sprite in its second tick, mirrored and drawn
 	   underfoot (scInit). */
 	ACTOR_TOLBI_SPRING_EAST_SIGN_GRASS,
 	ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS,
@@ -178,7 +178,7 @@ typedef enum TOLBI_SPRING_ACTOR_ID {
 	ACTOR_TOLBI_SPRING_VISITOR_ONE_MEDAL
 } TOLBI_SPRING_ACTOR_ID;
 
-/* Animations of the spring's sprites, as their animation tables and frames
+/* Animations of the spring's sprites, as their animation tables and ticks
    under graphics/sprite draw them. The coin's and the Lucky Medal's sprite
    sheets (spring_coin.png, spring_lucky_medal.png) are drawn alike. */
 typedef enum TOLBI_SPRING_ANIMATION {
@@ -221,7 +221,7 @@ enum {
 };
 
 /* The kinds of prize a line of Lucky Wheels wins, three items each in
-   StuccoRoomsC_LuckyWheelsPrizeItems: those before LUCKY_WHEELS_PRIZE_ANYTHING,
+   StuccoRoomsCLuckyWheelsPrizeItems: those before LUCKY_WHEELS_PRIZE_ANYTHING,
    which wins any of them. */
 enum { LUCKY_WHEELS_KINDS = LUCKY_WHEELS_PRIZE_ANYTHING };
 
@@ -232,7 +232,7 @@ enum { LUCKY_WHEELS_KINDS = LUCKY_WHEELS_PRIZE_ANYTHING };
 enum { LUCKY_WHEELS_LAST_GIVEN = 8 };
 
 /* The pixels the spring's water sinks before it fades, one every fourth
-   frame. */
+   tick. */
 enum { SPRING_WATER_SINK_PIXELS = 16 };
 
 /* A medal's prizes (MAIN_ROUTINE_STATE's prizeWeights): its ring allows three
@@ -247,11 +247,11 @@ enum { SPRING_RING_OUTSIDE = 4 };
    an angle round its ellipse. */
 enum { CRAB_HEADING_EAST = 0, CRAB_HEADING_WEST = 1 };
 
-/* The second crab rests this many frames at each end of its run. */
-enum { SPRING_CRAB_REST_FRAMES = 30 };
+/* The second crab rests this many ticks at each end of its run. */
+enum { SPRING_CRAB_REST_TICKS = 30 };
 
 /* The token's velocity keeps SPRING_TOKEN_PULLED_DAMPING /
-   SPRING_TOKEN_DAMPING_SCALE of itself each frame while the rings pull it, and
+   SPRING_TOKEN_DAMPING_SCALE of itself each tick while the rings pull it, and
    SPRING_TOKEN_SETTLING_DAMPING / SPRING_TOKEN_DAMPING_SCALE once they let
    go. */
 enum {
@@ -273,13 +273,13 @@ enum {
 #define TOLBI_SPRING_TOSS_MENU_WIDTH BY_LANGUAGE(7, 9, 10, 10, 10, 10)
 
 /* The tossed coin or medal, as its last four positions for the trail, its
-   velocity and the frames the prize rings still pull it. */
+   velocity and the ticks the prize rings still pull it. */
 typedef struct SPRING_TOSS_MOTION {
 	Uint8	unused[2]; /* nothing reads or writes it */
 	Sint16	launchFrm;
 	VECTOR3 trail[4]; /* 16.16 fixed-point pixels */
 	VECTOR3 shadow;
-	VECTOR3 vel; /* 16.16 fixed-point pixels per frame */
+	VECTOR3 vel; /* 16.16 fixed-point pixels per tick */
 	Sint32	attractionFrm;
 } SPRING_TOSS_MOTION;
 
@@ -305,7 +305,7 @@ static inline void scIOSetBlendAlpha(Sint32 value)
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return TolbiSpring_Entrances;
+	return TolbiSpringEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -315,7 +315,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return TolbiSpring_Exits;
+	return TolbiSpringExits;
 }
 
 /* Selects the actors of Tolbi Spring or of the Lucky Dice and Lucky */
@@ -453,7 +453,7 @@ Sint32 scInit(void)
 {
 	Sint32 coinChange;
 	Sint8 *wonPrizes;
-	Sint32 prizeIndex;
+	Sint32 prizeIdx;
 	Sint32 item;
 
 	if(MainRoutineStateWork.next == SCENE_TOLBI_SPRING) {
@@ -503,7 +503,7 @@ Sint32 scInit(void)
 				ACTOR_LUCKY_WHEELS_ATTENDANT, SPRITE_COLOR_GRB);
 			fdActorSetSprColById(ACTOR_LUCKY_DICE_ATTENDANT, SPRITE_COLOR_RBG);
 			fdScriptStartScreenTransition();
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 			fdScriptWait(10);
 			fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 120, 112);
 			fdScriptWait(20);
@@ -538,7 +538,7 @@ Sint32 scInit(void)
 			wonPrizes = MainRoutineStateWork.holdings.wonPrizes;
 			fdScriptStart();
 			fdScriptStartScreenTransition();
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 			fdScriptWait(10);
 			if(wonPrizes[0] == LUCKY_WHEELS_PRIZE_LIST_END) {
 				scStuccoRoomsCOfferLuckyWheels(1);
@@ -547,16 +547,16 @@ Sint32 scInit(void)
 				/* "Congratulations!" */
 				fdScriptShowMessage(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
 				if(*wonPrizes != LUCKY_WHEELS_PRIZE_LIST_END) {
-					for(prizeIndex = 0;
-						wonPrizes[prizeIndex] != LUCKY_WHEELS_PRIZE_LIST_END;
-						prizeIndex++) {
-						if(prizeIndex == 0) {
+					for(prizeIdx = 0;
+						wonPrizes[prizeIdx] != LUCKY_WHEELS_PRIZE_LIST_END;
+						prizeIdx++) {
+						if(prizeIdx == 0) {
 							fdScriptSetMessageId(MsgTolbiWonItemGo);
 						} else {
 							fdScriptSetMessageId(MsgTolbiAndYouWonItem);
 						}
 						item = scStuccoRoomsCSelectLuckyWheelsPrize(
-							wonPrizes[prizeIndex]);
+							wonPrizes[prizeIdx]);
 						mnMessageArgumentPush(item, MESSAGE_ARGUMENT_ITEM);
 						/* "You won ...! Here you go.", then "And you won ...!
 						   Here you go." */
@@ -582,11 +582,11 @@ Sint32 scInit(void)
 }
 
 /* Draws one picture of the prize being shown in the middle of Tolbi Spring,
-   with SE_CAST, and holds it 8 frames. */
+   with SE_CAST, and holds it 8 ticks. */
 static inline void scTolbiSpringShowPrizePicture(
-	Sint32 sourceColumn, Sint32 sourceRow)
+	Sint32 srcColumn, Sint32 srcRow)
 {
-	fdMapGridCopyMetatilesTo(sourceColumn, sourceRow, 70, 0, 3, 8);
+	fdMapGridCopyMetatilesTo(srcColumn, srcRow, 70, 0, 3, 8);
 	sySndPlay(SE_CAST);
 	fdScriptWait(8);
 }
@@ -599,7 +599,7 @@ static inline void scTolbiSpringShowPrizePicture(
    north the way it came.
 
    The dragon is the pictures: each is 3 by 8 metatiles copied over the spring's
-   middle from spare metatiles of the map, one every 8 frames, the head a step
+   middle from spare metatiles of the map, one every 8 ticks, the head a step
    further south in each as it comes and a step back north in each as it
    goes. */
 static void scTolbiSpringRevealPrize(Sint32 item)
@@ -657,23 +657,23 @@ static void scTolbiSpringRevealPrize(Sint32 item)
    the target of rings on its floor.
 
    It starts with SE_BURST. The water is the overhead layer, scrolled down a
-   pixel every fourth frame and then faded out through
-   TolbiSpring_AlphaSteps. */
+   pixel every fourth tick and then faded out through
+   TolbiSpringAlphaSteps. */
 static void scTolbiSpringDrainSpring(void)
 {
 	MAP_GRID_SCROLL_STATE *grid = MapGridState[0];
 	MAP_GRID_LAYER_SCROLL *spring;
 	const Uint16		  *alphaSteps;
-	Sint32				   stepIndex;
+	Sint32				   stepIdx;
 
 	sySndPlay(SE_BURST);
 	spring = &grid->layers[MAPGRID_LAYER_OVERHEAD];
-	for(stepIndex = 0; stepIndex < SPRING_WATER_SINK_PIXELS; stepIndex++) {
+	for(stepIdx = 0; stepIdx < SPRING_WATER_SINK_PIXELS; stepIdx++) {
 		spring->ofsY -= toFIXED(1);
 		sySynch(4);
 	}
-	alphaSteps = TolbiSpring_AlphaSteps;
-	for(stepIndex = 0; stepIndex < 8; stepIndex++) {
+	alphaSteps = TolbiSpringAlphaSteps;
+	for(stepIdx = 0; stepIdx < 8; stepIdx++) {
 		IO_WRITE16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
 			&REG_BLDCNT);
 		IO_WRITE16(*alphaSteps++, &REG_BLDALPHA);
@@ -813,33 +813,33 @@ static Sint32 scTolbiSpringRunSpringGame(void)
 	Sint32	cancel = -1; /* what the menus answer when B is pressed */
 	Sint32	coins;
 	Sint32	medals;
-	WINDOW *window;
+	WINDOW *win;
 	Sint32	result;
 	Sint32	totalWeight;
-	Sint32	prizeIndex;
+	Sint32	prizeIdx;
 	Sint32	prizeRoll;
-	Sint32	message;
+	Sint32	msg;
 	MAIN_ROUTINE_STATE *routine;
 
 	fdScriptStart();
 	fdEndBusyAndReveal();
-	message = MsgTolbiThrow;
+	msg = MsgTolbiThrow;
 #if LANGUAGE != LANGUAGE_JAPANESE
 	routine = &MainRoutineStateWork;
 prompt:
 	coins = routine->holdings.coins;
 	medals = gmPartyInventoryCountItem(ITEM_LUCKY_MEDAL);
-	fdScriptSetMessageId(message);
+	fdScriptSetMessageId(msg);
 	/* "What will you throw?" */
 	fdScriptOpenMessage(-1, 0);
-	window = mnWindowCreate(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
+	win = mnWindowCreate(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
 	text = MsgTolbiCoins;
-	mnTextDrawMessageAsTiles(text, window, 0, 0);
-	mnTextDrawNumInWindow(coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
-	mnTextDrawMessageAsTiles(text + 1, window, 0, 8);
-	mnTextDrawNumInWindow(medals, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 8);
+	mnTextDrawMessageAsTiles(text, win, 0, 0);
+	mnTextDrawNumInWindow(coins, 6, win, TOLBI_SPRING_COUNT_NUMBER_X, 0);
+	mnTextDrawMessageAsTiles(text + 1, win, 0, 8);
+	mnTextDrawNumInWindow(medals, 6, win, TOLBI_SPRING_COUNT_NUMBER_X, 8);
 	choice = mnSelectCoinsOrMedals(choice);
-	mnWindowClose(window, 2);
+	mnWindowClose(win, 2);
 	mnMessageCloseFinishedWindows();
 	if(choice == cancel) {
 		fdScriptEnd();
@@ -847,7 +847,7 @@ prompt:
 	}
 	if(choice == SPRING_TOSS_COIN) {
 		if(coins == 0) {
-			fdScriptSetMessageId(message + 1);
+			fdScriptSetMessageId(msg + 1);
 			/* "You don't have any coins!" */
 			fdScriptShowMessage(-1, 0);
 			sySynch(1);
@@ -855,14 +855,14 @@ prompt:
 		}
 	} else if(choice == SPRING_TOSS_MEDAL) {
 		if(medals == 0) {
-			fdScriptSetMessageId(message + 2);
+			fdScriptSetMessageId(msg + 2);
 			/* "You have no Lucky Medals!" */
 			fdScriptShowMessage(-1, 0);
 			sySynch(1);
 			goto prompt;
 		}
 		if(gmPartyInventoryCountFreeSlots() == 0) {
-			fdScriptSetMessageId(message + 4);
+			fdScriptSetMessageId(msg + 4);
 			/* "You can't carry more items. Do you still want to play?" */
 			fdScriptOpenMessage(-1, 0);
 			if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
@@ -870,11 +870,11 @@ prompt:
 			}
 		}
 	}
-	window = mnWindowCreate(
+	win = mnWindowCreate(
 		TOLBI_SPRING_TOSS_MENU_X, 15, TOLBI_SPRING_TOSS_MENU_WIDTH, 4, 2);
 	text = MsgTolbiToss;
-	mnTextDrawMessageAsTiles(text, window, 0, 0);
-	mnTextDrawMessageAsTiles(text + 1, window, 0, 8);
+	mnTextDrawMessageAsTiles(text, win, 0, 0);
+	mnTextDrawMessageAsTiles(text + 1, win, 0, 8);
 	sySynch(5);
 	sySndPlay(SE_TOLBI_SPRING_TOSS_PROMPT);
 	for(;;) {
@@ -890,28 +890,27 @@ prompt:
 		}
 		sySynch(1);
 	}
-	mnWindowClose(window, 2);
+	mnWindowClose(win, 2);
 #else
 	for(;;) {
 		text = MsgTolbiCoins;
 		routine = &MainRoutineStateWork;
 		coins = routine->holdings.coins;
 		medals = gmPartyInventoryCountItem(ITEM_LUCKY_MEDAL);
-		fdScriptSetMessageId(message);
+		fdScriptSetMessageId(msg);
 		/* "What will you throw?" */
 		fdScriptOpenMessage(-1, 0);
-		window = mnWindowCreate(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
-		mnTextDrawMessageAsTiles(text, window, 0, 0);
-		mnTextDrawNumInWindow(coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
+		win = mnWindowCreate(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
+		mnTextDrawMessageAsTiles(text, win, 0, 0);
+		mnTextDrawNumInWindow(coins, 6, win, TOLBI_SPRING_COUNT_NUMBER_X, 0);
 		/* The marker after each count, MsgTolbiCounterMarker, follows the medal
 		   label. */
-		mnTextDrawMessageAsTiles(text + 2, window, 104, 0);
-		mnTextDrawMessageAsTiles(text + 1, window, 0, 8);
-		mnTextDrawNumInWindow(
-			medals, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 8);
-		mnTextDrawMessageAsTiles(text + 2, window, 104, 8);
+		mnTextDrawMessageAsTiles(text + 2, win, 104, 0);
+		mnTextDrawMessageAsTiles(text + 1, win, 0, 8);
+		mnTextDrawNumInWindow(medals, 6, win, TOLBI_SPRING_COUNT_NUMBER_X, 8);
+		mnTextDrawMessageAsTiles(text + 2, win, 104, 8);
 		choice = mnSelectCoinsOrMedals(choice);
-		mnWindowClose(window, 2);
+		mnWindowClose(win, 2);
 		mnMessageCloseFinishedWindows();
 		if(choice == cancel) {
 			fdScriptEnd();
@@ -919,7 +918,7 @@ prompt:
 		}
 		if(choice == SPRING_TOSS_COIN) {
 			if(coins == 0) {
-				fdScriptSetMessageId(message + 1);
+				fdScriptSetMessageId(msg + 1);
 				/* "You don't have any coins!" */
 				fdScriptShowMessage(-1, 0);
 				sySynch(1);
@@ -927,14 +926,14 @@ prompt:
 			}
 		} else if(choice == SPRING_TOSS_MEDAL) {
 			if(medals == 0) {
-				fdScriptSetMessageId(message + 2);
+				fdScriptSetMessageId(msg + 2);
 				/* "You have no Lucky Medals!" */
 				fdScriptShowMessage(-1, 0);
 				sySynch(1);
 				continue;
 			}
 			if(gmPartyInventoryCountFreeSlots() == 0) {
-				fdScriptSetMessageId(message + 4);
+				fdScriptSetMessageId(msg + 4);
 				/* "You can't carry more items. Do you still want to play?" */
 				fdScriptOpenMessage(-1, 0);
 				if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) !=
@@ -944,11 +943,11 @@ prompt:
 				}
 			}
 		}
-		window = mnWindowCreate(
+		win = mnWindowCreate(
 			TOLBI_SPRING_TOSS_MENU_X, 15, TOLBI_SPRING_TOSS_MENU_WIDTH, 4, 2);
 		result = MsgTolbiToss;
-		mnTextDrawMessageAsTiles(result, window, 0, 0);
-		mnTextDrawMessageAsTiles(result + 1, window, 0, 8);
+		mnTextDrawMessageAsTiles(result, win, 0, 0);
+		mnTextDrawMessageAsTiles(result + 1, win, 0, 8);
 		sySynch(5);
 		sySndPlay(SE_TOLBI_SPRING_TOSS_PROMPT);
 		for(;;) {
@@ -964,7 +963,7 @@ prompt:
 			}
 			sySynch(1);
 		}
-		mnWindowClose(window, 2);
+		mnWindowClose(win, 2);
 		break;
 	}
 #endif
@@ -992,46 +991,44 @@ prompt:
 		} else {
 			/* The prize ring limits the weighted pool of medal rewards. */
 			totalWeight = 0;
-			prizeIndex = 0;
-			if(prizeIndex < result * SPRING_MEDAL_PRIZES_PER_RING +
+			prizeIdx = 0;
+			if(prizeIdx < result * SPRING_MEDAL_PRIZES_PER_RING +
 					SPRING_MEDAL_PRIZES_PER_RING) {
 				do {
 					/* FAKEMATCH(temporary): weight, the prize's weight held for
 					 * the one sum; as the weight added directly. */
-					Sint8 weight =
-						*(routine->holdings.prizeWeights + prizeIndex);
+					Sint8 weight = *(routine->holdings.prizeWeights + prizeIdx);
 
 					totalWeight += weight;
-					prizeIndex++;
-				} while(prizeIndex < result * SPRING_MEDAL_PRIZES_PER_RING +
+					prizeIdx++;
+				} while(prizeIdx < result * SPRING_MEDAL_PRIZES_PER_RING +
 						SPRING_MEDAL_PRIZES_PER_RING);
 			}
 			prizeRoll = syRandomBelow(totalWeight);
-			for(prizeIndex = 0; prizeIndex < SPRING_MEDAL_PRIZES;
-				prizeIndex++) {
-				prizeRoll -= routine->holdings.prizeWeights[prizeIndex];
+			for(prizeIdx = 0; prizeIdx < SPRING_MEDAL_PRIZES; prizeIdx++) {
+				prizeRoll -= routine->holdings.prizeWeights[prizeIdx];
 				if(prizeRoll < 0) {
 					break;
 				}
 			}
-			if(prizeIndex == SPRING_MEDAL_PRIZES) {
-				prizeIndex = SPRING_MEDAL_PRIZES - 1;
+			if(prizeIdx == SPRING_MEDAL_PRIZES) {
+				prizeIdx = SPRING_MEDAL_PRIZES - 1;
 			}
-			scTolbiSpringRevealPrize(TolbiSpring_PrizeItems[prizeIndex]);
+			scTolbiSpringRevealPrize(TolbiSpringPrizeItems[prizeIdx]);
 			/* FAKEMATCH(dead): stepping routine away and back. */
 			routine++;
 			routine--;
 			{
-				Sint32 slot = prizeIndex +
+				Sint32 slot = prizeIdx +
 					offsetof(MAIN_ROUTINE_STATE, holdings.prizeWeights) - 1;
 
-				if(routine->holdings.prizeWeights[prizeIndex] > 1) {
+				if(routine->holdings.prizeWeights[prizeIdx] > 1) {
 					/* FAKEMATCH(dead): the halving in both arms of a test of
 					 * slot. */
 					if(slot)
-						routine->holdings.prizeWeights[prizeIndex] /= 2;
+						routine->holdings.prizeWeights[prizeIdx] /= 2;
 					else
-						routine->holdings.prizeWeights[prizeIndex] /= 2;
+						routine->holdings.prizeWeights[prizeIdx] /= 2;
 				}
 			}
 		}
@@ -1047,7 +1044,7 @@ end:
    over, never the one she gave last time. A moon wins a kind at random. */
 static Sint32 scStuccoRoomsCSelectLuckyWheelsPrize(Sint32 category)
 {
-	Sint32 previousVariant;
+	Sint32 prevVariant;
 	Sint32 variant;
 
 	if(category < 0) {
@@ -1058,26 +1055,25 @@ static Sint32 scStuccoRoomsCSelectLuckyWheelsPrize(Sint32 category)
 		category = syRandomBelow(LUCKY_WHEELS_KINDS);
 	}
 
-	previousVariant = MainRoutineStateWork.holdings
-						  .wonPrizes[LUCKY_WHEELS_LAST_GIVEN + category];
+	prevVariant = MainRoutineStateWork.holdings
+					  .wonPrizes[LUCKY_WHEELS_LAST_GIVEN + category];
 
-	variant = (previousVariant + (Sint32)syRandomBelow(2) + 4) % 3;
+	variant = (prevVariant + (Sint32)syRandomBelow(2) + 4) % 3;
 
 	MainRoutineStateWork.holdings
 		.wonPrizes[LUCKY_WHEELS_LAST_GIVEN + category] = variant;
 
-	return StuccoRoomsC_LuckyWheelsPrizeItems[category * 3 + variant];
+	return StuccoRoomsCLuckyWheelsPrizeItems[category * 3 + variant];
 }
 
 /* Places the actor at the three coordinates and sets its facing, animation
    speed and colours. */
 static void scTolbiSpringSetActorAppearance(Sint32 actorId,
-	const Sint32 *coordinate, Sint32 facing, Sint32 colorVariant,
-	Sint32 animationSpeed)
+	const Sint32 *coordinate, Sint32 facing, Sint32 colVariant, Sint32 anmSpeed)
 {
 	ACTOR *actor = fdActorGet(actorId);
-	SPR	  *sprite;
-	Uint32 count;
+	SPR	  *spr;
+	Uint32 cnt;
 
 	if(actor != NULL) {
 		actor->x.fixed = *coordinate++;
@@ -1086,23 +1082,23 @@ static void scTolbiSpringSetActorAppearance(Sint32 actorId,
 		actor->facing = facing;
 		actor->motionFlg = 0;
 		actor->spr->flg = 0;
-		fdActorSetAnimationSpeed(actor, animationSpeed);
+		fdActorSetAnimationSpeed(actor, anmSpeed);
 	}
 	/* BUG: actor is read even when fdActorGet found none. */
-	sprite = actor->spr;
-	count = sprite->cnt;
-	if(count != 0) {
+	spr = actor->spr;
+	cnt = spr->cnt;
+	if(cnt != 0) {
 		Sint32			noPicture = SPRITE_PICTURE_NONE;
-		SPR_ANIMATION **animation = sprite->entries;
-		Uint32			left = count;
+		SPR_ANIMATION **anm = spr->entries;
+		Uint32			left = cnt;
 
 		do {
-			SPR_ANIMATION *entry = *animation++;
+			SPR_ANIMATION *entry = *anm++;
 
-			if(entry->colMode != colorVariant) {
+			if(entry->colMode != colVariant) {
 				Uint32 picture;
 
-				entry->colMode = colorVariant;
+				entry->colMode = colVariant;
 				/* No picture is cached in the new colours yet. */
 				picture = entry->picture | noPicture;
 				entry->picture = picture;
@@ -1122,26 +1118,26 @@ static void scTolbiSpringSetSprStorageKind(Sint32 actorId, Sint32 storageKind)
 }
 
 /* The coin or Lucky Medal in flight. */
-static SPRING_TOSS_MOTION sToss ALIGNED(16);
+static SPRING_TOSS_MOTION Toss ALIGNED(16);
 
 /* What is tossed: a coin, or SPRING_TOSS_MEDAL for a Lucky Medal. */
-static Sint32 sTossKind;
+static Sint32 TossKind;
 
 /* Three words nothing refers to.
 
    Removing them would move the obstacle state. */
-static Sint32 sTossUnused[3] UNUSED;
+static Sint32 TossUnused[3] UNUSED;
 
 /* The two crabs and two turtles moving in the spring. */
-static SPRING_OBSTACLE sObstacles[4];
+static SPRING_OBSTACLE Obstacles[4];
 
-/* The frames since the toss, whether it has come to rest, and the ring it rests
+/* The ticks since the toss, whether it has come to rest, and the ring it rests
    in. */
-static Sint32 sTossFrame;
-static Sint32 sTossEnded;
-static Sint32 sTossResult;
+static Sint32 TossTick;
+static Sint32 TossEnded;
+static Sint32 TossResult;
 
-/* Each frame of the spring game: the tossed token flies, lands, is drawn toward
+/* Each tick of the spring game: the tossed token flies, lands, is drawn toward
    the centre by the rings and bounces off the basin's sloping sides; the crabs
    and turtles move and knock it away when it comes near; and the token, its
    shadow and its trail are drawn. */
@@ -1149,12 +1145,12 @@ static void scTolbiSpringUpdateTossSimulation(void)
 {
 	SPRING_TOSS_MOTION *toss;
 	SPRING_OBSTACLE	   *obstacle;
-	Sint32				index;
+	Sint32				idx;
 	Sint32				height;
 	FIXED				edgeInset;
 	Sint32				motionStep;
 	Sint32				speedMode;
-	Sint32				cycleFrame;
+	Sint32				cycleFrm;
 	FIXED				minX;
 	FIXED				maxX;
 	FIXED				minZ;
@@ -1163,12 +1159,12 @@ static void scTolbiSpringUpdateTossSimulation(void)
 	 * touches. */
 	UNUSED VECTOR3 spare;
 
-	toss = &sToss;
+	toss = &Toss;
 	/* Retain the previous three positions for the visible toss trail. */
-	for(index = 3; index != 0; index--) {
-		toss->trail[index].x = toss->trail[index - 1].x;
-		toss->trail[index].y = toss->trail[index - 1].y;
-		toss->trail[index].z = toss->trail[index - 1].z;
+	for(idx = 3; idx != 0; idx--) {
+		toss->trail[idx].x = toss->trail[idx - 1].x;
+		toss->trail[idx].y = toss->trail[idx - 1].y;
+		toss->trail[idx].z = toss->trail[idx - 1].z;
 	}
 
 	/* Delay motion until the leader's launch animation has played. */
@@ -1182,7 +1178,7 @@ static void scTolbiSpringUpdateTossSimulation(void)
 			toss->trail[0].y = 0;
 			if(toss->vel.y != 0) {
 				toss->vel.y = 0;
-				if(sTossKind == SPRING_TOSS_MEDAL) {
+				if(TossKind == SPRING_TOSS_MEDAL) {
 					fdActorSelectAnimation(
 						fdActorGet(ACTOR_TOLBI_SPRING_MEDAL), ANIM_TOKEN_FLOAT);
 				} else {
@@ -1221,7 +1217,7 @@ static void scTolbiSpringUpdateTossSimulation(void)
 					toss->vel.z = 0;
 				}
 				if(toss->vel.x == 0 && toss->vel.z == 0) {
-					if(sTossKind == SPRING_TOSS_MEDAL) {
+					if(TossKind == SPRING_TOSS_MEDAL) {
 						fdActorSelectAnimation(
 							fdActorGet(ACTOR_TOLBI_SPRING_MEDAL),
 							ANIM_TOKEN_REST);
@@ -1252,17 +1248,17 @@ static void scTolbiSpringUpdateTossSimulation(void)
 
 						/* Classify squared pixel distance into the five prize
 						   rings. */
-						sTossEnded = 1;
+						TossEnded = 1;
 						if(distanceSquared <= 224) {
-							sTossResult = 0;
+							TossResult = 0;
 						} else if(distanceSquared <= 624) {
-							sTossResult = 1;
+							TossResult = 1;
 						} else if(distanceSquared <= 1088) {
-							sTossResult = 2;
+							TossResult = 2;
 						} else if(distanceSquared <= 1680) {
-							sTossResult = 3;
+							TossResult = 3;
 						} else {
-							sTossResult = SPRING_RING_OUTSIDE;
+							TossResult = SPRING_RING_OUTSIDE;
 						}
 					}
 				}
@@ -1351,9 +1347,9 @@ static void scTolbiSpringUpdateTossSimulation(void)
 
 	/* The two crabs scuttle east and west; the two turtles swim round ellipses,
 	   the second hiding in its shell for the last quarter of every 512
-	   frames. */
-	for(index = 0; index != 4; index++) {
-		obstacle = &sObstacles[index];
+	   ticks. */
+	for(idx = 0; idx != 4; idx++) {
+		obstacle = &Obstacles[idx];
 
 		if(obstacle->reactionFrm > 0) {
 			obstacle->reactionFrm = obstacle->reactionFrm - 1;
@@ -1362,7 +1358,7 @@ static void scTolbiSpringUpdateTossSimulation(void)
 			obstacle->hitCooldownFrm = obstacle->hitCooldownFrm - 1;
 		}
 
-		if(index <= 1) {
+		if(idx <= 1) {
 			speedMode = obstacle->speedMode;
 			motionStep = toFIXED(1);
 			if(speedMode == 1) {
@@ -1372,7 +1368,7 @@ static void scTolbiSpringUpdateTossSimulation(void)
 				motionStep = motionStep * 3;
 			}
 			if(obstacle->reactionFrm > 0) {
-				if(index == 0) {
+				if(idx == 0) {
 					fdActorSelectAnimation(
 						fdActorGet(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE),
 						ANIM_CRAB_RAISE_CLAWS);
@@ -1382,7 +1378,7 @@ static void scTolbiSpringUpdateTossSimulation(void)
 						ANIM_CRAB_RAISE_CLAWS);
 				}
 			} else {
-				if(index == 0) {
+				if(idx == 0) {
 					fdActorSelectAnimation(
 						fdActorGet(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE),
 						ANIM_CRAB_SCUTTLE);
@@ -1399,21 +1395,21 @@ static void scTolbiSpringUpdateTossSimulation(void)
 					}
 					if(obstacle->pos.x <= toFIXED(64)) {
 						obstacle->heading = CRAB_HEADING_EAST;
-						if(index == 1) {
-							obstacle->pauseOrPhase = SPRING_CRAB_REST_FRAMES;
+						if(idx == 1) {
+							obstacle->pauseOrPhase = SPRING_CRAB_REST_TICKS;
 						}
 					}
 					if(obstacle->pos.x > (toFIXED(176) - 1)) {
 						obstacle->heading = CRAB_HEADING_WEST;
-						if(index == 1) {
-							obstacle->pauseOrPhase = SPRING_CRAB_REST_FRAMES;
+						if(idx == 1) {
+							obstacle->pauseOrPhase = SPRING_CRAB_REST_TICKS;
 						}
 					}
 				} else {
 					obstacle->pauseOrPhase = obstacle->pauseOrPhase - 1;
 				}
 			}
-		} else if(index == 2) {
+		} else if(idx == 2) {
 			speedMode = obstacle->speedMode;
 			motionStep = -(TRIG_TURN / 1024);
 			if(speedMode == 1) {
@@ -1432,12 +1428,12 @@ static void scTolbiSpringUpdateTossSimulation(void)
 					ANIM_TURTLE_SWIM);
 				obstacle->pos.x = sySin(obstacle->heading) * 48 + toFIXED(112);
 				obstacle->pos.z = syCos(obstacle->heading) * 40 + toFIXED(72);
-				cycleFrame = (Uint16)obstacle->heading + motionStep;
-				obstacle->heading = cycleFrame;
+				cycleFrm = (Uint16)obstacle->heading + motionStep;
+				obstacle->heading = cycleFrm;
 				obstacle->pauseOrPhase = obstacle->pauseOrPhase + 1;
 			}
 		} else {
-			cycleFrame = obstacle->pauseOrPhase & 511;
+			cycleFrm = obstacle->pauseOrPhase & 511;
 			speedMode = obstacle->speedMode;
 			motionStep = TRIG_TURN / 1024;
 			if(speedMode == 1) {
@@ -1450,7 +1446,7 @@ static void scTolbiSpringUpdateTossSimulation(void)
 				fdActorSelectAnimation(
 					fdActorGet(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3),
 					ANIM_TURTLE_HIDE);
-			} else if(cycleFrame <= 383) {
+			} else if(cycleFrm <= 383) {
 				obstacle->pos.x = sySin(obstacle->heading) * 52 + toFIXED(112);
 				obstacle->pos.z = syCos(obstacle->heading) * 24 + toFIXED(72);
 				obstacle->heading = obstacle->heading + motionStep;
@@ -1480,7 +1476,7 @@ static void scTolbiSpringUpdateTossSimulation(void)
 				Sint32 nextMode;
 
 				speed = toFIXED(3);
-				if(index <= 1) {
+				if(idx <= 1) {
 					if(obstacle->heading == CRAB_HEADING_EAST) {
 						if(toss->vel.x < speed) {
 							toss->vel.x = speed;
@@ -1509,18 +1505,18 @@ static void scTolbiSpringUpdateTossSimulation(void)
 			}
 		}
 
-		switch(index) {
+		switch(idx) {
 		case 0:
 			scTolbiSpringSetActorAppearance(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE,
 				syVector3Coordinates(&obstacle->pos), 0,
-				TolbiSpring_CrabFrames[obstacle->speedMode],
+				TolbiSpringCrabFrames[obstacle->speedMode],
 				obstacle->speedMode * ANIM_STEP_NORMAL + ANIM_STEP_NORMAL);
 			break;
 		case 1:
 			scTolbiSpringSetActorAppearance(
 				ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 1,
 				syVector3Coordinates(&obstacle->pos), 0,
-				TolbiSpring_CrabFrames[obstacle->speedMode],
+				TolbiSpringCrabFrames[obstacle->speedMode],
 				obstacle->speedMode * ANIM_STEP_NORMAL + ANIM_STEP_NORMAL);
 			break;
 		case 2:
@@ -1528,7 +1524,7 @@ static void scTolbiSpringUpdateTossSimulation(void)
 				ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 2,
 				syVector3Coordinates(&obstacle->pos),
 				DEGtoANG(180) - obstacle->heading,
-				TolbiSpring_CircleFrames[obstacle->speedMode],
+				TolbiSpringCircleFrames[obstacle->speedMode],
 				obstacle->speedMode * ANIM_STEP_NORMAL + ANIM_STEP_NORMAL);
 			break;
 		case 3:
@@ -1536,7 +1532,7 @@ static void scTolbiSpringUpdateTossSimulation(void)
 				ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3,
 				syVector3Coordinates(&obstacle->pos),
 				TRIG_TURN - 1 - obstacle->heading,
-				TolbiSpring_CircleFrames[obstacle->speedMode],
+				TolbiSpringCircleFrames[obstacle->speedMode],
 				obstacle->speedMode * ANIM_STEP_NORMAL + ANIM_STEP_NORMAL);
 			break;
 		}
@@ -1546,7 +1542,7 @@ static void scTolbiSpringUpdateTossSimulation(void)
 	toss->shadow.y = 0;
 	toss->shadow.z = toss->trail[0].z;
 
-	if(sTossKind == SPRING_TOSS_MEDAL) {
+	if(TossKind == SPRING_TOSS_MEDAL) {
 		scTolbiSpringSetActorAppearance(ACTOR_TOLBI_SPRING_MEDAL,
 			syVector3Coordinates(&toss->trail[0]), 0, 0, ANIM_STEP_NORMAL);
 		scTolbiSpringSetActorAppearance(ACTOR_TOLBI_SPRING_MEDAL_SHADOW,
@@ -1588,20 +1584,20 @@ static void scTolbiSpringUpdateTossSimulation(void)
 }
 
 /* Puts the crabs and turtles at their starting places, the token out of sight,
-   and starts the spring game's frames. */
+   and starts the spring game's ticks. */
 static void scTolbiSpringInitTossSimulation(void)
 {
-	SPRING_TOSS_MOTION *toss = &sToss;
-	Sint32				obstacleIndex = 0;
+	SPRING_TOSS_MOTION *toss = &Toss;
+	Sint32				obstacleIdx = 0;
 	const Uint8		   *pixelX;
 	const Uint16	   *headings;
 	SPRING_OBSTACLE	   *obstacle;
 	const Uint8		   *pixelZ;
 
-	pixelX = TolbiSpring_ActorPixelX;
-	obstacle = sObstacles;
-	headings = TolbiSpring_ActorHeadings;
-	pixelZ = TolbiSpring_ActorPixelZ;
+	pixelX = TolbiSpringActorPixelX;
+	obstacle = Obstacles;
+	headings = TolbiSpringActorHeadings;
+	pixelZ = TolbiSpringActorPixelZ;
 
 	do {
 		obstacle->pos.x = toFIXED(*pixelX);
@@ -1613,12 +1609,12 @@ static void scTolbiSpringInitTossSimulation(void)
 		obstacle->reactionFrm = 0;
 		obstacle->hitCooldownFrm = 0;
 
-		obstacleIndex++;
+		obstacleIdx++;
 		pixelX++;
 		pixelZ++;
 		headings++;
 		obstacle++;
-	} while(obstacleIndex != 4);
+	} while(obstacleIdx != 4);
 
 	toss->trail[0].x = -toFIXED(30);
 	toss->trail[0].y = 0;
@@ -1632,7 +1628,7 @@ static void scTolbiSpringInitTossSimulation(void)
 		fdActorGet(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 2), ANIM_TURTLE_SWIM);
 	fdActorSelectAnimation(
 		fdActorGet(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3), ANIM_TURTLE_SWIM);
-	sySetFrameEvent(scTolbiSpringUpdateTossSimulation, EVENT_PASS_FRAME + 3);
+	sySetTickEvent(scTolbiSpringUpdateTossSimulation, EVENT_PASS_TICK + 3);
 }
 
 /* Isaac tosses the chosen coin or medal over his shoulder; returns the ring it
@@ -1641,19 +1637,19 @@ static Sint32 scTolbiSpringRunToss(Sint32 tossKind)
 {
 	SPRING_TOSS_MOTION *toss;
 
-	toss = &sToss;
+	toss = &Toss;
 	toss->trail[0].y = 0;
 	toss->trail[1].y = 0;
 	toss->trail[2].y = 0;
 	toss->trail[3].y = 0;
-	sTossKind = tossKind;
-	sTossEnded = 0;
+	TossKind = tossKind;
+	TossEnded = 0;
 	toss->launchFrm = -1;
-	for(sTossFrame = 0;; sTossFrame++) {
-		if(sTossFrame == 50) {
+	for(TossTick = 0;; TossTick++) {
+		if(TossTick == 50) {
 			sySndPlay(SE_TOLBI_SPRING_TOSS);
 		}
-		if(sTossFrame == 16) {
+		if(TossTick == 16) {
 			fdActorSetAnimation(
 				MainRoutineStateWork.leaderActorId, ANIM_LEADER_TOSS);
 			toss->launchFrm = 0;
@@ -1664,7 +1660,7 @@ static Sint32 scTolbiSpringRunToss(Sint32 tossKind)
 			toss->trail[0].y = toFIXED(16);
 			toss->trail[0].z = toFIXED(152);
 			toss->attractionFrm = 300;
-			if(sTossKind == SPRING_TOSS_MEDAL) {
+			if(TossKind == SPRING_TOSS_MEDAL) {
 				fdActorSelectAnimation(
 					fdActorGet(ACTOR_TOLBI_SPRING_MEDAL_SHADOW),
 					ANIM_TOKEN_SHADOW);
@@ -1685,14 +1681,14 @@ static Sint32 scTolbiSpringRunToss(Sint32 tossKind)
 			}
 		}
 		sySynch(1);
-		if(sTossEnded == 1) {
+		if(TossEnded == 1) {
 			break;
 		}
 	}
-	return sTossResult;
+	return TossResult;
 }
 
-const SCENE_ENTRANCE TolbiSpring_Entrances[] = {
+const SCENE_ENTRANCE TolbiSpringEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{TOLBI_SPRING_FROM_TOLBI, CONDITION_ALWAYS, 120, 0, 168, FACING_NORTH, 0,
@@ -1709,7 +1705,7 @@ const SCENE_ENTRANCE TolbiSpring_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-const Uint32 TolbiSpring_Exits[] = {
+const Uint32 TolbiSpringExits[] = {
 	SCENE_EXITS(TolbiSpring),
 	SCENE_EXIT_UNLESS(
 		TOLBI_SPRING_TO_TOLBI, Tolbi, TOLBI_FROM_TOLBI_SPRING, EXIT_FLAG_NONE),
@@ -1822,7 +1818,7 @@ const CUE StuccoRoomsCTriggers[] = {
 
 const CUE TolbiSpringCues[] = {
 	{ CUE_EXIT, TOLBI_SPRING_TO_TOLBI, CONDITION_ALWAYS, TOLBI_SPRING_TO_TOLBI },
-	/* XXX: TolbiSpring_Exits has no exit 2 and no entrance 2 is named; */
+	/* XXX: TolbiSpringExits has no exit 2 and no entrance 2 is named; */
 	/* whether a metatile of the spring's map carries behavior 2 would settle */
 	/* what it was. */
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, 2 },
@@ -1839,15 +1835,15 @@ const CUE TolbiSpringCues[] = {
 };
 
 /* The water's fade as the spring drains, from mostly water to none, one */
-/* step every eighth frame. */
-const Uint16 TolbiSpring_AlphaSteps[] = {
+/* step every eighth tick. */
+const Uint16 TolbiSpringAlphaSteps[] = {
 	BLEND_ALPHA(10, 9), BLEND_ALPHA(8, 10), BLEND_ALPHA(6, 11), BLEND_ALPHA(4, 12),
 	BLEND_ALPHA(3, 13), BLEND_ALPHA(2, 14), BLEND_ALPHA(1, 15), BLEND_ALPHA(0, 16),
 };
 
 /* The prizes a Lucky Medal can win, SPRING_MEDAL_PRIZES_PER_RING to a ring, */
 /* one drawn by its weight. */
-const Uint32 TolbiSpring_PrizeItems[] = {
+const Uint32 TolbiSpringPrizeItems[] = {
 	ITEM_ASSASSIN_BLADE, ITEM_EARTH_SHIELD, ITEM_SPIRIT_ARMOR, ITEM_ADEPTS_HELM, ITEM_BURNING_AXE,
 	ITEM_COCKTAIL_DRESS, ITEM_GLITTERING_TIARA, ITEM_GUARDIAN_ARMLET, ITEM_GRIEVOUS_MACE,
 	ITEM_NINJA_HOOD, ITEM_BATTLE_GLOVES, ITEM_KIMONO, ITEM_POTION, ITEM_PSY_CRYSTAL,
@@ -1855,34 +1851,34 @@ const Uint32 TolbiSpring_PrizeItems[] = {
 };
 
 /* The coins a tossed coin wins, by the ring it rests in. */
-const Uint16 TolbiSpring_CoinPrizes[] = {
+const Uint16 TolbiSpringCoinPrizes[] = {
 	20, 10, 2, 1, 0, 0,
 };
 
 /* What Lucky Wheels wins, three items to each of its LUCKY_WHEELS_KINDS */
 /* kinds. */
-const Uint32 StuccoRoomsC_LuckyWheelsPrizeItems[] = {
+const Uint32 StuccoRoomsCLuckyWheelsPrizeItems[] = {
 	ITEM_MYTHRIL_SHIRT, ITEM_SILK_SHIRT, ITEM_RUNNING_SHIRT, ITEM_HYPER_BOOTS, ITEM_QUICK_BOOTS, ITEM_FUR_BOOTS,
 	ITEM_ADEPT_RING, ITEM_WAR_RING, ITEM_SLEEP_RING, ITEM_POTION, ITEM_VIAL, ITEM_NUT,
 	ITEM_WATER_OF_LIFE, ITEM_PSY_CRYSTAL, ITEM_ELIXIR,
 };
 
 /* The crabs' animation for each speed, and the turtles'. */
-const Uint8 TolbiSpring_CrabFrames[] = {
+const Uint8 TolbiSpringCrabFrames[] = {
 	0, 1, 9,
 };
-const Uint8 TolbiSpring_CircleFrames[] = {
+const Uint8 TolbiSpringCircleFrames[] = {
 	0, 3, 4,
 };
 
 /* Where each obstacle starts, in pixels, and its heading. */
-const Uint8 TolbiSpring_ActorPixelX[] = {
+const Uint8 TolbiSpringActorPixelX[] = {
 	80, 160, 80, 72,
 };
-const Uint8 TolbiSpring_ActorPixelZ[] = {
+const Uint8 TolbiSpringActorPixelZ[] = {
 	32, 104, 68, 72,
 };
-const Uint16 TolbiSpring_ActorHeadings[] = {
+const Uint16 TolbiSpringActorHeadings[] = {
 	CRAB_HEADING_EAST, CRAB_HEADING_WEST, FACING_EAST, FACING_WEST,
 };
 /* clang-format on */

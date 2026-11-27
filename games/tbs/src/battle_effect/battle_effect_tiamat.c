@@ -28,32 +28,32 @@ void btEffectRunTiamat(BATTLE_EFFECT_PARM *args)
 	btEffectRunDragonFire(args, DRAGON_FIRE_TIAMAT);
 }
 
-#define DRAGON_FIRE_FRAMES			208
+#define DRAGON_FIRE_TICKS		   208
 /* The breath of fire, then the flash that ends it. */
-#define DRAGON_FIRE_BREATH_FRAME	128
-#define DRAGON_FIRE_FLASH_FRAME		160
-#define DRAGON_FIRE_FLASH_END_FRAME 176
-#define DRAGON_FIRE_FIREBALLS		16 /* falling fireballs */
-#define DRAGON_FIRE_FIRST_FIREBALL	24 /* the first in state->particles */
-#define DRAGON_FIRE_FIRST_SPARK		40 /* the first spark in state->particles */
-#define DRAGON_FIRE_EMBERS			512 /* embers in PARTICLES */
-#define DRAGON_FIRE_BREATH			24 /* puffs of breath, state->particles 0 to 23 */
-#define DRAGON_FIRE_SPARKS			24 /* sparks, state->particles 40 to 63 */
+#define DRAGON_FIRE_BREATH_TICK	   128
+#define DRAGON_FIRE_FLASH_TICK	   160
+#define DRAGON_FIRE_FLASH_END_TICK 176
+#define DRAGON_FIRE_FIREBALLS	   16  /* falling fireballs */
+#define DRAGON_FIRE_FIRST_FIREBALL 24  /* the first in state->particles */
+#define DRAGON_FIRE_FIRST_SPARK	   40  /* the first spark in state->particles */
+#define DRAGON_FIRE_EMBERS		   512 /* embers in PARTICLES */
+#define DRAGON_FIRE_BREATH		   24 /* puffs of breath, state->particles 0 to 23 */
+#define DRAGON_FIRE_SPARKS		   24 /* sparks, state->particles 40 to 63 */
 /* The flames a fireball burns with where it lands, in the sprite sheet. */
-#define DRAGON_FIRE_FLAME_PICTURES	12288
-/* A puff of breath shows the flash burst's six pictures, four frames each. */
-#define DRAGON_FIRE_PUFF_PICTURES	6
-#define DRAGON_FIRE_PUFF_FRAMES		4
-/* A landed fireball's flame burns through its six pictures, two frames each,
+#define DRAGON_FIRE_FLAME_PICTURES 12288
+/* A puff of breath shows the flash burst's six pictures, four ticks each. */
+#define DRAGON_FIRE_PUFF_PICTURES  6
+#define DRAGON_FIRE_PUFF_TICKS	   4
+/* A landed fireball's flame burns through its six pictures, two ticks each,
    over and over. */
-#define DRAGON_FIRE_BURN_PICTURES	6
-#define DRAGON_FIRE_BURN_FRAMES		2
-#define DRAGON_FIRE_SPARK_LIFE		48	/* frames a spark flies */
-#define DRAGON_FIRE_EMBER_LIFE		256 /* frames an ember rises */
+#define DRAGON_FIRE_BURN_PICTURES  6
+#define DRAGON_FIRE_BURN_TICKS	   2
+#define DRAGON_FIRE_SPARK_LIFE	   48  /* ticks a spark flies */
+#define DRAGON_FIRE_EMBER_LIFE	   256 /* ticks an ember rises */
 /* A falling fireball is the largest mote. */
-#define DRAGON_FIRE_FIREBALL_SIZE	10
+#define DRAGON_FIRE_FIREBALL_SIZE  10
 /* The sprites Tiamat is drawn from. */
-#define TIAMAT_SPRITES				8
+#define TIAMAT_SPRITES			   8
 
 /* Tiamat's pieces (state->sprs), each showing its own picture of the sprite
    sheet: piece n shows animation n. As it breathes, its head, horns, jaw and
@@ -83,7 +83,7 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	BATTLE_CAMERA		*camera;
 	BATTLE_EFFECT_STATE *state;
 	BLITTER_PAIR		 draw;
-	Sint32				 frame;
+	Sint32				 frm;
 	Uint8				*motes;
 	POINT2_D			 tiamat;
 	Sint32				 direction;
@@ -160,11 +160,11 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		btEffectCreateSprs(TIAMAT_SPRITES, SPRITE_TIAMAT, 2);
 	}
 
-	for(frame = 0; frame != DRAGON_FIRE_FRAMES; frame++) {
+	for(frm = 0; frm != DRAGON_FIRE_TICKS; frm++) {
 		/* A or B skips to the flash. */
-		if((PerRepeat & (KEY_A | KEY_B)) && frame > 48 &&
-			frame < DRAGON_FIRE_FLASH_FRAME) {
-			/* Tiamat's open mouth of the breath and the targets' reel of frame
+		if((PerRepeat & (KEY_A | KEY_B)) && frm > 48 &&
+			frm < DRAGON_FIRE_FLASH_TICK) {
+			/* Tiamat's open mouth of the breath and the targets' reel of tick
 			   138. */
 			if(mode == DRAGON_FIRE_TIAMAT) {
 				fdSprStartAnimationStub(
@@ -182,34 +182,34 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				btMotionApplyKnockbackStub(
 					state->args->tgts[i], KNOCKBACK_HURL);
 			}
-			frame = DRAGON_FIRE_FLASH_FRAME;
+			frm = DRAGON_FIRE_FLASH_TICK;
 		}
 		EFFECT_VIEW_FROM_CAMERA(camera);
-		if(frame == 178)
+		if(frm == 178)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
-		if(frame == DRAGON_FIRE_BREATH_FRAME)
+		if(frm == DRAGON_FIRE_BREATH_TICK)
 			state->transferValue = CANVAS_FADE_HALF;
-		if(frame == DRAGON_FIRE_FLASH_END_FRAME) {
+		if(frm == DRAGON_FIRE_FLASH_END_TICK) {
 			EFFECT_SET_TRANSFER(
 				state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
 			resource = syResourceGetTableEntry(RESOURCE_EMBER_STREAK_SHEET);
 			syWordsCopy(BG_PLTT, resource, SHEET_PALETTE_BYTES);
-		} else if(frame >= DRAGON_FIRE_FLASH_FRAME &&
-			frame < DRAGON_FIRE_FLASH_END_FRAME) {
+		} else if(frm >= DRAGON_FIRE_FLASH_TICK &&
+			frm < DRAGON_FIRE_FLASH_END_TICK) {
 			EFFECT_SET_TRANSFER(
 				state, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
-			if(frame > 173)
+			if(frm > 173)
 				state->transferValue = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
 			btPaletteBrightenBgEntries(2, 2, 2);
 		}
 
 		/* Embers rise from the ground. */
-		if(frame >= 33 && frame < DRAGON_FIRE_FLASH_END_FRAME) {
+		if(frm >= 33 && frm < DRAGON_FIRE_FLASH_END_TICK) {
 			Sint32 spawned = 0;
 			Sint32 limit = 1;
 
-			if(frame > 103)
+			if(frm > 103)
 				limit = 8;
 			for(i = 0; i != DRAGON_FIRE_EMBERS; i++) {
 				PARTICLE *ember = &PARTICLES[i];
@@ -218,9 +218,9 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					ember->x = toFIXED((syRandom() & 255) - 32);
 					ember->y = toFIXED(112);
 					ember->velX =
-						((syRandom() & 127) + Tiamat_EmberSpeeds[i & 3]) << 9;
+						((syRandom() & 127) + TiamatEmberSpeeds[i & 3]) << 9;
 					ember->velY =
-						-((syRandom() & 127) + Tiamat_EmberSpeeds[i & 3]) << 11;
+						-((syRandom() & 127) + TiamatEmberSpeeds[i & 3]) << 11;
 					ember->variant = 0;
 					spawned++;
 					if(spawned == limit)
@@ -229,17 +229,17 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		}
 		/* Sparks fly up from Tiamat's head. */
-		if(frame >= 41 && frame < DRAGON_FIRE_BREATH_FRAME) {
+		if(frm >= 41 && frm < DRAGON_FIRE_BREATH_TICK) {
 			Sint32 spawned = 0;
 
-			if(frame & 1) {
+			if(frm & 1) {
 				for(i = 0; i != DRAGON_FIRE_SPARKS; i++) {
 					PARTICLE *spark =
 						&state->particles[DRAGON_FIRE_FIRST_SPARK + i];
 
 					if(spark->variant == -1) {
 						Sint32 speed = (syRandom() & 255) + 128;
-						Sint32 angle = (syRandom() & 0x1fff) + 20000;
+						Sint32 ang = (syRandom() & 0x1fff) + 20000;
 
 						if(mode == DRAGON_FIRE_TIAMAT) {
 							spark->x = INTtoFIXED((syRandom() & 7) + 78);
@@ -248,8 +248,8 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							spark->x = toFIXED((syRandom() & 7) + origin.x - 8);
 							spark->y = toFIXED(origin.y);
 						}
-						spark->velX = speed * sySin(angle) >> 9;
-						spark->velY = speed * syCos(angle) >> 9;
+						spark->velX = speed * sySin(ang) >> 9;
+						spark->velY = speed * syCos(ang) >> 9;
 						spawned++;
 						spark->variant = 0;
 						if(spawned == 1)
@@ -258,13 +258,12 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				}
 			}
 		}
-		if(frame == 48)
+		if(frm == 48)
 			sySndPlayStub(SE_RUMBLE);
-		if(frame == DRAGON_FIRE_BREATH_FRAME)
+		if(frm == DRAGON_FIRE_BREATH_TICK)
 			sySndPlayStub(SE_CRASH);
 		/* Breath: puffs of fire thrown across the targets. */
-		if(frame > DRAGON_FIRE_BREATH_FRAME &&
-			frame < DRAGON_FIRE_FLASH_END_FRAME) {
+		if(frm > DRAGON_FIRE_BREATH_TICK && frm < DRAGON_FIRE_FLASH_END_TICK) {
 			Sint32 spawned = 0;
 
 			for(i = 0; i != DRAGON_FIRE_BREATH; i++) {
@@ -272,7 +271,7 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 				if(puff->variant == -1) {
 					Sint32 speed = (syRandom() & 255) + 128;
-					Sint32 angle = (syRandom() & 0x1fff) - 20000;
+					Sint32 ang = (syRandom() & 0x1fff) - 20000;
 
 					if(mode == DRAGON_FIRE_TIAMAT) {
 						puff->x = toFIXED(68);
@@ -281,8 +280,8 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						puff->x = toFIXED(origin.x);
 						puff->y = toFIXED(origin.y);
 					}
-					puff->velX = speed * sySin(angle) >> 6;
-					puff->velY = speed * syCos(angle) >> 6;
+					puff->velX = speed * sySin(ang) >> 6;
+					puff->velY = speed * syCos(ang) >> 6;
 					puff->variant = 0;
 					spawned++;
 					if(spawned == 1)
@@ -291,7 +290,7 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		}
 
-		if(frame < DRAGON_FIRE_FLASH_END_FRAME) {
+		if(frm < DRAGON_FIRE_FLASH_END_TICK) {
 			for(i = 0; i != DRAGON_FIRE_BREATH; i++) {
 				PARTICLE *puff = &state->particles[i];
 
@@ -306,7 +305,7 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					puff->y += puff->velY;
 					puff->variant++;
 					if(puff->variant ==
-						DRAGON_FIRE_PUFF_PICTURES * DRAGON_FIRE_PUFF_FRAMES)
+						DRAGON_FIRE_PUFF_PICTURES * DRAGON_FIRE_PUFF_TICKS)
 						puff->variant = -1;
 				}
 			}
@@ -317,7 +316,7 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			Sint32	  size = 1;
 
 			if(spark->variant >= 0) {
-				draw[1](canvas, Tiamat_SparkPixels, FIXEDtoINT(spark->x),
+				draw[1](canvas, TiamatSparkPixels, FIXEDtoINT(spark->x),
 					FIXEDtoINT(spark->y) - size, size, size * 2);
 				spark->x += spark->velX * direction;
 				spark->y += spark->velY;
@@ -329,19 +328,19 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		}
 
 		/* Embers rise, then curve away. */
-		if(frame < DRAGON_FIRE_FLASH_END_FRAME) {
+		if(frm < DRAGON_FIRE_FLASH_END_TICK) {
 			for(i = 0; i != DRAGON_FIRE_EMBERS; i++) {
 				PARTICLE *ember = &PARTICLES[i];
 
 				if(ember->variant >= 0) {
-					Uint8 size = Tiamat_EmberSizes[i & 3];
+					Uint8 size = TiamatEmberSizes[i & 3];
 
-					draw[0](canvas, motes + BattleEffect_MotePictures[size - 1],
+					draw[0](canvas, motes + BattleEffectMotePictures[size - 1],
 						FIXEDtoINT(ember->x) - size / 2,
 						FIXEDtoINT(ember->y) - size, size, size * 2);
 					ember->x += ember->velX * direction;
 					ember->y += ember->velY;
-					if(frame > DRAGON_FIRE_BREATH_FRAME) {
+					if(frm > DRAGON_FIRE_BREATH_TICK) {
 						if(i & 1)
 							ember->velX += -toFIXED(1) / 2;
 						else
@@ -356,18 +355,18 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		}
 
-		if(frame == DRAGON_FIRE_BREATH_FRAME)
+		if(frm == DRAGON_FIRE_BREATH_TICK)
 			state->shakeFrm = 48;
-		if(mode == DRAGON_FIRE_TIAMAT && frame == 48)
+		if(mode == DRAGON_FIRE_TIAMAT && frm == 48)
 			state->shakeFrm = 8;
 
 		/* Tiamat swoops down. */
-		if(frame >= 40 && frame <= 47) {
+		if(frm >= 40 && frm <= 47) {
 			tiamat.x += -toFIXED(8);
 			tiamat.y += toFIXED(16);
 		}
 		if(mode == DRAGON_FIRE_TIAMAT) {
-			if(frame == DRAGON_FIRE_BREATH_FRAME) {
+			if(frm == DRAGON_FIRE_BREATH_TICK) {
 				fdSprStartAnimationStub(
 					state->sprs[TIAMAT_HEAD], TIAMAT_HEAD_BREATHING);
 				fdSprStartAnimationStub(
@@ -377,7 +376,7 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				fdSprStartAnimationStub(
 					state->sprs[TIAMAT_THROAT], TIAMAT_THROAT_BREATHING);
 			}
-			if(frame == DRAGON_FIRE_FLASH_END_FRAME) {
+			if(frm == DRAGON_FIRE_FLASH_END_TICK) {
 				fdSprStartAnimationStub(state->sprs[TIAMAT_HEAD], TIAMAT_HEAD);
 				fdSprStartAnimationStub(
 					state->sprs[TIAMAT_HORNS], TIAMAT_HORNS);
@@ -388,7 +387,7 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			btEffectPlaceFormationSprs(
 				SUMMON_FORMATION_TIAMAT, tiamat.x, tiamat.y);
 		}
-		if(frame == 138) {
+		if(frm == 138) {
 			EFFECT_FOR_EACH_TARGET(i, state->args) {
 				btEffectTintBattler(state->args->tgts[i], SPRITE_COLOR_RED_TINT,
 					POSE_DAMAGE, TINT_KEEP, 0);
@@ -397,7 +396,7 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		}
 
-		if(frame < DRAGON_FIRE_FLASH_END_FRAME) {
+		if(frm < DRAGON_FIRE_FLASH_END_TICK) {
 			for(i = 0; i != DRAGON_FIRE_FIREBALLS; i++) {
 				PARTICLE *fireball =
 					&state->particles[DRAGON_FIRE_FIRST_FIREBALL + i];
@@ -405,30 +404,30 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				if(fireball->y > 55) {
 					if(fireball->variant >= 0 &&
 						fireball->variant < DRAGON_FIRE_BURN_PICTURES *
-								DRAGON_FIRE_BURN_FRAMES) {
+								DRAGON_FIRE_BURN_TICKS) {
 						Sint32 picture =
-							fireball->variant / DRAGON_FIRE_BURN_FRAMES;
+							fireball->variant / DRAGON_FIRE_BURN_TICKS;
 
 						draw[0](canvas,
-							state->sheet + Tiamat_FlamePictures[picture] +
+							state->sheet + TiamatFlamePictures[picture] +
 								DRAGON_FIRE_FLAME_PICTURES,
-							fireball->x - Tiamat_FlameWidths[picture] / 2,
-							fireball->y + Tiamat_FlameDrops[picture],
-							Tiamat_FlameWidths[picture],
-							Tiamat_FlameHeights[picture]);
+							fireball->x - TiamatFlameWidths[picture] / 2,
+							fireball->y + TiamatFlameDrops[picture],
+							TiamatFlameWidths[picture],
+							TiamatFlameHeights[picture]);
 					}
 					fireball->variant++;
 					if(fireball->variant ==
-						DRAGON_FIRE_BURN_PICTURES * DRAGON_FIRE_BURN_FRAMES)
+						DRAGON_FIRE_BURN_PICTURES * DRAGON_FIRE_BURN_TICKS)
 						fireball->variant = 0;
 				} else if(fireball->variant == 0) {
 					Sint32 size = DRAGON_FIRE_FIREBALL_SIZE;
 
 					fireball->x -= direction * 6;
 					fireball->y += 6;
-					if(frame <= 47 && fireball->y > 55)
+					if(frm <= 47 && fireball->y > 55)
 						sySndPlayStub(SE_WHOOSH);
-					draw[0](canvas, motes + BattleEffect_MotePictures[size - 1],
+					draw[0](canvas, motes + BattleEffectMotePictures[size - 1],
 						fireball->x - size / 2, fireball->y + 30, size,
 						size * 2);
 				} else {
@@ -437,7 +436,7 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		}
 		btCameraShake(8, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	syCloseEvent(btEffectTransferCanvas);
@@ -450,10 +449,10 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	btEffectEndCanvasLayer();
 }
 
-#undef DRAGON_FIRE_FRAMES
-#undef DRAGON_FIRE_BREATH_FRAME
-#undef DRAGON_FIRE_FLASH_FRAME
-#undef DRAGON_FIRE_FLASH_END_FRAME
+#undef DRAGON_FIRE_TICKS
+#undef DRAGON_FIRE_BREATH_TICK
+#undef DRAGON_FIRE_FLASH_TICK
+#undef DRAGON_FIRE_FLASH_END_TICK
 #undef DRAGON_FIRE_FIREBALLS
 #undef DRAGON_FIRE_FIRST_FIREBALL
 #undef DRAGON_FIRE_FIRST_SPARK
@@ -462,9 +461,9 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 #undef DRAGON_FIRE_SPARKS
 #undef DRAGON_FIRE_FLAME_PICTURES
 #undef DRAGON_FIRE_PUFF_PICTURES
-#undef DRAGON_FIRE_PUFF_FRAMES
+#undef DRAGON_FIRE_PUFF_TICKS
 #undef DRAGON_FIRE_BURN_PICTURES
-#undef DRAGON_FIRE_BURN_FRAMES
+#undef DRAGON_FIRE_BURN_TICKS
 #undef DRAGON_FIRE_SPARK_LIFE
 #undef DRAGON_FIRE_EMBER_LIFE
 #undef DRAGON_FIRE_FIREBALL_SIZE

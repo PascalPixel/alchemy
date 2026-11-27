@@ -10,13 +10,13 @@
 SPEAKER_DEFINITION *fdSpeakerFindDefinition(Uint32 id)
 {
 	SPEAKER_DEFINITION *entry = SpeakerDefinitions;
-	Uint32				definitionIndex = 0;
+	Uint32				definitionIdx = 0;
 
 	if(entry->id != id) {
 		do {
-			definitionIndex += 1;
+			definitionIdx += 1;
 			entry++;
-			if(definitionIndex >= SPEAKER_DEFINITION_COUNT)
+			if(definitionIdx >= SPEAKER_DEFINITION_COUNT)
 				break;
 		} while(entry->id != id);
 	}

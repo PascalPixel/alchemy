@@ -53,60 +53,60 @@
 #define GASP_SEEDS		   16
 
 /* Gasp and Lull: the small Djinni sways GASP_DJINNI_SWAY pixels either side and
-   bobs, a 32nd of a turn a frame. Gasp's burning skulls rise one every 8
-   frames, each for GASP_SKULL_FRAMES before it fades. */
-#define GASP_DJINNI_SWAY  20
-#define GASP_SKULLS		  6
-#define GASP_SKULL_FRAMES 32
-#define GASP_SKULL_SCALE  (toFIXED(1875) / 4096)
+   bobs, a 32nd of a turn a tick. Gasp's burning skulls rise one every 8
+   ticks, each for GASP_SKULL_TICKS before it fades. */
+#define GASP_DJINNI_SWAY 20
+#define GASP_SKULLS		 6
+#define GASP_SKULL_TICKS 32
+#define GASP_SKULL_SCALE (toFIXED(1875) / 4096)
 
 /* Reflux: the Djinni circles wider until GASP_REFLUX_RADIUS. Reflux and
    Counter-rush: of GASP_MOTES set up, GASP_SWIRL_MOTES close in on the swirl,
-   each for GASP_SWIRL_MOTE_FRAMES, as the swirl grows to GASP_SWIRL_SCALE. */
-#define GASP_REFLUX_RADIUS	   12
-#define GASP_SWIRL_MOTES	   48
-#define GASP_SWIRL_MOTE_FRAMES 32
-#define GASP_SWIRL_SCALE	   (toFIXED(375) / 512)
-/* The swirl grows to its full scale over its first 32 frames, and shrinks away
+   each for GASP_SWIRL_MOTE_TICKS, as the swirl grows to GASP_SWIRL_SCALE. */
+#define GASP_REFLUX_RADIUS	  12
+#define GASP_SWIRL_MOTES	  48
+#define GASP_SWIRL_MOTE_TICKS 32
+#define GASP_SWIRL_SCALE	  (toFIXED(375) / 512)
+/* The swirl grows to its full scale over its first 32 ticks, and shrinks away
    twice as fast. */
-#define GASP_SWIRL_GROWTH	   (GASP_SWIRL_SCALE / 32)
-#define GASP_SWIRL_SHRINK	   (GASP_SWIRL_SCALE / 16)
+#define GASP_SWIRL_GROWTH	  (GASP_SWIRL_SCALE / 32)
+#define GASP_SWIRL_SHRINK	  (GASP_SWIRL_SCALE / 16)
 
 /* Shine: the Djinni glides a GASP_SHINE_GLIDE-th of the way to over the user a
-   frame, then falls onto the target a GASP_SHINE_FALL-th of the way more each
-   frame, turning rays of light about it. Each ray's texture scrolls two texels
-   a frame, seven behind the last ray's, within the 32 texels its mesh spans. */
+   tick, then falls onto the target a GASP_SHINE_FALL-th of the way more each
+   tick, turning rays of light about it. Each ray's texture scrolls two texels
+   a tick, seven behind the last ray's, within the 32 texels its mesh spans. */
 #define GASP_SHINE_GLIDE		   40
 #define GASP_SHINE_FALL			   32
 #define GASP_SHINE_RAYS			   8
-#define GASP_SHINE_RAY_FRAMES	   32
+#define GASP_SHINE_RAY_TICKS	   32
 #define GASP_SHINE_RAY_SCROLL_MASK 0x1f
 
 /* Lull: a ring of music notes, leaning back GASP_LULL_TILT (about 100 degrees)
-   and righting itself a 1024th of a turn a frame, turning about 2 degrees a
-   frame, fades after GASP_LULL_RING_FRAMES. */
-#define GASP_LULL_NOTES		  12
-#define GASP_LULL_RING_FRAMES 64
-#define GASP_LULL_TILT		  18288
+   and righting itself a 1024th of a turn a tick, turning about 2 degrees a
+   tick, fades after GASP_LULL_RING_TICKS. */
+#define GASP_LULL_NOTES		 12
+#define GASP_LULL_RING_TICKS 64
+#define GASP_LULL_TILT		 18288
 
-/* Mold: the Djinni's sprite shrinks GASP_MOLD_SHRINK a frame (about 7 percent
-   of its size); for its first GASP_MOLD_SLOW_FADE_FRAMES the canvas keeps three
+/* Mold: the Djinni's sprite shrinks GASP_MOLD_SHRINK a tick (about 7 percent
+   of its size); for its first GASP_MOLD_SLOW_FADE_TICKS the canvas keeps three
    quarters of each pixel, then half. */
-#define GASP_MOLD_SHRINK		   4592
-#define GASP_MOLD_SLOW_FADE_FRAMES 24
+#define GASP_MOLD_SHRINK		  4592
+#define GASP_MOLD_SLOW_FADE_TICKS 24
 
-/* Emu: puffs of dust trail the bird, one each two frames for its first ten; the
+/* Emu: puffs of dust trail the bird, one each two ticks for its first ten; the
    blow scatters motes, each at least GASP_EMU_MOTE_SPEED_MIN fast. */
 #define GASP_EMU_PUFFS			32
 #define GASP_EMU_MOTES			256
 #define GASP_EMU_MOTE_SPEED_MIN 64
 
 /* Beat Dance and Clarion Cry: the notes that fly from their unit, one every two
-   frames, each for GASP_NOTE_FRAMES before it fades, at least
+   ticks, each for GASP_NOTE_TICKS before it fades, at least
    GASP_NOTE_SPEED_MIN fast. */
 #define GASP_NOTE_SEEDS		32
 #define GASP_NOTES			12
-#define GASP_NOTE_FRAMES	24
+#define GASP_NOTE_TICKS		24
 #define GASP_NOTE_SPEED_MIN 128
 
 /* Call Dullahan: the sparks his bolt scatters, each at least
@@ -120,17 +120,17 @@
 #define GASP_DULLAHAN_SWING			  48152
 
 /* Cage: its rings lean, each a further eighth of a turn, and close on the
-   target from GASP_CAGE_CLOSE_FRAME, each two frames after the last. */
-#define GASP_CAGE_TILT		  4000
-#define GASP_CAGE_CLOSE_FRAME 16
+   target from GASP_CAGE_CLOSE_TICK, each two ticks after the last. */
+#define GASP_CAGE_TILT		 4000
+#define GASP_CAGE_CLOSE_TICK 16
 
 /* Element Swap: a mote's distance from the user is kept in sixteenths of a
    pixel, GASP_SWAP_MOTE_SHIFT bits of fraction. */
 #define GASP_SWAP_MOTE_SHIFT 4
 
 /* Psy Boost: each of its two rings shrinks onto the user over
-   GASP_PSY_BOOST_RING_FRAMES. */
-#define GASP_PSY_BOOST_RING_FRAMES 16
+   GASP_PSY_BOOST_RING_TICKS. */
+#define GASP_PSY_BOOST_RING_TICKS 16
 
 /* The shared body of sixteen abilities' effects, named for the first; the
    wrappers in rime.c pick a GASP_MODE: Gasp, Reflux, Djinn Counter, Mold and
@@ -138,16 +138,16 @@
    abilities, Call Dullahan and Formina Sage, Beat Dance, Element Swap, Cage,
    Clarion Cry and Psy Boost. GASP_MODE_UNUSED has no caller. Each mode loads
    its own sprite sheets, then draws a canvas layer and a model layer every
-   frame for the mode's length. */
+   tick for the mode's length. */
 void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
 	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
 	Uint8				*canvas = Ram_HeapSlots->battleCanvas;
 	/* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
-	 * frame reserves and never touches; as one DRAW_RECTANGLE. */
+	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE draw[2];
-	Sint32		   frames;
-	Uint8		  *sprites = Ram_HeapSlots->battleSheet;
+	Sint32		   ticks;
+	Uint8		  *sprs = Ram_HeapSlots->battleSheet;
 	BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
 	Uint8		  *cells = Ram_MapMetatileBuffer;
 	RENDER_MODEL  *model;
@@ -155,7 +155,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	MODEL_TEXTURE  texture;
 	Sint32		   screen[3];
 	Sint32		   other[3];
-	Sint32		   frame;
+	Sint32		   frm;
 	Sint32		   i;
 
 	btEffectStartCanvasLayer(0);
@@ -171,7 +171,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			RESOURCE_BURNING_SKULL_SHEET, state->sheet, 0, 0);
 		REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
 			BGCNT_SCREEN_BASE(7);
-		frames = 84;
+		ticks = 84;
 	} else if(mode == GASP_MODE_UNUSED) {
 		btEffectRunDjinniEntrance(args,
 			DJINNI_ENTRANCE(
@@ -182,7 +182,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		btResourceLoadAndDecompress(
 			RESOURCE_MERCURY_DJINN_SMALL_SHEET, FIGURE(state), 1, 1);
 		LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
-		frames = 48;
+		ticks = 48;
 	} else if(mode == GASP_MODE_MOLD) {
 		Sint32 j;
 		Sint32 k;
@@ -202,7 +202,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					GASP_DJINNI_SLOT_MARGIN + j] =
 					state->sheet[GASP_FAMILY_VENUS_DJINN_PICTURES +
 						k * DJINNI_WIDTH + j];
-		frames = 42;
+		ticks = 42;
 	} else if(mode == GASP_MODE_LULL) {
 		btEffectRunDjinniEntrance(args,
 			DJINNI_ENTRANCE(
@@ -212,24 +212,24 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			RESOURCE_JUPITER_DJINN_SMALL_SHEET, FIGURE(state), 1, 1);
 		btResourceLoadAndDecompress(
 			RESOURCE_MUSIC_NOTE_SHEET, state->sheet, 0, 0);
-		frames = 80;
+		ticks = 80;
 		sySndPlayStub(MUS_POISON_CURED);
 	} else if(mode == GASP_MODE_BEAT_DANCE) {
 		btResourceLoadAndDecompress(
 			RESOURCE_MUSIC_NOTE_SHEET, state->sheet, 0, 0);
 		LOAD_BG_PALETTE(RESOURCE_MARS_DJINN_SMALL_SHEET);
-		frames = 64;
+		ticks = 64;
 	} else if(mode == GASP_MODE_CLARION_CRY) {
 		btResourceLoadAndDecompress(
 			RESOURCE_MUSIC_NOTE_SHEET, state->sheet, 0, 0);
 		LOAD_BG_PALETTE(RESOURCE_MERCURY_DJINN_SMALL_SHEET);
-		state->fadeFrm = BACKGROUND_DARKEN_FRAMES;
+		state->fadeFrm = BACKGROUND_DARKEN_TICKS;
 		state->fadeStep = 0;
-		frames = 64;
+		ticks = 64;
 	} else if(mode == GASP_MODE_CAGE) {
 		btResourceLoadAndDecompress(
 			RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 1);
-		frames = 40;
+		ticks = 40;
 	} else if(mode == GASP_MODE_ELEMENT_SWAP) {
 		btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, cells, 0, 0);
 		btResourceLoadAndDecompress(RESOURCE_CORNER_GLOW_SHEET,
@@ -237,9 +237,9 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		btPictureMirrorIntoQuadrants(
 			state->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES, state->sheet, 64,
 			64);
-		state->fadeFrm = BACKGROUND_DARKEN_FRAMES;
+		state->fadeFrm = BACKGROUND_DARKEN_TICKS;
 		state->fadeStep = 0;
-		frames = 48;
+		ticks = 48;
 	} else if(mode == GASP_MODE_PSY_BOOST) {
 		btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, cells, 0, 0);
 		btResourceLoadAndDecompress(RESOURCE_CORNER_GLOW_SHEET,
@@ -247,9 +247,9 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		btPictureMirrorIntoQuadrants(
 			state->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES, state->sheet, 64,
 			64);
-		state->fadeFrm = BACKGROUND_DARKEN_FRAMES;
+		state->fadeFrm = BACKGROUND_DARKEN_TICKS;
 		state->fadeStep = 0;
-		frames = 48;
+		ticks = 48;
 	} else if(mode == GASP_MODE_SHINE) {
 		btEffectRunDjinniEntrance(args,
 			DJINNI_ENTRANCE(ELEMENT_MARS, args->side, DJINNI_ANCHOR_LOW_CENTRE),
@@ -264,7 +264,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			state->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES, 0, 0);
 		btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, cells, 0, 0);
 		LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
-		frames = 82;
+		ticks = 82;
 	} else if(mode == GASP_MODE_CALL_DULLAHAN) {
 		Sint32 j;
 		Sint32 k;
@@ -281,11 +281,11 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						cells[i * LIGHTNING_BOLT_PICTURE_BYTES +
 							k * LIGHTNING_BOLT_WIDTH + j];
 		LOAD_BG_PALETTE(RESOURCE_VIOLET_PALETTE_F);
-		frames = 60;
+		ticks = 60;
 	} else if(mode == GASP_MODE_COUNTER_RUSH) {
 		btResourceLoadAndDecompress(RESOURCE_SWIRL_TEXTURE, state->sheet, 0, 0);
 		LOAD_BG_PALETTE(RESOURCE_MERCURY_DJINN_SMALL_SHEET);
-		frames = 76;
+		ticks = 76;
 	} else if(mode == GASP_MODE_DEMON_EYE) {
 		btResourceLoadAndDecompress(RESOURCE_CORNER_GLOW_SHEET,
 			state->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES, 1, 1);
@@ -294,7 +294,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			64);
 		REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
 			BGCNT_SCREEN_BASE(7);
-		frames = 16;
+		ticks = 16;
 	} else if(mode == GASP_MODE_EMU) {
 		Uint8 *p;
 
@@ -315,25 +315,25 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			LOAD_BG_PALETTE(RESOURCE_BLAST_SHEET);
 		}
 		btEffectSetApproachMotion(args->user, args->tgts[0], 10, 80);
-		frames = 41;
+		ticks = 41;
 	} else {
 		if(mode == GASP_MODE_REFLUX) {
 			btEffectRunDjinniEntrance(args,
 				DJINNI_ENTRANCE(
 					ELEMENT_MARS, args->side ^ 1, DJINNI_ANCHOR_OVER_TARGET),
 				screen, other);
-			frames = 76;
+			ticks = 76;
 		} else {
-			state->fadeFrm = BACKGROUND_DARKEN_FRAMES;
+			state->fadeFrm = BACKGROUND_DARKEN_TICKS;
 			state->fadeStep = 0;
-			frames = 70;
+			ticks = 70;
 		}
 		btResourceLoadAndDecompress(RESOURCE_SWIRL_TEXTURE, state->sheet, 0, 0);
 		btResourceLoadAndDecompress(
 			RESOURCE_MARS_DJINN_SMALL_SHEET, FIGURE(state), 1, 1);
 		LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
 	}
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	if(mode == GASP_MODE_GASP || mode == GASP_MODE_LULL)
 		sySetEvent(btEffectArmBg2AffineHBlankDMA, EVENT_PASS_VBLANK);
@@ -363,7 +363,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	}
 	draw[0] = Ram_HeapSlots->ramCode;
 
-	for(frame = 0; frame != frames; frame++) {
+	for(frm = 0; frm != ticks; frm++) {
 		Sint32 a;
 		Sint32 twice;
 		Sint32 x;
@@ -380,8 +380,8 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 			for(i = 0; i != ARRAY_COUNT(state->bg2xLines); i++)
 				*lines++ = CANVAS_WAVE_BG2X(toFIXED(6) -
-					sySin(frame * (TRIG_TURN / 32) + i * (TRIG_TURN / 32)) * 6);
-		} else if(mode == GASP_MODE_UNUSED && frame > 31) {
+					sySin(frm * (TRIG_TURN / 32) + i * (TRIG_TURN / 32)) * 6);
+		} else if(mode == GASP_MODE_UNUSED && frm > 31) {
 			Uint16 *pal = (Uint16 *)&BG_PLTT_COLOR(0, 1);
 
 			for(i = 0; i != SHEET_PALETTE_COLORS - 1; i++, pal++) {
@@ -389,7 +389,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				Sint32 g = RGB_GREEN(*pal);
 				Sint32 b = RGB_BLUE(*pal);
 
-				if(frame > 40) {
+				if(frm > 40) {
 					r += 4;
 					g += 4;
 					b += 4;
@@ -419,8 +419,8 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			btEffectPosProjectScaledBattler(args->tgts[0], &to);
 			from.x /= 2;
 			to.x /= 2;
-			if((Uint32)(frame - 32) <= 8) {
-				Sint32 n = frame - 31;
+			if((Uint32)(frm - 32) <= 8) {
+				Sint32 n = frm - 31;
 				Sint32 dx;
 				Sint32 head;
 				Sint32 tail;
@@ -430,8 +430,8 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				if(n > 8)
 					n = 8;
 				dx = to.x - from.x;
-				head = from.x + GaspFamily_StreakSteps[n] * dx / 16;
-				tail = from.x + GaspFamily_StreakSteps[n - 1] * dx / 16;
+				head = from.x + GaspFamilyStreakSteps[n] * dx / 16;
+				tail = from.x + GaspFamilyStreakSteps[n - 1] * dx / 16;
 				for(i = 0, step = head - tail, acc = 0; i != 4;
 					i++, acc += step)
 					draw[0](canvas, FIGURE(state),
@@ -439,8 +439,8 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						from.y - SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
 						SMALL_DJINNI_HEIGHT);
 			}
-			if(frame > 37) {
-				if(frame == 38) {
+			if(frm > 37) {
+				if(frm == 38) {
 					for(i = 0; i != GASP_MOTES; i++) {
 						PARTICLE *p = &state->particles[i];
 						Sint32	  s;
@@ -465,7 +465,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					if(p->variant >= 0) {
 						Sint32 n = (p->variant >> 3) + 2;
 
-						EFFECT_DRAW_MOTE(draw[0], canvas, sprites,
+						EFFECT_DRAW_MOTE(draw[0], canvas, sprs,
 							FIXED_INTEGER_PART(p->x), FIXED_INTEGER_PART(p->y),
 							n);
 						btParticleAdvanceWithGravity2D(p, 60, toFIXED(1) / 64);
@@ -474,101 +474,101 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				}
 			}
 		} else if(mode == GASP_MODE_LULL) {
-			/* The small Djinni sways over the targets and rises from frame
+			/* The small Djinni sways over the targets and rises from tick
 			   45. */
-			Sint32 b = frame * (TRIG_TURN / 32);
+			Sint32 b = frm * (TRIG_TURN / 32);
 			Sint32 x;
 			Sint32 y;
 
 			x = (FIXEDtoINT(sySin(b) * GASP_DJINNI_SWAY)) + screen[0] / 2 -
 				SMALL_DJINNI_WIDTH / 2;
 			y = (FIXEDtoINT(syCos(b) * 4)) + screen[1] - 24;
-			if(frame > 44) {
-				twice = frame * 2;
+			if(frm > 44) {
+				twice = frm * 2;
 				y = y - twice + 88;
 			}
 			draw[0](canvas, FIGURE(state), x, y, SMALL_DJINNI_WIDTH,
 				SMALL_DJINNI_HEIGHT);
 			btEffectUpdatePhasePalette(
-				frame, TRIG_TURN - DEGtoANG(120), DEGtoANG(120), 0);
+				frm, TRIG_TURN - DEGtoANG(120), DEGtoANG(120), 0);
 		} else if(mode == GASP_MODE_REFLUX || mode == GASP_MODE_COUNTER_RUSH) {
 			/* Reflux's Djinni circles over the target; motes swirl in on it. */
-			SCREEN_POINT target;
+			SCREEN_POINT tgt;
 
 			if(mode == GASP_MODE_REFLUX) {
-				Sint32 r = frame;
+				Sint32 r = frm;
 
 				x = screen[0] / 2 - SMALL_DJINNI_WIDTH / 2;
 				y = screen[1] - SMALL_DJINNI_HEIGHT / 2;
 				if(r > GASP_REFLUX_RADIUS)
 					r = GASP_REFLUX_RADIUS;
-				a = frame * (TRIG_TURN / 128);
+				a = frm * (TRIG_TURN / 128);
 				x -= FIXEDtoINT(sySin(a) * r * 2);
 				y -= (FIXEDtoINT(syCos(a) * r)) - r;
-				if(frame <= 61)
+				if(frm <= 61)
 					draw[0](canvas, FIGURE(state), x, y, SMALL_DJINNI_WIDTH,
 						SMALL_DJINNI_HEIGHT);
 			}
-			if(frame == 0)
+			if(frm == 0)
 				sySndPlayStub(SE_SWIRL);
-			if(frame == 62)
+			if(frm == 62)
 				sySndPlayStub(SE_DJINNI_SET);
-			if(frame == 0) {
+			if(frm == 0) {
 				for(i = 0; i != GASP_MOTES; i++) {
 					PARTICLE *p = &state->particles[i];
 
 					p->z = syRandom();
 					p->velZ = (syRandom() & 63) + 64;
 					syRandom();
-					p->variant = i + GASP_SWIRL_MOTE_FRAMES;
+					p->variant = i + GASP_SWIRL_MOTE_TICKS;
 				}
 			}
-			btEffectPosProjectScaledBattler(args->tgts[0], &target);
+			btEffectPosProjectScaledBattler(args->tgts[0], &tgt);
 			for(i = 0; i != GASP_SWIRL_MOTES; i++) {
 				PARTICLE *p = &state->particles[i];
 
-				if((Uint32)p->variant < GASP_SWIRL_MOTE_FRAMES) {
+				if((Uint32)p->variant < GASP_SWIRL_MOTE_TICKS) {
 					Sint32 n = p->variant / 8 + 2;
 					Sint32 x =
-						(FIXEDtoINT(sySin(p->z) * p->velZ / 2)) + target.x / 2;
-					Sint32 y = (FIXEDtoINT(syCos(p->z) * p->velZ)) + target.y;
+						(FIXEDtoINT(sySin(p->z) * p->velZ / 2)) + tgt.x / 2;
+					Sint32 y = (FIXEDtoINT(syCos(p->z) * p->velZ)) + tgt.y;
 
 					p->z += 512;
 					p->velZ -= 4;
 					if(p->velZ > 0)
-						EFFECT_DRAW_MOTE(draw[0], canvas, sprites, x, y, n);
+						EFFECT_DRAW_MOTE(draw[0], canvas, sprs, x, y, n);
 				}
 				p->variant--;
 			}
 		} else if(mode == GASP_MODE_SHINE) {
 			/* The Djinni glides up over the user, then falls on the target and
-			   strikes at frame 55; its place in the battle is in the
+			   strikes at tick 55; its place in the battle is in the
 			   velocity. */
 			PARTICLE	*ball = &state->particles[GASP_CENTRE];
 			SCREEN_POINT pos;
 			Sint32		 x;
 			Sint32		 y;
 
-			if(frame == 0) {
+			if(frm == 0) {
 				ball->velX = other[0];
 				ball->velY = other[1];
 				ball->velZ = other[2];
 			}
-			if(frame <= 47) {
+			if(frm <= 47) {
 				MOTION_OBJECT *user = btObjectGetStub(args->user)->obj;
 
 				ball->velX += (user->x - other[0]) / GASP_SHINE_GLIDE;
 				ball->velY += (toFIXED(60) - other[1]) / GASP_SHINE_GLIDE;
 				ball->velZ += (user->z - other[2]) / GASP_SHINE_GLIDE;
 			} else {
-				MOTION_OBJECT *target = btObjectGetStub(args->tgts[0])->obj;
+				MOTION_OBJECT *tgt = btObjectGetStub(args->tgts[0])->obj;
 				PARTICLE	  *fall = &state->particles[GASP_FALL];
 
-				if(frame == 48) {
+				if(frm == 48) {
 					SET_POSITION(fall, 0, 0, 0);
-					fall->velX = (target->x - ball->velX) / GASP_SHINE_FALL;
+					fall->velX = (tgt->x - ball->velX) / GASP_SHINE_FALL;
 					fall->velY = -ball->velY / GASP_SHINE_FALL;
-					fall->velZ = (target->z - ball->velZ) / GASP_SHINE_FALL;
+					fall->velZ = (tgt->z - ball->velZ) / GASP_SHINE_FALL;
 				}
 				ball->velX += fall->x;
 				ball->velY += fall->y;
@@ -588,9 +588,9 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			draw[0](canvas, FIGURE(state), x - SMALL_DJINNI_WIDTH / 2,
 				y - SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
 				SMALL_DJINNI_HEIGHT);
-			if(frame == 0)
+			if(frm == 0)
 				sySndPlayStub(SE_SPIN);
-			if(frame == 55) {
+			if(frm == 55) {
 				PARTICLE *flash = &state->particles[GASP_FLASH];
 
 				flash->x = pos.x;
@@ -603,17 +603,17 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 			btCameraShake(8, 8);
 		} else if(mode == GASP_MODE_GASP) {
-			/* The small Djinni sways over the targets and rises from frame
+			/* The small Djinni sways over the targets and rises from tick
 			   49. */
-			Sint32 b = frame * (TRIG_TURN / 32);
+			Sint32 b = frm * (TRIG_TURN / 32);
 			Sint32 x;
 			Sint32 y;
 
 			x = (FIXEDtoINT(sySin(b) * GASP_DJINNI_SWAY)) + screen[0] / 2 -
 				SMALL_DJINNI_WIDTH / 2;
 			y = (FIXEDtoINT(syCos(b) * 4)) + screen[1] - 24;
-			if(frame > 48) {
-				twice = frame * 2;
+			if(frm > 48) {
+				twice = frm * 2;
 				y = y - twice + 96;
 			}
 			if(y > -SMALL_DJINNI_HEIGHT)
@@ -630,8 +630,8 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		model->vertices = verts;
 		if(mode == GASP_MODE_GASP) {
 			/* Burning skulls rise from the ground, swaying, one every 8
-			   frames. */
-			if(frame == 0) {
+			   ticks. */
+			if(frm == 0) {
 				for(i = 0; i != GASP_SEEDS; i++) {
 					PARTICLE *p = &state->particles[i];
 
@@ -642,14 +642,14 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					p->variant = -i * 8;
 				}
 			}
-			if(frame == 4)
+			if(frm == 4)
 				sySndPlayStub(SE_BEAST_CRY);
-			if(frame == 48)
+			if(frm == 48)
 				EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
 			texture.logWidth = 5;
 			texture.logHeight = 5;
 			model->kind = MODEL_SHADED_ADDITIVE;
-			model->mesh = BattleEffect_SmallSquareMeshReversed;
+			model->mesh = BattleEffectSmallSquareMeshReversed;
 			for(i = 0; i != GASP_SKULLS; i++) {
 				PARTICLE *p = &state->particles[i];
 
@@ -659,8 +659,8 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 					if(p->variant <= 6)
 						shade = p->variant * 8 + MODEL_SHADE_INVISIBLE;
-					if(p->variant >= GASP_SKULL_FRAMES) {
-						shade = (GASP_SKULL_FRAMES - p->variant) * 4;
+					if(p->variant >= GASP_SKULL_TICKS) {
+						shade = (GASP_SKULL_TICKS - p->variant) * 4;
 						if(shade < MODEL_SHADE_INVISIBLE)
 							continue;
 					}
@@ -675,7 +675,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					syScale(size >> 1, size, size >> 1);
 					syRotX(-DEGtoANG(90));
 					btRenderTransformVertices(
-						BattleEffect_GroundSquareCorners, verts, 4);
+						BattleEffectGroundSquareCorners, verts, 4);
 					btRenderDrawModelList(model);
 				}
 				p->variant++;
@@ -688,35 +688,35 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			texture.logHeight = 5;
 			model->kind = MODEL_SHADED_MAX;
 			model->texture = &texture;
-			model->mesh = BattleEffect_SmallSquareMeshReversed;
+			model->mesh = BattleEffectSmallSquareMeshReversed;
 			model->vertices = verts;
-			/* One ring: the loop that could start another every 32 frames runs
+			/* One ring: the loop that could start another every 32 ticks runs
 			   once. */
 			for(k = 0; k != 1; k++) {
-				if(frame >= k * 32) {
-					Sint32 t = frame - k * 32;
+				if(frm >= k * 32) {
+					Sint32 t = frm - k * 32;
 					Sint32 scale = t * (toFIXED(1) / 64) + toFIXED(1) / 16;
 					Sint32 shade = 0;
 
-					if(t >= GASP_LULL_RING_FRAMES) {
-						shade = (GASP_LULL_RING_FRAMES - t) * 4;
+					if(t >= GASP_LULL_RING_TICKS) {
+						shade = (GASP_LULL_RING_TICKS - t) * 4;
 						if(shade < MODEL_SHADE_INVISIBLE)
 							continue;
 					}
 					model->shade = shade;
 					syInitMatrix();
 					syScale(scale >> 1, scale, scale);
-					syRotZ(frame * (TRIG_TURN / 256) + TRIG_TURN * 3 / 4);
-					syRotX(frame * (TRIG_TURN / 1024) - GASP_LULL_TILT);
+					syRotZ(frm * (TRIG_TURN / 256) + TRIG_TURN * 3 / 4);
+					syRotX(frm * (TRIG_TURN / 1024) - GASP_LULL_TILT);
 					for(i = 0; i != GASP_LULL_NOTES; i++) {
 						texture.pixels =
 							state->sheet + i % 3 * GASP_TEXTURE_BYTES;
 						syPushMatrix();
-						syRotZ(frame * 356 + i * (TRIG_TURN / GASP_LULL_NOTES));
+						syRotZ(frm * 356 + i * (TRIG_TURN / GASP_LULL_NOTES));
 						syTranslate(0, toFIXED(116), 0);
 						syScale(scale >> 1, scale >> 1, scale >> 1);
 						btRenderTransformVertices(
-							BattleEffect_GroundSquareCorners, verts, 4);
+							BattleEffectGroundSquareCorners, verts, 4);
 						syPopMatrix();
 						btRenderDrawModelList(model);
 					}
@@ -727,7 +727,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			model->shade = 0;
 			texture.logWidth = 6;
 			texture.logHeight = 6;
-			model->mesh = BattleEffect_SquareMesh;
+			model->mesh = BattleEffectSquareMesh;
 			model->kind = MODEL_SHADED_MAX;
 			texture.pixels = state->sheet;
 			for(i = 0; i != args->tgtCnt; i++) {
@@ -738,17 +738,16 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				syTranslate(
 					INTtoFIXED(pos.x / 2 - 64), INTtoFIXED(pos.y - 48), 0);
 				syRotX(DEGtoANG(90));
-				syRotY((frame << 9) - TRIG_TURN / 16);
-				syScale(
-					frame * 2596 >> 1, frame * 2596 >> 1, frame * 2596 >> 1);
+				syRotY((frm << 9) - TRIG_TURN / 16);
+				syScale(frm * 2596 >> 1, frm * 2596 >> 1, frm * 2596 >> 1);
 				btRenderTransformVertices(
-					BattleEffect_GroundSquareCorners, verts, 4);
+					BattleEffectGroundSquareCorners, verts, 4);
 				btRenderDrawModelList(model);
 			}
 		} else if(mode == GASP_MODE_SHINE) {
 			/* Rays of light turn about the Djinni as it glides; three rings
 			   flare at the target as it strikes. */
-			if(frame <= 47) {
+			if(frm <= 47) {
 				PARTICLE *ball;
 				Sint32	  twist;
 
@@ -759,9 +758,9 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					state->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES;
 				model->texture = &texture;
 				model->kind = MODEL_SHADED_ADDITIVE;
-				model->mesh = GaspFamily_StreakMesh;
+				model->mesh = GaspFamilyStreakMesh;
 				model->vertices = verts;
-				if(frame == 0) {
+				if(frm == 0) {
 					for(i = 0; i != GASP_SEEDS; i++) {
 						PARTICLE *p = &state->particles[i];
 
@@ -773,7 +772,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					}
 				}
 				for(i = 0, ball = &state->particles[GASP_CENTRE],
-				twist = frame * 2;
+				twist = frm * 2;
 					i != GASP_SHINE_RAYS; i++) {
 					PARTICLE *p = &state->particles[i];
 
@@ -781,7 +780,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					p->x += p->y * 2;
 					model->scrollV =
 						(twist + i * 7) & GASP_SHINE_RAY_SCROLL_MASK;
-					if((Uint32)p->variant < GASP_SHINE_RAY_FRAMES) {
+					if((Uint32)p->variant < GASP_SHINE_RAY_TICKS) {
 						syInitMatrix();
 						syTranslate(toFIXED(ball->x) - toFIXED(64),
 							toFIXED(ball->y) - toFIXED(64), 0);
@@ -791,7 +790,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 								toFIXED(3) / 4,
 							toFIXED(2), toFIXED(1));
 						btRenderTransformVertices(
-							BattleEffect_TaperedBeamCorners, verts, 4);
+							BattleEffectTaperedBeamCorners, verts, 4);
 						btRenderDrawModelList(model);
 					}
 				}
@@ -805,10 +804,10 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				texture.pixels = cells;
 				model->kind = MODEL_SHADED_ADDITIVE;
 				model->texture = &texture;
-				model->mesh = BattleEffect_LargeSquareMesh;
+				model->mesh = BattleEffectLargeSquareMesh;
 				model->vertices = verts;
 				for(i = 0; i != 3; i++) {
-					Sint32 t = frame - i * 4 - 55;
+					Sint32 t = frm - i * 4 - 55;
 
 					if(t >= 0) {
 						Sint32 scale =
@@ -827,7 +826,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							syRotX(-TRIG_TURN / 16);
 							syMatrixScaleUniform(scale);
 							btRenderTransformVertices(
-								BattleEffect_GroundSquareCorners, verts, 4);
+								BattleEffectGroundSquareCorners, verts, 4);
 							btRenderDrawModelList(model);
 						}
 					}
@@ -835,18 +834,18 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		} else if(mode == GASP_MODE_MOLD) {
 			/* The Djinni's sprite, twice, shrinks onto the target. */
-			if((Uint32)(frame - 16) <= 64) {
-				Sint32		 t = frame - 16;
+			if((Uint32)(frm - 16) <= 64) {
+				Sint32		 t = frm - 16;
 				Sint32		 scale;
 				SCREEN_POINT pos;
 
-				if(t < GASP_MOLD_SLOW_FADE_FRAMES)
+				if(t < GASP_MOLD_SLOW_FADE_TICKS)
 					state->transferValue = CANVAS_FADE_THREE_QUARTERS;
 				else
 					state->transferValue = CANVAS_FADE_HALF;
 				texture.logWidth = 6;
 				texture.logHeight = 6;
-				model->mesh = BattleEffect_SquareMesh;
+				model->mesh = BattleEffectSquareMesh;
 				model->kind = MODEL_SHADED_ADDITIVE;
 				texture.pixels = state->sheet;
 				btEffectPosProjectScaledBattler(args->tgts[0], &pos);
@@ -864,15 +863,15 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						syRotX(TRIG_TURN * 3 / 4);
 						syScale(scale, scale, scale);
 						btRenderTransformVertices(
-							BattleEffect_GroundSquareCorners, verts, 4);
+							BattleEffectGroundSquareCorners, verts, 4);
 						btRenderDrawModelList(model);
 					}
 				}
 			}
-			if(frame == 14) {
+			if(frm == 14) {
 				sySndPlayStub(SE_POWER_UP);
 			}
-			if(frame == 24) {
+			if(frm == 24) {
 				btEffectTintBattler(
 					args->tgts[0], SPRITE_COLOR_WHITE, TINT_KEEP, 0, 12);
 			}
@@ -884,7 +883,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			PARTICLE	*p;
 
 			btEffectPosProjectBattler(args->user, &from);
-			if(frame == 0) {
+			if(frm == 0) {
 				SCREEN_POINT to;
 				PARTICLE	*ball = &state->particles[GASP_CENTRE];
 				PARTICLE	*q;
@@ -914,12 +913,12 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					q->variant = (syRandom() & 15) + 8;
 				}
 			}
-			if(frame <= 9) {
+			if(frm <= 9) {
 				Sint32 v;
 				Sint32 mask = 255;
 
 				i = 0;
-				twice = frame * 2;
+				twice = frm * 2;
 				p = (void *)(twice * sizeof(PARTICLE) +
 					(Sint32)state->particles);
 				p->x = toFIXED(from.x / 2);
@@ -934,7 +933,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			for(i = 0; i != GASP_EMU_PUFFS; i++) {
 				p = &state->particles[i];
 
-				if((Uint32)p->variant < SMOKE_PUFF_FRAMES) {
+				if((Uint32)p->variant < SMOKE_PUFF_TICKS) {
 					draw[0](canvas,
 						state->sheet +
 							p->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
@@ -945,14 +944,14 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					p->variant++;
 				}
 			}
-			if(frame > 9) {
-				for(i = 0; i != GaspFamily_Counts[args->variant]; i++) {
+			if(frm > 9) {
+				for(i = 0; i != GaspFamilyCounts[args->variant]; i++) {
 					PARTICLE *q = &EXTRA_PARTICLES[i];
 
 					if(q->variant >= 0) {
 						Sint32 n = q->variant / 4 + 3;
 
-						EFFECT_DRAW_MOTE(draw[0], canvas, sprites,
+						EFFECT_DRAW_MOTE(draw[0], canvas, sprs,
 							FIXED_INTEGER_PART(q->x), FIXED_INTEGER_PART(q->y),
 							n);
 						btParticleAdvanceWithGravity2D(q, 62, 0);
@@ -960,9 +959,9 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					}
 				}
 			}
-			if(frame > 9) {
+			if(frm > 9) {
 				PARTICLE *ball = &state->particles[GASP_CENTRE];
-				Sint32	  t = frame - 10;
+				Sint32	  t = frm - 10;
 				Sint32	  scale = t * (toFIXED(1) / 2) + toFIXED(1) / 4;
 				Sint32	  shade = 0;
 
@@ -970,13 +969,13 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					scale /= 4;
 				else if(args->variant == EFFECT_VARIANT_STRONGER)
 					scale /= 2;
-				if(frame > 15)
-					shade = (16 - frame) * 8;
+				if(frm > 15)
+					shade = (16 - frm) * 8;
 				if(shade > MODEL_SHADE_INVISIBLE) {
 					model->shade = shade;
 					texture.logWidth = 7;
 					texture.logHeight = 7;
-					model->mesh = BattleEffect_LargeSquareMesh;
+					model->mesh = BattleEffectLargeSquareMesh;
 					model->kind = MODEL_SHADED_ADDITIVE;
 					texture.pixels = state->sheet + GASP_FIRE_RING;
 					syInitMatrix();
@@ -984,11 +983,11 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						INTtoFIXED(ball->y - 48), 0);
 					syScale(scale / 4, scale, scale / 2);
 					btRenderTransformVertices(
-						BattleEffect_SquareCorners, verts, 4);
+						BattleEffectSquareCorners, verts, 4);
 					btRenderDrawModelList(model);
 				}
 			}
-			if(frame == 10) {
+			if(frm == 10) {
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 				state->shakeFrm = args->variant * 2 + 8;
 				btMotionApplyKnockbackStub(args->tgts[0], KNOCKBACK_NUDGE);
@@ -998,7 +997,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			btCameraShake(args->variant * 2 + 8, args->variant * 2 + 8);
 		} else if(mode == GASP_MODE_BEAT_DANCE) {
 			/* Music notes fly up from the target as it flushes red. */
-			if(frame == 0) {
+			if(frm == 0) {
 				SCREEN_POINT pos;
 
 				btEffectPosProjectBattler(args->tgts[0], &pos);
@@ -1025,17 +1024,17 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			texture.logHeight = 5;
 			model->kind = MODEL_SHADED_MAX;
 			model->texture = &texture;
-			model->mesh = BattleEffect_SmallSquareMeshReversed;
+			model->mesh = BattleEffectSmallSquareMeshReversed;
 			model->vertices = verts;
 			for(i = 0; i != GASP_NOTES; i++) {
 				PARTICLE *p = &state->particles[i];
 
-				if(frame >= i * 2) {
-					Sint32 t = frame - i * 2;
+				if(frm >= i * 2) {
+					Sint32 t = frm - i * 2;
 					Sint32 shade = 0;
 
-					if(t >= GASP_NOTE_FRAMES) {
-						shade = (GASP_NOTE_FRAMES - t) * 4;
+					if(t >= GASP_NOTE_TICKS) {
+						shade = (GASP_NOTE_TICKS - t) * 4;
 						if(shade < MODEL_SHADE_INVISIBLE)
 							continue;
 					}
@@ -1044,7 +1043,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					PLACE_PARTICLE(p);
 					syMatrixScaleUniform(toFIXED(1) / 2);
 					btRenderTransformVertices(
-						BattleEffect_SquareCorners, verts, 4);
+						BattleEffectSquareCorners, verts, 4);
 					btRenderDrawModelList(model);
 					btParticleAdvanceWithGravity3D(p, 60, 0);
 				}
@@ -1052,7 +1051,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			btCameraShake(8, 8);
 		} else if(mode == GASP_MODE_CLARION_CRY) {
 			/* Music notes fly up from the user. */
-			if(frame == 0) {
+			if(frm == 0) {
 				SCREEN_POINT pos;
 
 				btEffectPosProjectBattler(args->user, &pos);
@@ -1076,17 +1075,17 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			texture.logHeight = 5;
 			model->kind = MODEL_SHADED_MAX;
 			model->texture = &texture;
-			model->mesh = BattleEffect_SmallSquareMeshReversed;
+			model->mesh = BattleEffectSmallSquareMeshReversed;
 			model->vertices = verts;
 			for(i = 0; i != GASP_NOTES; i++) {
 				PARTICLE *p = &state->particles[i];
 
-				if(frame >= i * 2) {
-					Sint32 t = frame - i * 2;
+				if(frm >= i * 2) {
+					Sint32 t = frm - i * 2;
 					Sint32 shade = 0;
 
-					if(t >= GASP_NOTE_FRAMES) {
-						shade = (GASP_NOTE_FRAMES - t) * 4;
+					if(t >= GASP_NOTE_TICKS) {
+						shade = (GASP_NOTE_TICKS - t) * 4;
 						if(shade < MODEL_SHADE_INVISIBLE)
 							continue;
 					}
@@ -1095,7 +1094,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					PLACE_PARTICLE(p);
 					syMatrixScaleUniform(toFIXED(1) / 2);
 					btRenderTransformVertices(
-						BattleEffect_SquareCorners, verts, 4);
+						BattleEffectSquareCorners, verts, 4);
 					btRenderDrawModelList(model);
 					btParticleAdvanceWithGravity3D(p, 60, 0);
 				}
@@ -1105,33 +1104,33 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			   target, and sparks burst and bounce there. */
 			SCREEN_POINT pos;
 
-			if(frame == 0) {
+			if(frm == 0) {
 				void *user = btObjectGetStub(args->user)->obj;
 
 				/* Another pose first, so that the leap starts over, held on its
-				   first picture until frame 14. */
+				   first picture until tick 14. */
 				fdActorSelectAnimationStub(user, POSE_STILL);
 				fdActorSelectAnimationStub(user, POSE_LEAP);
 				fdActorSetAnimationSpeedStub(user, 0);
 				sySndPlayStub(SE_POWER_UP);
 			}
-			if(frame == 14)
+			if(frm == 14)
 				fdActorSetAnimationSpeedStub(
 					btObjectGetStub(args->user)->obj, ANIM_STEP_NORMAL);
-			if(frame == 22)
+			if(frm == 22)
 				sySndPlayStub(SE_POWER_UP);
-			if(frame == 26) {
+			if(frm == 26) {
 				EFFECT_SHOW_DAMAGE(SE_CLATTER);
 				state->shakeFrm = 8;
 				EFFECT_STRIKE_TARGET(args, 0, 12, KNOCKBACK_HURL);
 				syWordsFillEntry(canvas, CANVAS_BYTES,
 					CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 			}
-			if(frame > 27) {
+			if(frm > 27) {
 				PARTICLE *q;
 				PARTICLE *p;
 
-				if(frame == 28) {
+				if(frm == 28) {
 					btEffectPosProjectScaledBattler(args->tgts[0], &pos);
 					for(q = EXTRA_PARTICLES, i = 0; i != GASP_DULLAHAN_SPARKS;
 						i++, q++) {
@@ -1153,12 +1152,12 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					if(p->variant >= 0) {
 						Sint32 j;
 
-						/* Each spark moves four steps a frame, drawn at
+						/* Each spark moves four steps a tick, drawn at
 						   each. */
 						for(j = 0; j != 4; j++) {
 							Sint32 n = p->variant / 8 + 1;
 
-							EFFECT_DRAW_MOTE(draw[0], canvas, sprites,
+							EFFECT_DRAW_MOTE(draw[0], canvas, sprs,
 								FIXED_INTEGER_PART(p->x),
 								FIXED_INTEGER_PART(p->y), n);
 							btParticleAdvanceWithGravity2D(
@@ -1177,7 +1176,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			texture.logHeight = 7;
 			model->kind = MODEL_SHADED_ADDITIVE;
 			model->texture = &texture;
-			model->mesh = BattleEffect_ColumnMesh;
+			model->mesh = BattleEffectColumnMesh;
 			model->vertices = verts;
 			syInitMatrix();
 			syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1));
@@ -1193,9 +1192,9 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					state->sheet + (syRandom() & 3) * GASP_BOLT_PICTURE_BYTES;
 				texture.logWidth = 5;
 				texture.logHeight = 7;
-				if(frame > 23) {
-					Sint32 d = frame * 16 - i * 2 - 352;
-					Sint32 angle;
+				if(frm > 23) {
+					Sint32 d = frm * 16 - i * 2 - 352;
+					Sint32 ang;
 
 					if(d < 0)
 						continue;
@@ -1207,11 +1206,11 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					else
 						syTranslate(-(d * 3 * (toFIXED(1) / 8)),
 							d * 7 * (toFIXED(1) / 32), 0);
-					angle = d * GASP_DULLAHAN_SWING / GASP_DULLAHAN_REACH +
+					ang = d * GASP_DULLAHAN_SWING / GASP_DULLAHAN_REACH +
 						TRIG_TURN * 3 / 8;
 					if(args->side == EFFECT_SIDE_ENEMIES)
-						angle = -angle;
-					syRotZ(angle);
+						ang = -ang;
+					syRotZ(ang);
 				} else {
 					if(i != 0)
 						continue;
@@ -1220,16 +1219,16 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							: TRIG_TURN * 3 / 8);
 				}
 				model->shade = -i * 8;
-				if(frame <= 23)
-					scale = frame * (toFIXED(1) / 24);
-				else if(frame > 31)
-					scale = toFIXED(4) - frame * 3 * (toFIXED(1) / 32);
+				if(frm <= 23)
+					scale = frm * (toFIXED(1) / 24);
+				else if(frm > 31)
+					scale = toFIXED(4) - frm * 3 * (toFIXED(1) / 32);
 				else
 					scale = toFIXED(1);
 				if(scale > 0) {
 					syScale(scale * 6, scale * 2, toFIXED(1));
 					btRenderTransformVertices(
-						BattleEffect_LongBeamCorners, verts, 4);
+						BattleEffectLongBeamCorners, verts, 4);
 					btRenderDrawModelList(model);
 					syPopMatrix();
 				}
@@ -1243,14 +1242,14 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			state->transferValue = CANVAS_FADE_HALF;
 			texture.logWidth = 7;
 			texture.logHeight = 7;
-			model->mesh = BattleEffect_LargeSquareMesh;
+			model->mesh = BattleEffectLargeSquareMesh;
 			model->kind = MODEL_SHADED_MAX;
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 			texture.pixels = state->sheet;
 			btEffectPosProjectScaledBattler(args->user, &pos);
-			if(frame <= 15) {
+			if(frm <= 15) {
 				for(i = 0; i != 2; i++) {
-					Sint32 scale = sySin(frame * (TRIG_TURN / 32)) * 5;
+					Sint32 scale = sySin(frm * (TRIG_TURN / 32)) * 5;
 
 					if(scale > 0) {
 						model->shade = 0;
@@ -1260,12 +1259,12 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						syScale(scale / 2, scale, scale / 2);
 						syRotZ(DEGtoANG(45));
 						btRenderTransformVertices(
-							BattleEffect_SquareCorners, verts, 4);
+							BattleEffectSquareCorners, verts, 4);
 						btRenderDrawModelList(model);
 					}
 				}
 			}
-			if(frame == 8) {
+			if(frm == 8) {
 				sySndPlayStub(SE_POWER_UP);
 				state->shakeFrm = 8;
 				syWordsFillEntry(canvas, CANVAS_BYTES,
@@ -1281,41 +1280,41 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			SCREEN_POINT pos;
 			Sint32		 shade;
 
-			if(frame == 0)
+			if(frm == 0)
 				sySndPlayStub(SE_LAUNCH);
 			btEffectPosProjectBattler(args->tgts[0], &pos);
-			shade = frame * 4 + MODEL_SHADE_INVISIBLE;
+			shade = frm * 4 + MODEL_SHADE_INVISIBLE;
 			if(shade >= -16)
 				shade = -16;
 			model->shade = shade;
 			model->texture = &texture;
 			model->vertices = verts;
 			model->kind = MODEL_SHADED_MAX;
-			model->mesh = BattleEffect_CylinderMesh;
+			model->mesh = BattleEffectCylinderMesh;
 			texture.pixels = state->sheet;
 			texture.logWidth = 7;
 			texture.logHeight = 4;
-			if(frame == 26) {
+			if(frm == 26) {
 				state->shakeFrm = 8;
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			}
 			for(i = 0; i != 8; i++) {
 				Sint32 scale = toFIXED(2);
-				Sint32 start = i * 2 + GASP_CAGE_CLOSE_FRAME;
+				Sint32 start = i * 2 + GASP_CAGE_CLOSE_TICK;
 
-				if(frame >= start)
-					scale = toFIXED(2) - (frame - start) * (toFIXED(1) / 8);
+				if(frm >= start)
+					scale = toFIXED(2) - (frm - start) * (toFIXED(1) / 8);
 				if(scale > toFIXED(1) / 2) {
-					model->scrollU = ((frame + i * 5) & 7) << 4;
+					model->scrollU = ((frm + i * 5) & 7) << 4;
 					syInitMatrix();
 					syTranslate(INTtoFIXED(pos.x / 2 - 60), toFIXED(8), 0);
 					syScale(scale >> 1, scale, toFIXED(1));
 					syRotX(i * DEGtoANG(45) + GASP_CAGE_TILT);
-					syRotY(frame * (TRIG_TURN / 128));
-					syRotZ((frame + i * 16) * (TRIG_TURN / 128));
+					syRotY(frm * (TRIG_TURN / 128));
+					syRotZ((frm + i * 16) * (TRIG_TURN / 128));
 					syScale(toFIXED(1), toFIXED(1) / 2, toFIXED(1));
 					btRenderTransformVertices(
-						BattleEffect_CylinderCorners, verts, 32);
+						BattleEffectCylinderCorners, verts, 32);
 					btRenderDrawModelList(model);
 				}
 			}
@@ -1329,35 +1328,35 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			texture.logWidth = 7;
 			texture.logHeight = 7;
 			texture.pixels = cells;
-			model->mesh = BattleEffect_LargeSquareMesh;
+			model->mesh = BattleEffectLargeSquareMesh;
 			model->kind = MODEL_SHADED_MAX;
 			btEffectPosProjectScaledBattler(args->user, &pos);
 			syInitMatrix();
 			syTranslate(INTtoFIXED(pos.x / 2 - 64), INTtoFIXED(pos.y - 48), 0);
-			if(frame <= 15) {
-				Sint32 scale = toFIXED(3) - frame * 3 * (toFIXED(1) / 16);
+			if(frm <= 15) {
+				Sint32 scale = toFIXED(3) - frm * 3 * (toFIXED(1) / 16);
 
 				model->shade = 0;
 				syScale(scale >> 1, scale, scale >> 1);
-				btRenderTransformVertices(BattleEffect_SquareCorners, verts, 4);
+				btRenderTransformVertices(BattleEffectSquareCorners, verts, 4);
 				btRenderDrawModelList(model);
 			}
 			syInitMatrix();
 			syTranslate(INTtoFIXED(pos.x / 2 - 64), INTtoFIXED(pos.y - 48), 0);
-			if((Uint32)(frame - 12) <= 31) {
+			if((Uint32)(frm - 12) <= 31) {
 				Sint32 scale =
-					sySin(frame * (TRIG_TURN / 64) - TRIG_TURN * 3 / 16) * 3;
+					sySin(frm * (TRIG_TURN / 64) - TRIG_TURN * 3 / 16) * 3;
 
 				texture.pixels = state->sheet;
 				syScale(scale / 2, scale, scale / 2);
-				syRotZ((frame << 9) + DEGtoANG(45));
-				btRenderTransformVertices(BattleEffect_SquareCorners, verts, 4);
+				syRotZ((frm << 9) + DEGtoANG(45));
+				btRenderTransformVertices(BattleEffectSquareCorners, verts, 4);
 				btRenderDrawModelList(model);
 			}
 			/* A mote's x is its distance from the user in sixteenths of a
 			   pixel, 48 to 142 pixels at first, closing in over 48 steps, three
-			   a frame; its y is its angle. */
-			if(frame == 0) {
+			   a tick; its y is its angle. */
+			if(frm == 0) {
 				for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
 					PARTICLE *p = &state->particles[i];
 
@@ -1368,7 +1367,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				}
 				LOAD_BG_PALETTE(RESOURCE_BLAST_SHEET);
 			}
-			if(frame <= 15) {
+			if(frm <= 15) {
 				for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
 					PARTICLE *p = &state->particles[i];
 
@@ -1381,18 +1380,18 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							60;
 						Sint32 n = 4;
 
-						EFFECT_DRAW_MOTE(draw[0], canvas, sprites, x, y, n);
+						EFFECT_DRAW_MOTE(draw[0], canvas, sprs, x, y, n);
 						p->x += p->velX;
 					}
 				}
 			}
-			/* Three steps a frame towards each Djinni's colours in turn. */
+			/* Three steps a tick towards each Djinni's colours in turn. */
 			for(i = 0; i != 3; i++) {
-				if(frame > 7) {
-					if(frame <= 15)
+				if(frm > 7) {
+					if(frm <= 15)
 						btEffectStepPaletteToResource(
 							RESOURCE_MERCURY_DJINN_SHEET);
-					else if(frame <= 23)
+					else if(frm <= 23)
 						btEffectStepPaletteToResource(
 							RESOURCE_MARS_DJINN_SHEET);
 					else
@@ -1400,12 +1399,12 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							RESOURCE_JUPITER_DJINN_SHEET);
 				}
 			}
-			if(frame == 16) {
+			if(frm == 16) {
 				sySndPlayStub(SE_POWER_UP);
 				btEffectTintBattler(
 					args->tgts[0], SPRITE_COLOR_WHITE, TINT_KEEP, 0, 30);
 			}
-			if(frame == 28)
+			if(frm == 28)
 				EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
 		} else if(mode == GASP_MODE_PSY_BOOST) {
 			/* Two rings shrink onto the user and a glow turns there, in
@@ -1415,16 +1414,16 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			texture.logWidth = 7;
 			texture.logHeight = 7;
 			texture.pixels = cells;
-			model->mesh = BattleEffect_LargeSquareMesh;
+			model->mesh = BattleEffectLargeSquareMesh;
 			model->kind = MODEL_SHADED_MAX;
 			btEffectPosProjectScaledBattler(args->user, &pos);
 			for(i = 0; i != 2; i++) {
-				Sint32 t = frame - i * 8;
+				Sint32 t = frm - i * 8;
 
 				syInitMatrix();
 				syTranslate(
 					INTtoFIXED(pos.x / 2 - 64), INTtoFIXED(pos.y - 48), 0);
-				if((Uint32)t < GASP_PSY_BOOST_RING_FRAMES) {
+				if((Uint32)t < GASP_PSY_BOOST_RING_TICKS) {
 					Sint32 scale = toFIXED(4) - t * (toFIXED(1) / 4);
 					Sint32 shade = 0;
 
@@ -1435,30 +1434,30 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					syRotZ(i * (DEGtoANG(90)) + DEGtoANG(45));
 					syRotX(-TRIG_TURN / 16);
 					btRenderTransformVertices(
-						BattleEffect_GroundSquareCorners, verts, 4);
+						BattleEffectGroundSquareCorners, verts, 4);
 					btRenderDrawModelList(model);
 				}
 			}
 			syInitMatrix();
 			syTranslate(INTtoFIXED(pos.x / 2 - 64), INTtoFIXED(pos.y - 48), 0);
-			if((Uint32)(frame - 12) <= 31) {
+			if((Uint32)(frm - 12) <= 31) {
 				Sint32 scale =
-					sySin(frame * (TRIG_TURN / 64) - TRIG_TURN * 3 / 16) * 2;
+					sySin(frm * (TRIG_TURN / 64) - TRIG_TURN * 3 / 16) * 2;
 
 				texture.pixels = state->sheet;
 				syScale(scale / 2, scale, scale / 2);
-				syRotZ((frame << 9) + DEGtoANG(45));
-				btRenderTransformVertices(BattleEffect_SquareCorners, verts, 4);
+				syRotZ((frm << 9) + DEGtoANG(45));
+				btRenderTransformVertices(BattleEffectSquareCorners, verts, 4);
 				btRenderDrawModelList(model);
 			}
-			if(frame == 0)
+			if(frm == 0)
 				btGraphicsLoadGreyRamp();
-			if(frame == 16) {
+			if(frm == 16) {
 				sySndPlayStub(SE_POWER_UP);
 				btEffectTintBattler(
 					args->tgts[0], SPRITE_COLOR_WHITE, TINT_KEEP, 0, 30);
 			}
-			if(frame == 28)
+			if(frm == 28)
 				EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
 		} else {
 			/* Reflux, Counter-rush and Djinn Counter: a swirl grows and turns,
@@ -1468,23 +1467,23 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			model->shade = 0;
 			texture.logWidth = 6;
 			texture.logHeight = 6;
-			model->mesh = BattleEffect_SquareMesh;
+			model->mesh = BattleEffectSquareMesh;
 			model->kind = MODEL_SHADED_ADDITIVE;
 			texture.pixels = state->sheet;
 			if(mode == GASP_MODE_REFLUX || mode == GASP_MODE_COUNTER_RUSH) {
-				if(frame <= 31)
-					scale = frame * GASP_SWIRL_GROWTH;
-				else if(frame > 59)
+				if(frm <= 31)
+					scale = frm * GASP_SWIRL_GROWTH;
+				else if(frm > 59)
 					scale = GASP_SWIRL_SCALE + 60 * GASP_SWIRL_SHRINK -
-						frame * GASP_SWIRL_SHRINK;
+						frm * GASP_SWIRL_SHRINK;
 				else
 					scale = GASP_SWIRL_SCALE;
 			} else {
-				if(frame <= 31)
-					scale = frame * GASP_SWIRL_GROWTH;
-				else if(frame > 39)
+				if(frm <= 31)
+					scale = frm * GASP_SWIRL_GROWTH;
+				else if(frm > 39)
 					scale = GASP_SWIRL_SCALE + 40 * GASP_SWIRL_SHRINK -
-						frame * GASP_SWIRL_SHRINK;
+						frm * GASP_SWIRL_SHRINK;
 				else
 					scale = GASP_SWIRL_SCALE;
 			}
@@ -1501,11 +1500,11 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				syRotX(DEGtoANG(90));
 				syScale(scale / 3, scale, scale);
 				if(mode == GASP_MODE_REFLUX)
-					syRotY(-frame * (TRIG_TURN / 64));
+					syRotY(-frm * (TRIG_TURN / 64));
 				else
-					syRotY(frame * (TRIG_TURN / 64));
+					syRotY(frm * (TRIG_TURN / 64));
 				btRenderTransformVertices(
-					BattleEffect_GroundSquareCorners, verts, 4);
+					BattleEffectGroundSquareCorners, verts, 4);
 				btRenderDrawModelList(model);
 			}
 		}

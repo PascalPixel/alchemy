@@ -27,7 +27,7 @@ void btEffectDrawShadedCircles(Uint8 *map, Sint32 size, FIXED scale);
 void btEffectDrawShadedCirclesMirrored(Uint8 *map, Sint32 size, Sint32 scale);
 
 void btResourceLoadAndDecompress(
-	Sint32 resourceId, void *target, Sint32 unpack, Sint32 wait);
+	Sint32 resourceId, void *tgt, Sint32 unpack, Sint32 wait);
 
 /* The flags of a composite draw: clip the picture at the canvas's edges, and
    mirror it. */

@@ -1,14 +1,14 @@
 /* Unused: a copy of the speakers' portrait maps, linked among the battle code
    and read by nothing. The message window looks portraits up in its own
-   Portrait_CharacterMap and Portrait_SpriteMap, which hold the same pairs. */
+   PortraitCharacterMap and PortraitSpriteMap, which hold the same pairs. */
 
 #include "sprite_ids.h"
 #include "game/character_ids.h"
 #include "window/window.h"
 
 /* clang-format off */
-/* {character, portrait} pairs, ending in -1, as in Portrait_CharacterMap. */
-const Sint16 Battle_UnusedCharacterPortraits[][2] = {
+/* {character, portrait} pairs, ending in -1, as in PortraitCharacterMap. */
+const Sint16 BattleUnusedCharacterPortraits[][2] = {
 	{ISAAC, PORTRAIT_ISAAC},
 	{GARET, PORTRAIT_GARET},
 	{IVAN, PORTRAIT_IVAN},
@@ -20,10 +20,10 @@ const Sint16 Battle_UnusedCharacterPortraits[][2] = {
 	{-1, -1},
 };
 
-/* {sprite, portrait} pairs, ending in -1, as in Portrait_SpriteMap: the */
+/* {sprite, portrait} pairs, ending in -1, as in PortraitSpriteMap: the */
 /* Djinn, shopkeepers, townspeople and named people who speak with a portrait, */
 /* each portrait counted from PORTRAIT_FIRST_SPRITE_PORTRAIT. */
-const Sint16 Battle_UnusedSpritePortraits[][2] = {
+const Sint16 BattleUnusedSpritePortraits[][2] = {
 	{SPRITE_JUPITER_DJINNI, SPRITE_PORTRAIT_JUPITER_DJINNI},
 	{SPRITE_VENUS_DJINNI, SPRITE_PORTRAIT_VENUS_DJINNI},
 	{SPRITE_MARS_DJINNI, SPRITE_PORTRAIT_MARS_DJINNI},

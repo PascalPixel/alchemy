@@ -47,12 +47,12 @@ typedef enum SPR_PART_AFFINE {
 /* A plain part's matrix field holds OAM's horizontal flip bit instead. */
 #define SPRITE_PART_MIRRORED 8
 
-/* Advances a sprite's animations by one frame, picks each sprite animation's
+/* Advances a sprite's animations by one tick, picks each sprite animation's
    picture for the facing dir, and when any picture changed redraws the sprite:
    the sprite animations composed by priority into one pixel buffer, an optional
    outline, and the result uploaded to the sprite's VRAM tiles. Returns 1 when
    the first sprite animation's picture is to be mirrored. */
-Sint32 fdSprComposePicture(SPR *sprite, Uint16 dir)
+Sint32 fdSprComposePicture(SPR *spr, Uint16 dir)
 {
 	Bool				mirrored;
 	Uint32				size;
@@ -67,7 +67,7 @@ Sint32 fdSprComposePicture(SPR *sprite, Uint16 dir)
 	Uint16				drawOrder[ANIM_LAYER_COUNT];
 	Sint32				i;
 	Sint32				k;
-	Sint32				drawCount;
+	Sint32				drawCnt;
 	Uint32				key;
 	Sint32				arg;
 	Sint32				picture;
@@ -79,23 +79,23 @@ Sint32 fdSprComposePicture(SPR *sprite, Uint16 dir)
 	mirrored = FALSE;
 	system = ActorSystemStateWork;
 	decoderWasLoaded = TRUE;
-	decodePicture = (SPR_DRAW_FN)HEAP_SLOT_BLOCK(HEAP_SLOT_FRAME_SCRATCH);
+	decodePicture = (SPR_DRAW_FN)HEAP_SLOT_BLOCK(HEAP_SLOT_TICK_SCRATCH);
 	if(decodePicture == 0) {
 		code = syHeapSlotAlloc(
-			HEAP_SLOT_FRAME_SCRATCH, (Sint32)Render_DecodePictureCodeSize);
+			HEAP_SLOT_TICK_SCRATCH, (Sint32)Render_DecodePictureCodeSize);
 		syDMAXCopy(fdRenderDecodePicture, code,
 			DMA_COPY_WORDS(((Uint32)fdRenderDecodePictureEnd -
 							   (Uint32)fdRenderDecodePicture) >>
 				2),
 			REG_DMA3);
-		decodePicture = (SPR_DRAW_FN)HEAP_SLOT_BLOCK(HEAP_SLOT_FRAME_SCRATCH);
+		decodePicture = (SPR_DRAW_FN)HEAP_SLOT_BLOCK(HEAP_SLOT_TICK_SCRATCH);
 		decoderWasLoaded = FALSE;
 	}
 
 	/* Step each sprite animation's script: read commands until one shows a
 	   picture for a while, else count the current picture's time down. */
-	for(i = 0; i < sprite->cnt; i++) {
-		layer = sprite->entries[i];
+	for(i = 0; i < spr->cnt; i++) {
+		layer = spr->entries[i];
 		if(layer == 0) {
 			continue;
 		}
@@ -109,7 +109,7 @@ Sint32 fdSprComposePicture(SPR *sprite, Uint16 dir)
 			switch(picture) {
 			case ANIMCMD_PLAY:
 				fdSprAnimationStart(layer, arg);
-				sprite->lastNo = arg;
+				spr->lastNo = arg;
 				break;
 			case ANIMCMD_JUMP:
 				layer->scriptOfs = arg;
@@ -134,7 +134,7 @@ Sint32 fdSprComposePicture(SPR *sprite, Uint16 dir)
 				picture = SPRITE_PICTURE_NONE;
 				/* Ending any sprite animation lowers the sprite's animation
 				   count, as if the last had ended. */
-				sprite->cnt--;
+				spr->cnt--;
 				goto select_direction;
 			case ANIMCMD_HOLD + 1 ... ANIMCMD_WAIT - 1:
 			case ANIMCMD_WAIT + 1 ... ANIMCMD_UNUSED_LAST:
@@ -148,7 +148,7 @@ Sint32 fdSprComposePicture(SPR *sprite, Uint16 dir)
 			goto read_command;
 		}
 		/* Time is left on this picture: count it down by the sprite animation's
-		   step (SPRITE_ANIMATION_NORMAL_STEP takes a frame off each frame). */
+		   step (SPRITE_ANIMATION_NORMAL_STEP takes a tick off each tick). */
 		layer->tmr = layer->tmr - layer->step;
 	show_picture:
 		picture = layer->pictureBase;
@@ -158,33 +158,33 @@ Sint32 fdSprComposePicture(SPR *sprite, Uint16 dir)
 		switch(layer->kind) {
 		case ANIM_FACING_ONE_PICTURE:
 			/* Only the first eight of its entries are read. */
-			facing = AnimationFacing_OnePicture[FACING_SECTOR(dir, 8)];
+			facing = AnimationFacingOnePicture[FACING_SECTOR(dir, 8)];
 			break;
 		case ANIM_FACING_FRONT_BACK:
 		case ANIM_FACING_TWO_PART:
-			facing = FACING_TABLE_ENTRY(AnimationFacing_FrontBack, dir);
+			facing = FACING_TABLE_ENTRY(AnimationFacingFrontBack, dir);
 			break;
 		case ANIM_FACING_FRONT_BACK_SWAPPED:
-			facing = FACING_TABLE_ENTRY(AnimationFacing_FrontBackSwapped, dir);
+			facing = FACING_TABLE_ENTRY(AnimationFacingFrontBackSwapped, dir);
 			break;
 		case ANIM_FACING_THREE_PICTURES:
-			facing = FACING_TABLE_ENTRY(AnimationFacing_ThreePictures, dir);
+			facing = FACING_TABLE_ENTRY(AnimationFacingThreePictures, dir);
 			break;
 		case ANIM_FACING_FOUR_PICTURES:
-			facing = FACING_TABLE_ENTRY(AnimationFacing_FourPictures, dir);
+			facing = FACING_TABLE_ENTRY(AnimationFacingFourPictures, dir);
 			break;
 		case ANIM_FACING_FIVE_PICTURES:
-			facing = FACING_TABLE_ENTRY(AnimationFacing_FivePictures, dir);
+			facing = FACING_TABLE_ENTRY(AnimationFacingFivePictures, dir);
 			break;
 		case ANIM_FACING_SIX_PICTURES:
-			facing = FACING_TABLE_ENTRY(AnimationFacing_SixPictures, dir);
+			facing = FACING_TABLE_ENTRY(AnimationFacingSixPictures, dir);
 			break;
 		case ANIM_FACING_EIGHT_PICTURES:
-			facing = AnimationFacing_EightPictures[FACING_NEAREST_EIGHTH_SECTOR(
-				dir)];
+			facing =
+				AnimationFacingEightPictures[FACING_NEAREST_EIGHTH_SECTOR(dir)];
 			break;
 		case ANIM_FACING_EIGHT_PICTURES_MIRRORED:
-			facing = AnimationFacing_EightPicturesMirrored
+			facing = AnimationFacingEightPicturesMirrored
 				[FACING_NEAREST_EIGHTH_SECTOR(dir)];
 			break;
 		default:
@@ -197,20 +197,20 @@ Sint32 fdSprComposePicture(SPR *sprite, Uint16 dir)
 		}
 		if(layer->picture != picture) {
 			layer->picture = picture;
-			sprite->dirty = 1;
+			spr->dirty = 1;
 		}
 	}
 
-	if(sprite->dirty != 0) {
-		size = sprite->width * sprite->height;
+	if(spr->dirty != 0) {
+		size = spr->width * spr->height;
 		pixels = syHeapAlloc(size);
 		syWordsClear(pixels, size);
 
 		/* Sort the visible sprite animations by priority (0-3), then by index,
 		   with an insertion sort on keys of (priority << 8) | index. */
-		drawCount = -1;
-		for(i = sprite->cnt - 1; i >= 0; i--) {
-			layer = sprite->entries[i];
+		drawCnt = -1;
+		for(i = spr->cnt - 1; i >= 0; i--) {
+			layer = spr->entries[i];
 			if(layer == 0) {
 				continue;
 			}
@@ -225,7 +225,7 @@ Sint32 fdSprComposePicture(SPR *sprite, Uint16 dir)
 				continue;
 			}
 			key = (key << 8) | i;
-			k = drawCount;
+			k = drawCnt;
 			if(k >= 0 && drawOrder[k] > key) {
 				drawOrder[k + 1] = drawOrder[k];
 				for(;;) {
@@ -239,13 +239,13 @@ Sint32 fdSprComposePicture(SPR *sprite, Uint16 dir)
 			}
 		insert:
 			drawOrder[k + 1] = key;
-			drawCount++;
+			drawCnt++;
 		}
-		drawCount++;
+		drawCnt++;
 
 		/* Draw the sprite animations in that order, each by its codec. */
-		for(i = 0; i < drawCount; i++) {
-			layer = sprite->entries[*(Uint8 *)&drawOrder[i]];
+		for(i = 0; i < drawCnt; i++) {
+			layer = spr->entries[*(Uint8 *)&drawOrder[i]];
 			if(layer->mode == SPRITE_PICTURE_TAGGED_LZ) {
 				syDecompressTaggedLZ(layer->pictures[layer->picture], pixels);
 			} else if(layer->mode == SPRITE_PICTURE_LZ) {
@@ -271,7 +271,7 @@ Sint32 fdSprComposePicture(SPR *sprite, Uint16 dir)
 
 		/* Outline: a pixel whose four neighbours are all drawn becomes the fill
 		   colour, and any other drawn pixel the edge colour. */
-		if((sprite->flg & SPRITE_FLAG_OUTLINED) != 0) {
+		if((spr->flg & SPRITE_FLAG_OUTLINED) != 0) {
 			Uint8 *inside;
 			Uint8  edge;
 			Uint8  fill;
@@ -281,8 +281,8 @@ Sint32 fdSprComposePicture(SPR *sprite, Uint16 dir)
 			Uint8 *dst;
 
 			inside = syHeapAlloc(size);
-			w = sprite->width;
-			h = sprite->height;
+			w = spr->width;
+			h = spr->height;
 			edge = system->edge;
 			fill = system->fill;
 			syWordsClear(inside, size);
@@ -315,20 +315,20 @@ Sint32 fdSprComposePicture(SPR *sprite, Uint16 dir)
 		}
 
 		/* Upload the pixels to the sprite's tiles in VRAM. */
-		tile = syVRAMCacheLoad(sprite->slot, size, 0);
+		tile = syVRAMCacheLoad(spr->slot, size, 0);
 		{
 			void *vram = (void *)(OBJ_VRAM0 + tile * TILE_SIZE_4BPP);
 			((SPR_UPLOAD_FN)HeapSlots[HEAP_SLOT_PICTURE_UPLOADER])(
-				pixels, sprite->width, sprite->height, vram);
+				pixels, spr->width, spr->height, vram);
 		}
-		sprite->image.tile = tile;
-		sprite->dirty = 0;
+		spr->image.tile = tile;
+		spr->dirty = 0;
 		system->used += size;
 		syHeapRelease(pixels);
 	}
 
 	if(decoderWasLoaded == 0) {
-		syHeapSlotRelease(HEAP_SLOT_FRAME_SCRATCH);
+		syHeapSlotRelease(HEAP_SLOT_TICK_SCRATCH);
 	}
 	return mirrored;
 }
@@ -337,11 +337,11 @@ Sint32 fdSprComposePicture(SPR *sprite, Uint16 dir)
    image centred on screenX and raised height above screenY, the shadow at
    groundHeight. scale is the sprite's (x, y) scale (16.16); above 1.0 both
    parts use the double-size affine mode. */
-void fdRenderPlaceSprPartPair(SPR *sprite, FIXED screenX, Sint32 height,
+void fdRenderPlaceSprPartPair(SPR *spr, FIXED screenX, Sint32 height,
 	Sint32 screenY, Sint32 groundHeight, FIXED *scale)
 {
-	Uint32				halfWidth = sprite->width >> 1;
-	Uint32				halfHeight = sprite->height / 2;
+	Uint32				halfWidth = spr->width >> 1;
+	Uint32				halfHeight = spr->height / 2;
 	Sint32				marginX = SHADOW_HALF_WIDTH;
 	Sint32				marginY = SHADOW_HALF_HEIGHT;
 	Sint32				affine = SPRITE_PART_AFFINE;
@@ -364,15 +364,14 @@ void fdRenderPlaceSprPartPair(SPR *sprite, FIXED screenX, Sint32 height,
 	   raised by half the height less offsetY, scaled and rounded up to a whole
 	   pixel. */
 	y = FIXEDtoINT(screenY - height) - halfHeight -
-		FIXEDtoINT(
-			((sprite->height / 2) - sprite->ofsY) * scaleY + (toFIXED(1) - 1));
-	sprite->image.affine = affine;
-	sprite->image.x = x;
-	sprite->image.y = y;
+		FIXEDtoINT(((spr->height / 2) - spr->ofsY) * scaleY + (toFIXED(1) - 1));
+	spr->image.affine = affine;
+	spr->image.x = x;
+	spr->image.y = y;
 	/* Place the shadow at ground height independently of the raised image. */
 	x = FIXEDtoINT(screenX) - marginX;
 	y = FIXEDtoINT(screenY - groundHeight) - marginY;
-	shadow = &sprite->shadow;
+	shadow = &spr->shadow;
 	shadow->affine = affine;
 	shadow->x = x;
 	shadow->y = y;
@@ -390,14 +389,14 @@ void fdRenderPlaceSprPartPair(SPR *sprite, FIXED screenX, Sint32 height,
 #define PLACEMENT_SHADOW_SLOT 2
 
 /* Places a sprite for the scrolling camera and queues it for drawing. */
-void fdRenderApplyProjectedPlacement(SPR *sprite, const SPR_PLACEMENT *position,
+void fdRenderApplyProjectedPlacement(SPR *spr, const SPR_PLACEMENT *position,
 	const SPR_SCALE *scale, Sint32 facing)
 {
 	const Sint32 *pos = sySprPlacementReadValues(position);
 	const Sint32 *scaleValues = scale->values;
 	Sint32		  matrix;
-	Uint32		  halfWidth = sprite->width >> 1;
-	Uint32		  halfHeight = sprite->height >> 1;
+	Uint32		  halfWidth = spr->width >> 1;
+	Uint32		  halfHeight = spr->height >> 1;
 	Sint32		  shadowHalfWidth = SHADOW_HALF_WIDTH;
 	Sint32		  shadowHalfHeight = SHADOW_HALF_HEIGHT;
 	Sint32		  affine;
@@ -421,14 +420,14 @@ void fdRenderApplyProjectedPlacement(SPR *sprite, const SPR_PLACEMENT *position,
 
 	/* Reuse an untransformed sprite when mirroring, scale and rotation allow
 	   it. */
-	flip = fdSprComposePicture(sprite, facing);
+	flip = fdSprComposePicture(spr, facing);
 	if(flip == 0 && scaleX == toFIXED(1) && scaleY == scaleX &&
-		sprite->rotation == 0) {
+		spr->rotation == 0) {
 		affine = SPRITE_PART_PLAIN;
 		matrix = 0;
 	} else {
 		affine = SPRITE_PART_AFFINE;
-		effect.ang = sprite->rotation;
+		effect.ang = spr->rotation;
 		effect.scaleX = scaleX >> 8;
 		effect.scaleY = scaleY >> 8;
 		if(flip != 0)
@@ -452,9 +451,9 @@ void fdRenderApplyProjectedPlacement(SPR *sprite, const SPR_PLACEMENT *position,
 	}
 	/* Queue the shadow at ground height before the raised image. */
 	y = FIXEDtoINT(screenY - groundHeight) - shadowHalfHeight;
-	if(sprite->flg & SPRITE_FLAG_SHADOW) {
+	if(spr->flg & SPRITE_FLAG_SHADOW) {
 		if(y < DISPLAY_HEIGHT) {
-			part = &sprite->shadow;
+			part = &spr->shadow;
 			part->affine = affine;
 			part->affineIdx = matrix;
 			part->x = FIXEDtoINT(screenX) - shadowHalfWidth;
@@ -463,14 +462,14 @@ void fdRenderApplyProjectedPlacement(SPR *sprite, const SPR_PLACEMENT *position,
 		}
 	}
 	x = FIXEDtoINT(screenX) - halfWidth +
-		FIXEDtoINT(sprite->ofsX * scaleX + (toFIXED(1) - 1));
+		FIXEDtoINT(spr->ofsX * scaleX + (toFIXED(1) - 1));
 	y = FIXEDtoINT(screenY - height) - halfHeight -
 		FIXEDtoINT(
-			scaleY * ((sprite->height >> 1) - sprite->ofsY) + (toFIXED(1) - 1));
+			scaleY * ((spr->height >> 1) - spr->ofsY) + (toFIXED(1) - 1));
 	/* Only the right and bottom edges are tested; OAM wraps a negative
 	   position. */
 	if(x < DISPLAY_WIDTH && y < DISPLAY_HEIGHT) {
-		part = &sprite->image;
+		part = &spr->image;
 		part->x = x;
 		part->y = y;
 		part->affine = affine;
@@ -494,7 +493,7 @@ void fdRenderApplyProjectedPlacement(SPR *sprite, const SPR_PLACEMENT *position,
    its own scale), with an affine matrix as needed and its shadow on the ground
    below. depth 0 sorts it by distance; any other value is its draw slot. */
 void fdRenderPlaceProjectedSpr(
-	SPR *sprite, Sint32 *point, Sint32 *scale, Sint32 facing, Sint32 depth)
+	SPR *spr, Sint32 *point, Sint32 *scale, Sint32 facing, Sint32 depth)
 {
 	Sint32			 flip;
 	Uint32			 halfHeight;
@@ -509,8 +508,8 @@ void fdRenderPlaceProjectedSpr(
 	Sint32			 roundedScale;
 	FIXED			 scaleX;
 	FIXED			 scaleY;
-	FIXED			 offsetX;
-	FIXED			 offsetY;
+	FIXED			 ofsX;
+	FIXED			 ofsY;
 	Sint32			 slot;
 
 	/* Project first, then discard sprites beyond the padded screen bounds. */
@@ -521,14 +520,14 @@ void fdRenderPlaceProjectedSpr(
 			screen[0] <= DISPLAY_WIDTH + PROJECTED_MARGIN &&
 			screen[1] >= -PROJECTED_MARGIN &&
 			screen[1] <= DISPLAY_HEIGHT + PROJECTED_MARGIN_BELOW) {
-			if(sprite->useOwnScale)
-				z = sprite->scale;
+			if(spr->useOwnScale)
+				z = spr->scale;
 			else
-				z = syMulFX(z, sprite->scale);
-			halfWidth = sprite->width >> 1;
-			halfHeight = sprite->height >> 1;
+				z = syMulFX(z, spr->scale);
+			halfWidth = spr->width >> 1;
+			halfHeight = spr->height >> 1;
 			size = SHADOW_HALF_WIDTH;
-			flip = fdSprComposePicture(sprite, facing);
+			flip = fdSprComposePicture(spr, facing);
 			/* Round the perspective scale to the nearest 1/32 before combining
 			   it with the sprite's own scale. */
 			roundedScale = (z + toFIXED(1) / 64) & -(toFIXED(1) / 32);
@@ -542,38 +541,38 @@ void fdRenderPlaceProjectedSpr(
 				scaleX = toFIXED(63) / 32;
 			if(scaleY >= toFIXED(63) / 32)
 				scaleY = toFIXED(63) / 32;
-			offsetX = syMulFX(sprite->ofsX, scaleX);
-			offsetY = -syMulFX((sprite->height >> 1) - sprite->ofsY, scaleY);
+			ofsX = syMulFX(spr->ofsX, scaleX);
+			ofsY = -syMulFX((spr->height >> 1) - spr->ofsY, scaleY);
 			if(scaleX > toFIXED(1) || scaleY > toFIXED(1)) {
 				affine = SPRITE_PART_AFFINE_DOUBLE;
 				halfWidth <<= 1;
 				halfHeight <<= 1;
 				size = 2 * SHADOW_HALF_WIDTH;
-			} else if(scaleX == toFIXED(1) && sprite->rotation == 0 &&
+			} else if(scaleX == toFIXED(1) && spr->rotation == 0 &&
 				scaleY == scaleX) {
 				affine = SPRITE_PART_PLAIN;
 			}
 			/* Mirroring uses negative affine scale when a matrix is needed. */
 			if(affine != SPRITE_PART_PLAIN) {
-				effect.ang = sprite->rotation;
+				effect.ang = spr->rotation;
 				effect.scaleX = scaleX >> 8;
 				if(flip != 0) {
 					effect.scaleX = -effect.scaleX;
-					offsetX = -offsetX;
+					ofsX = -ofsX;
 				}
 				effect.scaleY = scaleY >> 8;
 				matrix = syOAMMatrixAllocFromTransform(&effect);
 			} else if(flip != 0) {
 				matrix = SPRITE_PART_MIRRORED;
-				offsetX = -offsetX;
+				ofsX = -ofsX;
 			} else {
 				matrix = 0;
 			}
 			{
-				ANIMATION_SPR_PART *image = &sprite->image;
+				ANIMATION_SPR_PART *image = &spr->image;
 
-				image->x = screen[0] - halfWidth + offsetX;
-				image->y = screen[1] - halfHeight + offsetY;
+				image->x = screen[0] - halfWidth + ofsX;
+				image->y = screen[1] - halfHeight + ofsY;
 				image->affine = affine;
 				image->affineIdx = matrix;
 			}
@@ -584,18 +583,18 @@ void fdRenderPlaceProjectedSpr(
 					PROJECTED_MIDDLE_SLOT;
 				if(slot <= 0)
 					slot = DEPTH_SLOT_BACK;
-				syOAMAddSprAtDepth(sprite, slot);
+				syOAMAddSprAtDepth(spr, slot);
 			} else {
-				syOAMAddSprAtDepth(sprite, depth);
+				syOAMAddSprAtDepth(spr, depth);
 			}
 			/* Project the ground point separately so jumping does not lift the
 			   shadow. */
-			if(sprite->flg & SPRITE_FLAG_SHADOW) {
+			if(spr->flg & SPRITE_FLAG_SHADOW) {
 				ANIMATION_SPR_PART *shadow;
 
 				SET_VECTOR(ground, point[0], 0, point[2]);
 				syConvert3Dto2D(ground, screen);
-				shadow = &sprite->shadow;
+				shadow = &spr->shadow;
 				shadow->x = screen[0] - size;
 				/* Centred 2 pixels below the ground point, so the feet stand on
 				   the shadow's upper half (the World Map's leader, render probe
@@ -614,31 +613,31 @@ void fdRenderPlaceProjectedSpr(
 	/* Invisible sprites release cached tiles unless their display flags hold
 	   them; marked dirty, the sprite is redrawn into new VRAM when it next
 	   comes on screen. */
-	if(!sprite->retainCacheEntry) {
-		syVRAMCacheReleaseVRAM(sprite->slot);
-		sprite->dirty = 1;
+	if(!spr->retainCacheEntry) {
+		syVRAMCacheReleaseVRAM(spr->slot);
+		spr->dirty = 1;
 	}
 }
 
 /* Sets the colour mode (SPR_COL_MODE) of each of a sprite's animations to
-   colorMode, except sprite animations drawn hidden (SPRITE_COLOR_HIDDEN), and
+   colMode, except sprite animations drawn hidden (SPRITE_COLOR_HIDDEN), and
    marks the sprite for redrawing. */
-void fdSprSetAnimationColModes(void *rawSprite, Uint32 colorMode)
+void fdSprSetAnimationColModes(void *rawSpr, Uint32 colMode)
 {
-	SPR *sprite = rawSprite;
-	if(sprite != 0) {
-		Uint32 count = sprite->cnt;
+	SPR *spr = rawSpr;
+	if(spr != 0) {
+		Uint32 cnt = spr->cnt;
 
-		if(count != 0) {
-			SPR_ANIMATION **entry = sprite->entries;
-			Uint32			remaining = count;
+		if(cnt != 0) {
+			SPR_ANIMATION **entry = spr->entries;
+			Uint32			remaining = cnt;
 			do {
 				SPR_ANIMATION *layer = *entry++;
 				if(layer->colMode != SPRITE_COLOR_HIDDEN)
-					layer->colMode = colorMode;
+					layer->colMode = colMode;
 				remaining--;
 			} while(remaining != 0);
 		}
-		sprite->dirty = 1;
+		spr->dirty = 1;
 	}
 }

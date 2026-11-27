@@ -28,8 +28,8 @@
 #include "field/actor_script.h"
 #include "text/msg_ids.h"
 
-Sint32 LemurianShipDeck_BobPhase BSS_DATA; /* angle, TRIG_TURN / 128 a frame */
-Sint32 LemurianShipDeck_WaveScroll BSS_DATA; /* 16.16 pixels, to 32 */
+Sint32 LemurianShipDeckBobPhase	  BSS_DATA; /* angle, TRIG_TURN / 128 a tick */
+Sint32 LemurianShipDeckWaveScroll BSS_DATA; /* 16.16 pixels, to 32 */
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -94,16 +94,16 @@ typedef enum LEMURIAN_SHIP_DECK_METATILE_BEHAVIOR {
 #define scLemurianShipDeckHideWing() \
 	fdMapGridCopyMetatilesTo(60, 53, 67, 16, 7, 3)
 
-extern ACTOR_PLACE LemurianShipDeck_Placements[];
-extern ACTOR_PLACE LemurianShipDeck_TillerPlacements[];
+extern ACTOR_PLACE LemurianShipDeckPlacements[];
+extern ACTOR_PLACE LemurianShipDeckTillerPlacements[];
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_LEMURIAN_SHIP_TILLER)
-		return LemurianShipDeck_TillerPlacements;
-	return LemurianShipDeck_Placements;
+		return LemurianShipDeckTillerPlacements;
+	return LemurianShipDeckPlacements;
 }
 
 /* Felix walks north into the cabin door on the ship's deck, metatile (22, 25),
@@ -139,21 +139,21 @@ void scLemurianShipDeckEnterCabin(void)
 		fdScriptPlaySnd(SE_MAP_EXIT);
 		syFieldScriptSetExitRequest(state->stepCue);
 		fdScriptFinishScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdScriptEnd();
 	}
 }
 
-extern CUE LemurianShipDeck_Cues[];
-extern CUE LemurianShipDeck_MainDeckCues[];
+extern CUE LemurianShipDeckCues[];
+extern CUE LemurianShipDeckMainDeckCues[];
 
 const CUE *scGetCues(void)
 {
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_LEMURIAN_SHIP_MAIN_DECK)
-		return LemurianShipDeck_MainDeckCues;
-	return LemurianShipDeck_Cues;
+		return LemurianShipDeckMainDeckCues;
+	return LemurianShipDeckCues;
 }
 
 /* Felix checks the cabin door on the ship's deck, metatile (22, 24), before
@@ -167,11 +167,11 @@ void scLemurianShipDeckTryHeldDoor(void)
 }
 
 /* Defines an event that moves colours last-1 .. first of LEMURIAN_SHIP_PALETTE
-   one place up and the last round to first, every eighth frame. */
+   one place up and the last round to first, every eighth tick. */
 #define DEFINE_ROTATE_PALETTE_COLORS(name, last, first) \
 	void name(void) \
 	{ \
-		if((FrameCount & 7) == 0) { \
+		if((TickCount & 7) == 0) { \
 			Sint16 saved = BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, last); \
 			Sint32 i; \
 \
@@ -211,9 +211,8 @@ void scLemurianShipDeckShowArrival(void)
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	fdScriptStartScreenTransition();
-	syFieldSetFrameEvent(
-		LemurianShipDeck_RotateHullBandColors, EVENT_PASS_FRAME);
-	fdScriptWaitTransitionFrames();
+	syFieldSetTickEvent(LemurianShipDeck_RotateHullBandColors, EVENT_PASS_TICK);
+	fdScriptWaitTransitionTicks();
 	syFieldScriptWait(60);
 	fdTilesetAnimResume(HULL_BAND_FIRST_ANIMATION);
 	syFieldScriptWait(60);
@@ -222,45 +221,45 @@ void scLemurianShipDeckShowArrival(void)
 	fdScriptEnd();
 }
 
-/* An event: scrolls the waves' layer half a pixel a frame. */
+/* An event: scrolls the waves' layer half a pixel a tick. */
 void scLemurianShipDeckScrollWaves(void)
 {
 	MAP_LAYER *layer = fdMapGridGetLayer(0);
-	FIXED	   phase = LemurianShipDeck_WaveScroll;
+	FIXED	   phase = LemurianShipDeckWaveScroll;
 
 	layer->ofsX = phase;
 	phase += toFIXED(1) / 2;
-	LemurianShipDeck_WaveScroll = phase;
+	LemurianShipDeckWaveScroll = phase;
 	if(phase == toFIXED(32))
-		LemurianShipDeck_WaveScroll = 0;
+		LemurianShipDeckWaveScroll = 0;
 }
 
 /* An event: bobs the camera's actor and the first map layer together on a sine
-   wave, a full wave every 128 frames. */
+   wave, a full wave every 128 ticks. */
 void scLemurianShipDeckBobDeck(void)
 {
 	MAP_LAYER *layer = fdMapGridGetLayer(0);
 	ACTOR	  *actor = syScriptCameraGetActor();
-	Sint32	   offset = syMathSin(LemurianShipDeck_BobPhase) >> 2;
+	Sint32	   ofs = syMathSin(LemurianShipDeckBobPhase) >> 2;
 
-	actor->y.fixed += offset;
-	layer->ofsY += offset;
-	LemurianShipDeck_BobPhase += TRIG_TURN / 128;
+	actor->y.fixed += ofs;
+	layer->ofsY += ofs;
+	LemurianShipDeckBobPhase += TRIG_TURN / 128;
 }
 
-extern Sint32 LemurianShipDeck_JennaLooksAround[];
+extern Sint32 LemurianShipDeckJennaLooksAround[];
 
-extern Sint32 LemurianShipDeck_ShebaLooksAround[];
+extern Sint32 LemurianShipDeckShebaLooksAround[];
 
-extern Sint32 LemurianShipDeck_KradenLooksAround[];
+extern Sint32 LemurianShipDeckKradenLooksAround[];
 
-extern Sint16 LemurianShipDeck_Puddles[];
+extern Sint16 LemurianShipDeckPuddles[];
 
-extern Uint32 LemurianShipDeck_SparkleFades[];
-extern Sint32 LemurianShipDeck_ReturnToShipScript[];
+extern Uint32 LemurianShipDeckSparkleFades[];
+extern Sint32 LemurianShipDeckReturnToShipScript[];
 
-extern Sint32 LemurianShipDeck_ReachPiersShipScript[];
-extern Uint32 LemurianShipDeck_SplashFades[];
+extern Sint32 LemurianShipDeckReachPiersShipScript[];
+extern Uint32 LemurianShipDeckSplashFades[];
 
 /* Places an actor facing an angle, the angle taken as the Uint16 an actor's
    facing is, as Madra's and Loho's scenes also place them. */
@@ -300,14 +299,14 @@ void scLemurianShipDeckTakeTheTiller(void)
 		ACTOR_JENNA, toFIXED(546), toFIXED(440), FACING_SOUTH);
 	fdMapGridCenterOnFollowedPoint();
 	syWait(1);
-	fdActorSetScript(ACTOR_JENNA, LemurianShipDeck_JennaLooksAround);
-	fdActorSetScript(ACTOR_SHEBA, LemurianShipDeck_ShebaLooksAround);
-	fdActorSetScript(ACTOR_KRADEN, LemurianShipDeck_KradenLooksAround);
+	fdActorSetScript(ACTOR_JENNA, LemurianShipDeckJennaLooksAround);
+	fdActorSetScript(ACTOR_SHEBA, LemurianShipDeckShebaLooksAround);
+	fdActorSetScript(ACTOR_KRADEN, LemurianShipDeckKradenLooksAround);
 	fdScriptStartScreenTransition();
-	LemurianShipDeck_WaveScroll = 0;
-	sySetFrameEvent(scLemurianShipDeckScrollWaves, EVENT_PASS_FRAME);
-	LemurianShipDeck_BobPhase = 0;
-	sySetFrameEvent(scLemurianShipDeckBobDeck, EVENT_PASS_FRAME);
+	LemurianShipDeckWaveScroll = 0;
+	sySetTickEvent(scLemurianShipDeckScrollWaves, EVENT_PASS_TICK);
+	LemurianShipDeckBobPhase = 0;
+	sySetTickEvent(scLemurianShipDeckBobDeck, EVENT_PASS_TICK);
 	fdCameraSetSpeed(0.8);
 	fdCameraMoveTo(542, 44, 396, 1);
 	fdCameraWaitForArrival();
@@ -416,7 +415,7 @@ void scLemurianShipDeckTakeTheTiller(void)
 	/* "To the open sea, Felix!" */
 	fdScriptShowMessage(ACTOR_KRADEN, 0);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	MainRoutineStateWork.movementMode = LEADER_MOVEMENT_SHIP;
 	MainRoutineStateWork.ownerOverride = 1;
 	fdScriptSetFlag(FLAG_SHIP_CAN_SAIL);
@@ -426,14 +425,14 @@ void scLemurianShipDeckTakeTheTiller(void)
 /* Sends actor id at a run to where Felix stands, and off the deck. */
 static inline void scLemurianShipDeckRunToFelix(Sint32 id)
 {
-	ACTOR *target;
+	ACTOR *tgt;
 
 	fdActorSetSpeed(id, 1.2);
 	fdActorSetAnimation(id, ANIM_WALK);
-	target = fdActorGetById(ACTOR_FELIX);
-	if(target != NULL)
+	tgt = fdActorGetById(ACTOR_FELIX);
+	if(tgt != NULL)
 		fdActorSetDestination(
-			id, target->x.part[0].integer, target->z.part[0].integer);
+			id, tgt->x.part[0].integer, tgt->z.part[0].integer);
 	fdActorWaitForMoveById(id);
 	fdActorSetPos(id, 0, 0);
 }
@@ -450,7 +449,7 @@ void scLemurianShipDeckHoldOnToTiller(void)
 #if !BOB_DECK_DEAD_CALL_DROPPED
 	/* FAKEMATCH(dead): a call that never runs. */
 	if(0)
-		sySetFrameEvent(scLemurianShipDeckBobDeck, EVENT_PASS_FRAME);
+		sySetTickEvent(scLemurianShipDeckBobDeck, EVENT_PASS_TICK);
 #endif
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
@@ -468,11 +467,11 @@ void scLemurianShipDeckHoldOnToTiller(void)
 	fdMapGridCenterOnFollowedPoint();
 	syWait(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
-	LemurianShipDeck_WaveScroll = 0;
-	sySetFrameEvent(scLemurianShipDeckScrollWaves, EVENT_PASS_FRAME);
-	LemurianShipDeck_BobPhase = 0;
-	sySetFrameEvent(scLemurianShipDeckBobDeck, EVENT_PASS_FRAME);
+	fdScriptWaitTransitionTicks();
+	LemurianShipDeckWaveScroll = 0;
+	sySetTickEvent(scLemurianShipDeckScrollWaves, EVENT_PASS_TICK);
+	LemurianShipDeckBobPhase = 0;
+	sySetTickEvent(scLemurianShipDeckBobDeck, EVENT_PASS_TICK);
 	fdActorShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
 	fdActorFaceDirectionAndWait(ACTOR_SHEBA, FACING_SOUTH);
 	syFieldScriptWait(10);
@@ -584,9 +583,8 @@ void scLemurianShipDeckSetUpTillerDeck(void)
 {
 	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
 		ACTOR_PRIORITY_IGNORES_RISES;
-	syFieldSetFrameEvent(LemurianShipDeck_RotateSurfColors, EVENT_PASS_FRAME);
-	syFieldSetFrameEvent(
-		LemurianShipDeck_RotateHullBandColors, EVENT_PASS_FRAME);
+	syFieldSetTickEvent(LemurianShipDeck_RotateSurfColors, EVENT_PASS_TICK);
+	syFieldSetTickEvent(LemurianShipDeck_RotateHullBandColors, EVENT_PASS_TICK);
 	if(MainRoutineStateWork.entrance == LEMURIAN_SHIP_TILLER_FROM_WORLD_MAP_C)
 		scLemurianShipDeckTakeTheTiller();
 	if(MainRoutineStateWork.entrance ==
@@ -607,14 +605,13 @@ Sint32 scInit(void)
 		fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
 			ACTOR_PRIORITY_IGNORES_RISES;
 		fdActorSetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
-		fdFlagBlockPlaceAll(LemurianShipDeck_Puddles);
-		syFieldSetFrameEvent(
-			LemurianShipDeck_RotateSurfColors, EVENT_PASS_FRAME);
+		fdFlagBlockPlaceAll(LemurianShipDeckPuddles);
+		syFieldSetTickEvent(LemurianShipDeck_RotateSurfColors, EVENT_PASS_TICK);
 		if(MainRoutineStateWork.entrance == MAIN_DECK_ARRIVAL_ENTRANCE)
 			scLemurianShipDeckShowArrival();
 		else
-			syFieldSetFrameEvent(
-				LemurianShipDeck_RotateHullBandColors, EVENT_PASS_FRAME);
+			syFieldSetTickEvent(
+				LemurianShipDeck_RotateHullBandColors, EVENT_PASS_TICK);
 	}
 	return 0;
 }
@@ -733,23 +730,23 @@ void scLemurianShipDeckSightMenardisShip(void)
 	fdActorSetSpeed(ACTOR_SHEBA, 1.2);
 	fdActorSetSpeed(ACTOR_JENNA, 1.2);
 	{
-		ACTOR *target;
+		ACTOR *tgt;
 
 		fdActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
-		target = fdActorGet(ACTOR_FELIX);
-		if(target != NULL)
-			fdActorSetDestination(ACTOR_KRADEN, target->x.part[0].integer,
-				target->z.part[0].integer);
+		tgt = fdActorGet(ACTOR_FELIX);
+		if(tgt != NULL)
+			fdActorSetDestination(
+				ACTOR_KRADEN, tgt->x.part[0].integer, tgt->z.part[0].integer);
 		fdActorSetAnimation(ACTOR_JENNA, ANIM_WALK);
-		target = fdActorGet(ACTOR_FELIX);
-		if(target != NULL)
-			fdActorSetDestination(ACTOR_JENNA, target->x.part[0].integer,
-				target->z.part[0].integer);
+		tgt = fdActorGet(ACTOR_FELIX);
+		if(tgt != NULL)
+			fdActorSetDestination(
+				ACTOR_JENNA, tgt->x.part[0].integer, tgt->z.part[0].integer);
 		fdActorSetAnimation(ACTOR_SHEBA, ANIM_WALK);
-		target = fdActorGet(ACTOR_FELIX);
-		if(target != NULL)
-			fdActorSetDestination(ACTOR_SHEBA, target->x.part[0].integer,
-				target->z.part[0].integer);
+		tgt = fdActorGet(ACTOR_FELIX);
+		if(tgt != NULL)
+			fdActorSetDestination(
+				ACTOR_SHEBA, tgt->x.part[0].integer, tgt->z.part[0].integer);
 	}
 	scFieldActorWaitForMoveById(ACTOR_SHEBA);
 	fdActorSetPos(ACTOR_SHEBA, 0, 0);
@@ -764,7 +761,7 @@ void scLemurianShipDeckSightMenardisShip(void)
    Cookie. */
 void scLemurianShipDeckFreezePuddle(void)
 {
-	fdFlagBlockApplyFlags(LemurianShipDeck_Puddles);
+	fdFlagBlockApplyFlags(LemurianShipDeckPuddles);
 }
 
 /* Felix steps onto the deck just east of the cabin door, metatiles (72, 25) and
@@ -827,13 +824,12 @@ void scLemurianShipDeckStepBesideEastOfDoor(void)
    Black Crystal toward it. */
 void scLemurianShipDeckEmitSparkle(void)
 {
-	Sint32 position[3];
+	Sint32 pos[3];
 	ACTOR *actor;
 
-	SET_VECTOR(position, toFIXED(360), toFIXED(64), toFIXED(424));
-	syFieldVectorAddPolarOffset(32, syRandom(), position);
-	actor =
-		scFieldActorCreate(SPRITE_GLINT, position[0], position[1], position[2]);
+	SET_VECTOR(pos, toFIXED(360), toFIXED(64), toFIXED(424));
+	syFieldVectorAddPolarOffset(32, syRandom(), pos);
+	actor = scFieldActorCreate(SPRITE_GLINT, pos[0], pos[1], pos[2]);
 	if(actor != NULL) {
 		actor->motionFlg = 0;
 		actor->speedLimit = toFIXED(2);
@@ -841,7 +837,7 @@ void scLemurianShipDeckEmitSparkle(void)
 		fdActorSetSprFlags(actor, 0);
 		fdActorSelectAnimation(actor, 0);
 		scFieldActorSetMoveTarget(actor, 360, 64, 424);
-		fdActorStartScript(actor, LemurianShipDeck_SparkleFades);
+		fdActorStartScript(actor, LemurianShipDeckSparkleFades);
 	}
 }
 
@@ -850,22 +846,22 @@ ACTOR *scLemurianShipDeckCreateBlackCrystal(void)
 {
 	ACTOR *actor = (ACTOR *)syImportActorCreate(
 		SPRITE_UNSEEN_MARKER, toFIXED(360), toFIXED(64), toFIXED(424));
-	Uint8	  *buffer = 0;
-	FIELD_SPR *sprite;
+	Uint8	  *buf = 0;
+	FIELD_SPR *spr;
 
 	if(actor == 0)
 		return 0;
-	sprite = actor->spr;
-	sprite->fullCol = 0;
-	sprite->pal = 0;
-	sprite->pri = 1;
+	spr = actor->spr;
+	spr->fullCol = 0;
+	spr->pal = 0;
+	spr->pri = 1;
 	actor->motionFlg = 0;
 	actor->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
-	sprite->flg = 0;
-	sprite->cnt = 0;
-	buffer = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+	spr->flg = 0;
+	spr->cnt = 0;
+	buf = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	mnIconDrawItem(ITEM_BLACK_CRYSTAL);
-	syVRAMCacheLoad(sprite->slot, 128, ((ICON_TRANSFER *)buffer)->tiles);
+	syVRAMCacheLoad(spr->slot, 128, ((ICON_TRANSFER *)buf)->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	return actor;
 }
@@ -908,8 +904,8 @@ void scLemurianShipDeckReturnToShip(void)
 	/* "Wait there a moment." */
 	fdScriptShowMessage(ACTOR_PIERS, 0);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
-	fdActorSetScript(MainRoutineStateWork.leaderActorId,
-		LemurianShipDeck_ReturnToShipScript);
+	fdActorSetScript(
+		MainRoutineStateWork.leaderActorId, LemurianShipDeckReturnToShipScript);
 	fdActorSetSpeed(ACTOR_PIERS, 0.8);
 	fdActorWalkToAndWait(ACTOR_PIERS, 360, 424);
 	fdActorFaceDirectionAndWait(ACTOR_PIERS, FACING_NORTH);
@@ -918,7 +914,7 @@ void scLemurianShipDeckReturnToShip(void)
 	syFieldScriptWait(20);
 	fdScriptPlaySnd(SE_SHIMMER);
 	sparkles = scLemurianShipDeckEmitSparkle;
-	sySetEvent(sparkles, EVENT_PASS_FRAME);
+	sySetEvent(sparkles, EVENT_PASS_TICK);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
 	fdPaletteFadeInterpolate(20);
 	syFieldScriptWait(20);
@@ -1239,28 +1235,28 @@ void scLemurianShipDeckReachPiersShip(void)
 	fdActorSetSpeed(ACTOR_KRADEN, 1.2);
 	fdActorSetSpeed(ACTOR_SHEBA, 1.2);
 	fdActorSetSpeed(ACTOR_PIERS, 1.2);
-	fdActorSetScript(ACTOR_JENNA, LemurianShipDeck_ReachPiersShipScript);
-	fdActorSetScript(ACTOR_KRADEN, LemurianShipDeck_ReachPiersShipScript);
-	fdActorSetScript(ACTOR_SHEBA, LemurianShipDeck_ReachPiersShipScript);
-	fdActorRunScriptAndWait(ACTOR_PIERS, LemurianShipDeck_ReachPiersShipScript);
+	fdActorSetScript(ACTOR_JENNA, LemurianShipDeckReachPiersShipScript);
+	fdActorSetScript(ACTOR_KRADEN, LemurianShipDeckReachPiersShipScript);
+	fdActorSetScript(ACTOR_SHEBA, LemurianShipDeckReachPiersShipScript);
+	fdActorRunScriptAndWait(ACTOR_PIERS, LemurianShipDeckReachPiersShipScript);
 	syFieldScriptWait(20);
 	fdScriptSetFlag(FLAG_PIERS_SETTING_SAIL);
 	fdScriptEnd();
 }
 
-/* A wading splash rises at an actor's feet every eighth frame while it
+/* A wading splash rises at an actor's feet every eighth tick while it
    walks. */
 void scLemurianShipDeckEmitSplash(ACTOR *actor)
 {
 	ACTOR *spawned;
 
-	if((FrameCount & 7) == 0) {
+	if((TickCount & 7) == 0) {
 		spawned = scFieldActorCreate(SPRITE_WADING_SPLASH, actor->x.fixed,
 			actor->y.fixed, actor->z.fixed);
 		if(spawned != 0) {
 			fdActorSetSprFlags(spawned, 0);
 			fdActorSelectAnimation(spawned, 1);
-			fdActorStartScript(spawned, LemurianShipDeck_SplashFades);
+			fdActorStartScript(spawned, LemurianShipDeckSplashFades);
 		}
 	}
 }
@@ -1310,13 +1306,13 @@ void scLemurianShipDeckSetOutForMadra(void)
 
 /* clang-format off */
 /* The puddle on the path west of the ship, by actor id and flag. */
-Sint16 LemurianShipDeck_Puddles[] = {
+Sint16 LemurianShipDeckPuddles[] = {
 	ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN, -1, 0,
 };
 
 /* The party walking off across the shore, into Felix's party, once Piers has */
 /* agreed to sail for Lemuria. */
-Sint32 LemurianShipDeck_ReachPiersShipScript[] = {
+Sint32 LemurianShipDeckReachPiersShipScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(263, 0, 176),
 	SC_SYNC,
@@ -1329,7 +1325,7 @@ Sint32 LemurianShipDeck_ReachPiersShipScript[] = {
 
 /* Felix stepping back from the cabin door and turning to watch Piers open */
 /* it. */
-Sint32 LemurianShipDeck_ReturnToShipScript[] = {
+Sint32 LemurianShipDeckReturnToShipScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(368, 0, 448),
 	SC_SYNC,
@@ -1345,7 +1341,7 @@ Sint32 LemurianShipDeck_ReturnToShipScript[] = {
 };
 
 /* Jenna looking about the deck as the ship first sails. */
-Sint32 LemurianShipDeck_JennaLooksAround[] = {
+Sint32 LemurianShipDeckJennaLooksAround[] = {
 	SC_SET(SW_FACING, FACING_SOUTH),
 	SC_WAIT(30),
 	SC_SET(SW_FACING, FACING_SOUTHWEST),
@@ -1358,7 +1354,7 @@ Sint32 LemurianShipDeck_JennaLooksAround[] = {
 };
 
 /* Sheba looking about the deck as the ship first sails. */
-Sint32 LemurianShipDeck_ShebaLooksAround[] = {
+Sint32 LemurianShipDeckShebaLooksAround[] = {
 	SC_SET(SW_FACING, FACING_EAST),
 	SC_WAIT(50),
 	SC_SET(SW_FACING, FACING_SOUTHEAST),
@@ -1367,7 +1363,7 @@ Sint32 LemurianShipDeck_ShebaLooksAround[] = {
 };
 
 /* Kraden looking about the deck as the ship first sails. */
-Sint32 LemurianShipDeck_KradenLooksAround[] = {
+Sint32 LemurianShipDeckKradenLooksAround[] = {
 	SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
 	SC_WAIT(70),
 	SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
@@ -1394,7 +1390,7 @@ Uint32 SceneExits[] = {
 };
 
 /* The East Indra Shore's actors. */
-ACTOR_PLACE LemurianShipDeck_Placements[] = {
+ACTOR_PLACE LemurianShipDeckPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1404,7 +1400,7 @@ ACTOR_PLACE LemurianShipDeck_Placements[] = {
 };
 
 /* The tiller deck's actors. */
-ACTOR_PLACE LemurianShipDeck_TillerPlacements[] = {
+ACTOR_PLACE LemurianShipDeckTillerPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1414,12 +1410,12 @@ ACTOR_PLACE LemurianShipDeck_TillerPlacements[] = {
 };
 
 /* The tiller deck's cues: none. */
-CUE LemurianShipDeck_Cues[] = {
+CUE LemurianShipDeckCues[] = {
 	{CUE_TABLE_END},
 };
 
 /* The East Indra Shore's cues. */
-CUE LemurianShipDeck_MainDeckCues[] = {
+CUE LemurianShipDeckMainDeckCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), LEMURIAN_SHIP_MAIN_DECK_TO_LEMURIAN_SHIP_CABINS, CONDITION_ALWAYS, SCRIPT_REF(scLemurianShipDeckEnterCabin)},
 	{CUE_EXIT, LEMURIAN_SHIP_MAIN_DECK_TO_WORLD_MAP_NORTH, CONDITION_ALWAYS, LEMURIAN_SHIP_MAIN_DECK_TO_WORLD_MAP_NORTH},
 	{CUE_STEP, METATILE_BEHAVIOR_HEAD_OF_PATH, FLAG_MENARDIS_SHIP_SEEN, SCRIPT_REF(scLemurianShipDeckSightMenardisShip)},
@@ -1434,7 +1430,7 @@ CUE LemurianShipDeck_MainDeckCues[] = {
 };
 
 /* A sparkle drifting in to the Black Crystal, gone as it arrives. */
-Uint32 LemurianShipDeck_SparkleFades[] = {
+Uint32 LemurianShipDeckSparkleFades[] = {
 	SC_WAIT(10),
 	SC_SYNC,
 	SC_POSITION_ORIGIN,
@@ -1443,7 +1439,7 @@ Uint32 LemurianShipDeck_SparkleFades[] = {
 };
 
 /* A wading splash, gone after a quarter of a second. */
-Uint32 LemurianShipDeck_SplashFades[] = {
+Uint32 LemurianShipDeckSplashFades[] = {
 	SC_WAIT(15),
 	SC_POSITION_ORIGIN,
 	SC_WAIT(1),

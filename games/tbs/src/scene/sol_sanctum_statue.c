@@ -46,7 +46,7 @@
    between the pillars of the colonnade along the room's north wall. They sit 80
    pixels down the map at the lowest priority, so they pass in front of the sky
    and behind the pillars. The rows move an eighth, a quarter and a half of a
-   pixel a frame, the fastest drawn lowest
+   pixel a tick, the fastest drawn lowest
    (https://alchemy.pascalpixel.com/places/sol-sanctum-statue/sky-rows.gif: the
    top of the screen twice its size, above the sprites alone and the backgrounds
    alone, the clouds drifting behind the pillars).
@@ -65,11 +65,11 @@
 #include "sound/sound_driver_symbols.h"
 #include "text/msg_ids.h"
 
-extern SCENE_ENTRANCE SolSanctumStatue_Entrances[];
-extern Uint32		  SolSanctumStatue_Exits[];
-extern ACTOR_PLACE	  SolSanctumStatue_ActorPlacements[];
-extern CUE			  SolSanctumStatue_Cues[];
-extern Sint32		  SolSanctumStatue_ScrollOffset;
+extern SCENE_ENTRANCE SolSanctumStatueEntrances[];
+extern Uint32		  SolSanctumStatueExits[];
+extern ACTOR_PLACE	  SolSanctumStatueActorPlacements[];
+extern CUE			  SolSanctumStatueCues[];
+extern Sint32		  SolSanctumStatueScrollOffset;
 
 /* Both beams have opened the hole in the floor before the center statue. Until
    then, Move on the center statue first walks the leader clear of it. */
@@ -173,7 +173,7 @@ static void scSolSanctumStatueOpenSoutheastSeal(void);
 static void scSolSanctumStatueOpenSeal(void);
 static void scSolSanctumStatueShineLeftBeam(void);
 static void scSolSanctumStatueShineRightBeam(void);
-static void scSolSanctumStatueSayThenWait(Sint32 speaker, Sint32 frames);
+static void scSolSanctumStatueSayThenWait(Sint32 speaker, Sint32 ticks);
 
 /* A block of metatiles copied from one place in the map grid to another. */
 typedef struct METATILE_COPY {
@@ -213,7 +213,7 @@ typedef struct SEAL_OPENING {
 
 STATIC_ASSERT(offsetof(SEAL_OPENING, unused) == 196);
 
-/* The placed actors, numbered in the order of SolSanctumStatue_ActorPlacements.
+/* The placed actors, numbered in the order of SolSanctumStatueActorPlacements.
 
    They are Kraden, who stays out of sight until his two visits, the eight
    statues, and the center statue in its two places. Jenna and Garet, placed
@@ -239,18 +239,18 @@ typedef enum SOL_SANCTUM_STATUE_ACTOR_ID {
 } SOL_SANCTUM_STATUE_ACTOR_ID;
 
 /* The seal the last statue moved has set up to open. */
-static SEAL_OPENING sSealOpening ALIGNED(16);
+static SEAL_OPENING SealOpening ALIGNED(16);
 
 /* Initialization writes each three-word OAM packet, and drawing updates its
    fields. */
 static union {
 	ANIMATION_SPR_PART parts[3 * SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT];
 	Sint32			   words[3 * SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT * 3];
-} sScrollingSprites;
+} ScrollingSprites;
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return SolSanctumStatue_Entrances;
+	return SolSanctumStatueEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -260,21 +260,21 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return SolSanctumStatue_Exits;
+	return SolSanctumStatueExits;
 }
 
 /* Returns Kraden, the eight statues, the center statue and its moved copy
    (ACTOR_KRADEN to ACTOR_MOVED_CENTER_STATUE), then Jenna and Garet. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return SolSanctumStatue_ActorPlacements;
+	return SolSanctumStatueActorPlacements;
 }
 
 /* Returns the statues' Move and push scripts, each row only until its seal or
    beam is done. */
 const CUE *scGetCues(void)
 {
-	return SolSanctumStatue_Cues;
+	return SolSanctumStatueCues;
 }
 
 /* Chooses the script in the Luna and Sol rooms that a newly opened seal leads
@@ -297,7 +297,7 @@ static Sint32 scSolSanctumStatueSelectStoryExit(void)
 	return -1;
 }
 
-/* The floor before the center statue flashes this many times, eight frames
+/* The floor before the center statue flashes this many times, eight ticks
    each, as it opens. */
 #define CENTER_HOLE_FLASHES 22
 
@@ -332,7 +332,7 @@ static void scSolSanctumStatueExplainTrapDisarmed(void)
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	FieldStateWork->transitionFrm = 32;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	fdActorSetPos(ACTOR_KRADEN, 576, 232);
 	fdScriptWait(1);
@@ -376,26 +376,26 @@ static void scSolSanctumStatueExplainTrapDisarmed(void)
 	   come from?" Then back to the party. */
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdCameraMoveTo(287, CAMERA_KEEP, 176, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	fdActorSetPos(ACTOR_KRADEN, 424, 200);
 	sySynch(1);
 	scSolSanctumStatueSayThenWait(ACTOR_KRADEN, 20);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorSetPos(ACTOR_KRADEN, 576, 184);
 	fdCameraMoveTo(574, CAMERA_KEEP, 180, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	fdCameraSetSpeed(1.2);
 	fdCameraMoveTo(574, CAMERA_KEEP, 157, 1);
@@ -465,7 +465,7 @@ static void scSolSanctumStatueExplainTrapDisarmed(void)
 	fdScriptClearFlag(FLAG_SHOW_AREA_NAME);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 	fdScriptEnd();
 }
 
@@ -480,7 +480,7 @@ static void scSolSanctumStatueExplainStatuePuzzle(void)
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	state->transitionFrm = 32;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	fdActorSetPos(ACTOR_KRADEN, 576, 296);
 	fdScriptWait(1);
@@ -656,7 +656,7 @@ static void scSolSanctumStatueExplainStatuePuzzle(void)
 	state = FieldStateWork;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	state->transitionFrm = MAP_TRANSITION_FRAMES;
+	state->transitionFrm = MAP_TRANSITION_TICKS;
 	fdScriptEnd();
 }
 
@@ -667,9 +667,9 @@ static void scSolSanctumStatueUnusedPutOutSeals(void)
 	MAP_GRID_SCROLL_STATE *grid;
 	ACTOR				  *leader;
 	Sint32				  *savedOrigin;
-	FIXED				   cameraPosition[3];
+	FIXED				   cameraPos[3];
 	Sint32				   approachSide;
-	Sint32				   frame;
+	Sint32				   frm;
 
 	grid = MapGridState[0];
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
@@ -681,10 +681,10 @@ static void scSolSanctumStatueUnusedPutOutSeals(void)
 		fdScriptWait(30);
 		savedOrigin = grid->origin;
 		SET_VECTOR(
-			cameraPosition, leader->x.fixed, leader->y.fixed, leader->z.fixed);
-		grid->origin = cameraPosition;
-		for(frame = 0; frame != 30; frame++) {
-			cameraPosition[2] += toFIXED(1);
+			cameraPos, leader->x.fixed, leader->y.fixed, leader->z.fixed);
+		grid->origin = cameraPos;
+		for(frm = 0; frm != 30; frm++) {
+			cameraPos[2] += toFIXED(1);
 			fdScriptWait(1);
 		}
 		fdScriptWait(40);
@@ -694,29 +694,29 @@ static void scSolSanctumStatueUnusedPutOutSeals(void)
 		fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 		fdScriptWait(30);
 		SET_VECTOR(
-			cameraPosition, leader->x.fixed, leader->y.fixed, leader->z.fixed);
+			cameraPos, leader->x.fixed, leader->y.fixed, leader->z.fixed);
 		savedOrigin = grid->origin;
-		grid->origin = cameraPosition;
-		for(frame = 0; frame != 30; frame++) {
-			cameraPosition[2] -= toFIXED(1);
+		grid->origin = cameraPos;
+		for(frm = 0; frm != 30; frm++) {
+			cameraPos[2] -= toFIXED(1);
 			fdScriptWait(1);
 		}
 		fdScriptWait(40);
 		approachSide = 2;
 	}
-	for(frame = 0; frame != 6; frame++) {
+	for(frm = 0; frm != 6; frm++) {
 		fdMapGridCopyMetatilesTo(2, 28, 34, 10, 4, 2);
 		fdScriptWait(8);
 		fdMapGridCopyMetatilesTo(2, 30, 34, 10, 4, 2);
 		fdScriptWait(8);
 	}
-	for(frame = 0; frame != 10; frame++) {
+	for(frm = 0; frm != 10; frm++) {
 		fdMapGridCopyMetatilesTo(2, 28, 34, 10, 4, 2);
 		fdScriptWait(4);
 		fdMapGridCopyMetatilesTo(2, 30, 34, 10, 4, 2);
 		fdScriptWait(4);
 	}
-	for(frame = 0; frame != 12; frame++) {
+	for(frm = 0; frm != 12; frm++) {
 		fdMapGridCopyMetatilesTo(2, 28, 34, 10, 4, 2);
 		fdScriptWait(2);
 		fdMapGridCopyMetatilesTo(2, 30, 34, 10, 4, 2);
@@ -727,67 +727,67 @@ static void scSolSanctumStatueUnusedPutOutSeals(void)
 	fdScriptWait(60);
 	/* Reverse the pan before restoring the caller's camera target. */
 	if(approachSide == 1) {
-		for(frame = 0; frame != 30; frame++) {
-			cameraPosition[2] -= toFIXED(1);
+		for(frm = 0; frm != 30; frm++) {
+			cameraPos[2] -= toFIXED(1);
 			fdScriptWait(1);
 		}
 	} else if(approachSide == 2) {
-		for(frame = 0; frame != 30; frame++) {
-			cameraPosition[2] += toFIXED(1);
+		for(frm = 0; frm != 30; frm++) {
+			cameraPos[2] += toFIXED(1);
 			fdScriptWait(1);
 		}
 	}
 	grid->origin = savedOrigin;
 }
 
-/* The clouds' scroll offset gains this a frame. The back row moves by its
+/* The clouds' scroll offset gains this a tick. The back row moves by its
    1024th part, the middle by its 512th and the front by its 256th: an eighth, a
-   quarter and half a pixel a frame. */
+   quarter and half a pixel a tick. */
 #define SCROLL_OFFSET_STEP 128
 
 /* Draws the three rows of sky clouds while they overlap the screen. */
 static void scSolSanctumStatueUpdateScrollingSprs(void)
 {
 	MAP_GRID_SCROLL_STATE *grid = MapGridState[0];
-	ANIMATION_SPR_PART	  *sprite = sScrollingSprites.parts;
+	ANIMATION_SPR_PART	  *spr = ScrollingSprites.parts;
 	Sint32 cameraX = syMapGridScrollStateView(grid)[0] / toFIXED(1);
 	Sint32 screenY = 80 - syMapGridScrollStateView(grid)[1] / toFIXED(1);
 	Sint32 scrollX;
 	Uint32 column;
 
 	if(screenY >= -16 && screenY < DISPLAY_HEIGHT) {
-		scrollX = ((SolSanctumStatue_ScrollOffset >> 10) - cameraX) |
+		scrollX = ((SolSanctumStatueScrollOffset >> 10) - cameraX) |
 			-SOL_SANCTUM_STATUE_SPRITE_WIDTH;
 		for(column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT;
 			column++) {
-			sprite->x = scrollX;
-			sprite->y = screenY;
-			syOAMAddSprAtDepth(sprite, 0);
+			spr->x = scrollX;
+			spr->y = screenY;
+			syOAMAddSprAtDepth(spr, 0);
 			scrollX += SOL_SANCTUM_STATUE_SPRITE_WIDTH;
-			sprite++;
+			spr++;
 		}
-		scrollX = ((SolSanctumStatue_ScrollOffset >> 9) - cameraX) |
+		scrollX = ((SolSanctumStatueScrollOffset >> 9) - cameraX) |
 			-SOL_SANCTUM_STATUE_SPRITE_WIDTH;
 		for(column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT;
 			column++) {
-			sprite->x = scrollX;
-			sprite->y = screenY;
-			syOAMAddSprAtDepth(sprite, 0);
+			spr->x = scrollX;
+			spr->y = screenY;
+			syOAMAddSprAtDepth(spr, 0);
 			scrollX += SOL_SANCTUM_STATUE_SPRITE_WIDTH;
-			sprite++;
+			spr++;
 		}
-		scrollX = ((SolSanctumStatue_ScrollOffset >> 8) - cameraX) |
+		scrollX = ((SolSanctumStatueScrollOffset >> 8) - cameraX) |
 			-SOL_SANCTUM_STATUE_SPRITE_WIDTH;
 		for(column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT;
 			column++) {
-			sprite->x = scrollX;
-			sprite->y = screenY + SOL_SANCTUM_STATUE_FRONT_CLOUD_ROW_Y_OFFSET;
-			syOAMAddSprAtDepth(sprite, 0);
+			spr->x = scrollX;
+			spr->y = screenY + SOL_SANCTUM_STATUE_FRONT_CLOUD_ROW_Y_OFFSET;
+			syOAMAddSprAtDepth(spr, 0);
 			scrollX += SOL_SANCTUM_STATUE_SPRITE_WIDTH;
-			sprite++;
+			spr++;
 		}
 	}
-	SolSanctumStatue_ScrollOffset += SCROLL_OFFSET_STEP;
+	SolSanctumStatueScrollOffset += SCROLL_OFFSET_STEP;
 }
 
 /* Walking north over a jump spot jumps the leader two metatiles ahead
@@ -839,9 +839,9 @@ Sint32 scInit(void)
 	centerEffect = fdActorGet(ACTOR_MOVED_CENTER_STATUE);
 	centerEffect->collisionFlg = 0;
 	{
-		Uint8 flags = centerEffect->priFlg | ACTOR_PRIORITY_UNDERFOOT;
+		Uint8 flg = centerEffect->priFlg | ACTOR_PRIORITY_UNDERFOOT;
 
-		centerEffect->priFlg = flags;
+		centerEffect->priFlg = flg;
 	}
 	fdActorSetSprFlags(fdActorGet(ACTOR_MOVED_CENTER_STATUE), 0);
 	fdActorGet(ACTOR_MOVED_CENTER_STATUE)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -953,47 +953,47 @@ static void scSolSanctumStatueInitScrollingSprs(void)
 {
 	Uint32	column;
 	Sint32	tile;
-	Sint32 *spriteWords;
+	Sint32 *sprWords;
 	Uint8  *pixels;
 
-	spriteWords = sScrollingSprites.words;
+	sprWords = ScrollingSprites.words;
 	pixels = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
 	syDecompressByteLZ(SolSanctumStatue_SpriteRowsGraphics, pixels);
 	tile =
 		syVRAMCacheLoad(syVRAMCacheFindFreeEntry(), ROW_SPRITE_BYTES, pixels);
 	for(column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
-		Sint32 *attributeWords = spriteWords;
+		Sint32 *attributeWords = sprWords;
 
 		*attributeWords++ = 0;
 		*attributeWords++ = OBJ_SIZE_32X8;
-		spriteWords += 3;
+		sprWords += 3;
 		*attributeWords =
 			tile | OBJ_PRIORITY(3) | OBJ_PALETTE(BACK_CLOUD_ROW_PALETTE);
 	}
 	tile = syVRAMCacheLoad(syVRAMCacheFindFreeEntry(), ROW_SPRITE_BYTES,
 		pixels + ROW_SPRITE_BYTES);
 	for(column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
-		Sint32 *attributeWords = spriteWords;
+		Sint32 *attributeWords = sprWords;
 
 		*attributeWords++ = 0;
 		*attributeWords++ = OBJ_SIZE_32X8;
-		spriteWords += 3;
+		sprWords += 3;
 		*attributeWords =
 			tile | OBJ_PRIORITY(3) | OBJ_PALETTE(MIDDLE_CLOUD_ROW_PALETTE);
 	}
 	tile = syVRAMCacheLoad(syVRAMCacheFindFreeEntry(), ROW_SPRITE_BYTES,
 		pixels + 2 * ROW_SPRITE_BYTES);
 	for(column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
-		Sint32 *attributeWords = spriteWords;
+		Sint32 *attributeWords = sprWords;
 
 		*attributeWords++ = 0;
 		*attributeWords++ = OBJ_SIZE_32X8;
-		spriteWords += 3;
+		sprWords += 3;
 		*attributeWords =
 			tile | OBJ_PRIORITY(3) | OBJ_PALETTE(FRONT_CLOUD_ROW_PALETTE);
 	}
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
-	sySetFrameEvent(scSolSanctumStatueUpdateScrollingSprs, EVENT_PASS_FRAME);
+	sySetTickEvent(scSolSanctumStatueUpdateScrollingSprs, EVENT_PASS_TICK);
 }
 
 /* Isaac moves the northwest statue of the east hall with Move; if it now stands
@@ -1368,7 +1368,7 @@ static Sint32 scSolSanctumStatueIsActorAtMetatile(
    back to if the seal closes again. */
 static void scSolSanctumStatueOpenNorthwestSeal(void)
 {
-	SEAL_OPENING *seal = &sSealOpening;
+	SEAL_OPENING *seal = &SealOpening;
 	METATILE_COPY_SET(seal->open, 0, 55, 32, 40, 4, 3);
 	METATILE_COPY_SET(seal->pulseA, 2, 30, 34, 10, 2, 1);
 	METATILE_COPY_SET(seal->pulseB, 2, 28, 34, 10, 2, 1);
@@ -1391,7 +1391,7 @@ static void scSolSanctumStatueOpenNorthwestSeal(void)
    back to if the seal closes again. */
 static void scSolSanctumStatueOpenNortheastSeal(void)
 {
-	SEAL_OPENING *seal = &sSealOpening;
+	SEAL_OPENING *seal = &SealOpening;
 	METATILE_COPY_SET(seal->open, 4, 55, 36, 40, 4, 3);
 	METATILE_COPY_SET(seal->pulseA, 4, 30, 36, 10, 2, 1);
 	METATILE_COPY_SET(seal->pulseB, 4, 28, 36, 10, 2, 1);
@@ -1414,7 +1414,7 @@ static void scSolSanctumStatueOpenNortheastSeal(void)
    back to if the seal closes again. */
 static void scSolSanctumStatueOpenSouthwestSeal(void)
 {
-	SEAL_OPENING *seal = &sSealOpening;
+	SEAL_OPENING *seal = &SealOpening;
 	METATILE_COPY_SET(seal->open, 0, 58, 32, 43, 4, 1);
 	METATILE_COPY_SET(seal->pulseA, 2, 31, 34, 11, 2, 1);
 	METATILE_COPY_SET(seal->pulseB, 2, 29, 34, 11, 2, 1);
@@ -1437,7 +1437,7 @@ static void scSolSanctumStatueOpenSouthwestSeal(void)
    back to if the seal closes again. */
 static void scSolSanctumStatueOpenSoutheastSeal(void)
 {
-	SEAL_OPENING *seal = &sSealOpening;
+	SEAL_OPENING *seal = &SealOpening;
 	METATILE_COPY_SET(seal->open, 4, 58, 36, 43, 4, 1);
 	METATILE_COPY_SET(seal->pulseA, 4, 31, 36, 11, 2, 1);
 	METATILE_COPY_SET(seal->pulseB, 4, 29, 36, 11, 2, 1);
@@ -1477,16 +1477,16 @@ static void scSolSanctumStatueOpenSeal(void)
 		fdCameraMoveTo(576, CAMERA_KEEP, 172, 1);
 		fdCameraWaitForMove();
 		sySndPlay(SE_SOL_SANCTUM_LIGHT_UP);
-		COPY_METATILES(sSealOpening.open);
+		COPY_METATILES(SealOpening.open);
 		for(pulse = 0; pulse != SEAL_PULSES; pulse++) {
 			sySndPlay(SE_GLITTER);
-			COPY_METATILES(sSealOpening.pulseA);
+			COPY_METATILES(SealOpening.pulseA);
 			fdScriptWait(4);
 			sySndPlay(SE_GLITTER);
-			COPY_METATILES(sSealOpening.pulseB);
+			COPY_METATILES(SealOpening.pulseB);
 			fdScriptWait(4);
 		}
-		seal = &sSealOpening;
+		seal = &SealOpening;
 		COPY_METATILES(seal->opened);
 		gmFlagSet(seal->flg);
 		exitResult = scSolSanctumStatueSelectStoryExit();
@@ -1529,7 +1529,7 @@ static void scSolSanctumStatueOpenSeal(void)
 	}
 	if(exitResult == 1) {
 		fdScriptFinishScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 	}
 	fdScriptEnd();
 }
@@ -1587,13 +1587,13 @@ static void scSolSanctumStatueShineRightBeam(void)
 }
 
 /* Shows the next message of the script, then waits. */
-static void scSolSanctumStatueSayThenWait(Sint32 speaker, Sint32 frames)
+static void scSolSanctumStatueSayThenWait(Sint32 speaker, Sint32 ticks)
 {
 	fdScriptShowMessage(speaker, 0);
-	fdScriptWait(frames);
+	fdScriptWait(ticks);
 }
 
-SCENE_ENTRANCE SolSanctumStatue_Entrances[] = {
+SCENE_ENTRANCE SolSanctumStatueEntrances[] = {
 	{SOL_SANCTUM_STATUE_FROM_VALE_PLAZA, CONDITION_ALWAYS, 287, 0, 176,
 		FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS, CONDITION_ALWAYS, 646,
@@ -1613,7 +1613,7 @@ SCENE_ENTRANCE SolSanctumStatue_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 SolSanctumStatue_Exits[] = {
+Uint32 SolSanctumStatueExits[] = {
 	SCENE_EXITS(SolSanctumStatue),
 	SCENE_EXIT(SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS,
 		SolSanctumLunaSolRooms,
@@ -1638,7 +1638,7 @@ Uint32 SolSanctumStatue_Exits[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE SolSanctumStatue_ActorPlacements[] = {
+ACTOR_PLACE SolSanctumStatueActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		1608, 0, 1608, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1669,7 +1669,7 @@ ACTOR_PLACE SolSanctumStatue_ActorPlacements[] = {
 };
 /* clang-format on */
 
-CUE SolSanctumStatue_Cues[] = {
+CUE SolSanctumStatueCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN,
 		SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS, CONDITION_ALWAYS,
 		SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS},
@@ -1772,5 +1772,5 @@ CUE SolSanctumStatue_Cues[] = {
 	{CUE_TABLE_END},
 };
 
-/* The clouds' scroll, SCROLL_OFFSET_STEP more each frame. */
-Sint32 SolSanctumStatue_ScrollOffset = 0;
+/* The clouds' scroll, SCROLL_OFFSET_STEP more each tick. */
+Sint32 SolSanctumStatueScrollOffset = 0;

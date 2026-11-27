@@ -115,10 +115,10 @@ Sint32 fdModeRun(void)
 	syGameFlagClear(0x11f);
 	fdPaletteFadeInit();
 	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, 0);
-	/* The default fade is from the backdrop colour over 16 frames; the scene's
+	/* The default fade is from the backdrop colour over 16 ticks; the scene's
 	   initialization may choose another. */
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	state->transitionFrm = MAP_TRANSITION_FRAMES;
+	state->transitionFrm = MAP_TRANSITION_TICKS;
 	state->transitionActive = 0;
 	/* fdUpdateWalking scales the leader's speed by this (16.16) into the
 	   distance counted towards PP, Djinn recovery and poison: toFIXED(1) / 160
@@ -166,9 +166,9 @@ Sint32 fdModeRun(void)
 		value = state->transitionActive;
 		if(value == 0) {
 			/* XXX: why a Teleport arrival holds 6584 bytes of the battle
-			   effect's slot through its two 20-frame pauses. No state of that
+			   effect's slot through its two 20-tick pauses. No state of that
 			   size is known (Teleport's own take 7824), and what the scene's
-			   events take from the heap in those frames is freed with it
+			   events take from the heap in those ticks is freed with it
 			   (syHeapSlotRelease). A trace of HEAP_SLOTS.nextIwram through a
 			   Teleport chosen on the map screen, which no render here stages,
 			   would settle it. */
@@ -435,7 +435,7 @@ Sint32 fdModeRun(void)
 				mnAreaNameWindowHideStub();
 				if(packed == 0) {
 					fdWorldMapFreeze();
-					if(FRAME_WAIT_BEFORE_PSYNERGY)
+					if(TICK_WAIT_BEFORE_PSYNERGY)
 						sySynch(1);
 				}
 				fdUsePsynergy(state->psynergy);
@@ -468,7 +468,7 @@ Sint32 fdModeRun(void)
 					if(!syGameFlagGet(FLAG_IN_BATTLE_ARENA)) {
 						/* With fewer than PAUSE_MENU_VRAM_BLOCKS of the sprite
 						   VRAM blocks free, sprite drawing stays suspended
-						   while the menu runs, and a frame passes so that the
+						   while the menu runs, and a tick passes so that the
 						   field's sprites give their VRAM back before it
 						   opens. */
 						ACTOR_SYSTEM_STATE *system = Ram_HeapSlots->actorSystem;
@@ -667,7 +667,7 @@ Bool fdPlaceAtEntrance(void)
 	MAIN_ROUTINE_STATE *state = &MainRoutineStateWork;
 	FIXED				xFixed;
 	Uint8			   *cursor = MapScene;
-	Sint32			   *angle;
+	Sint32			   *ang;
 	Uint16			   *layer;
 	Sint32				entrance = state->entrance;
 	Sint32				height;
@@ -675,7 +675,7 @@ Bool fdPlaceAtEntrance(void)
 	Sint32				z;
 	FIXED				zFixed;
 	Sint32				base;
-	Sint32				flags;
+	Sint32				flg;
 	Sint32				left;
 	Sint32				top;
 	Sint32				bottom;
@@ -683,11 +683,11 @@ Bool fdPlaceAtEntrance(void)
 	Sint32				leftEdge, topEdge, rightEdge, bottomEdge;
 
 	cursor = MapScene + (Uint16)fdStreamReadU16(&cursor);
-	angle = &MainRoutineStateWork.heading;
+	ang = &MainRoutineStateWork.heading;
 	layer = &MainRoutineStateWork.layer;
 	for(;; cursor += MAP_ENTRANCE_ROW_BYTES) {
 		if(*(Sint8 *)cursor == -1) {
-			*angle = FACING_SOUTH;
+			*ang = FACING_SOUTH;
 			{
 				Uint32 cleared = 0;
 
@@ -703,17 +703,17 @@ Bool fdPlaceAtEntrance(void)
 			zFixed = toFIXED(z);
 			height =
 				FIXEDtoINT(fdMapGridGetTerrainHeightStub(0, xFixed, zFixed));
-			flags = *cursor;
+			flg = *cursor;
 			base = (Sint32)MapScene;
 			if(!syGameFlagGet(FLAG_KEEP_PARTY_POSITION)) {
 				MainRoutineStateWork.x = xFixed;
 				MainRoutineStateWork.z = zFixed;
-				*angle = (flags & MAP_ENTRANCE_FACING_MASK) * (TRIG_TURN / 16);
+				*ang = (flg & MAP_ENTRANCE_FACING_MASK) * (TRIG_TURN / 16);
 				*layer = 0;
-				if(flags & MAP_ENTRANCE_RAISED)
+				if(flg & MAP_ENTRANCE_RAISED)
 					MainRoutineStateWork.y = toFIXED(8);
 			}
-			if(flags & MAP_ENTRANCE_KEEP_BOUNDS)
+			if(flg & MAP_ENTRANCE_KEEP_BOUNDS)
 				return TRUE;
 
 			cursor = MapSceneBoundsOffset;

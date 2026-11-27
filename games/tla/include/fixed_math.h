@@ -23,7 +23,7 @@ typedef FIXED POINT[XYZ];
    the translation, as SGL types one but flat: FIXED[12], not [4][3]. */
 typedef FIXED MATRIX[4 * XYZ];
 
-/* A damping is a fraction of a speed kept each frame, out of DAMPING_SCALE:
+/* A damping is a fraction of a speed kept each tick, out of DAMPING_SCALE:
    speed * damping / DAMPING_SCALE. */
 #define DAMPING_SCALE 64
 

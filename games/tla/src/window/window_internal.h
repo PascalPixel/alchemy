@@ -61,7 +61,7 @@
 #include "graphics/display_transition.h"
 #include "field/sprite.h"
 
-/* Queues a sprite at a depth slot of this frame's OAM list. The window and
+/* Queues a sprite at a depth slot of this tick's OAM list. The window and
    screens objects' ROM code is compiled with no declaration in scope, as
    against this form: no parameter list and an Sint32 result, where the
    definition takes the entry and the slot and returns nothing. */
@@ -72,8 +72,8 @@ Sint32 syOAMAddSprAtDepth();
 #define WINDOW_ANIMATION_SWELL 4
 
 /* Window animation lengths. */
-#define WINDOW_OPEN_FRAMES	8
-#define WINDOW_CLOSE_FRAMES 4
+#define WINDOW_OPEN_TICKS  8
+#define WINDOW_CLOSE_TICKS 4
 
 /* Writes code at position in the ring of decoded text and steps position on,
    wrapping at the ring's end. */
@@ -98,7 +98,7 @@ Sint32 syOAMAddSprAtDepth();
 /* A byte string widened to codes: 255 bytes and the terminator. */
 #define TEXT_WIDE_STRING_BUFFER_SIZE 512
 #define SELECTION_MENU_ENTRY_LIMIT	 16 /* entries a selection row can list */
-#define AREA_NAME_WINDOW_FRAMES		 90 /* how long the area's name shows */
+#define AREA_NAME_WINDOW_TICKS		 90 /* how long the area's name shows */
 
 /* WIN_STATE owns three messages, each with four line gaps. */
 #define MESSAGE_COUNT			   3
@@ -120,9 +120,9 @@ enum {
 	TEXT_PAGE = 1, /* wait for a button, then clear the window for a new page */
 	TEXT_WAIT_KEY = 2, /* wait for a button, then close the window */
 	TEXT_NEWLINE = 3,
-	TEXT_PAUSE_LONG = 4,	/* a 60-frame pause */
-	TEXT_PAUSE_SHORT = 5,	/* a 20-frame pause a button can cut short */
-	TEXT_PAUSE_LONGEST = 6, /* a 120-frame pause a button can cut short */
+	TEXT_PAUSE_LONG = 4,	/* a 60-tick pause */
+	TEXT_PAUSE_SHORT = 5,	/* a 20-tick pause a button can cut short */
+	TEXT_PAUSE_LONGEST = 6, /* a 120-tick pause a button can cut short */
 	TEXT_COLORS_RESET = 7, /* the colour, style and line spacing set at start */
 	TEXT_COLOR = 8,		   /* the next entry is the text colour */
 	TEXT_OUTLINE = 9,	   /* the next entry is the text style */
@@ -174,10 +174,10 @@ typedef enum WINDOW_FIT_FLAG {
 /* The window object's functions its parts call before their definitions, or
    with declarations of their own that disagree. */
 void   mnTextResetStyle();
-void   mnWindowFitOnScreen(Sint32 message, Sint32 *windowX, Sint32 *windowY,
-	  Uint32 *windowWidth, Uint32 *windowHeight, Uint16 *spacing, Uint32 flags);
+void   mnWindowFitOnScreen(Sint32 msg, Sint32 *winX, Sint32 *winY,
+	  Uint32 *winWidth, Uint32 *winHeight, Uint16 *spacing, Uint32 flg);
 Sint32 mnGlyphDraw(
-	WINDOW *window, Sint32 character, Sint32 x, Sint32 y, Sint32 mode);
+	WINDOW *win, Sint32 character, Sint32 x, Sint32 y, Sint32 mode);
 Sint32 mnDebugSceneSelectHandleRowInput(
 	Sint32 arg, Sint16 value, Sint16 *sub, Sint16 *mode);
 
@@ -199,7 +199,7 @@ Sint32 mnItemMenuRunStub(void);
 /* The field menu's Status screen. */
 Sint32 mnStatScreenRunStub(void);
 /* Moves a menu cursor to (x, y), gliding as mode says. */
-void mnCursorSetStub(void *cursor, Sint32 x, Sint32 y, Sint32 frames);
+void mnCursorSetStub(void *cursor, Sint32 x, Sint32 y, Sint32 ticks);
 /* Places a menu cursor at (x, y) at once. */
 void mnCursorSetPosImmediateStub(void *cursor, Sint32 x, Sint32 y);
 
@@ -217,7 +217,7 @@ enum {
 };
 
 /* The battle lists' two page arrow tiles in VRAM, which mnPageArrowsDraw draws
-   each frame (LIST_TILE_PAGES_LEFT and LIST_TILE_PAGES_RIGHT). */
+   each tick (LIST_TILE_PAGES_LEFT and LIST_TILE_PAGES_RIGHT). */
 #define LIST_PAGE_ARROW_VRAM \
 	((Sint32)BG_CHAR_BLOCK(0) + \
 		(LIST_TILE_PAGES_LEFT & TILE_NUMBER_MASK) * TILE_SIZE_4BPP)
@@ -274,7 +274,7 @@ typedef enum BATTLE_TARGET_HINT {
 } BATTLE_TARGET_HINT;
 
 /* A code carrying the kana mark drawn with its character, in the top bits
-   (TEXT_MARK_SHIFT, the index into Font_MarkGlyphCodes). */
+   (TEXT_MARK_SHIFT, the index into FontMarkGlyphCodes). */
 #define TEXT_CODE_VOICED	 (1 << TEXT_MARK_SHIFT)
 #define TEXT_CODE_SEMIVOICED (2 << TEXT_MARK_SHIFT)
 
@@ -287,7 +287,7 @@ typedef enum BATTLE_TARGET_HINT {
 #define WINDOW_SPRITE_SPACE_WIDTH JAPANESE_OR(7, 5)
 
 /* A sprite speaker's portrait is numbered PORTRAIT_FIRST_SPRITE_PORTRAIT more
-   than its entry in Portrait_SpriteMap: mnIconLoadWithPalette takes portrait
+   than its entry in PortraitSpriteMap: mnIconLoadWithPalette takes portrait
    PORTRAIT_FIRST_SPRITE_PORTRAIT + n from icon PORTRAIT_FIRST_SPRITE_ICON +
    n. */
 #define PORTRAIT_FIRST_SPRITE_PORTRAIT 128

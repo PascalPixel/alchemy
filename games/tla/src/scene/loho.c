@@ -22,7 +22,7 @@
 #include "field/actor_script.h"
 #include "text/msg_ids.h"
 
-/* Loho, by the rows of Loho_TownPlacements. Each digger is named for what he
+/* Loho, by the rows of LohoTownPlacements. Each digger is named for what he
    says before the cannon breaches the wall. */
 typedef enum LOHO_ACTOR_ID {
 	/* "Welcome to Loho! We've been excavating all sorts of ores..." */
@@ -55,7 +55,7 @@ typedef enum LOHO_ACTOR_ID {
 	ACTOR_BOULDER	  /* raised by Lift, over the Golem Core */
 } LOHO_ACTOR_ID;
 
-/* Loho's houses, by the rows of Loho_RoomsPlacements. */
+/* Loho's houses, by the rows of LohoRoomsPlacements. */
 typedef enum LOHO_ROOMS_ACTOR_ID {
 	/* The woman who keeps the shop and the inn (scLohoTalkAboutCommerce). */
 	ACTOR_VILLAGER_ON_COMMERCE = ACTOR_FIRST_PLACED,
@@ -109,38 +109,38 @@ typedef enum LOHO_ROOMS_WAY {
 	WAY_HATCH_ROOM_STAIRS		/* up to the house in the south west */
 } LOHO_ROOMS_WAY;
 
-extern Sint32 Loho_ShopkeeperToEastCounter[];
-extern Sint32 Loho_ShopkeeperToSouthCounter[];
+extern Sint32 LohoShopkeeperToEastCounter[];
+extern Sint32 LohoShopkeeperToSouthCounter[];
 
-extern Sint32 Loho_VillagerReturns[];
+extern Sint32 LohoVillagerReturns[];
 
 void				scLohoClimbDownLadder(void);
-extern SCENE_REGION Loho_Regions[];
-extern ACTOR_PLACE	Loho_TownPlacements[];
-extern ACTOR_PLACE	Loho_RoomsPlacements[];
-extern Sint32		Loho_FirstMinerGoesToWall[];
-extern Sint32		Loho_SecondMinerStepsUp[];
+extern SCENE_REGION LohoRegions[];
+extern ACTOR_PLACE	LohoTownPlacements[];
+extern ACTOR_PLACE	LohoRoomsPlacements[];
+extern Sint32		LohoFirstMinerGoesToWall[];
+extern Sint32		LohoSecondMinerStepsUp[];
 
-extern Sint32 Loho_ThirdMinerStepsUp[];
+extern Sint32 LohoThirdMinerStepsUp[];
 
-extern Sint32					   Loho_FirstMinerWalksBack[];
-extern Sint32					   Loho_FirstMinerFetchesCannon[];
-extern Sint32					   Loho_FirstMinerReturns[];
-extern Sint32					   Loho_CannonRises[];
-extern CUE						   Loho_Cues[];
-extern CUE						   Loho_TownCues[];
-extern CUE						   Loho_RoomsCues[];
-extern MAP_GRID_METATILE_ANIMATION Loho_SanctumDoor;
-extern Sint32					   Loho_VillagerPaces[];
+extern Sint32					   LohoFirstMinerWalksBack[];
+extern Sint32					   LohoFirstMinerFetchesCannon[];
+extern Sint32					   LohoFirstMinerReturns[];
+extern Sint32					   LohoCannonRises[];
+extern CUE						   LohoCues[];
+extern CUE						   LohoTownCues[];
+extern CUE						   LohoRoomsCues[];
+extern MAP_GRID_METATILE_ANIMATION LohoSanctumDoor;
+extern Sint32					   LohoVillagerPaces[];
 
-extern Uint16 Loho_DoorOpening[];
+extern Uint16 LohoDoorOpening[];
 
 /* How long the blast throws sparks (EXPLOSION_SPARK_COUNT of them,
-   scene/scene.h), in frames. */
-#define LOHO_BLAST_FRAMES 120
+   scene/scene.h), in ticks. */
+#define LOHO_BLAST_TICKS 120
 
 /* One of the sparks the cannon's blast throws over the screen: the link the
-   sprite list threads it by, its sprite, and its age in frames, negative while
+   sprite list threads it by, its sprite, and its age in ticks, negative while
    it waits to appear. */
 typedef struct LOHO_SPARK {
 	struct LOHO_SPARK *next;
@@ -181,7 +181,7 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 const SCENE_REGION *scGetExitRegions(void)
 {
 	if(MainRoutineStateWork.next == SCENE_LOHO_ROOMS)
-		return Loho_Regions;
+		return LohoRegions;
 	return 0;
 }
 
@@ -193,8 +193,8 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.next == SCENE_LOHO_ROOMS)
-		return Loho_RoomsPlacements;
-	return Loho_TownPlacements;
+		return LohoRoomsPlacements;
+	return LohoTownPlacements;
 }
 
 /* Draws the ancient wall north of town as the cannon left it, with a breach
@@ -256,8 +256,8 @@ void scLohoFireCannon(void)
 	ACTOR	   *cannon;
 	ACTOR	   *walkingMiner;
 	LOHO_SPARK *spark;
-	LOHO_SPARK *table;
-	Sint32	   *timer;
+	LOHO_SPARK *tbl;
+	Sint32	   *tmr;
 	Sint32		tiles, entry, i, zero;
 	Sint32		sheet;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
@@ -338,27 +338,27 @@ inPlace:
 	fdActorWaitForMoveById(ACTOR_MAGMA_BALL);
 	fdActorSetPos(ACTOR_MAGMA_BALL, 0, 0);
 	fdMapGridSetShake(7, 7, 1);
-	table = (LOHO_SPARK *)syHeapAllocEWRAM(
+	tbl = (LOHO_SPARK *)syHeapAllocEWRAM(
 		EXPLOSION_SPARK_COUNT * sizeof(LOHO_SPARK));
 	{
-		void *buffer = syHeapAlloc(4096);
+		void *buf = syHeapAlloc(4096);
 
 		sheet = syResourceGetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION);
-		syDecompressTaggedLZ(sheet, buffer);
+		syDecompressTaggedLZ(sheet, buf);
 		entry = syVRAMCacheFindFreeEntry();
-		tiles = syVRAMCacheLoad(entry, 1024, buffer);
-		syHeapRelease(buffer);
+		tiles = syVRAMCacheLoad(entry, 1024, buf);
+		syHeapRelease(buf);
 	}
-	/* Each spark waits up to 31 frames to appear. */
-	timer = &table->age;
+	/* Each spark waits up to 31 ticks to appear. */
+	tmr = &tbl->age;
 	for(i = 0; i < EXPLOSION_SPARK_COUNT; i++) {
-		*timer = -(syRandom() << 5 >> 16);
-		timer += sizeof(LOHO_SPARK) / sizeof(Sint32);
+		*tmr = -(syRandom() << 5 >> 16);
+		tmr += sizeof(LOHO_SPARK) / sizeof(Sint32);
 	}
 	syDMAXCopy((const void *)(Sint32)Field_ExplosionPalette,
 		(void *)&OBJ_PLTT_COLOR(EXPLOSION_SPARK_PALETTE, 0),
 		DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
-	for(i = 0; i < LOHO_BLAST_FRAMES; i++) {
+	for(i = 0; i < LOHO_BLAST_TICKS; i++) {
 		if((i & 31) == 0) {
 			fdScriptPlaySnd(SE_CRASH);
 		}
@@ -366,7 +366,7 @@ inPlace:
 			syScreenFadeToWhite(90);
 			fdScriptPlaySnd(SE_RUMBLE);
 		}
-		spark = table;
+		spark = tbl;
 		do {
 			if(spark->age == 0) {
 				spark->spr.words[0] = OBJ_SIZE_16X16;
@@ -381,15 +381,15 @@ inPlace:
 				syOAMAddSprAtDepthClamped(spark, EXPLOSION_SPARK_DEPTH);
 			}
 			spark->age++;
-			if(spark->age >= EXPLOSION_SPARK_FRAMES) {
+			if(spark->age >= EXPLOSION_SPARK_TICKS) {
 				spark->age = -(syRandomBelow(7));
 			}
 			spark++;
-		} while((Sint32)spark <= (Sint32)&table[EXPLOSION_SPARK_COUNT - 1]);
+		} while((Sint32)spark <= (Sint32)&tbl[EXPLOSION_SPARK_COUNT - 1]);
 		sySynch(1);
 	}
 	syVRAMCacheFreeEntry(entry);
-	syHeapRelease(table);
+	syHeapRelease(tbl);
 	fdCameraMoveTo(488, CAMERA_KEEP, 390, 1);
 	fdActorSetPosAndFacing(
 		ACTOR_MINER_AT_HIS_SPOT, toFIXED(248), toFIXED(480), FACING_EAST);
@@ -520,13 +520,13 @@ inPlace:
 	miner = fdActorGetById(ACTOR_MINER_BY_THE_CANNON);
 	miner->motionFlg = zero;
 	fdActorSetSpeed(ACTOR_MINER_BY_THE_CANNON, 1.5);
-	fdActorSetScript(ACTOR_MINER_BY_THE_CANNON, Loho_FirstMinerGoesToWall);
+	fdActorSetScript(ACTOR_MINER_BY_THE_CANNON, LohoFirstMinerGoesToWall);
 	fdActorSetSpeed(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0.5);
 	fdActorSetScript(
-		ACTOR_MINER_PUZZLED_BY_THE_CANNON, (Sint32)Loho_SecondMinerStepsUp);
+		ACTOR_MINER_PUZZLED_BY_THE_CANNON, (Sint32)LohoSecondMinerStepsUp);
 	fdActorSetSpeed(ACTOR_MAN_KEEPING_THE_CANNON, 0.4);
 	fdActorSetScript(
-		ACTOR_MAN_KEEPING_THE_CANNON, (Sint32)Loho_ThirdMinerStepsUp);
+		ACTOR_MAN_KEEPING_THE_CANNON, (Sint32)LohoThirdMinerStepsUp);
 	fdActorWaitForScriptEndById(ACTOR_MINER_BY_THE_CANNON);
 	fdActorFaceDirectionAndWait(ACTOR_MINER_BY_THE_CANNON, FACING_SOUTHWEST);
 	fdScriptWait(10);
@@ -557,7 +557,7 @@ inPlace:
 	fdScriptWait(30);
 	fdActorFaceActor(ACTOR_MAN_KEEPING_THE_CANNON, ACTOR_FELIX, 0);
 	fdActorSetSpeed(ACTOR_MINER_BY_THE_CANNON, 1);
-	fdActorSetScript(ACTOR_MINER_BY_THE_CANNON, Loho_FirstMinerWalksBack);
+	fdActorSetScript(ACTOR_MINER_BY_THE_CANNON, LohoFirstMinerWalksBack);
 	fdCameraSetSpeed(1.8);
 	fdCameraMoveTo(542, CAMERA_KEEP, 350, 1);
 	fdCameraWaitForArrival();
@@ -591,7 +591,7 @@ crewLeaves:
 	fdActorFaceDirection(
 		ACTOR_MINER_PUZZLED_BY_THE_CANNON, FACING_NORTH_NORTHEAST, 0);
 	fdActorWaitForScriptEndById(ACTOR_MINER_BY_THE_CANNON);
-	fdActorSetScript(ACTOR_MINER_BY_THE_CANNON, Loho_FirstMinerFetchesCannon);
+	fdActorSetScript(ACTOR_MINER_BY_THE_CANNON, LohoFirstMinerFetchesCannon);
 	fdActorWaitForScriptEndById(ACTOR_MINER_BY_THE_CANNON);
 	fdActorFaceDirection(ACTOR_MINER_PUZZLED_BY_THE_CANNON, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_MAN_KEEPING_THE_CANNON, FACING_EAST, 0);
@@ -604,7 +604,7 @@ crewLeaves:
 	scFieldActorWatchAndSetScript(ACTOR_FELIX, ACTOR_MINER_BY_THE_CANNON);
 	fdActorWalkTo(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 504, 370);
 	fdActorWalkTo(ACTOR_MAN_KEEPING_THE_CANNON, 504, 352);
-	fdActorSetScript(ACTOR_MINER_BY_THE_CANNON, Loho_FirstMinerReturns);
+	fdActorSetScript(ACTOR_MINER_BY_THE_CANNON, LohoFirstMinerReturns);
 	fdActorWaitForMoveById(ACTOR_MAN_KEEPING_THE_CANNON);
 	fdActorWaitForMoveById(ACTOR_MINER_PUZZLED_BY_THE_CANNON);
 	fdActorWaitForScriptEndById(ACTOR_MINER_BY_THE_CANNON);
@@ -616,7 +616,7 @@ crewLeaves:
 	fdActorSetSpeed(ACTOR_CANNON, 0.1);
 	cannon = fdActorGetById(ACTOR_CANNON);
 	cannon->motionFlg = 0;
-	fdActorSetScript(ACTOR_CANNON, (Sint32)Loho_CannonRises);
+	fdActorSetScript(ACTOR_CANNON, (Sint32)LohoCannonRises);
 	fdActorWaitForScriptEndById(ACTOR_CANNON);
 	fdActorSetSpeed(ACTOR_CANNON, 0.3);
 	fdCameraSetSpeed(0.3);
@@ -706,10 +706,10 @@ void scLohoLiftBoulder(void)
 const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.next == SCENE_LOHO)
-		return Loho_TownCues;
+		return LohoTownCues;
 	if(MainRoutineStateWork.next == SCENE_LOHO_ROOMS)
-		return Loho_RoomsCues;
-	return Loho_Cues;
+		return LohoRoomsCues;
+	return LohoCues;
 }
 
 /* Felix reads the sign by the counter in the shop and inn, from the south,
@@ -792,7 +792,7 @@ void scLohoTalkAboutCannon(Sint32 actor)
    counter, and talking to her then opens the shop. */
 void scLohoShopkeeperComesToEastCounter(void)
 {
-	fdActorSetScript(ACTOR_VILLAGER_ON_COMMERCE, Loho_ShopkeeperToEastCounter);
+	fdActorSetScript(ACTOR_VILLAGER_ON_COMMERCE, LohoShopkeeperToEastCounter);
 	fdScriptSetFlag(FLAG_LOHO_SHOPKEEPER_AT_COUNTER);
 }
 
@@ -801,7 +801,7 @@ void scLohoShopkeeperComesToEastCounter(void)
    across from him, and talking to her then opens the shop. */
 void scLohoShopkeeperComesToSouthCounter(void)
 {
-	fdActorSetScript(ACTOR_VILLAGER_ON_COMMERCE, Loho_ShopkeeperToSouthCounter);
+	fdActorSetScript(ACTOR_VILLAGER_ON_COMMERCE, LohoShopkeeperToSouthCounter);
 	fdScriptSetFlag(FLAG_LOHO_SHOPKEEPER_AT_COUNTER);
 }
 
@@ -810,7 +810,7 @@ void scLohoShopkeeperComesToSouthCounter(void)
 void scLohoShopkeeperGoesBack(void)
 {
 	fdScriptClearFlag(FLAG_LOHO_SHOPKEEPER_AT_COUNTER);
-	fdActorSetScript(ACTOR_VILLAGER_ON_COMMERCE, Loho_VillagerReturns);
+	fdActorSetScript(ACTOR_VILLAGER_ON_COMMERCE, LohoVillagerReturns);
 }
 
 /* Plays a map metatile animation at its place on the map grid. */
@@ -841,7 +841,7 @@ void scLohoOpenDoorAndEnter(void)
 	cue = &state->stepCue;
 	fdScriptPlaySnd(SE_DOOR_OPEN);
 	scLohoAnimateMetatiles(
-		Loho_SanctumDoor.steps, Loho_SanctumDoor.x, Loho_SanctumDoor.y);
+		LohoSanctumDoor.steps, LohoSanctumDoor.x, LohoSanctumDoor.y);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	fdActorSetDestinationOffset(MainRoutineStateWork.leaderActorId, 0, -4);
@@ -849,7 +849,7 @@ void scLohoOpenDoorAndEnter(void)
 	fdScriptWait(6);
 	syImportScriptSetExitRequest(*cue);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -1009,7 +1009,7 @@ Sint32 scPrepareMap(void)
 
 /* clang-format off */
 /* The miner by the cannon walks up to the breached wall. */
-Sint32 Loho_FirstMinerGoesToWall[] = {
+Sint32 LohoFirstMinerGoesToWall[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE_XZ(539, 327),
 	SC_SYNC,
@@ -1033,7 +1033,7 @@ Sint32 Loho_FirstMinerGoesToWall[] = {
 };
 
 /* The miner puzzled by the cannon steps up to look at the wall. */
-Sint32 Loho_SecondMinerStepsUp[] = {
+Sint32 LohoSecondMinerStepsUp[] = {
 	SC_WAIT(50),
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE_BY(4, 0, -40),
@@ -1043,7 +1043,7 @@ Sint32 Loho_SecondMinerStepsUp[] = {
 };
 
 /* The man keeping the cannon steps up to look at the wall. */
-Sint32 Loho_ThirdMinerStepsUp[] = {
+Sint32 LohoThirdMinerStepsUp[] = {
 	SC_WAIT(70),
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE_BY(0, 0, -40),
@@ -1055,7 +1055,7 @@ Sint32 Loho_ThirdMinerStepsUp[] = {
 };
 
 /* The miner by the cannon walks back from the wall. */
-Sint32 Loho_FirstMinerWalksBack[] = {
+Sint32 LohoFirstMinerWalksBack[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(570, 0, 248),
 	SC_SYNC,
@@ -1069,7 +1069,7 @@ Sint32 Loho_FirstMinerWalksBack[] = {
 };
 
 /* The miner by the cannon goes to fetch it. */
-Sint32 Loho_FirstMinerFetchesCannon[] = {
+Sint32 LohoFirstMinerFetchesCannon[] = {
 	SC_POSITION(583, 0, 327),
 	SC_SET(SW_MOTION, 0),
 	SC_POSITION(583, 0, 300),
@@ -1082,7 +1082,7 @@ Sint32 Loho_FirstMinerFetchesCannon[] = {
 };
 
 /* The miner by the cannon comes back with it. */
-Sint32 Loho_FirstMinerReturns[] = {
+Sint32 LohoFirstMinerReturns[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE_XZ(472, 331),
 	SC_SYNC,
@@ -1094,7 +1094,7 @@ Sint32 Loho_FirstMinerReturns[] = {
 
 /* Run on the cannon as the crew sets off with it: it rises two pixels off */
 /* the ground. */
-Sint32 Loho_CannonRises[] = {
+Sint32 LohoCannonRises[] = {
 	SC_MOVE_BY(0, 2, 0),
 	SC_SYNC,
 	SC_END,
@@ -1109,7 +1109,7 @@ Sint32 Loho_CannonRises[] = {
 };
 
 /* The orange-haired woman looking about the shop and inn. */
-Sint32 Loho_VillagerPaces[] = {
+Sint32 LohoVillagerPaces[] = {
 	SC_LABEL(1),
 	SC_WAIT(50),
 	SC_SET(SW_FACING, FACING_WEST),
@@ -1124,7 +1124,7 @@ Sint32 Loho_VillagerPaces[] = {
 };
 
 /* The orange-haired woman going back to her place. */
-Sint32 Loho_VillagerReturns[] = {
+Sint32 LohoVillagerReturns[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(128, 0, 120),
 	SC_SYNC,
@@ -1144,7 +1144,7 @@ Sint32 Loho_VillagerReturns[] = {
 
 /* The orange-haired woman stepping up to the counter across from Felix at */
 /* its south side. */
-Sint32 Loho_ShopkeeperToSouthCounter[] = {
+Sint32 LohoShopkeeperToSouthCounter[] = {
 	SC_SPEED(0.9),
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(128, 0, 144),
@@ -1155,7 +1155,7 @@ Sint32 Loho_ShopkeeperToSouthCounter[] = {
 
 /* The orange-haired woman stepping over to the counter by Felix at its east */
 /* side. */
-Sint32 Loho_ShopkeeperToEastCounter[] = {
+Sint32 LohoShopkeeperToEastCounter[] = {
 	SC_SPEED(0.9),
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(159, 0, 128),
@@ -1168,7 +1168,7 @@ Sint32 Loho_ShopkeeperToEastCounter[] = {
 
 /* The houses' exit regions: the top of the ladder up out of the room under */
 /* the hatch. */
-SCENE_REGION Loho_Regions[] = {
+SCENE_REGION LohoRegions[] = {
 	{452, 28, 740, 460, 36, 748, CONDITION_ALWAYS, LOHO_ROOMS_TO_LOHO_SOUTH},
 	{SCENE_TABLE_END},
 };
@@ -1199,7 +1199,7 @@ Uint32 SceneExits[] = {
 };
 
 /* The town's actors, by LOHO_ACTOR_ID. */
-ACTOR_PLACE Loho_TownPlacements[] = {
+ACTOR_PLACE LohoTownPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_LOHO_WORKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 304, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_LOHO_WORKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 392, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_LOHO_WORKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 264, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1219,20 +1219,20 @@ ACTOR_PLACE Loho_TownPlacements[] = {
 };
 
 /* The houses' actors, by LOHO_ROOMS_ACTOR_ID. */
-ACTOR_PLACE Loho_RoomsPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, Loho_VillagerPaces, 128, 0, 120, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+ACTOR_PLACE LohoRoomsPlacements[] = {
+	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, LohoVillagerPaces, 128, 0, 120, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	{SCENE_TABLE_END},
 };
 
 /* The cues of neither the town nor the houses: none. */
-CUE Loho_Cues[] = {
+CUE LohoCues[] = {
 	{CUE_TABLE_END},
 };
 
 /* The town's cues. */
-CUE Loho_TownCues[] = {
+CUE LohoTownCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), LOHO_TO_LOHO_ROOMS_NORTHEAST, CONDITION_ALWAYS, SCRIPT_REF(scLohoEnterDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), LOHO_TO_LOHO_ROOMS_WEST, CONDITION_ALWAYS, SCRIPT_REF(scLohoEnterDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), LOHO_TO_LOHO_ROOMS_NORTHWEST, CONDITION_ALWAYS, SCRIPT_REF(scLohoEnterDoor)},
@@ -1298,7 +1298,7 @@ CUE Loho_TownCues[] = {
 };
 
 /* The houses' cues. */
-CUE Loho_RoomsCues[] = {
+CUE LohoRoomsCues[] = {
 	{CUE_EXIT, LOHO_ROOMS_TO_LOHO_NORTHEAST, CONDITION_ALWAYS, LOHO_ROOMS_TO_LOHO_NORTHEAST},
 	{CUE_EXIT, LOHO_ROOMS_TO_LOHO_WEST, CONDITION_ALWAYS, LOHO_ROOMS_TO_LOHO_WEST},
 	{CUE_EXIT, LOHO_ROOMS_TO_LOHO_NORTHWEST, CONDITION_ALWAYS, LOHO_ROOMS_TO_LOHO_NORTHWEST},
@@ -1325,9 +1325,9 @@ CUE Loho_RoomsCues[] = {
 	{CUE_TABLE_END},
 };
 
-/* How the Sanctum's double door swings open, as three frames of metatiles */
+/* How the Sanctum's double door swings open, as three ticks of metatiles */
 /* copied over the closed door. */
-Uint16 Loho_DoorOpening[] = {
+Uint16 LohoDoorOpening[] = {
 	MAPGRID_ANIMATION_STEP(64, 50, 2, 2, 2),
 	MAPGRID_ANIMATION_STEP(64, 52, 2, 2, 2),
 	MAPGRID_ANIMATION_STEP(64, 54, 2, 2, 2),
@@ -1336,4 +1336,4 @@ Uint16 Loho_DoorOpening[] = {
 /* clang-format on */
 
 /* The Sanctum's door opening, at its place on the map grid. */
-MAP_GRID_METATILE_ANIMATION Loho_SanctumDoor = {Loho_DoorOpening, 79, 15};
+MAP_GRID_METATILE_ANIMATION LohoSanctumDoor = {LohoDoorOpening, 79, 15};

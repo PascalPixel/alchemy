@@ -21,8 +21,8 @@ UNREAD_RESULT btAIChooseAction(BATTLE_ACTION *request, Sint32 acting)
 	const Sint8			   *actionStrategy;
 	const Uint8			   *itemActionMask;
 	Sint16					command;
-	Sint32					allyTarget;
-	Sint32					opponentTarget;
+	Sint32					allyTgt;
+	Sint32					opponentTgt;
 	Sint32					allyIsParty;
 	Sint32					opponentIsParty;
 	ITEM_DEFINITION		   *item;
@@ -32,9 +32,9 @@ UNREAD_RESULT btAIChooseAction(BATTLE_ACTION *request, Sint32 acting)
 	ABILITY_DEFINITION	   *ability;
 	UNIT				   *unit;
 	Sint32					abilityId;
-	Sint32					flags;
+	Sint32					flg;
 	Uint8					effect;
-	Uint8					targetMode;
+	Uint8					tgtMode;
 
 	/* Picks a place in the action list from a 0-255 roll and eight weights: the
 	   first place whose running total passes the roll, else place 0. */
@@ -84,15 +84,15 @@ select_again:
 	/* The three weight tables are in battle_tables.c. */
 	case ACTION_STRATEGY_EVEN:
 		selection = btEnemySelectWeightedAction(
-			BattleAI_ActionWeights[ACTION_STRATEGY_EVEN]);
+			BattleAIActionWeights[ACTION_STRATEGY_EVEN]);
 		break;
 	case ACTION_STRATEGY_FALLING:
 		selection = btEnemySelectWeightedAction(
-			BattleAI_ActionWeights[ACTION_STRATEGY_FALLING]);
+			BattleAIActionWeights[ACTION_STRATEGY_FALLING]);
 		break;
 	case ACTION_STRATEGY_FIRST_FAVOURED:
 		selection = btEnemySelectWeightedAction(
-			BattleAI_ActionWeights[ACTION_STRATEGY_FIRST_FAVOURED]);
+			BattleAIActionWeights[ACTION_STRATEGY_FIRST_FAVOURED]);
 		break;
 	case ACTION_STRATEGY_RANDOM_START:
 		if(selectionMemory->initialized == 0) {
@@ -140,9 +140,9 @@ select_again:
 				itemAction = gmAbilityGetDirectStub(item->abilityId);
 				abilityId = item->abilityId;
 				request->command = COMMAND_ITEM;
-				flags = itemAction->flg;
+				flg = itemAction->flg;
 				request->prm = 0;
-				switch(flags) {
+				switch(flg) {
 				case ABILITY_FORMULA_HEAL_HP:
 				case ABILITY_FORMULA_EFFECT:
 					break;
@@ -222,32 +222,32 @@ select_again:
 		/* The target: with no one on the side, a random place on the enemy's
 		   own side; with no one worth it, the enemy picks again. */
 		request->range = ability->range;
-		targetMode = ability->tgtMode;
-		switch(targetMode) {
+		tgtMode = ability->tgtMode;
+		switch(tgtMode) {
 		case ABILITY_TARGET_ALLIES:
 		case ABILITY_TARGET_SELF:
-			allyTarget = btAIChooseTarget(request->unitId, ability);
-			if(allyTarget == TARGET_PICK_SIDE_EMPTY) {
+			allyTgt = btAIChooseTarget(request->unitId, ability);
+			if(allyTgt == TARGET_PICK_SIDE_EMPTY) {
 				allyIsParty = 0;
 				if(request->unitId >= 0 && request->unitId <= ALLY_MAX)
 					allyIsParty = 1;
-				allyTarget = btAIChooseRandomTarget(allyIsParty);
+				allyTgt = btAIChooseRandomTarget(allyIsParty);
 			}
-			if(allyTarget != TARGET_PICK_NONE) {
-				request->tgt = allyTarget;
+			if(allyTgt != TARGET_PICK_NONE) {
+				request->tgt = allyTgt;
 				needsChoice = 0;
 			}
 			break;
 		case ABILITY_TARGET_FOES:
-			opponentTarget = btAIChooseTarget(request->unitId, ability);
-			if(opponentTarget == TARGET_PICK_SIDE_EMPTY) {
+			opponentTgt = btAIChooseTarget(request->unitId, ability);
+			if(opponentTgt == TARGET_PICK_SIDE_EMPTY) {
 				opponentIsParty = 0;
 				if(request->unitId >= 0 && request->unitId <= ALLY_MAX)
 					opponentIsParty = 1;
-				opponentTarget = btAIChooseRandomTarget(opponentIsParty);
+				opponentTgt = btAIChooseRandomTarget(opponentIsParty);
 			}
-			if(opponentTarget != TARGET_PICK_NONE) {
-				request->tgt = opponentTarget;
+			if(opponentTgt != TARGET_PICK_NONE) {
+				request->tgt = opponentTgt;
 				needsChoice = 0;
 			}
 			break;
@@ -255,8 +255,8 @@ select_again:
 			request->tgt = btFindUnitPlace(request->unitId);
 			break;
 		default:
-			opponentTarget = btFindUnitPlace(request->unitId);
-			request->tgt = opponentTarget;
+			opponentTgt = btFindUnitPlace(request->unitId);
+			request->tgt = opponentTgt;
 			needsChoice = 0;
 			break;
 		}

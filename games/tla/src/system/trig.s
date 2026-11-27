@@ -60,8 +60,8 @@ sySin:
 	.balign 2
 	.thumb
 	.2byte	0x0000
-	.global Math_SineTable
-Math_SineTable:
+	.global MathSineTable
+MathSineTable:
 	.2byte	0x0000, 0x0064, 0x00c9, 0x012d, 0x0192, 0x01f6, 0x025b, 0x02bf
 	.2byte	0x0323, 0x0388, 0x03ec, 0x0451, 0x04b5, 0x0519, 0x057d, 0x05e1
 	.2byte	0x0645, 0x06a9, 0x070d, 0x0771, 0x07d5, 0x0839, 0x089c, 0x0900
@@ -195,13 +195,13 @@ Math_SineTable:
 	.section .rodata.reciprocal_table,"a",%progbits
 	.balign 4
 	.align 2
-	.global System_ReciprocalTable
-	.type System_ReciprocalTable, %object
-System_ReciprocalTable:
+	.global SystemReciprocalTable
+	.type SystemReciprocalTable, %object
+SystemReciprocalTable:
 	.4byte 0
 	.set .Ldivisor, 1
 	.rept 0x3fff
 	.4byte ((0x100000000 + .Ldivisor - 1) / .Ldivisor) & 0xffffffff
 	.set .Ldivisor, .Ldivisor + 1
 	.endr
-	.size System_ReciprocalTable, .-System_ReciprocalTable
+	.size SystemReciprocalTable, .-SystemReciprocalTable

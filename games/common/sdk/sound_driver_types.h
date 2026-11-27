@@ -19,7 +19,7 @@
    PCM_DMA_BUF_SIZE. */
 #define SOUND_PCM_BUFFER_SIZE	1584
 /* CPU cycles from one VBlank to the next: 228 lines of 1232 cycles, which timer
-   0's reload divides by a VBlank's samples. */
+   0's reload divides by a frame's samples. */
 #define SOUND_CYCLES_PER_VBLANK (228 * 1232)
 /* 1.0 in the 24-bit fixed point SampleFreqSet takes the rate's reciprocal
    in. */
@@ -137,7 +137,7 @@ typedef void (*MPlayFunc)(
 #define MPLAY_JUMP_SAMPLE_FREQ_SET 30
 /* TrackStop: silences the track's notes and empties its list. */
 #define MPLAY_JUMP_TRACK_STOP	   31
-#define MPLAY_JUMP_FADE_OUT_BODY   32 /* FadeOutBody: a fade's step a VBlank. */
+#define MPLAY_JUMP_FADE_OUT_BODY   32 /* FadeOutBody: a fade's step a frame. */
 #define MPLAY_JUMP_TRK_VOL_PIT_SET 33
 /* RealClearChain: unlinks a note from its track's list (ClearChain). */
 #define MPLAY_JUMP_CLEAR_CHAIN	   34
@@ -181,7 +181,7 @@ enum MusicPlayerFadeFlag { TEMPORARY_FADE = 1, FADE_IN = 2 };
 #define SOUND_FADE_STEP		   16
 
 /* The tempo count that runs one song tick (MusicPlayerInfo.tempoCount), and so
-   the tempo a song starts at: a tick a VBlank. */
+   the tempo a song starts at: a song tick a frame. */
 #define SOUND_TEMPO_PER_TICK	 150
 /* MusicPlayerInfo.tempoScale that plays a song at its own tempo. */
 #define SOUND_TEMPO_SCALE_NORMAL 256
@@ -205,12 +205,12 @@ struct ToneData {
 	/* The PCM sample, the CGB wave pattern, duty or noise width, or for a
 	   rhythm or split voice its voice table. */
 	const void *target;
-	/* PCM: added to the envelope each VBlank until 255. CGB: VBlanks a step. In
+	/* PCM: added to the envelope each VBlank until 255. CGB: frames a step. In
 	   a split voice, these four bytes are a pointer to its key map. */
 	u8 attack;
-	u8 decay;	/* PCM: envelope * decay / 256 a VBlank. CGB: VBlanks a step. */
+	u8 decay;	/* PCM: envelope * decay / 256 a frame. CGB: frames a step. */
 	u8 sustain; /* Level decay stops at: 0 to 255 for PCM, 0 to 15 for CGB. */
-	/* PCM: envelope * release / 256 a VBlank. CGB: VBlanks a step. */
+	/* PCM: envelope * release / 256 a frame. CGB: frames a step. */
 	u8 release;
 };
 
@@ -244,7 +244,7 @@ struct SoundChannel {
 	u8 peak;
 	u8 levelLeft;  /* The envelope's left level, written by the mixer. */
 	u8 echoLevel;  /* After release, the level held. */
-	u8 echoLength; /* VBlanks the echo lasts. */
+	u8 echoLength; /* Frames the echo lasts. */
 	u8 paddingAfterEcho[2]; /* Unused by this driver (pret's dummy1, dummy2). */
 	u8 gate;				/* Ticks until the note is released. */
 	u8 songKey;				/* The key as the song wrote it. */
@@ -298,18 +298,18 @@ struct CgbChannel {
 	u8 kind;
 	u8 outRight; /* Velocity and track volume to the right, 0 to 255. */
 	u8 outLeft;	 /* Velocity and track volume to the left, 0 to 255. */
-	u8 attack;	 /* VBlanks per attack step. */
-	u8 decay;	 /* VBlanks per decay step. */
+	u8 attack;	 /* Frames per attack step. */
+	u8 decay;	 /* Frames per decay step. */
 	u8 sustain;	 /* Sustain level 0 to 15, scaled by peak. */
-	u8 release;	 /* VBlanks per release step. */
+	u8 release;	 /* Frames per release step. */
 	u8 key;		 /* The key played, before the track's pitch. */
 	u8 level;	 /* Envelope level 0 to 15 written to the channel. */
 	/* Top of the envelope: (outRight + outLeft) / 16, at most 15 when one side
 	   plays. */
 	u8 peak;
-	u8 counter;	  /* VBlanks left in the current envelope step. */
+	u8 counter;	  /* Frames left in the current envelope step. */
 	u8 echoLevel; /* After release, the level held is peak * echoLevel / 256. */
-	u8 echoLength;			/* VBlanks the echo lasts. */
+	u8 echoLength;			/* Frames the echo lasts. */
 	u8 paddingAfterEcho[2]; /* Unused by this driver (pret's dummy1, dummy2). */
 	u8 gate;				/* Ticks until the note is released. */
 	u8 songKey;				/* The key as the song wrote it. */
@@ -456,7 +456,7 @@ struct MusicPlayerTrack {
 	u8 lfoDelayCounter; /* lfoDelay's countdown, reloaded by each note. */
 	u8 priority;		/* Added to the player's priority for its notes. */
 	u8 echoLevel;		/* Each new note's echo level. */
-	u8 echoLength;		/* Each new note's echo length in VBlanks. */
+	u8 echoLength;		/* Each new note's echo length in frames. */
 	/* The notes this track started, newest first, linked through
 	   SoundChannel.next; PCM notes from SoundInfo.pcmNotes and CGB notes. */
 	struct SoundChannel *notes;
@@ -513,8 +513,8 @@ struct MusicPlayerInfo {
 	u16 tempoStep;
 	/* Each SOUND_TEMPO_PER_TICK in it runs one tick. */
 	u16 tempoCount;
-	u16 fadePeriod;	 /* VBlanks between fade steps; 0 when not fading. */
-	u16 fadeCounter; /* VBlanks left until the next fade step. */
+	u16 fadePeriod;	 /* Frames between fade steps; 0 when not fading. */
+	u16 fadeCounter; /* Frames left until the next fade step. */
 	/* bits: 8..4 level, 0 to 256 in steps of 16 | 1 fade in | 0 pause at the
 	   end (MusicPlayerFadeFlag). */
 	u16 fadeVolume;
@@ -533,7 +533,7 @@ struct MusicPlayerInfo {
    CGB notes, and the functions the driver calls. */
 struct SoundInfo {
 	u32 ident; /* ID_NUMBER when free; raised while the driver changes it. */
-	/* VBlanks until the DMA restart, which reloads it from transferPeriod; also
+	/* Frames until the DMA restart, which reloads it from transferPeriod; also
 	   picks which VBlank's part of the buffers is mixed. volatile, as pret's
 	   pcmDmaCounter is: m4aSoundVSyncOn clears it while the game's VBlank
 	   handler reads it, so it is no device. */
@@ -546,13 +546,13 @@ struct SoundInfo {
 	/* Counts 14 down to 0 once a CGB update; at 0 the envelopes take an extra
 	   step. */
 	u8 c15;
-	/* VBlanks the buffers hold: SOUND_PCM_BUFFER_SIZE / pcmSamplesPerVBlank. */
+	/* Frames the buffers hold: SOUND_PCM_BUFFER_SIZE / pcmSamplesPerVBlank. */
 	u8 transferPeriod;
 	/* Nonzero: the mixer stops taking notes once the scanline passes this many
 	   lines after its start. MaxLines, 0. */
 	u8 lineLimit;
 	u8 gap[3]; /* Unused by this driver, as in pret's. */
-	/* Samples mixed a VBlank, from PcmSamplesPerVBlankTable. */
+	/* Samples mixed a frame, from PcmSamplesPerVBlankTable. */
 	u32 pcmSamplesPerVBlank;
 	/* Samples a second: pcmSamplesPerVBlank * 59.7275, rounded. */
 	u32 outputRate;
@@ -578,7 +578,7 @@ struct SoundInfo {
 	u8 paddingBeforeNotes[16];		  /* Unused by this driver (pret's gap2). */
 	struct SoundChannel pcmNotes[12]; /* pcmNoteCount of them play. */
 	/* Right (0, DMA 1 to FIFO A) and left (1, DMA 2 to FIFO B) samples,
-	   transferPeriod VBlanks of pcmSamplesPerVBlank each. */
+	   transferPeriod frames of pcmSamplesPerVBlank each. */
 	s8 buffers[2][SOUND_PCM_BUFFER_SIZE];
 };
 

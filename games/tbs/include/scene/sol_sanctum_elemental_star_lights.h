@@ -8,15 +8,15 @@
 #include "types.h"
 
 /* Starts count lights floating, actors from first (at most 10). */
-void scSolSanctumStartFloatingLights(Sint32 first, Uint32 count);
+void scSolSanctumStartFloatingLights(Sint32 first, Uint32 cnt);
 
 /* Each light's drift, swing and direction on x, y and z, then its largest scale
    and how fast it pulses, from
    shared/sol_sanctum_elemental_star_light_tables.c. */
-extern Uint8 SolSanctum_LightDrift[][3];
-extern Uint8 SolSanctum_LightSwing[][3];
-extern Sint8 SolSanctum_LightDirection[][3];
-extern FIXED SolSanctum_LightMaxScales[];
-extern FIXED SolSanctum_LightScaleSteps[];
+extern Uint8 SolSanctumLightDrift[][3];
+extern Uint8 SolSanctumLightSwing[][3];
+extern Sint8 SolSanctumLightDirection[][3];
+extern FIXED SolSanctumLightMaxScales[];
+extern FIXED SolSanctumLightScaleSteps[];
 
 #endif

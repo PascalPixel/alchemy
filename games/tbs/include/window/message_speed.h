@@ -13,9 +13,9 @@ typedef enum MESSAGE_SPEED {
 	MESSAGE_SPEED_FAST = 2
 } MESSAGE_SPEED;
 
-extern const Uint8 MessageSpeed_Delays[3];
-extern const Uint8 MessageSpeed_Steps[3];
-extern const Uint8 MessageSpeed_VoiceGaps[3];
+extern const Uint8 MessageSpeedDelays[3];
+extern const Uint8 MessageSpeedSteps[3];
+extern const Uint8 MessageSpeedVoiceGaps[3];
 
 /* The German counted nouns that follow these tables are a file of their own,
    window/counted_nouns.c: their table of pointers is word-aligned, and in one

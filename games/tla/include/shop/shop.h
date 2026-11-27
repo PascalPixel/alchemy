@@ -42,32 +42,32 @@ enum { DAILA_INN = 0 };
 void   mnShopInitState(void);
 void   mnShopReleaseState(void);
 Sint32 mnShopSelectBuy(void);
-void   mnShopDrawStock(struct WINDOW *window, Sint32 selected);
+void   mnShopDrawStock(struct WINDOW *win, Sint32 selected);
 void   mnShopDrawItemPrice(
-	  struct WINDOW *window, Sint32 itemId, Sint32 price, Sint32 priceKind);
-void mnShopDrawMessage(struct WINDOW *window, Sint32 message);
-void mnShopDrawParty(struct WINDOW *window, Sint32 selected, Sint32 itemId);
+	  struct WINDOW *win, Sint32 itemId, Sint32 price, Sint32 priceKind);
+void mnShopDrawMessage(struct WINDOW *win, Sint32 msg);
+void mnShopDrawParty(struct WINDOW *win, Sint32 selected, Sint32 itemId);
 void mnShopDrawEquipComparison(
-	struct WINDOW *window, Sint32 unitId, Sint32 itemId);
-void mnShopDrawCarriedItem(struct WINDOW *window, Sint32 unitId, Sint32 itemId);
+	struct WINDOW *win, Sint32 unitId, Sint32 itemId);
+void   mnShopDrawCarriedItem(struct WINDOW *win, Sint32 unitId, Sint32 itemId);
 Sint32 mnShopSelectBuyCount(Sint32 unitId, Sint32 itemId);
 Sint32 mnShopSelectQuantity(Sint32 minimum, Sint32 maximum, Sint32 price);
 void   mnShopBuyDone(Sint32 unitId, Sint32 itemId, Sint32 quantity);
 Bool   mnShopConfirmEquip(Sint32 unitId, Sint32 slot);
 Bool   mnShopSellOld(Sint32 unitId, Sint32 slot);
-void   mnShopGiveGameTicket(struct WINDOW *window, struct WINDOW *itemWindow);
+void   mnShopGiveGameTicket(struct WINDOW *win, struct WINDOW *itemWin);
 Sint32 mnShopChooseMember(void);
 Sint32 mnShopSelectSell(Sint32 unitId);
-void   mnShopDrawMemberItems(struct WINDOW *window, Sint32 unitId);
+void   mnShopDrawMemberItems(struct WINDOW *win, Sint32 unitId);
 Sint32 mnShopSelectSellCount(Sint32 unitId, Sint32 slot);
-void   mnShopSellItem(Sint32 unitId, Sint32 slot, Sint32 count);
+void   mnShopSellItem(Sint32 unitId, Sint32 slot, Sint32 cnt);
 Sint32 mnShopRepairPrice(Sint32 inventoryEntry);
 Sint32 mnShopRunRepairMemberChoice(void);
 Sint32 mnShopSelectRepair(Sint32 unitId);
 void   mnShopRepairItem(Sint32 unitId, Sint32 slot);
-void   mnShopShowKeeperMessage(Sint32 messageId);
+void   mnShopShowKeeperMessage(Sint32 msgId);
 struct WINDOW_SPR *mnShopCreatePriceSpr(
-	Sint32 value, struct WINDOW *window, Sint32 x, Sint32 y);
+	Sint32 value, struct WINDOW *win, Sint32 x, Sint32 y);
 
 Sint32 mnShopStockGetRowCount(void);
 Sint32 mnShopStockGetType(Sint32 stockRow);
@@ -82,22 +82,22 @@ Sint32 mnForgeGetItemCondition(Sint32 itemId);
 Sint32 mnForgeOfferItem(Sint32 unitId, Sint32 slot);
 
 Sint32 mnSanctumRunPartyService(void);
-void   mnSanctumHighlightMembers(struct WINDOW *window, Sint32 selected);
-void   mnSanctumDrawFee(struct WINDOW *window, Sint32 unitId);
+void   mnSanctumHighlightMembers(struct WINDOW *win, Sint32 selected);
+void   mnSanctumDrawFee(struct WINDOW *win, Sint32 unitId);
 void   mnSanctumApplyService(Sint32 unitId, Sint32 serviceKind);
 void   mnSanctumRunMemberIconBurst(Sint32 member);
 
 Sint32 mnItemPickerRun(
 	Sint32 *selectedUnit, Sint32 *selectedSlot, Sint32 itemMode);
 Sint32 mnItemPickerSelectItem(Sint32 unitId);
-void   mnItemPickerDrawItem(struct WINDOW *window, Sint32 unitId, Sint32 slot);
+void   mnItemPickerDrawItem(struct WINDOW *win, Sint32 unitId, Sint32 slot);
 void   mnItemIconGridInit(void);
 void   mnItemIconGridRelease(void);
 void   mnItemIconGridShowInventory(
-	  struct WINDOW *window, Sint32 x, Sint32 y, Sint32 unitId);
+	  struct WINDOW *win, Sint32 x, Sint32 y, Sint32 unitId);
 
-/* The frames the hand cursor takes to glide into a newly opened list. */
-#define SHOP_CURSOR_ENTER_FRAMES 12
+/* The ticks the hand cursor takes to glide into a newly opened list. */
+#define SHOP_CURSOR_ENTER_TICKS 12
 
 /* The price digits 0 to 9, 32 bytes each (digits.4bpp), copied into a price
    sprite's tiles (mnShopDrawPriceDigit). */
@@ -118,7 +118,7 @@ Sint32 mnShopRun(Sint32 stockRow, Sint32 keeperId);
    farewell; `actorId` is the keeper, whose portrait the lines show. */
 Sint32 mnSanctumRun(Sint32 actorId);
 /* Runs an inn's counter: the innkeeper names the price, and on Yes the party
-   sleeps. `innId` is the row of Inn_PricesPerGuest and `actorId` the innkeeper,
+   sleeps. `innId` is the row of InnPricesPerGuest and `actorId` the innkeeper,
    whose portrait the lines show. */
 Sint32 mnInnCheckIn(Sint32 innId, Sint32 actorId);
 /* Runs the forge: the smith's line, then a party member's materials to forge,
@@ -128,27 +128,27 @@ Sint32 mnForgeRun(Sint32 actorId);
 /* Returns the night's price at inn `innId` with the shop's state opened for it,
    for a script to quote before checking in. */
 Sint32 mnInnQuoteRoomPrice(Sint32 innId);
-/* Moves the cursor a frame along its straight line toward its target. */
+/* Moves the cursor a tick along its straight line toward its target. */
 void mnCursorAdvance(struct MENU_CURSOR *cursor);
 /* Moves each cursor axis one quarter of the remaining distance, with a minimum
    one-pixel step. */
 void mnCursorMoveTowardTarget(struct MENU_CURSOR *cursor);
-/* Starts a glide of the cursor from where it is to (targetX, targetY) over
-   `frames` frames, for mnCursorAdvance to run. */
+/* Starts a glide of the cursor from where it is to (tgtX, tgtY) over
+   `ticks` ticks, for mnCursorAdvance to run. */
 void mnCursorSet(
-	struct MENU_CURSOR *cursor, Sint32 targetX, Sint32 targetY, Sint8 frames);
-/* Places the cursor and its sprite at (x, y) at once, with a one-frame glide
+	struct MENU_CURSOR *cursor, Sint32 tgtX, Sint32 tgtY, Sint8 ticks);
+/* Places the cursor and its sprite at (x, y) at once, with a one-tick glide
    that has already arrived. */
 void mnCursorSetPosImmediate(struct MENU_CURSOR *cursor, Sint32 x, Sint32 y);
-/* Paints the first `segments` segments of the quantity bar in `color` (a
+/* Paints the first `segments` segments of the quantity bar in `col` (a
    QUANTITY_BAR_ colour), over what was painted before. */
-void mnQuantityBarFill(Sint32 segments, Sint32 color, Uint8 *tileBuffer);
+void mnQuantityBarFill(Sint32 segments, Sint32 col, Uint8 *tileBuf);
 /* Saves the field's colours and fades them to `tint` (a PALETTE_TINT_ mode)
-   over SHOP_TINT_FRAMES frames: the grey of the sanctum's healing, and the
+   over SHOP_TINT_TICKS ticks: the grey of the sanctum's healing, and the
    element's colour as a Djinni joins the party. */
 void mnShopSaveAndTintFieldPalette(Sint32 tint);
 /* Fades back to the colours mnShopSaveAndTintFieldPalette saved, over
-   SHOP_TINT_FRAMES frames. */
+   SHOP_TINT_TICKS ticks. */
 void mnShopRestoreFieldPalette(void);
 /* Runs the item picker for an item to drop, showing each item's sale price. */
 Sint32 mnItemPickerRunToDrop(Sint32 *selectedUnit, Sint32 *selectedSlot);

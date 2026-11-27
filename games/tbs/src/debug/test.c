@@ -16,16 +16,16 @@ const Uint32		 *scGetExits(void);
 const ACTOR_PLACE	 *scGetActorPlacements(void);
 const CUE			 *scGetCues(void);
 Sint32				  scInit(void);
-extern Uint32		  Test_UnusedRows[];
-extern char			  MenuTest_ItemPrompt[12];
-extern char			  MenuTest_ItemHelp[24];
-extern char			  MenuTest_ItemFull[20];
-extern SCENE_ENTRANCE MenuTest_Entrances[];
-extern Uint32		  MenuTest_Exits[];
-extern ACTOR_PLACE	  MenuTest_ActorPlacements[];
-extern CUE			  MenuTest_Cues[];
-extern Sint32		  MenuTest_NextLevel;
-extern Sint32		  MenuTest_FillLetter;
+extern Uint32		  TestUnusedRows[];
+extern char			  MenuTestItemPrompt[12];
+extern char			  MenuTestItemHelp[24];
+extern char			  MenuTestItemFull[20];
+extern SCENE_ENTRANCE MenuTestEntrances[];
+extern Uint32		  MenuTestExits[];
+extern ACTOR_PLACE	  MenuTestActorPlacements[];
+extern CUE			  MenuTestCues[];
+extern Sint32		  MenuTestNextLevel;
+extern Sint32		  MenuTestFillLetter;
 
 /* The level scInit raises Garet, Mia and Ivan to. */
 #define DEBUG_PARTY_LEVEL 30
@@ -33,7 +33,7 @@ extern Sint32		  MenuTest_FillLetter;
 #define DEBUG_ISAAC_LEVEL \
 	WHEN(DEBUG_MENU_TEST_ISAAC_LEVEL_50, 50, DEBUG_PARTY_LEVEL)
 
-/* The placed actors, numbered in the order of MenuTest_ActorPlacements after
+/* The placed actors, numbered in the order of MenuTestActorPlacements after
    its four party rows, which keep their characters' ids. Each runs its test
    when talked to. */
 typedef enum MENU_TEST_ACTOR_ID {
@@ -72,7 +72,7 @@ static __inline__ void dbMenuTestRecalculateParty(void)
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return MenuTest_Entrances;
+	return MenuTestEntrances;
 }
 
 /* The scene has no exit regions: its regions entry returns none. */
@@ -83,12 +83,12 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return MenuTest_Exits;
+	return MenuTestExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return MenuTest_ActorPlacements;
+	return MenuTestActorPlacements;
 }
 
 #if DEBUG_SHOP_MESSAGE_BROWSER
@@ -96,12 +96,12 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 #define SHOP_MESSAGES (MsgArmorShopWelcome - MsgWeaponShopWelcome)
 
 /* Closes the finished message windows, opens the message and waits until it is
-   typed out, then a frame more. */
-static void dbMenuTestShowMessageAndWait(Sint32 messageId)
+   typed out, then a tick more. */
+static void dbMenuTestShowMessageAndWait(Sint32 msgId)
 {
 	mnMessageCloseFinishedWindows();
 	mnMessageOpenWindow(
-		messageId, 5, 0, MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
+		msgId, 5, 0, MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
 	while(mnMessageAllTyped() == 0) {
 		sySynch(1);
 	}
@@ -109,30 +109,30 @@ static void dbMenuTestShowMessageAndWait(Sint32 messageId)
 }
 
 /* Browses sample dialogue with A/Down and Up; B closes the window. */
-static void dbMenuTestBrowseMessageRange(Sint32 messageId, Sint32 messageCount)
+static void dbMenuTestBrowseMessageRange(Sint32 msgId, Sint32 msgCnt)
 {
-	WINDOW *window;
-	Sint32	messageIndex;
+	WINDOW *win;
+	Sint32	msgIdx;
 
 	MainRoutineStateWork.msgSpeed = MESSAGE_SPEED_FAST;
-	window = mnPortraitOpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
-	for(messageIndex = 0; messageIndex < messageCount; messageIndex++) {
+	win = mnPortraitOpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
+	for(msgIdx = 0; msgIdx < msgCnt; msgIdx++) {
 		/* A sample name, item and number for each message to show: Garet, the
 		   Virtuous Armlet and a number of six digits. */
 		mnMessageArgumentPush(GARET, MESSAGE_ARGUMENT_ACTOR);
 		mnMessageArgumentPush(ITEM_VIRTUOUS_ARMLET, MESSAGE_ARGUMENT_ITEM);
 		mnMessageArgumentPush(123456, MESSAGE_ARGUMENT_NUMBER);
-		dbMenuTestShowMessageAndWait(messageId);
+		dbMenuTestShowMessageAndWait(msgId);
 		for(;;) {
 			if((PerData & KEY_B) != 0) {
 				goto end;
 			}
 			if((PerData & KEY_A) != 0 || (PerData & KEY_DOWN) != 0) {
-				messageId++;
+				msgId++;
 				break;
 			}
 			if((PerData & KEY_UP) != 0) {
-				messageId--;
+				msgId--;
 				break;
 			}
 			if(PerData == 0) {
@@ -144,11 +144,11 @@ static void dbMenuTestBrowseMessageRange(Sint32 messageId, Sint32 messageCount)
 	}
 end:
 	mnMessageCloseFinishedWindows();
-	mnWindowClose(window, 2);
+	mnWindowClose(win, 2);
 }
 
 /* The shop message browsers, run by talking to ACTOR_FELIX and
-   ACTOR_SECOND_FELIX while the leader faces a given way (MenuTest_Cues). */
+   ACTOR_SECOND_FELIX while the leader faces a given way (MenuTestCues). */
 static void dbMenuTestBrowseWeaponShopMessages(void)
 {
 	dbMenuTestBrowseMessageRange(MsgWeaponShopWelcome, SHOP_MESSAGES);
@@ -248,20 +248,20 @@ UNUSED static void dbMenuTestGiveItemToParty(void)
 
 const CUE *scGetCues(void)
 {
-	return MenuTest_Cues;
+	return MenuTestCues;
 }
 
-/* Talking to Garet: levels the four to MenuTest_NextLevel, then raises it by
+/* Talking to Garet: levels the four to MenuTestNextLevel, then raises it by
    ten. */
 static void dbMenuTestRaisePartyLevels(void)
 {
 	/* "You went up a level!" */
 	mnFieldMessageShow(MsgDebugWentLevel, FIELD_MESSAGE_ZOOM);
-	gmUnitLevelUpTo(ISAAC, MenuTest_NextLevel);
-	gmUnitLevelUpTo(GARET, MenuTest_NextLevel);
-	gmUnitLevelUpTo(MIA, MenuTest_NextLevel);
-	gmUnitLevelUpTo(IVAN, MenuTest_NextLevel);
-	MenuTest_NextLevel += 10;
+	gmUnitLevelUpTo(ISAAC, MenuTestNextLevel);
+	gmUnitLevelUpTo(GARET, MenuTestNextLevel);
+	gmUnitLevelUpTo(MIA, MenuTestNextLevel);
+	gmUnitLevelUpTo(IVAN, MenuTestNextLevel);
+	MenuTestNextLevel += 10;
 	dbMenuTestRecalculateParty();
 }
 
@@ -483,23 +483,23 @@ static void dbMenuTestGivePartyDjinn(void)
 {
 	/* LEFTOVER(frame): the buffer the Japanese release's loop below fills
 	   FILL_PASSES times. */
-	UNUSED Uint8 fillBuffer[256];
+	UNUSED Uint8 fillBuf[256];
 #if !DEBUG_DJINN_GIFT_FILL_LOOP_DROPPED
 	Sint32 pass;
-	Sint32 characterIndex;
+	Sint32 characterIdx;
 
 	for(pass = 0; pass < FILL_PASSES; pass++) {
-		for(characterIndex = 0; characterIndex < (Sint32)sizeof(fillBuffer);
-			characterIndex++) {
-			fillBuffer[characterIndex] = 0;
+		for(characterIdx = 0; characterIdx < (Sint32)sizeof(fillBuf);
+			characterIdx++) {
+			fillBuf[characterIdx] = 0;
 		}
-		for(characterIndex = 0; characterIndex < pass + FILL_FIRST_LENGTH;
-			characterIndex++) {
-			fillBuffer[characterIndex] = MenuTest_FillLetter + 1;
+		for(characterIdx = 0; characterIdx < pass + FILL_FIRST_LENGTH;
+			characterIdx++) {
+			fillBuf[characterIdx] = MenuTestFillLetter + 1;
 		}
-		MenuTest_FillLetter++;
-		if(MenuTest_FillLetter >= 'a') {
-			MenuTest_FillLetter = 'A';
+		MenuTestFillLetter++;
+		if(MenuTestFillLetter >= 'a') {
+			MenuTestFillLetter = 'A';
 		}
 	}
 #endif
@@ -636,16 +636,16 @@ static void dbMenuTestGiveEquipmentTestStock(void)
    with no item. */
 static void dbMenuTestSelectItem(void)
 {
-	WINDOW *window;
+	WINDOW *win;
 	WINDOW *details;
 	Sint32	selectedItemId;
 	Sint32	redraw;
 	Sint32	itemId;
-	Sint32	itemCount;
+	Sint32	itemCnt;
 
-	itemCount = DEBUG_ITEM_COUNT;
+	itemCnt = DEBUG_ITEM_COUNT;
 	sySndPlay(SE_MENU_CONFIRM);
-	window = mnWindowCreate(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
+	win = mnWindowCreate(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
 	details = mnWindowCreate(0, 8, 13, 10, WINDOW_FLAG_INSTANT);
 	selectedItemId = 1;
 	redraw = 1;
@@ -662,23 +662,23 @@ static void dbMenuTestSelectItem(void)
 	while(1) {
 		if(redraw) {
 			redraw = 0;
-			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % itemCount;
-			mnWindowSprRedrawSavedRect(window);
-			mnWindowSprClearList(window);
-			mnTextDrawStringInWindow(MenuTest_ItemPrompt, window, 0, 0);
-			mnTextDrawNumAtOffset(selectedItemId, 0, window, 80, 0);
+			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % itemCnt;
+			mnWindowSprRedrawSavedRect(win);
+			mnWindowSprClearList(win);
+			mnTextDrawStringInWindow(MenuTestItemPrompt, win, 0, 0);
+			mnTextDrawNumAtOffset(selectedItemId, 0, win, 80, 0);
 			if(gmPartyInventoryHasSpace()) {
-				mnTextDrawStringInWindow(MenuTest_ItemHelp, window, 0, 32);
+				mnTextDrawStringInWindow(MenuTestItemHelp, win, 0, 32);
 				itemId = selectedItemId & INVENTORY_ITEM_ID_MASK;
 				/* DEAD: the item's definition is looked up and not used; the
 				   ROM keeps the call. */
 				gmItemGetDirect(itemId);
-				mnTextDrawMessageAsTiles(itemId + MsgItemName, window, 120, 0);
-				mnTextDrawMessage(itemId + MsgItemPlainName, window, 0, 16);
+				mnTextDrawMessageAsTiles(itemId + MsgItemName, win, 120, 0);
+				mnTextDrawMessage(itemId + MsgItemPlainName, win, 0, 16);
 				mnWindowSprRedrawSavedRect(details);
 				mnItemMenuDrawItemDetails(details, selectedItemId);
 			} else {
-				mnTextDrawStringInWindow(MenuTest_ItemFull, window, 0, 32);
+				mnTextDrawStringInWindow(MenuTestItemFull, win, 0, 32);
 			}
 		}
 		if(PerPush & KEY_A) {
@@ -724,9 +724,9 @@ static void dbMenuTestSelectItem(void)
 		}
 		sySynch(1);
 	}
-	mnWindowSprRedrawSavedRect(window);
+	mnWindowSprRedrawSavedRect(win);
 	sySynch(1);
-	mnWindowClose(window, 1);
+	mnWindowClose(win, 1);
 	mnWindowClose(details, 1);
 }
 
@@ -850,23 +850,23 @@ static Sint32 dbMenuTestOpenSanctum(Sint32 unitId)
 
 #include "test_rows.c"
 
-char MenuTest_ItemPrompt[12] = "Item No:";
+char MenuTestItemPrompt[12] = "Item No:";
 
-char MenuTest_ItemHelp[24] = "A:Get Item  B:Return";
+char MenuTestItemHelp[24] = "A:Get Item  B:Return";
 
-char MenuTest_ItemFull[20] = "ITEM FULL........";
+char MenuTestItemFull[20] = "ITEM FULL........";
 
-SCENE_ENTRANCE MenuTest_Entrances[] = {
+SCENE_ENTRANCE MenuTestEntrances[] = {
 	{0, CONDITION_ALWAYS, 60, 0, 94, FACING_NORTH, 0, -1, -1, -1, -1, 0},
 	{SCENE_TABLE_END},
 };
 
 /* No exits. */
-Uint32 MenuTest_Exits[] = {
+Uint32 MenuTestExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE MenuTest_ActorPlacements[] = {
+ACTOR_PLACE MenuTestActorPlacements[] = {
 	ACTOR_PLACEMENT(GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 48,
 		FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 80,
@@ -901,7 +901,7 @@ ACTOR_PLACE MenuTest_ActorPlacements[] = {
 
 /* Who runs what: Garet levels, Jenna equipment, Ivan consumables, Mia Isaac's
    name, and the placed actors (MENU_TEST_ACTOR_ID) the rest. */
-CUE MenuTest_Cues[] = {
+CUE MenuTestCues[] = {
 	{CUE_TALK, GARET, CONDITION_ALWAYS, SCRIPT_REF(dbMenuTestRaisePartyLevels)},
 	{CUE_TALK, JENNA, CONDITION_ALWAYS,
 		SCRIPT_REF(dbMenuTestGiveEquipmentTestStock)},
@@ -970,9 +970,9 @@ CUE MenuTest_Cues[] = {
 
 /* The level dbMenuTestRaisePartyLevels levels the four to next: 10 at first,
    ten more after each use. */
-Sint32 MenuTest_NextLevel = 10;
+Sint32 MenuTestNextLevel = 10;
 
 /* One less than the character the Japanese loop of dbMenuTestGivePartyDjinn
    fills with: 'A' at first, so 'B', one more each pass, and back to 'A' when it
    reaches 'a'. */
-Sint32 MenuTest_FillLetter = 'A';
+Sint32 MenuTestFillLetter = 'A';

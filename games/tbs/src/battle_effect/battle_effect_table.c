@@ -36,7 +36,7 @@ struct BATTLE_EFFECT_PARM;
 #define SLASH_PICTURE_HEIGHTS	   {7, 9, 11, 13, 13, 11}
 /* Each slash picture's reach from the target. */
 #define SLASH_PICTURE_REACH		   {58, 42, 25, 13, 5, 0}
-/* The flash picture for each three frames at the end of a flash's life. */
+/* The flash picture for each three ticks at the end of a flash's life. */
 #define FLASH_FADE_PICTURES		   {5, 5, 4, 3, 2, 1}
 /* The flips a glint may be drawn in: none, and mirrored each way and both. */
 #define GLINT_FLIPS				   {0, COMPOSITE_FLIP_X, COMPOSITE_FLIP_Y, COMPOSITE_FLIP}
@@ -51,45 +51,44 @@ struct BATTLE_EFFECT_PARM;
 /* Mote pictures: particle sprite sheets hold ten, picture n (from 0) n + 1
    pixels wide and twice that tall. It stays the first table, where the blitter
    template's walk ends. */
-Uint16 BattleEffect_MotePictures[] = {
-	0, 2, 10, 28, 60, 110, 182, 280, 408, 570};
+Uint16 BattleEffectMotePictures[] = {0, 2, 10, 28, 60, 110, 182, 280, 408, 570};
 /* Flare pictures: the first ten are squares 2x2 to 20x20, picture n (from 0) n
    + 1 pixels from its centre to each edge (EFFECT_DRAW_FLARE, and Neptune and
    Bind directly). The second ten begin at twice those offsets. */
-Uint16 BattleEffect_FlarePictures[] = {0, 4, 20, 56, 120, 220, 364, 560, 816,
+Uint16 BattleEffectFlarePictures[] = {0, 4, 20, 56, 120, 220, 364, 560, 816,
 	1140, 0, 8, 40, 112, 240, 440, 728, 1120, 1632, 2280};
 /* Nine square sparkle pictures (sparkle_dots_00 to _08), read by the falling,
    frost, healing, Djinni heal and Boreas parts. */
-Uint16 BattleEffect_SparklePictures[] = {
+Uint16 BattleEffectSparklePictures[] = {
 	0, 25, 74, 123, 172, 221, 246, 255, 256};
 /* Each sparkle picture's side. */
-Uint8 BattleEffect_SparkleSizes[] = {5, 7, 7, 7, 7, 5, 3, 1, 1};
+Uint8 BattleEffectSparkleSizes[] = {5, 7, 7, 7, 7, 5, 3, 1, 1};
 /* The six pictures of an erupting flame puff: width, height, how far below its
    anchor its top goes (so that all six stand on about the same line) and where
    each begins in the sprite sheet. Each is drawn centred across x; the Mars
-   Djinni shows each for 8 frames, centred on the flame's x. Read by the Djinn
+   Djinni shows each for 8 ticks, centred on the flame's x. Read by the Djinn
    attacks, Flare, the casting impacts, Atalanta and the dragon cloud. */
-Uint8  BattleEffect_PuffArcPictureWidths[] = FLAME_PUFF_PICTURE_WIDTHS;
-Uint8  BattleEffect_PuffArcPictureHeights[] = FLAME_PUFF_PICTURE_HEIGHTS;
-Uint8  BattleEffect_PuffArcPictureBiasY[] = FLAME_PUFF_PICTURE_BIAS_Y;
-Uint16 BattleEffect_PuffArcPictures[] = FLAME_PUFF_PICTURES;
+Uint8  BattleEffectPuffArcPictureWidths[] = FLAME_PUFF_PICTURE_WIDTHS;
+Uint8  BattleEffectPuffArcPictureHeights[] = FLAME_PUFF_PICTURE_HEIGHTS;
+Uint8  BattleEffectPuffArcPictureBiasY[] = FLAME_PUFF_PICTURE_BIAS_Y;
+Uint16 BattleEffectPuffArcPictures[] = FLAME_PUFF_PICTURES;
 /* Six glint pictures, each GlintPictureWidths by GlintPictureHeights pixels. */
-Uint16 BattleEffect_GlintPictures[] = {0, 589, 1302, 2015, 2414, 2750};
-Uint8  BattleEffect_GlintPictureWidths[] = {19, 23, 23, 19, 16, 17};
-Uint8  BattleEffect_GlintPictureHeights[] = {31, 31, 31, 21, 21, 24};
+Uint16 BattleEffectGlintPictures[] = {0, 589, 1302, 2015, 2414, 2750};
+Uint8  BattleEffectGlintPictureWidths[] = {19, 23, 23, 19, 16, 17};
+Uint8  BattleEffectGlintPictureHeights[] = {31, 31, 31, 21, 21, 24};
 
 /* battle_effect_falling.c: Falling shard and bolt wave counts. */
 
-/* Ice, by variant: shards and frames (ICE_SHARD_COUNT, ICE_FRAMES). */
-Uint8 Ice_Counts[][2] = {
-	/* shards, frames */
+/* Ice, by variant: shards and ticks (ICE_SHARD_COUNT, ICE_TICKS). */
+Uint8 IceCounts[][2] = {
+	/* shards, ticks */
 	[EFFECT_VARIANT_BASIC] = {16, 46},	   /* Ice */
 	[EFFECT_VARIANT_STRONGER] = {20, 52},  /* Ice Horn */
 	[EFFECT_VARIANT_STRONGEST] = {32, 80}, /* Ice Missile */
 };
 /* Douse, by variant: the DOUSE_ columns. */
-Uint8 Douse_Counts[][4] = {
-	/* bolts, sparks per bolt, spacing, frames */
+Uint8 DouseCounts[][4] = {
+	/* bolts, sparks per bolt, spacing, ticks */
 	[EFFECT_VARIANT_BASIC] = {6, 8, 32, 80},	 /* Douse */
 	[EFFECT_VARIANT_STRONGER] = {8, 16, 24, 80}, /* Drench */
 	[EFFECT_VARIANT_STRONGEST] = {32, 4, 8, 80}, /* Deluge */
@@ -100,7 +99,7 @@ Uint8 Douse_Counts[][4] = {
 
 /* Each streak style's effect, hit, motion and shake, by the STREAK_ columns
    (battle_effect_streaks.c). */
-Sint8 Streak_Styles[][4] = {
+Sint8 StreakStyles[][4] = {
 	/* STREAK_ANIMATE, STREAK_HIT, STREAK_MOTION, STREAK_SHAKE */
 	{0, 1, 0, 0},  /* STREAK_STYLE_EMBER */
 	{0, 1, 4, 0},  /* STREAK_STYLE_LIME */
@@ -108,17 +107,17 @@ Sint8 Streak_Styles[][4] = {
 	{1, 1, -1, 1}, /* STREAK_STYLE_RED */
 	{1, 1, 4, 0},  /* STREAK_STYLE_CYAN */
 };
-/* Pixels the target trembles by, frame by frame. */
-Sint8 Streak_Tremble[] = {-1, -1, 1, 1, 1, 1, -1, -1};
+/* Pixels the target trembles by, tick by tick. */
+Sint8 StreakTremble[] = {-1, -1, 1, 1, 1, 1, -1, -1};
 
 /* battle_effect_target_strike.c: Target strike timing, motion and pictures. */
 
 /* Each of the twelve target strike styles, by the TARGET_STRIKE_ columns
    (battle_effect_target_strike.c). */
 /* clang-format off */
-Uint8 TargetStrike_Styles[][7] = {
+Uint8 TargetStrikeStyles[][7] = {
 	/* TARGET_STRIKE_: KIND, HITS, FLAGS, COLOUR, PICTURE_FRAMES, COMPOSITE, */
-	/* FRAMES */
+	/* TICKS */
 	[TARGET_STRIKE_STYLE_BLUE_SPARK_BITES] =
 		{STRIKE_KIND_BITE, 2, STRIKE_SPARKS, STRIKE_COLOR_BLUE, 6, COMPOSITE_ADDITIVE, 70},
 	[TARGET_STRIKE_STYLE_LIME_SMOKE_BITE] =
@@ -148,66 +147,66 @@ Uint8 TargetStrike_Styles[][7] = {
 /* clang-format on */
 /* The six slash pictures: size, sprite sheet offset and reach from the
    target. */
-Uint8  TargetStrike_Widths[] = SLASH_PICTURE_WIDTHS;
-Uint8  TargetStrike_Heights[] = SLASH_PICTURE_HEIGHTS;
-Uint16 TargetStrike_Pictures[] = {3200, 3466, 3952, 4733, 5695, 6696};
-Uint8  TargetStrike_Reach[] = SLASH_PICTURE_REACH;
+Uint8  TargetStrikeWidths[] = SLASH_PICTURE_WIDTHS;
+Uint8  TargetStrikeHeights[] = SLASH_PICTURE_HEIGHTS;
+Uint16 TargetStrikePictures[] = {3200, 3466, 3952, 4733, 5695, 6696};
+Uint8  TargetStrikeReach[] = SLASH_PICTURE_REACH;
 /* The fang stage drawn at each picture time of a bite, four to a hit: the first
    hit closes through stages 0 to 3, and each later hit reads entries 4, 1, 2
    and 3 (pictures above 4 wrap back by 4), opening to 2 and 1 and closing again
    to 3. The hit lands on stage 3, the fangs met. */
-Uint8 TargetStrike_BiteStages[] = {0, 1, 2, 3, 2};
+Uint8 TargetStrikeBiteStages[] = {0, 1, 2, 3, 2};
 /* The flips a glint may be drawn in. */
-Uint8 TargetStrike_GlintDrawFlags[] = GLINT_FLIPS;
+Uint8 TargetStrikeGlintDrawFlags[] = GLINT_FLIPS;
 
 /* battle_effect_death_plunge.c: Blade rain and shattering tile pieces. */
 
 /* The sword pictures, by how steeply the sword falls. */
-Uint8  BladeRain_SwordWidths[] = {20, 21, 22, 25};
-Uint8  BladeRain_SwordHeights[] = {32, 31, 27, 24};
-Uint16 BladeRain_SwordPictures[] = {0, 640, 1291, 1885};
+Uint8  BladeRainSwordWidths[] = {20, 21, 22, 25};
+Uint8  BladeRainSwordHeights[] = {32, 31, 27, 24};
+Uint16 BladeRainSwordPictures[] = {0, 640, 1291, 1885};
 /* The 33 pieces of the ShatteringOpeningSheet picture: where each starts on the
    canvas, its size, and where its pixels begin in the decoded picture. The
    offsets carry one more entry, where the last piece ends. */
-Uint8  ShatteringOpening_PieceWidths[] = {21, 20, 24, 30, 35, 69, 19, 23, 9, 22,
-	 33, 10, 18, 9, 7, 9, 17, 55, 30, 25, 40, 29, 10, 28, 14, 5, 32, 23, 19, 32,
-	 8, 43, 15};
-Uint8  ShatteringOpening_PieceHeights[] = {23, 47, 25, 40, 20, 53, 28, 29, 23,
-	 14, 35, 17, 18, 14, 15, 12, 13, 37, 38, 41, 60, 41, 15, 45, 59, 41, 26, 50,
-	 21, 35, 12, 57, 11};
-Uint16 ShatteringOpening_PiecePictures[] = {0, 483, 1423, 2023, 3223, 3923,
-	7580, 8112, 8779, 8986, 9294, 10449, 10619, 10943, 11069, 11174, 11282,
-	11503, 13538, 14678, 15703, 18103, 19292, 19442, 20702, 21528, 21733, 22565,
-	23715, 24114, 25234, 25330, 27781, 27946};
-Uint8  ShatteringOpening_PieceStartX[] = {0, 21, 28, 46, 70, 51, 0, 13, 37, 77,
+Uint8 ShatteringOpeningPieceWidths[] = {21, 20, 24, 30, 35, 69, 19, 23, 9, 22,
+	33, 10, 18, 9, 7, 9, 17, 55, 30, 25, 40, 29, 10, 28, 14, 5, 32, 23, 19, 32,
+	8, 43, 15};
+Uint8 ShatteringOpeningPieceHeights[] = {23, 47, 25, 40, 20, 53, 28, 29, 23, 14,
+	35, 17, 18, 14, 15, 12, 13, 37, 38, 41, 60, 41, 15, 45, 59, 41, 26, 50, 21,
+	35, 12, 57, 11};
+Uint16 ShatteringOpeningPiecePictures[] = {0, 483, 1423, 2023, 3223, 3923, 7580,
+	8112, 8779, 8986, 9294, 10449, 10619, 10943, 11069, 11174, 11282, 11503,
+	13538, 14678, 15703, 18103, 19292, 19442, 20702, 21528, 21733, 22565, 23715,
+	24114, 25234, 25330, 27781, 27946};
+Uint8  ShatteringOpeningPieceStartX[] = {0, 21, 28, 46, 70, 51, 0, 13, 37, 77,
 	 87, 19, 25, 35, 44, 45, 48, 65, 0, 0, 0, 5, 33, 15, 36, 46, 47, 50, 53, 65,
 	 72, 77, 105};
-Uint8  ShatteringOpening_PieceStartY[] = {0, 0, 0, 0, 0, 0, 19, 17, 23, 28, 8,
-	 36, 43, 43, 40, 47, 48, 37, 42, 67, 60, 79, 62, 75, 61, 62, 60, 70, 74, 85,
-	 108, 63, 74};
+Uint8 ShatteringOpeningPieceStartY[] = {0, 0, 0, 0, 0, 0, 19, 17, 23, 28, 8, 36,
+	43, 43, 40, 47, 48, 37, 42, 67, 60, 79, 62, 75, 61, 62, 60, 70, 74, 85, 108,
+	63, 74};
 
 /* battle_effect_death_plunge.c and battle_effect_spider_web.c: Canvas corner
    sparks and two-resource pictures. */
 
 /* The element burst's corner sparks: offsets and flips. */
-Sint8 ElementBurst_SparkX[] = {0, 32, 0, 32};
-Sint8 ElementBurst_SparkY[] = {0, 0, 32, 32};
-Uint8 ElementBurst_SparkFlips[] = GLINT_FLIPS;
+Sint8 ElementBurstSparkX[] = {0, 32, 0, 32};
+Sint8 ElementBurstSparkY[] = {0, 0, 32, 32};
+Uint8 ElementBurstSparkFlips[] = GLINT_FLIPS;
 /* The six pictures: the first four from the swirl sprite sheet, the last two
-   from the tail sprite sheet. SwirlSwipe_PictureX has six entries for each
+   from the tail sprite sheet. SwirlSwipePictureX has six entries for each
    side. */
-Uint8  SwirlSwipe_PictureWidths[] = {40, 112, 112, 112, 88, 64};
-Uint8  SwirlSwipe_PictureHeights[] = {56, 80, 64, 64, 80, 88};
-Uint16 SwirlSwipe_Pictures[] = {0, 2240, 11200, 18368, 0, 7040};
-Uint8  SwirlSwipe_PictureX[] = {72, 0, 0, 0, 32, 64, 16, 16, 16, 16, 8, 0};
-Sint8  SwirlSwipe_PictureBiasY[] = {0, 4, 24, -6, -20, -28, 0, 0};
+Uint8  SwirlSwipePictureWidths[] = {40, 112, 112, 112, 88, 64};
+Uint8  SwirlSwipePictureHeights[] = {56, 80, 64, 64, 80, 88};
+Uint16 SwirlSwipePictures[] = {0, 2240, 11200, 18368, 0, 7040};
+Uint8  SwirlSwipePictureX[] = {72, 0, 0, 0, 32, 64, 16, 16, 16, 16, 8, 0};
+Sint8  SwirlSwipePictureBiasY[] = {0, 4, 24, -6, -20, -28, 0, 0};
 
 /* battle_effect_gathering_lights.c */
 
 /* Gathering lights, by mode (GATHERING_LIGHTS_MODE): the lights per target and
-   the frames before the targets' turns. */
-Uint8 GatheringLights_Counts[][2] = {
-	/* lights per target, frames */
+   the ticks before the targets' turns. */
+Uint8 GatheringLightsCounts[][2] = {
+	/* lights per target, ticks */
 	[GATHERING_LIGHTS_DEMON_NIGHT] = {16, 88},
 	[GATHERING_LIGHTS_RUMBLE] = {8, 72},
 	[GATHERING_LIGHTS_HAUNTING] = {12, 80},
@@ -218,24 +217,24 @@ Uint8 GatheringLights_Counts[][2] = {
 /* The earth wall's three images: the mirrored wall reads them at the start of
    its sprite sheet, the rising wall after its rebuilt rows. Both share the
    sizes. */
-Uint16 MirroredWall_Pictures[] = EARTH_WALL_PICTURES;
-Uint8  MirroredWall_PictureWidths[] = EARTH_WALL_PICTURE_WIDTHS;
-Uint8  MirroredWall_PictureHeights[] = EARTH_WALL_PICTURE_HEIGHTS;
+Uint16 MirroredWallPictures[] = EARTH_WALL_PICTURES;
+Uint8  MirroredWallPictureWidths[] = EARTH_WALL_PICTURE_WIDTHS;
+Uint8  MirroredWallPictureHeights[] = EARTH_WALL_PICTURE_HEIGHTS;
 
 /* battle_effect_djinn_beams.c: Djinni beam motes and heads. */
 
 /* The picture of each step of a mote's eight-step cycle. */
-Uint8 DjinnBeams_MotePictures[] = {2, 1, 0, 1, 2, 3, 4, 3};
+Uint8 DjinnBeamsMotePictures[] = {2, 1, 0, 1, 2, 3, 4, 3};
 /* The three pictures of the glow at a target's feet. */
-Uint16 DjinnBeams_HeadPictures[] = EARTH_WALL_PICTURES;
-Uint8  DjinnBeams_HeadWidths[] = EARTH_WALL_PICTURE_WIDTHS;
-Uint8  DjinnBeams_HeadHeights[] = EARTH_WALL_PICTURE_HEIGHTS;
+Uint16 DjinnBeamsHeadPictures[] = EARTH_WALL_PICTURES;
+Uint8  DjinnBeamsHeadWidths[] = EARTH_WALL_PICTURE_WIDTHS;
+Uint8  DjinnBeamsHeadHeights[] = EARTH_WALL_PICTURE_HEIGHTS;
 
 /* battle_effect_lobbed_shells.c: Shell explosion rows and shards. */
 
 /* Each lobbed shell style (LOBBED_SHELLS_MODE, battle_effect_lobbed_shells.c):
    the LOBBED_SHELLS_STYLE_ columns. */
-Sint8 LobbedShells_Styles[][2] = {
+Sint8 LobbedShellsStyles[][2] = {
 	/* shatter, unused */
 	{0, 0}, /* LOBBED_SHELLS_BONE_CHILLER */
 	{0, 0}, /* LOBBED_SHELLS_STICKY_GOO */
@@ -247,19 +246,19 @@ Sint8 LobbedShells_Styles[][2] = {
 };
 /* Lobbed shells: nine tumbling images in two sets, the second (pictures 9 to
    17) smaller. */
-Uint8 LobbedShells_ShardWidths[] = {
+Uint8 LobbedShellsShardWidths[] = {
 	9, 10, 9, 9, 9, 11, 11, 11, 12, 6, 7, 7, 7, 6, 6, 8, 8, 8};
-Uint8 LobbedShells_ShardHeights[] = {
+Uint8 LobbedShellsShardHeights[] = {
 	12, 12, 12, 12, 12, 12, 12, 12, 12, 8, 7, 6, 6, 8, 6, 4, 3, 3};
-Uint16 LobbedShells_ShardPictures[] = {0, 108, 228, 336, 444, 552, 684, 816,
-	948, 1092, 1140, 1189, 1231, 1273, 1321, 1357, 1389, 1413};
+Uint16 LobbedShellsShardPictures[] = {0, 108, 228, 336, 444, 552, 684, 816, 948,
+	1092, 1140, 1189, 1231, 1273, 1321, 1357, 1389, 1413};
 
 /* battle_effect_condemn.c: Where the reaper's pictures are drawn. */
 
 /* Where each of the reaper's seven pictures is drawn, in pixels, by the casting
    side's column (X) and row (Y). */
-Uint8 Condemn_PictureX[][7] = REAPER_PICTURE_X;
-Uint8 Condemn_PictureY[][7] = {
+Uint8 CondemnPictureX[][7] = REAPER_PICTURE_X;
+Uint8 CondemnPictureY[][7] = {
 	REAPER_PICTURE_Y,
 	/* Unused: Condemn reads only the first row. */
 	{0, 9, 4, 4, 4, 4, 4},
@@ -268,61 +267,61 @@ Uint8 Condemn_PictureY[][7] = {
 /* battle_effect_bind.c: Spinning and striking triangle vertices. */
 
 /* The spinning triangle's first vertex, 24 up from its centre. */
-VECTOR3 Bind_Vertex[] = {{.x = 0, .y = 24, .z = 0}};
+VECTOR3 BindVertex[] = {{.x = 0, .y = 24, .z = 0}};
 /* The striking triangle's first vertex, the same. */
-VECTOR3 Bind_TriangleStrikeVertex[] = {{.x = 0, .y = 24, .z = 0}};
+VECTOR3 BindTriangleStrikeVertex[] = {{.x = 0, .y = 24, .z = 0}};
 
 /* battle_effect_stars.c and battle_effect_procne.c: The star outlines; Procne's
-   sprite grid, strike frames and comet pictures. */
+   sprite grid, strike ticks and comet pictures. */
 
 /* The two star points, 48 and 28 pixels up (16.16). */
-VECTOR3 Star_Points[] = {
+VECTOR3 StarPoints[] = {
 	{.x = 0, .y = toFIXED(48), .z = 0}, {.x = 0, .y = toFIXED(28), .z = 0}};
-Uint8  Star_Radii[] = {32, 16};
-Uint8  Procne_GridX[] = {0, 32, 64, 0, 32, 64, 0, 32, 64};
-Uint8  Procne_GridY[] = {0, 0, 0, 32, 32, 32, 64, 64, 64};
-Uint16 Procne_Frames[] = {334, 347, 359, 372};
-Uint8  Procne_PictureWidths[] = {14, 24, 48};
-Uint8  Procne_PictureHeights[] = {14, 19, 24};
-Uint8  Procne_PictureBiasY[] = {8, 12, 17};
-Uint16 Procne_Pictures[] = {13824, 14020, 14476};
+Uint8  StarRadii[] = {32, 16};
+Uint8  ProcneGridX[] = {0, 32, 64, 0, 32, 64, 0, 32, 64};
+Uint8  ProcneGridY[] = {0, 0, 0, 32, 32, 32, 64, 64, 64};
+Uint16 ProcneTicks[] = {334, 347, 359, 372};
+Uint8  ProcnePictureWidths[] = {14, 24, 48};
+Uint8  ProcnePictureHeights[] = {14, 19, 24};
+Uint8  ProcnePictureBiasY[] = {8, 12, 17};
+Uint16 ProcnePictures[] = {13824, 14020, 14476};
 
 /* battle_effect_tiamat.c and battle_effect_nereid.c: Tiamat's embers and
    flames; Nereid's columns of water and falling drops. */
 
 /* Ember speeds, by ember index & 3: added to a random 0 to 127, in 128ths of a
-   pixel a frame across and 32nds up. */
-Uint8 Tiamat_EmberSpeeds[] = {0, 8, 12, 16};
+   pixel a tick across and 32nds up. */
+Uint8 TiamatEmberSpeeds[] = {0, 8, 12, 16};
 /* A spark's 1x2 picture, drawn additively, so a spark adds 32 of the ramp's 63
    levels to what it covers. */
-Uint8 Tiamat_SparkPixels[] = {32, 32};
+Uint8 TiamatSparkPixels[] = {32, 32};
 /* Ember sizes, by ember index & 3: mote pictures 1x2, 1x2, 2x4 and 3x6. */
-Uint8 Tiamat_EmberSizes[] = {1, 1, 2, 3};
+Uint8 TiamatEmberSizes[] = {1, 1, 2, 3};
 /* The six flame pictures: size, drop below the flame and sprite sheet
    offset. */
-Uint8  Tiamat_FlameWidths[] = FLAME_PUFF_PICTURE_WIDTHS;
-Uint8  Tiamat_FlameHeights[] = FLAME_PUFF_PICTURE_HEIGHTS;
-Uint8  Tiamat_FlameDrops[] = FLAME_PUFF_PICTURE_BIAS_Y;
-Uint16 Tiamat_FlamePictures[] = FLAME_PUFF_PICTURES;
+Uint8  TiamatFlameWidths[] = FLAME_PUFF_PICTURE_WIDTHS;
+Uint8  TiamatFlameHeights[] = FLAME_PUFF_PICTURE_HEIGHTS;
+Uint8  TiamatFlameDrops[] = FLAME_PUFF_PICTURE_BIAS_Y;
+Uint16 TiamatFlamePictures[] = FLAME_PUFF_PICTURES;
 /* Nereid's four columns of water (NEREID_COLUMN_X, NEREID_COLUMN_Y), drawn from
    the fire pillar picture in the water spray's colours. */
-Uint8 Nereid_Columns[][2] = {
+Uint8 NereidColumns[][2] = {
 	/* the foot of each column: x, y */
 	{16, 104},
 	{32, 104},
 	{48, 104},
 	{64, 104},
 };
-/* A drop's gravity while falling, by drop index & 3, in 16.16 pixels a frame
-   each frame: 1/2, 1/4, 1/4 and 1/8. */
-Sint32 Nereid_Gravity[] = {
+/* A drop's gravity while falling, by drop index & 3, in 16.16 pixels a tick
+   each tick: 1/2, 1/4, 1/4 and 1/8. */
+Sint32 NereidGravity[] = {
 	toFIXED(1) / 2, toFIXED(1) / 4, toFIXED(1) / 4, toFIXED(1) / 8};
 
 /* battle_effect_vortices.c: Vortex mote counts and tornado shapes. */
 
-/* Froth, by variant: motes and frames. */
-Uint8 Vortices_Counts[][2] = {
-	/* bubbles (at most 30, battle_effect_vortices.c), frames */
+/* Froth, by variant: motes and ticks. */
+Uint8 VorticesCounts[][2] = {
+	/* bubbles (at most 30, battle_effect_vortices.c), ticks */
 	[EFFECT_VARIANT_BASIC] = {6, 140},		/* Froth */
 	[EFFECT_VARIANT_STRONGER] = {12, 160},	/* Froth Sphere */
 	[EFFECT_VARIANT_STRONGEST] = {30, 200}, /* Froth Spiral */
@@ -330,7 +329,7 @@ Uint8 Vortices_Counts[][2] = {
 /* Whirlwind, by variant: the WHIRLWIND_ columns. The sway is in pixels each
    way; the shake is btCameraShake's horizontal range, the vertical twice
    that. */
-Uint8 Vortices_Shapes[][3] = {
+Uint8 VorticesShapes[][3] = {
 	/* tornadoes, sway, screen shake */
 	[EFFECT_VARIANT_BASIC] = {1, 16, 2},	 /* Whirlwind, Gale */
 	[EFFECT_VARIANT_STRONGER] = {2, 24, 2},	 /* Tornado, Typhoon */
@@ -340,7 +339,7 @@ Uint8 Vortices_Shapes[][3] = {
 /* battle_effect_prism.c: Crystal counts and pictures. */
 
 /* Where each of the 16 shards starts in the crystal: x, then y. */
-Uint8 Prism_ShardStarts[][2] = {
+Uint8 PrismShardStarts[][2] = {
 	{32, 60},
 	{33, 82},
 	{49, 94},
@@ -359,40 +358,40 @@ Uint8 Prism_ShardStarts[][2] = {
 	{36, 63},
 	{0, 0},
 };
-/* Prism, by variant: crystals and frames. */
-Uint8 Prism_Counts[][2] = {
-	/* crystals, frames */
+/* Prism, by variant: crystals and ticks. */
+Uint8 PrismCounts[][2] = {
+	/* crystals, ticks */
 	[EFFECT_VARIANT_BASIC] = {1, 110},		/* Prism */
 	[EFFECT_VARIANT_STRONGER] = {4, 134},	/* Hail Prism */
 	[EFFECT_VARIANT_STRONGEST] = {12, 166}, /* Freeze Prism */
 };
 /* The twelve shard pictures. */
-Uint8  Prism_ShardWidths[] = {5, 10, 11, 14, 12, 11, 19, 18, 23, 12, 22, 22};
-Uint8  Prism_ShardHeights[] = {14, 10, 7, 13, 14, 14, 32, 30, 24, 38, 20, 20};
-Sint32 Prism_ShardPictures[] = {
+Uint8  PrismShardWidths[] = {5, 10, 11, 14, 12, 11, 19, 18, 23, 12, 22, 22};
+Uint8  PrismShardHeights[] = {14, 10, 7, 13, 14, 14, 32, 30, 24, 38, 20, 20};
+Sint32 PrismShardPictures[] = {
 	0, 70, 170, 247, 429, 597, 751, 1359, 1899, 2451, 2907, 3347};
 
 /* battle_effect_plasma.c: Lightning pillar sparks, columns and counts. */
 
-/* Plasma, by variant: sparks per pillar and shake frames. */
-Uint16 Plasma_Sparks[][2] = {
-	/* sparks per pillar, shake frames */
+/* Plasma, by variant: sparks per pillar and shake ticks. */
+Uint16 PlasmaSparks[][2] = {
+	/* sparks per pillar, shake ticks */
 	[EFFECT_VARIANT_BASIC] = {384, 2},	   /* Plasma, Thunderclap */
 	[EFFECT_VARIANT_STRONGER] = {256, 3},  /* Shine Plasma, Thunderbolt */
 	[EFFECT_VARIANT_STRONGEST] = {192, 4}, /* Spark Plasma, Thunderstorm */
 };
 /* Each pillar's canvas x, seven for each side. */
-Uint8 Plasma_Columns[][7] = {
+Uint8 PlasmaColumns[][7] = {
 	{32, 64, 16, 48, 72, 96, 64},
 	{88, 56, 104, 72, 48, 24, 56},
 };
 /* How many pillars strike, by variant. */
-Uint8 Plasma_Counts[] = {1, 3, 7};
+Uint8 PlasmaCounts[] = {1, 3, 7};
 
 /* battle_effect_plasma.c: Spark group shapes and flash pictures. */
 
 /* The spark groups, by variant: the SPARK_GROUPS_ columns. */
-Uint16 SparkGroups_Shapes[][5] = {
+Uint16 SparkGroupsShapes[][5] = {
 	/* sparks per burst, bursts, each burst's offset across */
 	[EFFECT_VARIANT_BASIC] = {128, 1, 16, 0, 0},
 	[EFFECT_VARIANT_STRONGER] = {255, 1, 16, 0, 0},
@@ -400,28 +399,28 @@ Uint16 SparkGroups_Shapes[][5] = {
 	[SPARK_GROUPS_SEVERE_BLOW] = {340, 1, 16, 24, 48},
 	[SPARK_GROUPS_THRASH] = {32, 1, 16, 0, 0},
 };
-/* The flash picture for each three frames at the end of a flash's life. */
-Uint8 Plasma_FlashPictures[] = FLASH_FADE_PICTURES;
+/* The flash picture for each three ticks at the end of a flash's life. */
+Uint8 PlasmaFlashPictures[] = FLASH_FADE_PICTURES;
 
-/* battle_effect_volcano.c: Fire pillar counts, depths and start frames. */
+/* battle_effect_volcano.c: Fire pillar counts, depths and start ticks. */
 
 /* How many pillars stand, by variant. */
-Uint8 Volcano_Counts[] = {1, 2, 4};
+Uint8 VolcanoCounts[] = {1, 2, 4};
 /* Each pillar's depth in pixels, by variant. */
-Sint8 Volcano_Depths[][4] = {{0, 0, 0, 0}, {24, -24, 0, 0}, {-20, 20, -60, 60}};
-/* The frame each pillar starts. At most four pillars stand, so the fifth entry
+Sint8 VolcanoDepths[][4] = {{0, 0, 0, 0}, {24, -24, 0, 0}, {-20, 20, -60, 60}};
+/* The tick each pillar starts. At most four pillars stand, so the fifth entry
    is never read. */
-Uint8 Volcano_StartFrames[] = {8, 18, 24, 30, 34};
+Uint8 VolcanoStartTicks[] = {8, 18, 24, 30, 34};
 
 /* battle_effect_target_motes.c: Target mote glint orientations. */
 
 /* Glint orientations: none, and mirrored each way and both. */
-Uint8 TargetMotes_GlintFlips[] = GLINT_FLIPS;
+Uint8 TargetMotesGlintFlips[] = GLINT_FLIPS;
 
 /* The effect handlers, indexed by effect kind minus one, which
    btEffectRunFromTable calls; BATTLE_EFFECT_NONE is no effect, for which it
    only clears args->variant. */
-BATTLE_EFFECT_HANDLER BattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1] = {
+BATTLE_EFFECT_HANDLER BattleEffectHandlers[BATTLE_EFFECT_COUNT - 1] = {
 	/* battle_effect_quake.c: Quake */
 	[BATTLE_EFFECT_QUAKE - 1] = btEffectRunQuake,
 	/* battle_effect_spire.c: Spire */
@@ -747,93 +746,93 @@ BATTLE_EFFECT_HANDLER BattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1] = {
 
 /* The poses of the two halves of Cybele's face, three pairs, by
    CYBELE_POSE_FACE_LEFT and _RIGHT. */
-Uint8 Cybele_ObjectPoses[][2] = {
+Uint8 CybeleObjectPoses[][2] = {
 	{8, 10},
 	{9, 11},
 	{3, 4},
 };
 /* The five thorn pictures, which the chips use too. */
-Uint16 Cybele_ThornPictures[] = {3920, 3932, 3947, 3955, 3970};
-Uint8  Cybele_ThornWidths[] = {2, 5, 2, 5, 3};
-Uint8  Cybele_ThornHeights[] = {6, 3, 4, 3, 3};
+Uint16 CybeleThornPictures[] = {3920, 3932, 3947, 3955, 3970};
+Uint8  CybeleThornWidths[] = {2, 5, 2, 5, 3};
+Uint8  CybeleThornHeights[] = {6, 3, 4, 3, 3};
 /* The three flower pictures, square. */
-Uint16 Cybele_FlowerPictures[] = {3456, 3712, 3856};
-Uint8  Cybele_FlowerSizes[] = {16, 12, 8};
+Uint16 CybeleFlowerPictures[] = {3456, 3712, 3856};
+Uint8  CybeleFlowerSizes[] = {16, 12, 8};
 /* The five chip pictures, the thorn pictures again. */
-Uint16 Cybele_ChipPictures[] = {3920, 3932, 3947, 3955, 3970};
-Uint8  Cybele_ChipWidths[] = {2, 5, 2, 5, 3};
-Uint8  Cybele_ChipHeights[] = {6, 3, 4, 3, 3};
+Uint16 CybeleChipPictures[] = {3920, 3932, 3947, 3955, 3970};
+Uint8  CybeleChipWidths[] = {2, 5, 2, 5, 3};
+Uint8  CybeleChipHeights[] = {6, 3, 4, 3, 3};
 /* The five pictures of a spark, square. */
-Uint16 Cybele_SparkPictures[] = {3979, 4043, 4268, 4389, 4470};
-Uint8  Cybele_SparkSizes[] = {8, 15, 11, 9, 5};
+Uint16 CybeleSparkPictures[] = {3979, 4043, 4268, 4389, 4470};
+Uint8  CybeleSparkSizes[] = {8, 15, 11, 9, 5};
 /* The seven growing pictures of the blast sprite sheet, square. Cybele draws
    only the last, largest one, as a dust cloud. */
-Uint16 Cybele_BlastPictures[] = {5760, 6016, 7040, 9344, 11648, 13952, 16256};
-Uint16 Cybele_BlastSizes[] = {16, 32, 48, 48, 48, 48, 48};
+Uint16 CybeleBlastPictures[] = {5760, 6016, 7040, 9344, 11648, 13952, 16256};
+Uint16 CybeleBlastSizes[] = {16, 32, 48, 48, 48, 48, 48};
 /* Boreas: where the crystals stand (and in the second half the rising crystals,
    56 pixels further left), by the bottom-left corner. */
-Uint8 Boreas_Points[][2] = {{57, 130}, {75, 128}, {71, 104}, {101, 130},
+Uint8 BoreasPoints[][2] = {{57, 130}, {75, 128}, {71, 104}, {101, 130},
 	{86, 126}, {85, 98}, {64, 98}, {98, 96}, {77, 87}, {84, 88}, {68, 67},
 	{81, 49}, {94, 70}, {70, 51}, {93, 36}, {81, 50}};
-/* The battle background's jolt on frames 176 to 179. */
-Sint8 Boreas_ShakeOffsets[] = {-4, -3, -2, 0};
+/* The battle background's jolt on ticks 176 to 179. */
+Sint8 BoreasShakeOffsets[] = {-4, -3, -2, 0};
 /* The first half's three crystal pictures, drawn standing on their points. */
-Uint16 Boreas_CrystalPictures[] = {0, 1152, 2064};
-Uint8  Boreas_CrystalWidths[] = {24, 24, 20};
-Uint8  Boreas_CrystalHeights[] = {48, 38, 26};
-/* The third sprite's animations from frame 209, one every 4 frames. */
-Uint8 Boreas_Animations[] = {2, 9, 10, 11};
+Uint16 BoreasCrystalPictures[] = {0, 1152, 2064};
+Uint8  BoreasCrystalWidths[] = {24, 24, 20};
+Uint8  BoreasCrystalHeights[] = {48, 38, 26};
+/* The third sprite's animations from tick 209, one every 4 ticks. */
+Uint8 BoreasAnimations[] = {2, 9, 10, 11};
 /* Boreas: the shards thrown up as the crystals crumble: four large ones, then
-   from frame 192 seven small ones. */
-Uint8  Boreas_DebrisWidths[] = {12, 11, 8, 10, 8, 12, 5, 7, 7, 6, 7};
-Uint8  Boreas_DebrisHeights[] = {10, 16, 14, 15, 4, 4, 3, 4, 6, 12, 10};
-Uint16 Boreas_DebrisPictures[] = {
+   from tick 192 seven small ones. */
+Uint8  BoreasDebrisWidths[] = {12, 11, 8, 10, 8, 12, 5, 7, 7, 6, 7};
+Uint8  BoreasDebrisHeights[] = {10, 16, 14, 15, 4, 4, 3, 4, 6, 12, 10};
+Uint16 BoreasDebrisPictures[] = {
 	2584, 2704, 2880, 2992, 5062, 5094, 5142, 5157, 5185, 5227, 5299};
 /* Boreas: the three 16x16 spray pictures. */
-Uint8  Boreas_SprayWidths[] = {16, 16, 16};
-Uint8  Boreas_SprayHeights[] = {16, 16, 16};
-Uint16 Boreas_SprayPictures[] = {4294, 4550, 4806};
+Uint8  BoreasSprayWidths[] = {16, 16, 16};
+Uint8  BoreasSprayHeights[] = {16, 16, 16};
+Uint16 BoreasSprayPictures[] = {4294, 4550, 4806};
 /* The second half's rising crystals (56 pixels left of the first half's points)
    and the crystals they burst into: the same three pictures. */
-Uint16 Boreas_RisingCrystalPictures[] = {0, 1152, 2064};
-Uint8  Boreas_RisingCrystalWidths[] = {24, 24, 20};
-Uint8  Boreas_RisingCrystalHeights[] = {48, 38, 26};
-Uint8  Boreas_FallWidths[] = {24, 24, 20};
-Uint8  Boreas_FallHeights[] = {48, 38, 26};
-Uint16 Boreas_FallPictures[] = {0, 1152, 2064};
-/* Ice shards: shard i falls with gravity i & 3, in 16.16 pixels a frame each
-   frame: 1/4, 1/8, 1/4 and 1/2. */
-Sint32 Drain_Gravities[] = {
+Uint16 BoreasRisingCrystalPictures[] = {0, 1152, 2064};
+Uint8  BoreasRisingCrystalWidths[] = {24, 24, 20};
+Uint8  BoreasRisingCrystalHeights[] = {48, 38, 26};
+Uint8  BoreasFallWidths[] = {24, 24, 20};
+Uint8  BoreasFallHeights[] = {48, 38, 26};
+Uint16 BoreasFallPictures[] = {0, 1152, 2064};
+/* Ice shards: shard i falls with gravity i & 3, in 16.16 pixels a tick each
+   tick: 1/4, 1/8, 1/4 and 1/2. */
+Sint32 DrainGravities[] = {
 	toFIXED(1) / 4, toFIXED(1) / 8, toFIXED(1) / 4, toFIXED(1) / 2};
 
 /* battle_effect_stat_change.c: Stat-reduction shard geometry. */
 
-/* The twelve shard pictures, three frames for each of four shapes. */
-Uint16 StatChange_ShardPictures[] = {
+/* The twelve shard pictures, three ticks for each of four shapes. */
+Uint16 StatChangeShardPictures[] = {
 	0, 120, 180, 258, 298, 352, 408, 471, 567, 607, 631, 661};
-Uint8 StatChange_ShardWidths[] = {10, 5, 6, 5, 6, 7, 9, 8, 4, 6, 6, 7};
-Uint8 StatChange_ShardHeights[] = {12, 12, 13, 8, 9, 8, 7, 12, 10, 4, 5, 5};
+Uint8 StatChangeShardWidths[] = {10, 5, 6, 5, 6, 7, 9, 8, 4, 6, 6, 7};
+Uint8 StatChangeShardHeights[] = {12, 12, 13, 8, 9, 8, 7, 12, 10, 4, 5, 5};
 
 /* battle_effect_quake.c */
 
-/* Rock wall timing, by variant: frames in the effect, frames each pillar
+/* Rock wall timing, by variant: ticks in the effect, ticks each pillar
    stands, and how far the screen shakes. */
-Uint8 Quake_Timings[][3] = {{80, 32, 2}, {112, 64, 4}, {144, 96, 8}};
+Uint8 QuakeTimings[][3] = {{80, 32, 2}, {112, 64, 4}, {144, 96, 8}};
 
 /* battle_effect_fire.c: Homing ember counts and flare geometry. */
 
 /* Embers by variant, at most FIRE_EMBERS (battle_effect_fire.c). */
-Uint8 Fire_Counts[] = {16, 32, 64};
+Uint8 FireCounts[] = {16, 32, 64};
 /* The six impact flare pictures: sizes, y offsets and where each begins. */
-Uint8  Fire_FlareWidths[] = FLAME_PUFF_PICTURE_WIDTHS;
-Uint8  Fire_FlareHeights[] = FLAME_PUFF_PICTURE_HEIGHTS;
-Uint8  Fire_FlareBiasY[] = FLAME_PUFF_PICTURE_BIAS_Y;
-Uint16 Fire_FlarePictures[] = FLAME_PUFF_PICTURES;
+Uint8  FireFlareWidths[] = FLAME_PUFF_PICTURE_WIDTHS;
+Uint8  FireFlareHeights[] = FLAME_PUFF_PICTURE_HEIGHTS;
+Uint8  FireFlareBiasY[] = FLAME_PUFF_PICTURE_BIAS_Y;
+Uint16 FireFlarePictures[] = FLAME_PUFF_PICTURES;
 
 /* battle_effect_frost.c: Frost's motes, ice mounds and chips. */
 
 /* Where each ice mound stands: x, then the y of its foot. */
-Uint8 Frost_MoundSpots[][2] = {
+Uint8 FrostMoundSpots[][2] = {
 	{53, 108},
 	{73, 110},
 	{29, 110},
@@ -854,106 +853,106 @@ Uint8 Frost_MoundSpots[][2] = {
 	{18, 92},
 	{56, 81},
 };
-/* Motes, ice mounds and the burst frame, for each variant. */
-Uint8 Frost_Timings[][3] = {
+/* Motes, ice mounds and the burst tick, for each variant. */
+Uint8 FrostTimings[][3] = {
 	{32, 8, 85},
 	{48, 12, 97},
 	{64, 19, 109},
 };
 /* The eight mote pictures. */
-Uint8  Frost_MoteWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
-Uint8  Frost_MoteHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
-Uint16 Frost_MotePictures[] = {1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500};
+Uint8  FrostMoteWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
+Uint8  FrostMoteHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
+Uint16 FrostMotePictures[] = {1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500};
 /* The three ice mound pictures, 32 wide. */
-Uint16 Frost_MoundPictures[] = {0, 768, 1280};
-Uint8  Frost_MoundHeights[] = {24, 16, 16};
+Uint16 FrostMoundPictures[] = {0, 768, 1280};
+Uint8  FrostMoundHeights[] = {24, 16, 16};
 /* The eight chip pictures (the same as the motes). */
-Uint8  Frost_ChipWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
-Uint8  Frost_ChipHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
-Uint16 Frost_ChipPictures[] = {1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500};
+Uint8  FrostChipWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
+Uint8  FrostChipHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
+Uint16 FrostChipPictures[] = {1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500};
 
 /* battle_effect_ray.c: Closing bolt sparks by variant. */
 
-/* Sparks by variant; [1] is how many each bolt throws a frame. */
-Uint8 Ray_Sparks[][2] = {{2, 4}, {2, 6}, {4, 8}};
+/* Sparks by variant; [1] is how many each bolt throws a tick. */
+Uint8 RaySparks[][2] = {{2, 4}, {2, 6}, {4, 8}};
 
 /* battle_effect_eruption.c: Eruption counts and puff layouts. */
 
-/* Motes, puffs of smoke and frames, for each variant. */
-Uint8 Eruption_Counts[][3] = {{16, 8, 72}, {32, 16, 80}, {128, 32, 88}};
+/* Motes, puffs of smoke and ticks, for each variant. */
+Uint8 EruptionCounts[][3] = {{16, 8, 72}, {32, 16, 80}, {128, 32, 88}};
 /* The seven puff pictures, square. */
-Uint16 Eruption_PuffPictures[] = BLAST_PICTURES;
-Uint16 Eruption_PuffSizes[] = BLAST_PICTURE_SIZES;
+Uint16 EruptionPuffPictures[] = BLAST_PICTURES;
+Uint16 EruptionPuffSizes[] = BLAST_PICTURE_SIZES;
 
 /* Unreferenced picture layouts, from 6x6 through 20x20.
-   Unused_SheetPicturesShort stops at the 16x16 picture's offset, the first six
-   of Unused_SheetPictures. */
-Uint16 Unused_SheetPicturesShort[] = {0, 36, 100, 200, 344, 540};
-Uint16 Unused_SheetPictures[] = {
+   UnusedSheetPicturesShort stops at the 16x16 picture's offset, the first six
+   of UnusedSheetPictures. */
+Uint16 UnusedSheetPicturesShort[] = {0, 36, 100, 200, 344, 540};
+Uint16 UnusedSheetPictures[] = {
 	0, 36, 100, 200, 344, 540, 796, 1120, 1520, 1900, 2300};
-Uint8 Unused_SheetWidths[] = {6, 8, 10, 12, 14, 16, 18, 20, 19, 20};
-Uint8 Unused_SheetHeights[] = {6, 8, 10, 12, 14, 16, 18, 20, 20, 20};
+Uint8 UnusedSheetWidths[] = {6, 8, 10, 12, 14, 16, 18, 20, 19, 20};
+Uint8 UnusedSheetHeights[] = {6, 8, 10, 12, 14, 16, 18, 20, 20, 20};
 
 /* battle_effect_atalanta.c */
 
 /* The scale Atalanta's formation sprites keep throughout, one to one. */
-SPR_SCALE Atalanta_UnitScale = {{{toFIXED(1), toFIXED(1)}}};
+SPR_SCALE AtalantaUnitScale = {{{toFIXED(1), toFIXED(1)}}};
 
 /* battle_effect_growth.c: Growing vine and pillar geometry. */
 
 /* The three column shapes: vine and pillar widths, pictures and height caps. */
-Uint8  Growth_VineWidths[] = {21, 28, 19};
-Uint8  Growth_HeightLimits[] = {119, 119, 102};
-Uint16 Growth_VinePictures[] = {0, 2499, 5831};
-Uint8  Growth_PillarWidths[] = {10, 8, 9};
-Uint16 Growth_PillarPictures[] = {0, 1080, 1888};
+Uint8  GrowthVineWidths[] = {21, 28, 19};
+Uint8  GrowthHeightLimits[] = {119, 119, 102};
+Uint16 GrowthVinePictures[] = {0, 2499, 5831};
+Uint8  GrowthPillarWidths[] = {10, 8, 9};
+Uint16 GrowthPillarPictures[] = {0, 1080, 1888};
 /* Columns by variant, and where each column's root stands. */
-Uint8 Growth_ColumnCounts[] = {4, 8, 12};
-Uint8 Growth_ColumnX[] = {
+Uint8 GrowthColumnCounts[] = {4, 8, 12};
+Uint8 GrowthColumnX[] = {
 	64, 72, 56, 80, 48, 88, 40, 96, 32, 104, 24, 72, 56, 80, 48, 88};
-Sint8 Growth_PillarHeights[] = {100, 60, 88, 96, 64, 104, 82, 98};
+Sint8 GrowthPillarHeights[] = {100, 60, 88, 96, 64, 104, 82, 98};
 /* The seven pictures of a puff of dust. */
-Sint8  Growth_PuffWidths[] = {5, 7, 11, 16, 23, 27, 16};
-Uint8  Growth_PuffHeights[] = {10, 14, 21, 32, 45, 50, 32};
-Uint16 Growth_PuffPictures[] = {0, 50, 148, 379, 891, 1926, 3276};
+Sint8  GrowthPuffWidths[] = {5, 7, 11, 16, 23, 27, 16};
+Uint8  GrowthPuffHeights[] = {10, 14, 21, 32, 45, 50, 32};
+Uint16 GrowthPuffPictures[] = {0, 50, 148, 379, 891, 1926, 3276};
 /* Each vine's root, across from the middle of the targets. */
-Sint8 Vine_ColumnOffsets[] = {
+Sint8 VineColumnOffsets[] = {
 	0, 14, -32, 8, 32, -48, 4, 12, -24, 24, -12, -40, -4, -16, -32, 12};
 /* Each thorn's kind (THORN_ flags) and root. */
-Uint8 Thorn_Kinds[] = {0, THORN_SMALL | THORN_MIRRORED, THORN_SMALL,
+Uint8 ThornKinds[] = {0, THORN_SMALL | THORN_MIRRORED, THORN_SMALL,
 	THORN_MIRRORED, THORN_SMALL, THORN_SMALL | THORN_MIRRORED, THORN_SMALL,
 	THORN_MIRRORED};
 Sint8 Thorn_X[] = {24, 80, 24, 48, 88, 40, 8, 96};
 /* Thorns by variant. */
-Uint8 Thorn_Counts[] = {3, 5, 8};
+Uint8 ThornCounts[] = {3, 5, 8};
 /* The seven pictures of a puff of dust. */
-Sint8  Thorn_PuffWidths[] = {5, 7, 11, 17, 32, 32, 19};
-Uint8  Thorn_PuffHeights[] = {10, 14, 21, 34, 59, 60, 38};
-Uint16 Thorn_PuffPictures[] = {5888, 5938, 6036, 6267, 6845, 8733, 10653};
+Sint8  ThornPuffWidths[] = {5, 7, 11, 17, 32, 32, 19};
+Uint8  ThornPuffHeights[] = {10, 14, 21, 34, 59, 60, 38};
+Uint16 ThornPuffPictures[] = {5888, 5938, 6036, 6267, 6845, 8733, 10653};
 
 /* battle_effect_bolt.c: Lightning bolt counts and glint palettes. */
 
-/* Bolt, by variant: sparks each bolt throws, glints a frame around each target,
+/* Bolt, by variant: sparks each bolt throws, glints a tick around each target,
    how far the glints spread, and bolts drawn over each other. */
-Uint8 Bolt_Counts[][4] = {
+Uint8 BoltCounts[][4] = {
 	[EFFECT_VARIANT_BASIC] = {16, 0, 15, 1},	  /* Bolt */
 	[EFFECT_VARIANT_STRONGER] = {32, 3, 31, 1},	  /* Flash Bolt */
 	[EFFECT_VARIANT_STRONGEST] = {128, 5, 48, 3}, /* Blue Bolt */
 };
 /* The flips a glint may be drawn in, and its blend by variant. */
-Uint8 Bolt_GlintFlips[] = GLINT_FLIPS;
+Uint8 BoltGlintFlips[] = GLINT_FLIPS;
 /* The glints' blend mode by variant: the brighter pixel wins for Bolt and Flash
    Bolt, and Blue Bolt adds the glint to the canvas. */
-Uint8 Bolt_GlintModes[] = {
+Uint8 BoltGlintModes[] = {
 	COMPOSITE_LIGHTEN, COMPOSITE_LIGHTEN, COMPOSITE_ADDITIVE};
 
 /* battle_effect_projectiles.c: Projectile volley modes and pictures. */
 
 /* Comet picture heights, by comet (PROJECTILE_VOLLEY_COMET). */
-Uint8 ProjectileVolley_CometHeights[] = {24, 36, 48};
+Uint8 ProjectileVolleyCometHeights[] = {24, 36, 48};
 /* Each projectile volley mode, by the PROJECTILE_VOLLEY_ columns
    (battle_effect_projectiles.c). */
-Uint8 ProjectileVolley_Modes[][5] = {
+Uint8 ProjectileVolleyModes[][5] = {
 	/* PROJECTILE_VOLLEY_: SHOTS, STEPS, STAGGER, DELAY, SPARKS */
 	[PROJECTILE_VOLLEY_SLASH] = {6, 10, 3, 32, 4},
 	[PROJECTILE_VOLLEY_SHURIKEN] = {4, 10, 5, 32, 8},
@@ -968,53 +967,53 @@ Uint8 ProjectileVolley_Modes[][5] = {
 	[PROJECTILE_VOLLEY_ICE_BLESSING] = {60, 10, 1, 32, 4},
 	[PROJECTILE_VOLLEY_WING_STROKE] = {10, 10, 1, 32, 4},
 };
-/* Hit flash pictures, by step (flash frame / 2). */
-Uint8  ProjectileVolley_FlashWidths[] = {12, 18, 24, 30, 36, 39, 40};
-Uint8  ProjectileVolley_FlashHeights[] = {10, 15, 18, 22, 27, 28, 30};
-Uint8  ProjectileVolley_FlashSteps[] = {2, 3, 4, 4, 5, 6, 6};
-Uint8  ProjectileVolley_FlashRises[] = {0, 3, 5, 7, 10, 12, 12};
-Uint16 ProjectileVolley_FlashPictures[] = {
+/* Hit flash pictures, by step (flash tick / 2). */
+Uint8  ProjectileVolleyFlashWidths[] = {12, 18, 24, 30, 36, 39, 40};
+Uint8  ProjectileVolleyFlashHeights[] = {10, 15, 18, 22, 27, 28, 30};
+Uint8  ProjectileVolleyFlashSteps[] = {2, 3, 4, 4, 5, 6, 6};
+Uint8  ProjectileVolleyFlashRises[] = {0, 3, 5, 7, 10, 12, 12};
+Uint16 ProjectileVolleyFlashPictures[] = {
 	8192, 8312, 8582, 9014, 9674, 10646, 11738};
 /* Ice chip pictures, by shot index & 3. */
-Uint16 ProjectileVolley_PelletPictures[] = {2308, 2372, 2436, 2500};
+Uint16 ProjectileVolleyPelletPictures[] = {2308, 2372, 2436, 2500};
 
-/* battle_effect_djinn_attacks.c: Mercury Djinni flame launch frames. */
+/* battle_effect_djinn_attacks.c: Mercury Djinni flame launch ticks. */
 
-/* The frames on which the Djinni fires each of its five flames. */
-Uint8 DjinnAttacks_LaunchFrames[] = {4, 7, 10, 21, 34};
+/* The ticks on which the Djinni fires each of its five flames. */
+Uint8 DjinnAttacksLaunchTicks[] = {4, 7, 10, 21, 34};
 
 /* battle_effect_hail.c: Hail's ice chips; Ground's portal and crackles. */
 
 /* The four ice chip pictures. */
-Uint8  Hail_PictureWidths[] = {8, 8, 8, 8};
-Uint8  Hail_PictureHeights[] = {8, 8, 8, 8};
-Uint16 Hail_Pictures[] = {2308, 2372, 2436, 2500};
+Uint8  HailPictureWidths[] = {8, 8, 8, 8};
+Uint8  HailPictureHeights[] = {8, 8, 8, 8};
+Uint16 HailPictures[] = {2308, 2372, 2436, 2500};
 /* The blitter flags a crackle may take, chosen at random: clipped at the canvas
    edges, and drawn as is, mirrored across, mirrored down or both. */
-Uint8 Ground_CrackleFlips[] = {EFFECT_CLIP_BOUNDS,
+Uint8 GroundCrackleFlips[] = {EFFECT_CLIP_BOUNDS,
 	EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
 	EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP};
 /* The portal (picture 0), its white core (1 and 2) and its crackles (3 to 8) in
    the portal sprite sheet: size, where each begins in the sprite sheet, and its
    offset from the portal's corner. */
-Uint8  Ground_PortalWidths[] = {24, 7, 7, 8, 6, 13, 10, 11, 7};
-Uint8  Ground_PortalHeights[] = {48, 13, 14, 24, 24, 17, 20, 14, 20};
-Uint16 Ground_PortalPictures[] = {
+Uint8  GroundPortalWidths[] = {24, 7, 7, 8, 6, 13, 10, 11, 7};
+Uint8  GroundPortalHeights[] = {48, 13, 14, 24, 24, 17, 20, 14, 20};
+Uint16 GroundPortalPictures[] = {
 	0, 1152, 1243, 1341, 1533, 1677, 1898, 2098, 2252};
-Uint8 Ground_PortalX[] = {0, 9, 9, 11, 10, 0, 3, 13, 7};
-Uint8 Ground_PortalY[] = {0, 18, 18, 0, 24, 20, 5, 22, 26};
+Uint8 GroundPortalX[] = {0, 9, 9, 11, 10, 0, 3, 13, 7};
+Uint8 GroundPortalY[] = {0, 18, 18, 0, 24, 20, 5, 22, 26};
 
 /* battle_effect_spire.c and battle_effect_thor.c: Storm effect colours and
    shattering rocks. */
 
 /* The colours a target flashes when a bolt strikes it, chosen at random. */
-Uint8 Thor_TargetPalettes[] = {SPRITE_COLOR_WHITE, SPRITE_COLOR_BLACK,
+Uint8 ThorTargetPalettes[] = {SPRITE_COLOR_WHITE, SPRITE_COLOR_BLACK,
 	SPRITE_COLOR_RED_TINT, SPRITE_COLOR_GBR};
 /* Flip flags for the crackles of lightning around Thor, chosen at random. */
-Uint8 Thor_CrackleFlips[] = GLINT_FLIPS;
+Uint8 ThorCrackleFlips[] = GLINT_FLIPS;
 /* Where each of a rock's 21 shards starts, x then y, before the rock's offset
    across. */
-Uint8 Spire_ShardOffsets[32][2] = {
+Uint8 SpireShardOffsets[32][2] = {
 	{65, 104},
 	{68, 95},
 	{64, 93},
@@ -1037,18 +1036,18 @@ Uint8 Spire_ShardOffsets[32][2] = {
 	{61, 65},
 	{53, 61},
 };
-/* Each rock's offset across, the frame it appears (it lands 18 frames later),
+/* Each rock's offset across, the tick it appears (it lands 18 ticks later),
    and the rocks by variant. */
-Sint8 Spire_RockX[] = {0, -12, 12, -8, 16};
-Uint8 Spire_DropFrames[] = {8, 16, 20, 24, 32};
-Uint8 Spire_RockCounts[] = {1, 3, 5};
+Sint8 SpireRockX[] = {0, -12, 12, -8, 16};
+Uint8 SpireDropTicks[] = {8, 16, 20, 24, 32};
+Uint8 SpireRockCounts[] = {1, 3, 5};
 /* Shattering rocks: five shard shapes in three tumbling phases each, decoded
    after the boulder picture. */
-Uint8 Spire_ShardWidths[] = {
+Uint8 SpireShardWidths[] = {
 	5, 11, 10, 7, 7, 12, 13, 9, 19, 12, 17, 22, 15, 16, 14};
-Uint8 Spire_ShardHeights[] = {
+Uint8 SpireShardHeights[] = {
 	11, 6, 10, 11, 10, 7, 17, 21, 12, 21, 17, 13, 16, 16, 15};
-Uint16 Spire_ShardPictures[] = {0, 55, 121, 221, 298, 368, 452, 673, 862, 1090,
+Uint16 SpireShardPictures[] = {0, 55, 121, 221, 298, 368, 452, 673, 862, 1090,
 	1342, 1631, 1917, 2157, 2413, 2623};
 
 /* battle_effect_gaia.c and battle_effect_flurry.c: flurry rows and rising wall
@@ -1057,8 +1056,8 @@ Uint16 Spire_ShardPictures[] = {0, 55, 121, 221, 298, 368, 452, 673, 862, 1090,
 /* Each flurry mode (FLURRY_MODE), by the FLURRY_ columns
    (battle_effect_flurry.c). */
 /* clang-format off */
-Uint8 Flurry_Styles[][7] = {
-	/* FLURRY_: ARC_SHEET, PALETTE, STRIKES, MOTES, INTERVAL, FRAMES, */
+Uint8 FlurryStyles[][7] = {
+	/* FLURRY_: ARC_SHEET, PALETTE, STRIKES, MOTES, INTERVAL, TICKS, */
 	/* FLASH */
 	[FLURRY_BEAR_CLAW] =
 		{FLURRY_ARCS, FLURRY_PALETTE_MARS_DJINNI, 5, 16, 12, 80, 0},
@@ -1082,45 +1081,45 @@ Uint8 Flurry_Styles[][7] = {
 /* clang-format on */
 /* Rising wall: the nine rows of the growing wall in the rebuilt sprite
    sheet. */
-Uint16 Gaia_RowPictures[] = {0, 160, 352, 640, 1024, 1504, 2080, 2752, 3776};
-Uint8  Gaia_RowWidths[] = {5, 6, 9, 12, 15, 18, 21, 32, 40};
+Uint16 GaiaRowPictures[] = {0, 160, 352, 640, 1024, 1504, 2080, 2752, 3776};
+Uint8  GaiaRowWidths[] = {5, 6, 9, 12, 15, 18, 21, 32, 40};
 /* The three pictures of the flames at the wall's foot, after the rebuilt rows;
    they share the earth wall's sizes. */
-Uint16 Gaia_FlamePictures[] = {10672, 11505, 12550};
-Uint8  Gaia_FlameWidths[] = EARTH_WALL_PICTURE_WIDTHS;
-Uint8  Gaia_FlameHeights[] = EARTH_WALL_PICTURE_HEIGHTS;
+Uint16 GaiaFlamePictures[] = {10672, 11505, 12550};
+Uint8  GaiaFlameWidths[] = EARTH_WALL_PICTURE_WIDTHS;
+Uint8  GaiaFlameHeights[] = EARTH_WALL_PICTURE_HEIGHTS;
 /* BG2's x shift, by side and variant, in canvas pixels written to BG2X: a
    positive shift moves the canvas left on the screen. */
-Sint8 Gaia_Bg2Shifts[][3] = {{-8, 0, 12}, {-72, -40, -16}};
+Sint8 GaiaBg2Shifts[][3] = {{-8, 0, 12}, {-72, -40, -16}};
 /* The columns rock particles[16] to particles[21] take. */
-Uint8 Gaia_LateRockColumns[] = {136, 40, 120, 56, 104, 72};
+Uint8 GaiaLateRockColumns[] = {136, 40, 120, 56, 104, 72};
 
 /* battle_effect_beams.c: Beam pictures and reach. */
 
 /* The six pictures of the growing beam, and how far each reaches short of the
    user. The Lost Age reads the same tables. */
-Uint8  Beam_PictureWidths[] = SLASH_PICTURE_WIDTHS;
-Uint8  Beam_PictureHeights[] = SLASH_PICTURE_HEIGHTS;
-Uint16 Beam_Pictures[] = {0, 266, 752, 1533, 2495, 3496};
-Uint8  Beam_PictureReaches[] = SLASH_PICTURE_REACH;
+Uint8  BeamPictureWidths[] = SLASH_PICTURE_WIDTHS;
+Uint8  BeamPictureHeights[] = SLASH_PICTURE_HEIGHTS;
+Uint16 BeamPictures[] = {0, 266, 752, 1533, 2495, 3496};
+Uint8  BeamPictureReaches[] = SLASH_PICTURE_REACH;
 
 /* battle_effect_casting_impact.c: Casting impact glints and orbit pictures. */
 
 /* The flips a glint may take, picked at random. */
-Uint8 CastingImpact_GlintDrawFlags[] = GLINT_FLIPS;
-Uint8 Reaper_PictureX[][7] = REAPER_PICTURE_X;
-Uint8 Reaper_PictureY[] = REAPER_PICTURE_Y;
+Uint8 CastingImpactGlintDrawFlags[] = GLINT_FLIPS;
+Uint8 ReaperPictureX[][7] = REAPER_PICTURE_X;
+Uint8 ReaperPictureY[] = REAPER_PICTURE_Y;
 /* The four ice chip pictures, 8x8. */
-Uint16 CastingImpact_IceChipPictures[] = {2308, 2372, 2436, 2500, 0};
+Uint16 CastingImpactIceChipPictures[] = {2308, 2372, 2436, 2500, 0};
 
 /* battle_effect_helm_splitter.c: Fire swirl pictures. */
 
 /* The seven pictures of the fire swirl, and where each sits from the user. */
-Uint8  HelmSplitter_PictureWidths[] = {26, 46, 63, 77, 60, 39, 32};
-Uint8  HelmSplitter_PictureHeights[] = {11, 20, 37, 65, 65, 54, 39};
-Uint16 HelmSplitter_Pictures[] = {0, 286, 1206, 3537, 8542, 12442, 14548};
-Sint8  HelmSplitter_PictureBiasX[] = {53, 36, 16, 2, 2, 2, 2};
-Sint8  HelmSplitter_PictureBiasY[] = {2, 3, 3, 3, 4, 14, 29};
+Uint8  HelmSplitterPictureWidths[] = {26, 46, 63, 77, 60, 39, 32};
+Uint8  HelmSplitterPictureHeights[] = {11, 20, 37, 65, 65, 54, 39};
+Uint16 HelmSplitterPictures[] = {0, 286, 1206, 3537, 8542, 12442, 14548};
+Sint8  HelmSplitterPictureBiasX[] = {53, 36, 16, 2, 2, 2, 2};
+Sint8  HelmSplitterPictureBiasY[] = {2, 3, 3, 3, 4, 14, 29};
 
 /* battle_effect_helm_splitter.c: Sprite formation coordinates and impact burst
    pictures. */
@@ -1129,86 +1128,86 @@ Sint8  HelmSplitter_PictureBiasY[] = {2, 3, 3, 3, 4, 14, 29};
    a time: Nereid's twelve in rows of 1, 3, 4 and 4; Cybele's eight in rows of
    3, 2 and 3; Tiamat's eight drawn at 1.25 times their size. Thor's, a 3x3
    grid, needs no table. */
-Uint8 SummonFormation_NereidX[] = {
+Uint8 SummonFormationNereidX[] = {
 	52, 25, 57, 89, 7, 39, 71, 103, 21, 53, 85, 117};
-Uint8 SummonFormation_NereidZ[] = {
+Uint8 SummonFormationNereidZ[] = {
 	0, 32, 32, 32, 64, 64, 64, 64, 96, 96, 96, 96};
-Uint8 SummonFormation_CybeleX[] = {0, 32, 64, 16, 48, 0, 32, 64};
-Uint8 SummonFormation_CybeleZ[] = {0, 0, 0, 32, 32, 64, 64, 64};
-Uint8 SummonFormation_TiamatX[] = {0, 40, 80, 0, 40, 80, 40, 80};
-Uint8 SummonFormation_TiamatZ[] = {13, 0, 0, 53, 40, 40, 80, 80};
+Uint8 SummonFormationCybeleX[] = {0, 32, 64, 16, 48, 0, 32, 64};
+Uint8 SummonFormationCybeleZ[] = {0, 0, 0, 32, 32, 64, 64, 64};
+Uint8 SummonFormationTiamatX[] = {0, 40, 80, 0, 40, 80, 40, 80};
+Uint8 SummonFormationTiamatZ[] = {13, 0, 0, 53, 40, 40, 80, 80};
 /* The eight pictures of the impact flash. */
-Uint8  ImpactBurst_PictureWidths[] = {48, 48, 46, 36, 36, 32, 26, 6};
-Uint8  ImpactBurst_PictureHeights[] = {96, 96, 90, 74, 74, 62, 52, 12};
-Uint16 ImpactBurst_Pictures[] = {
+Uint8  ImpactBurstPictureWidths[] = {48, 48, 46, 36, 36, 32, 26, 6};
+Uint8  ImpactBurstPictureHeights[] = {96, 96, 90, 74, 74, 62, 52, 12};
+Uint16 ImpactBurstPictures[] = {
 	0, 4608, 9216, 13356, 16020, 18684, 20668, 22020};
 
 /* battle_effect_starfield_fall.c and battle_effect_ramses.c: The fall's
    orbiting sparks, fireballs and flashes; Ramses' statue and puffs. */
 
 /* The seven sparks that orbit the falling sprite. */
-Sint16 StarfieldFall_OrbitPoints[][3] = {{-64, -96, 24}, {-48, -120, 32},
+Sint16 StarfieldFallOrbitPoints[][3] = {{-64, -96, 24}, {-48, -120, 32},
 	{-32, -80, -48}, {-16, -72, -24}, {16, -80, 16}, {32, -112, -32},
 	{48, -96, 56}};
 /* Where the seven fireballs fall, in pixels. */
-Sint16 StarfieldFall_FireballPoints[][2] = {
+Sint16 StarfieldFallFireballPoints[][2] = {
 	{32, 32}, {48, 96}, {80, 80}, {112, 100}, {176, 80}, {196, 64}, {204, 96}};
 /* The seven growing flash pictures of the blast sprite sheet, square. */
-Uint16 StarfieldFall_FlashPictures[] = BLAST_PICTURES;
-Uint16 StarfieldFall_FlashSizes[] = BLAST_PICTURE_SIZES;
+Uint16 StarfieldFallFlashPictures[] = BLAST_PICTURES;
+Uint16 StarfieldFallFlashSizes[] = BLAST_PICTURE_SIZES;
 /* Where the statue's sprites stand, in pixels from its corner. */
-Uint8 Ramses_StatueColumns[] = {12, 44, 28, 60, 0, 32, 64, 0, 32};
-Uint8 Ramses_StatueRows[] = {0, 0, 32, 32, 64, 64, 64, 32, 32};
+Uint8 RamsesStatueColumns[] = {12, 44, 28, 60, 0, 32, 64, 0, 32};
+Uint8 RamsesStatueRows[] = {0, 0, 32, 32, 64, 64, 64, 32, 32};
 /* The puff pictures of the blast sprite sheet, square; only the last four are
    used. */
-Uint16 Ramses_PuffPictures[] = BLAST_PICTURES;
-Uint16 Ramses_PuffSizes[] = BLAST_PICTURE_SIZES;
+Uint16 RamsesPuffPictures[] = BLAST_PICTURES;
+Uint16 RamsesPuffSizes[] = BLAST_PICTURE_SIZES;
 
 /* battle_effect_ragnarok.c: Flame blade strike columns and flash pictures. */
 
 /* The canvas x of each strike column, three for each side. */
-Uint8 Ragnarok_StrikeColumns[][3] = {
+Uint8 RagnarokStrikeColumns[][3] = {
 	{32, 24, 0},
 	{96, 104, 128},
 };
-/* The flash picture for each three frames at the end of a flash's life. */
-Uint8 Ragnarok_FlashPictures[] = FLASH_FADE_PICTURES;
+/* The flash picture for each three ticks at the end of a flash's life. */
+Uint8 RagnarokFlashPictures[] = FLASH_FADE_PICTURES;
 
 /* battle_effect_judgment.c and battle_effect_titan_blade.c: Titan Blade's
    flashes and dust; Judgment's burst and its shards. */
 
-/* The flash picture for each three frames at the end of a flash's life. */
-Uint8 TitanBlade_FlashPictures[] = FLASH_FADE_PICTURES;
-/* Dust gravity, by particle index & 3, in Nereid_Gravity's steps. */
-Sint32 TitanBlade_DustGravity[] = {
+/* The flash picture for each three ticks at the end of a flash's life. */
+Uint8 TitanBladeFlashPictures[] = FLASH_FADE_PICTURES;
+/* Dust gravity, by particle index & 3, in NereidGravity's steps. */
+Sint32 TitanBladeDustGravity[] = {
 	toFIXED(1) / 2, toFIXED(1) / 4, toFIXED(1) / 4, toFIXED(1) / 8};
 /* Judgment's burst: seven quarter pictures, each half as wide as it is tall,
    from JUDGMENT_SHEET_BURST. */
-Uint8  Judgment_BurstHeights[] = {2, 3, 4, 6, 10, 11, 12};
-Uint16 Judgment_ShieldSprites[] = {0, 8, 26, 58, 130, 330, 572};
+Uint8  JudgmentBurstHeights[] = {2, 3, 4, 6, 10, 11, 12};
+Uint16 JudgmentShieldSprites[] = {0, 8, 26, 58, 130, 330, 572};
 /* The six shard pictures thrown from the burst, from the sprite sheet's
    start. */
-Uint16 Judgment_ShardPictures[] = {2396, 2985, 3698, 4411, 4810, 5146};
-Uint8  Judgment_ShardWidths[] = {19, 23, 23, 19, 16, 17};
-Uint8  Judgment_ShardHeights[] = {31, 31, 31, 21, 21, 24};
+Uint16 JudgmentShardPictures[] = {2396, 2985, 3698, 4411, 4810, 5146};
+Uint8  JudgmentShardWidths[] = {19, 23, 23, 19, 16, 17};
+Uint8  JudgmentShardHeights[] = {31, 31, 31, 21, 21, 24};
 
 /* battle_effect_kirin.c: Kirin's sprites. */
 
 /* Where Kirin's nine sprites stand, in pixels from its corner. */
-Uint8 Kirin_Columns[] = {8, 40, 72, 104, 8, 40, 72, 104, 0};
-Uint8 Kirin_Rows[] = {0, 0, 0, 24, 32, 32, 32, 56, 64};
+Uint8 KirinColumns[] = {8, 40, 72, 104, 8, 40, 72, 104, 0};
+Uint8 KirinRows[] = {0, 0, 0, 24, 32, 32, 32, 56, 64};
 
 /* battle_effect_neptune.c: Neptune's sprites and its spray's gravity. */
 
 /* Neptune's eight sprites: pixel offsets, scaled by 1.5 as placed. */
-Uint8 Neptune_ObjectX[] = {0, 32, 64, 0, 32, 64, 96, 96};
-Uint8 Neptune_ObjectY[] = {0, 0, 0, 32, 32, 32, 0, 32};
-/* Spray gravity, by particle index & 3, in Nereid_Gravity's steps. */
-Sint32 Neptune_Gravity[] = {
+Uint8 NeptuneObjectX[] = {0, 32, 64, 0, 32, 64, 96, 96};
+Uint8 NeptuneObjectY[] = {0, 0, 0, 32, 32, 32, 0, 32};
+/* Spray gravity, by particle index & 3, in NereidGravity's steps. */
+Sint32 NeptuneGravity[] = {
 	toFIXED(1) / 2, toFIXED(1) / 4, toFIXED(1) / 4, toFIXED(1) / 8};
 
 /* battle_effect_undead_sword.c: Rising burst puff pictures. */
 
 /* The seven square puff pictures, from UNDEAD_SWORD_PUFF_SHEET. */
-Uint16 UndeadSword_PuffPictures[] = BLAST_PICTURES;
-Uint16 UndeadSword_PuffSizes[] = BLAST_PICTURE_SIZES;
+Uint16 UndeadSwordPuffPictures[] = BLAST_PICTURES;
+Uint16 UndeadSwordPuffSizes[] = BLAST_PICTURE_SIZES;

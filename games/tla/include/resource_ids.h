@@ -787,19 +787,19 @@ extern char ResourceId_RobedGoddessTiles;
 
 /* The sky of Atalanta, Boreas, Cruel Ruin, Daedalus, Flora, Judgment, Moloch
    and Procne; only the unused slideshow list names it
-   (DisplayScroll_UnusedSlideResources). */
+   (DisplayScrollUnusedSlideResources). */
 extern char ResourceId_VioletSkyBackdrop;
 #define RESOURCE_VIOLET_SKY_BACKDROP ((Sint32)&ResourceId_VioletSkyBackdrop)
 /* The sky of Neptune and Thor; the credits' slideshow shows it
-   (DisplayScroll_SlideResources). */
+   (DisplayScrollSlideResources). */
 extern char ResourceId_DuskCloudsBackdrop;
 #define RESOURCE_DUSK_CLOUDS_BACKDROP ((Sint32)&ResourceId_DuskCloudsBackdrop)
 /* The sky of Judgment; the credits' slideshow shows it
-   (DisplayScroll_SlideResources). */
+   (DisplayScrollSlideResources). */
 extern char ResourceId_BeachBackdrop;
 #define RESOURCE_BEACH_BACKDROP ((Sint32)&ResourceId_BeachBackdrop)
 /* The sky of Judgment and Kirin; only the unused slideshow list names it
-   (DisplayScroll_UnusedSlideResources). */
+   (DisplayScrollUnusedSlideResources). */
 extern char ResourceId_ForestBackdrop;
 #define RESOURCE_FOREST_BACKDROP ((Sint32)&ResourceId_ForestBackdrop)
 /* Drawn by Cruel Ruin. */
@@ -819,7 +819,7 @@ extern char ResourceId_AerialViewBackdrop;
 
 /* The Colosso's backdrop, which the debug battle menu fights on
    (btDebugBattleRunMenu) and the credits' slideshow shows
-   (DisplayScroll_SlideResources). */
+   (DisplayScrollSlideResources). */
 extern char ResourceId_ColossoBackdrop;
 #define RESOURCE_COLOSSO_BACKDROP ((Sint32)&ResourceId_ColossoBackdrop)
 /* The desert's battle backdrop (fdBattleBackgroundSelectForEnvironment), and
@@ -827,7 +827,7 @@ extern char ResourceId_ColossoBackdrop;
 extern char ResourceId_DesertBackdrop;
 #define RESOURCE_DESERT_BACKDROP ((Sint32)&ResourceId_DesertBackdrop)
 /* Battle backdrops of The Broken Seal's places, which no battle in this game is
-   fought on: the credits' slideshow shows those DisplayScroll_SlideResources
+   fought on: the credits' slideshow shows those DisplayScrollSlideResources
    lists, and only the unused list names the rest. */
 extern char ResourceId_SuhallaGateBackdrop;
 #define RESOURCE_SUHALLA_GATE_BACKDROP ((Sint32)&ResourceId_SuhallaGateBackdrop)
@@ -898,7 +898,7 @@ extern char ResourceId_GrasslandBackdrop;
 #define RESOURCE_GRASSLAND_BACKDROP ((Sint32)&ResourceId_GrasslandBackdrop)
 extern char ResourceId_SolSanctumBackdrop;
 #define RESOURCE_SOL_SANCTUM_BACKDROP ((Sint32)&ResourceId_SolSanctumBackdrop)
-/* Loaded by btTransitionRun; listed in Scene_BattleBackgroundRules. */
+/* Loaded by btTransitionRun; listed in SceneBattleBackgroundRules. */
 extern char ResourceId_SerpentStarsBackdrop;
 #define RESOURCE_SERPENT_STARS_BACKDROP \
 	((Sint32)&ResourceId_SerpentStarsBackdrop)
@@ -909,7 +909,7 @@ extern char ResourceId_BlueRingSheet;
 /* The colours of Mars's star field. */
 extern char ResourceId_RedPaletteC;
 #define RESOURCE_RED_PALETTE_C ((Sint32)&ResourceId_RedPaletteC)
-/* Drawn by Haures; listed in Scene_BattleBackgroundRules. */
+/* Drawn by Haures; listed in SceneBattleBackgroundRules. */
 extern char ResourceId_MossCaveBackdrop;
 #define RESOURCE_MOSS_CAVE_BACKDROP ((Sint32)&ResourceId_MossCaveBackdrop)
 /* The lava cave backdrop of the Valukar battle in the Yampi Desert Cave. */
@@ -924,7 +924,7 @@ extern char ResourceId_DragonHallABackdrop;
 #define RESOURCE_DRAGON_HALL_A_BACKDROP \
 	((Sint32)&ResourceId_DragonHallABackdrop)
 /* Loaded by fdBattleBackgroundSelectForMap; listed in
-   Scene_BattleBackgroundRules. */
+   SceneBattleBackgroundRules. */
 extern char ResourceId_DragonHallBBackdrop;
 #define RESOURCE_DRAGON_HALL_B_BACKDROP \
 	((Sint32)&ResourceId_DragonHallBBackdrop)
@@ -934,7 +934,7 @@ extern char ResourceId_GrasslandBBackdrop;
 extern char ResourceId_RockyBeachBackdrop;
 #define RESOURCE_ROCKY_BEACH_BACKDROP ((Sint32)&ResourceId_RockyBeachBackdrop)
 /* Loaded by fdBattleBackgroundSelectForEnvironment; listed in
-   Scene_BattleBackgroundRules. */
+   SceneBattleBackgroundRules. */
 extern char ResourceId_DenseForestBackdrop;
 #define RESOURCE_DENSE_FOREST_BACKDROP ((Sint32)&ResourceId_DenseForestBackdrop)
 extern char ResourceId_ShipDeckBackdrop;
@@ -1050,16 +1050,16 @@ extern char ResourceId_WorldMapPictureLarge;
 /* The World Map: its four graphics sets, its cells and its perspective view. */
 
 /* The colours of the world map's first graphics set
-   (WorldMap_GraphicsResources). */
+   (WorldMapGraphicsResources). */
 extern char ResourceId_WorldMapPaletteA;
 #define RESOURCE_WORLD_MAP_PALETTE_A ((Sint32)&ResourceId_WorldMapPaletteA)
 /* The world map's cell tiles attributes in its first graphics set
-   (WorldMap_GraphicsResources). */
+   (WorldMapGraphicsResources). */
 extern char ResourceId_DefaultMetatileTilesAttributes;
 #define RESOURCE_DEFAULT_METATILE_TILES_ATTRIBUTES \
 	((Sint32)&ResourceId_DefaultMetatileTilesAttributes)
 /* The colours of the world map's third graphics set
-   (WorldMap_GraphicsResources). */
+   (WorldMapGraphicsResources). */
 extern char ResourceId_WorldMapPaletteB;
 #define RESOURCE_WORLD_MAP_PALETTE_B ((Sint32)&ResourceId_WorldMapPaletteB)
 /* The world map's tile offsets and packed tiles, read by
@@ -1071,115 +1071,115 @@ extern char ResourceId_PerspectiveDataA;
 extern char ResourceId_DefaultMapMetatiles;
 #define RESOURCE_DEFAULT_MAP_METATILES ((Sint32)&ResourceId_DefaultMapMetatiles)
 /* The tile animation of world map set A: a row of
-   WorldMap_GraphicsResources. */
+   WorldMapGraphicsResources. */
 extern char ResourceId_DefaultMapAnimation;
 #define RESOURCE_DEFAULT_MAP_ANIMATION ((Sint32)&ResourceId_DefaultMapAnimation)
-/* Tiles 1 of 6 of world map set A, a row of WorldMap_GraphicsResources. */
+/* Tiles 1 of 6 of world map set A, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesA1;
 #define RESOURCE_WORLD_MAP_TILES_A1 ((Sint32)&ResourceId_WorldMapTilesA1)
-/* Tiles 2 of 6 of world map set A, a row of WorldMap_GraphicsResources. */
+/* Tiles 2 of 6 of world map set A, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesA2;
 #define RESOURCE_WORLD_MAP_TILES_A2 ((Sint32)&ResourceId_WorldMapTilesA2)
-/* Tiles 3 of 6 of world map set A, a row of WorldMap_GraphicsResources. */
+/* Tiles 3 of 6 of world map set A, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesA3;
 #define RESOURCE_WORLD_MAP_TILES_A3 ((Sint32)&ResourceId_WorldMapTilesA3)
-/* Tiles 4 of 6 of world map set A, a row of WorldMap_GraphicsResources. */
+/* Tiles 4 of 6 of world map set A, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesA4;
 #define RESOURCE_WORLD_MAP_TILES_A4 ((Sint32)&ResourceId_WorldMapTilesA4)
-/* Tiles 5 of 6 of world map set A, a row of WorldMap_GraphicsResources. */
+/* Tiles 5 of 6 of world map set A, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesA5;
 #define RESOURCE_WORLD_MAP_TILES_A5 ((Sint32)&ResourceId_WorldMapTilesA5)
-/* Tiles 6 of 6 of world map set A, a row of WorldMap_GraphicsResources. */
+/* Tiles 6 of 6 of world map set A, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesA6;
 #define RESOURCE_WORLD_MAP_TILES_A6 ((Sint32)&ResourceId_WorldMapTilesA6)
-/* The palette of world map set C, a row of WorldMap_GraphicsResources. */
+/* The palette of world map set C, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapPaletteC;
 #define RESOURCE_WORLD_MAP_PALETTE_C ((Sint32)&ResourceId_WorldMapPaletteC)
 /* The tile animation of world map set C, in DefaultMapAnimation's format: a row
-   of WorldMap_GraphicsResources. */
+   of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapAnimationC;
 #define RESOURCE_WORLD_MAP_ANIMATION_C ((Sint32)&ResourceId_WorldMapAnimationC)
 /* The cell tiles attributes of world map set C, in
    DefaultMetatileTilesAttributes' format: a row of
-   WorldMap_GraphicsResources. */
+   WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapMetatileTilesAttributesC;
 #define RESOURCE_WORLD_MAP_METATILE_TILES_ATTRIBUTES_C \
 	((Sint32)&ResourceId_WorldMapMetatileTilesAttributesC)
-/* Tiles 1 of 6 of world map set C, a row of WorldMap_GraphicsResources. */
+/* Tiles 1 of 6 of world map set C, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesC1;
 #define RESOURCE_WORLD_MAP_TILES_C1 ((Sint32)&ResourceId_WorldMapTilesC1)
-/* Tiles 2 of 6 of world map set C, a row of WorldMap_GraphicsResources. */
+/* Tiles 2 of 6 of world map set C, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesC2;
 #define RESOURCE_WORLD_MAP_TILES_C2 ((Sint32)&ResourceId_WorldMapTilesC2)
-/* Tiles 3 of 6 of world map set C, a row of WorldMap_GraphicsResources. */
+/* Tiles 3 of 6 of world map set C, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesC3;
 #define RESOURCE_WORLD_MAP_TILES_C3 ((Sint32)&ResourceId_WorldMapTilesC3)
-/* Tiles 4 of 6 of world map set C, a row of WorldMap_GraphicsResources. */
+/* Tiles 4 of 6 of world map set C, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesC4;
 #define RESOURCE_WORLD_MAP_TILES_C4 ((Sint32)&ResourceId_WorldMapTilesC4)
-/* Tiles 5 of 6 of world map set C, a row of WorldMap_GraphicsResources. */
+/* Tiles 5 of 6 of world map set C, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesC5;
 #define RESOURCE_WORLD_MAP_TILES_C5 ((Sint32)&ResourceId_WorldMapTilesC5)
-/* Tiles 6 of 6 of world map set C, a row of WorldMap_GraphicsResources. */
+/* Tiles 6 of 6 of world map set C, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesC6;
 #define RESOURCE_WORLD_MAP_TILES_C6 ((Sint32)&ResourceId_WorldMapTilesC6)
 /* The tile animation of world map set B, in DefaultMapAnimation's format: a row
-   of WorldMap_GraphicsResources. */
+   of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapAnimationB;
 #define RESOURCE_WORLD_MAP_ANIMATION_B ((Sint32)&ResourceId_WorldMapAnimationB)
 /* The cell tiles attributes of world map set B, in
    DefaultMetatileTilesAttributes' format: a row of
-   WorldMap_GraphicsResources. */
+   WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapMetatileTilesAttributesB;
 #define RESOURCE_WORLD_MAP_METATILE_TILES_ATTRIBUTES_B \
 	((Sint32)&ResourceId_WorldMapMetatileTilesAttributesB)
-/* Tiles 1 of 6 of world map set B, a row of WorldMap_GraphicsResources. */
+/* Tiles 1 of 6 of world map set B, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesB1;
 #define RESOURCE_WORLD_MAP_TILES_B1 ((Sint32)&ResourceId_WorldMapTilesB1)
-/* Tiles 2 of 6 of world map set B, a row of WorldMap_GraphicsResources. */
+/* Tiles 2 of 6 of world map set B, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesB2;
 #define RESOURCE_WORLD_MAP_TILES_B2 ((Sint32)&ResourceId_WorldMapTilesB2)
-/* Tiles 3 of 6 of world map set B, a row of WorldMap_GraphicsResources. */
+/* Tiles 3 of 6 of world map set B, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesB3;
 #define RESOURCE_WORLD_MAP_TILES_B3 ((Sint32)&ResourceId_WorldMapTilesB3)
-/* Tiles 4 of 6 of world map set B, a row of WorldMap_GraphicsResources. */
+/* Tiles 4 of 6 of world map set B, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesB4;
 #define RESOURCE_WORLD_MAP_TILES_B4 ((Sint32)&ResourceId_WorldMapTilesB4)
-/* Tiles 5 of 6 of world map set B, a row of WorldMap_GraphicsResources. */
+/* Tiles 5 of 6 of world map set B, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesB5;
 #define RESOURCE_WORLD_MAP_TILES_B5 ((Sint32)&ResourceId_WorldMapTilesB5)
-/* Tiles 6 of 6 of world map set B, a row of WorldMap_GraphicsResources. */
+/* Tiles 6 of 6 of world map set B, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesB6;
 #define RESOURCE_WORLD_MAP_TILES_B6 ((Sint32)&ResourceId_WorldMapTilesB6)
-/* The palette of world map set D, a row of WorldMap_GraphicsResources. */
+/* The palette of world map set D, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapPaletteD;
 #define RESOURCE_WORLD_MAP_PALETTE_D ((Sint32)&ResourceId_WorldMapPaletteD)
 /* The tile animation of world map set D, in DefaultMapAnimation's format: a row
-   of WorldMap_GraphicsResources. */
+   of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapAnimationD;
 #define RESOURCE_WORLD_MAP_ANIMATION_D ((Sint32)&ResourceId_WorldMapAnimationD)
 /* The cell tiles attributes of world map set D, in
    DefaultMetatileTilesAttributes' format: a row of
-   WorldMap_GraphicsResources. */
+   WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapMetatileTilesAttributesD;
 #define RESOURCE_WORLD_MAP_METATILE_TILES_ATTRIBUTES_D \
 	((Sint32)&ResourceId_WorldMapMetatileTilesAttributesD)
-/* Tiles 1 of 6 of world map set D, a row of WorldMap_GraphicsResources. */
+/* Tiles 1 of 6 of world map set D, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesD1;
 #define RESOURCE_WORLD_MAP_TILES_D1 ((Sint32)&ResourceId_WorldMapTilesD1)
-/* Tiles 2 of 6 of world map set D, a row of WorldMap_GraphicsResources. */
+/* Tiles 2 of 6 of world map set D, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesD2;
 #define RESOURCE_WORLD_MAP_TILES_D2 ((Sint32)&ResourceId_WorldMapTilesD2)
-/* Tiles 3 of 6 of world map set D, a row of WorldMap_GraphicsResources. */
+/* Tiles 3 of 6 of world map set D, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesD3;
 #define RESOURCE_WORLD_MAP_TILES_D3 ((Sint32)&ResourceId_WorldMapTilesD3)
-/* Tiles 4 of 6 of world map set D, a row of WorldMap_GraphicsResources. */
+/* Tiles 4 of 6 of world map set D, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesD4;
 #define RESOURCE_WORLD_MAP_TILES_D4 ((Sint32)&ResourceId_WorldMapTilesD4)
-/* Tiles 5 of 6 of world map set D, a row of WorldMap_GraphicsResources. */
+/* Tiles 5 of 6 of world map set D, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesD5;
 #define RESOURCE_WORLD_MAP_TILES_D5 ((Sint32)&ResourceId_WorldMapTilesD5)
-/* Tiles 6 of 6 of world map set D, a row of WorldMap_GraphicsResources. */
+/* Tiles 6 of 6 of world map set D, a row of WorldMapGraphicsResources. */
 extern char ResourceId_WorldMapTilesD6;
 #define RESOURCE_WORLD_MAP_TILES_D6 ((Sint32)&ResourceId_WorldMapTilesD6)
 /* Loaded by fdWorldMapInitPerspective. */
@@ -1434,7 +1434,7 @@ extern char ResourceId_SpriteMetadata;
 extern char ResourceId_EmptyMap;
 #define RESOURCE_EMPTY_MAP ((Sint32)&ResourceId_EmptyMap)
 
-/* The battle backdrops that Scene_BattleBackgroundRules chooses, named by their
+/* The battle backdrops that SceneBattleBackgroundRules chooses, named by their
    pictures. */
 extern char ResourceId_CanyonMeadowBackdrop;
 #define RESOURCE_CANYON_MEADOW_BACKDROP \
@@ -1502,7 +1502,7 @@ extern char ResourceId_SpikeHallBackdrop;
 #define RESOURCE_SPIKE_HALL_BACKDROP ((Sint32)&ResourceId_SpikeHallBackdrop)
 
 /* Moapa's recorded runs through the Trial Road's stages, in
-   TrialRoad_RivalRecordings' order, which scTrialRoadPlayRivalRecording
+   TrialRoadRivalRecordings' order, which scTrialRoadPlayRivalRecording
    plays. */
 extern char ResourceId_TrialRoadPillarRecording; /* the pillar stage */
 #define RESOURCE_TRIAL_ROAD_PILLAR_RECORDING \

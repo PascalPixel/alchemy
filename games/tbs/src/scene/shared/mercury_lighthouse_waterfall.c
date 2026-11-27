@@ -19,7 +19,7 @@ static void scMercuryLighthouseWalkIntoWaterfall(Sint32 exit)
 	leader->update = NULL;
 	fdScriptWait(30);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(exit);
 	fdScriptEnd();
 }

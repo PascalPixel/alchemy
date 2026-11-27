@@ -1,7 +1,7 @@
 /* Helm Splitter, formations and the impact burst. Part of battle_effect.c. */
 
-#define HELM_SPLITTER_FRAMES		70
-#define HELM_SPLITTER_STRIKE_FRAME	18 /* the swirl strikes the target */
+#define HELM_SPLITTER_TICKS			70
+#define HELM_SPLITTER_STRIKE_TICK	18 /* the swirl strikes the target */
 /* The pink star effect, after the swirl. */
 #define HELM_SPLITTER_STAR_PICTURES 16000
 #define HELM_SPLITTER_STAR_SIZE		16 /* PinkStarSheet's six stars */
@@ -20,11 +20,11 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 	void				*canvas;
 	Uint8				*graphics;
 	DRAW_RECTANGLE		 draw[2];
-	SCREEN_POINT		 position;
+	SCREEN_POINT		 pos;
 
 	PARTICLE *sparks;
 	PARTICLE *spark;
-	Sint32	  frame;
+	Sint32	  frm;
 	Sint32	  i;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -45,11 +45,11 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 
 	{
 		ACTOR *actor = btObjectGetStub(state->args->user)->actor;
-		ACTOR *target = btObjectGetStub(state->args->tgts[0])->actor;
-		FIXED  diffX = target->x.fixed - actor->x.fixed;
+		ACTOR *tgt = btObjectGetStub(state->args->tgts[0])->actor;
+		FIXED  diffX = tgt->x.fixed - actor->x.fixed;
 		FIXED  startX = actor->x.fixed;
 		FIXED  deltaX = diffX * 80 / 100;
-		FIXED  diffZ = target->z.fixed - actor->z.fixed;
+		FIXED  diffZ = tgt->z.fixed - actor->z.fixed;
 		FIXED  startZ = actor->z.fixed;
 		FIXED  deltaZ = diffZ * 80 / 100;
 		FIXED  x = startX + deltaX;
@@ -73,31 +73,31 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 	}
 
 	/* Play the swirl and impact, then let the sparks bounce and fade. */
-	for(frame = 0; frame != HELM_SPLITTER_FRAMES; frame++) {
-		btProjectionUnit(state->args->user, &position);
-		REG_BG2X = (80 - position.x) << 8;
-		if(frame >= 8 && frame <= 23) {
-			Sint32 picture = (frame - 8) / 2;
+	for(frm = 0; frm != HELM_SPLITTER_TICKS; frm++) {
+		btProjectionUnit(state->args->user, &pos);
+		REG_BG2X = (80 - pos.x) << 8;
+		if(frm >= 8 && frm <= 23) {
+			Sint32 picture = (frm - 8) / 2;
 
 			if(picture > 6)
 				picture = 6;
 			if(state->args->side == EFFECT_SIDE_ENEMIES) {
-				draw[0](canvas, state->sheet + HelmSplitter_Pictures[picture],
-					HelmSplitter_PictureBiasX[picture] + 30,
-					HelmSplitter_PictureBiasY[picture] + position.y - 60,
-					HelmSplitter_PictureWidths[picture],
-					HelmSplitter_PictureHeights[picture]);
+				draw[0](canvas, state->sheet + HelmSplitterPictures[picture],
+					HelmSplitterPictureBiasX[picture] + 30,
+					HelmSplitterPictureBiasY[picture] + pos.y - 60,
+					HelmSplitterPictureWidths[picture],
+					HelmSplitterPictureHeights[picture]);
 			} else {
-				draw[0](canvas, state->sheet + HelmSplitter_Pictures[picture],
-					-HelmSplitter_PictureBiasX[picture] -
-						HelmSplitter_PictureWidths[picture] + 108,
-					HelmSplitter_PictureBiasY[picture] + position.y - 60,
-					HelmSplitter_PictureWidths[picture],
-					HelmSplitter_PictureHeights[picture]);
+				draw[0](canvas, state->sheet + HelmSplitterPictures[picture],
+					-HelmSplitterPictureBiasX[picture] -
+						HelmSplitterPictureWidths[picture] + 108,
+					HelmSplitterPictureBiasY[picture] + pos.y - 60,
+					HelmSplitterPictureWidths[picture],
+					HelmSplitterPictureHeights[picture]);
 			}
 		}
 		/* The strike. */
-		if(frame == HELM_SPLITTER_STRIKE_FRAME) {
+		if(frm == HELM_SPLITTER_STRIKE_TICK) {
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			btEffectTintBattler(
 				state->args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
@@ -129,7 +129,7 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 
 					draw[0](canvas,
 						state->sheet + HELM_SPLITTER_STAR_PICTURES +
-							(frame + i) / 4 % 6 *
+							(frm + i) / 4 % 6 *
 								(HELM_SPLITTER_STAR_SIZE *
 									HELM_SPLITTER_STAR_SIZE),
 						sx - HELM_SPLITTER_STAR_SIZE / 2,
@@ -139,7 +139,7 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		btCameraShake(8, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS();
@@ -183,24 +183,24 @@ void btEffectPlaceFormationSprs(Sint32 formation, FIXED x, FIXED z)
 		break;
 	case SUMMON_FORMATION_NEREID:
 		for(i = 0; i != FORMATION_TWELVE; i++) {
-			pos.x = toFIXED(SummonFormation_NereidX[i]) + x - toFIXED(16);
-			pos.y = toFIXED(SummonFormation_NereidZ[i]) + z - toFIXED(32);
+			pos.x = toFIXED(SummonFormationNereidX[i]) + x - toFIXED(16);
+			pos.y = toFIXED(SummonFormationNereidZ[i]) + z - toFIXED(32);
 			fdRenderApplyProjectedPlacementStub(
 				state->sprs[i], &pos, &normal, 0);
 		}
 		break;
 	case SUMMON_FORMATION_CYBELE:
 		for(i = 0; i != FORMATION_EIGHT; i++) {
-			pos.x = toFIXED(SummonFormation_CybeleX[i]) + x + toFIXED(16);
-			pos.y = toFIXED(SummonFormation_CybeleZ[i]) + z;
+			pos.x = toFIXED(SummonFormationCybeleX[i]) + x + toFIXED(16);
+			pos.y = toFIXED(SummonFormationCybeleZ[i]) + z;
 			fdRenderApplyProjectedPlacementStub(
 				state->sprs[i], &pos, &normal, 0);
 		}
 		break;
 	case SUMMON_FORMATION_TIAMAT:
 		for(i = 0; i != FORMATION_EIGHT; i++) {
-			pos.x = toFIXED(SummonFormation_TiamatX[i]) + x;
-			pos.y = toFIXED(SummonFormation_TiamatZ[i]) + z;
+			pos.x = toFIXED(SummonFormationTiamatX[i]) + x;
+			pos.y = toFIXED(SummonFormationTiamatZ[i]) + z;
 			fdRenderApplyProjectedPlacementStub(state->sprs[i], &pos, &big, 0);
 		}
 		break;
@@ -212,7 +212,7 @@ void btEffectPlaceFormationSprs(Sint32 formation, FIXED x, FIXED z)
 #define IMPACT_BURST_FRAGMENT_WIDTH	   12 /* each fragment picture's width */
 #define IMPACT_BURST_FRAGMENT_HEIGHT   24
 
-#define IMPACT_BURST_FRAMES			72
+#define IMPACT_BURST_TICKS			72
 #define IMPACT_BURST_FRAGMENTS		3 /* fragments, state->particles 61 to 63 */
 #define IMPACT_BURST_DRAWN_LARGE	30 /* large sparks drawn */
 #define IMPACT_BURST_DRAWN_SMALL	60 /* small sparks drawn */
@@ -223,11 +223,11 @@ void btEffectPlaceFormationSprs(Sint32 formation, FIXED x, FIXED z)
 /* The fragments' speed apart. */
 #define IMPACT_BURST_FRAGMENT_SPEED 32
 /* A spark's life left per size of its mote: a spark shrinks one size every
-   IMPACT_BURST_LIFE_PER_SIZE frames. */
+   IMPACT_BURST_LIFE_PER_SIZE ticks. */
 #define IMPACT_BURST_LIFE_PER_SIZE	16
 
 /* Ends a summon: a flash opens where its figure stands and scatters sparks and
-   three fragments, the figure holding its formation for the first 36 frames. */
+   three fragments, the figure holding its formation for the first 36 ticks. */
 void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 {
 	void			   **slots;
@@ -239,7 +239,7 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 	Uint8				*sheet;
 	FIXED				 originX;
 	PARTICLE			*particle;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 
 	slots = &HeapSlots[HEAP_SLOT_BATTLE_EFFECT];
@@ -301,14 +301,14 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 		PARTICLES[i].variant = (syRandom() & 15) + 20;
 	}
 
-	for(frame = 0; frame != IMPACT_BURST_FRAMES; frame++) {
-		if(frame == 4)
+	for(frm = 0; frm != IMPACT_BURST_TICKS; frm++) {
+		if(frm == 4)
 			sySndPlayStub(SE_CAST);
-		if(frame == 32)
+		if(frm == 32)
 			sySndPlayStub(SE_POWER_UP);
 
-		if(frame <= 47) {
-			Sint32 picture = (frame - 8) / 5;
+		if(frm <= 47) {
+			Sint32 picture = (frm - 8) / 5;
 			Uint32 width;
 			Uint32 height;
 
@@ -316,24 +316,24 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 				picture = 0;
 			/* UB: width is assigned in one argument and read in another. */
 #if FIX_UNSEQUENCED_SIDE_EFFECT
-			width = ImpactBurst_PictureWidths[picture];
-			height = ImpactBurst_PictureHeights[picture];
-			maxBlend(canvas, state->sheet + ImpactBurst_Pictures[picture],
+			width = ImpactBurstPictureWidths[picture];
+			height = ImpactBurstPictureHeights[picture];
+			maxBlend(canvas, state->sheet + ImpactBurstPictures[picture],
 				FIXEDtoINT(x) - (width >> 1), FIXEDtoINT(y) - (height >> 1),
 				width, height);
 #else
-			maxBlend(canvas, state->sheet + ImpactBurst_Pictures[picture],
+			maxBlend(canvas, state->sheet + ImpactBurstPictures[picture],
 				FIXEDtoINT(x) -
-					((width = ImpactBurst_PictureWidths[picture]) >> 1),
+					((width = ImpactBurstPictureWidths[picture]) >> 1),
 				FIXEDtoINT(y) -
-					((height = ImpactBurst_PictureHeights[picture]) >> 1),
+					((height = ImpactBurstPictureHeights[picture]) >> 1),
 				width, height);
 #endif
 		}
 
 		for(i = 0; i != IMPACT_BURST_DRAWN_LARGE; i++) {
 			particle = &state->particles[i];
-			if(frame > i / 2 && particle->variant > 0) {
+			if(frm > i / 2 && particle->variant > 0) {
 				Sint32 size;
 				Sint32 drawX;
 				Sint32 drawY;
@@ -349,7 +349,7 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 
 		for(i = 0, particle = PARTICLES; i != IMPACT_BURST_DRAWN_SMALL;
 			i++, particle++) {
-			if(frame > 35 && particle->variant > 0) {
+			if(frm > 35 && particle->variant > 0) {
 				Sint32 size;
 				Sint32 drawX;
 				Sint32 drawY;
@@ -367,14 +367,14 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 			PARTICLE *fragment =
 				&state->particles[IMPACT_BURST_FIRST_FRAGMENT + i];
 
-			if(frame >= 36 && frame <= 63) {
+			if(frm >= 36 && frm <= 63) {
 				Sint32 picture;
 				Sint32 drawX;
 				Sint32 drawY;
 
 				btParticleAdvanceWithGravity2D(
 					fragment, PARTICLE_DAMPING_NONE, 0);
-				picture = (frame - 36) / 7;
+				picture = (frm - 36) / 7;
 				drawX = FIXED_INTEGER_PART(fragment->x);
 				drawY = FIXED_INTEGER_PART(fragment->y);
 				maxBlend(canvas,
@@ -387,7 +387,7 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 			}
 		}
 
-		if(frame <= 35)
+		if(frm <= 35)
 			btEffectPlaceFormationSprs(formation, originX, y);
 		EFFECT_PRESENT_CANVAS(state);
 	}
@@ -397,8 +397,8 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 	EFFECT_RELEASE_BLITTERS();
 }
 
-#undef HELM_SPLITTER_FRAMES
-#undef HELM_SPLITTER_STRIKE_FRAME
+#undef HELM_SPLITTER_TICKS
+#undef HELM_SPLITTER_STRIKE_TICK
 #undef HELM_SPLITTER_STAR_PICTURES
 #undef HELM_SPLITTER_STAR_SIZE
 #undef HELM_SPLITTER_CLEARED_SLOTS
@@ -407,7 +407,7 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 #undef IMPACT_BURST_FRAGMENT_PICTURES
 #undef IMPACT_BURST_FRAGMENT_WIDTH
 #undef IMPACT_BURST_FRAGMENT_HEIGHT
-#undef IMPACT_BURST_FRAMES
+#undef IMPACT_BURST_TICKS
 #undef IMPACT_BURST_FRAGMENTS
 #undef IMPACT_BURST_DRAWN_LARGE
 #undef IMPACT_BURST_DRAWN_SMALL

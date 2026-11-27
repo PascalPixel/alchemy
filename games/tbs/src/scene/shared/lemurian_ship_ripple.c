@@ -10,8 +10,8 @@ static inline void scWaitDMA(volatile Uint32 *channel)
 	}
 }
 
-/* Starts the ripple, with the wave's frequency, its step each frame and its
-   amplitude for x and for y: one event builds each frame's table of line
+/* Starts the ripple, with the wave's frequency, its step each tick and its
+   amplitude for x and for y: one event builds each tick's table of line
    offsets, and another sends it by DMA in the horizontal blank. */
 void scLineScrollInitWave(Sint32 mode, FIXED freqX, Sint32 stepX, FIXED ampX,
 	FIXED freqY, Sint32 stepY, FIXED ampY)
@@ -29,6 +29,6 @@ void scLineScrollInitWave(Sint32 mode, FIXED freqX, Sint32 stepX, FIXED ampX,
 	state->ampY = ampY;
 	state->stepX = stepX;
 	state->stepY = stepY;
-	sySetFrameEvent(fdLineScrollBuildPage, EVENT_PASS_FRAME);
-	sySetFrameEvent(fdLineScrollArmDMA, EVENT_PASS_VBLANK);
+	sySetTickEvent(fdLineScrollBuildPage, EVENT_PASS_TICK);
+	sySetTickEvent(fdLineScrollArmDMA, EVENT_PASS_VBLANK);
 }

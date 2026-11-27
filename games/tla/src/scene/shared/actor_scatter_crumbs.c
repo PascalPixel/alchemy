@@ -4,7 +4,7 @@
 
 /* A fireball crumbling away throws off a crumb, a small flame drawn with the
    kept flame's tiles, that bounces off in a random direction and flickers out
-   (the includer's Crumbs_Script): as the Mars tower's fireball crashes on the
+   (the includer's CrumbsScript): as the Mars tower's fireball crashes on the
    centre wall, it shrinks away in a spray of little flames. */
 void scActorScatterCrumbs(ACTOR *actor)
 {
@@ -30,39 +30,39 @@ void scActorScatterCrumbs(ACTOR *actor)
 		y = c * 8 + actor->y.fixed + toFIXED(4);
 		object = (ACTOR *)syImportActorCreate(SPRITE_UNSEEN_MARKER, x, y, z);
 		if(object != NULL) {
-			Sint32 angle, radius;
+			Sint32 ang, radius;
 			Uint32 sum;
 			Sint32 scale;
-			SPR	  *sprite;
-			SPR	  *source;
+			SPR	  *spr;
+			SPR	  *src;
 
-			angle = syRandom();
+			ang = syRandom();
 			radius = syRandom() * 8;
 			sum = syRandom() + syRandom();
 			scale = (sum >> 2) + toFIXED(1) / 2;
-			fdActorStartScript(object, Crumbs_Script);
+			fdActorStartScript(object, CrumbsScript);
 			fdActorSetSprFlags(object, 0);
-			object->velY = angle * 4 + toFIXED(2);
-			object->velZ = syMulFX(radius, syCos(angle));
-			object->velX = syMulFX(radius, sySin(angle));
+			object->velY = ang * 4 + toFIXED(2);
+			object->velZ = syMulFX(radius, syCos(ang));
+			object->velX = syMulFX(radius, sySin(ang));
 			object->gravity = toFIXED(33) / 100;
 			object->scaleX = scale;
 			object->scaleY = scale;
 			object->acceleration = 0;
 			object->bounce = toFIXED(1) / 2;
-			sprite = object->spr;
-			source = ((ACTOR *)state->sharedFlame)->spr;
-			syVRAMCacheFreeEntry(sprite->slot);
-			sprite->retainCacheEntry = 1;
-			sprite->slot = state->flameVramBlock;
-			fdSprAnimationClear(sprite->entries[0]);
-			sprite->entries[0] = NULL;
-			sprite->cnt = 0;
-			sprite->width = source->width;
-			sprite->height = source->height;
-			sprite->image.shape = source->image.shape;
-			sprite->image.size = source->image.size;
-			sprite->image.tile = source->image.tile;
+			spr = object->spr;
+			src = ((ACTOR *)state->sharedFlame)->spr;
+			syVRAMCacheFreeEntry(spr->slot);
+			spr->retainCacheEntry = 1;
+			spr->slot = state->flameVramBlock;
+			fdSprAnimationClear(spr->entries[0]);
+			spr->entries[0] = NULL;
+			spr->cnt = 0;
+			spr->width = src->width;
+			spr->height = src->height;
+			spr->image.shape = src->image.shape;
+			spr->image.size = src->image.size;
+			spr->image.tile = src->image.tile;
 		}
 	}
 }

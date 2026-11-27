@@ -4,7 +4,7 @@
 
 #include "script_commands_internal.h"
 
-/* The frames of a raindrop's splash on the ground (Weather_RainSplashFrames,
+/* The frames of a raindrop's splash on the ground (WeatherRainSplashFrames,
    five halfwords each), played from the last down to the first. */
 #define RAIN_SPLASH_FRAMES 16
 
@@ -27,27 +27,27 @@ void fdWeatherUpdateRain(void)
 	Uint32				   i;
 
 	for(i = 0; i < WEATHER_PARTICLE_COUNT; i++, particle++) {
-		const Sint16 *frame;
+		const Sint16 *frm;
 		Sint32		  x;
 		Sint32		  y;
 
 		if(--particle->tmr == GROUND_PARTICLE_FREED)
 			continue;
-		/* BUG: freezing a timer of 16 indexes past the 16-frame table. */
+		/* BUG: freezing a timer of 16 indexes past the 16-tick table. */
 		if(gmFlagGetStub(FLAG_WEATHER_HELD))
 			particle->tmr++;
-		frame = &Weather_RainSplashFrames[5 * particle->tmr];
-		x = (particle->posX - cameraX) / toFIXED(1) + *frame++;
-		y = (particle->posZ - particle->posY - cameraZ) / toFIXED(1) + *frame++;
+		frm = &WeatherRainSplashFrames[5 * particle->tmr];
+		x = (particle->posX - cameraX) / toFIXED(1) + *frm++;
+		y = (particle->posZ - particle->posY - cameraZ) / toFIXED(1) + *frm++;
 		if((x >= -16 && x <= DISPLAY_WIDTH - 1) && y >= -32 &&
 			y <= DISPLAY_HEIGHT - 1) {
 			particle->pri = 1;
 			particle->x = x;
 			particle->y = y;
-			particle->tile = state->tileBase + *(const Uint16 *)frame;
-			frame++;
-			particle->shape = *(const Uint8 *)frame;
-			particle->size = *(const Uint8 *)(frame + 1);
+			particle->tile = state->tileBase + *(const Uint16 *)frm;
+			frm++;
+			particle->shape = *(const Uint8 *)frm;
+			particle->size = *(const Uint8 *)(frm + 1);
 			syOAMAddSprAtDepth(particle, OAM_DEPTH_WINDOW);
 		}
 		if(particle->tmr == 0) {
@@ -65,7 +65,7 @@ void fdWeatherUpdateRain(void)
 	}
 }
 
-/* Event for the storm: lightning flashes the BG colours three times, 5 frames
+/* Event for the storm: lightning flashes the BG colours three times, 5 ticks
    apart. */
 void fdWeatherUpdateLightning(void)
 {
@@ -89,8 +89,8 @@ void fdWeatherUpdateLightning(void)
 		/* fall through */
 	case 5:
 	case 10:
-		/* A frame after each flash: fade back to the dark colours over 12
-		   frames. */
+		/* A tick after each flash: fade back to the dark colours over 12
+		   ticks. */
 		fdPaletteFadeSetTarget((Sint32)state, 1);
 		syDMAXCopy(state->delta, target->delta,
 			DMA_COPY_WORDS(sizeof target->delta / 4), REG_DMA3);
@@ -100,7 +100,7 @@ void fdWeatherUpdateLightning(void)
 	case 1:
 	case 6:
 	case 11:
-		/* The flash: the lit colours, in one frame. */
+		/* The flash: the lit colours, in one tick. */
 		fdPaletteFadeSetTarget((Sint32)state->to, 1);
 		target->duration = 1;
 		target->step = 0;
@@ -151,7 +151,7 @@ void fdWeatherStartRain(void)
 	IO_WRITE16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
 	IO_WRITE16(BLEND_ALPHA(8, 16), &REG_BLDALPHA);
 	IO_WRITE16(0, &REG_BLDY);
-	sySetEvent(fdWeatherUpdateRain, EVENT_PASS_FRAME);
+	sySetEvent(fdWeatherUpdateRain, EVENT_PASS_TICK);
 }
 
 /* A particle's first word, seen as a value or a link. */
@@ -160,8 +160,8 @@ typedef union PARTICLE_LINK_WORD {
 	void  *link;
 } PARTICLE_LINK_WORD;
 
-/* Event of the motes of light: each rises and shrinks for 120 frames, then
-   starts again within 128 pixels of the leader, eight new ones a frame at
+/* Event of the motes of light: each rises and shrinks for 120 ticks, then
+   starts again within 128 pixels of the leader, eight new ones a tick at
    most. */
 void fdMotesUpdate(void)
 {
@@ -186,7 +186,7 @@ void fdMotesUpdate(void)
 				mote->tmr++;
 				mote->delay--;
 			}
-			/* x jitters by -1 or 0, and y is the frames left in pixels above
+			/* x jitters by -1 or 0, and y is the ticks left in pixels above
 			   the spot; a quarter of the delay, which builds up as it ages,
 			   lifts it further. */
 			firstJitterDraw = syRandom();
@@ -207,7 +207,7 @@ void fdMotesUpdate(void)
 					mote->tile =
 						state->tileBase + MOTE_LARGE * MOTE_PICTURE_TILES;
 				}
-				if((FrameCount >> 3) & 1)
+				if((TickCount >> 3) & 1)
 					mote->tile += MOTE_PICTURE_TILES;
 				mote->x = x;
 				mote->y = y - (mote->delay >> 2);
@@ -279,7 +279,7 @@ void fdMotesStart(void)
 	IO_WRITE16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
 	IO_WRITE16(BLEND_ALPHA(8, 16), &REG_BLDALPHA);
 	IO_WRITE16(0, &REG_BLDY);
-	sySetEvent(fdMotesUpdate, EVENT_PASS_FRAME);
+	sySetEvent(fdMotesUpdate, EVENT_PASS_TICK);
 }
 
 /* Event of the sparkles: now and then a burst of up to four twinkles on one
@@ -294,7 +294,7 @@ void fdEffectUpdateSparkles(void)
 	FIXED				   spawnX;
 	FIXED				   spawnZ;
 	WEATHER_PARTICLE	  *sparkle;
-	const Uint16		  *frame;
+	const Uint16		  *frm;
 	Sint32				  *leader;
 	Sint32				   cameraX;
 	Sint32				   cameraZ;
@@ -304,7 +304,7 @@ void fdEffectUpdateSparkles(void)
 	Sint32				   x;
 	Uint32				   a;
 	Uint32				   b;
-	Uint32				   frames;
+	Uint32				   ticks;
 
 	state = WeatherStateWork;
 	spawned = 0;
@@ -323,31 +323,31 @@ void fdEffectUpdateSparkles(void)
 			cameraZ = camera[1];
 			if(gmFlagGetStub(FLAG_WEATHER_HELD) != 0)
 				sparkle->tmr++;
-			frame =
-				(const Uint16 *)&FieldEffect_SparklePictures[sparkle->tmr >> 1];
+			frm =
+				(const Uint16 *)&FieldEffectSparklePictures[sparkle->tmr >> 1];
 			a = syRandom();
 			b = syRandom();
 			x = FIXEDtoINT(sparkle->posX - cameraX) +
 				(((a & 1) + (b & 1)) >> 1);
 			sx = x - 1;
 			sy = (sparkle->posZ - sparkle->posY - cameraZ) / toFIXED(1) +
-				*(const Sint16 *)frame;
-			frame++;
+				*(const Sint16 *)frm;
+			frm++;
 			if((Uint32)(x + 15) <= 255 && sy >= -32 &&
 				sy <= DISPLAY_HEIGHT - 1) {
-				sparkle->tile = state->tileBase + *frame;
+				sparkle->tile = state->tileBase + *frm;
 				sparkle->x = sx;
 				sparkle->shape = 0;
 				sparkle->size = 1;
 #if FIX_TYPE_PUNNING
-				frames = FrameCount;
+				ticks = TickCount;
 #else
 				/* UB: this drops volatile and reads a Uint32 as unsigned long.
 				   UBFIX reads the declared type. */
-				frames = *(unsigned long *)&FrameCount;
+				ticks = *(unsigned long *)&TickCount;
 #endif
 				sparkle->y = sy;
-				sparkle->affineIdx = ((frames >> 1) & 1) << 3;
+				sparkle->affineIdx = ((ticks >> 1) & 1) << 3;
 				syOAMAddSprAtDepth(sparkle, OAM_DEPTH_WINDOW);
 			}
 			sparkle->tmr--;
@@ -427,12 +427,12 @@ void fdEffectInitSparkles(void)
 		i++;
 		sparkle++;
 	} while(i < WEATHER_PARTICLE_COUNT);
-	sySetEvent(fdEffectUpdateSparkles, EVENT_PASS_FRAME);
+	sySetEvent(fdEffectUpdateSparkles, EVENT_PASS_TICK);
 }
 
 /* Starts the storm's lightning (fdWeatherUpdateLightning): builds the dark
    (PALETTE_TINT_DIM) and lit (PALETTE_TINT_PALE) BG colours and their 12-step
-   fade, and arms the first burst to end in 600 frames, repeating. */
+   fade, and arms the first burst to end in 600 ticks, repeating. */
 void fdWeatherStartLightning(void)
 {
 	FIELD_BLEND_STATE *state;
@@ -448,10 +448,10 @@ void fdWeatherStartLightning(void)
 	fdPaletteFadeBuild((Sint32)state, 0, buffers->tgt, 1);
 	state->tmr = 600;
 	state->enabled = 1;
-	sySetEvent(fdWeatherUpdateLightning, EVENT_PASS_FRAME);
+	sySetEvent(fdWeatherUpdateLightning, EVENT_PASS_TICK);
 }
 
-/* Stops the lightning: no flash for 32767 frames, and none after. */
+/* Stops the lightning: no flash for 32767 ticks, and none after. */
 void fdWeatherStopLightning(void)
 {
 	FIELD_BLEND_STATE *state =
@@ -460,7 +460,7 @@ void fdWeatherStopLightning(void)
 	state->enabled = 0;
 }
 
-/* One last burst of lightning, its first flash two frames from now (timer 12;
+/* One last burst of lightning, its first flash two ticks from now (timer 12;
    fdWeatherUpdateLightning flashes at 11), then no more. */
 void fdWeatherLastLightning(void)
 {
@@ -470,8 +470,8 @@ void fdWeatherLastLightning(void)
 	state->enabled = 0;
 }
 
-/* Restarts the lightning: the next burst ends in 128 frames, its first flash
-   118 frames from now, and bursts repeat. */
+/* Restarts the lightning: the next burst ends in 128 ticks, its first flash
+   118 ticks from now, and bursts repeat. */
 void fdWeatherResumeLightning(void)
 {
 	FIELD_BLEND_STATE *state =
@@ -482,23 +482,23 @@ void fdWeatherResumeLightning(void)
 
 /* Flashes the palette with the storm's event: one burst of three flashes of
    palette to, each fading back to palette from (fdPaletteFadeBuild modes) on
-   the BG colours, ending 120 frames from now, and no more after. */
+   the BG colours, ending 120 ticks from now, and no more after. */
 void fdWeatherStartLightningFlash(Sint32 from, Sint32 to)
 {
 	FIELD_BLEND_STATE *state;
 	PALETTE_FADE	  *buffers;
-	Sint16			  *target;
+	Sint16			  *tgt;
 
 	state =
 		syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD_BLEND, sizeof(FIELD_BLEND_STATE));
 	buffers = PaletteFadeState;
 	DMA_FILL32(0, state, sizeof(FIELD_BLEND_STATE));
 	fdPaletteFadeBuild(from, buffers, state, 1);
-	target = state->to;
-	fdPaletteFadeBuild(to, buffers, target, 1);
-	fdPaletteFadeCalcSteps(target, state->from, state->delta, 12);
+	tgt = state->to;
+	fdPaletteFadeBuild(to, buffers, tgt, 1);
+	fdPaletteFadeCalcSteps(tgt, state->from, state->delta, 12);
 	fdPaletteFadeBuild((Sint32)state, 0, buffers->tgt, 1);
 	state->tmr = 120;
 	state->enabled = 0;
-	sySetEvent(fdWeatherUpdateLightning, EVENT_PASS_FRAME);
+	sySetEvent(fdWeatherUpdateLightning, EVENT_PASS_TICK);
 }

@@ -28,7 +28,7 @@ typedef enum LEADER_MOVEMENT_MODE {
 	LEADER_MOVEMENT_FLYING_SHIP = 8, /* the winged ship on the World Map */
 	LEADER_MOVEMENT_WORLD_SAND = 9,	 /* as sand on the World Map */
 	LEADER_MOVEMENT_HOVER = 10,		 /* hovering, by Hover */
-	LEADER_MOVEMENT_WALKING = 11,	 /* Actor_WalkingScript's */
+	LEADER_MOVEMENT_WALKING = 11,	 /* ActorWalkingScript's */
 	LEADER_MOVEMENT_NONE = 12		 /* the idle script: it does not move */
 } LEADER_MOVEMENT_MODE;
 
@@ -36,7 +36,7 @@ typedef enum LEADER_MOVEMENT_MODE {
    byte, which fdScreenTransitionUpdateScanlineTable draws. */
 typedef enum WINDOW_TRANSITION_MODE {
 	WINDOW_TRANSITION_BARS = 0,	  /* a bar on each line, at random */
-	WINDOW_TRANSITION_SHAPE = 1,  /* a shape from ScreenTransition_Shapes */
+	WINDOW_TRANSITION_SHAPE = 1,  /* a shape from ScreenTransitionShapes */
 	WINDOW_TRANSITION_NOISE = 2,  /* ragged lines from the left edge */
 	WINDOW_TRANSITION_CIRCLE = 3, /* a circle at the screen's centre */
 	/* Alternate lines wiping in from the left and the right. */

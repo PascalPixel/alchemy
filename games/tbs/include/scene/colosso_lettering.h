@@ -14,12 +14,12 @@
 /* The lettering's tables and scripts (shared/colosso_lettering_tables.c and
    shared/colosso_lettering_scripts.c), and the sprite slot it is drawn in,
    which each match defines. */
-extern const Uint8	Colosso_LetteringPaletteOffsets[];
-extern const Sint16 Colosso_LetteringDigit[];
-extern const Sint16 Colosso_LetteringLose[];
-extern Sint16		Colosso_LetteringTitle[];
-extern Sint16		Colosso_LetteringGo[];
-extern Sint16		Colosso_LetteringWin[];
-extern Sint16		Colosso_LetteringSlot;
+extern const Uint8	ColossoLetteringPaletteOffsets[];
+extern const Sint16 ColossoLetteringDigit[];
+extern const Sint16 ColossoLetteringLose[];
+extern Sint16		ColossoLetteringTitle[];
+extern Sint16		ColossoLetteringGo[];
+extern Sint16		ColossoLetteringWin[];
+extern Sint16		ColossoLetteringSlot;
 
 #endif

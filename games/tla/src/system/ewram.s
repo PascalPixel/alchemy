@@ -262,53 +262,53 @@ FlashTimerReg:
 	.global FlashSavedIme
 FlashSavedIme:
 	.space 0x000000d4
-	.global Credits_PendingSlides
-Credits_PendingSlides:
+	.global CreditsPendingSlides
+CreditsPendingSlides:
 	.space 0x00000004
-	.global DisplayScroll_Position
-DisplayScroll_Position:
+	.global DisplayScrollPosition
+DisplayScrollPosition:
 	.space 0x00000004
-	.global DisplayScroll_Busy
-DisplayScroll_Busy:
+	.global DisplayScrollBusy
+DisplayScrollBusy:
 	.space 0x00000004
-	.global DisplayScroll_LastPosition
-DisplayScroll_LastPosition:
+	.global DisplayScrollLastPosition
+DisplayScrollLastPosition:
 	.space 0x00000004
-	.global DisplayScroll_Objects
-DisplayScroll_Objects:
+	.global DisplayScrollObjects
+DisplayScrollObjects:
 	.space 0x00000004
-	.global EndingImage_Block
-EndingImage_Block:
+	.global EndingImageBlock
+EndingImageBlock:
 	.space 0x00000002
-	.global EndingImage_FadeFrames
-EndingImage_FadeFrames:
+	.global EndingImageFadeFrames
+EndingImageFadeFrames:
 	.space 0x00000002
-	.global EndingImage_MapScroll
-EndingImage_MapScroll:
+	.global EndingImageMapScroll
+EndingImageMapScroll:
 	.space 0x00000004
-	.global EndingImage_Scroll
-EndingImage_Scroll:
+	.global EndingImageScroll
+EndingImageScroll:
 	.space 0x00000004
-	.global EndingImage_Row
-EndingImage_Row:
+	.global EndingImageRow
+EndingImageRow:
 	.space 0x00000002
-	.global EndingImage_TargetRow
-EndingImage_TargetRow:
+	.global EndingImageTargetRow
+EndingImageTargetRow:
 	.space 0x00000002
-	.global EndingImage_Speed
-EndingImage_Speed:
+	.global EndingImageSpeed
+EndingImageSpeed:
 	.space 0x00000004
-	.global EndingImage_Map
-EndingImage_Map:
+	.global EndingImageMap
+EndingImageMap:
 	.space 0x00000004
-	.global EndingImage_Strips
-EndingImage_Strips:
+	.global EndingImageStrips
+EndingImageStrips:
 	.space 0x00000ad4
 	.global OverlayArea
 OverlayArea:
 	.space 0x00007f58
-	.global ScriptedBattle_Snapshot
-ScriptedBattle_Snapshot:
+	.global ScriptedBattleSnapshot
+ScriptedBattleSnapshot:
 	.space 0x00000014
 	.space 0x00000080
 	.space 0x0000000c
@@ -334,22 +334,22 @@ MapGridMetatileBuffer:
 	.space 0x00000068
 	.space 0x00000080
 	.space 0x000000f0
-	.global Haures_MoundCorners
-Haures_MoundCorners:
+	.global HauresMoundCorners
+HauresMoundCorners:
 	.space 0x00000088
-	.global Iris_TileBuffer
-Iris_TileBuffer:
+	.global IrisTileBuffer
+IrisTileBuffer:
 	.space 0x00000170
 	.space 0x00000118
 	.space 0x0000002f
 	.space 0x0000000d
 	.space 0x000002ac
-	.global Haures_MoundStrip
-Haures_MoundStrip:
+	.global HauresMoundStrip
+HauresMoundStrip:
 	.space 0x00000008
 	.space 0x000000f0
-	.global Haures_MoundStripEnd
-Haures_MoundStripEnd:
+	.global HauresMoundStripEnd
+HauresMoundStripEnd:
 	.space 0x00000076
 	.space 0x00000002
 	.space 0x00000002
@@ -357,8 +357,8 @@ Haures_MoundStripEnd:
 	.space 0x00000110
 	.space 0x00000080
 	.space 0x000001a0
-	.global Haures_MoundShades
-Haures_MoundShades:
+	.global HauresMoundShades
+HauresMoundShades:
 	.space 0x00000060
 	.space 0x00000156
 	.space 0x00000192
@@ -375,8 +375,8 @@ Haures_MoundShades:
 	.space 0x00000400
 	.space 0x000000de
 	.space 0x00000062
-	.global Serac_MeshEnd
-Serac_MeshEnd:
+	.global SeracMeshEnd
+SeracMeshEnd:
 	.space 0x0000018a
 	.space 0x000000a1
 	.space 0x00000095
@@ -401,8 +401,8 @@ Data_02012f94:
 	.global EffectScratch
 EffectScratch:
 	.space 0x00000002
-	.global Flora_PetalTiles
-Flora_PetalTiles:
+	.global FloraPetalTiles
+FloraPetalTiles:
 	.space 0x00000002
 	.space 0x00000014
 	.space 0x00000006
@@ -410,8 +410,8 @@ Flora_PetalTiles:
 	.space 0x00000008
 	.space 0x00000010
 	.space 0x00000048
-	.global Flora_SpritePalettes
-Flora_SpritePalettes:
+	.global FloraSpritePalettes
+FloraSpritePalettes:
 	.space 0x000001a0
 	.space 0x0000036b
 	.space 0x00000095
@@ -464,8 +464,8 @@ Data_02017080:
 	.global ActorSpriteSlots
 ActorSpriteSlots:
 	.space 0x00001600
-	.global TitleIntro_LighthouseTilesTail
-TitleIntro_LighthouseTilesTail:
+	.global TitleIntroLighthouseTilesTail
+TitleIntroLighthouseTilesTail:
 	.space 0x00002a00
 	.global DecodeBuffer
 DecodeBuffer:
@@ -478,8 +478,8 @@ MetatileTiles:
 	.global MapShapeGrid
 MapShapeGrid:
 	.space 0x00002800
-	.global TitleIntro_LogoTileBuffer
-TitleIntro_LogoTileBuffer:
+	.global TitleIntroLogoTileBuffer
+TitleIntroLogoTileBuffer:
 	.space 0x00001800
 	.global MapGridAnimTiles
 MapGridAnimTiles:
@@ -488,47 +488,47 @@ MapGridAnimTiles:
 WorldMapStateWork:
 	.space 0x00000004
 	.space 0x0000061c
-	.global MapScreen_CursorMarker
-MapScreen_CursorMarker:
+	.global MapScreenCursorMarker
+MapScreenCursorMarker:
 	.space 0x0000000c
-	.global MapScreen_Cursor
-MapScreen_Cursor:
+	.global MapScreenCursor
+MapScreenCursor:
 	.space 0x00000004
-	.global MapScreen_ScrollX
-MapScreen_ScrollX:
+	.global MapScreenScrollX
+MapScreenScrollX:
 	.space 0x00000004
-	.global MapScreen_ScrollY
-MapScreen_ScrollY:
+	.global MapScreenScrollY
+MapScreenScrollY:
 	.space 0x00000004
-	.global MapScreen_NameBox
-MapScreen_NameBox:
+	.global MapScreenNameBox
+MapScreenNameBox:
 	.space 0x00000002
 	.space 0x00000002
 	.space 0x00000002
 	.space 0x00000002
-	.global MapScreen_Zoomed
-MapScreen_Zoomed:
+	.global MapScreenZoomed
+MapScreenZoomed:
 	.space 0x00000002
-	.global MapScreen_FirstListOnly
-MapScreen_FirstListOnly:
+	.global MapScreenFirstListOnly
+MapScreenFirstListOnly:
 	.space 0x00000002
-	.global MapScreen_GlideTargetX
-MapScreen_GlideTargetX:
+	.global MapScreenGlideTargetX
+MapScreenGlideTargetX:
 	.space 0x00000004
-	.global MapScreen_GlideTargetY
-MapScreen_GlideTargetY:
+	.global MapScreenGlideTargetY
+MapScreenGlideTargetY:
 	.space 0x00000004
-	.global MapScreen_CursorStartX
-MapScreen_CursorStartX:
+	.global MapScreenCursorStartX
+MapScreenCursorStartX:
 	.space 0x00000004
-	.global MapScreen_CursorStartY
-MapScreen_CursorStartY:
+	.global MapScreenCursorStartY
+MapScreenCursorStartY:
 	.space 0x00000004
-	.global MapScreen_NameRedrawPending
-MapScreen_NameRedrawPending:
+	.global MapScreenNameRedrawPending
+MapScreenNameRedrawPending:
 	.space 0x00000002
-	.global MapScreen_NameRedrawDelay
-MapScreen_NameRedrawDelay:
+	.global MapScreenNameRedrawDelay
+MapScreenNameRedrawDelay:
 	.space 0x000019aa
 	.global MapGridShapes
 MapGridShapes:

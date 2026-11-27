@@ -7,12 +7,12 @@
 
 /* clang-format off */
 /* A path's first two rows: the starting point in pixels, x and y each split */
-/* into a high and a low byte. Every row after it is one frame's move, x then */
+/* into a high and a low byte. Every row after it is one tick's move, x then */
 /* y in pixels. */
 #define PATH_START(x, y) {(x) >> 8, (Sint8)(x)}, {(y) >> 8, (Sint8)(y)}
 
-/* Atalanta's path while her shafts of light gather: a move a frame for 209 */
-/* frames, the last move never read. */
+/* Atalanta's path while her shafts of light gather: a move a tick for 209 */
+/* ticks, the last move never read. */
 const Sint8 BattleEffect_AtalantaPath[][2] = {
 	PATH_START(160, 95),
 	{-5, -3},
@@ -227,8 +227,8 @@ const Sint8 BattleEffect_AtalantaPath[][2] = {
 	{8, 6},
 };
 
-/* The path of the flame Dragon Cloud sends from its user: a move a frame for */
-/* 40 frames. */
+/* The path of the flame Dragon Cloud sends from its user: a move a tick for */
+/* 40 ticks. */
 const Sint8 BattleEffect_DragonCloudFlamePath[][2] = {
 	PATH_START(17, -39),
 	{6, 5},

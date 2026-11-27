@@ -64,12 +64,12 @@
 #include "sound/sound_driver_symbols.h"
 #include "text/msg_ids.h"
 
-extern Sint32		  CrossboneIsleSteppingStones_IceShineScript[];
-extern Uint16		  CrossboneIsleSteppingStones_SwitchCloseSteps[];
-extern Uint16		  CrossboneIsleSteppingStones_SwitchOpenSteps[];
-extern Uint16		  CrossboneIsleSteppingStones_FloodgateCloseSteps[];
-extern Uint16		  CrossboneIsleSteppingStones_FloodgateOpenSteps[];
-extern Uint16		  CrossboneIsleSteppingStones_FloodgateFootSteps[];
+extern Sint32		  CrossboneIsleSteppingStonesIceShineScript[];
+extern Uint16		  CrossboneIsleSteppingStonesSwitchCloseSteps[];
+extern Uint16		  CrossboneIsleSteppingStonesSwitchOpenSteps[];
+extern Uint16		  CrossboneIsleSteppingStonesFloodgateCloseSteps[];
+extern Uint16		  CrossboneIsleSteppingStonesFloodgateOpenSteps[];
+extern Uint16		  CrossboneIsleSteppingStonesFloodgateFootSteps[];
 extern SCENE_ENTRANCE CrossboneIsleSteppingStonesEntrances[];
 extern SCENE_ENTRANCE CrossboneIsleIcePillarsEntrances[];
 extern SCENE_ENTRANCE CrossboneIsleFloodgateEntrances[];
@@ -197,7 +197,7 @@ enum { METATILE_BEHAVIOR_FLOODGATE_SWITCH = 20 };
    stream in its other level twelve metatile rows below where they show it
    (scMapGridDrawMetatilePanel's rows 19 and 31), and the top
    WATER_DISSOLVE_LINES lines of the screen show it scrolled down to there, line
-   by line, more often each frame. */
+   by line, more often each tick. */
 #define WATER_PANEL_SCROLL_Y (12 * MAPGRID_METATILE_PIXELS)
 
 /* The floodgate room's map: its layers 1 and 2 begin at the map's columns 32
@@ -219,7 +219,7 @@ enum {
 #define WATER_DISSOLVE_LINES 48
 
 /* A damped particle loses a PARTICLE_DRAG-th of its speed across the ground
-   each frame, and a PARTICLE_DRAG_Y-th of its speed up or down. */
+   each tick, and a PARTICLE_DRAG_Y-th of its speed up or down. */
 enum { PARTICLE_DRAG = 10, PARTICLE_DRAG_Y = 3 };
 
 /* A copied map metatile, also read in the two flag pairs the pillar redraw
@@ -249,21 +249,21 @@ STATIC_ASSERT(offsetof(CROSSBONE_ISLE_PILLAR_METATILE, bits.shape) == 3);
 
 #include "shared/map_grid_panel.c"
 
-/* Waits up to sixty frames for landing, then stops vertical movement on the
+/* Waits up to sixty ticks for landing, then stops vertical movement on the
    ground. */
 static void scCrossboneIsleSteppingStonesSettleActorOnGround(ACTOR *actor)
 {
-	Sint32 remainingFrames = 60;
+	Sint32 remainingTicks = 60;
 
 	for(;;) {
-		if(remainingFrames == 0) {
+		if(remainingTicks == 0) {
 			break;
 		}
 		sySynch(1);
 		if(actor->y.fixed == actor->groundHeight) {
 			break;
 		}
-		remainingFrames--;
+		remainingTicks--;
 	}
 
 	actor->velY = 0;
@@ -276,10 +276,10 @@ static void scCrossboneIsleSteppingStonesSettleActorOnGround(ACTOR *actor)
 static void scCrossboneIsleSteppingStonesStopAtGroundOrHeight(
 	ACTOR *actor, Sint32 limit)
 {
-	Sint32 remainingFrames = 60;
+	Sint32 remainingTicks = 60;
 
 	for(;;) {
-		if(remainingFrames == 0) {
+		if(remainingTicks == 0) {
 			break;
 		}
 		sySynch(1);
@@ -289,7 +289,7 @@ static void scCrossboneIsleSteppingStonesStopAtGroundOrHeight(
 		if(actor->y.fixed <= limit) {
 			break;
 		}
-		remainingFrames--;
+		remainingTicks--;
 	}
 
 	actor->velY = 0;
@@ -299,7 +299,7 @@ static void scCrossboneIsleSteppingStonesStopAtGroundOrHeight(
 /* Finds the metatiles the actor covers: their width and depth, the top-left
    one, and the metatile where the map grid's layer 1 starts.
 
-   The actor's edges are its row of PushedActor_Rectangles. An actor whose
+   The actor's edges are its row of PushedActorRectangles. An actor whose
    animation is none of the six kinds gets PUSHED_ACTOR_NO_RECTANGLE, past them,
    and is refused. */
 static Sint32 scCrossboneIsleSteppingStonesQueryCoveredMetatiles(Sint32 id,
@@ -313,7 +313,7 @@ static Sint32 scCrossboneIsleSteppingStonesQueryCoveredMetatiles(Sint32 id,
 	Sint32				   farExtent;
 
 	for(i = 0; i <= 5; i++) {
-		if(actor->spr->entries[0]->anmId == PushedActor_RectangleKinds[i]) {
+		if(actor->spr->entries[0]->anmId == PushedActorRectangleKinds[i]) {
 			probe->rectangleIdx = i;
 			break;
 		}
@@ -327,29 +327,28 @@ static Sint32 scCrossboneIsleSteppingStonesQueryCoveredMetatiles(Sint32 id,
 	probe->pos.x = actor->x.fixed;
 	probe->pos.y = actor->y.fixed;
 	probe->pos.z = actor->z.fixed;
-	coordinate = PushedActor_Rectangles[probe->rectangleIdx].z0;
+	coordinate = PushedActorRectangles[probe->rectangleIdx].z0;
 	if(coordinate < 0) {
 		coordinate = -coordinate;
 	}
-	farExtent = PushedActor_Rectangles[probe->rectangleIdx].z1;
+	farExtent = PushedActorRectangles[probe->rectangleIdx].z1;
 	if(farExtent < 0) {
 		farExtent = -farExtent;
 	}
 	*depth = (coordinate + farExtent) >> 4;
-	coordinate = PushedActor_Rectangles[probe->rectangleIdx].x0;
+	coordinate = PushedActorRectangles[probe->rectangleIdx].x0;
 	if(coordinate < 0) {
 		coordinate = -coordinate;
 	}
-	farExtent = PushedActor_Rectangles[probe->rectangleIdx].x1;
+	farExtent = PushedActorRectangles[probe->rectangleIdx].x1;
 	if(farExtent < 0) {
 		farExtent = -farExtent;
 	}
 	*width = (coordinate + farExtent) >> 4;
 	/* Move from the actor's center to the top-left metatile it covers. */
-	probe->pos.x += toFIXED(PushedActor_Rectangles[probe->rectangleIdx].x0);
+	probe->pos.x += toFIXED(PushedActorRectangles[probe->rectangleIdx].x0);
 	{
-		Sint32 offsetZ =
-			toFIXED(PushedActor_Rectangles[probe->rectangleIdx].z0);
+		Sint32 offsetZ = toFIXED(PushedActorRectangles[probe->rectangleIdx].z0);
 
 		coordinate = probe->pos.z;
 		coordinate += offsetZ;
@@ -424,11 +423,11 @@ static Bool scCrossboneIsleSteppingStonesStrandLog(Sint32 actorId)
 	}
 
 	{
-		Sint32 sourceMetatileX = layerOriginX + probe.pos.x;
-		Sint32 sourceMetatileZ = layerOriginZ + probe.pos.z;
+		Sint32 srcMetatileX = layerOriginX + probe.pos.x;
+		Sint32 srcMetatileZ = layerOriginZ + probe.pos.z;
 
-		fdMapGridCopyMetatileAttributes(sourceMetatileX, sourceMetatileZ, width,
-			depth, probe.pos.x, probe.pos.z);
+		fdMapGridCopyMetatileAttributes(
+			srcMetatileX, srcMetatileZ, width, depth, probe.pos.x, probe.pos.z);
 		scMapGridFillCollisionRectangle(
 			0, probe.pos.x, probe.pos.z, width, depth, METATILE_BEHAVIOR_WALL);
 	}
@@ -457,8 +456,8 @@ static void scCrossboneIsleSteppingStonesReadMapGridMetatile(
 
 /* Copies the metatile's flags and metatile behavior without replacing its
    metatile tiles. */
-static void scCrossboneIsleSteppingStonesSetMetatileAttributes(Sint32 layer,
-	Sint32 x, Sint32 y, const CROSSBONE_ISLE_PILLAR_METATILE *source)
+static void scCrossboneIsleSteppingStonesSetMetatileAttributes(
+	Sint32 layer, Sint32 x, Sint32 y, const CROSSBONE_ISLE_PILLAR_METATILE *src)
 {
 	MAP_GRID_SCROLL_STATE *grid = MapGridState[0];
 
@@ -468,10 +467,10 @@ static void scCrossboneIsleSteppingStonesSetMetatileAttributes(Sint32 layer,
 				.metatiles;
 
 		metatile += x + (y << MAPGRID_ROW_SHIFT);
-		metatile->lowFlg = source->bits.lowFlg;
-		metatile->highFlg = source->bits.highFlg;
-		metatile->behavior = source->bits.behavior;
-		metatile->shape = source->bits.shape;
+		metatile->lowFlg = src->bits.lowFlg;
+		metatile->highFlg = src->bits.highFlg;
+		metatile->behavior = src->bits.behavior;
+		metatile->shape = src->bits.shape;
 	}
 }
 
@@ -543,22 +542,22 @@ static Sint32 scCrossboneIsleSteppingStonesLowerActorToLedge(
 }
 
 /* Sinks the pillar into the floor, a tenth of its height and 0.8 pixels a
-   frame, until a tenth of it is left (at most 32 frames). */
-static void scCrossboneIsleSteppingStonesSinkPillar(Sint32 index)
+   tick, until a tenth of it is left (at most 32 ticks). */
+static void scCrossboneIsleSteppingStonesSinkPillar(Sint32 idx)
 {
-	ACTOR *actor = fdActorGet(index);
-	Uint32 elapsedFrames;
+	ACTOR *actor = fdActorGet(idx);
+	Uint32 elapsedTicks;
 
 	actor->motionFlg = 0;
 
-	elapsedFrames = 0;
+	elapsedTicks = 0;
 	for(;;) {
-		if(elapsedFrames > 31)
+		if(elapsedTicks > 31)
 			return;
 		sySynch(1);
 		actor->scaleY -= toFIXED(1) / 10;
 		actor->y.fixed -= toFIXED(4) / 5;
-		elapsedFrames++;
+		elapsedTicks++;
 		if(actor->scaleY <= toFIXED(1) / 10 - 1) {
 			actor->scaleY = toFIXED(1) / 10;
 			return;
@@ -566,27 +565,27 @@ static void scCrossboneIsleSteppingStonesSinkPillar(Sint32 index)
 	}
 }
 
-/* Unused: spawns a particle near the leader once every four frames; nothing
+/* Unused: spawns a particle near the leader once every four ticks; nothing
    calls it. */
 UNUSED static void scCrossboneIsleSteppingStonesSpawnUnusedLeaderParticle(void)
 {
 	ACTOR		  *leader;
-	Sint32		   cycleFrame;
+	Sint32		   cycleFrm;
 	FIXED		   x;
 	FIXED		   z;
-	Sint32		   velocityY;
+	Sint32		   velY;
 	EFFECT_OPTIONS options;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	cycleFrame = FrameCount & 3;
-	if(cycleFrame == 0) {
+	cycleFrm = TickCount & 3;
+	if(cycleFrm == 0) {
 		options.pal = SPRITE_COLOR_RED_TINT;
 		options.startScaleX = toFIXED(7) / 10;
 		options.startScaleY = toFIXED(7) / 10;
 		x = leader->x.fixed + toFIXED(syRandomBelow(17) - 8);
 		z = leader->z.fixed + toFIXED(syRandomBelow(17) - 8);
-		velocityY = syMathDivide(toFIXED(syRandomBelow(5)) + toFIXED(3), 10);
-		fdEffectSpawn(x, leader->y.fixed, z, 0, velocityY, cycleFrame,
+		velY = syMathDivide(toFIXED(syRandomBelow(5)) + toFIXED(3), 10);
+		fdEffectSpawn(x, leader->y.fixed, z, 0, velY, cycleFrm,
 			EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
 			&options);
 	}
@@ -597,15 +596,15 @@ UNUSED static void scCrossboneIsleSteppingStonesSpawnUnusedLeaderParticle(void)
 static Bool scCrossboneIsleSteppingStonesTryJumpAcrossPillar(void)
 {
 	ACTOR *leader;
-	Sint32 savedMotionFlags;
+	Sint32 savedMotionFlg;
 	Sint32 jumpDirection;
 #if !JUMP_LANDS_ON_CELL_CENTER
 	Sint32 step;
 #endif
-	FIELD_POS destination;
+	FIELD_POS dst;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	savedMotionFlags = leader->motionFlg;
+	savedMotionFlg = leader->motionFlg;
 #if JUMP_LANDS_ON_CELL_CENTER
 	jumpDirection = FACING_NEAREST_CARDINAL(leader->facing);
 #endif
@@ -613,33 +612,31 @@ static Bool scCrossboneIsleSteppingStonesTryJumpAcrossPillar(void)
 		return FALSE;
 	}
 #if JUMP_LANDS_ON_CELL_CENTER
-	destination.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-	destination.y = leader->y.fixed;
-	destination.z = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-	syVectorAddPolarOffset(toFIXED(16), jumpDirection, (FIXED *)&destination);
+	dst.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	dst.y = leader->y.fixed;
+	dst.z = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	syVectorAddPolarOffset(toFIXED(16), jumpDirection, (FIXED *)&dst);
 #else
 	jumpDirection = FACING_INDEX(leader->facing);
-	fdActorStepFrom(
-		&destination, leader, PushedActor_DirectionSteps[jumpDirection]);
+	fdActorStepFrom(&dst, leader, PushedActorDirectionSteps[jumpDirection]);
 #endif
-	if(syFieldActorCheckMovementCollision(leader, &destination) != 1 &&
-		scPushedActorFindAtTile(&destination, leader) == 0) {
+	if(syFieldActorCheckMovementCollision(leader, &dst) != 1 &&
+		scPushedActorFindAtTile(&dst, leader) == 0) {
 #if JUMP_LANDS_ON_CELL_CENTER
-		destination.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-		destination.y = leader->y.fixed;
-		destination.z = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-		syVectorAddPolarOffset(
-			toFIXED(32), jumpDirection, (FIXED *)&destination);
+		dst.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+		dst.y = leader->y.fixed;
+		dst.z = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+		syVectorAddPolarOffset(toFIXED(32), jumpDirection, (FIXED *)&dst);
 #else
 		/* Two steps on. */
-		step = PushedActor_DirectionSteps[jumpDirection];
-		destination.x = leader->x.fixed + (DIRECTION_STEP_X_FIXED(step) * 2);
-		destination.y = leader->y.fixed;
+		step = PushedActorDirectionSteps[jumpDirection];
+		dst.x = leader->x.fixed + (DIRECTION_STEP_X_FIXED(step) * 2);
+		dst.y = leader->y.fixed;
 		step = DIRECTION_STEP_Z_FIXED(step) * 2;
-		destination.z = leader->z.fixed + step;
+		dst.z = leader->z.fixed + step;
 #endif
-		if(scPushedActorFindAtTile(&destination, leader) == 0 &&
-			syFieldActorCheckMovementCollision(leader, &destination) == 0) {
+		if(scPushedActorFindAtTile(&dst, leader) == 0 &&
+			syFieldActorCheckMovementCollision(leader, &dst) == 0) {
 			fdScriptStart();
 			fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 			sySynch(6);
@@ -650,11 +647,11 @@ static Bool scCrossboneIsleSteppingStonesTryJumpAcrossPillar(void)
 			leader->velY = toFIXED(4);
 			leader->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
 			fdActorSetSprFlags(leader, 0);
-			fdActorMoveToAndWait(ACTOR_PARTY_LEADER, FIXEDtoINT(destination.x),
-				FIXEDtoINT(destination.z));
+			fdActorMoveToAndWait(
+				ACTOR_PARTY_LEADER, FIXEDtoINT(dst.x), FIXEDtoINT(dst.z));
 			fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 			fdActorSetSprFlags(leader, SPRITE_FLAG_SHADOW);
-			leader->motionFlg = savedMotionFlags;
+			leader->motionFlg = savedMotionFlg;
 			fdScriptEnd();
 			return TRUE;
 		}
@@ -667,19 +664,19 @@ static Bool scCrossboneIsleSteppingStonesTryJumpAcrossPillar(void)
 static void scCrossboneIsleSteppingStonesUpdateDampedParticle(ACTOR *actor)
 {
 	FIELD_EFFECT *effect = (FIELD_EFFECT *)actor;
-	Sint32		  velocityX;
-	Sint32		  velocityY;
-	Sint32		  velocityZ;
+	Sint32		  velX;
+	Sint32		  velY;
+	Sint32		  velZ;
 
 	effect->x += effect->vel.x;
 	effect->y += effect->vel.y;
 	effect->z += effect->vel.z;
-	velocityX = effect->vel.x;
-	velocityY = effect->vel.y;
-	velocityZ = effect->vel.z;
-	effect->vel.x = velocityX - syMathDivide(velocityX, PARTICLE_DRAG);
-	effect->vel.y = velocityY - syMathDivide(velocityY, PARTICLE_DRAG_Y);
-	effect->vel.z = velocityZ - syMathDivide(velocityZ, PARTICLE_DRAG);
+	velX = effect->vel.x;
+	velY = effect->vel.y;
+	velZ = effect->vel.z;
+	effect->vel.x = velX - syMathDivide(velX, PARTICLE_DRAG);
+	effect->vel.y = velY - syMathDivide(velY, PARTICLE_DRAG_Y);
+	effect->vel.z = velZ - syMathDivide(velZ, PARTICLE_DRAG);
 	effect->scaleX += effect->scaleRateX;
 	effect->scaleY += effect->scaleRateY;
 	effect->spr->rotation += effect->spin;
@@ -712,7 +709,7 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 	if(sceneId == SCENE_CROSSBONE_ISLE_DRAGON_STATUE) {
 		return CrossboneIsleDragonStatueEntrances;
 	}
-	return Scene_FallbackEntrances;
+	return SceneFallbackEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -789,19 +786,19 @@ typedef struct PILLAR_SLOT {
 } PILLAR_SLOT;
 
 /* The side room's four pillars. */
-static PILLAR_SLOT sPillarSlots[4] ALIGNED(16);
+static PILLAR_SLOT PillarSlots[4] ALIGNED(16);
 /* Where a moved pillar stands, tested against the map's collision. */
-static FIELD_POS sProbePosition;
+static FIELD_POS ProbePosition;
 /* BG1 to BG3's scroll moved down to the stream's other level
    (scCrossboneIsleSteppingStonesPrepareWaterScroll). */
-static BG_SCROLL sOtherWaterScroll[3];
+static BG_SCROLL OtherWaterScroll[3];
 /* The percent chance that a line of the top WATER_DISSOLVE_LINES shows the
    other water level: 0 when the water starts to change, then a point higher
-   each frame until every line shows it. */
-static Sint32 sOtherWaterChance;
+   each tick until every line shows it. */
+static Sint32 OtherWaterChance;
 
 /* HBlank handler while the water changes level: the next line, if one of the
-   top WATER_DISSOLVE_LINES, shows the other water level with sOtherWaterChance,
+   top WATER_DISSOLVE_LINES, shows the other water level with OtherWaterChance,
    else the backgrounds' own scroll. */
 static void scCrossboneIsleSteppingStonesJitterBackgroundScroll(void)
 {
@@ -810,8 +807,8 @@ static void scCrossboneIsleSteppingStonesJitterBackgroundScroll(void)
 	volatile Uint32 *reg = (volatile Uint32 *)&REG_BG1HOFS;
 
 	if(line == DISPLAY_TOTAL_LINES - 1 || line <= WATER_DISSOLVE_LINES - 2) {
-		if(syRandomBelow(100) < sOtherWaterChance) {
-			src = ((Uint32 *)sOtherWaterScroll);
+		if(syRandomBelow(100) < OtherWaterChance) {
+			src = ((Uint32 *)OtherWaterScroll);
 		}
 	}
 	*reg = *src++;
@@ -821,26 +818,26 @@ static void scCrossboneIsleSteppingStonesJitterBackgroundScroll(void)
 }
 
 /* Copies BG1 to BG3's scroll and moves it down WATER_PANEL_SCROLL_Y, to the
-   stream in its other level. Event, each frame while the water changes
+   stream in its other level. Event, each tick while the water changes
    level. */
 static void scCrossboneIsleSteppingStonesPrepareWaterScroll(void)
 {
-	Uint32		 *destination;
-	const Uint32 *source;
+	Uint32		 *dst;
+	const Uint32 *src;
 	BG_SCROLL	 *other;
 
-	source = (const Uint32 *)&((Uint32 *)BgScrollWork)[1];
-	destination = (Uint32 *)sOtherWaterScroll;
-	*destination++ = *source++;
-	*destination++ = *source++;
-	*destination = *source;
-	other = sOtherWaterScroll;
+	src = (const Uint32 *)&((Uint32 *)BgScrollWork)[1];
+	dst = (Uint32 *)OtherWaterScroll;
+	*dst++ = *src++;
+	*dst++ = *src++;
+	*dst = *src;
+	other = OtherWaterScroll;
 	other[0].y += WATER_PANEL_SCROLL_Y;
 	other[1].y += WATER_PANEL_SCROLL_Y;
 	other[2].y += WATER_PANEL_SCROLL_Y;
 }
 
-/* The floodgate room's water changes level: over 100 frames, more and more of
+/* The floodgate room's water changes level: over 100 ticks, more and more of
    the top lines show the stream at its other level, then the map takes it. */
 static void scCrossboneIsleSteppingStonesAnimateWaterLevel(void)
 {
@@ -865,14 +862,14 @@ static void scCrossboneIsleSteppingStonesAnimateWaterLevel(void)
 			DRAINED_WATER_ROW + STREAM_ROW, 16, 5, 2, STREAM_COLUMN,
 			WATER_PANEL_ROW);
 	}
-	sOtherWaterChance = 0;
-	sySetFrameEvent(
-		scCrossboneIsleSteppingStonesPrepareWaterScroll, EVENT_PASS_FRAME);
+	OtherWaterChance = 0;
+	sySetTickEvent(
+		scCrossboneIsleSteppingStonesPrepareWaterScroll, EVENT_PASS_TICK);
 	sySynch(1);
 	syIntFunction(
 		IRQ_HBLANK, 0, scCrossboneIsleSteppingStonesJitterBackgroundScroll);
 	sySndPlay(SE_WATER_LEVEL);
-	for(sOtherWaterChance = 0; sOtherWaterChance <= 100; sOtherWaterChance++) {
+	for(OtherWaterChance = 0; OtherWaterChance <= 100; OtherWaterChance++) {
 		sySynch(1);
 	}
 	/* The map takes the new level for good. */
@@ -913,7 +910,7 @@ static void scCrossboneIsleSteppingStonesFlipWaterSwitch(void)
 	if(waterRaised == 0) {
 		sySndPlay(SE_CRUNCH);
 		fdMapGridAnimateMetatiles(
-			CrossboneIsleSteppingStones_SwitchCloseSteps, 84, 24);
+			CrossboneIsleSteppingStonesSwitchCloseSteps, 84, 24);
 		fdScriptWait(30);
 		sySndPlay(SE_LOG_FALL);
 		fdActorSetSprPriority(ACTOR_WATER, 1);
@@ -922,9 +919,9 @@ static void scCrossboneIsleSteppingStonesFlipWaterSwitch(void)
 		fdActorSetPos(ACTOR_WATER, 272, 416);
 		fdActorSetAnimation(ACTOR_WATER, SPLASH_ANIMATION_BURST);
 		fdMapGridAnimateMetatiles(
-			CrossboneIsleSteppingStones_FloodgateCloseSteps, 80, 24);
+			CrossboneIsleSteppingStonesFloodgateCloseSteps, 80, 24);
 		fdMapGridAnimateMetatiles(
-			CrossboneIsleSteppingStones_FloodgateFootSteps, 80, 28);
+			CrossboneIsleSteppingStonesFloodgateFootSteps, 80, 28);
 		fdMapGridCopyMetatilesTo(65, 40, 16, 27, 2, 4);
 		scCrossboneIsleSteppingStonesAnimateWaterLevel();
 		scCrossboneIsleSteppingStonesFloatLogs();
@@ -933,7 +930,7 @@ static void scCrossboneIsleSteppingStonesFlipWaterSwitch(void)
 	} else {
 		sySndPlay(SE_CRUNCH);
 		fdMapGridAnimateMetatiles(
-			CrossboneIsleSteppingStones_SwitchOpenSteps, 84, 24);
+			CrossboneIsleSteppingStonesSwitchOpenSteps, 84, 24);
 		fdScriptWait(30);
 		sySndPlay(SE_WATER_DRAIN);
 		fdActorGet(ACTOR_WATER)->motionFlg = 0;
@@ -942,7 +939,7 @@ static void scCrossboneIsleSteppingStonesFlipWaterSwitch(void)
 		fdActorSetAnimation(ACTOR_WATER, SPLASH_ANIMATION_CHURN);
 		fdMapGridCopyMetatilesTo(65, 45, 16, 27, 2, 4);
 		fdMapGridAnimateMetatiles(
-			CrossboneIsleSteppingStones_FloodgateOpenSteps, 80, 24);
+			CrossboneIsleSteppingStonesFloodgateOpenSteps, 80, 24);
 		scCrossboneIsleSteppingStonesAnimateWaterLevel();
 		scCrossboneIsleSteppingStonesStrandLog(ACTOR_FIRST_LOG + 1);
 		scCrossboneIsleSteppingStonesStrandLog(ACTOR_FIRST_LOG + 2);
@@ -1012,7 +1009,7 @@ static Sint32 scCrossboneIsleSteppingStonesSyncPriorityIfAhead(
 	return result;
 }
 
-/* A stacked pillar's update function, each frame. While Psynergy is cast it is
+/* A stacked pillar's update function, each tick. While Psynergy is cast it is
    solid and drawn on Isaac's layers. Otherwise a pillar just behind Isaac or
    another pillar is drawn no nearer than it, and then the pillars just behind
    it no nearer than it in turn; a pillar whose top is below Isaac's feet is
@@ -1096,26 +1093,26 @@ static void scCrossboneIsleSteppingStonesSortPillarActors(void)
 			syDMAXCopy(&savedActor, firstActor,
 				DMA_COPY_WORDS(sizeof(savedActor) / sizeof(Uint32)), REG_DMA3);
 			syDMAWait(REG_DMA3);
-			syDMAXCopy(&sPillarSlots[j], &savedPlacement,
+			syDMAXCopy(&PillarSlots[j], &savedPlacement,
 				DMA_COPY_WORDS(sizeof(PILLAR_PLACEMENT) / sizeof(Uint32)),
 				REG_DMA3);
 			syDMAWait(REG_DMA3);
-			syDMAXCopy(&sPillarSlots[i], &sPillarSlots[j],
+			syDMAXCopy(&PillarSlots[i], &PillarSlots[j],
 				DMA_COPY_WORDS(sizeof(PILLAR_PLACEMENT) / sizeof(Uint32)),
 				REG_DMA3);
 			syDMAWait(REG_DMA3);
-			syDMAXCopy(&savedPlacement, &sPillarSlots[i],
+			syDMAXCopy(&savedPlacement, &PillarSlots[i],
 				DMA_COPY_WORDS(sizeof(PILLAR_PLACEMENT) / sizeof(Uint32)),
 				REG_DMA3);
 			syDMAWait(REG_DMA3);
-			if(gmFlagGet(sPillarSlots[i].flg) &&
-				!gmFlagGet(sPillarSlots[j].flg)) {
-				gmFlagClear(sPillarSlots[i].flg);
-				gmFlagSet(sPillarSlots[j].flg);
-			} else if(!gmFlagGet(sPillarSlots[i].flg) &&
-				gmFlagGet(sPillarSlots[j].flg)) {
-				gmFlagSet(sPillarSlots[i].flg);
-				gmFlagClear(sPillarSlots[j].flg);
+			if(gmFlagGet(PillarSlots[i].flg) &&
+				!gmFlagGet(PillarSlots[j].flg)) {
+				gmFlagClear(PillarSlots[i].flg);
+				gmFlagSet(PillarSlots[j].flg);
+			} else if(!gmFlagGet(PillarSlots[i].flg) &&
+				gmFlagGet(PillarSlots[j].flg)) {
+				gmFlagSet(PillarSlots[i].flg);
+				gmFlagClear(PillarSlots[j].flg);
 			}
 		}
 	}
@@ -1141,21 +1138,21 @@ static void scCrossboneIsleSteppingStonesMovePillar(void)
 		actor = fdActorGet(id);
 		actor->layer = 2;
 		i = id - ACTOR_FIRST_PILLAR;
-		if(FIELD_METATILE(actor->x.fixed) == sPillarSlots[i].x &&
-			(FIELD_METATILE(actor->z.fixed)) == sPillarSlots[i].z &&
+		if(FIELD_METATILE(actor->x.fixed) == PillarSlots[i].x &&
+			(FIELD_METATILE(actor->z.fixed)) == PillarSlots[i].z &&
 			actor->velY == 0) {
 			continue;
 		}
-		syDMAXCopy(&actor->x, &sProbePosition,
-			DMA_COPY_WORDS(sizeof(sProbePosition) / sizeof(Uint32)), REG_DMA3);
+		syDMAXCopy(&actor->x, &ProbePosition,
+			DMA_COPY_WORDS(sizeof(ProbePosition) / sizeof(Uint32)), REG_DMA3);
 		syDMAWait(REG_DMA3);
-		if(syFieldActorCheckMovementCollision(actor, &sProbePosition) == -1) {
+		if(syFieldActorCheckMovementCollision(actor, &ProbePosition) == -1) {
 			actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		}
 		scCrossboneIsleSteppingStonesSetMetatileAttributes(
-			0, sPillarSlots[i].x, sPillarSlots[i].z, &sPillarSlots[i].metatile);
+			0, PillarSlots[i].x, PillarSlots[i].z, &PillarSlots[i].metatile);
 		scCrossboneIsleSteppingStonesSetMetatileAttributes(
-			2, sPillarSlots[i].x, sPillarSlots[i].z, &sPillarSlots[i].metatile);
+			2, PillarSlots[i].x, PillarSlots[i].z, &PillarSlots[i].metatile);
 		/* Falling pillars either reach a ledge, shrink away, or settle on
 		   ground. */
 		if(actor->motionFlg & ACTOR_FOLLOWS_TERRAIN) {
@@ -1184,33 +1181,33 @@ static void scCrossboneIsleSteppingStonesMovePillar(void)
 		}
 		scCrossboneIsleSteppingStonesReadMapGridMetatile(0,
 			FIELD_METATILE(actor->x.fixed), FIELD_METATILE(actor->z.fixed),
-			&sPillarSlots[i].metatile);
+			&PillarSlots[i].metatile);
 		if(actor->y.fixed >= 0) {
 			scCrossboneIsleSteppingStonesReadMapGridMetatile(
 				0, 27, FIELD_METATILE(actor->y.fixed) + 6, &metatile);
 			scCrossboneIsleSteppingStonesSetMetatileAttributes(0,
 				FIELD_METATILE(actor->x.fixed), FIELD_METATILE(actor->z.fixed),
 				&metatile);
-			metatile.bits.highFlg = sPillarSlots[i].metatile.bits.highFlg;
+			metatile.bits.highFlg = PillarSlots[i].metatile.bits.highFlg;
 			scCrossboneIsleSteppingStonesSetMetatileAttributes(2,
 				FIELD_METATILE(actor->x.fixed), FIELD_METATILE(actor->z.fixed),
 				&metatile);
 		}
-		sPillarSlots[i].x = FIELD_METATILE(actor->x.fixed);
-		sPillarSlots[i].y = FIELD_METATILE(actor->y.fixed);
-		sPillarSlots[i].z = FIELD_METATILE(actor->z.fixed);
+		PillarSlots[i].x = FIELD_METATILE(actor->x.fixed);
+		PillarSlots[i].y = FIELD_METATILE(actor->y.fixed);
+		PillarSlots[i].z = FIELD_METATILE(actor->z.fixed);
 		for(k = 0; k <= 3; k++) {
 			if(k == i) {
 				continue;
 			}
-			gmFlagClear(sPillarSlots[k].flg);
+			gmFlagClear(PillarSlots[k].flg);
 			other = fdActorGet(k + ACTOR_FIRST_PILLAR);
 			if(FIELD_METATILE(actor->x.fixed) ==
 					FIELD_METATILE(other->x.fixed) &&
 				(FIELD_METATILE(actor->z.fixed)) ==
 					FIELD_METATILE(other->z.fixed) &&
 				actor->y.fixed > other->y.fixed) {
-				gmFlagSet(sPillarSlots[k].flg);
+				gmFlagSet(PillarSlots[k].flg);
 			}
 		}
 	}
@@ -1252,12 +1249,12 @@ static void scCrossboneIsleSteppingStonesClimbUp(void)
 static void scCrossboneIsleSteppingStonesPushOrClimbDown(void)
 {
 	ACTOR	 *leader = fdActorGet(ACTOR_PARTY_LEADER);
-	FIELD_POS position;
+	FIELD_POS pos;
 
-	position.x = leader->x.fixed;
-	position.y = leader->y.fixed;
-	position.z = leader->z.fixed + toFIXED(16);
-	if(scPushedActorFindAtTile(&position, leader) != NULL) {
+	pos.x = leader->x.fixed;
+	pos.y = leader->y.fixed;
+	pos.z = leader->z.fixed + toFIXED(16);
+	if(scPushedActorFindAtTile(&pos, leader) != NULL) {
 		scCrossboneIsleSteppingStonesJumpOrPushStackedPillar();
 	} else if(scCrossboneIsleSteppingStonesTryJumpAcrossPillar() == 0) {
 		fdClimbDown();
@@ -1307,7 +1304,7 @@ static UNREAD_RESULT scCrossboneIsleSteppingStonesUpdateFrozenPuddlePriority(
 
 /* A puddle in the dragon statue's room has frozen into a pillar of ice: it
    shines, and its metatile becomes a pillar top Isaac can jump onto
-   (CrossboneIsleSteppingStones_IceShineScript). */
+   (CrossboneIsleSteppingStonesIceShineScript). */
 static void scCrossboneIsleSteppingStonesFreezePuddle(Sint32 id)
 {
 	ACTOR *actor;
@@ -1324,7 +1321,7 @@ static void scCrossboneIsleSteppingStonesFreezePuddle(Sint32 id)
 		FIELD_METATILE(actor->x.fixed), FIELD_METATILE(actor->z.fixed));
 	gmFlagSet(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + id -
 		ACTOR_FIRST_PUDDLE);
-	fdActorSetScript(id, CrossboneIsleSteppingStones_IceShineScript);
+	fdActorSetScript(id, CrossboneIsleSteppingStonesIceShineScript);
 	fdScriptEnd();
 }
 
@@ -1383,18 +1380,18 @@ static void scCrossboneIsleSteppingStonesFrostRaisesPillar(void)
 	fdMapGridCopyMetatileAttributes(20, 14, 1, 1, 22, 16);
 }
 
-/* The stone dragon's fire, each frame while it breathes: flames burst from
+/* The stone dragon's fire, each tick while it breathes: flames burst from
    beside it towards the puddle by the east ladder, with a whoosh. */
 static void scCrossboneIsleSteppingStonesSpawnDragonFire(void)
 {
 	EFFECT_OPTIONS options;
-	Sint32		   velocityX;
-	FIXED		   velocityY;
-	Uint32		   angle;
+	Sint32		   velX;
+	FIXED		   velY;
+	Uint32		   ang;
 
-	if((FrameCount & 2) != 0)
+	if((TickCount & 2) != 0)
 		return;
-	if((FrameCount & 7) == 0)
+	if((TickCount & 7) == 0)
 		sySndPlay(SE_WHOOSH);
 
 	options.pal = SPRITE_COLOR_RED_TINT;
@@ -1404,32 +1401,31 @@ static void scCrossboneIsleSteppingStonesSpawnDragonFire(void)
 	options.tgtScaleY = toFIXED(8) / 5;
 	/* A random angle, of which options.rotation keeps the top four bits: a
 	   random sixteenth of a turn. */
-	angle = syRandomNext() & 0x0ffff000;
-	options.rotation = angle;
+	ang = syRandomNext() & 0x0ffff000;
+	options.rotation = ang;
 	options.update = scCrossboneIsleSteppingStonesUpdateDampedParticle;
 
-	velocityX = -(toFIXED(syRandomBelow(5)) + toFIXED(6));
-	velocityX /= 2;
-	velocityY = -(toFIXED(syRandomBelow(5)) + toFIXED(5));
+	velX = -(toFIXED(syRandomBelow(5)) + toFIXED(6));
+	velX /= 2;
+	velY = -(toFIXED(syRandomBelow(5)) + toFIXED(5));
 
-	fdEffectSpawn(toFIXED(324), toFIXED(48), toFIXED(228), velocityX, velocityY,
-		0,
+	fdEffectSpawn(toFIXED(324), toFIXED(48), toFIXED(228), velX, velY, 0,
 		EFFECT_USE_UPDATE | EFFECT_USE_ROTATION | EFFECT_USE_START_SCALE |
 			EFFECT_SCALE_TO_TARGET | EFFECT_USE_PALETTE,
 		&options);
 }
 
 /* Steam rises from the melting ice by the east ladder: a white puff every eight
-   frames. */
+   ticks. */
 static UNREAD_RESULT scCrossboneIsleSteppingStonesSpawnMeltParticle(
 	ACTOR *actor)
 {
 	EFFECT_OPTIONS options;
-	Uint32		   phase = FrameCount & 7;
+	Uint32		   phase = TickCount & 7;
 	FIXED		   x;
 	FIXED		   y;
 	FIXED		   z;
-	Sint32		   velocityY;
+	Sint32		   velY;
 
 	if(phase != 0)
 		RETURN_UNREAD(0);
@@ -1441,9 +1437,9 @@ static UNREAD_RESULT scCrossboneIsleSteppingStonesSpawnMeltParticle(
 	x = actor->x.fixed + toFIXED(syRandomBelow(17) - 8);
 	y = actor->y.fixed + toFIXED(syRandomBelow(17));
 	z = actor->z.fixed + toFIXED(syRandomBelow(17) - 8);
-	velocityY = syMathDivide(toFIXED(syRandomBelow(5)) + toFIXED(3), 10);
+	velY = syMathDivide(toFIXED(syRandomBelow(5)) + toFIXED(3), 10);
 
-	fdEffectSpawn(x, y, z, 0, velocityY, phase,
+	fdEffectSpawn(x, y, z, 0, velY, phase,
 		EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
 		&options);
 	RETURN_UNREAD(0);
@@ -1468,8 +1464,8 @@ static void scCrossboneIsleSteppingStonesFreezeThirdPuddle(void)
 		fdMapGridCopyMetatilesTo(73, 10, 60, 10, 1, 2);
 		fdScriptWait(20);
 		/* The third puddle freezes while the frozen second puddle melts. */
-		sySetFrameEvent(
-			scCrossboneIsleSteppingStonesSpawnDragonFire, EVENT_PASS_FRAME);
+		sySetTickEvent(
+			scCrossboneIsleSteppingStonesSpawnDragonFire, EVENT_PASS_TICK);
 		fdScriptWait(40);
 		if(fdScriptGetFlag(
 			   FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + 1) !=
@@ -1617,7 +1613,7 @@ static void scCrossboneIsleSteppingStonesRestoreFrozenPuddle(Sint32 actorId)
 #endif
 		fdMapGridCopyMetatileAttributes(20, 14, 1, 1,
 			FIELD_METATILE(actor->x.fixed), FIELD_METATILE(actor->z.fixed));
-		fdActorSetScript(actorId, CrossboneIsleSteppingStones_IceShineScript);
+		fdActorSetScript(actorId, CrossboneIsleSteppingStonesIceShineScript);
 	}
 }
 
@@ -1710,16 +1706,16 @@ Sint32 scInit(void)
 		scCrossboneIsleSteppingStonesInitPillarPriority(ACTOR_FIRST_PILLAR + 2);
 		scCrossboneIsleSteppingStonesInitPillarPriority(ACTOR_FIRST_PILLAR + 3);
 		for(i = 0; i < 4; i++) {
-			sPillarSlots[i].x = 0;
-			sPillarSlots[i].y = 0;
-			sPillarSlots[i].z = 0;
-			sPillarSlots[i].flg = i +
+			PillarSlots[i].x = 0;
+			PillarSlots[i].y = 0;
+			PillarSlots[i].z = 0;
+			PillarSlots[i].flg = i +
 				FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER;
 		}
 		scCrossboneIsleSteppingStonesMovePillar();
 		fdScriptWait(1);
-		sySetFrameEvent(scCrossboneIsleSteppingStonesUpdateLeaderPriority,
-			EVENT_PASS_FRAME);
+		sySetTickEvent(
+			scCrossboneIsleSteppingStonesUpdateLeaderPriority, EVENT_PASS_TICK);
 		if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) != 0) {
 			for(id = ACTOR_FIRST_PILLAR; id < ACTOR_FIRST_PILLAR + 4; id++) {
 				actor = fdActorGet(id);
@@ -1770,10 +1766,10 @@ Sint32 scInit(void)
 #include "shared/pushed_actor_tables.c"
 /* clang-format off */
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 /* The shine on a pillar of ice Frost has made of a puddle in the dragon */
@@ -1781,8 +1777,8 @@ const Sint32 *FieldEffect_DurationScripts[] = {
 /* */
 /* The timer carries a colour mode to */
 /* scCrossboneIsleSteppingStonesSetSprColFromTimer, with green and blue */
-/* swapped for two frames in every eight. */
-Sint32 CrossboneIsleSteppingStones_IceShineScript[] = {
+/* swapped for two ticks in every eight. */
+Sint32 CrossboneIsleSteppingStonesIceShineScript[] = {
 	SC_SET(SW_TIMER, SPRITE_COLOR_RBG),
 	SC_CALL(scCrossboneIsleSteppingStonesSetSprColFromTimer),
 	SC_WAIT(2),
@@ -1795,18 +1791,18 @@ Sint32 CrossboneIsleSteppingStones_IceShineScript[] = {
 /* The floodgate's switch flipping as */
 /* scCrossboneIsleSteppingStonesFlipWaterSwitch closes the gate, and flipping */
 /* back as it opens it. */
-Uint16 CrossboneIsleSteppingStones_SwitchCloseSteps[] = {
+Uint16 CrossboneIsleSteppingStonesSwitchCloseSteps[] = {
 	MAPGRID_ANIMATION_STEP(76, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(77, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(78, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(79, 34, 1, 2, 4), MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 CrossboneIsleSteppingStones_SwitchOpenSteps[] = {
+Uint16 CrossboneIsleSteppingStonesSwitchOpenSteps[] = {
 	MAPGRID_ANIMATION_STEP(79, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(78, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(77, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(76, 34, 1, 2, 4), MAPGRID_ANIMATION_STEPS_END,
 };
 
 /* The floodgate closing, and opening again. */
-Uint16 CrossboneIsleSteppingStones_FloodgateCloseSteps[] = {
+Uint16 CrossboneIsleSteppingStonesFloodgateCloseSteps[] = {
 	MAPGRID_ANIMATION_STEP(67, 34, 2, 5, 6), MAPGRID_ANIMATION_STEP(69, 34, 2, 5, 6), MAPGRID_ANIMATION_STEP(71, 34, 2, 5, 6), MAPGRID_ANIMATION_STEP(73, 34, 2, 5, 6), MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 CrossboneIsleSteppingStones_FloodgateOpenSteps[] = {
+Uint16 CrossboneIsleSteppingStonesFloodgateOpenSteps[] = {
 	MAPGRID_ANIMATION_STEP(71, 50, 2, 5, 6), MAPGRID_ANIMATION_STEP(69, 50, 2, 5, 6), MAPGRID_ANIMATION_STEP(67, 50, 2, 5, 6), MAPGRID_ANIMATION_STEP(65, 50, 2, 5, 6), MAPGRID_ANIMATION_STEPS_END,
 };
 
@@ -1815,7 +1811,7 @@ Uint16 CrossboneIsleSteppingStones_FloodgateOpenSteps[] = {
 /* They show three pictures of white spray splashing up and falling, then the */
 /* stream bed below the gate, left almost dry */
 /* (scCrossboneIsleSteppingStonesFlipWaterSwitch's render). */
-Uint16 CrossboneIsleSteppingStones_FloodgateFootSteps[] = {
+Uint16 CrossboneIsleSteppingStonesFloodgateFootSteps[] = {
 	MAPGRID_ANIMATION_STEP(75, 38, 2, 1, 4), MAPGRID_ANIMATION_STEP(77, 38, 2, 1, 6), MAPGRID_ANIMATION_STEP(79, 38, 2, 1, 8), MAPGRID_ANIMATION_STEP(65, 53, 2, 1, 1), MAPGRID_ANIMATION_STEPS_END,
 };
 

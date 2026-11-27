@@ -15,7 +15,7 @@ void btEffectConfigureEffectDisp(void)
 	sySynch(1);
 }
 
-/* Scrolls BG1 a step every few VBlanks. */
+/* Scrolls BG1 a step every few frames. */
 void btEffectAdvanceScrollOnInterval(void)
 {
 	BATTLE_EFFECT_STATE *state;
@@ -29,7 +29,7 @@ void btEffectAdvanceScrollOnInterval(void)
 	}
 }
 
-/* Slides the affine BG2 a step every few VBlanks. */
+/* Slides the affine BG2 a step every few frames. */
 void btEffectAdvanceBg2OnInterval(void)
 {
 	BATTLE_EFFECT_STATE *state;

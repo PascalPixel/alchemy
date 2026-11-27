@@ -24,7 +24,7 @@ void scLightSprsDraw(void)
 			Sint32	large, screenX;
 			FIXED	y, z;
 			Sint32	screenY, depth;
-			Sint32	frame;
+			Sint32	frm;
 			Uint32 *word;
 			screenX = actor->x.fixed - viewX;
 			y = actor->y.fixed - viewY + toFIXED(8);
@@ -34,7 +34,7 @@ void scLightSprsDraw(void)
 			large = LightSpritesLarge;
 			if(large == 0) {
 				Sint32 actorX, actorY;
-				frame = actor->tmr;
+				frm = actor->tmr;
 				actorX = FIXEDtoINT(screenX);
 				actorY = FIXEDtoINT(screenY);
 				screenX = actorX - LIGHT_LEFT;
@@ -48,7 +48,7 @@ void scLightSprsDraw(void)
 				*word++ = 0;
 				*word++ =
 					screenY | OBJ_X(screenX) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
-				*word = (tile + frame * 8) | OBJ_PRIORITY(2);
+				*word = (tile + frm * 8) | OBJ_PRIORITY(2);
 				if(LightSpritePriority == -1)
 					oam->pri = fdActorGetSprPriority(actor);
 				else
@@ -57,7 +57,7 @@ void scLightSprsDraw(void)
 				oam++;
 			} else {
 				Sint32 actorX, actorY;
-				frame = actor->tmr;
+				frm = actor->tmr;
 				actorX = FIXEDtoINT(screenX);
 				actorY = FIXEDtoINT(screenY);
 				screenX = actorX - LIGHT_LEFT;
@@ -71,7 +71,7 @@ void scLightSprsDraw(void)
 				*word++ = 0;
 				*word++ =
 					screenY | OBJ_X(screenX) | OBJ_SIZE_32X64 | OBJ_256_COLORS;
-				*word = (tile + frame * 8) | OBJ_PRIORITY(2);
+				*word = (tile + frm * 8) | OBJ_PRIORITY(2);
 				if(LightSpritePriority == -1)
 					oam->pri = fdActorGetSprPriority(actor);
 				else

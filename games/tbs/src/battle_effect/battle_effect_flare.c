@@ -1,14 +1,14 @@
 /* Flare. Part of battle_effect.c. */
 
-#define FLARE_FRAMES 80 /* frames of the flare */
+#define FLARE_TICKS 80 /* ticks of the flare */
 
 #define FLARE_ARC_COUNT		 9 /* flames on the arc */
 /* The half ellipse's radii, across and up and down, in canvas pixels. */
 #define FLARE_ARC_RADIUS_X	 32
 #define FLARE_ARC_RADIUS_Y	 16
-/* A flame's six pictures, four frames each, before it goes out. */
+/* A flame's six pictures, four ticks each, before it goes out. */
 #define FLARE_FLAME_PICTURES 6
-#define FLARE_PICTURE_FRAMES 4
+#define FLARE_PICTURE_TICKS	 4
 
 /* Nine flames rise one after another along half an ellipse.
 
@@ -17,7 +17,7 @@ void btEffectRunFlare(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	DRAW_RECTANGLE		 draw;
 	Sint32				 i;
 	Sint32				 picture;
@@ -68,8 +68,8 @@ void btEffectRunFlare(BATTLE_EFFECT_PARM *args)
 	}
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	sySndPlayStub(SE_WHOOSH);
-	for(frame = 0; frame != FLARE_FRAMES; frame++) {
-		if(frame == 24) {
+	for(frm = 0; frm != FLARE_TICKS; frm++) {
+		if(frm == 24) {
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 		}
 
@@ -77,67 +77,67 @@ void btEffectRunFlare(BATTLE_EFFECT_PARM *args)
 		for(i = 0; i != FLARE_ARC_COUNT; i++) {
 			flame = &state->particles[i];
 			if(flame->variant >= 0 &&
-				flame->variant < FLARE_FLAME_PICTURES * FLARE_PICTURE_FRAMES) {
-				picture = flame->variant / FLARE_PICTURE_FRAMES;
+				flame->variant < FLARE_FLAME_PICTURES * FLARE_PICTURE_TICKS) {
+				picture = flame->variant / FLARE_PICTURE_TICKS;
 				/* UB: width is assigned in one argument and read in another. */
 #if FIX_UNSEQUENCED_SIDE_EFFECT
-				width = BattleEffect_PuffArcPictureWidths[picture];
+				width = BattleEffectPuffArcPictureWidths[picture];
 				draw(canvas,
-					state->sheet + BattleEffect_PuffArcPictures[picture],
+					state->sheet + BattleEffectPuffArcPictures[picture],
 					flame->x - (width >> 1),
-					flame->y + BattleEffect_PuffArcPictureBiasY[picture], width,
-					BattleEffect_PuffArcPictureHeights[picture]);
+					flame->y + BattleEffectPuffArcPictureBiasY[picture], width,
+					BattleEffectPuffArcPictureHeights[picture]);
 #else
 				draw(canvas,
-					state->sheet + BattleEffect_PuffArcPictures[picture],
+					state->sheet + BattleEffectPuffArcPictures[picture],
 					flame->x -
-						((width = BattleEffect_PuffArcPictureWidths[picture]) >>
+						((width = BattleEffectPuffArcPictureWidths[picture]) >>
 							1),
-					flame->y + BattleEffect_PuffArcPictureBiasY[picture], width,
-					BattleEffect_PuffArcPictureHeights[picture]);
+					flame->y + BattleEffectPuffArcPictureBiasY[picture], width,
+					BattleEffectPuffArcPictureHeights[picture]);
 #endif
 				/* Flare Wall stacks a flame 16 pixels higher, and Flare Storm
 				   another 16 above that. */
 				if(state->args->variant != EFFECT_VARIANT_BASIC) {
 #if FIX_UNSEQUENCED_SIDE_EFFECT
-					width = BattleEffect_PuffArcPictureWidths[picture];
+					width = BattleEffectPuffArcPictureWidths[picture];
 					draw(canvas,
-						state->sheet + BattleEffect_PuffArcPictures[picture],
+						state->sheet + BattleEffectPuffArcPictures[picture],
 						flame->x - (width >> 1),
-						(flame->y + BattleEffect_PuffArcPictureBiasY[picture]) -
+						(flame->y + BattleEffectPuffArcPictureBiasY[picture]) -
 							16,
-						width, BattleEffect_PuffArcPictureHeights[picture]);
+						width, BattleEffectPuffArcPictureHeights[picture]);
 #else
 					draw(canvas,
-						state->sheet + BattleEffect_PuffArcPictures[picture],
+						state->sheet + BattleEffectPuffArcPictures[picture],
 						flame->x -
-							((width = BattleEffect_PuffArcPictureWidths
+							((width = BattleEffectPuffArcPictureWidths
 									 [picture]) >>
 								1),
-						(flame->y + BattleEffect_PuffArcPictureBiasY[picture]) -
+						(flame->y + BattleEffectPuffArcPictureBiasY[picture]) -
 							16,
-						width, BattleEffect_PuffArcPictureHeights[picture]);
+						width, BattleEffectPuffArcPictureHeights[picture]);
 #endif
 				}
 				if(state->args->variant == EFFECT_VARIANT_STRONGEST) {
 #if FIX_UNSEQUENCED_SIDE_EFFECT
-					width = BattleEffect_PuffArcPictureWidths[picture];
+					width = BattleEffectPuffArcPictureWidths[picture];
 					draw(canvas,
-						state->sheet + BattleEffect_PuffArcPictures[picture],
+						state->sheet + BattleEffectPuffArcPictures[picture],
 						flame->x - (width >> 1),
-						(flame->y + BattleEffect_PuffArcPictureBiasY[picture]) -
+						(flame->y + BattleEffectPuffArcPictureBiasY[picture]) -
 							32,
-						width, BattleEffect_PuffArcPictureHeights[picture]);
+						width, BattleEffectPuffArcPictureHeights[picture]);
 #else
 					draw(canvas,
-						state->sheet + BattleEffect_PuffArcPictures[picture],
+						state->sheet + BattleEffectPuffArcPictures[picture],
 						flame->x -
-							((width = BattleEffect_PuffArcPictureWidths
+							((width = BattleEffectPuffArcPictureWidths
 									 [picture]) >>
 								1),
-						(flame->y + BattleEffect_PuffArcPictureBiasY[picture]) -
+						(flame->y + BattleEffectPuffArcPictureBiasY[picture]) -
 							32,
-						width, BattleEffect_PuffArcPictureHeights[picture]);
+						width, BattleEffectPuffArcPictureHeights[picture]);
 #endif
 				}
 			}
@@ -146,12 +146,12 @@ void btEffectRunFlare(BATTLE_EFFECT_PARM *args)
 
 		/* The targets flash red. */
 		for(i = 0; i != state->args->tgtCnt; i++) {
-			if(frame == (i * 8) + 16) {
+			if(frm == (i * 8) + 16) {
 				btEffectTintBattler(state->args->tgts[i], SPRITE_COLOR_RED_TINT,
 					POSE_DAMAGE, i, 12);
 			}
 		}
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 	syCloseEvent(btEffectTransferCanvas);
@@ -161,32 +161,32 @@ void btEffectRunFlare(BATTLE_EFFECT_PARM *args)
 /* Lists the indices within idxRadius of where curValue sits in values, up to
    entryLimit, and returns how many. */
 UNUSED Sint32 btEffectBuildCenteredIndexList(
-	BATTLE_EFFECT_INDEX_WINDOW *window, Sint16 *output)
+	BATTLE_EFFECT_INDEX_WINDOW *win, Sint16 *output)
 {
-	Sint32 windowLength = window->idxRadius * 2 + 1;
-	Sint32 outputCount = 0;
-	Sint32 centerIndex = 0;
-	Sint32 windowIndex;
+	Sint32 winLength = win->idxRadius * 2 + 1;
+	Sint32 outputCnt = 0;
+	Sint32 centerIdx = 0;
+	Sint32 winIdx;
 
-	for(windowIndex = 0; windowIndex != windowLength; windowIndex++) {
-		if(window->curValue == window->values[windowIndex]) {
-			centerIndex = windowIndex;
+	for(winIdx = 0; winIdx != winLength; winIdx++) {
+		if(win->curValue == win->values[winIdx]) {
+			centerIdx = winIdx;
 			break;
 		}
 	}
-	for(windowIndex = 0; windowIndex != windowLength; windowIndex++) {
-		Sint32 index = centerIndex + windowIndex - window->idxRadius;
+	for(winIdx = 0; winIdx != winLength; winIdx++) {
+		Sint32 idx = centerIdx + winIdx - win->idxRadius;
 
-		if(index >= 0 && index < window->entryLimit) {
-			output[outputCount++] = index;
+		if(idx >= 0 && idx < win->entryLimit) {
+			output[outputCnt++] = idx;
 		}
 	}
-	return outputCount;
+	return outputCnt;
 }
 
-#undef FLARE_FRAMES
+#undef FLARE_TICKS
 #undef FLARE_ARC_COUNT
 #undef FLARE_ARC_RADIUS_X
 #undef FLARE_ARC_RADIUS_Y
 #undef FLARE_FLAME_PICTURES
-#undef FLARE_PICTURE_FRAMES
+#undef FLARE_PICTURE_TICKS

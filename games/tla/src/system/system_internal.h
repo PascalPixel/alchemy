@@ -24,11 +24,11 @@
    numbered them (see system.h). */
 
 /* status, with LINK_STATUS_ERROR set when the link's last transfer failed. */
-static inline Sint32 sySerialAddErrorFlag(Sint32 status)
+static inline Sint32 sySerialAddErrorFlag(Sint32 stat)
 {
 	if(SerialStateWork.transferError != 0)
-		status |= LINK_STATUS_ERROR;
-	return status;
+		stat |= LINK_STATUS_ERROR;
+	return stat;
 }
 
 /* Resets the current matrix to the unit matrix. */

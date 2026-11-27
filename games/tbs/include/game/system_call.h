@@ -5,7 +5,7 @@
    functions below that the scene, menu and debug overlays import, which every
    overlay call of them goes through.
 
-   An overlay writes `sySetFrameEvent(func, EVENT_PASS_FRAME)`, and the inline
+   An overlay writes `sySetTickEvent(func, EVENT_PASS_TICK)`, and the inline
    calls sySetEvent through the overlay's import stub. Main-image code calls the
    functions by their own names, except in scene/shared/lemurian_ship_ripple.c,
    which field/script_commands_line_scroll.c includes as lemurian_ship.c does.
@@ -23,11 +23,11 @@ struct ACTOR;
 struct FIELD_POS;
 struct MENU_SPR;
 
-/* Adds `func` as an event of priority `priority` (EVENT_PASS_FRAME runs it once
-   a frame), or gives the event already running it that priority. */
-static inline Sint32 sySetFrameEvent(EVENT_FUNC func, Sint32 priority)
+/* Adds `func` as an event of priority `pri` (EVENT_PASS_TICK runs it once
+   a tick), or gives the event already running it that priority. */
+static inline Sint32 sySetTickEvent(EVENT_FUNC func, Sint32 pri)
 {
-	return sySetEvent(func, priority);
+	return sySetEvent(func, pri);
 }
 
 /* The overlays' names for the functions they import, each the function
@@ -42,10 +42,9 @@ static inline void syFieldMenuArrowSetPos(MENU_SPR *cursor, Sint32 x, Sint32 y)
 	mnArrowSetPos(cursor, x, y);
 }
 
-static inline void mnFieldMessageDecodeRawUnbounded(
-	Sint32 message, Uint16 *buffer)
+static inline void mnFieldMessageDecodeRawUnbounded(Sint32 msg, Uint16 *buf)
 {
-	mnMessageDecodeRawUnbounded(message, buffer);
+	mnMessageDecodeRawUnbounded(msg, buf);
 }
 
 static inline void fdSetCameraBounds(
@@ -61,19 +60,19 @@ static inline void syFieldActorJumpDownLedge(
 }
 
 static inline Sint32 syFieldActorCheckMovementCollision(
-	ACTOR *actor, FIELD_POS *position)
+	ACTOR *actor, FIELD_POS *pos)
 {
-	return fdMapGridCheckCollision(actor, position);
+	return fdMapGridCheckCollision(actor, pos);
 }
 
-static inline Sint32 syFieldGameFlagGetByte(Sint32 flag)
+static inline Sint32 syFieldGameFlagGetByte(Sint32 flg)
 {
-	return gmFlagGetByte(flag);
+	return gmFlagGetByte(flg);
 }
 
-static inline void syFieldGameFlagSetByte(Sint32 flag, Sint32 value)
+static inline void syFieldGameFlagSetByte(Sint32 flg, Sint32 value)
 {
-	gmFlagSetByte(flag, value);
+	gmFlagSetByte(flg, value);
 }
 
 static inline Sint32 syFieldPartyListMembers(Sint16 *owners)
@@ -86,12 +85,11 @@ static inline Sint32 syFieldUnitAddHp(Sint32 owner, Sint32 delta)
 	return gmUnitAddHp(owner, delta);
 }
 
-/* Decodes a tagged LZ stream (a first byte of 0 or 1) from `source` into
-   `destination`. */
-static inline Sint32 syFieldDecompressTaggedLZ(
-	const void *source, void *destination)
+/* Decodes a tagged LZ stream (a first byte of 0 or 1) from `src` into
+   `dst`. */
+static inline Sint32 syFieldDecompressTaggedLZ(const void *src, void *dst)
 {
-	return syDecompressTaggedLZ(source, destination);
+	return syDecompressTaggedLZ(src, dst);
 }
 
 static inline void fdLineScrollStartWave(Sint32 mode, Sint32 freqX,

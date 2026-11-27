@@ -44,10 +44,10 @@
 #include "graphics/graphics.h"
 #include "text/msg_ids.h"
 
-extern SCENE_ENTRANCE LogRoomsC_Entrances[];
-extern Uint32		  LogRoomsC_Exits[];
-extern ACTOR_PLACE	  LogRoomsC_ActorPlacements[];
-extern CUE			  LogRoomsC_Cues[];
+extern SCENE_ENTRANCE LogRoomsCEntrances[];
+extern Uint32		  LogRoomsCExits[];
+extern ACTOR_PLACE	  LogRoomsCActorPlacements[];
+extern CUE			  LogRoomsCCues[];
 
 /* The metatiles the jar, the barrel and the three bookcases answer. */
 typedef enum LOG_ROOMS_C_METATILE_BEHAVIOR {
@@ -69,7 +69,7 @@ enum {
 	KOLIMA_INN = 3
 };
 
-/* The residents, numbering LogRoomsC_ActorPlacements' rows from
+/* The residents, numbering LogRoomsCActorPlacements' rows from
    ACTOR_FIRST_PLACED. Their notes quote what they say once the curse is
    lifted. */
 typedef enum KOLIMA_ROOM_ACTOR_ID {
@@ -109,9 +109,9 @@ typedef enum KOLIMA_ROOM_ACTOR_ID {
    turning. */
 static void scLogRoomsCTurnVillagersIntoTrees(ACTOR_PLACE *placement)
 {
-	Uint32 villagerIndex;
+	Uint32 villagerIdx;
 
-	villagerIndex = 0;
+	villagerIdx = 0;
 	{
 		Uint8  talkFacing = TALK_FACING_KEEP;
 		Sint32 behavior = MOVEMENT_TYPE_STAND;
@@ -122,21 +122,21 @@ static void scLogRoomsCTurnVillagersIntoTrees(ACTOR_PLACE *placement)
 			placement->spr = SPRITE_TREE;
 			/* The two residents drawn as SPRITE_BOY_WITH_FAIR_HAIR take the
 			   small tree. */
-			if(villagerIndex ==
+			if(villagerIdx ==
 					ACTOR_CHILD_TOLD_THE_SECRET - ACTOR_FIRST_VILLAGER ||
-				villagerIndex ==
+				villagerIdx ==
 					ACTOR_LUMBERJACKS_HUNGRY_SON - ACTOR_FIRST_VILLAGER) {
 				placement->spr = SPRITE_SMALL_TREE;
 			}
-			villagerIndex++;
+			villagerIdx++;
 			placement++;
-		} while(villagerIndex < ACTOR_LAST_VILLAGER - ACTOR_FIRST_VILLAGER + 1);
+		} while(villagerIdx < ACTOR_LAST_VILLAGER - ACTOR_FIRST_VILLAGER + 1);
 	}
 }
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return LogRoomsC_Entrances;
+	return LogRoomsCEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -147,7 +147,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 /* The exits between the rooms, back to the village and into Kolima Tunnel. */
 const Uint32 *scGetExits(void)
 {
-	return LogRoomsC_Exits;
+	return LogRoomsCExits;
 }
 
 /* Kolima's residents, turned into trees first while the curse lasts. */
@@ -156,9 +156,9 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	ACTOR_PLACE *placements;
 
 	if(gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-		scLogRoomsCTurnVillagersIntoTrees(LogRoomsC_ActorPlacements);
+		scLogRoomsCTurnVillagersIntoTrees(LogRoomsCActorPlacements);
 	}
-	placements = LogRoomsC_ActorPlacements;
+	placements = LogRoomsCActorPlacements;
 	fdAssignViewFlags(placements);
 	return placements;
 }
@@ -237,7 +237,7 @@ static void scLogRoomsCTalkToInnkeeper(void)
    jar and the barrel. */
 const CUE *scGetCues(void)
 {
-	return LogRoomsC_Cues;
+	return LogRoomsCCues;
 }
 
 /* Sets up the houses for the curse and the way they're entered. */
@@ -287,7 +287,7 @@ Sint32 scInit(void)
 	return 0;
 }
 
-SCENE_ENTRANCE LogRoomsC_Entrances[] = {
+SCENE_ENTRANCE LogRoomsCEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP,
@@ -323,7 +323,7 @@ SCENE_ENTRANCE LogRoomsC_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 LogRoomsC_Exits[] = {
+Uint32 LogRoomsCExits[] = {
 	SCENE_EXITS(LogRoomsC),
 	SCENE_EXIT(
 		LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP,
@@ -363,7 +363,7 @@ Uint32 LogRoomsC_Exits[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE LogRoomsC_ActorPlacements[] = {
+ACTOR_PLACE LogRoomsCActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_IN_VIEW, MOVEMENT_TYPE_WANDER,
 		166, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
@@ -397,7 +397,7 @@ ACTOR_PLACE LogRoomsC_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE LogRoomsC_Cues[] = {
+CUE LogRoomsCCues[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_TO_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR },
 	{ CUE_EXIT, 3, CONDITION_ALWAYS, LOG_ROOMS_C_ITEM_SHOP_TO_KOLIMA },

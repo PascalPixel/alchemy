@@ -51,14 +51,14 @@
 #include "scene/goma_cave.h"
 #include "text/msg_ids.h"
 
-extern EFFECT_DURATION_SCRIPTS GomaCavePillar_FragmentScripts;
-extern Sint32				   GomaCavePillar_FragmentScriptShort[];
-extern Sint32				   GomaCavePillar_FragmentScriptMedium[];
-extern Sint32				   GomaCavePillar_FragmentScriptLong[];
-extern SCENE_ENTRANCE		   GomaCavePillar_Entrances[];
-extern Uint32				   GomaCavePillar_Exits[];
-extern ACTOR_PLACE			   GomaCavePillar_ActorPlacements[];
-extern CUE					   GomaCavePillar_Cues[];
+extern EFFECT_DURATION_SCRIPTS GomaCavePillarFragmentScripts;
+extern Sint32				   GomaCavePillarFragmentScriptShort[];
+extern Sint32				   GomaCavePillarFragmentScriptMedium[];
+extern Sint32				   GomaCavePillarFragmentScriptLong[];
+extern SCENE_ENTRANCE		   GomaCavePillarEntrances[];
+extern Uint32				   GomaCavePillarExits[];
+extern ACTOR_PLACE			   GomaCavePillarActorPlacements[];
+extern CUE					   GomaCavePillarCues[];
 
 /* The two axes a dust fragment moves along (scGomaCavePillarUpdateFragment). */
 typedef enum GOMA_CAVE_PILLAR_FRAGMENT_PLANE {
@@ -68,7 +68,7 @@ typedef enum GOMA_CAVE_PILLAR_FRAGMENT_PLANE {
 } GOMA_CAVE_PILLAR_FRAGMENT_PLANE;
 
 /* The room's actors, numbered in the order of
-   GomaCavePillar_ActorPlacements. */
+   GomaCavePillarActorPlacements. */
 typedef enum GOMA_CAVE_PILLAR_ACTOR_ID {
 	/* The tall pillar by the north wall, which slides between two places. */
 	ACTOR_WEST_PILLAR = ACTOR_FIRST_PLACED,
@@ -121,7 +121,7 @@ static void scGomaCavePillarFightForge(void)
 	fdRequestDjinnBattle(ACTOR_FORGE, DJINNI_FORGE);
 }
 
-/* Moves a fragment of dust by its two rates each frame, in the plane its place
+/* Moves a fragment of dust by its two rates each tick, in the plane its place
    names. */
 static void scGomaCavePillarUpdateFragment(ACTOR *fragment)
 {
@@ -178,7 +178,7 @@ static void scGomaCavePillarSpawnFragment(Sint32 x, Sint32 y, Sint32 z,
 	Uint32					priority;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	table = GomaCavePillar_FragmentScripts;
+	table = GomaCavePillarFragmentScripts;
 	fragment = syFieldActorCreate(SPRITE_DUST_PUFF, x, y, z);
 	if(fragment == NULL)
 		return;
@@ -208,7 +208,7 @@ static void scGomaCavePillarSpawnFragment(Sint32 x, Sint32 y, Sint32 z,
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return GomaCavePillar_Entrances;
+	return GomaCavePillarEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -218,19 +218,19 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return GomaCavePillar_Exits;
+	return GomaCavePillarExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return GomaCavePillar_ActorPlacements;
+	return GomaCavePillarActorPlacements;
 }
 
 /* Copies the metatiles around the west pillar for one of its two places from
    the spare stretch of map that holds them. */
-static inline void scGomaCavePillarCopyWestPillarMetatiles(Sint32 sourceColumn)
+static inline void scGomaCavePillarCopyWestPillarMetatiles(Sint32 srcColumn)
 {
-	fdMapGridCopyMetatileAttributes(sourceColumn, 40, 6, 3, 18, 6);
+	fdMapGridCopyMetatileAttributes(srcColumn, 40, 6, 3, 18, 6);
 }
 
 /* Isaac casts Move on the west pillar, by the north wall: it slides a step
@@ -257,44 +257,44 @@ static void scGomaCavePillarMoveWestPillar(void)
 }
 
 /* Drops one fragment of dust from somewhere along the stump's width, falling at
-   a random speed of up to four tenths of a pixel a frame. */
+   a random speed of up to four tenths of a pixel a tick. */
 static inline void scGomaCavePillarDropStumpFragment(void)
 {
 	FIXED  fixedX;
 	FIXED  fixedZ;
-	ACTOR *heightSource;
-	ACTOR *xSource;
+	ACTOR *heightSrc;
+	ACTOR *xSrc;
 	Sint32 randomX, style, speedBand, fallingSpeed;
 
-	xSource = fdActorGet(ACTOR_STUMP);
+	xSrc = fdActorGet(ACTOR_STUMP);
 	randomX = syRandomNext();
-	fixedX = xSource->x.fixed;
+	fixedX = xSrc->x.fixed;
 	fixedX += toFIXED((Uint32)randomX * 12 >> 16);
-	heightSource = fdActorGetById(ACTOR_STUMP);
+	heightSrc = fdActorGetById(ACTOR_STUMP);
 	fixedZ = fdActorGet(ACTOR_STUMP)->z.fixed;
 	fixedZ += toFIXED(6);
 	speedBand = syRandomBelow(5);
-	/* speedBand tenths of a pixel a frame. */
+	/* speedBand tenths of a pixel a tick. */
 	fallingSpeed = speedBand * -toFIXED(0.1);
 	style = syRandomBelow(2);
-	scGomaCavePillarSpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
-		fallingSpeed, style, PLANE_XY);
+	scGomaCavePillarSpawnFragment(
+		fixedX, heightSrc->y.fixed, fixedZ, 0, fallingSpeed, style, PLANE_XY);
 }
 
-/* While the stump teeters, dust falls from it: one fragment every eighth frame,
+/* While the stump teeters, dust falls from it: one fragment every eighth tick,
    two on every sixteenth. */
 static void scGomaCavePillarDropStumpFragments(void)
 {
-	if((FrameCount & 7) == 0) {
+	if((TickCount & 7) == 0) {
 		scGomaCavePillarDropStumpFragment();
-		if((FrameCount & 15) == 0)
+		if((TickCount & 15) == 0)
 			scGomaCavePillarDropStumpFragment();
 	}
 }
 
-/* The frames the witness has watched Forge join, counted by
+/* The ticks the witness has watched Forge join, counted by
    scGomaCavePillarWatchForgeJoin. */
-Sint32 GomaCavePillar_WitnessFrames;
+Sint32 GomaCavePillarWitnessTicks;
 
 /* Isaac casts Move on the stump in the middle of the room. Pushed to the edge,
    it rocks there shedding dust, tips over and drops out of sight, and the
@@ -309,7 +309,7 @@ static void scGomaCavePillarPushStumpOver(void)
 	Sint32 column;
 	FIXED  fixedX;
 	FIXED  fixedZ;
-	ACTOR *heightSource;
+	ACTOR *heightSrc;
 	ACTOR *stump;
 	Sint32 style, speedBand, fallingSpeed;
 
@@ -328,7 +328,7 @@ static void scGomaCavePillarPushStumpOver(void)
 		fdActorSetPos(ACTOR_MASK_FOR_STUMP, 414, 240);
 		fdScriptWait(10);
 		/* Dust falls while the stump rocks on the edge. */
-		sySetFrameEvent(scGomaCavePillarDropStumpFragments, EVENT_PASS_FRAME);
+		sySetTickEvent(scGomaCavePillarDropStumpFragments, EVENT_PASS_TICK);
 		sySndPlay(SE_RUMBLE);
 		fdActorSetDestinationOffset(ACTOR_STUMP, 1, 0);
 		fdActorWaitForMoveById(ACTOR_STUMP);
@@ -347,13 +347,13 @@ static void scGomaCavePillarPushStumpOver(void)
 		fdScriptWait(12);
 		sySndPlay(SE_STONE_GRIND);
 		fixedX = fdActorGet(ACTOR_STUMP)->x.fixed + toFIXED(syRandomBelow(12));
-		heightSource = fdActorGet(ACTOR_STUMP);
+		heightSrc = fdActorGet(ACTOR_STUMP);
 		fixedZ = fdActorGet(ACTOR_STUMP)->z.fixed + toFIXED(6);
 		speedBand = syRandomBelow(5);
-		/* A last piece of dust, falling speedBand tenths of a pixel a frame. */
+		/* A last piece of dust, falling speedBand tenths of a pixel a tick. */
 		fallingSpeed = speedBand * -toFIXED(0.1);
 		style = syRandomBelow(2);
-		scGomaCavePillarSpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
+		scGomaCavePillarSpawnFragment(fixedX, heightSrc->y.fixed, fixedZ, 0,
 			fallingSpeed, style, PLANE_XY);
 		fdScriptWait(20);
 		/* It lands below; the shake dies down before the map grid metatiles
@@ -443,17 +443,17 @@ static void scGomaCavePillarJumpGapWest(void)
 	fdTryJumpForward();
 #else
 	ACTOR	 *leader;
-	FIELD_POS target;
-	Uint8	 *motionFlags;
-	Uint8	  savedMotionFlags;
+	FIELD_POS tgt;
+	Uint8	 *motionFlg;
+	Uint8	  savedMotionFlg;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	motionFlags = &leader->motionFlg;
-	savedMotionFlags = *motionFlags;
-	target.x = fdActorGet(ACTOR_PARTY_LEADER)->x.fixed - toFIXED(32);
-	target.y = fdActorGet(ACTOR_PARTY_LEADER)->y.fixed;
-	target.z = fdActorGet(ACTOR_PARTY_LEADER)->z.fixed;
-	if(syFieldActorCheckMovementCollision(leader, &target) == 0) {
+	motionFlg = &leader->motionFlg;
+	savedMotionFlg = *motionFlg;
+	tgt.x = fdActorGet(ACTOR_PARTY_LEADER)->x.fixed - toFIXED(32);
+	tgt.y = fdActorGet(ACTOR_PARTY_LEADER)->y.fixed;
+	tgt.z = fdActorGet(ACTOR_PARTY_LEADER)->z.fixed;
+	if(syFieldActorCheckMovementCollision(leader, &tgt) == 0) {
 		fdScriptStart();
 		fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 		sySynch(6);
@@ -462,14 +462,14 @@ static void scGomaCavePillarJumpGapWest(void)
 		leader->speedLimit = toFIXED(3);
 		leader->acceleration = toFIXED(2);
 		leader->velY = toFIXED(4);
-		*motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
+		*motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
 		fdActorSetSprFlags(leader, 0);
 		fdActorMoveToAndWait(ACTOR_PARTY_LEADER,
-			(Sint16)(FIXEDtoINT((Uint32)target.x)),
-			(Sint16)(FIXEDtoINT((Uint32)target.z)));
+			(Sint16)(FIXEDtoINT((Uint32)tgt.x)),
+			(Sint16)(FIXEDtoINT((Uint32)tgt.z)));
 		fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 		fdActorSetSprFlags(leader, SPRITE_FLAG_SHADOW);
-		*motionFlags = savedMotionFlags;
+		*motionFlg = savedMotionFlg;
 		fdScriptEnd();
 	}
 #endif
@@ -477,7 +477,7 @@ static void scGomaCavePillarJumpGapWest(void)
 
 const CUE *scGetCues(void)
 {
-	return GomaCavePillar_Cues;
+	return GomaCavePillarCues;
 }
 
 /* Back from a won battle with Forge, the man who fought it winces, fidgets and
@@ -486,11 +486,11 @@ const CUE *scGetCues(void)
 static void scGomaCavePillarWatchForgeJoin(void)
 {
 	FIELD_STATE *state;
-	Sint32		 frame;
+	Sint32		 frm;
 
 	state = FieldStateWork;
-	frame = ++GomaCavePillar_WitnessFrames;
-	switch(frame) {
+	frm = ++GomaCavePillarWitnessTicks;
+	switch(frm) {
 	case 60:
 		fdActorFaceDirection(ACTOR_WITNESS, FACING_SOUTHEAST, 0);
 		fdActorShowEmote(ACTOR_WITNESS, EMOTE_WINCE, 0);
@@ -581,7 +581,7 @@ Sint32 scInit(void)
 	}
 	if(MainRoutineStateWork.entrance == ENTRANCE_STUMP_FALL) {
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdActorSetPos(ACTOR_STUMP, 384, 192);
 		fdScriptWait(60);
 		fdActorGet(ACTOR_STUMP)->layer = 2;
@@ -591,8 +591,8 @@ Sint32 scInit(void)
 	}
 	/* Coming back from a Djinni battle: the man reacts until it is over. */
 	if(MainRoutineStateWork.pendingDjinni != 0) {
-		GomaCavePillar_WitnessFrames = 0;
-		sySetFrameEvent(scGomaCavePillarWatchForgeJoin, EVENT_PASS_FRAME);
+		GomaCavePillarWitnessTicks = 0;
+		sySetTickEvent(scGomaCavePillarWatchForgeJoin, EVENT_PASS_TICK);
 	}
 	return 0;
 }
@@ -601,13 +601,13 @@ Sint32 scInit(void)
 /* clang-format off */
 
 /* How long a fragment of dust lasts, chosen by FRAGMENT_KIND. */
-EFFECT_DURATION_SCRIPTS GomaCavePillar_FragmentScripts = {{
-	GomaCavePillar_FragmentScriptShort,
-	GomaCavePillar_FragmentScriptMedium,
-	GomaCavePillar_FragmentScriptLong,
+EFFECT_DURATION_SCRIPTS GomaCavePillarFragmentScripts = {{
+	GomaCavePillarFragmentScriptShort,
+	GomaCavePillarFragmentScriptMedium,
+	GomaCavePillarFragmentScriptLong,
 }};
 
-Sint32 GomaCavePillar_FragmentScriptShort[] = {
+Sint32 GomaCavePillarFragmentScriptShort[] = {
 	SC_WAIT(1),
 	SC_LOOP(22, SC_TOP),
 	SC_CALL(scGomaCavePillarFinishFragment),
@@ -615,7 +615,7 @@ Sint32 GomaCavePillar_FragmentScriptShort[] = {
 	SC_RELEASE,
 };
 
-Sint32 GomaCavePillar_FragmentScriptMedium[] = {
+Sint32 GomaCavePillarFragmentScriptMedium[] = {
 	SC_WAIT(1),
 	SC_LOOP(44, SC_TOP),
 	SC_CALL(scGomaCavePillarFinishFragment),
@@ -623,7 +623,7 @@ Sint32 GomaCavePillar_FragmentScriptMedium[] = {
 	SC_RELEASE,
 };
 
-Sint32 GomaCavePillar_FragmentScriptLong[] = {
+Sint32 GomaCavePillarFragmentScriptLong[] = {
 	SC_WAIT(1),
 	SC_LOOP(126, SC_TOP),
 	SC_CALL(scGomaCavePillarFinishFragment),
@@ -631,7 +631,7 @@ Sint32 GomaCavePillar_FragmentScriptLong[] = {
 	SC_RELEASE,
 };
 
-SCENE_ENTRANCE GomaCavePillar_Entrances[] = {
+SCENE_ENTRANCE GomaCavePillarEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_WEST, CONDITION_ALWAYS, 88, 0, 184, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
 	{ GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST, CONDITION_ALWAYS, 584, 0, 184, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
@@ -642,7 +642,7 @@ SCENE_ENTRANCE GomaCavePillar_Entrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-Uint32 GomaCavePillar_Exits[] = {
+Uint32 GomaCavePillarExits[] = {
 	SCENE_EXITS(GomaCavePillar),
 	SCENE_EXIT(GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_WEST, GomaCaveStream, GOMA_CAVE_STREAM_FROM_GOMA_CAVE_PILLAR_WEST),
 	SCENE_EXIT(GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST, GomaCavePond, GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_WEST),
@@ -652,7 +652,7 @@ Uint32 GomaCavePillar_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE GomaCavePillar_ActorPlacements[] = {
+ACTOR_PLACE GomaCavePillarActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 384, 0, 192, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -662,7 +662,7 @@ ACTOR_PLACE GomaCavePillar_ActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-CUE GomaCavePillar_Cues[] = {
+CUE GomaCavePillarCues[] = {
 	{ CUE_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_WEST },
 	{ CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST },
 	{ CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_SOUTH },

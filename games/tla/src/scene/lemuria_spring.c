@@ -109,14 +109,14 @@ typedef enum SPRING_TOSS_RESULT {
 	TOSS_RING_MISSED
 } SPRING_TOSS_RESULT;
 
-/* How much of its speed a token on the water keeps each frame, in 256ths: while
+/* How much of its speed a token on the water keeps each tick, in 256ths: while
    the target pulls it, and once it drifts free. */
 #define SPEED_KEPT_SCALE  256
 #define PULLED_SPEED_KEPT 253
 #define DRIFT_SPEED_KEPT  220
 
 /* The crabs and turtles in the spring, by their slots in
-   LemuriaSpring_Obstacles. */
+   LemuriaSpringObstacles. */
 typedef enum LEMURIA_SPRING_OBSTACLE {
 	OBSTACLE_CRAB_A,
 	OBSTACLE_CRAB_B,
@@ -128,10 +128,10 @@ typedef enum LEMURIA_SPRING_OBSTACLE {
 /* Which way a crab scuttles (its SPRING_OBSTACLE.heading). */
 enum { CRAB_HEADING_EAST, CRAB_HEADING_WEST };
 
-/* The frames the second crab waits at each end of its way. */
-#define CRAB_TURN_PAUSE_FRAMES 30
-/* A turtle's slowest swim round its loop, a 1024th of a turn a frame. */
-#define TURTLE_SWIM_TURN	   (TRIG_TURN / 1024)
+/* The ticks the second crab waits at each end of its way. */
+#define CRAB_TURN_PAUSE_TICKS 30
+/* A turtle's slowest swim round its loop, a 1024th of a turn a tick. */
+#define TURTLE_SWIM_TURN	  (TRIG_TURN / 1024)
 
 /* scLemuriaSpringGivePrize's item for the summon Eclipse. */
 #define PRIZE_ECLIPSE (-1)
@@ -146,30 +146,30 @@ enum { CRAB_HEADING_EAST, CRAB_HEADING_WEST };
 
 Sint32 scLemuriaSpringRunSpringGame(void);
 
-extern Uint16 LemuriaSpring_CoinPrizes[];
-extern Uint32 LemuriaSpring_MedalPrizes[MEDAL_PRIZE_COUNT];
+extern Uint16 LemuriaSpringCoinPrizes[];
+extern Uint32 LemuriaSpringMedalPrizes[MEDAL_PRIZE_COUNT];
 
 Sint32 scLemuriaSpringRunToss();
 
 void scLemuriaSpringGivePrize(Sint32 item);
 
-extern Uint8 LemuriaSpring_CrabColorModes[];
-extern Uint8 LemuriaSpring_TurtleColorModes[];
-extern Uint8 LemuriaSpring_ObstacleStartX[];
-extern Uint8 LemuriaSpring_ObstacleStartZ[];
+extern Uint8 LemuriaSpringCrabColorModes[];
+extern Uint8 LemuriaSpringTurtleColorModes[];
+extern Uint8 LemuriaSpringObstacleStartX[];
+extern Uint8 LemuriaSpringObstacleStartZ[];
 
-extern Uint16 LemuriaSpring_ObstacleHeadings[];
+extern Uint16 LemuriaSpringObstacleHeadings[];
 
 void scLemuriaSpringSetSprStorageKind(Sint32 actor, Sint32 active);
 
-SPRING_TOSS_MOTION LemuriaSpring_Toss BSS_DATA ALIGNED(16);
-Sint32 LemuriaSpring_TossKind				   BSS_DATA;
+SPRING_TOSS_MOTION LemuriaSpringToss BSS_DATA ALIGNED(16);
+Sint32 LemuriaSpringTossKind				  BSS_DATA;
 /* The crabs and turtles in the toss's way, as the toss moves them. */
-SPRING_OBSTACLE LemuriaSpring_Obstacles[OBSTACLE_COUNT] BSS_DATA ALIGNED(16);
+SPRING_OBSTACLE LemuriaSpringObstacles[OBSTACLE_COUNT] BSS_DATA ALIGNED(16);
 
-Sint32 LemuriaSpring_TossFrame	BSS_DATA;
-Sint32 LemuriaSpring_TossEnded	BSS_DATA;
-Sint32 LemuriaSpring_TossResult BSS_DATA;
+Sint32 LemuriaSpringTossTick   BSS_DATA;
+Sint32 LemuriaSpringTossEnded  BSS_DATA;
+Sint32 LemuriaSpringTossResult BSS_DATA;
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -203,10 +203,10 @@ void scLemuriaSpringDrinkFromSpring(void)
 	gmPartyRestoreHpPp(1);
 }
 
-extern Uint16 LemuriaSpring_AlphaSteps[];
+extern Uint16 LemuriaSpringAlphaSteps[];
 
 /* The spring's water, the overhead layer, sinks 16 pixels, a pixel every four
-   frames, then fades away in eight steps to show the target at the bottom of
+   ticks, then fades away in eight steps to show the target at the bottom of
    the spring, as Tolbi's does. */
 void scLemuriaSpringDrainSpring(void)
 {
@@ -223,7 +223,7 @@ void scLemuriaSpringDrainSpring(void)
 	for(i = 0; i < 8; i++) {
 		syIOWrite16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
 			&REG_BLDCNT);
-		syIOWrite16(LemuriaSpring_AlphaSteps[i], &REG_BLDALPHA);
+		syIOWrite16(LemuriaSpringAlphaSteps[i], &REG_BLDALPHA);
 		sySynch(8);
 	}
 }
@@ -317,10 +317,10 @@ Sint32 scLemuriaSpringRunSpringGame(void)
 #if LANGUAGE == LANGUAGE_JAPANESE
 	Sint32 text;
 #endif
-	Sint32	message;
+	Sint32	msg;
 	Sint32	coins;
 	Sint32	medals;
-	WINDOW *window;
+	WINDOW *win;
 	Sint32	result;
 	Sint32	prizeRoll;
 	Sint32	total;
@@ -334,18 +334,18 @@ Sint32 scLemuriaSpringRunSpringGame(void)
 	for(;;) {
 		coins = MainRoutineStateWork.coins;
 		medals = gmPartyInventoryCountItem(ITEM_LUCKY_MEDAL);
-		message = (Sint32)MsgLemuriaSpringWhatWillYouThrow;
-		fdScriptSetMessageId(message);
+		msg = (Sint32)MsgLemuriaSpringWhatWillYouThrow;
+		fdScriptSetMessageId(msg);
 		/* "What will you throw?" */
 		fdScriptOpenMessage(-1, 0);
-		window = mnWindowCreate(0, 0, COIN_WINDOW_WIDTH, 4, 2);
+		win = mnWindowCreate(0, 0, COIN_WINDOW_WIDTH, 4, 2);
 		result = (Sint32)MsgLemuriaSpringCoins;
-		mnTextDrawMessageAsTiles(result, window, 0, 0);
-		mnTextDrawNumInWindow(coins, 6, window, COIN_NUMBER_X, 0);
-		mnTextDrawMessageAsTiles(result + 1, window, 0, 8);
-		mnTextDrawNumInWindow(medals, 6, window, COIN_NUMBER_X, 8);
+		mnTextDrawMessageAsTiles(result, win, 0, 0);
+		mnTextDrawNumInWindow(coins, 6, win, COIN_NUMBER_X, 0);
+		mnTextDrawMessageAsTiles(result + 1, win, 0, 8);
+		mnTextDrawNumInWindow(medals, 6, win, COIN_NUMBER_X, 8);
 		choice = mnSelectCoinsOrMedals(choice);
-		mnWindowClose(window, 2);
+		mnWindowClose(win, 2);
 		mnMessageCloseFinishedWindows();
 		if(choice == -1) {
 			fdScriptEnd();
@@ -353,7 +353,7 @@ Sint32 scLemuriaSpringRunSpringGame(void)
 		}
 		if(choice == SPRING_TOSS_COIN) {
 			if(coins == 0) {
-				fdScriptSetMessageId(message + 1);
+				fdScriptSetMessageId(msg + 1);
 				/* "You don't have any coins!" */
 				fdScriptShowMessage(-1, 0);
 				sySynch(1);
@@ -361,24 +361,24 @@ Sint32 scLemuriaSpringRunSpringGame(void)
 			}
 		} else if(choice == SPRING_TOSS_MEDAL) {
 			if(medals == 0) {
-				fdScriptSetMessageId(message + 2);
+				fdScriptSetMessageId(msg + 2);
 				/* "You have no Lucky Medals!" */
 				fdScriptShowMessage(-1, 0);
 				sySynch(1);
 				continue;
 			}
 			if(gmPartyInventoryCountFreeSlots() == 0) {
-				fdScriptSetMessageId(message + 4);
+				fdScriptSetMessageId(msg + 4);
 				/* "You can't carry more items. Do you still want to play?" */
 				fdScriptOpenMessage(-1, 0);
 				if(fdScriptAskYesNoWithActorAnimation(0, 0) != 0)
 					goto end;
 			}
 		}
-		window = mnWindowCreate(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
+		win = mnWindowCreate(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
 		result = (Sint32)MsgLemuriaSpringToss;
-		mnTextDrawMessageAsTiles(result, window, 0, 0);
-		mnTextDrawMessageAsTiles(result + 1, window, 0, 8);
+		mnTextDrawMessageAsTiles(result, win, 0, 0);
+		mnTextDrawMessageAsTiles(result + 1, win, 0, 8);
 		sySynch(5);
 		fdScriptPlaySnd(SE_TOLBI_SPRING_TOSS_PROMPT);
 		for(;;) {
@@ -394,7 +394,7 @@ Sint32 scLemuriaSpringRunSpringGame(void)
 			}
 			sySynch(1);
 		}
-		mnWindowClose(window, 2);
+		mnWindowClose(win, 2);
 		break;
 	}
 #else
@@ -408,20 +408,20 @@ Sint32 scLemuriaSpringRunSpringGame(void)
 	for(;;) {
 		coins = MainRoutineStateWork.coins;
 		medals = gmPartyInventoryCountItem(ITEM_LUCKY_MEDAL);
-		message = (Sint32)MsgLemuriaSpringWhatWillYouThrow;
-		fdScriptSetMessageId(message);
+		msg = (Sint32)MsgLemuriaSpringWhatWillYouThrow;
+		fdScriptSetMessageId(msg);
 		/* "What will you throw?" */
 		fdScriptOpenMessage(-1, 0);
-		window = mnWindowCreate(0, 0, COIN_WINDOW_WIDTH, 4, 2);
+		win = mnWindowCreate(0, 0, COIN_WINDOW_WIDTH, 4, 2);
 		text = (Sint32)MsgLemuriaSpringCoins;
-		mnTextDrawMessageAsTiles(text, window, 0, 0);
-		mnTextDrawNumInWindow(coins, 6, window, COIN_NUMBER_X, 0);
-		mnTextDrawMessageAsTiles(text + 2, window, 104, 0);
-		mnTextDrawMessageAsTiles(text + 1, window, 0, 8);
-		mnTextDrawNumInWindow(medals, 6, window, COIN_NUMBER_X, 8);
-		mnTextDrawMessageAsTiles(text + 2, window, 104, 8);
+		mnTextDrawMessageAsTiles(text, win, 0, 0);
+		mnTextDrawNumInWindow(coins, 6, win, COIN_NUMBER_X, 0);
+		mnTextDrawMessageAsTiles(text + 2, win, 104, 0);
+		mnTextDrawMessageAsTiles(text + 1, win, 0, 8);
+		mnTextDrawNumInWindow(medals, 6, win, COIN_NUMBER_X, 8);
+		mnTextDrawMessageAsTiles(text + 2, win, 104, 8);
 		choice = mnSelectCoinsOrMedals(choice);
-		mnWindowClose(window, 2);
+		mnWindowClose(win, 2);
 		mnMessageCloseFinishedWindows();
 		if(choice == -1) {
 			fdScriptEnd();
@@ -429,7 +429,7 @@ Sint32 scLemuriaSpringRunSpringGame(void)
 		}
 		if(choice == SPRING_TOSS_COIN) {
 			if(coins == 0) {
-				fdScriptSetMessageId(message + 1);
+				fdScriptSetMessageId(msg + 1);
 				/* "You don't have any coins!" */
 				fdScriptShowMessage(-1, 0);
 				sySynch(1);
@@ -438,7 +438,7 @@ Sint32 scLemuriaSpringRunSpringGame(void)
 			gmPartyAdjustCoins(-1);
 		} else if(choice == SPRING_TOSS_MEDAL) {
 			if(medals == 0) {
-				fdScriptSetMessageId(message + 2);
+				fdScriptSetMessageId(msg + 2);
 				/* "You have no Lucky Medals!" */
 				fdScriptShowMessage(-1, 0);
 				sySynch(1);
@@ -446,17 +446,17 @@ Sint32 scLemuriaSpringRunSpringGame(void)
 			}
 			gmPartyInventoryRemove(ITEM_LUCKY_MEDAL);
 			if(gmPartyInventoryCountFreeSlots() == 0) {
-				fdScriptSetMessageId(message + 4);
+				fdScriptSetMessageId(msg + 4);
 				/* "You can't carry more items. Do you still want to play?" */
 				fdScriptOpenMessage(-1, 0);
 				if(fdScriptAskYesNoWithActorAnimation(0, 0) != 0)
 					goto end;
 			}
 		}
-		window = mnWindowCreate(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
+		win = mnWindowCreate(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
 		result = (Sint32)MsgLemuriaSpringToss;
-		mnTextDrawMessageAsTiles(result, window, 0, 0);
-		mnTextDrawMessageAsTiles(result + 1, window, 0, 8);
+		mnTextDrawMessageAsTiles(result, win, 0, 0);
+		mnTextDrawMessageAsTiles(result + 1, win, 0, 8);
 		sySynch(5);
 		fdScriptPlaySnd(SE_TOLBI_SPRING_TOSS_PROMPT);
 		for(;;) {
@@ -472,7 +472,7 @@ Sint32 scLemuriaSpringRunSpringGame(void)
 			}
 			sySynch(1);
 		}
-		mnWindowClose(window, 2);
+		mnWindowClose(win, 2);
 		break;
 	}
 #endif
@@ -487,10 +487,10 @@ Sint32 scLemuriaSpringRunSpringGame(void)
 		result = scLemuriaSpringRunToss(choice);
 		if(choice == SPRING_TOSS_COIN) {
 			if(result != TOSS_RING_MISSED) {
-				gmPartyAdjustCoins(LemuriaSpring_CoinPrizes[result]);
+				gmPartyAdjustCoins(LemuriaSpringCoinPrizes[result]);
 				fdScriptPlaySnd(MUS_LUCKY);
 				mnMessageArgumentPush(
-					LemuriaSpring_CoinPrizes[result], MESSAGE_ARGUMENT_NUMBER);
+					LemuriaSpringCoinPrizes[result], MESSAGE_ARGUMENT_NUMBER);
 				fdScriptSetMessageId((Sint32)MsgLemuriaSpringYouWonCoin);
 				/* "You won ... coin!" */
 				fdScriptShowMessage(-1, 0);
@@ -517,7 +517,7 @@ Sint32 scLemuriaSpringRunSpringGame(void)
 				}
 				if(prize == MEDAL_PRIZE_COUNT)
 					prize = MEDAL_PRIZE_COUNT - 1;
-				scLemuriaSpringGivePrize(LemuriaSpring_MedalPrizes[prize]);
+				scLemuriaSpringGivePrize(LemuriaSpringMedalPrizes[prize]);
 				if(WEIGHT(prize) > 1)
 					MainRoutineStateWork.prizeWeights[prize] =
 						WEIGHT(prize) / 2;
@@ -530,11 +530,11 @@ end:
 }
 
 /* Draws one picture of the prize being brought up in the middle of the spring,
-   with SE_CAST, and holds it 8 frames. */
+   with SE_CAST, and holds it 8 ticks. */
 static inline void scLemuriaSpringShowPrizePicture(
-	Sint32 sourceColumn, Sint32 sourceRow)
+	Sint32 srcColumn, Sint32 srcRow)
 {
-	fdMapGridCopyMetatilesTo(sourceColumn, sourceRow, 70, 0, 3, 8);
+	fdMapGridCopyMetatilesTo(srcColumn, srcRow, 70, 0, 3, 8);
 	fdScriptPlaySnd(SE_CAST);
 	syFieldScriptWait(8);
 }
@@ -545,7 +545,7 @@ static inline void scLemuriaSpringShowPrizePicture(
    summon Eclipse, read from a tablet.
 
    What rises is the pictures: each is 3 by 8 metatiles copied over the spring's
-   middle from spare metatiles of the map, one every 8 frames, in order as it
+   middle from spare metatiles of the map, one every 8 ticks, in order as it
    comes and back in reverse as it goes. */
 void scLemuriaSpringGivePrize(Sint32 item)
 {
@@ -617,32 +617,32 @@ void scLemuriaSpringGivePrize(Sint32 item)
 /* Sets an actor of the toss where the simulation has it: its position, facing,
    colour mode and animation step. */
 void scLemuriaSpringSetActorAppearance(
-	Sint32 id, Sint32 *position, Sint32 facing, Sint32 colorMode, Sint32 step)
+	Sint32 id, Sint32 *pos, Sint32 facing, Sint32 colMode, Sint32 step)
 {
 	ACTOR		   *actor = fdActorGet(id);
-	SPR			   *sprite;
+	SPR			   *spr;
 	SPR_ANIMATION **entry;
 	Sint32			i;
 
 	if(actor != NULL) {
-		actor->x.fixed = *position++;
-		actor->y.fixed = *position++;
-		actor->z.fixed = *position;
+		actor->x.fixed = *pos++;
+		actor->y.fixed = *pos++;
+		actor->z.fixed = *pos;
 		actor->facing = facing;
 		actor->motionFlg = 0;
 		((SPR *)actor->spr)->flg = 0;
 		fdActorSetAnimationSpeed(actor, step);
 	}
-	sprite = actor->spr;
+	spr = actor->spr;
 	i = 0;
-	if(i < sprite->cnt) {
-		entry = sprite->entries;
-		for(; i < sprite->cnt; i++) {
-			SPR_ANIMATION *animation = *entry++;
+	if(i < spr->cnt) {
+		entry = spr->entries;
+		for(; i < spr->cnt; i++) {
+			SPR_ANIMATION *anm = *entry++;
 
-			if(animation->colMode != colorMode) {
-				animation->colMode = colorMode;
-				animation->picture = SPRITE_PICTURE_NONE;
+			if(anm->colMode != colMode) {
+				anm->colMode = colMode;
+				anm->picture = SPRITE_PICTURE_NONE;
 			}
 		}
 	}
@@ -659,18 +659,18 @@ void scLemuriaSpringSetSprStorageKind(Sint32 id, Sint32 kind)
 	}
 }
 
-/* An event: moves the tossed coin or medal a frame, its trail and shadow behind
+/* An event: moves the tossed coin or medal a tick, its trail and shadow behind
    it, and the crabs and turtles that swim in the spring. */
 void scLemuriaSpringUpdateTossSimulation(void)
 {
 	SPRING_TOSS_MOTION *toss;
 	SPRING_OBSTACLE	   *obstacle;
-	Sint32				index;
+	Sint32				idx;
 	Sint32				height;
 	FIXED				edgeInset;
 	Sint32				motionStep;
 	Sint32				speedMode;
-	Sint32				cycleFrame;
+	Sint32				cycleFrm;
 	FIXED				minX;
 	FIXED				maxX;
 	FIXED				minZ;
@@ -679,16 +679,16 @@ void scLemuriaSpringUpdateTossSimulation(void)
 	 * touches. */
 	VECTOR3 spare;
 
-	toss = &LemuriaSpring_Toss;
-	index = 3;
+	toss = &LemuriaSpringToss;
+	idx = 3;
 	do {
-		toss->trail[index].x = toss->trail[index - 1].x;
-		toss->trail[index].y = toss->trail[index - 1].y;
-		toss->trail[index].z = toss->trail[index - 1].z;
-		index--;
-	} while(index != 0);
+		toss->trail[idx].x = toss->trail[idx - 1].x;
+		toss->trail[idx].y = toss->trail[idx - 1].y;
+		toss->trail[idx].z = toss->trail[idx - 1].z;
+		idx--;
+	} while(idx != 0);
 
-	/* The token leaves the leader's hand 32 frames into the throw. */
+	/* The token leaves the leader's hand 32 ticks into the throw. */
 	if(toss->launchFrm > 31) {
 		toss->trail[0].x += toss->vel.x;
 		height = toss->trail[0].y + toss->vel.y;
@@ -699,7 +699,7 @@ void scLemuriaSpringUpdateTossSimulation(void)
 			toss->trail[0].y = 0;
 			if(toss->vel.y != 0) {
 				toss->vel.y = 0;
-				if(LemuriaSpring_TossKind == SPRING_TOSS_MEDAL) {
+				if(LemuriaSpringTossKind == SPRING_TOSS_MEDAL) {
 					fdActorSelectAnimation(
 						fdActorGetById(ACTOR_LEMURIA_SPRING_MEDAL),
 						ANIM_TOKEN_FLOAT);
@@ -740,7 +740,7 @@ void scLemuriaSpringUpdateTossSimulation(void)
 					toss->vel.z = 0;
 				}
 				if(toss->vel.x == 0 && toss->vel.z == 0) {
-					if(LemuriaSpring_TossKind == SPRING_TOSS_MEDAL) {
+					if(LemuriaSpringTossKind == SPRING_TOSS_MEDAL) {
 						fdActorSelectAnimation(
 							fdActorGetById(ACTOR_LEMURIA_SPRING_MEDAL),
 							ANIM_TOKEN_REST);
@@ -772,17 +772,17 @@ void scLemuriaSpringUpdateTossSimulation(void)
 						/* The target's rings end at these squared distances, in
 						   square pixels, as the rings painted in the spring
 						   do. */
-						LemuriaSpring_TossEnded = 1;
+						LemuriaSpringTossEnded = 1;
 						if(distanceSquared <= 224) {
-							LemuriaSpring_TossResult = TOSS_RING_MIDDLE;
+							LemuriaSpringTossResult = TOSS_RING_MIDDLE;
 						} else if(distanceSquared <= 624) {
-							LemuriaSpring_TossResult = TOSS_RING_SECOND;
+							LemuriaSpringTossResult = TOSS_RING_SECOND;
 						} else if(distanceSquared <= 1088) {
-							LemuriaSpring_TossResult = TOSS_RING_THIRD;
+							LemuriaSpringTossResult = TOSS_RING_THIRD;
 						} else if(distanceSquared <= 1680) {
-							LemuriaSpring_TossResult = TOSS_RING_OUTER;
+							LemuriaSpringTossResult = TOSS_RING_OUTER;
 						} else {
-							LemuriaSpring_TossResult = TOSS_RING_MISSED;
+							LemuriaSpringTossResult = TOSS_RING_MISSED;
 						}
 					}
 				}
@@ -871,10 +871,10 @@ void scLemuriaSpringUpdateTossSimulation(void)
 
 	/* The two crabs scuttle east and west; the two turtles swim round ellipses,
 	   the second hiding in its shell for the last quarter of every 512
-	   frames. */
-	index = 0;
+	   ticks. */
+	idx = 0;
 	do {
-		obstacle = &LemuriaSpring_Obstacles[index];
+		obstacle = &LemuriaSpringObstacles[idx];
 
 		if(obstacle->reactionFrm > 0) {
 			obstacle->reactionFrm = obstacle->reactionFrm - 1;
@@ -882,7 +882,7 @@ void scLemuriaSpringUpdateTossSimulation(void)
 		if(obstacle->hitCooldownFrm > 0) {
 			obstacle->hitCooldownFrm = obstacle->hitCooldownFrm - 1;
 		}
-		if(index <= OBSTACLE_CRAB_B) {
+		if(idx <= OBSTACLE_CRAB_B) {
 			speedMode = obstacle->speedMode;
 			motionStep = toFIXED(1);
 			if(speedMode == 1) {
@@ -892,7 +892,7 @@ void scLemuriaSpringUpdateTossSimulation(void)
 				motionStep = motionStep * 3;
 			}
 			if(obstacle->reactionFrm > 0) {
-				if(index == OBSTACLE_CRAB_A) {
+				if(idx == OBSTACLE_CRAB_A) {
 					fdActorSelectAnimation(
 						fdActorGetById(ACTOR_LEMURIA_SPRING_CRAB_A),
 						ANIM_CRAB_RAISE_CLAWS);
@@ -902,7 +902,7 @@ void scLemuriaSpringUpdateTossSimulation(void)
 						ANIM_CRAB_RAISE_CLAWS);
 				}
 			} else {
-				if(index == OBSTACLE_CRAB_A) {
+				if(idx == OBSTACLE_CRAB_A) {
 					fdActorSelectAnimation(
 						fdActorGetById(ACTOR_LEMURIA_SPRING_CRAB_A),
 						ANIM_CRAB_SCUTTLE);
@@ -922,21 +922,21 @@ void scLemuriaSpringUpdateTossSimulation(void)
 					}
 					if(obstacle->pos.x <= toFIXED(64)) {
 						obstacle->heading = CRAB_HEADING_EAST;
-						if(index == OBSTACLE_CRAB_B) {
-							obstacle->pauseOrPhase = CRAB_TURN_PAUSE_FRAMES;
+						if(idx == OBSTACLE_CRAB_B) {
+							obstacle->pauseOrPhase = CRAB_TURN_PAUSE_TICKS;
 						}
 					}
 					if(obstacle->pos.x > toFIXED(176) - 1) {
 						obstacle->heading = CRAB_HEADING_WEST;
-						if(index == OBSTACLE_CRAB_B) {
-							obstacle->pauseOrPhase = CRAB_TURN_PAUSE_FRAMES;
+						if(idx == OBSTACLE_CRAB_B) {
+							obstacle->pauseOrPhase = CRAB_TURN_PAUSE_TICKS;
 						}
 					}
 				} else {
 					obstacle->pauseOrPhase = obstacle->pauseOrPhase - 1;
 				}
 			}
-		} else if(index == OBSTACLE_TURTLE_A) {
+		} else if(idx == OBSTACLE_TURTLE_A) {
 			speedMode = obstacle->speedMode;
 			motionStep = -TURTLE_SWIM_TURN;
 			if(speedMode == 1) {
@@ -955,12 +955,12 @@ void scLemuriaSpringUpdateTossSimulation(void)
 					ANIM_TURTLE_SWIM);
 				obstacle->pos.x = sySin(obstacle->heading) * 48 + toFIXED(112);
 				obstacle->pos.z = syCos(obstacle->heading) * 40 + toFIXED(72);
-				cycleFrame = (Uint16)obstacle->heading + motionStep;
-				obstacle->heading = cycleFrame;
+				cycleFrm = (Uint16)obstacle->heading + motionStep;
+				obstacle->heading = cycleFrm;
 				obstacle->pauseOrPhase = obstacle->pauseOrPhase + 1;
 			}
 		} else {
-			cycleFrame = obstacle->pauseOrPhase & 511;
+			cycleFrm = obstacle->pauseOrPhase & 511;
 			speedMode = obstacle->speedMode;
 			motionStep = TURTLE_SWIM_TURN;
 			if(speedMode == 1) {
@@ -973,7 +973,7 @@ void scLemuriaSpringUpdateTossSimulation(void)
 				fdActorSelectAnimation(
 					fdActorGetById(ACTOR_LEMURIA_SPRING_TURTLE_B),
 					ANIM_TURTLE_HIDE);
-			} else if(cycleFrame <= 383) {
+			} else if(cycleFrm <= 383) {
 				obstacle->pos.x = sySin(obstacle->heading) * 52 + toFIXED(112);
 				obstacle->pos.z = syCos(obstacle->heading) * 24 + toFIXED(72);
 				obstacle->heading = obstacle->heading + motionStep;
@@ -989,7 +989,7 @@ void scLemuriaSpringUpdateTossSimulation(void)
 		}
 
 		/* A creature the token drifts against knocks it away at 3 pixels a
-		   frame and shortens the rings' pull; it flinches and speeds up a
+		   tick and shortens the rings' pull; it flinches and speeds up a
 		   step. */
 		if(obstacle->hitCooldownFrm == 0 && toss->trail[0].y == 0) {
 			Sint32 distanceSquared;
@@ -1004,7 +1004,7 @@ void scLemuriaSpringUpdateTossSimulation(void)
 				FIXED  speed;
 
 				speed = toFIXED(3);
-				if(index <= OBSTACLE_CRAB_B) {
+				if(idx <= OBSTACLE_CRAB_B) {
 					if(obstacle->heading == CRAB_HEADING_EAST) {
 						if(toss->vel.x < speed) {
 							toss->vel.x = speed;
@@ -1033,40 +1033,40 @@ void scLemuriaSpringUpdateTossSimulation(void)
 			}
 		}
 
-		switch(index) {
+		switch(idx) {
 		case OBSTACLE_CRAB_A:
 			scLemuriaSpringSetActorAppearance(ACTOR_LEMURIA_SPRING_CRAB_A,
 				&obstacle->pos.x, 0,
-				LemuriaSpring_CrabColorModes[obstacle->speedMode],
+				LemuriaSpringCrabColorModes[obstacle->speedMode],
 				ANIM_STEP_NORMAL * (obstacle->speedMode + 1));
 			break;
 		case OBSTACLE_CRAB_B:
 			scLemuriaSpringSetActorAppearance(ACTOR_LEMURIA_SPRING_CRAB_B,
 				&obstacle->pos.x, 0,
-				LemuriaSpring_CrabColorModes[obstacle->speedMode],
+				LemuriaSpringCrabColorModes[obstacle->speedMode],
 				ANIM_STEP_NORMAL * (obstacle->speedMode + 1));
 			break;
 		case OBSTACLE_TURTLE_A:
 			scLemuriaSpringSetActorAppearance(ACTOR_LEMURIA_SPRING_TURTLE_A,
 				&obstacle->pos.x, DEGtoANG(180) - obstacle->heading,
-				LemuriaSpring_TurtleColorModes[obstacle->speedMode],
+				LemuriaSpringTurtleColorModes[obstacle->speedMode],
 				ANIM_STEP_NORMAL * (obstacle->speedMode + 1));
 			break;
 		case OBSTACLE_TURTLE_B:
 			scLemuriaSpringSetActorAppearance(ACTOR_LEMURIA_SPRING_TURTLE_B,
 				&obstacle->pos.x, TRIG_TURN - 1 - obstacle->heading,
-				LemuriaSpring_TurtleColorModes[obstacle->speedMode],
+				LemuriaSpringTurtleColorModes[obstacle->speedMode],
 				ANIM_STEP_NORMAL * (obstacle->speedMode + 1));
 			break;
 		}
-		index++;
-	} while(index != OBSTACLE_COUNT);
+		idx++;
+	} while(idx != OBSTACLE_COUNT);
 
 	toss->shadow.x = toss->trail[0].x;
 	toss->shadow.y = 0;
 	toss->shadow.z = toss->trail[0].z;
 
-	if(LemuriaSpring_TossKind == SPRING_TOSS_MEDAL) {
+	if(LemuriaSpringTossKind == SPRING_TOSS_MEDAL) {
 		scLemuriaSpringSetActorAppearance(ACTOR_LEMURIA_SPRING_MEDAL,
 			&toss->trail[0].x, 0, 0, ANIM_STEP_NORMAL);
 		scLemuriaSpringSetActorAppearance(ACTOR_LEMURIA_SPRING_MEDAL_SHADOW,
@@ -1119,16 +1119,16 @@ void scLemuriaSpringUpdateTossSimulation(void);
    the spring, and starts the event that moves them. */
 void scLemuriaSpringInitTossSimulation(void)
 {
-	SPRING_TOSS_MOTION *toss = &LemuriaSpring_Toss;
+	SPRING_TOSS_MOTION *toss = &LemuriaSpringToss;
 	SPRING_OBSTACLE	   *obstacle;
 	Sint32				i;
 
 	for(i = 0; i != OBSTACLE_COUNT; i++) {
-		obstacle = &LemuriaSpring_Obstacles[i];
-		obstacle->pos.x = toFIXED(LemuriaSpring_ObstacleStartX[i]);
+		obstacle = &LemuriaSpringObstacles[i];
+		obstacle->pos.x = toFIXED(LemuriaSpringObstacleStartX[i]);
 		obstacle->pos.y = 0;
-		obstacle->pos.z = toFIXED(LemuriaSpring_ObstacleStartZ[i]);
-		obstacle->heading = LemuriaSpring_ObstacleHeadings[i];
+		obstacle->pos.z = toFIXED(LemuriaSpringObstacleStartZ[i]);
+		obstacle->heading = LemuriaSpringObstacleHeadings[i];
 		obstacle->pauseOrPhase = 0;
 		obstacle->speedMode = 0;
 		obstacle->reactionFrm = 0;
@@ -1148,8 +1148,8 @@ void scLemuriaSpringInitTossSimulation(void)
 	fdActorSelectAnimation(
 		fdActorGet(ACTOR_LEMURIA_SPRING_TURTLE_B), ANIM_TURTLE_SWIM);
 
-	sySetFrameEvent(
-		(EVENT_FUNC)scLemuriaSpringUpdateTossSimulation, EVENT_PASS_FRAME + 3);
+	sySetTickEvent(
+		(EVENT_FUNC)scLemuriaSpringUpdateTossSimulation, EVENT_PASS_TICK + 3);
 }
 
 /* Tosses the chosen coin or medal and waits for it to come to rest; returns the
@@ -1158,18 +1158,18 @@ Sint32 scLemuriaSpringRunToss(Sint32 tossKind)
 {
 	SPRING_TOSS_MOTION *toss;
 
-	toss = &LemuriaSpring_Toss;
+	toss = &LemuriaSpringToss;
 	toss->trail[0].y = 0;
 	toss->trail[1].y = 0;
 	toss->trail[2].y = 0;
 	toss->trail[3].y = 0;
-	LemuriaSpring_TossKind = tossKind;
-	LemuriaSpring_TossEnded = 0;
+	LemuriaSpringTossKind = tossKind;
+	LemuriaSpringTossEnded = 0;
 	toss->launchFrm = -1;
-	for(LemuriaSpring_TossFrame = 0;; LemuriaSpring_TossFrame++) {
-		if(LemuriaSpring_TossFrame == 50)
+	for(LemuriaSpringTossTick = 0;; LemuriaSpringTossTick++) {
+		if(LemuriaSpringTossTick == 50)
 			fdScriptPlaySnd(SE_TOLBI_SPRING_TOSS);
-		if(LemuriaSpring_TossFrame == 16) {
+		if(LemuriaSpringTossTick == 16) {
 			fdActorSetAnimation(
 				MainRoutineStateWork.leaderActorId, ANIM_LEADER_TOSS);
 			toss->launchFrm = 0;
@@ -1180,7 +1180,7 @@ Sint32 scLemuriaSpringRunToss(Sint32 tossKind)
 			toss->trail[0].y = toFIXED(16);
 			toss->trail[0].z = toFIXED(152);
 			toss->attractionFrm = 300;
-			if(LemuriaSpring_TossKind == SPRING_TOSS_MEDAL) {
+			if(LemuriaSpringTossKind == SPRING_TOSS_MEDAL) {
 				fdActorSelectAnimation(
 					fdActorGet(ACTOR_LEMURIA_SPRING_MEDAL_SHADOW),
 					ANIM_TOKEN_SHADOW);
@@ -1207,10 +1207,10 @@ Sint32 scLemuriaSpringRunToss(Sint32 tossKind)
 			}
 		}
 		syWait(1);
-		if(LemuriaSpring_TossEnded == 1)
+		if(LemuriaSpringTossEnded == 1)
 			break;
 	}
-	return LemuriaSpring_TossResult;
+	return LemuriaSpringTossResult;
 }
 
 SCENE_ENTRANCE SceneEntrances[] = {
@@ -1277,7 +1277,7 @@ ACTOR_PLACE ActorPlacements[] = {
 /* clang-format off */
 /* The blend weights the spring fades in through, eight steps from 10/9 to */
 /* 0/16 (first target over second, in sixteenths). */
-Uint16 LemuriaSpring_AlphaSteps[] = {
+Uint16 LemuriaSpringAlphaSteps[] = {
 	BLEND_ALPHA(10, 9), BLEND_ALPHA(8, 10), BLEND_ALPHA(6, 11), BLEND_ALPHA(4, 12),
 	BLEND_ALPHA(3, 13), BLEND_ALPHA(2, 14), BLEND_ALPHA(1, 15),
 	BLEND_ALPHA(0, BLEND_WEIGHT_MAX),
@@ -1299,7 +1299,7 @@ CUE SceneCues[] = {
 /* The items a medal can win, drawn by the weights in MainRoutineStateWork: */
 /* the middle ring draws from the first three, each ring further out from */
 /* three more. */
-Uint32 LemuriaSpring_MedalPrizes[MEDAL_PRIZE_COUNT] = {
+Uint32 LemuriaSpringMedalPrizes[MEDAL_PRIZE_COUNT] = {
 	ITEM_HESTIA_BLADE, ITEM_AEGIS_SHIELD, ITEM_EREBUS_ARMOR,
 	ITEM_MINERVA_HELM, ITEM_MIGHTY_AXE, ITEM_FLORAL_DRESS,
 	ITEM_CROWN_OF_GLORY, ITEM_LEDAS_BRACELET, ITEM_FIREMANS_POLE,
@@ -1308,33 +1308,33 @@ Uint32 LemuriaSpring_MedalPrizes[MEDAL_PRIZE_COUNT] = {
 };
 
 /* The coins a coin wins by where it lands, the middle first; 0 for a miss. */
-Uint16 LemuriaSpring_CoinPrizes[] = {
+Uint16 LemuriaSpringCoinPrizes[] = {
 	20, 10, 2, 1, 0,
 };
 
 /* The crabs' colour modes, by speed. */
-Uint8 LemuriaSpring_CrabColorModes[] = {
+Uint8 LemuriaSpringCrabColorModes[] = {
 	SPRITE_COLOR_NORMAL, SPRITE_COLOR_GRB, SPRITE_COLOR_BLUE_TINT,
 };
 
 /* The turtles' colour modes, by speed. */
-Uint8 LemuriaSpring_TurtleColorModes[] = {
+Uint8 LemuriaSpringTurtleColorModes[] = {
 	SPRITE_COLOR_NORMAL, SPRITE_COLOR_BGR, SPRITE_COLOR_GBR,
 };
 
 /* Where each obstacle starts, across. */
-Uint8 LemuriaSpring_ObstacleStartX[] = {
+Uint8 LemuriaSpringObstacleStartX[] = {
 	80, 160, 80, 72,
 };
 
 /* Where each obstacle starts, down. */
-Uint8 LemuriaSpring_ObstacleStartZ[] = {
+Uint8 LemuriaSpringObstacleStartZ[] = {
 	32, 104, 68, 72,
 };
 
 /* The way each obstacle starts heading: the crabs east or west, the turtles */
 /* by their angle round their loops. */
-Uint16 LemuriaSpring_ObstacleHeadings[] = {
+Uint16 LemuriaSpringObstacleHeadings[] = {
 	CRAB_HEADING_EAST, CRAB_HEADING_WEST, 0, DEGtoANG(180),
 };
 /* clang-format on */

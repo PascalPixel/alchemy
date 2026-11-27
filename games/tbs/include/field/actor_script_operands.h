@@ -14,6 +14,6 @@ struct SCRIPT_OPERANDS;
 typedef void (*OPERAND_FUNC)(
 	struct SCRIPT_OPERANDS *state, Sint32 operation, Sint32 value);
 
-extern const OPERAND_FUNC ActorScript_OperandHandlerTable[41];
+extern const OPERAND_FUNC ActorScriptOperandHandlerTable[41];
 
 #endif

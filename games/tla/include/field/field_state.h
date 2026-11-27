@@ -38,8 +38,8 @@ struct WINDOW;
 /* FIELD_STATE.talk: set with the actor id under it to ask for that actor's
    talk. */
 #define FIELD_TALK_REQUEST	  0x4000
-/* The frames of a scene's default fade in, from the backdrop colour. */
-#define MAP_TRANSITION_FRAMES 16
+/* The ticks of a scene's default fade in, from the backdrop colour. */
+#define MAP_TRANSITION_TICKS  16
 
 /* The values of FIELD_STATE.raisedCue that the field mode handles itself,
    rather than passing them to the scene (fdRunRaisedCue). */
@@ -91,9 +91,9 @@ typedef enum ACTOR_SYSTEM_MODE {
 	ACTOR_SYSTEM_BATTLE = 4
 } ACTOR_SYSTEM_MODE;
 
-/* The frames the leader pushes against a step cue, a ledge, a gap or a wall
+/* The ticks the leader pushes against a step cue, a ledge, a gap or a wall
    before it runs, jumps or climbs (FIELD_STATE.blockedSteps). */
-#define FIELD_PUSH_FRAMES 12
+#define FIELD_PUSH_TICKS 12
 
 /* FIELD_STATE.terrainKind: the ground the ship was last over, which sets where
    fdWorldMapIsFlyable lets it fly. */
@@ -144,9 +144,9 @@ typedef struct FIELD_STATE {
 	Sint16 survivorCnt;		/* 0 when the whole party fell */
 	Sint16 fallenOwners[9]; /* the characters who fell, from the active party */
 	Sint16 itemSlot;		/* the inventory slot fdUseItem receives */
-	/* Frames the leader has pushed against something, counted by the player
+	/* Ticks the leader has pushed against something, counted by the player
 	   controls; step cues and push metatiles need more than
-	   FIELD_PUSH_FRAMES. */
+	   FIELD_PUSH_TICKS. */
 	Sint16 blockedSteps;
 	/* The keys held: a ledge (KEY_DOWN) and a climb (KEY_UP or KEY_DOWN) read
 	   them, and they are kept when a rope or tightrope was raised. */
@@ -174,7 +174,7 @@ typedef struct FIELD_STATE {
 	Sint32 transition;
 	Uint16 unused;
 	Uint16 transitionActive; /* set once the opening transition has started */
-	/* The transition's frames: MAP_TRANSITION_FRAMES on entry and at each
+	/* The transition's ticks: MAP_TRANSITION_TICKS on entry and at each
 	   script. */
 	Sint32 transitionFrm;
 	Sint32 fastForward; /* debug: skip timed script waits and actor messages */
@@ -202,14 +202,14 @@ typedef struct FIELD_STATE {
 	Sint16 busy;
 	Sint8  revealActive;  /* nonzero while Reveal is active */
 	Sint8  effTmrRunning; /* lets the Reveal countdown advance */
-	Sint16 revealFrm;	  /* the frames Reveal has left */
+	Sint16 revealFrm;	  /* the ticks Reveal has left */
 	Sint16 revealCenterX; /* where Reveal was cast, in pixels */
 	Sint16 revealCenterY;
 	/* FIELD_PSYNERGY_RING's ring is shown (fdPsynergyRing); A, Select, Start or
 	   a shortcut ends it. */
 	Sint8  ringActive;
 	Sint8  ringTmrRunning; /* off while another field Psynergy is cast */
-	Sint16 ringFrm;		   /* frames left of the ring; 0 ends it */
+	Sint16 ringFrm;		   /* ticks left of the ring; 0 ends it */
 	/* The first of the two names the next yes/no choice shows in place of Yes
 	   and No (mnYesNoMenuRun), 0 for those. */
 	Sint16 choiceMsg;

@@ -42,7 +42,7 @@ enum {
 
 #include "macros.h"
 
-/* The village by the Aqua Stone (ApojiiIslands_VillagePlacements). */
+/* The village by the Aqua Stone (ApojiiIslandsVillagePlacements). */
 typedef enum APOJII_ISLANDS_VILLAGE_ACTOR_ID {
 	/* "This is Apojii, the easternmost island in the Eastern Sea!" */
 	ACTOR_WELCOMING_YOUNG_MAN = ACTOR_FIRST_PLACED,
@@ -70,7 +70,7 @@ typedef enum APOJII_ISLANDS_VILLAGE_ACTOR_ID {
 	ACTOR_AQUA_STONE
 } APOJII_ISLANDS_VILLAGE_ACTOR_ID;
 
-/* The houses (ApojiiIslands_ShopsPlacements). */
+/* The houses (ApojiiIslandsShopsPlacements). */
 typedef enum APOJII_ISLANDS_HOUSES_ACTOR_ID {
 	/* "There's this guy in town who spends his time at the spring, staring at
 	   the Aqua Stone." */
@@ -106,7 +106,7 @@ typedef enum APOJII_ISLANDS_HOUSES_ACTOR_ID {
 	ACTOR_OLD_MAN_ABOUT_THE_WARMING_SEA
 } APOJII_ISLANDS_HOUSES_ACTOR_ID;
 
-/* Haze's islet (ApojiiIslands_HazePlacements). */
+/* Haze's islet (ApojiiIslandsHazePlacements). */
 typedef enum APOJII_ISLANDS_HAZE_ACTOR_ID {
 	/* The rope's posts: Lash at the one on the rock among the falls ties the
 	   rope up to the one on the cliff. */
@@ -167,34 +167,34 @@ typedef struct METATILE_MARKER_SET {
 } METATILE_MARKER_SET;
 
 /* The falls' palette as loaded, the source of each cycle. */
-Uint16 ApojiiIslands_FallsColors[PALETTE_COLORS] BSS_DATA ALIGNED(4);
-/* The falls' palette as this frame's cycle leaves it. */
-Uint16 ApojiiIslands_FallsCycled[PALETTE_COLORS] BSS_DATA;
+Uint16 ApojiiIslandsFallsColors[PALETTE_COLORS] BSS_DATA ALIGNED(4);
+/* The falls' palette as this tick's cycle leaves it. */
+Uint16 ApojiiIslandsFallsCycled[PALETTE_COLORS] BSS_DATA;
 /* The spray's palette as loaded. */
-Uint16 ApojiiIslands_SprayColors[PALETTE_COLORS] BSS_DATA;
-/* The spray's palette as this frame's cycle leaves it. */
-Uint16 ApojiiIslands_SprayCycled[PALETTE_COLORS] BSS_DATA;
+Uint16 ApojiiIslandsSprayColors[PALETTE_COLORS] BSS_DATA;
+/* The spray's palette as this tick's cycle leaves it. */
+Uint16 ApojiiIslandsSprayCycled[PALETTE_COLORS] BSS_DATA;
 /* The sea's palette as loaded. */
-Uint16 ApojiiIslands_SeaColors[PALETTE_COLORS] BSS_DATA;
-/* The sea's palette as this frame's cycle leaves it. */
-Uint16 ApojiiIslands_SeaCycled[PALETTE_COLORS] BSS_DATA;
+Uint16 ApojiiIslandsSeaColors[PALETTE_COLORS] BSS_DATA;
+/* The sea's palette as this tick's cycle leaves it. */
+Uint16 ApojiiIslandsSeaCycled[PALETTE_COLORS] BSS_DATA;
 /* The shore's palette as loaded. */
-Uint16 ApojiiIslands_ShoreColors[PALETTE_COLORS] BSS_DATA;
-/* The shore's palette as this frame's cycle leaves it. */
-Uint16 ApojiiIslands_ShoreCycled[PALETTE_COLORS] BSS_DATA;
+Uint16 ApojiiIslandsShoreColors[PALETTE_COLORS] BSS_DATA;
+/* The shore's palette as this tick's cycle leaves it. */
+Uint16 ApojiiIslandsShoreCycled[PALETTE_COLORS] BSS_DATA;
 /* The woken Aqua Stone's colours as loaded. */
-Uint16 ApojiiIslands_StoneColors[PALETTE_COLORS] BSS_DATA;
-/* The woken Aqua Stone's colours as this frame's cycle leaves them. */
-Uint16 ApojiiIslands_StoneCycled[PALETTE_COLORS] BSS_DATA;
+Uint16 ApojiiIslandsStoneColors[PALETTE_COLORS] BSS_DATA;
+/* The woken Aqua Stone's colours as this tick's cycle leaves them. */
+Uint16 ApojiiIslandsStoneCycled[PALETTE_COLORS] BSS_DATA;
 /* The islet's screen line below which BG1 drifts and is blended
    (scScrollHBlank), and BG1's scroll above and below it. */
-Sint32 ApojiiIslands_SplitLine	  BSS_DATA;
-Uint16 ApojiiIslands_UpperScrollX BSS_DATA;
-Uint16 ApojiiIslands_LowerScrollX BSS_DATA;
+Sint32 ApojiiIslandsSplitLine	 BSS_DATA;
+Uint16 ApojiiIslandsUpperScrollX BSS_DATA;
+Uint16 ApojiiIslandsLowerScrollX BSS_DATA;
 /* The markers drawn over the spring once the Aqua Stone is woken. */
-METATILE_MARKER_SET ApojiiIslands_MetatileMarkers BSS_DATA;
-extern Uint32									  WadingSplash_Script[];
-extern Uint32									  RippleScript[];
+METATILE_MARKER_SET ApojiiIslandsMetatileMarkers BSS_DATA;
+extern Uint32									 WadingSplashScript[];
+extern Uint32									 RippleScript[];
 
 #include "field/call.h"
 #include "field/field_script.h"
@@ -225,8 +225,8 @@ enum {
 };
 
 /* The sea's, shore's, falls' and spray's cycles turn their last four colours, a
-   step every eighth frame. */
-enum { CYCLE_FIRST_COLOR = 12, CYCLE_COLORS = 4, CYCLE_STEP_FRAMES = 8 };
+   step every eighth tick. */
+enum { CYCLE_FIRST_COLOR = 12, CYCLE_COLORS = 4, CYCLE_STEP_TICKS = 8 };
 
 /* The woken Aqua Stone's cycle turns every colour but the transparent first. */
 #define STONE_CYCLE_COLORS (PALETTE_COLORS - 1)
@@ -256,16 +256,16 @@ enum {
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect_spawn.c"
 
-extern ACTOR_PLACE ApojiiIslands_Placements[];
-extern ACTOR_PLACE ApojiiIslands_VillagePlacements[];
-extern ACTOR_PLACE ApojiiIslands_ShopsPlacements[];
-extern ACTOR_PLACE ApojiiIslands_HazePlacements[];
-extern Sint32	   ApojiiIslands_StoneCycleFrame[];
+extern ACTOR_PLACE ApojiiIslandsPlacements[];
+extern ACTOR_PLACE ApojiiIslandsVillagePlacements[];
+extern ACTOR_PLACE ApojiiIslandsShopsPlacements[];
+extern ACTOR_PLACE ApojiiIslandsHazePlacements[];
+extern Sint32	   ApojiiIslandsStoneCycleTick[];
 
-extern CUE	  ApojiiIslands_Cues[];
-extern CUE	  ApojiiIslands_VillageCues[];
-extern CUE	  ApojiiIslands_ShopsCues[];
-extern CUE	  ApojiiIslands_HazeCues[];
+extern CUE	  ApojiiIslandsCues[];
+extern CUE	  ApojiiIslandsVillageCues[];
+extern CUE	  ApojiiIslandsShopsCues[];
+extern CUE	  ApojiiIslandsHazeCues[];
 void		  scApojiiIslandsSinkIntoSand(void);
 void		  scApojiiIslandsRiseFromSand(void);
 void		  scApojiiIslandsResumeSeaCols(void);
@@ -274,10 +274,10 @@ void		  scApojiiIslandsScatterWeedsOverBrambleSeed(void);
 void		  scApojiiIslandsEnterDoor(void);
 void		  scApojiiIslandsJumpDownLedge(void);
 void		  scApojiiIslandsJumpForward(void);
-extern Uint32 FieldEffect_ShortScript[];
-extern Uint32 FieldEffect_MediumScript[];
-extern Uint32 FieldEffect_LongScript[];
-extern Sint32 ApojiiIslands_PaceScript[];
+extern Uint32 FieldEffectShortScript[];
+extern Uint32 FieldEffectMediumScript[];
+extern Uint32 FieldEffectLongScript[];
+extern Sint32 ApojiiIslandsPaceScript[];
 
 /* Haze, the Jupiter Djinni on the islet, joins the party. */
 void scApojiiIslandsHazeJoinsParty(void)
@@ -306,12 +306,12 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_APOJII_ISLANDS)
-		return ApojiiIslands_VillagePlacements;
+		return ApojiiIslandsVillagePlacements;
 	if(scene == SCENE_APOJII_ISLANDS_SHOPS)
-		return ApojiiIslands_ShopsPlacements;
+		return ApojiiIslandsShopsPlacements;
 	if(scene == SCENE_APOJII_ISLANDS_HAZE)
-		return ApojiiIslands_HazePlacements;
-	return ApojiiIslands_Placements;
+		return ApojiiIslandsHazePlacements;
+	return ApojiiIslandsPlacements;
 }
 
 /* Sand takes the leader into the sand (and scApojiiIslandsRiseFromSand back
@@ -329,52 +329,52 @@ void scApojiiIslandsRiseFromSand(void)
 		MAPGRID_LAYER_GROUND;
 }
 
-extern Sint32 ApojiiIslands_FallsCycleFrame;
+extern Sint32 ApojiiIslandsFallsCycleTick;
 
 /* The islet's falls and their spray cycle their last colours, held while
    Psynergy or Reveal runs. */
 void scApojiiIslandsCycleFallsCols(void)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
-	Sint32		 phase, k, offset;
+	Sint32		 phase, k, ofs;
 	Uint16		*firstCopy, *secondCopy;
 
 	if(state->psynergy != 0)
 		return;
 	if(state->revealActive != 0)
 		return;
-	if(ApojiiIslands_FallsCycleFrame == -1) {
-		syWordsCopy(ApojiiIslands_FallsColors,
+	if(ApojiiIslandsFallsCycleTick == -1) {
+		syWordsCopy(ApojiiIslandsFallsColors,
 			(void *)&BG_PLTT_COLOR(FALLS_PALETTE, 0),
-			sizeof(ApojiiIslands_FallsColors));
-		syWordsCopyEntry(ApojiiIslands_FallsCycled, ApojiiIslands_FallsColors,
-			sizeof(ApojiiIslands_FallsCycled));
-		syWordsCopyEntry(ApojiiIslands_SprayColors,
+			sizeof(ApojiiIslandsFallsColors));
+		syWordsCopyEntry(ApojiiIslandsFallsCycled, ApojiiIslandsFallsColors,
+			sizeof(ApojiiIslandsFallsCycled));
+		syWordsCopyEntry(ApojiiIslandsSprayColors,
 			(void *)&BG_PLTT_COLOR(SPRAY_PALETTE, 0),
-			sizeof(ApojiiIslands_SprayColors));
-		syWordsCopyEntry(ApojiiIslands_SprayCycled, ApojiiIslands_SprayColors,
-			sizeof(ApojiiIslands_SprayCycled));
-		ApojiiIslands_FallsCycleFrame = 0;
+			sizeof(ApojiiIslandsSprayColors));
+		syWordsCopyEntry(ApojiiIslandsSprayCycled, ApojiiIslandsSprayColors,
+			sizeof(ApojiiIslandsSprayCycled));
+		ApojiiIslandsFallsCycleTick = 0;
 	}
-	phase = ApojiiIslands_FallsCycleFrame / CYCLE_STEP_FRAMES % CYCLE_COLORS;
+	phase = ApojiiIslandsFallsCycleTick / CYCLE_STEP_TICKS % CYCLE_COLORS;
 	k = 0;
-	firstCopy = ApojiiIslands_FallsCycled;
-	secondCopy = ApojiiIslands_SprayCycled;
+	firstCopy = ApojiiIslandsFallsCycled;
+	secondCopy = ApojiiIslandsSprayCycled;
 	for(; k < CYCLE_COLORS; k++) {
-		offset = ((phase + k) % CYCLE_COLORS + CYCLE_FIRST_COLOR) * 2;
-		*(Uint16 *)((Uint8 *)firstCopy + offset) =
-			ApojiiIslands_FallsColors[CYCLE_FIRST_COLOR + k];
-		*(Uint16 *)((Uint8 *)secondCopy + offset) =
-			ApojiiIslands_SprayColors[CYCLE_FIRST_COLOR + k];
+		ofs = ((phase + k) % CYCLE_COLORS + CYCLE_FIRST_COLOR) * 2;
+		*(Uint16 *)((Uint8 *)firstCopy + ofs) =
+			ApojiiIslandsFallsColors[CYCLE_FIRST_COLOR + k];
+		*(Uint16 *)((Uint8 *)secondCopy + ofs) =
+			ApojiiIslandsSprayColors[CYCLE_FIRST_COLOR + k];
 	}
 	IO_WRITE_QUEUE_PUSH((Uint32)&BG_PLTT_COLOR(FALLS_PALETTE, 0),
 		(Uint32)firstCopy, DMA_COPY_WORDS(8));
 	IO_WRITE_QUEUE_PUSH((Uint32)&BG_PLTT_COLOR(SPRAY_PALETTE, 0),
 		(Uint32)secondCopy, DMA_COPY_WORDS(8));
-	ApojiiIslands_FallsCycleFrame++;
+	ApojiiIslandsFallsCycleTick++;
 }
 
-extern Sint32 ApojiiIslands_SeaCycleFrame;
+extern Sint32 ApojiiIslandsSeaCycleTick;
 
 /* The village's sea and shore cycle their last colours, held while Psynergy or
    Reveal runs. */
@@ -388,32 +388,32 @@ void scApojiiIslandsCycleSeaCols(void)
 	busy = state->revealActive;
 	if(busy != 0)
 		return;
-	if(ApojiiIslands_SeaCycleFrame == -1) {
-		syWordsCopy(ApojiiIslands_SeaColors,
+	if(ApojiiIslandsSeaCycleTick == -1) {
+		syWordsCopy(ApojiiIslandsSeaColors,
 			(void *)&BG_PLTT_COLOR(VILLAGE_SEA_PALETTE, 0),
-			sizeof(ApojiiIslands_SeaColors));
-		syWordsCopyEntry(ApojiiIslands_SeaCycled, ApojiiIslands_SeaColors,
-			sizeof(ApojiiIslands_SeaCycled));
-		syWordsCopyEntry(ApojiiIslands_ShoreColors,
+			sizeof(ApojiiIslandsSeaColors));
+		syWordsCopyEntry(ApojiiIslandsSeaCycled, ApojiiIslandsSeaColors,
+			sizeof(ApojiiIslandsSeaCycled));
+		syWordsCopyEntry(ApojiiIslandsShoreColors,
 			(void *)&BG_PLTT_COLOR(SHORE_PALETTE, 0),
-			sizeof(ApojiiIslands_ShoreColors));
-		syWordsCopyEntry(ApojiiIslands_ShoreCycled, ApojiiIslands_ShoreColors,
-			sizeof(ApojiiIslands_ShoreCycled));
-		ApojiiIslands_SeaCycleFrame = busy;
+			sizeof(ApojiiIslandsShoreColors));
+		syWordsCopyEntry(ApojiiIslandsShoreCycled, ApojiiIslandsShoreColors,
+			sizeof(ApojiiIslandsShoreCycled));
+		ApojiiIslandsSeaCycleTick = busy;
 	}
-	phase = ApojiiIslands_SeaCycleFrame / CYCLE_STEP_FRAMES % CYCLE_COLORS;
+	phase = ApojiiIslandsSeaCycleTick / CYCLE_STEP_TICKS % CYCLE_COLORS;
 	for(k = 0; k < CYCLE_COLORS; k++) {
 		j = (phase + k) % CYCLE_COLORS;
-		ApojiiIslands_SeaCycled[CYCLE_FIRST_COLOR + j] =
-			ApojiiIslands_SeaColors[CYCLE_FIRST_COLOR + k];
-		ApojiiIslands_ShoreCycled[CYCLE_FIRST_COLOR + j] =
-			ApojiiIslands_ShoreColors[CYCLE_FIRST_COLOR + k];
+		ApojiiIslandsSeaCycled[CYCLE_FIRST_COLOR + j] =
+			ApojiiIslandsSeaColors[CYCLE_FIRST_COLOR + k];
+		ApojiiIslandsShoreCycled[CYCLE_FIRST_COLOR + j] =
+			ApojiiIslandsShoreColors[CYCLE_FIRST_COLOR + k];
 	}
 	IO_WRITE_QUEUE_PUSH((Uint32)&BG_PLTT_COLOR(VILLAGE_SEA_PALETTE, 0),
-		(Uint32)ApojiiIslands_SeaCycled, DMA_COPY_WORDS(8));
+		(Uint32)ApojiiIslandsSeaCycled, DMA_COPY_WORDS(8));
 	IO_WRITE_QUEUE_PUSH((Uint32)&BG_PLTT_COLOR(SHORE_PALETTE, 0),
-		(Uint32)ApojiiIslands_ShoreCycled, DMA_COPY_WORDS(8));
-	ApojiiIslands_SeaCycleFrame++;
+		(Uint32)ApojiiIslandsShoreCycled, DMA_COPY_WORDS(8));
+	ApojiiIslandsSeaCycleTick++;
 }
 
 /* Reveal holds the sea's colour cycle as it takes effect. */
@@ -430,26 +430,26 @@ void scApojiiIslandsResumeSeaCols(void)
 	syWait(3);
 }
 
-/* The woken Aqua Stone's colours turn a step every other frame, in the sprite
+/* The woken Aqua Stone's colours turn a step every other tick, in the sprite
    palette the spring's markers take. */
 void scApojiiIslandsCycleAquaStoneCols(void)
 {
 	Sint32 base;
 	Sint32 i;
 
-	if(ApojiiIslands_StoneCycleFrame[0] == -1) {
-		syWordsCopyEntry(ApojiiIslands_StoneColors,
+	if(ApojiiIslandsStoneCycleTick[0] == -1) {
+		syWordsCopyEntry(ApojiiIslandsStoneColors,
 			(void *)&BG_PLTT_COLOR(STONE_PALETTE, 0),
-			sizeof(ApojiiIslands_StoneColors));
-		ApojiiIslands_StoneCycleFrame[0] = 0;
+			sizeof(ApojiiIslandsStoneColors));
+		ApojiiIslandsStoneCycleTick[0] = 0;
 	}
-	base = (ApojiiIslands_StoneCycleFrame[0] / 2) % STONE_CYCLE_COLORS;
+	base = (ApojiiIslandsStoneCycleTick[0] / 2) % STONE_CYCLE_COLORS;
 	for(i = 0; i < STONE_CYCLE_COLORS; i++)
-		ApojiiIslands_StoneCycled[(base + i) % STONE_CYCLE_COLORS + 1] =
-			ApojiiIslands_StoneColors[i + 1];
+		ApojiiIslandsStoneCycled[(base + i) % STONE_CYCLE_COLORS + 1] =
+			ApojiiIslandsStoneColors[i + 1];
 	IO_WRITE_QUEUE_PUSH((Uint32)&OBJ_PLTT_COLOR(STONE_SPRITE_PALETTE, 0),
-		(Uint32)ApojiiIslands_StoneCycled, DMA_COPY_WORDS(8));
-	ApojiiIslands_StoneCycleFrame[0]++;
+		(Uint32)ApojiiIslandsStoneCycled, DMA_COPY_WORDS(8));
+	ApojiiIslandsStoneCycleTick[0]++;
 }
 
 /* A flashing actor's last update: its sprite's colour back to normal. */
@@ -497,7 +497,7 @@ void scApojiiIslandsDouseAquaStone(Sint32 unused, Sint32 id)
 		IO_WRITE_HALFWORD);
 	sySynch(1);
 	syCloseEvent(scApojiiIslandsCycleSeaCols);
-	sySetEvent(scApojiiIslandsCycleAquaStoneCols, EVENT_PASS_FRAME);
+	sySetEvent(scApojiiIslandsCycleAquaStoneCols, EVENT_PASS_TICK);
 	scApojiiIslandsStartMetatileMarkers();
 	scApojiiIslandsAddMetatileMarkers(METATILE_BEHAVIOR_SPRING, 0, 0);
 	for(i = 1; i <= 6; i++) {
@@ -528,7 +528,7 @@ void scApojiiIslandsFatherSeesTheStone(void)
 	syFieldScriptSetMessageId((Sint32)&MsgWhatWhatJust);
 	fdActorFaceActor(MainRoutineStateWork.leaderActorId, ACTOR_FATHER, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorFaceDirection(ACTOR_FATHER, FACING_EAST, 0);
 	fdActorSetAnimationAndWait(ACTOR_FATHER, 3);
 	fdActorFaceDirection(ACTOR_FATHER, FACING_WEST, 0);
@@ -637,7 +637,7 @@ void scApojiiIslandsEnterDoor(void)
 	syFieldScriptWait(10);
 	syFieldScriptSetExitRequest(state->stepCue);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -693,12 +693,12 @@ const CUE *scGetCues(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_APOJII_ISLANDS)
-		return ApojiiIslands_VillageCues;
+		return ApojiiIslandsVillageCues;
 	if(scene == SCENE_APOJII_ISLANDS_SHOPS)
-		return ApojiiIslands_ShopsCues;
+		return ApojiiIslandsShopsCues;
 	if(scene == SCENE_APOJII_ISLANDS_HAZE)
-		return ApojiiIslands_HazeCues;
-	return ApojiiIslands_Cues;
+		return ApojiiIslandsHazeCues;
+	return ApojiiIslandsCues;
 }
 
 /* The Apojii Islands' general store, as mnShopRun numbers the shops. */
@@ -773,36 +773,35 @@ void scApojiiIslandsTalkToGeneralStorekeeper(Sint32 actor)
 	fdScriptEnd();
 }
 
-/* The islet's HBlank split: above ApojiiIslands_SplitLine BG1 scrolls with the
+/* The islet's HBlank split: above ApojiiIslandsSplitLine BG1 scrolls with the
    map and blending is off; below it, BG1 drifts and is blended. */
 void scScrollHBlank(void)
 {
 	Uint32 value;
 
-	if(REG_VCOUNT < ApojiiIslands_SplitLine) {
-		value = ApojiiIslands_UpperScrollX;
+	if(REG_VCOUNT < ApojiiIslandsSplitLine) {
+		value = ApojiiIslandsUpperScrollX;
 		REG_BG1HOFS = value;
 		REG_BLDCNT = 0;
 	} else {
-		value = ApojiiIslands_LowerScrollX;
+		value = ApojiiIslandsLowerScrollX;
 		syIOWrite16(value, &REG_BG1HOFS);
 		REG_BLDALPHA = BLEND_ALPHA(12, BLEND_WEIGHT_MAX);
 		REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 	}
 }
 
-/* Each frame, follows the overhead layer's scroll for the split, the water
-   below it drifting west a pixel every fourth frame. */
+/* Each tick, follows the overhead layer's scroll for the split, the water
+   below it drifting west a pixel every fourth tick. */
 void scLayerTrackScroll(void)
 {
 	MAP_LAYER *layer =
 		&((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_OVERHEAD];
 	Sint16 y = FIXEDtoINT(layer->y);
 
-	ApojiiIslands_SplitLine = 1448 - y;
-	ApojiiIslands_UpperScrollX = FIXEDtoINT(layer->x);
-	ApojiiIslands_LowerScrollX =
-		(Sint16)FIXEDtoINT(layer->x) - (FrameCount >> 2);
+	ApojiiIslandsSplitLine = 1448 - y;
+	ApojiiIslandsUpperScrollX = FIXEDtoINT(layer->x);
+	ApojiiIslandsLowerScrollX = (Sint16)FIXEDtoINT(layer->x) - (TickCount >> 2);
 }
 
 #include "shared/scroll_start_hblank.h"
@@ -824,7 +823,7 @@ Sint32 scInit(void)
 	if(scene == SCENE_APOJII_ISLANDS_HAZE) {
 		scApojiiIslandsInitHaze();
 	} else if(scene == SCENE_APOJII_ISLANDS) {
-		syFieldSetFrameEvent(scApojiiIslandsCycleSeaCols, EVENT_PASS_FRAME);
+		syFieldSetTickEvent(scApojiiIslandsCycleSeaCols, EVENT_PASS_TICK);
 		if(fdScriptGetFlag(FLAG_FATHER_SEES_THE_STONE))
 			scApojiiIslandsFatherSeesTheStone();
 	} else if(scene == SCENE_APOJII_ISLANDS_SHOPS) {
@@ -846,7 +845,7 @@ Sint32 scPrepareMap(void)
    from the cave. */
 void scApojiiIslandsInitHaze(void)
 {
-	sySetFrameEvent(scApojiiIslandsCycleFallsCols, EVENT_PASS_FRAME);
+	sySetTickEvent(scApojiiIslandsCycleFallsCols, EVENT_PASS_TICK);
 	fdRopeInit();
 	fdRopePlace(
 		0, FLAG_HAZE_ROPE_TIED, ACTOR_FALLS_ROPE_POST, ACTOR_CLIFF_ROPE_POST);
@@ -897,16 +896,16 @@ UNUSED void scApojiiIslandsFlowWithStream(void)
 	Sint32		 owner = MainRoutineStateWork.leaderActorId;
 	ACTOR		*anchor = state->camera;
 	ACTOR		*leader = fdActorGet(owner);
-	FIXED		 position[3];
+	FIXED		 pos[3];
 	Sint32		 result;
 
 	if(MainRoutineStateWork.next != SCENE_AQUA_ROCK_MOAI ||
 		leader->groundHeight != 0) {
-		position[0] = leader->x.fixed;
-		position[1] = leader->y.fixed;
-		position[2] = leader->z.fixed + toFIXED(2);
-		result = fdMapGridCheckCollision(leader, position);
-		if((FrameCount & 4) == 0)
+		pos[0] = leader->x.fixed;
+		pos[1] = leader->y.fixed;
+		pos[2] = leader->z.fixed + toFIXED(2);
+		result = fdMapGridCheckCollision(leader, pos);
+		if((TickCount & 4) == 0)
 			scActorSpawnWadingSplash(leader);
 		if(result < 0) {
 			fdActorSetAttachedEffect(
@@ -922,20 +921,20 @@ UNUSED void scApojiiIslandsFlowWithStream(void)
 			fdActorSelectAnimation(leader, ANIM_LEADER_SIT);
 			syWait(3);
 		} else {
-			position[0] = leader->x.fixed;
-			position[1] = leader->y.fixed;
-			position[2] = leader->z.fixed + toFIXED(8);
-			result = fdMapGridCheckCollision(leader, position);
+			pos[0] = leader->x.fixed;
+			pos[1] = leader->y.fixed;
+			pos[2] = leader->z.fixed + toFIXED(8);
+			result = fdMapGridCheckCollision(leader, pos);
 			if(result <= 0) {
-				position[0] = leader->x.fixed + (toFIXED(57) / 10);
-				position[1] = leader->y.fixed;
-				position[2] = leader->z.fixed + (toFIXED(57) / 10);
-				result = fdMapGridCheckCollision(leader, position);
+				pos[0] = leader->x.fixed + (toFIXED(57) / 10);
+				pos[1] = leader->y.fixed;
+				pos[2] = leader->z.fixed + (toFIXED(57) / 10);
+				result = fdMapGridCheckCollision(leader, pos);
 				if(result <= 0) {
-					position[0] = leader->x.fixed - (toFIXED(57) / 10);
-					position[1] = leader->y.fixed;
-					position[2] = leader->z.fixed + (toFIXED(57) / 10);
-					result = fdMapGridCheckCollision(leader, position);
+					pos[0] = leader->x.fixed - (toFIXED(57) / 10);
+					pos[1] = leader->y.fixed;
+					pos[2] = leader->z.fixed + (toFIXED(57) / 10);
+					result = fdMapGridCheckCollision(leader, pos);
 					if(result <= 0) {
 						anchor->z.fixed += toFIXED(2);
 						leader->z.fixed += toFIXED(2);
@@ -981,7 +980,7 @@ enum { ACTOR_VIAL_CHEST_PUDDLE_C = ACTOR_FIRST_PLACED + 7 };
 		COPY_TILES(MARKER_SOURCE_TILE + 32 + (from) * 2, \
 			(to) * MARKER_PICTURE_TILES + 2))
 
-/* Each frame: copies the markers' pictures, which the map's tile animation
+/* Each tick: copies the markers' pictures, which the map's tile animation
    redraws, to sprite VRAM, and draws a sprite over each live marker in view,
    semi-transparent in the woken Aqua Stone's turning colours, at the lowest
    priority while it rests. */
@@ -993,9 +992,8 @@ void scApojiiIslandsDrawMetatileMarkers(void)
 	/* DEAD: viewY, subtracted from both height and z, cancels in dy; the ROM
 	   keeps its load and its store to the stack. */
 	Sint32 viewY = map->origin[1];
-	Uint32 tile =
-		VramCacheEntries[ApojiiIslands_MetatileMarkers.block].ofs >> 5;
-	Uint32 offset = VramCacheEntries[ApojiiIslands_MetatileMarkers.block].ofs;
+	Uint32 tile = VramCacheEntries[ApojiiIslandsMetatileMarkers.block].ofs >> 5;
+	Uint32 offset = VramCacheEntries[ApojiiIslandsMetatileMarkers.block].ofs;
 	METATILE_MARKER *record;
 	Sint32			 i;
 
@@ -1004,7 +1002,7 @@ void scApojiiIslandsDrawMetatileMarkers(void)
 	COPY_PICTURE(1, 1);
 	COPY_PICTURE(2, 2);
 	COPY_PICTURE(2, 3);
-	record = ApojiiIslands_MetatileMarkers.markers;
+	record = ApojiiIslandsMetatileMarkers.markers;
 	for(i = METATILE_MARKERS - 1; i >= 0; i--, record++) {
 		if(record->state != 0) {
 			Sint32	dx = record->x - viewX;
@@ -1047,15 +1045,15 @@ void scApojiiIslandsDrawMetatileMarkers(void)
 }
 
 /* Clears the markers, takes a free VRAM cache entry for their four pictures,
-   left empty, and starts drawing them each frame. */
+   left empty, and starts drawing them each tick. */
 void scApojiiIslandsStartMetatileMarkers(void)
 {
 	syWordsClearEntry(
-		&ApojiiIslands_MetatileMarkers, sizeof(METATILE_MARKER_SET));
-	ApojiiIslands_MetatileMarkers.block = syVRAMCacheFindFreeEntry();
-	mnVRAMLoad(ApojiiIslands_MetatileMarkers.block,
+		&ApojiiIslandsMetatileMarkers, sizeof(METATILE_MARKER_SET));
+	ApojiiIslandsMetatileMarkers.block = syVRAMCacheFindFreeEntry();
+	mnVRAMLoad(ApojiiIslandsMetatileMarkers.block,
 		METATILE_MARKER_KINDS * MARKER_PICTURE_TILES * TILE_SIZE_4BPP, 0);
-	syFieldSetFrameEvent(scApojiiIslandsDrawMetatileMarkers, EVENT_PASS_FRAME);
+	syFieldSetTickEvent(scApojiiIslandsDrawMetatileMarkers, EVENT_PASS_TICK);
 }
 
 /* Adds a marker over each metatile of layer 1 whose collision code is one of
@@ -1071,8 +1069,8 @@ void scApojiiIslandsAddMetatileMarkers(
 	Sint32 left = fdMapGridGetLayer(MAPGRID_LAYER_GROUND)->ofsX + map->minX;
 	Sint32 top = fdMapGridGetLayer(MAPGRID_LAYER_GROUND)->ofsY + map->minZ;
 	/* FAKEMATCH(temporary): markers, a pointer standing in for */
-	/* ApojiiIslands_MetatileMarkers's address; as the table by name. */
-	METATILE_MARKER_SET *markers = &ApojiiIslands_MetatileMarkers;
+	/* ApojiiIslandsMetatileMarkers's address; as the table by name. */
+	METATILE_MARKER_SET *markers = &ApojiiIslandsMetatileMarkers;
 	Sint32				 width = FIELD_METATILE(map->maxX - map->minX);
 	Sint32				 height = FIELD_METATILE(map->maxZ - map->minZ);
 	METATILE_MARKER		*entry = &markers->markers[markers->cnt];
@@ -1123,8 +1121,8 @@ extern Sint16 GroundParticleFrames[];
 /* clang-format off */
 #include "shared/field_effect_duration_scripts.c"
 
-/* A splash's script: it shows for 20 frames, then is released. */
-Uint32 WadingSplash_Script[] = {
+/* A splash's script: it shows for 20 ticks, then is released. */
+Uint32 WadingSplashScript[] = {
 	SC_WAIT(20),
 	SC_RELEASE,
 };
@@ -1133,15 +1131,15 @@ Uint32 WadingSplash_Script[] = {
 
 #include "shared/ground_particle_frames.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 /* The cautious mother paces her house: a step east and up to the north wall, */
 /* a pause, then back to her place, a pause. */
-Sint32 ApojiiIslands_PaceScript[] = {
+Sint32 ApojiiIslandsPaceScript[] = {
 	SC_SET(SW_COLLISION, PACER_COLLISION),
 	SC_ACCELERATION(0.2),
 	SC_SPEED(0.6),
@@ -1199,12 +1197,12 @@ Uint32 SceneExits[] = {
 };
 
 /* The scene's other rooms' actors: none. */
-ACTOR_PLACE ApojiiIslands_Placements[] = {
+ACTOR_PLACE ApojiiIslandsPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
 /* The village's actors, in APOJII_ISLANDS_VILLAGE_ACTOR_ID's order. */
-ACTOR_PLACE ApojiiIslands_VillagePlacements[] = {
+ACTOR_PLACE ApojiiIslandsVillagePlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 168, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 88, FACING_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
 	ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 312, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1219,11 +1217,11 @@ ACTOR_PLACE ApojiiIslands_VillagePlacements[] = {
 };
 
 /* The houses' actors, in APOJII_ISLANDS_HOUSES_ACTOR_ID's order. */
-ACTOR_PLACE ApojiiIslands_ShopsPlacements[] = {
+ACTOR_PLACE ApojiiIslandsShopsPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 152, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 104, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 104, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_SKIRT, CONDITION_ALWAYS, (Sint32)ApojiiIslands_PaceScript, 280, 0, 136, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_SKIRT, CONDITION_ALWAYS, (Sint32)ApojiiIslandsPaceScript, 280, 0, 136, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 344, 0, 120, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 592, 0, 120, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1236,7 +1234,7 @@ ACTOR_PLACE ApojiiIslands_ShopsPlacements[] = {
 };
 
 /* Haze's islet's actors, in APOJII_ISLANDS_HAZE_ACTOR_ID's order. */
-ACTOR_PLACE ApojiiIslands_HazePlacements[] = {
+ACTOR_PLACE ApojiiIslandsHazePlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_HAZE), MOVEMENT_TYPE_STAND, 376, 0, 200, FACING_WEST, TALK_FACING_PARTY, 0),
@@ -1244,23 +1242,23 @@ ACTOR_PLACE ApojiiIslands_HazePlacements[] = {
 };
 
 /* The scene's other rooms' cues: none. */
-CUE ApojiiIslands_Cues[] = {
+CUE ApojiiIslandsCues[] = {
 	{CUE_TABLE_END},
 };
 
-/* Frames the falls' cycle has run; -1 until it loads the palettes. */
-Sint32 ApojiiIslands_FallsCycleFrame = -1;
+/* Ticks the falls' cycle has run; -1 until it loads the palettes. */
+Sint32 ApojiiIslandsFallsCycleTick = -1;
 
-/* Frames the sea's cycle has run; -1 until it loads the palettes. */
-Sint32 ApojiiIslands_SeaCycleFrame = -1;
+/* Ticks the sea's cycle has run; -1 until it loads the palettes. */
+Sint32 ApojiiIslandsSeaCycleTick = -1;
 
-/* Frames the Aqua Stone's cycle has run; -1 until it loads the palette. */
-Sint32 ApojiiIslands_StoneCycleFrame[] = {
+/* Ticks the Aqua Stone's cycle has run; -1 until it loads the palette. */
+Sint32 ApojiiIslandsStoneCycleTick[] = {
 	-1,
 };
 
 /* The village's exits, doors, talks and Psynergy. */
-CUE ApojiiIslands_VillageCues[] = {
+CUE ApojiiIslandsVillageCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, APOJII_ISLANDS_TO_WORLD_MAP_A},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, APOJII_ISLANDS_TO_APOJII_ISLANDS_HAZE_NORTH},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, APOJII_ISLANDS_TO_APOJII_ISLANDS_HAZE_SOUTH},
@@ -1302,7 +1300,7 @@ CUE ApojiiIslands_VillageCues[] = {
 };
 
 /* The houses' exits, doors, talks and Psynergy. */
-CUE ApojiiIslands_ShopsCues[] = {
+CUE ApojiiIslandsShopsCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, APOJII_ISLANDS_SHOPS_TO_APOJII_ISLANDS_SOUTHEAST},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, APOJII_ISLANDS_SHOPS_TO_APOJII_ISLANDS_SOUTHWEST},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, APOJII_ISLANDS_SHOPS_TO_APOJII_ISLANDS_EAST},
@@ -1339,7 +1337,7 @@ CUE ApojiiIslands_ShopsCues[] = {
 /* Haze's islet's ways into the water, its ledge, Haze, Lash on the rope and */
 /* Cyclone on the weeds. Each way down into the water to the cave is the */
 /* metatile behaviour of the exit it leaves by, which scLeaderSinkAway takes. */
-CUE ApojiiIslands_HazeCues[] = {
+CUE ApojiiIslandsHazeCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, APOJII_ISLANDS_HAZE_TO_APOJII_ISLANDS_NORTH},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, APOJII_ISLANDS_HAZE_TO_APOJII_ISLANDS_SOUTH},
 	{CUE_STEP, APOJII_ISLANDS_HAZE_TO_APOJII_ISLANDS_CAVE_SOUTHWEST, CONDITION_ALWAYS, SCRIPT_REF(scLeaderSinkAway)},

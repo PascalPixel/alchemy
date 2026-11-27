@@ -286,7 +286,7 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 			for(j = 0; j < (djinnCount + 4) / BATTLE_LIST_ROWS; j++) {
 				Sint32 tile = j + PAGE_NUMBER_TILE;
 
-				if((PerWork.data & KEY_R) || (FrameCount & 15) <= 11) {
+				if((PerWork.data & KEY_R) || (TickCount & 15) <= 11) {
 					if(j == firstEntry / BATTLE_LIST_ROWS)
 						tile = j + PAGE_NUMBER_LIT_TILE;
 				}
@@ -385,7 +385,7 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 					for(i = 0; i < previewPages; i++) {
 						Sint32 tile = i + PAGE_NUMBER_TILE;
 
-						if((FrameCount & 15) <= 11 && i == previewPage - 1)
+						if((TickCount & 15) <= 11 && i == previewPage - 1)
 							tile = previewPage + PAGE_NUMBER_LIT_TILE - 1;
 						mnWindowSetTilemapEntry(previewWindow, tile,
 							previewWindow->width - previewPages + i - 2, -1, 0);
@@ -465,13 +465,13 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 
 		MENU_PLACE_CURSOR(cursorPos, listWindow, selectedRow, 2, sprite);
 		sprite->oam.f.tile = syVRAMCacheReload(cursorSlot, PointingHandTiles);
-		sprite->oam.f.x = cursorPos.x + ((FrameCount & 4) >> 1) - 6;
-		sprite->oam.f.y = cursorPos.y - ((FrameCount & 4) >> 2) - 8;
+		sprite->oam.f.x = cursorPos.x + ((TickCount & 4) >> 1) - 6;
+		sprite->oam.f.y = cursorPos.y - ((TickCount & 4) >> 2) - 8;
 		if(djinnCount != 0)
 			syOAMAddSprAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
 
 		partyStatus = Ram_HeapSlots->partyStat;
-		blinkPhase = FrameCount & 4;
+		blinkPhase = TickCount & 4;
 		iconWindow = (WINDOW *)partyStatus->win;
 		if(partyStatus->flg & 2) {
 			for(i = 0; i <= 3; i++) {
@@ -481,12 +481,12 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 				if(((1 << i) & standbyElements) == 0)
 					palette = WINDOW_PALETTE;
 				mnWindowHighlightRect(
-					iconWindow->x + DjinnMenu_ElementXOffsets[i] + 1,
-					iconWindow->y + DjinnMenu_ElementYOffsets[i] + 1, 2, 1,
+					iconWindow->x + DjinnMenuElementXOffsets[i] + 1,
+					iconWindow->y + DjinnMenuElementYOffsets[i] + 1, 2, 1,
 					palette);
 			}
 		}
-		if(FrameCount & 4) {
+		if(TickCount & 4) {
 			syWordsCopyEntry((void *)DJINN_MENU_ARROW_VRAM, DjinnMenu_BlinkTile,
 				TILE_SIZE_4BPP);
 			syWordsCopyEntry((void *)(DJINN_MENU_ARROW_VRAM + TILE_SIZE_4BPP),

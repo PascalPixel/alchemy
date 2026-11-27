@@ -1,14 +1,14 @@
 /* Frost. Part of battle_effect.c. */
 
-/* One row of Frost_Timings, for each variant. */
+/* One row of FrostTimings, for each variant. */
 enum {
 	FROST_MOTES,  /* how many motes spiral down */
 	FROST_MOUNDS, /* how many ice mounds spring up */
-	FROST_FRAME	  /* the frame the motes burst */
+	FROST_TICK	  /* the tick the motes burst */
 };
 
 /* The ice mounds' pictures in IceChipSheet are all as wide; their heights are
-   Frost_MoundHeights. */
+   FrostMoundHeights. */
 #define FROST_MOUND_WIDTH 32
 
 /* The motes still drawn once they burst, of the variant's FROST_MOTES. */
@@ -22,7 +22,7 @@ enum {
 #define FROST_CHIPS_DRAWN  24
 /* The sparkles that rise over the burst. */
 #define FROST_SPARKLES	   32
-/* A sparkle's frames: two for each of BattleEffect_SparklePictures' nine,
+/* A sparkle's ticks: two for each of BattleEffectSparklePictures' nine,
    counted down. */
 #define FROST_SPARKLE_LIFE 18
 
@@ -34,7 +34,7 @@ void btEffectRunFrost(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	Uint8				*sparkleSheet;
 	Sint32				 xyz[3];
 	SCREEN_POINT		 screen;
@@ -64,38 +64,37 @@ void btEffectRunFrost(BATTLE_EFFECT_PARM *args)
 	if(state->args->side == EFFECT_SIDE_PARTY)
 		REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
 
-	for(frame = 0;
-		frame != Frost_Timings[state->args->variant][FROST_FRAME] + 75;
-		frame++) {
-		Sint32 count;
+	for(frm = 0; frm != FrostTimings[state->args->variant][FROST_TICK] + 75;
+		frm++) {
+		Sint32 cnt;
 		Sint32 lowest;
 		Sint32 highest;
 
 		lowest = toFIXED(120);
 		highest = 0;
-		if(frame == Frost_Timings[state->args->variant][FROST_FRAME] + 11)
+		if(frm == FrostTimings[state->args->variant][FROST_TICK] + 11)
 			EFFECT_SHOW_DAMAGE(SE_WATER);
 		SET_VECTOR(point, 0, 0, toFIXED(512));
 		syInitMatrix();
 		syMatrixTranslateVector(point);
-		if(frame >= 36 && frame < 64 && (frame & 3) == 0)
+		if(frm >= 36 && frm < 64 && (frm & 3) == 0)
 			sySndPlayStub(SE_ICE);
-		if(frame == 85)
+		if(frm == 85)
 			sySndPlayStub(SE_WHOOSH);
 		EFFECT_FOR_EACH_TARGET(i, state->args) {
-			if(frame == i * 4 + 40)
+			if(frm == i * 4 + 40)
 				btEffectTintBattler(state->args->tgts[i],
 					SPRITE_COLOR_BLUE_TINT, POSE_DAMAGE, TINT_KEEP, 0);
 		}
 
 		/* Motes spiral in and sink. */
-		if(frame < Frost_Timings[state->args->variant][FROST_FRAME])
-			count = Frost_Timings[state->args->variant][FROST_MOTES];
+		if(frm < FrostTimings[state->args->variant][FROST_TICK])
+			cnt = FrostTimings[state->args->variant][FROST_MOTES];
 		else
-			count = FROST_BURST_MOTES;
-		if(frame < Frost_Timings[state->args->variant][FROST_FRAME] + 35) {
-			for(i = 0; i != count; i++) {
-				if(frame > i) {
+			cnt = FROST_BURST_MOTES;
+		if(frm < FrostTimings[state->args->variant][FROST_TICK] + 35) {
+			for(i = 0; i != cnt; i++) {
+				if(frm > i) {
 					Sint32 picture = i % 8;
 
 					mote = &state->particles[i];
@@ -112,25 +111,24 @@ void btEffectRunFrost(BATTLE_EFFECT_PARM *args)
 						/* UB: width is assigned in one argument and read in
 						   another. */
 #if FIX_UNSEQUENCED_SIDE_EFFECT
-						width = Frost_MoteWidths[picture];
-						height = Frost_MoteHeights[picture];
+						width = FrostMoteWidths[picture];
+						height = FrostMoteHeights[picture];
 						draw[1](canvas,
-							state->sheet + Frost_MotePictures[picture],
+							state->sheet + FrostMotePictures[picture],
 							screen.x - (width >> 1), screen.y - (height >> 1),
 							width, height);
 #else
 						draw[1](canvas,
-							state->sheet + Frost_MotePictures[picture],
+							state->sheet + FrostMotePictures[picture],
 							screen.x -
-								((width = Frost_MoteWidths[picture]) >> 1),
+								((width = FrostMoteWidths[picture]) >> 1),
 							screen.y -
-								((height = Frost_MoteHeights[picture]) >> 1),
+								((height = FrostMoteHeights[picture]) >> 1),
 							width, height);
 #endif
 					}
-					if(frame <
-						Frost_Timings[state->args->variant][FROST_FRAME]) {
-						if(frame > i + 16) {
+					if(frm < FrostTimings[state->args->variant][FROST_TICK]) {
+						if(frm > i + 16) {
 							if(mote->z > 4)
 								mote->z -= 2;
 							if(mote->y < toFIXED(FROST_MOTE_DEPTH))
@@ -152,44 +150,44 @@ void btEffectRunFrost(BATTLE_EFFECT_PARM *args)
 		highest += toFIXED(64);
 
 		/* Ice mounds spring up. */
-		if(frame < Frost_Timings[state->args->variant][FROST_FRAME]) {
-			for(i = 0; i != Frost_Timings[state->args->variant][FROST_MOUNDS];
+		if(frm < FrostTimings[state->args->variant][FROST_TICK]) {
+			for(i = 0; i != FrostTimings[state->args->variant][FROST_MOUNDS];
 				i++) {
-				if(i < (frame - 36) / 3) {
+				if(i < (frm - 36) / 3) {
 					Sint32 picture = i % 3;
 					Uint32 height;
 
-					if(frame >=
-						Frost_Timings[state->args->variant][FROST_FRAME] - 7) {
+					if(frm >=
+						FrostTimings[state->args->variant][FROST_TICK] - 7) {
 #if FIX_UNSEQUENCED_SIDE_EFFECT
-						height = Frost_MoundHeights[picture];
+						height = FrostMoundHeights[picture];
 						draw[1](canvas,
-							state->sheet + Frost_MoundPictures[picture],
-							Frost_MoundSpots[i][FROST_MOUND_X],
-							Frost_MoundSpots[i][FROST_MOUND_FOOT] - height,
+							state->sheet + FrostMoundPictures[picture],
+							FrostMoundSpots[i][FROST_MOUND_X],
+							FrostMoundSpots[i][FROST_MOUND_FOOT] - height,
 							FROST_MOUND_WIDTH, height);
 #else
 						draw[1](canvas,
-							state->sheet + Frost_MoundPictures[picture],
-							Frost_MoundSpots[i][FROST_MOUND_X],
-							Frost_MoundSpots[i][FROST_MOUND_FOOT] -
-								(height = Frost_MoundHeights[picture]),
+							state->sheet + FrostMoundPictures[picture],
+							FrostMoundSpots[i][FROST_MOUND_X],
+							FrostMoundSpots[i][FROST_MOUND_FOOT] -
+								(height = FrostMoundHeights[picture]),
 							FROST_MOUND_WIDTH, height);
 #endif
 					} else {
 #if FIX_UNSEQUENCED_SIDE_EFFECT
-						height = Frost_MoundHeights[picture];
+						height = FrostMoundHeights[picture];
 						draw[0](canvas,
-							state->sheet + Frost_MoundPictures[picture],
-							Frost_MoundSpots[i][FROST_MOUND_X],
-							Frost_MoundSpots[i][FROST_MOUND_FOOT] - height,
+							state->sheet + FrostMoundPictures[picture],
+							FrostMoundSpots[i][FROST_MOUND_X],
+							FrostMoundSpots[i][FROST_MOUND_FOOT] - height,
 							FROST_MOUND_WIDTH, height);
 #else
 						draw[0](canvas,
-							state->sheet + Frost_MoundPictures[picture],
-							Frost_MoundSpots[i][FROST_MOUND_X],
-							Frost_MoundSpots[i][FROST_MOUND_FOOT] -
-								(height = Frost_MoundHeights[picture]),
+							state->sheet + FrostMoundPictures[picture],
+							FrostMoundSpots[i][FROST_MOUND_X],
+							FrostMoundSpots[i][FROST_MOUND_FOOT] -
+								(height = FrostMoundHeights[picture]),
 							FROST_MOUND_WIDTH, height);
 #endif
 					}
@@ -202,7 +200,7 @@ void btEffectRunFrost(BATTLE_EFFECT_PARM *args)
 		   word its PARTICLES slot last held. Nothing in a battle clears that
 		   buffer, the map grid's cells, so the word is the field's cells or an
 		   earlier effect's particles or pictures. */
-		if(frame == Frost_Timings[state->args->variant][FROST_FRAME]) {
+		if(frm == FrostTimings[state->args->variant][FROST_TICK]) {
 			for(i = 0; i != FROST_CHIPS; i++) {
 				PARTICLE *chip = &PARTICLES[i];
 
@@ -216,16 +214,16 @@ void btEffectRunFrost(BATTLE_EFFECT_PARM *args)
 				chip->variant = (syRandom() & 15) + 16;
 			}
 		}
-		if(frame >= Frost_Timings[state->args->variant][FROST_FRAME]) {
+		if(frm >= FrostTimings[state->args->variant][FROST_TICK]) {
 			for(i = 0; i != FROST_CHIPS_DRAWN; i++) {
 				PARTICLE *chip = &PARTICLES[i];
 
 				if(chip->variant >= 0) {
 					Sint32 picture = i % 8;
 
-					draw[1](canvas, state->sheet + Frost_ChipPictures[picture],
+					draw[1](canvas, state->sheet + FrostChipPictures[picture],
 						FIXEDtoINT(chip->x), FIXEDtoINT(chip->y),
-						Frost_ChipWidths[picture], Frost_ChipHeights[picture]);
+						FrostChipWidths[picture], FrostChipHeights[picture]);
 					chip->x += chip->velX;
 					chip->y += chip->velY;
 					chip->variant--;
@@ -242,7 +240,7 @@ void btEffectRunFrost(BATTLE_EFFECT_PARM *args)
 			highest = lowest + 1;
 
 		/* Sparkles rise over the motes and chips. */
-		if(frame == Frost_Timings[state->args->variant][FROST_FRAME]) {
+		if(frm == FrostTimings[state->args->variant][FROST_TICK]) {
 			for(i = 0; i != FROST_SPARKLES; i++) {
 				PARTICLE *sparkle = &state->particles[i];
 
@@ -257,9 +255,9 @@ void btEffectRunFrost(BATTLE_EFFECT_PARM *args)
 				sparkle->variant = (syRandom() & 15) + 20;
 			}
 		}
-		if(frame >= Frost_Timings[state->args->variant][FROST_FRAME]) {
+		if(frm >= FrostTimings[state->args->variant][FROST_TICK]) {
 			Sint32 rise =
-				(frame - Frost_Timings[state->args->variant][FROST_FRAME]) / 2;
+				(frm - FrostTimings[state->args->variant][FROST_TICK]) / 2;
 
 			for(i = 0; i != FROST_SPARKLES; i++) {
 				PARTICLE *sparkle = &state->particles[i];
@@ -271,17 +269,17 @@ void btEffectRunFrost(BATTLE_EFFECT_PARM *args)
 					Uint32 size;
 
 #if FIX_UNSEQUENCED_SIDE_EFFECT
-					size = BattleEffect_SparkleSizes[picture];
+					size = BattleEffectSparkleSizes[picture];
 					draw[1](canvas,
-						sparkleSheet + BattleEffect_SparklePictures[picture],
+						sparkleSheet + BattleEffectSparklePictures[picture],
 						FIXEDtoINT(sparkle->velX) - (size >> 1),
 						FIXEDtoINT(sparkle->velY) - (size >> 1) - rise, size,
 						size);
 #else
 					draw[1](canvas,
-						sparkleSheet + BattleEffect_SparklePictures[picture],
+						sparkleSheet + BattleEffectSparklePictures[picture],
 						FIXEDtoINT(sparkle->velX) -
-							((size = BattleEffect_SparkleSizes[picture]) >> 1),
+							((size = BattleEffectSparkleSizes[picture]) >> 1),
 						FIXEDtoINT(sparkle->velY) - (size >> 1) - rise, size,
 						size);
 #endif
@@ -289,8 +287,7 @@ void btEffectRunFrost(BATTLE_EFFECT_PARM *args)
 				sparkle->variant--;
 				if((sparkle->variant == -1 ||
 					   sparkle->variant == FROST_SPARKLE_LIFE - 1) &&
-					frame <
-						Frost_Timings[state->args->variant][FROST_FRAME] + 35) {
+					frm < FrostTimings[state->args->variant][FROST_TICK] + 35) {
 					sparkle->variant = FROST_SPARKLE_LIFE - 1;
 					sparkle->velX = toFIXED(syRandom() & 127);
 					sparkle->velY =

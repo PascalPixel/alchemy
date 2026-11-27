@@ -36,7 +36,7 @@ typedef enum SHOP_TYPE {
 } SHOP_TYPE;
 
 /* The inn the inn's own code names (mnInnCheckIn's innId, a row of
-   sInnPricesPerGuest); each town's script names its own inn where it opens
+   InnPricesPerGuest); each town's script names its own inn where it opens
    it. */
 #define INN_XIAN 5
 

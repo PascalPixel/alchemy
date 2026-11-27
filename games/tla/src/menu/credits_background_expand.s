@@ -2,7 +2,7 @@
 @ value and jumps, through the case table, to one of the case commands below,
 @ which update the running pixel value in r5. They share the decoder's
 @ registers (r0 source, r2 and r3 read state, r5 value, r11 the mask 7) and
-@ have no frames of their own. One object, as The Broken Seal's
+@ have no ticks of their own. One object, as The Broken Seal's
 @ credits_background_expand.s: the relocation words, the dispatch, the case
 @ table and the commands, which the linker script places in that order.
 @

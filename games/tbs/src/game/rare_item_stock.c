@@ -5,7 +5,7 @@
 
 /* Each item's place in RareItemStock plus one, by item id; 0 for the items the
    shops keep no stock of. The ids run to INVENTORY_ITEM_ID_MASK. */
-const Uint8 Item_RareItemStockIndex[INVENTORY_ITEM_ID_MASK + 1] = {
+const Uint8 ItemRareItemStockIndex[INVENTORY_ITEM_ID_MASK + 1] = {
 	[ITEM_SHAMSHIR] = 1,
 	[ITEM_SILVER_BLADE] = 2,
 	[ITEM_MASAMUNE] = 3,

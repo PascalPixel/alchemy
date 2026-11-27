@@ -1,4 +1,4 @@
-/* Field requests and each frame of the leader's walking: exits, encounters,
+/* Field requests and each tick of the leader's walking: exits, encounters,
    damage. Part of field_mode.c. */
 
 #include "field_mode_internal.h"
@@ -29,7 +29,7 @@ Sint32 fdCountRequests(void)
 	FIELD_STATE *state = FieldStateWork;
 
 	/* BUG: a sum can be 0 with requests pending. fdUpdateWalking raises
-	   FIELD_RAISED_CUE_PARTY_FELL (-1) on the frame a party member falls to
+	   FIELD_RAISED_CUE_PARTY_FELL (-1) on the tick a party member falls to
 	   poison, and the step cue request is the metatile's metatile behavior, 1
 	   on step cue 1's metatiles (154 scenes have them); together they sum to 0,
 	   and both wait until another request breaks the tie, by which time a later
@@ -56,7 +56,7 @@ Sint32 fdGetCollisionAheadOfLeader(void)
 	FIELD_STATE			  *state;
 	ACTOR				  *leader;
 	MAP_GRID_SCROLL_STATE *gridState;
-	POLAR_OFFSET_POS	   position;
+	POLAR_OFFSET_POS	   pos;
 	Uint8				  *tile;
 	FIXED				   fixedX;
 	FIXED				   fixedZ;
@@ -69,29 +69,29 @@ Sint32 fdGetCollisionAheadOfLeader(void)
 	if(leader == 0)
 		return 0;
 
-	position.vector.x = leader->x.fixed;
-	position.vector.y = leader->y.fixed;
-	position.vector.z = leader->z.fixed;
-	syVectorAddPolarOffset(toFIXED(16), leader->facing, position.coordinates);
+	pos.vector.x = leader->x.fixed;
+	pos.vector.y = leader->y.fixed;
+	pos.vector.z = leader->z.fixed;
+	syVectorAddPolarOffset(toFIXED(16), leader->facing, pos.coordinates);
 
 	if(state->mode == ACTOR_SYSTEM_WORLD_MAP) {
 		/* World Map metatile tiles are 32 pixels square, 32 to a row. */
 		Uint32 tileX;
 		Uint32 tileY;
 
-		tileX = position.vector.x / toFIXED(32) & 31;
-		tileY = position.vector.z / toFIXED(32) & 31;
+		tileX = pos.vector.x / toFIXED(32) & 31;
+		tileY = pos.vector.z / toFIXED(32) & 31;
 
 		tile = (Uint8 *)MetatileTiles + ((tileX + (tileY << 5)) << 2);
 	} else {
 		/* Map metatiles are 16 pixels square, 128 to a row. */
 		tile = (Uint8 *)gridState->layers[MAPGRID_LAYER_GROUND].metatiles;
 
-		fixedX = position.vector.x;
+		fixedX = pos.vector.x;
 		{
 			Uint32 tileX = fixedX / toFIXED(MAPGRID_METATILE_PIXELS);
 
-			fixedZ = position.vector.z;
+			fixedZ = pos.vector.z;
 
 			tile = (Uint8 *)((Uint32)tile +
 				((tileX +
@@ -107,7 +107,7 @@ Sint32 fdGetCollisionAheadOfLeader(void)
    position (x, y, z), in 16.16 pixels, and whose condition holds: records the
    region's exit value for fdModeRun, plays the exit sound and starts leaving
    the scene. */
-void fdCheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ)
+void fdCheckExitRegions(FIXED posX, FIXED posY, FIXED posZ)
 {
 	Sint32					 exitValue;
 	FIELD_STATE				*state;
@@ -123,9 +123,9 @@ void fdCheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ)
 	Sint16					 minX;
 	const SCENE_EXIT_REGION *region;
 
-	fixedX = positionX;
-	fixedY = positionY;
-	fixedZ = positionZ;
+	fixedX = posX;
+	fixedY = posY;
+	fixedZ = posZ;
 	region = OverlayArea.regions();
 	if(region != 0 &&
 		(state = FieldStateWork, minX = region->minX, minX != -1)) {
@@ -154,7 +154,7 @@ void fdCheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ)
 	}
 }
 
-/* Handles one frame of the party leader's walking onto the metatile at (x, y,
+/* Handles one tick of the party leader's walking onto the metatile at (x, y,
    z) of map grid layer: records step cues and push metatiles, takes exits, and
    while walking advances the encounter counter, regenerates PP, hurts the party
    with poison and hazardous ground, and wears Avoid off. */
@@ -164,10 +164,10 @@ void fdUpdateWalking(Sint32 layer, FIXED x, FIXED y, FIXED z)
 	MAP_GRID_SCROLL_STATE *gridState = MapGridState[0];
 	Sint32				   leaderId = MainRoutineStateWork.leaderActorId;
 	ACTOR				  *leader = state->actors[leaderId];
-	Sint16				   previousHp[8];
+	Sint16				   prevHp[8];
 	MAP_GRID_METATILE	  *tile;
 	UNIT				  *unitVitals;
-	Uint32				   partyCount;
+	Uint32				   partyCnt;
 	Sint32				   partyHurt;
 	Uint32				   i;
 	Uint32				   event;
@@ -182,9 +182,9 @@ void fdUpdateWalking(Sint32 layer, FIXED x, FIXED y, FIXED z)
 		return;
 
 	/* Note each character's HP, to see who falls. */
-	partyCount = gmPartyCountMembersStub();
-	for(i = 0; i < partyCount; i++)
-		previousHp[i] = gmUnitGetStub(MainRoutineStateWork.party[i])->hp;
+	partyCnt = gmPartyCountMembersStub();
+	for(i = 0; i < partyCnt; i++)
+		prevHp[i] = gmUnitGetStub(MainRoutineStateWork.party[i])->hp;
 
 	if(state->mode == ACTOR_SYSTEM_WORLD_MAP) {
 		tile =
@@ -256,7 +256,7 @@ void fdUpdateWalking(Sint32 layer, FIXED x, FIXED y, FIXED z)
 		}
 
 		/* Hazardous ground: entering it starts the count half way; then each
-		   frame walked on it adds the leader's speed limit in whole pixels, so
+		   tick walked on it adds the leader's speed limit in whole pixels, so
 		   the count follows the distance walked there (the Lamakan Desert's
 		   limit is 600). */
 		if(MainRoutineStateWork.hazardMode == HAZARD_COUNT_ON_METATILES &&
@@ -283,9 +283,9 @@ void fdUpdateWalking(Sint32 layer, FIXED x, FIXED y, FIXED z)
 		}
 	}
 
-	/* With HAZARD_COUNT_FRAMES, which nothing in the game sets, the count rises
-	   by one each call, that is each frame the field mode runs. */
-	if(MainRoutineStateWork.hazardMode == HAZARD_COUNT_FRAMES) {
+	/* With HAZARD_COUNT_TICKS, which nothing in the game sets, the count rises
+	   by one each call, that is each tick the field mode runs. */
+	if(MainRoutineStateWork.hazardMode == HAZARD_COUNT_TICKS) {
 		MainRoutineStateWork.hazardSteps++;
 		if(MainRoutineStateWork.hazardSteps ==
 			MainRoutineStateWork.hazardLimit / 2)
@@ -305,9 +305,9 @@ void fdUpdateWalking(Sint32 layer, FIXED x, FIXED y, FIXED z)
 		partyHurt++;
 	}
 
-	/* The leader flinches (velocityY, a hop of 4 pixels a frame) and shows a
+	/* The leader flinches (velocityY, a hop of 4 pixels a tick) and shows a
 	   one-off SPRITE_ATTACHED_EFFECT; each character whose HP reached 0 on this
-	   frame is listed, loses its poison and raises FIELD_RAISED_CUE_PARTY_FELL,
+	   tick is listed, loses its poison and raises FIELD_RAISED_CUE_PARTY_FELL,
 	   which fdModeRun handles. */
 	if(partyHurt) {
 		state->fallenCnt = 0;
@@ -315,11 +315,11 @@ void fdUpdateWalking(Sint32 layer, FIXED x, FIXED y, FIXED z)
 		leader->velY = toFIXED(4);
 		fdEffectSetAttached(
 			leaderId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-		for(i = 0; i < partyCount; i++) {
+		for(i = 0; i < partyCnt; i++) {
 			unitVitals = gmUnitGetStub(MainRoutineStateWork.party[i]);
 			if(unitVitals->hp > 0) {
 				state->survivorCnt++;
-			} else if(previousHp[i] != 0) {
+			} else if(prevHp[i] != 0) {
 				state->fallenOwners[state->fallenCnt++] =
 					MainRoutineStateWork.party[i];
 				state->raisedCue = FIELD_RAISED_CUE_PARTY_FELL;
@@ -333,11 +333,11 @@ void fdUpdateWalking(Sint32 layer, FIXED x, FIXED y, FIXED z)
    walks). */
 void fdPartyAddPp(Sint32 amount, Sint32 unused)
 {
-	Sint32 partyCount = gmPartyCountMembersStub();
-	Sint32 partyIndex;
+	Sint32 partyCnt = gmPartyCountMembersStub();
+	Sint32 partyIdx;
 
-	for(partyIndex = 0; partyIndex < partyCount; partyIndex++)
-		gmUnitAddPpStub(MainRoutineStateWork.party[partyIndex], amount);
+	for(partyIdx = 0; partyIdx < partyCnt; partyIdx++)
+		gmUnitAddPpStub(MainRoutineStateWork.party[partyIdx], amount);
 }
 
 /* Damage past this plays SE_HEAVY_IMPACT rather than SE_IMPACT. */
@@ -347,8 +347,8 @@ void fdPartyAddPp(Sint32 amount, Sint32 unused)
    when percent is set. */
 void fdPartyAddHp(Sint32 amount, Sint32 percent)
 {
-	Sint32 partyCount;
-	Sint32 partyIndex;
+	Sint32 partyCnt;
+	Sint32 partyIdx;
 	Sint32 hpDelta;
 	UNIT  *unit;
 
@@ -364,9 +364,9 @@ void fdPartyAddHp(Sint32 amount, Sint32 percent)
 		sySndPlayStub(SE_RECOVERY);
 	}
 
-	partyCount = gmPartyCountMembersStub();
-	for(partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-		unit = gmUnitGetStub(MainRoutineStateWork.party[partyIndex]);
+	partyCnt = gmPartyCountMembersStub();
+	for(partyIdx = 0; partyIdx < partyCnt; partyIdx++) {
+		unit = gmUnitGetStub(MainRoutineStateWork.party[partyIdx]);
 		if(!percent) {
 			hpDelta = amount;
 		} else {
@@ -379,7 +379,7 @@ void fdPartyAddHp(Sint32 amount, Sint32 percent)
 					hpDelta = -hpDelta;
 			}
 		}
-		gmUnitAddHpStub(MainRoutineStateWork.party[partyIndex], hpDelta);
+		gmUnitAddHpStub(MainRoutineStateWork.party[partyIdx], hpDelta);
 	}
 }
 
@@ -394,11 +394,11 @@ void fdPartyAddHp(Sint32 amount, Sint32 percent)
 Sint32 fdPartyApplyPoisonDamage(void)
 {
 	Sint32 worstPoison = 0;
-	Sint32 partyCount = gmPartyCountMembersStub();
-	Sint32 partyIndex;
+	Sint32 partyCnt = gmPartyCountMembersStub();
+	Sint32 partyIdx;
 
-	for(partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-		UNIT  *unit = gmUnitGetStub(MainRoutineStateWork.party[partyIndex]);
+	for(partyIdx = 0; partyIdx < partyCnt; partyIdx++) {
+		UNIT  *unit = gmUnitGetStub(MainRoutineStateWork.party[partyIdx]);
 		Sint32 hpDelta;
 
 		switch(unit->poison) {
@@ -420,7 +420,7 @@ Sint32 fdPartyApplyPoisonDamage(void)
 			hpDelta = 0;
 			break;
 		}
-		gmUnitAddHpStub(MainRoutineStateWork.party[partyIndex], hpDelta);
+		gmUnitAddHpStub(MainRoutineStateWork.party[partyIdx], hpDelta);
 	}
 
 	if(worstPoison != 0) {

@@ -11,10 +11,10 @@ const Uint32		 *scGetExits(void);
 const ACTOR_PLACE	 *scGetActorPlacements(void);
 const CUE			 *scGetCues(void);
 Sint32				  scInit(void);
-extern SCENE_ENTRANCE Test_Entrances[];
-extern Uint32		  Test_Exits[];
-extern ACTOR_PLACE	  Test_ActorPlacements[];
-extern CUE			  Test_Cues[];
+extern SCENE_ENTRANCE TestEntrances[];
+extern Uint32		  TestExits[];
+extern ACTOR_PLACE	  TestActorPlacements[];
+extern CUE			  TestCues[];
 
 /* The placed actors: the first Djinni of each element, each there while its
    flag is clear. */
@@ -27,7 +27,7 @@ typedef enum TEST_ACTOR_ID {
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return Test_Entrances;
+	return TestEntrances;
 }
 
 /* The scene has no exit regions: its regions entry returns none. */
@@ -38,12 +38,12 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return Test_Exits;
+	return TestExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return Test_ActorPlacements;
+	return TestActorPlacements;
 }
 
 /* Gives the first Djinni of an element, then clears its flag so it stays. */
@@ -76,7 +76,7 @@ static void dbTestReceiveGust(void)
 
 const CUE *scGetCues(void)
 {
-	return Test_Cues;
+	return TestCues;
 }
 
 /* Nothing to set up. */
@@ -87,13 +87,13 @@ Sint32 scInit(void)
 
 #include "test_rows.c"
 
-SCENE_ENTRANCE Test_Entrances[] = {
+SCENE_ENTRANCE TestEntrances[] = {
 	{0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},
 	{SCENE_TABLE_END},
 };
 
 /* No exits: the headers of Test 0 to Test 3's tables, with none under them. */
-Uint32 Test_Exits[] = {
+Uint32 TestExits[] = {
 	SCENE_EXITS(Test0),
 	SCENE_EXITS(Test1),
 	SCENE_EXITS(Test2),
@@ -101,7 +101,7 @@ Uint32 Test_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE Test_ActorPlacements[] = {
+ACTOR_PLACE TestActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_FLINT),
 		MOVEMENT_TYPE_STAND, 496, 0, 176, FACING_EAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_FIZZ),
@@ -113,7 +113,7 @@ ACTOR_PLACE Test_ActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-CUE Test_Cues[] = {
+CUE TestCues[] = {
 	{CUE_TALK, ACTOR_FLINT, CONDITION_ALWAYS, SCRIPT_REF(dbTestReceiveFlint)},
 	{CUE_TALK, ACTOR_FIZZ, CONDITION_ALWAYS, SCRIPT_REF(dbTestReceiveFizz)},
 	{CUE_TALK, ACTOR_FORGE, CONDITION_ALWAYS, SCRIPT_REF(dbTestReceiveForge)},

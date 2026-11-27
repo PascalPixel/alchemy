@@ -53,30 +53,30 @@
 #include "text/msg_ids.h"
 
 const ACTOR_PLACE	 *scGetActorPlacements(void);
-extern Uint32		  Sanctum_LeaderCircleScript[];
-extern Uint32		  Sanctum_GaretCircleScript[];
-extern Sint32		  ItemIcon_GrowScript[];
-extern Sint32		  Sanctum_ItemIconEndScript[];
-extern SCENE_ENTRANCE Sanctum_Entrances[];
-extern Uint32		  Sanctum_Exits[];
-extern ACTOR_PLACE	  Sanctum_NoActorPlacements[];
-extern ACTOR_PLACE	  Sanctum_ValeActorPlacements[];
-extern ACTOR_PLACE	  Sanctum_IvanActorPlacement[];
-extern ACTOR_PLACE	  Sanctum_VaultBilibinActorPlacements[];
-extern ACTOR_PLACE	  Sanctum_QuestActorPlacements[];
-extern ACTOR_PLACE	  Sanctum_AltinXianActorPlacements[];
-extern CUE			  Sanctum_ValeCues[];
-extern CUE			  Sanctum_VaultCues[];
-extern CUE			  Sanctum_VaultRevisitCues[];
-extern CUE			  Sanctum_QuestCues[];
-extern CUE			  Sanctum_ValeCuesAfterLeaving[];
-extern CUE			  Sanctum_ValeCuesAfterKalay[];
-extern CUE			  Sanctum_AltinCues[];
-extern CUE			  Sanctum_BilibinCues[];
-extern CUE			  Sanctum_XianCues[];
-extern Sint32		  Sanctum_CursorOffsets[];
-extern Sint32		  Sanctum_OrbitingSparkleScript[];
-extern Sint32		  Sanctum_SparkEndScript[];
+extern Uint32		  SanctumLeaderCircleScript[];
+extern Uint32		  SanctumGaretCircleScript[];
+extern Sint32		  ItemIconGrowScript[];
+extern Sint32		  SanctumItemIconEndScript[];
+extern SCENE_ENTRANCE SanctumEntrances[];
+extern Uint32		  SanctumExits[];
+extern ACTOR_PLACE	  SanctumNoActorPlacements[];
+extern ACTOR_PLACE	  SanctumValeActorPlacements[];
+extern ACTOR_PLACE	  SanctumIvanActorPlacement[];
+extern ACTOR_PLACE	  SanctumVaultBilibinActorPlacements[];
+extern ACTOR_PLACE	  SanctumQuestActorPlacements[];
+extern ACTOR_PLACE	  SanctumAltinXianActorPlacements[];
+extern CUE			  SanctumValeCues[];
+extern CUE			  SanctumVaultCues[];
+extern CUE			  SanctumVaultRevisitCues[];
+extern CUE			  SanctumQuestCues[];
+extern CUE			  SanctumValeCuesAfterLeaving[];
+extern CUE			  SanctumValeCuesAfterKalay[];
+extern CUE			  SanctumAltinCues[];
+extern CUE			  SanctumBilibinCues[];
+extern CUE			  SanctumXianCues[];
+extern Sint32		  SanctumCursorOffsets[];
+extern Sint32		  SanctumOrbitingSparkleScript[];
+extern Sint32		  SanctumSparkEndScript[];
 
 /* The metatiles the room's step cues answer. */
 typedef enum SANCTUM_METATILE_BEHAVIOR {
@@ -104,8 +104,8 @@ typedef enum SANCTUM_ACTOR_ID {
 
 	   He is the Great Healer in Vale's Sanctum. */
 	ACTOR_HEALER = ACTOR_FIRST_PLACED,
-	/* Vale Sanctum (Sanctum_ValeActorPlacements, and
-	   Sanctum_QuestActorPlacements at the quest). The western of Vale's two
+	/* Vale Sanctum (SanctumValeActorPlacements, and
+	   SanctumQuestActorPlacements at the quest). The western of Vale's two
 	   other Healers, men with long brown hair in long robes, standing on either
 	   side of the stone counter.
 
@@ -116,7 +116,7 @@ typedef enum SANCTUM_ACTOR_ID {
 	/* The eastern one. "Psynergy is a power that should only be used for
 	   good... Never for evil!" */
 	ACTOR_EAST_HEALER,
-	/* The quest (Sanctum_QuestActorPlacements). Isaac's mother, a woman with
+	/* The quest (SanctumQuestActorPlacements). Isaac's mother, a woman with
 	   fair hair tied up. */
 	ACTOR_DORA,
 	/* The Mayor, Garet's grandfather, an old man with white hair and a cane.
@@ -127,7 +127,7 @@ typedef enum SANCTUM_ACTOR_ID {
 	ACTOR_WISE_ONE,
 	/* A copy of the Great Healer for its afterimages. */
 	ACTOR_HEALER_AFTERIMAGE,
-	/* Vault Sanctum and Bilibin Sanctum (Sanctum_VaultBilibinActorPlacements).
+	/* Vault Sanctum and Bilibin Sanctum (SanctumVaultBilibinActorPlacements).
 	   The other man of Vault's and Bilibin's Sanctums, who wanders the room.
 
 	   He wears the western Healer's sprite (a man with long brown hair in a
@@ -147,13 +147,13 @@ static void scSanctumReceiveWiseOnesMission(void);
 static void scSanctumShowHealerAfterimage(void);
 static void scSanctumHideHealerAfterimage(void);
 static void scSanctumUpdateHealerAfterimage(ACTOR *actor);
-static void scSanctumSpawnOrbitingEffect(Sint32 actorId, Sint32 angleStep);
+static void scSanctumSpawnOrbitingEffect(Sint32 actorId, Sint32 angStep);
 
-/* How far each sparkle circling the Great Healer goes around him in a frame. */
+/* How far each sparkle circling the Great Healer goes around him in a tick. */
 #define SANCTUM_SPARKLE_ORBIT_STEP (TRIG_TURN * 9 / 128)
 
 /* The sparks the Wise One gives off as he shrinks away after giving Isaac and
-   Garet their mission, one each four frames. */
+   Garet their mission, one each four ticks. */
 #define WISE_ONE_VANISH_SPARKS 32
 static Sint32 scSanctumChooseRestartOption(void);
 static void	  scSanctumActOutSolSanctum(void);
@@ -166,18 +166,18 @@ static void scSanctumRemoveCounter(void);
    timer holds. */
 static UNREAD_RESULT scSanctumFaceActorNamedByTimer(ACTOR *actor)
 {
-	ACTOR *target;
+	ACTOR *tgt;
 
-	target = fdActorGet(actor->tmr);
-	actor->facing = syAtan(
-		target->z.fixed - actor->z.fixed, target->x.fixed - actor->x.fixed);
+	tgt = fdActorGet(actor->tmr);
+	actor->facing =
+		syAtan(tgt->z.fixed - actor->z.fixed, tgt->x.fixed - actor->x.fixed);
 	RETURN_UNREAD(0);
 }
 
 /* The entrances of every town's Sanctum. */
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return Sanctum_Entrances;
+	return SanctumEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -187,7 +187,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return Sanctum_Exits;
+	return SanctumExits;
 }
 
 /* Who stands in the room depends on the door the party came in by: the town's
@@ -197,24 +197,24 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	switch(MainRoutineStateWork.entrance) {
 	case SANCTUM_FROM_VALE:
 	case SANCTUM_VALE_AFTER_DEFEAT:
-		return Sanctum_ValeActorPlacements;
+		return SanctumValeActorPlacements;
 
 	case SANCTUM_FROM_VAULT:
 	case SANCTUM_FROM_VAULT_REVISIT:
 	case SANCTUM_FROM_LOG_ROOMS_A:
 	case SANCTUM_FROM_BILIBIN:
-		return Sanctum_VaultBilibinActorPlacements;
+		return SanctumVaultBilibinActorPlacements;
 
 	case SANCTUM_FROM_VALE_ERUPTION:
 	case SANCTUM_FROM_QUEST_RESTART:
-		return Sanctum_QuestActorPlacements;
+		return SanctumQuestActorPlacements;
 
 	case SANCTUM_FROM_ALTIN:
 	case SANCTUM_FROM_XIAN:
-		return Sanctum_AltinXianActorPlacements;
+		return SanctumAltinXianActorPlacements;
 
 	default:
-		return Sanctum_NoActorPlacements;
+		return SanctumNoActorPlacements;
 	}
 }
 
@@ -225,30 +225,30 @@ const CUE *scGetCues(void)
 	switch(MainRoutineStateWork.entrance) {
 	case SANCTUM_FROM_VAULT:
 	case SANCTUM_FROM_LOG_ROOMS_A:
-		return Sanctum_VaultCues;
+		return SanctumVaultCues;
 	case SANCTUM_FROM_VAULT_REVISIT:
-		return Sanctum_VaultRevisitCues;
+		return SanctumVaultRevisitCues;
 	case SANCTUM_FROM_VALE_ERUPTION:
 	case SANCTUM_FROM_QUEST_RESTART:
 	case SANCTUM_QUEST_UNUSED:
-		return Sanctum_QuestCues;
+		return SanctumQuestCues;
 	case SANCTUM_FROM_XIAN:
-		return Sanctum_XianCues;
+		return SanctumXianCues;
 	case SANCTUM_FROM_ALTIN:
-		return Sanctum_AltinCues;
+		return SanctumAltinCues;
 	case SANCTUM_FROM_BILIBIN:
-		return Sanctum_BilibinCues;
+		return SanctumBilibinCues;
 	default:
 		break;
 	}
 
 	if(gmFlagGet(FLAG_KALAY_REACHED) != 0) {
-		return Sanctum_ValeCuesAfterKalay;
+		return SanctumValeCuesAfterKalay;
 	}
 	if(gmFlagGet(FLAG_VALE_PARTY_LEFT) != 0) {
-		return Sanctum_ValeCuesAfterLeaving;
+		return SanctumValeCuesAfterLeaving;
 	}
-	return Sanctum_ValeCues;
+	return SanctumValeCues;
 }
 
 /* Talking to the man in a long robe wandering Vault's Sanctum: while the gold
@@ -386,7 +386,7 @@ static void scSanctumAskAboutNewAdepts(void)
 {
 	fdScriptStart();
 #if IVAN_REACTS_TO_NEW_FRIENDS_QUESTION
-	fdScriptAppendActorPlacements(Sanctum_IvanActorPlacement);
+	fdScriptAppendActorPlacements(SanctumIvanActorPlacement);
 	sySynch(1);
 #endif
 	fdScriptSetMessageId(MsgSanctumIsaacYourNewFriendsAdepts);
@@ -597,7 +597,7 @@ static inline void scSanctumShowAllEmotes(void)
    leaves Isaac free to walk out. */
 static void scSanctumAskToAcceptQuest(void)
 {
-	Uint32 effectIndex;
+	Uint32 effectIdx;
 
 	fdScriptStart();
 	/* A repeat visit skips the account of Sol Sanctum. */
@@ -614,7 +614,7 @@ static void scSanctumAskToAcceptQuest(void)
 			SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		FieldStateWork->transitionFrm = 64;
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdScriptWait(120);
 	} else {
 		fdPaletteFadeApplyTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
@@ -625,7 +625,7 @@ static void scSanctumAskToAcceptQuest(void)
 		FieldStateWork->transition =
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		scSanctumActOutSolSanctum();
 		fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 		fdPaletteFadeStartInterpolation(60);
@@ -842,7 +842,7 @@ static void scSanctumAskToAcceptQuest(void)
 		fdScriptWait(32);
 		scSanctumSpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
 		fdScriptWait(16);
-		for(effectIndex = 0; effectIndex < 6; effectIndex++) {
+		for(effectIdx = 0; effectIdx < 6; effectIdx++) {
 			scSanctumSpawnOrbitingEffect(
 				ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
 			fdScriptWait(8);
@@ -931,7 +931,7 @@ static void scSanctumAskToAcceptQuest(void)
 		fdActorStartRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
 		fdActorStartRepeatedMotion(ACTOR_WEST_HEALER, 1);
 		fdActorStartRepeatedMotion(ACTOR_EAST_HEALER, 1);
-		for(effectIndex = 0; effectIndex < 6; effectIndex++) {
+		for(effectIdx = 0; effectIdx < 6; effectIdx++) {
 			scSanctumSpawnOrbitingEffect(
 				ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
 			fdScriptWait(8);
@@ -1204,7 +1204,7 @@ static void scSanctumAskToAcceptQuest(void)
    the Great Healer and sparkles circle him. */
 static void scSanctumReceiveWiseOnesMission(void)
 {
-	Uint32 sparkIndex;
+	Uint32 sparkIdx;
 
 	fdActorSetAttachedEffect(
 		ACTOR_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1313,7 +1313,7 @@ static void scSanctumReceiveWiseOnesMission(void)
 	fdActorSetSprColById(ACTOR_WISE_ONE, SPRITE_COLOR_BLINK);
 	sySndPlay(SOUND_FADE_OUT_BGM);
 	sySndPlay(SE_MATERIALIZE);
-	for(sparkIndex = 0; sparkIndex < WISE_ONE_VANISH_SPARKS; sparkIndex++) {
+	for(sparkIdx = 0; sparkIdx < WISE_ONE_VANISH_SPARKS; sparkIdx++) {
 		scSanctumSpawnActorSpark(ACTOR_WISE_ONE);
 		fdScriptWait(4);
 		fdActorGet(ACTOR_WISE_ONE)->scaleX -= toFIXED(1) / 100;
@@ -1613,10 +1613,10 @@ static void scSanctumReceiveWiseOnesMission(void)
    Psynergy. */
 static void scSanctumShowHealerAfterimage(void)
 {
-	Uint32 entryIndex;
+	Uint32 entryIdx;
 	ACTOR *afterimage;
 	ACTOR *actor;
-	SPR	  *sprite;
+	SPR	  *spr;
 
 	actor = fdActorGet(ACTOR_HEALER);
 	if(actor != NULL) {
@@ -1628,17 +1628,17 @@ static void scSanctumShowHealerAfterimage(void)
 	afterimage->facing = fdActorGet(ACTOR_HEALER)->facing;
 	fdActorGet(ACTOR_HEALER_AFTERIMAGE)->update =
 		scSanctumUpdateHealerAfterimage;
-	sprite = fdActorGet(ACTOR_HEALER_AFTERIMAGE)->spr;
-	for(entryIndex = 0; entryIndex < sprite->cnt; entryIndex++) {
-		SPR_ANIMATION *entry = sprite->entries[entryIndex];
+	spr = fdActorGet(ACTOR_HEALER_AFTERIMAGE)->spr;
+	for(entryIdx = 0; entryIdx < spr->cnt; entryIdx++) {
+		SPR_ANIMATION *entry = spr->entries[entryIdx];
 
 		if(entry != NULL && entry->script != 0) {
 			entry->colMode = SPRITE_COLOR_RED_TINT;
 		}
 	}
-	sprite->dirty = 1;
+	spr->dirty = 1;
 	fdActorGet(ACTOR_HEALER_AFTERIMAGE)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	sprite->image.pri = 2;
+	spr->image.pri = 2;
 }
 
 /* Takes the Great Healer's red glow away. */
@@ -1649,7 +1649,7 @@ static void scSanctumHideHealerAfterimage(void)
 	fdActorSetPos(ACTOR_HEALER_AFTERIMAGE, 0, 0);
 }
 
-/* Each frame moves the red copy a few pixels to another side of the Great
+/* Each tick moves the red copy a few pixels to another side of the Great
    Healer, so that it shimmers about him. */
 static void scSanctumUpdateHealerAfterimage(ACTOR *actor)
 {
@@ -1659,7 +1659,7 @@ static void scSanctumUpdateHealerAfterimage(ACTOR *actor)
 	actor->tgtX = actor->x.fixed = healer->x.fixed;
 	actor->tgtY = actor->y.fixed = healer->y.fixed;
 	actor->tgtZ = actor->z.fixed = healer->z.fixed - toFIXED(2);
-	switch(FrameCount & 3) {
+	switch(TickCount & 3) {
 	case 0:
 		actor->tgtX = actor->x.fixed = healer->x.fixed - toFIXED(7) / 2;
 		break;
@@ -1679,25 +1679,25 @@ static void scSanctumUpdateHealerAfterimage(ACTOR *actor)
 static void scSanctumUpdateOrbitingEffect(ACTOR *effect)
 {
 	ACTOR *anchor = (ACTOR *)effect->watchedActor;
-	Uint16 orbitAngle = effect->tmr;
+	Uint16 orbitAng = effect->tmr;
 	FIXED  x;
 	FIXED  z;
-	FIXED  currentX;
+	FIXED  curX;
 
-	x = anchor->x.fixed + syCos(orbitAngle) * 14;
+	x = anchor->x.fixed + syCos(orbitAng) * 14;
 	effect->x.fixed = x;
 
-	z = anchor->z.fixed + sySin(orbitAngle) * 10;
-	currentX = effect->x.fixed;
+	z = anchor->z.fixed + sySin(orbitAng) * 10;
+	curX = effect->x.fixed;
 	effect->z.fixed = z;
 	effect->tgtZ = z;
-	effect->tgtX = currentX;
+	effect->tgtX = curX;
 
 	effect->tmr += effect->userValue;
 }
 
 /* Starts a sparkle circling the actor, high above his feet, going around by the
-   given angle each frame. */
+   given angle each tick. */
 static void scSanctumSpawnOrbitingEffect(Sint32 actorId, Sint32 angleStep)
 {
 	ACTOR *center;
@@ -1711,7 +1711,7 @@ static void scSanctumSpawnOrbitingEffect(Sint32 actorId, Sint32 angleStep)
 			center->y.fixed + toFIXED(45), center->z.fixed);
 		if(effect != NULL) {
 			sprite = effect->spr;
-			fdActorStartScript(effect, Sanctum_OrbitingSparkleScript);
+			fdActorStartScript(effect, SanctumOrbitingSparkleScript);
 			effect->motionFlg = 0;
 			effect->tmr = 0;
 			effect->userValue = angleStep;
@@ -1769,7 +1769,7 @@ static Sint32 scSanctumChooseRestartOption(void)
 		if(PerRepeat & KEYS_VERTICAL) {
 			choice ^= 1;
 		}
-		x = Sanctum_CursorOffsets[(VBlankCount >> 1) & 15] + CURSOR_X;
+		x = SanctumCursorOffsets[(FrameCount >> 1) & 15] + CURSOR_X;
 		syFieldMenuArrowSetPos(&cursor, x, (choice << 4) + 60);
 		fdScriptWait(1);
 	}
@@ -1955,8 +1955,8 @@ static void scSanctumActOutSolSanctum(void)
 	fdActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	fdActorRunRepeatedMotion(ACTOR_GARET, 2);
 	fdScriptWait(10);
-	fdActorSetScript(ACTOR_PARTY_LEADER, Sanctum_LeaderCircleScript);
-	fdActorSetScript(ACTOR_GARET, Sanctum_GaretCircleScript);
+	fdActorSetScript(ACTOR_PARTY_LEADER, SanctumLeaderCircleScript);
+	fdActorSetScript(ACTOR_GARET, SanctumGaretCircleScript);
 	fdActorWaitForScriptEndById(ACTOR_PARTY_LEADER);
 	fdActorWaitForScriptEndById(ACTOR_GARET);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1.5);
@@ -2015,41 +2015,41 @@ static void scSanctumRaiseItemIcon(
 	Sint32 item, FIXED fixedX, FIXED fixedY, FIXED fixedZ)
 {
 	ACTOR		  *icon;
-	SPR			  *sprite;
+	SPR			  *spr;
 	ICON_TRANSFER *glyph;
-	Uint32		   frame;
+	Uint32		   frm;
 
 	icon = syFieldActorCreate(SPRITE_BLANK, fixedX, fixedY, fixedZ);
 	{
 		Uint8 cleared = 0;
 
 		if(icon != NULL) {
-			fdActorStartScript(icon, ItemIcon_GrowScript);
-			sprite = icon->spr;
-			sprite->flg = cleared;
-			sprite->cnt = cleared;
-			sprite->image.fullCol = 0;
-			sprite->image.pal = 0;
+			fdActorStartScript(icon, ItemIconGrowScript);
+			spr = icon->spr;
+			spr->flg = cleared;
+			spr->cnt = cleared;
+			spr->image.fullCol = 0;
+			spr->image.pal = 0;
 			icon->velY = toFIXED(2);
 			icon->gravity = toFIXED(1) / 4;
 			glyph =
 				syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 			mnIconDrawItem(item);
-			syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
+			syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
 			syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
-			for(frame = 0; frame < 60; frame++) {
+			for(frm = 0; frm < 60; frm++) {
 				if(icon->velY > -toFIXED(1) / 256 &&
 					icon->velY < toFIXED(1) / 256)
 					icon->motionFlg = 0;
 				sySynch(1);
 			}
-			fdActorStartScript(icon, Sanctum_ItemIconEndScript);
+			fdActorStartScript(icon, SanctumItemIconEndScript);
 		}
 	}
 }
 
 /* A glint's update: it drifts up, twinkling between full size and three fifths,
-   and goes once its frames run out. */
+   and goes once its ticks run out. */
 static void scSanctumUpdateRisingSpark(ACTOR *spark)
 {
 	FIXED scale;
@@ -2073,7 +2073,7 @@ static void scSanctumUpdateRisingSpark(ACTOR *spark)
 	spark->scaleX = scale;
 	spark->scaleY = scale;
 	if(--spark->userValue <= 0)
-		fdActorStartScript(spark, Sanctum_SparkEndScript);
+		fdActorStartScript(spark, SanctumSparkEndScript);
 }
 
 /* A glint rises from beside the actor, for half a second to a second and a
@@ -2252,7 +2252,7 @@ static void scSanctumTalkAboutJourneyFromXian(void)
 }
 
 /* clang-format off */
-Uint32 Sanctum_LeaderCircleScript[] = {
+Uint32 SanctumLeaderCircleScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_SPEED(2.5),
 	SC_ACCELERATION(0.5),
@@ -2278,7 +2278,7 @@ Uint32 Sanctum_LeaderCircleScript[] = {
 	SC_END,
 };
 
-Uint32 Sanctum_GaretCircleScript[] = {
+Uint32 SanctumGaretCircleScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_SPEED(2.5),
 	SC_ACCELERATION(0.5),
@@ -2306,12 +2306,12 @@ Uint32 Sanctum_GaretCircleScript[] = {
 
 #include "shared/item_icon_grow_script.c"
 
-Sint32 Sanctum_ItemIconEndScript[] = {
+Sint32 SanctumItemIconEndScript[] = {
 	SC_WAIT(60),
 	SC_RELEASE,
 };
 
-SCENE_ENTRANCE Sanctum_Entrances[] = {
+SCENE_ENTRANCE SanctumEntrances[] = {
 	{ SANCTUM_UNUSED, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SANCTUM_FROM_VALE, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
 	{ SANCTUM_VALE_AFTER_DEFEAT, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },
@@ -2326,7 +2326,7 @@ SCENE_ENTRANCE Sanctum_Entrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-Uint32 Sanctum_Exits[] = {
+Uint32 SanctumExits[] = {
 	SCENE_EXITS(Sanctum),
 	SCENE_EXIT(SANCTUM_TO_VALE, Vale, VALE_FROM_SANCTUM),
 	SCENE_EXIT(SANCTUM_TO_VAULT, Vault, VAULT_FROM_SANCTUM),
@@ -2340,11 +2340,11 @@ Uint32 Sanctum_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE Sanctum_NoActorPlacements[] = {
+ACTOR_PLACE SanctumNoActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE Sanctum_ValeActorPlacements[] = {
+ACTOR_PLACE SanctumValeActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2359,14 +2359,14 @@ ACTOR_PLACE Sanctum_ValeActorPlacements[] = {
 };
 
 #if IVAN_REACTS_TO_NEW_FRIENDS_QUESTION
-ACTOR_PLACE Sanctum_IvanActorPlacement[] = {
+ACTOR_PLACE SanctumIvanActorPlacement[] = {
 	ACTOR_PLACEMENT(ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	{ SCENE_TABLE_END },
 };
 #endif
 
-ACTOR_PLACE Sanctum_VaultBilibinActorPlacements[] = {
+ACTOR_PLACE SanctumVaultBilibinActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		200, 0, 130, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
@@ -2376,7 +2376,7 @@ ACTOR_PLACE Sanctum_VaultBilibinActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE Sanctum_QuestActorPlacements[] = {
+ACTOR_PLACE SanctumQuestActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		208, 0, 168, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
 	ACTOR_PLACEMENT(SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2396,13 +2396,13 @@ ACTOR_PLACE Sanctum_QuestActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE Sanctum_AltinXianActorPlacements[] = {
+ACTOR_PLACE SanctumAltinXianActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		200, 0, 132, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	{ SCENE_TABLE_END },
 };
 
-CUE Sanctum_ValeCues[] = {
+CUE SanctumValeCues[] = {
 	{ CUE_TALK, ACTOR_HEALER, CONDITION_ALWAYS, SCRIPT_REF(scSanctumTalkToHealer) },
 	{ CUE_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumOurPsynergyWasGivenToUs) },
 	{ CUE_TALK, ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumPsynergyIsAPowerThatShould) },
@@ -2410,7 +2410,7 @@ CUE Sanctum_ValeCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE Sanctum_VaultCues[] = {
+CUE SanctumVaultCues[] = {
 	{ CUE_TALK, ACTOR_HEALER, CONDITION_ALWAYS, SCRIPT_REF(scSanctumTalkToVaultHealer) },
 	{ CUE_TALK, ACTOR_SANCTUM_MEMBER, FLAG_VAULT_THIEVES_JAILED, SCRIPT_REF(scSanctumTalkAboutGoldenStatue) },
 	{ CUE_TALK, ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, SCRIPT_REF(scSanctumTalkAboutGoldenStatue) },
@@ -2420,7 +2420,7 @@ CUE Sanctum_VaultCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE Sanctum_VaultRevisitCues[] = {
+CUE SanctumVaultRevisitCues[] = {
 	{ CUE_EXIT, METATILE_BEHAVIOR_SANCTUM_DOORWAY, CONDITION_ALWAYS, SANCTUM_TO_VAULT_REVISIT },
 	{ CUE_TALK, ACTOR_HEALER, CONDITION_ALWAYS, SCRIPT_REF(scSanctumTalkToVaultHealer) },
 	{ CUE_TALK, ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, SCRIPT_REF(scSanctumTalkAboutGoldenStatue) },
@@ -2429,7 +2429,7 @@ CUE Sanctum_VaultRevisitCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE Sanctum_QuestCues[] = {
+CUE SanctumQuestCues[] = {
 	{ CUE_TALK, ACTOR_HEALER, CONDITION_ALWAYS, SCRIPT_REF(scSanctumAskQuestAgain) },
 	{ CUE_TALK, ACTOR_GARET, CONDITION_ALWAYS, MSGNO(MsgSanctumItIsATerribleBurdenTo) },
 	{ CUE_TALK, ACTOR_DORA, CONDITION_ALWAYS, MSGNO(MsgSanctumMotherWouldNeverDoubtYourCourage) },
@@ -2441,7 +2441,7 @@ CUE Sanctum_QuestCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE Sanctum_ValeCuesAfterLeaving[] = {
+CUE SanctumValeCuesAfterLeaving[] = {
 	{ CUE_EXIT, METATILE_BEHAVIOR_SANCTUM_DOORWAY, CONDITION_ALWAYS, SANCTUM_TO_VALE },
 	{ CUE_TALK, ACTOR_HEALER, CONDITION_ALWAYS, SCRIPT_REF(scSanctumTalkToHealer) },
 	{ CUE_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumThePowerOfMtAlephStems) },
@@ -2452,7 +2452,7 @@ CUE Sanctum_ValeCuesAfterLeaving[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE Sanctum_ValeCuesAfterKalay[] = {
+CUE SanctumValeCuesAfterKalay[] = {
 	{ CUE_EXIT, METATILE_BEHAVIOR_SANCTUM_DOORWAY, CONDITION_ALWAYS, SANCTUM_TO_VALE },
 	{ CUE_TALK, ACTOR_HEALER, CONDITION_ALWAYS, SCRIPT_REF(scSanctumTalkToHealer) },
 	{ CUE_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, SCRIPT_REF(scSanctumAskAboutNewAdepts) },
@@ -2463,7 +2463,7 @@ CUE Sanctum_ValeCuesAfterKalay[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE Sanctum_AltinCues[] = {
+CUE SanctumAltinCues[] = {
 	{ CUE_EXIT, METATILE_BEHAVIOR_SANCTUM_DOORWAY, CONDITION_ALWAYS, SANCTUM_TO_ALTIN },
 	{ CUE_TALK, ACTOR_HEALER, CONDITION_ALWAYS, SCRIPT_REF(scSanctumTalkAboutAltinMonsters) },
 	/* Unused: a copy of the row above, which always answers first. */
@@ -2473,7 +2473,7 @@ CUE Sanctum_AltinCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE Sanctum_BilibinCues[] = {
+CUE SanctumBilibinCues[] = {
 	{ CUE_TALK, ACTOR_HEALER, CONDITION_ALWAYS, SCRIPT_REF(scSanctumTalkAboutCurse) },
 	{ CUE_TALK, ACTOR_SANCTUM_MEMBER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgSanctumPleaseGiveMeStrengthAtTimes) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgSanctumWillITurnIntoATree) },
@@ -2485,7 +2485,7 @@ CUE Sanctum_BilibinCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE Sanctum_XianCues[] = {
+CUE SanctumXianCues[] = {
 	{ CUE_EXIT, METATILE_BEHAVIOR_SANCTUM_DOORWAY, CONDITION_ALWAYS, SANCTUM_TO_XIAN },
 	{ CUE_TALK, ACTOR_HEALER, CONDITION_ALWAYS, SCRIPT_REF(scSanctumTalkAboutJourneyFromXian) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumWhenYouStayInXianFor) },
@@ -2494,8 +2494,8 @@ CUE Sanctum_XianCues[] = {
 /* clang-format on */
 
 /* The choice cursor's offset to the right in pixels, swaying a step every two
-   frames. */
-Sint32 Sanctum_CursorOffsets[] = {
+   ticks. */
+Sint32 SanctumCursorOffsets[] = {
 	0,
 	0,
 	0,
@@ -2514,9 +2514,9 @@ Sint32 Sanctum_CursorOffsets[] = {
 	1,
 };
 
-/* A sparkle circling the Great Healer rises half a pixel a frame for 96 frames,
+/* A sparkle circling the Great Healer rises half a pixel a tick for 96 ticks,
    then is gone. */
-Sint32 Sanctum_OrbitingSparkleScript[] = {
+Sint32 SanctumOrbitingSparkleScript[] = {
 	SC_ADD(SW_Y, -toFIXED(1) / 2),
 	SC_ADD(SW_TARGET_Y, -toFIXED(1) / 2),
 	SC_WAIT(1),
@@ -2524,6 +2524,6 @@ Sint32 Sanctum_OrbitingSparkleScript[] = {
 	SC_RELEASE,
 };
 
-Sint32 Sanctum_SparkEndScript[] = {
+Sint32 SanctumSparkEndScript[] = {
 	SC_RELEASE,
 };

@@ -16,12 +16,12 @@
 #include "field/actor_script.h"
 #include "text/msg_ids.h"
 
-extern Sint32 LemuriaEntrance_ShipSailsOut[];
+extern Sint32 LemuriaEntranceShipSailsOut[];
 
 /* The way in's actors, by the rows of ActorPlacements. */
 enum {
 	/* The party's ship, placed blank; it sails out of the harbor
-	   (LemuriaEntrance_ShipSailsOut). */
+	   (LemuriaEntranceShipSailsOut). */
 	ACTOR_SHIP = ACTOR_FIRST_PLACED,
 	/* Boats moored in the harbor: four SPRITE_MOORED_BOAT and six on the winged
 	   ship's sprite sheet (SPRITE_WINGED_SHIP). */
@@ -47,11 +47,11 @@ enum { SPEAKER_KRADEN = 8 };
    by entrance 1. */
 enum { ENTRANCE_ABOARD_SHIP = 90 };
 
-void scLemuriaEntranceShowLineWithPortrait(Sint32 speaker, Sint32 frames);
+void scLemuriaEntranceShowLineWithPortrait(Sint32 speaker, Sint32 ticks);
 
 void scLemuriaEntranceShebaAsksPiersAge(void);
 
-extern Sint32 LemuriaEntrance_ShipAtRest[];
+extern Sint32 LemuriaEntranceShipAtRest[];
 
 /* Grind has broken up the brown rock in the north-west channel. */
 #define FLAG_ROCK_GROUND_AWAY 0x909
@@ -61,7 +61,7 @@ extern Sint32 LemuriaEntrance_ShipAtRest[];
    back. */
 enum { CHANNEL_NORTH_END = 2, CHANNEL_SOUTH_END = 4 };
 
-/* Starts an actor's animation from its first frame. */
+/* Starts an actor's animation from its first tick. */
 Sint32 scLemuriaEntranceResetAnimationFrame(ACTOR *actor)
 {
 	((FIELD_SPR *)actor->spr)->flg = 0;
@@ -101,7 +101,7 @@ void scLemuriaEntranceLandAtHarbor(Sint32 exit)
 	party->leaderActorId = ACTOR_SHIP;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	party->leaderActorId = ACTOR_FELIX;
 	syFieldScriptSetExitRequest(exit);
 }
@@ -119,7 +119,7 @@ void scLemuriaEntranceLandAtSouthQuay(Sint32 exit)
 	party->leaderActorId = ACTOR_SHIP;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	party->leaderActorId = ACTOR_FELIX;
 	syFieldScriptSetExitRequest(exit);
 }
@@ -145,7 +145,7 @@ UNUSED void scLemuriaEntranceBoardShip(void)
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		{
 			MAIN_ROUTINE_STATE *state = &MainRoutineStateWork;
 
@@ -199,7 +199,7 @@ Sint32 scInit(void)
 		MainRoutineStateWork.leaderActorId = ACTOR_SHIP;
 		FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		MainRoutineStateWork.leaderActorId = ACTOR_FELIX;
 		FieldStateWork->transition = effect;
 	}
@@ -218,10 +218,10 @@ Sint32 scPrepareMap(void)
 }
 
 /* Shows the next line of a conversation beside its speaker's portrait (Kraden's
-   for SPEAKER_KRADEN), holds it the given frames once typed, and closes it.
+   for SPEAKER_KRADEN), holds it the given ticks once typed, and closes it.
    Piers's lines stand further right with his portrait at their right-hand end;
    everyone else's portrait is at the left. */
-void scLemuriaEntranceShowLineWithPortrait(Sint32 speaker, Sint32 frames)
+void scLemuriaEntranceShowLineWithPortrait(Sint32 speaker, Sint32 ticks)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	Sint32		 height;
@@ -253,7 +253,7 @@ void scLemuriaEntranceShowLineWithPortrait(Sint32 speaker, Sint32 frames)
 	portrait = mnPortraitOpenWindow(character, 0, portrait, 5);
 	while(mnMessageAllTyped() == 0)
 		syWait(1);
-	syFieldScriptWait(frames);
+	syFieldScriptWait(ticks);
 	mnWindowClose(portrait, 2);
 	mnMessageCloseFinishedWindows();
 }
@@ -272,7 +272,7 @@ void scLemuriaEntranceShebaAsksPiersAge(void)
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	fdActorSetSpeed(ACTOR_SHIP, 0.27);
-	fdActorSetScript(ACTOR_SHIP, LemuriaEntrance_ShipSailsOut);
+	fdActorSetScript(ACTOR_SHIP, LemuriaEntranceShipSailsOut);
 	syFieldScriptWait(80);
 	syFieldScriptSetMessageId((Sint32)&MsgFieldAddressCompanion);
 	scLemuriaEntranceShowLineWithPortrait(ACTOR_SHEBA, 90);
@@ -302,7 +302,7 @@ void scLemuriaEntranceShebaAsksPiersAge(void)
 	state->transitionFrm = 30;
 	state->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syFieldScriptSetExitRequest(LEMURIA_ENTRANCE_TO_WORLD_MAP);
 	MainRoutineStateWork.msgSpeed = saved;
 	fdScriptEnd();
@@ -310,7 +310,7 @@ void scLemuriaEntranceShebaAsksPiersAge(void)
 
 /* clang-format off */
 /* The ship's course out of the harbor. */
-Sint32 LemuriaEntrance_ShipSailsOut[] = {
+Sint32 LemuriaEntranceShipSailsOut[] = {
 	SC_MOVE(728, 0, 160),
 	SC_SYNC,
 	SC_MOVE(608, 0, 152),
@@ -348,7 +348,7 @@ Sint32 LemuriaEntrance_ShipSailsOut[] = {
 /* clang-format on */
 
 /* The ship's animation as it rests in the harbor. */
-Sint32 LemuriaEntrance_ShipAtRest[] = {
+Sint32 LemuriaEntranceShipAtRest[] = {
 	SC_CALL(scLemuriaEntranceResetAnimationFrame),
 	SC_ANIMATION(7),
 	SC_END,
@@ -376,7 +376,7 @@ Uint32 SceneExits[] = {
 
 ACTOR_PLACE ActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS,
-		(Sint32)LemuriaEntrance_ShipAtRest, 14, 0, 4, FACING_NORTH,
+		(Sint32)LemuriaEntranceShipAtRest, 14, 0, 4, FACING_NORTH,
 		TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_MOORED_BOAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		636, 0, 112, FACING_WEST, TALK_FACING_KEEP, 0),

@@ -62,18 +62,18 @@
 #include "graphics/graphics.h"
 #include "text/msg_ids.h"
 
-extern Sint32		  AlpineCrossing_FeizhiPath[];
-extern Sint32		  AlpineCrossing_LeaderPath[];
-extern Sint32		  AlpineCrossing_HsuStruggle[];
-extern Uint16		  LamaTemple_DoorOpenMetatiles[];
-extern Uint16		  LamaTemple_DoorCloseMetatiles[];
-extern SCENE_ENTRANCE LamaTemple_Entrances[];
-extern SCENE_ENTRANCE AlpineCrossing_Entrances[];
-extern Uint32		  AlpineCrossingLamaTemple_Exits[];
-extern ACTOR_PLACE	  LamaTemple_ActorPlacements[];
-extern ACTOR_PLACE	  AlpineCrossing_ActorPlacements[];
-extern CUE			  LamaTemple_Cues[];
-extern CUE			  AlpineCrossing_Cues[];
+extern Sint32		  AlpineCrossingFeizhiPath[];
+extern Sint32		  AlpineCrossingLeaderPath[];
+extern Sint32		  AlpineCrossingHsuStruggle[];
+extern Uint16		  LamaTempleDoorOpenMetatiles[];
+extern Uint16		  LamaTempleDoorCloseMetatiles[];
+extern SCENE_ENTRANCE LamaTempleEntrances[];
+extern SCENE_ENTRANCE AlpineCrossingEntrances[];
+extern Uint32		  AlpineCrossingLamaTempleExits[];
+extern ACTOR_PLACE	  LamaTempleActorPlacements[];
+extern ACTOR_PLACE	  AlpineCrossingActorPlacements[];
+extern CUE			  LamaTempleCues[];
+extern CUE			  AlpineCrossingCues[];
 
 /* The temple's Psynergy Stone. It is an area temp flag, so it refills once the
    party has been to another area. */
@@ -170,7 +170,7 @@ typedef enum ALPINE_CROSSING_METATILE_BEHAVIOR {
 } ALPINE_CROSSING_METATILE_BEHAVIOR;
 
 /* The door of Hama's room, three metatiles wide and two high. Each step copies
-   the next door picture onto it for five frames. */
+   the next door picture onto it for five ticks. */
 enum { DOOR_X = 67, DOOR_Y = 6 };
 
 /* The chest of Water of Life under the mossy rock: its treasure spot is the
@@ -204,9 +204,9 @@ static UNREAD_RESULT scAlpineCrossingLeaderFaceFeizhi(ACTOR *leader)
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
 	if(MainRoutineStateWork.next == MAP_ALPINE_CROSSING) {
-		return AlpineCrossing_Entrances;
+		return AlpineCrossingEntrances;
 	}
-	return LamaTemple_Entrances;
+	return LamaTempleEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -217,15 +217,15 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 /* Both scenes share one exit table. */
 const Uint32 *scGetExits(void)
 {
-	return AlpineCrossingLamaTemple_Exits;
+	return AlpineCrossingLamaTempleExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.next == MAP_ALPINE_CROSSING) {
-		return AlpineCrossing_ActorPlacements;
+		return AlpineCrossingActorPlacements;
 	}
-	return LamaTemple_ActorPlacements;
+	return LamaTempleActorPlacements;
 }
 
 /* A monk in Lama Temple, until Hsu is freed, asks whether the party comes from
@@ -283,7 +283,7 @@ static void scLamaTempleTalkToChiMonk(void)
 static void scLamaTempleEnterHamasRoom(void)
 {
 	sySndPlay(SE_THUMP);
-	fdMapGridAnimateMetatiles(LamaTemple_DoorOpenMetatiles, DOOR_X, DOOR_Y);
+	fdMapGridAnimateMetatiles(LamaTempleDoorOpenMetatiles, DOOR_X, DOOR_Y);
 	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -313,7 +313,7 @@ static void scLamaTempleRunHamasFarewell(void)
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(60);
 
 	/* "Adepts, let me thank you again." */
@@ -417,12 +417,12 @@ static void scLamaTempleRunHamasFarewell(void)
 	/* The door slides open with SE_THUMP, Hama walks through, and it slides
 	   shut. */
 	sySndPlay(SE_THUMP);
-	fdMapGridAnimateMetatiles(LamaTemple_DoorOpenMetatiles, DOOR_X, DOOR_Y);
+	fdMapGridAnimateMetatiles(LamaTempleDoorOpenMetatiles, DOOR_X, DOOR_Y);
 	fdActorSetSpeed(ACTOR_TEMPLE_HAMA, 0.8);
 	fdActorWalkToAndWait(ACTOR_TEMPLE_HAMA, 136, 136);
 	fdActorSetPos(ACTOR_TEMPLE_HAMA, 0, 0);
 	sySndPlay(SE_THUMP);
-	fdMapGridAnimateMetatiles(LamaTemple_DoorCloseMetatiles, DOOR_X, DOOR_Y);
+	fdMapGridAnimateMetatiles(LamaTempleDoorCloseMetatiles, DOOR_X, DOOR_Y);
 	fdScriptWait(60);
 	fdPlayQueuedMusic();
 
@@ -624,13 +624,13 @@ static void scAlpineCrossingFeizhiArrives(void)
 
 		/* Feizhi runs down the path with the camera; the leader follows her
 		   until the camera arrives. */
-		fdActorSetScript(ACTOR_FEIZHI, AlpineCrossing_FeizhiPath);
+		fdActorSetScript(ACTOR_FEIZHI, AlpineCrossingFeizhiPath);
 		fdCameraMoveTo(296, CAMERA_KEEP, 344, 1);
 		gmFlagSet(FLAG_FEIZHI_SAW_ROCKSLIDE);
 		fdActorWaitForScriptEndById(ACTOR_FEIZHI);
 		fdCameraWaitForArrival();
 		fdActorSetSpeed(ACTOR_PARTY_LEADER, 1);
-		fdActorSetScript(ACTOR_PARTY_LEADER, AlpineCrossing_LeaderPath);
+		fdActorSetScript(ACTOR_PARTY_LEADER, AlpineCrossingLeaderPath);
 		fdActorWaitForScriptEndById(ACTOR_PARTY_LEADER);
 		fdScriptWait(10);
 		fdActorGet(ACTOR_PARTY_LEADER)->update = NULL;
@@ -677,7 +677,7 @@ static void scAlpineCrossingHamaReachesHsu(void)
 {
 	fdScriptStart();
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(30);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
 	fdCameraMoveToActorById(ACTOR_HSU, 1);
@@ -949,9 +949,9 @@ static void scAlpineCrossingGrowSprout(void)
 const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.next == MAP_ALPINE_CROSSING) {
-		return AlpineCrossing_Cues;
+		return AlpineCrossingCues;
 	}
-	return LamaTemple_Cues;
+	return LamaTempleCues;
 }
 
 /* Sets up whichever scene is being entered and runs its arrival scripts. */
@@ -1039,12 +1039,12 @@ Sint32 scInit(void)
 			fdActorSetPos(ACTOR_FEIZHI, 184, 304);
 			fdActorFaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST, 0);
 			fdActorFaceDirection(ACTOR_FEIZHI, FACING_NORTH_NORTHWEST, 0);
-			fdActorSetScript(ACTOR_HSU, AlpineCrossing_HsuStruggle);
+			fdActorSetScript(ACTOR_HSU, AlpineCrossingHsuStruggle);
 			fdActorGet(ACTOR_HSU)->scaleX = -toFIXED(1);
 		}
 		if(!fdScriptGetFlag(FLAG_HSU_RESCUED)) {
 			fdActorSetPos(ACTOR_HSU, 164, 280);
-			fdActorSetScript(ACTOR_HSU, AlpineCrossing_HsuStruggle);
+			fdActorSetScript(ACTOR_HSU, AlpineCrossingHsuStruggle);
 			fdActorGet(ACTOR_HSU)->scaleX = -toFIXED(1);
 		}
 		if(MainRoutineStateWork.entrance ==
@@ -1059,13 +1059,13 @@ Sint32 scInit(void)
 }
 
 /* The first worker's actor placement script: he is drawn behind the scenery. */
-Sint32 AlpineCrossing_WorkerActorPlacementScript[] = {
+Sint32 AlpineCrossingWorkerActorPlacementScript[] = {
 	SC_CALL(scActorDrawBehindBackground),
 	SC_END,
 };
 
 /* Feizhi's run down the path toward Hsu, walking, then standing. */
-Sint32 AlpineCrossing_FeizhiPath[] = {
+Sint32 AlpineCrossingFeizhiPath[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(392, 0, 232),
 	SC_SYNC,
@@ -1084,7 +1084,7 @@ Sint32 AlpineCrossing_FeizhiPath[] = {
 };
 
 /* The party leader follows Feizhi most of the way. */
-Sint32 AlpineCrossing_LeaderPath[] = {
+Sint32 AlpineCrossingLeaderPath[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(392, 0, 232),
 	SC_SYNC,
@@ -1101,7 +1101,7 @@ Sint32 AlpineCrossing_LeaderPath[] = {
 };
 
 /* Hsu, pinned under the boulder, struggles now and then. */
-Sint32 AlpineCrossing_HsuStruggle[] = {
+Sint32 AlpineCrossingHsuStruggle[] = {
 	SC_ANIMATION(ANIM_STAND),
 	SC_ANIMATION(ANIM_HSU_STRUGGLE),
 	SC_WAIT(240),
@@ -1116,18 +1116,18 @@ Sint32 AlpineCrossing_HsuStruggle[] = {
 };
 
 /* The door of Hama's room sliding open, and shut again. */
-Uint16 LamaTemple_DoorOpenMetatiles[] = {
+Uint16 LamaTempleDoorOpenMetatiles[] = {
 	MAPGRID_ANIMATION_STEP(66, 46, 3, 2, 5),
 	MAPGRID_ANIMATION_STEP(63, 46, 3, 2, 5),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 LamaTemple_DoorCloseMetatiles[] = {
+Uint16 LamaTempleDoorCloseMetatiles[] = {
 	MAPGRID_ANIMATION_STEP(66, 46, 3, 2, 5),
 	MAPGRID_ANIMATION_STEP(69, 46, 3, 2, 5),
 	MAPGRID_ANIMATION_STEPS_END,
 };
 
-SCENE_ENTRANCE LamaTemple_Entrances[] = {
+SCENE_ENTRANCE LamaTempleEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1,
 		-1, -1, 0},
 	{LAMA_TEMPLE_FROM_WORLD_MAP, CONDITION_ALWAYS, 216, 0, 520, FACING_NORTH, 0,
@@ -1141,7 +1141,7 @@ SCENE_ENTRANCE LamaTemple_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE AlpineCrossing_Entrances[] = {
+SCENE_ENTRANCE AlpineCrossingEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 496, 0, 216, FACING_WEST, 0, -1, -1,
 		-1, -1, 0},
 	{ALPINE_CROSSING_FROM_WORLD_MAP_EAST, CONDITION_ALWAYS, 496, 0, 216,
@@ -1157,7 +1157,7 @@ SCENE_ENTRANCE AlpineCrossing_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 AlpineCrossingLamaTemple_Exits[] = {
+Uint32 AlpineCrossingLamaTempleExits[] = {
 	SCENE_EXITS(LamaTemple),
 	SCENE_EXIT(LAMA_TEMPLE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LAMA_TEMPLE),
 	SCENE_EXIT(LAMA_TEMPLE_TO_LACQUER_ROOMS_A_HAMAS_ROOM, LacquerRoomsA,
@@ -1181,7 +1181,7 @@ Uint32 AlpineCrossingLamaTemple_Exits[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE LamaTemple_ActorPlacements[] = {
+ACTOR_PLACE LamaTempleActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1207,16 +1207,16 @@ ACTOR_PLACE LamaTemple_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE AlpineCrossing_ActorPlacements[] = {
+ACTOR_PLACE AlpineCrossingActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_HAMA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_HSU, CONDITION_ALWAYS, (Sint32)AlpineCrossing_HsuStruggle,
+	ACTOR_PLACEMENT(SPRITE_HSU, CONDITION_ALWAYS, (Sint32)AlpineCrossingHsuStruggle,
 		0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_FEIZHI, FLAG_HSU_RESCUED, MOVEMENT_TYPE_STAND,
 		296, 0, 344, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, FLAG_HSU_RESCUED, MOVEMENT_TYPE_STAND,
 		152, 0, 276, FACING_WEST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_YOUTH_WITH_HEADBAND, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), (Sint32)AlpineCrossing_WorkerActorPlacementScript,
+	ACTOR_PLACEMENT(SPRITE_YOUTH_WITH_HEADBAND, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), (Sint32)AlpineCrossingWorkerActorPlacementScript,
 		456, 0, 200, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_YOUTH_WITH_TIED_HAIR, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), MOVEMENT_TYPE_STAND,
 		184, 0, 264, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -1227,7 +1227,7 @@ ACTOR_PLACE AlpineCrossing_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE LamaTemple_Cues[] = {
+CUE LamaTempleCues[] = {
 	{ CUE_EXIT, METATILE_BEHAVIOR_LAMA_TEMPLE_SOUTH_ROAD, CONDITION_ALWAYS, LAMA_TEMPLE_TO_WORLD_MAP },
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), METATILE_BEHAVIOR_LAMA_TEMPLE_DOOR, CONDITION_ALWAYS, SCRIPT_REF(scLamaTempleEnterHamasRoom) },
 	{ CUE_TALK, ACTOR_GREETING_MONK, FLAG_HSU_RESCUED, MSGNO(MsgAlpineCrossingLamaTempleThisIsLamaTempleWelcomeTravelers) },
@@ -1263,7 +1263,7 @@ CUE LamaTemple_Cues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE AlpineCrossing_Cues[] = {
+CUE AlpineCrossingCues[] = {
 	{ CUE_EXIT, METATILE_BEHAVIOR_ALPINE_CROSSING_EAST_ROAD, CONDITION_ALWAYS, ALPINE_CROSSING_TO_WORLD_MAP_EAST },
 	{ CUE_EXIT, METATILE_BEHAVIOR_ALPINE_CROSSING_NORTH_ROAD, CONDITION_ALWAYS, ALPINE_CROSSING_TO_WORLD_MAP_NORTH },
 	{ CUE_EXIT, METATILE_BEHAVIOR_ALPINE_CROSSING_WEST_ROAD, CONDITION_ALWAYS, ALPINE_CROSSING_TO_WORLD_MAP_WEST },

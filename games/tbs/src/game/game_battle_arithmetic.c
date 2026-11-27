@@ -8,35 +8,34 @@ Sint32 gmBattleGetElementMultiplier(Sint32 difference, Sint32 halve)
 {
 	Sint32 minimumDifference;
 	Sint32 maximumDifference;
-	Sint32 pointIndex;
+	Sint32 pointIdx;
 	Sint32 multiplier;
 	Sint32 differenceSpan;
 	Sint32 multiplierSpan;
 
-	maximumDifference = Element_PowerResistCurve[0][0];
-	minimumDifference = Element_PowerResistCurve[4][0];
+	maximumDifference = ElementPowerResistCurve[0][0];
+	minimumDifference = ElementPowerResistCurve[4][0];
 	{
-		Sint32 pointCount = 5;
+		Sint32 pointCnt = 5;
 
 		if(difference > maximumDifference)
 			difference = maximumDifference;
 		else if(difference < minimumDifference)
 			difference = minimumDifference;
-		for(pointIndex = 0; pointIndex < pointCount; pointIndex++) {
-			if(difference > Element_PowerResistCurve[pointIndex][0])
+		for(pointIdx = 0; pointIdx < pointCnt; pointIdx++) {
+			if(difference > ElementPowerResistCurve[pointIdx][0])
 				break;
 		}
-		if(pointIndex == pointCount) {
-			multiplier = Element_PowerResistCurve[pointIndex - 1][1];
+		if(pointIdx == pointCnt) {
+			multiplier = ElementPowerResistCurve[pointIdx - 1][1];
 		} else {
-			differenceSpan = Element_PowerResistCurve[pointIndex - 1][0] -
-				Element_PowerResistCurve[pointIndex][0];
-			multiplierSpan = Element_PowerResistCurve[pointIndex - 1][1] -
-				Element_PowerResistCurve[pointIndex][1];
-			multiplier =
-				(difference - Element_PowerResistCurve[pointIndex][0]) *
+			differenceSpan = ElementPowerResistCurve[pointIdx - 1][0] -
+				ElementPowerResistCurve[pointIdx][0];
+			multiplierSpan = ElementPowerResistCurve[pointIdx - 1][1] -
+				ElementPowerResistCurve[pointIdx][1];
+			multiplier = (difference - ElementPowerResistCurve[pointIdx][0]) *
 					multiplierSpan / differenceSpan +
-				Element_PowerResistCurve[pointIndex][1];
+				ElementPowerResistCurve[pointIdx][1];
 		}
 		switch(halve) {
 		case 0:
@@ -135,18 +134,17 @@ Sint32 gmEquipmentGetUnleashRateBonus(UNIT *unit)
 {
 	Sint32				   chanceBonus;
 	Sint32				   inventorySlot;
-	Sint32				   effectIndex;
+	Sint32				   effectIdx;
 	const ITEM_DEFINITION *item;
 
 	chanceBonus = 0;
 	for(inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
 		if(unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
 			item = gmItemGetDirect(unit->inventory[inventorySlot]);
-			for(effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS;
-				effectIndex++) {
-				if(item->effs[effectIndex].kind ==
+			for(effectIdx = 0; effectIdx < EQUIP_EFFECT_SLOTS; effectIdx++) {
+				if(item->effs[effectIdx].kind ==
 					EQUIP_EFFECT_ADD_UNLEASH_CHANCE)
-					chanceBonus += item->effs[effectIndex].amount;
+					chanceBonus += item->effs[effectIdx].amount;
 			}
 		}
 	}
@@ -236,21 +234,21 @@ Sint32 gmBattleGetEffectBaseSuccessRate(Sint32 effectId)
 
 /* Returns 1 when the unit is weak to the effect: one of the three its enemy
    kind or class lists. */
-Bool gmBattleAbilityIsWeakToEffect(const UNIT *target, Sint32 effectId)
+Bool gmBattleAbilityIsWeakToEffect(const UNIT *tgt, Sint32 effectId)
 {
 	const Uint8 *weakEffects;
-	Sint32		 weaknessIndex;
+	Sint32		 weaknessIdx;
 
-	if(target->classId == CLASS_NONE) {
-		weakEffects = gmEnemyGetDefinition(target->id)->weakEffs;
-		for(weaknessIndex = 0; weaknessIndex < 3; weaknessIndex++) {
+	if(tgt->classId == CLASS_NONE) {
+		weakEffects = gmEnemyGetDefinition(tgt->id)->weakEffs;
+		for(weaknessIdx = 0; weaknessIdx < 3; weaknessIdx++) {
 			if(*weakEffects == effectId)
 				return TRUE;
 			weakEffects++;
 		}
 	} else {
-		weakEffects = gmClassGetDefinition(target->classId)->weakEffs;
-		for(weaknessIndex = 0; weaknessIndex < 3; weaknessIndex++) {
+		weakEffects = gmClassGetDefinition(tgt->classId)->weakEffs;
+		for(weaknessIdx = 0; weaknessIdx < 3; weaknessIdx++) {
 			if(*weakEffects++ == effectId)
 				return TRUE;
 		}
@@ -277,10 +275,10 @@ Bool gmBattleIsReviveEffect(Sint32 effectId)
    the caster's lead in `element`'s level, less half the target's luck, plus
    WEAKNESS_BONUS against a weakness, times successScale percent. Luff's seal
    (ABILITY_EFFECT_SEAL_2_TURNS) gets three tries. */
-Sint32 gmBattleRollEffectSuccess(Sint32 caster, Sint32 target, Sint32 element,
+Sint32 gmBattleRollEffectSuccess(Sint32 caster, Sint32 tgt, Sint32 element,
 	Sint32 effectId, Sint32 successScale)
 {
-	UNIT  *unit = gmUnitGet(target);
+	UNIT  *unit = gmUnitGet(tgt);
 	Sint32 attempts = 1;
 	Sint32 score;
 	Sint32 attempt;
@@ -339,7 +337,7 @@ restore_checked:
 	score = gmBattleGetEffectBaseSuccessRate(effectId);
 	if(score > 0) {
 		Sint32 difference = gmUnitGetElementLevel(caster, element) -
-			gmUnitGetElementLevel(target, element) - (unit->luck >> 1);
+			gmUnitGetElementLevel(tgt, element) - (unit->luck >> 1);
 
 		score += difference * 3;
 		if(gmBattleAbilityIsWeakToEffect(unit, effectId) != 0) {

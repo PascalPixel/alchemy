@@ -23,7 +23,7 @@
 
 /* A Mad Plant leaps at the leader (fdMadPlantLeapAtLeader, through the room's
    own import). */
-void syImportDebugMadPlantLeap(Sint32 sprite, Sint32 x, Sint32 z);
+void syImportDebugMadPlantLeap(Sint32 spr, Sint32 x, Sint32 z);
 
 /* The room's flags: the four Scoop spots dug, the Wicked Mace picked up, and
    whether Blaze has sent Kraden to his second spot. */
@@ -90,8 +90,8 @@ typedef enum PSYNERGY_TEST_ACTOR_ID {
 	ACTOR_TORCH			 /* Pound or A?? lights it */
 } PSYNERGY_TEST_ACTOR_ID;
 
-void dbPsynergyTestDigMetatiles(Sint32 stage, Sint32 sourceX, Sint32 sourceY,
-	Sint32 width, Sint32 height, Sint32 destinationX, Sint32 destinationY);
+void dbPsynergyTestDigMetatiles(Sint32 stage, Sint32 srcX, Sint32 srcY,
+	Sint32 width, Sint32 height, Sint32 dstX, Sint32 dstY);
 void dbPsynergyTestGrowActor(Sint32 stage, Sint32 id, Sint32 x, Sint32 z);
 void dbPsynergyTestDropActor(Sint32 stage, Sint32 id, Sint32 x, Sint32 z);
 void dbPsynergyTestRaiseStatue(
@@ -99,9 +99,9 @@ void dbPsynergyTestRaiseStatue(
 void dbPsynergyTestStartRings(ACTOR *actor, SPARKLE_STATE *state);
 void dbPsynergyTestStopRings(ACTOR *actor);
 
-extern Uint32									LightRing_Tiles[];
-SPARKLE_STATE PsynergyTest_LeaderRings BSS_DATA ALIGNED(16);
-SPARKLE_STATE PsynergyTest_TargetRings BSS_DATA ALIGNED(16);
+extern Uint32								   LightRingTiles[];
+SPARKLE_STATE PsynergyTestLeaderRings BSS_DATA ALIGNED(16);
+SPARKLE_STATE PsynergyTestTargetRings BSS_DATA ALIGNED(16);
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -150,41 +150,41 @@ void dbPsynergyTestIgnorePsynergy(void)
 
 /* Closes the finished message windows, opens the message in the window a
    shopkeeper's lines open (mnShopShowKeeperMessage) and waits until it is typed
-   out, then a frame more. */
-void dbPsynergyTestShowMessageAndWait(Sint32 message)
+   out, then a tick more. */
+void dbPsynergyTestShowMessageAndWait(Sint32 msg)
 {
 	mnMessageCloseFinishedWindows();
 	mnMessageOpenWindow(
-		message, 5, 0, MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
+		msg, 5, 0, MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
 	while(mnMessageAllTyped() == 0)
 		sySynch(1);
 	sySynch(1);
 }
 
-/* Browses `count` messages from `message`: A or Down for the next, Up for the
+/* Browses `cnt` messages from `msg`: A or Down for the next, Up for the
    one before, B to close. */
-void dbPsynergyTestBrowseMessageRange(Sint32 message, Sint32 count)
+void dbPsynergyTestBrowseMessageRange(Sint32 msg, Sint32 cnt)
 {
 	Sint32	i;
-	WINDOW *window;
+	WINDOW *win;
 
-	window = mnPortraitOpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
-	for(i = 0; i < count; i++) {
+	win = mnPortraitOpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
+	for(i = 0; i < cnt; i++) {
 		/* Sample name, item and number substitutions before each message:
 		   Garet, the Shamshir and 123456. */
 		mnMessageArgumentPush(GARET, MESSAGE_ARGUMENT_ACTOR);
 		mnMessageArgumentPush(ITEM_SHAMSHIR, MESSAGE_ARGUMENT_ITEM);
 		mnMessageArgumentPush(123456, MESSAGE_ARGUMENT_NUMBER);
-		dbPsynergyTestShowMessageAndWait(message);
+		dbPsynergyTestShowMessageAndWait(msg);
 		for(;;) {
 			if(PerWork.data & KEY_B)
 				goto done;
 			if((PerWork.data & KEY_A) || (PerWork.data & KEY_DOWN)) {
-				message++;
+				msg++;
 				break;
 			}
 			if(PerWork.data & KEY_UP) {
-				message--;
+				msg--;
 				break;
 			}
 			if(PerWork.data == 0)
@@ -195,7 +195,7 @@ void dbPsynergyTestBrowseMessageRange(Sint32 message, Sint32 count)
 	}
 done:
 	mnMessageCloseFinishedWindows();
-	mnWindowClose(window, 2);
+	mnWindowClose(win, 2);
 }
 
 /* The shop and sanctum message browsers: talking to ACTOR_MESSAGE_BROWSER from
@@ -455,27 +455,27 @@ void dbPsynergyTestStartleAgain(Sint32 unused, Sint32 actor)
    at (57, 16) is copied over the one at (25, 0). */
 void dbPsynergyTestLightTorch(void)
 {
-	Sint32 destinationX;
-	Sint32 destinationY;
+	Sint32 dstX;
+	Sint32 dstY;
 
 	fdActorSetAnimation(ACTOR_TORCH, 2);
 	syFieldScriptWait(10);
-	destinationX = 25;
-	destinationY = 0;
-	fdMapGridCopyMetatiles(57, 16, 4, 6, destinationX, destinationY);
+	dstX = 25;
+	dstY = 0;
+	fdMapGridCopyMetatiles(57, 16, 4, 6, dstX, dstY);
 }
 
 /* Pound on the torch does the same as its fist lands, without the wait. */
 void dbPsynergyTestPoundTorch(Sint32 stage)
 {
-	Sint32 destinationX;
-	Sint32 destinationY;
+	Sint32 dstX;
+	Sint32 dstY;
 
 	if(stage == POUND_STAGE_LANDED) {
 		fdActorSetAnimation(ACTOR_TORCH, 2);
-		destinationX = 25;
-		destinationY = 0;
-		fdMapGridCopyMetatiles(57, 16, 4, 6, destinationX, destinationY);
+		dstX = 25;
+		dstY = 0;
+		fdMapGridCopyMetatiles(57, 16, 4, 6, dstX, dstY);
 	}
 }
 
@@ -484,14 +484,14 @@ void dbPsynergyTestPoundTorch(Sint32 stage)
    26). */
 void dbPsynergyTestBlowAwayLeaves(void)
 {
-	Sint32 windowX;
-	Sint32 windowZ;
+	Sint32 winX;
+	Sint32 winZ;
 	Sint32 layer;
 
-	windowX = 2;
-	windowZ = 10;
+	winX = 2;
+	winZ = 10;
 	layer = 0;
-	fdTileCopiesCopyTouchedMetatiles(34, 26, 5, 4, windowX, windowZ, layer);
+	fdTileCopiesCopyTouchedMetatiles(34, 26, 5, 4, winX, winZ, layer);
 }
 
 /* Cyclone at METATILE_BEHAVIOR_RING_LEAF blows the leaves away too, then brings
@@ -562,12 +562,12 @@ void dbPsynergyTestPickUpItem(void)
 /* Parch at the pool dries it, copying in the dry metatiles at (48, 26). */
 void dbPsynergyTestParchMetatiles(void)
 {
-	Sint32 destinationX;
-	Sint32 destinationY;
+	Sint32 dstX;
+	Sint32 dstY;
 
-	destinationX = 16;
-	destinationY = 10;
-	fdMapGridCopyMetatiles(48, 26, 2, 4, destinationX, destinationY);
+	dstX = 16;
+	dstY = 10;
+	fdMapGridCopyMetatiles(48, 26, 2, 4, dstX, dstY);
 }
 
 /* Tremor's script, which does nothing. */
@@ -581,12 +581,12 @@ void dbPsynergyTestIgnoreGrind(void)
 }
 
 /* Talking to Mia: rings of light rise around her and the leader for 100
-   frames. */
+   ticks. */
 void dbPsynergyTestShowRings(Sint32 actor)
 {
-	dbPsynergyTestStartRings(fdActorGet(actor), &PsynergyTest_TargetRings);
+	dbPsynergyTestStartRings(fdActorGet(actor), &PsynergyTestTargetRings);
 	dbPsynergyTestStartRings(fdActorGet(MainRoutineStateWork.leaderActorId),
-		&PsynergyTest_LeaderRings);
+		&PsynergyTestLeaderRings);
 	sySynch(100);
 	dbPsynergyTestStopRings(fdActorGet(actor));
 	dbPsynergyTestStopRings(fdActorGet(MainRoutineStateWork.leaderActorId));
@@ -663,16 +663,15 @@ void dbPsynergyTestOpenSanctum(Sint32 keeper)
 }
 
 /* As the ground opens, copies the metatiles of the hole in. */
-void dbPsynergyTestDigMetatiles(Sint32 stage, Sint32 sourceX, Sint32 sourceY,
-	Sint32 width, Sint32 height, Sint32 destinationX, Sint32 destinationY)
+void dbPsynergyTestDigMetatiles(Sint32 stage, Sint32 srcX, Sint32 srcY,
+	Sint32 width, Sint32 height, Sint32 dstX, Sint32 dstY)
 {
 	if(stage == SCOOP_STAGE_DUG)
-		fdMapGridCopyMetatiles(
-			sourceX, sourceY, width, height, destinationX, destinationY);
+		fdMapGridCopyMetatiles(srcX, srcY, width, height, dstX, dstY);
 }
 
 /* As the ground opens, places the actor at (x, z) in pixels with no size;
-   twenty frames later, grows it to full size. */
+   twenty ticks later, grows it to full size. */
 void dbPsynergyTestGrowActor(Sint32 stage, Sint32 id, Sint32 x, Sint32 z)
 {
 	ACTOR *actor;
@@ -697,7 +696,7 @@ void dbPsynergyTestGrowActor(Sint32 stage, Sint32 id, Sint32 x, Sint32 z)
 	}
 }
 
-/* Twenty frames after the ground opens, drops the actor onto (x, z) in pixels
+/* Twenty ticks after the ground opens, drops the actor onto (x, z) in pixels
    from 32 pixels up. */
 void dbPsynergyTestDropActor(Sint32 stage, Sint32 id, Sint32 x, Sint32 z)
 {
@@ -714,7 +713,7 @@ void dbPsynergyTestDropActor(Sint32 stage, Sint32 id, Sint32 x, Sint32 z)
 }
 
 /* As the ground opens, places a brown boulder at (x, z) in pixels; twenty
-   frames later, grows a winged statue there from two fifths to full size while
+   ticks later, grows a winged statue there from two fifths to full size while
    it turns, turns it opposite the leader's facing and starts a battle with the
    formation at `column` of encounter zone `row`. */
 void dbPsynergyTestRaiseStatue(
@@ -757,27 +756,27 @@ void dbPsynergyTestRaiseStatue(
 	}
 }
 
-/* Each frame of an actor's rings: a ring climbs RING_CLIMB pixels up the actor,
+/* Each tick of an actor's rings: a ring climbs RING_CLIMB pixels up the actor,
    swelling and shrinking as it goes, and the next starts with a chime
-   RING_INTERVAL frames later, two at a time, while the actor's colours cycle.
+   RING_INTERVAL ticks later, two at a time, while the actor's colours cycle.
    Once stopped, the rings climb out and the actor's colours come back. */
 void dbPsynergyTestUpdateRings(ACTOR *actor)
 {
-	VECTOR3		   position;
+	VECTOR3		   pos;
 	Sint32		   x, z;
 	FIXED		   sine;
 	Sint32		   i, j;
 	SPARKLE_STATE *state = (SPARKLE_STATE *)actor->watchedActor;
-	Uint8		  *count = &actor->sceneByte;
-	EFFECT_SPR	  *sprite;
+	Uint8		  *cnt = &actor->sceneByte;
+	EFFECT_SPR	  *spr;
 
-	/* Every other frame, the next of the normal colours and the five swaps. */
-	if(*count & 1)
+	/* Every other tick, the next of the normal colours and the five swaps. */
+	if(*cnt & 1)
 		fdActorSetSprColMode(actor,
-			(Uint8)((Uint32)((COUNTER_BITS *)count)->rest %
+			(Uint8)((Uint32)((COUNTER_BITS *)cnt)->rest %
 				(SPRITE_COLOR_BRG + 1)));
 	if(actor->sceneCnt == 0) {
-		if((*count & (RING_INTERVAL - 1)) == 0) {
+		if((*cnt & (RING_INTERVAL - 1)) == 0) {
 			fdScriptPlaySnd(SE_RISING_RINGS);
 			state->heights[state->nextPair] = 0;
 			state->nextPair ^= 1;
@@ -790,35 +789,35 @@ void dbPsynergyTestUpdateRings(ACTOR *actor)
 			return;
 		}
 	}
-	(*count)++;
+	(*cnt)++;
 	for(i = 0; i < 2; i++) {
 		/* Its size: half a turn of sine over the climb. */
 		sine = syMathSin(state->heights[i] * (DEGtoANG(180) / RING_CLIMB));
 		if(state->heights[i] >= 0) {
 			if(state->heights[i] < RING_CLIMB) {
 
-				SET_POSITION(&position, actor->x.fixed,
+				SET_POSITION(&pos, actor->x.fixed,
 					actor->y.fixed + toFIXED(state->heights[i]),
 					actor->z.fixed);
-				fdCameraWorldToScreen(&position);
-				x = position.x;
+				fdCameraWorldToScreen(&pos);
+				x = pos.x;
 				j = 0;
-				z = position.z;
-				sprite = &state->sprs[i * 2];
+				z = pos.z;
+				spr = &state->sprs[i * 2];
 				for(; j <= 1; j++) {
-					sprite->x = x;
-					sprite->y = z;
-					sprite->scaleX = sine;
-					sprite->scaleY = sine;
+					spr->x = x;
+					spr->y = z;
+					spr->scaleX = sine;
+					spr->scaleY = sine;
 					if(j == 0) {
-						sprite->depth = fdActorGetSprDepth(actor) - 1;
+						spr->depth = fdActorGetSprDepth(actor) - 1;
 					} else {
-						sprite->depth = fdActorGetSprDepth(actor) + 1;
-						sprite->y -= toFIXED(1);
-						sprite->scaleY = -sprite->scaleY;
+						spr->depth = fdActorGetSprDepth(actor) + 1;
+						spr->y -= toFIXED(1);
+						spr->scaleY = -spr->scaleY;
 					}
-					fdEffectSprDraw(sprite);
-					sprite++;
+					fdEffectSprDraw(spr);
+					spr++;
 				}
 				state->heights[i]++;
 			}
@@ -1032,14 +1031,14 @@ CUE SceneCues[] = {
    dbPsynergyTestUpdateRings to the actor. */
 void dbPsynergyTestStartRings(ACTOR *actor, SPARKLE_STATE *state)
 {
-	EFFECT_SPR *sprite;
+	EFFECT_SPR *spr;
 	Sint32		tile;
 	Sint32		row;
 	Sint32		col;
-	Sint32		offset;
+	Sint32		ofs;
 
 	state->vramEntry = syVRAMCacheFindFreeEntry();
-	mnVRAMLoad(state->vramEntry, 8 * TILE_SIZE_4BPP, LightRing_Tiles);
+	mnVRAMLoad(state->vramEntry, 8 * TILE_SIZE_4BPP, LightRingTiles);
 	state->nextPair = 0;
 	state->heights[0] = RING_NOT_STARTED;
 	state->heights[1] = RING_NOT_STARTED;
@@ -1051,14 +1050,14 @@ void dbPsynergyTestStartRings(ACTOR *actor, SPARKLE_STATE *state)
 	actor->watchedActor = (union FIELD_OBJECT *)state;
 	for(row = 0; row <= 1; row++) {
 		col = 1;
-		offset = (row * 2) * sizeof(EFFECT_SPR);
-		sprite = (EFFECT_SPR *)(offset + (Sint32)state);
+		ofs = (row * 2) * sizeof(EFFECT_SPR);
+		spr = (EFFECT_SPR *)(ofs + (Sint32)state);
 		for(; col >= 0; col--) {
-			fdEffectSprInit(sprite, 16, 16, OBJ_SIZE_32X16, tile);
-			sprite->oam.fullCol = 0;
-			sprite->oam.pal = 0;
-			sprite->oam.pri = fdActorGetSprPriority(actor);
-			sprite++;
+			fdEffectSprInit(spr, 16, 16, OBJ_SIZE_32X16, tile);
+			spr->oam.fullCol = 0;
+			spr->oam.pal = 0;
+			spr->oam.pri = fdActorGetSprPriority(actor);
+			spr++;
 		}
 	}
 }

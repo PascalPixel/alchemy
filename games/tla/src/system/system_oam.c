@@ -1,4 +1,4 @@
-/* The frame's sprite lists: affine matrices and depth slots. Part of
+/* The tick's sprite lists: affine matrices and depth slots. Part of
    system.c. */
 
 enum {
@@ -6,37 +6,37 @@ enum {
 	RENDER_DEPTH_SLOT_COUNT = 256 /* depth slots a sprite is linked into */
 };
 
-/* Starts a new frame of sprites: frees the affine matrices and clears the masks
+/* Starts a new tick of sprites: frees the affine matrices and clears the masks
    of the depth slots sprites are linked into, a bit a slot. */
-void syOAMResetFrame(void)
+void syOAMResetTick(void)
 {
 	OamMatrixCount = 0;
 	syWordsClearEntry(OamDepthMasks, RENDER_DEPTH_SLOT_COUNT / 8);
 }
 
-/* Hands out the next OAM affine matrix for a sprite drawn with `source`'s scale
+/* Hands out the next OAM affine matrix for a sprite drawn with `src`'s scale
    and rotation and fills it in. Returns the matrix number, or the last
    (OBJ_AFFINE_MATRIX_COUNT - 1) when all are taken. */
-Sint32 syOAMMatrixAllocFromTransform(AFFINE_TRANSFORM *source)
+Sint32 syOAMMatrixAllocFromTransform(AFFINE_TRANSFORM *src)
 {
 	AFFINE_MATRIX *matrix;
 	Sint16		  *coefficient;
 	Sint32		   xScale;
 	Sint32		   yScale;
-	Sint32		   angle;
-	Uint8		   index;
+	Sint32		   ang;
+	Uint8		   idx;
 
-	xScale = (Sint16)source->scaleX;
-	angle = source->ang;
-	yScale = (Sint16)source->scaleY;
-	index = OamMatrixCount;
-	if(index >= OBJ_AFFINE_MATRIX_COUNT)
+	xScale = (Sint16)src->scaleX;
+	ang = src->ang;
+	yScale = (Sint16)src->scaleY;
+	idx = OamMatrixCount;
+	if(idx >= OBJ_AFFINE_MATRIX_COUNT)
 		return OBJ_AFFINE_MATRIX_COUNT - 1;
 
-	matrix = &OamMatrices[index];
+	matrix = &OamMatrices[idx];
 	coefficient = matrix->coefficients;
-	OamMatrixCount = index + 1;
-	if((xScale == yScale || xScale == -yScale) && angle == 0) {
+	OamMatrixCount = idx + 1;
+	if((xScale == yScale || xScale == -yScale) && ang == 0) {
 		/* Unrotated and evenly scaled (or mirrored): pa and pd are the scale's
 		   reciprocals (toFIXED(1) / scale, the 8.8 inverse of an 8.8 scale), pb
 		   and pc 0, two halfwords to a row. */
@@ -56,8 +56,8 @@ Sint32 syOAMMatrixAllocFromTransform(AFFINE_TRANSFORM *source)
 		FIXED sine;
 		FIXED cosine;
 
-		sine = sySin(angle);
-		cosine = syCos(angle);
+		sine = sySin(ang);
+		cosine = syCos(ang);
 		*coefficient = cosine / xScale;
 		coefficient++;
 		*coefficient = sine / xScale;
@@ -67,7 +67,7 @@ Sint32 syOAMMatrixAllocFromTransform(AFFINE_TRANSFORM *source)
 		*coefficient = cosine / yScale;
 	}
 
-	return index;
+	return idx;
 }
 
 /* As syOAMAddSprAtDepth, with the depth clamped below OAM_DEPTH_WINDOW, so that
@@ -89,10 +89,10 @@ void syOAMAddSprAtDepthClamped(void *entry, Sint32 slot)
 	buckets = OamDepthLists;
 	if(((Uint32)*mask >> bit) & 1) {
 		void **head = &buckets[slot];
-		void  *previous = *head;
+		void  *prev = *head;
 
 		*head = entry;
-		*(void **)entry = previous;
+		*(void **)entry = prev;
 	} else {
 		*mask |= 1 << bit;
 		buckets[slot] = entry;
@@ -101,7 +101,7 @@ void syOAMAddSprAtDepthClamped(void *entry, Sint32 slot)
 }
 
 /* Links a sprite entry at the head of depth slot `slot`'s list (clamped to the
-   RENDER_DEPTH_SLOT_COUNT slots) for this frame, and marks the slot taken. */
+   RENDER_DEPTH_SLOT_COUNT slots) for this tick, and marks the slot taken. */
 void syOAMAddSprAtDepth(void *entry, Sint32 slot)
 {
 	Uint8 *mask;
@@ -116,10 +116,10 @@ void syOAMAddSprAtDepth(void *entry, Sint32 slot)
 	head = &OamDepthLists[slot];
 	bit = slot & 7;
 	if(((Uint32)*mask >> bit) & 1) {
-		void *previous = *head;
+		void *prev = *head;
 
 		*head = entry;
-		*(void **)entry = previous;
+		*(void **)entry = prev;
 	} else {
 		*mask |= 1 << bit;
 		*head = entry;

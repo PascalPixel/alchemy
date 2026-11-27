@@ -45,14 +45,14 @@
    Seal names them. */
 #define ITEM_BREAK_SHARD_MAX 24
 
-/* The steps, one a frame, in which a Psynergy's actor, Douse's rain cloud among
+/* The steps, one a tick, in which a Psynergy's actor, Douse's rain cloud among
    them, grows out of the caster on its way to the target or shrinks back into
    it: fdEffectInterpolate's tenths. */
 #define GROW_STEPS 10
 
 /* Move's hand and Carry shed the same short-lived falling particle: it falls
-   under a gravity of 0.1 pixel a frame, each frame, and is freed after 12
-   frames. */
+   under a gravity of 0.1 pixel a tick, each tick, and is freed after 12
+   ticks. */
 static inline void fdEffectInitFallingFragment(ACTOR *fragment)
 {
 	/* The caller spawns the fragment and places it. */
@@ -61,7 +61,7 @@ static inline void fdEffectInitFallingFragment(ACTOR *fragment)
 		fragment->gravity = toFIXED(1) / 10;
 		fdActorSelectAnimationStub(fragment, 0);
 		fragment->wait = 12;
-		fdActorStartScriptStub(fragment, FieldEffect_ReleaseScript);
+		fdActorStartScriptStub(fragment, FieldEffectReleaseScript);
 	}
 }
 
@@ -92,7 +92,7 @@ typedef enum MERCURY_DROPLET_STATE {
 typedef enum MARS_SPARK_STATE {
 	MARS_SPARK_AIM = 0,	   /* aimed 120 pixels up the screen from its origin */
 	MARS_SPARK_RISING = 1, /* back to MARS_SPARK_AIM once it arrives */
-	/* Stops where it arrives, hidden, and waits 40 frames. */
+	/* Stops where it arrives, hidden, and waits 40 ticks. */
 	MARS_SPARK_STOPPING = 2,
 	MARS_SPARK_AIM_LEADER = 3, /* aimed at a point by the leader */
 	MARS_SPARK_SWARMING = 4,   /* back to MARS_SPARK_AIM_LEADER on arrival */

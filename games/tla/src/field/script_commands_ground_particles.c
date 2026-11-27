@@ -53,14 +53,14 @@ void fdGroundParticlesStart(void)
 	syIOWrite16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
 	syIOWrite16(BLEND_ALPHA(8, 16), &REG_BLDALPHA);
 	syIOWrite16(0, &REG_BLDY);
-	sySetEvent(fdGroundParticlesUpdate, EVENT_PASS_FRAME);
+	sySetEvent(fdGroundParticlesUpdate, EVENT_PASS_TICK);
 }
 
 /* Event of fdRisingParticlesStart: updates the 64 rising particles; each starts
-   on the ground at a random point of the strip for 120 frames, drifts right by
-   a random amount each frame, rises with its age, and is drawn at priority 3,
-   its tile stepping back by 8 at 90 and 60 frames left and flickering between
-   two tiles every 8 frames. */
+   on the ground at a random point of the strip for 120 ticks, drifts right by
+   a random amount each tick, rises with its age, and is drawn at priority 3,
+   its tile stepping back by 8 at 90 and 60 ticks left and flickering between
+   two tiles every 8 ticks. */
 void fdRisingParticlesUpdate(void)
 {
 	RISING_PARTICLE_STATE *state = Ram_HeapSlots->weather;
@@ -99,7 +99,7 @@ void fdRisingParticlesUpdate(void)
 				particle->spr.attributes.tile =
 					state->tile + MOTE_LARGE * MOTE_PICTURE_TILES;
 			particle->spr.attributes.tile =
-				((FrameCount >> 3) & 1) * MOTE_PICTURE_TILES +
+				((TickCount >> 3) & 1) * MOTE_PICTURE_TILES +
 				particle->spr.attributes.tile;
 			particle->spr.attributes.x = x;
 			particle->spr.attributes.shape = OBJ_SHAPE_SQUARE;
@@ -117,7 +117,7 @@ void fdRisingParticlesUpdate(void)
    clears heap slot HEAP_SLOT_WEATHER, decodes the particle tiles into VRAM,
    sets each of the 64 particles' sprite words and places it on the ground at a
    random point of the strip (x 288 to 488 pixels, z 60 to 80), staggering their
-   timers by 2 frames, and schedules the update. */
+   timers by 2 ticks, and schedules the update. */
 void fdRisingParticlesStart(void)
 {
 	RISING_PARTICLE_STATE *state =
@@ -139,12 +139,12 @@ void fdRisingParticlesStart(void)
 		syVRAMCacheLoad(state->vramEntry, 6 * WEATHER_PICTURE_BYTES, tiles);
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
 	for(i = 0; i < ARRAY_COUNT(state->particles); i++, particle++) {
-		Uint32 *sprite = particle->spr.words;
+		Uint32 *spr = particle->spr.words;
 		Sint32	x;
 
-		*sprite++ = 0;
-		*sprite++ = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-		*sprite = OBJ_PRIORITY(1) | OBJ_PALETTE(WEATHER_PALETTE);
+		*spr++ = 0;
+		*spr++ = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
+		*spr = OBJ_PRIORITY(1) | OBJ_PALETTE(WEATHER_PALETTE);
 		x = syRandom() * 200 + toFIXED(288);
 		z = toFIXED(80) - syRandom() * 20;
 		particle->posX = x;
@@ -154,13 +154,13 @@ void fdRisingParticlesStart(void)
 		particle->drift = 0;
 		particle->tmr = i * 2;
 	}
-	sySetEvent(fdRisingParticlesUpdate, EVENT_PASS_FRAME);
+	sySetEvent(fdRisingParticlesUpdate, EVENT_PASS_TICK);
 }
 
 /* Event of fdMotesStart: moves and draws the 64 motes in HEAP_SLOT_WEATHER. Up
-   to eight a frame start within 128 pixels of the point the view follows and
-   live 120 frames, rising, shrinking at 90 and 60 frames left and flickering
-   every 8 frames; FLAG_WEATHER_HELD holds them where they are. */
+   to eight a tick start within 128 pixels of the point the view follows and
+   live 120 ticks, rising, shrinking at 90 and 60 ticks left and flickering
+   every 8 ticks; FLAG_WEATHER_HELD holds them where they are. */
 void fdMotesUpdate(void)
 {
 	WEATHER_STATE	 *state = Ram_HeapSlots->weather;
@@ -185,7 +185,7 @@ void fdMotesUpdate(void)
 				mote->tmr++;
 				mote->delay--;
 			}
-			/* x jitters by -1 or 0, and y is the frames left in pixels above
+			/* x jitters by -1 or 0, and y is the ticks left in pixels above
 			   the spot; a quarter of the delay, which builds up as it ages,
 			   lifts it further. */
 			firstJitterDraw = syRandom();
@@ -207,7 +207,7 @@ void fdMotesUpdate(void)
 					mote->tile =
 						state->tileBase + MOTE_LARGE * MOTE_PICTURE_TILES;
 				}
-				if((FrameCount >> 3) & 1)
+				if((TickCount >> 3) & 1)
 					mote->tile += MOTE_PICTURE_TILES;
 				mote->x = x;
 				mote->y = y - (mote->delay >> 2);

@@ -1,4 +1,4 @@
-/* The palette fades: a fade between two built palettes over a number of frames,
+/* The palette fades: a fade between two built palettes over a number of ticks,
    and the palettes it builds from the shown one. Part of field_mode.c. */
 
 /* The palette fade works on 224 BG colours and then 224 OBJ colours, each as B,
@@ -7,29 +7,29 @@
 #define FADE_COLORS		 (FADE_HALF_COLORS * 2)
 #define FADE_CHANNELS	 (FADE_COLORS * 3)
 
-/* Sets each colour channel of step to the amount to add each frame for source
-   to reach target in frames frames; with frames 0 or less step is left as it
+/* Sets each colour channel of step to the amount to add each tick for source
+   to reach target in ticks ticks; with ticks 0 or less step is left as it
    was. */
 void fdPaletteFadeCalcSteps(
-	Sint16 *source, Sint16 *target, Sint16 *step, Sint32 frames)
+	Sint16 *src, Sint16 *tgt, Sint16 *step, Sint32 ticks)
 {
 	Sint32 i;
-	Sint32 sourceChannel;
-	Sint32 targetChannel;
+	Sint32 srcChannel;
+	Sint32 tgtChannel;
 
-	if(frames > 0) {
+	if(ticks > 0) {
 		for(i = 0; i < FADE_CHANNELS; i++) {
-			sourceChannel = *source;
-			targetChannel = *target;
-			*step = syIntegerDivide(targetChannel - sourceChannel, frames);
-			source++;
-			target++;
+			srcChannel = *src;
+			tgtChannel = *tgt;
+			*step = syIntegerDivide(tgtChannel - srcChannel, ticks);
+			src++;
+			tgt++;
 			step++;
 		}
 	}
 }
 
-/* Each frame (unless FLAG_PALETTE_BLEND_HELD is set): moves the palette fade
+/* Each tick (unless FLAG_PALETTE_BLEND_HELD is set): moves the palette fade
    one step toward its target, packs it into RGB555 and queues it for the BG and
    OBJ palettes. */
 void fdPaletteFadeUpdate(void)
@@ -44,12 +44,12 @@ void fdPaletteFadeUpdate(void)
 	if(state->duration == 0) {
 		return;
 	}
-	/* On the last frame the target itself is copied, so rounding in the steps
+	/* On the last tick the target itself is copied, so rounding in the steps
 	   never leaves the colours short. */
 	if(++state->step < state->duration) {
-		Uint16 *currentChannel = state->cur;
+		Uint16 *curChannel = state->cur;
 		for(i = 0; i < FADE_CHANNELS; i++) {
-			*currentChannel++ += *channelDelta++;
+			*curChannel++ += *channelDelta++;
 		}
 	} else {
 		syWordsCopy(state->cur, state->tgt, sizeof(state->cur));
@@ -60,16 +60,16 @@ void fdPaletteFadeUpdate(void)
 	{
 		Uint16 *packed = state->packed[1 ^ state->page];
 		Sint32	blueMask = BLUE_BITS;
-		Uint16 *current;
+		Uint16 *cur;
 
 		i = FADE_COLORS;
-		current = state->cur;
+		cur = state->cur;
 		for(; i != 0; i--) {
-			*packed++ = (current[0] & blueMask) |
-				(((Sint16)current[1] >> (RGB_BLUE_SHIFT - RGB_GREEN_SHIFT)) &
+			*packed++ = (cur[0] & blueMask) |
+				(((Sint16)cur[1] >> (RGB_BLUE_SHIFT - RGB_GREEN_SHIFT)) &
 					GREEN_BITS) |
-				(((Sint16)current[2] >> RGB_BLUE_SHIFT) & RED_BITS);
-			current += 3;
+				(((Sint16)cur[2] >> RGB_BLUE_SHIFT) & RED_BITS);
+			cur += 3;
 		}
 	}
 
@@ -95,20 +95,20 @@ void fdPaletteFadeUpdate(void)
 void fdPaletteFadeBuild(Uint32 mode, Uint16 *src, Uint16 *dst, Sint32 half)
 {
 	Uint32 i;
-	Uint32 colorCount = FADE_COLORS;
+	Uint32 colCnt = FADE_COLORS;
 	Sint32 red;
 	Sint32 blue;
-	Uint32 color;
+	Uint32 col;
 	Sint32 green;
 
 	if(mode == PALETTE_TINT_FROM_SOURCE)
 		mode = *(Uint16 *)BG_PLTT;
 	if(half == PALETTES_BG) {
-		colorCount = FADE_HALF_COLORS;
+		colCnt = FADE_HALF_COLORS;
 	} else if(half == PALETTES_OBJECTS) {
 		dst += FADE_HALF_COLORS * 3;
 		src += FADE_HALF_COLORS;
-		colorCount = FADE_HALF_COLORS;
+		colCnt = FADE_HALF_COLORS;
 	}
 
 	/* One colour: write it once, then let DMA copy it over the rest. The copy
@@ -117,53 +117,51 @@ void fdPaletteFadeBuild(Uint32 mode, Uint16 *src, Uint16 *dst, Sint32 half)
 		*dst++ = mode & BLUE_BITS;
 		*dst++ = (mode & GREEN_BITS) << (RGB_BLUE_SHIFT - RGB_GREEN_SHIFT);
 		*dst++ = (mode & RED_BITS) << RGB_BLUE_SHIFT;
-		syDMAXCopy(dst - 3, dst,
-			DMA_COPY_HALFWORDS(((colorCount - 1) * 6) >> 1), REG_DMA3);
+		syDMAXCopy(dst - 3, dst, DMA_COPY_HALFWORDS(((colCnt - 1) * 6) >> 1),
+			REG_DMA3);
 	} else if(mode < PALETTE_TINT_FLAGS) {
 		switch(mode) {
 		case PALETTE_TINT_GRAYSCALE: /* grey of brightness (2R + 4G + B) / 7 */
-			for(i = 0; i < colorCount; i++) {
-				color = *src++;
-				red = ((color << BRIGHTNESS_RED_SHIFT) &
+			for(i = 0; i < colCnt; i++) {
+				col = *src++;
+				red = ((col << BRIGHTNESS_RED_SHIFT) &
 					(RED_BITS << BRIGHTNESS_RED_SHIFT));
-				green = ((color << BRIGHTNESS_GREEN_SHIFT) &
+				green = ((col << BRIGHTNESS_GREEN_SHIFT) &
 					(GREEN_BITS << BRIGHTNESS_GREEN_SHIFT));
-				blue = (color & BLUE_BITS);
-				color = syIntegerDivide(red + green + blue, 7);
-				dst[i * 3 + 0] = color;
-				dst[i * 3 + 1] = color;
-				dst[i * 3 + 2] = color;
+				blue = (col & BLUE_BITS);
+				col = syIntegerDivide(red + green + blue, 7);
+				dst[i * 3 + 0] = col;
+				dst[i * 3 + 1] = col;
+				dst[i * 3 + 2] = col;
 			}
 			break;
 		/* a third of R + G + B, B three steps darker */
 		case PALETTE_TINT_DIM_GRAY:
-			for(i = 0; i < colorCount; i++) {
-				color = *src++;
-				red = RGB_RED(color);
-				color = syIntegerDivide(
-					red + RGB_GREEN(color) + RGB_BLUE(color), 3);
-				red = color - 1;
+			for(i = 0; i < colCnt; i++) {
+				col = *src++;
+				red = RGB_RED(col);
+				col = syIntegerDivide(red + RGB_GREEN(col) + RGB_BLUE(col), 3);
+				red = col - 1;
 				green = red;
 				red = fdPaletteFadeClampComponent(red);
 				green = fdPaletteFadeClampComponent(green);
-				blue = color - 3;
+				blue = col - 3;
 				blue = fdPaletteFadeClampComponent(blue);
-				dst[0] = FieldEffect_ChannelCurveLight[blue];
-				dst[1] = FieldEffect_ChannelCurveLight[green];
-				dst[2] = FieldEffect_ChannelCurveLight[red];
+				dst[0] = FieldEffectChannelCurveLight[blue];
+				dst[1] = FieldEffectChannelCurveLight[green];
+				dst[2] = FieldEffectChannelCurveLight[red];
 				dst += 3;
 			}
 			break;
 		case PALETTE_TINT_SEPIA: /* the brightness, red stronger */
-			for(i = 0; i < colorCount; i++) {
-				color = *src++;
-				red = RGB_RED(color);
-				green = RGB_GREEN(color);
-				blue = RGB_BLUE(color);
-				color =
-					syIntegerDivide(red + green + blue, SEPIA_SHADE_DIVISOR);
-				red = color * 4 + 5;
-				blue = color * 3 + 5;
+			for(i = 0; i < colCnt; i++) {
+				col = *src++;
+				red = RGB_RED(col);
+				green = RGB_GREEN(col);
+				blue = RGB_BLUE(col);
+				col = syIntegerDivide(red + green + blue, SEPIA_SHADE_DIVISOR);
+				red = col * 4 + 5;
+				blue = col * 3 + 5;
 				green = blue;
 				if(red < SEPIA_LEVEL_MIN)
 					red = SEPIA_LEVEL_MIN;
@@ -177,18 +175,18 @@ void fdPaletteFadeBuild(Uint32 mode, Uint16 *src, Uint16 *dst, Sint32 half)
 					green = SEPIA_LEVEL_MAX;
 				if(blue > SEPIA_LEVEL_MAX)
 					blue = SEPIA_LEVEL_MAX;
-				*dst++ = FieldEffect_ChannelCurveLight[blue];
-				*dst++ = FieldEffect_ChannelCurveLight[green];
-				*dst++ = FieldEffect_ChannelCurveLight[red];
+				*dst++ = FieldEffectChannelCurveLight[blue];
+				*dst++ = FieldEffectChannelCurveLight[green];
+				*dst++ = FieldEffectChannelCurveLight[red];
 			}
 			break;
 		/* half R + 10, two thirds G + 8, B - 7 (black stays black) */
 		case PALETTE_TINT_WARM:
-			for(i = 0; i < colorCount; i++) {
-				color = *src++;
-				red = RGB_RED(color);
-				green = RGB_GREEN(color);
-				blue = RGB_BLUE(color);
+			for(i = 0; i < colCnt; i++) {
+				col = *src++;
+				red = RGB_RED(col);
+				green = RGB_GREEN(col);
+				blue = RGB_BLUE(col);
 				if((red | green | blue) != 0) {
 					red -= (Uint32)red >> 1;
 					green -= green / 3;
@@ -199,17 +197,17 @@ void fdPaletteFadeBuild(Uint32 mode, Uint16 *src, Uint16 *dst, Sint32 half)
 					green = fdPaletteFadeClampComponent(green);
 					blue = fdPaletteFadeClampComponent(blue);
 				}
-				*dst++ = FieldEffect_ChannelCurveContrast[blue];
-				*dst++ = FieldEffect_ChannelCurveLight[green];
-				*dst++ = FieldEffect_ChannelCurve[red];
+				*dst++ = FieldEffectChannelCurveContrast[blue];
+				*dst++ = FieldEffectChannelCurveLight[green];
+				*dst++ = FieldEffectChannelCurve[red];
 			}
 			break;
 		case PALETTE_TINT_MUTED: /* narrow the range, G and B + 2 */
-			for(i = 0; i < colorCount; i++) {
-				color = *src++;
-				red = RGB_RED(color);
-				green = RGB_GREEN(color);
-				blue = RGB_BLUE(color);
+			for(i = 0; i < colCnt; i++) {
+				col = *src++;
+				red = RGB_RED(col);
+				green = RGB_GREEN(col);
+				blue = RGB_BLUE(col);
 				/* The first colour stays as it is. */
 				if(i != 0) {
 					if(red < 8)
@@ -230,19 +228,19 @@ void fdPaletteFadeBuild(Uint32 mode, Uint16 *src, Uint16 *dst, Sint32 half)
 					green = fdPaletteFadeClampComponent(green);
 					blue = fdPaletteFadeClampComponent(blue);
 				}
-				*dst++ = FieldEffect_ChannelCurve[blue];
-				*dst++ = FieldEffect_ChannelCurve[green];
-				*dst++ = FieldEffect_ChannelCurve[red];
+				*dst++ = FieldEffectChannelCurve[blue];
+				*dst++ = FieldEffectChannelCurve[green];
+				*dst++ = FieldEffectChannelCurve[red];
 			}
 			break;
 		case PALETTE_TINT_PALE: /* half of each, plus the mean */
-			for(i = 0; i < colorCount; i++) {
+			for(i = 0; i < colCnt; i++) {
 				Sint32 mean;
 
-				color = *src++;
-				red = RGB_RED(color);
-				green = RGB_GREEN(color);
-				blue = RGB_BLUE(color);
+				col = *src++;
+				red = RGB_RED(col);
+				green = RGB_GREEN(col);
+				blue = RGB_BLUE(col);
 				mean = fdPaletteFadeClampComponent((red + green + blue) / 3);
 				red = (red >> 1) + mean;
 				green = (green >> 1) + mean;
@@ -250,36 +248,36 @@ void fdPaletteFadeBuild(Uint32 mode, Uint16 *src, Uint16 *dst, Sint32 half)
 				red = fdPaletteFadeClampComponent(red);
 				green = fdPaletteFadeClampComponent(green);
 				blue = fdPaletteFadeClampComponent(blue);
-				dst[0] = FieldEffect_ChannelCurveContrast[blue];
-				dst[1] = FieldEffect_ChannelCurveContrast[green];
-				dst[2] = FieldEffect_ChannelCurveContrast[red];
+				dst[0] = FieldEffectChannelCurveContrast[blue];
+				dst[1] = FieldEffectChannelCurveContrast[green];
+				dst[2] = FieldEffectChannelCurveContrast[red];
 				dst += 3;
 			}
 			break;
 		/* an eighth of G and B added to R; G and B two thirds */
 		case PALETTE_TINT_RED:
-			for(i = 0; i < colorCount; i++) {
-				color = *src++;
-				red = RGB_RED(color);
-				green = RGB_GREEN(color);
-				blue = RGB_BLUE(color);
+			for(i = 0; i < colCnt; i++) {
+				col = *src++;
+				red = RGB_RED(col);
+				green = RGB_GREEN(col);
+				blue = RGB_BLUE(col);
 				red += ((green >> 3) + (blue >> 3));
 				red = fdPaletteFadeClampComponent(red);
 				green -= green / 3;
 				blue -= blue / 3;
-				dst[0] = FieldEffect_ChannelCurve[blue];
-				dst[1] = FieldEffect_ChannelCurve[green];
-				dst[2] = FieldEffect_ChannelCurveLight[red];
+				dst[0] = FieldEffectChannelCurve[blue];
+				dst[1] = FieldEffectChannelCurve[green];
+				dst[2] = FieldEffectChannelCurveLight[red];
 				dst += 3;
 			}
 			break;
 		case PALETTE_TINT_WARM_DARK: /* half R + 6, two thirds G + 4, B - 6 */
-			for(i = 0; i < colorCount; i++) {
-				color = *src++;
-				red = RGB_RED(color);
+			for(i = 0; i < colCnt; i++) {
+				col = *src++;
+				red = RGB_RED(col);
 				red -= (Uint32)red >> 1;
-				green = RGB_GREEN(color);
-				blue = RGB_BLUE(color);
+				green = RGB_GREEN(col);
+				blue = RGB_BLUE(col);
 				green -= green / 3;
 				red += 6;
 				green += 4;
@@ -287,19 +285,19 @@ void fdPaletteFadeBuild(Uint32 mode, Uint16 *src, Uint16 *dst, Sint32 half)
 				red = fdPaletteFadeClampComponent(red);
 				green = fdPaletteFadeClampComponent(green);
 				blue = fdPaletteFadeClampComponent(blue);
-				dst[0] = FieldEffect_ChannelCurveContrast[blue];
-				dst[1] = FieldEffect_ChannelCurveLight[green];
-				dst[2] = FieldEffect_ChannelCurve[red];
+				dst[0] = FieldEffectChannelCurveContrast[blue];
+				dst[1] = FieldEffectChannelCurveLight[green];
+				dst[2] = FieldEffectChannelCurve[red];
 				dst += 3;
 			}
 			break;
 		/* a fifth off each channel of a bright colour */
 		case PALETTE_TINT_DIM_BRIGHT:
-			for(i = 0; i < colorCount; i++) {
-				color = *src++;
-				red = RGB_RED(color);
-				green = RGB_GREEN(color);
-				blue = RGB_BLUE(color);
+			for(i = 0; i < colCnt; i++) {
+				col = *src++;
+				red = RGB_RED(col);
+				green = RGB_GREEN(col);
+				blue = RGB_BLUE(col);
 				if(red + green + blue > 60) {
 					red -= red / 5;
 					green -= green / 5;
@@ -308,18 +306,18 @@ void fdPaletteFadeBuild(Uint32 mode, Uint16 *src, Uint16 *dst, Sint32 half)
 				red = fdPaletteFadeClampComponent(red);
 				green = fdPaletteFadeClampComponent(green);
 				blue = fdPaletteFadeClampComponent(blue);
-				*dst++ = FieldEffect_ChannelCurve[blue];
-				*dst++ = FieldEffect_ChannelCurve[green];
-				*dst++ = FieldEffect_ChannelCurve[red];
+				*dst++ = FieldEffectChannelCurve[blue];
+				*dst++ = FieldEffectChannelCurve[green];
+				*dst++ = FieldEffectChannelCurve[red];
 			}
 			break;
 		default: /* unchanged */
-			for(i = 0; i < colorCount; i++) {
-				color = *src++;
-				dst[i * 3 + 0] = color & BLUE_BITS;
-				dst[i * 3 + 1] = (color & GREEN_BITS)
+			for(i = 0; i < colCnt; i++) {
+				col = *src++;
+				dst[i * 3 + 0] = col & BLUE_BITS;
+				dst[i * 3 + 1] = (col & GREEN_BITS)
 					<< (RGB_BLUE_SHIFT - RGB_GREEN_SHIFT);
-				dst[i * 3 + 2] = (color & RED_BITS) << RGB_BLUE_SHIFT;
+				dst[i * 3 + 2] = (col & RED_BITS) << RGB_BLUE_SHIFT;
 			}
 			break;
 		}
@@ -336,17 +334,17 @@ void fdPaletteFadeBuild(Uint32 mode, Uint16 *src, Uint16 *dst, Sint32 half)
 		tintGreen = RGB_GREEN(mode);
 		tintBlue = mode >> RGB_BLUE_SHIFT;
 		tintBlue &= RGB_LEVEL_MAX;
-		for(i = 0; i < colorCount; i++) {
-			color = *src++;
-			red = ((color << BRIGHTNESS_RED_SHIFT) &
+		for(i = 0; i < colCnt; i++) {
+			col = *src++;
+			red = ((col << BRIGHTNESS_RED_SHIFT) &
 				(RED_BITS << BRIGHTNESS_RED_SHIFT));
-			green = ((color << BRIGHTNESS_GREEN_SHIFT) &
+			green = ((col << BRIGHTNESS_GREEN_SHIFT) &
 				(GREEN_BITS << BRIGHTNESS_GREEN_SHIFT));
-			blue = (color & BLUE_BITS);
-			color = syIntegerDivide(red + green + blue, CUSTOM_TINT_DIVISOR);
-			red = color * tintRed;
-			green = color * tintGreen;
-			blue = color * tintBlue;
+			blue = (col & BLUE_BITS);
+			col = syIntegerDivide(red + green + blue, CUSTOM_TINT_DIVISOR);
+			red = col * tintRed;
+			green = col * tintGreen;
+			blue = col * tintBlue;
 			red = fdPaletteFadeClampShiftedComponent(red);
 			green = fdPaletteFadeClampShiftedComponent(green);
 			blue = fdPaletteFadeClampShiftedComponent(blue);
@@ -372,49 +370,48 @@ void fdPaletteFadeBuild(Uint32 mode, Uint16 *src, Uint16 *dst, Sint32 half)
 		tintGreen = RGB_GREEN(mode);
 		tintBlue = mode >> RGB_BLUE_SHIFT;
 		tintBlue &= RGB_LEVEL_MAX;
-		for(i = 0; i < colorCount; i++) {
-			color = *src++;
-			red = RGB_RED(color);
-			color =
-				syIntegerDivide((red + RGB_GREEN(color) + RGB_BLUE(color)) << 4,
-					tintRed + tintGreen + tintBlue);
+		for(i = 0; i < colCnt; i++) {
+			col = *src++;
+			red = RGB_RED(col);
+			col = syIntegerDivide((red + RGB_GREEN(col) + RGB_BLUE(col)) << 4,
+				tintRed + tintGreen + tintBlue);
 			blendedRed = syMulFX(
-				toFIXED((color * tintRed) >> 4), (Sint32)toFIXED(tintRed) >> 4);
-			blendedGreen = syMulFX(toFIXED((color * tintGreen) >> 4),
+				toFIXED((col * tintRed) >> 4), (Sint32)toFIXED(tintRed) >> 4);
+			blendedGreen = syMulFX(toFIXED((col * tintGreen) >> 4),
 				(Sint32)toFIXED(tintGreen) >> 4);
-			blendedBlue = syMulFX(toFIXED((color * tintBlue) >> 4),
-				(Sint32)toFIXED(tintBlue) >> 4);
+			blendedBlue = syMulFX(
+				toFIXED((col * tintBlue) >> 4), (Sint32)toFIXED(tintBlue) >> 4);
 			clampedRed =
 				fdPaletteFadeClampComponent(FIXEDtoINT((Uint32)blendedRed));
 			clampedGreen =
 				fdPaletteFadeClampComponent(FIXEDtoINT((Uint32)blendedGreen));
 			clampedBlue =
 				fdPaletteFadeClampComponent(FIXEDtoINT((Uint32)blendedBlue));
-			dst[i * 3 + 0] = FieldEffect_ChannelCurve[clampedBlue];
-			dst[i * 3 + 1] = FieldEffect_ChannelCurve[clampedGreen];
-			dst[i * 3 + 2] = FieldEffect_ChannelCurve[clampedRed];
+			dst[i * 3 + 0] = FieldEffectChannelCurve[clampedBlue];
+			dst[i * 3 + 1] = FieldEffectChannelCurve[clampedGreen];
+			dst[i * 3 + 2] = FieldEffectChannelCurve[clampedRed];
 		}
 	} else if(mode & PALETTE_TINT_SPLIT) {
 		/* The colours unchanged, as the default tint writes them. */
-		for(i = 0; i < colorCount; i++) {
-			color = *src++;
-			dst[i * 3 + 0] = color & BLUE_BITS;
-			dst[i * 3 + 1] = (color & GREEN_BITS)
+		for(i = 0; i < colCnt; i++) {
+			col = *src++;
+			dst[i * 3 + 0] = col & BLUE_BITS;
+			dst[i * 3 + 1] = (col & GREEN_BITS)
 				<< (RGB_BLUE_SHIFT - RGB_GREEN_SHIFT);
-			dst[i * 3 + 2] = (color & RED_BITS) << RGB_BLUE_SHIFT;
+			dst[i * 3 + 2] = (col & RED_BITS) << RGB_BLUE_SHIFT;
 		}
 	} else {
 		/* Copy a ready buffer: mode is its address, and the OBJ half starts
 		   after the BG's colours of three halfwords. */
 		if(half == PALETTES_OBJECTS)
 			mode += FADE_HALF_COLORS * 3 * sizeof(Uint16);
-		syDMAXCopy((const void *)mode, dst,
-			DMA_COPY_WORDS((colorCount * 6) >> 2), REG_DMA3);
+		syDMAXCopy((const void *)mode, dst, DMA_COPY_WORDS((colCnt * 6) >> 2),
+			REG_DMA3);
 	}
 }
 
 /* Sets up the palette fade (HEAP_SLOT_PALETTE_FADE) from the BG and OBJ
-   palettes and starts updating the palettes from it each frame. */
+   palettes and starts updating the palettes from it each tick. */
 void fdPaletteFadeInit(void)
 {
 	PALETTE_FADE *state;
@@ -426,7 +423,7 @@ void fdPaletteFadeInit(void)
 	syDMAXCopy((void *)OBJ_PLTT, &state->pal[FADE_HALF_COLORS],
 		DMA_COPY_WORDS(FADE_HALF_COLORS / 2), REG_DMA3);
 	fdPaletteFadeBuild(PALETTE_TINT_NONE, state->pal, state->tgt, PALETTES_ALL);
-	sySetEvent(fdPaletteFadeUpdate, EVENT_PASS_FRAME + 15);
+	sySetEvent(fdPaletteFadeUpdate, EVENT_PASS_TICK + 15);
 }
 
 /* Stops the palette fade and frees it. */
@@ -459,12 +456,12 @@ void fdPaletteFadeSetSource(Sint32 mode, Sint32 half)
 
 /* Sets the backdrop colour (BG colour 0) of the palette fade's copy of the
    palettes, from which it builds its colours. */
-void fdPaletteFadeSetBackdrop(Uint32 color)
+void fdPaletteFadeSetBackdrop(Uint32 col)
 {
 	PALETTE_FADE *state = Ram_HeapSlots->palFade;
 
 	if(state != NULL) {
-		state->pal[0] = color;
+		state->pal[0] = col;
 	}
 }
 
@@ -475,37 +472,37 @@ void fdPaletteFadePackTarget(void)
 	PALETTE_FADE *state = Ram_HeapSlots->palFade;
 	Uint16		 *packed = state->pal;
 	Sint32		  blueMask = BLUE_BITS;
-	Uint16		 *current;
+	Uint16		 *cur;
 	Sint32		  i;
 
 	i = FADE_COLORS;
-	current = state->tgt;
+	cur = state->tgt;
 	for(; i != 0; i--) {
-		*packed++ = (current[0] & blueMask) |
-			((current[1] >> (RGB_BLUE_SHIFT - RGB_GREEN_SHIFT)) & GREEN_BITS) |
-			((current[2] >> RGB_BLUE_SHIFT) & RED_BITS);
-		current += 3;
+		*packed++ = (cur[0] & blueMask) |
+			((cur[1] >> (RGB_BLUE_SHIFT - RGB_GREEN_SHIFT)) & GREEN_BITS) |
+			((cur[2] >> RGB_BLUE_SHIFT) & RED_BITS);
+		cur += 3;
 	}
 	/* FAKEMATCH(dead): a decrement of state, which nothing reads after it. */
 	state--;
 }
 
-/* Starts the fade from the shown colours to the target colours, over frames
-   frames. */
-void fdPaletteFadeStartInterpolation(Sint32 frames)
+/* Starts the fade from the shown colours to the target colours, over ticks
+   ticks. */
+void fdPaletteFadeStartInterpolation(Sint32 ticks)
 {
 	PALETTE_FADE *state = Ram_HeapSlots->palFade;
 
 	if(state != NULL) {
-		state->duration = frames;
+		state->duration = ticks;
 		state->step = 0;
-		fdPaletteFadeCalcSteps(state->cur, state->tgt, state->delta, frames);
+		fdPaletteFadeCalcSteps(state->cur, state->tgt, state->delta, ticks);
 	}
 }
 
 /* Takes colors as the BG colours of the palette copy and makes them, unchanged,
    the BG colours' target. */
-void fdPaletteFadeLoadPalette(const Uint16 *colors)
+void fdPaletteFadeLoadPalette(const Uint16 *cols)
 {
 	PALETTE_FADE *state = Ram_HeapSlots->palFade;
 
@@ -513,7 +510,7 @@ void fdPaletteFadeLoadPalette(const Uint16 *colors)
 		Sint32 (*copy)(void *destination, const void *source, Sint32 size) =
 			syWordsCopyEntry;
 
-		copy(state->pal, colors, FADE_HALF_COLORS * sizeof(Uint16));
+		copy(state->pal, cols, FADE_HALF_COLORS * sizeof(Uint16));
 		fdPaletteFadeBuild(
 			PALETTE_TINT_NONE, state->pal, state->tgt, PALETTES_BG);
 	}

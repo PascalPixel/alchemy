@@ -38,7 +38,7 @@ typedef enum BURST_SHOWER_MODE {
 typedef enum BURST_SHOWER_SHEET {
 	BURST_SHOWER_BUBBLE = 4096,	 /* the bubble, each row written twice */
 	BURST_SHOWER_PICTURE = 3158, /* the mode's bursts, faces, bolts or rocks */
-	/* Gravel Blow's rock shards, as Spire_ShardPictures counts from them. */
+	/* Gravel Blow's rock shards, as SpireShardPictures counts from them. */
 	BURST_SHOWER_ROCK_SHARDS = 5266,
 	BURST_SHOWER_DJINNI = 26048 /* the prelude's small Djinni */
 } BURST_SHOWER_SHEET;
@@ -63,9 +63,9 @@ typedef enum BURST_SHOWER_SHEET {
 #define FLASH_BURST_HOLES(picture) ((picture) * 512 + 1024)
 #define SMOKE_PUFF_HOLES(picture)  ((picture) * 256 + 512)
 
-#define BURST_SHOWER_BURSTS		48 /* one fired a frame from frame 0 */
-#define BURST_SHOWER_BURST_LIFE 24 /* frames each shot lives */
-#define BURST_SHOWER_NOTE_LIFE	32 /* frames each music note lives */
+#define BURST_SHOWER_BURSTS		48 /* one fired a tick from tick 0 */
+#define BURST_SHOWER_BURST_LIFE 24 /* ticks each shot lives */
+#define BURST_SHOWER_NOTE_LIFE	32 /* ticks each music note lives */
 /* Aging Gas fires AGING_GAS_BURSTS shots, and AGING_GAS_MOTES motes burst from
    the first target, of which the first AGING_GAS_DRAWN_MOTES are drawn into the
    user. */
@@ -268,9 +268,9 @@ void btEffectRunFireDance(BATTLE_EFFECT_PARM *args)
 	fdActorSetAnimationSpeedStub(actor, ANIM_STEP_NORMAL);
 }
 
-/* The user fires one shot a frame at a point near one of the targets, taking
+/* The user fires one shot a tick at a point near one of the targets, taking
    them in turn, and each target is hit in turn; the blend fades over the last
-   eight frames. The mode picks the picture (flash bursts, music notes, hearts,
+   eight ticks. The mode picks the picture (flash bursts, music notes, hearts,
    smoke, bubbles, demon faces, rock shards) and how it is prepared, the
    colours, the blending and where the shots leave from. Storm Breath shows a
    violet lightning bolt at the user instead; Aging Gas also draws motes into
@@ -281,20 +281,20 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 {
 	void				*canvas;
 	BATTLE_EFFECT_STATE *state;
-	Sint32				 frame;
+	Sint32				 frm;
 	Uint8				*sheet;
-	Sint32				 target;
+	Sint32				 tgt;
 	Sint32				 i;
 	Sint32				 j;
-	Sint32				 launchFrames;
+	Sint32				 launchTicks;
 	Sint32				 row;
 	Sint32				 column;
 
 	Uint8		  *palette;
 	Sint32		   origin[3];
-	Sint32		   djinniTarget[3];
-	SCREEN_POINT   userPosition;
-	SCREEN_POINT   targets[8];
+	Sint32		   djinniTgt[3];
+	SCREEN_POINT   userPos;
+	SCREEN_POINT   tgts[8];
 	SCREEN_POINT   aim;
 	SCREEN_POINT   screen;
 	DRAW_RECTANGLE pair[2];
@@ -322,14 +322,14 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			btEffectRunDjinniEntrance(args,
 				DJINNI_ENTRANCE(
 					ELEMENT_MARS, args->side, DJINNI_ANCHOR_OVER_USER),
-				origin, djinniTarget);
+				origin, djinniTgt);
 			btResourceLoadAndDecompress(RESOURCE_MARS_DJINN_SMALL_SHEET,
 				state->sheet + BURST_SHOWER_DJINNI, 1, 0);
 		} else {
 			btEffectRunDjinniEntrance(args,
 				DJINNI_ENTRANCE(
 					ELEMENT_VENUS, args->side, DJINNI_ANCHOR_OVER_USER),
-				origin, djinniTarget);
+				origin, djinniTgt);
 			btResourceLoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET,
 				state->sheet + BURST_SHOWER_DJINNI, 1, 0);
 		}
@@ -562,24 +562,24 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	EFFECT_FREE_PARTICLES(i, state->particles, 64);
 	{
-		Sint32		  showerFrames;
+		Sint32		  showerTicks;
 		SCREEN_POINT *user;
 		Sint32		  k;
 		if(mode == BURST_SHOWER_MODE_PETRA ||
 			mode == BURST_SHOWER_MODE_FIRE_DANCE ||
 			mode == BURST_SHOWER_MODE_DESERT_GASP)
-			showerFrames = 32;
+			showerTicks = 32;
 		else if(mode == BURST_SHOWER_MODE_GRAVEL_BLOW)
-			showerFrames = 64;
+			showerTicks = 64;
 		else if(mode == BURST_SHOWER_MODE_HEAT_KISS)
-			showerFrames = 48;
+			showerTicks = 48;
 		else
-			showerFrames = 56;
+			showerTicks = 56;
 
 		/* Where the shots leave from, and where the targets are. */
-		btEffectPosProjectSpr(args->user, user = &userPosition);
+		btEffectPosProjectSpr(args->user, user = &userPos);
 		for(i = 0; i != args->tgtCnt; i++)
-			btEffectPosProjectScaledBattler(args->tgts[i], &targets[i]);
+			btEffectPosProjectScaledBattler(args->tgts[i], &tgts[i]);
 		if(mode == BURST_SHOWER_MODE_TOXIC_BREATH ||
 			mode == BURST_SHOWER_MODE_BLACK_ICE) {
 			if(args->side == EFFECT_SIDE_ENEMIES)
@@ -623,7 +623,7 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 		if(mode == BURST_SHOWER_MODE_AGING_GAS) {
 			user->y -= 24;
 			for(i = 0; i != args->tgtCnt; i++)
-				targets[i].y += 80;
+				tgts[i].y += 80;
 		}
 		if(mode == BURST_SHOWER_MODE_DJINNI) {
 			if(args->side == EFFECT_SIDE_PARTY)
@@ -663,18 +663,17 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			}
 		}
 
-		for(frame = 0; frame != showerFrames; frame++) {
-			target = frame % args->tgtCnt;
+		for(frm = 0; frm != showerTicks; frm++) {
+			tgt = frm % args->tgtCnt;
 
-			/* Fade out over the last eight frames. */
-			if(frame >= showerFrames - 8)
-				REG_BLDALPHA =
-					EFFECT_BLEND_CANVAS(-((frame - showerFrames) * 2));
-			if(mode == BURST_SHOWER_MODE_PETRA && frame > 15)
+			/* Fade out over the last eight ticks. */
+			if(frm >= showerTicks - 8)
+				REG_BLDALPHA = EFFECT_BLEND_CANVAS(-((frm - showerTicks) * 2));
+			if(mode == BURST_SHOWER_MODE_PETRA && frm > 15)
 				btEffectStepPaletteToResource(RESOURCE_CYAN_PALETTE);
-			if(mode == BURST_SHOWER_MODE_AGING_GAS && frame > 31)
+			if(mode == BURST_SHOWER_MODE_AGING_GAS && frm > 31)
 				btEffectStepPaletteToResource(RESOURCE_BLAST_SHEET);
-			if(frame == 4) {
+			if(frm == 4) {
 				if(mode == BURST_SHOWER_MODE_FUGUE ||
 					mode == BURST_SHOWER_MODE_DJINNFEST)
 					sySndPlayStub(MUS_VERY_LUCKY);
@@ -684,25 +683,25 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			if(mode == BURST_SHOWER_MODE_PETRA) {
 				/* Petra shows no damage during the shower. */
 			} else if(mode == BURST_SHOWER_MODE_GREY) {
-				if(frame == 60)
+				if(frm == 60)
 					EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			} else if(mode == BURST_SHOWER_MODE_CHAR) {
-				if(frame == 48)
+				if(frm == 48)
 					EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-			} else if(frame == 24) {
+			} else if(frm == 24) {
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			}
 
-			/* The Djinni sways, and after frame 56 rises two pixels a frame. */
+			/* The Djinni sways, and after tick 56 rises two pixels a tick. */
 			if(args->prelude == 1) {
-				Sint32 x = (FIXEDtoINT(-sySin(frame * (TRIG_TURN / 32)) * 4)) +
+				Sint32 x = (FIXEDtoINT(-sySin(frm * (TRIG_TURN / 32)) * 4)) +
 					origin[0] / 2 - SMALL_DJINNI_WIDTH / 2;
-				Sint32 y = (FIXEDtoINT(syCos(frame * (TRIG_TURN / 32)) * 2)) +
+				Sint32 y = (FIXEDtoINT(syCos(frm * (TRIG_TURN / 32)) * 2)) +
 					origin[1] - 24;
 
-				if(frame > 56)
-					y = y - frame * 2 + 112;
-				if(frame <= 3)
+				if(frm > 56)
+					y = y - frm * 2 + 112;
+				if(frm <= 3)
 					pair[1](canvas, state->sheet + BURST_SHOWER_DJINNI, x, y,
 						SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
 				pair[1](canvas, state->sheet + BURST_SHOWER_DJINNI, x, y,
@@ -711,26 +710,26 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 
 			if(mode == BURST_SHOWER_MODE_LIGHTNING ||
 				mode == BURST_SHOWER_MODE_STORM_BREATH_STRONG) {
-				/* One big picture at the user, three frames a picture. */
+				/* One big picture at the user, three ticks a picture. */
 				if(args->side == EFFECT_SIDE_PARTY)
 					pair[0](canvas,
 						state->sheet + BURST_SHOWER_PICTURE +
-							frame / 3 % 3 * VIOLET_LIGHTNING_BYTES,
+							frm / 3 % 3 * VIOLET_LIGHTNING_BYTES,
 						user->x - 2, user->y - 32, VIOLET_LIGHTNING_WIDTH,
 						VIOLET_LIGHTNING_HEIGHT);
 				else
 					pair[0](canvas,
 						state->sheet + BURST_SHOWER_PICTURE +
-							frame / 3 % 3 * VIOLET_LIGHTNING_BYTES,
+							frm / 3 % 3 * VIOLET_LIGHTNING_BYTES,
 						user->x - 70, user->y - 32, VIOLET_LIGHTNING_WIDTH,
 						VIOLET_LIGHTNING_HEIGHT);
 			} else {
-				/* Launch a shot at a point near this frame's target. */
-				aim.x = targets[target].x + (syRandom() & 31) - 16;
+				/* Launch a shot at a point near this tick's target. */
+				aim.x = tgts[tgt].x + (syRandom() & 31) - 16;
 				if(mode == BURST_SHOWER_MODE_FUGUE ||
 					mode == BURST_SHOWER_MODE_DJINNFEST ||
 					mode == BURST_SHOWER_MODE_FIRE_DANCE_ENEMY)
-					aim.y = targets[target].y + (syRandom() & 127) - 32;
+					aim.y = tgts[tgt].y + (syRandom() & 127) - 32;
 				else if(mode == BURST_SHOWER_MODE_TOXIC_BREATH ||
 					mode == BURST_SHOWER_MODE_BLACK_ICE ||
 					mode == BURST_SHOWER_MODE_HEAT_KISS ||
@@ -738,23 +737,22 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 					mode == BURST_SHOWER_MODE_DARKSOL_GASP ||
 					mode == BURST_SHOWER_MODE_FURY ||
 					mode == BURST_SHOWER_MODE_TYPHOON_BLOW)
-					aim.y = targets[target].y + (syRandom() & 127) - 64;
+					aim.y = tgts[tgt].y + (syRandom() & 127) - 64;
 				else if(mode == BURST_SHOWER_MODE_CHAR)
-					aim.y = targets[target].y + syRandom() % 96 - 32;
+					aim.y = tgts[tgt].y + syRandom() % 96 - 32;
 				else if(mode == BURST_SHOWER_MODE_FIRE_DANCE) {
 					/* The random height is thrown away; Fire Dance's shots
 					   weave. */
-					aim.y = targets[target].y + (syRandom() & 255) - 192;
-					aim.y = targets[target].y +
-						(FIXEDtoINT(sySin(frame * (TRIG_TURN / 16)) << 8)) -
-						128;
+					aim.y = tgts[tgt].y + (syRandom() & 255) - 192;
+					aim.y = tgts[tgt].y +
+						(FIXEDtoINT(sySin(frm * (TRIG_TURN / 16)) << 8)) - 128;
 				} else
-					aim.y = targets[target].y + (syRandom() & 63) - 16;
-				launchFrames = AGING_GAS_BURSTS;
+					aim.y = tgts[tgt].y + (syRandom() & 63) - 16;
+				launchTicks = AGING_GAS_BURSTS;
 				if(mode != BURST_SHOWER_MODE_AGING_GAS)
-					launchFrames = BURST_SHOWER_BURSTS;
-				if(frame < launchFrames) {
-					PARTICLE *shot = &state->particles[frame];
+					launchTicks = BURST_SHOWER_BURSTS;
+				if(frm < launchTicks) {
+					PARTICLE *shot = &state->particles[frm];
 					/* the canvas is half as wide */
 					Sint32 x = user->x * (toFIXED(1) / 2);
 					Sint32 y;
@@ -815,7 +813,7 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 					/* Every other shot, wobbling up and down. */
 					if(i & 1) {
 						Sint32 y = shot->y +
-							(sySin((i * 2 + frame) * (TRIG_TURN / 32)) << 5);
+							(sySin((i * 2 + frm) * (TRIG_TURN / 32)) << 5);
 
 						pair[1](canvas,
 							state->sheet + picture * PICTURE_BYTES(MUSIC_NOTE),
@@ -825,10 +823,10 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 					}
 				} else if(mode == BURST_SHOWER_MODE_GRAVEL_BLOW) {
 					Sint32		 picture = i % 5 * 3 + age % 3;
-					Uint32		 width = Spire_ShardWidths[picture];
+					Uint32		 width = SpireShardWidths[picture];
 					Sint32		 x = FIXED_INTEGER_PART(shot->x);
 					Uint32		 half = width >> 1;
-					const Uint8 *shardHeights = Spire_ShardHeights;
+					const Uint8 *shardHeights = SpireShardHeights;
 					Uint32		 height;
 					Sint32		 y;
 					x -= half;
@@ -836,11 +834,11 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 					y = FIXED_INTEGER_PART(shot->y) - (height >> 1);
 
 					pair[0](canvas,
-						state->sheet + Spire_ShardPictures[picture] +
+						state->sheet + SpireShardPictures[picture] +
 							BURST_SHOWER_ROCK_SHARDS,
 						x, y, width, height);
 				} else if(mode == BURST_SHOWER_MODE_FIRE_DANCE_ENEMY) {
-					FIXED  wobble = sySin((i * 2 + frame) * (TRIG_TURN / 32));
+					FIXED  wobble = sySin((i * 2 + frm) * (TRIG_TURN / 32));
 					Sint32 y;
 					picture = age >> 2;
 					y = FIXEDtoINT(shot->y + (wobble << 5));
@@ -897,36 +895,36 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 				}
 			}
 
-			/* Char: three glints a frame around each target being hit. */
+			/* Char: three glints a tick around each target being hit. */
 			if(mode == BURST_SHOWER_MODE_CHAR) {
 				for(i = 0; i != args->tgtCnt; i++) {
-					if(frame >= i * 4 + 16 && frame < showerFrames - 8) {
+					if(frm >= i * 4 + 16 && frm < showerTicks - 8) {
 						for(k = 0; k != 3; k++) {
 							Sint32 picture = i & 3;
-							Sint32 angle;
+							Sint32 ang;
 							Sint32 x;
 							Sint32 y;
 							Uint32 flip;
 
-							angle = syRandom() & TRIG_ANGLE_MASK;
-							x = FIXEDtoINT(sySin(angle) << 4);
-							x += targets[i].x / 2;
-							x -= BattleEffect_GlintPictureWidths[picture] >> 1;
-							y = FIXEDtoINT(syCos(angle) << 4);
-							y += targets[i].y;
-							y -= BattleEffect_GlintPictureHeights[picture] >> 1;
+							ang = syRandom() & TRIG_ANGLE_MASK;
+							x = FIXEDtoINT(sySin(ang) << 4);
+							x += tgts[i].x / 2;
+							x -= BattleEffectGlintPictureWidths[picture] >> 1;
+							y = FIXEDtoINT(syCos(ang) << 4);
+							y += tgts[i].y;
+							y -= BattleEffectGlintPictureHeights[picture] >> 1;
 
 							EFFECT_RELEASE_BLITTERS();
 							flip = syRandom();
 							EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-								BurstShower_GlintFlips[flip & 3] |
+								BurstShowerGlintFlips[flip & 3] |
 									EFFECT_CLIP_BOUNDS,
 								BLITTER_ADDITIVE);
 							(Ram_HeapSlots->ramCodePaired)(canvas,
 								state->sheet +
-									BattleEffect_GlintPictures[picture],
-								x, y, BattleEffect_GlintPictureWidths[picture],
-								BattleEffect_GlintPictureHeights[picture]);
+									BattleEffectGlintPictures[picture],
+								x, y, BattleEffectGlintPictureWidths[picture],
+								BattleEffectGlintPictureHeights[picture]);
 							syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 							btEffectBuildCanvasBlitters(args->side, pair);
 						}
@@ -941,34 +939,34 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			} else if(mode == BURST_SHOWER_MODE_LIGHTNING ||
 				mode == BURST_SHOWER_MODE_STORM_BREATH_STRONG) {
 				for(i = 0; i != args->tgtCnt; i++) {
-					if(frame >= i * 4 + 2 && (frame & 7) == i) {
+					if(frm >= i * 4 + 2 && (frm & 7) == i) {
 						state->shakeFrm = 8;
 						btEffectTintBattler(args->tgts[i], SPRITE_COLOR_WHITE,
 							POSE_DAMAGE, i, 4);
 					}
 				}
 			} else if(mode == BURST_SHOWER_MODE_AGING_GAS) {
-				if(frame == 18) {
+				if(frm == 18) {
 					state->shakeFrm = 4;
 					btEffectTintBattler(
 						args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 4);
 				}
-				if(frame == 46)
+				if(frm == 46)
 					btEffectTintBattler(args->user, SPRITE_COLOR_WHITE,
 						TINT_KEEP, TINT_KEEP, 0);
-				if(frame == 54)
+				if(frm == 54)
 					btEffectTintBattler(args->user, SPRITE_COLOR_NORMAL,
 						TINT_KEEP, TINT_KEEP, 0);
 			} else if(mode == BURST_SHOWER_MODE_PETRA) {
-				if(frame == 20) {
+				if(frm == 20) {
 					for(i = 0; i != args->tgtCnt; i++)
 						btEffectTintBattler(args->tgts[i], SPRITE_COLOR_GREY,
 							POSE_DAMAGE, i, 60);
 				}
 			} else {
 				for(i = 0; i != args->tgtCnt; i++) {
-					if(frame >= i * 4 + 16 && frame < showerFrames - 8 &&
-						(frame & 3) == i) {
+					if(frm >= i * 4 + 16 && frm < showerTicks - 8 &&
+						(frm & 3) == i) {
 						state->shakeFrm = 8;
 						if(mode == BURST_SHOWER_MODE_GREY)
 							btEffectTintBattler(args->tgts[i],
@@ -979,15 +977,14 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 						if(mode != BURST_SHOWER_MODE_FIRE_DANCE &&
 							mode != BURST_SHOWER_MODE_DESERT_GASP)
 							btEffectStartActorMotion(args->tgts[i], 1,
-								toFIXED(1), toFIXED(4), toFIXED(2),
-								frame + 100);
+								toFIXED(1), toFIXED(4), toFIXED(2), frm + 100);
 					}
 				}
 			}
 
-			/* Aging Gas: from frame 16 the motes are drawn into the user, and
+			/* Aging Gas: from tick 16 the motes are drawn into the user, and
 			   go out once past it. */
-			if(mode == BURST_SHOWER_MODE_AGING_GAS && frame > 15) {
+			if(mode == BURST_SHOWER_MODE_AGING_GAS && frm > 15) {
 				MOTION_OBJECT *object;
 				Sint32		   half;
 				BATTLE_CAMERA *camera;
@@ -1004,10 +1001,10 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 					if(mote->variant >= 0) {
 						btEffectPosProjectPoint((Sint32 *)mote, &screen);
 						screen.x >>= 1;
-						pair[0](canvas, sheet + BattleEffect_MotePictures[5],
+						pair[0](canvas, sheet + BattleEffectMotePictures[5],
 							screen.x - 3, screen.y - height / 2, 6, height);
 						btParticleAdvanceWithGravity3D(mote, 62, 0);
-						if(frame > i + 16) {
+						if(frm > i + 16) {
 							Sint32 dx = (object->x - mote->x) >> 7;
 							Sint32 dy = (object->y + half - mote->y) >> 8;
 							Sint32 dz = (object->z - mote->z) >> 8;

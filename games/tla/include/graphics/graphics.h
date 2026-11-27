@@ -26,6 +26,6 @@ extern Uint8 Text_LookupSymbolCodeSize[];
 extern Uint8 mnScanlineWindowBuildSpansCodeSize[];
 
 /* Remaps size bytes of pixels in place through SpriteColorGreyTable. */
-void fdSprColRemapPixelsStub(void *buffer, Sint32 size);
+void fdSprColRemapPixelsStub(void *buf, Sint32 size);
 
 #endif

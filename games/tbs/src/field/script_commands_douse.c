@@ -13,9 +13,9 @@
 #define DOUSE_DROPS_ON_TARGET		  24
 #define DOUSE_SWAYING_DROPS_ON_TARGET 30
 
-/* Per-frame update of a falling drop: on reaching its ground height it is
-   released 2 frames later and scatters three half-size splashes, which hop
-   toward points 32 pixels away and are released after 6 frames. */
+/* Per-tick update of a falling drop: on reaching its ground height it is
+   released 2 ticks later and scatters three half-size splashes, which hop
+   toward points 32 pixels away and are released after 6 ticks. */
 void fdEffectUpdateDouseDrop(ACTOR *drop)
 {
 	Sint32 i;
@@ -23,11 +23,11 @@ void fdEffectUpdateDouseDrop(ACTOR *drop)
 
 	if(drop->y.fixed <= drop->groundHeight) {
 		drop->wait = 2;
-		fdActorStartScriptStub(drop, FieldEffect_SharedParticleScript);
+		fdActorStartScriptStub(drop, FieldEffectSharedParticleScript);
 		splash = NULL;
 		drop->update = NULL;
 
-		/* Half size, hopping up at a pixel a frame, toward a random point 32
+		/* Half size, hopping up at a pixel a tick, toward a random point 32
 		   pixels away. */
 		for(i = 0; i <= 2; i++) {
 			splash = fdActorSpawn(
@@ -43,13 +43,13 @@ void fdEffectUpdateDouseDrop(ACTOR *drop)
 			fdActorSetTargetPosFromMagnitudeAng(
 				splash, toFIXED(32), syRandom());
 			splash->wait = 6;
-			fdActorStartScriptStub(splash, FieldEffect_SharedParticleScript);
+			fdActorStartScriptStub(splash, FieldEffectSharedParticleScript);
 		}
 	}
 }
 
-/* Per-frame update: drifts from side to side, up to a pixel a frame, as it
-   falls 0.3 pixels a frame, and is released on reaching its ground height. */
+/* Per-tick update: drifts from side to side, up to a pixel a tick, as it
+   falls 0.3 pixels a tick, and is released on reaching its ground height. */
 void fdEffectUpdateDriftingFallActor(ACTOR *particle)
 {
 	Sint32 drift;
@@ -58,7 +58,7 @@ void fdEffectUpdateDriftingFallActor(ACTOR *particle)
 	drift = syRandom();
 	particle->x.fixed += drift - syRandom();
 	if(particle->y.fixed <= particle->groundHeight) {
-		fdActorStartScriptStub(particle, FieldEffect_SharedParticleScript);
+		fdActorStartScriptStub(particle, FieldEffectSharedParticleScript);
 	}
 }
 
@@ -69,7 +69,7 @@ void fdPsynergyDouseOnTarget(Sint32 unused)
 }
 
 /* A rain cloud rises from 16 pixels above the caster to 32 pixels above the
-   destination (80 with sceneVariant) over GROW_STEPS frames, growing as it
+   destination (80 with sceneVariant) over GROW_STEPS ticks, growing as it
    goes, rains drops, and returns. */
 void fdPsynergyDouse(void)
 {
@@ -81,7 +81,7 @@ void fdPsynergyDouse(void)
 	ACTOR			   *cloud;
 	Sint32				step;
 	Sint32				steps = GROW_STEPS + 1;
-	Sint32				count;
+	Sint32				cnt;
 	Sint32				y;
 	ACTOR			   *particle;
 
@@ -124,18 +124,18 @@ void fdPsynergyDouse(void)
 	sySynch(10);
 
 	if((Sint8)effectState->lit == 0) {
-		/* A drop every 6 frames from 3 to 8 pixels round the cloud (the last
+		/* A drop every 6 ticks from 3 to 8 pixels round the cloud (the last
 		   right under it); aimAhead is cleared once a target is dispatched. */
-		count = DOUSE_DROPS;
+		cnt = DOUSE_DROPS;
 		if(effectState->aimAhead == 0)
-			count = DOUSE_DROPS_ON_TARGET;
-		for(step = 0; step < count; step++) {
+			cnt = DOUSE_DROPS_ON_TARGET;
+		for(step = 0; step < cnt; step++) {
 			pos.x = cloud->x.fixed;
 			pos.y = cloud->y.fixed;
 			pos.z = cloud->z.fixed;
 			syVectorAddPolarOffset(
 				syRandom() * 5 + toFIXED(3), syRandom(), (FIXED *)&pos);
-			if(step == count - 1) {
+			if(step == cnt - 1) {
 				sySynch(25);
 				pos.x = cloud->x.fixed;
 				pos.y = cloud->y.fixed;
@@ -152,13 +152,13 @@ void fdPsynergyDouse(void)
 		}
 		sySynch(10);
 	} else {
-		/* Every 6 frames, a blue drop sways down from 3 to 8 pixels round the
+		/* Every 6 ticks, a blue drop sways down from 3 to 8 pixels round the
 		   cloud. */
 		if(effectState->aimAhead != 0)
-			count = DOUSE_DROPS;
+			cnt = DOUSE_DROPS;
 		else
-			count = DOUSE_SWAYING_DROPS_ON_TARGET;
-		for(step = 0; step < count; step++) {
+			cnt = DOUSE_SWAYING_DROPS_ON_TARGET;
+		for(step = 0; step < cnt; step++) {
 			pos.x = cloud->x.fixed;
 			pos.y = cloud->y.fixed;
 			pos.z = cloud->z.fixed;

@@ -34,7 +34,7 @@ typedef struct BUP_FILE_SUMMARY {
 	Uint8  level;		   /* the leader's; 0 for an empty file */
 	Uint8  classId;		   /* the leader's */
 	Uint16 area;		   /* area name number (fdAreaGetNameIndex) */
-	Uint32 playTime;	   /* frames */
+	Uint32 playTime;	   /* ticks */
 	Uint32 coins;
 	Sint8  djinn[4]; /* the party's Djinn of each element */
 	Sint8  party[5]; /* up to four party members, ended by -1 */

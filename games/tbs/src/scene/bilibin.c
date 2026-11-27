@@ -36,7 +36,7 @@
 #include "graphics/graphics.h"
 #include "text/msg_ids.h"
 
-extern Sint32		  Bilibin_FaceLeaderScript[];
+extern Sint32		  BilibinFaceLeaderScript[];
 extern SCENE_ENTRANCE BilibinEntrancesOther[];
 extern SCENE_ENTRANCE BilibinEntrances[];
 extern SCENE_ENTRANCE BilibinBarricadeEntrances[];
@@ -51,12 +51,12 @@ extern CUE			  BilibinCuesOther[];
 extern CUE			  BilibinCues[];
 extern CUE			  BilibinBarricadeCues[];
 extern CUE			  BilibinTreasuryCues[];
-extern Uint16		 *Bilibin_DoorSteps[];
-extern Sint16		  Bilibin_DoorMetatiles[][2];
+extern Uint16		 *BilibinDoorSteps[];
+extern Sint16		  BilibinDoorMetatiles[][2];
 /* The metatiles round the crates' place that push them, as column and row
    pairs. */
-extern Uint8  Bilibin_CratesPushMetatiles[];
-extern Sint32 Bilibin_RippleScript[];
+extern Uint8  BilibinCratesPushMetatiles[];
+extern Sint32 BilibinRippleScript[];
 
 static void scBilibinRestoreVillageActors(void);
 /* Move on the golden statue in front of Bilibin's weapon and armor shop slides
@@ -76,7 +76,7 @@ static void scBilibinRestoreRiverActors(void);
    the road to Kolima.
 
    The same work follows every push and every arrival at the barricade: the ten
-   metatiles round the crate's place, listed in Bilibin_CratesPushMetatiles, are
+   metatiles round the crate's place, listed in BilibinCratesPushMetatiles, are
    made ground that pushes the crate, and the crate's own metatile is walled
    off. */
 static void scBilibinUpdateCratesMetatiles(void);
@@ -169,12 +169,12 @@ typedef enum BILIBIN_TREASURY_ACTOR_ID {
 	ACTOR_GUST
 } BILIBIN_TREASURY_ACTOR_ID;
 
-/* Counts frames between the ripples, one every 30 frames. */
+/* Counts ticks between the ripples, one every 30 ticks. */
 typedef struct BILIBIN_RIPPLE_TIMER {
-	Sint16 frames;
+	Sint16 ticks;
 } BILIBIN_RIPPLE_TIMER;
 
-BILIBIN_RIPPLE_TIMER Bilibin_RippleTimer;
+BILIBIN_RIPPLE_TIMER BilibinRippleTimer;
 
 #include "shared/actor_facing.c"
 
@@ -437,7 +437,7 @@ static void scBilibinOpenDoorAndLeave(void)
 {
 	Uint32		 actorSlot;
 	ACTOR		*actor;
-	Sint32		 exitIndex;
+	Sint32		 exitIdx;
 	Sint32		 column;
 	Sint32		 row;
 	FIELD_STATE *state;
@@ -452,32 +452,32 @@ static void scBilibinOpenDoorAndLeave(void)
 			actor->motionFlg = 0;
 		}
 	}
-	exitIndex = (Sint16)(state->stepCue - BILIBIN_TO_INN);
-	if(exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
+	exitIdx = (Sint16)(state->stepCue - BILIBIN_TO_INN);
+	if(exitIdx == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
 		sySndPlay(SE_THUMP);
 	} else {
 		sySndPlay(SE_DOOR_OPEN);
 	}
 	/* Each door has its metatile and the steps that draw it opening. */
-	column = Bilibin_DoorMetatiles[exitIndex][0];
-	row = Bilibin_DoorMetatiles[exitIndex][1];
-	fdMapGridPlayMapEdit(Bilibin_DoorSteps[exitIndex], column, row);
+	column = BilibinDoorMetatiles[exitIdx][0];
+	row = BilibinDoorMetatiles[exitIdx][1];
+	fdMapGridPlayMapEdit(BilibinDoorSteps[exitIdx], column, row);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
 	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	if(exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
+	if(exitIdx == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
 		fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 		fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -4);
 	} else {
 		fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
 	}
-	if(exitIndex == BILIBIN_TO_ITEM_SHOP - BILIBIN_TO_INN) {
+	if(exitIdx == BILIBIN_TO_ITEM_SHOP - BILIBIN_TO_INN) {
 		fdActorSetSprPriority(ACTOR_PARTY_LEADER, 3);
 	} else {
 		fdActorSetSprPriority(ACTOR_PARTY_LEADER, 2);
 	}
 	fdScriptWait(16);
-	syImportScriptSetExitRequest(exitIndex + BILIBIN_TO_INN);
+	syImportScriptSetExitRequest(exitIdx + BILIBIN_TO_INN);
 	fdScriptEnd();
 }
 
@@ -638,9 +638,9 @@ static void scBilibinJillGivesHardNut(void)
 	fdScriptWait(1);
 	{
 		ACTOR *jill = fdActorGet(ACTOR_JILL);
-		Uint8  steeringFlags = jill->steeringFlg | ACTOR_FACES_MOTION;
+		Uint8  steeringFlg = jill->steeringFlg | ACTOR_FACES_MOTION;
 
-		jill->steeringFlg = steeringFlags;
+		jill->steeringFlg = steeringFlg;
 	}
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_GANG_MEMBER_EAST, 2);
@@ -650,11 +650,11 @@ static void scBilibinJillGivesHardNut(void)
 	fdActorSetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
 	/* From now on the three turn to face the leader wherever he goes. */
 	syFieldActorWatchAndStartScript(ACTOR_GANG_MEMBER_EAST,
-		ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER, Bilibin_FaceLeaderScript);
+		ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER, BilibinFaceLeaderScript);
 	syFieldActorWatchAndStartScript(ACTOR_GANG_MEMBER_WEST,
-		ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER, Bilibin_FaceLeaderScript);
+		ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER, BilibinFaceLeaderScript);
 	syFieldActorWatchAndStartScript(ACTOR_JILL,
-		ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER, Bilibin_FaceLeaderScript);
+		ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER, BilibinFaceLeaderScript);
 	gmFlagSet(FLAG_BILIBIN_JILL_GIFT_RECEIVED);
 	fdScriptEnd();
 }
@@ -668,7 +668,7 @@ Sint32 scInit(void)
 		scBilibinRestoreVillageActors();
 	} else if(MainRoutineStateWork.next == SCENE_BILIBIN_BARRICADE) {
 		scBilibinRestoreRiverActors();
-		sySetFrameEvent(scBilibinUpdateRiverRipples, EVENT_PASS_FRAME);
+		sySetTickEvent(scBilibinUpdateRiverRipples, EVENT_PASS_TICK);
 	} else if(MainRoutineStateWork.next == SCENE_BILIBIN_TREASURY) {
 		scBilibinSetUpTreasury();
 	}
@@ -837,7 +837,7 @@ static void scBilibinRestoreRiverActors(void)
 	scBilibinUpdateCratesMetatiles();
 }
 
-/* The metatiles round the crate's place, as Bilibin_CratesPushMetatiles lists
+/* The metatiles round the crate's place, as BilibinCratesPushMetatiles lists
    them. */
 #define CRATES_LANE_METATILES 10
 
@@ -854,8 +854,8 @@ static void scBilibinUpdateCratesMetatiles(void)
 
 	for(i = 0; i < 2 * CRATES_LANE_METATILES; i += 2) {
 		fdMapGridCopyMetatileAttributes(BARRICADE_PUSH_METATILE_COLUMN,
-			SPARE_METATILE_ROW, 1, 1, Bilibin_CratesPushMetatiles[i],
-			Bilibin_CratesPushMetatiles[i + 1]);
+			SPARE_METATILE_ROW, 1, 1, BilibinCratesPushMetatiles[i],
+			BilibinCratesPushMetatiles[i + 1]);
 	}
 
 	fdMapGridCopyMetatileAttributes(BARRICADE_WALL_METATILE_COLUMN,
@@ -895,37 +895,34 @@ static void scBilibinPushStatueOrCrates(void)
 	ACTOR	 *leader;
 	ACTOR	 *pushed;
 	Uint32	  direction;
-	FIELD_POS destination;
+	FIELD_POS dst;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	direction = FACING_INDEX(leader->facing);
 	pushed = scActorFindAtMetatile(
 		(leader->x.part[0].integer +
-			(FIXEDtoINT(PushedActor_DirectionSteps[direction]))) >>
+			(FIXEDtoINT(PushedActorDirectionSteps[direction]))) >>
 			4,
 		(leader->z.part[0].integer +
-			(Sint16)PushedActor_DirectionSteps[direction]) >>
+			(Sint16)PushedActorDirectionSteps[direction]) >>
 			4);
 	if(pushed != NULL) {
 		pushed->layer = 2;
-		fdActorStepFrom(
-			&destination, pushed, PushedActor_DirectionSteps[direction]);
-		if(syFieldActorCheckMovementCollision(pushed, &destination) <= 0) {
+		fdActorStepFrom(&dst, pushed, PushedActorDirectionSteps[direction]);
+		if(syFieldActorCheckMovementCollision(pushed, &dst) <= 0) {
 			/* The leader leans on it, then both move together. */
 			fdActorSelectAnimation(leader, ANIM_PUSH);
 			sySynch(15);
 			sySndPlay(SE_PUSH);
 			pushed->speedLimit = toFIXED(1) / 5;
 			pushed->acceleration = toFIXED(1) / 5;
-			syFieldActorSetMoveTargetFX(
-				pushed, destination.x, destination.y, destination.z);
+			syFieldActorSetMoveTargetFX(pushed, dst.x, dst.y, dst.z);
 			leader->speedLimit = toFIXED(1) / 5;
 			leader->acceleration = toFIXED(1) / 5;
-			syFieldActorSetMoveTargetFX(
-				leader, destination.x, destination.y, destination.z);
+			syFieldActorSetMoveTargetFX(leader, dst.x, dst.y, dst.z);
 			fdActorWaitForMove(pushed);
-			pushed->x.fixed = destination.x;
-			pushed->z.fixed = destination.z;
+			pushed->x.fixed = dst.x;
+			pushed->z.fixed = dst.z;
 			pushed->velX = 0;
 			pushed->velZ = 0;
 			fdActorSelectAnimation(leader, ANIM_STAND);
@@ -942,7 +939,7 @@ static void scBilibinPushStatueOrCrates(void)
 }
 
 /* While Isaac wades in the river at the Bilibin Barricade, west of the fallen
-   tree, a ripple spreads from his feet every 30 frames. It runs every frame. */
+   tree, a ripple spreads from his feet every 30 ticks. It runs every tick. */
 static void scBilibinUpdateRiverRipples(void)
 {
 	ACTOR *actor;
@@ -950,40 +947,40 @@ static void scBilibinUpdateRiverRipples(void)
 	actor = fdActorGet(MainRoutineStateWork.leaderActorId);
 	if(actor->x.fixed < toFIXED(142)) {
 		if(actor->y.fixed < toFIXED(8)) {
-			if(Bilibin_RippleTimer.frames == 0)
+			if(BilibinRippleTimer.ticks == 0)
 				scBilibinSpawnRipple(actor);
-			if(++Bilibin_RippleTimer.frames == 30)
-				Bilibin_RippleTimer.frames = 0;
+			if(++BilibinRippleTimer.ticks == 30)
+				BilibinRippleTimer.ticks = 0;
 		} else {
-			Bilibin_RippleTimer.frames = 0;
+			BilibinRippleTimer.ticks = 0;
 		}
 	}
 }
 
 /* Spawns a semi-transparent ripple (SPRITE_RIPPLE's spreading rings) at the
-   wader, which releases itself after 30 frames. */
+   wader, which releases itself after 30 ticks. */
 static void scBilibinSpawnRipple(ACTOR *actor)
 {
 	ACTOR *effect;
-	SPR	  *sprite;
+	SPR	  *spr;
 
 	effect = syFieldActorCreate(
 		SPRITE_RIPPLE, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 	if(effect == NULL)
 		return;
 
-	sprite = effect->spr;
-	fdActorStartScript(effect, Bilibin_RippleScript);
+	spr = effect->spr;
+	fdActorStartScript(effect, BilibinRippleScript);
 	effect->motionFlg = 0;
 	effect->layer = 1;
 	effect->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-	if(sprite == NULL)
+	if(spr == NULL)
 		return;
 
-	fdSprStartAnimation(sprite, 2);
-	sprite->flg = 0;
-	sprite->image.objMode = OBJ_MODE_SEMI_TRANSPARENT;
-	sprite->image.pri = 3;
+	fdSprStartAnimation(spr, 2);
+	spr->flg = 0;
+	spr->image.objMode = OBJ_MODE_SEMI_TRANSPARENT;
+	spr->image.pri = 3;
 }
 
 static void scBilibinUpdateTreasuryStatueMetatiles(void)
@@ -1009,7 +1006,7 @@ static void scBilibinUpdateTreasuryStatueMetatiles(void)
 			TREASURY_FOOT_METATILE_COLUMN, SPARE_METATILE_ROW, 1, 1, 14, 9);
 }
 
-Sint32 Bilibin_FaceLeaderScript[] = {
+Sint32 BilibinFaceLeaderScript[] = {
 	SC_CALL(scTurnTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -1290,49 +1287,49 @@ CUE BilibinTreasuryCues[] = {
 };
 
 /* Each door's opening, as map grid animations, and the doors in turn. */
-Uint16 Bilibin_SanctumDoorSteps[] = {
+Uint16 BilibinSanctumDoorSteps[] = {
 	MAPGRID_ANIMATION_STEP(37, 33, 4, 2, 5), MAPGRID_ANIMATION_STEP(33, 33, 4, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Bilibin_ItemShopDoorSteps[] = {
+Uint16 BilibinItemShopDoorSteps[] = {
 	MAPGRID_ANIMATION_STEP(35, 43, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 43, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Bilibin_WeaponAndArmorShopDoorSteps[] = {
+Uint16 BilibinWeaponAndArmorShopDoorSteps[] = {
 	MAPGRID_ANIMATION_STEP(35, 52, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 52, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Bilibin_HouseEastDoorSteps[] = {
+Uint16 BilibinHouseEastDoorSteps[] = {
 	MAPGRID_ANIMATION_STEP(35, 54, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 54, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Bilibin_InnDoorSteps[] = {
+Uint16 BilibinInnDoorSteps[] = {
 	MAPGRID_ANIMATION_STEP(35, 48, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 48, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Bilibin_HouseWestDoorSteps[] = {
+Uint16 BilibinHouseWestDoorSteps[] = {
 	MAPGRID_ANIMATION_STEP(35, 46, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 46, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Bilibin_HouseNorthDoorSteps[] = {
+Uint16 BilibinHouseNorthDoorSteps[] = {
 	MAPGRID_ANIMATION_STEP(35, 50, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 50, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 *Bilibin_DoorSteps[] = {
-	Bilibin_InnDoorSteps,
-	Bilibin_HouseEastDoorSteps,
-	Bilibin_HouseWestDoorSteps,
-	Bilibin_HouseNorthDoorSteps,
-	Bilibin_ItemShopDoorSteps,
-	Bilibin_WeaponAndArmorShopDoorSteps,
-	Bilibin_SanctumDoorSteps,
+Uint16 *BilibinDoorSteps[] = {
+	BilibinInnDoorSteps,
+	BilibinHouseEastDoorSteps,
+	BilibinHouseWestDoorSteps,
+	BilibinHouseNorthDoorSteps,
+	BilibinItemShopDoorSteps,
+	BilibinWeaponAndArmorShopDoorSteps,
+	BilibinSanctumDoorSteps,
 };
 
 /* Where each door's opening is drawn on the map grid, in the order of */
-/* Bilibin_DoorSteps. The doors are drawn on map layer 1, whose metatiles */
+/* BilibinDoorSteps. The doors are drawn on map layer 1, whose metatiles */
 /* begin at the map's column 32: the inn's (54, 20) is that layer's (22, 20), */
 /* the door just above the ground metatile (23, 22) Isaac walks into (render */
 /* probe Bilibin --entrance 3 --mark-metatiles 22,20,23,21,1). */
-Sint16 Bilibin_DoorMetatiles[][2] = {
+Sint16 BilibinDoorMetatiles[][2] = {
 	{54, 20}, {43, 18}, {37, 19}, {41, 11}, {35, 11}, {49, 9}, {55, 6},
 };
 
 /* The ten metatiles round the crates' place at the Bilibin Barricade that */
 /* push them, as column and row. */
-Uint8 Bilibin_CratesPushMetatiles[] = {
+Uint8 BilibinCratesPushMetatiles[] = {
 	8,  18, 9,  18, 10, 18, 8,  19, 9,  19,
 	10, 19, 11, 19, 9,  20, 10, 20, 11, 20,
 };
@@ -1340,7 +1337,7 @@ Uint8 Bilibin_CratesPushMetatiles[] = {
 
 #include "shared/pushed_actor_direction_steps.c"
 
-Sint32 Bilibin_RippleScript[] = {
+Sint32 BilibinRippleScript[] = {
 	SC_WAIT(30),
 	SC_RELEASE,
 };

@@ -1,8 +1,8 @@
 /* Helm Splitter. Part of battle_effect.c. */
 
-#define HELM_SPLITTER_FRAMES		 70
-#define HELM_SPLITTER_LEAP_FRAMES	 16 /* the user's leap at the target */
-#define HELM_SPLITTER_STRIKE_FRAME	 18 /* the swirl strikes the target */
+#define HELM_SPLITTER_TICKS			 70
+#define HELM_SPLITTER_LEAP_TICKS	 16 /* the user's leap at the target */
+#define HELM_SPLITTER_STRIKE_TICK	 18 /* the swirl strikes the target */
 /* FireSwirlSheet's bytes; the sparks' pictures, PinkStarSheet's stars or
    SkullSheet's skulls, follow them. */
 #define HELM_SPLITTER_SWIRL_BYTES	 16000
@@ -26,11 +26,11 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
 	void				*canvas = Ram_HeapSlots->battleCanvas;
 	DRAW_RECTANGLE		 draw[2];
-	SCREEN_POINT		 position;
+	SCREEN_POINT		 pos;
 	PARTICLE			*sparks;
 	PARTICLE			*spark;
 	Sint32				*life;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 
 	/* Set up the canvas and load the swirl and the spark sprite sheets. */
@@ -77,69 +77,68 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 
 	/* The user leaps at the target. */
 	btMotionApproachTargetStub(
-		args->user, args->tgts[0], HELM_SPLITTER_LEAP_FRAMES, toFIXED(7));
+		args->user, args->tgts[0], HELM_SPLITTER_LEAP_TICKS, toFIXED(7));
 
-	for(frame = 0; frame != HELM_SPLITTER_FRAMES; frame++) {
-		/* The swirl grows, a picture every second frame. */
+	for(frm = 0; frm != HELM_SPLITTER_TICKS; frm++) {
+		/* The swirl grows, a picture every second tick. */
 		if(args->variant == EFFECT_VARIANT_BASIC) {
-			btEffectPosProjectBattler(args->user, &position);
+			btEffectPosProjectBattler(args->user, &pos);
 			if(args->side == EFFECT_SIDE_ENEMIES)
-				REG_BG2X = (80 - position.x) << 8;
+				REG_BG2X = (80 - pos.x) << 8;
 			else
-				REG_BG2X = (32 - position.x) << 8;
-			if(frame >= 8 && frame <= 23) {
-				Sint32 picture = (frame - 8) / 2;
+				REG_BG2X = (32 - pos.x) << 8;
+			if(frm >= 8 && frm <= 23) {
+				Sint32 picture = (frm - 8) / 2;
 
 				if(picture > HELM_SPLITTER_SWIRL_PICTURES - 1)
 					picture = HELM_SPLITTER_SWIRL_PICTURES - 1;
 				if(args->side == EFFECT_SIDE_ENEMIES) {
 					draw[0](canvas,
-						state->sheet + HelmSplitter_Pictures[picture],
-						HelmSplitter_PictureBiasX[picture] + 30,
-						HelmSplitter_PictureBiasY[picture] + position.y - 60,
-						HelmSplitter_PictureWidths[picture],
-						HelmSplitter_PictureHeights[picture]);
+						state->sheet + HelmSplitterPictures[picture],
+						HelmSplitterPictureBiasX[picture] + 30,
+						HelmSplitterPictureBiasY[picture] + pos.y - 60,
+						HelmSplitterPictureWidths[picture],
+						HelmSplitterPictureHeights[picture]);
 				} else {
 					draw[0](canvas,
-						state->sheet + HelmSplitter_Pictures[picture],
-						-HelmSplitter_PictureBiasX[picture] -
-							HelmSplitter_PictureWidths[picture] + 98,
-						HelmSplitter_PictureBiasY[picture] + position.y - 60,
-						HelmSplitter_PictureWidths[picture],
-						HelmSplitter_PictureHeights[picture]);
+						state->sheet + HelmSplitterPictures[picture],
+						-HelmSplitterPictureBiasX[picture] -
+							HelmSplitterPictureWidths[picture] + 98,
+						HelmSplitterPictureBiasY[picture] + pos.y - 60,
+						HelmSplitterPictureWidths[picture],
+						HelmSplitterPictureHeights[picture]);
 				}
 			}
 		} else {
-			btEffectPosProjectBattler(args->tgts[0], &position);
-			if(frame >= 8 && frame <= 23) {
-				Sint32 picture = (frame - 8) / 2;
+			btEffectPosProjectBattler(args->tgts[0], &pos);
+			if(frm >= 8 && frm <= 23) {
+				Sint32 picture = (frm - 8) / 2;
 
 				if(picture > HELM_SPLITTER_SWIRL_PICTURES - 1)
 					picture = HELM_SPLITTER_SWIRL_PICTURES - 1;
 				if(args->side == EFFECT_SIDE_ENEMIES) {
 					draw[0](canvas,
-						state->sheet + HelmSplitter_Pictures[picture],
-						position.x / 2 + HelmSplitter_PictureBiasX[picture] -
-							16,
-						HelmSplitter_PictureBiasY[picture] + position.y - 92,
-						HelmSplitter_PictureWidths[picture],
-						HelmSplitter_PictureHeights[picture]);
+						state->sheet + HelmSplitterPictures[picture],
+						pos.x / 2 + HelmSplitterPictureBiasX[picture] - 16,
+						HelmSplitterPictureBiasY[picture] + pos.y - 92,
+						HelmSplitterPictureWidths[picture],
+						HelmSplitterPictureHeights[picture]);
 				} else {
 					draw[0](canvas,
-						state->sheet + HelmSplitter_Pictures[picture],
-						position.x / 2 - HelmSplitter_PictureBiasX[picture] -
-							HelmSplitter_PictureWidths[picture] + 16,
-						HelmSplitter_PictureBiasY[picture] + position.y - 92,
-						HelmSplitter_PictureWidths[picture],
-						HelmSplitter_PictureHeights[picture]);
+						state->sheet + HelmSplitterPictures[picture],
+						pos.x / 2 - HelmSplitterPictureBiasX[picture] -
+							HelmSplitterPictureWidths[picture] + 16,
+						HelmSplitterPictureBiasY[picture] + pos.y - 92,
+						HelmSplitterPictureWidths[picture],
+						HelmSplitterPictureHeights[picture]);
 				}
 			}
 		}
 
 		/* The strike: the target flashes and reels, the screen shakes and the
 		   swirl bursts into sparks. */
-		if(frame == HELM_SPLITTER_STRIKE_FRAME) {
-			btEffectPosProjectBattler(args->tgts[0], &position);
+		if(frm == HELM_SPLITTER_STRIKE_TICK) {
+			btEffectPosProjectBattler(args->tgts[0], &pos);
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			EFFECT_STRIKE_TARGET(args, 0, 8, KNOCKBACK_BOUNCE);
 			state->shakeFrm = 4;
@@ -153,7 +152,7 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 				if(args->variant == EFFECT_VARIANT_BASIC)
 					spark->x = toFIXED(64);
 				else
-					spark->x = toFIXED(position.x / 2);
+					spark->x = toFIXED(pos.x / 2);
 				spark->y = toFIXED(80);
 				spark->velX = (sySin(angle) * force) >> 7;
 				spark->velY = -(syCos(angle) * force) >> 6;
@@ -177,7 +176,7 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 					if(args->variant == EFFECT_VARIANT_BASIC)
 						draw[0](canvas,
 							state->sheet + HELM_SPLITTER_SPARK_PICTURES +
-								((frame + i) / 4 % HELM_SPLITTER_STARS) *
+								((frm + i) / 4 % HELM_SPLITTER_STARS) *
 									HELM_SPLITTER_STAR_SIZE *
 									HELM_SPLITTER_STAR_SIZE,
 							sx - HELM_SPLITTER_STAR_SIZE / 2,
@@ -194,15 +193,15 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 		}
 
 		btCameraShake(8, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS();
 }
 
-#undef HELM_SPLITTER_FRAMES
-#undef HELM_SPLITTER_LEAP_FRAMES
-#undef HELM_SPLITTER_STRIKE_FRAME
+#undef HELM_SPLITTER_TICKS
+#undef HELM_SPLITTER_LEAP_TICKS
+#undef HELM_SPLITTER_STRIKE_TICK
 #undef HELM_SPLITTER_SWIRL_BYTES
 #undef HELM_SPLITTER_SPARK_PICTURES
 #undef HELM_SPLITTER_SPARKS

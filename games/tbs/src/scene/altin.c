@@ -46,7 +46,7 @@
    not shown again.
 
    In the inn a cook from Xian paces between his pots
-   (CottageRoomsD_CookScript). */
+   (CottageRoomsDCookScript). */
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -58,17 +58,17 @@
 #include "game/system_call.h"
 #include "text/msg_ids.h"
 
-extern SCENE_ENTRANCE			   Altin_NoEntrances[];
-extern SCENE_ENTRANCE			   Altin_Entrances[];
-extern SCENE_ENTRANCE			   CottageRoomsD_Entrances[];
-extern Uint32					   Altin_Exits[];
-extern ACTOR_PLACE				   Altin_NoActorPlacements[];
-extern ACTOR_PLACE				   Altin_ActorPlacements[];
-extern ACTOR_PLACE				   CottageRoomsD_ActorPlacements[];
-extern CUE						   Altin_NoCues[];
-extern CUE						   Altin_Cues[];
-extern CUE						   CottageRoomsD_Cues[];
-extern MAP_GRID_METATILE_ANIMATION Altin_Doors[];
+extern SCENE_ENTRANCE			   AltinNoEntrances[];
+extern SCENE_ENTRANCE			   AltinEntrances[];
+extern SCENE_ENTRANCE			   CottageRoomsDEntrances[];
+extern Uint32					   AltinExits[];
+extern ACTOR_PLACE				   AltinNoActorPlacements[];
+extern ACTOR_PLACE				   AltinActorPlacements[];
+extern ACTOR_PLACE				   CottageRoomsDActorPlacements[];
+extern CUE						   AltinNoCues[];
+extern CUE						   AltinCues[];
+extern CUE						   CottageRoomsDCues[];
+extern MAP_GRID_METATILE_ANIMATION AltinDoors[];
 
 /* The x of the easternmost pot the cook from Xian walks to and nods over, 4
    pixels further west in the French, Spanish and Italian editions. */
@@ -78,7 +78,7 @@ extern MAP_GRID_METATILE_ANIMATION Altin_Doors[];
 #define MAP_ALTIN_VILLAGE (SCENE_ALTIN)
 #define MAP_ALTIN_HOUSES  (SCENE_COTTAGE_ROOMS_D)
 
-/* The village's actors, numbering the rows of Altin_ActorPlacements.
+/* The village's actors, numbering the rows of AltinActorPlacements.
 
    The people without a script of their own are named by their sprite and by
    what they say before the hydros statues are beaten. */
@@ -130,7 +130,7 @@ typedef enum ALTIN_VILLAGE_ACTOR_ID {
 	ACTOR_THIRD_CRATE
 } ALTIN_VILLAGE_ACTOR_ID;
 
-/* The houses' actors, numbering the rows of CottageRoomsD_ActorPlacements,
+/* The houses' actors, numbering the rows of CottageRoomsDActorPlacements,
    named as the village's are. */
 typedef enum ALTIN_HOUSE_ACTOR_ID {
 	/* The family sheltering in the inn's Room One until the first drop. They
@@ -245,7 +245,7 @@ typedef enum COTTAGE_ROOMS_D_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_COTTAGE_ROOMS_D_BOOKCASE = 203
 } COTTAGE_ROOMS_D_METATILE_BEHAVIOR;
 
-/* The doors of the village, by their index in Altin_Doors. */
+/* The doors of the village, by their index in AltinDoors. */
 enum {
 	/* The Sanctum's door, which leads to SANCTUM_FROM_ALTIN. */
 	DOOR_SANCTUM = METATILE_BEHAVIOR_ALTIN_SANCTUM_DOOR -
@@ -256,11 +256,11 @@ enum {
 		METATILE_BEHAVIOR_ALTIN_FIRST_DOOR
 };
 
-/* The frames from one of the water beast's hops to the next. */
+/* The ticks from one of the water beast's hops to the next. */
 #define WATER_BEAST_HOP_PERIOD	  60
 /* The map column the stone statue stands in once moved, at (360, 168). */
 #define STONE_STATUE_MOVED_COLUMN 22
-/* The frames a drop of the water beast's spray lives. */
+/* The ticks a drop of the water beast's spray lives. */
 #define SPEW_LIFETIME			  20
 /* A drop of spray starts at three tenths of its sprite's size. */
 #define SPEW_START_SCALE		  (toFIXED(3) / 10)
@@ -275,8 +275,8 @@ enum {
 		(Uint32)(FACING_NORTHEAST - FACING_NORTHWEST - 2) << 16)
 #endif
 
-/* How far a drop of spray drifts east this frame, in 16.16 pixels: a sixteenth
-   of a pixel for each frame it has left, and half a pixel of random wobble
+/* How far a drop of spray drifts east this tick, in 16.16 pixels: a sixteenth
+   of a pixel for each tick it has left, and half a pixel of random wobble
    either way. */
 /* UB: the wobble can be negative, and a negative number is shifted left. */
 #if FIX_UNDEFINED_SHIFT
@@ -294,12 +294,12 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == MAP_ALTIN_VILLAGE) {
-		return Altin_Entrances;
+		return AltinEntrances;
 	}
 	if(sceneId == MAP_ALTIN_HOUSES) {
-		return CottageRoomsD_Entrances;
+		return CottageRoomsDEntrances;
 	}
-	return Altin_NoEntrances;
+	return AltinNoEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -310,7 +310,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 /* Both scenes share one exit table. */
 const Uint32 *scGetExits(void)
 {
-	return Altin_Exits;
+	return AltinExits;
 }
 
 /* Some villagers only turn back after talking once the flood is over or their
@@ -320,27 +320,27 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	Sint32 sceneId = MainRoutineStateWork.next;
 	if(sceneId == MAP_ALTIN_VILLAGE) {
 		if(gmFlagGet(FLAG_HYDROS_STATUES_DEFEATED)) {
-			Altin_ActorPlacements[ACTOR_WOMAN_WATER_LUCK - ACTOR_FIRST_PLACED]
+			AltinActorPlacements[ACTOR_WOMAN_WATER_LUCK - ACTOR_FIRST_PLACED]
 				.talkFacing = TALK_FACING_PARTY;
-			Altin_ActorPlacements[ACTOR_THIRSTY_OLD_WOMAN - ACTOR_FIRST_PLACED]
+			AltinActorPlacements[ACTOR_THIRSTY_OLD_WOMAN - ACTOR_FIRST_PLACED]
 				.talkFacing = TALK_FACING_PARTY;
 		}
-		return Altin_ActorPlacements;
+		return AltinActorPlacements;
 	}
 	if(sceneId == MAP_ALTIN_HOUSES) {
 		if(gmFlagGet(FLAG_ALTIN_MINE_FIRST_DRAIN))
-			CottageRoomsD_ActorPlacements[ACTOR_ROOM_ONE_SECOND_GUEST -
+			CottageRoomsDActorPlacements[ACTOR_ROOM_ONE_SECOND_GUEST -
 				ACTOR_FIRST_PLACED]
 				.talkFacing = TALK_FACING_PARTY_AND_BACK;
 		if(gmFlagGet(FLAG_ALTIN_MINE_SECOND_DRAIN) ||
 			gmFlagGet(FLAG_ALTIN_MINE_THIRD_DRAIN))
-			CottageRoomsD_ActorPlacements[ACTOR_ROOM_TWO_SECOND_GUEST -
+			CottageRoomsDActorPlacements[ACTOR_ROOM_TWO_SECOND_GUEST -
 				ACTOR_FIRST_PLACED]
 				.talkFacing = TALK_FACING_PARTY_AND_BACK;
-		fdAssignViewFlags(CottageRoomsD_ActorPlacements);
-		return CottageRoomsD_ActorPlacements;
+		fdAssignViewFlags(CottageRoomsDActorPlacements);
+		return CottageRoomsDActorPlacements;
 	}
-	return Altin_NoActorPlacements;
+	return AltinNoActorPlacements;
 }
 
 const CUE *scGetCues(void)
@@ -348,12 +348,12 @@ const CUE *scGetCues(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == MAP_ALTIN_VILLAGE) {
-		return Altin_Cues;
+		return AltinCues;
 	}
 	if(sceneId == MAP_ALTIN_HOUSES) {
-		return CottageRoomsD_Cues;
+		return CottageRoomsDCues;
 	}
-	return Altin_NoCues;
+	return AltinNoCues;
 }
 
 /* The bald strong man by the east entrance asks whether this is the party's
@@ -656,7 +656,7 @@ static void scAltinEnterDoor(void)
 	Uint32		 actorId;
 	FIELD_STATE *state;
 	ACTOR		*actor;
-	Sint32		 doorIndex;
+	Sint32		 doorIdx;
 	Sint32		 column;
 	Sint32		 row;
 	Sint32		 rightColumn;
@@ -670,10 +670,10 @@ static void scAltinEnterDoor(void)
 		}
 	}
 
-	doorIndex = (Sint16)(state->stepCue - METATILE_BEHAVIOR_ALTIN_FIRST_DOOR);
-	column = (Sint16)Altin_Doors[doorIndex].x;
-	row = (Sint16)Altin_Doors[doorIndex].y;
-	if(doorIndex == DOOR_SANCTUM) {
+	doorIdx = (Sint16)(state->stepCue - METATILE_BEHAVIOR_ALTIN_FIRST_DOOR);
+	column = (Sint16)AltinDoors[doorIdx].x;
+	row = (Sint16)AltinDoors[doorIdx].y;
+	if(doorIdx == DOOR_SANCTUM) {
 		/* The Sanctum's door slides open with SE_THUMP, as Bilibin's does. */
 		sySndPlay(SE_THUMP);
 		fdMapGridCopyMetatilesTo(42, 33, column, row, 2, 2);
@@ -685,28 +685,28 @@ static void scAltinEnterDoor(void)
 		fdScriptWait(4);
 	} else {
 		sySndPlay(SE_DOOR_OPEN);
-		/* The cliff house door's row in Altin_Doors plays its opening at (39,
+		/* The cliff house door's row in AltinDoors plays its opening at (39,
 		   17), outside the village's camera box; its house stands at (8, 17),
 		   above where the party comes back out
 		   (ALTIN_FROM_COTTAGE_ROOMS_D_CLIFF_HOUSE), so that doorway is drawn
 		   open here (a render with this copy made on entry shows the open
 		   doorway). */
-		if(doorIndex ==
+		if(doorIdx ==
 			METATILE_BEHAVIOR_ALTIN_CLIFF_HOUSE_DOOR -
 				METATILE_BEHAVIOR_ALTIN_FIRST_DOOR) {
 			fdMapGridCopyMetatilesTo(33, 42, 8, 17, 1, 2);
 		}
-		fdMapGridAnimateMetatiles(Altin_Doors[doorIndex].steps, column, row);
+		fdMapGridAnimateMetatiles(AltinDoors[doorIdx].steps, column, row);
 	}
 
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-	if(doorIndex == DOOR_ARMOR_SHOP) {
+	if(doorIdx == DOOR_ARMOR_SHOP) {
 		fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, 0);
 	} else {
-		if(doorIndex != DOOR_SANCTUM) {
+		if(doorIdx != DOOR_SANCTUM) {
 			fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, -4);
 		} else {
 			fdActorSetSprPriority(ACTOR_PARTY_LEADER, 2);
@@ -716,7 +716,7 @@ static void scAltinEnterDoor(void)
 	fdScriptWait(10);
 	syImportScriptSetExitRequest(state->stepCue);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -736,19 +736,19 @@ static void scAltinWalkIntoMine(void)
 	fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
 	syImportScriptSetExitRequest(state->stepCue);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
 /* The water beast's update function as it flees: it leaps every
-   WATER_BEAST_HOP_PERIOD frames with SE_JUMP, and lands with a splash that
-   shakes the screen for a few frames. */
+   WATER_BEAST_HOP_PERIOD ticks with SE_JUMP, and lands with a splash that
+   shakes the screen for a few ticks. */
 static void scAltinBeastHop(ACTOR *actor)
 {
 	ACTOR *beast = actor;
 
-	/* userValue holds the frames left of the landing's shake, timer counts the
-	   frames of the hop, and the effect's countdown is set while the beast is
+	/* userValue holds the ticks left of the landing's shake, timer counts the
+	   ticks of the hop, and the effect's countdown is set while the beast is
 	   in the air, so that it lands with one splash. */
 	if(beast->userValue != 0) {
 		if(--beast->userValue == 1)
@@ -761,7 +761,7 @@ static void scAltinBeastHop(ACTOR *actor)
 			if(((FIELD_EFFECT *)actor)->countdown != 0) {
 				sySndPlay(SE_SPLASH);
 				((FIELD_EFFECT *)actor)->countdown = 0;
-				/* Four frames of shake. */
+				/* Four ticks of shake. */
 				beast->userValue = 4;
 				fdMapGridSetShake(0, 1, 1);
 			}
@@ -885,7 +885,7 @@ static void scAltinApplyWaterLevel(void)
 		fdQueueMusic(SE_AMBIENT_WATER);
 		fdActorSetSprColById(ACTOR_WATER_BEAST, SPRITE_COLOR_RBG);
 		fdActorSetAnimation(ACTOR_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
-		sySetFrameEvent(scAltinBeastSpewWater, EVENT_PASS_FRAME);
+		sySetTickEvent(scAltinBeastSpewWater, EVENT_PASS_TICK);
 	}
 	if(MainRoutineStateWork.entrance == ALTIN_FROM_SANCTUM) {
 		gmFlagClear(FLAG_SHOW_AREA_NAME);
@@ -969,9 +969,9 @@ static void scAltinInitSpew(ACTOR *drop)
 	drop->scaleY = SPEW_START_SCALE;
 }
 
-/* A drop of spray's update function, through its SPEW_LIFETIME frames: it
+/* A drop of spray's update function, through its SPEW_LIFETIME ticks: it
    drifts east, slowing as it goes, with a random wobble, and moves two pixels a
-   frame down the screen as it grows; in its last frames it spreads flat and
+   tick down the screen as it grows; in its last ticks it spreads flat and
    rises a little as it splashes. It flashes white the more often the nearer its
    end, and is released. */
 static void scAltinDriftSpew(ACTOR *drop)
@@ -1000,12 +1000,12 @@ static void scAltinDriftSpew(ACTOR *drop)
 }
 
 /* Event while the water beast spews ("We can't drink the water the monsters
-   spew!"): every fourth frame a drop of water starts from its spout, living
-   SPEW_LIFETIME frames. */
+   spew!"): every fourth tick a drop of water starts from its spout, living
+   SPEW_LIFETIME ticks. */
 static void scAltinBeastSpewWater(void)
 {
 	ACTOR *drop;
-	if((FrameCount & 3) == 0) {
+	if((TickCount & 3) == 0) {
 		drop = ((ACTOR *)syFieldActorCreate(
 			SPRITE_DUST_PUFF, toFIXED(64), 0, toFIXED(400)));
 		if(drop != NULL) {
@@ -1052,7 +1052,7 @@ static void scAltinScareOffBeast(void)
 }
 
 /* The cook from Xian paces between his pots, nodding over each. */
-Sint32 CottageRoomsD_CookScript[] = {
+Sint32 CottageRoomsDCookScript[] = {
 	SC_ADD(SW_COLLISION, 128),
 	SC_SPEED(2.4),
 	SC_ACCELERATION(1.2),
@@ -1086,12 +1086,12 @@ Sint32 CottageRoomsD_CookScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-SCENE_ENTRANCE Altin_NoEntrances[] = {
+SCENE_ENTRANCE AltinNoEntrances[] = {
 	{0, CONDITION_ALWAYS, 380, 0, 433, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE Altin_Entrances[] = {
+SCENE_ENTRANCE AltinEntrances[] = {
 	{0, CONDITION_ALWAYS, 380, 0, 433, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{ALTIN_FROM_WORLD_MAP, CONDITION_ALWAYS, 488, 0, 184, FACING_WEST, 0, -1,
 		-1, -1, -1, 0},
@@ -1122,7 +1122,7 @@ SCENE_ENTRANCE Altin_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE CottageRoomsD_Entrances[] = {
+SCENE_ENTRANCE CottageRoomsDEntrances[] = {
 	{0, CONDITION_ALWAYS, 200, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{COTTAGE_ROOMS_D_EAST_HOUSE_FROM_ALTIN, CONDITION_ALWAYS, 159, 0, 258,
 		FACING_NORTH, 0, 25, 16, 255, 300, 0},
@@ -1145,7 +1145,7 @@ SCENE_ENTRANCE CottageRoomsD_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 Altin_Exits[] = {
+Uint32 AltinExits[] = {
 	SCENE_EXITS(Altin),
 	SCENE_EXIT(ALTIN_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ALTIN),
 	SCENE_EXIT(ALTIN_TO_COTTAGE_ROOMS_D_INN, CottageRoomsD,
@@ -1193,11 +1193,11 @@ Uint32 Altin_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE Altin_NoActorPlacements[] = {
+ACTOR_PLACE AltinNoActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Altin_ActorPlacements[] = {
+ACTOR_PLACE AltinActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_STAND, 440, 0, 200, FACING_SOUTH_SOUTHWEST,
 		TALK_FACING_PARTY_AND_BACK, 0),
@@ -1247,7 +1247,7 @@ ACTOR_PLACE Altin_ActorPlacements[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE CottageRoomsD_ActorPlacements[] = {
+ACTOR_PLACE CottageRoomsDActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 120, FACING_EAST_SOUTHEAST,
 		TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 105, 0, 233, FACING_SOUTH_SOUTHWEST,
@@ -1270,18 +1270,18 @@ ACTOR_PLACE CottageRoomsD_ActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_MAN_WITH_DARK_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND, 103, 0, 744, FACING_SOUTH_SOUTHEAST,
 		TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PINK_APRON, CONDITION_IN_VIEW, MOVEMENT_TYPE_WANDER_NEAR, 228, 0, 756, FACING_WEST_SOUTHWEST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_COOK, CONDITION_IN_VIEW, (Sint32)CottageRoomsD_CookScript, 350, 0, 746,
+	ACTOR_PLACEMENT(SPRITE_COOK, CONDITION_IN_VIEW, (Sint32)CottageRoomsDCookScript, 350, 0, 746,
 		FACING_WEST_SOUTHWEST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND, 646, 0, 734, FACING_SOUTH_SOUTHEAST,
 		TALK_FACING_PARTY, 0),
 	{SCENE_TABLE_END},
 };
 
-CUE Altin_NoCues[] = {
+CUE AltinNoCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Altin_Cues[] = {
+CUE AltinCues[] = {
 	{STEP_CUE_FACING(FACING_NORTH), METATILE_BEHAVIOR_ALTIN_WEST_MINE_DOORWAY, CONDITION_ALWAYS, SCRIPT_REF(scAltinWalkIntoMine)},
 	{STEP_CUE_FACING(FACING_NORTH), METATILE_BEHAVIOR_ALTIN_RAIL_TUNNEL, CONDITION_ALWAYS, SCRIPT_REF(scAltinWalkIntoMine)},
 	{STEP_CUE_FACING(FACING_NORTH), METATILE_BEHAVIOR_ALTIN_MIDDLE_MINE_DOORWAY, CONDITION_ALWAYS, SCRIPT_REF(scAltinWalkIntoMine)},
@@ -1360,7 +1360,7 @@ CUE Altin_Cues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE CottageRoomsD_Cues[] = {
+CUE CottageRoomsDCues[] = {
 	{CUE_EXIT, COTTAGE_ROOMS_D_EAST_HOUSE_TO_ALTIN, CONDITION_ALWAYS, COTTAGE_ROOMS_D_EAST_HOUSE_TO_ALTIN},
 	{CUE_EXIT, COTTAGE_ROOMS_D_CLIFF_HOUSE_TO_ALTIN, CONDITION_ALWAYS, COTTAGE_ROOMS_D_CLIFF_HOUSE_TO_ALTIN},
 	{CUE_EXIT, COTTAGE_ROOMS_D_SOUTH_HOUSE_TO_ALTIN, CONDITION_ALWAYS, COTTAGE_ROOMS_D_SOUTH_HOUSE_TO_ALTIN},
@@ -1472,39 +1472,39 @@ CUE CottageRoomsD_Cues[] = {
 /* The opening pictures of the village's doors, two metatiles square. The
    Sanctum's door (the second) is wider, and scAltinEnterDoor redraws it by hand
    instead. */
-Uint16 Altin_SanctumDoorMetatiles[] = {
+Uint16 AltinSanctumDoorMetatiles[] = {
 	MAPGRID_ANIMATION_STEP(42, 33, 2, 2, 0),
 	MAPGRID_ANIMATION_STEP(42, 35, 2, 2, 5),
 	MAPGRID_ANIMATION_STEP(40, 33, 2, 2, 0),
 	MAPGRID_ANIMATION_STEP(40, 35, 2, 2, 5),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Altin_InnDoorMetatiles[] = {
+Uint16 AltinInnDoorMetatiles[] = {
 	MAPGRID_ANIMATION_STEP(35, 48, 2, 2, 5),
 	MAPGRID_ANIMATION_STEP(33, 48, 2, 2, 5),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Altin_ItemShopDoorMetatiles[] = {
+Uint16 AltinItemShopDoorMetatiles[] = {
 	MAPGRID_ANIMATION_STEP(35, 35, 2, 2, 5),
 	MAPGRID_ANIMATION_STEP(33, 35, 2, 2, 5),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Altin_ArmorShopDoorMetatiles[] = {
+Uint16 AltinArmorShopDoorMetatiles[] = {
 	MAPGRID_ANIMATION_STEP(35, 46, 2, 2, 5),
 	MAPGRID_ANIMATION_STEP(33, 46, 2, 2, 5),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Altin_EastHouseDoorMetatiles[] = {
+Uint16 AltinEastHouseDoorMetatiles[] = {
 	MAPGRID_ANIMATION_STEP(35, 50, 2, 2, 5),
 	MAPGRID_ANIMATION_STEP(33, 50, 2, 2, 5),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Altin_CliffHouseAndWeaponShopDoorMetatiles[] = {
+Uint16 AltinCliffHouseAndWeaponShopDoorMetatiles[] = {
 	MAPGRID_ANIMATION_STEP(35, 33, 2, 2, 5),
 	MAPGRID_ANIMATION_STEP(33, 33, 2, 2, 5),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Altin_SouthHouseDoorMetatiles[] = {
+Uint16 AltinSouthHouseDoorMetatiles[] = {
 	MAPGRID_ANIMATION_STEP(35, 52, 2, 2, 5),
 	MAPGRID_ANIMATION_STEP(33, 52, 2, 2, 5),
 	MAPGRID_ANIMATION_STEPS_END,
@@ -1516,13 +1516,13 @@ Uint16 Altin_SouthHouseDoorMetatiles[] = {
    that layer's (9, 5), on the inn's door just above the ground metatile (10,
    13) Isaac walks into (render probe Altin --entrance 2 --mark-metatiles
    9,5,10,6,1). */
-MAP_GRID_METATILE_ANIMATION Altin_Doors[] = {
-	{Altin_InnDoorMetatiles, 41, 5},
-	{Altin_SanctumDoorMetatiles, 51, 6},
-	{Altin_EastHouseDoorMetatiles, 57, 17},
-	{Altin_CliffHouseAndWeaponShopDoorMetatiles, 39, 17},
-	{Altin_SouthHouseDoorMetatiles, 48, 25},
-	{Altin_ItemShopDoorMetatiles, 59, 9},
-	{Altin_ArmorShopDoorMetatiles, 42, 23},
-	{Altin_CliffHouseAndWeaponShopDoorMetatiles, 41, 27},
+MAP_GRID_METATILE_ANIMATION AltinDoors[] = {
+	{AltinInnDoorMetatiles, 41, 5},
+	{AltinSanctumDoorMetatiles, 51, 6},
+	{AltinEastHouseDoorMetatiles, 57, 17},
+	{AltinCliffHouseAndWeaponShopDoorMetatiles, 39, 17},
+	{AltinSouthHouseDoorMetatiles, 48, 25},
+	{AltinItemShopDoorMetatiles, 59, 9},
+	{AltinArmorShopDoorMetatiles, 42, 23},
+	{AltinCliffHouseAndWeaponShopDoorMetatiles, 41, 27},
 };

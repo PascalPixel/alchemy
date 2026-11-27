@@ -36,7 +36,7 @@ static inline void gmInventoryCompactSlots(Sint16 *inventory)
    no stock), and the most one counts. */
 enum { ITEM_COUNTER_COUNT = 300, ITEM_COUNTER_MAX = 99 };
 
-/* A character's element group (Character_ElementGroupTable): which two
+/* A character's element group (CharacterElementGroupTable): which two
    lighthouses gmPartyRestorePpInLighthouse restores its PP in. */
 typedef enum ELEMENT_GROUP {
 	ELEMENT_GROUP_VENUS_MARS,

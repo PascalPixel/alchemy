@@ -1,4 +1,4 @@
-/* Run each frame: when the leader steps onto a whole tile it cracks, and onto a
+/* Run each tick: when the leader steps onto a whole tile it cracks, and onto a
    cracked one other than the one it cracked last, the leader falls through it;
    1 when it falls. */
 Bool scCrackedTileStep(void)

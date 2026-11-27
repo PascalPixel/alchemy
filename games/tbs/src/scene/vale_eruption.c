@@ -40,16 +40,16 @@
 #include "graphics/graphics.h"
 #include "text/msg_ids.h"
 
-extern Sint32		  ValeEruption_LeaderWalksDown[];
-extern Sint32		  ValeEruption_GaretWalksDown[];
-extern Sint32		  ValeEruption_EnterSanctum[];
-extern SCENE_ENTRANCE ValeEruption_Entrances[];
-extern Uint32		  ValeEruption_Exits[];
-extern ACTOR_PLACE	  ValeEruption_ActorPlacements[];
-extern CUE			  ValeEruption_Cues[];
-extern Uint16		  ValeEruption_SanctumDoorOpens[];
+extern Sint32		  ValeEruptionLeaderWalksDown[];
+extern Sint32		  ValeEruptionGaretWalksDown[];
+extern Sint32		  ValeEruptionEnterSanctum[];
+extern SCENE_ENTRANCE ValeEruptionEntrances[];
+extern Uint32		  ValeEruptionExits[];
+extern ACTOR_PLACE	  ValeEruptionActorPlacements[];
+extern CUE			  ValeEruptionCues[];
+extern Uint16		  ValeEruptionSanctumDoorOpens[];
 
-/* The placed actors, numbered in the order of ValeEruption_ActorPlacements.
+/* The placed actors, numbered in the order of ValeEruptionActorPlacements.
    Garet's row places the party's Garet and takes no number. */
 typedef enum VALE_ERUPTION_ACTOR_ID {
 	/* The Great Healer is a man with a white beard, in a tall hat and a long
@@ -88,7 +88,7 @@ static void scValeEruptionReturnFromMtAleph(void);
    down from the mountain, Mt. Aleph. */
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return ValeEruption_Entrances;
+	return ValeEruptionEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -100,19 +100,19 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
    (SANCTUM_FROM_VALE_ERUPTION), which scValeEruptionReturnFromMtAleph takes. */
 const Uint32 *scGetExits(void)
 {
-	return ValeEruption_Exits;
+	return ValeEruptionExits;
 }
 
 /* Returns Garet and the villagers gathered before the sanctum. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return ValeEruption_ActorPlacements;
+	return ValeEruptionActorPlacements;
 }
 
 /* The scene has no cues of its own, since everything happens on arrival. */
 const CUE *scGetCues(void)
 {
-	return ValeEruption_Cues;
+	return ValeEruptionCues;
 }
 
 /* Arriving in Vale during the eruption plays the return from the mountain, when
@@ -336,9 +336,9 @@ static void scValeEruptionReturnFromMtAleph(void)
 	fdCameraMoveTo(214, CAMERA_KEEP, 472, 1);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1);
 	fdActorSetSpeed(ACTOR_GARET, 1);
-	fdActorSetScript(ACTOR_PARTY_LEADER, ValeEruption_LeaderWalksDown);
+	fdActorSetScript(ACTOR_PARTY_LEADER, ValeEruptionLeaderWalksDown);
 	fdScriptWait(30);
-	fdActorSetScript(ACTOR_GARET, ValeEruption_GaretWalksDown);
+	fdActorSetScript(ACTOR_GARET, ValeEruptionGaretWalksDown);
 	fdActorWaitForScriptEndById(ACTOR_GARET);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_EAST, 0);
@@ -451,7 +451,7 @@ static void scValeEruptionReturnFromMtAleph(void)
 	/* The sanctum's door opens and everyone files inside. */
 	fdActorWalkToAndWait(ACTOR_GREAT_HEALER, 255, 445);
 	fdScriptWait(40);
-	fdMapGridAnimateMetatiles(ValeEruption_SanctumDoorOpens, 45, 11);
+	fdMapGridAnimateMetatiles(ValeEruptionSanctumDoorOpens, 45, 11);
 	sySndPlay(SE_THUMP);
 	fdScriptWait(30);
 	fdActorWalkTo(ACTOR_GREAT_HEALER, 255, 390);
@@ -468,7 +468,7 @@ static void scValeEruptionReturnFromMtAleph(void)
 	fdActorRunRepeatedMotion(ACTOR_GARET, 1);
 	fdScriptWait(40);
 	fdActorWalkTo(ACTOR_DORA, 255, 390);
-	actionScript = ValeEruption_EnterSanctum;
+	actionScript = ValeEruptionEnterSanctum;
 	fdActorSetScript(ACTOR_PARTY_LEADER, actionScript);
 	fdScriptWait(40);
 	fdActorSetScript(ACTOR_GARET, actionScript);
@@ -493,7 +493,7 @@ static void scValeEruptionReturnFromMtAleph(void)
 }
 
 /* Isaac walks down from the path to the villagers before the sanctum. */
-Sint32 ValeEruption_LeaderWalksDown[] = {
+Sint32 ValeEruptionLeaderWalksDown[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(128, 0, 378),
 	SC_SYNC,
@@ -508,7 +508,7 @@ Sint32 ValeEruption_LeaderWalksDown[] = {
 };
 
 /* Garet follows him, stopping a little above. */
-Sint32 ValeEruption_GaretWalksDown[] = {
+Sint32 ValeEruptionGaretWalksDown[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(128, 0, 378),
 	SC_SYNC,
@@ -521,7 +521,7 @@ Sint32 ValeEruption_GaretWalksDown[] = {
 };
 
 /* Isaac, then Garet, walk through the sanctum's door. */
-Sint32 ValeEruption_EnterSanctum[] = {
+Sint32 ValeEruptionEnterSanctum[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(255, 0, 452),
 	SC_SYNC,
@@ -531,7 +531,7 @@ Sint32 ValeEruption_EnterSanctum[] = {
 	SC_END,
 };
 
-SCENE_ENTRANCE ValeEruption_Entrances[] = {
+SCENE_ENTRANCE ValeEruptionEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 110, 0, 270, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{VALE_ERUPTION_FROM_SOL_ENTRANCE, CONDITION_ALWAYS, 103, 0, 284,
@@ -539,14 +539,14 @@ SCENE_ENTRANCE ValeEruption_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 ValeEruption_Exits[] = {
+Uint32 ValeEruptionExits[] = {
 	SCENE_EXITS(ValeEruption),
 	SCENE_EXIT(VALE_ERUPTION_TO_SANCTUM, Sanctum, SANCTUM_FROM_VALE_ERUPTION),
 	SCENE_EXITS_END,
 };
 
 /* clang-format off */
-ACTOR_PLACE ValeEruption_ActorPlacements[] = {
+ACTOR_PLACE ValeEruptionActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		104, 0, 258, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -577,12 +577,12 @@ ACTOR_PLACE ValeEruption_ActorPlacements[] = {
 };
 /* clang-format on */
 
-CUE ValeEruption_Cues[] = {
+CUE ValeEruptionCues[] = {
 	{CUE_TABLE_END},
 };
 
 /* The sanctum's door, two metatiles wide, opening in two steps. */
-Uint16 ValeEruption_SanctumDoorOpens[] = {
+Uint16 ValeEruptionSanctumDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(0, 98, 2, 2, 2),
 	MAPGRID_ANIMATION_STEP(2, 98, 2, 2, 2),
 	MAPGRID_ANIMATION_STEPS_END,

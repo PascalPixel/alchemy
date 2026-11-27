@@ -1,7 +1,7 @@
 /* The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
    the end of the race at the arena, where each warrior walks up to a prize and
    holds it up. The first to arrive takes the better one
-   (Colosso_OpponentFinishScript, Colosso_LeaderFinishScript). */
+   (ColossoOpponentFinishScript, ColossoLeaderFinishScript). */
 
 /* UB: calls a void function through an Sint32 function type, the call the bytes
    show; UBFIX calls it as declared. */
@@ -36,15 +36,15 @@ static void scColossoWaitForOpponentToFinish(void)
 	}
 }
 
-/* The speed, in pixels a frame, below which the raised prize has settled. */
+/* The speed, in pixels a tick, below which the raised prize has settled. */
 #define PRIZE_SETTLE_SPEED toFIXED(0.0039)
 
-/* The raised prize's hook (Colosso_PrizeScript): it settles once it has almost
-   stopped rising, and on about one frame in ten a sparkle
-   (Colosso_PrizeSparkleScript) appears somewhere within 16 pixels of it. */
+/* The raised prize's hook (ColossoPrizeScript): it settles once it has almost
+   stopped rising, and on about one tick in ten a sparkle
+   (ColossoPrizeSparkleScript) appears somewhere within 16 pixels of it. */
 static void scColossoSparkleAroundPrize(ACTOR *prize)
 {
-	Sint32 position[3];
+	Sint32 pos[3];
 
 	if(prize->velY >= -PRIZE_SETTLE_SPEED &&
 		prize->velY <= PRIZE_SETTLE_SPEED) {
@@ -53,23 +53,23 @@ static void scColossoSparkleAroundPrize(ACTOR *prize)
 	if(syRandomBelow(100) < 10) {
 		ACTOR *sparkle;
 		Sint32 distance;
-		Sint32 angle;
+		Sint32 ang;
 
-		SET_VECTOR(position, prize->x.fixed, prize->y.fixed, prize->z.fixed);
+		SET_VECTOR(pos, prize->x.fixed, prize->y.fixed, prize->z.fixed);
 		distance = syRandomNext();
-		angle = syRandomNext();
-		syVectorAddPolarOffset(distance << 4, angle, position);
+		ang = syRandomNext();
+		syVectorAddPolarOffset(distance << 4, ang, pos);
 		{
-			Sint32 x = position[0];
-			Sint32 y = position[1];
-			Sint32 z = position[2];
+			Sint32 x = pos[0];
+			Sint32 y = pos[1];
+			Sint32 z = pos[2];
 
 			sparkle = syFieldActorCreate(SPRITE_SPARKLE, x, y, z);
 		}
 		if(sparkle != NULL) {
 			sparkle->motionFlg = 0;
 			fdActorSetSprFlags(sparkle, 0);
-			fdActorStartScript(sparkle, Colosso_PrizeSparkleScript);
+			fdActorStartScript(sparkle, ColossoPrizeSparkleScript);
 			fdActorSelectAnimation(sparkle, 1);
 			fdActorSelectAnimation(sparkle, 0);
 		}
@@ -86,7 +86,7 @@ static Sint32 scColossoRaisePrize(ACTOR *warrior)
 	syFieldActorSetMoveTargetFX(prize, warrior->x.fixed,
 		warrior->y.fixed + toFIXED(36), warrior->z.fixed);
 	prize->motionFlg = 0;
-	fdActorStartScript(prize, Colosso_PrizeScript);
+	fdActorStartScript(prize, ColossoPrizeScript);
 	sySndPlay(MUS_TREASURE_FOUND);
 	warrior->tmr = 0;
 	return 0;
@@ -126,7 +126,7 @@ static Sint32 scColossoTakePrize(Sint32 firstItem, Sint32 secondItem)
 	leader->speedLimit = toFIXED(1);
 	syFieldActorSetMoveTargetFX(leader, x, 0, z);
 	gmFlagSet(FLAG_ARENA_REACHED);
-	fdActorStartScript(leader, Colosso_LeaderFinishScript);
+	fdActorStartScript(leader, ColossoLeaderFinishScript);
 	while(*raisedPrizeActorId != 0) {
 		sySynch(1);
 	}

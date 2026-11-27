@@ -170,7 +170,7 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 	if(sceneId == SCENE_GONDOWAN_CAVE) {
 		return GondowanCaveEntrances;
 	}
-	return Scene_FallbackEntrances;
+	return SceneFallbackEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -328,10 +328,10 @@ static void scGondowanCaveIodemComesAlong(void)
    he agrees: they wouldn't be let into Babi Lighthouse anyway. */
 static void scGondowanCaveSoldierAsksAboutCrossing(void)
 {
-	Sint32 firstMessage;
+	Sint32 firstMsg;
 
-	firstMessage = MsgKaragolDoYouWishCrossInto;
-	fdScriptSetMessageId(firstMessage);
+	firstMsg = MsgKaragolDoYouWishCrossInto;
+	fdScriptSetMessageId(firstMsg);
 	/* "Do you wish to cross into Gondowan?" */
 	fdScriptOpenMessage(ACTOR_FIRST_SOLDIER, 0);
 	if(fdScriptAskYesNoWithActorAnimation(0, 0) == 0) {
@@ -342,7 +342,7 @@ static void scGondowanCaveSoldierAsksAboutCrossing(void)
 				/* Once Colosso is over, the shorter answer eight messages on:
 				   "I won't stop you, but I wouldn't go unless I had business
 				   there!" */
-				fdScriptSetMessageId(firstMessage + 8);
+				fdScriptSetMessageId(firstMsg + 8);
 			}
 		}
 		fdScriptShowMessage(ACTOR_FIRST_SOLDIER, 0);
@@ -390,7 +390,7 @@ static void scGondowanCaveLeaveToWorldMapEast(void)
 	}
 	syImportScriptSetExitRequest(state->stepCue);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -435,11 +435,11 @@ static void scGondowanCavePushPillar(void)
 }
 
 /* Hides the pillar and shows the actor that stands in for it in its place. */
-static inline void scGondowanCavePlaceDroppedPillar(Sint32 animation)
+static inline void scGondowanCavePlaceDroppedPillar(Sint32 anm)
 {
 	fdActorSetPos(ACTOR_PILLAR, 0, 0);
 	fdActorSetPos(ACTOR_DROPPED_PILLAR, 696, 288);
-	fdActorSetAnimation(ACTOR_DROPPED_PILLAR, animation);
+	fdActorSetAnimation(ACTOR_DROPPED_PILLAR, anm);
 }
 
 static void scGondowanCaveMovePillar(void)
@@ -461,21 +461,21 @@ static UNUSED void scGondowanCaveUnusedNoOperationA(void)
 {
 }
 
-/* Spins the leaping stump a sixty-fourth of a turn each frame. */
+/* Spins the leaping stump a sixty-fourth of a turn each tick. */
 static void scGondowanCaveSpinStump(ACTOR *actor)
 {
 	actor->spr->rotation -= TRIG_TURN / 64;
 }
 
-/* Waits until the actor has come down to height (16.16), forty frames at most:
+/* Waits until the actor has come down to height (16.16), forty ticks at most:
    scActorWaitBelowHeight with a shorter limit. */
 static void scGondowanCaveWaitBelowHeight(ACTOR *actor, Sint32 height)
 {
-	Sint32 framesRemaining = 40;
+	Sint32 ticksRemaining = 40;
 
-	while(framesRemaining != 0) {
+	while(ticksRemaining != 0) {
 		sySynch(1);
-		framesRemaining--;
+		ticksRemaining--;
 		if(actor->y.fixed <= height) {
 			break;
 		}
@@ -492,14 +492,14 @@ static void scGondowanCaveWaitBelowHeight(ACTOR *actor, Sint32 height)
 static void scGondowanCaveLeapStump(Sint32 actorId)
 {
 	ACTOR  *actor;
-	Uint32	stepIndex;
-	VECTOR3 particleVelocity;
-	Sint32	angle;
+	Uint32	stepIdx;
+	VECTOR3 particleVel;
+	Sint32	ang;
 
 	actor = fdActorGet(actorId);
 	/* It winds up its spin in place. */
 	actor->motionFlg = 0;
-	for(stepIndex = 0; stepIndex < 9; stepIndex++) {
+	for(stepIdx = 0; stepIdx < 9; stepIdx++) {
 		sySynch(1);
 		actor->spr->rotation -= TRIG_TURN / 256;
 		actor->x.fixed -= syCos(actor->spr->rotation) / 2;
@@ -516,16 +516,15 @@ static void scGondowanCaveLeapStump(Sint32 actorId)
 	scGondowanCaveWaitBelowHeight(actor, toFIXED(32));
 	fdMapGridSetShake(5, 5, 1);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-	for(stepIndex = 0; stepIndex <= TRIG_TURN / FACING_STEP; stepIndex++) {
-		angle = stepIndex * FACING_STEP;
-		particleVelocity.x = syCos(angle);
-		particleVelocity.y = 0;
-		particleVelocity.z = sySin(angle);
-		particleVelocity.x -= particleVelocity.x / 4;
-		particleVelocity.z -= particleVelocity.z / 2;
+	for(stepIdx = 0; stepIdx <= TRIG_TURN / FACING_STEP; stepIdx++) {
+		ang = stepIdx * FACING_STEP;
+		particleVel.x = syCos(ang);
+		particleVel.y = 0;
+		particleVel.z = sySin(ang);
+		particleVel.x -= particleVel.x / 4;
+		particleVel.z -= particleVel.z / 2;
 		fdEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
-			particleVelocity.x, particleVelocity.y, particleVelocity.z, 0,
-			NULL);
+			particleVel.x, particleVel.y, particleVel.z, 0, NULL);
 	}
 	fdActorSetDestination(actorId, 440, 308);
 	fdActorWaitForMoveById(actorId);
@@ -587,10 +586,10 @@ Sint32 scInit(void)
 #include "shared/pushed_actor_tables.c"
 /* clang-format off */
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 #include "shared/fallback_entrances.c"

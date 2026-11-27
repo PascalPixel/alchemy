@@ -1,14 +1,14 @@
 /* Growth, Punji, Vine and Thorn. Part of battle_effect.c. */
 
-#define GROWTH_DUST		 512 /* puffs of dust in PARTICLES */
-#define THORN_DUST		 64	 /* puffs of dust in PARTICLES for the thorns */
-/* The frames a puff of dust lasts: its seven pictures, two frames each. */
-#define DUST_PUFF_FRAMES 14
-/* The columns set out, of which Growth_ColumnCounts picks how many grow. */
-#define GROWING_COLUMNS	 16
+#define GROWTH_DUST		512 /* puffs of dust in PARTICLES */
+#define THORN_DUST		64	/* puffs of dust in PARTICLES for the thorns */
+/* The ticks a puff of dust lasts: its seven pictures, two ticks each. */
+#define DUST_PUFF_TICKS 14
+/* The columns set out, of which GrowthColumnCounts picks how many grow. */
+#define GROWING_COLUMNS 16
 
 /* Growing columns and thorns spring up one after another, each shaking the
-   screen and throwing up dust from its root, and the targets react a few frames
+   screen and throwing up dust from its root, and the targets react a few ticks
    later. */
 
 /* The dust pictures in the vine sprite sheet, after the vines. */
@@ -38,7 +38,7 @@ typedef struct GROWING_COLUMN {
 	Sint32 unused[2];
 	Sint32 height;	   /* the full length, 55 to 118 capped by its shape */
 	Sint32 unusedVelZ; /* the Particle's velZ, which the columns leave alone */
-	/* The frame it starts to grow; set, but the frame loop computes its own. */
+	/* The tick it starts to grow; set, but the tick loop computes its own. */
 	Sint32 start;
 } GROWING_COLUMN;
 
@@ -66,7 +66,7 @@ void btEffectRunGrowingColumns(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	void				*canvas;
 	BLITTER_PAIR		 rectangle;
 
-	Sint32			frame;
+	Sint32			frm;
 	Sint32			duration;
 	DRAW_RECTANGLE *draw;
 	Sint32			start;
@@ -83,7 +83,7 @@ void btEffectRunGrowingColumns(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint8			pillarHeight;
 
 	Sint32 n; /* a target that reacts, then a free slot for the dust */
-	Sint32 reactFrame;
+	Sint32 reactFrm;
 
 	Sint32	  i;
 	PARTICLE *puff;
@@ -118,19 +118,19 @@ void btEffectRunGrowingColumns(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		rectangle[1] = mirroredBlitter;
 	}
 
-	duration = Growth_ColumnCounts[state->args->variant] * 4 + 56;
+	duration = GrowthColumnCounts[state->args->variant] * 4 + 56;
 
 	for(i = 0; i != PARTICLE_POOL_COUNT; i++)
 		PARTICLES[i].variant = -1;
 
 	for(i = 0; i != GROWING_COLUMNS; i++) {
 		setup = &((GROWING_COLUMN *)state->particles)[i];
-		x = (Growth_ColumnX[i] + (7 & syRandom())) - 4;
+		x = (GrowthColumnX[i] + (7 & syRandom())) - 4;
 		setup->y = i / 2 + 108;
 		setup->x = x;
 		height = (63 & syRandom()) + 55;
 		setup->height = height;
-		limit = Growth_HeightLimits[i % 3];
+		limit = GrowthHeightLimits[i % 3];
 		if(limit < height) {
 			setup->height = limit;
 		}
@@ -140,29 +140,29 @@ void btEffectRunGrowingColumns(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 
-	for(frame = 0; frame != duration; frame++) {
-		if(frame == duration - 64) {
+	for(frm = 0; frm != duration; frm++) {
+		if(frm == duration - 64) {
 			EFFECT_SHOW_DAMAGE(SE_WATER);
 		}
-		if(frame >= duration - 20 && frame < duration - 4) {
-			/* Fade out over the last 16 frames. */
+		if(frm >= duration - 20 && frm < duration - 4) {
+			/* Fade out over the last 16 ticks. */
 			REG_BLDCNT =
 				BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-			REG_BLDALPHA = EFFECT_BLEND_CANVAS((duration - frame) - 5);
+			REG_BLDALPHA = EFFECT_BLEND_CANVAS((duration - frm) - 5);
 		}
-		if(frame < duration - 4) {
-			for(i = 0; i != Growth_ColumnCounts[state->args->variant]; i++) {
+		if(frm < duration - 4) {
+			for(i = 0; i != GrowthColumnCounts[state->args->variant]; i++) {
 				column = &((GROWING_COLUMN *)state->particles)[i];
 				start = i * 4 + 8;
-				if(frame == i * 4 + 9) {
+				if(frm == i * 4 + 9) {
 					state->shakeFrm = 2;
 				}
 
 				/* A column grows from its root. */
-				if(frame > start) {
+				if(frm > start) {
 					Uint32 shape = i % 3;
 
-					length = (frame - start) * 8;
+					length = (frm - start) * 8;
 					reach = column->height;
 					if(length > reach) {
 						length = reach;
@@ -170,21 +170,21 @@ void btEffectRunGrowingColumns(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					if(mode == GROWING_COLUMNS_VINES) {
 						{
 							Sint32 side = 1 & i;
-							Sint32 picture = Growth_VinePictures[shape];
-							Uint32 width = Growth_VineWidths[shape];
+							Sint32 picture = GrowthVinePictures[shape];
+							Uint32 width = GrowthVineWidths[shape];
 							draw[side](canvas, state->sheet + picture,
 								column->x - (width >> 1), column->y - length,
 								width, length);
 						}
 					} else {
-						pillarHeight = Growth_PillarHeights[7 & i];
+						pillarHeight = GrowthPillarHeights[7 & i];
 						if(length > pillarHeight) {
 							length = pillarHeight;
 						}
 						{
 							Sint32 side = 1 & i;
-							Sint32 picture = Growth_PillarPictures[shape];
-							Uint32 width = Growth_PillarWidths[shape];
+							Sint32 picture = GrowthPillarPictures[shape];
+							Uint32 width = GrowthPillarWidths[shape];
 							draw[side](canvas, state->sheet + picture,
 								column->x - (width >> 1), column->y - length,
 								width, length);
@@ -195,9 +195,9 @@ void btEffectRunGrowingColumns(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				/* The targets react as it grows. */
 				n = 0;
 				if(state->args->tgtCnt != 0) {
-					reactFrame = start + 4;
+					reactFrm = start + 4;
 					for(; n != state->args->tgtCnt; n++) {
-						if(frame == reactFrame) {
+						if(frm == reactFrm) {
 							if(!(i & 1)) {
 								sySndPlayStub(SE_IMPACT);
 							}
@@ -206,11 +206,11 @@ void btEffectRunGrowingColumns(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						}
 					}
 				} else {
-					reactFrame = start + 4;
+					reactFrm = start + 4;
 				}
 
 				/* Dust puffs from the root. */
-				if((frame == reactFrame) || (frame == (start + 8))) {
+				if((frm == reactFrm) || (frm == (start + 8))) {
 					for(n = 0; n != GROWTH_DUST; n++) {
 						PARTICLE *dust = &PARTICLES[n];
 
@@ -236,35 +236,35 @@ void btEffectRunGrowingColumns(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					puffPictures = GROWING_COLUMNS_PILLAR_DUST_PICTURES;
 				}
 				rectangle[0](canvas,
-					state->sheet + (Growth_PuffPictures[image] + puffPictures),
-					puff->x - Growth_PuffWidths[image],
-					puff->y - (Sint8)Growth_PuffHeights[image] / 2,
-					Growth_PuffWidths[image], (Sint8)Growth_PuffHeights[image]);
+					state->sheet + (GrowthPuffPictures[image] + puffPictures),
+					puff->x - GrowthPuffWidths[image],
+					puff->y - (Sint8)GrowthPuffHeights[image] / 2,
+					GrowthPuffWidths[image], (Sint8)GrowthPuffHeights[image]);
 				rectangle[1](canvas,
-					state->sheet + (Growth_PuffPictures[image] + puffPictures),
-					puff->x, puff->y - (Sint8)Growth_PuffHeights[image] / 2,
-					Growth_PuffWidths[image], (Sint8)Growth_PuffHeights[image]);
+					state->sheet + (GrowthPuffPictures[image] + puffPictures),
+					puff->x, puff->y - (Sint8)GrowthPuffHeights[image] / 2,
+					GrowthPuffWidths[image], (Sint8)GrowthPuffHeights[image]);
 				puff->variant++;
-				if(puff->variant == DUST_PUFF_FRAMES) {
+				if(puff->variant == DUST_PUFF_TICKS) {
 					puff->variant = -1;
 				}
 			}
 		}
 
 		btCameraShake(4, 4);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 	EFFECT_FINISH_CANVAS();
 }
 
 #define VINE_COLUMNS		16 /* columns that rise */
-#define VINE_FRAMES			70
+#define VINE_TICKS			70
 /* GreenVineSheet: five 32 by 32 pictures of a vine, drawn in turn. */
 #define GREEN_VINE_WIDTH	32
 #define GREEN_VINE_HEIGHT	32
 #define GREEN_VINE_PICTURES 5
 
-/* Sixteen green vines grow from the middle of the row of targets, 2 frames
+/* Sixteen green vines grow from the middle of the row of targets, 2 ticks
    apart, and shrink back.
 
    Abilities: Vine. */
@@ -275,7 +275,7 @@ void btEffectRunVine(BATTLE_EFFECT_PARM *args)
 	BLITTER_PAIR		 draw;
 	Sint32				 originX, originY;
 	SCREEN_POINT		 first, last;
-	Sint32				 i, frame, picture, height, offset, middle;
+	Sint32				 i, frm, picture, height, ofs, middle;
 	PARTICLE			*column;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -303,11 +303,11 @@ void btEffectRunVine(BATTLE_EFFECT_PARM *args)
 	draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 	column = state->particles;
 	for(i = 0; i != VINE_COLUMNS; i++) {
-		column[i].x = Vine_ColumnOffsets[i] + CANVAS_SIZE / 2;
+		column[i].x = VineColumnOffsets[i] + CANVAS_SIZE / 2;
 	}
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
-	for(frame = 0; frame != VINE_FRAMES; frame++) {
-		if(frame == 32) {
+	for(frm = 0; frm != VINE_TICKS; frm++) {
+		if(frm == 32) {
 			sySndPlayStub(SE_CRACK);
 			EFFECT_FOR_EACH_TARGET(i, state->args)
 				btEffectTintBattler(state->args->tgts[i], SPRITE_COLOR_WHITE,
@@ -315,19 +315,19 @@ void btEffectRunVine(BATTLE_EFFECT_PARM *args)
 		}
 		for(i = 0; i != VINE_COLUMNS; i++) {
 			column = &state->particles[i];
-			if(frame == i * 4 + 5)
+			if(frm == i * 4 + 5)
 				state->shakeFrm = 2;
 
 			/* Each vine grows, then shrinks back. */
-			offset = i * 2;
-			if(frame > offset + 4) {
-				picture = (frame / 4 + i) % GREEN_VINE_PICTURES;
-				if(frame < offset + 32) {
-					height = (frame - offset) * 4 - 16;
+			ofs = i * 2;
+			if(frm > ofs + 4) {
+				picture = (frm / 4 + i) % GREEN_VINE_PICTURES;
+				if(frm < ofs + 32) {
+					height = (frm - ofs) * 4 - 16;
 					if(height > GREEN_VINE_HEIGHT)
 						height = GREEN_VINE_HEIGHT;
 				} else {
-					height = 160 - (frame - offset) * 4;
+					height = 160 - (frm - ofs) * 4;
 				}
 				if(height > 0)
 					draw[i & 1](canvas,
@@ -337,22 +337,22 @@ void btEffectRunVine(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		btCameraShake(4, 4);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 	EFFECT_FINISH_CANVAS();
 }
 
-/* Thorns burst from the ground one every 8 frames, throwing up dust from their
+/* Thorns burst from the ground one every 8 ticks, throwing up dust from their
    roots.
 
    Abilities: Thorn, Briar, Nettle. */
 void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 {
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	DRAW_RECTANGLE		 drawFlip;
 	DRAW_RECTANGLE		 draw;
-	Sint32				 frameCount;
+	Sint32				 frmCnt;
 	BATTLE_EFFECT_STATE *state;
 	Sint32				 i;
 	Sint32				 j;
@@ -375,37 +375,37 @@ void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 	draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_TRANSPARENT);
-	/* clear the canvas every frame */
+	/* clear the canvas every tick */
 	state->transferMode = CANVAS_COPY_AND_CLEAR;
 	state->transferValue = 0;
 	drawFlip = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
-	frameCount = Thorn_Counts[state->args->variant] * 8 + 56;
+	frmCnt = ThornCounts[state->args->variant] * 8 + 56;
 
 	for(i = 0; i != PARTICLE_POOL_COUNT; i++) {
 		PARTICLES[i].variant = -1;
 	}
 
-	for(frame = 0; frame != frameCount; frame++) {
-		if(frame == frameCount - 64) {
+	for(frm = 0; frm != frmCnt; frm++) {
+		if(frm == frmCnt - 64) {
 			EFFECT_SHOW_DAMAGE(SE_WATER);
 		}
-		if(frame >= frameCount - 16) {
-			/* Fade out over the last 16 frames. */
+		if(frm >= frmCnt - 16) {
+			/* Fade out over the last 16 ticks. */
 			REG_BLDCNT =
 				BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-			REG_BLDALPHA = EFFECT_BLEND_CANVAS(frameCount - frame - 1);
+			REG_BLDALPHA = EFFECT_BLEND_CANVAS(frmCnt - frm - 1);
 		}
 
-		for(i = 0; i != Thorn_Counts[state->args->variant]; i++) {
+		for(i = 0; i != ThornCounts[state->args->variant]; i++) {
 			start = i * 8 + 8;
-			age = frame - (i * 8 + 8);
-			if(frame > start) {
+			age = frm - (i * 8 + 8);
+			if(frm > start) {
 				Sint32 height;
 				Sint32 lean;
 
 				/* A thorn leans sideways as it grows. */
-				if(Thorn_Kinds[i] < THORN_SMALL) {
+				if(ThornKinds[i] < THORN_SMALL) {
 					height = age * 16;
 					lean = age * 6;
 					if(height > THORN_BIG_HEIGHT) {
@@ -414,7 +414,7 @@ void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 					if(lean > THORN_BIG_LEAN) {
 						lean = THORN_BIG_LEAN;
 					}
-					if(Thorn_Kinds[i] & THORN_MIRRORED) {
+					if(ThornKinds[i] & THORN_MIRRORED) {
 						drawFlip(canvas, state->sheet, Thorn_X[i] - lean,
 							108 - height, THORN_BIG_WIDTH, height);
 					} else {
@@ -430,7 +430,7 @@ void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 					if(age > THORN_SMALL_LEAN) {
 						lean = THORN_SMALL_LEAN;
 					}
-					if(Thorn_Kinds[i] & THORN_MIRRORED) {
+					if(ThornKinds[i] & THORN_MIRRORED) {
 						drawFlip(canvas, state->sheet + THORN_SMALL_PICTURE,
 							Thorn_X[i] - lean, 108 - height,
 							THORN_SMALL_PICTURE_WIDTH, height);
@@ -440,12 +440,12 @@ void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 							THORN_SMALL_PICTURE_WIDTH, height);
 					}
 				}
-				if(frame == start + 1) {
+				if(frm == start + 1) {
 					state->shakeFrm = 3;
 				}
 
 				/* Dust puffs beside the thorn. */
-				if(frame < start + 3) {
+				if(frm < start + 3) {
 					Sint32	  y = (syRandom() & 31) + 72;
 					PARTICLE *puff;
 					for(j = 0; j != THORN_DUST; j++) {
@@ -463,7 +463,7 @@ void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 				}
 			}
 			EFFECT_FOR_EACH_TARGET(j, state->args) {
-				if(frame == start + 4) {
+				if(frm == start + 4) {
 					sySndPlayStub(SE_WATER);
 					btEffectTintBattler(state->args->tgts[j],
 						SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 3);
@@ -475,23 +475,21 @@ void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 		for(i = 0; i != THORN_DUST; i++) {
 			if(PARTICLES[i].variant >= 0) {
 				Sint32 picture = PARTICLES[i].variant / 2;
-				draw(canvas, state->sheet + Thorn_PuffPictures[picture],
-					PARTICLES[i].x - Thorn_PuffWidths[picture],
-					PARTICLES[i].y - (Sint8)Thorn_PuffHeights[picture] / 2,
-					Thorn_PuffWidths[picture],
-					(Sint8)Thorn_PuffHeights[picture]);
-				drawFlip(canvas, state->sheet + Thorn_PuffPictures[picture],
+				draw(canvas, state->sheet + ThornPuffPictures[picture],
+					PARTICLES[i].x - ThornPuffWidths[picture],
+					PARTICLES[i].y - (Sint8)ThornPuffHeights[picture] / 2,
+					ThornPuffWidths[picture], (Sint8)ThornPuffHeights[picture]);
+				drawFlip(canvas, state->sheet + ThornPuffPictures[picture],
 					PARTICLES[i].x,
-					PARTICLES[i].y - (Sint8)Thorn_PuffHeights[picture] / 2,
-					Thorn_PuffWidths[picture],
-					(Sint8)Thorn_PuffHeights[picture]);
-				if(++PARTICLES[i].variant == DUST_PUFF_FRAMES) {
+					PARTICLES[i].y - (Sint8)ThornPuffHeights[picture] / 2,
+					ThornPuffWidths[picture], (Sint8)ThornPuffHeights[picture]);
+				if(++PARTICLES[i].variant == DUST_PUFF_TICKS) {
 					PARTICLES[i].variant = -1;
 				}
 			}
 		}
 		btCameraShake(8, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS();
@@ -501,13 +499,13 @@ void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 #undef GROWING_COLUMNS_PILLAR_DUST_PICTURES
 #undef THORN_SMALL_PICTURE
 #undef VINE_COLUMNS
-#undef VINE_FRAMES
+#undef VINE_TICKS
 #undef GREEN_VINE_WIDTH
 #undef GREEN_VINE_HEIGHT
 #undef GREEN_VINE_PICTURES
 #undef GROWTH_DUST
 #undef THORN_DUST
-#undef DUST_PUFF_FRAMES
+#undef DUST_PUFF_TICKS
 #undef GROWING_COLUMNS
 #undef THORN_BIG_LEAN
 #undef THORN_SMALL_LEAN

@@ -19,10 +19,10 @@ void scMercuryLighthouseRippleAroundLeader(void);
 /* The scripts the pool's lights and sparks run, which each scene defines or
    includes (shared/mercury_lighthouse_pillar_tables.c), and the d-pad's
    headings. */
-extern Sint32 MercuryLighthouse_SparkScript[];
-extern Sint32 MercuryLighthouse_GrowLightScript[];
-extern Sint32 MercuryLighthouse_LightOutScript[];
-extern Sint32 MercuryLighthouse_PillarScript[];
-extern Uint16 MercuryLighthouse_MoveAngles[];
+extern Sint32 MercuryLighthouseSparkScript[];
+extern Sint32 MercuryLighthouseGrowLightScript[];
+extern Sint32 MercuryLighthouseLightOutScript[];
+extern Sint32 MercuryLighthousePillarScript[];
+extern Uint16 MercuryLighthouseMoveAngles[];
 
 #endif

@@ -27,17 +27,16 @@
 #include "scene/scene.h"
 #include "game/game.h"
 
-extern volatile Uint32 SeaOfTime_WaveStartFrame;
-extern Uint32		   SeaOfTime_WaveState;
+extern volatile Uint32 SeaOfTimeWaveStartTick;
+extern Uint32		   SeaOfTimeWaveState;
 /* The scene's view of SceneStateWork (system/globals.h): its words. */
 #define SceneStateWork ((Uint32 *)SceneStateWork)
 extern MAP_METATILE MapGridMetatileBuffer[];
 
-void fdSetActorSprPriority(ACTOR *actor, Sint32 priority);
+void fdSetActorSprPriority(ACTOR *actor, Sint32 pri);
 
-void   scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	  Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	  const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 Sint32 fdMapMetatileGetAttributes(Uint32 layer, Sint32 x, Sint32 y);
 Sint32 scMapMetatileSetAttributes(
 	Uint32 layer, Sint32 x, Sint32 y, Sint32 value);
@@ -46,9 +45,9 @@ void   scSeaOfTimeRemoveRock(Sint32 x, Sint32 z, Sint32 actor);
 void   scSeaOfTimePlaceRock(Sint32 x, Sint32 z, Sint32 actor);
 
 /* syCos, through an inline as the swirl's turn calls it. */
-static inline Sint32 scSeaOfTimeCos(Sint32 angle)
+static inline Sint32 scSeaOfTimeCos(Sint32 ang)
 {
-	return syCos(angle);
+	return syCos(ang);
 }
 
 #include "shared/scene_create_imported_actor.h"
@@ -60,28 +59,28 @@ static inline Sint32 scSeaOfTimeCos(Sint32 angle)
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect_spawn.c"
 
-extern ACTOR_PLACE SeaOfTime_ToLemuriaPlacements[];
-extern Uint32	   SeaOfTime_LastLapFrame;
+extern ACTOR_PLACE SeaOfTimeToLemuriaPlacements[];
+extern Uint32	   SeaOfTimeLastLapTick;
 
 void scSeaOfTimeTimeWaves(void);
 
-extern CUE SeaOfTime_SwirlsCues[];
+extern CUE SeaOfTimeSwirlsCues[];
 
-extern CUE	  SeaOfTime_NorthPartCues[];
-extern CUE	  SeaOfTime_SouthPartCues[];
-extern Sint16 SeaOfTime_RedPulseStep[1];
+extern CUE	  SeaOfTimeNorthPartCues[];
+extern CUE	  SeaOfTimeSouthPartCues[];
+extern Sint16 SeaOfTimeRedPulseStep[1];
 void		  scSeaOfTimeRideCurrent(void);
 
 void scSeaOfTimeCountLaps(void);
 
-extern Uint32 FieldEffect_ShortScript[];
-extern Uint32 FieldEffect_MediumScript[];
-extern Uint32 FieldEffect_LongScript[];
-extern Sint32 SeaOfTime_ShipRests[];
+extern Uint32 FieldEffectShortScript[];
+extern Uint32 FieldEffectMediumScript[];
+extern Uint32 FieldEffectLongScript[];
+extern Sint32 SeaOfTimeShipRests[];
 
 /* The sea's horizontal offset for each screen line as it ripples sideways
    (scSeaOfTimeAnimateSea). */
-Uint16 SeaOfTime_RippleLines[DISPLAY_HEIGHT] BSS_DATA ALIGNED(16);
+Uint16 SeaOfTimeRippleLines[DISPLAY_HEIGHT] BSS_DATA ALIGNED(16);
 
 #include "shared/ship_drop_shadow.h"
 
@@ -106,7 +105,7 @@ const Uint32 *scGetExits(void)
 	return SceneExits;
 }
 
-extern ACTOR_PLACE SeaOfTime_SwirlsPlacements[];
+extern ACTOR_PLACE SeaOfTimeSwirlsPlacements[];
 
 /* The Lemurian ship the party sails, and the rocks that rise in the last
    stretch. The ship's row places it blank, and it wears the ship's sprite sheet
@@ -201,8 +200,8 @@ enum {
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.next == SCENE_SEA_OF_TIME_TO_LEMURIA)
-		return SeaOfTime_ToLemuriaPlacements;
-	return SeaOfTime_SwirlsPlacements;
+		return SeaOfTimeToLemuriaPlacements;
+	return SeaOfTimeSwirlsPlacements;
 }
 
 /* The 32-pixel square, two metatiles across, that a 16.16 coordinate lies in,
@@ -223,33 +222,33 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 #define QUARTER_TURNS(n)	  ((n) << 14)
 
 /* The sea's background palette, whose colours 1 to SEA_COLORS the waves tint
-   and the sea's frame callback turns round; the next palette's turn as the
+   and the sea's tick callback turns round; the next palette's turn as the
    water flows. */
-#define SEA_PALETTE			   3
-#define SEA_COLORS			   14
-#define FLOW_PALETTE		   (SEA_PALETTE + 1)
+#define SEA_PALETTE			  3
+#define SEA_COLORS			  14
+#define FLOW_PALETTE		  (SEA_PALETTE + 1)
 /* The colour the waves tint the sea's colours toward, a step a channel at a
    time. */
-#define WAVE_RED			   11
-#define WAVE_GREEN			   6
-#define WAVE_BLUE			   23
-/* The frames between the sea's colour steps while the waves run. */
-#define WAVE_COLOR_STEP_FRAMES 360
+#define WAVE_RED			  11
+#define WAVE_GREEN			  6
+#define WAVE_BLUE			  23
+/* The ticks between the sea's colour steps while the waves run. */
+#define WAVE_COLOR_STEP_TICKS 360
 /* The background colour whose red pulses while no waves run, between
    `PULSE_RED_MIN` and full: colour 15 of background palette 0. */
-#define PULSE_COLOR			   BG_PLTT_COLOR(0, 15)
-#define PULSE_RED_MIN		   18
+#define PULSE_COLOR			  BG_PLTT_COLOR(0, 15)
+#define PULSE_RED_MIN		  18
 /* The ripple's sine shifted down to a swing of two pixels each way. */
-#define RIPPLE_SHIFT		   15
-/* The shower of water over Poseidon: PUFF_SHOWER_FRAMES long, a puff every 16
-   frames, from PUFF_SHOWER_FASTER every 8 and from PUFF_SHOWER_FASTEST every
-   other frame, each somewhere in a PUFF_SPREAD-pixel square; BIG_PUFFS larger
-   ones follow, one a frame. */
-#define PUFF_SHOWER_FRAMES	   360
-#define PUFF_SHOWER_FASTER	   120
-#define PUFF_SHOWER_FASTEST	   240
-#define PUFF_SPREAD			   32
-#define BIG_PUFFS			   16
+#define RIPPLE_SHIFT		  15
+/* The shower of water over Poseidon: PUFF_SHOWER_TICKS long, a puff every 16
+   ticks, from PUFF_SHOWER_FASTER every 8 and from PUFF_SHOWER_FASTEST every
+   other tick, each somewhere in a PUFF_SPREAD-pixel square; BIG_PUFFS larger
+   ones follow, one a tick. */
+#define PUFF_SHOWER_TICKS	  360
+#define PUFF_SHOWER_FASTER	  120
+#define PUFF_SHOWER_FASTEST	  240
+#define PUFF_SPREAD			  32
+#define BIG_PUFFS			  16
 
 /* The Lemurian ship sails into the dark eye of a swirl, and the swirl pulls it
    into the very middle and spins it round there, clockwise or counterclockwise
@@ -321,7 +320,7 @@ void scSeaOfTimeRideCurrent(void)
 	Sint32		   x;
 	Sint32		   z;
 	Sint32		   phase;
-	Sint32		   frame;
+	Sint32		   frm;
 	Sint32		  *counter;
 	FIXED		   c;
 	FIXED		   s;
@@ -401,12 +400,12 @@ void scSeaOfTimeRideCurrent(void)
 	actor->x.fixed = x;
 	actor->z.fixed = z;
 
-	counter = &FrameCount;
-	frame = *counter;
+	counter = &TickCount;
+	frm = *counter;
 	phase = 3;
-	phase &= frame;
+	phase &= frm;
 	if(phase == 0) {
-		if((frame & 10) == 0)
+		if((frm & 10) == 0)
 			fdScriptPlaySnd(SE_CURRENT);
 		spark.pri = 2;
 		spark.pal = SPRITE_COLOR_WHITE;
@@ -467,47 +466,47 @@ void scSeaOfTimeFollowChannel(void)
 	EFFECT_OPTIONS spark;
 	FIELD_STATE	  *state;
 	ACTOR		  *actor;
-	Sint16		   angle;
+	Sint16		   ang;
 	Sint32		   x, z, dx, dz;
-	FIXED		   targetX, targetZ;
+	FIXED		   tgtX, tgtZ;
 	FIXED		   cosine, sine;
 	FIXED		   x0, y0, z0;
 	Sint32		   flip;
 
 	state = Ram_HeapSlots->fieldState;
 	actor = fdActorGetById(ACTOR_SHIP);
-	angle = QUARTER_TURNS(state->stepCue - METATILE_BEHAVIOR_CHANNEL_EAST);
+	ang = QUARTER_TURNS(state->stepCue - METATILE_BEHAVIOR_CHANNEL_EAST);
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	x = FIELD_METATILE(actor->x.fixed);
 	z = FIELD_METATILE(actor->z.fixed);
-	dx = FIXEDtoINT(syCos(angle));
-	dz = FIXEDtoINT(sySin(angle));
+	dx = FIXEDtoINT(syCos(ang));
+	dz = FIXEDtoINT(sySin(ang));
 	actor->speedLimit = toFIXED(4);
 	actor->acceleration = toFIXED(4);
-	targetZ = 0;
-	targetX = 0;
+	tgtZ = 0;
+	tgtX = 0;
 	if(fdMapMetatileGetAttributes(MAPGRID_LAYER_MIDDLE, x + (dz < 0 ? -dz : dz),
 		   z + (dx < 0 ? -dx : dx)) >>
 			8 ==
 		state->stepCue) {
-		targetX = (dz < 0 ? -dz : dz) * toFIXED(15);
-		targetZ = (dx < 0 ? -dx : dx) * toFIXED(15);
+		tgtX = (dz < 0 ? -dz : dz) * toFIXED(15);
+		tgtZ = (dx < 0 ? -dx : dx) * toFIXED(15);
 	}
-	targetX += FIELD_METATILE_ORIGIN(x);
-	targetZ += FIELD_METATILE_ORIGIN(z);
+	tgtX += FIELD_METATILE_ORIGIN(x);
+	tgtZ += FIELD_METATILE_ORIGIN(z);
 	while(fdMapMetatileGetAttributes(MAPGRID_LAYER_MIDDLE, x, z) >> 8 ==
 		state->stepCue) {
 		x += dx;
 		z += dz;
-		targetX += FIELD_METATILE_ORIGIN(dx);
-		targetZ += FIELD_METATILE_ORIGIN(dz);
-		fdActorSetMoveTarget(actor, targetX, actor->y.fixed, targetZ);
+		tgtX += FIELD_METATILE_ORIGIN(dx);
+		tgtZ += FIELD_METATILE_ORIGIN(dz);
+		fdActorSetMoveTarget(actor, tgtX, actor->y.fixed, tgtZ);
 		while(fdActorHasArrived(actor) == 0) {
 			Sint32 phase = 3;
-			phase &= FrameCount;
+			phase &= TickCount;
 			if(phase == 0) {
-				if((FrameCount & 10) == 0) {
+				if((TickCount & 10) == 0) {
 					sySndPlay(SE_CURRENT);
 				}
 				/* The current's spray (scSeaOfTimeRideCurrent), larger, from
@@ -531,7 +530,7 @@ void scSeaOfTimeFollowChannel(void)
 					pos[1] -= toFIXED(12);
 					pos[3] -= toFIXED(12);
 				}
-				flip = FrameCount & 4;
+				flip = TickCount & 4;
 				y0 = actor->y.fixed;
 				x0 = pos[0];
 				z0 = pos[1];
@@ -565,17 +564,17 @@ void scSeaOfTimeFollowChannel(void)
 	fdScriptEnd();
 }
 
-extern Uint16 SeaOfTime_LapCount;
-extern Sint16 SeaOfTime_LapTurn;
-extern Uint16 SeaOfTime_LastLapMetatile;
-extern SPOTS  SeaOfTime_LapSpots;
-extern Uint8  SeaOfTime_LapsNeeded[];
+extern Uint16 SeaOfTimeLapCount;
+extern Sint16 SeaOfTimeLapTurn;
+extern Uint16 SeaOfTimeLastLapMetatile;
+extern SPOTS  SeaOfTimeLapSpots;
+extern Uint8  SeaOfTimeLapsNeeded[];
 
 /* The lap squares round each trunk, in order round it. */
 #define LAP_METATILES			  8
-/* The frames the ship may take from one lap square to the next before its count
+/* The ticks the ship may take from one lap square to the next before its count
    starts again. */
-#define LAP_STEP_FRAMES			  50
+#define LAP_STEP_TICKS			  50
 /* The squares round after which stars rise about the trunk, somewhere in a
    `SPARKLE_SPREAD`-pixel square. */
 #define LAP_STEPS_BEFORE_SPARKLES 3
@@ -587,41 +586,41 @@ extern Uint8  SeaOfTime_LapsNeeded[];
    start. Turning back or dawdling starts the count again.
 
    Each of the trunk's eight lap squares counts one step when the ship enters it
-   from the one before, within `LAP_STEP_FRAMES`; the trunks, numbered on the
-   ground layer, need `SeaOfTime_LapsNeeded` steps. The trunk on metatiles (4,
+   from the one before, within `LAP_STEP_TICKS`; the trunks, numbered on the
+   ground layer, need `SeaOfTimeLapsNeeded` steps. The trunk on metatiles (4,
    8) to (9, 13), by the way to the last stretch, is one of them. */
 void scSeaOfTimeCountLaps(void)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	ACTOR		*actor = fdActorGetById(ACTOR_SHIP);
-	Sint16		 index;
+	Sint16		 idx;
 	Sint32		 now;
 	Sint32		 last;
 	Sint32		 nowRaw;
 	Uint32		 phase;
-	Uint32		*frame;
+	Uint32		*frm;
 	Uint32		*stamp;
 
-	index =
+	idx =
 		(fdMapMetatileGetAttributes(MAPGRID_LAYER_GROUND,
 			 FIELD_METATILE(actor->x.fixed), FIELD_METATILE(actor->z.fixed)) >>
 			8) -
 		1;
-	frame = &FrameCount;
-	stamp = &SeaOfTime_LastLapFrame;
+	frm = &TickCount;
+	stamp = &SeaOfTimeLastLapTick;
 
-	if(*frame - *stamp > LAP_STEP_FRAMES) {
-		SeaOfTime_LapCount = 0;
-		SeaOfTime_LapTurn = 0;
+	if(*frm - *stamp > LAP_STEP_TICKS) {
+		SeaOfTimeLapCount = 0;
+		SeaOfTimeLapTurn = 0;
 	}
-	last = SeaOfTime_LastLapMetatile;
+	last = SeaOfTimeLastLapMetatile;
 	now = state->stepCue;
 	nowRaw = (Uint16)state->stepCue;
 	if(last != now) {
-		Sint16 *delta = &SeaOfTime_LapTurn;
+		Sint16 *delta = &SeaOfTimeLapTurn;
 		Sint32	raw;
 		Sint32	diff;
-		Uint16 *count;
+		Uint16 *cnt;
 		Sint32	step;
 
 		if(*delta == 0) {
@@ -637,20 +636,20 @@ void scSeaOfTimeCountLaps(void)
 		diff = last - now;
 		raw = (Uint16)*delta;
 		step = (Sint16)raw;
-		count = &SeaOfTime_LapCount;
+		cnt = &SeaOfTimeLapCount;
 		if(diff == step || now - last == step * (LAP_METATILES - 1)) {
-			(*count)++;
-			*stamp = *frame;
+			(*cnt)++;
+			*stamp = *frm;
 		} else {
-			*count = 0;
+			*cnt = 0;
 			*delta = 0;
 		}
 	}
-	SeaOfTime_LastLapMetatile = state->stepCue;
-	if(SeaOfTime_LapCount > LAP_STEPS_BEFORE_SPARKLES) {
-		phase = FrameCount & 3;
+	SeaOfTimeLastLapMetatile = state->stepCue;
+	if(SeaOfTimeLapCount > LAP_STEPS_BEFORE_SPARKLES) {
+		phase = TickCount & 3;
 		if(phase == 0) {
-			SPOTS		   spots = SeaOfTime_LapSpots;
+			SPOTS		   spots = SeaOfTimeLapSpots;
 			EFFECT_OPTIONS params;
 			Uint32		   z;
 			Uint32		   x;
@@ -662,38 +661,38 @@ void scSeaOfTimeCountLaps(void)
 			fdScriptPlaySnd(SE_GLITTER);
 			x <<= 16;
 			z <<= 16;
-			scFieldEffectSpawn(spots.spot[(Uint16)index].x + x, 0,
-				spots.spot[(Uint16)index].z + z, 0, toFIXED(1.2), phase,
+			scFieldEffectSpawn(spots.spot[(Uint16)idx].x + x, 0,
+				spots.spot[(Uint16)idx].z + z, 0, toFIXED(1.2), phase,
 				EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM,
 				&params);
 		}
 	}
-	if(SeaOfTime_LapCount == SeaOfTime_LapsNeeded[(Uint16)index]) {
+	if(SeaOfTimeLapCount == SeaOfTimeLapsNeeded[(Uint16)idx]) {
 
 		state->raisedCue = RAISED_START_WAVES;
-		SeaOfTime_LapCount = 0;
-		SeaOfTime_LapTurn = 0;
+		SeaOfTimeLapCount = 0;
+		SeaOfTimeLapTurn = 0;
 	}
 }
 
-/* The frames the waves run. */
-#define WAVE_FRAMES 120
+/* The ticks the waves run. */
+#define WAVE_TICKS 120
 
-/* While the waves run, ends them `WAVE_FRAMES` after the sea has gone still,
-   and keeps their start, the sea's colour step and the frame count in case the
+/* While the waves run, ends them `WAVE_TICKS` after the sea has gone still,
+   and keeps their start, the sea's colour step and the tick count in case the
    scene is left and entered again. */
 void scSeaOfTimeTimeWaves(void)
 {
 	Uint32 *state = SceneStateWork;
 
-	if(FrameCount - SeaOfTime_WaveStartFrame > WAVE_FRAMES)
+	if(TickCount - SeaOfTimeWaveStartTick > WAVE_TICKS)
 		FieldStateWork->raisedCue = RAISED_STOP_WAVES;
-	*state++ = SeaOfTime_WaveStartFrame;
-	*state++ = SeaOfTime_WaveState;
-	*state = FrameCount;
+	*state++ = SeaOfTimeWaveStartTick;
+	*state++ = SeaOfTimeWaveState;
+	*state = TickCount;
 }
 
-extern Uint32 SeaOfTime_WaveState;
+extern Uint32 SeaOfTimeWaveState;
 
 /* Steps one of a colour's channels a unit toward its target, setting changed if
    it moved: the sea's colours fade a step at a time this way, toward the waves'
@@ -727,10 +726,10 @@ extern Uint32 SeaOfTime_WaveState;
 	}
 
 /* One step of the sea's colours back toward those saved on arrival
-   (SeaOfTime_SavedColors, the sea's from colour 1 on). */
+   (SeaOfTimeSavedColors, the sea's from colour 1 on). */
 #define STEP_SEA_TOWARD_SAVED_COLORS(palette, saved, i, j, changed) \
 	palette = &BG_PLTT_COLOR(SEA_PALETTE, 0); \
-	for(i = 1, saved = &SeaOfTime_SavedColors, j = 0; i != SEA_COLORS + 1; \
+	for(i = 1, saved = &SeaOfTimeSavedColors, j = 0; i != SEA_COLORS + 1; \
 		i++, j++) { \
 		Uint16 color = palette[i]; \
 		Uint16 target = saved->cols[j]; \
@@ -753,14 +752,14 @@ extern Uint32 SeaOfTime_WaveState;
    once the sea is still.
 
    The sea's colours step toward one colour (`WAVE_RED`, `WAVE_GREEN`,
-   `WAVE_BLUE`) every 10 frames, and its colour cycle slows to a step every
-   `WAVE_COLOR_STEP_FRAMES`; `scSeaOfTimeTimeWaves` ends them. */
+   `WAVE_BLUE`) every 10 ticks, and its colour cycle slows to a step every
+   `WAVE_COLOR_STEP_TICKS`; `scSeaOfTimeTimeWaves` ends them. */
 void scSeaOfTimeStartWaves(void)
 {
 	volatile Uint16 *palette;
 	Sint32			 changed;
 	Sint32			 i;
-	Sint32			 frame;
+	Sint32			 frm;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -770,21 +769,21 @@ void scSeaOfTimeStartWaves(void)
 		sySynch(10);
 		changed = 0;
 		STEP_SEA_TOWARD_WAVES(palette, i, changed);
-		frame = FrameCount;
-		SeaOfTime_WaveState += frame & 1;
+		frm = TickCount;
+		SeaOfTimeWaveState += frm & 1;
 	} while(changed);
-	SeaOfTime_WaveState = WAVE_COLOR_STEP_FRAMES;
-	SeaOfTime_WaveStartFrame = frame;
-	sySetEvent(scSeaOfTimeTimeWaves, EVENT_PASS_FRAME);
+	SeaOfTimeWaveState = WAVE_COLOR_STEP_TICKS;
+	SeaOfTimeWaveStartTick = frm;
+	sySetEvent(scSeaOfTimeTimeWaves, EVENT_PASS_TICK);
 	fdScriptEnd();
 }
 
-SAVED_COL SeaOfTime_SavedColors BSS_DATA;
+SAVED_COL SeaOfTimeSavedColors BSS_DATA;
 
 /* The waves stop: with a higher sound the stripes and swirls come back into the
    water over a few seconds, and the channels carry the ship again.
 
-   The sea's colours step back to the ones saved on arrival every 10 frames. */
+   The sea's colours step back to the ones saved on arrival every 10 ticks. */
 void scSeaOfTimeStopWaves(void)
 {
 	Sint32			 changed;
@@ -797,22 +796,21 @@ void scSeaOfTimeStopWaves(void)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	sySndPlay(SE_RISE_WITH_SPARKS_HIGH);
-	SeaOfTime_WaveState = 1;
+	SeaOfTimeWaveState = 1;
 	/* Each of the sea's colours steps one unit per channel toward its saved
-	   colour every 10 frames, until none changes. */
+	   colour every 10 ticks, until none changes. */
 	do {
 		sySynch(10);
 		changed = 0;
 		STEP_SEA_TOWARD_SAVED_COLORS(palette, saved, i, j, changed);
 	} while(changed);
-	SeaOfTime_WaveState = 1;
+	SeaOfTimeWaveState = 1;
 	fdScriptClearFlag(FLAG_WAVES_RUNNING);
 	fdScriptEnd();
 }
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 /* The Lemurian ship sails into the rough water of the great sea's north, the
    band along the north edge at metatiles (46, 1) to (61, 3) or the one at (18,
@@ -825,7 +823,7 @@ void scSeaOfTimePushBackInRoughWater(void)
 	ACTOR		  *actor;
 	FIXED		   cosine, sine;
 	FIXED		   x, y, z;
-	FIXED		   velocity, reverseVelocity;
+	FIXED		   vel, reverseVel;
 	Sint32		   alternate;
 
 	actor = fdActorGetById(ACTOR_SHIP);
@@ -834,7 +832,7 @@ void scSeaOfTimePushBackInRoughWater(void)
 	fdActorSetMoveTarget(
 		actor, actor->x.fixed, actor->y.fixed, actor->z.fixed + toFIXED(8));
 	while(fdActorHasArrived(actor) == 0) {
-		if((FrameCount & 3) == 0) {
+		if((TickCount & 3) == 0) {
 			/* The channels' spray (scSeaOfTimeFollowChannel), written out again
 			   here. */
 			options.pri = 2;
@@ -851,33 +849,33 @@ void scSeaOfTimePushBackInRoughWater(void)
 			sides[1] += actor->z.fixed;
 			sides[2] += actor->x.fixed;
 			sides[3] += actor->z.fixed;
-			velocity = toFIXED(1) / 2;
+			vel = toFIXED(1) / 2;
 			if(sides[1] != actor->z.fixed) {
 				sides[1] -= toFIXED(12);
 				sides[3] -= toFIXED(12);
 			}
-			alternate = FrameCount & 4;
-			reverseVelocity = -velocity;
+			alternate = TickCount & 4;
+			reverseVel = -vel;
 			x = sides[0];
 			y = actor->y.fixed;
 			z = sides[1];
 			if(alternate) {
-				scFieldEffectSpawn(x + toFIXED(4), y, z, velocity, 0, 0,
+				scFieldEffectSpawn(x + toFIXED(4), y, z, vel, 0, 0,
 					EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
 						EFFECT_USE_START_SCALE,
 					&options);
 				scFieldEffectSpawn(sides[2] - toFIXED(4), actor->y.fixed,
-					sides[3], reverseVelocity, 0, 0,
+					sides[3], reverseVel, 0, 0,
 					EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
 						EFFECT_USE_START_SCALE,
 					&options);
 			} else {
-				scFieldEffectSpawn(x - toFIXED(4), y, z, reverseVelocity, 0, 0,
+				scFieldEffectSpawn(x - toFIXED(4), y, z, reverseVel, 0, 0,
 					EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
 						EFFECT_USE_START_SCALE,
 					&options);
 				scFieldEffectSpawn(sides[2] + toFIXED(4), actor->y.fixed,
-					sides[3], velocity, 0, 0,
+					sides[3], vel, 0, 0,
 					EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
 						EFFECT_USE_START_SCALE,
 					&options);
@@ -905,16 +903,16 @@ void scSeaOfTimeSweptBack(void)
 		syImportScriptSetExitRequest(SEA_OF_TIME_SWIRLS_TO_WORLD_MAP);
 	}
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
-/* Each frame Poseidon stands over the sea, water splashes up at his feet, every
-   other frame somewhere across his width. */
+/* Each tick Poseidon stands over the sea, water splashes up at his feet, every
+   other tick somewhere across his width. */
 void scSeaOfTimeUpdateWater(ACTOR *actor)
 {
 	EFFECT_OPTIONS spark;
-	Sint32		   even = FrameCount & 1;
+	Sint32		   even = TickCount & 1;
 
 	if(even == 0) {
 		FIXED dx = toFIXED(syRandom() & 31) - toFIXED(14);
@@ -969,15 +967,15 @@ void scSeaOfTimeFacePoseidon(void)
 		DMA_FILL_HALFWORDS(SEA_COLORS), REG_DMA3);
 	fdMapGridCopyMetatileTilesIndicesRect(49, 70, 19, 73, 6, 6);
 	/* Steps each colour's red, green and blue by one toward the saved palette
-	   every 10 frames until none changes. */
+	   every 10 ticks until none changes. */
 	do {
 		sySynch(10);
 		changed = 0;
 		STEP_SEA_TOWARD_SAVED_COLORS(palette, saved, i, j, changed);
 	} while(changed);
 	fdScriptWait(30);
-	/* The shower of water, with SE_SCATTER every 64 frames. */
-	for(i = 0; i != PUFF_SHOWER_FRAMES; i++) {
+	/* The shower of water, with SE_SCATTER every 64 ticks. */
+	for(i = 0; i != PUFF_SHOWER_TICKS; i++) {
 		if(i % 64 == 0)
 			sySndPlay(SE_SCATTER);
 		if(i < PUFF_SHOWER_FASTER) {
@@ -1000,7 +998,7 @@ void scSeaOfTimeFacePoseidon(void)
 			sySynch(1);
 		}
 	}
-	/* Then the larger puffs, one a frame. */
+	/* Then the larger puffs, one a tick. */
 	for(i = 0; i != BIG_PUFFS; i++) {
 		{
 			Sint32 x = syRandom();
@@ -1098,7 +1096,7 @@ DEFINE_GRIND_ROCK(
 		fdScriptEndLastingPsynergy(0); \
 		syImportScriptSetExitRequest(exit); \
 		fdScriptFinishScreenTransition(); \
-		fdScriptWaitTransitionFrames(); \
+		fdScriptWaitTransitionTicks(); \
 		fdScriptEnd(); \
 	}
 
@@ -1114,27 +1112,27 @@ DEFINE_LEAVE_BY_EXIT(SeaOfTime_ReturnNorth, EXIT_BACK_NORTH)
 const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.next == SCENE_SEA_OF_TIME_SWIRLS)
-		return SeaOfTime_SwirlsCues;
+		return SeaOfTimeSwirlsCues;
 	if(MainRoutineStateWork.entrance <= NORTH_PART_LAST_ENTRANCE)
-		return SeaOfTime_NorthPartCues;
-	return SeaOfTime_SouthPartCues;
+		return SeaOfTimeNorthPartCues;
+	return SeaOfTimeSouthPartCues;
 }
 
-/* Each frame, keeps the Sea of Time moving: the swirls turn and the channels'
+/* Each tick, keeps the Sea of Time moving: the swirls turn and the channels'
    stripes flow as their colours are cycled, one colour's red pulses (fading out
    as the waves start and back as they stop), and the whole sea ripples sideways
    line by line.
 
-   The swirls' colours turn a step at the pace `SeaOfTime_WaveState` sets and
-   the channels' every other frame. */
+   The swirls' colours turn a step at the pace `SeaOfTimeWaveState` sets and
+   the channels' every other tick. */
 void scSeaOfTimeAnimateSea(void)
 {
-	Uint16		 *line = SeaOfTime_RippleLines;
+	Uint16		 *line = SeaOfTimeRippleLines;
 	MAP_LAYER	 *layer = fdMapGridGetLayer(2);
 	PALETTE_FADE *fade = Ram_HeapSlots->palFade;
 	FIELD_STATE	 *event = Ram_HeapSlots->fieldState;
 	Sint32		  i;
-	Sint16		  color;
+	Sint16		  col;
 
 	if(event->psynergy != 0)
 		return;
@@ -1143,11 +1141,11 @@ void scSeaOfTimeAnimateSea(void)
 	if(event->transitionActive == 0)
 		return;
 
-	if(FrameCount - SeaOfTime_WaveStartFrame > SeaOfTime_WaveState) {
-		Sint16 target;
+	if(TickCount - SeaOfTimeWaveStartTick > SeaOfTimeWaveState) {
+		Sint16 tgt;
 
-		color = BG_PLTT_COLOR(SEA_PALETTE, SEA_COLORS);
-		target = SeaOfTime_SavedColors.cols[SEA_COLORS - 1];
+		col = BG_PLTT_COLOR(SEA_PALETTE, SEA_COLORS);
+		tgt = SeaOfTimeSavedColors.cols[SEA_COLORS - 1];
 
 		for(i = SEA_COLORS; i != 0; i--) {
 			BG_PLTT_COLOR(SEA_PALETTE, i) = BG_PLTT_COLOR(SEA_PALETTE, i - 1);
@@ -1156,35 +1154,35 @@ void scSeaOfTimeAnimateSea(void)
 #if FIX_SEA_SAVED_COLORS_READ_BEFORE_ARRAY
 			if(i != 1)
 #endif
-				SeaOfTime_SavedColors.cols[i - 1] =
-					SeaOfTime_SavedColors.cols[i - 2];
+				SeaOfTimeSavedColors.cols[i - 1] =
+					SeaOfTimeSavedColors.cols[i - 2];
 		}
-		BG_PLTT_COLOR(SEA_PALETTE, 1) = color;
-		SeaOfTime_SavedColors.cols[0] = target;
-		SeaOfTime_WaveStartFrame = FrameCount;
+		BG_PLTT_COLOR(SEA_PALETTE, 1) = col;
+		SeaOfTimeSavedColors.cols[0] = tgt;
+		SeaOfTimeWaveStartTick = TickCount;
 	}
 
-	if((FrameCount & 1) == 0) {
-		color = BG_PLTT_COLOR(FLOW_PALETTE, SEA_COLORS);
+	if((TickCount & 1) == 0) {
+		col = BG_PLTT_COLOR(FLOW_PALETTE, SEA_COLORS);
 
 		for(i = SEA_COLORS; i != 0; i--)
 			BG_PLTT_COLOR(FLOW_PALETTE, i) = BG_PLTT_COLOR(FLOW_PALETTE, i - 1);
-		BG_PLTT_COLOR(FLOW_PALETTE, 1) = color;
+		BG_PLTT_COLOR(FLOW_PALETTE, 1) = col;
 
-		if((FrameCount & 3) == 0) {
-			Uint16 color = PULSE_COLOR;
-			Uint16 red = RGB_RED(color);
-			Uint16 green = RGB_GREEN(color);
-			Uint16 blue = RGB_BLUE(color);
+		if((TickCount & 3) == 0) {
+			Uint16 col = PULSE_COLOR;
+			Uint16 red = RGB_RED(col);
+			Uint16 green = RGB_GREEN(col);
+			Uint16 blue = RGB_BLUE(col);
 
 			if(syGameFlagGet(FLAG_WAVES_RUNNING) == 0) {
-				red += SeaOfTime_RedPulseStep[0];
+				red += SeaOfTimeRedPulseStep[0];
 				if(red < PULSE_RED_MIN) {
 					red = PULSE_RED_MIN;
-					SeaOfTime_RedPulseStep[0] = 1;
+					SeaOfTimeRedPulseStep[0] = 1;
 				} else if(red > RGB_LEVEL_MAX) {
 					red = RGB_LEVEL_MAX;
-					SeaOfTime_RedPulseStep[0] = -1;
+					SeaOfTimeRedPulseStep[0] = -1;
 				}
 			} else if(FieldStateWork->raisedCue == RAISED_START_WAVES) {
 				if(red != 0)
@@ -1203,17 +1201,17 @@ void scSeaOfTimeAnimateSea(void)
 	layer->speedY = 0;
 	for(i = 0; i != DISPLAY_HEIGHT; i++)
 		*line++ = (Sint16)FIXEDtoINT(layer->x) +
-			(sySin((i + *(Uint8 *)&FrameCount + (Sint16)FIXEDtoINT(layer->y))
+			(sySin((i + *(Uint8 *)&TickCount + (Sint16)FIXEDtoINT(layer->y))
 				 << 9) >>
 				RIPPLE_SHIFT);
-	line = SeaOfTime_RippleLines;
+	line = SeaOfTimeRippleLines;
 	REG_BG1HOFS = *line;
 	syDMAXCopy(line + 1, (void *)&REG_BG1HOFS, DMA_HBLANK_HALFWORD_PER_LINE,
 		(volatile Uint32 *)REG_DMA0);
 }
 
-/* The frames a rock takes to grow to its height out of the sea. */
-#define ROCK_RISE_FRAMES 10
+/* The ticks a rock takes to grow to its height out of the sea. */
+#define ROCK_RISE_TICKS 10
 
 /* Puts a rock in the last stretch, which the ship cannot sail through. `x` and
    `z` count half metatiles of 8 pixels, from the map's top left, and the rock
@@ -1258,10 +1256,10 @@ void scSeaOfTimeRaiseRock(Sint32 x, Sint32 z, Sint32 actor)
 	spark.type = SPRITE_SPLASH;
 	scFieldEffectSpawn(px, 0, pz, 0, 0, 0,
 		EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY, &spark);
-	fdActorGetById(actor)->scaleY = toFIXED(1) / ROCK_RISE_FRAMES;
+	fdActorGetById(actor)->scaleY = toFIXED(1) / ROCK_RISE_TICKS;
 	scSeaOfTimePlaceRock(x, z, actor);
-	for(i = 0; i != ROCK_RISE_FRAMES; i++) {
-		fdActorGetById(actor)->scaleY += toFIXED(1) / ROCK_RISE_FRAMES;
+	for(i = 0; i != ROCK_RISE_TICKS; i++) {
+		fdActorGetById(actor)->scaleY += toFIXED(1) / ROCK_RISE_TICKS;
 		fdScriptWait(1);
 	}
 	fdActorGetById(actor)->scaleY = toFIXED(1);
@@ -1291,7 +1289,7 @@ void scSeaOfTimeOpen(void)
 	fdScriptStartScreenTransition();
 	sySynch(1);
 	sySetEvent(scSeaOfTimeAnimateSea, EVENT_PASS_VBLANK);
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(60);
 	scSeaOfTimeRaiseRock(21, 23, ACTOR_ROCK_A);
 	scSeaOfTimeRaiseRock(37, 17, ACTOR_ROCK_B);
@@ -1304,7 +1302,7 @@ void scSeaOfTimeOpen(void)
 	FieldStateWork->raisedCue = RAISED_START_WAVES;
 	fdScriptPlaySnd(SE_SEA_OF_TIME_OPENS);
 	fdScriptWait(40);
-	for(i = 0; i != PUFF_SHOWER_FRAMES; i++) {
+	for(i = 0; i != PUFF_SHOWER_TICKS; i++) {
 		if(i % 32 == 0)
 			fdScriptPlaySnd(SE_SCATTER);
 		if(i < PUFF_SHOWER_FASTER) {
@@ -1358,7 +1356,7 @@ void scSeaOfTimeOpen(void)
 		sySynch(10);
 		changed = 0;
 		STEP_SEA_TOWARD_WAVES(palette, i, changed);
-		SeaOfTime_WaveState += FrameCount & 1;
+		SeaOfTimeWaveState += TickCount & 1;
 	} while(changed);
 	syCloseEvent(scSeaOfTimeAnimateSea);
 	gmPlayMusic();
@@ -1376,36 +1374,36 @@ Sint32 scInit(void)
 {
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	if(MainRoutineStateWork.next == SCENE_SEA_OF_TIME_SWIRLS) {
-		SeaOfTime_WaveStartFrame = FrameCount;
-		SeaOfTime_WaveState = 1;
+		SeaOfTimeWaveStartTick = TickCount;
+		SeaOfTimeWaveState = 1;
 		syDMAXCopy((const void *)&BG_PLTT_COLOR(SEA_PALETTE, 1),
-			SeaOfTime_SavedColors.cols, DMA_COPY_HALFWORDS(SEA_COLORS),
+			SeaOfTimeSavedColors.cols, DMA_COPY_HALFWORDS(SEA_COLORS),
 			REG_DMA3);
 		if(syGameFlagGet(FLAG_WAVES_RUNNING)) {
 			Uint32 *state = SceneStateWork;
-			Uint32	offset, i;
+			Uint32	ofs, i;
 
-			SeaOfTime_WaveStartFrame = *state++;
-			SeaOfTime_WaveState = *state++;
-			FrameCount = *state;
+			SeaOfTimeWaveStartTick = *state++;
+			SeaOfTimeWaveState = *state++;
+			TickCount = *state;
 			/* The sea's colours but the last, by their byte offsets. */
 			i = 1;
-			offset = (SEA_PALETTE * PALETTE_COLORS + 1) * sizeof(Uint16);
+			ofs = (SEA_PALETTE * PALETTE_COLORS + 1) * sizeof(Uint16);
 			do {
-				*(volatile Uint16 *)((Uint32)BG_PLTT + offset) =
+				*(volatile Uint16 *)((Uint32)BG_PLTT + ofs) =
 					RGB(WAVE_RED, WAVE_GREEN, WAVE_BLUE);
 				i++;
-				offset += 2;
+				ofs += 2;
 			} while(i != SEA_COLORS);
-			sySetEvent(scSeaOfTimeTimeWaves, EVENT_PASS_FRAME);
+			sySetEvent(scSeaOfTimeTimeWaves, EVENT_PASS_TICK);
 		}
 	} else if(MainRoutineStateWork.next == SCENE_SEA_OF_TIME_TO_LEMURIA) {
-		SeaOfTime_WaveStartFrame = FrameCount;
-		SeaOfTime_WaveState = 0;
+		SeaOfTimeWaveStartTick = TickCount;
+		SeaOfTimeWaveState = 0;
 		if(MainRoutineStateWork.entrance <= NORTH_PART_LAST_ENTRANCE) {
 			if(!syGameFlagGet(FLAG_SEA_OF_TIME_OPENED)) {
 				syDMAXCopy((const void *)&BG_PLTT_COLOR(SEA_PALETTE, 1),
-					SeaOfTime_SavedColors.cols, DMA_COPY_HALFWORDS(SEA_COLORS),
+					SeaOfTimeSavedColors.cols, DMA_COPY_HALFWORDS(SEA_COLORS),
 					REG_DMA3);
 			} else {
 				if(!syGameFlagGet(FLAG_ROCK_A_CLEARED))
@@ -1454,14 +1452,14 @@ Sint32 scPrepareMap(void)
 #include "shared/field_effect_duration_scripts.c"
 
 /* The steps round each trunk the ship must sail before the waves start. */
-Uint8 SeaOfTime_LapsNeeded[] = {
+Uint8 SeaOfTimeLapsNeeded[] = {
 	2 * LAP_METATILES, 3 * LAP_METATILES, 2 * LAP_METATILES,
 	3 * LAP_METATILES, 2 * LAP_METATILES, 3 * LAP_METATILES,
 };
 
 /* Where the sparkles rise round each trunk as the ship's laps add up, in */
 /* 16.16 pixels. */
-SPOTS SeaOfTime_LapSpots = {{
+SPOTS SeaOfTimeLapSpots = {{
 	{toFIXED(672), toFIXED(704)},
 	{toFIXED(896), toFIXED(320)},
 	{toFIXED(512), toFIXED(192)},
@@ -1471,13 +1469,13 @@ SPOTS SeaOfTime_LapSpots = {{
 }};
 /* clang-format on */
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
-Sint32 SeaOfTime_ShipRests[] = {
+Sint32 SeaOfTimeShipRests[] = {
 	SC_CALL((Sint32)scShipDropShadow),
 	SC_END,
 };
@@ -1511,14 +1509,14 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE SeaOfTime_SwirlsPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, (Sint32)SeaOfTime_ShipRests,
+ACTOR_PLACE SeaOfTimeSwirlsPlacements[] = {
+	ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, (Sint32)SeaOfTimeShipRests,
 		120, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE SeaOfTime_ToLemuriaPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, (Sint32)SeaOfTime_ShipRests,
+ACTOR_PLACE SeaOfTimeToLemuriaPlacements[] = {
+	ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, (Sint32)SeaOfTimeShipRests,
 		120, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SEA_ROCK, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP,
@@ -1539,16 +1537,16 @@ ACTOR_PLACE SeaOfTime_ToLemuriaPlacements[] = {
 };
 
 /* The ship's laps round a trunk: the last step cue it crossed, the steps
-   counted, the way it turns and the frame of its last step; then the waves'
-   start frame and state. */
-Uint16			SeaOfTime_LastLapMetatile = 0;
-Uint16			SeaOfTime_LapCount = 0;
-Sint16			SeaOfTime_LapTurn = 0;
-Uint32			SeaOfTime_LastLapFrame = 0;
-volatile Uint32 SeaOfTime_WaveStartFrame = 0;
-Uint32			SeaOfTime_WaveState = 0;
+   counted, the way it turns and the tick of its last step; then the waves'
+   start tick and state. */
+Uint16			SeaOfTimeLastLapMetatile = 0;
+Uint16			SeaOfTimeLapCount = 0;
+Sint16			SeaOfTimeLapTurn = 0;
+Uint32			SeaOfTimeLastLapTick = 0;
+volatile Uint32 SeaOfTimeWaveStartTick = 0;
+Uint32			SeaOfTimeWaveState = 0;
 
-CUE SeaOfTime_SwirlsCues[] = {
+CUE SeaOfTimeSwirlsCues[] = {
 	{CUE_EXIT, SEA_OF_TIME_SWIRLS_TO_WORLD_MAP, CONDITION_ALWAYS,
 		SEA_OF_TIME_SWIRLS_TO_WORLD_MAP},
 	{CUE_EXIT, SEA_OF_TIME_SWIRLS_TO_SEA_OF_TIME_TO_LEMURIA, CONDITION_ALWAYS,
@@ -1608,7 +1606,7 @@ CUE SeaOfTime_SwirlsCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE SeaOfTime_NorthPartCues[] = {
+CUE SeaOfTimeNorthPartCues[] = {
 	{CUE_EXIT, SEA_OF_TIME_TO_LEMURIA_TO_SEA_OF_TIME_SWIRLS, CONDITION_ALWAYS,
 		SEA_OF_TIME_TO_LEMURIA_TO_SEA_OF_TIME_SWIRLS},
 	{CUE_EXIT, EXIT_TO_SOUTH_PART, CONDITION_ALWAYS, EXIT_TO_SOUTH_PART},
@@ -1649,7 +1647,7 @@ CUE SeaOfTime_NorthPartCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE SeaOfTime_SouthPartCues[] = {
+CUE SeaOfTimeSouthPartCues[] = {
 	{CUE_STEP, CUE_TO_WORLD_MAP, CONDITION_ALWAYS,
 		SCRIPT_REF(SeaOfTime_LeaveForWorldMap)},
 	{CUE_STEP, CUE_BACK_NORTH, CONDITION_ALWAYS,
@@ -1668,7 +1666,7 @@ CUE SeaOfTime_SouthPartCues[] = {
 };
 
 /* The step the sea's red pulse takes each time it brightens or dims. */
-Sint16 SeaOfTime_RedPulseStep[] = {
+Sint16 SeaOfTimeRedPulseStep[] = {
 	1,
 };
 #undef EFFECT_SET_MODE

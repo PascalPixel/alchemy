@@ -27,29 +27,29 @@ void btEffectRunHaunting(BATTLE_EFFECT_PARM *args)
 	btEffectRunGatheringLights(args, GATHERING_LIGHTS_HAUNTING);
 }
 
-#define GATHERING_LIGHTS_SLOTS		   128 /* particles reserved for each target */
-/* The targets' turns, this many frames apart: each is struck by its lights from
-   GATHERING_LIGHTS_HIT_FRAME. */
-#define GATHERING_LIGHTS_TARGET_FRAMES 20
-#define GATHERING_LIGHTS_HIT_FRAME	   70
+#define GATHERING_LIGHTS_SLOTS		  128 /* particles reserved for each target */
+/* The targets' turns, this many ticks apart: each is struck by its lights from
+   GATHERING_LIGHTS_HIT_TICK. */
+#define GATHERING_LIGHTS_TARGET_TICKS 20
+#define GATHERING_LIGHTS_HIT_TICK	  70
 /* GatheringLightsImage's three lights. */
-#define GATHERING_LIGHT_WIDTH		   20
-#define GATHERING_LIGHT_HEIGHT		   32
+#define GATHERING_LIGHT_WIDTH		  20
+#define GATHERING_LIGHT_HEIGHT		  32
 /* How far the canvas's ripple sways each line either side of its middle, in
    CANVAS_WAVE_BG2X's quarter canvas pixels (4 canvas pixels, 8 on screen); the
-   wave moves a 64th of a turn a line and a frame. */
-#define GATHERING_LIGHTS_RIPPLE		   16
+   wave moves a 64th of a turn a line and a tick. */
+#define GATHERING_LIGHTS_RIPPLE		  16
 
 /* For each target in turn, lights burst out of the user and are pulled into the
    middle of the target's body, which is struck as they arrive; the effect layer
    ripples throughout. */
 void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
-	SCREEN_POINT		 screenPosition;
+	SCREEN_POINT		 screenPos;
 	BLITTER_PAIR		 draw;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 k;
 	BATTLE_CAMERA		*camera;
 	Sint32				 paletteId;
@@ -94,13 +94,13 @@ void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	sySndPlayStub(SE_ENEMY_CRY);
 
-	for(frame = 0; frame !=
-		GatheringLights_Counts[mode][GATHERING_LIGHTS_FRAMES] +
-			state->args->tgtCnt * GATHERING_LIGHTS_TARGET_FRAMES;
-		frame++) {
+	for(frm = 0; frm !=
+		GatheringLightsCounts[mode][GATHERING_LIGHTS_TICKS] +
+			state->args->tgtCnt * GATHERING_LIGHTS_TARGET_TICKS;
+		frm++) {
 		Sint32 *row;
 
-		if(frame == 80) {
+		if(frm == 80) {
 			if(mode == GATHERING_LIGHTS_DEMON_NIGHT)
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			else
@@ -112,53 +112,51 @@ void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		row = state->bg2xLines;
 		for(i = 0; i != DISPLAY_HEIGHT; i++)
 			*row++ = CANVAS_WAVE_BG2X(toFIXED(GATHERING_LIGHTS_RIPPLE) -
-				sySin((frame + i) * (TRIG_TURN / 64)) *
-					GATHERING_LIGHTS_RIPPLE);
+				sySin((frm + i) * (TRIG_TURN / 64)) * GATHERING_LIGHTS_RIPPLE);
 
 		EFFECT_FOR_EACH_TARGET(k, state->args) {
-			ACTOR *target = btObjectGetStub(state->args->tgts[k])->actor;
+			ACTOR *tgt = btObjectGetStub(state->args->tgts[k])->actor;
 			Sint32 half = btUnitGetEffectHeightStub(state->args->tgts[k]) / 2;
 
-			if(frame ==
-				k * GATHERING_LIGHTS_TARGET_FRAMES +
-					GATHERING_LIGHTS_HIT_FRAME + 1) {
+			if(frm ==
+				k * GATHERING_LIGHTS_TARGET_TICKS + GATHERING_LIGHTS_HIT_TICK +
+					1) {
 				if(mode == GATHERING_LIGHTS_DEMON_NIGHT)
 					sySndPlayStub(SE_HEAVY_IMPACT);
 				else
 					sySndPlayStub(SE_IMPACT);
 			}
-			if(frame ==
-				k * GATHERING_LIGHTS_TARGET_FRAMES + GATHERING_LIGHTS_HIT_FRAME)
+			if(frm ==
+				k * GATHERING_LIGHTS_TARGET_TICKS + GATHERING_LIGHTS_HIT_TICK)
 				btEffectTintBattler(state->args->tgts[k], SPRITE_COLOR_WHITE,
 					POSE_DAMAGE, k, 26);
-			if(frame > k * GATHERING_LIGHTS_TARGET_FRAMES) {
+			if(frm > k * GATHERING_LIGHTS_TARGET_TICKS) {
 				for(i = 0;
-					i != GatheringLights_Counts[mode][GATHERING_LIGHTS_COUNT];
+					i != GatheringLightsCounts[mode][GATHERING_LIGHTS_COUNT];
 					i++) {
 					PARTICLE *mote = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
 
-					/* Each light leaves two frames after the one before it. */
-					if(frame > (k * (GATHERING_LIGHTS_TARGET_FRAMES / 2) + i) *
-								2 &&
+					/* Each light leaves two ticks after the one before it. */
+					if(frm >
+							(k * (GATHERING_LIGHTS_TARGET_TICKS / 2) + i) * 2 &&
 						mote->variant >= 0) {
-						btProjectionPoint(mote, &screenPosition);
-						screenPosition.x >>= 1;
+						btProjectionPoint(mote, &screenPos);
+						screenPos.x >>= 1;
 						draw[0](canvas,
 							state->sheet +
 								i % 3 * PICTURE_BYTES(GATHERING_LIGHT),
-							screenPosition.x - GATHERING_LIGHT_WIDTH / 2,
-							screenPosition.y - GATHERING_LIGHT_HEIGHT / 2,
+							screenPos.x - GATHERING_LIGHT_WIDTH / 2,
+							screenPos.y - GATHERING_LIGHT_HEIGHT / 2,
 							GATHERING_LIGHT_WIDTH, GATHERING_LIGHT_HEIGHT);
 						btParticleAdvanceWithGravity3D(mote, 62, 0);
-						/* Thirty frames on, the light is pulled toward the
+						/* Thirty ticks on, the light is pulled toward the
 						   middle of its target's body, its speed gaining a
-						   512th of the distance a frame, and is gone once
+						   512th of the distance a tick, and is gone once
 						   within 32 pixels of it across and in depth. */
-						if(frame >
-							k * GATHERING_LIGHTS_TARGET_FRAMES + i + 30) {
-							Sint32 dx = (target->x.fixed - mote->x) >> 9;
-							Sint32 dy = (target->y.fixed + half - mote->y) >> 9;
-							Sint32 dz = (target->z.fixed - mote->z) >> 9;
+						if(frm > k * GATHERING_LIGHTS_TARGET_TICKS + i + 30) {
+							Sint32 dx = (tgt->x.fixed - mote->x) >> 9;
+							Sint32 dy = (tgt->y.fixed + half - mote->y) >> 9;
+							Sint32 dz = (tgt->z.fixed - mote->z) >> 9;
 
 							mote->velX += dx;
 							mote->velY += dy;
@@ -171,7 +169,7 @@ void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				}
 			}
 		}
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	syCloseEvent(btEffectTransferCanvas);
@@ -182,7 +180,7 @@ void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 #undef GATHERING_LIGHTS_SLOTS
 #undef GATHERING_LIGHTS_RIPPLE
-#undef GATHERING_LIGHTS_TARGET_FRAMES
-#undef GATHERING_LIGHTS_HIT_FRAME
+#undef GATHERING_LIGHTS_TARGET_TICKS
+#undef GATHERING_LIGHTS_HIT_TICK
 #undef GATHERING_LIGHT_WIDTH
 #undef GATHERING_LIGHT_HEIGHT

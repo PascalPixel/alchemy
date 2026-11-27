@@ -2,14 +2,14 @@
 #define ALCHEMY_ACTOR_SCRIPT_H
 
 /* Actor scripts: one Sint32 command word, then its operands, as
-   ActorScript_CommandTable runs them. Each macro expands to the words of one
+   ActorScriptCommandTable runs them. Each macro expands to the words of one
    command. The script stores positions and speeds in 16.16 fixed point; its
    macros take plain pixels and decimal speeds and convert them. */
 
 #include "fixed_math.h"
 #include "types.h"
 
-/* The script commands, numbered by their place in ActorScript_CommandTable; the
+/* The script commands, numbered by their place in ActorScriptCommandTable; the
    SC_ macros below write each with its operands. */
 typedef enum ACTOR_SCRIPT_COMMAND {
 	SCRIPT_COMMAND_WAIT = 0,
@@ -74,10 +74,10 @@ typedef enum ACTOR_SCRIPT_COMMAND {
 #define SC_TOP		0	  /* Name the script's start as a jump's destination. */
 #define SC_FOREVER	65535 /* Give SC_LOOP a count that never runs out. */
 
-/* Wait n frames, this one the first. */
+/* Wait n ticks, this one the first. */
 #define SC_WAIT(n) SCRIPT_COMMAND_WAIT, (n)
 /* Wait until the actor reaches its target, or a solid actor has blocked it for
-   60 frames. */
+   60 ticks. */
 #define SC_SYNC	   SCRIPT_COMMAND_SYNC
 /* Stand still at (x, y, z). */
 #define SC_POSITION(x, y, z) \
@@ -128,13 +128,13 @@ typedef enum ACTOR_SCRIPT_COMMAND {
 #define SC_ADD(w, v)		SCRIPT_COMMAND_ADD, (w), (v)
 /* Test whether work value w equals v. */
 #define SC_CMP(w, v)		SCRIPT_COMMAND_CMP, (w), (v)
-/* Set the speed limit, in pixels a frame: SC_SPEED(0.8). */
+/* Set the speed limit, in pixels a tick: SC_SPEED(0.8). */
 #define SC_SPEED(speed)		SC_SET(SW_SPEED, toFIXED(speed))
-/* Set the acceleration, in pixels a frame per frame. */
+/* Set the acceleration, in pixels a tick per tick. */
 #define SC_ACCELERATION(acceleration) \
 	SC_SET(SW_ACCELERATION, toFIXED(acceleration))
 
-/* The leader's controls, one a movement mode: each runs every frame until the
+/* The leader's controls, one a movement mode: each runs every tick until the
    mode changes. Walk or run on the field by the direction pad. */
 #define SC_PLAYER	  SCRIPT_COMMAND_PLAYER
 /* Walk on the World Map by the direction pad. */
@@ -157,7 +157,7 @@ typedef enum ACTOR_SCRIPT_COMMAND {
 #define SC_WORLD_SAND SCRIPT_COMMAND_WORLD_SAND
 /* Hover over what lies below (the Hover Psynergy). */
 #define SC_HOVER	  SCRIPT_COMMAND_HOVER
-/* Walk at one pace, a pixel a frame whatever the keys. */
+/* Walk at one pace, a pixel a tick whatever the keys. */
 #define SC_WALK		  SCRIPT_COMMAND_WALK
 /* Check the configured keys and go on. */
 #define SC_KEY_COUNT  SCRIPT_COMMAND_KEY_COUNT
@@ -178,7 +178,7 @@ typedef enum ACTOR_SCRIPT_COMMAND {
 #define SC_HIDE_SPRITES		SCRIPT_COMMAND_HIDE_SPRITES
 /* Show one sprite (ACTOR_SPRITE_ONE). */
 #define SC_SHOW_SPRITE		SCRIPT_COMMAND_SHOW_SPRITE
-/* Call fn with the actor each frame until it returns zero. */
+/* Call fn with the actor each tick until it returns zero. */
 #define SC_CALL(fn)			SCRIPT_COMMAND_CALL, (Sint32)(fn)
 /* Follow the watched actor with the camera, keeping the view in the room's
    bounds. */

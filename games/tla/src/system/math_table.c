@@ -6,7 +6,7 @@
 /* Tangents scaled by 256: index i is tan(i * 45 / 128 degrees), so index 128 */
 /* is tan(45 degrees). syAtan starts its binary search at index 127; the */
 /* same as The Broken Seal's. */
-const Uint16 Math_TanTable[258] = {
+const Uint16 MathTanTable[258] = {
 	0, 1, 3, 4, 6, 7, 9, 11,
 	12, 14, 15, 17, 18, 20, 22, 23,
 	25, 26, 28, 30, 31, 33, 34, 36,

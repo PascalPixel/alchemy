@@ -7,10 +7,10 @@
 #define TARGET_STRIKE_SPARKS		   (PARTICLES + TARGET_STRIKE_MOTE_SLOTS)
 
 /* The smoke pictures in the sprite sheet: six 24x48 puffs, each shown for
-   TARGET_STRIKE_SMOKE_FRAMES as a puff rises. */
+   TARGET_STRIKE_SMOKE_TICKS as a puff rises. */
 #define TARGET_STRIKE_SMOKE_PICTURES   12800
 #define TARGET_STRIKE_SMOKE_PUFFS	   6
-#define TARGET_STRIKE_SMOKE_FRAMES	   4
+#define TARGET_STRIKE_SMOKE_TICKS	   4
 /* The sparks each hit lights, a block of them for each hit: a slash's and a
    bite's; of the sparks, the first TARGET_STRIKE_SPARKS_SHOWN are drawn. */
 #define TARGET_STRIKE_SPARKS_PER_SLASH 32
@@ -21,36 +21,36 @@
    target's motes; of these, the first TARGET_STRIKE_DRAIN_MOTES are drawn. */
 #define TARGET_STRIKE_PUFFS_PER_HIT	   8
 #define TARGET_STRIKE_HIT_BLOCK		   16
-/* The hit a frame belongs to: hits are counted six pictures apart, each with
+/* The hit a tick belongs to: hits are counted six pictures apart, each with
    its block of sparks, puffs and motes. */
-#define TARGET_STRIKE_HIT(mode, frame) \
-	((frame) / (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES) * 6))
-#define TARGET_STRIKE_DRAIN_MOTES		 64
-/* The frames a drained mote flies out before the user pulls it in. */
-#define TARGET_STRIKE_MOTE_FLIGHT_FRAMES 10
+#define TARGET_STRIKE_HIT(mode, tick) \
+	((tick) / (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_TICKS) * 6))
+#define TARGET_STRIKE_DRAIN_MOTES		64
+/* The ticks a drained mote flies out before the user pulls it in. */
+#define TARGET_STRIKE_MOTE_FLIGHT_TICKS 10
 /* The canvas row the fangs' pictures start at. */
-#define TARGET_STRIKE_BITE_Y			 56
+#define TARGET_STRIKE_BITE_Y			56
 /* The bite's stages after the tornado sprite sheet: BeamImage for a slash,
    BlueDropletSheet otherwise. */
-#define TARGET_STRIKE_BITE_PICTURES		 3200
-#define TARGET_STRIKE_BITE_WIDTH		 18
-#define TARGET_STRIKE_BITE_HEIGHT		 48
-/* The bite's last stage, the fangs met (TargetStrike_BiteStages). */
-#define TARGET_STRIKE_FANGS_MET			 3
+#define TARGET_STRIKE_BITE_PICTURES		3200
+#define TARGET_STRIKE_BITE_WIDTH		18
+#define TARGET_STRIKE_BITE_HEIGHT		48
+/* The bite's last stage, the fangs met (TargetStrikeBiteStages). */
+#define TARGET_STRIKE_FANGS_MET			3
 
-/* Column `field` of style `mode`'s row of TargetStrike_Styles. */
-#define TARGET_STRIKE_VALUE(mode, field) TargetStrike_Styles[(mode)][(field)]
+/* Column `field` of style `mode`'s row of TargetStrikeStyles. */
+#define TARGET_STRIKE_VALUE(mode, field) TargetStrikeStyles[(mode)][(field)]
 
-/* The columns of TargetStrike_Styles. */
+/* The columns of TargetStrikeStyles. */
 enum {
-	TARGET_STRIKE_KIND,			  /* STRIKE_KIND_SLASH or STRIKE_KIND_BITE */
-	TARGET_STRIKE_HITS,			  /* how many times the target is struck */
-	TARGET_STRIKE_FLAGS,		  /* STRIKE_SMOKE and so on */
-	TARGET_STRIKE_COLOR,		  /* background palette, a STRIKE_COLOR_ */
-	TARGET_STRIKE_PICTURE_FRAMES, /* frames each strike picture is shown */
+	TARGET_STRIKE_KIND,			 /* STRIKE_KIND_SLASH or STRIKE_KIND_BITE */
+	TARGET_STRIKE_HITS,			 /* how many times the target is struck */
+	TARGET_STRIKE_FLAGS,		 /* STRIKE_SMOKE and so on */
+	TARGET_STRIKE_COLOR,		 /* background palette, a STRIKE_COLOR_ */
+	TARGET_STRIKE_PICTURE_TICKS, /* ticks each strike picture is shown */
 	/* how the fangs are drawn (COMPOSITE_LIGHTEN or _ADDITIVE) */
 	TARGET_STRIKE_COMPOSITE,
-	TARGET_STRIKE_FRAMES /* length of the effect in frames */
+	TARGET_STRIKE_TICKS /* length of the effect in ticks */
 };
 
 /* One slash strikes the first target among glints, in lightning colours.
@@ -157,17 +157,17 @@ void btEffectRunDrainFang(BATTLE_EFFECT_PARM *args)
 void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
 	SCREEN_POINT		 ground;
-	SCREEN_POINT		 targetPosition;
+	SCREEN_POINT		 tgtPos;
 	SCREEN_POINT		 alternate;
-	SCREEN_POINT		 position;
+	SCREEN_POINT		 pos;
 	BLITTER_PAIR		 draw;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 k;
 	Uint8				*motes;
 	BATTLE_CAMERA		*camera;
-	ACTOR				*target;
+	ACTOR				*tgt;
 	ACTOR				*user;
 	Sint32				 resource;
 	Sint32				 i;
@@ -224,7 +224,7 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	 * only, as btEffectRunDrain (battle_effect_drain.c) seeds each target's
 	 * motes over every target; as its body once with k 0. */
 	for(k = 0; k != 1; k++) {
-		target = btObjectGetStub(state->args->tgts[k])->actor;
+		tgt = btObjectGetStub(state->args->tgts[k])->actor;
 		for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
 			PARTICLE *puff = &state->particles[i];
 
@@ -237,16 +237,16 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		for(i = 0; i != TARGET_STRIKE_MOTES_PER_TARGET; i++) {
 			PARTICLE *mote = &PARTICLES[k * TARGET_STRIKE_MOTES_PER_TARGET + i];
 
-			SET_POSITION(mote, target->x.fixed, toFIXED(20), target->z.fixed);
+			SET_POSITION(mote, tgt->x.fixed, toFIXED(20), tgt->z.fixed);
 			SET_VELOCITY(mote, ((syRandom() & 255) - 128) << 11,
 				((syRandom() & 255) - 128) << 11,
 				((syRandom() & 255) - 128) << 11);
 			mote->variant = -1;
 		}
 		for(i = 0; i != TARGET_STRIKE_SPARK_COUNT; i++) {
-			TARGET_STRIKE_SPARKS[i].x = target->x.fixed;
+			TARGET_STRIKE_SPARKS[i].x = tgt->x.fixed;
 			TARGET_STRIKE_SPARKS[i].y = toFIXED(20);
-			TARGET_STRIKE_SPARKS[i].z = target->z.fixed;
+			TARGET_STRIKE_SPARKS[i].z = tgt->z.fixed;
 			if(TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) ==
 				STRIKE_KIND_BITE) {
 				TARGET_STRIKE_SPARKS[i].velX = ((syRandom() & 255) - 128) << 11;
@@ -278,52 +278,49 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-	btProjectionScaledUnit(state->args->tgts[0], &targetPosition);
+	btProjectionScaledUnit(state->args->tgts[0], &tgtPos);
 	btProjectionUnit(state->args->tgts[0], &alternate);
-	targetPosition.y += (alternate.y - targetPosition.y) / 2;
+	tgtPos.y += (alternate.y - tgtPos.y) / 2;
 
-	for(frame = 0; frame != TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FRAMES);
-		frame++) {
+	for(frm = 0; frm != TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_TICKS); frm++) {
 		Sint32 span = TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_HITS) *
-			TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES);
+			TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_TICKS);
 		Sint32 length = span * 4;
 		Sint32 glint = 0;
 
 		if(TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_SLASH) {
 			/* Slashes sweep across the target from the user's side. */
-			if(frame < span * 6) {
-				Sint32 picture = frame /
-					TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES) % 6;
+			if(frm < span * 6) {
+				Sint32 picture = frm /
+					TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_TICKS) % 6;
 
 				if(state->args->side == EFFECT_SIDE_PARTY) {
 					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 						EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
 						COMPOSITE_LIGHTEN);
 					EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas,
-						state->sheet + TargetStrike_Pictures[picture],
-						targetPosition.x / 2 -
-							(TargetStrike_Reach[picture] / 2) -
-							TargetStrike_Widths[picture] + 8,
-						targetPosition.y - (TargetStrike_Heights[picture] / 2),
-						TargetStrike_Widths[picture],
-						TargetStrike_Heights[picture]);
+						state->sheet + TargetStrikePictures[picture],
+						tgtPos.x / 2 - (TargetStrikeReach[picture] / 2) -
+							TargetStrikeWidths[picture] + 8,
+						tgtPos.y - (TargetStrikeHeights[picture] / 2),
+						TargetStrikeWidths[picture],
+						TargetStrikeHeights[picture]);
 				} else {
 					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
 						COMPOSITE_LIGHTEN);
 					EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas,
-						state->sheet + TargetStrike_Pictures[picture],
-						targetPosition.x / 2 +
-							(TargetStrike_Reach[picture] / 2) - 8,
-						targetPosition.y - (TargetStrike_Heights[picture] / 2),
-						TargetStrike_Widths[picture],
-						TargetStrike_Heights[picture]);
+						state->sheet + TargetStrikePictures[picture],
+						tgtPos.x / 2 + (TargetStrikeReach[picture] / 2) - 8,
+						tgtPos.y - (TargetStrikeHeights[picture] / 2),
+						TargetStrikeWidths[picture],
+						TargetStrikeHeights[picture]);
 				}
 				syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
-				if(frame %
+				if(frm %
 						(TARGET_STRIKE_VALUE(
-							 mode, TARGET_STRIKE_PICTURE_FRAMES) *
+							 mode, TARGET_STRIKE_PICTURE_TICKS) *
 							6) ==
-					TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES) *
+					TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_TICKS) *
 						4) {
 					if(mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH) {
 						EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -346,7 +343,7 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						for(i = 0; i != TARGET_STRIKE_SPARKS_PER_SLASH; i++) {
 							PARTICLE *spark =
 								&TARGET_STRIKE_SPARKS[TARGET_STRIKE_HIT(
-														  mode, frame) *
+														  mode, frm) *
 										TARGET_STRIKE_SPARKS_PER_SLASH +
 									i];
 
@@ -355,7 +352,7 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					}
 					for(i = 0; i != TARGET_STRIKE_PUFFS_PER_HIT; i++) {
 						PARTICLE *puff =
-							&state->particles[TARGET_STRIKE_HIT(mode, frame) *
+							&state->particles[TARGET_STRIKE_HIT(mode, frm) *
 									TARGET_STRIKE_HIT_BLOCK +
 								i];
 
@@ -363,20 +360,20 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					}
 				}
 			}
-			if(frame >= 12 && frame <= 31)
+			if(frm >= 12 && frm <= 31)
 				glint = 1;
-		} else if(frame < length + 4) {
+		} else if(frm < length + 4) {
 			/* Bites: rows of fangs close above and below the target and meet in
 			   a flash. */
 			Sint32 stage;
 
-			if(frame < length) {
-				Sint32 picture = frame /
-					TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES);
+			if(frm < length) {
+				Sint32 picture = frm /
+					TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_TICKS);
 
 				while(picture > 4)
 					picture -= 4;
-				stage = TargetStrike_BiteStages[picture];
+				stage = TargetStrikeBiteStages[picture];
 			} else {
 				stage = TARGET_STRIKE_FANGS_MET;
 			}
@@ -385,9 +382,8 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas,
 				state->sheet + stage * PICTURE_BYTES(TARGET_STRIKE_BITE) +
 					TARGET_STRIKE_BITE_PICTURES,
-				targetPosition.x / 2 - TARGET_STRIKE_BITE_WIDTH,
-				TARGET_STRIKE_BITE_Y, TARGET_STRIKE_BITE_WIDTH,
-				TARGET_STRIKE_BITE_HEIGHT);
+				tgtPos.x / 2 - TARGET_STRIKE_BITE_WIDTH, TARGET_STRIKE_BITE_Y,
+				TARGET_STRIKE_BITE_WIDTH, TARGET_STRIKE_BITE_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
@@ -395,13 +391,13 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas,
 				state->sheet + stage * PICTURE_BYTES(TARGET_STRIKE_BITE) +
 					TARGET_STRIKE_BITE_PICTURES,
-				targetPosition.x / 2, TARGET_STRIKE_BITE_Y,
-				TARGET_STRIKE_BITE_WIDTH, TARGET_STRIKE_BITE_HEIGHT);
+				tgtPos.x / 2, TARGET_STRIKE_BITE_Y, TARGET_STRIKE_BITE_WIDTH,
+				TARGET_STRIKE_BITE_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
-			if(frame %
-					(TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES) *
+			if(frm %
+					(TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_TICKS) *
 						4) ==
-				TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES) * 3) {
+				TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_TICKS) * 3) {
 				/* A hit: the target flashes, and the last lets the battle show
 				   the damage. Hits are counted six pictures apart, as a slash's
 				   are, so a third bite relights the second's sparks and smoke
@@ -409,15 +405,15 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				btEffectTintBattler(state->args->tgts[0], SPRITE_COLOR_WHITE,
 					POSE_DAMAGE, 0, 8);
 				state->shakeFrm = 4;
-				if(frame >
+				if(frm >
 					(TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_HITS) * 4 - 4) *
-						TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES))
+						TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_TICKS))
 					EFFECT_SHOW_DAMAGE(SE_IMPACT);
 				else
 					sySndPlayStub(SE_IMPACT);
 				for(i = 0; i != TARGET_STRIKE_SPARKS_PER_BITE; i++) {
 					PARTICLE *spark =
-						&TARGET_STRIKE_SPARKS[TARGET_STRIKE_HIT(mode, frame) *
+						&TARGET_STRIKE_SPARKS[TARGET_STRIKE_HIT(mode, frm) *
 								TARGET_STRIKE_SPARKS_PER_BITE +
 							i];
 
@@ -425,14 +421,14 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				}
 				for(i = 0; i != TARGET_STRIKE_PUFFS_PER_HIT; i++) {
 					PARTICLE *puff =
-						&state->particles[TARGET_STRIKE_HIT(mode, frame) *
+						&state->particles[TARGET_STRIKE_HIT(mode, frm) *
 								TARGET_STRIKE_HIT_BLOCK +
 							i];
 
 					puff->variant = 0;
 				}
 				for(i = 0; i != TARGET_STRIKE_HIT_BLOCK; i++)
-					PARTICLES[TARGET_STRIKE_HIT(mode, frame) *
+					PARTICLES[TARGET_STRIKE_HIT(mode, frm) *
 							TARGET_STRIKE_HIT_BLOCK +
 						i]
 						.variant = 0;
@@ -445,26 +441,24 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		if((TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_GLINTS) &&
 			glint) {
 			for(i = 0; i != 3; i++) {
-				Sint32 image = frame & 3;
+				Sint32 image = frm & 3;
 				Sint32 angle = syRandom() & TRIG_ANGLE_MASK;
 				Sint32 radius = (syRandom() & 31) + 4;
 				Sint32 x;
 				Sint32 y;
 
-				x = targetPosition.x / 2 +
-					(FIXEDtoINT(sySin(angle) * radius) >> 1) -
-					(BattleEffect_GlintPictureWidths[image] / 2);
-				y = targetPosition.y -
-					(FIXEDtoINT(syCos(angle) * radius) >> 1) -
-					(BattleEffect_GlintPictureHeights[image] / 2);
+				x = tgtPos.x / 2 + (FIXEDtoINT(sySin(angle) * radius) >> 1) -
+					(BattleEffectGlintPictureWidths[image] / 2);
+				y = tgtPos.y - (FIXEDtoINT(syCos(angle) * radius) >> 1) -
+					(BattleEffectGlintPictureHeights[image] / 2);
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-					TargetStrike_GlintDrawFlags[syRandom() & 3] |
+					TargetStrikeGlintDrawFlags[syRandom() & 3] |
 						EFFECT_CLIP_BOUNDS,
 					COMPOSITE_ADDITIVE);
 				(*pairedBlitter)(canvas,
-					state->sheet + BattleEffect_GlintPictures[image], x, y,
-					BattleEffect_GlintPictureWidths[image],
-					BattleEffect_GlintPictureHeights[image]);
+					state->sheet + BattleEffectGlintPictures[image], x, y,
+					BattleEffectGlintPictureWidths[image],
+					BattleEffectGlintPictureHeights[image]);
 				syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 			}
 		}
@@ -487,9 +481,9 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 					if(puff->variant >= 0 &&
 						puff->variant < TARGET_STRIKE_SMOKE_PUFFS *
-								TARGET_STRIKE_SMOKE_FRAMES) {
+								TARGET_STRIKE_SMOKE_TICKS) {
 						Sint32 picture =
-							puff->variant / TARGET_STRIKE_SMOKE_FRAMES;
+							puff->variant / TARGET_STRIKE_SMOKE_TICKS;
 
 						draw[i & 1](canvas,
 							state->sheet + picture * PICTURE_BYTES(SMOKE_PUFF) +
@@ -510,23 +504,23 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 				if(mode == TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_BITES)
 					size = 8;
-				if(frame == 55)
+				if(frm == 55)
 					btEffectTintBattler(state->args->user, SPRITE_COLOR_WHITE,
 						TINT_KEEP, TINT_KEEP, 0);
-				if(frame == 90)
+				if(frm == 90)
 					btEffectTintBattler(state->args->user, SPRITE_COLOR_NORMAL,
 						TINT_KEEP, TINT_KEEP, 0);
 				for(i = 0; i != TARGET_STRIKE_DRAIN_MOTES; i++) {
 					PARTICLE *mote = &PARTICLES[i];
 
 					if(mote->variant >= 0) {
-						btProjectionPoint(mote, &position);
-						position.x >>= 1;
-						EFFECT_DRAW_MOTE(draw[1], canvas, motes, position.x,
-							position.y, size);
+						btProjectionPoint(mote, &pos);
+						pos.x >>= 1;
+						EFFECT_DRAW_MOTE(
+							draw[1], canvas, motes, pos.x, pos.y, size);
 						btParticleAdvanceWithGravity3D(mote, 60, 0);
 						mote->variant++;
-						if(mote->variant > TARGET_STRIKE_MOTE_FLIGHT_FRAMES) {
+						if(mote->variant > TARGET_STRIKE_MOTE_FLIGHT_TICKS) {
 							Sint32 dx = (user->x.fixed - mote->x) >> 8;
 							Sint32 dy =
 								(user->y.fixed - mote->y + toFIXED(20)) >> 8;
@@ -550,13 +544,13 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					Sint32	  size = spark->variant;
 
 					if(size >= 0) {
-						btProjectionPoint(spark, &position);
-						position.x >>= 1;
+						btProjectionPoint(spark, &pos);
+						pos.x >>= 1;
 						btParticleAdvanceWithGravity3D(spark, 60, 0);
 						size >>= 3;
 						size++;
-						EFFECT_DRAW_MOTE(draw[1], canvas, motes, position.x,
-							position.y, size);
+						EFFECT_DRAW_MOTE(
+							draw[1], canvas, motes, pos.x, pos.y, size);
 						spark->variant--;
 					}
 				}
@@ -567,7 +561,7 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			btCameraShake(8, 8);
 		else
 			btCameraShake(2, 4);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	syCloseEvent(btEffectTransferCanvas);
@@ -578,7 +572,7 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 #undef TARGET_STRIKE_VALUE
 #undef TARGET_STRIKE_SMOKE_PICTURES
 #undef TARGET_STRIKE_SMOKE_PUFFS
-#undef TARGET_STRIKE_SMOKE_FRAMES
+#undef TARGET_STRIKE_SMOKE_TICKS
 #undef TARGET_STRIKE_SPARKS_PER_SLASH
 #undef TARGET_STRIKE_SPARKS_PER_BITE
 #undef TARGET_STRIKE_SPARKS_SHOWN
@@ -586,6 +580,6 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 #undef TARGET_STRIKE_HIT_BLOCK
 #undef TARGET_STRIKE_HIT
 #undef TARGET_STRIKE_DRAIN_MOTES
-#undef TARGET_STRIKE_MOTE_FLIGHT_FRAMES
+#undef TARGET_STRIKE_MOTE_FLIGHT_TICKS
 #undef TARGET_STRIKE_BITE_Y
 #undef TARGET_STRIKE_FANGS_MET

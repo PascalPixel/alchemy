@@ -6,13 +6,13 @@
 enum {
 	/* A packet: its number, missing mask, checksum and the 24-byte payload. */
 	SERIAL_PACKET_HALFWORDS = 14,
-	SERIAL_PAYLOAD_BYTES = 24, /* one console's payload each frame */
+	SERIAL_PAYLOAD_BYTES = 24, /* one console's payload each tick */
 	SERIAL_BLOCK_BYTES = 20,   /* bulk data carried in each payload */
 	/* About 10,000 seconds, nearly three hours. */
-	SERIAL_TRANSFER_TIMEOUT_FRAMES = 600000,
+	SERIAL_TRANSFER_TIMEOUT_TICKS = 600000,
 	SERIAL_IDLE_HALFWORD = 0xfefe, /* sent and seen between packets */
 	/* Timer 3's reload: it overflows 13981 cycles on, from one halfword
-	   transfer to the next, about 20 a frame. */
+	   transfer to the next, about 20 a tick. */
 	SERIAL_TIMER_RELOAD = 65536 - 13981
 };
 
@@ -33,11 +33,11 @@ void syBupSetProgressCallback(void (*progress)(Sint32 step))
 /* Resets the serial port into multiplayer mode, installs the serial and timer 3
    interrupt handlers, clears SerialStateWork and points its packet buffers into
    its storage, clears the bulk transfer state and sets SerialExchangeActive,
-   which starts the per-frame exchange. */
+   which starts the per-tick exchange. */
 void sySerialInit(void)
 {
 	Uint32		  savedIme;
-	Sint32		  index;
+	Sint32		  idx;
 	SERIAL_STATE *state;
 
 	IRQ_LOCK(savedIme);
@@ -65,13 +65,13 @@ void sySerialInit(void)
 	state->sendBuf[1] = (Uint16 *)(state->storage + SERIAL_PACKET_BYTES);
 	/* Each console has separate incoming, completed and pending packet
 	   buffers. */
-	for(index = 0; index <= 1; index++) {
-		state->incomingBuf[index] = (Uint16 *)(state->storage +
-			SERIAL_PACKET_BYTES * 2 + index * SERIAL_PACKET_BYTES * 3);
-		state->readyBuf[index] = (Uint16 *)(state->storage +
-			SERIAL_PACKET_BYTES * 3 + index * SERIAL_PACKET_BYTES * 3);
-		state->pendingBuf[index] = (Uint16 *)(state->storage +
-			SERIAL_PACKET_BYTES * 4 + index * SERIAL_PACKET_BYTES * 3);
+	for(idx = 0; idx <= 1; idx++) {
+		state->incomingBuf[idx] = (Uint16 *)(state->storage +
+			SERIAL_PACKET_BYTES * 2 + idx * SERIAL_PACKET_BYTES * 3);
+		state->readyBuf[idx] = (Uint16 *)(state->storage +
+			SERIAL_PACKET_BYTES * 3 + idx * SERIAL_PACKET_BYTES * 3);
+		state->pendingBuf[idx] = (Uint16 *)(state->storage +
+			SERIAL_PACKET_BYTES * 4 + idx * SERIAL_PACKET_BYTES * 3);
 	}
 	REG_IME = 0;
 	REG_IE |= INTR_FLAG_SERIAL;
@@ -137,13 +137,13 @@ static __inline__ void sySerialStartClocking(
    when the multiplayer id says a third is there. */
 static __inline__ Sint32 sySerialGetLinkStat(Uint32 control)
 {
-	Sint32 status;
+	Sint32 stat;
 	Sint32 result;
 
-	status = SerialStateWork.curMask | (SerialStateWork.receivedMask << 8);
+	stat = SerialStateWork.curMask | (SerialStateWork.receivedMask << 8);
 	if(SerialStateWork.mode == SERIAL_MODE_CLOCKING)
-		status |= LINK_STATUS_CLOCKING;
-	result = sySerialAddErrorFlag(status);
+		stat |= LINK_STATUS_CLOCKING;
+	result = sySerialAddErrorFlag(stat);
 	if(SIO_ID_OF(control) > 1)
 		result |= LINK_STATUS_EXTRA_CONSOLE;
 	return result;
@@ -189,7 +189,7 @@ Sint32 sySerialPollAndTransfer(void *send, void *receive)
 }
 
 /* As sySerialPollAndTransfer, without exchanging data: sySynch() calls it once
-   a frame while SerialExchangeActive is set, and the VBlank handler does the
+   a tick while SerialExchangeActive is set, and the VBlank handler does the
    exchange. */
 Sint32 sySerialPollStat(void)
 {
@@ -218,7 +218,7 @@ Sint32 sySerialPollStat(void)
    `receive` and builds the next packet from `send`. Called by the VBlank
    handler while SerialExchangeActive is set, which stores the result in
    LinkStatusWork. Returns the link status: in bits 0 and 1 the consoles heard
-   from this frame (both: LINK_STATUS_HEARD_BOTH, which the block transfer and
+   from this tick (both: LINK_STATUS_HEARD_BOTH, which the block transfer and
    sySerialWaitForStatMask wait for), in bits 8 and 9 those heard from since the
    link began, and LINK_STATUS_CLOCKING, LINK_STATUS_ERROR and
    LINK_STATUS_EXTRA_CONSOLE. */
@@ -251,17 +251,16 @@ void sySerialPrepareSendPacket(void *payload)
 		   SERIAL_PACKET, written through a byte pointer: as the struct's
 		   volatile members, each store would read its word first. */
 		volatile Uint8 *packet;
-		Uint8			currentMask;
+		Uint8			curMask;
 		Uint8			receivedMask;
 
 		packet = (volatile Uint8 *)state->sendBuf[0];
 		packet[offsetof(SERIAL_PACKET, packetNum)] = state->packetNum;
-		currentMask = state->curMask;
+		curMask = state->curMask;
 		receivedMask = state->receivedMask;
 		sum = 0;
 		*(volatile Uint16 *)(packet + offsetof(SERIAL_PACKET, checksum)) = sum;
-		packet[offsetof(SERIAL_PACKET, missingMask)] =
-			receivedMask ^ currentMask;
+		packet[offsetof(SERIAL_PACKET, missingMask)] = receivedMask ^ curMask;
 		syDMAXCopy(payload, (void *)(packet + offsetof(SERIAL_PACKET, payload)),
 			DMA_COPY_WORDS(SERIAL_PAYLOAD_BYTES / 4), REG_DMA3);
 	}
@@ -298,14 +297,14 @@ void sySerialPrepareSendPacket(void *payload)
    records the consoles heard from in currentMask and receivedMask. */
 Uint8 sySerialCollectReceivedPayloads(void *payload)
 {
-	Uint8	flags[8];
+	Uint8	flg[8];
 	Sint32	i;
 	Uint32	k;
 	Uint16 *packet;
 	Uint16 *swap;
 	Sint32	sum;
 
-	*(Uint32 *)&flags[4] = 0;
+	*(Uint32 *)&flg[4] = 0;
 	/* Swap completed buffers with interrupts masked, then validate outside
 	   it. */
 	syIOWrite16(0, &REG_IME);
@@ -314,7 +313,7 @@ Uint8 sySerialCollectReceivedPayloads(void *payload)
 		SerialStateWork.pendingBuf[i] = SerialStateWork.readyBuf[i];
 		SerialStateWork.readyBuf[i] = swap;
 	}
-	*(Uint32 *)flags = *(Uint32 *)SerialStateWork.channelFlg;
+	*(Uint32 *)flg = *(Uint32 *)SerialStateWork.channelFlg;
 	*(Uint32 *)SerialStateWork.channelFlg = 0;
 	syIOWrite16(1, &REG_IME);
 	SerialStateWork.curMask = 0;
@@ -325,7 +324,7 @@ Uint8 sySerialCollectReceivedPayloads(void *payload)
 			sum += packet[k];
 		/* A good packet's halfwords, its complemented checksum included, sum to
 		   0xffff. */
-		if(flags[i] == SERIAL_CHANNEL_PACKET_COMPLETE && (Sint16)sum == -1) {
+		if(flg[i] == SERIAL_CHANNEL_PACKET_COMPLETE && (Sint16)sum == -1) {
 			syDMAXCopy(SerialStateWork.pendingBuf[i] + 2,
 				(Uint8 *)payload + i * SERIAL_PAYLOAD_BYTES,
 				DMA_COPY_WORDS(SERIAL_PAYLOAD_BYTES / 4), REG_DMA3);
@@ -384,19 +383,19 @@ void sySerialHandleTransferInterrupt(void)
 		SerialStateWork.sendIdx++;
 
 	for(channel = 0; channel <= 1; channel++) {
-		Sint32	receiveIndex;
+		Sint32	receiveIdx;
 		Uint16 *incoming;
 
-		/* Hand complete packets to the frame code without overwriting its
+		/* Hand complete packets to the tick code without overwriting its
 		   buffers. */
 		if(recv[channel] == SERIAL_IDLE_HALFWORD &&
 			SerialStateWork.receiveIdx[channel] >= SERIAL_PACKET_HALFWORDS) {
 			SerialStateWork.receiveIdx[channel] = -1;
 		} else {
-			receiveIndex = SerialStateWork.receiveIdx[channel];
+			receiveIdx = SerialStateWork.receiveIdx[channel];
 			incoming = SerialStateWork.incomingBuf[channel];
-			incoming[receiveIndex] = recv[channel];
-			if(receiveIndex == SERIAL_PACKET_HALFWORDS - 1) {
+			incoming[receiveIdx] = recv[channel];
+			if(receiveIdx == SERIAL_PACKET_HALFWORDS - 1) {
 				Uint16 *swap = SerialStateWork.readyBuf[channel];
 
 				SerialStateWork.readyBuf[channel] = incoming;
@@ -420,7 +419,7 @@ void sySerialHandleTransferInterrupt(void)
 	}
 }
 
-/* Clears SerialExchangeActive, which stops the per-frame exchange, and removes
+/* Clears SerialExchangeActive, which stops the per-tick exchange, and removes
    the link interrupt handlers. */
 void sySerialRemoveIRQHandlers(void)
 {
@@ -429,7 +428,7 @@ void sySerialRemoveIRQHandlers(void)
 	syIntFunction(IRQ_TIMER3, 0, 0);
 }
 
-/* Waits a frame at a time until every status bit in `mask` is set in
+/* Waits a tick at a time until every status bit in `mask` is set in
    LinkStatusWork, then returns this console's multiplayer id. */
 Uint32 sySerialWaitForStatMask(Sint32 mask)
 {
@@ -439,10 +438,10 @@ Uint32 sySerialWaitForStatMask(Sint32 mask)
 	return SIO_ID_OF(REG_SIOCNT);
 }
 
-/* Starts sending `size` bytes from `source` to the partner in blocks of
+/* Starts sending `size` bytes from `src` to the partner in blocks of
    SERIAL_BLOCK_BYTES: sets the send source, size and block number that
    sySerialStepBlockTransfer works from. */
-Sint32 sySerialStartSend(void *source, Sint32 size)
+Sint32 sySerialStartSend(void *src, Sint32 size)
 {
 	SERIAL_TRANSFER_STATE *state = &SerialTransfer;
 	Uint32				   savedIme;
@@ -451,7 +450,7 @@ Sint32 sySerialStartSend(void *source, Sint32 size)
 		return -1;
 	IRQ_LOCK(savedIme);
 	state->stat = SERIAL_STATUS_RUNNING;
-	SerialSendSource = (Sint32)source;
+	SerialSendSource = (Sint32)src;
 	SerialSendSize = size;
 	SerialBlockNumber = 0;
 	state->active = 1;
@@ -459,9 +458,9 @@ Sint32 sySerialStartSend(void *source, Sint32 size)
 	return 0;
 }
 
-/* Starts receiving the partner's blocks into `destination`: sets the receive
+/* Starts receiving the partner's blocks into `dst`: sets the receive
    destination and clears the received size. */
-Sint32 sySerialStartReceive(void *destination)
+Sint32 sySerialStartReceive(void *dst)
 {
 	SERIAL_TRANSFER_STATE *state = &SerialTransfer;
 	Uint32				   savedIme;
@@ -470,7 +469,7 @@ Sint32 sySerialStartReceive(void *destination)
 		return -1;
 	IRQ_LOCK(savedIme);
 	state->stat = SERIAL_STATUS_RUNNING | 1;
-	SerialReceiveDestination = (Sint32)destination;
+	SerialReceiveDestination = (Sint32)dst;
 	SerialReceivedSize = 0;
 	state->active = 1;
 	SerialBlockNumber = 0;
@@ -478,64 +477,64 @@ Sint32 sySerialStartReceive(void *destination)
 	return 0;
 }
 
-/* Waits a frame at a time until the queued send is done, giving up after
-   SERIAL_TRANSFER_TIMEOUT_FRAMES frames. */
+/* Waits a tick at a time until the queued send is done, giving up after
+   SERIAL_TRANSFER_TIMEOUT_TICKS ticks. */
 void sySerialWaitForSend(void)
 {
-	Uint32 count = 0;
+	Uint32 cnt = 0;
 
 	if(SerialSendSource != 0) {
-		for(; count < SERIAL_TRANSFER_TIMEOUT_FRAMES && SerialSendSource != 0;
-			count++) {
+		for(; cnt < SERIAL_TRANSFER_TIMEOUT_TICKS && SerialSendSource != 0;
+			cnt++) {
 			sySynch(1);
 		}
 	}
 }
 
-/* Waits a frame at a time until the queued receive is done, giving up after
-   SERIAL_TRANSFER_TIMEOUT_FRAMES frames. */
+/* Waits a tick at a time until the queued receive is done, giving up after
+   SERIAL_TRANSFER_TIMEOUT_TICKS ticks. */
 void sySerialWaitForReceive(void)
 {
-	Uint32 count = 0;
+	Uint32 cnt = 0;
 
 	if(SerialReceiveDestination != 0) {
 		do {
 			sySynch(1);
-			count++;
-		} while(count < SERIAL_TRANSFER_TIMEOUT_FRAMES &&
+			cnt++;
+		} while(cnt < SERIAL_TRANSFER_TIMEOUT_TICKS &&
 			SerialReceiveDestination != 0);
 	}
 }
 
 /* Waits until both the send and the receive have finished, giving up after
-   SERIAL_TRANSFER_TIMEOUT_FRAMES frames. Reached through the stub table. */
+   SERIAL_TRANSFER_TIMEOUT_TICKS ticks. Reached through the stub table. */
 void sySerialWaitForTransfers(void)
 {
-	Uint32 count;
+	Uint32 cnt;
 
-	count = 0;
+	cnt = 0;
 	while(SerialSendSource != 0 || SerialReceiveDestination != 0) {
 		sySynch(1);
-		count++;
-		if(count >= SERIAL_TRANSFER_TIMEOUT_FRAMES)
+		cnt++;
+		if(cnt >= SERIAL_TRANSFER_TIMEOUT_TICKS)
 			return;
 	}
 }
 
 /* Returns bit 0 while a send runs and bit 1 while a receive runs. The link
-   battle and the Battle Arena poll it between frames. */
+   battle and the Battle Arena poll it between ticks. */
 Sint32 sySerialGetActiveTransfers(void)
 {
-	Sint32 flags;
+	Sint32 flg;
 
-	flags = 0;
+	flg = 0;
 	if(SerialSendSource != 0) {
-		flags = 1;
+		flg = 1;
 	}
 	if(SerialReceiveDestination != 0) {
-		flags |= 2;
+		flg |= 2;
 	}
-	return flags;
+	return flg;
 }
 
 /* Clears the serial transfer for a link battle with interrupts off: nothing to
@@ -573,7 +572,7 @@ void sySerialStepBlockTransfer(void)
 	one.value = 1;
 	own = &SerialTransfer;
 	peer = &SerialPeerPayloads[id];
-	/* Both consoles must have been heard from this frame */
+	/* Both consoles must have been heard from this tick */
 	if((LinkStatusWork & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH)
 		return;
 	/* Receiving advances only when the peer presents the expected block number.

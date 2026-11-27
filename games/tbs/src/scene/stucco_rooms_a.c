@@ -45,25 +45,25 @@
 #include "graphics/graphics.h"
 #include "text/msg_ids.h"
 
-extern SCENE_ENTRANCE			   StuccoRoomsA_HouseEntrances[];
-extern SCENE_ENTRANCE			   StuccoRoomsA_SanctumEntrances[];
-extern Uint32					   StuccoRoomsA_Exits[];
-extern ACTOR_PLACE				   StuccoRoomsA_NoActorPlacements[];
-extern ACTOR_PLACE				   StuccoRoomsA_HouseActorPlacements[];
-extern ACTOR_PLACE				   StuccoRoomsA_InnActorPlacements[];
-extern ACTOR_PLACE				   StuccoRoomsA_SanctumActorPlacements[];
-extern CUE						   StuccoRoomsA_NoCues[];
-extern CUE						   StuccoRoomsA_HouseCues[];
-extern CUE						   StuccoRoomsA_InnCues[];
-extern CUE						   StuccoRoomsA_SanctumCues[];
-extern MAP_GRID_METATILE_ANIMATION StuccoRoomsA_DoorMetatiles[];
+extern SCENE_ENTRANCE			   StuccoRoomsAHouseEntrances[];
+extern SCENE_ENTRANCE			   StuccoRoomsASanctumEntrances[];
+extern Uint32					   StuccoRoomsAExits[];
+extern ACTOR_PLACE				   StuccoRoomsANoActorPlacements[];
+extern ACTOR_PLACE				   StuccoRoomsAHouseActorPlacements[];
+extern ACTOR_PLACE				   StuccoRoomsAInnActorPlacements[];
+extern ACTOR_PLACE				   StuccoRoomsASanctumActorPlacements[];
+extern CUE						   StuccoRoomsANoCues[];
+extern CUE						   StuccoRoomsAHouseCues[];
+extern CUE						   StuccoRoomsAInnCues[];
+extern CUE						   StuccoRoomsASanctumCues[];
+extern MAP_GRID_METATILE_ANIMATION StuccoRoomsADoorMetatiles[];
 
 /* Each table numbers its own rows from ACTOR_FIRST_PLACED.
 
-   The tables are the houses' (StuccoRoomsA_HouseActorPlacements), the inn's,
+   The tables are the houses' (StuccoRoomsAHouseActorPlacements), the inn's,
    whose rooms are entered through the inn's entrances
-   (StuccoRoomsA_InnActorPlacements), and the Kalay Sanctum's
-   (StuccoRoomsA_SanctumActorPlacements).
+   (StuccoRoomsAInnActorPlacements), and the Kalay Sanctum's
+   (StuccoRoomsASanctumActorPlacements).
 
    Unless a note says otherwise, it quotes what its actor says before the
    Colosso tour leaves. */
@@ -152,12 +152,12 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_STUCCO_ROOMS_A) {
-		return StuccoRoomsA_HouseEntrances;
+		return StuccoRoomsAHouseEntrances;
 	}
 	if(sceneId == SCENE_KALAY_SANCTUM) {
-		return StuccoRoomsA_SanctumEntrances;
+		return StuccoRoomsASanctumEntrances;
 	}
-	return Kalay_FallbackEntrances;
+	return KalayFallbackEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -167,7 +167,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return StuccoRoomsA_Exits;
+	return StuccoRoomsAExits;
 }
 
 /* The inn's rooms share one actor placement table and the houses another. */
@@ -177,7 +177,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 
 	if(sceneId == SCENE_STUCCO_ROOMS_A) {
 		Sint32		 entrance = MainRoutineStateWork.entrance;
-		ACTOR_PLACE *table;
+		ACTOR_PLACE *tbl;
 
 		switch(entrance) {
 		case STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE:
@@ -188,19 +188,19 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 		case STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST:
 		case STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST:
 		case STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE:
-			table = StuccoRoomsA_InnActorPlacements;
+			tbl = StuccoRoomsAInnActorPlacements;
 			break;
 		default:
-			table = StuccoRoomsA_HouseActorPlacements;
+			tbl = StuccoRoomsAHouseActorPlacements;
 			break;
 		}
-		fdAssignViewFlags(table);
-		return table;
+		fdAssignViewFlags(tbl);
+		return tbl;
 	}
 	if(sceneId == SCENE_KALAY_SANCTUM) {
-		return StuccoRoomsA_SanctumActorPlacements;
+		return StuccoRoomsASanctumActorPlacements;
 	}
-	return StuccoRoomsA_NoActorPlacements;
+	return StuccoRoomsANoActorPlacements;
 }
 
 /* Selects room dialogue with the same entrance grouping as the actor
@@ -221,15 +221,15 @@ const CUE *scGetCues(void)
 		case STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST:
 		case STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST:
 		case STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE:
-			return StuccoRoomsA_InnCues;
+			return StuccoRoomsAInnCues;
 		default:
-			return StuccoRoomsA_HouseCues;
+			return StuccoRoomsAHouseCues;
 		}
 	}
 	if(sceneId == SCENE_KALAY_SANCTUM) {
-		return StuccoRoomsA_SanctumCues;
+		return StuccoRoomsASanctumCues;
 	}
-	return StuccoRoomsA_NoCues;
+	return StuccoRoomsANoCues;
 }
 
 /* Isaac talks to the tour guide with a pack in the dining room of Kalay's inn:
@@ -317,7 +317,7 @@ static void scStuccoRoomsATalkToHealer(void)
    door in the north wall of either guest room behind the passage's south
    doorways (metatiles (50, 38) and (52, 49)), back out to the passage.
 
-   Each door's step cue is the exit it leaves by, and StuccoRoomsA_DoorMetatiles
+   Each door's step cue is the exit it leaves by, and StuccoRoomsADoorMetatiles
    holds the metatiles its opening is drawn on: the two metatiles over the
    door's step metatile on map layer 2, whose metatiles begin at the map's row
    60, so the door at (34, 40) opens at the map's (34, 98) and (34, 99). */
@@ -325,7 +325,7 @@ static void scStuccoRoomsAOpenDoorAndExit(void)
 {
 	FIELD_STATE *state = FieldStateWork;
 	Uint32		 slot;
-	Sint32		 doorIndex;
+	Sint32		 doorIdx;
 
 	fdScriptStart();
 
@@ -340,16 +340,16 @@ static void scStuccoRoomsAOpenDoorAndExit(void)
 
 	switch(state->stepCue) {
 	case STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST:
-		doorIndex = 0;
+		doorIdx = 0;
 		break;
 	case STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST:
-		doorIndex = 1;
+		doorIdx = 1;
 		break;
 	case STUCCO_ROOMS_A_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE:
-		doorIndex = 2;
+		doorIdx = 2;
 		break;
 	case STUCCO_ROOMS_A_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE:
-		doorIndex = 3;
+		doorIdx = 3;
 		break;
 	default:
 		return;
@@ -358,11 +358,11 @@ static void scStuccoRoomsAOpenDoorAndExit(void)
 	sySndPlay(SE_DOOR_OPEN);
 
 	{
-		Uint32 x = StuccoRoomsA_DoorMetatiles[doorIndex].x;
-		Uint32 y = StuccoRoomsA_DoorMetatiles[doorIndex].y;
+		Uint32 x = StuccoRoomsADoorMetatiles[doorIdx].x;
+		Uint32 y = StuccoRoomsADoorMetatiles[doorIdx].y;
 
 		fdMapGridAnimateMetatiles(
-			StuccoRoomsA_DoorMetatiles[doorIndex].steps, x, y);
+			StuccoRoomsADoorMetatiles[doorIdx].steps, x, y);
 	}
 
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
@@ -375,7 +375,7 @@ static void scStuccoRoomsAOpenDoorAndExit(void)
 
 	syImportScriptSetExitRequest(state->stepCue);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -436,7 +436,7 @@ static void scStuccoRoomsAApplyRoomState(void)
 
 #include "shared/kalay_fallback_entrances.c"
 
-SCENE_ENTRANCE StuccoRoomsA_HouseEntrances[] = {
+SCENE_ENTRANCE StuccoRoomsAHouseEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{STUCCO_ROOMS_A_HOUSE_NORTHWEST, CONDITION_ALWAYS, 144, 0, 192,
@@ -480,7 +480,7 @@ SCENE_ENTRANCE StuccoRoomsA_HouseEntrances[] = {
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE StuccoRoomsA_SanctumEntrances[] = {
+SCENE_ENTRANCE StuccoRoomsASanctumEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{KALAY_SANCTUM_FROM_KALAY, CONDITION_ALWAYS, 248, 0, 304, FACING_NORTH, 0,
@@ -490,7 +490,7 @@ SCENE_ENTRANCE StuccoRoomsA_SanctumEntrances[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 StuccoRoomsA_Exits[] = {
+Uint32 StuccoRoomsAExits[] = {
 	SCENE_EXITS(StuccoRoomsA),
 	SCENE_EXIT(STUCCO_ROOMS_A_HOUSE_NORTHWEST_TO_KALAY, Kalay,
 		KALAY_FROM_HOUSE_NORTHWEST),
@@ -534,12 +534,12 @@ Uint32 StuccoRoomsA_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE StuccoRoomsA_NoActorPlacements[] = {
+ACTOR_PLACE StuccoRoomsANoActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
 /* clang-format off */
-ACTOR_PLACE StuccoRoomsA_HouseActorPlacements[] = {
+ACTOR_PLACE StuccoRoomsAHouseActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
 		101, 0, 181, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
@@ -567,7 +567,7 @@ ACTOR_PLACE StuccoRoomsA_HouseActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE StuccoRoomsA_InnActorPlacements[] = {
+ACTOR_PLACE StuccoRoomsAInnActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_MAN_WITH_DARK_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
 		120, 0, 627, FACING_EAST_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PINK_APRON, CONDITION_IN_VIEW, MOVEMENT_TYPE_WANDER,
@@ -595,13 +595,13 @@ ACTOR_PLACE StuccoRoomsA_InnActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE StuccoRoomsA_SanctumActorPlacements[] = {
+ACTOR_PLACE StuccoRoomsASanctumActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		248, 0, 106, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
 	{ SCENE_TABLE_END },
 };
 
-CUE StuccoRoomsA_NoCues[] = {
+CUE StuccoRoomsANoCues[] = {
 	{ CUE_TABLE_END },
 };
 
@@ -609,7 +609,7 @@ CUE StuccoRoomsA_NoCues[] = {
 /* */
 /* So these lines are spoken before the Colosso tour leaves, the next ones */
 /* after. */
-CUE StuccoRoomsA_HouseCues[] = {
+CUE StuccoRoomsAHouseCues[] = {
 	{ CUE_EXIT, STUCCO_ROOMS_A_HOUSE_NORTHWEST_TO_KALAY, CONDITION_ALWAYS, STUCCO_ROOMS_A_HOUSE_NORTHWEST_TO_KALAY },
 	{ CUE_EXIT, STUCCO_ROOMS_A_HOUSE_NORTHEAST_UPPER_TO_KALAY, CONDITION_ALWAYS, STUCCO_ROOMS_A_HOUSE_NORTHEAST_UPPER_TO_KALAY },
 	{ CUE_EXIT, STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER_TO_KALAY, CONDITION_ALWAYS, STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER_TO_KALAY },
@@ -661,7 +661,7 @@ CUE StuccoRoomsA_HouseCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE StuccoRoomsA_InnCues[] = {
+CUE StuccoRoomsAInnCues[] = {
 	{ CUE_EXIT, STUCCO_ROOMS_A_INN_TO_INN_PASSAGE, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_TO_INN_PASSAGE },
 	{ CUE_EXIT, STUCCO_ROOMS_A_INN_TO_KALAY, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_TO_KALAY },
 	{ CUE_EXIT, STUCCO_ROOMS_A_INN_PASSAGE_TO_INN, CONDITION_ALWAYS, STUCCO_ROOMS_A_INN_PASSAGE_TO_INN },
@@ -711,7 +711,7 @@ CUE StuccoRoomsA_InnCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE StuccoRoomsA_SanctumCues[] = {
+CUE StuccoRoomsASanctumCues[] = {
 	{ CUE_EXIT, KALAY_SANCTUM_TO_KALAY, CONDITION_ALWAYS, KALAY_SANCTUM_TO_KALAY },
 	{ CUE_TALK, ACTOR_HEALER, CONDITION_ALWAYS, SCRIPT_REF(scStuccoRoomsATalkToHealer) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgKalayInteriorsICameHereToSpreadGood) },
@@ -722,14 +722,14 @@ CUE StuccoRoomsA_SanctumCues[] = {
 /* A door of the rooms opening, and where each door is: its two metatiles on map
    layer 2, 58 rows below the door's step metatile in the map (60 rows down to
    the layer, then the two rows over the step metatile). */
-Uint16 StuccoRoomsA_DoorMetatileSteps[] = {
+Uint16 StuccoRoomsADoorMetatileSteps[] = {
 	MAPGRID_ANIMATION_STEP(7, 125, 1, 2, 5),
 	MAPGRID_ANIMATION_STEP(8, 125, 1, 2, 5),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-MAP_GRID_METATILE_ANIMATION StuccoRoomsA_DoorMetatiles[] = {
-	{StuccoRoomsA_DoorMetatileSteps, 34, 98},
-	{StuccoRoomsA_DoorMetatileSteps, 39, 98},
-	{StuccoRoomsA_DoorMetatileSteps, 50, 96},
-	{StuccoRoomsA_DoorMetatileSteps, 52, 107},
+MAP_GRID_METATILE_ANIMATION StuccoRoomsADoorMetatiles[] = {
+	{StuccoRoomsADoorMetatileSteps, 34, 98},
+	{StuccoRoomsADoorMetatileSteps, 39, 98},
+	{StuccoRoomsADoorMetatileSteps, 50, 96},
+	{StuccoRoomsADoorMetatileSteps, 52, 107},
 };

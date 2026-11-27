@@ -57,11 +57,11 @@
 #include "scene/walk_into_leader.h"
 #include "text/msg_ids.h"
 
-extern const SCENE_ENTRANCE WestLunpaCave_Entrances[];
-extern const Uint32			WestLunpaCave_Exits[];
-extern const ACTOR_PLACE	WestLunpaCave_NoActorPlacements[];
-extern const ACTOR_PLACE	WestLunpaCave_ActorPlacements[];
-extern const CUE			WestLunpaCave_Cues[];
+extern const SCENE_ENTRANCE WestLunpaCaveEntrances[];
+extern const Uint32			WestLunpaCaveExits[];
+extern const ACTOR_PLACE	WestLunpaCaveNoActorPlacements[];
+extern const ACTOR_PLACE	WestLunpaCaveActorPlacements[];
+extern const CUE			WestLunpaCaveCues[];
 
 /* The metatiles the cave's cues answer: the two ways out, the two switches and
    the spot where Bunza is seen. */
@@ -73,7 +73,7 @@ typedef enum WEST_LUNPA_CAVE_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE = 10
 } WEST_LUNPA_CAVE_METATILE_BEHAVIOR;
 
-/* The cave's actors, numbered in the order of WestLunpaCave_ActorPlacements. */
+/* The cave's actors, numbered in the order of WestLunpaCaveActorPlacements. */
 typedef enum WEST_LUNPA_CAVE_ACTOR_ID {
 	/* Placed at the map's top-left corner, off every part of the cave the
 	   screen shows, so the player never sees it
@@ -237,7 +237,7 @@ static void	 scWestLunpaCaveRideWagon(void);
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return WestLunpaCave_Entrances;
+	return WestLunpaCaveEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -248,7 +248,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 /* The ways out: to the World Map, to Lunpa, and away in Bunza's wagon. */
 const Uint32 *scGetExits(void)
 {
-	return WestLunpaCave_Exits;
+	return WestLunpaCaveExits;
 }
 
 /* The puddles, and Bunza, Hammet and the party for the reunion, kept off the
@@ -256,16 +256,16 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.next == SCENE_WEST_LUNPA_CAVE) {
-		return WestLunpaCave_ActorPlacements;
+		return WestLunpaCaveActorPlacements;
 	}
-	return WestLunpaCave_NoActorPlacements;
+	return WestLunpaCaveNoActorPlacements;
 }
 
 /* The cave's scripts: its ways out, the two switches, Frost on each puddle and
    the spot where Bunza is seen. */
 const CUE *scGetCues(void)
 {
-	return WestLunpaCave_Cues;
+	return WestLunpaCaveCues;
 }
 
 /* Unused: Frost on the fourth puddle, at the map's top-left corner (metatile
@@ -301,7 +301,7 @@ static void scWestLunpaCaveFreezeSouthPuddle(void)
 	gmFlagSet(FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN);
 }
 
-/* The gate rises onto the ice pillar under it in steps of four frames and stays
+/* The gate rises onto the ice pillar under it in steps of four ticks and stays
    up, and the way under it opens. */
 static void scWestLunpaCaveGateDrawPropped(void)
 {
@@ -356,7 +356,7 @@ static void scWestLunpaCaveFreezeNorthPuddle(void)
 	gmFlagSet(FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN);
 }
 
-/* The gate drops to the floor in steps of four frames, over the puddle, and the
+/* The gate drops to the floor in steps of four ticks, over the puddle, and the
    way under it is shut. */
 static void scWestLunpaCaveGateLower(void)
 {
@@ -399,7 +399,7 @@ static void scWestLunpaCaveFlipLoweringSwitch(void)
 	}
 }
 
-/* The gate rises clear in steps of four frames, and the way under it opens. */
+/* The gate rises clear in steps of four ticks, and the way under it opens. */
 static void scWestLunpaCaveGateRaise(void)
 {
 	fdMapGridCopyMetatiles(41, 87, 2, 5, 21, 59);
@@ -538,7 +538,7 @@ static void scWestLunpaCaveHammetFindsBunza(void)
 		fdActorWalkTo(ACTOR_BUNZA, 168, 432);
 		fdScriptWait(40);
 		fdScriptFinishScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdScriptWait(20);
 		fdScriptEnd();
 		scWestLunpaCaveHoldReunion();
@@ -552,7 +552,7 @@ static void scWestLunpaCaveHammetFindsBunza(void)
 static void scWestLunpaCaveHoldReunion(void)
 {
 	Sint32 reunion;
-	Sint32 messageBase;
+	Sint32 msgBase;
 
 	/* Arrange the reunion while the screen is closed, then reveal the group. */
 	fdScriptStart();
@@ -574,7 +574,7 @@ static void scWestLunpaCaveHoldReunion(void)
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 
 	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
@@ -798,39 +798,39 @@ static void scWestLunpaCaveHoldReunion(void)
 	fdActorFaceActor(ACTOR_IVAN, ACTOR_BUNZA, 0);
 	fdActorFaceActor(ACTOR_HAMMET, ACTOR_BUNZA, 0);
 	fdActorShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-	messageBase = MsgLunpaBunza;
-	fdScriptSetMessageId(messageBase + PLAN_HAMMET_ASKS_PLAN);
+	msgBase = MsgLunpaBunza;
+	fdScriptSetMessageId(msgBase + PLAN_HAMMET_ASKS_PLAN);
 	fdScriptShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMET, 0);
 	fdScriptWait(20);
 	fdActorShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
-	fdScriptSetMessageId(messageBase + PLAN_BUNZA_HAS_WAGON);
+	fdScriptSetMessageId(msgBase + PLAN_BUNZA_HAS_WAGON);
 	fdScriptShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-	fdScriptSetMessageId(messageBase + PLAN_MIA_ASKS_ABOUT_WAGON);
+	fdScriptSetMessageId(msgBase + PLAN_MIA_ASKS_ABOUT_WAGON);
 	fdScriptShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_MIA, 0);
 	fdActorFaceActor(ACTOR_BUNZA, ACTOR_MIA, 0);
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
 	fdActorFaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 0);
-	fdScriptSetMessageId(messageBase + PLAN_BUNZA_OFFERS_RIDE);
+	fdScriptSetMessageId(msgBase + PLAN_BUNZA_OFFERS_RIDE);
 	fdScriptShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
 	fdActorFaceActor(ACTOR_IVAN, ACTOR_BUNZA, 0);
-	fdScriptSetMessageId(messageBase + PLAN_IVAN_DOUBTS_WAGON);
+	fdScriptSetMessageId(msgBase + PLAN_IVAN_DOUBTS_WAGON);
 	fdScriptShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
-	fdScriptSetMessageId(messageBase + PLAN_BUNZA_REASSURES);
+	fdScriptSetMessageId(msgBase + PLAN_BUNZA_REASSURES);
 	fdScriptShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
 	fdActorTurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
 	fdScriptWait(60);
 	fdActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_BUNZA, 0);
 	fdActorFaceActor(ACTOR_GARET, ACTOR_BUNZA, 0);
-	fdScriptSetMessageId(messageBase + PLAN_GARET_AGREES);
+	fdScriptSetMessageId(msgBase + PLAN_GARET_AGREES);
 	fdScriptShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
 	fdActorFaceActor(ACTOR_BUNZA, ACTOR_GARET, 0);
 	fdActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
 	fdScriptWait(20);
-	fdScriptSetMessageId(messageBase + PLAN_BUNZA_IS_UNSUSPECTED);
+	fdScriptSetMessageId(msgBase + PLAN_BUNZA_IS_UNSUSPECTED);
 	fdScriptShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
 	fdActorTurnToFaceEachOther(ACTOR_HAMMET, ACTOR_IVAN, 0);
 	fdScriptWait(60);
@@ -1200,7 +1200,7 @@ Sint32 scInit(void)
 }
 
 /* clang-format off */
-const SCENE_ENTRANCE WestLunpaCave_Entrances[] = {
+const SCENE_ENTRANCE WestLunpaCaveEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ WEST_LUNPA_CAVE_FROM_WORLD_MAP, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, 88, 56, 648, 648, 0 },
 	{ WEST_LUNPA_CAVE_FROM_LUNPA, CONDITION_ALWAYS, 552, 0, 328, FACING_NORTH, 0, 88, 56, 648, 648, 0 },
@@ -1208,7 +1208,7 @@ const SCENE_ENTRANCE WestLunpaCave_Entrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-const Uint32 WestLunpaCave_Exits[] = {
+const Uint32 WestLunpaCaveExits[] = {
 	SCENE_EXITS(WestLunpaCave),
 	SCENE_EXIT(WEST_LUNPA_CAVE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_WEST_LUNPA_CAVE),
 	SCENE_EXIT(WEST_LUNPA_CAVE_TO_LUNPA, Lunpa, LUNPA_FROM_WEST_LUNPA_CAVE),
@@ -1216,11 +1216,11 @@ const Uint32 WestLunpaCave_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-const ACTOR_PLACE WestLunpaCave_NoActorPlacements[] = {
+const ACTOR_PLACE WestLunpaCaveNoActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-const ACTOR_PLACE WestLunpaCave_ActorPlacements[] = {
+const ACTOR_PLACE WestLunpaCaveActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 	  136, 0, 520, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -1237,11 +1237,11 @@ const ACTOR_PLACE WestLunpaCave_ActorPlacements[] = {
 };
 
 /* Unused: an empty cue table nothing returns. */
-const CUE WestLunpaCave_NoCues[] = {
+const CUE WestLunpaCaveNoCues[] = {
 	{ CUE_TABLE_END },
 };
 
-const CUE WestLunpaCave_Cues[] = {
+const CUE WestLunpaCaveCues[] = {
 	{ CUE_EXIT, METATILE_BEHAVIOR_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_WORLD_MAP },
 	{ CUE_EXIT, METATILE_BEHAVIOR_WEST_LUNPA_CAVE_LUNPA_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_LUNPA },
 	{ CUE_STEP, METATILE_BEHAVIOR_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE, FLAG_LUNPA_CAVE_REUNION_SEEN,

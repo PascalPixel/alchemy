@@ -40,7 +40,7 @@ pillar hides what is behind it.
 ![Garet casts Fire at Isaac, Mia and Ivan: fireballs rise from him, hang in the air and stream across into the three, each leaving a fading trail.](https://alchemy.pascalpixel.com/abilities/fire.gif)
 
 A handler never draws on the screen. It draws on its own copy of the
-canvas, marks it ready, and waits a frame. An event, the transfer, copies it
+canvas, marks it ready, and waits a tick. An event, the transfer, copies it
 to the screen at VBlank.
 
 Straight after the copy, the transfer does one thing to the handler's
@@ -48,19 +48,19 @@ copy, and which thing is the effect's choice:
 
 | After the copy | What the player sees |
 | --- | --- |
-| wipe it clean | only this frame's drawing |
+| wipe it clean | only this tick's drawing |
 | cut every level to three quarters | a long trail |
 | cut every level to half | a short trail |
 | leave it | the drawing builds up |
 
 That is how Fire's fireballs have tails nobody draws: the tail is last
-frame's fireball, a little dimmer.
+tick's fireball, a little dimmer.
 
 ## Around the canvas
 
-An effect also changes the screen around its drawing. Two windows frame the
+An effect also changes the screen around its drawing. Two windows tick the
 battle view, and the effect chooses which layers each shows. While the canvas
-is open the battle background darkens a step a frame, so the light stands out
+is open the battle background darkens a step a tick, so the light stands out
 against it, and it brightens again when the canvas closes.
 
 Some effects reach down to the single line. The Game Boy Advance can copy a
@@ -93,19 +93,19 @@ each at ten sizes, so a mote shrinks as it dies just by being asked for at a
 smaller size.
 
 Sparks, embers and chips of rock are particles: a position, a speed and
-one spare number the effect uses as it likes, often the frames left to
+one spare number the effect uses as it likes, often the ticks left to
 live.
 
-## A handler's frame loop
+## A handler's tick loop
 
 ![Ivan casts Bolt at Isaac: purple sparks gather around Ivan, a bolt of lightning strikes Isaac and crackles away, and the damage is told while sparks are still in the air.](https://alchemy.pascalpixel.com/abilities/bolt.gif)
 
-A handler reads the way its effect plays: set up, then one frame's work
-after another with a wait of one frame between, then tidy up. Anything that
-happens once is tied to a frame number. [`battle_effect_bolt.c`](battle_effect_bolt.c) is
+A handler reads the way its effect plays: set up, then one tick's work
+after another with a wait of one tick between, then tidy up. Anything that
+happens once is tied to a tick number. [`battle_effect_bolt.c`](battle_effect_bolt.c) is
 a short one to start with.
 
-One of those frames is the signal to the battle. From it on, the battle
+One of those ticks is the signal to the battle. From it on, the battle
 shows each target's flinch and its message while the effect goes on
 drawing ([Battles](../battle/README.md#how-outcomes-reach-the-screen)).
 

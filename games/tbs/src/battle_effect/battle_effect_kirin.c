@@ -1,13 +1,13 @@
 /* The Kirin summon. Part of battle_effect.c. */
 
-#define KIRIN_CHARGE_FRAMES 96	/* frames of the charge and the wall of fire */
-#define KIRIN_SWEEP_FRAMES	120 /* frames of Kirin's bound through the hoop */
+#define KIRIN_CHARGE_TICKS 96  /* ticks of the charge and the wall of fire */
+#define KIRIN_SWEEP_TICKS  120 /* ticks of Kirin's bound through the hoop */
 
 #define KIRIN_BLOB_BYTES PICTURE_BYTES(FIRE_BLOB)
 
-/* The sprites Kirin is drawn from, each at its Kirin_Columns and Kirin_Rows. */
+/* The sprites Kirin is drawn from, each at its KirinColumns and KirinRows. */
 #define KIRIN_SPRITES			 9
-/* The forest's scroll speeds up a pixel a frame to this, in pixels a frame. */
+/* The forest's scroll speeds up a pixel a tick to this, in pixels a tick. */
 #define KIRIN_FOREST_SPEED_MAX	 24
 /* How high Kirin rises in each bound, in its last leap away, and in the leap
    that opens its charge, in pixels. */
@@ -52,7 +52,7 @@ void btEffectRunKirin(BATTLE_EFFECT_PARM *args)
 	BATTLE_BACKGROUND_STATE *view;
 	Sint32					 forestSpeed;
 	Sint32					 bounce;
-	Sint32					 frame;
+	Sint32					 frm;
 	Sint32					 i;
 
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
@@ -106,69 +106,68 @@ void btEffectRunKirin(BATTLE_EFFECT_PARM *args)
 		BGCNT_SCREEN_BASE(7);
 
 	/* The sweep: Kirin bounds in over the forest (A or B ends it). */
-	for(frame = 0; frame != KIRIN_SWEEP_FRAMES; frame++) {
+	for(frm = 0; frm != KIRIN_SWEEP_TICKS; frm++) {
 		bounce = 0;
-		if(frame == 0) {
+		if(frm == 0) {
 			sySndPlayStub(SE_WHOOSH);
 		}
-		if(frame == 26) {
+		if(frm == 26) {
 			sySndPlayStub(SE_RUMBLE);
 		}
-		if(frame == 40) {
+		if(frm == 40) {
 			sySndPlayStub(SE_CAST);
 		}
-		if(frame == 72) {
+		if(frm == 72) {
 			sySndPlayStub(SE_CAST);
 		}
-		if(frame == 104) {
+		if(frm == 104) {
 			sySndPlayStub(SE_CAST);
 		}
-		if((PerRepeat & (KEY_A | KEY_B)) != 0 && frame > 16) {
+		if((PerRepeat & (KEY_A | KEY_B)) != 0 && frm > 16) {
 			break;
 		}
 
-		if(frame >= 24 && frame <= 55) {
+		if(frm >= 24 && frm <= 55) {
 			forestSpeed++;
 		}
 		if(forestSpeed > KIRIN_FOREST_SPEED_MAX) {
 			forestSpeed = KIRIN_FOREST_SPEED_MAX;
 		}
 		/* The forest scrolls the whole bound: this test and the one below are
-		   always true, as the bound ends at KIRIN_SWEEP_FRAMES (120). */
-		if(frame <= 135) {
+		   always true, as the bound ends at KIRIN_SWEEP_TICKS (120). */
+		if(frm <= 135) {
 			BgScrollWork[1].x -= forestSpeed;
 			scrolled += forestSpeed;
 		}
 
 		/* Kirin bounds in, the screen shaking at each landing, then lifts away
 		   to the left. */
-		if(frame <= 149) {
+		if(frm <= 149) {
 			SPR_SCALE pair = sweepScale;
 			Sint32	  lift;
 
 			lift = 0;
-			if(frame > 103) {
-				lift = (frame - 104) * 16;
+			if(frm > 103) {
+				lift = (frm - 104) * 16;
 			}
-			if(frame >= 8 && frame <= 31) {
+			if(frm >= 8 && frm <= 31) {
 				kirinX = kirinX + forestSpeed - 8;
 			}
-			if(frame > 7) {
+			if(frm > 7) {
 				Sint32 height;
-				Sint32 angle;
+				Sint32 ang;
 
 				height = KIRIN_LEAP_AWAY_HEIGHT;
-				if(frame <= 104) {
+				if(frm <= 104) {
 					height = KIRIN_BOUND_HEIGHT;
 				}
-				/* A bound every 32 frames: half a sine wave, repeated. */
-				angle =
-					(frame * (TRIG_TURN / 64) - DEGtoANG(45)) & TRIG_ANGLE_MASK;
-				if(angle > DEGtoANG(180)) {
-					angle -= DEGtoANG(180);
+				/* A bound every 32 ticks: half a sine wave, repeated. */
+				ang = (frm * (TRIG_TURN / 64) - DEGtoANG(45)) & TRIG_ANGLE_MASK;
+				if(ang > DEGtoANG(180)) {
+					ang -= DEGtoANG(180);
 				}
-				bounce = FIXEDtoINT(sySin(angle) * height);
-				if((frame & 31) == 8) {
+				bounce = FIXEDtoINT(sySin(ang) * height);
+				if((frm & 31) == 8) {
 					state->shakeFrm = 4;
 				}
 			}
@@ -176,55 +175,54 @@ void btEffectRunKirin(BATTLE_EFFECT_PARM *args)
 			place.height = toFIXED(255);
 			for(i = 0; i != KIRIN_SPRITES; i++) {
 				place.x =
-					toFIXED(kirinX + Kirin_Columns[i] - lift) + toFIXED(224);
-				place.y = toFIXED(Kirin_Rows[i] - bounce) + toFIXED(72);
+					toFIXED(kirinX + KirinColumns[i] - lift) + toFIXED(224);
+				place.y = toFIXED(KirinRows[i] - bounce) + toFIXED(72);
 				fdRenderApplyProjectedPlacementStub(
 					state->sprs[i], &place, &pair, 0);
 			}
 		}
 
 		/* A hoop of motes opens in front of Kirin. */
-		if(frame <= 26) {
+		if(frm <= 26) {
 			Sint32 size = scrolled + 4;
-			Sint32 count = frame * 8;
+			Sint32 cnt = frm * 8;
 
 			if(size > MOTE_SIZE_MAX) {
 				size = MOTE_SIZE_MAX;
 			}
-			if(count > KIRIN_HOOP_MOTES) {
-				count = KIRIN_HOOP_MOTES;
+			if(cnt > KIRIN_HOOP_MOTES) {
+				cnt = KIRIN_HOOP_MOTES;
 			}
 			/* A tall ellipse, its half-width twice the motes' size before the
 			   cap and its half-height twelve times it, swelling and moving
 			   right as the forest starts to scroll. */
-			for(i = 0; i != count; i++) {
-				Sint32 angle = i * (TRIG_TURN / KIRIN_HOOP_MOTES);
-				Sint32 x = FIXEDtoINT(sySin(angle) * ((scrolled + 4) * 2)) +
+			for(i = 0; i != cnt; i++) {
+				Sint32 ang = i * (TRIG_TURN / KIRIN_HOOP_MOTES);
+				Sint32 x = FIXEDtoINT(sySin(ang) * ((scrolled + 4) * 2)) +
 					scrolled + 96;
-				Sint32 y =
-					FIXEDtoINT(syCos(angle) * ((scrolled + 4) * 12)) + 64;
+				Sint32 y = FIXEDtoINT(syCos(ang) * ((scrolled + 4) * 12)) + 64;
 
 				EFFECT_DRAW_MOTE(blit, canvas, sheet, x, y, size);
 			}
 		}
 
-		if(frame == 24) {
+		if(frm == 24) {
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 		}
-		if(frame == 28) {
+		if(frm == 28) {
 			REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) |
 				BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 		}
 
 		/* Fire trails Kirin. */
-		if(frame > 17) {
+		if(frm > 17) {
 			for(i = 0; i != KIRIN_TRAIL_MOTES; i++) {
 				PARTICLE *fire = &state->particles[i];
 
 				if(fire->variant == 0) {
 					Sint32 size = i % 3 + 1;
 
-					blit(canvas, sheet + BattleEffect_MotePictures[size - 1],
+					blit(canvas, sheet + BattleEffectMotePictures[size - 1],
 						fire->x, FIXEDtoINT(fire->y) - size, size, size * 2);
 					fire->x += 2;
 					fire->y += fire->velY;
@@ -241,8 +239,8 @@ void btEffectRunKirin(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* A column of fire blobs slides left. */
-		if(frame > 31) {
-			Sint32 slide = (frame - 32) / 2;
+		if(frm > 31) {
+			Sint32 slide = (frm - 32) / 2;
 
 			if(slide > KIRIN_BLOB_SLIDE_MAX) {
 				slide = KIRIN_BLOB_SLIDE_MAX;
@@ -270,9 +268,9 @@ void btEffectRunKirin(BATTLE_EFFECT_PARM *args)
 	REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
 
 	for(i = 0; i != KIRIN_SPRITES; i++) {
-		SPR *sprite = state->sprs[i];
+		SPR *spr = state->sprs[i];
 
-		sprite->image.pri = 3;
+		spr->image.pri = 3;
 	}
 
 	{
@@ -295,45 +293,45 @@ void btEffectRunKirin(BATTLE_EFFECT_PARM *args)
 			BGCNT_SCREEN_BASE(7);
 		REG_BLDALPHA = EFFECT_BLEND_ADD;
 
-		for(frame = 0; frame != KIRIN_CHARGE_FRAMES; frame++) {
-			if(frame <= 23) {
+		for(frm = 0; frm != KIRIN_CHARGE_TICKS; frm++) {
+			if(frm <= 23) {
 				SPR_SCALE chargeScaleCopy = chargeScale;
-				Sint32	  angle;
+				Sint32	  ang;
 				Sint32	  rise;
 
 				chargeX -= 16;
-				/* A bound every 16 frames, the first higher. */
-				if(frame <= 8) {
-					angle = frame * (TRIG_TURN / 32) + DEGtoANG(90);
-					if(angle > DEGtoANG(180)) {
-						angle -= DEGtoANG(180);
+				/* A bound every 16 ticks, the first higher. */
+				if(frm <= 8) {
+					ang = frm * (TRIG_TURN / 32) + DEGtoANG(90);
+					if(ang > DEGtoANG(180)) {
+						ang -= DEGtoANG(180);
 					}
-					rise = FIXEDtoINT(sySin(angle) * KIRIN_CHARGE_LEAP_HEIGHT);
+					rise = FIXEDtoINT(sySin(ang) * KIRIN_CHARGE_LEAP_HEIGHT);
 				} else {
-					angle = frame * (TRIG_TURN / 32) + DEGtoANG(90);
-					if(angle > DEGtoANG(180)) {
-						angle -= DEGtoANG(180);
+					ang = frm * (TRIG_TURN / 32) + DEGtoANG(90);
+					if(ang > DEGtoANG(180)) {
+						ang -= DEGtoANG(180);
 					}
-					rise = FIXEDtoINT(sySin(angle) * KIRIN_BOUND_HEIGHT);
+					rise = FIXEDtoINT(sySin(ang) * KIRIN_BOUND_HEIGHT);
 				}
 				chargePlace.groundHeight = 0;
 				chargePlace.height = toFIXED(255);
 				for(i = 0; i != KIRIN_SPRITES; i++) {
-					chargePlace.x = toFIXED(chargeX + Kirin_Columns[i]);
-					chargePlace.y = toFIXED(Kirin_Rows[i] - rise) + toFIXED(72);
+					chargePlace.x = toFIXED(chargeX + KirinColumns[i]);
+					chargePlace.y = toFIXED(KirinRows[i] - rise) + toFIXED(72);
 					fdRenderApplyProjectedPlacementStub(
 						state->sprs[i], &chargePlace, &chargeScaleCopy, 0);
 				}
 			}
 
-			if(frame == 8) {
+			if(frm == 8) {
 				state->shakeFrm = 8;
 				sySndPlayStub(SE_CRASH);
 			}
-			if(frame == 11) {
+			if(frm == 11) {
 				sySndPlayStub(SE_CRASH);
 			}
-			if(frame == 46) {
+			if(frm == 46) {
 				sySndPlayStub(SE_KIRIN);
 			}
 
@@ -384,13 +382,13 @@ void btEffectRunKirin(BATTLE_EFFECT_PARM *args)
 				}
 			}
 
-			if(frame == 48) {
+			if(frm == 48) {
 				sySndPlayStub(SE_WHOOSH);
 			}
 			/* The wall of fire slides off to the left and its smear dies
 			   away. */
-			if(frame > 40) {
-				Sint32 slide = (frame - 40) * 12;
+			if(frm > 40) {
+				Sint32 slide = (frm - 40) * 12;
 
 				EFFECT_SET_TRANSFER(
 					state, CANVAS_COPY, CANVAS_FADE_THREE_QUARTERS);
@@ -400,11 +398,11 @@ void btEffectRunKirin(BATTLE_EFFECT_PARM *args)
 						wallJitter[i] - slide + 120, i * 8 - 8, FIRE_BLOB_WIDTH,
 						FIRE_BLOB_HEIGHT);
 			}
-			if(frame > 64) {
+			if(frm > 64) {
 				state->transferMode = CANVAS_COPY_AND_FADE;
 			}
 			/* Every target, burnt by the wall of fire, turns black. */
-			if(frame == 58) {
+			if(frm == 58) {
 				EFFECT_FOR_EACH_TARGET(i, state->args) {
 					btEffectTintBattler(state->args->tgts[i],
 						SPRITE_COLOR_BLACK, POSE_DAMAGE, TINT_KEEP, 0);
@@ -412,7 +410,7 @@ void btEffectRunKirin(BATTLE_EFFECT_PARM *args)
 			}
 
 			btCameraShake(8, 8);
-			EFFECT_END_FRAME(state);
+			EFFECT_END_TICK(state);
 		}
 	}
 

@@ -20,13 +20,13 @@
 #define BALL_LIGHTNING_BOLT_PICTURE_HEIGHT 128
 #define BALL_LIGHTNING_BOLT_PICTURE_INSET \
 	((BALL_LIGHTNING_BOLT_PICTURE_WIDTH - LIGHTNING_BOLT_WIDTH) / 2)
-/* The bolts of lightning set up, and of them those drawn, each for eight frames
-   from the frame of its number. */
+/* The bolts of lightning set up, and of them those drawn, each for eight ticks
+   from the tick of its number. */
 #define BALL_LIGHTNING_BOLTS_SET_UP 63
 #define BALL_LIGHTNING_BOLTS		40
 
-#define BALL_LIGHTNING_FRAMES 50
-/* The ball's size, which grows two pixels a frame from 16 to this. */
+#define BALL_LIGHTNING_TICKS  50
+/* The ball's size, which grows two pixels a tick from 16 to this. */
 #define BALL_LIGHTNING_SIZE	  48
 #define EARTH_FORCE_BALL_SIZE 64
 
@@ -40,18 +40,18 @@ void btEffectRunBallLightning(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	/* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
-	 * frame reserves and never touches; as one DRAW_RECTANGLE. */
+	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE draw[2];
-	Uint8		  *sprites;
+	Uint8		  *sprs;
 	Sint32		   ballSize;
-	Sint32		   frames;
+	Sint32		   ticks;
 	Sint32		   sparkFloor;
 	Sint32		   x;
 	Sint32		   y;
-	SCREEN_POINT   target;
-	SCREEN_POINT   source;
+	SCREEN_POINT   tgt;
+	SCREEN_POINT   src;
 	MODEL_TEXTURE  texture;
 	RENDER_MODEL  *model;
 	PARTICLE	  *ball;
@@ -61,12 +61,12 @@ void btEffectRunBallLightning(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	void		  *vertices;
 	Sint32		   i;
 	Sint32		   k;
-	Uint8		  *buffer;
+	Uint8		  *buf;
 
 	state = Ram_HeapSlots->battleEff;
 	canvas = Ram_HeapSlots->battleCanvas;
-	sprites = Ram_HeapSlots->battleSheet;
-	buffer = Ram_MapMetatileBuffer;
+	sprs = Ram_HeapSlots->battleSheet;
+	buf = Ram_MapMetatileBuffer;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	if(mode == BALL_LIGHTNING_THUNDER_MINE) {
 		REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -78,8 +78,8 @@ void btEffectRunBallLightning(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	ballSize = 0;
 	btResourceLoadAndDecompress(RESOURCE_TORNADO_SHEET,
 		state->sheet + BALL_LIGHTNING_TORNADO_PICTURES, 1, 0);
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
-	btResourceLoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET, buffer, 1, 1);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET, buf, 1, 1);
 	if(mode == BALL_LIGHTNING_EARTH_FORCE) {
 		syWordsCopy((void *)BG_PLTT,
 			syResourceGetTableEntry(RESOURCE_VIOLET_PALETTE_C),
@@ -98,7 +98,7 @@ void btEffectRunBallLightning(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					BALL_LIGHTNING_BOLT_PICTURE_INSET +
 					i * PICTURE_BYTES(BALL_LIGHTNING_BOLT_PICTURE) +
 					k * BALL_LIGHTNING_BOLT_PICTURE_WIDTH + j] =
-					buffer[i * LIGHTNING_BOLT_PICTURE_BYTES +
+					buf[i * LIGHTNING_BOLT_PICTURE_BYTES +
 						k * LIGHTNING_BOLT_WIDTH + j];
 			}
 		}
@@ -110,33 +110,33 @@ void btEffectRunBallLightning(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	}
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	if(mode == BALL_LIGHTNING_THUNDER_MINE) {
-		frames = 24;
+		ticks = 24;
 		/* Only Thunder Mine's sparks bounce: Ball Lightning never reads the
 		   floor. */
 		sparkFloor = BALL_LIGHTNING_SPARK_FLOOR;
 	} else {
-		frames = 40;
+		ticks = 40;
 	}
 
-	for(frame = 0; frame != BALL_LIGHTNING_FRAMES; frame++) {
+	for(frm = 0; frm != BALL_LIGHTNING_TICKS; frm++) {
 		ball = state->particles;
-		if(frame == 0) {
-			btEffectPosProjectBattler(args->user, &source);
-			btEffectPosProjectBattler(args->tgts[0], &target);
+		if(frm == 0) {
+			btEffectPosProjectBattler(args->user, &src);
+			btEffectPosProjectBattler(args->tgts[0], &tgt);
 			if(mode == BALL_LIGHTNING_THUNDER_MINE) {
-				ball->x = toFIXED(source.x);
-				ball->y = INTtoFIXED(source.y - 32);
-				ball->velX = (toFIXED(target.x) - ball->x) / frames;
+				ball->x = toFIXED(src.x);
+				ball->y = INTtoFIXED(src.y - 32);
+				ball->velX = (toFIXED(tgt.x) - ball->x) / ticks;
 			} else {
 				if(args->side == EFFECT_SIDE_ENEMIES) {
-					ball->x = INTtoFIXED(source.x - 32);
+					ball->x = INTtoFIXED(src.x - 32);
 				} else {
-					ball->x = INTtoFIXED(source.x + 32);
+					ball->x = INTtoFIXED(src.x + 32);
 				}
-				ball->y = INTtoFIXED(source.y - 80);
-				ball->velX = (INTtoFIXED(target.x - 32) - ball->x) / frames;
+				ball->y = INTtoFIXED(src.y - 80);
+				ball->velX = (INTtoFIXED(tgt.x - 32) - ball->x) / ticks;
 			}
-			ball->velY = (INTtoFIXED(target.y - 32) - ball->y) / frames;
+			ball->velY = (INTtoFIXED(tgt.y - 32) - ball->y) / ticks;
 			sySndPlayStub(SE_RISE_WITH_SPARKS);
 			/* Each bolt turns its own way at its own speed, on a picture of its
 			   own. */
@@ -166,20 +166,20 @@ void btEffectRunBallLightning(BATTLE_EFFECT_PARM *args, Sint32 mode)
 #endif
 		}
 
-		if(frame == frames) {
+		if(frm == ticks) {
 			Sint32 n;
 
 			for(n = 0, spark = EXTRA_PARTICLES; n != BALL_LIGHTNING_SPARK_COUNT;
 				n++, spark++) {
-				Sint32 angle;
+				Sint32 ang;
 				Sint32 speed;
 
 				spark->x = ball->x / 2;
 				spark->y = ball->y;
-				angle = syRandom();
+				ang = syRandom();
 				speed = syRandom() % 400 + 32;
-				spark->velX = (sySin(angle) * speed) >> 7;
-				spark->velY = (syCos(angle) * speed) >> 6;
+				spark->velX = (sySin(ang) * speed) >> 7;
+				spark->velY = (syCos(ang) * speed) >> 6;
 				spark->variant = (syRandom() & 7) + 16;
 			}
 			syWordsFillEntry(canvas, CANVAS_VIEW_BYTES,
@@ -198,60 +198,59 @@ void btEffectRunBallLightning(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 		/* The ball, growing, with four glints about it; Earth Force's ball is a
 		   shaded disc turned over, dark inside a bright rim. */
-		if(frame <= frames) {
+		if(frm <= ticks) {
 			Sint32 largest;
 
 			ball->variant++;
 			x = FIXEDtoINT(ball->x) >> 1;
 			y = FIXEDtoINT(ball->y);
 			if(mode == BALL_LIGHTNING_THUNDER_MINE) {
-				ballSize = frame * 2 + 16;
+				ballSize = frm * 2 + 16;
 				largest = BALL_LIGHTNING_SIZE;
 			} else {
-				ballSize = frame * 2 + 16;
+				ballSize = frm * 2 + 16;
 				largest = EARTH_FORCE_BALL_SIZE;
 			}
 			if(ballSize > largest) {
 				ballSize = largest;
 			} else {
-				btEffectDrawShadedCircles(
-					buffer, ballSize, toFIXED(2673) / 2048);
+				btEffectDrawShadedCircles(buf, ballSize, toFIXED(2673) / 2048);
 				if(mode == BALL_LIGHTNING_EARTH_FORCE) {
 					for(i = 0; i != ballSize * ballSize / 2; i++) {
-						if(buffer[i] != 0) {
-							buffer[i] = CANVAS_LEVEL_BRIGHTEST + 1 - buffer[i];
+						if(buf[i] != 0) {
+							buf[i] = CANVAS_LEVEL_BRIGHTEST + 1 - buf[i];
 						}
 					}
 				}
 			}
-			btCanvasBlitMirroredQuarters(buffer, x, y, ballSize);
+			btCanvasBlitMirroredQuarters(buf, x, y, ballSize);
 			for(i = 0; i != 4; i++) {
 				/* DEAD: i runs 0 to 3, so the mask changes nothing; the ROM
 				   keeps the and. */
 				Sint32 picture = i & 3;
 				Sint32 half = ballSize / 2;
-				Sint32 angle = syRandom();
-				Sint32 glintX = x + (FIXEDtoINT(sySin(angle) * half)) -
-					(BattleEffect_GlintPictureWidths[picture] >> 1);
-				Sint32 glintY = y + (FIXEDtoINT(syCos(angle) * half)) -
-					(BattleEffect_GlintPictureHeights[picture] >> 1);
-				Sint32 flags =
-					EFFECT_CLIP_BOUNDS | BoltTrail_GlintFlips[syRandom() & 3];
+				Sint32 ang = syRandom();
+				Sint32 glintX = x + (FIXEDtoINT(sySin(ang) * half)) -
+					(BattleEffectGlintPictureWidths[picture] >> 1);
+				Sint32 glintY = y + (FIXEDtoINT(syCos(ang) * half)) -
+					(BattleEffectGlintPictureHeights[picture] >> 1);
+				Sint32 flg =
+					EFFECT_CLIP_BOUNDS | BoltTrailGlintFlips[syRandom() & 3];
 				EFFECT_LOAD_BLITTER(
-					HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
+					HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_MAX);
 				(Ram_HeapSlots->ramCodePaired)(canvas,
 					state->sheet + BALL_LIGHTNING_TORNADO_PICTURES +
-						BattleEffect_GlintPictures[picture],
-					glintX, glintY, BattleEffect_GlintPictureWidths[picture],
-					BattleEffect_GlintPictureHeights[picture]);
+						BattleEffectGlintPictures[picture],
+					glintX, glintY, BattleEffectGlintPictureWidths[picture],
+					BattleEffectGlintPictureHeights[picture]);
 				syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 			}
 			btParticleAdvanceWithGravity2D(ball, PARTICLE_DAMPING_NONE, 0);
 		}
 
 		/* Thunder Mine's sparks bounce, each drawn at eight steps of its flight
-		   a frame, so that it streaks. */
-		if(mode == BALL_LIGHTNING_THUNDER_MINE && frame >= frames) {
+		   a tick, so that it streaks. */
+		if(mode == BALL_LIGHTNING_THUNDER_MINE && frm >= ticks) {
 			for(i = 0, dot = EXTRA_PARTICLES;
 				i != BALL_LIGHTNING_SPARKS_CLEARED; i++, dot++) {
 				if(dot->variant >= 0) {
@@ -260,7 +259,7 @@ void btEffectRunBallLightning(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 					for(step = 0; step != 8; step++) {
 						draw[0](canvas,
-							sprites + BattleEffect_MotePictures[size - 1],
+							sprs + BattleEffectMotePictures[size - 1],
 							(FIXEDtoINT(dot->x)) - size / 2,
 							(FIXEDtoINT(dot->y)) - size, size, size * 2);
 						btParticleAdvanceWithGravity2D(
@@ -274,9 +273,9 @@ void btEffectRunBallLightning(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		}
 
-		/* The bolts of lightning about the ball, each shown for eight frames:
+		/* The bolts of lightning about the ball, each shown for eight ticks:
 		   dimmed a quarter on its first, whole for three, then fading. */
-		if(frame <= frames) {
+		if(frm <= ticks) {
 			vertices = syHeapAllocEWRAM(32);
 			model = btRenderAllocateModelList(1);
 			texture.logWidth = 5;
@@ -290,20 +289,20 @@ void btEffectRunBallLightning(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 			model->kind = MODEL_SHADED_MAX;
 			model->texture = &texture;
-			model->mesh = BattleEffect_ColumnMesh;
+			model->mesh = BattleEffectColumnMesh;
 			model->vertices = vertices;
 			for(i = 0, bolt = &state->particles[1]; i != BALL_LIGHTNING_BOLTS;
 				i++, bolt++) {
 				Sint32 shade;
 
-				if(frame < i || frame >= i + 8) {
+				if(frm < i || frm >= i + 8) {
 					continue;
 				}
 				shade = 0;
-				if(frame == i) {
+				if(frm == i) {
 					shade = MODEL_SHADE_INVISIBLE / 4;
-				} else if(frame >= i + 4) {
-					Sint32 fade = (frame - i) * 16 - 64;
+				} else if(frm >= i + 4) {
+					Sint32 fade = (frm - i) * 16 - 64;
 
 					shade = -fade;
 				}
@@ -318,12 +317,12 @@ void btEffectRunBallLightning(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				if(mode == BALL_LIGHTNING_THUNDER_MINE) {
 					syScale(toFIXED(4), toFIXED(1), toFIXED(1));
 					btRenderTransformVertices(
-						BattleEffect_TaperedBeamCorners, vertices, 4);
+						BattleEffectTaperedBeamCorners, vertices, 4);
 				} else {
 					syScale(ballSize * (toFIXED(1) / 32), ballSize * 312,
 						toFIXED(1));
 					btRenderTransformVertices(
-						BattleEffect_BeamCorners, vertices, 4);
+						BattleEffectBeamCorners, vertices, 4);
 				}
 				btRenderDrawModelList(model);
 			}
@@ -331,7 +330,7 @@ void btEffectRunBallLightning(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			syHeapRelease(vertices);
 		}
 		btCameraShake(4, 4);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
@@ -341,7 +340,7 @@ void btEffectRunBallLightning(BATTLE_EFFECT_PARM *args, Sint32 mode)
 /* Megaera's glints, bolts of lightning and sparkles, in the map cell buffer
    from its second 16 KB on. */
 #define MEGAERA_PICTURES	(Ram_MapMetatileBuffer + 16384)
-extern const SCALE Megaera_UnitScale;
+extern const SCALE MegaeraUnitScale;
 
 /* Where FlashBurstSheet, LightningBoltSheet and SparkleDots are decoded in the
    effect's pictures. */
@@ -349,8 +348,8 @@ extern const SCALE Megaera_UnitScale;
 #define MEGAERA_LIGHTNING_BOLT_PICTURES GLINT_SET_BYTES
 #define MEGAERA_SPARKLE_DOTS_PICTURES	11798
 
-#define MEGAERA_FRAMES			  170
-/* Two swords fall point down among the foes, the second 16 frames after the
+#define MEGAERA_TICKS			  170
+/* Two swords fall point down among the foes, the second 16 ticks after the
    first, each landing at MEGAERA_SWORD_GROUND_Y with a flash, a bolt of
    lightning and a burst of sparks that fall back and go out below
    MEGAERA_SPARK_FLOOR. A sword's picture is 64x64 in 256 colours: as it lands,
@@ -362,40 +361,40 @@ extern const SCALE Megaera_UnitScale;
 /* Each sword's bolt of lightning reaches down the canvas to this row, where its
    sparks burst. */
 #define MEGAERA_BOLT_HEIGHT		  112
-/* From MEGAERA_FIRE_FRAME the field bursts into flame: two columns of fiery
+/* From MEGAERA_FIRE_TICK the field bursts into flame: two columns of fiery
    streaks (WhirlBeamSheet's three 96x64 pictures) sway over it while billows of
-   fire rise, the burst's pictures from its third, four frames each. */
-#define MEGAERA_FIRE_FRAME		  64
+   fire rise, the burst's pictures from its third, four ticks each. */
+#define MEGAERA_FIRE_TICK		  64
 #define WHIRL_BEAM_WIDTH		  96
 #define WHIRL_BEAM_HEIGHT		  64
 #define MEGAERA_BILLOWS_SET_UP	  32
 #define MEGAERA_BILLOWS			  24
-#define MEGAERA_BILLOW_FRAMES	  16
+#define MEGAERA_BILLOW_TICKS	  16
 #define MEGAERA_BILLOW_PICTURES \
 	(MEGAERA_FLASH_BURST_PICTURES + 2 * PICTURE_BYTES(FLASH_BURST))
 /* Particles given a place and a delay that nothing reads, as Nereid's are. */
-#define MEGAERA_UNREAD_FIRST   24
-#define MEGAERA_UNREAD_COUNT   16
-/* Megaera swoops in across the foes at MEGAERA_SWOOP_FRAME, trailing sparkles
-   for MEGAERA_TRAIL_FRAMES; each sparkle twinkles for
-   MEGAERA_SPARKLE_FRAMES. */
-#define MEGAERA_SWOOP_FRAME	   108
-#define MEGAERA_TRAIL_FRAMES   24
-#define MEGAERA_SPARKLE_FRAMES 36
+#define MEGAERA_UNREAD_FIRST  24
+#define MEGAERA_UNREAD_COUNT  16
+/* Megaera swoops in across the foes at MEGAERA_SWOOP_TICK, trailing sparkles
+   for MEGAERA_TRAIL_TICKS; each sparkle twinkles for
+   MEGAERA_SPARKLE_TICKS. */
+#define MEGAERA_SWOOP_TICK	  108
+#define MEGAERA_TRAIL_TICKS	  24
+#define MEGAERA_SPARKLE_TICKS 36
 
 /* Megaera: two swords fall point down among the foes, each with a flash, a bolt
    of lightning and a burst of sparks; then the field bursts into flame, and
    Megaera swoops in across the foes in a trail of sparkles, and bursts on them.
-   Holding A or B after frame 10 skips to the swoop. */
+   Holding A or B after tick 10 skips to the swoop. */
 void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 {
 	void				*canvas;
 	BATTLE_EFFECT_STATE *state;
-	Sint32				 frame;
-	Uint8				*sprites;
+	Sint32				 frm;
+	Uint8				*sprs;
 	DRAW_RECTANGLE		*rects;
-	POINT2_D			 position;
-	POINT2_D			 velocity;
+	POINT2_D			 pos;
+	POINT2_D			 vel;
 	DRAW_RECTANGLE		 blitters[2];
 	SCALE				 scale;
 	Sint32				 placement[4];
@@ -406,7 +405,7 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 
 	canvas = Ram_HeapSlots->battleCanvas;
 	state = Ram_HeapSlots->battleEff;
-	sprites = Ram_HeapSlots->battleSheet;
+	sprs = Ram_HeapSlots->battleSheet;
 	pictures = MEGAERA_PICTURES;
 	btEffectConfigureEffectDisp();
 	btEffectStartCanvasLayer(0);
@@ -416,7 +415,7 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
 		state->sheet + MEGAERA_FLASH_BURST_PICTURES, 1, 0);
 	btResourceLoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, state->sheet, 1, 1);
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_TORNADO_SHEET, pictures, 1, 0);
 	btResourceLoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
 		pictures + MEGAERA_LIGHTNING_BOLT_PICTURES, 1, 0);
@@ -451,65 +450,64 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 	btEffectShowLivingTargets(state->args);
 	sySynch(1);
 
-	for(frame = 0; frame != MEGAERA_FRAMES; frame++) {
-		if((PerWork.repeat & (KEY_A | KEY_B)) && frame > 10) {
-			if(frame < MEGAERA_SWOOP_FRAME) {
-				frame = MEGAERA_SWOOP_FRAME - 1;
+	for(frm = 0; frm != MEGAERA_TICKS; frm++) {
+		if((PerWork.repeat & (KEY_A | KEY_B)) && frm > 10) {
+			if(frm < MEGAERA_SWOOP_TICK) {
+				frm = MEGAERA_SWOOP_TICK - 1;
 			}
 		}
-		if(frame == MEGAERA_SWOOP_FRAME - 1) {
+		if(frm == MEGAERA_SWOOP_TICK - 1) {
 			sySndPlayStub(SE_POWER_UP);
 		}
-		if(frame == 148) {
+		if(frm == 148) {
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 		}
-		if(frame == 0) {
-			position.x = toFIXED(32);
-			position.y = toFIXED(72);
-			velocity.x = toFIXED(9);
-			velocity.y = -toFIXED(2);
+		if(frm == 0) {
+			pos.x = toFIXED(32);
+			pos.y = toFIXED(72);
+			vel.x = toFIXED(9);
+			vel.y = -toFIXED(2);
 			btEffectCreateSprs(MEGAERA_SWORDS, SPRITE_MEGAERA_SWORD, 2);
 		}
-		if(frame == MEGAERA_SWOOP_FRAME) {
+		if(frm == MEGAERA_SWOOP_TICK) {
 			fdSprDestroyStub(state->sprs[0]);
 			fdSprDestroyStub(state->sprs[1]);
 			btEffectCreateSprs(MEGAERA_OBJECTS, SPRITE_MEGAERA, 2);
 		}
 
 		/* Megaera swoops, trailing sparkles. */
-		if(frame >= MEGAERA_SWOOP_FRAME) {
-			position.x += velocity.x;
-			position.y += velocity.y;
-			velocity.x = velocity.x * 59 / DAMPING_SCALE;
-			velocity.y = velocity.y * 59 / DAMPING_SCALE;
-			btEffectPlaceFormationSprs(
-				SUMMON_FORMATION_MEGAERA, position.x, position.y);
-			if(frame == MEGAERA_SWOOP_FRAME) {
+		if(frm >= MEGAERA_SWOOP_TICK) {
+			pos.x += vel.x;
+			pos.y += vel.y;
+			vel.x = vel.x * 59 / DAMPING_SCALE;
+			vel.y = vel.y * 59 / DAMPING_SCALE;
+			btEffectPlaceFormationSprs(SUMMON_FORMATION_MEGAERA, pos.x, pos.y);
+			if(frm == MEGAERA_SWOOP_TICK) {
 				for(i = 0; i != MEGAERA_SPARK_COUNT; i++) {
 					PARTICLES[i].variant = -1;
 				}
 			}
 			{
-				Sint32 trailFrame = frame - MEGAERA_SWOOP_FRAME;
-				if((Uint32)trailFrame < MEGAERA_TRAIL_FRAMES) {
-					Sint32 count = 10 - trailFrame / 2;
+				Sint32 trailFrm = frm - MEGAERA_SWOOP_TICK;
+				if((Uint32)trailFrm < MEGAERA_TRAIL_TICKS) {
+					Sint32 cnt = 10 - trailFrm / 2;
 
-					if(count > 0) {
+					if(cnt > 0) {
 						Sint32 half;
 
-						for(i = 0, half = position.x / 2; i != count / 5; i++) {
+						for(i = 0, half = pos.x / 2; i != cnt / 5; i++) {
 							PARTICLE *sparkle;
-							Sint32	  angle;
+							Sint32	  ang;
 							Sint32	  radius;
 
-							sparkle = &PARTICLES[((trailFrame << 5) + i) &
+							sparkle = &PARTICLES[((trailFrm << 5) + i) &
 								(MEGAERA_SPARK_COUNT - 1)];
-							angle = syRandom();
+							ang = syRandom();
 							radius = (syRandom() & 31) + 16;
 							sparkle->x =
-								sySin(angle) * radius + half + toFIXED(16);
+								sySin(ang) * radius + half + toFIXED(16);
 							sparkle->y =
-								syCos(angle) * radius + position.y - toFIXED(8);
+								syCos(ang) * radius + pos.y - toFIXED(8);
 							sparkle->velX = 0;
 							sparkle->velY = 0;
 							sparkle->variant = syRandom() & 15;
@@ -518,14 +516,14 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 				}
 			}
 		}
-		if((Uint32)(frame - MEGAERA_FIRE_FRAME) <= 3) {
+		if((Uint32)(frm - MEGAERA_FIRE_TICK) <= 3) {
 			syWordsFillEntry(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 		}
-		if(frame > 103) {
+		if(frm > 103) {
 			btEffectStepPaletteToResource(RESOURCE_TAN_PALETTE);
 		}
-		if(frame == MEGAERA_FIRE_FRAME) {
+		if(frm == MEGAERA_FIRE_TICK) {
 			syWordsCopyEntry((void *)BG_PLTT,
 				syResourceGetTableEntry(RESOURCE_ORANGE_PALETTE_B),
 				SHEET_PALETTE_BYTES);
@@ -533,12 +531,12 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 
 		/* The field in flames: two columns of fiery streaks, each drawn again
 		   below itself, sway until Megaera comes, and billows of fire rise. */
-		if(frame >= MEGAERA_FIRE_FRAME) {
-			if(frame <= 111) {
-				Sint32 picture = (frame / 4) % 3;
+		if(frm >= MEGAERA_FIRE_TICK) {
+			if(frm <= 111) {
+				Sint32 picture = (frm / 4) % 3;
 				Sint32 swayX =
-					(FIXEDtoINT(sySin(frame * (TRIG_TURN / 32)) << 3)) - 16;
-				Sint32			which = frame == MEGAERA_SWOOP_FRAME;
+					(FIXEDtoINT(sySin(frm * (TRIG_TURN / 32)) << 3)) - 16;
+				Sint32			which = frm == MEGAERA_SWOOP_TICK;
 				DRAW_RECTANGLE *draw = &blitters[which];
 				Uint8		   *cells =
 					state->sheet + picture * PICTURE_BYTES(WHIRL_BEAM);
@@ -548,13 +546,13 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 				(*draw)(canvas, cells, swayX, WHIRL_BEAM_HEIGHT,
 					WHIRL_BEAM_WIDTH, 52);
 				{
-					Sint32 flickerFrame = (frame / 2) % 3;
+					Sint32 flickerFrm = (frm / 2) % 3;
 					Uint8 *flickerPixels;
 
 					swayX = FIXEDtoINT(
-						sySin(frame * (TRIG_TURN / 16) + DEGtoANG(180)) << 3);
+						sySin(frm * (TRIG_TURN / 16) + DEGtoANG(180)) << 3);
 					flickerPixels =
-						state->sheet + flickerFrame * PICTURE_BYTES(WHIRL_BEAM);
+						state->sheet + flickerFrm * PICTURE_BYTES(WHIRL_BEAM);
 					(*draw)(canvas, flickerPixels, swayX, 0, WHIRL_BEAM_WIDTH,
 						WHIRL_BEAM_HEIGHT);
 					(*draw)(canvas, flickerPixels, swayX, WHIRL_BEAM_HEIGHT,
@@ -562,7 +560,7 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 				}
 			}
 			for(i = 0, p = state->particles; i != MEGAERA_BILLOWS; i++, p++) {
-				if((Uint32)p->variant < MEGAERA_BILLOW_FRAMES) {
+				if((Uint32)p->variant < MEGAERA_BILLOW_TICKS) {
 					Sint32 row = p->variant / 4;
 					Sint32 which = i & 1;
 					Uint8 *smoke = state->sheet + MEGAERA_BILLOW_PICTURES +
@@ -577,14 +575,14 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 				p->variant++;
 				/* Megaera's coming blows the fire aside; until then each billow
 				   rises again from the field when it has burnt out. */
-				if(frame == MEGAERA_SWOOP_FRAME) {
+				if(frm == MEGAERA_SWOOP_TICK) {
 					p->velX += toFIXED(2);
 					p->velY /= 4;
 				}
-				if(frame < MEGAERA_SWOOP_FRAME) {
+				if(frm < MEGAERA_SWOOP_TICK) {
 					Sint32 v = p->variant;
 
-					if(v == MEGAERA_BILLOW_FRAMES) {
+					if(v == MEGAERA_BILLOW_TICKS) {
 						p->variant = v = 0;
 					}
 					if(v == 0) {
@@ -596,21 +594,21 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 				}
 			}
 		}
-		if(frame == MEGAERA_FIRE_FRAME) {
+		if(frm == MEGAERA_FIRE_TICK) {
 			sySndPlayStub(SE_WAVE_HIGH);
 		}
-		/* The fire crackles eight times, four frames apart. */
+		/* The fire crackles eight times, four ticks apart. */
 		{
-			Sint32 crackleFrame;
+			Sint32 crackleFrm;
 
-			for(i = 0, crackleFrame = 75; i != 8; i++, crackleFrame += 4) {
-				if(frame == crackleFrame) {
+			for(i = 0, crackleFrm = 75; i != 8; i++, crackleFrm += 4) {
+				if(frm == crackleFrm) {
 					sySndPlayStub(SE_HEAVY_IMPACT);
 				}
 			}
 		}
 		/* As the first sword lands the foes flash white. */
-		if(frame == 10) {
+		if(frm == 10) {
 			state->shakeFrm = 8;
 			for(i = 0; i != args->tgtCnt; i++) {
 				btEffectTintBattler(
@@ -619,20 +617,20 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 		}
 		/* The sparkles twinkle through SparkleDots' nine pictures, drifting
 		   down and to the left. */
-		if(frame >= MEGAERA_SWOOP_FRAME) {
+		if(frm >= MEGAERA_SWOOP_TICK) {
 			for(i = 0, p = PARTICLES; i != MEGAERA_SPARK_COUNT; i++, p++) {
 				Sint32 k;
 
-				if((Uint32)p->variant >= MEGAERA_SPARKLE_FRAMES) {
+				if((Uint32)p->variant >= MEGAERA_SPARKLE_TICKS) {
 					continue;
 				}
 				k = (p->variant / 2) % 9;
 				blitters[0](canvas,
 					(MEGAERA_PICTURES + MEGAERA_SPARKLE_DOTS_PICTURES) +
-						BattleEffect_SparklePictures[k],
-					FIXED_INTEGER_PART(p->x) - BattleEffect_SparkleSizes[k] / 2,
-					FIXED_INTEGER_PART(p->y) - BattleEffect_SparkleSizes[k] / 2,
-					BattleEffect_SparkleSizes[k], BattleEffect_SparkleSizes[k]);
+						BattleEffectSparklePictures[k],
+					FIXED_INTEGER_PART(p->x) - BattleEffectSparkleSizes[k] / 2,
+					FIXED_INTEGER_PART(p->y) - BattleEffectSparkleSizes[k] / 2,
+					BattleEffectSparkleSizes[k], BattleEffectSparkleSizes[k]);
 				btParticleAdvanceWithGravity2D(p, 58, 0);
 				if(i & 1) {
 					p->velX += -toFIXED(1) / 32;
@@ -645,28 +643,28 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		/* The two swords: each falls 16 pixels a frame, and lands with a flash,
+		/* The two swords: each falls 16 pixels a tick, and lands with a flash,
 		   a bolt of lightning, a burst of sparks and glints. */
-		if(frame < MEGAERA_FIRE_FRAME) {
+		if(frm < MEGAERA_FIRE_TICK) {
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 			for(i = 0; i != MEGAERA_SWORDS; i++) {
-				Sint32 fallFrame = i * 16;
+				Sint32 fallFrm = i * 16;
 				Sint32 column = i * 32 + 24;
 
-				if(frame == fallFrame + 5) {
+				if(frm == fallFrm + 5) {
 					sySndPlayStub(SE_POWER_UP);
 				}
-				if(frame == fallFrame + 9) {
+				if(frm == fallFrm + 9) {
 					state->shakeFrm = 8;
 					syWordsFillEntry(canvas, CANVAS_VIEW_BYTES,
 						CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 					sySndPlayStub(SE_CLATTER);
 				}
-				if(frame >= fallFrame) {
-					Sint32 t = frame - fallFrame;
+				if(frm >= fallFrm) {
+					Sint32 t = frm - fallFrm;
 					Sint32 fallY = t * 16 - 16;
 
-					scale = Megaera_UnitScale;
+					scale = MegaeraUnitScale;
 					if(fallY > MEGAERA_SWORD_GROUND_Y - 1) {
 						fallY = MEGAERA_SWORD_GROUND_Y;
 					}
@@ -686,49 +684,48 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 									TILE_SIZE_4BPP,
 							MEGAERA_SWORD_POINT_BYTES);
 					}
-					if(frame == fallFrame + 10) {
+					if(frm == fallFrm + 10) {
 						for(j = 0; j != MEGAERA_SPARK_COUNT / MEGAERA_SWORDS;
 							j++) {
 							PARTICLE *spark = &PARTICLES[i *
 									(MEGAERA_SPARK_COUNT / MEGAERA_SWORDS) +
 								j];
-							Sint32	  angle = syRandom() & 0x7fff;
+							Sint32	  ang = syRandom() & 0x7fff;
 							Sint32	  speed = syRandom() & 255;
 
 							spark->x = toFIXED(column);
 							spark->y = toFIXED(MEGAERA_BOLT_HEIGHT);
-							spark->velY = (-sySin(angle) * speed) >> 5;
-							spark->velX = (syCos(angle) * speed) >> 5;
+							spark->velY = (-sySin(ang) * speed) >> 5;
+							spark->velX = (syCos(ang) * speed) >> 5;
 							spark->variant = 0;
 						}
 					}
-					if(frame >= fallFrame + 10 && frame < fallFrame + 18) {
+					if(frm >= fallFrm + 10 && frm < fallFrm + 18) {
 						blitters[0](canvas,
 							(MEGAERA_PICTURES +
 								MEGAERA_LIGHTNING_BOLT_PICTURES) +
-								(((frame + i) / 4) & 3) *
+								(((frm + i) / 4) & 3) *
 									LIGHTNING_BOLT_PICTURE_BYTES,
 							column - LIGHTNING_BOLT_WIDTH / 2, 0,
 							LIGHTNING_BOLT_WIDTH, MEGAERA_BOLT_HEIGHT);
 					}
-					if(frame >= fallFrame + 10) {
+					if(frm >= fallFrm + 10) {
 						for(j = 0; j != 2; j++) {
 							Sint32 k = j & 3;
 							Sint32 glintX = column + (syRandom() & 7) -
-								(BattleEffect_GlintPictureWidths[k] >> 1);
+								(BattleEffectGlintPictureWidths[k] >> 1);
 							Sint32 glintY = (syRandom() & 63) -
-								(BattleEffect_GlintPictureHeights[k] >> 1);
+								(BattleEffectGlintPictureHeights[k] >> 1);
 							Uint32 flip = syRandom();
 							EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 								EFFECT_CLIP_BOUNDS |
-									Megaera_GlintFlips[flip & 3],
-								Megaera_GlintModes[args->variant]);
+									MegaeraGlintFlips[flip & 3],
+								MegaeraGlintModes[args->variant]);
 							(Ram_HeapSlots->ramCodePaired)(canvas,
-								MEGAERA_PICTURES +
-									BattleEffect_GlintPictures[k],
+								MEGAERA_PICTURES + BattleEffectGlintPictures[k],
 								glintX - 4, glintY + 40,
-								BattleEffect_GlintPictureWidths[k],
-								BattleEffect_GlintPictureHeights[k]);
+								BattleEffectGlintPictureWidths[k],
+								BattleEffectGlintPictureHeights[k]);
 							syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 						}
 					}
@@ -737,7 +734,7 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
 				BLITTER_ADDITIVE);
 			rects[1] = Ram_HeapSlots->ramCodePaired;
-			if(frame <= 69) {
+			if(frm <= 69) {
 				for(i = 0, p = PARTICLES; i != MEGAERA_SPARK_COUNT; i++, p++) {
 					Sint32 size;
 
@@ -746,7 +743,7 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 					}
 					size = i % 3 + 1;
 					blitters[p->velY > 0](canvas,
-						sprites + BattleEffect_MotePictures[size - 1],
+						sprs + BattleEffectMotePictures[size - 1],
 						FIXED_INTEGER_PART(p->x) - size / 2,
 						FIXED_INTEGER_PART(p->y) - size, size, size * 2);
 					btParticleAdvanceWithGravity2D(p, 62, toFIXED(1) / 4);
@@ -759,29 +756,29 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		btCameraShake(8, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 	syCloseEvent(btEffectTransferCanvas);
 	EFFECT_RELEASE_BLITTERS();
-	btEffectRunImpactBurst(SUMMON_FORMATION_MEGAERA, position.x, position.y);
+	btEffectRunImpactBurst(SUMMON_FORMATION_MEGAERA, pos.x, pos.y);
 	for(i = 0; i != MEGAERA_OBJECTS; i++) {
 		fdSprDestroyStub(state->sprs[i]);
 	}
 	btEffectEndCanvasLayer();
 }
 
-#define VOID_BEAM_FRAMES	  88
+#define VOID_BEAM_TICKS		  88
 #define VOID_BEAM_SEGMENTS	  10
-/* The hexagon of motes is traced eight motes a frame from frame 42,
+/* The hexagon of motes is traced eight motes a tick from tick 42,
    VOID_BEAM_SIDE_MOTES to a side; the ring behind the caster gains three motes
-   every two frames up to VOID_BEAM_RING_MOTES, 40 pixels out. */
+   every two ticks up to VOID_BEAM_RING_MOTES, 40 pixels out. */
 #define VOID_BEAM_SIDE_MOTES  36
 #define VOID_BEAM_RING_MOTES  64
 #define VOID_BEAM_RING_RADIUS 40
-/* The beam fires at VOID_BEAM_FIRE_FRAME, and fades from
-   VOID_BEAM_FADE_FRAME. */
-#define VOID_BEAM_FIRE_FRAME  72
-#define VOID_BEAM_FADE_FRAME  80
+/* The beam fires at VOID_BEAM_FIRE_TICK, and fades from
+   VOID_BEAM_FADE_TICK. */
+#define VOID_BEAM_FIRE_TICK	  72
+#define VOID_BEAM_FADE_TICK	  80
 
 /* Where CometSheetB and RuneSheet are decoded in the effect's pictures. */
 #define VOID_BEAM_COMET_B_PICTURES 4096
@@ -794,69 +791,69 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 #define VOID_BEAM_COMET_HEIGHT	   36
 
 /* A hexagon of motes is traced, side by side, around the caster while a ring of
-   motes gathers behind; at VOID_BEAM_FIRE_FRAME a beam, the comet's head and a
+   motes gathers behind; at VOID_BEAM_FIRE_TICK a beam, the comet's head and a
    32-line gradient repeated nine times, shoots from the caster toward the
-   targets' side, fading out from VOID_BEAM_FADE_FRAME.
+   targets' side, fading out from VOID_BEAM_FADE_TICK.
 
    Abilities: Void Beam. */
 void btEffectRunVoidBeam(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	DRAW_RECTANGLE		 draw[2];
 	BATTLE_CAMERA		*camera;
-	Uint8				*sprites;
+	Uint8				*sprs;
 	Sint32				 point[3];
 	SCREEN_POINT		 corners[11];
 	SCREEN_POINT		 ring;
 	SCREEN_POINT		 segment;
 	Sint32				 flip;
-	Sint32				 count;
+	Sint32				 cnt;
 	Uint8				*row;
 	Sint32				 i;
 	Sint32				 k;
-	Uint8				*buffer;
+	Uint8				*buf;
 	Sint32				 size;
 
 	state = Ram_HeapSlots->battleEff;
 	canvas = Ram_HeapSlots->battleCanvas;
 	camera = Ram_HeapSlots->cameraState;
-	sprites = Ram_HeapSlots->battleSheet;
-	buffer = Ram_MapMetatileBuffer;
+	sprs = Ram_HeapSlots->battleSheet;
+	buf = Ram_MapMetatileBuffer;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	btResourceLoadAndDecompress(
 		RESOURCE_EMBER_STREAK_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_COMET_SHEET_B,
 		state->sheet + VOID_BEAM_COMET_B_PICTURES, 1, 0);
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 
 	/* The motes, one shade dimmer. */
 	for(i = 0; i != MOTE_SET_BYTES; i++) {
-		Sint32 pixel = sprites[i];
+		Sint32 pixel = sprs[i];
 
 		if(pixel != 0) {
 			pixel -= 8;
 			if(pixel <= 0) {
 				pixel = 1;
 			}
-			sprites[i] = pixel;
+			sprs[i] = pixel;
 		}
 	}
 	btResourceLoadAndDecompress(
-		RESOURCE_RUNE_SHEET, buffer + VOID_BEAM_RUNE_PICTURES, 1, 0);
-	syWordsClearEntry(buffer, RUNE_TEXTURE_SIZE * RUNE_TEXTURE_SIZE);
+		RESOURCE_RUNE_SHEET, buf + VOID_BEAM_RUNE_PICTURES, 1, 0);
+	syWordsClearEntry(buf, RUNE_TEXTURE_SIZE * RUNE_TEXTURE_SIZE);
 
 	/* The beam's head: the rune, mirrored to 48 columns. */
 	for(i = 0; i != RUNE_HALF_HEIGHT; i++) {
 		Sint32 j;
 
 		for(j = 0; j != RUNE_HALF_WIDTH; j++) {
-			buffer[RUNE_TEXTURE_RUNE + i * RUNE_TEXTURE_SIZE + j] =
-				buffer[VOID_BEAM_RUNE_PICTURES + i * RUNE_HALF_WIDTH + j];
-			buffer[RUNE_TEXTURE_RUNE + 2 * RUNE_HALF_WIDTH - 1 +
+			buf[RUNE_TEXTURE_RUNE + i * RUNE_TEXTURE_SIZE + j] =
+				buf[VOID_BEAM_RUNE_PICTURES + i * RUNE_HALF_WIDTH + j];
+			buf[RUNE_TEXTURE_RUNE + 2 * RUNE_HALF_WIDTH - 1 +
 				i * RUNE_TEXTURE_SIZE - j] =
-				buffer[VOID_BEAM_RUNE_PICTURES + i * RUNE_HALF_WIDTH + j];
+				buf[VOID_BEAM_RUNE_PICTURES + i * RUNE_HALF_WIDTH + j];
 		}
 	}
 	syWordsCopy((void *)BG_PLTT,
@@ -891,26 +888,26 @@ void btEffectRunVoidBeam(BATTLE_EFFECT_PARM *args)
 	draw[1] = Ram_HeapSlots->ramCodePaired;
 	state->cameraDelta = 0;
 	state->cameraPhase = 0;
-	sySetEvent(btCameraApplyPhasedDelta, EVENT_PASS_FRAME);
+	sySetEvent(btCameraApplyPhasedDelta, EVENT_PASS_TICK);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	sySndPlayStub(SE_SPIN);
 	size = 4;
 
-	for(frame = 0; frame != VOID_BEAM_FRAMES; frame++) {
-		/* The camera turns a 256th of a turn a frame from frame 9, and eases to
+	for(frm = 0; frm != VOID_BEAM_TICKS; frm++) {
+		/* The camera turns a 256th of a turn a tick from tick 9, and eases to
 		   a stop from 64 to 79; the other way round over the party. */
-		if((Uint32)(frame - 9) <= 54) {
+		if((Uint32)(frm - 9) <= 54) {
 			state->cameraDelta = -(TRIG_TURN / 256);
-		} else if((Uint32)(frame - 64) <= 15) {
-			state->cameraDelta = frame * 16 - 1280;
+		} else if((Uint32)(frm - 64) <= 15) {
+			state->cameraDelta = frm * 16 - 1280;
 		} else {
 			state->cameraDelta = 0;
 		}
 		if(args->side == EFFECT_SIDE_PARTY) {
 			state->cameraDelta = -state->cameraDelta;
 		}
-		if(frame > 79) {
-			Sint32 fade = frame * 2 - 160;
+		if(frm > 79) {
+			Sint32 fade = frm * 2 - 160;
 
 			REG_BLDALPHA = BLEND_ALPHA(16 - fade, BLEND_WEIGHT_MAX);
 		}
@@ -928,14 +925,14 @@ void btEffectRunVoidBeam(BATTLE_EFFECT_PARM *args)
 				point[0] = caster->x + toFIXED(8);
 			}
 
-			traced = frame * 8 - 336;
+			traced = frm * 8 - 336;
 			if(traced >= 0) {
 				for(i = 0; i != 6; i++) {
 					Sint32 corner = (i + 4) % 6;
 
 					point[1] =
-						toFIXED(VoidBeam_Corners[corner][1]) + toFIXED(30);
-					point[2] = toFIXED(VoidBeam_Corners[corner][0]) + caster->z;
+						toFIXED(VoidBeamCorners[corner][1]) + toFIXED(30);
+					point[2] = toFIXED(VoidBeamCorners[corner][0]) + caster->z;
 					btEffectPosProjectPoint(point, &corners[i]);
 					corners[i].x >>= 1;
 				}
@@ -957,37 +954,37 @@ void btEffectRunVoidBeam(BATTLE_EFFECT_PARM *args)
 								toFIXED(1) / VOID_BEAM_SIDE_MOTES);
 
 						draw[0](canvas,
-							sprites + BattleEffect_MotePictures[size - 1],
+							sprs + BattleEffectMotePictures[size - 1],
 							x - size / 2, y - size, size, size * 2);
 					}
 				}
 			}
 
 			/* The ring behind the caster. */
-			count = frame * 3 / 2;
-			if(count > VOID_BEAM_RING_MOTES) {
-				count = VOID_BEAM_RING_MOTES;
+			cnt = frm * 3 / 2;
+			if(cnt > VOID_BEAM_RING_MOTES) {
+				cnt = VOID_BEAM_RING_MOTES;
 			}
-			for(i = 0; i != count; i++) {
-				Sint32 angle = i * (TRIG_TURN / VOID_BEAM_RING_MOTES);
+			for(i = 0; i != cnt; i++) {
+				Sint32 ang = i * (TRIG_TURN / VOID_BEAM_RING_MOTES);
 
-				point[1] = caster->y - syCos(angle) * VOID_BEAM_RING_RADIUS +
+				point[1] = caster->y - syCos(ang) * VOID_BEAM_RING_RADIUS +
 					toFIXED(32);
-				point[2] = caster->z + sySin(angle) * VOID_BEAM_RING_RADIUS;
+				point[2] = caster->z + sySin(ang) * VOID_BEAM_RING_RADIUS;
 				btEffectPosProjectPoint(point, &ring);
 				ring.x >>= 1;
 				/* DEAD: the depth clamped to the range other effects size motes
 				   by; nothing reads it, and the ROM keeps the tests and
 				   stores. */
 				CLAMP(ring.depth, 160, 799);
-				draw[1](canvas, sprites + BattleEffect_MotePictures[size - 1],
+				draw[1](canvas, sprs + BattleEffectMotePictures[size - 1],
 					ring.x - size / 2, ring.y - size, size, size * 2);
 			}
 
-			if(frame >= VOID_BEAM_FIRE_FRAME) {
+			if(frm >= VOID_BEAM_FIRE_TICK) {
 				Sint32 fade;
 
-				if(frame == VOID_BEAM_FIRE_FRAME) {
+				if(frm == VOID_BEAM_FIRE_TICK) {
 					state->particles[0].x = point[0];
 					if(state->particles[0].x > 0) {
 						state->particles[0].velX = -toFIXED(32);
@@ -997,7 +994,7 @@ void btEffectRunVoidBeam(BATTLE_EFFECT_PARM *args)
 					REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
 						BGCNT_SCREEN_BASE(7);
 				}
-				if(frame == VOID_BEAM_FIRE_FRAME) {
+				if(frm == VOID_BEAM_FIRE_TICK) {
 					state->shakeFrm = 8;
 					EFFECT_SHOW_DAMAGE(SE_CRASH);
 					btMotionApplyKnockbackStub(args->tgts[0], KNOCKBACK_HURL);
@@ -1021,7 +1018,7 @@ void btEffectRunVoidBeam(BATTLE_EFFECT_PARM *args)
 						draw[1](canvas, state->sheet + VOID_BEAM_BODY,
 							segment.x, segment.y, VOID_BEAM_BODY_SIZE,
 							VOID_BEAM_BODY_SIZE);
-					} else if(frame <= 81) {
+					} else if(frm <= 81) {
 						draw[0](canvas,
 							state->sheet + VOID_BEAM_COMET_B_PICTURES,
 							segment.x, segment.y - VOID_BEAM_COMET_HEIGHT,
@@ -1032,11 +1029,11 @@ void btEffectRunVoidBeam(BATTLE_EFFECT_PARM *args)
 							VOID_BEAM_COMET_HEIGHT);
 					}
 				}
-				/* The body fades from VOID_BEAM_FADE_FRAME. */
+				/* The body fades from VOID_BEAM_FADE_TICK. */
 				row = state->sheet + VOID_BEAM_BODY;
 				fade = 0;
-				if(frame >= VOID_BEAM_FADE_FRAME) {
-					fade = frame * 8 - 640;
+				if(frm >= VOID_BEAM_FADE_TICK) {
+					fade = frm * 8 - 640;
 				}
 				for(i = 0; i != VOID_BEAM_BODY_SIZE; i++) {
 					Sint32 shade =
@@ -1059,7 +1056,7 @@ void btEffectRunVoidBeam(BATTLE_EFFECT_PARM *args)
 			state->cameraPhase = 1;
 		}
 		btCameraShake(8, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 	EFFECT_RELEASE_BLITTERS();
 	syCloseEvent(btEffectTransferCanvas);
@@ -1068,13 +1065,13 @@ void btEffectRunVoidBeam(BATTLE_EFFECT_PARM *args)
 }
 
 #undef MEGAERA_PICTURES
-#undef VOID_BEAM_FRAMES
+#undef VOID_BEAM_TICKS
 #undef VOID_BEAM_SEGMENTS
 #undef VOID_BEAM_SIDE_MOTES
 #undef VOID_BEAM_RING_MOTES
 #undef VOID_BEAM_RING_RADIUS
-#undef VOID_BEAM_FIRE_FRAME
-#undef VOID_BEAM_FADE_FRAME
+#undef VOID_BEAM_FIRE_TICK
+#undef VOID_BEAM_FADE_TICK
 #undef BALL_LIGHTNING_SPARKS_CLEARED
 #undef BALL_LIGHTNING_SPARK_COUNT
 #undef BALL_LIGHTNING_SPARK_FLOOR
@@ -1086,31 +1083,31 @@ void btEffectRunVoidBeam(BATTLE_EFFECT_PARM *args)
 #undef BALL_LIGHTNING_BOLT_PICTURE_INSET
 #undef BALL_LIGHTNING_BOLTS_SET_UP
 #undef BALL_LIGHTNING_BOLTS
-#undef BALL_LIGHTNING_FRAMES
+#undef BALL_LIGHTNING_TICKS
 #undef BALL_LIGHTNING_SIZE
 #undef EARTH_FORCE_BALL_SIZE
 #undef MEGAERA_SPARK_COUNT
 #undef MEGAERA_FLASH_BURST_PICTURES
 #undef MEGAERA_LIGHTNING_BOLT_PICTURES
 #undef MEGAERA_SPARKLE_DOTS_PICTURES
-#undef MEGAERA_FRAMES
+#undef MEGAERA_TICKS
 #undef MEGAERA_SWORDS
 #undef MEGAERA_SWORD_GROUND_Y
 #undef MEGAERA_SWORD_POINT_BYTES
 #undef MEGAERA_SPARK_FLOOR
 #undef MEGAERA_BOLT_HEIGHT
-#undef MEGAERA_FIRE_FRAME
+#undef MEGAERA_FIRE_TICK
 #undef WHIRL_BEAM_WIDTH
 #undef WHIRL_BEAM_HEIGHT
 #undef MEGAERA_BILLOWS_SET_UP
 #undef MEGAERA_BILLOWS
-#undef MEGAERA_BILLOW_FRAMES
+#undef MEGAERA_BILLOW_TICKS
 #undef MEGAERA_BILLOW_PICTURES
 #undef MEGAERA_UNREAD_FIRST
 #undef MEGAERA_UNREAD_COUNT
-#undef MEGAERA_SWOOP_FRAME
-#undef MEGAERA_TRAIL_FRAMES
-#undef MEGAERA_SPARKLE_FRAMES
+#undef MEGAERA_SWOOP_TICK
+#undef MEGAERA_TRAIL_TICKS
+#undef MEGAERA_SPARKLE_TICKS
 #undef VOID_BEAM_COMET_B_PICTURES
 #undef VOID_BEAM_RUNE_PICTURES
 #undef VOID_BEAM_BODY

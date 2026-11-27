@@ -6,7 +6,7 @@
 
 #include "types.h"
 
-extern Uint16 Blitter_UnusedImmediatePowers[];
-extern Uint16 Blitter_ImmediatePowers[];
+extern Uint16 BlitterUnusedImmediatePowers[];
+extern Uint16 BlitterImmediatePowers[];
 
 #endif

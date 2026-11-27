@@ -4,7 +4,7 @@
 /* How far a row of btEffectWipeCanvas's wipe lags behind its front, at most:
    each row lags a random 0 to WIPE_LAG_MAX pixels. */
 #define WIPE_LAG_MAX	63
-/* Where the across wipe's front stops, three frames past */
+/* Where the across wipe's front stops, three ticks past */
 /* CANVAS_SIZE + WIPE_LAG_MAX, where the wipe is finished. */
 #define WIPE_ACROSS_END 256
 
@@ -12,8 +12,8 @@
    it. */
 #define CANVAS_WIPE_NONE 3
 
-/* Wipes the whole canvas to one colour with a ragged edge, a frame at a time:
-   23 frames across, 15 down. Each frame sets state->transferPending, so the
+/* Wipes the whole canvas to one colour with a ragged edge, a tick at a time:
+   23 ticks across, 15 down. Each tick sets state->transferPending, so the
    caller's transfer event must already be running.
 
    direction: CANVAS_WIPE_ACROSS sweeps left to right, CANVAS_WIPE_NONE does
@@ -26,7 +26,7 @@ void btEffectWipeCanvas(Sint32 direction, Sint32 fill)
 	Uint8				 delay[CANVAS_SIZE];
 	Sint32				 x;
 	Sint32				 y;
-	Sint32				 wipePosition;
+	Sint32				 wipePos;
 
 	canvas = Ram_HeapSlots->battleCanvas;
 	state = Ram_HeapSlots->battleEff;
@@ -45,11 +45,10 @@ void btEffectWipeCanvas(Sint32 direction, Sint32 fill)
 			speed++;
 			for(; x != front; x++) {
 				for(y = 0; y != CANVAS_SIZE; y++) {
-					wipePosition = x - delay[y];
-					if(wipePosition >= 0)
-						if(wipePosition < CANVAS_SIZE)
-							canvas[CANVAS_PIXEL_OFFSET(wipePosition, y)] =
-								1 - fill;
+					wipePos = x - delay[y];
+					if(wipePos >= 0)
+						if(wipePos < CANVAS_SIZE)
+							canvas[CANVAS_PIXEL_OFFSET(wipePos, y)] = 1 - fill;
 				}
 			}
 			EFFECT_PRESENT_CANVAS(state);
@@ -66,11 +65,10 @@ void btEffectWipeCanvas(Sint32 direction, Sint32 fill)
 			speed += 4;
 			for(; y != front; y++) {
 				for(x = 0; x != CANVAS_SIZE; x++) {
-					wipePosition = y - delay[x];
-					if(wipePosition >= 0)
-						if(wipePosition < CANVAS_SIZE)
-							canvas[CANVAS_PIXEL_OFFSET(x, wipePosition)] =
-								1 - fill;
+					wipePos = y - delay[x];
+					if(wipePos >= 0)
+						if(wipePos < CANVAS_SIZE)
+							canvas[CANVAS_PIXEL_OFFSET(x, wipePos)] = 1 - fill;
 				}
 			}
 			EFFECT_PRESENT_CANVAS(state);

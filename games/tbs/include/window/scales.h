@@ -7,16 +7,16 @@
 
 #include "types.h"
 
-extern const Uint16 WindowSprite_BounceScales[32];
-extern const Sint8	WindowSprite_BounceScalesTail[8];
-extern const Sint8	MenuCursor_BobOffsets[16];
-extern const Uint8	WindowColor_WaveTable[121];
+extern const Uint16 WindowSpriteBounceScales[32];
+extern const Sint8	WindowSpriteBounceScalesTail[8];
+extern const Sint8	MenuCursorBobOffsets[16];
+extern const Uint8	WindowColorWaveTable[121];
 
-extern const Uint8 SettingsMenu_HuePresets[6];
-extern const Uint8 SettingsMenu_BrightnessPresets[6];
-extern const Sint8 PauseMenu_Icons[8];
+extern const Uint8 SettingsMenuHuePresets[6];
+extern const Uint8 SettingsMenuBrightnessPresets[6];
+extern const Sint8 PauseMenuIcons[8];
 
-extern const Sint16 Portrait_CharacterMap[20];
-extern const Sint16 Portrait_SpriteMap[100];
+extern const Sint16 PortraitCharacterMap[20];
+extern const Sint16 PortraitSpriteMap[100];
 
 #endif

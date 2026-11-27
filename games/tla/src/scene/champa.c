@@ -22,20 +22,20 @@
 #include "field/actor_script.h"
 
 struct ACTOR;
-extern ACTOR_PLACE				   Champa_ActorPlacementsOnceBriggsSailed[];
-extern MAP_GRID_METATILE_ANIMATION Champa_Doors[];
-extern CUE						   Champa_Cues[];
-extern CUE						   Champa_CuesOnceBriggsSailed[];
-extern Uint16					   Champa_NoDoor[];
-extern Uint16					   Champa_SanctumDoorOpening[];
+extern ACTOR_PLACE				   ChampaActorPlacementsOnceBriggsSailed[];
+extern MAP_GRID_METATILE_ANIMATION ChampaDoors[];
+extern CUE						   ChampaCues[];
+extern CUE						   ChampaCuesOnceBriggsSailed[];
+extern Uint16					   ChampaNoDoor[];
+extern Uint16					   ChampaSanctumDoorOpening[];
 /* Closes at once the portrait window of a speaker, if one is open
    (mnPortraitCloseWindow, through the overlay's own import row). */
 Sint32 mnWindowCloseMatchingId();
 
 /* Sends an actor walking to where another stands, if it is on the map. */
-static inline void scActorHeadToward(Sint32 id, Sint32 target)
+static inline void scActorHeadToward(Sint32 id, Sint32 tgt)
 {
-	ACTOR *actor = fdActorGet(target);
+	ACTOR *actor = fdActorGet(tgt);
 
 	if(actor != NULL)
 		fdActorSetDestination(
@@ -79,8 +79,8 @@ typedef enum CHAMPA_METATILE_BEHAVIOR {
 /* The same frames of the sanctum's door over and over, kept paused. */
 #define SANCTUM_DOOR_LOOP_ANIMATION 3
 
-/* Champa's people and things, numbering the rows of Champa_ActorPlacements
-   whose sprites are not the party's; Champa_ActorPlacementsOnceBriggsSailed
+/* Champa's people and things, numbering the rows of ChampaActorPlacements
+   whose sprites are not the party's; ChampaActorPlacementsOnceBriggsSailed
    keeps them and adds the sailors who spot Felix. */
 typedef enum CHAMPA_ACTOR_ID {
 	/* The ends of the tightrope over the gap (fdTightropePlace). */
@@ -155,16 +155,16 @@ const Uint32 *scGetExits(void)
 	return SceneExits;
 }
 
-extern ACTOR_PLACE Champa_ActorPlacements[];
+extern ACTOR_PLACE ChampaActorPlacements[];
 
 const Sint16 *scGetActorPlacements(void)
 {
 	if(fdScriptGetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA))
-		return Champa_ActorPlacementsOnceBriggsSailed;
-	return Champa_ActorPlacements;
+		return ChampaActorPlacementsOnceBriggsSailed;
+	return ChampaActorPlacements;
 }
 
-/* Felix, each frame as he walks into the tent on one of the two rafts: he
+/* Felix, each tick as he walks into the tent on one of the two rafts: he
    shrinks by 3/128 of his size, as if going in under the canvas. */
 void scChampaShrinkIntoTent(ACTOR *actor)
 {
@@ -194,7 +194,7 @@ void scChampaOpenDoorAndEnter(
 	syFieldScriptWait(10);
 	syFieldScriptSetExitRequest(door);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -204,16 +204,16 @@ void scChampaOpenDoorAndEnter(
    walks through. */
 void scChampaEnterDoor(Sint32 door)
 {
-	MAP_GRID_METATILE_ANIMATION *table = Champa_Doors;
+	MAP_GRID_METATILE_ANIMATION *tbl = ChampaDoors;
 
 	if((Uint32)(door - CHAMPA_TO_CHAMPA_ROOMS_SOUTHWEST_A) <= 1)
 		fdActorGet(MainRoutineStateWork.leaderActorId)->update =
 			(OBJECT_UPDATE)scChampaShrinkIntoTent;
 	if(door == CHAMPA_TO_CHAMPA_SANCTUM) {
 		fdTilesetAnimResume(SANCTUM_DOOR_ANIMATION);
-		scChampaOpenDoorAndEnter(&table[0], CHAMPA_TO_CHAMPA_SANCTUM, 1);
+		scChampaOpenDoorAndEnter(&tbl[0], CHAMPA_TO_CHAMPA_SANCTUM, 1);
 	} else {
-		scChampaOpenDoorAndEnter(&table[1], door, 0);
+		scChampaOpenDoorAndEnter(&tbl[1], door, 0);
 	}
 }
 
@@ -649,30 +649,30 @@ void scChampaFeizhiArrives(void)
 const CUE *scGetCues(void)
 {
 	if(fdScriptGetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA))
-		return Champa_CuesOnceBriggsSailed;
-	return Champa_Cues;
+		return ChampaCuesOnceBriggsSailed;
+	return ChampaCues;
 }
 
-/* Champa's two waterfalls flow: every other frame, the bands of blues they are
+/* Champa's two waterfalls flow: every other tick, the bands of blues they are
    drawn in, colours 1 to WATERFALL_LAST_COLOR of background palettes 3, 4 and
    5, turn one place on. */
 void scChampaCycleWaterfallPalettes(void)
 {
-	if((FrameCount & 1) == 0) {
+	if((TickCount & 1) == 0) {
 		Sint16 saved;
-		Sint32 index;
+		Sint32 idx;
 
 		saved = BG_PLTT_COLOR(3, WATERFALL_LAST_COLOR);
-		for(index = WATERFALL_LAST_COLOR; index != 1; index--)
-			BG_PLTT_COLOR(3, index) = BG_PLTT_COLOR(3, index - 1);
+		for(idx = WATERFALL_LAST_COLOR; idx != 1; idx--)
+			BG_PLTT_COLOR(3, idx) = BG_PLTT_COLOR(3, idx - 1);
 		BG_PLTT_COLOR(3, 1) = saved;
 		saved = BG_PLTT_COLOR(4, WATERFALL_LAST_COLOR);
-		for(index = WATERFALL_LAST_COLOR; index != 1; index--)
-			BG_PLTT_COLOR(4, index) = BG_PLTT_COLOR(4, index - 1);
+		for(idx = WATERFALL_LAST_COLOR; idx != 1; idx--)
+			BG_PLTT_COLOR(4, idx) = BG_PLTT_COLOR(4, idx - 1);
 		BG_PLTT_COLOR(4, 1) = saved;
 		saved = BG_PLTT_COLOR(5, WATERFALL_LAST_COLOR);
-		for(index = WATERFALL_LAST_COLOR; index != 1; index--)
-			BG_PLTT_COLOR(5, index) = BG_PLTT_COLOR(5, index - 1);
+		for(idx = WATERFALL_LAST_COLOR; idx != 1; idx--)
+			BG_PLTT_COLOR(5, idx) = BG_PLTT_COLOR(5, idx - 1);
 		BG_PLTT_COLOR(5, 1) = saved;
 	}
 }
@@ -684,7 +684,7 @@ Sint32 scInit(void)
 {
 
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	sySetFrameEvent((Sint32)scChampaCycleWaterfallPalettes, EVENT_PASS_VBLANK);
+	sySetTickEvent((Sint32)scChampaCycleWaterfallPalettes, EVENT_PASS_VBLANK);
 	fdTilesetAnimPause(SANCTUM_DOOR_ANIMATION);
 	fdActorSetSprFlags((Sint32)fdActorGet(ACTOR_WEST_FLAG), 0);
 	fdActorSetSprFlags((Sint32)fdActorGet(ACTOR_EAST_FLAG), 0);
@@ -725,27 +725,27 @@ Sint32 scPrepareMap(void)
 	return 0;
 }
 
-extern Uint32 Champa_QuestionMarkScript[];
+extern Uint32 ChampaQuestionMarkScript[];
 
-/* A question mark over someone's head, the emote sprite's, turned to `angle`,
-   for `frames` frames. */
+/* A question mark over someone's head, the emote sprite's, turned to `ang`,
+   for `ticks` ticks. */
 void scChampaSpawnQuestionMark(
-	Sint32 x, Sint32 y, Sint32 z, Sint32 angle, Sint32 frames)
+	Sint32 x, Sint32 y, Sint32 z, Sint32 ang, Sint32 ticks)
 {
-	Sint16	   value = angle;
+	Sint16	   value = ang;
 	ACTOR	  *actor;
-	FIELD_SPR *sprite;
+	FIELD_SPR *spr;
 
 	actor = scFieldActorCreate(SPRITE_EMOTE, x, y, z);
 	if(actor != 0) {
-		sprite = actor->spr;
+		spr = actor->spr;
 		fdActorSelectAnimation(actor, 1);
-		fdActorStartScript(actor, Champa_QuestionMarkScript);
+		fdActorStartScript(actor, ChampaQuestionMarkScript);
 		actor->motionFlg = 0;
-		actor->wait = frames;
+		actor->wait = ticks;
 
-		sprite->flg = 0;
-		sprite->rotation = value;
+		spr->flg = 0;
+		spr->rotation = value;
 	}
 }
 
@@ -791,19 +791,19 @@ void scChampaShowTwoMessages(Sint32 first, Sint32 firstX, Sint32 firstY,
 	Sint32 delay)
 {
 	FIELD_STATE *event = Ram_HeapSlots->fieldState;
-	Sint32		 firstSprite = fdActorGetSprById(first);
-	Sint32		 secondSprite = fdActorGetSprById(second);
+	Sint32		 firstSpr = fdActorGetSprById(first);
+	Sint32		 secondSpr = fdActorGetSprById(second);
 
 	mnMessageOpenWindow((Sint16)event->msg++, firstX, firstY,
-		MESSAGE_WINDOW_VOICE(fdSpeakerGetVoice(firstSprite)));
-	mnPortraitOpenWindow(firstSprite, 0, firstPortraitX, firstPortraitY);
+		MESSAGE_WINDOW_VOICE(fdSpeakerGetVoice(firstSpr)));
+	mnPortraitOpenWindow(firstSpr, 0, firstPortraitX, firstPortraitY);
 	if(delay != 0) {
 		while(!mnMessageAllTyped())
 			syWait(delay);
 	}
 	mnMessageOpenWindow((Sint16)event->msg++, secondX, secondY,
-		MESSAGE_WINDOW_VOICE(fdSpeakerGetVoice(secondSprite)));
-	mnPortraitOpenWindow(secondSprite, 0, secondPortraitX, secondPortraitY);
+		MESSAGE_WINDOW_VOICE(fdSpeakerGetVoice(secondSpr)));
+	mnPortraitOpenWindow(secondSpr, 0, secondPortraitX, secondPortraitY);
 	while(!mnMessageAllTyped())
 		syWait(1);
 	syWait(1);
@@ -812,13 +812,13 @@ void scChampaShowTwoMessages(Sint32 first, Sint32 firstX, Sint32 firstY,
 /* Closes the two windows scChampaShowTwoMessages opened. */
 void scChampaCloseTwoMessages(Sint32 first, Sint32 second)
 {
-	Sint32 firstSprite;
-	Sint32 secondSprite;
+	Sint32 firstSpr;
+	Sint32 secondSpr;
 
-	firstSprite = fdActorGetSprById(first);
-	secondSprite = fdActorGetSprById(second);
-	mnWindowCloseMatchingId(firstSprite);
-	mnWindowCloseMatchingId(secondSprite);
+	firstSpr = fdActorGetSprById(first);
+	secondSpr = fdActorGetSprById(second);
+	mnWindowCloseMatchingId(firstSpr);
+	mnWindowCloseMatchingId(secondSpr);
 }
 
 /* Nothing visible happens when the party, coming in from the south, walks up
@@ -831,9 +831,9 @@ void scChampaWalkIntoTheVillage(void)
 }
 
 /* Shows the speaker's message by its actor (fdMessageShowAtActor). */
-static __inline__ void scChampaMessageOpen(Sint32 speaker, Sint32 flags)
+static __inline__ void scChampaMessageOpen(Sint32 speaker, Sint32 flg)
 {
-	fdMessageShowAtActor(speaker, flags);
+	fdMessageShowAtActor(speaker, flg);
 }
 
 /* Walking back south onto the plank bridge out of Champa (metatile (19, 42))
@@ -1779,7 +1779,7 @@ Uint32 SceneExits[] = {
 
 /* clang-format off */
 /* Champa's actors, in CHAMPA_ACTOR_ID's order. */
-ACTOR_PLACE Champa_ActorPlacements[] = {
+ACTOR_PLACE ChampaActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
 	ACTOR_PLACEMENT(SPRITE_RED_FLAG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 240, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1812,7 +1812,7 @@ ACTOR_PLACE Champa_ActorPlacements[] = {
 
 /* Champa's actors once Briggs has sailed from Alhafra: the sailors at the */
 /* mouth of his cave and Briggs too. */
-ACTOR_PLACE Champa_ActorPlacementsOnceBriggsSailed[] = {
+ACTOR_PLACE ChampaActorPlacementsOnceBriggsSailed[] = {
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
 	ACTOR_PLACEMENT(SPRITE_RED_FLAG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 240, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1847,12 +1847,12 @@ ACTOR_PLACE Champa_ActorPlacementsOnceBriggsSailed[] = {
 };
 
 /* A doorway with no door: nothing to open. */
-Uint16 Champa_NoDoor[] = {
+Uint16 ChampaNoDoor[] = {
 	MAPGRID_ANIMATION_STEPS_END,
 };
 
 /* The sanctum's door opening in two steps. */
-Uint16 Champa_SanctumDoorOpening[] = {
+Uint16 ChampaSanctumDoorOpening[] = {
 	MAPGRID_ANIMATION_STEP(36, 2, 2, 2, 6),
 	MAPGRID_ANIMATION_STEP(36, 4, 2, 2, 6),
 	MAPGRID_ANIMATION_STEPS_END,
@@ -1862,13 +1862,13 @@ Uint16 Champa_SanctumDoorOpening[] = {
 /* The doors' map edits for scChampaOpenDoorAndEnter, which does not play them:
    the sanctum's, then the others'. The sanctum's door opens through
    SANCTUM_DOOR_ANIMATION instead. */
-MAP_GRID_METATILE_ANIMATION Champa_Doors[] = {
-	{Champa_SanctumDoorOpening, 29, 9},
-	{Champa_NoDoor, 0, 0},
+MAP_GRID_METATILE_ANIMATION ChampaDoors[] = {
+	{ChampaSanctumDoorOpening, 29, 9},
+	{ChampaNoDoor, 0, 0},
 };
 
 /* Champa's exits, doors, talks, Mind Read and Psynergy. */
-CUE Champa_Cues[] = {
+CUE ChampaCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), CHAMPA_TO_CHAMPA_ROOMS_SOUTHWEST_A,
 		CONDITION_ALWAYS, SCRIPT_REF(scChampaEnterDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), CHAMPA_TO_CHAMPA_ROOMS_SOUTHWEST_B,
@@ -1956,7 +1956,7 @@ CUE Champa_Cues[] = {
 };
 
 /* Champa's cues once Briggs has sailed, the sailors' warning among them. */
-CUE Champa_CuesOnceBriggsSailed[] = {
+CUE ChampaCuesOnceBriggsSailed[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), CHAMPA_TO_CHAMPA_ROOMS_SOUTHWEST_A,
 		CONDITION_ALWAYS, SCRIPT_REF(scChampaEnterDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), CHAMPA_TO_CHAMPA_ROOMS_SOUTHWEST_B,
@@ -2046,6 +2046,6 @@ CUE Champa_CuesOnceBriggsSailed[] = {
 };
 
 /* A question mark's script: it is released when its wait runs out. */
-Uint32 Champa_QuestionMarkScript[] = {
+Uint32 ChampaQuestionMarkScript[] = {
 	SC_RELEASE,
 };

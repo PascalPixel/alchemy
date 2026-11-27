@@ -112,7 +112,7 @@ Sint32 mnDebugBrowserIcons(void)
 	Sint32	tile;
 	Sint32	page;
 	Sint32	kind;
-	WINDOW *window;
+	WINDOW *win;
 	Sint32	slot;
 	Sint32	base;
 	Sint32	i;
@@ -120,7 +120,7 @@ Sint32 mnDebugBrowserIcons(void)
 	Sint32	x;
 	Sint32	y;
 
-	window = NULL;
+	win = NULL;
 	page = 0;
 	kind = 0;
 	redraw = TRUE;
@@ -152,21 +152,21 @@ Sint32 mnDebugBrowserIcons(void)
 			redraw = FALSE;
 			page = (page + ICON_BROWSER_PAGES) % ICON_BROWSER_PAGES;
 			kind = (kind + ICON_BROWSER_KINDS) % ICON_BROWSER_KINDS;
-			mnWindowClose(window, 2);
-			window = mnWindowCreate(10, 0, 18, 12, WINDOW_FLAG_INSTANT);
+			mnWindowClose(win, 2);
+			win = mnWindowCreate(10, 0, 18, 12, WINDOW_FLAG_INSTANT);
 			if(kind == 0)
-				mnTextDrawStringInWindow(IconBrowser_ItemTitle, window, 0, 0);
+				mnTextDrawStringInWindow(IconBrowserItemTitle, win, 0, 0);
 			else if(kind == 1)
-				mnTextDrawStringInWindow(IconBrowser_EnergyTitle, window, 0, 0);
+				mnTextDrawStringInWindow(IconBrowserEnergyTitle, win, 0, 0);
 			else
-				mnTextDrawStringInWindow(IconBrowser_StatusTitle, window, 0, 0);
-			mnTextDrawStringInWindow(IconBrowser_PageLabel, window, 0, 8);
-			mnTextDrawNumInWindow(page, 0, window, 40, 8);
+				mnTextDrawStringInWindow(IconBrowserStatusTitle, win, 0, 0);
+			mnTextDrawStringInWindow(IconBrowserPageLabel, win, 0, 8);
+			mnTextDrawNumInWindow(page, 0, win, 40, 8);
 			base = page * ICON_BROWSER_PAGE_ICONS;
-			mnTextDrawNumInWindow(base, 3, window, 64, 8);
-			mnTextDrawStringInWindow(IconBrowser_RangeDash, window, 88, 8);
+			mnTextDrawNumInWindow(base, 3, win, 64, 8);
+			mnTextDrawStringInWindow(IconBrowserRangeDash, win, 88, 8);
 			mnTextDrawNumInWindow(
-				base + ICON_BROWSER_PAGE_ICONS - 1, 3, window, 96, 8);
+				base + ICON_BROWSER_PAGE_ICONS - 1, 3, win, 96, 8);
 			for(i = 0; i < ICON_BROWSER_PAGE_ICONS; i++) {
 				slot = -1;
 				row = i / ICON_BROWSER_ROW_ICONS;
@@ -175,28 +175,28 @@ Sint32 mnDebugBrowserIcons(void)
 				if(kind == 0) {
 					mnIconBuildItemIconTiles(base + i, 1, &slot, &tile, kind);
 					mnWindowSprCreate(
-						slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
+						slot, WINDOW_SPRITE_SIZE_16X16, win, x, y);
 				} else if(kind == 1) {
 					mnIconBuildAbilityIconTiles(base + i, 1, &slot, &tile, 0);
 					mnWindowSprCreate(
-						slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
+						slot, WINDOW_SPRITE_SIZE_16X16, win, x, y);
 				} else {
 					slot = syVRAMCacheFindFreeEntry();
 					mnIconBuildMiscIconTiles(i, 0, slot);
 					mnWindowSprCreate(
-						slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
+						slot, WINDOW_SPRITE_SIZE_16X16, win, x, y);
 				}
 			}
 		}
 		sySynch(1);
 	}
-	mnWindowClose(window, 2);
+	mnWindowClose(win, 2);
 	Ram_HeapSlots->actorSystem->suspended = 0;
 	return 0;
 }
 
 /* A debug browser of the portraits: left and right step through
-   Portrait_CharacterMap and then Portrait_SpriteMap, L and R by
+   PortraitCharacterMap and then PortraitSpriteMap, L and R by
    DEBUG_LARGE_STEP, each drawn with its number and its name from
    MsgNamesMasterPoi; A or B leaves. */
 Sint32 mnDebugBrowserPortraits(void)
@@ -204,10 +204,10 @@ Sint32 mnDebugBrowserPortraits(void)
 	WIN_STATE *state;
 	WINDOW	  *portrait;
 	Bool	   redraw;
-	WINDOW	  *window;
-	Sint32	   characterCount;
-	Sint32	   entryCount;
-	Sint32	   index;
+	WINDOW	  *win;
+	Sint32	   characterCnt;
+	Sint32	   entryCnt;
+	Sint32	   idx;
 	Sint32	   i;
 	Sint32	   glyph;
 	Sint32	   tile;
@@ -218,30 +218,30 @@ Sint32 mnDebugBrowserPortraits(void)
 	state = (WIN_STATE *)Ram_HeapSlots->winState;
 	redraw = TRUE;
 	portrait = mnPortraitOpenWindow(0, 0, 10, 5);
-	window = mnWindowCreate(10, 10, 14, 3, WINDOW_FLAG_INSTANT);
-	index = 0;
-	for(i = 0; Portrait_CharacterMap[i * 2] != -1; i++) {
+	win = mnWindowCreate(10, 10, 14, 3, WINDOW_FLAG_INSTANT);
+	idx = 0;
+	for(i = 0; PortraitCharacterMap[i * 2] != -1; i++) {
 	}
-	characterCount = i;
-	for(i = 0; Portrait_SpriteMap[i * 2] != -1; i++) {
+	characterCnt = i;
+	for(i = 0; PortraitSpriteMap[i * 2] != -1; i++) {
 	}
-	entryCount = characterCount + i;
+	entryCnt = characterCnt + i;
 	while(1) {
 		if(PerWork.repeat & KEY_LEFT) {
 			redraw = TRUE;
-			index--;
+			idx--;
 		}
 		if(PerWork.repeat & KEY_RIGHT) {
 			redraw = TRUE;
-			index++;
+			idx++;
 		}
 		if(PerWork.repeat & KEY_L) {
 			redraw = TRUE;
-			index -= DEBUG_LARGE_STEP;
+			idx -= DEBUG_LARGE_STEP;
 		}
 		if(PerWork.repeat & KEY_R) {
 			redraw = TRUE;
-			index += DEBUG_LARGE_STEP;
+			idx += DEBUG_LARGE_STEP;
 		}
 		if(PerWork.repeat & KEY_A)
 			break;
@@ -249,22 +249,22 @@ Sint32 mnDebugBrowserPortraits(void)
 			break;
 		if(redraw) {
 			redraw = FALSE;
-			index = (index + entryCount) % entryCount;
-			mnWindowSprPrepareForRedraw(window);
-			if(index < characterCount)
-				glyph = Portrait_CharacterMap[index * 2 + 1];
+			idx = (idx + entryCnt) % entryCnt;
+			mnWindowSprPrepareForRedraw(win);
+			if(idx < characterCnt)
+				glyph = PortraitCharacterMap[idx * 2 + 1];
 			else
-				glyph = Portrait_SpriteMap[(index - characterCount) * 2 + 1] +
+				glyph = PortraitSpriteMap[(idx - characterCnt) * 2 + 1] +
 					PORTRAIT_FIRST_SPRITE_PORTRAIT;
 			slot = state->portraitSprs[portraitSlot];
 			mnIconLoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
-			mnTextDrawNumInWindow(index, 2, window, 0, 0);
+			mnTextDrawNumInWindow(idx, 2, win, 0, 0);
 			mnTextDrawMessageAsTiles(
-				index + (Sint32)MsgNamesMasterPoi, window, 24, 0);
+				idx + (Sint32)MsgNamesMasterPoi, win, 24, 0);
 		}
 		sySynch(1);
 	}
-	mnWindowClose((WINDOW *)window, 2);
+	mnWindowClose((WINDOW *)win, 2);
 	mnWindowClose((WINDOW *)portrait, 2);
 	sySynch(1);
 	return 0;

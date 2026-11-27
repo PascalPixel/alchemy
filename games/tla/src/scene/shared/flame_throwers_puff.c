@@ -1,10 +1,10 @@
 /* The Mars Lighthouse flame throwers' puffs, which four of its rooms keep a
    copy of. */
 
-/* Each frame, every flame thrower in view sends its flame (forward, back, east
-   or west) or a spark, as its flags say, every ninth frame. They pause while a
+/* Each tick, every flame thrower in view sends its flame (forward, back, east
+   or west) or a spark, as its flags say, every ninth tick. They pause while a
    menu is open, or while a Psynergy is used unless scFlameThrowersSetMode keeps
-   them running; the first frame a flame meets a blocked stop calls the state's
+   them running; the first tick a flame meets a blocked stop calls the state's
    callback. */
 void scFlameThrowersPuff(void)
 {
@@ -30,7 +30,7 @@ void scFlameThrowersPuff(void)
 	state->blocked = 0;
 	for(i = 0; i < 4; i++, entry++) {
 		ACTOR *actor;
-		Sint32 flag, x, y, offScreen, value;
+		Sint32 flg, x, y, offScreen, value;
 		FIXED  dx, dz;
 		Uint8 *mark;
 
@@ -39,11 +39,11 @@ void scFlameThrowersPuff(void)
 		actor = entry->actor;
 		if(actor == 0)
 			continue;
-		flag = syGameFlagGet(FLAG_MENU_OPEN);
+		flg = syGameFlagGet(FLAG_MENU_OPEN);
 		if(field->psynergy != 0)
-			flag |= 1;
+			flg |= 1;
 		mark = &actor->paused;
-		*mark = flag;
+		*mark = flg;
 		if(state->runsDuringPsynergy != 0)
 			*mark = syGameFlagGet(FLAG_MENU_OPEN);
 		dx = actor->x.fixed - cameraX;
@@ -88,7 +88,7 @@ void scFlameThrowersPuff(void)
 					&entry->actor->x.fixed, entry->reach, offScreen);
 				break;
 			}
-			value = 8; /* the next in nine frames */
+			value = 8; /* the next in nine ticks */
 		} else {
 			value = y - 1;
 		}

@@ -25,7 +25,7 @@ three windows open in place of the usual menus when extra buttons are held:
 - The **palette editor** changes the colours on screen.
 
 Debug mode also changes the game itself: walk through walls, skip through a
-cutscene, freeze the game and step it a frame at a time, win a battle with
+cutscene, freeze the game and step it a tick at a time, win a battle with
 one button. Each is a small test of the switch at the place it applies, and
 searching the source for `DebugMode` is a quick tour of where things
 happen. The main routine has four debug starts of its own, described in

@@ -77,10 +77,10 @@ Sint32 fdModeRun(Sint32 entrance)
 	fdPlaceTreasureSpots();
 	fdPaletteFadeInit();
 	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, 0);
-	/* The default fade is from the backdrop colour over 16 frames; the scene's
+	/* The default fade is from the backdrop colour over 16 ticks; the scene's
 	   initialization may choose another. */
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	state->transitionFrm = MAP_TRANSITION_FRAMES;
+	state->transitionFrm = MAP_TRANSITION_TICKS;
 	state->transitionActive = 0;
 	/* fdUpdateWalking scales the leader's speed by this (16.16) into the
 	   distance counted towards PP, Djinn recovery and poison: toFIXED(1) / 160
@@ -339,7 +339,7 @@ Sint32 fdModeRun(Sint32 entrance)
 						if(gmFlagGetStub(FLAG_IN_BATTLE_ARENA) == 0) {
 							/* With fewer than PAUSE_MENU_VRAM_BLOCKS of the
 							   sprite VRAM blocks free, sprite drawing stays
-							   suspended while the menu runs, and a frame passes
+							   suspended while the menu runs, and a tick passes
 							   so that the field's sprites give their VRAM back
 							   before it opens. */
 							ACTOR_SYSTEM_STATE *system = ActorSystemStateWork;
@@ -416,7 +416,7 @@ Sint32 fdActorGetCueMetatileAheadOfCurrent(void)
 	FIELD_STATE			  *state;
 	MAP_GRID_SCROLL_STATE *grid;
 	ACTOR				  *leader;
-	POLAR_OFFSET_POS	   probePosition;
+	POLAR_OFFSET_POS	   probePos;
 	Uint8				  *metatile;
 	Sint32				   behavior;
 	Sint32				   groundHeight;
@@ -427,26 +427,25 @@ Sint32 fdActorGetCueMetatileAheadOfCurrent(void)
 	state = FieldStateWork;
 	grid = MapGridState[0];
 	if(leader != 0) {
-		probePosition.vector.x = leader->x.fixed;
-		probePosition.vector.y = leader->y.fixed;
-		probePosition.vector.z = leader->z.fixed;
+		probePos.vector.x = leader->x.fixed;
+		probePos.vector.y = leader->y.fixed;
+		probePos.vector.z = leader->z.fixed;
 		syVectorAddPolarOffset(
-			toFIXED(16), leader->facing, probePosition.coordinates);
+			toFIXED(16), leader->facing, probePos.coordinates);
 		/* World Map metatile tiles are 32 pixels square, 32 to a row; map
 		   metatiles 16 pixels square, 128 to a row, four bytes each. */
 		if(state->mode == ACTOR_SYSTEM_WORLD_MAP) {
 			metatile = Ram_MetatileTiles +
-				((((probePosition.vector.x / toFIXED(32)) & 31) +
-					 (((probePosition.vector.z / toFIXED(32)) & 31) << 5))
+				((((probePos.vector.x / toFIXED(32)) & 31) +
+					 (((probePos.vector.z / toFIXED(32)) & 31) << 5))
 					<< 2);
 		} else {
 			Uint8 *metatiles =
 				(Uint8 *)grid->layers[MAPGRID_LAYER_GROUND].metatiles;
 
 			metatile = metatiles +
-				(((probePosition.vector.x / toFIXED(MAPGRID_METATILE_PIXELS)) +
-					 ((probePosition.vector.z /
-						  toFIXED(MAPGRID_METATILE_PIXELS)) *
+				(((probePos.vector.x / toFIXED(MAPGRID_METATILE_PIXELS)) +
+					 ((probePos.vector.z / toFIXED(MAPGRID_METATILE_PIXELS)) *
 						 MAPGRID_SIZE))
 					<< 2);
 		}
@@ -454,7 +453,7 @@ Sint32 fdActorGetCueMetatileAheadOfCurrent(void)
 		if(behavior >= METATILE_BEHAVIOR_JAR &&
 			behavior <= METATILE_BEHAVIOR_WELL) {
 			groundHeight = fdMapGridGetTerrainHeightStub(
-				leader->layer, probePosition.vector.x, probePosition.vector.z);
+				leader->layer, probePos.vector.x, probePos.vector.z);
 			if(groundHeight >= leader->y.fixed &&
 				groundHeight <= leader->y.fixed + toFIXED(64)) {
 				result = behavior;

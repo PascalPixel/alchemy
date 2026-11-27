@@ -1,30 +1,30 @@
 /* The Thor summon. Part of battle_effect.c. */
 
-#define THOR_OPENING_FRAMES 170 /* frames of the ring, triangle and beam */
-#define THOR_STORM_FRAMES	192 /* frames of the pillar, Thor and his bolts */
+#define THOR_OPENING_TICKS 170 /* ticks of the ring, triangle and beam */
+#define THOR_STORM_TICKS   192 /* ticks of the pillar, Thor and his bolts */
 /* The opening's beam of light, and the storm's bolts. */
-#define THOR_BEAM_FRAME		151
-#define THOR_BOLTS_FRAME	80
-/* The ring tips flat and sinks into the sky after THOR_SINK_FRAME. */
-#define THOR_SINK_FRAME		128
-/* Thor appears over the targets at THOR_APPEAR_FRAME of the storm and is pushed
-   back from THOR_PUSH_FRAME; the damage shows at THOR_DAMAGE_FRAME. */
-#define THOR_APPEAR_FRAME	16
-#define THOR_PUSH_FRAME		32
-#define THOR_DAMAGE_FRAME	140
+#define THOR_BEAM_TICK	   151
+#define THOR_BOLTS_TICK	   80
+/* The ring tips flat and sinks into the sky after THOR_SINK_TICK. */
+#define THOR_SINK_TICK	   128
+/* Thor appears over the targets at THOR_APPEAR_TICK of the storm and is pushed
+   back from THOR_PUSH_TICK; the damage shows at THOR_DAMAGE_TICK. */
+#define THOR_APPEAR_TICK   16
+#define THOR_PUSH_TICK	   32
+#define THOR_DAMAGE_TICK   140
 
 /* The sparks, from the first word after the glint pictures that draw the
    crackles of lightning. */
 #define THOR_PARTICLES \
 	((PARTICLE *)(Ram_MapGridMetatileBuffer + ((GLINT_SET_BYTES + 3) & ~3)))
-#define THOR_SPARK_COUNT		 910
+#define THOR_SPARK_COUNT		910
 /* The sparks the pillar of lightning throws up from its foot, each bolt throws
-   out, and the glow at Thor's hammer sheds each frame; a spark's mote shrinks a
-   size for each THOR_SPARK_SHRINK_FRAMES of its life it loses. */
-#define THOR_PILLAR_SPARKS		 512
-#define THOR_BOLT_SPARKS		 16
-#define THOR_HAMMER_GLOW_SPARKS	 4
-#define THOR_SPARK_SHRINK_FRAMES 16
+   out, and the glow at Thor's hammer sheds each tick; a spark's mote shrinks a
+   size for each THOR_SPARK_SHRINK_TICKS of its life it loses. */
+#define THOR_PILLAR_SPARKS		512
+#define THOR_BOLT_SPARKS		16
+#define THOR_HAMMER_GLOW_SPARKS 4
+#define THOR_SPARK_SHRINK_TICKS 16
 
 /* The particle sprites, after the light fan pictures. */
 #define THOR_SPRITE_PICTURES 6144
@@ -57,35 +57,35 @@
 
 /* The ring of motes, and the three lines across it, between the points of
    lineEnds, measured from the corner of the ring's square. Each line draws four
-   motes a frame from THOR_LINES_FRAME, the next starting when one is whole. */
+   motes a tick from THOR_LINES_TICK, the next starting when one is whole. */
 #define THOR_RING_RADIUS 96
 #define THOR_RING_MOTES	 128
 #define THOR_LINE_MOTES	 48
-#define THOR_LINES_FRAME 64
+#define THOR_LINES_TICK	 64
 
-/* The level the canvas is left at the frame before the beam falls: the sky
+/* The level the canvas is left at the tick before the beam falls: the sky
    floods with light. */
 #define THOR_BEAM_FLASH_LEVEL 26
 
 /* The beam of light: a ramp of levels THOR_BEAM_WIDTH wide, brightest in its
    middle, down from THOR_BEAM_TOP, its tip narrowing a pixel each side a row
-   over THOR_BEAM_TIP_ROWS rows, and THOR_BEAM_SPEED rows longer each frame; it
-   narrows a pixel each side a frame after its first. */
-#define THOR_BEAM_WIDTH		 32
-#define THOR_BEAM_X			 ((CANVAS_SIZE - THOR_BEAM_WIDTH) / 2)
-#define THOR_BEAM_TOP		 16
-#define THOR_BEAM_TIP_ROWS	 9
-#define THOR_BEAM_SPEED		 20
-#define THOR_BEAM_LAST_FRAME (THOR_BEAM_FRAME + 16)
+   over THOR_BEAM_TIP_ROWS rows, and THOR_BEAM_SPEED rows longer each tick; it
+   narrows a pixel each side a tick after its first. */
+#define THOR_BEAM_WIDTH		32
+#define THOR_BEAM_X			((CANVAS_SIZE - THOR_BEAM_WIDTH) / 2)
+#define THOR_BEAM_TOP		16
+#define THOR_BEAM_TIP_ROWS	9
+#define THOR_BEAM_SPEED		20
+#define THOR_BEAM_LAST_TICK (THOR_BEAM_TICK + 16)
 
 /* A dead loop's step between pillars of lightning, of which Thor strikes one,
-   THOR_PILLAR_FRAME frames into the storm. */
+   THOR_PILLAR_TICK ticks into the storm. */
 #define THOR_PILLAR_INTERVAL 128
-#define THOR_PILLAR_FRAME	 8
+#define THOR_PILLAR_TICK	 8
 
 #define THOR_BOLTS \
-	30 /* violet bolts, one each 2 frames from THOR_BOLTS_FRAME */
-#define THOR_FLASHES		  6 /* the canvas flashes, one each 8 frames from then */
+	30 /* violet bolts, one each 2 ticks on from THOR_BOLTS_TICK */
+#define THOR_FLASHES		  6 /* the canvas flashes, one each 8 ticks from then */
 /* The level each flash fills the canvas to. */
 #define THOR_BOLT_FLASH_LEVEL 16
 
@@ -139,20 +139,20 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 	Uint8					 ramp[THOR_BEAM_WIDTH];
 	FIXED					 point[3];
 	SCREEN_POINT			 screen[11];
-	Sint32					 position[3];
+	Sint32					 pos[3];
 	Sint32					 scale[3];
 	BATTLE_BACKGROUND_STATE *view;
 	BATTLE_EFFECT_STATE		*state;
 	void					*canvas;
 	Uint8					*motes;
-	Sint32					 frame;
+	Sint32					 frm;
 	/* LEFTOVER(frame): blit[1], the idle half of the pair. */
 	BLITTER_PAIR blit;
 	Sint32		 size;
-	Sint32		 count;
+	Sint32		 cnt;
 	Sint32		 i;
 	Sint32		 j;
-	Sint32		 moteCount;
+	Sint32		 moteCnt;
 	PARTICLE	*spark;
 
 	view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
@@ -169,16 +169,16 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
 
 	{
-		Sint32 offset;
-		for(i = 0, offset = 0; i != DIMMED_COPIES; i++) {
+		Sint32 ofs;
+		for(i = 0, ofs = 0; i != DIMMED_COPIES; i++) {
 			Uint8 *src;
 			for(j = 0, src = motes; j != MOTE_SET_BYTES; j++) {
 				Sint32 v = *src++;
 
 				EFFECT_CAP_LEVEL(v, DIMMED_COPY_CAP(i));
-				(state->sheet + THOR_DIMMED_MOTES)[offset + j] = v;
+				(state->sheet + THOR_DIMMED_MOTES)[ofs + j] = v;
 			}
-			offset += j;
+			ofs += j;
 		}
 	}
 
@@ -223,16 +223,16 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 		BGCNT_SCREEN_BASE(7);
 
 	/* First part (A or B skips it): the ring, the triangle and the beam. */
-	for(frame = 0; frame != THOR_OPENING_FRAMES; frame++) {
+	for(frm = 0; frm != THOR_OPENING_TICKS; frm++) {
 		size = 2;
-		count = frame * 2;
-		if(frame == 16) {
+		cnt = frm * 2;
+		if(frm == 16) {
 			sySndPlayStub(SE_SPIN);
 		}
-		if(frame == 132) {
+		if(frm == 132) {
 			sySndPlayStub(SE_PSYNERGY_SPARKLE);
 		}
-		if(frame == THOR_BEAM_FRAME) {
+		if(frm == THOR_BEAM_TICK) {
 			sySndPlayStub(SE_CRASH);
 		}
 		if(PerRepeat & (KEY_A | KEY_B)) {
@@ -240,8 +240,8 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 		}
 		/* The colours cycle through the hues. */
 		btEffectUpdatePhasePalette(
-			frame * 2, TRIG_TURN - DEGtoANG(120), DEGtoANG(120), 0);
-		if(frame == THOR_BEAM_FRAME - 1) {
+			frm * 2, TRIG_TURN - DEGtoANG(120), DEGtoANG(120), 0);
+		if(frm == THOR_BEAM_TICK - 1) {
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR,
 				CANVAS_FILL_WORD(THOR_BEAM_FLASH_LEVEL));
 		} else {
@@ -251,42 +251,41 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 		sySetScreenDist(BATTLE_CAMERA_DISTANCE,
 			syDivFX(BATTLE_CAMERA_DISTANCE, toFIXED(3) / 4), toFIXED(32767));
 		syInitMatrix();
-		if(frame > THOR_SINK_FRAME) {
-			Sint32 sinkFrame = frame - THOR_SINK_FRAME;
-			if(sinkFrame > 22) {
-				sinkFrame = 20;
+		if(frm > THOR_SINK_TICK) {
+			Sint32 sinkFrm = frm - THOR_SINK_TICK;
+			if(sinkFrm > 22) {
+				sinkFrm = 20;
 			}
-			SET_VECTOR(position, 0, -sinkFrame * toFIXED(2), toFIXED(512));
-			size = (sinkFrame >> 2) + 2;
+			SET_VECTOR(pos, 0, -sinkFrm * toFIXED(2), toFIXED(512));
+			size = (sinkFrm >> 2) + 2;
 			if(size > 8) {
 				size = 8;
 			}
-			syMatrixTranslateVector(position);
+			syMatrixTranslateVector(pos);
 			syRotX(-TRIG_TURN / 16);
 			syRotZ(DEGtoANG(180));
 			syRotX(DEGtoANG(180));
-			syRotY(sinkFrame * (TRIG_TURN / 16));
+			syRotY(sinkFrm * (TRIG_TURN / 16));
 			/* As the beam falls the ring swells, 3/32 of its size larger a
-			   frame. */
-			if(frame > 150) {
-				SET_VECTOR(scale, frame * 6144 - 889856, scale[0], scale[0]);
+			   tick. */
+			if(frm > 150) {
+				SET_VECTOR(scale, frm * 6144 - 889856, scale[0], scale[0]);
 				size = 5;
 			} else {
-				SET_VECTOR(scale,
-					toFIXED(1) - sinkFrame * 3 * (toFIXED(1) / 64), scale[0],
-					scale[0]);
+				SET_VECTOR(scale, toFIXED(1) - sinkFrm * 3 * (toFIXED(1) / 64),
+					scale[0], scale[0]);
 			}
 			syMatrixScaleVector(scale);
 		} else {
-			SET_VECTOR(position, 0, 0, toFIXED(256));
-			syMatrixTranslateVector(position);
+			SET_VECTOR(pos, 0, 0, toFIXED(256));
+			syMatrixTranslateVector(pos);
 			syRotX(-TRIG_TURN / 16);
-			syRotZ(frame * (TRIG_TURN / 256));
-			syRotX(frame * (TRIG_TURN / 256));
+			syRotZ(frm * (TRIG_TURN / 256));
+			syRotX(frm * (TRIG_TURN / 256));
 		}
 
 		/* The three lines, drawn mote by mote from end to end. */
-		if(frame <= 149) {
+		if(frm <= 149) {
 			for(i = 0; i != 6; i++) {
 				SET_VECTOR(point, INTtoFIXED(lineEnds[i][0] - THOR_RING_RADIUS),
 					0, INTtoFIXED(lineEnds[i][1] - THOR_RING_RADIUS));
@@ -296,13 +295,12 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 				screen[i].y = FIXEDtoINT(screen[i].y) + THOR_CANVAS_CENTER_Y;
 			}
 			for(i = 0; i != 3; i++) {
-				moteCount =
-					count * 2 - i * THOR_LINE_MOTES - THOR_LINES_FRAME * 4;
-				if(moteCount > THOR_LINE_MOTES) {
-					moteCount = THOR_LINE_MOTES;
+				moteCnt = cnt * 2 - i * THOR_LINE_MOTES - THOR_LINES_TICK * 4;
+				if(moteCnt > THOR_LINE_MOTES) {
+					moteCnt = THOR_LINE_MOTES;
 				}
-				if(moteCount >= 0) {
-					for(j = 0; j != moteCount; j++) {
+				if(moteCnt >= 0) {
+					for(j = 0; j != moteCnt; j++) {
 						Sint32 x = screen[i * 2].x +
 							syMulFX(j * (screen[i * 2 + 1].x - screen[i * 2].x),
 								toFIXED(1) / THOR_LINE_MOTES);
@@ -315,19 +313,19 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		/* The ring of motes, two more each frame, darkening once the beam has
+		/* The ring of motes, two more each tick, darkening once the beam has
 		   fallen. */
-		if(frame <= 179) {
+		if(frm <= 179) {
 			DRAW_RECTANGLE drawAlt;
 			Sint32		   level = 0;
 
-			if(frame > 155) {
-				level = frame - 156;
+			if(frm > 155) {
+				level = frm - 156;
 			}
 			if(level > DIMMED_COPIES - 1) {
 				level = DIMMED_COPIES - 1;
 			}
-			if(frame <= 139) {
+			if(frm <= 139) {
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 					EFFECT_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
 				drawAlt = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED];
@@ -336,11 +334,11 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 					EFFECT_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
 				drawAlt = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED];
 			}
-			moteCount = count;
-			if(moteCount > THOR_RING_MOTES) {
-				moteCount = THOR_RING_MOTES;
+			moteCnt = cnt;
+			if(moteCnt > THOR_RING_MOTES) {
+				moteCnt = THOR_RING_MOTES;
 			}
-			for(i = 0; i != moteCount; i++) {
+			for(i = 0; i != moteCnt; i++) {
 				Sint32 moteSize = size + 1;
 				point[0] =
 					sySin(i * (TRIG_TURN / THOR_RING_MOTES)) * THOR_RING_RADIUS;
@@ -353,7 +351,7 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 				drawAlt(canvas,
 					state->sheet +
 						(level * MOTE_SET_BYTES +
-							BattleEffect_MotePictures[moteSize - 1]) +
+							BattleEffectMotePictures[moteSize - 1]) +
 						THOR_DIMMED_MOTES,
 					screen[0].x - moteSize / 2, screen[0].y - moteSize,
 					moteSize, moteSize * 2);
@@ -362,12 +360,11 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The beam, and the light fan falling down it. */
-		if(frame >= THOR_BEAM_FRAME && frame <= THOR_BEAM_LAST_FRAME) {
+		if(frm >= THOR_BEAM_TICK && frm <= THOR_BEAM_LAST_TICK) {
 			Sint32 inset = 0;
-			Sint32 beamHeight =
-				(frame - THOR_BEAM_FRAME) * THOR_BEAM_SPEED + 44;
-			if(frame > THOR_BEAM_FRAME) {
-				inset = frame - THOR_BEAM_FRAME - 1;
+			Sint32 beamHeight = (frm - THOR_BEAM_TICK) * THOR_BEAM_SPEED + 44;
+			if(frm > THOR_BEAM_TICK) {
+				inset = frm - THOR_BEAM_TICK - 1;
 			}
 			if(inset > THOR_BEAM_WIDTH / 2 - 1) {
 				inset = THOR_BEAM_WIDTH / 2 - 1;
@@ -392,14 +389,13 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 				COMPOSITE_LIGHTEN);
 			EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas, state->sheet,
 				CANVAS_SIZE / 2 - THOR_LIGHT_FAN_WIDTH,
-				(frame - THOR_BEAM_FRAME) * THOR_BEAM_SPEED - 12,
+				(frm - THOR_BEAM_TICK) * THOR_BEAM_SPEED - 12,
 				THOR_LIGHT_FAN_WIDTH, THOR_LIGHT_FAN_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
 			EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas, state->sheet,
-				CANVAS_SIZE / 2,
-				(frame - THOR_BEAM_FRAME) * THOR_BEAM_SPEED - 12,
+				CANVAS_SIZE / 2, (frm - THOR_BEAM_TICK) * THOR_BEAM_SPEED - 12,
 				THOR_LIGHT_FAN_WIDTH, THOR_LIGHT_FAN_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 		}
@@ -452,17 +448,17 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 		EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 		sySndPlayStub(SE_CRASH);
 
-		for(frame = 0; frame != THOR_STORM_FRAMES; frame++) {
-			Sint32 stormFrame;
-			if(frame == 20) {
+		for(frm = 0; frm != THOR_STORM_TICKS; frm++) {
+			Sint32 stormFrm;
+			if(frm == 20) {
 				btResourceLoadAndDecompress(
 					RESOURCE_VIOLET_LIGHTNING_SHEET_B, state->sheet, 1, 0);
 			}
-			stormFrame = frame - THOR_BOLTS_FRAME;
-			if(stormFrame >= 0 && stormFrame <= 59 && !(frame & 7)) {
+			stormFrm = frm - THOR_BOLTS_TICK;
+			if(stormFrm >= 0 && stormFrm <= 59 && !(frm & 7)) {
 				sySndPlayStub(SE_HEAVY_IMPACT);
 			}
-			if(frame == THOR_DAMAGE_FRAME) {
+			if(frm == THOR_DAMAGE_TICK) {
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			}
 			/* The pillar of lightning, throwing sparks up from its foot. */
@@ -470,18 +466,18 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 			   counter, the step of start by THOR_PILLAR_INTERVAL and its exit
 			   test. */
 			for(j = 0; j != 1; j++) {
-				Sint32 start = j * THOR_PILLAR_INTERVAL + THOR_PILLAR_FRAME;
-				if(frame >= start && frame < start + 9) {
-					if(frame >= start + 1 && frame < start + 4) {
+				Sint32 start = j * THOR_PILLAR_INTERVAL + THOR_PILLAR_TICK;
+				if(frm >= start && frm < start + 9) {
+					if(frm >= start + 1 && frm < start + 4) {
 						blit[0](canvas, state->sheet, 36, 0,
 							LIGHTNING_PILLAR_WIDTH, pillarY);
 					}
-					if(frame >= start + 4 && frame < start + 8) {
+					if(frm >= start + 4 && frm < start + 8) {
 						blit[0](canvas,
 							state->sheet + PICTURE_BYTES(LIGHTNING_PILLAR), 36,
 							0, LIGHTNING_PILLAR_WIDTH, LIGHTNING_PILLAR_HEIGHT);
 					}
-					if(frame == start + 2) {
+					if(frm == start + 2) {
 						THOR_LAUNCH_SPARKS(spark, i, toFIXED(pillarX),
 							toFIXED(pillarY),
 							(syRandom() & 0x7fff) - DEGtoANG(90),
@@ -490,7 +486,7 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 					}
 				}
 			}
-			if(frame == 10) {
+			if(frm == 10) {
 				EFFECT_FOR_EACH_TARGET(i, state->args) {
 					btEffectTintBattler(state->args->tgts[i],
 						SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 8);
@@ -498,19 +494,19 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 						state->args->tgts[i], KNOCKBACK_HURL);
 				}
 			}
-			if(stormFrame >= 0 && stormFrame <= 63) {
+			if(stormFrm >= 0 && stormFrm <= 63) {
 				Sint32 glowX;
 				Sint32 glowY;
 				Sint32 mirrorX;
 				for(i = 0; i != THOR_FLASHES; i++) {
-					if(frame == i * 8 + THOR_BOLTS_FRAME) {
+					if(frm == i * 8 + THOR_BOLTS_TICK) {
 						syWordsFill(canvas, CANVAS_BYTES,
 							CANVAS_FILL_WORD(THOR_BOLT_FLASH_LEVEL));
 					}
 				}
 				for(i = 0; i != THOR_BOLTS; i++) {
-					if(frame >= i * 2 + THOR_BOLTS_FRAME) {
-						if(frame < i * 2 + THOR_BOLTS_FRAME + 2) {
+					if(frm >= i * 2 + THOR_BOLTS_TICK) {
+						if(frm < i * 2 + THOR_BOLTS_TICK + 2) {
 							Sint32 boltX = (syRandom() & 3) - 3;
 							Sint32 boltY = (syRandom() & 3) + 32;
 							EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
@@ -521,14 +517,14 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 								THOR_BOLT_HEIGHT);
 							syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 						}
-						if(frame == i * 2 + THOR_BOLTS_FRAME) {
+						if(frm == i * 2 + THOR_BOLTS_TICK) {
 							THOR_LAUNCH_SPARKS(spark, j, toFIXED(16),
 								toFIXED(80), syRandom() & TRIG_ANGLE_MASK,
 								THOR_BOLT_SPARKS);
 							state->shakeFrm = 8;
 							EFFECT_FOR_EACH_TARGET(j, state->args) {
 								btEffectTintBattler(state->args->tgts[j],
-									Thor_TargetPalettes[syRandom() & 3],
+									ThorTargetPalettes[syRandom() & 3],
 									POSE_DAMAGE, j, 4);
 								btMotionApplyKnockbackStub(
 									state->args->tgts[j], KNOCKBACK_HURL);
@@ -609,7 +605,7 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 							Sint32 x = FIXEDtoINT(spark->x);
 							Sint32 y = FIXEDtoINT(spark->y);
 							Sint32 moteSize =
-								spark->variant / THOR_SPARK_SHRINK_FRAMES + 1;
+								spark->variant / THOR_SPARK_SHRINK_TICKS + 1;
 							EFFECT_DRAW_MOTE(
 								draw, canvas, motes, x, y, moteSize);
 						}
@@ -619,12 +615,12 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 
 			/* Thor stands over the targets, then is pushed back. */
-			if(frame >= THOR_APPEAR_FRAME) {
-				if(frame == THOR_PUSH_FRAME) {
+			if(frm >= THOR_APPEAR_TICK) {
+				if(frm == THOR_PUSH_TICK) {
 					thorSpeedX = toFIXED(4);
 					thorSpeedY = -toFIXED(1) / 4;
 				}
-				if(frame >= THOR_PUSH_FRAME) {
+				if(frm >= THOR_PUSH_TICK) {
 					thorX += thorSpeedX;
 					thorY += thorSpeedY;
 					thorSpeedX = thorSpeedX * 60 / DAMPING_SCALE;
@@ -632,7 +628,7 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 				}
 				btEffectPlaceFormationSprs(SUMMON_FORMATION_THOR, thorX, thorY);
 			}
-			if(frame >= THOR_APPEAR_FRAME && frame <= 143) {
+			if(frm >= THOR_APPEAR_TICK && frm <= 143) {
 				Sint32 thorScreenX;
 				for(i = 0, thorScreenX = FIXEDtoINT(thorX) >> 1; i != 3; i++) {
 					Sint32 glint = i & 3;
@@ -640,27 +636,27 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 					Sint32 x =
 						FIXEDtoINT(sySin(angle) * THOR_CRACKLE_RADIUS_X) +
 						thorScreenX -
-						(BattleEffect_GlintPictureWidths[glint] >> 1);
+						(BattleEffectGlintPictureWidths[glint] >> 1);
 					Sint32 y =
 						FIXEDtoINT(syCos(angle) * THOR_CRACKLE_RADIUS_Y) -
-						(BattleEffect_GlintPictureHeights[glint] >> 1);
+						(BattleEffectGlintPictureHeights[glint] >> 1);
 					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-						EFFECT_CLIP_BOUNDS | Thor_CrackleFlips[syRandom() & 3],
+						EFFECT_CLIP_BOUNDS | ThorCrackleFlips[syRandom() & 3],
 						COMPOSITE_LIGHTEN);
 					EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas,
 						Ram_MapGridMetatileBuffer +
-							BattleEffect_GlintPictures[glint],
-						x, y + 56, BattleEffect_GlintPictureWidths[glint],
-						BattleEffect_GlintPictureHeights[glint]);
+							BattleEffectGlintPictures[glint],
+						x, y + 56, BattleEffectGlintPictureWidths[glint],
+						BattleEffectGlintPictureHeights[glint]);
 					syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 				}
 			}
-			if(frame < THOR_PUSH_FRAME) {
+			if(frm < THOR_PUSH_TICK) {
 				btCameraShake(8, 16);
 			} else {
 				btCameraShake(4, 4);
 			}
-			EFFECT_END_FRAME(state);
+			EFFECT_END_TICK(state);
 		}
 
 		syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
@@ -680,7 +676,7 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 #undef THOR_SPRITE_PICTURES
 #undef THOR_BEAM_FLASH_LEVEL
 #undef THOR_BOLT_FLASH_LEVEL
-#undef THOR_SINK_FRAME
-#undef THOR_APPEAR_FRAME
-#undef THOR_PUSH_FRAME
-#undef THOR_DAMAGE_FRAME
+#undef THOR_SINK_TICK
+#undef THOR_APPEAR_TICK
+#undef THOR_PUSH_TICK
+#undef THOR_DAMAGE_TICK

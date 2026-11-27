@@ -13,31 +13,31 @@
 Sint32 mnBattleClassifyEntryKind(const ABILITY_DEFINITION *act)
 {
 	Sint32 abilityKind;
-	Sint32 targetKind;
+	Sint32 tgtKind;
 
-	targetKind = TARGET_HINT_NONE;
+	tgtKind = TARGET_HINT_NONE;
 	abilityKind = act->flg & ABILITY_FORMULA_MASK;
 	if(abilityKind == ABILITY_FORMULA_HEAL_HP)
-		targetKind = TARGET_HINT_HP;
+		tgtKind = TARGET_HINT_HP;
 	if(abilityKind == ABILITY_FORMULA_HEAL_PP)
-		targetKind = TARGET_HINT_PP;
+		tgtKind = TARGET_HINT_PP;
 	if(act->eff == ABILITY_EFFECT_CURE_POISON)
-		targetKind = TARGET_HINT_CURE_POISON;
+		tgtKind = TARGET_HINT_CURE_POISON;
 	if(act->eff == ABILITY_EFFECT_RESTORE)
-		targetKind = TARGET_HINT_RESTORE;
+		tgtKind = TARGET_HINT_RESTORE;
 	if(act->eff == ABILITY_EFFECT_CURE_ALL)
-		targetKind = TARGET_HINT_CURE_ALL;
+		tgtKind = TARGET_HINT_CURE_ALL;
 	if(gmBattleIsReviveEffectStub(act->eff) != 0)
-		targetKind = TARGET_HINT_REVIVE;
-	return targetKind;
+		tgtKind = TARGET_HINT_REVIVE;
+	return tgtKind;
 }
 
 /* Collects the party's commands for a turn into `commands`, one for each of the
-   `commandCount` units in `actors` (a party member with two actions is listed
-   twice), and returns how many it wrote: commandCount, 1 when the party flees
+   `commandCnt` units in `actors` (a party member with two actions is listed
+   twice), and returns how many it wrote: commandCnt, 1 when the party flees
    (COMMAND_FLEE for the first actor), or -1 when the link fails. */
 Sint32 mnBattleCollectPartyCommands(
-	BATTLE_ACTION *commands, Uint16 *actors, Sint32 commandCount)
+	BATTLE_ACTION *commands, Uint16 *actors, Sint32 commandCnt)
 {
 	BATTLE_MENU_STATE *state;
 	/* Default: each local given NULL or 0 here is set for real before it is
@@ -49,19 +49,19 @@ Sint32 mnBattleCollectPartyCommands(
 	BATTLE_ACTION *command = NULL;
 	UNIT		  *unit = NULL;
 	WINDOW		  *commandWindow = NULL;
-	MENU_SPR	  *iconSprite = NULL;
+	MENU_SPR	  *iconSpr = NULL;
 	Uint16		   memberList[2];
-	Sint32		   target;
+	Sint32		   tgt;
 	Sint32		   unitId;
 	Sint32		   mode = 0;
 	Sint32		   commandKind;
 	Sint32		   parameter;
 	Sint32		   largeIconSlot;
 	Sint32		   smallIconSlot;
-	Sint32		   missedLinkFrames = 0;
-	Sint32		   commandIndex = 0;
+	Sint32		   missedLinkTicks = 0;
+	Sint32		   commandIdx = 0;
 	Sint32		   k = 0;
-	Sint32		   priority;
+	Sint32		   pri;
 
 	/* An empty ID list clears every party panel's highlight and marks no unit
 	   before the next actor is chosen. */
@@ -78,7 +78,7 @@ Sint32 mnBattleCollectPartyCommands(
 	   the lists' page numbers (PAGE_DIGITS_TILE), page arrows
 	   (LIST_PAGE_ARROW_VRAM) and range icons (RANGE_ICON_FIRST_TILE), and no
 	   Djinni chosen yet (BATTLE_MENU_NO_DJINNI). */
-	target = PLACE_PARTY;
+	tgt = PLACE_PARTY;
 	commandKind = 0;
 	parameter = 0;
 	largeIconSlot = syVRAMCacheAllocEntry(COMMAND_ICON_BYTES);
@@ -116,24 +116,24 @@ Sint32 mnBattleCollectPartyCommands(
 		transferWords[5] = 'S';
 		transferWords[6] = 'S';
 		transferWords[7] = 'T';
-		missedLinkFrames = 0;
+		missedLinkTicks = 0;
 		for(;;) {
 			peerSignature =
 				(Uint16 *)SerialPeerPayloads[battle->linkSide ^ 1].payload;
 			if(battle->linkPaused != 0) {
-				commandCount = -1;
+				commandCnt = -1;
 				state->linkTmr = 0;
 				break;
 			}
 			if((LinkStatusWork & LINK_STATUS_HEARD_BOTH) !=
 				LINK_STATUS_HEARD_BOTH) {
-				if(++missedLinkFrames > LINK_MAX_MISSED_FRAMES) {
-					commandCount = -1;
+				if(++missedLinkTicks > LINK_MAX_MISSED_TICKS) {
+					commandCnt = -1;
 					state->linkTmr = 0;
 					break;
 				}
 			} else {
-				missedLinkFrames = 0;
+				missedLinkTicks = 0;
 				if(peerSignature[4] == 'V' && peerSignature[5] == 'S' &&
 					peerSignature[6] == 'S' && peerSignature[7] == 'T') {
 					break;
@@ -144,7 +144,7 @@ Sint32 mnBattleCollectPartyCommands(
 				}
 				if(!(peerSignature[0] == 'E' && peerSignature[1] == 'X' &&
 					   peerSignature[2] == 'E' && peerSignature[3] == 'C')) {
-					commandCount = -1;
+					commandCnt = -1;
 					state->linkTmr = 0;
 					break;
 				}
@@ -152,7 +152,7 @@ Sint32 mnBattleCollectPartyCommands(
 			sySynch(1);
 		}
 	}
-	sySetEvent(mnBattleMenuUpdate, EVENT_PASS_FRAME);
+	sySetEvent(mnBattleMenuUpdate, EVENT_PASS_TICK);
 
 	while(1) {
 		mnPartyStatClearHighlights();
@@ -165,7 +165,7 @@ Sint32 mnBattleCollectPartyCommands(
 		}
 		/* The party's row; with no party member to choose, as if Fight were
 		   taken. */
-		if(commandCount > 0) {
+		if(commandCnt > 0) {
 			mode = mnBattleCommandRowRun(COMMAND_ROW_PARTY);
 		} else {
 			mode = COMMAND_ICON_FIGHT;
@@ -195,7 +195,7 @@ Sint32 mnBattleCollectPartyCommands(
 			if(mnBattleRefuseFlee() != 0) {
 				continue;
 			}
-			commandCount = 1;
+			commandCnt = 1;
 			command = commands;
 			command->unitId = actors[0];
 			command->pri = FLEE_PRIORITY;
@@ -208,26 +208,26 @@ Sint32 mnBattleCollectPartyCommands(
 			break;
 		}
 		sySndPlayStub(SE_CAST);
-		commandIndex = 0;
-		if(commandIndex >= commandCount) {
+		commandIdx = 0;
+		if(commandIdx >= commandCnt) {
 			break;
 		}
 
 		/* Each party member in turn. */
 		for(;;) {
-			if(commandIndex == 0) {
+			if(commandIdx == 0) {
 				btDjinnCountStandbyStub(0, state->standbyDjinn[0]);
 			} else {
 				Sint32 k;
 
 				for(k = 0; k < ELEMENT_COUNT; k++) {
-					state->standbyDjinn[commandIndex][k] =
-						state->standbyDjinn[commandIndex - 1][k];
+					state->standbyDjinn[commandIdx][k] =
+						state->standbyDjinn[commandIdx - 1][k];
 				}
 			}
 
-			command = &commands[commandIndex];
-			unitId = actors[commandIndex];
+			command = &commands[commandIdx];
+			unitId = actors[commandIdx];
 			/* UB: gmUnitGetStub returns a pointer, not the cast's doubleword
 			   result. */
 #if FIX_FUNCTION_SIGNATURES
@@ -239,20 +239,20 @@ Sint32 mnBattleCollectPartyCommands(
 			   the left. */
 			BattleMenuStateWork->commandActor = unitId;
 			BattleMenuStateWork->commandSelection[1] = 0;
-			iconSprite = &BattleMenuStateWork->icons[BATTLE_MENU_ICON_PORTRAIT];
-			iconSprite->oam.word.attr01 =
+			iconSpr = &BattleMenuStateWork->icons[BATTLE_MENU_ICON_PORTRAIT];
+			iconSpr->oam.word.attr01 =
 				OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-			iconSprite->oam.word.attr23 = 0;
-			iconSprite->oam.f.tile = mnPortraitLoad(unit->id, smallIconSlot);
-			iconSprite->oam.f.x = BATTLE_PORTRAIT_X;
-			iconSprite->oam.f.y = 128;
-			iconSprite->oam.f.pal = PORTRAIT_PALETTE;
+			iconSpr->oam.word.attr23 = 0;
+			iconSpr->oam.f.tile = mnPortraitLoad(unit->id, smallIconSlot);
+			iconSpr->oam.f.x = BATTLE_PORTRAIT_X;
+			iconSpr->oam.f.y = 128;
+			iconSpr->oam.f.pal = PORTRAIT_PALETTE;
 			state->iconShown[BATTLE_MENU_ICON_PORTRAIT] = 1;
 
 		mark_visible:
 			mnWindowMarkVisibleTextTiles();
 			BattleMenuStateWork->iconShown[BATTLE_MENU_ICON_COMMAND] = 0;
-			BattleMenuStateWork->chosenDjinn[commandIndex] =
+			BattleMenuStateWork->chosenDjinn[commandIdx] =
 				BATTLE_MENU_NO_DJINNI;
 			/* memberList is the party member alone, ended by
 			   BATTLE_UNIT_LIST_END: marked in the battle and highlighted in the
@@ -281,10 +281,10 @@ Sint32 mnBattleCollectPartyCommands(
 			/* B: back to the party member before, or from the first to the
 			   party's row. */
 			if(mode == COMMAND_ROW_CANCELLED) {
-				if(commandIndex == 0) {
+				if(commandIdx == 0) {
 					break;
 				}
-				commandIndex--;
+				commandIdx--;
 				continue;
 			}
 
@@ -292,18 +292,17 @@ Sint32 mnBattleCollectPartyCommands(
 			if(BattleMenuStateWork->tmr == 0) {
 				mode = COMMAND_ICON_DEFEND;
 			}
-			iconSprite = &BattleMenuStateWork->icons[BATTLE_MENU_ICON_COMMAND];
-			MENU_SPR_INIT(*iconSprite,
+			iconSpr = &BattleMenuStateWork->icons[BATTLE_MENU_ICON_COMMAND];
+			MENU_SPR_INIT(*iconSpr,
 				OBJ_SIZE_32X32 | OBJ_256_COLORS |
 					OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
-			iconSprite->oam.f.tile =
-				mnCommandIconReloadSlot(largeIconSlot, mode);
+			iconSpr->oam.f.tile = mnCommandIconReloadSlot(largeIconSlot, mode);
 			if(mode == COMMAND_ICON_DJINN) {
-				iconSprite->oam.f.x = 128;
+				iconSpr->oam.f.x = 128;
 			} else {
-				iconSprite->oam.f.x = 96;
+				iconSpr->oam.f.x = 96;
 			}
-			iconSprite->oam.f.y = 136;
+			iconSpr->oam.f.y = 136;
 			state->iconShown[BATTLE_MENU_ICON_COMMAND] = 1;
 			/* Each command's menus; commandKind is the COMMAND_ value
 			   recorded. */
@@ -323,19 +322,19 @@ Sint32 mnBattleCollectPartyCommands(
 					goto mark_visible;
 				}
 				commandKind = COMMAND_ATTACK;
-				target = mode;
+				tgt = mode;
 				command->range = 1;
 				break;
 
 			case COMMAND_ICON_PSYNERGY: {
-				MENU_SPR		   *iconSprite;
+				MENU_SPR		   *iconSpr;
 				ABILITY_DEFINITION *ability;
-				WIN_STATE		   *windowState;
+				WIN_STATE		   *winState;
 				Uint16			   *list;
 				Uint8			   *pick;
 				Sint32				range;
 				Sint32				handle;
-				Sint32				count;
+				Sint32				cnt;
 				Sint32				k;
 				Sint32				entryValue;
 
@@ -353,21 +352,21 @@ Sint32 mnBattleCollectPartyCommands(
 				list = state->listAbilities;
 				pick = state->listSlots;
 				state->icons[BATTLE_MENU_ICON_COMMAND].oam.f.x = 48;
-				count = 0;
+				cnt = 0;
 				for(k = 0; k != PSYNERGY_SLOTS &&
 					(entryValue = unit->psynergy[k].encodedAction &
 							ACTION_ID_MASK) != 0;
 					k++) {
 					if((gmAbilityGetDirectStub(entryValue)->flg & BATTLE_OK) !=
 						0) {
-						pick[count] = k;
-						list[count] = entryValue;
-						count++;
+						pick[cnt] = k;
+						list[cnt] = entryValue;
+						cnt++;
 					}
 				}
-				pick[count] = 0;
-				list[count] = 0;
-				mode = mnBattlePsynergyMenuRun(unitId, list, count);
+				pick[cnt] = 0;
+				list[cnt] = 0;
+				mode = mnBattlePsynergyMenuRun(unitId, list, cnt);
 				if(mode == -1) {
 					goto mark_visible;
 				}
@@ -375,21 +374,21 @@ Sint32 mnBattleCollectPartyCommands(
 					unit->psynergy[pick[mode]].encodedAction & ACTION_ID_MASK;
 				ability = gmAbilityGetDirectStub(parameter);
 				range = ability->range;
-				iconSprite = &state->icons[BATTLE_MENU_ICON_ABILITY];
+				iconSpr = &state->icons[BATTLE_MENU_ICON_ABILITY];
 				handle = syVRAMCacheAllocEntry(128);
-				windowState = WINDOW_STATE;
+				winState = WINDOW_STATE;
 				commandWindow = mnWindowCreate(8, 17, 18, 3, MENU_WINDOW_FLAGS);
 				state->icons[BATTLE_MENU_ICON_COMMAND].oam.f.x = 40;
-				iconSprite->oam.word.attr01 =
+				iconSpr->oam.word.attr01 =
 					OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-				iconSprite->oam.word.attr23 = 0;
-				iconSprite->oam.f.x = commandWindow->x * 8 + 8;
-				iconSprite->oam.f.y = commandWindow->y * 8 + 4;
+				iconSpr->oam.word.attr23 = 0;
+				iconSpr->oam.f.x = commandWindow->x * 8 + 8;
+				iconSpr->oam.f.y = commandWindow->y * 8 + 4;
 				ASM_NOTHING();
-				iconSprite->oam.f.tile =
+				iconSpr->oam.f.tile =
 					mnAbilityIconLoadIntoSlot(parameter, handle);
 				state->iconShown[BATTLE_MENU_ICON_ABILITY] = 1;
-				windowState->textPal = BASIC_COLORS_PALETTE;
+				winState->textPal = BASIC_COLORS_PALETTE;
 				if(ability->ppCost > unit->pp) {
 					mnTextSetCol(TEXT_COLOR_RED);
 				} else if(unit->psySeal != 0) {
@@ -399,7 +398,7 @@ Sint32 mnBattleCollectPartyCommands(
 					parameter + MsgAbilityName, commandWindow, 16, 0);
 				mnTextDrawNumAtOffset(
 					ability->ppCost, 2, commandWindow, 104, 0);
-				windowState->textPal = WINDOW_PALETTE;
+				winState->textPal = WINDOW_PALETTE;
 				mnTextSetCol(TEXT_COLOR_WHITE);
 				mnWindowSetTilemapEntry(
 					commandWindow, PSYNERGY_COST_FIRST_TILE, 11, 0, 0);
@@ -420,14 +419,14 @@ Sint32 mnBattleCollectPartyCommands(
 					goto psynergy_list;
 				}
 				commandKind = COMMAND_PSYNERGY;
-				target = mode;
+				tgt = mode;
 				break;
 			}
 
 			case COMMAND_ICON_SUMMON: {
 				const SUMMON_DEFINITION *summon;
 				ABILITY_DEFINITION		*ability;
-				MENU_SPR				*iconSprite;
+				MENU_SPR				*iconSpr;
 				Sint32					 handle;
 				Sint32					 ok;
 				Sint32					 j;
@@ -444,7 +443,7 @@ Sint32 mnBattleCollectPartyCommands(
 					BATTLE_SUMMON_ICON_X;
 				mnPartyStatHighlightMembers(memberList);
 				mode = mnBattleSummonMenuRun(
-					0, 0, state->standbyDjinn[commandIndex]);
+					0, 0, state->standbyDjinn[commandIdx]);
 				mnPartyStatHighlightMembers(memberList);
 				if(mode == -1) {
 					goto mark_visible;
@@ -452,7 +451,7 @@ Sint32 mnBattleCollectPartyCommands(
 				commandKind = COMMAND_SUMMON;
 				parameter = mode;
 				sySynch(1);
-				iconSprite = &state->icons[BATTLE_MENU_ICON_ABILITY];
+				iconSpr = &state->icons[BATTLE_MENU_ICON_ABILITY];
 				summon = gmSummonDefinitionGetNearStub(mode);
 				ability = gmAbilityGetDirectStub(summon->abilityId);
 				handle = syVRAMCacheAllocEntry(128);
@@ -461,19 +460,19 @@ Sint32 mnBattleCollectPartyCommands(
 				n = 0;
 				for(j = 0; j < ELEMENT_COUNT; j++) {
 					if(summon->djinnRequired[j] >
-						state->standbyDjinn[commandIndex][j]) {
+						state->standbyDjinn[commandIdx][j]) {
 						break;
 					}
 				}
 				ok = (j == ELEMENT_COUNT);
 				state->icons[BATTLE_MENU_ICON_COMMAND].oam.f.x = 56;
-				iconSprite->oam.word.attr01 =
+				iconSpr->oam.word.attr01 =
 					OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-				iconSprite->oam.word.attr23 = 0;
+				iconSpr->oam.word.attr23 = 0;
 				ASM_NOTHING();
-				iconSprite->oam.f.x = commandWindow->x * 8 + 8;
-				iconSprite->oam.f.y = commandWindow->y * 8 + 4;
-				iconSprite->oam.f.tile = mnAbilityIconLoadIntoSlot(
+				iconSpr->oam.f.x = commandWindow->x * 8 + 8;
+				iconSpr->oam.f.y = commandWindow->y * 8 + 4;
+				iconSpr->oam.f.tile = mnAbilityIconLoadIntoSlot(
 					summon->abilityId & ACTION_ID_MASK, handle);
 				state->iconShown[BATTLE_MENU_ICON_ABILITY] = 1;
 				if(ok == 0) {
@@ -514,14 +513,14 @@ Sint32 mnBattleCollectPartyCommands(
 				   not spent. */
 				for(j = 0; j < ELEMENT_COUNT; j++) {
 					if(summon->djinnRequired[j] >
-						state->standbyDjinn[commandIndex][j]) {
-						state->standbyDjinn[commandIndex][j] = 0;
+						state->standbyDjinn[commandIdx][j]) {
+						state->standbyDjinn[commandIdx][j] = 0;
 						break;
 					}
-					state->standbyDjinn[commandIndex][j] -=
+					state->standbyDjinn[commandIdx][j] -=
 						summon->djinnRequired[j];
 				}
-				target = mode;
+				tgt = mode;
 				break;
 			}
 
@@ -530,7 +529,7 @@ Sint32 mnBattleCollectPartyCommands(
 				WINDOW			   *hint;
 				Sint32				range;
 				Sint32				element;
-				Sint32				index;
+				Sint32				idx;
 
 				/* Djinn: the party member's Djinn list; COMMAND_DJINN with the
 				   Djinni's entry as parameter, kept in chosenDjinn so no later
@@ -539,7 +538,7 @@ Sint32 mnBattleCollectPartyCommands(
 				BATTLE_MENU_SET_CURSOR(0, 0, 0);
 			djinn_list:
 				state->icons[BATTLE_MENU_ICON_COMMAND].oam.f.x = 144;
-				BattleMenuStateWork->chosenDjinn[commandIndex] =
+				BattleMenuStateWork->chosenDjinn[commandIdx] =
 					BATTLE_MENU_NO_DJINNI;
 				mode = mnBattleDjinnMenuRun(unitId, 1);
 				command->range = 0;
@@ -548,12 +547,12 @@ Sint32 mnBattleCollectPartyCommands(
 				}
 				commandKind = COMMAND_DJINN;
 				parameter = mode;
-				BattleMenuStateWork->chosenDjinn[commandIndex] = mode;
+				BattleMenuStateWork->chosenDjinn[commandIdx] = mode;
 				element = DJINN_COMMAND_ELEMENT(parameter);
-				index = DJINN_COMMAND_INDEX(parameter);
-				if(gmDjinnIsSetStub(unitId, element, index) != 0) {
+				idx = DJINN_COMMAND_INDEX(parameter);
+				if(gmDjinnIsSetStub(unitId, element, idx) != 0) {
 					ability = gmAbilityGetDirectStub(
-						gmDjinnGetAbilityIdStub(element, index));
+						gmDjinnGetAbilityIdStub(element, idx));
 					range = ability->range;
 					commandWindow =
 						mnWindowCreate(11, 17, 10, 3, MENU_WINDOW_FLAGS);
@@ -561,7 +560,7 @@ Sint32 mnBattleCollectPartyCommands(
 					mnWindowSetTilemapEntry(commandWindow,
 						element + LIST_TILE_SUMMON_ELEMENT, 0, 0, 0);
 					mnTextDrawMessageAsTiles(
-						element * DJINN_PER_ELEMENT + index + MsgDjinnName,
+						element * DJINN_PER_ELEMENT + idx + MsgDjinnName,
 						commandWindow, 16, 0);
 					command->range = range;
 					sySynch(1);
@@ -581,7 +580,7 @@ Sint32 mnBattleCollectPartyCommands(
 					if(mode == -1) {
 						goto djinn_list;
 					}
-					target = mode;
+					tgt = mode;
 					break;
 				}
 				commandWindow =
@@ -591,7 +590,7 @@ Sint32 mnBattleCollectPartyCommands(
 				mnWindowSetTilemapEntry(
 					commandWindow, element + LIST_TILE_SUMMON_ELEMENT, 0, 0, 0);
 				mnTextDrawMessageAsTiles(
-					element * DJINN_PER_ELEMENT + index + MsgDjinnName,
+					element * DJINN_PER_ELEMENT + idx + MsgDjinnName,
 					commandWindow, 16, 0);
 				mnTextSetCol(TEXT_COLOR_WHITE);
 				command->range = 1;
@@ -603,18 +602,18 @@ Sint32 mnBattleCollectPartyCommands(
 				if(mode == -1) {
 					goto djinn_list;
 				}
-				target = mode;
+				tgt = mode;
 				break;
 			}
 
 			case COMMAND_ICON_ITEM: {
-				MENU_SPR		   *iconSprite;
+				MENU_SPR		   *iconSpr;
 				ABILITY_DEFINITION *ability;
 				Uint16			   *list;
 				Uint8			   *pick;
 				Sint32				range;
 				Sint32				handle;
-				Sint32				count;
+				Sint32				cnt;
 				Sint32				k;
 				Sint32				entryValue;
 				Sint32				selection;
@@ -632,15 +631,15 @@ Sint32 mnBattleCollectPartyCommands(
 				state->icons[BATTLE_MENU_ICON_COMMAND].oam.f.x = 96;
 				pick = state->listSlots;
 				list = state->listAbilities;
-				count = 0;
+				cnt = 0;
 				for(k = 0; k != INVENTORY_SLOTS &&
 					(entryValue = unit->inventory[k]) != 0;
 					k++) {
 					gmItemGetDirectStub(entryValue);
 					if(mnItemCheckBattleUse(unitId, entryValue) ==
 						BATTLE_ITEM_USABLE) {
-						list[count] = entryValue;
-						pick[count++] = k;
+						list[cnt] = entryValue;
+						pick[cnt++] = k;
 					}
 				}
 				for(k = 0; k != INVENTORY_SLOTS &&
@@ -649,12 +648,12 @@ Sint32 mnBattleCollectPartyCommands(
 					gmItemGetDirectStub(entryValue);
 					if(mnItemCheckBattleUse(unitId, entryValue) !=
 						BATTLE_ITEM_USABLE) {
-						list[count] = entryValue;
-						pick[count++] = k;
+						list[cnt] = entryValue;
+						pick[cnt++] = k;
 					}
 				}
-				list[count] = 0;
-				mode = mnBattleItemMenuRun(unitId, list, count);
+				list[cnt] = 0;
+				mode = mnBattleItemMenuRun(unitId, list, cnt);
 				if(mode == -1) {
 					goto mark_visible;
 				}
@@ -663,18 +662,18 @@ Sint32 mnBattleCollectPartyCommands(
 				ability = gmAbilityGetDirectStub(
 					gmItemGetDirectStub(unit->inventory[selection])->abilityId);
 				range = ability->range;
-				iconSprite = &state->icons[BATTLE_MENU_ICON_ABILITY];
+				iconSpr = &state->icons[BATTLE_MENU_ICON_ABILITY];
 				handle = syVRAMCacheAllocEntry(128);
 				commandWindow = mnWindowCreate(
 					9, 17, BATTLE_ITEM_WINDOW_WIDTH, 3, MENU_WINDOW_FLAGS);
 				state->icons[BATTLE_MENU_ICON_COMMAND].oam.f.x = 48;
-				iconSprite->oam.word.attr01 =
+				iconSpr->oam.word.attr01 =
 					OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-				iconSprite->oam.word.attr23 = 0;
+				iconSpr->oam.word.attr23 = 0;
 				ASM_NOTHING();
-				iconSprite->oam.f.x = commandWindow->x * 8 + 8;
-				iconSprite->oam.f.y = commandWindow->y * 8 + 4;
-				iconSprite->oam.f.tile =
+				iconSpr->oam.f.x = commandWindow->x * 8 + 8;
+				iconSpr->oam.f.y = commandWindow->y * 8 + 4;
+				iconSpr->oam.f.tile =
 					mnItemIconLoadIntoSlot(unit->inventory[selection], handle);
 				state->iconShown[BATTLE_MENU_ICON_ABILITY] = 1;
 				mnTextDrawMessageAsTiles(
@@ -692,7 +691,7 @@ Sint32 mnBattleCollectPartyCommands(
 					goto item_list;
 				}
 				commandKind = COMMAND_ITEM;
-				target = mode;
+				tgt = mode;
 				break;
 			}
 
@@ -706,14 +705,14 @@ Sint32 mnBattleCollectPartyCommands(
 			command->unitId = unitId;
 			/* Draw the priority random value once, only for a nonzero
 			   agility. */
-			priority = unit->agility;
-			if(priority != 0) {
-				priority += (Uint32)(unit->agility * syRandom()) >> 20;
+			pri = unit->agility;
+			if(pri != 0) {
+				pri += (Uint32)(unit->agility * syRandom()) >> 20;
 			}
-			command->pri = priority;
-			if(commandIndex != 0 &&
-				actors[commandIndex] == actors[commandIndex - 1]) {
-				command->pri = (Sint16)priority / 2;
+			command->pri = pri;
+			if(commandIdx != 0 &&
+				actors[commandIdx] == actors[commandIdx - 1]) {
+				command->pri = (Sint16)pri / 2;
 			}
 			/* A priority past 32767 reads negative as Sint16. */
 			if((Sint16)command->pri < 0) {
@@ -721,15 +720,15 @@ Sint32 mnBattleCollectPartyCommands(
 			}
 			command->command = commandKind;
 			command->prm = parameter;
-			command->tgt = target;
-			commandIndex++;
-			if(commandIndex < commandCount) {
+			command->tgt = tgt;
+			commandIdx++;
+			if(commandIdx < commandCnt) {
 				continue;
 			}
 			break;
 		}
 
-		if(commandIndex < commandCount) {
+		if(commandIdx < commandCnt) {
 			continue;
 		}
 		break;
@@ -766,8 +765,8 @@ Sint32 mnBattleCollectPartyCommands(
 
 		/* The wait message shows only when the countdown never opened its
 		   window, that is while the partner is still choosing; a timer window
-		   was closed above and is only forgotten here. mode counts the frames
-		   without the link, and past LINK_MAX_MISSED_FRAMES gives up (-1). */
+		   was closed above and is only forgotten here. mode counts the ticks
+		   without the link, and past LINK_MAX_MISSED_TICKS gives up (-1). */
 		linkBattle = BattleStateWork;
 		mode = 0;
 		if(state->tmrWin == 0 && linkBattle->linkPaused == 0) {
@@ -783,14 +782,14 @@ Sint32 mnBattleCollectPartyCommands(
 			peerSignature =
 				(Uint16 *)SerialPeerPayloads[linkBattle->linkSide ^ 1].payload;
 			if(linkBattle->linkPaused != 0) {
-				commandCount = -1;
+				commandCnt = -1;
 				break;
 			}
 			if((LinkStatusWork & LINK_STATUS_HEARD_BOTH) !=
 				LINK_STATUS_HEARD_BOTH) {
 				mode++;
-				if(mode > LINK_MAX_MISSED_FRAMES) {
-					commandCount = -1;
+				if(mode > LINK_MAX_MISSED_TICKS) {
+					commandCnt = -1;
 					break;
 				}
 			} else {
@@ -812,7 +811,7 @@ Sint32 mnBattleCollectPartyCommands(
 	}
 	btCameraSetCommandViewStub(0);
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_MENU);
-	return commandCount;
+	return commandCnt;
 }
 
 #undef FLEE_PRIORITY

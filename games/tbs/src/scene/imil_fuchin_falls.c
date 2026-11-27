@@ -77,36 +77,36 @@
 #include "graphics/graphics.h"
 #include "text/msg_ids.h"
 
-extern Sint16		  Ice_KeyHeadings[];
-extern Sint16		  ImilFuchinFalls_SlideHeadings[];
-extern ACTOR		 *ImilFuchinFalls_DragonsEye;
-extern SCENE_ENTRANCE ImilFuchinFalls_NoEntrances[];
-extern SCENE_ENTRANCE ImilFuchinFalls_ImilFallsCaveEntrances[];
-extern SCENE_ENTRANCE ImilFuchinFalls_EntranceEntrances[];
-extern SCENE_ENTRANCE ImilFuchinFalls_ZephyrRoomEntrances[];
-extern SCENE_ENTRANCE ImilFuchinFalls_DragonsEyeRoomEntrances[];
-extern SCENE_ENTRANCE ImilFuchinFalls_ArcticBladeRoomEntrances[];
-extern SCENE_ENTRANCE ImilFuchinFalls_KiRoomEntrances[];
-extern SCENE_ENTRANCE ImilFuchinFalls_DragonRoomEntrances[];
-extern Uint32		  ImilFuchinFalls_Exits[];
-extern ACTOR_PLACE	  ImilFuchinFalls_NoActorPlacements[];
-extern ACTOR_PLACE	  ImilFuchinFalls_ImilFallsCaveActorPlacements[];
-extern ACTOR_PLACE	  ImilFuchinFalls_EntranceActorPlacements[];
-extern ACTOR_PLACE	  ImilFuchinFalls_ZephyrRoomActorPlacements[];
-extern ACTOR_PLACE	  ImilFuchinFalls_DragonsEyeRoomActorPlacements[];
-extern ACTOR_PLACE	  ImilFuchinFalls_ArcticBladeRoomActorPlacements[];
-extern ACTOR_PLACE	  ImilFuchinFalls_DragonRoomActorPlacements[];
-extern CUE			  ImilFuchinFalls_NoCues[];
-extern CUE			  ImilFuchinFalls_ImilFallsCaveCues[];
-extern CUE			  ImilFuchinFalls_EntranceCues[];
-extern CUE			  ImilFuchinFalls_ZephyrRoomCues[];
-extern CUE			  ImilFuchinFalls_DragonsEyeRoomCues[];
-extern CUE			  ImilFuchinFalls_ArcticBladeRoomCues[];
-extern CUE			  ImilFuchinFalls_KiRoomCues[];
-extern CUE			  ImilFuchinFalls_DragonRoomCues[];
-extern Sint32		  ImilFuchinFalls_ShortDustScript[];
-extern Sint32		  ImilFuchinFalls_MediumDustScript[];
-extern Sint32		  ImilFuchinFalls_LongDustScript[];
+extern Sint16		  IceKeyHeadings[];
+extern Sint16		  ImilFuchinFallsSlideHeadings[];
+extern ACTOR		 *ImilFuchinFallsDragonsEye;
+extern SCENE_ENTRANCE ImilFuchinFallsNoEntrances[];
+extern SCENE_ENTRANCE ImilFuchinFallsImilFallsCaveEntrances[];
+extern SCENE_ENTRANCE ImilFuchinFallsEntranceEntrances[];
+extern SCENE_ENTRANCE ImilFuchinFallsZephyrRoomEntrances[];
+extern SCENE_ENTRANCE ImilFuchinFallsDragonsEyeRoomEntrances[];
+extern SCENE_ENTRANCE ImilFuchinFallsArcticBladeRoomEntrances[];
+extern SCENE_ENTRANCE ImilFuchinFallsKiRoomEntrances[];
+extern SCENE_ENTRANCE ImilFuchinFallsDragonRoomEntrances[];
+extern Uint32		  ImilFuchinFallsExits[];
+extern ACTOR_PLACE	  ImilFuchinFallsNoActorPlacements[];
+extern ACTOR_PLACE	  ImilFuchinFallsImilFallsCaveActorPlacements[];
+extern ACTOR_PLACE	  ImilFuchinFallsEntranceActorPlacements[];
+extern ACTOR_PLACE	  ImilFuchinFallsZephyrRoomActorPlacements[];
+extern ACTOR_PLACE	  ImilFuchinFallsDragonsEyeRoomActorPlacements[];
+extern ACTOR_PLACE	  ImilFuchinFallsArcticBladeRoomActorPlacements[];
+extern ACTOR_PLACE	  ImilFuchinFallsDragonRoomActorPlacements[];
+extern CUE			  ImilFuchinFallsNoCues[];
+extern CUE			  ImilFuchinFallsImilFallsCaveCues[];
+extern CUE			  ImilFuchinFallsEntranceCues[];
+extern CUE			  ImilFuchinFallsZephyrRoomCues[];
+extern CUE			  ImilFuchinFallsDragonsEyeRoomCues[];
+extern CUE			  ImilFuchinFallsArcticBladeRoomCues[];
+extern CUE			  ImilFuchinFallsKiRoomCues[];
+extern CUE			  ImilFuchinFallsDragonRoomCues[];
+extern Sint32		  ImilFuchinFallsShortDustScript[];
+extern Sint32		  ImilFuchinFallsMediumDustScript[];
+extern Sint32		  ImilFuchinFallsLongDustScript[];
 
 /* The placed actors, numbering each scene's placement rows from
    ACTOR_FIRST_PLACED: Fever in Imil Falls Cave, the floating logs of Fuchin
@@ -280,7 +280,7 @@ static void scLeaderSlideOnIce(void);
 
 /* Set while the floor's ground mask follows the leader
    (scFuchinFallsCaveGroundMaskFollowsLeader). */
-Sint32 ImilFuchinFalls_TrackLeader;
+Sint32 ImilFuchinFallsTrackLeader;
 
 /* The fields of EFFECT_OPTIONS that the dragon's fire sets, up to its scales,
    passed to scImilFuchinFallsSpawnDust in their place. */
@@ -325,27 +325,27 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_IMIL_FALLS_CAVE) {
-		return ImilFuchinFalls_ImilFallsCaveEntrances;
+		return ImilFuchinFallsImilFallsCaveEntrances;
 	}
 	if(sceneId == SCENE_FUCHIN_FALLS_CAVE_ENTRANCE) {
-		return ImilFuchinFalls_EntranceEntrances;
+		return ImilFuchinFallsEntranceEntrances;
 	}
 	if(sceneId == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
-		return ImilFuchinFalls_ZephyrRoomEntrances;
+		return ImilFuchinFallsZephyrRoomEntrances;
 	}
 	if(sceneId == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE) {
-		return ImilFuchinFalls_DragonsEyeRoomEntrances;
+		return ImilFuchinFallsDragonsEyeRoomEntrances;
 	}
 	if(sceneId == SCENE_FUCHIN_FALLS_CAVE_ARCTIC_BLADE) {
-		return ImilFuchinFalls_ArcticBladeRoomEntrances;
+		return ImilFuchinFallsArcticBladeRoomEntrances;
 	}
 	if(sceneId == SCENE_FUCHIN_FALLS_CAVE_ORB_OF_FORCE) {
-		return ImilFuchinFalls_KiRoomEntrances;
+		return ImilFuchinFallsKiRoomEntrances;
 	}
 	if(sceneId == SCENE_FUCHIN_FALLS_CAVE_DRAGON_STATUE) {
-		return ImilFuchinFalls_DragonRoomEntrances;
+		return ImilFuchinFallsDragonRoomEntrances;
 	}
-	return ImilFuchinFalls_NoEntrances;
+	return ImilFuchinFallsNoEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -356,7 +356,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 /* Returns the exit table every scene of the overlay shares. */
 const Uint32 *scGetExits(void)
 {
-	return ImilFuchinFalls_Exits;
+	return ImilFuchinFallsExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
@@ -364,24 +364,24 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_IMIL_FALLS_CAVE) {
-		return ImilFuchinFalls_ImilFallsCaveActorPlacements;
+		return ImilFuchinFallsImilFallsCaveActorPlacements;
 	}
 	if(sceneId == SCENE_FUCHIN_FALLS_CAVE_ENTRANCE) {
-		return ImilFuchinFalls_EntranceActorPlacements;
+		return ImilFuchinFallsEntranceActorPlacements;
 	}
 	if(sceneId == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
-		return ImilFuchinFalls_ZephyrRoomActorPlacements;
+		return ImilFuchinFallsZephyrRoomActorPlacements;
 	}
 	if(sceneId == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE) {
-		return ImilFuchinFalls_DragonsEyeRoomActorPlacements;
+		return ImilFuchinFallsDragonsEyeRoomActorPlacements;
 	}
 	if(sceneId == SCENE_FUCHIN_FALLS_CAVE_ARCTIC_BLADE) {
-		return ImilFuchinFalls_ArcticBladeRoomActorPlacements;
+		return ImilFuchinFallsArcticBladeRoomActorPlacements;
 	}
 	if(sceneId == SCENE_FUCHIN_FALLS_CAVE_DRAGON_STATUE) {
-		return ImilFuchinFalls_DragonRoomActorPlacements;
+		return ImilFuchinFallsDragonRoomActorPlacements;
 	}
-	return ImilFuchinFalls_NoActorPlacements;
+	return ImilFuchinFallsNoActorPlacements;
 }
 
 #include "shared/log_ride.c"
@@ -1239,27 +1239,27 @@ const CUE *scGetCues(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_IMIL_FALLS_CAVE) {
-		return ImilFuchinFalls_ImilFallsCaveCues;
+		return ImilFuchinFallsImilFallsCaveCues;
 	}
 	if(sceneId == SCENE_FUCHIN_FALLS_CAVE_ENTRANCE) {
-		return ImilFuchinFalls_EntranceCues;
+		return ImilFuchinFallsEntranceCues;
 	}
 	if(sceneId == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
-		return ImilFuchinFalls_ZephyrRoomCues;
+		return ImilFuchinFallsZephyrRoomCues;
 	}
 	if(sceneId == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE) {
-		return ImilFuchinFalls_DragonsEyeRoomCues;
+		return ImilFuchinFallsDragonsEyeRoomCues;
 	}
 	if(sceneId == SCENE_FUCHIN_FALLS_CAVE_ARCTIC_BLADE) {
-		return ImilFuchinFalls_ArcticBladeRoomCues;
+		return ImilFuchinFallsArcticBladeRoomCues;
 	}
 	if(sceneId == SCENE_FUCHIN_FALLS_CAVE_ORB_OF_FORCE) {
-		return ImilFuchinFalls_KiRoomCues;
+		return ImilFuchinFallsKiRoomCues;
 	}
 	if(sceneId == SCENE_FUCHIN_FALLS_CAVE_DRAGON_STATUE) {
-		return ImilFuchinFalls_DragonRoomCues;
+		return ImilFuchinFallsDragonRoomCues;
 	}
-	return ImilFuchinFalls_NoCues;
+	return ImilFuchinFallsNoCues;
 }
 
 /* Isaac walks out of the doorway at the bottom of Imil Falls Cave (metatile
@@ -1270,7 +1270,7 @@ static void scImilLeaveFallsCave(void)
 	fdActorGet(ACTOR_PARTY_LEADER)->facing = FACING_SOUTH;
 	sySndPlay(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(IMIL_FALLS_CAVE_TO_IMIL);
 }
 
@@ -1511,7 +1511,7 @@ static void scFuchinFallsCaveRebuildArcticBladeRoomLogs(void)
    to follow; come in any other way, he walks there whole. */
 static void scFuchinFallsCaveGroundMaskFollowsLeader(void)
 {
-	if(ImilFuchinFalls_TrackLeader != 0) {
+	if(ImilFuchinFallsTrackLeader != 0) {
 		GROUND_MASK_STATE *state = *(HeapSlots + HEAP_SLOT_GROUND_MASK);
 
 		state->actor = fdActorGet(ACTOR_PARTY_LEADER);
@@ -1523,7 +1523,7 @@ static void scFuchinFallsCaveGroundMaskFollowsLeader(void)
    18)); the room's ground mask stops following him. */
 static void scFuchinFallsCaveGroundMaskStopsFollowing(void)
 {
-	if(ImilFuchinFalls_TrackLeader != 0) {
+	if(ImilFuchinFallsTrackLeader != 0) {
 		GROUND_MASK_STATE *state = *(HeapSlots + HEAP_SLOT_GROUND_MASK);
 
 		state->actor = NULL;
@@ -1593,7 +1593,7 @@ static void scImilFuchinFallsPrepareRoom(void)
 		   the ground mask. */
 		state = NULL;
 		actor = fdActorGet(ACTOR_INVISIBLE_DRAGON_ROOM_CRATE);
-		ImilFuchinFalls_TrackLeader = 0;
+		ImilFuchinFallsTrackLeader = 0;
 		actor->motionFlg = 0;
 		actor->y.fixed = 0;
 		fdActorSetSprPriority(ACTOR_INVISIBLE_DRAGON_ROOM_CRATE, 1);
@@ -1603,11 +1603,11 @@ static void scImilFuchinFallsPrepareRoom(void)
 		case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST:
 		case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST:
 			fdEffectStartGroundMask(0);
-			ImilFuchinFalls_TrackLeader = 1;
+			ImilFuchinFallsTrackLeader = 1;
 			break;
 		case FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE:
 			fdEffectStartGroundMask(0);
-			ImilFuchinFalls_TrackLeader = 1;
+			ImilFuchinFallsTrackLeader = 1;
 			state = GroundMaskStateWork;
 			state->actor = NULL;
 			break;
@@ -1719,25 +1719,25 @@ static void scFuchinFallsCaveHopWest(void)
 static void scImilFuchinFallsPlaceDragonsEye(void)
 {
 	ACTOR		  *actor;
-	SPR			  *sprite;
+	SPR			  *spr;
 	ICON_TRANSFER *glyph;
 	Uint8		   clear = 0;
 
 	actor = syFieldActorCreate(
 		SPRITE_BLANK, toFIXED(248), toFIXED(8), toFIXED(152));
 	if(actor != NULL) {
-		sprite = actor->spr;
-		sprite->flg = clear;
-		sprite->cnt = clear;
-		sprite->image.fullCol = 0;
-		sprite->image.pal = 0;
+		spr = actor->spr;
+		spr->flg = clear;
+		spr->cnt = clear;
+		spr->image.fullCol = 0;
+		spr->image.pal = 0;
 		actor->motionFlg = clear;
 		actor->retainSprCache = 1;
 		glyph = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(*glyph));
 		mnIconDrawItem(ITEM_DRAGONS_EYE);
-		syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
+		syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
-		ImilFuchinFalls_DragonsEye = actor;
+		ImilFuchinFallsDragonsEye = actor;
 	}
 }
 
@@ -1747,22 +1747,22 @@ static void scFuchinFallsCaveFindDragonsEye(void)
 {
 	fdScriptStart();
 
-	if(ImilFuchinFalls_DragonsEye != NULL) {
-		fdItemDispShowPicture(ImilFuchinFalls_DragonsEye,
+	if(ImilFuchinFallsDragonsEye != NULL) {
+		fdItemDispShowPicture(ImilFuchinFallsDragonsEye,
 			ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
 	}
 
 	gmPartyGiveItem(ITEM_DRAGONS_EYE, 0);
 	gmFlagSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND);
 
-	if(ImilFuchinFalls_DragonsEye != NULL) {
-		fdActorRelease(ImilFuchinFalls_DragonsEye);
+	if(ImilFuchinFallsDragonsEye != NULL) {
+		fdActorRelease(ImilFuchinFallsDragonsEye);
 	}
 
 	fdScriptEnd();
 }
 
-/* Moves and grows a puff of the dragon's fire for one frame. */
+/* Moves and grows a puff of the dragon's fire for one tick. */
 static void scFuchinFallsCaveUpdateDustMotion(ACTOR *actor)
 {
 	FIELD_EFFECT *puff = ((FIELD_EFFECT *)actor);
@@ -1783,49 +1783,48 @@ static Sint32 scFuchinFallsCaveHideDust(ACTOR *actor)
 
 /* Creates one puff of the dust sprite, flying at the given speed, in the given
    colour and growing to the given size: the puffs of the dragon's fire. */
-void scImilFuchinFallsSpawnDust(FIXED x, FIXED y, FIXED z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *extra)
+void scImilFuchinFallsSpawnDust(FIXED x, FIXED y, FIXED z, Sint32 velX,
+	Sint32 velY, Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *extra)
 {
 	FIELD_EFFECT *effect;
-	SPR			 *sprite;
+	SPR			 *spr;
 	const Sint32 *script;
 	const Sint32 *scripts[3] = {
-		ImilFuchinFalls_ShortDustScript,
-		ImilFuchinFalls_MediumDustScript,
-		ImilFuchinFalls_LongDustScript,
+		ImilFuchinFallsShortDustScript,
+		ImilFuchinFallsMediumDustScript,
+		ImilFuchinFallsLongDustScript,
 	};
 
 	effect = (FIELD_EFFECT *)fdActorCreate(SPRITE_DUST_PUFF, x, y, z);
 	if(effect == NULL)
 		return;
-	sprite = effect->spr;
-	fdActorSelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-	fdActorStartScript((ACTOR *)effect, scripts[flags & EFFECT_SCRIPT_MASK]);
+	spr = effect->spr;
+	fdActorSelectAnimation(effect, (flg + 1) & EFFECT_SCRIPT_MASK);
+	fdActorStartScript((ACTOR *)effect, scripts[flg & EFFECT_SCRIPT_MASK]);
 	effect->motionFlg = 0;
-	sprite->flg = 0;
+	spr->flg = 0;
 	effect->update = scFuchinFallsCaveUpdateDustMotion;
-	effect->vel.x = velocityX;
-	effect->vel.y = velocityY;
-	effect->vel.z = velocityZ;
+	effect->vel.x = velX;
+	effect->vel.y = velY;
+	effect->vel.z = velZ;
 	effect->scaleRateX = 0;
 	effect->scaleRateY = 0;
-	sprite->image.pri = 1;
-	if((flags & EFFECT_OPTION_MASK) == 0 || extra == NULL)
+	spr->image.pri = 1;
+	if((flg & EFFECT_OPTION_MASK) == 0 || extra == NULL)
 		return;
-	if(flags & EFFECT_USE_PALETTE)
+	if(flg & EFFECT_USE_PALETTE)
 		fdActorSetSprCol((ACTOR *)effect, extra->pal);
-	if(flags & EFFECT_USE_PRIORITY) {
+	if(flg & EFFECT_USE_PRIORITY) {
 		effect->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-		sprite->image.pri = extra->pri;
+		spr->image.pri = extra->pri;
 	}
-	if(flags & EFFECT_USE_START_SCALE) {
+	if(flg & EFFECT_USE_START_SCALE) {
 		effect->scaleX = extra->startScaleX;
 		effect->scaleY = extra->startScaleY;
 	}
-	if(flags & EFFECT_SCALE_TO_TARGET) {
-		script = scripts[flags & EFFECT_SCRIPT_MASK];
-		if(flags & EFFECT_USE_START_SCALE) {
+	if(flg & EFFECT_SCALE_TO_TARGET) {
+		script = scripts[flg & EFFECT_SCRIPT_MASK];
+		if(flg & EFFECT_USE_START_SCALE) {
 			effect->scaleRateX = (extra->tgtScaleX - effect->scaleX) /
 				script[EFFECT_SCRIPT_REPEAT_COUNT];
 			effect->scaleRateY = (extra->tgtScaleY - effect->scaleY) /
@@ -1839,29 +1838,29 @@ void scImilFuchinFallsSpawnDust(FIXED x, FIXED y, FIXED z, Sint32 velocityX,
 	}
 }
 
-/* Every fourth frame while the dragon statue wakes, a red puff of fire blows
+/* Every fourth tick while the dragon statue wakes, a red puff of fire blows
    out of its mouth toward the west, with a whoosh every eighth. */
 static void scFuchinFallsCaveBreatheDragonFire(void)
 {
 	CAVE_DUST_OPTIONS options;
-	Sint32			  framePhase;
-	FIXED			  velocityX;
-	FIXED			  velocityY;
+	Sint32			  frmPhase;
+	FIXED			  velX;
+	FIXED			  velY;
 
-	framePhase = FrameCount & 3;
-	if(framePhase != 0)
+	frmPhase = TickCount & 3;
+	if(frmPhase != 0)
 		return;
 	options.pal = SPRITE_COLOR_RED_TINT;
 	options.startScaleX = toFIXED(1) / 2;
 	options.startScaleY = toFIXED(1) / 2;
 	options.tgtScaleX = toFIXED(9) / 5;
 	options.tgtScaleY = toFIXED(9) / 5;
-	if((FrameCount & 7) == 0)
+	if((TickCount & 7) == 0)
 		sySndPlay(SE_WHOOSH);
-	velocityX = -toFIXED(1) - toFIXED(syRandomBelow(2));
-	velocityY = -((syRandomBelow(3)) * (toFIXED(1) / 5));
-	scImilFuchinFallsSpawnDust(toFIXED(308), toFIXED(64), toFIXED(222),
-		velocityX, velocityY, framePhase,
+	velX = -toFIXED(1) - toFIXED(syRandomBelow(2));
+	velY = -((syRandomBelow(3)) * (toFIXED(1) / 5));
+	scImilFuchinFallsSpawnDust(toFIXED(308), toFIXED(64), toFIXED(222), velX,
+		velY, frmPhase,
 		EFFECT_SCRIPT_MEDIUM | EFFECT_USE_PALETTE | EFFECT_USE_START_SCALE |
 			EFFECT_SCALE_TO_TARGET,
 		(const EFFECT_OPTIONS *)&options);
@@ -1901,7 +1900,7 @@ static void scFuchinFallsCaveLightDragonWithEye(void)
 	sySynch(30);
 
 	/* The dragon breathes fire while the room turns red. */
-	sySetFrameEvent(scFuchinFallsCaveBreatheDragonFire, EVENT_PASS_FRAME);
+	sySetTickEvent(scFuchinFallsCaveBreatheDragonFire, EVENT_PASS_TICK);
 	sySynch(40);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 4, 4), PALETTES_BG);
 	fdPaletteFadeStartInterpolation(40);
@@ -1994,7 +1993,7 @@ static void scFuchinFallsCaveEndRevealLighting(void)
 	}
 }
 
-#define ICE_SLIDE_HEADINGS ImilFuchinFalls_SlideHeadings
+#define ICE_SLIDE_HEADINGS ImilFuchinFallsSlideHeadings
 #include "shared/leader_slide_on_ice.c"
 
 /* clang-format off */
@@ -2002,27 +2001,27 @@ static void scFuchinFallsCaveEndRevealLighting(void)
 
 /* The way the leader slides on the ice for each combination of held */
 /* directions (DPAD_INDEX); a diagonal slides east or west. */
-Sint16 ImilFuchinFalls_SlideHeadings[] = {
+Sint16 ImilFuchinFallsSlideHeadings[] = {
 	KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, FACING_EAST, FACING_WEST, FACING_NORTH,
 	FACING_SOUTH, FACING_EAST, FACING_WEST, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
 	FACING_EAST, FACING_EAST,
 };
 
 /* The Dragon's Eye's icon on the little table, until the party takes it. */
-ACTOR *ImilFuchinFalls_DragonsEye = NULL;
+ACTOR *ImilFuchinFallsDragonsEye = NULL;
 
-SCENE_ENTRANCE ImilFuchinFalls_NoEntrances[] = {
+SCENE_ENTRANCE ImilFuchinFallsNoEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 256, 0, 600, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-SCENE_ENTRANCE ImilFuchinFalls_ImilFallsCaveEntrances[] = {
+SCENE_ENTRANCE ImilFuchinFallsImilFallsCaveEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ IMIL_FALLS_CAVE_FROM_IMIL, CONDITION_ALWAYS, 264, 0, 289, FACING_NORTH, 0, 135, 62, 376, 328, 0 },
 	{ SCENE_TABLE_END },
 };
 
-SCENE_ENTRANCE ImilFuchinFalls_EntranceEntrances[] = {
+SCENE_ENTRANCE ImilFuchinFallsEntranceEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 248, 0, 600, FACING_SOUTH, 0, 64, 64, 416, 656, 0 },
 	{ FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_TEMPLE_GROUNDS, CONDITION_ALWAYS, 248, 0, 632, FACING_NORTH, 0, 64, 368, 416, 656, 0 },
 	{ FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_ZEPHYR, CONDITION_ALWAYS, 376, 0, 488, FACING_SOUTH, 0, 64, 368, 416, 656, 0 },
@@ -2035,13 +2034,13 @@ SCENE_ENTRANCE ImilFuchinFalls_EntranceEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-SCENE_ENTRANCE ImilFuchinFalls_ZephyrRoomEntrances[] = {
+SCENE_ENTRANCE ImilFuchinFallsZephyrRoomEntrances[] = {
 	{ FUCHIN_FALLS_CAVE_ZEPHYR_FROM_FUCHIN_FALLS_CAVE_DRAGONS_EYE, CONDITION_ALWAYS, 248, 0, 120, FACING_SOUTH, 0, 96, 64, 416, 480, 0 },
 	{ FUCHIN_FALLS_CAVE_ZEPHYR_FROM_FUCHIN_FALLS_CAVE_ENTRANCE, CONDITION_ALWAYS, 152, 0, 200, FACING_NORTH, 0, 96, 64, 416, 480, 0 },
 	{ SCENE_TABLE_END },
 };
 
-SCENE_ENTRANCE ImilFuchinFalls_DragonsEyeRoomEntrances[] = {
+SCENE_ENTRANCE ImilFuchinFallsDragonsEyeRoomEntrances[] = {
 	{ FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_FROM_LOGS, CONDITION_ALWAYS, 248, 0, 104, FACING_SOUTH, 0, 128, 64, 368, 256, 0 },
 	{ FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE, CONDITION_ALWAYS, 184, 0, 328, FACING_SOUTH, 0, 96, 256, 416, 656, 0 },
 	{ FUCHIN_FALLS_CAVE_DRAGONS_EYE_LOGS_FROM_CHAMBER, CONDITION_ALWAYS, 152, 0, 432, FACING_SOUTH, 0, 96, 256, 416, 656, 0 },
@@ -2050,7 +2049,7 @@ SCENE_ENTRANCE ImilFuchinFalls_DragonsEyeRoomEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-SCENE_ENTRANCE ImilFuchinFalls_ArcticBladeRoomEntrances[] = {
+SCENE_ENTRANCE ImilFuchinFallsArcticBladeRoomEntrances[] = {
 	{ FUCHIN_FALLS_CAVE_ARCTIC_BLADE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE, CONDITION_ALWAYS, 328, 0, 72, FACING_SOUTH, 0, 64, 16, 416, 416, 0 },
 	{ FUCHIN_FALLS_CAVE_ARCTIC_BLADE_NORTH_HALF_FROM_SOUTH_HALF, CONDITION_ALWAYS, 248, 0, 392, FACING_NORTH, 0, 64, 16, 416, 416, 0 },
 	{ FUCHIN_FALLS_CAVE_ARCTIC_BLADE_SOUTH_HALF_FROM_NORTH_HALF, CONDITION_ALWAYS, 248, 0, 472, FACING_SOUTH, 0, 64, 416, 416, 800, 0 },
@@ -2058,7 +2057,7 @@ SCENE_ENTRANCE ImilFuchinFalls_ArcticBladeRoomEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-SCENE_ENTRANCE ImilFuchinFalls_KiRoomEntrances[] = {
+SCENE_ENTRANCE ImilFuchinFallsKiRoomEntrances[] = {
 	{ FUCHIN_FALLS_CAVE_ORB_OF_FORCE_NORTH_HALF_FROM_SOUTH_HALF, CONDITION_ALWAYS, 264, 0, 232, FACING_NORTH, 0, 128, 16, 384, 256, 0 },
 	{ FUCHIN_FALLS_CAVE_ORB_OF_FORCE_SOUTH_HALF_FROM_NORTH_HALF, CONDITION_ALWAYS, 248, 0, 472, FACING_SOUTH, 0, 64, 256, 416, 720, 0 },
 	{ FUCHIN_FALLS_CAVE_ORB_OF_FORCE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE_WEST, CONDITION_ALWAYS, 216, 0, 664, FACING_NORTH, 0, 64, 256, 416, 720, 0 },
@@ -2066,7 +2065,7 @@ SCENE_ENTRANCE ImilFuchinFalls_KiRoomEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-SCENE_ENTRANCE ImilFuchinFalls_DragonRoomEntrances[] = {
+SCENE_ENTRANCE ImilFuchinFallsDragonRoomEntrances[] = {
 	{ FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST, CONDITION_ALWAYS, 280, 0, 120, FACING_SOUTH, 0, 64, 0, 416, 344, 0 },
 	{ FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST, CONDITION_ALWAYS, 216, 0, 120, FACING_SOUTH, 0, 64, 0, 416, 344, 0 },
 	{ FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ARCTIC_BLADE, CONDITION_ALWAYS, 104, 0, 280, FACING_SOUTH, 0, 64, 0, 416, 344, 0 },
@@ -2082,7 +2081,7 @@ SCENE_ENTRANCE ImilFuchinFalls_DragonRoomEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-Uint32 ImilFuchinFalls_Exits[] = {
+Uint32 ImilFuchinFallsExits[] = {
 	SCENE_EXITS(ImilFallsCave),
 	SCENE_EXIT(IMIL_FALLS_CAVE_TO_IMIL, Imil, IMIL_FROM_IMIL_FALLS_CAVE),
 	SCENE_EXITS(FuchinFallsCaveEntrance),
@@ -2129,17 +2128,17 @@ Uint32 ImilFuchinFalls_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE ImilFuchinFalls_NoActorPlacements[] = {
+ACTOR_PLACE ImilFuchinFallsNoActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE ImilFuchinFalls_ImilFallsCaveActorPlacements[] = {
+ACTOR_PLACE ImilFuchinFallsImilFallsCaveActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_FEVER), MOVEMENT_TYPE_STAND,
 		263, 0, 204, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE ImilFuchinFalls_EntranceActorPlacements[] = {
+ACTOR_PLACE ImilFuchinFallsEntranceActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
 		136, 0, 504, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -2149,7 +2148,7 @@ ACTOR_PLACE ImilFuchinFalls_EntranceActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE ImilFuchinFalls_ZephyrRoomActorPlacements[] = {
+ACTOR_PLACE ImilFuchinFallsZephyrRoomActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
 		216, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -2161,7 +2160,7 @@ ACTOR_PLACE ImilFuchinFalls_ZephyrRoomActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE ImilFuchinFalls_DragonsEyeRoomActorPlacements[] = {
+ACTOR_PLACE ImilFuchinFallsDragonsEyeRoomActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
 		328, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -2173,7 +2172,7 @@ ACTOR_PLACE ImilFuchinFalls_DragonsEyeRoomActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE ImilFuchinFalls_ArcticBladeRoomActorPlacements[] = {
+ACTOR_PLACE ImilFuchinFallsArcticBladeRoomActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
 		328, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -2183,24 +2182,24 @@ ACTOR_PLACE ImilFuchinFalls_ArcticBladeRoomActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE ImilFuchinFalls_DragonRoomActorPlacements[] = {
+ACTOR_PLACE ImilFuchinFallsDragonRoomActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
 		312, 0, 128, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	{ SCENE_TABLE_END },
 };
 
-CUE ImilFuchinFalls_NoCues[] = {
+CUE ImilFuchinFallsNoCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE ImilFuchinFalls_ImilFallsCaveCues[] = {
+CUE ImilFuchinFallsImilFallsCaveCues[] = {
 	{ CUE_STEP, IMIL_FALLS_CAVE_TO_IMIL, CONDITION_ALWAYS, SCRIPT_REF(scImilLeaveFallsCave) },
 	{ CUE_STEP, METATILE_BEHAVIOR_IMIL_FALLS_CAVE_ICE, CONDITION_ALWAYS, SCRIPT_REF(scImilMoveAcrossIce) },
 	{ CUE_TALK, ACTOR_FEVER, CONDITION_ALWAYS, SCRIPT_REF(scImilFeverJoins) },
 	{ CUE_TABLE_END },
 };
 
-CUE ImilFuchinFalls_EntranceCues[] = {
+CUE ImilFuchinFallsEntranceCues[] = {
 	{ STEP_CUE_WALKING_INTO(FACING_EAST), METATILE_BEHAVIOR_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_WEST, CONDITION_ALWAYS, SCRIPT_REF(scFuchinFallsCaveEntranceMoveFirstLogEast) },
 	{ STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST, CONDITION_ALWAYS, SCRIPT_REF(scFuchinFallsCaveEntranceMoveFirstLogWest) },
 	{ CUE_STEP, METATILE_BEHAVIOR_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_WEST, CONDITION_ALWAYS, SCRIPT_REF(scFuchinFallsCaveSettleFirstLog) },
@@ -2226,7 +2225,7 @@ CUE ImilFuchinFalls_EntranceCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE ImilFuchinFalls_ZephyrRoomCues[] = {
+CUE ImilFuchinFallsZephyrRoomCues[] = {
 	{ STEP_CUE_WALKING_INTO(FACING_EAST), METATILE_BEHAVIOR_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_START, FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH, SCRIPT_REF(scFuchinFallsCaveZephyrRoomMoveFirstLogToEastEnd) },
 	{ STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_START, CONDITION_ALWAYS, SCRIPT_REF(scFuchinFallsCaveZephyrRoomNudgeFirstLogWest) },
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), METATILE_BEHAVIOR_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_WEST_END, CONDITION_ALWAYS, SCRIPT_REF(scImilFuchinFallsHopOnCue) },
@@ -2251,7 +2250,7 @@ CUE ImilFuchinFalls_ZephyrRoomCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE ImilFuchinFalls_DragonsEyeRoomCues[] = {
+CUE ImilFuchinFallsDragonsEyeRoomCues[] = {
 	{ STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_EAST_END, CONDITION_ALWAYS, SCRIPT_REF(scFuchinFallsCaveDragonsEyeRoomMoveFirstLogWest) },
 	{ STEP_CUE_WALKING_INTO(FACING_EAST), METATILE_BEHAVIOR_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE, CONDITION_ALWAYS, SCRIPT_REF(scFuchinFallsCaveDragonsEyeRoomMoveFirstLogEastFromMiddle) },
 	{ STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE, CONDITION_ALWAYS, SCRIPT_REF(scFuchinFallsCaveDragonsEyeRoomMoveFirstLogWestIfClear) },
@@ -2302,7 +2301,7 @@ CUE ImilFuchinFalls_DragonsEyeRoomCues[] = {
 };
 /* clang-format on */
 
-CUE ImilFuchinFalls_ArcticBladeRoomCues[] = {
+CUE ImilFuchinFallsArcticBladeRoomCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_SOUTH),
 		METATILE_BEHAVIOR_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_FIRST_LOG_NORTH,
 		CONDITION_ALWAYS,
@@ -2352,7 +2351,7 @@ CUE ImilFuchinFalls_ArcticBladeRoomCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE ImilFuchinFalls_KiRoomCues[] = {
+CUE ImilFuchinFallsKiRoomCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS,
 		FUCHIN_FALLS_CAVE_ORB_OF_FORCE_NORTH_HALF_TO_SOUTH_HALF},
 	{CUE_EXIT, 2, CONDITION_ALWAYS,
@@ -2368,7 +2367,7 @@ CUE ImilFuchinFalls_KiRoomCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE ImilFuchinFalls_DragonRoomCues[] = {
+CUE ImilFuchinFallsDragonRoomCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS,
 		FUCHIN_FALLS_CAVE_DRAGON_STATUE_TO_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST},
 	{CUE_EXIT, 2, CONDITION_ALWAYS,
@@ -2413,7 +2412,7 @@ CUE ImilFuchinFalls_DragonRoomCues[] = {
 	{CUE_TABLE_END},
 };
 
-Sint32 ImilFuchinFalls_ShortDustScript[] = {
+Sint32 ImilFuchinFallsShortDustScript[] = {
 	SC_WAIT(1),
 	SC_LOOP(22, SC_TOP),
 	SC_CALL(scFuchinFallsCaveHideDust),
@@ -2423,7 +2422,7 @@ Sint32 ImilFuchinFalls_ShortDustScript[] = {
 	SC_RELEASE,
 };
 
-Sint32 ImilFuchinFalls_MediumDustScript[] = {
+Sint32 ImilFuchinFallsMediumDustScript[] = {
 	SC_WAIT(1),
 	SC_LOOP(44, SC_TOP),
 	SC_CALL(scFuchinFallsCaveHideDust),
@@ -2433,7 +2432,7 @@ Sint32 ImilFuchinFalls_MediumDustScript[] = {
 	SC_RELEASE,
 };
 
-Sint32 ImilFuchinFalls_LongDustScript[] = {
+Sint32 ImilFuchinFallsLongDustScript[] = {
 	SC_WAIT(1),
 	SC_LOOP(126, SC_TOP),
 	SC_CALL(scFuchinFallsCaveHideDust),

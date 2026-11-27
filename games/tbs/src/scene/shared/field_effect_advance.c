@@ -10,7 +10,7 @@
 #endif
 
 /* A drifting effect loses a FIELD_EFFECT_DRAG_X-th of its x speed and a
-   FIELD_EFFECT_DRAG_Z-th of its z speed each frame. */
+   FIELD_EFFECT_DRAG_Z-th of its z speed each tick. */
 #define FIELD_EFFECT_DRAG_X 18
 #define FIELD_EFFECT_DRAG_Z 16
 

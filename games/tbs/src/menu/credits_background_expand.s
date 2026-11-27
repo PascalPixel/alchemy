@@ -2,7 +2,7 @@
 @ takes the next packed value and jumps, through mnCreditsDecodeBackgroundCaseTable,
 @ to one of the case commands below, which update the running pixel value in
 @ r5. They share the decoder's registers (r0 source, r2 and r3 read state,
-@ r5 value, r11 the mask 7) and have no frames of their own.
+@ r5 value, r11 the mask 7) and have no ticks of their own.
 @
 @ Why assembly:
 @ Why mnCreditsDecodeBackgroundRead is assembly:

@@ -23,9 +23,9 @@
 struct ACTOR;
 
 /* One step of a metatile animation: copy the width by height metatiles at
-   sourceX, sourceY over the destination, then wait frames. */
-#define MAPGRID_ANIMATION_STEP(sourceX, sourceY, width, height, frames) \
-	(sourceX), (sourceY), (width), (height), (frames)
+   sourceX, sourceY over the destination, then wait ticks. */
+#define MAPGRID_ANIMATION_STEP(sourceX, sourceY, width, height, ticks) \
+	(sourceX), (sourceY), (width), (height), (ticks)
 
 /* A metatile animation, such as a door opening: its steps and the metatile they
    are copied to (fdMapGridPlayMapEdit, which blocks until the last). */
@@ -38,7 +38,7 @@ typedef struct MAP_GRID_METATILE_ANIMATION {
 } MAP_GRID_METATILE_ANIMATION;
 
 /* Sets a game flag, called for no result: field/flag_call.h says why. */
-void syGameFlagSet(Sint32 flag);
+void syGameFlagSet(Sint32 flg);
 /* Creates an actor at (x, y, z), 16.16 pixels, or returns 0 when every slot is
    taken (fdActorCreate, through the overlay's own import row). */
 struct ACTOR *syImportActorCreate(Sint32 type, Sint32 x, Sint32 y, Sint32 z);
@@ -70,23 +70,23 @@ Sint32 fdMapGridGetMetatileBehaviorAt(Sint32 layer, FIXED x, FIXED y);
 
 /* Shows the script's next line of dialogue and waits for the player to read
    it. */
-static inline void fdScriptShowMessage(Sint32 speaker, Sint32 flags)
+static inline void fdScriptShowMessage(Sint32 speaker, Sint32 flg)
 {
-	fdScriptShowMessageAndWait(speaker, flags);
+	fdScriptShowMessageAndWait(speaker, flg);
 }
 
 /* Opens the script's next line and returns its window once the text is typed
    out, so the script can act while it is still on screen. */
-static inline Sint32 fdScriptOpenMessage(Sint32 speaker, Sint32 flags)
+static inline Sint32 fdScriptOpenMessage(Sint32 speaker, Sint32 flg)
 {
-	return fdMessageShowAtActor(speaker, flags);
+	return fdMessageShowAtActor(speaker, flg);
 }
 
 /* Puts the current line to the player as a question and shows the line that
    answers it; returns 0 for yes. */
-static inline Sint32 fdScriptAskYesNo(Sint32 speaker, Sint32 flags)
+static inline Sint32 fdScriptAskYesNo(Sint32 speaker, Sint32 flg)
 {
-	return fdScriptAskYesNoAndShowResponse(speaker, flags);
+	return fdScriptAskYesNoAndShowResponse(speaker, flg);
 }
 
 /* Looks up an actor for a script, NULL when it doesn't exist
@@ -117,13 +117,13 @@ static inline void fdActorSetSpeedFX(
 	fdActorSetSpeedParms(actorId, speed, acceleration);
 }
 
-/* Sets an actor's top speed for the script's next moves, in pixels a frame, and
+/* Sets an actor's top speed for the script's next moves, in pixels a tick, and
    an acceleration of half that: `fdActorSetSpeed(8, 0.5)`. */
 #define fdActorSetSpeed(actorId, speed) \
 	fdActorSetSpeedFX(actorId, toFIXED(speed), toFIXED(speed) / 2)
 
-/* Sets an actor's top speed, in pixels a frame, and its acceleration, in pixels
-   a frame per frame, where the acceleration isn't half the speed. */
+/* Sets an actor's top speed, in pixels a tick, and its acceleration, in pixels
+   a tick per tick, where the acceleration isn't half the speed. */
 #define fdActorSetSpeedAndAcceleration(actorId, speed, acceleration) \
 	fdActorSetSpeedFX(actorId, toFIXED(speed), toFIXED(acceleration))
 
@@ -154,33 +154,32 @@ static inline void fdActorWalkBy(Sint32 actorId, Sint32 dx, Sint32 dz)
 	fdActorWalkByById(actorId, dx, dz);
 }
 
-/* Turns an actor to a direction and holds the script for a few frames. */
+/* Turns an actor to a direction and holds the script for a few ticks. */
 static inline void fdActorFaceDirection(
-	Sint32 actorId, Sint32 facing, Sint32 frames)
+	Sint32 actorId, Sint32 facing, Sint32 ticks)
 {
-	fdActorFaceDirectionById(actorId, facing, frames);
+	fdActorFaceDirectionById(actorId, facing, ticks);
 }
 
 /* Has one actor look at another at once, then pauses the script. */
-static inline void fdActorFaceActor(
-	Sint32 actorId, Sint32 target, Sint32 frames)
+static inline void fdActorFaceActor(Sint32 actorId, Sint32 tgt, Sint32 ticks)
 {
-	fdActorFaceActorById(actorId, target, frames);
+	fdActorFaceActorById(actorId, tgt, ticks);
 }
 
-/* Pops an emote bubble up over an actor, then lets frames pass before the
+/* Pops an emote bubble up over an actor, then lets ticks pass before the
    script goes on. */
 static inline struct ACTOR *fdActorShowEmote(
-	Sint32 actorId, Sint32 emote, Sint32 frames)
+	Sint32 actorId, Sint32 emote, Sint32 ticks)
 {
-	return fdActorShowEmoteById(actorId, emote, frames);
+	return fdActorShowEmoteById(actorId, emote, ticks);
 }
 
 /* fdActorShowEmote, for a script that leaves its result unread. */
 static inline void scFieldActorShowEmote(
-	Sint32 actorId, Sint32 emote, Sint32 frames)
+	Sint32 actorId, Sint32 emote, Sint32 ticks)
 {
-	fdActorShowEmoteById(actorId, emote, frames);
+	fdActorShowEmoteById(actorId, emote, ticks);
 }
 
 /* Attaches a field effect to an actor, takes it off, or plays one over it
@@ -198,13 +197,13 @@ static inline void fdCameraSetSpeedFX(FIXED speed, FIXED acceleration)
 }
 
 /* Sets the camera's top panning speed for the script's next camera moves, in
-   pixels a frame, and an acceleration of an eighth of that:
+   pixels a tick, and an acceleration of an eighth of that:
    `fdCameraSetSpeed(0.8)`. */
 #define fdCameraSetSpeed(speed) \
 	fdCameraSetSpeedFX(toFIXED(speed), toFIXED(speed) / 8)
 
-/* Sets the camera's top panning speed, in pixels a frame, and its acceleration,
-   in pixels a frame per frame, where the acceleration isn't an eighth of the
+/* Sets the camera's top panning speed, in pixels a tick, and its acceleration,
+   in pixels a tick per tick, where the acceleration isn't an eighth of the
    speed. */
 #define fdCameraSetSpeedAndAcceleration(speed, acceleration) \
 	fdCameraSetSpeedFX(toFIXED(speed), toFIXED(acceleration))
@@ -232,27 +231,24 @@ static inline void fdCameraMoveToFX(FIXED x, FIXED y, FIXED z, Sint32 pan)
 
 /* Changes part of the room in place, copying whole metatiles, metatile tiles
    and metatile behavior alike, from another part of the map. */
-static inline void fdMapGridCopyMetatiles(Sint32 sourceX, Sint32 sourceY,
-	Sint32 width, Sint32 height, Sint32 destinationX, Sint32 destinationY)
+static inline void fdMapGridCopyMetatiles(Sint32 srcX, Sint32 srcY,
+	Sint32 width, Sint32 height, Sint32 dstX, Sint32 dstY)
 {
-	fdMapCopyMetatilesRect(
-		sourceX, sourceY, width, height, destinationX, destinationY);
+	fdMapCopyMetatilesRect(srcX, srcY, width, height, dstX, dstY);
 }
 
 /* Changes where the party can walk in part of the room, copying only the
    metatiles' metatile behaviors and flags. */
-static inline void fdMapGridCopyMetatileAttributes(Sint32 sourceX,
-	Sint32 sourceY, Sint32 width, Sint32 height, Sint32 destinationX,
-	Sint32 destinationY)
+static inline void fdMapGridCopyMetatileAttributes(Sint32 srcX, Sint32 srcY,
+	Sint32 width, Sint32 height, Sint32 dstX, Sint32 dstY)
 {
-	fdMapCopyMetatileAttributeRect(
-		sourceX, sourceY, width, height, destinationX, destinationY);
+	fdMapCopyMetatileAttributeRect(srcX, srcY, width, height, dstX, dstY);
 }
 
 /* Keeps a shake component as it is (fdMapGridSetShake). */
 #define SHAKE_KEEP (-1)
 
-/* Sets shake amplitudes in 16.16 fixed-point pixels and the per-frame decay
+/* Sets shake amplitudes in 16.16 fixed-point pixels and the per-tick decay
    factor in 16.16; SHAKE_KEEP keeps that component, toFIXED(1) keeps the
    shake. */
 static inline void fdMapGridSetShakeFX(
@@ -267,7 +263,7 @@ static inline void fdMapGridSetShakeFX(
 #define SCRIPT_SHAKE_FIXED(value) \
 	((value) == SHAKE_KEEP ? SHAKE_KEEP : toFIXED(value))
 
-/* Shakes the screen by amplitudes in pixels, shrunk each frame by a decay
+/* Shakes the screen by amplitudes in pixels, shrunk each tick by a decay
    factor (1 keeps the shake going); SHAKE_KEEP keeps a component:
    `fdMapGridSetShake(2, 2, 1)`. */
 #define fdMapGridSetShake(horizontal, vertical, decay) \
@@ -275,28 +271,28 @@ static inline void fdMapGridSetShakeFX(
 		SCRIPT_SHAKE_FIXED(vertical), SCRIPT_SHAKE_FIXED(decay))
 
 /* syGameFlagGet, from a script: 1 when the flag is set. */
-static inline Sint32 fdScriptGetFlag(Sint32 flag)
+static inline Sint32 fdScriptGetFlag(Sint32 flg)
 {
-	return syGameFlagGet(flag);
+	return syGameFlagGet(flg);
 }
 
 /* syGameFlagSet, from a script. */
-static inline void fdScriptSetFlag(Sint32 flag)
+static inline void fdScriptSetFlag(Sint32 flg)
 {
-	syGameFlagSet(flag);
+	syGameFlagSet(flg);
 }
 
 /* syGameFlagClear, from a script. */
-static inline void fdScriptClearFlag(Sint32 flag)
+static inline void fdScriptClearFlag(Sint32 flg)
 {
-	syGameFlagClear(flag);
+	syGameFlagClear(flg);
 }
 
 /* Plays a sound effect or music from a script: the SE command of
    actor_script.h. */
-static inline void fdScriptPlaySnd(Sint32 sound)
+static inline void fdScriptPlaySnd(Sint32 snd)
 {
-	sySndPlay(sound);
+	sySndPlay(snd);
 }
 
 /* Divides, rounding toward zero. */
@@ -328,9 +324,9 @@ static inline struct ACTOR *scFieldActorCreate(
 /* Plays a metatile animation, such as a door opening, and holds the script
    until its last step. */
 static inline void fdMapGridAnimateMetatiles(
-	const Uint16 *steps, Sint32 destinationX, Sint32 destinationY)
+	const Uint16 *steps, Sint32 dstX, Sint32 dstY)
 {
-	fdMapGridPlayMapEdit(steps, destinationX, destinationY);
+	fdMapGridPlayMapEdit(steps, dstX, dstY);
 }
 
 /* Moves a treasure spot's actor to a point on the ground. */
@@ -341,10 +337,9 @@ static inline void fdTreasureSpotSetPos(Sint32 actorId, FIXED x, FIXED z)
 
 /* Lines an actor up with the middle of its column, sets its sprite priority,
    then walks it straight along z. */
-static inline void fdActorCenterAndWalk(
-	Sint32 actorId, Sint32 priority, Sint32 dz)
+static inline void fdActorCenterAndWalk(Sint32 actorId, Sint32 pri, Sint32 dz)
 {
-	fdActorCenterOnColumn(actorId, priority, dz);
+	fdActorCenterOnColumn(actorId, pri, dz);
 }
 
 /* Walks an actor some distance and waits until it is there. */
@@ -355,9 +350,9 @@ static inline void fdActorWalkByAndWait(Sint32 actorId, Sint32 dx, Sint32 dz)
 
 /* Shows a line of dialogue, then pauses before the script goes on. */
 static inline void syFieldScriptShowMessageThenWait(
-	Sint32 speaker, Sint32 flags, Sint32 frames)
+	Sint32 speaker, Sint32 flg, Sint32 ticks)
 {
-	fdScriptShowMessageThenWait(speaker, flags, frames);
+	fdScriptShowMessageThenWait(speaker, flg, ticks);
 }
 
 /* Sets a colour mode (SPR_COL_MODE) on every part of an actor's sprite, or
@@ -369,22 +364,22 @@ static inline void fdActorSetSprColById(Sint32 actorId, Sint32 value)
 
 /* Changes what part of the room shows, copying the metatiles' tiles but not
    their metatile behaviors. */
-static inline void fdMapGridCopyMetatilesTo(Sint32 sourceX, Sint32 sourceY,
-	Sint32 destinationX, Sint32 destinationY, Sint32 width, Sint32 height)
+static inline void fdMapGridCopyMetatilesTo(Sint32 srcX, Sint32 srcY,
+	Sint32 dstX, Sint32 dstY, Sint32 width, Sint32 height)
 {
 	fdMapGridCopyMetatileTilesIndicesRect(
-		sourceX, sourceY, destinationX, destinationY, width, height);
+		srcX, srcY, dstX, dstY, width, height);
 }
 
 /* Changes the pictures of part of the room as fdMapGridCopyMetatilesTo does,
    the rectangle's size before its destination, through
    fdMapGridCopyMetatileTilesMetatilesRect, which keeps each metatile's
    attribute bits. */
-static inline void fdMapGridCopyMetatilesLayered(Sint32 sourceX, Sint32 sourceY,
-	Sint32 width, Sint32 height, Sint32 destinationX, Sint32 destinationY)
+static inline void fdMapGridCopyMetatilesLayered(Sint32 srcX, Sint32 srcY,
+	Sint32 width, Sint32 height, Sint32 dstX, Sint32 dstY)
 {
 	fdMapGridCopyMetatileTilesMetatilesRect(
-		sourceX, sourceY, width, height, destinationX, destinationY);
+		srcX, srcY, width, height, dstX, dstY);
 }
 
 /* Sets the colours the screen shows now, where a script's palette fade
@@ -413,7 +408,7 @@ static inline void fdActorWalkToAndWait(Sint32 actorId, Sint32 x, Sint32 z)
 }
 
 /* Has two actors speak at once, each window placed by the script
-   (fdScriptShowTwoMessagesAndWait): places in tiles, delay in frames. */
+   (fdScriptShowTwoMessagesAndWait): places in tiles, delay in ticks. */
 static inline void syFieldScriptShowTwoMessagesAndWait(Sint32 first,
 	Sint32 firstX, Sint32 firstY, Sint32 firstPortraitX, Sint32 firstPortraitY,
 	Sint32 second, Sint32 secondX, Sint32 secondY, Sint32 secondPortraitX,
@@ -431,7 +426,7 @@ static inline void fdActorSetScript(Sint32 actorId, const Sint32 *script)
 	fdActorSetMovementTypeById(actorId, script);
 }
 
-/* Runs a script, waiting at most 300 frames for its final command. */
+/* Runs a script, waiting at most 300 ticks for its final command. */
 static inline void fdActorRunScriptAndWait(Sint32 actorId, const Sint32 *script)
 {
 	fdActorSetMovementTypeAndWaitById(actorId, script);

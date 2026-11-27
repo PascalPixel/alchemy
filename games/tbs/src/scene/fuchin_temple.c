@@ -72,10 +72,10 @@
 #include "game/system_call.h"
 #include "text/msg_ids.h"
 
-extern Sint32		  FuchinTemple_JumpingStudentScript[];
-extern Uint16		  FuchinTemple_TempleDoorOpens[];
-extern Uint16		  FuchinTemple_FehsDoorOpens[];
-extern Uint16		  FuchinTemple_FehsDoorCloses[];
+extern Sint32		  FuchinTempleJumpingStudentScript[];
+extern Uint16		  FuchinTempleTempleDoorOpens[];
+extern Uint16		  FuchinTempleFehsDoorOpens[];
+extern Uint16		  FuchinTempleFehsDoorCloses[];
 extern SCENE_ENTRANCE FuchinTempleGroundsEntrances[];
 extern SCENE_ENTRANCE FuchinTempleEntrancesOther[];
 extern Uint32		  FuchinTempleExits[];
@@ -85,7 +85,7 @@ extern ACTOR_PLACE	  FuchinTempleActorPlacementsFromLamaTemple[];
 extern CUE			  FuchinTempleGroundsCues[];
 extern CUE			  FuchinTempleCues[];
 extern CUE			  FuchinTempleCuesFromLamaTemple[];
-extern Sint32		  FuchinTemple_ShotScript[];
+extern Sint32		  FuchinTempleShotScript[];
 
 /* The metatiles outside the temple and in its rooms that run scripts. */
 enum {
@@ -204,8 +204,7 @@ enum {
 static void scFuchinTempleFeizhiLeavesForHsu(void);
 static void scFuchinTempleFehSeesChi(void);
 static void scHopLeaderBy(Sint32 dx, Sint32 dz);
-static void scFuchinTempleStartMindReadDemonstration(
-	Sint32 caster, Sint32 target);
+static void scFuchinTempleStartMindReadDemonstration(Sint32 caster, Sint32 tgt);
 static void scFuchinTempleFinishMindReadDemonstration(void);
 static void scFuchinTempleSpawnNyunpasParticles(void);
 static void scFuchinTempleAnimateRevealLesson(void);
@@ -224,7 +223,7 @@ static Sint32 scFuchinTempleClearScriptedActorSprFlags(ACTOR *interpreter)
 	return 0;
 }
 
-/* Turns an actor toward the party leader, each frame, while Feh's school waits
+/* Turns an actor toward the party leader, each tick, while Feh's school waits
    to see Isaac's Chi. */
 static UNREAD_RESULT scFuchinTempleFaceLeader(ACTOR *actor)
 {
@@ -557,7 +556,7 @@ static void scFuchinTempleNyunpaOffersTest(void)
 		fdPaletteFadeApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
 		fdPaletteFadeApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
 		fdPaletteFadeStartInterpolation(30);
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdCameraWaitForArrival();
 		scFuchinTempleSpawnNyunpasParticles();
 		fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -643,7 +642,7 @@ static void scFuchinTempleTalkToJumpingStudent(void)
 
 	fdActorGet(ACTOR_JUMPING_STUDENT)->paused = 0;
 
-	fdActorSetScript(ACTOR_JUMPING_STUDENT, FuchinTemple_JumpingStudentScript);
+	fdActorSetScript(ACTOR_JUMPING_STUDENT, FuchinTempleJumpingStudentScript);
 	fdScriptEnd();
 }
 
@@ -676,15 +675,15 @@ static void scFuchinTempleKnockTreeDownWest(void)
 {
 	ACTOR *tree = fdActorGet(ACTOR_TRAINING_TREE);
 	Uint32 turnStep;
-	Sint32 angle;
+	Sint32 ang;
 
 	for(turnStep = TREE_STANDING_STEP; turnStep >= TREE_FALLEN_WEST_STEP;
 		turnStep--) {
-		angle = turnStep * FACING_STEP;
-		tree->spr->rotation = angle;
+		ang = turnStep * FACING_STEP;
+		tree->spr->rotation = ang;
 		sySynch((turnStep - TREE_FALLEN_WEST_STEP) * 2);
-		tree->x.fixed += syCos(angle) * 6;
-		tree->z.fixed += sySin(angle) * 6;
+		tree->x.fixed += syCos(ang) * 6;
+		tree->z.fixed += sySin(ang) * 6;
 	}
 
 	tree->y.fixed = toFIXED(18);
@@ -706,16 +705,16 @@ static void scFuchinTempleKnockTreeDownEast(void)
 {
 	ACTOR *tree;
 	Uint32 turnStep;
-	Sint32 angle;
+	Sint32 ang;
 
 	tree = fdActorGet(ACTOR_TRAINING_TREE);
 	for(turnStep = TREE_STANDING_STEP; turnStep <= TREE_FALLEN_EAST_STEP;
 		turnStep++) {
-		angle = turnStep * FACING_STEP;
-		tree->spr->rotation = angle;
+		ang = turnStep * FACING_STEP;
+		tree->spr->rotation = ang;
 		sySynch((TREE_FALLEN_EAST_STEP - turnStep) * 2);
-		tree->x.fixed -= syCos(angle) * 6;
-		tree->z.fixed -= sySin(angle) * 6;
+		tree->x.fixed -= syCos(ang) * 6;
+		tree->z.fixed -= sySin(ang) * 6;
 	}
 	tree->y.fixed = toFIXED(18);
 	tree->tgtY = toFIXED(18);
@@ -734,15 +733,15 @@ static void scFuchinTempleKnockTreeDownEast(void)
 static void scFuchinTempleKnockTreeDownNorth(void)
 {
 	ACTOR *tree = fdActorGet(ACTOR_TRAINING_TREE);
-	Uint32 stepIndex = 0;
+	Uint32 stepIdx = 0;
 	Sint32 delay = 8;
 	do {
 		sySynch(delay);
 		tree->z.fixed -= toFIXED(1);
 		tree->tgtZ = ACTOR_NO_TARGET;
-		stepIndex++;
+		stepIdx++;
 		delay -= 2;
-	} while(stepIndex < 4);
+	} while(stepIdx < 4);
 	{
 		Uint8 rotation = 0;
 
@@ -764,20 +763,20 @@ static void scFuchinTempleKnockTreeDownNorth(void)
 static void scFuchinTempleKnockTreeDownSouth(void)
 {
 	ACTOR *tree;
-	Uint32 stepIndex;
+	Uint32 stepIdx;
 	FIXED  particleSpeed;
 	Sint32 delay;
 
 	tree = fdActorGet(ACTOR_TRAINING_TREE);
-	stepIndex = 0;
+	stepIdx = 0;
 	delay = 8;
 	do {
 		sySynch(delay);
 		tree->z.fixed += toFIXED(1);
 		tree->tgtZ = ACTOR_NO_TARGET;
-		stepIndex++;
+		stepIdx++;
 		delay -= 2;
-	} while(stepIndex < 4);
+	} while(stepIdx < 4);
 
 	tree->spr->rotation = 0;
 	tree->z.fixed += toFIXED(24);
@@ -847,14 +846,14 @@ typedef enum FUCHIN_TEMPLE_CHI_RULE {
    FUCHIN_TEMPLE_CHI_RULE, says, and sets the trunk up again. */
 static void scFuchinTempleStudentExplainsChiRules(Sint32 mode)
 {
-	Sint32 rulesMessage;
+	Sint32 rulesMsg;
 
 	fdActorSetSpeed(ACTOR_TREE_STUDENT, 0.8);
 	fdScriptWait(60);
-	rulesMessage = MsgXianCannotPushHands;
-	fdScriptSetMessageId(rulesMessage);
+	rulesMsg = MsgXianCannotPushHands;
+	fdScriptSetMessageId(rulesMsg);
 	if(mode == FUCHIN_TEMPLE_CHI_NOT_FROM_LINE) {
-		fdScriptSetMessageId(rulesMessage - 1);
+		fdScriptSetMessageId(rulesMsg - 1);
 		fdActorShowEmote(
 			ACTOR_TREE_STUDENT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
 		/* "Ya! What happened!? The tree fell on its own!" */
@@ -1075,7 +1074,7 @@ static void scFuchinTempleFeizhiLeavesForHsu(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_MESSENGER_STUDENT, FACING_NORTH, 20);
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridAnimateMetatiles(FuchinTemple_FehsDoorOpens, 78, 13);
+	fdMapGridAnimateMetatiles(FuchinTempleFehsDoorOpens, 78, 13);
 	fdActorRunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
 	fdScriptWait(20);
 	fdActorSetSpeed(ACTOR_MESSENGER_STUDENT, 1.5);
@@ -1115,7 +1114,7 @@ static void scFuchinTempleFeizhiLeavesForHsu(void)
 	fdActorFaceDirection(ACTOR_FEH, FACING_SOUTH_SOUTHWEST, 0);
 	fdActorWaitForMoveById(ACTOR_FEIZHI);
 	sySndPlay(SE_DOOR_CLOSE);
-	fdMapGridAnimateMetatiles(FuchinTemple_FehsDoorCloses, 78, 13);
+	fdMapGridAnimateMetatiles(FuchinTempleFehsDoorCloses, 78, 13);
 	/* "Feizhi! Wait!" */
 	fdScriptShowMessageThenWait(ACTOR_FEH, 0, 20);
 	fdActorFaceActor(ACTOR_WELCOMING_STUDENT, ACTOR_FEIZHI, 0);
@@ -1318,7 +1317,7 @@ static void scFuchinTempleFeizhiLeavesForHsu(void)
 	fdActorFaceDirection(ACTOR_PUNCHING_STUDENT, FACING_WEST, 20);
 	fdActorSetAnimation(ACTOR_KICKING_STUDENT, ANIM_STUDENT_KICKS);
 	fdActorSetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
-	fdActorSetScript(ACTOR_JUMPING_STUDENT, FuchinTemple_JumpingStudentScript);
+	fdActorSetScript(ACTOR_JUMPING_STUDENT, FuchinTempleJumpingStudentScript);
 }
 
 /* Isaac talks to Feh in his school after turning him down: "Warrior, will you
@@ -1552,7 +1551,7 @@ static void scFuchinTempleFehSeesChi(void)
 	fdActorSetAnimation(ACTOR_KICKING_STUDENT, ANIM_STUDENT_KICKS);
 	fdActorSetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
 	fdActorWaitForMoveById(ACTOR_JUMPING_STUDENT);
-	fdActorSetScript(ACTOR_JUMPING_STUDENT, FuchinTemple_JumpingStudentScript);
+	fdActorSetScript(ACTOR_JUMPING_STUDENT, FuchinTempleJumpingStudentScript);
 	fdActorSetSpeed(ACTOR_TREE_STUDENT, 0.8);
 	fdActorWalkToAndWait(ACTOR_TREE_STUDENT, 216, 168);
 	fdActorWalkToAndWait(ACTOR_TREE_STUDENT, 232, 168);
@@ -1598,7 +1597,7 @@ static void scFuchinTempleOpenLockedDoor(void)
 		fdScriptEnd();
 	} else {
 		sySndPlay(SE_DOOR_OPEN);
-		fdMapGridAnimateMetatiles(FuchinTemple_FehsDoorOpens, 78, 13);
+		fdMapGridAnimateMetatiles(FuchinTempleFehsDoorOpens, 78, 13);
 		fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
 		fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 306, 248);
 		fdActorWalkTo(ACTOR_PARTY_LEADER, 304, 216);
@@ -1675,11 +1674,11 @@ static void scFuchinTempleSpawnGrottoEntryParticle(void)
 
 	fallSpeed = syRandomBelow(8) * (toFIXED(1) / 5);
 
-	fdEffectSpawn(leader->x.fixed + toFIXED(8 - (FrameCount & 15)),
+	fdEffectSpawn(leader->x.fixed + toFIXED(8 - (TickCount & 15)),
 		leader->y.fixed + toFIXED(24), leader->z.fixed, 0, -fallSpeed, 0,
 		EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
 
-	if((FrameCount & 1) != 0)
+	if((TickCount & 1) != 0)
 		fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
 	else
 		fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_GRB);
@@ -1714,7 +1713,7 @@ static void scFuchinTempleEnterWaterfallGrotto(void)
 
 	fdScriptStart();
 	particleTask = scFuchinTempleSpawnGrottoEntryParticle;
-	sySetFrameEvent(particleTask, EVENT_PASS_FRAME);
+	sySetTickEvent(particleTask, EVENT_PASS_TICK);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.2);
 	FieldStateWork->transitionFrm = 60;
 	fdScriptFinishScreenTransition();
@@ -1725,7 +1724,7 @@ static void scFuchinTempleEnterWaterfallGrotto(void)
 	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
 	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	syCloseEvent(particleTask);
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(
 		FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE);
 	fdScriptEnd();
@@ -1745,7 +1744,7 @@ static void scFuchinTempleEnterTemple(void)
 {
 	fdScriptStart();
 	sySndPlay(SE_THUMP);
-	fdMapGridAnimateMetatiles(FuchinTemple_TempleDoorOpens, 77, 8);
+	fdMapGridAnimateMetatiles(FuchinTempleTempleDoorOpens, 77, 8);
 	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1767,7 +1766,7 @@ static void scFuchinTempleNyunpaTeachesKi(void)
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 168, 504);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 	fdScriptWait(20);
 	fdActorStartRepeatedMotion(ACTOR_NYUNPA, 2);
@@ -1886,7 +1885,7 @@ static void scFuchinTempleRunHamasRevealLesson(void)
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.4);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 472, 536);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 	fdActorFaceDirection(ACTOR_HAMAS_BOY_MONK, FACING_EAST, 20);
 	fdActorRunRepeatedMotion(ACTOR_HAMAS_BOY_MONK, 2);
@@ -2645,15 +2644,14 @@ Sint32 scInit(void)
 
 /* Starts Mind Read from caster on target as part of a script, without the
    window that announces its name. */
-static void scFuchinTempleStartMindReadDemonstration(
-	Sint32 caster, Sint32 target)
+static void scFuchinTempleStartMindReadDemonstration(Sint32 caster, Sint32 tgt)
 {
 	FIELD_EFFECT_STATE *effectState;
 
 	gmFlagSet(FLAG_PLAY_PSYNERGY_CAST);
 	fdPsynergyLoadResources(ABILITY_MIND_READ, 1);
 	effectState = FieldEffectStateWork;
-	fdPsynergySetupActorPair(caster, target);
+	fdPsynergySetupActorPair(caster, tgt);
 	effectState->announceName = 0;
 	fdPsynergyStartCast();
 	fdPsynergyRunHandler(FIELD_PSYNERGY_HANDLER_ON_TARGET);
@@ -2668,23 +2666,23 @@ static void scFuchinTempleFinishMindReadDemonstration(void)
 	fdPsynergyStopCasterUpdate();
 }
 
-/* Eight crescents of light rise from Nyunpa, ten frames apart, as he glows and
+/* Eight crescents of light rise from Nyunpa, ten ticks apart, as he glows and
    calls to the monk at the falls; every second one sounds. */
 static void scFuchinTempleSpawnNyunpasParticles(void)
 {
 	EFFECT_OPTIONS options;
 	ACTOR		  *nyunpa;
-	Uint32		   shotIndex;
+	Uint32		   shotIdx;
 
 	nyunpa = fdActorGet(ACTOR_NYUNPA);
 	options.pri = 1;
 	options.type = SPRITE_CRESCENT;
-	options.script = FuchinTemple_ShotScript;
+	options.script = FuchinTempleShotScript;
 	options.tgtScaleX = toFIXED(7) / 2;
 	options.tgtScaleY = toFIXED(3) / 2;
-	for(shotIndex = 0; shotIndex < 8; shotIndex++) {
+	for(shotIdx = 0; shotIdx < 8; shotIdx++) {
 		fdScriptWait(10);
-		if(shotIndex & 1) {
+		if(shotIdx & 1) {
 			sySndPlay(SE_PSYNERGY_START);
 		}
 		fdEffectSpawn(nyunpa->x.fixed, nyunpa->y.fixed,
@@ -2697,17 +2695,17 @@ static void scFuchinTempleSpawnNyunpasParticles(void)
 }
 
 /* Hama's and Ivan's update function during the Reveal lesson: they glow, drawn
-   red and blue in turn every two frames. */
+   red and blue in turn every two ticks. */
 static void scFuchinTempleGlowRedAndBlue(ACTOR *updated)
 {
-	if((FrameCount >> 1) & 1) {
+	if((TickCount >> 1) & 1) {
 		fdActorSetSprCol(updated, SPRITE_COLOR_RED_TINT);
 	} else {
 		fdActorSetSprCol(updated, SPRITE_COLOR_BLUE_TINT);
 	}
 }
 
-/* The sparkles that rise from Hama, two frames apart, as the Reveal lesson
+/* The sparkles that rise from Hama, two ticks apart, as the Reveal lesson
    ends. */
 #define REVEAL_LESSON_SPARKLES 64
 
@@ -2717,7 +2715,7 @@ static void scFuchinTempleAnimateRevealLesson(void)
 {
 	EFFECT_OPTIONS options;
 	ACTOR		  *hama;
-	Uint32		   particleIndex;
+	Uint32		   particleIdx;
 	FIXED		   particleX;
 	FIXED		   particleY;
 	Sint32		   riseSpeed;
@@ -2736,9 +2734,8 @@ static void scFuchinTempleAnimateRevealLesson(void)
 	options.pri = 1;
 	options.pal = SPRITE_COLOR_RBG;
 	options.type = SPRITE_SPARKLE;
-	for(particleIndex = 0; particleIndex < REVEAL_LESSON_SPARKLES;
-		particleIndex++) {
-		if((particleIndex & 3) == 0) {
+	for(particleIdx = 0; particleIdx < REVEAL_LESSON_SPARKLES; particleIdx++) {
+		if((particleIdx & 3) == 0) {
 			sySndPlay(SE_GLITTER);
 		}
 		particleX = hama->x.fixed + toFIXED(syRandomBelow(48)) - toFIXED(12);
@@ -2762,15 +2759,15 @@ static void scFuchinTempleAnimateRevealLesson(void)
 
 #include "shared/field_effect_duration_scripts.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 /* The student who trains by jumping: three hops, each higher, spinning a full
    turn in the third, then a second's rest. */
-Sint32 FuchinTemple_JumpingStudentScript[] = {
+Sint32 FuchinTempleJumpingStudentScript[] = {
 	SC_ANIMATION(ANIM_STILL),
 	SC_SET(SW_GRAVITY, toFIXED(3) / 5),
 	SC_LABEL(1),
@@ -2803,26 +2800,26 @@ Sint32 FuchinTemple_JumpingStudentScript[] = {
 };
 
 /* The point Force strikes on the training tree: no shadow. */
-Sint32 FuchinTemple_HiddenSpriteScript[] = {
+Sint32 FuchinTempleHiddenSpriteScript[] = {
 	SC_CALL(scFuchinTempleClearScriptedActorSprFlags),
 	SC_WAIT(1),
 	SC_END,
 };
 
-/* The doors' map metatiles, frame by frame: Fuchin Temple's door opening as
+/* The doors' map metatiles, tick by tick: Fuchin Temple's door opening as
    Isaac walks in (scFuchinTempleEnterTemple), and the door Feh and Feizhi come
    out of in Master Feh's school, opening and closing behind them. */
-Uint16 FuchinTemple_TempleDoorOpens[] = {
+Uint16 FuchinTempleTempleDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(66, 46, 3, 2, 5),
 	MAPGRID_ANIMATION_STEP(63, 46, 3, 2, 5),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 FuchinTemple_FehsDoorOpens[] = {
+Uint16 FuchinTempleFehsDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(62, 19, 2, 2, 5),
 	MAPGRID_ANIMATION_STEP(64, 19, 2, 2, 5),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 FuchinTemple_FehsDoorCloses[] = {
+Uint16 FuchinTempleFehsDoorCloses[] = {
 	MAPGRID_ANIMATION_STEP(62, 19, 2, 2, 5),
 	MAPGRID_ANIMATION_STEP(60, 19, 2, 2, 5),
 	MAPGRID_ANIMATION_STEPS_END,
@@ -2905,7 +2902,7 @@ ACTOR_PLACE FuchinTempleActorPlacements[] = {
 		120, 0, 200, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_YOUTH_WITH_TIED_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
 		152, 0, 152, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_YOUTH_WITH_TIED_HAIR, CONDITION_IN_VIEW, (Sint32)FuchinTemple_JumpingStudentScript,
+	ACTOR_PLACEMENT(SPRITE_YOUTH_WITH_TIED_HAIR, CONDITION_IN_VIEW, (Sint32)FuchinTempleJumpingStudentScript,
 		120, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_YOUTH_WITH_TIED_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
 		176, 0, 168, FACING_EAST, TALK_FACING_PARTY, 0),
@@ -2923,7 +2920,7 @@ ACTOR_PLACE FuchinTempleActorPlacements[] = {
 	/* The training tree, and where Force strikes it */
 	ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
 		232, 0, 168, FACING_WEST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, (Sint32)FuchinTemple_HiddenSpriteScript,
+	ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, (Sint32)FuchinTempleHiddenSpriteScript,
 		232, 0, 168, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	{ SCENE_TABLE_END },
 };
@@ -3091,8 +3088,8 @@ CUE FuchinTempleCuesFromLamaTemple[] = {
 /* clang-format on */
 
 /* One of Nyunpa's crescents (scFuchinTempleSpawnNyunpasParticles): it rises
-   facing north for 45 frames, then is put away. */
-Sint32 FuchinTemple_ShotScript[] = {
+   facing north for 45 ticks, then is put away. */
+Sint32 FuchinTempleShotScript[] = {
 	SC_SET(SW_FACING, FACING_NORTH),
 	SC_WAIT(44),
 	SC_WAIT(1),

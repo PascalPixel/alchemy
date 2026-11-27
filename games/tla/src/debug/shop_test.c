@@ -81,18 +81,18 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	return ActorPlacements;
 }
 
-/* Browses `count` messages from `message`, each typed out at once: A for the
-   next, B to close; each moves on by itself after 10 frames held, or 60 frames
+/* Browses `cnt` messages from `msg`, each typed out at once: A for the
+   next, B to close; each moves on by itself after 10 ticks held, or 60 ticks
    before it is typed out. */
-void dbShopTestBrowseMessageRange(Sint32 message, Sint32 count)
+void dbShopTestBrowseMessageRange(Sint32 msg, Sint32 cnt)
 {
 	Sint32 i;
-	Sint32 frames;
-	void  *window;
+	Sint32 ticks;
+	void  *win;
 	Sint32 typed;
 
-	window = mnPortraitOpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
-	for(i = 0; i < count; i++) {
+	win = mnPortraitOpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
+	for(i = 0; i < cnt; i++) {
 		/* A sample name, item and number for each message to show: Garet, the
 		   Shamshir and a number of six digits. */
 		mnMessageArgumentPush(GARET, MESSAGE_ARGUMENT_ACTOR);
@@ -100,13 +100,13 @@ void dbShopTestBrowseMessageRange(Sint32 message, Sint32 count)
 		mnMessageArgumentPush(123456, MESSAGE_ARGUMENT_NUMBER);
 		mnMessageCloseFinishedWindows();
 		mnMessageOpenWindow(
-			message, 5, 0, MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
-		frames = 0;
+			msg, 5, 0, MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
+		ticks = 0;
 		if(!(PerWork.data & (KEY_A | KEY_B))) {
 			do {
 				sySynch(1);
-				frames++;
-				if(frames > 59)
+				ticks++;
+				if(ticks > 59)
 					break;
 			} while(!(PerWork.data & (KEY_A | KEY_B)));
 		}
@@ -119,24 +119,24 @@ void dbShopTestBrowseMessageRange(Sint32 message, Sint32 count)
 			PerWork.repeat = KEY_A;
 			sySynch(1);
 		}
-		frames = 0;
+		ticks = 0;
 		if(PerWork.data & KEY_B)
 			break;
 		if(!(PerWork.data & KEY_A)) {
 			do {
 				sySynch(1);
-				frames++;
-				if(frames > 9)
+				ticks++;
+				if(ticks > 9)
 					break;
 				if(PerWork.data & KEY_B)
 					goto done;
 			} while(!(PerWork.data & KEY_A));
 		}
-		message++;
+		msg++;
 	}
 done:
 	mnMessageCloseFinishedWindows();
-	mnWindowClose(window, 2);
+	mnWindowClose(win, 2);
 }
 
 /* The shop and sanctum message browsers: talking to ACTOR_SANCTUM_MESSAGES and
@@ -206,20 +206,20 @@ void dbShopTestOpenSanctum(Sint32 keeper)
    anvil: while FLAG_FORGE_OPEN is set he forges what the party brings. */
 void dbShopTestTalkToSunshine(Sint32 actor)
 {
-	Sint32 message;
+	Sint32 msg;
 
 	if(!fdScriptGetFlag(FLAG_FORGE_OPEN)) {
-		message = (Sint32)MsgAhSoYou;
-		fdScriptSetMessageId(message);
+		msg = (Sint32)MsgAhSoYou;
+		fdScriptSetMessageId(msg);
 		/* "Ah, so you're looking for a really unique item, huh?" */
 		fdMessageShowAtActor(actor, 0);
 		if(fdScriptAskYesNoWithActorAnimation(fdPartyGetLeaderActor(), 0) ==
 			0) {
 			fdScriptWait(10);
-			fdScriptSetMessageId(message + 1);
+			fdScriptSetMessageId(msg + 1);
 		} else {
 			fdScriptWait(20);
-			fdScriptSetMessageId(message + 2);
+			fdScriptSetMessageId(msg + 2);
 		}
 		fdScriptShowMessageAndWait(actor, 0);
 	} else if(fdScriptGetFlag(FLAG_SHOP_TEST_SUNSHINE_FORGING)) {
@@ -232,13 +232,13 @@ void dbShopTestTalkToSunshine(Sint32 actor)
 		/* "My wife has the item I made you. She can give it to you." */
 		fdScriptShowMessageAndWait(actor, 0);
 	} else {
-		message = (Sint32)MsgYouWantMe;
-		fdScriptSetMessageId(message);
+		msg = (Sint32)MsgYouWantMe;
+		fdScriptSetMessageId(msg);
 		/* "You want me to make you a little something special?" */
 		fdMessageShowAtActor(actor, 0);
 		if(fdScriptAskYesNoWithActorAnimation(fdPartyGetLeaderActor(), 0) ==
 			0) {
-			fdScriptSetMessageId(message + 1);
+			fdScriptSetMessageId(msg + 1);
 			/* "Well, look at that! You went to get some raw materials for
 			   me..." */
 			fdScriptShowMessageAndWait(actor, 0);
@@ -246,7 +246,7 @@ void dbShopTestTalkToSunshine(Sint32 actor)
 			if(mnForgeGetItem())
 				fdScriptSetFlag(FLAG_SHOP_TEST_SUNSHINE_FORGING);
 		} else {
-			fdScriptSetMessageId(message + 2);
+			fdScriptSetMessageId(msg + 2);
 			/* "Hm... Maybe I made a mistake. It's hard to tell... If you
 			   want..." */
 			fdScriptShowMessageAndWait(actor, 0);
@@ -271,33 +271,33 @@ void dbShopTestTalkToSunshinesWife(Sint32 actor)
 	} else if(mnForgeGetItem()) {
 		Sint32 item = mnForgeGetItem();
 		Uint32 price = (Uint16)gmItemGetDirect(item)->price;
-		Sint32 message;
+		Sint32 msg;
 
 		mnMessageArgumentPush(item, MESSAGE_ARGUMENT_ITEM);
 		mnMessageArgumentPush(price, MESSAGE_ARGUMENT_NUMBER);
-		message = (Sint32)MsgHereSThe;
-		fdScriptSetMessageId(message);
+		msg = (Sint32)MsgHereSThe;
+		fdScriptSetMessageId(msg);
 		/* "Here's the item you wanted. Now, about the payment... We only
 		   take..." */
 		fdMessageShowAtActor(actor, 0);
 		if(fdScriptAskYesNoWithActorAnimation(fdPartyGetLeaderActor(), 0) !=
 			0) {
-			fdScriptSetMessageId(message + 1);
+			fdScriptSetMessageId(msg + 1);
 			/* "Hey, we're not a charity! If you can't pay for it, you don't get
 			   it!" */
 			fdScriptShowMessageAndWait(actor, 0);
 		} else if(gmPartyInventoryFindRoom(item) < 0) {
-			fdScriptSetMessageId(message + 2);
+			fdScriptSetMessageId(msg + 2);
 			/* "Whoops! Looks like you've got a full load there! This'll have
 			   to..." */
 			fdScriptShowMessageAndWait(actor, 0);
 		} else if(MainRoutineStateWork.coins < price) {
-			fdScriptSetMessageId(message + 3);
+			fdScriptSetMessageId(msg + 3);
 			/* "You don't enough money! What are you trying to pull? I can't
 			   give..." */
 			fdScriptShowMessageAndWait(actor, 0);
 		} else {
-			fdScriptSetMessageId(message + 4);
+			fdScriptSetMessageId(msg + 4);
 			/* "OK, here you go!" */
 			fdScriptShowMessageAndWait(actor, 0);
 			fdItemDispShowItem(
@@ -400,17 +400,17 @@ void dbShopTestOpenPortraitBrowser(void);
 void dbShopTestNoOperation(void);
 
 /* The level editor's label before a member's level, as
-   IncreaseItemAndLevel_LvLabel. */
-char ShopTest_LvLabel[4] = "Lv";
+   IncreaseItemAndLevelLvLabel. */
+char ShopTestLvLabel[4] = "Lv";
 
 /* The item selector's prompt, before the item number. */
-char ShopTest_ItemPrompt[12] = "Item No:";
+char ShopTestItemPrompt[12] = "Item No:";
 
 /* The item selector's help line, while the bags have room. */
-char ShopTest_ItemHelp[24] = "A:Get Item  B:Return";
+char ShopTestItemHelp[24] = "A:Get Item  B:Return";
 
 /* The item selector's line when the party's bags are full. */
-char ShopTest_ItemFull[20] = "ITEM FULL........";
+char ShopTestItemFull[20] = "ITEM FULL........";
 
 SCENE_ENTRANCE SceneEntrances[] = {
 	{0, CONDITION_ALWAYS, 408, 0, 312, FACING_NORTH, 0, 280, 0, 780, 464, 0},
@@ -688,10 +688,10 @@ Sint32 scPrepareMap(void)
 void dbShopTestRaisePartyLevels(Sint32 levels)
 {
 	Sint16 owners[16];
-	Sint32 count = syFieldPartyListMembers(owners);
+	Sint32 cnt = syFieldPartyListMembers(owners);
 	Sint32 i;
 
-	for(i = 0; i < count;) {
+	for(i = 0; i < cnt;) {
 		Uint16 owner = owners[i++];
 
 		gmUnitLevelUpTo(owner, syUnitGet(owner)->level + levels);
@@ -706,21 +706,21 @@ void dbShopTestRaisePartyLevels(Sint32 levels)
 void dbShopTestRunLevelEditor(void)
 {
 	UNIT		*unit = syUnitGet(MainRoutineStateWork.leaderActorId);
-	void		*window = mnWindowCreate(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
-	const Uint8 *message = MsgRaiseEveryoneS;
+	void		*win = mnWindowCreate(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
+	const Uint8 *msg = MsgRaiseEveryoneS;
 	Sint32		 redraw;
 
-	mnTextDrawMessage(message, window, 0, 0);
-	mnTextDrawMessage(message + 1, window, 0, 16);
+	mnTextDrawMessage(msg, win, 0, 0);
+	mnTextDrawMessage(msg + 1, win, 0, 16);
 	redraw = 1;
-	mnTextDrawMessage(message + 2, window, 0, 32);
+	mnTextDrawMessage(msg + 2, win, 0, 32);
 	for(;;) {
 		if(redraw) {
-			mnWindowSprRedrawSavedRect(window);
-			mnTextDrawStringAtOffset(unit->name, window, 0, 48);
-			mnTextDrawStringInWindow(ShopTest_LvLabel, window, 48, 48);
+			mnWindowSprRedrawSavedRect(win);
+			mnTextDrawStringAtOffset(unit->name, win, 0, 48);
+			mnTextDrawStringInWindow(ShopTestLvLabel, win, 48, 48);
 			redraw = 0;
-			mnTextDrawNumInWindow(unit->level, 0, window, 72, 48);
+			mnTextDrawNumInWindow(unit->level, 0, win, 72, 48);
 		}
 		sySynch(1);
 		if((PerWork.push & KEY_START) || (PerWork.push & KEY_SELECT)) {
@@ -737,7 +737,7 @@ void dbShopTestRunLevelEditor(void)
 			break;
 	}
 	sySndPlay(SE_MENU_CANCEL);
-	mnWindowClose(window, 2);
+	mnWindowClose(win, 2);
 }
 
 /* The selector's item numbers, 0 to 499, wrapping. */
@@ -749,18 +749,18 @@ void dbShopTestRunLevelEditor(void)
    Talking to ACTOR_ITEM_SELECTOR. */
 void dbShopTestSelectItem(void)
 {
-	void  *window;
+	void  *win;
 	void  *details;
 	Sint32 item;
 	Sint32 redraw;
-	Sint32 entryCount;
+	Sint32 entryCnt;
 	Sint8  step;
 
-	entryCount = ITEM_SELECTOR_ITEM_COUNT;
+	entryCnt = ITEM_SELECTOR_ITEM_COUNT;
 	step = 0;
 	item = 1;
 	redraw = 1;
-	window = mnWindowCreate(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
+	win = mnWindowCreate(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
 	details = mnWindowCreate(0, 8, 13, 10, WINDOW_FLAG_INSTANT);
 	syDMAXCopy((const void *)OBJ_PLTT,
 		(void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0), DMA_COPY_HALFWORDS(16),
@@ -774,19 +774,19 @@ void dbShopTestSelectItem(void)
 	while(1) {
 		if(redraw) {
 			redraw = 0;
-			mnWindowSprPrepareForRedraw(window);
+			mnWindowSprPrepareForRedraw(win);
 			mnWindowSprPrepareForRedraw(details);
-			mnTextDrawStringInWindow(ShopTest_ItemPrompt, window, 0, 0);
-			mnTextDrawNumAtOffset(item, 0, window, 80, 0);
+			mnTextDrawStringInWindow(ShopTestItemPrompt, win, 0, 0);
+			mnTextDrawNumAtOffset(item, 0, win, 80, 0);
 			if(gmPartyInventoryHasSpace()) {
-				mnTextDrawStringInWindow(ShopTest_ItemHelp, window, 0, 32);
+				mnTextDrawStringInWindow(ShopTestItemHelp, win, 0, 32);
 				mnTextDrawMessageAsTiles(
-					(Sint32)(item + MsgItemName), window, 120, 0);
+					(Sint32)(item + MsgItemName), win, 120, 0);
 				mnTextDrawMessage(
-					(Sint32)(item + MsgItemDescription), window, 0, 16);
+					(Sint32)(item + MsgItemDescription), win, 0, 16);
 				mnItemMenuDrawItemDetails((Sint32)details, item);
 			} else {
-				mnTextDrawStringInWindow(ShopTest_ItemFull, window, 0, 32);
+				mnTextDrawStringInWindow(ShopTestItemFull, win, 0, 32);
 			}
 		}
 		sySynch(1);
@@ -838,20 +838,20 @@ void dbShopTestSelectItem(void)
 			sySndPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(step == -1) {
-			for(item = (item + ITEM_SELECTOR_ITEM_COUNT) % entryCount;
+			for(item = (item + ITEM_SELECTOR_ITEM_COUNT) % entryCnt;
 				gmItemGetDirect(item & INVENTORY_ITEM_ID_MASK)->icon == 0;
-				item = (item + ITEM_SELECTOR_ITEM_COUNT - 1) % entryCount)
+				item = (item + ITEM_SELECTOR_ITEM_COUNT - 1) % entryCnt)
 				;
 		}
 		if(step == 1) {
-			for(item = (item + ITEM_SELECTOR_ITEM_COUNT) % entryCount;
+			for(item = (item + ITEM_SELECTOR_ITEM_COUNT) % entryCnt;
 				gmItemGetDirect(item & INVENTORY_ITEM_ID_MASK)->icon == 0;
-				item = (item + ITEM_SELECTOR_ITEM_COUNT + 1) % entryCount)
+				item = (item + ITEM_SELECTOR_ITEM_COUNT + 1) % entryCnt)
 				;
 		}
 		step = 0;
 	}
-	mnWindowClose(window, 2);
+	mnWindowClose(win, 2);
 	mnWindowClose(details, 2);
 }
 
@@ -868,12 +868,11 @@ void dbShopTestOpenPortraitBrowser(void)
 }
 
 /* Unused: the Psynergy test's dbPsynergyTestDigMetatiles again. */
-UNUSED void dbShopTestDigMetatiles(Sint32 stage, Sint32 sourceX, Sint32 sourceY,
-	Sint32 width, Sint32 height, Sint32 destinationX, Sint32 destinationY)
+UNUSED void dbShopTestDigMetatiles(Sint32 stage, Sint32 srcX, Sint32 srcY,
+	Sint32 width, Sint32 height, Sint32 dstX, Sint32 dstY)
 {
 	if(stage == SCOOP_STAGE_DUG)
-		fdMapCopyMetatilesRect(
-			sourceX, sourceY, width, height, destinationX, destinationY);
+		fdMapCopyMetatilesRect(srcX, srcY, width, height, dstX, dstY);
 }
 
 /* Unused: the Psynergy test's dbPsynergyTestGrowActor again. */

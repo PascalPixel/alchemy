@@ -37,7 +37,7 @@ typedef enum LEADER_MOVEMENT_MODE {
    byte, which fdScreenTransitionUpdateScanlineTable draws. */
 typedef enum WINDOW_TRANSITION_MODE {
 	WINDOW_TRANSITION_BARS = 0,	  /* a bar on each line, at random */
-	WINDOW_TRANSITION_SHAPE = 1,  /* a shape from ScreenTransition_Shapes */
+	WINDOW_TRANSITION_SHAPE = 1,  /* a shape from ScreenTransitionShapes */
 	WINDOW_TRANSITION_NOISE = 2,  /* ragged lines from the left edge */
 	WINDOW_TRANSITION_CIRCLE = 3, /* a circle at the screen's centre */
 	/* Alternate lines wiping in from the left and the right. */
@@ -113,11 +113,11 @@ typedef enum ENCOUNTER_ZONE_ID {
    (src/field/mode_stubs.s). */
 Sint32 fdModeRun(Sint32 entrance);
 void   gmMainRoutineRun(Sint32 start);
-void   fdScriptWait(Sint32 frames);
+void   fdScriptWait(Sint32 ticks);
 void   fdScriptStart(void);
 void   fdScriptEnd(void);
-void   fdScriptRunActorUpdateAndWait(struct ACTOR_PLACE *table);
-void   fdScriptAppendActorPlacements(struct ACTOR_PLACE *table);
+void   fdScriptRunActorUpdateAndWait(struct ACTOR_PLACE *tbl);
+void   fdScriptAppendActorPlacements(struct ACTOR_PLACE *tbl);
 void   fdAssignViewFlags(struct ACTOR_PLACE *entry);
 void   fdScriptSetCues(const struct CUE *cues);
 void   fdScriptAddPartyMember(Sint32 unit, Sint32 announce);
@@ -139,50 +139,49 @@ void fdActorSetDestinationById(Uint32 actorId, Sint32 x, Sint32 z);
 void fdActorMoveToAndWaitById(Uint32 actorId, Sint32 x, Sint32 z);
 void fdActorWalkToById(Uint32 actorId, Sint32 x, Sint32 z);
 void fdActorWalkToAndWaitById(Uint32 actorId, Sint32 x, Sint32 z);
-void fdActorCenterOnColumn(Uint32 actorId, Sint32 priority, Sint32 zOffset);
-void fdActorSetDestinationOffsetById(
-	Uint32 actorId, Sint32 xOffset, Sint32 zOffset);
+void fdActorCenterOnColumn(Uint32 actorId, Sint32 pri, Sint32 zOfs);
+void fdActorSetDestinationOffsetById(Uint32 actorId, Sint32 xOfs, Sint32 zOfs);
 void fdActorWaitForMoveById(Uint32 actorId);
 void fdActorSetHorizontalPosWithTerrain(Uint32 actorId, FIXED x, FIXED z);
 void fdActorSetPosWithTerrain(Uint32 actorId, FIXED x, FIXED y, FIXED z);
-void fdActorSetAnimationById(Uint32 actorId, Sint32 animation);
+void fdActorSetAnimationById(Uint32 actorId, Sint32 anm);
 void fdActorSetAnimationSpeedById(Uint32 actorId, Sint32 steps);
-void fdActorSetAnimationAndWait(Uint32 actorId, Sint32 animation);
+void fdActorSetAnimationAndWait(Uint32 actorId, Sint32 anm);
 void fdActorWaitForAnimationChange(Uint32 actorId);
 void fdActorNoOperation(void);
-void fdActorJump(Uint32 actorId, Sint32 speed, Sint32 frames);
-void fdActorStartRepeatedMotion(Uint32 actorId, Sint32 count);
-void fdActorRunRepeatedMotion(Uint32 actorId, Sint32 count);
-void fdActorJumpDownLedge(Sint32 actorId, Uint32 pose, Sint32 dustColor);
-void fdActorFaceActorById(Sint32 firstId, Sint32 secondId, Sint32 frames);
-void fdActorTurnToFaceEachOther(Sint32 firstId, Sint32 secondId, Sint32 frames);
-void fdActorConfigureSprCol(Sint32 actorId, Sint32 color);
-void fdActorSetSprCol(struct ACTOR *actor, Sint32 color);
+void fdActorJump(Uint32 actorId, Sint32 speed, Sint32 ticks);
+void fdActorStartRepeatedMotion(Uint32 actorId, Sint32 cnt);
+void fdActorRunRepeatedMotion(Uint32 actorId, Sint32 cnt);
+void fdActorJumpDownLedge(Sint32 actorId, Uint32 pose, Sint32 dustCol);
+void fdActorFaceActorById(Sint32 firstId, Sint32 secondId, Sint32 ticks);
+void fdActorTurnToFaceEachOther(Sint32 firstId, Sint32 secondId, Sint32 ticks);
+void fdActorConfigureSprCol(Sint32 actorId, Sint32 col);
+void fdActorSetSprCol(struct ACTOR *actor, Sint32 col);
 void fdActorWatchAndStartScript(
-	Uint32 actorId, Sint32 targetId, const void *script);
-void		   fdScriptSetMessageId(Sint32 message);
-struct WINDOW *fdMessageShowAtActor(Sint32 speaker, Sint32 unusedFlags);
-void		   fdScriptShowMessageAndWait(Sint32 actorId, Sint32 flags);
-void   fdScriptShowMessageThenWait(Sint32 actorId, Sint32 flags, Sint32 frames);
-Sint32 fdScriptAskYesNoAndShowResponse(Sint32 actorId, Sint32 flags);
+	Uint32 actorId, Sint32 tgtId, const void *script);
+void		   fdScriptSetMessageId(Sint32 msg);
+struct WINDOW *fdMessageShowAtActor(Sint32 speaker, Sint32 unusedFlg);
+void		   fdScriptShowMessageAndWait(Sint32 actorId, Sint32 flg);
+void   fdScriptShowMessageThenWait(Sint32 actorId, Sint32 flg, Sint32 ticks);
+Sint32 fdScriptAskYesNoAndShowResponse(Sint32 actorId, Sint32 flg);
 void   fdScriptNoOperationCallback(void);
 void   fdScriptShowSpeakerMessage(Sint32 speaker);
 void   fdScriptForwardShowMessageAtPos(
 	  Sint32 unusedA, Sint32 unusedB, Sint32 x, Sint32 y);
 void fdScriptShowMessageAtPos(
 	Sint32 unusedA, Sint32 unusedB, Sint32 x, Sint32 y);
-void fdActorFaceDirectionById(Sint32 actorId, Sint32 angle, Sint32 frames);
+void fdActorFaceDirectionById(Sint32 actorId, Sint32 ang, Sint32 ticks);
 void fdActorClearDestinationAndStand(Uint32 actorId);
 void fdActorClosePortrait(Sint32 actorId);
 void fdScriptShowTwoMessagesAndWait(Sint32 first, Sint32 firstX, Sint32 firstY,
 	Sint32 firstPortraitX, Sint32 firstPortraitY, Sint32 second, Sint32 secondX,
 	Sint32 secondY, Sint32 secondPortraitX, Sint32 secondPortraitY);
 void fdMessageSetVoiceFromActor(Sint32 actorId);
-void fdActorSetSprPriority(Sint32 actorId, Sint32 priority);
-void fdActorShowEmoteById(Sint32 actorId, Sint32 emote, Sint32 frames);
-void fdEffectSetAttached(Sint32 actorId, Sint32 flags);
-void fdActorCopyGraphics(Uint32 targetId, Uint32 sourceId);
-void fdCameraFollowActor(Sint32 actorId, Sint32 keepPosition);
+void fdActorSetSprPriority(Sint32 actorId, Sint32 pri);
+void fdActorShowEmoteById(Sint32 actorId, Sint32 emote, Sint32 ticks);
+void fdEffectSetAttached(Sint32 actorId, Sint32 flg);
+void fdActorCopyGraphics(Uint32 tgtId, Uint32 srcId);
+void fdCameraFollowActor(Sint32 actorId, Sint32 keepPos);
 void fdCameraSetSpeedParms(FIXED speedLimit, FIXED acceleration);
 void fdCameraMoveWithinMapBounds(
 	FIXED requestedX, FIXED requestedY, FIXED requestedZ, Sint32 glide);
@@ -199,10 +198,10 @@ void   fdRequestDjinnBattle(Sint32 actorAndHop, Sint32 djinni);
 void   fdScriptSetAfterBattleDestination(Sint32 sceneId, Sint32 entrance);
 void   fdScriptSetDefeatDestination(Sint32 sceneId, Sint32 entrance);
 void   fdScriptLeaveFor(Uint16 sceneId, Uint16 entrance);
-Sint32 fdActorGetScreenPos(Sint32 actorId, Sint32 *position);
+Sint32 fdActorGetScreenPos(Sint32 actorId, Sint32 *pos);
 Sint32 fdActorGetCueMetatileAheadOfCurrent(void);
 Sint32 fdPartyGetCharacterSpr(Sint32 character);
-void   fdPsynergySteerPushedTarget(Sint32 targetId);
+void   fdPsynergySteerPushedTarget(Sint32 tgtId);
 void   fdPsynergyStartCloak(void);
 Sint32 fdTryJumpForward(void);
 Sint32 fdClimbDown(void);
@@ -218,29 +217,29 @@ void   fdMotesStart(void);
 void   fdEffectInitSparkles(void);
 void   fdScreenTransitionStartHeldWindow(Sint32 mode);
 void   fdScreenTransitionStartDissolveHeld(Sint32 mode);
-void   fdScreenTransitionStart(Sint32 mode, Sint32 frames);
-void   fdScreenTransitionFinish(Sint32 mode, Sint32 frames);
+void   fdScreenTransitionStart(Sint32 mode, Sint32 ticks);
+void   fdScreenTransitionFinish(Sint32 mode, Sint32 ticks);
 void   fdScreenTransitionHideBackgrounds(
 	  Sint32 clearBg3, Sint32 clearBg2, Sint32 clearBg1);
 void fdPaletteFadeInit(void);
 void fdPaletteFadeSetTarget(Sint32 mode, Sint32 half);
 void fdPaletteFadeSetSource(Sint32 mode, Sint32 half);
 void fdPaletteFadeCalcSteps(
-	Sint16 *source, Sint16 *target, Sint16 *step, Sint32 frames);
-void fdPaletteFadeStartInterpolation(Sint32 frames);
+	Sint16 *src, Sint16 *tgt, Sint16 *step, Sint32 ticks);
+void fdPaletteFadeStartInterpolation(Sint32 ticks);
 void fdPaletteFadeRelease(void);
-void fdPaletteFadeSetBackdrop(Uint32 color);
+void fdPaletteFadeSetBackdrop(Uint32 col);
 void fdScriptStartScreenTransition(void);
 void fdScriptFinishScreenTransition(void);
-void fdScriptWaitTransitionFrames(void);
-/* Starts the ripple: for x and y, the wave's frequency, its step each frame and
+void fdScriptWaitTransitionTicks(void);
+/* Starts the ripple: for x and y, the wave's frequency, its step each tick and
    its amplitude. */
 void   scLineScrollInitWave(Sint32 mode, FIXED freqX, Sint32 stepX, FIXED ampX,
 	  FIXED freqY, Sint32 stepY, FIXED ampY);
 void   fdLineScrollStop(void);
-Sint32 fdChestOpenAndShowItem(Sint32 actorId, Sint32 target, Sint32 itemId);
-void   fdItemDispShowPicture(void *object, Sint32 flags);
-void   fdItemDispShowItem(Sint32 item, Sint32 flags);
+Sint32 fdChestOpenAndShowItem(Sint32 actorId, Sint32 tgt, Sint32 itemId);
+void   fdItemDispShowPicture(void *object, Sint32 flg);
+void   fdItemDispShowItem(Sint32 item, Sint32 flg);
 struct ACTOR *fdTreasureSpotGetActor(Sint32 id);
 void		  fdTreasureSpotOpenChest(Sint32 id);
 void		  fdTreasureSpotCloseChest(Sint32 id);
@@ -250,31 +249,30 @@ void		  fdTreasureSpotHide(Sint32 id);
 void		  fdTreasureSpotMoveLeaderAway(void);
 void		  fdWorldMapFreeze(void);
 void		  fdWorldMapUnfreeze(void);
-void		  fdActorResetForLeader(struct ACTOR_PLACE *table);
+void		  fdActorResetForLeader(struct ACTOR_PLACE *tbl);
 void   fdScriptSpawnActorPlacements(struct ACTOR_PLACE *entry, Sint32 slot);
-void   fdActorReleaseAtIndex(Sint32 actorIndex);
-void  *fdActorLookup(Uint32 actorIndex);
+void   fdActorReleaseAtIndex(Sint32 actorIdx);
+void  *fdActorLookup(Uint32 actorIdx);
 void   fdEffectStartGroundMask(void *object);
 void   fdGroundMaskSuspend(void);
 void   fdGroundMaskResume(void);
 void   fdPsynergyRunHandler(Sint32 kind);
 void   fdPsynergyLoadResources(Sint32 abilityId, Sint32 mode);
-void   fdPsynergySetupActorPair(Sint32 userId, Sint32 targetId);
+void   fdPsynergySetupActorPair(Sint32 userId, Sint32 tgtId);
 void   fdPsynergyStopCasterUpdate(void);
 void   fdPsynergyEnd(void);
 void   fdPsynergyStartCast(void);
 void   fdPsynergyFadeToCastCol(void);
 void   fdPsynergyFadeFromCastCol(void);
 void   fdEndBusyAndReveal(void);
-void   fdPsynergyStartMindReadWave(Sint32 casterId, Sint32 targetId);
+void   fdPsynergyStartMindReadWave(Sint32 casterId, Sint32 tgtId);
 void   fdPsynergyStopMindReadWave(void);
 void   fdPsynergyGreyMindReadPalette(void);
 void   fdPsynergyRestoreMindReadPalette(void);
 Bool   fdHasPsynergyCue(Sint32 group);
 Uint32 fdHasItemCue(Uint16 item);
-struct SPR *fdSprShareVRAMCacheEntry(
-	struct SPR *sourceSprite, struct SPR *sharedSprite);
-Sint16		  fdBattleBackgroundGetSelected(void);
+struct SPR *fdSprShareVRAMCacheEntry(struct SPR *srcSpr, struct SPR *sharedSpr);
+Sint16		fdBattleBackgroundGetSelected(void);
 struct ACTOR *fdEffectSpawnMoveHand(struct ACTOR *caster);
 void		  fdEffectGrowHandAndWait(struct ACTOR *actor);
 void		  fdEffectBurstHand(struct ACTOR *hand);
@@ -290,32 +288,32 @@ void		  fdParticleUpdate(FIELD_PARTICLE *effect);
 Uint32		  fdParticleHasPendingTarget(FIELD_PARTICLE *effect);
 void		  fdParticleSetPos(FIELD_PARTICLE *effect, Sint32 x, Sint32 z);
 void		  fdParticleSetAnimation(FIELD_PARTICLE *effect, Sint32 mode);
-void   fdParticleSetCallback(FIELD_PARTICLE *effect, EFFECT_CALLBACK callback);
+void   fdParticleSetCallback(FIELD_PARTICLE *effect, EFFECT_CALLBACK func);
 void   fdParticleInit(FIELD_PARTICLE *effect, Sint32 kind, Sint32 x, FIXED z);
 void   fdEffectClearOwnedSlot(FIELD_PARTICLE *effect);
-void   fdCameraWorldToScreen(struct VECTOR3 *position);
-Sint32 fdSpeakerGetVoice(Uint32 spriteId);
+void   fdCameraWorldToScreen(struct VECTOR3 *pos);
+Sint32 fdSpeakerGetVoice(Uint32 sprId);
 void   fdPartyClearUnusableShortcuts(void);
 void   fdEffectInitSlots(void);
 void   fdEffectReleaseSlots(void);
 void   fdActorClearOutOfBounds(void);
 void   fdActorRespawn(void);
 void   fdActorLaunchFromLeader(
-	  Uint32 actorId, Sint32 xOffset, Sint32 zOffset, Sint32 facing);
-void   fdActorWalkByById(Uint32 actorId, Sint32 xOffset, Sint32 zOffset);
-void   fdActorWalkByAndWaitById(Uint32 actorId, Sint32 xOffset, Sint32 zOffset);
+	  Uint32 actorId, Sint32 xOfs, Sint32 zOfs, Sint32 facing);
+void   fdActorWalkByById(Uint32 actorId, Sint32 xOfs, Sint32 zOfs);
+void   fdActorWalkByAndWaitById(Uint32 actorId, Sint32 xOfs, Sint32 zOfs);
 void   fdActorWatchAndSetScript(Uint32 actorId, Uint32 watchedActorId);
 void   fdPsynergyHaltActor(Sint32 actorId);
 void   fdPsynergyResumeHaltedActor(Sint32 actorId);
-Sint32 fdActorFindBySpr(Sint32 sprite);
+Sint32 fdActorFindBySpr(Sint32 spr);
 Sint32 fdActorGetSprById(Sint32 actorId);
 void   fdActorSnapshot(void);
 void   fdActorRestore(void);
-void   fdWorldMapStartZoom(FIXED zoom, Sint32 frames);
+void   fdWorldMapStartZoom(FIXED zoom, Sint32 ticks);
 void   fdScriptWaitForZoomTransition(void);
 Sint32 fdAreaGetNameIndex(Sint32 sceneId, Sint32 entrance);
 void   fdActorSetMovementType(struct ACTOR *actor, Sint32 movement);
-void   fdQueueMusic(Sint32 soundId);
+void   fdQueueMusic(Sint32 sndId);
 void   fdPlayQueuedMusic(void);
 Sint32 fdPartyGetCharacterSprForChildhood(Sint32 character, Sint32 childhood);
 #if FIELD_MENU_STOPS_REVEAL_SPARKLES
@@ -408,9 +406,9 @@ void fdPsynergyCarry(void);
 #define FIELD_METATILE_CENTER(metatile) \
 	(FIELD_METATILE_ORIGIN(metatile) + toFIXED(8))
 
-/* The frames the leader pushes against a step cue, a ledge, a gap or a wall
+/* The ticks the leader pushes against a step cue, a ledge, a gap or a wall
    before it runs, jumps or climbs (FIELD_STATE.blockedSteps). */
-#define FIELD_PUSH_FRAMES 12
+#define FIELD_PUSH_TICKS 12
 
 /* --------------------------------------------------------------------------
    The map's treasure spots (chests and Psynergy Stones)
@@ -424,13 +422,13 @@ void fdPsynergyCarry(void);
 #define TREASURE_SPOT_LIST_END 255
 
 Sint32 fdActorFindLastActiveId(void);
-void  *fdActorGetSlotAddress(Uint32 actorIndex);
+void  *fdActorGetSlotAddress(Uint32 actorIdx);
 void   fdActorClearAll(void);
 
 void   fdClearRequests(void);
 Sint32 fdCountRequests(void);
 Sint32 fdGetCollisionAheadOfLeader(void);
-void   fdCheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ);
+void   fdCheckExitRegions(FIXED posX, FIXED posY, FIXED posZ);
 void   fdUpdateWalking(Sint32 layer, FIXED x, FIXED y, FIXED z);
 Sint32 fdPartyApplyPoisonDamage(void);
 void   fdApplyEntrance(void);
@@ -438,8 +436,8 @@ void   fdPaletteEditorRun(void);
 
 struct ACTOR_PLACE *fdFindActorPlacement(Sint32 id);
 Sint32				fdGameFlagIsConditionActive(Sint32 condition);
-Uint32				fdExamineCueIgnoresCondition(Sint32 flags, Sint32 result);
-const struct CUE   *fdFindCue(Sint32 kind, Sint32 target);
+Uint32				fdExamineCueIgnoresCondition(Sint32 flg, Sint32 result);
+const struct CUE   *fdFindCue(Sint32 kind, Sint32 tgt);
 void				fdOverlayCallInit(void);
 const struct CUE   *fdFindActorTalkCue(Sint32 id);
 Sint32				fdTalkToActor(Sint32 id);
@@ -450,12 +448,12 @@ Sint32				fdExamineMetatile(Sint32 tile);
 Sint32				fdGetPsynergyTargetRange(Sint32 kind);
 Sint32				fdFindNearbyTalkTarget(Sint32 id);
 Sint32				fdFindNearbyPsynergyTarget(Sint32 id, Sint32 kind);
-void fdActorSetLayersColMode(struct ACTOR *actor, Sint32 colorModePlusOne);
+void fdActorSetLayersColMode(struct ACTOR *actor, Sint32 colModePlusOne);
 const struct CUE *fdFindItemCue(Sint32 item);
 Sint32			  fdUseItem(Sint32 packedItem, Sint32 slot);
-void  *fdFindPsynergyCue(Sint32 eventFlags, Sint32 group, Sint32 *target);
-Sint32 fdRunPsynergyEndScripts(Sint32 packed);
-Sint32 fdUsePsynergy(Uint32 code);
+void			 *fdFindPsynergyCue(Sint32 eventFlg, Sint32 group, Sint32 *tgt);
+Sint32			  fdRunPsynergyEndScripts(Sint32 packed);
+Sint32			  fdUsePsynergy(Uint32 code);
 
 void   fdActorSnapToTerrain(void *object);
 void   fdPlaceTreasureSpots(void);
@@ -486,7 +484,7 @@ void							fdScreenTransitionUpdate(void);
 void							fdScreenTransitionUpdateFromCenter(void);
 void							fdScreenTransitionUpdateScanline(void);
 void							fdScreenTransitionUpdateDissolve(void);
-void fdScreenTransitionFillTilemapAndColTile(Sint32 color);
+void fdScreenTransitionFillTilemapAndColTile(Sint32 col);
 
 void fdPaletteFadeUpdate(void);
 /* UB: script_commands.c calls fdPaletteFadeBuild with no declaration in scope,
@@ -501,13 +499,13 @@ const struct SPEAKER_DEFINITION *fdSpeakerFindDefinition(Uint32 id);
 Sint32							 fdSpeakerGetActorSpr(Sint32 id);
 Sint32							 fdSpeakerGetHaltedLines(Sint32 id);
 
-/* Mind Read's caster's palette cycle, two frames a step
+/* Mind Read's caster's palette cycle, two ticks a step
    (field_mode_tables.c). */
-extern const Uint8 MindRead_CasterPaletteCycle[];
+extern const Uint8 MindReadCasterPaletteCycle[];
 
 /* The World Map cursor's angle for each +Control Pad direction, and its
    markers' blend cycle (field_mode_tables.c). */
-extern const Uint16 WorldMap_CursorDirectionAngles[];
-extern const Uint8	WorldMap_MarkerBlendCycle[];
+extern const Uint16 WorldMapCursorDirectionAngles[];
+extern const Uint8	WorldMapMarkerBlendCycle[];
 
 #endif

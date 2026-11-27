@@ -8,8 +8,8 @@
 
 #include "flags.h"
 
-/* The frames a leaping stump tips before it leaps. */
-#define STUMP_TIP_FRAMES	18
+/* The ticks a leaping stump tips before it leaps. */
+#define STUMP_TIP_TICKS		18
 /* The puffs of dust that burst round a leaping stump as it lands. */
 #define STUMP_LANDING_PUFFS 17
 

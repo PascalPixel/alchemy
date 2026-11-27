@@ -18,7 +18,7 @@
 #define REG_DISPSTAT		(*(volatile Uint16 *)0x04000004)
 /* line being drawn, 0..227 */
 #define REG_VCOUNT			(*(volatile Uint16 *)0x04000006)
-/* The lines REG_VCOUNT counts through in a frame: the DISPLAY_HEIGHT drawn and
+/* The lines REG_VCOUNT counts through in a tick: the DISPLAY_HEIGHT drawn and
    those of VBlank. A line's HBlank comes before the next line is drawn, the
    last line's before line 0. */
 #define DISPLAY_TOTAL_LINES 228
@@ -618,7 +618,7 @@ typedef enum EVENT_LIMITS { EVENT_COUNT = 24 } EVENT_LIMITS;
 
 typedef void (*EVENT_FUNC)(void);
 
-/* An event: its function's address, its priority (see EVENT_PASS_FRAME) and its
+/* An event: its function's address, its priority (see EVENT_PASS_TICK) and its
    flags (EVENT_FLAG_KEEP_RUNNING). */
 typedef struct EVENT {
 	Uint32 func;
@@ -636,10 +636,10 @@ STATIC_ASSERT(offsetof(EVENT, flg) == 6);
    event is suspended, so no pass matches it.
 
    The two passes: the VBlank handler runs EVENT_PASS_VBLANK's events, and
-   sySynch() runs EVENT_PASS_FRAME's once a frame. Each ranks 0x80, the middle
-   of the low byte, so an event added at EVENT_PASS_FRAME + 10 runs before those
-   added at EVENT_PASS_FRAME. */
-#define EVENT_PASS_FRAME	   0x480
+   sySynch() runs EVENT_PASS_TICK's once a tick. Each ranks 0x80, the middle
+   of the low byte, so an event added at EVENT_PASS_TICK + 10 runs before those
+   added at EVENT_PASS_TICK. */
+#define EVENT_PASS_TICK		   0x480
 #define EVENT_PASS_VBLANK	   0xc80
 /* An empty slot's priority, sorted last: the sort reads priorities signed. */
 #define EVENT_PRIORITY_EMPTY   -1
@@ -744,7 +744,7 @@ typedef struct HEAP_SLOTS {
 	void *glyphTransfer;
 	void *selectionMenu;			/* the selection screen's state */
 	void *unusedAfterSelectionMenu; /* no code allocates or reads this slot */
-	/* Lives for one frame: sySynch() builds the OAM list in it, and the field
+	/* Lives for one tick: sySynch() builds the OAM list in it, and the field
 	   sprite decoder keeps its code there between its own uses. */
 	void *frmScratch;
 	/* A RAM copy of fdRenderCopyStrided, which uploads field sprite pictures to
@@ -780,7 +780,7 @@ typedef struct HEAP_SLOTS {
 	struct ROPE_WORK	  *rope;	  /* a rope's state */
 	struct TIGHTROPE_WORK *tightrope; /* a tightrope's state */
 	void *hangingVine;	  /* a hanging vine's state (HANGING_VINE_WORK) */
-	void *battleEntryTmr; /* the battle's entry transition timer, in frames */
+	void *battleEntryTmr; /* the battle's entry transition timer, in ticks */
 	void *titleIntro;	  /* the title intro's state */
 	/* The battle background's view and entry transition (32 bytes), from
 	   btRun. */
@@ -838,7 +838,7 @@ typedef enum HEAP_SLOT {
 	HEAP_SLOT_PARTY_STATUS = offsetof(HEAP_SLOTS, partyStat),
 	HEAP_SLOT_ICON_TRANSFER = offsetof(HEAP_SLOTS, glyphTransfer),
 	HEAP_SLOT_SELECTION_MENU = offsetof(HEAP_SLOTS, selectionMenu),
-	HEAP_SLOT_FRAME_SCRATCH = offsetof(HEAP_SLOTS, frmScratch),
+	HEAP_SLOT_TICK_SCRATCH = offsetof(HEAP_SLOTS, frmScratch),
 	HEAP_SLOT_PICTURE_UPLOADER = offsetof(HEAP_SLOTS, pictureUploader),
 	HEAP_SLOT_MIND_READ = offsetof(HEAP_SLOTS, mindRead),
 	HEAP_SLOT_BATTLE_EFFECT = offsetof(HEAP_SLOTS, battleEff),
@@ -883,7 +883,7 @@ typedef enum HEAP_SLOT {
 #define HEAP_SLOT_AT(state, kind) (*(void **)((Uint8 *)(state) + (kind)))
 
 /* The affine group. Sprite rotation and scaling: a sprite's transform and the
-   OAM matrices this frame hands out for it. Full size in an AFFINE_TRANSFORM's
+   OAM matrices this tick hands out for it. Full size in an AFFINE_TRANSFORM's
    8.8 scales. */
 #define AFFINE_SCALE_ONE (1 << 8)
 
@@ -961,28 +961,28 @@ typedef struct SYSTEM_STUB_TABLE {
 	TRIG_STUB	 cos;
 } SYSTEM_STUB_TABLE;
 
-/* The frame group. The frame loop's globals: the VBlanks a frame takes, the CPU
+/* The tick group. The tick loop's globals: the frames a tick takes, the CPU
    load display and the VBlank flags, which sySynch() (system/system_frame.c)
-   and the VBlank handler share. Frames in a second: the screen refreshes about
+   and the VBlank handler share. Ticks in a second: the screen refreshes about
    60 times a second. */
-#define FRAMES_PER_SECOND 60
+#define TICKS_PER_SECOND 60
 
 /* The input group. The keypad state the VBlank interrupt keeps. The keypad
    state (PerWork): the keys held, newly pressed and repeating, the D-pad
    direction kept, and the repeat timer. */
 typedef struct INPUT_STATE {
 	volatile Uint32 data;			/* keys down now */
-	volatile Uint32 push;			/* keys that went down this frame */
+	volatile Uint32 push;			/* keys that went down this tick */
 	Uint32			prevVblankData; /* held at the previous VBlank */
-	/* Pressed keys, repeating while held: after 19 frames, then every 6. */
+	/* Pressed keys, repeating while held: after 19 ticks, then every 6. */
 	volatile Uint32 repeat;
 	/* repeat with at most one D-pad direction. */
 	volatile Uint32 dir;
 	/* The D-pad direction kept: of several held, the one added last. */
 	volatile Uint32 prevDir;
-	Uint32			prevData;	 /* held when the frame loop last read it */
+	Uint32			prevData;	 /* held when the tick loop last read it */
 	Uint32			pendingPush; /* presses since a reader last cleared it */
-	/* Frames until the held keys repeat; -1 makes them repeat at once. */
+	/* Ticks until the held keys repeat; -1 makes them repeat at once. */
 	volatile Sint32 repeatTmr;
 } INPUT_STATE;
 
@@ -996,8 +996,8 @@ STATIC_ASSERT(offsetof(INPUT_STATE, repeatTmr) == 32);
    VBlank. The writes the queue holds. */
 #define IO_WRITE_QUEUE_SIZE 32
 
-/* The register writes VBlank carries out once the frame loop has finished a
-   frame, each its value, address and control word; syIOWriteQueueFlushPending
+/* The register writes VBlank carries out once the tick loop has finished a
+   tick, each its value, address and control word; syIOWriteQueueFlushPending
    empties it. */
 typedef struct IO_WRITE_QUEUE {
 	Uint16 cnt;
@@ -1095,10 +1095,10 @@ enum {
    d, for the small v divided here. */
 #define RECIPROCAL_OF(d) (0xffffffffU / (d) + 1)
 
-/* The oam group. How much of OAM the frame's sprites take. How many OAM entries
+/* The oam group. How much of OAM the tick's sprites take. How many OAM entries
    are in use, and the most that may be. */
 typedef struct OAM_USAGE {
-	Uint16 used;  /* 32-bit words DMA copies to OAM each frame; 0 when reset */
+	Uint16 used;  /* 32-bit words DMA copies to OAM each tick; 0 when reset */
 	Uint16 limit; /* OAM_SIZE / 4, all of OAM, when reset */
 } OAM_USAGE;
 
@@ -1156,14 +1156,14 @@ typedef struct PROJECTION {
 #define Ram_IwramHeapEnd \
 	FIXED_ADDRESS((Uint8 *), 0x03006fc0, IwramSoundMixWorkspace)
 
-/* The frame counter, as the overlays of Airs Rock, Atteka Inlet and Ancient
+/* The tick counter, as the overlays of Airs Rock, Atteka Inlet and Ancient
    Lemuria read it. */
-#define Ram_FrameCount FIXED_ADDRESS((Uint32 *), 0x0300122c, FrameCount)
+#define Ram_TickCount FIXED_ADDRESS((Uint32 *), 0x0300122c, TickCount)
 
 /* The map screen's scroll (x, then y, 16.16 pixels), as fdMapScreenUpdateScroll
    reads it. */
 #define Ram_WorldMapScroll \
-	FIXED_ADDRESS((Sint32 *), 0x0202a630, MapScreen_ScrollX)
+	FIXED_ADDRESS((Sint32 *), 0x0202a630, MapScreenScrollX)
 
 /* The map screen's state, as its setup (fdMapScreenInit) reaches it. */
 #define Ram_WorldMapState \
@@ -1171,10 +1171,10 @@ typedef struct PROJECTION {
 /* Where fdMapScreenUpdateScroll reads the cursor from (x, then y, 16.16
    pixels): the setup points it at the state's cursor. */
 #define Ram_WorldMapCursor \
-	FIXED_ADDRESS((Sint32 **), 0x0202a62c, MapScreen_Cursor)
+	FIXED_ADDRESS((Sint32 **), 0x0202a62c, MapScreenCursor)
 /* The cursor's place when the screen opens (x, then y, 16.16 pixels). */
 #define Ram_WorldMapCursorStart \
-	FIXED_ADDRESS((Sint32 *), 0x0202a64c, MapScreen_CursorStartX)
+	FIXED_ADDRESS((Sint32 *), 0x0202a64c, MapScreenCursorStartX)
 /* Where SceneLocalState keeps, by element, the Djinni gmPartyAddIsaacsParty
    picked at random from The Broken Seal's Djinn the party lacks: its place in
    its element plus one, or 0 when the party has them all. An element's last
@@ -1189,7 +1189,7 @@ typedef struct MAIN_ROUTINE_STATE {
 	/* gmBuildStampGetTime's value when the game was last saved; 0 on a new
 	   game. */
 	Uint32 buildStamp;
-	Uint32 playTime; /* frames */
+	Uint32 playTime; /* ticks */
 	Uint8  unused[4];
 	/* The summons the party can call, bit n for summon n: the first word of the
 	   party's DJINN_RECOVERY_TABLE, which gmDjinnGetRecoveryTable returns from
@@ -1395,7 +1395,7 @@ typedef struct WORLD_MAP_STATE {
 	Uint8  unusedAfterZ[6]; /* no code names them */
 	Sint16 shown; /* the WORLD_MAP_PLACE whose name is drawn; -1 for none */
 	Uint8  unusedAfterShown[4]; /* no code names them */
-	FIXED  speed;				/* the cursor's speed, 16.16 pixels per frame */
+	FIXED  speed;				/* the cursor's speed, 16.16 pixels per tick */
 	void  *win;					/* the name window */
 	WORLD_MAP_MARKER markers[129]; /* the marker sprites */
 	Sint32			*cursor;	   /* the cursor the picture scrolls to */
@@ -1436,7 +1436,7 @@ typedef struct WORLD_MAP_CHOICE {
    save's state. The save's place in flash and its limits. */
 enum {
 	BUP_FLASH_TIMER = 2, /* the timer handed to the SDK's flash library */
-	BUP_FLASH_IDENTIFY_ATTEMPTS = 8, /* tries, a frame apart */
+	BUP_FLASH_IDENTIFY_ATTEMPTS = 8, /* tries, a tick apart */
 	/* Flash sectors used; as a sector number, "none" in the save functions. */
 	BUP_SECTOR_COUNT = 15,
 	BUP_SECTORS_PER_PART = 3, /* a part fills three sectors in a row */
@@ -1462,7 +1462,7 @@ typedef struct BUP_SUMMARY {
 	Uint8  level;		   /* the leader's */
 	Uint8  classId;		   /* the leader's */
 	Uint16 area;		   /* area name number (fdAreaGetNameIndex) */
-	Uint32 playTime;	   /* frames */
+	Uint32 playTime;	   /* ticks */
 	Uint32 coins;
 	Sint8  djinn[4]; /* the party's Djinn of each element */
 	Sint8  party[5]; /* up to four party members, ended by -1 */
@@ -1533,7 +1533,7 @@ STATIC_ASSERT(sizeof(BUP_SECTOR_HEADER) == 16);
 typedef struct SERIAL_PACKET {
 	/* SERIAL_STATE's packet number when the packet was built */
 	Uint8 packetNum;
-	/* The consoles heard from before but not this frame (receivedMask ^
+	/* The consoles heard from before but not this tick (receivedMask ^
 	   currentMask); a receiver complements it once the checksum is good. */
 	Uint8 missingMask;
 	/* The complement of the sum of the packet's first 14 halfwords, taken with
@@ -1573,7 +1573,7 @@ typedef enum SERIAL_MODE {
 
 /* The link status bits sySerialExchangePayloads returns. */
 typedef enum LINK_STAT {
-	LINK_STATUS_HEARD_BOTH = 3,	 /* both consoles heard from this frame */
+	LINK_STATUS_HEARD_BOTH = 3,	 /* both consoles heard from this tick */
 	LINK_STATUS_CLOCKING = 0x80, /* this console clocks the transfers */
 	/* The last transfer interrupt found SIOCNT's error bit (SIO_ERROR) set. */
 	LINK_STATUS_ERROR = 0x1000,
@@ -1592,9 +1592,9 @@ typedef struct SERIAL_STATE {
 	Uint8 mode;
 	Uint8 phase;		/* an SERIAL_PHASE */
 	Uint8 receivedMask; /* the consoles heard from since the link began */
-	Uint8 curMask;		/* the consoles heard from this frame */
+	Uint8 curMask;		/* the consoles heard from this tick */
 	/* Each console's SERIAL_CHANNEL_FLAG bits, set by the transfer interrupt
-	   and cleared each frame. */
+	   and cleared each tick. */
 	Uint8 channelFlg[4];
 	/* Nonzero lets a new packet restart timer 3. */
 	Uint8 transferEnabled;
@@ -1604,7 +1604,7 @@ typedef struct SERIAL_STATE {
 	   meanwhile. */
 	Uint8 transferError;
 	Uint8 reserved0a;
-	/* The packet number, counted up each frame once connected. */
+	/* The packet number, counted up each tick once connected. */
 	Uint8 packetNum;
 	Uint8 reserved0c[8];
 	/* The halfword of sendBuf[1] sent next; -1 between packets, when
@@ -1621,8 +1621,8 @@ typedef struct SERIAL_STATE {
 	Uint16 *incomingBuf[4];
 	/* Each console's last complete packet, swapped in by the interrupt. */
 	Uint16 *readyBuf[4];
-	/* The packets the frame code checks and copies, swapped with readyBuf each
-	   frame. */
+	/* The packets the tick code checks and copies, swapped with readyBuf each
+	   tick. */
 	Uint16 *pendingBuf[4];
 	/* The buffers' memory: two 32-byte send buffers, then 96 bytes a console
 	   for its incoming, ready and pending packets. */
@@ -1636,7 +1636,7 @@ STATIC_ASSERT(offsetof(SERIAL_STATE, sendIdx) == 20);
 STATIC_ASSERT(offsetof(SERIAL_STATE, storage) == 96);
 
 /* SERIAL_STATE.channelFlg: what the transfer interrupts saw of a console's
-   packets since the last frame. */
+   packets since the last tick. */
 typedef enum SERIAL_CHANNEL_FLAG {
 	SERIAL_CHANNEL_PACKET_COMPLETE = 1, /* its fourteenth halfword arrived */
 	/* a transfer interrupt found SIOCNT's error bit (SIO_ERROR) set */
@@ -1726,8 +1726,8 @@ STATIC_ASSERT(offsetof(ANIMATION_METADATA, anm) == 16);
 /* Looks up animation metadata using the descriptor ID in the low twelve bits:
    that row of Sprite_AnimationMetadata (graphics/sprite/sprites.s), with no
    bounds check. */
-ANIMATION_METADATA *syResourceGetMetadataRecord(Uint32 number);
-ANIMATION_METADATA *fdResourceGetMetadataRecordStubStub(Uint32 number);
+ANIMATION_METADATA *syResourceGetMetadataRecord(Uint32 num);
+ANIMATION_METADATA *fdResourceGetMetadataRecordStubStub(Uint32 num);
 
 /* The vram_cache group. The VRAM cache: numbered entries, each holding a run of
    64-byte blocks of sprite VRAM for a sprite or a loaded picture. The VRAM

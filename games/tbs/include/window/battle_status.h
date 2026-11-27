@@ -84,25 +84,25 @@ STATIC_ASSERT(sizeof(BATTLE_SUMMARY_CURSOR) == 4);
 
 /* The stat cursor stops: rows 0 to 8 for a character with Djinn, rows 9 to 15
    for one without (window/battle_status_cursors.c). */
-extern const BATTLE_SUMMARY_STAT_CURSOR BattleStatusScreen_StatCursors[];
+extern const BATTLE_SUMMARY_STAT_CURSOR BattleStatusScreenStatCursors[];
 /* The cursor stops of the screen's second group (STATUS_CURSOR_COMBAT_STATS):
    column 19, rows 1 to 4. */
-extern const BATTLE_SUMMARY_CURSOR BattleStatusScreen_EquipmentCursors[];
+extern const BATTLE_SUMMARY_CURSOR BattleStatusScreenEquipmentCursors[];
 /* The eight status cursor stops, two tiles apart on row 0. */
-extern const BATTLE_SUMMARY_CURSOR BattleStatusScreen_ConditionCursors[];
+extern const BATTLE_SUMMARY_CURSOR BattleStatusScreenConditionCursors[];
 /* The level label: `Lv`, or `Niv` in French. */
-extern const Uint8 BattleStatusScreen_LevelString[];
-extern const Uint8 BattleStatusScreen_HpString[];
-extern const Uint8 BattleStatusScreen_SlashString[];
-extern const Uint8 BattleStatusScreen_PpString[];
+extern const Uint8 BattleStatusScreenLevelString[];
+extern const Uint8 BattleStatusScreenHpString[];
+extern const Uint8 BattleStatusScreenSlashString[];
+extern const Uint8 BattleStatusScreenPpString[];
 #if BATTLE_LABELS_BY_HEADER_LANGUAGE
 /* The Spanish and Italian editions' labels for a cartridge set to another
    language: the level's `Niv` (French) and `Nv.` (Spanish), and HP's `KP`
    (German) and `PV` (French and Spanish). */
-extern const Uint8 BattleStatusScreen_NivString[];
-extern const Uint8 BattleStatusScreen_NvString[];
-extern const Uint8 BattleStatusScreen_KpString[];
-extern const Uint8 BattleStatusScreen_PvString[];
+extern const Uint8 BattleStatusScreenNivString[];
+extern const Uint8 BattleStatusScreenNvString[];
+extern const Uint8 BattleStatusScreenKpString[];
+extern const Uint8 BattleStatusScreenPvString[];
 #endif
 
 /* The party status window's flags (mnPartyStatDraw, mnPartyStatCreateWindow):

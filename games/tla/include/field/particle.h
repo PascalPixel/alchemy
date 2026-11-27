@@ -26,9 +26,9 @@ typedef struct PARTICLE {
 	FIXED y; /* 16.16 fixed-point pixels */
 	FIXED z; /* 16.16 fixed-point pixels */
 #endif
-	FIXED  velX;	/* 16.16 fixed-point pixels per frame */
-	FIXED  velY;	/* 16.16 fixed-point pixels per frame */
-	FIXED  velZ;	/* 16.16 fixed-point pixels per frame */
+	FIXED  velX;	/* 16.16 fixed-point pixels per tick */
+	FIXED  velY;	/* 16.16 fixed-point pixels per tick */
+	FIXED  velZ;	/* 16.16 fixed-point pixels per tick */
 	Sint32 variant; /* each effect's own */
 } PARTICLE;
 
@@ -69,19 +69,19 @@ typedef struct SCREEN_POINT {
 /* UB: indexing from &x crosses separate scalar members in the legacy record.
    UBFIX provides a real array while keeping the effects' named coordinates. An
    always-on union changes native alias analysis in the effect/window code. */
-static inline Sint32 *syScreenPointCoordinates(SCREEN_POINT *position)
+static inline Sint32 *syScreenPointCoordinates(SCREEN_POINT *pos)
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
-	return position->coordinates;
+	return pos->coordinates;
 #else
-	return &position->x;
+	return &pos->x;
 #endif
 }
 
 void btEffectPosAdvanceWithGravity3D(
 	PARTICLE *step, Sint32 damping, Sint32 gravity);
-Sint32 btEffectPosProjectPoint(const void *point, SCREEN_POINT *position);
-void   btEffectPosProjectScaledBattler(Sint32 id, SCREEN_POINT *position);
+Sint32 btEffectPosProjectPoint(const void *point, SCREEN_POINT *pos);
+void   btEffectPosProjectScaledBattler(Sint32 id, SCREEN_POINT *pos);
 
 STATIC_ASSERT(offsetof(PARTICLE, x) == 0);
 STATIC_ASSERT(offsetof(PARTICLE, y) == 4);

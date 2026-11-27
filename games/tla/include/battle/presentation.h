@@ -24,7 +24,7 @@ Sint32 btFormationBuildEnemyList(Sint32 recordId);
 void btBackgroundInit(void);
 
 /* Opens the battle: the curtain, then the enemies announced. */
-void btTransitionRun(Sint32 enemyCount, Sint32 kind);
+void btTransitionRun(Sint32 enemyCnt, Sint32 kind);
 
 /* Does nothing, at the end of each turn and of the battle. */
 void btTurnEndNoOperation(void);
@@ -32,8 +32,8 @@ void btTurnEndNoOperation(void);
 void btBackgroundFree(void);
 
 /* An enemy kind's battle sprite and its palette. */
-Sint32 btSprGetSpr(Sint32 index);
-Sint32 btSprGetPalette(Sint32 index);
+Sint32 btSprGetSpr(Sint32 idx);
+Sint32 btSprGetPalette(Sint32 idx);
 
 /* Announces an action and lays it out target by target; 0 stages it. */
 Sint32 btActionRunBuild(
@@ -50,8 +50,8 @@ Sint32 btAIChooseAction(BATTLE_ACTION_RECORD *request, Sint32 retry);
 
 /* The battle effect an enemy kind's plain attack shows, and its defeat
    sound. */
-Uint32 btSprGetAttackEffect(Uint32 index);
-Uint32 btSprGetDefeatSnd(Sint32 index);
+Uint32 btSprGetAttackEffect(Uint32 idx);
+Uint32 btSprGetDefeatSnd(Sint32 idx);
 
 /* Picks a random living target on the party's side or the enemies'. */
 Sint32 btAIChooseRandomTarget(Sint32 party);
@@ -97,14 +97,14 @@ extern Uint8	   Model_DecodeCodeSize[]; /* btModelDecodeCode's bytes */
 
 /* The field engine's sprite functions the battle's motion calls: a sprite run
    on to its animation's stop, one of its animations removed, and an animation's
-   length in frames. */
+   length in ticks. */
 void   fdSprSkipToStopStub(void *record);
 void   fdSprRemoveAnimationAtStub(void *record, Sint32 slot);
 Sint32 fdSprAnimationSumCommandLengthsStub(
-	Sint32 id, Sint32 animation, Sint32 timedCount);
+	Sint32 id, Sint32 anm, Sint32 timedCnt);
 
 /* Starts a message in the battle's message window. */
-void mnBattleMessageOpenStub(Sint32 message);
+void mnBattleMessageOpenStub(Sint32 msg);
 /* One step of dissolving a sprite pixel by pixel. */
 void fdSprDissolveStepStub(void *record, Sint32 step);
 /* Levels the unit up once if its experience reaches the next level, filling
@@ -113,17 +113,17 @@ void fdSprDissolveStepStub(void *record, Sint32 step);
 Sint32 gmUnitTryLevelUpStub(Sint32 unitId, Sint16 *gains);
 
 /* The advance arrow beside a battle message: eight 128-byte pictures of a
-   256-colour sprite, one every four frames. */
+   256-colour sprite, one every four ticks. */
 extern Uint8 BattleMessage_AdvanceArrowTiles[];
 
 /* btAIChooseAction's rolls for the first three action strategies, a row each:
    the chance in 256 of each place in the enemy's actions. */
-extern Uint8 BattleAI_ActionWeights[3][8];
+extern Uint8 BattleAIActionWeights[3][8];
 /* The enemy definitions Dullahan acts as, one drawn at random. */
-extern Uint16 BattleAI_DullahanForms[];
+extern Uint16 BattleAIDullahanForms[];
 
 /* The battle transition's curtain tile in eight variants, 32 bytes (one 4-bit
-   tile) each, a new one every four frames. */
+   tile) each, a new one every four ticks. */
 extern const Uint8 BattleTransition_CurtainVariants[];
 /* The battle transition's curtain tiles, 32 bytes (one 4-bit tile) each. */
 extern Uint8 BattleTransition_CurtainTiles[];
@@ -133,7 +133,7 @@ void btEffectRunShatteringOpeningStub(struct BATTLE_PRESENTATION_STATE *state);
 
 /* The party, then the enemies: the order the sides take their turn-end effects
    in. */
-extern const BATTLE_SIDE_ORDER Battle_TurnEndSideOrder;
+extern const BATTLE_SIDE_ORDER BattleTurnEndSideOrder;
 
 /* Puts a unit's set Djinn on standby, one at random or all. */
 void btUnitDrainDjinn(Sint32 unitId, Sint32 all, Sint32 announce);

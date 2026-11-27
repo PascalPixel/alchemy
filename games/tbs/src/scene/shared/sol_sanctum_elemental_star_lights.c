@@ -8,8 +8,8 @@
 /* The most lights the event keeps. */
 enum { SOL_SANCTUM_LIGHT_MAX = 10 };
 
-/* A light moves every this many frames. */
-#define SOL_SANCTUM_LIGHT_STEP_FRAMES  3
+/* A light moves every this many ticks. */
+#define SOL_SANCTUM_LIGHT_STEP_TICKS   3
 /* Shrunk to a tenth, a light is hidden for this many of its steps while it
    drifts on unseen, then shows again where it has drifted to. */
 #define SOL_SANCTUM_LIGHT_HIDDEN_STEPS 24
@@ -28,7 +28,7 @@ typedef struct SOL_SANCTUM_LIGHT_ENTRY {
 	Sint32 speedZ;
 	FIXED  scale;	  /* 16.16 fixed point, where toFIXED(1) is full size */
 	FIXED  scaleStep; /* 16.16 fixed point */
-	Uint8  tmr;		  /* frames to its next step */
+	Uint8  tmr;		  /* ticks to its next step */
 	Uint8  hold;	  /* steps it has left hidden */
 } SOL_SANCTUM_LIGHT_ENTRY;
 
@@ -39,7 +39,7 @@ typedef struct SOL_SANCTUM_LIGHT_LIST {
 	Uint16					cnt;
 } SOL_SANCTUM_LIGHT_LIST;
 
-/* An event: every SOL_SANCTUM_LIGHT_STEP_FRAMES each light pulses between a
+/* An event: every SOL_SANCTUM_LIGHT_STEP_TICKS each light pulses between a
    tenth of its size and its largest scale and drifts, swinging about on a sine
    of its drift speed on each axis it drifts on. */
 static void scSolSanctumUpdateFloatingLights(void)
@@ -57,7 +57,7 @@ static void scSolSanctumUpdateFloatingLights(void)
 		Sint32 speedZ;
 		FIXED  scale;
 		Sint32 step;
-		Uint8  timer;
+		Uint8  tmr;
 		FIXED  x;
 		FIXED  y;
 		FIXED  z;
@@ -73,21 +73,21 @@ static void scSolSanctumUpdateFloatingLights(void)
 		x = entry->x;
 		y = entry->y;
 		z = entry->z;
-		timer = entry->tmr;
-		if(--timer == 0) {
+		tmr = entry->tmr;
+		if(--tmr == 0) {
 			Uint32 rx;
 			Uint32 ry;
 			Uint32 rz;
 			FIXED  dx;
 			FIXED  dy;
 
-			timer = SOL_SANCTUM_LIGHT_STEP_FRAMES;
+			tmr = SOL_SANCTUM_LIGHT_STEP_TICKS;
 			if(hold == 0) {
 				scale += step;
-				if(scale >= SolSanctum_LightMaxScales[i]) {
-					step = -SolSanctum_LightScaleSteps[i];
+				if(scale >= SolSanctumLightMaxScales[i]) {
+					step = -SolSanctumLightScaleSteps[i];
 				} else if(scale <= toFIXED(1) / 10) {
-					step = SolSanctum_LightScaleSteps[i];
+					step = SolSanctumLightScaleSteps[i];
 					scale = toFIXED(1) / 10;
 					hold = SOL_SANCTUM_LIGHT_HIDDEN_STEPS;
 					x = actor->x.fixed;
@@ -100,34 +100,34 @@ static void scSolSanctumUpdateFloatingLights(void)
 				actor->scaleX = scale;
 				actor->scaleY = scale;
 			}
-			rx = syRandomBelow(SolSanctum_LightDrift[i][0]);
-			ry = syRandomBelow(SolSanctum_LightDrift[i][1]);
-			rz = syRandomBelow(SolSanctum_LightDrift[i][2]);
+			rx = syRandomBelow(SolSanctumLightDrift[i][0]);
+			ry = syRandomBelow(SolSanctumLightDrift[i][1]);
+			rz = syRandomBelow(SolSanctumLightDrift[i][2]);
 			rx = rx != 0 ? INTtoFIXED(rx) / 1000 : 0;
 			ry = ry != 0 ? INTtoFIXED(ry) / 1000 : 0;
 			rz = rz != 0 ? INTtoFIXED(rz) / 1000 : 0;
-			if(SolSanctum_LightDirection[i][0] == 1)
+			if(SolSanctumLightDirection[i][0] == 1)
 				speedX += rx;
-			else if(SolSanctum_LightDirection[i][0] == -1)
+			else if(SolSanctumLightDirection[i][0] == -1)
 				speedX -= rx;
 			else
 				speedX = 0;
-			if(SolSanctum_LightDirection[i][1] == 1)
+			if(SolSanctumLightDirection[i][1] == 1)
 				speedY += ry;
-			else if(SolSanctum_LightDirection[i][1] == -1)
+			else if(SolSanctumLightDirection[i][1] == -1)
 				speedY -= ry;
 			else
 				speedY = 0;
-			if(SolSanctum_LightDirection[i][2] == 1)
+			if(SolSanctumLightDirection[i][2] == 1)
 				speedZ += rz;
-			else if(SolSanctum_LightDirection[i][2] == -1)
+			else if(SolSanctumLightDirection[i][2] == -1)
 				speedZ -= rz;
 			else
 				speedZ = 0;
-			dx = sySin(speedX * SolSanctum_LightSwing[i][0]) * 2;
-			dy = sySin(speedY * SolSanctum_LightSwing[i][1]) * 2;
+			dx = sySin(speedX * SolSanctumLightSwing[i][0]) * 2;
+			dy = sySin(speedY * SolSanctumLightSwing[i][1]) * 2;
 			{
-				FIXED dz = syCos(speedZ * SolSanctum_LightSwing[i][2]) * 2;
+				FIXED dz = syCos(speedZ * SolSanctumLightSwing[i][2]) * 2;
 
 				if(hold != 0) {
 					x += dx;
@@ -164,7 +164,7 @@ static void scSolSanctumUpdateFloatingLights(void)
 		entry->x = x;
 		entry->y = y;
 		entry->z = z;
-		entry->tmr = timer;
+		entry->tmr = tmr;
 		i++;
 		entry++;
 	}
@@ -172,7 +172,7 @@ static void scSolSanctumUpdateFloatingLights(void)
 
 /* Starts the floating lights: count actors (at most SOL_SANCTUM_LIGHT_MAX) from
    first, each drawn translucent and starting at its largest scale. */
-void scSolSanctumStartFloatingLights(Sint32 first, Uint32 count)
+void scSolSanctumStartFloatingLights(Sint32 first, Uint32 cnt)
 {
 	/* Each light is set up through its effect view (ACTOR_OR_EFFECT); the event
 	   reads it as an actor. */
@@ -186,29 +186,29 @@ void scSolSanctumStartFloatingLights(Sint32 first, Uint32 count)
 		HEAP_SLOT_SOL_SANCTUM_LIGHTS, sizeof(SOL_SANCTUM_LIGHT_LIST));
 	entry = list->entries;
 	DMA_FILL32(0, list, sizeof(SOL_SANCTUM_LIGHT_LIST));
-	if(count > SOL_SANCTUM_LIGHT_MAX)
-		count = SOL_SANCTUM_LIGHT_MAX;
+	if(cnt > SOL_SANCTUM_LIGHT_MAX)
+		cnt = SOL_SANCTUM_LIGHT_MAX;
 	i = 0;
-	if(count != 0) {
+	if(cnt != 0) {
 		cleared = 0;
 		do {
 			light = (FIELD_EFFECT *)fdActorGetById(first);
 			{
-				Uint8 *flags = &light->spr->flg;
+				Uint8 *flg = &light->spr->flg;
 
 				entry->actor = (ACTOR *)light;
-				*flags = cleared;
+				*flg = cleared;
 			}
 			light->motionFlg = cleared;
 			fdActorSetBlendMode(fdActorGetById(first), ACTOR_BLEND_TRANSLUCENT);
-			entry->scale = SolSanctum_LightMaxScales[i];
-			entry->scaleStep = -SolSanctum_LightScaleSteps[i];
-			entry->tmr = SOL_SANCTUM_LIGHT_STEP_FRAMES;
+			entry->scale = SolSanctumLightMaxScales[i];
+			entry->scaleStep = -SolSanctumLightScaleSteps[i];
+			entry->tmr = SOL_SANCTUM_LIGHT_STEP_TICKS;
 			i++;
 			entry++;
 			first++;
-		} while(i != count);
+		} while(i != cnt);
 	}
-	list->cnt = count;
-	sySetFrameEvent(scSolSanctumUpdateFloatingLights, EVENT_PASS_FRAME);
+	list->cnt = cnt;
+	sySetTickEvent(scSolSanctumUpdateFloatingLights, EVENT_PASS_TICK);
 }

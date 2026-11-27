@@ -47,7 +47,7 @@ void fdScoopUpdate(void)
 {
 	SCOOP_STATE				*state;
 	ACTOR					*hand;
-	EFFECT_SPR				*sprite;
+	EFFECT_SPR				*spr;
 	FIELD_PSYNERGY_PARTICLE *particle;
 	Uint8					*vram;
 	Uint8					*picture;
@@ -88,16 +88,15 @@ void fdScoopUpdate(void)
 			((const Uint8 *(*)(const Uint8 *, Sint32, Sint32,
 				void *))Ram_HeapSlots->pictureUploader)(
 				picture, SCOOP_PICTURE_SIZE, SCOOP_PICTURE_SIZE, vram);
-			sprite = &state->pictureSpr;
-			fdEffectSprDraw(sprite);
+			spr = &state->pictureSpr;
+			fdEffectSprDraw(spr);
 		}
 		if(*phase == SCOOP_SETTLES) {
 			for(i = 0, particle = state->particles; i < SCOOP_DRAWN_DUST;
 				i++, particle++) {
-				sprite = &state->sprs[i];
+				spr = &state->sprs[i];
 				if(particle->tmr >= 0 && particle->tmr < 32)
-					fdScoopDustUpdateGrain(
-						sprite, particle, state->particleTile);
+					fdScoopDustUpdateGrain(spr, particle, state->particleTile);
 				particle->tmr++;
 			}
 		}
@@ -128,8 +127,8 @@ void fdScoopUpdate(void)
 			for(i = 0, particle = state->particles; i < SCOOP_PARTICLE_COUNT;
 				i++, particle++) {
 				if(particle->tmr >= 0 && particle->tmr < 45) {
-					sprite = &state->sprs[i];
-					fdEffectSprDrawAtWorldPos(sprite, particle);
+					spr = &state->sprs[i];
+					fdEffectSprDrawAtWorldPos(spr, particle);
 					if(particle->tmr < 42) {
 						particle->y -= toFIXED(1);
 						jitter = syRandom();
@@ -176,10 +175,10 @@ void fdScoopUpdate(void)
 			break;
 		}
 		particle = state->particles;
-		sprite = state->sprs;
-		for(i = 0; i < SCOOP_DRAWN_TARGET_DUST; i++, sprite++, particle++) {
+		spr = state->sprs;
+		for(i = 0; i < SCOOP_DRAWN_TARGET_DUST; i++, spr++, particle++) {
 			if(particle->tmr >= 0 && particle->tmr < 32)
-				fdScoopDustUpdateGrain(sprite, particle, state->particleTile);
+				fdScoopDustUpdateGrain(spr, particle, state->particleTile);
 			particle->tmr++;
 		}
 	}
@@ -208,8 +207,8 @@ void fdPsynergyScoop(void)
 	ACTOR					*caster = scene->caster;
 	ACTOR					*boulder = NULL;
 	ACTOR					*hand;
-	ACTOR					*target;
-	EFFECT_SPR				*sprite;
+	ACTOR					*tgt;
+	EFFECT_SPR				*spr;
 	FIELD_PSYNERGY_PARTICLE *particle;
 	void					*pending;
 	void					*data;
@@ -221,7 +220,7 @@ void fdPsynergyScoop(void)
 	Sint32					 failed;
 	Sint8					*lit;
 	Sint32					 stage;
-	Sint32					 frame;
+	Sint32					 frm;
 	Sint32					 i;
 
 	if(field->mode != ACTOR_SYSTEM_WORLD_MAP) {
@@ -279,13 +278,13 @@ void fdPsynergyScoop(void)
 
 			failed = SCOOP_CAN_DIG;
 			for(i = 0; i < FIELD_ACTOR_COUNT; i++) {
-				target = field->actors[i];
-				if(target != NULL && target->script != NULL &&
-					(fdActorGetSprIdStub(target) == SPRITE_STAKE ||
-						(target->collisionFlg & ACTOR_SOLID)) &&
-					target != scene->caster && ((SPR *)target->spr)->cnt != 0 &&
-					fdPsynergyCheckOverlap(&scene->x, 4, &target->x.fixed,
-						target->radius - 2) >= 0) {
+				tgt = field->actors[i];
+				if(tgt != NULL && tgt->script != NULL &&
+					(fdActorGetSprIdStub(tgt) == SPRITE_STAKE ||
+						(tgt->collisionFlg & ACTOR_SOLID)) &&
+					tgt != scene->caster && ((SPR *)tgt->spr)->cnt != 0 &&
+					fdPsynergyCheckOverlap(
+						&scene->x, 4, &tgt->x.fixed, tgt->radius - 2) >= 0) {
 					failed = SCOOP_ACTOR_IN_WAY;
 					break;
 				}
@@ -327,14 +326,14 @@ void fdPsynergyScoop(void)
 					i = 0;
 					particle = state->particles;
 					for(; i < SCOOP_PARTICLE_COUNT; i++, particle++) {
-						sprite = &state->sprs[i];
+						spr = &state->sprs[i];
 						fdEffectSprInit(
-							sprite, 8, 8, OBJ_SIZE_16X16, particleTile);
-						sprite->oam.fullCol = 1;
-						sprite->oam.pal = 0;
-						sprite->oam.pri = fdActorGetSprPriority(boulder);
-						sprite->depth = fdActorGetSprDepth(boulder) + 1;
-						sprite->scaleY = sprite->scaleX = toFIXED(1) / 5;
+							spr, 8, 8, OBJ_SIZE_16X16, particleTile);
+						spr->oam.fullCol = 1;
+						spr->oam.pal = 0;
+						spr->oam.pri = fdActorGetSprPriority(boulder);
+						spr->depth = fdActorGetSprDepth(boulder) + 1;
+						spr->scaleY = spr->scaleX = toFIXED(1) / 5;
 						SET_POSITION(particle, scene->x, scene->y, scene->z);
 						syVectorAddPolarOffset(
 							toFIXED(2), syRandom(), &particle->x);
@@ -357,13 +356,13 @@ void fdPsynergyScoop(void)
 					i = 0;
 					particle = state->particles;
 					for(; i < SCOOP_PARTICLE_COUNT; i++, particle++) {
-						sprite = &state->sprs[i];
+						spr = &state->sprs[i];
 						fdEffectSprInit(
-							sprite, 8, 8, OBJ_SIZE_16X16, particleTile);
-						sprite->oam.fullCol = 1;
-						sprite->oam.pal = 0;
-						sprite->oam.pri = fdActorGetSprPriority(boulder);
-						sprite->depth = fdActorGetSprDepth(boulder) + 1;
+							spr, 8, 8, OBJ_SIZE_16X16, particleTile);
+						spr->oam.fullCol = 1;
+						spr->oam.pal = 0;
+						spr->oam.pri = fdActorGetSprPriority(boulder);
+						spr->depth = fdActorGetSprDepth(boulder) + 1;
 						SET_POSITION(particle, scene->x, scene->y, scene->z);
 						syVectorAddPolarOffset(
 							toFIXED(2), syRandom(), &particle->x);
@@ -382,20 +381,20 @@ void fdPsynergyScoop(void)
 					state->particleTile = particleTile;
 					i = 0;
 					particle = state->particles;
-					sprite = state->sprs;
+					spr = state->sprs;
 					for(; i < SCOOP_PARTICLE_COUNT; i++) {
 						fdEffectSprInit(
-							sprite, 4, 4, 0, particleTile + (i & 1) * 2);
-						sprite->oam.fullCol = 1;
-						sprite->oam.pal = 0;
-						sprite->oam.pri = fdActorGetSprPriority(hand);
-						sprite->depth = fdActorGetSprDepth(hand) - 1;
+							spr, 4, 4, 0, particleTile + (i & 1) * 2);
+						spr->oam.fullCol = 1;
+						spr->oam.pal = 0;
+						spr->oam.pri = fdActorGetSprPriority(hand);
+						spr->depth = fdActorGetSprDepth(hand) - 1;
 						SET_POSITION(particle, scene->x, scene->y + toFIXED(40),
 							scene->z);
 						syVectorAddPolarOffset(syRandom() * 4 + toFIXED(3),
 							syRandom(), &particle->x);
 						particle->tmr = -i * 3 / 4;
-						sprite++;
+						spr++;
 						particle++;
 					}
 				}
@@ -406,18 +405,18 @@ void fdPsynergyScoop(void)
 					pictureEntry = syVRAMCacheFindFreeEntry();
 					pictureTile = syVRAMCacheLoad(pictureEntry, 1024, NULL);
 					state->pictureTile = pictureTile;
-					sprite = &state->pictureSpr;
-					fdEffectSprInit(sprite, 16, 0, OBJ_SIZE_32X32, pictureTile);
-					sprite->depth = fdActorGetSprDepth(scene->caster);
-					sprite->oam.pri = fdActorGetSprPriority(scene->caster);
-					sprite->oam.fullCol = 1;
-					sprite->oam.pal = 0;
+					spr = &state->pictureSpr;
+					fdEffectSprInit(spr, 16, 0, OBJ_SIZE_32X32, pictureTile);
+					spr->depth = fdActorGetSprDepth(scene->caster);
+					spr->oam.pri = fdActorGetSprPriority(scene->caster);
+					spr->oam.fullCol = 1;
+					spr->oam.pal = 0;
 					pos[0] = hand->x.fixed;
 					pos[1] = hand->y.fixed + toFIXED(32);
 					pos[2] = hand->z.fixed;
 					fdCameraWorldToScreen(pos);
-					sprite->x = pos[0];
-					sprite->y = pos[2];
+					spr->x = pos[0];
+					spr->y = pos[2];
 				}
 				if(state->mode == SCOOP_EARTH || state->mode == SCOOP_SPARKLE) {
 					sySynch(6);
@@ -430,37 +429,36 @@ void fdPsynergyScoop(void)
 				state->phase = SCOOP_DIGS;
 				state->tmr = 0;
 				{
-					Sint32 order = EVENT_PASS_FRAME;
+					Sint32 order = EVENT_PASS_TICK;
 
 					sySetEvent(fdScoopUpdate, order);
 				}
 				if(state->mode == SCOOP_FINDS) {
-					frame = 0;
+					frm = 0;
 					while(state->phase != FIELD_PSYNERGY_FINISHED) {
-						if(frame == 24)
+						if(frm == 24)
 							fdScoopDigUpItem();
 						sySynch(1);
-						frame++;
+						frm++;
 					}
 				} else {
 					pending = fdFindPsynergyCue(
 						PSYNERGY_CUE(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy,
 						fdSelectPsynergyTarget(scene->fieldPsynergy));
-					frame = 0;
+					frm = 0;
 					while(state->phase != FIELD_PSYNERGY_FINISHED) {
 						stage = 0;
 						sySynch(1);
-						if(frame == SCOOP_DUG_FRAME)
+						if(frm == SCOOP_DUG_TICK)
 							stage = SCOOP_STAGE_DUG;
-						if(frame == 50)
+						if(frm == 50)
 							stage = SCOOP_STAGE_DUG_UP;
 						scene->stage = stage;
-						scene->frm = frame;
-						fdRunPsynergyScript(pending, stage, frame);
-						frame++;
+						scene->frm = frm;
+						fdRunPsynergyScript(pending, stage, frm);
+						frm++;
 					}
-					fdRunPsynergyScript(
-						pending, FIELD_PSYNERGY_FINISHED, frame);
+					fdRunPsynergyScript(pending, FIELD_PSYNERGY_FINISHED, frm);
 				}
 				syCloseEvent(fdScoopUpdate);
 				sySndPlayStub(SE_MENU_ERROR);
@@ -480,7 +478,7 @@ void fdPsynergyScoop(void)
 }
 
 /* Drops an actor from Scoop's hand (if there is one) to fall to the ground,
-   waits 50 frames, then asks for its talk, which opens it without its "checked
+   waits 50 ticks, then asks for its talk, which opens it without its "checked
    the ..." message (FIELD_TALK_SILENT). */
 void fdScoopDropFromHand(Sint32 id)
 {
@@ -504,10 +502,10 @@ void fdScoopDropFromHand(Sint32 id)
 	field->talk = id | FIELD_TALK_SILENT;
 }
 
-extern const Uint16 Scoop_DugItems[16];
+extern const Uint16 ScoopDugItems[16];
 
 /* SCOOPED_ITEM_ACTOR at the hand, fetched or spawned (SPRITE_UNSEEN_MARKER),
-   shows what Scoop dug up: three times in four one of Scoop_DugItems's sixteen
+   shows what Scoop dug up: three times in four one of ScoopDugItems's sixteen
    items (a coin when there is no room for it), else coins up to twice the
    leader's level; it then drops (fdScoopDropFromHand). */
 void fdScoopDigUpItem(void)
@@ -533,7 +531,7 @@ void fdScoopDigUpItem(void)
 		field->actors[id] = actor;
 	}
 	if(syRandom() < SCOOP_ITEM_CHANCE) {
-		item = Scoop_DugItems[syRandomBelow(ARRAY_COUNT(Scoop_DugItems))];
+		item = ScoopDugItems[syRandomBelow(ARRAY_COUNT(ScoopDugItems))];
 		if(gmPartyInventoryFindRoomStub(item) == -1)
 			item = SCOOPED_COINS | 1;
 	} else {

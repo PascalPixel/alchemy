@@ -51,25 +51,25 @@ void	mnWindowCloseStub();
 WINDOW *mnWindowCreateStub(
 	Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 style);
 /* Redraws a window empty, its border and fill, at its current rectangle. */
-void mnWindowSprRedrawSavedRectStub(WINDOW *window);
+void mnWindowSprRedrawSavedRectStub(WINDOW *win);
 
 /* Creates *handle's window if absent and returns 1. Otherwise returns 0,
    redrawing its saved rectangle unless flags has WINDOW_KEEP_EXISTING set. */
 Sint32 mnWindowUpdateOrCreate(
-	Sint32 *handle, Sint32 x, Sint32 y, Sint32 w, Sint32 h, Sint32 flags)
+	Sint32 *handle, Sint32 x, Sint32 y, Sint32 w, Sint32 h, Sint32 flg)
 {
-	WINDOW *window;
+	WINDOW *win;
 	Sint32	style;
 
-	window = *handle;
-	if(window != 0) {
-		if(WINDOW_KEEP_EXISTING & flags) {
+	win = *handle;
+	if(win != 0) {
+		if(WINDOW_KEEP_EXISTING & flg) {
 			return 0;
 		}
-		mnWindowSprRedrawSavedRectStub(window);
+		mnWindowSprRedrawSavedRectStub(win);
 		return 0;
 	}
-	style = flags & WINDOW_STYLE_MASK;
+	style = flg & WINDOW_STYLE_MASK;
 	*handle = mnWindowCreateStub(x, y, w, h, style);
 	return 1;
 }
@@ -128,20 +128,20 @@ typedef enum STAT_PANEL_KIND {
 #define MESSAGE_LEARNED			 ((Sint32)&MsgLearned)
 
 /* The status panel's level label: `Lv`; `Nv.` in Spanish, `Niv` in French. */
-extern const Uint8 StatusPanel_LvString[];
+extern const Uint8 StatusPanelLvString[];
 
 /* Clears an area of a window's interior to the window fill: left, top, right
    and bottom are pixels inside it, and the area covers every tile they
    touch. */
 void mnWindowClearInteriorTilesStub(
-	WINDOW *window, Sint32 left, Sint32 top, Sint32 right, Sint32 bottom);
+	WINDOW *win, Sint32 left, Sint32 top, Sint32 right, Sint32 bottom);
 /* Releases every window sprite in a window's list and empties it. */
-void mnWindowSprClearListStub(WINDOW *window);
+void mnWindowSprClearListStub(WINDOW *win);
 /* Creates party member owner's portrait in window at pixel (x, y), with side's
    palette. */
-void *mnPortraitCreateStub(Sint32 owner, Sint32 position, Sint32 side,
-	WINDOW *window, Sint32 x, Sint32 y);
-void  gmUnitUpdateClassStub(Sint32 owner);
+void *mnPortraitCreateStub(
+	Sint32 owner, Sint32 pos, Sint32 side, WINDOW *win, Sint32 x, Sint32 y);
+void gmUnitUpdateClassStub(Sint32 owner);
 
 /* Draws the status panel of the Item and Psynergy screens for party member
    owner (window at tile 0,5, 13 by 12): the name, up to two statuses or the
@@ -161,7 +161,7 @@ void mnStatPanelDraw(WINDOW *unused, Sint32 owner, Sint32 slot, Sint32 mode)
 	Uint32			 item;
 	ITEM_MENU_STATE *state;
 	UNIT			*unit;
-	WINDOW			*window;
+	WINDOW			*win;
 	Sint32			 ailmentRows;
 	Sint32			 value;
 	UNIT			*backup;
@@ -175,7 +175,7 @@ void mnStatPanelDraw(WINDOW *unused, Sint32 owner, Sint32 slot, Sint32 mode)
 	if(!(mode & STATUS_PANEL_LOWER_ONLY))
 		created = mnWindowUpdateOrCreate((Sint32 *)&state->statWin, 0, 5, 13,
 			12, WINDOW_KEEP_EXISTING | WINDOW_FLAG_INSTANT);
-	window = state->statWin;
+	win = state->statWin;
 
 	if(!(mode & STATUS_PANEL_LOWER_ONLY)) {
 		if(!created) {
@@ -183,34 +183,34 @@ void mnStatPanelDraw(WINDOW *unused, Sint32 owner, Sint32 slot, Sint32 mode)
 			mnWindowClearInteriorTilesStub(state->statWin, 0, 0, 88, 32);
 		}
 		mnTextDrawStringAtOffsetStub(
-			unit->name, (Sint32)window, STATUS_PANEL_NAME_X, 0);
+			unit->name, (Sint32)win, STATUS_PANEL_NAME_X, 0);
 		mnStatScreenListStatuses(ailments, 1, owner);
 		ailmentRows = 0;
 		if(ailments[CHARACTER_POISON]) {
-			mnTextDrawMessageAsTilesStub(MESSAGE_POISON_LABEL, window,
+			mnTextDrawMessageAsTilesStub(MESSAGE_POISON_LABEL, win,
 				STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
 			ailmentRows++;
 		}
 		if(ailments[CHARACTER_VENOM]) {
-			mnTextDrawMessageAsTilesStub(MESSAGE_VENOM_LABEL, window,
+			mnTextDrawMessageAsTilesStub(MESSAGE_VENOM_LABEL, win,
 				STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
 			ailmentRows++;
 		}
 		if(ailments[CHARACTER_CURSE]) {
-			mnTextDrawMessageAsTilesStub(MESSAGE_CURSE_LABEL, window,
+			mnTextDrawMessageAsTilesStub(MESSAGE_CURSE_LABEL, win,
 				STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
 			ailmentRows++;
 		}
 		if(ailments[CHARACTER_HAUNT]) {
-			mnTextDrawMessageAsTilesStub(MESSAGE_HAUNT_LABEL, window,
+			mnTextDrawMessageAsTilesStub(MESSAGE_HAUNT_LABEL, win,
 				STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
 			ailmentRows++;
 		}
 		if(ailmentRows < 2) {
 			value = unit->level;
 			MENU_DRAW_STATUS_LABEL(
-				(Uint8 *)StatusPanel_LvString, (Sint32)window, 40, 16);
-			mnTextDrawNumInWindowStub(value, 4, (Sint32)window, 56, 16);
+				(Uint8 *)StatusPanelLvString, (Sint32)win, 40, 16);
+			mnTextDrawNumInWindowStub(value, 4, (Sint32)win, 56, 16);
 		}
 	}
 
@@ -218,9 +218,9 @@ void mnStatPanelDraw(WINDOW *unused, Sint32 owner, Sint32 slot, Sint32 mode)
 		sySynch(1);
 		mnWindowClearInteriorTilesStub(state->statWin, 0, 32, 88, 80);
 	}
-	mnWindowSprClearListStub(window);
+	mnWindowSprClearListStub(win);
 	if(!(mode & STATUS_PANEL_LOWER_ONLY))
-		state->cursor = mnPortraitCreateStub(owner, 0, 0, window, 0, 0);
+		state->cursor = mnPortraitCreateStub(owner, 0, 0, win, 0, 0);
 
 	switch(mode & STATUS_PANEL_KIND_MASK) {
 	case STATUS_PANEL_EQUIP_CLASS:
@@ -235,9 +235,9 @@ void mnStatPanelDraw(WINDOW *unused, Sint32 owner, Sint32 slot, Sint32 mode)
 			goto experience;
 	classChange:
 		value = unit->classId + MESSAGE_CLASS_NAME;
-		mnTextDrawMessageAsTilesStub(value, window, 0, 32);
+		mnTextDrawMessageAsTilesStub(value, win, 0, 32);
 		if(!gmItemCanUnitEquipDirectStub(owner, item)) {
-			mnTextDrawMessageAsTilesStub(MESSAGE_CANNOT_EQUIP, window, 16, 48);
+			mnTextDrawMessageAsTilesStub(MESSAGE_CANNOT_EQUIP, win, 16, 48);
 			break;
 		}
 		backup = syHeapAlloc(sizeof(UNIT));
@@ -252,31 +252,31 @@ void mnStatPanelDraw(WINDOW *unused, Sint32 owner, Sint32 slot, Sint32 mode)
 		/* The blinking arrow down from the class now to the class the equipment
 		   would give. */
 		mnWindowSetTilemapEntryStub(
-			(Sint32)window, WINDOW_TILE(CLASS_CHANGE_ARROW_TILE), 3, 5, 0);
+			(Sint32)win, WINDOW_TILE(CLASS_CHANGE_ARROW_TILE), 3, 5, 0);
 		value = unit->classId + MESSAGE_CLASS_NAME;
-		mnTextDrawMessageAsTilesStub(value, window, 0, 48);
+		mnTextDrawMessageAsTilesStub(value, win, 0, 48);
 		syWordsCopy(unit, backup, sizeof(UNIT));
 		syHeapRelease(backup);
 		break;
 	case STATUS_PANEL_EXPERIENCE:
 	experience:
 		value = unit->classId + MESSAGE_CLASS_NAME;
-		mnTextDrawMessageAsTilesStub(value, window, 0, 32);
-		mnStatPanelDrawHpPp(unit, (Sint32)window);
+		mnTextDrawMessageAsTilesStub(value, win, 0, 32);
+		mnStatPanelDrawHpPp(unit, (Sint32)win);
 		value = unit->experience;
-		mnTextDrawMessageAsTilesStub(MESSAGE_EXP_LABEL, window, 0, 64);
-		mnTextDrawNumInWindowStub(value, 8, (Sint32)window, 24, 72);
+		mnTextDrawMessageAsTilesStub(MESSAGE_EXP_LABEL, win, 0, 64);
+		mnTextDrawNumInWindowStub(value, 8, (Sint32)win, 24, 72);
 		break;
 	case STATUS_PANEL_CLASS:
 		value = unit->classId + MESSAGE_CLASS_NAME;
-		mnTextDrawMessageAsTilesStub(value, window, 0, 32);
-		mnStatPanelDrawHpPp(unit, (Sint32)window);
+		mnTextDrawMessageAsTilesStub(value, win, 0, 32);
+		mnStatPanelDrawHpPp(unit, (Sint32)win);
 		break;
 	case STATUS_PANEL_EQUIP:
 	case STATUS_PANEL_EQUIP + 1:
 		if(!gmItemCanUnitEquipDirectStub(owner, item)) {
 			mnTextDrawMessageAsTilesStub(
-				MESSAGE_CANNOT_EQUIP, window, STATUS_PANEL_CANNOT_EQUIP_X, 48);
+				MESSAGE_CANNOT_EQUIP, win, STATUS_PANEL_CANNOT_EQUIP_X, 48);
 			break;
 		}
 		backup = syHeapAlloc(sizeof(UNIT));
@@ -286,7 +286,7 @@ void mnStatPanelDraw(WINDOW *unused, Sint32 owner, Sint32 slot, Sint32 mode)
 		else
 			gmInventoryEquipStub(owner, slot);
 		gmUnitCalcStub(owner);
-		mnTextDrawStatComparison(unit, backup, (Sint32)window);
+		mnTextDrawStatComparison(unit, backup, (Sint32)win);
 		syWordsCopy(unit, backup, sizeof(UNIT));
 		syHeapRelease(backup);
 		break;
@@ -303,33 +303,33 @@ void mnStatPanelDraw(WINDOW *unused, Sint32 owner, Sint32 slot, Sint32 mode)
 			}
 		}
 		if(known) {
-			mnTextDrawMessageAsTilesStub(psynergy + MESSAGE_ABILITY_NAME,
-				window, 0, STATUS_PANEL_LEARN_NAME_Y);
+			mnTextDrawMessageAsTilesStub(psynergy + MESSAGE_ABILITY_NAME, win,
+				0, STATUS_PANEL_LEARN_NAME_Y);
 			mnTextDrawMessageAsTilesStub(
-				MESSAGE_LEARNED, window, 0, STATUS_PANEL_LEARN_NOTE_Y);
+				MESSAGE_LEARNED, win, 0, STATUS_PANEL_LEARN_NOTE_Y);
 		} else {
-			mnTextDrawMessageAsTilesStub(psynergy + MESSAGE_ABILITY_NAME,
-				window, 0, STATUS_PANEL_LEARN_NAME_Y);
+			mnTextDrawMessageAsTilesStub(psynergy + MESSAGE_ABILITY_NAME, win,
+				0, STATUS_PANEL_LEARN_NAME_Y);
 			mnTextDrawMessageAsTilesStub(
-				MESSAGE_WILL_LEARN, window, 0, STATUS_PANEL_LEARN_NOTE_Y);
+				MESSAGE_WILL_LEARN, win, 0, STATUS_PANEL_LEARN_NOTE_Y);
 		}
 		break;
 	}
 	case STATUS_PANEL_STATS: {
 		Sint32 labels = MESSAGE_PANEL_STAT_LABEL;
 
-		mnTextDrawMessageAsTilesStub(labels, window, 0, 40); /* Attack */
+		mnTextDrawMessageAsTilesStub(labels, win, 0, 40); /* Attack */
 		value = unit->attack;
-		mnTextDrawNumInWindowStub(value, 3, (Sint32)window, 64, 40);
-		mnTextDrawMessageAsTilesStub(labels + 1, window, 0, 48); /* Defense */
+		mnTextDrawNumInWindowStub(value, 3, (Sint32)win, 64, 40);
+		mnTextDrawMessageAsTilesStub(labels + 1, win, 0, 48); /* Defense */
 		value = unit->defense;
-		mnTextDrawNumInWindowStub(value, 3, (Sint32)window, 64, 48);
-		mnTextDrawMessageAsTilesStub(labels + 4, window, 0, 56); /* Agility */
+		mnTextDrawNumInWindowStub(value, 3, (Sint32)win, 64, 48);
+		mnTextDrawMessageAsTilesStub(labels + 4, win, 0, 56); /* Agility */
 		value = unit->agility;
-		mnTextDrawNumInWindowStub(value, 3, (Sint32)window, 64, 56);
-		mnTextDrawMessageAsTilesStub(labels + 3, window, 0, 64); /* Luck */
+		mnTextDrawNumInWindowStub(value, 3, (Sint32)win, 64, 56);
+		mnTextDrawMessageAsTilesStub(labels + 3, win, 0, 64); /* Luck */
 		value = unit->luck;
-		mnTextDrawNumInWindowStub(value, 3, (Sint32)window, 64, 64);
+		mnTextDrawNumInWindowStub(value, 3, (Sint32)win, 64, 64);
 		break;
 	}
 	}
@@ -345,18 +345,18 @@ void mnStatPanelDraw(WINDOW *unused, Sint32 owner, Sint32 slot, Sint32 mode)
 
 /* Returns how many decimal digits number has, but at least 2: a number under 10
    has its one digit counted twice, as the units and as the leading digit. */
-static inline Sint32 mnCountDigits(Sint32 number)
+static inline Sint32 mnCountDigits(Sint32 num)
 {
-	Sint32 count;
+	Sint32 cnt;
 
-	for(count = 1; count < DIGIT_COUNT_LIMIT; count++) {
-		number /= 10;
-		if(number < 10) {
+	for(cnt = 1; cnt < DIGIT_COUNT_LIMIT; cnt++) {
+		num /= 10;
+		if(num < 10) {
 			break;
 		}
 	}
-	count++; /* the leading digit */
-	return count;
+	cnt++; /* the leading digit */
+	return cnt;
 }
 
 /* Draws number right-aligned in a field ending at pixel x of window, 8 pixels a
@@ -364,14 +364,14 @@ static inline Sint32 mnCountDigits(Sint32 number)
    Japanese pads them with spaces, its font's space as wide as a digit; the
    Latin font's space is narrower, so each figure gets a field as wide as its
    digits instead. */
-void mnTextDrawNumRightAligned(Sint32 number, Sint32 window, Sint32 x, Sint32 y)
+void mnTextDrawNumRightAligned(Sint32 num, Sint32 win, Sint32 x, Sint32 y)
 {
-	Sint32 width = mnCountDigits(number);
+	Sint32 width = mnCountDigits(num);
 
 	/* Step x back to the field's left edge; the number writer right-aligns the
 	   number in a field of width characters. */
 	x -= width * NUMBER_PIXELS_PER_DIGIT;
-	mnTextDrawNumAtOffsetStub(number, width, window, x, y);
+	mnTextDrawNumAtOffsetStub(num, width, win, x, y);
 }
 
 #endif
@@ -379,7 +379,7 @@ void mnTextDrawNumRightAligned(Sint32 number, Sint32 window, Sint32 x, Sint32 y)
 /* Draws a party member's HP and PP into window as two rows, "HP
    current/maximum" at pixel row 40 and "PP current/maximum" at row 48. The
    current HP is yellow below a quarter of the maximum, and red at 0. */
-void mnStatPanelDrawHpPp(UNIT *unit, Sint32 window)
+void mnStatPanelDrawHpPp(UNIT *unit, Sint32 win)
 {
 	Sint16 value; /* each figure in turn */
 
@@ -387,11 +387,10 @@ void mnStatPanelDrawHpPp(UNIT *unit, Sint32 window)
 	/* The label at the left and a slash at 48. A current figure ends before the
 	   slash, at 48, and a maximum at 88, each in a field as wide as its
 	   digits. */
-	mnTextDrawStringAtOffsetStub(StatusPanel_HpString, window, 0, 40);
-	mnTextDrawStringInWindowStub(
-		(Uint8 *)StatusPanel_SlashString, window, 48, 40);
+	mnTextDrawStringAtOffsetStub(StatusPanelHpString, win, 0, 40);
+	mnTextDrawStringInWindowStub((Uint8 *)StatusPanelSlashString, win, 48, 40);
 	value = unit->hpMax;
-	mnTextDrawNumRightAligned(value, window, 88, 40);
+	mnTextDrawNumRightAligned(value, win, 88, 40);
 	value = unit->hp;
 	if(value < unit->hpMax >> 2) { /* below a quarter of maximum HP */
 		mnTextSetColStub(TEXT_COLOR_YELLOW);
@@ -399,25 +398,23 @@ void mnStatPanelDrawHpPp(UNIT *unit, Sint32 window)
 	if(value == 0) {
 		mnTextSetColStub(TEXT_COLOR_RED);
 	}
-	mnTextDrawNumRightAligned(value, window, 48, 40);
+	mnTextDrawNumRightAligned(value, win, 48, 40);
 	mnTextSetColStub(TEXT_COLOR_NORMAL);
-	mnTextDrawStringAtOffsetStub(StatusPanel_PpString, window, 0, 48);
-	mnTextDrawStringInWindowStub(
-		(Uint8 *)StatusPanel_SlashString, window, 48, 48);
+	mnTextDrawStringAtOffsetStub(StatusPanelPpString, win, 0, 48);
+	mnTextDrawStringInWindowStub((Uint8 *)StatusPanelSlashString, win, 48, 48);
 	value = unit->pp;
-	mnTextDrawNumRightAligned(value, window, 48, 48);
+	mnTextDrawNumRightAligned(value, win, 48, 48);
 	value = unit->ppMax;
-	mnTextDrawNumRightAligned(value, window, 88, 48);
+	mnTextDrawNumRightAligned(value, win, 88, 48);
 #else
 	/* Each row string ("HP    /" and "EP    /") holds the label and the slash,
 	   one character to an 8-pixel cell, the slash in the cell at 48. Each
 	   figure is four characters padded with spaces: the current one drawn from
 	   16 at the font's widths, the maximum from 56 a cell a character, ending
 	   at 88. */
-	mnTextDrawStringInWindowStub(
-		(Uint8 *)StatusPanel_HpRowString, window, 0, 40);
+	mnTextDrawStringInWindowStub((Uint8 *)StatusPanelHpRowString, win, 0, 40);
 	value = unit->hpMax;
-	mnTextDrawNumInWindowStub(value, 4, window, 56, 40);
+	mnTextDrawNumInWindowStub(value, 4, win, 56, 40);
 	value = unit->hp;
 	if(value < unit->hpMax >> 2) { /* below a quarter of maximum HP */
 		mnTextSetColStub(TEXT_COLOR_YELLOW);
@@ -425,19 +422,18 @@ void mnStatPanelDrawHpPp(UNIT *unit, Sint32 window)
 	if(value == 0) {
 		mnTextSetColStub(TEXT_COLOR_RED);
 	}
-	mnTextDrawNumAtOffsetStub(value, 4, window, 16, 40);
+	mnTextDrawNumAtOffsetStub(value, 4, win, 16, 40);
 	mnTextSetColStub(TEXT_COLOR_NORMAL);
-	mnTextDrawStringInWindowStub(
-		(Uint8 *)StatusPanel_PpRowString, window, 0, 48);
+	mnTextDrawStringInWindowStub((Uint8 *)StatusPanelPpRowString, win, 0, 48);
 	value = unit->pp;
-	mnTextDrawNumAtOffsetStub(value, 4, window, 16, 48);
+	mnTextDrawNumAtOffsetStub(value, 4, win, 16, 48);
 	value = unit->ppMax;
-	mnTextDrawNumInWindowStub(value, 4, window, 56, 48);
+	mnTextDrawNumInWindowStub(value, 4, win, 56, 48);
 #endif
 }
 
 Sint32 mnIconCreateStatChangeArrow(
-	WINDOW *window, Sint32 x, Sint32 y, Sint32 variant);
+	WINDOW *win, Sint32 x, Sint32 y, Sint32 variant);
 
 /* The stat arrows: the small up and down arrows the menu loads into its two
    VRAM cache slots (mnLoadStatArrows). */
@@ -446,47 +442,45 @@ typedef enum STAT_ARROW { STAT_ARROW_UP, STAT_ARROW_DOWN } STAT_ARROW;
 /* Writes Attack, Defense and Agility into a status window as they are now
    (before), and beside each one that changes its new value (after) with an up
    or down arrow: the equipment preview. */
-void mnTextDrawStatComparison(
-	const UNIT *after, const UNIT *before, Sint32 window)
+void mnTextDrawStatComparison(const UNIT *after, const UNIT *before, Sint32 win)
 {
 	mnTextDrawMessageAsTilesStub(
-		(Sint32)MsgPanelAttackLabel, (WINDOW *)window, 0, 32);
-	mnTextDrawNumAtOffsetStub(before->attack, 3, window, 16, 40);
+		(Sint32)MsgPanelAttackLabel, (WINDOW *)win, 0, 32);
+	mnTextDrawNumAtOffsetStub(before->attack, 3, win, 16, 40);
 	if(after->attack != before->attack) {
-		mnTextDrawNumAtOffsetStub(after->attack, 3, window, 64, 40);
+		mnTextDrawNumAtOffsetStub(after->attack, 3, win, 64, 40);
 		if(after->attack > before->attack) {
-			mnIconCreateStatChangeArrow(window, 44, 36, STAT_ARROW_UP);
+			mnIconCreateStatChangeArrow(win, 44, 36, STAT_ARROW_UP);
 		} else {
-			mnIconCreateStatChangeArrow(window, 44, 36, STAT_ARROW_DOWN);
+			mnIconCreateStatChangeArrow(win, 44, 36, STAT_ARROW_DOWN);
 		}
 	}
 	mnTextDrawMessageAsTilesStub(
-		(Sint32)MsgPanelDefenseLabel, (WINDOW *)window, 0, 48);
-	mnTextDrawNumAtOffsetStub(before->defense, 3, window, 16, 56);
+		(Sint32)MsgPanelDefenseLabel, (WINDOW *)win, 0, 48);
+	mnTextDrawNumAtOffsetStub(before->defense, 3, win, 16, 56);
 	if(after->defense != before->defense) {
-		mnTextDrawNumAtOffsetStub(after->defense, 3, window, 64, 56);
+		mnTextDrawNumAtOffsetStub(after->defense, 3, win, 64, 56);
 		if(after->defense > before->defense) {
-			mnIconCreateStatChangeArrow(window, 44, 52, STAT_ARROW_UP);
+			mnIconCreateStatChangeArrow(win, 44, 52, STAT_ARROW_UP);
 		} else {
-			mnIconCreateStatChangeArrow(window, 44, 52, STAT_ARROW_DOWN);
+			mnIconCreateStatChangeArrow(win, 44, 52, STAT_ARROW_DOWN);
 		}
 	}
-	mnTextDrawMessageAsTilesStub(
-		(Sint32)MsgAgilityLabel, (WINDOW *)window, 0, 64);
-	mnTextDrawNumAtOffsetStub(before->agility, 3, window, 16, 72);
+	mnTextDrawMessageAsTilesStub((Sint32)MsgAgilityLabel, (WINDOW *)win, 0, 64);
+	mnTextDrawNumAtOffsetStub(before->agility, 3, win, 16, 72);
 	if(after->agility != before->agility) {
-		mnTextDrawNumAtOffsetStub(after->agility, 3, window, 64, 72);
+		mnTextDrawNumAtOffsetStub(after->agility, 3, win, 64, 72);
 		if(after->agility > before->agility) {
-			mnIconCreateStatChangeArrow(window, 44, 68, STAT_ARROW_UP);
+			mnIconCreateStatChangeArrow(win, 44, 68, STAT_ARROW_UP);
 		} else {
-			mnIconCreateStatChangeArrow(window, 44, 68, STAT_ARROW_DOWN);
+			mnIconCreateStatChangeArrow(win, 44, 68, STAT_ARROW_DOWN);
 		}
 	}
 }
 
 /* Creates a hand cursor sprite in window at (x, y), loading the hand's tiles
    into a free VRAM block. */
-Sint32 mnIconCreateHandCursor(WINDOW *window, Sint32 x, Sint32 y)
+Sint32 mnIconCreateHandCursor(WINDOW *win, Sint32 x, Sint32 y)
 {
 	Sint32 slot;
 	Sint32 icon;
@@ -497,7 +491,7 @@ Sint32 mnIconCreateHandCursor(WINDOW *window, Sint32 x, Sint32 y)
 		mnVRAMBlockLoadResourceStub(
 			slot, ICON_TILE_BYTES, RESOURCE_UI_ICON_TILES);
 		icon = (Sint32)mnWindowSprCreateStub(
-			slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
+			slot, WINDOW_SPRITE_SIZE_16X16, win, x, y);
 	}
 	return icon;
 }
@@ -524,19 +518,19 @@ void mnReloadMemberPortrait(Sint32 menu, Sint32 unit)
 /* Opens the menu's top-left window (13 by 5 tiles) with a divider, puts the
    hand cursor in it, hidden, and adds the up and down arrow icons at its right
    edge when a VRAM entry is free. Returns the window. */
-WINDOW *mnCursorCreate(void *source)
+WINDOW *mnCursorCreate(void *src)
 {
-	PSYNERGY_MENU_STATE *menu = source;
-	WINDOW				*window;
+	PSYNERGY_MENU_STATE *menu = src;
+	WINDOW				*win;
 	WINDOW_SPR			*icon;
 	Sint32				 slot;
 
 	menu->auxiliaryWin = NULL;
 	mnWindowUpdateOrCreate(
 		(Sint32 *)&menu->auxiliaryWin, 0, 0, 13, 5, WINDOW_FLAG_INSTANT);
-	window = menu->auxiliaryWin;
-	mnWindowDrawDividerLineStub((Sint32)window, 0, 3, 12, 3);
-	icon = (WINDOW_SPR *)mnIconCreateHandCursor(window, -8, 11);
+	win = menu->auxiliaryWin;
+	mnWindowDrawDividerLineStub((Sint32)win, 0, 3, 12, 3);
+	icon = (WINDOW_SPR *)mnIconCreateHandCursor(win, -8, 11);
 	icon->motion = ICON_HIDDEN;
 	menu->tabIdx[0] = -1;
 	menu->sideIcon[0] = icon;
@@ -547,8 +541,8 @@ WINDOW *mnCursorCreate(void *source)
 	if(slot < VRAM_CACHE_ENTRY_COUNT) {
 		mnVRAMBlockLoadResourceStub(
 			slot, ICON_TILE_BYTES, RESOURCE_SHOP_UP_ARROW_TILES);
-		icon = mnWindowSprCreateStub(
-			slot, WINDOW_SPRITE_SIZE_16X16, window, 84, -4);
+		icon =
+			mnWindowSprCreateStub(slot, WINDOW_SPRITE_SIZE_16X16, win, 84, -4);
 		icon->motion = ICON_HIDDEN;
 		menu->pageArrows[0] = icon;
 	}
@@ -556,27 +550,27 @@ WINDOW *mnCursorCreate(void *source)
 	if(slot < VRAM_CACHE_ENTRY_COUNT) {
 		mnVRAMBlockLoadResourceStub(
 			slot, ICON_TILE_BYTES, RESOURCE_SHOP_DOWN_ARROW_TILES);
-		icon = mnWindowSprCreateStub(
-			slot, WINDOW_SPRITE_SIZE_16X16, window, 84, 8);
+		icon =
+			mnWindowSprCreateStub(slot, WINDOW_SPRITE_SIZE_16X16, win, 84, 8);
 		icon->motion = ICON_HIDDEN;
 		menu->pageArrows[1] = icon;
 	}
-	return window;
+	return win;
 }
 
-/* Event: each frame, places every party member sprite created by
+/* Event: each tick, places every party member sprite created by
    mnCreatePartyFigures at its menu position and scale, through the field's
    projected placement. */
 void mnPlacePartyFigures(void)
 {
 	PSYNERGY_MENU_STATE *menu = (PSYNERGY_MENU_STATE *)Ram_HeapSlots->menuState;
 	SPR_SCALE			 scale;
-	SPR_PLACEMENT		 position;
+	SPR_PLACEMENT		 pos;
 	Sint32				 i;
-	Sint32				 count;
+	Sint32				 cnt;
 
-	count = (Uint16)gmPartyCountMembersStub();
-	for(i = 0; i < count; i++) {
+	cnt = (Uint16)gmPartyCountMembersStub();
+	for(i = 0; i < cnt; i++) {
 		SPR *figure = menu->tabSprs[i];
 		/* 114.5 less half the row's screen y, in 16.16. */
 		FIXED placeY =
@@ -586,39 +580,39 @@ void mnPlacePartyFigures(void)
 			figure->image.pri = 0;
 			scale.x = menu->memberScale[i];
 			scale.y = menu->memberScale[i];
-			position.x = toFIXED(menu->tabX[i]);
-			position.height = placeY;
-			position.y = toFIXED(menu->rowPositions[i]) + placeY;
-			position.groundHeight = 0;
+			pos.x = toFIXED(menu->tabX[i]);
+			pos.height = placeY;
+			pos.y = toFIXED(menu->rowPositions[i]) + placeY;
+			pos.groundHeight = 0;
 			fdRenderApplyProjectedPlacementAtDepthStub(
-				figure, &position, &scale, FACING_SOUTH, MENU_FIGURE_DEPTH);
+				figure, &pos, &scale, FACING_SOUTH, MENU_FIGURE_DEPTH);
 		}
 	}
 }
 
-/* The hand cursor's bob in x, a step every two frames (mnCursorPos). */
-extern Uint8 MenuCursor_BobX[];
+/* The hand cursor's bob in x, a step every two ticks (mnCursorPos). */
+extern Uint8 MenuCursorBobX[];
 /* The hand cursor's bob in y: 0, -1, -1, -2, -2, -1, -1, 0. */
-extern Uint8 MenuCursor_BobY[];
+extern Uint8 MenuCursorBobY[];
 
-/* The hand cursor's step through MenuCursor_BobY, one every two frames. */
-#define CURSOR_BOB_STEP() ((FrameCount >> 1) & 7)
+/* The hand cursor's step through MenuCursorBobY, one every two ticks. */
+#define CURSOR_BOB_STEP() ((TickCount >> 1) & 7)
 
-/* Places the hand cursor at (xOffset, yOffset) inside the menu's window,
+/* Places the hand cursor at (xOfs, yOfs) inside the menu's window,
    bobbing. */
-void mnCursorPos(Sint32 xOffset, Sint32 yOffset)
+void mnCursorPos(Sint32 xOfs, Sint32 yOfs)
 {
 	PSYNERGY_MENU_STATE *menu = (PSYNERGY_MENU_STATE *)Ram_HeapSlots->menuState;
 	WINDOW_SPR			*cursor = menu->sideIcon[0];
 
-	cursor->spr.oam.x = cursor->x = MenuCursor_BobX[CURSOR_BOB_STEP()] +
-		xOffset + (Uint16)menu->auxiliaryWin->x * 8 + 8;
-	cursor->spr.oam.y = cursor->y = MenuCursor_BobY[CURSOR_BOB_STEP()] +
-		yOffset + (Uint16)menu->auxiliaryWin->y * 8 + 8;
+	cursor->spr.oam.x = cursor->x = MenuCursorBobX[CURSOR_BOB_STEP()] + xOfs +
+		(Uint16)menu->auxiliaryWin->x * 8 + 8;
+	cursor->spr.oam.y = cursor->y = MenuCursorBobY[CURSOR_BOB_STEP()] + yOfs +
+		(Uint16)menu->auxiliaryWin->y * 8 + 8;
 }
 
 /* Slides the hand cursor from where it is to (x, y) inside the menu's top-left
-   window over two frames, in 1/16 pixel steps. */
+   window over two ticks, in 1/16 pixel steps. */
 void mnCursorSlide(Sint32 x, Sint32 y)
 {
 	PSYNERGY_MENU_STATE *menu = (PSYNERGY_MENU_STATE *)Ram_HeapSlots->menuState;
@@ -638,11 +632,11 @@ void mnCursorSlide(Sint32 x, Sint32 y)
 	}
 	cursor = menu->sideIcon[0];
 	{
-		Sint32 spriteX = cursor->spr.oam.x;
-		Sint32 spriteY = cursor->spr.oam.y;
+		Sint32 sprX = cursor->spr.oam.x;
+		Sint32 sprY = cursor->spr.oam.y;
 
-		cursor->x = spriteX + 64;
-		cursor->y = spriteY + 64;
+		cursor->x = sprX + 64;
+		cursor->y = sprY + 64;
 	}
 	x += 64;
 	y += 64;
@@ -662,9 +656,9 @@ void mnCursorSlide(Sint32 x, Sint32 y)
 	do {
 		px += dx;
 		{
-			Sint32 spriteX = (px >> 4) + ((Uint16)menu->auxiliaryWin->x << 3);
+			Sint32 sprX = (px >> 4) + ((Uint16)menu->auxiliaryWin->x << 3);
 
-			cursor->spr.oam.x = cursor->x = spriteX - 56;
+			cursor->spr.oam.x = cursor->x = sprX - 56;
 		}
 		py += dy;
 		cursor->spr.oam.y = cursor->y =
@@ -690,51 +684,50 @@ void mnPsynergyMenuPlaceEntryIcons(
 {
 	WINDOW_SPR **slot;
 	WINDOW_SPR **scan;
-	Sint32		 index;
+	Sint32		 idx;
 
-	index = 0;
+	idx = 0;
 	slot = ((PSYNERGY_MENU_STATE *)Ram_HeapSlots->menuState)->entryIcons;
 	scan = slot;
 	do {
 		if(*scan++ != NULL) {
-			mnPsynergyMenuPlaceEntryIcon(
-				slot, index, originX, originY, columns);
+			mnPsynergyMenuPlaceEntryIcon(slot, idx, originX, originY, columns);
 		}
-		index++;
+		idx++;
 		slot++;
-	} while(index < MENU_ENTRY_ICONS);
+	} while(idx < MENU_ENTRY_ICONS);
 }
 
 /* Places the icon in *slot at cell index of a grid of 16x16 cells, columns
    wide, from (originX, originY), and shows it; an index past the last entry is
    taken as 0. */
-void mnPsynergyMenuPlaceEntryIcon(WINDOW_SPR **slot, Sint32 index,
-	Sint32 originX, Sint32 originY, Sint32 columns)
-{
-	WINDOW_SPR *icon;
-
-	if(index > MENU_ENTRY_ICONS - 1) {
-		index = 0;
-	}
-	icon = *slot;
-	icon->y = (index / columns) * 16 + originY;
-	icon->x = (index % columns) * 16 + originX;
-	mnIconShow(icon);
-}
-
-/* Places the icon in *slot at slotIndex in a columns-wide grid of 24x16 cells
-   from (originX, originY), and shows it; a slotIndex past INVENTORY_SLOTS is
-   taken as 0. */
-void mnItemMenuPlaceIcon(WINDOW_SPR **slot, Sint32 slotIndex, Sint32 originX,
+void mnPsynergyMenuPlaceEntryIcon(WINDOW_SPR **slot, Sint32 idx, Sint32 originX,
 	Sint32 originY, Sint32 columns)
 {
 	WINDOW_SPR *icon;
 
-	if(slotIndex > INVENTORY_SLOTS)
-		slotIndex = 0;
+	if(idx > MENU_ENTRY_ICONS - 1) {
+		idx = 0;
+	}
 	icon = *slot;
-	icon->y = slotIndex / columns * 16 + originY;
-	icon->x = slotIndex % columns * 24 + originX;
+	icon->y = (idx / columns) * 16 + originY;
+	icon->x = (idx % columns) * 16 + originX;
+	mnIconShow(icon);
+}
+
+/* Places the icon in *slot at slotIdx in a columns-wide grid of 24x16 cells
+   from (originX, originY), and shows it; a slotIdx past INVENTORY_SLOTS is
+   taken as 0. */
+void mnItemMenuPlaceIcon(WINDOW_SPR **slot, Sint32 slotIdx, Sint32 originX,
+	Sint32 originY, Sint32 columns)
+{
+	WINDOW_SPR *icon;
+
+	if(slotIdx > INVENTORY_SLOTS)
+		slotIdx = 0;
+	icon = *slot;
+	icon->y = slotIdx / columns * 16 + originY;
+	icon->x = slotIdx % columns * 24 + originX;
 	mnIconShow(icon);
 }
 
@@ -745,7 +738,7 @@ void mnItemMenuPlaceIcons(Sint32 layout)
 	WINDOW_SPR	   **slot;
 	WINDOW_SPR	   **scan;
 	WINDOW_SPR		*icon;
-	Sint32			 index;
+	Sint32			 idx;
 	Sint32			 originY;
 	ITEM_MENU_STATE *menu;
 
@@ -755,21 +748,21 @@ void mnItemMenuPlaceIcons(Sint32 layout)
 		originY = 40;
 	}
 	slot = menu->entryIcons;
-	index = 0;
+	idx = 0;
 	scan = slot;
 	do {
 		icon = *scan++;
 		if(icon != NULL) {
 			mnItemMenuPlaceIcon(
-				slot, index, 116, originY, MENU_ITEM_GRID_COLUMNS);
+				slot, idx, 116, originY, MENU_ITEM_GRID_COLUMNS);
 		}
-		index++;
+		idx++;
 		slot++;
-	} while(index < INVENTORY_SLOTS);
+	} while(idx < INVENTORY_SLOTS);
 }
 
 void mnTextGetMessageSizeStub(
-	Sint32 message, Sint32 *left, Sint32 *top, Sint32 *width, Sint32 *height);
+	Sint32 msg, Sint32 *left, Sint32 *top, Sint32 *width, Sint32 *height);
 
 /* Shows message in the item menu, with the hand cursor hidden meanwhile.
 
@@ -777,10 +770,10 @@ void mnTextGetMessageSizeStub(
    sized to the message opens at (x, y). With x == -1 the message stays up and
    FLAG_INFO_WINDOW_HOLDS_MESSAGE records that the info window holds it;
    otherwise it waits for A, B or Start and clears it again. */
-void mnItemMenuShowMessage(Sint32 message, Sint32 x, Sint32 y)
+void mnItemMenuShowMessage(Sint32 msg, Sint32 x, Sint32 y)
 {
 	ITEM_MENU_STATE *menu = (ITEM_MENU_STATE *)Ram_HeapSlots->menuState;
-	WINDOW			*window;
+	WINDOW			*win;
 	Sint32			 height;
 	Sint32			 width;
 	Sint32			 top;
@@ -788,23 +781,23 @@ void mnItemMenuShowMessage(Sint32 message, Sint32 x, Sint32 y)
 
 	menu->sideIcons[0]->motion = ICON_HIDDEN;
 	if(y != -1) {
-		mnTextGetMessageSizeStub(message, &left, &top, &width, &height);
+		mnTextGetMessageSizeStub(msg, &left, &top, &width, &height);
 		if(mnWindowUpdateOrCreate((Sint32 *)&menu->modalWin, x, y, width,
 			   height, WINDOW_KEEP_EXISTING | WINDOW_FLAG_INSTANT) == 0)
 			mnWindowSetBounds(menu->modalWin, x, y, width, height);
-		window = menu->modalWin;
+		win = menu->modalWin;
 	} else {
-		window = menu->infoWin;
+		win = menu->infoWin;
 	}
-	mnWindowSprRedrawSavedRectStub((WINDOW *)window);
-	mnWindowSprClearListStub(window);
+	mnWindowSprRedrawSavedRectStub((WINDOW *)win);
+	mnWindowSprClearListStub(win);
 #if LANGUAGE == LANGUAGE_JAPANESE
-	mnTextDrawMessageStub(message, (Sint32)window, 0, 0);
+	mnTextDrawMessageStub(msg, (Sint32)win, 0, 0);
 #else
 	if(y == -1)
-		mnTextDrawMessageAsTilesStub(message, window, 0, 0);
+		mnTextDrawMessageAsTilesStub(msg, win, 0, 0);
 	else
-		mnTextDrawMessageStub(message, (Sint32)window, 0, 0);
+		mnTextDrawMessageStub(msg, (Sint32)win, 0, 0);
 #endif
 	if(x != -1) {
 		sySynch(1);
@@ -812,7 +805,7 @@ void mnItemMenuShowMessage(Sint32 message, Sint32 x, Sint32 y)
 			sySynch(1);
 		} while(!(PerWork.push & KEY_A) && !(PerWork.push & KEY_B) &&
 			!(PerWork.push & KEY_START));
-		mnWindowSprClearListStub(window);
+		mnWindowSprClearListStub(win);
 	} else {
 		syGameFlagSet(FLAG_INFO_WINDOW_HOLDS_MESSAGE);
 	}
@@ -840,26 +833,26 @@ Sint32 mnItemMenuSort(Uint16 *inventory, Sint32 mode)
 	ITEM_DEFINITION *item;
 	Sint32			 pass;
 	Sint32			 i;
-	Sint32			 count;
+	Sint32			 cnt;
 	Sint32			 best;
 	Sint32			 bestSlot;
-	Sint32			 sortedCount;
+	Sint32			 sortedCnt;
 	Sint32			 value;
 
 	bestSlot = 0;
-	sortedCount = 0;
+	sortedCnt = 0;
 	mnCopyListOrder(mode, order);
 
 	for(i = 0; i < INVENTORY_SLOTS; i++)
 		items[i] = inventory[i];
 
-	count = 0;
+	cnt = 0;
 	for(i = 0; i < INVENTORY_SLOTS; i++) {
 		if(items[i] != 0)
-			count++;
+			cnt++;
 	}
 
-	for(i = count; i < INVENTORY_SLOTS; i++)
+	for(i = cnt; i < INVENTORY_SLOTS; i++)
 		sorted[i] = 0;
 
 	/* One pass for each entry of the order: move its items across, the highest
@@ -867,7 +860,7 @@ Sint32 mnItemMenuSort(Uint16 *inventory, Sint32 mode)
 	for(pass = 0; order[pass] != LIST_ORDER_END; pass++) {
 		for(;;) {
 			best = 0;
-			for(i = 0; i < count; i++) {
+			for(i = 0; i < cnt; i++) {
 				if(items[i] == 0)
 					continue;
 				item = gmItemGetDirectStub(items[i]);
@@ -884,13 +877,13 @@ Sint32 mnItemMenuSort(Uint16 *inventory, Sint32 mode)
 			}
 			if(best == 0)
 				break;
-			sorted[sortedCount] = items[bestSlot];
+			sorted[sortedCnt] = items[bestSlot];
 			items[bestSlot] = 0;
-			sortedCount++;
+			sortedCnt++;
 		}
 	}
 
-	for(i = 0; i < count; i++)
+	for(i = 0; i < cnt; i++)
 		inventory[i] = sorted[i];
 	return 1;
 }
@@ -903,16 +896,16 @@ void mnCopyListOrder(Sint32 mode, Uint8 *order)
 	Uint8 *src;
 	Sint32 n;
 
-	src = Menu_ListOrderItemsFirst;
+	src = MenuListOrderItemsFirst;
 	switch(mode) {
 	case LIST_SORT_EQUIPPED_THEN_ITEMS:
-		src = Menu_ListOrderEquippedThenItems;
+		src = MenuListOrderEquippedThenItems;
 		break;
 	case LIST_SORT_EQUIPPED_THEN_EQUIPMENT:
-		src = Menu_ListOrderEquippedThenEquipment;
+		src = MenuListOrderEquippedThenEquipment;
 		break;
 	case LIST_SORT_EQUIPMENT_FIRST:
-		src = Menu_ListOrderEquipmentFirst;
+		src = MenuListOrderEquipmentFirst;
 		break;
 	}
 	*order = *src;
@@ -936,32 +929,32 @@ void mnCopyListOrder(Sint32 mode, Uint8 *order)
    round. Moving past either end wraps round; turning to a shorter page pulls
    the cursor up to its last entry. Returns 1 after a page turn, 0 after a
    cursor move and -1 when nothing moved or the list is empty. */
-Sint32 mnPagedListHandleInput(Sint32 horizontal, Sint32 count, Sint32 pageSize,
+Sint32 mnPagedListHandleInput(Sint32 horizontal, Sint32 cnt, Sint32 pageSize,
 	Sint32 *cursor, Sint32 *page)
 {
 	Sint32 pages;
 	Sint32 next;
-	Sint32 previous;
+	Sint32 prev;
 	Sint32 pageForward;
 	Sint32 result;
 
 	result = -1;
-	if(count == 0)
+	if(cnt == 0)
 		return result;
 	/* Animate the page arrows. */
 	mnPageArrowsDrawStub(PAGE_ARROW_VRAM);
-	pages = count / pageSize;
-	if(count % pageSize != 0)
+	pages = cnt / pageSize;
+	if(cnt % pageSize != 0)
 		pages++;
 	/* horizontal is reused for the page-back key. */
 	if(horizontal) {
 		next = PerWork.repeat & KEY_RIGHT;
-		previous = PerWork.repeat & KEY_LEFT;
+		prev = PerWork.repeat & KEY_LEFT;
 		horizontal = PerWork.repeat & KEY_UP;
 		pageForward = PerWork.repeat & KEY_DOWN;
 	} else {
 		next = PerWork.repeat & KEY_DOWN;
-		previous = PerWork.repeat & KEY_UP;
+		prev = PerWork.repeat & KEY_UP;
 		horizontal = PerWork.repeat & KEY_LEFT;
 		pageForward = PerWork.repeat & KEY_RIGHT;
 	}
@@ -969,8 +962,8 @@ Sint32 mnPagedListHandleInput(Sint32 horizontal, Sint32 count, Sint32 pageSize,
 		sySndPlayStub(SE_MENU_CURSOR_MOVE);
 		if(--*page < 0)
 			*page = pages - 1;
-		if(*cursor + *page * pageSize > count - 1) {
-			*cursor = count - *page * pageSize - 1;
+		if(*cursor + *page * pageSize > cnt - 1) {
+			*cursor = cnt - *page * pageSize - 1;
 			if(*cursor > pageSize - 1)
 				*cursor = pageSize - 1;
 		}
@@ -982,8 +975,8 @@ Sint32 mnPagedListHandleInput(Sint32 horizontal, Sint32 count, Sint32 pageSize,
 		sySndPlayStub(SE_MENU_CURSOR_MOVE);
 		if(++*page > pages - 1)
 			*page = 0;
-		if(*cursor + *page * pageSize > count - 1) {
-			*cursor = count - *page * pageSize - 1;
+		if(*cursor + *page * pageSize > cnt - 1) {
+			*cursor = cnt - *page * pageSize - 1;
 			if(*cursor > pageSize - 1)
 				*cursor = pageSize - 1;
 		}
@@ -991,12 +984,12 @@ Sint32 mnPagedListHandleInput(Sint32 horizontal, Sint32 count, Sint32 pageSize,
 		result = 1;
 		return result;
 	}
-	if(previous) {
+	if(prev) {
 		sySndPlayStub(SE_MENU_CURSOR_MOVE);
 		if(--*cursor < 0) {
 			/* DEAD: a store the next overwrites; the ROM keeps it. */
 			*cursor = pageSize - 1;
-			*cursor = count - *page * pageSize - 1;
+			*cursor = cnt - *page * pageSize - 1;
 			if(*cursor > pageSize - 1)
 				*cursor = pageSize - 1;
 		}
@@ -1007,19 +1000,19 @@ Sint32 mnPagedListHandleInput(Sint32 horizontal, Sint32 count, Sint32 pageSize,
 		return result;
 	sySndPlayStub(SE_MENU_CURSOR_MOVE);
 	result = 0;
-	if(++*cursor == count - *page * pageSize)
+	if(++*cursor == cnt - *page * pageSize)
 		*cursor = result;
 	if(*cursor > pageSize - 1)
 		*cursor = result;
 	return 0;
 }
 
-/* Copies WINDOW_PALETTE into background palette paletteNumber and lightens its
+/* Copies WINDOW_PALETTE into background palette paletteNum and lightens its
    WINDOW_BACKGROUND_COLOR by HIGHLIGHT_LIGHTEN_STEPS in each channel: the
    highlight colour of the menu's selected rows. */
-void mnPaletteLightenHighlight(Sint32 paletteNumber)
+void mnPaletteLightenHighlight(Sint32 paletteNum)
 {
-	Uint16 *palette = (Uint16 *)&BG_PLTT_COLOR(paletteNumber, 0);
+	Uint16 *palette = (Uint16 *)&BG_PLTT_COLOR(paletteNum, 0);
 	Uint32	red;
 	Uint32	green;
 	Uint32	blue;
@@ -1051,36 +1044,36 @@ void mnPaletteLightenHighlight(Sint32 paletteNumber)
 /* Draws a paged list's page numbers on the top border of window, ending at tile
    rightEdge: one digit per page between the page arrows, selectedPage in the
    highlight palette and the others in the window's. */
-void mnPagedListDrawPageNumbers(Sint32 window, Sint32 itemCount,
-	Sint32 pageSize, Sint32 selectedPage, Sint32 rightEdge)
+void mnPagedListDrawPageNumbers(Sint32 win, Sint32 itemCnt, Sint32 pageSize,
+	Sint32 selectedPage, Sint32 rightEdge)
 {
-	Sint32 pageCount;
+	Sint32 pageCnt;
 	Sint32 page;
 	Sint32 x;
 	Sint32 tile;
 
 	x = rightEdge;
 	tile = PAGE_LABEL_FIRST;
-	pageCount = itemCount / pageSize;
-	if(itemCount % pageSize != 0)
-		pageCount++;
+	pageCnt = itemCnt / pageSize;
+	if(itemCnt % pageSize != 0)
+		pageCnt++;
 
-	x -= pageCount;
-	if(pageCount > 1) {
-		mnWindowSetTilemapEntryStub(window, PAGE_ARROW_LEFT, x - 1, -1, 0);
+	x -= pageCnt;
+	if(pageCnt > 1) {
+		mnWindowSetTilemapEntryStub(win, PAGE_ARROW_LEFT, x - 1, -1, 0);
 
-		for(page = 0; page < pageCount; page++) {
+		for(page = 0; page < pageCnt; page++) {
 			if(page == selectedPage)
 				mnWindowSetTilemapEntryStub(
-					window, tile, x, -1, TILEMAP_ENTRY_HIGHLIGHT);
+					win, tile, x, -1, TILEMAP_ENTRY_HIGHLIGHT);
 			else
 				mnWindowSetTilemapEntryStub(
-					window, tile, x, -1, TILEMAP_ENTRY_WINDOW);
+					win, tile, x, -1, TILEMAP_ENTRY_WINDOW);
 			tile++;
 			x++;
 		}
 
-		mnWindowSetTilemapEntryStub(window, PAGE_ARROW_RIGHT, x, -1, 0);
+		mnWindowSetTilemapEntryStub(win, PAGE_ARROW_RIGHT, x, -1, 0);
 	}
 }
 
@@ -1153,7 +1146,7 @@ void mnPaletteLoadIconsIntoHighlight(void)
    entries first to first + pageSize - 1, stopping early at an empty icon slot
    or the state's itemCount. Hides all the others. */
 void mnSetPageIcons(
-	Sint32 pageSize, Sint32 first, Sint32 window, Sint32 x, Sint32 y)
+	Sint32 pageSize, Sint32 first, Sint32 win, Sint32 x, Sint32 y)
 {
 	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
 	WINDOW_SPR		*icon;
@@ -1176,25 +1169,25 @@ void mnSetPageIcons(
 
 /* Writes the party's coins and the "Coins" label into window: the info window
    of the Item and Psynergy screens' party member choice. */
-void mnDrawCoins(Sint32 window)
+void mnDrawCoins(Sint32 win)
 {
-	mnTextDrawNumAtOffsetStub(MainRoutineStateWork.coins, 7, window, 8, 0);
-	mnTextDrawMessageAsTilesStub(MsgCoinsLabel, window, 64, 0);
+	mnTextDrawNumAtOffsetStub(MainRoutineStateWork.coins, 7, win, 8, 0);
+	mnTextDrawMessageAsTilesStub(MsgCoinsLabel, win, 64, 0);
 	/* Only the Japanese editions draw a vertical divider at tile column 12. */
 #if LANGUAGE == LANGUAGE_JAPANESE
-	mnWindowDrawDividerLineStub(window, 12, 0, 12, 2);
+	mnWindowDrawDividerLineStub(win, 12, 0, 12, 2);
 #endif
 }
 
 /* Moves and resizes a window, in tiles. */
 void mnWindowSetBounds(
-	WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height)
+	WINDOW *win, Sint32 x, Sint32 y, Sint32 width, Sint32 height)
 {
-	if(window != NULL) {
-		window->width = width;
-		window->x = x;
-		window->height = height;
-		window->y = y;
+	if(win != NULL) {
+		win->width = width;
+		win->x = x;
+		win->height = height;
+		win->y = y;
 	}
 }
 
@@ -1206,18 +1199,18 @@ Sint32 mnSndPlayReturnOne(Sint32 snd)
 }
 
 /* An event while the menus watch for Start: blinks the class change's down
-   arrow every four frames, and on Start plays the cancel sound, sets
+   arrow every four ticks, and on Start plays the cancel sound, sets
    FLAG_MENU_START_PRESSED and removes itself. */
 void mnWatchStart(void)
 {
-	Uint32		 frame;
+	Uint32		 frm;
 	Uint32		*node;
 	INPUT_STATE *input;
 	Uint32		 mask;
 
-	frame = FrameCount;
-	if((frame & 3) == 0) {
-		if(frame & 4)
+	frm = TickCount;
+	if((frm & 3) == 0) {
+		if(frm & 4)
 			syWordsCopy(
 				BG_CHAR_BLOCK(0) + CLASS_CHANGE_ARROW_TILE * TILE_SIZE_4BPP,
 				Menu_ClassChangeArrowTile, TILE_SIZE_4BPP);
@@ -1245,7 +1238,7 @@ void mnWatchStart(void)
 void mnStartWatchingStart(void)
 {
 	syGameFlagClear(FLAG_MENU_START_PRESSED);
-	sySetEvent((Sint32)mnWatchStart, EVENT_PASS_FRAME);
+	sySetEvent((Sint32)mnWatchStart, EVENT_PASS_TICK);
 }
 
 /* Stops watching for Start, if Start has not removed the watch already. */

@@ -6,7 +6,7 @@
 /* clang-format off */
 /* One row a field Psynergy, with one more for the things Tremor's shaking */
 /* reaches; the last row, ended by -1, is the reach of a kind not listed. */
-const FIELD_PSYNERGY_REACH FieldPsynergy_Reach[] = {
+const FIELD_PSYNERGY_REACH FieldPsynergyReach[] = {
 	{FIELD_PSYNERGY_PLY,                           16, 8,  DEGtoANG(33.75)},
 	{FIELD_PSYNERGY_FROST,                         16, 8,  DEGtoANG(33.75)},
 	{FIELD_PSYNERGY_LIFT,                          16, 8,  DEGtoANG(33.75)},

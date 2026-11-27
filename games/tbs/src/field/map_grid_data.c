@@ -5,7 +5,7 @@
 
 /* Ground height functions, by TERRAIN_KIND, called with (the remaining samples,
    x within the metatile, y within the metatile). */
-const TERRAIN_HEIGHT_FN MapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
+const TERRAIN_HEIGHT_FN MapGridTerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
 	[TERRAIN_FLAT] = fdTerrainGetFlatHeight,
 	[TERRAIN_SLOPE_X] = fdTerrainGetSlopeXHeight,
 	[TERRAIN_SLOPE_Y] = fdTerrainGetSlopeYHeight,
@@ -32,7 +32,7 @@ const TERRAIN_HEIGHT_FN MapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
    value plus 16 when the block word's top bit is set, or plus 32 (whatever that
    bit) for WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD. */
 /* clang-format off */
-const Uint8 WorldMap_BattleEnvironments[48] = {
+const Uint8 WorldMapBattleEnvironments[48] = {
 	/* Collision values 0 to 15. */
 	ENV(NONE), ENV(NONE), ENV(NONE), ENV(NONE),
 	ENV(NONE), ENV(GRASSLAND), ENV(SHALLOWS), ENV(GRASSLAND),
@@ -54,7 +54,7 @@ const Uint8 WorldMap_BattleEnvironments[48] = {
 
 /* The eight compass directions as (x, y) offsets of radius 40. No code in The
    Broken Seal names it. */
-const Sint8 WorldMap_DirectionOffsets[8][2] = {
+const Sint8 WorldMapDirectionOffsets[8][2] = {
 	{0, -40},
 	{28, -28},
 	{40, 0},
@@ -67,7 +67,7 @@ const Sint8 WorldMap_DirectionOffsets[8][2] = {
 
 /* Two 1.0s (16.16). No code in The Broken Seal names it; The Lost Age's battle
    effects read its copy as a unit scale. */
-const Uint32 WorldMap_UnitScale[2] = {
+const Uint32 WorldMapUnitScale[2] = {
 	toFIXED(1),
 	toFIXED(1),
 };

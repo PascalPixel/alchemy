@@ -187,7 +187,7 @@ typedef enum MOVEMENT_TYPE {
 	MOVEMENT_TYPE_WANDER_CLOSE = 4,	  /* within 6 pixels, at its own speed */
 	MOVEMENT_TYPE_FOLLOW_WATCHED = 5, /* moves toward the watched actor */
 	MOVEMENT_TYPE_FACE_LEADER = 6, /* watches the leader and turns toward it */
-	MOVEMENT_TYPE_RESET_ACTION = 7 /* MovementType_ResetActionScript */
+	MOVEMENT_TYPE_RESET_ACTION = 7 /* MovementTypeResetActionScript */
 } MOVEMENT_TYPE;
 
 /* How a placed actor turns when the leader talks to it (fdTalkToActor). With
@@ -198,7 +198,7 @@ typedef enum ACTOR_TALK_FACING {
 	TALK_FACING_PARTY_AND_BACK = 1,
 	TALK_FACING_KEEP = 2,
 	/* Faces the party, then keeps turning to face the leader once the talk is
-	   over (Actor_FaceWatchedScript). */
+	   over (ActorFaceWatchedScript). */
 	TALK_FACING_PARTY_THEN_WATCH = 3
 } ACTOR_TALK_FACING;
 
@@ -286,9 +286,9 @@ typedef enum EXIT_STYLE {
 #define FIELD_RAISED_CUE_MENUS 250
 
 /* A step cue that needs the leader to have pushed against it for more than
-   FIELD_PUSH_FRAMES frames, or 2 with STEP_CUE_FLAG_QUICK. */
+   FIELD_PUSH_TICKS ticks, or 2 with STEP_CUE_FLAG_QUICK. */
 #define STEP_CUE_FLAG_WALKING	0x200
-/* With STEP_CUE_FLAG_WALKING, 2 frames of pushing are enough. */
+/* With STEP_CUE_FLAG_WALKING, 2 ticks of pushing are enough. */
 #define STEP_CUE_FLAG_QUICK		0x800
 /* A script that needs the leader to face within an eighth of a turn of the
    heading in control bits 15..12 (fdFindCue). */
@@ -422,9 +422,9 @@ typedef enum EXAMINE {
 #define SCRIPT_REF(script) ((Uint32)(script))
 #define CUE_TABLE_END	   0xffffffff
 
-/* SC_FACE_WATCHED every frame, forever: the script of an actor told to keep
+/* SC_FACE_WATCHED every tick, forever: the script of an actor told to keep
    facing its watched actor. */
-extern const Sint32 Actor_FaceWatchedScript[];
+extern const Sint32 ActorFaceWatchedScript[];
 
 /* Where the party returns after a defeat: {scene, entrance (-1 any), return
    scene, return entrance} rows, ended by scene -1 (fdSetRestartPoint). */
@@ -433,16 +433,16 @@ extern const Sint16 Scene_RestartRules[];
 /* Battle backgrounds by scene: a background word (bit 31 set, resource id
    below) and then its scenes, ended by 0; a scene not listed takes the last
    background (fdBattleBackgroundSelectForMap). */
-extern Sint32 Scene_BattleBackgroundRules[];
+extern Sint32 SceneBattleBackgroundRules[];
 
 /* Entrance tables more than one scene file holds, each from a part of
    src/scene/shared/: the fallback of a cave or island scene
    (fallback_entrances.c) and of Kalay's (kalay_fallback_entrances.c), the
    title's and the File Screen's (screen_entrances.c), and Sol Sanctum's
    Elemental Star room's (sol_sanctum_star_room_entrances.c). */
-extern SCENE_ENTRANCE Scene_FallbackEntrances[];
-extern SCENE_ENTRANCE Kalay_FallbackEntrances[];
-extern SCENE_ENTRANCE Screen_Entrances[];
-extern SCENE_ENTRANCE SolSanctum_StarRoomEntrances[];
+extern SCENE_ENTRANCE SceneFallbackEntrances[];
+extern SCENE_ENTRANCE KalayFallbackEntrances[];
+extern SCENE_ENTRANCE ScreenEntrances[];
+extern SCENE_ENTRANCE SolSanctumStarRoomEntrances[];
 
 #endif

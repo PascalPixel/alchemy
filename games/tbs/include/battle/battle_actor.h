@@ -62,7 +62,7 @@ typedef struct BATTLE_ACTOR {
 	void (*update)(struct ACTOR *actor);
 } BATTLE_ACTOR;
 
-/* The gravity a battle unit falls under, about 0.67 pixels a frame per frame in
+/* The gravity a battle unit falls under, about 0.67 pixels a tick per tick in
    16.16: btMotionReturnToSpot sets it whenever a unit goes back to its spot,
    and effects that change a unit's gravity for a leap or a lift give it this
    one back. */

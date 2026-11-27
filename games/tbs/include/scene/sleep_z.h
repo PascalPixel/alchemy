@@ -5,7 +5,7 @@
    Isaac after the last Colosso match, each scene moving its own. */
 
 /* A drifting Z's two steps, timer (east) and userValue (up), are steps of a
-   256th of a pixel a frame. */
+   256th of a pixel a tick. */
 #define SLEEP_Z_STEPS_PER_PIXEL 256
 
 #endif

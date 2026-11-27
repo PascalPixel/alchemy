@@ -1,4 +1,4 @@
-/* Playback over frames, btPlaybackRun. Part of battle.c. */
+/* Playback over ticks, btPlaybackRun. Part of battle.c. */
 
 #include "battle_internal.h"
 
@@ -31,19 +31,19 @@ void btPlaybackStart(Sint32 snd)
 	}
 }
 
-/* Empties the playback queue and plays the commands queued next, after frames
-   frames, with no targets to resolve. */
-Sint32 btPlaybackSchedulePhase(Sint32 frames)
+/* Empties the playback queue and plays the commands queued next, after ticks
+   ticks, with no targets to resolve. */
+Sint32 btPlaybackSchedulePhase(Sint32 ticks)
 {
 	BATTLE_PLAYBACK_STATE *events;
 
 	events = &BattleStateWork->playback;
 	events->queue.cnt = 0;
 	events->eventIdx = 0;
-	events->tmr = frames;
+	events->tmr = ticks;
 	events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
 	BattleStateWork->actionRun.tgtCnt = 0;
-	return sySetEvent(btPlaybackRun, EVENT_PASS_FRAME);
+	return sySetEvent(btPlaybackRun, EVENT_PASS_TICK);
 }
 
 /* btPlaybackRun's waits, in BATTLE_PLAYBACK_STATE.phase beside the phases
@@ -54,37 +54,37 @@ Sint32 btPlaybackSchedulePhase(Sint32 frames)
 #define PLAY_FELLED		 11 /* greys a fallen enemy and dissolves it */
 #define PLAY_MESSAGE_ADD 13 /* waits for the message, then goes straight on */
 
-/* PLAY_HIT's frames: the unit white on frames 1 and 5, its own colours again on
+/* PLAY_HIT's ticks: the unit white on ticks 1 and 5, its own colours again on
    3 and 7. */
-#define HIT_FLASH_FRAMES 8
+#define HIT_FLASH_TICKS 8
 
 /* PLAY_FELLED's timer from here counts the Djinn bonus's colour cycle, kept
    apart from the counts of the fall itself (0 to 36). */
-#define FELLED_FLASH				1024
-/* The Djinn bonus's colour cycle lasts 30 frames. */
-#define FELLED_FLASH_FRAMES			30
-/* PLAY_FELLED's timer at which the dissolve starts, a frame after the enemy
-   leaves the lists; it takes fdSprDissolveStep's 128 steps, four a frame. */
-#define FELLED_DISSOLVE_FIRST_FRAME 5
-#define FELLED_DISSOLVE_STEPS		128
+#define FELLED_FLASH			   1024
+/* The Djinn bonus's colour cycle lasts 30 ticks. */
+#define FELLED_FLASH_TICKS		   30
+/* PLAY_FELLED's timer at which the dissolve starts, a tick after the enemy
+   leaves the lists; it takes fdSprDissolveStep's 128 steps, four a tick. */
+#define FELLED_DISSOLVE_FIRST_TICK 5
+#define FELLED_DISSOLVE_STEPS	   128
 
 /* Plays the action's targets one at a time: resolves each with
-   btAbilityApplyToTarget, then plays what it queued over the frames that
+   btAbilityApplyToTarget, then plays what it queued over the ticks that
    follow, without waiting. */
 void btPlaybackRun(void)
 {
 	Uint16				   selection[8];
-	SPR					  *sprites[4];
+	SPR					  *sprs[4];
 	BATTLE_STATE		  *battle = BattleStateWork;
 	BATTLE_PLAYBACK_STATE *events = &battle->playback;
 
 	/* Clears a sprite's tiles in OBJ VRAM, at its VRAM cache entry's offset;
 	   the last step of a fallen enemy's dissolve. */
-	void btSprClearTiles(SPR * sprite, Sint32 unused)
+	void btSprClearTiles(SPR * spr, Sint32 unused)
 	{
-		Uint8 *tiles = (Uint8 *)OBJ_VRAM0 + VramCacheEntries[sprite->slot].ofs;
+		Uint8 *tiles = (Uint8 *)OBJ_VRAM0 + VramCacheEntries[spr->slot].ofs;
 
-		syWordsClear(tiles, sprite->width * sprite->height);
+		syWordsClear(tiles, spr->width * spr->height);
 	}
 
 	/* Idle until the effect's blow lands; ready once every target is played. */
@@ -109,10 +109,10 @@ void btPlaybackRun(void)
 			}
 		} else if(events->phase == BATTLE_PLAYBACK_PHASE_DISPATCH) {
 			/* Play the queued events in order; one that has to wait for later
-			   frames ends the loop. */
+			   ticks ends the loop. */
 			while(events->eventIdx < events->queue.cnt) {
 				{
-					Sint32 eventIndex = events->eventIdx;
+					Sint32 eventIdx = events->eventIdx;
 
 					if(events->phase != BATTLE_PLAYBACK_PHASE_DISPATCH)
 						break;
@@ -120,33 +120,33 @@ void btPlaybackRun(void)
 						events->tmr--;
 						return;
 					}
-					switch(events->queue.opcodes[eventIndex]) {
+					switch(events->queue.opcodes[eventIdx]) {
 					case PLAYBACK_SOUND:
-						sySndPlayStub(events->queue.operands[eventIndex]);
+						sySndPlayStub(events->queue.operands[eventIdx]);
 						break;
 					case PLAYBACK_DJINN_BONUS:
 						btPlaybackGrantDjinnBonus(
-							events, events->queue.operands[eventIndex]);
+							events, events->queue.operands[eventIdx]);
 						break;
 					case PLAYBACK_UNIT_NAME:
 						mnMessageArgumentPushStub(
-							events->queue.operands[eventIndex],
+							events->queue.operands[eventIdx],
 							MESSAGE_ARGUMENT_ACTOR);
 						break;
 					case PLAYBACK_NUMBER:
 						mnMessageArgumentPushStub(
-							events->queue.operands[eventIndex],
+							events->queue.operands[eventIdx],
 							MESSAGE_ARGUMENT_NUMBER);
 						break;
 					case PLAYBACK_ITEM_NAME:
 						mnMessageArgumentPushStub(
-							events->queue.operands[eventIndex] &
+							events->queue.operands[eventIdx] &
 								INVENTORY_ITEM_ID_MASK,
 							MESSAGE_ARGUMENT_ITEM);
 						break;
 					case PLAYBACK_ABILITY_NAME:
 						mnMessageArgumentPushStub(
-							events->queue.operands[eventIndex] &
+							events->queue.operands[eventIdx] &
 								PSYNERGY_ABILITY_MASK,
 							MESSAGE_ARGUMENT_ABILITY);
 						break;
@@ -156,30 +156,30 @@ void btPlaybackRun(void)
 					/* A message of MESSAGE_NONE only waits for the player, and
 					   only a press after the message goes on. */
 					case PLAYBACK_MESSAGE:
-						if((Sint32)events->queue.operands[eventIndex] >= 0)
+						if((Sint32)events->queue.operands[eventIdx] >= 0)
 							mnBattleMessageOpenStub(
-								events->queue.operands[eventIndex]);
+								events->queue.operands[eventIdx]);
 						events->phase = PLAY_MESSAGE;
 						PerPushLatch = 0;
 						break;
 					case PLAYBACK_MESSAGE_NO_WAIT:
-						if((Sint32)events->queue.operands[eventIndex] >= 0)
+						if((Sint32)events->queue.operands[eventIdx] >= 0)
 							mnBattleMessageOpenStub(
-								events->queue.operands[eventIndex]);
+								events->queue.operands[eventIdx]);
 						events->phase = PLAY_MESSAGE_ADD;
 						break;
 					case PLAYBACK_CLEAR_ARGUMENTS:
 						mnMessageArgumentClearAllStub();
 						break;
 					case PLAYBACK_REMOVE_UNIT:
-						btUnitRemoveEnemy(events->queue.operands[eventIndex]);
+						btUnitRemoveEnemy(events->queue.operands[eventIdx]);
 						break;
 					/* The hit's sound, then the damage pose and PLAY_HIT's
 					   flashes. */
 					case PLAYBACK_HIT:
 						if(events->pendingSnd > 0)
 							sySndPlayStub(events->pendingSnd);
-						events->unitId = events->queue.operands[eventIndex];
+						events->unitId = events->queue.operands[eventIdx];
 						fdActorSelectAnimationStub(
 							btObjectGet(events->unitId)->actor, POSE_DAMAGE);
 						events->phase = PLAY_HIT;
@@ -190,24 +190,21 @@ void btPlaybackRun(void)
 					   PLAY_FELLED. */
 					case PLAYBACK_DEFEAT: {
 						UNIT  *unit;
-						SPR	  *sprite;
-						Sint32 spriteIndex;
+						SPR	  *spr;
+						Sint32 sprIdx;
 
-						events->unitId = events->queue.operands[eventIndex];
+						events->unitId = events->queue.operands[eventIdx];
 						btEnemyRecordDefeat(events->unitId, events->djinnBonus);
 						btUnitClearStatuses(events->unitId);
 						unit = gmUnitGetStub(events->unitId);
-						for(spriteIndex = 0;
-							(sprite = btActorGetSpr(
-								 btObjectGet(events->unitId)->actor,
-								 spriteIndex)) != 0;
-							spriteIndex++) {
+						for(sprIdx = 0; (spr = btActorGetSpr(
+											 btObjectGet(events->unitId)->actor,
+											 sprIdx)) != 0;
+							sprIdx++) {
 							if(unit->side != BATTLE_SIDE_ENEMY)
-								fdSprStartAnimationStub(
-									sprite, POSE_PARTY_HELD);
+								fdSprStartAnimationStub(spr, POSE_PARTY_HELD);
 							else
-								fdSprStartAnimationStub(
-									sprite, POSE_ENEMY_DOWN);
+								fdSprStartAnimationStub(spr, POSE_ENEMY_DOWN);
 						}
 						if(unit->side == BATTLE_SIDE_ENEMY) {
 							events->phase = PLAY_FELLED;
@@ -221,13 +218,13 @@ void btPlaybackRun(void)
 					case PLAYBACK_REFRESH_UNIT: {
 						BATTLE_OBJECT *slot;
 
-						btUnitBuildStatFlags(events->queue.operands[eventIndex],
-							btObjectGet(events->queue.operands[eventIndex]));
-						slot = btObjectGet(events->queue.operands[eventIndex]);
+						btUnitBuildStatFlags(events->queue.operands[eventIdx],
+							btObjectGet(events->queue.operands[eventIdx]));
+						slot = btObjectGet(events->queue.operands[eventIdx]);
 						btObjectSetColMode(slot->actor,
 							btObjectGetPalette(
-								events->queue.operands[eventIndex]));
-						btObjectUpdatePose(events->queue.operands[eventIndex]);
+								events->queue.operands[eventIdx]));
+						btObjectUpdatePose(events->queue.operands[eventIdx]);
 						break;
 					}
 					}
@@ -249,7 +246,7 @@ void btPlaybackRun(void)
 			} else {
 				events->phase = PLAY_ADVANCE;
 				events->arrowResource = -1;
-				events->tmr = VBlankCount;
+				events->tmr = FrameCount;
 			}
 		} else if(events->phase == PLAY_ADVANCE) {
 			/* Show the arrow and wait for the player, as
@@ -257,10 +254,10 @@ void btPlaybackRun(void)
 			ADVANCE_ARROW_SPR *prompt = &events->arrow;
 			Uint8			  *arrowTiles = BattleMessage_AdvanceArrowTiles;
 			Sint32			   pictureTiles =
-				(Sint32)arrowTiles + ((FrameCount >> 2) & 7) * 128;
+				(Sint32)arrowTiles + ((TickCount >> 2) & 7) * 128;
 			BATTLE_MESSAGE_STATE  *display = BattleMessageStateWork;
-			WINDOW				  *window = display->win;
-			BATTLE_MESSAGE_OFFSET *offset = display->ofs;
+			WINDOW				  *win = display->win;
+			BATTLE_MESSAGE_OFFSET *ofs = display->ofs;
 			Sint32				   x = 0;
 
 			if(events->arrowResource == -1)
@@ -275,11 +272,11 @@ void btPlaybackRun(void)
 			((Uint32 *)prompt)[2] = x;
 			prompt->tile =
 				syVRAMCacheReload(events->arrowResource, pictureTiles);
-			x = window->x * 8 + (offset->x >> 8) + 4;
+			x = win->x * 8 + (ofs->x >> 8) + 4;
 			prompt->x = x;
-			prompt->y = CURSOR_BOB_Y() + window->y * 8 + (offset->y >> 8) + 6;
+			prompt->y = CURSOR_BOB_Y() + win->y * 8 + (ofs->y >> 8) + 6;
 			if((PerData & KEY_B) || (PerPushLatch & KEY_ADVANCE) ||
-				((Uint32)(VBlankCount - events->tmr) > 10 &&
+				((Uint32)(FrameCount - events->tmr) > 10 &&
 					(PerData & KEY_ADVANCE))) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
@@ -308,16 +305,16 @@ void btPlaybackRun(void)
 				mnPartyStatHighlightMembersStub(selection);
 			}
 			events->tmr++;
-			if(events->tmr <= HIT_FLASH_FRAMES)
+			if(events->tmr <= HIT_FLASH_TICKS)
 				return;
 			events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
 			events->tmr = 0;
 		} else if(events->phase == PLAY_FELLED) {
 			/* A fallen enemy: with the Djinn bonus it first cycles its colours
-			   for 30 frames, then turns grey, leaves the lists and
+			   for 30 ticks, then turns grey, leaves the lists and
 			   dissolves. */
 			if(events->tmr == 0 || events->tmr >= FELLED_FLASH) {
-				Sint32 colorMode = SPRITE_COLOR_GREY;
+				Sint32 colMode = SPRITE_COLOR_GREY;
 
 				if(events->tmr == 0 && events->djinnBonus != 0) {
 					Sint32 kind =
@@ -331,7 +328,7 @@ void btPlaybackRun(void)
 					}
 					events->tmr = FELLED_FLASH;
 				}
-				if(events->tmr > FELLED_FLASH + FELLED_FLASH_FRAMES - 1)
+				if(events->tmr > FELLED_FLASH + FELLED_FLASH_TICKS - 1)
 					events->tmr = 0;
 				if(events->tmr == 0) {
 					Sint32 kind =
@@ -341,77 +338,72 @@ void btPlaybackRun(void)
 						sySndPlayStub(SE_ENEMY_CRY + kind);
 				}
 				if(events->tmr >= FELLED_FLASH)
-					colorMode =
+					colMode =
 						(events->tmr - FELLED_FLASH) / 8 % 5 + SPRITE_COLOR_GRB;
 				/* Recolour every layer's first entry and have its picture drawn
 				   again. */
-				if(colorMode == SPRITE_COLOR_GREY || (events->tmr & 7) == 0) {
-					SPR	  *sprite;
-					Sint32 spriteIndex;
+				if(colMode == SPRITE_COLOR_GREY || (events->tmr & 7) == 0) {
+					SPR	  *spr;
+					Sint32 sprIdx;
 					SPR	 **slot;
 					Sint32 lastPictureMask;
 
-					for(spriteIndex = 0, slot = sprites,
+					for(sprIdx = 0, slot = sprs,
 					lastPictureMask = SPRITE_PICTURE_NONE;
-						(sprite = btActorGetSpr(
-							 btObjectGet(events->unitId)->actor,
-							 spriteIndex)) != 0;
-						spriteIndex++) {
+						(spr = btActorGetSpr(
+							 btObjectGet(events->unitId)->actor, sprIdx)) != 0;
+						sprIdx++) {
 						SPR_ANIMATION *child;
-						Uint8		   previousPicture;
+						Uint8		   prevPicture;
 
-						*slot++ = sprite;
-						child = sprite->entries[0];
-						previousPicture = child->picture;
-						child->colMode = colorMode;
-						child->picture = previousPicture | lastPictureMask;
+						*slot++ = spr;
+						child = spr->entries[0];
+						prevPicture = child->picture;
+						child->colMode = colMode;
+						child->picture = prevPicture | lastPictureMask;
 					}
 				}
 				events->tmr++;
 				return;
 			}
-			if(events->tmr == FELLED_DISSOLVE_FIRST_FRAME - 1) {
+			if(events->tmr == FELLED_DISSOLVE_FIRST_TICK - 1) {
 				btObjectRemoveFromLists(events->unitId);
 				events->tmr++;
 				return;
 			}
-			if(events->tmr > FELLED_DISSOLVE_FIRST_FRAME - 1) {
-				/* The dissolve, four steps a frame. */
+			if(events->tmr > FELLED_DISSOLVE_FIRST_TICK - 1) {
+				/* The dissolve, four steps a tick. */
 				BATTLE_OBJECT *slot;
-				SPR			  *sprite;
-				Sint32		   count;
+				SPR			  *spr;
+				Sint32		   cnt;
 				Sint32		   step;
 				Sint32		   base;
 
 				slot = btObjectGet(events->unitId);
 				slot->fading = 1;
-				for(count = 0;
-					(sprite = btActorGetSpr(slot->actor, count)) != 0; count++)
-					sprites[count] = sprite;
+				for(cnt = 0; (spr = btActorGetSpr(slot->actor, cnt)) != 0;
+					cnt++)
+					sprs[cnt] = spr;
 				base = events->tmr * 4;
-				step = base - FELLED_DISSOLVE_FIRST_FRAME * 4;
+				step = base - FELLED_DISSOLVE_FIRST_TICK * 4;
 				if(step > FELLED_DISSOLVE_STEPS - 1) {
-					Sint32 spriteIndex;
+					Sint32 sprIdx;
 
-					for(spriteIndex = 0; spriteIndex < count; spriteIndex++)
-						btSprClearTiles(sprites[spriteIndex], 0);
+					for(sprIdx = 0; sprIdx < cnt; sprIdx++)
+						btSprClearTiles(sprs[sprIdx], 0);
 					btObjectMarkForRelease(events->unitId);
 					events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
 					events->tmr = 0;
 					return;
 				}
 				{
-					Sint32 spriteIndex;
+					Sint32 sprIdx;
 
-					for(spriteIndex = 0; spriteIndex < count; spriteIndex++) {
-						fdSprDissolveStepStub(
-							(Uint8 *)sprites[spriteIndex], step);
-						fdSprDissolveStepStub(
-							(Uint8 *)sprites[spriteIndex], step + 1);
-						fdSprDissolveStepStub(
-							(Uint8 *)sprites[spriteIndex], step + 2);
-						fdSprDissolveStepStub(
-							(Uint8 *)sprites[spriteIndex], step + 3);
+					for(sprIdx = 0; sprIdx < cnt; sprIdx++) {
+						fdSprDissolveStepStub((Uint8 *)sprs[sprIdx], step);
+						fdSprDissolveStepStub((Uint8 *)sprs[sprIdx], step + 1);
+						fdSprDissolveStepStub((Uint8 *)sprs[sprIdx], step + 2);
+						fdSprDissolveStepStub((Uint8 *)sprs[sprIdx], step + 3);
 					}
 				}
 				events->tmr++;
@@ -457,7 +449,7 @@ UNREAD_RESULT btPlaybackWaitForReady(void)
 	btPlaybackReset();
 }
 
-#undef HIT_FLASH_FRAMES
-#undef FELLED_FLASH_FRAMES
-#undef FELLED_DISSOLVE_FIRST_FRAME
+#undef HIT_FLASH_TICKS
+#undef FELLED_FLASH_TICKS
+#undef FELLED_DISSOLVE_FIRST_TICK
 #undef FELLED_DISSOLVE_STEPS

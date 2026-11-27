@@ -12,7 +12,7 @@
 struct WINDOW;
 
 Sint32 mnWindowSprCreateAbilityIcon(
-	struct WINDOW *window, Sint32 x, Sint32 y, Sint32 resource);
+	struct WINDOW *win, Sint32 x, Sint32 y, Sint32 resource);
 
 /* Attributes zero through two as the hardware lays them out in OAM, plus the
    halfword after them. */
@@ -57,13 +57,13 @@ typedef struct WINDOW_SPR {
 	/* The depth slot it is drawn at (syOAMAddSprAtDepth): a higher slot is
 	   drawn in front. */
 	Uint8	   depth;
-	QUEUED_SPR spr; /* queued at its depth each frame */
+	QUEUED_SPR spr; /* queued at its depth each tick */
 } WINDOW_SPR;
 
-/* The queued sprite of window sprite `sprite` (WINDOW_SPR.spr). */
-static inline QUEUED_SPR *mnWindowSprGetSpr(WINDOW_SPR *sprite)
+/* The queued sprite of window sprite `spr` (WINDOW_SPR.spr). */
+static inline QUEUED_SPR *mnWindowSprGetSpr(WINDOW_SPR *spr)
 {
-	return &sprite->spr;
+	return &spr->spr;
 }
 
 /* A list of window sprites: its first sprite and the link to append after. */
@@ -76,10 +76,10 @@ STATIC_ASSERT(sizeof(WINDOW_SPR_LIST) == 8);
 STATIC_ASSERT(offsetof(WINDOW_SPR_LIST, tailLink) == 4);
 
 /* Takes a free window sprite showing VRAM cache slot `slot`, places it
-   (offsetX, offsetY) pixels from the window's inner corner and appends it to
+   (ofsX, ofsY) pixels from the window's inner corner and appends it to
    the window's list. */
-WINDOW_SPR *mnWindowSprCreateStub(Sint32 slot, Sint32 oamFlags,
-	struct WINDOW *window, Sint32 offsetX, Sint32 offsetY);
+WINDOW_SPR *mnWindowSprCreateStub(
+	Sint32 slot, Sint32 oamFlg, struct WINDOW *win, Sint32 ofsX, Sint32 ofsY);
 
 STATIC_ASSERT(offsetof(WINDOW_SPR, anmStep) == 12);
 

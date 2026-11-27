@@ -19,11 +19,11 @@
 
 /* The healthy colours, kept by scKolimaPaletteSaveHealthy; each scene defines
    the 1792 bytes. */
-extern Uint8 KolimaPalette_Healthy[];
+extern Uint8 KolimaPaletteHealthy[];
 /* The cursed colours, kept by scKolimaPaletteSaveCursed. */
-extern Uint8 KolimaPalette_Cursed[];
+extern Uint8 KolimaPaletteCursed[];
 
-static Uint16 scKolimaPaletteCurseCol(Uint16 color, Sint32 divisor);
+static Uint16 scKolimaPaletteCurseCol(Uint16 col, Sint32 divisor);
 static void	  scKolimaPaletteSaveHealthy(void);
 static void	  scKolimaPaletteSaveCursed(void);
 static void	  scKolimaPaletteCapture(void);
@@ -51,11 +51,11 @@ void scKolimaPaletteCurse(Sint32 divisor)
 
 /* One cursed colour: red gains 1 / (4 * divisor) of itself, up to
    RGB_LEVEL_MAX, and green and blue lose 1 / divisor. */
-static Uint16 scKolimaPaletteCurseCol(Uint16 color, Sint32 divisor)
+static Uint16 scKolimaPaletteCurseCol(Uint16 col, Sint32 divisor)
 {
-	Sint16 green = RGB_GREEN(color);
-	Sint16 red = RGB_RED(color);
-	Sint16 blue = RGB_BLUE(color);
+	Sint16 green = RGB_GREEN(col);
+	Sint16 red = RGB_RED(col);
+	Sint16 blue = RGB_BLUE(col);
 	Uint32 packed;
 
 	red = (red + syMathDivide(red, (divisor << 2)));
@@ -70,18 +70,18 @@ static Uint16 scKolimaPaletteCurseCol(Uint16 color, Sint32 divisor)
 }
 
 /* Keeps the healthy colours: the palette fade's colours into
-   KolimaPalette_Healthy. */
+   KolimaPaletteHealthy. */
 static void scKolimaPaletteSaveHealthy(void)
 {
-	syDMAXCopy(PaletteFadeState->pal, KolimaPalette_Healthy,
+	syDMAXCopy(PaletteFadeState->pal, KolimaPaletteHealthy,
 		DMA_COPY_WORDS(KOLIMA_PALETTE_WORDS), REG_DMA3);
 }
 
 /* Keeps the cursed colours: the palette fade's colours into
-   KolimaPalette_Cursed. */
+   KolimaPaletteCursed. */
 static void scKolimaPaletteSaveCursed(void)
 {
-	syDMAXCopy(PaletteFadeState->pal, KolimaPalette_Cursed,
+	syDMAXCopy(PaletteFadeState->pal, KolimaPaletteCursed,
 		DMA_COPY_WORDS(KOLIMA_PALETTE_WORDS), REG_DMA3);
 }
 
@@ -106,10 +106,10 @@ void scKolimaPaletteRestore(Sint32 second)
 	Uint16 *buf = PaletteFadeState->pal;
 
 	if(second)
-		syDMAXCopy(KolimaPalette_Cursed, buf,
+		syDMAXCopy(KolimaPaletteCursed, buf,
 			DMA_COPY_WORDS(KOLIMA_PALETTE_WORDS), REG_DMA3);
 	else
-		syDMAXCopy(KolimaPalette_Healthy, buf,
+		syDMAXCopy(KolimaPaletteHealthy, buf,
 			DMA_COPY_WORDS(KOLIMA_PALETTE_WORDS), REG_DMA3);
 	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 	scKolimaPaletteCapture();

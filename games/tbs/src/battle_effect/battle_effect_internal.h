@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_EFFECT_INTERNAL_H
 
 /* What every part of the battle effect object shares: its includes, macros and
-   frame-loop helpers. */
+   tick-loop helpers. */
 
 #include "debug/debug.h"
 #include "edition.h"
@@ -88,15 +88,15 @@ static inline void btDMAStop(volatile Uint16 *channel)
 	for((i) = 0; (i) != (count); (i)++) \
 	(particles)[i].variant = -1
 
-/* Starts a frame's 3D projection from the battle camera. */
+/* Starts a tick's 3D projection from the battle camera. */
 #define EFFECT_VIEW_FROM_CAMERA(camera) \
 	(syInitMatrix(), syLookAtLoad((camera)->eye, (camera)->focus))
 
 /* Strikes target `i`: it flashes white in its damage pose and is knocked back
    by `motion`. */
-#define EFFECT_STRIKE_TARGET(effect, i, frames, motion) \
+#define EFFECT_STRIKE_TARGET(effect, i, ticks, motion) \
 	(btEffectTintBattler( \
-		 (effect)->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, frames), \
+		 (effect)->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, ticks), \
 		btMotionApplyKnockbackStub((effect)->tgts[i], motion))
 
 /* The canvas life cycle, shared by every canvas effect. */
@@ -134,11 +134,11 @@ static inline void btDMAStop(volatile Uint16 *channel)
    lower than the battle's BATTLE_PROJECTION_CENTER_Y. */
 #define SUMMON_PROJECTION_CENTER_Y 240
 
-/* The frames the battle background darkens behind an effect's canvas
+/* The ticks the battle background darkens behind an effect's canvas
    (state->fadeFrm, btEffectDarkenBackgroundStep). */
-#define BACKGROUND_DARKEN_FRAMES  24
-/* The level a canvas darkens the battle background to, a level a frame. */
-#define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
+#define BACKGROUND_DARKEN_TICKS	  24
+/* The level a canvas darkens the battle background to, a level a tick. */
+#define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_TICKS
 
 /* A sprite sheet resource opens with its 64 colours, ahead of its compressed
    pictures. */
@@ -166,17 +166,17 @@ static inline void btDMAStop(volatile Uint16 *channel)
 #define EFFECT_SET_TRANSFER(state, mode, value) \
 	((state)->transferMode = (mode), (state)->transferValue = (value))
 
-/* Sets the transfer, then starts copying the canvas to VRAM once a frame. */
+/* Sets the transfer, then starts copying the canvas to VRAM once a tick. */
 #define EFFECT_START_TRANSFER(state, mode, value) \
 	(EFFECT_SET_TRANSFER(state, mode, value), \
 		sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK))
 
-/* Presents the canvas and waits for the next frame. */
+/* Presents the canvas and waits for the next tick. */
 #define EFFECT_PRESENT_CANVAS(state) ((state)->transferPending = 1, sySynch(1))
 
-/* The usual end of an effect's frame: counts down the targets' flash timers,
+/* The usual end of an effect's tick: counts down the targets' flash timers,
    then presents the canvas. */
-#define EFFECT_END_FRAME(state) \
+#define EFFECT_END_TICK(state) \
 	(btEffectCountDownBattlerTints(), EFFECT_PRESENT_CANVAS(state))
 
 /* Frees the two blitters, the alternate first. */
@@ -219,7 +219,7 @@ static inline void btDMAStop(volatile Uint16 *channel)
 /* Draws mote picture `size` (1 to MOTE_SIZE_MAX: size pixels wide, twice that
    tall), centred across x and standing on y. */
 #define EFFECT_DRAW_MOTE(draw, canvas, sheet, x, y, size) \
-	(draw)(canvas, (sheet) + BattleEffect_MotePictures[(size) - 1], \
+	(draw)(canvas, (sheet) + BattleEffectMotePictures[(size) - 1], \
 		(x) - (size) / 2, (y) - (size), size, (size) * 2)
 /* The largest of the ten mote pictures. */
 #define MOTE_SIZE_MAX	10
@@ -232,23 +232,22 @@ static inline void btDMAStop(volatile Uint16 *channel)
 
 /* Draws flare picture `size`, a square, centred on (x, y). */
 #define EFFECT_DRAW_FLARE(draw, canvas, sheet, x, y, size) \
-	(draw)(canvas, (sheet) + BattleEffect_FlarePictures[(size) - 1], \
+	(draw)(canvas, (sheet) + BattleEffectFlarePictures[(size) - 1], \
 		(x) - (size), (y) - (size), (size) * 2, (size) * 2)
 
 /* Swells a falling mote as the drops clear (Nereid's drops, Titan Blade's
    dust). */
-#define EFFECT_SWELL_MOTE(size, frame) \
-	((frame) > 68 && (size) <= 5 && ((size) = 6), \
-		(frame) > 70 && (size) <= 6 && ((size) = 7), \
-		(frame) > 72 && (size) <= 7 && ((size) = 8), \
-		(frame) > 74 && (size) <= 8 && ((size) = 9), \
-		(frame) > 76 && ((size) = 10))
+#define EFFECT_SWELL_MOTE(size, tick) \
+	((tick) > 68 && (size) <= 5 && ((size) = 6), \
+		(tick) > 70 && (size) <= 6 && ((size) = 7), \
+		(tick) > 72 && (size) <= 7 && ((size) = 8), \
+		(tick) > 74 && (size) <= 8 && ((size) = 9), \
+		(tick) > 76 && ((size) = 10))
 
-/* A falling mote's vertical speed: it falls under `gravity`, then from frame 80
+/* A falling mote's vertical speed: it falls under `gravity`, then from tick 80
    rises. */
-#define EFFECT_FALL_MOTE(velocityY, gravity, frame) \
-	((frame) > 80 ? ((velocityY) -= toFIXED(1) / 2) \
-				  : ((velocityY) += (gravity)))
+#define EFFECT_FALL_MOTE(velocityY, gravity, tick) \
+	((tick) > 80 ? ((velocityY) -= toFIXED(1) / 2) : ((velocityY) += (gravity)))
 
 /* Shows the canvas stretched to twice its width, `top` sixteenths of its colour
    added over what lies under it. */
@@ -465,9 +464,9 @@ typedef enum RED_CRESCENT_PICTURE {
 	}
 
 /* What btEffectRunDjinniEntrance takes added to its element; the element alone
-   plays the 64-frame entrance. */
+   plays the 64-tick entrance. */
 typedef enum DJINNI_ENTRANCE_LENGTH {
-	/* The long entrance: 84 frames instead of 64, ending in a burst of
+	/* The long entrance: 84 ticks instead of 64, ending in a burst of
 	   motes. */
 	DJINNI_ENTRANCE_LONG = ELEMENT_COUNT
 } DJINNI_ENTRANCE_LENGTH;
@@ -483,11 +482,11 @@ typedef enum DJINNI_ENTRANCE_ANCHOR {
 
 /* Where btEffectRunSparkGroups' bursts go off. */
 typedef enum SPARK_GROUPS_MODE {
-	SPARK_GROUPS_NOVA, /* at (60, 48); the damage shows on frame 24 */
-	/* at (60, 64), orange; the damage shows on frame 2 */
+	SPARK_GROUPS_NOVA, /* at (60, 48); the damage shows on tick 24 */
+	/* at (60, 64), orange; the damage shows on tick 2 */
 	SPARK_GROUPS_DYNAMITE,
 	/* below the user, in the LightningBolt colours, the sparks rising; the
-	   damage shows on frame 2 */
+	   damage shows on tick 2 */
 	SPARK_GROUPS_RISING
 } SPARK_GROUPS_MODE;
 
@@ -526,9 +525,9 @@ typedef enum SPIN_AXIS {
    the camera through it (Fire, Froth) pass between them. */
 typedef enum CAMERA_PHASE {
 	CAMERA_PHASE_IDLE, /* nothing marked since the last turn */
-	/* the effect has finished a frame: turn the whole delta */
-	CAMERA_PHASE_FRAME_DONE,
-	CAMERA_PHASE_HALF_TURNED /* half a delta turned on an unmarked frame */
+	/* the effect has finished a tick: turn the whole delta */
+	CAMERA_PHASE_TICK_DONE,
+	CAMERA_PHASE_HALF_TURNED /* half a delta turned on an unmarked tick */
 } CAMERA_PHASE;
 
 /* Where each range of btEffectRunByIdRange's effect kinds starts: the casting

@@ -57,25 +57,23 @@ void scMarsLighthouseEntranceShootBalmFireball(void);
 Bool fdActorIsTouching(struct ACTOR *a, struct ACTOR *b);
 
 Bool fdActorIsBeside(struct ACTOR *a, struct ACTOR *b);
-/* A flame thrower's flame sent forward, backward, east or west from `position`
+/* A flame thrower's flame sent forward, backward, east or west from `pos`
    at `speed` (shared/flame_thrower_send_*.c); `offScreen` keeps its sprite's
    picture loaded out of sight. */
-void scFlameThrowerSendForward(
-	Sint32 *position, Sint32 speed, Sint32 offScreen);
-void scFlameThrowerSendBackward(
-	Sint32 *position, Sint32 speed, Sint32 offScreen);
-void scFlameThrowerSendEast(Sint32 *position, Sint32 speed, Sint32 offScreen);
-void scFlameThrowerSendWest(Sint32 *position, Sint32 speed, Sint32 offScreen);
+void scFlameThrowerSendForward(Sint32 *pos, Sint32 speed, Sint32 offScreen);
+void scFlameThrowerSendBackward(Sint32 *pos, Sint32 speed, Sint32 offScreen);
+void scFlameThrowerSendEast(Sint32 *pos, Sint32 speed, Sint32 offScreen);
+void scFlameThrowerSendWest(Sint32 *pos, Sint32 speed, Sint32 offScreen);
 
 void scActorRollAndCrumble(struct ACTOR *actor);
 
-void scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
+void scCrackedTileCrack(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry);
 
 void scTeleportArriveWhirling(void);
 
 Sint32 syListCountEntries(Uint16 *list);
 void   fdPaletteCycleFade(void);
-void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flag, Sint32 layer);
+void   fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flg, Sint32 layer);
 
 void scMarsLighthouseEntranceCrackLapisIceSheet(void);
 
@@ -85,7 +83,7 @@ void scMarsLighthouseEntranceMeltIceInPath(void);
 
 void scMarsLighthouseEntranceClearFireballRow(void);
 
-void scMarsLighthouseEntranceStartPoundIceCone(Sint32 mode, Sint32 index);
+void scMarsLighthouseEntranceStartPoundIceCone(Sint32 mode, Sint32 idx);
 
 void scMarsLighthouseEntranceCheckIce(void);
 

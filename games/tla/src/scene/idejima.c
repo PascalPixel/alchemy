@@ -96,7 +96,7 @@ enum { KRADEN_ANIMATION_ASLEEP = 5 };
    her on her side. */
 enum { ANIM_SHEBA_SIT_UP = 18, ANIM_JENNA_LIE_ON_SIDE = 18 };
 
-/* Menardi's ship rocking every 10 frames, quicker than at rest, as the island
+/* Menardi's ship rocking every 10 ticks, quicker than at rest, as the island
    drifts. */
 enum { SHIP_ANIMATION_ROCK_FAST = 2 };
 
@@ -106,29 +106,29 @@ extern CUE			  IdejimaCues[];
 extern CUE			  IdejimaCuesFromDoor[];
 extern CUE			  IdejimaCuesWake[];
 extern ACTOR_PLACE	  IdejimaPlacements[];
-extern Sint32		  Idejima_StretchScript[];
-extern Uint32		  Idejima_KradenStepsAsideScript[];
-extern Uint32		  Idejima_JoinTheLeaderScript[];
-extern Uint32		  Idejima_GoAfterAlexScript[];
-extern Uint32		  Idejima_KradenToTheShipScript[];
-extern Uint32		  Idejima_JennaToTheShipScript[];
-extern Uint32		  Idejima_AlexLeadsTheWayScript[];
-extern Uint32		  Idejima_KradenFollowsAlexScript[];
-extern Uint32		  Idejima_JennaFollowsAlexScript[];
-extern Uint32		  Idejima_KradenRunsToFelixScript[];
-extern Uint32		  Idejima_JennaRunsToFelixScript[];
-extern Uint32		  Idejima_JennaToTheShoreScript[];
-extern Uint32		  Idejima_ShebaToTheShoreScript[];
-extern Uint32		  Idejima_KradenToTheShoreScript[];
-extern Uint32		  Idejima_FelixToTheShoreScript[];
+extern Sint32		  IdejimaStretchScript[];
+extern Uint32		  IdejimaKradenStepsAsideScript[];
+extern Uint32		  IdejimaJoinTheLeaderScript[];
+extern Uint32		  IdejimaGoAfterAlexScript[];
+extern Uint32		  IdejimaKradenToTheShipScript[];
+extern Uint32		  IdejimaJennaToTheShipScript[];
+extern Uint32		  IdejimaAlexLeadsTheWayScript[];
+extern Uint32		  IdejimaKradenFollowsAlexScript[];
+extern Uint32		  IdejimaJennaFollowsAlexScript[];
+extern Uint32		  IdejimaKradenRunsToFelixScript[];
+extern Uint32		  IdejimaJennaRunsToFelixScript[];
+extern Uint32		  IdejimaJennaToTheShoreScript[];
+extern Uint32		  IdejimaShebaToTheShoreScript[];
+extern Uint32		  IdejimaKradenToTheShoreScript[];
+extern Uint32		  IdejimaFelixToTheShoreScript[];
 
-/* The wave scroll's two tables of BG3 row offsets, one for each frame in
+/* The wave scroll's two tables of BG3 row offsets, one for each tick in
    turn. */
-Sint16 Idejima_WaveLines[2][160] BSS_DATA ALIGNED(16);
-/* The frame count the wave scroll's phase follows. */
-Sint32 Idejima_WavePhase BSS_DATA;
-/* Which of Idejima_WaveLines the next frame computes. */
-Sint16 Idejima_WaveBuffer BSS_DATA;
+Sint16 IdejimaWaveLines[2][160] BSS_DATA ALIGNED(16);
+/* The tick count the wave scroll's phase follows. */
+Sint32 IdejimaWavePhase BSS_DATA;
+/* Which of IdejimaWaveLines the next tick computes. */
+Sint16 IdejimaWaveBuffer BSS_DATA;
 
 void scIdejimaResetWaveLines(void);
 void scIdejimaApplyWaveLines(void);
@@ -199,15 +199,15 @@ void scIdejimaGetUp(Sint32 id)
    solid land and joins the party. */
 void scIdejimaWakeKraden(void)
 {
-	Sint32 message;
+	Sint32 msg;
 	ACTOR *actor;
 	ACTOR *leader;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	fdActorRunRepeatedMotion(ACTOR_KRADEN, 1);
-	message = (Sint32)MsgIdejimaGroan;
-	syFieldScriptSetMessageId(message);
+	msg = (Sint32)MsgIdejimaGroan;
+	syFieldScriptSetMessageId(msg);
 	/* "Oooog..." */
 	fdScriptShowMessage(ACTOR_KRADEN, 0);
 	fdActorRunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -259,7 +259,7 @@ void scIdejimaWakeKraden(void)
 			ACTOR_KRADEN, leader->x.part[0].integer, leader->z.part[0].integer);
 	scFieldActorWaitForMoveById(ACTOR_KRADEN);
 	fdActorSetPos(ACTOR_KRADEN, 0, 0);
-	mnMessageShowCentered(message + 8, 1);
+	mnMessageShowCentered(msg + 8, 1);
 	fdScriptSetFlag(FLAG_IDEJIMA_KRADEN_JOINED);
 	fdScriptEnd();
 }
@@ -412,7 +412,7 @@ void scIdejimaEnterDoor(void)
 	fdScriptEndLastingPsynergy(0);
 	sySndPlay(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(EXIT_DOOR);
 }
 
@@ -456,7 +456,7 @@ void scIdejimaCatchUpWithFelix(void)
 		fdActorWalkToAndWait(ACTOR_KRADEN, 192, 712);
 		fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
 		scFieldActorWaitForScriptEndById(ACTOR_KRADEN);
-		fdActorRunScriptAndWait(ACTOR_KRADEN, Idejima_StretchScript);
+		fdActorRunScriptAndWait(ACTOR_KRADEN, IdejimaStretchScript);
 		scFieldActorJump(ACTOR_KRADEN, 4, 20);
 		/* "You weren't planning on leaving me, were you?" */
 		fdScriptShowMessage(ACTOR_KRADEN, 0);
@@ -509,7 +509,7 @@ void scIdejimaCatchUpWithFelix(void)
 		fdCameraSetSpeed(0.6);
 		fdCameraMoveTo(168, CAMERA_KEEP, 721, 1);
 		fdActorSetSpeed(ACTOR_KRADEN, 1.6);
-		fdActorSetScript(ACTOR_KRADEN, Idejima_KradenStepsAsideScript);
+		fdActorSetScript(ACTOR_KRADEN, IdejimaKradenStepsAsideScript);
 		fdActorFaceDirection(
 			MainRoutineStateWork.leaderActorId, FACING_NORTHEAST, 0);
 		fdMapGridCopyMetatileAttributes(38, 31, 2, 1, 17, 46);
@@ -561,8 +561,8 @@ void scIdejimaCatchUpWithFelix(void)
 			MainRoutineStateWork.leaderActorId, FACING_NORTHEAST, 20);
 		fdActorSetAnimationAndWait(
 			MainRoutineStateWork.leaderActorId, ANIM_NOD);
-		fdActorSetScript(ACTOR_KRADEN, Idejima_JoinTheLeaderScript);
-		fdActorRunScriptAndWait(ACTOR_JENNA, Idejima_JoinTheLeaderScript);
+		fdActorSetScript(ACTOR_KRADEN, IdejimaJoinTheLeaderScript);
+		fdActorRunScriptAndWait(ACTOR_JENNA, IdejimaJoinTheLeaderScript);
 		syFieldScriptAddPartyMember(ACTOR_JENNA, 1);
 		fdActorFaceDirection(
 			MainRoutineStateWork.leaderActorId, FACING_SOUTH, 20);
@@ -581,7 +581,7 @@ void scIdejimaCatchUpWithFelix(void)
 		fdCameraSetSpeed(0.6);
 		fdCameraMoveTo(168, CAMERA_KEEP, 721, 1);
 		fdActorSetSpeed(ACTOR_KRADEN, 1.6);
-		fdActorSetScript(ACTOR_KRADEN, (Sint32)Idejima_KradenStepsAsideScript);
+		fdActorSetScript(ACTOR_KRADEN, (Sint32)IdejimaKradenStepsAsideScript);
 		fdActorFaceDirection(
 			MainRoutineStateWork.leaderActorId, FACING_NORTHEAST, 0);
 		fdMapGridCopyMetatileAttributes(38, 31, 2, 1, 14, 40);
@@ -640,9 +640,9 @@ void scIdejimaCatchUpWithFelix(void)
 		fdScriptShowMessageAndWait(ACTOR_SHEBA, 0);
 		fdActorSetAnimationById(ACTOR_KRADEN, ANIM_NOD);
 		fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
-		fdActorSetScript(ACTOR_KRADEN, (Sint32)Idejima_JoinTheLeaderScript);
+		fdActorSetScript(ACTOR_KRADEN, (Sint32)IdejimaJoinTheLeaderScript);
 		fdActorRunScriptAndWait(
-			ACTOR_SHEBA, (Sint32)Idejima_JoinTheLeaderScript);
+			ACTOR_SHEBA, (Sint32)IdejimaJoinTheLeaderScript);
 		fdScriptAddPartyMember(ACTOR_SHEBA, 1);
 		fdActorFaceDirection(
 			MainRoutineStateWork.leaderActorId, FACING_SOUTH, 20);
@@ -917,7 +917,7 @@ void scIdejimaWonderWhereAlexHasGone(void)
 	/* "Now, I am quite famished. Shall we get moving?" */
 	fdScriptShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
 	fdActorSetSpeed(ACTOR_SHEBA, 0.8);
-	script = Idejima_GoAfterAlexScript;
+	script = IdejimaGoAfterAlexScript;
 	fdActorSetScript(ACTOR_KRADEN, script);
 	fdActorSetScript(ACTOR_JENNA, script);
 	fdActorRunScriptAndWait(ACTOR_SHEBA, script);
@@ -928,40 +928,40 @@ void scIdejimaWonderWhereAlexHasGone(void)
 /* Starts the wave scroll from its first phase and table. */
 void scIdejimaResetWaveLines(void)
 {
-	Idejima_WaveBuffer = 0;
-	Idejima_WavePhase = 0;
+	IdejimaWaveBuffer = 0;
+	IdejimaWavePhase = 0;
 }
 
 /* The sea's wave scroll: each scanline's vertical offset for BG3 from the table
-   finished last frame, streamed by DMA 0 at every HBlank. */
+   finished last tick, streamed by DMA 0 at every HBlank. */
 void scIdejimaApplyWaveLines(void)
 {
-	Sint16 *line = Idejima_WaveLines[(Sint16)(Idejima_WaveBuffer ^ 1)];
+	Sint16 *line = IdejimaWaveLines[(Sint16)(IdejimaWaveBuffer ^ 1)];
 
 	syIOWrite16(line[0], &REG_BG3VOFS);
 	syDMAXCopy(
 		line + 1, (void *)&REG_BG3VOFS, DMA_HBLANK_HALFWORD_PER_LINE, REG_DMA0);
 }
 
-/* Fills the other table of Idejima_WaveLines with BG3's scroll plus twice the
+/* Fills the other table of IdejimaWaveLines with BG3's scroll plus twice the
    sine plus one, 0 to 4 pixels: a wave that moves down the screen a row each
-   frame. */
+   tick. */
 void scIdejimaUpdateWaveLines(void)
 {
 	MAP_LAYER *layer = fdMapGridGetLayer(0);
-	Sint16	  *line = Idejima_WaveLines[Idejima_WaveBuffer];
+	Sint16	  *line = IdejimaWaveLines[IdejimaWaveBuffer];
 	Sint32	   i;
 
 	for(i = 0; i != DISPLAY_HEIGHT; i++) {
-		Sint32 wave = syMathSin(((Uint8)Idejima_WavePhase - i -
+		Sint32 wave = syMathSin(((Uint8)IdejimaWavePhase - i -
 									FIXEDtoINT(layer->y) + DISPLAY_HEIGHT)
 						  << 9) +
 			toFIXED(1);
 
 		line[i] = FIXEDtoINT(layer->y) + FIXEDtoINT_TWICE(wave);
 	}
-	Idejima_WaveBuffer ^= 1;
-	Idejima_WavePhase++;
+	IdejimaWaveBuffer ^= 1;
+	IdejimaWavePhase++;
 }
 
 /* Copies BG palettes 8 to 11 of the palette being faded to over palettes 0 to 3
@@ -980,7 +980,7 @@ void scIdejimaUseDriftPalette(void)
 }
 
 /* Readies the island adrift: the sea's layer drifts a quarter of a pixel east
-   and an eighth south each frame, the beacon's metatiles are copied in and the
+   and an eighth south each tick, the beacon's metatiles are copied in and the
    ship rocks quickly. */
 void scDriftScenePrepare(void)
 {
@@ -1059,9 +1059,9 @@ void scIdejimaBreakAwayFromGondowan(void)
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
 	fdActorSetSpeed(ACTOR_JENNA, 0.8);
 	fdActorSetSpeed(ACTOR_KRADEN, 0.8);
-	fdActorSetScript(ACTOR_KRADEN, Idejima_KradenToTheShipScript);
+	fdActorSetScript(ACTOR_KRADEN, IdejimaKradenToTheShipScript);
 	syFieldScriptWait(40);
-	fdActorRunScriptAndWait(ACTOR_JENNA, Idejima_JennaToTheShipScript);
+	fdActorRunScriptAndWait(ACTOR_JENNA, IdejimaJennaToTheShipScript);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_EAST, 0);
 	fdActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_WEST, 40);
@@ -1237,7 +1237,7 @@ void scIdejimaBreakAwayFromGondowan(void)
 	fdScriptShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 80);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syFieldScriptSetExitRequest(IDEJIMA_TO_WORLD_MAP_NORTH_A);
 }
 
@@ -1273,7 +1273,7 @@ void scIdejimaFindFelixAndSheba(void)
 	fdActorSetSprFlags(fdActorGet(ACTOR_KRADEN), 0);
 	syWait(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syFieldScriptWait(120);
 	syFieldScriptSetMessageId((Sint32)MsgIdejimaHowLongWillWeDrift);
 	/* "Oh, Kraden... How long will this island continue to drift?" */
@@ -1324,7 +1324,7 @@ void scIdejimaFindFelixAndSheba(void)
 	fdActorShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
 	/* "There is something I wish to show you." */
 	fdScriptShowMessage(ACTOR_ALEX, 0);
-	fdActorSetScript(ACTOR_ALEX, Idejima_AlexLeadsTheWayScript);
+	fdActorSetScript(ACTOR_ALEX, IdejimaAlexLeadsTheWayScript);
 	syFieldScriptWait(40);
 	fdActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
 	fdActorSetSprFlags(fdActorGet(ACTOR_KRADEN), 1);
@@ -1336,12 +1336,12 @@ void scIdejimaFindFelixAndSheba(void)
 	fdActorFaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 40);
 	fdActorSetSpeed(ACTOR_KRADEN, 0.8);
 	fdActorSetSpeed(ACTOR_JENNA, 0.8);
-	fdActorSetScript(ACTOR_KRADEN, Idejima_KradenFollowsAlexScript);
+	fdActorSetScript(ACTOR_KRADEN, IdejimaKradenFollowsAlexScript);
 	syFieldScriptWait(40);
 	fdCameraSetSpeed(0.8);
 	fdCameraMoveTo(368, CAMERA_KEEP, 210, 1);
 	actor->tmr = 0;
-	fdActorSetScript(ACTOR_JENNA, Idejima_JennaFollowsAlexScript);
+	fdActorSetScript(ACTOR_JENNA, IdejimaJennaFollowsAlexScript);
 	do {
 		syWait(1);
 	} while(actor->tmr == 0);
@@ -1356,8 +1356,8 @@ void scIdejimaFindFelixAndSheba(void)
 	fdActorFaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST, 0);
 	fdActorSetSpeed(ACTOR_KRADEN, 1.6);
 	fdActorSetSpeed(ACTOR_JENNA, 1.6);
-	fdActorSetScript(ACTOR_KRADEN, Idejima_KradenRunsToFelixScript);
-	fdActorRunScriptAndWait(ACTOR_JENNA, Idejima_JennaRunsToFelixScript);
+	fdActorSetScript(ACTOR_KRADEN, IdejimaKradenRunsToFelixScript);
+	fdActorRunScriptAndWait(ACTOR_JENNA, IdejimaJennaRunsToFelixScript);
 	syFieldScriptWait(40);
 	/* "They... They're alive..." */
 	fdScriptShowMessage(
@@ -1371,7 +1371,7 @@ void scIdejimaFindFelixAndSheba(void)
 		SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0, 40);
 	FieldStateWork->transitionFrm = 120;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syFieldScriptSetExitRequest(IDEJIMA_TO_TITLE);
 }
 
@@ -1402,7 +1402,7 @@ void scIdejimaRideTheTidalWave(void)
 	fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
 	syWait(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syFieldScriptWait(20);
 	syFieldScriptSetMessageId(MsgIdejimaThoughtTheyWereInsideLighthouse);
 	/* "I thought Felix and Sheba were still inside the lighthouse." */
@@ -1662,11 +1662,11 @@ void scIdejimaRideTheTidalWave(void)
 	fdActorSetSpeed(ACTOR_KRADEN, 0.8);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
 	leader->tmr = 0;
-	fdActorSetScript(ACTOR_KRADEN, Idejima_KradenToTheShoreScript);
-	fdActorSetScript(ACTOR_JENNA, Idejima_JennaToTheShoreScript);
+	fdActorSetScript(ACTOR_KRADEN, IdejimaKradenToTheShoreScript);
+	fdActorSetScript(ACTOR_JENNA, IdejimaJennaToTheShoreScript);
 	fdActorSetScript(
-		MainRoutineStateWork.leaderActorId, Idejima_FelixToTheShoreScript);
-	fdActorSetScript(ACTOR_SHEBA, Idejima_ShebaToTheShoreScript);
+		MainRoutineStateWork.leaderActorId, IdejimaFelixToTheShoreScript);
+	fdActorSetScript(ACTOR_SHEBA, IdejimaShebaToTheShoreScript);
 	do
 		syWait(1);
 	while(leader->tmr == 0);
@@ -1694,10 +1694,10 @@ void scFelixWakeEndStep(void)
 /* Waits for a button, or 3 seconds. */
 void scFelixWakeWaitForButton(void)
 {
-	Sint32 frames = 180;
+	Sint32 ticks = 180;
 
 	scFelixWakeStartStep();
-	while(--frames != -1) {
+	while(--ticks != -1) {
 		syWait(1);
 		if(PerWork.push != 0)
 			break;
@@ -1732,7 +1732,7 @@ void scIdejimaFelixWakes(void)
 	syWait(1);
 	scFelixWakeEndStep();
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syWait(10);
 	scFelixWakeWaitForButton();
 	scFelixWakeStartStep();
@@ -1825,8 +1825,8 @@ Sint32 scInit(void)
 	Sint32 entrance;
 
 	scIdejimaResetWaveLines();
-	sySetFrameEvent(scIdejimaApplyWaveLines, EVENT_PASS_VBLANK);
-	sySetFrameEvent(scIdejimaUpdateWaveLines, EVENT_PASS_FRAME);
+	sySetTickEvent(scIdejimaApplyWaveLines, EVENT_PASS_VBLANK);
+	sySetTickEvent(scIdejimaUpdateWaveLines, EVENT_PASS_TICK);
 	{
 		MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 
@@ -1880,7 +1880,7 @@ UNUSED void scIdejimaLieDown(Sint32 id)
    grass where the wave left them, and wakes Felix the first time. */
 void scIdejimaLayDownTheOthers(void)
 {
-	Sint32 flag;
+	Sint32 flg;
 
 	if(!fdScriptGetFlag(FLAG_IDEJIMA_KRADEN_JOINED)) {
 		ACTOR *actor;
@@ -1908,8 +1908,8 @@ void scIdejimaLayDownTheOthers(void)
 		actor->collisionFlg = 0;
 		fdActorSetAnimation(ACTOR_JENNA, ANIM_JENNA_LIE_ON_SIDE);
 	}
-	flag = fdScriptGetFlag(FLAG_IDEJIMA_SHEBA_JOINED);
-	if(flag == 0) {
+	flg = fdScriptGetFlag(FLAG_IDEJIMA_SHEBA_JOINED);
+	if(flg == 0) {
 		ACTOR *actor;
 
 		actor = fdActorGet(ACTOR_SHEBA);
@@ -1926,7 +1926,7 @@ void scIdejimaLayDownTheOthers(void)
 		scIdejimaFelixWakes();
 }
 
-Uint32 Idejima_KradenToTheShipScript[] = {
+Uint32 IdejimaKradenToTheShipScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(216, 0, 172),
 	SC_SYNC,
@@ -1936,7 +1936,7 @@ Uint32 Idejima_KradenToTheShipScript[] = {
 	SC_END,
 };
 
-Uint32 Idejima_JennaToTheShipScript[] = {
+Uint32 IdejimaJennaToTheShipScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(216, 0, 182),
 	SC_SYNC,
@@ -1946,7 +1946,7 @@ Uint32 Idejima_JennaToTheShipScript[] = {
 	SC_END,
 };
 
-Uint32 Idejima_AlexLeadsTheWayScript[] = {
+Uint32 IdejimaAlexLeadsTheWayScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(224, 0, 172),
 	SC_SYNC,
@@ -1959,7 +1959,7 @@ Uint32 Idejima_AlexLeadsTheWayScript[] = {
 	SC_END,
 };
 
-Uint32 Idejima_KradenFollowsAlexScript[] = {
+Uint32 IdejimaKradenFollowsAlexScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(224, 0, 172),
 	SC_SYNC,
@@ -1974,7 +1974,7 @@ Uint32 Idejima_KradenFollowsAlexScript[] = {
 	SC_END,
 };
 
-Uint32 Idejima_JennaFollowsAlexScript[] = {
+Uint32 IdejimaJennaFollowsAlexScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(216, 0, 172),
 	SC_SYNC,
@@ -1990,7 +1990,7 @@ Uint32 Idejima_JennaFollowsAlexScript[] = {
 	SC_END,
 };
 
-Uint32 Idejima_KradenRunsToFelixScript[] = {
+Uint32 IdejimaKradenRunsToFelixScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(420, 0, 200),
 	SC_SYNC,
@@ -1998,7 +1998,7 @@ Uint32 Idejima_KradenRunsToFelixScript[] = {
 	SC_END,
 };
 
-Uint32 Idejima_JennaRunsToFelixScript[] = {
+Uint32 IdejimaJennaRunsToFelixScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(408, 0, 232),
 	SC_SYNC,
@@ -2006,7 +2006,7 @@ Uint32 Idejima_JennaRunsToFelixScript[] = {
 	SC_END,
 };
 
-Uint32 Idejima_JennaToTheShoreScript[] = {
+Uint32 IdejimaJennaToTheShoreScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(424, 0, 200),
 	SC_SYNC,
@@ -2017,7 +2017,7 @@ Uint32 Idejima_JennaToTheShoreScript[] = {
 	SC_END,
 };
 
-Uint32 Idejima_ShebaToTheShoreScript[] = {
+Uint32 IdejimaShebaToTheShoreScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(408, 0, 228),
 	SC_SYNC,
@@ -2028,7 +2028,7 @@ Uint32 Idejima_ShebaToTheShoreScript[] = {
 	SC_END,
 };
 
-Uint32 Idejima_KradenToTheShoreScript[] = {
+Uint32 IdejimaKradenToTheShoreScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(400, 0, 214),
 	SC_SYNC,
@@ -2039,7 +2039,7 @@ Uint32 Idejima_KradenToTheShoreScript[] = {
 	SC_END,
 };
 
-Uint32 Idejima_FelixToTheShoreScript[] = {
+Uint32 IdejimaFelixToTheShoreScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(412, 0, 248),
 	SC_SYNC,
@@ -2051,7 +2051,7 @@ Uint32 Idejima_FelixToTheShoreScript[] = {
 	SC_END,
 };
 
-Sint32 Idejima_StretchScript[] = {
+Sint32 IdejimaStretchScript[] = {
 	SC_LABEL(1),
 	SC_ADD(SW_SCALE_X, 192),
 	SC_ADD(SW_SCALE_Y, 384),
@@ -2078,7 +2078,7 @@ Sint32 Idejima_StretchScript[] = {
 	SC_END,
 };
 
-Uint32 Idejima_KradenStepsAsideScript[] = {
+Uint32 IdejimaKradenStepsAsideScript[] = {
 	SC_POSITION(152, 0, 756),
 	SC_WAIT(1),
 	SC_ANIMATION(ANIM_WALK),
@@ -2091,7 +2091,7 @@ Uint32 Idejima_KradenStepsAsideScript[] = {
 	SC_END,
 };
 
-Uint32 Idejima_JoinTheLeaderScript[] = {
+Uint32 IdejimaJoinTheLeaderScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(152, 0, 756),
 	SC_SYNC,
@@ -2101,7 +2101,7 @@ Uint32 Idejima_JoinTheLeaderScript[] = {
 	SC_END,
 };
 
-Uint32 Idejima_GoAfterAlexScript[] = {
+Uint32 IdejimaGoAfterAlexScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(104, 0, 728),
 	SC_SYNC,
@@ -2167,7 +2167,7 @@ CUE IdejimaCuesWake[] = {
 	{CUE_TABLE_END},
 };
 
-Uint32 Emote_PopTiltedScript[] = {
+Uint32 EmotePopTiltedScript[] = {
 	SC_WAIT(46),
 	SC_RELEASE,
 };

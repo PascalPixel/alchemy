@@ -80,7 +80,7 @@ typedef enum ROCK_ROOMS_METATILE_BEHAVIOR {
 } ROCK_ROOMS_METATILE_BEHAVIOR;
 
 /* The placed actors of Lunpa's houses, shops, inn and temple, numbered in the
-   order of RockRooms_ActorPlacements. Two people live in each of the three
+   order of RockRoomsActorPlacements. Two people live in each of the three
    homes, named by their sprites and by what they say while the town is
    sealed. */
 typedef enum ROCK_ROOMS_ACTOR_ID {
@@ -127,7 +127,7 @@ enum { SHOP_LUNPA_ITEMS = 25, SHOP_LUNPA_WEAPONS = 29, SHOP_LUNPA_ARMOR = 30 };
 enum { LUNPA_INN = 8 };
 
 /* clang-format off */
-const SCENE_ENTRANCE RockRooms_Entrances[] = {
+const SCENE_ENTRANCE RockRoomsEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ ROOM_FIRST_HOME, CONDITION_ALWAYS, 192, 0, 184, FACING_NORTH, 0, 16, 0, 256, 224, 0 },
 	{ ROOM_SECOND_HOME, CONDITION_ALWAYS, 432, 0, 264, FACING_NORTH, 0, 296, 48, 536, 288, 0 },
@@ -146,7 +146,7 @@ const SCENE_ENTRANCE RockRooms_Entrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-const Uint32 RockRooms_Exits[] = {
+const Uint32 RockRoomsExits[] = {
 	SCENE_EXITS(RockRooms),
 	SCENE_EXIT(ROOM_FIRST_HOME, Lunpa, LUNPA_FROM_FIRST_HOME),
 	SCENE_EXIT(ROOM_SECOND_HOME, Lunpa, LUNPA_FROM_SECOND_HOME),
@@ -160,7 +160,7 @@ const Uint32 RockRooms_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-const ACTOR_PLACE RockRooms_ActorPlacements[] = {
+const ACTOR_PLACE RockRoomsActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
 	  144, 0, 168, FACING_WEST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -202,13 +202,13 @@ const ACTOR_PLACE RockRooms_ActorPlacements[] = {
 
 /* clang-format on */
 
-extern const CUE RockRooms_SealedCues[];
-extern const CUE RockRooms_ReopenedCues[];
-extern const CUE RockRooms_GateToSuhallaCues[];
+extern const CUE RockRoomsSealedCues[];
+extern const CUE RockRoomsReopenedCues[];
+extern const CUE RockRoomsGateToSuhallaCues[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return RockRooms_Entrances;
+	return RockRoomsEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -218,14 +218,14 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return RockRooms_Exits;
+	return RockRoomsExits;
 }
 
 /* The villagers, shopkeepers and counters of every room, and the traveling
    Healer of the house beside Suhalla Gate. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return RockRooms_ActorPlacements;
+	return RockRoomsActorPlacements;
 }
 
 /* The house beside Suhalla Gate has its own cues; Lunpa's rooms have one table
@@ -233,12 +233,12 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.entrance == ROOM_GATE_TO_SUHALLA) {
-		return RockRooms_GateToSuhallaCues;
+		return RockRoomsGateToSuhallaCues;
 	}
 	if(gmFlagGet(FLAG_DODONPA_LOCKED_UP) != 0) {
-		return RockRooms_ReopenedCues;
+		return RockRoomsReopenedCues;
 	}
-	return RockRooms_SealedCues;
+	return RockRoomsSealedCues;
 }
 
 /* Talking to the innkeeper behind the counter of Lunpa's inn offers a night's
@@ -522,7 +522,7 @@ static void scRockRoomsTalkToTravelingHealer(void)
 }
 
 /* clang-format off */
-const CUE RockRooms_SealedCues[] = {
+const CUE RockRoomsSealedCues[] = {
 	ROOM_DOOR(ROOM_FIRST_HOME),
 	ROOM_DOOR(ROOM_SECOND_HOME),
 	ROOM_DOOR(ROOM_THIRD_HOME),
@@ -591,7 +591,7 @@ const CUE RockRooms_SealedCues[] = {
 	{ CUE_TABLE_END },
 };
 
-const CUE RockRooms_ReopenedCues[] = {
+const CUE RockRoomsReopenedCues[] = {
 	ROOM_DOOR(ROOM_FIRST_HOME),
 	ROOM_DOOR(ROOM_SECOND_HOME),
 	ROOM_DOOR(ROOM_THIRD_HOME),
@@ -660,7 +660,7 @@ const CUE RockRooms_ReopenedCues[] = {
 };
 /* clang-format on */
 
-const CUE RockRooms_GateToSuhallaCues[] = {
+const CUE RockRoomsGateToSuhallaCues[] = {
 	ROOM_DOOR(ROOM_GATE_TO_SUHALLA),
 	{CUE_TALK, ACTOR_TRAVELING_HEALER, CONDITION_ALWAYS,
 		SCRIPT_REF(scRockRoomsTalkToTravelingHealer)},

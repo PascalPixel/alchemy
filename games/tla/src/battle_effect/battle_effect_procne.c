@@ -15,18 +15,18 @@ typedef enum DRAGON_FIRE_MODE {
    division. */
 #define MODULO_THREE(v) syMathUnsignedMulHighAdd((v), RECIPROCAL_OF(3), -3)
 
-#define PROCNE_FRAMES		  400 /* frames of Procne */
+#define PROCNE_TICKS		  400 /* ticks of Procne */
 /* Procne appears in the violet sky, and the targets it lifted drop. */
-#define PROCNE_ARRIVAL_FRAME  160
-#define PROCNE_DROP_FRAME	  395
-/* The first comet leaves Procne, and the next each PROCNE_COMET_INTERVAL frames
+#define PROCNE_ARRIVAL_TICK	  160
+#define PROCNE_DROP_TICK	  395
+/* The first comet leaves Procne, and the next each PROCNE_COMET_INTERVAL ticks
    after. */
-#define PROCNE_COMET_FRAME	  330
+#define PROCNE_COMET_TICK	  330
 #define PROCNE_COMET_INTERVAL 12
 
-#define PROCNE_SPRITES 9 /* Procne's sprites, on Procne_GridX and _GridY */
+#define PROCNE_SPRITES 9 /* Procne's sprites, on ProcneGridX, ProcneGridY */
 
-/* The whirlwind sprite sheet: three whirlwind pictures, shown 4 frames each,
+/* The whirlwind sprite sheet: three whirlwind pictures, shown 4 ticks each,
    then the dust. */
 #define PROCNE_WHIRLWIND_WIDTH	48
 #define PROCNE_WHIRLWIND_HEIGHT 64
@@ -42,20 +42,20 @@ typedef enum DRAGON_FIRE_MODE {
 #define PROCNE_COMET_PICTURES		 13824
 
 #define PROCNE_DUST_MOTES	  24 /* dust motes that swirl up the whirlwind */
-/* How much faster a dust mote circles the whirlwind each frame, up to
-   PROCNE_DUST_SPIN_MAX, in 1/65536 turns a frame. */
+/* How much faster a dust mote circles the whirlwind each tick, up to
+   PROCNE_DUST_SPIN_MAX, in 1/65536 turns a tick. */
 #define PROCNE_DUST_SPIN_GAIN 50
 #define PROCNE_DUST_SPIN_MAX  (TRIG_TURN / 16)
 /* The distance from the whirlwind's centre, in half pixels, that the lifted
    targets spiral in to. */
 #define PROCNE_CORE_RADIUS	  16
-/* How much faster the lifted targets circle each frame, in 1/65536 turns a
-   frame, and how fast they circle once Procne arrives. */
+/* How much faster the lifted targets circle each tick, in 1/65536 turns a
+   tick, and how fast they circle once Procne arrives. */
 #define PROCNE_SPIN_GAIN	  48
 #define PROCNE_SKY_SPIN		  6000
 
-/* Procne's sway: sixty-fourths of the wave's sine, as 16.16 pixels a frame,
-   across and up and down; it bobs twice as far over its first 64 frames. */
+/* Procne's sway: sixty-fourths of the wave's sine, as 16.16 pixels a tick,
+   across and up and down; it bobs twice as far over its first 64 ticks. */
 #define PROCNE_SWAY 32
 #define PROCNE_BOB	16
 
@@ -66,7 +66,7 @@ typedef enum DRAGON_FIRE_MODE {
 #define PROCNE_RING_MOTES		28
 #define PROCNE_COMET_PARTICLES	(PROCNE_RING + PROCNE_RING_MOTES)
 
-/* The four strikes, at Procne_Frames: each throws out its sparks from its own
+/* The four strikes, at ProcneTicks: each throws out its sparks from its own
    rows of PARTICLES. */
 #define PROCNE_STRIKES			 4
 #define PROCNE_STRIKE_SPARKS	 96
@@ -95,14 +95,14 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 	BATTLE_CAMERA		*camera;
 	BATTLE_EFFECT_STATE *state;
 	BLITTER_PAIR		 draw;
-	Sint32				 frame;
+	Sint32				 frm;
 	Uint8				*graphics;
-	MOTION_OBJECT		*target;
+	MOTION_OBJECT		*tgt;
 	BATTLE_OBJECT		*battleObject;
 	PARTICLE			*point;
 	PARTICLE			*spark;
 	PARTICLE			*comet;
-	Sint32				 index;
+	Sint32				 idx;
 	Sint32				 slot;
 	Sint32				 size;
 	Sint32				 moteSize;
@@ -112,10 +112,10 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 	Sint32				 radius[8];
 	Sint32				 spin[8];
 	POINT2_D			 home[8];
-	Sint32				 baseAngle[8];
+	Sint32				 baseAng[8];
 	FIXED				 world[3];
 	SCREEN_POINT		 screen;
-	FIXED				 depthOffset[3];
+	FIXED				 depthOfs[3];
 	SPR_PLACEMENT		 place;
 	SCALE				 scale;
 
@@ -139,24 +139,24 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 		drift.y = 0;
 
 		/* Each target's place, for the whirlwind to turn it. */
-		EFFECT_FOR_EACH_TARGET(index, args) {
-			battleObject = btObjectGetStub(args->tgts[index]);
-			target = battleObject->obj;
-			home[index].x = target->x;
-			home[index].y = target->z;
-			baseAngle[index] = target->ang;
-			heading[index] = (Uint16)syAtan(target->x, target->z);
-			radius[index] = sySquartIWRAM((target->x >> 8) * (target->x >> 8) +
-								(target->z >> 8) * (target->z >> 8)) >>
+		EFFECT_FOR_EACH_TARGET(idx, args) {
+			battleObject = btObjectGetStub(args->tgts[idx]);
+			tgt = battleObject->obj;
+			home[idx].x = tgt->x;
+			home[idx].y = tgt->z;
+			baseAng[idx] = tgt->ang;
+			heading[idx] = (Uint16)syAtan(tgt->x, tgt->z);
+			radius[idx] = sySquartIWRAM((tgt->x >> 8) * (tgt->x >> 8) +
+							  (tgt->z >> 8) * (tgt->z >> 8)) >>
 				7;
-			spin[index] = 0;
-			target->verticalMotionStrength = 0;
+			spin[idx] = 0;
+			tgt->verticalMotionStrength = 0;
 		}
 
 		/* The dust motes start at the whirlwind's foot, each after a wait of
 		   its own. */
-		for(index = 0; index != ARRAY_COUNT(state->particles); index++) {
-			point = &state->particles[index];
+		for(idx = 0; idx != ARRAY_COUNT(state->particles); idx++) {
+			point = &state->particles[idx];
 			point->z = 120;
 			point->y = 0;
 			syRandom(); /* a number drawn and not used */
@@ -165,152 +165,152 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 			point->variant = syRandom() & 63;
 		}
 
-		for(frame = 0; frame != PROCNE_FRAMES; frame++) {
+		for(frm = 0; frm != PROCNE_TICKS; frm++) {
 			if((PerWork.repeat & (KEY_A | KEY_B)) != 0) {
-				if(frame < PROCNE_ARRIVAL_FRAME)
-					frame = PROCNE_ARRIVAL_FRAME;
-				else if(frame < PROCNE_DROP_FRAME)
-					frame = PROCNE_DROP_FRAME;
+				if(frm < PROCNE_ARRIVAL_TICK)
+					frm = PROCNE_ARRIVAL_TICK;
+				else if(frm < PROCNE_DROP_TICK)
+					frm = PROCNE_DROP_TICK;
 			}
 
 			EFFECT_VIEW_FROM_CAMERA(camera);
 
-			if(frame == 16)
+			if(frm == 16)
 				sySndPlayStub(SE_RUMBLE);
-			if(frame == 256)
+			if(frm == 256)
 				sySndPlayStub(SE_SPIN);
-			if(frame == 334)
+			if(frm == 334)
 				sySndPlayStub(SE_POWER_UP);
-			if(frame == 347)
+			if(frm == 347)
 				sySndPlayStub(SE_POWER_UP);
-			if(frame == 359)
+			if(frm == 359)
 				sySndPlayStub(SE_POWER_UP);
-			if(frame == 372)
+			if(frm == 372)
 				sySndPlayStub(SE_POWER_UP);
 
-			/* The targets, one every 16 frames, spiral in toward the centre and
+			/* The targets, one every 16 ticks, spiral in toward the centre and
 			   rise, spinning faster; each strike flashes them. */
-			EFFECT_FOR_EACH_TARGET(index, args) {
-				if(frame > index * 16) {
-					battleObject = btObjectGetStub(args->tgts[index]);
-					target = battleObject->obj;
-					target->x = (radius[index] * sySin(heading[index])) >> 1;
-					target->z = (radius[index] * syCos(heading[index])) >> 1;
+			EFFECT_FOR_EACH_TARGET(idx, args) {
+				if(frm > idx * 16) {
+					battleObject = btObjectGetStub(args->tgts[idx]);
+					tgt = battleObject->obj;
+					tgt->x = (radius[idx] * sySin(heading[idx])) >> 1;
+					tgt->z = (radius[idx] * syCos(heading[idx])) >> 1;
 
-					if(frame < PROCNE_ARRIVAL_FRAME) {
-						if(frame > index * 16 + 16)
-							spin[index] += PROCNE_SPIN_GAIN;
-						if(radius[index] <= 31)
-							target->y += toFIXED(6);
+					if(frm < PROCNE_ARRIVAL_TICK) {
+						if(frm > idx * 16 + 16)
+							spin[idx] += PROCNE_SPIN_GAIN;
+						if(radius[idx] <= 31)
+							tgt->y += toFIXED(6);
 						else
-							target->y += toFIXED(1) / 2;
-						if(target->y > toFIXED(124))
-							target->y = toFIXED(124);
+							tgt->y += toFIXED(1) / 2;
+						if(tgt->y > toFIXED(124))
+							tgt->y = toFIXED(124);
 					}
 
-					/* DEAD: always true, as the effect ends at frame 399; the
+					/* DEAD: always true, as the effect ends at tick 399; the
 					   ROM keeps the test. */
-					if(frame <= 490) {
-						heading[index] += spin[index];
-						if(heading[index] > TRIG_TURN)
-							heading[index] -= TRIG_TURN;
-						target->ang += spin[index] / 4;
+					if(frm <= 490) {
+						heading[idx] += spin[idx];
+						if(heading[idx] > TRIG_TURN)
+							heading[idx] -= TRIG_TURN;
+						tgt->ang += spin[idx] / 4;
 					}
 
-					if(frame == PROCNE_DROP_FRAME)
-						target->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
+					if(frm == PROCNE_DROP_TICK)
+						tgt->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
 
 					for(slot = 0; slot != PROCNE_STRIKES; slot++) {
-						if(frame == Procne_Frames[slot]) {
-							target->velY = 0;
-							btEffectTintBattler(args->tgts[index],
-								SPRITE_COLOR_WHITE, POSE_DAMAGE, index, 8);
+						if(frm == ProcneTicks[slot]) {
+							tgt->velY = 0;
+							btEffectTintBattler(args->tgts[idx],
+								SPRITE_COLOR_WHITE, POSE_DAMAGE, idx, 8);
 						}
 					}
 
-					if(radius[index] > PROCNE_CORE_RADIUS)
-						radius[index] -= 2;
+					if(radius[idx] > PROCNE_CORE_RADIUS)
+						radius[idx] -= 2;
 				}
 			}
 
-			/* The whirlwind's foot grows from frame 16, its top from 48; once
+			/* The whirlwind's foot grows from tick 16, its top from 48; once
 			   Procne arrives it stands two pictures high. */
-			if(frame >= 16 && frame < PROCNE_ARRIVAL_FRAME) {
-				size = frame * 2 - 32;
+			if(frm >= 16 && frm < PROCNE_ARRIVAL_TICK) {
+				size = frm * 2 - 32;
 				if(size > PROCNE_WHIRLWIND_FOOT_HEIGHT)
 					size = PROCNE_WHIRLWIND_FOOT_HEIGHT;
 				draw[0](canvas,
-					&state->sheet[MODULO_THREE(frame / 4) *
+					&state->sheet[MODULO_THREE(frm / 4) *
 							PROCNE_WHIRLWIND_PICTURE +
 						(PROCNE_WHIRLWIND_FOOT_HEIGHT - size) *
 							PROCNE_WHIRLWIND_WIDTH],
 					32, 112 - size, PROCNE_WHIRLWIND_WIDTH, size);
 			}
-			if(frame >= 48 && frame < PROCNE_ARRIVAL_FRAME) {
-				size = frame * 2 - 96;
+			if(frm >= 48 && frm < PROCNE_ARRIVAL_TICK) {
+				size = frm * 2 - 96;
 				if(size > PROCNE_WHIRLWIND_HEIGHT)
 					size = PROCNE_WHIRLWIND_HEIGHT;
 				draw[0](canvas,
-					&state->sheet[MODULO_THREE(frame / 4) *
+					&state->sheet[MODULO_THREE(frm / 4) *
 							PROCNE_WHIRLWIND_PICTURE +
 						(PROCNE_WHIRLWIND_HEIGHT - size) *
 							PROCNE_WHIRLWIND_WIDTH],
 					32, 64 - size, PROCNE_WHIRLWIND_WIDTH, size);
 			}
-			if(frame >= PROCNE_ARRIVAL_FRAME && frame < PROCNE_FRAMES) {
+			if(frm >= PROCNE_ARRIVAL_TICK && frm < PROCNE_TICKS) {
 				draw[0](canvas,
-					&state->sheet[MODULO_THREE(frame / 4) *
+					&state->sheet[MODULO_THREE(frm / 4) *
 						PROCNE_WHIRLWIND_PICTURE],
 					8, 0, PROCNE_WHIRLWIND_WIDTH, PROCNE_WHIRLWIND_HEIGHT);
 				draw[0](canvas,
-					&state->sheet[MODULO_THREE(frame / 4) *
+					&state->sheet[MODULO_THREE(frm / 4) *
 						PROCNE_WHIRLWIND_PICTURE],
 					8, 64, PROCNE_WHIRLWIND_WIDTH, PROCNE_WHIRLWIND_HEIGHT);
 			}
 
 			/* The dust spirals in and up. */
-			if(frame < PROCNE_ARRIVAL_FRAME) {
+			if(frm < PROCNE_ARRIVAL_TICK) {
 				point = state->particles;
-				for(index = 0; index != PROCNE_DUST_MOTES; index++) {
-					if(point[index].variant == 0) {
-						world[0] = point[index].z * sySin(point[index].velY);
-						world[1] = point[index].y;
-						world[2] = point[index].z * syCos(point[index].velY);
+				for(idx = 0; idx != PROCNE_DUST_MOTES; idx++) {
+					if(point[idx].variant == 0) {
+						world[0] = point[idx].z * sySin(point[idx].velY);
+						world[1] = point[idx].y;
+						world[2] = point[idx].z * syCos(point[idx].velY);
 						btEffectPosProjectPoint(world, &screen);
 						screen.x >>= 1;
 						/* DEAD: always true, as a mote restarts once past 48
 						   pixels up and climbs little more than 2 pixels a
-						   frame; the ROM keeps the test. */
-						if(point[index].y < toFIXED(64))
+						   tick; the ROM keeps the test. */
+						if(point[idx].y < toFIXED(64))
 							draw[0](canvas, state->sheet + PROCNE_DUST,
 								screen.x - (PROCNE_DUST_SIZE / 2 + 4),
 								screen.y - (PROCNE_DUST_SIZE / 2 + 4),
 								PROCNE_DUST_SIZE, PROCNE_DUST_SIZE);
-						if(point[index].z > 24)
-							point[index].z -= 4;
-						point[index].velY += point[index].velX * 2;
-						if(point[index].velY > TRIG_TURN)
-							point[index].velY -= TRIG_TURN;
-						point[index].velX += PROCNE_DUST_SPIN_GAIN;
-						if(point[index].velX > PROCNE_DUST_SPIN_MAX)
-							point[index].velX = PROCNE_DUST_SPIN_MAX;
-						point[index].velY += TRIG_TURN / 32;
-						point[index].y += point[index].velY * 2;
-						if(point[index].y > toFIXED(48)) {
-							point[index].y = 0;
-							point[index].z = 100;
-							point[index].velY = 0;
-							point[index].velX = 0;
+						if(point[idx].z > 24)
+							point[idx].z -= 4;
+						point[idx].velY += point[idx].velX * 2;
+						if(point[idx].velY > TRIG_TURN)
+							point[idx].velY -= TRIG_TURN;
+						point[idx].velX += PROCNE_DUST_SPIN_GAIN;
+						if(point[idx].velX > PROCNE_DUST_SPIN_MAX)
+							point[idx].velX = PROCNE_DUST_SPIN_MAX;
+						point[idx].velY += TRIG_TURN / 32;
+						point[idx].y += point[idx].velY * 2;
+						if(point[idx].y > toFIXED(48)) {
+							point[idx].y = 0;
+							point[idx].z = 100;
+							point[idx].velY = 0;
+							point[idx].velX = 0;
 						}
 					} else {
-						point[index].variant--;
+						point[idx].variant--;
 					}
 				}
 			}
 
-			if(frame == PROCNE_ARRIVAL_FRAME) {
+			if(frm == PROCNE_ARRIVAL_TICK) {
 				Sint32 speed;
-				Sint32 angle;
+				Sint32 ang;
 
 				btBackgroundLoadStub(
 					BATTLE_BACKGROUND_FIXED, RESOURCE_VIOLET_SKY_BACKDROP, 0);
@@ -321,46 +321,44 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 				btResourceLoadAndDecompress(RESOURCE_VIOLET_COMET_SHEET,
 					state->sheet + PROCNE_COMET_PICTURES, 1, 1);
 
-				for(index = 0;
-					index != PROCNE_STRIKES * PROCNE_STRIKE_SPARK_ROWS;
-					index++) {
-					PARTICLES[index].variant = 0;
+				for(idx = 0; idx != PROCNE_STRIKES * PROCNE_STRIKE_SPARK_ROWS;
+					idx++) {
+					PARTICLES[idx].variant = 0;
 				}
 
-				EFFECT_FOR_EACH_TARGET(index, args) {
-					battleObject = btObjectGetStub(args->tgts[index]);
-					target = battleObject->obj;
-					target->y = INTtoFIXED((syRandom() & 15) + 8);
+				EFFECT_FOR_EACH_TARGET(idx, args) {
+					battleObject = btObjectGetStub(args->tgts[idx]);
+					tgt = battleObject->obj;
+					tgt->y = INTtoFIXED((syRandom() & 15) + 8);
 				}
 
 				ProjectionWork.centerX = 72;
 
-				for(index = 0; index != PROCNE_GATHERING_SPARKS; index++) {
+				for(idx = 0; idx != PROCNE_GATHERING_SPARKS; idx++) {
 					speed = syRandom() & 127;
-					angle = (syRandom() & 0x7fff) + DEGtoANG(225) - 1;
-					state->particles[index].x = sySin(angle) * speed;
-					state->particles[index].y = syCos(angle) * speed;
-					state->particles[index].z = toFIXED(syRandom() % 200 - 100);
-					state->particles[index].variant = 0;
+					ang = (syRandom() & 0x7fff) + DEGtoANG(225) - 1;
+					state->particles[idx].x = sySin(ang) * speed;
+					state->particles[idx].y = syCos(ang) * speed;
+					state->particles[idx].z = toFIXED(syRandom() % 200 - 100);
+					state->particles[idx].variant = 0;
 				}
 
-				EFFECT_FOR_EACH_TARGET(index, args) {
-					radius[index] = PROCNE_CORE_RADIUS;
-					spin[index] = PROCNE_SKY_SPIN;
+				EFFECT_FOR_EACH_TARGET(idx, args) {
+					radius[idx] = PROCNE_CORE_RADIUS;
+					spin[idx] = PROCNE_SKY_SPIN;
 				}
 			}
 
 			/* Procne sways, pushed by each comet. */
-			if(frame >= PROCNE_ARRIVAL_FRAME) {
-				scale = Procne_UnitScale;
+			if(frm >= PROCNE_ARRIVAL_TICK) {
+				scale = ProcneUnitScale;
 				size = PROCNE_BOB;
-				if(frame - PROCNE_ARRIVAL_FRAME <= 64)
+				if(frm - PROCNE_ARRIVAL_TICK <= 64)
 					size = PROCNE_BOB * 2;
-				wave.x -= (sySin((frame - PROCNE_ARRIVAL_FRAME) << 7) *
-							  PROCNE_SWAY) >>
+				wave.x -=
+					(sySin((frm - PROCNE_ARRIVAL_TICK) << 7) * PROCNE_SWAY) >>
 					6;
-				wave.y +=
-					(sySin((frame - PROCNE_ARRIVAL_FRAME) << 9) * size) >> 6;
+				wave.y += (sySin((frm - PROCNE_ARRIVAL_TICK) << 9) * size) >> 6;
 				wave.x += drift.x;
 				wave.y += drift.y;
 				drift.x /= 2;
@@ -371,37 +369,34 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 				place.groundHeight = 0;
 				/* Sprite i stands lower and higher by the same amount, which
 				   cancel on the screen but give it a later draw slot. */
-				for(index = 0; index != PROCNE_SPRITES; index++) {
-					place.x =
-						toFIXED(Procne_GridX[index]) + wave.x + toFIXED(40);
-					place.height = toFIXED(255) + index * toFIXED(64);
-					place.y =
-						toFIXED(Procne_GridY[index] + index * 64) + wave.y;
+				for(idx = 0; idx != PROCNE_SPRITES; idx++) {
+					place.x = toFIXED(ProcneGridX[idx]) + wave.x + toFIXED(40);
+					place.height = toFIXED(255) + idx * toFIXED(64);
+					place.y = toFIXED(ProcneGridY[idx] + idx * 64) + wave.y;
 					fdRenderApplyProjectedPlacementStub(
-						(SPR *)state->sprs[index], &place.x, &scale.x, 0);
+						(SPR *)state->sprs[idx], &place.x, &scale.x, 0);
 				}
 
-				if(frame > 255) {
+				if(frm > 255) {
 					Sint32 launch;
 
-					depthOffset[2] = toFIXED(256);
+					depthOfs[2] = toFIXED(256);
 					arrived = 0;
-					depthOffset[0] = 0;
-					depthOffset[1] = 0;
+					depthOfs[0] = 0;
+					depthOfs[1] = 0;
 					syInitMatrix();
-					syMatrixTranslateVector(depthOffset);
+					syMatrixTranslateVector(depthOfs);
 
 					/* Until the first comet, the sparks gather on Procne, each
-					   a part of its distance a frame; those that have arrived
+					   a part of its distance a tick; those that have arrived
 					   make one spark that grows with their number. */
-					if(frame < PROCNE_COMET_FRAME) {
-						for(index = 0; index != PROCNE_GATHERING_SPARKS;
-							index++) {
+					if(frm < PROCNE_COMET_TICK) {
+						for(idx = 0; idx != PROCNE_GATHERING_SPARKS; idx++) {
 							Sint32 xx;
 							Sint32 yy;
 							Sint32 zz;
 
-							point = &state->particles[index];
+							point = &state->particles[idx];
 							xx = (point->x >> 8) * (point->x >> 8);
 							yy = (point->y >> 8) * (point->y >> 8);
 							zz = (point->z >> 8) * (point->z >> 8);
@@ -431,7 +426,7 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 							moteSize = arrived / 10 + 1;
 							draw[1](canvas,
 								graphics +
-									BattleEffect_MotePictures[moteSize - 1],
+									BattleEffectMotePictures[moteSize - 1],
 								(FIXEDtoINT(wave.x) >> 1) - moteSize / 2 + 32,
 								FIXEDtoINT(wave.y) - moteSize - 4, moteSize,
 								moteSize * 2);
@@ -440,19 +435,18 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 
 					/* Each strike throws out sparks. */
 					for(slot = 0; slot != PROCNE_STRIKES; slot++) {
-						if(frame == Procne_Frames[slot]) {
+						if(frm == ProcneTicks[slot]) {
 							Sint32 speed;
-							Sint32 angle;
+							Sint32 ang;
 
-							for(index = 0; index != PROCNE_STRIKE_SPARKS;
-								index++) {
+							for(idx = 0; idx != PROCNE_STRIKE_SPARKS; idx++) {
 								speed = (syRandom() & 127) + 16;
-								angle = syRandom() & TRIG_ANGLE_MASK;
+								ang = syRandom() & TRIG_ANGLE_MASK;
 								spark =
 									&PARTICLES[slot * PROCNE_STRIKE_SPARK_ROWS +
-										index];
-								spark->velX = (sySin(angle) * speed) >> 6;
-								spark->velY = -(syCos(angle) * speed) >> 6;
+										idx];
+								spark->velX = (sySin(ang) * speed) >> 6;
+								spark->velY = -(syCos(ang) * speed) >> 6;
 								/* BUG: the random depth speed is stored over
 								   velocityY, not in velocityZ as the other
 								   bursts store it, and z moves by velocityY:
@@ -469,14 +463,14 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 						}
 
 						/* Inside the strikes' loop, so the sparks move and fade
-						   four steps a frame. */
-						if(frame >= Procne_Frames[0]) {
+						   four steps a tick. */
+						if(frm >= ProcneTicks[0]) {
 							spark = PARTICLES;
-							for(index = 0; index !=
+							for(idx = 0; idx !=
 								PROCNE_STRIKES * PROCNE_STRIKE_SPARK_ROWS;
-								index++) {
-								if(spark[index].variant > 0) {
-									syCalcPoint(&spark[index].x, &screen.x);
+								idx++) {
+								if(spark[idx].variant > 0) {
+									syCalcPoint(&spark[idx].x, &screen.x);
 									screen.x = (FIXEDtoINT(screen.x) >> 1) + 32;
 									screen.y = FIXEDtoINT(screen.y) + 56;
 									screen.depth = FIXEDtoINT(screen.depth);
@@ -486,14 +480,14 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 										PROCNE_SPARK_SIZE(screen.depth, 3);
 									EFFECT_DRAW_MOTE(draw[0], canvas, graphics,
 										screen.x, screen.y, moteSize);
-									spark[index].x += spark[index].velX;
-									spark[index].y += spark[index].velY;
+									spark[idx].x += spark[idx].velX;
+									spark[idx].y += spark[idx].velY;
 #if FIX_PROCNE_SPARK_DEPTH
-									spark[index].z += spark[index].velZ;
+									spark[idx].z += spark[idx].velZ;
 #else
-									spark[index].z += spark[index].velY;
+									spark[idx].z += spark[idx].velY;
 #endif
-									spark[index].variant--;
+									spark[idx].variant--;
 								}
 							}
 						}
@@ -501,12 +495,11 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 
 					/* The comets leave Procne one after another; each pushes it
 					   back and shakes the screen. */
-					for(index = 0; index != PROCNE_STRIKES; index++) {
-						comet =
-							&state->particles[index + PROCNE_COMET_PARTICLES];
+					for(idx = 0; idx != PROCNE_STRIKES; idx++) {
+						comet = &state->particles[idx + PROCNE_COMET_PARTICLES];
 						launch =
-							index * PROCNE_COMET_INTERVAL + PROCNE_COMET_FRAME;
-						if(frame == launch) {
+							idx * PROCNE_COMET_INTERVAL + PROCNE_COMET_TICK;
+						if(frm == launch) {
 							comet->x = (FIXEDtoINT(wave.x) >> 1) + 32;
 							comet->y = FIXEDtoINT(wave.y) - 4;
 							/* Where it leaves Procne, kept for the ring of
@@ -524,24 +517,24 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 							state->shakeFrm = 8;
 						}
 
-						if(frame >= launch) {
+						if(frm >= launch) {
 							Sint32 picture;
 
-							/* The comet grows over its first frames as it
+							/* The comet grows over its first ticks as it
 							   flies. */
-							picture = (frame - launch) / 2;
+							picture = (frm - launch) / 2;
 							if(picture > 2)
 								picture = 2;
 							draw[1](canvas,
-								state->sheet + Procne_Pictures[picture],
+								state->sheet + ProcnePictures[picture],
 								comet->x,
-								comet->y - Procne_PictureBiasY[picture],
-								Procne_PictureWidths[picture],
-								Procne_PictureHeights[picture]);
+								comet->y - ProcnePictureBiasY[picture],
+								ProcnePictureWidths[picture],
+								ProcnePictureHeights[picture]);
 							comet->x -= 8;
 							comet->y += 2;
 
-							if(frame < launch + 8) {
+							if(frm < launch + 8) {
 								/* A ring of light grows where the comet left
 								   Procne. */
 								syRotZ(-DEGtoANG(11.25));
@@ -564,12 +557,12 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 									btEffectPosProjectPoint(world, &screen);
 									screen.x = (FIXEDtoINT(screen.x) >> 1) +
 										state
-											->particles[index +
+											->particles[idx +
 												PROCNE_COMET_PARTICLES]
 											.velX;
 									screen.y = FIXEDtoINT(screen.y) +
 										state
-											->particles[index +
+											->particles[idx +
 												PROCNE_COMET_PARTICLES]
 											.velY;
 									screen.depth = FIXEDtoINT(screen.depth);
@@ -586,25 +579,25 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 				}
 			}
 
-			EFFECT_END_FRAME(state);
+			EFFECT_END_TICK(state);
 		}
 
 		EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
-		EFFECT_FOR_EACH_TARGET(index, args) {
+		EFFECT_FOR_EACH_TARGET(idx, args) {
 			MOTION_OBJECT *battler;
 
-			battleObject = btObjectGetStub(args->tgts[index]);
+			battleObject = btObjectGetStub(args->tgts[idx]);
 			battler = battleObject->obj;
-			battler->x = home[index].x;
-			battler->z = home[index].y;
-			battler->ang = baseAngle[index];
+			battler->x = home[idx].x;
+			battler->z = home[idx].y;
+			battler->ang = baseAng[idx];
 		}
 		ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X;
 		btEffectSetupBlendedDisp();
 
-		for(index = 0; index != PROCNE_SPRITES; index++) {
-			fdSprDestroyStub(state->sprs[index]);
+		for(idx = 0; idx != PROCNE_SPRITES; idx++) {
+			fdSprDestroyStub(state->sprs[idx]);
 		}
 
 		EFFECT_FINISH_CANVAS();
@@ -612,10 +605,10 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 }
 
 #undef MODULO_THREE
-#undef PROCNE_FRAMES
-#undef PROCNE_ARRIVAL_FRAME
-#undef PROCNE_DROP_FRAME
-#undef PROCNE_COMET_FRAME
+#undef PROCNE_TICKS
+#undef PROCNE_ARRIVAL_TICK
+#undef PROCNE_DROP_TICK
+#undef PROCNE_COMET_TICK
 #undef PROCNE_COMET_INTERVAL
 #undef PROCNE_SPRITES
 #undef PROCNE_WHIRLWIND_WIDTH
@@ -662,36 +655,36 @@ void btEffectRunTiamat(BATTLE_EFFECT_PARM *args)
 	btEffectRunDragonFire(args, DRAGON_FIRE_TIAMAT);
 }
 
-#define DRAGON_FIRE_FRAMES			208
+#define DRAGON_FIRE_TICKS		   208
 /* The breath of fire, then the flash that ends it. */
-#define DRAGON_FIRE_BREATH_FRAME	128
-#define DRAGON_FIRE_FLASH_FRAME		160
-#define DRAGON_FIRE_FLASH_END_FRAME 176
-#define DRAGON_FIRE_TIAMAT_SPRITES	8  /* the sprites that draw Tiamat */
-#define DRAGON_FIRE_FIREBALLS		16 /* falling fireballs */
-#define DRAGON_FIRE_FIRST_FIREBALL	24 /* the first in state->particles */
-#define DRAGON_FIRE_FIRST_SPARK		40 /* the first spark in state->particles */
-#define DRAGON_FIRE_EMBERS			512 /* embers in PARTICLES */
-#define DRAGON_FIRE_BREATH			24 /* puffs of breath, state->particles 0 to 23 */
-#define DRAGON_FIRE_SPARKS			24 /* sparks, state->particles 40 to 63 */
+#define DRAGON_FIRE_BREATH_TICK	   128
+#define DRAGON_FIRE_FLASH_TICK	   160
+#define DRAGON_FIRE_FLASH_END_TICK 176
+#define DRAGON_FIRE_TIAMAT_SPRITES 8   /* the sprites that draw Tiamat */
+#define DRAGON_FIRE_FIREBALLS	   16  /* falling fireballs */
+#define DRAGON_FIRE_FIRST_FIREBALL 24  /* the first in state->particles */
+#define DRAGON_FIRE_FIRST_SPARK	   40  /* the first spark in state->particles */
+#define DRAGON_FIRE_EMBERS		   512 /* embers in PARTICLES */
+#define DRAGON_FIRE_BREATH		   24 /* puffs of breath, state->particles 0 to 23 */
+#define DRAGON_FIRE_SPARKS		   24 /* sparks, state->particles 40 to 63 */
 /* The flames a fireball burns with where it lands, in the sprite sheet. */
-#define DRAGON_FIRE_FLAME_PICTURES	12288
-/* A puff of breath shows the flash burst's six pictures, four frames each. */
-#define DRAGON_FIRE_PUFF_PICTURES	6
-#define DRAGON_FIRE_PUFF_FRAMES		4
-/* A landed fireball's flame burns through its six pictures, two frames each,
+#define DRAGON_FIRE_FLAME_PICTURES 12288
+/* A puff of breath shows the flash burst's six pictures, four ticks each. */
+#define DRAGON_FIRE_PUFF_PICTURES  6
+#define DRAGON_FIRE_PUFF_TICKS	   4
+/* A landed fireball's flame burns through its six pictures, two ticks each,
    over and over. */
-#define DRAGON_FIRE_BURN_PICTURES	6
-#define DRAGON_FIRE_BURN_FRAMES		2
-#define DRAGON_FIRE_SPARK_LIFE		48	/* frames a spark flies */
-#define DRAGON_FIRE_EMBER_LIFE		256 /* frames an ember rises */
-/* The level the canvas is cleared to each frame of the flash, until its last
-   two frames turn it CANVAS_LEVEL_BRIGHTEST. */
-#define DRAGON_FIRE_FLASH_LEVEL		16
+#define DRAGON_FIRE_BURN_PICTURES  6
+#define DRAGON_FIRE_BURN_TICKS	   2
+#define DRAGON_FIRE_SPARK_LIFE	   48  /* ticks a spark flies */
+#define DRAGON_FIRE_EMBER_LIFE	   256 /* ticks an ember rises */
+/* The level the canvas is cleared to each tick of the flash, until its last
+   two ticks turn it CANVAS_LEVEL_BRIGHTEST. */
+#define DRAGON_FIRE_FLASH_LEVEL	   16
 /* A spark's heading is a random one from DRAGON_FIRE_HEADING, about 110
    degrees, to an eighth of a turn past it; a puff of breath's from about 110
    degrees the other way. */
-#define DRAGON_FIRE_HEADING			20000
+#define DRAGON_FIRE_HEADING		   20000
 
 /* Tiamat's pieces (state->sprs), each showing its own picture of the sprite
    sheet: piece n shows animation n. As it breathes, its head, horns, jaw and
@@ -723,7 +716,7 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	void				*canvas;
 	BATTLE_CAMERA		*camera;
 	BATTLE_EFFECT_STATE *state;
-	Sint32				 frame;
+	Sint32				 frm;
 	Uint8				*sheet;
 	Sint32				 i;
 
@@ -748,12 +741,12 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	{
 		POINT2_D focus;
 		Sint32	 dir;
-		Sint32	 twoPartTarget;
+		Sint32	 twoPartTgt;
 
-		twoPartTarget = 0;
+		twoPartTgt = 0;
 		if(btObjectGetStub(args->tgts[0])->obj->recordStorageKind ==
 			ACTOR_SPRITE_GROUP)
-			twoPartTarget = 1;
+			twoPartTgt = 1;
 
 		if(mode == DRAGON_FIRE_TIAMAT)
 			dir = 1;
@@ -773,7 +766,7 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				origin.x = 44;
 		}
 
-		if(twoPartTarget == 1) {
+		if(twoPartTgt == 1) {
 			focus.x = toFIXED(220);
 			focus.y = -toFIXED(52);
 		} else {
@@ -799,10 +792,10 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			btEffectCreateSprs(DRAGON_FIRE_TIAMAT_SPRITES, SPRITE_TIAMAT, 2);
 		}
 
-		for(frame = 0; frame != DRAGON_FIRE_FRAMES; frame++) {
+		for(frm = 0; frm != DRAGON_FIRE_TICKS; frm++) {
 			/* A or B skips to the flash. */
-			if((PerWork.repeat & (KEY_A | KEY_B)) && frame > 48 &&
-				frame < DRAGON_FIRE_FLASH_FRAME) {
+			if((PerWork.repeat & (KEY_A | KEY_B)) && frm > 48 &&
+				frm < DRAGON_FIRE_FLASH_TICK) {
 				/* What the breath would have done: Tiamat opens its jaws and
 				   the targets reel. */
 				if(mode == DRAGON_FIRE_TIAMAT) {
@@ -820,36 +813,36 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						POSE_DAMAGE, TINT_KEEP, 0);
 					btMotionApplyKnockbackStub(args->tgts[i], KNOCKBACK_HURL);
 				}
-				frame = DRAGON_FIRE_FLASH_FRAME;
+				frm = DRAGON_FIRE_FLASH_TICK;
 			}
 			EFFECT_VIEW_FROM_CAMERA(camera);
-			if(frame == 178)
+			if(frm == 178)
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
-			if(frame == DRAGON_FIRE_BREATH_FRAME)
+			if(frm == DRAGON_FIRE_BREATH_TICK)
 				state->transferValue = CANVAS_FADE_HALF;
-			if(frame == DRAGON_FIRE_FLASH_END_FRAME) {
+			if(frm == DRAGON_FIRE_FLASH_END_TICK) {
 				EFFECT_SET_TRANSFER(
 					state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
 				syWordsCopyEntry((void *)BG_PLTT,
 					syResourceGetTableEntry(RESOURCE_EMBER_STREAK_SHEET),
 					SHEET_PALETTE_BYTES);
-			} else if(frame >= DRAGON_FIRE_FLASH_FRAME &&
-				frame < DRAGON_FIRE_FLASH_END_FRAME) {
+			} else if(frm >= DRAGON_FIRE_FLASH_TICK &&
+				frm < DRAGON_FIRE_FLASH_END_TICK) {
 				EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR,
 					CANVAS_FILL_WORD(DRAGON_FIRE_FLASH_LEVEL));
-				if(frame > 173)
+				if(frm > 173)
 					state->transferValue =
 						CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
 				btPaletteBrightenBgEntries(2, 2, 2);
 			}
 
 			/* Embers rise from the ground. */
-			if(frame >= 33 && frame < DRAGON_FIRE_FLASH_END_FRAME) {
+			if(frm >= 33 && frm < DRAGON_FIRE_FLASH_END_TICK) {
 				Sint32 spawned = 0;
 				Sint32 limit = 1;
 
-				if(frame > 103)
+				if(frm > 103)
 					limit = 8;
 				for(i = 0; i != DRAGON_FIRE_EMBERS; i++) {
 					PARTICLE *ember = &PARTICLES[i];
@@ -858,10 +851,10 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						ember->x = toFIXED((syRandom() & 255) - 32);
 						ember->y = toFIXED(112);
 						ember->velX =
-							((syRandom() & 127) + Tiamat_EmberSpeeds[i & 3])
+							((syRandom() & 127) + TiamatEmberSpeeds[i & 3])
 							<< 9;
 						ember->velY =
-							-((syRandom() & 127) + Tiamat_EmberSpeeds[i & 3])
+							-((syRandom() & 127) + TiamatEmberSpeeds[i & 3])
 							<< 11;
 						ember->variant = 0;
 						spawned++;
@@ -872,21 +865,21 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 
 			/* Sparks fly up from Tiamat's head. */
-			if(frame >= 41 && frame < DRAGON_FIRE_BREATH_FRAME) {
+			if(frm >= 41 && frm < DRAGON_FIRE_BREATH_TICK) {
 				Sint32 spawned = 0;
 
-				if(frame & 1) {
+				if(frm & 1) {
 					for(i = 0; i != DRAGON_FIRE_SPARKS; i++) {
 						PARTICLE *spark =
 							&state->particles[DRAGON_FIRE_FIRST_SPARK + i];
 
 						if(spark->variant == -1) {
 							Sint32 speed = (syRandom() & 255) + 128;
-							Sint32 angle =
+							Sint32 ang =
 								(syRandom() & 0x1fff) + DRAGON_FIRE_HEADING;
 
 							if(mode == DRAGON_FIRE_TIAMAT) {
-								if(twoPartTarget == 1) {
+								if(twoPartTgt == 1) {
 									spark->x =
 										INTtoFIXED((syRandom() & 7) + 78);
 									spark->y = toFIXED(78);
@@ -900,8 +893,8 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 									toFIXED((syRandom() & 7) + origin.x - 8);
 								spark->y = toFIXED(origin.y);
 							}
-							spark->velX = speed * sySin(angle) >> 9;
-							spark->velY = speed * syCos(angle) >> 9;
+							spark->velX = speed * sySin(ang) >> 9;
+							spark->velY = speed * syCos(ang) >> 9;
 							spark->variant = 0;
 							spawned++;
 							if(spawned == 1)
@@ -910,14 +903,14 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					}
 				}
 			}
-			if(frame == 48)
+			if(frm == 48)
 				sySndPlayStub(SE_RUMBLE);
-			if(frame == DRAGON_FIRE_BREATH_FRAME)
+			if(frm == DRAGON_FIRE_BREATH_TICK)
 				sySndPlayStub(SE_CRASH);
 
 			/* Breath: puffs of fire thrown across the targets. */
-			if(frame > DRAGON_FIRE_BREATH_FRAME &&
-				frame < DRAGON_FIRE_FLASH_END_FRAME) {
+			if(frm > DRAGON_FIRE_BREATH_TICK &&
+				frm < DRAGON_FIRE_FLASH_END_TICK) {
 				Sint32 spawned = 0;
 
 				for(i = 0; i != DRAGON_FIRE_BREATH; i++) {
@@ -925,11 +918,11 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 					if(puff->variant == -1) {
 						Sint32 speed = (syRandom() & 255) + 128;
-						Sint32 angle =
+						Sint32 ang =
 							(syRandom() & 0x1fff) - DRAGON_FIRE_HEADING;
 
 						if(mode == DRAGON_FIRE_TIAMAT) {
-							if(twoPartTarget == 1) {
+							if(twoPartTgt == 1) {
 								puff->x = toFIXED(72);
 								puff->y = toFIXED(72);
 							} else {
@@ -940,8 +933,8 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							puff->x = toFIXED(origin.x);
 							puff->y = toFIXED(origin.y);
 						}
-						puff->velX = speed * sySin(angle) >> 6;
-						puff->velY = speed * syCos(angle) >> 6;
+						puff->velX = speed * sySin(ang) >> 6;
+						puff->velY = speed * syCos(ang) >> 6;
 						puff->variant = 0;
 						spawned++;
 						if(spawned == 1)
@@ -950,7 +943,7 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				}
 			}
 
-			if(frame < DRAGON_FIRE_FLASH_END_FRAME) {
+			if(frm < DRAGON_FIRE_FLASH_END_TICK) {
 				for(i = 0; i != DRAGON_FIRE_BREATH; i++) {
 					PARTICLE *puff = &state->particles[i];
 
@@ -967,7 +960,7 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						puff->y += puff->velY;
 						puff->variant++;
 						if(puff->variant ==
-							DRAGON_FIRE_PUFF_PICTURES * DRAGON_FIRE_PUFF_FRAMES)
+							DRAGON_FIRE_PUFF_PICTURES * DRAGON_FIRE_PUFF_TICKS)
 							puff->variant = -1;
 					}
 				}
@@ -979,7 +972,7 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				Sint32 size = 1;
 
 				if(spark->variant >= 0) {
-					draw[1](canvas, Tiamat_SparkPixels,
+					draw[1](canvas, TiamatSparkPixels,
 						FIXED_INTEGER_PART(spark->x),
 						FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
 					spark->x += spark->velX * dir;
@@ -992,21 +985,21 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 
 			/* Embers rise, then curve away. */
-			if(frame < DRAGON_FIRE_FLASH_END_FRAME) {
+			if(frm < DRAGON_FIRE_FLASH_END_TICK) {
 				for(i = 0; i != DRAGON_FIRE_EMBERS; i++) {
 					PARTICLE *ember = &PARTICLES[i];
 
 					if(ember->variant >= 0) {
-						Uint8 size = Tiamat_EmberSizes[i & 3];
+						Uint8 size = TiamatEmberSizes[i & 3];
 
 						draw[0](canvas,
-							sheet + BattleEffect_MotePictures[size - 1],
+							sheet + BattleEffectMotePictures[size - 1],
 							FIXED_INTEGER_PART(ember->x) - size / 2,
 							FIXED_INTEGER_PART(ember->y) - size, size,
 							size * 2);
 						ember->x += ember->velX * dir;
 						ember->y += ember->velY;
-						if(frame > DRAGON_FIRE_BREATH_FRAME) {
+						if(frm > DRAGON_FIRE_BREATH_TICK) {
 							if(i & 1)
 								ember->velX += -toFIXED(1) / 2;
 							else
@@ -1021,18 +1014,18 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				}
 			}
 
-			if(frame == DRAGON_FIRE_BREATH_FRAME)
+			if(frm == DRAGON_FIRE_BREATH_TICK)
 				state->shakeFrm = 48;
-			if(mode == DRAGON_FIRE_TIAMAT && frame == 48)
+			if(mode == DRAGON_FIRE_TIAMAT && frm == 48)
 				state->shakeFrm = 8;
 
 			/* Tiamat swoops down. */
-			if(frame >= 40 && frame <= 47) {
+			if(frm >= 40 && frm <= 47) {
 				focus.x += -toFIXED(8);
 				focus.y += toFIXED(16);
 			}
 			if(mode == DRAGON_FIRE_TIAMAT) {
-				if(frame == DRAGON_FIRE_BREATH_FRAME) {
+				if(frm == DRAGON_FIRE_BREATH_TICK) {
 					fdSprStartAnimationStub(
 						state->sprs[TIAMAT_HEAD], TIAMAT_HEAD_BREATHING);
 					fdSprStartAnimationStub(
@@ -1042,7 +1035,7 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					fdSprStartAnimationStub(
 						state->sprs[TIAMAT_THROAT], TIAMAT_THROAT_BREATHING);
 				}
-				if(frame == DRAGON_FIRE_FLASH_END_FRAME) {
+				if(frm == DRAGON_FIRE_FLASH_END_TICK) {
 					fdSprStartAnimationStub(
 						state->sprs[TIAMAT_HEAD], TIAMAT_HEAD);
 					fdSprStartAnimationStub(
@@ -1052,14 +1045,14 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					fdSprStartAnimationStub(
 						state->sprs[TIAMAT_THROAT], TIAMAT_THROAT);
 				}
-				if(twoPartTarget == 1)
+				if(twoPartTgt == 1)
 					btEffectPlaceFormationSprs(
 						SUMMON_FORMATION_TIAMAT_ALTERNATE, focus.x, focus.y);
 				else
 					btEffectPlaceFormationSprs(
 						SUMMON_FORMATION_TIAMAT, focus.x, focus.y);
 			}
-			if(frame == 138) {
+			if(frm == 138) {
 				EFFECT_FOR_EACH_TARGET(i, args) {
 					btEffectTintBattler(args->tgts[i], SPRITE_COLOR_RED_TINT,
 						POSE_DAMAGE, TINT_KEEP, 0);
@@ -1067,7 +1060,7 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				}
 			}
 
-			if(frame < DRAGON_FIRE_FLASH_END_FRAME) {
+			if(frm < DRAGON_FIRE_FLASH_END_TICK) {
 				for(i = 0; i != DRAGON_FIRE_FIREBALLS; i++) {
 					PARTICLE *fireball =
 						&state->particles[DRAGON_FIRE_FIRST_FIREBALL + i];
@@ -1075,33 +1068,33 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					if(fireball->y > 55) {
 						if(fireball->variant >= 0 &&
 							fireball->variant < DRAGON_FIRE_BURN_PICTURES *
-									DRAGON_FIRE_BURN_FRAMES) {
+									DRAGON_FIRE_BURN_TICKS) {
 							Sint32 picture =
-								fireball->variant / DRAGON_FIRE_BURN_FRAMES;
+								fireball->variant / DRAGON_FIRE_BURN_TICKS;
 
 							draw[0](canvas,
 								state->sheet +
-									Tiamat_EmberStreakPictures[picture] +
+									TiamatEmberStreakPictures[picture] +
 									DRAGON_FIRE_FLAME_PICTURES,
 								fireball->x -
-									Tiamat_EmberStreakWidths[picture] / 2,
-								fireball->y + Tiamat_EmberStreakBiasY[picture],
-								Tiamat_EmberStreakWidths[picture],
-								Tiamat_EmberStreakHeights[picture]);
+									TiamatEmberStreakWidths[picture] / 2,
+								fireball->y + TiamatEmberStreakBiasY[picture],
+								TiamatEmberStreakWidths[picture],
+								TiamatEmberStreakHeights[picture]);
 						}
 						fireball->variant++;
 						if(fireball->variant ==
-							DRAGON_FIRE_BURN_PICTURES * DRAGON_FIRE_BURN_FRAMES)
+							DRAGON_FIRE_BURN_PICTURES * DRAGON_FIRE_BURN_TICKS)
 							fireball->variant = 0;
 					} else if(fireball->variant == 0) {
 						Sint32 size = MOTE_PICTURES;
 
 						fireball->x -= dir * 6;
 						fireball->y += 6;
-						if(frame <= 47 && fireball->y > 55)
+						if(frm <= 47 && fireball->y > 55)
 							sySndPlayStub(SE_WHOOSH);
 						draw[0](canvas,
-							sheet + BattleEffect_MotePictures[size - 1],
+							sheet + BattleEffectMotePictures[size - 1],
 							fireball->x - size / 2, fireball->y + 30, size,
 							size * 2);
 					} else {
@@ -1110,13 +1103,13 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				}
 			}
 			btCameraShake(8, 8);
-			EFFECT_END_FRAME(state);
+			EFFECT_END_TICK(state);
 		}
 
 		syCloseEvent(btEffectTransferCanvas);
 		EFFECT_RELEASE_BLITTERS();
 		if(mode == DRAGON_FIRE_TIAMAT) {
-			if(twoPartTarget == 1)
+			if(twoPartTgt == 1)
 				btEffectRunImpactBurst(
 					SUMMON_FORMATION_TIAMAT_ALTERNATE, focus.x, focus.y);
 			else
@@ -1131,10 +1124,10 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	btEffectEndCanvasLayer();
 }
 
-#undef DRAGON_FIRE_FRAMES
-#undef DRAGON_FIRE_BREATH_FRAME
-#undef DRAGON_FIRE_FLASH_FRAME
-#undef DRAGON_FIRE_FLASH_END_FRAME
+#undef DRAGON_FIRE_TICKS
+#undef DRAGON_FIRE_BREATH_TICK
+#undef DRAGON_FIRE_FLASH_TICK
+#undef DRAGON_FIRE_FLASH_END_TICK
 #undef DRAGON_FIRE_TIAMAT_SPRITES
 #undef DRAGON_FIRE_FIREBALLS
 #undef DRAGON_FIRE_FIRST_FIREBALL
@@ -1144,9 +1137,9 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 #undef DRAGON_FIRE_SPARKS
 #undef DRAGON_FIRE_FLAME_PICTURES
 #undef DRAGON_FIRE_PUFF_PICTURES
-#undef DRAGON_FIRE_PUFF_FRAMES
+#undef DRAGON_FIRE_PUFF_TICKS
 #undef DRAGON_FIRE_BURN_PICTURES
-#undef DRAGON_FIRE_BURN_FRAMES
+#undef DRAGON_FIRE_BURN_TICKS
 #undef DRAGON_FIRE_SPARK_LIFE
 #undef DRAGON_FIRE_EMBER_LIFE
 #undef DRAGON_FIRE_FLASH_LEVEL

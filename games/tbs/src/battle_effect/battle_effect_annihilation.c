@@ -1,23 +1,23 @@
 /* Annihilation. Part of battle_effect.c. */
 
-#define ANNIHILATION_FRAMES			  64
-#define ANNIHILATION_SHARDS			  64
-/* The first four shards' life in frames; each four after live two frames
+#define ANNIHILATION_TICKS			 64
+#define ANNIHILATION_SHARDS			 64
+/* The first four shards' life in ticks; each four after live two ticks
    longer. */
-#define ANNIHILATION_SHARD_LIFE		  16
-/* The fire streak in front of the user, its pictures a frame each from here,
+#define ANNIHILATION_SHARD_LIFE		 16
+/* The fire streak in front of the user, its pictures a tick each from here,
    and the target's first red flash. */
-#define ANNIHILATION_STREAK_FRAME	  6
-#define ANNIHILATION_STREAK_PICTURES  6
+#define ANNIHILATION_STREAK_TICK	 6
+#define ANNIHILATION_STREAK_PICTURES 6
 /* The white flash, the damage and the knock-back. */
-#define ANNIHILATION_HIT_FRAME		  8
-#define ANNIHILATION_FLASH_FRAME	  14 /* the target's second red flash */
-/* The fire burst over the target, from ANNIHILATION_BURST_FRAME to
-   ANNIHILATION_BURST_LAST_FRAME: three pictures two frames each, the last
+#define ANNIHILATION_HIT_TICK		 8
+#define ANNIHILATION_FLASH_TICK		 14 /* the target's second red flash */
+/* The fire burst over the target, from ANNIHILATION_BURST_TICK to
+   ANNIHILATION_BURST_LAST_TICK: three pictures two ticks each, the last
    held. */
-#define ANNIHILATION_BURST_FRAME	  16
-#define ANNIHILATION_BURST_LAST_FRAME 47
-#define ANNIHILATION_BURST_PICTURES	  3
+#define ANNIHILATION_BURST_TICK		 16
+#define ANNIHILATION_BURST_LAST_TICK 47
+#define ANNIHILATION_BURST_PICTURES	 3
 
 /* The user closes on the first target and fire bursts from it in a shower of
    shards, the flames settling into the kanji for destroy over it (the stronger
@@ -30,14 +30,14 @@ void btEffectRunAnnihilation(BATTLE_EFFECT_PARM *args)
 	void				*canvas;
 	Uint8				*particleSheet;
 	BATTLE_CAMERA		*camera;
-	ACTOR				*targetActor;
+	ACTOR				*tgtActor;
 	PARTICLE			*shard;
-	SCREEN_POINT		 position;
+	SCREEN_POINT		 pos;
 	SCREEN_POINT		 origin;
 	SCREEN_POINT		 out;
 	DRAW_RECTANGLE		 blitters[2];
 	Sint32				 i;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 size;
 	Uint8				*burstPixels;
 
@@ -54,14 +54,14 @@ void btEffectRunAnnihilation(BATTLE_EFFECT_PARM *args)
 		RESOURCE_YELLOW_GLOW_SHEET, particleSheet, 0, 0);
 	btMotionApproachTargetStub(state->args->user, state->args->tgts[0], 4, 0);
 	sySynch(1);
-	targetActor = btObjectGetStub(state->args->tgts[0])->actor;
+	tgtActor = btObjectGetStub(state->args->tgts[0])->actor;
 
 	for(i = 0; i != ANNIHILATION_SHARDS; i++) {
 		/* Shards burst from the target. */
 		PARTICLE *seed = &state->particles[i];
 
-		SET_POSITION(seed, targetActor->x.fixed, targetActor->y.fixed,
-			targetActor->z.fixed);
+		SET_POSITION(
+			seed, tgtActor->x.fixed, tgtActor->y.fixed, tgtActor->z.fixed);
 		SET_VELOCITY(seed, (syRandom() & 255) << 11,
 			((syRandom() & 255) - 127) << 12, ((syRandom() & 255) - 127) << 12);
 		if(seed->x > 0)
@@ -74,16 +74,16 @@ void btEffectRunAnnihilation(BATTLE_EFFECT_PARM *args)
 	EFFECT_SET_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-	for(frame = 0; frame != ANNIHILATION_FRAMES; frame++) {
-		if(frame == ANNIHILATION_HIT_FRAME)
+	for(frm = 0; frm != ANNIHILATION_TICKS; frm++) {
+		if(frm == ANNIHILATION_HIT_TICK)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 		if(state->args->variant != EFFECT_VARIANT_BASIC &&
-			frame == ANNIHILATION_HIT_FRAME)
+			frm == ANNIHILATION_HIT_TICK)
 			sySndPlayStub(SE_POWER_UP);
-		btProjectionScaledUnit(state->args->user, &position);
+		btProjectionScaledUnit(state->args->user, &pos);
 		/* The fire streak in front of the user. */
-		if(frame >= ANNIHILATION_STREAK_FRAME &&
-			frame < ANNIHILATION_STREAK_FRAME + ANNIHILATION_STREAK_PICTURES) {
+		if(frm >= ANNIHILATION_STREAK_TICK &&
+			frm < ANNIHILATION_STREAK_TICK + ANNIHILATION_STREAK_PICTURES) {
 			if(state->args->side == EFFECT_SIDE_ENEMIES)
 				EFFECT_LOAD_BLITTER(
 					HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
@@ -94,23 +94,23 @@ void btEffectRunAnnihilation(BATTLE_EFFECT_PARM *args)
 			if(state->args->side == EFFECT_SIDE_ENEMIES)
 				blitters[0](canvas,
 					state->sheet +
-						(frame - ANNIHILATION_STREAK_FRAME) *
+						(frm - ANNIHILATION_STREAK_TICK) *
 							PICTURE_BYTES(FIRE_STREAK),
-					position.x / 2 - FIRE_STREAK_WIDTH / 2, position.y - 24,
+					pos.x / 2 - FIRE_STREAK_WIDTH / 2, pos.y - 24,
 					FIRE_STREAK_WIDTH, FIRE_STREAK_HEIGHT);
 			else
 				blitters[0](canvas,
 					state->sheet +
-						(frame - ANNIHILATION_STREAK_FRAME) *
+						(frm - ANNIHILATION_STREAK_TICK) *
 							PICTURE_BYTES(FIRE_STREAK),
-					position.x / 2, position.y - 24, FIRE_STREAK_WIDTH,
+					pos.x / 2, pos.y - 24, FIRE_STREAK_WIDTH,
 					FIRE_STREAK_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 		}
 		/* The fire burst over the target grows. */
-		if(frame >= ANNIHILATION_BURST_FRAME &&
-			frame <= ANNIHILATION_BURST_LAST_FRAME) {
-			Sint32 step = (frame - ANNIHILATION_BURST_FRAME) / 2;
+		if(frm >= ANNIHILATION_BURST_TICK &&
+			frm <= ANNIHILATION_BURST_LAST_TICK) {
+			Sint32 step = (frm - ANNIHILATION_BURST_TICK) / 2;
 			Sint32 strip;
 
 			EFFECT_LOAD_BLITTER(
@@ -134,13 +134,13 @@ void btEffectRunAnnihilation(BATTLE_EFFECT_PARM *args)
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 		}
 		/* The strike flashes the canvas. */
-		if(frame == ANNIHILATION_HIT_FRAME) {
+		if(frm == ANNIHILATION_HIT_TICK) {
 			DMA_FILL32(
 				CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST), canvas, CANVAS_BYTES);
 		}
 		EFFECT_VIEW_FROM_CAMERA(camera);
 		/* Shards shrink and fall. */
-		if(frame > 3) {
+		if(frm > 3) {
 			btEffectBuildCanvasBlitters(state->args->side, blitters);
 			for(i = 0; i != ANNIHILATION_SHARDS; i++) {
 				Sint32 life;
@@ -161,30 +161,30 @@ void btEffectRunAnnihilation(BATTLE_EFFECT_PARM *args)
 			EFFECT_RELEASE_BLITTERS();
 		}
 		/* The strike throws the target back. */
-		if(frame == ANNIHILATION_HIT_FRAME) {
+		if(frm == ANNIHILATION_HIT_TICK) {
 			btMotionApplyKnockbackStub(state->args->tgts[0], KNOCKBACK_HURL);
 			state->shakeFrm = 4;
 		}
-		if(frame == ANNIHILATION_STREAK_FRAME)
+		if(frm == ANNIHILATION_STREAK_TICK)
 			btEffectTintBattler(state->args->tgts[0], SPRITE_COLOR_RED_TINT,
 				TINT_KEEP, TINT_KEEP, 0);
-		if(frame == ANNIHILATION_FLASH_FRAME)
+		if(frm == ANNIHILATION_FLASH_TICK)
 			btEffectTintBattler(state->args->tgts[0], SPRITE_COLOR_RED_TINT,
 				TINT_KEEP, TINT_KEEP, 0);
 		btCameraShake(16, 16);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 	syCloseEvent(btEffectTransferCanvas);
 	btEffectEndCanvasLayer();
 }
 
-#undef ANNIHILATION_FRAMES
+#undef ANNIHILATION_TICKS
 #undef ANNIHILATION_SHARDS
 #undef ANNIHILATION_SHARD_LIFE
-#undef ANNIHILATION_STREAK_FRAME
+#undef ANNIHILATION_STREAK_TICK
 #undef ANNIHILATION_STREAK_PICTURES
-#undef ANNIHILATION_HIT_FRAME
-#undef ANNIHILATION_FLASH_FRAME
-#undef ANNIHILATION_BURST_FRAME
-#undef ANNIHILATION_BURST_LAST_FRAME
+#undef ANNIHILATION_HIT_TICK
+#undef ANNIHILATION_FLASH_TICK
+#undef ANNIHILATION_BURST_TICK
+#undef ANNIHILATION_BURST_LAST_TICK
 #undef ANNIHILATION_BURST_PICTURES

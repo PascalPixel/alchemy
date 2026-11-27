@@ -11,11 +11,11 @@
 #include "field/metatile_target.h"
 #include "field/scene_tables.h"
 
-/* The frames the aerie's scJupiterLighthouseRaiseAngels takes to raise an angel
+/* The ticks the aerie's scJupiterLighthouseRaiseAngels takes to raise an angel
    and tilt the lid, and then to lift both angels and the lid off the well once
    both are shot. */
-#define ANGEL_RISE_FRAMES 64
-#define LID_LIFT_FRAMES	  256
+#define ANGEL_RISE_TICKS 64
+#define LID_LIFT_TICKS	 256
 
 /* The aerie's placed actors that its two scenes (SceneId_JupiterLighthouseAerie
    and SceneId_JupiterLighthouseAerieBeacon) number alike and
@@ -36,7 +36,7 @@ enum {
 
 struct EFFECT_OPTIONS;
 
-void syGameFlagSetByte(Sint32 flag, Sint32 value);
+void syGameFlagSetByte(Sint32 flg, Sint32 value);
 /* Hangs a vine from high above an actor down to its feet (fdHangingVinePlace,
    through the overlay's own import row). */
 void syImportHangingVinePlace(Sint32 id, Sint32 a);

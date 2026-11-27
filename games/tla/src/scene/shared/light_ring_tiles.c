@@ -5,7 +5,7 @@
 /* The ring's picture at 4 bits a pixel, 32 by 16, eight rows of a tile to */
 /* every two lines: each word is a row of a tile's eight pixels, a hex digit */
 /* each, the leftmost in the lowest digit. */
-Uint32 LightRing_Tiles[] = {
+Uint32 LightRingTiles[] = {
 	0, 0, 0, 0,
 	0, 0, 0x70000000, 0xf7700000,
 	0, 0, 0, 0,

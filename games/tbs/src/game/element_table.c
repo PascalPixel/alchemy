@@ -3,11 +3,11 @@
 
 #include "game/game.h"
 
-/* Class_SeriesByElements, read as [strongest * 4 + second], a row for each
+/* ClassSeriesByElements, read as [strongest * 4 + second], a row for each
    strongest element and a column for each second, in element order (Venus,
    Mercury, Mars, Jupiter). */
 /* clang-format off */
-const Sint32 Class_SeriesByElements[] = {
+const Sint32 ClassSeriesByElements[] = {
 	CLASS_SERIES_SQUIRE, CLASS_SERIES_SWORDSMAN, CLASS_SERIES_BRUTE, CLASS_SERIES_APPRENTICE,
 	CLASS_SERIES_SEER, CLASS_SERIES_WATER_SEER, CLASS_SERIES_PILGRIM, CLASS_SERIES_HERMIT,
 	CLASS_SERIES_BRUTE, CLASS_SERIES_SWORDSMAN, CLASS_SERIES_GUARD, CLASS_SERIES_APPRENTICE,
@@ -16,7 +16,7 @@ const Sint32 Class_SeriesByElements[] = {
 
 /* A character's base power and resistance in an element, by its whole element */
 /* level 0 to 15; gmUnitCalcBaseElements adds the level's tenths to both. */
-ELEMENT_LEVEL_BONUS Element_PowerResistByLevel[16]
+ELEMENT_LEVEL_BONUS ElementPowerResistByLevel[16]
 	__attribute__((section(".rodata"))) = {
 	{75, 85},   {80, 90},   {85, 95},   {90, 100},
 	{95, 105},  {100, 110}, {105, 115}, {110, 120},
@@ -26,7 +26,7 @@ ELEMENT_LEVEL_BONUS Element_PowerResistByLevel[16]
 
 /* The 44 enemy element presets, by ENEMY_DEFINITION.elementPreset; each is */
 /* named by the enemies that have it, in the English release's words. */
-const ENEMY_ELEMENT_PRESET Enemy_ElementPresetTable[] = {
+const ENEMY_ELEMENT_PRESET EnemyElementPresetTable[] = {
 	/* Unused: only ??? has it, and ??? is in no formation. */
 	[ELEMENT_PRESET_DEFAULT] = {
 		.attackElement = ELEMENT_NONE,
@@ -513,7 +513,7 @@ const ENEMY_ELEMENT_PRESET Enemy_ElementPresetTable[] = {
 	},
 };
 
-const Sint16 Element_PowerResistCurve[5][2] = {
+const Sint16 ElementPowerResistCurve[5][2] = {
 	{200, 256},
 	{100, 128},
 	{0, 0},

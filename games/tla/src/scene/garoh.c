@@ -50,13 +50,13 @@ void scGarohScatterDustRing(Sint32 id);
 #include "field/actor_script.h"
 #include "text/msg_ids.h"
 
-extern ACTOR_PLACE Garoh_VillageDayActorPlacements[];
-extern CUE		   Garoh_WayUpCues[];
+extern ACTOR_PLACE GarohVillageDayActorPlacements[];
+extern CUE		   GarohWayUpCues[];
 void			   scGarohWerewolvesRevealThemselves(void);
 void			   scGarohMahaTellsTheLegend(void);
 void			   scGarohInitVillage(void);
 void			   scGarohInitWayUp(void);
-extern Uint32	   Garoh_WerewolfLookAroundScript[];
+extern Uint32	   GarohWerewolfLookAroundScript[];
 Sint32			   scGarohMetWerewolves();
 void			   scGarohOpenDoorAndEnter(void);
 void			   scGarohWerewolfPeersFromCave(void);
@@ -74,19 +74,19 @@ void			   scGarohHideTunnelPassage(void);
 void			   scGarohHideCavePassage(void);
 void			   scGarohCrossLowerTwilightLine(void);
 void			   scGarohCrossUpperTwilightLine(void);
-extern Uint32	   FieldEffect_ShortScript[];
-extern Uint32	   FieldEffect_LongScript[];
-extern Sint32	   Garoh_ShrunkSpriteScript[];
-extern Sint16	   Garoh_DoorFrames[];
-extern Sint16	   Garoh_WideDoorFrames[];
-extern Sint16	   Garoh_TallDoorFrames[];
+extern Uint32	   FieldEffectShortScript[];
+extern Uint32	   FieldEffectLongScript[];
+extern Sint32	   GarohShrunkSpriteScript[];
+extern Sint16	   GarohDoorFrames[];
+extern Sint16	   GarohWideDoorFrames[];
+extern Sint16	   GarohTallDoorFrames[];
 void			   scGarohLashRope(void);
 /* BG2's horizontal offset for each screen line while the path's layer ripples
    by night (scGarohWavePathLayer). */
-Uint16 Garoh_WaveLines[DISPLAY_HEIGHT] BSS_DATA ALIGNED(16);
+Uint16 GarohWaveLines[DISPLAY_HEIGHT] BSS_DATA ALIGNED(16);
 
 /* The village's people by night and by day (SceneId_Garoh), numbering the rows
-   of Garoh_VillageActorPlacements and Garoh_VillageDayActorPlacements: the five
+   of GarohVillageActorPlacements and GarohVillageDayActorPlacements: the five
    who go hooded by night show their faces by day. */
 typedef enum GAROH_VILLAGE_ACTOR_ID {
 	/* By night he asks whether the party has seen a werewolf; by day he has
@@ -111,7 +111,7 @@ typedef enum GAROH_VILLAGE_ACTOR_ID {
 
 /* The path up to the village and the werewolves' cave (SceneId_GarohPath and
    SceneId_GarohWerewolfCave), numbering the rows of
-   Garoh_WerewolfCaveActorPlacements; GarohPath places the werewolf and Kraden
+   GarohWerewolfCaveActorPlacements; GarohPath places the werewolf and Kraden
    on the same rows. */
 typedef enum GAROH_WEREWOLF_ACTOR_ID {
 	ACTOR_WEREWOLF = ACTOR_FIRST_PLACED,
@@ -133,7 +133,7 @@ enum {
 };
 
 /* The stone pillars on the way up to the village (SceneId_GarohWayUp),
-   numbering the rows of Garoh_WayUpActorPlacements: Move or a push takes each
+   numbering the rows of GarohWayUpActorPlacements: Move or a push takes each
    onto the slot where it sinks. */
 typedef enum GAROH_WAY_UP_ACTOR_ID {
 	ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
@@ -227,7 +227,7 @@ void scGarohMatchSecondLayer(void)
 }
 
 /* By night the second map layer of the path up to the village ripples: each
-   line is offset by two sines of the frame count, handed to an HBlank DMA. */
+   line is offset by two sines of the tick count, handed to an HBlank DMA. */
 void scGarohWavePathLayer(void)
 {
 	Sint32 x;
@@ -235,16 +235,16 @@ void scGarohWavePathLayer(void)
 	   to. */
 	Sint32 (*sine)(Sint32) = *(Sint32 (**)(Sint32))(((Uint32)sySin & ~3) + 4);
 	MAP_LAYER *layer = fdMapGridGetLayer(1);
-	Uint16	  *line = Garoh_WaveLines;
+	Uint16	  *line = GarohWaveLines;
 
 	if(FieldStateWork->revealActive == 0) {
-		Uint32			 frame;
+		Uint32			 frm;
 		Sint32			 z;
 		Sint32			 i;
 		volatile Uint16 *dma;
 
 		layer->speedY = 0;
-		frame = (Uint8)FrameCount;
+		frm = (Uint8)TickCount;
 		i = 0;
 		/* FAKEMATCH(barrier): i and line held through an empty asm; as no
 		 * asm. */
@@ -258,8 +258,8 @@ void scGarohWavePathLayer(void)
 			   line turns them on by. */
 			Sint32 stepA = TRIG_TURN * 51 / 256;
 			Sint32 stepB = TRIG_TURN * 153 / 2048;
-			Sint32 a = z * stepA + frame * (TRIG_TURN / 64);
-			Sint32 b = z * stepB - frame * (TRIG_TURN / 64);
+			Sint32 a = z * stepA + frm * (TRIG_TURN / 64);
+			Sint32 b = z * stepB - frm * (TRIG_TURN / 64);
 
 			for(; i != DISPLAY_HEIGHT;) {
 				Sint32 s1 = sine(a);
@@ -274,7 +274,7 @@ void scGarohWavePathLayer(void)
 				b += stepB;
 			}
 		}
-		line = Garoh_WaveLines;
+		line = GarohWaveLines;
 		REG_BG2HOFS = line[0];
 		dma = REG_DMA0;
 		dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
@@ -285,8 +285,8 @@ void scGarohWavePathLayer(void)
 	}
 }
 
-extern Uint16 Garoh_PathDayColors[];
-extern Uint16 Garoh_PathNightColors[];
+extern Uint16 GarohPathDayColors[];
+extern Uint16 GarohPathNightColors[];
 
 /* Writes count colours from first on, from a table of red, green and blue
    halfwords, to the BG palette and the palette fade's source. */
@@ -304,11 +304,10 @@ extern Uint16 Garoh_PathNightColors[];
 	}
 
 /* By day the path's colours: BG palette 1's colours 8 to 15. */
-DEFINE_GAROH_LOAD_PALETTE(scGarohLoadPathDayCols, Garoh_PathDayColors, 24, 8)
+DEFINE_GAROH_LOAD_PALETTE(scGarohLoadPathDayCols, GarohPathDayColors, 24, 8)
 
 /* By night the path's colours: BG palette 6's colours 1 to 9. */
-DEFINE_GAROH_LOAD_PALETTE(
-	scGarohLoadPathNightCols, Garoh_PathNightColors, 97, 9)
+DEFINE_GAROH_LOAD_PALETTE(scGarohLoadPathNightCols, GarohPathNightColors, 97, 9)
 
 /* A script's call: clears the actor's sprite flags. */
 Sint32 scGarohClearScriptedActorSprFlags(ACTOR *actor)
@@ -332,14 +331,14 @@ const Uint32 *scGetExits(void)
 	return SceneExits;
 }
 
-extern ACTOR_PLACE Garoh_ActorPlacements[];
-extern ACTOR_PLACE Garoh_VillageActorPlacements[];
-extern ACTOR_PLACE Garoh_WayUpActorPlacements[];
-extern ACTOR_PLACE Garoh_TunnelsActorPlacements[];
-extern ACTOR_PLACE Garoh_PathActorPlacements[];
-extern ACTOR_PLACE Garoh_WerewolfCaveActorPlacements[];
+extern ACTOR_PLACE GarohActorPlacements[];
+extern ACTOR_PLACE GarohVillageActorPlacements[];
+extern ACTOR_PLACE GarohWayUpActorPlacements[];
+extern ACTOR_PLACE GarohTunnelsActorPlacements[];
+extern ACTOR_PLACE GarohPathActorPlacements[];
+extern ACTOR_PLACE GarohWerewolfCaveActorPlacements[];
 
-extern MAP_GRID_METATILE_ANIMATION Garoh_Doors[];
+extern MAP_GRID_METATILE_ANIMATION GarohDoors[];
 
 /* The people of the scene being entered: in the village, the hooded villagers
    by night or their faces once Maha has shared the secret. */
@@ -349,18 +348,18 @@ const void *scGetActorPlacements(void)
 
 	if(scene == SCENE_GAROH) {
 		if(fdScriptGetFlag(FLAG_GAROH_SECRET_SHARED))
-			return Garoh_VillageDayActorPlacements;
-		return Garoh_VillageActorPlacements;
+			return GarohVillageDayActorPlacements;
+		return GarohVillageActorPlacements;
 	}
 	if(scene == SCENE_GAROH_PATH)
-		return Garoh_PathActorPlacements;
+		return GarohPathActorPlacements;
 	if(scene == SCENE_GAROH_WAY_UP)
-		return Garoh_WayUpActorPlacements;
+		return GarohWayUpActorPlacements;
 	if(scene == SCENE_GAROH_TUNNELS)
-		return Garoh_TunnelsActorPlacements;
+		return GarohTunnelsActorPlacements;
 	if(scene == SCENE_GAROH_WEREWOLF_CAVE)
-		return Garoh_WerewolfCaveActorPlacements;
-	return Garoh_ActorPlacements;
+		return GarohWerewolfCaveActorPlacements;
+	return GarohActorPlacements;
 }
 
 /* Walking north into the door of one of Garoh's round houses, or of the
@@ -370,11 +369,11 @@ const void *scGetActorPlacements(void)
    25) and the sanctum's tall door at (14, 15).
 
    The door's metatile behaviour is the exit it leaves by, which also picks its
-   opening frames from `Garoh_Doors`. */
+   opening ticks from `GarohDoors`. */
 void scGarohOpenDoorAndEnter(void)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
-	Sint32		 index;
+	Sint32		 idx;
 	Sint32		 i;
 
 	fdScriptStart();
@@ -387,11 +386,11 @@ void scGarohOpenDoorAndEnter(void)
 				actor->motionFlg = 0;
 		}
 	}
-	index = state->stepCue;
+	idx = state->stepCue;
 	fdScriptPlaySnd(SE_DOOR_OPEN);
-	index--;
+	idx--;
 	fdMapGridAnimateMetatiles(
-		Garoh_Doors[index].steps, Garoh_Doors[index].x, Garoh_Doors[index].y);
+		GarohDoors[idx].steps, GarohDoors[idx].x, GarohDoors[idx].y);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	{
@@ -399,7 +398,7 @@ void scGarohOpenDoorAndEnter(void)
 
 		/* The sanctum's tall door is entered straight on, the others from the
 		   centre of their metatile. */
-		if(index == GAROH_TO_GAROH_ROOMS_SANCTUM - 1)
+		if(idx == GAROH_TO_GAROH_ROOMS_SANCTUM - 1)
 			fdActorSetDestinationOffset(owner, 0, -4);
 		else
 			fdActorCenterAndWalk(owner, 2, -4);
@@ -407,7 +406,7 @@ void scGarohOpenDoorAndEnter(void)
 	syFieldScriptWait(6);
 	syFieldScriptSetExitRequest(state->stepCue);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -495,14 +494,14 @@ void scGarohHowlOutLoud(Sint32 actor)
    rooms sets that flag, so the player always hears all three lines. */
 void scGarohHowlForDog(Sint32 actor)
 {
-	Sint32 flag;
+	Sint32 flg;
 	Sint32 msg;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	flag = fdScriptGetFlag(FLAG_AREA_TEMP_00);
+	flg = fdScriptGetFlag(FLAG_AREA_TEMP_00);
 	msg = (Sint32)MsgGarohGaaarooooooForDog;
-	if(flag) {
+	if(flg) {
 		syFieldScriptSetMessageId(msg);
 	} else {
 		syFieldScriptSetMessageId(msg);
@@ -558,7 +557,7 @@ void scGarohLittleWerewolfThanks(void)
    Once a visit. */
 void scGarohWerewolfPeersFromCave(void)
 {
-	Sint32 flag;
+	Sint32 flg;
 	Sint32 facing;
 
 	void scGarohOpenCaveEntrance(Sint32 id)
@@ -579,8 +578,8 @@ void scGarohWerewolfPeersFromCave(void)
 		fdPsynergyEnd();
 	}
 
-	flag = fdScriptGetFlag(FLAG_WEREWOLF_PEERED_OUT);
-	if(flag == 0) {
+	flg = fdScriptGetFlag(FLAG_WEREWOLF_PEERED_OUT);
+	if(flg == 0) {
 		fdScriptSetFlag(FLAG_WEREWOLF_PEERED_OUT);
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
@@ -614,7 +613,7 @@ void scGarohWerewolfPeersFromCave(void)
 		scGarohOpenCaveEntrance(ACTOR_CAVE_ENTRANCE);
 		syFieldScriptWait(20);
 		fdActorWalkByAndWait(ACTOR_MAHA_AT_THE_CAVE_ENTRANCE, 0, -16);
-		fdActorGet(ACTOR_MAHA_AT_THE_CAVE_ENTRANCE)->motionFlg = flag;
+		fdActorGet(ACTOR_MAHA_AT_THE_CAVE_ENTRANCE)->motionFlg = flg;
 		fdActorWalkByAndWait(ACTOR_MAHA_AT_THE_CAVE_ENTRANCE, 0, -16);
 		fdActorSetPos(ACTOR_MAHA_AT_THE_CAVE_ENTRANCE, 0, 0);
 		syFieldScriptWait(10);
@@ -625,14 +624,14 @@ void scGarohWerewolfPeersFromCave(void)
 	}
 }
 
-extern CUE Garoh_Cues[];
-extern CUE Garoh_VillageCues[];
-extern CUE Garoh_VillageDayCues[];
-extern CUE Garoh_PathCues[];
-extern CUE Garoh_TunnelsCues[];
-extern CUE Garoh_WerewolfCaveCues[];
+extern CUE GarohCues[];
+extern CUE GarohVillageCues[];
+extern CUE GarohVillageDayCues[];
+extern CUE GarohPathCues[];
+extern CUE GarohTunnelsCues[];
+extern CUE GarohWerewolfCaveCues[];
 
-extern Sint32 Garoh_HowlFrames;
+extern Sint32 GarohHowlTicks;
 
 /* Walking north into an opening Reveal has shown takes the party through it:
    the cleft at the foot of the big grey rock north-east of the sanctum,
@@ -672,30 +671,30 @@ const void *scGetCues(void)
 
 	if(scene == SCENE_GAROH) {
 		if(fdScriptGetFlag(FLAG_GAROH_SECRET_SHARED))
-			return Garoh_VillageDayCues;
-		return Garoh_VillageCues;
+			return GarohVillageDayCues;
+		return GarohVillageCues;
 	}
 	if(scene == SCENE_GAROH_PATH)
-		return Garoh_PathCues;
+		return GarohPathCues;
 	if(scene == SCENE_GAROH_WAY_UP)
-		return Garoh_WayUpCues;
+		return GarohWayUpCues;
 	if(scene == SCENE_GAROH_TUNNELS)
-		return Garoh_TunnelsCues;
+		return GarohTunnelsCues;
 	if(scene == SCENE_GAROH_WEREWOLF_CAVE)
-		return Garoh_WerewolfCaveCues;
-	return Garoh_Cues;
+		return GarohWerewolfCaveCues;
+	return GarohCues;
 }
 
-/* A howl comes each time the night's frames under this mask are 0. */
+/* A howl comes each time the night's ticks under this mask are 0. */
 #define HOWL_PERIOD_MASK 0x3ff
 
-/* A wolf howls in the distance every 1,024 frames while it is night. */
+/* A wolf howls in the distance every 1,024 ticks while it is night. */
 void scGarohHowlAtNight(void)
 {
 	if(!fdScriptGetFlag(FLAG_GAROH_SECRET_SHARED) &&
 		fdScriptGetFlag(FLAG_GAROH_NIGHT)) {
-		Garoh_HowlFrames++;
-		if((Garoh_HowlFrames & HOWL_PERIOD_MASK) == 0)
+		GarohHowlTicks++;
+		if((GarohHowlTicks & HOWL_PERIOD_MASK) == 0)
 			fdScriptPlaySnd(SE_HOWL);
 	}
 }
@@ -733,7 +732,7 @@ Sint32 scInit(void)
 			FieldStateWork->transition = SCENE_TRANSITION(
 				TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 			fdScriptStartScreenTransition();
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 		}
 	} else {
 		FieldStateWork->transition = 0;
@@ -763,7 +762,7 @@ Sint32 scPrepareMap(void)
    day the cleft in the big grey rock and the cave's other ways stand open. */
 void scGarohInitVillage(void)
 {
-	syFieldSetFrameEvent(scGarohHowlAtNight, EVENT_PASS_FRAME);
+	syFieldSetTickEvent(scGarohHowlAtNight, EVENT_PASS_TICK);
 	FieldStateWork->transition = 0;
 	if(fdScriptGetFlag(FLAG_GAROH_SECRET_SHARED) == 0 ||
 		fdScriptGetFlag(FLAG_GAROH_NIGHT) != 0) {
@@ -772,7 +771,7 @@ void scGarohInitVillage(void)
 		if(fdScriptGetFlag(FLAG_NIGHT_TINTS_ACTORS))
 			fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, PALETTES_OBJECTS);
 		fdPaletteFadeInterpolate(1);
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdPaletteFadePackTarget();
 		{
 			PALETTE_FADE *fade = Ram_HeapSlots->palFade;
@@ -798,7 +797,7 @@ void scGarohInitVillage(void)
 		fdScriptClearFlag(FLAG_ARRIVAL_STAIRS_UP);
 		fdScriptClearFlag(FLAG_ARRIVAL_STAIRS_DOWN);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		FieldStateWork->transition = 0;
 	}
 }
@@ -807,7 +806,7 @@ void scGarohInitVillage(void)
    colours and rippling water, by day its hidden ways open. */
 void scGarohInitPath(void)
 {
-	sySetFrameEvent(scGarohHowlAtNight, EVENT_PASS_FRAME);
+	sySetTickEvent(scGarohHowlAtNight, EVENT_PASS_TICK);
 	fdTightropeInit();
 	fdTightropePlace(
 		0, ACTOR_PATH_TIGHTROPE_POST_A, ACTOR_PATH_TIGHTROPE_POST_B);
@@ -818,11 +817,11 @@ void scGarohInitPath(void)
 			fdPaletteFadeApplyTarget(PALETTE_TINT_WARM_DARK, 1);
 		}
 		fdPaletteFadeInterpolate(1);
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdPaletteFadePackTarget();
 		scGarohLoadPathNightCols();
 		fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, 1);
-		sySetFrameEvent((Sint32)scGarohWavePathLayer, EVENT_PASS_VBLANK);
+		sySetTickEvent((Sint32)scGarohWavePathLayer, EVENT_PASS_VBLANK);
 	} else {
 		fdMapGridCopyMetatilesTo(20, 7, 9, 7, 5, 5);
 		fdMapGridCopyMetatilesTo(20, 71, 9, 71, 5, 5);
@@ -833,22 +832,22 @@ void scGarohInitPath(void)
 	}
 }
 
-extern Sint16 Garoh_Pillars[];
+extern Sint16 GarohPillars[];
 
 /* The way up from the world map: the four stone pillars where they were left,
    in the evening's or the night's light once the party has climbed into it. */
 void scGarohInitWayUp(void)
 {
-	syFieldSetFrameEvent(scGarohHowlAtNight, EVENT_PASS_FRAME);
+	syFieldSetTickEvent(scGarohHowlAtNight, EVENT_PASS_TICK);
 	if(fdScriptGetFlag(FLAG_GAROH_NIGHT)) {
 		if(fdScriptGetFlag(FLAG_EVENING))
 			fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, 1);
 		else
 			fdPaletteFadeApplyTarget(PALETTE_TINT_WARM_DARK, 1);
 	}
-	fdActorPlaceBlocks(Garoh_Pillars);
+	fdActorPlaceBlocks(GarohPillars);
 	fdPaletteFadeInterpolate(1);
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 }
 
 /* Nothing visible happens as Felix starts casting Move on one of the stone
@@ -856,7 +855,7 @@ void scGarohInitWayUp(void)
    that Move can slide it. */
 void scGarohLiftPillar(void)
 {
-	fdActorLiftTargetBlock(Garoh_Pillars);
+	fdActorLiftTargetBlock(GarohPillars);
 }
 
 /* Nothing visible happens as Felix starts pushing one of the stone pillars on
@@ -864,7 +863,7 @@ void scGarohLiftPillar(void)
    metatiles so that it can slide. */
 void scGarohLiftPushedPillar(void)
 {
-	fdActorLiftTargetBlock(Garoh_Pillars);
+	fdActorLiftTargetBlock(GarohPillars);
 }
 
 /* A pillar set down on its slot sinks 32 pixels into the ground with a whoosh
@@ -1119,9 +1118,8 @@ void scGarohCrossUpperTwilightLine(void)
 #undef EFFECT_SET_SCRIPT
 #undef DEFINE_GAROH_LOAD_PALETTE
 #undef DEFINE_GAROH_CUE_AT_METATILE
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 /* A ring of puffs of dust spreads out from the actor, one every eighth of a
    turn: nine, the first and last both to the east. */
@@ -1130,30 +1128,30 @@ void scGarohScatterDustRing(Sint32 objectId)
 	ACTOR		  *actor;
 	VECTOR3		   vec;
 	EFFECT_OPTIONS params;
-	Uint32		   angleStep;
-	Sint32		   angle;
+	Uint32		   angStep;
+	Sint32		   ang;
 	Sint32		   x;
 	FIXED		   z;
 
 	actor = fdActorGet(objectId);
 	params.update = fdEffectAdvanceMotion;
-	angleStep = 0;
+	angStep = 0;
 	do {
-		angle = angleStep * (TRIG_TURN / DUST_RING_PUFFS);
-		vec.x = syCos(angle);
+		ang = angStep * (TRIG_TURN / DUST_RING_PUFFS);
+		vec.x = syCos(ang);
 		vec.y = 0;
-		z = syMathSin(angle);
+		z = syMathSin(ang);
 		x = vec.x;
 		vec.z = z;
 		x += x / 3;
 		vec.x = x;
 		scFieldEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, x,
 			vec.y, z, EFFECT_USE_UPDATE | 1, &params);
-		angleStep += 2;
-	} while(angleStep <= DUST_RING_PUFFS);
+		angStep += 2;
+	} while(angStep <= DUST_RING_PUFFS);
 }
 
-extern Uint32 Garoh_QuestionMarkScript[];
+extern Uint32 GarohQuestionMarkScript[];
 
 /* Unused: Lash ties a rope between the third and fourth stone pillars on the
    way up; no cue runs it. */
@@ -1171,10 +1169,10 @@ Sint32 scGarohMetWerewolves(void)
 }
 
 /* Pops a "?" bubble up at (x, y, z), tilted by rotation, for the given
-   frames. */
-void   scGarohPopQuestionMark(x, y, z, rotation, frames) Sint32 x, y, z;
+   ticks. */
+void   scGarohPopQuestionMark(x, y, z, rotation, ticks) Sint32 x, y, z;
 Sint16 rotation;
-Sint32 frames;
+Sint32 ticks;
 {
 	ACTOR *object;
 	SPR	  *sprite;
@@ -1183,9 +1181,9 @@ Sint32 frames;
 	if(object != NULL) {
 		sprite = object->spr;
 		fdActorSelectAnimation(object, EMOTE_QUESTION);
-		fdActorStartScript(object, Garoh_QuestionMarkScript);
+		fdActorStartScript(object, GarohQuestionMarkScript);
 		object->motionFlg = 0;
-		object->wait = frames;
+		object->wait = ticks;
 		sprite->flg = 0;
 		sprite->rotation = rotation;
 	}
@@ -1350,7 +1348,7 @@ void scGarohWerewolfRunsPast(void)
 	fdActorSetAnimation(ACTOR_WEREWOLF, ANIM_STAND);
 	syFieldScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_WEREWOLF, 2);
-	fdActorSetScript(ACTOR_WEREWOLF, Garoh_WerewolfLookAroundScript);
+	fdActorSetScript(ACTOR_WEREWOLF, GarohWerewolfLookAroundScript);
 	FieldStateWork->msg--;
 	/* "Awoooooo!!!" */
 	syFieldScriptShowMessageThenWait(ACTOR_WEREWOLF, 0, 0);
@@ -2367,10 +2365,10 @@ void scGarohWerewolvesRevealThemselves(void)
    Aleph, and gives the party the Jupiter Djinni Ether. */
 void scGarohMahaTellsTheLegend(void)
 {
-	Sint32 frames;
+	Sint32 ticks;
 	FIXED  total;
 	ACTOR *ether;
-	SPR	  *sprite;
+	SPR	  *spr;
 
 	fdScriptSetFlag(FLAG_GAROH_HEARD_MAHA);
 	fdScriptStart();
@@ -2983,15 +2981,15 @@ void scGarohMahaTellsTheLegend(void)
 	fdActorAnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
 	syFieldScriptWait(5);
 	ether = fdActorGet(ACTOR_ETHER);
-	sprite = ether->spr;
-	sprite->scale = toFIXED(2) / 5;
+	spr = ether->spr;
+	spr->scale = toFIXED(2) / 5;
 	scFieldActorSetSprPriority(ACTOR_ETHER, 1);
 	fdActorSetSprFlags(fdActorGet(ACTOR_ETHER), 0);
 	fdActorSetPos(ACTOR_ETHER, 328, 160);
 	scFieldActorJump(ACTOR_ETHER, 9, 0);
 	total = 0;
-	for(frames = 0; frames <= ETHER_GROW_STEPS; frames++) {
-		sprite->scale = syMathDivide(total, ETHER_GROW_STEPS) + toFIXED(2) / 5;
+	for(ticks = 0; ticks <= ETHER_GROW_STEPS; ticks++) {
+		spr->scale = syMathDivide(total, ETHER_GROW_STEPS) + toFIXED(2) / 5;
 		ether->facing += FACING_STEP;
 		syWait(1);
 		total += toFIXED(3) / 5;
@@ -3160,18 +3158,18 @@ void scGarohLiftPushedPillar(void);
 void scGarohRevealCaveEntrance(void);
 void scGarohRevealCavePassage(void);
 
-extern Uint32 FieldEffect_MediumScript[];
+extern Uint32 FieldEffectMediumScript[];
 
 /* clang-format off */
 #include "shared/field_effect_duration_scripts.c"
 
 /* The four pillars Move pushes, ended by -1. */
-Sint16 Garoh_Pillars[] = {
+Sint16 GarohPillars[] = {
 	ACTOR_FIRST_PILLAR, ACTOR_SECOND_PILLAR, ACTOR_THIRD_PILLAR,
 	ACTOR_FOURTH_PILLAR, -1, 0,
 };
 
-Uint32 Garoh_WerewolfLookAroundScript[] = {
+Uint32 GarohWerewolfLookAroundScript[] = {
 	SC_SET(SW_FACING, FACING_SOUTH_SOUTHWEST),
 	SC_WAIT(12),
 	SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
@@ -3184,7 +3182,7 @@ Uint32 Garoh_WerewolfLookAroundScript[] = {
 };
 
 /* The path's colours by night, BG palette 6's colours 1 to 9. */
-Uint16 Garoh_PathNightColors[] = {
+Uint16 GarohPathNightColors[] = {
 	31, 31, 31, 29, 29, 30, 27, 28,
 	29, 25, 27, 28, 23, 25, 27, 21,
 	24, 26, 15, 18, 19, 10, 12, 13,
@@ -3192,20 +3190,20 @@ Uint16 Garoh_PathNightColors[] = {
 };
 
 /* The path's colours by day, BG palette 1's colours 8 to 15. */
-Uint16 Garoh_PathDayColors[] = {
+Uint16 GarohPathDayColors[] = {
 	24, 28, 30, 19, 24, 27, 15, 20,
 	25, 11, 16, 23, 7, 12, 21, 3,
 	8, 19, 27, 27, 27, 16, 24, 29,
 	0,
 };
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
-Sint32 Garoh_ShrunkSpriteScript[] = {
+Sint32 GarohShrunkSpriteScript[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_ADD(SW_Y, toFIXED(-4)),
 	SC_ADD(SW_X, toFIXED(6)),
@@ -3262,11 +3260,11 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE Garoh_ActorPlacements[] = {
+ACTOR_PLACE GarohActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Garoh_VillageActorPlacements[] = {
+ACTOR_PLACE GarohVillageActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_HOODED_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 400, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_HOODED_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 416, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_HOODED_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 304, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -3285,7 +3283,7 @@ ACTOR_PLACE Garoh_VillageActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Garoh_VillageDayActorPlacements[] = {
+ACTOR_PLACE GarohVillageDayActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 400, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 416, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 304, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -3303,7 +3301,7 @@ ACTOR_PLACE Garoh_VillageDayActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Garoh_WayUpActorPlacements[] = {
+ACTOR_PLACE GarohWayUpActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 472, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 456, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 392, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -3311,21 +3309,21 @@ ACTOR_PLACE Garoh_WayUpActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Garoh_TunnelsActorPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)Garoh_ShrunkSpriteScript, 128, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)Garoh_ShrunkSpriteScript, 208, 0, 56, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)Garoh_ShrunkSpriteScript, 152, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)Garoh_ShrunkSpriteScript, 248, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)Garoh_ShrunkSpriteScript, 352, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)Garoh_ShrunkSpriteScript, 216, 0, 424, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)Garoh_ShrunkSpriteScript, 96, 0, 488, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)Garoh_ShrunkSpriteScript, 328, 0, 440, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)Garoh_ShrunkSpriteScript, 456, 0, 352, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)Garoh_ShrunkSpriteScript, 136, 0, 664, FACING_NORTH, TALK_FACING_KEEP, 0),
+ACTOR_PLACE GarohTunnelsActorPlacements[] = {
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)GarohShrunkSpriteScript, 128, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)GarohShrunkSpriteScript, 208, 0, 56, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)GarohShrunkSpriteScript, 152, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)GarohShrunkSpriteScript, 248, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)GarohShrunkSpriteScript, 352, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)GarohShrunkSpriteScript, 216, 0, 424, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)GarohShrunkSpriteScript, 96, 0, 488, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)GarohShrunkSpriteScript, 328, 0, 440, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)GarohShrunkSpriteScript, 456, 0, 352, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)GarohShrunkSpriteScript, 136, 0, 664, FACING_NORTH, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Garoh_PathActorPlacements[] = {
+ACTOR_PLACE GarohPathActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_WEREWOLF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -3336,7 +3334,7 @@ ACTOR_PLACE Garoh_PathActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Garoh_WerewolfCaveActorPlacements[] = {
+ACTOR_PLACE GarohWerewolfCaveActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_WEREWOLF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_MAHA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -3345,50 +3343,50 @@ ACTOR_PLACE Garoh_WerewolfCaveActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)Garoh_ShrunkSpriteScript, 64, 0, 562, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)Garoh_ShrunkSpriteScript, 370, 0, 56, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)Garoh_ShrunkSpriteScript, 256, 0, 80, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)Garoh_ShrunkSpriteScript, 184, 0, 352, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)Garoh_ShrunkSpriteScript, 392, 0, 368, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)Garoh_ShrunkSpriteScript, 280, 0, 626, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)Garoh_ShrunkSpriteScript, 336, 0, 784, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)GarohShrunkSpriteScript, 64, 0, 562, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)GarohShrunkSpriteScript, 370, 0, 56, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)GarohShrunkSpriteScript, 256, 0, 80, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)GarohShrunkSpriteScript, 184, 0, 352, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)GarohShrunkSpriteScript, 392, 0, 368, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)GarohShrunkSpriteScript, 280, 0, 626, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (Sint32)GarohShrunkSpriteScript, 336, 0, 784, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
 	{SCENE_TABLE_END},
 };
 
 /* The village's doors opening, as MAPGRID_ANIMATION_STEP rows: two steps of */
-/* six frames each: a door, the shop's wide door, the sanctum's tall door. */
-Sint16 Garoh_DoorFrames[] = {
+/* six ticks each: a door, the shop's wide door, the sanctum's tall door. */
+Sint16 GarohDoorFrames[] = {
 	82, 32, 1, 2, 6, 80, 32, 1,
 	2, 6, -1,
 };
-Sint16 Garoh_WideDoorFrames[] = {
+Sint16 GarohWideDoorFrames[] = {
 	82, 35, 1, 2, 6, 80, 35, 1,
 	2, 6, -1,
 };
-Sint16 Garoh_TallDoorFrames[] = {
+Sint16 GarohTallDoorFrames[] = {
 	78, 32, 2, 2, 6, 78, 35, 2,
 	2, 6, -1, 0,
 };
 
 /* The doors Felix walks into, a row for each exit from the first: the */
 /* opening and the metatile it plays at. */
-MAP_GRID_METATILE_ANIMATION Garoh_Doors[] = {
-	{Garoh_DoorFrames, 78, 21},
-	{Garoh_DoorFrames, 0, 0},
-	{Garoh_DoorFrames, 72, 10},
-	{Garoh_WideDoorFrames, 74, 22},
-	{Garoh_DoorFrames, 85, 23},
-	{Garoh_TallDoorFrames, 78, 13},
+MAP_GRID_METATILE_ANIMATION GarohDoors[] = {
+	{GarohDoorFrames, 78, 21},
+	{GarohDoorFrames, 0, 0},
+	{GarohDoorFrames, 72, 10},
+	{GarohWideDoorFrames, 74, 22},
+	{GarohDoorFrames, 85, 23},
+	{GarohTallDoorFrames, 78, 13},
 };
 
-CUE Garoh_Cues[] = {
+CUE GarohCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_TABLE_END},
 };
 /* clang-format on */
 
-CUE Garoh_VillageCues[] = {
+CUE GarohVillageCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), GAROH_TO_GAROH_ROOMS_HOUSES_SOUTH,
 		CONDITION_ALWAYS, SCRIPT_REF(scGarohOpenDoorAndEnter)},
 	{CUE_EXIT | CUE_FLAG_FACING | FACING_NORTH, 2, CONDITION_ALWAYS, 2},
@@ -3439,7 +3437,7 @@ CUE Garoh_VillageCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Garoh_VillageDayCues[] = {
+CUE GarohVillageDayCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), GAROH_TO_GAROH_ROOMS_HOUSES_SOUTH,
 		CONDITION_ALWAYS, SCRIPT_REF(scGarohOpenDoorAndEnter)},
 	{CUE_EXIT | CUE_FLAG_FACING | FACING_NORTH, 2, CONDITION_ALWAYS, 2},
@@ -3494,7 +3492,7 @@ CUE Garoh_VillageDayCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Garoh_PathCues[] = {
+CUE GarohPathCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3507,7 +3505,7 @@ CUE Garoh_PathCues[] = {
 
 /* No end row: the room reads on into the tunnels' table, whose exits and Reveal
    answer here too. */
-CUE Garoh_WayUpCues[] = {
+CUE GarohWayUpCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_STEP, METATILE_BEHAVIOR_LOWER_TWILIGHT_LINE,
@@ -3543,7 +3541,7 @@ CUE Garoh_WayUpCues[] = {
 		CONDITION_ALWAYS, SCRIPT_REF(scGarohRestoreWayUpLight)},
 };
 
-CUE Garoh_TunnelsCues[] = {
+CUE GarohTunnelsCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
@@ -3562,7 +3560,7 @@ CUE Garoh_TunnelsCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Garoh_WerewolfCaveCues[] = {
+CUE GarohWerewolfCaveCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3587,10 +3585,10 @@ CUE Garoh_WerewolfCaveCues[] = {
 	{CUE_TABLE_END},
 };
 
-/* The frames counted at night; a wolf howls every 1,024. */
-Sint32 Garoh_HowlFrames = 0;
+/* The ticks counted at night; a wolf howls every 1,024. */
+Sint32 GarohHowlTicks = 0;
 
-Uint32 Garoh_QuestionMarkScript[] = {
+Uint32 GarohQuestionMarkScript[] = {
 	SC_RELEASE,
 };
 #undef fdActorAnimateThenWait

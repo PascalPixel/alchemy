@@ -56,7 +56,7 @@ typedef enum SND_ID {
 	/* Field music of Tolbi before the Colosso; afterwards Tolbi plays
 	   MUS_TOWN_THEME. */
 	MUS_TOLBI,
-	/* Not a sound: fades the music out over 112 VBlanks, once. */
+	/* Not a sound: fades the music out over 112 frames, once. */
 	SOUND_FADE_OUT_BGM = 17,
 	/* Not a sound: keeps the music that is playing. */
 	SOUND_KEEP_BGM,
@@ -118,23 +118,23 @@ typedef enum SND_ID {
 	MUS_A_LONG_JOURNEY,
 	/* Field music of Venus Lighthouse, but for its entry and its aerie. */
 	MUS_VENUS_LIGHTHOUSE,
-	/* The music of every battle Encounter_BattleMusic lists no other music
+	/* The music of every battle EncounterBattleMusic lists no other music
 	   for. */
 	MUS_BATTLE = 50,
-	/* Battle music Encounter_BattleMusic gives the Mystery Man and Mystery
+	/* Battle music EncounterBattleMusic gives the Mystery Man and Mystery
 	   Woman who catch Isaac in Vale's plaza
 	   (ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, slot 4) and Saturos at Mercury
 	   Lighthouse's aerie (ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2); btRun
 	   plays it, then MUS_COLOSSEUM_FINALS, for a battle with no music of its
 	   own. */
 	MUS_SWORN_ENEMIES_STAND_IN_YOUR_WAY,
-	/* Battle music Encounter_BattleMusic gives the guardians and bosses: Tret,
+	/* Battle music EncounterBattleMusic gives the guardians and bosses: Tret,
 	   the Killer Ape, the Hydros Statue, the Manticore, the Kraken, Toadonpa,
 	   the Storm and Tempest Lizards, and the monsters guarding Crossbone Isle's
 	   floors; it also plays as Dodonpa pulls the lever that springs the trap in
 	   the Lunpa Fortress. */
 	MUS_BATTLING_A_POWERFUL_FOE,
-	/* Battle music Encounter_BattleMusic gives Saturos and Menardi's first
+	/* Battle music EncounterBattleMusic gives Saturos and Menardi's first
 	   battle at Venus Lighthouse's aerie (ENCOUNTER_ZONE_SCRIPTED, slot 1) and
 	   Deadbeard (ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, slot 5). */
 	MUS_BATTLE_WITH_SATUROS_AND_MENARDI,
@@ -193,7 +193,7 @@ typedef enum SND_ID {
 	   script on the world map, until a key is pressed (the title's entrance
 	   10). */
 	MUS_TO_BE_CONTINUED,
-	/* Battle music Encounter_BattleMusic gives the battles that end the Colosso
+	/* Battle music EncounterBattleMusic gives the battles that end the Colosso
 	   finals' matches (ENCOUNTER_ZONE_COLOSSO); btRun plays it after
 	   MUS_SWORN_ENEMIES_STAND_IN_YOUR_WAY for a battle with no music of its
 	   own. */
@@ -358,7 +358,7 @@ typedef enum SND_ID {
 	   Cave, and in the Fire, Flare, Frost, Mars, Cybele, Kirin and other battle
 	   effects. */
 	SE_WHOOSH,
-	/* Plays in the Kirin summon only, 46 frames after its shake begins. */
+	/* Plays in the Kirin summon only, 46 ticks after its shake begins. */
 	SE_KIRIN,
 	/* An item breaking, and a lifted, pushed or caught thing shattering; also
 	   the Bolt and Ray battle effects, rumbling at Sol Sanctum's entrance, and
@@ -422,9 +422,9 @@ typedef enum SND_ID {
 	   caught. */
 	SE_LIGHT_APPEAR,
 	/* An actor jumps: fdActorJump plays the high jump above 5 pixels a
-	   frame. */
+	   tick. */
 	SE_JUMP,
-	/* A high jump: fdActorJump above 5 pixels a frame, Djinn leaping, and the
+	/* A high jump: fdActorJump above 5 pixels a tick, Djinn leaping, and the
 	   leaps on Altin Peak, at the Kalay docks and in the Elemental Star
 	   room. */
 	SE_HIGH_JUMP,
@@ -560,7 +560,7 @@ typedef enum SND_ID {
 	   Altmiller Cave's rock turned. */
 	SE_WARP,
 	/* Unused: nothing plays it here. The Lost Age plays the same sequence as
-	   Gaia Rock's altar faces part, at Zagan's frame 32 and in Megiddo's
+	   Gaia Rock's altar faces part, at Zagan's tick 32 and in Megiddo's
 	   dive. */
 	SE_TABLET_RISE_HIGH,
 	/* Unused: nothing plays it here. The Lost Age plays the same sequence for
@@ -595,7 +595,7 @@ typedef enum SND_ID {
 	   shrunk in the eruption. */
 	SE_ASCEND,
 	/* On the stormy night, as Isaac and Dora hurry to the plaza, a flame flares
-	   up and rises away as smoke (CottageRoomsB_FlameRisesScript). */
+	   up and rises away as smoke (CottageRoomsBFlameRisesScript). */
 	SE_FLAME_FLARE,
 	SE_UNUSED_NOISE_PUFF,
 	/* Landing in dust at Babi Lighthouse, the Mercury Lighthouse entrance and
@@ -806,7 +806,7 @@ typedef enum SND_ID {
 	   every scene change (unless FLAG_SKIP_SCENE_CHANGE_SOUND), a rolling log
 	   or cart stopping, a battle starting on the field. */
 	SE_STOP_ACTION_SE,
-	/* Not a sound: fades player 3 out over 48 VBlanks, so this row of the song
+	/* Not a sound: fades player 3 out over 48 frames, so this row of the song
 	   table never plays. */
 	SOUND_FADE_OUT_ACTION_SE,
 	/* Unused: SE_TAKE_FLIGHT higher, its first track six semitones up with one
@@ -824,20 +824,20 @@ typedef enum SND_ID {
 	   map's exit and stairs sounds do; played before each queued scene sound
 	   (fdQueueMusic). */
 	SE_STOP_EXIT_SE = 298,
-	/* Tolbi Spring: a coin or medal on its way, 50 frames into the toss
+	/* Tolbi Spring: a coin or medal on its way, 50 ticks into the toss
 	   (scTolbiSpringRunToss). */
 	SE_TOLBI_SPRING_TOSS = 300,
 	/* Tolbi Spring: a tossed coin meeting one of the moving obstacles. */
 	SE_TOLBI_SPRING_OBSTACLE_HIT,
 	/* Lucky Dice: the dice thrown with A. */
 	SE_LUCKY_DICE_THROW,
-	/* Lucky Dice: each of the four numbers revealed, five frames apart. */
+	/* Lucky Dice: each of the four numbers revealed, five ticks apart. */
 	SE_LUCKY_DICE_NUMBER,
 	/* Lucky Wheels: the wheels starting to spin. */
 	SE_LUCKY_WHEELS_SPIN,
 	/* Lucky Wheels: a wheel held or released. */
 	SE_LUCKY_WHEELS_HOLD,
-	/* Lucky Wheels: 16 frames after the wheels start, as the stop prompt
+	/* Lucky Wheels: 16 ticks after the wheels start, as the stop prompt
 	   shows. */
 	SE_LUCKY_WHEELS_STOP_PROMPT,
 	/* Lucky Wheels: a wheel stopped. */

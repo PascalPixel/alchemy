@@ -179,6 +179,6 @@ CUE KolimaForestCliffCues[] = {
 
 /* The healthy colours, kept by scKolimaPaletteSaveHealthy: the palette fade's
    448 background and sprite colours, in the array's first half. */
-Uint8 KolimaPalette_Healthy[1792] BSS_DATA ALIGNED(16);
+Uint8 KolimaPaletteHealthy[1792] BSS_DATA ALIGNED(16);
 /* The cursed colours, kept by scKolimaPaletteSaveCursed. */
-Uint8 KolimaPalette_Cursed[896] BSS_DATA;
+Uint8 KolimaPaletteCursed[896] BSS_DATA;

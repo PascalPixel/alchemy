@@ -129,7 +129,7 @@
 
 /* The stack and the restart
 
-   What the frame wait and the soft reset do to the processor itself. */
+   What the tick wait and the soft reset do to the processor itself. */
 
 /* Reads the hardware stack pointer into `variable`. */
 #define ASM_STACK_POINTER_GET(variable) \

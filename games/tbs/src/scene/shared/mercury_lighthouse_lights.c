@@ -13,16 +13,16 @@ void scMercuryLighthouseRestoreLights(
 {
 	ACTOR			  *actor;
 	ACTOR			  *light;
-	SPR				  *sprite;
+	SPR				  *spr;
 	MAP_GRID_METATILE *metatile;
 	FIXED			   z;
-	Sint32			   flag;
+	Sint32			   flg;
 
 	*(MERCURY_LIGHTHOUSE_LIGHTS **)syHeapSlotAllocEWRAM(
 		HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS, sizeof(lights)) = lights;
-	flag = gmFlagGet(FLAG_KEEP_PARTY_POSITION);
-	if(flag == 0) {
-		DMA_FILL32(flag, lights, sizeof(*lights));
+	flg = gmFlagGet(FLAG_KEEP_PARTY_POSITION);
+	if(flg == 0) {
+		DMA_FILL32(flg, lights, sizeof(*lights));
 		lights->poolBehavior = region;
 		return;
 	}
@@ -35,16 +35,16 @@ void scMercuryLighthouseRestoreLights(
 			actor->y.fixed + toFIXED(24), z);
 		if(light != NULL) {
 			light->groundHeight = actor->groundHeight;
-			sprite = light->spr;
-			fdActorStartScript(light, MercuryLighthouse_PillarScript);
+			spr = light->spr;
+			fdActorStartScript(light, MercuryLighthousePillarScript);
 			light->watchedActor = (ACTOR_OR_EFFECT *)actor;
 			light->motionFlg = ACTOR_FLOATS;
 			light->y.fixed -= toFIXED(1) / 2;
-			if(sprite != NULL) {
+			if(spr != NULL) {
 				fdSprStartAnimation(
-					sprite, GOLDEN_RINGS_ANIMATION_COLUMN(lights->levels));
-				sprite->flg = 0;
-				sprite->image.pri = 1;
+					spr, GOLDEN_RINGS_ANIMATION_COLUMN(lights->levels));
+				spr->flg = 0;
+				spr->image.pri = 1;
 			}
 			lights->pillar = light;
 		}
@@ -57,15 +57,15 @@ void scMercuryLighthouseRestoreLights(
 		if(light == NULL)
 			return;
 		light->groundHeight = actor->groundHeight;
-		sprite = light->spr;
-		fdActorStartScript(light, MercuryLighthouse_GrowLightScript);
+		spr = light->spr;
+		fdActorStartScript(light, MercuryLighthouseGrowLightScript);
 		light->motionFlg = 0;
 		light->tmr = 0;
 		light->priFlg = ACTOR_PRIORITY_UNDERFOOT;
 		light->speedLimit = toFIXED(4);
-		if(sprite != NULL) {
-			fdSprStartAnimation(sprite, GOLDEN_RINGS_ANIMATION_POOL_LIGHT);
-			sprite->flg = 0;
+		if(spr != NULL) {
+			fdSprStartAnimation(spr, GOLDEN_RINGS_ANIMATION_POOL_LIGHT);
+			spr->flg = 0;
 		}
 		lights->stepEff = light;
 	} else {

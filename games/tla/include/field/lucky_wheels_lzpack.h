@@ -50,8 +50,8 @@ STATIC_ASSERT(offsetof(LZ_PACK_STATE, inputCursor) == 17464);
 void   fdLZPackResetSlotBuckets(void);
 void   fdLZPackInsertSlotNode(Sint32 slot);
 void   fdLZPackRemoveSlotNode(Sint32 slot);
-void   fdLZPackConsumeSlotBytes(Sint32 start, Sint32 count, const Uint8 *input);
-void   fdLZPackCopyBufferedBytes(Uint8 *destination);
-Sint32 fdLZPackPackStream(const Uint8 *input, Uint8 *destination, Sint32 size);
+void   fdLZPackConsumeSlotBytes(Sint32 start, Sint32 cnt, const Uint8 *input);
+void   fdLZPackCopyBufferedBytes(Uint8 *dst);
+Sint32 fdLZPackPackStream(const Uint8 *input, Uint8 *dst, Sint32 size);
 
 #endif

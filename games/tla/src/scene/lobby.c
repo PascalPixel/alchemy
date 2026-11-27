@@ -25,7 +25,7 @@
 #define PARTY_SLOT_EMPTY 255
 
 /* The map's tileset animation of the iron gate in the north wall, run for eight
-   frames as the party walks to it from the diamond mark. */
+   ticks as the party walks to it from the diamond mark. */
 enum { BATTLE_ARENA_GATE_ANIMATION = 5 };
 
 /* The slot a linked battle is requested with, in ENCOUNTER_ZONE_VENUS_DJINN:
@@ -43,12 +43,12 @@ const SCENE_REGION *scGetExitRegions(void)
 	return 0;
 }
 
-void syGameFlagSetByte(Sint32 flag, Sint32 value);
+void syGameFlagSetByte(Sint32 flg, Sint32 value);
 
-/* Stores a byte in the eight game flags from `flag`. */
-static inline void scFieldGameFlagSetByte(Sint32 flag, Sint32 value)
+/* Stores a byte in the eight game flags from `flg`. */
+static inline void scFieldGameFlagSetByte(Sint32 flg, Sint32 value)
 {
-	syGameFlagSetByte(flag, value);
+	syGameFlagSetByte(flg, value);
 }
 
 /* Restarts the link with interrupts locked. */
@@ -113,13 +113,13 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 }
 
 /* One linked console's published words, as the link exchange last received
-   them: its signature, then its state (LinkLobby_SlotColumns gives each
+   them: its signature, then its state (LinkLobbySlotColumns gives each
    LOBBY_SLOT's word). */
 typedef struct LINK_PEER {
 	Sint32 values[6];
 } LINK_PEER;
 
-/* The words of LinkLobby_SlotValues, by slot, as The Broken Seal's Battle Arena
+/* The words of LinkLobbySlotValues, by slot, as The Broken Seal's Battle Arena
    numbers them. They are the signature, then the state a console publishes. */
 typedef enum LOBBY_SLOT {
 	LOBBY_SLOT_SIGNATURE = 0,
@@ -148,16 +148,16 @@ typedef enum LOBBY_RAISED_CUE {
 	LOBBY_CUE_DISCONNECTED = 2 /* scLinkLobbyReportLinkDisconnected */
 } LOBBY_RAISED_CUE;
 
-/* Frames without a link (scLinkLobbyPollPeerReady) or without the partner's
+/* Ticks without a link (scLinkLobbyPollPeerReady) or without the partner's
    request (scLinkLobbyEnterBattle) before the lobby gives the partner up. */
-#define LOBBY_PEER_WAIT_FRAMES 25
+#define LOBBY_PEER_WAIT_TICKS 25
 
-/* Frames, five seconds, before the attendant asks the player again to step into
+/* Ticks, five seconds, before the attendant asks the player again to step into
    the circle. */
-#define LOBBY_PROMPT_REPEAT_FRAMES 300
+#define LOBBY_PROMPT_REPEAT_TICKS 300
 
 /* The attendant has asked the player to take part. Every
-   LOBBY_PROMPT_REPEAT_FRAMES calls of scLinkLobbyPromptToParticipate clear it
+   LOBBY_PROMPT_REPEAT_TICKS calls of scLinkLobbyPromptToParticipate clear it
    so she asks again. */
 #define FLAG_LINK_LOBBY_ATTENDANT_ASKED		 FLAG_SCENE_TEMP_00
 /* The linked partner has asked for a battle. Its signature matches and it
@@ -192,7 +192,7 @@ typedef enum LOBBY_RAISED_CUE {
 /* The last linked battle was won. */
 #define FLAG_LINK_LOBBY_LINK_BATTLE_WON		 FLAG_AREA_TEMP_05
 
-/* LinkStatusWork bits 0 and 1: both consoles were heard this frame. */
+/* LinkStatusWork bits 0 and 1: both consoles were heard this tick. */
 #define LOBBY_LINK_READY_MASK 3
 
 /* The highest level bonus a monster series reaches (FLAG_MONSTER_BATTLE_WINS,
@@ -231,7 +231,7 @@ Bool scLinkLobbyPeerSlotMatches(Sint32 slot)
 	}
 	/* At most one pass: a match returns 1, anything else breaks out. */
 	while(id >= 0 && fdScriptGetFlag(FLAG_LINK_LOBBY_LINK_UP)) {
-		const Sint32 *expected = &LinkLobby_SlotValues[slot];
+		const Sint32 *expected = &LinkLobbySlotValues[slot];
 
 		if(id != 0)
 			fdScriptSetFlag(FLAG_LINK_LOBBY_LINK_CHILD);
@@ -242,7 +242,7 @@ Bool scLinkLobbyPeerSlotMatches(Sint32 slot)
 				LinkPeerSignatures[fdScriptGetFlag(FLAG_LINK_LOBBY_LINK_CHILD) ^
 					1];
 
-			if(row->values[LinkLobby_SlotColumns[slot]] == *expected)
+			if(row->values[LinkLobbySlotColumns[slot]] == *expected)
 				return TRUE;
 			break;
 		}
@@ -255,14 +255,14 @@ Bool scLinkLobbyPeerSlotMatches(Sint32 slot)
 void scLinkLobbyWriteSlotValue(Sint32 slot)
 {
 	Sint32		 *dst = (Sint32 *)SerialTransfer.payload;
-	const Sint32 *src = &LinkLobby_SlotValues[slot];
-	dst[LinkLobby_SlotColumns[slot]] = *src;
+	const Sint32 *src = &LinkLobbySlotValues[slot];
+	dst[LinkLobbySlotColumns[slot]] = *src;
 }
 
-Sint32 LinkLobby_WaitFrames BSS_DATA; /* frames without the partner */
-Sint32 LinkLobby_CallFrames BSS_DATA;
+Sint32 LinkLobbyWaitTicks BSS_DATA; /* ticks without the partner */
+Sint32 LinkLobbyCallTicks BSS_DATA;
 
-/* The lobby's event each frame: counts frames without the opponent, clears the
+/* The lobby's event each tick: counts ticks without the opponent, clears the
    peer signatures after 25, and raises the script cue when both sides are ready
    or the link is lost. Returns whether the peer answered. */
 Sint32 scLinkLobbyPollPeerReady(void)
@@ -283,17 +283,17 @@ Sint32 scLinkLobbyPollPeerReady(void)
 		scLinkLobbyPeerSlotMatches(LOBBY_SLOT_SIGNATURE);
 		set = fdScriptGetFlag(FLAG_LINK_LOBBY_LINK_UP);
 		if(!set) {
-			if(++LinkLobby_WaitFrames > LOBBY_PEER_WAIT_FRAMES) {
+			if(++LinkLobbyWaitTicks > LOBBY_PEER_WAIT_TICKS) {
 				for(i = 0; i < 4; i++)
 					syWordsClearEntry(
 						LinkPeerSignatures[i], sizeof(SerialTransfer.payload));
-				LinkLobby_WaitFrames = 0;
+				LinkLobbyWaitTicks = 0;
 				scLinkLobbyWriteSlotValue(LOBBY_SLOT_IDLE);
 			}
 		} else {
-			LinkLobby_WaitFrames = 0;
+			LinkLobbyWaitTicks = 0;
 		}
-		if(LinkLobby_WaitFrames == 0) {
+		if(LinkLobbyWaitTicks == 0) {
 			if(scLinkLobbyPeerSlotMatches(LOBBY_SLOT_SIGNATURE) &&
 				(scLinkLobbyPeerSlotMatches(LOBBY_SLOT_ASKED) ||
 					scLinkLobbyPeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))) {
@@ -315,7 +315,7 @@ Sint32 scLinkLobbyPollPeerReady(void)
 		   fdScriptGetFlag(FLAG_LINK_LOBBY_PLAYER_APPLIED)) &&
 		!fdScriptGetFlag(FLAG_MONSTER_BATTLE) &&
 		!scLinkLobbyPeerSlotMatches(LOBBY_SLOT_SIGNATURE) &&
-		LinkLobby_WaitFrames >= LOBBY_PEER_WAIT_FRAMES) {
+		LinkLobbyWaitTicks >= LOBBY_PEER_WAIT_TICKS) {
 		state->raisedCue = LOBBY_CUE_DISCONNECTED;
 		fdScriptSetFlag(FLAG_LINK_LOBBY_LINK_LOST_UNREPORTED);
 		fdScriptClearFlag(FLAG_LINK_LOBBY_PARTNER_ASKED);
@@ -338,8 +338,8 @@ Sint32 scLinkLobbyPromptToParticipate(void)
 	if(set != 0) {
 		return set;
 	}
-	if(++LinkLobby_CallFrames == LOBBY_PROMPT_REPEAT_FRAMES) {
-		LinkLobby_CallFrames = 0;
+	if(++LinkLobbyCallTicks == LOBBY_PROMPT_REPEAT_TICKS) {
+		LinkLobbyCallTicks = 0;
 		fdScriptClearFlag(FLAG_LINK_LOBBY_ATTENDANT_ASKED);
 	}
 	set = fdScriptGetFlag(FLAG_LINK_LOBBY_ATTENDANT_ASKED);
@@ -378,21 +378,21 @@ Sint32 scLinkLobbyReportLinkDisconnected(void)
    a block and ends a send only when its count reaches exactly 0. The bytes sent
    for each party member: a Unit (332 bytes) and the eight bytes after it, 17
    blocks of 20. */
-#define LOBBY_UNIT_RECORD_BYTES		 (17 * 20)
+#define LOBBY_UNIT_RECORD_BYTES		(17 * 20)
 /* The bytes received for the Djinn recovery table after the party members, 17
    blocks of 20. */
-#define LOBBY_RECOVERY_RECORD_BYTES	 (17 * 20)
+#define LOBBY_RECOVERY_RECORD_BYTES (17 * 20)
 /* The party members a linked battle takes. A smaller party sends absent
    records. */
-#define LOBBY_UNIT_RECORD_COUNT		 3
-/* A record fails on the 25th frame it waits without a link or past the
+#define LOBBY_UNIT_RECORD_COUNT		3
+/* A record fails on the 25th tick it waits without a link or past the
    timeout. */
-#define LOBBY_TRANSFER_RETRY_LIMIT	 24
-/* Frames, about ten seconds, for the three party member records, and again for
+#define LOBBY_TRANSFER_RETRY_LIMIT	24
+/* Ticks, about ten seconds, for the three party member records, and again for
    the recovery table. */
-#define LOBBY_SEND_TIMEOUT_FRAMES	 600
-/* Frames, about fifteen seconds, for all four records received. */
-#define LOBBY_RECEIVE_TIMEOUT_FRAMES 900
+#define LOBBY_SEND_TIMEOUT_TICKS	600
+/* Ticks, about fifteen seconds, for all four records received. */
+#define LOBBY_RECEIVE_TIMEOUT_TICKS 900
 
 /* The Broken Seal's BattleArena_ReceivePartyRecords: takes the other player's
    party records over the link. */
@@ -413,13 +413,13 @@ Sint32 scLinkLobbyReceivePartyRecords(void)
 	size = LOBBY_UNIT_RECORD_BYTES;
 	heap = syHeapAllocEWRAM(size);
 	result = 0;
-	timeout = LOBBY_RECEIVE_TIMEOUT_FRAMES;
+	timeout = LOBBY_RECEIVE_TIMEOUT_TICKS;
 	slot = 0;
 	/* Three records, each started at recordNext and waited for at recordTest,
-	   then the Djinn recovery table at table. Each receive waits a frame at a
+	   then the Djinn recovery table at table. Each receive waits a tick at a
 	   time; more than size bytes is an overrun and fewer once it ends a short
 	   record, and once the timeout has run out, or while the link is not ready,
-	   every frame is a try, failing past LOBBY_TRANSFER_RETRY_LIMIT. */
+	   every tick is a try, failing past LOBBY_TRANSFER_RETRY_LIMIT. */
 	goto recordNext;
 recordWait:
 	if(SerialReceivedSize > size) {
@@ -511,12 +511,12 @@ done:
    PARTY_SLOT_EMPTY. */
 Sint32 scLinkLobbyCopyPartyOwnerIds(Uint16 *out)
 {
-	Sint32 count = gmPartyCountMembers();
+	Sint32 cnt = gmPartyCountMembers();
 	Sint32 i;
 
-	if(count > 3)
-		count = 3;
-	for(i = 0; i < count; i++) {
+	if(cnt > 3)
+		cnt = 3;
+	for(i = 0; i < cnt; i++) {
 		Uint8 owner = MainRoutineStateWork.party[i];
 
 		if(out != NULL)
@@ -524,7 +524,7 @@ Sint32 scLinkLobbyCopyPartyOwnerIds(Uint16 *out)
 	}
 	if(out != NULL)
 		*out = PARTY_SLOT_EMPTY;
-	return count;
+	return cnt;
 }
 
 /* The Broken Seal's BattleArena_SendPartyRecords: sends the party's records to
@@ -536,7 +536,7 @@ Sint32 scLinkLobbySendPartyRecords(void)
 	Uint8				 peerSlots[8];
 	Sint32				 transferResult;
 	Uint8				*heap;
-	Sint32				 memberCount;
+	Sint32				 memberCnt;
 	Sint32				 timeout;
 	Sint32				 tries;
 	Sint32				 i;
@@ -548,16 +548,16 @@ Sint32 scLinkLobbySendPartyRecords(void)
 	size = LOBBY_UNIT_RECORD_BYTES;
 	heap = syHeapAllocEWRAM(size);
 	result = 0;
-	timeout = LOBBY_SEND_TIMEOUT_FRAMES;
-	memberCount = scLinkLobbyCopyPartyOwnerIds(memberIds);
+	timeout = LOBBY_SEND_TIMEOUT_TICKS;
+	memberCnt = scLinkLobbyCopyPartyOwnerIds(memberIds);
 	for(i = 0; i <= 7; i++)
 		peerSlots[i] = 0;
-	/* Each send waits a frame at a time to finish. Once the timeout has run
-	   out, or while the link is not ready, every frame is a try, and past
+	/* Each send waits a tick at a time to finish. Once the timeout has run
+	   out, or while the link is not ready, every tick is a try, and past
 	   LOBBY_TRANSFER_RETRY_LIMIT tries the exchange fails. A send that cannot
 	   start leaves the block. */
 	do {
-		for(i = 0; i < memberCount; i++) {
+		for(i = 0; i < memberCnt; i++) {
 			Sint32 tries = 0;
 
 			syWordsCopyEntry(heap, syUnitGet(memberIds[i]), size);
@@ -613,7 +613,7 @@ Sint32 scLinkLobbySendPartyRecords(void)
 
 			list = &((DJINN_RECOVERY_TABLE *)heap)->list;
 			tries = 0;
-			timeout = LOBBY_SEND_TIMEOUT_FRAMES;
+			timeout = LOBBY_SEND_TIMEOUT_TICKS;
 			/* Give each Djinni on the list its party member's number on the
 			   partner's side, and drop those of party members not sent. */
 			for(j = 0; j < list->cnt; j++) {
@@ -677,15 +677,15 @@ Sint32 scLinkLobbyExchangePartyRecords(void)
 {
 	Sint32 result;
 	Sint32 first;
-	Sint32 flag;
+	Sint32 flg;
 
 	/* FAKEMATCH(dead): the result's zero in a once-only block. */
 	do {
 		result = 0;
 	} while(0);
-	flag = fdScriptGetFlag(FLAG_LINK_LOBBY_LINK_CHILD);
+	flg = fdScriptGetFlag(FLAG_LINK_LOBBY_LINK_CHILD);
 	LinkExchangeState = result;
-	if(!flag) {
+	if(!flg) {
 		sySynch(5);
 		result = scLinkLobbySendPartyRecords();
 		if(result < 0)
@@ -723,17 +723,17 @@ Sint32 scLinkLobbyEnterBattle(void)
 {
 	FIELD_STATE *state;
 	Bool		 failed;
-	WINDOW		*window;
-	Sint32		 framesUnanswered;
+	WINDOW		*win;
+	Sint32		 ticksUnanswered;
 	Bool		 stop;
 	Uint8		*savedUnits;
-	Uint16		*table;
+	Uint16		*tbl;
 	Uint32		 i;
 
 	failed = FALSE;
-	window = 0;
+	win = 0;
 	state = Ram_HeapSlots->fieldState;
-	framesUnanswered = 0;
+	ticksUnanswered = 0;
 	if(fdScriptGetFlag(FLAG_MONSTER_BATTLE)) {
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
@@ -748,8 +748,8 @@ Sint32 scLinkLobbyEnterBattle(void)
 		scLinkLobbyWriteSlotValue(LOBBY_SLOT_IN_CIRCLE);
 		if(!scLinkLobbyPeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))
 			/* "Awaiting your opponent..." */
-			window = mnMessageOpenWindow((Sint32)MsgLobbyAwaitingYourOpponent,
-				5, 4, MESSAGE_WINDOW_ZOOM);
+			win = mnMessageOpenWindow((Sint32)MsgLobbyAwaitingYourOpponent, 5,
+				4, MESSAGE_WINDOW_ZOOM);
 		while(!scLinkLobbyPeerSlotMatches(LOBBY_SLOT_IN_CIRCLE)) {
 			sySynch(1);
 			stop = FALSE;
@@ -759,10 +759,10 @@ Sint32 scLinkLobbyEnterBattle(void)
 				stop = TRUE;
 			if(!scLinkLobbyPeerSlotMatches(LOBBY_SLOT_IN_CIRCLE) &&
 				!scLinkLobbyPeerSlotMatches(LOBBY_SLOT_ASKED)) {
-				if(++framesUnanswered > LOBBY_PEER_WAIT_FRAMES)
+				if(++ticksUnanswered > LOBBY_PEER_WAIT_TICKS)
 					stop = TRUE;
 			} else {
-				framesUnanswered = 0;
+				ticksUnanswered = 0;
 			}
 			if(stop) {
 				state->raisedCue = LOBBY_CUE_DISCONNECTED;
@@ -775,8 +775,8 @@ Sint32 scLinkLobbyEnterBattle(void)
 				break;
 			}
 		}
-		if(window)
-			mnWindowClose(window, 1);
+		if(win)
+			mnWindowClose(win, 1);
 		sySynch(5);
 	}
 	if(!failed) {
@@ -818,7 +818,7 @@ Sint32 scLinkLobbyEnterBattle(void)
 				scLinkLobbyWriteSlotValue(LOBBY_SLOT_SIGNATURE);
 				scLinkLobbyWriteSlotValue(LOBBY_SLOT_IDLE);
 				sySetEvent(
-					(EVENT_FUNC)scLinkLobbyPollPeerReady, EVENT_PASS_FRAME);
+					(EVENT_FUNC)scLinkLobbyPollPeerReady, EVENT_PASS_TICK);
 				sySetEventFlags(scLinkLobbyPollPeerReady, 1);
 				fdScriptClearFlag(FLAG_LINK_LOBBY_PARTNER_ASKED);
 				fdScriptClearFlag(FLAG_LINK_LOBBY_PLAYER_APPLIED);
@@ -846,11 +846,11 @@ Sint32 scLinkLobbyEnterBattle(void)
 			ENCOUNTER_ZONE_VENUS_DJINN, LINK_BATTLE_ENCOUNTER_SLOT);
 		/* EXEC fills the payload's first four halfwords, where the link
 		   battle's command entry looks for it in the partner's. */
-		table = (Uint16 *)SerialTransfer.payload;
-		table[0] = 'E';
-		table[1] = 'X';
-		table[2] = 'E';
-		table[3] = 'C';
+		tbl = (Uint16 *)SerialTransfer.payload;
+		tbl[0] = 'E';
+		tbl[1] = 'X';
+		tbl[2] = 'E';
+		tbl[3] = 'C';
 		/* The six units go to the battle's actor sprite slots, where the battle
 		   takes them from. */
 		for(i = 0; i < 6 * BATTLE_UNIT_SIZE; i++)
@@ -1028,7 +1028,7 @@ Sint32 scLinkLobbyReportWinTallies(Sint32 actor)
    Sugimoto." */
 Sint32 scLinkLobbyChooseDebugParmSet(Sint32 actorId)
 {
-	WINDOW *window;
+	WINDOW *win;
 	Sint32	choice;
 	Sint32	shown;
 	Sint32	ok;
@@ -1039,13 +1039,13 @@ Sint32 scLinkLobbyChooseDebugParmSet(Sint32 actorId)
 	fdScriptSetMessageId((Sint32)MsgLobbyChooseYourParametersHere);
 	/* "Choose your parameters here." */
 	fdScriptShowMessage(actorId, 0);
-	window = mnWindowCreate(0, 0, 6, 4, 2);
+	win = mnWindowCreate(0, 0, 6, 4, 2);
 	choice = 0;
 	shown = -1;
 	for(;;) {
 		if(choice != shown) {
-			mnWindowSprPrepareForRedraw(window);
-			mnTextDrawNum(choice, 3, window, 0, 0);
+			mnWindowSprPrepareForRedraw(win);
+			mnTextDrawNum(choice, 3, win, 0, 0);
 			shown = choice;
 		}
 		if(PerWork.repeat & KEY_LEFT) {
@@ -1066,7 +1066,7 @@ Sint32 scLinkLobbyChooseDebugParmSet(Sint32 actorId)
 		}
 		sySynch(1);
 	}
-	mnWindowClose(window, 1);
+	mnWindowClose(win, 1);
 	if(choice >= 0) {
 		ok = btDebugParmSetLoad(choice);
 	} else {
@@ -1104,15 +1104,15 @@ void scLinkLobbyOpenSanctum(Sint32 actor)
    while FLAG_LINK_BATTLE_ARRANGED is clear; an 0xff entry ends the list. */
 Bool scLinkLobbyPartyContains(Sint32 owner)
 {
-	Sint32 count = gmPartyCountMembers();
+	Sint32 cnt = gmPartyCountMembers();
 	Sint32 limit = 3;
 	Sint32 i;
 
 	if(!fdScriptGetFlag(FLAG_LINK_BATTLE_ARRANGED))
 		limit = 4;
-	if(count > limit)
-		count = limit;
-	for(i = 0; i < count; i++) {
+	if(cnt > limit)
+		cnt = limit;
+	for(i = 0; i < cnt; i++) {
 		if(MainRoutineStateWork.party[i] == PARTY_SLOT_EMPTY)
 			return FALSE;
 		if(MainRoutineStateWork.party[i] == owner)
@@ -1130,7 +1130,7 @@ extern Uint8 MsgLobbyYouHaveSongRequest[];
 extern Uint8 MsgLobbyComeBackWhenYoureReady[];
 /* The sounds the song request offers, numbered from 0 in its window. */
 #define SONG_REQUEST_SOUNDS 97
-extern Uint16 LinkLobby_SongRequestSounds[SONG_REQUEST_SOUNDS];
+extern Uint16 LinkLobbySongRequestSounds[SONG_REQUEST_SOUNDS];
 
 /* "You have a song request?": the player picks a piece of music or a sound by
    number with Left and Right and hears it with A, until B ends it with "Come
@@ -1143,7 +1143,7 @@ extern Uint16 LinkLobby_SongRequestSounds[SONG_REQUEST_SOUNDS];
    below the hall where the player cannot walk. */
 void scLinkLobbyTakeSongRequest(Sint32 actor)
 {
-	WINDOW *window;
+	WINDOW *win;
 	Sint32	song;
 	Sint32	shown;
 	Sint32	step;
@@ -1162,12 +1162,12 @@ void scLinkLobbyTakeSongRequest(Sint32 actor)
 		all = 1;
 	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
 	for(;;) {
-		window = mnWindowCreate(12, 8, 6, 3, 2);
+		win = mnWindowCreate(12, 8, 6, 3, 2);
 		shown = -1;
 		for(;;) {
 			if(song != shown) {
-				mnWindowSprPrepareForRedraw(window);
-				mnTextDrawNum(song, 3, window, 0, 0);
+				mnWindowSprPrepareForRedraw(win);
+				mnTextDrawNum(song, 3, win, 0, 0);
 				shown = song;
 			}
 			step = 0;
@@ -1184,7 +1184,7 @@ void scLinkLobbyTakeSongRequest(Sint32 actor)
 				if(all != 0 || MainRoutineStateWork.sendFlg != 0 ||
 					AnyFileCleared != 0)
 					break;
-				if(sySndFlagTest(LinkLobby_SongRequestSounds[song]) != 0)
+				if(sySndFlagTest(LinkLobbySongRequestSounds[song]) != 0)
 					break;
 			}
 			if(PerWork.push & KEY_A)
@@ -1195,9 +1195,9 @@ void scLinkLobbyTakeSongRequest(Sint32 actor)
 			}
 			sySynch(1);
 		}
-		mnWindowClose(window, 1);
+		mnWindowClose(win, 1);
 		if(song >= 0) {
-			fdScriptPlaySnd(LinkLobby_SongRequestSounds[song]);
+			fdScriptPlaySnd(LinkLobbySongRequestSounds[song]);
 		} else {
 			fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
 			sySynch(120);
@@ -1281,7 +1281,7 @@ Sint32 scLinkLobbyLeaveArena(void)
    gives "I like my men macho", or with L or R held, a song request. */
 Sint32 scLinkLobbyTalkToVisitor(Sint32 actor)
 {
-	Sint32 message;
+	Sint32 msg;
 
 	if(actor == ACTOR_MACHO_LOVING_VISITOR && (PerWork.data & KEYS_SHOULDERS)) {
 		scLinkLobbyTakeSongRequest(ACTOR_MACHO_LOVING_VISITOR);
@@ -1292,35 +1292,35 @@ Sint32 scLinkLobbyTalkToVisitor(Sint32 actor)
 	if(fdScriptGetFlag(FLAG_LINK_LOBBY_VISITOR_SPOKE)) {
 		switch(actor) {
 		case ACTOR_ROOTING_VISITOR:
-			message = (Sint32)MsgLobbyIllBeRooting;
+			msg = (Sint32)MsgLobbyIllBeRooting;
 			break;
 		case ACTOR_MACHO_LOVING_VISITOR:
-			message = (Sint32)MsgLobbyILikeMyMenMacho;
+			msg = (Sint32)MsgLobbyILikeMyMenMacho;
 			break;
 		default:
-			message = (Sint32)MsgLobbySometimesYourClassChangesWhen;
+			msg = (Sint32)MsgLobbySometimesYourClassChangesWhen;
 			break;
 		}
 	} else {
 		switch(actor) {
 		case ACTOR_ROOTING_VISITOR:
-			message = (Sint32)MsgLobbyYouLookLittleScrawny;
+			msg = (Sint32)MsgLobbyYouLookLittleScrawny;
 			break;
 		case ACTOR_MACHO_LOVING_VISITOR:
-			message = (Sint32)MsgLobbyILikeMyMenMacho;
+			msg = (Sint32)MsgLobbyILikeMyMenMacho;
 			break;
 		default:
-			message = (Sint32)MsgLobbySometimesYourClassChangesWhen;
+			msg = (Sint32)MsgLobbySometimesYourClassChangesWhen;
 			break;
 		}
 		fdScriptSetFlag(FLAG_LINK_LOBBY_VISITOR_SPOKE);
 	}
-	fdScriptSetMessageId(message);
+	fdScriptSetMessageId(msg);
 	/* "Sometimes, your class changes when you unleash a Djinni. You need
 	   to..." */
 	fdScriptOpenMessage(actor, 0);
 	fdScriptWait(1);
-	if(message == (Sint32)MsgLobbyYouLookLittleScrawny) {
+	if(msg == (Sint32)MsgLobbyYouLookLittleScrawny) {
 		fdActorStartRepeatedMotion(ACTOR_MACHO_LOVING_VISITOR, 1);
 		fdActorSetAnimation(ACTOR_MACHO_LOVING_VISITOR, 4);
 		fdScriptWait(15);
@@ -1338,24 +1338,24 @@ Sint32 scLinkLobbyTalkToVisitor(Sint32 actor)
    order on the status screen. */
 Sint32 scLinkLobbyExplainPartyOrder(Sint32 actor)
 {
-	Sint32 message;
+	Sint32 msg;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdActorFaceActor(actor, MainRoutineStateWork.leaderActorId, 0);
 	if(!fdScriptGetFlag(FLAG_LINK_LOBBY_PARTY_ORDER_NEXT)) {
 		if(gmPartyCountMembers() == 8)
-			message = (Sint32)MsgLobbyUpToThreeAlliesCan;
+			msg = (Sint32)MsgLobbyUpToThreeAlliesCan;
 		else if(gmPartyCountMembers() <= 3)
-			message = (Sint32)MsgLobbyUpToThreeAlliesCanFight;
+			msg = (Sint32)MsgLobbyUpToThreeAlliesCanFight;
 		else
-			message = (Sint32)MsgLobbyUpToThreeAlliesCanFightInLinked;
+			msg = (Sint32)MsgLobbyUpToThreeAlliesCanFightInLinked;
 		fdScriptSetFlag(FLAG_LINK_LOBBY_PARTY_ORDER_NEXT);
 	} else {
-		message = (Sint32)MsgLobbyYouCanChangeOrder;
+		msg = (Sint32)MsgLobbyYouCanChangeOrder;
 		fdScriptClearFlag(FLAG_LINK_LOBBY_PARTY_ORDER_NEXT);
 	}
-	fdScriptSetMessageId(message);
+	fdScriptSetMessageId(msg);
 	/* "You can change the order of your party in the status screen. But
 	   you..." */
 	fdScriptOpenMessage(actor, 0);
@@ -1432,8 +1432,8 @@ Sint32 scLinkLobbyInit(void)
 	fdScriptSetFlag(FLAG_IN_BATTLE_ARENA);
 	MainRoutineStateWork.firstShortcut = 0;
 	MainRoutineStateWork.secondShortcut = 0;
-	LinkLobby_CallFrames = 0;
-	LinkLobby_WaitFrames = 0;
+	LinkLobbyCallTicks = 0;
+	LinkLobbyWaitTicks = 0;
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 	sySndLoadReverbCode(SOUND_REVERB_NORMAL);
@@ -1464,7 +1464,7 @@ Sint32 scLinkLobbyInit(void)
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		scLinkLobbyWriteSlotValue(LOBBY_SLOT_ALONE);
 		MainRoutineStateWork.linkTallies[LINK_TALLY_MONSTER_WINS]++;
 		MainRoutineStateWork.linkTallies[LINK_TALLY_MONSTER_STREAK]++;
@@ -1523,7 +1523,7 @@ Sint32 scLinkLobbyInit(void)
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		scLinkLobbyWriteSlotValue(LOBBY_SLOT_ALONE);
 		fdActorFaceActor(
 			ACTOR_ATTENDANT, MainRoutineStateWork.leaderActorId, 0);
@@ -1555,7 +1555,7 @@ Sint32 scLinkLobbyInit(void)
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		scLinkLobbyWriteSlotValue(LOBBY_SLOT_SIGNATURE);
 		scLinkLobbyWriteSlotValue(LOBBY_SLOT_IDLE);
 		/* FLAG_AREA_TEMP_E8: the linked battle broke off rather than being
@@ -1589,7 +1589,7 @@ Sint32 scLinkLobbyInit(void)
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		scLinkLobbyWriteSlotValue(LOBBY_SLOT_SIGNATURE);
 		scLinkLobbyWriteSlotValue(LOBBY_SLOT_IDLE);
 		if(!fdScriptGetFlag(FLAG_MONSTER_BATTLE)) {
@@ -1608,7 +1608,7 @@ Sint32 scLinkLobbyInit(void)
 			fdScriptStart();
 			fdScriptEndLastingPsynergy(0);
 			fdScriptStartScreenTransition();
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 			fdActorFaceActor(
 				ACTOR_ATTENDANT, MainRoutineStateWork.leaderActorId, 0);
 			fdScriptSetMessageId((Sint32)MsgLobbyNoteYouCantUseSleep);
@@ -1621,7 +1621,7 @@ Sint32 scLinkLobbyInit(void)
 		scLinkLobbyWriteSlotValue(LOBBY_SLOT_SIGNATURE);
 		scLinkLobbyWriteSlotValue(LOBBY_SLOT_IDLE);
 	}
-	sySetEvent((EVENT_FUNC)scLinkLobbyPollPeerReady, EVENT_PASS_FRAME);
+	sySetEvent((EVENT_FUNC)scLinkLobbyPollPeerReady, EVENT_PASS_TICK);
 	sySetEventFlags((EVENT_FUNC)scLinkLobbyPollPeerReady, 1);
 	if(MainRoutineStateWork.entrance != LOBBY_AFTER_MONSTER_WIN ||
 		!fdScriptGetFlag(FLAG_MONSTER_BATTLE)) {
@@ -1643,7 +1643,7 @@ Sint32 scPrepareMap(void)
 /* The words the lobby publishes in its link payload, by LOBBY_SLOT; the partner
    compares them with its own (scLinkLobbyPeerSlotMatches). */
 /* clang-format off */
-Sint32 LinkLobby_SlotValues[] = {
+Sint32 LinkLobbySlotValues[] = {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 	PEER_TAG('C', 'M', 'g', '2'), PEER_TAG('0', '1', '2', '3'),
 	PEER_TAG('A', 'B', 'C', '1'), PEER_TAG('C', 'D', 'E', '2'),
@@ -1671,13 +1671,13 @@ Sint32 LinkLobby_SlotValues[] = {
 #endif
 };
 
-Uint8 LinkLobby_SlotColumns[] = {
+Uint8 LinkLobbySlotColumns[] = {
 	0, 1, 1, 1, 1, 0,
 };
 
 /* The music and sounds the song request offers, numbered from 0 in its */
 /* window. */
-Uint16 LinkLobby_SongRequestSounds[] = {
+Uint16 LinkLobbySongRequestSounds[] = {
 	MUS_TRY_YOUR_LUCK,
 	MUS_THE_BROKEN_SEAL,
 	MUS_THE_ADVENTURE_RESUMES,
@@ -1821,7 +1821,7 @@ ACTOR_PLACE ActorPlacements[] = {
 };
 
 /* Unused: a placement table nothing reads. */
-ACTOR_PLACE LinkLobby_UnusedPlacements[] = {
+ACTOR_PLACE LinkLobbyUnusedPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 204, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
 	ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 204, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 304, 0, 168, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),

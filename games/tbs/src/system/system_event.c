@@ -1,12 +1,12 @@
-/* Events: per-frame and VBlank functions in priority order. Part of
+/* Events: per-tick and VBlank functions in priority order. Part of
    system.c. */
 
 #if !FIX_FUNCTION_SIGNATURES
 typedef Sint32 (*EVENT_INT_FUNC)(void);
 #endif
 
-/* Events: up to EVENT_COUNT functions run each frame by sySynch() or each
-   VBlank, kept sorted by their priority (see EVENT_PASS_FRAME). */
+/* Events: up to EVENT_COUNT functions run each tick by sySynch() or each
+   VBlank, kept sorted by their priority (see EVENT_PASS_TICK). */
 
 /* Empties the event table: every slot gets no function, priority
    EVENT_PRIORITY_EMPTY and no flags. */
@@ -26,14 +26,13 @@ void syInitEvent(void)
 	EventsInitialized = 1;
 }
 
-/* Unused: copies `byteCount` bytes a word at a time. */
-UNUSED void syCopyEventWords(
-	Uint32 *destination, Uint32 *source, Uint32 byteCount)
+/* Unused: copies `byteCnt` bytes a word at a time. */
+UNUSED void syCopyEventWords(Uint32 *dst, Uint32 *src, Uint32 byteCnt)
 {
-	Uint32 index;
-	byteCount >>= 2;
-	for(index = 0; index < byteCount; index++)
-		*destination++ = *source++;
+	Uint32 idx;
+	byteCnt >>= 2;
+	for(idx = 0; idx < byteCnt; idx++)
+		*dst++ = *src++;
 }
 
 /* Bubble-sorts the event table by priority, highest first, so each pass runs
@@ -87,18 +86,18 @@ UNUSED Sint32 syFindEvent(EVENT_FUNC func)
 	return result;
 }
 
-/* Adds an event running `func` with priority `priority`, or gives an event
+/* Adds an event running `func` with priority `pri`, or gives an event
    already running it the new priority, and re-sorts the table. */
-Sint32 sySetEvent(EVENT_FUNC func, Sint32 priority)
+Sint32 sySetEvent(EVENT_FUNC func, Sint32 pri)
 {
 	Uint32 savedInterruptState;
-	Sint32 index;
+	Sint32 idx;
 	EVENT *event;
 	Sint32 i;
 
 	/* Adding re-sorts the table, which would shift the events after the new one
 	   if it came during a pass; no event adds one. */
-	index = -1;
+	idx = -1;
 	event = EventBuf;
 	/* DEAD: nothing uses the status read here; the ROM keeps the load, as The
 	   Lost Age's sySetEvent does. */
@@ -107,26 +106,26 @@ Sint32 sySetEvent(EVENT_FUNC func, Sint32 priority)
 	/* Update an existing event before looking for an unused event slot. */
 	for(i = 0; i < EVENT_COUNT; i++, event++) {
 		if(event->func == (Uint32)func) {
-			event->pri = priority;
-			index = i;
+			event->pri = pri;
+			idx = i;
 			break;
 		}
 	}
 	event = EventBuf;
-	if(index == -1) {
+	if(idx == -1) {
 		for(i = 0; i < EVENT_COUNT; i++, event++) {
 			if(event->func == 0) {
 				event->func = (Uint32)func;
-				event->pri = priority;
+				event->pri = pri;
 				event->flg = 0;
-				index = i;
+				idx = i;
 				break;
 			}
 		}
 	}
 	sySortEvents();
 	IRQ_UNLOCK(savedInterruptState);
-	return index;
+	return idx;
 }
 
 /* Unused: an empty function. */
@@ -283,7 +282,7 @@ Sint32 syResumeOverlayEvents(void)
 }
 
 /* Runs one pass of the events: every event whose priority's high byte matches
-   `pass`'s (EVENT_PASS_FRAME or EVENT_PASS_VBLANK), in table order. */
+   `pass`'s (EVENT_PASS_TICK or EVENT_PASS_VBLANK), in table order. */
 void syExecuteEvent(Sint32 pass)
 {
 	EVENT *event = EventBuf;

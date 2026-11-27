@@ -23,17 +23,17 @@ typedef enum LINK_PARTY_PACKET_SIZE {
 Sint32 btLinkBattleReceiveParty(void)
 {
 	Uint16 label[24];
-	void  *buffer;
+	void  *buf;
 	UNIT  *opponent;
-	Sint32 memberCount;
+	Sint32 memberCnt;
 	Sint32 partySlot;
 	Sint32 labelLength;
 	Sint32 i;
 
 	/* XXX (no evidence): what the block is for; each party member is received
 	   straight into its enemy unit, and the block is only freed. */
-	buffer = syHeapAllocEWRAM(LINK_PARTY_UNIT_BYTES);
-	memberCount = 0;
+	buf = syHeapAllocEWRAM(LINK_PARTY_UNIT_BYTES);
+	memberCnt = 0;
 	for(partySlot = 0; partySlot < LINK_PARTY_SIZE; partySlot++) {
 		opponent = gmUnitGetStub(partySlot + FIRST_ENEMY_UNIT);
 		if(sySerialStartReceive(opponent) == -1) {
@@ -41,7 +41,7 @@ Sint32 btLinkBattleReceiveParty(void)
 		}
 		sySerialWaitForReceive();
 		if(opponent->side != 0) {
-			memberCount++;
+			memberCnt++;
 		}
 		sySynch(2);
 
@@ -66,17 +66,17 @@ Sint32 btLinkBattleReceiveParty(void)
 		}
 		opponent->name[UNIT_NAME_LENGTH] = 0;
 	}
-	syHeapRelease(buffer);
+	syHeapRelease(buf);
 
 	/* The recovery packet follows all three party places. */
-	buffer = syHeapAllocEWRAM(LINK_PARTY_OFFER_BYTES);
+	buf = syHeapAllocEWRAM(LINK_PARTY_OFFER_BYTES);
 	if(sySerialStartReceive(
 		   gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_OPPONENT)) != -1) {
 		sySerialWaitForReceive();
 		sySynch(2);
 	}
-	syHeapRelease(buffer);
-	return memberCount;
+	syHeapRelease(buf);
+	return memberCnt;
 }
 
 /* BATTLE_STATE.opponentSlots for a party unit the opponent was not sent. */
@@ -86,17 +86,17 @@ Sint32 btLinkBattleReceiveParty(void)
    the opponent knows it by. */
 UNREAD_RESULT btLinkBattleSendParty(void)
 {
-	Uint8				*buffer;
+	Uint8				*buf;
 	BATTLE_STATE		*battle;
 	Sint32				 j;
 	DJINN_RECOVERY_LIST *list;
 	Sint32				 size;
-	Sint32				 count;
+	Sint32				 cnt;
 	Sint32				 i;
 	Uint16				 unitIds[8];
 
 	size = LINK_PARTY_UNIT_BYTES;
-	buffer = syHeapAllocEWRAM(size);
+	buf = syHeapAllocEWRAM(size);
 	{
 		Sint32 noSlot = OPPONENT_SLOT_NONE;
 
@@ -105,21 +105,21 @@ UNREAD_RESULT btLinkBattleSendParty(void)
 			battle->opponentSlots[i] = noSlot;
 
 		/* The party members, each marked as the opponent's. */
-		count = btPartyPrepareMembers(unitIds);
-		for(i = 0; i < count; i++) {
-			syWordsCopy(buffer, gmUnitGetStub(unitIds[i]), size);
-			((UNIT *)buffer)->side = BATTLE_SIDE_PARTY;
+		cnt = btPartyPrepareMembers(unitIds);
+		for(i = 0; i < cnt; i++) {
+			syWordsCopy(buf, gmUnitGetStub(unitIds[i]), size);
+			((UNIT *)buf)->side = BATTLE_SIDE_PARTY;
 			/* FIRST_ENEMY_UNIT + i, in a byte. */
 			battle->opponentSlots[unitIds[i]] = i - FIRST_ENEMY_UNIT;
-			if(sySerialStartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+			if(sySerialStartSend(buf, LINK_PARTY_UNIT_BYTES) == -1)
 				break;
 			sySerialWaitForSend();
 			sySynch(2);
 		}
 		/* Empty places up to three. */
 		for(; i < LINK_PARTY_SIZE; i++) {
-			((UNIT *)buffer)->side = BATTLE_SIDE_NONE;
-			if(sySerialStartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
+			((UNIT *)buf)->side = BATTLE_SIDE_NONE;
+			if(sySerialStartSend(buf, LINK_PARTY_UNIT_BYTES) == -1)
 				break;
 			sySerialWaitForSend();
 			sySynch(2);
@@ -127,20 +127,20 @@ UNREAD_RESULT btLinkBattleSendParty(void)
 
 		/* The Djinn recovery list, its units renumbered for the opponent. */
 		size = LINK_PARTY_OFFER_BYTES;
-		syHeapRelease(buffer);
-		buffer = syHeapAllocEWRAM(size);
+		syHeapRelease(buf);
+		buf = syHeapAllocEWRAM(size);
 		IWRAM_COPY_WORDS(
-			buffer, gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_PARTY), size);
-		list = &((DJINN_RECOVERY_TABLE *)buffer)->list;
+			buf, gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_PARTY), size);
+		list = &((DJINN_RECOVERY_TABLE *)buf)->list;
 		for(j = 0; j < list->cnt; j++)
 			list->entries[j].unitId =
 				battle->opponentSlots[list->entries[j].unitId];
-		if(sySerialStartSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
+		if(sySerialStartSend(buf, LINK_PARTY_OFFER_BYTES) != -1) {
 			sySerialWaitForSend();
 			sySynch(1);
 			sySynch(2);
 		}
-		syHeapRelease(buffer);
+		syHeapRelease(buf);
 	}
 }
 
@@ -148,29 +148,29 @@ UNREAD_RESULT btLinkBattleSendParty(void)
    returns a pointer to the end. UB: the copy is on the stack; UBFIX keeps
    it. */
 UNUSED Uint8 *btTextCopyFourCharsUnderscored(
-	Uint32 unusedA, Uint32 unusedB, Uint16 *source)
+	Uint32 unusedA, Uint32 unusedB, Uint16 *src)
 {
 #if FIX_RETURNED_STACK_BUFFER
 	static Uint8 sBuffer[5];
 	Uint8		*base = sBuffer;
 #else
-	Uint8  buffer[5];
-	Uint8 *base = buffer;
+	Uint8  buf[5];
+	Uint8 *base = buf;
 #endif
 	Uint32 fill = '_';
-	Uint8 *current = base;
-	Uint8 *dst = current;
+	Uint8 *cur = base;
+	Uint8 *dst = cur;
 	Sint32 i;
 
 	for(i = 0; i < 4; i++) {
-		Uint32 value = *source;
+		Uint32 value = *src;
 
 		*dst = value;
-		source++;
+		src++;
 		dst++;
 		if((Uint8)value == 0)
-			*current = fill;
-		current++;
+			*cur = fill;
+		cur++;
 	}
 	base[4] = 0;
 	/* BUG: the original buffer is on the stack, gone once this returns. UBFIX
@@ -178,7 +178,7 @@ UNUSED Uint8 *btTextCopyFourCharsUnderscored(
 	return dst;
 }
 
-/* In a link battle, shows the "EXEC" signature and waits up to 30 frames for
+/* In a link battle, shows the "EXEC" signature and waits up to 30 ticks for
    the other console to show it too. Returns -1 when the link fails, else 0. */
 Sint32 btLinkBattleWaitSync(void)
 {
@@ -206,7 +206,7 @@ Sint32 btLinkBattleWaitSync(void)
 				if((LinkStatusWork & LINK_BOTH_CONNECTED) !=
 					LINK_BOTH_CONNECTED) {
 					missed++;
-					if(missed > LINK_MAX_MISSED_FRAMES)
+					if(missed > LINK_MAX_MISSED_TICKS)
 						return -1;
 				} else {
 					missed = 0;
@@ -249,7 +249,7 @@ Sint32 btLinkBattleSyncTurn(void)
 		sySynch(1);
 		for(;;) {
 			if((LinkStatusWork & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
-				if(++missed > LINK_MAX_MISSED_FRAMES)
+				if(++missed > LINK_MAX_MISSED_TICKS)
 					return -1;
 			} else {
 				missed = 0;
@@ -267,7 +267,7 @@ Sint32 btLinkBattleSyncTurn(void)
 		signature[7] = 'n';
 		for(;;) {
 			if((LinkStatusWork & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
-				if(++missed > LINK_MAX_MISSED_FRAMES)
+				if(++missed > LINK_MAX_MISSED_TICKS)
 					return -1;
 			} else {
 				missed = 0;
@@ -286,7 +286,7 @@ Sint32 btLinkBattleSyncTurn(void)
 		signature[3] = 'C';
 		for(;;) {
 			if((LinkStatusWork & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
-				if(++missed > LINK_MAX_MISSED_FRAMES)
+				if(++missed > LINK_MAX_MISSED_TICKS)
 					return -1;
 			} else {
 				missed = 0;
@@ -304,7 +304,7 @@ Sint32 btLinkBattleSyncTurn(void)
 		signature[5] = 'u';
 		for(;;) {
 			if((LinkStatusWork & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
-				if(++missed > LINK_MAX_MISSED_FRAMES)
+				if(++missed > LINK_MAX_MISSED_TICKS)
 					return -1;
 			} else {
 				missed = 0;
@@ -322,7 +322,7 @@ Sint32 btLinkBattleSyncTurn(void)
 		signature[7] = 'N';
 		for(;;) {
 			if((LinkStatusWork & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
-				if(++missed > LINK_MAX_MISSED_FRAMES)
+				if(++missed > LINK_MAX_MISSED_TICKS)
 					return -1;
 			} else {
 				missed = 0;

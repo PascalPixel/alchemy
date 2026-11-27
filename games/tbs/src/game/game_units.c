@@ -127,21 +127,21 @@ const ENEMY_DEFINITION *gmEnemyGetDefinition(Sint32 enemyId)
 #endif
 		row = 0;
 	}
-	return &Enemy_Definitions[row];
+	return &EnemyDefinitions[row];
 }
 
-/* Unused: copies `count` bytes from `first` to `second` when `direction` is
+/* Unused: copies `cnt` bytes from `first` to `second` when `direction` is
    set, and from `second` to `first` otherwise. */
 UNUSED void gmMemoryCopyBytesDirectional(
-	Uint8 *first, Uint8 *second, Sint32 count, Sint32 direction)
+	Uint8 *first, Uint8 *second, Sint32 cnt, Sint32 direction)
 {
 	Sint32 i;
 
 	if(direction != 0) {
-		for(i = 0; i < count; i++)
+		for(i = 0; i < cnt; i++)
 			*second++ = *first++;
 	} else {
-		for(i = 0; i < count; i++)
+		for(i = 0; i < cnt; i++)
 			*first++ = *second++;
 	}
 }
@@ -158,13 +158,13 @@ void gmUnitCalc(Sint32 unitId)
 {
 	STAT_STATE *stats;
 	UNIT	   *unit;
-	Sint32		index, effectIndex, elementIndex;
+	Sint32		idx, effectIdx, elementIdx;
 	Sint32		value;
 	Sint32		inOwnLighthouse;
 	Sint32		effectKind;
 	Sint32		effectAmount;
 	Sint32		statLimit;
-	Sint16		previousMaximum;
+	Sint16		prevMaximum;
 
 	/* Start with the unit's base stats and elemental power/resistance. */
 	stats = syHeapAllocEWRAM(sizeof(STAT_STATE));
@@ -178,9 +178,9 @@ void gmUnitCalc(Sint32 unitId)
 	stats->actionCnt = unit->baseActionCnt & UNIT_ACTION_COUNT_MASK;
 	stats->hpRegen = unit->baseHpRegen;
 	stats->ppRegen = unit->basePpRegen;
-	for(index = 0; index < ELEMENT_COUNT; index++) {
-		stats->element[index].power = unit->baseElement[index].power;
-		stats->element[index].resistance = unit->baseElement[index].resistance;
+	for(idx = 0; idx < ELEMENT_COUNT; idx++) {
+		stats->element[idx].power = unit->baseElement[idx].power;
+		stats->element[idx].resistance = unit->baseElement[idx].resistance;
 	}
 
 	/* HP and PP keep their share of the maximum; gauges that no longer match
@@ -208,18 +208,17 @@ void gmUnitCalc(Sint32 unitId)
 	/* Apply additive equipment and set-Djinn bonuses before class scaling. An
 	   enemy (CLASS_NONE) skips equipment, Djinn and class entirely. */
 	if(unit->classId != CLASS_NONE) {
-		for(index = 0; index < INVENTORY_SLOTS; index++) {
-			if(!(unit->inventory[index] & INVENTORY_EQUIPPED))
+		for(idx = 0; idx < INVENTORY_SLOTS; idx++) {
+			if(!(unit->inventory[idx] & INVENTORY_EQUIPPED))
 				continue;
-			stats->item = gmItemGetDirect(unit->inventory[index]);
+			stats->item = gmItemGetDirect(unit->inventory[idx]);
 			if(stats->item->flg & ITEM_CURSED)
 				unit->curse |= CURSE_BOUND | CURSE_ITEM;
 			stats->attack += stats->item->attack;
 			stats->defense += stats->item->defense;
-			for(effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS;
-				effectIndex++) {
-				effectKind = stats->item->effs[effectIndex].kind;
-				effectAmount = stats->item->effs[effectIndex].amount;
+			for(effectIdx = 0; effectIdx < EQUIP_EFFECT_SLOTS; effectIdx++) {
+				effectKind = stats->item->effs[effectIdx].kind;
+				effectAmount = stats->item->effs[effectIdx].amount;
 				stats->kind = effectKind;
 				stats->amount = effectAmount;
 				switch(effectKind) {
@@ -286,13 +285,13 @@ void gmUnitCalc(Sint32 unitId)
 			unit->curse &= ~(CURSE_REMOVABLE | CURSE_BOUND);
 
 		/* Only set Djinn contribute their stat bonuses. */
-		for(elementIndex = 0; elementIndex < ELEMENT_COUNT; elementIndex++) {
-			Uint32 activeDjinn = unit->djinnSet[elementIndex];
+		for(elementIdx = 0; elementIdx < ELEMENT_COUNT; elementIdx++) {
+			Uint32 activeDjinn = unit->djinnSet[elementIdx];
 
-			for(index = 0; index < DJINN_PER_ELEMENT; index++) {
-				if(activeDjinn & (1 << index)) {
+			for(idx = 0; idx < DJINN_PER_ELEMENT; idx++) {
+				if(activeDjinn & (1 << idx)) {
 					const DJINN_DEFINITION *djinn =
-						gmDjinnGetDefinition(elementIndex, index);
+						gmDjinnGetDefinition(elementIdx, idx);
 
 					stats->hp += djinn->hp;
 					stats->pp += djinn->pp;
@@ -323,14 +322,13 @@ void gmUnitCalc(Sint32 unitId)
 
 		/* Then the equipment's multiplying effects, EQUIP_EFFECT_SCALE_HP to
 		   EQUIP_EFFECT_SCALE_LUCK, also in tenths. */
-		for(index = 0; index < INVENTORY_SLOTS; index++) {
-			if(!(unit->inventory[index] & INVENTORY_EQUIPPED))
+		for(idx = 0; idx < INVENTORY_SLOTS; idx++) {
+			if(!(unit->inventory[idx] & INVENTORY_EQUIPPED))
 				continue;
-			stats->item = gmItemGetDirect(unit->inventory[index]);
-			for(effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS;
-				effectIndex++) {
-				effectKind = stats->item->effs[effectIndex].kind;
-				effectAmount = stats->item->effs[effectIndex].amount;
+			stats->item = gmItemGetDirect(unit->inventory[idx]);
+			for(effectIdx = 0; effectIdx < EQUIP_EFFECT_SLOTS; effectIdx++) {
+				effectKind = stats->item->effs[effectIdx].kind;
+				effectAmount = stats->item->effs[effectIdx].amount;
 				stats->kind = effectKind;
 				effectKind = SCALE_EFFECT(effectKind);
 				stats->amount = effectAmount;
@@ -374,13 +372,13 @@ void gmUnitCalc(Sint32 unitId)
 	stats->attack = stats->attack * (unit->attackStage + 8) / 8;
 	stats->defense = stats->defense * (unit->defenseStage + 8) / 8;
 	stats->agility = stats->agility * (unit->agilityStage + 8) / 8;
-	for(index = 0; index < ELEMENT_COUNT; index++)
-		stats->element[index].power +=
-			(unit->summonBoost[index] * unit->summonBoost[index] +
-				unit->summonBoost[index]) *
+	for(idx = 0; idx < ELEMENT_COUNT; idx++)
+		stats->element[idx].power +=
+			(unit->summonBoost[idx] * unit->summonBoost[idx] +
+				unit->summonBoost[idx]) *
 			5;
-	for(index = 0; index < ELEMENT_COUNT; index++)
-		stats->element[index].resistance +=
+	for(idx = 0; idx < ELEMENT_COUNT; idx++)
+		stats->element[idx].resistance +=
 			unit->resistanceStage * RESISTANCE_PER_STAGE;
 
 	if(unit->classId != CLASS_NONE) {
@@ -415,9 +413,9 @@ void gmUnitCalc(Sint32 unitId)
 	CLAMP(stats->actionCnt, 0, 2);
 	CLAMP(stats->hpRegen, 0, UNIT_HP_REGEN_MAX);
 	CLAMP(stats->ppRegen, 0, UNIT_PP_REGEN_MAX);
-	for(index = 0; index < ELEMENT_COUNT; index++) {
-		CLAMP(stats->element[index].power, 0, UNIT_ELEMENT_MAX);
-		CLAMP(stats->element[index].resistance, 0, UNIT_ELEMENT_MAX);
+	for(idx = 0; idx < ELEMENT_COUNT; idx++) {
+		CLAMP(stats->element[idx].power, 0, UNIT_ELEMENT_MAX);
+		CLAMP(stats->element[idx].resistance, 0, UNIT_ELEMENT_MAX);
 	}
 
 	unit->attack = stats->attack;
@@ -427,19 +425,19 @@ void gmUnitCalc(Sint32 unitId)
 	unit->actionsPerTurn = stats->actionCnt;
 	unit->hpRegen = stats->hpRegen;
 	unit->ppRegen = stats->ppRegen;
-	for(index = 0; index < ELEMENT_COUNT; index++) {
-		unit->element[index].power = stats->element[index].power;
-		unit->element[index].resistance = stats->element[index].resistance;
+	for(idx = 0; idx < ELEMENT_COUNT; idx++) {
+		unit->element[idx].power = stats->element[idx].power;
+		unit->element[idx].resistance = stats->element[idx].resistance;
 	}
 
 	statLimit = UNIT_HP_MAX;
 	if(unit->classId != CLASS_NONE)
 		statLimit = UNIT_CHARACTER_HP_MAX;
 
-	previousMaximum = unit->hpMax;
+	prevMaximum = unit->hpMax;
 	CLAMP(stats->hp, 0, statLimit);
 	unit->hpMax = stats->hp;
-	if(previousMaximum != unit->hpMax) {
+	if(prevMaximum != unit->hpMax) {
 		value = stats->hp * unit->hpGauge / UNIT_GAUGE_FULL;
 		CLAMP(value, 0, statLimit);
 		if(unit->hp != 0 && value == 0)
@@ -447,10 +445,10 @@ void gmUnitCalc(Sint32 unitId)
 		unit->hp = value;
 	}
 
-	previousMaximum = unit->ppMax;
+	prevMaximum = unit->ppMax;
 	CLAMP(stats->pp, 0, statLimit);
 	unit->ppMax = stats->pp;
-	if(previousMaximum != unit->ppMax) {
+	if(prevMaximum != unit->ppMax) {
 		value = stats->pp * unit->ppGauge / UNIT_GAUGE_FULL;
 		CLAMP(value, 0, statLimit);
 		if(unit->pp != 0 && value == 0)
@@ -561,11 +559,11 @@ void gmMainRoutineStateInitDefaults(void)
 	MainRoutineStateWork.winBrightness = NEW_GAME_WINDOW_BRIGHTNESS;
 	MainRoutineStateWork.buildStamp = 0;
 	MainRoutineStateWork.startStamp = gmBuildStampGetTime();
-	PlayTimeFrames = 0;
+	PlayTimeTicks = 0;
 	MainRoutineStateWork.playTime = 0;
 	IdleSleepEnabled = 0;
 	MainRoutineStateWork.idleSleepEnabled = IdleSleepEnabled;
-	IdleFrames = 0;
+	IdleTicks = 0;
 	BupSlot = -1;
 	/* The spring game's medal prizes, three to a ring, each ring out from the
 	   centre twice as likely as the one inside it. */
@@ -651,12 +649,12 @@ void gmPartyEndChildhood(void)
 void gmPartyRestoreHpPp(Sint32 cureConditions)
 {
 	Sint32 partySize;
-	Sint32 partyIndex;
+	Sint32 partyIdx;
 	UNIT  *unit;
 
 	partySize = gmPartyCountMembers();
-	for(partyIndex = 0; partyIndex < partySize; partyIndex++) {
-		unit = gmUnitGet(MainRoutineStateWork.party[partyIndex]);
+	for(partyIdx = 0; partyIdx < partySize; partyIdx++) {
+		unit = gmUnitGet(MainRoutineStateWork.party[partyIdx]);
 
 		unit->hp = unit->hpMax;
 		unit->pp = unit->ppMax;
@@ -670,21 +668,21 @@ void gmPartyRestoreHpPp(Sint32 cureConditions)
 }
 
 /* Refills the PP of each party member whose lighthouse group
-   (Character_LighthouseGroupTable) holds the lighthouse the party is inside.
+   (CharacterLighthouseGroupTable) holds the lighthouse the party is inside.
    The aeries of Venus and Mercury Lighthouse call it. */
 void gmPartyRestorePpInLighthouse(void)
 {
 	Sint32 partySize;
-	Sint32 partyIndex;
+	Sint32 partyIdx;
 	Uint8  unitId;
 	Sint32 lighthouseGroup;
 	Sint32 restorePp;
 	UNIT  *unit;
 
 	partySize = gmPartyCountMembers();
-	for(partyIndex = 0; partyIndex < partySize; partyIndex++) {
-		unitId = MainRoutineStateWork.party[partyIndex];
-		lighthouseGroup = Character_LighthouseGroupTable[unitId];
+	for(partyIdx = 0; partyIdx < partySize; partyIdx++) {
+		unitId = MainRoutineStateWork.party[partyIdx];
+		lighthouseGroup = CharacterLighthouseGroupTable[unitId];
 		restorePp = 0;
 		if(lighthouseGroup == LIGHTHOUSE_GROUP_VENUS_MARS) {
 			if(gmFlagGet(FLAG_IN_VENUS_LIGHTHOUSE) ||

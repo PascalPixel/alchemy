@@ -72,7 +72,7 @@ syResourceDirectoryTable:
 	resource WorldMapPicture, Title_WorldMapPicture
 	resource WorldMapPictureLarge, Title_WorldMapPictureLarge
 	resource IntroTilesB, Title_IntroTilesB
-	resource Headings, Ui_Headings
+	resource Headings, UiHeadings
 	resource , Battle_PurpleMoonBackdrop
 	resource SuhallaGateBackdrop, Battle_SuhallaGateBackdrop
 	resource PirateShipBackdrop, Battle_PirateShipBackdrop

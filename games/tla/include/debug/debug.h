@@ -25,9 +25,9 @@ typedef struct DEBUG_WARP_PRESET {
 } DEBUG_WARP_PRESET;
 
 /* The debug warp menu's nine rows (debug_tables.c). */
-extern const DEBUG_WARP_PRESET DebugWarp_Presets[];
+extern const DEBUG_WARP_PRESET DebugWarpPresets[];
 /* The abilities the debug shortcut grid offers, by column and row. */
-extern const Sint16 DebugShortcut_Abilities[4][9];
+extern const Sint16 DebugShortcutAbilities[4][9];
 
 /* The debug rooms' item choosers (dbIncreaseItemAndLevelSelectItem,
    dbShopTestSelectItem): Right and Left move ten numbers. */
@@ -39,7 +39,7 @@ extern const Sint16 DebugShortcut_Abilities[4][9];
    (battle_debug.c) takes it on Up and Down, ten encounters. */
 #define DEBUG_LARGE_STEP		10
 
-/* The warp menu's handlers, one a row of DebugWarp_Presets, each named for its
+/* The warp menu's handlers, one a row of DebugWarpPresets, each named for its
    row's label ("0:Jupiter" to "8:Kaoru Special1"). */
 void mnDebugWarpJupiter(void);
 void mnDebugWarpArafura2(void);
@@ -51,8 +51,7 @@ void mnDebugWarpKaoruSpecial3(void);
 void mnDebugWarpKaoruSpecial2(void);
 void mnDebugWarpKaoruSpecial1(void);
 
-void   mnDebugFlagEditorDrawTable(Sint32 window, Sint32 startFlag);
-Sint32 mnDebugFlagEditorHandleInput(
-	Sint32 window, Sint32 *page, Sint32 *cursor);
+void   mnDebugFlagEditorDrawTable(Sint32 win, Sint32 startFlg);
+Sint32 mnDebugFlagEditorHandleInput(Sint32 win, Sint32 *page, Sint32 *cursor);
 
 #endif

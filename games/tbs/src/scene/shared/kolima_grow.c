@@ -3,7 +3,7 @@
 
 #include "field/script_operands.h"
 
-/* An actor script call: widen the actor by 3/25 of its size a frame, and
+/* An actor script call: widen the actor by 3/25 of its size a tick, and
    release it once it has reached its destination. */
 static Sint32 scFieldEffectStretchUntilArrived(ACTOR *streak)
 {

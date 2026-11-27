@@ -28,8 +28,8 @@
    actor, that position, and a function run during the leader's
    follow-through. */
 typedef struct PUSHED_ACTOR_PROBE {
-	/* The large thing's row in PushedActor_RectangleKinds and
-	   PushedActor_Rectangles, 0 to 5. */
+	/* The large thing's row in PushedActorRectangleKinds and
+	   PushedActorRectangles, 0 to 5. */
 	Sint32 rectangleIdx;
 	Sint32 actorSlot; /* the large thing's actor id, 8 to 65 */
 	/* 16.16 pixels while moving; converted to metatiles by rectangle
@@ -40,7 +40,7 @@ typedef struct PUSHED_ACTOR_PROBE {
 	void (*func)(void);
 } PUSHED_ACTOR_PROBE;
 
-/* A large thing's edges, a row of PushedActor_Rectangles. */
+/* A large thing's edges, a row of PushedActorRectangles. */
 typedef struct PUSHED_ACTOR_RECTANGLE {
 	Sint32 x0; /* left edge, pixels from the thing's position */
 	Sint32 z0; /* top edge, pixels from the thing's position */
@@ -57,6 +57,6 @@ STATIC_ASSERT(sizeof(PUSHED_ACTOR_RECTANGLE) == 16);
 /* The pixel step of each direction, X in the upper halfword and Z in the lower
    (DIRECTION_STEP); each scene that pushes a large thing includes it
    (shared/pushed_actor_direction_steps.c). */
-extern Sint32 PushedActor_DirectionSteps[];
+extern Sint32 PushedActorDirectionSteps[];
 
 #endif

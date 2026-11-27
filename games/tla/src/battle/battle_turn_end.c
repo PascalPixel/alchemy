@@ -216,9 +216,9 @@ Bool btUnitCountDownPsynergySeal(Sint32 unitId)
 Bool btUnitCountDownRegenerate(Sint32 id)
 {
 	UNIT  *unit = syUnitGet(id);
-	Uint8 *count = &unit->regenerate;
+	Uint8 *cnt = &unit->regenerate;
 
-	if(*count != 0) {
+	if(*cnt != 0) {
 		Sint32 max;
 		Sint32 before;
 		Sint32 hp;
@@ -228,7 +228,7 @@ Bool btUnitCountDownRegenerate(Sint32 id)
 		hp = unit->hp;
 		max = unit->hpMax;
 		before = hp;
-		hp += max * (*count + 1) / 10;
+		hp += max * (*cnt + 1) / 10;
 		if(hp > max)
 			hp = max;
 		gain = hp - before;
@@ -340,7 +340,7 @@ Sint32 btDjinnRecoveryCountDownSide(Sint32 side)
 	DJINN_RECOVERY_ENTRY *entry;
 	Sint32				  result = 0;
 	Sint32				  i;
-	Sint32				  count;
+	Sint32				  cnt;
 
 	list = &gmDjinnGetRecoveryTableStub(side)->list;
 	i = 0;
@@ -352,11 +352,11 @@ Sint32 btDjinnRecoveryCountDownSide(Sint32 side)
 				timedEntry->turns--;
 				result = 1;
 			}
-			count = list->cnt;
+			cnt = list->cnt;
 
 			i++;
 			timedEntry++;
-		} while(i < count);
+		} while(i < cnt);
 	}
 	i = 0;
 	if(i < list->cnt) {
@@ -470,32 +470,32 @@ void btProcessTurnEnd(void)
 {
 	BATTLE_STATE		 *battle;
 	Sint32				  side;
-	Sint32				  sideCount;
-	Sint32				  count;
-	Sint32				  recoveryIndex;
+	Sint32				  sideCnt;
+	Sint32				  cnt;
+	Sint32				  recoveryIdx;
 	DJINN_RECOVERY_LIST	 *list;
 	DJINN_RECOVERY_ENTRY *timedEntry;
 	DJINN_RECOVERY_ENTRY *expiredEntry;
 
 	battle = Ram_HeapSlots->battleState;
-	sideCount = (battle->isLink != 0) + 1;
-	for(side = 0; side < sideCount; side++) {
+	sideCnt = (battle->isLink != 0) + 1;
+	for(side = 0; side < sideCnt; side++) {
 		list = &gmDjinnGetRecoveryTableStub(side)->list;
-		recoveryIndex = 0;
+		recoveryIdx = 0;
 		timedEntry = list->entries;
-		if(recoveryIndex < list->cnt) {
+		if(recoveryIdx < list->cnt) {
 			do {
 				if(timedEntry->turns > 0 &&
 					btObjectGet(timedEntry->unitId) != 0 &&
 					syUnitGet(timedEntry->unitId)->hp != 0) {
 					timedEntry->turns--;
 				}
-				recoveryIndex++;
+				recoveryIdx++;
 				timedEntry++;
-			} while(recoveryIndex < list->cnt);
+			} while(recoveryIdx < list->cnt);
 		}
-		recoveryIndex = 0;
-		if(recoveryIndex < list->cnt) {
+		recoveryIdx = 0;
+		if(recoveryIdx < list->cnt) {
 			expiredEntry = list->entries;
 			do {
 				if(expiredEntry->turns == 0) {
@@ -533,19 +533,19 @@ void btProcessTurnEnd(void)
 					}
 				} else {
 					expiredEntry++;
-					recoveryIndex++;
+					recoveryIdx++;
 				}
-			} while(recoveryIndex < list->cnt);
+			} while(recoveryIdx < list->cnt);
 		}
 	}
 	btBackgroundSetMode(
 		BATTLE_BACKGROUND_ZOOMED, Ram_HeapSlots->battleState->bg, 0);
 	{
 		Sint32			 *groupList;
-		BATTLE_SIDE_ORDER order = Battle_TurnEndSideOrder;
+		BATTLE_SIDE_ORDER order = BattleTurnEndSideOrder;
 		Uint16			  unitIds[16];
 		Sint32			  group;
-		Sint32			  unitIndex;
+		Sint32			  unitIdx;
 
 		if(battle->isLink != 0 && battle->linkSide != 0) {
 			order.group[0] = BATTLE_SIDE_MASK_ENEMIES;
@@ -553,13 +553,13 @@ void btProcessTurnEnd(void)
 		}
 		groupList = order.group;
 		for(group = 0; group <= 1; group++) {
-			count = btUnitListIds(groupList[group], unitIds);
+			cnt = btUnitListIds(groupList[group], unitIds);
 			if(groupList[group] == BATTLE_SIDE_MASK_PARTY)
-				count += btPartyPrepareReserveOwners(unitIds + count);
-			for(unitIndex = 0; unitIndex < count; unitIndex++) {
+				cnt += btPartyPrepareReserveOwners(unitIds + cnt);
+			for(unitIdx = 0; unitIdx < cnt; unitIdx++) {
 				Sint32 hpAmount;
 				Sint32 ppAmount;
-				Sint32 unitId = unitIds[unitIndex];
+				Sint32 unitId = unitIds[unitIdx];
 				UNIT  *unit = syUnitGet(unitId);
 
 				/* A readiness to counterattack lasts the one turn. */
@@ -651,7 +651,7 @@ void btUnitDrainDjinn(Sint32 unitId, Sint32 all, Sint32 announce)
 	Uint8				 elements[DRAIN_CANDIDATE_MAX];
 	Uint8				 indices[DRAIN_CANDIDATE_MAX];
 	Sint32				 shown;
-	Sint32				 count;
+	Sint32				 cnt;
 	Sint32				 active;
 	Sint32				 element;
 	Sint32				 djinni;
@@ -663,40 +663,40 @@ void btUnitDrainDjinn(Sint32 unitId, Sint32 all, Sint32 announce)
 
 	shown = 0;
 again: {
-	count = 0;
+	cnt = 0;
 	active = 0;
 	for(element = 0; element < ELEMENT_COUNT; element++) {
 		for(djinni = 0; djinni < DJINN_PER_ELEMENT; djinni++) {
 			if(gmDjinnIsSetStub(unitId, element, djinni)) {
-				elements[count] = element;
-				indices[count] = djinni;
-				count++;
+				elements[cnt] = element;
+				indices[cnt] = djinni;
+				cnt++;
 				active = 1;
-				if(count == DRAIN_CANDIDATE_MAX)
+				if(cnt == DRAIN_CANDIDATE_MAX)
 					goto picked;
 			}
 		}
 	}
-	if(count == 0) {
+	if(cnt == 0) {
 		for(element = 0; element < ELEMENT_COUNT; element++) {
 			for(djinni = 0; djinni < DJINN_PER_ELEMENT; djinni++) {
 				if(gmDjinnCanSetStub(unitId, element, djinni)) {
-					elements[count] = element;
-					indices[count] = djinni;
-					count++;
-					if(count == DRAIN_CANDIDATE_MAX)
+					elements[cnt] = element;
+					indices[cnt] = djinni;
+					cnt++;
+					if(cnt == DRAIN_CANDIDATE_MAX)
 						goto picked;
 				}
 			}
 		}
 	}
 picked:
-	if(count == 0)
+	if(cnt == 0)
 		return;
 
-	count = ((Uint32)gmBattleRandomStub() * count) >> 16;
-	element = elements[count];
-	djinni = indices[count];
+	cnt = ((Uint32)gmBattleRandomStub() * cnt) >> 16;
+	element = elements[cnt];
+	djinni = indices[cnt];
 	if(active) {
 		gmDjinnRecoveryAddStandbyStub(unitId, element, djinni);
 		gmDjinnPutOnStandbyStub(unitId, element, djinni);
@@ -753,14 +753,14 @@ picked:
 		shown = 1;
 		btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
 		if(!all) {
-			Sint32 message;
+			Sint32 msg;
 
 			btPlaybackPush(PLAYBACK_ABILITY_NAME,
 				element * DJINN_PER_ELEMENT + djinni + ABILITY_DJINNI_FIRST);
-			message = (Uint32)&MsgDjinnDrained;
+			msg = (Uint32)&MsgDjinnDrained;
 			if(unitId < 0 || unitId > ALLY_MAX)
-				message++;
-			btPlaybackPush(PLAYBACK_MESSAGE, message);
+				msg++;
+			btPlaybackPush(PLAYBACK_MESSAGE, msg);
 		} else {
 			btPlaybackPush(PLAYBACK_MESSAGE, (Uint32)&MsgAllDjinnDrained);
 		}
@@ -778,9 +778,9 @@ void btUnitProcessActionEnd(BATTLE_PLAN *plan)
 	Uint32				 unitId;
 	UNIT				*unit;
 	Sint32				 battleContinues;
-	Sint32				 counts[ELEMENT_COUNT];
+	Sint32				 cnts[ELEMENT_COUNT];
 	DJINN_RECOVERY_LIST *list;
-	Sint32				 entryIndex;
+	Sint32				 entryIdx;
 	Sint32				 recoveryTurn;
 
 	unitId = plan->unitId;
@@ -789,13 +789,11 @@ void btUnitProcessActionEnd(BATTLE_PLAN *plan)
 	if(unitId <= ALLY_MAX ||
 		((BATTLE_STATE *)Ram_HeapSlots->battleState)->isLink != 0) {
 		list = &gmDjinnGetRecoveryTableStub(unitId > ALLY_MAX)->list;
-		for(entryIndex = 0; entryIndex < list->cnt; entryIndex++) {
-			if(list->entries[entryIndex].unitId == unitId &&
-				list->entries[entryIndex].turns ==
-					DJINN_RECOVERY_AFTER_BATTLE) {
-				gmDjinnPutOnStandbyStub(unitId,
-					list->entries[entryIndex].element,
-					list->entries[entryIndex].idx);
+		for(entryIdx = 0; entryIdx < list->cnt; entryIdx++) {
+			if(list->entries[entryIdx].unitId == unitId &&
+				list->entries[entryIdx].turns == DJINN_RECOVERY_AFTER_BATTLE) {
+				gmDjinnPutOnStandbyStub(unitId, list->entries[entryIdx].element,
+					list->entries[entryIdx].idx);
 			}
 		}
 	}
@@ -812,7 +810,7 @@ void btUnitProcessActionEnd(BATTLE_PLAN *plan)
 			((BATTLE_STATE *)Ram_HeapSlots->battleState)->isLink != 0)
 					   ->list;
 		for(i = 0; i < ELEMENT_COUNT; i++) {
-			counts[i] = 0;
+			cnts[i] = 0;
 		}
 		for(;;) {
 			owner = -1;
@@ -840,7 +838,7 @@ void btUnitProcessActionEnd(BATTLE_PLAN *plan)
 				if(pending->entries[i].unitId == owner &&
 					pending->entries[i].turns == DJINN_RECOVERY_SUMMONED) {
 					pending->entries[i].turns = recoveryTurn;
-					counts[pending->entries[i].element]++;
+					cnts[pending->entries[i].element]++;
 					recoveryTurn++;
 				}
 			}
@@ -855,10 +853,10 @@ void btUnitProcessActionEnd(BATTLE_PLAN *plan)
 		for(i = 0; i < ELEMENT_COUNT; i++) {
 			/* A summon's boost to an element is how many of its Djinn the
 			   summons used, four at most, and never falls during the battle. */
-			if(counts[i] > 4)
-				counts[i] = 4;
-			if(unit->summonBoost[i] < counts[i])
-				unit->summonBoost[i] = counts[i];
+			if(cnts[i] > 4)
+				cnts[i] = 4;
+			if(unit->summonBoost[i] < cnts[i])
+				unit->summonBoost[i] = cnts[i];
 		}
 		gmUnitCalcStub(unitId);
 		for(i = 0; i < ELEMENT_COUNT; i++) {

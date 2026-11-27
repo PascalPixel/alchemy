@@ -50,6 +50,6 @@ extern FORMATION Formations[FORMATION_COUNT];
 
 /* The 20 enemies whose defeated flags a monster battle clears before it picks a
    formation (battle/formations.c). */
-extern Uint16 BattleFormation_ExcludedEnemies[20];
+extern Uint16 BattleFormationExcludedEnemies[20];
 
 #endif

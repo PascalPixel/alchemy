@@ -79,24 +79,24 @@
 
 struct LIGHT_WHEEL;
 
-extern struct LIGHT_WHEEL *AltmillerCave_LightWheel;
-extern SCENE_ENTRANCE	   AltmillerCave_Entrances[];
-extern Uint32			   AltmillerCave_Exits[];
-extern ACTOR_PLACE		   AltmillerCave_ActorPlacementsOther[];
-extern ACTOR_PLACE		   AltmillerCave_BabiActorPlacements[];
-extern ACTOR_PLACE		   AltmillerCave_SquallActorPlacements[];
-extern ACTOR_PLACE		   AltmillerCave_DraughtActorPlacements[];
-extern Uint32			   AltmillerCave_PulseScales[];
-extern Sint32			   AltmillerCave_GuardsArrivePath[];
-extern Sint32			   AltmillerCave_SecondGuardLeavePath[];
-extern Sint32			   AltmillerCave_FirstGuardLeavePath[];
-extern Sint32			   AltmillerCave_BabiLeavePath[];
-extern CUE				   AltmillerCave_CuesOther[];
-extern CUE				   AltmillerCave_BabiCues[];
-extern CUE				   AltmillerCave_VialChestCues[];
-extern CUE				   AltmillerCave_SquallCues[];
-extern CUE				   AltmillerCave_CookieChestCues[];
-extern CUE				   AltmillerCave_DraughtCues[];
+extern struct LIGHT_WHEEL *AltmillerCaveLightWheel;
+extern SCENE_ENTRANCE	   AltmillerCaveEntrances[];
+extern Uint32			   AltmillerCaveExits[];
+extern ACTOR_PLACE		   AltmillerCaveActorPlacementsOther[];
+extern ACTOR_PLACE		   AltmillerCaveBabiActorPlacements[];
+extern ACTOR_PLACE		   AltmillerCaveSquallActorPlacements[];
+extern ACTOR_PLACE		   AltmillerCaveDraughtActorPlacements[];
+extern Uint32			   AltmillerCavePulseScales[];
+extern Sint32			   AltmillerCaveGuardsArrivePath[];
+extern Sint32			   AltmillerCaveSecondGuardLeavePath[];
+extern Sint32			   AltmillerCaveFirstGuardLeavePath[];
+extern Sint32			   AltmillerCaveBabiLeavePath[];
+extern CUE				   AltmillerCaveCuesOther[];
+extern CUE				   AltmillerCaveBabiCues[];
+extern CUE				   AltmillerCaveVialChestCues[];
+extern CUE				   AltmillerCaveSquallCues[];
+extern CUE				   AltmillerCaveCookieChestCues[];
+extern CUE				   AltmillerCaveDraughtCues[];
 
 /* The actors of Babi's room: Babi while invisible and once seen, and the two
    men from Tolbi who come looking for him. Garet, Ivan and Mia are placed
@@ -256,7 +256,7 @@ static void scAltmillerCaveReleaseWallBurst(void);
    are 16-bit turns, and the light at the top is the chosen one. */
 typedef struct LIGHT_WHEEL {
 	Sint16 phase;  /* WHEEL_SPEEDING_UP to WHEEL_STOPPED */
-	Sint16 frames; /* frames into the phase */
+	Sint16 ticks;  /* ticks into the phase */
 	Sint16 unused; /* nothing reads or writes it */
 	Uint16 ang;
 	Uint16 speed;
@@ -274,9 +274,9 @@ enum {
 	WHEEL_STOPPED = 99
 };
 
-/* The ring's speeds, in angle a frame. It speeds up by WHEEL_SPEED_STEP a frame
-   to WHEEL_TOP_SPEED and slows by half a step a frame to WHEEL_LOW_SPEED, then
-   stops on the chosen light once it is within a frame's turn of the top. */
+/* The ring's speeds, in angle a tick. It speeds up by WHEEL_SPEED_STEP a tick
+   to WHEEL_TOP_SPEED and slows by half a step a tick to WHEEL_LOW_SPEED, then
+   stops on the chosen light once it is within a tick's turn of the top. */
 enum {
 	WHEEL_SPEED_STEP = TRIG_TURN / 4096,
 	WHEEL_TOP_SPEED = TRIG_TURN * 3 / 64,
@@ -319,7 +319,7 @@ enum {
 };
 
 /* The ring of lights. */
-LIGHT_WHEEL AltmillerCave_LightWheelState __attribute__((nocommon)) ALIGNED(4);
+LIGHT_WHEEL AltmillerCaveLightWheelState __attribute__((nocommon)) ALIGNED(4);
 
 #include "shared/pushed_actor.c"
 
@@ -333,7 +333,7 @@ static void scAltmillerCaveStartDjinnBattle(void)
 /* The six rooms share one entrance table. */
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return AltmillerCave_Entrances;
+	return AltmillerCaveEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -343,7 +343,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return AltmillerCave_Exits;
+	return AltmillerCaveExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
@@ -351,15 +351,15 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_ALTMILLER_CAVE_BABI) {
-		return AltmillerCave_BabiActorPlacements;
+		return AltmillerCaveBabiActorPlacements;
 	}
 	if(sceneId == SCENE_ALTMILLER_CAVE_SQUALL) {
-		return AltmillerCave_SquallActorPlacements;
+		return AltmillerCaveSquallActorPlacements;
 	}
 	if(sceneId == SCENE_ALTMILLER_CAVE_DRAUGHT) {
-		return AltmillerCave_DraughtActorPlacements;
+		return AltmillerCaveDraughtActorPlacements;
 	}
-	return AltmillerCave_ActorPlacementsOther;
+	return AltmillerCaveActorPlacementsOther;
 }
 
 /* Darkens the passage in to its current level: everything outside the light
@@ -570,14 +570,14 @@ static void scAltmillerCaveCheckPuddleCovered(void)
 {
 	FIELD_EFFECT_STATE *effectState =
 		(FIELD_EFFECT_STATE *)FieldEffectStateWork;
-	ACTOR	 *target = fdActorGet(ACTOR_SQUALL_ROOM_PUDDLE);
-	FIELD_POS position;
+	ACTOR	 *tgt = fdActorGet(ACTOR_SQUALL_ROOM_PUDDLE);
+	FIELD_POS pos;
 
-	position.x = target->x.fixed;
-	position.y = target->y.fixed;
-	position.z = target->z.fixed;
+	pos.x = tgt->x.fixed;
+	pos.y = tgt->y.fixed;
+	pos.z = tgt->z.fixed;
 
-	if(syFieldActorCheckMovementCollision(target, &position) > 0) {
+	if(syFieldActorCheckMovementCollision(tgt, &pos) > 0) {
 		effectState->leaveTgt = 1;
 	}
 }
@@ -597,8 +597,8 @@ static void scAltmillerCaveFreezePuddle(void)
 	if(blocked == 0) {
 		fdMapGridCopyMetatileAttributes(76, 16, 1, 1, 73, 17);
 		if(puddle != NULL) {
-			Sint32 motionFlags = ACTOR_FALLS;
-			puddle->motionFlg = motionFlags;
+			Sint32 motionFlg = ACTOR_FALLS;
+			puddle->motionFlg = motionFlg;
 			/* blocked is 0 here: the pillar is drawn as anything standing
 			   is. */
 			puddle->priFlg = blocked;
@@ -614,15 +614,15 @@ static void scAltmillerCaveFreezePuddle(void)
 static void scAltmillerCaveHopOverPuddle(void)
 {
 	ACTOR *actor = fdActorGet(MainRoutineStateWork.leaderActorId);
-	Sint32 motionFlags = actor->motionFlg;
+	Sint32 motionFlg = actor->motionFlg;
 
 	union {
 		FIELD_POS		 pos;
 		Sint32			 coordinates[3];
 		FIELD_COORDINATE components[3];
-	} destination;
+	} dst;
 
-	FIELD_COORDINATE *components = destination.components;
+	FIELD_COORDINATE *components = dst.components;
 
 	components[0].fixed = actor->x.fixed;
 	components[1].fixed = actor->y.fixed;
@@ -630,9 +630,9 @@ static void scAltmillerCaveHopOverPuddle(void)
 	{
 		Sint32 angle = FACING_SIXTEENTH(actor->facing);
 
-		syVectorAddPolarOffset(toFIXED(32), angle, destination.coordinates);
+		syVectorAddPolarOffset(toFIXED(32), angle, dst.coordinates);
 	}
-	if(syFieldActorCheckMovementCollision(actor, &destination.pos) == 0) {
+	if(syFieldActorCheckMovementCollision(actor, &dst.pos) == 0) {
 		fdScriptStart();
 		fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
 		sySynch(6);
@@ -647,7 +647,7 @@ static void scAltmillerCaveHopOverPuddle(void)
 			components[2].part[0].integer);
 		fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
 		fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW);
-		actor->motionFlg = motionFlags;
+		actor->motionFlg = motionFlg;
 		fdScriptEnd();
 	}
 }
@@ -658,7 +658,7 @@ static void scAltmillerCaveHopOverPuddle(void)
    through four sizes. */
 static void scAltmillerCavePulseLight(ACTOR *light)
 {
-	Sint32 scale = AltmillerCave_PulseScales[(light->tmr >> 2) & 3];
+	Sint32 scale = AltmillerCavePulseScales[(light->tmr >> 2) & 3];
 
 	light->scaleX = scale;
 	light->scaleY = scale;
@@ -687,20 +687,20 @@ static void scAltmillerCavePlaceLight(
 
 /* Spaces the five lights evenly around the ring, the first at the given
    angle. */
-static void scAltmillerCavePlaceLights(Sint32 angle)
+static void scAltmillerCavePlaceLights(Sint32 ang)
 {
 	Sint32 i;
 
 	for(i = 0; i < LIGHT_COUNT; i++) {
-		scAltmillerCavePlaceLight(ACTOR_FIRST_LIGHT + i, toFIXED(24), angle);
-		angle -= DEGtoANG(72);
+		scAltmillerCavePlaceLight(ACTOR_FIRST_LIGHT + i, toFIXED(24), ang);
+		ang -= DEGtoANG(72);
 	}
 }
 
 /* Event that spins the ring of lights. */
 static void scAltmillerCaveSpinLights(void)
 {
-	LIGHT_WHEEL *wheel = AltmillerCave_LightWheel;
+	LIGHT_WHEEL *wheel = AltmillerCaveLightWheel;
 	Sint32		 moving = 1;
 	Sint32		 phase = wheel->phase;
 
@@ -708,10 +708,10 @@ static void scAltmillerCaveSpinLights(void)
 		wheel->speed += WHEEL_SPEED_STEP;
 		if(wheel->speed > WHEEL_TOP_SPEED - 1) {
 			wheel->phase++;
-			wheel->frames = 0;
+			wheel->ticks = 0;
 		}
 	} else if(phase == WHEEL_COASTING) {
-		if(wheel->frames == 30) {
+		if(wheel->ticks == 30) {
 			wheel->phase++;
 		}
 	} else if(phase == WHEEL_SLOWING) {
@@ -721,11 +721,11 @@ static void scAltmillerCaveSpinLights(void)
 		}
 	} else if(phase == WHEEL_STOPPING) {
 		Sint32 chosenLight = CAVE_SIGNED_STATE(CAVE_CHOSEN_LIGHT);
-		Sint32 chosenAngle = syMathDivide(chosenLight * TRIG_TURN, LIGHT_COUNT);
-		Sint16 fromTop = wheel->ang - chosenAngle - DEGtoANG(90);
+		Sint32 chosenAng = syMathDivide(chosenLight * TRIG_TURN, LIGHT_COUNT);
+		Sint16 fromTop = wheel->ang - chosenAng - DEGtoANG(90);
 
 		if(fromTop > -WHEEL_LOW_SPEED && fromTop < WHEEL_LOW_SPEED) {
-			wheel->ang = chosenAngle + DEGtoANG(90);
+			wheel->ang = chosenAng + DEGtoANG(90);
 			wheel->phase = WHEEL_STOPPED;
 			wheel->speed = 0;
 			fdActorGet(ACTOR_FIRST_LIGHT + chosenLight)->update =
@@ -735,15 +735,15 @@ static void scAltmillerCaveSpinLights(void)
 		moving = 0;
 	}
 	if(moving != 0) {
-		AltmillerCave_LightWheel->ang += AltmillerCave_LightWheel->speed;
-		scAltmillerCavePlaceLights(AltmillerCave_LightWheel->ang);
-		AltmillerCave_LightWheel->travel += AltmillerCave_LightWheel->speed;
-		if(AltmillerCave_LightWheel->travel > TRIG_TURN * 3 / 16) {
-			AltmillerCave_LightWheel->travel = 0;
+		AltmillerCaveLightWheel->ang += AltmillerCaveLightWheel->speed;
+		scAltmillerCavePlaceLights(AltmillerCaveLightWheel->ang);
+		AltmillerCaveLightWheel->travel += AltmillerCaveLightWheel->speed;
+		if(AltmillerCaveLightWheel->travel > TRIG_TURN * 3 / 16) {
+			AltmillerCaveLightWheel->travel = 0;
 			sySndPlay(SE_CLICK);
 		}
 	}
-	AltmillerCave_LightWheel->frames++;
+	AltmillerCaveLightWheel->ticks++;
 }
 
 /* Pressing A at one of the five rocks in the rock room at the bottom of the
@@ -763,9 +763,9 @@ static void scAltmillerCaveTurnRock(Sint32 rock)
 	Sint32		 scale;
 	Sint8		 state;
 	Sint32		 chosenLight;
-	Uint8		 previousLight;
+	Uint8		 prevLight;
 	FIXED		 radius;
-	Uint16		 angle;
+	Uint16		 ang;
 
 	fdScriptStart();
 	fdEndBusyAndReveal();
@@ -780,8 +780,8 @@ static void scAltmillerCaveTurnRock(Sint32 rock)
 		actor->scaleY = toFIXED(1);
 	}
 	state = ROCK_PUZZLE->state;
-	previousLight = ROCK_PUZZLE->chosenLight;
-	wheel = AltmillerCave_LightWheel;
+	prevLight = ROCK_PUZZLE->chosenLight;
+	wheel = AltmillerCaveLightWheel;
 	chosenLight = ROCK_PUZZLE->chosenLight;
 	wheel->ang = (chosenLight * TRIG_TURN) / LIGHT_COUNT + DEGtoANG(90);
 	/* The leftmost rock, then the rightmost, before the rounds of lights. */
@@ -801,10 +801,10 @@ static void scAltmillerCaveTurnRock(Sint32 rock)
 			state = PUZZLE_LIGHTS_SHOWN;
 			sySndPlay(SE_CHIME);
 			sySynch(30);
-			angle = AltmillerCave_LightWheel->ang;
+			ang = AltmillerCaveLightWheel->ang;
 			for(i = 0; i < LIGHT_COUNT; i++) {
 				scAltmillerCavePlaceLight(
-					ACTOR_FIRST_LIGHT + i, toFIXED(24), angle);
+					ACTOR_FIRST_LIGHT + i, toFIXED(24), ang);
 				sySndPlay(SE_LIGHT_APPEAR);
 				actor = fdActorGet(ACTOR_FIRST_LIGHT + i);
 				actor->scaleX = 0;
@@ -815,7 +815,7 @@ static void scAltmillerCaveTurnRock(Sint32 rock)
 					sySynch(1);
 					scale += toFIXED(3) / 64;
 				} while(actor->scaleX < toFIXED(1));
-				angle -= DEGtoANG(72);
+				ang -= DEGtoANG(72);
 			}
 			sySynch(30);
 			correctRock = 1;
@@ -854,14 +854,14 @@ static void scAltmillerCaveTurnRock(Sint32 rock)
 
 		/* One of the four others: 1 to 4 lights on from the last. */
 		puzzle[CAVE_CHOSEN_LIGHT - CAVE_PUZZLE] =
-			((Sint8)((syRandomBelow(4)) + previousLight + 1) + 5) % 5;
-		AltmillerCave_LightWheel->phase = WHEEL_SPEEDING_UP;
-		AltmillerCave_LightWheel->frames = 0;
-		AltmillerCave_LightWheel->speed = TRIG_TURN / 128;
-		AltmillerCave_LightWheel->travel = TRIG_TURN * 3 / 16;
-		sySetFrameEvent(scAltmillerCaveSpinLights, EVENT_PASS_FRAME);
+			((Sint8)((syRandomBelow(4)) + prevLight + 1) + 5) % 5;
+		AltmillerCaveLightWheel->phase = WHEEL_SPEEDING_UP;
+		AltmillerCaveLightWheel->ticks = 0;
+		AltmillerCaveLightWheel->speed = TRIG_TURN / 128;
+		AltmillerCaveLightWheel->travel = TRIG_TURN * 3 / 16;
+		sySetTickEvent(scAltmillerCaveSpinLights, EVENT_PASS_TICK);
 		if(rounds <= 2) {
-			while(AltmillerCave_LightWheel->phase != WHEEL_STOPPED) {
+			while(AltmillerCaveLightWheel->phase != WHEEL_STOPPED) {
 				sySynch(1);
 			}
 			sySynch(10);
@@ -870,29 +870,29 @@ static void scAltmillerCaveTurnRock(Sint32 rock)
 			/* The third light matched: the ground shakes, the ring spirals in
 			   to nothing, and the wall bursts. */
 			*puzzle = PUZZLE_SOLVED;
-			while(AltmillerCave_LightWheel->phase != WHEEL_SLOWING) {
+			while(AltmillerCaveLightWheel->phase != WHEEL_SLOWING) {
 				sySynch(1);
 			}
-			AltmillerCave_LightWheel->phase = WHEEL_SLOWING;
-			AltmillerCave_LightWheel->frames = 0;
+			AltmillerCaveLightWheel->phase = WHEEL_SLOWING;
+			AltmillerCaveLightWheel->ticks = 0;
 			fdMapGridSetShake(2, 2, 1);
 			fdScriptWait(20);
 			fdMapGridSetShake(4, 4, 1);
-			AltmillerCave_LightWheel->phase = WHEEL_STOPPED;
+			AltmillerCaveLightWheel->phase = WHEEL_STOPPED;
 			sySndPlay(SE_WARP);
 			radius = toFIXED(24);
-			angle = AltmillerCave_LightWheel->ang;
+			ang = AltmillerCaveLightWheel->ang;
 			do {
 				for(i = 0; i < LIGHT_COUNT; i++) {
 					actor = fdActorGet(ACTOR_FIRST_LIGHT + i);
 					actor->scaleX -= toFIXED(1) / 4096;
 					actor->scaleY -= toFIXED(1) / 4096;
 					scAltmillerCavePlaceLight(
-						ACTOR_FIRST_LIGHT + i, radius, angle);
-					angle -= DEGtoANG(72);
+						ACTOR_FIRST_LIGHT + i, radius, ang);
+					ang -= DEGtoANG(72);
 				}
 				radius -= toFIXED(1) / 5;
-				angle += WHEEL_TOP_SPEED;
+				ang += WHEEL_TOP_SPEED;
 				sySynch(1);
 			} while(radius > 0);
 			for(i = 0; i < LIGHT_COUNT; i++) {
@@ -1307,10 +1307,10 @@ static void scAltmillerCaveRestoreBabiAndInviteParty(void)
 	/* The two men greet Babi; he invites the party to the finals. */
 	fdActorSetSpeed(ACTOR_FIRST_SOLDIER, 1.4);
 	fdActorSetSpeed(ACTOR_SECOND_SOLDIER, 1.4);
-	fdActorSetScript(ACTOR_FIRST_SOLDIER, AltmillerCave_GuardsArrivePath);
+	fdActorSetScript(ACTOR_FIRST_SOLDIER, AltmillerCaveGuardsArrivePath);
 	fdScriptWait(3);
 	fdActorWalkByAndWait(ACTOR_SECOND_SOLDIER, -16, 0);
-	fdActorSetScript(ACTOR_SECOND_SOLDIER, AltmillerCave_GuardsArrivePath);
+	fdActorSetScript(ACTOR_SECOND_SOLDIER, AltmillerCaveGuardsArrivePath);
 	fdActorWaitForScriptEndById(ACTOR_FIRST_SOLDIER);
 	fdActorWalkByAndWait(ACTOR_FIRST_SOLDIER, 0, -16);
 	fdActorWaitForScriptEndById(ACTOR_SECOND_SOLDIER);
@@ -1524,9 +1524,9 @@ static void scAltmillerCaveRestoreBabiAndInviteParty(void)
 	fdActorSetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
 	fdScriptWait(30);
 	/* Babi and the two men walk back toward the cave entrance. */
-	fdActorSetScript(ACTOR_SECOND_SOLDIER, AltmillerCave_SecondGuardLeavePath);
-	fdActorSetScript(ACTOR_FIRST_SOLDIER, AltmillerCave_FirstGuardLeavePath);
-	fdActorSetScript(ACTOR_BABI, AltmillerCave_BabiLeavePath);
+	fdActorSetScript(ACTOR_SECOND_SOLDIER, AltmillerCaveSecondGuardLeavePath);
+	fdActorSetScript(ACTOR_FIRST_SOLDIER, AltmillerCaveFirstGuardLeavePath);
+	fdActorSetScript(ACTOR_BABI, AltmillerCaveBabiLeavePath);
 	fdScriptWait(10);
 	fdActorFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
 	fdActorFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
@@ -2136,21 +2136,21 @@ const CUE *scGetCues(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_ALTMILLER_CAVE_BABI) {
-		return AltmillerCave_BabiCues;
+		return AltmillerCaveBabiCues;
 	}
 	if(sceneId == SCENE_ALTMILLER_CAVE_VIAL_CHEST) {
-		return AltmillerCave_VialChestCues;
+		return AltmillerCaveVialChestCues;
 	}
 	if(sceneId == SCENE_ALTMILLER_CAVE_SQUALL) {
-		return AltmillerCave_SquallCues;
+		return AltmillerCaveSquallCues;
 	}
 	if(sceneId == SCENE_ALTMILLER_CAVE_COOKIE_CHEST) {
-		return AltmillerCave_CookieChestCues;
+		return AltmillerCaveCookieChestCues;
 	}
 	if(sceneId == SCENE_ALTMILLER_CAVE_DRAUGHT) {
-		return AltmillerCave_DraughtCues;
+		return AltmillerCaveDraughtCues;
 	}
-	return AltmillerCave_CuesOther;
+	return AltmillerCaveCuesOther;
 }
 
 /* Update function of the fallen columns in the hall at the bottom of the cave:
@@ -2270,7 +2270,7 @@ Sint32 scInit(void)
 		   over, with the red light first. */
 		if(MainRoutineStateWork.entrance ==
 			ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) {
-			DMA_FILL32(0, AltmillerCave_LightWheel, sizeof(LIGHT_WHEEL));
+			DMA_FILL32(0, AltmillerCaveLightWheel, sizeof(LIGHT_WHEEL));
 			if(!gmFlagGet(FLAG_KEEP_PARTY_POSITION)) {
 				CAVE_STATE(CAVE_ROUNDS_MATCHED) = 0;
 				CAVE_STATE(CAVE_PUZZLE) = PUZZLE_START;
@@ -2295,7 +2295,7 @@ Sint32 scInit(void)
 			actor->scaleX = toFIXED(1);
 			actor->scaleY = toFIXED(1);
 			fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_LIGHT + i), 0);
-			/* The lights glimmer alike, each starting six frames after the one
+			/* The lights glimmer alike, each starting six ticks after the one
 			   before, so that they do not glimmer in step. */
 			fdActorSetAnimation(ACTOR_FIRST_LIGHT + i, i + 1);
 		}
@@ -2330,24 +2330,24 @@ Sint32 scInit(void)
    to a random point 120 pixels away, then starts again from the center. */
 static void scAltmillerCaveUpdateWallFragment(FIELD_PARTICLE *fragment)
 {
-	FIXED position[3];
+	FIXED pos[3];
 
 	if(fragment->state == 0) {
 		FIXED  startZ = fragment->originZ;
 		Sint32 startX = fragment->originX;
 
 		fragment->z = startZ;
-		position[2] = startZ;
+		pos[2] = startZ;
 		fragment->x = startX;
-		position[0] = startX;
-		syVectorAddPolarOffset(toFIXED(120), syRandomNext(), position);
-		fragment->tgtX = position[0];
-		fragment->tgtZ = position[2];
+		pos[0] = startX;
+		syVectorAddPolarOffset(toFIXED(120), syRandomNext(), pos);
+		fragment->tgtX = pos[0];
+		fragment->tgtZ = pos[2];
 		fragment->acceleration = toFIXED(5);
 		fragment->speedMax = toFIXED(5);
 		fragment->turnStepLimited = 0;
 		fragment->state++;
-		if((VBlankCount & 3) == 0)
+		if((FrameCount & 3) == 0)
 			sySndPlay(SE_HEAVY_IMPACT);
 	} else if(fragment->state == 1) {
 		if(fdParticleHasPendingTarget(fragment) == 0) {
@@ -2367,22 +2367,22 @@ static void scAltmillerCaveUpdateWallFragment(FIELD_PARTICLE *fragment)
 static void scAltmillerCaveReleaseWallBurst(void)
 {
 	FIELD_EFFECT_STATE *effectState;
-	VECTOR3				position;
+	VECTOR3				pos;
 	FIELD_PARTICLE	   *fragment;
-	Sint32				fragmentIndex;
+	Sint32				fragmentIdx;
 
 	fdEffectInitSlots();
 	effectState = (FIELD_EFFECT_STATE *)FieldEffectStateWork;
 	mnShopSaveAndTintFieldPalette(PALETTE_TINT_CUSTOM | RGB(8, 8, 8));
-	position.x = toFIXED(504);
-	position.y = toFIXED(24);
-	position.z = toFIXED(144);
-	fdCameraWorldToScreen(&position);
+	pos.x = toFIXED(504);
+	pos.y = toFIXED(24);
+	pos.z = toFIXED(144);
+	fdCameraWorldToScreen(&pos);
 	fragment = effectState->particles;
-	for(fragmentIndex = 0; fragmentIndex < WALL_BURST_PIECES; fragmentIndex++) {
+	for(fragmentIdx = 0; fragmentIdx < WALL_BURST_PIECES; fragmentIdx++) {
 		FIXED scale;
 
-		fdParticleInit(fragment, SPRITE_PARTICLE, position.x, position.z);
+		fdParticleInit(fragment, SPRITE_PARTICLE, pos.x, pos.z);
 		fdParticleSetCallback(fragment, scAltmillerCaveUpdateWallFragment);
 		fdParticleSetAnimation(fragment, PARTICLE_ANIMATION_FLICKER);
 		fdSprSetAnimationColModes(fragment->spr, syRandomBelow(7));
@@ -2398,11 +2398,11 @@ static void scAltmillerCaveReleaseWallBurst(void)
 	sySynch(50);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	sySynch(30);
-	for(fragmentIndex = 0;
-		fragmentIndex < (Sint32)ARRAY_COUNT(effectState->particles);
-		fragmentIndex++) {
-		if(effectState->particles[fragmentIndex].active)
-			effectState->particles[fragmentIndex].state = 2;
+	for(fragmentIdx = 0;
+		fragmentIdx < (Sint32)ARRAY_COUNT(effectState->particles);
+		fragmentIdx++) {
+		if(effectState->particles[fragmentIdx].active)
+			effectState->particles[fragmentIdx].state = 2;
 	}
 	fdMapGridWaitForShakeToSettle();
 	mnShopRestoreFieldPalette();
@@ -2412,9 +2412,9 @@ static void scAltmillerCaveReleaseWallBurst(void)
 #include "shared/pushed_actor_tables.c"
 
 /* The ring of lights, as the cave's code reaches it. */
-LIGHT_WHEEL *AltmillerCave_LightWheel = &AltmillerCave_LightWheelState;
+LIGHT_WHEEL *AltmillerCaveLightWheel = &AltmillerCaveLightWheelState;
 
-SCENE_ENTRANCE AltmillerCave_Entrances[] = {
+SCENE_ENTRANCE AltmillerCaveEntrances[] = {
 	{0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP, CONDITION_ALWAYS, 456, 0, 504,
 		FACING_NORTH, 0, 0, 0, 544, 528, 0},
@@ -2453,7 +2453,7 @@ SCENE_ENTRANCE AltmillerCave_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 AltmillerCave_Exits[] = {
+Uint32 AltmillerCaveExits[] = {
 	SCENE_EXITS(AltmillerCaveEntrance),
 	SCENE_EXIT(ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP, WorldMap,
 		WORLD_MAP_FROM_ALTMILLER_CAVE_ENTRANCE),
@@ -2505,11 +2505,11 @@ Uint32 AltmillerCave_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE AltmillerCave_ActorPlacementsOther[] = {
+ACTOR_PLACE AltmillerCaveActorPlacementsOther[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE AltmillerCave_BabiActorPlacements[] = {
+ACTOR_PLACE AltmillerCaveBabiActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
 		FACING_EAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
@@ -2527,7 +2527,7 @@ ACTOR_PLACE AltmillerCave_BabiActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE AltmillerCave_SquallActorPlacements[] = {
+ACTOR_PLACE AltmillerCaveSquallActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_RESET_ACTION, 328, 0, 256, FACING_SOUTH, TALK_FACING_KEEP,
 		0),
@@ -2547,7 +2547,7 @@ ACTOR_PLACE AltmillerCave_SquallActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE AltmillerCave_DraughtActorPlacements[] = {
+ACTOR_PLACE AltmillerCaveDraughtActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_RESET_ACTION, 392, 0, 416, FACING_SOUTH, TALK_FACING_KEEP,
 		0),
@@ -2581,7 +2581,7 @@ ACTOR_PLACE AltmillerCave_DraughtActorPlacements[] = {
 };
 
 /* The sizes the light at the top pulses through. */
-Uint32 AltmillerCave_PulseScales[] = {
+Uint32 AltmillerCavePulseScales[] = {
 	toFIXED(1),
 	toFIXED(11) / 10,
 	toFIXED(6) / 5,
@@ -2589,7 +2589,7 @@ Uint32 AltmillerCave_PulseScales[] = {
 };
 
 /* The two men from Tolbi walk in to Babi from the south. */
-Sint32 AltmillerCave_GuardsArrivePath[] = {
+Sint32 AltmillerCaveGuardsArrivePath[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE_BY(0, 0, -32),
 	SC_SYNC,
@@ -2602,7 +2602,7 @@ Sint32 AltmillerCave_GuardsArrivePath[] = {
 };
 
 /* Babi and the two men walk out of the room, each by his own path. */
-Sint32 AltmillerCave_SecondGuardLeavePath[] = {
+Sint32 AltmillerCaveSecondGuardLeavePath[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE_BY(16, 0, 0),
 	SC_SYNC,
@@ -2614,7 +2614,7 @@ Sint32 AltmillerCave_SecondGuardLeavePath[] = {
 	SC_END,
 };
 
-Sint32 AltmillerCave_FirstGuardLeavePath[] = {
+Sint32 AltmillerCaveFirstGuardLeavePath[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE_BY(0, 0, 16),
 	SC_SYNC,
@@ -2628,7 +2628,7 @@ Sint32 AltmillerCave_FirstGuardLeavePath[] = {
 	SC_END,
 };
 
-Sint32 AltmillerCave_BabiLeavePath[] = {
+Sint32 AltmillerCaveBabiLeavePath[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE_BY(0, 0, 32),
 	SC_SYNC,
@@ -2643,7 +2643,7 @@ Sint32 AltmillerCave_BabiLeavePath[] = {
 };
 
 /* clang-format off */
-CUE AltmillerCave_CuesOther[] = {
+CUE AltmillerCaveCuesOther[] = {
 	{CUE_EXIT, ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP},
 	{CUE_EXIT, ALTMILLER_CAVE_ENTRANCE_TO_TORCH_CHAMBER, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_TORCH_CHAMBER},
 	{CUE_EXIT, ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_TO_PASSAGE, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_TO_PASSAGE},
@@ -2662,7 +2662,7 @@ CUE AltmillerCave_CuesOther[] = {
 	{CUE_TABLE_END},
 };
 
-CUE AltmillerCave_BabiCues[] = {
+CUE AltmillerCaveBabiCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST},
 	{CUE_TALK, ACTOR_INVISIBLE_BABI, FLAG_MET_INVISIBLE_BABI, SCRIPT_REF(scAltmillerCaveMeetInvisibleBabi)},
@@ -2681,7 +2681,7 @@ CUE AltmillerCave_BabiCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE AltmillerCave_VialChestCues[] = {
+CUE AltmillerCaveVialChestCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL},
 	{PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
@@ -2691,7 +2691,7 @@ CUE AltmillerCave_VialChestCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE AltmillerCave_SquallCues[] = {
+CUE AltmillerCaveSquallCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST},
 	{STEP_CUE_WALKING_INTO(FACING_SOUTH), METATILE_BEHAVIOR_ALTMILLER_CAVE_NORTH_OF_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, SCRIPT_REF(scAltmillerCaveHopOverPuddle)},
@@ -2707,7 +2707,7 @@ CUE AltmillerCave_SquallCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE AltmillerCave_CookieChestCues[] = {
+CUE AltmillerCaveCookieChestCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT},
 	{PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
@@ -2718,7 +2718,7 @@ CUE AltmillerCave_CookieChestCues[] = {
 };
 /* clang-format on */
 
-CUE AltmillerCave_DraughtCues[] = {
+CUE AltmillerCaveDraughtCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP,
 		ALTMILLER_CAVE_DRAUGHT_TO_ALTMILLER_CAVE_COOKIE_CHEST, CONDITION_ALWAYS,
 		ALTMILLER_CAVE_DRAUGHT_TO_ALTMILLER_CAVE_COOKIE_CHEST},

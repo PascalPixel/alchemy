@@ -7,6 +7,6 @@
 
 /* Releases the actor at once; from its second word, waits for it to arrive and
    then releases it. */
-extern const Sint32 FieldEffect_ReleaseScript[];
+extern const Sint32 FieldEffectReleaseScript[];
 
 #endif

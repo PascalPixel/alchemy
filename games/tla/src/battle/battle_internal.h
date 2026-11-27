@@ -270,50 +270,50 @@ typedef enum BATTLE_CAST_KIND {
 /* The scripted battles' snapshot (btScriptedBattleSaveUnits), reached by its
    fixed address: the 168 bytes of EWRAM below the map's cell buffer. */
 #define Ram_ScriptedBattleSnapshot \
-	FIXED_ADDRESS((SNAPSHOT *), 0x0200ff58, ScriptedBattle_Snapshot)
+	FIXED_ADDRESS((SNAPSHOT *), 0x0200ff58, ScriptedBattleSnapshot)
 
 /* The five units Karst and Agatio's battle carries over between its parts:
    Felix, Piers and Jenna, and the first two enemies. */
-extern Uint8 ScriptedBattle_Units[];
+extern Uint8 ScriptedBattleUnits[];
 
 /* A knocked-back unit's motion by variant (BattleMotion_Knockback), as The
    Broken Seal's. */
-extern const Sint32 BattleKnockback_Acceleration[]; /* acceleration */
+extern const Sint32 BattleKnockbackAcceleration[]; /* acceleration */
 
-extern const Sint32 BattleKnockback_SpeedLimit[]; /* speed limit */
+extern const Sint32 BattleKnockbackSpeedLimit[]; /* speed limit */
 
-extern const Sint32 BattleKnockback_VelocityY[]; /* upward velocity */
+extern const Sint32 BattleKnockbackVelocityY[]; /* upward velocity */
 
 /* distance, in percent of the anchor's x */
-extern const Sint32 BattleKnockback_DistancePercent[];
+extern const Sint32 BattleKnockbackDistancePercent[];
 
 /* The tilt the battle camera adds while commands are chosen
    (btCameraApplyTransform). */
-extern const FIXED BattleCamera_CommandMatrix[];
+extern const FIXED BattleCameraCommandMatrix[];
 
 /* The script a battle object starts with: none. */
-extern const Sint32 BattleObject_EmptyScript[];
+extern const Sint32 BattleObjectEmptyScript[];
 
 /* The order enemies of a fixed formation take from the centre out: 0, -1, 1,
    -2, 2 and on. */
-extern const Sint8 BattleFormation_CenteredOffsets[];
+extern const Sint8 BattleFormationCenteredOffsets[];
 
 /* Each character's battle sprite for each weapon kind (btUnitGetWeaponSpr). */
-extern const Uint16 BattleUnit_WeaponAnimationsIsaac[];
+extern const Uint16 BattleUnitWeaponAnimationsIsaac[];
 
-extern const Uint16 BattleUnit_WeaponAnimationsGaret[];
+extern const Uint16 BattleUnitWeaponAnimationsGaret[];
 
-extern const Uint16 BattleUnit_WeaponAnimationsIvan[];
+extern const Uint16 BattleUnitWeaponAnimationsIvan[];
 
-extern const Uint16 BattleUnit_WeaponAnimationsMia[];
+extern const Uint16 BattleUnitWeaponAnimationsMia[];
 
-extern const Uint16 BattleUnit_WeaponAnimationsJenna[];
+extern const Uint16 BattleUnitWeaponAnimationsJenna[];
 
-extern const Uint16 BattleUnit_WeaponAnimationsFelix[];
+extern const Uint16 BattleUnitWeaponAnimationsFelix[];
 
-extern const Uint16 BattleUnit_WeaponAnimationsSheba[];
+extern const Uint16 BattleUnitWeaponAnimationsSheba[];
 
-extern const Uint16 BattleUnit_WeaponAnimationsPiers[];
+extern const Uint16 BattleUnitWeaponAnimationsPiers[];
 
 /* The battle background's colours: BG palettes 6 to 13, filled from
    BATTLE_STATE.pal, darkened or not. */

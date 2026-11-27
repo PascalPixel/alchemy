@@ -114,10 +114,10 @@ typedef enum LEMURIA_METATILE_BEHAVIOR {
 #define FLAG_LEMURIA_ROPE_LET_DOWN		 0x96f
 
 void		  scLemuriaTakeLeaderLayer(void);
-extern Sint32 Lemuria_FirstWalkerPaces[];
-extern Sint32 Lemuria_SecondWalkerPaces[];
-extern Uint16 Lemuria_DoorOpening[];
-extern Uint16 Lemuria_WideDoorOpening[];
+extern Sint32 LemuriaFirstWalkerPaces[];
+extern Sint32 LemuriaSecondWalkerPaces[];
+extern Uint16 LemuriaDoorOpening[];
+extern Uint16 LemuriaWideDoorOpening[];
 
 #include "shared/position_distance.h"
 
@@ -195,13 +195,13 @@ Sint32 scLemuriaNoticeLeader(ACTOR *self)
 	return 0;
 }
 
-extern MAP_GRID_METATILE_ANIMATION Lemuria_UnclesDoor;
-extern MAP_GRID_METATILE_ANIMATION Lemuria_GirlsHouseDoor;
-extern MAP_GRID_METATILE_ANIMATION Lemuria_SenateDoor;
-extern MAP_GRID_METATILE_ANIMATION Lemuria_LunpasWindow;
-extern MAP_GRID_METATILE_ANIMATION Lemuria_PalaceFrontDoor;
-extern MAP_GRID_METATILE_ANIMATION Lemuria_PalaceUpperDoor;
-extern MAP_GRID_METATILE_ANIMATION Lemuria_LunpasDoor;
+extern MAP_GRID_METATILE_ANIMATION LemuriaUnclesDoor;
+extern MAP_GRID_METATILE_ANIMATION LemuriaGirlsHouseDoor;
+extern MAP_GRID_METATILE_ANIMATION LemuriaSenateDoor;
+extern MAP_GRID_METATILE_ANIMATION LemuriaLunpasWindow;
+extern MAP_GRID_METATILE_ANIMATION LemuriaPalaceFrontDoor;
+extern MAP_GRID_METATILE_ANIMATION LemuriaPalaceUpperDoor;
+extern MAP_GRID_METATILE_ANIMATION LemuriaLunpasDoor;
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -256,7 +256,7 @@ void scLemuriaOpenDoorAndEnter(
 	syFieldScriptWait(10);
 	syFieldScriptSetExitRequest(exit);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -270,7 +270,7 @@ void scLemuriaOpenDoorAndEnter(
    there's a raucous caucus going on inside..." */
 void scLemuriaEnterDoor(Sint32 exit)
 {
-	const MAP_GRID_METATILE_ANIMATION *door = &Lemuria_UnclesDoor;
+	const MAP_GRID_METATILE_ANIMATION *door = &LemuriaUnclesDoor;
 	Sint32							   mode = 0;
 
 	if(exit == LEMURIA_TO_LEMURIA_ROOMS_WEST_C &&
@@ -282,31 +282,31 @@ void scLemuriaEnterDoor(Sint32 exit)
 		return;
 	}
 	if(exit == LEMURIA_TO_LEMURIA_ROOMS_WEST_A) {
-		door = &Lemuria_UnclesDoor;
+		door = &LemuriaUnclesDoor;
 		mode = 0;
 	}
 	if(exit == LEMURIA_TO_LEMURIA_ROOMS_WEST_B) {
-		door = &Lemuria_GirlsHouseDoor;
+		door = &LemuriaGirlsHouseDoor;
 		mode = 0;
 	}
 	if(exit == LEMURIA_TO_LEMURIA_ROOMS_WEST_C) {
-		door = &Lemuria_SenateDoor;
+		door = &LemuriaSenateDoor;
 		mode = 1;
 	}
 	if(exit == LEMURIA_TO_LEMURIA_ROOMS_EAST_A) {
-		door = &Lemuria_LunpasWindow;
+		door = &LemuriaLunpasWindow;
 		mode = 0;
 	}
 	if(exit == LEMURIA_TO_LEMURIA_PALACE_SOUTH) {
-		door = &Lemuria_PalaceFrontDoor;
+		door = &LemuriaPalaceFrontDoor;
 		mode = 1;
 	}
 	if(exit == LEMURIA_TO_LEMURIA_PALACE_NORTHEAST) {
-		door = &Lemuria_PalaceUpperDoor;
+		door = &LemuriaPalaceUpperDoor;
 		mode = 1;
 	}
 	if(exit == LEMURIA_TO_LEMURIA_ROOMS_EAST_C) {
-		door = &Lemuria_LunpasDoor;
+		door = &LemuriaLunpasDoor;
 		mode = 0;
 	}
 	scLemuriaOpenDoorAndEnter(door, exit, mode);
@@ -321,7 +321,7 @@ void scLemuriaTalkToSpoiledChild(void)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	ACTOR		*actor = fdActorGet(ACTOR_SPOILED_CHILD);
-	Sint16		 angle = actor->facing;
+	Sint16		 ang = actor->facing;
 
 	actor->tmr = 1;
 	fdScriptStart();
@@ -340,7 +340,7 @@ void scLemuriaTalkToSpoiledChild(void)
 	syFieldScriptShowMessageThenWait(ACTOR_SPOILED_CHILD, 0, 10);
 	fdScriptEnd();
 	actor->tmr = 0;
-	actor->facing = angle;
+	actor->facing = ang;
 	syWait(1);
 }
 
@@ -709,12 +709,12 @@ const CUE *scGetCues(void)
 	return SceneCues;
 }
 
-/* Which of Lemuria_RippleLines' two tables the HBlank DMA reads; the other is
-   filled for the next frame. */
-Uint8 Lemuria_RippleBuffer BSS_DATA;
+/* Which of LemuriaRippleLines' two tables the HBlank DMA reads; the other is
+   filled for the next tick. */
+Uint8 LemuriaRippleBuffer BSS_DATA;
 /* The water's two tables of BG2 horizontal offsets, a halfword a screen
    line. */
-Sint16 Lemuria_RippleLines[2][160] BSS_DATA ALIGNED(16);
+Sint16 LemuriaRippleLines[2][160] BSS_DATA ALIGNED(16);
 
 /* Background palette `n`, as the water's colour cycle turns it. */
 #define WATER_PALETTE(n) ((volatile Uint16 *)&BG_PLTT_COLOR(n, 0))
@@ -723,11 +723,11 @@ Sint16 Lemuria_RippleLines[2][160] BSS_DATA ALIGNED(16);
    palette's first and last. */
 enum { WATER_CYCLE_FIRST_COLOR = 1, WATER_CYCLE_LAST_COLOR = 14 };
 
-/* Every fourth frame rotates the water's colours of background palettes 7 and 8
+/* Every fourth tick rotates the water's colours of background palettes 7 and 8
    by one place. */
 void scLemuriaCycleWaterCols(void)
 {
-	if((FrameCount & 3) == 0) {
+	if((TickCount & 3) == 0) {
 		Sint16 saved;
 		Sint32 i;
 
@@ -745,7 +745,7 @@ void scLemuriaCycleWaterCols(void)
 /* Puts the per-line BG2 horizontal scroll on an HBlank DMA. */
 void scLemuriaStartRippleDMA(void)
 {
-	Sint16			*lines = Lemuria_RippleLines[Lemuria_RippleBuffer];
+	Sint16			*lines = LemuriaRippleLines[LemuriaRippleBuffer];
 	volatile Uint16 *dma;
 
 	syIOWrite16(lines[0], &REG_BG2HOFS);
@@ -763,35 +763,34 @@ void scLemuriaStartRippleDMA(void)
 enum { RIPPLE_SWAY_SHIFT = 15 };
 
 /* An event: fills the back buffer of line scrolls with the water's ripple, a
-   sine of the line and the frame, and swaps the buffers. */
+   sine of the line and the tick, and swaps the buffers. */
 void scLemuriaFillRippleLines(void)
 {
 	MAP_LAYER *layer = fdMapGridGetLayer(1);
-	Sint16	  *lines = Lemuria_RippleLines[Lemuria_RippleBuffer ^ 1];
+	Sint16	  *lines = LemuriaRippleLines[LemuriaRippleBuffer ^ 1];
 	FIXED	   v[2];
-	Sint32	  *count = &v[1];
+	Sint32	  *cnt = &v[1];
 	FIXED	   sine;
 
-	for(*count = 0; *count != DISPLAY_HEIGHT; (*count)++) {
-		sine =
-			syMathSin((*count + (Uint8)FrameCount + FIXEDtoINT(layer->y)) << 9);
+	for(*cnt = 0; *cnt != DISPLAY_HEIGHT; (*cnt)++) {
+		sine = syMathSin((*cnt + (Uint8)TickCount + FIXEDtoINT(layer->y)) << 9);
 		v[0] = sine;
 		*lines++ =
-			FIXEDtoINT(layer->x) + (sine >> RIPPLE_SWAY_SHIFT) + *count % 3 - 1;
+			FIXEDtoINT(layer->x) + (sine >> RIPPLE_SWAY_SHIFT) + *cnt % 3 - 1;
 	}
-	Lemuria_RippleBuffer ^= 1;
+	LemuriaRippleBuffer ^= 1;
 }
 
 /* Starts the water's ripple: its line scrolls each VBlank and their DMA each
-   frame. */
+   tick. */
 void scLemuriaStartRipple(void)
 {
-	Sint32 priority;
+	Sint32 pri;
 
-	priority = EVENT_PASS_FRAME;
-	sySetFrameEvent(scLemuriaFillRippleLines, priority);
-	priority = EVENT_PASS_VBLANK;
-	sySetFrameEvent(scLemuriaStartRippleDMA, priority);
+	pri = EVENT_PASS_TICK;
+	sySetTickEvent(scLemuriaFillRippleLines, pri);
+	pri = EVENT_PASS_VBLANK;
+	sySetTickEvent(scLemuriaStartRippleDMA, pri);
 }
 
 /* Sets up the town: the water's colours cycling, the two children walking
@@ -803,7 +802,7 @@ Sint32 scInit(void)
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-	syFieldSetFrameEvent((Sint32)scLemuriaCycleWaterCols, EVENT_PASS_VBLANK);
+	syFieldSetTickEvent((Sint32)scLemuriaCycleWaterCols, EVENT_PASS_VBLANK);
 	fdEffectStartBlankOverlay(0);
 	fdActorSetSprFlags(fdActorGet(ACTOR_SIGN), 0);
 	scFieldActorSetSprPriority(ACTOR_ROPE_HIGH_POST, 3);
@@ -811,12 +810,12 @@ Sint32 scInit(void)
 	fdActorGet(ACTOR_DOG)->update = scLemuriaTakeLeaderLayer;
 	fdActorSetAnimation(ACTOR_COW, 3);
 	fdActorSetPos(ACTOR_SPOILED_CHILD, 40, 952);
-	fdActorSetScript(ACTOR_SPOILED_CHILD, Lemuria_FirstWalkerPaces);
+	fdActorSetScript(ACTOR_SPOILED_CHILD, LemuriaFirstWalkerPaces);
 	actor = fdActorGet(ACTOR_SPOILED_CHILD);
 	actor->watchedActor = (union FIELD_OBJECT *)fdActorGet(ACTOR_LONELY_CHILD);
 	actor->update = scLemuriaNoticeLeader;
 	fdActorSetPos(ACTOR_LONELY_CHILD, 88, 904);
-	fdActorSetScript(ACTOR_LONELY_CHILD, Lemuria_SecondWalkerPaces);
+	fdActorSetScript(ACTOR_LONELY_CHILD, LemuriaSecondWalkerPaces);
 	actor = fdActorGet(ACTOR_LONELY_CHILD);
 	actor->watchedActor = (union FIELD_OBJECT *)fdActorGet(ACTOR_SPOILED_CHILD);
 	actor->update = scLemuriaNoticeLeader;
@@ -1352,17 +1351,17 @@ void scLemuriaMarvelAtCity(void)
    Sint32. */
 void fdActorTakeLeaderLayer(void);
 
-/* An actor's per-frame hook: it is drawn on the party leader's layer. */
+/* An actor's per-tick hook: it is drawn on the party leader's layer. */
 void scLemuriaTakeLeaderLayer(void)
 {
 	fdActorTakeLeaderLayer();
 }
 
-extern Uint16 Lemuria_WindowOpening[];
+extern Uint16 LemuriaWindowOpening[];
 
 /* clang-format off */
 /* The spoiled child's walk. */
-Sint32 Lemuria_FirstWalkerPaces[] = {                                                               
+Sint32 LemuriaFirstWalkerPaces[] = {                                                               
 	  SC_ANIMATION(2),                                                               
 	  SC_SPEED(1),                                               
 	  SC_ACCELERATION(1),                                               
@@ -1379,7 +1378,7 @@ Sint32 Lemuria_FirstWalkerPaces[] = {
   };
 
 /* The lonely child's walk. */
-Sint32 Lemuria_SecondWalkerPaces[] = {                                                               
+Sint32 LemuriaSecondWalkerPaces[] = {                                                               
 	  SC_ANIMATION(2),                                                               
 	  SC_SPEED(1),                                               
 	  SC_ACCELERATION(1),                                               
@@ -1445,22 +1444,22 @@ ACTOR_PLACE ActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-/* How a door opens, as two frames of metatiles copied over the closed door. */
-Uint16 Lemuria_DoorOpening[] = {
+/* How a door opens, as two ticks of metatiles copied over the closed door. */
+Uint16 LemuriaDoorOpening[] = {
 	MAPGRID_ANIMATION_STEP(2, 1, 1, 1, 6),
 	MAPGRID_ANIMATION_STEP(2, 2, 1, 1, 6),
 	MAPGRID_ANIMATION_STEPS_END,
 };
 
 /* The same for the Senate's and the palace's doors, two metatiles wide. */
-Uint16 Lemuria_WideDoorOpening[] = {
+Uint16 LemuriaWideDoorOpening[] = {
 	MAPGRID_ANIMATION_STEP(0, 1, 2, 1, 6),
 	MAPGRID_ANIMATION_STEP(0, 2, 2, 1, 6),
 	MAPGRID_ANIMATION_STEPS_END,
 };
 
-/* The window on Lunpa's balcony opens in one frame. */
-Uint16 Lemuria_WindowOpening[] = {
+/* The window on Lunpa's balcony opens in one tick. */
+Uint16 LemuriaWindowOpening[] = {
 	MAPGRID_ANIMATION_STEP(3, 1, 1, 1, 0),
 	MAPGRID_ANIMATION_STEPS_END,
 };
@@ -1468,32 +1467,31 @@ Uint16 Lemuria_WindowOpening[] = {
 
 /* The opening of the door of Piers's uncle's house, at its place on the map
    grid. */
-MAP_GRID_METATILE_ANIMATION Lemuria_UnclesDoor = {Lemuria_DoorOpening, 22, 47};
+MAP_GRID_METATILE_ANIMATION LemuriaUnclesDoor = {LemuriaDoorOpening, 22, 47};
 
 /* The opening of the door of the girl's house, at its place on the map grid. */
-MAP_GRID_METATILE_ANIMATION Lemuria_GirlsHouseDoor = {
-	Lemuria_DoorOpening, 35, 47};
+MAP_GRID_METATILE_ANIMATION LemuriaGirlsHouseDoor = {
+	LemuriaDoorOpening, 35, 47};
 
 /* The Senate's door's opening, at its place on the map grid. */
-MAP_GRID_METATILE_ANIMATION Lemuria_SenateDoor = {
-	Lemuria_WideDoorOpening, 9, 40};
+MAP_GRID_METATILE_ANIMATION LemuriaSenateDoor = {LemuriaWideDoorOpening, 9, 40};
 
 /* The opening of the window on the middle balcony of Lunpa's tower, which Lunpa
    opened for the party, at its place on the map grid. */
-MAP_GRID_METATILE_ANIMATION Lemuria_LunpasWindow = {
-	Lemuria_WindowOpening, 54, 45};
+MAP_GRID_METATILE_ANIMATION LemuriaLunpasWindow = {
+	LemuriaWindowOpening, 54, 45};
 
 /* The palace front door's opening, at its place on the map grid. */
-MAP_GRID_METATILE_ANIMATION Lemuria_PalaceFrontDoor = {
-	Lemuria_WideDoorOpening, 28, 20};
+MAP_GRID_METATILE_ANIMATION LemuriaPalaceFrontDoor = {
+	LemuriaWideDoorOpening, 28, 20};
 
 /* The palace upper door's opening, at its place on the map grid. */
-MAP_GRID_METATILE_ANIMATION Lemuria_PalaceUpperDoor = {
-	Lemuria_WideDoorOpening, 28, 13};
+MAP_GRID_METATILE_ANIMATION LemuriaPalaceUpperDoor = {
+	LemuriaWideDoorOpening, 28, 13};
 
 /* The opening of the front door of Lunpa's tower, at its place on the map
    grid. */
-MAP_GRID_METATILE_ANIMATION Lemuria_LunpasDoor = {Lemuria_DoorOpening, 54, 50};
+MAP_GRID_METATILE_ANIMATION LemuriaLunpasDoor = {LemuriaDoorOpening, 54, 50};
 
 CUE SceneCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), LEMURIA_TO_LEMURIA_ROOMS_WEST_A,

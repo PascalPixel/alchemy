@@ -113,7 +113,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 /* The step handlers below pass on the metatile behavior their cue hands them;
    scCrackedTileStep finds the leader's metatile itself and never reads it. */
 Bool   scCrackedTileStep();
-ACTOR *scWhirlwindSpawn(ACTOR *source);
+ACTOR *scWhirlwindSpawn(ACTOR *src);
 
 /* Nothing visible happens when Felix starts to Hover; while he floats, the
    Hover hall's stairs down between the statues, metatile (34, 17), are walled
@@ -321,18 +321,18 @@ Sint32 scPrepareMap(void)
 
 #include "shared/scene_set_arrival_flags.c"
 
-void syGameFlagSetByte(Sint32 flag, Sint32 value);
+void syGameFlagSetByte(Sint32 flg, Sint32 value);
 
 extern Sint32 PaletteCyclePausesInScripts;
 
 #include "shared/palette_cycle_set_pauses_in_scripts.h"
 
-extern Sint32 PaletteCycleFrame;
+extern Sint32 PaletteCycleTick;
 
-/* Sets the palette cycle's frame (PaletteCycleFrame). */
-static inline void scPaletteCycleSetFrame(Sint32 value)
+/* Sets the palette cycle's tick (PaletteCycleTick). */
+static inline void scPaletteCycleSetTick(Sint32 value)
 {
-	PaletteCycleFrame = value;
+	PaletteCycleTick = value;
 }
 
 #include "shared/palette_cycle_step.h"
@@ -352,9 +352,8 @@ extern Sint32 WhirlwindEndScript[];
 Sint32 fdMapGridGetMetatileBehavior(Sint32 x, Sint32 z, Sint32 layer);
 #include "shared/whirlwind_update.h"
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 #include "shared/whirlwind_spawn.h"
 
@@ -380,7 +379,7 @@ void scLightSprsSetPriority(Sint32 value)
 
 #include "../field/actor_set_sprite_priority.c"
 
-extern Uint32 FieldEffect_LongScript[];
+extern Uint32 FieldEffectLongScript[];
 
 /* clang-format off */
 #include "shared/field_effect_duration_scripts.c"
@@ -462,7 +461,7 @@ CUE SceneCues[] = {
 	{CUE_TABLE_END},
 };
 
-Sint32 PaletteCycleFrame = -1;
+Sint32 PaletteCycleTick = -1;
 
 Sint32 PaletteCyclePausesInScripts = 1;
 
@@ -473,15 +472,15 @@ Sint32 WhirlwindEndScript[] = {
 };
 /* clang-format on */
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 #include "../field/field_effect_move.c"
 
-extern const Sint32 *FieldEffect_DurationScripts[];
+extern const Sint32 *FieldEffectDurationScripts[];
 
 #define EFFECT_SET_MODE	  fdActorSelectAnimation
 #define EFFECT_SET_SCRIPT fdActorStartScript
@@ -502,13 +501,13 @@ extern const Sint32 *FieldEffect_DurationScripts[];
 
 #undef METATILE_PUSH_SLOT_ENTRY
 
-void scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
-extern Uint32 FieldEffect_ShortScript[];
-extern Uint32 FieldEffect_MediumScript[];
+void scCrackedTileCrack(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry);
+extern Uint32 FieldEffectShortScript[];
+extern Uint32 FieldEffectMediumScript[];
 
 #include "shared/cracked_tile_drop_in.h"
 
-void syGameFlagSetByte(Sint32 flag, Sint32 value);
+void syGameFlagSetByte(Sint32 flg, Sint32 value);
 
 #include "shared/cracked_tile_step.h"
 

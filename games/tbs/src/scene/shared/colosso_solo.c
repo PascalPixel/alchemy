@@ -153,7 +153,7 @@ static void scColossoTakePlaceForMatch(void)
 	state->transitionFrm = 15;
 	fdScriptWait(20);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	flagBase = COLOSSO_CHEER_SLOT(supporterId);
 	syFieldGameFlagSetByte(
 		flagBase + COLOSSO_CHEER_COLUMN, FIELD_METATILE(supporter->x.fixed));
@@ -169,7 +169,7 @@ static void scColossoTakePlaceForMatch(void)
 	} else {
 		scColossoCtrlCharacterAlone(supporterId);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		*transition = 0;
 	}
 	fdScriptEnd();
@@ -182,7 +182,7 @@ void scColossoAskDoneCheering(Sint32 id)
 	FIELD_STATE *state;
 	Sint32		 friendId;
 	ACTOR		*actor;
-	Sint32		 message;
+	Sint32		 msg;
 	Sint32		 answer;
 
 	state = FieldStateWork;
@@ -193,20 +193,20 @@ void scColossoAskDoneCheering(Sint32 id)
 	fdScriptStart();
 	/* "Huh? Are you done cheering?" Yeah: "Then please wait here until the
 	   match begins." Nope: "Then cheer as best you can!" */
-	message = MsgColossoCheering;
-	fdScriptSetMessageId(message);
+	msg = MsgColossoCheering;
+	fdScriptSetMessageId(msg);
 	fdMessageShowAtActor(id, 0);
 	FieldStateWork->choiceMsg = MsgColossoCheeringChoices;
 	FieldStateWork->choiceWidth = 4;
 	answer = fdScriptAskYesNoWithActorAnimation(friendId, 0);
 	if(answer == 0) {
-		fdScriptSetMessageId(message + 1);
+		fdScriptSetMessageId(msg + 1);
 		fdScriptShowMessageAndWait(id, 0);
 		state->transition =
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
 		state->transitionFrm = 15;
 		fdScriptFinishScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		syFieldGameFlagSetByte(
 			COLOSSO_CHEER_SLOT(friendId) + COLOSSO_CHEER_COLUMN,
 			FIELD_METATILE(actor->x.fixed));
@@ -219,11 +219,11 @@ void scColossoAskDoneCheering(Sint32 id)
 		} else {
 			scColossoCtrlCharacterAlone(friendId);
 			fdScriptStartScreenTransition();
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 			state->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
 		}
 	} else {
-		fdScriptSetMessageId(message + 2);
+		fdScriptSetMessageId(msg + 2);
 		fdScriptShowMessageAndWait(id, 0);
 	}
 	fdScriptEnd();
@@ -256,7 +256,7 @@ static void scColossoAskDoneLookingAround(Sint32 actorId)
 			fdActorWalkToAndWaitById(ACTOR_PARTY_LEADER, x, z);
 			fdActorWalkToAndWaitById(ACTOR_PARTY_LEADER, x, z + 32);
 			fdScriptFinishScreenTransition();
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 			syImportScriptSetExitRequest(COLOSSO_SOLO_TO_COLOSSEUM);
 		}
 	} else {
@@ -288,20 +288,20 @@ void scColossoClearCheeringSpots(void)
 Sint32 scColossoGreetAtStage(Sint32 speaker, Sint32 stage)
 {
 	Sint32 sceneId;
-	Sint32 message;
+	Sint32 msg;
 	Sint32 choice;
 
 	fdEndBusyAndReveal();
 	mnMessageArgumentPush(stage, MESSAGE_ARGUMENT_NUMBER);
 	sceneId = MainRoutineStateWork.next;
 	if(sceneId == SCENE_COLOSSEUM_AZART_MATCH) {
-		message = MsgColossoStageFirstFinalsMatch;
+		msg = MsgColossoStageFirstFinalsMatch;
 	} else if(sceneId == SCENE_COLOSSEUM_SATRAGE_MATCH) {
-		message = MsgColossoStageSecondFinalsMatch;
+		msg = MsgColossoStageSecondFinalsMatch;
 	} else {
-		message = MsgColossoStageThirdFinalsMatch;
+		msg = MsgColossoStageThirdFinalsMatch;
 	}
-	fdScriptSetMessageId(message);
+	fdScriptSetMessageId(msg);
 	fdScriptShowMessageAndWait(speaker, 0);
 	if(gmFlagGet(stage + COLOSSO_STAGE_CHEERED) != 0) {
 		return COLOSSO_GUIDE_CHEER;
@@ -329,18 +329,18 @@ Sint32 scColossoGreetAtStage(Sint32 speaker, Sint32 stage)
 void scColossoRepeatStageNum(Sint32 speaker, Sint32 stage)
 {
 	Sint32 sceneId;
-	Sint32 message;
+	Sint32 msg;
 
 	mnMessageArgumentPush(stage, MESSAGE_ARGUMENT_NUMBER);
 	sceneId = MainRoutineStateWork.next;
 	if(sceneId == SCENE_COLOSSEUM_AZART_MATCH) {
-		message = MsgColossoStageFirstFinalsMatch;
+		msg = MsgColossoStageFirstFinalsMatch;
 	} else if(sceneId == SCENE_COLOSSEUM_SATRAGE_MATCH) {
-		message = MsgColossoStageSecondFinalsMatch;
+		msg = MsgColossoStageSecondFinalsMatch;
 	} else {
-		message = MsgColossoStageThirdFinalsMatch;
+		msg = MsgColossoStageThirdFinalsMatch;
 	}
-	fdScriptSetMessageId(message + 1);
+	fdScriptSetMessageId(msg + 1);
 	fdScriptShowMessageAndWait(speaker, 0);
 }
 
@@ -352,7 +352,7 @@ void scColossoOfferCheeringSpot(Sint32 mode, Sint32 guide, Sint32 stage)
 	ACTOR *leader;
 	Sint32 guideX;
 	Sint32 guideZ;
-	Sint32 memberCount;
+	Sint32 memberCnt;
 	Sint32 answer;
 	Sint32 friendId;
 	Sint32 frontZ;
@@ -371,11 +371,11 @@ void scColossoOfferCheeringSpot(Sint32 mode, Sint32 guide, Sint32 stage)
 		fdScriptShowMessage(guide, 0);
 		return;
 	}
-	memberCount = gmPartyCountMembers();
-	for(i = 0; i < memberCount; i++) {
+	memberCnt = gmPartyCountMembers();
+	for(i = 0; i < memberCnt; i++) {
 		members[i] = MainRoutineStateWork.party[i];
 	}
-	if(memberCount <= 1) {
+	if(memberCnt <= 1) {
 		fdScriptSetMessageId(MsgColossoDoYourBest);
 		fdScriptShowMessage(guide, 0);
 		return;
@@ -398,21 +398,21 @@ void scColossoOfferCheeringSpot(Sint32 mode, Sint32 guide, Sint32 stage)
 		fdScriptShowMessage(guide, 0);
 		return;
 	}
-	if(answer < memberCount) {
-		for(i = 0; i < memberCount; i++) {
+	if(answer < memberCnt) {
+		for(i = 0; i < memberCnt; i++) {
 			gmPartyRemoveMember((Sint8)members[i]);
 		}
 	}
-	for(i = 0; i < memberCount; i++) {
+	for(i = 0; i < memberCnt; i++) {
 		if((Sint8)members[i] != 0) {
 			gmPartyAddMember((Sint8)members[i]);
 		}
 	}
 	friendId = mnPartyMemberChooserOpen();
-	for(i = 0; i < memberCount; i++) {
+	for(i = 0; i < memberCnt; i++) {
 		gmPartyRemoveMember((Sint8)members[i]);
 	}
-	for(i = 0; i < memberCount; i++) {
+	for(i = 0; i < memberCnt; i++) {
 		gmPartyAddMember((Sint8)members[i]);
 	}
 	if(friendId == -1) {

@@ -30,7 +30,7 @@ typedef enum FLAME_THROWER_FLAGS {
 /* One of the state's four flame throwers. */
 typedef struct FLAME_THROWER {
 	Sint16 active;
-	Sint16 tmr; /* frames to the next puff, 8 after each */
+	Sint16 tmr; /* ticks to the next puff, 8 after each */
 	/* FLAME_THROWER_FLAGS in the high nibble (the FlameThrower_Send function
 	   each picks), the reach in the low. */
 	Sint16 flg;
@@ -61,7 +61,7 @@ typedef struct FLAME_HIT_STATE {
 	Sint16 active; /* set once a flame or fireball has hit the leader */
 	/* Set when a flame met a blocked slot's actor, and called back once for. */
 	Sint16 blocked;
-	Sint16 wasBlocked; /* blocked as it was the frame before */
+	Sint16 wasBlocked; /* blocked as it was the tick before */
 	Uint16 hitCue;	   /* the step cue raised when the leader is hit */
 	/* the kept flame's VRAM cache entry (scFlameThrowersCreate) */
 	Uint16 flameVramBlock;

@@ -32,7 +32,7 @@ Uint16 mnColScaleComponents(
 	return red;
 }
 
-extern const Uint8 WindowColor_WaveTable[];
+extern const Uint8 WindowColorWaveTable[];
 
 /* The window colours the window colour settings set: WINDOW_PALETTE's colours
    from its background (shade 0, WINDOW_BACKGROUND_COLOR) to shade 6. */
@@ -47,24 +47,24 @@ extern const Uint8 WindowColor_WaveTable[];
 /* Sets the window colours (WINDOW_SHADE) for a window colour (0 to
    WINDOW_COLOR_COUNT - 1, a hue around the colour wheel) and brightness (0 to
    WINDOW_BRIGHTNESS_COUNT - 1, WINDOW_BRIGHTNESS_NEUTRAL the plain one). */
-void mnWindowColApply(Sint32 color, Sint32 brightness)
+void mnWindowColApply(Sint32 col, Sint32 brightness)
 {
 	Sint16 rgb[3];
 	Sint16 step;
 	Sint16 red;
 	Sint16 green;
 	Sint16 blue;
-	Sint16 offset;
+	Sint16 ofs;
 
-	step = ((color + WINDOW_COLOR_COUNT / 2) % WINDOW_COLOR_COUNT) * 4;
-	offset = brightness - WINDOW_BRIGHTNESS_NEUTRAL;
-	red = WindowColor_WaveTable[(step % WINDOW_COLOR_WHEEL_STEPS)] + offset;
-	green = WindowColor_WaveTable[(step + WINDOW_COLOR_WHEEL_STEPS / 3) %
+	step = ((col + WINDOW_COLOR_COUNT / 2) % WINDOW_COLOR_COUNT) * 4;
+	ofs = brightness - WINDOW_BRIGHTNESS_NEUTRAL;
+	red = WindowColorWaveTable[(step % WINDOW_COLOR_WHEEL_STEPS)] + ofs;
+	green = WindowColorWaveTable[(step + WINDOW_COLOR_WHEEL_STEPS / 3) %
 				WINDOW_COLOR_WHEEL_STEPS] +
-		offset;
-	blue = WindowColor_WaveTable[(step + WINDOW_COLOR_WHEEL_STEPS * 2 / 3) %
+		ofs;
+	blue = WindowColorWaveTable[(step + WINDOW_COLOR_WHEEL_STEPS * 2 / 3) %
 			   WINDOW_COLOR_WHEEL_STEPS] +
-		offset;
+		ofs;
 	CLAMP(red, 0, RGB_LEVEL_MAX);
 	CLAMP(green, 0, RGB_LEVEL_MAX);
 	CLAMP(blue, 0, RGB_LEVEL_MAX);
@@ -97,7 +97,7 @@ void mnWindowColApply(Sint32 color, Sint32 brightness)
 			rgb, toFIXED(37) / 30, toFIXED(1), toFIXED(22) / 15));
 }
 
-/* The settings menu's per-frame event: moves the cursor and the two slider
+/* The settings menu's per-tick event: moves the cursor and the two slider
    markers, animates the marker of the slider in use, and pulses the chosen
    setting's icon. */
 void mnSettingsMenuAnimateCursors(void)
@@ -138,7 +138,7 @@ void mnSettingsMenuAnimateCursors(void)
 }
 
 /* Allocates the settings menu's state, copies the settings into it with how
-   many values each takes, and starts its per-frame event. */
+   many values each takes, and starts its per-tick event. */
 void mnSettingsMenuInitState(void)
 {
 	SETTINGS_MENU_STATE *state;
@@ -161,10 +161,10 @@ void mnSettingsMenuInitState(void)
 	state->option[SETTINGS_ROW_AUTO_SLEEP] =
 		MainRoutineStateWork.idleSleepEnabled;
 	state->optionCnt[SETTINGS_ROW_AUTO_SLEEP] = 2;
-	sySetEvent(mnSettingsMenuAnimateCursors, EVENT_PASS_FRAME);
+	sySetEvent(mnSettingsMenuAnimateCursors, EVENT_PASS_TICK);
 }
 
-/* Stops the settings menu's per-frame event and frees its state. */
+/* Stops the settings menu's per-tick event and frees its state. */
 void mnSettingsMenuRelease(void)
 {
 	syCloseEvent(mnSettingsMenuAnimateCursors);
@@ -200,14 +200,14 @@ extern const Uint8 PointingHandTiles[];
 extern const Uint8	SettingsMenu_SliderTiles[];
 extern const Uint16 SettingsMenu_SliderPalette[];
 
-extern Sint8 SettingsMenu_SpeedIcons[];
-extern Sint8 SettingsMenu_SpeechIcons[];
-extern Sint8 SettingsMenu_SleepIcons[];
+extern Sint8 SettingsMenuSpeedIcons[];
+extern Sint8 SettingsMenuSpeechIcons[];
+extern Sint8 SettingsMenuSleepIcons[];
 extern Uint8 MsgSpeechLabel[];
 extern Uint8 MsgAutoSleepLabel[];
 
 WINDOW_SPR *mnCommandIconCreate(
-	Sint32 icon, Sint32 remap, WINDOW *window, Sint32 x, Sint32 y);
+	Sint32 icon, Sint32 remap, WINDOW *win, Sint32 x, Sint32 y);
 
 /* Opens the settings menu's window: the labels, the hue and brightness sliders
    with their markers, the cursor and the setting icons. Returns the window. Its
@@ -304,21 +304,21 @@ WINDOW *mnSettingsMenuOpen(void)
 
 	y = 28;
 	state->choiceIcons[0][0] = mnCommandIconCreate(
-		SettingsMenu_SpeedIcons[0], 0, win, OPTION_CHOICE_X, y);
+		SettingsMenuSpeedIcons[0], 0, win, OPTION_CHOICE_X, y);
 	state->choiceIcons[0][1] = mnCommandIconCreate(
-		SettingsMenu_SpeedIcons[1], 0, win, OPTION_CHOICE_X + 24, y);
+		SettingsMenuSpeedIcons[1], 0, win, OPTION_CHOICE_X + 24, y);
 	state->choiceIcons[0][2] = mnCommandIconCreate(
-		SettingsMenu_SpeedIcons[2], 0, win, OPTION_CHOICE_X + 48, y);
+		SettingsMenuSpeedIcons[2], 0, win, OPTION_CHOICE_X + 48, y);
 	y = 52;
 	state->choiceIcons[1][0] =
-		mnCommandIconCreate(SettingsMenu_SpeechIcons[0], 0, win, 100, y);
+		mnCommandIconCreate(SettingsMenuSpeechIcons[0], 0, win, 100, y);
 	state->choiceIcons[1][1] =
-		mnCommandIconCreate(SettingsMenu_SpeechIcons[1], 0, win, 124, y);
+		mnCommandIconCreate(SettingsMenuSpeechIcons[1], 0, win, 124, y);
 	y = 76;
 	state->choiceIcons[2][0] =
-		mnCommandIconCreate(SettingsMenu_SleepIcons[0], 0, win, 100, y);
+		mnCommandIconCreate(SettingsMenuSleepIcons[0], 0, win, 100, y);
 	state->choiceIcons[2][1] =
-		mnCommandIconCreate(SettingsMenu_SleepIcons[1], 0, win, 124, y);
+		mnCommandIconCreate(SettingsMenuSleepIcons[1], 0, win, 124, y);
 	return win;
 }
 
@@ -353,13 +353,13 @@ WINDOW *mnSettingsMenuOpen(void)
 
 extern Uint8 MsgMessageSpeedSlow[], MsgSpeechOff[], MsgAutoSleepOff[],
 	MsgWindowColorHelp[], MsgSleepModeHelp[];
-extern const Uint8 SettingsMenu_HuePresets[], SettingsMenu_BrightnessPresets[];
+extern const Uint8 SettingsMenuHuePresets[], SettingsMenuBrightnessPresets[];
 
-/* The colour presets SELECT steps through (SettingsMenu_HuePresets). */
+/* The colour presets SELECT steps through (SettingsMenuHuePresets). */
 #define SETTINGS_PRESET_COUNT 6
 
 void mnIconShowStub(WINDOW_SPR *icon);
-void mnCommandIconLoad(Sint32 index, Sint32 value, Sint32 flag);
+void mnCommandIconLoad(Sint32 idx, Sint32 value, Sint32 flg);
 
 /* Runs the settings menu (window colour and brightness, message speed, speech,
    auto-sleep) until A or START keeps the settings (returns 0) or B drops them
@@ -367,16 +367,16 @@ void mnCommandIconLoad(Sint32 index, Sint32 value, Sint32 flag);
 Sint32 mnSettingsMenuRun(void)
 {
 	SETTINGS_MENU_STATE *state;
-	WINDOW				*settingsWindow;
-	WINDOW				*helpWindow;
+	WINDOW				*settingsWin;
+	WINDOW				*helpWin;
 	WINDOW_SPR			*pair;
-	Sint8				*windowColor;
+	Sint8				*winCol;
 	Sint8				*brightness;
 	Bool				 redraw;
 	Sint32				 selectedOption;
 	Sint32				 i;
 	Bool				 dimmed;
-	Sint32				 resourceIndex;
+	Sint32				 resourceIdx;
 	Sint32				 x;
 	Sint32				 y;
 	Sint32				 result;
@@ -386,12 +386,12 @@ Sint32 mnSettingsMenuRun(void)
 	selectedOption = 0;
 	mnSettingsMenuInitState();
 	state = Ram_HeapSlots->settingsMenu;
-	helpWindow = mnWindowCreate(SETTINGS_HELP_WINDOW_X, 2,
+	helpWin = mnWindowCreate(SETTINGS_HELP_WINDOW_X, 2,
 		SETTINGS_HELP_WINDOW_WIDTH, 3, WINDOW_FLAG_INSTANT);
-	settingsWindow = mnSettingsMenuOpen();
-	pair = mnTitleCreate(SETTINGS_HEADING, settingsWindow, 64, -48);
+	settingsWin = mnSettingsMenuOpen();
+	pair = mnTitleCreate(SETTINGS_HEADING, settingsWin, 64, -48);
 	sySynch(1);
-	windowColor = &state->option[SETTINGS_ROW_WINDOW_COLOR];
+	winCol = &state->option[SETTINGS_ROW_WINDOW_COLOR];
 	brightness = &state->option[SETTINGS_ROW_WINDOW_BRIGHTNESS];
 
 	for(;;) {
@@ -414,79 +414,79 @@ Sint32 mnSettingsMenuRun(void)
 				icon = state->choiceIcons[0][i];
 				icon->depth = OAM_DEPTH_FRONT - 4;
 				mnIconShowStub(icon);
-				resourceIndex = (Uint8)state->choiceIcons[0][i]->idx;
+				resourceIdx = (Uint8)state->choiceIcons[0][i]->idx;
 				dimmed = FALSE;
 				if(i != state->option[SETTINGS_ROW_MESSAGE_SPEED])
 					dimmed = TRUE;
 				mnCommandIconLoad(
-					SettingsMenu_SpeedIcons[i], resourceIndex, dimmed);
+					SettingsMenuSpeedIcons[i], resourceIdx, dimmed);
 			}
 			for(i = 0; i <= 1; i++) {
 				icon = state->choiceIcons[1][i];
 				icon->depth = OAM_DEPTH_FRONT - 4;
 				mnIconShowStub(icon);
-				resourceIndex = (Uint8)state->choiceIcons[1][i]->idx;
+				resourceIdx = (Uint8)state->choiceIcons[1][i]->idx;
 				dimmed = FALSE;
 				if(i != state->option[SETTINGS_ROW_SPEECH])
 					dimmed = TRUE;
 				mnCommandIconLoad(
-					SettingsMenu_SpeechIcons[i], resourceIndex, dimmed);
+					SettingsMenuSpeechIcons[i], resourceIdx, dimmed);
 			}
 			for(i = 0; i <= 1; i++) {
 				icon = state->choiceIcons[2][i];
 				icon->depth = OAM_DEPTH_FRONT - 4;
 				mnIconShowStub(icon);
-				resourceIndex = (Uint8)state->choiceIcons[2][i]->idx;
+				resourceIdx = (Uint8)state->choiceIcons[2][i]->idx;
 				dimmed = FALSE;
 				if(i != state->option[SETTINGS_ROW_AUTO_SLEEP])
 					dimmed = TRUE;
 				mnCommandIconLoad(
-					SettingsMenu_SleepIcons[i], resourceIndex, dimmed);
+					SettingsMenuSleepIcons[i], resourceIdx, dimmed);
 			}
 
-			x = settingsWindow->x * 8 + OPTION_SLIDER_X;
-			x += (*windowColor * OPTION_SLIDER_WIDTH) /
+			x = settingsWin->x * 8 + OPTION_SLIDER_X;
+			x += (*winCol * OPTION_SLIDER_WIDTH) /
 				state->optionCnt[SETTINGS_ROW_WINDOW_COLOR];
-			y = settingsWindow->y * 8 + 4;
+			y = settingsWin->y * 8 + 4;
 			mnCursorSetStub(&state->marker[0].cursor, x, y, 1);
-			x = settingsWindow->x * 8 + OPTION_SLIDER_X;
+			x = settingsWin->x * 8 + OPTION_SLIDER_X;
 			x += (*brightness * OPTION_SLIDER_WIDTH) /
 				state->optionCnt[SETTINGS_ROW_WINDOW_BRIGHTNESS];
-			y = settingsWindow->y * 8 + 20;
+			y = settingsWin->y * 8 + 20;
 			mnCursorSetStub(&state->marker[1].cursor, x, y, 1);
 
 			x = state->option[SETTINGS_ROW_MESSAGE_SPEED] +
 				(Sint32)MsgMessageSpeedSlow;
 			mnWindowClearInteriorTiles(
-				settingsWindow, CHOICE_X, 40, FIRST_CHOICE_RIGHT, 48);
-			mnTextDrawMessageAsTiles(x, settingsWindow, CHOICE_X, 40);
+				settingsWin, CHOICE_X, 40, FIRST_CHOICE_RIGHT, 48);
+			mnTextDrawMessageAsTiles(x, settingsWin, CHOICE_X, 40);
 			x = state->option[SETTINGS_ROW_SPEECH] + (Sint32)MsgSpeechOff;
 			mnWindowClearInteriorTiles(
-				settingsWindow, CHOICE_X, 64, CHOICE_RIGHT, 72);
-			mnTextDrawMessageAsTiles(x, settingsWindow, CHOICE_X, 64);
+				settingsWin, CHOICE_X, 64, CHOICE_RIGHT, 72);
+			mnTextDrawMessageAsTiles(x, settingsWin, CHOICE_X, 64);
 			x = state->option[SETTINGS_ROW_AUTO_SLEEP] +
 				(Sint32)MsgAutoSleepOff;
 			mnWindowClearInteriorTiles(
-				settingsWindow, CHOICE_X, 88, CHOICE_RIGHT, 96);
-			mnTextDrawMessageAsTiles(x, settingsWindow, CHOICE_X, 88);
+				settingsWin, CHOICE_X, 88, CHOICE_RIGHT, 96);
+			mnTextDrawMessageAsTiles(x, settingsWin, CHOICE_X, 88);
 			/* The windows show the edited colours at once. */
-			mnWindowColApply(*windowColor, *brightness);
+			mnWindowColApply(*winCol, *brightness);
 
 			/* The cursor goes 3 tiles a row down the window's left edge, the
 			   first row's a tile lower; the help window says what the row
 			   sets. */
-			x = settingsWindow->x * 8;
+			x = settingsWin->x * 8;
 			{
-				Sint32 top = settingsWindow->y;
+				Sint32 top = settingsWin->y;
 
 				y = (selectedOption * 3 + top) * 8 + 4;
 			}
 			if(selectedOption == SETTINGS_ROW_WINDOW_COLOR)
 				y += 8;
 			mnCursorSetStub(&state->cursor.cursor, x, y, 3);
-			mnWindowSprClearList(helpWindow);
+			mnWindowSprClearList(helpWin);
 			mnTextDrawMessage(selectedOption + (Sint32)MsgWindowColorHelp,
-				(Sint32)helpWindow, 0, 0);
+				(Sint32)helpWin, 0, 0);
 		}
 		mnTitleBob(pair);
 		sySynch(1);
@@ -498,8 +498,8 @@ Sint32 mnSettingsMenuRun(void)
 			redraw = TRUE;
 			if(state->preset > SETTINGS_PRESET_COUNT - 1)
 				state->preset = 0;
-			*windowColor = SettingsMenu_HuePresets[state->preset];
-			*brightness = SettingsMenu_BrightnessPresets[state->preset];
+			*winCol = SettingsMenuHuePresets[state->preset];
+			*brightness = SettingsMenuBrightnessPresets[state->preset];
 			continue;
 		}
 		if(PerWork.push & (KEY_A | KEY_START)) {
@@ -534,8 +534,8 @@ Sint32 mnSettingsMenuRun(void)
 		}
 	}
 
-	mnWindowClose(helpWindow, WINDOW_FLAG_INSTANT);
-	mnWindowClose(settingsWindow, WINDOW_FLAG_INSTANT);
+	mnWindowClose(helpWin, WINDOW_FLAG_INSTANT);
+	mnWindowClose(settingsWin, WINDOW_FLAG_INSTANT);
 	if(result == 0) {
 		/* "In Sleep Mode, press Select and the L and R Buttons to return to the
 		   game." */
@@ -564,7 +564,7 @@ Sint32 mnSettingsMenuRun(void)
 	return result;
 }
 
-/* The Pause menu's per-frame event: moves the cursor and pulses the chosen
+/* The Pause menu's per-tick event: moves the cursor and pulses the chosen
    entry's icon. */
 void mnPauseMenuAnimateCursor(void)
 {
@@ -574,7 +574,7 @@ void mnPauseMenuAnimateCursor(void)
 	mnWindowSprPulse(state->icon[state->page]);
 }
 
-/* Allocates the Pause menu's state and starts its per-frame event. The Pause
+/* Allocates the Pause menu's state and starts its per-tick event. The Pause
    menu shares the settings menu's heap slot: mnPauseMenuChoose frees it before
    mnPauseMenuRun opens the settings menu. */
 void mnPauseMenuInit(void)
@@ -583,10 +583,10 @@ void mnPauseMenuInit(void)
 		HEAP_SLOT_SETTINGS_MENU, sizeof(SETTINGS_MENU_STATE));
 
 	DMA_FILL32(0, state, sizeof(SETTINGS_MENU_STATE));
-	sySetEvent(mnPauseMenuAnimateCursor, EVENT_PASS_FRAME);
+	sySetEvent(mnPauseMenuAnimateCursor, EVENT_PASS_TICK);
 }
 
-/* Stops the Pause menu's per-frame event and frees its state. */
+/* Stops the Pause menu's per-tick event and frees its state. */
 void mnPauseMenuRelease(void)
 {
 	syCloseEvent(mnPauseMenuAnimateCursor);
@@ -596,7 +596,7 @@ void mnPauseMenuRelease(void)
 extern Uint8	   MsgSaveYourQuest[];
 extern Uint8	   MsgChangeSettings[];
 extern Uint8	   MsgRoughMenu[];
-extern const Sint8 PauseMenu_Icons[];
+extern const Sint8 PauseMenuIcons[];
 
 #define PAUSE_MENU_ROWS		  3 /* Save your quest, Sleep and Change settings */
 #define PAUSE_MENU_DEBUG_ROWS 3 /* the entries added in debug mode */
@@ -664,7 +664,7 @@ WINDOW *mnPauseMenuOpen(void)
 	y = -4;
 	for(i = 0; i < rows; i++) {
 		state->icon[i] =
-			mnCommandIconCreate(PauseMenu_Icons[first + i], 0, win, 12, y);
+			mnCommandIconCreate(PauseMenuIcons[first + i], 0, win, 12, y);
 		y += PAUSE_MENU_ROW_HEIGHT;
 	}
 	return win;
@@ -679,9 +679,9 @@ WINDOW *mnPauseMenuOpen(void)
    even when only Change settings is shown. The menu's window and state are
    freed before it returns; mnPauseMenuRun (screens_pause_menu.c) acts on the
    result. */
-Sint32 mnPauseMenuChoose(Sint32 initial)
+Sint32 mnPauseMenuChoose(Sint32 init)
 {
-	WINDOW				*window;
+	WINDOW				*win;
 	Sint32				 redraw;
 	WINDOW_SPR			*pair;
 	Sint32				 first;
@@ -693,7 +693,7 @@ Sint32 mnPauseMenuChoose(Sint32 initial)
 	Sint32				 y;
 	Sint32				 result;
 	Sint32				 selected;
-	Sint32				 resourceIndex;
+	Sint32				 resourceIdx;
 	Sint32				 x;
 	Sint32				 top;
 	const Sint8			*pauseIcons;
@@ -701,15 +701,15 @@ Sint32 mnPauseMenuChoose(Sint32 initial)
 	SETTINGS_MENU_STATE *state;
 
 	redraw = -1;
-	selected = initial;
+	selected = init;
 	rows = PAUSE_MENU_ROWS;
 	settingsOnly = syGameFlagGet(FLAG_IN_BATTLE_ARENA);
 	first = 0;
 	mnPauseMenuInit();
 	state = Ram_HeapSlots->settingsMenu;
 	sySynch(1);
-	window = mnPauseMenuOpen();
-	pair = mnTitleCreate(MENU_TITLE_PAUSE, window, 40, HEADING_Y);
+	win = mnPauseMenuOpen();
+	pair = mnTitleCreate(MENU_TITLE_PAUSE, win, 40, HEADING_Y);
 	if(settingsOnly != 0) {
 		rows = 1;
 		first = PAUSE_MENU_CHANGE_SETTINGS;
@@ -723,23 +723,23 @@ Sint32 mnPauseMenuChoose(Sint32 initial)
 			i = 0;
 			if(i < rows) {
 				j = first;
-				pauseIcons = PauseMenu_Icons;
+				pauseIcons = PauseMenuIcons;
 				do {
 					icon = state->icon[i];
 					icon->depth = OAM_DEPTH_FRONT - 4;
 					mnIconShowStub(icon);
-					resourceIndex = (Uint8)icon->idx;
+					resourceIdx = (Uint8)icon->idx;
 					dimmed = FALSE;
 					if(i != state->page)
 						dimmed = TRUE;
 					mnCommandIconLoad(*(Sint8 *)(j + (Sint32)pauseIcons),
-						resourceIndex, dimmed);
+						resourceIdx, dimmed);
 					i++;
 					j++;
 				} while(i < rows);
 			}
-			top = window->y;
-			x = window->x * 8;
+			top = win->y;
+			x = win->x * 8;
 			y = (Sint16)top;
 			y = (selected * 3 + y) * 8 + 16;
 			if(-1 == redraw)
@@ -785,7 +785,7 @@ Sint32 mnPauseMenuChoose(Sint32 initial)
 			}
 		}
 	}
-	mnWindowClose(window, WINDOW_FLAG_INSTANT);
+	mnWindowClose(win, WINDOW_FLAG_INSTANT);
 	mnPauseMenuRelease();
 	sySynch(1);
 	if(result >= 0)

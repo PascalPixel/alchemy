@@ -21,7 +21,7 @@ static void scTitleRevealScreen(Sint32 unused);
 static void scTitleLoadBackground(void);
 
 /* One sprite of the logo's lettering, as syOAMAddSprAtDepthClamped queues it.
-   scTitleUpdateSprReveal rewrites every entry each frame. */
+   scTitleUpdateSprReveal rewrites every entry each tick. */
 typedef struct TITLE_SPR {
 	/* [0] the queue link the depth queue writes; [1] OAM attribute 0 (y, mode
 	   and shape) in the low half and attribute 1 (x) in the high half; [2]
@@ -29,8 +29,8 @@ typedef struct TITLE_SPR {
 	Uint32 attr[3];
 } TITLE_SPR;
 
-/* Frames since the lettering's reveal began; a column appears every two. */
-extern Sint16 TitleRevealFrame;
+/* Ticks since the lettering's reveal began; a column appears every two. */
+extern Sint16 TitleRevealTick;
 /* The lettering's 18 sprites, in the overlay's BSS (scene/title_bss.s). */
 extern TITLE_SPR TitleSprites[];
 
@@ -66,16 +66,16 @@ void mnTitleShowCamelotLogo(Sint32 unused);
 /* The overlay's initialize entry, which plays what the entrance asks for. */
 Sint32 scInit(void)
 {
-	Sint32 waitFrames;
+	Sint32 waitTicks;
 
 	if(MainRoutineStateWork.entrance == TITLE_TO_BE_CONTINUED) {
 		fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
 		fdScriptPlaySnd(MUS_TITLE_AFTER_PROLOGUE);
 		scTitleRevealScreen(0);
-		/* After 120 frames, the logo waits up to 3600 frames (a minute) for a
+		/* After 120 ticks, the logo waits up to 3600 ticks (a minute) for a
 		   key press. */
 		sySynch(120);
-		for(waitFrames = 0; waitFrames < 3600; waitFrames++) {
+		for(waitTicks = 0; waitTicks < 3600; waitTicks++) {
 			sySynch(1);
 			if(PerWork.push != 0)
 				break;
@@ -111,7 +111,7 @@ Sint32 scInit(void)
 					fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
 					syScreenFadeToBlack(30);
 					syScreenFadeWait();
-					for(waitFrames = 0; waitFrames <= 119; waitFrames++) {
+					for(waitTicks = 0; waitTicks <= 119; waitTicks++) {
 						sySynch(1);
 						if(PerWork.push != 0)
 							break;
@@ -160,44 +160,43 @@ enum { TO_BE_CONTINUED_PALETTE = 15 };
 /* Loads the logo's lettering sprites and their palette. */
 void scTitleLoadSprs(Sint32 unused)
 {
-	Uint8			*decodedSprites;
+	Uint8			*decodedSprs;
 	volatile Sint32 *dma3;
 
 	/* The decoded data opens with its 16-colour palette, then 40 4-bit tiles of
 	   lettering. */
-	decodedSprites = syHeapAllocEWRAM(PALETTE_COLORS * 2 + 40 * TILE_SIZE_4BPP);
+	decodedSprs = syHeapAllocEWRAM(PALETTE_COLORS * 2 + 40 * TILE_SIZE_4BPP);
 	if(TitleVramBlock == -1)
 		TitleVramBlock = syVRAMCacheFindFreeEntry();
 	syDecompressTaggedLZ(
-		syResourceGetTableEntry(RESOURCE_INTRO_TILES_B), decodedSprites);
-	syDMAXCopy(decodedSprites,
-		(void *)&OBJ_PLTT_COLOR(TO_BE_CONTINUED_PALETTE, 0),
+		syResourceGetTableEntry(RESOURCE_INTRO_TILES_B), decodedSprs);
+	syDMAXCopy(decodedSprs, (void *)&OBJ_PLTT_COLOR(TO_BE_CONTINUED_PALETTE, 0),
 		DMA_COPY_WORDS(PALETTE_COLORS / 2), REG_DMA3);
-	syVRAMCacheLoad(TitleVramBlock, 40 * TILE_SIZE_4BPP,
-		decodedSprites + PALETTE_COLORS * 2);
+	syVRAMCacheLoad(
+		TitleVramBlock, 40 * TILE_SIZE_4BPP, decodedSprs + PALETTE_COLORS * 2);
 	dma3 = (volatile Sint32 *)REG_DMA3;
 	while(dma3[2] & DMA_BUSY)
 		;
-	syHeapRelease(decodedSprites);
+	syHeapRelease(decodedSprs);
 }
 
-/* The event that queues the logo's lettering sprites each frame, revealing them
+/* The event that queues the logo's lettering sprites each tick, revealing them
    from the left: those the reveal has reached are queued, the two newest only
-   on even frames. */
+   on even ticks. */
 void scTitleUpdateSprReveal(void)
 {
 	Uint32	  *attributes;
-	TITLE_SPR *sprite;
-	Sint32	   tileIndex;
+	TITLE_SPR *spr;
+	Sint32	   tileIdx;
 	Sint32	   column;
 	Sint32	   revealAge;
 	Sint32	   screenX;
 
 	/* One row of 18 semi-transparent sprites of 8 by 16 pixels at y 136 and x
 	   88 to 224. */
-	sprite = TitleSprites;
+	spr = TitleSprites;
 	attributes = TitleSprites[0].attr;
-	tileIndex = VramCacheEntries[TitleVramBlock].ofs >> 5;
+	tileIdx = VramCacheEntries[TitleVramBlock].ofs >> 5;
 	for(column = 0; column <= 17; column++) {
 		Sint32 screenY = 136;
 
@@ -210,17 +209,17 @@ void scTitleUpdateSprReveal(void)
 		*attributes++ = 0;
 		*attributes++ = OBJ_X(screenX) | screenY | OBJ_SIZE_8X16 |
 			OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-		*attributes++ = OBJ_PALETTE(TO_BE_CONTINUED_PALETTE) | tileIndex;
-		revealAge = TitleRevealFrame / 2 - column;
+		*attributes++ = OBJ_PALETTE(TO_BE_CONTINUED_PALETTE) | tileIdx;
+		revealAge = TitleRevealTick / 2 - column;
 		if(revealAge < 0)
 			revealAge = 0;
-		if(revealAge <= 2 && (FrameCount & 1))
+		if(revealAge <= 2 && (TickCount & 1))
 			revealAge = 0;
 		if(revealAge != 0)
-			syOAMAddSprAtDepthClamped(sprite++, OAM_DEPTH_FRONT);
-		tileIndex += 2;
+			syOAMAddSprAtDepthClamped(spr++, OAM_DEPTH_FRONT);
+		tileIdx += 2;
 	}
-	TitleRevealFrame++;
+	TitleRevealTick++;
 }
 
 /* Shows the Golden Sun logo for TITLE_TO_BE_CONTINUED: its "To Be Continued"
@@ -231,9 +230,9 @@ static void scTitleRevealScreen(Sint32 unused)
 
 	scTitleLoadBackground();
 	fdScriptWait(30);
-	TitleRevealFrame = 0;
+	TitleRevealTick = 0;
 	scTitleLoadSprs(0);
-	sySetEvent(scTitleUpdateSprReveal, EVENT_PASS_FRAME);
+	sySetEvent(scTitleUpdateSprReveal, EVENT_PASS_TICK);
 	/* Show BG0, BG2 and the sprites. BG1 to BG3 start fully darkened, so the
 	   logo on BG2 is black; the semi-transparent lettering is blended onto the
 	   layers under it at full weight. */
@@ -258,7 +257,7 @@ static void scTitleRevealScreen(Sint32 unused)
 	FieldStateWork->transition = 0;
 	FieldStateWork->transitionFrm = 1;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	FieldStateWork->transitionFrm = 60;
 }
 
@@ -272,7 +271,7 @@ static void scTitleLoadBackground(void)
 	Uint16	  *tilemap;
 	Uint32	   screenX;
 	Uint32	   screenY;
-	Uint16	   tileIndex;
+	Uint16	   tileIdx;
 	BG_SCROLL *bgScroll;
 	Sint32	   blankTile;
 
@@ -289,10 +288,10 @@ static void scTitleLoadBackground(void)
 	syDMAXCopy((void *)Ram_MapMetatileBuffer, LOGO_TILES, DMA_COPY_WORDS(9600),
 		REG_DMA3);
 	tilemap = LOGO_MAP;
-	tileIndex = LOGO_FIRST_TILE;
+	tileIdx = LOGO_FIRST_TILE;
 	for(screenY = 0; screenY <= 19; screenY++) {
 		for(screenX = 0; screenX <= 29; screenX++)
-			*tilemap++ = tileIndex++;
+			*tilemap++ = tileIdx++;
 		*tilemap++ = blankTile;
 		*tilemap++ = blankTile;
 	}

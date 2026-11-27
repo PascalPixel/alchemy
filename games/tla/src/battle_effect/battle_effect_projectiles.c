@@ -9,18 +9,18 @@ typedef enum SPIN_AXIS {
 	SPIN_PITCH_AND_ROLL
 } SPIN_AXIS;
 
-/* The sparks that spin into the Djinni, the frames their centre takes from the
+/* The sparks that spin into the Djinni, the ticks their centre takes from the
    user to the anchor, and the depths that size them: one size smaller every
    DJINNI_SPARK_DEPTH_STEP from DJINNI_SPARK_DEPTH_NEAR, held below
    DJINNI_SPARK_DEPTH_FAR. */
-#define DJINNI_ENTRANCE_SPARKS		  32
-#define DJINNI_ENTRANCE_TRAVEL_FRAMES 40
-#define DJINNI_SPARK_DEPTH_NEAR		  250
-#define DJINNI_SPARK_DEPTH_STEP		  64
-#define DJINNI_SPARK_DEPTH_FAR		  634
+#define DJINNI_ENTRANCE_SPARKS		 32
+#define DJINNI_ENTRANCE_TRAVEL_TICKS 40
+#define DJINNI_SPARK_DEPTH_NEAR		 250
+#define DJINNI_SPARK_DEPTH_STEP		 64
+#define DJINNI_SPARK_DEPTH_FAR		 634
 
 /* Sparks swirl around a point that travels from the user to the anchor and
-   gather into a Djinni, which sways for 16 frames and bursts into motes. packed
+   gather into a Djinni, which sways for 16 ticks and bursts into motes. packed
    is DJINNI_ENTRANCE's; the anchor's screen point goes to screen and its world
    point to world. */
 void btEffectRunDjinniEntrance(
@@ -30,17 +30,17 @@ void btEffectRunDjinniEntrance(
 	FIXED				 goal[3];
 	FIXED				 step[3];
 	Sint32				 point[3];
-	SCREEN_POINT		 position;
+	SCREEN_POINT		 pos;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	DRAW_RECTANGLE		 draw[2];
 	Uint8				*sheet;
-	Sint32				 frameCount;
-	MOTION_OBJECT		*target;
+	Sint32				 frmCnt;
+	MOTION_OBJECT		*tgt;
 	MOTION_OBJECT		*actor;
 	Uint8				*palette;
 	Sint32				 resource;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 	Sint32				 element;
 	Sint32				 side;
@@ -53,19 +53,19 @@ void btEffectRunDjinniEntrance(
 	side = DJINNI_ENTRANCE_SIDE(packed);
 	anchor = DJINNI_ENTRANCE_ANCHOR_OF(packed);
 	if(anchor == DJINNI_ANCHOR_CENTRE_BRIGHTENING) {
-		frameCount = 40;
+		frmCnt = 40;
 	} else if(anchor == DJINNI_ANCHOR_OVER_TARGET_SHORT) {
-		state->fadeFrm = BACKGROUND_DARKEN_FRAMES;
+		state->fadeFrm = BACKGROUND_DARKEN_TICKS;
 		state->fadeStep = 0;
-		frameCount = 54;
+		frmCnt = 54;
 	} else {
-		state->fadeFrm = BACKGROUND_DARKEN_FRAMES;
+		state->fadeFrm = BACKGROUND_DARKEN_TICKS;
 		state->fadeStep = 0;
 		if(element > ELEMENT_JUPITER) {
 			element -= DJINNI_ENTRANCE_LONG;
-			frameCount = 84;
+			frmCnt = 84;
 		} else {
-			frameCount = 55;
+			frmCnt = 55;
 		}
 	}
 
@@ -119,7 +119,7 @@ void btEffectRunDjinniEntrance(
 	draw[0] = Ram_HeapSlots->ramCode;
 	draw[1] = Ram_HeapSlots->ramCodePaired;
 	actor = btObjectGetStub(args->user)->obj;
-	target = btObjectGetStub(args->tgts[0])->obj;
+	tgt = btObjectGetStub(args->tgts[0])->obj;
 
 	/* 64 sparks start on the ground around the caster, flying outward. */
 	for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
@@ -136,29 +136,29 @@ void btEffectRunDjinniEntrance(
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-	/* The spin's centre moves from the caster to the anchor over frames
+	/* The spin's centre moves from the caster to the anchor over ticks
 	   6-45. */
 	center[0] = actor->x;
 	center[1] = 0;
 	center[2] = actor->z;
 	switch(anchor) {
 	case DJINNI_ANCHOR_OVER_TARGET:
-		goal[0] = target->x;
+		goal[0] = tgt->x;
 		goal[1] = toFIXED(60);
-		goal[2] = target->z;
+		goal[2] = tgt->z;
 		break;
 	case DJINNI_ANCHOR_OVER_TARGET_SHORT:
-		goal[0] = target->x;
+		goal[0] = tgt->x;
 		goal[1] = toFIXED(60);
-		goal[2] = target->z;
+		goal[2] = tgt->z;
 		break;
 	case DJINNI_ANCHOR_TARGET_X:
-		goal[0] = target->x;
+		goal[0] = tgt->x;
 		goal[1] = toFIXED(60);
 		goal[2] = 0;
 		break;
 	case DJINNI_ANCHOR_HIGH_TARGET_X:
-		goal[0] = target->x;
+		goal[0] = tgt->x;
 		goal[1] = toFIXED(120);
 		goal[2] = 0;
 		break;
@@ -194,71 +194,71 @@ void btEffectRunDjinniEntrance(
 		goal[2] = 0;
 		break;
 	}
-	step[0] = (goal[0] - center[0]) / DJINNI_ENTRANCE_TRAVEL_FRAMES;
-	step[1] = (goal[1] - center[1]) / DJINNI_ENTRANCE_TRAVEL_FRAMES;
-	step[2] = (goal[2] - center[2]) / DJINNI_ENTRANCE_TRAVEL_FRAMES;
+	step[0] = (goal[0] - center[0]) / DJINNI_ENTRANCE_TRAVEL_TICKS;
+	step[1] = (goal[1] - center[1]) / DJINNI_ENTRANCE_TRAVEL_TICKS;
+	step[2] = (goal[2] - center[2]) / DJINNI_ENTRANCE_TRAVEL_TICKS;
 
-	for(frame = 0; frame != frameCount; frame++) {
+	for(frm = 0; frm != frmCnt; frm++) {
 		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
 
-		if(frame > 75)
-			REG_BLDALPHA = EFFECT_BLEND_CANVAS(168 - frame * 2);
-		if(anchor == DJINNI_ANCHOR_CENTRE_BRIGHTENING && frame > 23)
+		if(frm > 75)
+			REG_BLDALPHA = EFFECT_BLEND_CANVAS(168 - frm * 2);
+		if(anchor == DJINNI_ANCHOR_CENTRE_BRIGHTENING && frm > 23)
 			btPaletteBrightenBattleBg(2, 2, 2);
-		if(frame == 8)
+		if(frm == 8)
 			sySndPlayStub(SE_POWER_UP);
 		syInitMatrix();
 		syLookAtLoad(camera->eye, camera->focus);
-		if(frame >= 6 && frame <= 45) {
+		if(frm >= 6 && frm <= 45) {
 			center[0] += step[0];
 			center[1] += step[1];
 			center[2] += step[2];
 		}
 		syMatrixTranslateVector(center);
-		if(frame == 0)
+		if(frm == 0)
 			btEffectTintBattler(
 				args->user, SPRITE_COLOR_WHITE, TINT_KEEP, TINT_KEEP, 0);
-		if(frame == 24)
+		if(frm == 24)
 			btEffectTintBattler(
 				args->user, SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
 
 		/* The sparks spin about the centre, each on its own axis, and from
-		   their 24th frame fall into it; a spark that has arrived stops. */
-		if(frame <= 63) {
+		   their 24th tick fall into it; a spark that has arrived stops. */
+		if(frm <= 63) {
 			for(i = 0; i != DJINNI_ENTRANCE_SPARKS; i++) {
 				PARTICLE *spark = &state->particles[i];
 
-				if(frame >= i / 8 && spark->variant == 0) {
+				if(frm >= i / 8 && spark->variant == 0) {
 					Sint32 size;
 
 					syPushMatrix();
 					switch(i & 3) {
 					case SPIN_YAW:
-						syRotY(frame * ((i + 8) * (TRIG_TURN / 2048)));
+						syRotY(frm * ((i + 8) * (TRIG_TURN / 2048)));
 						break;
 					case SPIN_PITCH:
-						syRotX(-frame * ((i + 8) * (TRIG_TURN / 2048)));
+						syRotX(-frm * ((i + 8) * (TRIG_TURN / 2048)));
 						break;
 					case SPIN_ROLL:
-						syRotZ(-frame * ((i + 8) * (TRIG_TURN / 2048)));
+						syRotZ(-frm * ((i + 8) * (TRIG_TURN / 2048)));
 						break;
 					case SPIN_PITCH_AND_ROLL:
-						syRotX(-frame * ((i + 8) * (TRIG_TURN / 2048)));
-						syRotZ(-frame * ((i + 8) * (TRIG_TURN / 2048)));
+						syRotX(-frm * ((i + 8) * (TRIG_TURN / 2048)));
+						syRotZ(-frm * ((i + 8) * (TRIG_TURN / 2048)));
 						break;
 					}
-					btEffectPosProjectPoint(&spark->x, &position);
-					position.x >>= 1;
+					btEffectPosProjectPoint(&spark->x, &pos);
+					pos.x >>= 1;
 					syPopMatrix();
-					CLAMP(position.depth, DJINNI_SPARK_DEPTH_NEAR,
+					CLAMP(pos.depth, DJINNI_SPARK_DEPTH_NEAR,
 						DJINNI_SPARK_DEPTH_FAR);
 					size = 8 -
-						(position.depth - DJINNI_SPARK_DEPTH_NEAR) /
+						(pos.depth - DJINNI_SPARK_DEPTH_NEAR) /
 							DJINNI_SPARK_DEPTH_STEP;
 					EFFECT_DRAW_MOTE(
-						draw[1], canvas, sheet, position.x, position.y, size);
+						draw[1], canvas, sheet, pos.x, pos.y, size);
 					btParticleAdvanceWithGravity3D(spark, 60, 0);
-					if(frame >= i / 8 + 24) {
+					if(frm >= i / 8 + 24) {
 						Sint32 pullX = -spark->x >> 7;
 						Sint32 pullY = -spark->y >> 7;
 						Sint32 pullZ = -spark->z >> 7;
@@ -277,25 +277,25 @@ void btEffectRunDjinniEntrance(
 			}
 		}
 
-		/* The small Djinni sways at the anchor for frames 54 to 69. */
-		if(frame >= 54 && frame <= 69) {
-			point[0] = sySin(frame * (TRIG_TURN / 64)) * 4;
+		/* The small Djinni sways at the anchor for ticks 54 to 69. */
+		if(frm >= 54 && frm <= 69) {
+			point[0] = sySin(frm * (TRIG_TURN / 64)) * 4;
 			point[1] = 0;
 			point[2] = 0;
-			world[0] = goal[0] + sySin(frame * (TRIG_TURN / 64)) * 4;
+			world[0] = goal[0] + sySin(frm * (TRIG_TURN / 64)) * 4;
 			world[1] = goal[1];
 			world[2] = goal[2];
-			btEffectPosProjectPoint(point, &position);
-			screen[0] = position.x;
-			screen[1] = position.y;
-			position.x >>= 1;
-			draw[0](canvas, state->sheet, position.x - SMALL_DJINNI_WIDTH / 2,
-				position.y - SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
+			btEffectPosProjectPoint(point, &pos);
+			screen[0] = pos.x;
+			screen[1] = pos.y;
+			pos.x >>= 1;
+			draw[0](canvas, state->sheet, pos.x - SMALL_DJINNI_WIDTH / 2,
+				pos.y - SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
 				SMALL_DJINNI_HEIGHT);
 		}
 
-		/* At frame 64 it bursts into 64 motes that fall away. */
-		if(frame == 64) {
+		/* At tick 64 it bursts into 64 motes that fall away. */
+		if(frm == 64) {
 			for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
 				PARTICLE *mote = &state->particles[i];
 				Sint32	  angle = syRandom() & TRIG_ANGLE_MASK;
@@ -308,7 +308,7 @@ void btEffectRunDjinniEntrance(
 				mote->variant = (syRandom() & 15) + 8;
 			}
 		}
-		if(frame > 63) {
+		if(frm > 63) {
 			for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
 				PARTICLE *mote = &state->particles[i];
 
@@ -332,7 +332,7 @@ void btEffectRunDjinniEntrance(
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 }
 
-/* Six comets fly at each target, three frames apart, and burst into a flash and
+/* Six comets fly at each target, three ticks apart, and burst into a flash and
    sparks; the effect's variant picks one of three comets.
 
    Abilities: Slash, Wind Slash, Sonic Slash. */
@@ -341,7 +341,7 @@ void btEffectRunSlash(BATTLE_EFFECT_PARM *args)
 	btEffectRunProjectileVolley(args, PROJECTILE_VOLLEY_SLASH);
 }
 
-/* Four spinning shurikens fly at each target, five frames apart, and vanish
+/* Four spinning shurikens fly at each target, five ticks apart, and vanish
    once past it.
 
    Abilities: Shuriken. */
@@ -359,7 +359,7 @@ void btEffectRunCrazyVoice(BATTLE_EFFECT_PARM *args)
 	btEffectRunProjectileVolley(args, PROJECTILE_VOLLEY_CRAZY_VOICE);
 }
 
-/* Five yellow sparks fly level at each target, five frames apart.
+/* Five yellow sparks fly level at each target, five ticks apart.
 
    Abilities: Wing Flutter. */
 void btEffectRunWingFlutter(BATTLE_EFFECT_PARM *args)
@@ -367,7 +367,7 @@ void btEffectRunWingFlutter(BATTLE_EFFECT_PARM *args)
 	btEffectRunProjectileVolley(args, PROJECTILE_VOLLEY_WING_FLUTTER);
 }
 
-/* Ten large yellow sparks stream level at each target, one a frame, spread up
+/* Ten large yellow sparks stream level at each target, one a tick, spread up
    and down.
 
    Abilities: Wing Stroke. */
@@ -376,7 +376,7 @@ void btEffectRunWingStroke(BATTLE_EFFECT_PARM *args)
 	btEffectRunProjectileVolley(args, PROJECTILE_VOLLEY_WING_STROKE);
 }
 
-/* Ten small yellow sparks stream level at each target, one a frame.
+/* Ten small yellow sparks stream level at each target, one a tick.
 
    Abilities: Wing Beat. */
 void btEffectRunWingBeat(BATTLE_EFFECT_PARM *args)
@@ -407,7 +407,7 @@ void btEffectRunCuttingEdge(BATTLE_EFFECT_PARM *args)
 }
 
 /* From the user's leap pose, seven fireballs trailing embers fly at each
-   target, two frames apart, each bursting into 40 sparks.
+   target, two ticks apart, each bursting into 40 sparks.
 
    Abilities: Heat Wave. */
 void btEffectRunHeatWave(BATTLE_EFFECT_PARM *args)
@@ -424,7 +424,7 @@ void btEffectRunSleet(BATTLE_EFFECT_PARM *args)
 }
 
 /* From the user's leap pose, sixty ice chips stream at each target, one a
-   frame, scattered up and down, without knocking it back.
+   tick, scattered up and down, without knocking it back.
 
    Abilities: Blizzard. */
 void btEffectRunBlizzard(BATTLE_EFFECT_PARM *args)
@@ -433,7 +433,7 @@ void btEffectRunBlizzard(BATTLE_EFFECT_PARM *args)
 }
 
 /* From the user's leap pose, seven fireballs trailing smoke fly level at each
-   target, two frames apart, scattered up and down, each bursting into 40
+   target, two ticks apart, scattered up and down, each bursting into 40
    sparks.
 
    Abilities: Steel, Blaze Rush. */
@@ -443,7 +443,7 @@ void btEffectRunBlazeRush(BATTLE_EFFECT_PARM *args)
 }
 
 /* From the user's leap pose, twenty blue bubbles stream at each target, one a
-   frame, scattered up and down, each bursting into 40 drops of spray.
+   tick, scattered up and down, each bursting into 40 drops of spray.
 
    Abilities: Hydro Slash. */
 void btEffectRunHydroSlash(BATTLE_EFFECT_PARM *args)
@@ -452,7 +452,7 @@ void btEffectRunHydroSlash(BATTLE_EFFECT_PARM *args)
 }
 
 /* From the user's leap pose, thirty turning ice crystals stream at each target,
-   two frames apart, scattered up and down.
+   two ticks apart, scattered up and down.
 
    Abilities: Diamond Dust. */
 void btEffectRunDiamondDust(BATTLE_EFFECT_PARM *args)
@@ -460,7 +460,7 @@ void btEffectRunDiamondDust(BATTLE_EFFECT_PARM *args)
 	btEffectRunVolleyWithAction(args, PROJECTILE_VOLLEY_DIAMOND_DUST);
 }
 
-/* Thirty white needles stream at each target, one a frame.
+/* Thirty white needles stream at each target, one a tick.
 
    Abilities: Beast Needle. */
 void btEffectRunBeastNeedle(BATTLE_EFFECT_PARM *args)
@@ -468,7 +468,7 @@ void btEffectRunBeastNeedle(BATTLE_EFFECT_PARM *args)
 	btEffectRunProjectileVolley(args, PROJECTILE_VOLLEY_BEAST_NEEDLE);
 }
 
-/* Thirty lime needles stream at each target, one a frame, and lime smoke
+/* Thirty lime needles stream at each target, one a tick, and lime smoke
    billows where they land.
 
    Abilities: Poison Sting. */
@@ -477,7 +477,7 @@ void btEffectRunPoisonSting(BATTLE_EFFECT_PARM *args)
 	btEffectRunProjectileVolley(args, PROJECTILE_VOLLEY_POISON_STING);
 }
 
-/* Thirty blue needles stream at each target, one a frame, and blue glints flash
+/* Thirty blue needles stream at each target, one a tick, and blue glints flash
    about it where they land.
 
    Abilities: Stun Sting. */
@@ -486,7 +486,7 @@ void btEffectRunStunSting(BATTLE_EFFECT_PARM *args)
 	btEffectRunProjectileVolley(args, PROJECTILE_VOLLEY_STUN_STING);
 }
 
-/* Sixty ice chips stream at each target, one a frame, without knocking it back.
+/* Sixty ice chips stream at each target, one a tick, without knocking it back.
 
    Abilities: Ice Breath, Blue Dragon. */
 void btEffectRunIceBlessing(BATTLE_EFFECT_PARM *args)
@@ -494,7 +494,7 @@ void btEffectRunIceBlessing(BATTLE_EFFECT_PARM *args)
 	btEffectRunProjectileVolley(args, PROJECTILE_VOLLEY_ICE_BLESSING);
 }
 
-/* Sixty ice chips stream at each target, one a frame, from the user's breath.
+/* Sixty ice chips stream at each target, one a tick, from the user's breath.
 
    Abilities: Chill Breath. */
 void btEffectRunChillBreath(BATTLE_EFFECT_PARM *args)
@@ -521,7 +521,7 @@ void btEffectRunChillBreath(BATTLE_EFFECT_PARM *args)
 #define PROJECTILE_VOLLEY_HALVED_BUBBLE_PICTURES 4096
 #define PROJECTILE_VOLLEY_HALVED_BUBBLE_BYTES \
 	((2 * PICTURE_BYTES(BLUE_BUBBLE) + PICTURE_BYTES(BLUE_LARGE_SPLASH)) / 2)
-/* A hit's sparks fly at up to 4 pixels a frame each way, as a random -128 to
+/* A hit's sparks fly at up to 4 pixels a tick each way, as a random -128 to
    127 shifted up; Cutting Edge's at up to 8. */
 #define PROJECTILE_VOLLEY_SPARK_SPEED_SHIFT 11
 #define CUTTING_EDGE_SPARK_SPEED_SHIFT		12
@@ -570,22 +570,22 @@ typedef enum PROJECTILE_VOLLEY_COMET {
 #define SHURIKEN_HEIGHT				  24
 
 /* Shots fly from the user to each target and burst into a flash and sparks when
-   they pass it. The hit sound plays at most once every 8 frames. */
+   they pass it. The hit sound plays at most once every 8 ticks. */
 void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
 	SCREEN_POINT		 screen;
 	SCREEN_POINT		 world;
 	SCREEN_POINT		 origin;
-	SCREEN_POINT		 position;
+	SCREEN_POINT		 pos;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	Sint32				 i;
 	Sint32				 j;
-	Sint32				 frame;
+	Sint32				 frm;
 	DRAW_RECTANGLE		 draw[2];
 	BATTLE_CAMERA		*camera;
 	Uint8				*sheet;
-	Sint32				 soundCooldown;
+	Sint32				 sndCooldown;
 	Sint32				 total;
 	Sint32				 comet;
 	Sint32				 shots;
@@ -600,7 +600,7 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	canvas = Ram_HeapSlots->battleCanvas;
 	camera = Ram_HeapSlots->cameraState;
 	sheet = Ram_HeapSlots->battleSheet;
-	soundCooldown = 0;
+	sndCooldown = 0;
 	comet = args->variant;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	/* With a prelude, a Mercury Djinni appears over the user first. */
@@ -733,12 +733,11 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 	/* Where each shot starts and how fast it flies. */
 	user = btObjectGetStub(args->user)->obj;
-	shots = ProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_SHOTS];
-	steps = ProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_STEPS];
+	shots = ProjectileVolleyModes[mode][PROJECTILE_VOLLEY_SHOTS];
+	steps = ProjectileVolleyModes[mode][PROJECTILE_VOLLEY_STEPS];
 	{
-		Sint32 stagger =
-			ProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_STAGGER];
-		Sint32 delay = ProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_DELAY];
+		Sint32 stagger = ProjectileVolleyModes[mode][PROJECTILE_VOLLEY_STAGGER];
+		Sint32 delay = ProjectileVolleyModes[mode][PROJECTILE_VOLLEY_DELAY];
 		Sint32 height = btUnitGetEffectHeightStub(args->user);
 
 		/* Too many shots for the particles: only the first target is shot
@@ -747,8 +746,8 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			args->tgtCnt = 1;
 
 		for(i = 0; i != args->tgtCnt; i++) {
-			MOTION_OBJECT *target = btObjectGetStub(args->tgts[i])->obj;
-			Sint32 targetHeight = btUnitGetEffectHeightStub(args->tgts[i]);
+			MOTION_OBJECT *tgt = btObjectGetStub(args->tgts[i])->obj;
+			Sint32		   tgtHeight = btUnitGetEffectHeightStub(args->tgts[i]);
 
 			for(j = 0; j != shots; j++) {
 				PARTICLE *shot = &state->particles[i * shots + j];
@@ -788,24 +787,24 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				else
 					shot->y = user->y + height;
 				shot->z = user->z;
-				shot->velX = (target->x - shot->x) / steps;
-				shot->velZ = (target->z - shot->z) / steps;
+				shot->velX = (tgt->x - shot->x) / steps;
+				shot->velZ = (tgt->z - shot->z) / steps;
 				if(mode == PROJECTILE_VOLLEY_SLEET) {
-					shot->velY = (Sint32)(target->y + toFIXED(syRandom() & 63) -
+					shot->velY = (Sint32)(tgt->y + toFIXED(syRandom() & 63) -
 									 shot->y - toFIXED(12)) /
 						steps;
 				} else if(mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
-					shot->velY = (Sint32)(target->y + toFIXED(syRandom() & 7) -
+					shot->velY = (Sint32)(tgt->y + toFIXED(syRandom() & 7) -
 									 shot->y + toFIXED(22)) /
 						steps;
 				} else if(mode == PROJECTILE_VOLLEY_DIAMOND_DUST) {
 					shot->velY =
-						(Sint32)(target->y + toFIXED(64 - (syRandom() & 63)) -
+						(Sint32)(tgt->y + toFIXED(64 - (syRandom() & 63)) -
 							shot->y) /
 						steps;
 				} else if(mode == PROJECTILE_VOLLEY_BLIZZARD) {
 					shot->velY =
-						(Sint32)(target->y + toFIXED(64 - (syRandom() & 63)) -
+						(Sint32)(tgt->y + toFIXED(64 - (syRandom() & 63)) -
 							shot->y) /
 						steps;
 				} else if(mode >= PROJECTILE_VOLLEY_BEAST_NEEDLE &&
@@ -813,14 +812,14 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					shot->velY = shot->y / 32;
 				} else if(mode == PROJECTILE_VOLLEY_ICE_BLESSING) {
 					/* These start two steps along their flight. */
-					shot->velY = (Sint32)(target->y + toFIXED(syRandom() & 31) -
+					shot->velY = (Sint32)(tgt->y + toFIXED(syRandom() & 31) -
 									 shot->y + toFIXED(4)) /
 						steps;
 					shot->x += shot->velX * 2;
 					shot->y += shot->velY * 2;
 					shot->z += shot->velZ * 2;
 				} else if(mode == PROJECTILE_VOLLEY_CHILL_BREATH) {
-					shot->velY = (Sint32)(target->y + toFIXED(syRandom() & 31) -
+					shot->velY = (Sint32)(tgt->y + toFIXED(syRandom() & 31) -
 									 shot->y + toFIXED(4)) /
 						steps;
 					shot->x += shot->velX * 2;
@@ -833,11 +832,11 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					mode == PROJECTILE_VOLLEY_BLAZE_RUSH) {
 					shot->velY = 0;
 				} else if(mode == PROJECTILE_VOLLEY_HEAT_WAVE) {
-					shot->velY = (Sint32)(target->y + targetHeight / 2 +
+					shot->velY = (Sint32)(tgt->y + tgtHeight / 2 +
 									 toFIXED(syRandom() & 15) - shot->y) /
 						steps;
 				} else {
-					shot->velY = (Sint32)(target->y + targetHeight -
+					shot->velY = (Sint32)(tgt->y + tgtHeight -
 									 toFIXED(syRandom() & 15) - shot->y) /
 						steps;
 				}
@@ -871,44 +870,42 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		else
 			total = (args->tgtCnt - 1) * delay + shots * stagger + 32;
 
-		/* Each frame: the sounds, the Djinni, the shots and their impacts, then
+		/* Each tick: the sounds, the Djinni, the shots and their impacts, then
 		   the flashes, sparks, smoke and streaks. */
-		for(frame = 0; frame != total; frame++) {
-			Sint32 index;
+		for(frm = 0; frm != total; frm++) {
+			Sint32 idx;
 
-			if(soundCooldown > 0)
-				soundCooldown--;
+			if(sndCooldown > 0)
+				sndCooldown--;
 			if(mode == PROJECTILE_VOLLEY_HEAT_WAVE ||
 				mode == PROJECTILE_VOLLEY_BLAZE_RUSH ||
 				mode == PROJECTILE_VOLLEY_HYDRO_SLASH ||
 				mode == PROJECTILE_VOLLEY_DIAMOND_DUST) {
-				if(frame == 4)
+				if(frm == 4)
 					sySndPlayStub(SE_WHOOSH);
-				if(frame == 32)
+				if(frm == 32)
 					EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			} else if(mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
-				if(frame == 32)
+				if(frm == 32)
 					EFFECT_SHOW_DAMAGE(SE_IMPACT);
 			} else if(mode == PROJECTILE_VOLLEY_SLEET) {
-				if(frame == 48)
+				if(frm == 48)
 					EFFECT_SHOW_DAMAGE(SE_IMPACT);
 			} else if(mode != PROJECTILE_VOLLEY_CUTTING_EDGE) {
-				if(frame == 16)
+				if(frm == 16)
 					EFFECT_SHOW_DAMAGE(SE_IMPACT);
 			}
 
-			/* The prelude's small Mercury Djinni circles, then from frame 70
+			/* The prelude's small Mercury Djinni circles, then from tick 70
 			   flies off upwards. */
 			if(args->prelude == 1) {
-				Sint32 djinnX =
-					FIXEDtoINT(-sySin(frame * (TRIG_TURN / 32)) * 4) +
+				Sint32 djinnX = FIXEDtoINT(-sySin(frm * (TRIG_TURN / 32)) * 4) +
 					screen.x / 2 - SMALL_DJINNI_WIDTH / 2;
-				Sint32 djinnY =
-					FIXEDtoINT(syCos(frame * (TRIG_TURN / 32)) * 2) + screen.y -
-					24;
+				Sint32 djinnY = FIXEDtoINT(syCos(frm * (TRIG_TURN / 32)) * 2) +
+					screen.y - 24;
 
-				if(frame > 69)
-					djinnY = djinnY - frame * 2 + 138;
+				if(frm > 69)
+					djinnY = djinnY - frm * 2 + 138;
 				if(args->side == EFFECT_SIDE_PARTY)
 					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 						EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
@@ -917,7 +914,7 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 						EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
 				draw[1] = DRAW_ALTERNATE;
-				if(frame <= 3)
+				if(frm <= 3)
 					draw[1](canvas,
 						state->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE, djinnX,
 						djinnY, SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
@@ -929,15 +926,15 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			/* The shots. */
 			syInitMatrix();
 			syLookAtLoad(camera->eye, camera->focus);
-			index = 0;
+			idx = 0;
 			for(i = 0; i != args->tgtCnt; i++) {
-				MOTION_OBJECT *target = btObjectGetStub(args->tgts[i])->obj;
+				MOTION_OBJECT *tgt = btObjectGetStub(args->tgts[i])->obj;
 
-				for(j = 0; j != shots; j++, index++) {
+				for(j = 0; j != shots; j++, idx++) {
 					PARTICLE *shot;
-					Sint32	  targetDelay = i * delay;
+					Sint32	  tgtDelay = i * delay;
 
-					if(j * stagger + targetDelay >= frame)
+					if(j * stagger + tgtDelay >= frm)
 						continue;
 					shot = &state->particles[i * shots + j];
 					if(mode >= PROJECTILE_VOLLEY_BEAST_NEEDLE &&
@@ -946,8 +943,8 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						continue;
 
 					/* The screen position (the canvas is half as wide). */
-					btEffectPosProjectPoint((Sint32 *)shot, &position);
-					position.x >>= 1;
+					btEffectPosProjectPoint((Sint32 *)shot, &pos);
+					pos.x >>= 1;
 					shot->x += shot->velX;
 					shot->y += shot->velY;
 					shot->z += shot->velZ;
@@ -960,8 +957,8 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							PARTICLE *p = &PARTICLES[k];
 
 							if(p->variant == 0) {
-								p->x = toFIXED(position.x);
-								p->y = toFIXED(position.y);
+								p->x = toFIXED(pos.x);
+								p->y = toFIXED(pos.y);
 								p->velX = ((syRandom() & 255) - 128) << 11;
 								p->velY = ((syRandom() & 255) - 128) << 11;
 								p->variant = (syRandom() & 7) + 32;
@@ -977,11 +974,11 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						/* The shot hits when it passes the target's x on its
 						   side. */
 						x = shot->x;
-						if(target->x < 0) {
+						if(tgt->x < 0) {
 							hit = x < 0;
 							/* FAKEMATCH(dead): the twin's cancelling updates
 							 * under a test that does nothing. */
-							if(target) {
+							if(tgt) {
 								hit ^= x;
 								hit ^= x;
 							}
@@ -990,16 +987,16 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						} else {
 							hit = x >= 0;
 							/* FAKEMATCH(dead): the same for the other side. */
-							if(target) {
+							if(tgt) {
 								hit ^= x;
 								hit ^= x;
 							}
 							if(!hit)
 								goto draw_shot;
 						}
-						if(ABS(x) >= ABS(target->x)) {
+						if(ABS(x) >= ABS(tgt->x)) {
 							Sint32	  spawned = 0;
-							PARTICLE *flash = &PARTICLES[index];
+							PARTICLE *flash = &PARTICLES[idx];
 
 							shot->variant = 1;
 							if(mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
@@ -1008,8 +1005,8 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 								mode != PROJECTILE_VOLLEY_BLAZE_RUSH &&
 								mode != PROJECTILE_VOLLEY_HYDRO_SLASH &&
 								mode != PROJECTILE_VOLLEY_DIAMOND_DUST &&
-								soundCooldown == 0) {
-								soundCooldown = 8;
+								sndCooldown == 0) {
+								sndCooldown = 8;
 								sySndPlayStub(SE_WATER);
 							}
 							if(mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
@@ -1023,7 +1020,7 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 								shot->velX = -shot->velX;
 							}
 							flash->variant = 1;
-							SET_POSITION(flash, position.x, position.y, 0);
+							SET_POSITION(flash, pos.x, pos.y, 0);
 							if(mode != PROJECTILE_VOLLEY_SLEET)
 								state->shakeFrm = 2;
 							btEffectTintBattler(args->tgts[i],
@@ -1074,8 +1071,8 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 									PARTICLE *p = &PARTICLES[k];
 
 									if(p->variant == 0) {
-										p->x = toFIXED(position.x);
-										p->y = toFIXED(position.y);
+										p->x = toFIXED(pos.x);
+										p->y = toFIXED(pos.y);
 										p->velX = ((syRandom() & 255) - 128)
 											<< trailsOrShift;
 										p->velY = ((syRandom() & 255) - 128)
@@ -1083,7 +1080,7 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 										p->variant = (syRandom() & 7) + 16;
 										spawned++;
 										if(spawned ==
-											ProjectileVolley_Modes
+											ProjectileVolleyModes
 												[mode]
 												[PROJECTILE_VOLLEY_SPARKS])
 											break;
@@ -1107,10 +1104,10 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 								EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 						DRAW_ALTERNATE(canvas,
 							state->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
-							position.x - PROJECTILE_VOLLEY_COMET_WIDTH / 2,
-							position.y - ProjectileVolley_CometHeights[comet],
+							pos.x - PROJECTILE_VOLLEY_COMET_WIDTH / 2,
+							pos.y - ProjectileVolleyCometHeights[comet],
 							PROJECTILE_VOLLEY_COMET_WIDTH,
-							ProjectileVolley_CometHeights[comet]);
+							ProjectileVolleyCometHeights[comet]);
 						syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 						if(args->side == EFFECT_SIDE_PARTY)
 							EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
@@ -1122,103 +1119,103 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 								BLITTER_MAX);
 						DRAW_ALTERNATE(canvas,
 							state->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
-							position.x - PROJECTILE_VOLLEY_COMET_WIDTH / 2,
-							position.y, PROJECTILE_VOLLEY_COMET_WIDTH,
-							ProjectileVolley_CometHeights[comet]);
+							pos.x - PROJECTILE_VOLLEY_COMET_WIDTH / 2, pos.y,
+							PROJECTILE_VOLLEY_COMET_WIDTH,
+							ProjectileVolleyCometHeights[comet]);
 						syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 					} else if(mode == PROJECTILE_VOLLEY_SHURIKEN) {
-						if(ABS(shot->x) <= ABS(target->x))
+						if(ABS(shot->x) <= ABS(tgt->x))
 							draw[0](canvas,
 								state->sheet +
-									frame % 6 * PICTURE_BYTES(SHURIKEN),
-								position.x - SHURIKEN_WIDTH / 2,
-								position.y - SHURIKEN_HEIGHT / 2,
-								SHURIKEN_WIDTH, SHURIKEN_HEIGHT);
+									frm % 6 * PICTURE_BYTES(SHURIKEN),
+								pos.x - SHURIKEN_WIDTH / 2,
+								pos.y - SHURIKEN_HEIGHT / 2, SHURIKEN_WIDTH,
+								SHURIKEN_HEIGHT);
 					} else if(mode == PROJECTILE_VOLLEY_SLEET ||
 						mode == PROJECTILE_VOLLEY_BLIZZARD ||
 						mode == PROJECTILE_VOLLEY_ICE_BLESSING ||
 						mode == PROJECTILE_VOLLEY_CHILL_BREATH) {
 						draw[0](canvas,
 							state->sheet +
-								ProjectileVolley_PelletPictures[j & 3],
-							position.x - PROJECTILE_VOLLEY_PELLET_SIZE / 2,
-							position.y - PROJECTILE_VOLLEY_PELLET_SIZE / 2,
+								ProjectileVolleyPelletPictures[j & 3],
+							pos.x - PROJECTILE_VOLLEY_PELLET_SIZE / 2,
+							pos.y - PROJECTILE_VOLLEY_PELLET_SIZE / 2,
 							PROJECTILE_VOLLEY_PELLET_SIZE,
 							PROJECTILE_VOLLEY_PELLET_SIZE);
 					} else if(mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
 						draw[0](canvas,
 							state->sheet +
 								j % 6 * PICTURE_BYTES(PROJECTILE_VOLLEY_NOTE),
-							position.x - PROJECTILE_VOLLEY_NOTE_WIDTH / 2,
-							position.y - PROJECTILE_VOLLEY_NOTE_HEIGHT / 2,
+							pos.x - PROJECTILE_VOLLEY_NOTE_WIDTH / 2,
+							pos.y - PROJECTILE_VOLLEY_NOTE_HEIGHT / 2,
 							PROJECTILE_VOLLEY_NOTE_WIDTH,
 							PROJECTILE_VOLLEY_NOTE_HEIGHT);
 					} else if(mode == PROJECTILE_VOLLEY_WING_FLUTTER) {
 						EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 							PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE,
-							position.x -
+							pos.x -
 								PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE_WIDTH /
 									2,
-							position.y -
+							pos.y -
 								(PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE_HEIGHT +
 									1) /
 									2);
 					} else if(mode == PROJECTILE_VOLLEY_WING_BEAT) {
 						EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 							PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE,
-							position.x -
+							pos.x -
 								PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE_WIDTH / 2,
-							position.y -
+							pos.y -
 								PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE_HEIGHT /
 									2);
 					} else if(mode >= PROJECTILE_VOLLEY_BEAST_NEEDLE &&
 						mode <= PROJECTILE_VOLLEY_STUN_STING) {
 						draw[0](canvas, state->sheet,
-							position.x - SHORT_STREAK_WIDTH / 2,
-							position.y - SHORT_STREAK_HEIGHT / 2,
-							SHORT_STREAK_WIDTH, SHORT_STREAK_HEIGHT);
+							pos.x - SHORT_STREAK_WIDTH / 2,
+							pos.y - SHORT_STREAK_HEIGHT / 2, SHORT_STREAK_WIDTH,
+							SHORT_STREAK_HEIGHT);
 					} else if(mode == PROJECTILE_VOLLEY_HYDRO_SLASH) {
 						draw[0](canvas, state->sheet,
-							position.x - BLUE_BUBBLE_WIDTH / 2,
-							position.y - BLUE_BUBBLE_HEIGHT / 2,
-							BLUE_BUBBLE_WIDTH, BLUE_BUBBLE_HEIGHT);
+							pos.x - BLUE_BUBBLE_WIDTH / 2,
+							pos.y - BLUE_BUBBLE_HEIGHT / 2, BLUE_BUBBLE_WIDTH,
+							BLUE_BUBBLE_HEIGHT);
 					} else if(mode == PROJECTILE_VOLLEY_DIAMOND_DUST) {
 						/* Five crystals, each turning through three
 						   pictures. */
-						Sint32 shard = (i * shots + j) % 5 * 3 + frame / 4 % 3;
+						Sint32 shard = (i * shots + j) % 5 * 3 + frm / 4 % 3;
 						Uint32 width;
 						Uint32 height;
 						Uint8 *picture = state->sheet +
-							Prism_ShardPictures[shard] + PICTURE_BYTES(CRYSTAL);
+							PrismShardPictures[shard] + PICTURE_BYTES(CRYSTAL);
 						Sint32 left;
 						Sint32 top;
 
-						width = Prism_ShardWidths[shard];
-						left = position.x - (width >> 1);
-						height = Prism_ShardHeights[shard];
-						top = position.y - (height >> 1);
+						width = PrismShardWidths[shard];
+						left = pos.x - (width >> 1);
+						height = PrismShardHeights[shard];
+						top = pos.y - (height >> 1);
 						draw[0](canvas, picture, left, top, width, height);
 					} else if(mode == PROJECTILE_VOLLEY_WING_STROKE) {
 						EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 							PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE,
-							position.x -
+							pos.x -
 								(PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE_WIDTH +
 									1) /
 									2,
-							position.y -
+							pos.y -
 								(PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE_HEIGHT +
 									1) /
 									2);
 					} else {
 						draw[0](canvas, state->sheet,
-							position.x - FLAMEBALL_WIDTH / 2,
-							position.y - FLAMEBALL_HEIGHT / 2, FLAMEBALL_WIDTH,
+							pos.x - FLAMEBALL_WIDTH / 2,
+							pos.y - FLAMEBALL_HEIGHT / 2, FLAMEBALL_WIDTH,
 							FLAMEBALL_HEIGHT);
 					}
 				}
 			}
 
-			/* The comets' flashes, 12 frames: half the picture, then the same
+			/* The comets' flashes, 12 ticks: half the picture, then the same
 			   half flipped (odd flashes use the picture turned on its side). */
 			if(mode == PROJECTILE_VOLLEY_SLASH ||
 				mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
@@ -1228,56 +1225,56 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 					if(flash->variant == 1) {
 						Sint32 step = flash->z / 2;
-						Sint32 flags;
+						Sint32 flg;
 
 						if(!(i & 1)) {
-							flags = EFFECT_CLIP_BOUNDS;
+							flg = EFFECT_CLIP_BOUNDS;
 							EFFECT_LOAD_BLITTER(
-								HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
+								HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_MAX);
 							DRAW_ALTERNATE(canvas,
 								state->sheet +
-									ProjectileVolley_FlashPictures[step],
-								flash->x - ProjectileVolley_FlashWidths[step],
-								flash->y - ProjectileVolley_FlashRises[step],
-								ProjectileVolley_FlashWidths[step],
-								ProjectileVolley_FlashHeights[step]);
+									ProjectileVolleyFlashPictures[step],
+								flash->x - ProjectileVolleyFlashWidths[step],
+								flash->y - ProjectileVolleyFlashRises[step],
+								ProjectileVolleyFlashWidths[step],
+								ProjectileVolleyFlashHeights[step]);
 							syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
-							flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP;
+							flg = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP;
 							EFFECT_LOAD_BLITTER(
-								HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
+								HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_MAX);
 							DRAW_ALTERNATE(canvas,
 								state->sheet +
-									ProjectileVolley_FlashPictures[step],
+									ProjectileVolleyFlashPictures[step],
 								flash->x,
-								flash->y + ProjectileVolley_FlashSteps[step] -
-									ProjectileVolley_FlashRises[step],
-								ProjectileVolley_FlashWidths[step],
-								ProjectileVolley_FlashHeights[step]);
+								flash->y + ProjectileVolleyFlashSteps[step] -
+									ProjectileVolleyFlashRises[step],
+								ProjectileVolleyFlashWidths[step],
+								ProjectileVolleyFlashHeights[step]);
 							syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 						} else {
-							flags = EFFECT_CLIP_BOUNDS;
+							flg = EFFECT_CLIP_BOUNDS;
 							EFFECT_LOAD_BLITTER(
-								HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
+								HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_MAX);
 							DRAW_ALTERNATE(canvas,
 								state->sheet +
-									ProjectileVolley_FlashPictures[step] +
+									ProjectileVolleyFlashPictures[step] +
 									PROJECTILE_VOLLEY_FLASH_TURNED,
-								flash->x - ProjectileVolley_FlashRises[step],
-								flash->y - ProjectileVolley_FlashWidths[step],
-								ProjectileVolley_FlashHeights[step],
-								ProjectileVolley_FlashWidths[step]);
+								flash->x - ProjectileVolleyFlashRises[step],
+								flash->y - ProjectileVolleyFlashWidths[step],
+								ProjectileVolleyFlashHeights[step],
+								ProjectileVolleyFlashWidths[step]);
 							syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
-							flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP;
+							flg = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP;
 							EFFECT_LOAD_BLITTER(
-								HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
+								HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_MAX);
 							DRAW_ALTERNATE(canvas,
 								state->sheet +
-									ProjectileVolley_FlashPictures[step] +
+									ProjectileVolleyFlashPictures[step] +
 									PROJECTILE_VOLLEY_FLASH_TURNED,
-								flash->x + ProjectileVolley_FlashSteps[step] -
-									ProjectileVolley_FlashRises[step],
-								flash->y, ProjectileVolley_FlashHeights[step],
-								ProjectileVolley_FlashWidths[step]);
+								flash->x + ProjectileVolleyFlashSteps[step] -
+									ProjectileVolleyFlashRises[step],
+								flash->y, ProjectileVolleyFlashHeights[step],
+								ProjectileVolleyFlashWidths[step]);
 							syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 						}
 						flash->z++;
@@ -1327,12 +1324,12 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 			if(mode == PROJECTILE_VOLLEY_POISON_STING) {
 				/* Smoke billows up where each streak landed: six pictures, four
-				   frames each. */
+				   ticks each. */
 				for(i = 0; i != PROJECTILE_VOLLEY_STREAKS; i++) {
 					PARTICLE *p =
 						&PARTICLES[PROJECTILE_VOLLEY_FIRST_STREAK + i];
 
-					if((Uint32)p->variant < SMOKE_PUFF_FRAMES) {
+					if((Uint32)p->variant < SMOKE_PUFF_TICKS) {
 						draw[0](canvas,
 							state->sheet +
 								PROJECTILE_VOLLEY_STING_HIT_PICTURES +
@@ -1352,36 +1349,36 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						&PARTICLES[PROJECTILE_VOLLEY_FIRST_STREAK + i];
 
 					if((Uint32)p->variant <= 7) {
-						Sint32 glint = frame & 3;
+						Sint32 glint = frm & 3;
 
 						Sint32 angle = syRandom() & TRIG_ANGLE_MASK;
 						Sint32 radius = (syRandom() & 31) + 4;
 						Sint32 glintX = FIXED_INTEGER_PART(p->x) +
 							(FIXEDtoINT(sySin(angle) * radius) >> 1) -
-							(BattleEffect_GlintPictureWidths[glint] >> 1);
+							(BattleEffectGlintPictureWidths[glint] >> 1);
 						Sint32 glintY = FIXED_INTEGER_PART(p->y) -
 							(FIXEDtoINT(syCos(angle) * radius) >> 1) -
-							(BattleEffect_GlintPictureHeights[glint] >> 1);
+							(BattleEffectGlintPictureHeights[glint] >> 1);
 						Uint32 flip = syRandom();
 
 						EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-							ProjectileVolley_GlintFlips[flip & 3] |
+							ProjectileVolleyGlintFlips[flip & 3] |
 								EFFECT_CLIP_BOUNDS,
 							BLITTER_ADDITIVE);
 						DRAW_ALTERNATE(canvas,
 							state->sheet +
 								PROJECTILE_VOLLEY_STING_HIT_PICTURES +
-								BattleEffect_GlintPictures[glint],
+								BattleEffectGlintPictures[glint],
 							glintX, glintY,
-							BattleEffect_GlintPictureWidths[glint],
-							BattleEffect_GlintPictureHeights[glint]);
+							BattleEffectGlintPictureWidths[glint],
+							BattleEffectGlintPictureHeights[glint]);
 						syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 						p->variant++;
 					}
 				}
 			}
 			btCameraShake(4, 4);
-			EFFECT_END_FRAME(state);
+			EFFECT_END_TICK(state);
 		}
 	}
 
@@ -1408,18 +1405,18 @@ UNUSED void btEffectHopBackToSpot(Sint32 slot)
 }
 
 /* Moves the object rate percent of the way to the target's object in the given
-   frames. */
+   ticks. */
 void btEffectSetApproachMotion(
-	Sint32 id, Sint32 targetId, Sint32 frames, Sint32 rate)
+	Sint32 id, Sint32 tgtId, Sint32 ticks, Sint32 rate)
 {
 	BATTLE_OBJECT *slot = btObjectGetStub(id);
-	BATTLE_OBJECT *targetSlot = btObjectGetStub(targetId);
+	BATTLE_OBJECT *tgtSlot = btObjectGetStub(tgtId);
 	ACTOR		  *obj = (ACTOR *)slot->obj;
-	ACTOR		  *target = (ACTOR *)targetSlot->obj;
-	FIXED		   diffX = target->x.fixed - obj->x.fixed;
+	ACTOR		  *tgt = (ACTOR *)tgtSlot->obj;
+	FIXED		   diffX = tgt->x.fixed - obj->x.fixed;
 	FIXED		   startX = obj->x.fixed;
 	FIXED		   dx = rate * diffX / 100;
-	FIXED		   diffZ = target->z.fixed - obj->z.fixed;
+	FIXED		   diffZ = tgt->z.fixed - obj->z.fixed;
 	FIXED		   startZ = obj->z.fixed;
 	FIXED		   dz = rate * diffZ / 100;
 	FIXED		   x = startX + dx;
@@ -1429,7 +1426,7 @@ void btEffectSetApproachMotion(
 	Sint32		   dist;
 
 	dist = sySquartIWRAM(sx * sx + sz * sz);
-	dist = (dist << 8) / frames;
+	dist = (dist << 8) / ticks;
 	obj->acceleration = dist;
 	obj->speedLimit = dist;
 	obj->snapToTgt = 1;
@@ -1443,7 +1440,7 @@ void btEffectSetApproachMotion(
 }
 
 #undef DJINNI_ENTRANCE_SPARKS
-#undef DJINNI_ENTRANCE_TRAVEL_FRAMES
+#undef DJINNI_ENTRANCE_TRAVEL_TICKS
 #undef DJINNI_SPARK_DEPTH_NEAR
 #undef DJINNI_SPARK_DEPTH_STEP
 #undef DJINNI_SPARK_DEPTH_FAR

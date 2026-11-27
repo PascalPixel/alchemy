@@ -15,11 +15,11 @@ void				fdCameraResetViewDefaults(void);
 Sint32				fdFixedPointMulQ8(Sint16 left, Sint16 right);
 Sint16				fdFixedPointDivQ8(Sint16 numerator, Sint16 denominator);
 Sint16				fdFixedPointReciprocal(Sint16 value);
-extern const Sint32 LuckyDice_UnusedSigns[];
-extern const Uint8	LuckyDice_LabelCounts[];
-extern const Uint8	LuckyDice_LabelTiles[];
-extern const Uint8	LuckyDice_FaceTiles[];
-extern const Sint16 LuckyDice_FaceHeights[];
+extern const Sint32 LuckyDiceUnusedSigns[];
+extern const Uint8	LuckyDiceLabelCounts[];
+extern const Uint8	LuckyDiceLabelTiles[];
+extern const Uint8	LuckyDiceFaceTiles[];
+extern const Sint16 LuckyDiceFaceHeights[];
 void				fdLuckyDiceRun(void);
 
 #endif

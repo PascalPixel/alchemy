@@ -4,7 +4,7 @@
 /* Returns an item's definition; an inventory entry's other bits are ignored. */
 ITEM_DEFINITION *gmItemGetDirect(Sint32 item)
 {
-	return &Item_DefinitionTable[item & INVENTORY_ITEM_ID_MASK];
+	return &ItemDefinitionTable[item & INVENTORY_ITEM_ID_MASK];
 }
 
 /* Returns whether the character can equip the item: the bit of its equipMask
@@ -74,28 +74,28 @@ Sint32 gmInventoryGetQuantity(Sint32 unitId, Sint32 slot)
 Sint32 gmInventoryCount(Sint32 unitId)
 {
 	UNIT  *unit = syUnitGet(unitId);
-	Sint32 count;
+	Sint32 cnt;
 
-	for(count = 0; count < INVENTORY_SLOTS; count++) {
-		if(unit->inventory[count] == 0)
+	for(cnt = 0; cnt < INVENTORY_SLOTS; cnt++) {
+		if(unit->inventory[cnt] == 0)
 			break;
 	}
-	return count;
+	return cnt;
 }
 
 /* Returns 1 when the leader or any party member has a free inventory slot. */
 Bool gmPartyInventoryHasSpace(void)
 {
 	Sint16	unitIds[10];
-	Sint32	unitCount;
+	Sint32	unitCnt;
 	Sint16 *unitId;
 	Sint32	i;
 
 	if(gmInventoryCount(MainRoutineStateWork.leaderActorId) != INVENTORY_SLOTS)
 		return TRUE;
-	unitCount = gmPartyListMembers(unitIds);
+	unitCnt = gmPartyListMembers(unitIds);
 	unitId = unitIds;
-	for(i = 0; i < unitCount; i++) {
+	for(i = 0; i < unitCnt; i++) {
 		if(gmInventoryCount(*unitId++) != INVENTORY_SLOTS)
 			return TRUE;
 	}
@@ -106,12 +106,12 @@ Bool gmPartyInventoryHasSpace(void)
 Sint32 gmPartyInventoryCountFreeSlots(void)
 {
 	Sint16	unitIds[10];
-	Sint32	unitCount = gmPartyListMembers(unitIds);
+	Sint32	unitCnt = gmPartyListMembers(unitIds);
 	Sint32	freeSlots = 0;
 	Sint16 *unitId = unitIds;
 	Sint32	i;
 
-	for(i = 0; i < unitCount; i++)
+	for(i = 0; i < unitCnt; i++)
 		freeSlots = freeSlots - gmInventoryCount(*unitId++) + INVENTORY_SLOTS;
 	return freeSlots;
 }
@@ -132,15 +132,15 @@ Sint32 gmInventoryAddItem(Sint32 unitId, Sint32 itemId)
 		}
 		if(slot != INVENTORY_SLOTS) {
 			Sint32 entry = unit->inventory[slot];
-			Uint32 count = ((Uint32)entry >> INVENTORY_QUANTITY_SHIFT) + 1;
+			Uint32 cnt = ((Uint32)entry >> INVENTORY_QUANTITY_SHIFT) + 1;
 
-			if(count >= INVENTORY_STACK_MAX)
+			if(cnt >= INVENTORY_STACK_MAX)
 				return -1;
 			{
 				Sint32 value = INVENTORY_ENTRY_MASK;
 
 				value &= entry;
-				value |= count << INVENTORY_QUANTITY_SHIFT;
+				value |= cnt << INVENTORY_QUANTITY_SHIFT;
 				unit->inventory[slot] = value;
 			}
 			return slot;
@@ -161,11 +161,11 @@ Sint32 gmInventoryAddItem(Sint32 unitId, Sint32 itemId)
 Sint32 gmPartyInventoryAdd(Sint32 itemId)
 {
 	Sint16	unitIds[10];
-	Sint32	unitCount = gmPartyListMembers(unitIds);
+	Sint32	unitCnt = gmPartyListMembers(unitIds);
 	Sint16 *cursor = unitIds;
 	Sint32	i;
 
-	for(i = 0; i < unitCount; i++) {
+	for(i = 0; i < unitCnt; i++) {
 		Sint16 unitId = *cursor++;
 
 		if(gmInventoryAddItem(unitId, itemId) >= 0)
@@ -179,12 +179,12 @@ Sint32 gmPartyInventoryAdd(Sint32 itemId)
 Sint32 gmPartyInventoryFindRoom(Sint32 itemId)
 {
 	Sint16 owners[10];
-	Sint32 ownerCount;
-	Sint32 ownerIndex;
+	Sint32 ownerCnt;
+	Sint32 ownerIdx;
 
-	ownerCount = gmPartyListMembers(owners);
-	for(ownerIndex = 0; ownerIndex < ownerCount; ownerIndex++) {
-		Sint16 ownerId = owners[ownerIndex];
+	ownerCnt = gmPartyListMembers(owners);
+	for(ownerIdx = 0; ownerIdx < ownerCnt; ownerIdx++) {
+		Sint16 ownerId = owners[ownerIdx];
 		Sint32 slot = gmInventoryAddItem(ownerId, itemId);
 
 		if(slot >= 0) {
@@ -213,15 +213,15 @@ Sint32 gmInventoryFind(Sint32 unitId, Sint32 itemId)
 Sint32 gmPartyInventoryFindMember(Sint32 itemId)
 {
 	Sint16	unitIds[10];
-	Sint32	unitCount;
+	Sint32	unitCnt;
 	Sint16 *cursor;
 	Sint32	i;
 
 	if(gmInventoryFind(MainRoutineStateWork.leaderActorId, itemId) != -1)
 		return MainRoutineStateWork.leaderActorId;
-	unitCount = gmPartyListMembers(unitIds);
+	unitCnt = gmPartyListMembers(unitIds);
 	cursor = unitIds;
-	for(i = 0; i < unitCount; i++) {
+	for(i = 0; i < unitCnt; i++) {
 		Sint16 unitId = *cursor++;
 
 		if(gmInventoryFind(unitId, itemId) != -1)
@@ -275,19 +275,19 @@ Sint32 gmInventoryEquip(Sint32 unitId, Sint32 slot)
 Sint32 gmInventoryFindEquipped(Sint32 unitId, Sint32 type)
 {
 	UNIT				  *base = syUnitGet(unitId);
-	Sint32				   index;
+	Sint32				   idx;
 	const ITEM_DEFINITION *item;
 
-	for(index = 0; index < INVENTORY_SLOTS; index++) {
-		if(base->inventory[index] & INVENTORY_EQUIPPED) {
-			item = gmItemGetDirect(base->inventory[index]);
+	for(idx = 0; idx < INVENTORY_SLOTS; idx++) {
+		if(base->inventory[idx] & INVENTORY_EQUIPPED) {
+			item = gmItemGetDirect(base->inventory[idx]);
 			if(item->type == type)
 				break;
 		}
 	}
-	if(index == INVENTORY_SLOTS)
-		index = -1;
-	return index;
+	if(idx == INVENTORY_SLOTS)
+		idx = -1;
+	return idx;
 }
 
 /* Returns the definition of the unit's equipped item of `type`, or NULL. */
@@ -466,32 +466,32 @@ Uint8 gmItemGetTargetMode(Sint32 itemId)
 	return gmAbilityGetDirect(gmItemGetDirect(itemId)->abilityId)->tgtMode;
 }
 
-/* Adds `delta` to rare item counter `index`, kept between 0 and
+/* Adds `delta` to rare item counter `idx`, kept between 0 and
    ITEM_COUNTER_MAX, and returns the new count (0 for an index from
    ITEM_COUNTER_COUNT on). */
-Sint32 gmRareItemStockAdjust(Sint32 index, Sint32 delta)
+Sint32 gmRareItemStockAdjust(Sint32 idx, Sint32 delta)
 {
 	Uint8 *stock = RareItemStock;
 	Sint32 value;
-	Sint32 count;
+	Sint32 cnt;
 
-	if(index >= ITEM_COUNTER_COUNT)
+	if(idx >= ITEM_COUNTER_COUNT)
 		return 0;
-	value = stock[index];
+	value = stock[idx];
 
 	value += delta;
 
 	if(value < 0) {
 		value = 0;
-		count = 0;
+		cnt = 0;
 	} else if(value > ITEM_COUNTER_MAX) {
 		value = ITEM_COUNTER_MAX;
-		count = ITEM_COUNTER_MAX;
+		cnt = ITEM_COUNTER_MAX;
 	} else {
-		count = value;
+		cnt = value;
 	}
-	stock[index] = value;
-	return count;
+	stock[idx] = value;
+	return cnt;
 }
 
 /* Adds `delta` to how many of a rare item the shops may sell, and returns the
@@ -504,7 +504,7 @@ Sint32 gmItemAdjustRareItemStock(Sint32 itemId, Sint32 delta)
 	itemId &= INVENTORY_ITEM_ID_MASK;
 	/* The table holds a rare item's counter number plus one, and 0 for an
 	   ordinary item. */
-	counter = Item_RareItemCounters[itemId];
+	counter = ItemRareItemCounters[itemId];
 	result = 0;
 
 	if(counter)
@@ -517,31 +517,31 @@ Sint32 gmItemAdjustRareItemStock(Sint32 itemId, Sint32 delta)
 Sint32 gmInventoryCountItem(Sint32 unitId, Sint32 itemId)
 {
 	UNIT  *unit = syUnitGet(unitId);
-	Sint32 count = 0;
+	Sint32 cnt = 0;
 	Sint32 slot;
 
 	itemId &= INVENTORY_ITEM_ID_MASK;
 	for(slot = 0; slot < INVENTORY_SLOTS; slot++) {
 		if((unit->inventory[slot] & INVENTORY_ITEM_ID_MASK) == itemId) {
 			if(gmItemGetDirect(itemId)->flg & ITEM_STACKABLE) {
-				count = (unit->inventory[slot] >> INVENTORY_QUANTITY_SHIFT) + 1;
+				cnt = (unit->inventory[slot] >> INVENTORY_QUANTITY_SHIFT) + 1;
 				break;
 			}
-			count++;
+			cnt++;
 		}
 	}
-	return count;
+	return cnt;
 }
 
 /* Counts `itemId` across the party. */
 Sint32 gmPartyInventoryCountItem(Sint32 itemId)
 {
 	Uint16 unitIds[16];
-	Sint32 count = 0;
-	Sint32 unitCount = gmPartyListMembers(unitIds);
+	Sint32 cnt = 0;
+	Sint32 unitCnt = gmPartyListMembers(unitIds);
 	Sint32 i;
 
-	for(i = 0; i < unitCount; i++)
-		count += gmInventoryCountItem(unitIds[i], itemId);
-	return count;
+	for(i = 0; i < unitCnt; i++)
+		cnt += gmInventoryCountItem(unitIds[i], itemId);
+	return cnt;
 }

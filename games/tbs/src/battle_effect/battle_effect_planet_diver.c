@@ -5,17 +5,17 @@
 typedef struct IMPACT_CHIP {
 	FIXED  x;		   /* canvas position, 16.16 fixed point */
 	FIXED  y;		   /* canvas position, 16.16; the ground is y 112 */
-	FIXED  velX;	   /* 16.16 pixels a frame, damped to 56/64 each frame */
+	FIXED  velX;	   /* 16.16 pixels a tick, damped to 56/64 each tick */
 	Sint32 unusedVelX; /* a Particle's velocityX; never read */
-	FIXED  velY;	   /* 16.16 pixels a frame, with 1/8 pixel of gravity */
+	FIXED  velY;	   /* 16.16 pixels a tick, with 1/8 pixel of gravity */
 	Sint32 unusedVelZ; /* a Particle's velocityZ; never read */
-	Sint32 life;	   /* frames left; 0 is free */
+	Sint32 life;	   /* ticks left; 0 is free */
 } IMPACT_CHIP;
 
 /* Ram_MapGridMetatileBuffer seen as Planet Diver's chips. */
 #define PLANET_DIVER_IMPACT_CHIPS ((IMPACT_CHIP *)Ram_MapGridMetatileBuffer)
 
-#define PLANET_DIVER_FRAMES 88
+#define PLANET_DIVER_TICKS 88
 #define PLANET_DIVER_CLEARED_CHIPS \
 	1024							  /* map grid buffer slots cleared first */
 #define PLANET_DIVER_CHIPS		  256 /* chips the fireball bursts into */
@@ -27,16 +27,16 @@ typedef struct IMPACT_CHIP {
    Abilities: Planet Diver. */
 void btEffectRunPlanetDiver(BATTLE_EFFECT_PARM *args)
 {
-	SCREEN_POINT		 screenPosition;
+	SCREEN_POINT		 screenPos;
 	BLITTER_PAIR		 draw;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	Uint8				*motes;
-	ACTOR				*target;
+	ACTOR				*tgt;
 	FIXED				 stepX;
 	ACTOR				*user;
 	Uint8				*resource;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -62,42 +62,40 @@ void btEffectRunPlanetDiver(BATTLE_EFFECT_PARM *args)
 	for(i = 0; i != PLANET_DIVER_CLEARED_CHIPS; i++)
 		PLANET_DIVER_IMPACT_CHIPS[i].life = 0;
 	user = btObjectGetStub(state->args->user)->actor;
-	target = btObjectGetStub(state->args->tgts[0])->actor;
+	tgt = btObjectGetStub(state->args->tgts[0])->actor;
 	if(user->x.fixed > 0)
 		stepX = -toFIXED(15);
 	else
 		stepX = toFIXED(15);
 
-	for(frame = 0; frame != PLANET_DIVER_FRAMES; frame++) {
+	for(frm = 0; frm != PLANET_DIVER_TICKS; frm++) {
 		BATTLE_CAMERA *camera = BattleCameraWork;
 
 		EFFECT_VIEW_FROM_CAMERA(camera);
-		if(frame > 17 || frame == 0) {
-			btProjectionUnit(state->args->user, &screenPosition);
-			screenPosition.x /= 2;
+		if(frm > 17 || frm == 0) {
+			btProjectionUnit(state->args->user, &screenPos);
+			screenPos.x /= 2;
 		}
 
 		/* The flash spreads from the user. */
-		if(frame >= 2 && frame <= 3)
-			draw[0](canvas, state->sheet,
-				screenPosition.x - FLASH_BURST_WIDTH / 2,
-				screenPosition.y - FLASH_BURST_HEIGHT, FLASH_BURST_WIDTH,
+		if(frm >= 2 && frm <= 3)
+			draw[0](canvas, state->sheet, screenPos.x - FLASH_BURST_WIDTH / 2,
+				screenPos.y - FLASH_BURST_HEIGHT, FLASH_BURST_WIDTH,
 				FLASH_BURST_HEIGHT);
-		if(frame >= 4 && frame <= 15) {
+		if(frm >= 4 && frm <= 15) {
 			for(i = 0; i != PLANET_DIVER_FLASH_BURSTS; i++) {
-				Sint32 angle = i * (TRIG_TURN / PLANET_DIVER_FLASH_BURSTS);
-				Sint32 x = screenPosition.x + FIXEDtoINT(frame * sySin(angle));
-				Sint32 y =
-					screenPosition.y + FIXEDtoINT(frame * syCos(angle)) - frame;
+				Sint32 ang = i * (TRIG_TURN / PLANET_DIVER_FLASH_BURSTS);
+				Sint32 x = screenPos.x + FIXEDtoINT(frm * sySin(ang));
+				Sint32 y = screenPos.y + FIXEDtoINT(frm * syCos(ang)) - frm;
 
 				draw[0](canvas,
-					state->sheet + (frame - 4) / 2 * PICTURE_BYTES(FLASH_BURST),
+					state->sheet + (frm - 4) / 2 * PICTURE_BYTES(FLASH_BURST),
 					x - FLASH_BURST_WIDTH / 2, y - FLASH_BURST_HEIGHT,
 					FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
 			}
 		}
 		/* The user leaps, heading out past its own position. */
-		if(frame == 4) {
+		if(frm == 4) {
 			user->velY = toFIXED(20);
 			user->acceleration = toFIXED(1);
 			user->speedLimit = toFIXED(3);
@@ -109,7 +107,7 @@ void btEffectRunPlanetDiver(BATTLE_EFFECT_PARM *args)
 			state->shakeFrm = 4;
 			sySndPlayStub(SE_WHOOSH);
 		}
-		if(frame == 16) {
+		if(frm == 16) {
 			resource = syResourceGetTableEntry(RESOURCE_FLAMEBALL_SHEET);
 			syWordsCopy(BG_PLTT, resource, SHEET_PALETTE_BYTES);
 			resource += SHEET_PALETTE_BYTES;
@@ -117,15 +115,15 @@ void btEffectRunPlanetDiver(BATTLE_EFFECT_PARM *args)
 			user->gravity = 0;
 			user->velX = 0;
 			user->velY = 0;
-			user->z.fixed = target->z.fixed;
+			user->z.fixed = tgt->z.fixed;
 			fdActorStartIdleStub(user);
 		}
-		if(frame > 17) {
+		if(frm > 17) {
 			if(user->y.fixed > 0) {
 				user->x.fixed += stepX;
 				user->y.fixed -= toFIXED(8);
-				/* The nudge after drawing lasts only to this frame's landing
-				   test, where the chips start; the next frame projects the user
+				/* The nudge after drawing lasts only to this tick's landing
+				   test, where the chips start; the next tick projects the user
 				   afresh. On EFFECT_SIDE_PARTY the nudge moves y, so the chips
 				   start 8 pixels lower rather than 8 pixels across. XXX (no
 				   evidence): whether the party side's nudge was meant to move
@@ -133,15 +131,13 @@ void btEffectRunPlanetDiver(BATTLE_EFFECT_PARM *args)
 				   rewritten without it, and nothing else shows the intent. */
 				if(state->args->side == EFFECT_SIDE_ENEMIES) {
 					draw[0](canvas, state->sheet,
-						screenPosition.x - FLAMEBALL_WIDTH / 2,
-						screenPosition.y - 52, FLAMEBALL_WIDTH,
-						FLAMEBALL_HEIGHT);
-					screenPosition.x -= 8;
+						screenPos.x - FLAMEBALL_WIDTH / 2, screenPos.y - 52,
+						FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
+					screenPos.x -= 8;
 				} else {
-					draw[1](canvas, state->sheet, screenPosition.x - 26,
-						screenPosition.y - 52, FLAMEBALL_WIDTH,
-						FLAMEBALL_HEIGHT);
-					screenPosition.y += 8;
+					draw[1](canvas, state->sheet, screenPos.x - 26,
+						screenPos.y - 52, FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
+					screenPos.y += 8;
 				}
 			}
 			if(user->y.fixed < 0) {
@@ -150,14 +146,14 @@ void btEffectRunPlanetDiver(BATTLE_EFFECT_PARM *args)
 				for(i = 0; i != PLANET_DIVER_CHIPS; i++) {
 					IMPACT_CHIP *chip = &PLANET_DIVER_IMPACT_CHIPS[i];
 					Sint32		 speed;
-					Sint32		 angle;
+					Sint32		 ang;
 
 					speed = (syRandom() & 0x3ff) + 32;
-					angle = syRandom() & TRIG_ANGLE_MASK;
-					chip->x = toFIXED(screenPosition.x);
-					chip->y = INTtoFIXED(screenPosition.y - 24);
-					chip->velX = sySin(angle) * speed >> 6;
-					chip->velY = -(syCos(angle) * speed << 1) >> 6;
+					ang = syRandom() & TRIG_ANGLE_MASK;
+					chip->x = toFIXED(screenPos.x);
+					chip->y = INTtoFIXED(screenPos.y - 24);
+					chip->velX = sySin(ang) * speed >> 6;
+					chip->velY = -(syCos(ang) * speed << 1) >> 6;
 					chip->life = (syRandom() & 7) + 32;
 				}
 				state->shakeFrm = 8;
@@ -193,7 +189,7 @@ void btEffectRunPlanetDiver(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		btCameraShake(16, 16);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS();
@@ -210,11 +206,11 @@ void btEffectRunPlanetDiver(BATTLE_EFFECT_PARM *args)
    Abilities: Haunt. */
 void btEffectRunHaunt(BATTLE_EFFECT_PARM *args)
 {
-	SCREEN_POINT		 screenPosition;
+	SCREEN_POINT		 screenPos;
 	Sint32				 point[3];
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	BLITTER_PAIR		 draw;
 	Uint8				*resource;
 	Sint32				 i;
@@ -246,34 +242,34 @@ void btEffectRunHaunt(BATTLE_EFFECT_PARM *args)
 	}
 	sySndPlayStub(SE_SWIRL);
 
-	for(frame = 0; frame != state->args->tgtCnt * 32 + 96; frame++) {
+	for(frm = 0; frm != state->args->tgtCnt * 32 + 96; frm++) {
 		Sint32		  *row;
 		BATTLE_CAMERA *camera = BattleCameraWork;
 
-		if(frame == 96)
+		if(frm == 96)
 			EFFECT_SHOW_DAMAGE(0);
 
 		row = state->bg2xLines;
 		if(state->args->side == EFFECT_SIDE_ENEMIES) {
 			for(i = 0; i != DISPLAY_HEIGHT; i++)
 				*row++ = CANVAS_WAVE_BG2X(
-					toFIXED(6) - sySin((frame + i) * (TRIG_TURN / 32)) * 6);
+					toFIXED(6) - sySin((frm + i) * (TRIG_TURN / 32)) * 6);
 		} else {
 			for(i = 0; i != DISPLAY_HEIGHT; i++)
 				*row++ =
-					CANVAS_WAVE_BG2X(sySin((frame + i) * (TRIG_TURN / 32)) * 6);
+					CANVAS_WAVE_BG2X(sySin((frm + i) * (TRIG_TURN / 32)) * 6);
 		}
 
 		EFFECT_FOR_EACH_TARGET(k, state->args) {
-			ACTOR *target = btObjectGetStub(state->args->tgts[k])->actor;
+			ACTOR *tgt = btObjectGetStub(state->args->tgts[k])->actor;
 
 			/* Spin the skulls about a point above the target. */
 			EFFECT_VIEW_FROM_CAMERA(camera);
-			SET_VECTOR(point, target->x.fixed, toFIXED(20), target->z.fixed);
+			SET_VECTOR(point, tgt->x.fixed, toFIXED(20), tgt->z.fixed);
 			syMatrixTranslateVector(point);
-			if(frame > k * 32) {
-				syRotX(frame << 9);
-				if(frame == k * 32 + 32)
+			if(frm > k * 32) {
+				syRotX(frm << 9);
+				if(frm == k * 32 + 32)
 					btEffectTintBattler(state->args->tgts[k],
 						SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 32);
 
@@ -281,20 +277,20 @@ void btEffectRunHaunt(BATTLE_EFFECT_PARM *args)
 				for(i = 0; i != HAUNT_SKULLS; i++) {
 					PARTICLE *skull = &PARTICLES[k * HAUNT_SLOTS + i];
 
-					if(frame > (k * 8 + i) * 4) {
+					if(frm > (k * 8 + i) * 4) {
 						Sint32 x = (skull->x >> 8) * (skull->x >> 8);
 						Sint32 y = (skull->y >> 8) * (skull->y >> 8);
 						Sint32 z = (skull->z >> 8) * (skull->z >> 8);
 						Sint32 dist = sySquartIWRAM(x + y + z) >> 8;
 
 						if(dist != 0) {
-							btProjectionPoint(skull, &screenPosition);
-							screenPosition.x >>= 1;
+							btProjectionPoint(skull, &screenPos);
+							screenPos.x >>= 1;
 							draw[0](canvas,
 								state->sheet + i % 3 * PICTURE_BYTES(SKULL),
-								screenPosition.x - SKULL_WIDTH / 2,
-								screenPosition.y - SKULL_HEIGHT / 2,
-								SKULL_WIDTH, SKULL_HEIGHT);
+								screenPos.x - SKULL_WIDTH / 2,
+								screenPos.y - SKULL_HEIGHT / 2, SKULL_WIDTH,
+								SKULL_HEIGHT);
 							skull->x -= skull->x / dist;
 							skull->y -= skull->y / dist;
 							skull->z -= skull->z / dist;
@@ -304,7 +300,7 @@ void btEffectRunHaunt(BATTLE_EFFECT_PARM *args)
 				}
 			}
 		}
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	syCloseEvent(btEffectTransferCanvas);
@@ -315,12 +311,12 @@ void btEffectRunHaunt(BATTLE_EFFECT_PARM *args)
 
 /* The spirals: ORBITING_SPIRALS a quarter turn apart, circling
    ORBITING_SPIRALS_RADIUS pixels out, each target's ORBITING_SPIRALS_INTERVAL
-   frames after the one before and for ORBITING_SPIRALS_LIFE frames less one. */
+   ticks after the one before and for ORBITING_SPIRALS_LIFE ticks less one. */
 #define ORBITING_SPIRALS			   4
 #define ORBITING_SPIRALS_RADIUS		   16
 #define ORBITING_SPIRALS_INTERVAL	   16
 #define ORBITING_SPIRALS_LIFE		   60
-/* The canvas's scroll on the party side until the first frame's wave rows
+/* The canvas's scroll on the party side until the first tick's wave rows
    replace it, 8 pixels short of NARROW_CANVAS_PARTY_X. */
 #define ORBITING_SPIRALS_PARTY_START_X (NARROW_CANVAS_PARTY_X - 8)
 
@@ -329,7 +325,7 @@ void btEffectRunHaunt(BATTLE_EFFECT_PARM *args)
    player never sees it. Staged by hand (Quake's row of AbilityBattleEffects
    given its kind, cast by Isaac at Garet, Ivan and Mia), four spirals circle
    the point 40 pixels above Garet, then Ivan, then Mia, turning a 128th of a
-   turn a frame; each target takes its damage pose 32 frames into its turn. */
+   turn a tick; each target takes its damage pose 32 ticks into its turn. */
 void btEffectRunUnusedOrbitingSpirals(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
@@ -339,8 +335,8 @@ void btEffectRunUnusedOrbitingSpirals(BATTLE_EFFECT_PARM *args)
 	Sint32				 point[3];
 	SCREEN_POINT		 screen;
 	Sint32				 member;
-	Sint32				 offsetX;
-	Sint32				 frame;
+	Sint32				 ofsX;
+	Sint32				 frm;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
@@ -359,13 +355,12 @@ void btEffectRunUnusedOrbitingSpirals(BATTLE_EFFECT_PARM *args)
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	if(state->args->side == EFFECT_SIDE_PARTY) {
 		REG_BG2X = -(ORBITING_SPIRALS_PARTY_START_X << 8);
-		offsetX = -NARROW_CANVAS_PARTY_X;
+		ofsX = -NARROW_CANVAS_PARTY_X;
 	} else {
-		offsetX = 0;
+		ofsX = 0;
 	}
-	for(frame = 0;
-		frame != (state->args->tgtCnt * ORBITING_SPIRALS_INTERVAL) + 48;
-		frame++) {
+	for(frm = 0; frm != (state->args->tgtCnt * ORBITING_SPIRALS_INTERVAL) + 48;
+		frm++) {
 		BATTLE_CAMERA *camera = BattleCameraWork;
 		Sint32		  *row;
 		Sint32		   i;
@@ -374,11 +369,11 @@ void btEffectRunUnusedOrbitingSpirals(BATTLE_EFFECT_PARM *args)
 		if(state->args->side == EFFECT_SIDE_ENEMIES) {
 			for(i = 0; i != DISPLAY_HEIGHT; i++)
 				*row++ = CANVAS_WAVE_BG2X(
-					toFIXED(8) - sySin((frame + i) * (TRIG_TURN / 64)) * 8);
+					toFIXED(8) - sySin((frm + i) * (TRIG_TURN / 64)) * 8);
 		} else {
 			for(i = 0; i != DISPLAY_HEIGHT; i++)
-				*row++ = CANVAS_WAVE_BG2X(
-							 sySin((frame + i) * (TRIG_TURN / 64)) * 8) -
+				*row++ =
+					CANVAS_WAVE_BG2X(sySin((frm + i) * (TRIG_TURN / 64)) * 8) -
 					(NARROW_CANVAS_PARTY_X << 8);
 		}
 		EFFECT_VIEW_FROM_CAMERA(camera);
@@ -386,12 +381,12 @@ void btEffectRunUnusedOrbitingSpirals(BATTLE_EFFECT_PARM *args)
 			ACTOR *actor;
 
 			actor = btObjectGetStub(state->args->tgts[member])->actor;
-			if(frame > member * ORBITING_SPIRALS_INTERVAL &&
-				frame < (member * ORBITING_SPIRALS_INTERVAL) +
+			if(frm > member * ORBITING_SPIRALS_INTERVAL &&
+				frm < (member * ORBITING_SPIRALS_INTERVAL) +
 						ORBITING_SPIRALS_LIFE) {
 				Sint32 spin;
 
-				if(frame == (member * ORBITING_SPIRALS_INTERVAL) + 32) {
+				if(frm == (member * ORBITING_SPIRALS_INTERVAL) + 32) {
 					btEffectTintBattler(state->args->tgts[member],
 						SPRITE_COLOR_NORMAL, POSE_DAMAGE, TINT_KEEP, 0);
 				}
@@ -403,19 +398,19 @@ void btEffectRunUnusedOrbitingSpirals(BATTLE_EFFECT_PARM *args)
 					Sint32 y;
 					Sint32 phase;
 
-					spin = frame * (TRIG_TURN / 128) +
+					spin = frm * (TRIG_TURN / 128) +
 						i * (TRIG_TURN / ORBITING_SPIRALS);
 					x = (screen.x +
 							FIXEDtoINT(sySin(spin) * ORBITING_SPIRALS_RADIUS)) +
-						offsetX;
+						ofsX;
 					y = screen.y +
 						FIXEDtoINT(syCos(spin) * ORBITING_SPIRALS_RADIUS);
 					/* Each spiral turns through its four pictures, mirrored
-					   every other 16 frames. */
-					phase = frame / 16;
+					   every other 16 ticks. */
+					phase = frm / 16;
 					draw[phase & 1](canvas,
 						state->sheet +
-							(frame / 4 - phase * 4) * PICTURE_BYTES(SPIRAL),
+							(frm / 4 - phase * 4) * PICTURE_BYTES(SPIRAL),
 						x - SPIRAL_WIDTH / 2, y - SPIRAL_HEIGHT / 2,
 						SPIRAL_WIDTH, SPIRAL_HEIGHT);
 				}
@@ -430,7 +425,7 @@ void btEffectRunUnusedOrbitingSpirals(BATTLE_EFFECT_PARM *args)
 }
 
 #undef PLANET_DIVER_IMPACT_CHIPS
-#undef PLANET_DIVER_FRAMES
+#undef PLANET_DIVER_TICKS
 #undef PLANET_DIVER_CLEARED_CHIPS
 #undef PLANET_DIVER_CHIPS
 #undef HAUNT_SCATTERED

@@ -90,35 +90,35 @@ void gmInventorySnapshotSave(void)
 void gmInventorySnapshotRestore(void)
 {
 	Sint32	unitId;
-	Uint16 *source = InventorySnapshotWork;
+	Uint16 *src = InventorySnapshotWork;
 
-	if(*source++ == INVENTORY_SNAPSHOT_SENTINEL) {
+	if(*src++ == INVENTORY_SNAPSHOT_SENTINEL) {
 		for(unitId = ISAAC; unitId <= MIA; unitId++) {
 			Uint16 *inventory = gmUnitGet(unitId)->inventory;
 			Sint32	slot;
 
 			for(slot = 0; slot < INVENTORY_SLOTS; slot++)
-				*inventory++ = *source++;
+				*inventory++ = *src++;
 			gmUnitUpdateClass(unitId);
 			gmUnitCalc(unitId);
 		}
 
-		MainRoutineStateWork.firstShortcut = *source++;
-		MainRoutineStateWork.secondShortcut = *source++;
+		MainRoutineStateWork.firstShortcut = *src++;
+		MainRoutineStateWork.secondShortcut = *src++;
 		/* UB: the party order's four bytes are written as two halfwords,
 		   through a pointer of another type. */
 #if FIX_TYPE_PUNNING
-		MainRoutineStateWork.party[0] = source[0];
-		MainRoutineStateWork.party[1] = source[0] >> 8;
-		MainRoutineStateWork.party[2] = source[1];
-		MainRoutineStateWork.party[3] = source[1] >> 8;
-		source++;
+		MainRoutineStateWork.party[0] = src[0];
+		MainRoutineStateWork.party[1] = src[0] >> 8;
+		MainRoutineStateWork.party[2] = src[1];
+		MainRoutineStateWork.party[3] = src[1] >> 8;
+		src++;
 #else
-		*(Uint16 *)MainRoutineStateWork.party = *source++;
-		*(Uint16 *)&MainRoutineStateWork.party[2] = *source;
+		*(Uint16 *)MainRoutineStateWork.party = *src++;
+		*(Uint16 *)&MainRoutineStateWork.party[2] = *src;
 #endif
-		source = InventorySnapshotWork;
-		*source = 0;
+		src = InventorySnapshotWork;
+		*src = 0;
 		gmFlagClear(FLAG_COLOSSO_HOLDS_EQUIPMENT);
 	}
 }

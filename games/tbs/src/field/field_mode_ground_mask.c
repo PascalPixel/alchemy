@@ -8,7 +8,7 @@
    MAPGRID_METATILE_PIXEL_MASK takes a whole pixel coordinate's. */
 #define METATILE_GRID_ROW_MASK 0xf0
 
-/* Each frame of the ground mask: on each of the two metatiles beside the actor
+/* Each tick of the ground mask: on each of the two metatiles beside the actor
    (left and right of it), where the ground one or two metatiles south rises
    above the actor's floor, draws a semi-transparent 16-pixel-wide sprite of
    colour 1 at the height of that ground, which hides what of the actor is below
@@ -92,7 +92,7 @@ void fdGroundMaskDrawMarks(void)
 }
 
 /* Starts the ground mask on object (the party leader when NULL): loads its
-   solid tiles, sets the blending and draws it each frame. Kalay's tunnel,
+   solid tiles, sets the blending and draws it each tick. Kalay's tunnel,
    Mercury and Venus Lighthouse, the Fuchin Falls cave, the Tunnel Ruins and
    Crossbone Isle start it. */
 void fdEffectStartGroundMask(void *object)
@@ -107,7 +107,7 @@ void fdEffectStartGroundMask(void *object)
 	DMA_FILL32_CELL(fill, PIXELS_4BPP(1), tiles, 512);
 	syVRAMCacheLoad(VRAM_CACHE_ENTRY_GROUND_MASK, 512, tiles);
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
-	sySetEvent(fdGroundMaskDrawMarks, EVENT_PASS_FRAME);
+	sySetEvent(fdGroundMaskDrawMarks, EVENT_PASS_TICK);
 	IO_WRITE16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
 			BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
 		&REG_BLDCNT);

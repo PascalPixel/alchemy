@@ -36,5 +36,5 @@ void fdGroundParticlesStart(void)
 		i++;
 		p++;
 	} while(i < ARRAY_COUNT(state->particles));
-	sySetFrameEvent(fdGroundParticlesDraw, EVENT_PASS_FRAME);
+	sySetTickEvent(fdGroundParticlesDraw, EVENT_PASS_TICK);
 }

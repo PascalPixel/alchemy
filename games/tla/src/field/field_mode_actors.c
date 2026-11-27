@@ -24,19 +24,19 @@ enum {
    is set. */
 Sint32 fdPartyGetCharacterSpr(Sint32 character)
 {
-	Sint32 sprite;
+	Sint32 spr;
 
-	sprite = character;
-	if(sprite <= PLACEMENT_SHIP) {
-		if(sprite == PLACEMENT_SHIP) {
-			sprite = SPRITE_WINGED_SHIP_SMALL;
+	spr = character;
+	if(spr <= PLACEMENT_SHIP) {
+		if(spr == PLACEMENT_SHIP) {
+			spr = SPRITE_WINGED_SHIP_SMALL;
 			if(MainRoutineStateWork.mapId != SCENE_CLEAR)
-				sprite = SPRITE_WINGED_SHIP;
+				spr = SPRITE_WINGED_SHIP;
 			if(syGameFlagGet(FLAG_SHIP_FLIES))
-				sprite++;
+				spr++;
 		}
 	}
-	return sprite;
+	return spr;
 }
 
 /* Does nothing; nothing calls fdActorReservedNoOperationStub. */
@@ -49,9 +49,9 @@ UNUSED void fdActorReservedNoOperation(void)
 void fdScriptSpawnActorTable(ACTOR_PLACE *entry, Sint32 slot)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
-	Sint32		 actorIndex = 0;
+	Sint32		 actorIdx = 0;
 	Sint32		 i;
-	Uint16		 placementSprite;
+	Uint16		 placementSpr;
 
 	/* Remember the table once, before consuming slots for its actor
 	   placements. */
@@ -63,18 +63,18 @@ void fdScriptSpawnActorTable(ACTOR_PLACE *entry, Sint32 slot)
 			break;
 		}
 	}
-	for(placementSprite = entry->spr;
-		(Sint16)placementSprite != -1 && slot <= FIELD_TREASURE_ACTOR - 1;
-		entry++, placementSprite = entry->spr) {
+	for(placementSpr = entry->spr;
+		(Sint16)placementSpr != -1 && slot <= FIELD_TREASURE_ACTOR - 1;
+		entry++, placementSpr = entry->spr) {
 		ACTOR *actor;
-		SPR	  *sprite;
+		SPR	  *spr;
 		Sint32 condition;
-		Sint32 spriteId;
+		Sint32 sprId;
 
 		if(entry->spr <= PLACEMENT_PARTY_COUNT - 1)
-			actorIndex = entry->spr;
+			actorIdx = entry->spr;
 		else if(entry->spr <= PLACEMENT_SPRITE_MAX)
-			actorIndex = slot++;
+			actorIdx = slot++;
 		condition = entry->condition;
 		if(!fdGameFlagIsConditionActive(condition))
 			continue;
@@ -103,40 +103,38 @@ void fdScriptSpawnActorTable(ACTOR_PLACE *entry, Sint32 slot)
 					condition + FLAG_DJINN_HIDING_FIRST - FLAG_DJINN_FIRST))
 				continue;
 		}
-		spriteId = fdPartyGetCharacterSpr(entry->spr);
-		actor = fdActorLookup(actorIndex);
+		sprId = fdPartyGetCharacterSpr(entry->spr);
+		actor = fdActorLookup(actorIdx);
 		if(actor == NULL) {
 			/* ACTOR_PLACEMENT_AT_SCENE_POINT: x is the number of a scene point
 			   to stand on. */
 			if(entry->flg & ACTOR_PLACEMENT_AT_SCENE_POINT) {
-				Sint32 position[3];
+				Sint32 pos[3];
 
-				position[0] = (Sint32)actor;
-				position[1] = (Sint32)actor;
-				position[2] = (Sint32)actor;
-				fdScenePointGetPos(entry->x, position);
-				actor =
-					fdActorCreateStub(spriteId, position[0], 0, position[2]);
+				pos[0] = (Sint32)actor;
+				pos[1] = (Sint32)actor;
+				pos[2] = (Sint32)actor;
+				fdScenePointGetPos(entry->x, pos);
+				actor = fdActorCreateStub(sprId, pos[0], 0, pos[2]);
 			} else {
-				actor =
-					fdActorCreateStub(spriteId, entry->x, entry->y, entry->z);
+				actor = fdActorCreateStub(sprId, entry->x, entry->y, entry->z);
 			}
 			/* ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE: share the previous actor's
 			   sprite resource. */
 			if(entry->flg & ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE) {
-				ACTOR *previous = fdActorLookup(actorIndex - 1);
+				ACTOR *prev = fdActorLookup(actorIdx - 1);
 
-				if(previous->sprStorageKind == ACTOR_SPRITE_ONE &&
+				if(prev->sprStorageKind == ACTOR_SPRITE_ONE &&
 					actor->sprStorageKind == ACTOR_SPRITE_ONE) {
-					Uint8 spriteSlot;
+					Uint8 sprSlot;
 
-					sprite = previous->spr;
-					sprite->retainCacheEntry = 1;
-					spriteSlot = sprite->slot;
-					sprite = actor->spr;
-					sprite->retainCacheEntry = 1;
-					syVRAMCacheFreeEntry(sprite->slot);
-					sprite->slot = spriteSlot;
+					spr = prev->spr;
+					spr->retainCacheEntry = 1;
+					sprSlot = spr->slot;
+					spr = actor->spr;
+					spr->retainCacheEntry = 1;
+					syVRAMCacheFreeEntry(spr->slot);
+					spr->slot = sprSlot;
 				}
 			}
 		} else {
@@ -146,18 +144,18 @@ void fdScriptSpawnActorTable(ACTOR_PLACE *entry, Sint32 slot)
 				actor, entry->x, entry->y, entry->z);
 		}
 		if(actor != NULL) {
-			sprite = actor->spr;
+			spr = actor->spr;
 			fdActorSelectAnimationStub(actor, ANIM_STAND);
-			/* Each layer starts its first picture 0 to 4 sixteenths of a frame
+			/* Each layer starts its first picture 0 to 4 sixteenths of a tick
 			   apart, so actors placed together do not move in step. */
-			if(actor->sprStorageKind == ACTOR_SPRITE_ONE && sprite != NULL) {
-				for(i = 0; i < sprite->cnt; i++) {
-					SPR_ANIMATION *layer = sprite->entries[i];
+			if(actor->sprStorageKind == ACTOR_SPRITE_ONE && spr != NULL) {
+				for(i = 0; i < spr->cnt; i++) {
+					SPR_ANIMATION *layer = spr->entries[i];
 
 					if(layer != NULL)
 						layer->tmr = (syRandom() * 5) >> 15;
 				}
-				sprite->dirty = 1;
+				spr->dirty = 1;
 			}
 			actor->facing = entry->facing;
 			actor->collisionFlg = ACTOR_SOLID;
@@ -173,7 +171,7 @@ void fdScriptSpawnActorTable(ACTOR_PLACE *entry, Sint32 slot)
 			if(state->mode == ACTOR_SYSTEM_WORLD_MAP) {
 				actor->motionFlg &= ~ACTOR_FOLLOWS_TERRAIN;
 				if(!syGameFlagGet(FLAG_ISAAC_WEARS_TUNIC))
-					sprite->scale = syMulFX(sprite->scale, toFIXED(3) / 4);
+					spr->scale = syMulFX(spr->scale, toFIXED(3) / 4);
 			} else {
 				actor->groundHeight = fdMapGridGetTerrainHeightStub(
 					0, actor->x.fixed, actor->z.fixed);
@@ -181,14 +179,14 @@ void fdScriptSpawnActorTable(ACTOR_PLACE *entry, Sint32 slot)
 			}
 			actor->priFlg = ACTOR_PRIORITY_AUTOMATIC;
 		}
-		state->actors[actorIndex] = actor;
+		state->actors[actorIdx] = actor;
 	}
 }
 
 /* Looks point id up in the map's scene points (its scene_points.tsv, ended by
    id 0xff) and writes its x and z, in 16.16 pixels, to position; returns 0, or
    -1 when the map has no such point. */
-Sint32 fdScenePointGetPos(Sint32 id, FIXED *position)
+Sint32 fdScenePointGetPos(Sint32 id, FIXED *pos)
 {
 	Uint8 *cursor = Ram_MapScenePoints;
 	Sint8  key;
@@ -196,8 +194,8 @@ Sint32 fdScenePointGetPos(Sint32 id, FIXED *position)
 	key = *cursor++;
 	while(key != -1) {
 		if(key == id) {
-			position[0] = toFIXED(fdStreamReadU16(&cursor));
-			position[2] = toFIXED(fdStreamReadU16(&cursor));
+			pos[0] = toFIXED(fdStreamReadU16(&cursor));
+			pos[2] = toFIXED(fdStreamReadU16(&cursor));
 			return 0;
 		}
 		cursor += 4;
@@ -206,16 +204,16 @@ Sint32 fdScenePointGetPos(Sint32 id, FIXED *position)
 	return -1;
 }
 
-/* Releases the actor in slot actorIndex of the field state's table, if there is
+/* Releases the actor in slot actorIdx of the field state's table, if there is
    one, and empties the slot. */
-void fdActorReleaseAtIndex(Uint32 actorIndex)
+void fdActorReleaseAtIndex(Uint32 actorIdx)
 {
 	FIELD_STATE *state = FieldStateWork;
-	ACTOR		*actor = fdActorLookup(actorIndex);
+	ACTOR		*actor = fdActorLookup(actorIdx);
 
 	if(actor != NULL) {
 		fdActorReleaseStub(actor);
-		state->actors[actorIndex] = NULL;
+		state->actors[actorIdx] = NULL;
 	}
 }
 
@@ -225,7 +223,7 @@ Uint8 *fdSprAddAnimationStub(void *resource, Sint32 id);
    fdActorResetForLeader does: the party leader where the main routine's state
    puts it, the scene's placement table from actor slot 8, and the camera that
    follows the leader; it also chooses the leader's control mode. */
-void fdActorResetForLeader(Sint32 table)
+void fdActorResetForLeader(Sint32 tbl)
 {
 	FIELD_STATE	 *state;
 	ACTOR_PLACE	 *entry;
@@ -240,8 +238,8 @@ void fdActorResetForLeader(Sint32 table)
 	state = FieldStateWork;
 	leader = MainRoutineStateWork.leaderActorId;
 	entry = state->leaderPlacements;
-	entry[0] = Field_DefaultPlacements[0];
-	entry[1] = Field_DefaultPlacements[1];
+	entry[0] = FieldDefaultPlacements[0];
+	entry[1] = FieldDefaultPlacements[1];
 	for(i = 0; i < 4; i++)
 		state->tbls[i] = 0;
 	fdActorTableClear();
@@ -259,7 +257,7 @@ void fdActorResetForLeader(Sint32 table)
 			actor->groundHeight = y;
 		}
 	}
-	fdScriptSpawnActorTable((ACTOR_PLACE *)table, ACTOR_FIRST_PLACED);
+	fdScriptSpawnActorTable((ACTOR_PLACE *)tbl, ACTOR_FIRST_PLACED);
 
 	actor = state->actors[leader];
 	actor->layer = MainRoutineStateWork.layer;
@@ -407,16 +405,16 @@ void fdActorTableSnapshot(void)
 {
 	ACTOR *copy = SnapshotObjects;
 	Uint8 *indices = (Uint8 *)SnapshotObjects - ACTOR_SNAPSHOT_CAPACITY;
-	Uint8 *animations = (Uint8 *)&SnapshotObjects[ACTOR_SNAPSHOT_CAPACITY];
-	Uint8 *spriteFlags = animations + ACTOR_SNAPSHOT_CAPACITY;
-	Uint8 *priorities = animations + 2 * ACTOR_SNAPSHOT_CAPACITY;
-	Uint32 count = 0;
+	Uint8 *anms = (Uint8 *)&SnapshotObjects[ACTOR_SNAPSHOT_CAPACITY];
+	Uint8 *sprFlg = anms + ACTOR_SNAPSHOT_CAPACITY;
+	Uint8 *priorities = anms + 2 * ACTOR_SNAPSHOT_CAPACITY;
+	Uint32 cnt = 0;
 	ACTOR *actor;
-	SPR	  *sprite;
+	SPR	  *spr;
 	Sint32 i;
-	Uint32 animation;
-	Uint32 flags;
-	Uint32 priority;
+	Uint32 anm;
+	Uint32 flg;
+	Uint32 pri;
 	Sint32 limit = FIELD_ACTOR_COUNT;
 
 	for(i = 0; i < limit; i++) {
@@ -426,24 +424,24 @@ void fdActorTableSnapshot(void)
 		*indices++ = i;
 		syDMAXCopy(actor, copy, DMA_COPY_WORDS(sizeof(ACTOR) / 4), REG_DMA3);
 		if(actor->sprStorageKind == ACTOR_SPRITE_ONE) {
-			sprite = actor->spr;
-			animation = sprite->lastNo;
-			flags = sprite->flg;
-			priority = sprite->image.pri;
+			spr = actor->spr;
+			anm = spr->lastNo;
+			flg = spr->flg;
+			pri = spr->image.pri;
 		} else {
-			animation = 0;
-			flags = 0;
-			priority = 0;
+			anm = 0;
+			flg = 0;
+			pri = 0;
 		}
-		*animations++ = animation;
-		*spriteFlags++ = flags;
-		*priorities++ = priority;
-		count++;
+		*anms++ = anm;
+		*sprFlg++ = flg;
+		*priorities++ = pri;
+		cnt++;
 		copy++;
-		if(count > ACTOR_SNAPSHOT_CAPACITY - 1)
+		if(cnt > ACTOR_SNAPSHOT_CAPACITY - 1)
 			break;
 	}
-	for(i = count; i < ACTOR_SNAPSHOT_CAPACITY; i++)
+	for(i = cnt; i < ACTOR_SNAPSHOT_CAPACITY; i++)
 		*indices++ = ACTOR_SNAPSHOT_EMPTY;
 }
 
@@ -453,33 +451,33 @@ void fdActorRestore(void)
 {
 	ACTOR  *copy = SnapshotObjects;
 	Uint8  *indices = (Uint8 *)SnapshotObjects - ACTOR_SNAPSHOT_CAPACITY;
-	Uint8  *animations = (Uint8 *)&SnapshotObjects[ACTOR_SNAPSHOT_CAPACITY];
-	Uint8  *spriteFlags = animations + ACTOR_SNAPSHOT_CAPACITY;
-	Uint8  *priorities = animations + 2 * ACTOR_SNAPSHOT_CAPACITY;
-	Sint32	count;
+	Uint8  *anms = (Uint8 *)&SnapshotObjects[ACTOR_SNAPSHOT_CAPACITY];
+	Uint8  *sprFlg = anms + ACTOR_SNAPSHOT_CAPACITY;
+	Uint8  *priorities = anms + 2 * ACTOR_SNAPSHOT_CAPACITY;
+	Sint32	cnt;
 	ACTOR  *actor;
-	SPR	   *sprite;
+	SPR	   *spr;
 	Sint32 *view;
 	ACTOR  *camera;
-	Sint32	index;
-	Sint32	priority;
+	Sint32	idx;
+	Sint32	pri;
 	FIXED	y;
 
-	count = 0;
-	index = *indices++;
-	while(index != ACTOR_SNAPSHOT_EMPTY) {
-		actor = fdActorLookup(index);
+	cnt = 0;
+	idx = *indices++;
+	while(idx != ACTOR_SNAPSHOT_EMPTY) {
+		actor = fdActorLookup(idx);
 		if(actor != NULL) {
-			sprite = actor->spr;
+			spr = actor->spr;
 			syDMAXCopy(
 				copy, actor, DMA_COPY_WORDS(sizeof(ACTOR) / 4), REG_DMA3);
-			actor->spr = sprite;
-			fdActorSelectAnimationStub(actor, *animations);
-			fdActorSetSprFlagsStub(actor, *spriteFlags);
-			priority = *priorities;
-			sprite->image.pri = priority;
-			sprite->shadow.pri = priority;
-			if(index == fdPartyGetLeaderActor()) {
+			actor->spr = spr;
+			fdActorSelectAnimationStub(actor, *anms);
+			fdActorSetSprFlagsStub(actor, *sprFlg);
+			pri = *priorities;
+			spr->image.pri = pri;
+			spr->shadow.pri = pri;
+			if(idx == fdPartyGetLeaderActor()) {
 				camera = FieldStateWork->camera;
 				view = ((MAP_STATE *)Ram_HeapSlots->mapGrid)->origin;
 				y = actor->y.fixed;
@@ -492,13 +490,13 @@ void fdActorRestore(void)
 			}
 		}
 		copy++;
-		animations++;
-		spriteFlags++;
-		count++;
+		anms++;
+		sprFlg++;
+		cnt++;
 		priorities++;
-		if(count > ACTOR_SNAPSHOT_CAPACITY - 1)
+		if(cnt > ACTOR_SNAPSHOT_CAPACITY - 1)
 			break;
-		index = *indices++;
+		idx = *indices++;
 	}
 }
 

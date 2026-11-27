@@ -70,7 +70,7 @@ strongly one layer mixes into the others, and for how long.
 The World Map is too big to unpack whole. Its ground is cut into squares
 of 512 pixels, 32 by 32 of them, each packed separately, and only the four
 around the party are kept unpacked. As the party sails or walks, the next
-square is unpacked, never more than one in a frame. Its squares are in
+square is unpacked, never more than one in a tick. Its squares are in
 `world/blocks.tsv`.
 
 ## Loading a map

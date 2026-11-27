@@ -21,8 +21,8 @@ struct SoundInfo;
 struct SoundVBlankState;
 
 /* The event group. Events, their priorities and the event table, with room for
-   24 events. 1 while sySynch() runs the frame pass's events
-   (EVENT_PASS_FRAME). */
+   24 events. 1 while sySynch() runs the tick pass's events
+   (EVENT_PASS_TICK). */
 extern volatile Uint8 EventsRunning;
 extern Uint8		  EventsInitialized; /* 1 once the event table is set up */
 /* The event table, run in priority order by each pass of sySynch(). */
@@ -55,17 +55,17 @@ extern Uint8 ActorSpriteSlots[];
 extern Uint16 LinkPeerSignatures[][12];
 
 /* The affine group. Sprite rotation and scaling: a sprite's transform and the
-   OAM matrices this frame hands out for it. Matrices handed out this frame
-   (syOAMMatrixAllocFromTransform), up to 32; syOAMResetFrame sets it back to 0
+   OAM matrices this tick hands out for it. Matrices handed out this tick
+   (syOAMMatrixAllocFromTransform), up to 32; syOAMResetTick sets it back to 0
    after each VBlank. */
 extern Uint8 OamMatrixCount;
-/* This frame's 32 matrices, copied into OAM with the sprites. */
+/* This tick's 32 matrices, copied into OAM with the sprites. */
 extern AFFINE_MATRIX OamMatrices[];
 
 /* The bg_scroll group. The four backgrounds' scroll offsets, written to the
    hardware each VBlank. BG0 to BG3's scroll offsets, which the VBlank handler
    copies to REG_BG0HOFS to REG_BG3VOFS in the VBlank after sySynch() sets
-   FrameRenderPending. */
+   TickRenderPending. */
 extern BG_SCROLL BgScrollWork[];
 
 /* The decompress group. The decoders and other ARM code the system library
@@ -107,39 +107,39 @@ extern const SYSTEM_STUB_TABLE Stubs_System;
    no flash operation runs (mnCreditsLoadBackground). */
 extern Uint16 Credits_GreyColors[];
 
-/* The frame group. The frame loop's globals: the VBlanks a frame takes, the CPU
+/* The tick group. The tick loop's globals: the frames a tick takes, the CPU
    load display and the VBlank flags, which sySynch() (system/system_frame.c)
    and the VBlank handler share. The build stamp syCopyBuildStamp copies to
    IWRAM at power-on: twelve digits and a zero word, at the bottom of the
-   frame-wait stack. */
+   tick-wait stack. */
 extern Sint32 BuildStampWork[];
 /* The VBlank handler copies the OAM list only while it is set; scenes clear it
    to keep their own sprites on screen. */
 extern Uint8 OamCopyEnabled;
-/* Set by sySynch() once it has built a frame's OAM list; the VBlank handler
+/* Set by sySynch() once it has built a tick's OAM list; the VBlank handler
    then copies the list, the BG scroll and the queued register writes, and
    clears it. */
-extern Uint8 FrameRenderPending;
+extern Uint8 TickRenderPending;
 /* Debug: sySynch() measures the CPU load into CpuLoadPeak when set. */
 extern Uint8 CpuLoadDisplayEnabled;
-/* VBlanks since sySynch() last started a frame: 1 when the frame took one. */
-extern Uint16 FrameVBlanks;
-/* FrameVBlanks as the last frame left it; the text typing paces itself by
+/* Frames since sySynch() last started a tick: 1 when the tick took one. */
+extern Uint16 TickFrames;
+/* TickFrames as the last tick left it; the text typing paces itself by
    it. */
-extern Uint16 LastFrameVBlanks;
-extern Uint32 CpuLoadTimer; /* frames CpuLoadPeak is still held */
-/* The highest CPU load in the last 30 frames: the scanline the frame's work
+extern Uint16 LastTickFrames;
+extern Uint32 CpuLoadTimer; /* ticks CpuLoadPeak is still held */
+/* The highest CPU load in the last 30 ticks: the scanline the tick's work
    ended on, plus 256 for each VBlank it overran. */
 extern Uint32 CpuLoadPeak;
 /* Nonzero: sySynch() counts no idle time and ignores sleep requests. */
 extern volatile Uint8 SleepDisabled;
 /* Sleep after three idle minutes. */
 extern volatile Uint8 IdleSleepEnabled;
-/* Frames since a key was last held. */
-extern volatile Uint16 IdleFrames;
-/* 1: sleep this frame; more: count down to it. */
+/* Ticks since a key was last held. */
+extern volatile Uint16 IdleTicks;
+/* 1: sleep this tick; more: count down to it. */
 extern volatile Uint8 SleepRequested;
-/* Debug builds: Start+Select pauses the frame loop. */
+/* Debug builds: Start+Select pauses the tick loop. */
 extern Uint8 DebugMode;
 extern Uint8 DebugPaused; /* the debug pause is on */
 /* Set by the keypad interrupt; sySynch() performs the soft reset. */
@@ -147,14 +147,14 @@ extern Uint8 ResetRequested;
 /* Written by the soft reset just before it restarts the cartridge, and cleared
    by syInit; nothing else reads it. */
 extern Uint32 CartridgeResetMarker;
-/* Frames sySynch() has finished. */
-extern Uint32 FrameCount;
-extern Uint32 PlayTimeFrames; /* the play time clock, in frames */
+/* Ticks sySynch() has finished. */
+extern Uint32 TickCount;
+extern Uint32 PlayTimeTicks; /* the play time clock, in ticks */
 
-extern Uint32 VBlankCount; /* counted up by every VBlank */
-/* volatile: the VBlank handler sets it while syWaitForFrameInterrupt waits on
+extern Uint32 FrameCount; /* counted up by every VBlank */
+/* volatile: the VBlank handler sets it while syWaitForVBlankInterrupt waits on
    it, so it is no device. Bit 0 is set by the VBlank handler;
-   syWaitForFrameInterrupt clears it and halts until it is set again. */
+   syWaitForVBlankInterrupt clears it and halts until it is set again. */
 extern volatile Uint16 VBlankDone;
 
 /* The heap_release group. The heap's allocators and releases
@@ -173,7 +173,7 @@ extern IO_WRITE_QUEUE IoWriteQueueWork;
 
 /* The math_table group. The arctangent table. Tangents in 8.8 fixed point over
    a quarter turn in 256 steps, which syAtan searches. */
-extern const Uint16 Math_TanTable[258];
+extern const Uint16 MathTanTable[258];
 
 /* The matrix group. The current 3D matrix, its one-deep stack, and the unit
    matrix. The current 3D transform. syMultiMatrix multiplies the matrix it is
@@ -186,8 +186,8 @@ extern Sint32 MatrixStackDepth;
    HEAP_SLOT_MATRIX_STACK, or just past it while a matrix is saved. */
 extern Uint8 *MatrixStackTop;
 
-/* The oam group. The frame's OAM list. The OAM entries the frame's list holds
-   and the most it may; sySynch() empties it each frame. */
+/* The oam group. The tick's OAM list. The OAM entries the tick's list holds
+   and the most it may; sySynch() empties it each tick. */
 extern OAM_USAGE OamUsageWork;
 
 /* The projection group. The 3D projection the battle engine and the field
@@ -236,7 +236,7 @@ extern Uint8 GameFlagBytes[];
    them aside for the Trial Road, with spare room after them. */
 extern Uint8 InventorySnapshot[];
 /* How many of each rare item the shops may still sell, 0 to 99, by counter
-   number (ITEM_COUNTER_COUNT of them; Item_RareItemCounters,
+   number (ITEM_COUNTER_COUNT of them; ItemRareItemCounters,
    gmRareItemStockAdjust). */
 extern Uint8 RareItemStock[];
 
@@ -261,27 +261,27 @@ extern Uint8 MapSceneBoundsOffset[];
 
 /* Where each of `The Lost Age`'s pictures is unpacked before it is copied into
    sprite tiles. */
-extern Uint8 TitleIntro_LogoTileBuffer[];
+extern Uint8 TitleIntroLogoTileBuffer[];
 
 /* The battle effects' blocks in the map metatile buffer, which they borrow
    while no map is loaded. The map metatile buffer from its second 16 KB on,
    which some effects borrow as scratch: no map is loaded during a battle. */
 extern Uint8 EffectScratch[];
 /* Nirvana's mesh's end, after 112 faces. */
-extern Uint8 Serac_MeshEnd[];
+extern Uint8 SeracMeshEnd[];
 /* Inside EffectScratch: FLORA_WORK from its second tile number on, read at its
    fixed place. */
-extern Uint16 Flora_PetalTiles[];
+extern Uint16 FloraPetalTiles[];
 /* Inside EffectScratch: FLORA_WORK.pal, the object palette as it fades. */
-extern Uint16 Flora_SpritePalettes[];
+extern Uint16 FloraSpritePalettes[];
 /* In the map metatile buffer: Haures's mound's faces, eight bytes a quad. */
-extern Uint8 Haures_MoundStrip[];
+extern Uint8 HauresMoundStrip[];
 /* The face after Haures's mound's last, which ends the strip. */
-extern Uint8 Haures_MoundStripEnd[];
+extern Uint8 HauresMoundStripEnd[];
 /* In the map metatile buffer: each of Haures's mound corners' shade. */
-extern Uint8 Haures_MoundShades[];
+extern Uint8 HauresMoundShades[];
 /* In the map metatile buffer: the tiles Iris draws its sprites from. */
-extern Uint8 Iris_TileBuffer[];
+extern Uint8 IrisTileBuffer[];
 
 /* The world map's and the map screen's state in EWRAM. The map screen's state
    while it is open. */
@@ -298,59 +298,59 @@ extern Uint32 ScanlinePitch;
    entry 128 on, and show each place's second marker (the high nibble of its
    value). XXX (no evidence): what the switch was for; no edition, debug room or
    other code writes it, so the game never shows it set. */
-extern Sint16 MapScreen_FirstListOnly;
+extern Sint16 MapScreenFirstListOnly;
 /* Where the map screen's cursor glides to on its own, 16.16; 0 when it does
    not. */
-extern Sint32 MapScreen_GlideTargetX;
-/* As MapScreen_GlideTargetX, the second coordinate. */
-extern Sint32 MapScreen_GlideTargetY;
+extern Sint32 MapScreenGlideTargetX;
+/* As MapScreenGlideTargetX, the second coordinate. */
+extern Sint32 MapScreenGlideTargetY;
 /* Nonzero while the map screen is zoomed in. */
-extern Sint16 MapScreen_Zoomed;
+extern Sint16 MapScreenZoomed;
 /* Set while the place name waits to be drawn again. */
-extern Sint16 MapScreen_NameRedrawPending[];
-/* Frames before the place name is drawn again. */
-extern Sint16 MapScreen_NameRedrawDelay[];
+extern Sint16 MapScreenNameRedrawPending[];
+/* Ticks before the place name is drawn again. */
+extern Sint16 MapScreenNameRedrawDelay[];
 /* The map screen's cursor marker. */
-extern WORLD_MAP_MARKER MapScreen_CursorMarker;
+extern WORLD_MAP_MARKER MapScreenCursorMarker;
 /* The world map cursor's position (x, then y, 16.16 pixels). */
-extern FIXED *MapScreen_Cursor;
+extern FIXED *MapScreenCursor;
 /* Where the cursor goes back to when Start is let go: the place R or L last
    stepped to, 16.16 pixels. */
-extern Sint32 MapScreen_CursorStartX;
-extern Sint32 MapScreen_CursorStartY; /* as MapScreen_CursorStartX */
+extern Sint32 MapScreenCursorStartX;
+extern Sint32 MapScreenCursorStartY; /* as MapScreenCursorStartX */
 /* The map screen's scroll as Select toggles the zoom, 16.16 pixels. */
-extern Sint32 MapScreen_ScrollX;
-extern Sint32 MapScreen_ScrollY; /* as MapScreen_ScrollX */
+extern Sint32 MapScreenScrollX;
+extern Sint32 MapScreenScrollY; /* as MapScreenScrollX */
 
 /* The credits' state in EWRAM. Slides the crawl has released for the slideshow
    to show next; the slideshow waits while there are none. */
-extern Sint16 Credits_PendingSlides;
-/* The credits' sprite buffer, copied to OAM each frame: the border strips'
+extern Sint16 CreditsPendingSlides;
+/* The credits' sprite buffer, copied to OAM each tick: the border strips'
    sprites, then the text's. */
-extern struct DISPLAY_SCROLL_OBJECT *DisplayScroll_Objects;
+extern struct DISPLAY_SCROLL_OBJECT *DisplayScrollObjects;
 /* 0 while the credits text scrolls; once a line stops it, the line's stop (1 at
-   a page mark, which A or B releases), then counted up each frame after the end
-   (CREDITS_FRAMES_AFTER_END). */
-extern Sint16 DisplayScroll_Busy;
-/* DisplayScroll_Position when the credits last drew a line. */
-extern Sint16 DisplayScroll_LastPosition;
-/* How far the credits text has scrolled, in pixels: one every four VBlanks,
+   a page mark, which A or B releases), then counted up each tick after the end
+   (CREDITS_TICKS_AFTER_END). */
+extern Sint16 DisplayScrollBusy;
+/* DisplayScrollPosition when the credits last drew a line. */
+extern Sint16 DisplayScrollLastPosition;
+/* How far the credits text has scrolled, in pixels: one every four frames,
    faster while B is held. */
-extern Uint16 DisplayScroll_Position;
+extern Uint16 DisplayScrollPosition;
 /* The scrolling image's state. mnEndingImageScroll, a VBlank event, moves the
    scroll toward its target while mnEndingImageWaitForScroll waits for it to
    arrive. */
-extern Sint16 EndingImage_Block; /* which character block the image is in */
-extern Sint16 EndingImage_FadeFrames; /* frames of the fade-in, to 64 */
-extern Uint32 EndingImage_MapScroll;  /* the tilemap's scroll, 16.16 pixels */
-extern volatile Sint32 EndingImage_Scroll; /* the scroll, 16.16 pixels */
+extern Sint16 EndingImageBlock;		 /* which character block the image is in */
+extern Sint16 EndingImageFadeFrames; /* frames of the fade-in, to 64 */
+extern Uint32 EndingImageMapScroll;	 /* the tilemap's scroll, 16.16 pixels */
+extern volatile Sint32 EndingImageScroll; /* the scroll, 16.16 pixels */
 /* The row a scene asks for (mnEndingImageSetTargetRow); Row moves toward it. */
-extern Sint16 EndingImage_TargetRow;
-extern Sint16 EndingImage_Row;	 /* the row the scroll is heading for */
-extern Sint16 EndingImage_Speed; /* the most rows a frame moves */
-extern Uint8 *EndingImage_Map;	 /* the image's map */
+extern Sint16 EndingImageTargetRow;
+extern Sint16 EndingImageRow;	/* the row the scroll is heading for */
+extern Sint16 EndingImageSpeed; /* the most rows a tick moves */
+extern Uint8 *EndingImageMap;	/* the image's map */
 /* The 24 sprites of the image's border strips. */
-extern void *EndingImage_Strips;
+extern void *EndingImageStrips;
 
 /* The File Screen's options in EWRAM. Nonzero offers Battle on the File Screen,
    when a file has any game flag counted in its summary
@@ -373,12 +373,12 @@ extern Uint8 BupBuffer[];
 
 /* The bupdata group. The save signature and sector header template, and the
    link test strings nothing reads (system/bupdata.c). */
-extern const Uint8 Bup_Signature[];
-extern const Uint8 Bup_HeaderTemplate[8];
+extern const Uint8 BupSignature[];
+extern const Uint8 BupHeaderTemplate[8];
 
-extern const Uint32 Link_TestWord;
-extern const Uint8	Link_TestDataA[];
-extern const Uint8	Link_TestDataB[];
+extern const Uint32 LinkTestWord;
+extern const Uint8	LinkTestDataA[];
+extern const Uint8	LinkTestDataB[];
 
 /* The scene group. The running scene's overlay area, a field position, and the
    area name a scene and entrance show. The running scene's overlay, loaded into
@@ -392,7 +392,7 @@ extern SERIAL_TRANSFER_STATE SerialTransfer;
 /* The link cable's runtime (SERIAL_RUNTIME), which sySerialInit clears. */
 extern SERIAL_STATE SerialStateWork;
 /* Nonzero while the VBlank handler exchanges packets with the partner each
-   frame; sySerialInit sets it. */
+   tick; sySerialInit sets it. */
 extern Uint16 SerialExchangeActive;
 /* The data a block send reads from, 0 when none is under way
    (sySerialStartSend). */
@@ -425,12 +425,12 @@ extern volatile Uint16 LinkStatusWork;
 extern Uint8 ScreenFadeToWhite;
 /* volatile: syScreenFadeUpdate, which the VBlank handler runs, clears it at the
    fade's end while syScreenFadeWait waits on it, so it is no device. the fade's
-   length in VBlanks, 0 when idle */
-extern volatile Uint8 ScreenFadeVBlanks;
+   length in frames, 0 when idle */
+extern volatile Uint8 ScreenFadeFrames;
 /* volatile: the fade starts set it for syScreenFadeUpdate, which the VBlank
-   handler runs and which counts it down, so it is no device. VBlanks until the
+   handler runs and which counts it down, so it is no device. Frames until the
    running fade reaches its target. */
-extern volatile Uint8 ScreenFadeVBlanksLeft;
+extern volatile Uint8 ScreenFadeFramesLeft;
 /* The BLDCNT first-target layers the screen fade covers (the low six bits). */
 extern Uint16 ScreenFadeLayers;
 /* The brightness the running fade started from, 0 to 16. */
@@ -441,12 +441,12 @@ extern volatile Uint8 ScreenFadeTargetLevel;
 
 /* The sound group. The game's sound state in EWRAM and IWRAM; the sound
    driver's own work is declared in sdk/sound_driver.h. The sound driver's state
-   as the frame wait runs it. */
-/* XXX: why the frame wait reads the sound driver's state as bytes rather than
+   as the tick wait runs it. */
+/* XXX: why the tick wait reads the sound driver's state as bytes rather than
    through struct SoundInfo, whose transferCountdown is volatile; whether the
    driver's own struct should make that member volatile would settle the type.
    Where the sound driver finds its state (SOUND_INFO_PTR): a pointer to
-   SoundInfoWork, whose bytes the frame wait reads. */
+   SoundInfoWork, whose bytes the tick wait reads. */
 extern Uint8 *SoundInfoPointer;
 /* Plays music; SOUND_FADE_OUT_BGM fades it and a jingle silences it until it
    ends. */
@@ -470,8 +470,8 @@ extern Uint8 IwramSoundMixWorkspace[];
    IwramSoundNormalizeChannels saturates the samples and stores the clip mask
    (0x80008000) here. Only the sound test reads it. */
 extern Sint32 SoundMixerClipped;
-/* volatile: the VBlank handler and the frame wait share it. Who runs the sound
-   update this frame: the frame wait or the VBlank handler. */
+/* volatile: the VBlank handler and the tick wait share it. Who runs the sound
+   update this tick: the tick wait or the VBlank handler. */
 extern volatile struct SoundVBlankState SoundVBlankStateWork;
 /* The music playing, which sySndPlay sets from each music id it starts. */
 extern Uint16 CurrentBgm;
@@ -492,7 +492,7 @@ extern Uint16 BgmVolume;
 extern Uint16 BgmVolumeTarget;
 /* How far BgmVolume moves each VBlank (BGM_DEFAULT_RAMP_STEP). */
 extern Uint16 BgmVolumeStep;
-/* VBlanks after a jingle starts before the music waits for its end; held at 1
+/* Frames after a jingle starts before the music waits for its end; held at 1
    until the jingle's player stops, then 0. */
 extern Uint8 BgmRestoreDelay;
 /* The tempo and pitch BgmTempoPitch ramps toward. */

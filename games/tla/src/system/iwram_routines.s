@@ -385,7 +385,7 @@ syIWRAMUnsignedDivide:
 	mov	r0, r1
 	mov	r1, #0
 	bx	lr
-	.4byte	System_ReciprocalTable
+	.4byte	SystemReciprocalTable
 .L_03000578:
 	rsbs	r3, r2, r1, lsr #16
 	bcc	.L_030005b0

@@ -8,12 +8,11 @@
 #include "macros.h"
 #include "field/pushed_actor.h"
 
-/* Sets `position` to one step from `actor`: `step` is a DIRECTION_STEP, as the
+/* Sets `pos` to one step from `actor`: `step` is a DIRECTION_STEP, as the
    push tables hold them. */
-static inline void fdActorStepFrom(
-	FIELD_POS *position, ACTOR *actor, Sint32 step)
+static inline void fdActorStepFrom(FIELD_POS *pos, ACTOR *actor, Sint32 step)
 {
-	SET_POSITION(position, actor->x.fixed + DIRECTION_STEP_X_FIXED(step),
+	SET_POSITION(pos, actor->x.fixed + DIRECTION_STEP_X_FIXED(step),
 		actor->y.fixed, actor->z.fixed + DIRECTION_STEP_Z_FIXED(step));
 }
 

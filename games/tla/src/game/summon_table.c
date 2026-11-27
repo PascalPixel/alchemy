@@ -3,7 +3,7 @@
 
 /* The order the Summon command lists the summons in: by the number of Djinn
    they need, fewest first. */
-const Uint8 Summon_OrderList[SUMMON_COUNT] = {
+const Uint8 SummonOrderList[SUMMON_COUNT] = {
 	SUMMON_VENUS,
 	SUMMON_MERCURY,
 	SUMMON_MARS,
@@ -38,7 +38,7 @@ const Uint8 Summon_OrderList[SUMMON_COUNT] = {
 /* clang-format off */
 /* The 29 summons, by summon id, read through gmSummonDefinitionGetNearStub. Each */
 /* needs this many standby Djinn of each element. */
-const SUMMON_DEFINITION Summon_DefinitionTable[] = {
+const SUMMON_DEFINITION SummonDefinitionTable[] = {
 	[SUMMON_VENUS] = {
 		.abilityId = ABILITY_VENUS,
 		.djinnRequired = {[ELEMENT_VENUS] = 1},

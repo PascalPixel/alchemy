@@ -14,7 +14,7 @@
 /* The number a browsed message's number placeholder shows. */
 #define DEBUG_SAMPLE_NUMBER 999
 
-/* The last row of Debug_ParameterSets; the scan reports a missing parameter set
+/* The last row of DebugParameterSets; the scan reports a missing parameter set
    past it. */
 #define DEBUG_PARAMETER_SET_LAST_ROW 332
 
@@ -29,8 +29,8 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 	Sint32 unitId;
 	Bool   notFound;
 	Sint32 row;
-	Sint32 djinnIndex;
-	Sint32 currentSet;
+	Sint32 djinnIdx;
+	Sint32 curSet;
 	Sint32 i;
 
 	notFound = FALSE;
@@ -42,29 +42,29 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 	gmPartyRemoveMemberStub(MIA);
 	gmPartyRemoveMemberStub(JENNA);
 
-	currentSet = 0;
+	curSet = 0;
 	for(i = 0; i < ELEMENT_COUNT; i++)
 		nextDjinn[i] = 0;
 
 	/* Parameter sets are runs of rows each ended by a DEBUG_PARAMETER_SET_END
 	   row; skip to the run numbered set and apply its rows. */
 	for(row = 0;; row++) {
-		unitId = Debug_ParameterSets[row].unitId;
+		unitId = DebugParameterSets[row].unitId;
 		if(row < 0 || row > DEBUG_PARAMETER_SET_LAST_ROW) {
 			notFound = TRUE;
 			break;
 		}
 		if(unitId == DEBUG_PARAMETER_SET_END) {
-			if(currentSet == set)
+			if(curSet == set)
 				break;
-			currentSet++;
+			curSet++;
 			continue;
 		}
-		if(currentSet != set)
+		if(curSet != set)
 			continue;
 
 		gmPartyAddMemberStub(unitId);
-		gmUnitLevelUpToStub(unitId, Debug_ParameterSets[row].level);
+		gmUnitLevelUpToStub(unitId, DebugParameterSets[row].level);
 
 		/* Start from no Djinn and no abilities. */
 		member = gmUnitGetStub(unitId);
@@ -77,17 +77,16 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 		for(i = 0; i < PSYNERGY_SLOTS; i++)
 			*&member->psynergy[i].encodedAction = 0;
 		for(i = 0; i < 2; i++) {
-			if(Debug_ParameterSets[row].abilities[i] != 0)
+			if(DebugParameterSets[row].abilities[i] != 0)
 				gmUnitLearnPsynergyStub(
-					unitId, Debug_ParameterSets[row].abilities[i]);
+					unitId, DebugParameterSets[row].abilities[i]);
 		}
 
 		/* Djinn are numbered across the party, so no two party members get the
 		   same. */
 		for(i = 0; i < ELEMENT_COUNT; i++) {
-			for(djinnIndex = 0;
-				djinnIndex < Debug_ParameterSets[row].djinnCnts[i];
-				djinnIndex++) {
+			for(djinnIdx = 0; djinnIdx < DebugParameterSets[row].djinnCnts[i];
+				djinnIdx++) {
 				gmDjinnGiveStub(unitId, i, nextDjinn[i]);
 				gmDjinnSetStub(unitId, i, nextDjinn[i]);
 				nextDjinn[i]++;
@@ -99,10 +98,10 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 		for(i = 0; i < INVENTORY_SLOTS + 1; i++)
 			gmInventoryRemoveStub(unitId, 0);
 		for(i = 0; i < 4; i++) {
-			if(Debug_ParameterSets[row].items[i] != 0)
+			if(DebugParameterSets[row].items[i] != 0)
 				gmInventoryEquipStub(unitId,
 					gmInventoryAddItemStub(
-						unitId, Debug_ParameterSets[row].items[i]));
+						unitId, DebugParameterSets[row].items[i]));
 		}
 	}
 	return notFound;
@@ -122,9 +121,9 @@ void btDebugBattleViewMessages(void)
 	Sint32	secondRange = 0;
 	UNIT   *unit = gmUnitGetStub(ISAAC);
 	Sint32	i;
-	Sint32	index;
-	WINDOW *messageWindow;
-	Sint32	message;
+	Sint32	idx;
+	WINDOW *msgWin;
+	Sint32	msg;
 
 	/* Party member 0's name is the sample a `<unit>` blank shows. */
 	mnMessageDecodeRawUnboundedStub(MsgDebugSampleName, text);
@@ -137,7 +136,7 @@ void btDebugBattleViewMessages(void)
 	mnWindowSystemInitFieldStub();
 	sySndPlayStub(MUS_EMPTY);
 	for(;;) {
-		index = 0;
+		idx = 0;
 		IO_WRITE16(DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
 				DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
 			&REG_DISPCNT);
@@ -156,13 +155,11 @@ void btDebugBattleViewMessages(void)
 			/* The window at tile (2, 10) for the first range, (2, 2) for the
 			   second. */
 			if(secondRange == 0) {
-				message = MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely;
-				messageWindow =
-					mnMessageOpenWindowStub(index + message, 2, 10, 4);
+				msg = MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely;
+				msgWin = mnMessageOpenWindowStub(idx + msg, 2, 10, 4);
 			} else {
-				message = DEBUG_SECOND_RANGE_FIRST;
-				messageWindow =
-					mnMessageOpenWindowStub(index + message, 2, 2, 4);
+				msg = DEBUG_SECOND_RANGE_FIRST;
+				msgWin = mnMessageOpenWindowStub(idx + msg, 2, 2, 4);
 			}
 			sySynch(10);
 
@@ -173,26 +170,26 @@ void btDebugBattleViewMessages(void)
 					if(secondRange != 0) {
 						secondRange = 0;
 					} else {
-						index++;
+						idx++;
 						secondRange = 1;
 					}
 				}
 				if(PerRepeat & KEY_RIGHT)
-					index++;
+					idx++;
 				if(PerRepeat & KEY_LEFT)
-					index -= 2;
+					idx -= 2;
 				if(PerRepeat & KEY_UP)
 					secondRange = 1;
 				if(PerRepeat & KEY_DOWN)
 					secondRange = 0;
 				if(PerRepeat & KEY_R)
-					index += DEBUG_LARGE_STEP;
+					idx += DEBUG_LARGE_STEP;
 				if(PerRepeat & KEY_L)
-					index -= DEBUG_LARGE_STEP;
-				if(index < 0)
-					index = 0;
-				if(index >= (Uint32)DEBUG_VIEW_LIMIT)
-					index = DEBUG_VIEW_LIMIT;
+					idx -= DEBUG_LARGE_STEP;
+				if(idx < 0)
+					idx = 0;
+				if(idx >= (Uint32)DEBUG_VIEW_LIMIT)
+					idx = DEBUG_VIEW_LIMIT;
 				if(PerRepeat & (KEY_B | KEYS_DPAD | KEYS_SHOULDERS))
 					break;
 				if(mnMessageAllTypedStub() != 0 && (PerRepeat & KEY_A))
@@ -201,7 +198,7 @@ void btDebugBattleViewMessages(void)
 			}
 			mnWindowCloseAllStub(1);
 			/* Close the window and clear its page arrow. */
-			mnWindowCloseStub(messageWindow, 1);
+			mnWindowCloseStub(msgWin, 1);
 			((WIN_STATE *)WindowStateWork[0])->pageArrowShown = 0;
 		}
 	}

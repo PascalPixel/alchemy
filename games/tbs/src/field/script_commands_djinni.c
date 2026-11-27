@@ -20,11 +20,11 @@ void fdDjinnRunBattleStartHop(Sint32 djinniId)
 	ACTOR		 *djinni;
 	ACTOR		 *copy;
 	ACTOR		 *prev;
-	void		 *sharedSprite;
+	void		 *sharedSpr;
 	Sint32		  dir;
 	Sint32		  back;
 	FIXED		  dist;
-	Sint32		  sprite;
+	Sint32		  spr;
 	Sint32		  tint;
 	Sint32		  i;
 	UNUSED ACTOR *copies[DJINNI_AFTERIMAGES];
@@ -65,23 +65,23 @@ void fdDjinnRunBattleStartHop(Sint32 djinniId)
 	sySynch(20);
 
 	/* Afterimages of the same sprite at AFTERIMAGE_SCALE, each closing half the
-	   distance to the one before it every frame, tinted by the Djinni's
+	   distance to the one before it every tick, tinted by the Djinni's
 	   sprite. */
-	sprite = djinni->spr->entries[0]->anmId;
+	spr = djinni->spr->entries[0]->anmId;
 	tint = SPRITE_COLOR_BLUE_TINT;
-	if(sprite == SPRITE_VENUS_DJINNI)
+	if(spr == SPRITE_VENUS_DJINNI)
 		tint = SPRITE_COLOR_RBG;
-	if(sprite == SPRITE_MARS_DJINNI)
+	if(spr == SPRITE_MARS_DJINNI)
 		tint = SPRITE_COLOR_RED_TINT;
 	/* DEAD: tint is already SPRITE_COLOR_BLUE_TINT for SPRITE_MERCURY_DJINNI;
 	   the ROM keeps the test and the store. */
-	if(sprite == SPRITE_MERCURY_DJINNI)
+	if(spr == SPRITE_MERCURY_DJINNI)
 		tint = SPRITE_COLOR_BLUE_TINT;
-	sharedSprite = NULL;
+	sharedSpr = NULL;
 	prev = djinni;
 	for(i = 0; i < DJINNI_AFTERIMAGES; i++) {
 		copy = fdActorCreateStub(
-			sprite, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
+			spr, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
 		/* DEAD: nothing reads copies; the ROM keeps the store and its slot. */
 		copies[i] = copy;
 		if(copy != NULL) {
@@ -96,14 +96,14 @@ void fdDjinnRunBattleStartHop(Sint32 djinniId)
 			fdActorSetSprColModeStub(copy, tint);
 			fdActorSelectAnimationStub(copy, ANIM_STILL);
 			fdActorSetSprFlagsStub(copy, 0);
-			sharedSprite = fdSprShareVRAMCacheEntry(copy->spr, sharedSprite);
+			sharedSpr = fdSprShareVRAMCacheEntry(copy->spr, sharedSpr);
 			copy->watchedActor = (union ACTOR_OR_EFFECT *)prev;
 			prev = copy;
 		}
 	}
 
-	/* Leap 64 pixels at the leader, 12 pixels a frame upward, and after 24
-	   frames freeze wherever it is, landed or not. */
+	/* Leap 64 pixels at the leader, 12 pixels a tick upward, and after 24
+	   ticks freeze wherever it is, landed or not. */
 	fdActorSetTargetPosFromMagnitudeAng(
 		djinni, toFIXED(64), dir + DEGtoANG(180));
 	sySndPlayStub(SE_WHOOSH);
@@ -297,7 +297,7 @@ void fdEffectInitSlots(void)
 
 	state = syHeapSlotAlloc(HEAP_SLOT_FIELD_EFFECT, sizeof(FIELD_EFFECT_STATE));
 	DMA_FILL32(0, state, sizeof(FIELD_EFFECT_STATE));
-	sySetEvent(fdEffectUpdateAllSlots, EVENT_PASS_FRAME);
+	sySetEvent(fdEffectUpdateAllSlots, EVENT_PASS_TICK);
 }
 
 /* Stops the field effect sprites: removes their event, frees every slot still
@@ -318,17 +318,17 @@ void fdEffectReleaseSlots(void)
 	sySynch(1);
 }
 
-/* Per-frame update: spins an actor 1/8 turn a frame. */
+/* Per-tick update: spins an actor 1/8 turn a tick. */
 void fdEffectAdvanceSpinAng(ACTOR *actor)
 {
 	actor->facing += DEGtoANG(45);
 }
 
-/* The frames a Jupiter Djinni's light widens, and later closes in over, so that
-   it ends where it began; and the frames it circles and drifts. */
-#define DJINNI_LIGHT_RADIUS_FRAMES	 60
-#define DJINNI_LIGHT_CIRCLING_FRAMES 40
-#define DJINNI_LIGHT_DRIFTING_FRAMES 40
+/* The ticks a Jupiter Djinni's light widens, and later closes in over, so that
+   it ends where it began; and the ticks it circles and drifts. */
+#define DJINNI_LIGHT_RADIUS_TICKS	60
+#define DJINNI_LIGHT_CIRCLING_TICKS 40
+#define DJINNI_LIGHT_DRIFTING_TICKS 40
 
 /* The states of a Jupiter Djinni's light particle, in order. */
 typedef enum DJINNI_LIGHT_STATE {
@@ -342,60 +342,60 @@ typedef enum DJINNI_LIGHT_STATE {
 /* Field effect sprite callback of a Jupiter Djinni's light particles, the ring
    of coloured lights a joining Jupiter Djinni bursts into: each circles its
    centre while it widens, circles, drifts toward a point 20 pixels over the
-   leader and closes in on it, and is freed. It turns 1/32 turn a frame
-   throughout, and its radius grows, then shrinks, by 1 pixel a frame. */
+   leader and closes in on it, and is freed. It turns 1/32 turn a tick
+   throughout, and its radius grows, then shrinks, by 1 pixel a tick. */
 void fdEffectRunAngledApproachPhases(FIELD_PARTICLE *particle)
 {
-	ACTOR  *target;
-	VECTOR3 position;
+	ACTOR  *tgt;
+	VECTOR3 pos;
 
-	target = fdActorGetById(MainRoutineStateWork.leaderActorId);
+	tgt = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	if(particle->state == DJINNI_LIGHT_WIDENING) {
 		particle->orbitRadius += 1;
 		particle->orbitAng += 1;
-		if(particle->age == DJINNI_LIGHT_RADIUS_FRAMES) {
+		if(particle->age == DJINNI_LIGHT_RADIUS_TICKS) {
 			particle->age = 0;
 			particle->state += 1;
 		}
 	} else if(particle->state == DJINNI_LIGHT_CIRCLING) {
 		particle->orbitAng += 1;
-		if(particle->age == DJINNI_LIGHT_CIRCLING_FRAMES) {
+		if(particle->age == DJINNI_LIGHT_CIRCLING_TICKS) {
 			particle->age = 0;
 			particle->state += 1;
 		}
 	} else if(particle->state == DJINNI_LIGHT_DRIFTING) {
 		particle->orbitAng += 1;
-		position.x = target->x.fixed;
-		position.y = target->y.fixed + toFIXED(20);
-		position.z = target->z.fixed;
+		pos.x = tgt->x.fixed;
+		pos.y = tgt->y.fixed + toFIXED(20);
+		pos.z = tgt->z.fixed;
 		/* The centre moves 1/8 of the way to the leader's screen point a
-		   frame. */
-		fdCameraWorldToScreen(&position);
-		particle->originX += (position.x - particle->originX) / 8;
-		particle->originZ += (position.z - particle->originZ) / 8;
-		if(particle->age == DJINNI_LIGHT_DRIFTING_FRAMES) {
+		   tick. */
+		fdCameraWorldToScreen(&pos);
+		particle->originX += (pos.x - particle->originX) / 8;
+		particle->originZ += (pos.z - particle->originZ) / 8;
+		if(particle->age == DJINNI_LIGHT_DRIFTING_TICKS) {
 			particle->age = 0;
 			particle->state += 1;
 		}
 	} else if(particle->state == DJINNI_LIGHT_CLOSING) {
 		particle->orbitRadius -= 1;
 		particle->orbitAng += 1;
-		if(particle->age == DJINNI_LIGHT_RADIUS_FRAMES) {
+		if(particle->age == DJINNI_LIGHT_RADIUS_TICKS) {
 			particle->age = 0;
 			particle->state += 1;
 		}
 	} else if(particle->state == DJINNI_LIGHT_DONE) {
 		fdEffectClearOwnedSlot(particle);
 	}
-	position.x = particle->originX;
-	position.z = particle->originZ;
+	pos.x = particle->originX;
+	pos.z = particle->originZ;
 	syVectorAddPolarOffset(toFIXED(particle->orbitRadius),
-		particle->orbitAng * (TRIG_TURN / 32), (FIXED *)&position);
-	particle->x = position.x;
-	particle->z = position.z;
+		particle->orbitAng * (TRIG_TURN / 32), (FIXED *)&pos);
+	particle->x = pos.x;
+	particle->z = pos.z;
 }
 
 #undef DJINNI_AFTERIMAGES
-#undef DJINNI_LIGHT_RADIUS_FRAMES
-#undef DJINNI_LIGHT_CIRCLING_FRAMES
-#undef DJINNI_LIGHT_DRIFTING_FRAMES
+#undef DJINNI_LIGHT_RADIUS_TICKS
+#undef DJINNI_LIGHT_CIRCLING_TICKS
+#undef DJINNI_LIGHT_DRIFTING_TICKS

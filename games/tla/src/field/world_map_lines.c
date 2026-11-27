@@ -23,15 +23,15 @@
    camera's yaw, called from the asm below by name. */
 Sint32 fdMatrixCallInThumb(Sint32 x, Sint32 y);
 
-/* Builds the world map's per-scanline affine table for one frame: the ground
+/* Builds the world map's per-scanline affine table for one tick: the ground
    plane seen from eye towards target. line points at the 160 scanlines' ground
    terms, whose rotation terms stay cached while the yaw (ScanlineAngle) is
    unchanged; affine receives each line's parameters twice, for BG2 and then
    BG3, as the HBlank DMA writes both. */
-void fdWorldMapUpdateAffineLines(VECTOR3 *eye, VECTOR3 *target,
+void fdWorldMapUpdateAffineLines(VECTOR3 *eye, VECTOR3 *tgt,
 	WORLD_MAP_SCANLINE *line, WORLD_MAP_AFFINE_LINE *affine)
 {
-	Uint32					 angle;
+	Uint32					 ang;
 	FIXED					 originX;
 	FIXED					 originZ;
 	Sint32					 sinYaw;
@@ -39,44 +39,44 @@ void fdWorldMapUpdateAffineLines(VECTOR3 *eye, VECTOR3 *target,
 	FIXED					 negativeSinYaw;
 	Sint32					 scanline;
 	Sint32					 depth;
-	const SYSTEM_STUB_TABLE *table = &Stubs_System;
+	const SYSTEM_STUB_TABLE *tbl = &Stubs_System;
 
 	{
-		Sint32 targetDeltaX = target->x;
-		Sint32 targetZ = target->z;
+		Sint32 tgtDeltaX = tgt->x;
+		Sint32 tgtZ = tgt->z;
 		Sint32 eyeZ = eye->z;
 		Sint32 eyeX = eye->x;
 
-		depth = targetZ - eyeZ;
-		targetDeltaX -= eyeX;
+		depth = tgtZ - eyeZ;
+		tgtDeltaX -= eyeX;
 		{
 			/* The yaw: the stub table's arctangent of the view's direction,
 			   called in Thumb through fdMatrixCallInThumb with its target in
 			   ip. */
 			ASM_THUMB_CALL_ARCTAN(
-				angle, targetDeltaX >> 4, depth >> 4, table->arcTan2.tgt);
+				ang, tgtDeltaX >> 4, depth >> 4, tbl->arcTan2.tgt);
 		}
 	}
 	/* The texture origin: the target at half scale. */
-	originX = syMulFXArm(target->x, toFIXED(1) / 2);
-	originZ = syMulFXArm(target->z, toFIXED(1) / 2);
-	if(angle != ScanlineAngle) {
+	originX = syMulFXArm(tgt->x, toFIXED(1) / 2);
+	originZ = syMulFXArm(tgt->z, toFIXED(1) / 2);
+	if(ang != ScanlineAngle) {
 		/* The camera turned: recompute every scanline's rotation terms. */
-		ScanlineAngle = angle;
-		sinYaw = table->sin.tgt(angle);
-		cosYaw = table->cos.tgt(angle);
+		ScanlineAngle = ang;
+		sinYaw = tbl->sin.tgt(ang);
+		cosYaw = tbl->cos.tgt(ang);
 		negativeSinYaw = -sinYaw;
 		for(scanline = 0; scanline < DISPLAY_HEIGHT; scanline++) {
 			FIXED  widthScale = line->scale;
 			Sint32 centerX;
-			Sint32 horizontalOffset;
-			Sint32 depthOffset;
+			Sint32 horizontalOfs;
+			Sint32 depthOfs;
 			Sint32 affinePa;
 			Sint32 affinePc;
 
 			depth = line->depth;
 			affinePa = -FIXEDtoQ_8_8(syMulFXArm(widthScale, cosYaw));
-			horizontalOffset = (Sint16)affinePa;
+			horizontalOfs = (Sint16)affinePa;
 			line->pa = affinePa;
 			affine->pa = affinePa;
 			affinePc = FIXEDtoQ_8_8(syMulFXArm(widthScale, sinYaw));
@@ -88,17 +88,16 @@ void fdWorldMapUpdateAffineLines(VECTOR3 *eye, VECTOR3 *target,
 			/* UB: affine coefficients can be negative, and shifting a negative
 			   value left is undefined; UBFIX multiplies. */
 #if FIX_UNDEFINED_SHIFT
-			horizontalOffset = syQ88toFIXED(horizontalOffset) * centerX;
-			depthOffset = syQ88toFIXED((Sint16)affinePc) * -centerX;
+			horizontalOfs = syQ88toFIXED(horizontalOfs) * centerX;
+			depthOfs = syQ88toFIXED((Sint16)affinePc) * -centerX;
 #else
-			horizontalOffset = (horizontalOffset << 8) * centerX;
-			depthOffset = ((Sint16)affinePc << 8) * -centerX;
+			horizontalOfs = (horizontalOfs << 8) * centerX;
+			depthOfs = ((Sint16)affinePc << 8) * -centerX;
 #endif
 			/* The line's start: back from its centre by centerX pixels of the
 			   line's step, then along the view by its depth. */
-			line->ofsX =
-				-(horizontalOffset + syMulFXArm(negativeSinYaw, depth));
-			line->ofsY = depthOffset + syMulFXArm(cosYaw, depth);
+			line->ofsX = -(horizontalOfs + syMulFXArm(negativeSinYaw, depth));
+			line->ofsY = depthOfs + syMulFXArm(cosYaw, depth);
 			affine->x = (originX + line->ofsX) >> 8;
 			affine->y = (originZ + line->ofsY) >> 8;
 			affine[1] = affine[0];
@@ -108,17 +107,17 @@ void fdWorldMapUpdateAffineLines(VECTOR3 *eye, VECTOR3 *target,
 	} else {
 		/* Same angle: the cached terms stand and only the position moves. */
 		for(scanline = 0; scanline < DISPLAY_HEIGHT; scanline++) {
-			if(FrameCount & 1) {
-				/* On odd frames the sample point shifts by half a pixel step
+			if(TickCount & 1) {
+				/* On odd ticks the sample point shifts by half a pixel step
 				   along the line and a quarter step across it, so alternate
-				   frames sample between each other's texels. */
-				Sint32 sampleOffset;
+				   ticks sample between each other's texels. */
+				Sint32 sampleOfs;
 
-				sampleOffset =
+				sampleOfs =
 					((originX + line->ofsX) >> 8) + line->pc / 4 + line->pa / 2;
-				affine->x = sampleOffset;
-				/* FAKEMATCH(dead): sampleOffset set to line->pa, never read. */
-				sampleOffset = line->pa;
+				affine->x = sampleOfs;
+				/* FAKEMATCH(dead): sampleOfs set to line->pa, never read. */
+				sampleOfs = line->pa;
 				affine->y =
 					((originZ + line->ofsY) >> 8) + line->pa / 4 + line->pc / 2;
 			} else {

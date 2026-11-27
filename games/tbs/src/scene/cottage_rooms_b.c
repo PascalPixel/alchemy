@@ -54,7 +54,7 @@
 	 into ValePrologue (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA). While
 	 FLAG_VALE_STORM is set the villagers are put out of sight, lightning
 	 flashes, and COTTAGE_ROOMS_B_TO_VALE leads into the storm
-	 (ValePrologue) instead of Vale (CottageRoomsB_StormExits). Kyle dies
+	 (ValePrologue) instead of Vale (CottageRoomsBStormExits). Kyle dies
 	 that night, as the village says later.
    - Vale before the party leaves (FLAG_VALE_PARTY_LEFT clear): from Kraden's
 	 cottage (ValeKradensCottage's
@@ -107,32 +107,32 @@
 #include "graphics/graphics.h"
 #include "text/msg_ids.h"
 
-extern Sint32		  CottageRoomsB_LeaveHouseScript[];
-extern Sint32		  CottageRoomsB_DoraLeavesScript[];
-extern Sint32		  CottageRoomsB_IsaacLeavesScript[];
-extern Sint32		  CottageRoomsB_DoraRunsAheadScript[];
-extern Sint32		  CottageRoomsB_IsaacRunsAheadScript[];
-extern Sint32		  CottageRoomsB_DoraRunsBackScript[];
-extern Sint32		  CottageRoomsB_IsaacRunsBackScript[];
-extern Sint32		  CottageRoomsB_RunToPlazaScript[];
-extern Sint32		  CottageRoomsB_FlameShakesScript[];
-extern Sint32		  CottageRoomsB_FlameRisesScript[];
-extern Sint32		  CottageRoomsB_DoraFacesIsaacScript[];
-extern Sint32		  CottageRoomsB_MythrilBagRisesScript[];
-extern Sint32		  CottageRoomsB_MythrilBagWobblesScript[];
-extern SCENE_ENTRANCE CottageRoomsB_Entrances[];
-extern Uint32		  CottageRoomsB_Exits[];
-extern Uint32		  CottageRoomsB_StormExits[];
-extern ACTOR_PLACE	  CottageRoomsB_ActorPlacements[];
-extern ACTOR_PLACE	  CottageRoomsB_ActorPlacementsAfterLeaving[];
-extern ACTOR_PLACE	  CottageRoomsB_ActorPlacementsAfterKalay[];
-extern ACTOR_PLACE	  CottageRoomsB_BabiScholarsActorPlacements[];
-extern CUE			  CottageRoomsB_StormCues[];
-extern CUE			  CottageRoomsB_Cues[];
-extern CUE			  CottageRoomsB_CuesAfterLeaving[];
-extern CUE			  CottageRoomsB_CuesAfterKalay[];
-extern CUE			  CottageRoomsB_BabiScholarsCues[];
-extern CUE			  CottageRoomsB_BabiScholarsLaterCues[];
+extern Sint32		  CottageRoomsBLeaveHouseScript[];
+extern Sint32		  CottageRoomsBDoraLeavesScript[];
+extern Sint32		  CottageRoomsBIsaacLeavesScript[];
+extern Sint32		  CottageRoomsBDoraRunsAheadScript[];
+extern Sint32		  CottageRoomsBIsaacRunsAheadScript[];
+extern Sint32		  CottageRoomsBDoraRunsBackScript[];
+extern Sint32		  CottageRoomsBIsaacRunsBackScript[];
+extern Sint32		  CottageRoomsBRunToPlazaScript[];
+extern Sint32		  CottageRoomsBFlameShakesScript[];
+extern Sint32		  CottageRoomsBFlameRisesScript[];
+extern Sint32		  CottageRoomsBDoraFacesIsaacScript[];
+extern Sint32		  CottageRoomsBMythrilBagRisesScript[];
+extern Sint32		  CottageRoomsBMythrilBagWobblesScript[];
+extern SCENE_ENTRANCE CottageRoomsBEntrances[];
+extern Uint32		  CottageRoomsBExits[];
+extern Uint32		  CottageRoomsBStormExits[];
+extern ACTOR_PLACE	  CottageRoomsBActorPlacements[];
+extern ACTOR_PLACE	  CottageRoomsBActorPlacementsAfterLeaving[];
+extern ACTOR_PLACE	  CottageRoomsBActorPlacementsAfterKalay[];
+extern ACTOR_PLACE	  CottageRoomsBBabiScholarsActorPlacements[];
+extern CUE			  CottageRoomsBStormCues[];
+extern CUE			  CottageRoomsBCues[];
+extern CUE			  CottageRoomsBCuesAfterLeaving[];
+extern CUE			  CottageRoomsBCuesAfterKalay[];
+extern CUE			  CottageRoomsBBabiScholarsCues[];
+extern CUE			  CottageRoomsBBabiScholarsLaterCues[];
 
 static void scCottageRoomsBDoraWakesIsaac(void);
 static void scCottageRoomsBHurryToThePlaza(void);
@@ -176,7 +176,7 @@ typedef enum COTTAGE_ROOMS_B_SCHOLARS_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_SCHOLARS_STUDY_NOTEBOOK = 209
 } COTTAGE_ROOMS_B_SCHOLARS_METATILE_BEHAVIOR;
 
-/* Vale's placed actors, numbered by the rows of CottageRoomsB_ActorPlacements.
+/* Vale's placed actors, numbered by the rows of CottageRoomsBActorPlacements.
 
    The tables after the party leaves and after Kalay keep the rows up to the
    inn's, and differ after them (COTTAGE_ROOMS_B_AFTER_KALAY_ACTOR_ID). */
@@ -188,7 +188,7 @@ typedef enum COTTAGE_ROOMS_B_ACTOR_ID {
 	   second!" */
 	ACTOR_KYLE,
 	/* The candle flame on the table downstairs in Isaac's house
-	   (SPRITE_FLAME_AND_SMOKE, whose frames are a flame and wisps of smoke),
+	   (SPRITE_FLAME_AND_SMOKE, whose ticks are a flame and wisps of smoke),
 	   placed only for scCottageRoomsBHurryToThePlaza. There it flickers, then
 	   flares up and goes out, its smoke rising 18 pixels as it shrinks away. */
 	ACTOR_FLAME_AND_SMOKE,
@@ -221,7 +221,7 @@ typedef enum COTTAGE_ROOMS_B_ACTOR_ID {
 	ACTOR_KRADEN
 } COTTAGE_ROOMS_B_ACTOR_ID;
 
-/* The rows of CottageRoomsB_ActorPlacementsAfterKalay that differ from the
+/* The rows of CottageRoomsBActorPlacementsAfterKalay that differ from the
    first table's. */
 typedef enum COTTAGE_ROOMS_B_AFTER_KALAY_ACTOR_ID {
 	/* A burly grey-haired man at the inn. "Well if it isn't Isaac! You've grown
@@ -237,7 +237,7 @@ typedef enum COTTAGE_ROOMS_B_AFTER_KALAY_ACTOR_ID {
 } COTTAGE_ROOMS_B_AFTER_KALAY_ACTOR_ID;
 
 /* Babi's scholars, numbered by the rows of
-   CottageRoomsB_BabiScholarsActorPlacements and named by what they say before
+   CottageRoomsBBabiScholarsActorPlacements and named by what they say before
    the Colosso finals. */
 typedef enum COTTAGE_ROOMS_B_BABI_SCHOLAR_ACTOR_ID {
 	/* An old scholar with a white beard in a blue cap, who tells of the ruins
@@ -293,7 +293,7 @@ typedef enum COTTAGE_ROOMS_B_BED_ANIMATION {
 /* Returns the entrances, among them the scripts played on arrival. */
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return CottageRoomsB_Entrances;
+	return CottageRoomsBEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -305,26 +305,26 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 const Uint32 *scGetExits(void)
 {
 	if(gmFlagGet(FLAG_VALE_STORM) != 0) {
-		return CottageRoomsB_StormExits;
+		return CottageRoomsBStormExits;
 	}
-	return CottageRoomsB_Exits;
+	return CottageRoomsBExits;
 }
 
 /* Places Babi's scholars, or Vale's villagers as the story has left them. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	ACTOR_PLACE *table;
+	ACTOR_PLACE *tbl;
 
 	if(MainRoutineStateWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE)
-		return CottageRoomsB_BabiScholarsActorPlacements;
+		return CottageRoomsBBabiScholarsActorPlacements;
 	if(gmFlagGet(FLAG_KALAY_REACHED) != 0)
-		table = CottageRoomsB_ActorPlacementsAfterKalay;
+		tbl = CottageRoomsBActorPlacementsAfterKalay;
 	else if(gmFlagGet(FLAG_VALE_PARTY_LEFT) != 0)
-		table = CottageRoomsB_ActorPlacementsAfterLeaving;
+		tbl = CottageRoomsBActorPlacementsAfterLeaving;
 	else
-		table = CottageRoomsB_ActorPlacements;
-	fdAssignViewFlags(table);
-	return table;
+		tbl = CottageRoomsBActorPlacements;
+	fdAssignViewFlags(tbl);
+	return tbl;
 }
 
 /* In Babi's Palace, one of Babi's scholars asks whether the party knows
@@ -350,21 +350,21 @@ const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
 		if(gmFlagGet(FLAG_COLOSSO_OVER) != 0) {
-			return CottageRoomsB_BabiScholarsLaterCues;
+			return CottageRoomsBBabiScholarsLaterCues;
 		}
-		return CottageRoomsB_BabiScholarsCues;
+		return CottageRoomsBBabiScholarsCues;
 	}
 
 	if(gmFlagGet(FLAG_VALE_STORM) != 0) {
-		return CottageRoomsB_StormCues;
+		return CottageRoomsBStormCues;
 	}
 	if(gmFlagGet(FLAG_KALAY_REACHED) != 0) {
-		return CottageRoomsB_CuesAfterKalay;
+		return CottageRoomsBCuesAfterKalay;
 	}
 	if(gmFlagGet(FLAG_VALE_PARTY_LEFT) != 0) {
-		return CottageRoomsB_CuesAfterLeaving;
+		return CottageRoomsBCuesAfterLeaving;
 	}
-	return CottageRoomsB_Cues;
+	return CottageRoomsBCues;
 }
 
 /* The masked man at the inn asks Isaac his business. */
@@ -416,7 +416,7 @@ static void scCottageRoomsBAskWhetherMaskedManWasFelix(void)
 
 /* Takes an exit by a doorway or the stairs, on the stormy night stopping the
    lightning first. */
-static void scCottageRoomsBCloseScreenAndExit(Sint32 exitNumber)
+static void scCottageRoomsBCloseScreenAndExit(Sint32 exitNum)
 {
 	if(gmFlagGet(FLAG_VALE_STORM) != 0) {
 		fdWeatherStopLightning();
@@ -424,13 +424,13 @@ static void scCottageRoomsBCloseScreenAndExit(Sint32 exitNumber)
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
-	syImportScriptSetExitRequest(exitNumber);
+	fdScriptWaitTransitionTicks();
+	syImportScriptSetExitRequest(exitNum);
 }
 
 /* The exits in Vale: stepping on the metatile behavior of the same number in
    any of the Vale tables plays a step sound and takes that exit
-   (CottageRoomsB_Exits, or CottageRoomsB_StormExits on the stormy night). */
+   (CottageRoomsBExits, or CottageRoomsBStormExits on the stormy night). */
 
 /* Walking out of the forge, through the doorway at the south of the room, comes
    out at its door on the west edge of Vale's plaza
@@ -584,7 +584,7 @@ Sint32 scInit(void)
 							fdWeatherLastLightning();
 							sySynch(30);
 							fdScriptStartScreenTransition();
-							fdScriptWaitTransitionFrames();
+							fdScriptWaitTransitionTicks();
 							fdWeatherResumeLightning();
 						} else {
 							fdMapGridCenterOnFollowedPoint();
@@ -603,8 +603,8 @@ Sint32 scInit(void)
    Catch, has him put it on, and leads him downstairs. */
 static void scCottageRoomsBDoraWakesIsaac(void)
 {
-	Sint32				   firstMessage;
-	SPR					  *sprite;
+	Sint32				   firstMsg;
+	SPR					  *spr;
 	MAP_GRID_SCROLL_STATE *grid;
 	ACTOR				  *viewCenter;
 	FIELD_STATE			  *state;
@@ -612,7 +612,7 @@ static void scCottageRoomsBDoraWakesIsaac(void)
 	state = FieldStateWork;
 	grid = MapGridState[0];
 	viewCenter = state->camera;
-	sprite = fdActorGet(ACTOR_TUNIC)->spr;
+	spr = fdActorGet(ACTOR_TUNIC)->spr;
 	fdScriptStart();
 	fdActorSetPos(ACTOR_YOUNG_SMITH, 0, 0);
 	fdActorSetPos(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
@@ -623,7 +623,7 @@ static void scCottageRoomsBDoraWakesIsaac(void)
 	/* Isaac lies asleep in bed; his tunic is set beside him. */
 	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ISAAC_CHILD_ANIMATION_ASLEEP);
-	sprite->rotation = TRIG_TURN / 48;
+	spr->rotation = TRIG_TURN / 48;
 	fdActorGet(ACTOR_TUNIC)->motionFlg = 0;
 	fdActorSetSprFlags(fdActorGet(ACTOR_TUNIC), 0);
 	fdActorSetPos(ACTOR_TUNIC, 576, 650);
@@ -633,12 +633,12 @@ static void scCottageRoomsBDoraWakesIsaac(void)
 	/* On a dark screen, Dora's voice: "Isaac, wake up!" "Please, dear, wake
 	   up!" */
 	fdMessageSetVoiceFromActor(ACTOR_DORA);
-	firstMessage = MsgValeWake;
-	mnFieldMessageShowCentered(firstMessage, 1, 0);
+	firstMsg = MsgValeWake;
+	mnFieldMessageShowCentered(firstMsg, 1, 0);
 	fdScriptWait(40);
 	fdMapGridSetShake(1, 1, 1);
 	fdMessageSetVoiceFromActor(ACTOR_DORA);
-	mnFieldMessageShowCentered(firstMessage + 1, 1, 0);
+	mnFieldMessageShowCentered(firstMsg + 1, 1, 0);
 	fdActorSystemResumeProjectionAndHideLayers();
 	fdScriptWait(40);
 	/* Widen the camera bounds and reveal the lightning outside. */
@@ -659,10 +659,10 @@ static void scCottageRoomsBDoraWakesIsaac(void)
 	fdWeatherLastLightning();
 	sySynch(30);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdWeatherResumeLightning();
 	fdActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
-	fdScriptSetMessageId(firstMessage + 2);
+	fdScriptSetMessageId(firstMsg + 2);
 	/* "The Mt. Aleph Boulder is going to fall!" */
 	syFieldScriptShowMessageThenWait(
 		SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 60);
@@ -725,9 +725,9 @@ static void scCottageRoomsBDoraWakesIsaac(void)
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1.5);
 	fdCameraFollowActor(ACTOR_DORA, 1);
 	fdActorGet(ACTOR_PARTY_LEADER)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetScript(ACTOR_DORA, CottageRoomsB_LeaveHouseScript);
+	fdActorSetScript(ACTOR_DORA, CottageRoomsBLeaveHouseScript);
 	fdScriptWait(20);
-	fdActorSetScript(ACTOR_PARTY_LEADER, CottageRoomsB_LeaveHouseScript);
+	fdActorSetScript(ACTOR_PARTY_LEADER, CottageRoomsBLeaveHouseScript);
 	fdActorWaitForScriptEndById(ACTOR_DORA);
 	fdActorWalkToAndWait(ACTOR_DORA, 419, 661);
 	fdActorWalkToAndWait(ACTOR_DORA, 408, 661);
@@ -745,13 +745,13 @@ static void scCottageRoomsBDoraWakesIsaac(void)
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
 	fdScriptWait(20);
-	fdActorSetScript(ACTOR_DORA, CottageRoomsB_DoraLeavesScript);
-	fdActorSetScript(ACTOR_PARTY_LEADER, CottageRoomsB_IsaacLeavesScript);
+	fdActorSetScript(ACTOR_DORA, CottageRoomsBDoraLeavesScript);
+	fdActorSetScript(ACTOR_PARTY_LEADER, CottageRoomsBIsaacLeavesScript);
 	fdScriptWait(20);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(
 		COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA);
 }
@@ -776,12 +776,12 @@ static inline void scSetBlendAlpha(Uint32 value)
 static void scCottageRoomsBHurryToThePlaza(void)
 {
 	ACTOR			*actor;
-	SPR				*sprite;
+	SPR				*spr;
 	Uint32			 i;
 	volatile Uint16 *alpha;
 
 	actor = fdActorGet(ACTOR_FLAME_AND_SMOKE);
-	sprite = actor->spr;
+	spr = actor->spr;
 	fdScriptStart();
 	/* The villagers stay out of sight; ACTOR_FLAME_AND_SMOKE starts shaking. */
 	fdActorSetPos(ACTOR_YOUNG_SMITH, 0, 0);
@@ -795,8 +795,8 @@ static void scCottageRoomsBHurryToThePlaza(void)
 	fdActorSetSprFlags(fdActorGet(ACTOR_FLAME_AND_SMOKE), 0);
 	actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
 	actor->motionFlg = 0;
-	sprite->image.pri = 1;
-	fdActorSetScript(ACTOR_FLAME_AND_SMOKE, CottageRoomsB_FlameShakesScript);
+	spr->image.pri = 1;
+	fdActorSetScript(ACTOR_FLAME_AND_SMOKE, CottageRoomsBFlameShakesScript);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	/* These nine copies redraw the ground floor's metatiles on map layer 2,
 	   which begins at the map's column 60 (render probe CottageRoomsB): the
@@ -828,8 +828,8 @@ static void scCottageRoomsBHurryToThePlaza(void)
 	fdActorSetSpeed(ACTOR_DORA, 1.5);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1.5);
 	fdActorSetSpeed(ACTOR_KYLE, 1.5);
-	fdActorSetScript(ACTOR_PARTY_LEADER, CottageRoomsB_IsaacRunsAheadScript);
-	fdActorSetScript(ACTOR_DORA, CottageRoomsB_DoraRunsAheadScript);
+	fdActorSetScript(ACTOR_PARTY_LEADER, CottageRoomsBIsaacRunsAheadScript);
+	fdActorSetScript(ACTOR_DORA, CottageRoomsBDoraRunsAheadScript);
 	fdScriptStartScreenTransition();
 	fdActorWaitForScriptEndById(ACTOR_DORA);
 	sySndPlay(SE_DOOR_OPEN);
@@ -857,16 +857,16 @@ static void scCottageRoomsBHurryToThePlaza(void)
 	fdActorSetAnimationAndWait(ACTOR_KYLE, ANIM_NOD);
 	fdActorWalkTo(ACTOR_KYLE, 415, 589);
 	fdScriptWait(10);
-	fdActorSetScript(ACTOR_DORA, CottageRoomsB_DoraRunsBackScript);
-	fdActorSetScript(ACTOR_PARTY_LEADER, CottageRoomsB_IsaacRunsBackScript);
+	fdActorSetScript(ACTOR_DORA, CottageRoomsBDoraRunsBackScript);
+	fdActorSetScript(ACTOR_PARTY_LEADER, CottageRoomsBIsaacRunsBackScript);
 	sySndPlay(SE_RUN_BACK);
 	fdScriptWait(20);
 	/* ACTOR_FLAME_AND_SMOKE flares up, turns to smoke and rises away
-	   (CottageRoomsB_FlameRisesScript) as SE_FLAME_FLARE plays. */
-	fdActorSetScript(ACTOR_FLAME_AND_SMOKE, CottageRoomsB_FlameRisesScript);
+	   (CottageRoomsBFlameRisesScript) as SE_FLAME_FLARE plays. */
+	fdActorSetScript(ACTOR_FLAME_AND_SMOKE, CottageRoomsBFlameRisesScript);
 	alpha = &REG_BLDALPHA;
 
-	/* The flame brightens over four frames, then fades away over sixteen. */
+	/* The flame brightens over four ticks, then fades away over sixteen. */
 	i = 0;
 ramp:
 	*alpha = BLEND_ALPHA(14, 16) + i;
@@ -900,12 +900,12 @@ ramp:
 	fdScriptWait(40);
 	fdCameraSetSpeed(0.8);
 	fdCameraFollowActor(ACTOR_DORA, 1);
-	fdActorSetScript(ACTOR_DORA, CottageRoomsB_RunToPlazaScript);
-	fdActorRunScriptAndWait(ACTOR_PARTY_LEADER, CottageRoomsB_RunToPlazaScript);
+	fdActorSetScript(ACTOR_DORA, CottageRoomsBRunToPlazaScript);
+	fdActorRunScriptAndWait(ACTOR_PARTY_LEADER, CottageRoomsBRunToPlazaScript);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	FieldStateWork->transitionFrm = 32;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA);
 }
 
@@ -997,7 +997,7 @@ static void scCottageRoomsBReadThoughtsAboutDorasIllness(void)
    of her illness (FLAG_READ_THOUGHTS_ABOUT_DORA). */
 static void scCottageRoomsBVisitSickDora(void)
 {
-	Sint32 firstMessage;
+	Sint32 firstMsg;
 
 	fdScriptStart();
 	/* Isaac steps up to the bed. "Cough, cough! Who is it? Is it the
@@ -1058,8 +1058,8 @@ static void scCottageRoomsBVisitSickDora(void)
 	fdScriptShowMessage(ACTOR_DORA, 0);
 	fdActorShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
 	/* Branch on Isaac's replies and whether Mind Read revealed her illness. */
-	firstMessage = MsgValeWhoToldIll;
-	fdScriptSetMessageId(firstMessage);
+	firstMsg = MsgValeWhoToldIll;
+	fdScriptSetMessageId(firstMsg);
 	/* "Who told you I was ill? The mayor? Or cough ...was it the..." */
 	fdScriptOpenMessage(ACTOR_DORA, 0);
 	if(fdScriptAskYesNoWithActorAnimation(0, 0) == 1) {
@@ -1073,7 +1073,7 @@ static void scCottageRoomsBVisitSickDora(void)
 	fdActorShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
 	/* "You can't get out of your promises just because you're worried about
 	   me." "I just caught a cold." "But I'm fine now. Look!" */
-	fdScriptSetMessageId(firstMessage + 3);
+	fdScriptSetMessageId(firstMsg + 3);
 	/* "You can't get out of your promises just because you're..." */
 	fdScriptShowMessage(ACTOR_DORA, 0);
 	fdActorRunRepeatedMotion(ACTOR_DORA, 1);
@@ -1126,13 +1126,13 @@ static void scCottageRoomsBVisitSickDora(void)
    narration says she is dreaming. */
 static void scCottageRoomsBTalkToDora(void)
 {
-	Sint32 message;
+	Sint32 msg;
 
 	fdScriptStart();
 	if(gmFlagGet(FLAG_VALE_DORA_OUT_OF_BED) != 0) {
 		fdActorWatchAndStartScript(ACTOR_DORA,
 			ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-			CottageRoomsB_DoraFacesIsaacScript);
+			CottageRoomsBDoraFacesIsaacScript);
 		fdScriptWait(20);
 		fdScriptSetMessageId(MsgValeDontWorryBest);
 		/* "Don't you worry about me. Just do your best to complete your..." */
@@ -1140,11 +1140,11 @@ static void scCottageRoomsBTalkToDora(void)
 	} else {
 		fdActorRunRepeatedMotion(ACTOR_DORA, 2);
 		fdScriptWait(40);
-		message = MsgValeUnnOhhKyle;
-		fdScriptSetMessageId(message);
+		msg = MsgValeUnnOhhKyle;
+		fdScriptSetMessageId(msg);
 		/* "Unn... Ohh... Kyle... Don't go..." */
 		fdScriptShowMessageThenWait(ACTOR_DORA, 0, 40);
-		mnFieldMessageShow((message + 1), 1);
+		mnFieldMessageShow((msg + 1), 1);
 	}
 	fdScriptEnd();
 }
@@ -1163,7 +1163,7 @@ static void scCottageRoomsBRestoreRoomPatch(void)
 static void scCottageRoomsBShowMythrilBag(void)
 {
 	ACTOR		  *actor;
-	SPR			  *sprite;
+	SPR			  *spr;
 	ICON_TRANSFER *glyph;
 	Uint8		   clear = 0;
 
@@ -1177,14 +1177,14 @@ static void scCottageRoomsBShowMythrilBag(void)
 	actor = syFieldActorCreate(
 		SPRITE_BLANK, toFIXED(328), toFIXED(2), toFIXED(195));
 	actor->motionFlg = clear;
-	sprite = actor->spr;
+	spr = actor->spr;
 	actor->y.fixed = toFIXED(5);
-	sprite->cnt = clear;
-	sprite->image.fullCol = 0;
-	sprite->image.pal = 0;
+	spr->cnt = clear;
+	spr->image.fullCol = 0;
+	spr->image.pal = 0;
 	glyph = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(*glyph));
 	mnIconDrawItem(ITEM_MYTHRIL_BAG);
-	syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
+	syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	fdScriptStartScreenTransition();
@@ -1193,43 +1193,43 @@ static void scCottageRoomsBShowMythrilBag(void)
 	fdActorWalkToAndWait(ACTOR_KRADEN, 420, 164);
 	fdActorWalkToAndWait(ACTOR_KRADEN, 326, 185);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH, 10);
-	fdActorStartScript(actor, CottageRoomsB_MythrilBagRisesScript);
+	fdActorStartScript(actor, CottageRoomsBMythrilBagRisesScript);
 	fdActorWaitForScriptEnd(actor);
-	fdActorStartScript(actor, CottageRoomsB_MythrilBagWobblesScript);
+	fdActorStartScript(actor, CottageRoomsBMythrilBagWobblesScript);
 	fdActorWaitForScriptEnd(actor);
 	fdScriptWait(20);
 	fdActorRelease(actor);
 	fdActorJump(ACTOR_KRADEN, 2, 20);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_EAST, 40);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH);
 }
 
-/* An actor's update function that flashes it white every other two frames and
-   gives off a pair of effects every sixteen frames. */
+/* An actor's update function that flashes it white every other two ticks and
+   gives off a pair of effects every sixteen ticks. */
 UNUSED static void scCottageRoomsBFlashPaletteAndSpawnPair(ACTOR *actor)
 {
-	if((FrameCount & 2) != 0) {
+	if((TickCount & 2) != 0) {
 		fdActorSetColMode(actor, SPRITE_COLOR_WHITE);
 	} else {
 		fdActorSetColMode(actor, SPRITE_COLOR_NORMAL);
 	}
-	if((FrameCount & 15) == 0) {
+	if((TickCount & 15) == 0) {
 		scCottageRoomsBSpawnEffectPair(actor);
 	}
 }
 
 /* An actor's update function that cycles it through its own colours and the
    five swaps of red, green and blue (SPRITE_COLOR_NORMAL to SPRITE_COLOR_BRG),
-   a step every other frame, and gives off a pair of effects every sixteen
-   frames. */
+   a step every other tick, and gives off a pair of effects every sixteen
+   ticks. */
 static void scCottageRoomsBCyclePaletteAndSpawnPair(ACTOR *actor)
 {
-	if((FrameCount & 1) != 0) {
-		fdActorSetColMode(actor, (FrameCount >> 1) % 6);
+	if((TickCount & 1) != 0) {
+		fdActorSetColMode(actor, (TickCount >> 1) % 6);
 	}
-	if((FrameCount & 15) == 0) {
+	if((TickCount & 15) == 0) {
 		scCottageRoomsBSpawnEffectPair(actor);
 	}
 }
@@ -1245,14 +1245,14 @@ static void scCottageRoomsBSpawnEffectPair(ACTOR *parent)
 	ACTOR			   *pair[2];
 	ACTOR			   *child;
 	SPR				   *part;
-	SPR				   *sprite;
+	SPR				   *spr;
 	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
-	Sint32				effectIndex;
+	Sint32				effectIdx;
 
-	for(effectIndex = 0; effectIndex < 2; ++effectIndex) {
+	for(effectIdx = 0; effectIdx < 2; ++effectIdx) {
 		child = syFieldActorCreate(SPRITE_GOLDEN_RINGS, parent->x.fixed,
 			parent->y.fixed, parent->z.fixed);
-		pair[effectIndex] = child;
+		pair[effectIdx] = child;
 		if(child != NULL) {
 			child->groundHeight = parent->groundHeight;
 			part = child->spr;
@@ -1260,16 +1260,16 @@ static void scCottageRoomsBSpawnEffectPair(ACTOR *parent)
 			child->tmr = 0;
 			child->watchedActor = (ACTOR_OR_EFFECT *)parent;
 			if(part != NULL) {
-				sprite = part;
+				spr = part;
 				fdSprStartAnimation(part, 0);
-				sprite->flg = 0;
-				syVRAMCacheFreeEntry(sprite->slot);
-				sprite->slot = effectState->tileSlot;
-				sprite->retainCacheEntry = 1;
-				sprite->image.tile =
-					(VramCacheEntries[sprite->slot].ofs >> 5) & OBJ_TILE_MASK;
-				sprite->image.fullCol = 0;
-				sprite->image.shape = RING_HALF_SHAPE;
+				spr->flg = 0;
+				syVRAMCacheFreeEntry(spr->slot);
+				spr->slot = effectState->tileSlot;
+				spr->retainCacheEntry = 1;
+				spr->image.tile =
+					(VramCacheEntries[spr->slot].ofs >> 5) & OBJ_TILE_MASK;
+				spr->image.fullCol = 0;
+				spr->image.shape = RING_HALF_SHAPE;
 				part->image.size = RING_HALF_SIZE;
 				part->entries[0]->picture = 0;
 			}
@@ -1277,16 +1277,16 @@ static void scCottageRoomsBSpawnEffectPair(ACTOR *parent)
 	}
 	{
 		ACTOR *effectActor = pair[0];
-		SPR	  *effectSprite = effectActor->spr;
+		SPR	  *effectSpr = effectActor->spr;
 
 		effectActor->update = scFieldEffectRiseRingFrontHalf;
-		effectSprite->image.pri = 2;
+		effectSpr->image.pri = 2;
 	}
 	{
 		ACTOR *effectActor = pair[1];
-		SPR	  *effectSprite = effectActor->spr;
+		SPR	  *effectSpr = effectActor->spr;
 
-		effectSprite->image.pri = 2;
+		effectSpr->image.pri = 2;
 		effectActor->update = scFieldEffectRiseRingBackHalf;
 		effectActor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
 	}
@@ -1303,7 +1303,7 @@ UNUSED static void scCottageRoomsBCyclePaletteWithParticles(void)
 /* Cycles the tunic's palette, with no effects. */
 UNUSED static void scCottageRoomsBCyclePaletteWithoutParticles(void)
 {
-	scCycleColModesOnOddFrames(fdActorGet(ACTOR_TUNIC));
+	scCycleColModesOnOddTicks(fdActorGet(ACTOR_TUNIC));
 }
 
 /* Dora casts Catch on Isaac's tunic beside his bed. */
@@ -1317,7 +1317,7 @@ static void scCottageRoomsBDemonstrateCatch(void)
 	fdPsynergyEnd();
 }
 
-Sint32 CottageRoomsB_LeaveHouseScript[] = {
+Sint32 CottageRoomsBLeaveHouseScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(522, 0, 748),
 	SC_SYNC,
@@ -1329,7 +1329,7 @@ Sint32 CottageRoomsB_LeaveHouseScript[] = {
 	SC_END,
 };
 
-Sint32 CottageRoomsB_DoraLeavesScript[] = {
+Sint32 CottageRoomsBDoraLeavesScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(387, 0, 661),
 	SC_SYNC,
@@ -1337,7 +1337,7 @@ Sint32 CottageRoomsB_DoraLeavesScript[] = {
 	SC_END,
 };
 
-Sint32 CottageRoomsB_IsaacLeavesScript[] = {
+Sint32 CottageRoomsBIsaacLeavesScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(408, 0, 661),
 	SC_SYNC,
@@ -1347,7 +1347,7 @@ Sint32 CottageRoomsB_IsaacLeavesScript[] = {
 	SC_END,
 };
 
-Sint32 CottageRoomsB_DoraRunsAheadScript[] = {
+Sint32 CottageRoomsBDoraRunsAheadScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(468, 0, 390),
 	SC_SYNC,
@@ -1357,7 +1357,7 @@ Sint32 CottageRoomsB_DoraRunsAheadScript[] = {
 	SC_END,
 };
 
-Sint32 CottageRoomsB_IsaacRunsAheadScript[] = {
+Sint32 CottageRoomsBIsaacRunsAheadScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(431, 0, 391),
 	SC_SYNC,
@@ -1369,7 +1369,7 @@ Sint32 CottageRoomsB_IsaacRunsAheadScript[] = {
 	SC_END,
 };
 
-Sint32 CottageRoomsB_DoraRunsBackScript[] = {
+Sint32 CottageRoomsBDoraRunsBackScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(525, 0, 414),
 	SC_SYNC,
@@ -1381,7 +1381,7 @@ Sint32 CottageRoomsB_DoraRunsBackScript[] = {
 	SC_END,
 };
 
-Sint32 CottageRoomsB_IsaacRunsBackScript[] = {
+Sint32 CottageRoomsBIsaacRunsBackScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(525, 0, 414),
 	SC_SYNC,
@@ -1393,7 +1393,7 @@ Sint32 CottageRoomsB_IsaacRunsBackScript[] = {
 	SC_END,
 };
 
-Sint32 CottageRoomsB_RunToPlazaScript[] = {
+Sint32 CottageRoomsBRunToPlazaScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(428, 0, 460),
 	SC_SYNC,
@@ -1404,7 +1404,7 @@ Sint32 CottageRoomsB_RunToPlazaScript[] = {
 	SC_END,
 };
 
-Sint32 CottageRoomsB_FlameShakesScript[] = {
+Sint32 CottageRoomsBFlameShakesScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(9) / 10),
 	SC_SET(SW_SCALE_Y, toFIXED(1)),
 	SC_WAIT(4),
@@ -1414,7 +1414,7 @@ Sint32 CottageRoomsB_FlameShakesScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-Sint32 CottageRoomsB_FlameRisesScript[] = {
+Sint32 CottageRoomsBFlameRisesScript[] = {
 	SC_ANIMATION(2),
 	SC_SET(SW_SCALE_X, toFIXED(1)),
 	SC_SET(SW_SCALE_Y, toFIXED(6) / 5),
@@ -1447,7 +1447,7 @@ Sint32 CottageRoomsB_FlameRisesScript[] = {
 	SC_END,
 };
 
-Sint32 CottageRoomsB_DoraFacesIsaacScript[] = {
+Sint32 CottageRoomsBDoraFacesIsaacScript[] = {
 	SC_CALL(scTurnTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 	SC_MOVE(567, 0, 690),
@@ -1457,13 +1457,13 @@ Sint32 CottageRoomsB_DoraFacesIsaacScript[] = {
 	SC_END,
 };
 
-Sint32 CottageRoomsB_MythrilBagRisesScript[] = {
+Sint32 CottageRoomsBMythrilBagRisesScript[] = {
 	SC_ADD(SW_Y, toFIXED(1) / 2),
 	SC_WAIT(1),
 	SC_LOOP(16, SC_TOP),
 };
 
-Sint32 CottageRoomsB_MythrilBagWobblesScript[] = {
+Sint32 CottageRoomsBMythrilBagWobblesScript[] = {
 	SC_ADD(SW_SCALE_X, -toFIXED(1) / 4),
 	SC_ADD(SW_SCALE_Y, toFIXED(1) / 8),
 	SC_WAIT(2),
@@ -1491,7 +1491,7 @@ Sint32 CottageRoomsB_MythrilBagWobblesScript[] = {
 	SC_END,
 };
 
-SCENE_ENTRANCE CottageRoomsB_Entrances[] = {
+SCENE_ENTRANCE CottageRoomsBEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST, CONDITION_ALWAYS, 160, 0, 228,
@@ -1531,7 +1531,7 @@ SCENE_ENTRANCE CottageRoomsB_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 CottageRoomsB_Exits[] = {
+Uint32 CottageRoomsBExits[] = {
 	SCENE_EXITS(CottageRoomsB),
 	SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST, ValePlaza,
 		VALE_PLAZA_FROM_COTTAGE_ROOMS_B_WEST),
@@ -1565,7 +1565,7 @@ Uint32 CottageRoomsB_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-Uint32 CottageRoomsB_StormExits[] = {
+Uint32 CottageRoomsBStormExits[] = {
 	SCENE_EXITS(CottageRoomsB),
 	SCENE_EXIT(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST, ValePlaza,
 		VALE_PLAZA_FROM_COTTAGE_ROOMS_B_WEST),
@@ -1597,7 +1597,7 @@ Uint32 CottageRoomsB_StormExits[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE CottageRoomsB_ActorPlacements[] = {
+ACTOR_PLACE CottageRoomsBActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_KYLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1623,7 +1623,7 @@ ACTOR_PLACE CottageRoomsB_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE CottageRoomsB_ActorPlacementsAfterLeaving[] = {
+ACTOR_PLACE CottageRoomsBActorPlacementsAfterLeaving[] = {
 	ACTOR_PLACEMENT(SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_KYLE, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
@@ -1643,7 +1643,7 @@ ACTOR_PLACE CottageRoomsB_ActorPlacementsAfterLeaving[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE CottageRoomsB_ActorPlacementsAfterKalay[] = {
+ACTOR_PLACE CottageRoomsBActorPlacementsAfterKalay[] = {
 	ACTOR_PLACEMENT(SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		586, 0, 406, FACING_EAST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_KYLE, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
@@ -1667,7 +1667,7 @@ ACTOR_PLACE CottageRoomsB_ActorPlacementsAfterKalay[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE CottageRoomsB_BabiScholarsActorPlacements[] = {
+ACTOR_PLACE CottageRoomsBBabiScholarsActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		792, 0, 336, FACING_NORTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_MAN_WITH_GLASSES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1681,7 +1681,7 @@ ACTOR_PLACE CottageRoomsB_BabiScholarsActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE CottageRoomsB_StormCues[] = {
+CUE CottageRoomsBStormCues[] = {
 	{ CUE_STEP, COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST, CONDITION_ALWAYS, SCRIPT_REF(scCottageRoomsBExitToValePlazaNorthwest) },
 	{ CUE_STEP, COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH, CONDITION_ALWAYS, SCRIPT_REF(scCottageRoomsBExitToValeKradensCottageNorth) },
 	{ CUE_STEP, COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST, CONDITION_ALWAYS, SCRIPT_REF(scCottageRoomsBExitToValePlazaNortheast) },
@@ -1706,7 +1706,7 @@ CUE CottageRoomsB_StormCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE CottageRoomsB_Cues[] = {
+CUE CottageRoomsBCues[] = {
 	{ CUE_TALK, ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeMyFatherAlsoDiedInThat) },
 	{ CUE_TALK, ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeMySonIsStillYoungSo) },
 	{ CUE_TALK, ACTOR_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeOneOfTheMenFromThat) },
@@ -1737,7 +1737,7 @@ CUE CottageRoomsB_Cues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE CottageRoomsB_CuesAfterLeaving[] = {
+CUE CottageRoomsBCuesAfterLeaving[] = {
 	{ CUE_TALK, ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeComeBackAsAStrongWarrior) },
 	{ CUE_TALK, ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIWantedJennaToBeMy) },
 	{ CUE_TALK, ACTOR_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, SCRIPT_REF(scCottageRoomsBAskWhetherMaskedManWasFelix) },
@@ -1772,7 +1772,7 @@ CUE CottageRoomsB_CuesAfterLeaving[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE CottageRoomsB_CuesAfterKalay[] = {
+CUE CottageRoomsBCuesAfterKalay[] = {
 	{ CUE_TALK, ACTOR_YOUNG_SMITH, CONDITION_ALWAYS, MSGNO(MsgValeOwItsGonnaBeYearsBefore) },
 	{ CUE_TALK, ACTOR_YOUNG_SMITHS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeWelcomeHomeIsaacOhWhatHappened) },
 	{ CUE_TALK, ACTOR_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeYouTraveledAroundTheEasternEdge) },
@@ -1822,7 +1822,7 @@ CUE CottageRoomsB_CuesAfterKalay[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE CottageRoomsB_BabiScholarsCues[] = {
+CUE CottageRoomsBBabiScholarsCues[] = {
 	{ CUE_TALK, ACTOR_SCHOLAR_ANCIENT_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiOriginallyThereWereAncientRuinsAt) },
 	{ CUE_TALK, ACTOR_SCHOLAR_EXPERIMENT, CONDITION_ALWAYS, MSGNO(MsgBabiNoMatterHowManyTimesI) },
 	{ CUE_TALK, ACTOR_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiItIsSaidThatLongAgo) },
@@ -1841,7 +1841,7 @@ CUE CottageRoomsB_BabiScholarsCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE CottageRoomsB_BabiScholarsLaterCues[] = {
+CUE CottageRoomsBBabiScholarsLaterCues[] = {
 	{ CUE_TALK, ACTOR_SCHOLAR_ANCIENT_RUINS, CONDITION_ALWAYS, MSGNO(MsgBabiOnceBabiLighthouseIsCompleteId) },
 	{ CUE_TALK, ACTOR_SCHOLAR_EXPERIMENT, CONDITION_ALWAYS, SCRIPT_REF(scCottageRoomsBScholarAsksAboutKraden) },
 	{ CUE_TALK, ACTOR_SCHOLAR_SEALED_ALCHEMY, CONDITION_ALWAYS, MSGNO(MsgBabiAlchemyTeachesThatTheFourElements) },

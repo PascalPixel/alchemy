@@ -7,26 +7,26 @@
 @ reconstruction choice: the pictures carry the window palette
 @ (Window_Palette), white on window blue.
 	.section .rodata
-	.global Ui_Headings
-Ui_Headings:
-	.4byte .LUi_Heading00 - Ui_Headings
-	.4byte .LUi_Heading01 - Ui_Headings
-	.4byte .LUi_Heading02 - Ui_Headings
-	.4byte .LUi_Heading03 - Ui_Headings
-	.4byte .LUi_Heading04 - Ui_Headings
-	.4byte .LUi_Heading05 - Ui_Headings
-	.4byte .LUi_Heading06 - Ui_Headings
-	.4byte .LUi_Heading07 - Ui_Headings
-	.4byte .LUi_Heading08 - Ui_Headings
-	.4byte .LUi_Heading09 - Ui_Headings
-	.4byte .LUi_Heading10 - Ui_Headings
-	.4byte .LUi_Heading11 - Ui_Headings
-	.4byte .LUi_Heading12 - Ui_Headings
-	.4byte .LUi_Heading13 - Ui_Headings
-	.4byte .LUi_Heading14 - Ui_Headings
-	.4byte .LUi_Heading15 - Ui_Headings
-	.4byte .LUi_Heading16 - Ui_Headings
-	.4byte .LUi_Heading17 - Ui_Headings
+	.global UiHeadings
+UiHeadings:
+	.4byte .LUi_Heading00 - UiHeadings
+	.4byte .LUi_Heading01 - UiHeadings
+	.4byte .LUi_Heading02 - UiHeadings
+	.4byte .LUi_Heading03 - UiHeadings
+	.4byte .LUi_Heading04 - UiHeadings
+	.4byte .LUi_Heading05 - UiHeadings
+	.4byte .LUi_Heading06 - UiHeadings
+	.4byte .LUi_Heading07 - UiHeadings
+	.4byte .LUi_Heading08 - UiHeadings
+	.4byte .LUi_Heading09 - UiHeadings
+	.4byte .LUi_Heading10 - UiHeadings
+	.4byte .LUi_Heading11 - UiHeadings
+	.4byte .LUi_Heading12 - UiHeadings
+	.4byte .LUi_Heading13 - UiHeadings
+	.4byte .LUi_Heading14 - UiHeadings
+	.4byte .LUi_Heading15 - UiHeadings
+	.4byte .LUi_Heading16 - UiHeadings
+	.4byte .LUi_Heading17 - UiHeadings
 .LUi_Heading00:
 	.incbin "games/tla/src/graphics/ui/headings/heading_00.4bpp.plz"
 	.balign 4, 0

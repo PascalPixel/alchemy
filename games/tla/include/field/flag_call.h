@@ -11,29 +11,29 @@
 #include "system.h"
 
 /* Whether a game flag is clear or set, and setting or clearing it. */
-static inline Sint32 syFlagIsClear(Sint32 flag)
+static inline Sint32 syFlagIsClear(Sint32 flg)
 {
-	return !syGameFlagGet(flag);
+	return !syGameFlagGet(flg);
 }
 
-static inline Sint32 syFlagIsSet(Sint32 flag)
+static inline Sint32 syFlagIsSet(Sint32 flg)
 {
-	return syGameFlagGet(flag);
+	return syGameFlagGet(flg);
 }
 
 /* Sets a game flag. The scenes and the field call it for no result, though the
    function returns the flag's old state: the ROM's callers are compiled against
    this form. */
-void syGameFlagSet(Sint32 flag);
+void syGameFlagSet(Sint32 flg);
 
-static inline void syFlagSet(Sint32 flag)
+static inline void syFlagSet(Sint32 flg)
 {
-	syGameFlagSet(flag);
+	syGameFlagSet(flg);
 }
 
-static inline void syFlagClear(Sint32 flag)
+static inline void syFlagClear(Sint32 flg)
 {
-	syGameFlagClear(flag);
+	syGameFlagClear(flg);
 }
 
 #endif

@@ -69,7 +69,7 @@
 
    Each balance platform's timer is its weight. Both start at 3. A carved stone
    set on one adds one to it and takes one from the other.
-   Balance_PlatformHeights turns each weight into the platform's height.
+   BalancePlatformHeights turns each weight into the platform's height.
 
    Coming into the balance's room from the north, out of the first scene, sets
    the balance up empty. Coming back up from the south
@@ -111,10 +111,10 @@
    pillar's hidden target, 32 pixels below the pillar. */
 #define FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN FLAG_SCENE_TEMP_04
 
-extern Uint32			 Balance_PlatformHeights[];
-extern Sint32			 TunnelRuins_DouseSplashScript[];
-extern Uint16			 TunnelRuins_DoorOpenSteps[];
-extern Uint16			 TunnelRuins_DoorCloseSteps[];
+extern Uint32			 BalancePlatformHeights[];
+extern Sint32			 TunnelRuinsDouseSplashScript[];
+extern Uint16			 TunnelRuinsDoorOpenSteps[];
+extern Uint16			 TunnelRuinsDoorCloseSteps[];
 extern SCENE_ENTRANCE	 TunnelRuinsEntrancesOther[];
 extern SCENE_ENTRANCE	 TunnelRuinsGreatStatueEntrances[];
 extern SCENE_ENTRANCE	 TunnelRuinsLadyStatuesEntrances[];
@@ -273,7 +273,7 @@ static void			 scTunnelRuinsUpdateGreyPillarMetatiles(void);
 #include "shared/field_effect_spawn.c"
 
 /* Takes the shadow off the small Venus Lighthouse on the floor before the giant
-   statue, once TunnelRuins_SmallLighthouseScript has made it small. */
+   statue, once TunnelRuinsSmallLighthouseScript has made it small. */
 static Sint32 scTunnelRuinsHideLighthouseShadow(ACTOR *actor)
 {
 	fdActorSetSprFlags(actor, 0);
@@ -294,10 +294,10 @@ static inline Sint32 scTunnelRuinsGetLandingPixel(FIXED coordinate)
 /* Isaac crouches, leaps over the metatile ahead with the jump sound and lands
    on the target, when that metatile is no wall and the target is clear: across
    a gap or over a pillar. Returns 1 when there is no hop. */
-static Bool scTunnelRuinsHopLeaderTo(FIELD_POS *target)
+static Bool scTunnelRuinsHopLeaderTo(FIELD_POS *tgt)
 {
 	ACTOR	 *actor = fdActorGet(ACTOR_PARTY_LEADER);
-	Uint8	  savedMotionFlags = actor->motionFlg;
+	Uint8	  savedMotionFlg = actor->motionFlg;
 	FIELD_POS adjacentTile;
 
 	adjacentTile.x = (actor->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
@@ -308,7 +308,7 @@ static Bool scTunnelRuinsHopLeaderTo(FIELD_POS *target)
 		16, FACING_NEAREST_CARDINAL(actor->facing), &adjacentTile);
 
 	if(syFieldActorCheckMovementCollision(actor, &adjacentTile) != 1 &&
-		syFieldActorCheckMovementCollision(actor, target) == 0) {
+		syFieldActorCheckMovementCollision(actor, tgt) == 0) {
 		fdScriptStart();
 		fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
 		sySynch(6);
@@ -322,13 +322,13 @@ static Bool scTunnelRuinsHopLeaderTo(FIELD_POS *target)
 
 		fdActorSetSprFlags(actor, 0);
 		fdActorMoveToAndWait(ACTOR_PARTY_LEADER,
-			scTunnelRuinsGetLandingPixel(target->x),
-			scTunnelRuinsGetLandingPixel(target->z));
+			scTunnelRuinsGetLandingPixel(tgt->x),
+			scTunnelRuinsGetLandingPixel(tgt->z));
 		fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
 		fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW);
 		sySynch(6);
 
-		actor->motionFlg = savedMotionFlags;
+		actor->motionFlg = savedMotionFlg;
 		fdScriptEnd();
 		return FALSE;
 	}
@@ -343,13 +343,13 @@ static Bool scTunnelRuinsHopLeaderTo(FIELD_POS *target)
    basement (metatiles (44, 19) and (47, 19)). */
 static void scTunnelRuinsHopSouth(void)
 {
-	FIELD_POS target;
+	FIELD_POS tgt;
 	ACTOR	 *leader = fdActorGet(ACTOR_PARTY_LEADER);
 
-	target.x = leader->x.fixed;
-	target.y = leader->y.fixed;
-	target.z = leader->z.fixed + toFIXED(32);
-	scTunnelRuinsHopLeaderTo(&target);
+	tgt.x = leader->x.fixed;
+	tgt.y = leader->y.fixed;
+	tgt.z = leader->z.fixed + toFIXED(32);
+	scTunnelRuinsHopLeaderTo(&tgt);
 }
 
 /* Walking north against a one-metatile gap or a pillar makes Isaac leap over it
@@ -358,13 +358,13 @@ static void scTunnelRuinsHopSouth(void)
    basement (metatiles (44, 19) and (47, 19)). */
 static void scTunnelRuinsHopNorth(void)
 {
-	FIELD_POS target;
+	FIELD_POS tgt;
 	ACTOR	 *actor = fdActorGet(ACTOR_PARTY_LEADER);
 
-	target.x = actor->x.fixed;
-	target.y = actor->y.fixed;
-	target.z = actor->z.fixed - toFIXED(32);
-	scTunnelRuinsHopLeaderTo(&target);
+	tgt.x = actor->x.fixed;
+	tgt.y = actor->y.fixed;
+	tgt.z = actor->z.fixed - toFIXED(32);
+	scTunnelRuinsHopLeaderTo(&tgt);
 }
 
 /* The ground mask (fdEffectStartGroundMask) follows the leader only south of a
@@ -406,19 +406,19 @@ static void scTunnelRuinsUpdateGroundMaskLeader(void)
 
 #include "shared/actor_depth.c"
 
-/* While Douse rains on a pillar: its two frames alternate, and every fourth
-   frame a small splash appears on its top. */
+/* While Douse rains on a pillar: its two ticks alternate, and every fourth
+   tick a small splash appears on its top. */
 static UNREAD_RESULT scTunnelRuinsSplashDousedPillar(ACTOR *actor)
 {
 	EFFECT_OPTIONS options;
 	FIXED		   x;
 	FIXED		   z;
 
-	if(FrameCount & 2)
+	if(TickCount & 2)
 		fdActorSelectAnimation(actor, 1);
 	else
 		fdActorSelectAnimation(actor, 2);
-	if(FrameCount & 3)
+	if(TickCount & 3)
 		RETURN_UNREAD(0);
 	options.startScaleX = toFIXED(3) / 10;
 	options.startScaleY = toFIXED(3) / 10;
@@ -435,38 +435,38 @@ static UNREAD_RESULT scTunnelRuinsSplashDousedPillar(ACTOR *actor)
    it while the pillar stands in map row 10 and Isaac is no more than 48 pixels
    down. Anywhere else the target waits at the map's corner, out of Frost's
    reach. */
-static UNREAD_RESULT scTunnelRuinsFrostTargetFollowsPillar(ACTOR *frostTarget)
+static UNREAD_RESULT scTunnelRuinsFrostTargetFollowsPillar(ACTOR *frostTgt)
 {
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
 
 	if(leader->y.fixed > -toFIXED(48) &&
 		(FIELD_METATILE(fdActorGet(ACTOR_DOUSE_PILLAR)->z.fixed)) == 10) {
-		frostTarget->x.fixed = fdActorGet(ACTOR_DOUSE_PILLAR)->x.fixed;
-		frostTarget->y.fixed = -toFIXED(32);
-		frostTarget->z.fixed = fdActorGet(ACTOR_DOUSE_PILLAR)->z.fixed;
+		frostTgt->x.fixed = fdActorGet(ACTOR_DOUSE_PILLAR)->x.fixed;
+		frostTgt->y.fixed = -toFIXED(32);
+		frostTgt->z.fixed = fdActorGet(ACTOR_DOUSE_PILLAR)->z.fixed;
 	} else {
-		frostTarget->x.fixed = 0;
-		frostTarget->y.fixed = 0;
-		frostTarget->z.fixed = 0;
+		frostTgt->x.fixed = 0;
+		frostTgt->y.fixed = 0;
+		frostTgt->z.fixed = 0;
 	}
 	RETURN_UNREAD(0);
 }
 
-/* Waits up to 60 frames for landing, then stops vertical motion at the
+/* Waits up to 60 ticks for landing, then stops vertical motion at the
    ground. */
 static void scTunnelRuinsWaitForActorToLand(ACTOR *actor)
 {
-	Sint32 remainingFrames = 60;
+	Sint32 remainingTicks = 60;
 	FIXED  groundHeight;
 
 	for(;;) {
-		if(remainingFrames != 0) {
+		if(remainingTicks != 0) {
 			FIXED height;
 
 			sySynch(1);
 			height = actor->y.fixed;
 			groundHeight = actor->groundHeight;
-			remainingFrames--;
+			remainingTicks--;
 			if(height <= groundHeight) {
 				break;
 			}
@@ -487,7 +487,7 @@ static void scTunnelRuinsWaitForActorToLand(ACTOR *actor)
    (metatile (28, 11)), makes Isaac hop down it with a thud and a puff of dust.
 
    He leaps 12 pixels forward, then sinks 16 pixels to the floor below over 8
-   frames while the dust flies out behind him. */
+   ticks while the dust flies out behind him. */
 static void scTunnelRuinsHopDownStep(void)
 {
 	ACTOR		  *leader = fdActorGet(ACTOR_PARTY_LEADER);
@@ -514,14 +514,14 @@ static void scTunnelRuinsHopDownStep(void)
 		sySynch(1);
 		if(i & 1) {
 			Sint32 horizontalRoll = (Uint32)syRandomNext() % 10 - 5;
-			Sint32 velocityX = horizontalRoll * (2 * (toFIXED(1) / 10));
-			FIXED  velocityZ;
+			Sint32 velX = horizontalRoll * (2 * (toFIXED(1) / 10));
+			FIXED  velZ;
 
-			velocityZ = (Uint32)syRandomNext() % 10 * -(toFIXED(1) / 10) -
+			velZ = (Uint32)syRandomNext() % 10 * -(toFIXED(1) / 10) -
 				5 * (toFIXED(1) / 10);
 			fdEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-				velocityX, 0, velocityZ,
-				EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
+				velX, 0, velZ, EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM,
+				&options);
 		}
 	}
 	fdActorSetSprFlags(leader, SPRITE_FLAG_SHADOW);
@@ -575,15 +575,15 @@ const Uint32 *scGetExits(void)
    above), each prepared to appear only when it lies in the view. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	ACTOR_PLACE *table;
+	ACTOR_PLACE *tbl;
 
 	if(MainRoutineStateWork.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
-		table = TunnelRuinsGreatStatueActorPlacements;
+		tbl = TunnelRuinsGreatStatueActorPlacements;
 	} else {
-		table = TunnelRuinsActorPlacementsOther;
+		tbl = TunnelRuinsActorPlacementsOther;
 	}
-	fdAssignViewFlags(table);
-	return table;
+	fdAssignViewFlags(tbl);
+	return tbl;
 }
 
 /* Walking into one of the two gold-topped pillars in the room south of the
@@ -609,13 +609,13 @@ static void scTunnelRuinsPushFirstPillars(void)
    the pit, or over a pillar on its walkway. */
 static void scTunnelRuinsHopWest(void)
 {
-	FIELD_POS target;
+	FIELD_POS tgt;
 	ACTOR	 *actor = fdActorGet(ACTOR_PARTY_LEADER);
 
-	target.x = actor->x.fixed - toFIXED(32);
-	target.y = actor->y.fixed;
-	target.z = actor->z.fixed;
-	scTunnelRuinsHopLeaderTo(&target);
+	tgt.x = actor->x.fixed - toFIXED(32);
+	tgt.y = actor->y.fixed;
+	tgt.z = actor->z.fixed;
+	scTunnelRuinsHopLeaderTo(&tgt);
 }
 
 /* Walking into one of the second pair of gold-topped pillars, on the route past
@@ -650,13 +650,13 @@ static void scTunnelRuinsJumpDownLedge(void)
    onto the stepping stone the north-west pillar raised from the pit. */
 static void scTunnelRuinsHopEast(void)
 {
-	FIELD_POS target;
+	FIELD_POS tgt;
 	ACTOR	 *actor = fdActorGet(ACTOR_PARTY_LEADER);
 
-	target.x = actor->x.fixed + toFIXED(32);
-	target.y = actor->y.fixed;
-	target.z = actor->z.fixed;
-	scTunnelRuinsHopLeaderTo(&target);
+	tgt.x = actor->x.fixed + toFIXED(32);
+	tgt.y = actor->y.fixed;
+	tgt.z = actor->z.fixed;
+	scTunnelRuinsHopLeaderTo(&tgt);
 }
 
 /* Walking into one of the three small white-topped pillars on the floor below
@@ -676,12 +676,12 @@ static void scTunnelRuinsPushSmallPillars(void)
 static void scTunnelRuinsHopSouthOrPushSmallPillars(void)
 {
 	ACTOR	 *actor = fdActorGet(ACTOR_PARTY_LEADER);
-	FIELD_POS target;
+	FIELD_POS tgt;
 
-	target.x = actor->x.fixed;
-	target.y = actor->y.fixed;
-	target.z = actor->z.fixed + toFIXED(32);
-	if(scTunnelRuinsHopLeaderTo(&target) != 0) {
+	tgt.x = actor->x.fixed;
+	tgt.y = actor->y.fixed;
+	tgt.z = actor->z.fixed + toFIXED(32);
+	if(scTunnelRuinsHopLeaderTo(&tgt) != 0) {
 		scTunnelRuinsPushSmallPillars();
 	}
 }
@@ -758,10 +758,10 @@ static void scTunnelRuinsHopNorthBySmallPillars(void)
 /* The stepping stone in the pit rises one stage with a thump, and the screen
    shakes up and down, dying away. */
 static inline void scTunnelRuinsRaiseSteppingStone(
-	Sint32 sourceColumn, Sint32 column, Sint32 row)
+	Sint32 srcColumn, Sint32 column, Sint32 row)
 {
 	sySndPlay(SE_THUMP);
-	fdMapGridCopyMetatilesTo(sourceColumn, 8, column, row, 1, 3);
+	fdMapGridCopyMetatilesTo(srcColumn, 8, column, row, 1, 3);
 	fdMapGridSetShake(0, 5, 1);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 }
@@ -779,7 +779,7 @@ static inline void scTunnelRuinsRaiseSteppingStone(
    a stepping stone bearing the same crest rises out of the pit east of the
    walkway (metatile (49, 8)), and Isaac can hop across to it.
 
-   The pillar sinks a pixel every three frames, 16 in all. Its top is left flush
+   The pillar sinks a pixel every three ticks, 16 in all. Its top is left flush
    with the floor, a square of water where Frost's hidden target now lies. */
 static void scTunnelRuinsSinkNorthwestPillar(void)
 {
@@ -794,7 +794,7 @@ static void scTunnelRuinsSinkNorthwestPillar(void)
 		NORTHWEST_PILLAR_CREST_COLUMN) {
 		fdScriptWait(30);
 		overlay = fdActorPrepare(744, 0, 184, SPRITE_CAPPED_PILLAR);
-		/* The pillar sinks a pixel every three frames, raising dust around
+		/* The pillar sinks a pixel every three ticks, raising dust around
 		   it. */
 		options.startScaleX = toFIXED(3) / 5;
 		options.startScaleY = toFIXED(3) / 5;
@@ -923,7 +923,7 @@ static void scTunnelRuinsPushSoutheastSinkingPillar(void)
 static void scTunnelRuinsDouseStartsOnSoutheastPillar(void)
 {
 	fdActorSetScript(
-		ACTOR_SOUTHEAST_SINKING_PILLAR, TunnelRuins_DouseSplashScript);
+		ACTOR_SOUTHEAST_SINKING_PILLAR, TunnelRuinsDouseSplashScript);
 }
 
 /* Douse fills the grey pillar on the south walkway with water, and it sinks at
@@ -995,7 +995,7 @@ static void scTunnelRuinsPushDousePillar(void)
    (scTunnelRuinsFrostTargetFollowsPillar). */
 static void scTunnelRuinsDouseStartsOnPillar(void)
 {
-	fdActorSetScript(ACTOR_DOUSE_PILLAR, TunnelRuins_DouseSplashScript);
+	fdActorSetScript(ACTOR_DOUSE_PILLAR, TunnelRuinsDouseSplashScript);
 	gmFlagSet(FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED);
 	fdActorGet(ACTOR_DOUSE_PILLAR_FROST_TARGET)->update =
 		(void (*)(ACTOR *))scTunnelRuinsFrostTargetFollowsPillar;
@@ -1051,35 +1051,35 @@ static UNREAD_RESULT scTunnelRuinsRideStoneBelow(ACTOR *supportedActor)
 }
 
 /* The balance platforms move to the heights their weights give them (their
-   timers index Balance_PlatformHeights), with sounds unless frames is 0.
+   timers index BalancePlatformHeights), with sounds unless ticks is 0.
 
    A platform, or the top stone on one, that comes to rest just below the
    floor's height becomes a square Isaac can step onto and leap from, east or
    west (METATILE_BEHAVIOR_TUNNEL_RUINS_RISEN_PLATFORM). */
-static void scTunnelRuinsSettleBalance(Sint32 frames)
+static void scTunnelRuinsSettleBalance(Sint32 ticks)
 {
 	Uint32 i;
 
 	fdActorSetSpeed(ACTOR_BALANCE_WEST, 0.5);
 	fdActorSetSpeed(ACTOR_BALANCE_EAST, 0.5);
-	if(frames != 0) {
+	if(ticks != 0) {
 		sySndPlay(SE_SETTLE);
 	}
 	syFieldActorSetMoveTargetFX(fdActorGet(ACTOR_BALANCE_WEST),
 		fdActorGet(ACTOR_BALANCE_WEST)->x.fixed,
-		Balance_PlatformHeights[fdActorGet(ACTOR_BALANCE_WEST)->tmr],
+		BalancePlatformHeights[fdActorGet(ACTOR_BALANCE_WEST)->tmr],
 		fdActorGet(ACTOR_BALANCE_WEST)->z.fixed);
 	syFieldActorSetMoveTargetFX(fdActorGet(ACTOR_BALANCE_EAST),
 		fdActorGet(ACTOR_BALANCE_EAST)->x.fixed,
-		Balance_PlatformHeights[fdActorGet(ACTOR_BALANCE_EAST)->tmr],
+		BalancePlatformHeights[fdActorGet(ACTOR_BALANCE_EAST)->tmr],
 		fdActorGet(ACTOR_BALANCE_EAST)->z.fixed);
 	fdActorWaitForMoveById(ACTOR_BALANCE_WEST);
 	fdActorWaitForMoveById(ACTOR_BALANCE_EAST);
 	fdActorGet(ACTOR_BALANCE_WEST)->y.fixed =
-		Balance_PlatformHeights[fdActorGet(ACTOR_BALANCE_WEST)->tmr];
+		BalancePlatformHeights[fdActorGet(ACTOR_BALANCE_WEST)->tmr];
 	fdActorGet(ACTOR_BALANCE_EAST)->y.fixed =
-		Balance_PlatformHeights[fdActorGet(ACTOR_BALANCE_EAST)->tmr];
-	if(frames != 0) {
+		BalancePlatformHeights[fdActorGet(ACTOR_BALANCE_EAST)->tmr];
+	if(ticks != 0) {
 		sySndPlay(SOUND_FADE_OUT_ACTION_SE);
 	}
 	for(i = 0; i < 5; i++) {
@@ -1090,7 +1090,7 @@ static void scTunnelRuinsSettleBalance(Sint32 frames)
 				FIELD_METATILE(fdActorGet(i + ACTOR_BALANCE_WEST)->z.fixed));
 		}
 	}
-	fdScriptWait(frames);
+	fdScriptWait(ticks);
 }
 
 /* A carried stone drops onto the highest platform or carved stone in its
@@ -1124,11 +1124,10 @@ static void scTunnelRuinsDropStoneOnStack(Sint32 actorId)
 
 	{
 		ACTOR *actor = fdActorGet(actorId);
-		ACTOR *sourceActor = fdActorGet(actorId);
+		ACTOR *srcActor = fdActorGet(actorId);
 		FIXED  z = fdActorGet(actorId)->z.fixed;
 
-		syFieldActorSetMoveTargetFX(
-			actor, sourceActor->x.fixed, highestHeight, z);
+		syFieldActorSetMoveTargetFX(actor, srcActor->x.fixed, highestHeight, z);
 	}
 
 	fdActorWaitForMoveById(actorId);
@@ -1151,10 +1150,10 @@ static void scTunnelRuinsDropStoneOnStack(Sint32 actorId)
    not yet set, and the stones are always counted set from the first. */
 static void scTunnelRuinsSetStoneOnBalance(void)
 {
-	ACTOR  savedPosition;
+	ACTOR  savedPos;
 	Sint32 i;
 	Sint32 j;
-	Sint32 settledIndex;
+	Sint32 settledIdx;
 
 	fdScriptStart();
 	for(i = 0; i <= 2; i++) {
@@ -1176,14 +1175,14 @@ static void scTunnelRuinsSetStoneOnBalance(void)
 			fdActorGet(i + ACTOR_WEST_CARRY_STONE)->tmr = 0;
 			/* The carved stone set down takes the place of the first carved
 			   stone not yet set. */
-			settledIndex = i;
+			settledIdx = i;
 			for(j = 0; j < i; j++) {
 				if(gmFlagGet(FLAG_TUNNEL_RUINS_FIRST_STONE_SET + j) == 0) {
-					savedPosition.x.fixed =
+					savedPos.x.fixed =
 						fdActorGet(i + ACTOR_WEST_CARRY_STONE)->x.fixed;
-					savedPosition.y.fixed =
+					savedPos.y.fixed =
 						fdActorGet(i + ACTOR_WEST_CARRY_STONE)->y.fixed;
-					savedPosition.z.fixed =
+					savedPos.z.fixed =
 						fdActorGet(i + ACTOR_WEST_CARRY_STONE)->z.fixed;
 					fdActorGet(i + ACTOR_WEST_CARRY_STONE)->x.fixed =
 						fdActorGet(j + ACTOR_WEST_CARRY_STONE)->x.fixed;
@@ -1192,43 +1191,43 @@ static void scTunnelRuinsSetStoneOnBalance(void)
 					fdActorGet(i + ACTOR_WEST_CARRY_STONE)->z.fixed =
 						fdActorGet(j + ACTOR_WEST_CARRY_STONE)->z.fixed;
 					fdActorGet(j + ACTOR_WEST_CARRY_STONE)->x.fixed =
-						savedPosition.x.fixed;
+						savedPos.x.fixed;
 					fdActorGet(j + ACTOR_WEST_CARRY_STONE)->y.fixed =
-						savedPosition.y.fixed;
+						savedPos.y.fixed;
 					fdActorGet(j + ACTOR_WEST_CARRY_STONE)->z.fixed =
-						savedPosition.z.fixed;
-					settledIndex = j;
+						savedPos.z.fixed;
+					settledIdx = j;
 					break;
 				}
 			}
-			fdActorGet(settledIndex + ACTOR_WEST_CARRY_STONE)->groundHeight = 0;
-			fdActorGet(settledIndex + ACTOR_WEST_CARRY_STONE)->velY = 0;
-			fdActorGet(settledIndex + ACTOR_WEST_CARRY_STONE)->tgtY =
+			fdActorGet(settledIdx + ACTOR_WEST_CARRY_STONE)->groundHeight = 0;
+			fdActorGet(settledIdx + ACTOR_WEST_CARRY_STONE)->velY = 0;
+			fdActorGet(settledIdx + ACTOR_WEST_CARRY_STONE)->tgtY =
 				ACTOR_NO_TARGET;
-			fdActorGet(settledIndex + ACTOR_WEST_CARRY_STONE)->motionFlg = 0;
-			fdActorGet(settledIndex + ACTOR_WEST_CARRY_STONE)->tmr = 0;
+			fdActorGet(settledIdx + ACTOR_WEST_CARRY_STONE)->motionFlg = 0;
+			fdActorGet(settledIdx + ACTOR_WEST_CARRY_STONE)->tmr = 0;
 			/* The camera turns to the balance as the carved stone drops and the
 			   platforms move. */
 			fdCameraSetSpeed(3);
 			fdCameraGetActor()->motionFlg = 0;
 			fdCameraMoveTo(168, 8, 184, 1);
 			fdCameraWaitForMove();
-			scTunnelRuinsDropStoneOnStack(
-				settledIndex + ACTOR_WEST_CARRY_STONE);
-			if(FIELD_METATILE(fdActorGet(settledIndex + ACTOR_WEST_CARRY_STONE)
-					   ->x.fixed) == 8) {
+			scTunnelRuinsDropStoneOnStack(settledIdx + ACTOR_WEST_CARRY_STONE);
+			if(FIELD_METATILE(
+				   fdActorGet(settledIdx + ACTOR_WEST_CARRY_STONE)->x.fixed) ==
+				8) {
 				fdActorGet(ACTOR_BALANCE_WEST)->tmr++;
 				(fdActorGet(ACTOR_BALANCE_EAST)->tmr)--;
 			} else {
 				(fdActorGet(ACTOR_BALANCE_WEST)->tmr)--;
 				fdActorGet(ACTOR_BALANCE_EAST)->tmr++;
 			}
-			fdActorGet(settledIndex + ACTOR_WEST_CARRY_STONE)->update =
+			fdActorGet(settledIdx + ACTOR_WEST_CARRY_STONE)->update =
 				(void (*)(ACTOR *))scTunnelRuinsRideStoneBelow;
 			scTunnelRuinsSettleBalance(40);
-			fdActorGet(settledIndex + ACTOR_WEST_CARRY_STONE)->priFlg |=
+			fdActorGet(settledIdx + ACTOR_WEST_CARRY_STONE)->priFlg |=
 				ACTOR_PRIORITY_UNDERFOOT;
-			gmFlagSet(FLAG_TUNNEL_RUINS_FIRST_STONE_SET + settledIndex);
+			gmFlagSet(FLAG_TUNNEL_RUINS_FIRST_STONE_SET + settledIdx);
 			break;
 		}
 	}
@@ -1405,7 +1404,7 @@ static void scTunnelRuinsMoveLadyStatue(void)
 		fdScriptWait(30);
 		gmFlagSet(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN);
 		sySndPlay(SE_DOOR_OPEN);
-		fdMapGridAnimateMetatiles(TunnelRuins_DoorOpenSteps, 32, 46);
+		fdMapGridAnimateMetatiles(TunnelRuinsDoorOpenSteps, 32, 46);
 		fdMapGridCopyMetatileAttributes(24, 60, 1, 1, 32, 47);
 		fdScriptWait(40);
 	} else {
@@ -1417,7 +1416,7 @@ static void scTunnelRuinsMoveLadyStatue(void)
 			fdScriptWait(30);
 			gmFlagClear(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN);
 			sySndPlay(SE_DOOR_CLOSE);
-			fdMapGridAnimateMetatiles(TunnelRuins_DoorCloseSteps, 32, 46);
+			fdMapGridAnimateMetatiles(TunnelRuinsDoorCloseSteps, 32, 46);
 			fdMapGridCopyMetatileAttributes(31, 47, 1, 1, 32, 47);
 			fdScriptWait(40);
 		}
@@ -1598,8 +1597,8 @@ Sint32 scInit(void)
 			fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_PILLAR_B), 0);
 			fdActorGet(ACTOR_FIRST_PILLAR_A)->update = UPDATE_BY_RELATIVE_DEPTH;
 			fdActorGet(ACTOR_FIRST_PILLAR_B)->update = UPDATE_BY_RELATIVE_DEPTH;
-			sySetFrameEvent(
-				scTunnelRuinsUpdateGroundMaskLeader, EVENT_PASS_FRAME);
+			sySetTickEvent(
+				scTunnelRuinsUpdateGroundMaskLeader, EVENT_PASS_TICK);
 			break;
 		case TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_FIRST_PILLARS:
 		case TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SECOND_PILLARS:
@@ -1622,8 +1621,8 @@ Sint32 scInit(void)
 				UPDATE_BY_RELATIVE_DEPTH;
 			fdActorGet(ACTOR_SECOND_PILLAR_B)->update =
 				UPDATE_BY_RELATIVE_DEPTH;
-			sySetFrameEvent(
-				scTunnelRuinsUpdateGroundMaskLeader, EVENT_PASS_FRAME);
+			sySetTickEvent(
+				scTunnelRuinsUpdateGroundMaskLeader, EVENT_PASS_TICK);
 			break;
 		case TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_NORTH:
 		case TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_SOUTH:
@@ -1696,8 +1695,8 @@ Sint32 scInit(void)
 			fdActorGet(ACTOR_SMALL_PILLAR_A)->update = UPDATE_BY_RELATIVE_DEPTH;
 			fdActorGet(ACTOR_SMALL_PILLAR_B)->update = UPDATE_BY_RELATIVE_DEPTH;
 			fdActorGet(ACTOR_SMALL_PILLAR_C)->update = UPDATE_BY_RELATIVE_DEPTH;
-			sySetFrameEvent(
-				scTunnelRuinsUpdateGroundMaskLeader, EVENT_PASS_FRAME);
+			sySetTickEvent(
+				scTunnelRuinsUpdateGroundMaskLeader, EVENT_PASS_TICK);
 			break;
 		}
 	} else {
@@ -1818,8 +1817,8 @@ Sint32 scInit(void)
 		case TUNNEL_RUINS_LADY_STATUES_REVEAL_STATUE_WEST:
 			fdMapGridCopyMetatileAttributes(8, 49, 1, 1, 8, 113);
 			scTunnelRuinsShowVanishingStatues();
-			sySetFrameEvent(
-				scTunnelRuinsUpdateGroundMaskLeader, EVENT_PASS_FRAME);
+			sySetTickEvent(
+				scTunnelRuinsUpdateGroundMaskLeader, EVENT_PASS_TICK);
 			break;
 		case TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_NORTH:
 		case TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_EAST:
@@ -1883,13 +1882,13 @@ Sint32 scInit(void)
 
 #include "shared/balance_heights.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
-Sint32 TunnelRuins_SmallLighthouseScript[] = {
+Sint32 TunnelRuinsSmallLighthouseScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(3) / 5),
 	SC_SET(SW_SCALE_Y, toFIXED(3) / 5),
 	SC_SET(SW_COLLISION, 0),
@@ -1898,13 +1897,13 @@ Sint32 TunnelRuins_SmallLighthouseScript[] = {
 };
 
 /* The ivy stands 8/5 as tall as its sprite. */
-Sint32 TunnelRuins_StretchScript[] = {
+Sint32 TunnelRuinsStretchScript[] = {
 	SC_SET(SW_SCALE_Y, toFIXED(8) / 5),
 	SC_END,
 };
 
-/* Douse splashes on the pillar from frame 35 for 130 frames. */
-Sint32 TunnelRuins_DouseSplashScript[] = {
+/* Douse splashes on the pillar from tick 35 for 130 ticks. */
+Sint32 TunnelRuinsDouseSplashScript[] = {
 	SC_WAIT(35),
 	SC_SET(SW_HOOK, (Sint32)scTunnelRuinsSplashDousedPillar),
 	SC_WAIT(130),
@@ -1915,13 +1914,13 @@ Sint32 TunnelRuins_DouseSplashScript[] = {
 
 /* The east wall's door opening once all five statues stand on their marks, and
    shutting again. */
-Uint16 TunnelRuins_DoorOpenSteps[] = {
+Uint16 TunnelRuinsDoorOpenSteps[] = {
 	MAPGRID_ANIMATION_STEP(28, 59, 1, 2, 4),
 	MAPGRID_ANIMATION_STEP(26, 59, 1, 2, 4),
 	MAPGRID_ANIMATION_STEP(24, 59, 1, 2, 4),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 TunnelRuins_DoorCloseSteps[] = {
+Uint16 TunnelRuinsDoorCloseSteps[] = {
 	MAPGRID_ANIMATION_STEP(26, 59, 1, 2, 4),
 	MAPGRID_ANIMATION_STEP(28, 59, 1, 2, 4),
 	MAPGRID_ANIMATION_STEP(30, 59, 1, 2, 4),
@@ -2146,12 +2145,12 @@ ACTOR_PLACE TunnelRuinsGreatStatueActorPlacements[] = {
 		FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
 	ACTOR_PLACEMENT(SPRITE_SMALL_PILLAR, 0, MOVEMENT_TYPE_STAND, 424, 0, 792,
 		FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_IVY, 0, (Sint32)TunnelRuins_StretchScript, 416, 0,
+	ACTOR_PLACEMENT(SPRITE_IVY, 0, (Sint32)TunnelRuinsStretchScript, 416, 0,
 		794, FACING_NORTH, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_IVY, 0, (Sint32)TunnelRuins_StretchScript, 432, 0,
+	ACTOR_PLACEMENT(SPRITE_IVY, 0, (Sint32)TunnelRuinsStretchScript, 432, 0,
 		794, FACING_NORTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_IVY, FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY,
-		(Sint32)TunnelRuins_StretchScript, 568, 0, 856, FACING_NORTH,
+		(Sint32)TunnelRuinsStretchScript, 568, 0, 856, FACING_NORTH,
 		TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_SINKING_PILLAR, 0, MOVEMENT_TYPE_STAND, 680, 0, 136,
 		FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -2165,7 +2164,7 @@ ACTOR_PLACE TunnelRuinsGreatStatueActorPlacements[] = {
 	   World Map's tower, at three fifths of its size, with no collision and no
 	   shadow. */
 	ACTOR_PLACEMENT(SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE, 0,
-		(Sint32)TunnelRuins_SmallLighthouseScript, 232, 0, 248, FACING_SOUTH,
+		(Sint32)TunnelRuinsSmallLighthouseScript, 232, 0, 248, FACING_SOUTH,
 		TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };

@@ -18,7 +18,7 @@
 #define FIX_ITALIAN_ITEM_GENDER_READ_PAST_END  1
 #define FIX_NULL_DEREFERENCE				   1
 #define FIX_POINTER_OUTSIDE_OBJECT			   1
-#define FIX_RAIN_STREAK_FIRST_FRAME			   1
+#define FIX_RAIN_STREAK_FIRST_TICK			   1
 #define FIX_RESIDENT_SPAWN_LEADER_ACTOR		   1
 #define FIX_RETURNED_STACK_BUFFER			   1
 #define FIX_SEA_SAVED_COLORS_READ_BEFORE_ARRAY 1
@@ -107,7 +107,7 @@
 #endif
 
 /* Boreas's unused copy of its point table copies the table's 16 rows instead of
-   32, so it no longer reads the 32 bytes after Boreas_Points. Nothing reads the
+   32, so it no longer reads the 32 bytes after BoreasPoints. Nothing reads the
    copy, so nothing on screen changes. */
 #ifndef FIX_BOREAS_POINTS_OVERRUN
 #define FIX_BOREAS_POINTS_OVERRUN 0
@@ -122,9 +122,9 @@
 #endif
 
 /* Coatlicue's cog-glow loop reads only the one entry of its one-entry
-   glow-frame table instead of three. It no longer reads the two coil values
-   after the table as glow frames 20992 and 4096. The summon never reaches those
-   frames, so nothing visible changes in the ROM layout. */
+   glow-tick table instead of three. It no longer reads the two coil values
+   after the table as glow ticks 20992 and 4096. The summon never reaches those
+   ticks, so nothing visible changes in the ROM layout. */
 #ifndef FIX_COATLICUE_GLOW_OVERRUN
 #define FIX_COATLICUE_GLOW_OVERRUN 0
 #endif
@@ -137,8 +137,8 @@
 
 /* Effects that draw the spinning crystal shards skip the fifth kind of shard,
    whose pictures 12 to 14 lie past the ends of the twelve-entry crystal shard
-   tables (Prism_ShardPictures, _Widths, _Heights). Before, they read past those
-   tables and found zero heights, which draw nothing. */
+   tables (PrismShardPictures, PrismShardWidths, PrismShardHeights). Before,
+   they read past those tables and found zero heights, which draw nothing. */
 #ifndef FIX_CRYSTAL_SHARD_TABLE_OVERRUN
 #define FIX_CRYSTAL_SHARD_TABLE_OVERRUN 0
 #endif
@@ -173,7 +173,7 @@
 
 /* In Lucky Dice (both games) and Super Lucky Dice (The Lost Age), two touching
    dice whose whole-pixel separation comes out as 0 get no push apart that
-   frame, instead of dividing by that zero. That happens when they are less than
+   tick, instead of dividing by that zero. That happens when they are less than
    a pixel apart on every axis, measured toward the other die. */
 #ifndef FIX_DICE_DIVIDE_BY_ZERO
 #define FIX_DICE_DIVIDE_BY_ZERO 0
@@ -325,7 +325,7 @@
 #define FIX_OCEAN_FIST_DROPS_VANISH_AT_TOP 0
 #endif
 
-/* The sailor's son pacing West Indra Islet's pier waits 80 frames at the east
+/* The sailor's son pacing West Indra Islet's pier waits 80 ticks at the east
    end, as he already does at the west end, instead of turning straight back.
    The ROM's script has SC_SYNC and a bare 80 where SC_WAIT(80) was meant, and
    the walker skips the 80. */
@@ -375,13 +375,13 @@
 #endif
 
 /* A rain streak respawned in the field rain (Prox, Mars Lighthouse) now starts
-   its timer at 11, not 12. Its first frame reads the offset table's last pair
+   its timer at 11, not 12. Its first tick reads the offset table's last pair
    instead of the pair one past the end, which would draw it 2 pixels left of
-   its spot and 12 below. Each fall after a respawn becomes one frame shorter.
+   its spot and 12 below. Each fall after a respawn becomes one tick shorter.
    The 8 drops that the rain's start gives 12, and streaks while the weather is
    held, still read past the end. */
-#ifndef FIX_RAIN_STREAK_FIRST_FRAME
-#define FIX_RAIN_STREAK_FIRST_FRAME 0
+#ifndef FIX_RAIN_STREAK_FIRST_TICK
+#define FIX_RAIN_STREAK_FIRST_TICK 0
 #endif
 
 /* The window tilemap rectangle routines clip a rectangle's bottom once it
@@ -447,7 +447,7 @@
 /* Arithmetic that can overflow a signed int is done unsigned. One case is
    negating a negative number in the message decoder's signed-number argument:
    the magnitude becomes u32, 0U - (u32)value. The other is the file list glow's
-   sine phase, VBlankCount times 768, which overflows after about 13 hours: it
+   sine phase, FrameCount times 768, which overflows after about 13 hours: it
    is done in u32 and masked to an angle. */
 #ifndef FIX_SIGNED_OVERFLOW
 #define FIX_SIGNED_OVERFLOW 0
@@ -496,7 +496,7 @@
    that drop volatile. Halfword pairs are built with shifts or byte stores, and
    a 16.16 value's whole part is taken with a shift. Sprite and OAM words are
    written through their fields or copied in with memcpy. Pointers and function
-   pointers are read and stored as pointers, and FrameCount is read as
+   pointers are read and stored as pointers, and TickCount is read as
    declared. */
 #ifndef FIX_TYPE_PUNNING
 #define FIX_TYPE_PUNNING 0
@@ -544,7 +544,7 @@
 
 /* In the ember burst of Meteor and Outer Space, the farthest embers (depth 736
    and beyond) are drawn at size 1 instead of size 0. At size 0 the picture
-   offset is read from BattleEffect_MotePictures[-1], before the table's
+   offset is read from BattleEffectMotePictures[-1], before the table's
    start. */
 #ifndef FIX_ZERO_SIZE_EMBER
 #define FIX_ZERO_SIZE_EMBER 0

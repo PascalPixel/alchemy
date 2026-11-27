@@ -5,7 +5,7 @@
 #include "game/game.h"
 
 /* clang-format off */
-const DJINN_DEFINITION Djinn_DefinitionTable[] = {
+const DJINN_DEFINITION DjinnDefinitionTable[] = {
 	[DJINNI_FLINT] = {
 		.abilityId = ABILITY_DJINNI_FIRST,
 		.hp = 8,

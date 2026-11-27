@@ -6,14 +6,14 @@
 
 /* The menus list the summons in the order of their ids, Venus first and Thor
    last. */
-const Uint8 Summon_OrderList[16] = {
+const Uint8 SummonOrderList[16] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
 /* Each summon's ability and its cost in standby Djinn of each element: one
    Djinn of an element calls its first summon, four call Judgment, Boreas,
    Meteor or Thor. */
 /* clang-format off */
-const SUMMON_DEFINITION Summon_DefinitionTable[] = {
+const SUMMON_DEFINITION SummonDefinitionTable[] = {
 	/* Venus */
 	{
 		.abilityId = ABILITY_VENUS,

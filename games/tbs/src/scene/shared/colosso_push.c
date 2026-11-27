@@ -13,7 +13,7 @@ static void scColossoPushActorAhead(void)
 	ACTOR	 *blocker;
 	Uint32	  step;
 	Uint32	  direction;
-	FIELD_POS position;
+	FIELD_POS pos;
 	Sint32	  leaderId;
 
 	leaderId = MainRoutineStateWork.leaderActorId;
@@ -21,46 +21,46 @@ static void scColossoPushActorAhead(void)
 
 	direction = FACING_INDEX(leader->facing);
 
-	step = PushedActor_DirectionSteps[direction];
-	position.x = leader->x.fixed + DIRECTION_STEP_X_FIXED(step);
-	position.y = leader->y.fixed;
+	step = PushedActorDirectionSteps[direction];
+	pos.x = leader->x.fixed + DIRECTION_STEP_X_FIXED(step);
+	pos.y = leader->y.fixed;
 	step = DIRECTION_STEP_Z_FIXED(step);
-	position.z = leader->z.fixed + step;
+	pos.z = leader->z.fixed + step;
 
-	pushed = scActorFindAtPos(&position, leader);
+	pushed = scActorFindAtPos(&pos, leader);
 	if(pushed == NULL) {
 		return;
 	}
 
-	step = PushedActor_DirectionSteps[direction];
-	position.x = pushed->x.fixed + DIRECTION_STEP_X_FIXED(step);
-	position.y = pushed->y.fixed;
+	step = PushedActorDirectionSteps[direction];
+	pos.x = pushed->x.fixed + DIRECTION_STEP_X_FIXED(step);
+	pos.y = pushed->y.fixed;
 	step = DIRECTION_STEP_Z_FIXED(step);
-	position.z = pushed->z.fixed + step;
+	pos.z = pushed->z.fixed + step;
 
-	blocker = scActorFindAtPos(&position, pushed);
+	blocker = scActorFindAtPos(&pos, pushed);
 	if(blocker != NULL && (blocker->collisionFlg & ACTOR_SOLID) != 0) {
 		return;
 	}
 
-	position.x = pushed->x.fixed;
-	position.y = pushed->y.fixed + toFIXED(16);
-	position.z = pushed->z.fixed;
+	pos.x = pushed->x.fixed;
+	pos.y = pushed->y.fixed + toFIXED(16);
+	pos.z = pushed->z.fixed;
 
-	blocker = scActorFindAtPos(&position, pushed);
+	blocker = scActorFindAtPos(&pos, pushed);
 	if(blocker != NULL && (blocker->collisionFlg & ACTOR_SOLID) != 0) {
 		return;
 	}
 
 	pushed->layer = 2;
 
-	step = PushedActor_DirectionSteps[direction];
-	position.x = pushed->x.fixed + DIRECTION_STEP_X_FIXED(step);
-	position.y = pushed->y.fixed;
+	step = PushedActorDirectionSteps[direction];
+	pos.x = pushed->x.fixed + DIRECTION_STEP_X_FIXED(step);
+	pos.y = pushed->y.fixed;
 	step = DIRECTION_STEP_Z_FIXED(step);
-	position.z = pushed->z.fixed + step;
+	pos.z = pushed->z.fixed + step;
 
-	if(syFieldActorCheckMovementCollision(pushed, &position) > 0) {
+	if(syFieldActorCheckMovementCollision(pushed, &pos) > 0) {
 		return;
 	}
 
@@ -69,18 +69,18 @@ static void scColossoPushActorAhead(void)
 
 	pushed->speedLimit = toFIXED(1) / 5;
 	pushed->acceleration = toFIXED(1) / 5;
-	syFieldActorSetMoveTargetFX(pushed, position.x, position.y, position.z);
+	syFieldActorSetMoveTargetFX(pushed, pos.x, pos.y, pos.z);
 
 	leader->speedLimit = toFIXED(1) / 5;
 	leader->acceleration = toFIXED(1) / 5;
-	syFieldActorSetMoveTargetFX(leader, position.x, position.y, position.z);
+	syFieldActorSetMoveTargetFX(leader, pos.x, pos.y, pos.z);
 
 	sySndPlay(SE_PUSH_STEP);
 	fdActorWaitForMove(pushed);
 	sySndPlay(SE_STOP_ACTION_SE);
 
-	pushed->x.fixed = position.x;
-	pushed->z.fixed = position.z;
+	pushed->x.fixed = pos.x;
+	pushed->z.fixed = pos.z;
 	pushed->velX = 0;
 	pushed->velZ = 0;
 
@@ -94,26 +94,26 @@ void *scColossoFindActorAhead(void)
 {
 	ACTOR	 *leader;
 	Sint32	  facing;
-	FIELD_POS position;
+	FIELD_POS pos;
 	ACTOR	 *occupant;
 
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 
 	facing = FACING_NEAREST_CARDINAL(leader->facing);
 
-	position.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-	position.y = leader->y.fixed;
-	position.z = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-	syVectorAddPolarOffset(toFIXED(16), facing, (FIXED *)&position);
+	pos.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	pos.y = leader->y.fixed;
+	pos.z = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	syVectorAddPolarOffset(toFIXED(16), facing, (FIXED *)&pos);
 
-	occupant = scActorFindAtPos(&position, leader);
+	occupant = scActorFindAtPos(&pos, leader);
 	if(occupant == NULL) {
-		position.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-		position.y = leader->y.fixed;
-		position.z = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-		syVectorAddPolarOffset(toFIXED(32), facing, (FIXED *)&position);
+		pos.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+		pos.y = leader->y.fixed;
+		pos.z = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+		syVectorAddPolarOffset(toFIXED(32), facing, (FIXED *)&pos);
 
-		occupant = scActorFindAtPos(&position, leader);
+		occupant = scActorFindAtPos(&pos, leader);
 	}
 
 	return occupant;

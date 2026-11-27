@@ -10,30 +10,30 @@ void fdLineScrollArmDMA(void)
 {
 	volatile Uint16	  *dma;
 	LINE_SCROLL_STATE *state;
-	Uint32			  *source;
-	Uint16			   status;
+	Uint32			  *src;
+	Uint16			   stat;
 	Uint32			   control;
-	volatile Uint32	  *destination;
+	volatile Uint32	  *dst;
 
 	state = LineScroll;
-	source = (Uint32 *)state->rows[state->page];
+	src = (Uint32 *)state->rows[state->page];
 
 	dma = REG_DMA0;
-	destination = (volatile Uint32 *)&REG_BG1HOFS;
-	status = dma[DMA_CNT_H_INDEX];
-	control = status & (Uint16)~DMA_START_TIMING_DRQ_REPEAT;
+	dst = (volatile Uint32 *)&REG_BG1HOFS;
+	stat = dma[DMA_CNT_H_INDEX];
+	control = stat & (Uint16)~DMA_START_TIMING_DRQ_REPEAT;
 	dma[DMA_CNT_H_INDEX] = control;
-	status = dma[DMA_CNT_H_INDEX];
-	control = status & (Uint16)~DMA_ENABLE;
+	stat = dma[DMA_CNT_H_INDEX];
+	control = stat & (Uint16)~DMA_ENABLE;
 	dma[DMA_CNT_H_INDEX] = control;
 	(void)dma[DMA_CNT_H_INDEX];
 
-	*destination = *source++;
-	*destination = *source++;
-	*destination = *source++;
+	*dst = *src++;
+	*dst = *src++;
+	*dst = *src++;
 
 	control = DMA_HBLANK_WORDS_PER_LINE(3);
-	syDMAXCopy(source, (void *)destination, control, (volatile Uint32 *)dma);
+	syDMAXCopy(src, (void *)dst, control, (volatile Uint32 *)dma);
 }
 
 /* Event for the line scroll: fills the hidden page with each scanline's BG3,
@@ -71,7 +71,7 @@ void fdLineScrollBuildPage(void)
 
 		amplitude = state->ampX;
 		for(scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-			wave = syMulFX(LineScroll_WaveSine[FIXEDtoINT(phase) &
+			wave = syMulFX(LineScrollWaveSine[FIXEDtoINT(phase) &
 							   (LINE_SCROLL_WAVE_ENTRIES - 1)],
 					   amplitude) /
 				LINE_SCROLL_WAVE_SCALE;
@@ -100,7 +100,7 @@ void fdLineScrollBuildPage(void)
 
 		amplitude = state->ampY;
 		for(scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-			wave = syMulFX(LineScroll_WaveSine[FIXEDtoINT(phase) &
+			wave = syMulFX(LineScrollWaveSine[FIXEDtoINT(phase) &
 							   (LINE_SCROLL_WAVE_ENTRIES - 1)],
 					   amplitude) /
 				LINE_SCROLL_WAVE_SCALE;

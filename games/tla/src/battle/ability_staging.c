@@ -8,7 +8,7 @@
 #include "battle/ability_staging.h"
 #include "battle_effect/battle_effect.h"
 
-const Uint8 ActionRun_EffectChance[] = {100, 60, 30, 30, 30, 30};
+const Uint8 ActionRunEffectChance[] = {100, 60, 30, 30, 30, 30};
 
 /* clang-format off */
 /* By ability id, ABILITY_NOTHING to ABILITY_PRESSURE; 0 leaves the choice to */

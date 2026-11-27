@@ -6,10 +6,10 @@
 #include "types.h"
 
 /* clang-format off */
-/* Each light, on x, y and z: the most its drift speeds up a frame (thousandths */
+/* Each light, on x, y and z: the most its drift speeds up a tick (thousandths */
 /* of a pixel), how fast it swings, and which way it drifts (1, -1, or 0 for */
 /* not at all); then its largest scale and how fast it pulses. */
-Uint8 SolSanctum_LightDrift[][3] = {
+Uint8 SolSanctumLightDrift[][3] = {
 	{ 4, 4, 4 },
 	{ 4, 0, 3 },
 	{ 4, 0, 4 },
@@ -21,7 +21,7 @@ Uint8 SolSanctum_LightDrift[][3] = {
 	{ 2, 0, 1 },
 	{ 2, 0, 2 },
 };
-Uint8 SolSanctum_LightSwing[][3] = {
+Uint8 SolSanctumLightSwing[][3] = {
 	{ 1, 1, 2 },
 	{ 1, 0, 2 },
 	{ 1, 0, 2 },
@@ -33,7 +33,7 @@ Uint8 SolSanctum_LightSwing[][3] = {
 	{ 1, 0, 2 },
 	{ 1, 0, 2 },
 };
-Sint8 SolSanctum_LightDirection[][3] = {
+Sint8 SolSanctumLightDirection[][3] = {
 	{ 1, 1, 1 },
 	{ 1, 0, 1 },
 	{ 1, 0, 1 },
@@ -45,11 +45,11 @@ Sint8 SolSanctum_LightDirection[][3] = {
 	{ -1, 0, -1 },
 	{ -1, 0, -1 },
 };
-FIXED SolSanctum_LightMaxScales[] = {
+FIXED SolSanctumLightMaxScales[] = {
 	toFIXED(0.6), toFIXED(0.8), toFIXED(0.7), toFIXED(0.6), toFIXED(0.8),
 	toFIXED(0.6), toFIXED(0.7), toFIXED(0.6), toFIXED(0.6), toFIXED(0.7),
 };
-FIXED SolSanctum_LightScaleSteps[] = {
+FIXED SolSanctumLightScaleSteps[] = {
 	toFIXED(0.01), toFIXED(0.007), toFIXED(0.01), toFIXED(0.007), toFIXED(0.01),
 	toFIXED(0.007), toFIXED(0.01), toFIXED(0.01), toFIXED(0.008), toFIXED(0.01),
 };

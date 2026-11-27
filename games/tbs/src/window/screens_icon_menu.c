@@ -19,7 +19,7 @@
 /* The lines an icon row covers: its label window's three tiles. */
 #define ICON_ROW_LINES		 24
 /* The most icons a menu shows, and so the row length of
-   FileList_ActionByPosition, which has an action for each place. */
+   FileListActionByPosition, which has an action for each place. */
 #define ICON_MENU_MAX_ICONS	 ((Sint32)ARRAY_COUNT(IconMenuStateWork->entries))
 
 /* How far the selected icon overhangs its place while it pulses at the 8.8
@@ -41,11 +41,11 @@ void mnIconMenuDrawIcons(void)
 	ICON_MENU_ENTRY *entry;
 	AFFINE_TRANSFORM transform;
 	Sint32			 pulseScale;
-	Sint32			 affineIndex;
+	Sint32			 affineIdx;
 	Sint32			 span;
-	Sint32			 spriteY;
+	Sint32			 sprY;
 	Uint32			 lastLine;
-	Uint32			 index;
+	Uint32			 idx;
 	/* UB: edge steps from one line's window 1 edges to the next line's, past
 	   the member it points into. */
 	Uint16					*edge;
@@ -53,14 +53,14 @@ void mnIconMenuDrawIcons(void)
 
 	iconMenuState = IconMenuStateWork;
 	entry = iconMenuState->entries;
-	pulseScale = WindowSprite_BounceScales[(FrameCount * 2) & 31];
+	pulseScale = WindowSpriteBounceScales[(TickCount * 2) & 31];
 	pulseScale = (pulseScale - Q_8_8(1)) / 4 + Q_8_8(1.1875);
 	transform.scaleX = pulseScale;
 	transform.scaleY = pulseScale;
 	transform.ang = 0;
-	affineIndex = syOAMMatrixAllocFromTransform(&transform);
+	affineIdx = syOAMMatrixAllocFromTransform(&transform);
 	/* Pulse only the selection; the other icons keep their normal OAM shape. */
-	for(index = 0; index < iconMenuState->cnt; index++, entry++) {
+	for(idx = 0; idx < iconMenuState->cnt; idx++, entry++) {
 		Sint32	drawLayer;
 		Uint32 *word;
 		Sint32	x;
@@ -68,7 +68,7 @@ void mnIconMenuDrawIcons(void)
 		x = entry->x;
 		if(x == 0)
 			continue;
-		if(index == iconMenuState->selection) {
+		if(idx == iconMenuState->selection) {
 			Sint32 left = x + pulseScale * 7 / 512 - 20;
 
 			/* The icon grows to 32 * scale / Q_8_8(1) pixels in the middle of
@@ -77,26 +77,26 @@ void mnIconMenuDrawIcons(void)
 			   within OAM's 8 bits; elsewhere it grows mostly upward from its
 			   row. */
 			if(entry->y != 0)
-				spriteY = entry->y + pulseScale * 3 / 256 - 20;
+				sprY = entry->y + pulseScale * 3 / 256 - 20;
 			else
-				spriteY = (pulseScale * 15 / 256 - 30) & 255;
+				sprY = (pulseScale * 15 / 256 - 30) & 255;
 			word = entry->spr;
 			*word++ = 0;
-			*word++ = OBJ_MATRIX(affineIndex) | spriteY | OBJ_X(left) |
+			*word++ = OBJ_MATRIX(affineIdx) | sprY | OBJ_X(left) |
 				OBJ_SIZE_32X32 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
 			*word = VramCacheEntries[entry->slot].ofs >> 5;
 			drawLayer = OAM_DEPTH_WINDOW + 6;
 		} else {
 			Uint32 attributes;
-			Uint32 tileOffset;
+			Uint32 tileOfs;
 
 			word = entry->spr;
-			spriteY = *(Sint16 *)&entry->y;
+			sprY = *(Sint16 *)&entry->y;
 			*word++ = 0;
-			attributes = spriteY | OBJ_X(x) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
-			tileOffset = VramCacheEntries[entry->slot].ofs;
+			attributes = sprY | OBJ_X(x) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
+			tileOfs = VramCacheEntries[entry->slot].ofs;
 			*word++ = attributes;
-			*word = tileOffset >> 5;
+			*word = tileOfs >> 5;
 			drawLayer = OAM_DEPTH_WINDOW + 5;
 		}
 		syOAMAddSprAtDepth(entry, drawLayer);
@@ -120,14 +120,14 @@ void mnIconMenuDrawIcons(void)
 			iconMenuState->entries[iconMenuState->selection].y + ICON_ROW_LINES;
 		lastLine += PULSE_OVERHANG_LINES(pulseScale);
 		edge = &page->lines[ICON_ROW_LINES].win1;
-		for(index = ICON_ROW_LINES; index < lastLine; index++, edge += 2)
+		for(idx = ICON_ROW_LINES; idx < lastLine; idx++, edge += 2)
 			*edge = (*edge & 0xff) | span;
 		span = iconMenuState->entries[0].x;
 		if(iconMenuState->selection == 0)
 			span -= PULSE_OVERHANG_X(pulseScale);
 		span <<= 8;
 		edge = &page->lines[0].win1;
-		for(index = 0; index < ICON_ROW_LINES; index++, edge += 2)
+		for(idx = 0; idx < ICON_ROW_LINES; idx++, edge += 2)
 			*edge = (*edge & 0xff) | span;
 	} else {
 		WINDOW_BUFFER *page;
@@ -144,16 +144,15 @@ void mnIconMenuDrawIcons(void)
 		firstLine = iconMenuState->entries[iconMenuState->selection].y;
 		firstLine -= PULSE_OVERHANG_LINES(pulseScale);
 		edge = &page->lines[firstLine].win1;
-		for(index = firstLine; index < ICON_MENU_BOTTOM_ROW * 8;
-			index++, edge += 2)
+		for(idx = firstLine; idx < ICON_MENU_BOTTOM_ROW * 8; idx++, edge += 2)
 			*edge = (*edge & 0xff) | span;
 		span = iconMenuState->entries[0].x;
 		if(iconMenuState->selection == 0)
 			span -= PULSE_OVERHANG_X(pulseScale);
 		span <<= 8;
 		edge = &page->lines[ICON_MENU_BOTTOM_ROW * 8].win1;
-		for(index = ICON_MENU_BOTTOM_ROW * 8; index < DISPLAY_HEIGHT;
-			index++, edge += 2)
+		for(idx = ICON_MENU_BOTTOM_ROW * 8; idx < DISPLAY_HEIGHT;
+			idx++, edge += 2)
 			*edge = (*edge & 0xff) | span;
 	}
 }
@@ -166,24 +165,24 @@ void *mnIconMenuOpen(void)
 	void *state;
 	state = syHeapSlotAllocEWRAM(HEAP_SLOT_ICON_MENU, sizeof(ICON_MENU_STATE));
 	DMA_FILL32(0, state, sizeof(ICON_MENU_STATE));
-	sySetEvent(mnIconMenuDrawIcons, EVENT_PASS_FRAME - 10);
+	sySetEvent(mnIconMenuDrawIcons, EVENT_PASS_TICK - 10);
 	return state;
 }
 
 /* Stops drawing the icons, closes the label window and releases each loaded
    icon before freeing the icon menu's state (HEAP_SLOT_ICON_MENU), then waits a
-   frame. */
+   tick. */
 void mnIconMenuClose(void)
 {
-	WINDOW			*labelWindow;
+	WINDOW			*labelWin;
 	Sint32			 i;
 	ICON_MENU_STATE *state;
 
 	state = IconMenuStateWork;
 	syCloseEvent(mnIconMenuDrawIcons);
-	labelWindow = state->win;
-	if(labelWindow != 0) {
-		mnWindowClose(labelWindow, 2);
+	labelWin = state->win;
+	if(labelWin != 0) {
+		mnWindowClose(labelWin, 2);
 	}
 	for(i = 0; i < state->cnt; i++) {
 		syVRAMCacheFreeEntry(state->entries[i].slot);
@@ -196,12 +195,12 @@ void mnIconMenuClose(void)
    position; B or Start returns -1. Redraws the label only after a move: the
    message labelBase + position when the layout set a labelBase, else the icon's
    command name. */
-Sint32 mnIconMenuRun(Sint32 initial)
+Sint32 mnIconMenuRun(Sint32 init)
 {
 	ICON_MENU_STATE *state = IconMenuStateWork;
 	Sint32			 resource;
 
-	state->selection = initial;
+	state->selection = init;
 redraw:
 	mnWindowSprPrepareForRedraw(state->win);
 	if(state->labelBase != 0)
@@ -250,8 +249,8 @@ static inline Sint32 mnAbsDiff(Sint32 diff, Sint32 lhs, Sint32 rhs)
 
 /* Moves the selection from start to goal one icon at a time with the cursor
    sound, redrawing the label each step and waiting
-   Menu_SelectionStepDelays[icons still to go] frames at each (12 more at the
-   first), then 48 frames on the goal before the confirm sound: a menu choice
+   MenuSelectionStepDelays[icons still to go] ticks at each (12 more at the
+   first), then 48 ticks on the goal before the confirm sound: a menu choice
    made for the player to watch (mnAnimateSelectionToEntry). Returns goal. */
 Sint32 mnIconMenuAnimateTo(Sint32 start, Sint32 goal)
 {
@@ -260,7 +259,7 @@ Sint32 mnIconMenuAnimateTo(Sint32 start, Sint32 goal)
 	Sint32			 diff;
 	Sint32			 resourceId;
 	Sint32			 distance;
-	Sint32			 position;
+	Sint32			 pos;
 	Sint32			 step;
 	Sint32			 delay;
 	const Uint8		*stepDelays;
@@ -272,7 +271,7 @@ Sint32 mnIconMenuAnimateTo(Sint32 start, Sint32 goal)
 	state->selection = start;
 	if(goal < start)
 		step = -1;
-	position = start;
+	pos = start;
 
 	for(;;) {
 		mnWindowSprPrepareForRedraw(state->win);
@@ -285,18 +284,18 @@ Sint32 mnIconMenuAnimateTo(Sint32 start, Sint32 goal)
 		mnTextDrawMessageAsTiles(resourceId, state->win, 0, 0);
 
 		selection = state->selection;
-		stepDelays = Menu_SelectionStepDelays;
+		stepDelays = MenuSelectionStepDelays;
 		diff = selection - goal;
 		distance = mnAbsDiff(diff, selection, goal);
 		sySynch(stepDelays[distance] + delay);
 
-		if(position == goal)
+		if(pos == goal)
 			break;
 
 		state->selection += step;
 		sySndPlayStub(SE_MENU_CURSOR_MOVE);
 		delay = 0;
-		position += step;
+		pos += step;
 	}
 
 	sySynch(48);
@@ -304,18 +303,17 @@ Sint32 mnIconMenuAnimateTo(Sint32 start, Sint32 goal)
 	return goal;
 }
 
-/* Decodes command icon `index` into the VRAM cache entry `slot`, through a
+/* Decodes command icon `idx` into the VRAM cache entry `slot`, through a
    block it allocates and frees. */
-void mnCommandIconLoadIntoSlot(Sint32 slot, Sint32 index)
+void mnCommandIconLoadIntoSlot(Sint32 slot, Sint32 idx)
 {
 	Sint32	size = COMMAND_ICON_BYTES;
-	void   *buffer = syHeapAlloc(size);
-	Uint16 *offsetTable = syResourceGetTableEntry(RESOURCE_COMMAND_ICONS);
+	void   *buf = syHeapAlloc(size);
+	Uint16 *ofsTbl = syResourceGetTableEntry(RESOURCE_COMMAND_ICONS);
 
-	syDecompressByteLZ(
-		(void *)((Uint32)offsetTable + offsetTable[index]), buffer);
-	syVRAMCacheLoad(slot, size, buffer);
-	syHeapRelease(buffer);
+	syDecompressByteLZ((void *)((Uint32)ofsTbl + ofsTbl[idx]), buf);
+	syVRAMCacheLoad(slot, size, buf);
+	syHeapRelease(buf);
 }
 
 /* Appends a command icon if fewer than ICON_MENU_MAX_ICONS are present. It
@@ -325,21 +323,21 @@ void mnIconMenuAddIcon(Sint32 icon)
 {
 	ICON_MENU_STATE *state;
 	ICON_MENU_ENTRY *entry;
-	Sint16			 index;
+	Sint16			 idx;
 	Sint32			 slot;
 	Sint32			 y = ICON_MENU_BOTTOM_ROW * 8;
 
 	state = IconMenuStateWork;
-	index = state->cnt;
-	if(index < ICON_MENU_MAX_ICONS) {
+	idx = state->cnt;
+	if(idx < ICON_MENU_MAX_ICONS) {
 		state->cnt++;
-		entry = &state->entries[index];
+		entry = &state->entries[idx];
 		slot = syVRAMCacheFindFreeEntry();
 		mnCommandIconLoadIntoSlot(slot, icon);
-		entry->x = index * 24 + 32;
+		entry->x = idx * 24 + 32;
 		entry->y = y;
 		entry->slot = slot;
-		state->commandIcons[index] = icon;
+		state->commandIcons[idx] = icon;
 	}
 }
 
@@ -353,13 +351,13 @@ void mnIconMenuCenter(Sint32 row, Sint32 width, Sint32 resourceBase)
 	ICON_MENU_STATE *state = IconMenuStateWork;
 	Sint32			 x;
 	Sint32			 i;
-	Sint32			 count;
+	Sint32			 cnt;
 
 	state->width = width + 2;
 	state->labelBase = resourceBase;
 	state->row = row;
-	count = state->cnt;
-	x = DISPLAY_TILE_WIDTH / 2 - (count * 3 + state->width * 2 / 3) / 2;
+	cnt = state->cnt;
+	x = DISPLAY_TILE_WIDTH / 2 - (cnt * 3 + state->width * 2 / 3) / 2;
 	for(i = 0; i < state->cnt; i++) {
 		ICON_MENU_ENTRY *entry = &state->entries[i];
 
@@ -393,9 +391,9 @@ void mnIconMenuLayoutIcons(
 }
 
 /* Reads the signed command-position mapping used by the icon menu. */
-static __inline__ Sint32 mnIconMenuReadCommandPos(Sint8 *table, Sint32 index)
+static __inline__ Sint32 mnIconMenuReadCommandPos(Sint8 *tbl, Sint32 idx)
 {
-	return table[index];
+	return tbl[idx];
 }
 
 /* The field menu's row of icons: Psynergy, Djinn, Item and Status, without
@@ -405,7 +403,7 @@ static __inline__ Sint32 mnIconMenuReadCommandPos(Sint8 *table, Sint32 index)
 Sint32 mnFieldMenuSelectCommand(Sint32 selection)
 {
 	Sint32 group = 0;
-	Sint32 offset;
+	Sint32 ofs;
 	Sint32 groupTriple;
 	Sint32 result;
 	Sint8 *commandPositions;
@@ -415,10 +413,9 @@ Sint32 mnFieldMenuSelectCommand(Sint32 selection)
 	}
 
 	groupTriple = group * 3;
-	commandPositions = FieldMenu_PositionByCommand;
-	offset = groupTriple << 1;
-	selection =
-		mnIconMenuReadCommandPos(commandPositions, selection + offset) - 1;
+	commandPositions = FieldMenuPositionByCommand;
+	ofs = groupTriple << 1;
+	selection = mnIconMenuReadCommandPos(commandPositions, selection + ofs) - 1;
 	if(selection < 0) {
 		selection = 0;
 	}
@@ -435,7 +432,7 @@ Sint32 mnFieldMenuSelectCommand(Sint32 selection)
 	mnIconMenuClose();
 
 	if(result >= 0) {
-		result = FieldMenu_CommandByPosition[result + offset + 1];
+		result = FieldMenuCommandByPosition[result + ofs + 1];
 	}
 
 	return result;
@@ -462,7 +459,7 @@ Sint32 mnAnimateSelectionToEntry(Sint32 start, Sint32 command)
 }
 
 /* The File Screen's rows of icons, by the files saved, each a row of
-   FileList_ActionByPosition. */
+   FileListActionByPosition. */
 typedef enum FILE_ACTION_ROW {
 	FILE_ROW_SOME = 0, /* one or two files: New Game, Continue, Copy, Erase */
 	FILE_ROW_FULL = 1, /* three files: Continue, Erase */
@@ -481,11 +478,11 @@ Sint32 mnFileListSelectAction(void)
 {
 	Sint32 fileState;
 	Sint32 result;
-	Bool   initial;
+	Bool   init;
 	Uint32 group;
 
 	group = FILE_ROW_SOME;
-	initial = FALSE;
+	init = FALSE;
 	fileState = mnSaveScanFileSummaries();
 	if(fileState < 0) {
 		return -1;
@@ -500,7 +497,7 @@ Sint32 mnFileListSelectAction(void)
 	} else if(fileState > SAVE_SCAN_ALL_CLEARED) {
 		group = FILE_ROW_CLEARED;
 	} else {
-		initial = TRUE;
+		init = TRUE;
 	}
 	mnIconMenuOpen();
 	if((group == FILE_ROW_SOME) || (group == FILE_ROW_CLEARED)) {
@@ -520,13 +517,13 @@ Sint32 mnFileListSelectAction(void)
 		mnIconMenuAddIcon(COMMAND_ICON_SEND);
 	}
 	mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, FILE_SCREEN_ICON_ROW_WIDTH, 0);
-	result = mnIconMenuRun(initial);
+	result = mnIconMenuRun(init);
 	mnIconMenuClose();
 	/* With Send shown but not Battle, Send's place maps to SAVE_ACTION_BATTLE:
-	   FileList_ActionByPosition lists Battle before Send in every row. */
+	   FileListActionByPosition lists Battle before Send in every row. */
 	if(result >= 0) {
 		result =
-			FileList_ActionByPosition[result + (group * ICON_MENU_MAX_ICONS)];
+			FileListActionByPosition[result + (group * ICON_MENU_MAX_ICONS)];
 	}
 	return result;
 }
@@ -652,8 +649,8 @@ void mnTransferMethodDrawHelp(void)
 Sint32 mnIconMenuChooseSendOption(Sint32 mode)
 {
 	ICON_MENU_STATE *state;
-	WINDOW			*window;
-	Sint32			 message;
+	WINDOW			*win;
+	Sint32			 msg;
 	WINDOW		   **upper;
 	Sint32			 result;
 
@@ -680,41 +677,40 @@ Sint32 mnIconMenuChooseSendOption(Sint32 mode)
 	mnIconMenuCenter(ICON_MENU_BOTTOM_ROW, 5, 0);
 #endif
 	if(mode != SEND_OPTION_TRANSFER_METHOD) {
-		sySetEvent(mnPasswordLevelDrawHelp, EVENT_PASS_FRAME - 10);
+		sySetEvent(mnPasswordLevelDrawHelp, EVENT_PASS_TICK - 10);
 		state->drawnSelection = -1;
-		window = mnWindowCreate(PASSWORD_LEVEL_WINDOW_X, 0,
+		win = mnWindowCreate(PASSWORD_LEVEL_WINDOW_X, 0,
 			PASSWORD_LEVEL_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
-		message = MsgPasswordSelection;
+		msg = MsgPasswordSelection;
 		upper = &state->upperWin;
-		*upper = window;
+		*upper = win;
 		/* "Password Selection", then "The data stored in your" "password
 		   depends on which" "level you select:" */
-		mnTextDrawMessage(message, window, 0, 4);
+		mnTextDrawMessage(msg, win, 0, 4);
 #if LANGUAGE != LANGUAGE_JAPANESE
-		window = mnWindowCreate(PASSWORD_HELP_WINDOW_X, 4,
+		win = mnWindowCreate(PASSWORD_HELP_WINDOW_X, 4,
 			PASSWORD_HELP_WINDOW_WIDTH, 12, WINDOW_FLAG_INSTANT);
-		state->lowerWin = window;
-		mnTextDrawMessage(message + 1, window, 8, 0);
-		mnTextDrawMessage(message + 2, state->lowerWin, 8, 11);
-		message += 3;
-		mnTextDrawMessage(message, state->lowerWin, 8, 22);
+		state->lowerWin = win;
+		mnTextDrawMessage(msg + 1, win, 8, 0);
+		mnTextDrawMessage(msg + 2, state->lowerWin, 8, 11);
+		msg += 3;
+		mnTextDrawMessage(msg, state->lowerWin, 8, 22);
 #else
-		window = mnWindowCreate(5, 4, 21, 12, WINDOW_FLAG_INSTANT);
-		state->lowerWin = window;
-		mnTextDrawMessage(message + 1, window, 0, 4);
-		message += 2;
-		mnTextDrawMessage(message, state->lowerWin, 0, 16);
+		win = mnWindowCreate(5, 4, 21, 12, WINDOW_FLAG_INSTANT);
+		state->lowerWin = win;
+		mnTextDrawMessage(msg + 1, win, 0, 4);
+		msg += 2;
+		mnTextDrawMessage(msg, state->lowerWin, 0, 16);
 #endif
 	} else {
-		sySetEvent(mnTransferMethodDrawHelp, EVENT_PASS_FRAME - 10);
+		sySetEvent(mnTransferMethodDrawHelp, EVENT_PASS_TICK - 10);
 		state->drawnSelection = -1;
-		window = mnWindowCreate(TRANSFER_METHOD_WINDOW_X, 0,
+		win = mnWindowCreate(TRANSFER_METHOD_WINDOW_X, 0,
 			TRANSFER_METHOD_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
 		upper = &state->upperWin;
-		*upper = window;
+		*upper = win;
 		/* "Transfer Method" */
-		mnTextDrawMessage(
-			MsgTransferMethod, window, TRANSFER_METHOD_LABEL_X, 4);
+		mnTextDrawMessage(MsgTransferMethod, win, TRANSFER_METHOD_LABEL_X, 4);
 		state->lowerWin = mnWindowCreate(TRANSFER_HELP_WINDOW_X, 5,
 			TRANSFER_HELP_WINDOW_WIDTH, 7, WINDOW_FLAG_INSTANT);
 	}
@@ -771,7 +767,7 @@ Sint32 mnSelectSanctumService(Sint32 selection)
 
 /* Selects Yes or No, returning YES or NO; cancelling returns NO. */
 Sint32 mnYesNoMenuRun(
-	Sint32 bottom, Sint32 message, Sint32 labelWidth, Sint32 selection)
+	Sint32 bottom, Sint32 msg, Sint32 labelWidth, Sint32 selection)
 {
 	Sint32 row;
 
@@ -788,7 +784,7 @@ Sint32 mnYesNoMenuRun(
 
 	mnIconMenuAddIcon(COMMAND_ICON_YES);
 	mnIconMenuAddIcon(COMMAND_ICON_NO);
-	mnIconMenuCenter(row, labelWidth, message);
+	mnIconMenuCenter(row, labelWidth, msg);
 
 	selection = mnIconMenuRun(selection);
 	mnIconMenuClose();

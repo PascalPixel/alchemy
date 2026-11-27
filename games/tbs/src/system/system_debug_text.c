@@ -25,25 +25,25 @@ void syStringFormatHex(Uint32 value)
 	Sint32 i;
 
 	for(i = HEX_DIGITS - 1; i >= 0; i--) {
-		NumberBuffer[i] = String_HexDigits[value & 0xf];
+		NumberBuffer[i] = StringHexDigits[value & 0xf];
 		value >>= 4;
 	}
 	NumberBuffer[HEX_DIGITS] = 0;
 }
 
-/* Writes `number` to the number buffer as DECIMAL_DIGITS_MAX + 1 characters:
+/* Writes `num` to the number buffer as DECIMAL_DIGITS_MAX + 1 characters:
    spaces, a sign (a space or '-') and its decimal digits, right-aligned. */
-void syStringFormatDecimal(Sint32 number)
+void syStringFormatDecimal(Sint32 num)
 {
-	const Uint32 *placeValues = (const Uint32 *)String_PowersOfTen;
+	const Uint32 *placeValues = (const Uint32 *)StringPowersOfTen;
 	Sint8		  sign = ' ';
 	Uint8		 *output = NumberBuffer;
 	Sint32		  places;
 	Uint32		  placeValue;
 	Sint32		  digit;
-	Uint32		  magnitude = number;
+	Uint32		  magnitude = num;
 
-	if(number < 0) {
+	if(num < 0) {
 		magnitude = 0U - magnitude;
 		sign = '-';
 	}
@@ -73,14 +73,14 @@ void syStringFormatDecimal(Sint32 number)
 	output[1] = 0;
 }
 
-/* Writes `count` blank characters (WINDOW_TILE_BLANK) at the debug text cursor
+/* Writes `cnt` blank characters (WINDOW_TILE_BLANK) at the debug text cursor
    and moves it on. */
-void syPrintBlanks(Uint32 count)
+void syPrintBlanks(Uint32 cnt)
 {
 	Uint16 *dst = DebugTextCursor;
-	Uint32	index;
+	Uint32	idx;
 
-	for(index = 0; index < count; index++)
+	for(idx = 0; idx < cnt; idx++)
 		*dst++ = WINDOW_TILE_BLANK;
 	DebugTextCursor = dst;
 }
@@ -106,7 +106,7 @@ void syPrint(const Uint8 *text)
 	if(DebugTextEnabled != 0) {
 		Uint16 *cursor = DebugTextCursor;
 		Uint32	c = *text;
-		Uint32	count = 0;
+		Uint32	cnt = 0;
 
 		text++;
 		if(c != 0) {
@@ -118,7 +118,7 @@ void syPrint(const Uint8 *text)
 				if(cursor ==
 					(Uint16 *)(DEBUG_TEXT_SCREEN + DEBUG_TEXT_SCREEN_BYTES))
 					cursor = (Uint16 *)DEBUG_TEXT_SCREEN;
-				if(++count > DEBUG_TEXT_MAX_LENGTH - 1)
+				if(++cnt > DEBUG_TEXT_MAX_LENGTH - 1)
 					break;
 				c = *text++;
 			} while(c != 0);

@@ -52,7 +52,7 @@ typedef enum MADRA_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_MADRA_PATH_PAST_KARST
 } MADRA_METATILE_BEHAVIOR;
 
-/* The town's placed actors, by the rows of Madra_Placements, the first visit's:
+/* The town's placed actors, by the rows of MadraPlacements, the first visit's:
    Kraden, out of sight, steps out from behind Felix at the gate, and Milady and
    her guard wait out of sight until they hurry to the jail. */
 typedef enum MADRA_ACTOR_ID {
@@ -105,7 +105,7 @@ typedef enum MADRA_ACTOR_ID {
 	ACTOR_CYCLONE_CHIP = FIELD_TREASURE_ACTOR + 2
 } MADRA_ACTOR_ID;
 
-/* The rows of Madra_PlacementsOnReturn that differ: Karst, who comes looking
+/* The rows of MadraPlacementsOnReturn that differ: Karst, who comes looking
    for Menardi, and the mayor, back from Alhafra. */
 typedef enum MADRA_ON_RETURN_ACTOR_ID {
 	ACTOR_KARST = ACTOR_LADY,
@@ -115,18 +115,18 @@ typedef enum MADRA_ON_RETURN_ACTOR_ID {
 	ACTOR_MAN_AFRAID_OF_THE_KIBOMBO
 } MADRA_ON_RETURN_ACTOR_ID;
 
-extern ACTOR_PLACE Madra_Placements[];
-extern ACTOR_PLACE Madra_PlacementsOnReturn[];
+extern ACTOR_PLACE MadraPlacements[];
+extern ACTOR_PLACE MadraPlacementsOnReturn[];
 
 void scMadraGrantPassageToOsenia(void);
 
 void	   scMadraMeetKarst(void);
-extern CUE Madra_CuesBeforeRaid[];
-extern CUE Madra_CuesAfterRaid[];
-extern CUE Madra_CuesOnReturn[];
+extern CUE MadraCuesBeforeRaid[];
+extern CUE MadraCuesAfterRaid[];
+extern CUE MadraCuesOnReturn[];
 
-extern Uint16 Madra_DoorOpening[];
-extern Uint16 Madra_CavernHomeDoorOpening[];
+extern Uint16 MadraDoorOpening[];
+extern Uint16 MadraCavernHomeDoorOpening[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -146,11 +146,11 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(fdScriptGetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
-		return Madra_PlacementsOnReturn;
-	return Madra_Placements;
+		return MadraPlacementsOnReturn;
+	return MadraPlacements;
 }
 
-extern MAP_GRID_METATILE_ANIMATION Madra_Doors[];
+extern MAP_GRID_METATILE_ANIMATION MadraDoors[];
 
 /* Felix walks up to one of Madra's doors: it opens with a door's sound, he
    steps through and the screen fades to the room inside. The doors are the left
@@ -162,7 +162,7 @@ extern MAP_GRID_METATILE_ANIMATION Madra_Doors[];
    open.
 
    Each door metatile's step cue is the number of the exit it leads by, and
-   `Madra_Doors` holds, at that number less one, the metatiles that redraw the
+   `MadraDoors` holds, at that number less one, the metatiles that redraw the
    door open. Everyone else on the map stops while Felix walks in. */
 void scMadraEnterDoor(void)
 {
@@ -170,7 +170,7 @@ void scMadraEnterDoor(void)
 	ACTOR		*actor;
 	Sint16		*cue;
 	Uint32		 id;
-	Sint32		 index;
+	Sint32		 idx;
 
 	state = Ram_HeapSlots->fieldState;
 	fdScriptStart();
@@ -182,13 +182,13 @@ void scMadraEnterDoor(void)
 		}
 	}
 	cue = &state->stepCue;
-	index = *cue - 1;
+	idx = *cue - 1;
 	fdScriptPlaySnd(SE_DOOR_OPEN);
 	{
-		Sint32 x = Madra_Doors[index].x;
-		Sint32 y = Madra_Doors[index].y;
+		Sint32 x = MadraDoors[idx].x;
+		Sint32 y = MadraDoors[idx].y;
 
-		fdMapGridAnimateMetatiles(Madra_Doors[index].steps, x, y);
+		fdMapGridAnimateMetatiles(MadraDoors[idx].steps, x, y);
 	}
 	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
@@ -196,7 +196,7 @@ void scMadraEnterDoor(void)
 	fdScriptWait(10);
 	syImportScriptSetExitRequest(*cue);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -495,10 +495,10 @@ void scMadraWorkerBlocksSealedHole(void)
 const CUE *scGetCues(void)
 {
 	if(fdScriptGetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
-		return Madra_CuesOnReturn;
+		return MadraCuesOnReturn;
 	if(fdScriptGetFlag(FLAG_BRIGGS_CAUGHT))
-		return Madra_CuesAfterRaid;
-	return Madra_CuesBeforeRaid;
+		return MadraCuesAfterRaid;
+	return MadraCuesBeforeRaid;
 }
 
 /* Makes the metatiles around the Champa's hole, (45, 14) to (47, 16), plain
@@ -715,17 +715,17 @@ void scMadraMindReadBriggsFan(void)
    for her, and asks again next time. */
 void scMadraAskAboutJenna(void)
 {
-	Sint32 flags;
+	Sint32 flg;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdActorFaceActor(ACTOR_BOAT_OWNER, ACTOR_FELIX, 0);
 	fdScriptSetMessageId((Sint32)&MsgMadraIsThereByAnyChance);
-	flags = 0;
+	flg = 0;
 	/* "Is there by any chance a girl named Jenna with you?" Yes: "Ah! Those
 	   people must have been looking for..." No: "Oh... Well, if you run across
 	   anyone named..." */
-	fdScriptOpenMessage(ACTOR_BOAT_OWNER, flags);
+	fdScriptOpenMessage(ACTOR_BOAT_OWNER, flg);
 	if(fdScriptAskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
 		fdScriptSetFlag(FLAG_MADRA_TOLD_OF_JENNA);
 		/* "Ah! Those people must have been looking for you! There were four
@@ -916,7 +916,7 @@ void scMadraGrantPassageToOsenia(void)
 	fdActorSetPos(ACTOR_LADY, 172, 332);
 	fdActorSetPos(ACTOR_LADYS_GUARD, 172, 324);
 	fdScriptSetMessageId((Sint32)MsgMadraHasPiersEscaped);
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	/* "Has Piers escaped!?" */
 	fdScriptShowMessageThenWait(ACTOR_LADY, 0, 10);
 	fdActorWalkTo(ACTOR_LADY, 156, 372);
@@ -1291,9 +1291,9 @@ void scMadraMeetKarst(void)
 	fdActorFaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
 	fdScriptWait(20);
 	fdMapGridAnimateMetatiles(
-		Madra_Doors[MADRA_TO_MADRA_ROOMS_HOUSES_NORTHWEST - 1].steps,
-		Madra_Doors[MADRA_TO_MADRA_ROOMS_HOUSES_NORTHWEST - 1].x,
-		Madra_Doors[MADRA_TO_MADRA_ROOMS_HOUSES_NORTHWEST - 1].y);
+		MadraDoors[MADRA_TO_MADRA_ROOMS_HOUSES_NORTHWEST - 1].steps,
+		MadraDoors[MADRA_TO_MADRA_ROOMS_HOUSES_NORTHWEST - 1].x,
+		MadraDoors[MADRA_TO_MADRA_ROOMS_HOUSES_NORTHWEST - 1].y);
 	fdActorSetHorizontalPosAndAngWithTerrain(ACTOR_MAYOR, x, z, FACING_SOUTH);
 	fdActorWalkByAndWaitById(ACTOR_MAYOR, 0, 4);
 	fdActorAnimateThenWait(ACTOR_MAYOR, ANIM_NOD, 20);
@@ -1365,7 +1365,7 @@ void scMadraMeetKarst(void)
 		fdActorFaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
 		syGameFlagSet(FLAG_MADRA_CYCLONE_CHIP_GIVEN);
 	} else {
-		Sint32 count = FieldStateWork->msg + 1;
+		Sint32 cnt = FieldStateWork->msg + 1;
 
 		fdScriptSetMessageId((Sint32)MsgMadraMayorTriedToGiveFelix);
 		mnMessageArgumentPush(ITEM_CYCLONE_CHIP, MESSAGE_ARGUMENT_ITEM);
@@ -1378,7 +1378,7 @@ void scMadraMeetKarst(void)
 		fdActorWalkByAndWait(ACTOR_MAYOR, -16, 0);
 		fdActorFaceDirectionAndWait(ACTOR_MAYOR, FACING_SOUTH);
 		fdActorSetPos(ACTOR_CYCLONE_CHIP, 192, 256);
-		FieldStateWork->msg = count;
+		FieldStateWork->msg = cnt;
 	}
 	fdActorWalkByAndWait(ACTOR_MAYOR, -16, -8);
 	fdActorFaceDirectionAndWait(ACTOR_MAYOR, FACING_SOUTH);
@@ -1912,7 +1912,7 @@ Uint32 SceneExits[] = {
 };
 
 /* The town until the party returns with Piers (MADRA_ACTOR_ID). */
-ACTOR_PLACE Madra_Placements[] = {
+ACTOR_PLACE MadraPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 296, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_WHITE_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 392, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_ORANGE_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 360, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1946,7 +1946,7 @@ ACTOR_PLACE Madra_Placements[] = {
 
 /* The town once the party returns with Piers (MADRA_ACTOR_ID, then */
 /* MADRA_ON_RETURN_ACTOR_ID). */
-ACTOR_PLACE Madra_PlacementsOnReturn[] = {
+ACTOR_PLACE MadraPlacementsOnReturn[] = {
 	ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 150, 0, 344, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_WHITE_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 392, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_ORANGE_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 360, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1983,14 +1983,14 @@ ACTOR_PLACE Madra_PlacementsOnReturn[] = {
 
 /* A door opening: the one metatile animation step of most of the town's */
 /* doors. */
-Uint16 Madra_DoorOpening[] = {
+Uint16 MadraDoorOpening[] = {
 	MAPGRID_ANIMATION_STEP(1, 39, 1, 2, 6),
 	MAPGRID_ANIMATION_STEPS_END,
 };
 
 /* The door opening of the left cavern home's two doors, from other */
 /* metatiles. */
-Uint16 Madra_CavernHomeDoorOpening[] = {
+Uint16 MadraCavernHomeDoorOpening[] = {
 	MAPGRID_ANIMATION_STEP(3, 39, 1, 2, 6),
 	MAPGRID_ANIMATION_STEPS_END,
 };
@@ -1998,21 +1998,21 @@ Uint16 Madra_CavernHomeDoorOpening[] = {
 
 /* The town's doors that open with a metatile animation as the party walks
    through, by the exits they lead by. */
-MAP_GRID_METATILE_ANIMATION Madra_Doors[] = {
-	{Madra_CavernHomeDoorOpening, 20, 3},
-	{Madra_DoorOpening, 13, 23},
-	{Madra_DoorOpening, 17, 17},
-	{Madra_DoorOpening, 23, 18},
-	{Madra_DoorOpening, 28, 10},
-	{Madra_DoorOpening, 28, 6},
-	{Madra_DoorOpening, 9, 6},
-	{Madra_DoorOpening, 19, 24},
-	{Madra_DoorOpening, 0, 0}, /* the jail's doorway has no door */
-	{Madra_CavernHomeDoorOpening, 17, 3},
+MAP_GRID_METATILE_ANIMATION MadraDoors[] = {
+	{MadraCavernHomeDoorOpening, 20, 3},
+	{MadraDoorOpening, 13, 23},
+	{MadraDoorOpening, 17, 17},
+	{MadraDoorOpening, 23, 18},
+	{MadraDoorOpening, 28, 10},
+	{MadraDoorOpening, 28, 6},
+	{MadraDoorOpening, 9, 6},
+	{MadraDoorOpening, 19, 24},
+	{MadraDoorOpening, 0, 0}, /* the jail's doorway has no door */
+	{MadraCavernHomeDoorOpening, 17, 3},
 };
 
 /* The town's doors, gate, talk and Mind Read before the Kibombo raid. */
-CUE Madra_CuesBeforeRaid[] = {
+CUE MadraCuesBeforeRaid[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH),
 		MADRA_TO_MADRA_ROOMS_CAVERN_HOMES_EAST, CONDITION_ALWAYS,
 		SCRIPT_REF(scMadraEnterDoor)},
@@ -2154,7 +2154,7 @@ CUE Madra_CuesBeforeRaid[] = {
 
 /* The town's doors, gate, talk and Mind Read once the Kibombo have raided
    Madra. */
-CUE Madra_CuesAfterRaid[] = {
+CUE MadraCuesAfterRaid[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH),
 		MADRA_TO_MADRA_ROOMS_CAVERN_HOMES_EAST, CONDITION_ALWAYS,
 		SCRIPT_REF(scMadraEnterDoor)},
@@ -2283,7 +2283,7 @@ CUE Madra_CuesAfterRaid[] = {
 
 /* The town's doors, talk and Mind Read once the party returns with Piers, and
    Karst's visit. */
-CUE Madra_CuesOnReturn[] = {
+CUE MadraCuesOnReturn[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH),
 		MADRA_TO_MADRA_ROOMS_CAVERN_HOMES_EAST, CONDITION_ALWAYS,
 		SCRIPT_REF(scMadraEnterDoor)},

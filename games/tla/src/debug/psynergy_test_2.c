@@ -36,7 +36,7 @@ typedef enum PSYNERGY_TEST2_ACTOR_ID {
 	ACTOR_SECOND_POST, /* the rope's other end */
 } PSYNERGY_TEST2_ACTOR_ID;
 
-#define ROCK_FRAMES 20 /* how long a rock flies */
+#define ROCK_TICKS 20 /* how long a rock flies */
 
 /* The rocks a talk scatters, in the menu's heap slot: the scenes' struct
    ROCK_STATE with each rock read as a particle. */
@@ -49,7 +49,7 @@ typedef struct ROCK_PARTICLE_STATE {
 	Sint16	   resource;
 } ROCK_PARTICLE_STATE;
 
-void dbPsynergyTest2SpawnRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 count);
+void dbPsynergyTest2SpawnRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 cnt);
 
 void dbPsynergyTest2StartRocks(void);
 void dbPsynergyTest2EndRocks(void);
@@ -121,7 +121,7 @@ void dbPsynergyTest2StepIntoBattle(void)
 }
 
 /* Talking to ACTOR_STAKE: twenty rocks burst out around it and fall for 20
-   frames. */
+   ticks. */
 void dbPsynergyTest2ScatterRocks(Sint32 id)
 {
 	ACTOR *actor = fdActorGet(id);
@@ -160,25 +160,24 @@ Sint32 scPrepareMap(void)
 	return 0;
 }
 
-/* Each frame of the rocks: each rock younger than ROCK_FRAMES is drawn, its
+/* Each tick of the rocks: each rock younger than ROCK_TICKS is drawn, its
    picture one of eight as it ages, and falls. */
 void dbPsynergyTest2UpdateRocks(void)
 {
 	ROCK_PARTICLE_STATE *state = Ram_HeapSlots->menuState;
 	PARTICLE			*particle = state->rocks;
-	EFFECT_SPR			*sprite = state->sprs;
+	EFFECT_SPR			*spr = state->sprs;
 	Sint32				 i;
 	Sint32				 step = -toFIXED(1) / 2;
 
 	for(i = 0; i < ROCK_COUNT; i++) {
-		if((Uint32)particle->variant < ROCK_FRAMES) {
-			sprite->oam.idx =
-				state->tileBase + ((particle->variant >> 2) & 7) * 8;
-			fdEffectSprDrawAtWorldPos(sprite, particle);
+		if((Uint32)particle->variant < ROCK_TICKS) {
+			spr->oam.idx = state->tileBase + ((particle->variant >> 2) & 7) * 8;
+			fdEffectSprDrawAtWorldPos(spr, particle);
 			fdBattleEffectStepVector3(particle, 63, step);
 			particle->variant++;
 		}
-		sprite++;
+		spr++;
 		particle++;
 	}
 }
@@ -224,31 +223,31 @@ CUE SceneCues[] = {
 	{CUE_TABLE_END},
 };
 
-/* Throws `count` rocks out of (x, y, z): each starts 8 pixels or more away at a
+/* Throws `cnt` rocks out of (x, y, z): each starts 8 pixels or more away at a
    random angle and flies up and outward. */
-void dbPsynergyTest2SpawnRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 count)
+void dbPsynergyTest2SpawnRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 cnt)
 {
 	ROCK_PARTICLE_STATE *state = Ram_HeapSlots->menuState;
 	PARTICLE			*rock;
-	Sint32				 angle;
+	Sint32				 ang;
 	Sint32				 i;
 
-	if(count > 0) {
-		i = count;
+	if(cnt > 0) {
+		i = cnt;
 		do {
-			angle = syRandom();
+			ang = syRandom();
 			rock = &state->rocks[state->next];
 			rock->variant = 0;
 			rock->x = x;
 			rock->y = y;
 			rock->z = z;
 			syFieldVectorAddPolarOffsetFX(
-				(syRandom() << 3) + toFIXED(8), angle, &rock->x);
+				(syRandom() << 3) + toFIXED(8), ang, &rock->x);
 			rock->velX = 0;
 			rock->velY = toFIXED(5);
 			rock->velZ = 0;
 			syFieldVectorAddPolarOffsetFX(
-				(syRandom() << 1) + toFIXED(2), angle, &rock->velX);
+				(syRandom() << 1) + toFIXED(2), ang, &rock->velX);
 			state->next++;
 			state->next &= ROCK_COUNT - 1;
 			i--;
@@ -266,7 +265,7 @@ void dbPsynergyTest2StartRocks(void)
 	Sint32		tile;
 	Sint32		i;
 	PARTICLE   *rock;
-	EFFECT_SPR *sprite;
+	EFFECT_SPR *spr;
 
 	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_FALLING_ROCK), state);
 	entry = syVRAMCacheFindFreeEntry();
@@ -275,17 +274,17 @@ void dbPsynergyTest2StartRocks(void)
 	state->resource = entry;
 	rock = state->rocks;
 	for(i = 0; i < ROCK_COUNT; i++) {
-		sprite = &state->sprs[i];
-		fdEffectSprInit(sprite, 8, 8, OBJ_SIZE_16X16, tile);
-		sprite->oam.fullCol = 1;
-		sprite->oam.pal = 0;
-		sprite->oam.pri = 0;
-		sprite->depth = OAM_DEPTH_WINDOW;
+		spr = &state->sprs[i];
+		fdEffectSprInit(spr, 8, 8, OBJ_SIZE_16X16, tile);
+		spr->oam.fullCol = 1;
+		spr->oam.pal = 0;
+		spr->oam.pri = 0;
+		spr->depth = OAM_DEPTH_WINDOW;
 		rock->variant = -1;
 		rock++;
 	}
 	state->next = 0;
-	syFieldSetFrameEvent(dbPsynergyTest2UpdateRocks, EVENT_PASS_FRAME);
+	syFieldSetTickEvent(dbPsynergyTest2UpdateRocks, EVENT_PASS_TICK);
 }
 
 /* Stops the rocks and frees their tiles and state. */
@@ -299,13 +298,11 @@ void dbPsynergyTest2EndRocks(void)
 }
 
 /* Unused: the Psynergy test's dbPsynergyTestDigMetatiles again. */
-UNUSED void dbPsynergyTest2DigMetatiles(Sint32 stage, Sint32 sourceX,
-	Sint32 sourceY, Sint32 width, Sint32 height, Sint32 destinationX,
-	Sint32 destinationY)
+UNUSED void dbPsynergyTest2DigMetatiles(Sint32 stage, Sint32 srcX, Sint32 srcY,
+	Sint32 width, Sint32 height, Sint32 dstX, Sint32 dstY)
 {
 	if(stage == SCOOP_STAGE_DUG)
-		fdMapGridCopyMetatiles(
-			sourceX, sourceY, width, height, destinationX, destinationY);
+		fdMapGridCopyMetatiles(srcX, srcY, width, height, dstX, dstY);
 }
 
 /* Unused: the Psynergy test's dbPsynergyTestGrowActor again. */

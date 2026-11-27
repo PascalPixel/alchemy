@@ -29,7 +29,7 @@ typedef enum SPR_COL_MODE {
 } SPR_COL_MODE;
 
 /* Passed to fdActorConfigureSprCol in place of a SPR_COL_MODE:
-   the actor blinks white every few frames (fdActorUpdateBlink) until it is
+   the actor blinks white every few ticks (fdActorUpdateBlink) until it is
    given a mode again. */
 #define SPRITE_COLOR_BLINK 0x100
 
@@ -46,8 +46,8 @@ typedef enum SPR_COL_MODE {
    script and timer. */
 typedef struct SPR_ANIMATION {
 	Sint16 anmId; /* the sprite id whose metadata and pictures it uses */
-	/* Time left on the current picture in sixteenths of a frame, read signed:
-	   each timed command adds its argument times 16, each frame takes off
+	/* Time left on the current picture in sixteenths of a tick, read signed:
+	   each timed command adds its argument times 16, each tick takes off
 	   step. */
 	Uint16 tmr;
 	/* The facing table its pictures follow (from the metadata, or
@@ -63,7 +63,7 @@ typedef struct SPR_ANIMATION {
 	Uint8 **scripts;
 	Uint8  *script;	   /* the running script; null when stopped (ANIMCMD_END) */
 	Uint8	scriptOfs; /* byte offset of the next command in script */
-	/* taken off timer each frame; ANIM_STEP_NORMAL is normal speed */
+	/* taken off timer each tick; ANIM_STEP_NORMAL is normal speed */
 	Uint8 step;
 	/* picture shown, pictureBase plus the facing offset; SPRITE_PICTURE_NONE
 	   for none */
@@ -73,7 +73,7 @@ typedef struct SPR_ANIMATION {
 } SPR_ANIMATION;
 
 /* SPR_ANIMATION.step at normal speed, as fdActorSetAnimationSpeed sets it:
-   a timed command's frames run as written. */
+   a timed command's ticks run as written. */
 #define ANIM_STEP_NORMAL 16
 
 /* A sprite picture cache: the tag of the animation loaded into it (slot number
@@ -114,7 +114,7 @@ STATIC_ASSERT(sizeof(ACTOR_SYSTEM_STATE) == 92);
 /* The hardware sprite attributes one part of an animated sprite (its image or
    its shadow) is drawn with. */
 typedef struct ANIMATION_SPR_PART {
-	/* The link to the next part queued in the same depth slot this frame
+	/* The link to the next part queued in the same depth slot this tick
 	   (syOAMAddSprAtDepth). */
 	struct SPR *link;
 	/* The OAM entry's attributes 0 to 2. */
@@ -181,7 +181,7 @@ typedef enum ACTOR_ANIMATION {
 	ANIM_WALK = 2,
 	ANIM_NOD = 3,
 	ANIM_SHAKE_HEAD = 4,
-	/* Running, leaning forward, four frames a step to the walk's six. This and
+	/* Running, leaning forward, four ticks a step to the walk's six. This and
 	   the leader's other poses below are as Isaac's sprite (isaac.png) draws
 	   them. */
 	ANIM_LEADER_RUN = 5,
@@ -203,7 +203,7 @@ typedef enum ACTOR_ANIMATION {
 	ANIM_LEADER_CLIMB_DOWN_FROM_TOP = 13,
 	ANIM_LEADER_CLIMB_EAST = 14, /* reaching along a wall as he climbs east */
 	ANIM_LEADER_CLIMB_WEST = 15, /* reaching along a wall as he climbs west */
-	/* One leg forward, braced, held briefly: the frame ANIM_LEADER_LEAP holds
+	/* One leg forward, braced, held briefly: the tick ANIM_LEADER_LEAP holds
 	   and the run starts on, as when he lunges into a fight or pulls someone
 	   from a river. */
 	ANIM_LEADER_STRIDE = 16,
@@ -218,14 +218,14 @@ typedef enum ACTOR_ANIMATION {
 	ANIM_COLLAPSE = 19,
 	ANIM_LEADER_LEAN_BACK = 22, /* leaning back, his head thrown back */
 	/* The arrivals and leavings of the animated exits (EXIT_STYLE), each four
-	   frames of the leader turning: an arrival grows from a small figure seen
+	   ticks of the leader turning: an arrival grows from a small figure seen
 	   side-on to full size facing the player, a leaving turns from his back to
 	   side-on as he shrinks and is then hidden. */
 	ANIM_LEADER_ARRIVE_ALTERNATE = 23,
 	ANIM_LEADER_ARRIVE = 24,
 	ANIM_LEADER_LEAVE_ALTERNATE = 25,
 	ANIM_LEADER_LEAVE = 26,
-	/* ANIM_WALK's six pictures in reverse order, three frames each, played as a
+	/* ANIM_WALK's six pictures in reverse order, three ticks each, played as a
 	   log carries the leader across water or a torn leaf drops him. XXX (no
 	   evidence): what the player sees of it; render script reaches neither a
 	   torn leaf's fall (the second touch of one leaf) nor a ride on Crossbone

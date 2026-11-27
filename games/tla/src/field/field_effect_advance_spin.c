@@ -1,28 +1,28 @@
-/* A field effect's motion and spin each frame. */
+/* A field effect's motion and spin each tick. */
 
 #include "system/field_effect.h"
 #include "field/script.h"
 
 /* fdEffectAdvanceMotion with a fixed spin: moves the effect by its velocity,
    which loses drag, grows it at its rates and turns its sprite a sixteenth of a
-   turn each frame. Nothing calls it. */
+   turn each tick. Nothing calls it. */
 UNUSED void fdEffectAdvanceMotionAndSpin(FIELD_OBJECT *object)
 {
 	FIELD_EFFECT *effect = &object->eff;
-	Sint32		  velocityX;
-	Sint32		  velocityZ;
+	Sint32		  velX;
+	Sint32		  velZ;
 	Sint32		  scaleRateX;
 
 	/* DEAD: the leader looked up and not used; the ROM keeps the call. */
 	fdActorGetById(MainRoutineStateWork.leaderActorId);
-	velocityX = effect->vel.x;
-	effect->x += velocityX;
+	velX = effect->vel.x;
+	effect->x += velX;
 	effect->y += effect->vel.y;
-	velocityZ = effect->vel.z;
-	effect->z += velocityZ;
+	velZ = effect->vel.z;
+	effect->z += velZ;
 
-	effect->vel.x = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
-	effect->vel.z = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
+	effect->vel.x = velX - velX / FIELD_EFFECT_DRAG_X;
+	effect->vel.z = velZ - velZ / FIELD_EFFECT_DRAG_Z;
 
 	scaleRateX = effect->scaleRateX;
 	effect->scaleX += scaleRateX;

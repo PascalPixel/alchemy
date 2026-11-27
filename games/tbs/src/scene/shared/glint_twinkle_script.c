@@ -2,8 +2,8 @@
    twinkle in rising water and spray. */
 
 /* A SPRITE_GLINT's life: it shrinks from full size to a quarter and back, four
-   times over 24 frames each, then is released. */
-Sint32 Glint_TwinkleScript[] = {
+   times over 24 ticks each, then is released. */
+Sint32 GlintTwinkleScript[] = {
 	SC_SET(SW_SCALE_Y, toFIXED(1)),
 	SC_SET(SW_SCALE_X, toFIXED(1)),
 	SC_WAIT(6),

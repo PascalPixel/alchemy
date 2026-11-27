@@ -12,7 +12,7 @@
    cache slot. */
 typedef struct ICON_MENU_ENTRY {
 	/* The sprite queue's link, then OAM attributes 0 and 1 and attribute 2,
-	   written each frame by mnIconMenuDrawIcons. */
+	   written each tick by mnIconMenuDrawIcons. */
 	Uint32 spr[3];
 	Sint16 x; /* screen pixels; an icon at 0 is not drawn */
 	Sint16 y; /* screen pixels */

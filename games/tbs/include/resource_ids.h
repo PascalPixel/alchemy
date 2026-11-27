@@ -41,7 +41,7 @@ extern char ResourceId_SmallFont;
 /* Shown first by mnTitleShowPublisherLogo. */
 extern char ResourceId_PublisherLogo;
 #define RESOURCE_PUBLISHER_LOGO ((Sint32)&ResourceId_PublisherLogo)
-/* The Camelot logo's four frames of tiles, which mnTitleShowCamelotLogo
+/* The Camelot logo's four ticks of tiles, which mnTitleShowCamelotLogo
    cycles. */
 extern char ResourceId_CamelotLogo;
 #define RESOURCE_CAMELOT_LOGO ((Sint32)&ResourceId_CamelotLogo)
@@ -61,10 +61,10 @@ extern char ResourceId_ToBeContinuedLettering;
 	((Sint32)&ResourceId_ToBeContinuedLettering)
 
 /* Battle backgrounds. fdBattleBackgroundSelectForMap picks one for the current
-   scene from Scene_BattleBackgroundRules (field/battle_background_rules.c), and
+   scene from SceneBattleBackgroundRules (field/battle_background_rules.c), and
    on the world map fdBattleBackgroundSelectForEnvironment picks one by battle
    environment; either leaves it in MainRoutineStateWork.battleBg for the
-   battle. The credits (Credits_Backgrounds) shows every one but DesertBackdrop
+   battle. The credits (CreditsBackgrounds) shows every one but DesertBackdrop
    and AerialViewBackdrop, and some summons draw one as their sky. */
 
 /* Suhalla Gate's checkpoint and Dew rooms. The debug battle menu fights on it
@@ -407,7 +407,7 @@ extern char ResourceId_DefaultMetatileTilesAttributes;
 #define RESOURCE_DEFAULT_METATILE_TILES_ATTRIBUTES \
 	((Sint32)&ResourceId_DefaultMetatileTilesAttributes)
 
-/* The world map's two graphics sets (WorldMap_GraphicsResources), each a
+/* The world map's two graphics sets (WorldMapGraphicsResources), each a
    palette and five tilesets: fdWorldMapLoadGraphics decodes the first four into
    char blocks 2 and 3 and the fifth into MapGridAnimTiles for the tileset
    animation. The second set is for WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD. */

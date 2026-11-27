@@ -73,7 +73,7 @@ STATIC_ASSERT(offsetof(FIELD_EFFECT_STATE, arcTileSlot) == 1818);
 STATIC_ASSERT(offsetof(FIELD_EFFECT_STATE, msgMode) == 1820);
 
 /* Returns the value step tenths of the way from `from` to `to`; the field
-   Psynergy that uses it steps from 0 to 10, one a frame. */
+   Psynergy that uses it steps from 0 to 10, one a tick. */
 static __inline__ Sint32 fdEffectInterpolate(
 	Sint32 to, Sint32 from, Sint32 step)
 {

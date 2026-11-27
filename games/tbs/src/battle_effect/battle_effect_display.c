@@ -17,7 +17,7 @@ void btEffectConfigureEffectDisp(void)
 	sySynch(1);
 }
 
-/* Scrolls BG1 a step every few VBlanks. */
+/* Scrolls BG1 a step every few frames. */
 void btEffectAdvanceScrollOnInterval(void)
 {
 	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -30,16 +30,16 @@ void btEffectAdvanceScrollOnInterval(void)
 	}
 }
 
-/* Slides the affine BG2 a step every few VBlanks. */
+/* Slides the affine BG2 a step every few frames. */
 void btEffectAdvanceBg2OnInterval(void)
 {
-	Sint32				 timer;
+	Sint32				 tmr;
 	BATTLE_EFFECT_STATE *state;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-	timer = state->scrollTmr + 1;
-	state->scrollTmr = timer;
-	if(timer == state->scrollInterval) {
+	tmr = state->scrollTmr + 1;
+	state->scrollTmr = tmr;
+	if(tmr == state->scrollInterval) {
 		REG_BG2X = state->bg2x;
 		REG_BG2Y = state->bg2y;
 		state->bg2x += state->scrollStepX;

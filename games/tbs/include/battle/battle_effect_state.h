@@ -24,7 +24,7 @@ STATIC_ASSERT(sizeof(BATTLE_BG2_ORIGIN) == 12);
 STATIC_ASSERT(offsetof(BATTLE_BG2_ORIGIN, y) == 4);
 
 /* How btEffectTransferCanvas moves the effect's 128x128 canvas into VRAM once a
-   frame (state->transferMode); the canvas pixels are indices into a palette
+   tick (state->transferMode); the canvas pixels are indices into a palette
    ramp, so scaling them fades a trail. For the clear, darken and brighten modes
    transferValue is a word, a fill or a step repeated in each of its four bytes
    (one per pixel, CANVAS_FILL_WORD); the fade mode only compares it with
@@ -33,7 +33,7 @@ typedef enum CANVAS_TRANSFER_MODE {
 	CANVAS_COPY, /* copy as drawn */
 	/* copy, then fill the canvas with transferValue (0 clears it) */
 	CANVAS_COPY_AND_CLEAR,
-	/* copy, keeping half of each pixel's level for the next frame when
+	/* copy, keeping half of each pixel's level for the next tick when
 	   transferValue is CANVAS_FADE_HALF, and three quarters for any other value
 	   (CANVAS_FADE_THREE_QUARTERS by convention) */
 	CANVAS_COPY_AND_FADE,
@@ -45,7 +45,7 @@ typedef enum CANVAS_TRANSFER_MODE {
 } CANVAS_TRANSFER_MODE;
 
 /* CANVAS_COPY_AND_FADE's transferValue: the percentage of each pixel's level
-   kept for the next frame. */
+   kept for the next tick. */
 typedef enum CANVAS_FADE_SHARE {
 	CANVAS_FADE_HALF = 50,
 	CANVAS_FADE_THREE_QUARTERS = 75
@@ -95,19 +95,19 @@ typedef struct BATTLE_EFFECT_STATE {
 	   percent) or the darken or brighten amount. */
 	Sint32 transferValue;
 	Sint32 unused;		   /* never read or written in either game */
-	Sint32 frm;			   /* frame counter some effects keep, from 0 */
-	Sint32 scrollTmr;	   /* frames since the last interval scroll step */
-	Sint32 scrollInterval; /* frames between interval scroll steps */
+	Sint32 frm;			   /* tick counter some effects keep, from 0 */
+	Sint32 scrollTmr;	   /* ticks since the last interval scroll step */
+	Sint32 scrollInterval; /* ticks between interval scroll steps */
 	Sint32 scrollStepX;	   /* added to BG1 or BG2 x at each step */
 	Sint32 scrollStepY;	   /* added to BG1 or BG2 y at each step */
 	Sint32 savedBg1X;	   /* BG1 scroll restored when a shake ends */
 	Sint32 savedBg1Y;	   /* BG1 scroll restored when a shake ends */
-	Sint32 shakeFrm;	   /* shake frames left; btCameraShake counts down */
-	Sint32 cameraDelta;	   /* camera yaw turned per frame of the effect */
-	/* The effect sets 1 after a frame; btCameraApplyPhasedDelta then turns the
+	Sint32 shakeFrm;	   /* shake ticks left; btCameraShake counts down */
+	Sint32 cameraDelta;	   /* camera yaw turned per tick of the effect */
+	/* The effect sets 1 after a tick; btCameraApplyPhasedDelta then turns the
 	   whole cameraDelta and sets 0, else turns half and toggles 0 and 2. */
 	Sint32 cameraPhase;
-	Sint32 fadeFrm; /* battle background fade frames left */
+	Sint32 fadeFrm; /* battle background fade ticks left */
 	/* (btEffectDarkenBackgroundStep) */
 	Sint32 fadeStep; /* CANVAS_FADE_STEPs the background has darkened so far */
 	/* Window, display and blend registers, which
@@ -127,11 +127,11 @@ typedef struct BATTLE_EFFECT_STATE {
 	Sint32		bg2x;
 	Sint32		bg2y;
 	struct SPR *sprs[16]; /* the effect's sprites */
-	/* Each target's flash timer in frames, for args->tgts[n]: set by
+	/* Each target's flash timer in ticks, for args->tgts[n]: set by
 	   btEffectTintBattler, counted down by btEffectCountDownBattlerTints. */
 	Uint8 actorTmrs[8];
 	/* 1 on a canvas copy's VBlank, then counts up */
-	Sint32 vblanksSinceTransfer;
+	Sint32 framesSinceTransfer;
 	/* 1 once the effect has presented its canvas (EFFECT_PRESENT_CANVAS); the
 	   canvas transfer event copies the canvas and clears it. */
 	Sint32				transferPending;
@@ -156,7 +156,7 @@ STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, win0h) == 30652);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, bg2x) == 30672);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, sprs) == 30680);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, actorTmrs) == 30744);
-STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, vblanksSinceTransfer) == 30752);
+STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, framesSinceTransfer) == 30752);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, transferPending) == 30756);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, args) == 30760);
 STATIC_ASSERT(sizeof(BATTLE_EFFECT_STATE) == 30764);

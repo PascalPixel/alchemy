@@ -1,4 +1,4 @@
-/* Actors' motion each frame: their scripts, steering toward a target, falling,
+/* Actors' motion each tick: their scripts, steering toward a target, falling,
    floating and riding a platform, and being sent somewhere. Part of field.c. */
 
 #include "field/resource_slot.h"
@@ -34,16 +34,16 @@ Sint32 fdActorHasArrived(ACTOR *actor)
 	return fdActorIsTargetUnset(actor);
 }
 
-extern const SCRIPT_COMMAND_FN ActorScript_CommandTable[];
-extern const Sint32			   ActorScript_CycleTable[];
+extern const SCRIPT_COMMAND_FN ActorScriptCommandTable[];
+extern const Sint32			   ActorScriptCycleTable[];
 
 /* The highest script word read as a command, an index of
-   ActorScript_CommandTable; a larger one is stepped over. */
+   ActorScriptCommandTable; a larger one is stepped over. */
 #define SCRIPT_COMMAND_MAX 63
-/* A floating actor's bob, one cycle of ActorScript_CycleTable over this many
-   frames; its rise and fall each frame is the table's value times its gravity
+/* A floating actor's bob, one cycle of ActorScriptCycleTable over this many
+   ticks; its rise and fall each tick is the table's value times its gravity
    over FLOAT_DIVISOR, or FLOAT_HIGH_DIVISOR with ACTOR_FLOATS_HIGH. */
-#define FLOAT_CYCLE_FRAMES 64
+#define FLOAT_CYCLE_TICKS  64
 #define FLOAT_DIVISOR	   64
 #define FLOAT_HIGH_DIVISOR 16
 
@@ -53,7 +53,7 @@ static __inline__ Sint32 fdObjectSquare(Sint32 value)
 	return value * value;
 }
 
-/* Advances every actor by one frame: their scripts and their motion, with free
+/* Advances every actor by one tick: their scripts and their motion, with free
    flight in 3D, following the ground, floating, and solid actors that refuse to
    overlap. */
 void fdActorUpdateAllOnField(void)
@@ -64,14 +64,14 @@ void fdActorUpdateAllOnField(void)
 	FIXED  y;
 	Sint32 z;
 	FIXED  ground;
-	Sint32 arrivedAtTarget;
+	Sint32 arrivedAtTgt;
 	FIXED  pos[3];
 	Sint32 dx;
 	Sint32 dy;
 	Sint32 dz;
-	Sint32 velocityX;
-	Sint32 velocityY;
-	Sint32 velocityZ;
+	Sint32 velX;
+	Sint32 velY;
+	Sint32 velZ;
 	Sint32 distance;
 	FIXED  speed;
 	FIXED  reducedSpeed;
@@ -84,7 +84,7 @@ void fdActorUpdateAllOnField(void)
 		objectsRemaining--, object++) {
 		const Sint32 *script;
 
-		arrivedAtTarget = 0;
+		arrivedAtTgt = 0;
 		script = object->script;
 		if(script == NULL)
 			continue;
@@ -95,9 +95,9 @@ void fdActorUpdateAllOnField(void)
 		if(script == NULL)
 			continue;
 		if(object->paused != 0) {
-			object->stepX = arrivedAtTarget;
-			object->stepY = arrivedAtTarget;
-			object->stepZ = arrivedAtTarget;
+			object->stepX = arrivedAtTgt;
+			object->stepY = arrivedAtTgt;
+			object->stepZ = arrivedAtTgt;
 			continue;
 		}
 
@@ -113,7 +113,7 @@ void fdActorUpdateAllOnField(void)
 				command = *script;
 
 				if(command <= SCRIPT_COMMAND_MAX) {
-					if(ActorScript_CommandTable[command](object) == 0)
+					if(ActorScriptCommandTable[command](object) == 0)
 						break;
 				} else {
 					object->scriptCursor++;
@@ -145,17 +145,16 @@ void fdActorUpdateAllOnField(void)
 						object->velX += dx * ratio;
 						object->velY += dy * ratio;
 						object->velZ += dz * ratio;
-						velocityX = object->velX;
-						velocityY = object->velY;
-						velocityZ = object->velZ;
-						speed = sySquartFX(syMulFX(velocityX, velocityX) +
-							syMulFX(velocityY, velocityY) +
-							syMulFX(velocityZ, velocityZ));
+						velX = object->velX;
+						velY = object->velY;
+						velZ = object->velZ;
+						speed = sySquartFX(syMulFX(velX, velX) +
+							syMulFX(velY, velY) + syMulFX(velZ, velZ));
 						if(speed > object->speedLimit) {
 							ratio = syDivFX(speed, object->speedLimit);
-							object->velX = syMulFX(velocityX, ratio);
-							object->velY = syMulFX(velocityY, ratio);
-							object->velZ = syMulFX(velocityZ, ratio);
+							object->velX = syMulFX(velX, ratio);
+							object->velY = syMulFX(velY, ratio);
+							object->velZ = syMulFX(velZ, ratio);
 						}
 					}
 				} else {
@@ -198,14 +197,14 @@ void fdActorUpdateAllOnField(void)
 						ratio = syDivFX(distance, object->acceleration);
 						object->velX += syMulFX(dx, ratio);
 						object->velZ += syMulFX(dz, ratio);
-						velocityX = object->velX;
-						velocityZ = object->velZ;
-						speed = sySquartFX(syMulFX(velocityX, velocityX) +
-							syMulFX(velocityZ, velocityZ));
+						velX = object->velX;
+						velZ = object->velZ;
+						speed = sySquartFX(
+							syMulFX(velX, velX) + syMulFX(velZ, velZ));
 						if(speed > object->speedLimit) {
 							ratio = syDivFX(speed, object->speedLimit);
-							object->velX = syMulFX(velocityX, ratio);
-							object->velZ = syMulFX(velocityZ, ratio);
+							object->velX = syMulFX(velX, ratio);
+							object->velZ = syMulFX(velZ, ratio);
 						}
 					}
 				} else {
@@ -228,8 +227,8 @@ void fdActorUpdateAllOnField(void)
 				/* Follow the ground, or the top of a platform 16 pixels
 				   below. */
 				if(object->motionFlg & ACTOR_FOLLOWS_TERRAIN) {
-					velocityX = x + object->velX;
-					velocityZ = z + object->velZ;
+					velX = x + object->velX;
+					velZ = z + object->velZ;
 					standing = 0;
 					object->carrier = NULL;
 					if(object->priFlg & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
@@ -245,11 +244,11 @@ void fdActorUpdateAllOnField(void)
 								continue;
 							if(other == object)
 								continue;
-							if((FIELD_METATILE(velocityX - other->x.fixed +
-								   toFIXED(8))) != 0)
+							if((FIELD_METATILE(
+								   velX - other->x.fixed + toFIXED(8))) != 0)
 								continue;
-							if((FIELD_METATILE(velocityZ - other->z.fixed +
-								   toFIXED(8))) != 0)
+							if((FIELD_METATILE(
+								   velZ - other->z.fixed + toFIXED(8))) != 0)
 								continue;
 							dy = y - other->y.fixed;
 							if((dy - toFIXED(16) < 0
@@ -264,17 +263,17 @@ void fdActorUpdateAllOnField(void)
 					}
 					if(!standing)
 						ground = fdMapGridGetTerrainHeight(
-							object->layer, velocityX, velocityZ);
-					velocityY = ground - object->groundHeight;
+							object->layer, velX, velZ);
+					velY = ground - object->groundHeight;
 					if(ground - y > -toFIXED(4))
-						y += velocityY;
-					if(velocityY < 0)
-						velocityY = -velocityY;
+						y += velY;
+					if(velY < 0)
+						velY = -velY;
 					maximumChange = object->acceleration / 2;
-					if(velocityY > maximumChange)
-						velocityY = maximumChange;
-					velocityY *= 3;
-					if(velocityY != 0 &&
+					if(velY > maximumChange)
+						velY = maximumChange;
+					velY *= 3;
+					if(velY != 0 &&
 						!(object->motionFlg & ACTOR_KEEPS_SPEED_ON_SLOPES) &&
 						!standing) {
 						dx = object->velX;
@@ -283,7 +282,7 @@ void fdActorUpdateAllOnField(void)
 						speed = sySquartFX(syIWRAMMulFX(dx, dx) +
 							syIWRAMMulFX(dy, dy) + syIWRAMMulFX(dz, dz));
 						if(speed != 0) {
-							reducedSpeed = speed - velocityY;
+							reducedSpeed = speed - velY;
 							if(reducedSpeed < 0)
 								reducedSpeed = 0;
 							ratio = syDivFX(speed, reducedSpeed);
@@ -320,13 +319,13 @@ void fdActorUpdateAllOnField(void)
 
 				/* Float: bob up and down on a triangle wave. */
 				if(object->motionFlg & ACTOR_FLOATS) {
-					Uint32 phase = object->bounce & (FLOAT_CYCLE_FRAMES - 1);
+					Uint32 phase = object->bounce & (FLOAT_CYCLE_TICKS - 1);
 
 					if(object->motionFlg & ACTOR_FLOATS_HIGH)
-						object->velY = ActorScript_CycleTable[phase >> 1] *
+						object->velY = ActorScriptCycleTable[phase >> 1] *
 							object->gravity / FLOAT_HIGH_DIVISOR;
 					else
-						object->velY = ActorScript_CycleTable[phase >> 1] *
+						object->velY = ActorScriptCycleTable[phase >> 1] *
 							object->gravity / FLOAT_DIVISOR;
 					object->bounce++;
 				}
@@ -351,20 +350,20 @@ void fdActorUpdateAllOnField(void)
 		case ARRIVAL_AXIS_X:
 			if(x == object->tgtX ||
 				((object->x.fixed - object->tgtX) ^ (x - object->tgtX)) < 0)
-				arrivedAtTarget = 1;
+				arrivedAtTgt = 1;
 			break;
 		case ARRIVAL_AXIS_Y:
 			if(y == object->tgtY ||
 				((object->y.fixed - object->tgtY) ^ (y - object->tgtY)) < 0)
-				arrivedAtTarget = 1;
+				arrivedAtTgt = 1;
 			break;
 		case ARRIVAL_AXIS_Z:
 			if(z == object->tgtZ ||
 				((object->z.fixed - object->tgtZ) ^ (z - object->tgtZ)) < 0)
-				arrivedAtTarget = 1;
+				arrivedAtTgt = 1;
 			break;
 		}
-		if(arrivedAtTarget != 0) {
+		if(arrivedAtTgt != 0) {
 			if(object->snapToTgt != 0) {
 				x = object->tgtX;
 				object->velX = 0;
@@ -387,7 +386,7 @@ void fdActorUpdateAllOnField(void)
 		SET_ACTOR_POSITION(object, x, y, z);
 
 		/* Turn to face the direction of travel, at most a sixteenth of a turn a
-		   frame. */
+		   tick. */
 		if(object->steeringFlg & ACTOR_FACES_MOTION) {
 			x = object->velX;
 			z = object->velZ;
@@ -409,7 +408,7 @@ void fdActorUpdateAllOnField(void)
 	}
 }
 
-/* Each frame: an actor that walks on platforms
+/* Each tick: an actor that walks on platforms
    (ACTOR_PRIORITY_WALKS_ON_PLATFORMS) and rides one, its carrier, moves with
    the carrier's last step; one standing on it as it rises or sinks is set on
    its top, 16 pixels up. */
@@ -544,6 +543,6 @@ void fdActorListRunning(ACTOR *actor, ACTOR **out)
 }
 
 #undef SCRIPT_COMMAND_MAX
-#undef FLOAT_CYCLE_FRAMES
+#undef FLOAT_CYCLE_TICKS
 #undef FLOAT_DIVISOR
 #undef FLOAT_HIGH_DIVISOR

@@ -7,7 +7,7 @@
 /* clang-format off */
 /* The byte offset of each lettering picture's palette (enum */
 /* COLOSSO_LETTERING_PICTURE) among the lettering palettes. */
-const Uint8 Colosso_LetteringPaletteOffsets[] = {
+const Uint8 ColossoLetteringPaletteOffsets[] = {
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
 	0, 32, 32, 32, 96, 64, 64, 64, 128, 0,
 #else
@@ -16,7 +16,7 @@ const Uint8 Colosso_LetteringPaletteOffsets[] = {
 };
 
 /* A count digit's moves (3, 2, 1). */
-const Sint16 Colosso_LetteringDigit[] = {
+const Sint16 ColossoLetteringDigit[] = {
 	COLOSSO_LETTERING_SCALE, 512, 1,
 	COLOSSO_LETTERING_FADE, 0, 1,
 	COLOSSO_LETTERING_SCALE, 256, 6,
@@ -28,7 +28,7 @@ const Sint16 Colosso_LetteringDigit[] = {
 };
 
 /* `LOSE`'s moves. */
-const Sint16 Colosso_LetteringLose[] = {
+const Sint16 ColossoLetteringLose[] = {
 	COLOSSO_LETTERING_SCALE, 128, 1,
 	COLOSSO_LETTERING_FADE, 0, 1,
 	COLOSSO_LETTERING_SCALE, 256, 6,

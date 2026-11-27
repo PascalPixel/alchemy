@@ -17,7 +17,7 @@
    lines down the screen. The first seventeen open a window over the right half,
    the rest close one over the left. */
 /* clang-format off */
-TRANSITION_SHAPE ScreenTransition_Shapes[] = {
+TRANSITION_SHAPE ScreenTransitionShapes[] = {
 	{WINOUT_WIN01_BG0, TRANSITION_SHOW_ALL, {SPAN_FILL(160, 255, 255)}},
 	{WINOUT_WIN01_BG0, TRANSITION_SHOW_ALL, {SPAN_SLOPE(80, 120, 120, 134, 120), SPAN_FILL(80, 255, 255)}},
 	{WINOUT_WIN01_BG0, TRANSITION_SHOW_ALL, {SPAN_SLOPE(80, 120, 120, 150, 120), SPAN_FILL(80, 255, 255)}},

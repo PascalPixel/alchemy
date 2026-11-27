@@ -88,18 +88,18 @@
 typedef struct TARGET_TRACK {
 	Uint8 x; /* screen pixels */
 	Uint8 y; /* screen pixels */
-	/* bits: 7..2 frames to stay put (CURSOR_HOLD_FRAME each) | 1
+	/* bits: 7..2 ticks to stay put (CURSOR_HOLD_TICK each) | 1
 	   CURSOR_IN_SPREAD | 0 CURSOR_EASING */
 	Uint8 flg;
 	/* The place it follows from the aimed one; TARGET_MARKERS when unused. */
 	Sint8 idx;
 } TARGET_TRACK;
 
-/* TARGET_TRACK.flg: easing halfway to its unit each frame, in the current
-   spread, and one frame of staying put. */
-#define CURSOR_EASING	  (1 << 0)
-#define CURSOR_IN_SPREAD  (1 << 1)
-#define CURSOR_HOLD_FRAME (1 << 2)
+/* TARGET_TRACK.flg: easing halfway to its unit each tick, in the current
+   spread, and one tick of staying put. */
+#define CURSOR_EASING	 (1 << 0)
+#define CURSOR_IN_SPREAD (1 << 1)
+#define CURSOR_HOLD_TICK (1 << 2)
 
 /* What the selection redraws: the spread's targets and their markers, and at
    the start every part. */
@@ -122,23 +122,23 @@ Sint32 mnBattleTargetRunSelection(
 	Sint32 selection, Sint32 mode, Uint32 spread, Uint32 kind)
 {
 	Uint16			 candidateIds[8];
-	SELECTION_SPR	 cursorSprites[TARGET_MARKERS];
+	SELECTION_SPR	 cursorSprs[TARGET_MARKERS];
 	TARGET_TRACK	 cursorTracks[TARGET_MARKERS];
-	SCREEN_POINT	 actorPosition;
+	SCREEN_POINT	 actorPos;
 	Uint16			 spreadActorIds[UNIT_MAX];
 	Uint8			 spreadTrackIndices[8];
 	SCREEN_POINT	 selectedPosition;
-	Uint16			 targetName[UNIT_NAME_SIZE];
-	SCREEN_POINT	 namePosition;
-	SCREEN_POINT	 markerPosition;
+	Uint16			 tgtName[UNIT_NAME_SIZE];
+	SCREEN_POINT	 namePos;
+	SCREEN_POINT	 markerPos;
 	AFFINE_TRANSFORM effect;
 	UNIT			*unit;
 	BATTLE_STATE	*battle;
-	WINDOW			*window;
+	WINDOW			*win;
 	WINDOW			*conditionWindow;
-	Sint32			 targetIndex;
-	Sint32			 targetCount;
-	Sint32			 candidateCount;
+	Sint32			 tgtIdx;
+	Sint32			 tgtCnt;
+	Sint32			 candidateCnt;
 	Sint32			 redraw;
 	Sint32			 cursorSlot;
 	Sint32			 drawCursors;
@@ -159,11 +159,11 @@ Sint32 mnBattleTargetRunSelection(
 	Sint32			 result;
 	TARGET_TRACK	*track;
 	SELECTION_SPR	*marker;
-	SELECTION_SPR	*firstSprite;
-	UNIT			*target;
+	SELECTION_SPR	*firstSpr;
+	UNIT			*tgt;
 
 	battle = BattleStateWork;
-	targetCount = 0;
+	tgtCnt = 0;
 	redraw = TARGET_REDRAW_ALL;
 	cursorSlot = syVRAMCacheAllocEntry(256);
 	conditionWindow = NULL;
@@ -176,31 +176,31 @@ Sint32 mnBattleTargetRunSelection(
 	for(i = 0; i < TARGET_MARKERS; i++)
 		cursorTracks[i].flg = 0;
 	/* The candidates: the party, the acting unit alone, or the enemies. */
-	targetIndex = -1;
+	tgtIdx = -1;
 	if(mode == ABILITY_TARGET_ALLIES) {
 		for(i = 0; i <= 5 && battle->partyUnits[i] != BATTLE_UNIT_LIST_END;
 			i++) {
-			candidateIds[targetCount] = battle->partyUnits[i];
-			targetCount++;
+			candidateIds[tgtCnt] = battle->partyUnits[i];
+			tgtCnt++;
 		}
 	} else if(mode == ABILITY_TARGET_SELF) {
 		candidateIds[0] = selection;
-		targetCount = 1;
+		tgtCnt = 1;
 	} else {
 		for(i = 0; i <= 5 && battle->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
-			candidateIds[targetCount] = battle->enemyIds[i];
-			targetCount++;
+			candidateIds[tgtCnt] = battle->enemyIds[i];
+			tgtCnt++;
 		}
 	}
 	/* Keep the candidate list separate from the markers drawn for a spread. */
-	candidateIds[targetCount] = BATTLE_UNIT_LIST_END;
-	candidateCount = targetCount;
+	candidateIds[tgtCnt] = BATTLE_UNIT_LIST_END;
+	candidateCnt = tgtCnt;
 	/* Restorative actions prefer an ally who benefits from their effect.
 	   Otherwise the cursor starts on the acting unit when it is a candidate. */
 	if(mode == ABILITY_TARGET_ALLIES) {
 		if(spread != ABILITY_RANGE_ALL && kind != TARGET_HINT_NONE) {
 			found = 0;
-			for(j = 0; j < targetCount; j++) {
+			for(j = 0; j < tgtCnt; j++) {
 				UNIT *candidate;
 
 				if(candidateIds[j] == BATTLE_UNIT_REMOVED)
@@ -237,40 +237,40 @@ Sint32 mnBattleTargetRunSelection(
 				}
 			}
 		}
-		for(j = 0; j < targetCount; j++) {
+		for(j = 0; j < tgtCnt; j++) {
 			if(candidateIds[j] == selection)
 				break;
 		}
-		if(j != targetCount)
-			targetIndex = j;
+		if(j != tgtCnt)
+			tgtIdx = j;
 	}
 	/* Else the middle one; then step back past empty places and, in a link
 	   battle, past downed enemies. */
-	if(targetIndex < 0)
-		targetIndex = (targetCount - 1) / 2;
-	while(candidateIds[targetIndex] == BATTLE_UNIT_REMOVED ||
+	if(tgtIdx < 0)
+		tgtIdx = (tgtCnt - 1) / 2;
+	while(candidateIds[tgtIdx] == BATTLE_UNIT_REMOVED ||
 		(gmFlagGetStub(FLAG_LINK_BATTLE) && mode == ABILITY_TARGET_FOES &&
-			gmUnitGetStub(candidateIds[targetIndex])->hp == 0)) {
-		targetIndex = targetIndex + targetCount - 1;
-		targetIndex %= targetCount;
+			gmUnitGetStub(candidateIds[tgtIdx])->hp == 0)) {
+		tgtIdx = tgtIdx + tgtCnt - 1;
+		tgtIdx %= tgtCnt;
 	}
 	/* Aimed at enemies or itself, the cursor starts at the acting unit (at y
-	   128), stays two frames, then eases to the target. */
+	   128), stays two ticks, then eases to the target. */
 	if(mode != ABILITY_TARGET_ALLIES) {
-		btMotionProjectCursorPointStub(selection, &actorPosition);
-		cursorTracks[0].flg = CURSOR_HOLD_FRAME * 2;
-		cursorTracks[0].x = actorPosition.x;
+		btMotionProjectCursorPointStub(selection, &actorPos);
+		cursorTracks[0].flg = CURSOR_HOLD_TICK * 2;
+		cursorTracks[0].x = actorPos.x;
 		cursorTracks[0].y = 128;
 	}
-	window = mnWindowCreate(0, TARGET_NAME_WINDOW_ROW, DISPLAY_TILE_WIDTH, 4,
+	win = mnWindowCreate(0, TARGET_NAME_WINDOW_ROW, DISPLAY_TILE_WIDTH, 4,
 		WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
 			WINDOW_FLAG_OUTLINED_TEXT);
 	do {
-		/* FAKEMATCH(temporary): firstSprite holds &cursorSprites[0]. */
-		firstSprite = cursorSprites;
+		/* FAKEMATCH(temporary): firstSpr holds &cursorSprs[0]. */
+		firstSpr = cursorSprs;
 		drawCursors = 0;
 		{
-			Sint32 t = targetIndex * 2;
+			Sint32 t = tgtIdx * 2;
 
 			/* FAKEMATCH(dead): a test that cannot change t. */
 			if(t == 0)
@@ -278,15 +278,15 @@ Sint32 mnBattleTargetRunSelection(
 			btMotionProjectCursorPointStub(
 				*(Uint16 *)((Uint8 *)candidateIds + t), &selectedPosition);
 		}
-		/* The cursor: 32 frames (256 bytes each), a frame every four frames,
-		   bobbing 2 pixels each way every 16 frames. */
-		((Sint32 *)firstSprite)[1] = OBJ_SIZE_16X16 | OBJ_256_COLORS;
-		((Sint32 *)firstSprite)[2] = 0;
-		firstSprite->tile = syVRAMCacheReload(cursorSlot,
-			(((FrameCount >> 2) & 31) << 8) + (Sint32)Menu_AnimatedCursorTiles);
+		/* The cursor: 32 ticks (256 bytes each), a tick every four ticks,
+		   bobbing 2 pixels each way every 16 ticks. */
+		((Sint32 *)firstSpr)[1] = OBJ_SIZE_16X16 | OBJ_256_COLORS;
+		((Sint32 *)firstSpr)[2] = 0;
+		firstSpr->tile = syVRAMCacheReload(cursorSlot,
+			(((TickCount >> 2) & 31) << 8) + (Sint32)Menu_AnimatedCursorTiles);
 		selectedPosition.y += CURSOR_BOB_Y();
 		y = selectedPosition.y;
-		/* Ease halfway each frame; the other markers show once the cursor is
+		/* Ease halfway each tick; the other markers show once the cursor is
 		   within 7 pixels of its target. */
 		if(cursorTracks[0].flg & CURSOR_EASING) {
 			cursorX = (selectedPosition.x + cursorTracks[0].x) / 2;
@@ -299,7 +299,7 @@ Sint32 mnBattleTargetRunSelection(
 			cursorTracks[0].x = cursorX;
 			cursorTracks[0].y = cursorY;
 			selectedPosition.y = cursorY;
-		} else if(cursorTracks[0].flg < CURSOR_HOLD_FRAME) {
+		} else if(cursorTracks[0].flg < CURSOR_HOLD_TICK) {
 			cursorTracks[0].x = selectedPosition.x;
 			selectedPosition.y = y;
 			cursorTracks[0].y = y;
@@ -307,13 +307,13 @@ Sint32 mnBattleTargetRunSelection(
 		} else {
 			selectedPosition.x = cursorTracks[0].x;
 			selectedPosition.y = cursorTracks[0].y;
-			cursorTracks[0].flg = cursorTracks[0].flg - CURSOR_HOLD_FRAME;
-			if(cursorTracks[0].flg < CURSOR_HOLD_FRAME)
+			cursorTracks[0].flg = cursorTracks[0].flg - CURSOR_HOLD_TICK;
+			if(cursorTracks[0].flg < CURSOR_HOLD_TICK)
 				cursorTracks[0].flg = CURSOR_EASING;
 		}
-		firstSprite->x = selectedPosition.x - 8;
-		firstSprite->y = selectedPosition.y - 16;
-		syOAMAddSprAtDepth(firstSprite, OAM_DEPTH_WINDOW);
+		firstSpr->x = selectedPosition.x - 8;
+		firstSpr->y = selectedPosition.y - 16;
+		syOAMAddSprAtDepth(firstSpr, OAM_DEPTH_WINDOW);
 		/* The other markers' scale: 11/16 beside an aimed one, full size when
 		   the action takes every unit. */
 		if(spread == ABILITY_RANGE_ALL) {
@@ -350,26 +350,26 @@ Sint32 mnBattleTargetRunSelection(
 		/* The aim moved: list the units the range covers, the aimed one first,
 		   mark them, and redraw the window for the aimed one. */
 		if(redraw & TARGET_REDRAW_SPREAD) {
-			targetCount = 0;
+			tgtCnt = 0;
 			for(i = 0; i < TARGET_MARKERS; i++)
 				cursorTracks[i].flg &= ~CURSOR_IN_SPREAD;
 			for(i = 0; i < spread; i++) {
 				{
-					n = targetIndex + i;
-					if(n < candidateCount &&
+					n = tgtIdx + i;
+					if(n < candidateCnt &&
 						candidateIds[n] != BATTLE_UNIT_REMOVED) {
-						spreadActorIds[targetCount] = candidateIds[n];
+						spreadActorIds[tgtCnt] = candidateIds[n];
 						cursorTracks[i].flg |= CURSOR_IN_SPREAD;
 						if(cursorTracks[i].idx != i) {
 							cursorTracks[i].flg &= ~CURSOR_EASING;
 							cursorTracks[i].idx = i;
 						}
-						spreadTrackIndices[targetCount] = i;
-						targetCount++;
+						spreadTrackIndices[tgtCnt] = i;
+						tgtCnt++;
 					}
-					if(i != 0 && (n = targetIndex - i) >= 0 &&
+					if(i != 0 && (n = tgtIdx - i) >= 0 &&
 						candidateIds[n] != BATTLE_UNIT_REMOVED) {
-						spreadActorIds[targetCount] = candidateIds[n];
+						spreadActorIds[tgtCnt] = candidateIds[n];
 						cursorTracks[TARGET_MARKERS - i].flg |=
 							CURSOR_IN_SPREAD;
 						if(cursorTracks[TARGET_MARKERS - i].idx != -i) {
@@ -377,8 +377,8 @@ Sint32 mnBattleTargetRunSelection(
 								~CURSOR_EASING;
 							cursorTracks[TARGET_MARKERS - i].idx = -i;
 						}
-						spreadTrackIndices[targetCount] = TARGET_MARKERS - i;
-						targetCount++;
+						spreadTrackIndices[tgtCnt] = TARGET_MARKERS - i;
+						tgtCnt++;
 					}
 				}
 			}
@@ -386,15 +386,15 @@ Sint32 mnBattleTargetRunSelection(
 				if((cursorTracks[i].flg & CURSOR_IN_SPREAD) == 0)
 					cursorTracks[i].idx = TARGET_MARKERS;
 			}
-			spreadActorIds[targetCount] = BATTLE_UNIT_LIST_END;
+			spreadActorIds[tgtCnt] = BATTLE_UNIT_LIST_END;
 			btHighlightSetModesStub(spreadActorIds, HIGHLIGHT_SELECTED);
 			/* A party member: the window of what the action does, placed by the
 			   party member's tile column and kept on screen. */
-			if(candidateIds[targetIndex] <= ALLY_MAX) {
+			if(candidateIds[tgtIdx] <= ALLY_MAX) {
 				if(spread != ABILITY_RANGE_ALL && kind != TARGET_HINT_NONE) {
-					unit = gmUnitGetStub(candidateIds[targetIndex]);
+					unit = gmUnitGetStub(candidateIds[tgtIdx]);
 					btMotionProjectCursorPointStub(
-						candidateIds[targetIndex], &selectedPosition);
+						candidateIds[tgtIdx], &selectedPosition);
 					if(conditionWindow != 0)
 						mnWindowClose(conditionWindow, 1);
 					/* FAKEMATCH(dead): cancelling updates of
@@ -459,34 +459,34 @@ Sint32 mnBattleTargetRunSelection(
 						switch(syGetLanguage()) {
 						case CARTRIDGE_LANGUAGE_GERMAN:
 							mnTextDrawStringAtOffset(
-								(Uint8 *)BattleStatusScreen_KpString,
+								(Uint8 *)BattleStatusScreenKpString,
 								conditionWindow, 0, 0);
 							break;
 						case CARTRIDGE_LANGUAGE_FRENCH:
 							mnTextDrawStringAtOffset(
-								(Uint8 *)BattleStatusScreen_PvString,
+								(Uint8 *)BattleStatusScreenPvString,
 								conditionWindow, 0, 0);
 							break;
 						case CARTRIDGE_LANGUAGE_SPANISH:
 							mnTextDrawStringAtOffset(
-								(Uint8 *)BattleStatusScreen_PvString,
+								(Uint8 *)BattleStatusScreenPvString,
 								conditionWindow, 0, 0);
 							break;
 						case CARTRIDGE_LANGUAGE_ITALIAN:
 							mnTextDrawStringAtOffset(
-								(Uint8 *)BattleStatusScreen_HpString,
+								(Uint8 *)BattleStatusScreenHpString,
 								conditionWindow, 0, 0);
 							break;
 						}
 #else
 						mnTextDrawStringAtOffset(
-							(Uint8 *)BattleStatusScreen_HpString,
+							(Uint8 *)BattleStatusScreenHpString,
 							conditionWindow, 0, 0);
 #endif
 						mnTextDrawNumInWindow(
 							unit->hp, 4, conditionWindow, 16, 0);
 						mnTextDrawStringAtOffset(
-							(Uint8 *)BattleStatusScreen_SlashString,
+							(Uint8 *)BattleStatusScreenSlashString,
 							conditionWindow, 48, 0);
 						mnTextDrawNumInWindow(
 							unit->hpMax, 4, conditionWindow, 56, 0);
@@ -496,12 +496,12 @@ Sint32 mnBattleTargetRunSelection(
 						conditionWindow = mnWindowCreate(helpColumn, 8,
 							TARGET_GAUGE_WIDTH, 3, MENU_WINDOW_FLAGS);
 						mnTextDrawStringAtOffset(
-							(Uint8 *)BattleStatusScreen_PpString,
+							(Uint8 *)BattleStatusScreenPpString,
 							conditionWindow, 0, 0);
 						mnTextDrawNumInWindow(
 							unit->pp, 4, conditionWindow, 16, 0);
 						mnTextDrawStringAtOffset(
-							(Uint8 *)BattleStatusScreen_SlashString,
+							(Uint8 *)BattleStatusScreenSlashString,
 							conditionWindow, 48, 0);
 						mnTextDrawNumInWindow(
 							unit->ppMax, 4, conditionWindow, 56, 0);
@@ -647,67 +647,64 @@ Sint32 mnBattleTargetRunSelection(
 				/* An enemy: its name, centred under it and kept within the
 				   window; ENEMY_MYSTERY_MAN and ENEMY_MYSTERY_WOMAN are named
 				   "Mystery Man" and "Mystery Woman". */
-				target = gmUnitGetStub(candidateIds[targetIndex]);
-				btMotionProjectCursorPointStub(
-					candidateIds[targetIndex], &namePosition);
-				namePosition.y += CURSOR_BOB_Y();
-				if(target->id == ENEMY_MYSTERY_WOMAN ||
-					target->id == ENEMY_MYSTERY_MAN) {
+				tgt = gmUnitGetStub(candidateIds[tgtIdx]);
+				btMotionProjectCursorPointStub(candidateIds[tgtIdx], &namePos);
+				namePos.y += CURSOR_BOB_Y();
+				if(tgt->id == ENEMY_MYSTERY_WOMAN ||
+					tgt->id == ENEMY_MYSTERY_MAN) {
 					width = MsgMysteryPersonName;
-					if(target->id == ENEMY_MYSTERY_WOMAN)
+					if(tgt->id == ENEMY_MYSTERY_WOMAN)
 						width++;
 					TARGET_MYSTERY_NAME_COPY(
-						width, targetName, TARGET_MYSTERY_NAME_CAPACITY);
+						width, tgtName, TARGET_MYSTERY_NAME_CAPACITY);
 				} else {
 					for(i = 0; i < UNIT_NAME_SIZE - 1; i++) {
-						targetName[i] = n = target->name[i];
+						tgtName[i] = n = tgt->name[i];
 						if(!n)
 							break;
 					}
-					targetName[i] = 0;
+					tgtName[i] = 0;
 				}
-				width = mnTextGetWideStringWidth(targetName);
-				namePosition.x -= width / 2;
-				namePosition.x -= 8;
-				if(namePosition.x + width > TARGET_NAME_INTERIOR_WIDTH)
-					namePosition.x = TARGET_NAME_INTERIOR_WIDTH - width;
-				if(namePosition.x < 0)
-					namePosition.x = 0;
+				width = mnTextGetWideStringWidth(tgtName);
+				namePos.x -= width / 2;
+				namePos.x -= 8;
+				if(namePos.x + width > TARGET_NAME_INTERIOR_WIDTH)
+					namePos.x = TARGET_NAME_INTERIOR_WIDTH - width;
+				if(namePos.x < 0)
+					namePos.x = 0;
 				mnTextClearCanvas();
-				mnTextDrawWideStringAtOffset(
-					targetName, window, namePosition.x, 4);
+				mnTextDrawWideStringAtOffset(tgtName, win, namePos.x, 4);
 			}
 			redraw &= ~TARGET_REDRAW_SPREAD;
 		}
 		if(drawCursors != 0) {
-			for(i = 1; i < targetCount; i++) {
-				marker = &firstSprite[i];
+			for(i = 1; i < tgtCnt; i++) {
+				marker = &firstSpr[i];
 				track = &cursorTracks[spreadTrackIndices[i]];
-				btMotionProjectCursorPointStub(
-					spreadActorIds[i], &markerPosition);
-				markerPosition.y = markerPosition.y + CURSOR_BOB_Y();
-				*marker = *firstSprite;
+				btMotionProjectCursorPointStub(spreadActorIds[i], &markerPos);
+				markerPos.y = markerPos.y + CURSOR_BOB_Y();
+				*marker = *firstSpr;
 				if(track->flg & CURSOR_EASING) {
-					Sint32 x = (markerPosition.x + track->x) / 2;
-					Sint32 y = (markerPosition.y + track->y) / 2;
+					Sint32 x = (markerPos.x + track->x) / 2;
+					Sint32 y = (markerPos.y + track->y) / 2;
 
-					markerPosition.x = x;
+					markerPos.x = x;
 					track->x = x;
-					markerPosition.y = y;
+					markerPos.y = y;
 					track->y = y;
 				} else {
 					Sint32 x = marker->x;
 					Sint32 y = marker->y + 8;
 
 					track->flg = CURSOR_EASING;
-					markerPosition.x = x;
+					markerPos.x = x;
 					track->x = x;
-					markerPosition.y = y;
+					markerPos.y = y;
 					track->y = y;
 				}
 				marker->mode = OBJ_MODE_SEMI_TRANSPARENT;
-				marker->x = markerPosition.x - 8;
-				marker->y = markerPosition.y - 12;
+				marker->x = markerPos.x - 8;
+				marker->y = markerPos.y - 12;
 				if(spread == ABILITY_RANGE_ALL)
 					marker->affine = 0;
 				else
@@ -730,12 +727,12 @@ Sint32 mnBattleTargetRunSelection(
 			}
 		}
 		/* A: the aimed unit's side and place; the loop ends after this
-		   frame. */
+		   tick. */
 		if(pressed & KEY_A) {
 			Sint32 id;
 			Sint32 k;
 
-			id = candidateIds[targetIndex];
+			id = candidateIds[tgtIdx];
 			redraw = 0;
 			result = -1;
 			for(k = 0; k <= 5 && battle->partyUnits[k] != BATTLE_UNIT_LIST_END;
@@ -755,28 +752,28 @@ Sint32 mnBattleTargetRunSelection(
 					}
 				}
 			}
-			targetIndex = result;
+			tgtIdx = result;
 		} else if(spread != ABILITY_RANGE_ALL) {
 			if(repeated & (KEY_DOWN | KEY_RIGHT)) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				do {
-					targetIndex++;
-					targetIndex %= candidateCount;
-				} while(candidateIds[targetIndex] == BATTLE_UNIT_REMOVED);
+					tgtIdx++;
+					tgtIdx %= candidateCnt;
+				} while(candidateIds[tgtIdx] == BATTLE_UNIT_REMOVED);
 				redraw |= TARGET_REDRAW_SPREAD;
 			}
 			if(repeated & (KEY_UP | KEY_LEFT)) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				do {
-					targetIndex = targetIndex + candidateCount - 1;
-					targetIndex %= candidateCount;
-				} while(candidateIds[targetIndex] == BATTLE_UNIT_REMOVED);
+					tgtIdx = tgtIdx + candidateCnt - 1;
+					tgtIdx %= candidateCnt;
+				} while(candidateIds[tgtIdx] == BATTLE_UNIT_REMOVED);
 				redraw |= TARGET_REDRAW_SPREAD;
 			}
 		}
 		if(BattleMenuStateWork->tmr == 0 || (pressed & KEY_B)) {
 			sySndPlayStub(SE_MENU_CANCEL);
-			targetIndex = -1;
+			tgtIdx = -1;
 			break;
 		}
 		sySynch(1);
@@ -785,11 +782,11 @@ Sint32 mnBattleTargetRunSelection(
 	syVRAMCacheFreeEntry(cursorSlot);
 	if(conditionWindow != 0)
 		mnWindowClose(conditionWindow, 1);
-	mnWindowClose(window, 1);
+	mnWindowClose(win, 1);
 	btHighlightSetModesStub(candidateIds, HIGHLIGHT_OFF);
 	BattleMenuStateWork->tgtViewOfs = 0;
 	sySynch(1);
-	return targetIndex;
+	return tgtIdx;
 }
 
 #undef TARGET_SET_DJINNI_WIDTH
@@ -812,6 +809,6 @@ Sint32 mnBattleTargetRunSelection(
 #undef TARGET_MARKERS
 #undef CURSOR_EASING
 #undef CURSOR_IN_SPREAD
-#undef CURSOR_HOLD_FRAME
+#undef CURSOR_HOLD_TICK
 #undef TARGET_REDRAW_SPREAD
 #undef TARGET_REDRAW_ALL

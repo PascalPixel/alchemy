@@ -21,13 +21,13 @@ typedef struct SPARKLE_STATE {
 	struct ACTOR *actor;
 } SPARKLE_STATE;
 
-/* How far a ring climbs, in pixels, how many frames apart the rings start, and
+/* How far a ring climbs, in pixels, how many ticks apart the rings start, and
    the height of one not yet started. */
 #define RING_CLIMB		 32
 #define RING_INTERVAL	 16
 #define RING_NOT_STARTED 999
 
-/* The sparkle's frame counter in ACTOR.sceneByte: bit 0 alternates, the rest
+/* The sparkle's tick counter in ACTOR.sceneByte: bit 0 alternates, the rest
    picks the colour. */
 typedef struct COUNTER_BITS {
 	Uint8 low : 1;

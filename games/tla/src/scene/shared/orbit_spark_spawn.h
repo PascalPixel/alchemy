@@ -1,9 +1,8 @@
-/* Leaves a small spark where an orbiting one is, released after 6 frames
-   (OrbitSpark_Script): the orbit's trail. */
-void scOrbitSparkSpawn(ORBITER *source)
+/* Leaves a small spark where an orbiting one is, released after 6 ticks
+   (OrbitSparkScript): the orbit's trail. */
+void scOrbitSparkSpawn(ORBITER *src)
 {
-	ACTOR *spark =
-		scFieldActorCreate(SPRITE_PARTICLE, source->x, source->y, source->z);
+	ACTOR *spark = scFieldActorCreate(SPRITE_PARTICLE, src->x, src->y, src->z);
 
 	spark->scaleY = toFIXED(2) / 5;
 	spark->scaleX = toFIXED(2) / 5;
@@ -13,5 +12,5 @@ void scOrbitSparkSpawn(ORBITER *source)
 	fdActorSelectAnimation(spark, 1);
 	fdActorSetSprFlags(spark, 0);
 	fdActorSetBlendMode(spark, 1);
-	fdActorStartScript(spark, OrbitSpark_Script);
+	fdActorStartScript(spark, OrbitSparkScript);
 }

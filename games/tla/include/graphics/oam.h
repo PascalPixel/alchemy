@@ -1,7 +1,7 @@
 #ifndef ALCHEMY_OAM_H
 #define ALCHEMY_OAM_H
 
-/* The window sprites' shapes. How much of OAM the frame's sprites take, and the
+/* The window sprites' shapes. How much of OAM the tick's sprites take, and the
    list they are built into, belong to the system library (system.h). */
 
 #include "edition.h"

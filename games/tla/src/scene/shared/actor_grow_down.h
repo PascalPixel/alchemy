@@ -1,17 +1,17 @@
 /* The second golden ring of a pair (scStaffCreditSpawnGrowingPair): drawn
    upside down, it rises behind the actor it watches, swelling and shrinking
-   over half a sine wave, and is released after 32 frames. */
+   over half a sine wave, and is released after 32 ticks. */
 void scActorGrowDown(ACTOR *actor)
 {
 	ACTOR *anchor = (ACTOR *)actor->watchedActor;
-	Sint32 frame = ++actor->tmr;
+	Sint32 frm = ++actor->tmr;
 	FIXED  amplitude;
 
-	if(frame > 31) {
+	if(frm > 31) {
 		fdActorRelease(actor);
 		return;
 	}
-	amplitude = syMathSin(frame * (DEGtoANG(180) / 32));
+	amplitude = syMathSin(frm * (DEGtoANG(180) / 32));
 	actor->scaleX = amplitude;
 	actor->scaleY = -amplitude;
 

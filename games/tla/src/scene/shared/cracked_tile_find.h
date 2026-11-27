@@ -1,29 +1,29 @@
 /* Finds the room's cracked tiles: every metatile whose script is `kind` (whole)
-   or `kind + 1` (cracked), each given the next flag from `flag`; returns how
+   or `kind + 1` (cracked), each given the next flag from `flg`; returns how
    many. */
 Sint32 scCrackedTileFind(
-	Uint32 kind, Sint32 flag, Sint32 flagByte, Sint32 x, Sint32 z)
+	Uint32 kind, Sint32 flg, Sint32 flgByte, Sint32 x, Sint32 z)
 {
-	METATILE_TARGET		  *table = &CrackedTiles;
-	METATILE_TARGET_ENTRY *entry = table->entries;
+	METATILE_TARGET		  *tbl = &CrackedTiles;
+	METATILE_TARGET_ENTRY *entry = tbl->entries;
 	MAP_STATE			  *map;
 	MAP_LAYER			  *layer;
 	MAP_METATILE		  *metatiles;
 	MAP_METATILE		  *metatile;
 	Sint32				   x0, z0, width, height, i, j;
-	Uint32				  *buffer;
+	Uint32				  *buf;
 	Uint32				   event, last;
 	Sint32				   cx, cz;
 	Sint32				   k;
 
-	syWordsClearEntry(table, 4);
-	table->kind = kind;
-	table->firstFlg = flag;
-	table->flgByte = flagByte;
-	table->x = x;
-	table->z = z;
-	table->cur = -1;
-	table->cnt = 0;
+	syWordsClearEntry(tbl, 4);
+	tbl->kind = kind;
+	tbl->firstFlg = flg;
+	tbl->flgByte = flgByte;
+	tbl->x = x;
+	tbl->z = z;
+	tbl->cur = -1;
+	tbl->cnt = 0;
 	map = Ram_HeapSlots->mapGrid;
 	layer = &map->layers[0];
 	metatiles = layer->metatiles;
@@ -44,18 +44,18 @@ Sint32 scCrackedTileFind(
 					entry->x = cx;
 					cz = j + z0;
 					entry->z = cz;
-					entry->flg = flag;
-					flag++;
+					entry->flg = flg;
+					flg++;
 					if(!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION)) {
 						if(event == last)
 							fdScriptSetFlag(entry->flg);
 					} else if(fdScriptGetFlag(entry->flg)) {
-						fdMapGridCopyMetatiles(table->x, table->z + 1, 1, 1,
-							cx | (Sint16)(table->x & 64),
-							cz | (Sint16)(table->z & 64));
+						fdMapGridCopyMetatiles(tbl->x, tbl->z + 1, 1, 1,
+							cx | (Sint16)(tbl->x & 64),
+							cz | (Sint16)(tbl->z & 64));
 					}
 					entry++;
-					table->cnt++;
+					tbl->cnt++;
 				}
 			}
 		}
@@ -65,25 +65,25 @@ Sint32 scCrackedTileFind(
 		Sint32 leaderX = FIELD_METATILE(leader->x.fixed);
 		Sint32 leaderZ = FIELD_METATILE(leader->z.fixed);
 
-		entry = table->entries;
-		for(k = 0; k < table->cnt; k++) {
+		entry = tbl->entries;
+		for(k = 0; k < tbl->cnt; k++) {
 			if(entry->x == leaderX && entry->z == leaderZ)
-				table->cur = k;
+				tbl->cur = k;
 			entry++;
 		}
 	}
 	/* The hole mask fdCrackedTileUpdate draws into the OBJ window: a 16 by 32
 	   sprite whose every pixel is colour 1. */
-	buffer = syHeapAlloc(HOLE_MASK_BYTES);
+	buf = syHeapAlloc(HOLE_MASK_BYTES);
 	{
-		Uint32 *word = buffer;
+		Uint32 *word = buf;
 
 		for(k = 0; k < HOLE_MASK_BYTES / 4; k++)
 			*word++ = PIXELS_4BPP(1);
 	}
-	table->tile = syVRAMCacheFindFreeEntry();
-	mnVRAMLoad(table->tile, HOLE_MASK_BYTES, buffer);
-	syHeapRelease(buffer);
-	sySetFrameEvent(fdCrackedTileUpdate, EVENT_PASS_FRAME);
-	return table->cnt;
+	tbl->tile = syVRAMCacheFindFreeEntry();
+	mnVRAMLoad(tbl->tile, HOLE_MASK_BYTES, buf);
+	syHeapRelease(buf);
+	sySetTickEvent(fdCrackedTileUpdate, EVENT_PASS_TICK);
+	return tbl->cnt;
 }

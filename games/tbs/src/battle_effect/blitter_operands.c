@@ -20,10 +20,10 @@
 		ARM_IMMEDIATE_BIT(12), ARM_IMMEDIATE_BIT(13), ARM_IMMEDIATE_BIT(14), \
 		ARM_IMMEDIATE_BIT(15)
 
-/* Unused: a copy of Blitter_ImmediatePowers that nothing reads. */
-Uint16 Blitter_UnusedImmediatePowers[] = {ARM_IMMEDIATE_POWERS};
+/* Unused: a copy of BlitterImmediatePowers that nothing reads. */
+Uint16 BlitterUnusedImmediatePowers[] = {ARM_IMMEDIATE_POWERS};
 /* The operand for 1 << n, by n from 0 to 15. btEffectBuildBlitter
    (battle_effect_blitter.c) adds the entry for the canvas width's power of two
    (7 for the 128-pixel canvas) to two of the instructions that clip a picture
    at the canvas's left and right edges, so that they hold the width. */
-Uint16 Blitter_ImmediatePowers[] = {ARM_IMMEDIATE_POWERS};
+Uint16 BlitterImmediatePowers[] = {ARM_IMMEDIATE_POWERS};

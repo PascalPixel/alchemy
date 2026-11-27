@@ -3,14 +3,14 @@
 /* Waits until the actor stops rising or falling, a second at most. */
 static void scActorWaitUntilIdle(ACTOR *actor)
 {
-	Sint32 frames;
+	Sint32 ticks;
 	Sint32 busy;
 
-	frames = FRAMES_PER_SECOND;
-	while(frames != 0) {
+	ticks = TICKS_PER_SECOND;
+	while(ticks != 0) {
 		sySynch(1);
 		busy = actor->velY;
-		frames--;
+		ticks--;
 		if(busy == 0)
 			break;
 	}

@@ -16,7 +16,7 @@
 @
 @ Why assembly:
 @ r11 (fp) as an ordinary register: it holds a row counter
-@ (rsb fp, ip, #16; mov lr, fp), not a frame.
+@ (rsb fp, ip, #16; mov lr, fp), not a tick.
 @ The preceding entries also share unsaved r5/r9 state with the main body.
 .syntax unified
 .text

@@ -82,44 +82,44 @@
 #include "text/msg_ids.h"
 
 /* Unused: twelve bytes nothing reads or writes. */
-Uint8 Kalay_UnusedBeforePacingStep[12] BSS_DATA ALIGNED(8);
+Uint8 KalayUnusedBeforePacingStep[12] BSS_DATA ALIGNED(8);
 /* Which of the two guides' turns scKalayUpdatePacingGuides is at, 0 to 4. */
-Sint32 Kalay_PacingStep BSS_DATA;
+Sint32 KalayPacingStep BSS_DATA;
 
-extern Sint32					   Kalay_TourGroupWalkScript[];
-extern Sint32					   Kalay_TourGroupLeaveScript[];
-extern Sint32					   Kalay_WaitingTouristScript[];
-extern Sint32					   Kalay_GuideCountScript[];
-extern Sint32					   Kalay_GuidePaceScript[];
-extern Sint32					   Kalay_HeadGuideStopScript[];
-extern Sint32					   Kalay_SecondGuideStopScript[];
-extern Sint32					   Kalay_HeadGuideReturnScript[];
-extern Sint32					   Kalay_SecondGuideReturnScript[];
-extern Sint32					   Kalay_PartyLookAboutScript[];
-extern Sint32					   Kalay_PartyGatherScript[];
-extern Sint32					   Kalay_PuddleGrowScript[];
-extern SCENE_ENTRANCE			   Kalay_TownEntrances[];
-extern SCENE_ENTRANCE			   Kalay_HammetPalaceEntrances[];
-extern SCENE_ENTRANCE			   Kalay_TunnelEntranceEntrances[];
-extern SCENE_ENTRANCE			   Kalay_TunnelCaveEntrances[];
-extern SCENE_ENTRANCE			   Kalay_TunnelPassageEntrances[];
-extern SCENE_ENTRANCE			   Kalay_TunnelEntrances[];
-extern Uint32					   Kalay_Exits[];
-extern ACTOR_PLACE				   Kalay_NoActorPlacements[];
-extern ACTOR_PLACE				   Kalay_TownActorPlacements[];
-extern ACTOR_PLACE				   Kalay_TourGroupActorPlacements[];
-extern ACTOR_PLACE				   Kalay_HammetPalaceActorPlacements[];
-extern ACTOR_PLACE				   Kalay_TunnelEntranceActorPlacements[];
-extern ACTOR_PLACE				   Kalay_TunnelActorPlacements[];
-extern CUE						   Kalay_NoCues[];
-extern CUE						   Kalay_TownCues[];
-extern CUE						   Kalay_HammetPalaceCues[];
-extern CUE						   Kalay_TunnelEntranceCues[];
-extern CUE						   Kalay_TunnelCaveCues[];
-extern CUE						   Kalay_TunnelPassageCues[];
-extern CUE						   Kalay_TunnelCues[];
-extern MAP_GRID_METATILE_ANIMATION Kalay_DoorMetatiles[];
-extern Sint32					   Kalay_TunnelParticleScript[];
+extern Sint32					   KalayTourGroupWalkScript[];
+extern Sint32					   KalayTourGroupLeaveScript[];
+extern Sint32					   KalayWaitingTouristScript[];
+extern Sint32					   KalayGuideCountScript[];
+extern Sint32					   KalayGuidePaceScript[];
+extern Sint32					   KalayHeadGuideStopScript[];
+extern Sint32					   KalaySecondGuideStopScript[];
+extern Sint32					   KalayHeadGuideReturnScript[];
+extern Sint32					   KalaySecondGuideReturnScript[];
+extern Sint32					   KalayPartyLookAboutScript[];
+extern Sint32					   KalayPartyGatherScript[];
+extern Sint32					   KalayPuddleGrowScript[];
+extern SCENE_ENTRANCE			   KalayTownEntrances[];
+extern SCENE_ENTRANCE			   KalayHammetPalaceEntrances[];
+extern SCENE_ENTRANCE			   KalayTunnelEntranceEntrances[];
+extern SCENE_ENTRANCE			   KalayTunnelCaveEntrances[];
+extern SCENE_ENTRANCE			   KalayTunnelPassageEntrances[];
+extern SCENE_ENTRANCE			   KalayTunnelEntrances[];
+extern Uint32					   KalayExits[];
+extern ACTOR_PLACE				   KalayNoActorPlacements[];
+extern ACTOR_PLACE				   KalayTownActorPlacements[];
+extern ACTOR_PLACE				   KalayTourGroupActorPlacements[];
+extern ACTOR_PLACE				   KalayHammetPalaceActorPlacements[];
+extern ACTOR_PLACE				   KalayTunnelEntranceActorPlacements[];
+extern ACTOR_PLACE				   KalayTunnelActorPlacements[];
+extern CUE						   KalayNoCues[];
+extern CUE						   KalayTownCues[];
+extern CUE						   KalayHammetPalaceCues[];
+extern CUE						   KalayTunnelEntranceCues[];
+extern CUE						   KalayTunnelCaveCues[];
+extern CUE						   KalayTunnelPassageCues[];
+extern CUE						   KalayTunnelCues[];
+extern MAP_GRID_METATILE_ANIMATION KalayDoorMetatiles[];
+extern Sint32					   KalayTunnelParticleScript[];
 
 /* The metatiles of the Kalay Tunnel's treasure rooms the scene gives a meaning
    of its own. */
@@ -140,9 +140,9 @@ typedef enum KALAY_TUNNEL_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_KALAY_TUNNEL_DRAWN_BY_PLACE = 19
 } KALAY_TUNNEL_METATILE_BEHAVIOR;
 
-/* Kalay's actors (Kalay), numbering the rows of Kalay_TownActorPlacements from
+/* Kalay's actors (Kalay), numbering the rows of KalayTownActorPlacements from
    ACTOR_FIRST_PLACED, then the tour group, which scKalayWatchTourGroupDeparture
-   places after them (Kalay_TourGroupActorPlacements). */
+   places after them (KalayTourGroupActorPlacements). */
 typedef enum KALAY_TOWN_ACTOR_ID {
 	/* The two soldiers of Kalay at the town's entrance from the World Map. */
 	ACTOR_WELCOMING_SOLDIER = ACTOR_FIRST_PLACED,
@@ -196,7 +196,7 @@ typedef enum KALAY_TOWN_ACTOR_ID {
 } KALAY_TOWN_ACTOR_ID;
 
 /* Hammet Palace's front (HammetPalaceGrounds), numbering
-   Kalay_HammetPalaceActorPlacements, whose first row places the party's
+   KalayHammetPalaceActorPlacements, whose first row places the party's
    Ivan. */
 typedef enum KALAY_PALACE_ACTOR_ID {
 	/* The soldiers of Kalay before the palace door. "This is Lord Hammet's
@@ -206,7 +206,7 @@ typedef enum KALAY_PALACE_ACTOR_ID {
 } KALAY_PALACE_ACTOR_ID;
 
 /* The Kalay Tunnel Entrance (KalayTunnelEntrance), numbering
-   Kalay_TunnelEntranceActorPlacements after its rows for Garet, Ivan and
+   KalayTunnelEntranceActorPlacements after its rows for Garet, Ivan and
    Mia. */
 typedef enum KALAY_TUNNEL_ENTRANCE_ACTOR_ID {
 	/* A soldier of Kalay who keeps the passage closed by Hammet and Layana's
@@ -221,7 +221,7 @@ typedef enum KALAY_TUNNEL_ENTRANCE_ACTOR_ID {
 } KALAY_TUNNEL_ENTRANCE_ACTOR_ID;
 
 /* The Kalay Tunnel's treasure room (KalayTunnelTreasureRoom), numbering
-   Kalay_TunnelActorPlacements. */
+   KalayTunnelActorPlacements. */
 typedef enum KALAY_TUNNEL_ACTOR_ID {
 	/* The statues that open the two passages. */
 	ACTOR_FIRST_STATUE = ACTOR_FIRST_PLACED,
@@ -284,13 +284,13 @@ static void scKalayScorchJoins(void)
 	fdDjinnJoinParty(ACTOR_SCORCH, ELEMENT_MARS, DJINNI_INDEX(DJINNI_SCORCH));
 }
 
-/* An actor script call, each frame: in Kalay, while the tour waits, a tourist
+/* An actor script call, each tick: in Kalay, while the tour waits, a tourist
    now and then nods, shakes his head or turns up to half a turn, and then waits
-   a random 0 to 79 frames. */
+   a random 0 to 79 ticks. */
 static Sint32 scKalayUpdateWaitingTourist(ACTOR *actor)
 {
 	Uint32 action;
-	Uint32 nextTimer;
+	Uint32 nextTmr;
 
 	if(actor->userValue == 0) {
 		action = syRandomBelow(8);
@@ -306,8 +306,8 @@ static Sint32 scKalayUpdateWaitingTourist(ACTOR *actor)
 			actor->facing += syRandomBelow(32768);
 			break;
 		}
-		nextTimer = syRandomBelow(80);
-		actor->userValue = nextTimer;
+		nextTmr = syRandomBelow(80);
+		actor->userValue = nextTmr;
 	}
 	if(actor->userValue != 0) {
 		actor->userValue--;
@@ -322,24 +322,24 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_KALAY) {
-		return Kalay_TownEntrances;
+		return KalayTownEntrances;
 	}
 	if(sceneId == SCENE_HAMMET_PALACE_GROUNDS) {
-		return Kalay_HammetPalaceEntrances;
+		return KalayHammetPalaceEntrances;
 	}
 	if(sceneId == SCENE_KALAY_TUNNEL_ENTRANCE) {
-		return Kalay_TunnelEntranceEntrances;
+		return KalayTunnelEntranceEntrances;
 	}
 	if(sceneId == SCENE_KALAY_TUNNEL_CAVE) {
-		return Kalay_TunnelCaveEntrances;
+		return KalayTunnelCaveEntrances;
 	}
 	if(sceneId == SCENE_KALAY_TUNNEL_PASSAGE) {
-		return Kalay_TunnelPassageEntrances;
+		return KalayTunnelPassageEntrances;
 	}
 	if(sceneId == SCENE_KALAY_TUNNEL_TREASURE_ROOM) {
-		return Kalay_TunnelEntrances;
+		return KalayTunnelEntrances;
 	}
-	return Kalay_FallbackEntrances;
+	return KalayFallbackEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -350,7 +350,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 /* The numbered exits of all six scenes. */
 const Uint32 *scGetExits(void)
 {
-	return Kalay_Exits;
+	return KalayExits;
 }
 
 /* The people of Kalay, Hammet Palace's front, the Kalay Tunnel Entrance and the
@@ -360,18 +360,18 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_KALAY) {
-		return Kalay_TownActorPlacements;
+		return KalayTownActorPlacements;
 	}
 	if(sceneId == SCENE_HAMMET_PALACE_GROUNDS) {
-		return Kalay_HammetPalaceActorPlacements;
+		return KalayHammetPalaceActorPlacements;
 	}
 	if(sceneId == SCENE_KALAY_TUNNEL_ENTRANCE) {
-		return Kalay_TunnelEntranceActorPlacements;
+		return KalayTunnelEntranceActorPlacements;
 	}
 	if(sceneId == SCENE_KALAY_TUNNEL_TREASURE_ROOM) {
-		return Kalay_TunnelActorPlacements;
+		return KalayTunnelActorPlacements;
 	}
-	return Kalay_NoActorPlacements;
+	return KalayNoActorPlacements;
 }
 
 /* Searching the well in Kalay: the party peers in, and it is very clean. */
@@ -397,24 +397,24 @@ const CUE *scGetCues(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_KALAY) {
-		return Kalay_TownCues;
+		return KalayTownCues;
 	}
 	if(sceneId == SCENE_HAMMET_PALACE_GROUNDS) {
-		return Kalay_HammetPalaceCues;
+		return KalayHammetPalaceCues;
 	}
 	if(sceneId == SCENE_KALAY_TUNNEL_ENTRANCE) {
-		return Kalay_TunnelEntranceCues;
+		return KalayTunnelEntranceCues;
 	}
 	if(sceneId == SCENE_KALAY_TUNNEL_CAVE) {
-		return Kalay_TunnelCaveCues;
+		return KalayTunnelCaveCues;
 	}
 	if(sceneId == SCENE_KALAY_TUNNEL_PASSAGE) {
-		return Kalay_TunnelPassageCues;
+		return KalayTunnelPassageCues;
 	}
 	if(sceneId == SCENE_KALAY_TUNNEL_TREASURE_ROOM) {
-		return Kalay_TunnelCues;
+		return KalayTunnelCues;
 	}
-	return Kalay_NoCues;
+	return KalayNoCues;
 }
 
 /* A man in Kalay tells why he moved there: he left Tolbi, afraid of Babi, who
@@ -551,10 +551,10 @@ static void scKalayOpenDoorAndExit(void)
 	door = *cue - 1;
 	sySndPlay(SE_DOOR_OPEN);
 	{
-		Sint32 x = Kalay_DoorMetatiles[door].x;
-		Sint32 y = Kalay_DoorMetatiles[door].y;
+		Sint32 x = KalayDoorMetatiles[door].x;
+		Sint32 y = KalayDoorMetatiles[door].y;
 
-		fdMapGridAnimateMetatiles(Kalay_DoorMetatiles[door].steps, x, y);
+		fdMapGridAnimateMetatiles(KalayDoorMetatiles[door].steps, x, y);
 	}
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
 	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
@@ -563,11 +563,11 @@ static void scKalayOpenDoorAndExit(void)
 	fdScriptWait(10);
 	syImportScriptSetExitRequest(*cue);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
-/* The palace door opens in two frames. */
+/* The palace door opens in two ticks. */
 static inline void scKalayAnimatePalaceDoor(void)
 {
 	sySndPlay(SE_THUMP);
@@ -590,7 +590,7 @@ static void scKalayEnterPalace(void)
 	fdScriptWait(10);
 	syImportScriptSetExitRequest(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -601,7 +601,7 @@ static void scKalayEnterPalace(void)
    comes out too late and hurries after it. Once. */
 static void scKalayWatchTourGroupDeparture(void)
 {
-	Sint32		 message;
+	Sint32		 msg;
 	ACTOR		*closing;
 	ACTOR		*last;
 	FIELD_STATE *state;
@@ -610,7 +610,7 @@ static void scKalayWatchTourGroupDeparture(void)
 	fdScriptStart();
 	if(gmFlagGet(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR) != 0 &&
 		gmFlagGet(FLAG_KALAY_COLOSSO_TOUR_LEFT) == 0) {
-		fdScriptAppendActorPlacements(Kalay_TourGroupActorPlacements);
+		fdScriptAppendActorPlacements(KalayTourGroupActorPlacements);
 		fdActorSetPos(ACTOR_HEAD_GUIDE, 252, 272);
 		fdActorSetPos(ACTOR_FIRST_TOURIST, 284, 264);
 		fdActorSetPos(ACTOR_FIRST_TOURIST + 1, 284, 280);
@@ -646,18 +646,18 @@ static void scKalayWatchTourGroupDeparture(void)
 		fdActorSetSpeed(ACTOR_FIRST_TOURIST + 6, 0.7);
 		fdActorSetSpeed(ACTOR_OURANOS, 0.7);
 		fdActorSetSpeed(ACTOR_SECOND_GUIDE, 0.6);
-		fdActorSetScript(ACTOR_HEAD_GUIDE, Kalay_TourGroupWalkScript);
-		fdActorSetScript(ACTOR_FIRST_TOURIST, Kalay_TourGroupWalkScript);
-		fdActorSetScript(ACTOR_FIRST_TOURIST + 1, Kalay_TourGroupWalkScript);
-		fdActorSetScript(ACTOR_FIRST_TOURIST + 2, Kalay_TourGroupWalkScript);
-		fdActorSetScript(ACTOR_FIRST_TOURIST + 3, Kalay_TourGroupWalkScript);
-		fdActorSetScript(ACTOR_FIRST_TOURIST + 5, Kalay_TourGroupWalkScript);
-		fdActorSetScript(ACTOR_FIRST_TOURIST + 4, Kalay_TourGroupWalkScript);
-		fdActorSetScript(ACTOR_FIRST_TOURIST + 6, Kalay_TourGroupWalkScript);
-		fdActorSetScript(ACTOR_OURANOS, Kalay_TourGroupWalkScript);
+		fdActorSetScript(ACTOR_HEAD_GUIDE, KalayTourGroupWalkScript);
+		fdActorSetScript(ACTOR_FIRST_TOURIST, KalayTourGroupWalkScript);
+		fdActorSetScript(ACTOR_FIRST_TOURIST + 1, KalayTourGroupWalkScript);
+		fdActorSetScript(ACTOR_FIRST_TOURIST + 2, KalayTourGroupWalkScript);
+		fdActorSetScript(ACTOR_FIRST_TOURIST + 3, KalayTourGroupWalkScript);
+		fdActorSetScript(ACTOR_FIRST_TOURIST + 5, KalayTourGroupWalkScript);
+		fdActorSetScript(ACTOR_FIRST_TOURIST + 4, KalayTourGroupWalkScript);
+		fdActorSetScript(ACTOR_FIRST_TOURIST + 6, KalayTourGroupWalkScript);
+		fdActorSetScript(ACTOR_OURANOS, KalayTourGroupWalkScript);
 		last = fdActorGet(ACTOR_SECOND_GUIDE);
 		last->tmr = 0;
-		fdActorSetScript(ACTOR_SECOND_GUIDE, Kalay_TourGroupWalkScript);
+		fdActorSetScript(ACTOR_SECOND_GUIDE, KalayTourGroupWalkScript);
 		fdCameraMoveTo(186, CAMERA_KEEP, 272, 1);
 		fdActorWaitForScriptEndById(ACTOR_HEAD_GUIDE);
 		fdActorFaceDirection(ACTOR_HEAD_GUIDE, FACING_EAST, 0);
@@ -780,7 +780,7 @@ static void scKalayWatchTourGroupDeparture(void)
 		fdActorSetAnimationAndWait(ACTOR_SECOND_GUIDE, ANIM_NOD);
 		fdActorFaceDirection(ACTOR_SECOND_GUIDE, FACING_EAST, 0);
 		fdActorSetSpeed(ACTOR_HEAD_GUIDE, 1.6);
-		fdActorRunScriptAndWait(ACTOR_HEAD_GUIDE, Kalay_GuidePaceScript);
+		fdActorRunScriptAndWait(ACTOR_HEAD_GUIDE, KalayGuidePaceScript);
 		fdActorWalkToAndWait(ACTOR_HEAD_GUIDE, 228, 296);
 		fdActorFaceDirection(ACTOR_HEAD_GUIDE, FACING_NORTH, 40);
 		fdActorWalkToAndWait(ACTOR_HEAD_GUIDE, 212, 296);
@@ -793,8 +793,8 @@ static void scKalayWatchTourGroupDeparture(void)
 			ACTOR_HEAD_GUIDE, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 		fdScriptWait(60);
 		fdActorSetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_SHAKE_HEAD);
-		message = MsgKalayShortOnePerson;
-		fdScriptSetMessageId(message);
+		msg = MsgKalayShortOnePerson;
+		fdScriptSetMessageId(msg);
 		/* "Uh-oh... We're short one person... Now where could he be?" */
 		fdScriptShowMessageThenWait(ACTOR_HEAD_GUIDE, 0, 40);
 		/* The guides pace while the tourists complain one by one. */
@@ -835,7 +835,7 @@ static void scKalayWatchTourGroupDeparture(void)
 		fdActorFaceDirection(
 			ACTOR_FIRST_TOURIST + 3, FACING_NORTH_NORTHWEST, 10);
 		fdActorRunRepeatedMotion(ACTOR_FIRST_TOURIST + 3, 1);
-		fdScriptSetMessageId(message + 6);
+		fdScriptSetMessageId(msg + 6);
 		/* "Come on! Why aren't we leaving yet?" */
 		fdScriptShowMessageThenWait(ACTOR_FIRST_TOURIST + 3, 0, 10);
 		syCloseEvent(scKalayUpdatePacingGuides);
@@ -846,15 +846,15 @@ static void scKalayWatchTourGroupDeparture(void)
 		fdActorGet(ACTOR_SECOND_GUIDE)->tmr = 0;
 		fdActorSetSpeed(ACTOR_HEAD_GUIDE, 0.8);
 		fdActorSetSpeed(ACTOR_SECOND_GUIDE, 0.8);
-		fdActorSetScript(ACTOR_HEAD_GUIDE, Kalay_HeadGuideStopScript);
-		fdActorSetScript(ACTOR_SECOND_GUIDE, Kalay_SecondGuideStopScript);
+		fdActorSetScript(ACTOR_HEAD_GUIDE, KalayHeadGuideStopScript);
+		fdActorSetScript(ACTOR_SECOND_GUIDE, KalaySecondGuideStopScript);
 		fdActorStop(ACTOR_FIRST_TOURIST + 2);
 		sySynch(1);
 		fdActorFaceDirection(
 			ACTOR_FIRST_TOURIST + 2, FACING_SOUTH_SOUTHWEST, 10);
-		message += 5;
+		msg += 5;
 		fdActorRunRepeatedMotion(ACTOR_FIRST_TOURIST + 2, 2);
-		fdScriptSetMessageId(message);
+		fdScriptSetMessageId(msg);
 		/* "I hear there was a landslide on the road to Tolbi. We paid..." */
 		fdScriptShowMessageThenWait(ACTOR_FIRST_TOURIST + 2, 0, 20);
 		scKalayStartTouristWaiting(ACTOR_FIRST_TOURIST + 2);
@@ -863,16 +863,16 @@ static void scKalayWatchTourGroupDeparture(void)
 			sySynch(1);
 		} while(fdActorGet(ACTOR_HEAD_GUIDE)->tmr == 0 ||
 			fdActorGet(ACTOR_SECOND_GUIDE)->tmr != 1);
-		fdActorSetScript(ACTOR_HEAD_GUIDE, Kalay_HeadGuideReturnScript);
-		fdActorSetScript(ACTOR_SECOND_GUIDE, Kalay_SecondGuideReturnScript);
+		fdActorSetScript(ACTOR_HEAD_GUIDE, KalayHeadGuideReturnScript);
+		fdActorSetScript(ACTOR_SECOND_GUIDE, KalaySecondGuideReturnScript);
 		fdActorStop(ACTOR_FIRST_TOURIST + 4);
 		sySynch(1);
 		fdActorFaceDirection(
 			ACTOR_FIRST_TOURIST + 4, FACING_SOUTH_SOUTHWEST, 10);
 		fdActorRunRepeatedMotion(ACTOR_FIRST_TOURIST + 4, 1);
 		fdActorSetAnimationAndWait(ACTOR_FIRST_TOURIST + 4, ANIM_SHAKE_HEAD);
-		message = MsgKalayDecideEnteringColosso;
-		fdScriptSetMessageId(message);
+		msg = MsgKalayDecideEnteringColosso;
+		fdScriptSetMessageId(msg);
 		/* "We have to decide if we're entering Colosso once we reach Tolbi." */
 		fdScriptShowMessageThenWait(ACTOR_FIRST_TOURIST + 4, 0, 10);
 		scKalayStartTouristWaiting(ACTOR_FIRST_TOURIST + 4);
@@ -885,9 +885,9 @@ static void scKalayWatchTourGroupDeparture(void)
 		fdActorFaceDirection(ACTOR_OURANOS, FACING_NORTH_NORTHWEST, 10);
 		fdActorFaceDirection(
 			ACTOR_FIRST_TOURIST + 6, FACING_SOUTH_SOUTHWEST, 10);
-		message += 3;
+		msg += 3;
 		fdActorSetAnimationAndWait(ACTOR_OURANOS, ANIM_SHAKE_HEAD);
-		fdScriptSetMessageId(message);
+		fdScriptSetMessageId(msg);
 		/* "Right when we're leaving, they tell us we have to ride a
 		   boat?..." */
 		fdScriptShowMessageThenWait(ACTOR_OURANOS, 0, 10);
@@ -1022,18 +1022,18 @@ static void scKalayWatchTourGroupDeparture(void)
 		fdActorStop(ACTOR_HEAD_GUIDE);
 		fdActorStop(ACTOR_SECOND_GUIDE);
 		sySynch(1);
-		fdActorSetScript(ACTOR_HEAD_GUIDE, Kalay_TourGroupLeaveScript);
-		fdActorSetScript(ACTOR_FIRST_TOURIST, Kalay_TourGroupLeaveScript);
-		fdActorSetScript(ACTOR_FIRST_TOURIST + 1, Kalay_TourGroupLeaveScript);
-		fdActorSetScript(ACTOR_FIRST_TOURIST + 2, Kalay_TourGroupLeaveScript);
-		fdActorSetScript(ACTOR_FIRST_TOURIST + 3, Kalay_TourGroupLeaveScript);
-		fdActorSetScript(ACTOR_FIRST_TOURIST + 5, Kalay_TourGroupLeaveScript);
-		fdActorSetScript(ACTOR_FIRST_TOURIST + 4, Kalay_TourGroupLeaveScript);
-		fdActorSetScript(ACTOR_FIRST_TOURIST + 6, Kalay_TourGroupLeaveScript);
-		fdActorSetScript(ACTOR_OURANOS, Kalay_TourGroupLeaveScript);
+		fdActorSetScript(ACTOR_HEAD_GUIDE, KalayTourGroupLeaveScript);
+		fdActorSetScript(ACTOR_FIRST_TOURIST, KalayTourGroupLeaveScript);
+		fdActorSetScript(ACTOR_FIRST_TOURIST + 1, KalayTourGroupLeaveScript);
+		fdActorSetScript(ACTOR_FIRST_TOURIST + 2, KalayTourGroupLeaveScript);
+		fdActorSetScript(ACTOR_FIRST_TOURIST + 3, KalayTourGroupLeaveScript);
+		fdActorSetScript(ACTOR_FIRST_TOURIST + 5, KalayTourGroupLeaveScript);
+		fdActorSetScript(ACTOR_FIRST_TOURIST + 4, KalayTourGroupLeaveScript);
+		fdActorSetScript(ACTOR_FIRST_TOURIST + 6, KalayTourGroupLeaveScript);
+		fdActorSetScript(ACTOR_OURANOS, KalayTourGroupLeaveScript);
 		closing = fdActorGet(ACTOR_SECOND_GUIDE);
 		closing->tmr = 0;
-		fdActorSetScript(ACTOR_SECOND_GUIDE, Kalay_TourGroupLeaveScript);
+		fdActorSetScript(ACTOR_SECOND_GUIDE, KalayTourGroupLeaveScript);
 		do {
 			sySynch(1);
 		} while(fdActorGet(ACTOR_SECOND_GUIDE)->tmr != 1);
@@ -1067,7 +1067,7 @@ static void scKalayWatchTourGroupDeparture(void)
 		fdActorSetSpeed(ACTOR_LATE_TOURIST, 1.2);
 		closing = fdActorGet(ACTOR_LATE_TOURIST);
 		closing->tmr = 0;
-		fdActorSetScript(ACTOR_LATE_TOURIST, Kalay_TourGroupLeaveScript);
+		fdActorSetScript(ACTOR_LATE_TOURIST, KalayTourGroupLeaveScript);
 		do {
 			sySynch(1);
 		} while(fdActorGet(ACTOR_LATE_TOURIST)->tmr != 1);
@@ -1099,7 +1099,7 @@ static void scKalayWatchTourGroupDeparture(void)
 		sySndPlay(SE_MAP_EXIT);
 		syImportScriptSetExitRequest(state->stepCue);
 		fdScriptFinishScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 	}
 	fdScriptEnd();
 }
@@ -1202,7 +1202,7 @@ static void scKalayPrepareTown(void)
 {
 	ORBITING_MAP_ACTOR	   *nut;
 	ICON_TRANSFER		   *glyph;
-	ORBITING_MAP_ACTOR_SPR *sprite;
+	ORBITING_MAP_ACTOR_SPR *spr;
 
 	scKalayCatchUpWithLunpa();
 	if(MainRoutineStateWork.entrance == KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) {
@@ -1215,24 +1215,24 @@ static void scKalayPrepareTown(void)
 		fdActorSetPos(ACTOR_TOWN_NUT, 0, 0);
 	} else {
 		nut = (ORBITING_MAP_ACTOR *)fdActorGet(ACTOR_TOWN_NUT);
-		sprite = nut->spr;
-		sprite->pri = 1;
-		sprite->fullCol = 0;
-		sprite->palNum = 0;
-		sprite->cnt = 0;
+		spr = nut->spr;
+		spr->pri = 1;
+		spr->fullCol = 0;
+		spr->palNum = 0;
+		spr->cnt = 0;
 		nut->retainSprCache = 1;
 		nut->motionFlg = 0;
 		nut->y = toFIXED(10);
 		nut->frozen = 1;
 		glyph = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		mnIconDrawItem(ITEM_NUT);
-		syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
+		syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 		nut->orbitAng = 0;
 		nut->orbitCenterX = nut->x;
 		nut->orbitCenterY = nut->y;
 		nut->orbitCenterZ = nut->z;
-		sySetFrameEvent(scKalayUpdateNutOrbit, EVENT_PASS_FRAME);
+		sySetTickEvent(scKalayUpdateNutOrbit, EVENT_PASS_TICK);
 	}
 }
 
@@ -1338,7 +1338,7 @@ static void scKalayPrepareTunnelTreasureRoom(void)
 	}
 	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_STATUE), 0);
 	fdActorSetSprFlags(fdActorGet(ACTOR_SECOND_STATUE), 0);
-	sySetFrameEvent(scKalayUpdateTunnelStatues, EVENT_PASS_FRAME);
+	sySetTickEvent(scKalayUpdateTunnelStatues, EVENT_PASS_TICK);
 	/* Once the tunnel is open, the man who waited for it stands here and the
 	   barred gate beside him stands open. */
 	if(gmFlagGet(FLAG_KALAY_TUNNEL_OPEN) != 0) {
@@ -1457,52 +1457,52 @@ static void scKalayStartTouristWaiting(Sint32 actorId)
 	actor->tmr = actorId;
 	random = syRandomNext();
 	actor->userValue = (random * 5) >> 12;
-	fdActorStartScript(actor, Kalay_WaitingTouristScript);
+	fdActorStartScript(actor, KalayWaitingTouristScript);
 }
 
 /* The guides speed up and start pacing in turn. */
 static void scKalayStartGuidesPacing(void)
 {
-	Kalay_PacingStep = 0;
+	KalayPacingStep = 0;
 	fdActorSetSpeed(ACTOR_HEAD_GUIDE, 1.6);
 	fdActorSetSpeed(ACTOR_SECOND_GUIDE, 1.6);
-	sySetFrameEvent(scKalayUpdatePacingGuides, EVENT_PASS_FRAME);
+	sySetTickEvent(scKalayUpdatePacingGuides, EVENT_PASS_TICK);
 }
 
 /* Event: the guides take turns, each counting the tourists and then pacing, one
    starting when the other finishes. */
 static void scKalayUpdatePacingGuides(void)
 {
-	switch(Kalay_PacingStep) {
+	switch(KalayPacingStep) {
 	case 0:
 		scKalayClearScriptDone(fdActorGet(ACTOR_SECOND_GUIDE));
-		fdActorSetScript(ACTOR_SECOND_GUIDE, Kalay_GuideCountScript);
-		Kalay_PacingStep++;
+		fdActorSetScript(ACTOR_SECOND_GUIDE, KalayGuideCountScript);
+		KalayPacingStep++;
 		break;
 	case 1:
 		if(fdActorGet(ACTOR_SECOND_GUIDE)->tmr != 0) {
 			scKalayClearScriptDone(fdActorGet(ACTOR_HEAD_GUIDE));
-			fdActorSetScript(ACTOR_HEAD_GUIDE, Kalay_GuidePaceScript);
-			Kalay_PacingStep++;
+			fdActorSetScript(ACTOR_HEAD_GUIDE, KalayGuidePaceScript);
+			KalayPacingStep++;
 		}
 		break;
 	case 2:
 		if(fdActorGet(ACTOR_HEAD_GUIDE)->tmr != 0) {
 			scKalayClearScriptDone(fdActorGet(ACTOR_HEAD_GUIDE));
-			fdActorSetScript(ACTOR_HEAD_GUIDE, Kalay_GuideCountScript);
-			Kalay_PacingStep++;
+			fdActorSetScript(ACTOR_HEAD_GUIDE, KalayGuideCountScript);
+			KalayPacingStep++;
 		}
 		break;
 	case 3:
 		if(fdActorGet(ACTOR_HEAD_GUIDE)->tmr != 0) {
 			scKalayClearScriptDone(fdActorGet(ACTOR_SECOND_GUIDE));
-			fdActorSetScript(ACTOR_SECOND_GUIDE, Kalay_GuidePaceScript);
-			Kalay_PacingStep++;
+			fdActorSetScript(ACTOR_SECOND_GUIDE, KalayGuidePaceScript);
+			KalayPacingStep++;
 		}
 		break;
 	case 4:
 		if(fdActorGet(ACTOR_SECOND_GUIDE)->tmr != 0) {
-			Kalay_PacingStep = 0;
+			KalayPacingStep = 0;
 		}
 		break;
 	}
@@ -1711,7 +1711,7 @@ static void scKalayIvanMeetsPalaceGuards(void)
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(
 		HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM);
 	fdScriptEnd();
@@ -1773,7 +1773,7 @@ static void scKalayHammetReturnsToPalace(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
 	/* Seed the party idle phases for the arrival conversation. */
 	fdActorGet(ACTOR_PARTY_LEADER)->userValue = syRandomBelow(80);
-	fdActorSetScript(ACTOR_PARTY_LEADER, Kalay_PartyLookAboutScript);
+	fdActorSetScript(ACTOR_PARTY_LEADER, KalayPartyLookAboutScript);
 	fdActorJump(ACTOR_BUNZA, 2, 20);
 	fdActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
 	fdScriptSetMessageId(MsgKalayWeveArrivedHammet);
@@ -1806,9 +1806,9 @@ static void scKalayHammetReturnsToPalace(void)
 	fdActorGet(ACTOR_GARET)->userValue = syRandomBelow(80);
 	fdActorGet(ACTOR_IVAN)->userValue = syRandomBelow(80);
 	fdActorGet(ACTOR_MIA)->userValue = syRandomBelow(80);
-	fdActorSetScript(ACTOR_GARET, Kalay_PartyLookAboutScript);
-	fdActorSetScript(ACTOR_IVAN, Kalay_PartyLookAboutScript);
-	fdActorSetScript(ACTOR_MIA, Kalay_PartyLookAboutScript);
+	fdActorSetScript(ACTOR_GARET, KalayPartyLookAboutScript);
+	fdActorSetScript(ACTOR_IVAN, KalayPartyLookAboutScript);
+	fdActorSetScript(ACTOR_MIA, KalayPartyLookAboutScript);
 	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
 	/* "Arrived where?" */
 	syFieldScriptShowMessageThenWait(
@@ -1963,14 +1963,14 @@ static void scKalayHammetReturnsToPalace(void)
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorSetPos(ACTOR_WAGON, 440, 340);
 	fdActorGet(ACTOR_WAGON)->facing = FACING_SOUTH;
 	fdCameraMoveTo(380, CAMERA_KEEP, 280, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(10);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	fdActorSetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
 	fdScriptWait(20);
@@ -1984,7 +1984,7 @@ static void scKalayHammetReturnsToPalace(void)
 	fdActorWalkToAndWait(ACTOR_BUNZA, 439, 306);
 	fdActorSetPos(ACTOR_BUNZA, 0, 0);
 	/* The party climbs back into the wagon. */
-	exitActions = Kalay_PartyGatherScript;
+	exitActions = KalayPartyGatherScript;
 	fdActorSetScript(ACTOR_GARET, exitActions);
 	fdActorSetScript(ACTOR_IVAN, exitActions);
 	fdActorRunScriptAndWait(ACTOR_MIA, exitActions);
@@ -2008,7 +2008,7 @@ static void scKalayHammetReturnsToPalace(void)
 	state->transitionFrm = 24;
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH);
 	fdScriptEnd();
 }
@@ -2019,7 +2019,7 @@ static void scKalayHammetReturnsToPalace(void)
    one metatile, when there is room, with Isaac following it. */
 static void scKalayPushTunnelStatue(void)
 {
-	FIELD_POS destination;
+	FIELD_POS dst;
 	ACTOR	 *leader;
 	ACTOR	 *statue;
 	Sint32	  direction;
@@ -2029,29 +2029,26 @@ static void scKalayPushTunnelStatue(void)
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	direction = FACING_INDEX(leader->facing);
 	leaderX = leader->x.part[0].integer;
-	probeStep = PushedActor_DirectionSteps[direction];
+	probeStep = PushedActorDirectionSteps[direction];
 	statue = scActorFindAtMetatile((leaderX + DIRECTION_STEP_X(probeStep)) >> 4,
 		(leader->z.part[0].integer + DIRECTION_STEP_Z(probeStep)) >> 4);
 	if(statue != NULL) {
 		statue->layer = MAPGRID_LAYER_OVERHEAD;
-		fdActorStepFrom(
-			&destination, statue, PushedActor_DirectionSteps[direction]);
-		if(syFieldActorCheckMovementCollision(statue, &destination) <= 0) {
+		fdActorStepFrom(&dst, statue, PushedActorDirectionSteps[direction]);
+		if(syFieldActorCheckMovementCollision(statue, &dst) <= 0) {
 			fdActorSelectAnimation(leader, ANIM_PUSH);
 			sySynch(15);
 			sySndPlay(SE_PUSH);
 			statue->speedLimit = toFIXED(1) / 5;
 			statue->acceleration = toFIXED(1) / 5;
-			syFieldActorSetMoveTargetFX(
-				statue, destination.x, destination.y, destination.z);
+			syFieldActorSetMoveTargetFX(statue, dst.x, dst.y, dst.z);
 			leader->speedLimit = toFIXED(1) / 5;
 			leader->acceleration = toFIXED(1) / 5;
-			syFieldActorSetMoveTargetFX(
-				leader, destination.x, destination.y, destination.z);
+			syFieldActorSetMoveTargetFX(leader, dst.x, dst.y, dst.z);
 			fdActorWaitForMove(statue);
 			fdPlayQueuedMusic();
-			statue->x.fixed = destination.x;
-			statue->z.fixed = destination.z;
+			statue->x.fixed = dst.x;
+			statue->z.fixed = dst.z;
 			statue->velX = 0;
 			statue->velZ = 0;
 			fdActorSelectAnimation(leader, ANIM_STAND);
@@ -2118,12 +2115,12 @@ static void scKalayUpdateTunnelPassages(void)
 		   metatiles beside them at (16, 45). */
 		fdMapGridCopyMetatilesTo(16, 109, 13, 109, 3, 2);
 		fdScriptWait(40);
-		/* The pool drains in three stages, 40 frames apart, and the puddle
+		/* The pool drains in three stages, 40 ticks apart, and the puddle
 		   grows out of its bed. */
 		puddle->scaleX = toFIXED(1) / 10;
 		puddle->scaleY = toFIXED(1) / 10;
 		fdActorSetPos(ACTOR_PUDDLE, 150, 728);
-		fdActorSetScript(ACTOR_PUDDLE, Kalay_PuddleGrowScript);
+		fdActorSetScript(ACTOR_PUDDLE, KalayPuddleGrowScript);
 		fdMapGridCopyMetatilesTo(67, 64, 71, 44, 1, 2);
 		fdMapGridCopyMetatilesTo(67, 64, 72, 44, 1, 2);
 		fdMapGridCopyMetatilesTo(67, 68, 73, 43, 1, 2);
@@ -2201,15 +2198,15 @@ static void scKalayUpdateTunnelPassages(void)
 }
 
 /* The share of a tunnel particle's sideways and vertical speed that drag takes
-   each frame, as one part in this many. */
+   each tick, as one part in this many. */
 #define TUNNEL_PARTICLE_DRAG_X 256
 #define TUNNEL_PARTICLE_DRAG_Y 16
 
-/* An actor script call, each frame: a tunnel particle swells and drifts, slowed
-   by drag. On its last frame it stops and moves to x 0 at height 0, and then it
+/* An actor script call, each tick: a tunnel particle swells and drifts, slowed
+   by drag. On its last tick it stops and moves to x 0 at height 0, and then it
    is released. */
 /* UB: returns nothing, so SC_CALL takes whatever value is left as its result,
-   which is not 0, and calls it again the next frame; UBFIX returns 1. */
+   which is not 0, and calls it again the next tick; UBFIX returns 1. */
 #if FIX_FUNCTION_SIGNATURES
 static Sint32 scKalayUpdateTunnelParticle(ACTOR *particle)
 {
@@ -2217,8 +2214,8 @@ static Sint32 scKalayUpdateTunnelParticle(ACTOR *particle)
 static void scKalayUpdateTunnelParticle(ACTOR *particle)
 {
 #endif
-	Sint32 velocityX;
-	Sint32 velocityY;
+	Sint32 velX;
+	Sint32 velY;
 
 	if(particle->tmr == 0) {
 		fdActorRelease(particle);
@@ -2233,10 +2230,10 @@ static void scKalayUpdateTunnelParticle(ACTOR *particle)
 	}
 	particle->x.fixed += particle->velX;
 	particle->y.fixed += particle->velY;
-	velocityX = particle->velX;
-	velocityY = particle->velY;
-	particle->velX = velocityX - velocityX / TUNNEL_PARTICLE_DRAG_X;
-	particle->velY = velocityY - velocityY / TUNNEL_PARTICLE_DRAG_Y;
+	velX = particle->velX;
+	velY = particle->velY;
+	particle->velX = velX - velX / TUNNEL_PARTICLE_DRAG_X;
+	particle->velY = velY - velY / TUNNEL_PARTICLE_DRAG_Y;
 	particle->tmr--;
 #if FIX_FUNCTION_SIGNATURES
 	return 1;
@@ -2256,7 +2253,7 @@ static void scKalayUpdateTunnelParticle(ACTOR *particle)
 #define FIRST_STATUE_SPARKLE_X	245
 #define SECOND_STATUE_SPARKLE_X 709
 
-/* Each frame in the Kalay Tunnel's halls: while a pool is still full, sparkles
+/* Each tick in the Kalay Tunnel's halls: while a pool is still full, sparkles
    stream from its statue as it nears the waterfall, with the sound of water
    draining the first time. While the first statue stands a metatile east of
    where it starts, it is drawn at the leader's priority. */
@@ -2274,7 +2271,7 @@ static void scKalayUpdateTunnelStatues(void)
 			fdActorGet(ACTOR_PARTY_LEADER)->spr->image.pri;
 	} else if(!gmFlagGet(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) &&
 		firstStatue->x.part[0].integer <= FIRST_STATUE_SPARKLE_X &&
-		(FrameCount & 1) == 0) {
+		(TickCount & 1) == 0) {
 		if(!fdScriptGetFlag(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED)) {
 			fdQueueMusic(-1);
 			sySndPlay(SE_WATER_DRAIN);
@@ -2285,7 +2282,7 @@ static void scKalayUpdateTunnelStatues(void)
 	}
 	if(!gmFlagGet(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) &&
 		secondStatue->x.part[0].integer <= SECOND_STATUE_SPARKLE_X &&
-		(FrameCount & 1) == 0) {
+		(TickCount & 1) == 0) {
 		if(!fdScriptGetFlag(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED)) {
 			fdQueueMusic(-1);
 			sySndPlay(SE_WATER_DRAIN);
@@ -2311,13 +2308,13 @@ static void scKalaySpawnTunnelParticle(Sint32 x, Sint32 height, Sint32 z)
 		fdActorSetSprCol(particle, SPRITE_COLOR_BLUE_TINT);
 		fdActorSetSprFlags(particle, 0);
 		/* It drifts up to a pixel left and up to three up or down each
-		   frame. */
+		   tick. */
 		particle->velX = toFIXED((syRandomBelow(2)) - 1);
 		particle->velY = toFIXED((syRandomBelow(6)) - 3);
 		particle->tmr = 20;
 		particle->frozen = 1;
 		fdActorSelectAnimation(particle, 1);
-		fdActorStartScript(particle, Kalay_TunnelParticleScript);
+		fdActorStartScript(particle, KalayTunnelParticleScript);
 	}
 }
 
@@ -2357,7 +2354,7 @@ static void scKalayFreezePuddle(void)
 
 #include "shared/pushed_actor_direction_steps.c"
 
-Sint32 Kalay_TourGroupWalkScript[] = {
+Sint32 KalayTourGroupWalkScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE_BY(-80, 0, 0),
 	SC_SYNC,
@@ -2367,7 +2364,7 @@ Sint32 Kalay_TourGroupWalkScript[] = {
 	SC_END,
 };
 
-Sint32 Kalay_TourGroupLeaveScript[] = {
+Sint32 KalayTourGroupLeaveScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE_BY(-72, 0, 0),
 	SC_SYNC,
@@ -2388,12 +2385,12 @@ Sint32 Kalay_TourGroupLeaveScript[] = {
 	SC_END,
 };
 
-Sint32 Kalay_WaitingTouristScript[] = {
+Sint32 KalayWaitingTouristScript[] = {
 	SC_CALL(scKalayUpdateWaitingTourist),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-Sint32 Kalay_GuideCountScript[] = {
+Sint32 KalayGuideCountScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(228, 0, 296),
 	SC_SYNC,
@@ -2422,7 +2419,7 @@ Sint32 Kalay_GuideCountScript[] = {
 	SC_END,
 };
 
-Sint32 Kalay_GuidePaceScript[] = {
+Sint32 KalayGuidePaceScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(164, 0, 278),
 	SC_SYNC,
@@ -2439,7 +2436,7 @@ Sint32 Kalay_GuidePaceScript[] = {
 	SC_END,
 };
 
-Sint32 Kalay_HeadGuideStopScript[] = {
+Sint32 KalayHeadGuideStopScript[] = {
 	SC_SET(SW_TARGET_X, ACTOR_NO_TARGET),
 	SC_SET(SW_TARGET_Y, ACTOR_NO_TARGET),
 	SC_SET(SW_TARGET_Z, ACTOR_NO_TARGET),
@@ -2457,7 +2454,7 @@ Sint32 Kalay_HeadGuideStopScript[] = {
 	SC_END,
 };
 
-Sint32 Kalay_SecondGuideStopScript[] = {
+Sint32 KalaySecondGuideStopScript[] = {
 	SC_SET(SW_TARGET_X, ACTOR_NO_TARGET),
 	SC_SET(SW_TARGET_Y, ACTOR_NO_TARGET),
 	SC_SET(SW_TARGET_Z, ACTOR_NO_TARGET),
@@ -2475,7 +2472,7 @@ Sint32 Kalay_SecondGuideStopScript[] = {
 	SC_END,
 };
 
-Sint32 Kalay_HeadGuideReturnScript[] = {
+Sint32 KalayHeadGuideReturnScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(178, 0, 272),
 	SC_SYNC,
@@ -2486,7 +2483,7 @@ Sint32 Kalay_HeadGuideReturnScript[] = {
 	SC_END,
 };
 
-Sint32 Kalay_SecondGuideReturnScript[] = {
+Sint32 KalaySecondGuideReturnScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(255, 0, 289),
 	SC_SYNC,
@@ -2501,12 +2498,12 @@ Sint32 Kalay_SecondGuideReturnScript[] = {
 	SC_END,
 };
 
-Sint32 Kalay_PartyLookAboutScript[] = {
+Sint32 KalayPartyLookAboutScript[] = {
 	SC_CALL(scLookAboutRandomly),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-Sint32 Kalay_PartyGatherScript[] = {
+Sint32 KalayPartyGatherScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(388, 0, 300),
 	SC_SYNC,
@@ -2515,7 +2512,7 @@ Sint32 Kalay_PartyGatherScript[] = {
 	SC_END,
 };
 
-Sint32 Kalay_PuddleGrowScript[] = {
+Sint32 KalayPuddleGrowScript[] = {
 	SC_ADD(SW_SCALE_X, 546),
 	SC_ADD(SW_SCALE_Y, 546),
 	SC_WAIT(1),
@@ -2525,7 +2522,7 @@ Sint32 Kalay_PuddleGrowScript[] = {
 
 #include "shared/kalay_fallback_entrances.c"
 
-SCENE_ENTRANCE Kalay_TownEntrances[] = {
+SCENE_ENTRANCE KalayTownEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 224, 0, 280, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{KALAY_FROM_HOUSE_NORTHWEST, CONDITION_ALWAYS, 72, 0, 200, FACING_SOUTH, 0,
@@ -2559,7 +2556,7 @@ SCENE_ENTRANCE Kalay_TownEntrances[] = {
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE Kalay_HammetPalaceEntrances[] = {
+SCENE_ENTRANCE KalayHammetPalaceEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{HAMMET_PALACE_GROUNDS_FROM_KALAY, CONDITION_ALWAYS, 192, 0, 280,
@@ -2569,7 +2566,7 @@ SCENE_ENTRANCE Kalay_HammetPalaceEntrances[] = {
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE Kalay_TunnelEntranceEntrances[] = {
+SCENE_ENTRANCE KalayTunnelEntranceEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{KALAY_TUNNEL_ENTRANCE_FROM_KALAY_TUNNEL_CAVE, CONDITION_ALWAYS, 248, 0,
@@ -2581,7 +2578,7 @@ SCENE_ENTRANCE Kalay_TunnelEntranceEntrances[] = {
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE Kalay_TunnelCaveEntrances[] = {
+SCENE_ENTRANCE KalayTunnelCaveEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{KALAY_TUNNEL_CAVE_FROM_KALAY_TUNNEL_PASSAGE, CONDITION_ALWAYS, 296, 0, 104,
@@ -2591,7 +2588,7 @@ SCENE_ENTRANCE Kalay_TunnelCaveEntrances[] = {
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE Kalay_TunnelPassageEntrances[] = {
+SCENE_ENTRANCE KalayTunnelPassageEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_WEST,
@@ -2607,7 +2604,7 @@ SCENE_ENTRANCE Kalay_TunnelPassageEntrances[] = {
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE Kalay_TunnelEntrances[] = {
+SCENE_ENTRANCE KalayTunnelEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE, CONDITION_ALWAYS, 408, 0,
@@ -2621,7 +2618,7 @@ SCENE_ENTRANCE Kalay_TunnelEntrances[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 Kalay_Exits[] = {
+Uint32 KalayExits[] = {
 	SCENE_EXITS(Kalay),
 	SCENE_EXIT(
 		KALAY_TO_HOUSE_NORTHWEST, StuccoRoomsA, STUCCO_ROOMS_A_HOUSE_NORTHWEST),
@@ -2691,12 +2688,12 @@ Uint32 Kalay_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE Kalay_NoActorPlacements[] = {
+ACTOR_PLACE KalayNoActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
 /* clang-format off */
-ACTOR_PLACE Kalay_TownActorPlacements[] = {
+ACTOR_PLACE KalayTownActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		188, 0, 476, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2738,7 +2735,7 @@ ACTOR_PLACE Kalay_TownActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE Kalay_TourGroupActorPlacements[] = {
+ACTOR_PLACE KalayTourGroupActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_CHEF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_YOUNG_WOMAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2758,7 +2755,7 @@ ACTOR_PLACE Kalay_TourGroupActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE Kalay_HammetPalaceActorPlacements[] = {
+ACTOR_PLACE KalayHammetPalaceActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2768,7 +2765,7 @@ ACTOR_PLACE Kalay_HammetPalaceActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE Kalay_TunnelEntranceActorPlacements[] = {
+ACTOR_PLACE KalayTunnelEntranceActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2788,7 +2785,7 @@ ACTOR_PLACE Kalay_TunnelEntranceActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE Kalay_TunnelActorPlacements[] = {
+ACTOR_PLACE KalayTunnelActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		376, 0, 826, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2802,11 +2799,11 @@ ACTOR_PLACE Kalay_TunnelActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE Kalay_NoCues[] = {
+CUE KalayNoCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE Kalay_TownCues[] = {
+CUE KalayTownCues[] = {
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), KALAY_TO_HOUSE_NORTHWEST, CONDITION_ALWAYS, SCRIPT_REF(scKalayOpenDoorAndExit) },
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), KALAY_TO_HOUSE_NORTHEAST_UPPER, CONDITION_ALWAYS, SCRIPT_REF(scKalayOpenDoorAndExit) },
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), KALAY_TO_HOUSE_NORTHEAST_LOWER, CONDITION_ALWAYS, SCRIPT_REF(scKalayOpenDoorAndExit) },
@@ -2864,7 +2861,7 @@ CUE Kalay_TownCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE Kalay_HammetPalaceCues[] = {
+CUE KalayHammetPalaceCues[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, HAMMET_PALACE_GROUNDS_TO_KALAY },
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE, CONDITION_ALWAYS, SCRIPT_REF(scKalayEnterPalace) },
 	{ CUE_TALK, ACTOR_PALACE_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersHandleAffairs) },
@@ -2874,7 +2871,7 @@ CUE Kalay_HammetPalaceCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE Kalay_TunnelEntranceCues[] = {
+CUE KalayTunnelEntranceCues[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_CAVE },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_NORTH },
 	{ CUE_TALK, ACTOR_TUNNEL_GUARD, CONDITION_ALWAYS, SCRIPT_REF(scKalayAskAboutGoingToCave) },
@@ -2883,14 +2880,14 @@ CUE Kalay_TunnelEntranceCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE Kalay_TunnelCaveCues[] = {
+CUE KalayTunnelCaveCues[] = {
 	{ CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_PASSAGE },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_ENTRANCE },
 	{ EXAMINE_CUE(EXAMINE_CHEST), 100, FLAG_KALAY_TUNNEL_APPLE_CHEST, FIND_ITEM(ITEM_APPLE) },
 	{ CUE_TABLE_END },
 };
 
-CUE Kalay_TunnelPassageCues[] = {
+CUE KalayTunnelPassageCues[] = {
 	{ CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_WEST },
 	{ CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_TREASURE_ROOM_EAST },
 	{ CUE_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_LONG_PATH_TO_NORTHEAST_ROOM },
@@ -2899,7 +2896,7 @@ CUE Kalay_TunnelPassageCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE Kalay_TunnelCues[] = {
+CUE KalayTunnelCues[] = {
 	{ CUE_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_HAMMET_PALACE },
 	{ CUE_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_WEST },
 	{ CUE_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY_TUNNEL_PASSAGE_EAST },
@@ -2929,23 +2926,23 @@ CUE Kalay_TunnelCues[] = {
 /* clang-format on */
 
 /* A door of the town opening, and where each door is. */
-Uint16 Kalay_DoorMetatileSteps[] = {
+Uint16 KalayDoorMetatileSteps[] = {
 	MAPGRID_ANIMATION_STEP(35, 33, 1, 2, 5),
 	MAPGRID_ANIMATION_STEP(37, 33, 1, 2, 5),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-MAP_GRID_METATILE_ANIMATION Kalay_DoorMetatiles[] = {
-	{Kalay_DoorMetatileSteps, 36, 10},
-	{Kalay_DoorMetatileSteps, 57, 7},
-	{Kalay_DoorMetatileSteps, 57, 11},
-	{Kalay_DoorMetatileSteps, 57, 23},
-	{Kalay_DoorMetatileSteps, 52, 25},
-	{Kalay_DoorMetatileSteps, 39, 14},
-	{Kalay_DoorMetatileSteps, 51, 14},
-	{Kalay_DoorMetatileSteps, 41, 25},
+MAP_GRID_METATILE_ANIMATION KalayDoorMetatiles[] = {
+	{KalayDoorMetatileSteps, 36, 10},
+	{KalayDoorMetatileSteps, 57, 7},
+	{KalayDoorMetatileSteps, 57, 11},
+	{KalayDoorMetatileSteps, 57, 23},
+	{KalayDoorMetatileSteps, 52, 25},
+	{KalayDoorMetatileSteps, 39, 14},
+	{KalayDoorMetatileSteps, 51, 14},
+	{KalayDoorMetatileSteps, 41, 25},
 };
 
-Sint32 Kalay_TunnelParticleScript[] = {
+Sint32 KalayTunnelParticleScript[] = {
 	SC_CALL(scKalayUpdateTunnelParticle),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };

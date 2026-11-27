@@ -3,9 +3,9 @@
 
 #include "types.h"
 
-/* Frames to wait after each glyph while no button is held. */
-const Uint8 MessageSpeed_Delays[3] = {4, 0, 0};
-/* Glyphs a message draws each frame. */
-const Uint8 MessageSpeed_Steps[3] = {1, 1, 10};
+/* Ticks to wait after each glyph while no button is held. */
+const Uint8 MessageSpeedDelays[3] = {4, 0, 0};
+/* Glyphs a message draws each tick. */
+const Uint8 MessageSpeedSteps[3] = {1, 1, 10};
 /* Glyphs between two of the speaker's voice blips. */
-const Uint8 MessageSpeed_VoiceGaps[3] = {1, 3, 10};
+const Uint8 MessageSpeedVoiceGaps[3] = {1, 3, 10};

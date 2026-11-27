@@ -46,10 +46,10 @@ void		  scAlhafraDrawPirateInFront(void);
 void		  scAlhafraSailorToldToWork(void);
 void		  scAlhafraRevealTreasureSpot(void);
 void		  scAlhafraHideTreasureSpot(void);
-extern Uint32 Alhafra_LookAroundScript[];
-extern Uint16 Alhafra_NoDoor[];
-extern Uint16 Alhafra_DoorOpening[];
-extern Uint16 Alhafra_SecondDoorOpening[];
+extern Uint32 AlhafraLookAroundScript[];
+extern Uint16 AlhafraNoDoor[];
+extern Uint16 AlhafraDoorOpening[];
+extern Uint16 AlhafraSecondDoorOpening[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -82,7 +82,7 @@ const Uint32 *scGetExits(void)
 /* The chest Reveal shows among the six gravestones, holding a Psy Crystal. */
 #define ACTOR_PSY_CRYSTAL_CHEST 64
 
-/* The Alhafrans of Alhafra_ActorPlacements, who keep their rows, sprites and
+/* The Alhafrans of AlhafraActorPlacements, who keep their rows, sprites and
    places to ACTOR_SAILOR_BUILDING_HOUSES once Briggs is caught and once the
    ship is stolen; what each says changes with the story. */
 typedef enum ALHAFRA_ACTOR_ID {
@@ -167,7 +167,7 @@ typedef enum ALHAFRA_ONCE_BRIGGS_IS_CAUGHT_ACTOR_ID {
 } ALHAFRA_ONCE_BRIGGS_IS_CAUGHT_ACTOR_ID;
 
 /* The Alhafrans the town's setup moves once the mast is cleared, until the ship
-   is stolen (Alhafra_ActorPlacementsOnceTheMastIsCleared). */
+   is stolen (AlhafraActorPlacementsOnceTheMastIsCleared). */
 typedef enum ALHAFRA_ONCE_THE_MAST_IS_CLEARED_ACTOR_ID {
 	/* "The whole town is grateful to you..." */
 	ACTOR_GRATEFUL_YOUNG_MAN = ACTOR_FIRST_PLACED,
@@ -206,22 +206,22 @@ typedef enum ALHAFRA_ONCE_THE_MAST_IS_CLEARED_ACTOR_ID {
 	ACTOR_OLD_WOMAN_ON_FISHING_BOATS
 } ALHAFRA_ONCE_THE_MAST_IS_CLEARED_ACTOR_ID;
 
-extern ACTOR_PLACE Alhafra_ActorPlacements[];
-extern ACTOR_PLACE Alhafra_ActorPlacementsOnceBriggsIsCaught[];
-extern ACTOR_PLACE Alhafra_ActorPlacementsOnceTheShipIsStolen[];
-extern ACTOR_PLACE Alhafra_ActorPlacementsOnceTheMastIsCleared[];
-extern MAP_GRID_METATILE_ANIMATION Alhafra_Doors[];
+extern ACTOR_PLACE				   AlhafraActorPlacements[];
+extern ACTOR_PLACE				   AlhafraActorPlacementsOnceBriggsIsCaught[];
+extern ACTOR_PLACE				   AlhafraActorPlacementsOnceTheShipIsStolen[];
+extern ACTOR_PLACE				   AlhafraActorPlacementsOnceTheMastIsCleared[];
+extern MAP_GRID_METATILE_ANIMATION AlhafraDoors[];
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(syGameFlagGet(FLAG_ALHAFRA_MAST_CLEARED)) {
 		if(syGameFlagGet(FLAG_ALHAFRA_SHIP_GONE) == 0)
-			return Alhafra_ActorPlacementsOnceTheMastIsCleared;
-		return Alhafra_ActorPlacementsOnceTheShipIsStolen;
+			return AlhafraActorPlacementsOnceTheMastIsCleared;
+		return AlhafraActorPlacementsOnceTheShipIsStolen;
 	}
 	if(syGameFlagGet(FLAG_BRIGGS_CAUGHT))
-		return Alhafra_ActorPlacementsOnceBriggsIsCaught;
-	return Alhafra_ActorPlacements;
+		return AlhafraActorPlacementsOnceBriggsIsCaught;
+	return AlhafraActorPlacements;
 }
 
 /* A door of the town opens as Felix walks into it, he walks through, and the
@@ -241,7 +241,7 @@ void scAlhafraOpenDoorAndEnter(
 	fdScriptWait(10);
 	syImportScriptSetExitRequest(exit);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -251,12 +251,12 @@ void scAlhafraOpenDoorAndEnter(
    (scAlhafraOpenDoorAndEnter).
 
    Each door's metatile behaviour is the number of the exit it leads by, and of
-   its row of Alhafra_Doors. */
-void scAlhafraEnterDoor(Sint32 index)
+   its row of AlhafraDoors. */
+void scAlhafraEnterDoor(Sint32 idx)
 {
-	MAP_GRID_METATILE_ANIMATION *table = Alhafra_Doors;
+	MAP_GRID_METATILE_ANIMATION *tbl = AlhafraDoors;
 
-	scAlhafraOpenDoorAndEnter(&table[index], index, 0);
+	scAlhafraOpenDoorAndEnter(&tbl[idx], idx, 0);
 }
 
 /* Alhafra's shops, as mnShopRun numbers them. */
@@ -387,13 +387,13 @@ void scAlhafraDrawPirateInFront(void)
 	scFieldActorSetSprPriority(ACTOR_PIRATE, 3);
 }
 
-extern Sint16 Alhafra_Puddles[];
+extern Sint16 AlhafraPuddles[];
 
 /* Felix casts Frost on one of the three puddles of seawater the tidal wave left
    in town, and it freezes into a pillar of ice. */
 void scAlhafraFreezePuddle(Sint32 unused, Sint32 actorId)
 {
-	fdFlagBlockApplyFlags((Sint32)Alhafra_Puddles);
+	fdFlagBlockApplyFlags((Sint32)AlhafraPuddles);
 	fdActorGetById(actorId)->priFlg = 0;
 }
 
@@ -566,29 +566,29 @@ void scAlhafraFindGoldCoins(void)
    yes has him step aside for good. */
 void scAlhafraFatherLetsPartyToCave(Sint32 actor)
 {
-	Sint32 message = (Sint32)MsgAlhafraYoureTheOneWhoGave;
+	Sint32 msg = (Sint32)MsgAlhafraYoureTheOneWhoGave;
 
 	if(fdScriptGetFlag(FLAG_LET_INTO_CAVE) != 0) {
-		fdScriptSetMessageId(message + 4);
+		fdScriptSetMessageId(msg + 4);
 		/* "I've heard that the deeper you go into the cave, the more
 		   dangerous..." */
 		fdMessageShowAtActor(actor, 0);
 	} else {
-		fdScriptSetMessageId(message);
+		fdScriptSetMessageId(msg);
 		/* "You're the one who gave my son some food, aren't you? Did you want
 		   to go see the cave?" */
 		fdMessageShowAtActor(actor, 0);
 		if(fdScriptAskYesNoWithActorAnimation(fdPartyGetLeaderActor(), 0) !=
 			0) {
 			fdScriptWait(20);
-			fdScriptSetMessageId(message + 1);
+			fdScriptSetMessageId(msg + 1);
 			/* No: "If you were up for a little spelunking, I'd be glad to let
 			   you..." */
 			fdScriptShowMessageAndWait(actor, 0);
 		} else {
 			syGameFlagSet(FLAG_LET_INTO_CAVE);
 			fdScriptWait(20);
-			fdScriptSetMessageId(message + 2);
+			fdScriptSetMessageId(msg + 2);
 			/* Yes: "I'm only letting you pass because you did good by my
 			   son..." */
 			fdScriptShowMessage(actor, 0);
@@ -626,21 +626,21 @@ void scAlhafraHideTreasureSpot(void)
 	fdTreasureSpotSetPos(ACTOR_PSY_CRYSTAL_CHEST, -1, -1);
 }
 
-extern CUE Alhafra_Cues[];
-extern CUE Alhafra_CuesOnceBriggsIsCaught[];
-extern CUE Alhafra_CuesOnceTheShipIsStolen[];
-extern CUE Alhafra_CuesOnceTheMastIsCleared[];
+extern CUE AlhafraCues[];
+extern CUE AlhafraCuesOnceBriggsIsCaught[];
+extern CUE AlhafraCuesOnceTheShipIsStolen[];
+extern CUE AlhafraCuesOnceTheMastIsCleared[];
 
 const CUE *scGetCues(void)
 {
 	if(syGameFlagGet(FLAG_ALHAFRA_MAST_CLEARED)) {
 		if(syGameFlagGet(FLAG_ALHAFRA_SHIP_GONE) == 0)
-			return Alhafra_CuesOnceTheMastIsCleared;
-		return Alhafra_CuesOnceTheShipIsStolen;
+			return AlhafraCuesOnceTheMastIsCleared;
+		return AlhafraCuesOnceTheShipIsStolen;
 	}
 	if(syGameFlagGet(FLAG_BRIGGS_CAUGHT))
-		return Alhafra_CuesOnceBriggsIsCaught;
-	return Alhafra_Cues;
+		return AlhafraCuesOnceBriggsIsCaught;
+	return AlhafraCues;
 }
 
 Sint32 scInit(void)
@@ -713,7 +713,7 @@ Sint32 scInit(void)
 			fdActorSetPos(ACTOR_WOMAN_ON_THE_LOST_SHIPS, 536, 760);
 		if(syGameFlagGet(FLAG_PIRATE_LEFT))
 			fdActorSetPos(ACTOR_PIRATE, 0, 0);
-		fdFlagBlockPlaceAllMarkingEdges((Sint32)&Alhafra_Puddles);
+		fdFlagBlockPlaceAllMarkingEdges((Sint32)&AlhafraPuddles);
 		fdActorSetMovementType(
 			fdActorGetById(ACTOR_PUDDLE_A), MOVEMENT_TYPE_TAKE_LEADER_LAYER);
 		fdActorSetMovementType(
@@ -764,24 +764,24 @@ void scAlhafraTakeLeadersLayer(void)
 	fdActorTakeLeaderLayer();
 }
 
-extern Sint32 Alhafra_ElderStepsBackScript[];
-extern Uint32 Alhafra_WomanWalksOffScript[];
-extern Uint32 Alhafra_AlhafranLeadsBesideFelixScript[];
-extern Uint32 Alhafra_ElderFollowsBesideFelixScript[];
-extern Uint32 Alhafra_WaitingMadranFollowsBesideFelixScript[];
-extern Uint32 Alhafra_MayorFollowsBesideFelixScript[];
-extern Uint32 Alhafra_SecondSoldierFollowsBesideFelixScript[];
-extern Uint32 Alhafra_FirstSoldierFollowsBesideFelixScript[];
-extern Uint32 Alhafra_WearyMadranFollowsBesideFelixScript[];
-extern Uint32 Alhafra_SilentMadranFollowsBesideFelixScript[];
-extern Sint32 Alhafra_AlhafranLeadsBehindFelixScript[];
-extern Uint32 Alhafra_ElderFollowsBehindFelixScript[];
-extern Uint32 Alhafra_WaitingMadranFollowsBehindFelixScript[];
-extern Uint32 Alhafra_MayorFollowsBehindFelixScript[];
-extern Uint32 Alhafra_WearyMadranFollowsBehindFelixScript[];
-extern Uint32 Alhafra_FirstSoldierFollowsBehindFelixScript[];
-extern Sint32 Alhafra_SilentMadranFollowsBehindFelixScript[];
-extern Uint32 Alhafra_SecondSoldierFollowsBehindFelixScript[];
+extern Sint32 AlhafraElderStepsBackScript[];
+extern Uint32 AlhafraWomanWalksOffScript[];
+extern Uint32 AlhafraAlhafranLeadsBesideFelixScript[];
+extern Uint32 AlhafraElderFollowsBesideFelixScript[];
+extern Uint32 AlhafraWaitingMadranFollowsBesideFelixScript[];
+extern Uint32 AlhafraMayorFollowsBesideFelixScript[];
+extern Uint32 AlhafraSecondSoldierFollowsBesideFelixScript[];
+extern Uint32 AlhafraFirstSoldierFollowsBesideFelixScript[];
+extern Uint32 AlhafraWearyMadranFollowsBesideFelixScript[];
+extern Uint32 AlhafraSilentMadranFollowsBesideFelixScript[];
+extern Sint32 AlhafraAlhafranLeadsBehindFelixScript[];
+extern Uint32 AlhafraElderFollowsBehindFelixScript[];
+extern Uint32 AlhafraWaitingMadranFollowsBehindFelixScript[];
+extern Uint32 AlhafraMayorFollowsBehindFelixScript[];
+extern Uint32 AlhafraWearyMadranFollowsBehindFelixScript[];
+extern Uint32 AlhafraFirstSoldierFollowsBehindFelixScript[];
+extern Sint32 AlhafraSilentMadranFollowsBehindFelixScript[];
+extern Uint32 AlhafraSecondSoldierFollowsBehindFelixScript[];
 
 /* The mayor and elder of Madra arrive with their soldiers and townsfolk, ask
    the way to Alhafra's mayor and follow an Alhafran to the manor. */
@@ -926,7 +926,7 @@ void scAlhafraMadransArrive(Sint32 metatileBehavior)
 	/* "So...is this Alhafra?" */
 	syFieldScriptShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
 	fdActorSetMovementTypeById(
-		ACTOR_MADRAS_ELDER, (Sint32)Alhafra_ElderStepsBackScript);
+		ACTOR_MADRAS_ELDER, (Sint32)AlhafraElderStepsBackScript);
 	fdScriptWait(20);
 	fdActorWalkByAndWait(ACTOR_MADRAS_MAYOR, 0, -32);
 	fdActorWalkByAndWaitById(ACTOR_MADRAS_MAYOR, -32, 0);
@@ -973,7 +973,7 @@ void scAlhafraMadransArrive(Sint32 metatileBehavior)
 	fdActorFaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_SOUTHEAST, 0);
 	fdScriptWait(20);
 	fdActorSetMovementTypeById(
-		ACTOR_WOMAN_ON_THE_LOST_SHIPS, (Sint32)Alhafra_WomanWalksOffScript);
+		ACTOR_WOMAN_ON_THE_LOST_SHIPS, (Sint32)AlhafraWomanWalksOffScript);
 	scFieldActorJump(ACTOR_FIRST_MADRAN_SOLDIER, 6, 15);
 	scFieldActorJump(ACTOR_FIRST_MADRAN_SOLDIER, 6, 23);
 	/* "We're in no shape to go present ourselves to the mayor right now!" */
@@ -1122,11 +1122,11 @@ void scAlhafraMadransArrive(Sint32 metatileBehavior)
 			ACTOR_SECOND_MADRAN_SOLDIER, ACTOR_MADRAS_ELDER);
 		scFieldActorWatchAndSetScript(ACTOR_WEARY_MADRAN, ACTOR_MADRAS_ELDER);
 		fdActorSetMovementTypeById(ACTOR_ALHAFRAN_GIVING_DIRECTIONS,
-			(Sint32)Alhafra_AlhafranLeadsBesideFelixScript);
+			(Sint32)AlhafraAlhafranLeadsBesideFelixScript);
 		fdActorSetMovementTypeById(
-			ACTOR_MADRAS_ELDER, (Sint32)Alhafra_ElderFollowsBesideFelixScript);
+			ACTOR_MADRAS_ELDER, (Sint32)AlhafraElderFollowsBesideFelixScript);
 		fdActorSetMovementTypeById(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
-			(Sint32)Alhafra_WaitingMadranFollowsBesideFelixScript);
+			(Sint32)AlhafraWaitingMadranFollowsBesideFelixScript);
 		fdScriptWait(80);
 		scFieldActorSetSprPriority(ACTOR_MADRAS_ELDER, 3);
 		scFieldActorSetSprPriority(ACTOR_MADRAS_MAYOR, 3);
@@ -1138,18 +1138,18 @@ void scAlhafraMadransArrive(Sint32 metatileBehavior)
 		scFieldActorSetSprPriority(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 3);
 		scFieldActorWatchAndSetScript(ACTOR_SILENT_MADRAN, ACTOR_MADRAS_ELDER);
 		fdActorSetMovementTypeById(
-			ACTOR_MADRAS_MAYOR, (Sint32)Alhafra_MayorFollowsBesideFelixScript);
+			ACTOR_MADRAS_MAYOR, (Sint32)AlhafraMayorFollowsBesideFelixScript);
 		fdScriptWait(170);
 		fdActorSetMovementTypeById(ACTOR_SECOND_MADRAN_SOLDIER,
-			(Sint32)Alhafra_SecondSoldierFollowsBesideFelixScript);
+			(Sint32)AlhafraSecondSoldierFollowsBesideFelixScript);
 		fdScriptWait(10);
 		fdActorSetMovementTypeById(ACTOR_FIRST_MADRAN_SOLDIER,
-			(Sint32)Alhafra_FirstSoldierFollowsBesideFelixScript);
+			(Sint32)AlhafraFirstSoldierFollowsBesideFelixScript);
 		fdActorSetMovementTypeById(ACTOR_WEARY_MADRAN,
-			(Sint32)Alhafra_WearyMadranFollowsBesideFelixScript);
+			(Sint32)AlhafraWearyMadranFollowsBesideFelixScript);
 		fdScriptWait(60);
 		fdActorSetMovementTypeById(ACTOR_SILENT_MADRAN,
-			(Sint32)Alhafra_SilentMadranFollowsBesideFelixScript);
+			(Sint32)AlhafraSilentMadranFollowsBesideFelixScript);
 	} else {
 		scFieldActorSetSprPriority(ACTOR_MADRAS_MAYOR, 2);
 		scFieldActorWatchAndSetScript(
@@ -1160,16 +1160,16 @@ void scAlhafraMadransArrive(Sint32 metatileBehavior)
 			ACTOR_SECOND_MADRAN_SOLDIER, ACTOR_MADRAS_MAYOR);
 		scFieldActorWatchAndSetScript(ACTOR_WEARY_MADRAN, ACTOR_MADRAS_MAYOR);
 		fdActorSetMovementTypeById(ACTOR_ALHAFRAN_GIVING_DIRECTIONS,
-			(Sint32)Alhafra_AlhafranLeadsBehindFelixScript);
+			(Sint32)AlhafraAlhafranLeadsBehindFelixScript);
 		fdScriptWait(60);
 		fdActorSetMovementTypeById(
-			ACTOR_MADRAS_ELDER, (Sint32)Alhafra_ElderFollowsBehindFelixScript);
+			ACTOR_MADRAS_ELDER, (Sint32)AlhafraElderFollowsBehindFelixScript);
 		fdActorSetMovementTypeById(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
-			(Sint32)Alhafra_WaitingMadranFollowsBehindFelixScript);
+			(Sint32)AlhafraWaitingMadranFollowsBehindFelixScript);
 		fdScriptWait(70);
 		scFieldActorWatchAndSetScript(ACTOR_SILENT_MADRAN, ACTOR_MADRAS_ELDER);
 		fdActorSetMovementTypeById(
-			ACTOR_MADRAS_MAYOR, (Sint32)Alhafra_MayorFollowsBehindFelixScript);
+			ACTOR_MADRAS_MAYOR, (Sint32)AlhafraMayorFollowsBehindFelixScript);
 		scFieldActorSetSprPriority(ACTOR_MADRAS_ELDER, 3);
 		scFieldActorSetSprPriority(ACTOR_MADRAS_MAYOR, 3);
 		scFieldActorSetSprPriority(ACTOR_FIRST_MADRAN_SOLDIER, 3);
@@ -1180,15 +1180,15 @@ void scAlhafraMadransArrive(Sint32 metatileBehavior)
 		fdActorSetSprPriority(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 3);
 		fdScriptWait(120);
 		fdActorSetMovementTypeById(ACTOR_WEARY_MADRAN,
-			(Sint32)Alhafra_WearyMadranFollowsBehindFelixScript);
+			(Sint32)AlhafraWearyMadranFollowsBehindFelixScript);
 		fdScriptWait(40);
 		fdActorSetMovementTypeById(ACTOR_FIRST_MADRAN_SOLDIER,
-			(Sint32)Alhafra_FirstSoldierFollowsBehindFelixScript);
+			(Sint32)AlhafraFirstSoldierFollowsBehindFelixScript);
 		fdActorSetMovementTypeById(ACTOR_SILENT_MADRAN,
-			(Sint32)Alhafra_SilentMadranFollowsBehindFelixScript);
+			(Sint32)AlhafraSilentMadranFollowsBehindFelixScript);
 		fdScriptWait(30);
 		fdActorSetMovementTypeById(ACTOR_SECOND_MADRAN_SOLDIER,
-			(Sint32)Alhafra_SecondSoldierFollowsBehindFelixScript);
+			(Sint32)AlhafraSecondSoldierFollowsBehindFelixScript);
 	}
 	fdScriptWait(300);
 	fdActorWaitForScriptEndById(ACTOR_WEARY_MADRAN);
@@ -1345,12 +1345,12 @@ void scAlhafraPirateSeesMadrasMayor(Sint32 how)
 /* clang-format off */
 /* The three puddles Frost freezes into pillars, each with the flag set while */
 /* it stands (fdFlagBlockPlaceAll). */
-Sint16 Alhafra_Puddles[] = {
+Sint16 AlhafraPuddles[] = {
 	ACTOR_PUDDLE_A, FLAG_PUDDLE_A_FROZEN, ACTOR_PUDDLE_B, FLAG_PUDDLE_B_FROZEN,
 	ACTOR_PUDDLE_C, FLAG_PUDDLE_C_FROZEN, -1, 0,
 };
 
-Uint32 Alhafra_LookAroundScript[] = {
+Uint32 AlhafraLookAroundScript[] = {
 	SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
 	SC_WAIT(40),
 	SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
@@ -1379,7 +1379,7 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE Alhafra_ActorPlacements[] = {
+ACTOR_PLACE AlhafraActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_WEAPON_MERCHANT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 544, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_ARMOR_MERCHANT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 544, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 280, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1411,7 +1411,7 @@ ACTOR_PLACE Alhafra_ActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Alhafra_ActorPlacementsOnceBriggsIsCaught[] = {
+ACTOR_PLACE AlhafraActorPlacementsOnceBriggsIsCaught[] = {
 	ACTOR_PLACEMENT(SPRITE_WEAPON_MERCHANT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 544, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_ARMOR_MERCHANT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 544, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 312, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -1439,7 +1439,7 @@ ACTOR_PLACE Alhafra_ActorPlacementsOnceBriggsIsCaught[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Alhafra_ActorPlacementsOnceTheShipIsStolen[] = {
+ACTOR_PLACE AlhafraActorPlacementsOnceTheShipIsStolen[] = {
 	ACTOR_PLACEMENT(SPRITE_WEAPON_MERCHANT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 544, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_ARMOR_MERCHANT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 544, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 280, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1467,7 +1467,7 @@ ACTOR_PLACE Alhafra_ActorPlacementsOnceTheShipIsStolen[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Alhafra_ActorPlacementsOnceTheMastIsCleared[] = {
+ACTOR_PLACE AlhafraActorPlacementsOnceTheMastIsCleared[] = {
 	ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 552, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 520, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 600, FACING_EAST, TALK_FACING_PARTY, 0),
@@ -1483,24 +1483,24 @@ ACTOR_PLACE Alhafra_ActorPlacementsOnceTheMastIsCleared[] = {
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 624, FACING_EAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 592, FACING_EAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 576, FACING_EAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, (Sint32)Alhafra_LookAroundScript, 648, 0, 504, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, (Sint32)AlhafraLookAroundScript, 648, 0, 504, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 608, FACING_EAST, TALK_FACING_PARTY, 0),
 	{SCENE_TABLE_END},
 };
 
 /* A doorway with no door: nothing to open. */
-Uint16 Alhafra_NoDoor[] = {
+Uint16 AlhafraNoDoor[] = {
 	MAPGRID_ANIMATION_STEPS_END,
 };
 
 /* A door opening: one step of metatiles copied over it. */
-Uint16 Alhafra_DoorOpening[] = {
+Uint16 AlhafraDoorOpening[] = {
 	MAPGRID_ANIMATION_STEP(63, 2, 1, 2, 6),
 	MAPGRID_ANIMATION_STEPS_END,
 };
 
 /* The other shape of door's opening, from the metatiles beside the first's. */
-Uint16 Alhafra_SecondDoorOpening[] = {
+Uint16 AlhafraSecondDoorOpening[] = {
 	MAPGRID_ANIMATION_STEP(62, 2, 1, 2, 6),
 	MAPGRID_ANIMATION_STEPS_END,
 };
@@ -1508,25 +1508,25 @@ Uint16 Alhafra_SecondDoorOpening[] = {
 /* The doors Felix opens by walking into them, a row for each exit number */
 /* (scAlhafraEnterDoor): the door's opening and its metatile; a row with none */
 /* opens nothing. */
-MAP_GRID_METATILE_ANIMATION Alhafra_Doors[] = {
+MAP_GRID_METATILE_ANIMATION AlhafraDoors[] = {
 	{NULL, 0, 0},
-	{Alhafra_DoorOpening, 27, 37},
-	{Alhafra_DoorOpening, 27, 43},
-	{NULL, 0, 0},
-	{NULL, 0, 0},
-	{Alhafra_DoorOpening, 21, 36},
-	{Alhafra_DoorOpening, 38, 46},
-	{Alhafra_NoDoor, 0, 0},
-	{Alhafra_SecondDoorOpening, 11, 33},
+	{AlhafraDoorOpening, 27, 37},
+	{AlhafraDoorOpening, 27, 43},
 	{NULL, 0, 0},
 	{NULL, 0, 0},
+	{AlhafraDoorOpening, 21, 36},
+	{AlhafraDoorOpening, 38, 46},
+	{AlhafraNoDoor, 0, 0},
+	{AlhafraSecondDoorOpening, 11, 33},
 	{NULL, 0, 0},
-	{Alhafra_SecondDoorOpening, 5, 9},
 	{NULL, 0, 0},
-	{Alhafra_DoorOpening, 16, 9},
+	{NULL, 0, 0},
+	{AlhafraSecondDoorOpening, 5, 9},
+	{NULL, 0, 0},
+	{AlhafraDoorOpening, 16, 9},
 };
 
-CUE Alhafra_Cues[] = {
+CUE AlhafraCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, SCRIPT_REF(scAlhafraEnterDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, SCRIPT_REF(scAlhafraEnterDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, SCRIPT_REF(scAlhafraEnterDoor)},
@@ -1590,7 +1590,7 @@ CUE Alhafra_Cues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Alhafra_CuesOnceBriggsIsCaught[] = {
+CUE AlhafraCuesOnceBriggsIsCaught[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, SCRIPT_REF(scAlhafraEnterDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, SCRIPT_REF(scAlhafraEnterDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, SCRIPT_REF(scAlhafraEnterDoor)},
@@ -1667,7 +1667,7 @@ CUE Alhafra_CuesOnceBriggsIsCaught[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Alhafra_CuesOnceTheShipIsStolen[] = {
+CUE AlhafraCuesOnceTheShipIsStolen[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, SCRIPT_REF(scAlhafraEnterDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, SCRIPT_REF(scAlhafraEnterDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, SCRIPT_REF(scAlhafraEnterDoor)},
@@ -1735,7 +1735,7 @@ CUE Alhafra_CuesOnceTheShipIsStolen[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Alhafra_CuesOnceTheMastIsCleared[] = {
+CUE AlhafraCuesOnceTheMastIsCleared[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, SCRIPT_REF(scAlhafraEnterDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, SCRIPT_REF(scAlhafraEnterDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, SCRIPT_REF(scAlhafraEnterDoor)},
@@ -1787,7 +1787,7 @@ CUE Alhafra_CuesOnceTheMastIsCleared[] = {
 	{CUE_TABLE_END},
 };
 
-Sint32 Alhafra_ElderStepsBackScript[] = {
+Sint32 AlhafraElderStepsBackScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE_BY(0, 0, -8),
 	SC_SYNC,
@@ -1800,7 +1800,7 @@ Sint32 Alhafra_ElderStepsBackScript[] = {
 	SC_END,
 };
 
-Uint32 Alhafra_WomanWalksOffScript[] = {
+Uint32 AlhafraWomanWalksOffScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(552, 0, 808),
 	SC_SYNC,
@@ -1810,7 +1810,7 @@ Uint32 Alhafra_WomanWalksOffScript[] = {
 	SC_END,
 };
 
-Uint32 Alhafra_AlhafranLeadsBesideFelixScript[] = {
+Uint32 AlhafraAlhafranLeadsBesideFelixScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(440, 0, 800),
 	SC_SYNC,
@@ -1829,7 +1829,7 @@ Uint32 Alhafra_AlhafranLeadsBesideFelixScript[] = {
 	SC_END,
 };
 
-Uint32 Alhafra_MayorFollowsBesideFelixScript[] = {
+Uint32 AlhafraMayorFollowsBesideFelixScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(424, 0, 792),
 	SC_SYNC,
@@ -1846,7 +1846,7 @@ Uint32 Alhafra_MayorFollowsBesideFelixScript[] = {
 	SC_END,
 };
 
-Uint32 Alhafra_ElderFollowsBesideFelixScript[] = {
+Uint32 AlhafraElderFollowsBesideFelixScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(440, 0, 808),
 	SC_SYNC,
@@ -1865,7 +1865,7 @@ Uint32 Alhafra_ElderFollowsBesideFelixScript[] = {
 	SC_END,
 };
 
-Uint32 Alhafra_WaitingMadranFollowsBesideFelixScript[] = {
+Uint32 AlhafraWaitingMadranFollowsBesideFelixScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(440, 0, 808),
 	SC_SYNC,
@@ -1882,7 +1882,7 @@ Uint32 Alhafra_WaitingMadranFollowsBesideFelixScript[] = {
 	SC_END,
 };
 
-Uint32 Alhafra_FirstSoldierFollowsBesideFelixScript[] = {
+Uint32 AlhafraFirstSoldierFollowsBesideFelixScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(408, 0, 760),
 	SC_SYNC,
@@ -1895,7 +1895,7 @@ Uint32 Alhafra_FirstSoldierFollowsBesideFelixScript[] = {
 	SC_END,
 };
 
-Uint32 Alhafra_WearyMadranFollowsBesideFelixScript[] = {
+Uint32 AlhafraWearyMadranFollowsBesideFelixScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(408, 0, 760),
 	SC_SYNC,
@@ -1912,7 +1912,7 @@ Uint32 Alhafra_WearyMadranFollowsBesideFelixScript[] = {
 	SC_END,
 };
 
-Uint32 Alhafra_SecondSoldierFollowsBesideFelixScript[] = {
+Uint32 AlhafraSecondSoldierFollowsBesideFelixScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE_BY(16, 0, 0),
 	SC_SYNC,
@@ -1933,7 +1933,7 @@ Uint32 Alhafra_SecondSoldierFollowsBesideFelixScript[] = {
 	SC_END,
 };
 
-Uint32 Alhafra_SilentMadranFollowsBesideFelixScript[] = {
+Uint32 AlhafraSilentMadranFollowsBesideFelixScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(408, 0, 760),
 	SC_SYNC,
@@ -1952,7 +1952,7 @@ Uint32 Alhafra_SilentMadranFollowsBesideFelixScript[] = {
 	SC_END,
 };
 
-Sint32 Alhafra_AlhafranLeadsBehindFelixScript[] = {
+Sint32 AlhafraAlhafranLeadsBehindFelixScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE_BY(0, 0, -16),
 	SC_SYNC,
@@ -1969,7 +1969,7 @@ Sint32 Alhafra_AlhafranLeadsBehindFelixScript[] = {
 	SC_END,
 };
 
-Uint32 Alhafra_MayorFollowsBehindFelixScript[] = {
+Uint32 AlhafraMayorFollowsBehindFelixScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(328, 0, 808),
 	SC_SYNC,
@@ -1982,7 +1982,7 @@ Uint32 Alhafra_MayorFollowsBehindFelixScript[] = {
 	SC_END,
 };
 
-Uint32 Alhafra_ElderFollowsBehindFelixScript[] = {
+Uint32 AlhafraElderFollowsBehindFelixScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(328, 0, 808),
 	SC_SYNC,
@@ -1995,7 +1995,7 @@ Uint32 Alhafra_ElderFollowsBehindFelixScript[] = {
 	SC_END,
 };
 
-Uint32 Alhafra_WaitingMadranFollowsBehindFelixScript[] = {
+Uint32 AlhafraWaitingMadranFollowsBehindFelixScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(328, 0, 808),
 	SC_SYNC,
@@ -2008,7 +2008,7 @@ Uint32 Alhafra_WaitingMadranFollowsBehindFelixScript[] = {
 	SC_END,
 };
 
-Uint32 Alhafra_WearyMadranFollowsBehindFelixScript[] = {
+Uint32 AlhafraWearyMadranFollowsBehindFelixScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE_BY(0, 0, 16),
 	SC_SYNC,
@@ -2023,7 +2023,7 @@ Uint32 Alhafra_WearyMadranFollowsBehindFelixScript[] = {
 	SC_END,
 };
 
-Uint32 Alhafra_SecondSoldierFollowsBehindFelixScript[] = {
+Uint32 AlhafraSecondSoldierFollowsBehindFelixScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE_BY(0, 0, 16),
 	SC_SYNC,
@@ -2038,7 +2038,7 @@ Uint32 Alhafra_SecondSoldierFollowsBehindFelixScript[] = {
 	SC_END,
 };
 
-Uint32 Alhafra_FirstSoldierFollowsBehindFelixScript[] = {
+Uint32 AlhafraFirstSoldierFollowsBehindFelixScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE_BY(0, 0, 32),
 	SC_SYNC,
@@ -2053,7 +2053,7 @@ Uint32 Alhafra_FirstSoldierFollowsBehindFelixScript[] = {
 	SC_END,
 };
 
-Sint32 Alhafra_SilentMadranFollowsBehindFelixScript[] = {
+Sint32 AlhafraSilentMadranFollowsBehindFelixScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE_BY(-20, 0, 32),
 	SC_SYNC,

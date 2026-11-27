@@ -1,4 +1,4 @@
-animation	command	value	count	destination	frames
+animation	command	value	count	destination	ticks
 0	picture	1864	2	408	0
 0	picture	1896	2	440	0
 0	picture	1928	2	472	0

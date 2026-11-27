@@ -24,7 +24,7 @@ typedef struct BATTLE_OBJECT {
 	FIXED  scale;		   /* 16.16 fixed point, toFIXED(1) full size */
 	Uint16 activeStatuses; /* a bit per status with an icon */
 	Uint8  selectedCondition;		   /* the status whose icon is shown */
-	Sint8  cycleTmr;				   /* frames until the next status icon */
+	Sint8  cycleTmr;				   /* ticks until the next status icon */
 	struct SPR_ANIMATION *anmEntry;	   /* the status icon's sprite, or NULL */
 	struct SPR_ANIMATION *shadowEntry; /* the shadow sprite, or NULL */
 	/* Set by btObjectMarkForRelease: the object is released with the others. */

@@ -15,24 +15,24 @@
 #include "window/window.h"
 #include "field/field_psynergy_state.h"
 
-extern ACTOR_PLACE IncreaseItemAndLevel_ActorPlacements[];
-extern ACTOR_PLACE IncreaseItemAndLevel_FirstNamePlacements[];
-extern ACTOR_PLACE IncreaseItemAndLevel_SecondNamePlacements[];
-extern ACTOR_PLACE IncreaseItemAndLevel_ThirdNamePlacements[];
-extern ACTOR_PLACE IncreaseItemAndLevel_FourthNamePlacements[];
-extern CUE		   IncreaseItemAndLevel_NameCues[];
-extern CUE		   IncreaseItemAndLevel_Cues[];
-extern char		   IncreaseItemAndLevel_LvLabel[];
-extern char		   IncreaseItemAndLevel_ItemPrompt[];
-extern char		   IncreaseItemAndLevel_ItemHelp[];
-extern char		   IncreaseItemAndLevel_ItemFull[];
+extern ACTOR_PLACE IncreaseItemAndLevelActorPlacements[];
+extern ACTOR_PLACE IncreaseItemAndLevelFirstNamePlacements[];
+extern ACTOR_PLACE IncreaseItemAndLevelSecondNamePlacements[];
+extern ACTOR_PLACE IncreaseItemAndLevelThirdNamePlacements[];
+extern ACTOR_PLACE IncreaseItemAndLevelFourthNamePlacements[];
+extern CUE		   IncreaseItemAndLevelNameCues[];
+extern CUE		   IncreaseItemAndLevelCues[];
+extern char		   IncreaseItemAndLevelLvLabel[];
+extern char		   IncreaseItemAndLevelItemPrompt[];
+extern char		   IncreaseItemAndLevelItemHelp[];
+extern char		   IncreaseItemAndLevelItemFull[];
 void			   dbIncreaseItemAndLevelRunMotionTest(void);
 void			   dbIncreaseItemAndLevelKeepPortraitBrowserInPlace(void);
 void			   dbIncreaseItemAndLevelOpenIconBrowser(void);
 void			   dbIncreaseItemAndLevelOpenPortraitBrowser(void);
 
 /* The entrances that open a room of names in place of the debug room: each has
-   its own actor placements and the cues of IncreaseItemAndLevel_NameCues. */
+   its own actor placements and the cues of IncreaseItemAndLevelNameCues. */
 enum {
 	ENTRANCE_NAMES_FOURTH = 96,
 	ENTRANCE_NAMES_THIRD = 97,
@@ -45,7 +45,7 @@ enum {
 enum { ENTRANCE_DEBUG_ROOM_LAST = 89, ENTRANCE_NAMES_ABOVE = 94 };
 
 /* The debug room's actors, numbering the rows of
-   IncreaseItemAndLevel_ActorPlacements, as The Broken Seal's. */
+   IncreaseItemAndLevelActorPlacements, as The Broken Seal's. */
 typedef enum INCREASE_ITEM_AND_LEVEL_ACTOR_ID {
 	/* dbIncreaseItemAndLevelSelectItem */
 	ACTOR_ITEM_BROWSER = ACTOR_FIRST_PLACED,
@@ -77,14 +77,14 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.entrance == ENTRANCE_NAMES_FIRST)
-		return IncreaseItemAndLevel_FirstNamePlacements;
+		return IncreaseItemAndLevelFirstNamePlacements;
 	if(MainRoutineStateWork.entrance == ENTRANCE_NAMES_SECOND)
-		return IncreaseItemAndLevel_SecondNamePlacements;
+		return IncreaseItemAndLevelSecondNamePlacements;
 	if(MainRoutineStateWork.entrance == ENTRANCE_NAMES_THIRD)
-		return IncreaseItemAndLevel_ThirdNamePlacements;
+		return IncreaseItemAndLevelThirdNamePlacements;
 	if(MainRoutineStateWork.entrance == ENTRANCE_NAMES_FOURTH)
-		return IncreaseItemAndLevel_FourthNamePlacements;
-	return IncreaseItemAndLevel_ActorPlacements;
+		return IncreaseItemAndLevelFourthNamePlacements;
+	return IncreaseItemAndLevelActorPlacements;
 }
 
 /* How much larger ACTOR_LEVEL_EDITOR is drawn in the debug room. */
@@ -139,8 +139,8 @@ void dbIncreaseItemAndLevelShowCharacterName(Sint32 character)
 const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.entrance > ENTRANCE_NAMES_ABOVE)
-		return IncreaseItemAndLevel_NameCues;
-	return IncreaseItemAndLevel_Cues;
+		return IncreaseItemAndLevelNameCues;
+	return IncreaseItemAndLevelCues;
 }
 
 /* Raises one party member `amount` levels and works out their new stats. */
@@ -154,11 +154,11 @@ void dbIncreaseItemAndLevelRaiseMemberLevel(Sint32 ownerId, Sint32 amount)
 void dbIncreaseItemAndLevelRaisePartyLevels(Sint32 amount)
 {
 	Uint16 ownerIds[16];
-	Sint32 ownerCount;
+	Sint32 ownerCnt;
 	Sint32 i;
 
-	ownerCount = syFieldPartyListMembers(ownerIds);
-	for(i = 0; i < ownerCount; i++)
+	ownerCnt = syFieldPartyListMembers(ownerIds);
+	for(i = 0; i < ownerCnt; i++)
 		dbIncreaseItemAndLevelRaiseMemberLevel(ownerIds[i], amount);
 }
 
@@ -170,28 +170,27 @@ void dbIncreaseItemAndLevelRaisePartyLevels(Sint32 amount)
 void dbIncreaseItemAndLevelRunLevelEditor(void)
 {
 	UNIT   *unit;
-	WINDOW *window;
+	WINDOW *win;
 	Sint32	redraw;
-	Sint32	messageId;
+	Sint32	msgId;
 
 	unit = syUnitGet(MainRoutineStateWork.leaderActorId);
-	window = mnWindowCreate(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
+	win = mnWindowCreate(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
 
-	messageId = (Sint32)MsgRaiseEveryoneS;
-	mnTextDrawMessage(messageId, window, 0, 0);
-	mnTextDrawMessage(messageId + 1, window, 0, 16);
-	messageId += 2;
+	msgId = (Sint32)MsgRaiseEveryoneS;
+	mnTextDrawMessage(msgId, win, 0, 0);
+	mnTextDrawMessage(msgId + 1, win, 0, 16);
+	msgId += 2;
 	redraw = 1;
-	mnTextDrawMessage(messageId, window, 0, 32);
+	mnTextDrawMessage(msgId, win, 0, 32);
 
 	for(;;) {
 		if(redraw != 0) {
-			mnWindowSprRedrawSavedRect(window);
-			mnTextDrawStringAtOffset(unit->name, window, 0, 48);
-			mnTextDrawStringInWindow(
-				IncreaseItemAndLevel_LvLabel, window, 48, 48);
+			mnWindowSprRedrawSavedRect(win);
+			mnTextDrawStringAtOffset(unit->name, win, 0, 48);
+			mnTextDrawStringInWindow(IncreaseItemAndLevelLvLabel, win, 48, 48);
 			redraw = 0;
-			mnTextDrawNumInWindow(unit->level, 0, window, 72, 48);
+			mnTextDrawNumInWindow(unit->level, 0, win, 72, 48);
 		}
 
 		if((PerWork.push & KEY_START) != 0 ||
@@ -209,9 +208,9 @@ void dbIncreaseItemAndLevelRunLevelEditor(void)
 
 		if((PerWork.push & KEY_B) != 0) {
 			sySndPlay(SE_MENU_CANCEL);
-			mnWindowSprRedrawSavedRect(window);
+			mnWindowSprRedrawSavedRect(win);
 			sySynch(1);
-			mnWindowClose(window, 1);
+			mnWindowClose(win, 1);
 
 			gmUnitCalc(ISAAC);
 			gmUnitCalc(GARET);
@@ -234,20 +233,20 @@ void dbIncreaseItemAndLevelRunLevelEditor(void)
    A with every bag full, closes the browser. */
 void dbIncreaseItemAndLevelSelectItem(void)
 {
-	void  *window;
+	void  *win;
 	void  *details;
 	Sint32 selectedItemId;
 	Sint32 redraw;
 	Sint32 itemId;
-	Sint32 entryCount;
+	Sint32 entryCnt;
 	Sint8  seekDirection;
 
-	entryCount = ITEM_BROWSER_ITEM_COUNT;
+	entryCnt = ITEM_BROWSER_ITEM_COUNT;
 	seekDirection = 0;
 	sySndPlay(SE_MENU_CONFIRM);
 	selectedItemId = 1;
 	redraw = 1;
-	window = mnWindowCreate(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
+	win = mnWindowCreate(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
 #if LANGUAGE < LANGUAGE_GERMAN
 	details = mnWindowCreate(0, 8, 13, 10, WINDOW_FLAG_INSTANT);
 #else
@@ -269,26 +268,25 @@ void dbIncreaseItemAndLevelSelectItem(void)
 			redraw = 0;
 			/* Wrap the number into 0 to 511 (a step back from 0 is 511). */
 			selectedItemId =
-				(selectedItemId + ITEM_BROWSER_ITEM_COUNT) % entryCount;
-			mnWindowSprRedrawSavedRect(window);
-			mnWindowSprClearList(window);
-			mnTextDrawStringInWindow(
-				IncreaseItemAndLevel_ItemPrompt, window, 0, 0);
-			mnTextDrawNumAtOffset(selectedItemId, 0, window, 80, 0);
+				(selectedItemId + ITEM_BROWSER_ITEM_COUNT) % entryCnt;
+			mnWindowSprRedrawSavedRect(win);
+			mnWindowSprClearList(win);
+			mnTextDrawStringInWindow(IncreaseItemAndLevelItemPrompt, win, 0, 0);
+			mnTextDrawNumAtOffset(selectedItemId, 0, win, 80, 0);
 			if(gmPartyInventoryHasSpace()) {
 				mnTextDrawStringInWindow(
-					IncreaseItemAndLevel_ItemHelp, window, 0, 32);
+					IncreaseItemAndLevelItemHelp, win, 0, 32);
 				itemId = selectedItemId & INVENTORY_ITEM_ID_MASK;
 				gmItemGetDirect(itemId);
 				mnTextDrawMessageAsTiles(
-					itemId + (Sint32)MsgItemName, window, 120, 0);
+					itemId + (Sint32)MsgItemName, win, 120, 0);
 				mnTextDrawMessage(
-					itemId + (Sint32)MsgItemDescription, window, 0, 16);
+					itemId + (Sint32)MsgItemDescription, win, 0, 16);
 				mnWindowSprRedrawSavedRect(details);
 				mnItemMenuDrawItemDetails(details, selectedItemId);
 			} else {
 				mnTextDrawStringInWindow(
-					IncreaseItemAndLevel_ItemFull, window, 0, 32);
+					IncreaseItemAndLevelItemFull, win, 0, 32);
 			}
 		}
 		if(PerWork.push & KEY_A) {
@@ -341,40 +339,40 @@ void dbIncreaseItemAndLevelSelectItem(void)
 		/* Skip items with no icon in the chosen direction. */
 		if(seekDirection == -1) {
 			selectedItemId =
-				(selectedItemId + ITEM_BROWSER_ITEM_COUNT) % entryCount;
+				(selectedItemId + ITEM_BROWSER_ITEM_COUNT) % entryCnt;
 			while(gmItemGetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)
 					  ->icon == 0)
 				selectedItemId =
-					(selectedItemId + ITEM_BROWSER_ITEM_COUNT - 1) % entryCount;
+					(selectedItemId + ITEM_BROWSER_ITEM_COUNT - 1) % entryCnt;
 		}
 		if(seekDirection == 1) {
 			selectedItemId =
-				(selectedItemId + ITEM_BROWSER_ITEM_COUNT) % entryCount;
+				(selectedItemId + ITEM_BROWSER_ITEM_COUNT) % entryCnt;
 			while(gmItemGetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)
 					  ->icon == 0)
 				selectedItemId =
-					(selectedItemId + ITEM_BROWSER_ITEM_COUNT + 1) % entryCount;
+					(selectedItemId + ITEM_BROWSER_ITEM_COUNT + 1) % entryCnt;
 		}
 		seekDirection = 0;
 		sySynch(1);
 	}
-	mnWindowSprRedrawSavedRect(window);
+	mnWindowSprRedrawSavedRect(win);
 	sySynch(1);
-	mnWindowClose(window, 1);
+	mnWindowClose(win, 1);
 	mnWindowClose(details, 1);
 }
 
 /* The level editor's label before a member's level. */
-char IncreaseItemAndLevel_LvLabel[4] = "Lv";
+char IncreaseItemAndLevelLvLabel[4] = "Lv";
 
 /* The item selector's prompt, before the item number. */
-char IncreaseItemAndLevel_ItemPrompt[12] = "Item No:";
+char IncreaseItemAndLevelItemPrompt[12] = "Item No:";
 
 /* The item selector's help line, while the bags have room. */
-char IncreaseItemAndLevel_ItemHelp[24] = "A:Get Item  B:Return";
+char IncreaseItemAndLevelItemHelp[24] = "A:Get Item  B:Return";
 
 /* The item selector's line when the party's bags are full. */
-char IncreaseItemAndLevel_ItemFull[20] = "ITEM FULL........";
+char IncreaseItemAndLevelItemFull[20] = "ITEM FULL........";
 
 SCENE_ENTRANCE SceneEntrances[] = {
 	{0, CONDITION_ALWAYS, 80, 0, 72, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -396,7 +394,7 @@ Uint32 SceneExits[] = {
 };
 
 /* The debug room's actors, in the order of INCREASE_ITEM_AND_LEVEL_ACTOR_ID. */
-ACTOR_PLACE IncreaseItemAndLevel_ActorPlacements[] = {
+ACTOR_PLACE IncreaseItemAndLevelActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_LADY_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		48, 0, 272, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -410,7 +408,7 @@ ACTOR_PLACE IncreaseItemAndLevel_ActorPlacements[] = {
 };
 
 /* The first room of names, from Master Poi. */
-ACTOR_PLACE IncreaseItemAndLevel_FirstNamePlacements[] = {
+ACTOR_PLACE IncreaseItemAndLevelFirstNamePlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_POI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0,
 		160, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_RIKI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0,
@@ -445,7 +443,7 @@ ACTOR_PLACE IncreaseItemAndLevel_FirstNamePlacements[] = {
 };
 
 /* The second room of names. */
-ACTOR_PLACE IncreaseItemAndLevel_SecondNamePlacements[] = {
+ACTOR_PLACE IncreaseItemAndLevelSecondNamePlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_SUSA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 256, 0,
 		160, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_LADY_UZUME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -478,7 +476,7 @@ ACTOR_PLACE IncreaseItemAndLevel_SecondNamePlacements[] = {
 };
 
 /* The third room of names, from Alex. */
-ACTOR_PLACE IncreaseItemAndLevel_ThirdNamePlacements[] = {
+ACTOR_PLACE IncreaseItemAndLevelThirdNamePlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_ISAAC, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0,
 		160, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0,
@@ -516,7 +514,7 @@ ACTOR_PLACE IncreaseItemAndLevel_ThirdNamePlacements[] = {
 };
 
 /* The fourth room of names. */
-ACTOR_PLACE IncreaseItemAndLevel_FourthNamePlacements[] = {
+ACTOR_PLACE IncreaseItemAndLevelFourthNamePlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_STAND, 128, 0, 160, FACING_SOUTHEAST, TALK_FACING_KEEP,
 		0),
@@ -575,7 +573,7 @@ ACTOR_PLACE IncreaseItemAndLevel_FourthNamePlacements[] = {
    has it: Force cast at the portrait browser runs a motion test, and a second
    row on the same person, run before the cast, sets the effect's child mode, so
    Force's shot leaves the portrait browser where it stands. */
-CUE IncreaseItemAndLevel_Cues[] = {
+CUE IncreaseItemAndLevelCues[] = {
 	{CUE_TALK, ACTOR_ITEM_BROWSER, CONDITION_ALWAYS,
 		SCRIPT_REF(dbIncreaseItemAndLevelSelectItem)},
 	{CUE_TALK, ACTOR_ICON_BROWSER, CONDITION_ALWAYS,
@@ -595,7 +593,7 @@ CUE IncreaseItemAndLevel_Cues[] = {
 /* The rooms of names' cues: each party member says their name, and each of the
    first 25 people placed theirs. The debug room's two Force rows stay at the
    end. */
-CUE IncreaseItemAndLevel_NameCues[] = {
+CUE IncreaseItemAndLevelNameCues[] = {
 	{CUE_TALK, ISAAC, CONDITION_ALWAYS,
 		SCRIPT_REF(dbIncreaseItemAndLevelShowCharacterName)},
 	{CUE_TALK, GARET, CONDITION_ALWAYS,
@@ -668,7 +666,7 @@ CUE IncreaseItemAndLevel_NameCues[] = {
 	{CUE_TABLE_END},
 };
 
-/* Unused: requests an exit through a window transition over 24 frames; no cue
+/* Unused: requests an exit through a window transition over 24 ticks; no cue
    row names it. */
 void dbIncreaseItemAndLevelRequestExit(Sint32 countdown)
 {

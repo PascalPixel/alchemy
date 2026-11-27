@@ -52,7 +52,7 @@ typedef struct CLASS_ABILITY {
 } CLASS_ABILITY;
 
 /* CLASS_DEFINITION.series for the series a character's elements can choose
-   (Class_SeriesByElements), each named by its first class, and two that no pair
+   (ClassSeriesByElements), each named by its first class, and two that no pair
    of elements chooses. */
 typedef enum CLASS_SERIES {
 	CLASS_SERIES_SQUIRE = 1,
@@ -71,7 +71,7 @@ typedef enum CLASS_SERIES {
 	CLASS_SERIES_NPC
 } CLASS_SERIES;
 
-/* The classes of CLASS_SERIES_FIXED, the last rows of Class_DefinitionTable. */
+/* The classes of CLASS_SERIES_FIXED, the last rows of ClassDefinitionTable. */
 typedef enum FIXED_CLASS {
 	/* Isaac's while FLAG_CHILDHOOD is set; the text names it "?". */
 	CLASS_ISAAC_CHILD = 200,
@@ -137,7 +137,7 @@ typedef enum ENEMY_TARGET_STRATEGY {
 } ENEMY_TARGET_STRATEGY;
 
 /* ENEMY_DEFINITION.actionStrategy: how btAIChooseAction picks a place in the
-   enemy's eight actions. The first three roll against BattleAI_ActionWeights;
+   enemy's eight actions. The first three roll against BattleAIActionWeights;
    the next two remember the place in UNIT.aiState. No row of enemy_table.c has
    a strategy past ACTION_STRATEGY_RANDOM_START. */
 typedef enum ENEMY_ACTION_STRATEGY {
@@ -172,9 +172,9 @@ typedef struct ENEMY_DEFINITION {
 	/* 0 in every row; the unit's first UNIT.aiState. */
 	BATTLE_AI_STATE aiState;
 	Uint8			reservedAfterAiState[4]; /* 0 in every row */
-	Uint16			items[4]; /* items the enemy carries, 0 for none */
-	Uint8			cnts[4];  /* how many of each item it carries */
-	Uint8 elementPreset;	  /* row of Enemy_ElementPresetTable, 0 to 43 */
+	Uint16			items[4];	   /* items the enemy carries, 0 for none */
+	Uint8			cnts[4];	   /* how many of each item it carries */
+	Uint8			elementPreset; /* row of EnemyElementPresetTable, 0 to 43 */
 	/* Whom a single-target attack favours: an ENEMY_TARGET_STRATEGY. */
 	Sint8 tgtStrategy;
 	/* How the action is chosen from `abilities` (btAIChooseAction):
@@ -238,8 +238,8 @@ STATIC_ASSERT(sizeof(LEVEL_UP_RESULT) == 16);
 
 /* The eight characters' definitions, by character id
    (game/character_table.c). */
-extern const CHARACTER_DEFINITION Character_DefinitionTable[];
+extern const CHARACTER_DEFINITION CharacterDefinitionTable[];
 /* The classes, by class index (game/class_table.c, 203 entries). */
-extern const CLASS_DEFINITION Class_DefinitionTable[];
+extern const CLASS_DEFINITION ClassDefinitionTable[];
 
 #endif

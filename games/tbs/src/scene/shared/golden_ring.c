@@ -9,7 +9,7 @@ void scSpawnGoldenRing(ACTOR *parent)
 {
 	ACTOR			   *pair[2];
 	ACTOR			   *child;
-	SPR				   *sprite;
+	SPR				   *spr;
 	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
 	Sint32				i;
 
@@ -19,38 +19,38 @@ void scSpawnGoldenRing(ACTOR *parent)
 		pair[i] = child;
 		if(child != NULL) {
 			child->groundHeight = parent->groundHeight;
-			sprite = child->spr;
+			spr = child->spr;
 			child->motionFlg = 0;
 			child->tmr = 0;
 			child->watchedActor = (ACTOR_OR_EFFECT *)parent;
-			if(sprite != NULL) {
-				fdSprStartAnimation(sprite, 0);
-				sprite->flg = 0;
-				syVRAMCacheFreeEntry(sprite->slot);
-				sprite->slot = effectState->tileSlot;
-				sprite->retainCacheEntry = 1;
-				sprite->image.tile =
-					(VramCacheEntries[sprite->slot].ofs / TILE_SIZE_4BPP) &
+			if(spr != NULL) {
+				fdSprStartAnimation(spr, 0);
+				spr->flg = 0;
+				syVRAMCacheFreeEntry(spr->slot);
+				spr->slot = effectState->tileSlot;
+				spr->retainCacheEntry = 1;
+				spr->image.tile =
+					(VramCacheEntries[spr->slot].ofs / TILE_SIZE_4BPP) &
 					OBJ_TILE_MASK;
-				sprite->image.fullCol = 0;
-				sprite->image.shape = RING_HALF_SHAPE;
-				sprite->image.size = RING_HALF_SIZE;
-				sprite->entries[0]->picture = 0;
+				spr->image.fullCol = 0;
+				spr->image.shape = RING_HALF_SHAPE;
+				spr->image.size = RING_HALF_SIZE;
+				spr->entries[0]->picture = 0;
 			}
 		}
 	}
 	{
 		ACTOR *effect = pair[0];
-		SPR	  *effectSprite = effect->spr;
+		SPR	  *effectSpr = effect->spr;
 
 		effect->update = scFieldEffectRiseRingFrontHalf;
-		effectSprite->image.pri = 1;
+		effectSpr->image.pri = 1;
 	}
 	{
 		ACTOR *effect = pair[1];
-		SPR	  *effectSprite = effect->spr;
+		SPR	  *effectSpr = effect->spr;
 
-		effectSprite->image.pri = 1;
+		effectSpr->image.pri = 1;
 		effect->update = scFieldEffectRiseRingBackHalf;
 		effect->priFlg = ACTOR_PRIORITY_UNDERFOOT;
 	}

@@ -23,9 +23,9 @@ of the code opens up.
    game from switch-on to switch-off, one mode at a time: the field, a
    battle, Lucky Dice, Lucky Wheels or Super Lucky Dice.
 2. [Waiting and events](../../docs/tla/system.md#waiting-and-events). No loop at the top
-   turns once a frame. The frame loop is inside one function, `sySynch()`:
-   code that needs time to pass calls it, and it runs that many frames of
-   the game and returns. What it runs each frame is a short list of
+   turns once a tick. The tick loop is inside one function, `sySynch()`:
+   code that needs time to pass calls it, and it runs that many ticks of
+   the game and returns. What it runs each tick is a short list of
    functions, the events. This is the part that will surprise you.
 
 ## What runs

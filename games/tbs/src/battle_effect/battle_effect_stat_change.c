@@ -84,9 +84,9 @@ typedef enum STAT_BOOST_SHEET {
 } STAT_BOOST_SHEET;
 
 /* When the first target's flares burst and its sprite appears, with the damage;
-   each later target follows STAT_BOOST_TARGET_DELAY frames behind. */
-#define STAT_BOOST_BURST_FRAME	52
-#define STAT_BOOST_SPRITE_FRAME 80
+   each later target follows STAT_BOOST_TARGET_DELAY ticks behind. */
+#define STAT_BOOST_BURST_TICK	52
+#define STAT_BOOST_SPRITE_TICK	80
 #define STAT_BOOST_TARGET_DELAY 8
 
 /* The particles both kinds of stat change set out: the first half of the
@@ -96,7 +96,7 @@ typedef enum STAT_BOOST_SHEET {
    STAT_BOOST_TARGET_PARTICLES particles. */
 #define STAT_BOOST_TARGET_PARTICLES 64
 #define STAT_BOOST_TARGET_FLARES	32
-/* How far the flares turn about the target each frame. */
+/* How far the flares turn about the target each tick. */
 #define STAT_BOOST_FLARE_SPIN		(TRIG_TURN / 64)
 /* A flare is drawn at size STAT_BOOST_FLARE_SIZE_MAX at depth
    STAT_BOOST_FLARE_DEPTH_NEAR or nearer, one size smaller every
@@ -123,8 +123,8 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	BLITTER_PAIR		 draw;
 	Sint32				 member;
 	Sint32				 canvasShiftX;
-	Sint32				 drawFlags;
-	Sint32				 frame;
+	Sint32				 drawFlg;
+	Sint32				 frm;
 	Sint32				 i;
 	SCREEN_POINT		 base;
 	Sint32				 center[3];
@@ -223,40 +223,40 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	state->transferValue = CANVAS_FADE_HALF;
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	if(state->args->side == EFFECT_SIDE_PARTY)
-		drawFlags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
+		drawFlg = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
 	else
-		drawFlags = EFFECT_CLIP_BOUNDS;
+		drawFlg = EFFECT_CLIP_BOUNDS;
 	sySndPlayStub(SE_SWIRL);
 
-	for(frame = 0; frame !=
-		state->args->tgtCnt * STAT_BOOST_TARGET_DELAY +
-			STAT_BOOST_SPRITE_FRAME + 28;
-		frame++) {
+	for(frm = 0; frm !=
+		state->args->tgtCnt * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_TICK +
+			28;
+		frm++) {
 		BATTLE_CAMERA *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
 
-		if(frame == STAT_BOOST_SPRITE_FRAME)
+		if(frm == STAT_BOOST_SPRITE_TICK)
 			EFFECT_SHOW_DAMAGE(0);
 
-		/* The prelude's Djinni sways, and from frame 32 rises two pixels a
-		   frame; for its first four frames it is drawn added as well. */
+		/* The prelude's Djinni sways, and from tick 32 rises two pixels a
+		   tick; for its first four ticks it is drawn added as well. */
 		if(state->args->prelude == 1) {
-			Sint32 x = FIXEDtoINT(sySin(frame * (TRIG_TURN / 32)) *
+			Sint32 x = FIXEDtoINT(sySin(frm * (TRIG_TURN / 32)) *
 						   STAT_BOOST_DJINNI_SWAY) +
 				originX + canvasShiftX - DJINNI_WIDTH / 2;
 			Sint32 y =
-				FIXEDtoINT(syCos(frame * (TRIG_TURN / 32)) * 4) + originY - 24;
+				FIXEDtoINT(syCos(frm * (TRIG_TURN / 32)) * 4) + originY - 24;
 
-			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-				drawFlags ^ COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
+			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlg ^ COMPOSITE_FLIP_X,
+				COMPOSITE_LIGHTEN);
 			draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-				drawFlags ^ COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
+				drawFlg ^ COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
 			draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
-			if(frame > 32)
-				y = y - frame * 2 + 64;
+			if(frm > 32)
+				y = y - frm * 2 + 64;
 			draw[0](canvas, state->sheet + STAT_BOOST_DJINNI, x, y,
 				DJINNI_WIDTH, DJINNI_HEIGHT);
-			if(frame <= 3)
+			if(frm <= 3)
 				draw[1](canvas, state->sheet + STAT_BOOST_DJINNI, x, y,
 					DJINNI_WIDTH, DJINNI_HEIGHT);
 			EFFECT_RELEASE_BLITTERS();
@@ -267,39 +267,38 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			Sint32 height =
 				btUnitGetEffectHeightStub(state->args->tgts[member]) * 2 / 3;
 
-			if(frame ==
-				member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME)
+			if(frm == member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_TICK)
 				sySndPlayStub(SE_POWER_UP);
 			EFFECT_VIEW_FROM_CAMERA(camera);
 			SET_VECTOR(point, actor->x.fixed, height, actor->z.fixed);
 			syMatrixTranslateVector(point);
-			if(frame == member * STAT_BOOST_TARGET_DELAY + 48)
+			if(frm == member * STAT_BOOST_TARGET_DELAY + 48)
 				btEffectTintBattler(state->args->tgts[member],
 					SPRITE_COLOR_WHITE, TINT_KEEP, member, 16);
 
 			/* Flares turn and close in on the centre. */
-			if(frame > member * STAT_BOOST_TARGET_DELAY) {
+			if(frm > member * STAT_BOOST_TARGET_DELAY) {
 				EFFECT_LOAD_BLITTER(
-					HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
+					HEAP_SLOT_RAM_CODE, drawFlg, COMPOSITE_LIGHTEN);
 				draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 				EFFECT_LOAD_BLITTER(
-					HEAP_SLOT_RAM_CODE_PAIRED, drawFlags, COMPOSITE_ADDITIVE);
+					HEAP_SLOT_RAM_CODE_PAIRED, drawFlg, COMPOSITE_ADDITIVE);
 				draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 				if(mode == STAT_BOOST_IMPACT) {
-					syRotX(-frame * STAT_BOOST_FLARE_SPIN);
+					syRotX(-frm * STAT_BOOST_FLARE_SPIN);
 				} else if(mode == STAT_BOOST_GUARD) {
 					/* Guard's flares close in without turning. */
 				} else if(mode == STAT_BOOST_WARD) {
-					syRotY(frame * STAT_BOOST_FLARE_SPIN);
+					syRotY(frm * STAT_BOOST_FLARE_SPIN);
 				} else {
-					syRotY(frame * STAT_BOOST_FLARE_SPIN);
-					syRotZ(frame * STAT_BOOST_FLARE_SPIN);
+					syRotY(frm * STAT_BOOST_FLARE_SPIN);
+					syRotZ(frm * STAT_BOOST_FLARE_SPIN);
 				}
 				for(i = 0; i != STAT_BOOST_TARGET_FLARES; i++) {
 					PARTICLE *flare =
 						&PARTICLES[member * STAT_BOOST_TARGET_PARTICLES + i];
 
-					if(frame > member * STAT_BOOST_TARGET_DELAY + i) {
+					if(frm > member * STAT_BOOST_TARGET_DELAY + i) {
 						Sint32 xx = (flare->x >> 8) * (flare->x >> 8);
 						Sint32 yy = (flare->y >> 8) * (flare->y >> 8);
 						Sint32 zz = (flare->z >> 8) * (flare->z >> 8);
@@ -330,16 +329,16 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			btProjectionPoint(center, &screen);
 			screen.x = screen.x * 4 / 5 + canvasShiftX;
 
-			if(frame >=
-					member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_BURST_FRAME &&
-				frame < member * STAT_BOOST_TARGET_DELAY +
-						STAT_BOOST_BURST_FRAME + 24) {
-				Sint32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
-									 STAT_BOOST_BURST_FRAME) /
+			if(frm >=
+					member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_BURST_TICK &&
+				frm < member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_BURST_TICK +
+						24) {
+				Sint32 picture = (frm - member * STAT_BOOST_TARGET_DELAY -
+									 STAT_BOOST_BURST_TICK) /
 					4 % 6;
 
 				EFFECT_LOAD_BLITTER(
-					HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
+					HEAP_SLOT_RAM_CODE, drawFlg, COMPOSITE_LIGHTEN);
 				draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 				draw[0](canvas,
 					state->sheet + picture * PICTURE_BYTES(GLOW_ORB) +
@@ -351,16 +350,16 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			}
 
 			if(mode == STAT_BOOST_IMPACT) {
-				if(frame >= member * STAT_BOOST_TARGET_DELAY +
-							STAT_BOOST_SPRITE_FRAME &&
-					frame < member * STAT_BOOST_TARGET_DELAY +
-							STAT_BOOST_SPRITE_FRAME + 28) {
-					Sint32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
-										 STAT_BOOST_SPRITE_FRAME) /
+				if(frm >= member * STAT_BOOST_TARGET_DELAY +
+							STAT_BOOST_SPRITE_TICK &&
+					frm < member * STAT_BOOST_TARGET_DELAY +
+							STAT_BOOST_SPRITE_TICK + 28) {
+					Sint32 picture = (frm - member * STAT_BOOST_TARGET_DELAY -
+										 STAT_BOOST_SPRITE_TICK) /
 						4 % 7;
 
 					EFFECT_LOAD_BLITTER(
-						HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
+						HEAP_SLOT_RAM_CODE, drawFlg, COMPOSITE_LIGHTEN);
 					draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 					draw[0](canvas,
 						state->sheet + picture * PICTURE_BYTES(DAGGER) +
@@ -371,16 +370,16 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 					syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 				}
 			} else if(mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH) {
-				if(frame >= member * STAT_BOOST_TARGET_DELAY +
-							STAT_BOOST_SPRITE_FRAME &&
-					frame < member * STAT_BOOST_TARGET_DELAY +
-							STAT_BOOST_SPRITE_FRAME + 24) {
-					Sint32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
-										 STAT_BOOST_SPRITE_FRAME) /
+				if(frm >= member * STAT_BOOST_TARGET_DELAY +
+							STAT_BOOST_SPRITE_TICK &&
+					frm < member * STAT_BOOST_TARGET_DELAY +
+							STAT_BOOST_SPRITE_TICK + 24) {
+					Sint32 picture = (frm - member * STAT_BOOST_TARGET_DELAY -
+										 STAT_BOOST_SPRITE_TICK) /
 						4 % 6;
 
 					EFFECT_LOAD_BLITTER(
-						HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
+						HEAP_SLOT_RAM_CODE, drawFlg, COMPOSITE_LIGHTEN);
 					draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 					draw[0](canvas,
 						state->sheet + picture * PICTURE_BYTES(VIOLET_STREAK) +
@@ -391,19 +390,19 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 					syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 				}
 			} else if(mode == STAT_BOOST_ZEPHYR) {
-				if(frame >= member * STAT_BOOST_TARGET_DELAY +
-							STAT_BOOST_SPRITE_FRAME &&
-					frame < member * STAT_BOOST_TARGET_DELAY +
-							STAT_BOOST_SPRITE_FRAME + 24) {
-					Sint32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
-										 STAT_BOOST_SPRITE_FRAME) /
+				if(frm >= member * STAT_BOOST_TARGET_DELAY +
+							STAT_BOOST_SPRITE_TICK &&
+					frm < member * STAT_BOOST_TARGET_DELAY +
+							STAT_BOOST_SPRITE_TICK + 24) {
+					Sint32 picture = (frm - member * STAT_BOOST_TARGET_DELAY -
+										 STAT_BOOST_SPRITE_TICK) /
 						2 % 6;
 
 					EFFECT_LOAD_BLITTER(
-						HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
+						HEAP_SLOT_RAM_CODE, drawFlg, COMPOSITE_LIGHTEN);
 					draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-						drawFlags | COMPOSITE_FLIP_Y, COMPOSITE_LIGHTEN);
+						drawFlg | COMPOSITE_FLIP_Y, COMPOSITE_LIGHTEN);
 					draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 					draw[0](canvas,
 						state->sheet + picture * PICTURE_BYTES(WISP) +
@@ -418,16 +417,16 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 					EFFECT_RELEASE_BLITTERS();
 				}
 			} else {
-				if(frame >= member * STAT_BOOST_TARGET_DELAY +
-							STAT_BOOST_SPRITE_FRAME &&
-					frame < member * STAT_BOOST_TARGET_DELAY +
-							STAT_BOOST_SPRITE_FRAME + 24) {
-					Sint32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
-										 STAT_BOOST_SPRITE_FRAME) /
+				if(frm >= member * STAT_BOOST_TARGET_DELAY +
+							STAT_BOOST_SPRITE_TICK &&
+					frm < member * STAT_BOOST_TARGET_DELAY +
+							STAT_BOOST_SPRITE_TICK + 24) {
+					Sint32 picture = (frm - member * STAT_BOOST_TARGET_DELAY -
+										 STAT_BOOST_SPRITE_TICK) /
 						4 % 6;
 
 					EFFECT_LOAD_BLITTER(
-						HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_ADDITIVE);
+						HEAP_SLOT_RAM_CODE, drawFlg, COMPOSITE_ADDITIVE);
 					draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 					draw[0](canvas,
 						state->sheet + picture * PICTURE_BYTES(SHIELD) +
@@ -439,7 +438,7 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 				}
 			}
 		}
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	syCloseEvent(btEffectTransferCanvas);
@@ -485,7 +484,7 @@ UNUSED void btEffectRunUnusedStatReduction(BATTLE_EFFECT_PARM *args)
 #define STAT_REDUCTION_SHARD_PICTURES	9600
 #define STAT_REDUCTION_SHARD_BYTES		696 /* bytes in each copy */
 /* Each target throws STAT_REDUCTION_TARGET_SHARDS shards from its own run of
-   STAT_REDUCTION_TARGET_PARTICLES particles, STAT_REDUCTION_TARGET_DELAY frames
+   STAT_REDUCTION_TARGET_PARTICLES particles, STAT_REDUCTION_TARGET_DELAY ticks
    after the target before it. */
 #define STAT_REDUCTION_TARGET_PARTICLES 32
 #define STAT_REDUCTION_TARGET_SHARDS	24
@@ -497,9 +496,9 @@ void btEffectRunStatReduction(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 j;
-	Sint32				 xOffset;
+	Sint32				 xOfs;
 	Sint32				 origin[3];
 	SCREEN_POINT		 screen;
 	Sint32				 point[3];
@@ -538,10 +537,10 @@ void btEffectRunStatReduction(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 	if(state->args->side == EFFECT_SIDE_PARTY) {
 		REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
-		xOffset = -NARROW_CANVAS_PARTY_X;
+		xOfs = -NARROW_CANVAS_PARTY_X;
 	} else {
 		REG_BG2X = 0;
-		xOffset = 0;
+		xOfs = 0;
 	}
 
 	/* The shards start in a grid where the sprite was, in rows 6 pixels apart
@@ -551,9 +550,9 @@ void btEffectRunStatReduction(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	for(i = 0; i != STAT_CHANGE_PARTICLES; i++) {
 		PARTICLE *shard = &PARTICLES[i];
 		Sint32	  radius = 192;
-		Sint32	  angle;
+		Sint32	  ang;
 
-		angle = syRandom() & TRIG_ANGLE_MASK;
+		ang = syRandom() & TRIG_ANGLE_MASK;
 		shard->x = 0;
 		if(mode == STAT_REDUCTION_DULL) {
 			shard->y = toFIXED(
@@ -568,36 +567,35 @@ void btEffectRunStatReduction(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			shard->velX = toFIXED(2);
 		else
 			shard->velX = -toFIXED(2);
-		shard->velY = ((syCos(angle) * radius) >> 6) + toFIXED(1);
-		shard->velZ = (sySin(angle) * radius) >> 6;
+		shard->velY = ((syCos(ang) * radius) >> 6) + toFIXED(1);
+		shard->velZ = (sySin(ang) * radius) >> 6;
 		shard->variant = syRandom() & 0xff;
 	}
 
 	btEffectBuildCanvasBlitters(state->args->side, blitters);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-	for(frame = 0;
-		frame != state->args->tgtCnt * STAT_REDUCTION_TARGET_DELAY + 64;
-		frame++) {
+	for(frm = 0; frm != state->args->tgtCnt * STAT_REDUCTION_TARGET_DELAY + 64;
+		frm++) {
 		BATTLE_CAMERA *camera = BattleCameraWork;
 
-		/* The loop runs count * STAT_REDUCTION_TARGET_DELAY + 64 frames, so
-		   frame 72 comes only with three or more targets. With one or two,
+		/* The loop runs count * STAT_REDUCTION_TARGET_DELAY + 64 ticks, so
+		   tick 72 comes only with three or more targets. With one or two,
 		   btPlaybackWaitForReady starts playback once the effect returns, so
 		   the messages follow the shards instead of overlapping them. XXX (no
 		   evidence): whether that difference was meant; both orders show the
 		   same messages, so only the author's intent would say. */
-		if(frame == 72)
+		if(frm == 72)
 			EFFECT_SHOW_DAMAGE(0);
 		EFFECT_FOR_EACH_TARGET(j, state->args) {
 			ACTOR *actor;
-			Sint32 targetFrame;
+			Sint32 tgtFrm;
 			Sint32 x;
 			Sint32 y;
 
-			targetFrame = frame - j * STAT_REDUCTION_TARGET_DELAY;
+			tgtFrm = frm - j * STAT_REDUCTION_TARGET_DELAY;
 			actor = btObjectGetStub(state->args->tgts[j])->actor;
-			if(targetFrame > 0) {
+			if(tgtFrm > 0) {
 				/* DEAD: the view set from the camera a first time, which the
 				   second call repeats; the ROM keeps both calls. */
 				EFFECT_VIEW_FROM_CAMERA(camera);
@@ -606,31 +604,31 @@ void btEffectRunStatReduction(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				syMatrixTranslateVector(point);
 				SET_VECTOR(origin, 0, 0, 0);
 				btProjectionPoint(origin, &screen);
-				x = screen.x + xOffset;
+				x = screen.x + xOfs;
 				y = screen.y;
 				if(mode == STAT_REDUCTION_DULL) {
-					if(targetFrame <= 26)
+					if(tgtFrm <= 26)
 						blitters[0](canvas,
 							state->sheet +
-								targetFrame / 4 % 7 * PICTURE_BYTES(DAGGER),
+								tgtFrm / 4 % 7 * PICTURE_BYTES(DAGGER),
 							x - DAGGER_WIDTH / 2, y - DAGGER_HEIGHT / 2,
 							DAGGER_WIDTH, DAGGER_HEIGHT);
 				} else {
-					if(targetFrame <= 23)
+					if(tgtFrm <= 23)
 						blitters[1](canvas,
 							state->sheet +
-								targetFrame / 4 % 6 * PICTURE_BYTES(SHIELD),
+								tgtFrm / 4 % 6 * PICTURE_BYTES(SHIELD),
 							x - SHIELD_WIDTH / 2, y - SHIELD_HEIGHT / 2,
 							SHIELD_WIDTH, SHIELD_HEIGHT);
 				}
-				if(targetFrame == 24)
+				if(tgtFrm == 24)
 					sySndPlayStub(SE_CRACK);
-				if(targetFrame >= 24 && targetFrame <= 60) {
+				if(tgtFrm >= 24 && tgtFrm <= 60) {
 					Sint32 level;
 
 					level = 0;
-					if(targetFrame > 28) {
-						level = (targetFrame - 24) / 4;
+					if(tgtFrm > 28) {
+						level = (tgtFrm - 24) / 4;
 						if(level > DIMMED_COPIES - 1)
 							level = DIMMED_COPIES - 1;
 					}
@@ -639,18 +637,17 @@ void btEffectRunStatReduction(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							&PARTICLES[j * STAT_REDUCTION_TARGET_PARTICLES + i];
 						Sint32 picture;
 
-						picture =
-							i % 4 * 3 + (shard->variant + targetFrame) / 8 % 3;
+						picture = i % 4 * 3 + (shard->variant + tgtFrm) / 8 % 3;
 						btProjectionPoint(shard, &screen);
-						x = screen.x + xOffset;
+						x = screen.x + xOfs;
 						y = screen.y;
 						blitters[0](canvas,
 							state->sheet +
 								(level * STAT_REDUCTION_SHARD_BYTES +
-									StatChange_ShardPictures[picture]) +
+									StatChangeShardPictures[picture]) +
 								STAT_REDUCTION_SHARD_PICTURES,
-							x, y, StatChange_ShardWidths[picture],
-							StatChange_ShardHeights[picture]);
+							x, y, StatChangeShardWidths[picture],
+							StatChangeShardHeights[picture]);
 						btParticleAdvanceWithGravity3D(shard, 60, 0);
 					}
 				}
@@ -662,8 +659,8 @@ void btEffectRunStatReduction(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	EFFECT_FINISH_CANVAS();
 }
 
-#undef STAT_BOOST_BURST_FRAME
-#undef STAT_BOOST_SPRITE_FRAME
+#undef STAT_BOOST_BURST_TICK
+#undef STAT_BOOST_SPRITE_TICK
 #undef STAT_BOOST_TARGET_DELAY
 #undef STAT_CHANGE_PARTICLES
 #undef STAT_BOOST_TARGET_PARTICLES

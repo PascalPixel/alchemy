@@ -12,7 +12,7 @@
 #include "system/definitions.h"
 
 /* The event group. Events, their priorities and the event runner's state. 1
-   while sySynch() runs the frame pass's events (EVENT_PASS_FRAME). */
+   while sySynch() runs the tick pass's events (EVENT_PASS_TICK). */
 extern volatile Uint8 EventsRunning;
 extern Uint8		  EventsInitialized; /* 1 once the event table is set up */
 /* The event table, run in priority order by each pass. */
@@ -61,14 +61,14 @@ extern Uint8 EwramHeap[];
 extern Uint8 IwramHeap[];
 
 /* The affine group. Sprite rotation and scale, and the affine matrices handed
-   out each frame. Matrices handed out this frame
-   (syOAMMatrixAllocFromTransform), up to 32; syOAMResetFrame sets it back to 0
+   out each tick. Matrices handed out this tick
+   (syOAMMatrixAllocFromTransform), up to 32; syOAMResetTick sets it back to 0
    after each VBlank. */
 extern Uint8 OamMatrixCount;
-/* This frame's 32 matrices, copied into OAM with the sprites. */
+/* This tick's 32 matrices, copied into OAM with the sprites. */
 extern OAM_MATRIX OamMatrices[];
 /* The 256 depth slots' list heads that every drawn sprite is linked into
-   (syOAMAddSprAtDepth); syOAMResetFrame empties them each frame. */
+   (syOAMAddSprAtDepth); syOAMResetTick empties them each tick. */
 extern void *OamDepthLists[];
 
 /* The decompress group. The decoders and canvas fades that the system library
@@ -153,34 +153,34 @@ extern const SYSTEM_STUB_TABLE Stubs_System;
    ResourceStubs and ResourceStubsAlternate. */
 extern const Uint8 Stubs_Resource[];
 
-/* The frame group. The frame loop's globals: the VBlanks a frame takes, the CPU
+/* The tick group. The tick loop's globals: the frames a tick takes, the CPU
    load display and the VBlank flags. Set by sySynch() once it has built a
-   frame's OAM list; the VBlank handler then copies the list, the BG scroll and
+   tick's OAM list; the VBlank handler then copies the list, the BG scroll and
    the queued register writes, and clears it. */
-extern Uint8 FrameRenderPending;
+extern Uint8 TickRenderPending;
 /* Debug: sySynch() measures the CPU load into CpuLoadPeak when set. */
 extern volatile Uint8 CpuLoadDisplayEnabled;
 /* The VBlank handler copies the OAM list only while it is set; scenes clear it
    to keep their own sprites on screen. */
 extern Uint8 OamCopyEnabled;
-/* VBlanks since sySynch() last started a frame: 1 when the frame took one. */
-extern Uint16 FrameVBlanks;
-/* FrameVBlanks as the last frame left it; the text typing paces itself by
+/* Frames since sySynch() last started a tick: 1 when the tick took one. */
+extern Uint16 TickFrames;
+/* TickFrames as the last tick left it; the text typing paces itself by
    it. */
-extern volatile Uint16 LastFrameVBlanks;
+extern volatile Uint16 LastTickFrames;
 /* Bit 0 is set by the VBlank handler; sySynch() clears it and halts until it is
    set again. volatile: the VBlank handler sets it while sySynch() halts on
    it. */
 extern volatile Uint16 VBlankDone;
-extern Uint32		   CpuLoadTimer; /* Frames CpuLoadPeak is still held. */
-/* The highest CPU load in the last 30 frames: the scanline the frame's work
+extern Uint32		   CpuLoadTimer; /* Ticks CpuLoadPeak is still held. */
+/* The highest CPU load in the last 30 ticks: the scanline the tick's work
    ended on, plus 256 for each VBlank it overran. */
 extern Uint32 CpuLoadPeak;
-/* Frames sySynch() has finished. volatile: the VBlank pass reads it
+/* Ticks sySynch() has finished. volatile: the VBlank pass reads it
    (fdWorldMapApplyAffinePage picks the world map's affine page by it) while
    sySynch() counts it. */
-extern volatile Uint32 FrameCount;
-extern Uint32		   VBlankCount; /* Counted up by every VBlank. */
+extern volatile Uint32 TickCount;
+extern Uint32		   FrameCount; /* Counted up by every VBlank. */
 /* A function for the next VBlank alone: the handler clears it, then calls
    it. */
 extern void (*VBlankCallback)(void);
@@ -189,45 +189,45 @@ extern void (*VBlankCallback)(void);
 extern volatile Uint8 SleepDisabled;
 /* Sleep after three idle minutes. */
 extern volatile Uint8 IdleSleepEnabled;
-/* 1: sleep this frame; more: count down to it. volatile: sySynch() counts it
-   down and reads it each frame. */
+/* 1: sleep this tick; more: count down to it. volatile: sySynch() counts it
+   down and reads it each tick. */
 extern volatile Uint8 SleepRequested;
-/* Debug builds: Start+Select pauses the frame loop. volatile:
+/* Debug builds: Start+Select pauses the tick loop. volatile:
    fdActorUpdatePlayerCtrl and fdModeRun each read it again after an earlier
    test. */
 extern volatile Uint8 DebugMode;
 extern Uint8		  DebugPaused; /* The debug pause is on. */
 /* Set by the keypad interrupt; sySynch() performs the soft reset. */
 extern Uint8 ResetRequested;
-/* Frames since a key was last held. volatile: sySynch() counts it and reads it
-   each frame. */
-extern volatile Uint16 IdleFrames;
-/* Frames L and R have been held together; three seconds request sleep.
-   volatile: sySynch() counts it and reads it each frame. */
-extern volatile Uint16 SleepComboFrames;
+/* Ticks since a key was last held. volatile: sySynch() counts it and reads it
+   each tick. */
+extern volatile Uint16 IdleTicks;
+/* Ticks L and R have been held together; three seconds request sleep.
+   volatile: sySynch() counts it and reads it each tick. */
+extern volatile Uint16 SleepComboTicks;
 /* Written by the soft reset just before it restarts the cartridge, and cleared
    by syInit; nothing else reads it. */
 extern Uint32 CartridgeResetMarker;
 /* The build stamp syCopyBuildStamp copies to IWRAM at power-on: twelve digits
-   and a zero word, at the bottom of the frame-wait stack. */
+   and a zero word, at the bottom of the tick-wait stack. */
 extern Sint32 BuildStampWork[];
-extern Uint32 PlayTimeFrames; /* The play time clock, in frames. */
+extern Uint32 PlayTimeTicks; /* The play time clock, in ticks. */
 /* Bytes of the caller's stack sySynch() has copied into SavedStack, or 0. */
 extern Uint32 SavedStackSize;
-/* The caller's stack below the frame-wait stack top, while sySynch() runs. */
+/* The caller's stack below the tick-wait stack top, while sySynch() runs. */
 extern Uint8 SavedStack[];
 
 /* The input group. The keypad state the VBlank interrupt keeps.
 
    The VBlank handler reads the keypad into these metatiles, and
-   syInputUpdateKeyRepeatAndDirection turns them into repeats after each frame
+   syInputUpdateKeyRepeatAndDirection turns them into repeats after each tick
    (system/system_frame.c). The first three are volatile because the VBlank
    handler sets them while the code it interrupts reads them; the next two the
-   key repeat rebuilds and reads each frame. Keys down now. */
+   key repeat rebuilds and reads each tick. Keys down now. */
 extern volatile Uint32 PerData;
-/* Keys that went down this frame. */
+/* Keys that went down this tick. */
 extern volatile Uint32 PerPush;
-/* Pressed keys, repeating while held: after 19 frames, then every 6. */
+/* Pressed keys, repeating while held: after 19 ticks, then every 6. */
 extern volatile Uint32 PerRepeat;
 /* PerRepeat with at most one D-pad direction. */
 extern volatile Uint32 PerRepeatDirected;
@@ -236,24 +236,24 @@ extern volatile Uint32 PerRepeatDirected;
    KEYS_HORIZONTAL, both left and right, stands for none. */
 extern volatile Uint32 PerDirection;
 
-/* Kept by the frame loop and the key repeat. */
+/* Kept by the tick loop and the key repeat. */
 extern Uint32 PerPushLatch;	   /* Presses since a reader last cleared it. */
-extern Uint32 PerDataLast;	   /* PerData when the frame loop last read it. */
+extern Uint32 PerDataLast;	   /* PerData when the tick loop last read it. */
 extern Uint32 PerDataAtVBlank; /* PerData at the previous VBlank. */
-/* Frames until the held keys repeat; -1 makes them repeat at once. */
+/* Ticks until the held keys repeat; -1 makes them repeat at once. */
 extern Sint32 PerRepeatTimer;
 
 /* The screen_fade group. The brightness fade of the whole screen that the
    VBlank handler steps (system/system_screen_fade.c). Which way the screen fade
    goes: 0 towards black, 1 towards white. */
 extern Uint8 ScreenFadeToWhite;
-/* The running fade's length in VBlanks, 0 when no fade is running. volatile:
+/* The running fade's length in frames, 0 when no fade is running. volatile:
    the VBlank handler's syScreenFadeUpdate clears it when the fade ends, while
    syScreenFadeWait waits on it. */
-extern volatile Uint8 ScreenFadeVBlanks;
-/* VBlanks until the running fade reaches its target. volatile: the VBlank
+extern volatile Uint8 ScreenFadeFrames;
+/* Frames until the running fade reaches its target. volatile: the VBlank
    handler's syScreenFadeUpdate counts it down. */
-extern volatile Uint8 ScreenFadeVBlanksLeft;
+extern volatile Uint8 ScreenFadeFramesLeft;
 /* The BLDCNT first-target layers the screen fade covers (the low six bits). */
 extern Uint16 ScreenFadeLayers;
 /* The brightness the running fade started from, 0 to 16. */
@@ -263,7 +263,7 @@ extern Uint8 ScreenFadeStartLevel;
 extern volatile Uint8 ScreenFadeTargetLevel;
 
 /* The io_write_queue group. The register write queue that VBlank carries out
-   after each finished frame. The queue IO_WRITE_QUEUE_PUSH and the
+   after each finished tick. The queue IO_WRITE_QUEUE_PUSH and the
    IoWriteQueue_ writers fill, and syIOWriteQueueFlushPending empties at
    VBlank. */
 extern IO_WRITE_QUEUE IoWriteQueueWork;
@@ -279,10 +279,10 @@ extern Uint8 syIWRAMWordsClear[];
 
 /* The math_table group. The trigonometry tables (system/math_table.c): the sine
    of a quarter turn and the tangents syAtan searches. */
-extern const Uint16 Math_SinQuarter[256];
-extern const Uint16 Math_TwoPiSteps[8];
-extern const Sint32 Math_QuadrantSin[4];
-extern const Uint16 Math_TanTable[258];
+extern const Uint16 MathSinQuarter[256];
+extern const Uint16 MathTwoPiSteps[8];
+extern const Sint32 MathQuadrantSin[4];
+extern const Uint16 MathTanTable[258];
 
 /* The matrix group. The 3D transform and its stack. The current 3D transform.
    syMultiMatrix multiplies the matrix it is given into it. */
@@ -299,8 +299,8 @@ extern const Uint32 RelocatedInnerProduct[];
 
 /* The number_text group. The digits and place values the number formatters
    write with (system/number_text.c). */
-extern const Uint8	String_HexDigits[];
-extern const Sint32 String_PowersOfTen[9];
+extern const Uint8	StringHexDigits[];
+extern const Sint32 StringPowersOfTen[9];
 /* The number text buffer: syStringFormatHex writes eight digits and
    syStringFormatDecimal eleven characters, right-aligned, each with a
    terminator. */
@@ -313,19 +313,19 @@ extern PROJECTION ProjectionWork;
 
 /* The bupdata group. The save sectors' signature and header template, and the
    link test's strings (system/bupdata.c). */
-extern const Uint8 Bup_Signature[];
-extern const Uint8 Bup_HeaderTemplate[8];
+extern const Uint8 BupSignature[];
+extern const Uint8 BupHeaderTemplate[8];
 
-extern const Uint32 Link_TestWord;
-extern const Uint8	Link_TestDataA[];
-extern const Uint8	Link_TestDataB[];
+extern const Uint32 LinkTestWord;
+extern const Uint8	LinkTestDataA[];
+extern const Uint8	LinkTestDataB[];
 
 /* The serial group. The link cable's runtime: serial packets, registers and
    transfer state. This console's block transfer state, sent to the partners
    each VBlank. */
 extern SERIAL_TRANSFER_STATE SerialTransfer;
 extern SERIAL_STATE			 SerialStateWork;
-/* Set from sySerialInit while the consoles exchange packets every frame. */
+/* Set from sySerialInit while the consoles exchange packets every tick. */
 extern Uint16 SerialExchangeActive;
 /* What the send in progress sends from, 0 when none is running. */
 extern Sint32 SerialSendSource;

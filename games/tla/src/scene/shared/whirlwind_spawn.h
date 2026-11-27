@@ -1,23 +1,20 @@
-/* A whirlwind blows out of the stone face at `source`. Mars Lighthouse keeps a
+/* A whirlwind blows out of the stone face at `src`. Mars Lighthouse keeps a
    copy nothing calls, its whirlwinds starting from a gust. */
-ACTOR *scWhirlwindSpawn(ACTOR *source)
+ACTOR *scWhirlwindSpawn(ACTOR *src)
 {
-	VECTOR3		   position;
+	VECTOR3		   pos;
 	EFFECT_OPTIONS options;
 	ACTOR		  *actor;
 
 	fdScriptPlaySnd(SE_WHIRLWIND);
-	position.x =
-		source->x.fixed + syMathMulFX(toFIXED(8), syCos(source->facing));
-	position.z =
-		source->z.fixed + syMathMulFX(toFIXED(8), syMathSin(source->facing));
-	actor = scFieldActorCreate(
-		SPRITE_WHIRLWIND, position.x, source->y.fixed, position.z);
+	pos.x = src->x.fixed + syMathMulFX(toFIXED(8), syCos(src->facing));
+	pos.z = src->z.fixed + syMathMulFX(toFIXED(8), syMathSin(src->facing));
+	actor = scFieldActorCreate(SPRITE_WHIRLWIND, pos.x, src->y.fixed, pos.z);
 	fdActorSelectAnimation(actor, 2);
 	fdActorSetSprFlags(actor, 0);
 	actor->motionFlg = 0;
 	actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	actor->facing = source->facing;
+	actor->facing = src->facing;
 	actor->tmr = 0;
 	actor->sceneCnt = 0;
 	actor->sceneByte = 0;
@@ -25,7 +22,7 @@ ACTOR *scWhirlwindSpawn(ACTOR *source)
 	actor->speedLimit = toFIXED(3) / 2;
 	options.pri = 1;
 	options.pal = SPRITE_COLOR_WHITE;
-	scFieldEffectSpawn(position.x, source->y.fixed, position.z - toFIXED(6), 0,
-		0, 0, EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY, &options);
+	scFieldEffectSpawn(pos.x, src->y.fixed, pos.z - toFIXED(6), 0, 0, 0,
+		EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY, &options);
 	return actor;
 }

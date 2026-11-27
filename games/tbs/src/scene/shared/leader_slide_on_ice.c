@@ -4,7 +4,7 @@
    The including scene names its table of slide headings, by the held directions
    (DPAD_INDEX), as ICE_SLIDE_HEADINGS. */
 
-/* While the leader slides on the ice, turns him a sixteenth of a turn a frame
+/* While the leader slides on the ice, turns him a sixteenth of a turn a tick
    toward the way the pad points, at three times his walking pace, and has him
    look around when it points nowhere. */
 static void scActorSteerByPad(ACTOR *actor)
@@ -18,7 +18,7 @@ static void scActorSteerByPad(ACTOR *actor)
 		return;
 	}
 	actor->steeringFlg = 0;
-	heading = Ice_KeyHeadings[DPAD_INDEX(PerData)];
+	heading = IceKeyHeadings[DPAD_INDEX(PerData)];
 	if(heading == KEY_HEADING_NONE) {
 		fdActorSelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
 		return;

@@ -6,7 +6,7 @@
 
 #include "types.h"
 
-extern const Uint8 Terrain_RoundedSquareMask[256];
-extern const Uint8 Terrain_SampleIndexTable[256];
+extern const Uint8 TerrainRoundedSquareMask[256];
+extern const Uint8 TerrainSampleIndexTable[256];
 
 #endif

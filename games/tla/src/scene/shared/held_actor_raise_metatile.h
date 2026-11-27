@@ -7,7 +7,7 @@ void scHeldActorRaiseMetatile()
 	SHAPE_METATILE *shapes;
 	Sint32			shape;
 	Sint32			level;
-	Sint32			index;
+	Sint32			idx;
 	Uint8			newShape;
 
 	if(held == NULL)
@@ -19,14 +19,14 @@ void scHeldActorRaiseMetatile()
 		(((MAP_METATILE *)metatiles) - (MAP_METATILE *)Ram_MapMetatileBuffer);
 	shape = fdMapGridGetTerrainKind(held->layer, held->x.fixed, held->z.fixed);
 	level = fdMapGetTerrainHeight(held->layer, held->x.fixed, held->z.fixed);
-	index = fdActorGetMetatileIndex(held);
+	idx = fdActorGetMetatileIndex(held);
 	level = METATILE_HEIGHT_STEPS(level);
 	level += 4;
 	newShape = fdMapShapeFindOrAdd(held->layer, shape, level);
-	shapes += index;
-	index <<= 2;
+	shapes += idx;
+	idx <<= 2;
 	shapes->shape = newShape;
-	metatiles += index;
+	metatiles += idx;
 	((MAP_METATILE *)metatiles)->attributeB |=
 		MAP_METATILE_JUMP | MAP_METATILE_CLIMBABLE;
 	metatiles += MAPGRID_SIZE * sizeof(MAP_METATILE);

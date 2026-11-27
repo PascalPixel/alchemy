@@ -13,16 +13,16 @@ enum {
 	/* Full volume, and the song's own tempo and pitch: 1.0 in the ramps' 8.8
 	   fixed point. */
 	BGM_UNITY_SCALE = 256,
-	/* A ramp's step a VBlank: a full fade in or out takes 64 VBlanks. */
+	/* A ramp's step a frame: a full fade in or out takes 64 frames. */
 	BGM_DEFAULT_RAMP_STEP = 4,
 	/* The track mask of every music command here. */
 	TRACKS_ALL = 0xff,
 	MUSIC_PLAYER_COUNT = 8, /* MusicPlayerLastSound' entries, one a player. */
-	/* VBlanks after a jingle starts before the music waits for it to end. */
-	BGM_RESTORE_DELAY_VBLANKS = 10,
-	/* sySndWaitForBGMRestore gives up after this many frames, about five
+	/* Frames after a jingle starts before the music waits for it to end. */
+	BGM_RESTORE_DELAY_FRAMES = 10,
+	/* sySndWaitForBGMRestore gives up after this many ticks, about five
 	   seconds. */
-	BGM_WAIT_TIMEOUT_FRAMES = 300,
+	BGM_WAIT_TIMEOUT_TICKS = 300,
 	/* CurrentBgm before any music: an id no music has, so the first music
 	   always plays. */
 	BGM_NONE = 255
@@ -36,15 +36,15 @@ enum {
    means" describes. */
 void sySndPlay(Sint32 id)
 {
-	Sint32 flags;
+	Sint32 flg;
 	Sint32 player;
 
-	flags = id & SOUND_FLAGS_MASK;
+	flg = id & SOUND_FLAGS_MASK;
 	id &= SOUND_NUM_MASK;
 
 	if(id == SOUND_FADE_OUT_BGM) {
 		/* Fade the music out, once until the next music starts: 16 steps 7
-		   VBlanks apart, 112 VBlanks. */
+		   Frames apart, 112 frames. */
 		if(BgmFadeRequested != 0)
 			return;
 		m4aMPlayFadeOut(&MPlayInfo_BGM, 7);
@@ -52,7 +52,7 @@ void sySndPlay(Sint32 id)
 		CurrentBgm = MUS_SILENCE;
 	} else if(id == SOUND_FADE_OUT_ACTION_SE) {
 		/* The control is also the number of the song table's row 289, so it
-		   fades MUSIC_PLAYER_ACTION_SE out over 48 VBlanks (16 steps of 3) and
+		   fades MUSIC_PLAYER_ACTION_SE out over 48 frames (16 steps of 3) and
 		   that row never plays. */
 		MusicPlayerLastSound[MUSIC_PLAYER_ACTION_SE] = 0;
 		m4aMPlayFadeOut(&MPlayInfo_ActionSE, 3);
@@ -79,7 +79,7 @@ void sySndPlay(Sint32 id)
 		BgmVolumeTarget = 0;
 		BgmVolume = 0;
 		m4aSongNumStart(id);
-		BgmRestoreDelay = BGM_RESTORE_DELAY_VBLANKS;
+		BgmRestoreDelay = BGM_RESTORE_DELAY_FRAMES;
 	} else {
 		/* Music: the keep control, or the music last chosen (CurrentBgm),
 		   changes nothing, so a scene may name its music on every entry; music
@@ -95,8 +95,8 @@ void sySndPlay(Sint32 id)
 				? SOUND_REVERB_LONG
 				: SOUND_REVERB_NORMAL);
 		m4aSongNumStart(id);
-		/* A silent start fades the new music in over 64 VBlanks. */
-		if(flags & SOUND_FLAG_FADE_IN)
+		/* A silent start fades the new music in over 64 frames. */
+		if(flg & SOUND_FLAG_FADE_IN)
 			BgmVolume = 0;
 		else
 			BgmVolume = BGM_UNITY_SCALE;
@@ -159,7 +159,7 @@ void sySndUpdateBGMRamps(void)
 			(Sint16)BgmTempoPitch * SEMITONES_PER_OCTAVE -
 				SEMITONES_PER_OCTAVE * BGM_UNITY_SCALE);
 	}
-	/* Count down the VBlanks left in the PCM buffer and restart the FIFO DMAs
+	/* Count down the frames left in the PCM buffer and restart the FIFO DMAs
 	   from its start when they run out (SoundInfo.transferCountdown). */
 	m4aSoundVSync();
 }
@@ -175,22 +175,22 @@ void sySndTestRun(void)
 	Sint32 snds[3] = {0, SOUND_JINGLE_FIRST, SOUND_SE_FIRST};
 	Sint32 reverbCode;
 	Sint32 row;
-	Sint32 clipTimer;
+	Sint32 clipTmr;
 
 	row = 0;
 	reverbCode = SOUND_REVERB_NORMAL;
 	IO_WRITE32(0, &BuildStampWork[0]);
-	clipTimer = 20;
+	clipTmr = 20;
 
 	for(;;) {
-		/* A 20-frame countdown, restarted whenever the mixer has clipped a
-		   sample since the last frame; nothing reads it. */
-		if(clipTimer != 0)
-			clipTimer--;
+		/* A 20-tick countdown, restarted whenever the mixer has clipped a
+		   sample since the last tick; nothing reads it. */
+		if(clipTmr != 0)
+			clipTmr--;
 
 		if(SoundMixerClipped != 0) {
 			SoundMixerClipped = 0;
-			clipTimer = 20;
+			clipTmr = 20;
 		}
 
 		if(PerRepeat & KEY_SELECT) {
@@ -262,12 +262,12 @@ void sySndSetBGMPitch(Uint16 pitch)
 	m4aMPlayPitchControl(&MPlayInfo_BGM, TRACKS_ALL, pitch);
 }
 
-/* Unused: ramps the music's tempo and pitch together toward `targetScale`
-   (BGM_UNITY_SCALE its own) by `step` a VBlank. Only a bare stub, which no code
+/* Unused: ramps the music's tempo and pitch together toward `tgtScale`
+   (BGM_UNITY_SCALE its own) by `step` a frame. Only a bare stub, which no code
    names, leads here. */
-void sySndSetBGMTempoPitchTarget(Uint16 targetScale, Uint16 step)
+void sySndSetBGMTempoPitchTarget(Uint16 tgtScale, Uint16 step)
 {
-	BgmTempoPitchTarget = targetScale;
+	BgmTempoPitchTarget = tgtScale;
 	BgmTempoPitchStep = step;
 }
 
@@ -280,11 +280,11 @@ void sySndSetBGMVolume(Sint16 volume)
 	BgmVolume = volume;
 }
 
-/* Unused: fades the music toward `targetVolume` (BGM_UNITY_SCALE full) by
-   `step` a VBlank. Only a bare stub, which no code names, leads here. */
-void sySndSetBGMVolumeTarget(Uint16 targetVolume, Uint16 step)
+/* Unused: fades the music toward `tgtVolume` (BGM_UNITY_SCALE full) by
+   `step` a frame. Only a bare stub, which no code names, leads here. */
+void sySndSetBGMVolumeTarget(Uint16 tgtVolume, Uint16 step)
 {
-	BgmVolumeTarget = targetVolume;
+	BgmVolumeTarget = tgtVolume;
 	BgmVolumeStep = step;
 }
 
@@ -331,17 +331,17 @@ Sint32 sySndGetCurrentBGM(void)
 }
 
 /* Waits until the music has begun to come back after a jingle, giving up after
-   BGM_WAIT_TIMEOUT_FRAMES. */
+   BGM_WAIT_TIMEOUT_TICKS. */
 void sySndWaitForBGMRestore(void)
 {
-	Sint32 framesWaited = 0;
+	Sint32 ticksWaited = 0;
 
 	do {
 		if(BgmRestoreDelay == 0)
 			break;
 		sySynch(1);
-		framesWaited++;
-	} while(framesWaited < BGM_WAIT_TIMEOUT_FRAMES);
+		ticksWaited++;
+	} while(ticksWaited < BGM_WAIT_TIMEOUT_TICKS);
 }
 
 /* Unused: returns the reverb code sySndPlay gives music `command`:

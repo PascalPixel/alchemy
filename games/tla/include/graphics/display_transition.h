@@ -1,7 +1,7 @@
 #ifndef ALCHEMY_DISPLAY_TRANSITION_H
 #define ALCHEMY_DISPLAY_TRANSITION_H
 
-/* The screen transition's frames, windows and state. */
+/* The screen transition's ticks, windows and state. */
 
 #include "edition.h"
 #include "fixed_math.h"
@@ -14,10 +14,10 @@ typedef struct SCREEN_TRANSITION_DISSOLVE_STATE {
 	/* as SCREEN_TRANSITION_STATE's; the dissolve leaves them */
 	Uint16 pages[2][322];
 	/* SCREEN_TRANSITION_STATE's solidTile and mode: the dissolve sets two more
-	   of the tile's pixels each frame and copies the tile to BG character block
+	   of the tile's pixels each tick and copies the tile to BG character block
 	   0. */
 	Uint8 solidTilePixels[34];
-	/* The progress, moved from start to end over duration frames: bit 5 says
+	/* The progress, moved from start to end over duration ticks: bit 5 says
 	   whether the dissolve fills or clears, the low 5 bits how far it is. */
 	Uint16 value;
 	/* As SCREEN_TRANSITION_STATE's; the dissolve leaves them. */
@@ -26,13 +26,13 @@ typedef struct SCREEN_TRANSITION_DISSOLVE_STATE {
 	Sint16 insideLayers;
 	Sint16 outsideLayers;
 	Uint8  unused;
-	/* SCREEN_TRANSITION_STATE's page: the dissolve flips it each frame, though
+	/* SCREEN_TRANSITION_STATE's page: the dissolve flips it each tick, though
 	   nothing reads it while the dissolve runs. */
 	Uint8 page;
 	Sint8 start;	/* the value's first step */
 	Sint8 end;		/* the value's last step */
-	Sint8 duration; /* frames; 0 when the value is not moving */
-	Sint8 step;		/* frames */
+	Sint8 duration; /* ticks; 0 when the value is not moving */
+	Sint8 step;		/* ticks */
 } SCREEN_TRANSITION_DISSOLVE_STATE;
 
 /* The screen transition state: two pages of window edges for every line, the
@@ -44,7 +44,7 @@ typedef struct SCREEN_TRANSITION_STATE {
 	/* The dissolve's solid tile, one 8 by 8 tile of 4-bit pixels. */
 	Uint32 solidTile[8];
 	Uint16 mode; /* the window transition's shape */
-	/* The progress, moved from start to end over duration frames. */
+	/* The progress, moved from start to end over duration ticks. */
 	Uint16 value;
 	/* 16.16 fixed-point pixels: the centre of the ellipse around a point, set
 	   by the Reveal effect. */
@@ -59,8 +59,8 @@ typedef struct SCREEN_TRANSITION_STATE {
 	Uint8  page;	 /* the pages entry the HBlank DMA copies from */
 	Sint8  start;	 /* the value's first step */
 	Sint8  end;		 /* the value's last step */
-	Sint8  duration; /* frames; 0 when the value is not moving */
-	Sint8  step;	 /* frames */
+	Sint8  duration; /* ticks; 0 when the value is not moving */
+	Sint8  step;	 /* ticks */
 	/* The mode taken when the value reaches its end; 0 ends the transition. */
 	Sint8 nextMode;
 	/* Set by the fade out to the centre line (fdScreenTransitionFinish); while
@@ -87,7 +87,7 @@ void					 fdScreenTransitionUpdate(void);
 void					 fdScreenTransitionUpdateFromCenter(void);
 void					 fdScreenTransitionUpdateScanline(void);
 void					 fdScreenTransitionUpdateDissolve(void);
-void					 fdScreenTransitionFillTilemapAndColTile(Sint32 color);
+void					 fdScreenTransitionFillTilemapAndColTile(Sint32 col);
 void					 fdScreenTransitionUpdateScanlineTable(void);
 void					 fdEffectStartWindowHBlankDMA(void);
 

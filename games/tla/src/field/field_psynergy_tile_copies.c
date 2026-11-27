@@ -1,8 +1,8 @@
 /* The Cyclone's helpers: copying the metatiles it touched, its arcs and its
    burst, and a Mad Plant leaping at the leader. Part of field_psynergy.c. */
 
-/* The frames of a Mad Plant's leap at the leader. */
-#define MAD_PLANT_LEAP_FRAMES  20
+/* The ticks of a Mad Plant's leap at the leader. */
+#define MAD_PLANT_LEAP_TICKS   20
 /* The pixels of one of the Cyclone's arcs, and the angle from one to the next,
    about two degrees. */
 #define CYCLONE_ARC_PIXELS	   30
@@ -13,7 +13,7 @@
    height rectangle at (x, z) of the layer, copies the matching metatile tiles
    from the rectangle at (toX, toZ) over it, opens it on layer 2 and records the
    copy in TouchCopiesWork, up to 64. Gaia Rock calls it after a Cyclone. */
-void fdCycloneCopyTouchedMetatiles(Sint32 x, Sint32 z, Sint16 layerIndex,
+void fdCycloneCopyTouchedMetatiles(Sint32 x, Sint32 z, Sint16 layerIdx,
 	Sint16 width, Sint16 height, Sint32 toX, Sint32 toZ)
 {
 	FIELD_STATE *field = Ram_HeapSlots->fieldState;
@@ -26,8 +26,8 @@ void fdCycloneCopyTouchedMetatiles(Sint32 x, Sint32 z, Sint16 layerIndex,
 	Sint32		 layerX, layerZ;
 	Sint32		 left, top, i;
 
-	if(layerIndex <= 2)
-		layer += layerIndex;
+	if(layerIdx <= 2)
+		layer += layerIdx;
 	layerX = FIELD_METATILE(layer->ofsX);
 	layerZ = FIELD_METATILE(layer->ofsY);
 	left = x - layerX;
@@ -72,11 +72,11 @@ void fdCycloneCopyTouchedMetatiles(Sint32 x, Sint32 z, Sint16 layerIndex,
    it grows, turns to the leader, hops twice and leaps at the leader in an arc
    before the battle. The Gabomba Catacombs, Taopo Swamp and Gaia Rock each hide
    one. */
-void fdMadPlantLeapAtLeader(Sint32 sprite, Sint32 x, Sint32 z)
+void fdMadPlantLeapAtLeader(Sint32 spr, Sint32 x, Sint32 z)
 {
 	Sint32 ownerId = fdPartyGetLeaderActor();
 	ACTOR *owner = fdActorGetById(ownerId);
-	ACTOR *actor = fdActorCreateStub(sprite, toFIXED(x), 0, toFIXED(z));
+	ACTOR *actor = fdActorCreateStub(spr, toFIXED(x), 0, toFIXED(z));
 	FIXED  from[3];
 	FIXED  to[3];
 	Sint32 i;
@@ -118,15 +118,13 @@ void fdMadPlantLeapAtLeader(Sint32 sprite, Sint32 x, Sint32 z)
 	to[1] = owner->y.fixed;
 	to[2] = owner->z.fixed;
 	/* A straight line, lifted by half a sine wave 40 pixels high. */
-	steps = MAD_PLANT_LEAP_FRAMES;
+	steps = MAD_PLANT_LEAP_TICKS;
 	for(i = 0; i < steps; i++) {
-		actor->x.fixed =
-			from[0] + i * (to[0] - from[0]) / MAD_PLANT_LEAP_FRAMES;
+		actor->x.fixed = from[0] + i * (to[0] - from[0]) / MAD_PLANT_LEAP_TICKS;
 		actor->y.fixed = from[1] +
-			i * (to[1] - from[1]) / MAD_PLANT_LEAP_FRAMES +
-			sySin(i * (TRIG_TURN / 2) / MAD_PLANT_LEAP_FRAMES) * 40;
-		actor->z.fixed =
-			from[2] + i * (to[2] - from[2]) / MAD_PLANT_LEAP_FRAMES;
+			i * (to[1] - from[1]) / MAD_PLANT_LEAP_TICKS +
+			sySin(i * (TRIG_TURN / 2) / MAD_PLANT_LEAP_TICKS) * 40;
+		actor->z.fixed = from[2] + i * (to[2] - from[2]) / MAD_PLANT_LEAP_TICKS;
 		sySynch(1);
 	}
 }
@@ -135,20 +133,19 @@ void fdMadPlantLeapAtLeader(Sint32 sprite, Sint32 x, Sint32 z)
    middle of the canvas, from angle on, shading through the canvas palette's
    colours 1 to 15; offsets maps each point to its byte. The Cyclone draws its
    swirl with it. */
-void fdCyclonePlotArc(
-	Sint32 radius, Sint32 angle, Uint16 *offsets, Uint8 *pixels)
+void fdCyclonePlotArc(Sint32 radius, Sint32 ang, Uint16 *offsets, Uint8 *pixels)
 {
 	Sint32 i;
 
 	if(radius > CANVAS_WIDTH / 2 - 1)
 		radius = CANVAS_WIDTH / 2 - 1;
 	for(i = 0; i < CYCLONE_ARC_PIXELS; i++) {
-		Sint32 x = FIXEDtoINT(radius * syCos(angle)) + CANVAS_WIDTH / 2;
-		Sint32 y = FIXEDtoINT(radius * sySin(angle)) + CANVAS_WIDTH / 2;
+		Sint32 x = FIXEDtoINT(radius * syCos(ang)) + CANVAS_WIDTH / 2;
+		Sint32 y = FIXEDtoINT(radius * sySin(ang)) + CANVAS_WIDTH / 2;
 		Sint32 value = i / 2 + CANVAS_PALETTE * PALETTE_COLORS + 1;
 
 		pixels[offsets[y * CANVAS_WIDTH + x]] = value;
-		angle += CYCLONE_ARC_PIXEL_STEP;
+		ang += CYCLONE_ARC_PIXEL_STEP;
 	}
 }
 
@@ -166,7 +163,7 @@ void fdParticleBurstStart(void)
 	FIXED dx = FIELD_METATILE_ORIGIN(metatile->x) - owner->x.fixed + toFIXED(8);
 	FIXED dz = FIELD_METATILE_ORIGIN(metatile->z) - owner->z.fixed + toFIXED(8);
 	Sint32			heading = (Uint16)syAtan(dz, dx);
-	EFFECT_SPR	   *sprite;
+	EFFECT_SPR	   *spr;
 	BURST_PARTICLE *particle;
 	Sint32			resource;
 	Sint32			vram;
@@ -182,12 +179,12 @@ void fdParticleBurstStart(void)
 
 	for(i = 0, particle = state->particles; i < PARTICLE_BURST_COUNT;
 		i++, particle++) {
-		sprite = &state->sprs[i];
-		fdEffectSprInit(sprite, 4, 4, 0, vram);
-		sprite->depth = EFFECT_SPRITE_FRONT_DEPTH;
-		sprite->oam.pri = 0;
-		sprite->oam.fullCol = 1;
-		sprite->oam.pal = 0;
+		spr = &state->sprs[i];
+		fdEffectSprInit(spr, 4, 4, 0, vram);
+		spr->depth = EFFECT_SPRITE_FRONT_DEPTH;
+		spr->oam.pri = 0;
+		spr->oam.fullCol = 1;
+		spr->oam.pal = 0;
 		SET_POSITION(particle, owner->x.fixed, owner->y.fixed, owner->z.fixed);
 		syVectorAddPolarOffset(
 			syRandom() * 8 + toFIXED(8), syRandom(), &particle->x);
@@ -199,9 +196,9 @@ void fdParticleBurstStart(void)
 		particle->delay = -i / 2;
 	}
 	sySndPlayStub(SE_SHIMMER);
-	sySetEvent(fdParticleBurstUpdate, EVENT_PASS_FRAME);
+	sySetEvent(fdParticleBurstUpdate, EVENT_PASS_TICK);
 }
 
-#undef MAD_PLANT_LEAP_FRAMES
+#undef MAD_PLANT_LEAP_TICKS
 #undef CYCLONE_ARC_PIXELS
 #undef CYCLONE_ARC_PIXEL_STEP

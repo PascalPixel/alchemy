@@ -76,25 +76,23 @@ typedef enum CREDITS_ALIGNMENT {
    palette half). */
 void mnCreditsClearBuffer(Sint32 alternate)
 {
-	Uint32			fillColor;
-	void		   *tileDestination;
-	void		   *paletteDestination;
+	Uint32			fillCol;
+	void		   *tileDst;
+	void		   *paletteDst;
 	volatile Uint32 dmaFill;
 
 	if(alternate == 0) {
-		fillColor = PIXELS_8BPP(1);
-		tileDestination = BG_CHAR_BLOCK(0);
-		paletteDestination = (void *)BG_PLTT;
+		fillCol = PIXELS_8BPP(1);
+		tileDst = BG_CHAR_BLOCK(0);
+		paletteDst = (void *)BG_PLTT;
 	} else {
-		fillColor = PIXELS_8BPP(BATTLE_BACKGROUND_COLORS + 1);
-		tileDestination = BG_CHAR_BLOCK(2);
-		paletteDestination = (void *)&BG_PLTT_COLOR(
+		fillCol = PIXELS_8BPP(BATTLE_BACKGROUND_COLORS + 1);
+		tileDst = BG_CHAR_BLOCK(2);
+		paletteDst = (void *)&BG_PLTT_COLOR(
 			BATTLE_BACKGROUND_COLORS / PALETTE_COLORS, 0);
 	}
-	DMA_FILL32_CELL(
-		dmaFill, fillColor, tileDestination, BATTLE_BACKGROUND_TILE_BYTES);
-	DMA_FILL32_CELL(
-		dmaFill, 0, paletteDestination, BATTLE_BACKGROUND_PALETTE_BYTES);
+	DMA_FILL32_CELL(dmaFill, fillCol, tileDst, BATTLE_BACKGROUND_TILE_BYTES);
+	DMA_FILL32_CELL(dmaFill, 0, paletteDst, BATTLE_BACKGROUND_PALETTE_BYTES);
 }
 
 typedef Sint32 (*PACKED_DECODER)(
@@ -102,7 +100,7 @@ typedef Sint32 (*PACKED_DECODER)(
 
 /* Battle backgrounds shown in the credits; 0 clears the display. */
 /* clang-format off */
-const Uint32 Credits_Backgrounds[] = {
+const Uint32 CreditsBackgrounds[] = {
 	(Uint32)RESOURCE_VALE_STORM_BACKDROP,
 	(Uint32)RESOURCE_SOL_SANCTUM_BACKDROP,
 	(Uint32)RESOURCE_GRASSLAND_BACKDROP,
@@ -143,9 +141,9 @@ const Uint32 Credits_Backgrounds[] = {
 void mnCreditsLoadBackground(Uint32 resourceId, Sint32 alternate)
 {
 	const Uint8 *resourceData;
-	Uint32		 paletteDestination;
-	Uint32		 paletteOffset;
-	void		*tileDestination;
+	Uint32		 paletteDst;
+	Uint32		 paletteOfs;
+	void		*tileDst;
 
 	if(resourceId == 0) {
 		mnCreditsClearBuffer(alternate);
@@ -153,13 +151,13 @@ void mnCreditsLoadBackground(Uint32 resourceId, Sint32 alternate)
 	}
 	resourceData = syResourceGetTableEntry(resourceId);
 	if(alternate == 0) {
-		paletteOffset = 0;
-		tileDestination = BG_CHAR_BLOCK(0);
-		paletteDestination = (Uint32)BG_PLTT;
+		paletteOfs = 0;
+		tileDst = BG_CHAR_BLOCK(0);
+		paletteDst = (Uint32)BG_PLTT;
 	} else {
-		paletteOffset = PIXELS_8BPP(BATTLE_BACKGROUND_COLORS);
-		tileDestination = BG_CHAR_BLOCK(2);
-		paletteDestination = (Uint32)&BG_PLTT_COLOR(
+		paletteOfs = PIXELS_8BPP(BATTLE_BACKGROUND_COLORS);
+		tileDst = BG_CHAR_BLOCK(2);
+		paletteDst = (Uint32)&BG_PLTT_COLOR(
 			BATTLE_BACKGROUND_COLORS / PALETTE_COLORS, 0);
 	}
 	/* Offset every pixel into the selected palette half so both pictures can
@@ -167,19 +165,18 @@ void mnCreditsLoadBackground(Uint32 resourceId, Sint32 alternate)
 	RAM_CODE_LOAD_SLOT(HEAP_SLOT_RAM_CODE_TEMP, mnCreditsDecodeBackground,
 		Credits_DecodeBackgroundCodeSize);
 	((PACKED_DECODER)HeapSlots[HEAP_SLOT_RAM_CODE_TEMP])(
-		resourceData + BATTLE_BACKGROUND_PALETTE_BYTES, tileDestination,
-		paletteOffset);
+		resourceData + BATTLE_BACKGROUND_PALETTE_BYTES, tileDst, paletteOfs);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_TEMP);
 
 	/* Queue palette RAM writes for VBlank rather than transferring colours
 	   during the active display. */
-	IO_WRITE_QUEUE_PUSH(paletteDestination, (Uint32)resourceData,
+	IO_WRITE_QUEUE_PUSH(paletteDst, (Uint32)resourceData,
 		DMA_COPY_WORDS(BATTLE_BACKGROUND_PALETTE_BYTES / 4));
 }
 
 /* Builds a battle background's tilemap: two blank rows, its tiles in order over
    fifteen rows, three blank rows, then a zeroed tail. */
-void mnCreditsBuildBackgroundTilemap(Uint32 *destination)
+void mnCreditsBuildBackgroundTilemap(Uint32 *dst)
 {
 	Sint32 i;
 	Uint32 blankTiles = MAP_ENTRY_PAIR(CREDITS_BLANK_TILE, CREDITS_BLANK_TILE);
@@ -187,23 +184,23 @@ void mnCreditsBuildBackgroundTilemap(Uint32 *destination)
 
 	/* Pad above and below the picture so vertical wrapping stays blank. */
 	for(i = 0; i < 2 * TILEMAP_ROW_WORDS; i++)
-		*destination++ = blankTiles;
+		*dst++ = blankTiles;
 	for(i = 0; i < BATTLE_BACKGROUND_TILES / 2; i++) {
-		*destination++ = tilePair;
+		*dst++ = tilePair;
 		tilePair += MAP_ENTRY_PAIR(2, 2);
 	}
 	for(i = 0; i < 3 * TILEMAP_ROW_WORDS; i++)
-		*destination++ = blankTiles;
+		*dst++ = blankTiles;
 	tilePair = 0;
 	for(i = 0; i < 12 * TILEMAP_ROW_WORDS; i++)
-		*destination++ = tilePair;
+		*dst++ = tilePair;
 }
 
 /* A VBlank event of the credits: drifts both pictures together, keeping their
    horizontal offsets aligned throughout the crossfade. */
 void mnCreditsScrollBackgrounds(void)
 {
-	if((VBlankCount & 3) == 0) {
+	if((FrameCount & 3) == 0) {
 		Uint32 decrement = (Uint16)-1;
 
 		BgScrollWork[2].x += decrement;
@@ -248,11 +245,11 @@ Sint32 mnCreditsRun(void)
 	/* Give the names a five-second lead before the first picture. */
 	mnCreditsInitTextSprs();
 	sySynch(300);
-	/* Alternate the hidden layer after each 64-frame crossfade. */
+	/* Alternate the hidden layer after each 64-tick crossfade. */
 	for(slide = 0;
-		slide < sizeof(Credits_Backgrounds) / sizeof(Credits_Backgrounds[0]);
+		slide < sizeof(CreditsBackgrounds) / sizeof(CreditsBackgrounds[0]);
 		slide++) {
-		mnCreditsLoadBackground(Credits_Backgrounds[slide], (slide & 1) ^ 1);
+		mnCreditsLoadBackground(CreditsBackgrounds[slide], (slide & 1) ^ 1);
 		/* Fade the new half in: an even slide went to BG2, the first target
 		   (BLDALPHA bits 4..0), an odd one to BG3, the second (bits 12..8). */
 		for(alpha = 1; alpha <= BLEND_WEIGHT_MAX; alpha++) {
@@ -316,7 +313,7 @@ extern Sint16 CreditsEndOfText;
 #define CREDITS_END_OF_TEXT		   (*(Sint16 *)&ProgramFlashSectorWork)
 #endif
 
-static const Uint8 sBlankCreditLine[] = "";
+static const Uint8 BlankCreditLine[] = "";
 
 /* The staff roll's headings whose wording the Japanese edition and the others
    spell differently. */
@@ -335,268 +332,268 @@ static const Uint8 sBlankCreditLine[] = "";
 #endif
 
 /* Credits text, one row per line, terminated by 0. A line is 8 pixels of
-   scroll, 32 frames; the text is drawn with Credits_Font, ASCII 32 to 127. */
+   scroll, 32 ticks; the text is drawn with Credits_Font, ASCII 32 to 127. */
 /* clang-format off */
-const void *Credits_Lines[] = {
-	sBlankCreditLine,
+const void *CreditsLines[] = {
+	BlankCreditLine,
 	CREDITS_STAFF_TITLE,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Game Planning",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Hiroyuki Takahashi",
 	"Shugo Takahashi",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Scenario",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Hiroyuki Takahashi",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Director",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Shugo Takahashi",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Assistant Director",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Yusuke Sugimoto",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Game Design",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Yusuke Sugimoto",
 	"Shuji Shimizu",
 	"Ayumu Shindo",
 	"Kentaro Sakou",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Programming",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"System",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Yasuhiro Taguchi",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Battle",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Haruki Kodera",
 	"Toru Takamatsu",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Field",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Kaoru Shimada",
 	"Hiroyuki Ichikawa",
 	"Akiko Sato",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"User Interface",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Yutaka Yamamoto",
 	"Yasushi Kazawa",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Support",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Kenji Numaya",
 	"P. E. Jareth Hein",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Graphic Arts",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Character Design",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Shin Yamanouchi",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Monster Design",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Hiroshi Kajiyama",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Battle Characters",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Junko Nakamura",
 	"Kaori Matsunaga",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Battle Effects",
 	CREDITS_FACES_SUBTITLE,
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Junichi Ochiai",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Battle Backgrounds",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Hiroto Nakashima",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Maps",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Masayuki Hashimoto",
 	"Mitsumasa Muraishi",
 	"Mitsuru Fukumoto",
 	"Masashi Mikami",
 	"Akihito Kimura",
 	"Shinichiro Sugimoto",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Map Characters",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Mieko Koguchi",
 	"Kanako Horiguchi",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Graphics Direction",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Fumihide Aoki",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Staff Coordination",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Akiko Sato",
 	"Kenji Numaya",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Music",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Motoi Sakuraba",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Sound Effects",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Hiroyuki Hamada",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	CREDITS_SOUND_DIRECTION_LABEL,
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Masaaki Uno",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Illustration",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Shin Yamanouchi",
 	"Masanori Sato",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	CREDITS_GRAPHICS_SUPPORT_LABEL,
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Yoichi Kotabe",
 	"Masanori Sato",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	CREDITS_ARTWORK_LABEL,
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Yoshitaka Nishikawa",
 	"Mamoru Sakurai",
 	"Nanako Kinoshita",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 #if CREDITS_REVISED_FOR_LOCALIZATION
 	"Coordination",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Masaaki Uno",
 	"Toshiharu Izuno",
 	"Atsushi Okada",
 	"Kenichi Nishida",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 #endif
 #if !CREDITS_REVISED_FOR_LOCALIZATION
 	"Public Relations",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Mitsuaki Hagishima",
 	"Asako Haruhana",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Coordination",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Masaaki Uno",
 	"Toshiharu Izuno",
 	"Kenichi Nishida",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Special Thanks to",
 	"Super Mario Club Staff",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Tomohiko Komada",
 	"Nobuaki Maeda",
 	"Naoki Inoue",
@@ -641,234 +638,234 @@ const void *Credits_Lines[] = {
 	"Mitsuhiro Seno",
 	"Takehiko Asaka",
 	"Masato Mizuta",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Produced by",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Shinji Hatano",
 	"Hiroyuki Takahashi",
 	"Shugo Takahashi",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Executive Producer",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Hiroshi Yamauchi",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Copyrights of Game, Scenario",
 	"and Program reserved by",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"NINTENDO Co.,Ltd.",
 	"and",
 	"CAMELOT Co.,Ltd.",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Copyrights of All Characters",
 	"and Music reserved by",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"NINTENDO Co.,Ltd.",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	0
 #elif LANGUAGE == LANGUAGE_ENGLISH
-	sBlankCreditLine,
+	BlankCreditLine,
 	"North American",
 	" Localization",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Translation",
 	" Coordination",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Bill Trinen",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Writing",
 	" & Editing",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Richard Amtower",
 	"Nate Bihldorf",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Additional",
 	" Localization",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Tim O'Leary",
 	"Scot Ritchey",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Localization",
 	" Management",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Leslie Swan",
 	"Jeff Miller",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Testing &",
 	" Debugging",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Michael Kelbaugh",
 	"Todd Buechele",
 	"NOA Product Testing",
 	" Department",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Special Thanks to",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Motoyasu Tojima",
 	"Mike Fukuda",
-	sBlankCreditLine,
+	BlankCreditLine,
 	" and",
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Minoru Arakawa",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Producer",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Shinji Hatano",
 	"Hiroyuki Takahashi",
 	"Shugo Takahashi",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Executive Producer",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Hiroshi Yamauchi",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Copyrights of Game, Scenario,",
 	"and Program reserved by",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"NINTENDO and CAMELOT.",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Copyrights of all characters",
 	"and music reserved by",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"NINTENDO.",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	0
 #else
 	/* European releases share this order, with local staff and publisher */
 	/* rows. */
 	"North American",
 	" Localization",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Translation",
 	" Coordination",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Bill Trinen",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Writing",
 	" & Editing",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Richard Amtower",
 	"Nate Bihldorf",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Additional   ",
 	" Localization",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Tim O'Leary",
 	"Scot Ritchey",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Localization",
 	" Management ",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Leslie Swan",
 	"Jeff Miller",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Localization & ",
 	" Testing Europe",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Andy Fey",
 	"Kai Zeh",
 	"Tanja Baar",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 #if LANGUAGE == LANGUAGE_GERMAN
 	"German Translation",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Micky Auer",
 	"Martina Deimel",
 #elif LANGUAGE == LANGUAGE_SPANISH
 	"Spanish Translation",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Carlos Montilla",
 	"Miguel Lopez",
 #elif LANGUAGE == LANGUAGE_FRENCH
 	"French Translation",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Daniel Charbit",
 	"Steven Arhan",
 #elif LANGUAGE == LANGUAGE_ITALIAN
 	"Italian Translation",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Andrea Salvi",
 	"Calimero Tiiijun",
 #endif
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 #if LANGUAGE == LANGUAGE_GERMAN
 	"German Testing",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Maurice Tisdale",
 	"Andreas Dietz",
 	"Rudolf Schnitzer",
@@ -877,7 +874,7 @@ const void *Credits_Lines[] = {
 	"Zoran Tasevski",
 #elif LANGUAGE == LANGUAGE_SPANISH
 	"Spanish Testing",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Maurice Tisdale",
 	"Andreas Dietz",
 	"Luis Martinez",
@@ -886,7 +883,7 @@ const void *Credits_Lines[] = {
 	"Monica Gomez",
 #elif LANGUAGE == LANGUAGE_FRENCH
 	"French Testing",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Maurice Tisdale",
 	"Peter Ehlert",
 	"Emeline Condy",
@@ -896,7 +893,7 @@ const void *Credits_Lines[] = {
 	"Michael Troger",
 #elif LANGUAGE == LANGUAGE_ITALIAN
 	"Italian Testing",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Maurice Tisdale",
 	"Andreas Dietz",
 	"Sonia Trepiccioni",
@@ -904,50 +901,50 @@ const void *Credits_Lines[] = {
 	"Luca Riccioni",
 	"Andrea De Benedetto",
 #endif
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Special Thanks to",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Motoyasu Tojima",
 	"Takako Morita",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Producer",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Shinji Hatano",
 	"Hiroyuki Takahashi",
 	"Shugo Takahashi",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Executive Producer",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Hiroshi Yamauchi",
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	"Copyrights of Game, Scenario,",
 	"and Program reserved by",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"NINTENDO and CAMELOT.",
-	sBlankCreditLine,
+	BlankCreditLine,
 	"Copyrights of all characters",
 	"and music reserved by",
-	sBlankCreditLine,
+	BlankCreditLine,
 #if LANGUAGE != LANGUAGE_FRENCH
 	"NINTENDO.",
 #endif
-	sBlankCreditLine,
-	sBlankCreditLine,
-	sBlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
+	BlankCreditLine,
 	0
 #endif
 };
@@ -956,7 +953,7 @@ const void *Credits_Lines[] = {
 /* The staff credits font's advance widths in pixels, character codes 32 to 127,
    beside the font (font.png). */
 /* clang-format off */
-const Uint8 Credits_GlyphWidths[96] = {
+const Uint8 CreditsGlyphWidths[96] = {
 	7, 4, 7, 7, 8, 8, 8, 4, 5, 5, 5, 6, 4, 6, 4, 6,
 	7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 4, 5, 6, 5, 7,
 	8, 8, 8, 8, 8, 8, 8, 8, 8, 5, 6, 8, 8, 8, 8, 8,
@@ -974,10 +971,10 @@ const Uint8 Credits_GlyphWidths[96] = {
    onto the tile ring and uploads their sprites. */
 void mnCreditsUpdateTextSprs(void)
 {
-	Uint32 frame = CreditsScrollPosition;
-	Uint32 scrollWithinTile = frame & 7;
-	Sint32 tileIndex =
-		(((Sint16)frame / 8) & (CREDITS_RING_ROWS - 1)) * CREDITS_LINE_TILES;
+	Uint32 frm = CreditsScrollPosition;
+	Uint32 scrollWithinTile = frm & 7;
+	Sint32 tileIdx =
+		(((Sint16)frm / 8) & (CREDITS_RING_ROWS - 1)) * CREDITS_LINE_TILES;
 	Uint32 *oamWords = (Uint32 *)(SCROLL_OBJECTS + CREDITS_BORDER_SPRITES);
 	Sint32	row;
 
@@ -990,35 +987,35 @@ void mnCreditsUpdateTextSprs(void)
 		for(column = 0; column < CREDITS_COLUMNS; column++) {
 			*oamWords++ = (row * 8 + CREDITS_TEXT_TOP - scrollWithinTile) |
 				OBJ_X(column * 32 + CREDITS_TEXT_LEFT) | OBJ_SIZE_32X8;
-			*oamWords++ = tileIndex;
-			tileIndex += 4;
-			if(tileIndex == CREDITS_RING_TILES)
-				tileIndex = 0;
+			*oamWords++ = tileIdx;
+			tileIdx += 4;
+			if(tileIdx == CREDITS_RING_TILES)
+				tileIdx = 0;
 		}
 	}
 	syDMAXCopy(SCROLL_OBJECTS, OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
-	if(CREDITS_END_OF_TEXT == 0 && (VBlankCount & 3) == 0)
+	if(CREDITS_END_OF_TEXT == 0 && (FrameCount & 3) == 0)
 		CreditsScrollPosition++;
 }
 
-/* A frame-pass event added by mnCreditsInitTextSprs: renders each entering line
+/* A tick-pass event added by mnCreditsInitTextSprs: renders each entering line
    sixteen rows ahead of the visible top, into the hidden half of the tile ring.
    A null table entry latches the end-of-text state. */
 void mnCreditsDrawEnteringLine(void)
 {
-	Uint32 scrollPosition;
-	Sint32 lineIndex;
+	Uint32 scrollPos;
+	Sint32 lineIdx;
 
 	/* A line is 8 pixels, so a new one is drawn each time the scroll crosses
-	   into the next line, every 32 frames. */
+	   into the next line, every 32 ticks. */
 	if(CREDITS_END_OF_TEXT == 0) {
-		scrollPosition = CreditsScrollPosition;
+		scrollPos = CreditsScrollPosition;
 		if((Sint16)CreditsScrollPosition / 8 !=
 			CREDITS_LAST_LINE_POSITION / 8) {
-			lineIndex = (Sint16)CreditsScrollPosition / 8;
-			CREDITS_LAST_LINE_POSITION = scrollPosition;
-			CREDITS_END_OF_TEXT = mnCreditsDrawLine(Credits_Lines[lineIndex],
-				CREDITS_RING_LINE_TILE(lineIndex), CREDITS_ALIGN_CENTER);
+			lineIdx = (Sint16)CreditsScrollPosition / 8;
+			CREDITS_LAST_LINE_POSITION = scrollPos;
+			CREDITS_END_OF_TEXT = mnCreditsDrawLine(CreditsLines[lineIdx],
+				CREDITS_RING_LINE_TILE(lineIdx), CREDITS_ALIGN_CENTER);
 		}
 	}
 }
@@ -1062,10 +1059,10 @@ void mnCreditsInitTextSprs(void)
 	   VBlank. */
 	for(row = 0; row < CREDITS_VISIBLE_ROWS; row++) {
 		for(column = 0; column < CREDITS_COLUMNS; column++) {
-			Uint32 tileIndex = (row * 3) * 8 + column * 4;
+			Uint32 tileIdx = (row * 3) * 8 + column * 4;
 			*oamWords++ = (row * 8 + CREDITS_TEXT_TOP) |
 				OBJ_X(column * 32 + CREDITS_TEXT_LEFT) | OBJ_SIZE_32X8;
-			*oamWords++ = tileIndex;
+			*oamWords++ = tileIdx;
 		}
 	}
 	/* The last eight entries are parked off screen. */
@@ -1077,10 +1074,10 @@ void mnCreditsInitTextSprs(void)
 	CREDITS_LAST_LINE_POSITION = 0;
 	CREDITS_END_OF_TEXT = 0;
 	sySetEvent(mnCreditsUpdateTextSprs, EVENT_PASS_VBLANK);
-	sySetEvent(mnCreditsDrawEnteringLine, EVENT_PASS_FRAME);
+	sySetEvent(mnCreditsDrawEnteringLine, EVENT_PASS_TICK);
 	for(row = 0; row < CREDITS_RING_ROWS; row++)
 		mnCreditsDrawLine(
-			Credits_Lines[0], row * CREDITS_LINE_TILES, CREDITS_ALIGN_CENTER);
+			CreditsLines[0], row * CREDITS_LINE_TILES, CREDITS_ALIGN_CENTER);
 }
 
 /* Row `row` (4 bytes, 8 pixels) of sprite tile `tile` in OBJ VRAM. */
@@ -1094,15 +1091,15 @@ Sint32 mnCreditsDrawLine(const Uint8 *text, Sint32 firstTile, Sint32 alignment)
 	Sint32		 startX = 0;
 	Sint32		 lineWidth = CREDITS_LINE_PIXELS;
 	const Uint8 *font = Credits_Font;
-	Sint32		 tileCount;
+	Sint32		 tileCnt;
 	Sint32		 textAdvance;
-	const Uint8 *sourceBytes;
-	Uint8		*destination;
-	Uint32		 sourceValue;
-	Sint32		 glyphIndex;
+	const Uint8 *srcBytes;
+	Uint8		*dst;
+	Uint32		 srcValue;
+	Sint32		 glyphIdx;
 	Sint32		 glyphWidth;
 	Sint32		 row;
-	Sint32		 columnIndex;
+	Sint32		 columnIdx;
 	Uint32		 glyphBits;
 	Uint32		 glyphMask;
 
@@ -1132,12 +1129,12 @@ Sint32 mnCreditsDrawLine(const Uint8 *text, Sint32 firstTile, Sint32 alignment)
 	}
 
 	/* Measure the line in the credits font, then choose where it starts.
-	   sourceBytes walks the text here, and each glyph's rows below. */
-	sourceBytes = text;
+	   srcBytes walks the text here, and each glyph's rows below. */
+	srcBytes = text;
 	textAdvance = 0;
-	while((sourceValue = *sourceBytes++) != 0) {
-		if(sourceValue >= ' ')
-			textAdvance += Credits_GlyphWidths[sourceValue - ' '];
+	while((srcValue = *srcBytes++) != 0) {
+		if(srcValue >= ' ')
+			textAdvance += CreditsGlyphWidths[srcValue - ' '];
 	}
 	if(alignment == CREDITS_ALIGN_RIGHT)
 		startX = lineWidth - textAdvance;
@@ -1145,65 +1142,64 @@ Sint32 mnCreditsDrawLine(const Uint8 *text, Sint32 firstTile, Sint32 alignment)
 		startX = (lineWidth - textAdvance) / 2;
 
 	/* Rasterize each glyph and its one-pixel shadow at the aligned start. */
-	/* FAKEMATCH(dead): sourceBytes = text, overwritten before it is read; this
+	/* FAKEMATCH(dead): srcBytes = text, overwritten before it is read; this
 	 * pass walks text itself; as no store. */
-	sourceBytes = text;
+	srcBytes = text;
 	textAdvance = 0;
-	while((sourceValue = *text++) != 0) {
-		if(sourceValue >= ' ') {
-			glyphIndex = sourceValue - ' ';
-			sourceBytes = font + glyphIndex * 8;
-			destination = linePixels + startX + textAdvance;
+	while((srcValue = *text++) != 0) {
+		if(srcValue >= ' ') {
+			glyphIdx = srcValue - ' ';
+			srcBytes = font + glyphIdx * 8;
+			dst = linePixels + startX + textAdvance;
 			for(row = 0; row < 8; row++) {
-				glyphBits = *sourceBytes++;
+				glyphBits = *srcBytes++;
 				glyphMask = 0x80;
-				for(columnIndex = 0; columnIndex < 8; columnIndex++) {
+				for(columnIdx = 0; columnIdx < 8; columnIdx++) {
 					if(glyphBits & glyphMask) {
-						destination[CREDITS_RASTER_STRIDE + 1] =
-							CREDITS_SHADOW_COLOR;
-						destination[0] = CREDITS_TEXT_COLOR;
+						dst[CREDITS_RASTER_STRIDE + 1] = CREDITS_SHADOW_COLOR;
+						dst[0] = CREDITS_TEXT_COLOR;
 					}
-					destination++;
+					dst++;
 					glyphMask >>= 1;
 				}
-				destination += CREDITS_RASTER_STRIDE - 8;
+				dst += CREDITS_RASTER_STRIDE - 8;
 			}
 			glyphWidth = 1;
-			if(sourceValue >= ' ')
-				glyphWidth = Credits_GlyphWidths[glyphIndex];
+			if(srcValue >= ' ')
+				glyphWidth = CreditsGlyphWidths[glyphIdx];
 			textAdvance += glyphWidth;
 		}
 	}
 
 	/* Pack pairs of pixel indices into bytes, keeping the 256-pixel stride. */
-	tileCount = lineWidth / 8;
-	sourceBytes = linePixels;
-	destination = linePixels;
+	tileCnt = lineWidth / 8;
+	srcBytes = linePixels;
+	dst = linePixels;
 	for(row = 0; row < 8; row++) {
-		for(columnIndex = 0; columnIndex < tileCount * 4; columnIndex++) {
-			sourceValue = *sourceBytes++;
-			sourceValue |= *sourceBytes++ << 4;
-			*destination++ = sourceValue;
+		for(columnIdx = 0; columnIdx < tileCnt * 4; columnIdx++) {
+			srcValue = *srcBytes++;
+			srcValue |= *srcBytes++ << 4;
+			*dst++ = srcValue;
 		}
-		destination += CREDITS_RASTER_STRIDE - tileCount * 4;
-		sourceBytes += CREDITS_RASTER_STRIDE - tileCount * 8;
+		dst += CREDITS_RASTER_STRIDE - tileCnt * 4;
+		srcBytes += CREDITS_RASTER_STRIDE - tileCnt * 8;
 	}
 
 	/* Transpose raster rows into the tile ring used by the scrolling
 	   sprites. */
-	for(row = 0; row < tileCount; row++) {
-		Sint32	tileIndex = firstTile + row;
+	for(row = 0; row < tileCnt; row++) {
+		Sint32	tileIdx = firstTile + row;
 		Uint32 *words = (Uint32 *)linePixels + row;
 
 		/* A tile's eight rows of 4 bytes, each a 256-pixel raster row apart. */
-		OBJ_TILE_ROW(tileIndex, 0) = words[0];
-		OBJ_TILE_ROW(tileIndex, 1) = words[1 * (CREDITS_RASTER_STRIDE / 4)];
-		OBJ_TILE_ROW(tileIndex, 2) = words[2 * (CREDITS_RASTER_STRIDE / 4)];
-		OBJ_TILE_ROW(tileIndex, 3) = words[3 * (CREDITS_RASTER_STRIDE / 4)];
-		OBJ_TILE_ROW(tileIndex, 4) = words[4 * (CREDITS_RASTER_STRIDE / 4)];
-		OBJ_TILE_ROW(tileIndex, 5) = words[5 * (CREDITS_RASTER_STRIDE / 4)];
-		OBJ_TILE_ROW(tileIndex, 6) = words[6 * (CREDITS_RASTER_STRIDE / 4)];
-		OBJ_TILE_ROW(tileIndex, 7) = words[7 * (CREDITS_RASTER_STRIDE / 4)];
+		OBJ_TILE_ROW(tileIdx, 0) = words[0];
+		OBJ_TILE_ROW(tileIdx, 1) = words[1 * (CREDITS_RASTER_STRIDE / 4)];
+		OBJ_TILE_ROW(tileIdx, 2) = words[2 * (CREDITS_RASTER_STRIDE / 4)];
+		OBJ_TILE_ROW(tileIdx, 3) = words[3 * (CREDITS_RASTER_STRIDE / 4)];
+		OBJ_TILE_ROW(tileIdx, 4) = words[4 * (CREDITS_RASTER_STRIDE / 4)];
+		OBJ_TILE_ROW(tileIdx, 5) = words[5 * (CREDITS_RASTER_STRIDE / 4)];
+		OBJ_TILE_ROW(tileIdx, 6) = words[6 * (CREDITS_RASTER_STRIDE / 4)];
+		OBJ_TILE_ROW(tileIdx, 7) = words[7 * (CREDITS_RASTER_STRIDE / 4)];
 	}
 	syHeapRelease(linePixels);
 	return 0;

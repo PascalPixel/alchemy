@@ -44,7 +44,7 @@ typedef struct WORLD_MAP_BLOCKS {
 #define MAP_SHAPE(shape, height0, height1, height2) \
 	((shape) | (height0) << 8 | (height1) << 16 | (height2) << 24)
 
-/* The map's animation each frame: its tiles, its blend scripts and the World
+/* The map's animation each tick: its tiles, its blend scripts and the World
    Map's tints and tile blocks. */
 void   fdTilesetAnimUpdate(void);
 void   fdWorldMapUpdateRegionTint(Sint32 region, Sint32 gradual);

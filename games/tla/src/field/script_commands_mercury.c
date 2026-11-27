@@ -1,17 +1,17 @@
 /* A Mercury Djinni joining the party. Part of script_commands.c. */
 
 #define MERCURY_AFTERIMAGE_MAX 8  /* afterimages of the rising Djinni */
-#define MERCURY_RISE_FRAMES	   15 /* frames the Djinni rises, 8 pixels each */
+#define MERCURY_RISE_TICKS	   15 /* ticks the Djinni rises, 8 pixels each */
 
 /* Moves the actor halfway to the actor it watches; a copy of
    fdActorMoveHalfwayTowardTarget. */
 void fdActorMoveHalfwayTowardTargetCopy(ACTOR *actor)
 {
-	ACTOR *target = (ACTOR *)actor->watchedActor;
+	ACTOR *tgt = (ACTOR *)actor->watchedActor;
 
-	actor->x.fixed += (target->x.fixed - actor->x.fixed) / 2;
-	actor->y.fixed += (target->y.fixed - actor->y.fixed) / 2;
-	actor->z.fixed += (target->z.fixed - actor->z.fixed) / 2;
+	actor->x.fixed += (tgt->x.fixed - actor->x.fixed) / 2;
+	actor->y.fixed += (tgt->y.fixed - actor->y.fixed) / 2;
+	actor->z.fixed += (tgt->z.fixed - actor->z.fixed) / 2;
 }
 
 /* A Mercury Djinni joins the party: the screen is tinted blue, the Djinni
@@ -22,17 +22,17 @@ void fdDjinnRunMercuryJoinEffect(Sint32 djinniId)
 {
 	ACTOR			   *djinni;
 	ACTOR			   *copy;
-	ACTOR			   *previous;
-	SPR				   *sharedSprite;
+	ACTOR			   *prev;
+	SPR				   *sharedSpr;
 	FIELD_EFFECT_STATE *effectState;
 	ACTOR			  **cursor;
 	ACTOR			  **list;
 	FIELD_PARTICLE	   *effect;
-	Sint32				sprite;
+	Sint32				spr;
 	Sint32				i;
 	Sint32				sharedEntry;
 	ACTOR			   *copies[MERCURY_AFTERIMAGE_MAX];
-	VECTOR3				position;
+	VECTOR3				pos;
 
 	djinni = fdActorGetById(djinniId);
 	if(djinni == NULL)
@@ -50,7 +50,7 @@ void fdDjinnRunMercuryJoinEffect(Sint32 djinniId)
 	fdActorRunRepeatedMotion(djinniId, 1);
 	sySynch(20);
 
-	/* Three hops, at 3, 5 and 7 pixels a frame. */
+	/* Three hops, at 3, 5 and 7 pixels a tick. */
 	sySndPlayStub(SE_JUMP);
 	fdActorJump(djinniId, 3, 14);
 	sySndPlayStub(SE_JUMP);
@@ -60,15 +60,15 @@ void fdDjinnRunMercuryJoinEffect(Sint32 djinniId)
 	sySynch(20);
 
 	/* MERCURY_AFTERIMAGE_MAX afterimages of the same sprite at 15/16 size, each
-	   closing half the distance to the one before it every frame, sharing one
+	   closing half the distance to the one before it every tick, sharing one
 	   VRAM cache entry, as in fdDjinnRunBattleStartHop. */
-	sprite = ((SPR *)djinni->spr)->entries[0]->anmId;
-	sharedSprite = NULL;
-	previous = djinni;
+	spr = ((SPR *)djinni->spr)->entries[0]->anmId;
+	sharedSpr = NULL;
+	prev = djinni;
 	cursor = copies;
 	for(i = 0; i < MERCURY_AFTERIMAGE_MAX; i++) {
 		copy = fdActorCreateStub(
-			sprite, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
+			spr, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
 		*cursor++ = copy;
 		if(copy != NULL) {
 			copy->scaleY = AFTERIMAGE_SCALE;
@@ -81,16 +81,16 @@ void fdDjinnRunMercuryJoinEffect(Sint32 djinniId)
 			fdActorSetSprColModeStub(copy, SPRITE_COLOR_BLUE_TINT);
 			fdActorSelectAnimationStub(copy, ANIM_STILL);
 			fdActorSetSprFlagsStub(copy, 0);
-			sharedSprite = fdSprShareVRAMCacheEntry(copy->spr, sharedSprite);
-			copy->watchedActor = (union FIELD_OBJECT *)previous;
-			previous = copy;
+			sharedSpr = fdSprShareVRAMCacheEntry(copy->spr, sharedSpr);
+			copy->watchedActor = (union FIELD_OBJECT *)prev;
+			prev = copy;
 		}
 	}
 
-	sharedEntry = sharedSprite->slot;
+	sharedEntry = sharedSpr->slot;
 	sySndPlayStub(SE_HIGH_JUMP);
 	djinni->motionFlg = 0;
-	for(i = 0; i < MERCURY_RISE_FRAMES; i++) {
+	for(i = 0; i < MERCURY_RISE_TICKS; i++) {
 		djinni->y.fixed += toFIXED(8);
 		sySynch(1);
 	}
@@ -109,14 +109,14 @@ void fdDjinnRunMercuryJoinEffect(Sint32 djinniId)
 		ANIM_LEADER_ARMS_RAISED);
 	sySynch(20);
 
-	/* The droplets (SPRITE_DROPLET), one a frame, from where the Djinni was on
+	/* The droplets (SPRITE_DROPLET), one a tick, from where the Djinni was on
 	   screen (fdEffectUpdateRandomTargetParticle moves them). */
-	SET_POSITION(&position, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
-	fdCameraWorldToScreen(&position);
+	SET_POSITION(&pos, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
+	fdCameraWorldToScreen(&pos);
 
 	effect = effectState->particles;
 	for(i = 0; i < (Sint32)ARRAY_COUNT(effectState->particles); i++) {
-		fdParticleInit(effect, SPRITE_DROPLET, position.x, position.z);
+		fdParticleInit(effect, SPRITE_DROPLET, pos.x, pos.z);
 		fdParticleSetCallback(
 			effect, (void *)fdEffectUpdateRandomTargetParticle);
 		/* SPRITE_DROPLET has two animations and no twinkle, so the droplet
@@ -128,7 +128,7 @@ void fdDjinnRunMercuryJoinEffect(Sint32 djinniId)
 		effect++;
 	}
 
-	/* After 120 frames every droplet still in use takes its last fall. */
+	/* After 120 ticks every droplet still in use takes its last fall. */
 	sySynch(120);
 	for(i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
 		if(effectState->particles[i].active)
@@ -141,4 +141,4 @@ void fdDjinnRunMercuryJoinEffect(Sint32 djinniId)
 }
 
 #undef MERCURY_AFTERIMAGE_MAX
-#undef MERCURY_RISE_FRAMES
+#undef MERCURY_RISE_TICKS

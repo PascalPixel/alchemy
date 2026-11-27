@@ -1,33 +1,33 @@
 /* Stepping onto a crumbling pillar of an (actor, flag) list, as
    scCrumblingPillarStep: the first time it flashes and cracks, the second time
    it gives way under the leader with a shake, dust and a thump. */
-void scLeaderCheckCrumblingStep(const Uint16 *table)
+void scLeaderCheckCrumblingStep(const Uint16 *tbl)
 {
 	ACTOR *leader;
 	ACTOR *trap;
-	FIXED  position[3];
+	FIXED  pos[3];
 	Sint32 id;
-	Sint32 flag;
+	Sint32 flg;
 	Sint32 second;
 
 	if(fdTryJumpForward() != 0)
 		return;
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	position[0] = leader->x.fixed;
-	position[1] = leader->y.fixed;
-	position[2] = leader->z.fixed;
-	trap = fdActorFindAtMetatile(position, 0);
+	pos[0] = leader->x.fixed;
+	pos[1] = leader->y.fixed;
+	pos[2] = leader->z.fixed;
+	trap = fdActorFindAtMetatile(pos, 0);
 	if(trap == 0)
 		return;
-	while(*table != ACTOR_LIST_END) {
-		id = table[0];
+	while(*tbl != ACTOR_LIST_END) {
+		id = tbl[0];
 		if(fdActorGetById(id) != trap) {
-			table += 2;
+			tbl += 2;
 			continue;
 		}
-		flag = table[1];
+		flg = tbl[1];
 		fdScriptStart();
-		if(!syGameFlagGet(flag)) {
+		if(!syGameFlagGet(flg)) {
 			sySndPlay(SE_CHEST_CLOSE);
 			fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_WHITE);
 			sySynch(2);
@@ -38,9 +38,9 @@ void scLeaderCheckCrumblingStep(const Uint16 *table)
 			sySynch(4);
 			fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_NORMAL);
 			scDustScatter(0);
-			syGameFlagSet(flag);
+			syGameFlagSet(flg);
 		} else {
-			second = flag + 1;
+			second = flg + 1;
 			if(!syGameFlagGet(second)) {
 				leader->motionFlg = 0;
 				sySndPlay(SE_PUSH);

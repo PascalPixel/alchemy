@@ -105,7 +105,7 @@ typedef enum TOLBI_ACTOR_ID {
 	ACTOR_TOLBI_WORRIED_WOMAN,
 	/* An old man with a cane (SPRITE_OLD_MAN_WITH_CANE), who says he is 65 and
 	   later talks of the Lucky Guess. He copies the leader's sprite priority
-	   every frame (scTolbiCopyLeaderPriority). */
+	   every tick (scTolbiCopyLeaderPriority). */
 	ACTOR_TOLBI_OLD_MAN,
 	/* An old woman (SPRITE_OLD_WOMAN) who asks whether someone can live past a
 	   hundred (scTolbiAskAboutLivingPastHundred). */
@@ -219,14 +219,14 @@ static void scTolbiJoinEmber(void)
 
    Returns 1 when the child stopped. */
 static Sint32 scTolbiKidStopForTarget(
-	ACTOR *kid, ACTOR *target, Sint32 range, Sint32 force)
+	ACTOR *kid, ACTOR *tgt, Sint32 range, Sint32 force)
 {
 	Sint32 stopped = 0;
 
-	if(fdActorDistance(target, kid) < range || force != 0) {
+	if(fdActorDistance(tgt, kid) < range || force != 0) {
 		/* The heading to the target, and the eight-way directions around it. */
 		Uint32 heading = (Uint16)syAtan(
-			target->z.fixed - kid->z.fixed, target->x.fixed - kid->x.fixed);
+			tgt->z.fixed - kid->z.fixed, tgt->x.fixed - kid->x.fixed);
 		Uint32 farLeft = FACING_SIXTEENTH(heading - 2 * FACING_STEP);
 		Uint32 farRight = FACING_SIXTEENTH(heading + 2 * FACING_STEP);
 		Uint32 left = FACING_SIXTEENTH(heading - FACING_STEP);
@@ -239,7 +239,7 @@ static Sint32 scTolbiKidStopForTarget(
 			fdActorSelectAnimation(kid, ANIM_STAND);
 			stopped = 1;
 		}
-		if(target == fdActorGet(ACTOR_PARTY_LEADER) &&
+		if(tgt == fdActorGet(ACTOR_PARTY_LEADER) &&
 			(farRight == facing || farLeft == facing)) {
 			kid->paused = 1;
 			fdActorSelectAnimation(kid, ANIM_STAND);
@@ -258,7 +258,7 @@ static Sint32 scTolbiKidStopForTarget(
    TALK_STOP_RANGE), the child being talked to stops whatever the direction. */
 static UNREAD_RESULT scTolbiUpdateKid(ACTOR *updated)
 {
-	WIN_STATE	*window = (WIN_STATE *)WindowStateWork[0];
+	WIN_STATE	*win = (WIN_STATE *)WindowStateWork[0];
 	FIELD_STATE *state = FieldStateWork;
 	Sint32		 force = 0;
 	Sint32		 range = STOP_RANGE;
@@ -276,7 +276,7 @@ static UNREAD_RESULT scTolbiUpdateKid(ACTOR *updated)
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 
-	if((Sint16)state->talk != 0 || window->mindRead != 0) {
+	if((Sint16)state->talk != 0 || win->mindRead != 0) {
 		range = TALK_STOP_RANGE;
 		if((updated->tmr & KID_TALKING) != 0) {
 			force = 1;
@@ -595,24 +595,24 @@ static void scTolbiEnterDoor(void)
 	}
 	syImportScriptSetExitRequest(state->stepCue);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
 /* The old man with a cane, who wanders west of the fountain, is drawn in front
-   of or behind things as the leader is, each frame.
+   of or behind things as the leader is, each tick.
 
    During the festival he says he is 65 and that Babi was already old when he
    was born. */
 static void scTolbiCopyLeaderPriority(ACTOR *updated)
 {
-	Sint32 priority;
+	Sint32 pri;
 
 	if(updated != NULL) {
-		priority = fdActorGet(ACTOR_PARTY_LEADER)->spr->image.pri;
+		pri = fdActorGet(ACTOR_PARTY_LEADER)->spr->image.pri;
 		updated->priFlg = 0;
-		updated->spr->image.pri = priority;
-		updated->spr->shadow.pri = priority;
+		updated->spr->image.pri = pri;
+		updated->spr->shadow.pri = pri;
 	}
 }
 
@@ -1230,7 +1230,7 @@ CUE TolbiCuesAfterColosso[] = {
 };
 /* clang-format on */
 
-/* How a door opens, as two frames of metatiles copied over the closed door. */
+/* How a door opens, as two ticks of metatiles copied over the closed door. */
 Uint16 TolbiDoorOpening[] = {
 	MAPGRID_ANIMATION_STEP(39, 32, 1, 2, 6),
 	MAPGRID_ANIMATION_STEP(40, 32, 1, 2, 6),

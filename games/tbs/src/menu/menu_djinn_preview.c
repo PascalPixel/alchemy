@@ -5,18 +5,18 @@
 #include "menu_internal.h"
 
 /* The Djinni figures of a give or trade preview hop across between the two
-   party members once a second, a few frames into it: a hop takes
-   DJINN_PREVIEW_HOP_FRAMES frames along half a sine wave of
+   party members once a second, a few ticks into it: a hop takes
+   DJINN_PREVIEW_HOP_TICKS ticks along half a sine wave of
    DJINN_PREVIEW_HOP_SINE_HEIGHT pixels, cut flat at DJINN_PREVIEW_HOP_HEIGHT.
    It would dip no deeper than DJINN_PREVIEW_HOP_DEPTH below its line, and its
-   slide would start over after DJINN_PREVIEW_SLIDE_FRAMES frames; a hop reaches
+   slide would start over after DJINN_PREVIEW_SLIDE_TICKS ticks; a hop reaches
    neither. */
-#define DJINN_PREVIEW_HOP_FRAMES	  30
+#define DJINN_PREVIEW_HOP_TICKS		  30
 #define DJINN_PREVIEW_HOP_DELAY		  5
 #define DJINN_PREVIEW_HOP_SINE_HEIGHT 16
 #define DJINN_PREVIEW_HOP_HEIGHT	  6
 #define DJINN_PREVIEW_HOP_DEPTH		  12
-#define DJINN_PREVIEW_SLIDE_FRAMES	  35
+#define DJINN_PREVIEW_SLIDE_TICKS	  35
 
 /* The tilemap rows at the top of the screen that a tutorial message covers,
    saved before it opens and put back after it closes. */
@@ -39,25 +39,25 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 	DJINN_MENU_BACKDROP *backdrop;
 	WIN_STATE			*state;
 	WINDOW				*list;
-	Sint32				 pageCounts[2];
+	Sint32				 pageCnts[2];
 	Sint32				 selectedPages[2];
 	Sint32				 confirmationChoice;
 	Uint32				 redraw;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 page;
 	Sint32				 previewMode;
 	Bool				 addPairSlot;
 	Sint32				 step;
 	Sint32				 row;
 	Sint32				 result;
-	Sint32				 index;
-	Sint32				 memberIndex;
+	Sint32				 idx;
+	Sint32				 memberIdx;
 
 	menu = MenuState;
 	confirmationChoice = YES;
 	result = 0;
 	redraw = 1;
-	frame = 0;
+	frm = 0;
 	selectedPages[0] = 0;
 	page = DJINN_COMPARE_PAGE_BOTH;
 	menu->cursor->motion = ICON_HIDDEN;
@@ -65,8 +65,8 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 
 	/* The party figures go below the screen, except the two party members
 	   concerned: the first over the left window, the second over the right. */
-	for(memberIndex = 0; memberIndex < 4; memberIndex++) {
-		menu->memberY[memberIndex] = MENU_FIGURE_HIDDEN_Y;
+	for(memberIdx = 0; memberIdx < 4; memberIdx++) {
+		menu->memberY[memberIdx] = MENU_FIGURE_HIDDEN_Y;
 	}
 	menu->memberX[menu->selectedColumn[1]] = 120;
 	menu->memberY[menu->selectedColumn[1]] = 32;
@@ -78,8 +78,8 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 	mnWindowCloseIfOpen(&menu->helpWin, 1);
 	mnWindowUpdateOrCreate(&menu->helpWin, 0, 0, 30, 5, WINDOW_FLAG_INSTANT);
 
-	pageCounts[0] = 1;
-	pageCounts[1] = 1;
+	pageCnts[0] = 1;
+	pageCnts[1] = 1;
 
 	/* Count the Psynergy lists' pages: make the change on each party member's
 	   unit, work the unit out again, compare its Psynergy with a copy taken
@@ -90,55 +90,55 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 		UNIT   *unit;
 		Sint32	memberId;
 		Sint32	firstElement;
-		Sint32	firstIndex;
+		Sint32	firstIdx;
 		Sint32	secondElement;
-		Sint32	secondIndex;
+		Sint32	secondIdx;
 		Sint32	firstWasSet;
 		Sint32	secondWasSet;
-		Sint32	lostCount;
-		Sint32	gainedCount;
+		Sint32	lostCnt;
+		Sint32	gainedCnt;
 		Sint32	size;
 
 		diffState = syHeapAllocEWRAM(96);
 		size = sizeof(*originalUnit);
 		originalUnit = syHeapAllocEWRAM(size);
 		secondElement = 0;
-		secondIndex = 0;
+		secondIdx = 0;
 		memberId = menu->shownMember[0];
 		firstElement = menu->pairElement[0];
-		firstIndex = menu->pairIdx[0] & DJINN_ENTRY_INDEX;
+		firstIdx = menu->pairIdx[0] & DJINN_ENTRY_INDEX;
 		firstWasSet = (Uint16)(menu->pairEntries[0] & DJINN_ENTRY_IS_SET);
 
 		unit = gmUnitGetStub(memberId);
 		syWordsCopy(originalUnit, unit, size);
-		gmDjinnPutOnStandbyStub(memberId, firstElement, firstIndex);
+		gmDjinnPutOnStandbyStub(memberId, firstElement, firstIdx);
 		if(mode == DJINN_COMPARE_TRADE) {
 			secondElement = menu->pairElement[1];
-			secondIndex = menu->pairIdx[1] & DJINN_ENTRY_INDEX;
+			secondIdx = menu->pairIdx[1] & DJINN_ENTRY_INDEX;
 			secondWasSet = (Uint16)(menu->pairEntries[1] & DJINN_ENTRY_IS_SET);
-			gmDjinnGiveStub(memberId, secondElement, secondIndex);
+			gmDjinnGiveStub(memberId, secondElement, secondIdx);
 			if(secondWasSet != 0) {
-				gmDjinnSetStub(memberId, secondElement, secondIndex);
+				gmDjinnSetStub(memberId, secondElement, secondIdx);
 			}
 		}
 		gmUnitCalcStub(memberId);
-		pageCounts[0] = mnPsynergyListDiff(originalUnit->psynergy,
-			unit->psynergy, diffState, &gainedCount, &lostCount);
+		pageCnts[0] = mnPsynergyListDiff(originalUnit->psynergy, unit->psynergy,
+			diffState, &gainedCnt, &lostCnt);
 		syWordsCopy(unit, originalUnit, size);
 
 		memberId = menu->shownMember[1];
 		unit = gmUnitGetStub(memberId);
 		syWordsCopy(originalUnit, unit, size);
 		if(mode == DJINN_COMPARE_TRADE) {
-			gmDjinnPutOnStandbyStub(memberId, secondElement, secondIndex);
+			gmDjinnPutOnStandbyStub(memberId, secondElement, secondIdx);
 		}
-		gmDjinnGiveStub(memberId, firstElement, firstIndex);
+		gmDjinnGiveStub(memberId, firstElement, firstIdx);
 		if(firstWasSet != 0) {
-			gmDjinnSetStub(memberId, firstElement, firstIndex);
+			gmDjinnSetStub(memberId, firstElement, firstIdx);
 		}
 		gmUnitCalcStub(memberId);
-		pageCounts[1] = mnPsynergyListDiff(originalUnit->psynergy,
-			unit->psynergy, diffState, &gainedCount, &lostCount);
+		pageCnts[1] = mnPsynergyListDiff(originalUnit->psynergy, unit->psynergy,
+			diffState, &gainedCnt, &lostCnt);
 		syWordsCopy(unit, originalUnit, size);
 		syHeapRelease(originalUnit);
 		syHeapRelease(diffState);
@@ -148,42 +148,42 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 		UNIT   *unit;
 		Sint32	firstMemberId;
 		Sint32	firstElement;
-		Sint32	firstIndex;
+		Sint32	firstIdx;
 		Sint32	applySecond;
-		Sint32	lostCount;
-		Sint32	gainedCount;
+		Sint32	lostCnt;
+		Sint32	gainedCnt;
 
 		diffState = syHeapAllocEWRAM(96);
 		originalUnit = syHeapAllocEWRAM(sizeof(*originalUnit));
 		firstMemberId = menu->shownMember[0];
 		firstElement = menu->pairElement[0];
-		firstIndex = menu->pairIdx[0] & DJINN_ENTRY_INDEX;
+		firstIdx = menu->pairIdx[0] & DJINN_ENTRY_INDEX;
 		applySecond = (mode == DJINN_COMPARE_SET);
 
 		unit = gmUnitGetStub(firstMemberId);
 		syWordsCopy(originalUnit, unit, sizeof(*originalUnit));
-		gmDjinnPutOnStandbyStub(firstMemberId, firstElement, firstIndex);
+		gmDjinnPutOnStandbyStub(firstMemberId, firstElement, firstIdx);
 		if(applySecond != 0) {
-			gmDjinnSetStub(firstMemberId, firstElement, firstIndex);
+			gmDjinnSetStub(firstMemberId, firstElement, firstIdx);
 		}
 		gmUnitCalcStub(firstMemberId);
-		pageCounts[0] = mnPsynergyListDiff(originalUnit->psynergy,
-			unit->psynergy, diffState, &gainedCount, &lostCount);
+		pageCnts[0] = mnPsynergyListDiff(originalUnit->psynergy, unit->psynergy,
+			diffState, &gainedCnt, &lostCnt);
 		syWordsCopy(unit, originalUnit, sizeof(*originalUnit));
-		pageCounts[1] = pageCounts[0];
+		pageCnts[1] = pageCnts[0];
 		page = DJINN_COMPARE_PAGE_GIVER;
 		syHeapRelease(originalUnit);
 		syHeapRelease(diffState);
 	}
 
 	/* Psynergy entries to pages of five. */
-	pageCounts[0] = ((pageCounts[0] - 1) / 5) + 1;
-	if(pageCounts[0] == 0) {
-		pageCounts[0] = 1;
+	pageCnts[0] = ((pageCnts[0] - 1) / 5) + 1;
+	if(pageCnts[0] == 0) {
+		pageCnts[0] = 1;
 	}
-	pageCounts[1] = ((pageCounts[1] - 1) / 5) + 1;
-	if(pageCounts[1] == 0) {
-		pageCounts[1] = 1;
+	pageCnts[1] = ((pageCnts[1] - 1) / 5) + 1;
+	if(pageCnts[1] == 0) {
+		pageCnts[1] = 1;
 	}
 
 	/* Open the paired sides only after both units have been restored. */
@@ -269,7 +269,7 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 		pressedKeys = PerPush;
 		repeatedKeys = PerRepeat;
 
-		/* The tutorial presses A for the player after 100 frames, or shows its
+		/* The tutorial presses A for the player after 100 ticks, or shows its
 		   messages; the windows' tilemap rows a message covers are saved before
 		   it opens and put back after it closes. */
 		if(backdrop->tutorialStep != DJINN_TUTORIAL_OFF) {
@@ -296,12 +296,12 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 				break;
 			case DJINN_TUTORIAL_SET_CHANGES:
 				if(backdrop->tutorialTmr == 60) {
-					WINDOW *window;
+					WINDOW *win;
 
 					syWordsCopy(saved, state->tilemap, size);
 					/* "Setting a Djinni changes your attributes and maybe even
 					   your class." */
-					window = mnMessageOpenWindowStub(
+					win = mnMessageOpenWindowStub(
 						MsgDjinnTutorialSetChanges, 8, 0, MESSAGE_WINDOW_ZOOM);
 					DJINN_TUTORIAL_SET_CURSOR(menu, ICON_SHOWN);
 					mnCursorSlide(2, 96);
@@ -309,7 +309,7 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 					while(mnMessageAllTypedStub() == 0) {
 						sySynch(1);
 					}
-					mnWindowCloseStub(window, 1);
+					mnWindowCloseStub(win, 1);
 					syWordsCopy(state->tilemap, saved, size);
 					mnWindowMarkVisibleTextTilesStub();
 					state->dirty = 1;
@@ -321,21 +321,20 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 				break;
 			case DJINN_TUTORIAL_CLASS_PSYNERGY:
 				if(backdrop->tutorialTmr == 60) {
-					WINDOW *window;
+					WINDOW *win;
 
 					syWordsCopy(saved, state->tilemap, size);
 					/* "When your class changes, the Psynergy you can use may
 					   also change." */
-					window =
-						mnMessageOpenWindowStub(MsgDjinnTutorialClassPsynergy,
-							8, 0, MESSAGE_WINDOW_ZOOM);
+					win = mnMessageOpenWindowStub(MsgDjinnTutorialClassPsynergy,
+						8, 0, MESSAGE_WINDOW_ZOOM);
 					DJINN_TUTORIAL_SET_CURSOR(menu, ICON_SHOWN);
 					mnCursorSlide(106, 56);
 					MainRoutineStateWork.msgSpeed = MESSAGE_SPEED_NORMAL;
 					while(mnMessageAllTypedStub() == 0) {
 						sySynch(1);
 					}
-					mnWindowCloseStub(window, 1);
+					mnWindowCloseStub(win, 1);
 					syWordsCopy(state->tilemap, saved, size);
 					mnWindowMarkVisibleTextTilesStub();
 					state->dirty = 1;
@@ -422,26 +421,25 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 		   the page shown. */
 		if(page <= DJINN_COMPARE_PAGE_RECEIVER) {
 			list = menu->secondWin;
-			if(pageCounts[page] > 1) {
+			if(pageCnts[page] > 1) {
 
-				for(index = 0; index < pageCounts[page]; index++) {
+				for(idx = 0; idx < pageCnts[page]; idx++) {
 					Sint32 tile;
 
-					tile = WINDOW_TILE('1') + index;
-					if(index > 9) {
+					tile = WINDOW_TILE('1') + idx;
+					if(idx > 9) {
 						tile = WINDOW_TILE('0');
 					}
-					if(index == selectedPages[page]) {
+					if(idx == selectedPages[page]) {
 						tile -=
 							BG_TILE_PALETTE(WINDOW_PALETTE - HIGHLIGHT_PALETTE);
 					}
 					mnWindowSetTilemapEntryStub(list, tile,
-						list->width - pageCounts[page] + index - 2, -1,
+						list->width - pageCnts[page] + idx - 2, -1,
 						TILEMAP_ENTRY_PLAIN);
 				}
 				mnWindowSetTilemapEntryStub(list, PAGE_ARROW_LEFT,
-					list->width - pageCounts[page] - 3, -1,
-					TILEMAP_ENTRY_PLAIN);
+					list->width - pageCnts[page] - 3, -1, TILEMAP_ENTRY_PLAIN);
 				mnWindowSetTilemapEntryStub(list, PAGE_ARROW_RIGHT,
 					list->width - 2, -1, TILEMAP_ENTRY_PLAIN);
 				mnWindowMarkTilemapRow(state, list->y);
@@ -449,30 +447,30 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 		}
 
 		/* The Djinni figures, at a fixed 3/4 size (a negative phase), hop once
-		   a second: step runs through the hop's frames and holds at its end. */
-		frame++;
-		step = (frame % 60) - DJINN_PREVIEW_HOP_DELAY;
+		   a second: step runs through the hop's ticks and holds at its end. */
+		frm++;
+		step = (frm % 60) - DJINN_PREVIEW_HOP_DELAY;
 		if(step < 0) {
 			step = 0;
 		}
-		if(step > DJINN_PREVIEW_HOP_FRAMES - 1) {
-			step = DJINN_PREVIEW_HOP_FRAMES - 1;
+		if(step > DJINN_PREVIEW_HOP_TICKS - 1) {
+			step = DJINN_PREVIEW_HOP_TICKS - 1;
 		}
 		mnDjinnFiguresSetSlotPhase(0, -(toFIXED(3) / 4));
 		mnDjinnFiguresSetSlotPhase(1, -(toFIXED(3) / 4));
 
 		/* The given Djinni hops from the giver's side to the receiver's, two
-		   pixels a frame; in a trade the other one passes it the other way,
+		   pixels a tick; in a trade the other one passes it the other way,
 		   dipping as far as the first one rises. */
 		if(mode <= DJINN_COMPARE_GIVE) {
 			Sint32 rise;
 			Sint32 slide;
 
-			/* DEAD: step never reaches DJINN_PREVIEW_HOP_FRAMES, so the modulo
+			/* DEAD: step never reaches DJINN_PREVIEW_HOP_TICKS, so the modulo
 			   leaves it as it is; the ROM keeps its division. */
 			rise = -syMulFX(DJINN_PREVIEW_HOP_SINE_HEIGHT,
-				sySin((step % DJINN_PREVIEW_HOP_FRAMES) *
-					(DEGtoANG(180) / DJINN_PREVIEW_HOP_FRAMES)));
+				sySin((step % DJINN_PREVIEW_HOP_TICKS) *
+					(DEGtoANG(180) / DJINN_PREVIEW_HOP_TICKS)));
 			if(rise < -DJINN_PREVIEW_HOP_HEIGHT) {
 				rise = -DJINN_PREVIEW_HOP_HEIGHT;
 			}
@@ -482,10 +480,10 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 			if(rise > DJINN_PREVIEW_HOP_DEPTH) {
 				rise = DJINN_PREVIEW_HOP_DEPTH;
 			}
-			/* DEAD: step never reaches DJINN_PREVIEW_SLIDE_FRAMES, so the
+			/* DEAD: step never reaches DJINN_PREVIEW_SLIDE_TICKS, so the
 			   modulo leaves it as it is and the slide never wraps; the ROM
 			   keeps its division. */
-			slide = (step % DJINN_PREVIEW_SLIDE_FRAMES) * 2;
+			slide = (step % DJINN_PREVIEW_SLIDE_TICKS) * 2;
 			mnDjinnFiguresSetSlotPos(0, slide + 34, rise + 20, 0);
 			if(mode == DJINN_COMPARE_TRADE) {
 				mnDjinnFiguresSetSlotPos(1, 99 - slide, 36 - rise, 0);
@@ -504,13 +502,13 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 
 		/* Blink the down arrow between a thing and what the change makes of it
 		   (DJINN_CHANGE_ARROW_TILE): drawn and blanked in turn every 4
-		   frames. */
-		if((frame & 3) == 0) {
+		   ticks. */
+		if((frm & 3) == 0) {
 			void  *tile;
 			Uint32 fill = TEXT_CANVAS_BACKGROUND_WORD;
 
 			tile = (void *)DJINN_CHANGE_ARROW_VRAM;
-			if((frame & 4) != 0) {
+			if((frm & 4) != 0) {
 				syWordsCopy(tile, Menu_ChangeArrowTile, 32);
 			} else {
 				syWordsFill(tile, 32, fill);
@@ -544,7 +542,7 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 			if(page <= DJINN_COMPARE_PAGE_RECEIVER) {
 				selectedPages[page]--;
 				selectedPages[page] =
-					mnWrapIndex(selectedPages[page], pageCounts[page]);
+					mnWrapIndex(selectedPages[page], pageCnts[page]);
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				syInputResetKeyRepeat();
 				redraw = 1;
@@ -556,7 +554,7 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 				selectedPages[page]++;
 				redraw = 1;
 				selectedPages[page] =
-					mnWrapIndex(selectedPages[page], pageCounts[page]);
+					mnWrapIndex(selectedPages[page], pageCnts[page]);
 			}
 		}
 		sySynch(1);
@@ -566,7 +564,7 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 	   figures grow in again from phase 0. */
 	mnDjinnFiguresSetSlotPhase(0, 0);
 	mnDjinnFiguresSetSlotPhase(1, 0);
-	sySetEvent(mnPlacePartyFigures, EVENT_PASS_FRAME);
+	sySetEvent(mnPlacePartyFigures, EVENT_PASS_TICK);
 
 	WINDOW_STATE->holdTilemapUpload = 1;
 	mnWindowCloseIfOpen(&menu->helpWin, 1);
@@ -590,25 +588,25 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 Sint32 mnDjinnMenuShowMemberStat(void)
 {
 	Sint32			  selectedPages[2];
-	Sint32			  pageCounts[2];
+	Sint32			  pageCnts[2];
 	Sint32			  gained;
 	Sint32			  lost;
 	Sint32			  phase;
 	Bool			  redraw;
-	Sint32			  frame;
-	WINDOW			**leftWindowSlot;
-	WINDOW			**rightWindowSlot;
+	Sint32			  frm;
+	WINDOW			**leftWinSlot;
+	WINDOW			**rightWinSlot;
 	WIN_STATE		 *state;
 	Uint32			  pressedKeys;
 	Uint32			  repeatedKeys;
 	DJINN_MENU_STATE *menu;
 	UNIT			 *unit;
-	WINDOW			 *window;
+	WINDOW			 *win;
 	Uint16			 *listedActions;
 	void			 *saved;
 	Sint32			  result;
 	Sint32			  tile;
-	Sint32			  pageIndex;
+	Sint32			  pageIdx;
 	Sint32			  side;
 	Sint32			  blink;
 
@@ -616,7 +614,7 @@ Sint32 mnDjinnMenuShowMemberStat(void)
 	phase = 0;
 	redraw = TRUE;
 	result = 0;
-	frame = 0;
+	frm = 0;
 	menu->cursor->motion = ICON_HIDDEN;
 	selectedPages[1] = selectedPages[0] = result;
 	for(side = 0; side < 4; side++)
@@ -625,24 +623,24 @@ Sint32 mnDjinnMenuShowMemberStat(void)
 	sySynch(1);
 	/* Count the party member's Psynergy by diffing their list with itself;
 	   saved, room for a copy of the unit, is taken and given back unused. */
-	pageCounts[1] = pageCounts[0] = 1;
+	pageCnts[1] = pageCnts[0] = 1;
 	listedActions = syHeapAllocEWRAM(96);
 	saved = syHeapAllocEWRAM(sizeof(UNIT));
 	unit = gmUnitGetStub(menu->shownMember[0]);
-	pageCounts[1] = pageCounts[0] = mnPsynergyListDiff(
+	pageCnts[1] = pageCnts[0] = mnPsynergyListDiff(
 		unit->psynergy, unit->psynergy, listedActions, &gained, &lost);
 	syHeapRelease(saved);
 	syHeapRelease(listedActions);
-	pageCounts[0] = (pageCounts[0] - 1) / 6 + 1;
-	if(pageCounts[0] == 0)
-		pageCounts[0] = 1;
-	pageCounts[1] = (pageCounts[1] - 1) / 6 + 1;
-	if(pageCounts[1] == 0)
-		pageCounts[1] = 1;
-	leftWindowSlot = (WINDOW **)&menu->win;
-	mnWindowUpdateOrCreate(leftWindowSlot, 0, 5, 15, 15, WINDOW_FLAG_INSTANT);
-	rightWindowSlot = &menu->secondWin;
-	mnWindowUpdateOrCreate(rightWindowSlot, 15, 5, 15, 15, WINDOW_FLAG_INSTANT);
+	pageCnts[0] = (pageCnts[0] - 1) / 6 + 1;
+	if(pageCnts[0] == 0)
+		pageCnts[0] = 1;
+	pageCnts[1] = (pageCnts[1] - 1) / 6 + 1;
+	if(pageCnts[1] == 0)
+		pageCnts[1] = 1;
+	leftWinSlot = (WINDOW **)&menu->win;
+	mnWindowUpdateOrCreate(leftWinSlot, 0, 5, 15, 15, WINDOW_FLAG_INSTANT);
+	rightWinSlot = &menu->secondWin;
+	mnWindowUpdateOrCreate(rightWinSlot, 15, 5, 15, 15, WINDOW_FLAG_INSTANT);
 	mnWindowSprRedrawSavedRectStub(menu->helpWin);
 	mnWindowSprRedrawSavedRectStub(menu->statWin);
 	mnTextDrawMessageAsTilesStub(MsgCurrentStatus, menu->statWin, 0, 0);
@@ -663,36 +661,36 @@ Sint32 mnDjinnMenuShowMemberStat(void)
 				selectedPages[0] + 1, 1);
 			state->holdTilemapUpload = 0;
 		}
-		if(pageCounts[side] > 1) {
-			window = menu->secondWin;
-			for(pageIndex = 0; pageIndex < pageCounts[side]; pageIndex++) {
-				tile = WINDOW_TILE('1') + pageIndex;
-				if(pageIndex > 9)
+		if(pageCnts[side] > 1) {
+			win = menu->secondWin;
+			for(pageIdx = 0; pageIdx < pageCnts[side]; pageIdx++) {
+				tile = WINDOW_TILE('1') + pageIdx;
+				if(pageIdx > 9)
 					tile = WINDOW_TILE('0');
-				if(pageIndex == selectedPages[side])
+				if(pageIdx == selectedPages[side])
 					tile -= BG_TILE_PALETTE(WINDOW_PALETTE - HIGHLIGHT_PALETTE);
-				mnWindowSetTilemapEntryStub(window, tile,
-					window->width - pageCounts[side] + pageIndex - 2, -1,
+				mnWindowSetTilemapEntryStub(win, tile,
+					win->width - pageCnts[side] + pageIdx - 2, -1,
 					TILEMAP_ENTRY_PLAIN);
 			}
-			mnWindowSetTilemapEntryStub(window, PAGE_ARROW_LEFT,
-				window->width - pageCounts[side] - 3, -1, TILEMAP_ENTRY_PLAIN);
-			mnWindowSetTilemapEntryStub(window, PAGE_ARROW_RIGHT,
-				window->width - 2, -1, TILEMAP_ENTRY_PLAIN);
-			mnWindowMarkTilemapRow(state, window->y);
+			mnWindowSetTilemapEntryStub(win, PAGE_ARROW_LEFT,
+				win->width - pageCnts[side] - 3, -1, TILEMAP_ENTRY_PLAIN);
+			mnWindowSetTilemapEntryStub(
+				win, PAGE_ARROW_RIGHT, win->width - 2, -1, TILEMAP_ENTRY_PLAIN);
+			mnWindowMarkTilemapRow(state, win->y);
 		}
 		/* blink is worked out as the preview's hop step is, and not used; the
 		   Djinni figure stays below the screen. */
-		frame++;
-		blink = frame % 60 - DJINN_PREVIEW_HOP_DELAY;
-		CLAMP(blink, 0, DJINN_PREVIEW_HOP_FRAMES - 1);
+		frm++;
+		blink = frm % 60 - DJINN_PREVIEW_HOP_DELAY;
+		CLAMP(blink, 0, DJINN_PREVIEW_HOP_TICKS - 1);
 		mnDjinnFiguresSetSlotPos(0, 32, MENU_FIGURE_HIDDEN_Y, 0);
 		if(redraw) {
 			redraw = FALSE;
 			phase = mnWrapIndex(phase, 2);
 		}
-		if((frame & 3) == 0) {
-			if(frame & 4)
+		if((frm & 3) == 0) {
+			if(frm & 4)
 				syWordsCopy(
 					(void *)DJINN_CHANGE_ARROW_VRAM, Menu_ChangeArrowTile, 32);
 			else
@@ -712,7 +710,7 @@ Sint32 mnDjinnMenuShowMemberStat(void)
 		if(repeatedKeys & KEY_LEFT) {
 			selectedPages[side]--;
 			selectedPages[side] =
-				mnWrapIndex(selectedPages[side], pageCounts[side]);
+				mnWrapIndex(selectedPages[side], pageCnts[side]);
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
 			syInputResetKeyRepeat();
 			redraw = TRUE;
@@ -722,17 +720,17 @@ Sint32 mnDjinnMenuShowMemberStat(void)
 			syInputResetKeyRepeat();
 			redraw = TRUE;
 			selectedPages[side] =
-				mnWrapIndex(selectedPages[side], pageCounts[side]);
+				mnWrapIndex(selectedPages[side], pageCnts[side]);
 		}
 		sySynch(1);
 	}
-	sySetEvent(mnPlacePartyFigures, EVENT_PASS_FRAME);
+	sySetEvent(mnPlacePartyFigures, EVENT_PASS_TICK);
 	WINDOW_STATE->holdTilemapUpload = 1;
 	mnWindowCloseIfOpen(&menu->helpWin, 1);
 	sySynch(1);
 	mnWindowUpdateOrCreate(&menu->helpWin, 13, 0, 17, 5, WINDOW_FLAG_INSTANT);
-	mnWindowCloseIfOpen(leftWindowSlot, 1);
-	mnWindowCloseIfOpen(rightWindowSlot, 1);
+	mnWindowCloseIfOpen(leftWinSlot, 1);
+	mnWindowCloseIfOpen(rightWinSlot, 1);
 	mnWindowSprRedrawSavedRectStub(menu->listWin);
 	/* BUG: no window is ever made in unopenedWin (DJINN_MENU_STATE), so this
 	   redraws through NULL; see the field. BUGFIX skips it. */
@@ -748,50 +746,49 @@ Sint32 mnDjinnMenuShowMemberStat(void)
 /* Marks recipients that would leave unequal Djinn totals after a direct give.
    Returns how many recipients would need a trade instead. */
 Sint32 mnDjinnMarkTradeOnlyRecipients(
-	Sint8 *requiresTrade, Sint32 sourceMemberColumn)
+	Sint8 *requiresTrade, Sint32 srcMemberColumn)
 {
-	Sint32			  tradeCount;
+	Sint32			  tradeCnt;
 	Sint32			  memberColumn;
 	Sint8			 *entry;
 	DJINN_MENU_STATE *menu;
 
 	menu = MenuState;
-	tradeCount = 0;
+	tradeCnt = 0;
 	memberColumn = 0;
-	if(tradeCount < menu->memberCnt) {
+	if(tradeCnt < menu->memberCnt) {
 		entry = requiresTrade;
 		do {
 			*entry = 0;
-			if(memberColumn != sourceMemberColumn) {
-				if(mnDjinnCheckGiveBalance(sourceMemberColumn, memberColumn) ==
+			if(memberColumn != srcMemberColumn) {
+				if(mnDjinnCheckGiveBalance(srcMemberColumn, memberColumn) ==
 					0) {
 					*entry = 1;
-					tradeCount += 1;
+					tradeCnt += 1;
 				}
 			}
 			memberColumn += 1;
 			entry += 1;
 		} while(memberColumn < menu->memberCnt);
 	}
-	return tradeCount;
+	return tradeCnt;
 }
 
 /* Tests whether a hypothetical give leaves every pair of party members within
    one Djinn. */
-Sint32 mnDjinnCheckGiveBalance(
-	Sint32 sourceMemberColumn, Sint32 targetMemberColumn)
+Sint32 mnDjinnCheckGiveBalance(Sint32 srcMemberColumn, Sint32 tgtMemberColumn)
 {
 	DJINN_MENU_STATE *menu;
-	Sint8			  ownedCounts[16];
+	Sint8			  ownedCnts[16];
 	Uint8			  firstMember;
 	Uint8			  secondMember;
 	Sint32			  difference;
 	Sint32			  balanced;
 
 	menu = MenuState;
-	mnDjinnCountOwned((Uint8 *)ownedCounts);
-	ownedCounts[sourceMemberColumn] -= 1;
-	ownedCounts[targetMemberColumn] += 1;
+	mnDjinnCountOwned((Uint8 *)ownedCnts);
+	ownedCnts[srcMemberColumn] -= 1;
+	ownedCnts[tgtMemberColumn] += 1;
 	balanced = 1;
 	for(firstMember = 0; firstMember < menu->memberCnt; firstMember++) {
 		secondMember = firstMember;
@@ -800,8 +797,7 @@ Sint32 mnDjinnCheckGiveBalance(
 				secondMember++;
 				if(secondMember >= menu->memberCnt)
 					break;
-				difference =
-					ownedCounts[firstMember] - ownedCounts[secondMember];
+				difference = ownedCnts[firstMember] - ownedCnts[secondMember];
 				if(difference < -1 || difference > 1) {
 					balanced = 0;
 					break;
@@ -813,29 +809,29 @@ Sint32 mnDjinnCheckGiveBalance(
 }
 
 /* Counts each party member's Djinn across its set and available bitmasks:
-   writes every party member's total, set or not, into ownedCounts by list
+   writes every party member's total, set or not, into ownedCnts by list
    column. */
-void mnDjinnCountOwned(Uint8 *ownedCounts)
+void mnDjinnCountOwned(Uint8 *ownedCnts)
 {
 	DJINN_MENU_STATE *menu;
 	UNIT			 *unit;
-	Sint32			  memberIndex;
+	Sint32			  memberIdx;
 	Sint32			  element;
-	Sint32			  djinnIndex;
-	Sint32			  ownedCount;
+	Sint32			  djinnIdx;
+	Sint32			  ownedCnt;
 
 	menu = MenuState;
-	for(memberIndex = 0; memberIndex < menu->memberCnt; memberIndex++) {
-		unit = gmUnitGetStub(menu->members[memberIndex]);
-		ownedCount = 0;
+	for(memberIdx = 0; memberIdx < menu->memberCnt; memberIdx++) {
+		unit = gmUnitGetStub(menu->members[memberIdx]);
+		ownedCnt = 0;
 		for(element = 0; element <= 3; element++) {
-			for(djinnIndex = 0; djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
-				if(unit->djinnSet[element] & (1 << djinnIndex))
-					ownedCount++;
-				else if(unit->djinnHeld[element] & (1 << djinnIndex))
-					ownedCount++;
+			for(djinnIdx = 0; djinnIdx < DJINN_PER_ELEMENT; djinnIdx++) {
+				if(unit->djinnSet[element] & (1 << djinnIdx))
+					ownedCnt++;
+				else if(unit->djinnHeld[element] & (1 << djinnIdx))
+					ownedCnt++;
 			}
 		}
-		ownedCounts[memberIndex] = ownedCount;
+		ownedCnts[memberIdx] = ownedCnt;
 	}
 }

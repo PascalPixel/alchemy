@@ -10,7 +10,7 @@
 /* The sparks each strike scatters. */
 #define DRAGON_SPARKS		   32
 /* How far round its arc a dragon's head and tail travel, DRAGON_ARC_SPEED a
-   frame. */
+   tick. */
 #define DRAGON_ARC_END		   950
 #define DRAGON_ARC_SPEED	   44
 /* The strips' widths, as a fraction of their rows' widths, and the heads'
@@ -39,7 +39,7 @@ typedef struct STRIP_VERTEX {
 
 /* A dragon of blue flame (two at the next variant) rises from the caster and
    arcs onto the target: a scrolling band of flame of DRAGON_SEGMENTS segments,
-   widening to its head, a dragon's head of flame. Each strikes ten frames after
+   widening to its head, a dragon's head of flame. Each strikes ten ticks after
    the last, scattering DRAGON_SPARKS sparks.
 
    Abilities: Rising Dragon (the Masamune's unleash). */
@@ -48,13 +48,13 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	DRAW_RECTANGLE		 blit[2];
-	Sint32				 frame;
+	Sint32				 frm;
 	BATTLE_CAMERA		*camera;
-	Uint8				*sprites;
+	Uint8				*sprs;
 	void				*caster;
 	Sint32				 arcs[4];
 	SCREEN_POINT		 source;
-	SCREEN_POINT		 target;
+	SCREEN_POINT		 tgt;
 	SCREEN_POINT		 hit;
 	MODEL_TEXTURE		 texture;
 	RENDER_MODEL		*model;
@@ -66,7 +66,7 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 	state = Ram_HeapSlots->battleEff;
 	canvas = Ram_HeapSlots->battleCanvas;
 	camera = Ram_HeapSlots->cameraState;
-	sprites = Ram_HeapSlots->battleSheet;
+	sprs = Ram_HeapSlots->battleSheet;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	if(args->side == EFFECT_SIDE_ENEMIES) {
 		EFFECT_LOAD_BLITTER(
@@ -85,10 +85,10 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 		fdActorSetAnimationSpeedStub(caster, ANIM_STEP_NORMAL * 3);
 		fdActorSelectAnimationStub(caster, POSE_LEAP);
 		btEffectPosProjectBattler(args->user, &source);
-		btEffectPosProjectBattler(args->tgts[0], &target);
+		btEffectPosProjectBattler(args->tgts[0], &tgt);
 		btResourceLoadAndDecompress(
 			RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 1);
-		btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
+		btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 		btResourceLoadAndDecompress(RESOURCE_CLAW_SLASH_SHEET,
 			state->sheet + RISING_DRAGON_FLAME_DRAGON_HEAD_PICTURES, 1, 1);
 		syWordsCopyEntry((void *)BG_PLTT,
@@ -98,9 +98,9 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 		btRenderBuildQuadStrip(MapGridMetatileBuffer + RISING_DRAGON_STRIP, 4,
 			32, DRAGON_SEGMENTS - 1);
 
-		for(frame = 0; frame != args->variant * 10 + 60; frame++) {
+		for(frm = 0; frm != args->variant * 10 + 60; frm++) {
 			EFFECT_VIEW_FROM_CAMERA(camera);
-			if(frame == 0) {
+			if(frm == 0) {
 				arcs[0] = 0;
 				arcs[1] = 0;
 				arcs[2] = 0;
@@ -111,28 +111,28 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 
 			/* Each dragon's strike. */
 			for(i = 0; i != args->variant + 1; i++) {
-				if(frame != i * 10 + 28) {
+				if(frm != i * 10 + 28) {
 					continue;
 				}
 				btEffectPosProjectBattler(args->tgts[0], &hit);
 				for(j = 0; j != DRAGON_SPARKS; j++) {
-					Sint32 angle;
+					Sint32 ang;
 					Sint32 speed;
 
 					spark = &state->particles[i * DRAGON_SPARKS + j];
 
 					spark->x = toFIXED(hit.x / 2);
 					spark->y = INTtoFIXED(hit.y - 16);
-					angle = syRandom();
+					ang = syRandom();
 					speed = (syRandom() & 255) + 127;
-					spark->velX = (sySin(angle) * speed) >> 6;
-					spark->velY = (syCos(angle) * speed) >> 6;
+					spark->velX = (sySin(ang) * speed) >> 6;
+					spark->velY = (syCos(ang) * speed) >> 6;
 					spark->variant = (syRandom() & 15) + 16;
 				}
 				syWordsFillEntry(canvas, CANVAS_BYTES,
 					CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 				state->shakeFrm = 8;
-				if(frame == 28) {
+				if(frm == 28) {
 					if(args->variant == EFFECT_VARIANT_BASIC) {
 						EFFECT_SHOW_DAMAGE(SE_CLATTER);
 					} else {
@@ -153,8 +153,7 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 				if(spark->variant >= 0) {
 					Sint32 size = (spark->variant >> 3) + 2;
 
-					blit[0](canvas,
-						sprites + BattleEffect_MotePictures[size - 1],
+					blit[0](canvas, sprs + BattleEffectMotePictures[size - 1],
 						FIXED_INTEGER_PART(spark->x) - size / 2,
 						FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
 					btParticleAdvanceWithGravity2D(spark, 60, toFIXED(1) / 16);
@@ -162,32 +161,32 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 				}
 			}
 
-			if(frame > 15) {
+			if(frm > 15) {
 				STRIP_VERTEX *stripA = (STRIP_VERTEX *)MapGridMetatileBuffer;
 				Sint32		  scale = DRAGON_SCALE;
 				const Uint8	 *stripMesh =
 					MapGridMetatileBuffer + RISING_DRAGON_STRIP;
 
 				/* The arcs' heads and tails: the first dragon's head sets out
-				   at frame 16 and its tail at 32, the second's at 30 and 46. */
-				arcs[0] = (frame - 16) * DRAGON_ARC_SPEED;
+				   at tick 16 and its tail at 32, the second's at 30 and 46. */
+				arcs[0] = (frm - 16) * DRAGON_ARC_SPEED;
 				if(arcs[0] > DRAGON_ARC_END) {
 					arcs[0] = DRAGON_ARC_END;
 				}
-				if(frame > 31) {
-					arcs[1] = (frame - 32) * DRAGON_ARC_SPEED;
+				if(frm > 31) {
+					arcs[1] = (frm - 32) * DRAGON_ARC_SPEED;
 					if(arcs[1] > DRAGON_ARC_END) {
 						arcs[1] = DRAGON_ARC_END;
 					}
 				}
-				if(frame > 29) {
-					arcs[2] = (frame - 30) * DRAGON_ARC_SPEED;
+				if(frm > 29) {
+					arcs[2] = (frm - 30) * DRAGON_ARC_SPEED;
 					if(arcs[2] > DRAGON_ARC_END) {
 						arcs[2] = DRAGON_ARC_END;
 					}
 				}
-				if(frame > 45) {
-					arcs[3] = (frame - 46) * DRAGON_ARC_SPEED;
+				if(frm > 45) {
+					arcs[3] = (frm - 46) * DRAGON_ARC_SPEED;
 					if(arcs[3] > DRAGON_ARC_END) {
 						arcs[3] = DRAGON_ARC_END;
 					}
@@ -195,8 +194,8 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 
 				/* The first dragon arcs over, the second under. */
 				for(j = 0; j != DRAGON_SEGMENTS; j++) {
-					Sint32 distance = source.x / 4 - target.x / 4;
-					Sint32 angle =
+					Sint32 distance = source.x / 4 - tgt.x / 4;
+					Sint32 ang =
 						j * (arcs[0] - arcs[1]) + arcs[1] * DRAGON_SEGMENTS;
 					Sint32 height;
 					Sint32 width;
@@ -215,22 +214,22 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 					for(i = 0; i != 2; i++) {
 						STRIP_VERTEX *corner = stripA + (j * 2 + i);
 
-						corner->x = (FIXEDtoINT(syCos(angle) *
+						corner->x = (FIXEDtoINT(syCos(ang) *
 										(distance + start + i * width))) -
 							distance;
 						corner->y = -(FIXEDtoINT(
-							sySin(angle) * (height + start + i * width)));
+							sySin(ang) * (height + start + i * width)));
 						corner->z = 0;
 					}
 					if(j == DRAGON_SEGMENTS - 1) {
 						endX[0] =
-							(FIXEDtoINT(syCos(angle) * distance)) - distance;
-						endY[0] = -(FIXEDtoINT(sySin(angle) * height));
+							(FIXEDtoINT(syCos(ang) * distance)) - distance;
+						endY[0] = -(FIXEDtoINT(sySin(ang) * height));
 					}
 				}
 				for(j = 0; j != DRAGON_SEGMENTS; j++) {
-					Sint32 distance = source.x / 4 - target.x / 4;
-					Sint32 angle =
+					Sint32 distance = source.x / 4 - tgt.x / 4;
+					Sint32 ang =
 						j * (arcs[2] - arcs[3]) + arcs[3] * DRAGON_SEGMENTS;
 					Sint32 height;
 					Sint32 width;
@@ -252,17 +251,17 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 							DRAGON_CORNERS;
 						STRIP_VERTEX *corner = stripB + (j * 2 + i);
 
-						corner->x = (FIXEDtoINT(syCos(angle) *
+						corner->x = (FIXEDtoINT(syCos(ang) *
 										(distance + start + i * width))) -
 							distance;
 						corner->y = FIXEDtoINT(
-							sySin(angle) * (height + start + i * width));
+							sySin(ang) * (height + start + i * width));
 						corner->z = 0;
 					}
 					if(j == DRAGON_SEGMENTS - 1) {
 						endX[1] =
-							(FIXEDtoINT(syCos(angle) * distance)) - distance;
-						endY[1] = FIXEDtoINT(sySin(angle) * height);
+							(FIXEDtoINT(syCos(ang) * distance)) - distance;
+						endY[1] = FIXEDtoINT(sySin(ang) * height);
 					}
 				}
 
@@ -281,7 +280,7 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 					texture.logHeight = 5;
 					texture.pixels = state->sheet;
 					model->mesh = stripMesh;
-					model->scrollU = TEXTURE_SCROLL_MASK & ~(frame << 3);
+					model->scrollU = TEXTURE_SCROLL_MASK & ~(frm << 3);
 					syInitMatrix();
 					if(args->side == EFFECT_SIDE_ENEMIES) {
 						syTranslate(INTtoFIXED(source.x / 2 - 68),
@@ -299,18 +298,18 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 					btRenderTransformVertices(
 						stripA + i * DRAGON_CORNERS, vertices, DRAGON_CORNERS);
 					btRenderDrawModelList(model);
-					if(frame < i * 16 + 40) {
+					if(frm < i * 16 + 40) {
 						texture.logWidth = 6;
 						texture.logHeight = 6;
 						model->scrollU = 0;
-						model->mesh = BattleEffect_SquareMesh;
+						model->mesh = BattleEffectSquareMesh;
 						texture.pixels = state->sheet +
 							RISING_DRAGON_FLAME_DRAGON_HEAD_PICTURES;
 						syTranslate(toFIXED(endX[i]), toFIXED(endY[i]), 0);
 						syRotZ(DRAGON_HEAD_TURN - (arcs[i * 2] << 5));
 						syMatrixScaleUniform(DRAGON_SCALE);
 						btRenderTransformVertices(
-							BattleEffect_SquareCorners, vertices, 4);
+							BattleEffectSquareCorners, vertices, 4);
 						btRenderDrawModelList(model);
 					}
 				}
@@ -327,10 +326,10 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 	btEffectEndCanvasLayer();
 }
 
-#define FIGURE_FRAMES			 108
+#define FIGURE_TICKS			108
 /* The burst at its hand flashes the screen. */
-#define FIGURE_SPARK_BURST_FRAME 30
-#define FIGURE_HIT_FRAME		 80 /* the blow, which starts the result phase */
+#define FIGURE_SPARK_BURST_TICK 30
+#define FIGURE_HIT_TICK			80 /* the blow, which starts the result phase */
 
 /* The parts of the figure in BattleEffect_HeartbreakSheet, unpacked into the
    map cells. */
@@ -343,22 +342,22 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 #define FIGURE_ARM_REACHING		   9438
 #define FIGURE_ARM_REACHING_WIDTH  48
 #define FIGURE_ARM_REACHING_HEIGHT 51
-/* A burst of sparks growing, four pictures (Heartbreak_SparkBurstPictures). */
+/* A burst of sparks growing, four pictures (HeartbreakSparkBurstPictures). */
 #define FIGURE_SPARK_BURST		   11886
 /* A heart, then seven pictures of green flame burning it away
-   (Heartbreak_HeartBurnPictures); the first is also the heart held up. */
+   (HeartbreakHeartBurnPictures); the first is also the heart held up. */
 #define FIGURE_HEART			   20125
 #define FIGURE_HEART_WIDTH		   32
 #define FIGURE_HEART_HEIGHT		   29
-/* The figure sways on a circle of this radius, a 256th of a turn a frame. */
+/* The figure sways on a circle of this radius, a 256th of a turn a tick. */
 #define FIGURE_SWAY				   8
 
 /* A great cloaked figure with a horned skull for a head sweeps down on the
    target from above the far side, swaying and fading in through the blend, its
-   clawed hand reaching out. From frame 28 a burst of sparks grows at its hand
-   and the screen flashes white; from frame 40 a heart is held up, from frame 48
-   the hand closes into a fist, and from frame 62 green flame burns the heart
-   away. At frame 80 the blow lands and the result phase starts; from frame 92
+   clawed hand reaching out. From tick 28 a burst of sparks grows at its hand
+   and the screen flashes white; from tick 40 a heart is held up, from tick 48
+   the hand closes into a fist, and from tick 62 green flame burns the heart
+   away. At tick 80 the blow lands and the result phase starts; from tick 92
    the figure fades out and rises away, and the battle background is reloaded at
    the end. On the far side the whole figure is drawn mirrored.
 
@@ -370,8 +369,8 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 	Uint8				*canvas;
 	Uint8				*parts;
 	DRAW_RECTANGLE		 draw[2];
-	SCREEN_POINT		 target;
-	Sint32				 frame;
+	SCREEN_POINT		 tgt;
+	Sint32				 frm;
 	Sint32				 x;
 	Sint32				 y;
 
@@ -389,16 +388,16 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_TRANSPARENT);
 	draw[1] = heap->ramCodePaired;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
-	btEffectPosProjectScaledBattler(args->tgts[0], &target);
+	btEffectPosProjectScaledBattler(args->tgts[0], &tgt);
 
-	for(frame = 0; frame != FIGURE_FRAMES; frame++) {
+	for(frm = 0; frm != FIGURE_TICKS; frm++) {
 		/* It starts 100 pixels above the canvas and to the target's far side,
-		   and comes down at it for 32 frames. */
-		if(frame == 0) {
+		   and comes down at it for 32 ticks. */
+		if(frm == 0) {
 			if(args->side == EFFECT_SIDE_ENEMIES)
-				state->particles[0].x = INTtoFIXED(target.x + 40);
+				state->particles[0].x = INTtoFIXED(tgt.x + 40);
 			else
-				state->particles[0].x = INTtoFIXED(target.x - 168);
+				state->particles[0].x = INTtoFIXED(tgt.x - 168);
 			state->particles[0].y = -toFIXED(100);
 			if(args->side == EFFECT_SIDE_ENEMIES)
 				state->particles[0].velX = -toFIXED(6);
@@ -407,17 +406,17 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 			state->particles[0].velY = toFIXED(8);
 			REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
 		}
-		if(frame < 32)
+		if(frm < 32)
 			btParticleAdvanceWithGravity2D(&state->particles[0], 60, 0);
 
-		/* In over 32 frames, out over the last 16, rising away. */
-		if(frame <= 32) {
-			Sint32 level = frame / 2;
+		/* In over 32 ticks, out over the last 16, rising away. */
+		if(frm <= 32) {
+			Sint32 level = frm / 2;
 
 			REG_BLDALPHA = ((BLEND_WEIGHT_MAX - level / 2) << 8) | level;
 		}
-		if(frame > 91) {
-			Sint32 level = FIGURE_FRAMES - frame;
+		if(frm > 91) {
+			Sint32 level = FIGURE_TICKS - frm;
 
 			REG_BLDALPHA = ((BLEND_WEIGHT_MAX - level / 2) << 8) | level;
 			btParticleAdvanceWithGravity2D(
@@ -426,16 +425,16 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 
 		/* The sway, and the canvas moved with the figure. */
 		x = FIXED_INTEGER_PART(state->particles[0].x) +
-			(FIXEDtoINT(sySin(frame * (TRIG_TURN / 256)) * FIGURE_SWAY));
+			(FIXEDtoINT(sySin(frm * (TRIG_TURN / 256)) * FIGURE_SWAY));
 		y = FIXED_INTEGER_PART(state->particles[0].y) +
-			(FIXEDtoINT(syCos(frame * (TRIG_TURN / 256)) * FIGURE_SWAY));
+			(FIXEDtoINT(syCos(frm * (TRIG_TURN / 256)) * FIGURE_SWAY));
 		REG_BG2X = -x << 8;
 
-		/* The body, and the arm reaching until frame 48, then clenched. */
+		/* The body, and the arm reaching until tick 48, then clenched. */
 		if(args->side == EFFECT_SIDE_ENEMIES) {
 			draw[args->side](canvas, Ram_MapMetatileBuffer + FIGURE_BODY, 25,
 				y + 2, FIGURE_BODY_WIDTH, FIGURE_BODY_HEIGHT);
-			if((Uint32)frame < 48)
+			if((Uint32)frm < 48)
 				draw[args->side](canvas,
 					Ram_MapMetatileBuffer + FIGURE_ARM_REACHING, 31, y + 22,
 					FIGURE_ARM_REACHING_WIDTH, FIGURE_ARM_REACHING_HEIGHT);
@@ -446,7 +445,7 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 		} else {
 			draw[args->side](canvas, Ram_MapMetatileBuffer + FIGURE_BODY, 7,
 				y + 2, FIGURE_BODY_WIDTH, FIGURE_BODY_HEIGHT);
-			if((Uint32)frame < 48)
+			if((Uint32)frm < 48)
 				draw[args->side](canvas,
 					Ram_MapMetatileBuffer + FIGURE_ARM_REACHING, 49, y + 22,
 					FIGURE_ARM_REACHING_WIDTH, FIGURE_ARM_REACHING_HEIGHT);
@@ -456,34 +455,34 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 					FIGURE_ARM_CLENCHED_WIDTH, FIGURE_ARM_CLENCHED_HEIGHT);
 		}
 
-		/* The burst of sparks, three frames a picture from frame 28. */
-		if(frame >= 28 && frame < 40) {
-			Sint32 picture = (frame - 28) / 3;
+		/* The burst of sparks, three ticks a picture from tick 28. */
+		if(frm >= 28 && frm < 40) {
+			Sint32 picture = (frm - 28) / 3;
 
 			if(args->side == EFFECT_SIDE_ENEMIES) {
 				draw[args->side](canvas,
 					Ram_MapMetatileBuffer + FIGURE_SPARK_BURST +
-						Heartbreak_SparkBurstPictures[picture],
-					46 - Heartbreak_SparkBurstWidths[picture] / 2,
-					y - Heartbreak_SparkBurstHeights[picture] / 2 + 61,
-					Heartbreak_SparkBurstWidths[picture],
-					Heartbreak_SparkBurstHeights[picture]);
+						HeartbreakSparkBurstPictures[picture],
+					46 - HeartbreakSparkBurstWidths[picture] / 2,
+					y - HeartbreakSparkBurstHeights[picture] / 2 + 61,
+					HeartbreakSparkBurstWidths[picture],
+					HeartbreakSparkBurstHeights[picture]);
 			} else {
 				draw[args->side](canvas,
 					Ram_MapMetatileBuffer + FIGURE_SPARK_BURST +
-						Heartbreak_SparkBurstPictures[picture],
-					Heartbreak_SparkBurstWidths[picture] / 2 -
-						Heartbreak_SparkBurstWidths[picture] + 82,
-					y - Heartbreak_SparkBurstHeights[picture] / 2 + 61,
-					Heartbreak_SparkBurstWidths[picture],
-					Heartbreak_SparkBurstHeights[picture]);
+						HeartbreakSparkBurstPictures[picture],
+					HeartbreakSparkBurstWidths[picture] / 2 -
+						HeartbreakSparkBurstWidths[picture] + 82,
+					y - HeartbreakSparkBurstHeights[picture] / 2 + 61,
+					HeartbreakSparkBurstWidths[picture],
+					HeartbreakSparkBurstHeights[picture]);
 			}
 		}
 
-		/* The heart: held up until frame 47, then in the closed fist, where
-		   from frame 62 it burns away, a picture every six frames. */
-		if(frame > 39) {
-			if(frame <= 47) {
+		/* The heart: held up until tick 47, then in the closed fist, where
+		   from tick 62 it burns away, a picture every six ticks. */
+		if(frm > 39) {
+			if(frm <= 47) {
 				if(args->side == EFFECT_SIDE_ENEMIES)
 					draw[args->side](canvas,
 						Ram_MapMetatileBuffer + FIGURE_HEART, 30, y + 46,
@@ -493,7 +492,7 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 						Ram_MapMetatileBuffer + FIGURE_HEART, 66, y + 46,
 						FIGURE_HEART_WIDTH, FIGURE_HEART_HEIGHT);
 			} else {
-				Sint32 picture = (frame - 56) / 6;
+				Sint32 picture = (frm - 56) / 6;
 
 				if(picture < 0)
 					picture = 0;
@@ -501,28 +500,28 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 					if(args->side == EFFECT_SIDE_ENEMIES)
 						draw[args->side](canvas,
 							Ram_MapMetatileBuffer + FIGURE_HEART +
-								Heartbreak_HeartBurnPictures[picture],
-							63, y + Heartbreak_HeartBurnY[picture] - 8,
+								HeartbreakHeartBurnPictures[picture],
+							63, y + HeartbreakHeartBurnY[picture] - 8,
 							FIGURE_HEART_WIDTH,
-							Heartbreak_HeartBurnHeights[picture]);
+							HeartbreakHeartBurnHeights[picture]);
 					else
 						draw[args->side](canvas,
 							Ram_MapMetatileBuffer + FIGURE_HEART +
-								Heartbreak_HeartBurnPictures[picture],
-							33, y + Heartbreak_HeartBurnY[picture] - 8,
+								HeartbreakHeartBurnPictures[picture],
+							33, y + HeartbreakHeartBurnY[picture] - 8,
 							FIGURE_HEART_WIDTH,
-							Heartbreak_HeartBurnHeights[picture]);
+							HeartbreakHeartBurnHeights[picture]);
 				}
 			}
 		}
 
-		if(frame == FIGURE_HIT_FRAME) {
+		if(frm == FIGURE_HIT_TICK) {
 			state->shakeFrm = 6;
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			btEffectTintBattler(
 				args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 16);
 		}
-		if(frame == FIGURE_SPARK_BURST_FRAME) {
+		if(frm == FIGURE_SPARK_BURST_TICK) {
 			syWordsFillEntry(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 			state->shakeFrm = 3;
@@ -532,12 +531,12 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 		}
 
 		btCameraShake(4, 4);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	syCloseEvent(btEffectTransferCanvas);
 	btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED,
-		Ram_HeapSlots->battleState->bg, BACKGROUND_DARKEN_FRAMES);
+		Ram_HeapSlots->battleState->bg, BACKGROUND_DARKEN_TICKS);
 	EFFECT_RELEASE_BLITTERS();
 	btEffectEndCanvasLayer();
 }
@@ -554,9 +553,9 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 #undef RISING_DRAGON_VERTICES
 #undef RISING_DRAGON_STRIP
 #undef RISING_DRAGON_FLAME_DRAGON_HEAD_PICTURES
-#undef FIGURE_FRAMES
-#undef FIGURE_SPARK_BURST_FRAME
-#undef FIGURE_HIT_FRAME
+#undef FIGURE_TICKS
+#undef FIGURE_SPARK_BURST_TICK
+#undef FIGURE_HIT_TICK
 #undef FIGURE_BODY
 #undef FIGURE_BODY_WIDTH
 #undef FIGURE_BODY_HEIGHT

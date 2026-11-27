@@ -94,7 +94,7 @@ coming together. The credits are the staff roll after the ending, with
 battle backgrounds behind the names, and the same code holds two more
 things: the story told in scrolling lines that open
 `Ages ago, or so the stories`, and the ending's images that scroll past in their
-frame.
+tick.
 
 ## Where the code is
 

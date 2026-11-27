@@ -4,7 +4,7 @@
 #include "field/actor_script.h"
 
 /* The script of an actor that does nothing. */
-const Sint32 Actor_IdleScript[] = {
+const Sint32 ActorIdleScript[] = {
 	SC_END,
 };
 
@@ -12,8 +12,8 @@ const Sint32 Actor_IdleScript[] = {
    its state as it starts. Only the idle script survives the copy:
    fdActorResetForLeader writes the leader's own sprite, condition, spot and
    heading over the rest of the first row. */
-const ACTOR_PLACE Field_DefaultPlacements[] = {
-	ACTOR_PLACEMENT(0, CONDITION_ALWAYS, (Sint32)Actor_IdleScript, 300, 0, 300,
-		23472, 0, 0),
+const ACTOR_PLACE FieldDefaultPlacements[] = {
+	ACTOR_PLACEMENT(
+		0, CONDITION_ALWAYS, (Sint32)ActorIdleScript, 300, 0, 300, 23472, 0, 0),
 	{SCENE_TABLE_END, 0, 0, 0, 0, 0, 0, 0, 0},
 };

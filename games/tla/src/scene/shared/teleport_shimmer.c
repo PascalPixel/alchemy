@@ -8,21 +8,21 @@
    lists for the shimmer, and saves the palettes as the fade's source; arriving
    by Teleport, the party then arrives on the circle. */
 void scPaletteSetColsFade(
-	Uint16 *slots, Uint16 *colours, Uint16 *cycleColors, Uint16 *cycleSlots)
+	Uint16 *slots, Uint16 *colours, Uint16 *cycleCols, Uint16 *cycleSlots)
 {
 	PALETTE_FADE *fade = Ram_HeapSlots->palFade;
 
 	PaletteSlots = slots;
 	PaletteColors = colours;
-	PaletteCycleColors = cycleColors;
+	PaletteCycleColors = cycleCols;
 	PaletteCycleSlots = cycleSlots;
 	while(*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END) {
-		int index = *slots++;
+		int idx = *slots++;
 		int red = *colours++;
 		int green = *colours++;
 		int blue = *colours++;
 
-		SET_RGB(BG_PLTT[index], red, green, blue);
+		SET_RGB(BG_PLTT[idx], red, green, blue);
 	}
 	syDMAXCopy((const void *)BG_PLTT, fade->pal,
 		DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2), REG_DMA3);
@@ -35,7 +35,7 @@ void scPaletteSetColsFade(
 }
 
 /* Starts the shimmer at its slow pace, as Teleport is cast: the first step
-   after 16 frames, each after a frame less, down to two. */
+   after 16 ticks, each after a tick less, down to two. */
 void scTeleportStartShimmer(void)
 {
 	PaletteCycleIndex = 0;
@@ -43,7 +43,7 @@ void scTeleportStartShimmer(void)
 	PaletteCycleDelay = 15;
 	PaletteCycleTimer = 16;
 	PaletteCycleBright = 1;
-	sySetFrameEvent(fdPaletteCycleFade, EVENT_PASS_FRAME);
+	sySetTickEvent(fdPaletteCycleFade, EVENT_PASS_TICK);
 }
 
 /* Stops the shimmer, leaving the next transition a backdrop fade. */
@@ -53,7 +53,7 @@ void scTeleportStopShimmer(void)
 	syFieldCloseEvent(fdPaletteCycleFade);
 }
 
-/* Starts the shimmer at a step every two frames, as the party arrives. */
+/* Starts the shimmer at a step every two ticks, as the party arrives. */
 void scTeleportStartFastShimmer(void)
 {
 	PaletteCycleIndex = 0;
@@ -61,7 +61,7 @@ void scTeleportStartFastShimmer(void)
 	PaletteCycleDelay = 2;
 	PaletteCycleTimer = 2;
 	PaletteCycleBright = 1;
-	sySetFrameEvent(fdPaletteCycleFade, EVENT_PASS_FRAME);
+	sySetTickEvent(fdPaletteCycleFade, EVENT_PASS_TICK);
 }
 
 #include "list_count_entries.h"
@@ -81,7 +81,7 @@ void scTeleportArriveWhirling(void)
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	scTeleportStartFastShimmer();
 	fdTeleportPlayWhirl();
 	syWait(40);

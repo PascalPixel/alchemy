@@ -86,8 +86,8 @@ typedef enum DAILA_ROOMS_ACTOR_ID {
 	ACTOR_ARMOR_COUNTER
 } DAILA_ROOMS_ACTOR_ID;
 
-/* The rows of DailaRooms_HousesPlacementsOnceTaviIsRescued after those it
-   shares with DailaRooms_HousesPlacements. */
+/* The rows of DailaRoomsHousesPlacementsOnceTaviIsRescued after those it
+   shares with DailaRoomsHousesPlacements. */
 typedef enum DAILA_ROOMS_ACTOR_ID_AFTER_RESCUE {
 	/* The two boys, back home, with their mouths full. */
 	ACTOR_RIKI = ACTOR_GUEST_ON_MADRAS_SEAFOOD + 1,
@@ -109,7 +109,7 @@ enum { ANIM_EATING = 5 };
 enum { ENTRANCE_COW_ISLET_HOUSE = 7 };
 
 /* The sanctuary's actors, numbering the rows of
-   DailaRooms_SanctumPlacements. */
+   DailaRoomsSanctumPlacements. */
 typedef enum DAILA_SANCTUARY_ACTOR_ID {
 	/* The sanctuary's healer, who sends travelers with nowhere to go to Poi at
 	   the Kandorean Temple, and once that is done heals the party. */
@@ -128,20 +128,20 @@ typedef enum DAILA_SANCTUARY_ACTOR_ID {
 } DAILA_SANCTUARY_ACTOR_ID;
 
 /* The first of three flags, one for each of the sanctuary's puddles Frost has
-   frozen into a pillar for this visit, by DailaRooms_PillarFrozenFlags. */
+   frozen into a pillar for this visit, by DailaRoomsPillarFrozenFlags. */
 #define FLAG_DAILA_SANCTUARY_PUDDLE_FROZEN_FIRST 0x220
 /* Holds which of his two spots the practicing man has jumped to last. */
 #define FLAG_DAILA_PRACTICE_AT_DOOR				 0x200
 
-extern Sint32	   DailaRooms_ExitsOnceTaviIsRescued[];
-extern ACTOR_PLACE DailaRooms_HousesPlacements[];
-extern ACTOR_PLACE DailaRooms_SanctumPlacements[];
-extern ACTOR_PLACE DailaRooms_HousesPlacementsOnceTaviIsRescued[];
-extern CUE		   DailaRooms_SanctumCues[];
-extern CUE		   DailaRooms_HousesCuesOnceTaviIsRescued[];
-extern CUE		   DailaRooms_SanctumCuesOnceTaviIsRescued[];
+extern Sint32	   DailaRoomsExitsOnceTaviIsRescued[];
+extern ACTOR_PLACE DailaRoomsHousesPlacements[];
+extern ACTOR_PLACE DailaRoomsSanctumPlacements[];
+extern ACTOR_PLACE DailaRoomsHousesPlacementsOnceTaviIsRescued[];
+extern CUE		   DailaRoomsSanctumCues[];
+extern CUE		   DailaRoomsHousesCuesOnceTaviIsRescued[];
+extern CUE		   DailaRoomsSanctumCuesOnceTaviIsRescued[];
 
-extern Sint16 DailaRooms_PillarFrozenFlags[];
+extern Sint16 DailaRoomsPillarFrozenFlags[];
 
 Sint32 scDailaRoomsGiveItem(Sint32 item, Sint32 mode);
 void   scFadeInAndClearFlag(void);
@@ -156,22 +156,22 @@ const SCENE_REGION *scGetExitRegions(void)
 	return 0;
 }
 
-extern Sint32 DailaRooms_Exits[];
+extern Sint32 DailaRoomsExits[];
 
 const void *scGetExits(void)
 {
 	if(syGameFlagGet(FLAG_TAVI_RESCUED))
-		return DailaRooms_ExitsOnceTaviIsRescued;
-	return DailaRooms_Exits;
+		return DailaRoomsExitsOnceTaviIsRescued;
+	return DailaRoomsExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.next == SCENE_DAILA_ROOMS_SANCTUM)
-		return DailaRooms_SanctumPlacements;
+		return DailaRoomsSanctumPlacements;
 	if(syGameFlagGet(FLAG_TAVI_RESCUED))
-		return DailaRooms_HousesPlacementsOnceTaviIsRescued;
-	return DailaRooms_HousesPlacements;
+		return DailaRoomsHousesPlacementsOnceTaviIsRescued;
+	return DailaRoomsHousesPlacements;
 }
 
 /* Unused: does nothing. */
@@ -254,7 +254,7 @@ UNUSED void scDailaRoomsStartLeaderScript(void)
 	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
 }
 
-extern CUE DailaRooms_HousesCues[];
+extern CUE DailaRoomsHousesCues[];
 
 const CUE *scGetCues(void)
 {
@@ -264,12 +264,12 @@ const CUE *scGetCues(void)
 
 	if(taviRescued) {
 		if(state->next == sanctum)
-			return DailaRooms_SanctumCuesOnceTaviIsRescued;
-		return DailaRooms_HousesCuesOnceTaviIsRescued;
+			return DailaRoomsSanctumCuesOnceTaviIsRescued;
+		return DailaRoomsHousesCuesOnceTaviIsRescued;
 	}
 	if(state->next == sanctum)
-		return DailaRooms_SanctumCues;
-	return DailaRooms_HousesCues;
+		return DailaRoomsSanctumCues;
+	return DailaRoomsHousesCues;
 }
 
 /* The weapon merchant at the right-hand counter of the shop sells to Felix when
@@ -534,13 +534,13 @@ void scDailaRoomsTalkCaughtPracticing(void)
 void scDailaRoomsTakeSeaGodsTear(void)
 {
 	Sint32 savedGravity;
-	Sint32 savedVelocityY;
+	Sint32 savedVelY;
 	FIXED  savedY;
 	Sint32 item;
 
 	savedGravity = fdActorGetById(ACTOR_SEA_GODS_TEAR)->gravity;
 	item = ITEM_SEA_GODS_TEAR;
-	savedVelocityY = fdActorGetById(ACTOR_SEA_GODS_TEAR)->velY;
+	savedVelY = fdActorGetById(ACTOR_SEA_GODS_TEAR)->velY;
 	savedY = fdActorGetById(ACTOR_SEA_GODS_TEAR)->y.fixed;
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -566,7 +566,7 @@ void scDailaRoomsTakeSeaGodsTear(void)
 		} else {
 			fdActorSetPos(ACTOR_SEA_GODS_TEAR, 0, 0);
 			syFieldScriptWait(1);
-			fdActorGetById(ACTOR_SEA_GODS_TEAR)->velY = savedVelocityY;
+			fdActorGetById(ACTOR_SEA_GODS_TEAR)->velY = savedVelY;
 			fdActorGetById(ACTOR_SEA_GODS_TEAR)->y.fixed = savedY;
 			fdActorGetById(ACTOR_SEA_GODS_TEAR)->gravity = savedGravity;
 			fdActorGetById(ACTOR_SEA_GODS_TEAR)->update = NULL;
@@ -592,7 +592,7 @@ Sint32 scDailaRoomsGiveItem(Sint32 item, Sint32 unused)
 	Sint32		 saved;
 	Sint32		 owner;
 	Sint32		 result;
-	Sint32		 count;
+	Sint32		 cnt;
 	Sint32		 i;
 	Sint32		 member;
 	Sint32		 slot;
@@ -634,7 +634,7 @@ Sint32 scDailaRoomsGiveItem(Sint32 item, Sint32 unused)
 				return owner;
 			}
 			syUnitGet(member);
-			count = gmInventoryGetQuantity(member, slot);
+			cnt = gmInventoryGetQuantity(member, slot);
 			if(gmInventoryCountItem(member, item) >= INVENTORY_STACK_MAX) {
 				mnMessageArgumentPush(member, MESSAGE_ARGUMENT_ACTOR);
 				mnMessageArgumentPush(item, MESSAGE_ARGUMENT_ITEM);
@@ -646,7 +646,7 @@ Sint32 scDailaRoomsGiveItem(Sint32 item, Sint32 unused)
 			}
 			break;
 		}
-		for(i = 0; i < count; i++)
+		for(i = 0; i < cnt; i++)
 			gmInventoryDiscard(member, slot);
 		gmUnitRefreshPsynergy(member);
 		gmUnitCalc(member);
@@ -741,7 +741,7 @@ Sint32 scInit(void)
 			fdActorSetPos(ACTOR_THIRD_PUDDLE, 0, 0);
 			map->wading = MAP_WADING_UPPER_LEVEL;
 		} else {
-			fdFlagBlockPlaceAll(DailaRooms_PillarFrozenFlags);
+			fdFlagBlockPlaceAll(DailaRoomsPillarFrozenFlags);
 		}
 		fdScriptEnd();
 	}
@@ -771,7 +771,7 @@ void scDailaRoomsJumpForward(void)
 }
 
 /* clang-format off */
-Sint16 DailaRooms_PillarFrozenFlags[] = {
+Sint16 DailaRoomsPillarFrozenFlags[] = {
 	ACTOR_FIRST_PUDDLE,  FLAG_DAILA_SANCTUARY_PUDDLE_FROZEN_FIRST + 0,
 	ACTOR_SECOND_PUDDLE, FLAG_DAILA_SANCTUARY_PUDDLE_FROZEN_FIRST + 1,
 	ACTOR_THIRD_PUDDLE,  FLAG_DAILA_SANCTUARY_PUDDLE_FROZEN_FIRST + 2,
@@ -779,7 +779,7 @@ Sint16 DailaRooms_PillarFrozenFlags[] = {
 };
 
 /* Tavi's father's script: he paces his house back and forth. */
-Sint32 DailaRooms_PacingScript[] = {
+Sint32 DailaRoomsPacingScript[] = {
 #if !DAILA_APOJII_TUNDARIA_PACERS_NOT_PUSHABLE
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
 #else
@@ -808,7 +808,7 @@ Sint32 DailaRooms_PacingScript[] = {
 
 /* The inn's two performers' script once Tavi is rescued: they turn on the */
 /* spot, rehearsing the dinner show. */
-Sint32 DailaRooms_LookAroundScript[] = {
+Sint32 DailaRoomsLookAroundScript[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
 	SC_ACCELERATION(0.1),
 	SC_SPEED(0.3),
@@ -886,7 +886,7 @@ Sint32 DailaRooms_LookAroundScript[] = {
 /* clang-format off */
 /* Where the houses' doors lead, before Tavi is rescued, out into the flooded */
 /* village. */
-Sint32 DailaRooms_Exits[] = {
+Sint32 DailaRoomsExits[] = {
 	SCENE_EXITS(DailaRoomsHouses),
 	SCENE_EXIT_UNLESS(1, DailaFlooded, 1, EXIT_FLAG_NONE),
 	SCENE_EXIT_UNLESS(2, DailaFlooded, 2, EXIT_FLAG_NONE),
@@ -902,7 +902,7 @@ Sint32 DailaRooms_Exits[] = {
 
 /* Where the houses' doors lead once Tavi is rescued, out into the drained */
 /* village. */
-Sint32 DailaRooms_ExitsOnceTaviIsRescued[] = {
+Sint32 DailaRoomsExitsOnceTaviIsRescued[] = {
 	SCENE_EXITS(DailaRoomsHouses),
 	SCENE_EXIT_UNLESS(1, Daila, 1, EXIT_FLAG_NONE),
 	SCENE_EXIT_UNLESS(2, Daila, 2, EXIT_FLAG_NONE),
@@ -918,10 +918,10 @@ Sint32 DailaRooms_ExitsOnceTaviIsRescued[] = {
 
 /* The houses, shops and inn before Tavi is rescued (enum */
 /* DAILA_ROOMS_ACTOR_ID). */
-ACTOR_PLACE DailaRooms_HousesPlacements[] = {
+ACTOR_PLACE DailaRoomsHousesPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 88, 0, 88, FACING_EAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, (Sint32)DailaRooms_PacingScript, 360, 0, 168, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, (Sint32)DailaRoomsPacingScript, 360, 0, 168, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 72, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 632, 0, 168, FACING_EAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 568, 0, 88, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -943,7 +943,7 @@ ACTOR_PLACE DailaRooms_HousesPlacements[] = {
 };
 
 /* The sanctuary (DAILA_SANCTUARY_ACTOR_ID). */
-ACTOR_PLACE DailaRooms_SanctumPlacements[] = {
+ACTOR_PLACE DailaRoomsSanctumPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 333, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 196, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_PUDDLE, FLAG_SCENE_TEMP_23, MOVEMENT_TYPE_STAND, 184, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -954,10 +954,10 @@ ACTOR_PLACE DailaRooms_SanctumPlacements[] = {
 };
 
 /* The houses, shops and inn once Tavi is rescued, with Riki and Tavi home. */
-ACTOR_PLACE DailaRooms_HousesPlacementsOnceTaviIsRescued[] = {
+ACTOR_PLACE DailaRoomsHousesPlacementsOnceTaviIsRescued[] = {
 	ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 120, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 88, 0, 88, FACING_EAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, (Sint32)DailaRooms_PacingScript, 360, 0, 168, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, (Sint32)DailaRoomsPacingScript, 360, 0, 168, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 72, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 632, 0, 168, FACING_EAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 568, 0, 88, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -968,12 +968,12 @@ ACTOR_PLACE DailaRooms_HousesPlacementsOnceTaviIsRescued[] = {
 	ACTOR_PLACEMENT(SPRITE_WEAPON_MERCHANT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 712, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_ARMOR_MERCHANT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 724, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_INNKEEPER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 468, FACING_EAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_INN_WORKER, CONDITION_ALWAYS, (Sint32)DailaRooms_LookAroundScript, 424, 0, 520, FACING_SOUTH, TALK_FACING_PARTY, 0),
+	ACTOR_PLACEMENT(SPRITE_INN_WORKER, CONDITION_ALWAYS, (Sint32)DailaRoomsLookAroundScript, 424, 0, 520, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 376, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 360, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_RIKI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 161, 0, 111, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_TAVI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 112, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, (Sint32)DailaRooms_LookAroundScript, 456, 0, 520, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, (Sint32)DailaRoomsLookAroundScript, 456, 0, 520, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_AUBURN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 472, 0, 746, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_BLUE_COAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 712, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_IN_GREEN_SHAWL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 712, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -982,7 +982,7 @@ ACTOR_PLACE DailaRooms_HousesPlacementsOnceTaviIsRescued[] = {
 };
 
 /* The houses' doors, talk and Mind Read before Tavi is rescued. */
-CUE DailaRooms_HousesCues[] = {
+CUE DailaRoomsHousesCues[] = {
 	{CUE_EXIT, DAILA_ROOMS_HOUSES_TO_DAILA_WEST, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_DAILA_WEST},
 	{CUE_EXIT, DAILA_ROOMS_HOUSES_TO_DAILA_NORTHWEST, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_DAILA_NORTHWEST},
 	{CUE_EXIT, DAILA_ROOMS_HOUSES_TO_DAILA_NORTHEAST, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_DAILA_NORTHEAST},
@@ -1034,7 +1034,7 @@ CUE DailaRooms_HousesCues[] = {
 };
 
 /* The sanctuary's doors, talk and Mind Read before Tavi is rescued. */
-CUE DailaRooms_SanctumCues[] = {
+CUE DailaRoomsSanctumCues[] = {
 	{CUE_EXIT, DAILA_ROOMS_SANCTUM_TO_DAILA, CONDITION_ALWAYS, DAILA_ROOMS_SANCTUM_TO_DAILA},
 	/* Unused: the sanctuary has no metatiles for exits 2 to 6, nor exits of */
 	/* those numbers. */
@@ -1049,7 +1049,7 @@ CUE DailaRooms_SanctumCues[] = {
 };
 
 /* The houses' doors, talk and Mind Read once Tavi is rescued. */
-CUE DailaRooms_HousesCuesOnceTaviIsRescued[] = {
+CUE DailaRoomsHousesCuesOnceTaviIsRescued[] = {
 	{CUE_EXIT, DAILA_ROOMS_HOUSES_TO_DAILA_WEST, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_DAILA_WEST},
 	{CUE_EXIT, DAILA_ROOMS_HOUSES_TO_DAILA_NORTHWEST, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_DAILA_NORTHWEST},
 	{CUE_EXIT, DAILA_ROOMS_HOUSES_TO_DAILA_NORTHEAST, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_DAILA_NORTHEAST},
@@ -1108,7 +1108,7 @@ CUE DailaRooms_HousesCuesOnceTaviIsRescued[] = {
 
 /* The sanctuary once Tavi is rescued: Frost on the three puddles, the jumps */
 /* between the pillars and the Tear at their top. */
-CUE DailaRooms_SanctumCuesOnceTaviIsRescued[] = {
+CUE DailaRoomsSanctumCuesOnceTaviIsRescued[] = {
 	{CUE_EXIT, DAILA_ROOMS_SANCTUM_TO_DAILA, CONDITION_ALWAYS, DAILA_ROOMS_SANCTUM_TO_DAILA},
 	/* Unused: the sanctuary has no metatiles for exits 2 to 6, nor exits of */
 	/* those numbers. */

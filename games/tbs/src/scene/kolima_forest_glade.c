@@ -27,13 +27,13 @@
 #include "scene/catch_nut.h"
 #include "scene/kolima_palette.h"
 
-extern SCENE_ENTRANCE KolimaForestGlade_Entrances[];
-extern Uint32		  KolimaForestGlade_Exits[];
-extern ACTOR_PLACE	  KolimaForestGlade_ActorPlacements[];
-extern CUE			  KolimaForestGlade_Cues[];
+extern SCENE_ENTRANCE KolimaForestGladeEntrances[];
+extern Uint32		  KolimaForestGladeExits[];
+extern ACTOR_PLACE	  KolimaForestGladeActorPlacements[];
+extern CUE			  KolimaForestGladeCues[];
 
 /* Kolima Forest's actors, numbering the rows of
-   KolimaForestGlade_ActorPlacements. */
+   KolimaForestGladeActorPlacements. */
 typedef enum KOLIMA_FOREST_GLADE_ACTOR_ID {
 	/* The three logs. */
 	ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
@@ -51,7 +51,7 @@ typedef enum KOLIMA_FOREST_GLADE_ACTOR_ID {
    SceneId_KolimaForestCliff. */
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return KolimaForestGlade_Entrances;
+	return KolimaForestGladeEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -63,13 +63,13 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
    (SceneId_KolimaForestEntrance). */
 const Uint32 *scGetExits(void)
 {
-	return KolimaForestGlade_Exits;
+	return KolimaForestGladeExits;
 }
 
 /* The three logs and the Nut. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return KolimaForestGlade_ActorPlacements;
+	return KolimaForestGladeActorPlacements;
 }
 
 /* In Kolima Forest (SceneId_KolimaForestGlade), walking into a log rolls it
@@ -93,7 +93,7 @@ static void scKolimaForestGladeCatchNut(void)
 /* The logs, the Nut and the two ways out. */
 const CUE *scGetCues(void)
 {
-	return KolimaForestGlade_Cues;
+	return KolimaForestGladeCues;
 }
 
 /* Sets up the floating Nut and the logs on entry. */
@@ -119,7 +119,7 @@ Sint32 scInit(void)
 #include "shared/pushed_actor_tables.c"
 /* clang-format off */
 
-SCENE_ENTRANCE KolimaForestGlade_Entrances[] = {
+SCENE_ENTRANCE KolimaForestGladeEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_ENTRANCE, CONDITION_ALWAYS, 480, 0, 376, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_CLIFF, CONDITION_ALWAYS, 312, 0, 40, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -128,7 +128,7 @@ SCENE_ENTRANCE KolimaForestGlade_Entrances[] = {
 
 /* KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF on into the forest, and */
 /* KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE back. */
-Uint32 KolimaForestGlade_Exits[] = {
+Uint32 KolimaForestGladeExits[] = {
 	SCENE_EXITS(KolimaForestGlade),
 	SCENE_EXIT(KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF, KolimaForestCliff, KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_GLADE),
 	SCENE_EXIT(KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE, KolimaForestEntrance, KOLIMA_FOREST_ENTRANCE_FROM_KOLIMA_FOREST_GLADE),
@@ -137,7 +137,7 @@ Uint32 KolimaForestGlade_Exits[] = {
 
 /* Until the third patch the Nut's actor placement tested Vale's */
 /* FLAG_VALE_NUT_CAUGHT, not the flag catching it sets. */
-ACTOR_PLACE KolimaForestGlade_ActorPlacements[] = {
+ACTOR_PLACE KolimaForestGladeActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
 		360, 0, 368, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -155,7 +155,7 @@ ACTOR_PLACE KolimaForestGlade_ActorPlacements[] = {
 };
 /* clang-format on */
 
-CUE KolimaForestGlade_Cues[] = {
+CUE KolimaForestGladeCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF},
 	{CUE_EXIT, 2, CONDITION_ALWAYS,
 		KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE},
@@ -168,6 +168,6 @@ CUE KolimaForestGlade_Cues[] = {
 
 /* The healthy colours, kept by scKolimaPaletteSaveHealthy: the palette fade's
    448 background and sprite colours, in the array's first half. */
-Uint8 KolimaPalette_Healthy[1792] BSS_DATA ALIGNED(16);
+Uint8 KolimaPaletteHealthy[1792] BSS_DATA ALIGNED(16);
 /* The cursed colours, kept by scKolimaPaletteSaveCursed. */
-Uint8 KolimaPalette_Cursed[896] BSS_DATA;
+Uint8 KolimaPaletteCursed[896] BSS_DATA;

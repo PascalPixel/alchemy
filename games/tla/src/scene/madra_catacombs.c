@@ -125,26 +125,26 @@ typedef enum MADRA_CATACOMBS_BOOKSHELF_ACTOR_ID {
 struct ACTOR;
 
 extern SCENE_ENTRANCE SceneEntrances[];
-extern SCENE_ENTRANCE MadraCatacombs_StoneDoorEntrances[];
+extern SCENE_ENTRANCE MadraCatacombsStoneDoorEntrances[];
 
-extern SCENE_ENTRANCE MadraCatacombs_BookshelfEntrances[];
+extern SCENE_ENTRANCE MadraCatacombsBookshelfEntrances[];
 
-extern SCENE_REGION MadraCatacombs_LadderRoomRegions[];
+extern SCENE_REGION MadraCatacombsLadderRoomRegions[];
 
-extern ACTOR_PLACE MadraCatacombs_Placements[];
+extern ACTOR_PLACE MadraCatacombsPlacements[];
 
-extern ACTOR_PLACE MadraCatacombs_EntrancePlacements[];
+extern ACTOR_PLACE MadraCatacombsEntrancePlacements[];
 
-extern ACTOR_PLACE MadraCatacombs_ChampaTunnelPlacements[];
+extern ACTOR_PLACE MadraCatacombsChampaTunnelPlacements[];
 
-extern ACTOR_PLACE MadraCatacombs_BookshelfPlacements[];
-extern ACTOR_PLACE MadraCatacombs_TabletPlacements[];
-extern CUE		   MadraCatacombs_EntranceCues[];
-extern CUE		   MadraCatacombs_LaddersCues[];
-extern CUE		   MadraCatacombs_ChampaTunnelCues[];
-extern CUE		   MadraCatacombs_StoneDoorCues[];
-extern CUE		   MadraCatacombs_BookshelfCues[];
-extern CUE		   MadraCatacombs_TabletCues[];
+extern ACTOR_PLACE MadraCatacombsBookshelfPlacements[];
+extern ACTOR_PLACE MadraCatacombsTabletPlacements[];
+extern CUE		   MadraCatacombsEntranceCues[];
+extern CUE		   MadraCatacombsLaddersCues[];
+extern CUE		   MadraCatacombsChampaTunnelCues[];
+extern CUE		   MadraCatacombsStoneDoorCues[];
+extern CUE		   MadraCatacombsBookshelfCues[];
+extern CUE		   MadraCatacombsTabletCues[];
 
 void scMadraCatacombsSetUpVillage(void);
 
@@ -154,14 +154,14 @@ void scMadraCatacombsSetUpBookshelfRoom(void);
 
 void scMadraCatacombsSetUpTabletRoom(void);
 
-extern Sint16 MadraCatacombs_PushedPillar[];
-extern Sint16 MadraCatacombs_Puddles[];
+extern Sint16 MadraCatacombsPushedPillar[];
+extern Sint16 MadraCatacombsPuddles[];
 
-extern Sint32 MadraCatacombs_FlameFlaresUp[];
+extern Sint32 MadraCatacombsFlameFlaresUp[];
 
-extern Sint32 MadraCatacombs_GreatFlameFlaresUp[];
-extern Sint16 MadraCatacombs_VinePillar[];
-extern Sint32 Leader_WalkThroughDoorScript[];
+extern Sint32 MadraCatacombsGreatFlameFlaresUp[];
+extern Sint16 MadraCatacombsVinePillar[];
+extern Sint32 LeaderWalkThroughDoorScript[];
 
 void scMadraCatacombsRockChestWithBookshelf(void);
 
@@ -179,16 +179,16 @@ void scMadraCatacombsLeaveBlockedVillage(void);
 
 #include "shared/held_actor_raise_metatile.h"
 
-extern CUE MadraCatacombs_Cues[];
+extern CUE MadraCatacombsCues[];
 
 void scMadraCatacombsSetUpStoneDoorRoom(void);
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
 	if(MainRoutineStateWork.next == SCENE_MADRA_CATACOMBS_STONE_DOOR)
-		return MadraCatacombs_StoneDoorEntrances;
+		return MadraCatacombsStoneDoorEntrances;
 	if(MainRoutineStateWork.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
-		return MadraCatacombs_BookshelfEntrances;
+		return MadraCatacombsBookshelfEntrances;
 	return SceneEntrances;
 }
 
@@ -197,7 +197,7 @@ const SCENE_REGION *scGetExitRegions(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_MADRA_CATACOMBS_LADDERS)
-		return MadraCatacombs_LadderRoomRegions;
+		return MadraCatacombsLadderRoomRegions;
 	return 0;
 }
 
@@ -209,31 +209,31 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.next == SCENE_MADRA_CATACOMBS_ENTRANCE)
-		return MadraCatacombs_EntrancePlacements;
+		return MadraCatacombsEntrancePlacements;
 	if(MainRoutineStateWork.next == SCENE_MADRA_CATACOMBS_CHAMPA_TUNNEL)
-		return MadraCatacombs_ChampaTunnelPlacements;
+		return MadraCatacombsChampaTunnelPlacements;
 	if(MainRoutineStateWork.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
-		return MadraCatacombs_BookshelfPlacements;
+		return MadraCatacombsBookshelfPlacements;
 	if(MainRoutineStateWork.next == SCENE_MADRA_CATACOMBS_TABLET)
-		return MadraCatacombs_TabletPlacements;
-	return MadraCatacombs_Placements;
+		return MadraCatacombsTabletPlacements;
+	return MadraCatacombsPlacements;
 }
 
 const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.next == SCENE_MADRA_CATACOMBS_ENTRANCE)
-		return MadraCatacombs_EntranceCues;
+		return MadraCatacombsEntranceCues;
 	if(MainRoutineStateWork.next == SCENE_MADRA_CATACOMBS_LADDERS)
-		return MadraCatacombs_LaddersCues;
+		return MadraCatacombsLaddersCues;
 	if(MainRoutineStateWork.next == SCENE_MADRA_CATACOMBS_CHAMPA_TUNNEL)
-		return MadraCatacombs_ChampaTunnelCues;
+		return MadraCatacombsChampaTunnelCues;
 	if(MainRoutineStateWork.next == SCENE_MADRA_CATACOMBS_STONE_DOOR)
-		return MadraCatacombs_StoneDoorCues;
+		return MadraCatacombsStoneDoorCues;
 	if(MainRoutineStateWork.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
-		return MadraCatacombs_BookshelfCues;
+		return MadraCatacombsBookshelfCues;
 	if(MainRoutineStateWork.next == SCENE_MADRA_CATACOMBS_TABLET)
-		return MadraCatacombs_TabletCues;
-	return MadraCatacombs_Cues;
+		return MadraCatacombsTabletCues;
+	return MadraCatacombsCues;
 }
 
 /* Examining the red double door at the foot of the hall before Moloch's tablet
@@ -280,7 +280,7 @@ void scMadraCatacombsDropPillarIntoHole(void)
    slide. */
 void scMadraCatacombsStartMovingPushedPillar(void)
 {
-	fdActorLiftTargetBlock(MadraCatacombs_PushedPillar);
+	fdActorLiftTargetBlock(MadraCatacombsPushedPillar);
 }
 
 /* Felix Moves the plain stone pillar east of the village's middle; once it is
@@ -301,7 +301,7 @@ void scMadraCatacombsFinishMovingPushedPillar(void)
    leaves the catacombs. */
 void scMadraCatacombsFreezePuddle(void)
 {
-	fdFlagBlockApplyFlags(MadraCatacombs_Puddles);
+	fdFlagBlockApplyFlags(MadraCatacombsPuddles);
 }
 
 void scMadraCatacombsLightFlames(void);
@@ -333,20 +333,20 @@ void scMadraCatacombsUnlockWithRuinKey(void)
 	fdScriptPlaySnd(SE_UNLOCK);
 	fdActorSetPos(ACTOR_FIRST_WEST_FLARE + 4, 136, 258);
 	fdActorSetPos(ACTOR_FIRST_EAST_FLARE + 4, 184, 258);
-	fdActorSetScript(ACTOR_FIRST_WEST_FLARE + 4, MadraCatacombs_FlameFlaresUp);
-	fdActorSetScript(ACTOR_FIRST_EAST_FLARE + 4, MadraCatacombs_FlameFlaresUp);
+	fdActorSetScript(ACTOR_FIRST_WEST_FLARE + 4, MadraCatacombsFlameFlaresUp);
+	fdActorSetScript(ACTOR_FIRST_EAST_FLARE + 4, MadraCatacombsFlameFlaresUp);
 	fdScriptWait(40);
 	fdScriptPlaySnd(SE_UNLOCK);
 	fdActorSetPos(ACTOR_FIRST_WEST_FLARE + 3, 120, 226);
 	fdActorSetPos(ACTOR_FIRST_EAST_FLARE + 3, 200, 226);
-	fdActorSetScript(ACTOR_FIRST_WEST_FLARE + 3, MadraCatacombs_FlameFlaresUp);
-	fdActorSetScript(ACTOR_FIRST_EAST_FLARE + 3, MadraCatacombs_FlameFlaresUp);
+	fdActorSetScript(ACTOR_FIRST_WEST_FLARE + 3, MadraCatacombsFlameFlaresUp);
+	fdActorSetScript(ACTOR_FIRST_EAST_FLARE + 3, MadraCatacombsFlameFlaresUp);
 	fdScriptWait(40);
 	fdScriptPlaySnd(SE_UNLOCK);
 	fdActorSetPos(ACTOR_FIRST_WEST_FLARE + 2, 120, 194);
 	fdActorSetPos(ACTOR_FIRST_EAST_FLARE + 2, 200, 194);
-	fdActorSetScript(ACTOR_FIRST_WEST_FLARE + 2, MadraCatacombs_FlameFlaresUp);
-	fdActorSetScript(ACTOR_FIRST_EAST_FLARE + 2, MadraCatacombs_FlameFlaresUp);
+	fdActorSetScript(ACTOR_FIRST_WEST_FLARE + 2, MadraCatacombsFlameFlaresUp);
+	fdActorSetScript(ACTOR_FIRST_EAST_FLARE + 2, MadraCatacombsFlameFlaresUp);
 	fdScriptWait(60);
 	fdScriptPlaySnd(SE_SPLASH);
 	fdActorSetPos(ACTOR_FIRST_WEST_FLARE + 1, 136, 162);
@@ -354,11 +354,11 @@ void scMadraCatacombsUnlockWithRuinKey(void)
 	fdActorSetPos(ACTOR_FIRST_WEST_FLARE, 136, 138);
 	fdActorSetPos(ACTOR_FIRST_EAST_FLARE, 184, 138);
 	fdActorSetScript(
-		ACTOR_FIRST_WEST_FLARE + 1, MadraCatacombs_GreatFlameFlaresUp);
+		ACTOR_FIRST_WEST_FLARE + 1, MadraCatacombsGreatFlameFlaresUp);
 	fdActorSetScript(
-		ACTOR_FIRST_EAST_FLARE + 1, MadraCatacombs_GreatFlameFlaresUp);
-	fdActorSetScript(ACTOR_FIRST_WEST_FLARE, MadraCatacombs_GreatFlameFlaresUp);
-	fdActorSetScript(ACTOR_FIRST_EAST_FLARE, MadraCatacombs_GreatFlameFlaresUp);
+		ACTOR_FIRST_EAST_FLARE + 1, MadraCatacombsGreatFlameFlaresUp);
+	fdActorSetScript(ACTOR_FIRST_WEST_FLARE, MadraCatacombsGreatFlameFlaresUp);
+	fdActorSetScript(ACTOR_FIRST_EAST_FLARE, MadraCatacombsGreatFlameFlaresUp);
 	fdScriptWait(80);
 	scMadraCatacombsLightFlames();
 	gmPartyInventoryRemove(ITEM_RUIN_KEY);
@@ -469,7 +469,7 @@ void scMadraCatacombsPushVinePillar(void)
 	if(fdLeaderCanPushObjectAhead() != 0) {
 		actor = fdActorGetById(
 			fdFindNearbyTalkTarget(MainRoutineStateWork.leaderActorId));
-		scPillarLowerHeldMetatiles(MadraCatacombs_VinePillar);
+		scPillarLowerHeldMetatiles(MadraCatacombsVinePillar);
 		fdLeaderPushObjectAhead();
 		scMadraCatacombsSettleVinePillar(actor);
 	}
@@ -480,11 +480,11 @@ void scMadraCatacombsPushVinePillar(void)
    slide. */
 void scMadraCatacombsStartMovingVinePillar(void)
 {
-	scPillarLowerHeldMetatiles(MadraCatacombs_VinePillar);
+	scPillarLowerHeldMetatiles(MadraCatacombsVinePillar);
 }
 
-void scMadraCatacombsOpenDoorAndEnter(Sint32 sourceX, Sint32 sourceZ, Sint32 x,
-	Sint32 z, Sint32 width, Sint32 height);
+void scMadraCatacombsOpenDoorAndEnter(
+	Sint32 srcX, Sint32 srcZ, Sint32 x, Sint32 z, Sint32 width, Sint32 height);
 
 /* Felix Moves the vine-covered pillar north of the village's middle; where it
    comes to rest becomes ground to stand on, so he can climb its vines to the
@@ -503,7 +503,7 @@ void scMadraCatacombsFinishMovingVinePillar(void)
 void scMadraCatacombsLightFlames(void)
 {
 	Uint32 i;
-	Sint32 target = ACTOR_FIRST_WEST_FLARE;
+	Sint32 tgt = ACTOR_FIRST_WEST_FLARE;
 	Sint32 actor = ACTOR_FIRST_FLAME_MARKER;
 
 	fdActorSetPos(ACTOR_FIRST_WEST_FLARE + 4, 136, 258);
@@ -518,8 +518,8 @@ void scMadraCatacombsLightFlames(void)
 	fdActorSetPos(ACTOR_FIRST_EAST_FLARE, 184, 138);
 	for(i = 0; i < FLARES_PER_SIDE * 2; i++) {
 		fdActorSetAnimation(actor, 0);
-		fdActorPlaceOnActor(actor, target);
-		target++;
+		fdActorPlaceOnActor(actor, tgt);
+		tgt++;
 		actor++;
 	}
 	fdMapGridCopyMetatileAttributes(0, 0, 2, 2, 9, 22);
@@ -533,16 +533,16 @@ void scMadraCatacombsRockChestWithBookshelf(void)
 {
 	ACTOR *bookshelf = fdActorGetById(ACTOR_BOOKSHELF);
 	ACTOR *chest = fdActorGetById(ACTOR_SHELF_CHEST);
-	SPR	  *sprite = chest->spr;
+	SPR	  *spr = chest->spr;
 
-	sprite->rotation = ((SPR *)bookshelf->spr)->rotation;
-	if(fdScriptGetFlag(FLAG_BOOKSHELF_LEANING) != 0 && sprite->rotation == 0) {
+	spr->rotation = ((SPR *)bookshelf->spr)->rotation;
+	if(fdScriptGetFlag(FLAG_BOOKSHELF_LEANING) != 0 && spr->rotation == 0) {
 		fdScriptPlaySnd(SE_BOOKSHELF_SLIDE);
 		chest->x.fixed += toFIXED(-2);
 		chest->velY = toFIXED(2);
 		fdScriptClearFlag(FLAG_BOOKSHELF_LEANING);
 	}
-	if(sprite->rotation != 0)
+	if(spr->rotation != 0)
 		fdScriptSetFlag(FLAG_BOOKSHELF_LEANING);
 }
 
@@ -572,19 +572,19 @@ void scMadraCatacombsEnterDoor(void)
 		actor->y.fixed, actor->z.fixed);
 	scFieldActorWaitForMove(actor);
 	actor->facing = FACING_NORTH;
-	fdActorSetScript(party->leaderActorId, Leader_WalkThroughDoorScript);
+	fdActorSetScript(party->leaderActorId, LeaderWalkThroughDoorScript);
 	sySynch(12);
 	fdScriptPlaySnd(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(state->stepCue);
 }
 
-/* A door opens, its open picture copied over it from (sourceX, sourceZ), and
+/* A door opens, its open picture copied over it from (srcX, srcZ), and
    Felix walks through: a stone door two metatiles wide slides with a thump, a
    door one metatile wide opens as he steps to its middle. */
-void scMadraCatacombsOpenDoorAndEnter(Sint32 sourceX, Sint32 sourceZ, Sint32 x,
-	Sint32 z, Sint32 width, Sint32 height)
+void scMadraCatacombsOpenDoorAndEnter(
+	Sint32 srcX, Sint32 srcZ, Sint32 x, Sint32 z, Sint32 width, Sint32 height)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	ACTOR		*actor;
@@ -596,7 +596,7 @@ void scMadraCatacombsOpenDoorAndEnter(Sint32 sourceX, Sint32 sourceZ, Sint32 x,
 		fdScriptPlaySnd(SE_THUMP);
 	else
 		fdScriptPlaySnd(SE_DOOR_OPEN);
-	fdMapGridCopyMetatilesTo(sourceX, sourceZ, x, z, width, height);
+	fdMapGridCopyMetatilesTo(srcX, srcZ, x, z, width, height);
 	fdScriptWait(20);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	if(width == 1) {
@@ -609,11 +609,11 @@ void scMadraCatacombsOpenDoorAndEnter(Sint32 sourceX, Sint32 sourceZ, Sint32 x,
 		actor->facing = FACING_NORTH;
 	}
 	fdActorSetScript(
-		MainRoutineStateWork.leaderActorId, Leader_WalkThroughDoorScript);
+		MainRoutineStateWork.leaderActorId, LeaderWalkThroughDoorScript);
 	sySynch(12);
 	fdScriptPlaySnd(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(state->stepCue);
 }
 
@@ -664,7 +664,7 @@ void scMadraCatacombsOpenTabletRoomDoor(void)
 			SPRITE_COLOR_HIDDEN); \
 		sySynch(1); \
 		fdScriptStartScreenTransition(); \
-		fdScriptWaitTransitionFrames(); \
+		fdScriptWaitTransitionTicks(); \
 		fdScriptWait(40); \
 		syImportScriptSetExitRequest(exit); \
 	}
@@ -714,12 +714,12 @@ void scMadraCatacombsSetUpVillage(void)
 	}
 	if(fdScriptGetFlag(FLAG_MADRA_CATACOMBS_PILLAR_PLACED) != 0)
 		fdActorSetPos(ACTOR_PUSHED_PILLAR, 712, 424);
-	fdActorPlaceBlocks(MadraCatacombs_PushedPillar);
+	fdActorPlaceBlocks(MadraCatacombsPushedPillar);
 	if(fdScriptGetFlag(FLAG_MADRA_CATACOMBS_VINE_PILLAR_PLACED) != 0)
 		fdActorSetPos(ACTOR_VINE_PILLAR, 568, 280);
 	fdActorGetById(ACTOR_VINE_PILLAR)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	scPillarRaise(MadraCatacombs_VinePillar);
-	fdFlagBlockPlaceAll(MadraCatacombs_Puddles);
+	scPillarRaise(MadraCatacombsVinePillar);
+	fdFlagBlockPlaceAll(MadraCatacombsPuddles);
 	if(fdScriptGetFlag(FLAG_MADRA_CATACOMBS_VILLAGE_DOOR_OPEN) != 0) {
 		fdMapGridCopyMetatilesTo(75, 66, 97, 39, 2, 2);
 		fdMapGridCopyMetatileAttributes(33, 37, 2, 2, 33, 39);
@@ -810,7 +810,7 @@ void scMadraCatacombsSetUpTabletRoom(void)
 #include "shared/leader_walk_through_door_script.c"
 
 /* A brazier's flame's actor script as it flares up. */
-Sint32 MadraCatacombs_FlameFlaresUp[] = {
+Sint32 MadraCatacombsFlameFlaresUp[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1) / 16),
 	SC_SET(SW_SCALE_Y, toFIXED(1) / 16),
 	SC_WAIT(1),
@@ -830,7 +830,7 @@ Sint32 MadraCatacombs_FlameFlaresUp[] = {
 
 /* The actor script of the great braziers by Moloch's tablet as they flare */
 /* up. */
-Sint32 MadraCatacombs_GreatFlameFlaresUp[] = {
+Sint32 MadraCatacombsGreatFlameFlaresUp[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1) / 16),
 	SC_SET(SW_SCALE_Y, toFIXED(1) / 16),
 	SC_WAIT(1),
@@ -855,30 +855,30 @@ Sint32 MadraCatacombs_GreatFlameFlaresUp[] = {
 };
 
 /* The plain stone pillar Move pushes, ended by -1. */
-Sint16 MadraCatacombs_PushedPillar[] = {
+Sint16 MadraCatacombsPushedPillar[] = {
 	ACTOR_PUSHED_PILLAR, -1,
 };
 
 /* The puddle Frost freezes into a pillar, with its flag. */
-Sint16 MadraCatacombs_Puddles[] = {
+Sint16 MadraCatacombsPuddles[] = {
 	ACTOR_VILLAGE_PUDDLE, FLAG_VILLAGE_PUDDLE_FROZEN, -1,
 };
 
 /* The vine-covered pillar Move pushes, ended by -1. */
-Sint16 MadraCatacombs_VinePillar[] = {
+Sint16 MadraCatacombsVinePillar[] = {
 	ACTOR_VINE_PILLAR, -1, 0,
 };
 
 #include "shared/scene_entrances_default.c"
 
 /* The entrances of the stone door's room. */
-SCENE_ENTRANCE MadraCatacombs_StoneDoorEntrances[] = {
+SCENE_ENTRANCE MadraCatacombsStoneDoorEntrances[] = {
 	{3, CONDITION_ALWAYS, 512, 0, 224, FACING_NORTH, 0, 392, 40, 632, 280, 0},
 	{SCENE_TABLE_END},
 };
 
 /* The entrances of the bookshelf room. */
-SCENE_ENTRANCE MadraCatacombs_BookshelfEntrances[] = {
+SCENE_ENTRANCE MadraCatacombsBookshelfEntrances[] = {
 	{5, CONDITION_ALWAYS, 728, 0, 88, FACING_SOUTH, 0, 680, 32, 920, 192, 0},
 	{6, CONDITION_ALWAYS, 872, 0, 88, FACING_SOUTH, 0, 680, 32, 920, 192, 0},
 	{7, CONDITION_ALWAYS, 872, 0, 120, FACING_EAST, 0, 680, 32, 920, 192, 0},
@@ -888,7 +888,7 @@ SCENE_ENTRANCE MadraCatacombs_BookshelfEntrances[] = {
 
 /* Climbing either ladder up out of the ladder room takes the party up into */
 /* Madra. */
-SCENE_REGION MadraCatacombs_LadderRoomRegions[] = {
+SCENE_REGION MadraCatacombsLadderRoomRegions[] = {
 	{112, 48, 144, 128, 64, 160, CONDITION_ALWAYS, MADRA_CATACOMBS_LADDERS_TO_MADRA_WEST},
 	{336, 48, 144, 352, 64, 160, CONDITION_ALWAYS, MADRA_CATACOMBS_LADDERS_TO_MADRA_EAST},
 	{SCENE_TABLE_END},
@@ -947,12 +947,12 @@ Uint32 SceneExits[] = {
 };
 
 /* The actors placed in the catacombs' rooms with no table of their own. */
-ACTOR_PLACE MadraCatacombs_Placements[] = {
+ACTOR_PLACE MadraCatacombsPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
 /* The actors placed in the catacombs' entrance. */
-ACTOR_PLACE MadraCatacombs_EntrancePlacements[] = {
+ACTOR_PLACE MadraCatacombsEntrancePlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_VINE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
@@ -963,7 +963,7 @@ ACTOR_PLACE MadraCatacombs_EntrancePlacements[] = {
 };
 
 /* The actors placed in the Champa tunnel. */
-ACTOR_PLACE MadraCatacombs_ChampaTunnelPlacements[] = {
+ACTOR_PLACE MadraCatacombsChampaTunnelPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
 	ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 794, 0, 236, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -971,13 +971,13 @@ ACTOR_PLACE MadraCatacombs_ChampaTunnelPlacements[] = {
 };
 
 /* The actors placed in the bookshelf room. */
-ACTOR_PLACE MadraCatacombs_BookshelfPlacements[] = {
+ACTOR_PLACE MadraCatacombsBookshelfPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_BOOKSHELF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 202, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
 
 /* The actors placed in the tablet room. */
-ACTOR_PLACE MadraCatacombs_TabletPlacements[] = {
+ACTOR_PLACE MadraCatacombsTabletPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 150, 0, 366, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 170, 0, 366, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1004,12 +1004,12 @@ ACTOR_PLACE MadraCatacombs_TabletPlacements[] = {
 };
 
 /* The cues of the catacombs' rooms with no table of their own. */
-CUE MadraCatacombs_Cues[] = {
+CUE MadraCatacombsCues[] = {
 	{CUE_TABLE_END},
 };
 
 /* The cues of the catacombs' entrance. */
-CUE MadraCatacombs_EntranceCues[] = {
+CUE MadraCatacombsEntranceCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), MADRA_CATACOMBS_ENTRANCE_TO_MADRA_CATACOMBS_BOOKSHELF, CONDITION_ALWAYS, SCRIPT_REF(scMadraCatacombsEnterDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), MADRA_CATACOMBS_ENTRANCE_TO_MADRA_CATACOMBS_STONE_DOOR_NORTH, CONDITION_ALWAYS, SCRIPT_REF(scMadraCatacombsEnterDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), MADRA_CATACOMBS_ENTRANCE_TO_MADRA_CATACOMBS_CHAMPA_TUNNEL_WEST, CONDITION_ALWAYS, SCRIPT_REF(scMadraCatacombsEnterDoor)},
@@ -1033,7 +1033,7 @@ CUE MadraCatacombs_EntranceCues[] = {
 };
 
 /* The cues of the ladder room. */
-CUE MadraCatacombs_LaddersCues[] = {
+CUE MadraCatacombsLaddersCues[] = {
 	{CUE_EXIT, MADRA_CATACOMBS_LADDERS_TO_MADRA_CATACOMBS_CHAMPA_TUNNEL_NORTH, CONDITION_ALWAYS, MADRA_CATACOMBS_LADDERS_TO_MADRA_CATACOMBS_CHAMPA_TUNNEL_NORTH},
 	{CUE_EXIT, MADRA_CATACOMBS_LADDERS_TO_MADRA_CATACOMBS_CHAMPA_TUNNEL_SOUTH, CONDITION_ALWAYS, MADRA_CATACOMBS_LADDERS_TO_MADRA_CATACOMBS_CHAMPA_TUNNEL_SOUTH},
 	{CUE_TABLE_END},
@@ -1041,7 +1041,7 @@ CUE MadraCatacombs_LaddersCues[] = {
 /* clang-format on */
 
 /* The cues of the Champa tunnel. */
-CUE MadraCatacombs_ChampaTunnelCues[] = {
+CUE MadraCatacombsChampaTunnelCues[] = {
 	{CUE_EXIT, MADRA_CATACOMBS_CHAMPA_TUNNEL_TO_MADRA_CATACOMBS_ENTRANCE_WEST,
 		CONDITION_ALWAYS,
 		MADRA_CATACOMBS_CHAMPA_TUNNEL_TO_MADRA_CATACOMBS_ENTRANCE_WEST},
@@ -1069,7 +1069,7 @@ CUE MadraCatacombs_ChampaTunnelCues[] = {
 };
 
 /* The cues of the stone door's room. */
-CUE MadraCatacombs_StoneDoorCues[] = {
+CUE MadraCatacombsStoneDoorCues[] = {
 	{CUE_EXIT,
 		MADRA_CATACOMBS_STONE_DOOR_TO_MADRA_CATACOMBS_BOOKSHELF_NORTHWEST,
 		CONDITION_ALWAYS,
@@ -1103,7 +1103,7 @@ CUE MadraCatacombs_StoneDoorCues[] = {
 };
 
 /* The cues of the bookshelf room. */
-CUE MadraCatacombs_BookshelfCues[] = {
+CUE MadraCatacombsBookshelfCues[] = {
 	{CUE_EXIT,
 		MADRA_CATACOMBS_BOOKSHELF_TO_MADRA_CATACOMBS_STONE_DOOR_NORTHWEST,
 		CONDITION_ALWAYS,
@@ -1129,7 +1129,7 @@ CUE MadraCatacombs_BookshelfCues[] = {
 };
 
 /* The cues of the tablet room. */
-CUE MadraCatacombs_TabletCues[] = {
+CUE MadraCatacombsTabletCues[] = {
 	{CUE_EXIT, MADRA_CATACOMBS_TABLET_TO_MADRA_CATACOMBS_STONE_DOOR_WEST,
 		CONDITION_ALWAYS,
 		MADRA_CATACOMBS_TABLET_TO_MADRA_CATACOMBS_STONE_DOOR_WEST},

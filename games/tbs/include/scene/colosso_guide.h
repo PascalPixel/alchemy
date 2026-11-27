@@ -20,7 +20,7 @@ void scColossoRestoreWarrior(Sint32 id);
 /* Stops the actor where it is. */
 void scActorResetMotionFields(Sint32 actorId);
 
-/* Glides the pointer to screen pixel (x, y) over duration frames. */
+/* Glides the pointer to screen pixel (x, y) over duration ticks. */
 void scColossoMovePointer(Uint32 x, Uint32 y, Uint32 duration);
 /* Hides the pointer. */
 void scColossoHidePointer(void);
@@ -34,6 +34,6 @@ typedef union POINTER_COORDINATE {
 } POINTER_COORDINATE;
 
 /* The pointer's sprite slot, which each match defines. */
-extern Sint16 Colosso_PointerSlot;
+extern Sint16 ColossoPointerSlot;
 
 #endif

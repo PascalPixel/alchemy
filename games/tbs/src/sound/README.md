@@ -60,7 +60,7 @@ VBlank. When the jingle is over the target goes back to full, and the
 music swells in over about a second, having moved on as if the band had
 played through the night.
 
-Nothing counts frames here. All of the sound's timing runs on VBlanks,
+Nothing counts ticks here. All of the sound's timing runs on frames,
 which is why the music keeps its tempo when the picture slows down.
 
 ## The sound driver

@@ -1,7 +1,7 @@
 /* Tolbi's ship deck and Vale's storm: things that throb. */
 
-/* An actor script call, each frame: every 60 to 149 frames the actor squashes
-   and stretches back to its own shape over six frames. */
+/* An actor script call, each tick: every 60 to 149 ticks the actor squashes
+   and stretches back to its own shape over six ticks. */
 static Sint32 scSquashAndStretch(ACTOR *state)
 {
 	switch(state->tmr) {

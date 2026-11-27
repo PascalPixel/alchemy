@@ -198,10 +198,10 @@ void fdMapScreenGetLeaderPoint(Sint32 *screenX, Sint32 *screenY)
 }
 
 /* Returns a World Map place's marker: the high nibble of its value when
-   MapScreen_FirstListOnly is set, else the low nibble (0 and 15 show none). */
+   MapScreenFirstListOnly is set, else the low nibble (0 and 15 show none). */
 Uint32 fdWorldMapPlaceGetMarker(const WORLD_MAP_PLACE *place)
 {
-	if(MapScreen_FirstListOnly != 0)
+	if(MapScreenFirstListOnly != 0)
 		return place->value >> 4;
 	return place->value & 0xf;
 }

@@ -48,39 +48,39 @@ void btTurnStartNoOperation(void)
    SUMMON_EFFECT_DAEDALUS_STRIKE. source is the queued BATTLE_ACTION_RECORD,
    read as halfwords: [0] its unit, [3] its command. Declared Sint32, though it
    returns no value; its one caller reads none. */
-Sint32 btStagingPlanDaedalus(Uint16 *source, BATTLE_PLAN *plan)
+Sint32 btStagingPlanDaedalus(Uint16 *src, BATTLE_PLAN *plan)
 {
 	Uint16 ids[10];
-	Sint32 count;
+	Sint32 cnt;
 	Sint32 i;
 	Sint32 side = BATTLE_SIDE_MASK_ENEMIES;
 	Sint32 own;
 
-	if(source[0] > ALLY_MAX)
+	if(src[0] > ALLY_MAX)
 		side = BATTLE_SIDE_MASK_PARTY;
-	count = btUnitListLivingIds(side, ids);
+	cnt = btUnitListLivingIds(side, ids);
 	/* The plan and BATTLE_STATE.skipPlayback after it. */
 	syWordsClearEntry(plan, sizeof(*plan) + sizeof(Sint32));
 	own = 0;
-	if(source[0] <= ALLY_MAX)
+	if(src[0] <= ALLY_MAX)
 		own = 1;
 	own = btGetUnitAtPlace(btAIChooseRandomTarget(own));
 	plan->element = ELEMENT_MARS;
 	plan->staging = STAGING_DAEDALUS;
 	{
-		Sint32 command = source[3];
+		Sint32 command = src[3];
 
 		plan->unitId = own;
 		plan->command = command;
 	}
-	for(i = 0; i < count; i++) {
+	for(i = 0; i < cnt; i++) {
 		plan->tgtIds[i] = ids[i];
 		plan->tgtOfs[i] = 0;
 		plan->tgtMultiplier[i] = 1;
 		plan->tgtCritical[i] = 0;
 		plan->tgtHit[i] = 1;
 	}
-	plan->tgtCnt = count;
+	plan->tgtCnt = cnt;
 	plan->abilityId = ABILITY_DAEDALUS_STRIKE;
 	plan->battleEff = EFFECT_SUMMON | SUMMON_EFFECT_DAEDALUS_STRIKE;
 }
@@ -91,21 +91,21 @@ Sint32 btStagingPlanDaedalus(Uint16 *source, BATTLE_PLAN *plan)
 void btStagingPlanHighImpact(BATTLE_PLAN *plan)
 {
 	Uint16 ids[10];
-	Sint32 count;
+	Sint32 cnt;
 	Sint32 i;
 	Sint32 side = BATTLE_SIDE_MASK_PARTY;
 
 	if(plan->unitId > ALLY_MAX)
 		side = BATTLE_SIDE_MASK_ENEMIES;
-	count = btUnitListLivingIds(side, ids);
-	for(i = 0; i < count; i++) {
+	cnt = btUnitListLivingIds(side, ids);
+	for(i = 0; i < cnt; i++) {
 		plan->tgtIds[i] = ids[i];
 		plan->tgtOfs[i] = 0;
 		plan->tgtMultiplier[i] = 1;
 		plan->tgtCritical[i] = 0;
 		plan->tgtHit[i] = 1;
 	}
-	plan->tgtCnt = count;
+	plan->tgtCnt = cnt;
 	plan->abilityId = ABILITY_HIGH_IMPACT;
 	plan->battleEff = 1 << EFFECT_VARIANT_SHIFT | BATTLE_EFFECT_CRUCIBLE_FIRE;
 }
@@ -116,23 +116,23 @@ void btStagingPlanHighImpact(BATTLE_PLAN *plan)
 void btStagingPlanAuroraField(BATTLE_PLAN *plan)
 {
 	Uint16 ids[10];
-	Sint32 count;
+	Sint32 cnt;
 	Sint32 i;
 
 	if(plan->unitId <= ALLY_MAX) {
-		count = btPartyPrepareMembers(ids);
-		count += btPartyPrepareReserveOwners(&ids[count]);
+		cnt = btPartyPrepareMembers(ids);
+		cnt += btPartyPrepareReserveOwners(&ids[cnt]);
 	} else {
-		count = btUnitListIds(BATTLE_SIDE_MASK_ENEMIES, ids);
+		cnt = btUnitListIds(BATTLE_SIDE_MASK_ENEMIES, ids);
 	}
-	for(i = 0; i < count; i++) {
+	for(i = 0; i < cnt; i++) {
 		plan->tgtIds[i] = ids[i];
 		plan->tgtOfs[i] = 0;
 		plan->tgtMultiplier[i] = 1;
 		plan->tgtCritical[i] = 0;
 		plan->tgtHit[i] = 1;
 	}
-	plan->tgtCnt = count;
+	plan->tgtCnt = cnt;
 	plan->abilityId = ABILITY_AURORA_FIELD;
 	plan->battleEff = EFFECT_ON_DOWNED | 2 << EFFECT_VARIANT_SHIFT |
 		BATTLE_EFFECT_REVERSE_STAR;
@@ -143,14 +143,14 @@ void btStagingPlanAuroraField(BATTLE_PLAN *plan)
 void btPartyReturnAllToSpots(void)
 {
 	Uint16 ids[UNIT_MAX];
-	Sint32 count = btUnitListIds(BATTLE_SIDE_MASK_BOTH, ids);
+	Sint32 cnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, ids);
 	Sint32 i;
 
-	for(i = 0; i < count; i++)
+	for(i = 0; i < cnt; i++)
 		btMotionReturnToSpot(ids[i]);
 }
 
-/* Plays one action of the turn after delay frames: an enemy picks its ability
+/* Plays one action of the turn after delay ticks: an enemy picks its ability
    now, the action is built and staged, and every unit returns to its spot.
    Returns 1 when the party got away, 0 otherwise, and -1 when the unit is
    already down. */
@@ -176,10 +176,10 @@ Sint32 btStagingDispatchAction(BATTLE_ACTION_RECORD *request, Sint32 delay)
 	if(unit->classId == CLASS_NONE)
 		btAIChooseAction(request, 1);
 
-	/* The camera eases back over 60 frames, the background at full brightness,
+	/* The camera eases back over 60 ticks, the background at full brightness,
 	   the far depth well past the battlefield. */
 	view = Ram_HeapSlots->battleBg;
-	view->frames = 60;
+	view->ticks = 60;
 	view->keepRange = 0;
 	camera = Ram_HeapSlots->cameraState;
 	battle->brightness = toFIXED(1);
@@ -342,39 +342,39 @@ finish:
 void btStagingBuildTargetList(
 	BATTLE_PLAN *plan, BATTLE_PRESENTATION_STATE *effect)
 {
-	Sint16 *outputTarget;
-	Uint32	flags;
-	Sint32	livingTargets;
-	Sint32	targetIndex;
-	Uint8  *inputTarget;
+	Sint16 *outputTgt;
+	Uint32	flg;
+	Sint32	livingTgts;
+	Sint32	tgtIdx;
+	Uint8  *inputTgt;
 
-	livingTargets = 0;
+	livingTgts = 0;
 	effect->prelude = 0;
-	flags = plan->battleEff;
-	effect->kind = flags & EFFECT_ID_MASK;
-	effect->variant = (flags & EFFECT_VARIANT_MASK) >> EFFECT_VARIANT_SHIFT;
+	flg = plan->battleEff;
+	effect->kind = flg & EFFECT_ID_MASK;
+	effect->variant = (flg & EFFECT_VARIANT_MASK) >> EFFECT_VARIANT_SHIFT;
 	effect->actor = plan->unitId;
-	targetIndex = 0;
-	if(targetIndex < plan->tgtCnt) {
-		inputTarget = plan->tgtIds;
-		outputTarget = effect->actors;
+	tgtIdx = 0;
+	if(tgtIdx < plan->tgtCnt) {
+		inputTgt = plan->tgtIds;
+		outputTgt = effect->actors;
 		do {
-			if(btUnitIsListed(*inputTarget) &&
-				(syUnitGet(*inputTarget)->hp != 0 ||
+			if(btUnitIsListed(*inputTgt) &&
+				(syUnitGet(*inputTgt)->hp != 0 ||
 					(plan->battleEff & EFFECT_ON_DOWNED))) {
-				*outputTarget++ = *inputTarget;
-				livingTargets++;
+				*outputTgt++ = *inputTgt;
+				livingTgts++;
 			}
-			targetIndex++;
-			inputTarget++;
-		} while(targetIndex < plan->tgtCnt);
+			tgtIdx++;
+			inputTgt++;
+		} while(tgtIdx < plan->tgtCnt);
 	}
-	if(livingTargets == 0) {
+	if(livingTgts == 0) {
 		effect->actors[0] = plan->tgtIds[0];
-		livingTargets = 1;
+		livingTgts = 1;
 	}
 	effect->firstTgt = plan->tgtIds[0];
-	effect->cnt = livingTargets;
+	effect->cnt = livingTgts;
 	effect->range = 1;
 }
 
@@ -406,17 +406,17 @@ Sint32 btStagingRunFlee(BATTLE_PLAN *plan)
 			btMessageWaitForAdvance();
 		} else {
 			Sint16 unitIds[UNIT_MAX];
-			Sint32 index =
+			Sint32 idx =
 				btUnitListLiving(BATTLE_SIDE_MASK_PARTY, (Uint16 *)unitIds) - 1;
 
-			while(index != -1) {
-				UNIT *unit = syUnitGet(unitIds[index]);
+			while(idx != -1) {
+				UNIT *unit = syUnitGet(unitIds[idx]);
 
 				if(unit->stun == 0 && unit->sleep == 0) {
-					btMotionSetupEscapeObject(unitIds[index]);
+					btMotionSetupEscapeObject(unitIds[idx]);
 					sySynch(8);
 				}
-				index--;
+				idx--;
 			}
 			completed = TRUE;
 		}
@@ -446,8 +446,8 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
 	Uint16					  units[UNIT_MAX];
 	BATTLE_PRESENTATION_STATE state;
 	Uint32					  actor;
-	Uint32					  target;
-	Uint32					  count;
+	Uint32					  tgt;
+	Uint32					  cnt;
 	Uint32					  i;
 	Uint32					  kept;
 	MOTION_OBJECT			 *object;
@@ -456,7 +456,7 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
 	   usual view. */
 	btStagingBuildTargetList(plan, &state);
 	actor = plan->unitId;
-	target = plan->tgtIds[0];
+	tgt = plan->tgtIds[0];
 	if(plan->battleEff & EFFECT_SUMMON) {
 		BATTLE_BACKGROUND_STATE *view = Ram_HeapSlots->battleBg;
 
@@ -464,7 +464,7 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
 			view->tgtYaw = YAW_PARTY_ACTION;
 		else
 			view->tgtYaw = YAW_BEHIND_ENEMIES;
-		view->frames = 60;
+		view->ticks = 60;
 	} else {
 		BATTLE_BACKGROUND_STATE *view = Ram_HeapSlots->battleBg;
 		Sint32					 yaw;
@@ -483,14 +483,14 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
 	object = btObjectGet(actor)->obj;
 	REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
 	i = 0;
-	count = btUnitListIds(BATTLE_SIDE_MASK_BOTH, units);
-	for(; i != count; i++) {
+	cnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, units);
+	for(; i != cnt; i++) {
 		if(units[i] == BATTLE_UNIT_REMOVED)
 			continue;
 		if((mode & STAGING_NO_CAST) || units[i] != actor) {
 			Uint32 unit = units[i];
 
-			if((target <= ALLY_MAX) != (unit <= ALLY_MAX))
+			if((tgt <= ALLY_MAX) != (unit <= ALLY_MAX))
 				btHighlightSetSprMode(unit, SPRITE_SEMI_TRANSPARENT);
 		} else {
 			fdActorSelectAnimationStub(
@@ -521,13 +521,13 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
 	} else {
 		/* Only the target side stays on the field. */
 		kept = 0;
-		for(i = 0; i < count; i++) {
+		for(i = 0; i < cnt; i++) {
 			Uint32 unit = units[i];
 
 			if(unit == actor) {
 				if(!(mode & STAGING_HIDE_ACTOR))
 					units[kept++] = actor;
-			} else if((target <= ALLY_MAX) == (unit <= ALLY_MAX)) {
+			} else if((tgt <= ALLY_MAX) == (unit <= ALLY_MAX)) {
 				units[kept++] = unit;
 			}
 		}
@@ -538,16 +538,15 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
 		units[i] = BATTLE_UNIT_LIST_END;
 		/* Each target's colour modes are saved beside the effect command. */
 		for(i = 0; i != state.cnt; i++) {
-			SPR *animation =
-				btActorGetSpr(btObjectGet(state.actors[i])->obj, 0);
+			SPR	  *anm = btActorGetSpr(btObjectGet(state.actors[i])->obj, 0);
 			Uint32 child;
 
-			for(child = 0; child != animation->cnt - 1; child++)
-				state.params[i][child] = animation->entries[child]->colMode;
+			for(child = 0; child != anm->cnt - 1; child++)
+				state.params[i][child] = anm->entries[child]->colMode;
 		}
 		/* The side the battle effect plays on: the targets'. */
 		if(plan->battleEff & EFFECT_SUMMON) {
-			if(target <= ALLY_MAX)
+			if(tgt <= ALLY_MAX)
 				state.side = EFFECT_SIDE_PARTY;
 			else
 				state.side = EFFECT_SIDE_ENEMIES;
@@ -560,8 +559,8 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
 		if(plan->battleEff & EFFECT_OTHER_SIDE)
 			state.side ^= 1;
 		/* The battle effect runs to its end while playback, an event, plays
-		   each target's outcome from the frame the blow lands. */
-		sySetEvent(btPlaybackRun, EVENT_PASS_FRAME);
+		   each target's outcome from the tick the blow lands. */
+		sySetEvent(btPlaybackRun, EVENT_PASS_TICK);
 		if(plan->battleEff & EFFECT_SUMMON)
 			btEffectRunSummonStub((Sint32 *)&state);
 		else
@@ -569,12 +568,12 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
 		btPlaybackWaitForReady();
 	}
 
-	/* Everyone back: the faded units fade in over 16 frames and every colour
+	/* Everyone back: the faded units fade in over 16 ticks and every colour
 	   mode is cleared. */
 	btObjectPut();
-	count = btUnitListIds(BATTLE_SIDE_MASK_BOTH, units);
+	cnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, units);
 	REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
-	for(i = 0; i != count; i++) {
+	for(i = 0; i != cnt; i++) {
 		Uint32 unit;
 
 		if(units[i] == BATTLE_UNIT_REMOVED)
@@ -586,14 +585,14 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
 			state.kind == BATTLE_EFFECT_GAIA)
 			continue;
 		unit = units[i];
-		if((target <= ALLY_MAX) != (unit <= ALLY_MAX))
+		if((tgt <= ALLY_MAX) != (unit <= ALLY_MAX))
 			btHighlightSetSprMode(unit, SPRITE_SEMI_TRANSPARENT);
 	}
 	for(i = 0; i != BLEND_WEIGHT_MAX; i++) {
 		REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
 		sySynch(1);
 	}
-	for(i = 0; i != count; i++)
+	for(i = 0; i != cnt; i++)
 		btHighlightSetSprMode(units[i], SPRITE_OPAQUE);
 	btCameraSetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
 	sySynch(1);
@@ -605,14 +604,14 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
    waits for the message to advance. */
 UNREAD_RESULT btStagingRunMessages(BATTLE_PLAN *plan, Sint32 unused)
 {
-	Sint32 targetIndex;
+	Sint32 tgtIdx;
 
 	btHighlightSetModes(0, HIGHLIGHT_OFF);
 	if(plan->tgtCnt == 0) {
 		btMessageWaitForAdvance();
 	} else {
-		for(targetIndex = 0; targetIndex < plan->tgtCnt; targetIndex++) {
-			btAbilityApplyToTarget(plan, targetIndex);
+		for(tgtIdx = 0; tgtIdx < plan->tgtCnt; tgtIdx++) {
+			btAbilityApplyToTarget(plan, tgtIdx);
 			btPlaybackRunAll();
 		}
 	}

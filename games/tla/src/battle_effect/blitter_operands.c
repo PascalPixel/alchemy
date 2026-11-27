@@ -14,7 +14,7 @@
 /* The operand for 1 << n, by n from 0 to 15: the blitter builder adds the one
    for the canvas width, as a power of two, to words 8 and 11 of its horizontal
    clip template, counting from 0. */
-const Uint16 Blitter_ImmediatePowers[] = {
+const Uint16 BlitterImmediatePowers[] = {
 	ARM_IMMEDIATE_BIT(0),
 	ARM_IMMEDIATE_BIT(1),
 	ARM_IMMEDIATE_BIT(2),

@@ -30,7 +30,7 @@
 #include "text/msg_ids.h"
 
 /* The Lemurian Ship's room of two jellies, by the rows of
-   LemurianShip_TwoJellyRoomPlacements. */
+   LemurianShipTwoJellyRoomPlacements. */
 typedef enum LEMURIAN_SHIP_TWO_JELLY_ROOM_ACTOR_ID {
 	ACTOR_TWO_JELLY_ROOM_JELLY_A = ACTOR_FIRST_PLACED,
 	ACTOR_TWO_JELLY_ROOM_JELLY_B,
@@ -39,7 +39,7 @@ typedef enum LEMURIAN_SHIP_TWO_JELLY_ROOM_ACTOR_ID {
 } LEMURIAN_SHIP_TWO_JELLY_ROOM_ACTOR_ID;
 
 /* The Lemurian Ship's room of six jellies and the lift, by the rows of
-   LemurianShip_SixJellyRoomPlacements. */
+   LemurianShipSixJellyRoomPlacements. */
 typedef enum LEMURIAN_SHIP_SIX_JELLY_ROOM_ACTOR_ID {
 	ACTOR_SIX_JELLY_ROOM_CRATE = ACTOR_FIRST_PLACED,
 	ACTOR_SIX_JELLY_ROOM_JELLY_A,
@@ -57,13 +57,13 @@ typedef enum LEMURIAN_SHIP_SIX_JELLY_ROOM_ACTOR_ID {
 } LEMURIAN_SHIP_SIX_JELLY_ROOM_ACTOR_ID;
 
 /* The Lemurian Ship's room of the crate on the ledge, by the rows of
-   LemurianShip_LedgeRoomPlacements. */
+   LemurianShipLedgeRoomPlacements. */
 typedef enum LEMURIAN_SHIP_LEDGE_ROOM_ACTOR_ID {
 	ACTOR_LEDGE_CRATE = ACTOR_FIRST_PLACED
 } LEMURIAN_SHIP_LEDGE_ROOM_ACTOR_ID;
 
 /* The Lemurian Ship's room of the pipes, by the rows of
-   LemurianShip_PipeRoomPlacements. */
+   LemurianShipPipeRoomPlacements. */
 typedef enum LEMURIAN_SHIP_PIPE_ROOM_ACTOR_ID {
 	ACTOR_PIPE_ROOM_CRATE = ACTOR_FIRST_PLACED,
 	ACTOR_PIPE_ROOM_JELLY_A,
@@ -83,7 +83,7 @@ typedef enum LEMURIAN_SHIP_PIPE_ROOM_ACTOR_ID {
 } LEMURIAN_SHIP_PIPE_ROOM_ACTOR_ID;
 
 /* The Lemurian Ship's hold, where the jellies gather into the Aqua Hydra, by
-   the rows of LemurianShip_HoldPlacements; the party's rows go to their
+   the rows of LemurianShipHoldPlacements; the party's rows go to their
    slots. */
 typedef enum LEMURIAN_SHIP_HOLD_ACTOR_ID {
 	ACTOR_HOLD_JELLY_A = ACTOR_FIRST_PLACED,
@@ -95,7 +95,7 @@ typedef enum LEMURIAN_SHIP_HOLD_ACTOR_ID {
 } LEMURIAN_SHIP_HOLD_ACTOR_ID;
 
 /* The Lemurian Ship's room of the two pillars Douse fills, by the rows of
-   LemurianShip_PillarRoomPlacements. */
+   LemurianShipPillarRoomPlacements. */
 typedef enum LEMURIAN_SHIP_PILLAR_ROOM_ACTOR_ID {
 	ACTOR_RIGHT_PILLAR = ACTOR_FIRST_PLACED,
 	ACTOR_LEFT_PILLAR,
@@ -104,7 +104,7 @@ typedef enum LEMURIAN_SHIP_PILLAR_ROOM_ACTOR_ID {
 } LEMURIAN_SHIP_PILLAR_ROOM_ACTOR_ID;
 
 /* The Lemurian Ship's engine room, by the rows of
-   LemurianShip_EngineRoomPlacements; the party's rows go to their slots. */
+   LemurianShipEngineRoomPlacements; the party's rows go to their slots. */
 typedef enum LEMURIAN_SHIP_ENGINE_ROOM_ACTOR_ID {
 	ACTOR_ENGINE_ROOM_KRADEN = ACTOR_FIRST_PLACED
 } LEMURIAN_SHIP_ENGINE_ROOM_ACTOR_ID;
@@ -168,7 +168,7 @@ typedef enum LEMURIAN_SHIP_RAISED_CUE {
 /* The first, by LEMURIAN_SHIP_JELLY: Frost froze the jelly's puddle. */
 #define FLAG_PUDDLE_FROZEN	   FLAG_SCENE_TEMP_10
 /* The pillar room's puddles share the room of two jellies' puddle rows
-   (LemurianShip_TwoJellyRoomPuddles) and so its flags: Frost froze the puddle
+   (LemurianShipTwoJellyRoomPuddles) and so its flags: Frost froze the puddle
    on the pillar. */
 #define FLAG_RIGHT_PILLAR_PUDDLE_FROZEN \
 	(FLAG_PUDDLE_FROZEN + JELLY_TWO_JELLY_ROOM_A)
@@ -225,7 +225,7 @@ typedef enum LEMURIAN_SHIP_LOWER_DECK_ENTRANCE {
 /* The cabins' exits within the scene, by the room each leaves and the room it
    leads to, as their entrances are named; scene_exits.h names those to the main
    deck and the lower deck. The doors among them open as Felix walks into them
-   (LemurianShip_Doors). */
+   (LemurianShipDoors). */
 typedef enum LEMURIAN_SHIP_CABINS_EXIT {
 	EXIT_LOGBOOK_ROOM_TO_TWO_JELLY_ROOM = 2,
 	EXIT_TWO_JELLY_ROOM_TO_LOGBOOK_ROOM,
@@ -271,17 +271,17 @@ typedef enum LEMURIAN_SHIP_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_FLOODED_HOLD = 255
 } LEMURIAN_SHIP_METATILE_BEHAVIOR;
 
-extern SCENE_ENTRANCE LemurianShip_AquaHydraEntrances[];
+extern SCENE_ENTRANCE LemurianShipAquaHydraEntrances[];
 
 Uint8 *scGetEntrances(void)
 {
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_LEMURIAN_SHIP_CABINS)
-		return LemurianShip_CabinsEntrances;
+		return LemurianShipCabinsEntrances;
 	if(scene == SCENE_LEMURIAN_SHIP_AQUA_HYDRA)
-		return (Uint8 *)LemurianShip_AquaHydraEntrances;
-	return LemurianShip_Entrances;
+		return (Uint8 *)LemurianShipAquaHydraEntrances;
+	return LemurianShipEntrances;
 }
 
 Uint8 *scGetExitRegions(void)
@@ -289,9 +289,9 @@ Uint8 *scGetExitRegions(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_LEMURIAN_SHIP_CABINS)
-		return LemurianShip_CabinsRegions;
+		return LemurianShipCabinsRegions;
 	if(scene == SCENE_LEMURIAN_SHIP_AQUA_HYDRA)
-		return LemurianShip_AquaHydraRegions;
+		return LemurianShipAquaHydraRegions;
 	return 0;
 }
 
@@ -300,9 +300,9 @@ const Uint32 *scGetExits(void)
 	return SceneExits;
 }
 
-/* The cabin doors (LemurianShip_Doors). */
+/* The cabin doors (LemurianShipDoors). */
 #define CABIN_DOOR_COUNT 10
-/* The lower deck's doors (LemurianShip_LowerDoors); the hold's two doors
+/* The lower deck's doors (LemurianShipLowerDoors); the hold's two doors
    follow, as they open while it is flooded. */
 #define LOWER_DOOR_COUNT 4
 
@@ -330,21 +330,21 @@ void scLemurianShipCheckPillarsOnDropTiles(void);
 void scLemurianShipSetUpPuddle(Sint32 id);
 void scLemurianShipSetUpLowPuddle(Sint32 id);
 
-extern Sint32 LemurianShip_JellyMelts[];
-extern Sint32 LemurianShip_PuddleSpreads[];
-extern Sint32 LemurianShip_HydraForms[];
-extern Sint16 LemurianShip_Crate[];
-extern Sint16 LemurianShip_TwoJellyRoomPuddles[];
-extern Sint16 LemurianShip_SixJellyRoomPuddles[];
-extern Sint16 LemurianShip_PipeRoomPuddles[];
-extern Sint16 LemurianShip_Pillars[];
+extern Sint32 LemurianShipJellyMelts[];
+extern Sint32 LemurianShipPuddleSpreads[];
+extern Sint32 LemurianShipHydraForms[];
+extern Sint16 LemurianShipCrate[];
+extern Sint16 LemurianShipTwoJellyRoomPuddles[];
+extern Sint16 LemurianShipSixJellyRoomPuddles[];
+extern Sint16 LemurianShipPipeRoomPuddles[];
+extern Sint16 LemurianShipPillars[];
 
 void		  scLemurianShipJellyFlees(void);
 void		  scLemurianShipSetBlackCrystal(void);
-extern Uint32 LemurianShip_LightToOrb[];
+extern Uint32 LemurianShipLightToOrb[];
 
-extern ACTOR_PLACE LemurianShip_LedgeRoomPlacements[];
-extern ACTOR_PLACE LemurianShip_PipeRoomPlacements[];
+extern ACTOR_PLACE LemurianShipLedgeRoomPlacements[];
+extern ACTOR_PLACE LemurianShipPipeRoomPlacements[];
 
 ACTOR_PLACE *scGetActorPlacements(void)
 {
@@ -353,20 +353,20 @@ ACTOR_PLACE *scGetActorPlacements(void)
 		case ENTRANCE_TWO_JELLY_ROOM_FROM_LOGBOOK_ROOM:
 		case ENTRANCE_TWO_JELLY_ROOM_FROM_STAIR_ROOM:
 		case ENTRANCE_TWO_JELLY_ROOM_FROM_TWO_JELLY_ROOM_HALL:
-			return LemurianShip_TwoJellyRoomPlacements;
+			return LemurianShipTwoJellyRoomPlacements;
 		case ENTRANCE_SIX_JELLY_ROOM_FROM_WEST_HALL:
 		case ENTRANCE_SIX_JELLY_ROOM_FROM_EAST_HALL:
 		case ENTRANCE_SIX_JELLY_ROOM_FROM_LEDGE_ROOM_WEST:
 		case ENTRANCE_SIX_JELLY_ROOM_FROM_LEDGE_ROOM_EAST:
-			return LemurianShip_SixJellyRoomPlacements;
+			return LemurianShipSixJellyRoomPlacements;
 		case LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_AQUA_HYDRA_NORTHEAST_A:
 		case ENTRANCE_LEDGE_ROOM_FROM_SIX_JELLY_ROOM_WEST:
 		case ENTRANCE_LEDGE_ROOM_FROM_SIX_JELLY_ROOM_EAST:
 		case ENTRANCE_LEDGE_ROOM_FROM_PIPE_ROOM:
-			return LemurianShip_LedgeRoomPlacements;
+			return LemurianShipLedgeRoomPlacements;
 		case ENTRANCE_PIPE_ROOM_FROM_SIX_JELLY_ROOM_EAST_HALL:
 		case ENTRANCE_PIPE_ROOM_FROM_LEDGE_ROOM:
-			return LemurianShip_PipeRoomPlacements;
+			return LemurianShipPipeRoomPlacements;
 		}
 	} else if(MainRoutineStateWork.next == SCENE_LEMURIAN_SHIP_AQUA_HYDRA) {
 		switch(MainRoutineStateWork.entrance) {
@@ -383,21 +383,21 @@ ACTOR_PLACE *scGetActorPlacements(void)
 		case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTH_B:
 		case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_WEST_B:
 		case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTHEAST_B:
-			return LemurianShip_HoldPlacements;
+			return LemurianShipHoldPlacements;
 		case ENTRANCE_PILLAR_ROOM_FROM_CORRIDOR:
 		case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_EAST:
-			return LemurianShip_PillarRoomPlacements;
+			return LemurianShipPillarRoomPlacements;
 		default:
-			return LemurianShip_EngineRoomPlacements;
+			return LemurianShipEngineRoomPlacements;
 		}
 	}
-	return LemurianShip_Placements;
+	return LemurianShipPlacements;
 }
 
 /* Felix walks north into one of the cabins' wooden doors: it swings open, he
    steps through, and the screen closes and opens on the room beyond.
 
-   The doors are LemurianShip_Doors, found by the metatile's step cue, which is
+   The doors are LemurianShipDoors, found by the metatile's step cue, which is
    also the exit taken; the first is the logbook room's, metatile (4, 4). Every
    placed actor stops moving while he goes. */
 void scLemurianShipOpenDoor(void)
@@ -416,16 +416,16 @@ void scLemurianShipOpenDoor(void)
 			actor->motionFlg = 0;
 	}
 	for(i = 0; i < CABIN_DOOR_COUNT; i++) {
-		if(state->stepCue == LemurianShip_Doors[i].exit)
+		if(state->stepCue == LemurianShipDoors[i].exit)
 			found = i;
 	}
 	fdScriptPlaySnd(SE_DOOR_OPEN);
 	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
 	fdMapGridCopyMetatilesTo(
-		0, 0, LemurianShip_Doors[found].x, LemurianShip_Doors[found].z, 1, 2);
-	fdMapGridAnimateMetatiles(LemurianShip_Doors[found].value,
-		LemurianShip_Doors[found].x,
-		LemurianShip_Doors[found].z + OVERHEAD_LAYER_ROW);
+		0, 0, LemurianShipDoors[found].x, LemurianShipDoors[found].z, 1, 2);
+	fdMapGridAnimateMetatiles(LemurianShipDoors[found].value,
+		LemurianShipDoors[found].x,
+		LemurianShipDoors[found].z + OVERHEAD_LAYER_ROW);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	{
@@ -448,7 +448,7 @@ void scLemurianShipOpenDoor(void)
    While the hold is flooded (after the Aqua Hydra, until Parch) the party walks
    a copy of the hold drawn 19 rows further south, and the doors there,
    metatiles (4, 23) and (10, 23), are the last rows of
-   LemurianShip_LowerDoors. */
+   LemurianShipLowerDoors. */
 void scLemurianShipOpenLowerDoor(void)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
@@ -465,7 +465,7 @@ void scLemurianShipOpenLowerDoor(void)
 			actor->motionFlg = 0;
 	}
 	for(i = 0; i < LOWER_DOOR_COUNT; i++) {
-		if(state->stepCue == LemurianShip_LowerDoors[i].exit)
+		if(state->stepCue == LemurianShipLowerDoors[i].exit)
 			found = i;
 	}
 	if(found < 2 && fdScriptGetFlag(FLAG_AQUA_HYDRA_BEATEN) &&
@@ -473,11 +473,11 @@ void scLemurianShipOpenLowerDoor(void)
 		found += LOWER_DOOR_COUNT;
 	fdScriptPlaySnd(SE_DOOR_OPEN);
 	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
-	fdMapGridCopyMetatilesTo(0, 0, LemurianShip_LowerDoors[found].x,
-		LemurianShip_LowerDoors[found].z, 1, 2);
-	fdMapGridAnimateMetatiles(LemurianShip_LowerDoors[found].value,
-		LemurianShip_LowerDoors[found].x,
-		LemurianShip_LowerDoors[found].z + OVERHEAD_LAYER_ROW);
+	fdMapGridCopyMetatilesTo(0, 0, LemurianShipLowerDoors[found].x,
+		LemurianShipLowerDoors[found].z, 1, 2);
+	fdMapGridAnimateMetatiles(LemurianShipLowerDoors[found].value,
+		LemurianShipLowerDoors[found].x,
+		LemurianShipLowerDoors[found].z + OVERHEAD_LAYER_ROW);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	fdActorCenterOnColumn(MainRoutineStateWork.leaderActorId, 2, -4);
@@ -509,18 +509,18 @@ void scLemurianShipWalkIntoPassage(void)
 			leader->y.fixed, leader->z.fixed);
 		scFieldActorWaitForMove(leader);
 		leader->facing = FACING_NORTH;
-		fdActorSetScript(party->leaderActorId, Leader_WalkThroughDoorScript);
+		fdActorSetScript(party->leaderActorId, LeaderWalkThroughDoorScript);
 		sySynch(12);
 		fdScriptPlaySnd(SE_MAP_EXIT);
 		fdScriptFinishScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		syImportScriptSetExitRequest(state->stepCue);
 	}
 }
 
-extern CUE LemurianShip_LedgeRoomCues[];
-extern CUE LemurianShip_HoldCues[];
-extern CUE LemurianShip_PillarRoomCues[];
+extern CUE LemurianShipLedgeRoomCues[];
+extern CUE LemurianShipHoldCues[];
+extern CUE LemurianShipPillarRoomCues[];
 
 const CUE *scGetCues(void)
 {
@@ -529,22 +529,22 @@ const CUE *scGetCues(void)
 		case ENTRANCE_TWO_JELLY_ROOM_FROM_LOGBOOK_ROOM:
 		case ENTRANCE_TWO_JELLY_ROOM_FROM_STAIR_ROOM:
 		case ENTRANCE_TWO_JELLY_ROOM_FROM_TWO_JELLY_ROOM_HALL:
-			return LemurianShip_TwoJellyRoomCues;
+			return LemurianShipTwoJellyRoomCues;
 		case ENTRANCE_SIX_JELLY_ROOM_FROM_WEST_HALL:
 		case ENTRANCE_SIX_JELLY_ROOM_FROM_EAST_HALL:
 		case ENTRANCE_SIX_JELLY_ROOM_FROM_LEDGE_ROOM_WEST:
 		case ENTRANCE_SIX_JELLY_ROOM_FROM_LEDGE_ROOM_EAST:
-			return LemurianShip_SixJellyRoomCues;
+			return LemurianShipSixJellyRoomCues;
 		case LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_AQUA_HYDRA_NORTHEAST_A:
 		case ENTRANCE_LEDGE_ROOM_FROM_SIX_JELLY_ROOM_WEST:
 		case ENTRANCE_LEDGE_ROOM_FROM_SIX_JELLY_ROOM_EAST:
 		case ENTRANCE_LEDGE_ROOM_FROM_PIPE_ROOM:
-			return LemurianShip_LedgeRoomCues;
+			return LemurianShipLedgeRoomCues;
 		case ENTRANCE_PIPE_ROOM_FROM_SIX_JELLY_ROOM_EAST_HALL:
 		case ENTRANCE_PIPE_ROOM_FROM_LEDGE_ROOM:
-			return LemurianShip_PipeRoomCues;
+			return LemurianShipPipeRoomCues;
 		default:
-			return LemurianShip_CabinCues;
+			return LemurianShipCabinCues;
 		}
 	} else if(MainRoutineStateWork.next == SCENE_LEMURIAN_SHIP_AQUA_HYDRA) {
 		switch(MainRoutineStateWork.entrance) {
@@ -561,15 +561,15 @@ const CUE *scGetCues(void)
 		case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTH_B:
 		case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_WEST_B:
 		case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTHEAST_B:
-			return LemurianShip_HoldCues;
+			return LemurianShipHoldCues;
 		case ENTRANCE_PILLAR_ROOM_FROM_CORRIDOR:
 		case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_EAST:
-			return LemurianShip_PillarRoomCues;
+			return LemurianShipPillarRoomCues;
 		default:
-			return LemurianShip_LowerDeckCues;
+			return LemurianShipLowerDeckCues;
 		}
 	}
-	return LemurianShip_Cues;
+	return LemurianShipCues;
 }
 
 /* Felix checks the lever beside the lift in the room of six jellies, metatile
@@ -615,7 +615,7 @@ void scLemurianShipExamineLiftSwitch(void)
    that it can slide (`fdActorLiftTargetBlock`). */
 void scLemurianShipLiftCrate(void)
 {
-	fdActorLiftTargetBlock(LemurianShip_Crate);
+	fdActorLiftTargetBlock(LemurianShipCrate);
 }
 
 /* Felix slides the tall crate one metatile with Move or a push, in the room of
@@ -630,7 +630,7 @@ void scLemurianShipSetDownCrate(void)
    ledge by the stairs; the game takes the crate up so that it can slide. */
 void scLemurianShipLiftLedgeCrate(void)
 {
-	fdActorLiftTargetBlock(LemurianShip_Crate);
+	fdActorLiftTargetBlock(LemurianShipCrate);
 }
 
 /* Felix slides the tall crate along the ledge by the stairs with Move or a
@@ -669,14 +669,14 @@ void scLemurianShipPushCrateOffLedge(void)
    chest. */
 void scLemurianShipFreezeTwoJellyRoomPuddle(void)
 {
-	fdFlagBlockApplyFlags(LemurianShip_TwoJellyRoomPuddles);
+	fdFlagBlockApplyFlags(LemurianShipTwoJellyRoomPuddles);
 }
 
 /* Felix casts Frost on a puddle a jelly left in the room of six jellies: it
    freezes into a pillar of ice to jump along. */
 void scLemurianShipFreezeSixJellyRoomPuddle(void)
 {
-	fdFlagBlockApplyFlags(LemurianShip_SixJellyRoomPuddles);
+	fdFlagBlockApplyFlags(LemurianShipSixJellyRoomPuddles);
 }
 
 /* Felix casts Frost on the puddle the frightened jelly left beside the lift in
@@ -692,7 +692,7 @@ void scLemurianShipFreezeLiftPuddle(void)
    freezes into a pillar of ice to jump along. */
 void scLemurianShipFreezePipeRoomPuddle(void)
 {
-	fdFlagBlockApplyFlags(LemurianShip_PipeRoomPuddles);
+	fdFlagBlockApplyFlags(LemurianShipPipeRoomPuddles);
 }
 
 /* Felix steps onto the grated lift at the top right of the room of six jellies
@@ -894,7 +894,7 @@ void scLemurianShipFightAquaHydra(void)
 	fdActorSetPos(ACTOR_HOLD_JELLY_F, 0, 0);
 	fdScriptWait(20);
 	fdScriptPlaySnd(MUS_AQUA_HYDRA);
-	fdActorRunScriptAndWait(ACTOR_HOLD_JELLY_A, LemurianShip_HydraForms);
+	fdActorRunScriptAndWait(ACTOR_HOLD_JELLY_A, LemurianShipHydraForms);
 
 	MainRoutineStateWork.battleType = BATTLE_TYPE_NO_ESCAPE;
 	fdScriptSetAfterBattleDestination(
@@ -914,7 +914,7 @@ void scLemurianShipCheckPillarsOnDropTiles(void)
 	ACTOR *leader;
 	Sint32 column;
 	Sint32 row;
-	Uint32 frame;
+	Uint32 frm;
 	Sint32 done;
 
 	done = fdScriptGetFlag(FLAG_RIGHT_PILLAR_SUNK);
@@ -937,7 +937,7 @@ void scLemurianShipCheckPillarsOnDropTiles(void)
 				if(actor->z.fixed > leader->z.fixed)
 					fdActorSetSprPriority(
 						MainRoutineStateWork.leaderActorId, 3);
-				for(frame = 0; frame < 128; frame++) {
+				for(frm = 0; frm < 128; frm++) {
 					actor->y.fixed -= toFIXED(1) / 8;
 					sySynch(1);
 				}
@@ -976,7 +976,7 @@ void scLemurianShipCheckPillarsOnDropTiles(void)
 				if(actor->z.fixed > leader->z.fixed)
 					fdActorSetSprPriority(
 						MainRoutineStateWork.leaderActorId, 3);
-				for(frame = 0; frame < 128; frame++) {
+				for(frm = 0; frm < 128; frm++) {
 					actor->y.fixed -= toFIXED(1) / 8;
 					sySynch(1);
 				}
@@ -1011,7 +1011,7 @@ void scLemurianShipCheckPillarsOnDropTiles(void)
    pillars; the game takes it up so that it can slide. */
 void scLemurianShipLiftPillar(void)
 {
-	fdActorLiftTargetBlock(LemurianShip_Pillars);
+	fdActorLiftTargetBlock(LemurianShipPillars);
 }
 
 /* Felix slides one of the two pillars a metatile with Move or a push. If it is
@@ -1070,7 +1070,7 @@ void scLemurianShipShowLeftPillarPuddle(void)
 	{ \
 		FIELD_STATE *state = Ram_HeapSlots->fieldState; \
 		ACTOR		*actor = ((ACTOR *)fdActorGetById(pillar)); \
-		Uint32		 frame; \
+		Uint32		 tick; \
 \
 		fdScriptStart(); \
 		fdScriptEndLastingPsynergy(0); \
@@ -1079,7 +1079,7 @@ void scLemurianShipShowLeftPillarPuddle(void)
 		syGameFlagClear(fullFlag); \
 		fdScriptWait(20); \
 		sySndPlay(SE_SOL_SANCTUM_LIGHT_UP); \
-		for(frame = 0; frame <= 63; frame++) { \
+		for(tick = 0; tick <= 63; tick++) { \
 			actor->y.fixed += toFIXED(1) / 4; \
 			sySynch(1); \
 		} \
@@ -1220,7 +1220,7 @@ void scLemurianShipKeepPillarRoomPuddles(void)
 #define WADE_ROW(row) ((row) + OVERHEAD_LAYER_ROW)
 
 /* An event: in the flooded hold, draws the water rippling around Felix as he
-   wades. Each frame the overhead layer's water over columns 4 to 11 of rows 25
+   wades. Each tick the overhead layer's water over columns 4 to 11 of rows 25
    to 30 is drawn afresh from a plain copy at (74, 105); where he stands on one
    of seven of those metatiles, the ripples' picture at (18, 126) is drawn on
    his metatile, and on all but (7, 26) on the metatile south of it too. */
@@ -1282,13 +1282,13 @@ void scLemurianShipWatchPillarPuddles(void)
    around the pedestal toward it. */
 void scLemurianShipDrawLightToOrb(void)
 {
-	Sint32 position[3];
+	Sint32 pos[3];
 	ACTOR *actor;
 
-	SET_VECTOR(position, toFIXED(808), toFIXED(8), toFIXED(140));
-	syVectorAddPolarOffset(toFIXED(32), syRandom(), position);
-	actor = ((ACTOR *)syImportActorCreate(
-		SPRITE_GLINT, position[0], position[1], position[2]));
+	SET_VECTOR(pos, toFIXED(808), toFIXED(8), toFIXED(140));
+	syVectorAddPolarOffset(toFIXED(32), syRandom(), pos);
+	actor =
+		((ACTOR *)syImportActorCreate(SPRITE_GLINT, pos[0], pos[1], pos[2]));
 	if(actor != NULL) {
 		actor->motionFlg = 0;
 		actor->speedLimit = toFIXED(2);
@@ -1296,7 +1296,7 @@ void scLemurianShipDrawLightToOrb(void)
 		fdActorSetSprFlags(actor, 0);
 		fdActorSelectAnimation(actor, 0);
 		scFieldActorSetMoveTarget(actor, 808, 8, 140);
-		fdActorStartScript(actor, LemurianShip_LightToOrb);
+		fdActorStartScript(actor, LemurianShipLightToOrb);
 	}
 }
 
@@ -1311,7 +1311,7 @@ void scLemurianShipSetBlackCrystal(void)
 	fdScriptSetMessageId((Sint32)MsgLemurianShipHowDidAllTheseMonsters);
 	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 808, 208);
 	fdCameraSetSpeed(0.8);
@@ -1326,10 +1326,10 @@ void scLemurianShipSetBlackCrystal(void)
 	fdActorSetSpeed(ACTOR_SHEBA, 0.8);
 	fdActorSetSpeed(ACTOR_JENNA, 0.8);
 	fdActorSetSpeed(ACTOR_ENGINE_ROOM_KRADEN, 0.8);
-	fdActorSetScript(ACTOR_SHEBA, LemurianShip_ShebaStepsUp);
-	fdActorSetScript(ACTOR_JENNA, LemurianShip_JennaStepsUp);
-	fdActorSetScript(ACTOR_ENGINE_ROOM_KRADEN, LemurianShip_KradenStepsUp);
-	fdActorRunScriptAndWait(ACTOR_PIERS, LemurianShip_PiersToPedestal);
+	fdActorSetScript(ACTOR_SHEBA, LemurianShipShebaStepsUp);
+	fdActorSetScript(ACTOR_JENNA, LemurianShipJennaStepsUp);
+	fdActorSetScript(ACTOR_ENGINE_ROOM_KRADEN, LemurianShipKradenStepsUp);
+	fdActorRunScriptAndWait(ACTOR_PIERS, LemurianShipPiersToPedestal);
 	fdScriptWait(20);
 	/* "How did all these monsters get on board? I could swear I locked
 	   the..." */
@@ -1345,7 +1345,7 @@ void scLemurianShipSetBlackCrystal(void)
 	fdActorRunRepeatedMotion(ACTOR_PIERS, 2);
 	fdActorSetSprPriority(ACTOR_PIERS, 1);
 	fdScriptPlaySnd(SE_SHIMMER);
-	sySetEvent(scLemurianShipDrawLightToOrb, EVENT_PASS_FRAME);
+	sySetEvent(scLemurianShipDrawLightToOrb, EVENT_PASS_TICK);
 	fdScriptWait(60);
 	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
 	fdScriptWait(20);
@@ -1364,7 +1364,7 @@ void scLemurianShipSetBlackCrystal(void)
 	fdScriptWait(80);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	gmPartyInventoryRemove(ITEM_BLACK_CRYSTAL);
 	fdScriptSetFlag(FLAG_SHIP_ENGINE_RUNNING);
 	fdScriptSetFlag(FLAG_JELLIES_BEATEN);
@@ -1398,11 +1398,11 @@ void scLemurianShipMeltJellyIntoPuddle(Sint32 jelly, Sint32 puddle)
 	actor->scaleY = toFIXED(1) / 16;
 	sySynch(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	fdScriptPlaySnd(SE_CURSE);
-	fdActorSetScript(jelly, LemurianShip_JellyMelts);
-	fdActorRunScriptAndWait(puddle, LemurianShip_PuddleSpreads);
+	fdActorSetScript(jelly, LemurianShipJellyMelts);
+	fdActorRunScriptAndWait(puddle, LemurianShipPuddleSpreads);
 	fdScriptWait(20);
 	fdScriptEnd();
 }
@@ -1415,7 +1415,7 @@ void scLemurianShipScareJellyOnArrival(void)
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdScriptWait(20);
 		scLemurianShipJellyFlees();
 		fdScriptEnd();
@@ -1554,11 +1554,11 @@ Sint32 scPrepareMap(void)
    jelly just beaten melting into its puddle. */
 void scLemurianShipSetUpTwoJellyRoom(void)
 {
-	Sint32 flag;
+	Sint32 flg;
 
 	if(fdScriptGetFlag(FLAG_JELLIES_BEATEN)) {
-		flag = fdScriptGetFlag(FLAG_JELLY_MELTING);
-		if(flag != 0) {
+		flg = fdScriptGetFlag(FLAG_JELLY_MELTING);
+		if(flg != 0) {
 			fdMapGridCopyMetatileAttributes(0, 25, 1, 3, 6, 25);
 			fdActorSetPosAndResetMotion(
 				((ACTOR *)fdActorGetById(ACTOR_TWO_JELLY_ROOM_PUDDLE_A)),
@@ -1589,7 +1589,7 @@ void scLemurianShipSetUpTwoJellyRoom(void)
 		fdActorSetSprPriority(ACTOR_TWO_JELLY_ROOM_PUDDLE_B, 1);
 		sySynch(1);
 	}
-	fdFlagBlockPlaceAll(LemurianShip_TwoJellyRoomPuddles);
+	fdFlagBlockPlaceAll(LemurianShipTwoJellyRoomPuddles);
 	if(fdScriptGetFlag(FLAG_JELLY_MELTING)) {
 		scLemurianShipMeltJellyIntoPuddle(
 			ACTOR_TWO_JELLY_ROOM_JELLY_A, ACTOR_TWO_JELLY_ROOM_PUDDLE_A);
@@ -1627,7 +1627,7 @@ void scLemurianShipSetUpSixJellyRoom(void)
 {
 	((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId))->priFlg |=
 		ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorPlaceBlocks(LemurianShip_Crate);
+	fdActorPlaceBlocks(LemurianShipCrate);
 	((ACTOR *)fdActorGetById(ACTOR_SIX_JELLY_ROOM_CRATE))->priFlg |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	fdActorSetSprPriority(ACTOR_SIX_JELLY_ROOM_CRATE, 1);
@@ -1690,7 +1690,7 @@ void scLemurianShipSetUpSixJellyRoom(void)
 			ACTOR_SIX_JELLY_ROOM_PUDDLE_B, toFIXED(760), toFIXED(152))
 		if(FIELD_METATILE(block->x.fixed) == 47 &&
 			FIELD_METATILE(block->z.fixed) == 8)
-			fdActorPlaceBlocks(LemurianShip_Crate);
+			fdActorPlaceBlocks(LemurianShipCrate);
 		if(!fdScriptGetFlag((FLAG_JELLY_MELTING + JELLY_SIX_JELLY_ROOM_C)))
 			fdActorSetPos(ACTOR_SIX_JELLY_ROOM_JELLY_C, 0, 0);
 	} else {
@@ -1709,7 +1709,7 @@ void scLemurianShipSetUpSixJellyRoom(void)
 		PLACE_ON_LOWER_FLOOR(
 			ACTOR_SIX_JELLY_ROOM_PUDDLE_C, toFIXED(792), toFIXED(120))
 		if((x == 48 && z == 7) || (x == 49 && z == 8))
-			fdActorPlaceBlocks(LemurianShip_Crate);
+			fdActorPlaceBlocks(LemurianShipCrate);
 		if(!fdScriptGetFlag((FLAG_JELLY_MELTING + JELLY_SIX_JELLY_ROOM_D)))
 			fdActorSetPos(ACTOR_SIX_JELLY_ROOM_JELLY_D, 0, 0);
 	} else {
@@ -1737,8 +1737,8 @@ void scLemurianShipSetUpSixJellyRoom(void)
 	} else {
 		scLemurianShipSetUpLowerFloorJelly(ACTOR_SIX_JELLY_ROOM_JELLY_F);
 	}
-	fdFlagBlockPlaceAll(LemurianShip_SixJellyRoomPuddles);
-	sySetEvent(scLemurianShipKeepSixJellyRoomPuddles, EVENT_PASS_FRAME);
+	fdFlagBlockPlaceAll(LemurianShipSixJellyRoomPuddles);
+	sySetEvent(scLemurianShipKeepSixJellyRoomPuddles, EVENT_PASS_TICK);
 	if(fdScriptGetFlag((FLAG_JELLY_MELTING + JELLY_SIX_JELLY_ROOM_A))) {
 		scLemurianShipMeltJellyIntoPuddle(
 			ACTOR_SIX_JELLY_ROOM_JELLY_A, ACTOR_SIX_JELLY_ROOM_LIFT_PUDDLE);
@@ -1787,8 +1787,8 @@ void scLemurianShipSetUpLedgeRoom(void)
 {
 	if(fdScriptGetFlag(0x8))
 		fdMapGridCopyMetatileAttributes(14, 46, 1, 1, 16, 46);
-	fdActorPlaceBlocks(LemurianShip_Crate);
-	sySetEvent(scLemurianShipMatchCratePriority, EVENT_PASS_FRAME);
+	fdActorPlaceBlocks(LemurianShipCrate);
+	sySetEvent(scLemurianShipMatchCratePriority, EVENT_PASS_TICK);
 }
 
 /* Sets a jelly up on the floor. */
@@ -1809,7 +1809,7 @@ void scLemurianShipSetUpPipeRoom(void)
 {
 	((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId))->priFlg |=
 		ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorPlaceBlocks(LemurianShip_Crate);
+	fdActorPlaceBlocks(LemurianShipCrate);
 	((ACTOR *)fdActorGetById(ACTOR_PIPE_ROOM_CRATE))->priFlg |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	fdActorSetSprPriority(ACTOR_PIPE_ROOM_CRATE, 1);
@@ -1879,8 +1879,8 @@ void scLemurianShipSetUpPipeRoom(void)
 	} else {
 		scLemurianShipSetUpJelly(ACTOR_PIPE_ROOM_JELLY_G);
 	}
-	fdFlagBlockPlaceAll(LemurianShip_PipeRoomPuddles);
-	syFieldSetFrameEvent(scLemurianShipKeepPipeRoomPuddles, EVENT_PASS_FRAME);
+	fdFlagBlockPlaceAll(LemurianShipPipeRoomPuddles);
+	syFieldSetTickEvent(scLemurianShipKeepPipeRoomPuddles, EVENT_PASS_TICK);
 	if(fdScriptGetFlag((FLAG_JELLY_MELTING + JELLY_PIPE_ROOM_A))) {
 		scLemurianShipMeltJellyIntoPuddle(
 			ACTOR_PIPE_ROOM_JELLY_A, ACTOR_PIPE_ROOM_PUDDLE_A);
@@ -1925,7 +1925,7 @@ void scLemurianShipSetUpHold(void)
 
 	((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId))->priFlg |=
 		ACTOR_PRIORITY_IGNORES_RISES;
-	sySetEvent(scLemurianShipRippleAroundLeader, EVENT_PASS_FRAME);
+	sySetEvent(scLemurianShipRippleAroundLeader, EVENT_PASS_TICK);
 	if(fdScriptGetFlag(FLAG_AQUA_HYDRA_BEATEN)) {
 		actor = ((ACTOR *)fdActorGetById(FIELD_TREASURE_ACTOR));
 		actor->motionFlg = 0;
@@ -1971,7 +1971,7 @@ void scLemurianShipSetUpPillarRoom(void)
 
 	((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId))->priFlg |=
 		ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorPlaceBlocks(LemurianShip_Pillars);
+	fdActorPlaceBlocks(LemurianShipPillars);
 	if(fdScriptGetFlag(FLAG_PILLAR_WAY_OPEN)) {
 		fdMapGridCopyMetatilesTo(4, 124, 31, 64, 3, 2);
 		fdScriptSetFlag(FLAG_RIGHT_PILLAR_SUNK);
@@ -2015,8 +2015,8 @@ void scLemurianShipSetUpPillarRoom(void)
 			fdActorSetAnimation(ACTOR_LEFT_PILLAR, SINKING_PILLAR_FULL);
 	}
 	sySynch(1);
-	fdFlagBlockPlaceAll(LemurianShip_TwoJellyRoomPuddles);
-	syFieldSetFrameEvent(scLemurianShipKeepPillarRoomPuddles, EVENT_PASS_FRAME);
+	fdFlagBlockPlaceAll(LemurianShipTwoJellyRoomPuddles);
+	syFieldSetTickEvent(scLemurianShipKeepPillarRoomPuddles, EVENT_PASS_TICK);
 	if(!fdScriptGetFlag(FLAG_RIGHT_PILLAR_PUDDLE_FROZEN))
 		scFieldActorSetSprCol(
 			((ACTOR *)fdActorGetById(ACTOR_RIGHT_PILLAR_PUDDLE)),
@@ -2025,7 +2025,7 @@ void scLemurianShipSetUpPillarRoom(void)
 		scFieldActorSetSprCol(
 			((ACTOR *)fdActorGetById(ACTOR_LEFT_PILLAR_PUDDLE)),
 			SPRITE_COLOR_HIDDEN);
-	sySetEvent(scLemurianShipWatchPillarPuddles, EVENT_PASS_FRAME);
+	sySetEvent(scLemurianShipWatchPillarPuddles, EVENT_PASS_TICK);
 }
 
 /* The engine room: until the engine runs, Piers sets the Black Crystal as the
@@ -2040,7 +2040,7 @@ void scLemurianShipSetUpEngineRoom(void)
 #include "shared/leader_walk_through_door_script.c"
 
 /* A beaten jelly melting away: it sinks flat over a second and is put away. */
-Sint32 LemurianShip_JellyMelts[] = {
+Sint32 LemurianShipJellyMelts[] = {
 	SC_ADD(SW_SCALE_X, -toFIXED(1) / 128),
 	SC_ADD(SW_SCALE_Y, -toFIXED(1) / 64),
 	SC_WAIT(1),
@@ -2051,7 +2051,7 @@ Sint32 LemurianShip_JellyMelts[] = {
 };
 
 /* The puddle spreading where the jelly melted. */
-Sint32 LemurianShip_PuddleSpreads[] = {
+Sint32 LemurianShipPuddleSpreads[] = {
 	SC_ADD(SW_SCALE_X, toFIXED(1) / 64),
 	SC_ADD(SW_SCALE_Y, toFIXED(1) / 64),
 	SC_WAIT(1),
@@ -2060,7 +2060,7 @@ Sint32 LemurianShip_PuddleSpreads[] = {
 };
 
 /* The Aqua Hydra forming out of the gathered jellies, growing in pulses. */
-Sint32 LemurianShip_HydraForms[] = {
+Sint32 LemurianShipHydraForms[] = {
 	SC_ADD(SW_SCALE_X, toFIXED(3) / 16),
 	SC_ADD(SW_SCALE_Y, toFIXED(3) / 16),
 	SC_WAIT(4),
@@ -2077,46 +2077,46 @@ Sint32 LemurianShip_HydraForms[] = {
 };
 
 /* Piers walking up to the Black Crystal's pedestal. */
-Uint32 LemurianShip_PiersToPedestal[] = {
+Uint32 LemurianShipPiersToPedestal[] = {
 	SC_ANIMATION(ANIM_WALK), SC_MOVE(808, 0, 168), SC_SYNC,
 	SC_ANIMATION(ANIM_STAND), SC_END,
 };
 
 /* Sheba stepping up beside Piers. */
-Uint32 LemurianShip_ShebaStepsUp[] = {
+Uint32 LemurianShipShebaStepsUp[] = {
 	SC_ANIMATION(ANIM_WALK), SC_MOVE(784, 0, 196), SC_SYNC,
 	SC_ANIMATION(ANIM_STAND), SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHEAST),
 	SC_WAIT(10), SC_END,
 };
 
 /* Jenna stepping up beside Piers. */
-Uint32 LemurianShip_JennaStepsUp[] = {
+Uint32 LemurianShipJennaStepsUp[] = {
 	SC_ANIMATION(ANIM_WALK), SC_MOVE(832, 0, 196), SC_SYNC,
 	SC_ANIMATION(ANIM_STAND), SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTHWEST),
 	SC_WAIT(10), SC_END,
 };
 
 /* Kraden stepping up beside Piers. */
-Uint32 LemurianShip_KradenStepsUp[] = {
+Uint32 LemurianShipKradenStepsUp[] = {
 	SC_ANIMATION(ANIM_WALK), SC_MOVE(792, 0, 216), SC_SYNC,
 	SC_ANIMATION(ANIM_STAND), SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
 	SC_WAIT(10), SC_END,
 };
 
 /* The crate Move and a push take up, by actor id. */
-Sint16 LemurianShip_Crate[] = {
+Sint16 LemurianShipCrate[] = {
 	ACTOR_FIRST_PLACED, -1,
 };
 
 /* The room of two jellies' puddles, by actor id and flag. */
-Sint16 LemurianShip_TwoJellyRoomPuddles[] = {
+Sint16 LemurianShipTwoJellyRoomPuddles[] = {
 	ACTOR_TWO_JELLY_ROOM_PUDDLE_A, FLAG_PUDDLE_FROZEN + JELLY_TWO_JELLY_ROOM_A,
 	ACTOR_TWO_JELLY_ROOM_PUDDLE_B, FLAG_PUDDLE_FROZEN + JELLY_TWO_JELLY_ROOM_B,
 	-1,
 };
 
 /* The room of six jellies' puddles, by actor id and flag. */
-Sint16 LemurianShip_SixJellyRoomPuddles[] = {
+Sint16 LemurianShipSixJellyRoomPuddles[] = {
 	ACTOR_SIX_JELLY_ROOM_PUDDLE_A, FLAG_PUDDLE_FROZEN + JELLY_SIX_JELLY_ROOM_B,
 	ACTOR_SIX_JELLY_ROOM_PUDDLE_B, FLAG_PUDDLE_FROZEN + JELLY_SIX_JELLY_ROOM_C,
 	ACTOR_SIX_JELLY_ROOM_PUDDLE_C, FLAG_PUDDLE_FROZEN + JELLY_SIX_JELLY_ROOM_D,
@@ -2126,7 +2126,7 @@ Sint16 LemurianShip_SixJellyRoomPuddles[] = {
 };
 
 /* The room of the pipes' puddles, by actor id and flag. */
-Sint16 LemurianShip_PipeRoomPuddles[] = {
+Sint16 LemurianShipPipeRoomPuddles[] = {
 	ACTOR_PIPE_ROOM_PUDDLE_A, FLAG_PUDDLE_FROZEN + JELLY_PIPE_ROOM_A,
 	ACTOR_PIPE_ROOM_PUDDLE_B, FLAG_PUDDLE_FROZEN + JELLY_PIPE_ROOM_B,
 	ACTOR_PIPE_ROOM_PUDDLE_C, FLAG_PUDDLE_FROZEN + JELLY_PIPE_ROOM_C,
@@ -2137,7 +2137,7 @@ Sint16 LemurianShip_PipeRoomPuddles[] = {
 };
 
 /* The two pillars Move and a push take up, by actor id. */
-Sint16 LemurianShip_Pillars[] = {
+Sint16 LemurianShipPillars[] = {
 	ACTOR_RIGHT_PILLAR, ACTOR_LEFT_PILLAR, -1,
 };
 
@@ -2161,13 +2161,13 @@ Sint16 LemurianShip_Pillars[] = {
 #define REGION_WORDS_END HALFWORDS(SCENE_TABLE_END, 0), 0, 0, 0
 
 /* The entrances of neither scene. */
-Sint32 LemurianShip_Entrances[] = {
+Sint32 LemurianShipEntrances[] = {
 	ENTRANCE_WORDS(0, 172, 0, 149, FACING_SOUTH, -1, -1, -1, -1),
 	ENTRANCE_WORDS_END,
 };
 
 /* The cabins' entrances. */
-Uint32 LemurianShip_CabinsEntrances[] = {
+Uint32 LemurianShipCabinsEntrances[] = {
 	ENTRANCE_WORDS(LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_AQUA_HYDRA_NORTH_A, 406, 0, 376, FACING_NORTH, 336, 264, 616, 424),
 	ENTRANCE_WORDS(ENTRANCE_SIX_JELLY_ROOM_WEST_HALL_FROM_SIX_JELLY_ROOM, 550, 0, 377, FACING_NORTH, 336, 264, 616, 424),
 	ENTRANCE_WORDS(ENTRANCE_SIX_JELLY_ROOM_EAST_HALL_FROM_SIX_JELLY_ROOM, 566, 0, 889, FACING_NORTH, 488, 776, 728, 936),
@@ -2178,7 +2178,7 @@ Uint32 LemurianShip_CabinsEntrances[] = {
 };
 
 /* The lower deck's entrances. */
-SCENE_ENTRANCE LemurianShip_AquaHydraEntrances[] = {
+SCENE_ENTRANCE LemurianShipAquaHydraEntrances[] = {
 	{0, CONDITION_ALWAYS, 72, 0, 72, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTHWEST_A, CONDITION_ALWAYS, 72, 0, 72, FACING_SOUTH, 0, 8, 16, 248, 256, 0},
 	{LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTH_A, CONDITION_ALWAYS, 168, 0, 72, FACING_SOUTH, 0, 8, 16, 248, 256, 0},
@@ -2193,14 +2193,14 @@ SCENE_ENTRANCE LemurianShip_AquaHydraEntrances[] = {
 };
 
 /* The cabins' exit regions. */
-Uint32 LemurianShip_CabinsRegions[] = {
+Uint32 LemurianShipCabinsRegions[] = {
 	REGION_WORDS(466, -20, 580, 474, -12, 588,
 				 LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_AQUA_HYDRA_EAST_A),
 	REGION_WORDS_END,
 };
 
 /* The lower deck's exit regions. */
-Uint32 LemurianShip_AquaHydraRegions[] = {
+Uint32 LemurianShipAquaHydraRegions[] = {
 	REGION_WORDS(512, 16, 190, 528, 32, 206,
 				 LEMURIAN_SHIP_AQUA_HYDRA_TO_LEMURIAN_SHIP_CABINS_EAST),
 	REGION_WORDS_END,
@@ -2260,12 +2260,12 @@ Uint32 SceneExits[] = {
 };
 
 /* The actors of neither scene: none. */
-ACTOR_PLACE LemurianShip_Placements[] = {
+ACTOR_PLACE LemurianShipPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
 /* The room of two jellies' actors, by LEMURIAN_SHIP_TWO_JELLY_ROOM_ACTOR_ID. */
-ACTOR_PLACE LemurianShip_TwoJellyRoomPlacements[] = {
+ACTOR_PLACE LemurianShipTwoJellyRoomPlacements[] = {
 	{SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, 1, toFIXED(104), 0, toFIXED(424), FACING_SOUTH, 0, 0},
 	{SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, 1, toFIXED(104), 0, toFIXED(536), FACING_SOUTH, 0, 0},
 	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -2274,7 +2274,7 @@ ACTOR_PLACE LemurianShip_TwoJellyRoomPlacements[] = {
 };
 
 /* The room of six jellies' actors, by LEMURIAN_SHIP_SIX_JELLY_ROOM_ACTOR_ID. */
-ACTOR_PLACE LemurianShip_SixJellyRoomPlacements[] = {
+ACTOR_PLACE LemurianShipSixJellyRoomPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_TALL_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 120, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 856, 0, 88, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 88, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -2292,14 +2292,14 @@ ACTOR_PLACE LemurianShip_SixJellyRoomPlacements[] = {
 };
 
 /* The ledge room's actors, by LEMURIAN_SHIP_LEDGE_ROOM_ACTOR_ID. */
-ACTOR_PLACE LemurianShip_LedgeRoomPlacements[] = {
+ACTOR_PLACE LemurianShipLedgeRoomPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_TALL_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 744, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	{SCENE_TABLE_END},
 };
 
 /* The room of the pipes' actors, by enum */
 /* LEMURIAN_SHIP_PIPE_ROOM_ACTOR_ID. */
-ACTOR_PLACE LemurianShip_PipeRoomPlacements[] = {
+ACTOR_PLACE LemurianShipPipeRoomPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_TALL_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 552, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 520, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 856, 0, 520, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -2319,7 +2319,7 @@ ACTOR_PLACE LemurianShip_PipeRoomPlacements[] = {
 };
 
 /* The hold's actors, by LEMURIAN_SHIP_HOLD_ACTOR_ID. */
-ACTOR_PLACE LemurianShip_HoldPlacements[] = {
+ACTOR_PLACE LemurianShipHoldPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 120, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 88, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
 	ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 120, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
@@ -2331,7 +2331,7 @@ ACTOR_PLACE LemurianShip_HoldPlacements[] = {
 };
 
 /* The pillar room's actors, by LEMURIAN_SHIP_PILLAR_ROOM_ACTOR_ID. */
-ACTOR_PLACE LemurianShip_PillarRoomPlacements[] = {
+ACTOR_PLACE LemurianShipPillarRoomPlacements[] = {
 	{SPRITE_SINKING_PILLAR, CONDITION_ALWAYS, 1, toFIXED(584), 0, toFIXED(168), FACING_SOUTH, 2, 0},
 	{SPRITE_SINKING_PILLAR, CONDITION_ALWAYS, 1, toFIXED(472), 0, toFIXED(152), FACING_SOUTH, 2, 0},
 	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2340,7 +2340,7 @@ ACTOR_PLACE LemurianShip_PillarRoomPlacements[] = {
 };
 
 /* The engine room's actors, by LEMURIAN_SHIP_ENGINE_ROOM_ACTOR_ID. */
-ACTOR_PLACE LemurianShip_EngineRoomPlacements[] = {
+ACTOR_PLACE LemurianShipEngineRoomPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2348,17 +2348,17 @@ ACTOR_PLACE LemurianShip_EngineRoomPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-/* How a ship's door swings open, as three frames of metatiles copied over */
+/* How a ship's door swings open, as three ticks of metatiles copied over */
 /* the closed door, ended by -1 (MAPGRID_ANIMATION_STEPS_END). */
-Sint16 LemurianShip_DoorOpening[] = {
+Sint16 LemurianShipDoorOpening[] = {
 	MAPGRID_ANIMATION_STEP(0, 126, 1, 2, 2),
 	MAPGRID_ANIMATION_STEP(1, 126, 1, 2, 4),
 	MAPGRID_ANIMATION_STEP(2, 126, 1, 2, 4),
 	-1,
 };
 
-/* How the logbook room's door swings open, in two frames. */
-Sint16 LemurianShip_FirstDoorOpening[] = {
+/* How the logbook room's door swings open, in two ticks. */
+Sint16 LemurianShipFirstDoorOpening[] = {
 	MAPGRID_ANIMATION_STEP(10, 126, 1, 2, 4),
 	MAPGRID_ANIMATION_STEP(11, 126, 1, 2, 4),
 	-1,
@@ -2369,37 +2369,37 @@ Sint16 LemurianShip_FirstDoorOpening[] = {
 };
 
 /* The cabin doors, by the step cue that opens each. */
-LEMURIAN_SHIP_WARP LemurianShip_Doors[CABIN_DOOR_COUNT] = {
-	{EXIT_LOGBOOK_ROOM_TO_TWO_JELLY_ROOM, (Sint32)LemurianShip_FirstDoorOpening, 4, 3},
-	{LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_AQUA_HYDRA_WEST_A, (Sint32)LemurianShip_DoorOpening, 35, 11},
-	{LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_AQUA_HYDRA_NORTHEAST_A, (Sint32)LemurianShip_DoorOpening, 6, 45},
-	{EXIT_LEDGE_ROOM_TO_SIX_JELLY_ROOM_WEST, (Sint32)LemurianShip_DoorOpening, 11, 45},
-	{EXIT_LEDGE_ROOM_TO_SIX_JELLY_ROOM_EAST, (Sint32)LemurianShip_DoorOpening, 21, 45},
-	{EXIT_LEDGE_ROOM_TO_PIPE_ROOM, (Sint32)LemurianShip_DoorOpening, 26, 46},
-	{EXIT_STAIR_ROOM_HALL_TO_STAIR_ROOM, (Sint32)LemurianShip_DoorOpening, 29, 28},
-	{EXIT_SIX_JELLY_ROOM_TO_WEST_HALL, (Sint32)LemurianShip_DoorOpening, 48, 2},
-	{EXIT_SIX_JELLY_ROOM_TO_EAST_HALL, (Sint32)LemurianShip_DoorOpening, 54, 2},
-	{EXIT_PIPE_ROOM_TO_SIX_JELLY_ROOM_EAST_HALL, (Sint32)LemurianShip_DoorOpening, 41, 29},
+LEMURIAN_SHIP_WARP LemurianShipDoors[CABIN_DOOR_COUNT] = {
+	{EXIT_LOGBOOK_ROOM_TO_TWO_JELLY_ROOM, (Sint32)LemurianShipFirstDoorOpening, 4, 3},
+	{LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_AQUA_HYDRA_WEST_A, (Sint32)LemurianShipDoorOpening, 35, 11},
+	{LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_AQUA_HYDRA_NORTHEAST_A, (Sint32)LemurianShipDoorOpening, 6, 45},
+	{EXIT_LEDGE_ROOM_TO_SIX_JELLY_ROOM_WEST, (Sint32)LemurianShipDoorOpening, 11, 45},
+	{EXIT_LEDGE_ROOM_TO_SIX_JELLY_ROOM_EAST, (Sint32)LemurianShipDoorOpening, 21, 45},
+	{EXIT_LEDGE_ROOM_TO_PIPE_ROOM, (Sint32)LemurianShipDoorOpening, 26, 46},
+	{EXIT_STAIR_ROOM_HALL_TO_STAIR_ROOM, (Sint32)LemurianShipDoorOpening, 29, 28},
+	{EXIT_SIX_JELLY_ROOM_TO_WEST_HALL, (Sint32)LemurianShipDoorOpening, 48, 2},
+	{EXIT_SIX_JELLY_ROOM_TO_EAST_HALL, (Sint32)LemurianShipDoorOpening, 54, 2},
+	{EXIT_PIPE_ROOM_TO_SIX_JELLY_ROOM_EAST_HALL, (Sint32)LemurianShipDoorOpening, 41, 29},
 };
 
 /* The lower deck's doors, by the step cue that opens each, then the */
 /* hold's two doors while it is flooded. */
-LEMURIAN_SHIP_WARP LemurianShip_LowerDoors[LOWER_DOOR_COUNT + 2] = {
-	{LEMURIAN_SHIP_AQUA_HYDRA_TO_LEMURIAN_SHIP_CABINS_NORTHWEST_A, (Sint32)LemurianShip_DoorOpening, 4, 2},
-	{LEMURIAN_SHIP_AQUA_HYDRA_TO_LEMURIAN_SHIP_CABINS_NORTH_A, (Sint32)LemurianShip_DoorOpening, 10, 2},
-	{EXIT_PILLAR_ROOM_TO_CORRIDOR, (Sint32)LemurianShip_DoorOpening, 31, 3},
-	{EXIT_CORRIDOR_TO_ENGINE_ROOM, (Sint32)LemurianShip_DoorOpening, 41, 51},
-	{11, (Sint32)LemurianShip_DoorOpening, 4, 21},
-	{12, (Sint32)LemurianShip_DoorOpening, 10, 21},
+LEMURIAN_SHIP_WARP LemurianShipLowerDoors[LOWER_DOOR_COUNT + 2] = {
+	{LEMURIAN_SHIP_AQUA_HYDRA_TO_LEMURIAN_SHIP_CABINS_NORTHWEST_A, (Sint32)LemurianShipDoorOpening, 4, 2},
+	{LEMURIAN_SHIP_AQUA_HYDRA_TO_LEMURIAN_SHIP_CABINS_NORTH_A, (Sint32)LemurianShipDoorOpening, 10, 2},
+	{EXIT_PILLAR_ROOM_TO_CORRIDOR, (Sint32)LemurianShipDoorOpening, 31, 3},
+	{EXIT_CORRIDOR_TO_ENGINE_ROOM, (Sint32)LemurianShipDoorOpening, 41, 51},
+	{11, (Sint32)LemurianShipDoorOpening, 4, 21},
+	{12, (Sint32)LemurianShipDoorOpening, 10, 21},
 };
 
 /* The cues of neither scene: none. */
-CUE LemurianShip_Cues[] = {
+CUE LemurianShipCues[] = {
 	{CUE_TABLE_END},
 };
 
 /* The cabins' cues. */
-CUE LemurianShip_CabinCues[] = {
+CUE LemurianShipCabinCues[] = {
 	{CUE_EXIT, LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_MAIN_DECK, CONDITION_ALWAYS, LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_MAIN_DECK},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), EXIT_LOGBOOK_ROOM_TO_TWO_JELLY_ROOM, CONDITION_ALWAYS, SCRIPT_REF(scLemurianShipOpenDoor)},
 	{CUE_EXIT, EXIT_STAIR_ROOM_TO_TWO_JELLY_ROOM, CONDITION_ALWAYS, EXIT_STAIR_ROOM_TO_TWO_JELLY_ROOM},
@@ -2418,7 +2418,7 @@ CUE LemurianShip_CabinCues[] = {
 };
 
 /* The room of two jellies' cues. */
-CUE LemurianShip_TwoJellyRoomCues[] = {
+CUE LemurianShipTwoJellyRoomCues[] = {
 	{CUE_EXIT, EXIT_TWO_JELLY_ROOM_TO_LOGBOOK_ROOM, CONDITION_ALWAYS, EXIT_TWO_JELLY_ROOM_TO_LOGBOOK_ROOM},
 	{CUE_EXIT, EXIT_TWO_JELLY_ROOM_TO_STAIR_ROOM, CONDITION_ALWAYS, EXIT_TWO_JELLY_ROOM_TO_STAIR_ROOM},
 	{CUE_EXIT, EXIT_TWO_JELLY_ROOM_TO_TWO_JELLY_ROOM_HALL, CONDITION_ALWAYS, EXIT_TWO_JELLY_ROOM_TO_TWO_JELLY_ROOM_HALL},
@@ -2430,7 +2430,7 @@ CUE LemurianShip_TwoJellyRoomCues[] = {
 };
 
 /* The room of six jellies' cues. */
-CUE LemurianShip_SixJellyRoomCues[] = {
+CUE LemurianShipSixJellyRoomCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), EXIT_SIX_JELLY_ROOM_TO_WEST_HALL, CONDITION_ALWAYS, SCRIPT_REF(scLemurianShipOpenDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), EXIT_SIX_JELLY_ROOM_TO_EAST_HALL, CONDITION_ALWAYS, SCRIPT_REF(scLemurianShipOpenDoor)},
 	{CUE_EXIT, EXIT_SIX_JELLY_ROOM_TO_LEDGE_ROOM_WEST, CONDITION_ALWAYS, EXIT_SIX_JELLY_ROOM_TO_LEDGE_ROOM_WEST},
@@ -2459,7 +2459,7 @@ CUE LemurianShip_SixJellyRoomCues[] = {
 };
 
 /* The ledge room's cues. */
-CUE LemurianShip_LedgeRoomCues[] = {
+CUE LemurianShipLedgeRoomCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_AQUA_HYDRA_NORTHEAST_A, CONDITION_ALWAYS, SCRIPT_REF(scLemurianShipOpenDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), EXIT_LEDGE_ROOM_TO_SIX_JELLY_ROOM_WEST, CONDITION_ALWAYS, SCRIPT_REF(scLemurianShipOpenDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), EXIT_LEDGE_ROOM_TO_SIX_JELLY_ROOM_EAST, CONDITION_ALWAYS, SCRIPT_REF(scLemurianShipOpenDoor)},
@@ -2472,7 +2472,7 @@ CUE LemurianShip_LedgeRoomCues[] = {
 };
 
 /* The room of the pipes' cues. */
-CUE LemurianShip_PipeRoomCues[] = {
+CUE LemurianShipPipeRoomCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), EXIT_PIPE_ROOM_TO_SIX_JELLY_ROOM_EAST_HALL, CONDITION_ALWAYS, SCRIPT_REF(scLemurianShipOpenDoor)},
 	{CUE_EXIT, EXIT_PIPE_ROOM_TO_LEDGE_ROOM, CONDITION_ALWAYS, EXIT_PIPE_ROOM_TO_LEDGE_ROOM},
 	{TALK_CUE_FACING(FACING_EAST), ACTOR_PIPE_ROOM_JELLY_A, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightPipeRoomJelly)},
@@ -2500,7 +2500,7 @@ CUE LemurianShip_PipeRoomCues[] = {
 };
 
 /* The hold's cues. */
-CUE LemurianShip_HoldCues[] = {
+CUE LemurianShipHoldCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), LEMURIAN_SHIP_AQUA_HYDRA_TO_LEMURIAN_SHIP_CABINS_NORTHWEST_A, CONDITION_ALWAYS, SCRIPT_REF(scLemurianShipOpenLowerDoor)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), LEMURIAN_SHIP_AQUA_HYDRA_TO_LEMURIAN_SHIP_CABINS_NORTH_A, CONDITION_ALWAYS, SCRIPT_REF(scLemurianShipOpenLowerDoor)},
 	{CUE_EXIT, LEMURIAN_SHIP_AQUA_HYDRA_TO_LEMURIAN_SHIP_CABINS_WEST_A, CONDITION_ALWAYS, LEMURIAN_SHIP_AQUA_HYDRA_TO_LEMURIAN_SHIP_CABINS_WEST_A},
@@ -2512,7 +2512,7 @@ CUE LemurianShip_HoldCues[] = {
 };
 
 /* The pillar room's cues. */
-CUE LemurianShip_PillarRoomCues[] = {
+CUE LemurianShipPillarRoomCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), EXIT_PILLAR_ROOM_TO_CORRIDOR, CONDITION_ALWAYS, SCRIPT_REF(scLemurianShipWalkIntoPassage)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_RIGHT_PILLAR, FLAG_RIGHT_PILLAR_SUNK, SCRIPT_REF(scLemurianShipLiftPillar)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RIGHT_PILLAR, FLAG_RIGHT_PILLAR_SUNK, SCRIPT_REF(scLemurianShipSetDownPillar)},
@@ -2532,7 +2532,7 @@ CUE LemurianShip_PillarRoomCues[] = {
 };
 
 /* The lower deck's cues. */
-CUE LemurianShip_LowerDeckCues[] = {
+CUE LemurianShipLowerDeckCues[] = {
 	/* Unused: no metatile of the lower deck's map answers 5, and its exits */
 	/* list none. */
 	{CUE_EXIT, 5, CONDITION_ALWAYS, 5},
@@ -2543,7 +2543,7 @@ CUE LemurianShip_LowerDeckCues[] = {
 };
 
 /* A glint drifting in to the orb, gone as it arrives. */
-Uint32 LemurianShip_LightToOrb[] = {
+Uint32 LemurianShipLightToOrb[] = {
 	SC_WAIT(10),
 	SC_SYNC,
 	SC_POSITION_ORIGIN,

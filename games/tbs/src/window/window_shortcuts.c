@@ -10,7 +10,7 @@
 #define SHORTCUT_ABILITY_MASK 0x3ff
 
 /* Shows the area's name in a window centred in the screen's top ten rows, for
-   AREA_NAME_WINDOW_FRAMES; a per-frame event closes it. */
+   AREA_NAME_WINDOW_TICKS; a per-tick event closes it. */
 void mnAreaNameWindowShow(void)
 {
 	FIELD_STATE *notice;
@@ -18,36 +18,36 @@ void mnAreaNameWindowShow(void)
 	Sint32		 width;
 	Sint32		 y;
 	Sint32		 x;
-	Sint32		 areaMessage;
-	WINDOW		*nameWindow;
+	Sint32		 areaMsg;
+	WINDOW		*nameWin;
 
 	notice = FieldStateWork;
 	x = 8;
 	y = 8;
-	areaMessage = fdAreaGetNameIndexStub(MainRoutineStateWork.next,
-					  MainRoutineStateWork.entrance) +
+	areaMsg = fdAreaGetNameIndexStub(
+				  MainRoutineStateWork.next, MainRoutineStateWork.entrance) +
 		MsgDebugAreaName;
-	mnTextGetMessageSize(areaMessage, &x, &y, &width, &height);
+	mnTextGetMessageSize(areaMsg, &x, &y, &width, &height);
 	x = (DISPLAY_TILE_WIDTH - width) >> 1;
 	y = (10 - height) >> 1;
-	nameWindow = mnWindowCreate(x, y, width, height, WINDOW_FLAG_INSTANT);
-	notice->areaNameWin = nameWindow;
-	mnTextDrawMessage(areaMessage, nameWindow, 0, 0);
-	notice->areaNameCountdown = AREA_NAME_WINDOW_FRAMES;
-	sySetEvent(mnAreaNameWindowUpdate, EVENT_PASS_FRAME);
+	nameWin = mnWindowCreate(x, y, width, height, WINDOW_FLAG_INSTANT);
+	notice->areaNameWin = nameWin;
+	mnTextDrawMessage(areaMsg, nameWin, 0, 0);
+	notice->areaNameCountdown = AREA_NAME_WINDOW_TICKS;
+	sySetEvent(mnAreaNameWindowUpdate, EVENT_PASS_TICK);
 }
 
 /* Counts the area name down, and closes it at 0. */
 void mnAreaNameWindowUpdate(void)
 {
 	FIELD_STATE *notice;
-	Uint16		 framesLeft;
+	Uint16		 ticksLeft;
 
 	notice = FieldStateWork;
 	/* Adding (Uint16)-1 takes one off in 16 bits. */
 	notice->areaNameCountdown =
-		(framesLeft = notice->areaNameCountdown + (Uint16)-1);
-	if(framesLeft == 0) {
+		(ticksLeft = notice->areaNameCountdown + (Uint16)-1);
+	if(ticksLeft == 0) {
 		mnWindowClose(notice->areaNameWin, WINDOW_FLAG_INSTANT);
 		syCloseEvent(mnAreaNameWindowUpdate);
 	}
@@ -56,11 +56,11 @@ void mnAreaNameWindowUpdate(void)
 /* Closes the area name at once, if it is shown. */
 void mnAreaNameWindowHide(void)
 {
-	WINDOW *window;
+	WINDOW *win;
 
-	window = FieldStateWork->areaNameWin;
-	if(window != NULL && window->flg != 0) {
-		mnWindowClose(window, WINDOW_FLAG_INSTANT);
+	win = FieldStateWork->areaNameWin;
+	if(win != NULL && win->flg != 0) {
+		mnWindowClose(win, WINDOW_FLAG_INSTANT);
 		syCloseEvent(mnAreaNameWindowUpdate);
 	}
 }
@@ -109,7 +109,7 @@ void mnDebugSelectShortcuts(void)
 	WINDOW_SPR		   *cursor;
 	Uint32				first;
 	Uint32				second;
-	Uint32				count;
+	Uint32				cnt;
 	Sint32				done = 0;
 	Sint32				row = 0;
 	Sint32				redraw;
@@ -132,8 +132,8 @@ void mnDebugSelectShortcuts(void)
 	gmUnitLearnPsynergyStub(JENNA, ABILITY_MOVE);
 	second = 0;
 	first = 0;
-	count = mnPartyListPsynergy(list);
-	if(count != 0) {
+	cnt = mnPartyListPsynergy(list);
+	if(cnt != 0) {
 		mnFindShortcutEntries(&first, &second, list);
 		picks = mnWindowCreate(4, 6, 20, 7, WINDOW_FLAG_INSTANT);
 		title = mnWindowCreate(4, 3, 20, 3, WINDOW_FLAG_INSTANT);
@@ -159,8 +159,8 @@ void mnDebugSelectShortcuts(void)
 				redraw = 0;
 				/* Wrap both picks and the row; a step below 0 wraps through the
 				   unsigned sum. */
-				first = (first + count) % count;
-				second = (second + count) % count;
+				first = (first + cnt) % cnt;
+				second = (second + cnt) % cnt;
 				row = (row + 2) % 2;
 				y = (row << 4) + (picks->y << 3) + 28;
 				cursor->y = y;
@@ -252,61 +252,61 @@ void mnDebugSelectShortcuts(void)
 Sint32 mnPartyListPsynergy(ABILITY_LIST_ENTRY *output)
 {
 	Uint16 memberIds[14];
-	Sint32 outputCount = 0;
-	Sint32 memberCount = gmPartyListMembersStub(memberIds);
+	Sint32 outputCnt = 0;
+	Sint32 memberCnt = gmPartyListMembersStub(memberIds);
 	Sint32 i;
 
-	for(i = 0; i < memberCount; i++) {
+	for(i = 0; i < memberCnt; i++) {
 		UNIT  *unit;
 		Uint32 member;
-		Sint32 slotIndex;
+		Sint32 slotIdx;
 		Uint32 ability;
 
 		member = memberIds[i];
 		unit = gmUnitGetStub(member);
-		for(slotIndex = 0; slotIndex <
+		for(slotIdx = 0; slotIdx <
 			(Sint32)(sizeof(unit->psynergy) / sizeof(unit->psynergy[0]));
-			slotIndex++) {
-			ability = unit->psynergy[slotIndex].encodedAction & ACTION_ID_MASK;
+			slotIdx++) {
+			ability = unit->psynergy[slotIdx].encodedAction & ACTION_ID_MASK;
 			if(ability == 0)
 				break;
 			gmAbilityGetDirectStub(ability);
-			output[outputCount].member = member;
-			output[outputCount].ability = ability;
-			outputCount++;
+			output[outputCnt].member = member;
+			output[outputCnt].ability = ability;
+			outputCnt++;
 		}
 	}
 
-	return outputCount;
+	return outputCnt;
 }
 
 /* Finds the two Psynergy shortcuts in a list from mnPartyListPsynergy, and
    returns their indexes (0 for one not found). */
 void mnFindShortcutEntries(
-	Uint32 *firstIndex, Uint32 *secondIndex, const ABILITY_LIST_ENTRY *entries)
+	Uint32 *firstIdx, Uint32 *secondIdx, const ABILITY_LIST_ENTRY *entries)
 {
-	Sint32 entryIndex;
+	Sint32 entryIdx;
 
-	*firstIndex = 0;
-	*secondIndex = 0;
+	*firstIdx = 0;
+	*secondIdx = 0;
 
-	for(entryIndex = 0; entryIndex < SHORTCUT_LIST_ENTRIES; entryIndex++) {
-		if(entries[entryIndex].ability ==
+	for(entryIdx = 0; entryIdx < SHORTCUT_LIST_ENTRIES; entryIdx++) {
+		if(entries[entryIdx].ability ==
 				(MainRoutineStateWork.firstShortcut & SHORTCUT_ABILITY_MASK) &&
-			entries[entryIndex].member ==
+			entries[entryIdx].member ==
 				(MainRoutineStateWork.firstShortcut >> SHORTCUT_MEMBER_SHIFT)) {
-			*firstIndex = entryIndex;
+			*firstIdx = entryIdx;
 			break;
 		}
 	}
 
-	for(entryIndex = 0; entryIndex < SHORTCUT_LIST_ENTRIES; entryIndex++) {
-		if(entries[entryIndex].ability ==
+	for(entryIdx = 0; entryIdx < SHORTCUT_LIST_ENTRIES; entryIdx++) {
+		if(entries[entryIdx].ability ==
 				(MainRoutineStateWork.secondShortcut & SHORTCUT_ABILITY_MASK) &&
-			entries[entryIndex].member ==
+			entries[entryIdx].member ==
 				(MainRoutineStateWork.secondShortcut >>
 					SHORTCUT_MEMBER_SHIFT)) {
-			*secondIndex = entryIndex;
+			*secondIdx = entryIdx;
 			break;
 		}
 	}

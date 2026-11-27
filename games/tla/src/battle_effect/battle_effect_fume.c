@@ -7,9 +7,9 @@ typedef struct CORNER {
 	Sint8 z;
 } CORNER;
 
-#define FUME_FRAMES			   50
-/* The frame the plume's head reaches the target and the target is hit. */
-#define FUME_HIT_FRAME		   22
+#define FUME_TICKS			   50
+/* The tick the plume's head reaches the target and the target is hit. */
+#define FUME_HIT_TICK		   22
 /* The plume is FUME_SEGMENTS pairs of corners, laid in the map cell buffer: the
    corners, those btRenderTransformVertices makes of them at
    FUME_STRIP_VERTICES, and the plume's mesh at FUME_STRIP_MESH, whose quads
@@ -20,7 +20,7 @@ typedef struct CORNER {
 #define FUME_STRIP_VERTICES	   (Ram_MapMetatileBuffer + 4096)
 #define FUME_STRIP_MESH		   (Ram_MapMetatileBuffer + 8192)
 /* The plume arcs from the caster over to the target. Its head goes
-   FUME_ARC_GROWTH further each frame, and from the level's FUME_TAIL_START its
+   FUME_ARC_GROWTH further each tick, and from the level's FUME_TAIL_START its
    tail follows, each up to FUME_ARC_SPAN; a point's angle on the arc is
    FUME_SEGMENTS times its place. */
 #define FUME_ARC_GROWTH		   44
@@ -29,20 +29,20 @@ typedef struct CORNER {
    times the level's width. */
 #define FUME_THICKNESS		   24
 /* The plume sways up to FUME_SWAY pixels at its head, less towards its tail, a
-   wave that runs along it a segment a frame. */
+   wave that runs along it a segment a tick. */
 #define FUME_SWAY			   4
-/* From this frame the plume dims, 8 shades a frame. */
-#define FUME_DIM_FRAME		   34
+/* From this tick the plume dims, 8 shades a tick. */
+#define FUME_DIM_TICK		   34
 /* The head's scale, seven eighths of the plume's width. */
 #define FUME_HEAD_SCALE(width) ((width) * 28 / 32)
 
 /* The fireballs that burst from the target: FUME_BURSTS_MAX are set out at the
-   hit, four more showing each frame, and a level draws Fume_Levels' FUME_SPARKS
+   hit, four more showing each tick, and a level draws FumeLevels' FUME_SPARKS
    of them. Each shows FlashBurstSheet's six pictures in turn,
-   FUME_BURST_PICTURE_FRAMES apiece, for FUME_BURST_FRAMES. */
-#define FUME_BURSTS_MAX			  32
-#define FUME_BURST_PICTURE_FRAMES 4
-#define FUME_BURST_FRAMES		  24
+   FUME_BURST_PICTURE_TICKS apiece, for FUME_BURST_TICKS. */
+#define FUME_BURSTS_MAX			 32
+#define FUME_BURST_PICTURE_TICKS 4
+#define FUME_BURST_TICKS		 24
 
 /* Where FlashBurstSheet is decoded in the effect's pictures. */
 #define FUME_FLASH_BURST_PICTURES 2048
@@ -62,10 +62,10 @@ void btEffectRunFume(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	/* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
-	 * frame reserves and never touches; as one DRAW_RECTANGLE. */
+	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE blit[2];
 	Sint32		   j;
-	Sint32		   frame;
+	Sint32		   frm;
 	Sint32		   endX;
 	Sint32		   endY;
 
@@ -75,7 +75,7 @@ void btEffectRunFume(BATTLE_EFFECT_PARM *args)
 	} arc;
 
 	SCREEN_POINT  caster;
-	SCREEN_POINT  target;
+	SCREEN_POINT  tgt;
 	MODEL_TEXTURE texture;
 	RENDER_MODEL *model;
 	PARTICLE	 *burst;
@@ -96,7 +96,7 @@ void btEffectRunFume(BATTLE_EFFECT_PARM *args)
 	endX = 0;
 	endY = 0;
 	btEffectPosProjectBattler(args->user, &caster);
-	btEffectPosProjectBattler(args->tgts[0], &target);
+	btEffectPosProjectBattler(args->tgts[0], &tgt);
 	btResourceLoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
 		state->sheet + FUME_FLASH_BURST_PICTURES, 1, 0);
@@ -105,16 +105,16 @@ void btEffectRunFume(BATTLE_EFFECT_PARM *args)
 	REG_BG2PA = Q_8_8(0.5);
 	btRenderBuildQuadStrip(FUME_STRIP_MESH, 4, 32, FUME_QUADS);
 
-	for(frame = 0; frame != FUME_FRAMES; frame++) {
-		if(frame == 0) {
+	for(frm = 0; frm != FUME_TICKS; frm++) {
+		if(frm == 0) {
 			arc.head = 0;
 			arc.tail = 0;
 			/* No fireball shows until the hit. */
 			for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
-				state->particles[i].variant = FUME_BURST_FRAMES;
+				state->particles[i].variant = FUME_BURST_TICKS;
 			}
 		}
-		if(frame == FUME_HIT_FRAME) {
+		if(frm == FUME_HIT_TICK) {
 			syWordsFillEntry(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 			EFFECT_SHOW_DAMAGE(SE_CLATTER);
@@ -126,22 +126,22 @@ void btEffectRunFume(BATTLE_EFFECT_PARM *args)
 			for(i = 0; i != FUME_BURSTS_MAX; i++) {
 				burst = &state->particles[i];
 				burst->variant = -i / 4 + 2;
-				burst->x = toFIXED(target.x / 2);
-				burst->y = toFIXED(target.y + (syRandom() & 15) - 32);
+				burst->x = toFIXED(tgt.x / 2);
+				burst->y = toFIXED(tgt.y + (syRandom() & 15) - 32);
 				burst->velX =
-					((syRandom() % Fume_Levels[args->variant][FUME_SPREAD]) -
-						(Fume_Levels[args->variant][FUME_SPREAD] >> 1))
+					((syRandom() % FumeLevels[args->variant][FUME_SPREAD]) -
+						(FumeLevels[args->variant][FUME_SPREAD] >> 1))
 					<< 12;
 				burst->velY = (192 - (syRandom() & 255)) << 10;
 			}
 		}
-		for(i = 0; i != Fume_Levels[args->variant][FUME_SPARKS]; i++) {
+		for(i = 0; i != FumeLevels[args->variant][FUME_SPARKS]; i++) {
 			particle = &state->particles[i];
-			if((Uint32)particle->variant < FUME_BURST_FRAMES) {
+			if((Uint32)particle->variant < FUME_BURST_TICKS) {
 				if(particle->variant > 1) {
 					blit[0](canvas,
 						state->sheet + FUME_FLASH_BURST_PICTURES +
-							particle->variant / FUME_BURST_PICTURE_FRAMES *
+							particle->variant / FUME_BURST_PICTURE_TICKS *
 								PICTURE_BYTES(FLASH_BURST),
 						FIXED_INTEGER_PART(particle->x) - FLASH_BURST_WIDTH / 2,
 						FIXED_INTEGER_PART(particle->y) -
@@ -149,7 +149,7 @@ void btEffectRunFume(BATTLE_EFFECT_PARM *args)
 						FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
 				}
 				btParticleAdvanceWithGravity2D(
-					particle, 60, -Fume_Levels[args->variant][FUME_LIFT]);
+					particle, 60, -FumeLevels[args->variant][FUME_LIFT]);
 			}
 			particle->variant++;
 		}
@@ -157,23 +157,22 @@ void btEffectRunFume(BATTLE_EFFECT_PARM *args)
 		vertices = FUME_STRIP_VERTICES;
 		mesh = FUME_STRIP_MESH;
 		corners = (CORNER *)MapGridMetatileBuffer;
-		/* DEAD: frame never falls below 0; the ROM keeps the compare and
+		/* DEAD: tick never falls below 0; the ROM keeps the compare and
 		   branch. */
-		if(frame >= 0) {
+		if(frm >= 0) {
 			Sint32 width;
 			Sint32 step;
 			Sint32 sweep;
 			Sint32 vertex;
 			Sint32 shade;
 
-			width = Fume_Levels[args->variant][FUME_WIDTH];
-			arc.head = frame * FUME_ARC_GROWTH;
+			width = FumeLevels[args->variant][FUME_WIDTH];
+			arc.head = frm * FUME_ARC_GROWTH;
 			if(arc.head > FUME_ARC_SPAN) {
 				arc.head = FUME_ARC_SPAN;
 			}
-			if(frame >= Fume_Levels[args->variant][FUME_TAIL_START]) {
-				arc.tail =
-					(frame - Fume_Levels[args->variant][FUME_TAIL_START]) *
+			if(frm >= FumeLevels[args->variant][FUME_TAIL_START]) {
+				arc.tail = (frm - FumeLevels[args->variant][FUME_TAIL_START]) *
 					FUME_ARC_GROWTH;
 				if(arc.tail > FUME_ARC_SPAN) {
 					arc.tail = FUME_ARC_SPAN;
@@ -185,11 +184,10 @@ void btEffectRunFume(BATTLE_EFFECT_PARM *args)
 			   the target. */
 			for(j = 0, step = arc.head - arc.tail, sweep = 0, vertex = 0;
 				j != FUME_SEGMENTS; sweep += step, vertex += 2, j++) {
-				Sint32 distance = caster.x / 8 - target.x / 8;
-				Sint32 angle = sweep + arc.tail * FUME_SEGMENTS;
-				Sint32 sway =
-					(FIXEDtoINT(
-						sySin((frame + j) * (TRIG_TURN / 16)) * FUME_SWAY)) *
+				Sint32 distance = caster.x / 8 - tgt.x / 8;
+				Sint32 ang = sweep + arc.tail * FUME_SEGMENTS;
+				Sint32 sway = (FIXEDtoINT(sySin((frm + j) * (TRIG_TURN / 16)) *
+								  FUME_SWAY)) *
 					j / (FUME_SEGMENTS - 1);
 				Sint32 height;
 				Sint32 thickness;
@@ -201,7 +199,7 @@ void btEffectRunFume(BATTLE_EFFECT_PARM *args)
 				if(distance < 0) {
 					distance = -distance;
 				}
-				height = Fume_Levels[args->variant][FUME_HEIGHT];
+				height = FumeLevels[args->variant][FUME_HEIGHT];
 				thickness = j * 4;
 				if(thickness > FUME_THICKNESS) {
 					thickness = FUME_THICKNESS;
@@ -214,23 +212,22 @@ void btEffectRunFume(BATTLE_EFFECT_PARM *args)
 				radiusX = distance + half + sway;
 				for(; i != 2; i++) {
 					corners[vertex + i].x =
-						(FIXEDtoINT(syCos(angle) * radiusX)) - distance;
-					corners[vertex + i].y =
-						-(FIXEDtoINT(sySin(angle) * radiusY));
+						(FIXEDtoINT(syCos(ang) * radiusX)) - distance;
+					corners[vertex + i].y = -(FIXEDtoINT(sySin(ang) * radiusY));
 					corners[vertex + i].z = 0;
 					radiusY += thickness;
 					radiusX += thickness;
 				}
 				if(j == FUME_SEGMENTS - 1) {
-					endX = (FIXEDtoINT((distance + sway) * syCos(angle))) -
-						distance;
-					endY = -(FIXEDtoINT((height + sway) * sySin(angle)));
+					endX =
+						(FIXEDtoINT((distance + sway) * syCos(ang))) - distance;
+					endY = -(FIXEDtoINT((height + sway) * sySin(ang)));
 				}
 			}
 
 			shade = 0;
-			if(frame >= FUME_DIM_FRAME) {
-				shade = (FUME_DIM_FRAME - frame) * 8;
+			if(frm >= FUME_DIM_TICK) {
+				shade = (FUME_DIM_TICK - frm) * 8;
 			}
 			if(shade > MODEL_SHADE_INVISIBLE) {
 				model = btRenderAllocateModelList(1);
@@ -241,12 +238,12 @@ void btEffectRunFume(BATTLE_EFFECT_PARM *args)
 				model->vertices = vertices;
 				if(arc.head > arc.tail) {
 					/* The plume, its flames running along it 8 texels a
-					   frame. */
+					   tick. */
 					texture.logWidth = 6;
 					texture.logHeight = 5;
 					texture.pixels = state->sheet;
 					model->mesh = mesh;
-					model->scrollU = TEXTURE_SCROLL_MASK & ~(frame << 3);
+					model->scrollU = TEXTURE_SCROLL_MASK & ~(frm << 3);
 					syInitMatrix();
 					syTranslate(INTtoFIXED(caster.x / 2 - CANVAS_SIZE / 2),
 						toFIXED(caster.y) - toFIXED(64), 0);
@@ -260,8 +257,8 @@ void btEffectRunFume(BATTLE_EFFECT_PARM *args)
 
 					/* The head at the plume's end, turned with the arc, until
 					   it strikes. */
-					if(frame <= FUME_HIT_FRAME) {
-						model->mesh = BattleEffect_SquareMesh;
+					if(frm <= FUME_HIT_TICK) {
+						model->mesh = BattleEffectSquareMesh;
 						texture.logWidth = 6;
 						texture.logHeight = 6;
 						model->scrollU = 0;
@@ -271,7 +268,7 @@ void btEffectRunFume(BATTLE_EFFECT_PARM *args)
 						syRotZ(DEGtoANG(90) - arc.head * (FUME_SEGMENTS - 1));
 						syMatrixScaleUniform(FUME_HEAD_SCALE(width));
 						btRenderTransformVertices(
-							BattleEffect_SquareCorners, vertices, 4);
+							BattleEffectSquareCorners, vertices, 4);
 						btRenderDrawModelList(model);
 					}
 				}
@@ -287,8 +284,8 @@ void btEffectRunFume(BATTLE_EFFECT_PARM *args)
 	btEffectEndCanvasLayer();
 }
 
-#undef FUME_FRAMES
-#undef FUME_HIT_FRAME
+#undef FUME_TICKS
+#undef FUME_HIT_TICK
 #undef FUME_SEGMENTS
 #undef FUME_CORNERS
 #undef FUME_QUADS
@@ -298,10 +295,10 @@ void btEffectRunFume(BATTLE_EFFECT_PARM *args)
 #undef FUME_ARC_SPAN
 #undef FUME_THICKNESS
 #undef FUME_SWAY
-#undef FUME_DIM_FRAME
+#undef FUME_DIM_TICK
 #undef FUME_HEAD_SCALE
 #undef FUME_BURSTS_MAX
-#undef FUME_BURST_PICTURE_FRAMES
-#undef FUME_BURST_FRAMES
+#undef FUME_BURST_PICTURE_TICKS
+#undef FUME_BURST_TICKS
 #undef FUME_FLASH_BURST_PICTURES
 #undef FUME_DRAGON_HEAD_PICTURES

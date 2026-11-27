@@ -13,7 +13,7 @@
    and a Lucky Medal on the raised ground north of the inn.
 
    Once the Serpent is slain the village holds a festival, its dancers turning
-   on the spot in the square (Izumo_FirstDanceScript). The first time the party
+   on the spot in the square (IzumoFirstDanceScript). The first time the party
    leaves Susa's house after being hailed there as heroes, Susa runs out after
    it to thank it and tells it the legend of the Cloud Brand
    (scIzumoStopThePartyToThankThem). */
@@ -119,19 +119,19 @@ enum { ANIM_DANCE = 5, ANIM_OLD_MAN_DRUM = 5, ANIM_OLD_MAN_DANCE = 6 };
 #define WATER_FIRST_COLOR	1
 #define WATER_LAST_COLOR	14
 
-extern Uint32 Izumo_FirstDanceScript[];
-extern Uint32 Izumo_SecondDanceScript[];
-extern Uint32 Izumo_ThirdDanceScript[];
-extern Uint32 Izumo_FourthDanceScript[];
-extern Uint32 Izumo_FifthDanceScript[];
-extern Uint32 Izumo_SixthDanceScript[];
+extern Uint32 IzumoFirstDanceScript[];
+extern Uint32 IzumoSecondDanceScript[];
+extern Uint32 IzumoThirdDanceScript[];
+extern Uint32 IzumoFourthDanceScript[];
+extern Uint32 IzumoFifthDanceScript[];
+extern Uint32 IzumoSixthDanceScript[];
 void		  scIzumoRevealTheStoneCircle(void);
 
-extern Sint16	   Izumo_StonesToMove[];
-extern ACTOR_PLACE Izumo_ActorPlacementsOnceTheSerpentIsSlain[];
-extern ACTOR_PLACE Izumo_ActorPlacements[];
-extern CUE		   Izumo_CuesOnceTheSerpentIsSlain[];
-extern CUE		   Izumo_Cues[];
+extern Sint16	   IzumoStonesToMove[];
+extern ACTOR_PLACE IzumoActorPlacementsOnceTheSerpentIsSlain[];
+extern ACTOR_PLACE IzumoActorPlacements[];
+extern CUE		   IzumoCuesOnceTheSerpentIsSlain[];
+extern CUE		   IzumoCues[];
 extern Uint8	   MsgCanYouImagine[];
 extern Uint8	   MsgSeeThisRing[];
 extern Uint8	   MsgButItS[];
@@ -143,7 +143,7 @@ extern Uint8	   MsgFelixWait[];
 extern Uint8	   MsgThisTokenIsn[];
 extern Uint8	   MsgTheMisalignedStone[];
 
-void syFieldScriptWait(Sint32 frames);
+void syFieldScriptWait(Sint32 ticks);
 /* The ROM's callers here are compiled against this form, all signed, though the
    definition takes the destination and the size unsigned. */
 void fdMapGridCopyMetatileTilesIndicesRect(
@@ -158,7 +158,7 @@ void scIzumoTellTheCloudBrandLegend(void);
    stones, on the west side of the ring at metatile (19, 9). */
 void scIzumoStartMovingStone(void)
 {
-	fdActorLiftTargetBlock(Izumo_StonesToMove);
+	fdActorLiftTargetBlock(IzumoStonesToMove);
 }
 
 /* Move sets the out-of-line stone down. Pushed east into the gap in the ring,
@@ -240,8 +240,8 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(syGameFlagGet(FLAG_SERPENT_SLAIN))
-		return Izumo_ActorPlacementsOnceTheSerpentIsSlain;
-	return Izumo_ActorPlacements;
+		return IzumoActorPlacementsOnceTheSerpentIsSlain;
+	return IzumoActorPlacements;
 }
 
 /* Cyclone cast in the weeds of the village's south-east corner, between the
@@ -397,15 +397,15 @@ void scIzumoEnterDoor(void)
 	sySndPlay(SE_MAP_EXIT);
 	scIzumoSetExitRequest(state->stepCue);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
 const CUE *scGetCues(void)
 {
 	if(syGameFlagGet(FLAG_SERPENT_SLAIN))
-		return Izumo_CuesOnceTheSerpentIsSlain;
-	return Izumo_Cues;
+		return IzumoCuesOnceTheSerpentIsSlain;
+	return IzumoCues;
 }
 
 /* The woman guarding the ring of giant stones, at the east end of its bridge,
@@ -423,17 +423,17 @@ void scIzumoTalkToStoneCircleGuard(Sint32 actor)
 		   move..." */
 		fdScriptShowMessageAndWait(actor, 0);
 	} else {
-		const Uint8 *message = MsgSeeThisRing;
+		const Uint8 *msg = MsgSeeThisRing;
 
-		fdScriptSetMessageId(message);
+		fdScriptSetMessageId(msg);
 		fdMessageShowAtActor(actor, 0);
 		if(fdScriptAskYesNoWithActorAnimation(fdPartyGetLeaderActor(), 0) ==
 			0) {
 			syFieldScriptWait(10);
-			fdScriptSetMessageId(message + 1);
+			fdScriptSetMessageId(msg + 1);
 		} else {
 			syFieldScriptWait(20);
-			fdScriptSetMessageId(message + 2);
+			fdScriptSetMessageId(msg + 2);
 		}
 		fdScriptShowMessageAndWait(actor, 0);
 	}
@@ -453,17 +453,17 @@ void scIzumoTalkToFestivalStoneCircleGuard(Sint32 actor)
 		   circle?" */
 		fdScriptShowMessageAndWait(actor, 0);
 	} else {
-		const Uint8 *message = MsgSeeThisRingOf;
+		const Uint8 *msg = MsgSeeThisRingOf;
 
-		fdScriptSetMessageId(message);
+		fdScriptSetMessageId(msg);
 		fdMessageShowAtActor(actor, 0);
 		if(fdScriptAskYesNoWithActorAnimation(fdPartyGetLeaderActor(), 0) ==
 			0) {
 			syFieldScriptWait(10);
-			fdScriptSetMessageId(message + 1);
+			fdScriptSetMessageId(msg + 1);
 		} else {
 			syFieldScriptWait(20);
-			fdScriptSetMessageId(message + 2);
+			fdScriptSetMessageId(msg + 2);
 		}
 		fdScriptShowMessageAndWait(actor, 0);
 	}
@@ -476,48 +476,48 @@ void scIzumoTalkToFestivalStoneCircleGuard(Sint32 actor)
    Uzume used her powers for the good of all. */
 void scIzumoTellOfUzumesFamily(Sint32 actor)
 {
-	const Uint8 *message;
+	const Uint8 *msg;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	message = MsgLadyUzumeAnd;
-	fdScriptSetMessageId(message);
+	msg = MsgLadyUzumeAnd;
+	fdScriptSetMessageId(msg);
 	fdMessageShowAtActor(actor, 0);
 	if(fdScriptAskYesNoWithActorAnimation(fdPartyGetLeaderActor(), 0) == 0) {
 		syFieldScriptWait(10);
-		fdScriptSetMessageId(message + 1);
+		fdScriptSetMessageId(msg + 1);
 	} else {
 		syFieldScriptWait(20);
-		fdScriptSetMessageId(message + 2);
+		fdScriptSetMessageId(msg + 2);
 	}
 	fdScriptShowMessageAndWait(actor, 0);
 	fdScriptEnd();
 }
 
-/* The river shimmers: every fourth frame the shifting colours of each of its
+/* The river shimmers: every fourth tick the shifting colours of each of its
    palettes move along by one. */
 void scIzumoRotateWaterCols(void)
 {
 	Sint16 saved;
-	Sint32 index;
+	Sint32 idx;
 
-	if((FrameCount & 3) == 0) {
+	if((TickCount & 3) == 0) {
 		saved = BG_PLTT_COLOR(FIRST_WATER_PALETTE, WATER_LAST_COLOR);
-		for(index = WATER_LAST_COLOR; index != WATER_FIRST_COLOR; index--)
-			BG_PLTT_COLOR(FIRST_WATER_PALETTE, index) =
-				BG_PLTT_COLOR(FIRST_WATER_PALETTE, index - 1);
+		for(idx = WATER_LAST_COLOR; idx != WATER_FIRST_COLOR; idx--)
+			BG_PLTT_COLOR(FIRST_WATER_PALETTE, idx) =
+				BG_PLTT_COLOR(FIRST_WATER_PALETTE, idx - 1);
 		BG_PLTT_COLOR(FIRST_WATER_PALETTE, WATER_FIRST_COLOR) = saved;
 
 		saved = BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, WATER_LAST_COLOR);
-		for(index = WATER_LAST_COLOR; index != WATER_FIRST_COLOR; index--)
-			BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, index) =
-				BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, index - 1);
+		for(idx = WATER_LAST_COLOR; idx != WATER_FIRST_COLOR; idx--)
+			BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, idx) =
+				BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, idx - 1);
 		BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, WATER_FIRST_COLOR) = saved;
 
 		saved = BG_PLTT_COLOR(FIRST_WATER_PALETTE + 2, WATER_LAST_COLOR);
-		for(index = WATER_LAST_COLOR; index != WATER_FIRST_COLOR; index--)
-			BG_PLTT_COLOR(FIRST_WATER_PALETTE + 2, index) =
-				BG_PLTT_COLOR(FIRST_WATER_PALETTE + 2, index - 1);
+		for(idx = WATER_LAST_COLOR; idx != WATER_FIRST_COLOR; idx--)
+			BG_PLTT_COLOR(FIRST_WATER_PALETTE + 2, idx) =
+				BG_PLTT_COLOR(FIRST_WATER_PALETTE + 2, idx - 1);
 		BG_PLTT_COLOR(FIRST_WATER_PALETTE + 2, WATER_FIRST_COLOR) = saved;
 	}
 }
@@ -645,20 +645,20 @@ void scIzumoTellTheCloudBrandLegend(void)
 void scIzumoOfferATokenOfGratitude(void)
 {
 	if(!syGameFlagGet(FLAG_TOKEN_OFFERED)) {
-		const Uint8 *message;
+		const Uint8 *msg;
 
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
 		fdActorShowEmoteById(
 			ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-		message = MsgWouldYouBe;
-		fdScriptSetMessageId(message);
+		msg = MsgWouldYouBe;
+		fdScriptSetMessageId(msg);
 		fdMessageShowAtActor(ACTOR_SUSA, 0);
 		if(fdScriptAskYesNoWithActorAnimation(
 			   MainRoutineStateWork.leaderActorId, 0) == 0) {
 			scIzumoTellTheCloudBrandLegend();
 		} else {
-			fdScriptSetMessageId(message - 1);
+			fdScriptSetMessageId(msg - 1);
 			fdScriptShowMessageAndWait(ACTOR_SUSA, 0);
 		}
 		fdScriptEnd();
@@ -679,7 +679,7 @@ Sint32 scInit(void)
 	syGameFlagClear(FLAG_SUSA_WAITS);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	sySetEvent(scIzumoRotateWaterCols, EVENT_PASS_VBLANK);
-	fdActorPlaceBlocks(Izumo_StonesToMove);
+	fdActorPlaceBlocks(IzumoStonesToMove);
 	if(syGameFlagGet(FLAG_SERPENT_SLAIN)) {
 		fdActorGetById(ACTOR_OKUNI)->steeringFlg = STEERING_KEEP_FACING;
 		fdActorSetAnimationById(ACTOR_DANCER_A, ANIM_DANCE);
@@ -803,16 +803,16 @@ void scIzumoEnterTheRuins(void)
 #include "text/msg_ids.h"
 
 /* The stones Move can push, ended by -1: the one out of line in the ring. */
-Sint16 Izumo_StonesToMove[] = {
+Sint16 IzumoStonesToMove[] = {
 	ACTOR_MISALIGNED_STONE,
 	-1,
 };
 
 /* The festival dancers' scripts: each turns once round on the spot, a quarter
-   turn every 5 frames, then stands a second and a half facing as it began, over
+   turn every 5 ticks, then stands a second and a half facing as it began, over
    and over. They differ only in the way each starts out facing. */
 /* clang-format off */
-Uint32 Izumo_FirstDanceScript[] = {
+Uint32 IzumoFirstDanceScript[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
 	SC_ACCELERATION(0.2),
 	SC_SPEED(0.6),
@@ -841,7 +841,7 @@ Uint32 Izumo_FirstDanceScript[] = {
 	SC_END,
 };
 
-Uint32 Izumo_SecondDanceScript[] = {
+Uint32 IzumoSecondDanceScript[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
 	SC_ACCELERATION(0.2),
 	SC_SPEED(0.6),
@@ -870,7 +870,7 @@ Uint32 Izumo_SecondDanceScript[] = {
 	SC_END,
 };
 
-Uint32 Izumo_ThirdDanceScript[] = {
+Uint32 IzumoThirdDanceScript[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
 	SC_ACCELERATION(0.2),
 	SC_SPEED(0.6),
@@ -899,8 +899,8 @@ Uint32 Izumo_ThirdDanceScript[] = {
 	SC_END,
 };
 
-/* The same script as Izumo_FirstDanceScript, under another name. */
-Uint32 Izumo_FourthDanceScript[] = {
+/* The same script as IzumoFirstDanceScript, under another name. */
+Uint32 IzumoFourthDanceScript[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
 	SC_ACCELERATION(0.2),
 	SC_SPEED(0.6),
@@ -929,8 +929,8 @@ Uint32 Izumo_FourthDanceScript[] = {
 	SC_END,
 };
 
-/* The same script as Izumo_SecondDanceScript, under another name. */
-Uint32 Izumo_FifthDanceScript[] = {
+/* The same script as IzumoSecondDanceScript, under another name. */
+Uint32 IzumoFifthDanceScript[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
 	SC_ACCELERATION(0.2),
 	SC_SPEED(0.6),
@@ -959,7 +959,7 @@ Uint32 Izumo_FifthDanceScript[] = {
 	SC_END,
 };
 
-Uint32 Izumo_SixthDanceScript[] = {
+Uint32 IzumoSixthDanceScript[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
 	SC_ACCELERATION(0.3),
 	SC_SPEED(0.6),
@@ -1013,7 +1013,7 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE Izumo_ActorPlacements[] = {
+ACTOR_PLACE IzumoActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -1036,7 +1036,7 @@ ACTOR_PLACE Izumo_ActorPlacements[] = {
 /* clang-format on */
 
 /* clang-format off */
-ACTOR_PLACE Izumo_ActorPlacementsOnceTheSerpentIsSlain[] = {
+ACTOR_PLACE IzumoActorPlacementsOnceTheSerpentIsSlain[] = {
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -1054,19 +1054,19 @@ ACTOR_PLACE Izumo_ActorPlacementsOnceTheSerpentIsSlain[] = {
 	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 117, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 155, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 155, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (Sint32)Izumo_FirstDanceScript, 256, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (Sint32)Izumo_SecondDanceScript, 264, 0, 504, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (Sint32)Izumo_ThirdDanceScript, 360, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (Sint32)IzumoFirstDanceScript, 256, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (Sint32)IzumoSecondDanceScript, 264, 0, 504, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (Sint32)IzumoThirdDanceScript, 360, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 472, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, (Sint32)Izumo_FourthDanceScript, 232, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, (Sint32)Izumo_FifthDanceScript, 328, 0, 504, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_WOMAN, CONDITION_ALWAYS, (Sint32)Izumo_SixthDanceScript, 336, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, (Sint32)IzumoFourthDanceScript, 232, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, (Sint32)IzumoFifthDanceScript, 328, 0, 504, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_WOMAN, CONDITION_ALWAYS, (Sint32)IzumoSixthDanceScript, 336, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_SUSA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	{SCENE_TABLE_END},
 };
 /* clang-format on */
 
-CUE Izumo_Cues[] = {
+CUE IzumoCues[] = {
 	{CUE_EXIT, IZUMO_TO_WORLD_MAP, CONDITION_ALWAYS, IZUMO_TO_WORLD_MAP},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), IZUMO_TO_IZUMO_ROOMS_SOUTHEAST_A,
 		CONDITION_ALWAYS, SCRIPT_REF(scIzumoEnterDoor)},
@@ -1165,7 +1165,7 @@ CUE Izumo_Cues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Izumo_CuesOnceTheSerpentIsSlain[] = {
+CUE IzumoCuesOnceTheSerpentIsSlain[] = {
 	{CUE_EXIT, IZUMO_TO_WORLD_MAP, CONDITION_ALWAYS, IZUMO_TO_WORLD_MAP},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), IZUMO_TO_IZUMO_ROOMS_SOUTHEAST_A,
 		CONDITION_ALWAYS, SCRIPT_REF(scIzumoEnterDoor)},
@@ -1295,6 +1295,6 @@ CUE Izumo_CuesOnceTheSerpentIsSlain[] = {
 };
 
 /* Unused: a halfword nothing reads. */
-Uint16 Izumo_Unused[] = {
+Uint16 IzumoUnused[] = {
 	1,
 };

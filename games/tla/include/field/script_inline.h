@@ -17,35 +17,35 @@
 
 /* Turns two actors toward each other, as a conversation between them begins. */
 static inline void fdActorFaceEachOther(
-	Sint32 actorId, Sint32 other, Sint32 frames)
+	Sint32 actorId, Sint32 other, Sint32 ticks)
 {
-	fdActorTurnToFaceEachOther(actorId, other, frames);
+	fdActorTurnToFaceEachOther(actorId, other, ticks);
 }
 
 /* Switches an actor to an animation of its sprite. */
-static inline void fdActorSetAnimation(Sint32 actorId, Sint32 animation)
+static inline void fdActorSetAnimation(Sint32 actorId, Sint32 anm)
 {
-	fdActorSetAnimationById(actorId, animation);
+	fdActorSetAnimationById(actorId, anm);
 }
 
 /* fdActorSetAnimation as the scripts that take fdActorSetAnimationById for a
    function returning int make the call. */
-static inline void scFieldActorSetAnimation(Sint32 actorId, Sint32 animation)
+static inline void scFieldActorSetAnimation(Sint32 actorId, Sint32 anm)
 {
 #if FIX_FUNCTION_SIGNATURES
-	fdActorSetAnimationById(actorId, animation);
+	fdActorSetAnimationById(actorId, anm);
 #else
 	/* UB: fdActorSetAnimationById returns nothing, but these calls are made as
 	   to a function returning int, which moves their argument registers. */
-	((Sint32 (*)(Uint32, Sint32))fdActorSetAnimationById)(actorId, animation);
+	((Sint32 (*)(Uint32, Sint32))fdActorSetAnimationById)(actorId, anm);
 #endif
 }
 
 /* Runs a script's palette fade, from the source colours to the target ones,
-   over frames. */
-static inline void fdPaletteFadeInterpolate(Sint32 frames)
+   over ticks. */
+static inline void fdPaletteFadeInterpolate(Sint32 ticks)
 {
-	fdPaletteFadeStartInterpolation(frames);
+	fdPaletteFadeStartInterpolation(ticks);
 }
 
 /* Draws an item's icon, ready for a script to show it. */
@@ -55,23 +55,23 @@ static inline void gmItemLoadIcon(Sint32 item)
 }
 
 /* The sine of an angle, a full turn being TRIG_TURN, in 16.16. */
-static inline FIXED syMathSin(ANGLE angle)
+static inline FIXED syMathSin(ANGLE ang)
 {
-	return sySin(angle);
+	return sySin(ang);
 }
 
 /* Shows a message in the middle of the screen rather than in a speech
    window. */
-static inline void mnMessageShowCentered(Sint32 message, Sint32 flags)
+static inline void mnMessageShowCentered(Sint32 msg, Sint32 flg)
 {
-	mnFieldMessageShow(message, flags);
+	mnFieldMessageShow(msg, flg);
 }
 
 /* Gives the party an item from a script and says who got it; -1 when it was
    left behind. */
-static inline Sint32 gmPartyGiveItem(Sint32 item, Sint32 flags)
+static inline Sint32 gmPartyGiveItem(Sint32 item, Sint32 flg)
 {
-	return fdPartyInventoryGiveItem(item, flags);
+	return fdPartyInventoryGiveItem(item, flg);
 }
 
 /* Loads a scene's sprite picture into VRAM; returns its first tile number, 0
@@ -118,10 +118,10 @@ static inline void fdSetWorldMapWindowMetatileTile(
 	fdWorldMapSetWindowMetatileTile(x, y, metatileX, metatileY);
 }
 
-/* Holds the script for frames while the field goes on (fdScriptWait). */
-static inline void syFieldScriptWait(Sint32 frames)
+/* Holds the script for ticks while the field goes on (fdScriptWait). */
+static inline void syFieldScriptWait(Sint32 ticks)
 {
-	fdScriptWait(frames);
+	fdScriptWait(ticks);
 }
 
 /* Turns an actor to a direction and holds the script until it has turned. */
@@ -140,37 +140,35 @@ static inline void fdActorSetPosAndFacing(
 
 /* fdActorSetAnimationAndWait as the scripts that take
    fdActorSetAnimationAndWait for a function returning int make the call. */
-static inline void scFieldActorSetAnimationAndWait(
-	Sint32 actorId, Sint32 animation)
+static inline void scFieldActorSetAnimationAndWait(Sint32 actorId, Sint32 anm)
 {
 #if FIX_FUNCTION_SIGNATURES
-	fdActorSetAnimationAndWait(actorId, animation);
+	fdActorSetAnimationAndWait(actorId, anm);
 #else
 	/* UB: fdActorSetAnimationAndWait returns nothing, but these calls are made
 	   as to a function returning int, which moves their argument registers. */
-	((Sint32 (*)(Uint32, Sint32))fdActorSetAnimationAndWait)(
-		actorId, animation);
+	((Sint32 (*)(Uint32, Sint32))fdActorSetAnimationAndWait)(actorId, anm);
 #endif
 }
 
-/* Throws an actor upward at speed pixels a frame, then holds the script for
-   frames. */
-static inline void scFieldActorJump(Sint32 actorId, Sint32 speed, Sint32 frames)
+/* Throws an actor upward at speed pixels a tick, then holds the script for
+   ticks. */
+static inline void scFieldActorJump(Sint32 actorId, Sint32 speed, Sint32 ticks)
 {
-	fdActorJump(actorId, speed, frames);
+	fdActorJump(actorId, speed, ticks);
 }
 
 /* Fixes the priority of an actor's sprite, which then no longer follows its
    depth. */
-static inline void scFieldActorSetSprPriority(Sint32 actorId, Sint32 priority)
+static inline void scFieldActorSetSprPriority(Sint32 actorId, Sint32 pri)
 {
-	fdActorSetSprPriority(actorId, priority);
+	fdActorSetSprPriority(actorId, pri);
 }
 
 /* Squashes an actor and springs it back count times. */
-static inline void scFieldActorStartRepeatedMotion(Sint32 actorId, Sint32 count)
+static inline void scFieldActorStartRepeatedMotion(Sint32 actorId, Sint32 cnt)
 {
-	fdActorStartRepeatedMotion(actorId, count);
+	fdActorStartRepeatedMotion(actorId, cnt);
 }
 
 /* Makes an actor follow another. */
@@ -180,7 +178,7 @@ static inline void scFieldActorWatchAndSetScript(
 	fdActorWatchAndSetScript(actorId, watchedActorId);
 }
 
-/* Holds the script until an actor arrives, 600 frames at most. */
+/* Holds the script until an actor arrives, 600 ticks at most. */
 static inline void scFieldActorWaitForMoveById(Sint32 actorId)
 {
 	fdActorWaitForMoveById(actorId);
@@ -193,16 +191,15 @@ static inline void syFieldScriptEndLastingPsynergy(Sint32 skip)
 }
 
 /* Makes message the script's next line. */
-static inline void syFieldScriptSetMessageId(Sint32 message)
+static inline void syFieldScriptSetMessageId(Sint32 msg)
 {
-	fdScriptSetMessageId(message);
+	fdScriptSetMessageId(msg);
 }
 
 /* Makes the camera follow an actor (fdCameraFollowActor). */
-static inline void syScriptCameraFollowActor(
-	Sint32 actorId, Sint32 keepPosition)
+static inline void syScriptCameraFollowActor(Sint32 actorId, Sint32 keepPos)
 {
-	fdCameraFollowActor(actorId, keepPosition);
+	fdCameraFollowActor(actorId, keepPos);
 }
 
 /* Places an actor at (x, y, z), 16.16 pixels, and stops it. */
@@ -212,16 +209,16 @@ static inline void scFieldActorSetPosAndResetMotion(
 	fdActorSetPosAndResetMotion(actor, x, y, z);
 }
 
-/* Holds the script until an actor's script ends, 300 frames at most. */
+/* Holds the script until an actor's script ends, 300 ticks at most. */
 static inline void scFieldActorWaitForScriptEndById(Sint32 actorId)
 {
 	fdActorWaitForScriptEndById(actorId);
 }
 
 /* Sets the colour mode of an actor's sprite (fdActorSetSprCol). */
-static inline void scFieldActorSetSprCol(struct ACTOR *actor, Sint32 colorMode)
+static inline void scFieldActorSetSprCol(struct ACTOR *actor, Sint32 colMode)
 {
-	fdActorSetSprCol(actor, colorMode);
+	fdActorSetSprCol(actor, colMode);
 }
 
 /* Stops an actor's movement type and stands it on the idle script. */
@@ -252,9 +249,9 @@ static inline Sint32 syFieldPartyInventoryFindMember(Sint32 item)
 /* Shows a message in a window in the middle of the screen
    (mnFieldMessageShowCentered). */
 static inline void syScriptMessageShowCentered(
-	Sint32 message, Sint32 mode, Sint32 yOffset)
+	Sint32 msg, Sint32 mode, Sint32 yOfs)
 {
-	mnFieldMessageShowCentered(message, mode, yOffset);
+	mnFieldMessageShowCentered(msg, mode, yOfs);
 }
 
 /* The leader's actor id. */
@@ -265,9 +262,9 @@ static inline Sint32 syFieldPartyGetLeaderActor(void)
 
 /* Asks yes or no as the speaker nods or shakes its head; returns 0 for yes. */
 static inline Sint32 syFieldScriptAskYesNoWithActorAnimation(
-	Sint32 actorId, Sint32 flags)
+	Sint32 actorId, Sint32 flg)
 {
-	return fdScriptAskYesNoWithActorAnimation(actorId, flags);
+	return fdScriptAskYesNoWithActorAnimation(actorId, flg);
 }
 
 /* Sets where the party goes after the script's battle
@@ -297,16 +294,16 @@ static inline Sint32 syScriptYesNoAsk(Sint32 atBottom)
 	return fdYesNoAsk(atBottom);
 }
 
-/* Zooms the World Map's view to zoom, 16.16, over frames. */
-static inline void syFieldWorldMapStartZoom(FIXED zoom, Sint32 frames)
+/* Zooms the World Map's view to zoom, 16.16, over ticks. */
+static inline void syFieldWorldMapStartZoom(FIXED zoom, Sint32 ticks)
 {
-	fdWorldMapStartZoom(zoom, frames);
+	fdWorldMapStartZoom(zoom, ticks);
 }
 
 /* Applies a window colour (mnWindowColApply). */
-static inline void syFieldWindowColApply(Sint32 color, Sint32 brightness)
+static inline void syFieldWindowColApply(Sint32 col, Sint32 brightness)
 {
-	mnWindowColApply(color, brightness);
+	mnWindowColApply(col, brightness);
 }
 
 /* Requests a battle with a Djinni (fdRequestDjinnBattle). */
@@ -364,9 +361,9 @@ static inline void syScriptCameraMoveToActor(Sint32 actorId, Sint32 pan)
 }
 
 /* Rotates an actor's sprite (fdActorSetSprRotationById). */
-static inline void scFieldActorSetSprRotationById(Sint32 actorId, Sint32 angle)
+static inline void scFieldActorSetSprRotationById(Sint32 actorId, Sint32 ang)
 {
-	fdActorSetSprRotationById(actorId, angle);
+	fdActorSetSprRotationById(actorId, ang);
 }
 
 /* Sets the metatile behavior of a metatile (fdMapGridSetMetatileBehavior). */
@@ -379,9 +376,9 @@ static inline Sint32 syFieldMapGridSetMetatileBehavior(
 /* Scoop digs up a buried treasure: with `mode` RETURN_HOME_DUG_UP, the treasure
    actor comes up at its home and its flag is set (fdActorReturnHome). */
 static inline void fdScriptDigUpTreasure(
-	Sint32 mode, Sint32 actorId, Sint32 flag)
+	Sint32 mode, Sint32 actorId, Sint32 flg)
 {
-	fdActorReturnHome(mode, actorId, flag);
+	fdActorReturnHome(mode, actorId, flg);
 }
 
 #endif

@@ -20,17 +20,17 @@
 #include "text/msg_ids.h"
 
 Sint32			   scInit(void);
-extern Uint32	   FileScreen_Exits[];
-extern ACTOR_PLACE FileScreen_ActorPlacements[];
-extern CUE		   FileScreen_Cues[];
-extern Sint16	   FileScreen_BlendFrame;
-extern Sint16	   FileScreen_CodeUnlocked;
-extern Sint16	   FileScreen_ExtraCodeUnlocked;
-extern Sint16	   FileScreen_CodeProgress;
-extern Sint16	   FileScreen_ExtraCodeProgress;
-extern Sint16	   FileScreen_CodeHeld;
-extern Sint32	   FileScreen_ExtraCodeHeld;
-extern Uint16	   FileScreen_PasswordStackItems[];
+extern Uint32	   FileScreenExits[];
+extern ACTOR_PLACE FileScreenActorPlacements[];
+extern CUE		   FileScreenCues[];
+extern Sint16	   FileScreenBlendTick;
+extern Sint16	   FileScreenCodeUnlocked;
+extern Sint16	   FileScreenExtraCodeUnlocked;
+extern Sint16	   FileScreenCodeProgress;
+extern Sint16	   FileScreenExtraCodeProgress;
+extern Sint16	   FileScreenCodeHeld;
+extern Sint32	   FileScreenExtraCodeHeld;
+extern Uint16	   FileScreenPasswordStackItems[];
 
 /* The password buffer: a Gold password is 260 symbols
    (scFileScreenEncodePassword) in every edition, which the Japanese buffer
@@ -111,7 +111,7 @@ extern Uint16	   FileScreen_PasswordStackItems[];
    which Gold has not; the stats rows after those, two party members to a row;
    and Gold's alone, the party's items, 15 a member in nine bits each, their
    quantities, five bits for each of the 23 items that stack
-   (FileScreen_PasswordStackItems), and the coins, high byte first. */
+   (FileScreenPasswordStackItems), and the coins, high byte first. */
 #define PASSWORD_FLAGS_BYTE		 7
 #define PASSWORD_KEY_ITEMS_BYTE	 8
 #define PASSWORD_STATS_ROW_BYTES 15
@@ -119,16 +119,16 @@ extern Uint16	   FileScreen_PasswordStackItems[];
 #define PASSWORD_QUANTITIES_BYTE 107
 #define PASSWORD_COINS_BYTE		 165
 #define PASSWORD_STACK_ITEMS	 23
-/* The party members a password packs (FileScreen_PasswordMembers), its story
-   flags (FileScreen_PasswordFlags) and Psynergy items
-   (FileScreen_PasswordKeyItems). */
+/* The party members a password packs (FileScreenPasswordMembers), its story
+   flags (FileScreenPasswordFlags) and Psynergy items
+   (FileScreenPasswordKeyItems). */
 #define PASSWORD_MEMBERS		 4
 #define PASSWORD_FLAGS			 6
 #define PASSWORD_KEY_ITEMS		 8
 
-extern Uint32 FileScreen_PasswordMembers[PASSWORD_MEMBERS];
-extern Uint16 FileScreen_PasswordFlags[PASSWORD_FLAGS];
-extern Uint16 FileScreen_PasswordKeyItems[PASSWORD_KEY_ITEMS];
+extern Uint32 FileScreenPasswordMembers[PASSWORD_MEMBERS];
+extern Uint16 FileScreenPasswordFlags[PASSWORD_FLAGS];
+extern Uint16 FileScreenPasswordKeyItems[PASSWORD_KEY_ITEMS];
 
 /* A party member's base stats in the password, two words of fields: HP (11
    bits), PP (11) and Attack (10); then Defense (10), Agility (10) and Luck (8)
@@ -158,24 +158,24 @@ extern Uint16 FileScreen_PasswordKeyItems[PASSWORD_KEY_ITEMS];
 
 /* Sending by cable gives up after this long, almost three hours, and with a
    communication error once the other console goes unheard this long. */
-#define LINK_SEND_FRAMES   600000
-#define LINK_SILENT_FRAMES 10
+#define LINK_SEND_TICKS	  600000
+#define LINK_SILENT_TICKS 10
 
 /* UB: the second code's held flag, a word, is read and written as its low
    halfword. */
 #define EXTRA_CODE_HELD \
-	WHEN(FIX_TYPE_PUNNING, FileScreen_ExtraCodeHeld, \
-		(*(Sint16 *)&FileScreen_ExtraCodeHeld))
+	WHEN(FIX_TYPE_PUNNING, FileScreenExtraCodeHeld, \
+		(*(Sint16 *)&FileScreenExtraCodeHeld))
 
 static Sint32 scFileScreenPackPasswordData(
 	Sint32 unused, Sint32 mode, Uint8 *out);
 static Sint32 scFileScreenEncodePassword(Uint8 *data, Sint32 size, Uint8 *out);
-static Uint16 scFileScreenCalcPasswordCrc16(Uint32 byteCount, Uint8 *data);
+static Uint16 scFileScreenCalcPasswordCrc16(Uint32 byteCnt, Uint8 *data);
 
 /* The File Screen overlay's scene tables, for the scene loader. */
 Uint8 *scGetEntrances(void)
 {
-	return (Uint8 *)Screen_Entrances;
+	return (Uint8 *)ScreenEntrances;
 }
 
 /* The exit regions entry: the File Screen has no exit boxes. */
@@ -186,17 +186,17 @@ Sint32 scGetExitRegions(void)
 
 Uint8 *scGetExits(void)
 {
-	return (Uint8 *)FileScreen_Exits;
+	return (Uint8 *)FileScreenExits;
 }
 
 Uint8 *scGetActorPlacements(void)
 {
-	return (Uint8 *)FileScreen_ActorPlacements;
+	return (Uint8 *)FileScreenActorPlacements;
 }
 
 Uint8 *scGetCues(void)
 {
-	return (Uint8 *)FileScreen_Cues;
+	return (Uint8 *)FileScreenCues;
 }
 
 /* Loads the Golden Sun logo onto BG2 as scTitleLoadBackground (title.c) does,
@@ -246,12 +246,12 @@ static void scFileScreenLoadBackground(void)
 }
 
 /* The event that fades BG0 and the sprites in over the logo, a step of the
-   blend every second frame. */
+   blend every second tick. */
 static void scFileScreenFadeInBlend(void)
 {
 	Uint16 level;
 
-	level = (Uint16)++FileScreen_BlendFrame >> 1;
+	level = (Uint16)++FileScreenBlendTick >> 1;
 	IO_WRITE_QUEUE_PUSH((Uint32)&REG_BLDCNT,
 		BLDCNT_TGT1_BG0 | BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND |
 			BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
@@ -268,57 +268,57 @@ static void scFileScreenFadeInBlend(void)
 /* */
 /* It is Select three times. With it a new game names Garet, Ivan and Mia as */
 /* well as Isaac (scInit). */
-const Uint16 FileScreen_ButtonCode[] = {
+const Uint16 FileScreenButtonCode[] = {
 	KEY_SELECT, KEY_SELECT, KEY_SELECT, 0,
 };
 
 /* The second, longer code. */
 /* */
 /* With it a new game also names Felix, Jenna and Sheba. */
-const Uint16 FileScreen_ExtraButtonCode[] = {
+const Uint16 FileScreenExtraButtonCode[] = {
 	KEY_UP, KEY_DOWN, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_LEFT, KEY_RIGHT,
 	KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT, KEY_UP, KEY_SELECT, 0,
 };
 /* clang-format on */
 
-/* The event that follows the two hidden codes each frame while the File Screen
+/* The event that follows the two hidden codes each tick while the File Screen
    runs: each held key that matches the next key of a code advances it, a wrong
    key starts it again, and finishing a code unlocks it with a chime. */
 static void scFileScreenCheckButtonCodes(void)
 {
-	if(FileScreen_CodeUnlocked == 0) {
-		if(FileScreen_CodeHeld != 0) {
+	if(FileScreenCodeUnlocked == 0) {
+		if(FileScreenCodeHeld != 0) {
 			if(PerData == 0)
-				FileScreen_CodeHeld = 0;
+				FileScreenCodeHeld = 0;
 		} else if(PerData != 0) {
-			if(PerData == FileScreen_ButtonCode[FileScreen_CodeProgress]) {
-				FileScreen_CodeProgress++;
-				FileScreen_CodeHeld = 1;
-				if(FileScreen_ButtonCode[FileScreen_CodeProgress] == 0) {
-					FileScreen_CodeUnlocked = 1;
+			if(PerData == FileScreenButtonCode[FileScreenCodeProgress]) {
+				FileScreenCodeProgress++;
+				FileScreenCodeHeld = 1;
+				if(FileScreenButtonCode[FileScreenCodeProgress] == 0) {
+					FileScreenCodeUnlocked = 1;
 					sySndPlay(SE_CHIME);
 				}
 			} else {
-				FileScreen_CodeProgress = 0;
+				FileScreenCodeProgress = 0;
 			}
 		}
 	}
-	if(FileScreen_ExtraCodeUnlocked == 0) {
+	if(FileScreenExtraCodeUnlocked == 0) {
 		if(EXTRA_CODE_HELD != 0) {
 			if(PerData == 0)
 				EXTRA_CODE_HELD = 0;
 		} else if(PerData != 0) {
 			if(PerData ==
-				FileScreen_ExtraButtonCode[FileScreen_ExtraCodeProgress]) {
-				FileScreen_ExtraCodeProgress++;
+				FileScreenExtraButtonCode[FileScreenExtraCodeProgress]) {
+				FileScreenExtraCodeProgress++;
 				EXTRA_CODE_HELD = 1;
-				if(FileScreen_ExtraButtonCode[FileScreen_ExtraCodeProgress] ==
+				if(FileScreenExtraButtonCode[FileScreenExtraCodeProgress] ==
 					0) {
-					FileScreen_ExtraCodeUnlocked = 1;
+					FileScreenExtraCodeUnlocked = 1;
 					sySndPlay(SE_CHIME);
 				}
 			} else {
-				FileScreen_ExtraCodeProgress = 0;
+				FileScreenExtraCodeProgress = 0;
 			}
 		}
 	}
@@ -406,7 +406,7 @@ static Sint32 scFileScreenIsRetreatBlocked(void)
 typedef struct FILE_SCREEN_LOADED_SCENE_STATE {
 	/* SceneLocalState, then InventorySnapshotWork */
 	Uint8 mapAndInventory[256];
-	/* The play time in frames, which mnSaveBuildFileSummary copies here when
+	/* The play time in ticks, which mnSaveBuildFileSummary copies here when
 	   saving. */
 	Sint32 playTime;
 } FILE_SCREEN_LOADED_SCENE_STATE;
@@ -427,37 +427,37 @@ typedef struct SAVE_LINK_GREETING {
    Returns 0 once a destination is set. */
 Sint32 scInit(void)
 {
-	Sint32	pageCount;
+	Sint32	pageCnt;
 	Sint32	encodedSize;
-	WINDOW *pageWindow;
+	WINDOW *pageWin;
 	Sint32	glyphColumn;
-	WINDOW *linkWindow;
+	WINDOW *linkWin;
 	Sint32	passwordColumn;
 	Sint32	tileValue;
 	/* index, limit and result serve each step in turn: the yes/no answer, the
 	   name being entered, the link's greeting, the page to redraw. */
 	Sint32	limit;
-	Sint32	index;
+	Sint32	idx;
 	Sint32	result;
-	Sint32	linkMessage;
-	Sint32	peerIndex;
+	Sint32	linkMsg;
+	Sint32	peerIdx;
 	Bool	linkConnectionOk;
-	Sint32	pageGlyphIndex;
-	Sint32	passwordHeadingMessage;
-	Sint32	pageIndex;
+	Sint32	pageGlyphIdx;
+	Sint32	passwordHeadingMsg;
+	Sint32	pageIdx;
 	Bool	blendStarted;
-	WINDOW *helpWindow;
-	WINDOW *headingWindow;
+	WINDOW *helpWin;
+	WINDOW *headingWin;
 	Uint8	saveData[200];
 	Uint8	password[FILE_SCREEN_PASSWORD_BUFFER_SIZE];
 	Uint8	glyph[4];
 
 	blendStarted = FALSE;
 	scFileScreenLoadBackground();
-	sySetFrameEvent(scFileScreenCheckButtonCodes, EVENT_PASS_FRAME);
+	sySetTickEvent(scFileScreenCheckButtonCodes, EVENT_PASS_TICK);
 	FieldStateWork->transition = 0;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	/* FILE_SCREEN_FROM_TITLE, after the credits (the title): save the cleared
 	   game, then WORLD_MAP_FROM_FILE_SCREEN. Cancelling the file choice asks
 	   again. */
@@ -466,17 +466,17 @@ Sint32 scInit(void)
 		/* "Save your adventure?" */
 		mnFieldMessageShow(MsgSaveAdventureQuestion,
 			FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
-		index = fdYesNoAsk(1);
+		idx = fdYesNoAsk(1);
 		mnMessageCloseFinishedWindows();
-		if(index == YES) {
+		if(idx == YES) {
 			/* "You cannot resume your adventure with this data." */
 			mnFieldMessageShow(
 				MsgSaveAdventureQuestion + 1, FIELD_MESSAGE_ZOOM);
 			/* Marks the file cleared (BUP_FILE_SUMMARY's sendFlg): its data can
 			   be sent, and the message says it cannot be continued. */
 			MainRoutineStateWork.sendFlg = 1;
-			index = mnSaveToChosenFile();
-			if(index == -1) {
+			idx = mnSaveToChosenFile();
+			if(idx == -1) {
 				goto ask_to_save;
 			}
 		}
@@ -504,7 +504,7 @@ menu_top:;
 	if(result == 0) {
 		if(blendStarted == 0) {
 			sySynch(30);
-			sySetFrameEvent(scFileScreenFadeInBlend, EVENT_PASS_FRAME);
+			sySetTickEvent(scFileScreenFadeInBlend, EVENT_PASS_TICK);
 			sySynch(1);
 			blendStarted = TRUE;
 		}
@@ -523,24 +523,24 @@ menu_top:;
 		mnWindowColApply(
 			MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
 		limit = ISAAC + 1;
-		index = ISAAC;
+		idx = ISAAC;
 		for(;;) {
 			sySynch(6);
-			result = mnNameEntryEditMemberName(index);
+			result = mnNameEntryEditMemberName(idx);
 			if(result == -1) {
-				if(index == ISAAC) {
+				if(idx == ISAAC) {
 					goto menu_top;
 				}
-				index--;
+				idx--;
 				continue;
 			}
-			if(FileScreen_CodeUnlocked != 0) {
+			if(FileScreenCodeUnlocked != 0) {
 				limit = MIA + 1;
 			}
-			if(FileScreen_ExtraCodeUnlocked != 0) {
+			if(FileScreenExtraCodeUnlocked != 0) {
 				limit = SHEBA + 1;
 			}
-			if(++index >= limit) {
+			if(++idx >= limit) {
 				break;
 			}
 		}
@@ -659,14 +659,14 @@ menu_top:;
 		/* Link transfer waits for the other game's edition-specific greeting in
 		   the partner's payload (SAVE_LINK_GREETING); B gives up. */
 		if(result == TRANSFER_METHOD_CABLE) {
-			linkWindow = mnWindowCreate(FILE_SCREEN_LINK_WINDOW_X, 5,
+			linkWin = mnWindowCreate(FILE_SCREEN_LINK_WINDOW_X, 5,
 				FILE_SCREEN_LINK_WINDOW_WIDTH, 8, WINDOW_FLAG_INSTANT);
-			linkMessage = MsgClearSaveLabel;
+			linkMsg = MsgClearSaveLabel;
 
 			/* "Save", "Preparing data" and "B: Quit" */
-			mnTextDrawMessage(linkMessage, linkWindow, 0, 4);
-			mnTextDrawMessage(linkMessage + 1, linkWindow, 0, 16);
-			mnTextDrawMessage(linkMessage + 3, linkWindow, 0, 36);
+			mnTextDrawMessage(linkMsg, linkWin, 0, 4);
+			mnTextDrawMessage(linkMsg + 1, linkWin, 0, 16);
+			mnTextDrawMessage(linkMsg + 3, linkWin, 0, 36);
 			sySerialInit();
 			sySynch(10);
 			{
@@ -677,12 +677,11 @@ menu_top:;
 				sync[2] = '0';
 				sync[3] = '0';
 			}
-			index = 0;
+			idx = 0;
 			limit = LINK_STATUS_HEARD_BOTH;
-			for(peerIndex = 0; peerIndex != 4; peerIndex++) {
+			for(peerIdx = 0; peerIdx != 4; peerIdx++) {
 				Uint16 *greeting =
-					((SAVE_LINK_GREETING *)SerialPeerPayloads[peerIndex]
-							.payload)
+					((SAVE_LINK_GREETING *)SerialPeerPayloads[peerIdx].payload)
 						->code;
 
 				greeting[0] = '0';
@@ -706,7 +705,7 @@ menu_top:;
 						if(received[1] == 'V') {
 							if(received[2] == 'T') {
 								if(received[3] == 'S') {
-									index = 1;
+									idx = 1;
 									break;
 								}
 							}
@@ -715,15 +714,15 @@ menu_top:;
 				}
 				sySynch(1);
 			}
-			mnWindowClose(linkWindow, 2);
-			if(index == 0) {
+			mnWindowClose(linkWin, 2);
+			if(idx == 0) {
 				goto link_select;
 			}
-			linkWindow = mnWindowCreate(FILE_SCREEN_SENDING_WINDOW_X, 10,
+			linkWin = mnWindowCreate(FILE_SCREEN_SENDING_WINDOW_X, 10,
 				FILE_SCREEN_SENDING_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
 
 			/* "Sending data" */
-			mnTextDrawMessage(MsgClearSendingData, linkWindow, 0, 4);
+			mnTextDrawMessage(MsgClearSendingData, linkWin, 0, 4);
 			sySynch(10);
 			sySerialStartSend(BupBuffer, 4100);
 			sySynch(10);
@@ -732,13 +731,13 @@ menu_top:;
 				Sint32 requiredLinkMask = LINK_STATUS_HEARD_BOTH;
 
 				linkConnectionOk = TRUE;
-				for(index = 0; index < LINK_SEND_FRAMES; index++) {
+				for(idx = 0; idx < LINK_SEND_TICKS; idx++) {
 					limit++;
 					if((requiredLinkMask & LinkStatusWork) ==
 						requiredLinkMask) {
 						limit = 0;
 					}
-					if(limit == LINK_SILENT_FRAMES) {
+					if(limit == LINK_SILENT_TICKS) {
 						linkConnectionOk = FALSE;
 						break;
 					}
@@ -748,10 +747,10 @@ menu_top:;
 					sySynch(1);
 				}
 				if(linkConnectionOk == 0) {
-					mnWindowSprPrepareForRedraw(linkWindow);
+					mnWindowSprPrepareForRedraw(linkWin);
 					/* "Communication Error" */
 					mnTextDrawMessage(
-						MsgClearCommunicationError, linkWindow, 0, 4);
+						MsgClearCommunicationError, linkWin, 0, 4);
 					do {
 						sySynch(1);
 					} while((PerPush & KEY_A) == 0);
@@ -760,12 +759,12 @@ menu_top:;
 				sySerialRemoveIRQHandlers();
 				sySynch(10);
 			}
-#if SENDING_WINDOW_WAITS_A_FRAME_AFTER_CLOSING
-			mnWindowClose(linkWindow, 2);
+#if SENDING_WINDOW_WAITS_A_TICK_AFTER_CLOSING
+			mnWindowClose(linkWin, 2);
 			sySynch(1);
 #else
-			mnWindowSprPrepareForRedraw(linkWindow);
-			mnWindowClose(linkWindow, 2);
+			mnWindowSprPrepareForRedraw(linkWin);
+			mnWindowClose(linkWin, 2);
 #endif
 			goto menu_top;
 		}
@@ -792,31 +791,30 @@ menu_top:;
 					scFileScreenEncodePassword(saveData, encodedSize, password);
 			}
 			syWindowLoadGraphics();
-			pageWindow = mnWindowCreate(5, 4, 20, 12, WINDOW_FLAG_INSTANT);
-			pageIndex = 0;
-			pageCount = encodedSize / PASSWORD_SYMBOLS_PER_PAGE + 1;
-			headingWindow = mnWindowCreate(FILE_SCREEN_PASSWORD_HEADING_X, 0,
+			pageWin = mnWindowCreate(5, 4, 20, 12, WINDOW_FLAG_INSTANT);
+			pageIdx = 0;
+			pageCnt = encodedSize / PASSWORD_SYMBOLS_PER_PAGE + 1;
+			headingWin = mnWindowCreate(FILE_SCREEN_PASSWORD_HEADING_X, 0,
 				FILE_SCREEN_PASSWORD_HEADING_WIDTH, 4, WINDOW_FLAG_INSTANT);
-			passwordHeadingMessage = MsgClearPasswordLabel;
+			passwordHeadingMsg = MsgClearPasswordLabel;
 			/* "Password" */
-			mnTextDrawMessage(passwordHeadingMessage, headingWindow, 6, 4);
-			index = 1;
+			mnTextDrawMessage(passwordHeadingMsg, headingWin, 6, 4);
+			idx = 1;
 			/* The help line below: "B: Return" for one page, "Left & Right:
 			   Change
 			   Page  B: Return" for more. */
-			if(pageCount == 1) {
-				helpWindow = mnWindowCreate(5, 16, 20, 3, WINDOW_FLAG_INSTANT);
-				mnTextDrawMessageAsTiles(passwordHeadingMessage - 2, helpWindow,
+			if(pageCnt == 1) {
+				helpWin = mnWindowCreate(5, 16, 20, 3, WINDOW_FLAG_INSTANT);
+				mnTextDrawMessageAsTiles(passwordHeadingMsg - 2, helpWin,
 					FILE_SCREEN_PASSWORD_RETURN_X, 0);
 			} else {
-				helpWindow = mnWindowCreate(FILE_SCREEN_PASSWORD_HELP_X, 16,
+				helpWin = mnWindowCreate(FILE_SCREEN_PASSWORD_HELP_X, 16,
 					FILE_SCREEN_PASSWORD_HELP_WIDTH, 3, WINDOW_FLAG_INSTANT);
-				mnTextDrawMessageAsTiles(
-					passwordHeadingMessage - 1, helpWindow, 0, 0);
+				mnTextDrawMessageAsTiles(passwordHeadingMsg - 1, helpWin, 0, 0);
 			}
 			mnGraphicsExpandVRAMTilesByColTable((Uint16 *)(BG_CHAR_BLOCK(0) +
 				PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
-			mnWindowSprPrepareForRedraw(pageWindow);
+			mnWindowSprPrepareForRedraw(pageWin);
 			/* A turns the page, and on the last returns to the menu; Left and
 			   Right turn back and forth, wrapping round; B goes back to the
 			   level choice. index is 1 when the page must be drawn again. */
@@ -824,106 +822,105 @@ menu_top:;
 				mnPageArrowsDraw(PAGE_ARROW_VRAM);
 				if((PerPush & KEY_B) != 0) {
 					sySndPlay(SE_MENU_CANCEL);
-					mnWindowSprPrepareForRedraw(pageWindow);
-					mnWindowClose(pageWindow, 2);
-					mnWindowClose(helpWindow, 2);
-					mnWindowClose(headingWindow, 2);
+					mnWindowSprPrepareForRedraw(pageWin);
+					mnWindowClose(pageWin, 2);
+					mnWindowClose(helpWin, 2);
+					mnWindowClose(headingWin, 2);
 					goto page_select;
 				}
 				if((PerPush & KEY_A) != 0) {
-					pageIndex++;
-					index = 1;
-					if(pageIndex == pageCount) {
+					pageIdx++;
+					idx = 1;
+					if(pageIdx == pageCnt) {
 						sySndPlay(SE_MENU_CONFIRM);
-						mnWindowSprPrepareForRedraw(pageWindow);
-						mnWindowClose(pageWindow, 2);
-						mnWindowClose(helpWindow, 2);
-						mnWindowClose(headingWindow, 2);
+						mnWindowSprPrepareForRedraw(pageWin);
+						mnWindowClose(pageWin, 2);
+						mnWindowClose(helpWin, 2);
+						mnWindowClose(headingWin, 2);
 						sySynch(1);
 						goto menu_top;
 					}
 					sySndPlay(SE_MENU_CURSOR_MOVE);
-				} else if((PerPush & KEY_LEFT) != 0 && pageCount > 1) {
+				} else if((PerPush & KEY_LEFT) != 0 && pageCnt > 1) {
 					/* Left and Right turn the page, wrapping round. */
 					sySndPlay(SE_MENU_CURSOR_MOVE);
-					pageIndex = (pageIndex + pageCount - 1) % pageCount;
-					index = 1;
-				} else if((PerPush & KEY_RIGHT) != 0 && pageCount > 1) {
+					pageIdx = (pageIdx + pageCnt - 1) % pageCnt;
+					idx = 1;
+				} else if((PerPush & KEY_RIGHT) != 0 && pageCnt > 1) {
 					sySndPlay(SE_MENU_CURSOR_MOVE);
-					pageIndex = (pageIndex + pageCount + 1) % pageCount;
-					index = 1;
+					pageIdx = (pageIdx + pageCnt + 1) % pageCnt;
+					idx = 1;
 				}
-				if(index == 1) {
-					mnWindowSprPrepareForRedraw(pageWindow);
-					index = 0;
+				if(idx == 1) {
+					mnWindowSprPrepareForRedraw(pageWin);
+					idx = 0;
 					limit = 2;
 					do {
-						mnWindowDrawDividerLine(
-							pageWindow, 0, limit, 18, limit);
+						mnWindowDrawDividerLine(pageWin, 0, limit, 18, limit);
 						limit = limit + 2;
-						index++;
-					} while(index != 4);
+						idx++;
+					} while(idx != 4);
 					/* The page numbers between the arrows, the page shown
 					   lit. */
-					if(pageCount > 1) {
-						index = 0;
-						if(pageCount != 0) {
+					if(pageCnt > 1) {
+						idx = 0;
+						if(pageCnt != 0) {
 							Uint32 mode = TILEMAP_ENTRY_PLAIN;
 
 							do {
-								tileValue = index + PAGE_NUMBER_TILE;
-								if(index == pageIndex) {
-									tileValue = index + PAGE_NUMBER_LIT_TILE;
+								tileValue = idx + PAGE_NUMBER_TILE;
+								if(idx == pageIdx) {
+									tileValue = idx + PAGE_NUMBER_LIT_TILE;
 								}
-								mnWindowSetTilemapEntry(pageWindow, tileValue,
-									index + 18 - pageCount, -1, mode);
-								index++;
-							} while(index != pageCount);
+								mnWindowSetTilemapEntry(pageWin, tileValue,
+									idx + 18 - pageCnt, -1, mode);
+								idx++;
+							} while(idx != pageCnt);
 						}
-						mnWindowSetTilemapEntry(pageWindow, PAGE_ARROW_LEFT,
-							17 - pageCount, -1, TILEMAP_ENTRY_PLAIN);
-						mnWindowSetTilemapEntry(pageWindow, PAGE_ARROW_RIGHT,
-							18, -1, TILEMAP_ENTRY_PLAIN);
+						mnWindowSetTilemapEntry(pageWin, PAGE_ARROW_LEFT,
+							17 - pageCnt, -1, TILEMAP_ENTRY_PLAIN);
+						mnWindowSetTilemapEntry(pageWin, PAGE_ARROW_RIGHT, 18,
+							-1, TILEMAP_ENTRY_PLAIN);
 						mnWindowMarkTilemapRow(
-							(WIN_STATE *)WindowStateWork[0], pageWindow->y);
+							(WIN_STATE *)WindowStateWork[0], pageWin->y);
 					}
 					/* The page's symbols, each row split into two groups of
 					   five: rows 16 pixels apart, the second five of a row 10
 					   pixels further right. */
-					result = pageIndex * PASSWORD_SYMBOLS_PER_PAGE +
+					result = pageIdx * PASSWORD_SYMBOLS_PER_PAGE +
 						PASSWORD_SYMBOLS_PER_PAGE;
 					if(result > encodedSize) {
 						result = encodedSize;
 					}
-					for(index = pageIndex * PASSWORD_SYMBOLS_PER_PAGE,
-					pageGlyphIndex = 0;
-						index != result; index++, pageGlyphIndex++) {
+					for(idx = pageIdx * PASSWORD_SYMBOLS_PER_PAGE,
+					pageGlyphIdx = 0;
+						idx != result; idx++, pageGlyphIdx++) {
 						/* FAKEMATCH(dead): a once-only block round the draw
 						 * call. */
 						do {
 							scFileScreenGetPasswordCharacter(
-								password[index] & PASSWORD_SYMBOL_MASK, glyph);
+								password[idx] & PASSWORD_SYMBOL_MASK, glyph);
 						} while(0);
-						passwordColumn = index % PASSWORD_SYMBOLS_PER_ROW;
+						passwordColumn = idx % PASSWORD_SYMBOLS_PER_ROW;
 						if(passwordColumn > PASSWORD_SYMBOLS_PER_ROW / 2 - 1) {
 							Sint32 row;
 
 							glyphColumn =
-								pageGlyphIndex % PASSWORD_SYMBOLS_PER_ROW;
-							row = pageGlyphIndex / PASSWORD_SYMBOLS_PER_ROW;
-							mnTextDrawString(glyph, pageWindow,
+								pageGlyphIdx % PASSWORD_SYMBOLS_PER_ROW;
+							row = pageGlyphIdx / PASSWORD_SYMBOLS_PER_ROW;
+							mnTextDrawString(glyph, pageWin,
 								glyphColumn * 12 + 18, (row << 4) + 2);
 						} else {
 							Sint32 row;
 
 							glyphColumn =
-								pageGlyphIndex % PASSWORD_SYMBOLS_PER_ROW;
-							row = pageGlyphIndex / PASSWORD_SYMBOLS_PER_ROW;
-							mnTextDrawString(glyph, pageWindow,
+								pageGlyphIdx % PASSWORD_SYMBOLS_PER_ROW;
+							row = pageGlyphIdx / PASSWORD_SYMBOLS_PER_ROW;
+							mnTextDrawString(glyph, pageWin,
 								glyphColumn * 12 + 8, (row << 4) + 2);
 						}
 					}
-					index = 0;
+					idx = 0;
 				}
 				sySynch(1);
 			}
@@ -936,7 +933,7 @@ leave:;
 	fdScriptWait(30);
 	sySndPlay(SOUND_FADE_OUT_BGM);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(60);
 	return 0;
 }
@@ -951,7 +948,7 @@ leave:;
    window tilemap, in VRAM and in its shadow, at the window's metatile: each
    metatile's tile the row times the window's width plus the column. */
 UNUSED static void scFileScreenFillTileGridByWindowWidth(
-	WINDOW *window, const void *compressedTiles)
+	WINDOW *win, const void *compressedTiles)
 {
 	Uint16 *shadow;
 	Uint16 *vram;
@@ -963,12 +960,12 @@ UNUSED static void scFileScreenFillTileGridByWindowWidth(
 	shadow = ((WIN_STATE *)WindowStateWork[0])->tilemap;
 	decodedTiles = syHeapAllocEWRAM(768);
 	syFieldDecompressTaggedLZ(compressedTiles, decodedTiles);
-	metatile = window->y * BG_SCREEN_WIDTH + window->x;
+	metatile = win->y * BG_SCREEN_WIDTH + win->x;
 	vram = (Uint16 *)WINDOW_TILEMAP_VRAM + metatile;
 	shadow += metatile;
 	for(row = 0; row < TILE_GRID_ROWS; row++) {
 		for(col = 0; col < TILE_GRID_COLUMNS; col++) {
-			Sint16 tile = WINDOW_TILE(window->width * row + col);
+			Sint16 tile = WINDOW_TILE(win->width * row + col);
 
 			*vram++ = tile;
 			*shadow++ = tile;
@@ -981,16 +978,16 @@ UNUSED static void scFileScreenFillTileGridByWindowWidth(
 
 /* Unused: fills a grid of the window tilemap with the tiles from
    TILE_GRID_FIRST_TILE on, TILE_GRID_COLUMNS to a row. */
-UNUSED static void scFileScreenFillTileGridByGridWidth(const WINDOW *window)
+UNUSED static void scFileScreenFillTileGridByGridWidth(const WINDOW *win)
 {
 	Sint16 *mirror = ((WIN_STATE *)WindowStateWork[0])->tilemap;
-	Sint16 *buffer = syHeapAllocEWRAM(768);
+	Sint16 *buf = syHeapAllocEWRAM(768);
 	Sint16 *vram;
 	Sint32	metatile;
 	Sint32	row;
 	Sint32	base;
 
-	metatile = window->y * BG_SCREEN_WIDTH + window->x;
+	metatile = win->y * BG_SCREEN_WIDTH + win->x;
 	vram = (Sint16 *)WINDOW_TILEMAP_VRAM + metatile;
 	mirror += metatile;
 	row = 0;
@@ -1013,7 +1010,7 @@ UNUSED static void scFileScreenFillTileGridByGridWidth(const WINDOW *window)
 		mirror += BG_SCREEN_WIDTH - TILE_GRID_COLUMNS;
 		base += TILE_GRID_COLUMNS;
 	} while(row < TILE_GRID_ROWS);
-	syHeapRelease(buffer);
+	syHeapRelease(buf);
 }
 
 /* A party member's base stats, which the password clamps and packs.
@@ -1055,11 +1052,11 @@ static Sint32 scFileScreenPackPasswordData(
 	Uint32 levelBits;
 	Uint32 djinnBits;
 	Uint8  keyItemBits;
-	Uint8  flagBits;
+	Uint8  flgBits;
 	Uint32 packedStats[PASSWORD_MEMBERS * 2];
 	Sint32 i;
-	Sint32 outputIndex;
-	Sint32 bitOffset;
+	Sint32 outputIdx;
+	Sint32 bitOfs;
 	Sint32 j;
 	Sint32 k;
 	Sint32 n;
@@ -1083,20 +1080,20 @@ static Sint32 scFileScreenPackPasswordData(
 	levelBits = 0;
 	djinnBits = 0;
 	keyItemBits = 0;
-	flagBits = 0;
+	flgBits = 0;
 	for(i = 0; i != PASSWORD_MEMBERS * 2; i++) {
 		packedStats[i] = 0;
 	}
 
 	for(i = 0; i != PASSWORD_FLAGS; i++) {
-		if(gmFlagGet(FileScreen_PasswordFlags[i])) {
-			flagBits |= 1 << i;
+		if(gmFlagGet(FileScreenPasswordFlags[i])) {
+			flgBits |= 1 << i;
 		}
 	}
 
 	for(i = 0; i != PASSWORD_MEMBERS; i++) {
 		PASSWORD_MEMBER *member =
-			(PASSWORD_MEMBER *)gmUnitGet(FileScreen_PasswordMembers[i]);
+			(PASSWORD_MEMBER *)gmUnitGet(FileScreenPasswordMembers[i]);
 		PASSWORD_STATS *stats = &member->stats;
 
 		if(stats->baseHp > UNIT_CHARACTER_HP_MAX) {
@@ -1142,13 +1139,13 @@ static Sint32 scFileScreenPackPasswordData(
 		for(j = 0; j != ELEMENT_COUNT; j++) {
 			djinnBits += member->djinnHeld[j] << (j * 7);
 		}
-		/* Which of the eight Psynergy items (FileScreen_PasswordKeyItems) any
+		/* Which of the eight Psynergy items (FileScreenPasswordKeyItems) any
 		   party member carries. */
 		for(j = 0; j != INVENTORY_SLOTS; j++) {
 			Uint16 item = member->inventory[j] & INVENTORY_ITEM_ID_MASK;
 
 			for(k = 0; k != PASSWORD_KEY_ITEMS; k++) {
-				if(item == FileScreen_PasswordKeyItems[k]) {
+				if(item == FileScreenPasswordKeyItems[k]) {
 					keyItemBits |= 1 << k;
 				}
 			}
@@ -1157,11 +1154,11 @@ static Sint32 scFileScreenPackPasswordData(
 
 	/* The largest password also carries inventories, stack counts and coins. */
 	if(mode == PASSWORD_LEVEL_GOLD) {
-		outputIndex = PASSWORD_ITEMS_BYTE;
-		bitOffset = 0;
+		outputIdx = PASSWORD_ITEMS_BYTE;
+		bitOfs = 0;
 		for(i = 0; i != PASSWORD_MEMBERS; i++) {
 			PASSWORD_MEMBER *member =
-				(PASSWORD_MEMBER *)gmUnitGet(FileScreen_PasswordMembers[i]);
+				(PASSWORD_MEMBER *)gmUnitGet(FileScreenPasswordMembers[i]);
 
 			for(n = 0; n != INVENTORY_SLOTS; n++) {
 				Uint16 item;
@@ -1170,22 +1167,22 @@ static Sint32 scFileScreenPackPasswordData(
 				   not used. */
 				gmItemGetDirect(member->inventory[n]);
 				item = member->inventory[n] & INVENTORY_ITEM_ID_MASK;
-				out[outputIndex] += item >> (bitOffset + 1);
-				out[outputIndex + 1] += item << (7 - bitOffset);
-				bitOffset++;
-				outputIndex++;
-				if(bitOffset == 7) {
-					bitOffset = 0;
-					outputIndex++;
+				out[outputIdx] += item >> (bitOfs + 1);
+				out[outputIdx + 1] += item << (7 - bitOfs);
+				bitOfs++;
+				outputIdx++;
+				if(bitOfs == 7) {
+					bitOfs = 0;
+					outputIdx++;
 				}
 			}
 		}
 
-		outputIndex = PASSWORD_QUANTITIES_BYTE;
-		bitOffset = -1;
+		outputIdx = PASSWORD_QUANTITIES_BYTE;
+		bitOfs = -1;
 		for(i = 0; i != PASSWORD_MEMBERS; i++) {
 			PASSWORD_MEMBER *member =
-				(PASSWORD_MEMBER *)gmUnitGet(FileScreen_PasswordMembers[i]);
+				(PASSWORD_MEMBER *)gmUnitGet(FileScreenPasswordMembers[i]);
 			Sint32 m;
 
 			for(m = 0; m != PASSWORD_STACK_ITEMS; m++) {
@@ -1194,7 +1191,7 @@ static Sint32 scFileScreenPackPasswordData(
 				j = 0;
 				for(n = 0; n != INVENTORY_SLOTS; n++) {
 					if((member->inventory[n] & INVENTORY_ITEM_ID_MASK) ==
-						FileScreen_PasswordStackItems[m]) {
+						FileScreenPasswordStackItems[m]) {
 						j = (member->inventory[n] & INVENTORY_QUANTITY_MASK) >>
 							INVENTORY_QUANTITY_SHIFT;
 					}
@@ -1202,16 +1199,16 @@ static Sint32 scFileScreenPackPasswordData(
 				/* FAKEMATCH(dead): a halfword copy of the quantity nothing
 				 * reads. */
 				quantity = j;
-				if(bitOffset < 0) {
-					out[outputIndex] += (Uint16)j >> -bitOffset;
-					outputIndex++;
-					bitOffset += 8;
+				if(bitOfs < 0) {
+					out[outputIdx] += (Uint16)j >> -bitOfs;
+					outputIdx++;
+					bitOfs += 8;
 				}
-				out[outputIndex] += (Uint16)j << bitOffset;
-				bitOffset -= 5;
-				if(bitOffset == -5) {
-					outputIndex++;
-					bitOffset = 3;
+				out[outputIdx] += (Uint16)j << bitOfs;
+				bitOfs -= 5;
+				if(bitOfs == -5) {
+					outputIdx++;
+					bitOfs = 3;
 				}
 			}
 		}
@@ -1224,28 +1221,28 @@ static Sint32 scFileScreenPackPasswordData(
 	   PASSWORD_STATS_ROW_BYTES: each one's first word and the top 28 bits of
 	   its second, whose low four bits are always 0. */
 	if(mode != PASSWORD_LEVEL_BRONZE) {
-		Sint32 statsOffset =
+		Sint32 statsOfs =
 			PASSWORD_KEY_ITEMS_BYTE + (mode != PASSWORD_LEVEL_GOLD);
 
 		for(i = 0; i != PASSWORD_MEMBERS / 2; i++) {
-			out[statsOffset] = packedStats[i * 4] >> 24;
-			out[statsOffset + 1] = packedStats[i * 4] >> 16;
-			out[statsOffset + 2] = packedStats[i * 4] >> 8;
-			out[statsOffset + 3] = packedStats[i * 4];
-			out[statsOffset + 4] = packedStats[i * 4 + 1] >> 24;
-			out[statsOffset + 5] = packedStats[i * 4 + 1] >> 16;
-			out[statsOffset + 6] = packedStats[i * 4 + 1] >> 8;
-			out[statsOffset + 7] = packedStats[i * 4 + 1];
-			out[statsOffset + 7] |= packedStats[i * 4 + 2] >> 28;
-			out[statsOffset + 8] = packedStats[i * 4 + 2] >> 20;
-			out[statsOffset + 9] = packedStats[i * 4 + 2] >> 12;
-			out[statsOffset + 10] = packedStats[i * 4 + 2] >> 4;
-			out[statsOffset + 11] = packedStats[i * 4 + 2] << 4;
-			out[statsOffset + 11] |= packedStats[i * 4 + 3] >> 28;
-			out[statsOffset + 12] = packedStats[i * 4 + 3] >> 20;
-			out[statsOffset + 13] = packedStats[i * 4 + 3] >> 12;
-			out[statsOffset + 14] = packedStats[i * 4 + 3] >> 4;
-			statsOffset += PASSWORD_STATS_ROW_BYTES;
+			out[statsOfs] = packedStats[i * 4] >> 24;
+			out[statsOfs + 1] = packedStats[i * 4] >> 16;
+			out[statsOfs + 2] = packedStats[i * 4] >> 8;
+			out[statsOfs + 3] = packedStats[i * 4];
+			out[statsOfs + 4] = packedStats[i * 4 + 1] >> 24;
+			out[statsOfs + 5] = packedStats[i * 4 + 1] >> 16;
+			out[statsOfs + 6] = packedStats[i * 4 + 1] >> 8;
+			out[statsOfs + 7] = packedStats[i * 4 + 1];
+			out[statsOfs + 7] |= packedStats[i * 4 + 2] >> 28;
+			out[statsOfs + 8] = packedStats[i * 4 + 2] >> 20;
+			out[statsOfs + 9] = packedStats[i * 4 + 2] >> 12;
+			out[statsOfs + 10] = packedStats[i * 4 + 2] >> 4;
+			out[statsOfs + 11] = packedStats[i * 4 + 2] << 4;
+			out[statsOfs + 11] |= packedStats[i * 4 + 3] >> 28;
+			out[statsOfs + 12] = packedStats[i * 4 + 3] >> 20;
+			out[statsOfs + 13] = packedStats[i * 4 + 3] >> 12;
+			out[statsOfs + 14] = packedStats[i * 4 + 3] >> 4;
+			statsOfs += PASSWORD_STATS_ROW_BYTES;
 		}
 	}
 
@@ -1259,7 +1256,7 @@ static Sint32 scFileScreenPackPasswordData(
 	out[4] = djinnBits >> 4;
 	out[5] = djinnBits >> 12;
 	out[6] = djinnBits >> 20;
-	out[PASSWORD_FLAGS_BYTE] = flagBits;
+	out[PASSWORD_FLAGS_BYTE] = flgBits;
 	if(mode != PASSWORD_LEVEL_GOLD) {
 		out[PASSWORD_KEY_ITEMS_BYTE] = keyItemBits;
 	}
@@ -1272,65 +1269,65 @@ static Sint32 scFileScreenPackPasswordData(
 static Sint32 scFileScreenEncodePassword(Uint8 *data, Sint32 size, Uint8 *out)
 {
 	Sint32 xorKey;
-	Sint32 symbolCount;
+	Sint32 symbolCnt;
 	Sint32 i;
 	Sint32 j;
 	Sint32 inputBit;
-	Sint32 inputIndex;
+	Sint32 inputIdx;
 	Sint32 symbol;
 	Sint32 groupSum;
 	Sint32 groupSymbols;
-	Sint32 sourceBit;
+	Sint32 srcBit;
 
 	xorKey = data[size - 1];
-	symbolCount = 0;
+	symbolCnt = 0;
 	for(i = 0; i != size - 1; i++)
 		data[i] ^= xorKey;
 	inputBit = 0;
-	inputIndex = 0;
+	inputIdx = 0;
 	groupSum = 0;
 	groupSymbols = 0;
 	do {
 		symbol = 0;
 		for(j = 0; j != 6; j++) {
-			sourceBit = (data[inputIndex] >> (7 - inputBit)) & 1;
+			srcBit = (data[inputIdx] >> (7 - inputBit)) & 1;
 			inputBit++;
 			if(inputBit == 8) {
 				inputBit = 0;
-				inputIndex++;
+				inputIdx++;
 			}
-			symbol |= sourceBit << (5 - j);
-			if(inputIndex == size)
+			symbol |= srcBit << (5 - j);
+			if(inputIdx == size)
 				break;
 		}
 		groupSymbols++;
-		out[symbolCount++] = symbol;
+		out[symbolCnt++] = symbol;
 		groupSum += symbol;
 		if(groupSymbols == PASSWORD_SYMBOLS_PER_ROW - 1) {
-			out[symbolCount++] = groupSum & PASSWORD_SYMBOL_MASK;
+			out[symbolCnt++] = groupSum & PASSWORD_SYMBOL_MASK;
 			groupSum = 0;
 			groupSymbols = 0;
 		}
-	} while(inputIndex != size);
-	for(i = 0; i != symbolCount; i++)
+	} while(inputIdx != size);
+	for(i = 0; i != symbolCnt; i++)
 		out[i] = (out[i] + i) & PASSWORD_SYMBOL_MASK;
-	return symbolCount;
+	return symbolCnt;
 }
 
-/* The password's checksum: over byteCount bytes of data, shifted a bit at a
+/* The password's checksum: over byteCnt bytes of data, shifted a bit at a
    time from PASSWORD_CRC_SEED, PASSWORD_CRC_POLYNOMIAL subtracted when the top
    bit falls out, and the result complemented. The Lost Age's password screen
    checks it against a decoded password's last PASSWORD_CRC_BYTES. */
-static Uint16 scFileScreenCalcPasswordCrc16(Uint32 byteCount, Uint8 *data)
+static Uint16 scFileScreenCalcPasswordCrc16(Uint32 byteCnt, Uint8 *data)
 {
 	Uint32 crc;
-	Uint32 byteIndex;
-	Uint32 bitIndex;
+	Uint32 byteIdx;
+	Uint32 bitIdx;
 
 	crc = PASSWORD_CRC_SEED;
-	for(byteIndex = 0; byteIndex != byteCount; byteIndex++, data++) {
+	for(byteIdx = 0; byteIdx != byteCnt; byteIdx++, data++) {
 		crc ^= *data << 8;
-		for(bitIndex = 0; bitIndex != 8; bitIndex++) {
+		for(bitIdx = 0; bitIdx != 8; bitIdx++) {
 			if((crc & PASSWORD_CRC_TOP_BIT) != 0) {
 				crc = (crc << 1) - PASSWORD_CRC_POLYNOMIAL;
 			} else {
@@ -1343,48 +1340,48 @@ static Uint16 scFileScreenCalcPasswordCrc16(Uint32 byteCount, Uint8 *data)
 
 #include "shared/screen_entrances.c"
 
-Uint32 FileScreen_Exits[] = {
+Uint32 FileScreenExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE FileScreen_ActorPlacements[] = {
+ACTOR_PLACE FileScreenActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-CUE FileScreen_Cues[] = {
+CUE FileScreenCues[] = {
 	{CUE_TABLE_END},
 };
 
-/* Frames since scFileScreenFadeInBlend began; the blend level is half of it. */
-Sint16 FileScreen_BlendFrame = 0;
+/* Ticks since scFileScreenFadeInBlend began; the blend level is half of it. */
+Sint16 FileScreenBlendTick = 0;
 
-/* Set once FileScreen_ButtonCode has been entered; nothing here clears it. */
-Sint16 FileScreen_CodeUnlocked = 0;
+/* Set once FileScreenButtonCode has been entered; nothing here clears it. */
+Sint16 FileScreenCodeUnlocked = 0;
 
-/* Set once FileScreen_ExtraButtonCode has been entered. */
-Sint16 FileScreen_ExtraCodeUnlocked = 0;
+/* Set once FileScreenExtraButtonCode has been entered. */
+Sint16 FileScreenExtraCodeUnlocked = 0;
 
-/* The index in FileScreen_ButtonCode of the key to press next. */
-Sint16 FileScreen_CodeProgress = 0;
+/* The index in FileScreenButtonCode of the key to press next. */
+Sint16 FileScreenCodeProgress = 0;
 
-/* The index in FileScreen_ExtraButtonCode of the key to press next. */
-Sint16 FileScreen_ExtraCodeProgress = 0;
+/* The index in FileScreenExtraButtonCode of the key to press next. */
+Sint16 FileScreenExtraCodeProgress = 0;
 
 /* Set while the first code's last correct key is still held. */
-Sint16 FileScreen_CodeHeld = 0;
+Sint16 FileScreenCodeHeld = 0;
 
 /* The same for the second code: a word, of which only the low halfword is
    used. */
-Sint32 FileScreen_ExtraCodeHeld = 0;
+Sint32 FileScreenExtraCodeHeld = 0;
 
 /* clang-format off */
 /* The party members the password packs: Isaac, Garet, Ivan and Mia. */
-Uint32 FileScreen_PasswordMembers[PASSWORD_MEMBERS] = {
+Uint32 FileScreenPasswordMembers[PASSWORD_MEMBERS] = {
 	ISAAC, GARET, IVAN, MIA,
 };
 
 /* The six story flags of the password's PASSWORD_FLAGS_BYTE, bits 0 to 5. */
-ALIGNED(4) Uint16 FileScreen_PasswordFlags[PASSWORD_FLAGS] = {
+ALIGNED(4) Uint16 FileScreenPasswordFlags[PASSWORD_FLAGS] = {
 	FLAG_DODONPA_LOCKED_UP, FLAG_WON_COLOSSO,
 	FLAG_HSU_RESCUED_WITHOUT_PARTY, FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED,
 	FLAG_VISITED_SICK_DORA, FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES,
@@ -1392,7 +1389,7 @@ ALIGNED(4) Uint16 FileScreen_PasswordFlags[PASSWORD_FLAGS] = {
 
 /* The eight Psynergy items, ITEM_ORB_OF_FORCE to ITEM_CATCH_BEADS, which */
 /* Silver and Bronze record in PASSWORD_KEY_ITEMS_BYTE. */
-ALIGNED(4) Uint16 FileScreen_PasswordKeyItems[PASSWORD_KEY_ITEMS] = {
+ALIGNED(4) Uint16 FileScreenPasswordKeyItems[PASSWORD_KEY_ITEMS] = {
 	ITEM_ORB_OF_FORCE, ITEM_DOUSE_DROP,
 	ITEM_FROST_JEWEL, ITEM_LIFTING_GEM,
 	ITEM_HALT_GEM, ITEM_CLOAK_BALL,
@@ -1405,7 +1402,7 @@ ALIGNED(4) Uint16 FileScreen_PasswordKeyItems[PASSWORD_KEY_ITEMS] = {
 /* Life, Power Bread, Cookie, Apple, Hard Nut, Mint, Lucky Pepper, Smoke */
 /* Bomb, Sleep Bomb, Game Ticket, Lucky Medal, Sacred Feather, Oil Drop, */
 /* Weasel's Claw, Bramble Seed and Crystal Powder. */
-Uint16 FileScreen_PasswordStackItems[PASSWORD_STACK_ITEMS] = {
+Uint16 FileScreenPasswordStackItems[PASSWORD_STACK_ITEMS] = {
 	ITEM_HERB, ITEM_NUT, ITEM_VIAL, ITEM_POTION, ITEM_PSY_CRYSTAL,
 	ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_WATER_OF_LIFE, ITEM_POWER_BREAD,
 	ITEM_COOKIE, ITEM_APPLE, ITEM_HARD_NUT, ITEM_MINT, ITEM_LUCKY_PEPPER,

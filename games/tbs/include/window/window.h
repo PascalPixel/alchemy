@@ -41,7 +41,7 @@ typedef struct WINDOW {
 	/* The zoom's stage: counts down from 7 to 0 while opening, and up from 0 to
 	   duration while closing. */
 	Sint16 zoomStage;
-	Sint16 duration;   /* frames of the zoom under way; 0 when none */
+	Sint16 duration;   /* ticks of the zoom under way; 0 when none */
 	Sint16 prevX;	   /* tiles */
 	Sint16 prevY;	   /* tiles */
 	Sint16 prevWidth;  /* tiles */
@@ -54,7 +54,7 @@ STATIC_ASSERT(offsetof(WINDOW, zoomStage) == 24);
 STATIC_ASSERT(offsetof(WINDOW, prevHeight) == 34);
 
 /* A message, one of three, which types decoded text into a window a few
-   characters a frame and runs its control codes. */
+   characters a tick and runs its control codes. */
 typedef struct MESSAGE {
 	WINDOW *win; /* the window typed into; NULL when free */
 	Uint16	x;	 /* pen, 8.8 fixed-point pixels */
@@ -64,14 +64,14 @@ typedef struct MESSAGE {
 	Uint16 spacing[4];
 	Uint16 line;		/* line of the page, indexes spacing; at most 3 */
 	Uint16 textIdx;		/* next code in WIN_STATE.textBuf */
-	Uint16 countdown;	/* frames left of a pause, a page wait or a swell */
+	Uint16 countdown;	/* ticks left of a pause, a page wait or a swell */
 	Uint16 colour;		/* text colour; 15 by default */
 	Uint16 outline;		/* outline colour; 0 for none */
 	Uint16 lineSpacing; /* 10 by default */
-	Uint16 transition;	/* frames left of the canvas scrolling up a line */
+	Uint16 transition;	/* ticks left of the canvas scrolling up a line */
 	Uint16 startX; /* pen x each new line returns to, 8.8 fixed-point pixels */
 	Uint16 ended;  /* 1 once a TEXT_END code is reached */
-	/* frames to wait after a glyph while no button is held */
+	/* ticks to wait after a glyph while no button is held */
 	Uint16 glyphDelay;
 	Uint16 flg; /* nonzero keeps the window's size from page to page */
 	Uint16 unused;
@@ -244,7 +244,7 @@ enum {
 #define WINDOW_BRIGHTNESS_COUNT	  15
 /* The brightness that adds nothing to the hue's colour. */
 #define WINDOW_BRIGHTNESS_NEUTRAL 7
-/* Steps round WindowColor_WaveTable's colour wheel; each hue is four. */
+/* Steps round WindowColorWaveTable's colour wheel; each hue is four. */
 #define WINDOW_COLOR_WHEEL_STEPS  96
 
 /* The BG palette the menus keep for their selected row or page: a copy of
@@ -275,7 +275,7 @@ enum {
 #define BASIC_COLORS_PALETTE		5
 
 /* Text colours (mnTextSetCol), named as both the window palette (through
-   Font_ColorPens) and the basic sprite palette show them. */
+   FontColorPens) and the basic sprite palette show them. */
 typedef enum TEXT_COL {
 	TEXT_COLOR_RED = 2,
 	TEXT_COLOR_YELLOW = 4,
@@ -301,7 +301,7 @@ typedef enum TEXT_COL {
 
 /* The two page arrows beside a paged list's page numbers, in the menus and the
    File Screen: tiles 296 and 297 of character block 0, which mnPageArrowsDraw
-   slides back and forth each frame, and their tilemap entries. */
+   slides back and forth each tick, and their tilemap entries. */
 #define PAGE_ARROW_TILE 296
 #define PAGE_ARROW_VRAM \
 	((Sint32)BG_CHAR_BLOCK(0) + PAGE_ARROW_TILE * TILE_SIZE_4BPP)
@@ -383,14 +383,14 @@ enum {
 #define TILE_HFLIP		 0x400
 #define TILE_VFLIP		 0x800
 
-/* How a window sprite moves (WINDOW_SPR.motion), run each frame by
+/* How a window sprite moves (WINDOW_SPR.motion), run each tick by
    mnWindowSprUpdateAll. 0 is a free window sprite. */
 enum {
 	WINDOW_SPRITE_MOTION_STILL = 1,
 	/* the animated next-page arrow, bobbing */
 	WINDOW_SPRITE_MOTION_PAGE_ARROW = 2,
 	WINDOW_SPRITE_MOTION_WOBBLE = 4, /* swings along a small arc */
-	WINDOW_SPRITE_MOTION_SHAKE = 5,	 /* jitters by a pixel every other frame */
+	WINDOW_SPRITE_MOTION_SHAKE = 5,	 /* jitters by a pixel every other tick */
 	WINDOW_SPRITE_MOTION_POP = 6,	/* shown at double size, then normal size */
 	WINDOW_SPRITE_MOTION_SPIN = 7,	/* turns while circling its place */
 	WINDOW_SPRITE_MOTION_PULSE = 8, /* shown at 1.25 times, then normal size */
@@ -447,7 +447,7 @@ typedef enum COMMAND_ICON {
 	COMMAND_ICON_COINS = 32,
 	COMMAND_ICON_LUCKY_MEDALS = 33,
 	/* The settings menu's choices and the Pause menu's entries
-	   (SettingsMenu_SpeedIcons to PauseMenu_Icons), whose command names are
+	   (SettingsMenuSpeedIcons to PauseMenuIcons), whose command names are
 	   placeholders. */
 	COMMAND_ICON_SPEED_SLOW = 34,
 	COMMAND_ICON_SPEED_NORMAL = 35,
@@ -474,7 +474,7 @@ typedef enum GLYPH_DRAW_MODE {
 
 /* The window mnFieldMessageShowCentered shows its message in. */
 typedef enum CENTERED_MESSAGE_MODE {
-	/* No frame or size: it opens and closes at once. */
+	/* No tick or size: it opens and closes at once. */
 	CENTERED_MESSAGE_BARE = 0,
 	/* A zooming window sized to the message, waited for as it closes. */
 	CENTERED_MESSAGE_WINDOW = 1
@@ -553,46 +553,44 @@ void	mnWindowSystemInitField(void);
 void	mnWindowSystemInitBattle(Sint32 loadGlyphTiles);
 WINDOW *mnWindowCreate(
 	Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 attrs);
-void   mnWindowClose(WINDOW *window, Sint32 instant);
-void   mnMessageDecodeRawUnbounded(Sint32 message, Uint16 *text);
-void   mnMessageDecodeRaw(Sint32 message, Uint16 *text, Sint32 capacity);
-Sint32 mnMessageCopyExpanded(
-	Sint32 message, Uint16 *destination, Uint32 capacity);
-WINDOW *mnMessageOpenWindow(Sint32 message, Sint32 x, Sint32 y, Uint32 packed);
-void	mnFieldMessageShow(Sint32 message, Sint32 flags);
+void	mnWindowClose(WINDOW *win, Sint32 instant);
+void	mnMessageDecodeRawUnbounded(Sint32 msg, Uint16 *text);
+void	mnMessageDecodeRaw(Sint32 msg, Uint16 *text, Sint32 capacity);
+Sint32	mnMessageCopyExpanded(Sint32 msg, Uint16 *dst, Uint32 capacity);
+WINDOW *mnMessageOpenWindow(Sint32 msg, Sint32 x, Sint32 y, Uint32 packed);
+void	mnFieldMessageShow(Sint32 msg, Sint32 flg);
 Bool	mnMessageAllTyped(void);
-Bool	mnWindowIsClosed(WINDOW *window);
-void	mnMessageSetDecodeFlags(Sint32 flags);
-void	mnWindowSprPrepareForRedraw(WINDOW *window);
+Bool	mnWindowIsClosed(WINDOW *win);
+void	mnMessageSetDecodeFlags(Sint32 flg);
+void	mnWindowSprPrepareForRedraw(WINDOW *win);
 void	mnWindowClearInteriorTiles(
-	   const WINDOW *window, Uint32 left, Uint32 top, Uint32 right, Uint32 bottom);
+	   const WINDOW *win, Uint32 left, Uint32 top, Uint32 right, Uint32 bottom);
 void mnWindowDrawDividerLine(
 	WINDOW *win, Uint32 x1, Uint32 y1, Uint32 x2, Uint32 y2);
-void mnTextDrawMessage(Sint32 message, WINDOW *window, Sint32 x, Sint32 y);
+void mnTextDrawMessage(Sint32 msg, WINDOW *win, Sint32 x, Sint32 y);
 void mnTextDrawMessageAsTiles(
-	Sint32 message, const WINDOW *window, Uint32 offsetX, Uint32 offsetY);
-void mnTextDrawString(const Uint8 *text, WINDOW *window, Sint32 x, Sint32 y);
+	Sint32 msg, const WINDOW *win, Uint32 ofsX, Uint32 ofsY);
+void mnTextDrawString(const Uint8 *text, WINDOW *win, Sint32 x, Sint32 y);
 void mnTextDrawStringAtOffset(
-	const Uint8 *text, const WINDOW *window, Sint32 offsetX, Sint32 offsetY);
+	const Uint8 *text, const WINDOW *win, Sint32 ofsX, Sint32 ofsY);
 void mnTextDrawStringInWindow(
-	const Uint8 *text, WINDOW *window, Uint32 x, Uint32 y);
-void mnTextDrawNum(
-	Sint32 value, Sint32 width, WINDOW *window, Sint32 x, Sint32 y);
+	const Uint8 *text, WINDOW *win, Uint32 x, Uint32 y);
+void mnTextDrawNum(Sint32 value, Sint32 width, WINDOW *win, Sint32 x, Sint32 y);
 void mnTextDrawNumAtOffset(
-	Sint32 value, Sint32 width, const WINDOW *window, Sint32 x, Sint32 y);
+	Sint32 value, Sint32 width, const WINDOW *win, Sint32 x, Sint32 y);
 void mnTextDrawNumInWindow(
-	Sint32 value, Sint32 width, WINDOW *window, Sint32 x, Sint32 y);
-void		mnTextSetCol(Sint32 color);
+	Sint32 value, Sint32 width, WINDOW *win, Sint32 x, Sint32 y);
+void		mnTextSetCol(Sint32 col);
 void		mnTextSetStyle(Uint16 style);
-WINDOW_SPR *mnWindowSprCreate(Sint32 slot, Sint32 oamFlags, WINDOW *window,
-	Sint32 offsetX, Sint32 offsetY);
+WINDOW_SPR *mnWindowSprCreate(
+	Sint32 slot, Sint32 oamFlg, WINDOW *win, Sint32 ofsX, Sint32 ofsY);
 WINDOW_SPR *mnWindowSprCreateFromResource(
-	Sint32 mode, Sint32 resource, WINDOW *window, Sint32 x, Sint32 y);
+	Sint32 mode, Sint32 resource, WINDOW *win, Sint32 x, Sint32 y);
 WINDOW_SPR *mnPortraitCreate(Sint32 character, Sint32 unused, Sint32 side,
-	WINDOW *window, Sint32 x, Sint32 y);
+	WINDOW *win, Sint32 x, Sint32 y);
 void		mnPortraitReload(Uint32 side, Sint32 character, Sint32 unused);
-void		mnWindowSprSetMotion(WINDOW_SPR *sprite, Sint32 mode);
-void		mnWindowSprSetPriority(void *sprite, Sint32 priority);
+void		mnWindowSprSetMotion(WINDOW_SPR *spr, Sint32 mode);
+void		mnWindowSprSetPriority(void *spr, Sint32 pri);
 WINDOW	   *mnPortraitOpenWindow(
 		Sint32 speaker, Sint32 portraitOption, Sint32 x, Sint32 y);
 void   mnPortraitCloseWindow(Uint32 speaker);
@@ -602,8 +600,8 @@ Sint32 mnTextGetMessageSizeAllPages(
 	Sint32 no, Sint32 *x, Sint32 *y, Uint32 *width, Uint32 *height);
 void   mnMessageArgumentClearAll(void);
 void   mnMessageArgumentPush(Uint32 value, Uint32 kind);
-void   mnPartyStatCreateWindow(Sint32 flags);
-void   mnPartyStatDraw(Sint32 flags);
+void   mnPartyStatCreateWindow(Sint32 flg);
+void   mnPartyStatDraw(Sint32 flg);
 void   mnPartyStatClose(void);
 void   mnMessageCloseFinishedWindows(void);
 void   mnWindowCloseAll(Sint32 unused);
@@ -612,7 +610,7 @@ void   mnSelectionMenuClear(void);
 void   mnSelectionMenuAddEntry(Uint32 kind, Uint32 base);
 void   mnSelectionMenuStartDrawing(void);
 void   mnSelectionMenuStopDrawing(void);
-void   mnSelectionMenuOpenNameWindow(Sint32 mode, Uint32 count);
+void   mnSelectionMenuOpenNameWindow(Sint32 mode, Uint32 cnt);
 void   mnSelectionMenuClose(void);
 void   mnSetupSelectionBothSides(void);
 Sint32 mnSelectionMenuRun(Sint32 mode);
@@ -622,9 +620,9 @@ void   mnArrowNoOperationCallbackA(void);
 void   mnSelectionMenuBuildEntries(Uint32 unused);
 void   mnSelectionMenuReservedNoOperation(void);
 Sint32 mnBattleCollectPartyCommands(
-	struct BATTLE_ACTION *commands, Uint16 *actors, Sint32 commandCount);
-void   mnBattleMessageShowAndWait(Sint32 message);
-void   mnBattleMessageOpen(Sint32 message);
+	struct BATTLE_ACTION *commands, Uint16 *actors, Sint32 commandCnt);
+void   mnBattleMessageShowAndWait(Sint32 msg);
+void   mnBattleMessageOpen(Sint32 msg);
 void   mnArrowNoOperationCallbackD(void);
 Sint32 mnPortraitGetForSpeaker(Uint32 speaker);
 Sint32 mnFieldMenuRun(void);
@@ -632,23 +630,23 @@ Sint32 mnFileListSelectAction(void);
 Sint32 mnIconMenuChooseSendOption(Sint32 mode);
 void   mnAreaNameWindowShow(void);
 void   mnAreaNameWindowHide(void);
-void   mnFieldMessageShowCentered(Sint32 message, Sint32 mode, Sint32 yOffset);
+void   mnFieldMessageShowCentered(Sint32 msg, Sint32 mode, Sint32 yOfs);
 void   mnBattleMessageClose(void);
 void   mnMessageResetIdle(void);
-void   mnArrowCreate(struct MENU_SPR *sprite, Sint32 *slot);
-void   mnArrowSetPos(struct MENU_SPR *sprite, Sint32 x, Sint32 y);
+void   mnArrowCreate(struct MENU_SPR *spr, Sint32 *slot);
+void   mnArrowSetPos(struct MENU_SPR *spr, Sint32 x, Sint32 y);
 void   mnArrowRelease(Sint32 slot);
 void   mnRunSelectionHook(void);
 Sint32 mnItemRemoveFromInventory(Sint32 unused, Sint32 itemId);
 void   mnIconDrawItem(Sint32 code);
 void   mnTextDrawWideStringAtOffset(
-	  Uint16 *text, WINDOW *window, Sint32 x, Sint32 y);
+	  Uint16 *text, WINDOW *win, Sint32 x, Sint32 y);
 void mnSettingsMenuSelectionNoOperation(void);
 void mnScanlineWindowFillSpans(void *spans);
-void mnWindowSprRedrawSavedRect(WINDOW *window);
-void mnWindowSprClearList(void *sprites);
+void mnWindowSprRedrawSavedRect(WINDOW *win);
+void mnWindowSprClearList(void *sprs);
 void mnWindowSetTilemapEntry(
-	WINDOW *window, Sint32 value, Sint32 x, Sint32 y, Uint32 mode);
+	WINDOW *win, Sint32 value, Sint32 x, Sint32 y, Uint32 mode);
 #if FIX_FUNCTION_SIGNATURES
 void mnDebugSceneSelectRun(void);
 #else
@@ -666,9 +664,9 @@ void   mnIconBuildItemIconTiles(Uint32 icon, Sint32 withBase, Sint32 *cacheSlot,
 void   mnIconBuildAbilityIconTiles(Uint32 icon, Sint32 withBase,
 	  Sint32 *cacheSlot, Sint32 *tileOut, Sint32 reuse);
 WINDOW_SPR *mnWindowSprCreateLoaded(
-	Sint32 icon, Sint32 layers, WINDOW *window, Sint32 x, Sint32 y);
+	Sint32 icon, Sint32 layers, WINDOW *win, Sint32 x, Sint32 y);
 WINDOW_SPR *mnWindowSprCreateFromTable(
-	Sint32 tableEntry, WINDOW *window, Sint32 x, Sint32 y);
+	Sint32 tblEntry, WINDOW *win, Sint32 x, Sint32 y);
 Sint16 mnSaveWriteCurrentFile(void);
 Sint32 mnSaveToChosenFile(void);
 Sint32 mnSaveChooseAndLoadFile(Sint32 mode);
@@ -693,13 +691,13 @@ void   mnBgScrFillRect(
 Sint32 mnSelectShopCommand(Sint32 selection);
 Sint32 mnSelectSanctumService(Sint32 selection);
 Sint32 mnYesNoMenuRun(
-	Sint32 bottom, Sint32 message, Sint32 labelWidth, Sint32 selection);
+	Sint32 bottom, Sint32 msg, Sint32 labelWidth, Sint32 selection);
 Sint32 mnSelectCoinsOrMedals(Sint32 selection);
 Sint32 mnColossoMenuChoose(Sint32 unused);
 Sint32 mnTitleLoadFirstTile(Uint32 entry, Sint32 unused, Uint32 slot);
 Sint32 mnYesNoMenuRunAt(Sint32 x, Sint32 y, Sint32 selection);
 Sint32 mnPointingHandLoadIntoFreeSlot(void);
-void   mnTextMeasureMessage(Sint32 message, Sint32 *x, Sint32 *y);
+void   mnTextMeasureMessage(Sint32 msg, Sint32 *x, Sint32 *y);
 void   mnWindowHighlightRect(
 	  Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 paletteBit);
 void mnAbilityBuildIconTiles(
@@ -707,12 +705,12 @@ void mnAbilityBuildIconTiles(
 void   mnGraphicsExpandVRAMTilesByColTable(Uint16 *dst);
 void   mnTextUseExtraTiles(Sint32 allowAlternateTiles);
 Sint32 mnAnimateSelectionToEntry(Sint32 start, Sint32 command);
-Sint32 mnWindowSprGetPointerTiles(Sint32 index);
-Sint32 mnMessageOpenDecoded(WINDOW *window, Sint32 message);
+Sint32 mnWindowSprGetPointerTiles(Sint32 idx);
+Sint32 mnMessageOpenDecoded(WINDOW *win, Sint32 msg);
 Sint32 mnSaveCountFilesExcludingSent(Sint32 excludeSent);
 void   mnWindowDrawBorder(Sint32 x, Sint32 y, Uint32 width, Uint32 height);
 void   mnWindowEraseBorderRect(Sint32 x, Sint32 y, Uint32 width, Uint32 height);
-void   mnPageArrowsDraw(Sint32 offset);
+void   mnPageArrowsDraw(Sint32 ofs);
 void   mnPartyShowJoinedMessage(Sint32 member);
 void   mnPartyShowPairJoinedMessage(Sint32 first, Sint32 second);
 
@@ -727,31 +725,31 @@ WINDOW_SPR *mnWindowSprAcquireFree(void);
 void		mnWindowSprReleaseFree(WINDOW_SPR *out);
 void		mnWindowSprInitFreeList(void);
 void		mnWindowSystemUploadTilemap(void);
-void		mnWindowDrawOpened(WINDOW *window);
-void		mnWindowWaitZoom(WINDOW *window);
+void		mnWindowDrawOpened(WINDOW *win);
+void		mnWindowWaitZoom(WINDOW *win);
 void		mnWindowSprUpdateListTail(WINDOW_SPR_LIST *list);
 void		mnWindowSprRelease(WINDOW_SPR *entry);
-MESSAGE *mnBattleMessageCont(WINDOW *window, Sint32 entry, Sint32 keepPosition);
-Sint32	 mnTextClearCanvas(void);
-Sint32	 mnTextFillCanvasBackground(void);
-void	 mnMessageApplyStyle(MESSAGE *message);
-void	 mnTextStartCanvasScroll(MESSAGE *message);
-void	 mnTextScrollCanvasUp(Sint32 step);
-void	 mnMessageUpdateAll(void);
-Sint32	 mnMessageType(MESSAGE *message);
-void	 mnWindowUpdateZooms(void);
-void	 mnWindowDrawZoomBorder(void *windowArg, Sint32 savePosition);
-Uint16	*mnMemoryFillHalfwordsDMA(Uint16 *dst, Sint32 value, Sint32 count);
-void	 mnWindowMapTextCanvasTiles(
-		Sint32 x, Sint32 y, Uint32 width, Uint32 height, Sint32 fullWidth);
+MESSAGE	   *mnBattleMessageCont(WINDOW *win, Sint32 entry, Sint32 keepPos);
+Sint32		mnTextClearCanvas(void);
+Sint32		mnTextFillCanvasBackground(void);
+void		mnMessageApplyStyle(MESSAGE *msg);
+void		mnTextStartCanvasScroll(MESSAGE *msg);
+void		mnTextScrollCanvasUp(Sint32 step);
+void		mnMessageUpdateAll(void);
+Sint32		mnMessageType(MESSAGE *msg);
+void		mnWindowUpdateZooms(void);
+void		mnWindowDrawZoomBorder(void *winArg, Sint32 savePos);
+Uint16	   *mnMemoryFillHalfwordsDMA(Uint16 *dst, Sint32 value, Sint32 cnt);
+void		mnWindowMapTextCanvasTiles(
+		   Sint32 x, Sint32 y, Uint32 width, Uint32 height, Sint32 fullWidth);
 /* Declared without a prototype, so that mnWindowCreate can pass it an argument
    it never reads. */
 void mnTextResetStyle();
 void mnWindowSystemStartFieldUpdate(void);
 void mnWindowSystemStartBattleUpdate(Sint32 loadGlyphTiles);
 /* The bob of a prompt or cursor: up and down by up to 2 pixels, a sine every 16
-   frames. */
-#define CURSOR_BOB_Y() (sySin(FrameCount * (TRIG_TURN / 16)) / (toFIXED(1) / 2))
+   ticks. */
+#define CURSOR_BOB_Y() (sySin(TickCount * (TRIG_TURN / 16)) / (toFIXED(1) / 2))
 
 /* mnMessageOpenWindow's packed argument: the speaker's voice in bits 16 to 27,
    above the window options. */
@@ -782,20 +780,20 @@ Sint32 mnTextDrawGlyphPair(Uint32 code, Uint32 *out);
 #endif
 Sint32 mnTextGetWideStringWidth(Uint16 *text);
 void   mnTextDrawWideStringAsTiles(
-	  Uint16 *buffer, const WINDOW *window, Sint32 offsetX, Sint32 offsetY);
-Uint8 *mnStringFormatNum(Uint8 *buffer, Sint32 input, Sint32 width);
-Uint32 mnMessageAppendArticleName(Sint32 inBattleMessage, Uint16 *name,
-	Uint32 writePosition, Uint16 *entries, Sint32 articleForm, Sint32 plural,
+	  Uint16 *buf, const WINDOW *win, Sint32 ofsX, Sint32 ofsY);
+Uint8 *mnStringFormatNum(Uint8 *buf, Sint32 input, Sint32 width);
+Uint32 mnMessageAppendArticleName(Sint32 inBattleMsg, Uint16 *name,
+	Uint32 writePos, Uint16 *entries, Sint32 articleForm, Sint32 plural,
 	Sint32 *lastLetter);
 Sint32 mnMessageDecode(Sint32 script, Sint32 clear);
-void   mnWindowFitOnScreen(Sint32 entryIndex, Sint32 *windowX, Sint32 *windowY,
-	  Uint32 *windowWidth, Uint32 *windowHeight, Uint16 *spacing, Uint32 flags);
+void   mnWindowFitOnScreen(Sint32 entryIdx, Sint32 *winX, Sint32 *winY,
+	  Uint32 *winWidth, Uint32 *winHeight, Uint16 *spacing, Uint32 flg);
 void   mnTextMeasureDecoded(
-	  Sint32 entryIndex, Uint32 *outWidth, Uint32 *outHeight, Uint16 *spacing);
+	  Sint32 entryIdx, Uint32 *outWidth, Uint32 *outHeight, Uint16 *spacing);
 void mnTextMeasureAllPages(
-	Sint32 entryIndex, Uint32 *outWidth, Uint32 *outHeight, Uint16 *spacing);
+	Sint32 entryIdx, Uint32 *outWidth, Uint32 *outHeight, Uint16 *spacing);
 Sint32 mnGlyphDraw(
-	WINDOW *window, Sint32 character, Sint32 x, Sint32 y, Sint32 mode);
+	WINDOW *win, Sint32 character, Sint32 x, Sint32 y, Sint32 mode);
 
 /* How mnWindowSetTilemapEntry writes its value (its mode argument): as given,
    or as a tile number in one of the palettes the menus keep for their
@@ -813,15 +811,15 @@ typedef enum TILEMAP_ENTRY_MODE {
 	TILEMAP_ENTRY_ICON
 } TILEMAP_ENTRY_MODE;
 
-void	mnWindowSprUpdateScaleAnimation(WINDOW_SPR *windowSprite);
+void	mnWindowSprUpdateScaleAnimation(WINDOW_SPR *winSpr);
 void	mnWindowSprUpdateAll(void);
 Sint32 *mnMemoryClearWordIfSet(Sint32 *p);
-void	mnWindowStepSwellEffect(MESSAGE *message);
+void	mnWindowStepSwellEffect(MESSAGE *msg);
 Uint32	mnMessageArgumentLookup(Uint32 kind, Uint32 clear);
-Bool	mnTextCheckPauseSkipped(MESSAGE *message);
-Bool	mnTextCheckTextDismissed(MESSAGE *message);
-Sint32	mnMessageDecodeAndClearArguments(Sint32 message);
-void	mnMessageFind(struct MESSAGE_READER *reader, Sint32 message);
+Bool	mnTextCheckPauseSkipped(MESSAGE *msg);
+Bool	mnTextCheckTextDismissed(MESSAGE *msg);
+Sint32	mnMessageDecodeAndClearArguments(Sint32 msg);
+void	mnMessageFind(struct MESSAGE_READER *reader, Sint32 msg);
 Sint32	mnTextDecodeSymbolInC(struct MESSAGE_READER *reader);
 void	mnPortraitClearSlots(void);
 
@@ -852,14 +850,14 @@ void	mnPortraitClearSlots(void);
 
 Sint32 mnIconCountItemIcons(void);
 Sint32 mnIconCountPsynergyIcons(void);
-void mnIconBuildCommandIconTiles(Sint32 overlayIcon, Sint32 frame, Sint32 *slot,
-	Sint32 *tileOut, Sint32 reuse);
-void mnAbilityBuildItemIconTiles(
-	Sint32 action, Sint32 withBase, Sint32 *slot, Sint32 *tile, Sint32 reuse);
+void   mnIconBuildCommandIconTiles(Sint32 overlayIcon, Sint32 frm, Sint32 *slot,
+	  Sint32 *tileOut, Sint32 reuse);
+void   mnAbilityBuildItemIconTiles(
+	  Sint32 action, Sint32 withBase, Sint32 *slot, Sint32 *tile, Sint32 reuse);
 Sint32 mnItemIconLoadLayersIntoSlot(
 	Sint32 inventoryCode, Sint32 layers, Sint32 cacheSlot);
 Sint32 mnIconBuildMiscIconTiles(Sint32 icon, Sint32 unused, Sint32 cacheSlot);
-void   mnIconDrawMisc(Uint32 iconIndex);
+void   mnIconDrawMisc(Uint32 iconIdx);
 void   mnIconLoadWithPalette(Uint32 icon, Sint32 unused, Sint32 *slot,
 	  Sint32 *tile, Sint32 palette, Sint32 reuse);
 void   mnIconReservedNoOperation(void);
@@ -876,9 +874,9 @@ void mnMoveSelectionBackward(struct SELECTION_MENU_STATE *state);
 void mnSelectionMenuStepRight(struct SELECTION_MENU_STATE *state);
 void mnSelectionMenuStepLeft(struct SELECTION_MENU_STATE *state);
 void mnSelectionMenuRedrawIcon(
-	struct SELECTION_MENU_STATE *state, Uint32 rowIndex);
+	struct SELECTION_MENU_STATE *state, Uint32 rowIdx);
 void mnSelectionMenuHighlightIcon(
-	struct SELECTION_MENU_STATE *state, Uint32 rowIndex);
+	struct SELECTION_MENU_STATE *state, Uint32 rowIdx);
 void mnClearBattleHighlight(struct SELECTION_MENU_STATE *state);
 void mnSelectionMenuScroll(struct SELECTION_MENU_STATE *state, Sint32 forward);
 Sint32 mnSelectionIconLoad(Sint32 mode, Sint32 value);
@@ -897,12 +895,12 @@ void   mnPartyStatOpenAndWait(void);
 void mnPartyStatCloseWithMenu(void);
 #endif
 void   mnSelectionMenuCreateEmpty(void);
-Uint32 mnRunSelectionForValue(Uint32 initialIndex);
+Uint32 mnRunSelectionForValue(Uint32 initIdx);
 
 void   mnAreaNameWindowUpdate(void);
 void   mnSettingsMenuStepWindowHue(Sint32 keys);
 Sint32 mnPartyListPsynergy(struct ABILITY_LIST_ENTRY *output);
-void   mnFindShortcutEntries(Uint32 *firstIndex, Uint32 *secondIndex,
+void   mnFindShortcutEntries(Uint32 *firstIdx, Uint32 *secondIdx,
 	  const struct ABILITY_LIST_ENTRY *entries);
 
 void   mnAllocateSelectionState(void);

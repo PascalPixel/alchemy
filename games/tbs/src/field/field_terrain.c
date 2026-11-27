@@ -6,7 +6,7 @@
 /* A sample is in eight-pixel units. */
 #define CURVE_HEIGHT_FIXED(sample) ((sample) * (1 << CURVE_VALUE_SHIFT))
 
-/* The ground height functions (MapGrid_TerrainHeightFunctions): each takes a
+/* The ground height functions (MapGridTerrainHeightFunctions): each takes a
    metatile's height samples after its kind byte and a pixel (x, y) within the
    16x16 metatile, and returns the ground height there in 16.16 pixels. */
 FIXED fdTerrainGetFlatHeight(
@@ -160,7 +160,7 @@ FIXED fdTerrainGetBendDifferenceDiagonalHeight(
 	return middleHeight + pixelDifference / CURVE_FULL_STEPS;
 }
 
-/* A raised or sunken rounded square: sample 1 where Terrain_RoundedSquareMask
+/* A raised or sunken rounded square: sample 1 where TerrainRoundedSquareMask
    is 1, sample 0 in the corners. */
 FIXED fdTerrainGetRoundedSquareHeight(
 	const Uint8 *heightBytes, Sint32 x, Sint32 y)
@@ -173,7 +173,7 @@ FIXED fdTerrainGetRoundedSquareHeight(
 	   between. */
 	return startHeight +
 		((CURVE_HEIGHT_FIXED(samples[1]) - startHeight) *
-			Terrain_RoundedSquareMask[x + (y * CURVE_FULL_STEPS)]);
+			TerrainRoundedSquareMask[x + (y * CURVE_FULL_STEPS)]);
 }
 
 /* The steps along one axis: sample 0 where `along`, the pixel's coordinate on
@@ -224,7 +224,7 @@ FIXED fdTerrainGetBendYHeight(
 	Uint32		 metatileY = pixelY;
 	Sint32		 endpointHeight;
 	Sint32		 middleHeight;
-	Sint32		 offsetPastMiddle;
+	Sint32		 ofsPastMiddle;
 	Sint32		 heightDelta;
 	Sint32		 tailDelta;
 
@@ -237,21 +237,21 @@ FIXED fdTerrainGetBendYHeight(
 	}
 
 	endpointHeight = CURVE_HEIGHT_FIXED(*samples);
-	offsetPastMiddle = metatileY;
+	ofsPastMiddle = metatileY;
 	endpointHeight -= middleHeight;
-	offsetPastMiddle -= CURVE_HALF_STEPS;
-	tailDelta = endpointHeight * offsetPastMiddle;
+	ofsPastMiddle -= CURVE_HALF_STEPS;
+	tailDelta = endpointHeight * ofsPastMiddle;
 	return middleHeight + tailDelta / CURVE_HALF_STEPS;
 }
 
-/* The sample Terrain_SampleIndexTable picks for (x, y). */
+/* The sample TerrainSampleIndexTable picks for (x, y). */
 FIXED fdTerrainGetSampleTableHeight(
 	const Uint8 *heightBytes, Sint32 pixelX, Sint32 pixelY)
 {
 	const Sint8 *samples = (const Sint8 *)heightBytes;
 	/* The table holds a byte per pixel of the metatile, row by row. */
 	return CURVE_HEIGHT_FIXED(
-		samples[Terrain_SampleIndexTable[pixelX + (pixelY << 4)]]);
+		samples[TerrainSampleIndexTable[pixelX + (pixelY << 4)]]);
 }
 
 /* The same, with the table mirrored left to right. */
@@ -261,7 +261,7 @@ FIXED fdTerrainGetSampleTableMirroredHeight(
 	const Sint8 *samples = (const Sint8 *)heightBytes;
 	/* Row y read from its right end: (y << 4) + 15 - x. */
 	return CURVE_HEIGHT_FIXED(
-		samples[Terrain_SampleIndexTable[((pixelY << 4) - pixelX) +
+		samples[TerrainSampleIndexTable[((pixelY << 4) - pixelX) +
 			CURVE_FULL_STEPS - 1]]);
 }
 
@@ -310,12 +310,12 @@ FIXED fdMapGridGetTerrainHeight(Sint32 layer, FIXED x, FIXED y)
 	{
 		Uint32 kind = *heightBytes++ & MAPGRID_SHAPE_KIND_MASK;
 
-		return MapGrid_TerrainHeightFunctions[kind](heightBytes,
+		return MapGridTerrainHeightFunctions[kind](heightBytes,
 			x & (MAPGRID_METATILE_PIXELS - 1),
 			y & (MAPGRID_METATILE_PIXELS - 1));
 	}
 #else
-	return MapGrid_TerrainHeightFunctions[*heightBytes++ &
+	return MapGridTerrainHeightFunctions[*heightBytes++ &
 		MAPGRID_SHAPE_KIND_MASK](heightBytes, x & (MAPGRID_METATILE_PIXELS - 1),
 		y & (MAPGRID_METATILE_PIXELS - 1));
 #endif
@@ -400,18 +400,18 @@ UNUSED Sint32 fdMapGridGetMetatileHighFlags(Sint32 x, Sint32 y)
 /* Returns whether an actor can step to position, an COLLISION: whether the
    metatile there is a wall, or the ground too high or too low for a step from
    the actor's. */
-Sint32 fdMapGridCheckCollision(ACTOR *actor, FIELD_POS *position)
+Sint32 fdMapGridCheckCollision(ACTOR *actor, FIELD_POS *pos)
 {
 	MAP_GRID_SCROLL_STATE *gridState;
 	Sint32				   pixelX;
 	Sint32				   pixelZ;
 	MAP_GRID_METATILE	  *metatile;
 	Uint8				  *heightBytes;
-	Sint32				   targetGround;
+	Sint32				   tgtGround;
 	Sint32				   stepHeight;
 
-	pixelX = ((FIELD_COORDINATE *)&position->x)->part[0].integer;
-	pixelZ = ((FIELD_COORDINATE *)&position->z)->part[0].integer;
+	pixelX = ((FIELD_COORDINATE *)&pos->x)->part[0].integer;
+	pixelZ = ((FIELD_COORDINATE *)&pos->z)->part[0].integer;
 	gridState = MapGridState[0];
 	if(gridState == NULL)
 		return COLLISION_NONE;
@@ -432,18 +432,18 @@ Sint32 fdMapGridCheckCollision(ACTOR *actor, FIELD_POS *position)
 	{
 		Uint32 kind = *heightBytes++ & MAPGRID_SHAPE_KIND_MASK;
 
-		targetGround = MapGrid_TerrainHeightFunctions[kind](heightBytes,
+		tgtGround = MapGridTerrainHeightFunctions[kind](heightBytes,
 			pixelX & (MAPGRID_METATILE_PIXELS - 1),
 			pixelZ & (MAPGRID_METATILE_PIXELS - 1));
 	}
 #else
-	targetGround = MapGrid_TerrainHeightFunctions[*heightBytes++ &
-		MAPGRID_SHAPE_KIND_MASK](heightBytes,
-		pixelX & (MAPGRID_METATILE_PIXELS - 1),
-		pixelZ & (MAPGRID_METATILE_PIXELS - 1));
+	tgtGround =
+		MapGridTerrainHeightFunctions[*heightBytes++ & MAPGRID_SHAPE_KIND_MASK](
+			heightBytes, pixelX & (MAPGRID_METATILE_PIXELS - 1),
+			pixelZ & (MAPGRID_METATILE_PIXELS - 1));
 #endif
 	/* Up to 8 pixels up or 12 down is a step the actor can take. */
-	stepHeight = targetGround - actor->groundHeight;
+	stepHeight = tgtGround - actor->groundHeight;
 	if(stepHeight > toFIXED(8))
 		return COLLISION_TOO_HIGH;
 	if(stepHeight < -toFIXED(12))
@@ -454,7 +454,7 @@ Sint32 fdMapGridCheckCollision(ACTOR *actor, FIELD_POS *position)
 /* Returns -1 when the metatile under position (its x, and y less its height) in
    MAPGRID_LAYER_OVERHEAD is a wall (METATILE_BEHAVIOR_WALL), else 0; also 0
    before the map state exists. */
-Sint32 fdMapGridIsWallAt(WORLD_POS *position)
+Sint32 fdMapGridIsWallAt(WORLD_POS *pos)
 {
 	Sint32				   pixelX;
 	Sint32				   pixelY;
@@ -463,9 +463,9 @@ Sint32 fdMapGridIsWallAt(WORLD_POS *position)
 	MAP_GRID_SCROLL_STATE *gridState;
 	MAP_GRID_METATILE	  *metatile;
 
-	pixelX = position->x / toFIXED(1);
+	pixelX = pos->x / toFIXED(1);
 	/* The point on the ground below the position. */
-	pixelY = (position->y - position->height) / toFIXED(1);
+	pixelY = (pos->y - pos->height) / toFIXED(1);
 	gridState = MapGridState[0];
 	if(gridState == NULL)
 		return 0;
@@ -494,20 +494,20 @@ Sint32 fdMapGridIsWallAt(WORLD_POS *position)
 #define WORLD_MAP_BLOCK_SECOND_BANK	 (1 << (31 - 24))
 /* A block word's encounter region, its bits 24 to 30. */
 #define WORLD_MAP_BLOCK_REGION(word) (((word) << 1) >> 25)
-/* The battle environments of WorldMap_BattleEnvironments come in banks of one
+/* The battle environments of WorldMapBattleEnvironments come in banks of one
    for each collision value. */
 #define WORLD_MAP_ENVIRONMENT_BANK	 16
 
 /* Returns the world map's collision value (1-15) at position: from the upper
    collision layer where it has one, else the lower, else
    WORLD_MAP_COLLISION_DEFAULT. */
-Sint32 fdWorldMapGetCollision(WORLD_POS *position)
+Sint32 fdWorldMapGetCollision(WORLD_POS *pos)
 {
-	Sint32 halfPixelX = FIXEDtoINT(position->x) >> 1;
-	Sint32 y = position->y;
+	Sint32 halfPixelX = FIXEDtoINT(pos->x) >> 1;
+	Sint32 y = pos->y;
 	Sint32 halfPixelY = FIXEDtoINT(y) >> 1;
 	Uint32 collisionMetatile;
-	Uint32 pixelOffset;
+	Uint32 pixelOfs;
 	Uint8  collisionTile;
 	Uint8  packedCollisions;
 	Uint32 result;
@@ -515,12 +515,12 @@ Sint32 fdWorldMapGetCollision(WORLD_POS *position)
 	/* Coordinates in 2-pixel units. */
 	collisionMetatile =
 		(((halfPixelY / 8) & 63) << 6) + ((halfPixelX / 8) & 63);
-	pixelOffset = (((halfPixelY / 2) & 3) << 1) + ((halfPixelX / 4) & 1);
+	pixelOfs = (((halfPixelY / 2) & 3) << 1) + ((halfPixelX / 4) & 1);
 
 	/* The upper layer first. */
 	collisionTile = WORLD_MAP_UPPER_COLLISION_MAP[collisionMetatile];
 	packedCollisions = *(Ram_MapGridShapes + WORLD_MAP_UPPER_COLLISION_TILES +
-		collisionTile * WORLD_MAP_COLLISION_TILE_BYTES + pixelOffset);
+		collisionTile * WORLD_MAP_COLLISION_TILE_BYTES + pixelOfs);
 	if(packedCollisions != 0) {
 		if(halfPixelX & 2)
 			result = packedCollisions >> WORLD_MAP_COLLISION_BITS;
@@ -533,7 +533,7 @@ Sint32 fdWorldMapGetCollision(WORLD_POS *position)
 	/* Then the lower layer. */
 	collisionTile = WORLD_MAP_LOWER_COLLISION_MAP[collisionMetatile];
 	packedCollisions = *(Ram_MapGridShapes +
-		collisionTile * WORLD_MAP_COLLISION_TILE_BYTES + pixelOffset);
+		collisionTile * WORLD_MAP_COLLISION_TILE_BYTES + pixelOfs);
 	if(packedCollisions != 0) {
 		if(halfPixelX & 2)
 			result = packedCollisions >> WORLD_MAP_COLLISION_BITS;
@@ -550,11 +550,10 @@ Sint32 fdWorldMapGetCollision(WORLD_POS *position)
 /* Returns 0 when the world map at position can be walked on (collision
    WORLD_MAP_COLLISION_WALKABLE_FIRST to WORLD_MAP_COLLISION_WALKABLE_LAST),
    else -1. */
-Sint32 fdWorldMapIsWalkable(Sint32 unused, WORLD_POS *position)
+Sint32 fdWorldMapIsWalkable(Sint32 unused, WORLD_POS *pos)
 {
 	/* One unsigned compare tests the walkable range. */
-	if((fdWorldMapGetCollision(position) -
-		   WORLD_MAP_COLLISION_WALKABLE_FIRST) <=
+	if((fdWorldMapGetCollision(pos) - WORLD_MAP_COLLISION_WALKABLE_FIRST) <=
 		(Uint32)(WORLD_MAP_COLLISION_WALKABLE_LAST -
 			WORLD_MAP_COLLISION_WALKABLE_FIRST)) {
 		return 0;
@@ -563,27 +562,27 @@ Sint32 fdWorldMapIsWalkable(Sint32 unused, WORLD_POS *position)
 }
 
 /* Returns the world map's battle environment at position from
-   WorldMap_BattleEnvironments, and stores the block's encounter region in
+   WorldMapBattleEnvironments, and stores the block's encounter region in
    *region. */
-Sint32 fdWorldMapGetBattleEnvironment(WORLD_POS *position, Sint32 *region)
+Sint32 fdWorldMapGetBattleEnvironment(WORLD_POS *pos, Sint32 *region)
 {
-	Sint32	collisionKind = fdWorldMapGetCollision(position);
-	Sint32	x = position->x;
+	Sint32	collisionKind = fdWorldMapGetCollision(pos);
+	Sint32	x = pos->x;
 	Sint32	y;
 	Sint32	environmentBank = 0;
 	Uint32	blockX;
-	Uint32	index;
+	Uint32	idx;
 	Uint32 *blockWord;
 
 	blockX =
 		(x / toFIXED(WORLD_MAP_BLOCK_PIXELS)) & (WORLD_MAP_BLOCKS_ACROSS - 1);
-	y = position->y;
+	y = pos->y;
 
-	index = blockX +
+	idx = blockX +
 		((y / toFIXED(WORLD_MAP_BLOCK_PIXELS)) &
 			(WORLD_MAP_BLOCKS_ACROSS - 1)) *
 			WORLD_MAP_BLOCKS_ACROSS;
-	blockWord = MetatileTiles + index;
+	blockWord = MetatileTiles + idx;
 	/* Bit 31 of the block word selects the second bank; the snowfield the
 	   third, whatever bit 31 says. */
 	if(((Uint8 *)blockWord)[3] & WORLD_MAP_BLOCK_SECOND_BANK)
@@ -593,7 +592,7 @@ Sint32 fdWorldMapGetBattleEnvironment(WORLD_POS *position, Sint32 *region)
 	if(*region == WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD)
 		environmentBank = 2 * WORLD_MAP_ENVIRONMENT_BANK;
 
-	return WorldMap_BattleEnvironments[environmentBank + collisionKind];
+	return WorldMapBattleEnvironments[environmentBank + collisionKind];
 }
 
 #undef WORLD_MAP_LOWER_COLLISION_MAP

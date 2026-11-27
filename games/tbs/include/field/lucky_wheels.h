@@ -33,19 +33,19 @@ void fdLuckyWheelsTransferCanvas(void);
 void fdLuckyWheelsDarkenStep(void);
 void fdLuckyWheelsStepSparkCols(Sint32 resource);
 void fdLuckyWheelsDrawCanvasLine(
-	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 color);
-extern const Uint16 LuckyWheels_SparkPictures[];
-extern const Uint8	LuckyWheels_SymbolPrizes[];
-extern const Uint8	LuckyWheels_MachineSpriteX[];
-extern const Uint8	LuckyWheels_MachineSpriteY[];
+	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 col);
+extern const Uint16 LuckyWheelsSparkPictures[];
+extern const Uint8	LuckyWheelsSymbolPrizes[];
+extern const Uint8	LuckyWheelsMachineSpriteX[];
+extern const Uint8	LuckyWheelsMachineSpriteY[];
 void				fdLuckyWheelsUpdate(void);
 void				fdLuckyWheelsSetUpBetting(void);
 void				fdLuckyWheelsRun(void);
 void				fdLZPackResetChains(void);
-void				fdLZPackInsertSlotNode(Sint32 index);
+void				fdLZPackInsertSlotNode(Sint32 idx);
 void				fdLZPackRemoveSlotNode(Sint32 slot);
-void   fdLZPackReadInput(Sint32 start, Sint32 count, const Uint8 *input);
-void   fdLZPackCopyBufferedBytes(Uint8 *destination);
+void   fdLZPackReadInput(Sint32 start, Sint32 cnt, const Uint8 *input);
+void   fdLZPackCopyBufferedBytes(Uint8 *dst);
 Sint32 fdLZPackPackData(const Uint8 *input, Uint8 *dst, Sint32 size);
 
 #endif

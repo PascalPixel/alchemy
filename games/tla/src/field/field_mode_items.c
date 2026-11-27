@@ -10,10 +10,10 @@ typedef enum PSYNERGY_END_SKIP {
 } PSYNERGY_END_SKIP;
 
 /* Runs message as a script of its own, shown at actor. */
-void fdScriptRunMessage(Sint32 actor, Sint32 message)
+void fdScriptRunMessage(Sint32 actor, Sint32 msg)
 {
 	fdScriptStart();
-	fdScriptSetMessageId(message);
+	fdScriptSetMessageId(msg);
 	fdScriptShowMessageAndWait(actor, 0);
 	fdScriptEnd();
 }
@@ -126,10 +126,10 @@ Sint32 fdUseItem(Sint32 packedItem, Sint32 slot)
 	UNIT		*unit;
 	const CUE	*cue;
 	Sint32		 inventorySlot;
-	Sint32		 partyIndex;
+	Sint32		 partyIdx;
 	Sint32		 mostMatchingSlots;
 	Sint32		 matchingSlots;
-	Sint32		 partyCount;
+	Sint32		 partyCnt;
 	FIELD_STATE *state;
 
 	result = -1;
@@ -139,12 +139,12 @@ Sint32 fdUseItem(Sint32 packedItem, Sint32 slot)
 	   whoever holds it in the most slots, the earlier on a tie. */
 	{
 		mostMatchingSlots = 0;
-		partyCount = gmPartyCountMembersStub();
+		partyCnt = gmPartyCountMembersStub();
 
 		if(actorId == UNIT_NONE) {
 			actorId = 0;
-			for(partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-				unit = syUnitGet(MainRoutineStateWork.party[partyIndex]);
+			for(partyIdx = 0; partyIdx < partyCnt; partyIdx++) {
+				unit = syUnitGet(MainRoutineStateWork.party[partyIdx]);
 				matchingSlots = 0;
 				for(inventorySlot = 0; inventorySlot < INVENTORY_SLOTS;
 					inventorySlot++) {
@@ -155,7 +155,7 @@ Sint32 fdUseItem(Sint32 packedItem, Sint32 slot)
 
 				if(mostMatchingSlots < matchingSlots) {
 					mostMatchingSlots = matchingSlots;
-					actorId = MainRoutineStateWork.party[partyIndex];
+					actorId = MainRoutineStateWork.party[partyIdx];
 				}
 			}
 		} else {
@@ -219,10 +219,10 @@ Sint32 fdUseItem(Sint32 packedItem, Sint32 slot)
 				mnFieldMessageShowStub((Sint32)&MsgUseItemQuestion,
 					FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN |
 						FIELD_MESSAGE_LOWER);
-				/* partyIndex now holds the answer: 0 is yes. */
-				partyIndex = fdYesNoAsk(TRUE);
+				/* partyIdx now holds the answer: 0 is yes. */
+				partyIdx = fdYesNoAsk(TRUE);
 				mnMessageCloseFinishedWindowsStub();
-				if(partyIndex != 0)
+				if(partyIdx != 0)
 					return 0;
 
 				MainRoutineStateWork.next = MainRoutineStateWork.retreatScene;
@@ -381,7 +381,7 @@ CUE *fdFindPsynergyCue(Sint32 filter, Sint32 kind, Sint32 selector)
    Psynergy (bits 0 to 9) and its user (bits 10 to 13). */
 Sint32 fdRunPsynergyEndScripts(Uint32 packed)
 {
-	Sint32		 action, user, kind, selector, target;
+	Sint32		 action, user, kind, selector, tgt;
 	PENDING_CUE *beforeEnd, *afterEnd;
 
 	action = ABILITY_ID(packed);
@@ -392,17 +392,17 @@ Sint32 fdRunPsynergyEndScripts(Uint32 packed)
 		PSYNERGY_CUE(PSYNERGY_PHASE_BEFORE_END), kind, selector);
 	afterEnd = (PENDING_CUE *)fdFindPsynergyCue(
 		PSYNERGY_CUE(PSYNERGY_PHASE_AFTER_END), kind, selector);
-	target = -1;
+	tgt = -1;
 	if(beforeEnd != NULL || afterEnd != NULL) {
 		if(selector != -1 && (selector & PSYNERGY_TARGET_ACTOR))
-			target = selector & PSYNERGY_TARGET_ID;
+			tgt = selector & PSYNERGY_TARGET_ID;
 	}
 	fdPsynergyLoadResources(action, 0);
-	fdPsynergySetupActorPair(fdPartyGetLeaderActor(), target);
-	fdRunPsynergyScript(beforeEnd, user, target);
+	fdPsynergySetupActorPair(fdPartyGetLeaderActor(), tgt);
+	fdRunPsynergyScript(beforeEnd, user, tgt);
 	fdPsynergyRunExtraHandler();
 	fdBattleEffectStopMainActor();
-	fdRunPsynergyScript(afterEnd, user, target);
+	fdRunPsynergyScript(afterEnd, user, tgt);
 	fdPsynergyEnd();
 	return 0;
 }

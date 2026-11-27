@@ -2,14 +2,14 @@
 #define ALCHEMY_ACTOR_SCRIPT_H
 
 /* Actor scripts: one Sint32 command word, then its operands, as
-   ActorScript_CommandTable runs them. Each macro expands to the words of one
+   ActorScriptCommandTable runs them. Each macro expands to the words of one
    command. The script stores positions and speeds in 16.16 fixed point; its
    macros take plain pixels and decimal speeds and convert them. */
 
 #include "fixed_math.h"
 #include "types.h"
 
-/* The script commands, numbered by their place in ActorScript_CommandTable; the
+/* The script commands, numbered by their place in ActorScriptCommandTable; the
    SC_ macros below write each with its operands. */
 typedef enum ACTOR_SCRIPT_COMMAND {
 	SCRIPT_COMMAND_WAIT = 0,
@@ -52,7 +52,7 @@ typedef enum ACTOR_SCRIPT_COMMAND {
 } ACTOR_SCRIPT_COMMAND;
 
 /* The highest script word run as a command, an index of
-   ActorScript_CommandTable; a larger one is stepped over. */
+   ActorScriptCommandTable; a larger one is stepped over. */
 #define SCRIPT_COMMAND_MAX 63
 
 #define SC_LABEL(n) (Sint32)(0x80000000 | (n) << 16) /* Branch destination */
@@ -62,7 +62,7 @@ typedef enum ACTOR_SCRIPT_COMMAND {
 #define SC_TOP		0	  /* Script start */
 #define SC_FOREVER	65535 /* An SC_LOOP count that never runs out */
 
-#define SC_WAIT(n) SCRIPT_COMMAND_WAIT, (n) /* Wait n frames. */
+#define SC_WAIT(n) SCRIPT_COMMAND_WAIT, (n) /* Wait n ticks. */
 #define SC_SYNC	   SCRIPT_COMMAND_SYNC		/* Wait for arrival. */
 /* Set position. */
 #define SC_POSITION(x, y, z) \
@@ -105,9 +105,9 @@ typedef enum ACTOR_SCRIPT_COMMAND {
 #define SC_ADD(w, v)	 SCRIPT_COMMAND_ADD, (w), (v) /* Add to a state value. */
 /* Test whether state value w equals v. */
 #define SC_CMP(w, v)	 SCRIPT_COMMAND_CMP, (w), (v)
-/* Set the speed limit, in pixels a frame: SC_SPEED(0.8). */
+/* Set the speed limit, in pixels a tick: SC_SPEED(0.8). */
 #define SC_SPEED(speed)	 SC_SET(SW_SPEED, toFIXED(speed))
-/* Set the acceleration, in pixels a frame per frame. */
+/* Set the acceleration, in pixels a tick per tick. */
 #define SC_ACCELERATION(acceleration) \
 	SC_SET(SW_ACCELERATION, toFIXED(acceleration))
 #define SC_PLAYER SCRIPT_COMMAND_PLAYER /* Hand the actor to the player. */
@@ -125,12 +125,12 @@ typedef enum ACTOR_SCRIPT_COMMAND {
 #define SC_HIDE_SPRITES SCRIPT_COMMAND_HIDE_SPRITES
 /* Show one sprite (ACTOR_SPRITE_ONE). */
 #define SC_SHOW_SPRITE	SCRIPT_COMMAND_SHOW_SPRITE
-/* Call fn with the actor each frame until it returns zero. */
+/* Call fn with the actor each tick until it returns zero. */
 #define SC_CALL(fn)		SCRIPT_COMMAND_CALL, (Sint32)(fn)
 #define SC_KEY_COUNT	SCRIPT_COMMAND_KEY_COUNT /* Check the configured keys. */
 
 /* Script state values for SC_SET, SC_ADD and SC_CMP: the actor's fields, by
-   their place in ActorScript_OperandHandlerTable. */
+   their place in ActorScriptOperandHandlerTable. */
 typedef enum ACTOR_SCRIPT_VALUE {
 	SW_SCRIPT = 0,
 	SW_CURSOR = 1,
@@ -179,7 +179,7 @@ typedef enum ACTOR_SCRIPT_VALUE {
 #include "field/script_operands.h"
 
 /* Commands receive the actor's interpreter view. A nonzero result continues its
-   script this frame; zero waits until the next frame. */
-extern const SCRIPT_COMMAND ActorScript_CommandTable[47];
+   script this tick; zero waits until the next tick. */
+extern const SCRIPT_COMMAND ActorScriptCommandTable[47];
 
 #endif

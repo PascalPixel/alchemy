@@ -10,7 +10,7 @@ void fdTreasureSpotMoveLeaderAway(void)
 {
 	ACTOR		  *leader = fdActorLookup(MainRoutineStateWork.leaderActorId);
 	TREASURE_SPOT *marker = FieldStateWork->treasureSpots;
-	Sint32		   markerIndex = 0;
+	Sint32		   markerIdx = 0;
 	FIXED		   x;
 	FIXED		   z;
 	Sint32		   metatileX;
@@ -40,9 +40,9 @@ void fdTreasureSpotMoveLeaderAway(void)
 				leader->tgtZ = ACTOR_NO_TARGET;
 				return;
 			}
-			markerIndex++;
+			markerIdx++;
 			marker++;
-			if(markerIndex > TREASURE_SPOT_MAX - 1 || marker->id == 0)
+			if(markerIdx > TREASURE_SPOT_MAX - 1 || marker->id == 0)
 				break;
 		}
 	}
@@ -53,17 +53,17 @@ void fdTreasureSpotMoveLeaderAway(void)
 static inline void fdActorInitSparkle(ACTOR *actor)
 {
 	if(actor != 0) {
-		fdActorStartScriptStub(actor, FieldEffect_ParticleScript);
+		fdActorStartScriptStub(actor, FieldEffectParticleScript);
 		fdActorSelectAnimationStub(actor, 0);
 		actor->spr->image.pri = 1;
 	}
 }
 
-/* Each frame of a found item's picture: one time in ten, a sparkle appears
+/* Each tick of a found item's picture: one time in ten, a sparkle appears
    within 16 pixels of it. */
 void fdItemDispEmitSparkles(ACTOR *emitter)
 {
-	POLAR_OFFSET_POS position;
+	POLAR_OFFSET_POS pos;
 	ACTOR			*object;
 	Uint32			 randomRadius;
 
@@ -77,13 +77,13 @@ void fdItemDispEmitSparkles(ACTOR *emitter)
 	if((100 * syRandom() >> 16) > 9)
 		return;
 
-	position.vector.x = emitter->x.fixed;
-	position.vector.y = emitter->y.fixed;
-	position.vector.z = emitter->z.fixed;
+	pos.vector.x = emitter->x.fixed;
+	pos.vector.y = emitter->y.fixed;
+	pos.vector.z = emitter->z.fixed;
 	randomRadius = syRandom();
-	syVectorAddPolarOffset(randomRadius << 4, syRandom(), position.coordinates);
-	object = fdActorSpawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
-		position.vector.z);
+	syVectorAddPolarOffset(randomRadius << 4, syRandom(), pos.coordinates);
+	object =
+		fdActorSpawn(SPRITE_SPARKLE, pos.vector.x, pos.vector.y, pos.vector.z);
 	fdActorInitSparkle(object);
 }
 
@@ -97,21 +97,21 @@ ACTOR *fdItemDispShowItemInFront(Sint32 actorId, Sint32 item)
 	Sint32 state = (Sint32)FieldStateWork;
 	Uint32 actorOffset = (actorId * 4) + offsetof(FIELD_STATE, actors);
 
-	Sint32			 source = (Sint32)*(ACTOR **)(state + actorOffset);
-	POLAR_OFFSET_POS picturePosition;
+	Sint32			 src = (Sint32)*(ACTOR **)(state + actorOffset);
+	POLAR_OFFSET_POS picturePos;
 	FIXED			 pictureX;
 
-	if(source == 0)
+	if(src == 0)
 		return 0;
 
-	picturePosition.vector.x = ((ACTOR *)source)->x.fixed;
-	picturePosition.vector.y = ((ACTOR *)source)->y.fixed;
-	picturePosition.vector.z = ((ACTOR *)source)->z.fixed;
+	picturePos.vector.x = ((ACTOR *)src)->x.fixed;
+	picturePos.vector.y = ((ACTOR *)src)->y.fixed;
+	picturePos.vector.z = ((ACTOR *)src)->z.fixed;
 	syVectorAddPolarOffset(
-		toFIXED(16), ((ACTOR *)source)->facing, picturePosition.coordinates);
-	pictureX = (picturePosition.vector.x & FIELD_METATILE_MASK) + toFIXED(8);
+		toFIXED(16), ((ACTOR *)src)->facing, picturePos.coordinates);
+	pictureX = (picturePos.vector.x & FIELD_METATILE_MASK) + toFIXED(8);
 	/* source now holds the metatile's z, no longer the actor. */
-	source = (picturePosition.vector.z & FIELD_METATILE_MASK) + toFIXED(8);
+	src = (picturePos.vector.z & FIELD_METATILE_MASK) + toFIXED(8);
 
 	if(((FIELD_STATE *)state)->revealActive != 0) {
 		/* Stop both the marker emitters and the sparkle actors they already
@@ -124,7 +124,7 @@ ACTOR *fdItemDispShowItemInFront(Sint32 actorId, Sint32 item)
 				if(effect->update == fdRevealEmitSparkles) {
 					fdActorReleaseStub(effect);
 				}
-				if(effect->script == FieldEffect_ParticleScript) {
+				if(effect->script == FieldEffectParticleScript) {
 					fdActorReleaseStub(effect);
 				}
 			}
@@ -133,34 +133,34 @@ ACTOR *fdItemDispShowItemInFront(Sint32 actorId, Sint32 item)
 	}
 
 	sySynch(3);
-	picture = fdActorCreateStub(SPRITE_BLANK, pictureX, toFIXED(16), source);
+	picture = fdActorCreateStub(SPRITE_BLANK, pictureX, toFIXED(16), src);
 	if(picture == 0)
 		return 0;
 
-	fdActorStartScriptStub(picture, ItemDisplay_GrowInScript);
+	fdActorStartScriptStub(picture, ItemDisplayGrowInScript);
 	{
-		SPR	 *sprite = picture->spr;
-		void *iconBuffer;
+		SPR	 *spr = picture->spr;
+		void *iconBuf;
 
 		/* No shadow, outline or sprite animations: a 16-colour sprite in OBJ
 		   palette 0 whose tiles are the item's icon. */
-		sprite->flg = 0;
-		sprite->cnt = 0;
-		sprite->image.fullCol = 0;
-		sprite->image.pal = 0;
-		sprite->image.pri = 1;
+		spr->flg = 0;
+		spr->cnt = 0;
+		spr->image.fullCol = 0;
+		spr->image.pal = 0;
+		spr->image.pri = 1;
 
 		picture->velY = toFIXED(2);
 		picture->gravity = toFIXED(1) / 4;
 
 		/* Draw the item's icon into HEAP_SLOT_ICON_TRANSFER, then send its
 		   tiles to the sprite's. */
-		iconBuffer =
+		iconBuf =
 			syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		mnIconDrawItemStub(item);
 
-		sprite->image.tile = syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES,
-			(Uint8 *)iconBuffer + offsetof(ICON_TRANSFER, tiles));
+		spr->image.tile = syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES,
+			(Uint8 *)iconBuf + offsetof(ICON_TRANSFER, tiles));
 
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 		picture->update = fdItemDispEmitSparkles;
@@ -186,7 +186,7 @@ void fdItemDispRaiseAboveLeader(ACTOR *actor)
 		return;
 
 	leader = fdActorLookup(MainRoutineStateWork.leaderActorId);
-	/* Up to 2 pixels a frame, gaining 1 a frame, in free flight: no motion
+	/* Up to 2 pixels a tick, gaining 1 a tick, in free flight: no motion
 	   flags, so it neither falls nor follows the ground. */
 	actor->acceleration = toFIXED(1);
 	actor->speedLimit = toFIXED(2);
@@ -195,68 +195,68 @@ void fdItemDispRaiseAboveLeader(ACTOR *actor)
 		actor, leader->x.fixed, leader->y.fixed + toFIXED(36), leader->z.fixed);
 	sySynch(3);
 	fdActorSelectAnimationStub(leader, ANIM_LEADER_ARMS_RAISED);
-	fdActorStartScriptStub(actor, ItemDisplay_PulseScript);
+	fdActorStartScriptStub(actor, ItemDisplayPulseScript);
 	/* FACING_SOUTH, a quarter turn, faces the screen. */
 	leader->facing = FACING_SOUTH;
 }
 
 /* Shows a found item's picture, with sparkles (ITEM_DISPLAY_SPARKLES) or held
-   up by the leader (ITEM_DISPLAY_RAISED); with both it sparkles for 60 frames
+   up by the leader (ITEM_DISPLAY_RAISED); with both it sparkles for 60 ticks
    before he raises it, and he holds it 80. */
-void fdItemDispShowPicture(void *object, Sint32 flags)
+void fdItemDispShowPicture(void *object, Sint32 flg)
 {
 	void *leader;
 
 	if(object != NULL) {
 		leader = fdActorLookup(MainRoutineStateWork.leaderActorId);
-		if(flags & ITEM_DISPLAY_SPARKLES) {
+		if(flg & ITEM_DISPLAY_SPARKLES) {
 			fdActorSetSprFlagsStub(object, 0);
-			fdActorStartScriptStub(object, ItemDisplay_GrowInScript);
+			fdActorStartScriptStub(object, ItemDisplayGrowInScript);
 			((ACTOR *)object)->velY = toFIXED(2);
 			((ACTOR *)object)->gravity = toFIXED(1) / 4;
 			((ACTOR *)object)->update = fdItemDispEmitSparkles;
 		}
-		if(flags == (ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED)) {
+		if(flg == (ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED)) {
 			sySynch(60);
 		}
-		if(flags & ITEM_DISPLAY_RAISED) {
+		if(flg & ITEM_DISPLAY_RAISED) {
 			fdItemDispRaiseAboveLeader(object);
 		}
-		if(flags == (ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED)) {
+		if(flg == (ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED)) {
 			sySynch(80);
 		}
 		fdActorSelectAnimationStub(leader, ANIM_STAND);
 	}
 }
 
-/* Shows the picture of item 36 pixels above the party leader for 80 frames,
+/* Shows the picture of item 36 pixels above the party leader for 80 ticks,
    with sparkles (ITEM_DISPLAY_SPARKLES) or held up as a found item
    (ITEM_DISPLAY_RAISED). */
-void fdItemDispShowItem(Sint32 item, Sint32 flags)
+void fdItemDispShowItem(Sint32 item, Sint32 flg)
 {
 	ACTOR *leader = fdActorLookup(MainRoutineStateWork.leaderActorId);
-	void  *iconBuffer =
+	void  *iconBuf =
 		syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	ACTOR *actor = fdActorCreateStub(SPRITE_BLANK, leader->x.fixed,
 		leader->y.fixed + toFIXED(36), leader->z.fixed);
 
 	if(actor != 0) {
-		SPR *sprite = actor->spr;
+		SPR *spr = actor->spr;
 
-		sprite->flg = 0;
-		sprite->cnt = 0;
-		sprite->image.fullCol = 0;
-		sprite->image.pal = 0;
-		sprite->image.pri = 1;
+		spr->flg = 0;
+		spr->cnt = 0;
+		spr->image.fullCol = 0;
+		spr->image.pal = 0;
+		spr->image.pri = 1;
 
 		mnIconDrawItemStub(item);
-		syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES,
-			(Uint8 *)iconBuffer + offsetof(ICON_TRANSFER, tiles));
+		syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES,
+			(Uint8 *)iconBuf + offsetof(ICON_TRANSFER, tiles));
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 
-		if(flags & ITEM_DISPLAY_SPARKLES)
+		if(flg & ITEM_DISPLAY_SPARKLES)
 			actor->update = fdItemDispEmitSparkles;
-		if(flags & ITEM_DISPLAY_RAISED)
+		if(flg & ITEM_DISPLAY_RAISED)
 			fdItemDispRaiseAboveLeader(actor);
 
 		sySynch(80);
@@ -278,7 +278,7 @@ void fdEffectReleaseRevealSparkles(void)
 
 		for(i = 0; i < ACTOR_COUNT; i++) {
 			if(effect->script != 0) {
-				if(effect->script == FieldEffect_ParticleScript)
+				if(effect->script == FieldEffectParticleScript)
 					fdActorReleaseStub(effect);
 			}
 			effect++;
@@ -288,12 +288,12 @@ void fdEffectReleaseRevealSparkles(void)
 
 #endif
 
-/* Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
+/* Each tick of a Reveal marker: one time in ten, a sparkle appears within 16
    pixels of it. */
 void fdRevealEmitSparkles(ACTOR *actor)
 {
-	const ACTOR		*source = (const ACTOR *)actor;
-	POLAR_OFFSET_POS position;
+	const ACTOR		*src = (const ACTOR *)actor;
+	POLAR_OFFSET_POS pos;
 	ACTOR			*object;
 	Uint32			 randomRadius;
 
@@ -304,13 +304,13 @@ void fdRevealEmitSparkles(ACTOR *actor)
 	if((100 * syRandom() >> 16) > 9)
 		return;
 
-	position.vector.x = source->x.fixed;
-	position.vector.y = source->y.fixed;
-	position.vector.z = source->z.fixed;
+	pos.vector.x = src->x.fixed;
+	pos.vector.y = src->y.fixed;
+	pos.vector.z = src->z.fixed;
 	randomRadius = syRandom();
-	syVectorAddPolarOffset(randomRadius << 4, syRandom(), position.coordinates);
-	object = fdActorSpawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
-		position.vector.z);
+	syVectorAddPolarOffset(randomRadius << 4, syRandom(), pos.coordinates);
+	object =
+		fdActorSpawn(SPRITE_SPARKLE, pos.vector.x, pos.vector.y, pos.vector.z);
 	fdActorInitSparkle(object);
 }
 
@@ -389,7 +389,7 @@ void fdEffectSpawnRevealMarkers(void)
 									toFIXED(8));
 							if(actor != 0) {
 								fdActorStartScriptStub(
-									actor, Reveal_MarkerScript);
+									actor, RevealMarkerScript);
 								fdActorSetSprFlagsStub(actor, 0);
 								actor->update = fdRevealEmitSparkles;
 							}

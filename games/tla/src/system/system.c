@@ -1,4 +1,4 @@
-/* The system library's object: power-up and the interrupt handlers, the frame
+/* The system library's object: power-up and the interrupt handlers, the tick
    wait and VBlank, input, the register write queue, fades, the sprite lists and
    VRAM cache, events, maths, debug text, the heap, the 3D transform, decoding,
    saving, the link cable and the game flags.
@@ -7,7 +7,7 @@
    the files under system/, included here in the order it has in the ROM, cut
    where The Broken Seal's parts are. Where to start:
    - power-up: syInit (system_start_up.c);
-   - frames: sySynch() and the VBlank handler (system_frame.c), events
+   - ticks: sySynch() and the VBlank handler (system_frame.c), events
 	 (system_event.c);
    - the screen: fades (system_screen_fade.c), sprite depth slots
 	 (system_oam.c), sprite VRAM (system_vram_cache.c);

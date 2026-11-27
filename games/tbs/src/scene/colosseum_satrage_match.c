@@ -49,7 +49,7 @@
 
    The shifting floor's four lifts run on every visit until Halt stops them
    (scColosseumSatrageMatchUpdateLifts). Every
-   COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES they change places: for a while all
+   COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_TICKS they change places: for a while all
    four stand in a line across the channel, metatiles (58, 13) to (64, 13), and
    Isaac can hop from one to the next; then the first and third slide north and
    the second and fourth south, and the line is broken. Only while they stand
@@ -102,45 +102,45 @@ enum { BOARD_WALK_STORE_COLUMN = 100, LOG_ROLLING_STORE_COLUMN = 120 };
    the shared files that use it say what each holds: the guide's pointer
    (colosso_guide.c), the lettering (colosso_task.c) and where Isaac stood
    before he was shown on a stage (colosso_guide.c). */
-Sint16 Colosso_PointerStep					   BSS_DATA;
-Sint16 Colosso_LetteringScaleDuration BSS_DATA ALIGNED(4);
-Sint16 Colosso_PointerFlip BSS_DATA			   ALIGNED(4);
+Sint16 ColossoPointerStep					  BSS_DATA;
+Sint16 ColossoLetteringScaleDuration BSS_DATA ALIGNED(4);
+Sint16 ColossoPointerFlip BSS_DATA			  ALIGNED(4);
 /* Isaac's z before he is shown on the stage, 16.16 fixed-point pixels. */
-FIXED Colosso_WarriorStartZ					  BSS_DATA;
-Sint16 Colosso_PointerEndX					  BSS_DATA;
-Sint16 Colosso_LetteringParameter BSS_DATA	  ALIGNED(4);
-Sint16 Colosso_LetteringScaleStart BSS_DATA	  ALIGNED(4);
-Sint16 Colosso_LetteringMoveDuration BSS_DATA ALIGNED(4);
-Sint32 Colosso_LetteringPosition			  BSS_DATA;
-Sint16 Colosso_PointerBlink					  BSS_DATA;
-Sint16 Colosso_LetteringScaleTarget BSS_DATA  ALIGNED(4);
-Sint16 Colosso_LetteringMoveStep BSS_DATA	  ALIGNED(4);
-Sint16 Colosso_PointerY BSS_DATA			  ALIGNED(4);
-Sint16 Colosso_LetteringFadeStep BSS_DATA	  ALIGNED(4);
+FIXED ColossoWarriorStartZ					 BSS_DATA;
+Sint16 ColossoPointerEndX					 BSS_DATA;
+Sint16 ColossoLetteringParameter BSS_DATA	 ALIGNED(4);
+Sint16 ColossoLetteringScaleStart BSS_DATA	 ALIGNED(4);
+Sint16 ColossoLetteringMoveDuration BSS_DATA ALIGNED(4);
+Sint32 ColossoLetteringPosition				 BSS_DATA;
+Sint16 ColossoPointerBlink					 BSS_DATA;
+Sint16 ColossoLetteringScaleTarget BSS_DATA	 ALIGNED(4);
+Sint16 ColossoLetteringMoveStep BSS_DATA	 ALIGNED(4);
+Sint16 ColossoPointerY BSS_DATA				 ALIGNED(4);
+Sint16 ColossoLetteringFadeStep BSS_DATA	 ALIGNED(4);
 /* Isaac's facing before scColossoFadeInWarrior, which scColossoRestoreWarrior
    puts back. */
-Sint32 Colosso_WarriorStartAngle			  BSS_DATA;
-Sint16 Colosso_PointerSteps					  BSS_DATA;
-Sint16 Colosso_LetteringMode BSS_DATA		  ALIGNED(4);
-Sint16 Colosso_LetteringFadeTarget BSS_DATA	  ALIGNED(4);
-Sint16 Colosso_LetteringFadeStart BSS_DATA	  ALIGNED(4);
-Sint16 Colosso_LetteringTimer BSS_DATA		  ALIGNED(4);
-Sint16 *Colosso_LetteringScript				  BSS_DATA;
-POINTER_COORDINATE Colosso_PointerStartX	  BSS_DATA;
-Sint16 Colosso_LetteringFadeDuration BSS_DATA ALIGNED(4);
-Uint8 ColosseumSatrageMatch_UnusedAfterBlendDuration[6] BSS_DATA;
+Sint32 ColossoWarriorStartAngle				 BSS_DATA;
+Sint16 ColossoPointerSteps					 BSS_DATA;
+Sint16 ColossoLetteringMode BSS_DATA		 ALIGNED(4);
+Sint16 ColossoLetteringFadeTarget BSS_DATA	 ALIGNED(4);
+Sint16 ColossoLetteringFadeStart BSS_DATA	 ALIGNED(4);
+Sint16 ColossoLetteringTimer BSS_DATA		 ALIGNED(4);
+Sint16 *ColossoLetteringScript				 BSS_DATA;
+POINTER_COORDINATE ColossoPointerStartX		 BSS_DATA;
+Sint16 ColossoLetteringFadeDuration BSS_DATA ALIGNED(4);
+Uint8 ColosseumSatrageMatchUnusedAfterBlendDuration[6] BSS_DATA;
 /* The blinking pointer's sprite part: the queue link and attributes 0 to 2. */
-Sint32									 Colosso_PointerOam[3] BSS_DATA;
-POINTER_COORDINATE Colosso_PointerStartY BSS_DATA;
-/* The lettering's sprite parts, three words each, written every frame. */
-Uint32							  Colosso_LetteringSprites[12] BSS_DATA;
-Sint16 Colosso_LetteringMoveStart BSS_DATA;
-Sint16 Colosso_PointerX BSS_DATA  ALIGNED(4);
-Sint16 Colosso_LetteringMoveTarget BSS_DATA ALIGNED(4);
-Sint16 Colosso_LetteringScaleStep BSS_DATA	ALIGNED(4);
-Sint16 Colosso_PointerEndY BSS_DATA			ALIGNED(4);
+Sint32									ColossoPointerOam[3] BSS_DATA;
+POINTER_COORDINATE ColossoPointerStartY BSS_DATA;
+/* The lettering's sprite parts, three words each, written every tick. */
+Uint32									   ColossoLetteringSprites[12] BSS_DATA;
+Sint16 ColossoLetteringMoveStart		   BSS_DATA;
+Sint16 ColossoPointerX BSS_DATA			   ALIGNED(4);
+Sint16 ColossoLetteringMoveTarget BSS_DATA ALIGNED(4);
+Sint16 ColossoLetteringScaleStep BSS_DATA  ALIGNED(4);
+Sint16 ColossoPointerEndY BSS_DATA		   ALIGNED(4);
 /* Isaac's x before he is shown on the stage, 16.16 fixed-point pixels. */
-FIXED Colosso_WarriorStartX BSS_DATA;
+FIXED ColossoWarriorStartX BSS_DATA;
 
 Sint32 scInit(void);
 /* UB: the scene calls this before its definition with no prototype, as a
@@ -150,33 +150,33 @@ void scColosseumSatrageMatchStartRaceGauge(Sint32 leaderId, Sint32 opponentId,
 	Sint32 segments, Sint32 finishX, FIXED finishZ, Sint32 firstItem,
 	Sint32 secondItem);
 #endif
-extern const Uint8	  ColosseumSatrageMatch_RollLogScript[];
+extern const Uint8	  ColosseumSatrageMatchRollLogScript[];
 extern SCENE_ENTRANCE ColosseumSatrageMatchEntrances[];
 extern Uint32		  ColosseumSatrageMatchExits[];
 extern ACTOR_PLACE	  ColosseumSatrageMatchActorPlacements[];
-extern Sint32		  ColosseumSatrageMatch_LiftsApart;
-extern Uint32		  ColosseumSatrageMatch_LiftTimer;
+extern Sint32		  ColosseumSatrageMatchLiftsApart;
+extern Uint32		  ColosseumSatrageMatchLiftTimer;
 extern CUE			  ColosseumSatrageMatchCues[];
 extern char			  HexDigits[20];
 
-/* The lifts' cycle in frames, the frame of it the demonstration waits for them
+/* The lifts' cycle in ticks, the tick of it the demonstration waits for them
    to stand lined up, and how long it waits at most; and how far a riding log
    carries Isaac, in pixels. */
-#define COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES			 120
-#define COLOSSEUM_SATRAGE_MATCH_LIFT_CROSSING_FRAME			 75
-#define COLOSSEUM_SATRAGE_MATCH_DEMONSTRATION_TIMEOUT_FRAMES 600
-#define COLOSSEUM_SATRAGE_MATCH_LOG_TRAVEL_PIXELS			 64
+#define COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_TICKS			120
+#define COLOSSEUM_SATRAGE_MATCH_LIFT_CROSSING_TICK			75
+#define COLOSSEUM_SATRAGE_MATCH_DEMONSTRATION_TIMEOUT_TICKS 600
+#define COLOSSEUM_SATRAGE_MATCH_LOG_TRAVEL_PIXELS			64
 /* The map grid rows the two riding logs lie across, from their first row. */
-#define RIDING_LOG_NORTH_ROW								 10
-#define RIDING_LOG_SOUTH_ROW								 13
-/* The falling log's spin, in 1/65536 turns a frame: it speeds up by
-   FALL_SPIN_ACCELERATION each frame, from 0 as it tips and from
+#define RIDING_LOG_NORTH_ROW								10
+#define RIDING_LOG_SOUTH_ROW								13
+/* The falling log's spin, in 1/65536 turns a tick: it speeds up by
+   FALL_SPIN_ACCELERATION each tick, from 0 as it tips and from
    SETTLE_SPIN_START as it drops into the water. */
-#define FALL_SPIN_ACCELERATION								 36
-#define SETTLE_SPIN_START									 360
+#define FALL_SPIN_ACCELERATION								36
+#define SETTLE_SPIN_START									360
 /* The column the stone pillar by The Wall stands in once pushed, a metatile
    east of its place (568, 264). */
-#define WALL_PILLAR_MOVED_COLUMN							 36
+#define WALL_PILLAR_MOVED_COLUMN							36
 
 /* A log offset, -64, 0 or 64, in fixed point. */
 #define COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(value) toFIXED(value)
@@ -401,7 +401,7 @@ static void scColosseumSatrageMatchPushBoardWalkPillar(void)
    column 35 is open on the metatiles. In the race the vine is climbed only from
    the sprout's own metatile. A climb starts from the metatile the leader stands
    on: a climbing metatile (METATILE_BEHAVIOR_CLIMB, read by fdUpdateWalking),
-   with his way blocked for more than FIELD_PUSH_FRAMES frames and Up held
+   with his way blocked for more than FIELD_PUSH_TICKS ticks and Up held
    (fdRunPushMetatile). Column 32's climbing metatiles on the ground layer are
    (32, 15) and (32, 16), and the sprout, which blocks the way, stands on (32,
    16). Put at the vine's foot, (32, 17), and holding Up for five seconds, Isaac
@@ -488,35 +488,35 @@ static void scColosseumSatrageMatchKeepLogStillForForce(void)
 static void scColosseumSatrageMatchKnockDownLog(void)
 {
 	ACTOR *obstacle;
-	Sint32 fallFrames;
+	Sint32 fallTicks;
 	Sint32 rotationStep;
-	Sint32 settleFrames;
+	Sint32 settleTicks;
 	Sint32 settleRotationStep;
-	SPR	  *sprite;
+	SPR	  *spr;
 
 	obstacle = fdActorGet(ACTOR_FALLING_LOG);
-	sprite = obstacle->spr;
+	spr = obstacle->spr;
 	fdScriptSetFlag(FLAG_LOG_KNOCKED_DOWN);
 	obstacle->acceleration = toFIXED(1) / 10;
 	obstacle->speedLimit = toFIXED(6) / 5;
 	sySndPlay(SE_TOPPLE);
 	syFieldActorSetMoveTarget(obstacle, 336, 10, 264);
-	for(rotationStep = 0, fallFrames = 0; fallFrames < 10; fallFrames++) {
-		sprite->rotation -= rotationStep;
+	for(rotationStep = 0, fallTicks = 0; fallTicks < 10; fallTicks++) {
+		spr->rotation -= rotationStep;
 		sySynch(1);
 		rotationStep += FALL_SPIN_ACCELERATION;
 	}
 	syFieldActorSetMoveTarget(obstacle, 330, -16, 264);
-	for(settleRotationStep = SETTLE_SPIN_START, settleFrames = 0;
-		settleFrames < 22; settleFrames++) {
-		sprite->rotation -= settleRotationStep;
+	for(settleRotationStep = SETTLE_SPIN_START, settleTicks = 0;
+		settleTicks < 22; settleTicks++) {
+		spr->rotation -= settleRotationStep;
 		sySynch(1);
 		settleRotationStep += FALL_SPIN_ACCELERATION;
 	}
 	fdActorWaitForMove(obstacle);
 	fdScriptWait(2);
 	sySndPlay(SE_LOG_FALL);
-	sprite->rotation = 0;
+	spr->rotation = 0;
 	fdActorSetAnimation(ACTOR_FALLING_LOG, FALLING_LOG_ANIMATION_FALLEN);
 	obstacle->x.fixed = toFIXED(336);
 	obstacle->y.fixed = -toFIXED(8);
@@ -574,48 +574,42 @@ static void scColosseumSatrageMatchHopWestFromPost(void)
    with Isaac on top walking backwards as it turns under him, and stops both in
    the middle of their metatiles. */
 static void scColosseumSatrageMatchMoveRidingLog(
-	Sint32 logId, Sint32 offsetX, Sint32 offsetZ)
+	Sint32 logId, Sint32 ofsX, Sint32 ofsZ)
 {
 	ACTOR *rider;
 	ACTOR *log;
-	FIXED  destinationX;
-	FIXED  destinationZ;
+	FIXED  dstX;
+	FIXED  dstZ;
 
 	rider = fdActorGet(MainRoutineStateWork.leaderActorId);
 	log = fdActorGet(logId);
 	fdScriptStart();
 	{
-		destinationX =
-			((rider->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetX)) &
-				FIELD_METATILE_MASK) +
+		dstX = ((rider->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(ofsX)) &
+				   FIELD_METATILE_MASK) +
 			toFIXED(8);
-		destinationZ =
-			((rider->z.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetZ)) &
-				FIELD_METATILE_MASK) +
+		dstZ = ((rider->z.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(ofsZ)) &
+				   FIELD_METATILE_MASK) +
 			toFIXED(8);
 
 		rider->speedLimit = toFIXED(1);
 		rider->acceleration = toFIXED(1) / 2;
-		syFieldActorSetMoveTargetFX(
-			rider, destinationX, rider->y.fixed, destinationZ);
+		syFieldActorSetMoveTargetFX(rider, dstX, rider->y.fixed, dstZ);
 	}
 	fdActorSelectAnimation(rider, ANIM_LEADER_WALK_BACKWARDS);
 	{
-		destinationX =
-			((log->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetX)) &
-				FIELD_METATILE_MASK) +
+		dstX = ((log->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(ofsX)) &
+				   FIELD_METATILE_MASK) +
 			toFIXED(8);
-		destinationZ =
-			((log->z.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetZ)) &
-				FIELD_METATILE_MASK) +
+		dstZ = ((log->z.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(ofsZ)) &
+				   FIELD_METATILE_MASK) +
 			toFIXED(8);
 
 		log->speedLimit = toFIXED(1);
 		log->acceleration = toFIXED(1) / 2;
-		syFieldActorSetMoveTargetFX(
-			log, destinationX, log->y.fixed, destinationZ);
+		syFieldActorSetMoveTargetFX(log, dstX, log->y.fixed, dstZ);
 	}
-	if(offsetX < 0 || offsetZ < 0) {
+	if(ofsX < 0 || ofsZ < 0) {
 		fdActorSelectAnimation(log, FLOATING_LOG_ANIMATION_ROLL_WEST_OR_NORTH);
 	} else {
 		fdActorSelectAnimation(log, FLOATING_LOG_ANIMATION_ROLL_EAST_OR_SOUTH);
@@ -634,7 +628,7 @@ static void scColosseumSatrageMatchRideLog(void)
 {
 	ACTOR *rider = fdActorGet(MainRoutineStateWork.leaderActorId);
 	Sint32 column = FIELD_METATILE(rider->x.fixed);
-	Sint32 offsetX = 0;
+	Sint32 ofsX = 0;
 	Sint32 logId = ACTOR_RIDING_LOG_NORTH;
 
 	if(FIELD_METATILE(rider->z.fixed) >= RIDING_LOG_SOUTH_ROW) {
@@ -645,13 +639,13 @@ static void scColosseumSatrageMatchRideLog(void)
 	}
 	if(column > 51) {
 		if(PerData & KEY_LEFT) {
-			offsetX = -COLOSSEUM_SATRAGE_MATCH_LOG_TRAVEL_PIXELS;
+			ofsX = -COLOSSEUM_SATRAGE_MATCH_LOG_TRAVEL_PIXELS;
 		}
 	} else if(PerData & KEY_RIGHT) {
-		offsetX = COLOSSEUM_SATRAGE_MATCH_LOG_TRAVEL_PIXELS;
+		ofsX = COLOSSEUM_SATRAGE_MATCH_LOG_TRAVEL_PIXELS;
 	}
-	if(offsetX != 0) {
-		scColosseumSatrageMatchMoveRidingLog(logId, offsetX, 0);
+	if(ofsX != 0) {
+		scColosseumSatrageMatchMoveRidingLog(logId, ofsX, 0);
 		fdMapGridCopyMetatileAttributes(
 			LOG_ROLLING_STORE_COLUMN, 10, 5, 6, 48, 10);
 		column = FIELD_METATILE(fdActorGet(ACTOR_RIDING_LOG_NORTH)->x.fixed);
@@ -673,17 +667,17 @@ static void scColosseumSatrageMatchRollLogToMetatile(
 	ACTOR *log = fdActorGet(logId);
 	Sint32 heading = FACING_NEAREST_EIGHTH(pusherActor->facing);
 	Sint32 alongX = FIELD_METATILE(log->x.fixed) != halfMetatileX / 2;
-	FIXED  offsetX;
-	FIXED  offsetZ;
+	FIXED  ofsX;
+	FIXED  ofsZ;
 
 	halfMetatileX = FIELD_HALF_METATILE_ORIGIN(halfMetatileX);
 	halfMetatileZ = FIELD_HALF_METATILE_ORIGIN(halfMetatileZ);
 	if(alongX) {
-		offsetX = (halfMetatileX - log->x.fixed) / 2;
-		offsetZ = 0;
+		ofsX = (halfMetatileX - log->x.fixed) / 2;
+		ofsZ = 0;
 	} else {
-		offsetX = 0;
-		offsetZ = (halfMetatileZ - log->z.fixed) / 2;
+		ofsX = 0;
+		ofsZ = (halfMetatileZ - log->z.fixed) / 2;
 	}
 	fdScriptStart();
 	fdActorSetAnimation(pusher, ANIM_PUSH);
@@ -691,7 +685,7 @@ static void scColosseumSatrageMatchRollLogToMetatile(
 	log->speedLimit = toFIXED(1) / 2;
 	log->acceleration = toFIXED(1) / 5;
 	fdActorSelectAnimation(
-		log, ColosseumSatrageMatch_RollLogScript[heading / (DEGtoANG(90))]);
+		log, ColosseumSatrageMatchRollLogScript[heading / (DEGtoANG(90))]);
 	syFieldActorSetMoveTargetFX(log, halfMetatileX, 0, halfMetatileZ);
 	fdScriptWait(6);
 	fdActorSetAnimation(pusher, ANIM_WALK);
@@ -702,8 +696,8 @@ static void scColosseumSatrageMatchRollLogToMetatile(
 		(Sint32)log);
 	fdActorSetSpeedAndAcceleration(pusher, 0.5, 0.2);
 	fdActorSelectAnimation(pusherActor, ANIM_WALK);
-	syFieldActorSetMoveTargetFX(pusherActor, pusherActor->x.fixed + offsetX, 0,
-		pusherActor->z.fixed + offsetZ);
+	syFieldActorSetMoveTargetFX(pusherActor, pusherActor->x.fixed + ofsX, 0,
+		pusherActor->z.fixed + ofsZ);
 	sySndPlay(SE_HEAVY_MOVE);
 	fdActorWaitForMove(pusherActor);
 	fdActorSelectAnimation(pusherActor, ANIM_STAND);
@@ -786,9 +780,9 @@ static UNUSED void scColosseumSatrageMatchUnusedRollCenterLogSouth(void)
 	scColosseumSatrageMatchUpdateRollingLogCollision();
 }
 
-/* Each frame while the shifting floor runs, carries Isaac north or south with
+/* Each tick while the shifting floor runs, carries Isaac north or south with
    the lift he stands on, swaps the lifts between a line across the channel and
-   their broken pattern every COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES, and
+   their broken pattern every COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_TICKS, and
    makes their metatiles squares to hop onto only while they stand in line. */
 static void scColosseumSatrageMatchUpdateLifts(void)
 {
@@ -846,8 +840,8 @@ static void scColosseumSatrageMatchUpdateLifts(void)
 	}
 	/* The final lift's destination selects the metatile behaviors for the
 	   row. */
-	if(ColosseumSatrageMatch_LiftTimer != 0 && lift->tgtX == ACTOR_NO_TARGET) {
-		if(ColosseumSatrageMatch_LiftsApart == 0) {
+	if(ColosseumSatrageMatchLiftTimer != 0 && lift->tgtX == ACTOR_NO_TARGET) {
+		if(ColosseumSatrageMatchLiftsApart == 0) {
 			fdMapGridCopyMetatileAttributes(58, 28, 7, 1, 58, 13);
 		} else {
 			fdMapGridCopyMetatileAttributes(58, 10, 1, 1, 58, 11);
@@ -856,9 +850,9 @@ static void scColosseumSatrageMatchUpdateLifts(void)
 		fdMapGridCopyMetatileAttributes(57, 11, 1, 1, 58, 11);
 		fdMapGridCopyMetatileAttributes(58, 14, 7, 1, 58, 13);
 	}
-	if(ColosseumSatrageMatch_LiftTimer == 0) {
-		ColosseumSatrageMatch_LiftsApart ^= 1;
-		if(ColosseumSatrageMatch_LiftsApart != 0) {
+	if(ColosseumSatrageMatchLiftTimer == 0) {
+		ColosseumSatrageMatchLiftsApart ^= 1;
+		if(ColosseumSatrageMatchLiftsApart != 0) {
 			syFieldActorSetMoveTarget(
 				fdActorGet(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT), 936, 0,
 				184);
@@ -890,11 +884,11 @@ static void scColosseumSatrageMatchUpdateLifts(void)
 				ACTOR_LIFT_OPERATOR, LIFT_OPERATOR_ANIMATION_LIFTS_LINED_UP);
 		}
 	}
-	ColosseumSatrageMatch_LiftTimer++;
-	if(ColosseumSatrageMatch_LiftTimer >=
-		COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES) {
+	ColosseumSatrageMatchLiftTimer++;
+	if(ColosseumSatrageMatchLiftTimer >=
+		COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_TICKS) {
 		if(gmFlagGet(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
-			ColosseumSatrageMatch_LiftTimer = 0;
+			ColosseumSatrageMatchLiftTimer = 0;
 		}
 	}
 }
@@ -903,8 +897,8 @@ static void scColosseumSatrageMatchUpdateLifts(void)
    the attendant's demonstration. */
 static void scColosseumSatrageMatchResetLifts(void)
 {
-	ColosseumSatrageMatch_LiftTimer = 0;
-	ColosseumSatrageMatch_LiftsApart = 0;
+	ColosseumSatrageMatchLiftTimer = 0;
+	ColosseumSatrageMatchLiftsApart = 0;
 	syCloseEvent(scColosseumSatrageMatchUpdateLifts);
 	fdActorSetPos(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT, 936, 216);
 	fdActorSetPos(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1, 968, 216);
@@ -917,7 +911,7 @@ static void scColosseumSatrageMatchResetLifts(void)
 /* Starts the shifting floor's lifts moving again. */
 static void scColosseumSatrageMatchStartLifts(void)
 {
-	sySetFrameEvent(scColosseumSatrageMatchUpdateLifts, EVENT_PASS_FRAME + 5);
+	sySetTickEvent(scColosseumSatrageMatchUpdateLifts, EVENT_PASS_TICK + 5);
 	gmFlagClear(FLAG_FIELD_HANDLING_REQUESTS);
 }
 
@@ -925,18 +919,18 @@ static void scColosseumSatrageMatchStartLifts(void)
    water, for the demonstration to jump onto them. */
 static void scColosseumSatrageMatchWaitForLiftsLinedUp(void)
 {
-	Sint32 elapsedFrames;
+	Sint32 elapsedTicks;
 
 	sySynch(10);
 
-	elapsedFrames = 0;
-	while(ColosseumSatrageMatch_LiftsApart != 0 ||
-		ColosseumSatrageMatch_LiftTimer !=
-			COLOSSEUM_SATRAGE_MATCH_LIFT_CROSSING_FRAME) {
+	elapsedTicks = 0;
+	while(ColosseumSatrageMatchLiftsApart != 0 ||
+		ColosseumSatrageMatchLiftTimer !=
+			COLOSSEUM_SATRAGE_MATCH_LIFT_CROSSING_TICK) {
 		sySynch(1);
-		elapsedFrames++;
-		if(elapsedFrames >=
-			COLOSSEUM_SATRAGE_MATCH_DEMONSTRATION_TIMEOUT_FRAMES) {
+		elapsedTicks++;
+		if(elapsedTicks >=
+			COLOSSEUM_SATRAGE_MATCH_DEMONSTRATION_TIMEOUT_TICKS) {
 			return;
 		}
 	}
@@ -950,8 +944,8 @@ static void scColosseumSatrageMatchHaltLifts(void)
 	fdPsynergyHaltActor(ACTOR_LIFT_OPERATOR);
 	gmFlagSet(FLAG_LIFTS_HALTED);
 
-	if(ColosseumSatrageMatch_LiftsApart != 0) {
-		ColosseumSatrageMatch_LiftTimer = 0;
+	if(ColosseumSatrageMatchLiftsApart != 0) {
+		ColosseumSatrageMatchLiftTimer = 0;
 	}
 
 	sySynch(30);
@@ -975,7 +969,7 @@ static void scColosseumSatrageMatchReachArena(void)
 	fdScriptStart();
 	opponentFirst = scColossoTakePrize(ITEM_CHAIN_MAIL, ITEM_COTTON_SHIRT);
 	scColossoWaitForOpponentToFinish();
-	/* Up to ten waits of 300 frames while the opponent holds up his prize. */
+	/* Up to ten waits of 300 ticks while the opponent holds up his prize. */
 	for(i = 0; i < 10; i++) {
 		fdActorWaitForScriptEndById(ACTOR_OPPONENT);
 	}
@@ -1053,7 +1047,7 @@ Sint32 scInit(void)
 	Sint32 obstacleId;
 	Sint32 column;
 	Sint32 liftId;
-	Sint32 columnOffset;
+	Sint32 columnOfs;
 	Sint32 row;
 
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
@@ -1153,13 +1147,13 @@ Sint32 scInit(void)
 		ACTOR_LIFT_OPERATOR, LIFT_OPERATOR_ANIMATION_LIFTS_LINED_UP);
 	if(gmFlagGet(FLAG_LIFTS_HALTED)) {
 		for(liftId = ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT, row = 13,
-		columnOffset = 58;
+		columnOfs = 58;
 			liftId <= ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT;
-			liftId++, columnOffset += 2) {
+			liftId++, columnOfs += 2) {
 			actor = fdActorGet(liftId);
 			actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
 			fdActorSelectAnimation(actor, PLATFORM_ANIMATION_AT_WATERLINE);
-			fdMapGridCopyMetatileAttributes(56, 13, 1, 1, columnOffset, row);
+			fdMapGridCopyMetatileAttributes(56, 13, 1, 1, columnOfs, row);
 		}
 		fdActorSetAnimation(
 			ACTOR_LIFT_OPERATOR, LIFT_OPERATOR_ANIMATION_LIFTS_LINED_UP);
@@ -1173,8 +1167,7 @@ Sint32 scInit(void)
 			actor->speedLimit = toFIXED(1) / 2;
 			actor->acceleration = toFIXED(1) / 5;
 		}
-		sySetFrameEvent(
-			scColosseumSatrageMatchUpdateLifts, EVENT_PASS_FRAME + 5);
+		sySetTickEvent(scColosseumSatrageMatchUpdateLifts, EVENT_PASS_TICK + 5);
 		sySetEventFlags(scColosseumSatrageMatchUpdateLifts, 1);
 	}
 	fdActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
@@ -1208,7 +1201,7 @@ Sint32 scInit(void)
 			RESOURCE_SATRAGE_OPPONENT_PATH);
 		break;
 	case COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST:
-		sySetFrameEvent(scColossoRaiseTakePlaceOnPsynergy, EVENT_PASS_FRAME);
+		sySetTickEvent(scColossoRaiseTakePlaceOnPsynergy, EVENT_PASS_TICK);
 		fdActorReleaseById(ACTOR_PRIZE_A);
 		fdActorReleaseById(ACTOR_PRIZE_B);
 		if(!gmFlagGet(FLAG_KEEP_PARTY_POSITION)) {
@@ -1266,7 +1259,7 @@ static void scColosseumSatrageMatchIntroduceSecondFinals(Sint32 attendantId)
 	fdActorGet(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
 	fdCameraFollowActor(ACTOR_PARTY_LEADER, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptSetMessageId(MsgColossoSiteSecondFinals);
 	fdActorSetAnimationAndWait(attendantId, ANIM_NOD);
 	/* "This is the site of the second finals match." */
@@ -1530,17 +1523,17 @@ static void scColosseumSatrageMatchDemonstrateLogPush(
 	   metatiles:
 	   given pixels it always holds, so the push is along x, as this one is. */
 	Sint32 alongX = FIELD_METATILE(obstacle->x.fixed) != x / 2;
-	FIXED  offsetX;
-	FIXED  offsetZ;
+	FIXED  ofsX;
+	FIXED  ofsZ;
 
 	x <<= 16;
 	z <<= 16;
 	if(alongX) {
-		offsetX = (x - obstacle->x.fixed) / 2;
-		offsetZ = 0;
+		ofsX = (x - obstacle->x.fixed) / 2;
+		ofsZ = 0;
 	} else {
-		offsetX = 0;
-		offsetZ = (z - obstacle->z.fixed) / 2;
+		ofsX = 0;
+		ofsZ = (z - obstacle->z.fixed) / 2;
 	}
 	fdActorSetAnimation(pusher, ANIM_PUSH);
 	fdScriptWait(6);
@@ -1553,8 +1546,8 @@ static void scColosseumSatrageMatchDemonstrateLogPush(
 	fdActorSetAnimation(pusher, ANIM_WALK);
 	fdActorSetSpeedAndAcceleration(pusher, 0.5, 0.2);
 	fdActorSelectAnimation(pusherActor, ANIM_WALK);
-	syFieldActorSetMoveTargetFX(pusherActor, pusherActor->x.fixed + offsetX, 0,
-		pusherActor->z.fixed + offsetZ);
+	syFieldActorSetMoveTargetFX(pusherActor, pusherActor->x.fixed + ofsX, 0,
+		pusherActor->z.fixed + ofsZ);
 	fdActorWaitForMove(pusherActor);
 	fdActorSelectAnimation(pusherActor, ANIM_STAND);
 	fdActorWaitForMove(obstacle);
@@ -1671,7 +1664,7 @@ void scColosseumSatrageMatchStartRaceGauge(Sint32 leaderId, Sint32 opponentId,
 	state->gauge.vramBlock = vramSlot;
 	syVRAMCacheLoad((Sint16)vramSlot, 512, graphics);
 
-	sySetFrameEvent(scColossoDrawGauge, EVENT_PASS_FRAME - 10);
+	sySetTickEvent(scColossoDrawGauge, EVENT_PASS_TICK - 10);
 
 	syHeapRelease(graphics);
 }
@@ -1691,7 +1684,7 @@ static void scColosseumSatrageMatchStartOpponentPath(Sint32 pathResource)
 		recorder->still = 0;
 		recorder->pathIdx = 0;
 	}
-	sySetFrameEvent(scColossoUpdatePathOpponent, EVENT_PASS_FRAME + 5);
+	sySetTickEvent(scColossoUpdatePathOpponent, EVENT_PASS_TICK + 5);
 }
 
 #include "shared/colosso_map_state.c"
@@ -1717,7 +1710,7 @@ enum {
 };
 
 /* The rolling log's animation for each quarter turn of the way it is pushed. */
-const Uint8 ColosseumSatrageMatch_RollLogScript[] = {2, 2, 3, 3};
+const Uint8 ColosseumSatrageMatchRollLogScript[] = {2, 2, 3, 3};
 
 #include "shared/colosso_lettering_tables.c"
 /* clang-format off */
@@ -1826,11 +1819,11 @@ ACTOR_PLACE ColosseumSatrageMatchActorPlacements[] = {
 };
 
 /* Set while the lifts stand in their broken pattern rather than in a line. */
-Sint32 ColosseumSatrageMatch_LiftsApart = 0;
+Sint32 ColosseumSatrageMatchLiftsApart = 0;
 
-/* The frames into the lifts' cycle */
-/* (COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES). */
-Uint32 ColosseumSatrageMatch_LiftTimer = 0;
+/* The ticks into the lifts' cycle */
+/* (COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_TICKS). */
+Uint32 ColosseumSatrageMatchLiftTimer = 0;
 
 CUE ColosseumSatrageMatchCues[] = {
 	{ STEP_CUE_WALKING_INTO(FACING_SOUTH), METATILE_BEHAVIOR_WALL_POST, CONDITION_ALWAYS, SCRIPT_REF(scColosseumSatrageMatchJumpDownFromPost) },
@@ -1876,11 +1869,11 @@ CUE ColosseumSatrageMatchCues[] = {
 	{ CUE_TABLE_END },
 };
 
-Sint16 Colosso_LetteringSlot = -1;
+Sint16 ColossoLetteringSlot = -1;
 
 #include "shared/colosso_lettering_scripts.c"
 /* clang-format on */
 
-Sint16 Colosso_PointerSlot = -1;
+Sint16 ColossoPointerSlot = -1;
 
 #include "shared/colosso_finish_scripts.c"

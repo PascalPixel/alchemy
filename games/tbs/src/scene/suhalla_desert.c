@@ -35,7 +35,7 @@
    them.
 
    Walking into a storm draws the leader to its centre and lifts the party,
-   spinning, for SANDSTORM_CAPTURE_FRAMES (scSuhallaDesertCatchInStorm).
+   spinning, for SANDSTORM_CAPTURE_TICKS (scSuhallaDesertCatchInStorm).
 
    Douse in that time stops the storm, and the monster in it attacks: a Tornado
    Lizard, or the Tempest Lizard in the red storm and the Storm Lizard in the
@@ -59,7 +59,7 @@
    - FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_SET_OFF: the chasing storm has set
 	 off.
    - FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM: a storm has caught the leader.
-   - FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT: a byte, the frames left before
+   - FLAG_SUHALLA_DESERT_CAPTURE_TICKS_LEFT: a byte, the ticks left before
 	 the storm carries the party away.
    - FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM: a byte, the storm that caught the
 	 leader. */
@@ -156,8 +156,8 @@ enum {
 	ENCOUNTER_SLOT_TEMPEST_LIZARD = 7 /* in the great red storm */
 };
 
-/* Frames a caught party spins before the storm carries it away. */
-enum { SANDSTORM_CAPTURE_FRAMES = 180 };
+/* Ticks a caught party spins before the storm carries it away. */
+enum { SANDSTORM_CAPTURE_TICKS = 180 };
 
 /* The treasure spot of the Psynergy Stone hidden in the south half, at metatile
    (12, 71) on the plain, whose search row finds the stone
@@ -187,13 +187,13 @@ static void scSuhallaDesertSetUpFirstMapStorms(void);
 static void scSuhallaDesertSetUpSecondMapStorms(void);
 
 /* The colour Reveal pulses, as it was before Reveal, put back as it ends. */
-static Uint16 sSuhallaDesertSavedColor;
+static Uint16 SuhallaDesertSavedColor;
 
 /* The colour Reveal pulses, the last of BG palette 12. */
 #define SUHALLA_REVEAL_PALETTE_COLOR BG_PLTT_COLOR(12, 15)
 
 /* Lalivero's area, whose FLAG_AREA_VISITED says the party has been there
-   (MapScreen_AreaMarkers marks it at SCENE_LALIVERO). */
+   (MapScreenAreaMarkers marks it at SCENE_LALIVERO). */
 #define AREA_LALIVERO 55
 
 #include "shared/field_effect_create.c"
@@ -217,9 +217,9 @@ static Uint16 sSuhallaDesertSavedColor;
 /* A sandstorm has caught the leader and lifts the party, and Douse can put it
    out. */
 #define FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM		  FLAG_SCENE_TEMP_0F
-/* A byte flag that holds the frames left before the sandstorm that caught the
+/* A byte flag that holds the ticks left before the sandstorm that caught the
    leader carries the party away. */
-#define FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT		  FLAG_SCENE_TEMP_10
+#define FLAG_SUHALLA_DESERT_CAPTURE_TICKS_LEFT		  FLAG_SCENE_TEMP_10
 /* A byte flag that holds the actor id of the sandstorm that caught the
    leader. */
 #define FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM		  FLAG_SCENE_TEMP_18
@@ -242,8 +242,8 @@ static Sint32 scSuhallaDesertClearActorSprAndCollisionFlags(ACTOR *actor)
 	return 0;
 }
 
-/* The rest of a storm's actor script, run every frame: the storm's sprite is
-   drawn one frame and not the next (ACTOR_SPRITE_ONE and ACTOR_SPRITE_NONE), so
+/* The rest of a storm's actor script, run every tick: the storm's sprite is
+   drawn one tick and not the next (ACTOR_SPRITE_ONE and ACTOR_SPRITE_NONE), so
    the whirlwind flickers, half there. */
 static Sint32 scSuhallaDesertFlickerStorm(ACTOR *actor)
 {
@@ -296,30 +296,30 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	return SuhallaDesertActorPlacementsOther;
 }
 
-/* Each frame while caught, spins the leader round and counts down to the storm
+/* Each tick while caught, spins the leader round and counts down to the storm
    carrying the party away (RAISED_SANDSTORM_CARRIES_PARTY_AWAY). The count
    stands still while the menu is open. */
 static void scSuhallaDesertUpdateCaptureTimer(void)
 {
 	ACTOR		*leader;
 	FIELD_STATE *state;
-	Sint32		 remainingFrames;
+	Sint32		 remainingTicks;
 
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	state = FieldStateWork;
-	leader->facing = FrameCount * FACING_STEP;
+	leader->facing = TickCount * FACING_STEP;
 
-	remainingFrames =
-		syFieldGameFlagGetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT);
-	if(remainingFrames != 0) {
-		if(remainingFrames == 1) {
+	remainingTicks =
+		syFieldGameFlagGetByte(FLAG_SUHALLA_DESERT_CAPTURE_TICKS_LEFT);
+	if(remainingTicks != 0) {
+		if(remainingTicks == 1) {
 			state->raisedCue = RAISED_SANDSTORM_CARRIES_PARTY_AWAY;
 		} else if(gmFlagGet(FLAG_MENU_OPEN) == 0) {
-			remainingFrames -= 1;
+			remainingTicks -= 1;
 		}
 	}
 	syFieldGameFlagSetByte(
-		FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT, remainingFrames);
+		FLAG_SUHALLA_DESERT_CAPTURE_TICKS_LEFT, remainingTicks);
 }
 
 /* The leader walks into a storm: he is drawn to its centre, looking about, and
@@ -349,7 +349,7 @@ static void scSuhallaDesertCatchInStorm(Sint32 stormId)
 		}
 		fdActorWaitForMoveById(leaderId);
 		sySndPlay(SE_SANDSTORM);
-		sySetFrameEvent(scSuhallaDesertUpdateCaptureTimer, EVENT_PASS_FRAME);
+		sySetTickEvent(scSuhallaDesertUpdateCaptureTimer, EVENT_PASS_TICK);
 		leader->motionFlg = 0;
 		syFieldActorSetMoveTargetFX(leader, leader->x.fixed,
 			leader->y.fixed + toFIXED(32), leader->z.fixed);
@@ -360,7 +360,7 @@ static void scSuhallaDesertCatchInStorm(Sint32 stormId)
 		gmFlagSet(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM);
 		syFieldGameFlagSetByte(FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM, stormId);
 		syFieldGameFlagSetByte(
-			FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT, SANDSTORM_CAPTURE_FRAMES);
+			FLAG_SUHALLA_DESERT_CAPTURE_TICKS_LEFT, SANDSTORM_CAPTURE_TICKS);
 		fdScriptEnd();
 		FieldStateWork->encounter = 0; /* drop any battle this step rolled */
 	}
@@ -419,7 +419,7 @@ static void scSuhallaDesertCaughtByFifthStorm(void)
    out, cries "A sandstorm!", and warns that they must step carefully. */
 static void scSuhallaDesertRaiseStorm(Sint32 stormId)
 {
-	Sint32 frame;
+	Sint32 frm;
 	Sint32 weight;
 	Sint32 leaderX;
 	Sint32 leaderZ;
@@ -435,11 +435,11 @@ static void scSuhallaDesertRaiseStorm(Sint32 stormId)
 	leaderZ = leader->z.part[0].integer;
 	fdScriptStart();
 	sySndPlay(SE_SANDSTORM);
-	for(frame = 0; frame < 16; frame++) {
-		storm->scaleX = frame * (toFIXED(1) / 32) + toFIXED(1) / 32;
-		storm->scaleY = frame * (toFIXED(1) / 16) + toFIXED(1) / 16;
+	for(frm = 0; frm < 16; frm++) {
+		storm->scaleX = frm * (toFIXED(1) / 32) + toFIXED(1) / 32;
+		storm->scaleY = frm * (toFIXED(1) / 16) + toFIXED(1) / 16;
 		if(hazeShown == 0) {
-			weight = frame + 1;
+			weight = frm + 1;
 			IO_WRITE_QUEUE_PUSH((Uint32)&REG_BLDALPHA,
 				BLEND_ALPHA(weight, BLEND_WEIGHT_MAX - weight),
 				IO_WRITE_HALFWORD);
@@ -617,14 +617,14 @@ static Sint32 scSuhallaDesertChaseLeader(ACTOR *actor)
 {
 	EFFECT_OPTIONS options;
 	ACTOR		  *leader;
-	Sint32		   sparkFrame;
+	Sint32		   sparkFrm;
 
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	actor->acceleration = toFIXED(1) / 4;
 	actor->speedLimit = toFIXED(3) / 2;
 	actor->motionFlg = 0;
 	fdActorSetSprFlags(actor, 0);
-	/* Drawn every other frame, as scSuhallaDesertFlickerStorm draws the
+	/* Drawn every other tick, as scSuhallaDesertFlickerStorm draws the
 	   others. */
 	actor->sprStorageKind ^= 1;
 	if(gmFlagGet(FLAG_FIELD_HANDLING_REQUESTS)) {
@@ -649,14 +649,14 @@ static Sint32 scSuhallaDesertChaseLeader(ACTOR *actor)
 			actor->tgtZ = leader->z.fixed;
 		}
 	}
-	/* Sand every eight frames, with a random spin. */
-	sparkFrame = FrameCount & 7;
-	if(sparkFrame == 0) {
+	/* Sand every eight ticks, with a random spin. */
+	sparkFrm = TickCount & 7;
+	if(sparkFrm == 0) {
 		options.startScaleX = toFIXED(4) / 5;
 		options.startScaleY = toFIXED(4) / 5;
 		options.spin = FIELD_EFFECT_RANDOM_SPIN();
 		fdEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0,
-			sparkFrame, sparkFrame,
+			sparkFrm, sparkFrm,
 			EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | EFFECT_SCRIPT_MEDIUM,
 			&options);
 	}
@@ -709,7 +709,7 @@ static void scSuhallaDesertDouseStorm(Sint32 unused, Sint32 stormId)
 					ACTOR_FIRST_SANDSTORM));
 		}
 	}
-	syFieldGameFlagSetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT, 0);
+	syFieldGameFlagSetByte(FLAG_SUHALLA_DESERT_CAPTURE_TICKS_LEFT, 0);
 	fdRequestBattleFromEncounterTable(
 		ENCOUNTER_ZONE_SCRIPTED, ENCOUNTER_SLOT_TORNADO_LIZARD);
 	SET_BATTLE_TYPE(BATTLE_TYPE_SCRIPTED);
@@ -742,7 +742,7 @@ static void scSuhallaDesertStormCarriesPartyAway(void)
 	Sint32 stormId;
 	ACTOR *leader;
 	ACTOR *storm;
-	Sint32 frame;
+	Sint32 frm;
 
 	stormId = syFieldGameFlagGetByte(FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM);
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
@@ -762,13 +762,13 @@ static void scSuhallaDesertStormCarriesPartyAway(void)
 	leader->frozen = 1;
 	storm->frozen = 1;
 	/* Both rise faster and faster for a second. */
-	for(frame = 0; frame < 60; frame++) {
+	for(frm = 0; frm < 60; frm++) {
 		leader->velY += toFIXED(1) / 5;
 		storm->velY += toFIXED(1) / 5;
 		sySynch(1);
 	}
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 	gmFlagSet(FLAG_ARRIVE_FALLING);
 	if(MainRoutineStateWork.next == SCENE_SUHALLA_DESERT_SOUTH &&
@@ -785,12 +785,12 @@ static void scSuhallaDesertStormCarriesPartyAway(void)
    brightening and dimming about once a second. */
 static void scSuhallaDesertPulseRevealPalette(void)
 {
-	Uint16 brightnessFrame = FrameCount & 63;
+	Uint16 brightnessFrm = TickCount & 63;
 	Uint16 grey;
 
-	if(brightnessFrame > 31)
-		brightnessFrame = 64 - brightnessFrame;
-	grey = (brightnessFrame >> 1) + 7;
+	if(brightnessFrm > 31)
+		brightnessFrm = 64 - brightnessFrm;
+	grey = (brightnessFrm >> 1) + 7;
 	grey = RGB(grey, grey, grey);
 	IO_WRITE16(grey, &SUHALLA_REVEAL_PALETTE_COLOR);
 }
@@ -831,7 +831,7 @@ static Sint32 scSuhallaDesertRevealEnds(void)
 #else
 		removalResult = syCloseEvent(scSuhallaDesertPulseRevealPalette);
 #endif
-		IO_WRITE16(sSuhallaDesertSavedColor, &SUHALLA_REVEAL_PALETTE_COLOR);
+		IO_WRITE16(SuhallaDesertSavedColor, &SUHALLA_REVEAL_PALETTE_COLOR);
 #if !FIX_FUNCTION_SIGNATURES
 		return removalResult;
 #endif
@@ -855,10 +855,10 @@ static UNREAD_RESULT scSuhallaDesertRevealStarts(void)
 		fdTreasureSpotMoveLeaderAway();
 		fdMapGridCopyMetatileAttributes(127, 127, 1, 1, 12, 71);
 #if FIX_FUNCTION_SIGNATURES
-		sySetFrameEvent(scSuhallaDesertPulseRevealPalette, EVENT_PASS_FRAME);
+		sySetTickEvent(scSuhallaDesertPulseRevealPalette, EVENT_PASS_TICK);
 #else
-		return sySetFrameEvent(
-			scSuhallaDesertPulseRevealPalette, EVENT_PASS_FRAME);
+		return sySetTickEvent(
+			scSuhallaDesertPulseRevealPalette, EVENT_PASS_TICK);
 #endif
 	}
 }
@@ -884,13 +884,13 @@ Sint32 scInit(void)
 	grid = MapGridState[0];
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-	if(syFieldGameFlagGetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT) != 0) {
+	if(syFieldGameFlagGetByte(FLAG_SUHALLA_DESERT_CAPTURE_TICKS_LEFT) != 0) {
 		MainRoutineStateWork.movementMode = LEADER_MOVEMENT_AIRBORNE;
-		sySetFrameEvent(scSuhallaDesertUpdateCaptureTimer, EVENT_PASS_FRAME);
+		sySetTickEvent(scSuhallaDesertUpdateCaptureTimer, EVENT_PASS_TICK);
 	}
 	if(MainRoutineStateWork.next == SCENE_SUHALLA_DESERT_NORTH ||
 		MainRoutineStateWork.next == SCENE_SUHALLA_DESERT_SOUTH) {
-		sSuhallaDesertSavedColor = SUHALLA_REVEAL_PALETTE_COLOR;
+		SuhallaDesertSavedColor = SUHALLA_REVEAL_PALETTE_COLOR;
 		scSuhallaDesertRevealEnds();
 	}
 	if(MainRoutineStateWork.next == SCENE_SUHALLA_DESERT_NORTH) {
@@ -959,7 +959,7 @@ static void scSuhallaDesertSetUpFirstMapStorms(void)
 static void scSuhallaDesertSetUpSecondMapStorms(void)
 {
 	ACTOR *actor;
-	SPR	  *sprite;
+	SPR	  *spr;
 	Sint32 stormId;
 	Sint32 hazeWeight = 0;
 
@@ -980,21 +980,21 @@ static void scSuhallaDesertSetUpSecondMapStorms(void)
 				actor->scaleX = toFIXED(1) / 32;
 				actor->scaleY = toFIXED(1) / 32;
 			}
-			sprite = actor->spr;
-			sprite->flg = 0;
+			spr = actor->spr;
+			spr->flg = 0;
 		}
 	}
 	actor = fdActorGet(ACTOR_FOURTH_SANDSTORM);
 	if(actor != NULL) {
 		SPR_ANIMATION *part;
 
-		sprite = actor->spr;
-		part = sprite->entries[0];
+		spr = actor->spr;
+		part = spr->entries[0];
 		if(part != NULL) {
 			part->colMode = SPRITE_COLOR_RED_TINT;
 		}
-		sprite->dirty = 1;
-		sprite->flg = 0;
+		spr->dirty = 1;
+		spr->flg = 0;
 	}
 	if(gmFlagGet(FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 4)) {
 		gmFlagSet(FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED);
@@ -1014,10 +1014,10 @@ static void scSuhallaDesertSetUpSecondMapStorms(void)
 
 #include "shared/field_effect_duration_scripts.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 Sint32 SuhallaDesertStormScript[] = {

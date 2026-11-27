@@ -74,15 +74,15 @@ typedef enum LEMURIA_PALACE_WAY {
    (scLemuriaPalaceMeetKingHydros). */
 enum { METATILE_BEHAVIOR_BEFORE_THRONE = 20 };
 
-/* The glow palette: every sixth frame its rotating colours move along by one,
-   and every four frames its glow colour takes the next of GLOW_STEPS steps. */
+/* The glow palette: every sixth tick its rotating colours move along by one,
+   and every four ticks its glow colour takes the next of GLOW_STEPS steps. */
 #define GLOW_PALETTE		 12
 #define ROTATING_FIRST_COLOR 1
 #define ROTATING_LAST_COLOR	 14
 #define GLOW_COLOR			 15
 #define GLOW_STEPS			 12
 
-/* What scLemuriaPalaceDrawMaps does with the maps' blend each frame. */
+/* What scLemuriaPalaceDrawMaps does with the maps' blend each tick. */
 typedef enum LEMURIA_PALACE_MAP_MODE {
 	MAP_MODE_HELD,		/* leaves it as the fades set it */
 	MAP_MODE_SHIMMER,	/* the shown map dims a little and back, now and then */
@@ -91,34 +91,34 @@ typedef enum LEMURIA_PALACE_MAP_MODE {
 
 /* The maps' pictures, 64 by 64 pixels of 256 colours each. */
 #define MAP_PICTURE_BYTES (64 * 64)
-/* The steps of LemuriaPalace_MapFadeLevels the shown map shimmers through,
-   eight frames apiece. */
+/* The steps of LemuriaPalaceMapFadeLevels the shown map shimmers through,
+   eight ticks apiece. */
 #define MAP_FADE_STEPS	  16
-/* The steps of LemuriaPalace_MapBlendSteps, four frames apiece: the first map
+/* The steps of LemuriaPalaceMapBlendSteps, four ticks apiece: the first map
    shows from the first and the second from the middle. */
 #define MAP_BLEND_STEPS	  28
 
-extern MAP_GRID_METATILE_ANIMATION LemuriaPalace_Doors[];
-extern MAP_GRID_METATILE_ANIMATION LemuriaPalace_BedroomDoor;
+extern MAP_GRID_METATILE_ANIMATION LemuriaPalaceDoors[];
+extern MAP_GRID_METATILE_ANIMATION LemuriaPalaceBedroomDoor;
 
 void scLemuriaPalaceDrawMaps(void);
 
-extern Uint16 LemuriaPalace_DoorOpening[];
+extern Uint16 LemuriaPalaceDoorOpening[];
 
-Sint32 LemuriaPalace_FirstMapVram	BSS_DATA;
-Sint32 LemuriaPalace_SecondMapShown BSS_DATA;
+Sint32 LemuriaPalaceFirstMapVram   BSS_DATA;
+Sint32 LemuriaPalaceSecondMapShown BSS_DATA;
 /* The sprite each of the two maps is drawn as. */
-EFFECT_SPR LemuriaPalace_SecondMapSprite BSS_DATA ALIGNED(16);
-Sint32 LemuriaPalace_SecondMapTile				  BSS_DATA;
-EFFECT_SPR LemuriaPalace_FirstMapSprite BSS_DATA  ALIGNED(16);
-Sint32 LemuriaPalace_FirstMapTile				  BSS_DATA;
-Sint8 LemuriaPalace_MapMode						  BSS_DATA;
-Sint32 LemuriaPalace_FirstMapShown				  BSS_DATA;
-Sint32 LemuriaPalace_SecondMapVram				  BSS_DATA;
-Sint32 LemuriaPalace_MapTime					  BSS_DATA;
-extern Uint8									  LemuriaPalace_MapFadeLevels[];
-extern const Uint8								  LemuriaPalace_FirstMapTiles[];
-extern const Uint8 LemuriaPalace_SecondMapTiles[];
+EFFECT_SPR LemuriaPalaceSecondMapSprite BSS_DATA ALIGNED(16);
+Sint32 LemuriaPalaceSecondMapTile				 BSS_DATA;
+EFFECT_SPR LemuriaPalaceFirstMapSprite BSS_DATA	 ALIGNED(16);
+Sint32 LemuriaPalaceFirstMapTile				 BSS_DATA;
+Sint8 LemuriaPalaceMapMode						 BSS_DATA;
+Sint32 LemuriaPalaceFirstMapShown				 BSS_DATA;
+Sint32 LemuriaPalaceSecondMapVram				 BSS_DATA;
+Sint32 LemuriaPalaceMapTime						 BSS_DATA;
+extern Uint8									 LemuriaPalaceMapFadeLevels[];
+extern const Uint8								 LemuriaPalace_FirstMapTiles[];
+extern const Uint8								 LemuriaPalace_SecondMapTiles[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -149,12 +149,12 @@ const ACTOR_PLACE *scGetActorPlacements(void)
    bedroom, metatile (56, 4), to the passage up to the room with a painting. */
 void scLemuriaPalaceEnterDoor(Sint32 exit)
 {
-	const MAP_GRID_METATILE_ANIMATION *door = LemuriaPalace_Doors;
+	const MAP_GRID_METATILE_ANIMATION *door = LemuriaPalaceDoors;
 
 	if(exit == WAY_HALL_EAST_DOOR)
 		door++;
 	if(exit == WAY_BEDROOM_DOOR)
-		door = &LemuriaPalace_BedroomDoor;
+		door = &LemuriaPalaceBedroomDoor;
 	scLeaderOpenDoorAndEnter(door, exit, 0);
 }
 
@@ -163,28 +163,28 @@ const CUE *scGetCues(void)
 	return SceneCues;
 }
 
-extern Sint16 LemuriaPalace_GlowColors[];
+extern Sint16 LemuriaPalaceGlowColors[];
 
-/* An event: every sixth frame the glow palette's rotating colours move along by
-   one; every frame its glow colour takes the glow's step for the frame, each
-   step four frames long. */
+/* An event: every sixth tick the glow palette's rotating colours move along by
+   one; every tick its glow colour takes the glow's step for the tick, each
+   step four ticks long. */
 void scLemuriaPalaceCycleGlowCols(void)
 {
-	Sint32 color;
+	Sint32 col;
 
-	if(FrameCount % 6 == 0) {
-		Sint32 index;
+	if(TickCount % 6 == 0) {
+		Sint32 idx;
 
-		color = (Sint16)BG_PLTT_COLOR(GLOW_PALETTE, ROTATING_LAST_COLOR);
-		index = ROTATING_LAST_COLOR;
+		col = (Sint16)BG_PLTT_COLOR(GLOW_PALETTE, ROTATING_LAST_COLOR);
+		idx = ROTATING_LAST_COLOR;
 		do {
-			BG_PLTT_COLOR(GLOW_PALETTE, index) =
-				BG_PLTT_COLOR(GLOW_PALETTE, index - 1);
-		} while(--index != ROTATING_FIRST_COLOR);
-		BG_PLTT_COLOR(GLOW_PALETTE, ROTATING_FIRST_COLOR) = color;
+			BG_PLTT_COLOR(GLOW_PALETTE, idx) =
+				BG_PLTT_COLOR(GLOW_PALETTE, idx - 1);
+		} while(--idx != ROTATING_FIRST_COLOR);
+		BG_PLTT_COLOR(GLOW_PALETTE, ROTATING_FIRST_COLOR) = col;
 	}
-	color = LemuriaPalace_GlowColors[(FrameCount >> 2) % GLOW_STEPS];
-	BG_PLTT_COLOR(GLOW_PALETTE, GLOW_COLOR) = color;
+	col = LemuriaPalaceGlowColors[(TickCount >> 2) % GLOW_STEPS];
+	BG_PLTT_COLOR(GLOW_PALETTE, GLOW_COLOR) = col;
 }
 
 /* The room's setup: it schedules the palette cycle
@@ -192,7 +192,7 @@ void scLemuriaPalaceCycleGlowCols(void)
 Sint32 scInit(void)
 {
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-	sySetFrameEvent(scLemuriaPalaceCycleGlowCols, EVENT_PASS_VBLANK);
+	sySetTickEvent(scLemuriaPalaceCycleGlowCols, EVENT_PASS_VBLANK);
 	scFieldActorSetSprPriority(ACTOR_GIRL_WAITING_ON_THE_KING, 3);
 	if(MainRoutineStateWork.entrance == WAY_DRESSER_ROOM_DOOR)
 		fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
@@ -241,57 +241,56 @@ void scLemuriaPalaceCastMapSparks(Sint32 actorId)
 	syFieldScriptWait(30);
 }
 
-extern Uint16 LemuriaPalace_MapBlendSteps[];
+extern Uint16 LemuriaPalaceMapBlendSteps[];
 
 /* An event: draws the two maps floating above the throne room as they are
-   shown, blending them by LemuriaPalace_MapMode. Each time the alternation
+   shown, blending them by LemuriaPalaceMapMode. Each time the alternation
    turns to a map, a chime sounds. */
 void scLemuriaPalaceDrawMaps(void)
 {
-	VECTOR3 position;
-	Sint8	mode = LemuriaPalace_MapMode;
+	VECTOR3 pos;
+	Sint8	mode = LemuriaPalaceMapMode;
 
 	if(mode == MAP_MODE_SHIMMER) {
-		Sint32 level =
-			LemuriaPalace_MapFadeLevels[(LemuriaPalace_MapTime >> 3) &
-				(MAP_FADE_STEPS - 1)];
+		Sint32 level = LemuriaPalaceMapFadeLevels[(LemuriaPalaceMapTime >> 3) &
+			(MAP_FADE_STEPS - 1)];
 
 		syIOWrite16(level << 8 | (BLEND_WEIGHT_MAX - level), &REG_BLDALPHA);
-		LemuriaPalace_MapTime++;
+		LemuriaPalaceMapTime++;
 	} else if(mode == MAP_MODE_ALTERNATE) {
-		Sint32 *time = &LemuriaPalace_MapTime;
+		Sint32 *time = &LemuriaPalaceMapTime;
 		Sint32	step = (*time >> 2) % MAP_BLEND_STEPS;
 
 		{
-			Sint32 alpha = LemuriaPalace_MapBlendSteps[step];
+			Sint32 alpha = LemuriaPalaceMapBlendSteps[step];
 
 			REG_BLDALPHA = alpha;
 		}
 		if(step == 0) {
-			LemuriaPalace_FirstMapShown = 1;
-			LemuriaPalace_SecondMapShown = step;
+			LemuriaPalaceFirstMapShown = 1;
+			LemuriaPalaceSecondMapShown = step;
 			fdScriptPlaySnd(SE_HIGH_JUMP);
 		}
 		if(step == MAP_BLEND_STEPS / 2) {
-			LemuriaPalace_FirstMapShown = 0;
-			LemuriaPalace_SecondMapShown = 1;
+			LemuriaPalaceFirstMapShown = 0;
+			LemuriaPalaceSecondMapShown = 1;
 			fdScriptPlaySnd(SE_HIGH_JUMP);
 		}
 		(*time)++;
 	}
-	position.x = toFIXED(832);
-	position.y = 0;
-	position.z = toFIXED(448);
-	fdCameraWorldToScreen(&position);
-	if(LemuriaPalace_FirstMapShown != 0) {
-		LemuriaPalace_FirstMapSprite.x = position.x;
-		LemuriaPalace_FirstMapSprite.y = position.z;
-		fdEffectSprDraw(&LemuriaPalace_FirstMapSprite);
+	pos.x = toFIXED(832);
+	pos.y = 0;
+	pos.z = toFIXED(448);
+	fdCameraWorldToScreen(&pos);
+	if(LemuriaPalaceFirstMapShown != 0) {
+		LemuriaPalaceFirstMapSprite.x = pos.x;
+		LemuriaPalaceFirstMapSprite.y = pos.z;
+		fdEffectSprDraw(&LemuriaPalaceFirstMapSprite);
 	}
-	if(LemuriaPalace_SecondMapShown != 0) {
-		LemuriaPalace_SecondMapSprite.x = position.x;
-		LemuriaPalace_SecondMapSprite.y = position.z;
-		fdEffectSprDraw(&LemuriaPalace_SecondMapSprite);
+	if(LemuriaPalaceSecondMapShown != 0) {
+		LemuriaPalaceSecondMapSprite.x = pos.x;
+		LemuriaPalaceSecondMapSprite.y = pos.z;
+		fdEffectSprDraw(&LemuriaPalaceSecondMapSprite);
 	}
 }
 
@@ -299,7 +298,7 @@ void scLemuriaPalaceDrawMaps(void)
    Lunpa's, and starts drawing them. */
 void scLemuriaPalaceLoadMaps(void)
 {
-	void   *buffer = syHeapCallAlternatePool(syHeapAlloc, MAP_PICTURE_BYTES);
+	void   *buf = syHeapCallAlternatePool(syHeapAlloc, MAP_PICTURE_BYTES);
 	Sint32 *firstSlot;
 	Sint32 *firstTile;
 	Sint32 *secondSlot;
@@ -307,70 +306,69 @@ void scLemuriaPalaceLoadMaps(void)
 
 	syIOWrite16(BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL, &REG_BLDCNT);
 	syIOWrite16(BLEND_ALPHA(0, BLEND_WEIGHT_MAX), &REG_BLDALPHA);
-	syDecompressTaggedLZ(LemuriaPalace_FirstMapTiles, buffer);
-	firstSlot = &LemuriaPalace_FirstMapVram;
+	syDecompressTaggedLZ(LemuriaPalace_FirstMapTiles, buf);
+	firstSlot = &LemuriaPalaceFirstMapVram;
 	*firstSlot = syVRAMCacheFindFreeEntry();
-	firstTile = &LemuriaPalace_FirstMapTile;
-	*firstTile =
-		mnVRAMLoad(LemuriaPalace_FirstMapVram, MAP_PICTURE_BYTES, buffer);
-	fdEffectSprInit(&LemuriaPalace_FirstMapSprite, 0, 0, OBJ_SIZE_64X64,
-		LemuriaPalace_FirstMapTile);
-	LemuriaPalace_FirstMapSprite.depth = 1;
-	LemuriaPalace_FirstMapSprite.oam.pri = 2;
-	LemuriaPalace_FirstMapSprite.oam.objMode = 1;
-	LemuriaPalace_FirstMapSprite.oam.fullCol = 1;
-	LemuriaPalace_FirstMapSprite.oam.pal = 0;
-	syDecompressTaggedLZ(LemuriaPalace_SecondMapTiles, buffer);
-	secondSlot = &LemuriaPalace_SecondMapVram;
+	firstTile = &LemuriaPalaceFirstMapTile;
+	*firstTile = mnVRAMLoad(LemuriaPalaceFirstMapVram, MAP_PICTURE_BYTES, buf);
+	fdEffectSprInit(&LemuriaPalaceFirstMapSprite, 0, 0, OBJ_SIZE_64X64,
+		LemuriaPalaceFirstMapTile);
+	LemuriaPalaceFirstMapSprite.depth = 1;
+	LemuriaPalaceFirstMapSprite.oam.pri = 2;
+	LemuriaPalaceFirstMapSprite.oam.objMode = 1;
+	LemuriaPalaceFirstMapSprite.oam.fullCol = 1;
+	LemuriaPalaceFirstMapSprite.oam.pal = 0;
+	syDecompressTaggedLZ(LemuriaPalace_SecondMapTiles, buf);
+	secondSlot = &LemuriaPalaceSecondMapVram;
 	*secondSlot = syVRAMCacheFindFreeEntry();
-	secondTile = &LemuriaPalace_SecondMapTile;
+	secondTile = &LemuriaPalaceSecondMapTile;
 	*secondTile =
-		mnVRAMLoad(LemuriaPalace_SecondMapVram, MAP_PICTURE_BYTES, buffer);
-	fdEffectSprInit(&LemuriaPalace_SecondMapSprite, 0, 0, OBJ_SIZE_64X64,
-		LemuriaPalace_SecondMapTile);
-	LemuriaPalace_SecondMapSprite.depth = 2;
-	LemuriaPalace_SecondMapSprite.oam.pri = 2;
-	LemuriaPalace_SecondMapSprite.oam.objMode = 1;
-	LemuriaPalace_SecondMapSprite.oam.fullCol = 1;
-	LemuriaPalace_SecondMapSprite.oam.pal = 0;
-	LemuriaPalace_FirstMapShown = 0;
-	LemuriaPalace_SecondMapShown = 0;
-	LemuriaPalace_MapTime = 0;
-	LemuriaPalace_MapMode = MAP_MODE_HELD;
-	sySetFrameEvent(scLemuriaPalaceDrawMaps, EVENT_PASS_FRAME);
-	syHeapRelease(buffer);
+		mnVRAMLoad(LemuriaPalaceSecondMapVram, MAP_PICTURE_BYTES, buf);
+	fdEffectSprInit(&LemuriaPalaceSecondMapSprite, 0, 0, OBJ_SIZE_64X64,
+		LemuriaPalaceSecondMapTile);
+	LemuriaPalaceSecondMapSprite.depth = 2;
+	LemuriaPalaceSecondMapSprite.oam.pri = 2;
+	LemuriaPalaceSecondMapSprite.oam.objMode = 1;
+	LemuriaPalaceSecondMapSprite.oam.fullCol = 1;
+	LemuriaPalaceSecondMapSprite.oam.pal = 0;
+	LemuriaPalaceFirstMapShown = 0;
+	LemuriaPalaceSecondMapShown = 0;
+	LemuriaPalaceMapTime = 0;
+	LemuriaPalaceMapMode = MAP_MODE_HELD;
+	sySetTickEvent(scLemuriaPalaceDrawMaps, EVENT_PASS_TICK);
+	syHeapRelease(buf);
 }
 
 /* Stops drawing the maps and frees their tiles. */
 void scLemuriaPalaceFreeMaps(void)
 {
 	syFieldCloseEvent(scLemuriaPalaceDrawMaps);
-	syVRAMCacheFreeEntry(LemuriaPalace_FirstMapVram);
-	syVRAMCacheFreeEntry(LemuriaPalace_SecondMapVram);
+	syVRAMCacheFreeEntry(LemuriaPalaceFirstMapVram);
+	syVRAMCacheFreeEntry(LemuriaPalaceSecondMapVram);
 }
 
-/* Fades the shown map in over 16 steps of four frames, then lets it shimmer. */
+/* Fades the shown map in over 16 steps of four ticks, then lets it shimmer. */
 void scLemuriaPalaceFadeMapsIn(void)
 {
 	Sint32 i;
 
 	syIOWrite16(BLEND_ALPHA(0, BLEND_WEIGHT_MAX), &REG_BLDALPHA);
-	LemuriaPalace_MapMode = MAP_MODE_HELD;
+	LemuriaPalaceMapMode = MAP_MODE_HELD;
 	for(i = 0; i < BLEND_WEIGHT_MAX; i++) {
 		syIOWrite16(BLEND_ALPHA(i, BLEND_WEIGHT_MAX - i), &REG_BLDALPHA);
 		syWait(4);
 	}
 	syIOWrite16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
-	LemuriaPalace_MapMode = MAP_MODE_SHIMMER;
+	LemuriaPalaceMapMode = MAP_MODE_SHIMMER;
 }
 
-/* Fades the shown map out over 16 steps of three frames. */
+/* Fades the shown map out over 16 steps of three ticks. */
 void scLemuriaPalaceFadeMapsOut(void)
 {
 	Sint32 i;
 
 	syIOWrite16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
-	LemuriaPalace_MapMode = MAP_MODE_HELD;
+	LemuriaPalaceMapMode = MAP_MODE_HELD;
 	for(i = 0; i < BLEND_WEIGHT_MAX; i++) {
 		syIOWrite16((i << 8) | (BLEND_WEIGHT_MAX - i), &REG_BLDALPHA);
 		syWait(3);
@@ -385,8 +383,8 @@ void scLemuriaPalaceFadeMapsOut(void)
    spoke of. */
 Sint32 scLemuriaPalaceMeetKingHydros(void)
 {
-	Sint32 answer, frame, growFrame;
-	ACTOR *target;
+	Sint32 answer, frm, growFrm;
+	ACTOR *tgt;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -640,8 +638,8 @@ Sint32 scLemuriaPalaceMeetKingHydros(void)
 	fdScriptWait(32);
 	fdScriptWait(20);
 	scLemuriaPalaceLoadMaps();
-	LemuriaPalace_FirstMapShown = 1;
-	LemuriaPalace_SecondMapShown = 0;
+	LemuriaPalaceFirstMapShown = 1;
+	LemuriaPalaceSecondMapShown = 0;
 	fdScriptPlaySnd(SE_HIGH_JUMP);
 	scLemuriaPalaceFadeMapsIn();
 	fdActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -657,8 +655,8 @@ Sint32 scLemuriaPalaceMeetKingHydros(void)
 	scLemuriaPalaceCastMapSparks(ACTOR_HYDROS);
 	scLemuriaPalaceFadeMapsOut();
 	fdScriptWait(30);
-	LemuriaPalace_FirstMapShown = 0;
-	LemuriaPalace_SecondMapShown = 1;
+	LemuriaPalaceFirstMapShown = 0;
+	LemuriaPalaceSecondMapShown = 1;
 	fdScriptPlaySnd(SE_HIGH_JUMP);
 	scLemuriaPalaceFadeMapsIn();
 	/* "And this...is the map Lunpa had with him when he arrived in
@@ -714,8 +712,8 @@ Sint32 scLemuriaPalaceMeetKingHydros(void)
 	scLemuriaPalaceCastMapSparks(ACTOR_HYDROS);
 	scLemuriaPalaceFadeMapsOut();
 	fdScriptWait(10);
-	LemuriaPalace_MapTime = 0;
-	LemuriaPalace_MapMode = MAP_MODE_ALTERNATE;
+	LemuriaPalaceMapTime = 0;
+	LemuriaPalaceMapMode = MAP_MODE_ALTERNATE;
 	fdScriptWait(150);
 	fdActorStartRepeatedMotion(ACTOR_KRADEN, 3);
 	fdActorSetAttachedEffect(
@@ -753,9 +751,9 @@ Sint32 scLemuriaPalaceMeetKingHydros(void)
 	fdScriptPlaySnd(SE_HIGH_JUMP);
 	/* Waits, two seconds at most, for the alternation to come round to a
 	   map. */
-	for(frame = 0; frame < 120; frame++) {
+	for(frm = 0; frm < 120; frm++) {
 		sySynch(1);
-		if((LemuriaPalace_MapTime >> 2) % (MAP_BLEND_STEPS / 2) == 0)
+		if((LemuriaPalaceMapTime >> 2) % (MAP_BLEND_STEPS / 2) == 0)
 			break;
 	}
 	scLemuriaPalaceFreeMaps();
@@ -1082,8 +1080,8 @@ Sint32 scLemuriaPalaceMeetKingHydros(void)
 	fdActorRunRepeatedMotion(ACTOR_LUNPA, 2);
 	fdScriptWait(10);
 	fdActorJump(ACTOR_LUNPA, 4, 20);
-	/* What Lunpa brings out grows to its height over 16 frames. */
-	for(growFrame = 0; growFrame < 16; growFrame++) {
+	/* What Lunpa brings out grows to its height over 16 ticks. */
+	for(growFrm = 0; growFrm < 16; growFrm++) {
 		fdActorGetById(FIELD_TREASURE_ACTOR)->scaleY += toFIXED(1) / 16;
 		sySynch(1);
 	}
@@ -1226,28 +1224,28 @@ Sint32 scLemuriaPalaceMeetKingHydros(void)
 	fdActorFaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
 	fdActorSetSpeed(ACTOR_KRADEN, 1.2);
 	fdActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
-	target = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	if(target != 0) {
+	tgt = fdActorGetById(MainRoutineStateWork.leaderActorId);
+	if(tgt != 0) {
 		fdActorSetDestination(
-			ACTOR_KRADEN, target->x.part[0].integer, target->z.part[0].integer);
+			ACTOR_KRADEN, tgt->x.part[0].integer, tgt->z.part[0].integer);
 	}
 	fdActorWaitForMoveById(ACTOR_KRADEN);
 	fdActorSetPos(ACTOR_KRADEN, 0, 0);
 	fdActorSetSpeed(ACTOR_JENNA, 1.2);
 	fdActorSetAnimation(ACTOR_JENNA, ANIM_WALK);
-	target = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	if(target != 0) {
+	tgt = fdActorGetById(MainRoutineStateWork.leaderActorId);
+	if(tgt != 0) {
 		fdActorSetDestination(
-			ACTOR_JENNA, target->x.part[0].integer, target->z.part[0].integer);
+			ACTOR_JENNA, tgt->x.part[0].integer, tgt->z.part[0].integer);
 	}
 	fdActorWaitForMoveById(ACTOR_JENNA);
 	fdActorSetPos(ACTOR_JENNA, 0, 0);
 	fdActorSetSpeed(ACTOR_SHEBA, 1.2);
 	fdActorSetAnimation(ACTOR_SHEBA, ANIM_WALK);
-	target = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	if(target != 0) {
+	tgt = fdActorGetById(MainRoutineStateWork.leaderActorId);
+	if(tgt != 0) {
 		fdActorSetDestination(
-			ACTOR_SHEBA, target->x.part[0].integer, target->z.part[0].integer);
+			ACTOR_SHEBA, tgt->x.part[0].integer, tgt->z.part[0].integer);
 	}
 	fdActorWaitForMoveById(ACTOR_SHEBA);
 	fdActorSetPos(ACTOR_SHEBA, 0, 0);
@@ -1263,10 +1261,10 @@ Sint32 scLemuriaPalaceMeetKingHydros(void)
 	fdScriptWait(10);
 	fdActorSetSpeed(ACTOR_PIERS, 1.2);
 	fdActorSetAnimation(ACTOR_PIERS, ANIM_WALK);
-	target = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	if(target != 0) {
+	tgt = fdActorGetById(MainRoutineStateWork.leaderActorId);
+	if(tgt != 0) {
 		fdActorSetDestination(
-			ACTOR_PIERS, target->x.part[0].integer, target->z.part[0].integer);
+			ACTOR_PIERS, tgt->x.part[0].integer, tgt->z.part[0].integer);
 	}
 	fdActorWaitForMoveById(ACTOR_PIERS);
 	fdActorSetPos(ACTOR_PIERS, 0, 0);
@@ -1344,9 +1342,9 @@ ACTOR_PLACE ActorPlacements[] = {
 /* clang-format on */
 
 /* clang-format off */
-/* How a palace door opens, as two frames of metatiles copied over the closed */
+/* How a palace door opens, as two ticks of metatiles copied over the closed */
 /* door. */
-Uint16 LemuriaPalace_DoorOpening[] = {
+Uint16 LemuriaPalaceDoorOpening[] = {
 	MAPGRID_ANIMATION_STEP(1, 52, 1, 2, 6),
 	MAPGRID_ANIMATION_STEP(2, 52, 1, 2, 6),
 	MAPGRID_ANIMATION_STEPS_END,
@@ -1358,14 +1356,14 @@ Uint16 LemuriaPalace_DoorOpening[] = {
 
 /* The openings of the entrance hall's west and east doors, at their places */
 /* on the map grid. */
-MAP_GRID_METATILE_ANIMATION LemuriaPalace_Doors[] = {
-	{LemuriaPalace_DoorOpening, 5, 23},
-	{LemuriaPalace_DoorOpening, 30, 23},
+MAP_GRID_METATILE_ANIMATION LemuriaPalaceDoors[] = {
+	{LemuriaPalaceDoorOpening, 5, 23},
+	{LemuriaPalaceDoorOpening, 30, 23},
 };
 
 /* The opening of the bedroom's north door, at its place on the map grid. */
-MAP_GRID_METATILE_ANIMATION LemuriaPalace_BedroomDoor = {
-	LemuriaPalace_DoorOpening, 56, 4};
+MAP_GRID_METATILE_ANIMATION LemuriaPalaceBedroomDoor = {
+	LemuriaPalaceDoorOpening, 56, 4};
 
 CUE SceneCues[] = {
 	{CUE_EXIT, LEMURIA_PALACE_TO_LEMURIA_SOUTH, CONDITION_ALWAYS, LEMURIA_PALACE_TO_LEMURIA_SOUTH},
@@ -1425,7 +1423,7 @@ CUE SceneCues[] = {
 };
 
 /* The glow's colours, in turn. */
-Sint16 LemuriaPalace_GlowColors[] = {
+Sint16 LemuriaPalaceGlowColors[] = {
 	RGB(0, 24, 30), RGB(0, 22, 29), RGB(0, 20, 28), RGB(0, 18, 27),
 	RGB(0, 16, 26), RGB(0, 14, 25), RGB(0, 12, 24), RGB(0, 14, 25),
 	RGB(0, 16, 26), RGB(0, 18, 27), RGB(0, 20, 28), RGB(0, 22, 29),
@@ -1434,7 +1432,7 @@ Sint16 LemuriaPalace_GlowColors[] = {
 
 /* The blend weights the hall's two maps flicker between as one fades into the
    other. */
-LATE_DATA ALIGNED(4) Uint16 LemuriaPalace_MapBlendSteps[] = {
+LATE_DATA ALIGNED(4) Uint16 LemuriaPalaceMapBlendSteps[] = {
 	BLEND_ALPHA(2, 14),
 	BLEND_ALPHA(4, 12),
 	BLEND_ALPHA(6, 10),

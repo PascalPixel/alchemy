@@ -49,7 +49,7 @@ struct EFFECT_SPR;
 void *btEffectSprAcquire(
 	Sint32 width, Sint32 height, Uint32 shape, Sint32 mode);
 void *btEffectSprCreateWithTiles(
-	Sint32 width, Sint32 height, Sint32 attributes, Sint32 flags);
+	Sint32 width, Sint32 height, Sint32 attributes, Sint32 flg);
 
 /* A point of a streak: x, y and z. */
 typedef struct STREAK_POINT {
@@ -72,9 +72,9 @@ typedef struct PLUNGE_STREAK {
 /* The element streaks' state, which btEffectStartElementStreaks allocates in
    the HEAP_SLOT_BATTLE_EFFECT heap slot in place of the battle effect state. */
 typedef struct ELEMENT_STREAKS_STATE {
-	Sint32 frm;			 /* the streaks' frame count (btEffectDrawStreaks) */
+	Sint32 frm;			 /* the streaks' tick count (btEffectDrawStreaks) */
 	Sint32 halvePending; /* the streaks are drawn: halve the canvas into VRAM */
-	/* Frames of the background's fade left (btEffectDimBackgroundStep). */
+	/* Ticks of the background's fade left (btEffectDimBackgroundStep). */
 	Sint32 fadeFrm;
 	Sint32 fadeStep; /* the fade's steps so far, BACKGROUND_LEVEL_STEP each */
 } ELEMENT_STREAKS_STATE;
@@ -106,16 +106,16 @@ typedef struct DROPLET_BUFFER {
 
 /* Eclipse's scale for the dragon's sprites, and Cruel Ruin's for its summon,
    one to one. */
-extern const SCALE Eclipse_DragonScale;
-extern const SCALE CruelRuin_UnitScale;
+extern const SCALE EclipseDragonScale;
+extern const SCALE CruelRuinUnitScale;
 
 /* One handler for each battle effect, by effect less one; 0 where none. */
-extern void (*const BattleEffect_Handlers[])(BATTLE_EFFECT_PARM *args);
+extern void (*const BattleEffectHandlers[])(BATTLE_EFFECT_PARM *args);
 
 /* Zagan's scale, one to one. */
-extern const SCALE Zagan_UnitScale;
+extern const SCALE ZaganUnitScale;
 
-extern const SCALE Procne_UnitScale; /* the comets' unit scale */
+extern const SCALE ProcneUnitScale; /* the comets' unit scale */
 
 /* The battle screen's display mode while an effect plays: background mode 1
    with BG0 to BG2, sprites and both windows on. */
@@ -170,14 +170,14 @@ extern const SCALE Procne_UnitScale; /* the comets' unit scale */
 
 /* The particles the map cell buffer holds when an effect lays its particles
    over it from the start. */
-#define PARTICLE_POOL_COUNT	 1024
+#define PARTICLE_POOL_COUNT 1024
 /* Nereid's drops burst up, in btEffectRunNereid and in the unused copy of it:
    every free one of the first NEREID_BURST_DROPS as the columns gather, then
-   NEREID_DROPS_A_FRAME a frame while they rise. */
-#define NEREID_BURST_DROPS	 256
-#define NEREID_DROPS_A_FRAME 16
+   NEREID_DROPS_A_TICK a tick while they rise. */
+#define NEREID_BURST_DROPS	256
+#define NEREID_DROPS_A_TICK 16
 /* The sprites that draw Megaera, in her summon and in her formation. */
-#define MEGAERA_OBJECTS		 11
+#define MEGAERA_OBJECTS		11
 
 /* The canvas: 128x128 pixels, one byte each, in its heap slot and in VRAM at
    BG_CHAR_BLOCK(1) (CANVAS_BYTES). */
@@ -229,10 +229,10 @@ extern const SCALE Procne_UnitScale; /* the comets' unit scale */
 	}
 
 /* Three summons open alike (Eclipse, Daedalus and Flora): the battle flashes
-   away over SUMMON_OPENING_FRAMES, and at SUMMON_OPENING_LOAD_FRAME their sky
+   away over SUMMON_OPENING_TICKS, and at SUMMON_OPENING_LOAD_TICK their sky
    and their sprites load. */
-#define SUMMON_OPENING_FRAMES	  52
-#define SUMMON_OPENING_LOAD_FRAME 27
+#define SUMMON_OPENING_TICKS	 52
+#define SUMMON_OPENING_LOAD_TICK 27
 
 /* Windows 0 and 1 both cover the battle view: the full width, lines 16 to
    135. */
@@ -253,12 +253,12 @@ extern const SCALE Procne_UnitScale; /* the comets' unit scale */
    the battle's BATTLE_PROJECTION_CENTER_Y. */
 #define SUMMON_PROJECTION_CENTER_Y 240
 
-/* The frames the battle background darkens behind an effect's canvas
+/* The ticks the battle background darkens behind an effect's canvas
    (state->fadeFrm, btEffectDarkenBackgroundStep). */
-#define BACKGROUND_DARKEN_FRAMES  24
+#define BACKGROUND_DARKEN_TICKS	  24
 /* The level btBackgroundLoadStub darkens the battle's own background to as it
    comes back after an effect: as dark as the canvas's fade left it. */
-#define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
+#define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_TICKS
 
 /* A sprite sheet resource opens with its 64 colours, ahead of its compressed
    pictures. */
@@ -344,7 +344,7 @@ typedef enum MODEL_KIND {
 #define MODEL_ONE_SIDED 2
 #define MODEL_CLOCKWISE 1
 
-/* Starts a frame's 3D projection from the battle camera. */
+/* Starts a tick's 3D projection from the battle camera. */
 #define EFFECT_VIEW_FROM_CAMERA(camera) \
 	(syInitMatrix(), syLookAtLoad((camera)->eye, (camera)->focus))
 
@@ -357,7 +357,7 @@ typedef enum MODEL_KIND {
 
 /* Draws flare picture `size`, a square, centred on (x, y). */
 #define EFFECT_DRAW_FLARE(draw, canvas, sheet, x, y, size) \
-	(draw)(canvas, (sheet) + BattleEffect_FlarePictures[(size) - 1], \
+	(draw)(canvas, (sheet) + BattleEffectFlarePictures[(size) - 1], \
 		(x) - (size), (y) - (size), (size) * 2, (size) * 2)
 
 /* The reaper in CounterRevealSheet, which Condemn and Mortal Danger decode: the
@@ -442,7 +442,7 @@ typedef enum RED_CRESCENT_PICTURE {
 #define CRYSTAL_WIDTH				  32
 #define CRYSTAL_HEIGHT				  64
 /* CrystalSheet's shard pictures, after its crystal, and the shards of
-   Prism_ShardStarts a crystal breaks into. */
+   PrismShardStarts a crystal breaks into. */
 #define CRYSTAL_SHARD_PICTURES		  PICTURE_BYTES(CRYSTAL)
 #define SHARDS_PER_CRYSTAL			  16
 /* BoulderSheet's boulder, its first picture, and its shard pictures after
@@ -453,7 +453,7 @@ typedef enum RED_CRESCENT_PICTURE {
 /* A shard turns through its three pictures, one each SHARD_TURN of its
    variant. */
 #define SHARD_TURN					  96
-/* PaletteRampImage's shard pictures (drawn through StatChange_ShardPictures),
+/* PaletteRampImage's shard pictures (drawn through StatChangeShardPictures),
    where the stat reduction and the Sword Card decode them in the sprite sheet,
    followed by DIMMED_COPIES - 1 copies of them, each darker than the one
    before. */
@@ -504,8 +504,8 @@ typedef enum RED_CRESCENT_PICTURE {
    SkullSheet's skulls and the tornado strips after TornadoSheet's glints. */
 #define SMOKE_PUFF_WIDTH		  24
 #define SMOKE_PUFF_HEIGHT		  48
-/* A puff of SmokeSheet's lives through its six pictures, four frames each. */
-#define SMOKE_PUFF_FRAMES		  (6 * 4)
+/* A puff of SmokeSheet's lives through its six pictures, four ticks each. */
+#define SMOKE_PUFF_TICKS		  (6 * 4)
 #define FLASH_BURST_WIDTH		  32
 #define FLASH_BURST_HEIGHT		  64
 /* FlashBurstSheet's six pictures: a white flash turning to a fireball that
@@ -578,18 +578,18 @@ typedef enum RED_CRESCENT_PICTURE {
 #define BATTLE_SHEET_BYTES (FLARE_SET_BYTES + 10)
 #define MOTE_PICTURES	   10
 
-/* The columns of TargetStrike_Styles, one row a style. */
+/* The columns of TargetStrikeStyles, one row a style. */
 typedef enum TARGET_STRIKE_COLUMN {
-	TARGET_STRIKE_KIND,			  /* STRIKE_KIND_SLASH or STRIKE_KIND_BITE */
-	TARGET_STRIKE_HITS,			  /* slashes or bites */
-	TARGET_STRIKE_FLAGS,		  /* the extras (STRIKE_SMOKE and on) */
-	TARGET_STRIKE_COLOR,		  /* the background's palette (STRIKE_COLOR_) */
-	TARGET_STRIKE_PICTURE_FRAMES, /* frames each picture shows */
-	TARGET_STRIKE_COMPOSITE,	  /* the bites' blitter mode */
-	TARGET_STRIKE_FRAMES		  /* the effect's length */
+	TARGET_STRIKE_KIND,			 /* STRIKE_KIND_SLASH or STRIKE_KIND_BITE */
+	TARGET_STRIKE_HITS,			 /* slashes or bites */
+	TARGET_STRIKE_FLAGS,		 /* the extras (STRIKE_SMOKE and on) */
+	TARGET_STRIKE_COLOR,		 /* the background's palette (STRIKE_COLOR_) */
+	TARGET_STRIKE_PICTURE_TICKS, /* ticks each picture shows */
+	TARGET_STRIKE_COMPOSITE,	 /* the bites' blitter mode */
+	TARGET_STRIKE_TICKS			 /* the effect's length */
 } TARGET_STRIKE_COLUMN;
 
-/* The two kinds of target strike (TargetStrike_Styles). */
+/* The two kinds of target strike (TargetStrikeStyles). */
 #define STRIKE_KIND_SLASH 0 /* sideways slashes */
 /* Rows of fangs above and below the target that close on it. */
 #define STRIKE_KIND_BITE  1
@@ -615,7 +615,7 @@ typedef enum TARGET_STRIKE_COLUMN {
 #define STRIKE_COLOR_LIGHTNING 5 /* LightningBoltSheet's */
 #define STRIKE_COLOR_ORANGE	   6 /* OrangePaletteB */
 
-/* The target strike styles, rows of TargetStrike_Styles: The Broken Seal's
+/* The target strike styles, rows of TargetStrikeStyles: The Broken Seal's
    twelve, then this game's own. */
 typedef enum TARGET_STRIKE_STYLE {
 	TARGET_STRIKE_STYLE_BLUE_SPARK_BITES,
@@ -656,9 +656,9 @@ typedef enum TARGET_STRIKE_STYLE {
 
 /* Strikes target `i`: it flashes white in its damage pose and is knocked back
    by `motion`. */
-#define EFFECT_STRIKE_TARGET(effect, i, frames, motion) \
+#define EFFECT_STRIKE_TARGET(effect, i, ticks, motion) \
 	(btEffectTintBattler( \
-		 (effect)->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, frames), \
+		 (effect)->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, ticks), \
 		btMotionApplyKnockbackStub((effect)->tgts[i], motion))
 
 /* A blitter that clips its rectangles to the canvas. */
@@ -682,23 +682,23 @@ typedef enum TARGET_STRIKE_STYLE {
 #define EFFECT_SET_TRANSFER(state, mode, value) \
 	((state)->transferMode = (mode), (state)->transferValue = (value))
 
-/* Sets the transfer, then starts copying the canvas to VRAM once a frame. */
+/* Sets the transfer, then starts copying the canvas to VRAM once a tick. */
 #define EFFECT_START_TRANSFER(state, mode, value) \
 	(EFFECT_SET_TRANSFER(state, mode, value), \
 		sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK))
 
-/* Presents the canvas and waits for the next frame. */
+/* Presents the canvas and waits for the next tick. */
 #define EFFECT_PRESENT_CANVAS(state) ((state)->transferPending = 1, sySynch(1))
 
 /* Waits until a VBlank has passed since the one that last copied the canvas. */
 /* DEAD: each test reads the count twice and drops the first read; the ROM keeps
    both loads. */
 #define WAIT_TRANSFER(state) \
-	while((state)->vblanksSinceTransfer, (state)->vblanksSinceTransfer <= 1)
+	while((state)->framesSinceTransfer, (state)->framesSinceTransfer <= 1)
 
-/* The usual end of an effect's frame: counts down the targets' flash timers,
+/* The usual end of an effect's tick: counts down the targets' flash timers,
    then presents the canvas. */
-#define EFFECT_END_FRAME(state) \
+#define EFFECT_END_TICK(state) \
 	(btEffectCountDownBattlerTints(), EFFECT_PRESENT_CANVAS(state))
 
 /* Frees the two blitters, the second first. */
@@ -722,7 +722,7 @@ typedef enum TARGET_STRIKE_STYLE {
 /* Draws mote picture `size` (1 to MOTE_SIZE_MAX: size pixels wide, twice that
    tall), centred across x and standing on y. */
 #define EFFECT_DRAW_MOTE(draw, canvas, sheet, x, y, size) \
-	(draw)(canvas, (sheet) + BattleEffect_MotePictures[(size) - 1], \
+	(draw)(canvas, (sheet) + BattleEffectMotePictures[(size) - 1], \
 		(x) - (size) / 2, (y) - (size), size, (size) * 2)
 
 /* Marks particles[0] to particles[count - 1] free: a particle whose variant is
@@ -869,8 +869,8 @@ typedef enum RUSHING_STRIKE_MODE {
 /* The mirrored wall's modes (btEffectRunMirroredWall), each named for the
    effect that plays it. */
 typedef enum MIRRORED_WALL_MODE {
-	MIRRORED_WALL_SPASM, /* actual size, a gentle shake for 32 frames */
-	/* A ninth wider than Spasm's, a hard shake for 8 frames. */
+	MIRRORED_WALL_SPASM, /* actual size, a gentle shake for 32 ticks */
+	/* A ninth wider than Spasm's, a hard shake for 8 ticks. */
 	MIRRORED_WALL_BERSERK,
 	/* A ninth wider than Spasm's, no shake, in the Fireball colours. */
 	MIRRORED_WALL_RECOVERY,
@@ -929,7 +929,7 @@ void btEffectSetupCanvasTileMap(void);
 void btEffectHideBg1AndRestoreBackdrop(void);
 void btEffectTransferFullScreenImage(void);
 void btEffectDrawClippedCanvasLine(
-	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 color);
+	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 col);
 void btEffectBuildCanvasTilemap(void);
 /* The 64x64 stamp Haures draws in 256 colours: the VRAM address of its sprite's
    tiles, two words before the state's end, past what struct BATTLE_EFFECT_STATE
@@ -947,15 +947,15 @@ void btEffectBuildCanvasBlitters(Sint32 flip, DRAW_RECTANGLE *out);
 
 /* prism.c */
 void btEffectUpdatePhasePalette(
-	Sint32 frame, Sint32 redPhase, Sint32 greenPhase, Sint32 bluePhase);
+	Sint32 frm, Sint32 redPhase, Sint32 greenPhase, Sint32 bluePhase);
 
 /* djinn_heal.c state->cameraPhase, which btCameraApplyPhasedDelta and the
    effects that turn the camera through it (Fire, Froth) pass between them. */
 typedef enum CAMERA_PHASE {
 	CAMERA_PHASE_IDLE, /* nothing marked since the last turn */
-	/* the effect has finished a frame: turn the whole delta */
-	CAMERA_PHASE_FRAME_DONE,
-	CAMERA_PHASE_HALF_TURNED /* half a delta turned on an unmarked frame */
+	/* the effect has finished a tick: turn the whole delta */
+	CAMERA_PHASE_TICK_DONE,
+	CAMERA_PHASE_HALF_TURNED /* half a delta turned on an unmarked tick */
 } CAMERA_PHASE;
 
 void btCameraApplyPhasedDelta(void);
@@ -965,10 +965,10 @@ void btEffectShowLivingTargets(BATTLE_EFFECT_PARM *args);
 void btEffectCallNoOperation(Sint32 cnt);
 void btEffectBuildWindowEdgeTable(void);
 
-/* battler_tint.c Shows a battler in a palette and a pose, for `frames` frames
-   counted in timer slot `timerSlot`; TINT_KEEP leaves any of them as it is. */
-void btEffectTintBattler(Sint32 unitId, Sint32 palette, Sint32 pose,
-	Sint32 timerSlot, Sint32 frames);
+/* battler_tint.c Shows a battler in a palette and a pose, for `ticks` ticks
+   counted in timer slot `tmrSlot`; TINT_KEEP leaves any of them as it is. */
+void btEffectTintBattler(
+	Sint32 unitId, Sint32 palette, Sint32 pose, Sint32 tmrSlot, Sint32 ticks);
 void btEffectSetupBlendedDisp(void);
 
 /* stat_change.c */
@@ -977,7 +977,7 @@ void btEffectRunDull(BATTLE_EFFECT_PARM *args);
 void btEffectRunWeaken(BATTLE_EFFECT_PARM *args);
 
 /* eruption.c */
-void btEffectCreateSprs(Sint32 count, Sint32 spriteId, Uint32 priority);
+void btEffectCreateSprs(Sint32 cnt, Sint32 sprId, Uint32 pri);
 
 /* projectiles.c */
 void btParticleAdvanceWithGravity3D(
@@ -987,7 +987,7 @@ void btParticleAdvanceWithGravity2D(
 void btEffectRunDjinniEntrance(
 	BATTLE_EFFECT_PARM *effect, Uint32 packed, Sint32 *screen, Sint32 *world);
 void btEffectSetApproachMotion(
-	Sint32 id, Sint32 targetId, Sint32 frames, Sint32 rate);
+	Sint32 id, Sint32 tgtId, Sint32 ticks, Sint32 rate);
 
 /* djinn_attacks.c */
 void btResourceLoadAndDecompress(
@@ -1002,22 +1002,21 @@ SPR_ANIMATION *btAnimationObjectAllocateEmpty(void);
 
 /* spider_web.c */
 void btEffectStartActorMotion(Sint32 id, Sint32 force, Sint32 acceleration,
-	Sint32 speedLimit, Sint32 velocityY, Sint32 percent);
+	Sint32 speedLimit, Sint32 velY, Sint32 percent);
 void btRenderBuildQuadStrip(
-	struct STRIP_QUAD *quad, Sint32 width, Sint32 height, Sint32 count);
+	struct STRIP_QUAD *quad, Sint32 width, Sint32 height, Sint32 cnt);
 void btEffectRunSwirlSwipe(BATTLE_EFFECT_PARM *effect, Sint32 mode);
 void btPaletteMirrorBgCols(void);
 void btGraphicsLoadGreyRamp(void);
 
 /* azul.c */
-void btEffectPosProjectBattler(Sint32 id, SCREEN_POINT *position);
+void btEffectPosProjectBattler(Sint32 id, SCREEN_POINT *pos);
 /* The middle between the first and the last target. */
-void btEffectGetTargetsMidpoint(SCREEN_POINT *position);
+void btEffectGetTargetsMidpoint(SCREEN_POINT *pos);
 void btMeshBuildGrid(MESH_TRIANGLE *triangles, Sint32 columns, Sint32 rows,
 	Sint32 cellWidth, Sint32 cellHeight);
-void btColBufferScaleStub(
-	void *source, void *destination, Sint32 scale, Sint32 count);
-void btEffectPosProjectSpr(Sint32 id, SCREEN_POINT *position);
+void btColBufferScaleStub(void *src, void *dst, Sint32 scale, Sint32 cnt);
+void btEffectPosProjectSpr(Sint32 id, SCREEN_POINT *pos);
 
 /* positions.c */
 void btEffectRunCastingImpact(BATTLE_EFFECT_PARM *action, Sint32 kind);
@@ -1036,7 +1035,7 @@ void btEffectPlaceFormationSprs(Sint32 formation, Sint32 x, Sint32 z);
 void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y);
 void btEffectArmPaletteHBlankDMA(void);
 void fdRenderApplyProjectedPlacementStub(
-	SPR *sprite, Sint32 *position, Sint32 *scale, Sint32 mode);
+	SPR *spr, Sint32 *pos, Sint32 *scale, Sint32 mode);
 
 /* ramses.c An actor's recoil motion, through a stub call. */
 void btMotionApplyKnockbackStub(Sint32 actor, Sint32 motion);
@@ -1091,8 +1090,7 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *effect, Sint32 mode);
 void btEffectRunCards(BATTLE_EFFECT_PARM *effect, Sint32 mode);
 
 /* breaths.c */
-void btCanvasBlitMirroredQuarters(
-	void *source, Sint32 x, Sint32 y, Sint32 size);
+void btCanvasBlitMirroredQuarters(void *src, Sint32 x, Sint32 y, Sint32 size);
 void btEffectRunBreaths(BATTLE_EFFECT_PARM *effect, Sint32 mode);
 void btEffectRunCrescentSlash(BATTLE_EFFECT_PARM *effect, Sint32 mode);
 
@@ -1106,16 +1104,15 @@ void btEffectRunBallAttack(BATTLE_EFFECT_PARM *effect);
 /* odyssey.c The five-argument blitter builder's stub call, which only a call in
    odyssey.c that is never taken names. */
 Sint32 btEffectBuildBlitterStub(Sint32 slot, Sint32 widthShift,
-	Sint32 heightShift, Sint32 flags, Uint32 mode);
+	Sint32 heightShift, Sint32 flg, Uint32 mode);
 void   btIrisWipeScreen(Uint8 side, Uint8 speed, void (*midpoint)(void));
 void   btIrisRestoreBattle(void);
 void   btEffectBuildSteepShadeRampWave(
-	  Uint8 *table, Uint32 count, Uint32 repeats, Sint32 scale);
+	  Uint8 *tbl, Uint32 cnt, Uint32 repeats, Sint32 scale);
 
 /* moloch.c */
-RENDER_MODEL *btRenderAllocateModelList(Sint32 count);
-void		  btRenderTransformVertices(
-			 const void *corners, void *vertices, Sint32 count);
+RENDER_MODEL *btRenderAllocateModelList(Sint32 cnt);
+void btRenderTransformVertices(const void *corners, void *vertices, Sint32 cnt);
 
 /* target_motes.c Glowing orbs spiral in on each target.
 
@@ -1128,10 +1125,9 @@ void   btActorSpawnObjectsForListStub(Sint16 *list, Sint32 mode);
 void   btBackgroundLoadStub(Sint32 mode, Sint32 resource, Sint32 level);
 void   btBackgroundSetModeStub(Sint32 mode, Sint32 resource, Sint32 speed);
 void   btBackgroundSetPaletteLevelStub(Sint32 background, Sint32 level);
-/* Turns the battle camera, over `frames` frames, to look at the point between
+/* Turns the battle camera, over `ticks` ticks, to look at the point between
    two units. */
-void btCameraSetViewAtPairMidpointStub(
-	Sint32 actor, Sint32 target, Sint32 frames);
+void btCameraSetViewAtPairMidpointStub(Sint32 actor, Sint32 tgt, Sint32 ticks);
 void btCameraSetViewStub(Sint32 x, Sint32 depth, Sint32 y, Sint32 zoom);
 void btObjectPutStub(void);
 /* Spawns the battle objects of a list of units through its stub call. */
@@ -1142,7 +1138,7 @@ void btPlaybackStartStub(Sint32 phase);
 /* Whether an enemy's sprite takes the heavy impact, through its stub call. */
 Sint32 btSprHasHeavyImpactStub(Sint32 enemyId);
 Sint32 btUnitGetEffectHeightStub(Sint32 unit);
-void  *btActorGetSprStub(void *object, Sint32 index);
+void  *btActorGetSprStub(void *object, Sint32 idx);
 void   btObjectDestroySprsStub(Sint32 actor);
 void   fdSprRemoveAnimationStub(void *record, Sint32 entry);
 void   fdActorShadowLoadTilesStub(void);
@@ -1151,734 +1147,734 @@ void   fdActorShadowFreeTilesStub(void);
 /* The tables of effect_table.c, in its order. */
 
 /* Where each size of mote and of flare starts in its sprite sheet, in bytes. */
-extern Uint16 BattleEffect_MotePictures[];
-extern Uint16 BattleEffect_FlarePictures[];
+extern Uint16 BattleEffectMotePictures[];
+extern Uint16 BattleEffectFlarePictures[];
 /* Where each of Cruel Ruin's circles starts in its sprite sheet. */
-extern const Uint16 CruelRuin_CirclePictures[];
+extern const Uint16 CruelRuinCirclePictures[];
 /* The pictures several effects share: the sparkles, the ember puff that rises
    in six pictures, and the six glints, with their sizes and offsets. */
-extern Uint16 BattleEffect_SparklePictures[];
-extern Uint8  BattleEffect_SparkleSizes[];
-extern Uint8  BattleEffect_EmberStreakPictureWidths[];
-extern Uint8  BattleEffect_EmberStreakPictureHeights[];
-extern Uint8  BattleEffect_EmberStreakPictureBiasY[];
-extern Uint16 BattleEffect_EmberStreakPictures[];
-extern Uint16 BattleEffect_GlintPictures[];
-extern Uint8  BattleEffect_GlintPictureWidths[];
-extern Uint8  BattleEffect_GlintPictureHeights[];
+extern Uint16 BattleEffectSparklePictures[];
+extern Uint8  BattleEffectSparkleSizes[];
+extern Uint8  BattleEffectEmberStreakPictureWidths[];
+extern Uint8  BattleEffectEmberStreakPictureHeights[];
+extern Uint8  BattleEffectEmberStreakPictureBiasY[];
+extern Uint16 BattleEffectEmberStreakPictures[];
+extern Uint16 BattleEffectGlintPictures[];
+extern Uint8  BattleEffectGlintPictureWidths[];
+extern Uint8  BattleEffectGlintPictureHeights[];
 /* Spire's shard pictures. */
-extern Uint8  Spire_ShardWidths[];
-extern Uint8  Spire_ShardHeights[];
-extern Uint16 Spire_ShardPictures[];
+extern Uint8  SpireShardWidths[];
+extern Uint8  SpireShardHeights[];
+extern Uint16 SpireShardPictures[];
 /* The stat change's shard pictures. */
-extern Uint16 StatChange_ShardPictures[];
-extern Uint8  StatChange_ShardWidths[];
-extern Uint8  StatChange_ShardHeights[];
+extern Uint16 StatChangeShardPictures[];
+extern Uint8  StatChangeShardWidths[];
+extern Uint8  StatChangeShardHeights[];
 /* Where the Death Card's Reaper draws its seven panels, seven x for each
    side. */
-extern Uint8 Reaper_PictureX[];
-extern Uint8 Reaper_PictureY[];
-/* Ice's shards and frames, and Douse's drops, by variant. */
-extern Uint8 Ice_Counts[];
-extern Uint8 Douse_Counts[];
+extern Uint8 ReaperPictureX[];
+extern Uint8 ReaperPictureY[];
+/* Ice's shards and ticks, and Douse's drops, by variant. */
+extern Uint8 IceCounts[];
+extern Uint8 DouseCounts[];
 /* The streaks' styles, and the struck target's tremble. */
-extern Sint8 Streak_Styles[];
-extern Sint8 Streak_Tremble[];
+extern Sint8 StreakStyles[];
+extern Sint8 StreakTremble[];
 /* The target strikes: their styles (TARGET_STRIKE_COLUMN), the slash pictures
    and how far each reaches, the bite's stages and the glints' flips. */
-extern Uint8  TargetStrike_Styles[][7];
-extern Uint8  TargetStrike_Widths[];
-extern Uint8  TargetStrike_Heights[];
-extern Uint16 TargetStrike_Pictures[];
-extern Uint8  TargetStrike_Reach[];
-extern Uint8  TargetStrike_BiteStages[];
-extern Uint8  TargetStrike_GlintDrawFlags[];
+extern Uint8  TargetStrikeStyles[][7];
+extern Uint8  TargetStrikeWidths[];
+extern Uint8  TargetStrikeHeights[];
+extern Uint16 TargetStrikePictures[];
+extern Uint8  TargetStrikeReach[];
+extern Uint8  TargetStrikeBiteStages[];
+extern Uint8  TargetStrikeGlintDrawFlags[];
 /* The 33 pieces the screen shatters into as Death Plunge opens: their pictures
    and where they start. */
-extern Uint8  ShatteringOpening_PieceWidths[];
-extern Uint8  ShatteringOpening_PieceHeights[];
-extern Uint16 ShatteringOpening_PiecePictures[];
-extern Uint8  ShatteringOpening_PieceStartX[];
-extern Uint8  ShatteringOpening_PieceStartY[];
+extern Uint8  ShatteringOpeningPieceWidths[];
+extern Uint8  ShatteringOpeningPieceHeights[];
+extern Uint16 ShatteringOpeningPiecePictures[];
+extern Uint8  ShatteringOpeningPieceStartX[];
+extern Uint8  ShatteringOpeningPieceStartY[];
 /* The element burst's four corner sparks: their places and flips. */
-extern Sint8 ElementBurst_SparkX[];
-extern Sint8 ElementBurst_SparkY[];
-extern Uint8 ElementBurst_GlintFlips[];
+extern Sint8 ElementBurstSparkX[];
+extern Sint8 ElementBurstSparkY[];
+extern Uint8 ElementBurstGlintFlips[];
 /* Cruel Ruin: the streak's corners, the discs' turns, the pillars, the blasts,
    and each streak's start, size, path and roll. */
-extern const MODEL_VERTEX CruelRuin_StreakCorners[];
-extern const Uint16		  CruelRuin_DiscPitches[];
-extern const Uint16		  CruelRuin_DiscYaws[];
-extern const Uint8		  CruelRuin_PillarSways[];
-extern const Uint8		  CruelRuin_PillarWidths[];
-extern const Uint8		  CruelRuin_BlastFrames[];
-extern const Uint8		  CruelRuin_BlastSizes[];
-extern const Uint8		  CruelRuin_BlastX[];
-extern const Uint8		  CruelRuin_BlastY[];
-extern const Uint8		  CruelRuin_StreakStarts[];
-extern const Uint8		  CruelRuin_StreakSizes[];
-extern const Uint8		  CruelRuin_StreakX[];
-extern const Uint8		  CruelRuin_StreakStepX[];
-extern const Uint8		  CruelRuin_StreakStepY[];
-extern const Uint8		  CruelRuin_StreakEndY[];
-extern const Sint32		  CruelRuin_StreakRolls[];
+extern const MODEL_VERTEX CruelRuinStreakCorners[];
+extern const Uint16		  CruelRuinDiscPitches[];
+extern const Uint16		  CruelRuinDiscYaws[];
+extern const Uint8		  CruelRuinPillarSways[];
+extern const Uint8		  CruelRuinPillarWidths[];
+extern const Uint8		  CruelRuinBlastTicks[];
+extern const Uint8		  CruelRuinBlastSizes[];
+extern const Uint8		  CruelRuinBlastX[];
+extern const Uint8		  CruelRuinBlastY[];
+extern const Uint8		  CruelRuinStreakStarts[];
+extern const Uint8		  CruelRuinStreakSizes[];
+extern const Uint8		  CruelRuinStreakX[];
+extern const Uint8		  CruelRuinStreakStepX[];
+extern const Uint8		  CruelRuinStreakStepY[];
+extern const Uint8		  CruelRuinStreakEndY[];
+extern const Sint32		  CruelRuinStreakRolls[];
 /* Eclipse: the glints' flips, the dragon's sprites that take new tiles as it
    turns and their places, the canvas's fills, and the rings. */
-extern const Uint8	Eclipse_GlintFlips[];
-extern const Uint8	Eclipse_TileObjects[];
-extern const Uint8	Eclipse_FillFrames[];
-extern const Uint32 Eclipse_FillLevels[];
-extern const Uint8	Eclipse_ObjectX[];
-extern const Uint8	Eclipse_ObjectZ[];
-extern const Uint8	Eclipse_RingGrowth[];
-extern const Sint8	Eclipse_RingHeights[];
+extern const Uint8	EclipseGlintFlips[];
+extern const Uint8	EclipseTileObjects[];
+extern const Uint8	EclipseFillTicks[];
+extern const Uint32 EclipseFillLevels[];
+extern const Uint8	EclipseObjectX[];
+extern const Uint8	EclipseObjectZ[];
+extern const Uint8	EclipseRingGrowth[];
+extern const Sint8	EclipseRingHeights[];
 /* The form change's four waves: when each starts, how fast it grows and how far
    it is stretched. */
-extern Uint8 FormChange_WaveStarts[];
-extern Uint8 FormChange_WaveGrowth[];
-extern Uint8 FormChange_WaveStretch[];
+extern Uint8 FormChangeWaveStarts[];
+extern Uint8 FormChangeWaveGrowth[];
+extern Uint8 FormChangeWaveStretch[];
 /* Prism's crystal and the shards it breaks into: their places and pictures. */
-extern Uint8  Prism_ShardStarts[];
-extern Uint8  Prism_ShardWidths[];
-extern Uint8  Prism_ShardHeights[];
-extern Sint32 Prism_ShardPictures[];
-/* The gathering lights' motes for each target, and the frames before the
+extern Uint8  PrismShardStarts[];
+extern Uint8  PrismShardWidths[];
+extern Uint8  PrismShardHeights[];
+extern Sint32 PrismShardPictures[];
+/* The gathering lights' motes for each target, and the ticks before the
    targets' share, by mode. */
-extern Uint8 GatheringLights_Counts[];
+extern Uint8 GatheringLightsCounts[];
 /* The Djinn beams: the motes' pictures as they sway, and the beam head's three
    pictures. */
-extern Uint8  DjinnBeams_MotePictures[];
-extern Uint16 DjinnBeams_HeadPictures[];
-extern Uint8  DjinnBeams_HeadWidths[];
-extern Uint8  DjinnBeams_HeadHeights[];
+extern Uint8  DjinnBeamsMotePictures[];
+extern Uint16 DjinnBeamsHeadPictures[];
+extern Uint8  DjinnBeamsHeadWidths[];
+extern Uint8  DjinnBeamsHeadHeights[];
 /* The lobbed shells: each style's record (LOBBED_SHELLS_SHATTER and the rest),
    and the shards' pictures. */
-extern Sint8  LobbedShells_Styles[];
-extern Uint8  LobbedShells_ShardWidths[];
-extern Uint8  LobbedShells_ShardHeights[];
-extern Uint16 LobbedShells_ShardPictures[];
+extern Sint8  LobbedShellsStyles[];
+extern Uint8  LobbedShellsShardWidths[];
+extern Uint8  LobbedShellsShardHeights[];
+extern Uint16 LobbedShellsShardPictures[];
 /* Where Condemn draws its seven pictures of the reaper and his crescent, by
    side. */
-extern Uint8 Condemn_PictureX[];
-extern Uint8 Condemn_PictureY[];
+extern Uint8 CondemnPictureX[];
+extern Uint8 CondemnPictureY[];
 /* Bind's triangles: the first corner of each. */
-extern Sint32 Bind_Vertex[];
-extern Sint32 Bind_TriangleStrikeVertex[];
+extern Sint32 BindVertex[];
+extern Sint32 BindTriangleStrikeVertex[];
 /* The star's ring: its points and radii, alternating. */
-extern Sint32 Star_Points[];
-extern Uint8  Star_Radii[];
-/* Procne: the grid her nine sprites sit on, the four strikes' frames and a
+extern Sint32 StarPoints[];
+extern Uint8  StarRadii[];
+/* Procne: the grid her nine sprites sit on, the four strikes' ticks and a
    strike's three pictures. */
-extern Uint8  Procne_GridX[];
-extern Uint8  Procne_GridY[];
-extern Uint16 Procne_Frames[];
-extern Uint8  Procne_PictureWidths[];
-extern Uint8  Procne_PictureHeights[];
-extern Uint8  Procne_PictureBiasY[];
-extern Uint16 Procne_Pictures[];
+extern Uint8  ProcneGridX[];
+extern Uint8  ProcneGridY[];
+extern Uint16 ProcneTicks[];
+extern Uint8  ProcnePictureWidths[];
+extern Uint8  ProcnePictureHeights[];
+extern Uint8  ProcnePictureBiasY[];
+extern Uint16 ProcnePictures[];
 /* Tiamat: the embers' speeds and sizes, a spark's two pixels, and the flame
    streak's six pictures. */
-extern Uint8  Tiamat_EmberSpeeds[];
-extern Uint8  Tiamat_SparkPixels[];
-extern Uint8  Tiamat_EmberSizes[];
-extern Uint8  Tiamat_EmberStreakWidths[];
-extern Uint8  Tiamat_EmberStreakHeights[];
-extern Uint8  Tiamat_EmberStreakBiasY[];
-extern Uint16 Tiamat_EmberStreakPictures[];
+extern Uint8  TiamatEmberSpeeds[];
+extern Uint8  TiamatSparkPixels[];
+extern Uint8  TiamatEmberSizes[];
+extern Uint8  TiamatEmberStreakWidths[];
+extern Uint8  TiamatEmberStreakHeights[];
+extern Uint8  TiamatEmberStreakBiasY[];
+extern Uint16 TiamatEmberStreakPictures[];
 /* Nereid: the three water columns' feet and the falling sparks' gravity. */
-extern Uint8  Nereid_Columns[];
-extern Sint32 Nereid_Gravity[];
+extern Uint8  NereidColumns[];
+extern Sint32 NereidGravity[];
 /* The vortices: Froth's counts and the whirlwind's shapes, by variant (the
    FROTH_ and WHIRLWIND_ columns). */
-extern Uint8 Vortices_Counts[][2];
-extern Uint8 Vortices_Shapes[][3];
-/* Prism's crystals, frames and damage frame, by variant. */
-extern Uint8 Prism_Counts[];
+extern Uint8 VorticesCounts[][2];
+extern Uint8 VorticesShapes[][3];
+/* Prism's crystals, ticks and damage tick, by variant. */
+extern Uint8 PrismCounts[];
 /* Plasma: the sparks and shake of each lightning pillar, the columns, and the
    counts, by variant. */
-extern Uint16 Plasma_Sparks[];
-extern Uint8  Plasma_Columns[];
-extern Uint8  Plasma_Counts[];
+extern Uint16 PlasmaSparks[];
+extern Uint8  PlasmaColumns[];
+extern Uint8  PlasmaCounts[];
 /* The spark groups' shapes, by variant: sparks in a group, groups and each
    group's x. */
-extern Uint16 SparkGroups_Shapes[][5];
-/* Plasma's flash burst picture for each three frames of a flash. */
-extern Uint8 Plasma_FlashPictures[];
+extern Uint16 SparkGroupsShapes[][5];
+/* Plasma's flash burst picture for each three ticks of a flash. */
+extern Uint8 PlasmaFlashPictures[];
 /* Volcano's pillars of fire: how many, their depths and when each erupts. */
-extern Uint8 Volcano_Counts[];
-extern Sint8 Volcano_Depths[][4];
-extern Uint8 Volcano_StartFrames[];
+extern Uint8 VolcanoCounts[];
+extern Sint8 VolcanoDepths[][4];
+extern Uint8 VolcanoStartTicks[];
 /* The target motes' glint flips. */
-extern Uint8 TargetMotes_GlintFlips[];
+extern Uint8 TargetMotesGlintFlips[];
 /* Zagan: where his sprites sit as he charges and as he gallops, and his dust
    rings. */
-extern const Uint16 Zagan_ChargePoints[][2];
-extern const Uint16 Zagan_GallopPoints[][2];
-extern const Uint8	Zagan_RingStarts[];
-extern const Uint8	Zagan_RingGrowth[];
-extern const Sint8	Zagan_RingHeights[];
+extern const Uint16 ZaganChargePoints[][2];
+extern const Uint16 ZaganGallopPoints[][2];
+extern const Uint8	ZaganRingStarts[];
+extern const Uint8	ZaganRingGrowth[];
+extern const Sint8	ZaganRingHeights[];
 /* Cybele: her sprites' poses, and the pictures of her thorns, flowers, chips,
    sparks and blasts. */
-extern Uint8  Cybele_ObjectPoses[];
-extern Uint16 Cybele_ThornPictures[];
-extern Uint8  Cybele_ThornWidths[];
-extern Uint8  Cybele_ThornHeights[];
-extern Uint16 Cybele_FlowerPictures[];
-extern Uint8  Cybele_FlowerSizes[];
-extern Uint16 Cybele_ChipPictures[];
-extern Uint8  Cybele_ChipWidths[];
-extern Uint8  Cybele_ChipHeights[];
-extern Uint16 Cybele_SparkPictures[];
-extern Uint8  Cybele_SparkSizes[];
-extern Uint16 Cybele_BlastPictures[];
-extern Uint16 Cybele_BlastSizes[];
+extern Uint8  CybeleObjectPoses[];
+extern Uint16 CybeleThornPictures[];
+extern Uint8  CybeleThornWidths[];
+extern Uint8  CybeleThornHeights[];
+extern Uint16 CybeleFlowerPictures[];
+extern Uint8  CybeleFlowerSizes[];
+extern Uint16 CybeleChipPictures[];
+extern Uint8  CybeleChipWidths[];
+extern Uint8  CybeleChipHeights[];
+extern Uint16 CybeleSparkPictures[];
+extern Uint8  CybeleSparkSizes[];
+extern Uint16 CybeleBlastPictures[];
+extern Uint16 CybeleBlastSizes[];
 /* Boreas: the crystals' points, the shake, his sprites' animations, and the
    pictures of the crystals, debris, spray, rising crystals and falls. */
-extern Uint8  Boreas_Points[][2];
-extern Sint8  Boreas_ShakeOffsets[];
-extern Uint16 Boreas_CrystalPictures[];
-extern Uint8  Boreas_CrystalWidths[];
-extern Uint8  Boreas_CrystalHeights[];
-extern Uint8  Boreas_Animations[];
-extern Uint8  Boreas_DebrisWidths[];
-extern Uint8  Boreas_DebrisHeights[];
-extern Uint16 Boreas_DebrisPictures[];
-extern Uint8  Boreas_SprayWidths[];
-extern Uint8  Boreas_SprayHeights[];
-extern Uint16 Boreas_SprayPictures[];
-extern Uint16 Boreas_RisingCrystalPictures[];
-extern Uint8  Boreas_RisingCrystalWidths[];
-extern Uint8  Boreas_RisingCrystalHeights[];
-extern Uint8  Boreas_FallWidths[];
-extern Uint8  Boreas_FallHeights[];
-extern Uint16 Boreas_FallPictures[];
+extern Uint8  BoreasPoints[][2];
+extern Sint8  BoreasShakeOffsets[];
+extern Uint16 BoreasCrystalPictures[];
+extern Uint8  BoreasCrystalWidths[];
+extern Uint8  BoreasCrystalHeights[];
+extern Uint8  BoreasAnimations[];
+extern Uint8  BoreasDebrisWidths[];
+extern Uint8  BoreasDebrisHeights[];
+extern Uint16 BoreasDebrisPictures[];
+extern Uint8  BoreasSprayWidths[];
+extern Uint8  BoreasSprayHeights[];
+extern Uint16 BoreasSprayPictures[];
+extern Uint16 BoreasRisingCrystalPictures[];
+extern Uint8  BoreasRisingCrystalWidths[];
+extern Uint8  BoreasRisingCrystalHeights[];
+extern Uint8  BoreasFallWidths[];
+extern Uint8  BoreasFallHeights[];
+extern Uint16 BoreasFallPictures[];
 /* Drain's motes: their gravities, and their size by mode. */
-extern Sint32 Drain_Gravities[];
-extern Uint8  DrainMotes_Sizes[];
-/* Quake's frames, rise and shake, by variant. */
-extern Uint8 Quake_Timings[][3];
+extern Sint32 DrainGravities[];
+extern Uint8  DrainMotesSizes[];
+/* Quake's ticks, rise and shake, by variant. */
+extern Uint8 QuakeTimings[][3];
 /* Fire's counts by variant, and its flare pictures. */
-extern Uint8  Fire_Counts[];
-extern Uint8  Fire_EmberStreakWidths[];
-extern Uint8  Fire_EmberStreakHeights[];
-extern Uint8  Fire_EmberStreakBiasY[];
-extern Uint16 Fire_EmberStreakPictures[];
+extern Uint8  FireCounts[];
+extern Uint8  FireEmberStreakWidths[];
+extern Uint8  FireEmberStreakHeights[];
+extern Uint8  FireEmberStreakBiasY[];
+extern Uint16 FireEmberStreakPictures[];
 /* Frost: where the mounds rise, its timings by variant, and the pictures of its
    motes, mounds and ice chips. */
-extern Uint8  Frost_MoundSpots[];
-extern Uint8  Frost_Timings[];
-extern Uint8  Frost_MoteWidths[];
-extern Uint8  Frost_MoteHeights[];
-extern Uint16 Frost_MoteCells[];
-extern Uint16 Frost_MoundPictures[];
-extern Uint8  Frost_MoundHeights[];
-extern Uint8  Frost_ChipWidths[];
-extern Uint8  Frost_ChipHeights[];
-extern Uint16 Frost_ChipCells[];
-/* The sparks each of Ray's bolts throws a frame, by variant. */
-extern Uint8 Ray_Sparks[][2];
+extern Uint8  FrostMoundSpots[];
+extern Uint8  FrostTimings[];
+extern Uint8  FrostMoteWidths[];
+extern Uint8  FrostMoteHeights[];
+extern Uint16 FrostMoteCells[];
+extern Uint16 FrostMoundPictures[];
+extern Uint8  FrostMoundHeights[];
+extern Uint8  FrostChipWidths[];
+extern Uint8  FrostChipHeights[];
+extern Uint16 FrostChipCells[];
+/* The sparks each of Ray's bolts throws a tick, by variant. */
+extern Uint8 RaySparks[][2];
 /* Eruption's counts by variant, and its puffs' pictures. */
-extern Uint8  Eruption_Counts[][3];
-extern Uint16 Eruption_PuffPictures[];
-extern Uint16 Eruption_PuffSizes[];
+extern Uint8  EruptionCounts[][3];
+extern Uint16 EruptionPuffPictures[];
+extern Uint16 EruptionPuffSizes[];
 /* The burst shower's glint flips. */
-extern Uint8 BurstShower_GlintFlips[];
+extern Uint8 BurstShowerGlintFlips[];
 /* Atalanta's sprites' scale, one to one. */
-extern Sint32 Atalanta_UnitScale[];
+extern Sint32 AtalantaUnitScale[];
 /* Growth: the vines' and pillars' pictures, the columns by strength and where
    they root, how tall they grow, and the dust puffs. */
-extern Uint8  Growth_VineWidths[];
-extern Uint8  Growth_HeightLimits[];
-extern Uint16 Growth_VinePictures[];
-extern Uint8  Growth_PillarWidths[];
-extern Uint16 Growth_PillarPictures[];
-extern Uint8  Growth_ColumnCounts[];
-extern Uint8  Growth_ColumnX[];
-extern Sint8  Growth_PillarHeights[];
-extern Sint8  Growth_PuffWidths[];
-extern Uint8  Growth_PuffHeights[];
-extern Uint16 Growth_PuffPictures[];
+extern Uint8  GrowthVineWidths[];
+extern Uint8  GrowthHeightLimits[];
+extern Uint16 GrowthVinePictures[];
+extern Uint8  GrowthPillarWidths[];
+extern Uint16 GrowthPillarPictures[];
+extern Uint8  GrowthColumnCounts[];
+extern Uint8  GrowthColumnX[];
+extern Sint8  GrowthPillarHeights[];
+extern Sint8  GrowthPuffWidths[];
+extern Uint8  GrowthPuffHeights[];
+extern Uint16 GrowthPuffPictures[];
 /* Each vine's x about the middle of the targets. */
-extern const Sint8 Vine_ColumnOffsets[];
+extern const Sint8 VineColumnOffsets[];
 /* Each thorn's kind (THORN_MIRRORED, THORN_SMALL). */
-extern Uint8 Thorn_Kinds[];
-/* A thorn's kind in Thorn_Kinds. */
+extern Uint8 ThornKinds[];
+/* A thorn's kind in ThornKinds. */
 #define THORN_MIRRORED 1 /* drawn mirrored across */
 #define THORN_SMALL	   2 /* 32 pixels wide, not 48 */
 /* The thorns: where each roots, how many by strength, and the dust puffs as
    each bursts out. */
 extern Sint8  Thorn_X[];
-extern Uint8  Thorn_Counts[];
-extern Sint8  Thorn_PuffWidths[];
-extern Uint8  Thorn_PuffHeights[];
-extern Uint16 Thorn_PuffPictures[];
+extern Uint8  ThornCounts[];
+extern Sint8  ThornPuffWidths[];
+extern Uint8  ThornPuffHeights[];
+extern Uint16 ThornPuffPictures[];
 /* Bolt: its sparks, glints, spread and bolts by strength, and how its glints
    are flipped and blended. */
-extern Uint8 Bolt_Counts[];
-extern Uint8 Bolt_GlintFlips[];
-extern Uint8 Bolt_GlintModes[];
+extern Uint8 BoltCounts[];
+extern Uint8 BoltGlintFlips[];
+extern Uint8 BoltGlintModes[];
 /* The projectile volley: the comets' heights, each mode's record (enum
    VOLLEY_FIELD), the hit flash's pictures and spread, the pellets' pictures and
    the glints' flips. */
-extern Uint8  ProjectileVolley_CometHeights[];
-extern Uint8  ProjectileVolley_Modes[][PROJECTILE_VOLLEY_COLUMNS];
-extern Uint8  ProjectileVolley_FlashWidths[];
-extern Uint8  ProjectileVolley_FlashHeights[];
-extern Uint8  ProjectileVolley_FlashSteps[];
-extern Uint8  ProjectileVolley_FlashRises[];
-extern Uint16 ProjectileVolley_FlashPictures[];
-extern Uint16 ProjectileVolley_PelletPictures[];
-extern Uint8  ProjectileVolley_GlintFlips[];
-/* The frames the Djinni throws its five flames on. */
-extern const Uint8 DjinnAttacks_LaunchFrames[];
+extern Uint8  ProjectileVolleyCometHeights[];
+extern Uint8  ProjectileVolleyModes[][PROJECTILE_VOLLEY_COLUMNS];
+extern Uint8  ProjectileVolleyFlashWidths[];
+extern Uint8  ProjectileVolleyFlashHeights[];
+extern Uint8  ProjectileVolleyFlashSteps[];
+extern Uint8  ProjectileVolleyFlashRises[];
+extern Uint16 ProjectileVolleyFlashPictures[];
+extern Uint16 ProjectileVolleyPelletPictures[];
+extern Uint8  ProjectileVolleyGlintFlips[];
+/* The ticks the Djinni throws its five flames on. */
+extern const Uint8 DjinnAttacksLaunchTicks[];
 /* Hail's four ice chip pictures. */
-extern Uint8  Hail_PictureWidths[];
-extern Uint8  Hail_PictureHeights[];
-extern Uint16 Hail_Pictures[];
+extern Uint8  HailPictureWidths[];
+extern Uint8  HailPictureHeights[];
+extern Uint16 HailPictures[];
 /* Ground: the crackles' flips, and the portals' pictures and places. */
-extern const Uint8	Ground_CrackleFlips[];
-extern const Uint8	Ground_PortalWidths[];
-extern const Uint8	Ground_PortalHeights[];
-extern const Uint16 Ground_PortalPictures[];
-extern const Uint8	Ground_PortalX[];
-extern const Uint8	Ground_PortalY[];
+extern const Uint8	GroundCrackleFlips[];
+extern const Uint8	GroundPortalWidths[];
+extern const Uint8	GroundPortalHeights[];
+extern const Uint16 GroundPortalPictures[];
+extern const Uint8	GroundPortalX[];
+extern const Uint8	GroundPortalY[];
 /* Thor: the palettes a struck target flashes in, and the crackles' flips. */
-extern const Uint8 Thor_TargetPalettes[];
-extern const Uint8 Thor_CrackleFlips[];
-/* Spire: where each shard sits in the boulder, the boulders' x and drop frames,
+extern const Uint8 ThorTargetPalettes[];
+extern const Uint8 ThorCrackleFlips[];
+/* Spire: where each shard sits in the boulder, the boulders' x and drop ticks,
    and how many by variant. */
-extern Uint8 Spire_ShardOffsets[];
-extern Sint8 Spire_RockX[];
-extern Uint8 Spire_DropFrames[];
-extern Uint8 Spire_RockCounts[];
+extern Uint8 SpireShardOffsets[];
+extern Sint8 SpireRockX[];
+extern Uint8 SpireDropTicks[];
+extern Uint8 SpireRockCounts[];
 /* The flurries: their styles (FLURRY_COLUMN) and the glints' flips. */
-extern Uint8	   Flurry_Styles[][8];
-extern const Uint8 Flurry_GlintFlips[];
+extern Uint8	   FlurryStyles[][8];
+extern const Uint8 FlurryGlintFlips[];
 /* Gaia: the growing wall's rows, the flame's pictures, the wall layer's shift
    and the late rocks. */
-extern Uint16 Gaia_RowPictures[];
-extern Uint8  Gaia_RowWidths[];
-extern Uint16 Gaia_FlamePictures[];
-extern Uint8  Gaia_FlameWidths[];
-extern Uint8  Gaia_FlameHeights[];
-extern Sint8  Gaia_Bg2Shifts[][3];
-extern Uint8  Gaia_LateRockColumns[];
+extern Uint16 GaiaRowPictures[];
+extern Uint8  GaiaRowWidths[];
+extern Uint16 GaiaFlamePictures[];
+extern Uint8  GaiaFlameWidths[];
+extern Uint8  GaiaFlameHeights[];
+extern Sint8  GaiaBg2Shifts[][3];
+extern Uint8  GaiaLateRockColumns[];
 /* Ulysses: where the mage's sprites sit, the summon's pictures, and where its
    six particles start. */
-extern const Uint8	Ulysses_ObjectX[];
-extern const Uint8	Ulysses_ObjectZ[];
-extern const Uint8	Ulysses_PictureWidths[];
-extern const Uint8	Ulysses_PictureHeights[];
-extern const Uint16 Ulysses_Pictures[];
-extern const Sint8	Ulysses_ParticleStarts[][5];
+extern const Uint8	UlyssesObjectX[];
+extern const Uint8	UlyssesObjectZ[];
+extern const Uint8	UlyssesPictureWidths[];
+extern const Uint8	UlyssesPictureHeights[];
+extern const Uint16 UlyssesPictures[];
+extern const Sint8	UlyssesParticleStarts[][5];
 /* The swirl swipe's six pictures: their sizes, pictures, x and rise. */
-extern const Uint8	SwirlSwipe_PictureWidths[];
-extern const Uint8	SwirlSwipe_PictureHeights[];
-extern const Uint16 SwirlSwipe_Pictures[];
-extern const Uint8	SwirlSwipe_PictureX[];
-extern const Sint8	SwirlSwipe_PictureBiasY[];
+extern const Uint8	SwirlSwipePictureWidths[];
+extern const Uint8	SwirlSwipePictureHeights[];
+extern const Uint16 SwirlSwipePictures[];
+extern const Uint8	SwirlSwipePictureX[];
+extern const Sint8	SwirlSwipePictureBiasY[];
 /* Azul: the points of the battlefield's shattered parts, and the serpent's
    sprites, early and late. */
-extern const Uint8 Azul_PartPoints[][2];
-extern const SCALE Azul_UnitScale;
-extern const Uint8 Azul_ObjectX[];
-extern const Uint8 Azul_ObjectZ[];
-extern const SCALE Azul_LateUnitScale;
-extern const Sint8 Azul_LateObjectX[];
-extern const Sint8 Azul_LateObjectZ[];
+extern const Uint8 AzulPartPoints[][2];
+extern const SCALE AzulUnitScale;
+extern const Uint8 AzulObjectX[];
+extern const Uint8 AzulObjectZ[];
+extern const SCALE AzulLateUnitScale;
+extern const Sint8 AzulLateObjectX[];
+extern const Sint8 AzulLateObjectZ[];
 /* The plain attacks' beam: its six pictures and how far each reaches. */
-extern Uint8  Beam_PictureWidths[];
-extern Uint8  Beam_PictureHeights[];
-extern Uint16 Beam_Pictures[];
-extern Uint8  Beam_PictureReaches[];
+extern Uint8  BeamPictureWidths[];
+extern Uint8  BeamPictureHeights[];
+extern Uint16 BeamPictures[];
+extern Uint8  BeamPictureReaches[];
 /* The casting impacts: glint flips, the bite's pictures, Raiden's Wrath's and
    Apocalypse's pictures and places, the ice chips, and Stun Jip's bands and
    Armor Crush's waves. */
-extern const Uint8	CastingImpact_SquallGlintFlips[];
-extern const Uint8	CastingImpact_SapGlintFlips[];
-extern const Uint8	CastingImpact_BitePictures[];
-extern const Uint16 CastingImpact_RaidensWrathPictures[];
-extern const Uint16 CastingImpact_RaidensWrathWidths[];
-extern const Uint16 CastingImpact_RaidensWrathHeights[];
-extern Uint16		CastingImpact_RaidensWrathX[];
-extern Uint16		CastingImpact_RaidensWrathY[];
-extern const Uint16 CastingImpact_ApocalypsePictures[];
-extern const Uint16 CastingImpact_ApocalypseWidths[];
-extern const Uint16 CastingImpact_ApocalypseHeights[];
-extern const Uint16 CastingImpact_ApocalypseX[];
-extern Uint16		CastingImpact_ApocalypseY[];
-extern const Uint16 CastingImpact_ApocalypseBurstPictures[];
-extern const Uint8	CastingImpact_ApocalypseBurstWidths[];
-extern const Uint8	CastingImpact_ApocalypseBurstHeights[];
-extern Uint8		CastingImpact_ApocalypseBurstPoints[][2];
-extern const Uint16 CastingImpact_IceChipPictures[];
-extern const Uint8	CastingImpact_StunBoltGlintFlips[];
-extern const Uint8	CastingImpact_StunJipBandStarts[];
-extern const Uint8	CastingImpact_StunJipBandGrowth[];
-extern const Sint8	CastingImpact_StunJipBandHeights[];
-extern const Uint8	CastingImpact_ArmorCrushWaveStarts[];
-extern const Uint8	CastingImpact_ArmorCrushWaveGrowth[];
-extern const Uint8	CastingImpact_ArmorCrushWaveStretch[];
+extern const Uint8	CastingImpactSquallGlintFlips[];
+extern const Uint8	CastingImpactSapGlintFlips[];
+extern const Uint8	CastingImpactBitePictures[];
+extern const Uint16 CastingImpactRaidensWrathPictures[];
+extern const Uint16 CastingImpactRaidensWrathWidths[];
+extern const Uint16 CastingImpactRaidensWrathHeights[];
+extern Uint16		CastingImpactRaidensWrathX[];
+extern Uint16		CastingImpactRaidensWrathY[];
+extern const Uint16 CastingImpactApocalypsePictures[];
+extern const Uint16 CastingImpactApocalypseWidths[];
+extern const Uint16 CastingImpactApocalypseHeights[];
+extern const Uint16 CastingImpactApocalypseX[];
+extern Uint16		CastingImpactApocalypseY[];
+extern const Uint16 CastingImpactApocalypseBurstPictures[];
+extern const Uint8	CastingImpactApocalypseBurstWidths[];
+extern const Uint8	CastingImpactApocalypseBurstHeights[];
+extern Uint8		CastingImpactApocalypseBurstPoints[][2];
+extern const Uint16 CastingImpactIceChipPictures[];
+extern const Uint8	CastingImpactStunBoltGlintFlips[];
+extern const Uint8	CastingImpactStunJipBandStarts[];
+extern const Uint8	CastingImpactStunJipBandGrowth[];
+extern const Sint8	CastingImpactStunJipBandHeights[];
+extern const Uint8	CastingImpactArmorCrushWaveStarts[];
+extern const Uint8	CastingImpactArmorCrushWaveGrowth[];
+extern const Uint8	CastingImpactArmorCrushWaveStretch[];
 /* The unused copy of Nereid: its columns and gravity. */
-extern Uint8		NereidCopy_Columns[];
-extern const Sint32 NereidCopy_Gravity[];
+extern Uint8		NereidCopyColumns[];
+extern const Sint32 NereidCopyGravity[];
 /* The summons' sprite formations, each sprite's x and depth: Nereid's,
    Cybele's, Tiamat's two and Megaera's. */
-extern const Uint8 SummonFormation_NereidX[];
-extern const Uint8 SummonFormation_NereidZ[];
-extern const Uint8 SummonFormation_CybeleX[];
-extern const Uint8 SummonFormation_CybeleZ[];
-extern const Uint8 SummonFormation_TiamatAlternateX[];
-extern const Uint8 SummonFormation_TiamatAlternateZ[];
-extern const Uint8 SummonFormation_TiamatX[];
-extern const Uint8 SummonFormation_TiamatZ[];
-extern const Sint8 SummonFormation_MegaeraX[];
-extern const Uint8 SummonFormation_MegaeraZ[];
+extern const Uint8 SummonFormationNereidX[];
+extern const Uint8 SummonFormationNereidZ[];
+extern const Uint8 SummonFormationCybeleX[];
+extern const Uint8 SummonFormationCybeleZ[];
+extern const Uint8 SummonFormationTiamatAlternateX[];
+extern const Uint8 SummonFormationTiamatAlternateZ[];
+extern const Uint8 SummonFormationTiamatX[];
+extern const Uint8 SummonFormationTiamatZ[];
+extern const Sint8 SummonFormationMegaeraX[];
+extern const Uint8 SummonFormationMegaeraZ[];
 /* The impact burst's pictures. */
-extern Uint8  ImpactBurst_PictureWidths[];
-extern Uint8  ImpactBurst_PictureHeights[];
-extern Uint16 ImpactBurst_Pictures[];
+extern Uint8  ImpactBurstPictureWidths[];
+extern Uint8  ImpactBurstPictureHeights[];
+extern Uint16 ImpactBurstPictures[];
 /* The starfield fall: the orbiting sparks, the fireballs and the flash
    pictures. */
-extern Sint16 StarfieldFall_OrbitPoints[][3];
-extern Sint16 StarfieldFall_FireballPoints[][2];
-extern Uint16 StarfieldFall_FlashPictures[];
-extern Uint16 StarfieldFall_FlashSizes[];
+extern Sint16 StarfieldFallOrbitPoints[][3];
+extern Sint16 StarfieldFallFireballPoints[][2];
+extern Uint16 StarfieldFallFlashPictures[];
+extern Uint16 StarfieldFallFlashSizes[];
 /* Ramses: where each of the statue's sprites sits, and the puffs' pictures. */
-extern Uint8  Ramses_StatueColumns[];
-extern Uint8  Ramses_StatueRows[];
-extern Uint16 Ramses_PuffPictures[];
-extern Uint16 Ramses_PuffSizes[];
+extern Uint8  RamsesStatueColumns[];
+extern Uint8  RamsesStatueRows[];
+extern Uint16 RamsesPuffPictures[];
+extern Uint16 RamsesPuffSizes[];
 /* Ragnarok: the strikes' columns and the flash's pictures. */
-extern Uint8 Ragnarok_StrikeColumns[];
-extern Uint8 Ragnarok_FlashPictures[];
+extern Uint8 RagnarokStrikeColumns[];
+extern Uint8 RagnarokFlashPictures[];
 /* Titan Blade: the flash's pictures and the dust's gravities. */
-extern Uint8  TitanBlade_FlashPictures[];
-extern Sint32 TitanBlade_DustGravity[];
+extern Uint8  TitanBladeFlashPictures[];
+extern Sint32 TitanBladeDustGravity[];
 /* Judgment: the sprites its shield is copied into, and the shards' pictures. */
-extern const Uint8	Judgment_ShieldSprites[];
-extern const Uint16 Judgment_ShardPictures[];
-extern const Uint8	Judgment_ShardWidths[];
-extern const Uint8	Judgment_ShardHeights[];
+extern const Uint8	JudgmentShieldSprites[];
+extern const Uint16 JudgmentShardPictures[];
+extern const Uint8	JudgmentShardWidths[];
+extern const Uint8	JudgmentShardHeights[];
 /* Kirin: the row's x offsets and heights. */
-extern Uint8 Kirin_Columns[];
-extern Uint8 Kirin_Rows[];
+extern Uint8 KirinColumns[];
+extern Uint8 KirinRows[];
 /* Neptune's spray: its four gravities. */
-extern Sint32 Neptune_Gravity[];
+extern Sint32 NeptuneGravity[];
 /* Undead Sword's sparks: their pictures and sizes. */
-extern const Uint16 UndeadSword_PuffPictures[];
-extern const Uint16 UndeadSword_PuffSizes[];
+extern const Uint16 UndeadSwordPuffPictures[];
+extern const Uint16 UndeadSwordPuffSizes[];
 /* The wind funnels, by mode. */
-extern const Uint8 WindFunnel_Counts[];
+extern const Uint8 WindFunnelCounts[];
 /* Diamond Berg: its ripples, and its flashes' roll and pitch. */
-extern const Uint8	DiamondBerg_RingStarts[4];
-extern const Uint8	DiamondBerg_RingGrowth[4];
-extern const Sint8	DiamondBerg_RingHeights[4];
-extern const Sint16 DiamondBerg_ShardRolls[8];
-extern const Sint16 DiamondBerg_ShardPitches[8];
+extern const Uint8	DiamondBergRingStarts[4];
+extern const Uint8	DiamondBergRingGrowth[4];
+extern const Sint8	DiamondBergRingHeights[4];
+extern const Sint16 DiamondBergShardRolls[8];
+extern const Sint16 DiamondBergShardPitches[8];
 /* Geode's rings: when each starts, how fast it grows, and its height. */
-extern const Uint8 Geode_WaveStarts[];
-extern const Uint8 Geode_WaveGrowth[];
-extern const Sint8 Geode_WaveHeights[];
+extern const Uint8 GeodeWaveStarts[];
+extern const Uint8 GeodeWaveGrowth[];
+extern const Sint8 GeodeWaveHeights[];
 /* Soul Shatter's sparks: their pictures and sizes. */
-extern Uint16 SoulShatter_SparkPictures[];
-extern Uint16 SoulShatter_SparkSizes[];
+extern Uint16 SoulShatterSparkPictures[];
+extern Uint16 SoulShatterSparkSizes[];
 /* Serac: the spire's rings, and the ripples of mist. */
-extern const Sint8 Serac_RowHeights[];
-extern const Sint8 Serac_RowRadii[];
-extern const Uint8 Serac_RingStarts[];
-extern const Uint8 Serac_RingGrowth[];
-extern const Sint8 Serac_RingHeights[];
-/* The heavy blow: its strike frame and chips, by mode, and a chip's two
+extern const Sint8 SeracRowHeights[];
+extern const Sint8 SeracRowRadii[];
+extern const Uint8 SeracRingStarts[];
+extern const Uint8 SeracRingGrowth[];
+extern const Sint8 SeracRingHeights[];
+/* The heavy blow: its strike tick and chips, by mode, and a chip's two
    pixels. */
-extern Uint8	   HeavyBlow_StrikeFrames[];
-extern Uint8	   HeavyBlow_ChipCounts[];
-extern const Uint8 HeavyBlow_ChipPixels[];
+extern Uint8	   HeavyBlowStrikeTicks[];
+extern Uint8	   HeavyBlowChipCounts[];
+extern const Uint8 HeavyBlowChipPixels[];
 /* Cool: its columns of ice and its sparks. */
-extern Sint16 Cool_ColumnX[];
-extern Uint8  Cool_ColumnStarts[];
-extern Uint8  Cool_ColumnHeights[];
-extern Uint8  Cool_ColumnLeans[];
-extern Uint16 Cool_SparkPictures[];
-extern Uint16 Cool_SparkSizes[];
+extern Sint16 CoolColumnX[];
+extern Uint8  CoolColumnStarts[];
+extern Uint8  CoolColumnHeights[];
+extern Uint8  CoolColumnLeans[];
+extern Uint16 CoolSparkPictures[];
+extern Uint16 CoolSparkSizes[];
 /* Wyrd Curse's drops: their bounce speeds. */
-extern const Sint8 WyrdCurse_DropBounces[];
+extern const Sint8 WyrdCurseDropBounces[];
 /* The ball lightning's glint flips. */
-extern const Uint8 BoltTrail_GlintFlips[];
+extern const Uint8 BoltTrailGlintFlips[];
 /* Megaera's glints: their flips and how they are blended, by variant. */
-extern const Uint8 Megaera_GlintFlips[];
-extern const Uint8 Megaera_GlintModes[];
+extern const Uint8 MegaeraGlintFlips[];
+extern const Uint8 MegaeraGlintModes[];
 /* Light Surge's four rings: their full sizes, shades and sways. */
-extern const Sint32 LightSurge_RingSizes[4];
-extern const Sint8	LightSurge_RingShades[4];
-extern Sint8		LightSurge_RingSways[4];
+extern const Sint32 LightSurgeRingSizes[4];
+extern const Sint8	LightSurgeRingShades[4];
+extern Sint8		LightSurgeRingSways[4];
 /* The Djinni charge: the Djinni's entrance by mode, and the debris's
    gravities. */
-extern const Uint8	DjinniCharge_EntranceFlags[];
-extern const Sint32 DjinniCharge_DebrisGravity[4];
+extern const Uint8	DjinniChargeEntranceFlags[];
+extern const Sint32 DjinniChargeDebrisGravity[4];
 /* The Gasp family: the streak's steps and mesh, and the counts by variant. */
-extern const Sint8	GaspFamily_StreakSteps[];
-extern const Uint16 GaspFamily_StreakMesh[];
-extern const Uint8	GaspFamily_Counts[];
-/* The frames Charon's canvas flashes. */
-extern Uint8 Charon_FlashFrames[];
+extern const Sint8	GaspFamilyStreakSteps[];
+extern const Uint16 GaspFamilyStreakMesh[];
+extern const Uint8	GaspFamilyCounts[];
+/* The ticks Charon's canvas flashes. */
+extern Uint8 CharonFlashTicks[];
 /* Models several effects share: a band's and a cylinder's corners. */
-extern const MODEL_VERTEX BattleEffect_OctagonBandCorners[];
-extern const MODEL_VERTEX BattleEffect_CylinderCorners[];
+extern const MODEL_VERTEX BattleEffectOctagonBandCorners[];
+extern const MODEL_VERTEX BattleEffectCylinderCorners[];
 /* The casting impacts' band mesh. */
-extern const Uint16 CastingImpact_BandMesh[];
+extern const Uint16 CastingImpactBandMesh[];
 /* The geyser's mesh. */
-extern const Uint16 Geyser_Mesh[];
+extern const Uint16 GeyserMesh[];
 /* The cylinder's mesh, the ripples and rings several effects spread. */
-extern const Uint16 BattleEffect_CylinderMesh[];
+extern const Uint16 BattleEffectCylinderMesh[];
 /* Geode's ring's corners. */
-extern const MODEL_VERTEX Geode_RingCorners[];
+extern const MODEL_VERTEX GeodeRingCorners[];
 /* Models several effects share: a ring, a triangle, beams and squares, their
    corners and meshes. */
-extern const MODEL_VERTEX BattleEffect_RingCorners[];
-extern const Uint16		  BattleEffect_RingMesh[];
-extern const Uint16		  BattleEffect_TriangleMesh[];
-extern const MODEL_VERTEX BattleEffect_TriangleCorners[];
-extern const MODEL_VERTEX BattleEffect_TaperedBeamCorners[];
-extern const MODEL_VERTEX BattleEffect_BeamCorners[];
-extern const MODEL_VERTEX BattleEffect_LongBeamCorners[];
-extern const MODEL_VERTEX BattleEffect_SquareCorners[];
-extern const MODEL_VERTEX BattleEffect_StandingSquareCorners[];
+extern const MODEL_VERTEX BattleEffectRingCorners[];
+extern const Uint16		  BattleEffectRingMesh[];
+extern const Uint16		  BattleEffectTriangleMesh[];
+extern const MODEL_VERTEX BattleEffectTriangleCorners[];
+extern const MODEL_VERTEX BattleEffectTaperedBeamCorners[];
+extern const MODEL_VERTEX BattleEffectBeamCorners[];
+extern const MODEL_VERTEX BattleEffectLongBeamCorners[];
+extern const MODEL_VERTEX BattleEffectSquareCorners[];
+extern const MODEL_VERTEX BattleEffectStandingSquareCorners[];
 /* A flame of Legend's fan: its corners. */
-extern MODEL_VERTEX Legend_FanFlameCorners[];
+extern MODEL_VERTEX LegendFanFlameCorners[];
 /* Models several effects share: a square on the ground, and the meshes of small
    squares and a column. */
-extern const MODEL_VERTEX BattleEffect_GroundSquareCorners[];
-extern const Uint16		  BattleEffect_SmallSquareMesh[];
-extern const Uint16		  BattleEffect_SmallSquareMeshReversed[];
-extern const Uint16		  BattleEffect_ColumnMesh[];
+extern const MODEL_VERTEX BattleEffectGroundSquareCorners[];
+extern const Uint16		  BattleEffectSmallSquareMesh[];
+extern const Uint16		  BattleEffectSmallSquareMeshReversed[];
+extern const Uint16		  BattleEffectColumnMesh[];
 /* The heavy blow's sword mesh. */
-extern const Uint16 HeavyBlow_SwordMesh[];
+extern const Uint16 HeavyBlowSwordMesh[];
 /* A tall quad's mesh. */
-extern const Uint16 BattleEffect_TallMesh[];
+extern const Uint16 BattleEffectTallMesh[];
 /* Haures's band mesh. */
-extern const Uint16 Haures_BandMesh[];
+extern const Uint16 HauresBandMesh[];
 /* Catastrophe's burst mesh. */
-extern const Uint16 Catastrophe_ForkMesh[];
+extern const Uint16 CatastropheForkMesh[];
 /* The square meshes several effects share. */
-extern const Uint16 BattleEffect_SquareMesh[];
-extern const Uint16 BattleEffect_LargeSquareMesh[];
+extern const Uint16 BattleEffectSquareMesh[];
+extern const Uint16 BattleEffectLargeSquareMesh[];
 /* Haures's burst mesh. */
-extern const Uint16 Haures_BurstMesh[];
+extern const Uint16 HauresBurstMesh[];
 /* Heartbreak: the burst of sparks at the figure's hand, and the heart in its
    fist burning away. */
-extern Uint8  Heartbreak_SparkBurstWidths[];
-extern Uint8  Heartbreak_SparkBurstHeights[];
-extern Uint16 Heartbreak_SparkBurstPictures[];
-extern Uint8  Heartbreak_HeartBurnHeights[];
-extern Uint8  Heartbreak_HeartBurnY[];
-extern Uint16 Heartbreak_HeartBurnPictures[];
+extern Uint8  HeartbreakSparkBurstWidths[];
+extern Uint8  HeartbreakSparkBurstHeights[];
+extern Uint16 HeartbreakSparkBurstPictures[];
+extern Uint8  HeartbreakHeartBurnHeights[];
+extern Uint8  HeartbreakHeartBurnY[];
+extern Uint16 HeartbreakHeartBurnPictures[];
 /* Raging Heat's sparks, spread, rings and embers, by level. */
-extern const Uint8 RagingHeat_Styles[][4];
+extern const Uint8 RagingHeatStyles[][4];
 /* Juggle's styles, one row a mode. */
-extern Uint8 Juggle_Styles[][7];
+extern Uint8 JuggleStyles[][7];
 /* Flora: the petals' pictures, and when and where each bloom opens and how it
    is turned. */
-extern const Uint8	Flora_PetalSizes[];
-extern const Uint16 Flora_PetalPictures[];
-extern const Uint16 Flora_BloomFrames[];
-extern const Sint16 Flora_BloomRolls[];
-extern const Sint16 Flora_BloomPitches[];
-extern const Sint8	Flora_BloomX[];
-extern const Sint8	Flora_BloomY[];
+extern const Uint8	FloraPetalSizes[];
+extern const Uint16 FloraPetalPictures[];
+extern const Uint16 FloraBloomTicks[];
+extern const Sint16 FloraBloomRolls[];
+extern const Sint16 FloraBloomPitches[];
+extern const Sint8	FloraBloomX[];
+extern const Sint8	FloraBloomY[];
 /* Sabre Dance's dagger: its mesh and corners. */
-extern const Uint16		  SabreDance_DaggerMesh[];
-extern const MODEL_VERTEX SabreDance_DaggerCorners[];
+extern const Uint16		  SabreDanceDaggerMesh[];
+extern const MODEL_VERTEX SabreDanceDaggerCorners[];
 /* Fume's levels, one row a level (FUME_LEVEL_COLUMN). */
-extern const Uint16 Fume_Levels[][FUME_COLUMNS];
+extern const Uint16 FumeLevels[][FUME_COLUMNS];
 /* Ocean Fist's early drops: their gravities. */
-extern const Sint32 OceanFist_DropGravity[4];
+extern const Sint32 OceanFistDropGravity[4];
 /* The rushing strike's streak scale, by mode. */
-extern const Sint32 RushingStrike_Scales[];
+extern const Sint32 RushingStrikeScales[];
 /* The mirrored wall: its scale by mode and its bursts' shades. */
-extern const Sint32 MirroredWall_Scales[];
-extern const Sint32 MirroredWall_Shades[];
+extern const Sint32 MirroredWallScales[];
+extern const Sint32 MirroredWallShades[];
 /* Daedalus: the shake, the birds' wing beats and drifts, the clatters, the
    rings, the leg, the splashes and the dives. */
-extern Sint8  Daedalus_ShakeOffsets[];
-extern Uint8  Daedalus_WingBeatPictures[];
-extern Uint8  Daedalus_BirdStarts[][2];
-extern Sint32 Daedalus_BirdSpeeds[][2];
-extern Uint8  Daedalus_BirdFrames[];
-extern Uint16 Daedalus_ClatterFrames[];
-extern Uint16 Daedalus_RingStarts[];
-extern Sint8  Daedalus_RingX[];
-extern Uint8  Daedalus_RightLegPoints[][2];
-extern Uint8  Daedalus_SplashPoints[][6][2];
-extern Uint16 Daedalus_DiveStarts[];
-/* The seven frames Daedalus's strikes land on. */
-extern const Uint8 DaedalusStrike_HitFrames[];
+extern Sint8  DaedalusShakeOffsets[];
+extern Uint8  DaedalusWingBeatPictures[];
+extern Uint8  DaedalusBirdStarts[][2];
+extern Sint32 DaedalusBirdSpeeds[][2];
+extern Uint8  DaedalusBirdTicks[];
+extern Uint16 DaedalusClatterTicks[];
+extern Uint16 DaedalusRingStarts[];
+extern Sint8  DaedalusRingX[];
+extern Uint8  DaedalusRightLegPoints[][2];
+extern Uint8  DaedalusSplashPoints[][6][2];
+extern Uint16 DaedalusDiveStarts[];
+/* The seven ticks Daedalus's strikes land on. */
+extern const Uint8 DaedalusStrikeHitTicks[];
 /* Which of Vengeance's seven arrows strike, by level. */
-extern const Uint8 Vengeance_ArrowStrikes[][7];
+extern const Uint8 VengeanceArrowStrikes[][7];
 /* Life Shear's scythe: its two blades' meshes and its corners. */
-extern const Uint16		  LifeShear_PaleBladeMesh[];
-extern const Uint16		  LifeShear_OrangeBladeMesh[];
-extern const MODEL_VERTEX LifeShear_BladeCorners[];
+extern const Uint16		  LifeShearPaleBladeMesh[];
+extern const Uint16		  LifeShearOrangeBladeMesh[];
+extern const MODEL_VERTEX LifeShearBladeCorners[];
 /* The geyser's drops: their gravity and smallest picture, by mode (enum
    GEYSER_MODE). */
-extern const Sint32 Geyser_DropGravity[];
-extern const Sint8	Geyser_DropMinSizes[];
+extern const Sint32 GeyserDropGravity[];
+extern const Sint8	GeyserDropMinSizes[];
 /* The unused bubble column's glowing oval, fifteen pictures. */
-extern Uint8  BubbleColumn_PictureWidths[];
-extern Uint8  BubbleColumn_PictureHeights[];
-extern Uint16 BubbleColumn_Pictures[];
+extern Uint8  BubbleColumnPictureWidths[];
+extern Uint8  BubbleColumnPictureHeights[];
+extern Uint16 BubbleColumnPictures[];
 /* Coatlicue: the bubbles' pictures, the bursts of bubbles, the ring's, flashes'
-   and glows' frames, and the coils. */
-extern Uint8  Coatlicue_PictureWidths[];
-extern Uint8  Coatlicue_PictureHeights[];
-extern Uint16 Coatlicue_Pictures[];
-extern Uint16 Coatlicue_BurstFrames[];
-extern Uint8  Coatlicue_BurstX[];
-extern Uint8  Coatlicue_BurstY[];
-extern Uint8  Coatlicue_BurstSpreadX[];
-extern Uint8  Coatlicue_BurstSpacingY[];
-extern Sint8  Coatlicue_BurstVelocityX[];
-extern Sint8  Coatlicue_BurstVelocityY[];
-extern Sint8  Coatlicue_BurstZ[];
-extern Sint8  Coatlicue_BurstVelocityZ[];
-extern Uint8  Coatlicue_PictureBias[];
-extern Uint16 Coatlicue_RingFrames[];
-extern Uint16 Coatlicue_FlashFrames[];
-extern Uint16 Coatlicue_GlowFrames[];
-extern Uint8  Coatlicue_CoilStarts[];
-extern Uint16 Coatlicue_CoilScales[];
-extern Uint16 Coatlicue_CoilRolls[];
-extern Uint16 Coatlicue_CoilGrowth[];
-extern Uint16 Coatlicue_CoilMaxScales[];
+   and glows' ticks, and the coils. */
+extern Uint8  CoatlicuePictureWidths[];
+extern Uint8  CoatlicuePictureHeights[];
+extern Uint16 CoatlicuePictures[];
+extern Uint16 CoatlicueBurstTicks[];
+extern Uint8  CoatlicueBurstX[];
+extern Uint8  CoatlicueBurstY[];
+extern Uint8  CoatlicueBurstSpreadX[];
+extern Uint8  CoatlicueBurstSpacingY[];
+extern Sint8  CoatlicueBurstVelocityX[];
+extern Sint8  CoatlicueBurstVelocityY[];
+extern Sint8  CoatlicueBurstZ[];
+extern Sint8  CoatlicueBurstVelocityZ[];
+extern Uint8  CoatlicuePictureBias[];
+extern Uint16 CoatlicueRingTicks[];
+extern Uint16 CoatlicueFlashTicks[];
+extern Uint16 CoatlicueGlowTicks[];
+extern Uint8  CoatlicueCoilStarts[];
+extern Uint16 CoatlicueCoilScales[];
+extern Uint16 CoatlicueCoilRolls[];
+extern Uint16 CoatlicueCoilGrowth[];
+extern Uint16 CoatlicueCoilMaxScales[];
 /* Catastrophe: the flashes, the demon's, armour's and mirrored demon's sprites,
    the bursts of lightning, the strikes and the glints. */
-extern const Uint16 Catastrophe_FlashFrames[];
-extern const Uint16 Catastrophe_FlashLengths[];
-extern const Uint8	Catastrophe_DemonX[];
-extern const Uint8	Catastrophe_DemonZ[];
-extern const Uint8	Catastrophe_ArmourX[];
-extern const Uint16 Catastrophe_ArmourZ[];
-extern const Uint8	Catastrophe_MirroredDemonX[];
-extern const Uint8	Catastrophe_MirroredDemonZ[];
-extern const Uint16 Catastrophe_ForkStarts[];
-extern const Uint8	Catastrophe_ForkX[];
-extern const Uint8	Catastrophe_ForkY[];
-extern const Uint8	Catastrophe_ForkPictures[];
-extern const Uint16 Catastrophe_CanvasFlashFrames[];
-extern const Uint8	Catastrophe_StrikeX[];
-extern const Uint8	Catastrophe_StrikeY[];
-extern const Uint16 Catastrophe_StrikeFrames[];
-extern const Uint8	Catastrophe_StrikeSpeedsY[];
-extern const Sint16 Catastrophe_StrikeRolls[];
-extern const Sint16 Catastrophe_StrikeTurns[];
-extern const Sint16 Catastrophe_StrikePictures[];
-extern const Uint8	Catastrophe_GlintFlips[];
-extern const Sint16 Catastrophe_BoltRolls[];
+extern const Uint16 CatastropheFlashTicks[];
+extern const Uint16 CatastropheFlashLengths[];
+extern const Uint8	CatastropheDemonX[];
+extern const Uint8	CatastropheDemonZ[];
+extern const Uint8	CatastropheArmourX[];
+extern const Uint16 CatastropheArmourZ[];
+extern const Uint8	CatastropheMirroredDemonX[];
+extern const Uint8	CatastropheMirroredDemonZ[];
+extern const Uint16 CatastropheForkStarts[];
+extern const Uint8	CatastropheForkX[];
+extern const Uint8	CatastropheForkY[];
+extern const Uint8	CatastropheForkPictures[];
+extern const Uint16 CatastropheCanvasFlashTicks[];
+extern const Uint8	CatastropheStrikeX[];
+extern const Uint8	CatastropheStrikeY[];
+extern const Uint16 CatastropheStrikeTicks[];
+extern const Uint8	CatastropheStrikeSpeedsY[];
+extern const Sint16 CatastropheStrikeRolls[];
+extern const Sint16 CatastropheStrikeTurns[];
+extern const Sint16 CatastropheStrikePictures[];
+extern const Uint8	CatastropheGlintFlips[];
+extern const Sint16 CatastropheBoltRolls[];
 /* Haures: the particles, his scale, the wings' shapes and morphs, the parts and
    the bands. */
-extern const Uint8 Haures_ParticleX[];
-extern Sint32	   Haures_UnitScale[];
-extern const Uint8 Haures_MoundShapes[];
-extern Uint8	   Haures_MoundMorphSteps[];
-extern const Uint8 Haures_PartPoints[];
-extern const Uint8 Haures_BandStarts[];
+extern const Uint8 HauresParticleX[];
+extern Sint32	   HauresUnitScale[];
+extern const Uint8 HauresMoundShapes[];
+extern Uint8	   HauresMoundMorphSteps[];
+extern const Uint8 HauresPartPoints[];
+extern const Uint8 HauresBandStarts[];
 /* Helm Splitter's pictures, and where each is drawn. */
-extern Uint8  HelmSplitter_PictureWidths[];
-extern Uint8  HelmSplitter_PictureHeights[];
-extern Uint16 HelmSplitter_Pictures[];
-extern Sint8  HelmSplitter_PictureBiasX[];
-extern Sint8  HelmSplitter_PictureBiasY[];
+extern Uint8  HelmSplitterPictureWidths[];
+extern Uint8  HelmSplitterPictureHeights[];
+extern Uint16 HelmSplitterPictures[];
+extern Sint8  HelmSplitterPictureBiasX[];
+extern Sint8  HelmSplitterPictureBiasY[];
 /* How many of Dragon Cloud's embers are sparks, by variant. */
-extern Uint8 DragonCloud_SparkCounts[];
+extern Uint8 DragonCloudSparkCounts[];
 /* The element cards: each card's length and how its sparks move. */
-extern Uint8		ElementCards_Frames[];
-extern SPARK_MOTION ElementCards_SparkMotions[];
-/* Triple Chomp's three bites' frames. */
-extern Uint8 TripleChomp_BiteFrames[];
-/* The breaths: their lengths, bursts, glows, jaws and the frames they hit. */
-extern Uint8 Breath_Frames[];
-extern Uint8 Breath_BurstFrames[];
-extern Uint8 Breath_MaxSizes[];
-extern Uint8 Breath_RingStarts[];
-extern Uint8 Breath_RingGrowth[];
-extern Sint8 Breath_RingX[];
-extern Uint8 Breath_FlashFrames[];
+extern Uint8		ElementCardsTicks[];
+extern SPARK_MOTION ElementCardsSparkMotions[];
+/* Triple Chomp's three bites' ticks. */
+extern Uint8 TripleChompBiteTicks[];
+/* The breaths: their lengths, bursts, glows, jaws and the ticks they hit. */
+extern Uint8 BreathTicks[];
+extern Uint8 BreathBurstTicks[];
+extern Uint8 BreathMaxSizes[];
+extern Uint8 BreathRingStarts[];
+extern Uint8 BreathRingGrowth[];
+extern Sint8 BreathRingX[];
+extern Uint8 BreathFlashTicks[];
 /* Trident: its rings, each trident's spin, the prong's corners and the glints'
    flips. */
-extern const Uint8		  Trident_RingStarts[];
-extern const Uint8		  Trident_RingGrowth[];
-extern const Sint8		  Trident_RingHeights[];
-extern const Sint32		  Trident_Spins[];
-extern const MODEL_VERTEX Trident_ProngCorners[];
-extern const Uint8		  Trident_GlintFlips[];
+extern const Uint8		  TridentRingStarts[];
+extern const Uint8		  TridentRingGrowth[];
+extern const Sint8		  TridentRingHeights[];
+extern const Sint32		  TridentSpins[];
+extern const MODEL_VERTEX TridentProngCorners[];
+extern const Uint8		  TridentGlintFlips[];
 /* The leaping strike's waves and rings. */
-extern const Uint8 LeapingStrike_WaveStarts[];
-extern const Uint8 LeapingStrike_WaveGrowth[];
-extern const Sint8 LeapingStrike_WaveHeights[];
-extern const Uint8 LeapingStrike_RingStarts[];
-extern const Uint8 LeapingStrike_RingGrowth[];
-extern const Sint8 LeapingStrike_RingHeights[];
+extern const Uint8 LeapingStrikeWaveStarts[];
+extern const Uint8 LeapingStrikeWaveGrowth[];
+extern const Sint8 LeapingStrikeWaveHeights[];
+extern const Uint8 LeapingStrikeRingStarts[];
+extern const Uint8 LeapingStrikeRingGrowth[];
+extern const Sint8 LeapingStrikeRingHeights[];
 /* Meteor Blow: its pictures, waves and rings. */
-extern const Uint8	MeteorBlow_PictureWidths[];
-extern const Uint8	MeteorBlow_PictureHeights[];
-extern const Uint16 MeteorBlow_Pictures[];
-extern const Uint8	MeteorBlow_WaveStarts[];
-extern const Uint8	MeteorBlow_WaveGrowth[];
-extern const Uint8	MeteorBlow_WaveStretch[];
-extern const Uint8	MeteorBlow_RingStarts[];
-extern const Uint8	MeteorBlow_RingGrowth[];
-extern const Sint8	MeteorBlow_RingHeights[];
-/* Liquifier's splash: its corners, start frames and heights. */
-extern const MODEL_VERTEX Liquifier_SplashCorners[];
-extern const Uint8		  Liquifier_SplashStarts[];
-extern const Uint8		  Liquifier_SplashHeights[];
-/* The canvas burst's flame picture for each three frames of its life. */
-extern const Uint8 CanvasBurst_FlamePictures[];
+extern const Uint8	MeteorBlowPictureWidths[];
+extern const Uint8	MeteorBlowPictureHeights[];
+extern const Uint16 MeteorBlowPictures[];
+extern const Uint8	MeteorBlowWaveStarts[];
+extern const Uint8	MeteorBlowWaveGrowth[];
+extern const Uint8	MeteorBlowWaveStretch[];
+extern const Uint8	MeteorBlowRingStarts[];
+extern const Uint8	MeteorBlowRingGrowth[];
+extern const Sint8	MeteorBlowRingHeights[];
+/* Liquifier's splash: its corners, start ticks and heights. */
+extern const MODEL_VERTEX LiquifierSplashCorners[];
+extern const Uint8		  LiquifierSplashStarts[];
+extern const Uint8		  LiquifierSplashHeights[];
+/* The canvas burst's flame picture for each three ticks of its life. */
+extern const Uint8 CanvasBurstFlamePictures[];
 /* Megiddo: its flashes' turns and starts, and its rays' turns and places. */
-extern const Sint16 Megiddo_FlashPitches[];
-extern const Sint16 Megiddo_FlashYaws[];
-extern const Uint16 Megiddo_FlashStarts[];
-extern const Sint16 Megiddo_RayPitches[];
-extern const Sint16 Megiddo_RayYaws[];
-extern const Sint16 Megiddo_RayRolls[];
-extern const Sint8	Megiddo_RayX[];
-extern const Sint8	Megiddo_RayY[];
+extern const Sint16 MegiddoFlashPitches[];
+extern const Sint16 MegiddoFlashYaws[];
+extern const Uint16 MegiddoFlashStarts[];
+extern const Sint16 MegiddoRayPitches[];
+extern const Sint16 MegiddoRayYaws[];
+extern const Sint16 MegiddoRayRolls[];
+extern const Sint8	MegiddoRayX[];
+extern const Sint8	MegiddoRayY[];
 /* Odyssey's flashes: their pitch and yaw. */
-extern const Sint16 Odyssey_FlashPitches[];
-extern const Sint16 Odyssey_FlashYaws[];
+extern const Sint16 OdysseyFlashPitches[];
+extern const Sint16 OdysseyFlashYaws[];
 /* Moloch's rings: when each starts, how fast it grows, and its height. */
-extern const Uint8 Moloch_RingStarts[4];
-extern const Uint8 Moloch_RingGrowth[];
-extern const Sint8 Moloch_RingHeights[];
-/* Iris: the splashes, the pillar and particle models, the sound frames, the
+extern const Uint8 MolochRingStarts[4];
+extern const Uint8 MolochRingGrowth[];
+extern const Sint8 MolochRingHeights[];
+/* Iris: the splashes, the pillar and particle models, the sound ticks, the
    streaks, the drops, the strips and the cone. */
-extern Sint32			  Iris_SplashRadii[];
-extern const Uint8		  Iris_SplashOffsetsY[];
-extern const Uint16		  Iris_PillarMesh[];
-extern const MODEL_VERTEX Iris_ParticleCorners[];
-extern const Uint16		  Iris_ParticleMesh[];
-extern const Uint8		  Iris_PsynergySoundFrames[];
-extern const Uint16		  Iris_DoorSoundFrames[];
-extern const Uint16		  Iris_PowerUpSoundFrames[];
-extern const Sint8		  Iris_StreakX[];
-extern const Uint8		  Iris_StreakY[];
-extern const Uint16		  Iris_StreakAngles[];
-extern const Sint16		  Iris_StreakSpeeds[];
-extern const Uint8		  Iris_LineShades[];
-extern Sint32			  Iris_MoteSizes[];
-extern const Uint16		  Iris_SplashStarts[];
-extern const Uint16		  Iris_SplashEnds[];
-extern const Uint8		  Iris_SplashX[];
-extern const Uint8		  Iris_SplashY[];
-extern const Uint8		  Iris_SplashSmall[];
-extern const Uint8		  Iris_DropSpeeds[];
-extern const Uint8		  Iris_DropFrames[];
-extern const Uint8		  Iris_DropPictureSteps[];
-extern const MODEL_VERTEX Iris_LeftStripCorners[];
-extern const MODEL_VERTEX Iris_RightStripCorners[];
-extern const Uint16		  Iris_StripMesh[];
-extern const MODEL_VERTEX Iris_ConeCorners[];
-extern const Uint16		  Iris_ConeMesh[];
+extern Sint32			  IrisSplashRadii[];
+extern const Uint8		  IrisSplashOffsetsY[];
+extern const Uint16		  IrisPillarMesh[];
+extern const MODEL_VERTEX IrisParticleCorners[];
+extern const Uint16		  IrisParticleMesh[];
+extern const Uint8		  IrisPsynergySoundTicks[];
+extern const Uint16		  IrisDoorSoundTicks[];
+extern const Uint16		  IrisPowerUpSoundTicks[];
+extern const Sint8		  IrisStreakX[];
+extern const Uint8		  IrisStreakY[];
+extern const Uint16		  IrisStreakAngles[];
+extern const Sint16		  IrisStreakSpeeds[];
+extern const Uint8		  IrisLineShades[];
+extern Sint32			  IrisMoteSizes[];
+extern const Uint16		  IrisSplashStarts[];
+extern const Uint16		  IrisSplashEnds[];
+extern const Uint8		  IrisSplashX[];
+extern const Uint8		  IrisSplashY[];
+extern const Uint8		  IrisSplashSmall[];
+extern const Uint8		  IrisDropSpeeds[];
+extern const Uint8		  IrisDropTicks[];
+extern const Uint8		  IrisDropPictureSteps[];
+extern const MODEL_VERTEX IrisLeftStripCorners[];
+extern const MODEL_VERTEX IrisRightStripCorners[];
+extern const Uint16		  IrisStripMesh[];
+extern const MODEL_VERTEX IrisConeCorners[];
+extern const Uint16		  IrisConeMesh[];
 
 /* The buffers and tables the parts share, by the first part that reads them. */
 
@@ -1887,13 +1883,13 @@ extern const Uint16		  Iris_ConeMesh[];
 extern Uint8 MapGridMetatileBuffer[];
 
 /* thor.c */
-extern const Sint16 Thor_Points[6][2]; /* the three lines' end points */
+extern const Sint16 ThorPoints[6][2]; /* the three lines' end points */
 
 /* flurry.c */
 void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mode);
 
 /* btEffectRunFlurry's modes, by the abilities that play them: the rows of
-   Flurry_Styles. Gust and Flying Attack take one, two or three strikes as a
+   FlurryStyles. Gust and Flying Attack take one, two or three strikes as a
    double or triple blow raises their variant. */
 typedef enum FLURRY_MODE {
 	FLURRY_BEAR_CLAW,			 /* five strikes; also Ransack */
@@ -1929,43 +1925,43 @@ typedef enum FLURRY_PAL {
 /* What else a flurry plays around its target, its FLURRY_EXTRA. */
 typedef enum FLURRY_EXTRA_KIND {
 	FLURRY_EXTRA_NONE,
-	FLURRY_EXTRA_GLINTS, /* three glints a frame until frame 31 */
+	FLURRY_EXTRA_GLINTS, /* three glints a tick until tick 31 */
 	FLURRY_EXTRA_RIPPLE	 /* BG2 swings on a sine wave and smoke rises */
 } FLURRY_EXTRA_KIND;
 
 /* The scale each of Gaia's rocks starts from before it grows. */
-extern const SCALE Gaia_UnitScale;
+extern const SCALE GaiaUnitScale;
 
 /* spider_web.c A scale of one in 16.16 on both axes. */
-extern const SPR_SCALE Ulysses_ParticleScale;
+extern const SPR_SCALE UlyssesParticleScale;
 
 /* neptune.c */
-extern const SCALE Neptune_UnitScale; /* the serpent's scale */
+extern const SCALE NeptuneUnitScale; /* the serpent's scale */
 
-extern const Sint8 VoidBeam_Corners[][2]; /* the hexagon's corners (z, y) */
+extern const Sint8 VoidBeamCorners[][2]; /* the hexagon's corners (z, y) */
 
 /* flora.c Flora's scale, one to one. */
-extern const SCALE Flora_UnitScale;
+extern const SCALE FloraUnitScale;
 
 /* daedalus.c The scales of the forest canopy Daedalus flies over, of his
    machine's pieces and of his missiles. */
-extern const SCALE Daedalus_CanopyScale;
-extern const SCALE Daedalus_MachineScale;
-extern const SCALE Daedalus_MissileScale;
+extern const SCALE DaedalusCanopyScale;
+extern const SCALE DaedalusMachineScale;
+extern const SCALE DaedalusMissileScale;
 
 /* Coatlicue's and Catastrophe's figures' scales. */
-extern const SCALE Coatlicue_UnitScale;
-extern const SCALE Catastrophe_UnitScale;
+extern const SCALE CoatlicueUnitScale;
+extern const SCALE CatastropheUnitScale;
 
 /* haures.c Haures's scales as he charges, as he circles and as he opens. */
-extern const SCALE Haures_ChargeScale;
-extern const SCALE Haures_OrbitScale;
-extern const SCALE Haures_OpeningScale;
+extern const SCALE HauresChargeScale;
+extern const SCALE HauresOrbitScale;
+extern const SCALE HauresOpeningScale;
 
 /* moloch.c Moloch's motes' sizes, by a mote's number's low three bits. */
-extern const Uint8 Moloch_MoteSizes[];
+extern const Uint8 MolochMoteSizes[];
 /* Iris's scale while she rises. */
-extern const SCALE Iris_UnitScale;
+extern const SCALE IrisUnitScale;
 /* The template btEffectBuildBlitter walks word by word to write a blitter
    (patch_template.s); none of it runs where it is. */
 extern const Uint32 BlitterTemplate[];
@@ -1976,7 +1972,7 @@ extern const Uint32 BlitterTemplate[];
    which caps an additive word's pixels at the brightest canvas level. */
 extern const Uint32 BattleEffect_Mask[];
 /* The ARM immediate operand for 1 << n, n from 0 to 15 (blitter_operands.c). */
-extern const Uint16 Blitter_ImmediatePowers[];
+extern const Uint16 BlitterImmediatePowers[];
 /* Copy, one pixel, right to left. */
 extern const Uint32 BattleEffect_CopyReverse[];
 /* Copy, one pixel, left to right. */

@@ -29,15 +29,15 @@
 #include "graphics/graphics.h"
 #include "text/msg_ids.h"
 
-extern SCENE_ENTRANCE LacquerRoomsB_Entrances[];
-extern Uint32		  LacquerRoomsB_Exits[];
-extern ACTOR_PLACE	  LacquerRoomsB_ActorPlacements[];
-extern ACTOR_PLACE	  LacquerRoomsB_SchoolRoomActorPlacements[];
-extern CUE			  LacquerRoomsB_Cues[];
-extern CUE			  LacquerRoomsB_SchoolRoomCues[];
+extern SCENE_ENTRANCE LacquerRoomsBEntrances[];
+extern Uint32		  LacquerRoomsBExits[];
+extern ACTOR_PLACE	  LacquerRoomsBActorPlacements[];
+extern ACTOR_PLACE	  LacquerRoomsBSchoolRoomActorPlacements[];
+extern CUE			  LacquerRoomsBCues[];
+extern CUE			  LacquerRoomsBSchoolRoomCues[];
 
 /* The actors of the houses, shops and inn, numbered by the rows of
-   LacquerRoomsB_ActorPlacements. Each villager is named by what they talk of
+   LacquerRoomsBActorPlacements. Each villager is named by what they talk of
    before Xian hears of Hsu. */
 typedef enum LACQUER_ROOMS_B_ACTOR_ID {
 	/* A man with a topknot, at the table of his house. */
@@ -84,7 +84,7 @@ enum { ANIM_HSU_IN_BED = 6 };
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return LacquerRoomsB_Entrances;
+	return LacquerRoomsBEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -94,7 +94,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return LacquerRoomsB_Exits;
+	return LacquerRoomsBExits;
 }
 
 /* The room behind the school places only Master Feh, Feizhi and Hsu. */
@@ -102,10 +102,10 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.entrance ==
 		LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
-		return LacquerRoomsB_SchoolRoomActorPlacements;
+		return LacquerRoomsBSchoolRoomActorPlacements;
 	}
-	fdAssignViewFlags(LacquerRoomsB_ActorPlacements);
-	return LacquerRoomsB_ActorPlacements;
+	fdAssignViewFlags(LacquerRoomsBActorPlacements);
+	return LacquerRoomsBActorPlacements;
 }
 
 /* The way the leader faces, read before the script turns anyone. */
@@ -268,9 +268,9 @@ const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.entrance ==
 		LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
-		return LacquerRoomsB_SchoolRoomCues;
+		return LacquerRoomsBSchoolRoomCues;
 	}
-	return LacquerRoomsB_Cues;
+	return LacquerRoomsBCues;
 }
 
 /* Each room opens with the window transition. The inn and the shop also get
@@ -300,13 +300,13 @@ Sint32 scInit(void)
 
 #include "shared/field_effect_duration_scripts.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
-SCENE_ENTRANCE LacquerRoomsB_Entrances[] = {
+SCENE_ENTRANCE LacquerRoomsBEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{LACQUER_ROOMS_B_HOUSE, CONDITION_ALWAYS, 128, 0, 184, FACING_NORTH, 0, 24,
@@ -328,7 +328,7 @@ SCENE_ENTRANCE LacquerRoomsB_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 LacquerRoomsB_Exits[] = {
+Uint32 LacquerRoomsBExits[] = {
 	SCENE_EXITS(LacquerRoomsB),
 	SCENE_EXIT(LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_XIAN, Xian,
 		XIAN_FROM_WEAPON_AND_ARMOR_SHOP),
@@ -350,7 +350,7 @@ Uint32 LacquerRoomsB_Exits[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE LacquerRoomsB_ActorPlacements[] = {
+ACTOR_PLACE LacquerRoomsBActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_MAN_WITH_TOPKNOT, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
 		144, 0, 152, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_APRON, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
@@ -378,7 +378,7 @@ ACTOR_PLACE LacquerRoomsB_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE LacquerRoomsB_SchoolRoomActorPlacements[] = {
+ACTOR_PLACE LacquerRoomsBSchoolRoomActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_FEH, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), MOVEMENT_TYPE_STAND,
 		224, 0, 656, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_FEIZHI, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), MOVEMENT_TYPE_STAND,
@@ -388,7 +388,7 @@ ACTOR_PLACE LacquerRoomsB_SchoolRoomActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE LacquerRoomsB_Cues[] = {
+CUE LacquerRoomsBCues[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_XIAN },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, LACQUER_ROOMS_B_HOUSE_NORTH_TO_XIAN },
 	{ CUE_EXIT, 3, CONDITION_ALWAYS, LACQUER_ROOMS_B_TO_XIAN_EAST },
@@ -458,7 +458,7 @@ CUE LacquerRoomsB_Cues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE LacquerRoomsB_SchoolRoomCues[] = {
+CUE LacquerRoomsBSchoolRoomCues[] = {
 	{ CUE_EXIT, 8, CONDITION_ALWAYS, LACQUER_ROOMS_B_TO_LACQUER_ROOMS_A_FEHS_SCHOOL },
 	{ CUE_TALK, ACTOR_FEH, FLAG_HSU_RESCUED_WITHOUT_PARTY, MSGNO(MsgXianInteriorsFeizhisPredictionCameTrueNowI) },
 	{ CUE_TALK, ACTOR_FEIZHI, FLAG_HSU_RESCUED_WITHOUT_PARTY, SCRIPT_REF(scLacquerRoomsBFeizhiThanksParty) },

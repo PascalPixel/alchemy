@@ -478,7 +478,7 @@ static void scMcCoyPalaceGroundsGuardsArrestParty(void)
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST);
 	fdScriptEnd();
 }
@@ -494,7 +494,7 @@ static void scMcCoyPalaceGroundsOpenDoor(void)
 #include "shared/floating_nut.c"
 
 /* clang-format off */
-/* The door's opening, drawn in three steps of 5 frames each from the spare */
+/* The door's opening, drawn in three steps of 5 ticks each from the spare */
 /* metatiles at (34, 25) to (36, 27). */
 Uint16 McCoyPalaceGroundsDoorOpenSteps[] = {
 	MAPGRID_ANIMATION_STEP(34, 25, 1, 3, 5), MAPGRID_ANIMATION_STEP(35, 25, 1, 3, 5), MAPGRID_ANIMATION_STEP(36, 25, 1, 3, 5), MAPGRID_ANIMATION_STEPS_END,

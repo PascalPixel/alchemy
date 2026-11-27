@@ -326,7 +326,7 @@ typedef enum ENEMY_ID {
 	ENEMY_SOUL_ARMY,
 	ENEMY_SPIRIT_ARMY,
 	/* The Dullahan's three sets of abilities, one row each
-	   (BattleAI_DullahanForms): it starts its battle on one at random and moves
+	   (BattleAIDullahanForms): it starts its battle on one at random and moves
 	   to the next each time it has gone through one (btAIChooseAction). */
 	ENEMY_DULLAHAN,
 	ENEMY_DULLAHAN_B,

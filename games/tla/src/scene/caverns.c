@@ -49,15 +49,15 @@ typedef enum CAVERNS_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_HAURUS_DOOR = 8
 } CAVERNS_METATILE_BEHAVIOR;
 
-extern Sint16	   Caverns_AngaraBlocks[];
-extern Sint16	   Caverns_OseniaRegions[];
-extern ACTOR_PLACE Caverns_Placements[];
-extern ACTOR_PLACE Caverns_IndraPlacements[];
-extern ACTOR_PLACE Caverns_AngaraPlacements[];
-extern CUE		   Caverns_OseniaCues[];
-extern CUE		   Caverns_IndraCues[];
-extern CUE		   Caverns_AttekaCues[];
-extern CUE		   Caverns_AngaraCues[];
+extern Sint16	   CavernsAngaraBlocks[];
+extern Sint16	   CavernsOseniaRegions[];
+extern ACTOR_PLACE CavernsPlacements[];
+extern ACTOR_PLACE CavernsIndraPlacements[];
+extern ACTOR_PLACE CavernsAngaraPlacements[];
+extern CUE		   CavernsOseniaCues[];
+extern CUE		   CavernsIndraCues[];
+extern CUE		   CavernsAttekaCues[];
+extern CUE		   CavernsAngaraCues[];
 
 void scCavernsPlaceAngaraBlocks(const Sint16 *data);
 void scCavernsPrepareOsenia(void);
@@ -66,7 +66,7 @@ void scCavernsInitIndra(void);
 void scCavernsPrepareAngara(void);
 void scCavernsInitAngara(void);
 /* Jumps the leader across to the position given when nothing is in the way. */
-Bool scCavernsJumpAcross(ACTOR *actor, FIELD_COORDINATE *position);
+Bool scCavernsJumpAcross(ACTOR *actor, FIELD_COORDINATE *pos);
 
 #include "../field/actor_set_sprite_priority.c"
 
@@ -83,10 +83,10 @@ Bool scCavernsJumpAcross(ACTOR *actor, FIELD_COORDINATE *position);
 
 struct ACTOR;
 
-extern Uint32 FieldEffect_ShortScript[];
+extern Uint32 FieldEffectShortScript[];
 
-extern Uint32 FieldEffect_MediumScript[];
-extern Uint32 FieldEffect_LongScript[];
+extern Uint32 FieldEffectMediumScript[];
+extern Uint32 FieldEffectLongScript[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -98,7 +98,7 @@ const Sint16 *scGetExitRegions(void)
 	const Sint16 *result = NULL;
 
 	if(MainRoutineStateWork.next == SCENE_CAVERNS_OSENIA)
-		result = Caverns_OseniaRegions;
+		result = CavernsOseniaRegions;
 	return result;
 }
 
@@ -112,10 +112,10 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	Sint32 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_CAVERNS_INDRA)
-		return Caverns_IndraPlacements;
+		return CavernsIndraPlacements;
 	if(scene == SCENE_CAVERNS_ANGARA)
-		return Caverns_AngaraPlacements;
-	return Caverns_Placements;
+		return CavernsAngaraPlacements;
+	return CavernsPlacements;
 }
 
 #include "../field/map_metatile_get.c"
@@ -229,32 +229,32 @@ void scCavernsShiftAngaraMetatileHeights(Sint32 offset)
    under it back to the floor, so that the block can leave its metatile. */
 void scCavernsStartMovingAngaraBlock(void)
 {
-	FIXED				position[3];
+	FIXED				pos[3];
 	FIELD_STATE		   *state = Ram_HeapSlots->fieldState;
-	FIELD_EFFECT_STATE *current = Ram_HeapSlots->fieldEffState;
-	const Uint16	   *ids = (const Uint16 *)Caverns_AngaraBlocks;
+	FIELD_EFFECT_STATE *cur = Ram_HeapSlots->fieldEffState;
+	const Uint16	   *ids = (const Uint16 *)CavernsAngaraBlocks;
 	ACTOR			   *actor = NULL;
 	ACTOR			   *leader;
 	Sint32				height;
-	Sint32				angle;
+	Sint32				ang;
 
 	state->movedBlock = NULL;
-	if(current != NULL && state->psynergy != 0) {
-		actor = state->movedBlock = current->tgt;
-		if(current->ability != ABILITY_CARRY)
+	if(cur != NULL && state->psynergy != 0) {
+		actor = state->movedBlock = cur->tgt;
+		if(cur->ability != ABILITY_CARRY)
 			scCavernsShiftAngaraMetatileHeights(1);
 	} else {
 		leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-		angle = FACING_QUARTER(leader->facing + DEGtoANG(45));
-		position[0] = leader->x.fixed;
-		position[1] = leader->y.fixed;
-		position[2] = leader->z.fixed;
-		syVectorAddPolarOffset(toFIXED(16), angle, position);
+		ang = FACING_QUARTER(leader->facing + DEGtoANG(45));
+		pos[0] = leader->x.fixed;
+		pos[1] = leader->y.fixed;
+		pos[2] = leader->z.fixed;
+		syVectorAddPolarOffset(toFIXED(16), ang, pos);
 		while(*ids != ACTOR_LIST_END) {
 			actor = fdActorGetById(*ids);
-			if(FIELD_METATILE(position[0]) == FIELD_METATILE(actor->x.fixed) &&
-				position[1] / toFIXED(1) == actor->y.fixed / toFIXED(1) &&
-				FIELD_METATILE(position[2]) == FIELD_METATILE(actor->z.fixed))
+			if(FIELD_METATILE(pos[0]) == FIELD_METATILE(actor->x.fixed) &&
+				pos[1] / toFIXED(1) == actor->y.fixed / toFIXED(1) &&
+				FIELD_METATILE(pos[2]) == FIELD_METATILE(actor->z.fixed))
 				break;
 			ids++;
 			actor = NULL;
@@ -273,11 +273,11 @@ void scCavernsStartMovingAngaraBlock(void)
 		FIELD_METATILE(actor->z.fixed), actor->sceneWord);
 }
 
-/* A dust puff loses a DUST_DRAG_X-th of its speed east or west each frame, and
+/* A dust puff loses a DUST_DRAG_X-th of its speed east or west each tick, and
    a DUST_DRAG_Z-th of its speed north or south. */
 enum { DUST_DRAG_X = 12, DUST_DRAG_Z = 10 };
 
-/* One puff of the ring of dust a fallen block throws up: each frame it drifts
+/* One puff of the ring of dust a fallen block throws up: each tick it drifts
    outwards, slows, grows and spins. */
 void scCavernsDriftDust(FIELD_OBJECT *object)
 {
@@ -293,7 +293,7 @@ void scCavernsDriftDust(FIELD_OBJECT *object)
 	effect->spr->rotation += effect->spin;
 }
 
-/* The block stacked on top of the other, each frame: Felix is drawn in front of
+/* The block stacked on top of the other, each tick: Felix is drawn in front of
    it while he stands south of it, and behind it otherwise. */
 void scCavernsLayerLeaderByTopBlock(ACTOR *actor)
 {
@@ -315,25 +315,25 @@ void scCavernsLayerLeaderByTopBlock(ACTOR *actor)
    a yellow block, and is gone. */
 void scCavernsFinishMovingAngaraBlock(void)
 {
-	FIXED				velocity[3];
+	FIXED				vel[3];
 	EFFECT_OPTIONS		options;
 	FIELD_STATE		   *state;
-	FIELD_EFFECT_STATE *current;
+	FIELD_EFFECT_STATE *cur;
 	ACTOR			   *actor;
 	ACTOR			   *other;
 	Sint32				kind;
 	Sint32				height;
 	Sint32				value;
-	Sint32				angle;
+	Sint32				ang;
 	Uint32				i;
 	ACTOR			   *spawned;
 	Sint32				sum;
 
 	state = Ram_HeapSlots->fieldState;
-	current = Ram_HeapSlots->fieldEffState;
+	cur = Ram_HeapSlots->fieldEffState;
 	actor = state->movedBlock;
-	if(current != NULL && state->psynergy != 0) {
-		if(current->ability != ABILITY_CARRY)
+	if(cur != NULL && state->psynergy != 0) {
+		if(cur->ability != ABILITY_CARRY)
 			scCavernsShiftAngaraMetatileHeights(-1);
 	} else {
 		scCavernsShiftAngaraMetatileHeights(-1);
@@ -374,18 +374,17 @@ void scCavernsFinishMovingAngaraBlock(void)
 			options.startScaleY = toFIXED(4) / 5;
 			i = 0;
 			do {
-				angle = i * (TRIG_TURN / DUST_RING_PUFFS);
-				velocity[0] = syCos(angle) * 2;
-				velocity[1] = 0;
-				velocity[2] = sySin(angle) * 2;
-				velocity[0] += velocity[0] >> 1;
-				velocity[0] += (Uint16)(syRandom() * 3 >> 2) - (toFIXED(3) / 8);
-				velocity[2] +=
-					(Uint16)(syRandom() * 3 >> 3) - (toFIXED(3) / 16);
+				ang = i * (TRIG_TURN / DUST_RING_PUFFS);
+				vel[0] = syCos(ang) * 2;
+				vel[1] = 0;
+				vel[2] = sySin(ang) * 2;
+				vel[0] += vel[0] >> 1;
+				vel[0] += (Uint16)(syRandom() * 3 >> 2) - (toFIXED(3) / 8);
+				vel[2] += (Uint16)(syRandom() * 3 >> 3) - (toFIXED(3) / 16);
 				/* FAKEMATCH(dead): sum, never read again, assigned the flags
 				 * inside the call's arguments. */
 				scFieldEffectSpawn(actor->x.fixed, actor->y.fixed,
-					actor->z.fixed, velocity[0], velocity[1], velocity[2],
+					actor->z.fixed, vel[0], vel[1], vel[2],
 					sum = EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
 						EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
 					&options);
@@ -395,10 +394,10 @@ void scCavernsFinishMovingAngaraBlock(void)
 		actor->motionFlg = 0;
 		actor->layer = 0;
 		/* The velocity array is reused for the position under the actor. */
-		velocity[0] = actor->x.fixed;
-		velocity[1] = actor->y.fixed - toFIXED(16);
-		velocity[2] = actor->z.fixed;
-		other = fdActorFindAtMetatile(velocity, 1);
+		vel[0] = actor->x.fixed;
+		vel[1] = actor->y.fixed - toFIXED(16);
+		vel[2] = actor->z.fixed;
+		other = fdActorFindAtMetatile(vel, 1);
 		if(other != NULL) {
 			actor->update = (OBJECT_UPDATE)scCavernsLayerLeaderByTopBlock;
 			actor->sceneCnt = 1;
@@ -423,12 +422,12 @@ const CUE *scGetCues(void)
 	Sint32 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_CAVERNS_INDRA)
-		return Caverns_IndraCues;
+		return CavernsIndraCues;
 	if(scene == SCENE_CAVERNS_ATTEKA)
-		return Caverns_AttekaCues;
+		return CavernsAttekaCues;
 	if(scene == SCENE_CAVERNS_ANGARA)
-		return Caverns_AngaraCues;
-	return Caverns_OseniaCues;
+		return CavernsAngaraCues;
+	return CavernsOseniaCues;
 }
 
 Sint32 scInit(void)
@@ -504,10 +503,10 @@ void scCavernsMoveIndraPillar(Sint32 unused, Sint32 id)
 		FIELD_METATILE(actor->x.fixed), INDRA_PILLAR_ROW);
 }
 
-Bool scCavernsJumpAcross(ACTOR *actor, FIELD_COORDINATE *position)
+Bool scCavernsJumpAcross(ACTOR *actor, FIELD_COORDINATE *pos)
 {
 	Sint32 saved = actor->motionFlg;
-	Sint32 blocked = fdMapGridCheckCollision(actor, position);
+	Sint32 blocked = fdMapGridCheckCollision(actor, pos);
 
 	if(blocked == 0) {
 		fdScriptStart();
@@ -523,8 +522,8 @@ Bool scCavernsJumpAcross(ACTOR *actor, FIELD_COORDINATE *position)
 		fdActorSetSprFlags(actor, 0);
 		{
 			MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
-			Sint32				x = position[0].part[0].integer;
-			Sint32				z = position[2].part[0].integer;
+			Sint32				x = pos[0].part[0].integer;
+			Sint32				z = pos[2].part[0].integer;
 			Sint32				owner = party->leaderActorId;
 
 			fdActorMoveToAndWaitById(owner, x, z);
@@ -556,7 +555,7 @@ void scCavernsJumpEastAcrossGap(void)
 	scCavernsJumpAcross(leader, (FIELD_COORDINATE *)position);
 }
 
-/* Osenia Cavern's one actor, the row of Caverns_Placements: an unseen marker
+/* Osenia Cavern's one actor, the row of CavernsPlacements: an unseen marker
    scCavernsWalkIntoPassage sets down by the hole as Felix climbs into it. */
 typedef enum CAVERNS_OSENIA_ACTOR_ID {
 	ACTOR_PASSAGE_MARKER = ACTOR_FIRST_PLACED
@@ -702,7 +701,7 @@ void scCavernsPrepareAngara(void)
 }
 
 /* Angara Cavern's things in Haurus's chamber, numbering
-   Caverns_AngaraPlacements. */
+   CavernsAngaraPlacements. */
 typedef enum CAVERNS_ANGARA_ACTOR_ID {
 	/* The two grey blocks carved with a spiral, one on the floor and one up on
 	   the ledge, carried until one stands on top of the other. */
@@ -719,7 +718,7 @@ typedef enum CAVERNS_ANGARA_ACTOR_ID {
    left out of the search for a block to push. */
 void scCavernsInitAngara(void)
 {
-	scCavernsPlaceAngaraBlocks(Caverns_AngaraBlocks);
+	scCavernsPlaceAngaraBlocks(CavernsAngaraBlocks);
 	fdActorGetById(ACTOR_FIRST_BLOCK)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
 	fdActorGetById(ACTOR_SECOND_BLOCK)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
 	fdActorGetById(ACTOR_WEST_CANDLESTICK)->collisionFlg |= ACTOR_NOT_TARGETED;
@@ -746,14 +745,14 @@ void scCavernsOpenAngaraDoor(void)
 #include "shared/field_effect_duration_scripts.c"
 
 /* The spiral blocks of Angara Cavern's chamber, by actor id, ended by -1. */
-Sint16 Caverns_AngaraBlocks[] = {
+Sint16 CavernsAngaraBlocks[] = {
 	ACTOR_FIRST_BLOCK, ACTOR_SECOND_BLOCK, -1, 0,
 };
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 SCENE_ENTRANCE SceneEntrances[] = {
@@ -763,7 +762,7 @@ SCENE_ENTRANCE SceneEntrances[] = {
 
 /* Osenia Cavern's exit regions: the tunnel's two ends, climbed up to the */
 /* west hole (exit 4) and to the one Scoop digs (exit 5). */
-Sint16 Caverns_OseniaRegions[] = {
+Sint16 CavernsOseniaRegions[] = {
 	132, 28, 692, 140, 36, 700, -1, 4,
 	292, 28, 692, 300, 36, 700, -1, 5,
 	-1, 0, 0, 0, 0, 0, 0, 0,
@@ -794,13 +793,13 @@ Uint32 SceneExits[] = {
 };
 
 /* Osenia and Atteka Caverns' actors: the passage marker. */
-ACTOR_PLACE Caverns_Placements[] = {
+ACTOR_PLACE CavernsPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
 
 /* Indra Cavern's actors, in CAVERNS_INDRA_ACTOR_ID's order. */
-ACTOR_PLACE Caverns_IndraPlacements[] = {
+ACTOR_PLACE CavernsIndraPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -808,7 +807,7 @@ ACTOR_PLACE Caverns_IndraPlacements[] = {
 };
 
 /* Angara Cavern's actors, in CAVERNS_ANGARA_ACTOR_ID's order. */
-ACTOR_PLACE Caverns_AngaraPlacements[] = {
+ACTOR_PLACE CavernsAngaraPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 536, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_LIT_CANDLESTICK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 512, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -818,7 +817,7 @@ ACTOR_PLACE Caverns_AngaraPlacements[] = {
 
 /* Osenia Cavern's exit, its two holes walked into from three sides, and */
 /* Scoop on the sand where the second is dug. */
-CUE Caverns_OseniaCues[] = {
+CUE CavernsOseniaCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, CAVERNS_OSENIA_TO_WORLD_MAP},
 	{STEP_CUE_WALKING_INTO(FACING_SOUTH), METATILE_BEHAVIOR_WEST_HOLE, CONDITION_ALWAYS, SCRIPT_REF(scCavernsWalkSouthIntoPassage)},
 	{STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_WEST_HOLE, CONDITION_ALWAYS, SCRIPT_REF(scCavernsWalkWestIntoPassage)},
@@ -832,7 +831,7 @@ CUE Caverns_OseniaCues[] = {
 
 /* Indra Cavern's exit, the ledge's edge by the gap, Lash on the rope post */
 /* and Move on the pillar. */
-CUE Caverns_IndraCues[] = {
+CUE CavernsIndraCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, CAVERNS_INDRA_TO_WORLD_MAP},
 	{STEP_CUE_WALKING_INTO(FACING_EAST), METATILE_BEHAVIOR_GAP_EDGE, CONDITION_ALWAYS, SCRIPT_REF(scCavernsJumpEastAcrossGap)},
 	{PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_LOWER_ROPE_POST, FLAG_INDRA_ROPE_TIED, 0},
@@ -841,7 +840,7 @@ CUE Caverns_IndraCues[] = {
 };
 
 /* Atteka Cavern's exit and Parch on its pool. */
-CUE Caverns_AttekaCues[] = {
+CUE CavernsAttekaCues[] = {
 	{CUE_EXIT, 5, CONDITION_ALWAYS, CAVERNS_ATTEKA_TO_WORLD_MAP},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), METATILE_BEHAVIOR_GREEN_POOL, CONDITION_ALWAYS, SCRIPT_REF(scCavernsParchAttekaWater)},
 	{CUE_TABLE_END},
@@ -849,7 +848,7 @@ CUE Caverns_AttekaCues[] = {
 
 /* Angara Cavern's exits and stairs, its stone door, and pushing, Move and */
 /* Carry on either spiral block until they are stacked. */
-CUE Caverns_AngaraCues[] = {
+CUE CavernsAngaraCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, CAVERNS_ANGARA_TO_WORLD_MAP},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},

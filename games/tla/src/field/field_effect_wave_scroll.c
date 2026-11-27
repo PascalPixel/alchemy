@@ -20,10 +20,10 @@ void WAVE_SCROLL(void)
 	for(i = 0; i != DISPLAY_HEIGHT; i++, line++) {
 		Sint32 range = (DISPLAY_HEIGHT - i) >> 2;
 
-		/* A sine of the line and the frame, (WAVE_SCROLL_CALM_LINE - i) / 2
+		/* A sine of the line and the tick, (WAVE_SCROLL_CALM_LINE - i) / 2
 		   pixels either way, less 4, jittered by up to a quarter of the lines
 		   below. */
-		*line = (syMulFX(sySin((i + (Uint8)FrameCount) * (TRIG_TURN / 256)),
+		*line = (syMulFX(sySin((i + (Uint8)TickCount) * (TRIG_TURN / 256)),
 					 (WAVE_SCROLL_CALM_LINE - i) * (toFIXED(1) / 64)) >>
 					11) -
 			4;

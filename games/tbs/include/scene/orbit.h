@@ -63,7 +63,7 @@ typedef struct ORBITING_MAP_ACTOR {
 	Sint32 velY;
 	Sint32 velZ;
 	/* ACTOR.speedLimit: 1/65536 turns; advanced by TRIG_TURN / 64 plus two
-	   random steps each frame. */
+	   random steps each tick. */
 	Sint32 orbitAng;
 	Sint32 acceleration;
 	FIXED  orbitCenterX; /* ACTOR.tgtX: 16.16 fixed-point pixels */

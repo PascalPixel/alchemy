@@ -1,7 +1,7 @@
 /* Torch and Kite. Part of battle_effect.c. */
 
-#define TORCH_FRAMES	  96
-#define TORCH_FADE_FRAMES 8 /* the rings fade in, and later out, over these */
+#define TORCH_TICKS		 96
+#define TORCH_FADE_TICKS 8 /* the rings fade in, and later out, over these */
 
 /* The ring level drawn brightest: the levels either side of it dim toward 0 and
    toward the disc's edge. */
@@ -36,11 +36,11 @@ void btEffectRunTorch(BATTLE_EFFECT_PARM *args)
 	Sint32				 red;
 	Sint32				 green;
 	Sint32				 blue;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 swayPhase;
 	Sint32				 level;
 	Uint16				*ramp;
-	Sint32				 angle;
+	Sint32				 ang;
 	Sint32				*line;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -114,30 +114,30 @@ void btEffectRunTorch(BATTLE_EFFECT_PARM *args)
 	sySetEvent(btEffectArmBg2AffineHBlankDMA, EVENT_PASS_VBLANK);
 
 	/* Fade the rings in, sway the lines, then fade them out. */
-	for(frame = 0; frame != TORCH_FRAMES; frame++) {
-		if(frame <= TORCH_FADE_FRAMES) {
-			level = frame * 2;
+	for(frm = 0; frm != TORCH_TICKS; frm++) {
+		if(frm <= TORCH_FADE_TICKS) {
+			level = frm * 2;
 			swayPhase = level;
 			REG_BLDALPHA = EFFECT_BLEND_CANVAS(level);
 		} else {
-			swayPhase = frame * 2;
+			swayPhase = frm * 2;
 		}
-		if(frame > TORCH_FRAMES - TORCH_FADE_FRAMES)
-			REG_BLDALPHA = EFFECT_BLEND_CANVAS(TORCH_FRAMES * 2 - frame * 2);
+		if(frm > TORCH_TICKS - TORCH_FADE_TICKS)
+			REG_BLDALPHA = EFFECT_BLEND_CANVAS(TORCH_TICKS * 2 - frm * 2);
 
 		/* Each line starts one canvas pixel further along than the one above,
 		   swayed either way by up to TORCH_SWAY. */
 		line = state->bg2xLines;
-		for(i = 0, angle = -(swayPhase << 9); i != DISPLAY_HEIGHT; i++) {
+		for(i = 0, ang = -(swayPhase << 9); i != DISPLAY_HEIGHT; i++) {
 			*line++ = CANVAS_WAVE_BG2X(
-				i * toFIXED(4) - sySin(angle) * TORCH_SWAY + toFIXED(4));
-			angle += TRIG_TURN / 128;
+				i * toFIXED(4) - sySin(ang) * TORCH_SWAY + toFIXED(4));
+			ang += TRIG_TURN / 128;
 		}
 
 		/* Rotate the colours so the rings run outward. */
-		/* DEAD: never true, as frame stays below TORCH_FRAMES; the ROM keeps
+		/* DEAD: never true, as tick stays below TORCH_TICKS; the ROM keeps
 		   the compare and the store. */
-		if(frame > 127) {
+		if(frm > 127) {
 			state->transferPending = 1;
 		} else {
 			ramp[1] = ramp[CANVAS_LEVEL_BRIGHTEST];
@@ -171,8 +171,8 @@ void btEffectRunKite(BATTLE_EFFECT_PARM *args)
 	btEffectEndCanvasLayer();
 }
 
-#undef TORCH_FRAMES
-#undef TORCH_FADE_FRAMES
+#undef TORCH_TICKS
+#undef TORCH_FADE_TICKS
 #undef TORCH_BRIGHTEST_LEVEL
 #undef TORCH_CHANNEL_MAX
 #undef TORCH_BLUE_MAX

@@ -4,12 +4,12 @@
 #include "field_internal.h"
 
 /* A dissolve clears one pixel of each 8-bit tile a step, in
-   SpriteDissolve_PixelOrder's order, so a tile is gone after this many. */
+   SpriteDissolvePixelOrder's order, so a tile is gone after this many. */
 #define DISSOLVE_TILE_PIXELS  64
 /* The step the first tile starts to dissolve at; each tile after it starts a
    step sooner. */
 #define DISSOLVE_FIRST_STEP	  64
-/* The steps a dissolve takes, four a frame. */
+/* The steps a dissolve takes, four a tick. */
 #define DISSOLVE_STEPS		  (DISSOLVE_FIRST_STEP + DISSOLVE_TILE_PIXELS)
 /* How much further along the pixel order each tile reads than the tile before,
    besides the step it is ahead. */
@@ -18,26 +18,26 @@
 #define PIXEL_PAIR_ODD_MASK	  0xff00
 
 /* One step of dissolving a sprite pixel by pixel. */
-void fdSprDissolveStep(Uint8 *rawSprite, Uint32 step)
+void fdSprDissolveStep(Uint8 *rawSpr, Uint32 step)
 {
 	Uint16		*tile;
-	Sint32		 tileCount;
+	Sint32		 tileCnt;
 	Uint32		 i;
 	const Uint8 *order;
 
-	SPR *sprite = (SPR *)rawSprite;
+	SPR *spr = (SPR *)rawSpr;
 
-	tile = (Uint16 *)(OBJ_VRAM0 + VramCacheEntries[sprite->slot].ofs);
-	tileCount = (sprite->width * sprite->height) / DISSOLVE_TILE_PIXELS;
+	tile = (Uint16 *)(OBJ_VRAM0 + VramCacheEntries[spr->slot].ofs);
+	tileCnt = (spr->width * spr->height) / DISSOLVE_TILE_PIXELS;
 	i = 0;
 
-	if(i < tileCount) {
-		order = SpriteDissolve_PixelOrder;
+	if(i < tileCnt) {
+		order = SpriteDissolvePixelOrder;
 		{
 			Uint32 highMask = PIXEL_PAIR_ODD_MASK;
-			Uint32 indexMask = DISSOLVE_TILE_PIXELS - 1;
+			Uint32 idxMask = DISSOLVE_TILE_PIXELS - 1;
 
-			for(; i < tileCount; i++, tile += TILE_SIZE_8BPP / 2, step++) {
+			for(; i < tileCnt; i++, tile += TILE_SIZE_8BPP / 2, step++) {
 				if((step - DISSOLVE_FIRST_STEP) <= DISSOLVE_TILE_PIXELS - 1) {
 					Uint8	pixel;
 					Uint16 *pixelPair;
@@ -46,8 +46,7 @@ void fdSprDissolveStep(Uint8 *rawSprite, Uint32 step)
 					/* Each tile reads the order DISSOLVE_ORDER_STRIDE entries
 					   and a step on from the tile before, so neighbouring tiles
 					   lose different pixels at the same step. */
-					pixel =
-						order[(step + i * DISSOLVE_ORDER_STRIDE) & indexMask];
+					pixel = order[(step + i * DISSOLVE_ORDER_STRIDE) & idxMask];
 					/* The halfword holding the pixel: its offset rounded down
 					   to even. */
 					pixelPair = (Uint16 *)((Uint8 *)tile +
@@ -64,8 +63,8 @@ void fdSprDissolveStep(Uint8 *rawSprite, Uint32 step)
 	}
 }
 
-/* Dissolves a sprite pixel by pixel, four steps a frame, over 32 frames. */
-void fdSprDissolveRun(Uint8 *sprite)
+/* Dissolves a sprite pixel by pixel, four steps a tick, over 32 ticks. */
+void fdSprDissolveRun(Uint8 *spr)
 {
 	Uint32 step;
 
@@ -73,50 +72,50 @@ void fdSprDissolveRun(Uint8 *sprite)
 	/* Finish all four dissolve steps before waiting for the next video
 	   frame. */
 	do {
-		fdSprDissolveStep(sprite, step);
-		fdSprDissolveStep(sprite, step + 1);
-		fdSprDissolveStep(sprite, step + 2);
-		fdSprDissolveStep(sprite, step + 3);
+		fdSprDissolveStep(spr, step);
+		fdSprDissolveStep(spr, step + 1);
+		fdSprDissolveStep(spr, step + 2);
+		fdSprDissolveStep(spr, step + 3);
 		step += 4;
 		sySynch(1);
 	} while(step <= DISSOLVE_STEPS - 1);
 }
 
-/* Dissolves count sprites together, pixel by pixel, over 32 frames. */
-void fdSprDissolveRunMany(Uint8 **sprites, Sint32 count)
+/* Dissolves count sprites together, pixel by pixel, over 32 ticks. */
+void fdSprDissolveRunMany(Uint8 **sprs, Sint32 cnt)
 {
-	Uint8 **firstSprite;
-	Uint8 **spriteCursor;
-	Sint32	spritesRemaining;
+	Uint8 **firstSpr;
+	Uint8 **sprCursor;
+	Sint32	sprsRemaining;
 	Uint32	step;
 	Uint32	secondDissolveStep;
 	Uint32	thirdDissolveStep;
 	Uint32	fourthDissolveStep;
 
-	firstSprite = sprites;
+	firstSpr = sprs;
 	for(step = 0; step <= DISSOLVE_STEPS - 1U; step += 4) {
-		if(count > 0) {
+		if(cnt > 0) {
 			secondDissolveStep = step + 1;
 			thirdDissolveStep = step + 2;
-			spriteCursor = firstSprite;
+			sprCursor = firstSpr;
 			fourthDissolveStep = step + 3;
-			spritesRemaining = count;
+			sprsRemaining = cnt;
 			do {
-				fdSprDissolveStep(*spriteCursor, step);
-				fdSprDissolveStep(*spriteCursor, secondDissolveStep);
-				fdSprDissolveStep(*spriteCursor, thirdDissolveStep);
-				spritesRemaining -= 1;
-				fdSprDissolveStep(*spriteCursor++, fourthDissolveStep);
-			} while(spritesRemaining != 0);
+				fdSprDissolveStep(*sprCursor, step);
+				fdSprDissolveStep(*sprCursor, secondDissolveStep);
+				fdSprDissolveStep(*sprCursor, thirdDissolveStep);
+				sprsRemaining -= 1;
+				fdSprDissolveStep(*sprCursor++, fourthDissolveStep);
+			} while(sprsRemaining != 0);
 		}
 		sySynch(1U);
 	}
 }
 
-/* Writes the actor's screen position, in pixels, to screenPosition[0..1] and
+/* Writes the actor's screen position, in pixels, to screenPos[0..1] and
    returns 0 when it is on or near the screen; otherwise writes 0, 0 and returns
    -1. */
-Sint32 fdMapGridGetScreenRelativePos(ACTOR *actor, Sint32 *screenPosition)
+Sint32 fdMapGridGetScreenRelativePos(ACTOR *actor, Sint32 *screenPos)
 {
 	MAP_GRID_SCROLL_STATE *grid = MapGridState[0];
 	Sint32				   viewX;
@@ -132,12 +131,12 @@ Sint32 fdMapGridGetScreenRelativePos(ACTOR *actor, Sint32 *screenPosition)
 	   the view's top and above 224. */
 	if((x >= -(toFIXED(32) - 1) && x <= toFIXED(272) - 1) && y > 0 &&
 		y < toFIXED(224)) {
-		*screenPosition++ = FIXEDtoINT(x);
-		*screenPosition = FIXEDtoINT(y);
+		*screenPos++ = FIXEDtoINT(x);
+		*screenPos = FIXEDtoINT(y);
 		return 0;
 	}
-	*screenPosition++ = 0;
-	*screenPosition = 0;
+	*screenPos++ = 0;
+	*screenPos = 0;
 	return -1;
 }
 
@@ -147,7 +146,7 @@ Sint32 fdMapGridGetScreenRelativePos(ACTOR *actor, Sint32 *screenPosition)
 #define OUTLINE_EDGE_COLOR 15
 
 /* Sets up the actor system: allocates and zeroes the 64 actors and registers
-   the per-frame updates. */
+   the per-tick updates. */
 void fdActorSystemInit(Sint32 controlMode)
 {
 	ACTOR_SYSTEM_STATE *system;
@@ -162,16 +161,16 @@ void fdActorSystemInit(Sint32 controlMode)
 	/* The event runner runs higher priorities first: the actors move before the
 	   camera follows them. */
 	if(controlMode == ACTOR_SYSTEM_BATTLE)
-		sySetEvent(fdActorUpdateAllMotion, EVENT_PASS_FRAME + 10);
+		sySetEvent(fdActorUpdateAllMotion, EVENT_PASS_TICK + 10);
 	else
-		sySetEvent(fdActorUpdateAllOnField, EVENT_PASS_FRAME + 10);
+		sySetEvent(fdActorUpdateAllOnField, EVENT_PASS_TICK + 10);
 	if(controlMode >= ACTOR_SYSTEM_WORLD_MAP &&
 		controlMode <= ACTOR_SYSTEM_BATTLE) {
-		sySetEvent(fdActorSystemProjectSprs, EVENT_PASS_FRAME);
+		sySetEvent(fdActorSystemProjectSprs, EVENT_PASS_TICK);
 	} else {
-		sySetEvent(fdActorSystemPlaceSprs, EVENT_PASS_FRAME);
-		Camera_UnreadWordB = 0;
-		Camera_UnreadWordA = 0;
+		sySetEvent(fdActorSystemPlaceSprs, EVENT_PASS_TICK);
+		CameraUnreadWordB = 0;
+		CameraUnreadWordA = 0;
 	}
 	system->edge = OUTLINE_EDGE_COLOR;
 	system->fill = 0;
@@ -191,14 +190,14 @@ void *fdActorFindFree(void)
 {
 	ACTOR *actor = ActorsWork;
 	void  *freeActor = 0;
-	Sint32 actorIndex = 0;
+	Sint32 actorIdx = 0;
 
-	while(actorIndex <= ACTOR_COUNT - 1) {
+	while(actorIdx <= ACTOR_COUNT - 1) {
 		if(actor->script == 0) {
 			freeActor = actor;
 			break;
 		}
-		actorIndex++;
+		actorIdx++;
 		actor++;
 	}
 	return freeActor;
@@ -208,8 +207,8 @@ void *fdActorFindFree(void)
    script lets fdActorFindFree hand the actor out again. */
 void fdActorRelease(ACTOR *actor)
 {
-	Sint32 spritesRemaining;
-	void **sprites;
+	Sint32 sprsRemaining;
+	void **sprs;
 
 	if(actor) {
 		switch(actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) {
@@ -217,12 +216,11 @@ void fdActorRelease(ACTOR *actor)
 			fdSprDestroy(actor->spr);
 			break;
 		case ACTOR_SPRITE_GROUP:
-			sprites = (void **)actor->spr;
-			for(spritesRemaining = 0; spritesRemaining < 4;
-				spritesRemaining++) {
-				SPR *sprite = *sprites++;
-				if(sprite)
-					fdSprDestroy(sprite);
+			sprs = (void **)actor->spr;
+			for(sprsRemaining = 0; sprsRemaining < 4; sprsRemaining++) {
+				SPR *spr = *sprs++;
+				if(spr)
+					fdSprDestroy(spr);
 			}
 			break;
 		}
@@ -231,31 +229,30 @@ void fdActorRelease(ACTOR *actor)
 }
 
 /* Creates an actor at (x, y, z), in 16.16 pixels, or returns 0 when every slot
-   is in use. encodedSprite / 4096 is its ACTOR_CREATE and the low 12 bits its
+   is in use. encodedSpr / 4096 is its ACTOR_CREATE and the low 12 bits its
    sprite. */
-ACTOR *fdActorCreate(Sint32 encodedSprite, FIXED x, FIXED y, FIXED z)
+ACTOR *fdActorCreate(Sint32 encodedSpr, FIXED x, FIXED y, FIXED z)
 {
 	ACTOR *actor;
-	SPR	  *sprite;
-	Sint32 spriteStorageKind;
-	void **spriteSlots;
+	SPR	  *spr;
+	Sint32 sprStorageKind;
+	void **sprSlots;
 
 	/* DEAD: a first search whose result is dropped; the ROM keeps its call. */
 	fdActorFindFree();
-	spriteStorageKind = encodedSprite / (ACTOR_CREATE_SPRITE_MASK + 1);
-	encodedSprite &= ACTOR_CREATE_SPRITE_MASK;
+	sprStorageKind = encodedSpr / (ACTOR_CREATE_SPRITE_MASK + 1);
+	encodedSpr &= ACTOR_CREATE_SPRITE_MASK;
 	actor = fdActorFindFree();
 	if(actor != NULL) {
 		actor->radius = 16;
-		switch(spriteStorageKind) {
+		switch(sprStorageKind) {
 		case ACTOR_CREATE_ONE_SPRITE:
-			sprite = fdSprCreate(encodedSprite);
-			if(sprite != NULL) {
+			spr = fdSprCreate(encodedSpr);
+			if(spr != NULL) {
 				actor->sprStorageKind = ACTOR_SPRITE_ONE;
-				actor->spr = sprite;
+				actor->spr = spr;
 				actor->radius =
-					syResourceGetMetadataRecordStub(encodedSprite)->footprint >>
-					1;
+					syResourceGetMetadataRecordStub(encodedSpr)->footprint >> 1;
 			} else {
 				actor->sprStorageKind = ACTOR_SPRITE_NONE;
 			}
@@ -263,31 +260,30 @@ ACTOR *fdActorCreate(Sint32 encodedSprite, FIXED x, FIXED y, FIXED z)
 		case ACTOR_CREATE_GROUP:
 			/* Take a zeroed list of four sprites, and fill it with id and id +
 			   1. */
-			spriteSlots = (void **)ActorSystemStateWork->sprGroups +
+			sprSlots = (void **)ActorSystemStateWork->sprGroups +
 				ActorSystemStateWork->cnt++;
-			actor->sprStorageKind = spriteStorageKind;
-			actor->spr = (SPR *)spriteSlots;
-			DMA_FILL32(0, spriteSlots, 4 * sizeof(void *));
-			sprite = fdSprCreate(encodedSprite);
-			if(sprite != NULL) {
+			actor->sprStorageKind = sprStorageKind;
+			actor->spr = (SPR *)sprSlots;
+			DMA_FILL32(0, sprSlots, 4 * sizeof(void *));
+			spr = fdSprCreate(encodedSpr);
+			if(spr != NULL) {
 				actor->radius =
-					syResourceGetMetadataRecordStub(encodedSprite)->footprint >>
-					1;
-				*spriteSlots++ = sprite;
+					syResourceGetMetadataRecordStub(encodedSpr)->footprint >> 1;
+				*sprSlots++ = spr;
 			}
-			sprite = fdSprCreate(encodedSprite + 1);
-			if(sprite != NULL)
-				*spriteSlots = sprite;
+			spr = fdSprCreate(encodedSpr + 1);
+			if(spr != NULL)
+				*sprSlots = spr;
 			break;
 		}
 	}
 	if(actor != NULL) {
 		fdActorSetPosAndResetMotion(actor, x, y, z);
-		/* Up to 2 pixels a frame, gaining 1 a frame; unit scale; following the
+		/* Up to 2 pixels a tick, gaining 1 a tick; unit scale; following the
 		   ground and falling; turning to face its motion; keeping a quarter of
 		   its speed when it bounces; facing down the screen (FACING_SOUTH, the
-		   heading WorldMap_KeyHeadings gives Down). */
-		actor->script = (Sint32 *)Actor_DefaultScript;
+		   heading WorldMapKeyHeadings gives Down). */
+		actor->script = (Sint32 *)ActorDefaultScript;
 		actor->speedLimit = toFIXED(2);
 		actor->scriptCursor = 0;
 		actor->scaleX = toFIXED(1);
@@ -356,25 +352,25 @@ ACTOR_DEFINE_APPLY(fdActorSetAnimationSpeed, ACTOR *, fdSprSetAnimationSpeed)
 
 /* Both of the above: switches all of an actor's sprites to animation and sets
    their timer step to step. */
-void fdActorSetAnimationAndSpeed(ACTOR *actor, Sint32 animation, Sint32 step)
+void fdActorSetAnimationAndSpeed(ACTOR *actor, Sint32 anm, Sint32 step)
 {
-	void **sprites;
-	void  *sprite;
+	void **sprs;
+	void  *spr;
 	Sint32 part;
 
 	if(actor != 0) {
 		switch(actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) {
 		case ACTOR_SPRITE_ONE:
-			fdSprStartAnimation(actor->spr, animation);
+			fdSprStartAnimation(actor->spr, anm);
 			fdSprSetAnimationSpeed(actor->spr, step);
 			break;
 		case ACTOR_SPRITE_GROUP:
-			sprites = (void **)actor->spr;
+			sprs = (void **)actor->spr;
 			for(part = 0; part < 4; part++) {
-				sprite = *sprites++;
-				if(sprite != 0) {
-					fdSprStartAnimation(sprite, animation);
-					fdSprSetAnimationSpeed(sprite, step);
+				spr = *sprs++;
+				if(spr != 0) {
+					fdSprStartAnimation(spr, anm);
+					fdSprSetAnimationSpeed(spr, step);
 				}
 			}
 			break;
@@ -390,31 +386,31 @@ void fdActorSetSprRotation(ACTOR *actor, Uint32 rotation)
 		actor->spr->rotation = rotation;
 }
 
-/* Gives a one-sprite actor's first sprite animation the animation animationId
-   and restarts its animations. A negative animationId does nothing. */
-void fdActorSetFirstSprAnimation(ACTOR *actor, Sint32 animationId)
+/* Gives a one-sprite actor's first sprite animation the animation anmId
+   and restarts its animations. A negative anmId does nothing. */
+void fdActorSetFirstSprAnimation(ACTOR *actor, Sint32 anmId)
 {
-	SPR *sprite;
+	SPR *spr;
 
 	if(actor != NULL &&
 		(actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
-		sprite = actor->spr;
-		if(animationId >= 0) {
-			sprite->entries[0]->anmId = animationId;
-			fdSprResetAnimations(sprite);
+		spr = actor->spr;
+		if(anmId >= 0) {
+			spr->entries[0]->anmId = anmId;
+			fdSprResetAnimations(spr);
 		}
 	}
 }
 
-/* Adds a layer playing animationId to a one-sprite actor's sprite. A negative
-   animationId does nothing. */
-void fdActorRegisterSprMetadata(ACTOR *actor, Sint32 animationId)
+/* Adds a layer playing anmId to a one-sprite actor's sprite. A negative
+   anmId does nothing. */
+void fdActorRegisterSprMetadata(ACTOR *actor, Sint32 anmId)
 {
 	if(actor != 0 &&
 		(actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
-		SPR *sprite = actor->spr;
-		if(animationId >= 0)
-			fdSprAddAnimation(sprite, animationId);
+		SPR *spr = actor->spr;
+		if(anmId >= 0)
+			fdSprAddAnimation(spr, anmId);
 	}
 }
 
@@ -422,48 +418,48 @@ void fdActorRegisterSprMetadata(ACTOR *actor, Sint32 animationId)
    (SC_APPROACH_WATCHED), watching watchedActorHandle. */
 void fdActorStartApproachWatched(ACTOR *actor, Sint32 watchedActorHandle)
 {
-	fdActorStartScript(actor, Actor_ApproachWatchedScript);
+	fdActorStartScript(actor, ActorApproachWatchedScript);
 	actor->watchedActor = (union ACTOR_OR_EFFECT *)watchedActorHandle;
 }
 
-/* Starts an actor on the script that runs SC_KEY_COUNT every frame. */
+/* Starts an actor on the script that runs SC_KEY_COUNT every tick. */
 void fdActorStartKeyCheck(ACTOR *actor)
 {
-	fdActorStartScript(actor, Actor_KeyCheckScript);
+	fdActorStartScript(actor, ActorKeyCheckScript);
 }
 
 /* Starts an actor on the script that moves it by the keys (SC_KEYS). The field
    mode gives it to the leader while he climbs (LEADER_MOVEMENT_CLIMB). */
 void fdActorStartMoveByKeys(ACTOR *actor)
 {
-	fdActorStartScript(actor, Actor_KeysScript);
+	fdActorStartScript(actor, ActorKeysScript);
 }
 
 /* Starts an actor on the player control script (SC_PLAYER). The field mode's
    usual choice for the leader on a layered map. */
 void fdActorStartPlayerCtrl(ACTOR *actor)
 {
-	fdActorStartScript(actor, Actor_PlayerScript);
+	fdActorStartScript(actor, ActorPlayerScript);
 }
 
 /* Starts an actor on the World Map control script (SC_WORLD). The field mode
    gives it to the leader on the World Map. */
 void fdActorStartWorldMapCtrl(ACTOR *actor)
 {
-	fdActorStartScript(actor, Actor_WorldMapScript);
+	fdActorStartScript(actor, ActorWorldMapScript);
 }
 
 /* Starts an actor on the idle script (a lone SC_END). */
 void fdActorStartIdle(ACTOR *actor)
 {
-	fdActorStartScript(actor, Actor_IdleScript);
+	fdActorStartScript(actor, ActorIdleScript);
 }
 
 /* Starts an actor on the camera script (SC_CAMERA). With a leader to follow, it
-   also gets a speed limit of 4 pixels a frame and an acceleration of 0.5. */
+   also gets a speed limit of 4 pixels a tick and an acceleration of 0.5. */
 void fdActorStartCamera(ACTOR *actor, Sint32 watchedActorHandle)
 {
-	fdActorStartScript(actor, Actor_CameraScript);
+	fdActorStartScript(actor, ActorCameraScript);
 	if(watchedActorHandle != 0) {
 		actor->acceleration = toFIXED(1) / 2;
 		actor->speedLimit = toFIXED(4);
@@ -472,31 +468,31 @@ void fdActorStartCamera(ACTOR *actor, Sint32 watchedActorHandle)
 	}
 }
 
-/* Waits until the actor's script reaches SC_END, at most 300 frames (five
+/* Waits until the actor's script reaches SC_END, at most 300 ticks (five
    seconds); it returns as soon as the script idles, and after the limit whether
    or not it has. */
 void fdActorWaitForScriptEnd(void *rawActor)
 {
 	ACTOR *interpreter = rawActor;
-	Sint32 waitedFrames;
+	Sint32 waitedTicks;
 
-	waitedFrames = 0;
+	waitedTicks = 0;
 	if(interpreter->script[interpreter->scriptCursor] != SC_END) {
 		do {
 			sySynch(1);
-			waitedFrames++;
-			if(waitedFrames > 299)
+			waitedTicks++;
+			if(waitedTicks > 299)
 				break;
 		} while(interpreter->script[interpreter->scriptCursor] != SC_END);
 	}
 }
 
 /* Sets the flags of a one-sprite actor's sprite (bit 0: draw its shadow). */
-void fdActorSetSprFlags(ACTOR *actor, Uint32 flags)
+void fdActorSetSprFlags(ACTOR *actor, Uint32 flg)
 {
 	if(actor != NULL) {
 		if((actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE)
-			actor->spr->flg = flags;
+			actor->spr->flg = flg;
 	}
 }
 
@@ -504,8 +500,8 @@ void fdActorSetSprFlags(ACTOR *actor, Uint32 flags)
 void fdActorSetBlendMode(ACTOR *actor, Uint32 mode)
 {
 	if(actor != 0 && actor->sprStorageKind == ACTOR_SPRITE_ONE) {
-		SPR *sprite = actor->spr;
-		sprite->image.objMode = mode;
+		SPR *spr = actor->spr;
+		spr->image.objMode = mode;
 	}
 }
 
@@ -514,21 +510,21 @@ void fdActorSetBlendMode(ACTOR *actor, Uint32 mode)
 void fdActorSetSprScale(ACTOR *actor, Uint32 fixedScale)
 {
 	if(actor != 0 && actor->sprStorageKind == ACTOR_SPRITE_ONE) {
-		SPR *sprite = actor->spr;
-		sprite->useOwnScale = fixedScale;
+		SPR *spr = actor->spr;
+		spr->useOwnScale = fixedScale;
 	}
 }
 
 /* Sets the colour mode (SPR_COL_MODE) of a one-sprite actor's sprite
    animations, except those drawn hidden (see fdSprSetAnimationColModes). */
-void fdActorSetSprColMode(ACTOR *actor, Uint32 colorMode)
+void fdActorSetSprColMode(ACTOR *actor, Uint32 colMode)
 {
 	if(actor != NULL && actor->sprStorageKind == ACTOR_SPRITE_ONE)
-		fdSprSetAnimationColModes(actor->spr, colorMode);
+		fdSprSetAnimationColModes(actor->spr, colMode);
 }
 
 /* Suspends the actor camera updates, starts the palette back to normal and, a
-   frame later, shows the sprites with BG1-3 hidden, leaving BG0 unchanged. */
+   tick later, shows the sprites with BG1-3 hidden, leaving BG0 unchanged. */
 void fdActorSystemSuspendProjectionAndShowSprs(void)
 {
 	sySuspendEvent(fdActorSystemPlaceSprs);

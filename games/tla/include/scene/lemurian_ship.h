@@ -8,31 +8,31 @@
 #include "scene/scene.h"
 #include "field/scene_tables.h"
 
-extern Sint32	   LemurianShip_Entrances[];
-extern Uint32	   LemurianShip_CabinsEntrances[];
-extern Uint32	   LemurianShip_CabinsRegions[];
-extern Uint32	   LemurianShip_AquaHydraRegions[];
-extern ACTOR_PLACE LemurianShip_Placements[];
-extern ACTOR_PLACE LemurianShip_TwoJellyRoomPlacements[];
+extern Sint32	   LemurianShipEntrances[];
+extern Uint32	   LemurianShipCabinsEntrances[];
+extern Uint32	   LemurianShipCabinsRegions[];
+extern Uint32	   LemurianShipAquaHydraRegions[];
+extern ACTOR_PLACE LemurianShipPlacements[];
+extern ACTOR_PLACE LemurianShipTwoJellyRoomPlacements[];
 
-extern ACTOR_PLACE LemurianShip_SixJellyRoomPlacements[];
+extern ACTOR_PLACE LemurianShipSixJellyRoomPlacements[];
 
-extern ACTOR_PLACE		  LemurianShip_HoldPlacements[];
-extern ACTOR_PLACE		  LemurianShip_PillarRoomPlacements[];
-extern ACTOR_PLACE		  LemurianShip_EngineRoomPlacements[];
-extern LEMURIAN_SHIP_WARP LemurianShip_Doors[];
-extern LEMURIAN_SHIP_WARP LemurianShip_LowerDoors[];
-extern Sint32			  Leader_WalkThroughDoorScript[];
-extern CUE				  LemurianShip_Cues[];
-extern CUE				  LemurianShip_CabinCues[];
-extern CUE				  LemurianShip_TwoJellyRoomCues[];
-extern CUE				  LemurianShip_SixJellyRoomCues[];
-extern CUE				  LemurianShip_PipeRoomCues[];
-extern CUE				  LemurianShip_LowerDeckCues[];
-extern Uint32			  LemurianShip_PiersToPedestal[];
-extern Uint32			  LemurianShip_ShebaStepsUp[];
-extern Uint32			  LemurianShip_JennaStepsUp[];
-extern Uint32			  LemurianShip_KradenStepsUp[];
+extern ACTOR_PLACE		  LemurianShipHoldPlacements[];
+extern ACTOR_PLACE		  LemurianShipPillarRoomPlacements[];
+extern ACTOR_PLACE		  LemurianShipEngineRoomPlacements[];
+extern LEMURIAN_SHIP_WARP LemurianShipDoors[];
+extern LEMURIAN_SHIP_WARP LemurianShipLowerDoors[];
+extern Sint32			  LeaderWalkThroughDoorScript[];
+extern CUE				  LemurianShipCues[];
+extern CUE				  LemurianShipCabinCues[];
+extern CUE				  LemurianShipTwoJellyRoomCues[];
+extern CUE				  LemurianShipSixJellyRoomCues[];
+extern CUE				  LemurianShipPipeRoomCues[];
+extern CUE				  LemurianShipLowerDeckCues[];
+extern Uint32			  LemurianShipPiersToPedestal[];
+extern Uint32			  LemurianShipShebaStepsUp[];
+extern Uint32			  LemurianShipJennaStepsUp[];
+extern Uint32			  LemurianShipKradenStepsUp[];
 void					  scLemurianShipSetUpStairRoom(void);
 
 void scLemurianShipSetUpSixJellyRoom(void);
@@ -42,8 +42,8 @@ void		  scLemurianShipSetUpPipeRoom(void);
 void		  scLemurianShipSetUpHold(void);
 void		  scLemurianShipSetUpPillarRoom(void);
 void		  scLemurianShipSetUpEngineRoom(void);
-extern Sint16 LemurianShip_DoorOpening[];
-extern Sint16 LemurianShip_FirstDoorOpening[];
+extern Sint16 LemurianShipDoorOpening[];
+extern Sint16 LemurianShipFirstDoorOpening[];
 void		  scLemurianShipLiftPillar(void);
 
 #endif

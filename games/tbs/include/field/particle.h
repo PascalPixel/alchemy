@@ -26,9 +26,9 @@ typedef struct PARTICLE {
 	FIXED y; /* 16.16 fixed-point pixels */
 	FIXED z; /* 16.16 fixed-point pixels */
 #endif
-	FIXED  velX;	/* 16.16 fixed-point pixels per frame */
-	FIXED  velY;	/* 16.16 fixed-point pixels per frame */
-	FIXED  velZ;	/* 16.16 fixed-point pixels per frame */
+	FIXED  velX;	/* 16.16 fixed-point pixels per tick */
+	FIXED  velY;	/* 16.16 fixed-point pixels per tick */
+	FIXED  velZ;	/* 16.16 fixed-point pixels per tick */
 	Sint32 variant; /* each animation's own: a size, a countdown, -1 for idle */
 } PARTICLE;
 
@@ -68,12 +68,12 @@ typedef struct SCREEN_POINT {
 /* Returns the position's three coordinates as an array. */
 /* UB: indexing from &x crosses separate scalar members of the point. UBFIX
    provides a real array while keeping the animations' named coordinates. */
-static inline Sint32 *syScreenPointCoordinates(SCREEN_POINT *position)
+static inline Sint32 *syScreenPointCoordinates(SCREEN_POINT *pos)
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
-	return position->coordinates;
+	return pos->coordinates;
 #else
-	return &position->x;
+	return &pos->x;
 #endif
 }
 

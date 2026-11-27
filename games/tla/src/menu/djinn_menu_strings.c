@@ -4,10 +4,10 @@
 #include "types.h"
 
 #if LANGUAGE == LANGUAGE_SPANISH
-const Uint8 DjinnMenu_TextLevel[] = "Nv.";
+const Uint8 DjinnMenuTextLevel[] = "Nv.";
 #elif LANGUAGE == LANGUAGE_FRENCH
-const Uint8 DjinnMenu_TextLevel[] = "Niv";
+const Uint8 DjinnMenuTextLevel[] = "Niv";
 #else
-const Uint8 DjinnMenu_TextLevel[] = "Lv";
+const Uint8 DjinnMenuTextLevel[] = "Lv";
 #endif
-const Uint8 DjinnMenu_TextSlash[] = "/";
+const Uint8 DjinnMenuTextSlash[] = "/";

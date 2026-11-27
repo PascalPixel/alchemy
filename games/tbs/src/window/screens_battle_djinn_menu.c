@@ -28,15 +28,15 @@
 Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 {
 	MENU_SPR			 cursorStorage;
-	Uint16				 messageText[64];
+	Uint16				 msgText[64];
 	WIN_STATE			*state;
-	WINDOW				*previewWindow;
+	WINDOW				*previewWin;
 	Sint32				 drawnRow;
 	Sint32				 cursorSlot;
 	Uint32				*djinnEntries;
-	Sint32				 djinnCount;
+	Sint32				 djinnCnt;
 	Sint32				 drawnFirstEntry;
-	WINDOW				*messageWindow;
+	WINDOW				*msgWin;
 	Sint32				 standbyElements;
 	Sint32				 preferredRow;
 	Sint32				 previewPage;
@@ -46,9 +46,9 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 	BATTLE_MENU_STATE	*navigation;
 	UNIT				*unit;
 	DJINN_RECOVERY_LIST *list;
-	WINDOW				*listWindow;
-	WINDOW				*iconWindow;
-	PARTY_STAT_WINDOW	*partyStatus;
+	WINDOW				*listWin;
+	WINDOW				*iconWin;
+	PARTY_STAT_WINDOW	*partyStat;
 	Uint32				 selectedDjinn;
 	Uint32				 blinkPhase;
 	Sint32				 firstEntry;
@@ -61,17 +61,17 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 	Sint32				 repeated;
 	Sint32				 held;
 	Sint32				 element;
-	Sint32				 djinnIndex;
+	Sint32				 djinnIdx;
 	Sint32				 i;
 	Sint32				 j;
 
 	state = WINDOW_STATE;
-	previewWindow = 0;
+	previewWin = 0;
 	drawnRow = -1;
 	cursorSlot = syVRAMCacheAllocEntry(128);
 	/* 84 words: room for 4 elements of 20 Djinn and the end. */
 	djinnEntries = syHeapAllocEWRAM(84 * 4);
-	djinnCount = 0;
+	djinnCnt = 0;
 	drawnFirstEntry = -1;
 	/* Default: the chosen entry, or -1, is set as the loop ends. */
 	encodedDjinn = 0;
@@ -80,22 +80,22 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 	previewPages = 0;
 	redraw = FALSE;
 	alreadySelected = FALSE;
-	messageWindow = mnWindowCreate(0, 4, 30, 4,
+	msgWin = mnWindowCreate(0, 4, 30, 4,
 		WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
 			WINDOW_FLAG_BORDERED_CANVAS);
 	mnTextUseExtraTiles(1);
-	listWindow = mnWindowCreate(21, 9, 9, 11, MENU_WINDOW_FLAGS);
+	listWin = mnWindowCreate(21, 9, 9, 11, MENU_WINDOW_FLAGS);
 	BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
 	unit = gmUnitGetStub(member);
 
 	/* Pack Djinn state and recovery turns before paging the selection list. */
 	for(element = 0; element < ELEMENT_COUNT; element++) {
-		for(djinnIndex = 0; djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
-			if(unit->djinnSet[element] & (Uint32)(1 << djinnIndex)) {
-				djinnEntries[djinnCount] =
-					(Uint32)DJINN_COMMAND(element, djinnIndex);
-				djinnCount++;
-			} else if(unit->djinnHeld[element] & (Uint32)(1 << djinnIndex)) {
+		for(djinnIdx = 0; djinnIdx < DJINN_PER_ELEMENT; djinnIdx++) {
+			if(unit->djinnSet[element] & (Uint32)(1 << djinnIdx)) {
+				djinnEntries[djinnCnt] =
+					(Uint32)DJINN_COMMAND(element, djinnIdx);
+				djinnCnt++;
+			} else if(unit->djinnHeld[element] & (Uint32)(1 << djinnIdx)) {
 				Uint32 v;
 				Sint32 k;
 				/* Owned but not set: look for its recovery in its side's
@@ -107,29 +107,29 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 				for(k = 0; k < list->cnt; k++) {
 					if(list->entries[k].unitId == member &&
 						list->entries[k].element == element &&
-						list->entries[k].idx == djinnIndex) {
+						list->entries[k].idx == djinnIdx) {
 						break;
 					}
 				}
-				v = (Uint32)(DJINN_COMMAND(element, djinnIndex) |
+				v = (Uint32)(DJINN_COMMAND(element, djinnIdx) |
 					BATTLE_DJINN_ENTRY_STANDBY);
-				djinnEntries[djinnCount] = v;
+				djinnEntries[djinnCnt] = v;
 				if(list->entries[k].turns > 0) {
 					v |= (Uint32)(list->entries[k].turns
 						<< BATTLE_DJINN_ENTRY_RECOVERY_SHIFT);
-					djinnEntries[djinnCount] = v;
+					djinnEntries[djinnCnt] = v;
 				}
-				djinnCount++;
+				djinnCnt++;
 			}
 		}
 	}
-	djinnEntries[djinnCount] = BATTLE_DJINN_ENTRY_END;
+	djinnEntries[djinnCnt] = BATTLE_DJINN_ENTRY_END;
 	state->dirty = 1;
 
 	for(;;) {
 		/* FAKEMATCH(temporary): sprite holds &cursorStorage; as &cursorStorage
 		 * at each use. */
-		MENU_SPR *sprite = &cursorStorage;
+		MENU_SPR *spr = &cursorStorage;
 
 		/* Rebuild descriptions only when the selection or preview page changes:
 		   the message ("Cannot use the same Djinni twice.", "Ready to summon."
@@ -141,18 +141,17 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 			selectedDjinn = djinnEntries[firstEntry + selectedRow];
 			standbyElements = 0;
 			state->holdTilemapUpload = 1;
-			mnWindowHighlightRect(listWindow->x + 1,
-				listWindow->y + drawnRow * 2 + 1, listWindow->width - 2, 1,
-				WINDOW_PALETTE);
+			mnWindowHighlightRect(listWin->x + 1, listWin->y + drawnRow * 2 + 1,
+				listWin->width - 2, 1, WINDOW_PALETTE);
 			if(previewPage != 0) {
-				mnWindowClose(messageWindow, 1);
-				messageWindow = mnWindowCreate(0, 4, 30, 4,
+				mnWindowClose(msgWin, 1);
+				msgWin = mnWindowCreate(0, 4, 30, 4,
 					WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
 						WINDOW_FLAG_BORDERED_CANVAS);
 				mnTextFillCanvasBackground();
 			}
 			redraw = FALSE;
-			if(djinnCount != 0) {
+			if(djinnCnt != 0) {
 				/* Default: 0, though the loop below sets it again. */
 				Sint32 k = 0;
 				mnMessageArgumentClearAll();
@@ -165,11 +164,11 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 					}
 				}
 				if(alreadySelected != 0) {
-					BATTLE_MENU_MESSAGE_COPY(MsgBattleDjinnTwice, messageText,
+					BATTLE_MENU_MESSAGE_COPY(MsgBattleDjinnTwice, msgText,
 						BATTLE_MENU_MESSAGE_CAPACITY);
-					if(previewWindow != 0) {
-						mnWindowClose(previewWindow, 1);
-						previewWindow = 0;
+					if(previewWin != 0) {
+						mnWindowClose(previewWin, 1);
+						previewWin = 0;
 						previewPage = 0;
 					}
 				} else if(selectedDjinn & BATTLE_DJINN_ENTRY_STANDBY) {
@@ -186,55 +185,54 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 									DJINN_PER_ELEMENT +
 								DJINN_COMMAND_INDEX(selectedDjinn)) +
 								MsgDjinnEffect,
-							messageText, BATTLE_MENU_MESSAGE_CAPACITY);
-						if(previewWindow != 0) {
-							mnWindowClose(previewWindow, 1);
-							previewWindow = 0;
+							msgText, BATTLE_MENU_MESSAGE_CAPACITY);
+						if(previewWin != 0) {
+							mnWindowClose(previewWin, 1);
+							previewWin = 0;
 							previewPage = 0;
 						}
 					} else {
-						previewWindow =
+						previewWin =
 							(WINDOW *)mnBattleDjinnMenuShowChangePreview(
-								previewWindow, member, (Sint32)selectedDjinn,
+								previewWin, member, (Sint32)selectedDjinn,
 								previewPage, &previewPages);
-						mnMessageCopyExpanded(MsgBattleSummonStandby,
-							messageText, BATTLE_MENU_MESSAGE_CAPACITY);
+						mnMessageCopyExpanded(MsgBattleSummonStandby, msgText,
+							BATTLE_MENU_MESSAGE_CAPACITY);
 						standbyElements = 1
 							<< BATTLE_DJINN_ENTRY_ELEMENT(selectedDjinn);
 					}
 				} else {
-					previewWindow =
-						(WINDOW *)mnBattleDjinnMenuShowChangePreview(
-							previewWindow, member, (Sint32)selectedDjinn,
-							previewPage, &previewPages);
+					previewWin = (WINDOW *)mnBattleDjinnMenuShowChangePreview(
+						previewWin, member, (Sint32)selectedDjinn, previewPage,
+						&previewPages);
 					BATTLE_MENU_MESSAGE_COPY(
 						(Sint32)(BATTLE_DJINN_ENTRY_ELEMENT(selectedDjinn) *
 								DJINN_PER_ELEMENT +
 							DJINN_COMMAND_INDEX(selectedDjinn)) +
 							MsgDjinnEffect,
-						messageText, BATTLE_MENU_MESSAGE_CAPACITY);
+						msgText, BATTLE_MENU_MESSAGE_CAPACITY);
 				}
 			} else {
-				BATTLE_MENU_MESSAGE_COPY(MsgBattleNoDjinn, messageText,
-					BATTLE_MENU_MESSAGE_CAPACITY);
+				BATTLE_MENU_MESSAGE_COPY(
+					MsgBattleNoDjinn, msgText, BATTLE_MENU_MESSAGE_CAPACITY);
 			}
 			state->holdTilemapUpload = 0;
 			if(previewPage == 0) {
 				state->holdTilemapUpload = 1;
-				mnWindowClose(messageWindow, 1);
-				messageWindow = mnWindowCreate(0, 4, 30, 4,
+				mnWindowClose(msgWin, 1);
+				msgWin = mnWindowCreate(0, 4, 30, 4,
 					WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
 						WINDOW_FLAG_BORDERED_CANVAS);
 				state->holdTilemapUpload = (Uint8)previewPage;
 			}
-			mnTextDrawWideStringAtOffset(messageText, messageWindow, 0, 4);
+			mnTextDrawWideStringAtOffset(msgText, msgWin, 0, 4);
 			drawnRow = selectedRow;
 			if(firstEntry != drawnFirstEntry) {
-				mnWindowSprRedrawSavedRect(listWindow);
+				mnWindowSprRedrawSavedRect(listWin);
 				j = 0;
 				while((encodedDjinn = djinnEntries[firstEntry + j]) !=
 					BATTLE_DJINN_ENTRY_END) {
-					mnWindowSetTilemapEntry(listWindow,
+					mnWindowSetTilemapEntry(listWin,
 						(Sint32)BATTLE_DJINN_ENTRY_ELEMENT(encodedDjinn) +
 							LIST_TILE_SUMMON_ELEMENT,
 						0, j * 2, 0);
@@ -248,13 +246,13 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 								DJINN_PER_ELEMENT +
 							DJINN_COMMAND_INDEX(encodedDjinn)) +
 							MsgDjinnName,
-						listWindow, 8, j * 16);
+						listWin, 8, j * 16);
 					if(encodedDjinn & BATTLE_DJINN_ENTRY_RECOVERY_MASK) {
 						mnTextDrawNumAtOffset(
 							(Sint32)((encodedDjinn &
 										 BATTLE_DJINN_ENTRY_RECOVERY_MASK) >>
 								BATTLE_DJINN_ENTRY_RECOVERY_SHIFT),
-							DJINN_RECOVERY_DIGITS, listWindow, DJINN_RECOVERY_X,
+							DJINN_RECOVERY_DIGITS, listWin, DJINN_RECOVERY_X,
 							j * 16);
 					}
 					mnTextSetCol(TEXT_COLOR_WHITE);
@@ -265,64 +263,61 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 				}
 				drawnFirstEntry = firstEntry;
 			}
-			if(djinnCount > BATTLE_LIST_ROWS) {
-				for(j = 0;
-					j < (listPages = ((djinnCount + BATTLE_LIST_ROWS - 1) /
-							 BATTLE_LIST_ROWS));
+			if(djinnCnt > BATTLE_LIST_ROWS) {
+				for(j = 0; j < (listPages = ((djinnCnt + BATTLE_LIST_ROWS - 1) /
+									BATTLE_LIST_ROWS));
 					j++) {
 					Sint32 tile = j + PAGE_NUMBER_TILE;
 					if(j == (firstEntry / BATTLE_LIST_ROWS)) {
 						tile = j + PAGE_NUMBER_LIT_TILE;
 					}
-					mnWindowSetTilemapEntry(listWindow, tile,
-						listWindow->width - listPages + j - 2, -1, 0);
+					mnWindowSetTilemapEntry(listWin, tile,
+						listWin->width - listPages + j - 2, -1, 0);
 				}
 			}
-			mnWindowHighlightRect(listWindow->x + 1,
-				listWindow->y + selectedRow * 2 + 1, listWindow->width - 2, 1,
+			mnWindowHighlightRect(listWin->x + 1,
+				listWin->y + selectedRow * 2 + 1, listWin->width - 2, 1,
 				HIGHLIGHT_PALETTE);
 			state->dirty = 1;
 			state->holdTilemapUpload = 0;
 		}
 
-		/* Each frame: the current page's number lit 12 frames in 16 (steady
+		/* Each tick: the current page's number lit 12 ticks in 16 (steady
 		   while R is held), and the page arrows, which give way to the plain
-		   frame while R turns the preview's pages instead. */
-		if(djinnCount > BATTLE_LIST_ROWS) {
-			for(j = 0;
-				j < (djinnCount + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS;
+		   tick while R turns the preview's pages instead. */
+		if(djinnCnt > BATTLE_LIST_ROWS) {
+			for(j = 0; j < (djinnCnt + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS;
 				j++) {
 				Sint32 tile = j + PAGE_NUMBER_TILE;
-				if((PerData & KEY_R) || (FrameCount & 15) <= 11) {
+				if((PerData & KEY_R) || (TickCount & 15) <= 11) {
 					if(j == (firstEntry / BATTLE_LIST_ROWS)) {
 						tile = j + PAGE_NUMBER_LIT_TILE;
 					}
 				}
-				mnWindowSetTilemapEntry(listWindow, tile,
-					listWindow->width -
-						((djinnCount + BATTLE_LIST_ROWS - 1) /
-							BATTLE_LIST_ROWS) +
+				mnWindowSetTilemapEntry(listWin, tile,
+					listWin->width -
+						((djinnCnt + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS) +
 						j - 2,
 					-1, 0);
 			}
 			if((PerData & KEY_R) == 0) {
-				mnWindowSetTilemapEntry(listWindow, LIST_TILE_PAGES_LEFT,
-					listWindow->width -
-						(djinnCount + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS -
+				mnWindowSetTilemapEntry(listWin, LIST_TILE_PAGES_LEFT,
+					listWin->width -
+						(djinnCnt + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS -
 						3,
 					-1, 0);
-				mnWindowSetTilemapEntry(listWindow, LIST_TILE_PAGES_RIGHT,
-					listWindow->width - 2, -1, 0);
+				mnWindowSetTilemapEntry(
+					listWin, LIST_TILE_PAGES_RIGHT, listWin->width - 2, -1, 0);
 			} else {
-				mnWindowSetTilemapEntry(listWindow, WINDOW_TILE_BORDER_TOP,
-					listWindow->width -
-						(djinnCount + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS -
+				mnWindowSetTilemapEntry(listWin, WINDOW_TILE_BORDER_TOP,
+					listWin->width -
+						(djinnCnt + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS -
 						3,
 					-1, 0);
-				mnWindowSetTilemapEntry(listWindow,
-					WINDOW_TILE_BORDER_TOP_RIGHT, listWindow->width - 2, -1, 0);
+				mnWindowSetTilemapEntry(listWin, WINDOW_TILE_BORDER_TOP_RIGHT,
+					listWin->width - 2, -1, 0);
 			}
-			mnWindowMarkTilemapRow(state, listWindow->y - 1);
+			mnWindowMarkTilemapRow(state, listWin->y - 1);
 		}
 
 		/* Tutorial input replaces live keys but uses the same navigation
@@ -354,7 +349,7 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 		if(pressed & KEY_A) {
 			Uint32 selection;
 			Uint32 turns;
-			if(djinnCount != 0) {
+			if(djinnCnt != 0) {
 				selection = djinnEntries[firstEntry + selectedRow];
 				turns = selection & BATTLE_DJINN_ENTRY_RECOVERY_MASK;
 				if(turns == 0) {
@@ -372,10 +367,9 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 						(Sint32)((turns & BATTLE_DJINN_ENTRY_RECOVERY_MASK) >>
 							BATTLE_DJINN_ENTRY_RECOVERY_SHIFT),
 						MESSAGE_ARGUMENT_NUMBER);
-					mnMessageCopyExpanded(MsgBattleDjinnRecovering, messageText,
+					mnMessageCopyExpanded(MsgBattleDjinnRecovering, msgText,
 						BATTLE_MENU_MESSAGE_CAPACITY);
-					mnTextDrawWideStringAtOffset(
-						messageText, messageWindow, 0, 4);
+					mnTextDrawWideStringAtOffset(msgText, msgWin, 0, 4);
 				}
 				sySndPlayStub(SE_MENU_ERROR);
 			} else {
@@ -384,12 +378,12 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 			}
 		}
 
-		if(djinnCount != 0) {
+		if(djinnCnt != 0) {
 			if(repeated & KEY_DOWN) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				selectedRow++;
 				if(selectedRow == BATTLE_LIST_ROWS ||
-					firstEntry + selectedRow == djinnCount) {
+					firstEntry + selectedRow == djinnCnt) {
 					selectedRow = 0;
 				}
 				preferredRow = selectedRow;
@@ -398,9 +392,9 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 				selectedRow--;
 				if(selectedRow < 0) {
 					if(firstEntry ==
-						((djinnCount - 1) / BATTLE_LIST_ROWS) *
+						((djinnCnt - 1) / BATTLE_LIST_ROWS) *
 							BATTLE_LIST_ROWS) {
-						selectedRow = djinnCount - firstEntry - 1;
+						selectedRow = djinnCnt - firstEntry - 1;
 					} else {
 						selectedRow = BATTLE_LIST_ROWS - 1;
 					}
@@ -408,26 +402,26 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 				preferredRow = selectedRow;
 			} else if(held & KEY_R) {
 				/* R held: the preview's page numbers and arrows on its top
-				   edge; the first frame turns to page 1, then Left and Right
+				   edge; the first tick turns to page 1, then Left and Right
 				   turn the pages. */
-				if(previewWindow != 0) {
+				if(previewWin != 0) {
 					for(i = 0; i < previewPages; i++) {
 						Sint32 tile = i + PAGE_NUMBER_TILE;
-						if((FrameCount & 15) <= 11 && i == previewPage - 1) {
+						if((TickCount & 15) <= 11 && i == previewPage - 1) {
 							tile = previewPage - 1 + PAGE_NUMBER_LIT_TILE;
 						}
-						mnWindowSetTilemapEntry(previewWindow, tile,
-							previewWindow->width - previewPages + i - 2, -1, 0);
+						mnWindowSetTilemapEntry(previewWin, tile,
+							previewWin->width - previewPages + i - 2, -1, 0);
 					}
-					mnWindowSetTilemapEntry(previewWindow, LIST_TILE_PAGES_LEFT,
-						previewWindow->width - previewPages - 3, -1, 0);
-					mnWindowSetTilemapEntry(previewWindow,
-						LIST_TILE_PAGES_RIGHT, previewWindow->width - 2, -1, 0);
-					mnWindowMarkTilemapRow(state, previewWindow->y);
+					mnWindowSetTilemapEntry(previewWin, LIST_TILE_PAGES_LEFT,
+						previewWin->width - previewPages - 3, -1, 0);
+					mnWindowSetTilemapEntry(previewWin, LIST_TILE_PAGES_RIGHT,
+						previewWin->width - 2, -1, 0);
+					mnWindowMarkTilemapRow(state, previewWin->y);
 				}
 				if(previewPage == 0 && previewPages != 0) {
-					if(previewWindow != 0) {
-						mnWindowSprClearList(previewWindow);
+					if(previewWin != 0) {
+						mnWindowSprClearList(previewWin);
 					}
 					previewPage = 1;
 					redraw = TRUE;
@@ -455,15 +449,15 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 				}
 			} else if(previewPage != 0) {
 				/* R let go: back to the stats page. */
-				if(previewWindow != 0) {
-					mnWindowSprClearList(previewWindow);
+				if(previewWin != 0) {
+					mnWindowSprClearList(previewWin);
 				}
 				previewPage = 0;
 				redraw = TRUE;
 			} else if(repeated & KEY_RIGHT) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				syInputResetKeyRepeat();
-				if(firstEntry + BATTLE_LIST_ROWS >= djinnCount) {
+				if(firstEntry + BATTLE_LIST_ROWS >= djinnCnt) {
 					if(firstEntry != 0) {
 						firstEntry = 0;
 						selectedRow = preferredRow;
@@ -472,9 +466,9 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 					firstEntry += BATTLE_LIST_ROWS;
 					selectedRow = preferredRow;
 					if(firstEntry ==
-						((djinnCount - 1) / BATTLE_LIST_ROWS) *
+						((djinnCnt - 1) / BATTLE_LIST_ROWS) *
 							BATTLE_LIST_ROWS) {
-						selectedRow = djinnCount - firstEntry - 1;
+						selectedRow = djinnCnt - firstEntry - 1;
 						if(selectedRow > preferredRow) {
 							selectedRow = preferredRow;
 						}
@@ -487,11 +481,11 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 					firstEntry -= BATTLE_LIST_ROWS;
 					selectedRow = preferredRow;
 				} else {
-					firstEntry = ((djinnCount - 1) / BATTLE_LIST_ROWS) *
-						BATTLE_LIST_ROWS;
+					firstEntry =
+						((djinnCnt - 1) / BATTLE_LIST_ROWS) * BATTLE_LIST_ROWS;
 					selectedRow = preferredRow;
 					if(firstEntry != 0) {
-						selectedRow = djinnCount - firstEntry - 1;
+						selectedRow = djinnCnt - firstEntry - 1;
 						if(selectedRow > preferredRow) {
 							selectedRow = preferredRow;
 						}
@@ -500,34 +494,34 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 			}
 		}
 
-		MENU_PLACE_CURSOR(cursorPos, listWindow, selectedRow, 2, sprite);
-		sprite->oam.f.tile =
+		MENU_PLACE_CURSOR(cursorPos, listWin, selectedRow, 2, spr);
+		spr->oam.f.tile =
 			syVRAMCacheReload(cursorSlot, (Sint32)PointingHandTiles);
-		sprite->oam.f.x = cursorPos.x + ((FrameCount & 4) >> 1) - 6;
-		sprite->oam.f.y = cursorPos.y - ((FrameCount & 4) >> 2) - 8;
-		if(djinnCount != 0) {
-			syOAMAddSprAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
+		spr->oam.f.x = cursorPos.x + ((TickCount & 4) >> 1) - 6;
+		spr->oam.f.y = cursorPos.y - ((TickCount & 4) >> 2) - 8;
+		if(djinnCnt != 0) {
+			syOAMAddSprAtDepth(spr, OAM_DEPTH_WINDOW + 2);
 		}
 		/* In the party status window's Djinn column (PARTY_STATUS_SHOW_DJINN),
 		   the element of a ready standby Djinni under the cursor blinks between
-		   HIGHLIGHT_PALETTE and WINDOW_PALETTE every four frames; then the
+		   HIGHLIGHT_PALETTE and WINDOW_PALETTE every four ticks; then the
 		   arrow tiles' blink. */
-		partyStatus = PARTY_STATUS_LAYOUT;
-		blinkPhase = FrameCount & 4;
-		iconWindow = partyStatus->win;
-		if(partyStatus->flg & PARTY_STATUS_SHOW_DJINN) {
+		partyStat = PARTY_STATUS_LAYOUT;
+		blinkPhase = TickCount & 4;
+		iconWin = partyStat->win;
+		if(partyStat->flg & PARTY_STATUS_SHOW_DJINN) {
 			for(i = 0; i < ELEMENT_COUNT; i++) {
 				palette = blinkPhase != 0 ? HIGHLIGHT_PALETTE : WINDOW_PALETTE;
 				if(((1 << i) & standbyElements) == 0) {
 					palette = WINDOW_PALETTE;
 				}
 				mnWindowHighlightRect(
-					iconWindow->x + DjinnMenu_ElementXOffsets[i] + 1,
-					iconWindow->y + DjinnMenu_ElementYOffsets[i] + 1, 2, 2,
+					iconWin->x + DjinnMenuElementXOffsets[i] + 1,
+					iconWin->y + DjinnMenuElementYOffsets[i] + 1, 2, 2,
 					palette);
 			}
 		}
-		if(FrameCount & 4) {
+		if(TickCount & 4) {
 			syWordsCopy((void *)DJINN_MENU_ARROW_VRAM, DjinnMenu_BlinkTile,
 				TILE_SIZE_4BPP);
 			syWordsCopy((void *)(DJINN_MENU_ARROW_VRAM + TILE_SIZE_4BPP),
@@ -548,9 +542,9 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 	}
 	/* Restore the party strip before releasing the Djinn menu's resources. */
 	syVRAMCacheFreeEntry(cursorSlot);
-	mnWindowClose(messageWindow, 1);
-	mnWindowClose(previewWindow, 1);
-	mnWindowClose(listWindow, 1);
+	mnWindowClose(msgWin, 1);
+	mnWindowClose(previewWin, 1);
+	mnWindowClose(listWin, 1);
 	mnWindowMarkVisibleTextTiles();
 	mnTextUseExtraTiles(0);
 	syHeapRelease(djinnEntries);

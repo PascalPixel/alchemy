@@ -82,7 +82,7 @@ const u32 FreqTable[] = {
 	0xcb2ff52a, 0xd744fccb, 0xe411f03a, 0xf1a1bf39
 };
 
-/* Samples mixed a VBlank for rates 1 to 12 (mode bits 19..16, SoundInfo.rate); */
+/* Samples mixed a frame for rates 1 to 12 (mode bits 19..16, SoundInfo.rate); */
 /* each, times 59.7275, is its sample rate, 5734 to 42048 a second. */
 const u16 PcmSamplesPerVBlankTable[] = {
 	96, 132, 176, 224, 264, 304, 352, 448, 528, 608, 672, 704

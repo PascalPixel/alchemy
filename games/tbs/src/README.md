@@ -65,7 +65,7 @@ What the player reads ([the menu engine](../../../docs/tbs/interface.md)):
 What everything stands on
 ([the system library](../../../docs/tbs/system.md)):
 
-- `system/` is the system library: start-up, the main routine, the frame,
+- `system/` is the system library: start-up, the main routine, the tick,
   events and saving ([its code](system/README.md)).
 - `sound/` is the sound code ([Sound](sound/README.md)).
 - `graphics/` is every picture ([Graphics](graphics/README.md)).

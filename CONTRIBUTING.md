@@ -98,15 +98,20 @@ Words are spelled out, apart from SGL’s short forms:
 
 `Scr` is a background layer, as SGL’s scroll screen; the whole display is written out, `Screen`: `syScreenFadeToBlack`. A function that does nothing is a `NoOperation`, as SGL’s `slNoOperation`: `btEffectNoOperation`.
 
+Time has two words. A tick is one step of the game’s own work, one pass of its loop: `sySynch(10)` waits ten ticks, `TickCount` counts them and a count of game steps ends in `_TICKS`. A frame is one drawing of the screen, the console’s time: `FrameCount` counts them at every VBlank and a screen fade lasts `frames`. VBlank stays the name of the hardware event, its interrupt and the event pass that runs in it (`EVENT_PASS_VBLANK`), and one drawing of an animation is a picture. `frm`, SGL’s short form, counts whichever of the two its code counts.
+
 The rest of each name follows these rules:
 
 | What                 | How it’s written                                                                                   |
 | -------------------- | -------------------------------------------------------------------------------------------------- |
-| Global variables     | the name alone, `HeapSlots`, `FrameCount`; `Work` added where the name is taken, `BattleStateWork` |
-| Statics              | `sName`                                                                                            |
+| Global variables     | the name alone, `HeapSlots`, `TickCount`; `Work` added where the name is taken, `BattleStateWork` |
+| Tables               | the name alone, `Formations`, `BattleKnockbackAcceleration`; `Tbl` added where the name is taken   |
+| Scene tables         | the scene’s name in front, `AlpineCrossingActorPlacements`, `ShrineOfTheSeaGodFootprintsTbl`       |
+| Assets               | one kind word and an underscore, `Tileset_ValePalette`, `Field_Vale`; the ids keep `ResourceId_`   |
+| Statics              | the name alone, as the globals: `InnPricesPerGuest`                                                |
 | Types                | capitals, `ACTOR`, `BATTLE_EFFECT_PARM`, written `typedef struct ACTOR { ... } ACTOR;`             |
 | Struct fields        | `camelCase` with the short forms: `sprId`, `anmIdx`, `velX`                                        |
-| Locals               | `camelCase`                                                                                        |
+| Locals, parameters   | `camelCase` with the fields’ short forms: `cnt`, `tgtId`, `memberIdx`                              |
 | Constants and macros | `UPPER_SNAKE_CASE`, a macro that is a statement too: `DMA_FILL16`                                  |
 | Files and folders    | lowercase, short, the same in both games                                                           |
 

@@ -91,7 +91,7 @@ differently in each.
 
 ## Time passes the same way
 
-Both games keep their frame loop inside `sySynch()` and run a short list of
+Both games keep their tick loop inside `sySynch()` and run a short list of
 [events](glossary.md#event) from it
 ([the system library](system.md#waiting-and-events)).
 The differences are small, and each can be read in

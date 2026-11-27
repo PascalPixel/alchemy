@@ -1,7 +1,7 @@
 /* Dragon Cloud. Part of battle_effect.c. */
 
-#define DRAGON_CLOUD_FRAMES		  150
-#define DRAGON_CLOUD_STRIKE_FRAME 83 /* the flame strikes the first target */
+#define DRAGON_CLOUD_TICKS		  150
+#define DRAGON_CLOUD_STRIKE_TICK  83 /* the flame strikes the first target */
 /* The trail picture's size, in pixels. */
 #define DRAGON_CLOUD_TRAIL_WIDTH  24
 #define DRAGON_CLOUD_TRAIL_HEIGHT 39
@@ -32,16 +32,16 @@
 /* An ember is drawn at size DRAGON_CLOUD_EMBER_SIZE_MAX at MOTE_DEPTH_NEAR or
    nearer, one size smaller every MOTE_DEPTH_STEP farther. */
 #define DRAGON_CLOUD_EMBER_SIZE_MAX		9
-/* The flash and puff animations: six pictures, two frames each. */
+/* The flash and puff animations: six pictures, two ticks each. */
 #define DRAGON_CLOUD_ANIMATION_PICTURES 6
 
 /* Draws one puff picture sized by the puff tables. */
 #define DRAGON_CLOUD_DRAW_PUFF(blit, canvas, sheet, picture, x, y) \
 	blit(canvas, \
 		&(sheet)[DRAGON_CLOUD_PUFF_PICTURES] + \
-			BattleEffect_PuffArcPictures[picture], \
-		x, y, BattleEffect_PuffArcPictureWidths[picture], \
-		BattleEffect_PuffArcPictureHeights[picture])
+			BattleEffectPuffArcPictures[picture], \
+		x, y, BattleEffectPuffArcPictureWidths[picture], \
+		BattleEffectPuffArcPictureHeights[picture])
 
 /* A flame leaves the user along a stored path with a fading trail behind it,
    strikes the first target and bursts into embers and flashes.
@@ -50,11 +50,11 @@
 void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 {
 	POINT2_D			 trail[DRAGON_CLOUD_TRAIL_LENGTH];
-	SCREEN_POINT		 position;
+	SCREEN_POINT		 pos;
 	DRAW_RECTANGLE		 draw[2];
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 drift;
 	Sint8				*path;
 	Sint32				 x;
@@ -139,34 +139,34 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 	}
 	path = syResourceGetTableEntry(RESOURCE_DRAGON_CLOUD_FLAME_PATH);
 
-	for(frame = 0; frame != DRAGON_CLOUD_FRAMES; frame++) {
+	for(frm = 0; frm != DRAGON_CLOUD_TICKS; frm++) {
 		BATTLE_CAMERA *camera = BattleCameraWork;
 
-		if(frame == DRAGON_CLOUD_STRIKE_FRAME)
+		if(frm == DRAGON_CLOUD_STRIKE_TICK)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-		if(frame == 0)
+		if(frm == 0)
 			sySndPlayStub(SE_WHOOSH);
-		if(frame == 50)
+		if(frm == 50)
 			sySndPlayStub(SE_WHOOSH);
 		if(state->args->side == EFFECT_SIDE_ENEMIES) {
-			if(frame <= 63)
+			if(frm <= 63)
 				camera->yaw -= TRIG_TURN / 256;
 		} else {
-			if(frame <= 63)
+			if(frm <= 63)
 				camera->yaw += TRIG_TURN / 256;
 		}
 		btCameraSetViewStub(0, 0, 0, BATTLE_ZOOM_NORMAL);
-		if(frame <= 17) {
-			Sint32 picture = frame / 3;
+		if(frm <= 17) {
+			Sint32 picture = frm / 3;
 
 			DRAGON_CLOUD_DRAW_PUFF(draw[0], canvas, state->sheet, picture, 48,
-				BattleEffect_PuffArcPictureBiasY[picture] + 60);
+				BattleEffectPuffArcPictureBiasY[picture] + 60);
 			DRAGON_CLOUD_DRAW_PUFF(draw[1], canvas, state->sheet, picture, 56,
-				BattleEffect_PuffArcPictureBiasY[picture] + 60);
+				BattleEffectPuffArcPictureBiasY[picture] + 60);
 		}
 		/* The flame flies along its path. */
-		if(frame >= 18 && frame <= 58) {
-			if(frame == 18) {
+		if(frm >= 18 && frm <= 58) {
+			if(frm == 18) {
 				x = (path[0] << 8) + (Uint8)path[1];
 				y = (path[2] << 8) + (Uint8)path[3] + 16;
 				path += 4;
@@ -176,8 +176,8 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 				path += 2;
 			}
 		}
-		if(frame >= 78 && frame <= 118) {
-			if(frame == 78) {
+		if(frm >= 78 && frm <= 118) {
+			if(frm == 78) {
 				x = -56;
 				y = 48;
 			} else {
@@ -185,7 +185,7 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		for(j = DRAGON_CLOUD_TRAIL_LENGTH - 1; j != 0; j--) {
-			if(frame > j + 18 && frame <= j + 83) {
+			if(frm > j + 18 && frm <= j + 83) {
 				trail[j].x = trail[j - 1].x;
 				trail[j].y = trail[j - 1].y;
 				if(j > DRAGON_CLOUD_TRAIL_BRIGHT)
@@ -203,15 +203,15 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 		}
 		EFFECT_VIEW_FROM_CAMERA(camera);
 		/* The flame leans as it rises and falls. */
-		if(frame >= 18 && frame <= DRAGON_CLOUD_STRIKE_FRAME) {
+		if(frm >= 18 && frm <= DRAGON_CLOUD_STRIKE_TICK) {
 			Sint32 lift;
 
 			if(state->args->side == EFFECT_SIDE_PARTY)
-				position.x = 64 - x / 2;
+				pos.x = 64 - x / 2;
 			else
-				position.x = x / 2 + 64;
-			position.y = 60 - y;
-			lift = (position.y - trail[0].y - 24) / 2;
+				pos.x = x / 2 + 64;
+			pos.y = 60 - y;
+			lift = (pos.y - trail[0].y - 24) / 2;
 			if(lift > 2)
 				lift = 2;
 			if(lift < -2)
@@ -222,21 +222,21 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 			if(drift < -8)
 				drift = -8;
 			lift = drift / 4 + 2;
-			trail[0].x = position.x - 12;
-			trail[0].y = position.y - 20;
+			trail[0].x = pos.x - 12;
+			trail[0].y = pos.y - 20;
 			draw[0](canvas,
 				&state->sheet[lift * PICTURE_BYTES(DRAGON_CLOUD_FLAME)],
 				trail[0].x - 6, trail[0].y - 2, DRAGON_CLOUD_FLAME_WIDTH,
 				DRAGON_CLOUD_FLAME_HEIGHT);
 		}
-		if(frame == DRAGON_CLOUD_STRIKE_FRAME) {
+		if(frm == DRAGON_CLOUD_STRIKE_TICK) {
 			state->shakeFrm = 8;
 			btEffectTintBattler(
 				state->args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
 			btMotionApplyKnockbackStub(state->args->tgts[0], KNOCKBACK_HOP);
 		}
 		/* After the strike the embers rise and fall back. */
-		if(frame > DRAGON_CLOUD_STRIKE_FRAME) {
+		if(frm > DRAGON_CLOUD_STRIKE_TICK) {
 			for(i = 0; i != DRAGON_CLOUD_EMBERS + DRAGON_CLOUD_FLASHES; i++) {
 				PARTICLE *ember =
 					&state->particles[DRAGON_CLOUD_FIRST_EMBER + i];
@@ -244,14 +244,14 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 				if(ember->y >= 0) {
 					Sint32 size;
 
-					btProjectionPoint(&ember->x, &position);
-					position.x >>= 1;
-					if(position.depth < MOTE_DEPTH_NEAR)
-						position.depth = MOTE_DEPTH_NEAR;
-					if(position.depth > MOTE_DEPTH_FAR)
-						position.depth = MOTE_DEPTH_FAR;
+					btProjectionPoint(&ember->x, &pos);
+					pos.x >>= 1;
+					if(pos.depth < MOTE_DEPTH_NEAR)
+						pos.depth = MOTE_DEPTH_NEAR;
+					if(pos.depth > MOTE_DEPTH_FAR)
+						pos.depth = MOTE_DEPTH_FAR;
 					size = DRAGON_CLOUD_EMBER_SIZE_MAX -
-						(position.depth - MOTE_DEPTH_NEAR) / MOTE_DEPTH_STEP;
+						(pos.depth - MOTE_DEPTH_NEAR) / MOTE_DEPTH_STEP;
 					if(i >= DRAGON_CLOUD_DRAWN_EMBERS) {
 						if(ember->variant <
 							2 * DRAGON_CLOUD_ANIMATION_PICTURES) {
@@ -259,14 +259,14 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 								Ram_MapGridMetatileBuffer +
 									ember->variant / 2 *
 										PICTURE_BYTES(FLASH_BURST),
-								position.x - FLASH_BURST_WIDTH / 2,
-								position.y - FLASH_BURST_HEIGHT / 2,
+								pos.x - FLASH_BURST_WIDTH / 2,
+								pos.y - FLASH_BURST_HEIGHT / 2,
 								FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
 							ember->variant++;
 						}
 					} else {
-						EFFECT_DRAW_MOTE(draw[0], canvas, sheet, position.x,
-							position.y, size);
+						EFFECT_DRAW_MOTE(
+							draw[0], canvas, sheet, pos.x, pos.y, size);
 					}
 					ember->x += ember->velX;
 					ember->y += ember->velY;
@@ -275,13 +275,13 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 				}
 			}
 		}
-		if(frame == 50) {
+		if(frm == 50) {
 			state->shakeFrm = 12;
 			btEffectTintBattler(
 				state->args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
 		}
 		/* The puffs. */
-		if(frame > 49) {
+		if(frm > 49) {
 			for(i = 0; i != DRAGON_CLOUD_PUFFS; i++) {
 				PARTICLE *puff = &state->particles[i];
 
@@ -291,22 +291,21 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 
 					DRAGON_CLOUD_DRAW_PUFF(draw[1], canvas, state->sheet,
 						picture,
-						puff->x -
-							BattleEffect_PuffArcPictureWidths[picture] / 2,
-						puff->y + BattleEffect_PuffArcPictureBiasY[picture]);
+						puff->x - BattleEffectPuffArcPictureWidths[picture] / 2,
+						puff->y + BattleEffectPuffArcPictureBiasY[picture]);
 				}
 				puff->variant++;
 			}
 		}
 		btCameraShake(8, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS();
 }
 
-#undef DRAGON_CLOUD_FRAMES
-#undef DRAGON_CLOUD_STRIKE_FRAME
+#undef DRAGON_CLOUD_TICKS
+#undef DRAGON_CLOUD_STRIKE_TICK
 #undef DRAGON_CLOUD_TRAIL_PICTURE_BYTES
 #undef DRAGON_CLOUD_FIRST_EMBER
 #undef DRAGON_CLOUD_FIRST_FLASH

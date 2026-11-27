@@ -14,18 +14,18 @@ struct WINDOW;
 struct WINDOW_SPR;
 
 struct WINDOW_SPR *mnWindowSprCreateOverlaidIcon(
-	Sint32 icon, struct WINDOW *window, Sint32 x, Sint32 y);
+	Sint32 icon, struct WINDOW *win, Sint32 x, Sint32 y);
 
-void		  mnPartyStatBuildLayoutBounds(Sint32 flags);
-void		  mnWindowDrawColumnBorders(struct WINDOW *window, Uint32 flags);
+void		  mnPartyStatBuildLayoutBounds(Sint32 flg);
+void		  mnWindowDrawColumnBorders(struct WINDOW *win, Uint32 flg);
 UNREAD_RESULT mnPartyStatDrawBars(
-	struct WINDOW *window, Sint32 x, Sint32 y, Sint32 length);
-void mnWindowSetInteriorPaletteBit(const struct WINDOW *window, Sint32 x,
-	Sint32 y, Sint32 width, Sint32 height, Uint32 set);
+	struct WINDOW *win, Sint32 x, Sint32 y, Sint32 length);
+void mnWindowSetInteriorPaletteBit(const struct WINDOW *win, Sint32 x, Sint32 y,
+	Sint32 width, Sint32 height, Uint32 set);
 
 struct BUP_FILE_SUMMARY;
 
-void  *mnStringFormatPlayTime(Sint32 frames, Uint8 *out);
+void  *mnStringFormatPlayTime(Sint32 ticks, Uint8 *out);
 Uint32 mnSaveFindFreeFile(void);
 Uint32 mnSaveBuildFileSummary(void);
 Sint32 mnSaveConfirmAndProcessSelectedFile(void);
@@ -33,12 +33,12 @@ void   mnFileListUpdatePulse(void);
 void   mnFileListStartPulse(void);
 void   mnFileListStopPulse(void);
 void   mnWindowFillTilemapRect(
-	  struct WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height);
-void mnFileListShowPartySprs(struct WINDOW *window, Sint32 x, Sint32 y,
-	struct BUP_FILE_SUMMARY *summary);
+	  struct WINDOW *win, Sint32 x, Sint32 y, Sint32 width, Sint32 height);
+void mnFileListShowPartySprs(
+	struct WINDOW *win, Sint32 x, Sint32 y, struct BUP_FILE_SUMMARY *summary);
 void mnFileListHidePartySprs(void);
 void mnFileListPlacePartySprs(void);
-void mnFileListShowDjinnSprs(struct WINDOW *window, Sint32 x, Sint32 y);
+void mnFileListShowDjinnSprs(struct WINDOW *win, Sint32 x, Sint32 y);
 void mnFileListHideDjinnSprs(void);
 void mnFileListPlaceDjinnSprs(void);
 
@@ -56,26 +56,26 @@ typedef enum FILE_MENU_MODE {
 } FILE_MENU_MODE;
 
 void mnFileListDrawDjinnCounts(
-	struct WINDOW *window, struct BUP_FILE_SUMMARY *summary);
+	struct WINDOW *win, struct BUP_FILE_SUMMARY *summary);
 void mnFileListDrawSummary(
-	struct WINDOW *window, struct BUP_FILE_SUMMARY *summary);
+	struct WINDOW *win, struct BUP_FILE_SUMMARY *summary);
 Sint32 mnFileListSelectFile(Sint32 selectedFile, Sint32 menuMode);
 Bool   mnNameEntryAcceptsMark(Sint32 mark, Sint32 letter);
 Sint32 mnNameEntryCountLetters(const Uint8 *name);
-void mnWindowCopyTilemapRegion(const struct WINDOW *window, const void *source);
-void mnWindowSetInteriorPalette(const struct WINDOW *window, Sint32 x, Sint32 y,
-	Sint32 width, Sint32 height, Uint32 palette);
-Sint32			   mnTextSetString(const Uint8 *str);
-void			   mnNameEntryDrawName(struct WINDOW *window, Uint8 *name);
-Sint32			   mnPartyGetMemberPortraitSpr(Uint32 member);
-void			   mnTitleLoad(Sint32 picture, Sint32 slot);
+void   mnWindowCopyTilemapRegion(const struct WINDOW *win, const void *src);
+void   mnWindowSetInteriorPalette(const struct WINDOW *win, Sint32 x, Sint32 y,
+	  Sint32 width, Sint32 height, Uint32 palette);
+Sint32 mnTextSetString(const Uint8 *str);
+void   mnNameEntryDrawName(struct WINDOW *win, Uint8 *name);
+Sint32 mnPartyGetMemberPortraitSpr(Uint32 member);
+void   mnTitleLoad(Sint32 picture, Sint32 slot);
 struct WINDOW_SPR *mnTitleCreate(
-	Sint32 picture, struct WINDOW *window, Sint32 x, Sint32 y);
-void			   mnTitleBob(struct WINDOW_SPR *sprite);
+	Sint32 picture, struct WINDOW *win, Sint32 x, Sint32 y);
+void			   mnTitleBob(struct WINDOW_SPR *spr);
 void			   mnCommandIconLoad(Sint32 icon, Sint32 slot, Sint32 remap);
 struct WINDOW_SPR *mnCommandIconCreate(
-	Sint32 icon, Sint32 remap, struct WINDOW *window, Sint32 x, Sint32 y);
-void mnWindowSprPulse(struct WINDOW_SPR *sprite);
+	Sint32 icon, Sint32 remap, struct WINDOW *win, Sint32 x, Sint32 y);
+void mnWindowSprPulse(struct WINDOW_SPR *spr);
 
 struct BATTLE_ACTION;
 struct ABILITY_DEFINITION;
@@ -85,41 +85,41 @@ struct BATTLE_COMMAND_ROW_STATE;
 
 UNREAD_RESULT mnRangeIconBuildTiles(void);
 UNREAD_RESULT mnRangeIconDraw(
-	struct WINDOW *window, Sint32 x, Sint32 y, Sint32 pattern, Sint32 unused);
+	struct WINDOW *win, Sint32 x, Sint32 y, Sint32 pattern, Sint32 unused);
 void mnGraphicsMergeShiftedTileRows(
 	Uint32 *first, Uint32 *second, Uint32 *output, Sint32 shift);
-Sint32		   mnStatIconLoadIntoSlot(Sint32 resource, Sint32 index);
-Sint32		   mnItemIconLoadIntoSlot(Sint32 resource, Sint32 index);
-Sint32		   mnAbilityIconLoadIntoSlot(Sint32 resource, Sint32 index);
+Sint32		   mnStatIconLoadIntoSlot(Sint32 resource, Sint32 idx);
+Sint32		   mnItemIconLoadIntoSlot(Sint32 resource, Sint32 idx);
+Sint32		   mnAbilityIconLoadIntoSlot(Sint32 resource, Sint32 idx);
 Sint32		   mnPortraitLoad(Uint32 member, Sint32 cacheSlot);
 void		   mnIconDecompress(ICON_TRANSFER *state);
 struct WINDOW *mnLinkCreateCountdownLabelWindow(void);
-Sint32		   mnCommandIconReloadSlot(Sint32 slotIndex, Sint32 icon);
+Sint32		   mnCommandIconReloadSlot(Sint32 slotIdx, Sint32 icon);
 void		   mnBattleCommandRowLoadIconTiles(
 			  ICON_PALETTE *palette, Sint32 glyph, Sint32 tile);
 void mnBattleCommandRowLoadIcon(
-	struct BATTLE_COMMAND_ROW_STATE *state, Sint32 index, Uint32 icon);
+	struct BATTLE_COMMAND_ROW_STATE *state, Sint32 idx, Uint32 icon);
 void		   mnCommandRowPutBg1Behind(void);
 void		   mnCommandRowPutBg1InFront(void);
 void		   mnGraphicsInstallBg1VCountHandler(void);
-struct WINDOW *mnMessageShowAndWait(Sint32 message, Sint32 x, Sint32 y);
+struct WINDOW *mnMessageShowAndWait(Sint32 msg, Sint32 x, Sint32 y);
 Sint32		   mnBattleCommandRowRun(Sint32 mode);
 UNREAD_RESULT  mnStringFormatNumToHalfwords(Sint16 *out, Sint32 value);
 Sint32		   mnBattleDjinnMenuListChangedAbilities(
 			const struct PSYNERGY_ENTRY *oldGrid, const struct PSYNERGY_ENTRY *newGrid,
 			Uint16 *out, Sint32 *gained, Sint32 *lost);
 UNREAD_RESULT mnWindowSprCreateAbilityIcon(
-	struct WINDOW *window, Sint32 x, Sint32 y, Sint32 abilityId);
-struct WINDOW *mnBattleDjinnMenuShowChangePreview(struct WINDOW *window,
-	Sint32 member, Sint32 encodedDjinn, Sint32 page, Sint32 *pageCount);
-Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCount, Sint32 member);
+	struct WINDOW *win, Sint32 x, Sint32 y, Sint32 abilityId);
+struct WINDOW *mnBattleDjinnMenuShowChangePreview(struct WINDOW *win,
+	Sint32 member, Sint32 encodedDjinn, Sint32 page, Sint32 *pageCnt);
+Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member);
 Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused);
 Sint32 mnBattleSummonMenuRun(
 	Sint32 unusedA, Sint32 unusedB, const Uint8 *standby);
 Sint32 mnItemCheckBattleUse(Sint32 unit, Sint32 itemId);
-void   mnVRAMCopyTile(Uint32 sourceTile, Uint32 destinationTile);
-Sint32 mnBattleItemMenuRun(Sint32 member, Uint16 *entries, Sint32 count);
-Sint32 mnBattlePsynergyMenuRun(Sint32 unitId, Uint16 *actions, Sint32 count);
+void   mnVRAMCopyTile(Uint32 srcTile, Uint32 dstTile);
+Sint32 mnBattleItemMenuRun(Sint32 member, Uint16 *entries, Sint32 cnt);
+Sint32 mnBattlePsynergyMenuRun(Sint32 unitId, Uint16 *actions, Sint32 cnt);
 Sint32 mnBattleTargetRunSelection(
 	Sint32 selection, Sint32 mode, Uint32 spread, Uint32 kind);
 void   mnBattleMenuUpdate(void);
@@ -129,16 +129,16 @@ Sint32 mnBattleClassifyEntryKind(const struct ABILITY_DEFINITION *act);
 void   mnIconMenuDrawIcons(void);
 void  *mnIconMenuOpen(void);
 void   mnIconMenuClose(void);
-Sint32 mnIconMenuRun(Sint32 initial);
+Sint32 mnIconMenuRun(Sint32 init);
 Sint32 mnIconMenuAnimateTo(Sint32 start, Sint32 goal);
-void   mnCommandIconLoadIntoSlot(Sint32 slot, Sint32 index);
+void   mnCommandIconLoadIntoSlot(Sint32 slot, Sint32 idx);
 void   mnIconMenuAddIcon(Sint32 icon);
 void   mnIconMenuCenter(Sint32 row, Sint32 width, Sint32 resourceBase);
 void   mnIconMenuLayoutIcons(
 	  Sint32 x, Sint32 y, Sint32 width, Sint32 resourceBase);
 
 /* The field menu's commands, as mnFieldMenuSelectCommand takes and returns them
-   (FieldMenu_CommandByPosition). */
+   (FieldMenuCommandByPosition). */
 typedef enum FIELD_MENU_COMMAND {
 	FIELD_MENU_PSYNERGY = 1,
 	FIELD_MENU_DJINN = 2,
@@ -147,7 +147,7 @@ typedef enum FIELD_MENU_COMMAND {
 } FIELD_MENU_COMMAND;
 
 /* The title menu's choices, as mnFileListSelectAction returns them
-   (FileList_ActionByPosition). */
+   (FileListActionByPosition). */
 typedef enum FILE_ACTION {
 	SAVE_ACTION_NEW_GAME = 0,
 	SAVE_ACTION_CONTINUE = 1,
@@ -185,32 +185,32 @@ void   mnTransferMethodDrawHelp(void);
 
 void mnDebugSceneSelectSchedule(void);
 void mnDebugSceneSelectDrawRow(
-	struct WINDOW *window, Sint32 sceneId, const Sint16 *entrance);
-Sint32 mnDebugSceneSelectHandleRowInput(struct WINDOW *window, Sint16 sceneId,
+	struct WINDOW *win, Sint32 sceneId, const Sint16 *entrance);
+Sint32 mnDebugSceneSelectHandleRowInput(struct WINDOW *win, Sint16 sceneId,
 	Sint16 *entrance, Sint16 *selectedField);
-void   mnStringFormatHexDigits(Uint32 value, Uint32 count, Uint8 *out);
-void   mnDebugFlagEditorDrawTable(struct WINDOW *window, Sint32 page);
+void   mnStringFormatHexDigits(Uint32 value, Uint32 cnt, Uint8 *out);
+void   mnDebugFlagEditorDrawTable(struct WINDOW *win, Sint32 page);
 Sint32 mnDebugFlagEditorHandleInput(
-	struct WINDOW *window, Sint32 *page, Sint32 *cursor);
+	struct WINDOW *win, Sint32 *page, Sint32 *cursor);
 void mnReservedNoOperation(void);
-void mnDjinnSetFoundFlagAndAdd(Sint32 member, Sint32 element, Sint32 index);
+void mnDjinnSetFoundFlagAndAdd(Sint32 member, Sint32 element, Sint32 idx);
 
 /* The Japanese name entry screen's second keyboard, which Select switches
    to. */
 extern const Uint8 NameEntry_AlternateKeyboardTilemap[];
 /* Eight offsets, 0 to 3 and back, that make the name entry screen's caret
    circle: the x offset leads the y offset by five steps. */
-extern Sint8 NameEntry_CaretWave[];
+extern Sint8 NameEntryCaretWave[];
 /* The kana that take the voiced mark, as first and last pairs ended by 0. */
-extern const Uint8 NameEntry_VoicedMarkRanges[];
+extern const Uint8 NameEntryVoicedMarkRanges[];
 /* The Delete key's label on the German, Spanish and French name entry screen
    keyboards ("ENT", "SUP", "EFF"). */
-extern Uint8 NameEntry_DeleteKeyLabel[];
+extern Uint8 NameEntryDeleteKeyLabel[];
 /* The End key's label on the German, Spanish and French keyboards ("ENDE",
    "FIN", "FIN"). */
-extern Uint8 NameEntry_EndKeyLabel[];
+extern Uint8 NameEntryEndKeyLabel[];
 /* The kana that take the semi-voiced mark, in the same pairs. */
-extern const Uint8 NameEntry_SemivoicedMarkRanges[];
+extern const Uint8 NameEntrySemivoicedMarkRanges[];
 /* The name entry screen keyboard's compressed tilemap, the Spanish edition's
    with its own letters. */
 extern const Uint8 NameEntry_KeyboardTilemap[];

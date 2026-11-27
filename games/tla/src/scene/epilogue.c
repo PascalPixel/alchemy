@@ -1,5 +1,5 @@
 /* The epilogue: the party's last words, line after line, each with the
-   speaker's portrait in a frame beside it, over the ending's images, from
+   speaker's portrait in a tick beside it, over the ending's images, from
    "Finally! We've reached Vale." (MsgFinallyWeVe) to The End; then it waits for
    a button, or three minutes, and goes on to the file screen. */
 
@@ -22,14 +22,14 @@ Sint32 mnEndingImageStart();
 
 /* The portrait frame's VRAM cache entry. */
 Sint32 EpiloguePortraitFrameEntry BSS_DATA ALIGNED(16);
-/* Unused: 268 bytes after the frame's entry that the epilogue never touches. */
-Uint8 Epilogue_UnusedAfterPortraitFrameEntry[268] BSS_DATA;
-/* The frame drawn round each portrait, a sprite under the portrait. */
+/* Unused: 268 bytes after the tick's entry that the epilogue never touches. */
+Uint8 EpilogueUnusedAfterPortraitFrameEntry[268] BSS_DATA;
+/* The tick drawn round each portrait, a sprite under the portrait. */
 EFFECT_SPR EpiloguePortraitFrame BSS_DATA;
 Sint32 EpilogueMessage			 BSS_DATA; /* the next line to show */
 Sint16 EpiloguePortraitY		 BSS_DATA; /* the portrait's top, in pixels */
-Sint32 EpiloguePortraitFrameTile BSS_DATA; /* the frame's first tile */
-/* Nonzero while a portrait is shown, and the frame drawn round it. */
+Sint32 EpiloguePortraitFrameTile BSS_DATA; /* the tick's first tile */
+/* Nonzero while a portrait is shown, and the tick drawn round it. */
 Sint8 EpiloguePortraitShown BSS_DATA;
 /* the portrait's left, in pixels */
 Sint16 EpiloguePortraitX BSS_DATA ALIGNED(4);
@@ -40,9 +40,9 @@ extern const Uint16 EpilogueNamePanelPalette[];
 /* mnEndingImageShow as the epilogue shows each of its pictures, through an
    inline as its waits go through syFieldScriptWait (script_inline.h). */
 static inline void scFieldEndingImageShow(
-	Sint32 resource, Uint8 *map, Sint32 position)
+	Sint32 resource, Uint8 *map, Sint32 pos)
 {
-	mnEndingImageShow(resource, map, position);
+	mnEndingImageShow(resource, map, pos);
 }
 
 #include "text/msg_ids.h"
@@ -72,7 +72,7 @@ const CUE *scGetCues(void)
 	return SceneCues;
 }
 
-/* Each frame while a portrait is shown, draws its frame round it. */
+/* Each tick while a portrait is shown, draws its tick round it. */
 void scEpiloguePlacePortraitFrame(void)
 {
 	if(EpiloguePortraitShown != 0) {
@@ -96,13 +96,13 @@ CUE SceneCues[] = {
 	{CUE_TABLE_END},
 };
 
-/* Loads the portraits' frame, a window border round a green panel
+/* Loads the portraits' tick, a window border round a green panel
    (RESOURCE_GREEN_PANEL) drawn in portrait slot 0's palette, and starts
    scEpiloguePlacePortraitFrame. */
 void scEpilogueLoadPortraitFrame(void)
 {
-	void	   *buffer = syHeapCallAlternatePool(syHeapAlloc, 64 * 64 / 2);
-	EFFECT_SPR *sprite;
+	void	   *buf = syHeapCallAlternatePool(syHeapAlloc, 64 * 64 / 2);
+	EFFECT_SPR *spr;
 	Sint32	   *slot;
 	Sint32	   *tileSlot;
 	Sint32		value;
@@ -110,22 +110,22 @@ void scEpilogueLoadPortraitFrame(void)
 	syDMAXCopy(EpilogueNamePanelPalette,
 		(void *)&OBJ_PLTT_COLOR(PORTRAIT_PALETTE, 0),
 		DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
-	sprite = &EpiloguePortraitFrame;
-	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_GREEN_PANEL), buffer);
+	spr = &EpiloguePortraitFrame;
+	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_GREEN_PANEL), buf);
 	slot = &EpiloguePortraitFrameEntry;
 	value = syVRAMCacheFindFreeEntry();
 	*slot = value;
 	tileSlot = &EpiloguePortraitFrameTile;
-	value = mnVRAMLoad(value, 64 * 64 / 2, buffer);
+	value = mnVRAMLoad(value, 64 * 64 / 2, buf);
 	*tileSlot = value;
-	syFieldEffectSprInit(sprite, 0, 0, OBJ_SIZE_64X64, value);
-	sprite->depth = OAM_DEPTH_WINDOW;
-	sprite->oam.pri = 0;
-	sprite->oam.fullCol = 0;
-	sprite->oam.pal = PORTRAIT_PALETTE;
-	syHeapRelease(buffer);
+	syFieldEffectSprInit(spr, 0, 0, OBJ_SIZE_64X64, value);
+	spr->depth = OAM_DEPTH_WINDOW;
+	spr->oam.pri = 0;
+	spr->oam.fullCol = 0;
+	spr->oam.pal = PORTRAIT_PALETTE;
+	syHeapRelease(buf);
 	EpiloguePortraitShown = 0;
-	syFieldSetFrameEvent(scEpiloguePlacePortraitFrame, EVENT_PASS_FRAME);
+	syFieldSetTickEvent(scEpiloguePlacePortraitFrame, EVENT_PASS_TICK);
 }
 
 /* A speaker (a sprite number) or'd with this shows the line with no portrait: a
@@ -142,20 +142,20 @@ void scEpilogueLoadPortraitFrame(void)
 
 /* Opens the epilogue's message window at tile (x, y) and, unless the speaker
    has EPILOGUE_NO_PORTRAIT, the speaker's portrait at tile (portraitX,
-   portraitY) with its frame round it, the window lowered in mode
+   portraitY) with its tick round it, the window lowered in mode
    EPILOGUE_TALL_LINE_AT_FOOT. Then it waits for the text, closes both windows
-   and waits the given frames. */
+   and waits the given ticks. */
 void scEpilogueShowLineAt(Sint32 speaker, Sint32 x, Sint32 y, Sint32 portraitX,
-	Sint32 portraitY, Sint32 frames, Sint32 mode)
+	Sint32 portraitY, Sint32 ticks, Sint32 mode)
 {
 	Sint32	noPortrait;
-	WINDOW *window;
+	WINDOW *win;
 	WINDOW *portrait;
 
 	portrait = 0;
 	noPortrait = EPILOGUE_NO_PORTRAIT & speaker;
 	speaker &= EPILOGUE_NO_PORTRAIT - 1;
-	window = mnMessageOpenWindow(EpilogueMessage, x, y,
+	win = mnMessageOpenWindow(EpilogueMessage, x, y,
 		MESSAGE_WINDOW_VOICE(fdSpeakerGetVoice(speaker)) |
 			EPILOGUE_WINDOW_OPTIONS);
 	if(!noPortrait) {
@@ -165,20 +165,20 @@ void scEpilogueShowLineAt(Sint32 speaker, Sint32 x, Sint32 y, Sint32 portraitX,
 		EpiloguePortraitY = portraitY << 3;
 	}
 	if(mode == EPILOGUE_TALL_LINE_AT_FOOT) {
-		window->y++;
-		window->width = 0;
-		window->height = 0;
+		win->y++;
+		win->width = 0;
+		win->height = 0;
 	}
 	while(!mnMessageAllTyped())
 		syWait(1);
 	syWait(1);
-	mnWindowClose(window, 2);
+	mnWindowClose(win, 2);
 	if(!noPortrait) {
 		mnWindowClose(portrait, 2);
 		EpiloguePortraitShown = noPortrait;
 	}
-	if(frames > 0) {
-		Sint32 i = frames;
+	if(ticks > 0) {
+		Sint32 i = ticks;
 
 		do {
 			syWait(1);
@@ -196,9 +196,9 @@ typedef enum EPILOGUE_LINE_POS {
 
 /* Shows the epilogue's next line, spoken by speaker (a sprite, whose portrait
    and voice it takes), at the given position, centred across the screen or,
-   beside a portrait, across the columns right of it; then holds it frames
+   beside a portrait, across the columns right of it; then holds it ticks
    more. */
-void scEpilogueShowLine(Sint32 speaker, Sint32 position, Sint32 frames)
+void scEpilogueShowLine(Sint32 speaker, Sint32 pos, Sint32 ticks)
 {
 	Sint32 x;
 	Sint32 y;
@@ -228,13 +228,13 @@ void scEpilogueShowLine(Sint32 speaker, Sint32 position, Sint32 frames)
 		portraitX = x;
 	}
 	half = (height - 1) / 2;
-	if(position == LINE_AT_TOP) {
+	if(pos == LINE_AT_TOP) {
 		y = 3;
 		portraitY = half + 1;
-	} else if(position == LINE_IN_MIDDLE) {
+	} else if(pos == LINE_IN_MIDDLE) {
 		y = 14 - half;
 		portraitY = y + half - 2;
-	} else if(position == LINE_AT_FOOT) {
+	} else if(pos == LINE_AT_FOOT) {
 		if(half == 3) {
 			y = 13;
 			portraitY = 15;
@@ -244,7 +244,7 @@ void scEpilogueShowLine(Sint32 speaker, Sint32 position, Sint32 frames)
 			portraitY = 15;
 		}
 	}
-	scEpilogueShowLineAt(speaker, x, y, portraitX, portraitY, frames, mode);
+	scEpilogueShowLineAt(speaker, x, y, portraitX, portraitY, ticks, mode);
 }
 
 /* Runs the whole epilogue, image after image, then sets out for the file
@@ -253,9 +253,9 @@ Sint32 scInit(void)
 {
 	MAIN_ROUTINE_STATE *state;
 	Sint32				savedSpeed;
-	Sint32				count;
+	Sint32				cnt;
 	ACTOR			   *leader;
-	WIN_STATE		   *windowState;
+	WIN_STATE		   *winState;
 	BG_SCROLL		   *scroll;
 
 	state = &MainRoutineStateWork;
@@ -265,9 +265,9 @@ Sint32 scInit(void)
 	state->msgSpeed = MESSAGE_SPEED_NORMAL;
 	mnEndingImageStart();
 	mnWindowSystemInitField();
-	windowState = (WIN_STATE *)Ram_HeapSlots->winState;
-	windowState->holdTilemapUpload = 1;
-	windowState->textMode = 1;
+	winState = (WIN_STATE *)Ram_HeapSlots->winState;
+	winState->holdTilemapUpload = 1;
+	winState->textMode = 1;
 	EpilogueMessage = (Sint32)MsgFinallyWeVe;
 	scEpilogueLoadPortraitFrame();
 	syFieldScriptWait(30);
@@ -407,12 +407,12 @@ Sint32 scInit(void)
 	MainRoutineStateWork.msgSpeed = savedSpeed;
 	syFieldScriptWait(300);
 	/* The End stays until a button is pressed, or for three minutes. */
-	count = 0;
+	cnt = 0;
 	if(PerWork.push == 0) {
 		do {
 			syWait(1);
-			count++;
-			if(count >= 3 * 60 * FRAMES_PER_SECOND)
+			cnt++;
+			if(cnt >= 3 * 60 * TICKS_PER_SECOND)
 				break;
 		} while(PerWork.push == 0);
 	}

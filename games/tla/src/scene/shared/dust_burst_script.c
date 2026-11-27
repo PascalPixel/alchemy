@@ -9,8 +9,8 @@
 #define DUST_SCRIPT_SECTION
 #endif
 
-/* It lasts 44 frames, then stops and is gone. */
-DUST_SCRIPT_SECTION Uint32 Dust_BurstScript[] = {
+/* It lasts 44 ticks, then stops and is gone. */
+DUST_SCRIPT_SECTION Uint32 DustBurstScript[] = {
 	SC_WAIT(44),
 	SC_SET(SW_HOOK, 0),
 	SC_POSITION(0, 0, 0),

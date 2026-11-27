@@ -5,7 +5,7 @@
 /* The message of each fixed search spot, METATILE_BEHAVIOR_JAR to
    METATILE_BEHAVIOR_WELL, as an offset from MsgTileChecked and
    MsgTileResult. */
-const Uint8 Field_ExamineCueMessageOffsets[] = {
+const Uint8 FieldExamineCueMessageOffsets[] = {
 	2,	/* a jar */
 	3,	/* a barrel */
 	13, /* a wooden box */

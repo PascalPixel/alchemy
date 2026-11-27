@@ -3,7 +3,7 @@
 #include "battle/battle.h"
 
 /* BLDY values, the same in both games. */
-Sint8 BattleHighlight_BlendRamp[] = {
+Sint8 BattleHighlightBlendRamp[] = {
 	15,
 	14,
 	13,
@@ -39,4 +39,4 @@ Sint8 BattleHighlight_BlendRamp[] = {
 };
 
 /* Unused: two words after the ramp that no code names. */
-Sint32 BattleHighlight_UnusedWords[] = {1, 27};
+Sint32 BattleHighlightUnusedWords[] = {1, 27};

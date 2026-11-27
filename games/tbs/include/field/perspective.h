@@ -32,13 +32,13 @@ typedef struct WORLD_MAP_VIEW {
 	Sint8 anmActive;
 	Uint8 unused[3];
 	/* Screen rows, 0 and 159 at load and 200 and 255 from
-	   fdWorldMapStartStillImage; each frame copies them to shownTop and
+	   fdWorldMapStartStillImage; each tick copies them to shownTop and
 	   shownBottom and picks BG mode 2 or 0 from them. */
 	Uint16 winTop;
 	Uint16 winBottom;
-	Uint16 shownTop;	/* windowTop as the frame update last applied it */
-	Uint16 shownBottom; /* winBottom as the frame update last applied it */
-	Uint16 winPending;	/* cleared by the frame update; not set by name */
+	Uint16 shownTop;	/* windowTop as the tick update last applied it */
+	Uint16 shownBottom; /* winBottom as the tick update last applied it */
+	Uint16 winPending;	/* cleared by the tick update; not set by name */
 	Uint8  unusedAfterWin[6];
 	/* The world map's tile offsets (ResourceId_WorldMapPerspectiveTiles), each
 	   tile LZ-compressed. */
@@ -46,7 +46,7 @@ typedef struct WORLD_MAP_VIEW {
 	Uint8	unusedAfterTiles[4];
 	Uint16	pitch;	   /* 1/65536 turns */
 	Uint16	yaw;	   /* 1/65536 turns */
-	Uint32 *resources; /* a row of WorldMap_GraphicsResources, by terrain */
+	Uint32 *resources; /* a row of WorldMapGraphicsResources, by terrain */
 	Uint8	unusedAfterResources[24];
 	Uint16	tileIds[256]; /* the world map tile in each of 16 by 16 metatiles */
 	/* The tile each quarter of each layer's block buffer shows, so an unchanged
@@ -57,7 +57,7 @@ typedef struct WORLD_MAP_VIEW {
 	Sint32 prevZoom;		   /* the zoom a transition starts from */
 	FIXED  zoom;			   /* 16.16 fixed point, toFIXED(1) full size */
 	Sint16 zoomTransitionFrm;  /* a zoom transition's length; 0 when none */
-	Sint16 zoomTransitionStep; /* frames of the transition done */
+	Sint16 zoomTransitionStep; /* ticks of the transition done */
 } WORLD_MAP_VIEW;
 
 STATIC_ASSERT(sizeof(WORLD_MAP_VIEW) == 860);

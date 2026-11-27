@@ -111,7 +111,7 @@ CUE SceneCues[] = {
 
 /* Unused: four halfwords and an end of -1s after the room's tables; nothing
    reads them. */
-Sint16 TestScenes_UnusedRow[] ALIGNED(4) = {
+Sint16 TestScenesUnusedRow[] ALIGNED(4) = {
 	512,
 	512,
 	1024,

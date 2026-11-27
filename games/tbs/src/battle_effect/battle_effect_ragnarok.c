@@ -1,20 +1,20 @@
 /* Ragnarok. Part of battle_effect.c. */
 
 /* FlameBladeSheet's blade, then FlashBurstSheet's pictures. */
-#define RAGNAROK_BLADE_WIDTH	   64
-#define RAGNAROK_BLADE_HEIGHT	   128
-#define RAGNAROK_FLASH_PICTURES	   PICTURE_BYTES(RAGNAROK_BLADE)
+#define RAGNAROK_BLADE_WIDTH	  64
+#define RAGNAROK_BLADE_HEIGHT	  128
+#define RAGNAROK_FLASH_PICTURES	  PICTURE_BYTES(RAGNAROK_BLADE)
 /* The blade comes down to RAGNAROK_BLADE_HOLD_TOP, and is cut off at the canvas
    row RAGNAROK_BLADE_FLOOR as it sinks into the ground. */
-#define RAGNAROK_BLADE_HOLD_TOP	   16
-#define RAGNAROK_BLADE_FLOOR	   104
+#define RAGNAROK_BLADE_HOLD_TOP	  16
+#define RAGNAROK_BLADE_FLOOR	  104
 /* A flash waits out its life, the ring's inner ones least, and in its last
-   RAGNAROK_FLASH_BURN_FRAMES burns down through six pictures, three frames
+   RAGNAROK_FLASH_BURN_TICKS burns down through six pictures, three ticks
    each. */
-#define RAGNAROK_FLASH_LIFE		   25
-#define RAGNAROK_FLASH_BURN_FRAMES 18
+#define RAGNAROK_FLASH_LIFE		  25
+#define RAGNAROK_FLASH_BURN_TICKS 18
 /* The canvas row the sparks bounce on. */
-#define RAGNAROK_GROUND_Y		   108
+#define RAGNAROK_GROUND_Y		  108
 
 #define RAGNAROK_COLUMNS	  2 /* columns that strike */
 #define RAGNAROK_SEEDED		  3 /* columns given particles; the third is unused */
@@ -23,13 +23,13 @@
 #define RAGNAROK_SPARKS		  340 /* sparks kept per column */
 #define RAGNAROK_DRAWN_SPARKS 256 /* of which flown */
 
-#define RAGNAROK_FRAMES				80
-#define RAGNAROK_BLADE_SWING_FRAMES 10 /* the blade comes down */
-#define RAGNAROK_BLADE_HOLD_FRAME	20 /* then holds, then creeps on */
-#define RAGNAROK_BLADE_LAST_FRAME	39 /* the blade is gone after it */
-#define RAGNAROK_FIRST_STRIKE_FRAME \
-	16 /* each column strikes 8 frames after the last */
-#define RAGNAROK_DAMAGE_FRAME 40 /* the damage is shown */
+#define RAGNAROK_TICKS			   80
+#define RAGNAROK_BLADE_SWING_TICKS 10 /* the blade comes down */
+#define RAGNAROK_BLADE_HOLD_TICK   20 /* then holds, then creeps on */
+#define RAGNAROK_BLADE_LAST_TICK   39 /* the blade is gone after it */
+#define RAGNAROK_FIRST_STRIKE_TICK \
+	16							/* each column strikes 8 ticks after the last */
+#define RAGNAROK_DAMAGE_TICK 40 /* the damage is shown */
 
 /* A huge flaming blade swings down over the targets and light bursts over them
    twice.
@@ -43,7 +43,7 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 	Uint8				*motes;
 	ACTOR				*user;
 	DRAW_RECTANGLE		 blit[2];
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -75,10 +75,10 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 			PARTICLE *flash = &state->particles[column * RAGNAROK_FLASHES + i];
 
 			Sint32 radius = i * 2;
-			Sint32 angle = syRandom() & TRIG_ANGLE_MASK;
+			Sint32 ang = syRandom() & TRIG_ANGLE_MASK;
 
-			flash->x = sySin(angle) * radius;
-			flash->y = -(syCos(angle) * radius);
+			flash->x = sySin(ang) * radius;
+			flash->y = -(syCos(ang) * radius);
 			flash->variant = i / 2 + RAGNAROK_FLASH_LIFE;
 		}
 
@@ -86,15 +86,15 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 			PARTICLE *spark = &PARTICLES[column * RAGNAROK_SPARKS + i];
 
 			Sint32 speed;
-			Sint32 angle;
+			Sint32 ang;
 
 			speed = (syRandom() & 0x1ff) + 32;
-			angle = syRandom() & TRIG_ANGLE_MASK;
+			ang = syRandom() & TRIG_ANGLE_MASK;
 			spark->x =
-				toFIXED(Ragnarok_StrikeColumns[state->args->side][column]);
+				toFIXED(RagnarokStrikeColumns[state->args->side][column]);
 			spark->y = toFIXED(88);
-			spark->velX = (sySin(angle) * speed) >> 6;
-			spark->velY = -(syCos(angle) * speed * 2) >> 6;
+			spark->velX = (sySin(ang) * speed) >> 6;
+			spark->velY = -(syCos(ang) * speed * 2) >> 6;
 			spark->variant = (syRandom() & 7) + 32;
 		}
 	}
@@ -102,46 +102,46 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-	for(frame = 0; frame != RAGNAROK_FRAMES; frame++) {
-		if(frame == 4) {
+	for(frm = 0; frm != RAGNAROK_TICKS; frm++) {
+		if(frm == 4) {
 			sySndPlayStub(SE_POWER_UP);
 		}
-		if(frame == 8) {
+		if(frm == 8) {
 			state->shakeFrm = 8;
 		}
-		if(frame == 18) {
+		if(frm == 18) {
 			sySndPlayStub(SE_CRASH);
 		}
-		if(frame == RAGNAROK_DAMAGE_FRAME) {
+		if(frm == RAGNAROK_DAMAGE_TICK) {
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 		}
 
-		/* The blade: down 16 pixels a frame from above the canvas, held, then
+		/* The blade: down 16 pixels a tick from above the canvas, held, then
 		   creeping on. */
-		if(frame <= RAGNAROK_BLADE_LAST_FRAME) {
+		if(frm <= RAGNAROK_BLADE_LAST_TICK) {
 			Sint32 height;
 			Sint32 x;
 			Sint32 top;
 
 			height = RAGNAROK_BLADE_HEIGHT;
 			if(state->args->side == EFFECT_SIDE_PARTY) {
-				if(frame < RAGNAROK_BLADE_SWING_FRAMES) {
-					x = frame * 10 - 8;
-					top = frame * 16 - RAGNAROK_BLADE_HEIGHT;
-				} else if(frame > RAGNAROK_BLADE_HOLD_FRAME) {
-					x = frame + 62;
-					top = frame * 2 - 24;
+				if(frm < RAGNAROK_BLADE_SWING_TICKS) {
+					x = frm * 10 - 8;
+					top = frm * 16 - RAGNAROK_BLADE_HEIGHT;
+				} else if(frm > RAGNAROK_BLADE_HOLD_TICK) {
+					x = frm + 62;
+					top = frm * 2 - 24;
 				} else {
 					x = 82;
 					top = RAGNAROK_BLADE_HOLD_TOP;
 				}
 			} else {
-				if(frame < RAGNAROK_BLADE_SWING_FRAMES) {
-					x = 128 - frame * 10;
-					top = frame * 16 - RAGNAROK_BLADE_HEIGHT;
-				} else if(frame > RAGNAROK_BLADE_HOLD_FRAME) {
-					x = 58 - frame;
-					top = frame * 2 - 24;
+				if(frm < RAGNAROK_BLADE_SWING_TICKS) {
+					x = 128 - frm * 10;
+					top = frm * 16 - RAGNAROK_BLADE_HEIGHT;
+				} else if(frm > RAGNAROK_BLADE_HOLD_TICK) {
+					x = 58 - frm;
+					top = frm * 2 - 24;
 				} else {
 					x = 38;
 					top = RAGNAROK_BLADE_HOLD_TOP;
@@ -157,21 +157,21 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		if(frame > RAGNAROK_FIRST_STRIKE_FRAME) {
+		if(frm > RAGNAROK_FIRST_STRIKE_TICK) {
 			btEffectStepPaletteToResource(RESOURCE_BLAST_SHEET);
 		}
 
 		/* The two columns of light strike, with flashes and then sparks. */
 		for(column = 0; column != RAGNAROK_COLUMNS; column++) {
-			Sint32 start = column * 8 + RAGNAROK_FIRST_STRIKE_FRAME;
+			Sint32 start = column * 8 + RAGNAROK_FIRST_STRIKE_TICK;
 
-			if(frame == start) {
+			if(frm == start) {
 				state->shakeFrm = 12;
 			}
-			if(frame >= start) {
-				if(frame < start + 2) {
+			if(frm >= start) {
+				if(frm < start + 2) {
 					blit[0](canvas, state->sheet + RAGNAROK_FLASH_PICTURES,
-						Ragnarok_StrikeColumns[state->args->side][column] -
+						RagnarokStrikeColumns[state->args->side][column] -
 							FLASH_BURST_WIDTH / 2,
 						56, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
 				}
@@ -185,12 +185,12 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 
 					y = FIXEDtoINT(flash->y);
 					x = FIXEDtoINT(flash->x) +
-						Ragnarok_StrikeColumns[state->args->side][column];
+						RagnarokStrikeColumns[state->args->side][column];
 					life = flash->variant;
-					if(life >= 0 && life < RAGNAROK_FLASH_BURN_FRAMES) {
+					if(life >= 0 && life < RAGNAROK_FLASH_BURN_TICKS) {
 						blit[0](canvas,
 							state->sheet +
-								Ragnarok_FlashPictures[life / 3] *
+								RagnarokFlashPictures[life / 3] *
 									PICTURE_BYTES(FLASH_BURST) +
 								RAGNAROK_FLASH_PICTURES,
 							x - FLASH_BURST_WIDTH / 2, y + 56,
@@ -202,7 +202,7 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 			}
 
 			/* Sparks fall and bounce. */
-			if(frame > start + 5) {
+			if(frm > start + 5) {
 				for(i = 0; i != RAGNAROK_DRAWN_SPARKS; i++) {
 					PARTICLE *spark = &PARTICLES[column * RAGNAROK_SPARKS + i];
 
@@ -228,7 +228,7 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 								size = spark->variant / 5 + 1;
 								lane = i & 1;
 								picture =
-									motes + BattleEffect_MotePictures[size - 1];
+									motes + BattleEffectMotePictures[size - 1];
 								drawX -= size / 2;
 								drawY -= size;
 								blit[lane](canvas, picture, drawX, drawY, size,
@@ -241,7 +241,7 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 
 			/* Every target flashes and recoils. */
 			EFFECT_FOR_EACH_TARGET(i, state->args) {
-				if(frame == start + 6) {
+				if(frm == start + 6) {
 					btEffectTintBattler(state->args->tgts[i],
 						SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 10);
 					btMotionApplyKnockbackStub(
@@ -251,7 +251,7 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 		}
 
 		btCameraShake(16, 16);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	fdActorSetAnimationSpeedStub(user, ANIM_STEP_NORMAL);
@@ -264,7 +264,7 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 #undef RAGNAROK_BLADE_HOLD_TOP
 #undef RAGNAROK_BLADE_FLOOR
 #undef RAGNAROK_FLASH_LIFE
-#undef RAGNAROK_FLASH_BURN_FRAMES
+#undef RAGNAROK_FLASH_BURN_TICKS
 #undef RAGNAROK_GROUND_Y
 #undef RAGNAROK_COLUMNS
 #undef RAGNAROK_SEEDED
@@ -272,9 +272,9 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 #undef RAGNAROK_RING
 #undef RAGNAROK_SPARKS
 #undef RAGNAROK_DRAWN_SPARKS
-#undef RAGNAROK_FRAMES
-#undef RAGNAROK_BLADE_SWING_FRAMES
-#undef RAGNAROK_BLADE_HOLD_FRAME
-#undef RAGNAROK_BLADE_LAST_FRAME
-#undef RAGNAROK_FIRST_STRIKE_FRAME
-#undef RAGNAROK_DAMAGE_FRAME
+#undef RAGNAROK_TICKS
+#undef RAGNAROK_BLADE_SWING_TICKS
+#undef RAGNAROK_BLADE_HOLD_TICK
+#undef RAGNAROK_BLADE_LAST_TICK
+#undef RAGNAROK_FIRST_STRIKE_TICK
+#undef RAGNAROK_DAMAGE_TICK

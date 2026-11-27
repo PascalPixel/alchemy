@@ -1,12 +1,12 @@
 /* Unused: a copy of scActorEmitSmoke, which three overlays keep and nothing
-   sets as an update: every eighth frame a black puff of smoke at 0.7 of its
+   sets as an update: every eighth tick a black puff of smoke at 0.7 of its
    size rises from within 4 pixels of the actor, 13 to 32 pixels up, at half a
-   pixel to 0.9 a frame. */
+   pixel to 0.9 a tick. */
 UNUSED Sint32 scActorEmitSmokeB(ACTOR *actor)
 {
 	EFFECT_OPTIONS puff;
 
-	if((FrameCount & 7) == 0) {
+	if((TickCount & 7) == 0) {
 		FIXED x;
 		FIXED y;
 

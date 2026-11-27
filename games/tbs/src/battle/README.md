@@ -89,12 +89,12 @@ battle effect at the right moment, so that a leap and its blow meet.
 ![Ivan casts Plasma at Garet, Isaac and Mia: lightning bursts over them, and the damage lines follow one target at a time, first Garet's, then Isaac's, then Mia's.](https://alchemy.pascalpixel.com/abilities/plasma.gif)
 
 Working out what an ability does to a target takes no time. Its HP drops
-in a single frame. What takes time is the showing: the flinch, the number,
+in a single tick. What takes time is the showing: the flinch, the number,
 the line of text waiting for a button.
 
 So the two are split. Resolving changes the numbers at once and leaves
 behind a list of things to show. An event plays that list a little each
-frame, while the battle effect goes on drawing. That is how lightning and
+tick, while the battle effect goes on drawing. That is how lightning and
 text share the screen, and it is `battle_playback.c` and `battle_playback_queue.c`.
 
 ## How an ability resolves

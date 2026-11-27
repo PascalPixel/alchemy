@@ -9,22 +9,22 @@
 #define HEAVY_DIVIDE_SWORD_HEIGHT			 128
 #define HEAVY_DIVIDE_AFTER_IMAGES			 4
 #define HEAVY_DIVIDE_FIRST_AFTER_IMAGE_COLOR 60
-#define HEAVY_DIVIDE_FRAMES					 80
-#define STRONG_HIT_FRAMES					 64
-/* The sword stands over the user until HEAVY_DIVIDE_SWING_FRAME, swings down to
-   strike at HEAVY_DIVIDE_STRIKE_FRAME (HeavyBlow_StrikeFrames' first row), then
+#define HEAVY_DIVIDE_TICKS					 80
+#define STRONG_HIT_TICKS					 64
+/* The sword stands over the user until HEAVY_DIVIDE_SWING_TICK, swings down to
+   strike at HEAVY_DIVIDE_STRIKE_TICK (HeavyBlowStrikeTicks' first row), then
    rebounds up to HEAVY_DIVIDE_REBOUND, a sine's toFIXED(1) being a whole
    turn. */
-#define HEAVY_DIVIDE_SWING_FRAME			 16
-#define HEAVY_DIVIDE_STRIKE_FRAME			 38
+#define HEAVY_DIVIDE_SWING_TICK				 16
+#define HEAVY_DIVIDE_STRIKE_TICK			 38
 #define HEAVY_DIVIDE_REBOUND				 (TRIG_TURN / 16)
-/* The axe takes STRONG_HIT_FLIGHT_FRAMES to cross to the target, turning a
-   sixteenth of a turn each frame. */
-#define STRONG_HIT_FLIGHT_FRAMES			 32
+/* The axe takes STRONG_HIT_FLIGHT_TICKS to cross to the target, turning a
+   sixteenth of a turn each tick. */
+#define STRONG_HIT_FLIGHT_TICKS				 32
 
-/* The chips set out in the map cell buffer; HeavyBlow_ChipCounts says how many
+/* The chips set out in the map cell buffer; HeavyBlowChipCounts says how many
    fly. Each flies out its own way at HEAVY_BLOW_CHIP_SPEED_MIN 64ths of a pixel
-   a frame and up to 255 more, and bounces when it falls below
+   a tick and up to 255 more, and bounces when it falls below
    HEAVY_BLOW_GROUND_Y. */
 #define HEAVY_BLOW_CHIPS		  256
 #define HEAVY_BLOW_CHIP_SPEED_MIN 128
@@ -39,14 +39,14 @@ void btEffectRunHeavyBlow(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	/* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
-	 * frame reserves and never touches; as one DRAW_RECTANGLE. */
+	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE blit[2];
-	Sint32		   frame;
+	Sint32		   frm;
 	void		  *caster;
-	Sint32		   frames;
+	Sint32		   ticks;
 	SCREEN_POINT   hit;
-	SCREEN_POINT   source;
-	SCREEN_POINT   target;
+	SCREEN_POINT   src;
+	SCREEN_POINT   tgt;
 	MODEL_TEXTURE  texture;
 	RENDER_MODEL  *model;
 	void		  *vertices;
@@ -64,7 +64,7 @@ void btEffectRunHeavyBlow(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	caster = btObjectGetStub(args->user)->obj;
 	if(mode == HEAVY_BLOW_HEAVY_DIVIDE) {
-		frames = HEAVY_DIVIDE_FRAMES;
+		ticks = HEAVY_DIVIDE_TICKS;
 		btResourceLoadAndDecompress(
 			RESOURCE_GREAT_SWORD_SHEET, state->sheet, 1, 1);
 
@@ -84,62 +84,62 @@ void btEffectRunHeavyBlow(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		}
 	} else {
 		btResourceLoadAndDecompress(RESOURCE_AXE_SHEET, state->sheet, 1, 1);
-		frames = STRONG_HIT_FRAMES;
+		ticks = STRONG_HIT_TICKS;
 	}
 	sySndPlayStub(SE_POWER_UP);
 
-	for(frame = 0; frame != frames; frame++) {
+	for(frm = 0; frm != ticks; frm++) {
 		Sint32 shade = 0;
 
-		if(frame == 0) {
+		if(frm == 0) {
 			btEffectPosProjectBattler(args->tgts[0], &hit);
 			for(i = 0; i != HEAVY_BLOW_CHIPS; i++) {
 				PARTICLE *chip = &PARTICLES[i];
-				Sint32	  angle = syRandom();
+				Sint32	  ang = syRandom();
 				Sint32	  speed = 255;
 
 				speed &= syRandom();
 				chip->x = toFIXED(hit.x / 2);
 				chip->y = INTtoFIXED(hit.y - 16);
 				chip->velX =
-					(sySin(angle) * (speed + HEAVY_BLOW_CHIP_SPEED_MIN)) >> 6;
+					(sySin(ang) * (speed + HEAVY_BLOW_CHIP_SPEED_MIN)) >> 6;
 				chip->velY =
-					(syCos(angle) * (speed + HEAVY_BLOW_CHIP_SPEED_MIN)) >> 6;
+					(syCos(ang) * (speed + HEAVY_BLOW_CHIP_SPEED_MIN)) >> 6;
 				chip->variant = (syRandom() & 15) + 16;
 			}
 		}
 		/* The user takes its leap pose; with the axe it also moves twice as
 		   fast. */
 		if(mode == HEAVY_BLOW_HEAVY_DIVIDE) {
-			if(frame == 8) {
+			if(frm == 8) {
 				btEffectTintBattler(args->user, TINT_KEEP, POSE_LEAP, 0, -1);
 			}
-		} else if(frame == 0) {
+		} else if(frm == 0) {
 			btEffectTintBattler(args->user, TINT_KEEP, POSE_LEAP, 0, -1);
 			fdActorSetAnimationSpeedStub(caster, ANIM_STEP_NORMAL * 2);
 		}
 
 		vertices = syHeapAllocEWRAM(32);
 		model = btRenderAllocateModelList(1);
-		btEffectPosProjectBattler(args->user, &source);
-		btEffectPosProjectBattler(args->tgts[0], &target);
+		btEffectPosProjectBattler(args->user, &src);
+		btEffectPosProjectBattler(args->tgts[0], &tgt);
 		model->kind = MODEL_SHADED;
 		model->texture = &texture;
 		model->vertices = vertices;
 		model->shade = shade;
 		if(mode == HEAVY_BLOW_HEAVY_DIVIDE) {
 			Sint32 size;
-			Sint32 angle;
+			Sint32 ang;
 
 			texture.logWidth = 5;
 			texture.logHeight = 7;
-			model->mesh = HeavyBlow_SwordMesh;
-			/* The sword grows in over the first frames and shrinks away from
-			   frame 60. */
-			if(frame > 59) {
-				size = 68 - frame;
+			model->mesh = HeavyBlowSwordMesh;
+			/* The sword grows in over the first ticks and shrinks away from
+			   tick 60. */
+			if(frm > 59) {
+				size = 68 - frm;
 			} else {
-				size = frame + 2;
+				size = frm + 2;
 			}
 			if(size > 8) {
 				size = 8;
@@ -147,41 +147,41 @@ void btEffectRunHeavyBlow(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			if(size > 0) {
 				/* It swings down a little over a quarter turn by the strike,
 				   then rebounds. */
-				if(frame > HEAVY_DIVIDE_STRIKE_FRAME) {
-					angle = DEGtoANG(90) -
-						sySin((frame - (HEAVY_DIVIDE_STRIKE_FRAME + 1)) *
+				if(frm > HEAVY_DIVIDE_STRIKE_TICK) {
+					ang = DEGtoANG(90) -
+						sySin((frm - (HEAVY_DIVIDE_STRIKE_TICK + 1)) *
 							(TRIG_TURN / 128)) /
 							(toFIXED(1) / HEAVY_DIVIDE_REBOUND);
-				} else if(frame >= HEAVY_DIVIDE_SWING_FRAME) {
-					angle = (TRIG_TURN -
-								syCos((frame - HEAVY_DIVIDE_SWING_FRAME) *
-									(TRIG_TURN / 128))) /
+				} else if(frm >= HEAVY_DIVIDE_SWING_TICK) {
+					ang = (TRIG_TURN -
+							  syCos((frm - HEAVY_DIVIDE_SWING_TICK) *
+								  (TRIG_TURN / 128))) /
 						2;
 				} else {
-					angle = 0;
+					ang = 0;
 				}
 
-				/* After-image i keeps the sword's angle of i frames before; it
-				   shows from frame 2i until i frames after the strike. */
+				/* After-image i keeps the sword's angle of i ticks before; it
+				   shows from tick 2i until i ticks after the strike. */
 				for(i = HEAVY_DIVIDE_AFTER_IMAGES; i != 0; i--) {
 					state->particles[i].variant =
 						state->particles[i - 1].variant;
 				}
-				state->particles[0].variant = angle;
+				state->particles[0].variant = ang;
 				for(i = HEAVY_DIVIDE_AFTER_IMAGES; i != -1; i--) {
 					PARTICLE *step = &state->particles[i];
 
-					if(i != 0 && frame > i + HEAVY_DIVIDE_STRIKE_FRAME) {
+					if(i != 0 && frm > i + HEAVY_DIVIDE_STRIKE_TICK) {
 						continue;
 					}
-					if(frame < i * 2) {
+					if(frm < i * 2) {
 						continue;
 					}
 					texture.pixels =
 						state->sheet + i * PICTURE_BYTES(HEAVY_DIVIDE_SWORD);
 					syInitMatrix();
-					syTranslate(INTtoFIXED(source.x / 2 - 64),
-						INTtoFIXED(source.y - 88), 0);
+					syTranslate(
+						INTtoFIXED(src.x / 2 - 64), INTtoFIXED(src.y - 88), 0);
 					syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 					if(args->side == EFFECT_SIDE_ENEMIES) {
 						syRotZ(DEGtoANG(180) - step->variant);
@@ -195,24 +195,24 @@ void btEffectRunHeavyBlow(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						syRotY(DEGtoANG(180));
 					}
 					btRenderTransformVertices(
-						BattleEffect_BeamCorners, vertices, 4);
+						BattleEffectBeamCorners, vertices, 4);
 					btRenderDrawModelList(model);
 				}
 			}
 		} else {
-			model->mesh = BattleEffect_SquareMesh;
+			model->mesh = BattleEffectSquareMesh;
 			texture.logWidth = 6;
 			texture.logHeight = 6;
 			/* DEAD: particles 1 to 4, which nothing reads; the ROM keeps the
 			   loop over five. */
-			if(frame == 0) {
+			if(frm == 0) {
 				for(i = 0; i != 5; i++) {
-					state->particles[i].x = toFIXED(source.x / 2);
-					state->particles[i].y = INTtoFIXED(source.y - 32);
-					state->particles[i].velX = (target.x / 2 - source.x / 2) *
-						(toFIXED(1) / STRONG_HIT_FLIGHT_FRAMES);
-					state->particles[i].velY = (target.y - source.y) *
-						(toFIXED(1) / STRONG_HIT_FLIGHT_FRAMES);
+					state->particles[i].x = toFIXED(src.x / 2);
+					state->particles[i].y = INTtoFIXED(src.y - 32);
+					state->particles[i].velX = (tgt.x / 2 - src.x / 2) *
+						(toFIXED(1) / STRONG_HIT_FLIGHT_TICKS);
+					state->particles[i].velY = (tgt.y - src.y) *
+						(toFIXED(1) / STRONG_HIT_FLIGHT_TICKS);
 					state->particles[i].z = 0;
 					if(args->side == EFFECT_SIDE_ENEMIES) {
 						state->particles[i].velZ = -(TRIG_TURN / 16);
@@ -221,8 +221,8 @@ void btEffectRunHeavyBlow(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					}
 				}
 			}
-			/* The axe flies from frame 8, to reach the target at the strike. */
-			if(frame > 7) {
+			/* The axe flies from tick 8, to reach the target at the strike. */
+			if(frm > 7) {
 				FIXED scale = toFIXED(625) / 512;
 
 				texture.pixels = state->sheet;
@@ -235,7 +235,7 @@ void btEffectRunHeavyBlow(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					syRotY(DEGtoANG(180));
 				}
 				btRenderTransformVertices(
-					BattleEffect_SquareCorners, vertices, 4);
+					BattleEffectSquareCorners, vertices, 4);
 				btRenderDrawModelList(model);
 				btParticleAdvanceWithGravity3D(
 					state->particles, PARTICLE_DAMPING_NONE, 0);
@@ -244,7 +244,7 @@ void btEffectRunHeavyBlow(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		syHeapRelease(model);
 		syHeapRelease(vertices);
 
-		if(frame == HeavyBlow_StrikeFrames[mode]) {
+		if(frm == HeavyBlowStrikeTicks[mode]) {
 			EFFECT_SHOW_DAMAGE(SE_CLATTER);
 			btMotionApplyKnockbackStub(args->tgts[0], KNOCKBACK_HURL);
 			btEffectTintBattler(
@@ -252,21 +252,21 @@ void btEffectRunHeavyBlow(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			state->shakeFrm = 8;
 		}
 		/* The chips fly from the strike on, each drawn and moved three times a
-		   frame; a bounce costs a chip eight frames of its life. */
-		if(frame >= HeavyBlow_StrikeFrames[mode]) {
-			for(i = 0; i != HeavyBlow_ChipCounts[mode]; i++) {
+		   tick; a bounce costs a chip eight ticks of its life. */
+		if(frm >= HeavyBlowStrikeTicks[mode]) {
+			for(i = 0; i != HeavyBlowChipCounts[mode]; i++) {
 				PARTICLE *chip = &PARTICLES[i];
 
 				if(chip->variant >= 0) {
-					blit[0](canvas, HeavyBlow_ChipPixels,
+					blit[0](canvas, HeavyBlowChipPixels,
 						FIXED_INTEGER_PART(chip->x),
 						FIXED_INTEGER_PART(chip->y) - 1, 1, 2);
 					btParticleAdvanceWithGravity2D(chip, 62, toFIXED(1) / 16);
-					blit[0](canvas, HeavyBlow_ChipPixels,
+					blit[0](canvas, HeavyBlowChipPixels,
 						FIXED_INTEGER_PART(chip->x),
 						FIXED_INTEGER_PART(chip->y) - 1, 1, 2);
 					btParticleAdvanceWithGravity2D(chip, 62, toFIXED(1) / 16);
-					blit[0](canvas, HeavyBlow_ChipPixels,
+					blit[0](canvas, HeavyBlowChipPixels,
 						FIXED_INTEGER_PART(chip->x),
 						FIXED_INTEGER_PART(chip->y) - 1, 1, 2);
 					btParticleAdvanceWithGravity2D(chip, 62, toFIXED(1) / 16);
@@ -283,7 +283,7 @@ void btEffectRunHeavyBlow(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		} else {
 			btCameraShake(8, 8);
 		}
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 	fdActorSetAnimationSpeedStub(caster, ANIM_STEP_NORMAL);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
@@ -300,17 +300,17 @@ void btEffectRunHeavyBlow(BATTLE_EFFECT_PARM *args, Sint32 mode)
 #define COOL_SLIM_SPIKE		   PICTURE_BYTES(COOL_SPIKE)
 /* Where BlastSheet's pictures, the puffs of frost, are decoded. */
 #define COOL_PUFF_PICTURES	   12384
-/* The puffs set out at frame 0, as many as Megacool draws. A puff starts on its
-   third picture, moves on every three frames and holds the last
+/* The puffs set out at tick 0, as many as Megacool draws. A puff starts on its
+   third picture, moves on every three ticks and holds the last
    (COOL_PUFF_LAST_PICTURE) until its life passes COOL_PUFF_END. */
 #define COOL_PUFFS			   16
 #define COOL_PUFF_START		   8
 #define COOL_PUFF_END		   28
 #define COOL_PUFF_LAST_PICTURE 6
-/* Cool's frames; each level adds four. */
-#define COOL_FRAMES			   54
+/* Cool's ticks; each level adds four. */
+#define COOL_TICKS			   54
 
-/* How a spike leans as it grows (Cool_ColumnLeans). */
+/* How a spike leans as it grows (CoolColumnLeans). */
 enum { LEAN_LEFT, LEAN_RIGHT, SLIM_LEAN_LEFT, SLIM_LEAN_RIGHT };
 
 /* Spikes of ice burst up one after another among the targets, leaning as they
@@ -323,10 +323,10 @@ void btEffectRunCool(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	Sint32				 stagger;
-	Sint32				 sinkFrame;
+	Sint32				 sinkFrm;
 	DRAW_RECTANGLE		 draw[2];
 	SCREEN_POINT		 ends[2];
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 
 	state = Ram_HeapSlots->battleEff;
@@ -341,7 +341,7 @@ void btEffectRunCool(BATTLE_EFFECT_PARM *args)
 		SHEET_PALETTE_BYTES);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	stagger = args->variant * 4;
-	sinkFrame = stagger + 32;
+	sinkFrm = stagger + 32;
 
 	/* The canvas is centred between the first and the last target. */
 	btEffectPosProjectBattler(args->tgts[0], &ends[0]);
@@ -349,10 +349,10 @@ void btEffectRunCool(BATTLE_EFFECT_PARM *args)
 	ends[0].x += (ends[1].x - ends[0].x) / 2;
 	REG_BG2X = (CANVAS_SIZE / 2 - ends[0].x) << 8;
 
-	frame = 0;
-	if(stagger != -COOL_FRAMES) {
+	frm = 0;
+	if(stagger != -COOL_TICKS) {
 		do {
-			if(frame == 0) {
+			if(frm == 0) {
 				PARTICLE *puff;
 
 				for(i = 0, puff = state->particles; i != COOL_PUFFS;
@@ -367,16 +367,16 @@ void btEffectRunCool(BATTLE_EFFECT_PARM *args)
 					puff->variant = COOL_PUFF_START;
 				}
 			}
-			if(frame == 32)
+			if(frm == 32)
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
-			/* DEAD: frame is never negative; the ROM keeps the test. */
-			if(frame >= 0) {
+			/* DEAD: tick is never negative; the ROM keeps the test. */
+			if(frm >= 0) {
 				Uint32 mode = BLITTER_MAX;
 
 				/* Supercool's and Megacool's spikes add their light to the
-				   first 24 frames' drawing. */
-				if(frame <= 23 && args->variant > 0)
+				   first 24 ticks' drawing. */
+				if(frm <= 23 && args->variant > 0)
 					mode = BLITTER_ADDITIVE;
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 					COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
@@ -386,12 +386,12 @@ void btEffectRunCool(BATTLE_EFFECT_PARM *args)
 				draw[1] = Ram_HeapSlots->ramCodePaired;
 
 				for(i = 0; i != args->variant * 3 + 4; i++) {
-					Sint32 age = frame - Cool_ColumnStarts[i];
-					Sint32 x = Cool_ColumnX[i];
+					Sint32 age = frm - CoolColumnStarts[i];
+					Sint32 x = CoolColumnX[i];
 					Sint32 scale;
 					Sint32 height;
 
-					/* Two frames after it starts, a spike strikes the next
+					/* Two ticks after it starts, a spike strikes the next
 					   target. */
 					if(age == 2) {
 						Sint32 member = i % args->tgtCnt;
@@ -401,20 +401,20 @@ void btEffectRunCool(BATTLE_EFFECT_PARM *args)
 						state->shakeFrm = 3;
 					}
 
-					/* A spike rises 10 pixels a frame to its height, in 64ths
+					/* A spike rises 10 pixels a tick to its height, in 64ths
 					   of its picture's, and sinks as fast. */
 					scale = COOL_SPIKE_HEIGHT;
-					if(Cool_ColumnLeans[i] > LEAN_RIGHT)
+					if(CoolColumnLeans[i] > LEAN_RIGHT)
 						scale = COOL_SLIM_SPIKE_HEIGHT;
-					scale = Cool_ColumnHeights[i] * scale / 64;
-					if(frame < sinkFrame)
+					scale = CoolColumnHeights[i] * scale / 64;
+					if(frm < sinkFrm)
 						height = age * 10;
 					else
-						height = scale - (frame - sinkFrame) * 10;
+						height = scale - (frm - sinkFrm) * 10;
 					if(height > scale)
 						height = scale;
 
-					switch(Cool_ColumnLeans[i]) {
+					switch(CoolColumnLeans[i]) {
 					case LEAN_LEFT:
 						x -= height / 2;
 						break;
@@ -428,12 +428,12 @@ void btEffectRunCool(BATTLE_EFFECT_PARM *args)
 						x += height / 4;
 						break;
 					}
-					if(Cool_ColumnLeans[i] <= LEAN_RIGHT)
-						draw[Cool_ColumnLeans[i] & 1](canvas, state->sheet,
+					if(CoolColumnLeans[i] <= LEAN_RIGHT)
+						draw[CoolColumnLeans[i] & 1](canvas, state->sheet,
 							x - COOL_SPIKE_WIDTH / 2, 112 - height,
 							COOL_SPIKE_WIDTH, height);
 					else
-						draw[Cool_ColumnLeans[i] & 1](canvas,
+						draw[CoolColumnLeans[i] & 1](canvas,
 							state->sheet + COOL_SLIM_SPIKE, x - 9, 108 - height,
 							COOL_SLIM_SPIKE_WIDTH, height);
 				}
@@ -441,7 +441,7 @@ void btEffectRunCool(BATTLE_EFFECT_PARM *args)
 				syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 			}
 
-			/* Puff i rises from frame 8 + 2i. */
+			/* Puff i rises from tick 8 + 2i. */
 			btEffectBuildCanvasBlitters(args->side, draw);
 			for(i = 0; i != args->variant * 4 + 8; i++) {
 				PARTICLE *puff = &state->particles[i];
@@ -449,8 +449,8 @@ void btEffectRunCool(BATTLE_EFFECT_PARM *args)
 				/* DEAD: the first test is never false, since no level draws
 				   more than COOL_PUFFS; the ROM keeps it and the wait for the
 				   spikes to sink. */
-				if((i <= COOL_PUFFS - 1 || frame >= sinkFrame) &&
-					frame >= i * 2 + 8 && puff->variant <= COOL_PUFF_END) {
+				if((i <= COOL_PUFFS - 1 || frm >= sinkFrm) &&
+					frm >= i * 2 + 8 && puff->variant <= COOL_PUFF_END) {
 					Sint32 cell = puff->variant / 3;
 					Sint32 x = FIXED_INTEGER_PART(puff->x);
 					Sint32 y = FIXED_INTEGER_PART(puff->y);
@@ -459,9 +459,9 @@ void btEffectRunCool(BATTLE_EFFECT_PARM *args)
 
 					if(cell > COOL_PUFF_LAST_PICTURE)
 						cell = COOL_PUFF_LAST_PICTURE;
-					src = state->sheet + Cool_SparkPictures[cell] +
+					src = state->sheet + CoolSparkPictures[cell] +
 						COOL_PUFF_PICTURES;
-					size = Cool_SparkSizes[cell];
+					size = CoolSparkSizes[cell];
 					draw[0](
 						canvas, src, x - size / 2, y - size / 2, size, size);
 					puff->variant++;
@@ -471,17 +471,17 @@ void btEffectRunCool(BATTLE_EFFECT_PARM *args)
 			EFFECT_RELEASE_BLITTERS();
 
 			btCameraShake(4, 4);
-			EFFECT_END_FRAME(state);
-		} while(++frame != stagger + COOL_FRAMES);
+			EFFECT_END_TICK(state);
+		} while(++frm != stagger + COOL_TICKS);
 	}
 	syCloseEvent(btEffectTransferCanvas);
 	btEffectEndCanvasLayer();
 }
 
-#define WYRD_CURSE_FRAMES 120
+#define WYRD_CURSE_TICKS 120
 
-/* The drops set out at frame 0, of which the first WYRD_CURSE_SKULL_COUNT fall,
-   one every eight frames. A landed drop feeds the glow a share each frame,
+/* The drops set out at tick 0, of which the first WYRD_CURSE_SKULL_COUNT fall,
+   one every eight ticks. A landed drop feeds the glow a share each tick,
    halving it: the first drop's share starts at WYRD_CURSE_FIRST_DROP_SHARE,
    each later one's WYRD_CURSE_DROP_SHARE_STEP less. */
 #define WYRD_CURSE_DROPS			16
@@ -490,14 +490,14 @@ void btEffectRunCool(BATTLE_EFFECT_PARM *args)
 #define WYRD_CURSE_DROP_SHARE_STEP	16
 /* The drops land, and the glow lies, on WYRD_CURSE_GROUND_Y. */
 #define WYRD_CURSE_GROUND_Y			112
-/* At WYRD_CURSE_RISE_FRAME the drops stop, the glow starts to fade and the
-   skulls start to rise, one every four frames; each strikes the target 16
-   frames after it rises. */
-#define WYRD_CURSE_RISE_FRAME		64
+/* At WYRD_CURSE_RISE_TICK the drops stop, the glow starts to fade and the
+   skulls start to rise, one every four ticks; each strikes the target 16
+   ticks after it rises. */
+#define WYRD_CURSE_RISE_TICK		64
 
 /* The glow, WYRD_CURSE_GLOW_SIZE square, grows an eighth of its full size for
    each WYRD_CURSE_LEVEL_PER_EIGHTH of its level, and loses WYRD_CURSE_GLOW_FADE
-   a frame as the skulls rise. */
+   a tick as the skulls rise. */
 #define WYRD_CURSE_GLOW_SIZE		32
 #define WYRD_CURSE_LEVEL_PER_EIGHTH 824
 #define WYRD_CURSE_GLOW_FADE		24
@@ -520,10 +520,10 @@ void btEffectRunWyrdCurse(BATTLE_EFFECT_PARM *args)
 	SCREEN_POINT  screen;
 	void		 *canvas;
 	/* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
-	 * frame reserves and never touches; as one DRAW_RECTANGLE. */
+	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE		 draw[2];
-	Sint32				 frame;
-	Uint8				*sprites;
+	Sint32				 frm;
+	Uint8				*sprs;
 	void				*caster;
 	BATTLE_EFFECT_STATE *state;
 	Sint32				 i;
@@ -535,7 +535,7 @@ void btEffectRunWyrdCurse(BATTLE_EFFECT_PARM *args)
 
 	state = Ram_HeapSlots->battleEff;
 	canvas = Ram_HeapSlots->battleCanvas;
-	sprites = Ram_HeapSlots->battleSheet;
+	sprs = Ram_HeapSlots->battleSheet;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	REG_BLDCNT = 0;
@@ -567,7 +567,7 @@ void btEffectRunWyrdCurse(BATTLE_EFFECT_PARM *args)
 		Sint32 y;
 		Sint32 x;
 		Sint32 half;
-		Sint32 offset;
+		Sint32 ofs;
 
 		size = width / 2;
 		half = size / 2;
@@ -575,10 +575,10 @@ void btEffectRunWyrdCurse(BATTLE_EFFECT_PARM *args)
 			WYRD_CURSE_GLOW_SIZE * WYRD_CURSE_GLOW_SIZE * 2);
 		btEffectDrawShadedCircles(state->sheet, size, toFIXED(1));
 		y = 0;
-		offset = 0;
+		ofs = 0;
 	nextRow:
 		for(x = 0; x != half; x++) {
-			Uint8 v = state->sheet[offset / 2 + x];
+			Uint8 v = state->sheet[ofs / 2 + x];
 
 			if(v != 0) {
 				Sint32 mirrorRow;
@@ -587,10 +587,9 @@ void btEffectRunWyrdCurse(BATTLE_EFFECT_PARM *args)
 				row = y * WYRD_CURSE_GLOW_SIZE;
 				state->sheet[WYRD_CURSE_GLOW + row + x * 2] = v;
 				state->sheet[WYRD_CURSE_GLOW + row + x + x + 1] = v;
-				state->sheet[WYRD_CURSE_GLOW + (offset + (size - x - 1)) * 2] =
+				state->sheet[WYRD_CURSE_GLOW + (ofs + (size - x - 1)) * 2] = v;
+				state->sheet[WYRD_CURSE_GLOW + (ofs + (size - x - 1)) * 2 + 1] =
 					v;
-				state->sheet[WYRD_CURSE_GLOW + (offset + (size - x - 1)) * 2 +
-					1] = v;
 				mirrorRow = (WYRD_CURSE_GLOW_SIZE - y) * WYRD_CURSE_GLOW_SIZE;
 				mirrorRow -= WYRD_CURSE_GLOW_SIZE;
 				state->sheet[WYRD_CURSE_GLOW + mirrorRow + x * 2] = v;
@@ -602,22 +601,22 @@ void btEffectRunWyrdCurse(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		y++;
-		offset += size;
+		ofs += size;
 		if(y != size) {
 			goto nextRow;
 		}
 	}
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_BURNING_SKULL_SHEET,
 		state->sheet + WYRD_CURSE_SKULL_PICTURES, 0, 0);
 
-	for(frame = 0; frame != WYRD_CURSE_FRAMES; frame++) {
+	for(frm = 0; frm != WYRD_CURSE_TICKS; frm++) {
 		RENDER_MODEL *model;
 		void		 *vertices;
 		Sint32		  shade = 0;
 		Sint32		  level;
 
-		if(frame == 0) {
+		if(frm == 0) {
 			btEffectPosProjectBattler(args->tgts[0], &screen);
 			for(i = 0; i != WYRD_CURSE_DROPS; i++) {
 				drop = &state->particles[i];
@@ -642,13 +641,13 @@ void btEffectRunWyrdCurse(BATTLE_EFFECT_PARM *args)
 
 		/* The drops fall, each a mote its size, and stop where they land; a
 		   landed drop keeps the speed its skull will drift aside with. */
-		if(frame < WYRD_CURSE_RISE_FRAME) {
+		if(frm < WYRD_CURSE_RISE_TICK) {
 			for(i = 0, drop = state->particles; i != WYRD_CURSE_SKULL_COUNT;
 				i++, drop++) {
-				if(frame > i * 8 && drop->variant == 0) {
+				if(frm > i * 8 && drop->variant == 0) {
 					Sint32 dropSize = drop->z;
 
-					EFFECT_DRAW_MOTE(draw[0], canvas, sprites,
+					EFFECT_DRAW_MOTE(draw[0], canvas, sprs,
 						FIXED_INTEGER_PART(drop->x),
 						FIXED_INTEGER_PART(drop->y), dropSize);
 					btParticleAdvanceWithGravity2D(
@@ -661,7 +660,7 @@ void btEffectRunWyrdCurse(BATTLE_EFFECT_PARM *args)
 						drop->velX =
 							((syRandom() & 31) - 16) * (toFIXED(1) / 16);
 						drop->velX =
-							WyrdCurse_DropBounces[i % 4] * (toFIXED(1) / 8);
+							WyrdCurseDropBounces[i % 4] * (toFIXED(1) / 8);
 						drop->velY = 0;
 					}
 				}
@@ -674,7 +673,7 @@ void btEffectRunWyrdCurse(BATTLE_EFFECT_PARM *args)
 		texture.logHeight = 5;
 		texture.pixels = state->sheet + WYRD_CURSE_GLOW;
 		model->kind = MODEL_SHADED_MAX;
-		model->mesh = BattleEffect_SmallSquareMeshReversed;
+		model->mesh = BattleEffectSmallSquareMeshReversed;
 		model->texture = &texture;
 		model->vertices = vertices;
 		model->shade = shade;
@@ -701,7 +700,7 @@ void btEffectRunWyrdCurse(BATTLE_EFFECT_PARM *args)
 			Sint32 scale =
 				level * (toFIXED(1) / 8) / WYRD_CURSE_LEVEL_PER_EIGHTH;
 
-			if(frame >= WYRD_CURSE_RISE_FRAME) {
+			if(frm >= WYRD_CURSE_RISE_TICK) {
 				last->variant = level - WYRD_CURSE_GLOW_FADE;
 			}
 			syInitMatrix();
@@ -709,7 +708,7 @@ void btEffectRunWyrdCurse(BATTLE_EFFECT_PARM *args)
 			syScale(scale * 2, scale, scale * 2);
 			syRotX(-DEGtoANG(45));
 			btRenderTransformVertices(
-				BattleEffect_GroundSquareCorners, vertices, 4);
+				BattleEffectGroundSquareCorners, vertices, 4);
 			btRenderDrawModelList(model);
 		}
 
@@ -717,10 +716,10 @@ void btEffectRunWyrdCurse(BATTLE_EFFECT_PARM *args)
 		texture.logWidth = 5;
 		texture.logHeight = 5;
 		model->kind = MODEL_SHADED_ADDITIVE;
-		model->mesh = BattleEffect_SmallSquareMeshReversed;
+		model->mesh = BattleEffectSmallSquareMeshReversed;
 		for(i = 0; i != WYRD_CURSE_SKULL_COUNT; i++) {
 			drop = &state->particles[i];
-			if(frame > i * 4 + WYRD_CURSE_RISE_FRAME) {
+			if(frm > i * 4 + WYRD_CURSE_RISE_TICK) {
 				FIXED skullScale = toFIXED(3125) / 8192;
 
 				model->shade = shade;
@@ -731,7 +730,7 @@ void btEffectRunWyrdCurse(BATTLE_EFFECT_PARM *args)
 				syScale(skullScale >> 1, skullScale, skullScale >> 1);
 				syRotX(-DEGtoANG(90));
 				btRenderTransformVertices(
-					BattleEffect_GroundSquareCorners, vertices, 4);
+					BattleEffectGroundSquareCorners, vertices, 4);
 				btRenderDrawModelList(model);
 				btParticleAdvanceWithGravity2D(drop, 60, -toFIXED(1) / 2);
 			}
@@ -739,11 +738,11 @@ void btEffectRunWyrdCurse(BATTLE_EFFECT_PARM *args)
 		syHeapRelease(model);
 		syHeapRelease(vertices);
 
-		if(frame == WYRD_CURSE_RISE_FRAME) {
+		if(frm == WYRD_CURSE_RISE_TICK) {
 			sySndPlayStub(SE_BEAST_CRY);
 		}
 		for(i = 0; i != WYRD_CURSE_SKULL_COUNT; i++) {
-			if(frame == i * 4 + WYRD_CURSE_RISE_FRAME + 16) {
+			if(frm == i * 4 + WYRD_CURSE_RISE_TICK + 16) {
 				state->shakeFrm = 2;
 				btMotionApplyKnockbackStub(args->tgts[0], KNOCKBACK_NUDGE);
 				btEffectTintBattler(
@@ -756,7 +755,7 @@ void btEffectRunWyrdCurse(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		btCameraShake(4, 4);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 	fdActorSetAnimationSpeedStub(caster, ANIM_STEP_NORMAL);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
@@ -764,23 +763,23 @@ void btEffectRunWyrdCurse(BATTLE_EFFECT_PARM *args)
 	btEffectEndCanvasLayer();
 }
 
-#define RADIANT_FIRE_FRAMES 66
+#define RADIANT_FIRE_TICKS 66
 
 /* The shaded discs drawn into the map cell buffer, 2 to twice
    RADIANT_FIRE_DISCS across, smallest first; their offsets are kept in the
    state's sheet. */
 #define RADIANT_FIRE_DISCS		  32
-/* The flames placed about the target at frame 0, of which the first
-   RADIANT_FIRE_BURSTS burn, one every four frames. A burst's disc swells and
-   shrinks over RADIANT_FIRE_BURST_FRAMES, to a radius of
+/* The flames placed about the target at tick 0, of which the first
+   RADIANT_FIRE_BURSTS burn, one every four ticks. A burst's disc swells and
+   shrinks over RADIANT_FIRE_BURST_TICKS, to a radius of
    RADIANT_FIRE_BURST_RADIUS for the first and a pixel less for each after it;
-   its ring of fire grows for RADIANT_FIRE_RING_FRAMES, fading from
+   its ring of fire grows for RADIANT_FIRE_RING_TICKS, fading from
    RADIANT_FIRE_RING_FADE. */
 #define RADIANT_FIRE_FLAMES		  32
 #define RADIANT_FIRE_BURSTS		  8
-#define RADIANT_FIRE_BURST_FRAMES 32
+#define RADIANT_FIRE_BURST_TICKS  32
 #define RADIANT_FIRE_BURST_RADIUS 32
-#define RADIANT_FIRE_RING_FRAMES  24
+#define RADIANT_FIRE_RING_TICKS	  24
 #define RADIANT_FIRE_RING_FADE	  16
 
 /* Where FireRingTexture is decoded in the effect's pictures. */
@@ -798,17 +797,17 @@ void btEffectRunRadiantFire(BATTLE_EFFECT_PARM *args)
 	MODEL_TEXTURE		 texture;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	BATTLE_CAMERA		*camera;
 	Sint32				 savedYaw;
-	MOTION_OBJECT		*target;
+	MOTION_OBJECT		*tgt;
 	Sint16				*discs;
 	PARTICLE			*flame;
 	PARTICLE			*burst;
 	PARTICLE			*ring;
 	RENDER_MODEL		*model;
 	void				*vertices;
-	Sint32				 offset;
+	Sint32				 ofs;
 	Sint32				 size;
 	Sint32				 cells;
 	Sint32				 i;
@@ -826,10 +825,10 @@ void btEffectRunRadiantFire(BATTLE_EFFECT_PARM *args)
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	camera = Ram_HeapSlots->cameraState;
-	offset = 0;
+	ofs = 0;
 	savedYaw = camera->yaw;
 	size = 2;
-	target = btObjectGetStub(args->tgts[0])->obj;
+	tgt = btObjectGetStub(args->tgts[0])->obj;
 
 	/* The discs are drawn a little over full strength, so that the middle of
 	   each burns at the brightest level. */
@@ -837,30 +836,30 @@ void btEffectRunRadiantFire(BATTLE_EFFECT_PARM *args)
 	discs = (Sint16 *)state->sheet;
 	for(i = 0; i != RADIANT_FIRE_DISCS; i++) {
 		btEffectDrawShadedCircles(
-			(void *)(offset + cells), size, toFIXED(2673) / 2048);
-		discs[i] = offset;
-		offset += (i * 2 + 3) * size / 2;
+			(void *)(ofs + cells), size, toFIXED(2673) / 2048);
+		discs[i] = ofs;
+		ofs += (i * 2 + 3) * size / 2;
 		size += 2;
 	}
 
-	for(frame = 0; frame != RADIANT_FIRE_FRAMES; frame++) {
+	for(frm = 0; frm != RADIANT_FIRE_TICKS; frm++) {
 		/* Each flame takes a random place about a point 48 pixels over the
 		   target, further out the later it comes, and keeps where that is on
 		   the screen. */
-		if(frame == 0) {
+		if(frm == 0) {
 			camera->yaw = savedYaw;
 			syInitMatrix();
 			syLookAtLoad(camera->eye, camera->focus);
 			flame = state->particles;
 			for(i = 0; i != RADIANT_FIRE_FLAMES; i++, flame++) {
-				Sint32 angle;
+				Sint32 ang;
 				Sint32 radius;
 
 				syRandom();
-				angle = syRandom() & TRIG_ANGLE_MASK;
+				ang = syRandom() & TRIG_ANGLE_MASK;
 				radius = (syRandom() & 7) + i * 4;
-				SET_POSITION(flame, target->x + sySin(angle) * radius * 2,
-					target->y + syCos(angle) * radius + toFIXED(48), target->z);
+				SET_POSITION(flame, tgt->x + sySin(ang) * radius * 2,
+					tgt->y + syCos(ang) * radius + toFIXED(48), tgt->z);
 				btEffectPosProjectPoint(&flame->x, &screen);
 				flame->x = screen.x / 2;
 				flame->y = screen.y;
@@ -871,10 +870,10 @@ void btEffectRunRadiantFire(BATTLE_EFFECT_PARM *args)
 				flame->variant = -i * 4;
 			}
 		}
-		if(frame == 0)
+		if(frm == 0)
 			btEffectSetApproachMotion(args->user, args->tgts[0], 8, 80);
 
-		if(frame == 8) {
+		if(frm == 8) {
 			syWordsFillEntry(canvas, CANVAS_VIEW_BYTES,
 				CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 			state->shakeFrm = 16;
@@ -884,7 +883,7 @@ void btEffectRunRadiantFire(BATTLE_EFFECT_PARM *args)
 			EFFECT_SHOW_DAMAGE(SE_CRASH);
 		}
 
-		if(frame >= 8) {
+		if(frm >= 8) {
 			i = 0;
 			burst = state->particles;
 			for(; i != RADIANT_FIRE_BURSTS; i++, burst++) {
@@ -897,23 +896,22 @@ void btEffectRunRadiantFire(BATTLE_EFFECT_PARM *args)
 						args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
 				}
 				if(burst->variant >= 0 &&
-					burst->variant < RADIANT_FIRE_BURST_FRAMES) {
+					burst->variant < RADIANT_FIRE_BURST_TICKS) {
 					Sint32 diameter;
-					Sint32 index;
+					Sint32 idx;
 
 					diameter =
 						FIXEDtoINT(
 							sySin(burst->variant *
-								(DEGtoANG(180) / RADIANT_FIRE_BURST_FRAMES)) *
+								(DEGtoANG(180) / RADIANT_FIRE_BURST_TICKS)) *
 							burst->velX) *
 						2;
 					/* Drawn 2 to 62 across: at its widest the first burst skips
-					   a frame. */
-					index = diameter - 2;
-					if((Uint32)index < 2 * RADIANT_FIRE_DISCS - 2)
+					   a tick. */
+					idx = diameter - 2;
+					if((Uint32)idx < 2 * RADIANT_FIRE_DISCS - 2)
 						btCanvasBlitMirroredQuarters(
-							(void *)(*(Sint16 *)(index + (Sint32)discs) +
-								cells),
+							(void *)(*(Sint16 *)(idx + (Sint32)discs) + cells),
 							burst->x, burst->y, diameter);
 				}
 			}
@@ -925,13 +923,13 @@ void btEffectRunRadiantFire(BATTLE_EFFECT_PARM *args)
 			texture.pixels = state->sheet + RADIANT_FIRE_FIRE_RING;
 			model->kind = MODEL_SHADED_MAX;
 			model->vertices = vertices;
-			model->mesh = BattleEffect_LargeSquareMesh;
+			model->mesh = BattleEffectLargeSquareMesh;
 			model->texture = &texture;
 			i = 0;
 			ring = state->particles;
 			for(; i != RADIANT_FIRE_BURSTS; i++, ring++) {
 				if(ring->variant >= 0 &&
-					ring->variant < RADIANT_FIRE_RING_FRAMES) {
+					ring->variant < RADIANT_FIRE_RING_TICKS) {
 					Sint32 brightness = 0;
 					Sint32 scale = ring->variant * (toFIXED(3) / 32);
 
@@ -946,7 +944,7 @@ void btEffectRunRadiantFire(BATTLE_EFFECT_PARM *args)
 					syRotX(ring->velY);
 					syMatrixScaleUniform(scale);
 					btRenderTransformVertices(
-						BattleEffect_SquareCorners, vertices, 4);
+						BattleEffectSquareCorners, vertices, 4);
 					btRenderDrawModelList(model);
 				}
 			}
@@ -955,18 +953,18 @@ void btEffectRunRadiantFire(BATTLE_EFFECT_PARM *args)
 		}
 
 		btCameraShake(4, 4);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-#define HURRICANE_FRAMES 68
+#define HURRICANE_TICKS 68
 
 /* The streak the effect draws into the state's sprite sheet: one pixel of level
    HURRICANE_STREAK_LEVEL a row, a pixel further over every 16 rows, slanting as
    the streaks fall. The first HURRICANE_STREAKS of the state's particles fall
-   as streaks, one more each frame, and a streak whose foot reaches
+   as streaks, one more each tick, and a streak whose foot reaches
    HURRICANE_GROUND_Y starts a puff there. */
 #define HURRICANE_STREAK_WIDTH	4
 #define HURRICANE_STREAK_HEIGHT 64
@@ -981,7 +979,7 @@ void btEffectRunRadiantFire(BATTLE_EFFECT_PARM *args)
 
 /* Rain driven by the wind streaks down over the target, and puffs rise where
    each streak lands; the target flashes as it is lashed, and the user closes in
-   to strike at frame 46. Then the canvas is cleared and Dull's effect follows.
+   to strike at tick 46. Then the canvas is cleared and Dull's effect follows.
 
    Abilities: Hurricane. */
 void btEffectRunHurricane(BATTLE_EFFECT_PARM *args)
@@ -989,14 +987,14 @@ void btEffectRunHurricane(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	/* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
-	 * frame reserves and never touches; as one DRAW_RECTANGLE. */
+	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE blit[2];
-	SCREEN_POINT   position;
+	SCREEN_POINT   pos;
 	PARTICLE	  *streak;
 	PARTICLE	  *puff;
 	Sint32		   size = CANVAS_VIEW_BYTES;
-	Sint32		   offsetX;
-	Sint32		   frame;
+	Sint32		   ofsX;
+	Sint32		   frm;
 	Sint32		   i;
 
 	state = Ram_HeapSlots->battleEff;
@@ -1009,9 +1007,9 @@ void btEffectRunHurricane(BATTLE_EFFECT_PARM *args)
 	syWordsCopyEntry((void *)BG_PLTT,
 		syResourceGetTableEntry(RESOURCE_CYAN_PALETTE), SHEET_PALETTE_BYTES);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-	btEffectPosProjectBattler(args->tgts[0], &position);
-	offsetX = CANVAS_SIZE / 2 - position.x;
-	REG_BG2X = offsetX << 8;
+	btEffectPosProjectBattler(args->tgts[0], &pos);
+	ofsX = CANVAS_SIZE / 2 - pos.x;
+	REG_BG2X = ofsX << 8;
 
 	syWordsClearEntry(state->sheet, PICTURE_BYTES(HURRICANE_STREAK));
 	for(i = 0; i != HURRICANE_STREAK_HEIGHT; i++) {
@@ -1026,9 +1024,9 @@ void btEffectRunHurricane(BATTLE_EFFECT_PARM *args)
 		RESOURCE_SMOKE_SHEET, state->sheet + HURRICANE_PUFF_PICTURES, 1, 0);
 	REG_BG2PA = Q_8_8(1);
 
-	for(frame = 0; frame != HURRICANE_FRAMES; frame++) {
+	for(frm = 0; frm != HURRICANE_TICKS; frm++) {
 		/* The streaks wait above the screen, drifting with the wind. */
-		if(frame == 0) {
+		if(frm == 0) {
 			sySndPlayStub(SE_AMBIENT_WATER);
 			EFFECT_FREE_PARTICLES(i, PARTICLES, HURRICANE_PUFFS);
 			for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
@@ -1045,17 +1043,17 @@ void btEffectRunHurricane(BATTLE_EFFECT_PARM *args)
 				streak->variant = -1;
 			}
 		}
-		if(frame == 32)
+		if(frm == 32)
 			btMotionApproachTargetStub(
 				args->user, args->tgts[0], 8, toFIXED(3));
-		if(frame == 46) {
+		if(frm == 46) {
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			btMotionApplyKnockbackStub(args->tgts[0], KNOCKBACK_HURL);
 		}
 
 		puff = PARTICLES;
 		for(i = 0; i != HURRICANE_PUFFS; i++, puff++) {
-			if(puff->variant >= 0 && puff->variant < SMOKE_PUFF_FRAMES) {
+			if(puff->variant >= 0 && puff->variant < SMOKE_PUFF_TICKS) {
 				blit[0](canvas,
 					state->sheet + HURRICANE_PUFF_PICTURES +
 						puff->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
@@ -1067,23 +1065,23 @@ void btEffectRunHurricane(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		/* The target flashes every four frames from frame 6. */
+		/* The target flashes every four ticks from tick 6. */
 		for(i = 0; i != 8; i++) {
-			if(frame == i * 4 + 6) {
+			if(frm == i * 4 + 6) {
 				btEffectTintBattler(
 					args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 3);
 				sySndPlayStub(SE_WATER);
 			}
 		}
 
-		/* Streak i falls from frame i, cut short at the ground. */
+		/* Streak i falls from tick i, cut short at the ground. */
 		for(i = 0; i != HURRICANE_STREAKS; i++) {
 			Sint32 y;
 			Sint32 height;
 			Sint32 x;
 
 			streak = &state->particles[i];
-			if(frame < i)
+			if(frm < i)
 				continue;
 			y = FIXED_INTEGER_PART(streak->y);
 			if(y >= HURRICANE_GROUND_Y)
@@ -1110,7 +1108,7 @@ void btEffectRunHurricane(BATTLE_EFFECT_PARM *args)
 		}
 
 		btCameraShake(4, 4);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	/* The canvas and its characters are cleared for Dull's effect. */

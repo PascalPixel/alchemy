@@ -5,7 +5,7 @@
 #include "field_internal.h"
 
 /* The longest fdMapGridWaitForShakeToSettle waits, five seconds. */
-#define MAPGRID_SHAKE_SETTLE_FRAMES		   300
+#define MAPGRID_SHAKE_SETTLE_TICKS		   300
 /* The largest shake that counts as settled, just under 1/256 pixel. */
 #define MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE (toFIXED(1) / 256 - 1)
 /* One of the world map's two tile maps of one-byte tiles, BG3's and then BG2's,
@@ -13,7 +13,7 @@
 #define WORLD_MAP_TILE_MAP_BYTES		   (64 * 64)
 
 /* Changes the shake without restarting an axis whose argument is negative.
-   Amplitudes are 16.16 pixels and decay is a 16.16 multiplier per frame. */
+   Amplitudes are 16.16 pixels and decay is a 16.16 multiplier per tick. */
 void fdMapGridSetScreenShake(FIXED shakeX, FIXED shakeY, FIXED shakeDecay)
 {
 	MAP_GRID_SCROLL_STATE *grid;
@@ -33,18 +33,18 @@ void fdMapGridSetScreenShake(FIXED shakeX, FIXED shakeY, FIXED shakeDecay)
 }
 
 /* Waits until both shake amplitudes have settled, at most
-   MAPGRID_SHAKE_SETTLE_FRAMES for a shake whose decay never settles. */
+   MAPGRID_SHAKE_SETTLE_TICKS for a shake whose decay never settles. */
 void fdMapGridWaitForShakeToSettle(void)
 {
 	MAP_GRID_SCROLL_STATE *grid;
-	Sint32				   waitedFrames;
+	Sint32				   waitedTicks;
 
 	grid = MapGridState[0];
 	/* A decay of 1.0 or more never settles, so the limit ends the wait. */
-	for(waitedFrames = 0; waitedFrames < MAPGRID_SHAKE_SETTLE_FRAMES &&
+	for(waitedTicks = 0; waitedTicks < MAPGRID_SHAKE_SETTLE_TICKS &&
 		(grid->shakeX > MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE ||
 			grid->shakeY > MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE);
-		waitedFrames++) {
+		waitedTicks++) {
 		sySynch(1);
 	}
 	/* A zero decay makes the next view update's shake its last. */
@@ -79,7 +79,7 @@ void fdTileMapDrawRowsFromRam(const WORLD_MAP_AFFINE_PAIR *lines, Uint8 *pixels)
    followed point, for a camera pitched by pitchSlope. The lines above the
    horizon, sky, get zeros. */
 void fdWorldMapBuildScanlineTable(
-	FIXED pitchSlope, Sint32 *position, WORLD_MAP_SCANLINE *scanline)
+	FIXED pitchSlope, Sint32 *pos, WORLD_MAP_SCANLINE *scanline)
 {
 	Sint32 groundPoint[3];
 	Sint32 cameraPoint[3];
@@ -100,7 +100,7 @@ void fdWorldMapBuildScanlineTable(
 
 	/* The followed point on the ground (height 0), in camera space; horizon is
 	   its height less its depth times the pitch slope. */
-	SET_VECTOR(groundPoint, position[0], groundHeight, position[2]);
+	SET_VECTOR(groundPoint, pos[0], groundHeight, pos[2]);
 	syCalcPoint(groundPoint, cameraPoint);
 	horizon = cameraPoint[1] - syMulFX(cameraPoint[2], pitchSlope);
 	focus = -ProjectionWork.focal;
@@ -144,6 +144,6 @@ void fdWorldMapBuildScanlineTable(
 	}
 }
 
-#undef MAPGRID_SHAKE_SETTLE_FRAMES
+#undef MAPGRID_SHAKE_SETTLE_TICKS
 #undef MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE
 #undef WORLD_MAP_TILE_MAP_BYTES

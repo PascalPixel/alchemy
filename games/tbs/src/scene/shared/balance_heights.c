@@ -4,7 +4,7 @@
 /* A balance platform's height by its weight (its timer, from 0 to 6). Each
    carved stone or pillar on it takes it 16 pixels further down, and the other
    platform up as far. */
-Uint32 Balance_PlatformHeights[] = {
+Uint32 BalancePlatformHeights[] = {
 	-toFIXED(16),
 	-toFIXED(16),
 	-toFIXED(32),

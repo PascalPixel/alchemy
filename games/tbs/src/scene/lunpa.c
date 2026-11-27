@@ -237,10 +237,10 @@ enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 
 #include "shared/field_effect_duration_scripts.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 const SCENE_ENTRANCE *scGetEntrances(void)
@@ -323,7 +323,7 @@ static void scLunpaFreezeHiddenPuddle(void)
 	gmFlagSet(FLAG_LUNPA_PUDDLE_FROZEN);
 }
 
-/* Every frame while Reveal shows the puddle: once Isaac is up on the ice
+/* Every tick while Reveal shows the puddle: once Isaac is up on the ice
    pillar, it is drawn under him. */
 static void scLunpaUpdateIcePillarDrawOrder(void)
 {
@@ -335,14 +335,14 @@ static void scLunpaUpdateIcePillarDrawOrder(void)
 }
 
 /* Draws one picture of the hidden passage's cave mouth in the cliff at the west
-   edge of town, from a set of copies kept at (sourceColumn, sourceRow). The
+   edge of town, from a set of copies kept at (srcColumn, srcRow). The
    second and third copies are the same mouth on the map's other layers. */
 static inline void scLunpaDrawHiddenPassagePicture(
-	Sint32 sourceColumn, Sint32 sourceRow)
+	Sint32 srcColumn, Sint32 srcRow)
 {
-	fdMapGridCopyMetatiles(sourceColumn, sourceRow, 3, 4, 1, 14);
-	fdMapGridCopyMetatiles(sourceColumn + 3, sourceRow, 3, 4, 33, 14);
-	fdMapGridCopyMetatiles(sourceColumn + 6, sourceRow, 3, 4, 1, 46);
+	fdMapGridCopyMetatiles(srcColumn, srcRow, 3, 4, 1, 14);
+	fdMapGridCopyMetatiles(srcColumn + 3, srcRow, 3, 4, 33, 14);
+	fdMapGridCopyMetatiles(srcColumn + 6, srcRow, 3, 4, 1, 46);
 }
 
 /* Casting Reveal in Lunpa turns the town grey and shows its secrets: the blue
@@ -395,7 +395,7 @@ static void scLunpaRevealSecrets(void)
 			actor->scaleY = SPARKLE_SCALE_Y;
 		}
 	}
-	sySetFrameEvent(scLunpaUpdateIcePillarDrawOrder, EVENT_PASS_FRAME);
+	sySetTickEvent(scLunpaUpdateIcePillarDrawOrder, EVENT_PASS_TICK);
 	gmFlagClear(FLAG_LUNPA_SECRETS_HIDDEN);
 }
 
@@ -600,19 +600,18 @@ static void scLunpaAskAboutFortressCommotion(void)
    the man with the party before, then decides it is impossible. */
 static void scLunpaTalkToLeftGuard(void)
 {
-	Sint32 recognitionMessageBase;
+	Sint32 recognitionMsgBase;
 
 	if(MainRoutineStateWork.cloaked != 0) {
 		fdScriptSetMessageId(MsgLunpaLeftGuardHearsSomeone);
 	} else if(gmFlagGet(FLAG_DODONPA_LOCKED_UP) != 0 &&
 		gmFlagGet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
 		fdActorShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-		recognitionMessageBase = MsgLunpaLeftGuardRecognizesHammet;
-		fdScriptSetMessageId(
-			recognitionMessageBase + RECOGNITION_SEEN_THAT_MAN);
+		recognitionMsgBase = MsgLunpaLeftGuardRecognizesHammet;
+		fdScriptSetMessageId(recognitionMsgBase + RECOGNITION_SEEN_THAT_MAN);
 		fdScriptShowMessage(ACTOR_LEFT_GUARD, 0);
 		fdActorStartRepeatedMotion(ACTOR_LEFT_GUARD, 1);
-		fdScriptSetMessageId(recognitionMessageBase + RECOGNITION_IMPOSSIBLE);
+		fdScriptSetMessageId(recognitionMsgBase + RECOGNITION_IMPOSSIBLE);
 		gmFlagSet(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
 	} else {
 		fdScriptSetMessageId(MsgLunpaLeftGuardResentsDodonpa);
@@ -682,7 +681,7 @@ static void scLunpaReadRightGuardsThoughts(void)
 	fdScriptShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
 
-/* Every frame at the Lunpa Fortress Gates between Donpa's judgment and the
+/* Every tick at the Lunpa Fortress Gates between Donpa's judgment and the
    meeting with Bunza: Isaac stepping into the upper palisade's gap (map row 10)
    raises Garet's warning, scLunpaGaretTurnsIsaacBack. */
 static void scLunpaWatchForFortressApproach(void)
@@ -724,7 +723,7 @@ static void scLunpaEnterDoor(void)
 	FIELD_STATE *state;
 	ACTOR		*placedActor;
 	Uint32		 actorId;
-	Sint32		 doorIndex;
+	Sint32		 doorIdx;
 
 	state = FieldStateWork;
 	fdScriptStart();
@@ -736,19 +735,19 @@ static void scLunpaEnterDoor(void)
 		}
 	}
 	sySndPlay(SE_DOOR_OPEN);
-	doorIndex = state->stepCue - METATILE_BEHAVIOR_LUNPA_FIRST_HOME_DOOR;
-	fdMapGridAnimateMetatiles(LunpaDoors[doorIndex].steps,
-		LunpaDoors[doorIndex].x, LunpaDoors[doorIndex].y);
+	doorIdx = state->stepCue - METATILE_BEHAVIOR_LUNPA_FIRST_HOME_DOOR;
+	fdMapGridAnimateMetatiles(LunpaDoors[doorIdx].steps, LunpaDoors[doorIdx].x,
+		LunpaDoors[doorIdx].y);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
 	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-	if(doorIndex != DOOR_TEMPLE) {
+	if(doorIdx != DOOR_TEMPLE) {
 		fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
 		fdScriptWait(10);
 	}
 	syImportScriptSetExitRequest(state->stepCue);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -788,7 +787,7 @@ static void scLunpaEnterFortress(void)
 	syImportScriptSetExitRequest(
 		LUNPA_FORTRESS_GATES_TO_LUNPA_FORTRESS_GROUND_FLOOR);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -833,15 +832,14 @@ static void scLunpaPressHiddenSwitch(void)
 	gmFlagSet(FLAG_LUNPA_HIDDEN_PASSAGE_OPEN);
 }
 
-/* Copies the metatile at (sourceColumn, sourceRow) over the three metatiles (7,
+/* Copies the metatile at (srcColumn, srcRow) over the three metatiles (7,
    11) to (9, 11) at the Lunpa Fortress Gates, just below the west half of the
    upper palisade. */
-static inline void scLunpaCopyGatewayCollision(
-	Sint32 sourceColumn, Sint32 sourceRow)
+static inline void scLunpaCopyGatewayCollision(Sint32 srcColumn, Sint32 srcRow)
 {
-	fdMapGridCopyMetatileAttributes(sourceColumn, sourceRow, 1, 1, 7, 11);
-	fdMapGridCopyMetatileAttributes(sourceColumn, sourceRow, 1, 1, 8, 11);
-	fdMapGridCopyMetatileAttributes(sourceColumn, sourceRow, 1, 1, 9, 11);
+	fdMapGridCopyMetatileAttributes(srcColumn, srcRow, 1, 1, 7, 11);
+	fdMapGridCopyMetatileAttributes(srcColumn, srcRow, 1, 1, 8, 11);
+	fdMapGridCopyMetatileAttributes(srcColumn, srcRow, 1, 1, 9, 11);
 }
 
 /* Walking uncloaked into the yard between the palisades at the Lunpa Fortress
@@ -895,7 +893,7 @@ static void scLunpaCastCloak(void)
 static void scLunpaGuardsCatchParty(void)
 {
 	ACTOR *leader;
-	Sint32 warningMessageBase;
+	Sint32 warningMsgBase;
 
 	if(fdScriptGetFlag(FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY) != 0) {
 		return;
@@ -911,23 +909,22 @@ static void scLunpaGuardsCatchParty(void)
 	fdActorShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
 	/* Warn the party before escorting everyone down the two sections of the
 	   gate. */
-	warningMessageBase = MsgLunpaGuardsCatchParty;
-	fdScriptSetMessageId(warningMessageBase + CATCH_LEFT_GUARD_CHALLENGES);
+	warningMsgBase = MsgLunpaGuardsCatchParty;
+	fdScriptSetMessageId(warningMsgBase + CATCH_LEFT_GUARD_CHALLENGES);
 	fdScriptShowMessage(ACTOR_LEFT_GUARD, 0);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 2);
 	fdActorSetSpeed(ACTOR_LEFT_GUARD, 2);
 	fdActorSetSpeed(ACTOR_RIGHT_GUARD, 2);
 	fdActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_SHAKE_HEAD);
 	fdScriptWait(35);
-	fdScriptSetMessageId(warningMessageBase + CATCH_RIGHT_GUARD_WONDERS);
+	fdScriptSetMessageId(warningMsgBase + CATCH_RIGHT_GUARD_WONDERS);
 	fdScriptShowMessage(ACTOR_RIGHT_GUARD, 0);
 	fdActorShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
-	fdScriptSetMessageId(warningMessageBase + CATCH_LEFT_GUARD_REFUSES_ENTRY);
+	fdScriptSetMessageId(warningMsgBase + CATCH_LEFT_GUARD_REFUSES_ENTRY);
 	fdScriptShowMessage(ACTOR_LEFT_GUARD, 0);
 	fdActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_NOD);
 	fdScriptWait(25);
-	fdScriptSetMessageId(
-		warningMessageBase + CATCH_RIGHT_GUARD_SENDS_PARTY_OFF);
+	fdScriptSetMessageId(warningMsgBase + CATCH_RIGHT_GUARD_SENDS_PARTY_OFF);
 	fdScriptShowMessage(ACTOR_RIGHT_GUARD, 0);
 	fdActorWalkTo(ACTOR_LEFT_GUARD, leader->x.part[0].integer - 1,
 		leader->z.part[0].integer);
@@ -948,7 +945,7 @@ static void scLunpaGuardsCatchParty(void)
 	fdActorWaitForMoveById(ACTOR_RIGHT_GUARD);
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 	fdScriptEnd();
-	sySetFrameEvent(scLunpaWatchForUncloakedParty, EVENT_PASS_FRAME);
+	sySetTickEvent(scLunpaWatchForUncloakedParty, EVENT_PASS_TICK);
 }
 
 /* Puts back the three metatiles (7, 11) to (9, 11) that Cloak and the guards at
@@ -986,7 +983,7 @@ static void scLunpaCloakFades(void)
 	gmFlagClear(FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY);
 }
 
-/* Every frame at the Lunpa Fortress Gates: an uncloaked Isaac in the gap of the
+/* Every tick at the Lunpa Fortress Gates: an uncloaked Isaac in the gap of the
    upper palisade is spotted by the guards. */
 static void scLunpaWatchForUncloakedParty(void)
 {
@@ -1003,20 +1000,20 @@ static void scLunpaWatchForUncloakedParty(void)
 	}
 }
 
-/* Every 16 frames while Isaac is dragged and thrown: a puff of dust at his
+/* Every 16 ticks while Isaac is dragged and thrown: a puff of dust at his
    feet. */
 static void scLunpaKickUpLeaderDust(void)
 {
 	ACTOR *leader;
-	Sint32 dustAngle;
-	Sint32 dustVelocity[3];
+	Sint32 dustAng;
+	Sint32 dustVel[3];
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	if((FrameCount & 15) == 0) {
-		dustAngle = (syRandomBelow(52)) * 64 + 230;
-		SET_VECTOR(dustVelocity, syCos(dustAngle) / 4, 0, sySin(dustAngle) / 2);
+	if((TickCount & 15) == 0) {
+		dustAng = (syRandomBelow(52)) * 64 + 230;
+		SET_VECTOR(dustVel, syCos(dustAng) / 4, 0, sySin(dustAng) / 2);
 		fdEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-			dustVelocity[0], dustVelocity[1], dustVelocity[2], 0, NULL);
+			dustVel[0], dustVel[1], dustVel[2], 0, NULL);
 	}
 }
 
@@ -1050,7 +1047,7 @@ static void scLunpaGuardsThrowIsaacOut(void)
 	fdActorWalkTo(ACTOR_RIGHT_GUARD, 168, 288);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
 	fdActorSetDestination(ACTOR_PARTY_LEADER, 160, 296);
-	sySetFrameEvent(scLunpaKickUpLeaderDust, EVENT_PASS_FRAME);
+	sySetTickEvent(scLunpaKickUpLeaderDust, EVENT_PASS_TICK);
 	fdScriptWait(1);
 	sySndPlay(SE_SCUFFLE);
 	fdScriptWait(20);
@@ -1079,7 +1076,7 @@ static void scLunpaGuardsThrowIsaacOut(void)
 	sySndPlay(SE_LANDING_THUD);
 	fdActorSetAttachedEffect(
 		ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	sySetFrameEvent(scLunpaKickUpLeaderDust, EVENT_PASS_FRAME);
+	sySetTickEvent(scLunpaKickUpLeaderDust, EVENT_PASS_TICK);
 	fdScriptWait(2);
 	/* A smaller second bounce ends with the guards' final warning. */
 	fdActorGet(ACTOR_PARTY_LEADER)->velY = toFIXED(3);
@@ -1178,13 +1175,13 @@ Sint32 scInit(void)
 		}
 		if(gmFlagGet(FLAG_DODONPA_LOCKED_UP) != 0 &&
 			gmFlagGet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
-			sySetFrameEvent(scLunpaWatchForFortressApproach, EVENT_PASS_FRAME);
+			sySetTickEvent(scLunpaWatchForFortressApproach, EVENT_PASS_TICK);
 		}
 #if LUNPA_GATES_RELOAD_REAPPLIES_CLOAK
 		if(MainRoutineStateWork.cloaked != 0)
 			scLunpaCastCloak();
 #endif
-		sySetFrameEvent(scLunpaWatchForUncloakedParty, EVENT_PASS_FRAME);
+		sySetTickEvent(scLunpaWatchForUncloakedParty, EVENT_PASS_TICK);
 		/* The fortress's puzzles and beaten guards are reset. */
 		gmFlagClear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_IVY_BLOWN_AWAY);
 		gmFlagClear(FLAG_LUNPA_FORTRESS_PASSAGE_IVY_BLOWN_AWAY);

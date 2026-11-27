@@ -41,17 +41,17 @@ void fdPsynergyGrindOnTarget(void)
 	FIELD_EFFECT_STATE		*scene = Ram_HeapSlots->fieldEffState;
 	ACTOR					*caster = scene->caster;
 	ACTOR					*child = scene->tgt;
-	SPR						*animation = child->spr;
-	EFFECT_SPR				*sprite;
+	SPR						*anm = child->spr;
+	EFFECT_SPR				*spr;
 	FIELD_PSYNERGY_PARTICLE *particle;
-	void					*source;
+	void					*src;
 	Uint8					*dst;
-	Sint32					 angle;
+	Sint32					 ang;
 	Sint32					 i;
 	Sint32					 entry;
 	Sint32					 tile;
 	Sint32					 phase;
-	Sint32					 timer;
+	Sint32					 tmr;
 	Sint32					 shifts;
 	Sint32					 animating;
 	Sint32					 spraying;
@@ -75,8 +75,8 @@ void fdPsynergyGrindOnTarget(void)
 	pending = fdFindPsynergyCue(
 		PSYNERGY_CUE(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy, selector);
 	if(child != NULL) {
-		if(animation != NULL) {
-			if(animation->width * animation->height <= GRIND_PICTURE_SIZE) {
+		if(anm != NULL) {
+			if(anm->width * anm->height <= GRIND_PICTURE_SIZE) {
 			} else
 				goto end;
 		}
@@ -99,26 +99,26 @@ void fdPsynergyGrindOnTarget(void)
 		radius = toFIXED(21);
 
 	fdPsynergyFadeToCastCol();
-	source = syResourceGetTableEntry(RESOURCE_WATER_SPLASH);
+	src = syResourceGetTableEntry(RESOURCE_WATER_SPLASH);
 	picture = state->picture;
-	syDecompressTaggedLZ(source, picture);
+	syDecompressTaggedLZ(src, picture);
 	entry = syVRAMCacheFindFreeEntry();
 	tile = syVRAMCacheLoad(entry, 1024, picture);
 	particle = state->particles;
 	for(i = 0; i < GRIND_SPLASH_COUNT; i++) {
-		sprite = &state->sprs[i];
-		fdEffectSprInit(sprite, 8, 8, OBJ_SIZE_16X16, tile);
-		sprite->oam.fullCol = 1;
-		sprite->oam.pal = 0;
-		sprite->oam.pri = 0;
-		sprite->depth = OAM_DEPTH_WINDOW;
+		spr = &state->sprs[i];
+		fdEffectSprInit(spr, 8, 8, OBJ_SIZE_16X16, tile);
+		spr->oam.fullCol = 1;
+		spr->oam.pal = 0;
+		spr->oam.pri = 0;
+		spr->depth = OAM_DEPTH_WINDOW;
 		particle->tmr = -1;
 		particle++;
 	}
-	if(child != NULL && animation != NULL && isSeaRock == 1) {
-		fdSprSetAnimationSpeedStub(animation, 0);
-		fdPsynergyDecodePicture((PICTURE_SOURCE *)animation->entries[0],
-			picture, animation->width * animation->height);
+	if(child != NULL && anm != NULL && isSeaRock == 1) {
+		fdSprSetAnimationSpeedStub(anm, 0);
+		fdPsynergyDecodePicture((PICTURE_SOURCE *)anm->entries[0], picture,
+			anm->width * anm->height);
 	}
 	fdViewMoveStart(VIEW_MOVE_Z);
 	sySynch(1);
@@ -126,7 +126,7 @@ void fdPsynergyGrindOnTarget(void)
 	counter = 0;
 	amplitude = toFIXED(2);
 	phase = SWAY_GROW;
-	timer = 0;
+	tmr = 0;
 	do {
 		if(spraying) {
 			if(mode == GRIND_SEA_ROCK) {
@@ -137,83 +137,80 @@ void fdPsynergyGrindOnTarget(void)
 			}
 		}
 		for(i = 0; i < spraying; i++) {
-			angle = syRandom();
+			ang = syRandom();
 			if(mode == GRIND_ON_NOTHING)
-				angle = ((syRandom() * 10) >> 4) - TRIG_TURN / 16;
-			sprite = &state->sprs[next];
+				ang = ((syRandom() * 10) >> 4) - TRIG_TURN / 16;
+			spr = &state->sprs[next];
 			particle = &state->particles[next];
 			if(child != NULL) {
-				sprite->oam.pri = fdActorGetSprPriority(child);
-				if(angle < TRIG_TURN / 2)
-					sprite->depth =
-						fdActorGetSprDepth(child) + GRIND_SPRAY_DEPTH;
+				spr->oam.pri = fdActorGetSprPriority(child);
+				if(ang < TRIG_TURN / 2)
+					spr->depth = fdActorGetSprDepth(child) + GRIND_SPRAY_DEPTH;
 				else
-					sprite->depth =
-						fdActorGetSprDepth(child) - GRIND_SPRAY_DEPTH;
+					spr->depth = fdActorGetSprDepth(child) - GRIND_SPRAY_DEPTH;
 			}
 			particle->tmr = 0;
 			SET_POSITION(particle, scene->x, scene->y + toFIXED(5), scene->z);
 			if(radius > toFIXED(5))
 				syVectorAddPolarOffset(
-					radius + syRandom() * 5, angle, &particle->x);
+					radius + syRandom() * 5, ang, &particle->x);
 			else
 				syVectorAddPolarOffset(
-					radius - (syRandom() << 2), angle, &particle->x);
+					radius - (syRandom() << 2), ang, &particle->x);
 			next++;
 			next %= GRIND_SPLASH_COUNT;
 		}
 		particle = state->particles;
 		for(i = 0; i < GRIND_SPLASH_COUNT; i++, particle++) {
-			sprite = &state->sprs[i];
+			spr = &state->sprs[i];
 			if((Uint32)particle->tmr <= 23) {
 				if(particle->tmr == 0)
-					sprite->oam.idx = tile;
+					spr->oam.idx = tile;
 				if(particle->tmr == 18)
-					sprite->oam.idx = tile + GRIND_SPLASH_FRAME_TILES;
+					spr->oam.idx = tile + GRIND_SPLASH_FRAME_TILES;
 				if(particle->tmr == 20)
-					sprite->oam.idx = tile + 2 * GRIND_SPLASH_FRAME_TILES;
+					spr->oam.idx = tile + 2 * GRIND_SPLASH_FRAME_TILES;
 				if(particle->tmr == 22)
-					sprite->oam.idx = tile + 3 * GRIND_SPLASH_FRAME_TILES;
-				fdEffectSprDrawAtWorldPos(sprite, particle);
+					spr->oam.idx = tile + 3 * GRIND_SPLASH_FRAME_TILES;
+				fdEffectSprDrawAtWorldPos(spr, particle);
 				particle->tmr++;
 			}
 		}
-		if(child != NULL && animation != NULL && animating) {
-			Sint32 size = animation->width * animation->height;
+		if(child != NULL && anm != NULL && animating) {
+			Sint32 size = anm->width * anm->height;
 			dst = (Uint8 *)OBJ_VRAM0 +
-				syVRAMCacheLoad(animation->slot, size, NULL) * TILE_SIZE_4BPP;
+				syVRAMCacheLoad(anm->slot, size, NULL) * TILE_SIZE_4BPP;
 			if(shifts % 3 == 0)
-				fdBattleEffectShiftRowsDown(
-					picture, animation->width, animation->height);
+				fdBattleEffectShiftRowsDown(picture, anm->width, anm->height);
 			shifts++;
 			((void (*)(
 				void *, Sint32, Sint32, void *))Ram_HeapSlots->pictureUploader)(
-				picture, animation->width, animation->height, dst);
+				picture, anm->width, anm->height, dst);
 		}
 		fdViewMoveSwing(VIEW_MOVE_Z, counter++, amplitude);
 		switch(phase) {
 		case SWAY_GROW:
-			if(timer == 40 && mode != GRIND_ON_TARGET)
+			if(tmr == 40 && mode != GRIND_ON_TARGET)
 				spraying = 1;
 			amplitude += toFIXED(1) / 10;
 			if(amplitude > toFIXED(12) - 1) {
 				phase++;
-				timer = -1;
+				tmr = -1;
 			}
 			break;
 		case SWAY_HOLD:
 			if(isSeaRock == 0) {
-				if(timer == 50) {
+				if(tmr == 50) {
 					phase = SWAY_SHRINK;
-					timer = -1;
+					tmr = -1;
 				}
 				if(pending != NULL)
 					((void (*)(Sint32, Sint32, Sint32))pending->value)(
-						0, timer, selector);
+						0, tmr, selector);
 			} else {
-				if(timer == animation->height * 3) {
+				if(tmr == anm->height * 3) {
 					phase = SWAY_SHRINK;
-					timer = -1;
+					tmr = -1;
 				}
 				animating = 1;
 			}
@@ -221,22 +218,22 @@ void fdPsynergyGrindOnTarget(void)
 		case SWAY_SHRINK:
 			if(isSeaRock == 1)
 				animating = 0;
-			if(timer == 5 && mode != GRIND_ON_TARGET)
+			if(tmr == 5 && mode != GRIND_ON_TARGET)
 				spraying = 0;
 			amplitude += -(toFIXED(3) / 20);
 			if(amplitude <= toFIXED(2)) {
 				phase++;
-				timer = -1;
+				tmr = -1;
 			}
 			break;
 		case SWAY_SETTLE:
 			amplitude = 0;
-			if(timer == 0)
+			if(tmr == 0)
 				phase = SWAY_DONE;
 			break;
 		}
 		sySynch(1);
-		timer++;
+		tmr++;
 	} while(phase != SWAY_DONE);
 	sySndPlayStub(SOUND_FADE_OUT_ACTION_SE);
 	fdViewMoveEnd();
@@ -249,7 +246,7 @@ end:
 /* FIELD_PSYNERGY_GRIND as fdPsynergyRun casts it: the view sways. */
 
 /* Sways the view up and down the screen: the swing grows from SWAY_START to
-   SWAY_PEAK, holds for SWAY_HOLD_FRAMES, shrinks back and stops; then the map's
+   SWAY_PEAK, holds for SWAY_HOLD_TICKS, shrinks back and stops; then the map's
    view bounds come back. */
 void fdPsynergyGrind(void)
 {
@@ -257,7 +254,7 @@ void fdPsynergyGrind(void)
 	Sint32				phase;
 	Sint32				amplitude;
 	Sint32				state;
-	Sint32				frames;
+	Sint32				ticks;
 
 	/* Grind's state's size, though the sway holds only the view move. */
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(GRIND_STATE));
@@ -270,7 +267,7 @@ void fdPsynergyGrind(void)
 	phase = 0;
 	amplitude = SWAY_START;
 	state = SWAY_GROW;
-	frames = 0;
+	ticks = 0;
 	do {
 		fdViewMoveSwing(VIEW_MOVE_Z, phase++, amplitude);
 		switch(state) {
@@ -278,30 +275,30 @@ void fdPsynergyGrind(void)
 			amplitude += SWAY_RAMP;
 			if(amplitude >= SWAY_PEAK) {
 				state = SWAY_HOLD;
-				frames = -1;
+				ticks = -1;
 			}
 			break;
 		case SWAY_HOLD:
-			if(frames == SWAY_HOLD_FRAMES) {
+			if(ticks == SWAY_HOLD_TICKS) {
 				state = SWAY_SHRINK;
-				frames = -1;
+				ticks = -1;
 			}
 			break;
 		case SWAY_SHRINK:
 			amplitude -= SWAY_RAMP;
 			if(amplitude <= SWAY_START) {
 				state = SWAY_SETTLE;
-				frames = -1;
+				ticks = -1;
 			}
 			break;
 		case SWAY_SETTLE:
 			amplitude = 0;
-			if(frames == 0)
+			if(ticks == 0)
 				state = SWAY_DONE;
 			break;
 		}
 		sySynch(1);
-		frames++;
+		ticks++;
 	} while(state != SWAY_DONE);
 
 	fdViewMoveEnd();

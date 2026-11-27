@@ -5,56 +5,56 @@
 
 /* The script fdActorCreate gives every new actor: it does nothing and returns
    to the idle script. */
-const Sint32 Actor_DefaultScript[] = {
+const Sint32 ActorDefaultScript[] = {
 	SC_END,
 };
 
-/* Runs SC_KEY_COUNT every frame; started by fdActorStartKeyCheck. This and the
-   scripts below each repeat one command every frame. */
-const Sint32 Actor_KeyCheckScript[] = {
+/* Runs SC_KEY_COUNT every tick; started by fdActorStartKeyCheck. This and the
+   scripts below each repeat one command every tick. */
+const Sint32 ActorKeyCheckScript[] = {
 	SC_KEY_COUNT,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const Sint32 Actor_KeysScript[] = {
+const Sint32 ActorKeysScript[] = {
 	SC_KEYS,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const Sint32 Actor_PlayerScript[] = {
+const Sint32 ActorPlayerScript[] = {
 	SC_PLAYER,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const Sint32 Actor_WorldMapScript[] = {
+const Sint32 ActorWorldMapScript[] = {
 	SC_WORLD,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const Sint32 Actor_CameraScript[] = {
+const Sint32 ActorCameraScript[] = {
 	SC_CAMERA,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const Sint32 Actor_ApproachWatchedScript[] = {
+const Sint32 ActorApproachWatchedScript[] = {
 	SC_APPROACH_WATCHED,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* The idle script fdActorStartIdle gives an actor. */
-const Sint32 Actor_IdleScript[] = {
+const Sint32 ActorIdleScript[] = {
 	SC_END,
 };
 
 /* The handler for each script command number; the numbers from
    SCRIPT_COMMAND_COUNT on act as SC_END. */
-const SCRIPT_COMMAND ActorScript_CommandTable[47] = {
+const SCRIPT_COMMAND ActorScriptCommandTable[47] = {
 	[SCRIPT_COMMAND_WAIT] = fdActorScriptWait,
 	[SCRIPT_COMMAND_SYNC] = fdActorScriptWaitForArrival,
 	[SCRIPT_COMMAND_POSITION] = fdActorScriptSetPosAndResetMotion,

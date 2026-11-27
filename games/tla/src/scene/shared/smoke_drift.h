@@ -1,5 +1,5 @@
-/* Each frame, a puff of chimney smoke drifts sideways ever faster, rises and
-   spreads, until its frames run out and it is gone. */
+/* Each tick, a puff of chimney smoke drifts sideways ever faster, rises and
+   spreads, until its ticks run out and it is gone. */
 void scSmokeDrift(ACTOR *actor)
 {
 	actor->x.fixed += actor->tmr << 8;

@@ -15,7 +15,7 @@ void sySndTestUnusedDummyFunc(void)
 
 /* The sounds the test's three selectors start on: one each for music, jingles
    and sound effects. */
-static const SND_TEST_SNDS sSoundTestSnds = {
+static const SND_TEST_SNDS SoundTestSnds = {
 	{0, SOUND_JINGLE_FIRST, SOUND_SE_FIRST}};
 
 /* Unused: the sound test, which never returns. Up and Down choose a selector
@@ -28,9 +28,9 @@ void sySndTestRun(void)
 	SND_TEST_SNDS snds;
 	Sint32		  reverbCode;
 	Sint32		  row;
-	Sint32		  timer;
+	Sint32		  tmr;
 
-	snds = sSoundTestSnds;
+	snds = SoundTestSnds;
 	row = 0;
 	reverbCode = SOUND_REVERB_LONG;
 	/* Clears the build stamp's first word, as The Broken Seal's test does.
@@ -38,17 +38,17 @@ void sySndTestRun(void)
 	   it at power-on, so nothing on screen changes. */
 	syIOWrite32(0, &BuildStampWork[0]);
 	SoundVBlankStateWork.soundTestActive = 1;
-	timer = 20;
+	tmr = 20;
 
 	for(;;) {
 		/* A countdown, restarted whenever the mixer has clipped a sample since
-		   the last frame; nothing reads it. */
-		if(timer != 0)
-			timer--;
+		   the last tick; nothing reads it. */
+		if(tmr != 0)
+			tmr--;
 
 		if(SoundMixerClipped != 0) {
 			SoundMixerClipped = 0;
-			timer = 2;
+			tmr = 2;
 		}
 
 		if(PerWork.repeat & KEY_SELECT) {
@@ -107,62 +107,62 @@ Uint16 sySndGetCurrentBGM(void)
 /* The sound ids SoundFlags has a bit for. */
 enum { SOUND_FLAG_COUNT = 1024 };
 
-/* Returns sound `sound`'s bit in SoundFlags, one bit for each of the
+/* Returns sound `snd`'s bit in SoundFlags, one bit for each of the
    SOUND_FLAG_COUNT sound ids. */
-Bool sySndFlagTest(Sint32 sound)
+Bool sySndFlagTest(Sint32 snd)
 {
 	Sint32 mask;
 	Uint8 *bytes;
 
-	mask = 1 << (7 & sound);
-	sound = (sound & (SOUND_FLAG_COUNT - 1)) >> 3;
+	mask = 1 << (7 & snd);
+	snd = (snd & (SOUND_FLAG_COUNT - 1)) >> 3;
 	bytes = SoundFlags;
-	if(bytes[sound] & mask)
+	if(bytes[snd] & mask)
 		return TRUE;
 	return FALSE;
 }
 
-/* Sets sound `sound`'s bit in SoundFlags. */
-void sySndFlagSet(Sint32 sound)
+/* Sets sound `snd`'s bit in SoundFlags. */
+void sySndFlagSet(Sint32 snd)
 {
 	Sint32 mask;
 	Uint8 *bytes;
 
-	mask = 1 << (7 & sound);
+	mask = 1 << (7 & snd);
 	bytes = SoundFlags;
-	sound = (sound & (SOUND_FLAG_COUNT - 1)) >> 3;
-	bytes[sound] = (Uint8)(bytes[sound] | mask);
+	snd = (snd & (SOUND_FLAG_COUNT - 1)) >> 3;
+	bytes[snd] = (Uint8)(bytes[snd] | mask);
 }
 
-/* Clears sound `sound`'s bit in SoundFlags. */
-void sySndFlagClear(Sint32 sound)
+/* Clears sound `snd`'s bit in SoundFlags. */
+void sySndFlagClear(Sint32 snd)
 {
 	Sint32 mask;
 	Uint8 *bytes;
 
-	mask = 1 << (7 & sound);
+	mask = 1 << (7 & snd);
 	bytes = SoundFlags;
-	sound = (sound & (SOUND_FLAG_COUNT - 1)) >> 3;
-	bytes[sound] = (Uint8)(bytes[sound] & ~mask);
+	snd = (snd & (SOUND_FLAG_COUNT - 1)) >> 3;
+	bytes[snd] = (Uint8)(bytes[snd] & ~mask);
 }
 
 /* The fixed output rate sySndInit sets for the whole game. */
 enum {
 	/* samples a second: SOUND_MODE_FREQ_GAME's rate */
 	SOUND_FIXED_RATE = 31536,
-	/* SOUND_FIXED_RATE over the 59.7275 VBlanks a second, rounded. */
+	/* SOUND_FIXED_RATE over the 59.7275 frames a second, rounded. */
 	SOUND_FIXED_SAMPLES_PER_VBLANK = 528
 };
 
 /* Sets direct sound to the fixed SOUND_FIXED_RATE with
-   SOUND_FIXED_SAMPLES_PER_VBLANK samples a VBlank, keeping mode's rate nibble,
+   SOUND_FIXED_SAMPLES_PER_VBLANK samples a frame, keeping mode's rate nibble,
    clears the two PCM buffers and points DMA 1 and 2 at them, then restarts
    timer 0 as the screen's last line begins. */
 void sySndSetFixedSampleFreq(Uint32 mode)
 {
 	struct SoundInfo *work = SOUND_INFO_PTR;
 	Uint32			  samples;
-	Uint8			 *buffer;
+	Uint8			 *buf;
 	Uint32			  control;
 	volatile Uint8	 *vcount;
 
@@ -178,17 +178,17 @@ void sySndSetFixedSampleFreq(Uint32 mode)
 	work->rateStep = SOUND_RATE_STEP_ONE / 2 / SOUND_FIXED_RATE;
 	control = 0;
 	syIOWrite16(control, &REG_TM0CNT_H);
-	/* Timer 0 overflows twice a sample: half a VBlank's cycles over its
+	/* Timer 0 overflows twice a sample: half a frame's cycles over its
 	   samples. */
 	syIOWrite16(
 		__divsi3(-(SOUND_CYCLES_PER_VBLANK / 2), samples), &REG_TM0CNT_L);
-	buffer = MixerPcmBuffer;
+	buf = MixerPcmBuffer;
 	/* Each channel's buffer here is twice the driver's own. */
-	syWordsClear(buffer, 4 * SOUND_PCM_BUFFER_SIZE);
+	syWordsClear(buf, 4 * SOUND_PCM_BUFFER_SIZE);
 	m4aSoundVSyncOn();
-	REG_DMA1SAD = (Uint32)buffer;
-	buffer += 2 * SOUND_PCM_BUFFER_SIZE;
-	syIOWrite32((Uint32)buffer, &REG_DMA2SAD);
+	REG_DMA1SAD = (Uint32)buf;
+	buf += 2 * SOUND_PCM_BUFFER_SIZE;
+	syIOWrite32((Uint32)buf, &REG_DMA2SAD);
 	vcount = (volatile Uint8 *)&REG_VCOUNT;
 	while(*vcount == DISPLAY_HEIGHT - 1)
 		;

@@ -70,12 +70,12 @@ enum {
 
 /* Set once Karst and Agatio have met Felix on his way up to the well, so that
    they do not stop him again. */
-#define FLAG_KARST_AND_AGATIO_MET_FELIX	  FLAG_SCENE_TEMP_00
-/* Sends up the column of light's particles every frame rather than every third
+#define FLAG_KARST_AND_AGATIO_MET_FELIX	 FLAG_SCENE_TEMP_00
+/* Sends up the column of light's particles every tick rather than every third
    (scJupiterLighthouseSpawnBeaconParticle); nothing here sets it. */
-#define FLAG_BEACON_PARTICLES_EVERY_FRAME FLAG_SCENE_TEMP_01
+#define FLAG_BEACON_PARTICLES_EVERY_TICK FLAG_SCENE_TEMP_01
 /* Set once the unused scJupiterLighthouseRaiseBeaconLight has finished. */
-#define FLAG_BEACON_LIGHT_RISEN			  FLAG_SCENE_TEMP_02
+#define FLAG_BEACON_LIGHT_RISEN			 FLAG_SCENE_TEMP_02
 
 /* The metatiles on the way up to the well where Karst and Agatio meet Felix,
    and the row before the well where he can cast the Jupiter Star. */
@@ -130,18 +130,18 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 #include "../field/actor_stop_where_it_stands.c"
 
 /* Turns a particle round the column of light's bottom (ACTOR_BEAM_BOTTOM) by
-   its timer, a thirty-second of a turn a frame, as far across as its speed and
+   its timer, a thirty-second of a turn a tick, as far across as its speed and
    two pixels deep. */
 void scJupiterLighthouseCircleBeacon(ACTOR *self)
 {
 	ACTOR *centre = fdActorGet(ACTOR_BEAM_BOTTOM);
-	Uint16 angle = self->tmr;
+	Uint16 ang = self->tmr;
 	FIXED  sine;
 	FIXED  x;
 	FIXED  z;
 
-	self->x.fixed = centre->x.fixed + syCos(angle) * (self->speedLimit + 3);
-	sine = syMathSin(angle);
+	self->x.fixed = centre->x.fixed + syCos(ang) * (self->speedLimit + 3);
+	sine = syMathSin(ang);
 	z = centre->z.fixed;
 	x = self->x.fixed;
 	z += sine * 2;
@@ -156,11 +156,11 @@ void scJupiterLighthouseCircleBeacon(ACTOR *self)
 void scJupiterLighthouseCircleBeaconWide(ACTOR *self)
 {
 	ACTOR *centre = fdActorGet(ACTOR_BEACON_ORB);
-	Uint16 angle = self->tmr;
-	FIXED  cosine = syCos(angle);
+	Uint16 ang = self->tmr;
+	FIXED  cosine = syCos(ang);
 	Sint32 radius = self->speedLimit + self->sceneCnt;
 	self->x.fixed = centre->x.fixed + cosine * (radius + 6);
-	self->z.fixed = centre->z.fixed + syMathSin(angle) * (self->sceneCnt + 4);
+	self->z.fixed = centre->z.fixed + syMathSin(ang) * (self->sceneCnt + 4);
 	self->tgtX = self->x.fixed;
 	self->tgtZ = self->z.fixed;
 	self->tmr -= DEGtoANG(45) / 4;
@@ -177,12 +177,12 @@ void scJupiterLighthouseKarstAndAgatioWait(void);
 
 void fdActorStopWhereItStands(ACTOR *actor);
 
-Sint32 JupiterLighthouse_ElevatorLevel BSS_DATA;
+Sint32 JupiterLighthouseElevatorLevel BSS_DATA;
 /* Unused: nothing reads these bytes. */
-Uint8 JupiterLighthouse_UnusedAfterElevatorLevel[4] BSS_DATA;
-Sint32 JupiterLighthouse_BeaconRiseFrame BSS_DATA;
-Sint32 WhirlwindRiding					 BSS_DATA;
-Uint16									 PaletteCycleColors[16] BSS_DATA;
+Uint8 JupiterLighthouseUnusedAfterElevatorLevel[4] BSS_DATA;
+Sint32 JupiterLighthouseBeaconRiseTick BSS_DATA;
+Sint32 WhirlwindRiding				   BSS_DATA;
+Uint16								   PaletteCycleColors[16] BSS_DATA;
 /* Palette 13's first two colours; it is copied whole, with the unlit colours
    after them. */
 Uint16					   PaletteCycleUnlitPalette[2] BSS_DATA;
@@ -197,10 +197,10 @@ Sint16 LightSpritePriority BSS_DATA;
    one the leader steps on. */
 METATILE_TARGET CrackedTiles BSS_DATA;
 
-void scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
+void scCrackedTileCrack(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry);
 
-extern Sint32 JupiterLighthouse_BeaconRisesScript[];
-extern Sint32 JupiterLighthouse_BeaconSparkScript[];
+extern Sint32 JupiterLighthouseBeaconRisesScript[];
+extern Sint32 JupiterLighthouseBeaconSparkScript[];
 
 /* Whom scJupiterLighthouseLowerElevator carries down, and where the camera
    goes: Alex, Agatio and Karst with the camera moving south after them; Isaac,
@@ -226,8 +226,8 @@ void scJupiterLighthousePlaceRaisedActors(void);
    returns a Uint8. */
 Sint32 fdMapGridGetMetatileBehavior();
 
-/* Unused: one frame of the beacon's rise as The Broken Seal's Venus Lighthouse
-   aerie plays it, counted by JupiterLighthouse_BeaconRiseFrame: the tower
+/* Unused: one tick of the beacon's rise as The Broken Seal's Venus Lighthouse
+   aerie plays it, counted by JupiterLighthouseBeaconRiseTick: the tower
    shakes and flashes, the orb (ACTOR_BEACON_ORB) climbs from below the map
    shedding sparks, and the screen fades to white; FLAG_BEACON_LIGHT_RISEN is
    set once it is done. No script here starts it. */
@@ -235,14 +235,14 @@ UNUSED void scJupiterLighthouseRaiseBeaconLight(void)
 {
 	ACTOR	  *center;
 	ACTOR	  *effect;
-	FIELD_SPR *sprite;
+	FIELD_SPR *spr;
 	Sint32	   spawnParticles;
 	Uint32	   randomHeight;
-	Sint32	   angle;
+	Sint32	   ang;
 
 	center = fdActorGetById(ACTOR_BEACON_ORB);
 	spawnParticles = 0;
-	switch(JupiterLighthouse_BeaconRiseFrame) {
+	switch(JupiterLighthouseBeaconRiseTick) {
 	case 0:
 		fdScriptPlaySnd(SE_SHIMMER);
 		fdMapGridSetShake(6, 6, 1);
@@ -264,30 +264,30 @@ UNUSED void scJupiterLighthouseRaiseBeaconLight(void)
 		center->scaleX = toFIXED(1);
 		center->scaleY = toFIXED(1);
 		fdActorStopWhereItStands(center);
-		fdActorSetScript(ACTOR_BEACON_ORB, JupiterLighthouse_BeaconRisesScript);
+		fdActorSetScript(ACTOR_BEACON_ORB, JupiterLighthouseBeaconRisesScript);
 		break;
 	case 25:
-		JupiterLighthouse_BeaconRiseFrame--;
+		JupiterLighthouseBeaconRiseTick--;
 		if(center->y.fixed > 0) {
 			fdPaletteFadeApplyTarget(
 				PALETTE_TINT_CUSTOM | RGB(16, 16, 12), PALETTES_ALL);
 			fdPaletteFadeInterpolate(16);
-			JupiterLighthouse_BeaconRiseFrame++;
+			JupiterLighthouseBeaconRiseTick++;
 		} else {
-			if((FrameCount & 7) == 0)
+			if((TickCount & 7) == 0)
 				fdScriptPlaySnd(SE_GLITTER);
 			spawnParticles = 1;
 			center->y.fixed += toFIXED(9) / 4;
 		}
 		break;
 	case 26:
-		JupiterLighthouse_BeaconRiseFrame--;
+		JupiterLighthouseBeaconRiseTick--;
 		if(center->y.fixed > toFIXED(40)) {
 			fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 			fdPaletteFadeInterpolate(40);
-			JupiterLighthouse_BeaconRiseFrame++;
+			JupiterLighthouseBeaconRiseTick++;
 		} else {
-			if((FrameCount & 7) == 0)
+			if((TickCount & 7) == 0)
 				fdScriptPlaySnd(SE_GLITTER);
 			spawnParticles = 1;
 			center->y.fixed += toFIXED(9) / 4;
@@ -318,12 +318,12 @@ UNUSED void scJupiterLighthouseRaiseBeaconLight(void)
 		effect = scFieldActorCreate(SPRITE_PARTICLE, center->x.fixed,
 			center->y.fixed - randomHeight + -toFIXED(8), center->z.fixed);
 		if(effect != 0) {
-			sprite = effect->spr;
-			fdActorStartScript(effect, JupiterLighthouse_BeaconSparkScript);
+			spr = effect->spr;
+			fdActorStartScript(effect, JupiterLighthouseBeaconSparkScript);
 			scFieldActorSetSprCol(effect, SPRITE_COLOR_GRB);
 			effect->motionFlg = 0;
-			angle = syRandom() & 0xffff000;
-			effect->tmr = angle;
+			ang = syRandom() & 0xffff000;
+			effect->tmr = ang;
 			effect->userValue = 0;
 			{
 				Uint32 counter = syRandom() >> 13;
@@ -334,11 +334,11 @@ UNUSED void scJupiterLighthouseRaiseBeaconLight(void)
 			effect->speedLimit =
 				syMathSin((Uint32)(syRandom() * 65535) >> 20) * 24;
 			effect->speedLimit = FIXEDtoINT(center->speedLimit);
-			sprite->flg = 0;
-			sprite->pri = 1;
+			spr->flg = 0;
+			spr->pri = 1;
 		}
 	}
-	JupiterLighthouse_BeaconRiseFrame++;
+	JupiterLighthouseBeaconRiseTick++;
 }
 
 /* Walking up towards the well in the aerie's centre (metatiles (33, 21) and
@@ -365,23 +365,23 @@ void scJupiterLighthouseKarstAndAgatioWait(void)
 	}
 }
 
-extern Sint32 JupiterLighthouse_BeaconParticleScript[];
+extern Sint32 JupiterLighthouseBeaconParticleScript[];
 
-/* Every third frame, or every frame with FLAG_BEACON_PARTICLES_EVERY_FRAME,
+/* Every third tick, or every tick with FLAG_BEACON_PARTICLES_EVERY_TICK,
    sends up a particle from a random height on the first column of light,
    circling it (scJupiterLighthouseCircleBeacon). */
 void scJupiterLighthouseSpawnBeaconParticle(void)
 {
 	ACTOR	  *center;
 	ACTOR	  *effect;
-	FIELD_SPR *sprite;
-	Sint32	   angle;
+	FIELD_SPR *spr;
+	Sint32	   ang;
 
-	if(fdScriptGetFlag(FLAG_BEACON_PARTICLES_EVERY_FRAME) == 0 &&
-		FrameCount % 3 != 0)
+	if(fdScriptGetFlag(FLAG_BEACON_PARTICLES_EVERY_TICK) == 0 &&
+		TickCount % 3 != 0)
 		return;
 	center = fdActorGet(ACTOR_BEAM_BOTTOM);
-	if(fdScriptGetFlag(FLAG_BEACON_PARTICLES_EVERY_FRAME) != 0) {
+	if(fdScriptGetFlag(FLAG_BEACON_PARTICLES_EVERY_TICK) != 0) {
 		Uint32 random;
 
 		random = syRandom();
@@ -399,18 +399,18 @@ void scJupiterLighthouseSpawnBeaconParticle(void)
 			center->z.fixed);
 	}
 	if(effect != 0) {
-		sprite = effect->spr;
-		fdActorStartScript(effect, JupiterLighthouse_BeaconParticleScript);
+		spr = effect->spr;
+		fdActorStartScript(effect, JupiterLighthouseBeaconParticleScript);
 		scFieldActorSetSprCol(effect, SPRITE_COLOR_GRB);
 		effect->motionFlg = 0;
-		angle = syRandom() & 0xffff000;
-		effect->tmr = angle;
+		ang = syRandom() & 0xffff000;
+		effect->tmr = ang;
 		effect->userValue = 0;
 		effect->update = scJupiterLighthouseCircleBeacon;
 		effect->speedLimit =
 			syMathSin((Uint32)(syRandom() * 65535) >> 20) * 24 >> 16;
-		sprite->flg = 0;
-		sprite->pri = 1;
+		spr->flg = 0;
+		spr->pri = 1;
 	}
 }
 
@@ -419,7 +419,7 @@ void scJupiterLighthouseSpawnBeaconParticle(void)
 #define BEACON_ORB_VIEW_Z_MAX 177
 
 /* The lit beacon's light (ACTOR_BEACON_ORB) pulses over the well while the view
-   lies no further south than BEACON_ORB_VIEW_Z_MAX: full size on odd frames,
+   lies no further south than BEACON_ORB_VIEW_Z_MAX: full size on odd ticks,
    1.3 times the size and 7 pixels lower on even ones. Further south it is put
    away at the origin. */
 void scJupiterLighthousePulseBeacon(void)
@@ -438,7 +438,7 @@ void scJupiterLighthousePulseBeacon(void)
 		((SPR_ANIMATION *)((FIELD_SPR *)fdActorGet(ACTOR_BEACON_ORB)->spr)
 				->record)
 			->colMode = SPRITE_COLOR_GRB;
-		if(FrameCount & 1) {
+		if(TickCount & 1) {
 			fdActorSetPos(ACTOR_BEACON_ORB, 512, 264);
 			fdActorGet(ACTOR_BEACON_ORB)->y.fixed = toFIXED(223) / 2;
 			fdActorGet(ACTOR_BEACON_ORB)->scaleX = toFIXED(1);
@@ -454,7 +454,7 @@ void scJupiterLighthousePulseBeacon(void)
 	}
 }
 
-extern Sint32 JupiterLighthouse_BeamOpenScript[];
+extern Sint32 JupiterLighthouseBeamOpenScript[];
 
 /* Stepping up to the well in the aerie's centre (metatiles (29, 18) to (34,
    18)) once Isaac and Ivan have fallen, Felix is asked whether to cast the
@@ -469,9 +469,9 @@ void scJupiterLighthouseCastTheJupiterStar(void)
 {
 	Sint32		   answer, state;
 	ACTOR		  *felix, *star, *shadow, *bottom, *top;
-	FIELD_SPR	  *sprite;
+	FIELD_SPR	  *spr;
 	ICON_TRANSFER *glyph;
-	Uint8		  *flags;
+	Uint8		  *flg;
 
 	if(syGameFlagGet(FLAG_ISAAC_AND_IVAN_FELL) != 0) {
 		fdScriptStart();
@@ -505,11 +505,11 @@ void scJupiterLighthouseCastTheJupiterStar(void)
 			star = scFieldActorCreate(SPRITE_UNSEEN_MARKER, felix->x.fixed,
 				felix->y.fixed + toFIXED(8), felix->z.fixed);
 			if(star != 0) {
-				sprite = star->spr;
-				sprite->cnt = 0;
-				sprite->fullCol = 0;
-				sprite->pal = 0;
-				sprite->pri = 0;
+				spr = star->spr;
+				spr->cnt = 0;
+				spr->fullCol = 0;
+				spr->pal = 0;
+				spr->pri = 0;
 				star->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
 				star->motionFlg = 0;
 				star->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
@@ -518,7 +518,7 @@ void scJupiterLighthouseCastTheJupiterStar(void)
 				glyph = syHeapSlotAlloc(
 					HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 				gmItemLoadIcon(ITEM_JUPITER_STAR);
-				mnVRAMLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
+				mnVRAMLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
 				syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 			}
 			scFieldActorSetSprPriority(ACTOR_STAR_SHADOW, 1);
@@ -534,8 +534,8 @@ void scJupiterLighthouseCastTheJupiterStar(void)
 			syFieldScriptSetMessageId((Sint32)MsgThereSeemsTo + 1);
 			fdScriptPlaySnd(MUS_CONFRONTATION);
 			if(star != 0) {
-				flags = &star->motionFlg;
-				*flags = 0;
+				flg = &star->motionFlg;
+				*flg = 0;
 				star->gravity = toFIXED(3) / 5;
 				star->bounce = toFIXED(4) / 5;
 				star->velY = toFIXED(8);
@@ -557,15 +557,15 @@ void scJupiterLighthouseCastTheJupiterStar(void)
 				fdActorFaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
 				scFieldActorWaitForMove(star);
 				state = ACTOR_FLOATS;
-				*flags = state;
+				*flg = state;
 				syFieldScriptWait(90);
-				*flags = 0;
+				*flg = 0;
 				scFieldActorSetMoveTarget(star, 512, 128, 264);
 				scFieldActorSetMoveTargetFX(
 					shadow, toFIXED(512), -1, toFIXED(264));
-				*flags = state;
+				*flg = state;
 				syFieldScriptWait(60);
-				*flags = 0;
+				*flg = 0;
 				shadow->x.fixed = 0;
 				shadow->tgtX = ACTOR_NO_TARGET;
 				shadow->tgtY = ACTOR_NO_TARGET;
@@ -578,9 +578,9 @@ void scJupiterLighthouseCastTheJupiterStar(void)
 				shadow->velZ = 0;
 				shadow->tmr = 0;
 				scFieldActorWaitForMove(star);
-				*flags = state;
+				*flg = state;
 				syFieldScriptWait(90);
-				*flags = 0;
+				*flg = 0;
 				scFieldActorSetMoveTarget(star, 512, 92, 264);
 				scFieldActorWaitForMove(star);
 				star->x.fixed = 0;
@@ -654,10 +654,10 @@ void scJupiterLighthouseCastTheJupiterStar(void)
 			top->z.fixed = toFIXED(264);
 			top->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
 			fdActorSetScript(
-				ACTOR_BEAM_BOTTOM, JupiterLighthouse_BeamOpenScript);
-			fdActorSetScript(ACTOR_BEAM_TOP, JupiterLighthouse_BeamOpenScript);
-			sySetFrameEvent(
-				scJupiterLighthouseSpawnBeaconParticle, EVENT_PASS_FRAME);
+				ACTOR_BEAM_BOTTOM, JupiterLighthouseBeamOpenScript);
+			fdActorSetScript(ACTOR_BEAM_TOP, JupiterLighthouseBeamOpenScript);
+			sySetTickEvent(
+				scJupiterLighthouseSpawnBeaconParticle, EVENT_PASS_TICK);
 			fdActorSetPos(ACTOR_LEFT_ANGEL, 0, 0);
 			fdActorSetPos(ACTOR_RIGHT_ANGEL, 0, 0);
 			fdActorSetPos(ACTOR_LID, 0, 0);
@@ -710,7 +710,7 @@ void scJupiterLighthouseBeaconIsLit(void)
 	fdScriptPlaySnd(SE_RUMBLE);
 	fdMapGridSetShake(4, 4, 1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdMapGridSetShake(3, 3, 1);
 	syFieldScriptWait(60);
 	fdMapGridSetShake(2, 2, 1);
@@ -927,7 +927,7 @@ void scJupiterLighthouseJennaJoinsTheFight(void)
 	fdActorSetAnimation(ACTOR_PIERS, ANIM_PIERS_BATTLE_STANCE);
 	fdCameraMoveTo(520, 104, 312, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syFieldScriptSetMessageId((Sint32)MsgCallJenna);
 	/* "Felix!" */
 	syFieldScriptShowMessageThenWait(ACTOR_JENNA, 0, 0);
@@ -1025,7 +1025,7 @@ void scJupiterLighthouseShebaJoinsTheFight(void)
 	fdActorSetPosAndFacing(ACTOR_SHEBA, toFIXED(544), toFIXED(384), north);
 	fdCameraMoveTo(520, 104, 312, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syFieldScriptSetMessageId((Sint32)MsgCallSheba);
 	/* "Jenna!" */
 	syFieldScriptShowMessageThenWait(ACTOR_SHEBA, 0, 0);
@@ -1121,7 +1121,7 @@ void scJupiterLighthouseShebaJoinsTheFight(void)
 
 /* The caster's arcs of light reach a fallen actor and it stands up: Mia healing
    Felix's party, or Alex healing Agatio and Karst. */
-void scJupiterLighthouseHealActor(Sint32 casterId, Sint32 targetId)
+void scJupiterLighthouseHealActor(Sint32 casterId, Sint32 tgtId)
 {
 	fdBattleEffectStartArcEffect();
 	fdBattleEffectSetObjectUpdateMode(
@@ -1131,13 +1131,13 @@ void scJupiterLighthouseHealActor(Sint32 casterId, Sint32 targetId)
 	fdBattleEffectSetObjectUpdateMode(fdActorGet(casterId), CASTER_LOOK_NORMAL);
 	fdBattleEffectWaitForArcGroups();
 	fdBattleEffectEndArcEffect();
-	fdActorSetAnimation(targetId, ANIM_STAND);
+	fdActorSetAnimation(tgtId, ANIM_STAND);
 }
 
-extern Sint32 JupiterLighthouse_JoinLeaderScript[];
-extern Sint32 JupiterLighthouse_WalkToPlatformsScript[];
-extern Sint32 JupiterLighthouse_HopWestOverPlatformsScript[];
-extern Sint32 JupiterLighthouse_HopEastOverPlatformsScript[];
+extern Sint32 JupiterLighthouseJoinLeaderScript[];
+extern Sint32 JupiterLighthouseWalkToPlatformsScript[];
+extern Sint32 JupiterLighthouseHopWestOverPlatformsScript[];
+extern Sint32 JupiterLighthouseHopEastOverPlatformsScript[];
 
 /* When the party loses the last battle on the aerie, Alex arrives and takes
    Karst and Agatio down on the elevator; Isaac's party comes up, Mia heals
@@ -1215,7 +1215,7 @@ void scJupiterLighthouseKarstAndAgatioRetreat(void)
 	actor->scaleX = -actor->scaleX;
 	fdCameraMoveTo(520, 104, 312, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syFieldScriptSetMessageId((Sint32)MsgWasnTThe);
 	fdActorSetAnimation(ACTOR_AGATIO, ANIM_AGATIO_BATTLE_STANCE);
 	fdActorSetAnimation(ACTOR_KARST, ANIM_KARST_BATTLE_STANCE);
@@ -1311,21 +1311,20 @@ void scJupiterLighthouseKarstAndAgatioRetreat(void)
 	fdActorAnimateThenWait(ACTOR_KARST, ANIM_NOD, 20);
 	syFieldScriptWait(10);
 	syScriptCameraFollowActor(ACTOR_AGATIO, 1);
-	fdActorSetScript(ACTOR_AGATIO, JupiterLighthouse_WalkToPlatformsScript);
+	fdActorSetScript(ACTOR_AGATIO, JupiterLighthouseWalkToPlatformsScript);
 	syFieldScriptWait(30);
-	fdActorSetScript(ACTOR_ALEX, JupiterLighthouse_WalkToPlatformsScript);
-	fdActorSetScript(ACTOR_KARST, JupiterLighthouse_WalkToPlatformsScript);
+	fdActorSetScript(ACTOR_ALEX, JupiterLighthouseWalkToPlatformsScript);
+	fdActorSetScript(ACTOR_KARST, JupiterLighthouseWalkToPlatformsScript);
 	scFieldActorWaitForScriptEndById(ACTOR_ALEX);
 	fdActorGet(ACTOR_ALEX)->priFlg |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 	fdActorGet(ACTOR_AGATIO)->priFlg |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 	fdActorGet(ACTOR_KARST)->priFlg |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 	fdActorGet(ACTOR_ALEX)->motionFlg = ACTOR_FALLS;
-	fdActorSetScript(ACTOR_ALEX, JupiterLighthouse_HopWestOverPlatformsScript);
+	fdActorSetScript(ACTOR_ALEX, JupiterLighthouseHopWestOverPlatformsScript);
 	scFieldActorWaitForScriptEndById(ACTOR_AGATIO);
-	fdActorSetScript(
-		ACTOR_AGATIO, JupiterLighthouse_HopWestOverPlatformsScript);
+	fdActorSetScript(ACTOR_AGATIO, JupiterLighthouseHopWestOverPlatformsScript);
 	scFieldActorWaitForScriptEndById(ACTOR_KARST);
-	fdActorSetScript(ACTOR_KARST, JupiterLighthouse_HopWestOverPlatformsScript);
+	fdActorSetScript(ACTOR_KARST, JupiterLighthouseHopWestOverPlatformsScript);
 	scFieldActorWaitForScriptEndById(ACTOR_ALEX);
 	fdActorWalkToAndWait(ACTOR_ALEX, 311, 256);
 	fdActorFaceDirection(ACTOR_ALEX, FACING_SOUTH, 0);
@@ -1541,9 +1540,9 @@ void scJupiterLighthouseKarstAndAgatioRetreat(void)
 		fdActorSetDestination(
 			ACTOR_GARET, actor->x.part[0].integer, actor->z.part[0].integer);
 	}
-	fdActorSetScript(ACTOR_IVAN, JupiterLighthouse_JoinLeaderScript);
-	fdActorSetScript(ACTOR_MIA, JupiterLighthouse_JoinLeaderScript);
-	fdActorSetScript(ACTOR_GARET, JupiterLighthouse_JoinLeaderScript);
+	fdActorSetScript(ACTOR_IVAN, JupiterLighthouseJoinLeaderScript);
+	fdActorSetScript(ACTOR_MIA, JupiterLighthouseJoinLeaderScript);
+	fdActorSetScript(ACTOR_GARET, JupiterLighthouseJoinLeaderScript);
 	scFieldActorWaitForScriptEndById(ACTOR_IVAN);
 	scFieldActorWaitForScriptEndById(ACTOR_MIA);
 	scFieldActorWaitForScriptEndById(ACTOR_GARET);
@@ -1570,7 +1569,7 @@ void scJupiterLighthouseKarstAndAgatioRetreat(void)
 	fdActorWalkToAndWait(ACTOR_ISAAC, 616, 247);
 	fdActorWalkToAndWait(ACTOR_ISAAC, 617, 312);
 	fdActorGet(ACTOR_ISAAC)->motionFlg = ACTOR_FALLS;
-	fdActorSetScript(ACTOR_ISAAC, JupiterLighthouse_HopEastOverPlatformsScript);
+	fdActorSetScript(ACTOR_ISAAC, JupiterLighthouseHopEastOverPlatformsScript);
 	scFieldActorWaitForScriptEndById(ACTOR_ISAAC);
 	fdActorFaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
 	syFieldScriptWait(30);
@@ -1623,21 +1622,21 @@ void scJupiterLighthouseKarstAndAgatioRetreat(void)
 		fdActorSetDestination(
 			ACTOR_KRADEN, actor->x.part[0].integer, actor->z.part[0].integer);
 	}
-	fdActorSetScript(ACTOR_PIERS, JupiterLighthouse_JoinLeaderScript);
-	fdActorSetScript(ACTOR_SHEBA, JupiterLighthouse_JoinLeaderScript);
-	fdActorSetScript(ACTOR_JENNA, JupiterLighthouse_JoinLeaderScript);
-	fdActorSetScript(ACTOR_KRADEN, JupiterLighthouse_JoinLeaderScript);
+	fdActorSetScript(ACTOR_PIERS, JupiterLighthouseJoinLeaderScript);
+	fdActorSetScript(ACTOR_SHEBA, JupiterLighthouseJoinLeaderScript);
+	fdActorSetScript(ACTOR_JENNA, JupiterLighthouseJoinLeaderScript);
+	fdActorSetScript(ACTOR_KRADEN, JupiterLighthouseJoinLeaderScript);
 	scFieldActorWaitForScriptEndById(ACTOR_PIERS);
 	scFieldActorWaitForScriptEndById(ACTOR_SHEBA);
 	scFieldActorWaitForScriptEndById(ACTOR_JENNA);
 	scFieldActorWaitForScriptEndById(ACTOR_KRADEN);
 	syScriptCameraFollowActor(ACTOR_FELIX, 1);
 	fdActorWalkByAndWait(ACTOR_FELIX, -16, 0);
-	fdActorSetScript(ACTOR_FELIX, JupiterLighthouse_WalkToPlatformsScript);
+	fdActorSetScript(ACTOR_FELIX, JupiterLighthouseWalkToPlatformsScript);
 	scFieldActorWaitForScriptEndById(ACTOR_FELIX);
 	fdActorGet(ACTOR_FELIX)->priFlg |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 	fdActorGet(ACTOR_ALEX)->motionFlg = ACTOR_FALLS;
-	fdActorSetScript(ACTOR_FELIX, JupiterLighthouse_HopWestOverPlatformsScript);
+	fdActorSetScript(ACTOR_FELIX, JupiterLighthouseHopWestOverPlatformsScript);
 	scFieldActorWaitForScriptEndById(ACTOR_FELIX);
 	fdActorWalkToAndWait(ACTOR_FELIX, 311, 256);
 	fdActorFaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
@@ -1649,7 +1648,7 @@ void scJupiterLighthouseKarstAndAgatioRetreat(void)
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
 	state->transitionFrm = 24;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	scJupiterLighthouseHealParty(0);
 	syFieldScriptSetExitRequest(
 		JUPITER_LIGHTHOUSE_AERIE_BEACON_TO_JUPITER_LIGHTHOUSE_ENTRANCE);
@@ -1699,7 +1698,7 @@ void scJupiterLighthouseWeBeatThem(void)
 	fdCameraSetSpeed(1);
 	fdCameraMoveTo(520, 104, 312, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syFieldScriptSetMessageId((Sint32)MsgWeDidItWe);
 	fdActorAnimateThenWait(ACTOR_PIERS, ANIM_SHAKE_HEAD, 33);
 	/* "We did it... We beat them..." */
@@ -1858,22 +1857,21 @@ void scJupiterLighthouseWeBeatThem(void)
 	fdActorAnimateThenWait(ACTOR_AGATIO, ANIM_NOD, 20);
 	syFieldScriptWait(10);
 	syScriptCameraFollowActor(ACTOR_AGATIO, 1);
-	fdActorSetScript(ACTOR_ALEX, JupiterLighthouse_WalkToPlatformsScript);
+	fdActorSetScript(ACTOR_ALEX, JupiterLighthouseWalkToPlatformsScript);
 	syFieldScriptWait(30);
-	fdActorSetScript(ACTOR_AGATIO, JupiterLighthouse_WalkToPlatformsScript);
+	fdActorSetScript(ACTOR_AGATIO, JupiterLighthouseWalkToPlatformsScript);
 	syFieldScriptWait(30);
-	fdActorSetScript(ACTOR_KARST, JupiterLighthouse_WalkToPlatformsScript);
+	fdActorSetScript(ACTOR_KARST, JupiterLighthouseWalkToPlatformsScript);
 	scFieldActorWaitForScriptEndById(ACTOR_ALEX);
 	fdActorGet(ACTOR_ALEX)->priFlg |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 	fdActorGet(ACTOR_AGATIO)->priFlg |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 	fdActorGet(ACTOR_KARST)->priFlg |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 	fdActorGet(ACTOR_ALEX)->motionFlg = ACTOR_FALLS;
-	fdActorSetScript(ACTOR_ALEX, JupiterLighthouse_HopWestOverPlatformsScript);
+	fdActorSetScript(ACTOR_ALEX, JupiterLighthouseHopWestOverPlatformsScript);
 	scFieldActorWaitForScriptEndById(ACTOR_AGATIO);
-	fdActorSetScript(
-		ACTOR_AGATIO, JupiterLighthouse_HopWestOverPlatformsScript);
+	fdActorSetScript(ACTOR_AGATIO, JupiterLighthouseHopWestOverPlatformsScript);
 	scFieldActorWaitForScriptEndById(ACTOR_KARST);
-	fdActorSetScript(ACTOR_KARST, JupiterLighthouse_HopWestOverPlatformsScript);
+	fdActorSetScript(ACTOR_KARST, JupiterLighthouseHopWestOverPlatformsScript);
 	scFieldActorWaitForScriptEndById(ACTOR_ALEX);
 	fdActorWalkToAndWait(ACTOR_ALEX, 311, 256);
 	fdActorFaceDirection(ACTOR_ALEX, FACING_SOUTH, 0);
@@ -2025,9 +2023,9 @@ void scJupiterLighthouseWeBeatThem(void)
 		fdActorSetDestination(
 			ACTOR_GARET, leader->x.part[0].integer, leader->z.part[0].integer);
 	}
-	fdActorSetScript(ACTOR_IVAN, JupiterLighthouse_JoinLeaderScript);
-	fdActorSetScript(ACTOR_MIA, JupiterLighthouse_JoinLeaderScript);
-	fdActorSetScript(ACTOR_GARET, JupiterLighthouse_JoinLeaderScript);
+	fdActorSetScript(ACTOR_IVAN, JupiterLighthouseJoinLeaderScript);
+	fdActorSetScript(ACTOR_MIA, JupiterLighthouseJoinLeaderScript);
+	fdActorSetScript(ACTOR_GARET, JupiterLighthouseJoinLeaderScript);
 	scFieldActorWaitForScriptEndById(ACTOR_IVAN);
 	scFieldActorWaitForScriptEndById(ACTOR_MIA);
 	scFieldActorWaitForScriptEndById(ACTOR_GARET);
@@ -2054,7 +2052,7 @@ void scJupiterLighthouseWeBeatThem(void)
 	fdActorWalkToAndWait(ACTOR_ISAAC, 616, 247);
 	fdActorWalkToAndWait(ACTOR_ISAAC, 617, 312);
 	fdActorGet(ACTOR_ISAAC)->motionFlg = ACTOR_FALLS;
-	fdActorSetScript(ACTOR_ISAAC, JupiterLighthouse_HopEastOverPlatformsScript);
+	fdActorSetScript(ACTOR_ISAAC, JupiterLighthouseHopEastOverPlatformsScript);
 	scFieldActorWaitForScriptEndById(ACTOR_ISAAC);
 	fdActorFaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
 	syFieldScriptWait(30);
@@ -2107,21 +2105,21 @@ void scJupiterLighthouseWeBeatThem(void)
 		fdActorSetDestination(
 			ACTOR_KRADEN, leader->x.part[0].integer, leader->z.part[0].integer);
 	}
-	fdActorSetScript(ACTOR_PIERS, JupiterLighthouse_JoinLeaderScript);
-	fdActorSetScript(ACTOR_SHEBA, JupiterLighthouse_JoinLeaderScript);
-	fdActorSetScript(ACTOR_JENNA, JupiterLighthouse_JoinLeaderScript);
-	fdActorSetScript(ACTOR_KRADEN, JupiterLighthouse_JoinLeaderScript);
+	fdActorSetScript(ACTOR_PIERS, JupiterLighthouseJoinLeaderScript);
+	fdActorSetScript(ACTOR_SHEBA, JupiterLighthouseJoinLeaderScript);
+	fdActorSetScript(ACTOR_JENNA, JupiterLighthouseJoinLeaderScript);
+	fdActorSetScript(ACTOR_KRADEN, JupiterLighthouseJoinLeaderScript);
 	scFieldActorWaitForScriptEndById(ACTOR_PIERS);
 	scFieldActorWaitForScriptEndById(ACTOR_SHEBA);
 	scFieldActorWaitForScriptEndById(ACTOR_JENNA);
 	scFieldActorWaitForScriptEndById(ACTOR_KRADEN);
 	syScriptCameraFollowActor(ACTOR_FELIX, 1);
 	fdActorWalkByAndWait(ACTOR_FELIX, -16, 0);
-	fdActorSetScript(ACTOR_FELIX, JupiterLighthouse_WalkToPlatformsScript);
+	fdActorSetScript(ACTOR_FELIX, JupiterLighthouseWalkToPlatformsScript);
 	scFieldActorWaitForScriptEndById(ACTOR_FELIX);
 	fdActorGet(ACTOR_FELIX)->priFlg |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 	fdActorGet(ACTOR_ALEX)->motionFlg = ACTOR_FALLS;
-	fdActorSetScript(ACTOR_FELIX, JupiterLighthouse_HopWestOverPlatformsScript);
+	fdActorSetScript(ACTOR_FELIX, JupiterLighthouseHopWestOverPlatformsScript);
 	scFieldActorWaitForScriptEndById(ACTOR_FELIX);
 	fdActorWalkToAndWait(ACTOR_FELIX, 311, 256);
 	fdActorFaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
@@ -2133,7 +2131,7 @@ void scJupiterLighthouseWeBeatThem(void)
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
 	state->transitionFrm = 24;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syFieldScriptSetExitRequest(
 		JUPITER_LIGHTHOUSE_AERIE_BEACON_TO_JUPITER_LIGHTHOUSE_ENTRANCE);
 	fdScriptEnd();
@@ -2171,25 +2169,25 @@ UNUSED void scJupiterLighthouseFindElevatorRiders(Sint32 *out, Sint32 zArg)
    places. */
 #define ELEVATOR_RIDERS_END FIELD_TREASURE_ACTOR
 
-extern Sint32 JupiterLighthouse_FirstElevatorRiders[];
-extern Sint32 JupiterLighthouse_SecondElevatorRiders[];
-extern Sint32 JupiterLighthouse_ThirdElevatorRiders[];
-extern Sint32 JupiterLighthouse_FourthElevatorRiders[];
-extern Sint32 JupiterLighthouse_FloatingPlatforms[];
+extern Sint32 JupiterLighthouseFirstElevatorRiders[];
+extern Sint32 JupiterLighthouseSecondElevatorRiders[];
+extern Sint32 JupiterLighthouseThirdElevatorRiders[];
+extern Sint32 JupiterLighthouseFourthElevatorRiders[];
+extern Sint32 JupiterLighthouseFloatingPlatforms[];
 
-/* The frames the elevator takes to sink all the way, the frame of a ride at
-   which the camera sets off after it, and the frame at which a rise and every
+/* The ticks the elevator takes to sink all the way, the tick of a ride at
+   which the camera sets off after it, and the tick at which a rise and every
    descent but DESCENT_FELIX stop. */
-#define ELEVATOR_DOWN_FRAMES  228
-#define ELEVATOR_CAMERA_FRAME 40
-#define ELEVATOR_RIDE_FRAMES  120
+#define ELEVATOR_DOWN_TICKS	 228
+#define ELEVATOR_CAMERA_TICK 40
+#define ELEVATOR_RIDE_TICKS	 120
 
 /* The elevator, drawn on the map's overhead layer, sinks with the riders of its
-   descent, speeding up a tenth of a pixel every fourth frame. */
+   descent, speeding up a tenth of a pixel every fourth tick. */
 void scJupiterLighthouseLowerElevator(Sint32 mode)
 {
 	FIXED	   speed;
-	Uint32	   count;
+	Uint32	   cnt;
 	Sint32	  *list;
 	Sint32	  *p;
 	Sint32	  *q;
@@ -2200,41 +2198,41 @@ void scJupiterLighthouseLowerElevator(Sint32 mode)
 	elevator =
 		&((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_OVERHEAD];
 	speed = toFIXED(1) / 10;
-	count = 0;
-	JupiterLighthouse_ElevatorLevel = elevator->ofsY;
+	cnt = 0;
+	JupiterLighthouseElevatorLevel = elevator->ofsY;
 	switch(mode) {
 	case DESCENT_ALEX_AGATIO_KARST:
 	case DESCENT_ALEX_AGATIO_KARST_FOLLOWING_ISAAC:
-		list = JupiterLighthouse_FirstElevatorRiders;
+		list = JupiterLighthouseFirstElevatorRiders;
 		break;
 	case DESCENT_ISAAC:
-		list = JupiterLighthouse_SecondElevatorRiders;
+		list = JupiterLighthouseSecondElevatorRiders;
 		break;
 	case DESCENT_FELIX:
-		list = JupiterLighthouse_ThirdElevatorRiders;
+		list = JupiterLighthouseThirdElevatorRiders;
 		break;
 	default:
-		list = JupiterLighthouse_FourthElevatorRiders;
+		list = JupiterLighthouseFourthElevatorRiders;
 		break;
 	}
 
 	for(i = 0; i <= 4 && list[i] != ELEVATOR_RIDERS_END; i++) {
 		fdActorGet(list[i])->motionFlg = 0;
 		scFieldActorSetSprPriority(list[i], 1);
-		count++;
+		cnt++;
 	}
 
 	for(i = 0; i <= 5; i++) {
-		fdActorGet(JupiterLighthouse_FloatingPlatforms[i])->priFlg |=
+		fdActorGet(JupiterLighthouseFloatingPlatforms[i])->priFlg |=
 			ACTOR_PRIORITY_IGNORES_RISES;
-		scFieldActorSetSprPriority(JupiterLighthouse_FloatingPlatforms[i], 0);
+		scFieldActorSetSprPriority(JupiterLighthouseFloatingPlatforms[i], 0);
 	}
 
 	fdScriptPlaySnd(SE_LIFT);
 
-	for(i = 0; i < ELEVATOR_DOWN_FRAMES; i++) {
+	for(i = 0; i < ELEVATOR_DOWN_TICKS; i++) {
 		elevator->ofsY -= speed;
-		for(j = 0; j < count; j++) {
+		for(j = 0; j < cnt; j++) {
 			ACTOR *actor;
 
 			fdActorGet(list[j])->z.fixed += speed;
@@ -2247,42 +2245,42 @@ void scJupiterLighthouseLowerElevator(Sint32 mode)
 			speed = toFIXED(3) / 2;
 		syWait(1);
 		if(mode == DESCENT_ALEX_AGATIO_KARST) {
-			if(i == ELEVATOR_CAMERA_FRAME)
+			if(i == ELEVATOR_CAMERA_TICK)
 				fdCameraMoveTo(512, 104, 304, 1);
-			if(i == ELEVATOR_RIDE_FRAMES)
+			if(i == ELEVATOR_RIDE_TICKS)
 				break;
 		} else if(mode == DESCENT_ISAAC) {
-			if(i == ELEVATOR_CAMERA_FRAME)
+			if(i == ELEVATOR_CAMERA_TICK)
 				fdCameraMoveTo(512, 104, 352, 1);
-			if(i == ELEVATOR_RIDE_FRAMES)
+			if(i == ELEVATOR_RIDE_TICKS)
 				break;
 		} else if(mode == DESCENT_ALEX_AGATIO_KARST_FOLLOWING_ISAAC) {
-			if(i == ELEVATOR_CAMERA_FRAME)
+			if(i == ELEVATOR_CAMERA_TICK)
 				syScriptCameraFollowActor(ACTOR_ISAAC, 1);
-			if(i == ELEVATOR_RIDE_FRAMES)
+			if(i == ELEVATOR_RIDE_TICKS)
 				break;
 		}
 	}
 
 	for(i = 0; i <= 5; i++) {
-		fdActorGet(JupiterLighthouse_FloatingPlatforms[i])->priFlg &=
+		fdActorGet(JupiterLighthouseFloatingPlatforms[i])->priFlg &=
 			~ACTOR_PRIORITY_IGNORES_RISES;
-		scFieldActorSetSprPriority(JupiterLighthouse_FloatingPlatforms[i], 1);
+		scFieldActorSetSprPriority(JupiterLighthouseFloatingPlatforms[i], 1);
 	}
 
-	for(i = 0; i < count; i++) {
+	for(i = 0; i < cnt; i++) {
 		fdActorSetPos(list[i], 0, 0);
 		fdActorGet(list[i])->motionFlg = 0;
 	}
 }
 
-extern Sint32 JupiterLighthouse_RisingElevatorRiders[];
+extern Sint32 JupiterLighthouseRisingElevatorRiders[];
 
 /* The rising elevator keeps (ELEVATOR_DRAG - 1) / ELEVATOR_DRAG of its speed
-   every fourth frame once it is less than ELEVATOR_SLOWING_FRAMES frames'
+   every fourth tick once it is less than ELEVATOR_SLOWING_TICKS ticks'
    travel from its level. */
-#define ELEVATOR_DRAG			16
-#define ELEVATOR_SLOWING_FRAMES 30
+#define ELEVATOR_DRAG		   16
+#define ELEVATOR_SLOWING_TICKS 30
 
 /* The elevator rises back to where it was before it sank, slowing as it nears
    it, or with ASCENT_AT_ONCE is only put back. */
@@ -2291,22 +2289,22 @@ void scJupiterLighthouseRaiseElevator(Sint32 mode)
 	MAP_LAYER *elevator =
 		&((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_OVERHEAD];
 	Sint32	speed = toFIXED(3) / 2;
-	Uint32	count = 0;
+	Uint32	cnt = 0;
 	Uint32	i;
-	Sint32 *ids = JupiterLighthouse_RisingElevatorRiders;
+	Sint32 *ids = JupiterLighthouseRisingElevatorRiders;
 
 	for(i = 0; i <= 4 && ids[i] != ELEVATOR_RIDERS_END; i++) {
 		fdActorGet(ids[i])->motionFlg = 0;
-		count++;
+		cnt++;
 	}
 	if(mode != ASCENT_AT_ONCE) {
 		fdScriptPlaySnd(SE_LIFT);
 		i = 0;
 		elevator->ofsY += toFIXED(3) / 2;
-		while(elevator->ofsY < JupiterLighthouse_ElevatorLevel) {
+		while(elevator->ofsY < JupiterLighthouseElevatorLevel) {
 			Uint32 j;
 
-			for(j = 0; j < count; j++) {
+			for(j = 0; j < cnt; j++) {
 				ACTOR *actor;
 
 				fdActorGet(ids[j])->z.fixed -= speed;
@@ -2314,21 +2312,21 @@ void scJupiterLighthouseRaiseElevator(Sint32 mode)
 				actor->tgtZ = fdActorGet(ids[j])->z.fixed;
 			}
 			if((i & 3) == 3 &&
-				JupiterLighthouse_ElevatorLevel <
-					speed * ELEVATOR_SLOWING_FRAMES + elevator->ofsY)
+				JupiterLighthouseElevatorLevel <
+					speed * ELEVATOR_SLOWING_TICKS + elevator->ofsY)
 				speed = speed * (ELEVATOR_DRAG - 1) / ELEVATOR_DRAG;
 			if(speed < toFIXED(1) / 20)
 				speed = toFIXED(1) / 20;
-			if(mode == ASCENT_RISING && i == ELEVATOR_CAMERA_FRAME)
+			if(mode == ASCENT_RISING && i == ELEVATOR_CAMERA_TICK)
 				fdCameraMoveTo(288, 104, 368, 1);
 			syWait(1);
 			i++;
-			if(i >= ELEVATOR_RIDE_FRAMES)
+			if(i >= ELEVATOR_RIDE_TICKS)
 				break;
 			elevator->ofsY += speed;
 		}
 	}
-	elevator->ofsY = JupiterLighthouse_ElevatorLevel;
+	elevator->ofsY = JupiterLighthouseElevatorLevel;
 	fdMapGridCenterOnFollowedPoint();
 	syWait(2);
 }
@@ -2364,7 +2362,7 @@ Sint32 scInit(void)
 	}
 	fdActorSetSprFlags(fdActorGet(ACTOR_BEACON_ORB), 0);
 	fdActorSetSprFlags(fdActorGet(ACTOR_BEACON_ORB), 0);
-	sySetFrameEvent(scJupiterLighthousePulseBeacon, EVENT_PASS_FRAME);
+	sySetTickEvent(scJupiterLighthousePulseBeacon, EVENT_PASS_TICK);
 	if(MainRoutineStateWork.entrance == ENTRANCE_BEACON_LIT) {
 		scJupiterLighthouseBeaconIsLit();
 
@@ -2412,12 +2410,12 @@ extern Sint32 PaletteCyclePausesInScripts;
 
 #include "shared/palette_cycle_set_pauses_in_scripts.h"
 
-extern Sint32 PaletteCycleFrame;
+extern Sint32 PaletteCycleTick;
 
-/* Sets the palette cycle's frame (PaletteCycleFrame). */
-static inline void scPaletteCycleSetFrame(Sint32 value)
+/* Sets the palette cycle's tick (PaletteCycleTick). */
+static inline void scPaletteCycleSetTick(Sint32 value)
 {
-	PaletteCycleFrame = value;
+	PaletteCycleTick = value;
 }
 
 #include "shared/palette_cycle_step.h"
@@ -2434,9 +2432,8 @@ extern Sint32 WhirlwindEndScript[];
 
 #include "shared/whirlwind_update.h"
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 #include "shared/whirlwind_spawn.h"
 
@@ -2464,7 +2461,7 @@ void scLightSprsSetPriority(Sint32 value)
 
 #include "../field/field_effect_move.c"
 
-extern const Sint32 *FieldEffect_DurationScripts[];
+extern const Sint32 *FieldEffectDurationScripts[];
 #define EFFECT_SET_MODE	  fdActorSelectAnimation
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
@@ -2487,28 +2484,27 @@ void fdCrackedTileUpdate(void);
 #include "../field/field_effect_advance_motion.c"
 
 #undef METATILE_PUSH_SLOT_ENTRY
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 #include "shared/cracked_tile_drop_in.h"
 
-void syGameFlagSetByte(Sint32 flag, Sint32 value);
+void syGameFlagSetByte(Sint32 flg, Sint32 value);
 #include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"
 
 /* Who the elevator carries down, by scJupiterLighthouseLowerElevator's mode:
    Alex, Agatio and Karst; Isaac; Felix; no one. */
-Sint32 JupiterLighthouse_FirstElevatorRiders[] = {
+Sint32 JupiterLighthouseFirstElevatorRiders[] = {
 	ACTOR_ALEX, ACTOR_AGATIO, ACTOR_KARST, ELEVATOR_RIDERS_END};
-Sint32 JupiterLighthouse_SecondElevatorRiders[] = {
+Sint32 JupiterLighthouseSecondElevatorRiders[] = {
 	ACTOR_ISAAC, ELEVATOR_RIDERS_END};
-Sint32 JupiterLighthouse_ThirdElevatorRiders[] = {
+Sint32 JupiterLighthouseThirdElevatorRiders[] = {
 	ACTOR_FELIX, ELEVATOR_RIDERS_END};
-Sint32 JupiterLighthouse_FourthElevatorRiders[] = {ELEVATOR_RIDERS_END};
+Sint32 JupiterLighthouseFourthElevatorRiders[] = {ELEVATOR_RIDERS_END};
 /* Who rides the elevator back up (scJupiterLighthouseRaiseElevator): no one. */
-Sint32 JupiterLighthouse_RisingElevatorRiders[] = {ELEVATOR_RIDERS_END};
+Sint32 JupiterLighthouseRisingElevatorRiders[] = {ELEVATOR_RIDERS_END};
 
 /* clang-format off */
 #define FIELD_EFFECT_DURATION_SCRIPT_SECTION LATE_DATA
@@ -2516,7 +2512,7 @@ Sint32 JupiterLighthouse_RisingElevatorRiders[] = {ELEVATOR_RIDERS_END};
 
 /* Unused: turns its actor's facing back and forth, 9/128 of a turn at a */
 /* time, and ends. Nothing starts it. */
-LATE_DATA Sint32 JupiterLighthouse_RockScript[] = {
+LATE_DATA Sint32 JupiterLighthouseRockScript[] = {
 	SC_WAIT(5),
 	SC_ADD(SW_FACING, TRIG_TURN * 9 / 128),
 	SC_WAIT(5),
@@ -2537,13 +2533,13 @@ LATE_DATA Sint32 JupiterLighthouse_RockScript[] = {
 };
 
 /* A party member walks into the leader it was sent to and is released there. */
-LATE_DATA Sint32 JupiterLighthouse_JoinLeaderScript[] = {
+LATE_DATA Sint32 JupiterLighthouseJoinLeaderScript[] = {
 	SC_SYNC,
 	SC_RELEASE,
 };
 
 /* Walks west round the well to the western floating platforms. */
-LATE_DATA Sint32 JupiterLighthouse_WalkToPlatformsScript[] = {
+LATE_DATA Sint32 JupiterLighthouseWalkToPlatformsScript[] = {
 	SC_SPEED(1),
 	SC_ACCELERATION(1),
 	SC_ANIMATION(ANIM_WALK),
@@ -2562,7 +2558,7 @@ LATE_DATA Sint32 JupiterLighthouse_WalkToPlatformsScript[] = {
 };
 
 /* Hops west over the three western floating platforms. */
-LATE_DATA Sint32 JupiterLighthouse_HopWestOverPlatformsScript[] = {
+LATE_DATA Sint32 JupiterLighthouseHopWestOverPlatformsScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_SPEED(3.5),
 	SC_ACCELERATION(1),
@@ -2602,7 +2598,7 @@ LATE_DATA Sint32 JupiterLighthouse_HopWestOverPlatformsScript[] = {
 };
 
 /* Hops east over the three eastern floating platforms. */
-LATE_DATA Sint32 JupiterLighthouse_HopEastOverPlatformsScript[] = {
+LATE_DATA Sint32 JupiterLighthouseHopEastOverPlatformsScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_SPEED(3.5),
 	SC_ACCELERATION(1),
@@ -2641,10 +2637,10 @@ LATE_DATA Sint32 JupiterLighthouse_HopEastOverPlatformsScript[] = {
 	SC_END,
 };
 
-/* The column of light widens by a sixteenth of its picture's width a frame */
-/* for 32 frames. Past its end are the scripts that narrow the column and */
+/* The column of light widens by a sixteenth of its picture's width a tick */
+/* for 32 ticks. Past its end are the scripts that narrow the column and */
 /* lift it away, which nothing here runs. */
-LATE_DATA Sint32 JupiterLighthouse_BeamOpenScript[] = {
+LATE_DATA Sint32 JupiterLighthouseBeamOpenScript[] = {
 	SC_ADD(SW_SCALE_X, toFIXED(1) / 16),
 	SC_WAIT(1),
 	SC_LOOP(32, SC_TOP),
@@ -2671,9 +2667,9 @@ LATE_DATA Sint32 JupiterLighthouse_BeamOpenScript[] = {
 	SC_END,
 };
 
-/* The lit beacon's orb breathes: narrower for four frames, wider for four, */
+/* The lit beacon's orb breathes: narrower for four ticks, wider for four, */
 /* again and again. */
-LATE_DATA Sint32 JupiterLighthouse_BeaconRisesScript[] = {
+LATE_DATA Sint32 JupiterLighthouseBeaconRisesScript[] = {
 	SC_LABEL(1),
 	SC_ADD(SW_SCALE_X, -toFIXED(3) / 128),
 	SC_WAIT(1),
@@ -2686,8 +2682,8 @@ LATE_DATA Sint32 JupiterLighthouse_BeaconRisesScript[] = {
 };
 
 /* A spark shed by the rising orb (scJupiterLighthouseRaiseBeaconLight): it */
-/* drops a pixel a frame for 16 frames and is released. */
-LATE_DATA Sint32 JupiterLighthouse_BeaconSparkScript[] = {
+/* drops a pixel a tick for 16 ticks and is released. */
+LATE_DATA Sint32 JupiterLighthouseBeaconSparkScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(0.8)),
 	SC_SET(SW_SCALE_Y, toFIXED(0.8)),
 	SC_ANIMATION(1),
@@ -2750,16 +2746,16 @@ LATE_DATA ACTOR_PLACE ActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
 	ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
 	ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_BLUE_ORB, IF_FLAG_SET(FLAG_JUPITER_BEACON_LIT), JupiterLighthouse_BeaconRisesScript, 512, 8, 264, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_BLUE_ORB, IF_FLAG_SET(FLAG_JUPITER_BEACON_LIT), JupiterLighthouseBeaconRisesScript, 512, 8, 264, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
 
 /* A particle of the column of light */
 /* (scJupiterLighthouseSpawnBeaconParticle): */
-/* it climbs a pixel a frame for 16 frames and is released. Past its end are */
+/* it climbs a pixel a tick for 16 ticks and is released. Past its end are */
 /* two more, which nothing here runs. */
-LATE_DATA Sint32 JupiterLighthouse_BeaconParticleScript[] = {
+LATE_DATA Sint32 JupiterLighthouseBeaconParticleScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(0.8)),
 	SC_SET(SW_SCALE_Y, toFIXED(0.8)),
 	SC_ANIMATION(1),
@@ -2810,12 +2806,12 @@ LATE_DATA CUE SceneCues[] = {
 
 /* The aerie's six floating platforms. */
 /* clang-format off */
-LATE_DATA Sint32 JupiterLighthouse_FloatingPlatforms[] = {
+LATE_DATA Sint32 JupiterLighthouseFloatingPlatforms[] = {
 	ACTOR_FLOATING_PLATFORM_A, ACTOR_FLOATING_PLATFORM_B, ACTOR_FLOATING_PLATFORM_C,
 	ACTOR_FLOATING_PLATFORM_D, ACTOR_FLOATING_PLATFORM_E, ACTOR_FLOATING_PLATFORM_F,
 };
 
-LATE_DATA Sint32 PaletteCycleFrame = -1;
+LATE_DATA Sint32 PaletteCycleTick = -1;
 
 LATE_DATA Sint32 PaletteCyclePausesInScripts = 1;
 
@@ -2826,8 +2822,8 @@ LATE_DATA Sint32 WhirlwindEndScript[] = {
 };
 /* clang-format on */
 
-LATE_DATA const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+LATE_DATA const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };

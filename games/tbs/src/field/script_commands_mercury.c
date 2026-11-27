@@ -13,17 +13,17 @@ void fdDjinnRunMercuryJoinEffect(Sint32 djinniId)
 {
 	ACTOR			   *djinni;
 	ACTOR			   *copy;
-	ACTOR			   *previous;
-	SPR				   *sharedSprite;
+	ACTOR			   *prev;
+	SPR				   *sharedSpr;
 	FIELD_EFFECT_STATE *effectState;
 	ACTOR			  **cursor;
 	ACTOR			  **list;
 	FIELD_PARTICLE	   *effect;
-	Sint32				spriteId;
+	Sint32				sprId;
 	Sint32				i;
 	Sint32				sharedSlot;
 	ACTOR			   *copies[MERCURY_AFTERIMAGE_MAX];
-	VECTOR3				position;
+	VECTOR3				pos;
 
 	djinni = fdActorGetById(djinniId);
 	if(djinni == NULL)
@@ -42,7 +42,7 @@ void fdDjinnRunMercuryJoinEffect(Sint32 djinniId)
 	fdActorRunRepeatedMotion(djinniId, 1);
 	sySynch(20);
 
-	/* Three hops, at 3, 5 and 7 pixels a frame. */
+	/* Three hops, at 3, 5 and 7 pixels a tick. */
 	sySndPlayStub(SE_JUMP);
 	fdActorJump(djinniId, 3, 14);
 	sySndPlayStub(SE_JUMP);
@@ -52,15 +52,15 @@ void fdDjinnRunMercuryJoinEffect(Sint32 djinniId)
 	sySynch(20);
 
 	/* Eight afterimages of the same sprite at 15/16 size, each closing half the
-	   distance to the one before it every frame, sharing one VRAM cache entry,
+	   distance to the one before it every tick, sharing one VRAM cache entry,
 	   as in fdDjinnRunBattleStartHop. */
-	spriteId = djinni->spr->entries[0]->anmId;
-	sharedSprite = NULL;
-	previous = djinni;
+	sprId = djinni->spr->entries[0]->anmId;
+	sharedSpr = NULL;
+	prev = djinni;
 	cursor = copies;
 	for(i = 0; i < MERCURY_AFTERIMAGE_MAX; i++) {
 		copy = fdActorCreateStub(
-			spriteId, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
+			sprId, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
 		*cursor++ = copy;
 		if(copy != NULL) {
 			copy->scaleY = AFTERIMAGE_SCALE;
@@ -73,16 +73,16 @@ void fdDjinnRunMercuryJoinEffect(Sint32 djinniId)
 			fdActorSetSprColModeStub(copy, SPRITE_COLOR_BLUE_TINT);
 			fdActorSelectAnimationStub(copy, ANIM_STILL);
 			fdActorSetSprFlagsStub(copy, 0);
-			sharedSprite = fdSprShareVRAMCacheEntry(copy->spr, sharedSprite);
-			copy->watchedActor = (union ACTOR_OR_EFFECT *)previous;
-			previous = copy;
+			sharedSpr = fdSprShareVRAMCacheEntry(copy->spr, sharedSpr);
+			copy->watchedActor = (union ACTOR_OR_EFFECT *)prev;
+			prev = copy;
 		}
 	}
 
-	/* Rise 8 pixels a frame for 15 frames, then remove the Djinni and its
+	/* Rise 8 pixels a tick for 15 ticks, then remove the Djinni and its
 	   afterimages, and free their shared VRAM cache entry
 	   (VRAM_CACHE_ENTRY_COUNT is none). */
-	sharedSlot = sharedSprite->slot;
+	sharedSlot = sharedSpr->slot;
 	sySndPlayStub(SE_HIGH_JUMP);
 	djinni->motionFlg = 0;
 	for(i = 0; i < 15; i++) {
@@ -104,16 +104,16 @@ void fdDjinnRunMercuryJoinEffect(Sint32 djinniId)
 		ANIM_LEADER_ARMS_RAISED);
 	sySynch(20);
 
-	/* The droplets (SPRITE_DROPLET), one a frame, from where the Djinni was on
+	/* The droplets (SPRITE_DROPLET), one a tick, from where the Djinni was on
 	   screen (fdEffectUpdateRandomTargetParticle moves them). */
-	position.x = djinni->x.fixed;
-	position.y = djinni->y.fixed;
-	position.z = djinni->z.fixed;
-	fdCameraWorldToScreen(&position);
+	pos.x = djinni->x.fixed;
+	pos.y = djinni->y.fixed;
+	pos.z = djinni->z.fixed;
+	fdCameraWorldToScreen(&pos);
 
 	effect = effectState->particles;
 	for(i = 0; i < MERCURY_DROPLETS; i++) {
-		fdParticleInit(effect, SPRITE_DROPLET, position.x, position.z);
+		fdParticleInit(effect, SPRITE_DROPLET, pos.x, pos.z);
 		fdParticleSetCallback(effect, fdEffectUpdateRandomTargetParticle);
 		fdParticleSetAnimation(effect, 7);
 		fdSprSetAnimationColModesStub(effect->spr, SPRITE_COLOR_BLUE_TINT);
@@ -121,7 +121,7 @@ void fdDjinnRunMercuryJoinEffect(Sint32 djinniId)
 		effect++;
 	}
 
-	/* After 120 frames every droplet still in use takes its last fall. */
+	/* After 120 ticks every droplet still in use takes its last fall. */
 	sySynch(120);
 	for(i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
 		if(effectState->particles[i].active)

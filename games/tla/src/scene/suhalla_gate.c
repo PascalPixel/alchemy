@@ -97,15 +97,15 @@ typedef enum SUHALLA_GATE_METATILE {
 void scSuhallaGateAfterPunchAntBattle(void);
 void scSuhallaGateFightPunchAnt(void);
 
-extern SCENE_ENTRANCE SuhallaGate_RoadEntrances[];
-extern SCENE_ENTRANCE SuhallaGate_CliffsEntrances[];
-extern SCENE_ENTRANCE SuhallaGate_CaveEntrances[];
-extern ACTOR_PLACE	  SuhallaGate_CavePlacements[];
-extern ACTOR_PLACE	  SuhallaGate_CliffsPlacements[];
-extern ACTOR_PLACE	  SuhallaGate_RoadPlacements[];
-extern CUE			  SuhallaGate_RoadCues[];
-extern CUE			  SuhallaGate_CliffsCues[];
-extern CUE			  SuhallaGate_CaveCues[];
+extern SCENE_ENTRANCE SuhallaGateRoadEntrances[];
+extern SCENE_ENTRANCE SuhallaGateCliffsEntrances[];
+extern SCENE_ENTRANCE SuhallaGateCaveEntrances[];
+extern ACTOR_PLACE	  SuhallaGateCavePlacements[];
+extern ACTOR_PLACE	  SuhallaGateCliffsPlacements[];
+extern ACTOR_PLACE	  SuhallaGateRoadPlacements[];
+extern CUE			  SuhallaGateRoadCues[];
+extern CUE			  SuhallaGateCliffsCues[];
+extern CUE			  SuhallaGateCaveCues[];
 
 /* Unused: talking to the west Ruffian at the crevice would start a battle with
    the Djinni Dew, but his own line, "Maybe I should have eaten a bigger
@@ -120,10 +120,10 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_SUHALLA_GATE_AMBUSH)
-		return SuhallaGate_CliffsEntrances;
+		return SuhallaGateCliffsEntrances;
 	if(scene == SCENE_SUHALLA_GATE_PSYNERGY_STONE)
-		return SuhallaGate_CaveEntrances;
-	return SuhallaGate_RoadEntrances;
+		return SuhallaGateCaveEntrances;
+	return SuhallaGateRoadEntrances;
 }
 
 const SCENE_REGION *scGetExitRegions(void)
@@ -141,10 +141,10 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_SUHALLA_GATE_AMBUSH)
-		return SuhallaGate_CliffsPlacements;
+		return SuhallaGateCliffsPlacements;
 	if(scene == SCENE_SUHALLA_GATE_ROAD)
-		return SuhallaGate_RoadPlacements;
-	return SuhallaGate_CavePlacements;
+		return SuhallaGateRoadPlacements;
+	return SuhallaGateCavePlacements;
 }
 
 const CUE *scGetCues(void)
@@ -152,10 +152,10 @@ const CUE *scGetCues(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_SUHALLA_GATE_AMBUSH)
-		return SuhallaGate_CliffsCues;
+		return SuhallaGateCliffsCues;
 	if(scene == SCENE_SUHALLA_GATE_PSYNERGY_STONE)
-		return SuhallaGate_CaveCues;
-	return SuhallaGate_RoadCues;
+		return SuhallaGateCaveCues;
+	return SuhallaGateRoadCues;
 }
 
 /* Back from his battle, the road's Ruffian lies beaten by it. */
@@ -292,9 +292,9 @@ void scSuhallaGateRuffianSpotsParty(void)
 	fdScriptShowMessageThenWait(ACTOR_ROAD_RUFFIAN, 0, 10);
 	{
 		Sint32 emote = EMOTE_IN_FRONT | EMOTE_EXCLAMATION;
-		Sint32 frames = 50;
+		Sint32 ticks = 50;
 
-		scFieldActorShowEmote(ACTOR_ROAD_RUFFIAN, emote, frames);
+		scFieldActorShowEmote(ACTOR_ROAD_RUFFIAN, emote, ticks);
 	}
 	/* "Whoa there... Where'd the blue-haired guy go?" */
 	fdScriptShowMessageThenWait(ACTOR_ROAD_RUFFIAN, 0, 10);
@@ -416,7 +416,7 @@ void scSuhallaGatePunchAntJumpsOut(void)
    no spot in the cave sets it off. */
 void scSuhallaGatePunchAntJumpsOutAsLeaderStepsAside(void)
 {
-	Sint32 emote, frames;
+	Sint32 emote, ticks;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -424,8 +424,8 @@ void scSuhallaGatePunchAntJumpsOutAsLeaderStepsAside(void)
 	fdScriptWait(16);
 	fdActorFaceActor(MainRoutineStateWork.leaderActorId, ACTOR_PUNCH_ANT, 0);
 	emote = EMOTE_IN_FRONT | EMOTE_EXCLAMATION;
-	frames = 0;
-	scFieldActorShowEmote(MainRoutineStateWork.leaderActorId, emote, frames);
+	ticks = 0;
+	scFieldActorShowEmote(MainRoutineStateWork.leaderActorId, emote, ticks);
 	fdScriptWait(16);
 	fdActorWalkTo(MainRoutineStateWork.leaderActorId, 488, 440);
 	fdScriptWait(16);
@@ -457,7 +457,7 @@ void scSuhallaGateAfterPunchAntBattle(void)
 	fdActorSetPos(ACTOR_CAVE_KRADEN, 512, 432);
 	fdActorSetPos(MainRoutineStateWork.leaderActorId, 528, 432);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	/* "My! That was invigorating! He wasn't too strong..." */
 	fdScriptShowMessageThenWait(ACTOR_CAVE_KRADEN, 0, 10);
 	fdActorSetAnimationAndWait(MainRoutineStateWork.leaderActorId, ANIM_NOD);
@@ -512,7 +512,7 @@ void scSuhallaGatePointToMeetingSpot(void)
 /* clang-format off */
 /* Unused: a script that squashes and stretches its actor over and over; */
 /* nothing runs it. */
-Sint32 SuhallaGate_SquashScript[] = {
+Sint32 SuhallaGateSquashScript[] = {
 	SC_LABEL(1),
 	SC_ADD(SW_SCALE_X, -toFIXED(1) / 4),
 	SC_ADD(SW_SCALE_Y, toFIXED(1) / 8),
@@ -570,7 +570,7 @@ Sint32 SuhallaGate_SquashScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-SCENE_ENTRANCE SuhallaGate_RoadEntrances[] = {
+SCENE_ENTRANCE SuhallaGateRoadEntrances[] = {
 	{0, CONDITION_ALWAYS, 152, 0, 504, FACING_SOUTH, 0, 32, 32, 272, 544, 0},
 	{1, CONDITION_ALWAYS, 152, 0, 520, FACING_NORTH, 0, 32, 32, 272, 544, 0},
 	{SUHALLA_GATE_ROAD_FROM_SUHALLA_GATE_AMBUSH_A, CONDITION_ALWAYS, 248, 0, 280, FACING_WEST, 0, 32, 32, 272, 544, 0},
@@ -581,7 +581,7 @@ SCENE_ENTRANCE SuhallaGate_RoadEntrances[] = {
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE SuhallaGate_CliffsEntrances[] = {
+SCENE_ENTRANCE SuhallaGateCliffsEntrances[] = {
 	{SUHALLA_GATE_AMBUSH_FROM_SUHALLA_GATE_ROAD_A, CONDITION_ALWAYS, 40, 0, 304, FACING_EAST, 0, 16, 32, 416, 480, 0},
 	{2, CONDITION_ALWAYS, 392, 0, 368, FACING_WEST, 0, 16, 32, 416, 480, 0},
 	{3, CONDITION_ALWAYS, 40, 0, 912, FACING_EAST, 0, 16, 608, 720, 1008, 0},
@@ -591,7 +591,7 @@ SCENE_ENTRANCE SuhallaGate_CliffsEntrances[] = {
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE SuhallaGate_CaveEntrances[] = {
+SCENE_ENTRANCE SuhallaGateCaveEntrances[] = {
 	{SUHALLA_GATE_PSYNERGY_STONE_FROM_SUHALLA_GATE_AMBUSH, CONDITION_ALWAYS, 72, 0, 264, FACING_NORTH, 0, 24, 24, 280, 256, 0},
 	{2, CONDITION_ALWAYS, 184, 0, 168, FACING_SOUTH, 0, 24, 24, 280, 256, 0},
 	{3, CONDITION_ALWAYS, 280, 0, 344, FACING_SOUTH, 0, 208, 288, 704, 640, 0},
@@ -619,13 +619,13 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE SuhallaGate_CavePlacements[] = {
+ACTOR_PLACE SuhallaGateCavePlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_PUNCH_ANT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE SuhallaGate_CliffsPlacements[] = {
+ACTOR_PLACE SuhallaGateCliffsPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 264, 0, 400, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 280, 0, 368, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 472, 0, 912, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
@@ -638,13 +638,13 @@ ACTOR_PLACE SuhallaGate_CliffsPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE SuhallaGate_RoadPlacements[] = {
+ACTOR_PLACE SuhallaGateRoadPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_RUFFIAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 264, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
 /* clang-format on */
 
-CUE SuhallaGate_RoadCues[] = {
+CUE SuhallaGateRoadCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, SUHALLA_GATE_ROAD_TO_SUHALLA_GATE_AMBUSH_A},
 	{CUE_EXIT, 4, CONDITION_ALWAYS, SUHALLA_GATE_ROAD_TO_SUHALLA_GATE_AMBUSH_B},
@@ -661,7 +661,7 @@ CUE SuhallaGate_RoadCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE SuhallaGate_CliffsCues[] = {
+CUE SuhallaGateCliffsCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, SUHALLA_GATE_AMBUSH_TO_SUHALLA_GATE_ROAD_A},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -683,7 +683,7 @@ CUE SuhallaGate_CliffsCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE SuhallaGate_CaveCues[] = {
+CUE SuhallaGateCaveCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS,
 		SUHALLA_GATE_PSYNERGY_STONE_TO_SUHALLA_GATE_AMBUSH},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},

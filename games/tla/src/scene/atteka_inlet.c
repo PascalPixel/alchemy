@@ -60,19 +60,19 @@ typedef enum ATTEKA_INLET_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_NINTH_WEEDS
 } ATTEKA_INLET_METATILE_BEHAVIOR;
 
-extern ACTOR_PLACE AttekaInlet_ActorPlacements[];
-extern ACTOR_PLACE AttekaInlet_HarborActorPlacements[];
-extern ACTOR_PLACE AttekaInlet_HarborActorPlacementsOnceWinged[];
-extern ACTOR_PLACE AttekaInlet_HarborActorPlacementsOnceSetOut[];
-extern ACTOR_PLACE AttekaInlet_HeightsActorPlacementsOnceWinged[];
-extern ACTOR_PLACE AttekaInlet_HeightsActorPlacements[];
-extern CUE		   AttekaInlet_Cues[];
-extern CUE		   AttekaInlet_HeightsCues[];
+extern ACTOR_PLACE AttekaInletActorPlacements[];
+extern ACTOR_PLACE AttekaInletHarborActorPlacements[];
+extern ACTOR_PLACE AttekaInletHarborActorPlacementsOnceWinged[];
+extern ACTOR_PLACE AttekaInletHarborActorPlacementsOnceSetOut[];
+extern ACTOR_PLACE AttekaInletHeightsActorPlacementsOnceWinged[];
+extern ACTOR_PLACE AttekaInletHeightsActorPlacements[];
+extern CUE		   AttekaInletCues[];
+extern CUE		   AttekaInletHeightsCues[];
 void			   scAttekaInletHammetsMessengerArrives(void);
 void			   scAttekaInletSetUpTheHarbor(void);
 void			   scAttekaInletSetUpTheHeights(void);
 
-/* The harbor's people, numbering AttekaInlet_HarborActorPlacements and the
+/* The harbor's people, numbering AttekaInletHarborActorPlacements and the
    tables after it. */
 typedef enum ATTEKA_INLET_HARBOR_ACTOR_ID {
 	/* Purple posts with glowing tops, along the shore and up the slope. */
@@ -111,7 +111,7 @@ typedef enum ATTEKA_INLET_HARBOR_ACTOR_ID {
 	ACTOR_HAMMETS_MESSENGER
 } ATTEKA_INLET_HARBOR_ACTOR_ID;
 
-/* The heights above the harbor (AttekaInlet_HeightsActorPlacements). */
+/* The heights above the harbor (AttekaInletHeightsActorPlacements). */
 typedef enum ATTEKA_INLET_HEIGHTS_ACTOR_ID {
 	/* "All of our myths and legends have taught us that the sea is a dangerous,
 	   fearsome power. But on the day the ship left, the sea was so calm and
@@ -165,30 +165,30 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 
 	if(scene == SCENE_ATTEKA_INLET) {
 		if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS))
-			return AttekaInlet_HarborActorPlacementsOnceSetOut;
+			return AttekaInletHarborActorPlacementsOnceSetOut;
 		if(syGameFlagGet(FLAG_REUNION_AT_CONTIGO))
-			return AttekaInlet_HarborActorPlacementsOnceWinged;
-		return AttekaInlet_HarborActorPlacements;
+			return AttekaInletHarborActorPlacementsOnceWinged;
+		return AttekaInletHarborActorPlacements;
 	}
 	if(scene == SCENE_ATTEKA_INLET_GEODE) {
 		if(syGameFlagGet(FLAG_REUNION_AT_CONTIGO))
-			return AttekaInlet_HeightsActorPlacementsOnceWinged;
-		return AttekaInlet_HeightsActorPlacements;
+			return AttekaInletHeightsActorPlacementsOnceWinged;
+		return AttekaInletHeightsActorPlacements;
 	}
-	return AttekaInlet_ActorPlacements;
+	return AttekaInletActorPlacements;
 }
 
-extern CUE AttekaInlet_HarborCues[];
+extern CUE AttekaInletHarborCues[];
 
 const CUE *scGetCues(void)
 {
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_ATTEKA_INLET)
-		return AttekaInlet_HarborCues;
+		return AttekaInletHarborCues;
 	if(scene == SCENE_ATTEKA_INLET_GEODE)
-		return AttekaInlet_HeightsCues;
-	return AttekaInlet_Cues;
+		return AttekaInletHeightsCues;
+	return AttekaInletCues;
 }
 
 /* Talking to Kraden on the deck has him ask "Felix, are we setting off now?":
@@ -556,13 +556,13 @@ void scAttekaInletCycloneNinthWeeds(void)
    (FLAG_HAMMETS_GIFT_DELIVERED). */
 void scAttekaInletHammetsMessengerArrives(void)
 {
-	Sint32 angle;
+	Sint32 ang;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	angle = FACING_NORTH_NORTHEAST;
+	ang = FACING_NORTH_NORTHEAST;
 	fdActorSetHorizontalPosAndAngWithTerrain(
-		ACTOR_HAMMETS_MESSENGER, toFIXED(504), toFIXED(460), angle);
+		ACTOR_HAMMETS_MESSENGER, toFIXED(504), toFIXED(460), ang);
 	sySynch(1);
 	fdScriptSetMessageId((Sint32)MsgAttekaInletHeyWait);
 	/* "Hey, wait!" */
@@ -588,7 +588,7 @@ void scAttekaInletHammetsMessengerArrives(void)
 	/* "I'm supposed to deliver this to Isaac... It's not too late, is it?" */
 	fdScriptShowMessageAndWait(ACTOR_HAMMETS_MESSENGER, 0);
 	fdActorSetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
-	fdActorFaceDirectionAndRefreshById(ACTOR_HAMMETS_MESSENGER, angle);
+	fdActorFaceDirectionAndRefreshById(ACTOR_HAMMETS_MESSENGER, ang);
 	fdActorGetById(ACTOR_HAMMETS_MESSENGER)->steeringFlg &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_HAMMETS_MESSENGER, 520, 384);
 	fdScriptWait(1);
@@ -607,7 +607,7 @@ void scAttekaInletHammetsMessengerArrives(void)
 	fdCameraMoveTo(512, CAMERA_KEEP, 348, 1);
 	fdActorWalkToAndWait(ACTOR_HAMMETS_MESSENGER, 504, 460);
 	fdActorSetPos(ACTOR_HAMMETS_MESSENGER, 0, 0);
-	fdActorFaceDirectionAndRefreshById(ACTOR_HAMMA, angle);
+	fdActorFaceDirectionAndRefreshById(ACTOR_HAMMA, ang);
 	/* "On my way here, I stopped in Kalay briefly to speak with Master
 	   Hammet." */
 	fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
@@ -626,7 +626,7 @@ void scAttekaInletHammetsMessengerArrives(void)
 	fdScriptEnd();
 }
 
-/* Nothing visible happens: each frame in the harbor, the boy by the wings and
+/* Nothing visible happens: each tick in the harbor, the boy by the wings and
    two of the glowing posts are layered with the leader, so that he passes in
    front of or behind them as he does the scenery around them. Each takes the
    leader's sprite priority. */
@@ -641,7 +641,7 @@ void scAttekaInletShareLeadersPriority(void)
 	fdActorSetSprPriority(ACTOR_GLOWING_POST_C, variant);
 }
 
-/* Nothing visible happens: each frame on the heights, the round boulder is
+/* Nothing visible happens: each tick on the heights, the round boulder is
    layered with the leader, as the harbor's posts are, by taking his sprite
    priority. */
 void scAttekaInletShareLeadersPriorityWithBoulder(void)
@@ -652,28 +652,27 @@ void scAttekaInletShareLeadersPriorityWithBoulder(void)
 }
 
 /* Turns the blues of the band along the ship's hull and the surf's colours on
-   one step every eight frames. */
+   one step every eight ticks. */
 void scAttekaInletRotateHullBandAndSurfCols(void)
 {
-	if((*Ram_FrameCount & 7) == 0) {
+	if((*Ram_TickCount & 7) == 0) {
 		Sint16 saved;
-		Sint32 index;
+		Sint32 idx;
 
 		saved = BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, HULL_BAND_LAST_COLOR);
-		for(index = HULL_BAND_LAST_COLOR; index != HULL_BAND_FIRST_COLOR;
-			index--)
-			BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, index) =
-				BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, index - 1);
+		for(idx = HULL_BAND_LAST_COLOR; idx != HULL_BAND_FIRST_COLOR; idx--)
+			BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, idx) =
+				BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, idx - 1);
 		BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, HULL_BAND_FIRST_COLOR) = saved;
 	}
-	if((*Ram_FrameCount & 7) == 0) {
+	if((*Ram_TickCount & 7) == 0) {
 		Sint16 saved;
-		Sint32 index;
+		Sint32 idx;
 
 		saved = BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, SURF_LAST_COLOR);
-		for(index = SURF_LAST_COLOR; index != SURF_FIRST_COLOR; index--)
-			BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, index) =
-				BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, index - 1);
+		for(idx = SURF_LAST_COLOR; idx != SURF_FIRST_COLOR; idx--)
+			BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, idx) =
+				BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, idx - 1);
 		BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, SURF_FIRST_COLOR) = saved;
 	}
 }
@@ -694,7 +693,7 @@ void scAttekaInletOpenDoorAndEnter(void)
 	fdActorCenterAndWalk(MainRoutineStateWork.leaderActorId, 2, -4);
 	fdScriptWait(8);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(state->stepCue);
 }
 
@@ -740,9 +739,9 @@ void scAttekaInletSetUpTheHarbor(void)
 	party = &MainRoutineStateWork;
 	fdActorGetById(party->leaderActorId)->priFlg |=
 		ACTOR_PRIORITY_IGNORES_RISES;
-	syFieldSetFrameEvent(
-		scAttekaInletRotateHullBandAndSurfCols, EVENT_PASS_FRAME);
-	syFieldSetFrameEvent(scAttekaInletShareLeadersPriority, EVENT_PASS_FRAME);
+	syFieldSetTickEvent(
+		scAttekaInletRotateHullBandAndSurfCols, EVENT_PASS_TICK);
+	syFieldSetTickEvent(scAttekaInletShareLeadersPriority, EVENT_PASS_TICK);
 	fdActorSetSprFlags(fdActorGetById(ACTOR_CANNON), 0);
 	fdActorGetById(ACTOR_CANNON)->motionFlg = 0;
 	if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS)) {
@@ -791,7 +790,7 @@ void scAttekaInletSetUpTheHeights(void)
 	}
 	if(syGameFlagGet(FLAG_GEODE_UNCOVERED))
 		fdActorSetPos(ACTOR_GEODE, 120, 376);
-	sySetEvent(scAttekaInletShareLeadersPriorityWithBoulder, EVENT_PASS_FRAME);
+	sySetEvent(scAttekaInletShareLeadersPriorityWithBoulder, EVENT_PASS_TICK);
 }
 
 SCENE_ENTRANCE SceneEntrances[] = {
@@ -825,12 +824,12 @@ Uint32 SceneExits[] = {
 };
 
 /* The scene's other rooms' actors. */
-ACTOR_PLACE AttekaInlet_ActorPlacements[] = {
+ACTOR_PLACE AttekaInletActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
 /* The harbor's actors, in ATTEKA_INLET_HARBOR_ACTOR_ID's order. */
-ACTOR_PLACE AttekaInlet_HarborActorPlacements[] = {
+ACTOR_PLACE AttekaInletHarborActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_CLEAR_COLLISION, 88, 0, 376, FACING_SOUTH,
 		TALK_FACING_KEEP, 0),
@@ -867,7 +866,7 @@ ACTOR_PLACE AttekaInlet_HarborActorPlacements[] = {
 
 /* The harbor's actors once the party has met again at Contigo and the ship has
    its wings. */
-ACTOR_PLACE AttekaInlet_HarborActorPlacementsOnceWinged[] = {
+ACTOR_PLACE AttekaInletHarborActorPlacementsOnceWinged[] = {
 	ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_CLEAR_COLLISION, 88, 0, 376, FACING_SOUTH,
 		TALK_FACING_KEEP, 0),
@@ -919,7 +918,7 @@ ACTOR_PLACE AttekaInlet_HarborActorPlacementsOnceWinged[] = {
 };
 
 /* The harbor's actors once the ship has set out with its wings. */
-ACTOR_PLACE AttekaInlet_HarborActorPlacementsOnceSetOut[] = {
+ACTOR_PLACE AttekaInletHarborActorPlacementsOnceSetOut[] = {
 	ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_CLEAR_COLLISION, 88, 0, 376, FACING_SOUTH,
 		TALK_FACING_KEEP, 0),
@@ -955,7 +954,7 @@ ACTOR_PLACE AttekaInlet_HarborActorPlacementsOnceSetOut[] = {
 };
 
 /* The heights' actors once the ship has its wings. */
-ACTOR_PLACE AttekaInlet_HeightsActorPlacementsOnceWinged[] = {
+ACTOR_PLACE AttekaInletHeightsActorPlacementsOnceWinged[] = {
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_WANDER_NEAR, 264, 0, 352, FACING_WEST, TALK_FACING_PARTY,
 		0),
@@ -976,7 +975,7 @@ ACTOR_PLACE AttekaInlet_HeightsActorPlacementsOnceWinged[] = {
 };
 
 /* The heights' actors, in ATTEKA_INLET_HEIGHTS_ACTOR_ID's order. */
-ACTOR_PLACE AttekaInlet_HeightsActorPlacements[] = {
+ACTOR_PLACE AttekaInletHeightsActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_WANDER_NEAR, 0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_MUSCULAR_MAN_WITH_BLOND_HAIR, CONDITION_ALWAYS,
@@ -996,13 +995,13 @@ ACTOR_PLACE AttekaInlet_HeightsActorPlacements[] = {
 };
 
 /* The scene's other rooms' cues. */
-CUE AttekaInlet_Cues[] = {
+CUE AttekaInletCues[] = {
 	{CUE_TABLE_END},
 };
 
 /* The harbor's exits, the cabin door, Hamma's and Kraden's spots, talks and the
    messenger's check. */
-CUE AttekaInlet_HarborCues[] = {
+CUE AttekaInletHarborCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), ATTEKA_INLET_TO_LEMURIAN_SHIP_CABINS,
 		CONDITION_ALWAYS, SCRIPT_REF(scAttekaInletOpenDoorAndEnter)},
 	{CUE_EXIT, ATTEKA_INLET_TO_ATTEKA_INLET_GEODE_SOUTH, CONDITION_ALWAYS,
@@ -1084,7 +1083,7 @@ CUE AttekaInlet_HarborCues[] = {
 
 /* The heights' exits, the shipwrights' spot, talks, Geode and Cyclone on its
    weeds. */
-CUE AttekaInlet_HeightsCues[] = {
+CUE AttekaInletHeightsCues[] = {
 	{CUE_EXIT, ATTEKA_INLET_GEODE_TO_ATTEKA_INLET_SOUTH, CONDITION_ALWAYS,
 		ATTEKA_INLET_GEODE_TO_ATTEKA_INLET_SOUTH},
 	{CUE_EXIT, ATTEKA_INLET_GEODE_TO_WORLD_MAP_NORTH, CONDITION_ALWAYS,

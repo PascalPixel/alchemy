@@ -7,29 +7,29 @@
 Sint32 btAIChooseRandomTarget(Sint32 party)
 {
 	BATTLE_STATE *battle;
-	Uint16		  targets[6];
-	Sint32		  count;
+	Uint16		  tgts[6];
+	Sint32		  cnt;
 	Sint32		  i;
 
-	count = 0;
+	cnt = 0;
 	battle = Ram_HeapSlots->battleState;
 
 	if(party != 0) {
 		for(i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
 			if(battle->partyUnits[i] != BATTLE_UNIT_REMOVED &&
 				syUnitGet(battle->partyUnits[i])->hp != 0)
-				targets[count++] = i | PLACE_PARTY;
+				tgts[cnt++] = i | PLACE_PARTY;
 		}
 	} else {
 		for(i = 0; battle->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
 			if(battle->enemyIds[i] != BATTLE_UNIT_REMOVED &&
 				syUnitGet(battle->enemyIds[i])->hp != 0)
-				targets[count++] = i | PLACE_ENEMY;
+				tgts[cnt++] = i | PLACE_ENEMY;
 		}
 	}
-	if(count == 0)
+	if(cnt == 0)
 		return 0;
-	return targets[(Uint32)(count * gmBattleRandomStub()) >> 16];
+	return tgts[(Uint32)(cnt * gmBattleRandomStub()) >> 16];
 }
 
 /* Finds the living unit with the highest Attack on unitId's side (the party for

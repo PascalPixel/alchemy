@@ -2,22 +2,22 @@
    Living Armor), and the handlers that play the mirrored wall. Part of
    battle_effect.c. */
 
-#define RUSHING_STRIKE_FRAMES					60
+#define RUSHING_STRIKE_TICKS				   60
 /* the user strikes; the ring and sparks start */
-#define RUSHING_STRIKE_FRAME					8
+#define RUSHING_STRIKE_TICK					   8
 /* the burst hides the user rushing in */
-#define RUSHING_STRIKE_BURST_FRAMES				15
-#define RUSHING_STRIKE_RING_FRAMES				12 /* the ring where it hits swells */
-#define RUSHING_STRIKE_SPARK_COUNT				64 /* in EXTRA_PARTICLES */
-/* The first two sparks' frames to live; each pair after lives one more. */
-#define RUSHING_STRIKE_SPARK_LIFE				16
-#define RUSHING_STRIKE_EXPLOSIONS				16 /* Living Armor's */
+#define RUSHING_STRIKE_BURST_TICKS			   15
+#define RUSHING_STRIKE_RING_TICKS			   12 /* the ring where it hits swells */
+#define RUSHING_STRIKE_SPARK_COUNT			   64 /* in EXTRA_PARTICLES */
+/* The first two sparks' ticks to live; each pair after lives one more. */
+#define RUSHING_STRIKE_SPARK_LIFE			   16
+#define RUSHING_STRIKE_EXPLOSIONS			   16 /* Living Armor's */
 /* The explosions set up at the hit, of which RUSHING_STRIKE_EXPLOSIONS are
    drawn. */
-#define RUSHING_STRIKE_EXPLOSION_SLOTS			64
-#define RUSHING_STRIKE_EXPLOSION_PICTURE_FRAMES 4
-/* FlashBurstSheet's six pictures, four frames apiece. */
-#define RUSHING_STRIKE_EXPLOSION_FRAMES			24
+#define RUSHING_STRIKE_EXPLOSION_SLOTS		   64
+#define RUSHING_STRIKE_EXPLOSION_PICTURE_TICKS 4
+/* FlashBurstSheet's six pictures, four ticks apiece. */
+#define RUSHING_STRIKE_EXPLOSION_TICKS		   24
 
 /* The burst: FlamePlumeSheet's 32x32 plume above the same plume upside down. */
 #define RUSHING_STRIKE_BURST_WIDTH		  32
@@ -35,22 +35,22 @@ void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	DRAW_RECTANGLE		 draw[2];
 	Uint8				*ringPixels = Ram_MapMetatileBuffer;
 	Sint32				 height;
-	SCREEN_POINT		 target;
+	SCREEN_POINT		 tgt;
 	SCREEN_POINT		 caster;
 	SCREEN_POINT		 screen;
 	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
 	void				*canvas = Ram_HeapSlots->battleCanvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	BATTLE_CAMERA		*camera = Ram_HeapSlots->cameraState;
 	Uint8				*motePictures = Ram_HeapSlots->battleSheet;
-	MOTION_OBJECT		*targetObject;
+	MOTION_OBJECT		*tgtObject;
 	RENDER_MODEL		*quad;
 	void				*vertices;
 	Sint32				 i;
 	Sint32				 row;
 	Sint32				 column;
 	Sint32				 scale;
-	Sint32				 ringFrame;
+	Sint32				 ringFrm;
 	Sint32				 brightness;
 	Sint32				 resource;
 
@@ -99,24 +99,24 @@ void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	btEffectSetApproachMotion(args->user, args->tgts[0], 10, 80);
 	fdActorSetAnimationSpeedStub(
 		btObjectGetStub(args->user)->obj, ANIM_STEP_NORMAL * 3);
-	targetObject = btObjectGetStub(args->tgts[0])->obj;
-	btEffectPosProjectBattler(args->tgts[0], &target);
+	tgtObject = btObjectGetStub(args->tgts[0])->obj;
+	btEffectPosProjectBattler(args->tgts[0], &tgt);
 
-	for(frame = 0; frame != RUSHING_STRIKE_FRAMES; frame++) {
-		/* The first frame readies the sparks and Living Armor's explosions at
+	for(frm = 0; frm != RUSHING_STRIKE_TICKS; frm++) {
+		/* The first tick readies the sparks and Living Armor's explosions at
 		   the target, 8 pixels out from it, flying back the way the user
 		   came. */
-		if(frame == 0) {
+		if(frm == 0) {
 			PARTICLE *spark = EXTRA_PARTICLES;
 
 			for(i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++, spark++) {
-				spark->x = targetObject->x;
+				spark->x = tgtObject->x;
 				if(spark->x < 0)
 					spark->x += -toFIXED(8);
 				else
 					spark->x += toFIXED(8);
-				spark->y = targetObject->y + toFIXED(14);
-				spark->z = targetObject->z;
+				spark->y = tgtObject->y + toFIXED(14);
+				spark->z = tgtObject->z;
 				spark->velX = (syRandom() & 511) << 11;
 				spark->velY = ((syRandom() & 255) - 64) << 11;
 				spark->velZ = ((syRandom() & 255) - 128) << 11;
@@ -126,13 +126,13 @@ void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 			for(i = 0; i != RUSHING_STRIKE_EXPLOSION_SLOTS; i++) {
 				PARTICLE *explosion = &state->particles[i];
-				explosion->x = targetObject->x;
+				explosion->x = tgtObject->x;
 				if(explosion->x < 0)
 					explosion->x += -toFIXED(8);
 				else
 					explosion->x += toFIXED(8);
-				explosion->y = targetObject->y + toFIXED(14);
-				explosion->z = targetObject->z;
+				explosion->y = tgtObject->y + toFIXED(14);
+				explosion->z = tgtObject->z;
 				explosion->velX = ((syRandom() & 511) - 256) << 10;
 				explosion->velY = ((syRandom() & 255) - 64) << 10;
 				explosion->velZ = ((syRandom() & 255) - 128) << 10;
@@ -151,33 +151,33 @@ void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		texture.logHeight = 6;
 		texture.pixels = state->sheet;
 		quad->texture = &texture;
-		quad->mesh = BattleEffect_TallMesh;
+		quad->mesh = BattleEffectTallMesh;
 		quad->kind = MODEL_SHADED_MAX;
 		quad->vertices = vertices;
 		quad->shade = brightness;
-		if(frame < RUSHING_STRIKE_BURST_FRAMES) {
+		if(frm < RUSHING_STRIKE_BURST_TICKS) {
 			syInitMatrix();
 			syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 			syTranslate(
 				INTtoFIXED(caster.x - 128), INTtoFIXED(caster.y - 88), 0);
-			syScale(RushingStrike_Scales[mode] << 1,
-				RushingStrike_Scales[mode] << 1, RushingStrike_Scales[mode]);
+			syScale(RushingStrikeScales[mode] << 1,
+				RushingStrikeScales[mode] << 1, RushingStrikeScales[mode]);
 			if(args->side == EFFECT_SIDE_PARTY)
 				syRotY(DEGtoANG(180));
-			btRenderTransformVertices(BattleEffect_SquareCorners, vertices, 4);
+			btRenderTransformVertices(BattleEffectSquareCorners, vertices, 4);
 			btRenderDrawModelList(quad);
 		}
 
 		/* The ring where it hits swells, four times as tall as it is wide, and
-		   darkens after its fifth frame. */
-		ringFrame = frame - RUSHING_STRIKE_FRAME;
-		if(frame >= RUSHING_STRIKE_FRAME &&
-			frame < RUSHING_STRIKE_FRAME + RUSHING_STRIKE_RING_FRAMES) {
+		   darkens after its fifth tick. */
+		ringFrm = frm - RUSHING_STRIKE_TICK;
+		if(frm >= RUSHING_STRIKE_TICK &&
+			frm < RUSHING_STRIKE_TICK + RUSHING_STRIKE_RING_TICKS) {
 			if(mode == RUSHING_STRIKE_STUN_MUSCLE)
-				scale = ringFrame * (toFIXED(1) / 16) + toFIXED(1) / 16;
+				scale = ringFrm * (toFIXED(1) / 16) + toFIXED(1) / 16;
 			else
-				scale = ringFrame * 3048 + 3048;
-			brightness = 32 - ringFrame * 8;
+				scale = ringFrm * 3048 + 3048;
+			brightness = 32 - ringFrm * 8;
 			if(brightness > 0)
 				brightness = 0;
 			quad->shade = brightness;
@@ -185,23 +185,21 @@ void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			texture.logHeight = 7;
 			texture.pixels = ringPixels;
 			quad->kind = MODEL_SHADED_ADDITIVE;
-			quad->mesh = BattleEffect_LargeSquareMesh;
+			quad->mesh = BattleEffectLargeSquareMesh;
 			syInitMatrix();
 			syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 			if(args->side == EFFECT_SIDE_ENEMIES)
-				syTranslate(
-					INTtoFIXED(target.x - 144), INTtoFIXED(target.y - 84), 0);
+				syTranslate(INTtoFIXED(tgt.x - 144), INTtoFIXED(tgt.y - 84), 0);
 			else
-				syTranslate(
-					INTtoFIXED(target.x - 112), INTtoFIXED(target.y - 84), 0);
+				syTranslate(INTtoFIXED(tgt.x - 112), INTtoFIXED(tgt.y - 84), 0);
 			syScale(scale, scale << 2, scale);
-			btRenderTransformVertices(BattleEffect_SquareCorners, vertices, 4);
+			btRenderTransformVertices(BattleEffectSquareCorners, vertices, 4);
 			btRenderDrawModelList(quad);
 		}
 		syHeapRelease(quad);
 		syHeapRelease(vertices);
 
-		if(frame == RUSHING_STRIKE_FRAME) {
+		if(frm == RUSHING_STRIKE_TICK) {
 			EFFECT_STRIKE_TARGET(args, 0, 8, KNOCKBACK_HURL);
 			if(mode == RUSHING_STRIKE_LIVING_ARMOR)
 				EFFECT_SHOW_DAMAGE(SE_CRASH);
@@ -212,9 +210,9 @@ void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 		/* From the hit on, the sparks fly and burn down, drawn by turns with
 		   the two blitters; their sprites shrink as they burn. */
-		/* DEAD: frame < 64 is always true, as the loop ends at
-		   RUSHING_STRIKE_FRAMES; the ROM keeps the compare. */
-		if(frame >= RUSHING_STRIKE_FRAME && frame < 64) {
+		/* DEAD: tick < 64 is always true, as the loop ends at
+		   RUSHING_STRIKE_TICKS; the ROM keeps the compare. */
+		if(frm >= RUSHING_STRIKE_TICK && frm < 64) {
 			PARTICLE *spark;
 
 			syInitMatrix();
@@ -230,7 +228,7 @@ void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					screen.x >>= 1;
 					height = size * 2;
 					draw[i & 1](canvas,
-						motePictures + BattleEffect_MotePictures[size - 1],
+						motePictures + BattleEffectMotePictures[size - 1],
 						screen.x - size / 2, screen.y - size, size, height);
 					btParticleAdvanceWithGravity3D(
 						spark, 60, -toFIXED(1) / 128);
@@ -244,9 +242,9 @@ void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					PARTICLE *explosion = &state->particles[i];
 					Sint32	  life = explosion->variant;
 
-					if(life >= 0 && life < RUSHING_STRIKE_EXPLOSION_FRAMES) {
+					if(life >= 0 && life < RUSHING_STRIKE_EXPLOSION_TICKS) {
 						Sint32 picture =
-							life / RUSHING_STRIKE_EXPLOSION_PICTURE_FRAMES;
+							life / RUSHING_STRIKE_EXPLOSION_PICTURE_TICKS;
 
 						btEffectPosProjectPoint(&explosion->x, &screen);
 						screen.x >>= 1;
@@ -265,7 +263,7 @@ void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		}
 
 		btCameraShake(8, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	syCloseEvent((Sint32)btEffectTransferCanvas);
@@ -297,16 +295,16 @@ void btEffectRunSack(BATTLE_EFFECT_PARM *args)
 	btEffectRunMirroredWall(args, MIRRORED_WALL_SACK);
 }
 
-#undef RUSHING_STRIKE_FRAMES
-#undef RUSHING_STRIKE_FRAME
-#undef RUSHING_STRIKE_BURST_FRAMES
-#undef RUSHING_STRIKE_RING_FRAMES
+#undef RUSHING_STRIKE_TICKS
+#undef RUSHING_STRIKE_TICK
+#undef RUSHING_STRIKE_BURST_TICKS
+#undef RUSHING_STRIKE_RING_TICKS
 #undef RUSHING_STRIKE_SPARK_COUNT
 #undef RUSHING_STRIKE_SPARK_LIFE
 #undef RUSHING_STRIKE_EXPLOSIONS
 #undef RUSHING_STRIKE_EXPLOSION_SLOTS
-#undef RUSHING_STRIKE_EXPLOSION_PICTURE_FRAMES
-#undef RUSHING_STRIKE_EXPLOSION_FRAMES
+#undef RUSHING_STRIKE_EXPLOSION_PICTURE_TICKS
+#undef RUSHING_STRIKE_EXPLOSION_TICKS
 #undef RUSHING_STRIKE_BURST_WIDTH
 #undef RUSHING_STRIKE_BURST_HEIGHT
 #undef RUSHING_STRIKE_PLUME_SIZE

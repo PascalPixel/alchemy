@@ -89,18 +89,18 @@ void btBackgroundSetMode(Sint32 mode, Sint32 backgroundId, Sint32 fade)
 			DMA_COPY_HALFWORDS(BATTLE_BACKGROUND_COLORS), REG_DMA3);
 	} else if(fade != 0) {
 		BATTLE_STATE *battle;
-		Uint16		 *source;
-		Uint16		 *destination;
+		Uint16		 *src;
+		Uint16		 *dst;
 		Sint32		  i;
 
 		battle = Ram_HeapSlots->battleState;
-		source = battle->pal;
-		destination = BATTLE_BG_PALETTE;
+		src = battle->pal;
+		dst = BATTLE_BG_PALETTE;
 
 		for(i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
-			Sint32 red = RGB_RED(source[i]);
-			Sint32 green = RGB_GREEN(source[i]);
-			Sint32 blue = RGB_BLUE(source[i]);
+			Sint32 red = RGB_RED(src[i]);
+			Sint32 green = RGB_GREEN(src[i]);
+			Sint32 blue = RGB_BLUE(src[i]);
 
 			if(red > fade)
 				red -= fade;
@@ -114,7 +114,7 @@ void btBackgroundSetMode(Sint32 mode, Sint32 backgroundId, Sint32 fade)
 				blue -= fade;
 			else
 				blue = 0;
-			destination[i] = RGB(red, green, blue);
+			dst[i] = RGB(red, green, blue);
 		}
 	}
 	btTransitionBuildAffineTilemap((void *)BG_SCREEN_BLOCK(7));
@@ -182,10 +182,10 @@ void btBackgroundLoad(Sint32 mode, Sint32 resource, Sint32 level)
 }
 
 /* Builds the zoomed background's next page for a zoom of scale about centerX
-   and centerY, shifted by offsetX and offsetY, and shows it: below a zoom of 1
+   and centerY, shifted by ofsX and ofsY, and shows it: below a zoom of 1
    the plane lies flat, from 1 it wraps and turns with the camera. */
 void btCameraSetRange(
-	FIXED centerX, FIXED centerY, Sint32 offsetX, Sint32 offsetY, FIXED scale)
+	FIXED centerX, FIXED centerY, Sint32 ofsX, Sint32 ofsY, FIXED scale)
 {
 	BATTLE_BACKGROUND_STATE *background = Ram_HeapSlots->battleBg;
 	BATTLE_AFFINE_HDMA		*scanlines = Ram_HeapSlots->battleScanlines;
@@ -230,8 +230,8 @@ void btCameraSetRange(
 	affine->pd = step;
 	x = syMulFX(ratio, syMulFX(centerX, scale - toFIXED(1)));
 	y = syMulFX(ratio, syMulFX(centerY, scale - toFIXED(1)));
-	affine->x = ((x + toFIXED(0.5) - 1) >> 8) + offsetX + panX;
-	affine->y = ((y + toFIXED(0.5) - 1) >> 8) + offsetY -
+	affine->x = ((x + toFIXED(0.5) - 1) >> 8) + ofsX + panX;
+	affine->y = ((y + toFIXED(0.5) - 1) >> 8) + ofsY -
 		Q_8_8(BACKGROUND_PLANE_HIDDEN_LINES);
 	/* The first line that reaches the picture's lower half at this zoom. */
 	lowerHalfLine = FIXEDtoINT(syDivFX((Sint16)affine->pd,
@@ -272,7 +272,7 @@ UNUSED void btCameraSetViewAtDepth(Sint32 x, Sint32 depth, Sint32 y)
 	BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
 	Sint32		  *focus = camera->focus;
 	FIXED		   scale = toFIXED(zoom) / 100;
-	Sint32		   eyeOffset[3];
+	Sint32		   eyeOfs[3];
 	Sint32		   originOnScreen[3];
 	Sint32		   origin[3];
 	FIXED		   nearShare;
@@ -294,10 +294,10 @@ UNUSED void btCameraSetViewAtDepth(Sint32 x, Sint32 depth, Sint32 y)
 	syMatrixTranslateVector(focus);
 	syRotY(camera->yaw);
 	syRotX(camera->pitch);
-	eyeOffset[0] = 0;
-	eyeOffset[1] = 0;
-	eyeOffset[2] = camera->distance;
-	syCalcPoint(eyeOffset, camera->eye);
+	eyeOfs[0] = 0;
+	eyeOfs[1] = 0;
+	eyeOfs[2] = camera->distance;
+	syCalcPoint(eyeOfs, camera->eye);
 	ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X;
 	ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y;
 	syInitMatrix();
@@ -323,7 +323,7 @@ void btCameraSetView(Sint32 x, Sint32 depth, Sint32 y, Sint32 zoom)
 	BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
 	Sint32		  *focus = camera->focus;
 	FIXED		   scale = toFIXED(zoom) / 100;
-	FIXED		   eyeOffset[3];
+	FIXED		   eyeOfs[3];
 	Sint32		   originOnScreen[3];
 	Sint32		   origin[3];
 	FIXED		   focal = BATTLE_CAMERA_DISTANCE;
@@ -346,10 +346,10 @@ void btCameraSetView(Sint32 x, Sint32 depth, Sint32 y, Sint32 zoom)
 	syMatrixTranslateVector(focus);
 	syRotY(camera->yaw);
 	syRotX(camera->pitch);
-	eyeOffset[0] = 0;
-	eyeOffset[1] = 0;
-	eyeOffset[2] = focal;
-	syCalcPoint(eyeOffset, (Sint32 *)camera);
+	eyeOfs[0] = 0;
+	eyeOfs[1] = 0;
+	eyeOfs[2] = focal;
+	syCalcPoint(eyeOfs, (Sint32 *)camera);
 	ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X;
 	ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y;
 	syInitMatrix();
@@ -383,8 +383,8 @@ void btCameraSetViewAtPairMidpoint(
 	btCameraSetView(x, 0, z, zoom);
 }
 
-/* Fades BG2 out over the backdrop in eight frames, its blend weight falling by
-   2 a frame from 15, while the backdrop's stays 16. Leaves REG_BLDCNT blending
+/* Fades BG2 out over the backdrop in eight ticks, its blend weight falling by
+   2 a tick from 15, while the backdrop's stays 16. Leaves REG_BLDCNT blending
    BG2 over the backdrop. */
 void btBackgroundFadeAlphaOut(void)
 {
@@ -397,8 +397,8 @@ void btBackgroundFadeAlphaOut(void)
 	}
 }
 
-/* Fades BG2 in over the backdrop in eight frames, its blend weight rising by 2
-   a frame from 1, while the backdrop's stays 16. Leaves REG_BLDCNT blending BG2
+/* Fades BG2 in over the backdrop in eight ticks, its blend weight rising by 2
+   a tick from 1, while the backdrop's stays 16. Leaves REG_BLDCNT blending BG2
    over the backdrop. */
 void btBackgroundFadeAlphaIn(void)
 {
@@ -436,10 +436,10 @@ struct BATTLE_TRANSITION_ENTRY {
    old value plus its new one in the second. */
 UNUSED void btTransitionInitEntries(struct BATTLE_TRANSITION_ENTRY *entries)
 {
-	Uint32 previous = entries[0].value;
+	Uint32 prev = entries[0].value;
 
 	syUnitMatrix((FIXED *)entries);
-	entries[0].sum = previous + entries[0].value;
+	entries[0].sum = prev + entries[0].value;
 }
 
 /* Unused: returns value divided by 16. */
@@ -500,7 +500,7 @@ void btHighlightSetSprMode(Sint32 unitId, Sint32 mode)
 	MOTION_OBJECT *object;
 	SPR			  *record;
 	SPR			 **records;
-	Sint32		   recordIndex;
+	Sint32		   recordIdx;
 
 	if(slot == 0)
 		return;
@@ -516,15 +516,15 @@ void btHighlightSetSprMode(Sint32 unitId, Sint32 mode)
 	}
 	case ACTOR_SPRITE_GROUP: {
 		records = object->records;
-		recordIndex = 0;
+		recordIdx = 0;
 		do {
 			record = *records++;
 			if(record == 0)
 				break;
 			record->image.objMode = mode;
 			record->shadow.objMode = mode;
-			recordIndex++;
-		} while(recordIndex < ACTOR_SPRITE_GROUP_SIZE);
+			recordIdx++;
+		} while(recordIdx < ACTOR_SPRITE_GROUP_SIZE);
 		break;
 	}
 	}
@@ -534,12 +534,12 @@ void btHighlightSetSprMode(Sint32 unitId, Sint32 mode)
 UNUSED void btHighlightSetOtherSprModes(Sint32 selectedUnitId)
 {
 	Sint16 unitIds[UNIT_MAX];
-	Sint32 unitCount = btUnitListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
-	Sint32 unitIndex;
+	Sint32 unitCnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
+	Sint32 unitIdx;
 
-	for(unitIndex = 0; unitIndex < unitCount; unitIndex++) {
-		if(unitIds[unitIndex] != selectedUnitId)
-			btHighlightSetSprMode(unitIds[unitIndex], SPRITE_SEMI_TRANSPARENT);
+	for(unitIdx = 0; unitIdx < unitCnt; unitIdx++) {
+		if(unitIds[unitIdx] != selectedUnitId)
+			btHighlightSetSprMode(unitIds[unitIdx], SPRITE_SEMI_TRANSPARENT);
 	}
 }
 
@@ -547,16 +547,16 @@ UNUSED void btHighlightSetOtherSprModes(Sint32 selectedUnitId)
 void btHighlightClearAllSprModes(void)
 {
 	Sint16 unitIds[UNIT_MAX];
-	Sint32 unitCount = btUnitListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
-	Sint32 unitIndex;
+	Sint32 unitCnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
+	Sint32 unitIdx;
 
-	for(unitIndex = 0; unitIndex < unitCount; unitIndex++)
-		btHighlightSetSprMode(unitIds[unitIndex], SPRITE_OPAQUE);
+	for(unitIdx = 0; unitIdx < unitCnt; unitIdx++)
+		btHighlightSetSprMode(unitIds[unitIdx], SPRITE_OPAQUE);
 }
 
-extern Sint8 BattleHighlight_BlendRamp[];
+extern Sint8 BattleHighlightBlendRamp[];
 
-/* The steps of each half of BattleHighlight_BlendRamp: the first half plays
+/* The steps of each half of BattleHighlightBlendRamp: the first half plays
    once, then the second over and over. */
 #define HIGHLIGHT_RAMP_HALF 16
 
@@ -588,9 +588,9 @@ void btBackgroundStepHighlightBlend(void)
 		} else if(battle->highlightMode == HIGHLIGHT_PULSE) {
 			REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
 			REG_BLDALPHA =
-				(BattleHighlight_BlendRamp[battle->highlightStep] << 8) |
+				(BattleHighlightBlendRamp[battle->highlightStep] << 8) |
 				(BLEND_WEIGHT_MAX -
-					BattleHighlight_BlendRamp[battle->highlightStep]);
+					BattleHighlightBlendRamp[battle->highlightStep]);
 			battle->highlightStep =
 				((battle->highlightStep + 1) & (HIGHLIGHT_RAMP_HALF - 1)) |
 				(battle->highlightStep >= HIGHLIGHT_RAMP_HALF - 1
@@ -600,7 +600,7 @@ void btBackgroundStepHighlightBlend(void)
 			REG_BLDCNT =
 				BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL;
 			REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
-			REG_BLDY = BattleHighlight_BlendRamp[battle->highlightStep];
+			REG_BLDY = BattleHighlightBlendRamp[battle->highlightStep];
 			battle->highlightStep =
 				((battle->highlightStep + 1) & (HIGHLIGHT_RAMP_HALF - 1)) |
 				(battle->highlightStep >= HIGHLIGHT_RAMP_HALF - 1
@@ -617,7 +617,7 @@ void btHighlightSetModes(Uint16 *actors, Sint32 mode)
 {
 	Sint16		  activeActors[UNIT_MAX];
 	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
-	Uint32		  count;
+	Uint32		  cnt;
 	Uint32		  i;
 
 	if(mode == HIGHLIGHT_OFF) {
@@ -633,8 +633,8 @@ void btHighlightSetModes(Uint16 *actors, Sint32 mode)
 		REG_BLDY = 0;
 		syIOWrite16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
 
-		count = btUnitListIds(BATTLE_SIDE_MASK_BOTH, (Uint16 *)activeActors);
-		for(i = 0; i < count; i++)
+		cnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, (Uint16 *)activeActors);
+		for(i = 0; i < cnt; i++)
 			btHighlightSetSprMode(activeActors[i], mode & 1);
 
 		if(actors != NULL) {
@@ -665,7 +665,7 @@ struct SPARK {
 	Sint32
 		/* x, y, z, then their velocities, in STAR_FIELD_PIXEL units */
 		   motion[6];
-	Sint32 life; /* frames left */
+	Sint32 life; /* ticks left */
 };
 
 /* A ring of the star field leaving its centre: its place, its speed and its
@@ -678,38 +678,38 @@ struct RING {
 	Sint32 age;
 };
 
-/* The star field's sparks and rings, and the frames in which a spent spark
+/* The star field's sparks and rings, and the ticks in which a spent spark
    starts again. */
-#define STAR_FIELD_SPARKS		 16
-#define STAR_FIELD_RINGS		 3
-#define STAR_FIELD_SPAWN_FRAMES	 25
-#define STAR_FIELD_SIZE			 128 /* the canvas's width and height in pixels */
-#define STAR_FIELD_CENTER		 (STAR_FIELD_SIZE / 2)
-#define STAR_FIELD_RING_SIZE	 32
-#define STAR_FIELD_FRAMES		 45 /* the frames a cast's glow lasts */
-/* The frames the background darkens through as the star field gathers, a
+#define STAR_FIELD_SPARKS		16
+#define STAR_FIELD_RINGS		3
+#define STAR_FIELD_SPAWN_TICKS	25
+#define STAR_FIELD_SIZE			128 /* the canvas's width and height in pixels */
+#define STAR_FIELD_CENTER		(STAR_FIELD_SIZE / 2)
+#define STAR_FIELD_RING_SIZE	32
+#define STAR_FIELD_TICKS		45 /* the ticks a cast's glow lasts */
+/* The ticks the background darkens through as the star field gathers, a
    BACKGROUND_LEVEL_STEP each. */
-#define STAR_FIELD_DARKEN_FRAMES 25
-/* The frames an enemy's cast shows its element's streaks. */
-#define ELEMENT_STREAK_FRAMES	 40
+#define STAR_FIELD_DARKEN_TICKS 25
+/* The ticks an enemy's cast shows its element's streaks. */
+#define ELEMENT_STREAK_TICKS	40
 /* The blue ring sprite sheet's colours, before its pictures; an element's
    palette replaces them. */
-#define STAR_FIELD_COLORS		 64
+#define STAR_FIELD_COLORS		64
 /* The sparks and rings move in 1/1024 canvas pixels: STAR_FIELD_PIXEL to a
    pixel. */
-#define STAR_FIELD_PIXEL_SHIFT	 10
-#define STAR_FIELD_PIXEL		 (1 << STAR_FIELD_PIXEL_SHIFT)
+#define STAR_FIELD_PIXEL_SHIFT	10
+#define STAR_FIELD_PIXEL		(1 << STAR_FIELD_PIXEL_SHIFT)
 
-/* The star field's state, for the 45 frames of a cast's glow. */
+/* The star field's state, for the 45 ticks of a cast's glow. */
 struct STAR_FIELD_STATE {
 	/* The blue ring sprite sheet's pictures, the sparks' and the rings'. */
 	Uint8		 sheet[4544];
 	struct SPARK sparks[STAR_FIELD_SPARKS];
 	struct RING	 rings[STAR_FIELD_RINGS];
-	/* frames drawn; new sparks start only in the first
-	   STAR_FIELD_SPAWN_FRAMES */
-	Sint32 frames;
-	/* 1 when a drawn frame waits for btElementGlowUploadStarField */
+	/* ticks drawn; new sparks start only in the first
+	   STAR_FIELD_SPAWN_TICKS */
+	Sint32 ticks;
+	/* 1 when a drawn tick waits for btElementGlowUploadStarField */
 	Sint32 ready;
 	/* Where BG2 shows the 128 by 128 canvas, in 8.8 pixels: btElementGlowPlay
 	   keeps it on the unit. */
@@ -720,17 +720,17 @@ struct STAR_FIELD_STATE {
 
 /* The star tables: each picture's size and sprite sheet offset, and the ring's
    four pictures. */
-extern const Uint8	ElementGlow_SparkSizes[];
-extern const Sint32 ElementGlow_SparkPictures[];
-extern const Sint32 ElementGlow_RingPictures[];
+extern const Uint8	ElementGlowSparkSizes[];
+extern const Sint32 ElementGlowSparkPictures[];
+extern const Sint32 ElementGlowRingPictures[];
 
-/* Draws the star field's next frame: each spark falls towards the centre and
+/* Draws the star field's next tick: each spark falls towards the centre and
    shrinks as its life runs out, a spent one starting again while the field is
    young, and the three rings move outward. */
 void btElementGlowUpdateStarField(void)
 {
 	Sint32					 ringsLeft;
-	Sint32					 frame;
+	Sint32					 frm;
 	Uint32					 size;
 	Sint32					 ringX;
 	Sint32					 ringY;
@@ -742,12 +742,12 @@ void btElementGlowUpdateStarField(void)
 	struct SPARK			*spark;
 	struct RING				*ring;
 	Sint32					*axis;
-	Sint32					 axisIndex;
+	Sint32					 axisIdx;
 	FIXED					 distance;
 	FIXED					 scale;
 	Sint32					 step;
 	Uint32					 radius;
-	Sint32					 angle;
+	Sint32					 ang;
 	Uint32					 half;
 	Sint32					 x;
 	Sint32					 y;
@@ -763,7 +763,7 @@ void btElementGlowUpdateStarField(void)
 		life = spark->life;
 		if(life != 0) {
 			/* The motion's first three words are the spark's place, the last
-			   three its velocity: each frame it is pulled toward the centre by
+			   three its velocity: each tick it is pulled toward the centre by
 			   the same amount whatever its distance, and its velocity loses
 			   1/128. */
 			distance =
@@ -777,7 +777,7 @@ void btElementGlowUpdateStarField(void)
 				spark->life--;
 				mulFX = syMulFX;
 				axis = spark->motion;
-				for(axisIndex = 0; axisIndex < 3; axisIndex++) {
+				for(axisIdx = 0; axisIdx < 3; axisIdx++) {
 					step = mulFX(mulFX(-*axis >> 8, scale), toFIXED(19) / 16);
 					axis[3] = axis[3] - (axis[3] >> 7) + step;
 					*axis += axis[3];
@@ -786,12 +786,12 @@ void btElementGlowUpdateStarField(void)
 			}
 			life = spark->life;
 		}
-		if(life == 0 && state->frames < STAR_FIELD_SPAWN_FRAMES) {
-			angle = syRandom();
+		if(life == 0 && state->ticks < STAR_FIELD_SPAWN_TICKS) {
+			ang = syRandom();
 			radius = syRandom() + toFIXED(1);
 			half = radius >> 1;
-			spark->motion[0] = syMulFX(syCos(angle), half);
-			spark->motion[1] = syMulFX(sySin(angle), half);
+			spark->motion[0] = syMulFX(syCos(ang), half);
+			spark->motion[1] = syMulFX(sySin(ang), half);
 			if(spark->motion[0] & 1)
 				spark->motion[0] = -spark->motion[0];
 			if(spark->motion[1] & 1)
@@ -809,13 +809,13 @@ void btElementGlowUpdateStarField(void)
 				STAR_FIELD_CENTER;
 			y = (spark->motion[1] >> STAR_FIELD_PIXEL_SHIFT) +
 				STAR_FIELD_CENTER;
-			frame = life;
-			if(frame < 0)
-				frame = 0;
-			else if(frame > 6)
-				frame = 6;
-			size = ElementGlow_SparkSizes[frame];
-			draw(dest, (Uint8 *)state + ElementGlow_SparkPictures[frame],
+			frm = life;
+			if(frm < 0)
+				frm = 0;
+			else if(frm > 6)
+				frm = 6;
+			size = ElementGlowSparkSizes[frm];
+			draw(dest, (Uint8 *)state + ElementGlowSparkPictures[frm],
 				x - (size >> 1), y - (size >> 1), size, size);
 		}
 	}
@@ -833,13 +833,13 @@ void btElementGlowUpdateStarField(void)
 			 * as the store alone. */
 			do {
 			} while(0);
-			draw(dest, (Uint8 *)state + ElementGlow_RingPictures[phase],
+			draw(dest, (Uint8 *)state + ElementGlowRingPictures[phase],
 				ringX + STAR_FIELD_CENTER - STAR_FIELD_RING_SIZE / 2,
 				ringY + STAR_FIELD_CENTER - STAR_FIELD_RING_SIZE / 2,
 				STAR_FIELD_RING_SIZE, STAR_FIELD_RING_SIZE);
 		}
 	}
-	state->frames++;
+	state->ticks++;
 	state->ready = 1;
 }
 
@@ -847,29 +847,29 @@ void btElementGlowUpdateStarField(void)
    brightness. */
 Sint32 btElementGlowUploadStarField(void)
 {
-	void					*source = Ram_HeapSlots->battleCanvas;
+	void					*src = Ram_HeapSlots->battleCanvas;
 	struct STAR_FIELD_STATE *state = Ram_HeapSlots->battleEff;
 
-	if(source != 0) {
+	if(src != 0) {
 		if(state->ready != 0) {
 			state->ready = 0;
 			return syColBufferScaleThreeQuarters(
-				source, (void *)BG_CHAR_BLOCK(1), BG_CHAR_SIZE);
+				src, (void *)BG_CHAR_BLOCK(1), BG_CHAR_SIZE);
 		}
 	}
-	return (Sint32)source;
+	return (Sint32)src;
 }
 
 /* Returns the x of the point at angle and radius from the origin. */
-static __inline__ Sint32 PolarX(Sint32 angle, Sint32 radius)
+static __inline__ Sint32 PolarX(Sint32 ang, Sint32 radius)
 {
-	return syMulFX(syCos(angle), radius);
+	return syMulFX(syCos(ang), radius);
 }
 
 /* Returns the y of the point at angle and radius from the origin. */
-static __inline__ Sint32 PolarY(Sint32 angle, Sint32 radius)
+static __inline__ Sint32 PolarY(Sint32 ang, Sint32 radius)
 {
-	return syMulFX(sySin(angle), radius);
+	return syMulFX(sySin(ang), radius);
 }
 
 /* Starts a star field of the element: sixteen sparks on random rings and three
@@ -887,13 +887,13 @@ Sint32 btElementGlowInitStarField(Sint32 element)
 	state = syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE_EFFECT, sizeof *state);
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 	for(i = 0; i < STAR_FIELD_SPARKS; i++) {
-		Sint32 angle = syRandom();
+		Sint32 ang = syRandom();
 		Uint32 radius = syRandom() + toFIXED(1);
 		Uint32 half = radius >> 1;
 
 		spark = &state->sparks[i];
-		spark->motion[0] = syMulFX(syCos(angle), half);
-		spark->motion[1] = syMulFX(sySin(angle), half);
+		spark->motion[0] = syMulFX(syCos(ang), half);
+		spark->motion[1] = syMulFX(sySin(ang), half);
 		if(spark->motion[0] & 1)
 			spark->motion[0] = -spark->motion[0];
 		if(spark->motion[1] & 1)
@@ -906,17 +906,17 @@ Sint32 btElementGlowInitStarField(Sint32 element)
 	}
 	for(i = 0; i < STAR_FIELD_RINGS; i++) {
 		Sint32 radius = 4 * STAR_FIELD_PIXEL;
-		Sint32 angle;
+		Sint32 ang;
 
 		ring = &state->rings[i];
-		angle = i * (DEGtoANG(120));
-		ring->x = PolarX(angle, radius);
-		ring->y = PolarY(angle, radius);
-		ring->velX = PolarX(angle, STAR_FIELD_PIXEL / 2);
-		ring->velY = PolarY(angle, STAR_FIELD_PIXEL / 2);
+		ang = i * (DEGtoANG(120));
+		ring->x = PolarX(ang, radius);
+		ring->y = PolarY(ang, radius);
+		ring->velX = PolarX(ang, STAR_FIELD_PIXEL / 2);
+		ring->velY = PolarY(ang, STAR_FIELD_PIXEL / 2);
 		ring->age = 0;
 	}
-	state->frames = 0;
+	state->ticks = 0;
 	state->ready = 0;
 	state->originPending = 0;
 	syWordsClearEntry(
@@ -958,8 +958,8 @@ Sint32 btElementGlowInitStarField(Sint32 element)
 		COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | BLITTER_ADDITIVE << 4);
 	btEffectLoadBlitterStub(HEAP_SLOT_RAM_CODE_PAIRED,
 		COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | BLITTER_MAX << 4);
-	sySetEvent(btElementGlowUpdateStarField, EVENT_PASS_FRAME);
-	return sySetEvent(btElementGlowUploadStarField, EVENT_PASS_FRAME);
+	sySetEvent(btElementGlowUpdateStarField, EVENT_PASS_TICK);
+	return sySetEvent(btElementGlowUploadStarField, EVENT_PASS_TICK);
 }
 
 /* Ends a star field and turns BG2 off. */
@@ -986,15 +986,15 @@ UNUSED void btElementGlowReservedNoOperation(void)
 void btElementGlowPlay(
 	Sint32 unitId, Sint32 element, Sint32 mode, Sint32 variant)
 {
-	SCREEN_POINT			  starPosition;
-	SCREEN_POINT			  streakPosition;
+	SCREEN_POINT			  starPos;
+	SCREEN_POINT			  streakPos;
 	BATTLE_PRESENTATION_STATE pillarLaunch;
 	BATTLE_PRESENTATION_STATE burstLaunch;
 	Sint32					  origin[2];
 	BATTLE_STATE			 *battle = Ram_HeapSlots->battleState;
 	volatile Uint16			 *ime;
 	struct STAR_FIELD_STATE	 *state;
-	Sint32					  frame;
+	Sint32					  frm;
 	Sint32					 *brightness;
 	SCREEN_POINT			 *pos;
 
@@ -1018,14 +1018,13 @@ void btElementGlowPlay(
 		syIOWriteQueueStore16(
 			(Uint32)&REG_BLDALPHA, BLEND_ALPHA(14, BLEND_WEIGHT_MAX));
 		btElementGlowInitStarField(element);
-		for(frame = 0, pos = &starPosition; frame < STAR_FIELD_FRAMES;
-			frame++) {
+		for(frm = 0, pos = &starPos; frm < STAR_FIELD_TICKS; frm++) {
 			brightness = &battle->brightness;
 			ime = &REG_IME;
 			state = (struct STAR_FIELD_STATE *)Ram_HeapSlots->battleEff;
-			if(frame < STAR_FIELD_DARKEN_FRAMES)
+			if(frm < STAR_FIELD_DARKEN_TICKS)
 				btColBufferScale(battle->pal, BATTLE_BG_PALETTE,
-					*brightness = toFIXED(1) - frame * BACKGROUND_LEVEL_STEP,
+					*brightness = toFIXED(1) - frm * BACKGROUND_LEVEL_STEP,
 					BATTLE_BACKGROUND_COLORS);
 			btMotionProjectScaledPos(unitId, (Sint32 *)pos);
 			state->originX = (STAR_FIELD_CENTER - pos->x) << 8;
@@ -1039,10 +1038,10 @@ void btElementGlowPlay(
 	} else if(mode == GLOW_STREAKS) {
 		/* The streaks, their canvas centred on the unit likewise. */
 		btEffectStartElementStreaksStub(element);
-		for(frame = 0; frame < ELEMENT_STREAK_FRAMES; frame++) {
-			btMotionProjectScaledPos(unitId, (Sint32 *)&streakPosition);
-			origin[0] = (STAR_FIELD_CENTER - streakPosition.x) << 8;
-			origin[1] = (STAR_FIELD_CENTER - streakPosition.y) << 8;
+		for(frm = 0; frm < ELEMENT_STREAK_TICKS; frm++) {
+			btMotionProjectScaledPos(unitId, (Sint32 *)&streakPos);
+			origin[0] = (STAR_FIELD_CENTER - streakPos.x) << 8;
+			origin[1] = (STAR_FIELD_CENTER - streakPos.y) << 8;
 			IO_WRITE_QUEUE_PUSH(
 				(Uint32)&REG_BG2X, (Uint32)origin, DMA_COPY_WORDS(2));
 			sySynch(1);
@@ -1095,27 +1094,27 @@ Sint32 btFormationAverageLevel(Sint32 recordId)
 {
 	FORMATION			   *record;
 	const ENEMY_DEFINITION *enemy;
-	Uint32					memberIndex;
+	Uint32					memberIdx;
 	Sint32					enemyId;
 	Sint32					levelTotal;
-	Sint32					enemyCount;
+	Sint32					enemyCnt;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
 	UNUSED Sint32 levels[7];
 
-	enemyCount = 0;
+	enemyCnt = 0;
 	levelTotal = 0;
 	record = &Formations[recordId];
-	for(memberIndex = 0; memberIndex < FORMATION_MEMBERS; memberIndex++) {
-		if(record->minCnts[memberIndex] != 0)
+	for(memberIdx = 0; memberIdx < FORMATION_MEMBERS; memberIdx++) {
+		if(record->minCnts[memberIdx] != 0)
 			break;
 	}
-	if(memberIndex == FORMATION_MEMBERS)
+	if(memberIdx == FORMATION_MEMBERS)
 		return -1;
-	for(memberIndex = 0; memberIndex < FORMATION_MEMBERS; memberIndex++) {
-		if(record->maxCnts[memberIndex] == 0)
+	for(memberIdx = 0; memberIdx < FORMATION_MEMBERS; memberIdx++) {
+		if(record->maxCnts[memberIdx] == 0)
 			continue;
-		enemyId = record->memberIds[memberIndex];
+		enemyId = record->memberIds[memberIdx];
 		enemy = gmEnemyGetDefinitionStub(enemyId + ENEMY_ID_FIRST);
 		if(enemy == 0)
 			continue;
@@ -1123,9 +1122,9 @@ Sint32 btFormationAverageLevel(Sint32 recordId)
 			!syGameFlagGet(ENEMY_DEFEATED_FLAG(enemyId + ENEMY_ID_FIRST)))
 			return -2;
 		levelTotal += enemy->level;
-		enemyCount++;
+		enemyCnt++;
 	}
-	if(enemyCount == 0)
+	if(enemyCnt == 0)
 		return -3;
-	return levelTotal / enemyCount;
+	return levelTotal / enemyCnt;
 }

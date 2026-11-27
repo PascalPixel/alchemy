@@ -31,7 +31,7 @@ typedef struct SELECTION_NODE {
 	struct SELECTION_NODE *prev; /* the icon before it in its row */
 	struct SELECTION_NODE *next; /* the icon after it in its row */
 	/* The entry's number within its kind, as listed in
-	   SELECTION_MENU_STATE.bases; for an arrow, the frames left of its nudge
+	   SELECTION_MENU_STATE.bases; for an arrow, the ticks left of its nudge
 	   after a scroll. */
 	Uint16 base;
 	/* The entry's kind, as listed in SELECTION_MENU_STATE.kinds, or
@@ -41,15 +41,15 @@ typedef struct SELECTION_NODE {
 	Uint16		  tile;		 /* first sprite tile of its picture */
 	Sint16		  x;		 /* screen pixels */
 	Sint16		  y;		 /* screen pixels */
-	Sint16		  dx;		 /* pixels a frame */
-	Sint16		  dy;		 /* pixels a frame */
+	Sint16		  dx;		 /* pixels a tick */
+	Sint16		  dy;		 /* pixels a tick */
 	Sint16		  tgtX;		 /* screen pixels */
 	Sint16		  tgtY;		 /* screen pixels */
 	Sint16		  homeX;	 /* screen pixels, where it stood when chosen */
 	Sint16		  homeY;	 /* screen pixels, where it stood when chosen */
 	Uint16		  msg;		 /* its name, shown in the screen's window */
 	Sint16		  scale;	 /* 8.8 fixed point, Q_8_8(1) full size */
-	Sint16		  scaleStep; /* 8.8 fixed point a frame */
+	Sint16		  scaleStep; /* 8.8 fixed point a tick */
 	Sint16		  scaleEnd;	 /* 8.8 fixed point, Q_8_8(1) full size */
 	SELECTION_SPR spr;
 } SELECTION_NODE;
@@ -90,7 +90,7 @@ typedef struct SELECTION_MENU_STATE {
 	Uint16 cursorIdx;
 	Uint16 verticalScroll; /* pixels added to the icons' y; 32 at setup */
 	/* SELECTION_STATUS_SCROLLING while the cursor steps, SELECTION_STATUS_SHOWN
-	   after (window_selection.c); each frame drawn adds 1. */
+	   after (window_selection.c); each tick drawn adds 1. */
 	Uint16 stat;
 	Uint16 pathTop[5]; /* top, kept for each icon chosen on the path */
 	/* cursorIndex, kept for each icon chosen on the path */

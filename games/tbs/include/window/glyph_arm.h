@@ -9,8 +9,8 @@
 
 struct WINDOW;
 
-Sint32 mnGlyphDrawArm(struct WINDOW *window, Uint32 character, Uint32 x,
-	Uint32 y, const Uint8 *font);
+Sint32 mnGlyphDrawArm(struct WINDOW *win, Uint32 character, Uint32 x, Uint32 y,
+	const Uint8 *font);
 void   mnScanlineWindowBuildEdges(Uint16 *scanlineBounds, Uint16 *tilemap);
 
 #endif

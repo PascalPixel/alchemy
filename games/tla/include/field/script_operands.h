@@ -11,7 +11,7 @@ struct ACTOR;
 
 /* An actor script command's handler: it reads its operands at the actor's
    script cursor, moves the cursor past them and returns 1 to run the next
-   command this frame or 0 to wait. */
+   command this tick or 0 to wait. */
 typedef Sint32 (*SCRIPT_COMMAND)(struct ACTOR *);
 
 /* ACTOR as the actor script's SC_SET, SC_ADD and SC_CMP commands reach it,
@@ -50,8 +50,8 @@ typedef struct SCRIPT_OPERANDS {
 	Uint8  paused;
 	Uint8  retainSprCache;
 	Uint8  repeatCnt; /* the SC_LOOP count */
-	Sint16 wait;	  /* SC_WAIT's frames left */
-	Uint8  refused;	  /* ACTOR.refused, the blocked frames */
+	Sint16 wait;	  /* SC_WAIT's ticks left */
+	Uint8  refused;	  /* ACTOR.refused, the blocked ticks */
 	Uint8  frozen;
 	Uint8  sceneCnt;
 	Uint8  sceneByte;
@@ -80,9 +80,9 @@ typedef void (*OPERAND_FUNC)(
 	SCRIPT_OPERANDS *operands, Sint32 operation, Sint32 value);
 
 /* The handler for each work value number (map_grid_data.c). */
-extern const OPERAND_FUNC ActorScript_OperandHandlerTable[41];
+extern const OPERAND_FUNC ActorScriptOperandHandlerTable[41];
 
-/* The work value handlers of ActorScript_OperandHandlerTable, one an SW_ value:
+/* The work value handlers of ActorScriptOperandHandlerTable, one an SW_ value:
    each sets, adds to or compares (into conditionResult) the actor field it
    names; positions, targets, velocities and gravity are 16.16 pixels. */
 void fdActorScriptSetOrCompareScriptAddress(

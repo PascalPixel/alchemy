@@ -59,7 +59,7 @@ found:
    clear. */
 Sint32 fdGameFlagIsConditionActive(Sint32 condition)
 {
-	Sint32 flagSet;
+	Sint32 flgSet;
 
 	if(condition == -1) {
 		return 1;
@@ -67,8 +67,8 @@ Sint32 fdGameFlagIsConditionActive(Sint32 condition)
 	if(CONDITION_FLAG_SET & condition) {
 		return syGameFlagGet(condition);
 	}
-	flagSet = syGameFlagGet(condition);
-	return flagSet == 0;
+	flgSet = syGameFlagGet(condition);
+	return flgSet == 0;
 }
 
 /* Returns the first of the scene's cues of kind for target whose condition
@@ -77,36 +77,35 @@ Sint32 fdGameFlagIsConditionActive(Sint32 condition)
    fdRunPushMetatile runs for an actor pushed and for the metatile pushed
    against, answer any target; the facing test alone is skipped while
    MainRoutineStateWork.movementMode is LEADER_MOVEMENT_KEYS. */
-CUE_VIEW *fdFindCue(Sint32 kind, Sint32 target)
+CUE_VIEW *fdFindCue(Sint32 kind, Sint32 tgt)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	CUE_VIEW	*cue = state->cues;
-	Sint32		 flags;
+	Sint32		 flg;
 	Uint32 facing = fdActorLookup(MainRoutineStateWork.leaderActorId)->facing;
 
-	flags = cue->flg;
-	while(flags != -1) {
+	flg = cue->flg;
+	while(flg != -1) {
 		Uint8 *mode = &MainRoutineStateWork.movementMode;
 
-		if((flags & CUE_KIND_MASK) == kind &&
-			(cue->value == target || kind == CUE_PUSH || kind == CUE_PUSHED) &&
+		if((flg & CUE_KIND_MASK) == kind &&
+			(cue->value == tgt || kind == CUE_PUSH || kind == CUE_PUSHED) &&
 			fdGameFlagIsConditionActive(cue->condition)) {
 			Sint32 matches = 0;
-			Sint32 minimumPushFrames = FIELD_PUSH_FRAMES;
+			Sint32 minimumPushTicks = FIELD_PUSH_TICKS;
 			Sint32 touchRequirements;
 
-			flags = cue->flg;
-			if(flags & STEP_CUE_FLAG_QUICK)
-				minimumPushFrames = 2;
-			touchRequirements =
-				flags & (STEP_CUE_FLAG_WALKING | CUE_FLAG_FACING);
+			flg = cue->flg;
+			if(flg & STEP_CUE_FLAG_QUICK)
+				minimumPushTicks = 2;
+			touchRequirements = flg & (STEP_CUE_FLAG_WALKING | CUE_FLAG_FACING);
 
 			switch(touchRequirements) {
 			case 0:
 				matches = 1;
 				break;
 			case STEP_CUE_FLAG_WALKING:
-				if(state->blockedSteps > minimumPushFrames)
+				if(state->blockedSteps > minimumPushTicks)
 					matches = 1;
 				break;
 			case CUE_FLAG_FACING:
@@ -114,16 +113,16 @@ CUE_VIEW *fdFindCue(Sint32 kind, Sint32 target)
 					/* Bits 15 to 12 are a facing in sixteenths of a turn; the
 					   leader's facing must be within an eighth of a turn of
 					   it. */
-					flags &= CUE_FACING_MASK;
-					matches = (Uint16)((flags - facing) +
-								  (TRIG_TURN / 8 - 1)) <= TRIG_TURN / 4 - 2;
+					flg &= CUE_FACING_MASK;
+					matches = (Uint16)((flg - facing) + (TRIG_TURN / 8 - 1)) <=
+						TRIG_TURN / 4 - 2;
 				}
 				break;
 			case STEP_CUE_FLAG_WALKING | CUE_FLAG_FACING:
-				if(state->blockedSteps > minimumPushFrames) {
-					flags &= CUE_FACING_MASK;
-					matches = (Uint16)((flags - facing) +
-								  (TRIG_TURN / 8 - 1)) <= TRIG_TURN / 4 - 2;
+				if(state->blockedSteps > minimumPushTicks) {
+					flg &= CUE_FACING_MASK;
+					matches = (Uint16)((flg - facing) + (TRIG_TURN / 8 - 1)) <=
+						TRIG_TURN / 4 - 2;
 				}
 				break;
 			}
@@ -133,7 +132,7 @@ CUE_VIEW *fdFindCue(Sint32 kind, Sint32 target)
 		cue++;
 		if(cue->flg == -1)
 			break;
-		flags = cue->flg;
+		flg = cue->flg;
 	}
 	return NULL;
 }
@@ -178,9 +177,9 @@ Sint32 fdTalkToActor(Sint32 id)
 	ACTOR_PLACE *placement;
 	Sint32		 result;
 	ACTOR		*talker;
-	Sint32		 savedAngle;
+	Sint32		 savedAng;
 	Sint32		 paused;
-	Sint32		 decodeFlags;
+	Sint32		 decodeFlg;
 	Sint32		 silent;
 	FIELD_STATE *field;
 	ACTOR		*leader;
@@ -191,17 +190,17 @@ Sint32 fdTalkToActor(Sint32 id)
 	Uint8		*busy;
 	Sint32		 found;
 	Sint32		 type;
-	Sint32		 flag;
+	Sint32		 flg;
 	Sint32		 contents;
-	Sint32		 index;
+	Sint32		 idx;
 	Sint32		 slot;
 	FIELD_STATE *state;
 
 	placement = fdFindActorPlacement(id);
 	result = -1;
-	savedAngle = 0;
+	savedAng = 0;
 	paused = 0;
-	decodeFlags = 0;
+	decodeFlg = 0;
 	silent = id & FIELD_TALK_SILENT;
 	field = Ram_HeapSlots->fieldState;
 	id &= FIELD_TALK_ACTOR_MASK;
@@ -215,18 +214,18 @@ Sint32 fdTalkToActor(Sint32 id)
 				   contents. */
 				row += (id - FIELD_TREASURE_ACTOR) * 4;
 				type = *row++;
-				index = id;
+				idx = id;
 				found = 1;
 				point = *row++;
-				flag = *row++;
+				flg = *row++;
 				contents = *row;
 			}
 		} else {
 			type = CONTAINER_GROUND;
 			point = result;
-			flag = result;
+			flg = result;
 			contents = field->scoopedItem;
-			index = SCOOPED_ITEM_ACTOR;
+			idx = SCOOPED_ITEM_ACTOR;
 			found = 1;
 		}
 		if(found) {
@@ -249,23 +248,23 @@ Sint32 fdTalkToActor(Sint32 id)
 				mnFieldMessageShowStub(
 					found + (Sint32)&MsgTileChecked, FIELD_MESSAGE_ZOOM);
 			if(MainRoutineStateWork.next == SCENE_VENUS_LIGHTHOUSE &&
-				point == 0 && !syGameFlagGet(flag)) {
+				point == 0 && !syGameFlagGet(flg)) {
 				mnMessageArgumentPushStub(contents, MESSAGE_ARGUMENT_ITEM);
 				mnFieldMessageShowStub(
 					(Sint32)&MsgChestAlreadyOpen, FIELD_MESSAGE_ZOOM);
 			}
-			if(!fdGameFlagIsConditionActive(flag))
+			if(!fdGameFlagIsConditionActive(flg))
 				goto empty;
 			if(type == CONTAINER_CHEST) {
 				if(contents == 0)
-					fdTreasureSpotOpenEmptyChest(index);
+					fdTreasureSpotOpenEmptyChest(idx);
 				else
-					fdTreasureSpotOpenChest(index);
+					fdTreasureSpotOpenChest(idx);
 			}
 			if(type == CONTAINER_MIMIC)
-				fdTreasureSpotOpenChest(index);
+				fdTreasureSpotOpenChest(idx);
 			if(type == CONTAINER_PSYNERGY_STONE) {
-				ACTOR *stone = fdTreasureSpotGetActor(index);
+				ACTOR *stone = fdTreasureSpotGetActor(idx);
 
 				stone->update = fdItemDispEmitSparkles;
 				fdItemDispRaiseAboveLeader(stone);
@@ -291,25 +290,25 @@ Sint32 fdTalkToActor(Sint32 id)
 				fdScriptWait(30);
 				mnFieldMessageShowStub(
 					(Sint32)&MsgPsynergyStoneDisappeared, FIELD_MESSAGE_ZOOM);
-				fdTreasureSpotRemove(index);
-				if(flag != -1)
-					syGameFlagSet(flag);
+				fdTreasureSpotRemove(idx);
+				if(flg != -1)
+					syGameFlagSet(flg);
 			} else if(type == CONTAINER_STONE_TABLET) {
 				fdScriptStart();
 				fdScriptEndLastingPsynergy(0);
-				fdSummonTabletPlayRunes(index);
+				fdSummonTabletPlayRunes(idx);
 				mnSummonShowLearnedMessageStub(contents);
 				gmSummonLearnStub(contents);
-				fdTreasureSpotRemove(index);
-				if(flag != -1)
-					syGameFlagSet(flag);
+				fdTreasureSpotRemove(idx);
+				if(flg != -1)
+					syGameFlagSet(flg);
 				fdScriptEnd();
 			} else if(type == CONTAINER_MIMIC) {
 				state = Ram_HeapSlots->fieldState;
-				fdTreasureSpotLaunchMimic(index);
-				if(flag != -1)
+				fdTreasureSpotLaunchMimic(idx);
+				if(flg != -1)
 					MainRoutineStateWork.pendingDjinni =
-						flag | CONDITION_FLAG_SET;
+						flg | CONDITION_FLAG_SET;
 				if(contents > ENCOUNTER_ZONE_SLOTS - 1)
 					state->encounter =
 						fdEncounterGetFormationAtSlot(ENCOUNTER_ZONE_MIMIC + 1,
@@ -326,20 +325,20 @@ Sint32 fdTalkToActor(Sint32 id)
 				if(type == CONTAINER_POND)
 					mnFieldMessageShowStub(
 						(Sint32)&MsgSomethingInTheShallows, FIELD_MESSAGE_ZOOM);
-				if(fdActorGetSprShape(index)) {
+				if(fdActorGetSprShape(idx)) {
 					mnFieldMessageShowStub(
 						(Sint32)&MsgSomethingBuriedHere, FIELD_MESSAGE_ZOOM);
 					if(gmPartyFindOwnerWithActionStub(ABILITY_SCOOP) != -1)
 						FieldStateWork->fieldMenu = 1;
 				} else if(contents & CONTAINER_COINS) {
 					if(type == CONTAINER_GROUND) {
-						shown = fdTreasureSpotGetActor(index);
+						shown = fdTreasureSpotGetActor(idx);
 						shown->update = fdItemDispEmitSparkles;
 					} else {
-						shown = fdItemDispShowItemInFront(index, 0);
+						shown = fdItemDispShowItemInFront(idx, 0);
 						sySynch(30);
 						if(type == CONTAINER_CHEST)
-							fdTreasureSpotShowOpened(index);
+							fdTreasureSpotShowOpened(idx);
 					}
 					fdItemDispRaiseAboveLeader(shown);
 					sySndPlayStub(MUS_TREASURE_FOUND);
@@ -349,8 +348,8 @@ Sint32 fdTalkToActor(Sint32 id)
 					mnFieldMessageShowStub((Sint32)&MsgCoinsReceived,
 						FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND);
 					gmPartyAdjustCoinsStub(contents);
-					if(flag != -1)
-						syGameFlagSet(flag);
+					if(flg != -1)
+						syGameFlagSet(flg);
 					if(type == CONTAINER_GROUND) {
 						fdActorSetPosAndResetMotionStub(shown, 0, 0, 0);
 						shown->update = NULL;
@@ -358,15 +357,15 @@ Sint32 fdTalkToActor(Sint32 id)
 						fdActorReleaseStub(shown);
 					}
 				} else if(contents == 0) {
-					if(flag != -1)
-						syGameFlagSet(flag);
+					if(flg != -1)
+						syGameFlagSet(flg);
 					goto empty;
 				} else {
 					if(type == CONTAINER_GROUND) {
-						shown = fdTreasureSpotGetActor(index);
+						shown = fdTreasureSpotGetActor(idx);
 						shown->update = fdItemDispEmitSparkles;
 					} else {
-						shown = fdItemDispShowItemInFront(index, contents);
+						shown = fdItemDispShowItemInFront(idx, contents);
 						sySynch(30);
 					}
 					slot = gmPartyInventoryAddStub(contents);
@@ -382,10 +381,10 @@ Sint32 fdTalkToActor(Sint32 id)
 						if(type != CONTAINER_GROUND)
 							fdActorReleaseIfPresent(shown);
 						if(type == CONTAINER_CHEST)
-							fdTreasureSpotCloseChest(index);
+							fdTreasureSpotCloseChest(idx);
 					} else {
 						if(type == CONTAINER_CHEST)
-							fdTreasureSpotShowOpened(index);
+							fdTreasureSpotShowOpened(idx);
 						fdItemDispRaiseAboveLeader(shown);
 						sySndPlayStub(MUS_TREASURE_FOUND);
 						mnMessageArgumentPushStub(
@@ -401,8 +400,8 @@ Sint32 fdTalkToActor(Sint32 id)
 								FIELD_MESSAGE_ZOOM |
 									FIELD_MESSAGE_WAITING_FOR_SOUND);
 						}
-						if(flag != -1)
-							syGameFlagSet(flag);
+						if(flg != -1)
+							syGameFlagSet(flg);
 						if(type == CONTAINER_GROUND) {
 							fdActorSetPosAndResetMotionStub(shown, 0, 0, 0);
 							shown->update = NULL;
@@ -410,7 +409,7 @@ Sint32 fdTalkToActor(Sint32 id)
 							fdActorReleaseStub(shown);
 						}
 						if(type == CONTAINER_POND)
-							fdTreasureSpotRemove(index);
+							fdTreasureSpotRemove(idx);
 						result = 0;
 					}
 				}
@@ -434,7 +433,7 @@ Sint32 fdTalkToActor(Sint32 id)
 			/* With no halted line of its own, a halted actor's plain talk comes
 			   out as halting speech, broken off after its first word. */
 			talk = fdFindCue(CUE_TALK, id);
-			decodeFlags = MESSAGE_DECODE_HALTING_SPEECH;
+			decodeFlg = MESSAGE_DECODE_HALTING_SPEECH;
 			if(talk == NULL)
 				return result;
 			/* A function talk cue is not run for a stopped actor: it says one
@@ -453,7 +452,7 @@ Sint32 fdTalkToActor(Sint32 id)
 		if(!paused) {
 			talker->paused = 1;
 			fdActorSetAnimationSpeedStub(talker, 0);
-			savedAngle = talker->facing;
+			savedAng = talker->facing;
 			if((Uint8)placement->talkFacing <= TALK_FACING_PARTY_AND_BACK ||
 				(Sint8)placement->talkFacing == TALK_FACING_PARTY_THEN_WATCH) {
 				leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
@@ -464,7 +463,7 @@ Sint32 fdTalkToActor(Sint32 id)
 			}
 		}
 		if(talk->result < CUE_RESULT_MESSAGE_END) {
-			mnMessageSetDecodeFlagsStub(decodeFlags);
+			mnMessageSetDecodeFlagsStub(decodeFlg);
 			fdScriptRunMessage(id, talk->result);
 		} else {
 			fdLeaderStopMoving();
@@ -478,11 +477,11 @@ Sint32 fdTalkToActor(Sint32 id)
 						MainRoutineStateWork.leaderActorId);
 					talker->steeringFlg |= ACTOR_FACES_MOTION;
 					fdActorSetMovementType(
-						talker, (Sint32)Actor_FaceWatchedScript);
+						talker, (Sint32)ActorFaceWatchedScript);
 				} else if((Sint8)placement->talkFacing ==
 					TALK_FACING_PARTY_AND_BACK) {
-					talker->tmr = savedAngle;
-					fdActorStartScriptStub(talker, Actor_StepAngleScript);
+					talker->tmr = savedAng;
+					fdActorStartScriptStub(talker, ActorStepAngleScript);
 				}
 			}
 			talker->paused = 0;
@@ -569,7 +568,7 @@ Sint32 fdRunStepCueOrExit(Sint32 value)
 }
 
 /* Runs the push metatile the leader pushes against (attributes, its metatile's
-   attribute bits) once it has pushed for more than FIELD_PUSH_FRAMES, idle
+   attribute bits) once it has pushed for more than FIELD_PUSH_TICKS, idle
    while MainRoutineStateWork.sandActive is set: a MAP_METATILE_LEDGE with
    KEY_DOWN held jumps down it, a MAP_METATILE_JUMP jumps forward, a
    MAP_METATILE_CLIMBABLE climbs down or up by the key held, and a
@@ -580,22 +579,22 @@ Sint32 fdRunPushMetatile(Sint32 attributes)
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	Sint32		 owner = MainRoutineStateWork.leaderActorId;
 	CUE_VIEW	*event;
-	Sint32		 target;
+	Sint32		 tgt;
 	Sint32		 result;
 
 	if(MainRoutineStateWork.sandActive != 0)
 		return 0;
 	if((attributes & MAP_METATILE_LEDGE) &&
-		state->blockedSteps > FIELD_PUSH_FRAMES &&
+		state->blockedSteps > FIELD_PUSH_TICKS &&
 		(state->heldKeys & KEY_DOWN)) {
 		fdActorJumpDownLedge(owner, ANIM_LEADER_SPRING, 0);
 		state->blockedSteps = 0;
 	}
 	if((attributes & MAP_METATILE_JUMP) &&
-		state->blockedSteps > FIELD_PUSH_FRAMES && !fdTryJumpForward())
+		state->blockedSteps > FIELD_PUSH_TICKS && !fdTryJumpForward())
 		state->blockedSteps = 0;
 	if((attributes & MAP_METATILE_CLIMBABLE) &&
-		state->blockedSteps > FIELD_PUSH_FRAMES) {
+		state->blockedSteps > FIELD_PUSH_TICKS) {
 		Sint32 kind =
 			state->heldKeys & (KEY_RIGHT | KEY_LEFT | KEY_UP | KEY_DOWN);
 		Sint32 done = -1;
@@ -614,16 +613,16 @@ Sint32 fdRunPushMetatile(Sint32 attributes)
 		}
 	}
 	if((attributes & MAP_METATILE_PUSH) &&
-		state->blockedSteps > FIELD_PUSH_FRAMES &&
+		state->blockedSteps > FIELD_PUSH_TICKS &&
 		fdLeaderCanPushObjectAhead()) {
-		target = fdFindNearbyTalkTarget(MainRoutineStateWork.leaderActorId);
-		if(target != -1) {
-			event = fdFindCue(CUE_PUSH, target);
+		tgt = fdFindNearbyTalkTarget(MainRoutineStateWork.leaderActorId);
+		if(tgt != -1) {
+			event = fdFindCue(CUE_PUSH, tgt);
 			if(event != NULL && (result = event->result) != 0) {
 				if(result < CUE_RESULT_MESSAGE_END)
 					fdScriptRunMessage(-1, result);
 				else
-					((void (*)(Sint32, Sint32))result)(attributes, target);
+					((void (*)(Sint32, Sint32))result)(attributes, tgt);
 			}
 			fdLeaderPushObjectAhead();
 			event = fdFindCue(CUE_PUSHED, attributes);
@@ -631,7 +630,7 @@ Sint32 fdRunPushMetatile(Sint32 attributes)
 				if(result < CUE_RESULT_MESSAGE_END)
 					fdScriptRunMessage(-1, result);
 				else
-					((void (*)(Sint32, Sint32))result)(attributes, target);
+					((void (*)(Sint32, Sint32))result)(attributes, tgt);
 			}
 			state->blockedSteps = 0;
 		}
@@ -640,7 +639,7 @@ Sint32 fdRunPushMetatile(Sint32 attributes)
 }
 
 /* The search command. METATILE_BEHAVIOR_JAR to METATILE_BEHAVIOR_WELL show
-   their pair of messages from Field_ExamineCueMessageOffsets; otherwise the
+   their pair of messages from FieldExamineCueMessageOffsets; otherwise the
    examine cue of the metatile runs: its "checked the ..." message, then its
    message or callback, or the matching "found nothing" message. MsgTileChecked
    is the base of the "X checked the Y..." lines, MsgTileResult the base of the
@@ -648,17 +647,17 @@ Sint32 fdRunPushMetatile(Sint32 attributes)
 Sint32 fdExamineMetatile(Sint32 id)
 {
 	CUE	  *event;
-	Sint32 index;
+	Sint32 idx;
 	Sint32 kind;
 	Sint32 condition;
 	Uint32 result;
 
 	/* The unsigned compare also rejects codes below METATILE_BEHAVIOR_JAR. */
-	index = id - METATILE_BEHAVIOR_JAR;
-	if((Uint32)index <= METATILE_BEHAVIOR_WELL - METATILE_BEHAVIOR_JAR) {
+	idx = id - METATILE_BEHAVIOR_JAR;
+	if((Uint32)idx <= METATILE_BEHAVIOR_WELL - METATILE_BEHAVIOR_JAR) {
 		fdLeaderStopMoving();
 		/* id, no longer needed, holds the pair's message number. */
-		id = Field_ExamineCueMessageOffsets[index];
+		id = FieldExamineCueMessageOffsets[idx];
 		mnFieldMessageShowStub(
 			id + (Sint32)&MsgTileChecked, FIELD_MESSAGE_ZOOM);
 		mnFieldMessageShowStub(id + (Sint32)&MsgTileResult, FIELD_MESSAGE_ZOOM);
@@ -666,10 +665,10 @@ Sint32 fdExamineMetatile(Sint32 id)
 	}
 	event = fdFindCue(CUE_EXAMINE, id);
 	if(event != NULL) {
-		Sint32 flags = event->ctrl;
+		Sint32 flg = event->ctrl;
 
 		condition = event->condition;
-		kind = EXAMINE_TARGET(flags);
+		kind = EXAMINE_TARGET(flg);
 		if(!(event->subject & CUE_SUBJECT_OWN_EFFECT) && kind != 0) {
 			fdLeaderStopMoving();
 			mnFieldMessageShowStub(

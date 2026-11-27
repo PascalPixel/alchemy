@@ -37,7 +37,7 @@ void mnShopRepairItem(Sint32 unitId, Sint32 slot)
 	ITEM_DEFINITION *item = gmItemGetDirectStub(itemId);
 	Sint32			 equipped = gmInventoryFindEquippedStub(unitId, item->type);
 	Uint32			 repairCost;
-	Sint32			 messageBase;
+	Sint32			 msgBase;
 	Uint8			 useType;
 	Uint32			 savedEntry;
 
@@ -65,12 +65,12 @@ void mnShopRepairItem(Sint32 unitId, Sint32 slot)
 	}
 	mnMessageArgumentPushStub(itemId, MESSAGE_ARGUMENT_ITEM);
 	mnMessageArgumentPushStub(repairCost, MESSAGE_ARGUMENT_NUMBER);
-	messageBase = (Sint32)MsgRepairOffer;
+	msgBase = (Sint32)MsgRepairOffer;
 	/* "I'll fix your <item> for <n> coins, OK?" */
-	mnShopShowKeeperMessageHidingCursor(messageBase);
+	mnShopShowKeeperMessageHidingCursor(msgBase);
 	if(mnShopAskYesNo(0) != 0) {
 		/* "Changed your mind? Whatever you say!" */
-		mnShopShowKeeperMessageHidingCursor(messageBase + 1);
+		mnShopShowKeeperMessageHidingCursor(msgBase + 1);
 		return;
 	}
 	/* Hide the item while it is repaired, without compacting its slot. */
@@ -79,9 +79,9 @@ void mnShopRepairItem(Sint32 unitId, Sint32 slot)
 	mnShopDrawMemberItems(shop->itemWin, unitId);
 	mnMessageArgumentPushStub(itemId, MESSAGE_ARGUMENT_ITEM);
 	/* "Yes, sir! I'll take your <item>, then." */
-	mnShopShowKeeperMessageHidingCursor(messageBase + 2);
+	mnShopShowKeeperMessageHidingCursor(msgBase + 2);
 	mnMessageCloseFinishedWindowsStub();
-	/* The hammer blows are 110 frames apart; the item stays hidden
+	/* The hammer blows are 110 ticks apart; the item stays hidden
 	   throughout. */
 	sySynch(10);
 	sySndPlayStub(SE_BELL);
@@ -99,7 +99,7 @@ void mnShopRepairItem(Sint32 unitId, Sint32 slot)
 	mnShopDrawMemberItems(shop->itemWin, unitId);
 	mnMessageArgumentPushStub(itemId, MESSAGE_ARGUMENT_ITEM);
 	/* "I've repaired your <item>. Here it is." */
-	mnShopShowKeeperMessageHidingCursor(messageBase + 3);
+	mnShopShowKeeperMessageHidingCursor(msgBase + 3);
 	if(mnShopConfirmEquip(unitId, slot))
 		mnShopSellOld(unitId, equipped);
 }

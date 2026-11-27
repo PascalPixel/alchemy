@@ -1,6 +1,6 @@
 /* The link battle timer and the no-flee check. Part of screens.c. */
 
-#define COUNTDOWN_START_FRAMES (15 * FRAMES_PER_SECOND)
+#define COUNTDOWN_START_TICKS (15 * TICKS_PER_SECOND)
 
 /* The partner console's link signature (LinkPeerSignatures) as the timer reads
    it: halfwords 4 to 7 read "EDVS" once the partner has chosen its commands
@@ -17,41 +17,41 @@ typedef struct LINK_SIGNATURE {
 /* An event while the party's commands are chosen
    (mnBattleCollectPartyCommands):
    eases the battle view a third of the way to BATTLE_MENU_STATE.tgtViewOfs each
-   frame (a pixel at least), draws the sprites of BATTLE_MENU_STATE.icons that
+   tick (a pixel at least), draws the sprites of BATTLE_MENU_STATE.icons that
    are shown (the chosen command's and ability's icons, the party member's
    portrait) and slides the page arrows. In a link battle it also runs the
    timer: once the partner has chosen its commands, this side has 15 seconds,
    counted down in the "TIME" window, with a tone at each second. */
-void mnBattleMenuUpdateEachFrame(void)
+void mnBattleMenuUpdateEachTick(void)
 {
 	BATTLE_MENU_STATE *state =
 		(BATTLE_MENU_STATE *)Ram_HeapSlots->battleMenuState;
 	BATTLE_STATE   *runtime;
 	LINK_SIGNATURE *signature;
-	Sint32			target;
-	Sint32			current;
+	Sint32			tgt;
+	Sint32			cur;
 	Sint32			difference;
 	Sint32			step;
-	Sint32			newOffset;
-	Sint32			timer;
-	Sint32			nextTimer;
+	Sint32			newOfs;
+	Sint32			tmr;
+	Sint32			nextTmr;
 	Sint32			seconds;
 	Sint32			i;
 
 	if(state != 0) {
-		target = state->tgtViewOfs;
-		current = state->viewOfs;
-		if(target != current) {
-			difference = target - current;
+		tgt = state->tgtViewOfs;
+		cur = state->viewOfs;
+		if(tgt != cur) {
+			difference = tgt - cur;
 			step = difference / 3;
 			if(step == 0) {
 				step--;
 				if(difference >= 0)
 					step = 1;
 			}
-			newOffset = current + step;
-			state->viewOfs = newOffset;
-			btCameraSetCommandViewStub(newOffset);
+			newOfs = cur + step;
+			state->viewOfs = newOfs;
+			btCameraSetCommandViewStub(newOfs);
 		}
 
 		for(i = 0; i < 3; i++) {
@@ -75,14 +75,14 @@ void mnBattleMenuUpdateEachFrame(void)
 			goto signature_done;
 		if(signature->s != 'S')
 			goto signature_done;
-		state->tmr = COUNTDOWN_START_FRAMES;
-		timer = state->tmr;
+		state->tmr = COUNTDOWN_START_TICKS;
+		tmr = state->tmr;
 		goto signature_done;
 
 		/* -1 until the partner's signature reads "EDVS", then the countdown. */
 	load_timer:
-		timer = state->tmr;
-		if(timer >= 0)
+		tmr = state->tmr;
+		if(tmr >= 0)
 			goto timer_ready;
 		signature = (LINK_SIGNATURE *)LinkPeerSignatures[runtime->linkSide ^ 1];
 		if(signature->e != 'E')
@@ -91,28 +91,28 @@ void mnBattleMenuUpdateEachFrame(void)
 			goto signature_tail;
 
 	signature_done:
-		if(timer < 0)
+		if(tmr < 0)
 			return;
 
-		/* The window opens the first frame the Status screen is not up. */
+		/* The window opens the first tick the Status screen is not up. */
 	timer_ready:
 		if(state->tmrWin == 0 && state->tmrHidden == 0) {
 			state->tmrWin = (WINDOW *)mnLinkCreateCountdownLabelWindow();
-			timer = state->tmr;
+			tmr = state->tmr;
 		}
 
-		if(timer > 0) {
-			nextTimer = timer - 1;
-			state->tmr = nextTimer;
-			timer = nextTimer;
+		if(tmr > 0) {
+			nextTmr = tmr - 1;
+			state->tmr = nextTmr;
+			tmr = nextTmr;
 		}
-		if(timer < 0)
+		if(tmr < 0)
 			return;
 
-		/* Round remaining frames upward so zero appears only after time
+		/* Round remaining ticks upward so zero appears only after time
 		   expires. */
-		seconds = (timer + FRAMES_PER_SECOND - 1) / FRAMES_PER_SECOND;
-		if(seconds != 0 && seconds * FRAMES_PER_SECOND == timer)
+		seconds = (tmr + TICKS_PER_SECOND - 1) / TICKS_PER_SECOND;
+		if(seconds != 0 && seconds * TICKS_PER_SECOND == tmr)
 			sySndPlayStub(SE_TRIPLE_TONE_LOW);
 
 		if(state->tmrWin != 0)
@@ -129,8 +129,8 @@ void mnBattleMenuUpdateEachFrame(void)
    row offers no Flee. */
 Sint32 mnBattleRefuseFlee(void)
 {
-	Sint16		  buffer[64];
-	Sint32		  window;
+	Sint16		  buf[64];
+	Sint32		  win;
 	Bool		  result;
 	BATTLE_STATE *battle;
 	Sint32		  mode;
@@ -148,18 +148,18 @@ Sint32 mnBattleRefuseFlee(void)
 		}
 	}
 	if(result != 0) {
-		window = mnWindowCreate(0, 7, 30, 4,
+		win = mnWindowCreate(0, 7, 30, 4,
 			WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
 				WINDOW_FLAG_BORDERED_CANVAS);
 		mnTextFillCanvasBackground();
 		BATTLE_MENU_MESSAGE_COPY(
-			(Sint32)&MsgNoTimeToRun, buffer, BATTLE_MENU_MESSAGE_CAPACITY);
-		mnTextDrawWideStringAtOffset(buffer, window, 0, 4);
+			(Sint32)&MsgNoTimeToRun, buf, BATTLE_MENU_MESSAGE_CAPACITY);
+		mnTextDrawWideStringAtOffset(buf, win, 0, 4);
 		do {
 			sySynch(1);
 		} while((PerWork.push & (KEY_A | KEY_B)) == 0 &&
 			BattleMenuStateWork->tmr != 0);
-		mnWindowClose(window, 1);
+		mnWindowClose(win, 1);
 	}
 	return result;
 }

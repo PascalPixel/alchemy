@@ -4,7 +4,7 @@
 #include "field/field.h"
 
 /* The handler for each state value number (ACTOR_SCRIPT_VALUE). */
-const OPERAND_FUNC ActorScript_OperandHandlerTable[41] = {
+const OPERAND_FUNC ActorScriptOperandHandlerTable[41] = {
 	fdActorScriptSetOrCompareScriptAddress,	   /* 0 SW_SCRIPT */
 	fdActorScriptSetOrCompareCursor,		   /* 1 SW_CURSOR */
 	fdActorScriptSetOrCompareFacing,		   /* 2, as SW_FACING */

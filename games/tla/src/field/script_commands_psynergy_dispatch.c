@@ -8,18 +8,18 @@ void fdPsynergyForceOnTarget(Sint32 unused);
 void fdPsynergyDouseOnTarget(Sint32 unused);
 void fdPsynergyFrostOnTarget(Sint32 unused);
 void fdPsynergyWhirlwindOnTarget(Sint32 unused);
-void fdPsynergyCatchOnTarget(Sint32 targetId);
-void fdPsynergySandOnTarget(Sint32 targetId);
-void fdPsynergyBlazeOnTarget(Sint32 targetId);
-void fdPsynergyCycloneOnTarget(Sint32 targetId);
-void fdPsynergyScoopOnTarget(Sint32 targetId);
-void fdPsynergyTremorOnTarget(Sint32 targetId);
-void fdPsynergyGrindOnTarget(Sint32 targetId);
-void fdPsynergyHoverOnTarget(Sint32 targetId);
-void fdPsynergyTeleportOnTarget(Sint32 targetId);
-void fdPsynergyParchOnTarget(Sint32 targetId);
-void fdPsynergyBurstOnTarget(Sint32 targetId);
-void fdPsynergyPoundOnTarget(Sint32 targetId);
+void fdPsynergyCatchOnTarget(Sint32 tgtId);
+void fdPsynergySandOnTarget(Sint32 tgtId);
+void fdPsynergyBlazeOnTarget(Sint32 tgtId);
+void fdPsynergyCycloneOnTarget(Sint32 tgtId);
+void fdPsynergyScoopOnTarget(Sint32 tgtId);
+void fdPsynergyTremorOnTarget(Sint32 tgtId);
+void fdPsynergyGrindOnTarget(Sint32 tgtId);
+void fdPsynergyHoverOnTarget(Sint32 tgtId);
+void fdPsynergyTeleportOnTarget(Sint32 tgtId);
+void fdPsynergyParchOnTarget(Sint32 tgtId);
+void fdPsynergyBurstOnTarget(Sint32 tgtId);
+void fdPsynergyPoundOnTarget(Sint32 tgtId);
 
 /* Runs one step of the scene's field Psynergy: cast with no target, cast on the
    chosen target (secondActorId), Mind Read's end, or what a lasting Psynergy
@@ -42,67 +42,67 @@ void fdPsynergyRun(void)
 {
 	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
 	FIELD_STATE		   *event = Ram_HeapSlots->fieldState;
-	Sint32				animation = scene->fieldPsynergy;
-	Sint32				targetId = scene->tgtId;
+	Sint32				anm = scene->fieldPsynergy;
+	Sint32				tgtId = scene->tgtId;
 	Sint32				objectId;
 
-	if(animation == FIELD_PSYNERGY_MOVE)
+	if(anm == FIELD_PSYNERGY_MOVE)
 		fdPsynergyMove();
-	else if(animation == FIELD_PSYNERGY_LIFT)
+	else if(anm == FIELD_PSYNERGY_LIFT)
 		fdPsynergyLift();
-	else if(animation == FIELD_PSYNERGY_CARRY)
+	else if(anm == FIELD_PSYNERGY_CARRY)
 		fdPsynergyCarry();
-	else if(animation == FIELD_PSYNERGY_FORCE)
+	else if(anm == FIELD_PSYNERGY_FORCE)
 		fdPsynergyForce();
-	else if(animation == FIELD_PSYNERGY_DOUSE)
+	else if(anm == FIELD_PSYNERGY_DOUSE)
 		fdPsynergyDouse();
-	else if(animation == FIELD_PSYNERGY_WHIRLWIND)
+	else if(anm == FIELD_PSYNERGY_WHIRLWIND)
 		fdPsynergyWhirlwind();
-	else if(animation == FIELD_PSYNERGY_FROST)
+	else if(anm == FIELD_PSYNERGY_FROST)
 		fdPsynergyFrost();
-	else if(animation == FIELD_PSYNERGY_PLY)
+	else if(anm == FIELD_PSYNERGY_PLY)
 		fdPsynergyPly();
-	else if(animation == FIELD_PSYNERGY_GROWTH)
+	else if(anm == FIELD_PSYNERGY_GROWTH)
 		fdPsynergyGrowth();
-	else if(animation == FIELD_PSYNERGY_CATCH)
+	else if(anm == FIELD_PSYNERGY_CATCH)
 		fdPsynergyCatch();
-	else if(animation == FIELD_PSYNERGY_RETREAT)
+	else if(anm == FIELD_PSYNERGY_RETREAT)
 		fdPsynergyRetreat();
-	else if(animation == FIELD_PSYNERGY_AVOID)
+	else if(anm == FIELD_PSYNERGY_AVOID)
 		fdPsynergyAvoid();
-	else if(animation == FIELD_PSYNERGY_CLOAK)
+	else if(anm == FIELD_PSYNERGY_CLOAK)
 		fdPsynergyStartCloak();
-	else if(animation == FIELD_PSYNERGY_REVEAL)
+	else if(anm == FIELD_PSYNERGY_REVEAL)
 		fdPsynergyReveal();
-	else if(animation == FIELD_PSYNERGY_LASH)
+	else if(anm == FIELD_PSYNERGY_LASH)
 		fdPsynergyLash();
-	else if(animation == FIELD_PSYNERGY_ARROW)
+	else if(anm == FIELD_PSYNERGY_ARROW)
 		fdPsynergyArrow();
-	else if(animation == FIELD_PSYNERGY_CYCLONE)
+	else if(anm == FIELD_PSYNERGY_CYCLONE)
 		fdPsynergyCyclone();
-	else if(animation == FIELD_PSYNERGY_BLAZE)
+	else if(anm == FIELD_PSYNERGY_BLAZE)
 		fdPsynergyBlaze();
-	else if(animation == FIELD_PSYNERGY_BURST)
+	else if(anm == FIELD_PSYNERGY_BURST)
 		fdPsynergyBurst();
-	else if(animation == FIELD_PSYNERGY_POUND)
+	else if(anm == FIELD_PSYNERGY_POUND)
 		fdPsynergyPound();
-	else if(animation == FIELD_PSYNERGY_SCOOP)
+	else if(anm == FIELD_PSYNERGY_SCOOP)
 		fdPsynergyScoop();
-	else if(animation == FIELD_PSYNERGY_TREMOR)
+	else if(anm == FIELD_PSYNERGY_TREMOR)
 		fdPsynergyTremor();
-	else if(animation == FIELD_PSYNERGY_GRIND)
+	else if(anm == FIELD_PSYNERGY_GRIND)
 		fdPsynergyGrind();
-	else if(animation == FIELD_PSYNERGY_HOVER)
+	else if(anm == FIELD_PSYNERGY_HOVER)
 		fdPsynergyHover();
-	else if(animation == FIELD_PSYNERGY_SAND)
+	else if(anm == FIELD_PSYNERGY_SAND)
 		fdPsynergySand();
-	else if(animation == FIELD_PSYNERGY_TELEPORT)
+	else if(anm == FIELD_PSYNERGY_TELEPORT)
 		fdPsynergyTeleport();
-	else if(animation == FIELD_PSYNERGY_PARCH)
+	else if(anm == FIELD_PSYNERGY_PARCH)
 		fdPsynergyParch();
-	else if(animation == FIELD_PSYNERGY_RING)
+	else if(anm == FIELD_PSYNERGY_RING)
 		fdPsynergyRing();
-	else if(animation == FIELD_PSYNERGY_HALT) {
+	else if(anm == FIELD_PSYNERGY_HALT) {
 		/* Resume the actor stopped before, then stop the nearest one that has
 		   an script to run; with none, the stopwatch is thrown at nothing. */
 		MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
@@ -113,7 +113,7 @@ void fdPsynergyRun(void)
 			fdPsynergyResumeHaltedActor(paused);
 			party->haltedActor = -1;
 		}
-		objectId = fdFindNearbyPsynergyTarget(scene->casterId, animation);
+		objectId = fdFindNearbyPsynergyTarget(scene->casterId, anm);
 		objectId = fdPsynergyFilterHaltTarget(objectId);
 		if(fdFindActorTalkCue(objectId) != 0) {
 			fdPsynergySetupActorPair(scene->casterId, objectId);
@@ -123,11 +123,11 @@ void fdPsynergyRun(void)
 		} else {
 			fdPsynergyHalt();
 		}
-	} else if(animation == FIELD_PSYNERGY_MIND_READ) {
+	} else if(anm == FIELD_PSYNERGY_MIND_READ) {
 		/* The wave and colour effect, stopping a running Reveal first. */
 		if(event->revealActive != 0)
 			fdPsynergyEndReveal();
-		fdPsynergyStartMindReadWave(scene->casterId, targetId);
+		fdPsynergyStartMindReadWave(scene->casterId, tgtId);
 	}
 }
 
@@ -137,65 +137,65 @@ void fdPsynergyDispatch(void)
 {
 	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
 	FIELD_STATE		   *event = Ram_HeapSlots->fieldState;
-	Sint32				animation = scene->fieldPsynergy;
-	Sint32				targetId = scene->tgtId;
+	Sint32				anm = scene->fieldPsynergy;
+	Sint32				tgtId = scene->tgtId;
 
 	scene->aimAhead = 0;
-	if(animation == FIELD_PSYNERGY_MOVE)
-		fdPsynergySteerPushedTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_LIFT)
-		fdPsynergyLiftOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_CARRY)
-		fdPsynergySteerLiftedTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_FORCE)
-		fdPsynergyForceOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_DOUSE)
-		fdPsynergyDouseOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_FROST)
-		fdPsynergyFrostOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_GROWTH)
-		fdPsynergyGrowthOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_PLY)
-		fdPsynergyPlyOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_WHIRLWIND)
-		fdPsynergyWhirlwindOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_CATCH)
-		fdPsynergyCatchOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_AVOID)
+	if(anm == FIELD_PSYNERGY_MOVE)
+		fdPsynergySteerPushedTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_LIFT)
+		fdPsynergyLiftOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_CARRY)
+		fdPsynergySteerLiftedTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_FORCE)
+		fdPsynergyForceOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_DOUSE)
+		fdPsynergyDouseOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_FROST)
+		fdPsynergyFrostOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_GROWTH)
+		fdPsynergyGrowthOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_PLY)
+		fdPsynergyPlyOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_WHIRLWIND)
+		fdPsynergyWhirlwindOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_CATCH)
+		fdPsynergyCatchOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_AVOID)
 		fdPsynergyAvoid();
-	else if(animation == FIELD_PSYNERGY_LASH)
-		fdPsynergyLashOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_CLOAK)
+	else if(anm == FIELD_PSYNERGY_LASH)
+		fdPsynergyLashOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_CLOAK)
 		fdPsynergyStartCloak();
-	else if(animation == FIELD_PSYNERGY_RETREAT)
+	else if(anm == FIELD_PSYNERGY_RETREAT)
 		fdPsynergyRetreat();
-	else if(animation == FIELD_PSYNERGY_REVEAL)
+	else if(anm == FIELD_PSYNERGY_REVEAL)
 		fdPsynergyReveal();
-	else if(animation == FIELD_PSYNERGY_SAND)
-		fdPsynergySandOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_BLAZE)
-		fdPsynergyBlazeOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_CYCLONE)
-		fdPsynergyCycloneOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_SCOOP)
-		fdPsynergyScoopOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_TREMOR)
-		fdPsynergyTremorOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_GRIND)
-		fdPsynergyGrindOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_HOVER)
-		fdPsynergyHoverOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_TELEPORT)
-		fdPsynergyTeleportOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_PARCH)
-		fdPsynergyParchOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_BURST)
-		fdPsynergyBurstOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_POUND)
-		fdPsynergyPoundOnTarget(targetId);
-	else if(animation == FIELD_PSYNERGY_RING)
+	else if(anm == FIELD_PSYNERGY_SAND)
+		fdPsynergySandOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_BLAZE)
+		fdPsynergyBlazeOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_CYCLONE)
+		fdPsynergyCycloneOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_SCOOP)
+		fdPsynergyScoopOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_TREMOR)
+		fdPsynergyTremorOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_GRIND)
+		fdPsynergyGrindOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_HOVER)
+		fdPsynergyHoverOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_TELEPORT)
+		fdPsynergyTeleportOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_PARCH)
+		fdPsynergyParchOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_BURST)
+		fdPsynergyBurstOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_POUND)
+		fdPsynergyPoundOnTarget(tgtId);
+	else if(anm == FIELD_PSYNERGY_RING)
 		fdPsynergyRing();
-	else if(animation == FIELD_PSYNERGY_MIND_READ) {
+	else if(anm == FIELD_PSYNERGY_MIND_READ) {
 		/* The wave and colour effect, stopping a running Reveal first; a target
 		   other than the halted actor stands still while the wave runs. */
 		MAIN_ROUTINE_STATE *party;
@@ -205,8 +205,8 @@ void fdPsynergyDispatch(void)
 		party = &MainRoutineStateWork;
 		if(party->haltedActor != scene->tgtId)
 			((ACTOR *)scene->tgt)->paused = 1;
-		fdPsynergyStartMindReadWave(scene->casterId, targetId);
-	} else if(animation == FIELD_PSYNERGY_HALT) {
+		fdPsynergyStartMindReadWave(scene->casterId, tgtId);
+	} else if(anm == FIELD_PSYNERGY_HALT) {
 		/* Resume the actor stopped before, then stop the target. */
 		MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 
@@ -214,9 +214,9 @@ void fdPsynergyDispatch(void)
 			fdPsynergyResumeHaltedActor(party->haltedActor);
 			party->haltedActor = -1;
 		}
-		fdPsynergyHaltActor(targetId);
-		party->haltedActor = targetId;
-		fdPsynergyHaltOnTarget(targetId);
+		fdPsynergyHaltActor(tgtId);
+		party->haltedActor = tgtId;
+		fdPsynergyHaltOnTarget(tgtId);
 	}
 }
 
@@ -262,35 +262,34 @@ void fdPsynergyRunExtraHandler(void)
 	}
 }
 
-/* Per-frame update: sets every part of an actor's sprite to the next of the six
+/* Per-tick update: sets every part of an actor's sprite to the next of the six
    orders of its colour channels (SPRITE_COLOR_NORMAL to SPRITE_COLOR_BRG). */
 void fdActorCycleSprCols(ACTOR *actor)
 {
-	SPR	  *sprite;
-	Sint32 count;
+	SPR	  *spr;
+	Sint32 cnt;
 	Sint32 i;
 
 	if(actor->sprStorageKind == ACTOR_SPRITE_ONE) {
-		sprite = actor->spr;
-		if(sprite != 0 && sprite->retainCacheEntry == 0) {
-			count = sprite->cnt;
-			for(i = 0; i < count; i++)
-				sprite->entries[i]->colMode =
-					FrameCount % (SPRITE_COLOR_BRG + 1);
-			sprite->dirty = 1;
+		spr = actor->spr;
+		if(spr != 0 && spr->retainCacheEntry == 0) {
+			cnt = spr->cnt;
+			for(i = 0; i < cnt; i++)
+				spr->entries[i]->colMode = TickCount % (SPRITE_COLOR_BRG + 1);
+			spr->dirty = 1;
 		}
 	}
 }
 
 /* Sends the actor toward the point magnitude away from it at angle. */
 void fdActorSetTargetPosFromMagnitudeAng(
-	ACTOR *actor, Sint32 magnitude, Sint32 angle)
+	ACTOR *actor, Sint32 magnitude, Sint32 ang)
 {
 	Sint32 values[3];
 
 	if(actor != 0) {
 		SET_VECTOR(values, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-		syVectorAddPolarOffset(magnitude, angle, values);
+		syVectorAddPolarOffset(magnitude, ang, values);
 		fdActorSetMoveTargetStub(actor, values[0], values[1], values[2]);
 	}
 }
@@ -347,7 +346,7 @@ Sint32 fdActorGetSprDepth(ACTOR *actor)
 	return depth;
 }
 
-/* Draws the Psynergy's canvas sprite (FIELD_EFFECT_STATE.spr) each frame. */
+/* Draws the Psynergy's canvas sprite (FIELD_EFFECT_STATE.spr) each tick. */
 void fdPsynergyDrawCanvasSpr(void)
 {
 	fdEffectSprDraw(&((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->spr);
@@ -356,41 +355,41 @@ void fdPsynergyDrawCanvasSpr(void)
 /* When the caster faces away (FACING_NORTH), starts the Psynergy's canvas
    sprite (FIELD_EFFECT_STATE.spr): a blank 32x32 sprite of its own VRAM cache
    entry, twice as tall, 28 pixels above the caster in front of everything,
-   drawn each frame by fdPsynergyDrawCanvasSpr until
+   drawn each tick by fdPsynergyDrawCanvasSpr until
    fdPsynergyReleaseSceneSpr. */
 void fdPsynergyStartSceneSpr(void)
 {
 	FIELD_EFFECT_STATE *effectState = Ram_HeapSlots->fieldEffState;
 	ACTOR			   *mainActor;
-	EFFECT_SPR		   *sprite;
-	FIXED				position[3];
-	void			   *buffer;
+	EFFECT_SPR		   *spr;
+	FIXED				pos[3];
+	void			   *buf;
 	Sint32				slot;
 	Sint32				tiles;
 
 	mainActor = effectState->caster;
 	if(effectState->ang == FACING_NORTH) {
 		effectState->sprActive = 1;
-		buffer = syHeapAlloc(512);
-		IWRAM_FILL_WORDS(buffer, 512, 0);
+		buf = syHeapAlloc(512);
+		IWRAM_FILL_WORDS(buf, 512, 0);
 		slot = syVRAMCacheFindFreeEntry();
-		tiles = syVRAMCacheLoad(slot, 512, buffer);
+		tiles = syVRAMCacheLoad(slot, 512, buf);
 		effectState->sprVramSlot = slot;
-		syHeapRelease(buffer);
-		sprite = &effectState->spr;
-		fdEffectSprInit(sprite, 16, 31, OBJ_SIZE_32X32, tiles);
-		sprite->depth = 0;
-		sprite->oam.pri = 0;
-		sprite->oam.fullCol = 0;
-		sprite->oam.pal = 0;
-		sprite->scaleY = toFIXED(2);
-		position[0] = effectState->x;
-		position[1] = mainActor->y.fixed + toFIXED(28);
-		position[2] = mainActor->z.fixed;
-		fdCameraWorldToScreen(position);
-		sprite->x = position[0];
-		sprite->y = position[2];
-		sySetEvent(fdPsynergyDrawCanvasSpr, EVENT_PASS_FRAME);
+		syHeapRelease(buf);
+		spr = &effectState->spr;
+		fdEffectSprInit(spr, 16, 31, OBJ_SIZE_32X32, tiles);
+		spr->depth = 0;
+		spr->oam.pri = 0;
+		spr->oam.fullCol = 0;
+		spr->oam.pal = 0;
+		spr->scaleY = toFIXED(2);
+		pos[0] = effectState->x;
+		pos[1] = mainActor->y.fixed + toFIXED(28);
+		pos[2] = mainActor->z.fixed;
+		fdCameraWorldToScreen(pos);
+		spr->x = pos[0];
+		spr->y = pos[2];
+		sySetEvent(fdPsynergyDrawCanvasSpr, EVENT_PASS_TICK);
 	}
 }
 

@@ -11,12 +11,12 @@ struct ACTOR;
 
 /* An actor script command's handler: it reads its operands at the actor's
    script cursor, moves the cursor past them and returns 1 to run the next
-   command this frame or 0 to wait. */
+   command this tick or 0 to wait. */
 typedef Sint32 (*SCRIPT_COMMAND)(struct ACTOR *);
 
 /* The whole 112-byte slot as SC_SET, SC_ADD and SC_CMP see it: each field is
    one state value (ACTOR_SCRIPT_VALUE in actor_script.h), reached through
-   ActorScript_OperandHandlerTable, and named for what the field keeps there. */
+   ActorScriptOperandHandlerTable, and named for what the field keeps there. */
 typedef struct SCRIPT_OPERANDS {
 	Uint32 scriptAdr;	 /* SW_SCRIPT; an add steps it by whole words */
 	Uint16 cursor;		 /* SW_CURSOR, compared as signed */
@@ -30,7 +30,7 @@ typedef struct SCRIPT_OPERANDS {
 	Uint16 radius;		 /* SW_RADIUS, in pixels; compared as signed */
 	Uint8  layer;		 /* no state value */
 	Uint8  priFlg;		 /* no state value */
-	Uint32 velX;		 /* SW_VELOCITY_X, 16.16 fixed-point pixels per frame */
+	Uint32 velX;		 /* SW_VELOCITY_X, 16.16 fixed-point pixels per tick */
 	Uint32 velY;		 /* SW_VELOCITY_Y */
 	Uint32 velZ;		 /* SW_VELOCITY_Z */
 	Uint32 speedLimit;	 /* SW_SPEED */
@@ -62,7 +62,7 @@ typedef struct SCRIPT_OPERANDS {
 	Sint16 tmr;			   /* SW_TIMER, what its actor script reads */
 	Sint16 userValue;	   /* SW_USER_VALUE, or scene scratch */
 	Uint32 watchedActor;   /* SW_WATCHED_ACTOR, the actor it follows or faces */
-	Uint32 update;		   /* SW_HOOK, the function run each frame */
+	Uint32 update;		   /* SW_HOOK, the function run each tick */
 } SCRIPT_OPERANDS;
 
 STATIC_ASSERT(offsetof(SCRIPT_OPERANDS, scriptAdr) == 0);

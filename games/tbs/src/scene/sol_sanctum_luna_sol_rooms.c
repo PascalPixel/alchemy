@@ -76,13 +76,13 @@
 #include "scene/walk_into_leader.h"
 #include "text/msg_ids.h"
 
-Uint16 SolSanctumLunaSolRooms_Light2Timer		   BSS_DATA;
-Uint16 SolSanctumLunaSolRooms_Light3Timer BSS_DATA ALIGNED(4);
-Uint16 SolSanctumLunaSolRooms_Light1Timer BSS_DATA ALIGNED(4);
-/* Set to 2 as a falling light lands: the rooms shake for a frame, then
+Uint16 SolSanctumLunaSolRoomsLight2Timer		  BSS_DATA;
+Uint16 SolSanctumLunaSolRoomsLight3Timer BSS_DATA ALIGNED(4);
+Uint16 SolSanctumLunaSolRoomsLight1Timer BSS_DATA ALIGNED(4);
+/* Set to 2 as a falling light lands: the rooms shake for a tick, then
    settle. */
-Sint32 SolSanctumLunaSolRooms_LandingShake BSS_DATA;
-Uint16 SolSanctumLunaSolRooms_Light4Timer  BSS_DATA;
+Sint32 SolSanctumLunaSolRoomsLandingShake BSS_DATA;
+Uint16 SolSanctumLunaSolRoomsLight4Timer  BSS_DATA;
 
 extern SCENE_ENTRANCE SolSanctumLunaSolRoomsEntrances[];
 extern Uint32		  SolSanctumLunaSolRoomsExits[];
@@ -180,7 +180,7 @@ static void	  scSolSanctumLunaSolRoomsIntroduceSolAndLunaRooms(void);
 static void	  scSolSanctumLunaSolRoomsDiscussFloorSymbolChangingToLuna(void);
 static Sint32 scSolSanctumLunaSolRoomsAreAllStatueLightsLit(void);
 static void	  scSolSanctumLunaSolRoomsShowMessageAndWait(
-	  Sint32 speaker, Sint32 waitFrames);
+	  Sint32 speaker, Sint32 waitTicks);
 static void scSolSanctumLunaSolRoomsArriveAfterWiseOnesRescue(void);
 
 const SCENE_ENTRANCE *scGetEntrances(void)
@@ -340,16 +340,16 @@ static void scSolSanctumLunaSolRoomsClearBackdropCol(void)
 /* Draws the light of each lit quarter of the Luna room's picture, from four
    consecutive flags, with the tiles of the given source row. */
 static inline void scSolSanctumLunaSolRoomsDrawStatueLightTiles(
-	Sint32 firstFlag, Sint32 sourceRow)
+	Sint32 firstFlg, Sint32 srcRow)
 {
-	if(gmFlagGet(firstFlag) != 0)
-		fdMapGridCopyMetatilesTo(45, sourceRow, 34, 10, 2, 1);
-	if(gmFlagGet(firstFlag + 1) != 0)
-		fdMapGridCopyMetatilesTo(47, sourceRow, 36, 10, 2, 1);
-	if(gmFlagGet(firstFlag + 2) != 0)
-		fdMapGridCopyMetatilesTo(45, sourceRow + 1, 34, 11, 2, 1);
-	if(gmFlagGet(firstFlag + 3) != 0)
-		fdMapGridCopyMetatilesTo(47, sourceRow + 1, 36, 11, 2, 1);
+	if(gmFlagGet(firstFlg) != 0)
+		fdMapGridCopyMetatilesTo(45, srcRow, 34, 10, 2, 1);
+	if(gmFlagGet(firstFlg + 1) != 0)
+		fdMapGridCopyMetatilesTo(47, srcRow, 36, 10, 2, 1);
+	if(gmFlagGet(firstFlg + 2) != 0)
+		fdMapGridCopyMetatilesTo(45, srcRow + 1, 34, 11, 2, 1);
+	if(gmFlagGet(firstFlg + 3) != 0)
+		fdMapGridCopyMetatilesTo(47, srcRow + 1, 36, 11, 2, 1);
 }
 
 /* Draws the lights of the quarters lit now (the _SEAL_OPEN flags). */
@@ -382,25 +382,25 @@ static void scSolSanctumLunaSolRoomsDarkenSavedStatueLights(void)
 
 /* Flashes the lit quarters' lights on and off at this pace. */
 static inline void scSolSanctumLunaSolRoomsFlashCurrentStatueLights(
-	Sint32 frames)
+	Sint32 ticks)
 {
 	sySndPlay(SE_GLITTER);
 	scSolSanctumLunaSolRoomsDrawCurrentStatueLights();
-	fdScriptWait(frames);
+	fdScriptWait(ticks);
 	sySndPlay(SE_GLITTER);
 	scSolSanctumLunaSolRoomsDarkenCurrentStatueLights();
-	fdScriptWait(frames);
+	fdScriptWait(ticks);
 }
 
 /* Flashes the lights last shown on and off at this pace. */
-static inline void scSolSanctumLunaSolRoomsFlashSavedStatueLights(Sint32 frames)
+static inline void scSolSanctumLunaSolRoomsFlashSavedStatueLights(Sint32 ticks)
 {
 	sySndPlay(SE_GLITTER);
 	scSolSanctumLunaSolRoomsDrawSavedStatueLights();
-	fdScriptWait(frames);
+	fdScriptWait(ticks);
 	sySndPlay(SE_GLITTER);
 	scSolSanctumLunaSolRoomsDarkenSavedStatueLights();
-	fdScriptWait(frames);
+	fdScriptWait(ticks);
 }
 
 /* The first time Isaac walks into the room of Sol (metatiles (17, 15) and (18,
@@ -712,11 +712,11 @@ static void scSolSanctumLunaSolRoomsKradenStopsPartyLeaving(void)
 	fdScriptEnd();
 }
 
-/* One frame of a falling light in the Luna room, counted on `timer`.
+/* One tick of a falling light in the Luna room, counted on `timer`.
 
-   Three frames in four it advances its timer: the light appears at (column,
-   top) from its staging column, falls four rows and flashes, and on frame
-   `cleared` its path is put back. It starts again after `restart` frames and up
+   Three ticks in four it advances its timer: the light appears at (column,
+   top) from its staging column, falls four rows and flashes, and on tick
+   `cleared` its path is put back. It starts again after `restart` ticks and up
    to 40 more. */
 #define STEP_FALLING_LIGHT(timer, staging, column, top, cleared, restart) \
 	if((syRandomNext() & 3) != 0) { \
@@ -735,7 +735,7 @@ static void scSolSanctumLunaSolRoomsKradenStopsPartyLeaving(void)
 			MOVE_LIGHT_DOWN(staging, column, (top) + 3); \
 			break; \
 		case 4: \
-			SolSanctumLunaSolRooms_LandingShake = 2; \
+			SolSanctumLunaSolRoomsLandingShake = 2; \
 			MOVE_LIGHT_DOWN(staging, column, (top) + 4); \
 			break; \
 		case cleared: \
@@ -752,14 +752,14 @@ static void scSolSanctumLunaSolRoomsKradenStopsPartyLeaving(void)
    any of the four lands. */
 static void scSolSanctumLunaSolRoomsUpdateFirstFallingLight(void)
 {
-	STEP_FALLING_LIGHT(SolSanctumLunaSolRooms_Light1Timer, 46, 30, 33, 80, 90)
-	if(SolSanctumLunaSolRooms_LandingShake != 0) {
-		if(SolSanctumLunaSolRooms_LandingShake == 2) {
+	STEP_FALLING_LIGHT(SolSanctumLunaSolRoomsLight1Timer, 46, 30, 33, 80, 90)
+	if(SolSanctumLunaSolRoomsLandingShake != 0) {
+		if(SolSanctumLunaSolRoomsLandingShake == 2) {
 			fdMapGridSetShake(1, 1, 1);
-		} else if(SolSanctumLunaSolRooms_LandingShake == 1) {
+		} else if(SolSanctumLunaSolRoomsLandingShake == 1) {
 			fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 		}
-		SolSanctumLunaSolRooms_LandingShake--;
+		SolSanctumLunaSolRoomsLandingShake--;
 	}
 }
 
@@ -774,13 +774,13 @@ static void scSolSanctumLunaSolRoomsUpdateFirstFallingLight(void)
 
 /* The Luna room's second falling light. */
 SOL_SANCTUM_FALLING_LIGHT(SolSanctumLunaSolRooms_UpdateSecondFallingLight,
-	SolSanctumLunaSolRooms_Light2Timer, 47, 42, 33, 90, 100)
+	SolSanctumLunaSolRoomsLight2Timer, 47, 42, 33, 90, 100)
 /* The Luna room's third falling light. */
 SOL_SANCTUM_FALLING_LIGHT(SolSanctumLunaSolRooms_UpdateThirdFallingLight,
-	SolSanctumLunaSolRooms_Light3Timer, 48, 31, 36, 95, 105)
+	SolSanctumLunaSolRoomsLight3Timer, 48, 31, 36, 95, 105)
 /* The Luna room's fourth falling light. */
 SOL_SANCTUM_FALLING_LIGHT(SolSanctumLunaSolRooms_UpdateFourthFallingLight,
-	SolSanctumLunaSolRooms_Light4Timer, 46, 41, 36, 85, 95)
+	SolSanctumLunaSolRoomsLight4Timer, 46, 41, 36, 85, 95)
 
 /* Opens on Kraden in the Luna room in SOL_SANCTUM_BLUE_TINT, as a flash crosses
    it. */
@@ -804,7 +804,7 @@ static void scSolSanctumLunaSolRoomsOpenOnKradenInLunaRoom(void)
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	FieldStateWork->transitionFrm = 32;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	sySndPlay(SE_THUNDER);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_PALE, PALETTES_BG);
@@ -821,11 +821,11 @@ static void scSolSanctumLunaSolRoomsOpenOnKradenInLunaRoom(void)
    and runs off to the statue room. */
 static void scSolSanctumLunaSolRoomsFlashLightsWithTrapDisarmed(void)
 {
-	Sint32 twelveFrameFlashes;
-	Sint32 eightFrameFlashes;
-	Sint32 sixFrameFlashes;
-	Sint32 fourFrameFlashes;
-	Sint32 twoFrameFlashes;
+	Sint32 twelveFrmFlashes;
+	Sint32 eightFrmFlashes;
+	Sint32 sixFrmFlashes;
+	Sint32 fourFrmFlashes;
+	Sint32 twoFrmFlashes;
 
 	fdScriptStart();
 	scSolSanctumLunaSolRoomsOpenOnKradenInLunaRoom();
@@ -840,19 +840,19 @@ static void scSolSanctumLunaSolRoomsFlashLightsWithTrapDisarmed(void)
 	scSolSanctumLunaSolRoomsShowMessageAndWait(
 		SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 20);
 	/* Shorten each flash interval as the flashing accelerates. */
-	for(twelveFrameFlashes = 0; twelveFrameFlashes != 4; twelveFrameFlashes++) {
+	for(twelveFrmFlashes = 0; twelveFrmFlashes != 4; twelveFrmFlashes++) {
 		scSolSanctumLunaSolRoomsFlashCurrentStatueLights(12);
 	}
-	for(eightFrameFlashes = 0; eightFrameFlashes != 6; eightFrameFlashes++) {
+	for(eightFrmFlashes = 0; eightFrmFlashes != 6; eightFrmFlashes++) {
 		scSolSanctumLunaSolRoomsFlashCurrentStatueLights(8);
 	}
-	for(sixFrameFlashes = 0; sixFrameFlashes != 8; sixFrameFlashes++) {
+	for(sixFrmFlashes = 0; sixFrmFlashes != 8; sixFrmFlashes++) {
 		scSolSanctumLunaSolRoomsFlashCurrentStatueLights(6);
 	}
-	for(fourFrameFlashes = 0; fourFrameFlashes != 10; fourFrameFlashes++) {
+	for(fourFrmFlashes = 0; fourFrmFlashes != 10; fourFrmFlashes++) {
 		scSolSanctumLunaSolRoomsFlashCurrentStatueLights(4);
 	}
-	for(twoFrameFlashes = 0; twoFrameFlashes != 12; twoFrameFlashes++) {
+	for(twoFrmFlashes = 0; twoFrmFlashes != 12; twoFrmFlashes++) {
 		scSolSanctumLunaSolRoomsFlashCurrentStatueLights(2);
 	}
 	scSolSanctumLunaSolRoomsDrawCurrentStatueLights();
@@ -865,7 +865,7 @@ static void scSolSanctumLunaSolRoomsFlashLightsWithTrapDisarmed(void)
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	FieldStateWork->transitionFrm = 32;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	gmFlagSet(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING);
 	syImportScriptSetExitRequest(
 		SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_DISARMED);
@@ -880,10 +880,10 @@ static void scSolSanctumLunaSolRoomsSpringTrap(void)
 	Sint32 flash;
 	fdScriptStart();
 	scSolSanctumLunaSolRoomsOpenOnKradenInLunaRoom();
-	SolSanctumLunaSolRooms_Light1Timer = 0;
-	SolSanctumLunaSolRooms_Light2Timer = 0;
-	SolSanctumLunaSolRooms_Light3Timer = 0;
-	SolSanctumLunaSolRooms_Light4Timer = 0;
+	SolSanctumLunaSolRoomsLight1Timer = 0;
+	SolSanctumLunaSolRoomsLight2Timer = 0;
+	SolSanctumLunaSolRoomsLight3Timer = 0;
+	SolSanctumLunaSolRoomsLight4Timer = 0;
 	/* Kraden turns, startled: "What's happening?" The lights flash four
 	   times. */
 	fdScriptSetMessageId(MsgSolSanctumWhatsHappening);
@@ -901,20 +901,20 @@ static void scSolSanctumLunaSolRoomsSpringTrap(void)
 	/* Kraden: "Isaac must have found something!" */
 	scSolSanctumLunaSolRoomsShowMessageAndWait(
 		SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 6);
-	/* Each light starts falling after 20 to 79 frames. */
-	SolSanctumLunaSolRooms_Light1Timer = (syRandomBelow(60)) + 20;
-	SolSanctumLunaSolRooms_Light2Timer = (syRandomBelow(60)) + 20;
-	SolSanctumLunaSolRooms_Light3Timer = (syRandomBelow(60)) + 20;
-	SolSanctumLunaSolRooms_Light4Timer = (syRandomBelow(60)) + 20;
-	SolSanctumLunaSolRooms_LandingShake = 0;
-	sySetFrameEvent(
-		scSolSanctumLunaSolRoomsUpdateFirstFallingLight, EVENT_PASS_FRAME);
-	sySetFrameEvent(
-		SolSanctumLunaSolRooms_UpdateSecondFallingLight, EVENT_PASS_FRAME);
-	sySetFrameEvent(
-		SolSanctumLunaSolRooms_UpdateThirdFallingLight, EVENT_PASS_FRAME);
-	sySetFrameEvent(
-		SolSanctumLunaSolRooms_UpdateFourthFallingLight, EVENT_PASS_FRAME);
+	/* Each light starts falling after 20 to 79 ticks. */
+	SolSanctumLunaSolRoomsLight1Timer = (syRandomBelow(60)) + 20;
+	SolSanctumLunaSolRoomsLight2Timer = (syRandomBelow(60)) + 20;
+	SolSanctumLunaSolRoomsLight3Timer = (syRandomBelow(60)) + 20;
+	SolSanctumLunaSolRoomsLight4Timer = (syRandomBelow(60)) + 20;
+	SolSanctumLunaSolRoomsLandingShake = 0;
+	sySetTickEvent(
+		scSolSanctumLunaSolRoomsUpdateFirstFallingLight, EVENT_PASS_TICK);
+	sySetTickEvent(
+		SolSanctumLunaSolRooms_UpdateSecondFallingLight, EVENT_PASS_TICK);
+	sySetTickEvent(
+		SolSanctumLunaSolRooms_UpdateThirdFallingLight, EVENT_PASS_TICK);
+	sySetTickEvent(
+		SolSanctumLunaSolRooms_UpdateFourthFallingLight, EVENT_PASS_TICK);
 	for(flash = 0; flash != 6; flash++) {
 		scSolSanctumLunaSolRoomsFlashCurrentStatueLights(5);
 	}
@@ -941,7 +941,7 @@ static void scSolSanctumLunaSolRoomsSpringTrap(void)
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	FieldStateWork->transitionFrm = 32;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(
 		SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_TRAP_TRIGGERED);
 }
@@ -952,11 +952,11 @@ static void scSolSanctumLunaSolRoomsSpringTrap(void)
 static void scSolSanctumLunaSolRoomsUnusedAnimateSavedStatueLights(void)
 {
 	Sint32 speaker;
-	Sint32 twelveFrameFlashes;
-	Sint32 eightFrameFlashes;
-	Sint32 sixFrameFlashes;
-	Sint32 fourFrameFlashes;
-	Sint32 twoFrameFlashes;
+	Sint32 twelveFrmFlashes;
+	Sint32 eightFrmFlashes;
+	Sint32 sixFrmFlashes;
+	Sint32 fourFrmFlashes;
+	Sint32 twoFrmFlashes;
 
 	fdScriptStart();
 	/* Toggle the shown lights only where the quarters are lit now. */
@@ -998,19 +998,19 @@ static void scSolSanctumLunaSolRoomsUnusedAnimateSavedStatueLights(void)
 	fdCameraMoveTo(574, CAMERA_KEEP, 174, 1);
 	fdCameraWaitForMove();
 	fdScriptWait(30);
-	for(twelveFrameFlashes = 0; twelveFrameFlashes != 4; twelveFrameFlashes++) {
+	for(twelveFrmFlashes = 0; twelveFrmFlashes != 4; twelveFrmFlashes++) {
 		scSolSanctumLunaSolRoomsFlashSavedStatueLights(12);
 	}
-	for(eightFrameFlashes = 0; eightFrameFlashes != 6; eightFrameFlashes++) {
+	for(eightFrmFlashes = 0; eightFrmFlashes != 6; eightFrmFlashes++) {
 		scSolSanctumLunaSolRoomsFlashSavedStatueLights(8);
 	}
-	for(sixFrameFlashes = 0; sixFrameFlashes != 8; sixFrameFlashes++) {
+	for(sixFrmFlashes = 0; sixFrmFlashes != 8; sixFrmFlashes++) {
 		scSolSanctumLunaSolRoomsFlashSavedStatueLights(6);
 	}
-	for(fourFrameFlashes = 0; fourFrameFlashes != 10; fourFrameFlashes++) {
+	for(fourFrmFlashes = 0; fourFrmFlashes != 10; fourFrmFlashes++) {
 		scSolSanctumLunaSolRoomsFlashSavedStatueLights(4);
 	}
-	for(twoFrameFlashes = 0; twoFrameFlashes != 12; twoFrameFlashes++) {
+	for(twoFrmFlashes = 0; twoFrmFlashes != 12; twoFrmFlashes++) {
 		scSolSanctumLunaSolRoomsFlashSavedStatueLights(2);
 	}
 	sySndPlay(SE_GLITTER);
@@ -1028,7 +1028,7 @@ static void scSolSanctumLunaSolRoomsUnusedAnimateSavedStatueLights(void)
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	FieldStateWork->transitionFrm = 32;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(
 		SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE_LIGHTS_SHOWN);
 }
@@ -1129,8 +1129,8 @@ static void scSolSanctumLunaSolRoomsDiscussFloorSymbolChangingToLuna(void)
 static void scSolSanctumLunaSolRoomsRiseToElementalStarRoom(void)
 {
 	ACTOR *actor;
-	Sint32 frame;
-	SPR	  *sprite;
+	Sint32 frm;
+	SPR	  *spr;
 
 	if(gmFlagGet(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN) != 0) {
 		fdScriptStart();
@@ -1205,22 +1205,22 @@ static void scSolSanctumLunaSolRoomsRiseToElementalStarRoom(void)
 		fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.3);
 		actor->steeringFlg &= ~ACTOR_FACES_MOTION;
 		/* Default: NULL until it is pointed at the leader's sprite below. */
-		sprite = NULL;
+		spr = NULL;
 		actor->motionFlg = 0;
 		sySndPlay(SE_ASCEND);
 		fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_BLINK);
-		sprite = actor->spr;
-		frame = 0;
-		sprite->flg = 0;
+		spr = actor->spr;
+		frm = 0;
+		spr->flg = 0;
 		do {
 			actor->y.fixed += toFIXED(1) / 5;
 			sySynch(1);
-			frame++;
-		} while(frame != 120);
+			frm++;
+		} while(frm != 120);
 		sySndPlay(SE_WARP);
-		for(frame = 0; frame != 60; frame++) {
+		for(frm = 0; frm != 60; frm++) {
 			actor->y.fixed += toFIXED(1) / 10;
-			sprite->scale -= toFIXED(1) / 64;
+			spr->scale -= toFIXED(1) / 64;
 			sySynch(1);
 		}
 		fdActorSetPos(ACTOR_PARTY_LEADER, 0, 0);
@@ -1237,18 +1237,18 @@ static void scSolSanctumLunaSolRoomsRiseToElementalStarRoom(void)
 		actor->motionFlg = 0;
 		sySndPlay(SE_ASCEND);
 		fdActorSetSprColById(ACTOR_KRADEN, SPRITE_COLOR_BLINK);
-		sprite = actor->spr;
-		sprite->flg = 0;
-		frame = 0;
+		spr = actor->spr;
+		spr->flg = 0;
+		frm = 0;
 		do {
 			actor->y.fixed += toFIXED(1) / 5;
 			sySynch(1);
-			frame++;
-		} while(frame != 120);
+			frm++;
+		} while(frm != 120);
 		sySndPlay(SE_WARP);
-		for(frame = 0; frame != 60; frame++) {
+		for(frm = 0; frm != 60; frm++) {
 			actor->y.fixed += toFIXED(1) / 10;
-			sprite->scale -= toFIXED(1) / 64;
+			spr->scale -= toFIXED(1) / 64;
 			sySynch(1);
 		}
 		fdActorSetPos(ACTOR_KRADEN, 0, 0);
@@ -1257,7 +1257,7 @@ static void scSolSanctumLunaSolRoomsRiseToElementalStarRoom(void)
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
 		FieldStateWork->transitionFrm = 24;
 		fdScriptFinishScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdPaletteFadeApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
 		fdPaletteFadeStartInterpolation(1);
 		sySynch(1);
@@ -1446,10 +1446,10 @@ static Sint32 scSolSanctumLunaSolRoomsAreAllStatueLightsLit(void)
 
 /* Shows the next message of the script, then waits. */
 static void scSolSanctumLunaSolRoomsShowMessageAndWait(
-	Sint32 speaker, Sint32 waitFrames)
+	Sint32 speaker, Sint32 waitTicks)
 {
 	fdScriptShowMessage(speaker, 0);
-	fdScriptWait(waitFrames);
+	fdScriptWait(waitTicks);
 }
 
 /* Sol Sanctum after the eruption: Isaac and Garet appear here in a white
@@ -1471,7 +1471,7 @@ static void scSolSanctumLunaSolRoomsArriveAfterWiseOnesRescue(void)
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
 	FieldStateWork->transitionFrm = 1;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdPaletteFadeApplyTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
 	fdPaletteFadeStartInterpolation(120);
 	sySynch(120);
@@ -1544,7 +1544,7 @@ static void scSolSanctumLunaSolRoomsArriveAfterWiseOnesRescue(void)
 	IO_WRITE16(0, &PLTT_BACKDROP);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 	fdScriptEnd();
 }
 

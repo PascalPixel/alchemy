@@ -5,7 +5,7 @@
 @ Why assembly: stm lr, {r0, r1} and stm lr, {r2, r8, r9, sl} copy one of
 @ resident_mixer_channel.s's three templates into the lanes' instruction slots
 @ before they run, stores into code; lsrs fp, fp, #1 / adc fp, fp, #0x8000
-@ consumes a shift's carry; fp (r11) holds the packed volumes, not a frame
+@ consumes a shift's carry; fp (r11) holds the packed volumes, not a tick
 @ pointer; movs r2, r2 copies and tests without a shift; and push {r4, r9, ip}
 @ saves without lr.
 	.section .text,"ax",%progbits

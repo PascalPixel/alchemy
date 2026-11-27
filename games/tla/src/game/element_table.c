@@ -3,8 +3,8 @@
    dragons and sea creatures two weapons' effects look for. Part of game.c. */
 
 /* The class series by a character's strongest and second element, read as
-   [strongest][second]; The Broken Seal's Class_SeriesByElements. */
-const Sint32 Class_SeriesByElements[4][4] = {
+   [strongest][second]; The Broken Seal's ClassSeriesByElements. */
+const Sint32 ClassSeriesByElements[4][4] = {
 	{CLASS_SERIES_SQUIRE, CLASS_SERIES_SWORDSMAN, CLASS_SERIES_BRUTE,
 		CLASS_SERIES_APPRENTICE},
 	{CLASS_SERIES_SEER, CLASS_SERIES_WATER_SEER, CLASS_SERIES_PILGRIM,
@@ -16,8 +16,8 @@ const Sint32 Class_SeriesByElements[4][4] = {
 };
 
 /* The elemental power and resistance of each element level, 0 to 15; The Broken
-   Seal's Element_PowerResistByLevel. */
-const ELEMENT_LEVEL_BONUS Element_PowerResistByLevel[16] = {
+   Seal's ElementPowerResistByLevel. */
+const ELEMENT_LEVEL_BONUS ElementPowerResistByLevel[16] = {
 	{75, 85},
 	{80, 90},
 	{85, 95},
@@ -39,7 +39,7 @@ const ELEMENT_LEVEL_BONUS Element_PowerResistByLevel[16] = {
 /* clang-format off */
 /* The 48 enemy element presets, by ENEMY_DEFINITION.elementPreset; each is */
 /* named by the enemies that have it, in the English release's words. */
-const ENEMY_ELEMENT_PRESET Enemy_ElementPresetTable[] = {
+const ENEMY_ELEMENT_PRESET EnemyElementPresetTable[] = {
 	/* The default: ???, Ruffian, Ruffian 2, Ruffian 3, Briggs, Sea Fighter, */
 	/* Champa 2, Champa 3, Moapa, Knight, Knight 3 and the enemy with no name */
 	/* message */
@@ -595,7 +595,7 @@ const ENEMY_ELEMENT_PRESET Enemy_ElementPresetTable[] = {
 /* The element power and resistance curve, the same in both games: pairs of an
    input and its value in 256ths, from 200 down to -200, between which
    gmBattleGetElementMultiplier interpolates. */
-const Sint16 Element_PowerResistCurve[5][2] = {
+const Sint16 ElementPowerResistCurve[5][2] = {
 	{200, 256},
 	{100, 128},
 	{0, 0},
@@ -606,7 +606,7 @@ const Sint16 Element_PowerResistCurve[5][2] = {
 /* The dragons, by enemy id: the Hydras, Serpents, Dinos, Dragons, Lizards,
    Chimeras and the Doom Dragon. Raiden's Wrath (the Cloud Brand's unleash)
    takes effect only on these (gmEnemyIsDragon). */
-const Uint16 Enemy_DragonIds[DRAGON_ENEMY_COUNT] = {
+const Uint16 EnemyDragonIds[DRAGON_ENEMY_COUNT] = {
 	ENEMY_AQUA_HYDRA,
 	ENEMY_HYDRA,
 	ENEMY_PYRODRA,
@@ -660,7 +660,7 @@ const Uint16 Enemy_DragonIds[DRAGON_ENEMY_COUNT] = {
    shells and urchins, the Mermen, the sea Dragons, the Seabirds, the Lizard Men
    and the Kraken. The Trident's use takes effect only on these
    (gmEnemyIsSeaCreature). */
-const Uint16 Enemy_SeaCreatureIds[SEA_CREATURE_ENEMY_COUNT] = {
+const Uint16 EnemySeaCreatureIds[SEA_CREATURE_ENEMY_COUNT] = {
 	ENEMY_CUTTLE,
 	ENEMY_CALAMAR,
 	ENEMY_MAN_O_WAR,

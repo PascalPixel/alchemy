@@ -68,8 +68,8 @@ void mnWindowClearTextTilesInRect(
 #define TEXT_LINE_HEIGHT		  15
 
 /* Window animation lengths. */
-#define WINDOW_OPEN_FRAMES	8
-#define WINDOW_CLOSE_FRAMES 4
+#define WINDOW_OPEN_TICKS  8
+#define WINDOW_CLOSE_TICKS 4
 
 /* Scratch capacities are in bytes unless the name says halfwords. */
 #define TEXT_NUMBER_BUFFER_SIZE		 16 /* mnStringFormatNum writes 14 of them */
@@ -80,7 +80,7 @@ void mnWindowClearTextTilesInRect(
 #define MESSAGE_NAME_HALFWORDS		 24
 #define MESSAGE_ARGUMENT_COUNT		 8 /* the message argument table's places */
 #define SELECTION_MENU_ENTRY_LIMIT	 16 /* entries a selection row can list */
-#define AREA_NAME_WINDOW_FRAMES		 90 /* how long the area's name shows */
+#define AREA_NAME_WINDOW_TICKS		 90 /* how long the area's name shows */
 
 /* The control codes of decoded message text (WIN_STATE.textBuf). Codes from
    TEXT_SPACE up are characters. */
@@ -89,9 +89,9 @@ enum {
 	TEXT_PAGE = 1, /* wait for a button, then clear the window for a new page */
 	TEXT_WAIT_KEY = 2, /* wait for a button, then close the window */
 	TEXT_NEWLINE = 3,
-	TEXT_PAUSE_LONG = 4,	/* a 60-frame pause */
-	TEXT_PAUSE_SHORT = 5,	/* a 20-frame pause a button can cut short */
-	TEXT_PAUSE_LONGEST = 6, /* a 120-frame pause a button can cut short */
+	TEXT_PAUSE_LONG = 4,	/* a 60-tick pause */
+	TEXT_PAUSE_SHORT = 5,	/* a 20-tick pause a button can cut short */
+	TEXT_PAUSE_LONGEST = 6, /* a 120-tick pause a button can cut short */
 	/* TEXT_DEFAULT_COLOR, TEXT_STYLE_PLAIN and TEXT_DEFAULT_LINE_SPACING again
 	   (the catalogs' reset_text_style). */
 	TEXT_RESET_STYLE = 7,
@@ -138,7 +138,7 @@ enum {
 };
 
 /* The kana mark drawn with a character, in the top two bits of its code (the
-   index into Font_MarkGlyphCodes). */
+   index into FontMarkGlyphCodes). */
 #define TEXT_CODE_MARK_SHIFT 14
 #define TEXT_CODE_VOICED	 (1 << TEXT_CODE_MARK_SHIFT)
 #define TEXT_CODE_SEMIVOICED (2 << TEXT_CODE_MARK_SHIFT)
@@ -194,7 +194,7 @@ enum {
 	WINDOW_FIT_GIVEN_SIZE = 2,
 };
 
-/* The icon frames of Icon_BasePointerTable (graphics/ui/marks.s) an icon is
+/* The icon frames of IconBasePointerTable (graphics/ui/marks.s) an icon is
    drawn over. */
 typedef enum ICON_FRAME {
 	ICON_FRAME_COMMAND = 0,
@@ -202,14 +202,14 @@ typedef enum ICON_FRAME {
 	ICON_FRAME_ITEM = 2, /* under items and Psynergy alike */
 } ICON_FRAME;
 
-/* The marks of Icon_MarkPointers drawn over an item's icon. */
+/* The marks of IconMarkPointers drawn over an item's icon. */
 typedef enum ICON_MARK {
 	ICON_MARK_EQUIPPED = 0, /* the green E of an equipped item */
 	ICON_MARK_BROKEN = 1,	/* the red cross */
 	ICON_MARK_CURSED = 2,	/* the white skull of a cursed item worn */
 } ICON_MARK;
 
-/* Icon_DigitPointers' first tens digit, 1: the digits 0 to 9 come before it. */
+/* IconDigitPointers' first tens digit, 1: the digits 0 to 9 come before it. */
 #define ICON_DIGIT_TENS_FIRST 10
 
 /* A sprite cell's affine field (OAM attribute 0's bits 8 and 9) and its shape

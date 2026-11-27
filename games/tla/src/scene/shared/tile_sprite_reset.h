@@ -6,9 +6,9 @@
 Sint32 scTileSprReset(ACTOR *actor)
 {
 	WORLD_MAP_VIEW *view = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
-	FIELD_SPR	   *sprite = actor->spr;
+	FIELD_SPR	   *spr = actor->spr;
 
-	sprite->rotation = view->yaw;
-	sprite->flg = 0;
+	spr->rotation = view->yaw;
+	spr->flg = 0;
 	return 1;
 }

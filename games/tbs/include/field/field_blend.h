@@ -14,11 +14,11 @@ typedef struct FIELD_BLEND_STATE {
 	/* B, G and R channels: each flash fades back to them. */
 	Sint16 from[1344];
 	Sint16 to[1344];	/* the lit colours (PALETTE_TINT_PALE), as from */
-	Sint16 delta[1344]; /* the 12-frame steps from to back to from */
-	/* Frames to the next flash, which comes in three, 5 frames apart; below 0
+	Sint16 delta[1344]; /* the 12-tick steps from to back to from */
+	/* Ticks to the next flash, which comes in three, 5 ticks apart; below 0
 	   stops the lightning. */
 	Sint16 tmr;
-	/* Nonzero arms the next flash a random 51 to 549 frames after each, with a
+	/* Nonzero arms the next flash a random 51 to 549 ticks after each, with a
 	   thunderclap. */
 	Sint16 enabled;
 	Sint16 loud; /* nonzero plays the louder thunderclap, SE_THUNDER_LOUD for */

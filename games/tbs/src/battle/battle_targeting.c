@@ -16,7 +16,7 @@ typedef struct BATTLE_STATE_UNIT_LIST_VIEW {
 Sint32 btAIChooseRandomTarget(Sint32 requireLivingUnit)
 {
 	Uint16 places[6];
-	Sint32 count;
+	Sint32 cnt;
 
 	/* UB: the view treats distinct BATTLE_STATE members as one array. */
 #if FIX_POINTER_OUTSIDE_OBJECT
@@ -25,7 +25,7 @@ Sint32 btAIChooseRandomTarget(Sint32 requireLivingUnit)
 	Sint32	place;
 	Sint32	sideTag;
 
-	count = 0;
+	cnt = 0;
 	unitIds = requireLivingUnit ? BattleStateWork->partyUnits
 								: BattleStateWork->enemyIds;
 	sideTag = requireLivingUnit ? PLACE_PARTY : PLACE_ENEMY;
@@ -35,7 +35,7 @@ Sint32 btAIChooseRandomTarget(Sint32 requireLivingUnit)
 			continue;
 		if(requireLivingUnit && gmUnitGetStub(unitId)->hp == 0)
 			continue;
-		places[count++] = place | sideTag;
+		places[cnt++] = place | sideTag;
 	}
 #else
 	struct BATTLE_STATE_UNIT_LIST_VIEW *lists;
@@ -45,9 +45,9 @@ Sint32 btAIChooseRandomTarget(Sint32 requireLivingUnit)
 	Sint32								place;
 	Sint32								slot;
 	Sint32								tail;
-	Sint32								offset;
+	Sint32								ofs;
 
-	count = 0;
+	cnt = 0;
 	lists = (struct BATTLE_STATE_UNIT_LIST_VIEW *)BattleStateWork;
 
 	/* The party's standing places, else the enemies' places in use. */
@@ -60,8 +60,8 @@ Sint32 btAIChooseRandomTarget(Sint32 requireLivingUnit)
 				listedUnit = entry[slot];
 				if(listedUnit != BATTLE_UNIT_REMOVED) {
 					if(gmUnitGetStub(listedUnit)->hp != 0) {
-						places[count] = place | PLACE_PARTY;
-						count++;
+						places[cnt] = place | PLACE_PARTY;
+						cnt++;
 					}
 				}
 				slot++;
@@ -74,14 +74,14 @@ Sint32 btAIChooseRandomTarget(Sint32 requireLivingUnit)
 		place = 0;
 		slot = offsetof(BATTLE_STATE, enemyIds) / sizeof(Sint16) - 1;
 		tail = offsetof(BATTLE_STATE, enemyIds) / sizeof(Sint16) - 1;
-		offset = tail * 2;
+		ofs = tail * 2;
 		entry = (lists->items + 1);
-		if(*(Sint16 *)((char *)entry + offset) != BATTLE_UNIT_LIST_END) {
+		if(*(Sint16 *)((char *)entry + ofs) != BATTLE_UNIT_LIST_END) {
 			cursor = entry;
 			do {
 				if((Sint16)cursor[slot] != BATTLE_UNIT_REMOVED) {
-					places[count] = place | PLACE_ENEMY;
-					count++;
+					places[cnt] = place | PLACE_ENEMY;
+					cnt++;
 				}
 				slot++;
 				tail++;
@@ -91,9 +91,9 @@ Sint32 btAIChooseRandomTarget(Sint32 requireLivingUnit)
 	}
 #endif
 
-	if(count == 0)
+	if(cnt == 0)
 		return 0;
-	return places[syRandom16Below(count)];
+	return places[syRandom16Below(cnt)];
 }
 
 /* BUG: Restore cures stun and never confusion or charm, as its description says
@@ -304,29 +304,29 @@ Sint32 btAIChooseTarget(Sint32 userId, ABILITY_DEFINITION *action)
 {
 	Uint16		  candidatePlaces[6];
 	Sint32		  unitIds[6];
-	Sint32		  targetPlaces[6];
+	Sint32		  tgtPlaces[6];
 	BATTLE_STATE *battle;
 	UNIT		 *unit;
 	UNIT		 *nextUnit;
 	UNIT		 *thisUnit;
-	Sint32		  candidateCount;
-	Sint32		  targetIndex;
-	Sint32		  targetCount;
-	Sint32		  innerIndex;
+	Sint32		  candidateCnt;
+	Sint32		  tgtIdx;
+	Sint32		  tgtCnt;
+	Sint32		  innerIdx;
 	Sint32		  selected;
 	Sint32		  unitId;
 	Sint32		  value;
 	Sint32		  nextValue;
 	Sint32		  temp;
 	Sint32		  ownSide;
-	Sint32		  kindIndex;
+	Sint32		  kindIdx;
 	Sint32		  applies;
 	Uint32		  roll;
 	Sint16		 *slot;
 
 	battle = BattleStateWork;
-	targetCount = 0;
-	candidateCount = 0;
+	tgtCnt = 0;
+	candidateCnt = 0;
 
 	/* The candidates: every unit on the side the ability may target. */
 	if(action->tgtMode != ABILITY_TARGET_ONE) {
@@ -337,54 +337,52 @@ Sint32 btAIChooseTarget(Sint32 userId, ABILITY_DEFINITION *action)
 
 		if(((userId < 0 || userId > ALLY_MAX) && ownSide == 0) ||
 			(userId >= 0 && userId <= ALLY_MAX && ownSide != 0)) {
-			for(targetIndex = 0;
-				battle->partyUnits[targetIndex] != BATTLE_UNIT_LIST_END;
-				targetIndex++) {
-				slot = &battle->partyUnits[targetIndex];
+			for(tgtIdx = 0; battle->partyUnits[tgtIdx] != BATTLE_UNIT_LIST_END;
+				tgtIdx++) {
+				slot = &battle->partyUnits[tgtIdx];
 				unitId = *slot;
 				if(unitId != BATTLE_UNIT_REMOVED) {
 					if(action->tgtMode != ABILITY_TARGET_SELF ||
 						unitId == userId) {
-						unitIds[candidateCount] = unitId;
-						candidatePlaces[candidateCount] = PLACE_PARTY;
-						candidatePlaces[candidateCount] |= targetIndex;
-						candidateCount++;
+						unitIds[candidateCnt] = unitId;
+						candidatePlaces[candidateCnt] = PLACE_PARTY;
+						candidatePlaces[candidateCnt] |= tgtIdx;
+						candidateCnt++;
 					}
 				}
 			}
 		} else {
-			for(targetIndex = 0;
-				battle->enemyIds[targetIndex] != BATTLE_UNIT_LIST_END;
-				targetIndex++) {
-				unitId = battle->enemyIds[targetIndex];
+			for(tgtIdx = 0; battle->enemyIds[tgtIdx] != BATTLE_UNIT_LIST_END;
+				tgtIdx++) {
+				unitId = battle->enemyIds[tgtIdx];
 				if(unitId != BATTLE_UNIT_REMOVED) {
 					if(action->tgtMode != ABILITY_TARGET_SELF ||
 						unitId == userId) {
-						unitIds[candidateCount] = unitId;
-						candidatePlaces[candidateCount] = PLACE_ENEMY;
-						candidatePlaces[candidateCount] |= targetIndex;
-						candidateCount++;
+						unitIds[candidateCnt] = unitId;
+						candidatePlaces[candidateCnt] = PLACE_ENEMY;
+						candidatePlaces[candidateCnt] |= tgtIdx;
+						candidateCnt++;
 					}
 				}
 			}
 		}
 	}
 
-	if(candidateCount == 0)
+	if(candidateCnt == 0)
 		return TARGET_PICK_SIDE_EMPTY;
 
 	/* Keep the candidates the ability would affect, in place. */
-	for(targetIndex = 0; targetIndex < candidateCount; targetIndex++) {
-		unit = gmUnitGetStub(unitIds[targetIndex]);
-		CHECK_EFFECT_TARGET(unit, action, applies, kindIndex);
+	for(tgtIdx = 0; tgtIdx < candidateCnt; tgtIdx++) {
+		unit = gmUnitGetStub(unitIds[tgtIdx]);
+		CHECK_EFFECT_TARGET(unit, action, applies, kindIdx);
 		if(applies != 0) {
-			unitIds[targetCount] = unitIds[targetIndex];
-			targetPlaces[targetCount] = candidatePlaces[targetIndex];
-			targetCount++;
+			unitIds[tgtCnt] = unitIds[tgtIdx];
+			tgtPlaces[tgtCnt] = candidatePlaces[tgtIdx];
+			tgtCnt++;
 		}
 	}
 
-	if(targetCount == 0)
+	if(tgtCnt == 0)
 		return TARGET_PICK_NONE;
 
 	if(action->tgtMode == ABILITY_TARGET_FOES && action->range == 1 &&
@@ -397,11 +395,10 @@ Sint32 btAIChooseTarget(Sint32 userId, ABILITY_DEFINITION *action)
 		/* BUG: each pass starts one place later, so HP 1, 2 and 3 end as 2, 3
 		   and 1. */
 		selected = -1;
-		for(targetIndex = 0; targetIndex < targetCount; targetIndex++) {
-			for(innerIndex = targetIndex; innerIndex < targetCount - 1;
-				innerIndex++) {
-				thisUnit = gmUnitGetStub(unitIds[innerIndex]);
-				nextUnit = gmUnitGetStub(unitIds[innerIndex + 1]);
+		for(tgtIdx = 0; tgtIdx < tgtCnt; tgtIdx++) {
+			for(innerIdx = tgtIdx; innerIdx < tgtCnt - 1; innerIdx++) {
+				thisUnit = gmUnitGetStub(unitIds[innerIdx]);
+				nextUnit = gmUnitGetStub(unitIds[innerIdx + 1]);
 				if(gmEnemyGetDefinitionStub(gmUnitGetStub(userId)->id)
 						->tgtStrategy == TARGET_STRATEGY_MOST_HP) {
 					value = thisUnit->hp;
@@ -411,12 +408,12 @@ Sint32 btAIChooseTarget(Sint32 userId, ABILITY_DEFINITION *action)
 					nextValue = nextUnit->hpMax;
 				}
 				if(value < nextValue) {
-					temp = unitIds[innerIndex];
-					unitIds[innerIndex] = unitIds[innerIndex + 1];
-					unitIds[innerIndex + 1] = temp;
-					temp = targetPlaces[innerIndex];
-					targetPlaces[innerIndex] = targetPlaces[innerIndex + 1];
-					targetPlaces[innerIndex + 1] = temp;
+					temp = unitIds[innerIdx];
+					unitIds[innerIdx] = unitIds[innerIdx + 1];
+					unitIds[innerIdx + 1] = temp;
+					temp = tgtPlaces[innerIdx];
+					tgtPlaces[innerIdx] = tgtPlaces[innerIdx + 1];
+					tgtPlaces[innerIdx + 1] = temp;
 				}
 			}
 		}
@@ -424,7 +421,7 @@ Sint32 btAIChooseTarget(Sint32 userId, ABILITY_DEFINITION *action)
 		/* Weighted toward the front: of a roll's outcomes the first target
 		   takes 6, the second 5, the third 4 and the fourth 3; five or more
 		   fall through to an even roll. */
-		switch(targetCount) {
+		switch(tgtCnt) {
 		case 1:
 			selected = 0;
 			break;
@@ -457,7 +454,7 @@ Sint32 btAIChooseTarget(Sint32 userId, ABILITY_DEFINITION *action)
 		}
 
 		if(selected >= 0)
-			return targetPlaces[selected];
+			return tgtPlaces[selected];
 	}
-	return targetPlaces[syRandom16Below(targetCount)];
+	return tgtPlaces[syRandom16Below(tgtCnt)];
 }

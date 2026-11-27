@@ -34,58 +34,58 @@ Sint32 fdModeRun(Sint32 entrance);
    exit. */
 void gmTakeExit(Sint32 exitId)
 {
-	Sint16		  currentScene;
-	const Uint32 *exitTable;
+	Sint16		  curScene;
+	const Uint32 *exitTbl;
 	const Uint32 *firstExit;
 	Uint32		  word;
 	Sint32		  sceneId;
-	Sint32		  destinationScene;
-	Sint32		  destinationEntrance;
+	Sint32		  dstScene;
+	Sint32		  dstEntrance;
 	Sint32		  entrance;
 	Sint32		  kind;
-	Sint32		  flag;
+	Sint32		  flg;
 
-	currentScene = MainRoutineStateWork.next;
-	exitTable = ((SCENE_ENTRY_TABLE *)OverlayArea)->exits();
-	destinationScene = EXIT_KEEP_DESTINATION;
-	destinationEntrance = 0;
+	curScene = MainRoutineStateWork.next;
+	exitTbl = ((SCENE_ENTRY_TABLE *)OverlayArea)->exits();
+	dstScene = EXIT_KEEP_DESTINATION;
+	dstEntrance = 0;
 	if(exitId == EXIT_KEEP_DESTINATION)
 		return;
 
 	for(;;) {
 		/* Find the header of the current scene: exit words have high bits
 		   set. */
-		sceneId = *exitTable++;
+		sceneId = *exitTbl++;
 		if(sceneId & ~EXIT_SCENE_MASK)
 			continue;
 		sceneId &= EXIT_SCENE_MASK;
 		if(sceneId == SCENE_EXITS_END)
 			break;
-		if(sceneId != currentScene)
+		if(sceneId != curScene)
 			continue;
 
-		firstExit = exitTable;
+		firstExit = exitTbl;
 		for(;;) {
-			word = *exitTable++;
+			word = *exitTbl++;
 			sceneId = word & EXIT_SCENE_MASK;
 			entrance = ENTRANCE(word);
 			kind = EXIT_ID(word);
-			flag = word & EXIT_HAS_FLAG;
-			if(flag)
-				flag = *exitTable++;
+			flg = word & EXIT_HAS_FLAG;
+			if(flg)
+				flg = *exitTbl++;
 			if(sceneId == SCENE_EXITS_END || kind == 0) {
-				destinationScene = *firstExit & EXIT_DEFAULT_SCENE_MASK;
+				dstScene = *firstExit & EXIT_DEFAULT_SCENE_MASK;
 				break;
 			}
 			if(kind == EXIT_ID_ANY || kind == exitId) {
-				if(flag != 0) {
-					if(flag != -1) {
-						if(syGameFlagGet(flag))
+				if(flg != 0) {
+					if(flg != -1) {
+						if(syGameFlagGet(flg))
 							continue;
 					}
 				}
-				destinationScene = sceneId;
-				destinationEntrance = entrance;
+				dstScene = sceneId;
+				dstEntrance = entrance;
 				break;
 			}
 		}
@@ -93,9 +93,9 @@ void gmTakeExit(Sint32 exitId)
 	}
 
 	/* Commit the chosen exit only after a matching scene was found. */
-	if(destinationScene != EXIT_KEEP_DESTINATION) {
-		MainRoutineStateWork.next = destinationScene;
-		MainRoutineStateWork.entrance = destinationEntrance;
+	if(dstScene != EXIT_KEEP_DESTINATION) {
+		MainRoutineStateWork.next = dstScene;
+		MainRoutineStateWork.entrance = dstEntrance;
 	}
 }
 
@@ -217,11 +217,11 @@ enum {
    minigames, Super Lucky Dice the third. */
 void gmMainRoutineRun(Sint32 start)
 {
-	const SCENE *table;
+	const SCENE *tbl;
 	const SCENE *record;
 	Sint32		 entrance;
 
-	table = ScenesWork;
+	tbl = ScenesWork;
 	/* Choose the first scene before initializing the per-scene runtime. */
 	if(DebugMode && start == GAME_START_DEBUG_VENUS_LIGHTHOUSE) {
 		MainRoutineStateWork.next = SCENE_VENUS_LIGHTHOUSE_ENTRANCE;
@@ -254,7 +254,7 @@ void gmMainRoutineRun(Sint32 start)
 			syGameFlagClear(FLAG_SKIP_SCENE_CHANGE_SOUND);
 		else
 			sySndPlayStub(SE_STOP_ACTION_SE);
-		record = &table[MainRoutineStateWork.next];
+		record = &tbl[MainRoutineStateWork.next];
 		entrance = MainRoutineStateWork.entrance;
 
 		DMA0_STOP();
@@ -319,10 +319,10 @@ void gmMainRoutineRun(Sint32 start)
 /* Loads the current scene's overlay code (its resource) into OverlayArea. */
 void gmLoadOverlay(Sint32 unused)
 {
-	const SCENE *table;
+	const SCENE *tbl;
 
-	table = ScenesWork;
-	syOverlayLoad(table[MainRoutineStateWork.next].resourceId, OverlayArea);
+	tbl = ScenesWork;
+	syOverlayLoad(tbl[MainRoutineStateWork.next].resourceId, OverlayArea);
 }
 
 /* The scene's row of ScenesWork. */
@@ -334,17 +334,16 @@ void gmLoadOverlay(Sint32 unused)
 void gmArrive(Sint32 unused, Sint32 keep)
 {
 	Sint32 area = MAP_HEADER_AT(MainRoutineStateWork.next)->area;
-	Sint32 flag;
+	Sint32 flg;
 
 	if(keep == 0) {
 		/* Local puzzle flags expire on every normal entry to a scene. */
-		for(flag = FLAG_SCENE_TEMP_FIRST; flag <= FLAG_SCENE_TEMP_LAST; flag++)
-			syGameFlagClear(flag);
+		for(flg = FLAG_SCENE_TEMP_FIRST; flg <= FLAG_SCENE_TEMP_LAST; flg++)
+			syGameFlagClear(flg);
 		if(area != MainRoutineStateWork.area) {
 			/* Area state and Retreat's destination survive moves within it. */
-			for(flag = FLAG_AREA_TEMP_FIRST; flag <= FLAG_AREA_TEMP_LAST;
-				flag++)
-				syGameFlagClear(flag);
+			for(flg = FLAG_AREA_TEMP_FIRST; flg <= FLAG_AREA_TEMP_LAST; flg++)
+				syGameFlagClear(flg);
 			syGameFlagSet(FLAG_SHOW_AREA_NAME);
 			MainRoutineStateWork.encounterSteps = 0;
 			MainRoutineStateWork.hazardSteps = 0;
@@ -358,9 +357,9 @@ void gmArrive(Sint32 unused, Sint32 keep)
 		}
 		/* The Djinn's hiding flags last for one scene, even within an area, and
 		   so do the flags after them to FLAG_ARRIVAL_CLEARED_LAST. */
-		for(flag = FLAG_DJINN_HIDING_FIRST; flag <= FLAG_ARRIVAL_CLEARED_LAST;
-			flag++)
-			syGameFlagClear(flag);
+		for(flg = FLAG_DJINN_HIDING_FIRST; flg <= FLAG_ARRIVAL_CLEARED_LAST;
+			flg++)
+			syGameFlagClear(flg);
 		syGameFlagClear(FLAG_LINK_BATTLE);
 		syGameFlagClear(FLAG_RETREAT_BLOCKED);
 		/* FLAG_NO_ENCOUNTERS_IN_AREA stops random battles. */

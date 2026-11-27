@@ -4,9 +4,9 @@
 #include "field/script.h"
 
 /* Sets an actor's y and groundHeight to the map's height at its x and z. */
-void fdActorSnapToTerrain(void *actorPointer)
+void fdActorSnapToTerrain(void *actorPtr)
 {
-	ACTOR *actor = actorPointer;
+	ACTOR *actor = actorPtr;
 	Sint32 groundHeight;
 
 	groundHeight =
@@ -23,16 +23,16 @@ Sint16 *fdSceneItemGetRows(void)
 	Sint16 *p = SceneItems;
 	Sint16 *found = NULL;
 	Sint32	header;
-	Sint32	flag;
+	Sint32	flg;
 	Sint16	value;
 
 	for(;;) {
 		header = *p++;
-		flag = *p++;
+		flg = *p++;
 		if(header == 0)
 			break;
 		if((header & (SCENE_ITEMS_HEADER - 1)) == scene &&
-			(flag == -1 || !syGameFlagGet(flag))) {
+			(flg == -1 || !syGameFlagGet(flg))) {
 			found = p;
 			break;
 		}
@@ -62,9 +62,9 @@ void fdPlaceTreasureSpots(void)
 	Sint32		 i;
 	Sint16		 type;
 	Sint32		 id;
-	Sint32		 flag;
+	Sint32		 flg;
 	Sint32		 item;
-	Sint32		 position[3];
+	Sint32		 pos[3];
 	Sint32		 kind;
 	Sint32		 buried;
 	ACTOR		*actor;
@@ -77,11 +77,11 @@ void fdPlaceTreasureSpots(void)
 		return;
 	do {
 		id = rows[0];
-		flag = rows[1];
+		flg = rows[1];
 		item = rows[2];
 		rows += 3;
-		if((type == CONTAINER_CHEST || flag == -1 || !syGameFlagGet(flag)) &&
-			!fdSceneItemFindPos(id, position)) {
+		if((type == CONTAINER_CHEST || flg == -1 || !syGameFlagGet(flg)) &&
+			!fdSceneItemFindPos(id, pos)) {
 			buried = 0;
 			if((Uint16)(type - CONTAINER_CHEST) <=
 				CONTAINER_MIMIC - CONTAINER_CHEST)
@@ -96,8 +96,7 @@ void fdPlaceTreasureSpots(void)
 				buried = 1;
 				kind = SPRITE_UNSEEN_MARKER;
 			}
-			actor =
-				fdActorCreateStub(kind, position[0], position[1], position[2]);
+			actor = fdActorCreateStub(kind, pos[0], pos[1], pos[2]);
 			if(actor != NULL) {
 				if(state->mode == ACTOR_SYSTEM_WORLD_MAP) {
 					actor->motionFlg = ACTOR_FALLS;
@@ -108,13 +107,13 @@ void fdPlaceTreasureSpots(void)
 						0, actor->x.fixed, actor->z.fixed);
 					actor->y.fixed += actor->groundHeight;
 					if(buried) {
-						Uint8		 *motionFlags = &actor->motionFlg;
+						Uint8		 *motionFlg = &actor->motionFlg;
 						MAP_STATE	 *map;
 						MAP_METATILE *metatiles;
 						Sint32		  x;
 						Sint32		  z;
 
-						*motionFlags = ACTOR_FALLS;
+						*motionFlg = ACTOR_FALLS;
 						actor->groundHeight -= toFIXED(16);
 						actor->y.fixed = actor->groundHeight;
 						map = Ram_HeapSlots->mapGrid;
@@ -132,7 +131,7 @@ void fdPlaceTreasureSpots(void)
 				}
 				fdActorSelectAnimationStub(actor, ANIM_STAND);
 				fdActorSetSprFlagsStub(actor, 0);
-				if(syGameFlagGet(flag))
+				if(syGameFlagGet(flg))
 					fdActorSelectAnimationStub(actor, TREASURE_SPOT_CHEST_OPEN);
 				fdActorStartIdleStub(actor);
 				actor->homeX = actor->x.fixed / toFIXED(1);
@@ -169,7 +168,7 @@ enum {
 void fdActorSetWideSpr(Uint32 actorId, Sint32 mode)
 {
 	ACTOR *actor;
-	SPR	  *sprite;
+	SPR	  *spr;
 
 	actor = fdActorLookup(actorId);
 	if(actor == 0)
@@ -180,29 +179,29 @@ void fdActorSetWideSpr(Uint32 actorId, Sint32 mode)
 		actor->sceneWord = TREASURE_SPOT_ON_METATILE;
 		return;
 	}
-	sprite = actor->spr;
-	if(sprite == 0)
+	spr = actor->spr;
+	if(spr == 0)
 		return;
-	sprite->ofsY += 4;
-	sprite->image.shape = OBJ_SHAPE_HORIZONTAL;
-	sprite->image.size = OAM_SIZE_16X8;
+	spr->ofsY += 4;
+	spr->image.shape = OBJ_SHAPE_HORIZONTAL;
+	spr->image.size = OAM_SIZE_16X8;
 }
 
 /* Draws the actor's sprite square, 16 by 16 pixels, 8 pixels down. */
 void fdActorSetSquareSpr(Uint32 actorId)
 {
 	ACTOR *actor;
-	SPR	  *sprite;
+	SPR	  *spr;
 
 	actor = fdActorLookup(actorId);
 	if(actor == 0)
 		return;
-	sprite = actor->spr;
-	if(sprite == 0)
+	spr = actor->spr;
+	if(spr == 0)
 		return;
-	sprite->ofsY = 8;
-	sprite->image.shape = OBJ_SHAPE_SQUARE;
-	sprite->image.size = OAM_SIZE_16X16;
+	spr->ofsY = 8;
+	spr->image.shape = OBJ_SHAPE_SQUARE;
+	spr->image.size = OAM_SIZE_16X16;
 }
 
 /* Returns the OAM shape of the actor's sprite (0 square, 1 wide, 2 tall), or 0
@@ -210,14 +209,14 @@ void fdActorSetSquareSpr(Uint32 actorId)
 Sint32 fdActorGetSprShape(Uint32 actorId)
 {
 	ACTOR *actor;
-	SPR	  *sprite;
+	SPR	  *spr;
 	Sint32 shape = OBJ_SHAPE_SQUARE;
 
 	actor = fdActorLookup(actorId);
 	if(actor != 0) {
-		sprite = actor->spr;
-		if(sprite != 0)
-			shape = sprite->image.shape;
+		spr = actor->spr;
+		if(spr != 0)
+			shape = spr->image.shape;
 	}
 	return shape;
 }
@@ -225,7 +224,7 @@ Sint32 fdActorGetSprShape(Uint32 actorId)
 /* RETURN_HOME_CLEAR_Z moves the actor to z 0; RETURN_HOME_DUG_UP sets flag,
    draws a moved actor square again and drops it back home (homeX, homeZ) at
    Scoop's anchor. */
-void fdActorReturnHome(Sint32 mode, Uint32 actorId, Sint32 flag)
+void fdActorReturnHome(Sint32 mode, Uint32 actorId, Sint32 flg)
 {
 	ACTOR *actor;
 
@@ -235,7 +234,7 @@ void fdActorReturnHome(Sint32 mode, Uint32 actorId, Sint32 flag)
 	if(mode == RETURN_HOME_CLEAR_Z)
 		actor->z.fixed = 0;
 	if(mode == RETURN_HOME_DUG_UP) {
-		syGameFlagSet(flag);
+		syGameFlagSet(flg);
 		if(actor->x.fixed != 0)
 			fdActorSetSquareSpr(actorId);
 		actor->x.fixed = toFIXED(actor->homeX);
@@ -244,17 +243,17 @@ void fdActorReturnHome(Sint32 mode, Uint32 actorId, Sint32 flag)
 	}
 }
 
-/* Shakes the actor's facing at random for 16 frames, then turns it back. */
+/* Shakes the actor's facing at random for 16 ticks, then turns it back. */
 UNUSED void fdActorShakeAng(Uint32 actorId)
 {
 	ACTOR *actor;
-	Sint32 angle;
+	Sint32 ang;
 	Sint32 i;
 
 	actor = fdActorLookup(actorId);
 	if(actor == 0)
 		return;
-	angle = actor->facing;
+	ang = actor->facing;
 	for(i = 0; i < 16; i++) {
 		Uint32 a = syRandom();
 		Uint32 b = syRandom();
@@ -266,11 +265,11 @@ UNUSED void fdActorShakeAng(Uint32 actorId)
 		actor->facing = cur + (a - b);
 		sySynch(1);
 	}
-	actor->facing = angle;
+	actor->facing = ang;
 }
 
 /* Closes the chest of the actor again (its item could not be carried), with
-   SE_CHEST_CLOSE, and waits 12 frames. */
+   SE_CHEST_CLOSE, and waits 12 ticks. */
 void fdTreasureSpotCloseChest(Uint32 actorId)
 {
 	fdActorSelectAnimationStub(
@@ -279,9 +278,9 @@ void fdTreasureSpotCloseChest(Uint32 actorId)
 	sySynch(12);
 }
 
-/* Makes the chest of the actor jump up as a mimic: after 18 frames it takes
+/* Makes the chest of the actor jump up as a mimic: after 18 ticks it takes
    TREASURE_SPOT_CHEST_MIMIC, plays SE_ENEMY_CRY and gets an upward velocity of
-   8 pixels a frame, its shadow shown. */
+   8 pixels a tick, its shadow shown. */
 void fdTreasureSpotLaunchMimic(Uint32 actorId)
 {
 	ACTOR *actor;
@@ -296,7 +295,7 @@ void fdTreasureSpotLaunchMimic(Uint32 actorId)
 	}
 }
 
-/* Opens the chest of the actor with SE_CHEST_OPEN, and waits 12 frames. */
+/* Opens the chest of the actor with SE_CHEST_OPEN, and waits 12 ticks. */
 void fdTreasureSpotOpenChest(Uint32 actorId)
 {
 	fdActorSelectAnimationStub(
@@ -313,7 +312,7 @@ void fdTreasureSpotShowOpened(Uint32 actorId)
 }
 
 /* Opens the empty chest of the actor with SE_CHEST_OPEN, and waits 12
-   frames. */
+   ticks. */
 void fdTreasureSpotOpenEmptyChest(Uint32 actorId)
 {
 	fdActorSelectAnimationStub(

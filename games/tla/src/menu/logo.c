@@ -1,14 +1,14 @@
 /* The gull that flies across the lighthouse picture before the title logo comes
-   in (mnTitleIntroUpdateLogo's first phase): its frames, drawn from
+   in (mnTitleIntroUpdateLogo's first phase): its ticks, drawn from
    ResourceId_IntroGullSprites's tiles, and the path it follows. */
 
 #include "types.h"
 
 /* clang-format off */
-/* The gull's frames, rows of five: a first tile, a count of columns, a */
-/* duration in frames and an x and y offset. The animation steps a row at a */
+/* The gull's ticks, rows of five: a first tile, a count of columns, a */
+/* duration in ticks and an x and y offset. The animation steps a row at a */
 /* time and stops at the row whose first value is -1. */
-const Sint16 TitleIntro_GullPictures[] = {
+const Sint16 TitleIntroGullPictures[] = {
 	   0, 3, 3,  0,  0,
 	  24, 4, 3,  0, -4,
 	  56, 4, 3,  0,  1,
@@ -49,8 +49,8 @@ const Sint16 TitleIntro_GullPictures[] = {
 };
 
 /* The gull's path, rows of three: an x and y position and a duration in */
-/* frames, ending in a row of -1. */
-const Sint16 TitleIntro_GullPath[] = {
+/* ticks, ending in a row of -1. */
+const Sint16 TitleIntroGullPath[] = {
 	101, 150, 1,
 	103, 150, 1,
 	105, 149, 1,

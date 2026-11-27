@@ -40,7 +40,7 @@ A figure is one file, such as `sprite/isaac.png`: a strip one
 [picture](../../../../docs/tla/glossary.md#picture) wide, with 215 pictures of 32 by 32
 stacked top to bottom. Beside it, `isaac.tsv` is its
 [animations](../../../../docs/tla/glossary.md#sprite-animation), one a line, each a list
-of which picture to show and for how many frames:
+of which picture to show and for how many ticks:
 
 ```
 picture 55 7, picture 30 7, picture 35 7, picture 40 7, picture 45 7, picture 50 7, loop

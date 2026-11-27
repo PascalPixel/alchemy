@@ -13,8 +13,8 @@ typedef Sint32 (*TERRAIN_HEIGHT_FN)(
 	const Uint8 *heightBytes, Sint32 pixelX, Sint32 pixelY);
 
 extern const TERRAIN_HEIGHT_FN
-					MapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT];
-extern const Sint8	WorldMap_DirectionOffsets[8][2];
-extern const Uint32 WorldMap_UnitScale[2];
+					MapGridTerrainHeightFunctions[TERRAIN_KIND_COUNT];
+extern const Sint8	WorldMapDirectionOffsets[8][2];
+extern const Uint32 WorldMapUnitScale[2];
 
 #endif

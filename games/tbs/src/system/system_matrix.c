@@ -98,12 +98,12 @@ void syMatrixRotate(Sint32 *angles)
 	syMultiMatrix(matrix);
 }
 
-/* Rotates CurrentMatrix about the X axis by `angle`. */
-void syRotX(ANGLE angle)
+/* Rotates CurrentMatrix about the X axis by `ang`. */
+void syRotX(ANGLE ang)
 {
 	MATRIX matrix;
-	FIXED  sine = sySin(angle);
-	FIXED  cosine = syCos(angle);
+	FIXED  sine = sySin(ang);
+	FIXED  cosine = syCos(ang);
 
 	syUnitMatrix(matrix);
 	matrix[4] = cosine;
@@ -113,12 +113,12 @@ void syRotX(ANGLE angle)
 	syMultiMatrix(matrix);
 }
 
-/* Rotates CurrentMatrix about the Y axis by `angle`. */
-void syRotY(ANGLE angle)
+/* Rotates CurrentMatrix about the Y axis by `ang`. */
+void syRotY(ANGLE ang)
 {
 	MATRIX matrix;
-	FIXED  sine = sySin(angle);
-	FIXED  cosine = syCos(angle);
+	FIXED  sine = sySin(ang);
+	FIXED  cosine = syCos(ang);
 
 	syUnitMatrix(matrix);
 	matrix[0] = cosine;
@@ -128,12 +128,12 @@ void syRotY(ANGLE angle)
 	syMultiMatrix(matrix);
 }
 
-/* Rotates CurrentMatrix about the Z axis by `angle`. */
-void syRotZ(ANGLE angle)
+/* Rotates CurrentMatrix about the Z axis by `ang`. */
+void syRotZ(ANGLE ang)
 {
 	MATRIX matrix;
-	FIXED  sine = sySin(angle);
-	FIXED  cosine = syCos(angle);
+	FIXED  sine = sySin(ang);
+	FIXED  cosine = syCos(ang);
 
 	syUnitMatrix(matrix);
 	matrix[0] = cosine;
@@ -143,15 +143,15 @@ void syRotZ(ANGLE angle)
 	syMultiMatrix(matrix);
 }
 
-/* Translates CurrentMatrix by `position` (x, y, z in 16.16). */
-void syMatrixTranslateVector(const POINT position)
+/* Translates CurrentMatrix by `pos` (x, y, z in 16.16). */
+void syMatrixTranslateVector(const POINT pos)
 {
 	MATRIX matrix;
 
 	syUnitMatrix(matrix);
-	matrix[MATRIX_TRANSLATION_X] = position[0];
-	matrix[MATRIX_TRANSLATION_Y] = position[1];
-	matrix[MATRIX_TRANSLATION_Z] = position[2];
+	matrix[MATRIX_TRANSLATION_X] = pos[0];
+	matrix[MATRIX_TRANSLATION_Y] = pos[1];
+	matrix[MATRIX_TRANSLATION_Z] = pos[2];
 	syMultiMatrix(matrix);
 }
 
@@ -167,9 +167,9 @@ void syMatrixScaleVector(const VECTOR scale)
 	syMultiMatrix(matrix);
 }
 
-/* Rotates CurrentMatrix by `angles` and translates it by `position` in one
+/* Rotates CurrentMatrix by `angles` and translates it by `pos` in one
    matrix. Reached through the stub table. */
-void syMatrixRotateTranslate(Sint32 *angles, POINT position)
+void syMatrixRotateTranslate(Sint32 *angles, POINT pos)
 {
 	FIXED  sinX, cosX, sinY, cosY, sinZ, cosZ;
 	MATRIX matrix;
@@ -189,15 +189,15 @@ void syMatrixRotateTranslate(Sint32 *angles, POINT position)
 	matrix[6] = syMulFX(syMulFX(cosX, sinY), cosZ) + syMulFX(sinX, sinZ);
 	matrix[7] = syMulFX(syMulFX(cosX, sinY), sinZ) - syMulFX(sinX, cosZ);
 	matrix[8] = syMulFX(cosX, cosY);
-	matrix[MATRIX_TRANSLATION_X] = position[0];
-	matrix[MATRIX_TRANSLATION_Y] = position[1];
-	matrix[MATRIX_TRANSLATION_Z] = position[2];
+	matrix[MATRIX_TRANSLATION_X] = pos[0];
+	matrix[MATRIX_TRANSLATION_Y] = pos[1];
+	matrix[MATRIX_TRANSLATION_Z] = pos[2];
 	syMultiMatrix(matrix);
 }
 
 /* Rotates by `angles`, scales each rotation row by `scale` and translates by
-   `position`, in one matrix. */
-void syMatrixRotateTranslateScale(Sint32 *angles, POINT position, VECTOR scale)
+   `pos`, in one matrix. */
+void syMatrixRotateTranslateScale(Sint32 *angles, POINT pos, VECTOR scale)
 {
 	FIXED  sinX, cosX, sinY, cosY, sinZ, cosZ;
 	FIXED  axisScale;
@@ -225,15 +225,15 @@ void syMatrixRotateTranslateScale(Sint32 *angles, POINT position, VECTOR scale)
 	matrix[7] = syMulFX(
 		axisScale, syMulFX(syMulFX(cosX, sinY), sinZ) - syMulFX(sinX, cosZ));
 	matrix[8] = syMulFX(axisScale, syMulFX(cosX, cosY));
-	matrix[MATRIX_TRANSLATION_X] = position[0];
-	matrix[MATRIX_TRANSLATION_Y] = position[1];
-	matrix[MATRIX_TRANSLATION_Z] = position[2];
+	matrix[MATRIX_TRANSLATION_X] = pos[0];
+	matrix[MATRIX_TRANSLATION_Y] = pos[1];
+	matrix[MATRIX_TRANSLATION_Z] = pos[2];
 	syMultiMatrix(matrix);
 }
 
-/* Builds in `out` the camera matrix of an eye at `eye` looking at `target`. The
+/* Builds in `out` the camera matrix of an eye at `eye` looking at `tgt`. The
    camera's sideways axis is kept level (no Y component). */
-void syMatrixBuildLookAt(POINT eye, POINT target, MATRIX out)
+void syMatrixBuildLookAt(POINT eye, POINT tgt, MATRIX out)
 {
 	Uint32	code[7];
 	Sint32	dx, dy, dz;
@@ -255,9 +255,9 @@ void syMatrixBuildLookAt(POINT eye, POINT target, MATRIX out)
 
 	/* The view axis d, pointing from the target back to the eye, normalized:
 	   its length in whole pixels, and toFIXED(1) over it, negated. */
-	dx = target[0] - eye[0];
-	dy = target[1] - eye[1];
-	dz = target[2] - eye[2];
+	dx = tgt[0] - eye[0];
+	dy = tgt[1] - eye[1];
+	dz = tgt[2] - eye[2];
 	t = sySquartIWRAM(
 		dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
 	scale = syIntegerDivideUnsigned(dividend, t) >> RECIPROCAL_SHIFT;
@@ -308,18 +308,18 @@ void syMatrixBuildLookAt(POINT eye, POINT target, MATRIX out)
 	out[MATRIX_TRANSLATION_Z] = -dot(ex, dx, ey, dy, ez, dz);
 }
 
-/* Makes the camera at `eye` looking at `target` the whole of CurrentMatrix. */
-void syLookAtLoad(POINT eye, POINT target)
+/* Makes the camera at `eye` looking at `tgt` the whole of CurrentMatrix. */
+void syLookAtLoad(POINT eye, POINT tgt)
 {
-	syMatrixBuildLookAt(eye, target, CurrentMatrix);
+	syMatrixBuildLookAt(eye, tgt, CurrentMatrix);
 }
 
-/* Multiplies the camera at `eye` looking at `target` into CurrentMatrix. */
-void syLookAt(POINT eye, POINT target)
+/* Multiplies the camera at `eye` looking at `tgt` into CurrentMatrix. */
+void syLookAt(POINT eye, POINT tgt)
 {
 	MATRIX work;
 
-	syMatrixBuildLookAt(eye, target, work);
+	syMatrixBuildLookAt(eye, tgt, work);
 	syMultiMatrix(work);
 }
 
@@ -328,15 +328,15 @@ void syLookAt(POINT eye, POINT target)
    half the angle. */
 void syPerspective(Uint32 fieldOfView, FIXED nearDepth, FIXED farDepth)
 {
-	Sint32 halfAngle;
+	Sint32 halfAng;
 	FIXED  sine;
 	FIXED  focal;
 
-	halfAngle = (Sint32)fieldOfView / 2;
-	sine = sySin(halfAngle);
+	halfAng = (Sint32)fieldOfView / 2;
+	sine = sySin(halfAng);
 	/* syDivFX(d, v) is v * toFIXED(1) / d: here (DISPLAY_HEIGHT / 2) * cos /
 	   sin */
-	focal = syDivFX(sine, syCos(halfAngle) * (DISPLAY_HEIGHT / 2));
+	focal = syDivFX(sine, syCos(halfAng) * (DISPLAY_HEIGHT / 2));
 	ProjectionWork.near = nearDepth;
 	ProjectionWork.focal = focal;
 	ProjectionWork.far = farDepth;

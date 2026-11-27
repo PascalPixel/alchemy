@@ -32,7 +32,7 @@ typedef struct MERCURY_LIGHTHOUSE_LIGHTS {
 	   pool spends one. */
 	Sint32 levels;
 	Sint32 poolBehavior; /* the pool's metatile behavior, the floor's region */
-	/* Frames to the next ripple in
+	/* Ticks to the next ripple in
 	   METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, 10 to 39; a hop zeroes
 	   it. */
 	Sint32 rippleTmr;

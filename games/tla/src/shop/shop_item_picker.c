@@ -8,8 +8,8 @@ Sint32 mnForgeRun(Sint32 actorId)
 {
 	SHOP_STATE *shop;
 	WINDOW_SPR *icon;
-	WINDOW	   *window;
-	Sint32		messageBase;
+	WINDOW	   *win;
+	Sint32		msgBase;
 	Sint32		result;
 
 	mnShopInitState();
@@ -18,25 +18,25 @@ Sint32 mnForgeRun(Sint32 actorId)
 	shop->action = SHOP_ACTION_FORGE;
 	shop->keeperGraphics =
 		((SPR *)fdActorGetByIdStub(actorId)->spr)->entries[0]->anmId;
-	window = mnPortraitOpenWindowStub(shop->keeperGraphics, 0, 0, 0);
+	win = mnPortraitOpenWindowStub(shop->keeperGraphics, 0, 0, 0);
 	icon = mnWindowSprCreateStub(
-		shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
+		shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, win, 0, 0);
 	icon->depth = OAM_DEPTH_FRONT;
 	icon->motion = WINDOW_SPRITE_MOTION_STILL;
 	icon->kind = WINDOW_SPRITE_PLAIN;
 	mnCursorSetPosImmediate(&shop->cursor, -32, 112);
 	shop->cursor.anchor = icon;
-	messageBase = (Sint32)MsgRightWhenI;
+	msgBase = (Sint32)MsgRightWhenI;
 	/* "Right when I saw those materials, I had to work!" */
-	mnShopShowKeeperMessage(messageBase);
+	mnShopShowKeeperMessage(msgBase);
 	/* "Which item needs my special attention?" */
-	mnShopShowKeeperMessage(messageBase + 1);
+	mnShopShowKeeperMessage(msgBase + 1);
 	result = mnForgeChooseMember();
 	mnCursorSetPosImmediate(&shop->cursor, -32, 112);
 	if(result == -1)
 		/* "Aren't you the ones mucking about earlier?" */
-		mnShopShowKeeperMessage(messageBase + 2);
-	mnWindowCloseStub(window, 2);
+		mnShopShowKeeperMessage(msgBase + 2);
+	mnWindowCloseStub(win, 2);
 	mnShopReleaseState();
 	return 0;
 }
@@ -123,9 +123,9 @@ Sint32 mnItemPickerRun(
 	SHOP_STATE *shop;
 	Sint32		unitId = 0;
 	Sint32		redraw = 1;
-	Sint32		memberIndex = 0;
-	WINDOW	   *partyWindow;
-	WINDOW	   *cursorWindow;
+	Sint32		memberIdx = 0;
+	WINDOW	   *partyWin;
+	WINDOW	   *cursorWin;
 	WINDOW_SPR *cursorAnchor;
 	Sint32		itemSlot;
 	Sint32		result = 0;
@@ -134,29 +134,29 @@ Sint32 mnItemPickerRun(
 	shop = Ram_HeapSlots->menuState;
 	shop->itemMode = itemMode;
 	shop->itemWin = mnWindowCreateStub(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
-	partyWindow = mnWindowCreateStub(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
-	shop->listWin = partyWindow;
-	cursorWindow = mnWindowCreateStub(30, 0, 1, 1, WINDOW_FLAG_INSTANT);
+	partyWin = mnWindowCreateStub(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
+	shop->listWin = partyWin;
+	cursorWin = mnWindowCreateStub(30, 0, 1, 1, WINDOW_FLAG_INSTANT);
 	cursorAnchor = mnWindowSprCreateStub(
-		shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, cursorWindow, 0, 0);
+		shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, cursorWin, 0, 0);
 	cursorAnchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
 	cursorAnchor->kind = WINDOW_SPRITE_PLAIN;
 	mnCursorSetPosImmediate(&shop->cursor, -32, 112);
 	shop->cursor.anchor = cursorAnchor;
 	shop->cursorFrm = 1;
-	mnShowPartyFiguresStub(partyWindow, 2, 0);
+	mnShowPartyFiguresStub(partyWin, 2, 0);
 	while(1) {
 		if(redraw != 0) {
-			unitId = shop->partyMemberIds[memberIndex];
-			mnCursorPlace(partyWindow,
-				(memberIndex % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
+			unitId = shop->partyMemberIds[memberIdx];
+			mnCursorPlace(
+				partyWin, (memberIdx % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
 			shop->cursorFrm = 3;
 			if(redraw == MENU_GRID_CHANGED_PAGE) {
-				mnCreatePartyFiguresStub(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
+				mnCreatePartyFiguresStub(memberIdx / SHOP_PARTY_PAGE_MEMBERS *
 					SHOP_PARTY_PAGE_MEMBERS);
 				sySynch(1);
 			}
-			mnShopDrawParty(partyWindow, memberIndex, 0);
+			mnShopDrawParty(partyWin, memberIdx, 0);
 			mnShopDrawMemberItems(shop->itemWin, unitId);
 			redraw = 0;
 		}
@@ -166,12 +166,12 @@ Sint32 mnItemPickerRun(
 				sySndPlayStub(SE_MENU_CANCEL);
 				continue;
 			}
-			mnWindowSprPrepareForRedrawStub(partyWindow);
+			mnWindowSprPrepareForRedrawStub(partyWin);
 			sySndPlayStub(SE_MENU_CONFIRM);
 			itemSlot = mnItemPickerSelectItem(unitId);
 			if(itemSlot == -1) {
 				shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-				shop->cursorFrm = SHOP_CURSOR_ENTER_FRAMES;
+				shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
 				redraw = MENU_GRID_CHANGED_PAGE;
 				continue;
 			}
@@ -187,12 +187,12 @@ Sint32 mnItemPickerRun(
 			break;
 		} else {
 			redraw = mnGridMoveCursor(
-				&memberIndex, shop->partyMemberCnt, SHOP_PARTY_PAGE_MEMBERS);
+				&memberIdx, shop->partyMemberCnt, SHOP_PARTY_PAGE_MEMBERS);
 		}
 	}
 	mnReleasePartyFiguresStub();
-	mnWindowCloseStub(cursorWindow, 2);
-	mnWindowCloseStub(partyWindow, 2);
+	mnWindowCloseStub(cursorWin, 2);
+	mnWindowCloseStub(partyWin, 2);
 	mnWindowCloseStub(shop->itemWin, 2);
 	sySynch(1);
 	mnShopReleaseState();
@@ -212,46 +212,46 @@ Sint32 mnItemPickerRun(
    cancelled. */
 Sint32 mnItemPickerSelectItem(Sint32 unitId)
 {
-	WINDOW	   *descriptionWindow;
+	WINDOW	   *descriptionWin;
 	SHOP_STATE *shop;
-	WINDOW	   *priceWindow;
+	WINDOW	   *priceWin;
 	UNIT	   *unit;
 	Sint32		slot;
-	Sint32		inventoryCount;
+	Sint32		inventoryCnt;
 	Bool		redraw;
 	Sint32		result;
 	Sint32		itemId;
 	Sint32		refusal;
-	WINDOW	   *window;
+	WINDOW	   *win;
 	Sint32		column;
 	Sint32		row;
 
 	shop = Ram_HeapSlots->menuState;
 	unit = syUnitGet(unitId);
-	inventoryCount = 1;
+	inventoryCnt = 1;
 	redraw = TRUE;
-	priceWindow = mnWindowCreateStub(ITEM_PICKER_PRICE_WINDOW_X, 8,
+	priceWin = mnWindowCreateStub(ITEM_PICKER_PRICE_WINDOW_X, 8,
 		ITEM_PICKER_PRICE_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
-	descriptionWindow = mnWindowCreateStub(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
+	descriptionWin = mnWindowCreateStub(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
 
 	shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
-	shop->cursorFrm = SHOP_CURSOR_ENTER_FRAMES;
+	shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
 	slot = 0;
 	while(1) {
 		if(redraw != 0) {
 			redraw = FALSE;
-			inventoryCount = gmInventoryCountStub(unitId);
-			if(slot > inventoryCount - 1)
-				slot = inventoryCount - 1;
+			inventoryCnt = gmInventoryCountStub(unitId);
+			if(slot > inventoryCnt - 1)
+				slot = inventoryCnt - 1;
 			itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
-			window = shop->itemWin;
+			win = shop->itemWin;
 			column = slot % SHOP_INVENTORY_COLUMNS;
 			row = slot / SHOP_INVENTORY_COLUMNS;
-			mnCursorPlace(window, column * 16, row * 16 + 8);
+			mnCursorPlace(win, column * 16, row * 16 + 8);
 			shop->cursorFrm = 3;
-			mnItemPickerDrawItem(priceWindow, unitId, slot);
+			mnItemPickerDrawItem(priceWin, unitId, slot);
 			mnShopDrawMessage(
-				descriptionWindow, itemId + (Sint32)MsgItemDescription);
+				descriptionWin, itemId + (Sint32)MsgItemDescription);
 		}
 		sySynch(1);
 		if(PerWork.push & KEY_A) {
@@ -282,17 +282,17 @@ Sint32 mnItemPickerSelectItem(Sint32 unitId)
 		}
 		if(PerWork.data & KEY_SELECT) {
 			Uint32	inventoryEntry = unit->inventory[slot];
-			WINDOW *detailsWindow;
+			WINDOW *detailsWin;
 
 			sySndPlayStub(SE_RECOVERY);
-			detailsWindow = mnWindowCreateStub(0, 9,
+			detailsWin = mnWindowCreateStub(0, 9,
 				ITEM_PICKER_DETAILS_WINDOW_WIDTH, 10, WINDOW_FLAG_INSTANT);
-			mnItemMenuDrawItemDetailsStub(detailsWindow, inventoryEntry);
+			mnItemMenuDrawItemDetailsStub(detailsWin, inventoryEntry);
 			shop->memberSprsShown = 0;
 			while(PerWork.data & KEY_SELECT)
 				sySynch(1);
 			shop->memberSprsShown = 1;
-			mnWindowCloseStub(detailsWindow, 2);
+			mnWindowCloseStub(detailsWin, 2);
 			mnWindowSprPrepareForRedrawStub(shop->listWin);
 			sySynch(1);
 			/* German, Spanish and Italian also redraw the item window here. */
@@ -310,27 +310,27 @@ Sint32 mnItemPickerSelectItem(Sint32 unitId)
 		if(PerWork.repeat & KEY_LEFT) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
 			slot--;
-			slot = (slot + inventoryCount) % inventoryCount;
+			slot = (slot + inventoryCnt) % inventoryCnt;
 			redraw = TRUE;
 		}
 		if(PerWork.repeat & KEY_RIGHT) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
 			slot++;
-			slot = (slot + inventoryCount) % inventoryCount;
+			slot = (slot + inventoryCnt) % inventoryCnt;
 			redraw = TRUE;
 		}
 		if(PerWork.repeat & KEY_UP) {
 			slot -= SHOP_INVENTORY_COLUMNS;
 			if(slot < 0)
 				slot += INVENTORY_SLOTS;
-			while(slot >= inventoryCount)
+			while(slot >= inventoryCnt)
 				slot -= SHOP_INVENTORY_COLUMNS;
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
 			redraw = TRUE;
 		}
 		if(PerWork.repeat & KEY_DOWN) {
 			slot += SHOP_INVENTORY_COLUMNS;
-			if(slot >= inventoryCount)
+			if(slot >= inventoryCnt)
 				slot -= INVENTORY_SLOTS;
 			while(slot < 0)
 				slot += SHOP_INVENTORY_COLUMNS;
@@ -338,8 +338,8 @@ Sint32 mnItemPickerSelectItem(Sint32 unitId)
 			redraw = TRUE;
 		}
 	}
-	mnWindowCloseStub(descriptionWindow, 2);
-	mnWindowCloseStub(priceWindow, 2);
+	mnWindowCloseStub(descriptionWin, 2);
+	mnWindowCloseStub(priceWin, 2);
 	sySynch(1);
 	return result;
 }
@@ -359,7 +359,7 @@ Sint32 mnItemPickerSelectItem(Sint32 unitId)
 /* Draws the slot's item name and, below it, why it cannot be dropped or
    removed, or, for an item to drop, what the whole stack would sell for. Called
    by mnItemPickerSelectItem each time the cursor moves. */
-void mnItemPickerDrawItem(WINDOW *window, Sint32 unitId, Sint32 slot)
+void mnItemPickerDrawItem(WINDOW *win, Sint32 unitId, Sint32 slot)
 {
 	SHOP_STATE *shop = Ram_HeapSlots->menuState;
 	UNIT	   *unit = syUnitGet(unitId);
@@ -368,31 +368,30 @@ void mnItemPickerDrawItem(WINDOW *window, Sint32 unitId, Sint32 slot)
 	Sint32		quantity = (inventoryEntry >> INVENTORY_QUANTITY_SHIFT) + 1;
 	Sint32		refusal;
 	Sint32		price;
-	Sint32		labelMessage;
+	Sint32		labelMsg;
 
-	if(window == 0)
+	if(win == 0)
 		return;
-	mnWindowSprRedrawSavedRectStub(window);
-	mnTextDrawMessageAsTilesStub(itemId + (Sint32)MsgItemName, window, 0, 0);
+	mnWindowSprRedrawSavedRectStub(win);
+	mnTextDrawMessageAsTilesStub(itemId + (Sint32)MsgItemName, win, 0, 0);
 	if(shop->itemMode == ITEM_PICKER_DROP)
 		refusal = gmInventoryCheckDiscardStub(unitId, slot);
 	else
 		refusal = gmInventoryCheckUnequipStub(unitId, slot);
 	if(refusal & INVENTORY_REFUSE_INDISPENSABLE) {
 		mnTextDrawMessageAsTilesStub(
-			(Sint32)MsgCannotDrop, window, SHOP_PRICE_NOTE_X, 8);
+			(Sint32)MsgCannotDrop, win, SHOP_PRICE_NOTE_X, 8);
 	} else if(refusal & INVENTORY_REFUSE_CANNOT_UNEQUIP) {
 		mnTextDrawMessageAsTilesStub(
-			(Sint32)MsgCannotRemove, window, SHOP_PRICE_NOTE_X, 8);
+			(Sint32)MsgCannotRemove, win, SHOP_PRICE_NOTE_X, 8);
 	} else if(shop->itemMode == ITEM_PICKER_DROP) {
 		price = mnShopSalePrice(unit->inventory[slot]) * quantity;
-		labelMessage = (Sint32)MsgPriceHeading;
-		mnTextDrawMessageAsTilesStub(labelMessage, window, 8, 8);
+		labelMsg = (Sint32)MsgPriceHeading;
+		mnTextDrawMessageAsTilesStub(labelMsg, win, 8, 8);
 		mnTextDrawNumInWindowStub(
-			price, 5, (Sint32)window, ITEM_PICKER_PRICE_NUMBER_X, 8);
+			price, 5, (Sint32)win, ITEM_PICKER_PRICE_NUMBER_X, 8);
 		/* Five messages before the price heading: MsgCoins. */
-		mnTextDrawMessageAsTilesStub(
-			labelMessage - 5, window, SHOP_PRICE_COINS_X, 8);
+		mnTextDrawMessageAsTilesStub(labelMsg - 5, win, SHOP_PRICE_COINS_X, 8);
 	}
 }
 
@@ -400,21 +399,21 @@ void mnItemPickerDrawItem(WINDOW *window, Sint32 unitId, Sint32 slot)
 #undef ITEM_PICKER_PRICE_NUMBER_X
 #undef SHOP_PRICE_COINS_X
 
-/* Queues each loaded icon's sprite while the grid is visible. Runs every frame
+/* Queues each loaded icon's sprite while the grid is visible. Runs every tick
    as an event. */
 void mnItemIconGridDraw(void)
 {
 	SHOP_STATE *shop = Ram_HeapSlots->menuState;
 
 	if(shop->iconsVisible) {
-		ICON_SPR *sprite = shop->iconSprs;
+		ICON_SPR *spr = shop->iconSprs;
 		Uint16	 *iconSlot = shop->iconSlots;
 		Sint32	  i;
 
 		for(i = 0; i < INVENTORY_SLOTS; i++) {
 			if(*iconSlot++ != ICON_NONE)
-				syOAMAddSprAtDepth(sprite, OAM_DEPTH_WINDOW);
-			sprite++;
+				syOAMAddSprAtDepth(spr, OAM_DEPTH_WINDOW);
+			spr++;
 		}
 	}
 }
@@ -431,7 +430,7 @@ void mnItemIconGridInit(void)
 		Sint32 hidden = 0;
 		shop->iconsVisible = hidden;
 	}
-	sySetEvent(mnItemIconGridDraw, EVENT_PASS_FRAME + 10);
+	sySetEvent(mnItemIconGridDraw, EVENT_PASS_TICK + 10);
 }
 
 /* Stops the drawing event and frees the icons' VRAM cache entries. */
@@ -447,13 +446,13 @@ void mnItemIconGridRelease(void)
 	}
 }
 
-/* Places icon `index` at (x, y) screen pixels. */
-void mnItemIconGridSetPos(Sint32 index, Sint32 x, Sint32 y)
+/* Places icon `idx` at (x, y) screen pixels. */
+void mnItemIconGridSetPos(Sint32 idx, Sint32 x, Sint32 y)
 {
 	SHOP_STATE *shop = Ram_HeapSlots->menuState;
 
-	shop->iconSprs[index].attr.x = x;
-	shop->iconSprs[index].attr.y = y;
+	shop->iconSprs[idx].attr.x = x;
+	shop->iconSprs[idx].attr.y = y;
 }
 
 /* Shows the grid (1) or hides it (0). */
@@ -467,10 +466,10 @@ void mnItemIconGridSetVisible(Sint32 visible)
 /* Releases the item icons' VRAM entries, then loads the icons of up to count
    items with the ICON_ layers in `mode` (an empty item keeps its old entry) and
    gives each its sprite attributes and tile. */
-void mnItemIconGridLoadItems(Uint16 *items, Sint32 count, Sint32 mode)
+void mnItemIconGridLoadItems(Uint16 *items, Sint32 cnt, Sint32 mode)
 {
 	SHOP_STATE *shop = Ram_HeapSlots->menuState;
-	ICON_SPR   *sprite;
+	ICON_SPR   *spr;
 	Sint32		entry;
 	Sint32		i;
 
@@ -480,18 +479,18 @@ void mnItemIconGridLoadItems(Uint16 *items, Sint32 count, Sint32 mode)
 			shop->iconSlots[i] = ICON_NONE;
 		}
 	}
-	sprite = shop->iconSprs;
-	for(i = 0; i < INVENTORY_SLOTS && i != count; i++, sprite++) {
+	spr = shop->iconSprs;
+	for(i = 0; i < INVENTORY_SLOTS && i != cnt; i++, spr++) {
 		if(items[i] != 0) {
 			entry = syVRAMCacheFindFreeEntry();
 			if(entry < VRAM_CACHE_ENTRY_COUNT) {
 				Uint32 *attr;
 
 				mnItemIconLoadLayersIntoSlotStub(items[i], mode, entry);
-				attr = (Uint32 *)&sprite->attr;
+				attr = (Uint32 *)&spr->attr;
 				*attr++ = WINDOW_SPRITE_SIZE_16X16;
 				*attr = 0;
-				sprite->attr.tile = VramCacheEntries[entry].ofs >> 5;
+				spr->attr.tile = VramCacheEntries[entry].ofs >> 5;
 			}
 			shop->iconSlots[i] = entry;
 		}
@@ -499,13 +498,12 @@ void mnItemIconGridLoadItems(Uint16 *items, Sint32 count, Sint32 mode)
 }
 
 /* Shows a party member's INVENTORY_SLOTS inventory icons at (x, y) pixels
-   inside `window`, SHOP_INVENTORY_COLUMNS to a row, 16 pixels apart. */
-void mnItemIconGridShowInventory(
-	WINDOW *window, Sint32 x, Sint32 y, Sint32 unitId)
+   inside `win`, SHOP_INVENTORY_COLUMNS to a row, 16 pixels apart. */
+void mnItemIconGridShowInventory(WINDOW *win, Sint32 x, Sint32 y, Sint32 unitId)
 {
 	UNIT  *unit = syUnitGet(unitId);
-	Sint32 left = window->x * 8 + x + 8;
-	Sint32 top = window->y * 8 + y + 8;
+	Sint32 left = win->x * 8 + x + 8;
+	Sint32 top = win->y * 8 + y + 8;
 	Sint32 i;
 
 	mnItemIconGridLoadItems(unit->inventory, INVENTORY_SLOTS,

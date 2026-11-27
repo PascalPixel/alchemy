@@ -44,33 +44,33 @@ Uint32 gmPartyGetAverageLevel(void)
    characters', so that one id names any unit. */
 const ENEMY_DEFINITION *gmEnemyGetDefinition(Sint32 enemyId)
 {
-	Uint32 recordIndex;
+	Uint32 recordIdx;
 
-	recordIndex = enemyId - ENEMY_ID_FIRST;
+	recordIdx = enemyId - ENEMY_ID_FIRST;
 	/* BUG: the table has ENEMY_COUNT rows, but only rows from ENEMY_ID_MAX on
 	   are refused, so those from ENEMY_COUNT read the tables after it.
 	   gmBattleUnitSet takes the first row for them itself. */
 #if FIX_ENEMY_ID_BOUND
-	if(recordIndex > ENEMY_COUNT - 1U)
+	if(recordIdx > ENEMY_COUNT - 1U)
 #else
-	if(recordIndex > ENEMY_ID_MAX - 1U)
+	if(recordIdx > ENEMY_ID_MAX - 1U)
 #endif
-		recordIndex = 0;
-	return &Enemy_Definitions[recordIndex];
+		recordIdx = 0;
+	return &EnemyDefinitions[recordIdx];
 }
 
-/* Copies `count` bytes from `first` to `second` when `direction` is set, and
+/* Copies `cnt` bytes from `first` to `second` when `direction` is set, and
    from `second` to `first` otherwise. */
 void gmMemoryCopyBytesDirectional(
-	Uint8 *first, Uint8 *second, Sint32 count, Sint32 direction)
+	Uint8 *first, Uint8 *second, Sint32 cnt, Sint32 direction)
 {
 	Sint32 i;
 
 	if(direction != 0) {
-		for(i = 0; i < count; i++)
+		for(i = 0; i < cnt; i++)
 			*second++ = *first++;
 	} else {
-		for(i = 0; i < count; i++)
+		for(i = 0; i < cnt; i++)
 			*first++ = *second++;
 	}
 }
@@ -87,14 +87,14 @@ void gmUnitCalc(Sint32 unitId)
 {
 	STAT_STATE *stats;
 	UNIT	   *unit;
-	Sint32		index, effectIndex, elementIndex;
+	Sint32		idx, effectIdx, elementIdx;
 	Sint32		value;
 	Sint32		lighthouse;
 	Sint32		effectKind;
 	Sint32		effectAmount;
 	Sint32		hpLimit;
 	Sint32		ppLimit;
-	Sint16		previousMaximum;
+	Sint16		prevMaximum;
 
 	/* Start with the unit's base stats and elemental power/resistance. */
 	stats = syHeapAllocEWRAM(sizeof(STAT_STATE));
@@ -108,9 +108,9 @@ void gmUnitCalc(Sint32 unitId)
 	stats->actionCnt = unit->baseActionCnt & UNIT_ACTION_COUNT_MASK;
 	stats->hpRegen = unit->baseHpRegen;
 	stats->ppRegen = unit->basePpRegen;
-	for(index = 0; index < ELEMENT_COUNT; index++) {
-		stats->element[index].power = unit->baseElement[index].power;
-		stats->element[index].resistance = unit->baseElement[index].resistance;
+	for(idx = 0; idx < ELEMENT_COUNT; idx++) {
+		stats->element[idx].power = unit->baseElement[idx].power;
+		stats->element[idx].resistance = unit->baseElement[idx].resistance;
 	}
 
 	/* HP and PP keep their share of the maximum; gauges that no longer match
@@ -137,18 +137,17 @@ void gmUnitCalc(Sint32 unitId)
 	/* Apply additive equipment and set-Djinn bonuses before class scaling. An
 	   enemy (CLASS_NONE) skips equipment, Djinn and class entirely. */
 	if(unit->classId != CLASS_NONE) {
-		for(index = 0; index < INVENTORY_SLOTS; index++) {
-			if(!(unit->inventory[index] & INVENTORY_EQUIPPED))
+		for(idx = 0; idx < INVENTORY_SLOTS; idx++) {
+			if(!(unit->inventory[idx] & INVENTORY_EQUIPPED))
 				continue;
-			stats->item = gmItemGetDirect(unit->inventory[index]);
+			stats->item = gmItemGetDirect(unit->inventory[idx]);
 			if(stats->item->flg & ITEM_CURSED)
 				unit->curse |= CURSE_BOUND | CURSE_ITEM;
 			stats->attack += stats->item->attack;
 			stats->defense += stats->item->defense;
-			for(effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS;
-				effectIndex++) {
-				effectKind = stats->item->effs[effectIndex].kind;
-				effectAmount = stats->item->effs[effectIndex].amount;
+			for(effectIdx = 0; effectIdx < EQUIP_EFFECT_SLOTS; effectIdx++) {
+				effectKind = stats->item->effs[effectIdx].kind;
+				effectAmount = stats->item->effs[effectIdx].amount;
 				stats->kind = effectKind;
 				stats->amount = effectAmount;
 				switch(effectKind) {
@@ -212,13 +211,13 @@ void gmUnitCalc(Sint32 unitId)
 			unit->curse &= ~(CURSE_REMOVABLE | CURSE_BOUND);
 
 		/* Only set Djinn contribute their stat bonuses. */
-		for(elementIndex = 0; elementIndex < ELEMENT_COUNT; elementIndex++) {
-			Uint32 activeDjinn = unit->djinnSet[elementIndex];
+		for(elementIdx = 0; elementIdx < ELEMENT_COUNT; elementIdx++) {
+			Uint32 activeDjinn = unit->djinnSet[elementIdx];
 
-			for(index = 0; index < DJINN_PER_ELEMENT; index++) {
-				if(activeDjinn & (1 << index)) {
+			for(idx = 0; idx < DJINN_PER_ELEMENT; idx++) {
+				if(activeDjinn & (1 << idx)) {
 					const DJINN_DEFINITION *djinn =
-						gmDjinnGetDefinition(elementIndex, index);
+						gmDjinnGetDefinition(elementIdx, idx);
 
 					stats->hp += djinn->hp;
 					stats->pp += djinn->pp;
@@ -249,14 +248,13 @@ void gmUnitCalc(Sint32 unitId)
 
 		/* Then the equipment's multiplying effects, EQUIP_EFFECT_SCALE_HP to
 		   EQUIP_EFFECT_SCALE_LUCK, also in tenths, applied after the class. */
-		for(index = 0; index < INVENTORY_SLOTS; index++) {
-			if(!(unit->inventory[index] & INVENTORY_EQUIPPED))
+		for(idx = 0; idx < INVENTORY_SLOTS; idx++) {
+			if(!(unit->inventory[idx] & INVENTORY_EQUIPPED))
 				continue;
-			stats->item = gmItemGetDirect(unit->inventory[index]);
-			for(effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS;
-				effectIndex++) {
-				effectKind = stats->item->effs[effectIndex].kind;
-				effectAmount = stats->item->effs[effectIndex].amount;
+			stats->item = gmItemGetDirect(unit->inventory[idx]);
+			for(effectIdx = 0; effectIdx < EQUIP_EFFECT_SLOTS; effectIdx++) {
+				effectKind = stats->item->effs[effectIdx].kind;
+				effectAmount = stats->item->effs[effectIdx].amount;
 				stats->kind = effectKind;
 				effectKind = SCALE_EFFECT(effectKind);
 				stats->amount = effectAmount;
@@ -300,13 +298,13 @@ void gmUnitCalc(Sint32 unitId)
 	stats->attack = stats->attack * (unit->attackStage + 8) / 8;
 	stats->defense = stats->defense * (unit->defenseStage + 8) / 8;
 	stats->agility = stats->agility * (unit->agilityStage + 8) / 8;
-	for(index = 0; index < ELEMENT_COUNT; index++)
-		stats->element[index].power +=
-			(unit->summonBoost[index] * unit->summonBoost[index] +
-				unit->summonBoost[index]) *
+	for(idx = 0; idx < ELEMENT_COUNT; idx++)
+		stats->element[idx].power +=
+			(unit->summonBoost[idx] * unit->summonBoost[idx] +
+				unit->summonBoost[idx]) *
 			5;
-	for(index = 0; index < ELEMENT_COUNT; index++)
-		stats->element[index].resistance +=
+	for(idx = 0; idx < ELEMENT_COUNT; idx++)
+		stats->element[idx].resistance +=
 			unit->resistanceStage * RESISTANCE_PER_STAGE;
 
 	if(unit->classId != CLASS_NONE) {
@@ -351,9 +349,9 @@ void gmUnitCalc(Sint32 unitId)
 	}
 	CLAMP(stats->hpRegen, 0, UNIT_HP_REGEN_MAX);
 	CLAMP(stats->ppRegen, 0, UNIT_PP_REGEN_MAX);
-	for(index = 0; index < ELEMENT_COUNT; index++) {
-		CLAMP(stats->element[index].power, 0, UNIT_ELEMENT_MAX);
-		CLAMP(stats->element[index].resistance, 0, UNIT_ELEMENT_MAX);
+	for(idx = 0; idx < ELEMENT_COUNT; idx++) {
+		CLAMP(stats->element[idx].power, 0, UNIT_ELEMENT_MAX);
+		CLAMP(stats->element[idx].resistance, 0, UNIT_ELEMENT_MAX);
 	}
 
 	unit->attack = stats->attack;
@@ -363,9 +361,9 @@ void gmUnitCalc(Sint32 unitId)
 	unit->actionsPerTurn = stats->actionCnt;
 	unit->hpRegen = stats->hpRegen;
 	unit->ppRegen = stats->ppRegen;
-	for(index = 0; index < ELEMENT_COUNT; index++) {
-		unit->element[index].power = stats->element[index].power;
-		unit->element[index].resistance = stats->element[index].resistance;
+	for(idx = 0; idx < ELEMENT_COUNT; idx++) {
+		unit->element[idx].power = stats->element[idx].power;
+		unit->element[idx].resistance = stats->element[idx].resistance;
 	}
 
 	if(unit->classId == CLASS_NONE) {
@@ -375,10 +373,10 @@ void gmUnitCalc(Sint32 unitId)
 		hpLimit = ppLimit = UNIT_CHARACTER_HP_MAX;
 	}
 
-	previousMaximum = unit->hpMax;
+	prevMaximum = unit->hpMax;
 	CLAMP(stats->hp, 0, hpLimit);
 	unit->hpMax = stats->hp;
-	if(previousMaximum != unit->hpMax) {
+	if(prevMaximum != unit->hpMax) {
 		value = stats->hp * unit->hpGauge / UNIT_GAUGE_FULL;
 		CLAMP(value, 0, hpLimit);
 		if(unit->hp != 0 && value == 0)
@@ -386,10 +384,10 @@ void gmUnitCalc(Sint32 unitId)
 		unit->hp = value;
 	}
 
-	previousMaximum = unit->ppMax;
+	prevMaximum = unit->ppMax;
 	CLAMP(stats->pp, 0, ppLimit);
 	unit->ppMax = stats->pp;
-	if(previousMaximum != unit->ppMax) {
+	if(prevMaximum != unit->ppMax) {
 		value = stats->pp * unit->ppGauge / UNIT_GAUGE_FULL;
 		CLAMP(value, 0, ppLimit);
 		if(unit->pp != 0 && value == 0)
@@ -443,12 +441,12 @@ FIXED gmPartyGetPpRatio(void)
 {
 	Sint32 pp = 0;
 	Sint32 max = 0;
-	Sint32 count = gmPartyCountMembers();
+	Sint32 cnt = gmPartyCountMembers();
 	Sint32 i;
 
-	if(count == 0)
+	if(cnt == 0)
 		return 0;
-	for(i = 0; i < count; i++) {
+	for(i = 0; i < cnt; i++) {
 		UNIT *unit = syUnitGet(MainRoutineStateWork.party[i]);
 
 		pp += unit->pp;
@@ -464,12 +462,12 @@ Sint32 gmPartyDrainPpFromFullest(void)
 {
 	FIXED  best = 0;
 	Sint32 bestOwner = -1;
-	Sint32 count = gmPartyCountMembers();
+	Sint32 cnt = gmPartyCountMembers();
 	Sint32 i;
 
-	if(count == 0)
+	if(cnt == 0)
 		return 0;
-	for(i = 0; i < count; i++) {
+	for(i = 0; i < cnt; i++) {
 		FIXED ratio = gmOwnerGetPpRatio(MainRoutineStateWork.party[i]);
 
 		if(ratio > best) {
@@ -483,12 +481,12 @@ Sint32 gmPartyDrainPpFromFullest(void)
 	return ((Sint32 (*)(Sint32, Sint32))gmUnitAddPp)(bestOwner, -1);
 }
 
-/* Takes `count` PP from the party, one at a time from the fullest member. */
-void gmPartyDrainPp(Sint32 count)
+/* Takes `cnt` PP from the party, one at a time from the fullest member. */
+void gmPartyDrainPp(Sint32 cnt)
 {
 	Sint32 i;
 
-	for(i = 0; i < count; i++)
+	for(i = 0; i < cnt; i++)
 		gmPartyDrainPpFromFullest();
 	/* The ratio is worked out again and not used. */
 	gmPartyGetPpRatio();
@@ -552,7 +550,7 @@ static __inline__ void gmWaitDMA(DMA_REGISTERS volatile *channel)
 /* The two tables a new game fills just after RareItemStock's ITEM_COUNTER_COUNT
    counters, as places in SceneLocalState: 32 rows of eight random numbers 0 to
    4, SCENE_STATE_RANDOM_ROW_BYTES apart, then a copy of
-   NewGame_SceneStateTable. */
+   NewGameSceneStateTable. */
 #define SCENE_STATE_RANDOM_ROWS		 4536
 #define SCENE_STATE_RANDOM_ROW_COUNT 32
 #define SCENE_STATE_RANDOM_ROW_BYTES 12
@@ -638,14 +636,14 @@ void gmMainRoutineStateInitDefaults(void)
 	MainRoutineStateWork.winBrightness = WINDOW_BRIGHTNESS_NEUTRAL + 1;
 	MainRoutineStateWork.buildStamp = 0;
 	MainRoutineStateWork.startStamp = gmBuildStampGetTime();
-	PlayTimeFrames = 0;
+	PlayTimeTicks = 0;
 	IdleSleepEnabled = 0;
 	MainRoutineStateWork.playTime = 0;
 	MainRoutineStateWork.idleSleepEnabled = IdleSleepEnabled;
-	IdleFrames = 0;
+	IdleTicks = 0;
 	BupSlot = -1;
 	MainRoutineStateWork.clearedFileAtStart = AnyFileCleared;
-	/* Lemuria's spring's medal prizes (LemuriaSpring_MedalPrizes): three share
+	/* Lemuria's spring's medal prizes (LemuriaSpringMedalPrizes): three share
 	   each weight, and each three weigh twice the last. */
 	MainRoutineStateWork.prizeWeights[0] = 4;
 	MainRoutineStateWork.prizeWeights[1] = 4;
@@ -675,7 +673,7 @@ void gmMainRoutineStateInitDefaults(void)
 	for(i = 0; i < 4; i++) {
 		for(j = 0; j < 5; j++)
 			SceneLocalState[SCENE_STATE_TABLE_COPY + i * 5 + j] =
-				NewGame_SceneStateTable[i][j];
+				NewGameSceneStateTable[i][j];
 	}
 }
 
@@ -700,7 +698,7 @@ void gmPartySetLeaderFelix(void)
 void gmPartyGivePiersDjinn(void)
 {
 	Sint32 i;
-	Sint32 count;
+	Sint32 cnt;
 
 	/* i counts Spring and Shade from 1. */
 	for(i = DJINNI_INDEX(DJINNI_SPRING) + 1;
@@ -711,8 +709,8 @@ void gmPartyGivePiersDjinn(void)
 	}
 	/* Called with an argument it does not take. */
 	((void (*)(Sint32))gmPartyBalanceDjinn)(0);
-	count = gmPartyCountMembers();
-	for(i = 0; i < count; i++)
+	cnt = gmPartyCountMembers();
+	for(i = 0; i < cnt; i++)
 		gmUnitCalc(MainRoutineStateWork.party[i]);
 }
 
@@ -721,12 +719,12 @@ void gmPartyGivePiersDjinn(void)
 void gmPartyRestoreHpPp(Sint32 cureConditions)
 {
 	Sint32 partySize;
-	Sint32 partyIndex;
+	Sint32 partyIdx;
 	UNIT  *unit;
 
 	partySize = gmPartyCountMembers();
-	for(partyIndex = 0; partyIndex < partySize; partyIndex++) {
-		unit = syUnitGet(MainRoutineStateWork.party[partyIndex]);
+	for(partyIdx = 0; partyIdx < partySize; partyIdx++) {
+		unit = syUnitGet(MainRoutineStateWork.party[partyIdx]);
 
 		unit->hp = unit->hpMax;
 		unit->pp = unit->ppMax;
@@ -745,16 +743,16 @@ void gmPartyRestoreHpPp(Sint32 cureConditions)
 void gmPartyRestorePpInLighthouse(void)
 {
 	Sint32 partySize;
-	Sint32 partyIndex;
+	Sint32 partyIdx;
 	Uint8  unitId;
 	Sint32 elementGroup;
 	Sint32 restorePp;
 	UNIT  *unit;
 
 	partySize = gmPartyCountMembers();
-	for(partyIndex = 0; partyIndex < partySize; partyIndex++) {
-		unitId = MainRoutineStateWork.party[partyIndex];
-		elementGroup = Character_ElementGroupTable[unitId];
+	for(partyIdx = 0; partyIdx < partySize; partyIdx++) {
+		unitId = MainRoutineStateWork.party[partyIdx];
+		elementGroup = CharacterElementGroupTable[unitId];
 		restorePp = 0;
 		if(elementGroup == ELEMENT_GROUP_VENUS_MARS) {
 			if(syGameFlagGet(FLAG_IN_VENUS_LIGHTHOUSE) ||
@@ -780,11 +778,11 @@ void gmPartyRestorePpInLighthouse(void)
 
 /* Writes the element and index of unit's last Djinni and returns 0, or returns
    -1 when it has none. */
-Sint32 gmUnitFindLastDjinn(Sint32 unit, Sint32 *elementOut, Sint32 *indexOut)
+Sint32 gmUnitFindLastDjinn(Sint32 unit, Sint32 *elementOut, Sint32 *idxOut)
 {
 	Uint32 *sets = syUnitGet(unit)->djinnHeld;
 	Sint32	element = -1;
-	Sint32	index = -1;
+	Sint32	idx = -1;
 	Sint32	i;
 	Sint32	j;
 
@@ -792,14 +790,14 @@ Sint32 gmUnitFindLastDjinn(Sint32 unit, Sint32 *elementOut, Sint32 *indexOut)
 		for(j = 0; j < ELEMENT_COUNT; j++) {
 			if(sets[j] & (1 << i)) {
 				element = j;
-				index = i;
+				idx = i;
 			}
 		}
 	}
 	if(element == -1)
 		return element;
 	*elementOut = element;
-	*indexOut = index;
+	*idxOut = idx;
 	return 0;
 }
 
@@ -811,7 +809,7 @@ Sint32 gmUnitFindLastDjinn(Sint32 unit, Sint32 *elementOut, Sint32 *indexOut)
    Djinni of the owner holding most to the one holding least. */
 void gmPartyBalanceDjinn(void)
 {
-	Sint32 count = gmPartyCountMembers();
+	Sint32 cnt = gmPartyCountMembers();
 
 	for(;;) {
 		Sint32 lowOwner = 0;
@@ -821,19 +819,19 @@ void gmPartyBalanceDjinn(void)
 		Sint32 i;
 		Sint32 sum;
 		Sint32 element;
-		Sint32 index;
+		Sint32 idx;
 
-		for(i = 0; i < count; i++) {
+		for(i = 0; i < cnt; i++) {
 			Sint32 owner = MainRoutineStateWork.party[i];
 			UNIT  *unit = syUnitGet(owner);
-			Uint8 *counts;
+			Uint8 *cnts;
 			Sint32 j;
 
 			sum = 0;
-			counts = unit->djinnHeldCnts;
+			cnts = unit->djinnHeldCnts;
 			for(j = 0; j < ELEMENT_COUNT; j++) {
-				Uint8 value = *counts;
-				counts++;
+				Uint8 value = *cnts;
+				cnts++;
 				sum += value;
 			}
 			if(sum > high) {
@@ -847,22 +845,22 @@ void gmPartyBalanceDjinn(void)
 		}
 		if(high - low <= 1)
 			break;
-		sum = gmUnitFindLastDjinn(highOwner, &element, &index);
+		sum = gmUnitFindLastDjinn(highOwner, &element, &idx);
 		if(sum != 0)
 			break;
-		gmDjinnTransfer(highOwner, element, index, lowOwner);
+		gmDjinnTransfer(highOwner, element, idx, lowOwner);
 	}
 }
 
-/* Returns flag `flag` of flag bytes laid out as GameFlagBytes: another save's
+/* Returns flag `flg` of flag bytes laid out as GameFlagBytes: another save's
    flags, as gmDataTransferApply reads them. */
-Sint32 gmFlagBitsTest(Uint8 *bytes, Sint32 flag)
+Sint32 gmFlagBitsTest(Uint8 *bytes, Sint32 flg)
 {
 	Sint32 bit;
 
-	bit = flag & 7;
-	flag = GAME_FLAG_BYTE(flag);
-	return (bytes[flag] >> bit) & 1;
+	bit = flg & 7;
+	flg = GAME_FLAG_BYTE(flg);
+	return (bytes[flg] >> bit) & 1;
 }
 
 /* The data transfer from Golden Sun ("Transfer data from Golden Sun",
@@ -879,8 +877,8 @@ void gmDataTransferApply(Uint8 *save, Sint32 byPassword)
 	Uint8				name[16];
 	Sint32				i;
 	Sint32				k;
-	Sint32				index;
-	Sint32				count;
+	Sint32				idx;
+	Sint32				cnt;
 	Sint32				j;
 
 	/* Each element's first seven Djinn, The Broken Seal's, become the
@@ -889,17 +887,17 @@ void gmDataTransferApply(Uint8 *save, Sint32 byPassword)
 		i++, k += TRANSFERRED_DJINN_PER_ELEMENT) {
 
 		for(j = 0; j < TRANSFERRED_DJINN_PER_ELEMENT; j++) {
-			Sint32 flag = FLAG_TRANSFERRED_DJINN_FIRST + k + j;
+			Sint32 flg = FLAG_TRANSFERRED_DJINN_FIRST + k + j;
 
-			index = i * DJINN_PER_ELEMENT + j;
-			if(gmFlagBitsTest(flags, FLAG_DJINNI(index)))
-				syGameFlagSet(flag);
+			idx = i * DJINN_PER_ELEMENT + j;
+			if(gmFlagBitsTest(flags, FLAG_DJINNI(idx)))
+				syGameFlagSet(flg);
 			else
-				syGameFlagClear(flag);
+				syGameFlagClear(flg);
 		}
 	}
 	for(i = 0; i < TRANSFERRED_FLAG_COUNT; i++) {
-		if(gmFlagBitsTest(flags, DataTransfer_Flags[i]))
+		if(gmFlagBitsTest(flags, DataTransferFlags[i]))
 			syGameFlagSet(FLAG_TRANSFERRED_DODONPA_LOCKED_UP + i);
 		else
 			syGameFlagClear(FLAG_TRANSFERRED_DODONPA_LOCKED_UP + i);
@@ -932,12 +930,12 @@ void gmDataTransferApply(Uint8 *save, Sint32 byPassword)
 		memcpy(unit, name, sizeof(units->name));
 		if(byPassword == 0)
 			unit->enemyId = unit->id;
-		for(index = INVENTORY_SLOTS - 1; index >= 0; index--) {
-			Sint32 item = unit->inventory[index];
+		for(idx = INVENTORY_SLOTS - 1; idx >= 0; idx--) {
+			Sint32 item = unit->inventory[idx];
 
 			if(item != 0 &&
 				(gmItemGetDirect(item)->flg & ITEM_NOT_TRANSFERRED)) {
-				while(gmInventoryRemove(i, index) == 1)
+				while(gmInventoryRemove(i, idx) == 1)
 					;
 			}
 		}
@@ -947,7 +945,7 @@ void gmDataTransferApply(Uint8 *save, Sint32 byPassword)
 	gmPartyRestoreHpPp(1);
 	syGameFlagSet((byPassword & 1) + FLAG_TRANSFERRED_BY_LINK);
 	syGameFlagSet(FLAG_DATA_TRANSFERRED);
-	PlayTimeFrames = MainRoutineStateWork.playTime;
+	PlayTimeTicks = MainRoutineStateWork.playTime;
 }
 
 /* Carries Clear Data over to a new quest: the options, coins and each unit's
@@ -959,7 +957,7 @@ void gmClearDataApply(Uint8 *save)
 	UNIT  *units = (UNIT *)(save + BUP_IMAGE_UNITS);
 	Uint8  unused[16]; /* Unused: gives the stack frame its 16 bytes. */
 	Sint32 i;
-	Sint32 count;
+	Sint32 cnt;
 
 	MainRoutineStateWork.winHue = party->winHue;
 	MainRoutineStateWork.winBrightness = party->winBrightness;
@@ -968,8 +966,8 @@ void gmClearDataApply(Uint8 *save)
 	MainRoutineStateWork.idleSleepEnabled = party->idleSleepEnabled;
 	mnWindowColApplyStub(
 		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
-	count = PIERS + 1;
-	for(i = 0; i < count; i++) {
+	cnt = PIERS + 1;
+	for(i = 0; i < cnt; i++) {
 		UNIT *unit = syUnitGet(i);
 		UNIT *saved = &units[i];
 
@@ -1007,7 +1005,7 @@ void gmPartyAddIsaacsParty(void)
 	Sint32 i;
 	Sint32 djinni;
 	Sint8  missing[8];
-	Sint32 count;
+	Sint32 cnt;
 	Sint32 k;
 
 	for(i = 0, k = 0; i < ELEMENT_COUNT;
@@ -1036,13 +1034,13 @@ void gmPartyAddIsaacsParty(void)
 	/* One of The Broken Seal's Djinn of each element the party lacks, picked at
 	   random, plus one; 0 when it has them all. */
 	for(i = 0; i < ELEMENT_COUNT; i++) {
-		count = 0;
+		cnt = 0;
 		for(djinni = 0; djinni < TRANSFERRED_DJINN_PER_ELEMENT; djinni++) {
 			if(!syGameFlagGet(FLAG_DJINNI(i * DJINN_PER_ELEMENT + djinni)))
-				missing[count++] = djinni;
+				missing[cnt++] = djinni;
 		}
-		if(count != 0)
-			djinni = missing[(syRandom() * count) >> 16] + 1;
+		if(cnt != 0)
+			djinni = missing[(syRandom() * cnt) >> 16] + 1;
 		else
 			djinni = 0;
 		SceneLocalState[SCENE_STATE_CHOSEN_DJINN + i] = djinni;
@@ -1069,12 +1067,12 @@ void gmUnitReservedNoOperation(void)
    field. */
 void gmDjinnAddFoundToOwner(Sint32 owner, Sint32 element, Sint32 djinn)
 {
-	Sint32 flag = element * DJINN_PER_ELEMENT + djinn;
+	Sint32 flg = element * DJINN_PER_ELEMENT + djinn;
 
 	gmDjinnGive(owner, element, djinn);
-	flag += FLAG_DJINN_FIRST;
+	flg += FLAG_DJINN_FIRST;
 	gmDjinnRecoveryAddStandby(owner, element, djinn);
-	syGameFlagSet(flag);
+	syGameFlagSet(flg);
 }
 
 /* The Djinn of The Broken Seal handed out at random, besides Flint and Fizz,
@@ -1085,27 +1083,27 @@ void gmDjinnAddFoundToOwner(Sint32 owner, Sint32 element, Sint32 djinn)
    transferred Djinn are already set, sets the party aside, makes Isaac's party
    the party, gives it Flint and Fizz, then hands out DEFAULT_TRANSFER_DJINN
    random Djinn of The Broken Seal's still unowned, keeping the elements' counts
-   within one, each with its chance in DataTransfer_DjinnChances; then moves the
+   within one, each with its chance in DataTransferDjinnChances; then moves the
    Djinn flags to the transferred ones and puts the party back. */
 void gmDataTransferGiveDefaultDjinn(void)
 {
 	Sint8  saved[8];
-	Sint8  counts[ELEMENT_COUNT];
-	Sint32 count;
+	Sint8  cnts[ELEMENT_COUNT];
+	Sint32 cnt;
 	Sint32 remaining;
 	Sint32 element;
 	Sint32 djinn;
-	Sint32 flag;
+	Sint32 flg;
 	Sint32 i;
 	Sint32 k;
 
 	if(syGameFlagGet(FLAG_TRANSFERRED_DJINN_FIRST))
 		return;
 
-	count = gmPartyCountMembers();
-	for(i = 0; i < count; i++)
+	cnt = gmPartyCountMembers();
+	for(i = 0; i < cnt; i++)
 		saved[i] = MainRoutineStateWork.party[i];
-	for(i = 0; i < count; i++)
+	for(i = 0; i < cnt; i++)
 		gmPartyRemoveMember(saved[i]);
 	for(i = ISAAC; i <= MIA; i++)
 		gmPartyAddMember(i);
@@ -1115,10 +1113,10 @@ void gmDataTransferGiveDefaultDjinn(void)
 	gmDjinnAddFoundToOwner(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
 
 	/* Each element's Djinn so far: Flint and Fizz. */
-	counts[ELEMENT_VENUS] = 1;
-	counts[ELEMENT_MERCURY] = 1;
-	counts[ELEMENT_MARS] = 0;
-	counts[ELEMENT_JUPITER] = 0;
+	cnts[ELEMENT_VENUS] = 1;
+	cnts[ELEMENT_MERCURY] = 1;
+	cnts[ELEMENT_MARS] = 0;
+	cnts[ELEMENT_JUPITER] = 0;
 	remaining = DEFAULT_TRANSFER_DJINN;
 	do {
 		element = syRandomBelow(ELEMENT_COUNT);
@@ -1128,21 +1126,21 @@ void gmDataTransferGiveDefaultDjinn(void)
 			Sint8 high;
 
 			/* Would the elements' counts stay within one with this Djinni? */
-			counts[element]++;
+			cnts[element]++;
 			low = 9; /* above any element's count */
 			high = 0;
 			for(i = 0; i < ELEMENT_COUNT; i++) {
-				if(low > counts[i])
-					low = counts[i];
-				if(high < counts[i])
-					high = counts[i];
+				if(low > cnts[i])
+					low = cnts[i];
+				if(high < cnts[i])
+					high = cnts[i];
 			}
-			counts[element]--;
+			cnts[element]--;
 			if(high - low <= 1 &&
 				(syRandomBelow(100)) <
-					DataTransfer_DjinnChances[element][djinn]) {
+					DataTransferDjinnChances[element][djinn]) {
 				gmDjinnGiveToParty(element, djinn);
-				counts[element]++;
+				cnts[element]++;
 				remaining--;
 			}
 		}
@@ -1155,15 +1153,15 @@ void gmDataTransferGiveDefaultDjinn(void)
 
 		for(j = 0; j < TRANSFERRED_DJINN_PER_ELEMENT; j++) {
 			djinn = i * DJINN_PER_ELEMENT + j;
-			flag = FLAG_TRANSFERRED_DJINN_FIRST + k + j;
+			flg = FLAG_TRANSFERRED_DJINN_FIRST + k + j;
 			if(syGameFlagGet(FLAG_DJINNI(djinn)))
-				syGameFlagSet(flag);
+				syGameFlagSet(flg);
 			syGameFlagClear(FLAG_DJINNI(djinn));
 		}
 	}
 	for(i = ISAAC; i <= MIA; i++)
 		gmPartyRemoveMember(i);
-	for(i = 0; i < count; i++)
+	for(i = 0; i < cnt; i++)
 		gmPartyAddMember(saved[i]);
 }
 

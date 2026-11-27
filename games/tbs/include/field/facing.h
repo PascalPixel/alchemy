@@ -9,24 +9,24 @@
 #include "fixed_math.h"
 #include "types.h"
 
-extern const Uint8 AnimationFacing_OnePicture[16];
-extern const Uint8 AnimationFacing_FrontBackSwapped[8];
-extern const Uint8 AnimationFacing_FrontBack[8];
-extern const Uint8 AnimationFacing_ThreePictures[16];
-extern const Uint8 AnimationFacing_FivePictures[16];
-extern const Uint8 AnimationFacing_EightPictures[8];
-extern const Uint8 AnimationFacing_EightPicturesMirrored[8];
-extern const Uint8 AnimationFacing_FourPictures[64];
-extern const Uint8 AnimationFacing_SixPictures[64];
+extern const Uint8 AnimationFacingOnePicture[16];
+extern const Uint8 AnimationFacingFrontBackSwapped[8];
+extern const Uint8 AnimationFacingFrontBack[8];
+extern const Uint8 AnimationFacingThreePictures[16];
+extern const Uint8 AnimationFacingFivePictures[16];
+extern const Uint8 AnimationFacingEightPictures[8];
+extern const Uint8 AnimationFacingEightPicturesMirrored[8];
+extern const Uint8 AnimationFacingFourPictures[64];
+extern const Uint8 AnimationFacingSixPictures[64];
 
-extern const Uint8	SpriteDissolve_PixelOrder[64];
-extern const Uint16 SpriteDissolve_PixelOrderTail;
-extern const FIXED	Camera_FixedViewMatrix[12];
-extern const Sint32 ActorScript_CycleTable[32];
-extern const Sint32 ActorScript_EndScript[1];
-extern const Sint16 ActorScript_EndScriptTail[8];
+extern const Uint8	SpriteDissolvePixelOrder[64];
+extern const Uint16 SpriteDissolvePixelOrderTail;
+extern const FIXED	CameraFixedViewMatrix[12];
+extern const Sint32 ActorScriptCycleTable[32];
+extern const Sint32 ActorScriptEndScript[1];
+extern const Sint16 ActorScriptEndScriptTail[8];
 
-extern const Sint32 WorldMap_KeyYaws[16];
+extern const Sint32 WorldMapKeyYaws[16];
 
 /* A facing table entry: the picture to draw, counted from the sprite
    animation's base picture (bits 0-2), mirrored when bit 7 is set. */
@@ -37,7 +37,7 @@ extern const Sint32 WorldMap_KeyYaws[16];
    opposite pair, where the others are facings. */
 #define KEY_HEADING_NONE (-1)
 
-/* WorldMap_KeyHeadings' entry when no direction is held, or only an opposite
+/* WorldMapKeyHeadings' entry when no direction is held, or only an opposite
    pair: no heading, since every real one is a multiple of an eighth turn. */
 #define WORLD_MAP_KEY_HEADING_NONE 65535
 

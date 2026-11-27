@@ -29,17 +29,17 @@ void scPillarLowerHeldMetatiles(Uint16 *list)
 				held->layer, held->x.fixed, held->z.fixed);
 			Sint32 height = fdMapGetTerrainHeight(
 				held->layer, held->x.fixed, held->z.fixed);
-			Sint32 index = fdActorGetMetatileIndex(held);
+			Sint32 idx = fdActorGetMetatileIndex(held);
 			Sint32 result = fdMapShapeFindOrAdd(held->layer, kind,
 				METATILE_HEIGHT_STEPS(height) -
 					METATILE_HEIGHT_STEPS(toFIXED(32)));
 
-			slot += index;
+			slot += idx;
 			/* The index goes on as the metatile offset, four bytes a
 			   metatile. */
-			index <<= 2;
+			idx <<= 2;
 			slot->shape = result;
-			metatile += index;
+			metatile += idx;
 			((MAP_METATILE *)metatile)->attributeB &=
 				~(MAP_METATILE_JUMP | MAP_METATILE_CLIMBABLE);
 			metatile += MAPGRID_SIZE * sizeof(MAP_METATILE);

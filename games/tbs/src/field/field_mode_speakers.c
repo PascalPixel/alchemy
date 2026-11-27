@@ -12,13 +12,13 @@
 const SPEAKER_DEFINITION *fdSpeakerFindDefinition(Uint32 id)
 {
 	const SPEAKER_DEFINITION *entry = SpeakerDefinitions;
-	Uint32					  definitionIndex = 0;
+	Uint32					  definitionIdx = 0;
 
 	if(entry->id != id) {
 		do {
-			definitionIndex += 1;
+			definitionIdx += 1;
 			entry++;
-			if(definitionIndex >= SPEAKER_DEFINITION_COUNT)
+			if(definitionIdx >= SPEAKER_DEFINITION_COUNT)
 				break;
 		} while(entry->id != id);
 	}
@@ -38,17 +38,16 @@ Sint32 fdSpeakerGetActorSpr(Sint32 id)
 	return actor->spr->entries[0]->anmId;
 }
 
-/* Returns the voice of sprite spriteId's messages: the first of its four blip
+/* Returns the voice of sprite sprId's messages: the first of its four blip
    sounds, SE_VOICE_FIRST plus its definition's value, or 0 for none
    (SPEAKER_VOICE_NONE) or with the Speech option off
    (MainRoutineStateWork.speech). */
-Sint32 fdSpeakerGetVoice(Uint32 spriteId)
+Sint32 fdSpeakerGetVoice(Uint32 sprId)
 {
 	Uint8 voice;
 
 	if(MainRoutineStateWork.speech == 0 ||
-		(voice = fdSpeakerFindDefinition(spriteId)->value) ==
-			SPEAKER_VOICE_NONE) {
+		(voice = fdSpeakerFindDefinition(sprId)->value) == SPEAKER_VOICE_NONE) {
 		return 0;
 	}
 	return voice + SE_VOICE_FIRST;

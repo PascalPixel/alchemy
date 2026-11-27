@@ -20,7 +20,7 @@
 #include "field/script_inline.h"
 #include "game/game.h"
 
-extern Sint16 JupiterLighthouse_WestPathMetatiles[][2];
+extern Sint16 JupiterLighthouseWestPathMetatiles[][2];
 
 void scJupiterLighthouseLightWestPath(Sint32 mode);
 void scJupiterLighthouseThrowOutBlock(
@@ -96,8 +96,8 @@ typedef enum JUPITER_LIGHTHOUSE_WHORL_METATILE_BEHAVIOR {
 
 /* A gap's floor, 16 pixels below the hall's, where a thrown block starts. */
 #define GAP_FLOOR_HEIGHT		   toFIXED(-16)
-/* The most frames the room waits for a block to come down. */
-#define BLOCK_LANDING_FRAMES	   30
+/* The most ticks the room waits for a block to come down. */
+#define BLOCK_LANDING_TICKS		   30
 /* The way in from the bridge's floor, through its west arch. */
 #define ENTRANCE_FROM_BRIDGE_FLOOR 12
 /* The first of the two ways into the east hall; the other is the next. */
@@ -119,7 +119,7 @@ typedef enum JUPITER_LIGHTHOUSE_WHORL_ACTOR_ID {
 	ACTOR_WHORL
 } JUPITER_LIGHTHOUSE_WHORL_ACTOR_ID;
 
-extern Sint16 JupiterLighthouse_WhorlPoundTargets[];
+extern Sint16 JupiterLighthouseWhorlPoundTargets[];
 extern Sint32 PaletteCyclePausesInScripts;
 /* The state of the code every Jupiter Lighthouse room's overlay keeps its own
    copy of: a whirlwind's ride (shared/whirlwind_*.h), the palette cycle
@@ -293,17 +293,17 @@ Sint32 scJupiterLighthouseFindBlockGap(void)
 /* How many of the first two blocks lie in gaps. */
 Sint32 scJupiterLighthouseCountBlocksInGaps(void)
 {
-	Sint32 count = 0;
+	Sint32 cnt = 0;
 
 	if(fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_EAST_GAP)) ||
 		fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_WEST_GAP)) ||
 		fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_NORTH_GAP)))
-		count = 1;
+		cnt = 1;
 	if(fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP)) ||
 		fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_WEST_GAP)) ||
 		fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_NORTH_GAP)))
-		count++;
-	return count;
+		cnt++;
+	return cnt;
 }
 
 /* Draws the east hall's floor for the blocks that lie in gaps: each filled gap,
@@ -377,10 +377,10 @@ Bool scJupiterLighthouseIsOnWestPath(ACTOR *actor)
 {
 	Sint32 i;
 
-	for(i = 0; JupiterLighthouse_WestPathMetatiles[i][0] != -1; i++) {
-		if(JupiterLighthouse_WestPathMetatiles[i][0] ==
+	for(i = 0; JupiterLighthouseWestPathMetatiles[i][0] != -1; i++) {
+		if(JupiterLighthouseWestPathMetatiles[i][0] ==
 				FIELD_METATILE(actor->x.fixed) &&
-			JupiterLighthouse_WestPathMetatiles[i][1] ==
+			JupiterLighthouseWestPathMetatiles[i][1] ==
 				FIELD_METATILE(actor->z.fixed))
 			return TRUE;
 	}
@@ -393,7 +393,7 @@ Bool scJupiterLighthouseIsOnWestPath(ACTOR *actor)
 void scJupiterLighthouseLightWestPath(Sint32 mode)
 {
 	ACTOR *actor;
-	Sint32 i, frame;
+	Sint32 i, frm;
 
 	if(!fdScriptGetFlag(FLAG_THIRD_BLOCK_IN_GAP)) {
 		fdMapGridCopyMetatilesLayered(80, 46, 1, 7, 72, 9);
@@ -402,7 +402,7 @@ void scJupiterLighthouseLightWestPath(Sint32 mode)
 		fdMapGridSetMetatileHeight(
 			toFIXED(128), toFIXED(192), MAPGRID_LAYER_GROUND, 4);
 		if(mode == 1) {
-			for(frame = 0; frame <= 15; frame++) {
+			for(frm = 0; frm <= 15; frm++) {
 				for(i = 0; i <= 5; i++) {
 					actor = fdActorGet(ACTOR_FIRST_GREY_BLOCK + i);
 					if(scJupiterLighthouseIsOnWestPath(actor)) {
@@ -429,7 +429,7 @@ void scJupiterLighthouseLightWestPath(Sint32 mode)
 		scFieldActorStop(MainRoutineStateWork.leaderActorId);
 		fdActorSetPos(ACTOR_THIRD_PATH_BLOCK, 0, 0);
 		if(mode == 1) {
-			for(frame = 0; frame <= 15; frame++) {
+			for(frm = 0; frm <= 15; frm++) {
 				for(i = 0; i <= 5; i++) {
 					actor = fdActorGet(ACTOR_FIRST_GREY_BLOCK + i);
 					if(scJupiterLighthouseIsOnWestPath(actor)) {
@@ -490,7 +490,7 @@ void scJupiterLighthousePlacePathBlock(Sint32 unused, Sint32 id)
 			do {
 				sySynch(1);
 				i++;
-				if(i >= BLOCK_LANDING_FRAMES)
+				if(i >= BLOCK_LANDING_TICKS)
 					break;
 			} while(actor->y.fixed > actor->groundHeight || actor->velY != 0);
 		}
@@ -577,9 +577,9 @@ void scJupiterLighthouseStartPound(void)
 
 /* Pound hammers the cone-shaped stake in the east or the west hall down into
    the floor. */
-void scJupiterLighthouseSinkPoundTarget(Sint32 mode, Sint32 frame)
+void scJupiterLighthouseSinkPoundTarget(Sint32 mode, Sint32 frm)
 {
-	fdPoundSinkTarget(JupiterLighthouse_WhorlPoundTargets, mode, frame);
+	fdPoundSinkTarget(JupiterLighthouseWhorlPoundTargets, mode, frm);
 }
 
 /* Throws a block up out of its gap at metatile (x, z) to land beside it. */
@@ -652,7 +652,7 @@ void scJupiterLighthouseRaiseBlocksFromGaps(void)
 		do {
 			syWait(1);
 			i++;
-			if(i >= BLOCK_LANDING_FRAMES)
+			if(i >= BLOCK_LANDING_TICKS)
 				break;
 		} while(actor->y.fixed > actor->groundHeight || actor->velY != 0);
 	}
@@ -663,7 +663,7 @@ void scJupiterLighthouseRaiseBlocksFromGaps(void)
 		do {
 			syWait(1);
 			i++;
-			if(i >= BLOCK_LANDING_FRAMES)
+			if(i >= BLOCK_LANDING_TICKS)
 				break;
 		} while(actor->y.fixed > actor->groundHeight || actor->velY != 0);
 	}
@@ -688,7 +688,7 @@ void scJupiterLighthouseRaiseThirdBlockFromGap(void)
 	scJupiterLighthouseLightWestPath(1);
 	syWait(2);
 	actor = fdActorGet(ACTOR_THIRD_PATH_BLOCK);
-	for(i = 0; i < BLOCK_LANDING_FRAMES; i++) {
+	for(i = 0; i < BLOCK_LANDING_TICKS; i++) {
 		if(actor->y.fixed <= actor->groundHeight && actor->velY == 0)
 			break;
 		syWait(1);
@@ -705,19 +705,19 @@ void scJupiterLighthouseJumpOrPushBlock(void)
 	ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	ACTOR *straight = fdActorGet(ACTOR_STRAIGHT_PATH_BLOCK);
 	ACTOR *corner = fdActorGet(ACTOR_CORNER_PATH_BLOCK);
-	FIXED  position[3];
+	FIXED  pos[3];
 	Sint32 found = 0;
 	Sint32 x;
 	Sint32 z;
 	Sint32 facing;
 
 	facing = (leader->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
-	position[0] = leader->x.fixed;
-	position[1] = leader->y.fixed;
-	position[2] = leader->z.fixed;
-	syFieldVectorAddPolarOffset(16, facing, position);
-	x = FIELD_METATILE(position[0]);
-	z = FIELD_METATILE(position[2]);
+	pos[0] = leader->x.fixed;
+	pos[1] = leader->y.fixed;
+	pos[2] = leader->z.fixed;
+	syFieldVectorAddPolarOffset(16, facing, pos);
+	x = FIELD_METATILE(pos[0]);
+	z = FIELD_METATILE(pos[2]);
 	if(straight->y.fixed == 0 && x == FIELD_METATILE(straight->x.fixed) &&
 		z == FIELD_METATILE(straight->z.fixed))
 		found = 1;
@@ -767,7 +767,7 @@ const CUE *scGetCues(void)
 
 void scActorsSetMetatilesOpen(const Uint16 *list);
 void scLightSprsInitB(void);
-void scLightSprsAddCounted(Sint32 id, Sint32 frame);
+void scLightSprsAddCounted(Sint32 id, Sint32 frm);
 
 /* Sets up the rooms as the party enters: the archer statue at three quarters of
    its size, the stakes and the bridge as their flags leave them, the blocks'
@@ -785,7 +785,7 @@ Sint32 scInit(void)
 	fdActorGet(ACTOR_ARCHER_STATUE)->scaleX = toFIXED(3) / 4;
 	fdActorGet(ACTOR_ARCHER_STATUE)->scaleY = toFIXED(3) / 4;
 	scActorsSetMetatilesOpen(
-		(const Uint16 *)JupiterLighthouse_WhorlPoundTargets);
+		(const Uint16 *)JupiterLighthouseWhorlPoundTargets);
 	if(fdScriptGetFlag(FLAG_BUTTON_PILLAR_PLACED)) {
 		fdActorSetPos(ACTOR_BUTTON_PILLAR, 136, 600);
 		scJupiterLighthouseRaiseBridge(0);
@@ -876,12 +876,12 @@ Sint32 scPrepareMap(void)
 
 #include "shared/palette_cycle_set_pauses_in_scripts.h"
 
-extern Sint32 PaletteCycleFrame;
+extern Sint32 PaletteCycleTick;
 
-/* Restarts the palette cycle at the given frame. */
-static inline void scPaletteCycleSetFrame(Sint32 value)
+/* Restarts the palette cycle at the given tick. */
+static inline void scPaletteCycleSetTick(Sint32 value)
 {
-	PaletteCycleFrame = value;
+	PaletteCycleTick = value;
 }
 
 #include "shared/palette_cycle_step.h"
@@ -905,20 +905,19 @@ struct METATILE_TARGET;
 struct METATILE_TARGET_ENTRY;
 struct LIGHT_OAM;
 
-extern Uint32 FieldEffect_ShortScript[];
-extern Uint32 FieldEffect_MediumScript[];
-extern Uint32 FieldEffect_LongScript[];
+extern Uint32 FieldEffectShortScript[];
+extern Uint32 FieldEffectMediumScript[];
+extern Uint32 FieldEffectLongScript[];
 
-void fdActorSetMetatileOpen(Sint32 id, Uint32 mode, Sint32 flag, Sint32 layer);
+void fdActorSetMetatileOpen(Sint32 id, Uint32 mode, Sint32 flg, Sint32 layer);
 
-void scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
+void scCrackedTileCrack(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry);
 
-void scCrackedTileFall(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
+void scCrackedTileFall(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry);
 
 void scWhirlwindUpdate(ACTOR *self);
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 #include "shared/whirlwind_spawn.h"
 
@@ -952,7 +951,7 @@ void scLightSprsSetPriority(Uint16 value)
 
 #include "../field/field_effect_move.c"
 
-extern const Sint32 *FieldEffect_DurationScripts[];
+extern const Sint32 *FieldEffectDurationScripts[];
 
 #define EFFECT_SET_MODE	  fdActorSelectAnimation
 #define EFFECT_SET_SCRIPT fdActorStartScript
@@ -974,13 +973,12 @@ struct METATILE_TARGET_ENTRY;
 #include "../field/field_effect_advance_motion.c"
 
 #undef METATILE_PUSH_SLOT_ENTRY
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 #include "shared/cracked_tile_drop_in.h"
 
-void syGameFlagSetByte(Sint32 flag, Sint32 value);
+void syGameFlagSetByte(Sint32 flg, Sint32 value);
 
 #include "shared/cracked_tile_step.h"
 
@@ -988,7 +986,7 @@ void syGameFlagSetByte(Sint32 flag, Sint32 value);
 
 /* The metatiles of the west hall's path, ending at an x of -1. */
 /* clang-format off */
-Sint16 JupiterLighthouse_WestPathMetatiles[][2] = {
+Sint16 JupiterLighthouseWestPathMetatiles[][2] = {
 	{8, 16}, {10, 16}, {11, 16}, {12, 16}, {14, 16}, {15, 16}, {10, 18},
 	{12, 18}, {13, 18}, {8, 20},  {10, 20}, {13, 20}, {15, 20}, {-1, 0},
 };
@@ -1000,7 +998,7 @@ Sint16 JupiterLighthouse_WestPathMetatiles[][2] = {
 
 /* The two stakes Pound sinks: each stake, its kind and the flag set once it */
 /* is sunk, ended by -1. */
-LATE_DATA Sint16 JupiterLighthouse_WhorlPoundTargets[] = {
+LATE_DATA Sint16 JupiterLighthouseWhorlPoundTargets[] = {
 	ACTOR_EAST_STAKE, STAKE_STONE, FLAG_EAST_STAKE_SUNK, ACTOR_WEST_STAKE, STAKE_STONE, FLAG_WEST_STAKE_SUNK, -1, 0,
 };
 
@@ -1078,7 +1076,7 @@ LATE_DATA CUE SceneCues[] = {
 	{CUE_TABLE_END},
 };
 
-LATE_DATA Sint32 PaletteCycleFrame = -1;
+LATE_DATA Sint32 PaletteCycleTick = -1;
 
 LATE_DATA Sint32 PaletteCyclePausesInScripts = 1;
 
@@ -1089,8 +1087,8 @@ LATE_DATA Sint32 WhirlwindEndScript[] = {
 };
 /* clang-format on */
 
-LATE_DATA const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+LATE_DATA const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };

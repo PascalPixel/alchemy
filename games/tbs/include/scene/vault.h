@@ -47,14 +47,14 @@ typedef enum VAULT_METATILE_BEHAVIOR {
 /* Both scenes' tables, defined by the shared parts they include:
    the children's routes round the well (shared/vault_well_routes.c) and the
    metatiles each door is redrawn with (shared/vault_door_metatiles.c). */
-extern Sint32 Vault_BoyRoundTheWellRoute[];
-extern Sint32 Vault_GirlRoundTheWellRoute[];
-extern Uint16 Vault_GemOwnersHouseDoorMetatiles[];
-extern Uint16 Vault_ChildsHouseDoorMetatiles[];
-extern Uint16 Vault_InnDoorMetatiles[];
-extern Uint16 Vault_ItemShopDoorMetatiles[];
-extern Uint16 Vault_WeaponAndArmorShopDoorMetatiles[];
-extern Uint16 Vault_MayorsHouseDoorMetatiles[];
-extern Uint16 Vault_JailDoorMetatiles[];
+extern Sint32 VaultBoyRoundTheWellRoute[];
+extern Sint32 VaultGirlRoundTheWellRoute[];
+extern Uint16 VaultGemOwnersHouseDoorMetatiles[];
+extern Uint16 VaultChildsHouseDoorMetatiles[];
+extern Uint16 VaultInnDoorMetatiles[];
+extern Uint16 VaultItemShopDoorMetatiles[];
+extern Uint16 VaultWeaponAndArmorShopDoorMetatiles[];
+extern Uint16 VaultMayorsHouseDoorMetatiles[];
+extern Uint16 VaultJailDoorMetatiles[];
 
 #endif

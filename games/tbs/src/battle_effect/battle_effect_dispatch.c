@@ -3,11 +3,11 @@
    0's ragged edge and the targets' sprites. Part of battle_effect.c. */
 
 /* Calls the empty btEffectNoOperation count times: a busy delay. */
-void btEffectCallNoOperation(Sint32 count)
+void btEffectCallNoOperation(Sint32 cnt)
 {
 	Sint32 i;
 
-	for(i = 0; i != count; i++)
+	for(i = 0; i != cnt; i++)
 		btEffectNoOperation();
 }
 
@@ -67,7 +67,7 @@ void btEffectRunSummon(BATTLE_EFFECT_PARM *args)
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_SHEET);
 }
 
-/* Runs an ordinary battle effect from BattleEffect_Handlers, with the sprite
+/* Runs an ordinary battle effect from BattleEffectHandlers, with the sprite
    sheet, state and canvas it lends. */
 void btEffectRunFromTable(BATTLE_EFFECT_PARM *args)
 {
@@ -84,7 +84,7 @@ void btEffectRunFromTable(BATTLE_EFFECT_PARM *args)
 	if(kind == BATTLE_EFFECT_NONE)
 		args->variant = EFFECT_VARIANT_BASIC;
 	else
-		BattleEffect_Handlers[kind - 1](args);
+		BattleEffectHandlers[kind - 1](args);
 
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_CANVAS);
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
@@ -133,24 +133,24 @@ void btEffectBuildWindowEdgeTable(void)
 void btEffectShowLivingTargets(BATTLE_EFFECT_PARM *args)
 {
 	Sint16 list[UNIT_MAX];
-	Sint32 count;
+	Sint32 cnt;
 	Sint32 i;
 
-	count = 0;
+	cnt = 0;
 	if(args->tgts[0] >= FIRST_ENEMY_UNIT) {
 		for(i = 0; i != ENEMY_BATTLE_SIZE; i++) {
 			Sint32 id = i + FIRST_ENEMY_UNIT;
 
 			if(gmUnitGetStub(id)->hp > 0)
-				list[count++] = id;
+				list[cnt++] = id;
 		}
 	} else {
 		for(i = 0; i != PARTY_UNIT_COUNT; i++) {
 			if(gmUnitGetStub(i)->hp > 0)
-				list[count++] = i;
+				list[cnt++] = i;
 		}
 	}
-	list[count] = BATTLE_UNIT_LIST_END;
+	list[cnt] = BATTLE_UNIT_LIST_END;
 	btObjectSpawnObjectsForListStub(list, 0);
 }
 
@@ -180,32 +180,32 @@ void btEffectSetupBlendedDisp(void)
 
 /* Tints one unit's sprite: every part but its shadow takes `palette`
    (SPRITE_COLOR_NORMAL gives the unit its own back), the sprite starts
-   `animation`, and timer `timerSlot` of the effect counts `timerFrames` down to
+   `anm`, and timer `tmrSlot` of the effect counts `tmrTicks` down to
    the tint's end (btEffectCountDownBattlerTints); TINT_KEEP leaves any of the
    three as it is. */
-void btEffectTintBattler(Sint32 unitId, Sint32 palette, Sint32 animation,
-	Sint32 timerSlot, Sint32 timerFrames)
+void btEffectTintBattler(
+	Sint32 unitId, Sint32 palette, Sint32 anm, Sint32 tmrSlot, Sint32 tmrTicks)
 {
 	BATTLE_OBJECT		*slot;
 	SPR					*group;
 	BATTLE_EFFECT_STATE *state;
-	Sint32				 groupIndex;
+	Sint32				 groupIdx;
 
 	slot = btObjectGetStub(unitId);
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
-	for(groupIndex = 0;
-		(group = btActorGetSprStub(slot->actor, groupIndex)) != NULL;
-		groupIndex++) {
-		if(timerSlot != TINT_KEEP) {
-			state->actorTmrs[timerSlot] = timerFrames;
+	for(groupIdx = 0;
+		(group = btActorGetSprStub(slot->actor, groupIdx)) != NULL;
+		groupIdx++) {
+		if(tmrSlot != TINT_KEEP) {
+			state->actorTmrs[tmrSlot] = tmrTicks;
 		}
 		if(slot->fading == 0) {
 			if(palette != TINT_KEEP) {
-				Sint32 partIndex;
+				Sint32 partIdx;
 
-				for(partIndex = 0; partIndex != group->cnt; partIndex++) {
-					SPR_ANIMATION *part = group->entries[partIndex];
+				for(partIdx = 0; partIdx != group->cnt; partIdx++) {
+					SPR_ANIMATION *part = group->entries[partIdx];
 
 					if(part != NULL && part != slot->shadowEntry &&
 						part != slot->anmEntry) {
@@ -217,8 +217,8 @@ void btEffectTintBattler(Sint32 unitId, Sint32 palette, Sint32 animation,
 					}
 				}
 			}
-			if(animation != TINT_KEEP)
-				fdSprStartAnimationStub(group, animation);
+			if(anm != TINT_KEEP)
+				fdSprStartAnimationStub(group, anm);
 		}
 	}
 }

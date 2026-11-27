@@ -8,8 +8,8 @@
 #include "types.h"
 
 /* The effect chance by distance btActionRunBuild rolls ahead for Annihilation
-   and Whorl, the same as RangeFalloff_EffectChance. */
-extern const Uint8 ActionRun_EffectChance[];
+   and Whorl, the same as RangeFalloffEffectChance. */
+extern const Uint8 ActionRunEffectChance[];
 /* Each ability's outcome staging (BATTLE_PLAN.staging), 0 for the default, by
    ability id. */
 extern const Uint8 AbilityStaging[];

@@ -14,7 +14,7 @@ union FIELD_OBJECT;
 struct ACTOR;
 
 /* An effect object that moves and draws one sprite: its position, scale,
-   velocity and target, and its per-frame update. It is one of the object slots
+   velocity and target, and its per-tick update. It is one of the object slots
    the field engine's FIELD_ACTOR also describes. */
 typedef struct MOTION_OBJECT {
 	const Sint32 *script; /* the object script it runs; null when it is free */
@@ -29,20 +29,20 @@ typedef struct MOTION_OBJECT {
 	Uint16		  height;		/* no code names it through this view */
 	Uint8		  layer; /* the map layer its ground height is read from */
 	Uint8		  priFlg;
-	FIXED		  velX;		  /* 16.16 fixed-point pixels per frame */
-	FIXED		  velY;		  /* 16.16 fixed-point pixels per frame */
-	FIXED		  velZ;		  /* 16.16 fixed-point pixels per frame */
-	FIXED		  speedLimit; /* 16.16 fixed-point pixels per frame */
-	/* Horizontal speed gained each frame towards the target, or lost braking
-	   without one, in 16.16 fixed-point pixels per frame. */
+	FIXED		  velX;		  /* 16.16 fixed-point pixels per tick */
+	FIXED		  velY;		  /* 16.16 fixed-point pixels per tick */
+	FIXED		  velZ;		  /* 16.16 fixed-point pixels per tick */
+	FIXED		  speedLimit; /* 16.16 fixed-point pixels per tick */
+	/* Horizontal speed gained each tick towards the target, or lost braking
+	   without one, in 16.16 fixed-point pixels per tick. */
 	FIXED acceleration;
 	FIXED tgtX; /* 16.16 fixed-point pixels; 0x80000000 for no target */
 	FIXED tgtY; /* 16.16 fixed-point pixels */
 	FIXED tgtZ; /* 16.16 fixed-point pixels */
 	/* With motionFlags bit 1, the 16.16 share of velocityY kept on a bounce. */
 	FIXED verticalMotionPhase;
-	/* Gravity: taken from velocityY each frame above the ground with
-	   motionFlags bit 1, in 16.16 fixed-point pixels per frame. */
+	/* Gravity: taken from velocityY each tick above the ground with
+	   motionFlags bit 1, in 16.16 fixed-point pixels per tick. */
 	FIXED  verticalMotionStrength;
 	Sint32 sceneWord;
 	void  *records; /* one sprite, or a table of them (recordStorageKind) */
@@ -59,14 +59,14 @@ typedef struct MOTION_OBJECT {
 	Uint8  paused; /* nonzero: the motion update leaves it where it is */
 	Uint8  retainSprCache; /* keeps its sprite's VRAM cache entry */
 	Uint8  repeatCnt;	   /* the object script's loop count */
-	Sint16 wait;		   /* the object script's wait, in frames */
+	Sint16 wait;		   /* the object script's wait, in ticks */
 	void  *func;		   /* Actor's hook; no battle code names it */
 	Sint32 tmr; /* Actor's timer and userValue; no battle code names it */
 	struct ACTOR *watchedActor;
 	void (*update)(union FIELD_OBJECT *object);
 } MOTION_OBJECT;
 
-/* The gravity a battle unit falls under, about 0.67 pixels a frame per frame in
+/* The gravity a battle unit falls under, about 0.67 pixels a tick per tick in
    16.16, as verticalMotionStrength: btMotionReturnToSpot sets it whenever a
    unit goes back to its spot, and effects that change a unit's gravity for a
    leap or a lift give it this one back. */

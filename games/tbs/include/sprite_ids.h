@@ -108,7 +108,7 @@ typedef enum SPR_ID {
 	/* Tret's face again: SPRITE_TRET's pictures and animations drawn 12 pixels
 	   higher (sprites.tsv's TRET_RAISED), as Kolima Forest shows him. */
 	SPRITE_TRET_RAISED,
-	/* A Venus Djinni; Djinn_ElementSprites gives each element's Djinni
+	/* A Venus Djinni; DjinnElementSprites gives each element's Djinni
 	   sprite. */
 	SPRITE_VENUS_DJINNI = 90,
 	SPRITE_MERCURY_DJINNI,
@@ -139,12 +139,12 @@ typedef enum SPR_ID {
 	SPRITE_COOK,
 	SPRITE_BALD_MAN_IN_RED,
 	SPRITE_YOUNG_MAN_IN_GREEN,
-	/* A second number for SPRITE_BALD_MAN_IN_RED, whose frames and animations
+	/* A second number for SPRITE_BALD_MAN_IN_RED, whose ticks and animations
 	   it borrows (sprites.tsv), so the player sees the same man. The first
 	   number keeps most towns' weapon shops; this one stands in Kalay's houses
 	   and in Hammet's palace. */
 	SPRITE_BALD_MAN_IN_RED_KALAY,
-	/* A second number for SPRITE_YOUNG_MAN_IN_GREEN, whose frames and
+	/* A second number for SPRITE_YOUNG_MAN_IN_GREEN, whose ticks and
 	   animations it borrows (sprites.tsv), so the player sees the same man. The
 	   first number keeps most towns' armor shops; this one stands in Kalay's
 	   houses and in Hammet's palace. */
@@ -655,7 +655,7 @@ typedef enum GOLDEN_HELMET_WARRIOR_ANIMATION {
 
 /* SPRITE_BABI's animations that scenes set by number (babi.tsv). */
 typedef enum BABI_ANIMATION {
-	/* Lying in bed, only his head on the pillow showing, its two frames
+	/* Lying in bed, only his head on the pillow showing, its two ticks
 	   alternating. */
 	BABI_ANIMATION_IN_BED = 5
 } BABI_ANIMATION;
@@ -693,7 +693,7 @@ typedef enum FLOATING_LOG_ANIMATION {
    them. */
 typedef enum SPLASH_ANIMATION {
 	SPLASH_ANIMATION_BURST = 1, /* one burst of spray, then nothing */
-	/* Spray churning for about 120 frames, then dying away to nothing. */
+	/* Spray churning for about 120 ticks, then dying away to nothing. */
 	SPLASH_ANIMATION_CHURN = 2
 } SPLASH_ANIMATION;
 
@@ -729,7 +729,7 @@ typedef enum CHEST_ANIMATION {
 	CHEST_ANIMATION_OPEN_EMPTY = 2, /* the lid up over an empty chest, held */
 	/* The lid lifting on treasure, then open over it as it glints. */
 	CHEST_ANIMATION_OPEN_ON_TREASURE = 4,
-	/* The lid lifted on the treasure for six frames, then shut again (the
+	/* The lid lifted on the treasure for six ticks, then shut again (the
 	   sprite's animation 1, closed). */
 	CHEST_ANIMATION_PEEK_AND_SHUT = 5
 } CHEST_ANIMATION;
@@ -862,7 +862,7 @@ typedef enum PARTICLE_ANIMATION {
 	PARTICLE_ANIMATION_SHRINK = 1, /* shrinking to the dot and holding it */
 	/* Growing from the dot, then PARTICLE_ANIMATION_FLICKER. */
 	PARTICLE_ANIMATION_GROW_AND_FLICKER = 6,
-	/* Flickering between the two largest pictures, two frames each: a light's
+	/* Flickering between the two largest pictures, two ticks each: a light's
 	   sparkle. */
 	PARTICLE_ANIMATION_FLICKER = 7
 } PARTICLE_ANIMATION;

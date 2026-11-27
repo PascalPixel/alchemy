@@ -14,7 +14,7 @@ void fdLeaderSlideOnIce(void)
 	Sint32	nextBehavior;
 	FIXED	distance;
 	ACTOR  *other;
-	Uint8  *flags;
+	Uint8  *flg;
 	Sint32	i;
 	FIXED	dx;
 	FIXED	dz;
@@ -40,7 +40,7 @@ top:
 	dx = x - actor->x.fixed;
 	distance = syMulFX(dx, dx) + syMulFX(dz, dz);
 	if(distance < toFIXED(4)) {
-		heading = SlideOnIce_AnglesByKey[DPAD_INDEX(PerWork.data)];
+		heading = SlideOnIceAnglesByKey[DPAD_INDEX(PerWork.data)];
 		/* -1 for no direction, tested as its halfword. */
 		if((Uint16)heading == DPAD_ANGLE_NONE) {
 			return;
@@ -87,9 +87,9 @@ top:
 			Sint32 radius = actor->radius - 2;
 
 			other = Ram_HeapSlots->actors;
-			flags = &other->collisionFlg;
-			for(i = 0; i < ACTOR_COUNT; i++, flags += sizeof(ACTOR), other++) {
-				if(other->script != NULL && (*flags & ACTOR_SOLID) &&
+			flg = &other->collisionFlg;
+			for(i = 0; i < ACTOR_COUNT; i++, flg += sizeof(ACTOR), other++) {
+				if(other->script != NULL && (*flg & ACTOR_SOLID) &&
 					other != actor) {
 					if(scScriptCheckSpheresOverlap(&other->x.fixed, radius,
 						   &probe.x, other->radius - 2) >= 0) {

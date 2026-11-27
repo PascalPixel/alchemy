@@ -24,8 +24,8 @@ void scAncientLemuriaMeetTheLemurians(void);
 
 #include "text/msg_ids.h"
 /* The shore's water: its two background palettes, from the first, the colours
-   of each that rotate every four frames, the colour of the first that shines in
-   the colours of AncientLemuria_ShiningWaterColors in turn, and how many there
+   of each that rotate every four ticks, the colour of the first that shines in
+   the colours of AncientLemuriaShiningWaterColors in turn, and how many there
    are. */
 #define FIRST_SHORE_WATER_PALETTE 7
 #define SHORE_WATER_FIRST_COLOR	  1
@@ -33,11 +33,11 @@ void scAncientLemuriaMeetTheLemurians(void);
 #define WATER_SHINING_COLOR		  15
 #define SHINING_WATER_COLORS	  12
 
-extern Sint16 AncientLemuria_ShiningWaterColors[SHINING_WATER_COLORS];
+extern Sint16 AncientLemuriaShiningWaterColors[SHINING_WATER_COLORS];
 
-/* The frames the statue Rime hides in takes to rock from side to side and back,
+/* The ticks the statue Rime hides in takes to rock from side to side and back,
    clicking as each rock starts. */
-#define RIME_STATUE_ROCK_FRAMES 16
+#define RIME_STATUE_ROCK_TICKS 16
 
 /* Rime's story: brought out of the first weeds by Cyclone, hiding in the blue
    statue, which rocks, until Tremor shakes it out. */
@@ -105,12 +105,12 @@ void scAncientLemuriaRimeJoins(void)
    starts. */
 void scAncientLemuriaRockTheStatue(ACTOR *actor)
 {
-	FIELD_SPR *sprite = actor->spr;
+	FIELD_SPR *spr = actor->spr;
 	Sint16	   time = actor->tmr++;
 
-	sprite->rotation = syMulFX(
-		sySin(time * (TRIG_TURN / RIME_STATUE_ROCK_FRAMES)), TRIG_TURN / 256);
-	if((time & (RIME_STATUE_ROCK_FRAMES - 1)) == 0)
+	spr->rotation = syMulFX(
+		sySin(time * (TRIG_TURN / RIME_STATUE_ROCK_TICKS)), TRIG_TURN / 256);
+	if((time & (RIME_STATUE_ROCK_TICKS - 1)) == 0)
 		sySndPlay(SE_SWITCH);
 }
 
@@ -118,11 +118,11 @@ void scAncientLemuriaRockTheStatue(ACTOR *actor)
 void scAncientLemuriaStillTheStatue(Sint32 id)
 {
 	ACTOR	  *actor = fdActorGetById(id);
-	FIELD_SPR *sprite = actor->spr;
+	FIELD_SPR *spr = actor->spr;
 
 	actor->update = 0;
 	actor->tmr = 0;
-	sprite->rotation = 0;
+	spr->rotation = 0;
 }
 
 const SCENE_ENTRANCE *scGetEntrances(void)
@@ -198,7 +198,7 @@ static inline void Hop(Sint32 dx, Sint32 dz)
 void scAncientLemuriaCycloneRevealsRime(void)
 {
 	ACTOR *actor;
-	Sint32 frame;
+	Sint32 frm;
 
 	syFieldTileCopiesCopyTouchedMetatiles(7, 13, 1, 1, 5, 13, 0);
 	if(fdScriptGetFlag(FLAG_RIME_REVEALED))
@@ -211,7 +211,7 @@ void scAncientLemuriaCycloneRevealsRime(void)
 	fdActorJump(ACTOR_RIME, 9, 0);
 	actor->scaleY = toFIXED(1) / 2;
 	actor->scaleX = toFIXED(1) / 2;
-	for(frame = 0; frame < 30; frame++) {
+	for(frm = 0; frm < 30; frm++) {
 		actor->facing += TRIG_TURN / 16;
 		if(actor->scaleX < toFIXED(1))
 			actor->scaleX += toFIXED(5) / 128;
@@ -299,7 +299,7 @@ void scAncientLemuriaStartTremorOnTheStatue(void)
 void scAncientLemuriaTremorShakesOutRime(void)
 {
 	ACTOR *actor;
-	Sint32 frame;
+	Sint32 tick;
 
 	if(fdScriptGetFlag(FLAG_RIME_OUT_OF_THE_STATUE))
 		return;
@@ -316,7 +316,7 @@ void scAncientLemuriaTremorShakesOutRime(void)
 	actor->scaleX = toFIXED(1) / 2;
 	fdActorSetSpeed(ACTOR_RIME, 2.2);
 	fdActorWalkTo(ACTOR_RIME, 312, 184);
-	for(frame = 0; frame < 24; frame++) {
+	for(tick = 0; tick < 24; tick++) {
 		actor->facing += TRIG_TURN / 8;
 		if(actor->scaleX < toFIXED(1))
 			actor->scaleX += toFIXED(5) / 128;
@@ -377,39 +377,36 @@ const CUE *scGetCues(void)
 	return SceneCues;
 }
 
-/* The water's shine: every four frames the rotating colours of both water
+/* The water's shine: every four ticks the rotating colours of both water
    palettes move on by one, and the shining colour takes the next of
-   AncientLemuria_ShiningWaterColors. */
+   AncientLemuriaShiningWaterColors. */
 Sint32 scAncientLemuriaCycleWaterCols(void)
 {
-	if((*Ram_FrameCount & 3) == 0) {
+	if((*Ram_TickCount & 3) == 0) {
 		Sint16 saved;
-		Sint32 index;
+		Sint32 idx;
 
 		saved =
 			BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, SHORE_WATER_LAST_COLOR);
-		for(index = SHORE_WATER_LAST_COLOR; index != SHORE_WATER_FIRST_COLOR;
-			index--)
-			BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, index) =
-				BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, index - 1);
+		for(idx = SHORE_WATER_LAST_COLOR; idx != SHORE_WATER_FIRST_COLOR; idx--)
+			BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, idx) =
+				BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, idx - 1);
 		BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, SHORE_WATER_FIRST_COLOR) =
 			saved;
 		saved = BG_PLTT_COLOR(
 			FIRST_SHORE_WATER_PALETTE + 1, SHORE_WATER_LAST_COLOR);
-		for(index = SHORE_WATER_LAST_COLOR; index != SHORE_WATER_FIRST_COLOR;
-			index--)
-			BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE + 1, index) =
-				BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE + 1, index - 1);
+		for(idx = SHORE_WATER_LAST_COLOR; idx != SHORE_WATER_FIRST_COLOR; idx--)
+			BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE + 1, idx) =
+				BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE + 1, idx - 1);
 		BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE + 1, SHORE_WATER_FIRST_COLOR) =
 			saved;
 	}
 	{
-		Sint16 color =
-			AncientLemuria_ShiningWaterColors[(*Ram_FrameCount >> 2) %
-				SHINING_WATER_COLORS];
+		Sint16 col = AncientLemuriaShiningWaterColors[(*Ram_TickCount >> 2) %
+			SHINING_WATER_COLORS];
 
-		BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, WATER_SHINING_COLOR) = color;
-		return color;
+		BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, WATER_SHINING_COLOR) = col;
+		return col;
 	}
 }
 
@@ -1141,7 +1138,7 @@ CUE SceneCues[] = {
 
 /* The colours the shining water takes in turn. */
 /* clang-format off */
-Sint16 AncientLemuria_ShiningWaterColors[SHINING_WATER_COLORS] = {
+Sint16 AncientLemuriaShiningWaterColors[SHINING_WATER_COLORS] = {
 	RGB(12, 24, 23), RGB(8, 22, 24), RGB(4, 20, 25),
 	RGB(0, 18, 26),  RGB(0, 16, 26), RGB(0, 14, 26),
 	RGB(0, 12, 26),  RGB(0, 14, 26), RGB(0, 16, 26),

@@ -5,7 +5,7 @@
 
 /* clang-format off */
 /* The credits font's advance widths, by character code from 0x20. */
-const Uint8 Credits_GlyphWidths[96] = {
+const Uint8 CreditsGlyphWidths[96] = {
 	7, 4, 7, 7, 8, 8, 8, 4, 5, 5, 5, 6, 4, 6, 4, 6,
 	7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 4, 5, 6, 5, 7,
 	8, 8, 8, 8, 8, 8, 8, 8, 8, 5, 6, 8, 8, 8, 8, 8,

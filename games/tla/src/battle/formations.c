@@ -10,7 +10,7 @@ FORMATION Formations[] = {
 	[0] = {0},
 	/* Djinni battles, each Djinni alone, its element's Djinn in a run of eleven */
 	/* after an empty row: Venus, Mercury, Mars, then Jupiter */
-	/* (Encounter_DjinnBattles gives each its zone and slot). */
+	/* (EncounterDjinnBattles gives each its zone and slot). */
 	[1] = {
 		.memberIds = {ENEMY_ROW(ENEMY_VENUS_DJINNI_UNUSED_ECHO)},
 		.minCnts = {1},
@@ -3003,7 +3003,7 @@ FORMATION Formations[] = {
 
 /* The 87 enemies whose defeated flags a monster battle clears before it */
 /* picks a formation (btFormationSelectLevelMatchedCandidate). */
-Uint16 BattleFormation_ExcludedEnemies[] = {
+Uint16 BattleFormationExcludedEnemies[] = {
 	ENEMY_VENUS_DJINNI_UNUSED_QUARTZ,
 	ENEMY_VENUS_DJINNI_UNUSED_VINE,
 	ENEMY_VENUS_DJINNI_UNUSED_BANE,
@@ -3094,5 +3094,5 @@ Uint16 BattleFormation_ExcludedEnemies[] = {
 };
 
 /* Unused: a 0 after the list that no code reads. */
-Uint16 BattleFormation_UnusedListEnd[] = {0};
+Uint16 BattleFormationUnusedListEnd[] = {0};
 /* clang-format on */

@@ -26,7 +26,7 @@ typedef struct DJINNI_BATTLE {
 	Uint16 slot;
 } DJINNI_BATTLE;
 
-extern const WORLD_MAP_ENCOUNTER_RULE WorldMap_EncounterRules[];
-extern const DJINNI_BATTLE			  Encounter_DjinnBattles[];
+extern const WORLD_MAP_ENCOUNTER_RULE WorldMapEncounterRules[];
+extern const DJINNI_BATTLE			  EncounterDjinnBattles[];
 
 #endif

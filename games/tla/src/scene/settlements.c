@@ -128,7 +128,7 @@ typedef enum KALT_ISLAND_METATILE {
 } KALT_ISLAND_METATILE;
 
 /* The people of Gondowan Settlement, by the rows of
-   Settlements_GondowanSettlementPlacements. */
+   SettlementsGondowanSettlementPlacements. */
 typedef enum GONDOWAN_SETTLEMENT_ACTOR_ID {
 	ACTOR_MAN_ON_THE_RIDDLE_OF_THE_ROCK = ACTOR_FIRST_PLACED,
 	ACTOR_GONDOWAN_BOY
@@ -141,7 +141,7 @@ typedef enum GONDOWAN_SETTLEMENT_HOUSES_ACTOR_ID {
 } GONDOWAN_SETTLEMENT_HOUSES_ACTOR_ID;
 
 /* The Hesperia Settlement, by the rows of
-   Settlements_HesperiaSettlementPlacements. */
+   SettlementsHesperiaSettlementPlacements. */
 typedef enum HESPERIA_SETTLEMENT_ACTOR_ID {
 	ACTOR_HESPERIA_MAN = ACTOR_FIRST_PLACED,
 	ACTOR_SPROUT, /* below the west cliff, grown into a vine by Growth */
@@ -157,7 +157,7 @@ typedef enum HESPERIA_SETTLEMENT_HOUSES_ACTOR_ID {
 	ACTOR_BOY_ON_THE_SHAMANS
 } HESPERIA_SETTLEMENT_HOUSES_ACTOR_ID;
 
-/* Kalt Island, by the rows of Settlements_KaltIslandPlacements. */
+/* Kalt Island, by the rows of SettlementsKaltIslandPlacements. */
 typedef enum KALT_ISLAND_ACTOR_ID {
 	/* The two posts on either bank of the frozen river, tied by Lash. */
 	ACTOR_ROPE_POST_A = ACTOR_FIRST_PLACED,
@@ -174,7 +174,7 @@ typedef enum KALT_ISLAND_HOUSES_ACTOR_ID {
 	ACTOR_OLD_WOMAN_ON_PROX_TRADE
 } KALT_ISLAND_HOUSES_ACTOR_ID;
 
-/* SW Atteka Islet, by the rows of Settlements_AttekaIsletPlacements. */
+/* SW Atteka Islet, by the rows of SettlementsAttekaIsletPlacements. */
 typedef enum ATTEKA_ISLET_ACTOR_ID {
 	ACTOR_ISLANDER = ACTOR_FIRST_PLACED,
 	ACTOR_PILLAR,	   /* on the grass by the river, pushed into it */
@@ -206,7 +206,7 @@ typedef enum ATTEKA_ISLET_HOUSES_ACTOR_ID {
 
 extern Uint8 MsgSettlementsDontTellMeYoureHere[];
 
-extern Sint16 Settlements_FallsObjects[];
+extern Sint16 SettlementsFallsObjects[];
 
 void scSmokeSpawn(Sint32 x, Sint32 y, Sint32 z);
 void scSettlementsCycleWaterCols(void);
@@ -221,12 +221,12 @@ void scSmokeDrift(ACTOR *actor);
 void scScrollHBlank(void);
 void scLayerTrackScroll(void);
 
-extern SCENE_REGION Settlements_HesperiaSettlementHousesRegions[];
-extern SCENE_REGION Settlements_GondowanSettlementCaveRegions[];
+extern SCENE_REGION SettlementsHesperiaSettlementHousesRegions[];
+extern SCENE_REGION SettlementsGondowanSettlementCaveRegions[];
 
 #include "shared/script_check_spheres_overlap.h"
 
-extern Sint16 SlideOnIce_AnglesByKey[];
+extern Sint16 SlideOnIceAnglesByKey[];
 
 void scSettlementsStepOntoWall(void);
 
@@ -263,10 +263,10 @@ void scSettlementsBlockCrate(void);
 
 void scSettlementsLiftBoulder(void);
 
-extern Uint32 FieldEffect_ShortScript[];
-extern Uint32 FieldEffect_MediumScript[];
-extern Sint32 Settlements_BobScript[];
-extern Sint32 Settlements_CrateBobScript[];
+extern Uint32 FieldEffectShortScript[];
+extern Uint32 FieldEffectMediumScript[];
+extern Sint32 SettlementsBobScript[];
+extern Sint32 SettlementsCrateBobScript[];
 
 /* Three 16.16 fixed-point components. */
 typedef struct SETTLEMENTS_VECTOR {
@@ -279,12 +279,12 @@ void scSettlementsStepOntoWall(void);
 
 /* The falls' palette as the map loads it, and as it is shown with its water
    colours turned. */
-Uint16 Settlements_LoadedWaterColors[16] BSS_DATA;
-Uint16 Settlements_ShownWaterColors[16] BSS_DATA;
-Uint8  Settlements_UnusedAfterShownWaterColors[64] BSS_DATA;
-Sint32 Settlements_WaterfallLine		BSS_DATA;
-Uint16 Settlements_WaterfallScrollAbove BSS_DATA;
-Uint16 Settlements_WaterfallScrollBelow BSS_DATA;
+Uint16 SettlementsLoadedWaterColors[16] BSS_DATA;
+Uint16 SettlementsShownWaterColors[16] BSS_DATA;
+Uint8  SettlementsUnusedAfterShownWaterColors[64] BSS_DATA;
+Sint32 SettlementsWaterfallLine		   BSS_DATA;
+Uint16 SettlementsWaterfallScrollAbove BSS_DATA;
+Uint16 SettlementsWaterfallScrollBelow BSS_DATA;
 
 void scSettlementsSpawnDustRing(Sint32 actorId);
 
@@ -337,10 +337,10 @@ const SCENE_REGION *scGetExitRegions(void)
 	SCENE_REGION *placements;
 
 	if(scene == SCENE_HESPERIA_SETTLEMENT_HOUSES)
-		return Settlements_HesperiaSettlementHousesRegions;
+		return SettlementsHesperiaSettlementHousesRegions;
 	placements = 0;
 	if(scene == SCENE_GONDOWAN_SETTLEMENT_CAVE)
-		placements = Settlements_GondowanSettlementCaveRegions;
+		placements = SettlementsGondowanSettlementCaveRegions;
 	return placements;
 }
 
@@ -349,37 +349,37 @@ const Uint32 *scGetExits(void)
 	return SceneExits;
 }
 
-extern ACTOR_PLACE Settlements_Placements[];
-extern ACTOR_PLACE Settlements_GondowanSettlementPlacements[];
-extern ACTOR_PLACE Settlements_GondowanSettlementHousesPlacements[];
-extern ACTOR_PLACE Settlements_HesperiaSettlementPlacements[];
-extern ACTOR_PLACE Settlements_HesperiaSettlementHousesPlacements[];
-extern ACTOR_PLACE Settlements_AttekaIsletPlacements[];
-extern ACTOR_PLACE Settlements_AttekaIsletHousesPlacements[];
-extern ACTOR_PLACE Settlements_KaltIslandPlacements[];
-extern ACTOR_PLACE Settlements_KaltIslandHousesPlacements[];
+extern ACTOR_PLACE SettlementsPlacements[];
+extern ACTOR_PLACE SettlementsGondowanSettlementPlacements[];
+extern ACTOR_PLACE SettlementsGondowanSettlementHousesPlacements[];
+extern ACTOR_PLACE SettlementsHesperiaSettlementPlacements[];
+extern ACTOR_PLACE SettlementsHesperiaSettlementHousesPlacements[];
+extern ACTOR_PLACE SettlementsAttekaIsletPlacements[];
+extern ACTOR_PLACE SettlementsAttekaIsletHousesPlacements[];
+extern ACTOR_PLACE SettlementsKaltIslandPlacements[];
+extern ACTOR_PLACE SettlementsKaltIslandHousesPlacements[];
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_GONDOWAN_SETTLEMENT)
-		return Settlements_GondowanSettlementPlacements;
+		return SettlementsGondowanSettlementPlacements;
 	if(scene == SCENE_GONDOWAN_SETTLEMENT_HOUSES)
-		return Settlements_GondowanSettlementHousesPlacements;
+		return SettlementsGondowanSettlementHousesPlacements;
 	if(scene == SCENE_HESPERIA_SETTLEMENT)
-		return Settlements_HesperiaSettlementPlacements;
+		return SettlementsHesperiaSettlementPlacements;
 	if(scene == SCENE_HESPERIA_SETTLEMENT_HOUSES)
-		return Settlements_HesperiaSettlementHousesPlacements;
+		return SettlementsHesperiaSettlementHousesPlacements;
 	if(scene == SCENE_KALT_ISLAND)
-		return Settlements_KaltIslandPlacements;
+		return SettlementsKaltIslandPlacements;
 	if(scene == SCENE_KALT_ISLAND_HOUSES)
-		return Settlements_KaltIslandHousesPlacements;
+		return SettlementsKaltIslandHousesPlacements;
 	if(scene == SCENE_SOUTHWEST_ATTEKA_ISLET)
-		return Settlements_AttekaIsletPlacements;
+		return SettlementsAttekaIsletPlacements;
 	if(scene == SCENE_SOUTHWEST_ATTEKA_ISLET_HOUSES)
-		return Settlements_AttekaIsletHousesPlacements;
-	return Settlements_Placements;
+		return SettlementsAttekaIsletHousesPlacements;
+	return SettlementsPlacements;
 }
 
 /* Felix casts Catch on the apple floating in the snowy trees west of Kalt
@@ -517,64 +517,64 @@ void scSettlementsGrowVine(void)
 	fdScriptSetFlag(FLAG_VINE_GROWN);
 }
 
-extern CUE Settlements_Cues[];
-extern CUE Settlements_GondowanSettlementCues[];
-extern CUE Settlements_GondowanSettlementHousesCues[];
-extern CUE Settlements_HesperiaSettlementCues[];
-extern CUE Settlements_HesperiaSettlementHousesCues[];
-extern CUE Settlements_KaltIslandCues[];
-extern CUE Settlements_KaltIslandHousesCues[];
-extern CUE Settlements_AttekaIsletCues[];
-extern CUE Settlements_AttekaIsletHousesCues[];
+extern CUE SettlementsCues[];
+extern CUE SettlementsGondowanSettlementCues[];
+extern CUE SettlementsGondowanSettlementHousesCues[];
+extern CUE SettlementsHesperiaSettlementCues[];
+extern CUE SettlementsHesperiaSettlementHousesCues[];
+extern CUE SettlementsKaltIslandCues[];
+extern CUE SettlementsKaltIslandHousesCues[];
+extern CUE SettlementsAttekaIsletCues[];
+extern CUE SettlementsAttekaIsletHousesCues[];
 
 const CUE *scGetCues(void)
 {
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_GONDOWAN_SETTLEMENT)
-		return Settlements_GondowanSettlementCues;
+		return SettlementsGondowanSettlementCues;
 	if(scene == SCENE_GONDOWAN_SETTLEMENT_HOUSES)
-		return Settlements_GondowanSettlementHousesCues;
+		return SettlementsGondowanSettlementHousesCues;
 	if(scene == SCENE_HESPERIA_SETTLEMENT)
-		return Settlements_HesperiaSettlementCues;
+		return SettlementsHesperiaSettlementCues;
 	if(scene == SCENE_HESPERIA_SETTLEMENT_HOUSES)
-		return Settlements_HesperiaSettlementHousesCues;
+		return SettlementsHesperiaSettlementHousesCues;
 	if(scene == SCENE_KALT_ISLAND)
-		return Settlements_KaltIslandCues;
+		return SettlementsKaltIslandCues;
 	if(scene == SCENE_KALT_ISLAND_HOUSES)
-		return Settlements_KaltIslandHousesCues;
+		return SettlementsKaltIslandHousesCues;
 	if(scene == SCENE_SOUTHWEST_ATTEKA_ISLET)
-		return Settlements_AttekaIsletCues;
+		return SettlementsAttekaIsletCues;
 	if(scene == SCENE_SOUTHWEST_ATTEKA_ISLET_HOUSES)
-		return Settlements_AttekaIsletHousesCues;
-	return Settlements_Cues;
+		return SettlementsAttekaIsletHousesCues;
+	return SettlementsCues;
 }
 
 #include "shared/smoke_drift.h"
 
 #include "shared/smoke_spawn.h"
 
-/* An event on Kalt Island: a puff from the house's chimney every 64 frames. */
+/* An event on Kalt Island: a puff from the house's chimney every 64 ticks. */
 void scSettlementsPuffChimneySmoke(void)
 {
-	if((FrameCount & 63) == 0)
+	if((TickCount & 63) == 0)
 		scSmokeSpawn(toFIXED(248), toFIXED(48), toFIXED(256));
 }
 
-/* The apple each frame: it sways up to two pixels either side of its spot and
+/* The apple each tick: it sways up to two pixels either side of its spot and
    dips up to two pixels below it, at a random pace, as The Broken Seal's Nut
    floats. A frozen actor is never steered, so the apple keeps the sway's angle
    in its speedLimit and its spot in targetX and targetY. */
 Sint32 scSettlementsFloatApple(ACTOR *apple)
 {
-	FIELD_SPR *sprite = (FIELD_SPR *)apple->spr;
+	FIELD_SPR *spr = (FIELD_SPR *)apple->spr;
 	FIXED	   dip = syMathSin(apple->speedLimit) * 2;
 
 	if(dip > 0)
 		dip = -dip;
 	apple->x.fixed = apple->tgtX + syCos(apple->speedLimit) * 2;
 	apple->y.fixed = apple->tgtY + dip;
-	sprite->rotation = syCos(apple->speedLimit + DEGtoANG(180)) / 8;
+	spr->rotation = syCos(apple->speedLimit + DEGtoANG(180)) / 8;
 	/* The pace: a sixty-fourth of a turn and two random steps under 1/128
 	   each. */
 	apple->speedLimit +=
@@ -589,15 +589,15 @@ Sint32 scSettlementsFloatApple(ACTOR *apple)
 void scSettlementsSetUpKaltIsland(void)
 {
 	ACTOR		  *actor;
-	FIELD_SPR	  *sprite;
+	FIELD_SPR	  *spr;
 	ICON_TRANSFER *glyph;
 
 	REG_BLDALPHA = BLEND_ALPHA(8, 12);
 	REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
 	{
-		Sint32 priority = EVENT_PASS_FRAME;
+		Sint32 priority = EVENT_PASS_TICK;
 
-		syFieldSetFrameEvent(scSettlementsPuffChimneySmoke, priority);
+		syFieldSetTickEvent(scSettlementsPuffChimneySmoke, priority);
 	}
 	fdRopeInit();
 	fdRopeInit();
@@ -608,11 +608,11 @@ void scSettlementsSetUpKaltIsland(void)
 		return;
 	}
 	actor = fdActorGet(ACTOR_APPLE);
-	sprite = (FIELD_SPR *)actor->spr;
-	sprite->pri = 1;
-	sprite->fullCol = 0;
-	sprite->pal = 0;
-	sprite->cnt = 0;
+	spr = (FIELD_SPR *)actor->spr;
+	spr->pri = 1;
+	spr->fullCol = 0;
+	spr->pal = 0;
+	spr->cnt = 0;
 	fdActorSetSprFlags(actor, 0);
 	actor->retainSprCache = 0;
 	actor->motionFlg = 0;
@@ -622,7 +622,7 @@ void scSettlementsSetUpKaltIsland(void)
 	actor->frozen = 1;
 	glyph = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	gmItemLoadIcon(ITEM_APPLE);
-	mnVRAMLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
+	mnVRAMLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	actor->tgtX = actor->x.fixed;
 	actor->speedLimit = 0;
@@ -632,7 +632,7 @@ void scSettlementsSetUpKaltIsland(void)
 	actor->arrivalAxis = 0;
 }
 
-extern Sint16 Settlements_WallCrate[];
+extern Sint16 SettlementsWallCrate[];
 
 void scSettlementsStartWaterfall(void);
 
@@ -643,7 +643,7 @@ Sint32 scInit(void)
 		scSettlementsSetUpKaltIsland();
 	if(MainRoutineStateWork.next == SCENE_SOUTHWEST_ATTEKA_ISLET) {
 		fdEffectStartBlankOverlay(0);
-		fdActorPlaceBlocks(Settlements_FallsObjects);
+		fdActorPlaceBlocks(SettlementsFallsObjects);
 		if(fdScriptGetFlag(FLAG_FALLS_CRATE_LOST))
 			fdActorSetPos(ACTOR_FALLS_CRATE, 0, 0);
 		fdActorGetById(ACTOR_FALLS_CRATE)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
@@ -672,7 +672,7 @@ Sint32 scInit(void)
 			fdScriptClearFlag(FLAG_ON_WALL);
 			scSettlementsStepOntoWall();
 		}
-		fdActorPlaceBlocks(Settlements_WallCrate);
+		fdActorPlaceBlocks(SettlementsWallCrate);
 	}
 	if(MainRoutineStateWork.next == SCENE_GONDOWAN_SETTLEMENT_CAVE)
 		fdEffectStartBlankOverlay(0);
@@ -764,7 +764,7 @@ void scSettlementsEnterHouse(void)
 	/* Both houses' doors are their scene's exit 2. */
 	syFieldScriptSetExitRequest(HESPERIA_HOUSE_DOOR);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -776,51 +776,51 @@ void scSettlementsLashRope(void)
 	fdScriptSetFlag(FLAG_KALT_ROPE_TIED);
 }
 
-extern Sint32 Settlements_WaterColorFrame;
+extern Sint32 SettlementsWaterColorTick;
 
 /* An event on SW Atteka Islet: the falls' water runs, its four colours moving
-   along by one every 8 frames. */
+   along by one every 8 ticks. */
 void scSettlementsCycleWaterCols(void)
 {
 	FIELD_STATE *state = (FIELD_STATE *)Ram_HeapSlots->fieldState;
-	Sint32		*frame;
+	Sint32		*frm;
 	Sint32		 phase, i;
 
 	if(state->psynergy != 0 || state->revealActive != 0)
 		return;
-	frame = &Settlements_WaterColorFrame;
-	if(*frame == -1) {
-		Uint16 *colors = Settlements_LoadedWaterColors;
+	frm = &SettlementsWaterColorTick;
+	if(*frm == -1) {
+		Uint16 *cols = SettlementsLoadedWaterColors;
 
-		syWordsCopy(colors, (void *)&BG_PLTT_COLOR(FALLS_PALETTE, 0),
-			sizeof(Settlements_LoadedWaterColors));
-		syWordsCopy(Settlements_ShownWaterColors, colors,
-			sizeof(Settlements_LoadedWaterColors));
-		*frame = 0;
+		syWordsCopy(cols, (void *)&BG_PLTT_COLOR(FALLS_PALETTE, 0),
+			sizeof(SettlementsLoadedWaterColors));
+		syWordsCopy(SettlementsShownWaterColors, cols,
+			sizeof(SettlementsLoadedWaterColors));
+		*frm = 0;
 	}
-	phase = (*frame / 8) % 4;
+	phase = (*frm / 8) % 4;
 	for(i = 0; i < WATER_COLORS; i++)
-		Settlements_ShownWaterColors[FIRST_WATER_COLOR +
+		SettlementsShownWaterColors[FIRST_WATER_COLOR +
 			(phase + i) % WATER_COLORS] =
-			Settlements_LoadedWaterColors[FIRST_WATER_COLOR + i];
+			SettlementsLoadedWaterColors[FIRST_WATER_COLOR + i];
 	{
 		IO_WRITE_QUEUE *q = &IoWriteQueueWork;
 		Uint32			saved;
-		Sint32			count;
+		Sint32			cnt;
 
 		IRQ_LOCK(saved);
-		count = q->cnt;
-		if(count < IO_WRITE_QUEUE_SIZE) {
-			Uint32 *entry = q->entries[count];
+		cnt = q->cnt;
+		if(cnt < IO_WRITE_QUEUE_SIZE) {
+			Uint32 *entry = q->entries[cnt];
 
-			*entry++ = (Uint32)Settlements_ShownWaterColors;
-			q->cnt = count + 1;
+			*entry++ = (Uint32)SettlementsShownWaterColors;
+			q->cnt = cnt + 1;
 			*entry++ = (Uint32)&BG_PLTT_COLOR(FALLS_PALETTE, 0);
 			*entry = DMA_COPY_WORDS(PALETTE_COLORS / 2);
 		}
 		IRQ_UNLOCK(saved);
 	}
-	Settlements_WaterColorFrame++;
+	SettlementsWaterColorTick++;
 }
 
 /* Starts SW Atteka Islet's falls: the running colours of the water, the sound
@@ -829,7 +829,7 @@ void scSettlementsStartWaterfall(void)
 {
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-	syFieldSetFrameEvent(scSettlementsCycleWaterCols, EVENT_PASS_FRAME);
+	syFieldSetTickEvent(scSettlementsCycleWaterCols, EVENT_PASS_TICK);
 	fdQueueMusic(SE_AMBIENT_WATER);
 	scScrollStartHBlank();
 }
@@ -839,17 +839,17 @@ void scSettlementsStartWaterfall(void)
    layer drifts sideways with time and is drawn see-through. */
 void scScrollHBlank(void)
 {
-	if(REG_VCOUNT < Settlements_WaterfallLine) {
-		syIOWrite16(Settlements_WaterfallScrollAbove, &REG_BG1HOFS);
+	if(REG_VCOUNT < SettlementsWaterfallLine) {
+		syIOWrite16(SettlementsWaterfallScrollAbove, &REG_BG1HOFS);
 		REG_BLDCNT = 0;
 	} else {
-		syIOWrite16(Settlements_WaterfallScrollBelow, &REG_BG1HOFS);
+		syIOWrite16(SettlementsWaterfallScrollBelow, &REG_BG1HOFS);
 		REG_BLDALPHA = BLEND_ALPHA(12, 16);
 		REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 	}
 }
 
-/* Each frame: where scScrollHBlank's line falls on screen, from the third map
+/* Each tick: where scScrollHBlank's line falls on screen, from the third map
    layer's scroll, and how far BG1 is scrolled above and below it. */
 void scLayerTrackScroll(void)
 {
@@ -859,10 +859,10 @@ void scLayerTrackScroll(void)
 	/* The third layer's picture starts 1024 pixels down the map; the line is
 	   the map's row 424, line 72 of the screen with the view at the foot of its
 	   box (render probe SouthwestAttekaIslet --entrance 99). */
-	Settlements_WaterfallLine = 1024 + 424 - y;
-	Settlements_WaterfallScrollAbove = FIXEDtoINT(layer->x);
-	Settlements_WaterfallScrollBelow =
-		(Sint16)FIXEDtoINT(layer->x) - (FrameCount >> 2);
+	SettlementsWaterfallLine = 1024 + 424 - y;
+	SettlementsWaterfallScrollAbove = FIXEDtoINT(layer->x);
+	SettlementsWaterfallScrollBelow =
+		(Sint16)FIXEDtoINT(layer->x) - (TickCount >> 2);
 }
 
 #include "shared/scroll_start_hblank.h"
@@ -871,7 +871,7 @@ void scLayerTrackScroll(void)
    crate; the game frees the metatile it stands on so it can move. */
 void scSettlementsUnblockFallsObjects(void)
 {
-	fdActorLiftTargetBlock(Settlements_FallsObjects);
+	fdActorLiftTargetBlock(SettlementsFallsObjects);
 }
 
 /* Nothing visible happens as Felix starts to push SW Atteka Islet's pillar or
@@ -881,7 +881,7 @@ void scSettlementsStartPushingFallsObject(void)
 {
 	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
 		ACTOR_PRIORITY_UNDERFOOT;
-	fdActorLiftTargetBlock(Settlements_FallsObjects);
+	fdActorLiftTargetBlock(SettlementsFallsObjects);
 }
 
 void scSettlementsSplashIntoRiver(Sint32 id);
@@ -912,9 +912,9 @@ void scSettlementsSinkPillar(void)
 	}
 }
 
-/* Sinks actor 2 pixels a frame for the given frames, counting in i. */
-#define SINK(frames) \
-	i = (frames); \
+/* Sinks actor 2 pixels a tick for the given ticks, counting in i. */
+#define SINK(ticks) \
+	i = (ticks); \
 	do { \
 		syFieldScriptWait(1); \
 		actor->y.fixed -= toFIXED(2); \
@@ -933,7 +933,7 @@ void scSettlementsSlideCrateDownFalls(void)
 	Sint32 column = FIELD_METATILE(actor->x.fixed);
 	Sint32 row = FIELD_METATILE(actor->z.fixed);
 	Sint32 i;
-	Uint8 *flags;
+	Uint8 *flg;
 
 	if(column == 11 && row == 9) {
 		actor->motionFlg = 0;
@@ -976,10 +976,10 @@ void scSettlementsSlideCrateDownFalls(void)
 	} else if(!fdScriptGetFlag(FLAG_FALLS_CRATE_DROPPED) && column == 16 &&
 		row == 12) {
 		fdMapGridCopyMetatileAttributes(17, 12, 1, 1, column, row);
-		flags = &actor->motionFlg;
-		*flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		flg = &actor->motionFlg;
+		*flg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		syFieldScriptWait(30);
-		*flags = 0;
+		*flg = 0;
 		fdScriptSetFlag(FLAG_FALLS_CRATE_DROPPED);
 		fdScriptEnd();
 	}
@@ -1075,7 +1075,7 @@ void scSettlementsUnblockCrate(void)
 	Sint32 z = FIELD_METATILE(actor->z.fixed);
 
 	scSettlementsSaveWallMetatiles();
-	fdActorLiftTargetBlock(Settlements_WallCrate);
+	fdActorLiftTargetBlock(SettlementsWallCrate);
 	if(x == 12 && z == 15) {
 		fdMapGridCopyMetatileAttributes(42, 3, 7, 3, 42, 14);
 		fdMapGridCopyMetatileAttributes(42, 9, 10, 10, 11, 73);
@@ -1090,7 +1090,7 @@ void scSettlementsUnblockCrate(void)
 	}
 }
 
-extern Sint32 Settlements_CrateDropScript[];
+extern Sint32 SettlementsCrateDropScript[];
 
 /* Hesperia Settlement's crate pushed off the south edge of the wall drops with
    the camera following it and lands in a ring of dust: through the leftmost gap
@@ -1133,7 +1133,7 @@ void scSettlementsDropCrate(void)
 		scSettlementsSpawnDustRing(ACTOR_WALL_CRATE);
 		if(!fdScriptGetFlag(FLAG_DJINNI(DJINNI_TINDER))) {
 			fdActorSetPos(ACTOR_TINDER, 0, 0);
-			fdActorSetScript(ACTOR_WALL_CRATE, Settlements_CrateDropScript);
+			fdActorSetScript(ACTOR_WALL_CRATE, SettlementsCrateDropScript);
 			syFieldScriptWait(20);
 		}
 		syFieldScriptWait(20);
@@ -1162,14 +1162,14 @@ void scSettlementsBlockCrate(void)
 	scSettlementsDropCrate();
 }
 
-extern Sint32 Settlements_SmokeScript[];
+extern Sint32 SettlementsSmokeScript[];
 
 /* Water splashes up where the pillar or crate goes into the river. */
 void scSettlementsSplashIntoRiver(Sint32 id)
 {
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
-	UNUSED SETTLEMENTS_VECTOR velocity;
+	UNUSED SETTLEMENTS_VECTOR vel;
 	EFFECT_OPTIONS			  spawn;
 	ACTOR					 *actor = fdActorGet(id);
 
@@ -1178,7 +1178,7 @@ void scSettlementsSplashIntoRiver(Sint32 id)
 	spawn.startScaleY = toFIXED(4) / 5;
 	spawn.tgtScaleX = toFIXED(1);
 	spawn.tgtScaleY = toFIXED(1);
-	spawn.script = Settlements_SmokeScript;
+	spawn.script = SettlementsSmokeScript;
 	fdScriptPlaySnd(SE_CAST);
 	scFieldEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
 		EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
@@ -1190,35 +1190,33 @@ void scSettlementsSplashIntoRiver(Sint32 id)
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 #undef SINK
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 /* Puffs a ring of dust out from the crate as it lands. */
 void scSettlementsSpawnDustRing(Sint32 actorId)
 {
 	ACTOR		  *actor;
-	VECTOR3		   velocity;
+	VECTOR3		   vel;
 	EFFECT_OPTIONS options;
-	Uint32		   angleStep;
-	Sint32		   angle;
-	Sint32		   velocityX;
-	FIXED		   velocityZ;
+	Uint32		   angStep;
+	Sint32		   ang;
+	Sint32		   velX;
+	FIXED		   velZ;
 
 	actor = fdActorGet(actorId);
 	options.update = fdEffectAdvanceMotion;
-	for(angleStep = 0; angleStep <= TRIG_TURN / FACING_STEP; angleStep += 2) {
-		angle = angleStep * FACING_STEP;
-		velocity.x = syCos(angle);
-		velocity.y = 0;
-		velocityZ = syMathSin(angle);
-		velocityX = velocity.x;
-		velocity.z = velocityZ;
-		velocityX += velocityX / 3;
-		velocity.x = velocityX;
-		scFieldEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
-			velocityX, velocity.y, velocityZ,
-			EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
+	for(angStep = 0; angStep <= TRIG_TURN / FACING_STEP; angStep += 2) {
+		ang = angStep * FACING_STEP;
+		vel.x = syCos(ang);
+		vel.y = 0;
+		velZ = syMathSin(ang);
+		velX = vel.x;
+		vel.z = velZ;
+		velX += velX / 3;
+		vel.x = velX;
+		scFieldEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velX,
+			vel.y, velZ, EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
 	}
 }
 
@@ -1230,19 +1228,19 @@ void scSettlementsLiftBoulder(void)
 	syGameFlagSet(FLAG_BOULDER_LIFTED);
 }
 
-extern Sint16 SlideOnIce_SteerAngles[];
+extern Sint16 SlideOnIceSteerAngles[];
 
 #include "shared/actor_steer_by_pad.h"
 
 #include "shared/leader_stop_if_pending.h"
 
-extern Sint16 SlideOnIce_AnglesByKey[];
+extern Sint16 SlideOnIceAnglesByKey[];
 
 #include "shared/leader_slide_on_ice.h"
 
-volatile Sint16 SlideOnIce_Stopped BSS_DATA;
+volatile Sint16 SlideOnIceStopped BSS_DATA;
 
-extern Sint16 SlideOnIce_AnglesByKey[];
+extern Sint16 SlideOnIceAnglesByKey[];
 void		  fdActorSteerByPad(ACTOR *actor);
 void		  fdLeaderStopIfPending(void);
 Sint32		  fdMapGetTerrainHeight(Sint32 layer, Sint32 x, Sint32 z);
@@ -1252,7 +1250,7 @@ Sint32		  fdMapGetTerrainHeight(Sint32 layer, Sint32 x, Sint32 z);
 /* Stops or restarts Felix's slide on the ice (fdLeaderSlideOnIce). */
 void scLeaderSetSlideStopped(Sint32 value)
 {
-	SlideOnIce_Stopped = value;
+	SlideOnIceStopped = value;
 }
 
 #include "shared/leader_slide_on_ice_ahead.h"
@@ -1264,29 +1262,29 @@ void scSettlementsGrowVine(void);
 void scSettlementsEnterHouse(void);
 void scSettlementsPushIntoFalls(void);
 
-extern Uint32 FieldEffect_LongScript[];
+extern Uint32 FieldEffectLongScript[];
 
 /* clang-format off */
 #include "shared/field_effect_duration_scripts.c"
 
 /* The blocks Move pushes, ended by ACTOR_LIST_END: by the falls, a pillar */
 /* and a crate; by the wall, a crate. */
-Sint16 Settlements_FallsObjects[] = {
+Sint16 SettlementsFallsObjects[] = {
 	ACTOR_PILLAR, ACTOR_FALLS_CRATE, ACTOR_LIST_END,
 };
-Sint16 Settlements_WallCrate[] = {
+Sint16 SettlementsWallCrate[] = {
 	ACTOR_WALL_CRATE, ACTOR_LIST_END,
 };
 
 #include "shared/slide_on_ice_angles.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
-Sint32 Settlements_BobScript[] = {
+Sint32 SettlementsBobScript[] = {
 	SC_ANIMATION(3),
 	SC_SET(SW_MOTION, 0),
 	SC_ADD(SW_Y, -toFIXED(16)),
@@ -1294,17 +1292,17 @@ Sint32 Settlements_BobScript[] = {
 	SC_END,
 };
 
-Sint32 Settlements_SmokeScript[] = {
+Sint32 SettlementsSmokeScript[] = {
 	SC_ANIMATION(2),
 	SC_END,
 };
 
-Sint32 Settlements_CrateBobScript[] = {
+Sint32 SettlementsCrateBobScript[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_END,
 };
 
-Sint32 Settlements_CrateDropScript[] = {
+Sint32 SettlementsCrateDropScript[] = {
 	SC_CALL((Sint32)scActorBob),
 	SC_END,
 };
@@ -1315,12 +1313,12 @@ SCENE_ENTRANCE SceneEntrances[] = {
 	{SCENE_TABLE_END},
 };
 
-SCENE_REGION Settlements_HesperiaSettlementHousesRegions[] = {
+SCENE_REGION SettlementsHesperiaSettlementHousesRegions[] = {
 	{672, 46, 400, 688, 62, 416, CONDITION_ALWAYS, 14},
 	{SCENE_TABLE_END},
 };
 
-SCENE_REGION Settlements_GondowanSettlementCaveRegions[] = {
+SCENE_REGION SettlementsGondowanSettlementCaveRegions[] = {
 	{212, 12, 132, 220, 20, 140, CONDITION_ALWAYS, 1},
 	{SCENE_TABLE_END},
 };
@@ -1365,62 +1363,62 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE Settlements_Placements[] = {
+ACTOR_PLACE SettlementsPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 808, FACING_NORTH, TALK_FACING_PARTY, 0),
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Settlements_GondowanSettlementPlacements[] = {
+ACTOR_PLACE SettlementsGondowanSettlementPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 192, 0, 240, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_BOY_WITH_SPIKY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 336, 0, 240, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Settlements_GondowanSettlementHousesPlacements[] = {
+ACTOR_PLACE SettlementsGondowanSettlementHousesPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 120, 0, 632, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Settlements_HesperiaSettlementPlacements[] = {
+ACTOR_PLACE SettlementsHesperiaSettlementPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 392, 0, 280, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 56, 0, 240, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_TALL_CRATE, CONDITION_ALWAYS, Settlements_CrateBobScript, 280, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TALL_CRATE, CONDITION_ALWAYS, SettlementsCrateBobScript, 280, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_TINDER), MOVEMENT_TYPE_STAND, 312, 0, 248, FACING_WEST, TALK_FACING_PARTY, 0),
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Settlements_HesperiaSettlementHousesPlacements[] = {
+ACTOR_PLACE SettlementsHesperiaSettlementHousesPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 168, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_BOY_WITH_SPIKY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 696, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Settlements_AttekaIsletPlacements[] = {
+ACTOR_PLACE SettlementsAttekaIsletPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_RUFFIAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 176, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 200, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_STACKED_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 168, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)Settlements_BobScript, 120, 0, 72, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)Settlements_BobScript, 72, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)Settlements_BobScript, 88, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)Settlements_BobScript, 120, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)Settlements_BobScript, 72, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)Settlements_BobScript, 104, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)Settlements_BobScript, 104, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)Settlements_BobScript, 120, 0, 184, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)Settlements_BobScript, 152, 0, 184, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)Settlements_BobScript, 152, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)Settlements_BobScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)SettlementsBobScript, 120, 0, 72, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)SettlementsBobScript, 72, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)SettlementsBobScript, 88, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)SettlementsBobScript, 120, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)SettlementsBobScript, 72, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)SettlementsBobScript, 104, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)SettlementsBobScript, 104, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)SettlementsBobScript, 120, 0, 184, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)SettlementsBobScript, 152, 0, 184, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)SettlementsBobScript, 152, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+	ACTOR_PLACEMENT(SPRITE_RIVER_STONE, CONDITION_ALWAYS, (Sint32)SettlementsBobScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 92, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_WIND19), MOVEMENT_TYPE_STAND, 72, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Settlements_AttekaIsletHousesPlacements[] = {
+ACTOR_PLACE SettlementsAttekaIsletHousesPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_RUFFIAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 96, 0, 816, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Settlements_KaltIslandPlacements[] = {
+ACTOR_PLACE SettlementsKaltIslandPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_GEL), MOVEMENT_TYPE_STAND, 312, 0, 296, FACING_WEST, TALK_FACING_PARTY, 0),
@@ -1428,13 +1426,13 @@ ACTOR_PLACE Settlements_KaltIslandPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE Settlements_KaltIslandHousesPlacements[] = {
+ACTOR_PLACE SettlementsKaltIslandHousesPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_BLUE_COAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 216, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_IN_GREEN_SHAWL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 136, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
 	{SCENE_TABLE_END},
 };
 
-CUE Settlements_Cues[] = {
+CUE SettlementsCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT, 11, CONDITION_ALWAYS, 9},
@@ -1445,7 +1443,7 @@ CUE Settlements_Cues[] = {
 };
 /* clang-format on */
 
-CUE Settlements_GondowanSettlementCues[] = {
+CUE SettlementsGondowanSettlementCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{STEP_CUE_WALKING_INTO(FACING_SOUTH), GONDOWAN_LADDER_HOLE_NORTH,
@@ -1468,7 +1466,7 @@ CUE Settlements_GondowanSettlementCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Settlements_GondowanSettlementHousesCues[] = {
+CUE SettlementsGondowanSettlementHousesCues[] = {
 	{CUE_EXIT, 11, CONDITION_ALWAYS, 1},
 	{CUE_TALK, ACTOR_WOMAN_ON_THE_KIBOMBO, CONDITION_ALWAYS,
 		MSGNO(MsgSettlementsIHearKibomboHasFinally)},
@@ -1477,7 +1475,7 @@ CUE Settlements_GondowanSettlementHousesCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Settlements_HesperiaSettlementCues[] = {
+CUE SettlementsHesperiaSettlementCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), HESPERIA_HOUSE_DOOR, CONDITION_ALWAYS,
 		SCRIPT_REF(scSettlementsEnterHouse)},
@@ -1510,7 +1508,7 @@ CUE Settlements_HesperiaSettlementCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Settlements_HesperiaSettlementHousesCues[] = {
+CUE SettlementsHesperiaSettlementHousesCues[] = {
 	{CUE_EXIT, 11, CONDITION_ALWAYS, 11},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 12, CONDITION_ALWAYS, 12},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 13, CONDITION_ALWAYS, 13},
@@ -1525,7 +1523,7 @@ CUE Settlements_HesperiaSettlementHousesCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Settlements_KaltIslandCues[] = {
+CUE SettlementsKaltIslandCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), KALT_HOUSE_DOOR, CONDITION_ALWAYS,
 		SCRIPT_REF(scSettlementsEnterHouse)},
@@ -1543,7 +1541,7 @@ CUE Settlements_KaltIslandCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Settlements_KaltIslandHousesCues[] = {
+CUE SettlementsKaltIslandHousesCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_TALK, ACTOR_OLD_MAN_ON_THE_GLACIERS, CONDITION_ALWAYS,
 		MSGNO(MsgSettlementsIfYouWantToCross)},
@@ -1558,7 +1556,7 @@ CUE Settlements_KaltIslandHousesCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Settlements_AttekaIsletCues[] = {
+CUE SettlementsAttekaIsletCues[] = {
 	{CUE_EXIT | CUE_FLAG_FACING | FACING_NORTH, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT | CUE_FLAG_FACING | FACING_NORTH, 2, CONDITION_ALWAYS, 2},
 	{CUE_TALK, ACTOR_ISLANDER, CONDITION_ALWAYS,
@@ -1585,7 +1583,7 @@ CUE Settlements_AttekaIsletCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE Settlements_AttekaIsletHousesCues[] = {
+CUE SettlementsAttekaIsletHousesCues[] = {
 	{CUE_EXIT, 11, CONDITION_ALWAYS, 1},
 	{CUE_TALK, ACTOR_ISLANDER_ON_THE_WEST, CONDITION_ALWAYS,
 		MSGNO(MsgSettlementsTheresNothingToWest)},
@@ -1594,5 +1592,5 @@ CUE Settlements_AttekaIsletHousesCues[] = {
 	{CUE_TABLE_END},
 };
 
-/* The frames the falls' water colours have run; -1 before they start. */
-Sint32 Settlements_WaterColorFrame = -1;
+/* The ticks the falls' water colours have run; -1 before they start. */
+Sint32 SettlementsWaterColorTick = -1;

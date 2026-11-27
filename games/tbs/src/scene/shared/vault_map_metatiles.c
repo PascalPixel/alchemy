@@ -1,5 +1,5 @@
 /* Vault, before and after the thieves are caught: the Sanctum's double door in
-   the cliff in the west of town, which opens in two frames as the leader walks
+   the cliff in the west of town, which opens in two ticks as the leader walks
    into it facing north. Both scenes give that exit one number, so the shared
    code names it VAULT_TO_SANCTUM. */
 
@@ -15,12 +15,12 @@ enum {
 
 /* The two square halves are stacked in the source layout and drawn side by
    side. */
-static inline void scVaultDrawSanctumDoor(Sint32 sourceColumn)
+static inline void scVaultDrawSanctumDoor(Sint32 srcColumn)
 {
 	fdMapGridCopyMetatilesTo(
-		sourceColumn, 33, 34, 16, VAULT_DOOR_HALF_SIZE, VAULT_DOOR_HALF_SIZE);
+		srcColumn, 33, 34, 16, VAULT_DOOR_HALF_SIZE, VAULT_DOOR_HALF_SIZE);
 	fdMapGridCopyMetatilesTo(
-		sourceColumn, 35, 36, 16, VAULT_DOOR_HALF_SIZE, VAULT_DOOR_HALF_SIZE);
+		srcColumn, 35, 36, 16, VAULT_DOOR_HALF_SIZE, VAULT_DOOR_HALF_SIZE);
 }
 
 /* Isaac walks up to the Sanctum's wooden double door, in the cliff in the west
@@ -29,7 +29,7 @@ static inline void scVaultDrawSanctumDoor(Sint32 sourceColumn)
 static void scVaultOpenDoorwayAndEnter(void)
 {
 	ACTOR *actor = fdActorGetById(ACTOR_PARTY_LEADER);
-	SPR	  *sprite = actor->spr;
+	SPR	  *spr = actor->spr;
 
 	sySndPlay(SE_THUMP);
 	scVaultDrawSanctumDoor(VAULT_DOOR_OPENING_COLUMN);
@@ -38,6 +38,6 @@ static void scVaultOpenDoorwayAndEnter(void)
 	fdScriptWait(4);
 	fdMapGridCopyMetatileAttributes(33, 21, 2, 2, 3, 16);
 	actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	sprite->image.pri = 3;
+	spr->image.pri = 3;
 	scVaultWalkThroughExit(64, 272, VAULT_TO_SANCTUM);
 }

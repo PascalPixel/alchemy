@@ -20,8 +20,8 @@ Bool VENT_TOUCHING(ACTOR *a, ACTOR *b)
    sprite, and stops its drift in z when it meets the leader or one of the
    actors the vent state lists. scVentPuff keeps the puff's motion in fields it
    borrows for the purpose: bounce is its x velocity, gravity its y velocity and
-   sceneWord its z velocity, all 16.16 pixels a frame; speedLimit and
-   acceleration are what its x and y scale grow by each frame, and timer its
+   sceneWord its z velocity, all 16.16 pixels a tick; speedLimit and
+   acceleration are what its x and y scale grow by each tick, and timer its
    spin. */
 void VENT_BOUNCE(ACTOR *actor)
 {

@@ -5,15 +5,15 @@
 #if LANGUAGE == LANGUAGE_GERMAN
 /* {singular, plural}: window.c reads [(kind & 7) * 2 + plural]. */
 /* clang-format off */
-const Uint8 *const LocalizedWord_CountedNouns[16] = {
-	LocalizedWord_Point, LocalizedWord_Points, /* Punkt, Punkte */
-	LocalizedWord_Coin, LocalizedWord_Coins, /* Münze, Münzen */
-	LocalizedWord_Round, LocalizedWord_Rounds, /* Runde, Runden */
-	LocalizedWord_Ticket, LocalizedWord_Tickets, /* Ticket, Tickets */
-	LocalizedWord_Battle, LocalizedWord_Battles, /* Kampf, Käpfe (sic) */
-	(const Uint8 *)Article_Empty, (const Uint8 *)Article_Empty,
-	(const Uint8 *)Article_Empty, (const Uint8 *)Article_Empty,
-	(const Uint8 *)Article_Empty, 0,
+const Uint8 *const LocalizedWordCountedNouns[16] = {
+	LocalizedWordPoint, LocalizedWordPoints, /* Punkt, Punkte */
+	LocalizedWordCoin, LocalizedWordCoins, /* Münze, Münzen */
+	LocalizedWordRound, LocalizedWordRounds, /* Runde, Runden */
+	LocalizedWordTicket, LocalizedWordTickets, /* Ticket, Tickets */
+	LocalizedWordBattle, LocalizedWordBattles, /* Kampf, Käpfe (sic) */
+	(const Uint8 *)ArticleEmpty, (const Uint8 *)ArticleEmpty,
+	(const Uint8 *)ArticleEmpty, (const Uint8 *)ArticleEmpty,
+	(const Uint8 *)ArticleEmpty, 0,
 };
 /* clang-format on */
 #endif

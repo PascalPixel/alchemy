@@ -13,11 +13,11 @@
 
 /* A bounce of 32 steps, 8.8 fixed-point scales: the selected icons pulse by
    it. */
-extern const Uint16 WindowSprite_BounceScales[];
+extern const Uint16 WindowSpriteBounceScales[];
 /* The portraits of the characters and of the other speakers, {who, portrait}
    pairs ending in -1. */
-extern const Sint16 Portrait_CharacterMap[];
-extern const Sint16 Portrait_SpriteMap[];
+extern const Sint16 PortraitCharacterMap[];
+extern const Sint16 PortraitSpriteMap[];
 
 #ifdef MODERN
 /* The screens object calls the window sprite list's functions with no
@@ -138,32 +138,32 @@ typedef struct FILE_LIST_STATE {
 #define DJINN_MENU_ARROW_TILE 808
 
 /* The arrow tile mnBattleDjinnMenuRun copies to the two BG tiles from
-   DJINN_MENU_ARROW_TILE each frame: the first blinks (four frames shown, four
+   DJINN_MENU_ARROW_TILE each tick: the first blinks (four ticks shown, four
    blank), the second stays. */
 extern const Uint8 DjinnMenu_BlinkTile[32];
 
 /* Where each element's icon and standby count sit in the party status window's
    Djinn column, in tiles, for the Djinn menu to blink them. */
-extern Uint8 DjinnMenu_ElementXOffsets[4];
-extern Uint8 DjinnMenu_ElementYOffsets[4];
+extern Uint8 DjinnMenuElementXOffsets[4];
+extern Uint8 DjinnMenuElementYOffsets[4];
 
 /* The Status screen's cursor stops: the stats, the equipment and the
    conditions. */
-extern const BATTLE_SUMMARY_STAT_CURSOR OwnerStatus_StatCursors[];
-extern const BATTLE_SUMMARY_CURSOR		OwnerStatus_EquipmentCursors[];
-extern const BATTLE_SUMMARY_CURSOR		OwnerStatus_ConditionCursors[];
+extern const BATTLE_SUMMARY_STAT_CURSOR OwnerStatusStatCursors[];
+extern const BATTLE_SUMMARY_CURSOR		OwnerStatusEquipmentCursors[];
+extern const BATTLE_SUMMARY_CURSOR		OwnerStatusConditionCursors[];
 /* "Lv", before the level on the Status screen. */
-extern const Uint8 OwnerStatus_LevelString[];
+extern const Uint8 OwnerStatusLevelString[];
 
 /* The ability of each summon, by its number. */
-extern const Uint16 Summon_Abilities[];
+extern const Uint16 SummonAbilities[];
 
 /* The heading pair's bob (mnTitleBob), in pixels, a step every four */
-/* VBlanks. */
-extern const Uint8 MenuTitle_BobOffsets[];
+/* Frames. */
+extern const Uint8 MenuTitleBobOffsets[];
 
 /* The rows the range icons are marked with (mnRangeIconBuildTiles). */
-extern const BAR_PATTERN_ROW Menu_BarPatternRows[];
+extern const BAR_PATTERN_ROW MenuBarPatternRows[];
 
 /* The standby Djinn counts 10 to 18, one tile each, from BG tile
    DJINN_COUNT_TENS_TILE: the party status window loads them
@@ -181,7 +181,7 @@ extern const Uint8 PartyStatus_DigitTiles[];
 
 /* The saving screen's progress bar: its seven stages, a row of tile numbers
    each. */
-extern const Uint8 Window_ProgressBarRows[];
+extern const Uint8 WindowProgressBarRows[];
 /* The progress bar's tiles, compressed. */
 extern const Uint8 Window_ProgressBarTiles[];
 
@@ -237,14 +237,14 @@ typedef struct WINDOW_BUFFER {
 } WINDOW_BUFFER;
 
 /* The debug icon browser's headings and page label. */
-extern const Uint8 IconBrowser_ItemTitle[];
-extern const Uint8 IconBrowser_EnergyTitle[];
-extern const Uint8 IconBrowser_StatusTitle[];
-extern const Uint8 IconBrowser_PageLabel[];
-extern const Uint8 IconBrowser_RangeDash[];
+extern const Uint8 IconBrowserItemTitle[];
+extern const Uint8 IconBrowserEnergyTitle[];
+extern const Uint8 IconBrowserStatusTitle[];
+extern const Uint8 IconBrowserPageLabel[];
+extern const Uint8 IconBrowserRangeDash[];
 
 /* The File Screen's icon menu: the action at each icon position. */
-extern Sint8 Menu_SaveSlotActionByPosition[];
+extern Sint8 MenuSaveSlotActionByPosition[];
 
 /* The parts, in ROM order. */
 #include "screens_battle_targets.c"

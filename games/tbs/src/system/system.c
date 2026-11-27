@@ -1,5 +1,5 @@
 /* The system library's object: what every other part of the game stands on.
-   Power-up and the interrupt handlers, the frame wait and VBlank, input, the
+   Power-up and the interrupt handlers, the tick wait and VBlank, input, the
    register write queue, fades, the sprite lists and VRAM cache, events, maths,
    debug text, the heap, the 3D transform, saving and the link cable.
 
@@ -9,7 +9,7 @@
    use. Where to start:
 
    - power-up: syInit (system_start_up.c);
-   - frames: sySynch(), syVBlankHandler and syIntFunction
+   - ticks: sySynch(), syVBlankHandler and syIntFunction
 	 (system_frame.c), sySetEvent (system_event.c);
    - the screen: syScreenFadeStart (system_screen_fade.c), syOAMBuildBuffer
 	 (system_oam.c), syVRAMCacheLoad (system_vram_cache.c);

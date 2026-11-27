@@ -1,8 +1,8 @@
 /* Streak volleys (Sonic Wave, Shriek, War Cry ...) and mote fountains (Sleep
    Star, Soothing Star). Part of battle_effect.c. */
 
-/* Column `n` of style `mode`'s row of Streak_Styles, four flags a style. */
-#define STREAK_VALUE(mode, n) Streak_Styles[(mode)][(n)]
+/* Column `n` of style `mode`'s row of StreakStyles, four flags a style. */
+#define STREAK_VALUE(mode, n) StreakStyles[(mode)][(n)]
 #define STREAK_ANIMATE		  0 /* nonzero: the streak cycles through three images */
 #define STREAK_HIT			  1 /* nonzero: play the hit sound and flash the target */
 /* The target's knockback on the hit (BATTLE_KNOCKBACK), or -1 for none. */
@@ -12,7 +12,7 @@
 
 #define STREAK_MAX 3 /* streaks fired at each target */
 
-/* The streak volley's styles: its colour and its row of Streak_Styles. */
+/* The streak volley's styles: its colour and its row of StreakStyles. */
 typedef enum STREAK_STYLE {
 	STREAK_STYLE_EMBER,	 /* Sonic Wave */
 	STREAK_STYLE_LIME,	 /* Shriek, and the unused btEffectRunLimeStreaks */
@@ -78,26 +78,26 @@ UNUSED void btEffectRunLimeStreaks(BATTLE_EFFECT_PARM *args)
 #define STREAK_WIDTH		20
 #define STREAK_HEIGHT		40
 #define STREAK_FRAME_BYTES	(6 * PICTURE_BYTES(STREAK))
-#define STREAK_SPACING		6  /* frames between streaks */
-#define STREAK_FLIGHT		24 /* frames from user to target */
-#define STREAK_TARGET_DELAY 32 /* frames between targets */
+#define STREAK_SPACING		6  /* ticks between streaks */
+#define STREAK_FLIGHT		24 /* ticks from user to target */
+#define STREAK_TARGET_DELAY 32 /* ticks between targets */
 
 /* Fires the streaks at each target in turn from above the user; each leaves a
    fading trail. */
 void btEffectRunStreakVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
-	SCREEN_POINT		 position;
+	SCREEN_POINT		 pos;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	Sint32				 k;
 	DRAW_RECTANGLE		 drawLower;
 	DRAW_RECTANGLE		 drawUpper;
 	BATTLE_CAMERA		*camera;
-	ACTOR				*source;
-	ACTOR				*target;
+	ACTOR				*src;
+	ACTOR				*tgt;
 	Sint32				 resource;
-	Sint32				 frame;
-	Sint32				 streakIndex;
+	Sint32				 frm;
+	Sint32				 streakIdx;
 	Sint32				 streaks = STREAK_MAX;
 	FIXED lift = toFIXED(20); /* the streaks fly 20 pixels above the ground */
 
@@ -146,66 +146,63 @@ void btEffectRunStreakVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		BG_PLTT, syResourceGetTableEntry(resource), SHEET_PALETTE_BYTES);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-	source = btObjectGetStub(state->args->user)->actor;
+	src = btObjectGetStub(state->args->user)->actor;
 	{
-		/* The loop counts 6 frames for each streak though targets are 32 frames
+		/* The loop counts 6 ticks for each streak though targets are 32 ticks
 		   apart, so with three or four targets it stops before the last one's
 		   second flash. */
-		Sint32 totalFrames =
-			streaks * state->args->tgtCnt * STREAK_SPACING + 48;
+		Sint32 totalTicks = streaks * state->args->tgtCnt * STREAK_SPACING + 48;
 
 		EFFECT_FOR_EACH_TARGET(k, state->args) {
-			target = btObjectGetStub(state->args->tgts[k])->actor;
-			for(streakIndex = 0; streakIndex != streaks; streakIndex++) {
-				PARTICLE *streak = &state->particles[k * streaks + streakIndex];
+			tgt = btObjectGetStub(state->args->tgts[k])->actor;
+			for(streakIdx = 0; streakIdx != streaks; streakIdx++) {
+				PARTICLE *streak = &state->particles[k * streaks + streakIdx];
 
-				SET_POSITION(streak, source->x.fixed, source->y.fixed + lift,
-					source->z.fixed);
-				SET_VELOCITY(streak,
-					(target->x.fixed - streak->x) / STREAK_FLIGHT,
-					(target->y.fixed + lift - streak->y) / STREAK_FLIGHT,
-					(target->z.fixed - streak->z) / STREAK_FLIGHT);
-				streak->variant = 0; /* frames since the streak set off */
+				SET_POSITION(
+					streak, src->x.fixed, src->y.fixed + lift, src->z.fixed);
+				SET_VELOCITY(streak, (tgt->x.fixed - streak->x) / STREAK_FLIGHT,
+					(tgt->y.fixed + lift - streak->y) / STREAK_FLIGHT,
+					(tgt->z.fixed - streak->z) / STREAK_FLIGHT);
+				streak->variant = 0; /* ticks since the streak set off */
 			}
 		}
 
-		for(frame = 0; frame != totalFrames; frame++) {
+		for(frm = 0; frm != totalTicks; frm++) {
 			Sint32 *row = state->bg2xLines;
 
 			/* A sine wave of BG2X offsets for the wave HBlank DMA, which
 			   nothing arms here, so the canvas does not ripple. */
 			for(k = 0; k != DISPLAY_HEIGHT; k++)
 				*row++ = CANVAS_WAVE_BG2X(
-					toFIXED(8) - sySin((frame + k) * (TRIG_TURN / 16)) * 2);
-			if(frame > totalFrames - 16)
-				REG_BLDALPHA = EFFECT_BLEND_CANVAS(totalFrames - frame);
+					toFIXED(8) - sySin((frm + k) * (TRIG_TURN / 16)) * 2);
+			if(frm > totalTicks - 16)
+				REG_BLDALPHA = EFFECT_BLEND_CANVAS(totalTicks - frm);
 			EFFECT_VIEW_FROM_CAMERA(camera);
 			EFFECT_FOR_EACH_TARGET(k, state->args) {
-				if(frame >= k * STREAK_TARGET_DELAY) {
-					for(streakIndex = 0; streakIndex != streaks;
-						streakIndex++) {
-						if(frame >= k * STREAK_TARGET_DELAY +
-								streakIndex * STREAK_SPACING) {
+				if(frm >= k * STREAK_TARGET_DELAY) {
+					for(streakIdx = 0; streakIdx != streaks; streakIdx++) {
+						if(frm >= k * STREAK_TARGET_DELAY +
+								streakIdx * STREAK_SPACING) {
 							PARTICLE *streak =
-								&state->particles[k * streaks + streakIndex];
+								&state->particles[k * streaks + streakIdx];
 							Sint32 step;
 
-							btProjectionPoint(streak, &position);
-							position.x >>= 1;
+							btProjectionPoint(streak, &pos);
+							pos.x >>= 1;
 							step = streak->variant / 8;
 							if(step > 5)
 								step = 5;
 							if(STREAK_VALUE(mode, STREAK_ANIMATE)) {
 								Uint8 *picture =
 									&state->sheet[step * PICTURE_BYTES(STREAK) +
-										frame / 2 % 3 * STREAK_FRAME_BYTES];
+										frm / 2 % 3 * STREAK_FRAME_BYTES];
 
 								drawUpper(canvas, picture,
-									position.x - STREAK_WIDTH / 2,
-									position.y - STREAK_HEIGHT, STREAK_WIDTH,
+									pos.x - STREAK_WIDTH / 2,
+									pos.y - STREAK_HEIGHT, STREAK_WIDTH,
 									STREAK_HEIGHT);
 								drawLower(canvas, picture,
-									position.x - STREAK_WIDTH / 2, position.y,
+									pos.x - STREAK_WIDTH / 2, pos.y,
 									STREAK_WIDTH, STREAK_HEIGHT);
 							} else {
 								Uint8 *picture =
@@ -213,11 +210,11 @@ void btEffectRunStreakVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 										2 * STREAK_FRAME_BYTES];
 
 								drawUpper(canvas, picture,
-									position.x - STREAK_WIDTH / 2,
-									position.y - STREAK_HEIGHT, STREAK_WIDTH,
+									pos.x - STREAK_WIDTH / 2,
+									pos.y - STREAK_HEIGHT, STREAK_WIDTH,
 									STREAK_HEIGHT);
 								drawLower(canvas, picture,
-									position.x - STREAK_WIDTH / 2, position.y,
+									pos.x - STREAK_WIDTH / 2, pos.y,
 									STREAK_WIDTH, STREAK_HEIGHT);
 							}
 							btParticleAdvanceWithGravity3D(
@@ -228,13 +225,14 @@ void btEffectRunStreakVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 					/* The target trembles. */
 					if(STREAK_VALUE(mode, STREAK_SHAKE) &&
-						frame >= k * STREAK_TARGET_DELAY + 30 &&
-						frame < k * STREAK_TARGET_DELAY + 62) {
+						frm >= k * STREAK_TARGET_DELAY + 30 &&
+						frm < k * STREAK_TARGET_DELAY + 62) {
 						ACTOR *struck =
 							btObjectGetStub(state->args->tgts[k])->actor;
 
-						struck->x.fixed += toFIXED(Streak_Tremble
-								[(frame - k * STREAK_TARGET_DELAY - 30) % 8]);
+						struck->x.fixed += toFIXED(
+							StreakTremble[(frm - k * STREAK_TARGET_DELAY - 30) %
+								8]);
 						if(struck->x.fixed > 0)
 							struck->x.fixed += toFIXED(1) / 2;
 						else
@@ -243,10 +241,10 @@ void btEffectRunStreakVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							POSE_DAMAGE, TINT_KEEP, 0);
 					}
 
-					/* The hit: the target flashes, and again 16 frames
+					/* The hit: the target flashes, and again 16 ticks
 					   later. */
 					if(STREAK_VALUE(mode, STREAK_HIT)) {
-						if(frame == k * STREAK_TARGET_DELAY + 24) {
+						if(frm == k * STREAK_TARGET_DELAY + 24) {
 							sySndPlayStub(SE_IMPACT);
 							/* the first hit lets the battle show the damage */
 							if(k == 0)
@@ -254,12 +252,12 @@ void btEffectRunStreakVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							btEffectTintBattler(state->args->tgts[k],
 								SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
 						}
-						if(frame == k * STREAK_TARGET_DELAY + 40)
+						if(frm == k * STREAK_TARGET_DELAY + 40)
 							btEffectTintBattler(state->args->tgts[k],
 								SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
 					}
 					if(STREAK_VALUE(mode, STREAK_MOTION) != -1 &&
-						frame == k * STREAK_TARGET_DELAY + 24) {
+						frm == k * STREAK_TARGET_DELAY + 24) {
 						state->shakeFrm = 4;
 						btMotionApplyKnockbackStub(state->args->tgts[k],
 							STREAK_VALUE(mode, STREAK_MOTION));
@@ -267,7 +265,7 @@ void btEffectRunStreakVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				}
 			}
 			btCameraShake(8, 8);
-			EFFECT_END_FRAME(state);
+			EFFECT_END_TICK(state);
 		}
 	}
 
@@ -301,7 +299,7 @@ void btEffectRunSoothingStar(BATTLE_EFFECT_PARM *args)
 	btEffectRunMoteFountain(args, MOTE_FOUNTAIN_HEALING);
 }
 
-#define MOTE_FOUNTAIN_FRAMES 128
+#define MOTE_FOUNTAIN_TICKS 128
 
 /* The projected depths over which a mote is sized, nearest to farthest: it is
    drawn MOTE_FOUNTAIN_LARGEST pixels wide (and twice as tall) at
@@ -317,16 +315,16 @@ void btEffectRunSoothingStar(BATTLE_EFFECT_PARM *args)
 void btEffectRunMoteFountain(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
 	Sint32				 worldPoint[3];
-	SCREEN_POINT		 position;
+	SCREEN_POINT		 pos;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	BLITTER_PAIR		 draw;
 	BATTLE_CAMERA		*camera;
 	Uint8				*motes;
-	ACTOR				*source;
+	ACTOR				*src;
 	PARTICLE			*mote;
 	Sint32				 resource;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -354,19 +352,19 @@ void btEffectRunMoteFountain(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-	source = btObjectGetStub(state->args->user)->actor;
+	src = btObjectGetStub(state->args->user)->actor;
 	for(i = 0; i != MOTE_FOUNTAIN_MOTES; i++) {
 		Sint32 speed;
-		Sint32 angle;
+		Sint32 ang;
 
 		mote = &PARTICLES[i];
 
 		speed = (syRandom() & 0x3ff) + 32;
-		angle = syRandom() & TRIG_ANGLE_MASK;
-		SET_POSITION(mote, source->x.fixed, source->y.fixed + toFIXED(5),
-			source->z.fixed);
-		SET_VELOCITY(mote, sySin(angle) * speed >> 8,
-			((syRandom() & 255) - 32) << 9, -(syCos(angle) * speed << 1) >> 8);
+		ang = syRandom() & TRIG_ANGLE_MASK;
+		SET_POSITION(
+			mote, src->x.fixed, src->y.fixed + toFIXED(5), src->z.fixed);
+		SET_VELOCITY(mote, sySin(ang) * speed >> 8,
+			((syRandom() & 255) - 32) << 9, -(syCos(ang) * speed << 1) >> 8);
 		mote->variant = (syRandom() & 31) + 48;
 		if(mode == MOTE_FOUNTAIN_HEALING) {
 			mote->velX /= 2;
@@ -374,11 +372,11 @@ void btEffectRunMoteFountain(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		}
 	}
 
-	for(frame = 0; frame != MOTE_FOUNTAIN_FRAMES; frame++) {
+	for(frm = 0; frm != MOTE_FOUNTAIN_TICKS; frm++) {
 		EFFECT_VIEW_FROM_CAMERA(camera);
 		for(i = 0; i != MOTE_FOUNTAIN_MOTES_DRAWN; i++) {
 			mote = &PARTICLES[i];
-			if(frame >= i / 32 * 8 && mote->variant >= 0) {
+			if(frm >= i / 32 * 8 && mote->variant >= 0) {
 				Sint32 size;
 
 				/* Motes wobble and grow as they near the camera. */
@@ -386,21 +384,20 @@ void btEffectRunMoteFountain(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					mote->x +
 						sySin((i * 4 + mote->variant) * (TRIG_TURN / 64)) * 16,
 					mote->y, mote->z);
-				btProjectionPoint(worldPoint, &position);
-				position.x >>= 1;
-				if(position.depth < MOTE_FOUNTAIN_DEPTH_NEAR)
-					position.depth = MOTE_FOUNTAIN_DEPTH_NEAR;
-				if(position.depth > MOTE_FOUNTAIN_DEPTH_FAR)
-					position.depth = MOTE_FOUNTAIN_DEPTH_FAR;
+				btProjectionPoint(worldPoint, &pos);
+				pos.x >>= 1;
+				if(pos.depth < MOTE_FOUNTAIN_DEPTH_NEAR)
+					pos.depth = MOTE_FOUNTAIN_DEPTH_NEAR;
+				if(pos.depth > MOTE_FOUNTAIN_DEPTH_FAR)
+					pos.depth = MOTE_FOUNTAIN_DEPTH_FAR;
 				size = MOTE_FOUNTAIN_LARGEST -
-					(position.depth - MOTE_FOUNTAIN_DEPTH_NEAR) /
+					(pos.depth - MOTE_FOUNTAIN_DEPTH_NEAR) /
 						MOTE_FOUNTAIN_DEPTH_STEP;
-				EFFECT_DRAW_MOTE(
-					draw[0], canvas, motes, position.x, position.y, size);
+				EFFECT_DRAW_MOTE(draw[0], canvas, motes, pos.x, pos.y, size);
 				btParticleAdvanceWithGravity3D(mote, 62, toFIXED(1) / 64);
 				/* The drifting mode pushes the motes across the field. */
 				if(mode == MOTE_FOUNTAIN_DRIFTING) {
-					if(source->x.fixed < 0)
+					if(src->x.fixed < 0)
 						mote->velX += toFIXED(1) / 8;
 					else
 						mote->velX -= toFIXED(1) / 8;
@@ -410,7 +407,7 @@ void btEffectRunMoteFountain(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		}
 		if(mode == MOTE_FOUNTAIN_DRIFTING) {
 			EFFECT_FOR_EACH_TARGET(i, state->args) {
-				if(frame == i * 8 + 48) {
+				if(frm == i * 8 + 48) {
 					EFFECT_SHOW_DAMAGE(-1);
 					btEffectTintBattler(state->args->tgts[i],
 						SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 8);
@@ -418,7 +415,7 @@ void btEffectRunMoteFountain(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		} else {
 			EFFECT_FOR_EACH_TARGET(i, state->args) {
-				if(frame == i * 8 + 48) {
+				if(frm == i * 8 + 48) {
 					sySndPlayStub(SE_RECOVERY);
 					EFFECT_SHOW_DAMAGE(-1);
 					btEffectTintBattler(state->args->tgts[i],
@@ -426,7 +423,7 @@ void btEffectRunMoteFountain(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				}
 			}
 		}
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS();
@@ -441,7 +438,7 @@ void btEffectRunMoteFountain(BATTLE_EFFECT_PARM *args, Sint32 mode)
 #undef STREAK_SPACING
 #undef STREAK_FLIGHT
 #undef STREAK_TARGET_DELAY
-#undef MOTE_FOUNTAIN_FRAMES
+#undef MOTE_FOUNTAIN_TICKS
 #undef MOTE_FOUNTAIN_DEPTH_NEAR
 #undef MOTE_FOUNTAIN_DEPTH_FAR
 #undef MOTE_FOUNTAIN_LARGEST

@@ -1,4 +1,4 @@
-/* Field requests and each frame of the leader's walking: exits, encounters,
+/* Field requests and each tick of the leader's walking: exits, encounters,
    damage. Part of field_mode.c. */
 
 #include "field/emote.h"
@@ -44,7 +44,7 @@ Sint32 fdCountRequests(void)
 	FIELD_STATE *state = FieldStateWork;
 
 	/* BUG: a sum can be 0 with requests pending. fdUpdateWalking raises
-	   FIELD_RAISED_CUE_PARTY_FELL (-1) on the frame a party member falls to
+	   FIELD_RAISED_CUE_PARTY_FELL (-1) on the tick a party member falls to
 	   poison, and the step cue request is the metatile's metatile behavior, 1
 	   on step cue 1's metatiles; together they sum to 0, and both wait until
 	   another request breaks the tie. BUGFIX tests each request instead. */
@@ -83,20 +83,20 @@ Sint32 fdGetCollisionAheadOfLeader(void)
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	ACTOR		*actor = fdGetPartyActor();
 	MAP_STATE	*map = Ram_HeapSlots->mapGrid;
-	FIXED		 position[3];
+	FIXED		 pos[3];
 	Uint8		*metatile;
 
 	if(actor == NULL)
 		return 0;
-	position[0] = actor->x.fixed;
-	position[1] = actor->y.fixed;
-	position[2] = actor->z.fixed;
-	syVectorAddPolarOffset(toFIXED(16), actor->facing, position);
+	pos[0] = actor->x.fixed;
+	pos[1] = actor->y.fixed;
+	pos[2] = actor->z.fixed;
+	syVectorAddPolarOffset(toFIXED(16), actor->facing, pos);
 	if(state->mode == ACTOR_SYSTEM_WORLD_MAP) {
 		Sint32 x, z;
 
-		x = position[0];
-		z = position[2];
+		x = pos[0];
+		z = pos[2];
 		metatile = syRamMapBlocks +
 			((((x / toFIXED(WORLD_MAP_METATILE_PIXELS)) &
 				  (WORLD_MAP_VIEW_METATILES - 1)) +
@@ -107,9 +107,9 @@ Sint32 fdGetCollisionAheadOfLeader(void)
 	} else {
 		FIXED x, z;
 
-		x = position[0];
+		x = pos[0];
 		metatile = (Uint8 *)map->layers[0].metatiles;
-		z = position[2];
+		z = pos[2];
 		metatile += (x / toFIXED(MAPGRID_METATILE_PIXELS) +
 				z / toFIXED(MAPGRID_METATILE_PIXELS) * MAPGRID_SIZE
 			<< 2);
@@ -124,23 +124,23 @@ Sint32 fdGetCollisionUnderLeader(void)
 	FIELD_STATE	 *state = Ram_HeapSlots->fieldState;
 	ACTOR		 *actor = fdGetPartyActor();
 	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
-	VECTOR3		  position;
+	VECTOR3		  pos;
 	MAP_METATILE *metatile;
 
 	if(actor == NULL)
 		return 0;
-	SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+	SET_POSITION(&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 	if(state->mode == ACTOR_SYSTEM_WORLD_MAP) {
 		metatile = (MAP_METATILE *)syRamMapBlocks +
-			(((position.x / toFIXED(WORLD_MAP_METATILE_PIXELS)) &
+			(((pos.x / toFIXED(WORLD_MAP_METATILE_PIXELS)) &
 				 (WORLD_MAP_VIEW_METATILES - 1)) +
-				((position.z / toFIXED(WORLD_MAP_METATILE_PIXELS)) &
+				((pos.z / toFIXED(WORLD_MAP_METATILE_PIXELS)) &
 					(WORLD_MAP_VIEW_METATILES - 1)) *
 					WORLD_MAP_VIEW_METATILES);
 	} else {
 		metatile = map->layers[0].metatiles;
-		metatile += position.x / toFIXED(MAPGRID_METATILE_PIXELS) +
-			position.z / toFIXED(MAPGRID_METATILE_PIXELS) * MAPGRID_SIZE;
+		metatile += pos.x / toFIXED(MAPGRID_METATILE_PIXELS) +
+			pos.z / toFIXED(MAPGRID_METATILE_PIXELS) * MAPGRID_SIZE;
 	}
 	return metatile->collisionCode;
 }
@@ -149,7 +149,7 @@ Sint32 fdGetCollisionUnderLeader(void)
    position (x, y, z), in 16.16 pixels, and whose condition holds: records the
    region's exit value for fdModeRun, plays the exit sound and starts leaving
    the scene. */
-void fdCheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ)
+void fdCheckExitRegions(FIXED posX, FIXED posY, FIXED posZ)
 {
 	Sint32		 selectedValue;
 	FIELD_STATE *state;
@@ -165,9 +165,9 @@ void fdCheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ)
 	Sint16		 minX;
 	MAP_REGION	*region;
 
-	x = positionX;
-	y = positionY;
-	z = positionZ;
+	x = posX;
+	y = posY;
+	z = posZ;
 	region = (MAP_REGION *)SCENE_ENTRIES->regions();
 	if(region != 0 &&
 		(state = Ram_HeapSlots->fieldState, minX = region->minX, minX != -1)) {
@@ -199,7 +199,7 @@ void fdCheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ)
    ready, and returns 1 when any was set. */
 Sint32 btDjinnRecoveryCountDownStub(void);
 
-/* Handles one frame of the party leader's walking onto the metatile at (x, y,
+/* Handles one tick of the party leader's walking onto the metatile at (x, y,
    z) of map grid layer: records step cues and push metatiles, takes exits, and
    while walking advances the encounter counter, regenerates PP, hurts the party
    with poison and hazardous ground, and wears Avoid off. */
@@ -209,11 +209,11 @@ void fdUpdateWalking(Uint32 layer, FIXED x, FIXED y, FIXED z)
 	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
 	Sint32		  leaderId = fdPartyGetLeaderActor();
 	ACTOR		 *leader = fdGetPartyActor();
-	Sint16		  previousHp[8];
+	Sint16		  prevHp[8];
 	MAP_METATILE *tile;
 	UNIT		 *unit;
 	Sint32		  partyHurt;
-	Uint32		  partyCount;
+	Uint32		  partyCnt;
 	Uint32		  i;
 	Uint32		  event;
 	Uint32		  attributes;
@@ -227,9 +227,9 @@ void fdUpdateWalking(Uint32 layer, FIXED x, FIXED y, FIXED z)
 	if(state == NULL)
 		return;
 
-	partyCount = gmPartyCountMembersStub();
-	for(i = 0; i < partyCount; i++)
-		previousHp[i] = syUnitGet(MainRoutineStateWork.party[i])->hp;
+	partyCnt = gmPartyCountMembersStub();
+	for(i = 0; i < partyCnt; i++)
+		prevHp[i] = syUnitGet(MainRoutineStateWork.party[i])->hp;
 
 	if(state->mode == ACTOR_SYSTEM_WORLD_MAP) {
 		tile = &((MAP_METATILE *)
@@ -318,9 +318,9 @@ void fdUpdateWalking(Uint32 layer, FIXED x, FIXED y, FIXED z)
 		}
 	}
 
-	/* With HAZARD_COUNT_FRAMES, which nothing in the game sets, the count rises
-	   by one each call, that is each frame the field mode runs. */
-	if(MainRoutineStateWork.hazardMode == HAZARD_COUNT_FRAMES) {
+	/* With HAZARD_COUNT_TICKS, which nothing in the game sets, the count rises
+	   by one each call, that is each tick the field mode runs. */
+	if(MainRoutineStateWork.hazardMode == HAZARD_COUNT_TICKS) {
 		MainRoutineStateWork.hazardSteps++;
 		if((Sint16)MainRoutineStateWork.hazardSteps ==
 			MainRoutineStateWork.hazardLimit / 2)
@@ -345,11 +345,11 @@ void fdUpdateWalking(Uint32 layer, FIXED x, FIXED y, FIXED z)
 		state->survivorCnt = 0;
 		fdEffectSetAttached(
 			leaderId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-		for(i = 0; i < partyCount; i++) {
+		for(i = 0; i < partyCnt; i++) {
 			unit = syUnitGet(MainRoutineStateWork.party[i]);
 			if(unit->hp > 0) {
 				state->survivorCnt++;
-			} else if(previousHp[i] != 0) {
+			} else if(prevHp[i] != 0) {
 				state->fallenOwners[state->fallenCnt++] =
 					MainRoutineStateWork.party[i];
 				state->raisedCue = FIELD_RAISED_CUE_PARTY_FELL;
@@ -363,18 +363,18 @@ void fdUpdateWalking(Uint32 layer, FIXED x, FIXED y, FIXED z)
    walks). */
 void fdPartyAddPp(Sint32 amount, Sint32 unused)
 {
-	Sint32 partyCount = gmPartyCountMembersStub();
-	Sint32 partyIndex;
+	Sint32 partyCnt = gmPartyCountMembersStub();
+	Sint32 partyIdx;
 
-	for(partyIndex = 0; partyIndex < partyCount; partyIndex++)
-		gmUnitAddPpStub(MainRoutineStateWork.party[partyIndex], amount);
+	for(partyIdx = 0; partyIdx < partyCnt; partyIdx++)
+		gmUnitAddPpStub(MainRoutineStateWork.party[partyIdx], amount);
 }
 
 /* Changes each party member's HP by amount, or by that percentage of maximum HP
    when scaled is set; a loss flashes the screen orange. */
 void fdPartyAddHp(Sint32 amount, Sint32 scaled)
 {
-	Sint32 count;
+	Sint32 cnt;
 	Sint32 i;
 	Sint32 value;
 	UNIT  *unit;
@@ -388,8 +388,8 @@ void fdPartyAddHp(Sint32 amount, Sint32 scaled)
 	} else {
 		sySndPlayStub(SE_RECOVERY);
 	}
-	count = gmPartyCountMembersStub();
-	for(i = 0; i < count; i++) {
+	cnt = gmPartyCountMembersStub();
+	for(i = 0; i < cnt; i++) {
 		unit = syUnitGet(MainRoutineStateWork.party[i]);
 		if(!scaled) {
 			value = amount;
@@ -414,12 +414,12 @@ void fdPartyAddHp(Sint32 amount, Sint32 scaled)
 Sint32 fdPartyApplyPoisonDamage(void)
 {
 	Sint32 result = 0;
-	Sint32 count = gmPartyCountMembersStub();
+	Sint32 cnt = gmPartyCountMembersStub();
 
-	if(result < count) {
+	if(result < cnt) {
 		MAIN_ROUTINE_STATE *state = &MainRoutineStateWork;
 		Uint8			   *entry = state->party;
-		Sint32				remaining = count;
+		Sint32				remaining = cnt;
 
 		do {
 			UNIT  *unit = syUnitGet(*entry);
@@ -464,7 +464,7 @@ Sint32 fdPartyApplyPoisonDamage(void)
 
 /* On the World Map, with no area graphics already pending: marks them pending,
    pauses the camera's actor and, when a screen transition is running, ends it
-   at once and waits 2 frames; then shows the still image
+   at once and waits 2 ticks; then shows the still image
    (fdWorldMapStartStillImageStub). */
 void fdWorldMapFreeze(void)
 {

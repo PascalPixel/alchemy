@@ -16,30 +16,30 @@
    call, gmAbilityGetDirectStub. */
 ABILITY_DEFINITION *gmAbilityGetDirect(Sint32 abilityId)
 {
-	Uint32 entryIndex = abilityId & PSYNERGY_ABILITY_MASK;
+	Uint32 entryIdx = abilityId & PSYNERGY_ABILITY_MASK;
 
 	/* BUG: id ABILITY_COUNT, one past the table, is let through. */
 #if FIX_ABILITY_ID_BOUND
-	if(entryIndex >= ABILITY_COUNT)
+	if(entryIdx >= ABILITY_COUNT)
 #else
-	if(entryIndex > ABILITY_COUNT)
+	if(entryIdx > ABILITY_COUNT)
 #endif
-		entryIndex = 0;
-	return (ABILITY_DEFINITION *)&AbilityDefinitions[entryIndex];
+		entryIdx = 0;
+	return (ABILITY_DEFINITION *)&AbilityDefinitions[entryIdx];
 }
 
 /* Returns the first party member who knows Psynergy `action`, or -1. */
 Sint32 gmPartyFindOwnerWithAction(Sint32 action)
 {
 	Sint16 owners[10];
-	Sint32 count = gmPartyListMembers(owners);
+	Sint32 cnt = gmPartyListMembers(owners);
 	Sint32 i;
 
-	for(i = 0; i < count; i++) {
+	for(i = 0; i < cnt; i++) {
 		if(gmUnitKnowsPsynergy(owners[i], action) != 0)
 			break;
 	}
-	if(i == count)
+	if(i == cnt)
 		return -1;
 	return owners[i];
 }
@@ -51,15 +51,15 @@ Bool gmUnitKnowsPsynergy(Sint32 unitId, Sint32 abilityId)
 {
 	UNIT		   *unit = syUnitGet(unitId);
 	PSYNERGY_ENTRY *entry;
-	Sint32			index = 0;
+	Sint32			idx = 0;
 	Sint32			actionMask = PSYNERGY_ABILITY_MASK;
 
 	entry = unit->psynergy;
-	for(; index < PSYNERGY_SLOTS; index++) {
-		Sint32 currentAction = entry->encodedAction;
+	for(; idx < PSYNERGY_SLOTS; idx++) {
+		Sint32 curAction = entry->encodedAction;
 
 		entry++;
-		if((currentAction & actionMask) == abilityId)
+		if((curAction & actionMask) == abilityId)
 			return TRUE;
 	}
 	return FALSE;
@@ -174,29 +174,29 @@ Sint32 gmUnitLearnPsynergy(Sint32 owner, Sint32 ability)
 	UNIT  *unit = syUnitGet(owner);
 	Sint32 key = ability & PSYNERGY_ABILITY_MASK;
 	Sint32 found = -1;
-	Sint32 index;
+	Sint32 idx;
 
 	/* Learning never takes the list's last slot. */
-	for(index = 0; index < PSYNERGY_SLOTS - 1; index++) {
+	for(idx = 0; idx < PSYNERGY_SLOTS - 1; idx++) {
 		Sint32 masked =
-			unit->psynergy[index].encodedAction & PSYNERGY_ABILITY_MASK;
+			unit->psynergy[idx].encodedAction & PSYNERGY_ABILITY_MASK;
 
 		/* FAKEMATCH(dead): the test written as an XOR; as masked == key, which
 		 * stores key in place of masked. */
 		if((masked ^ key) == 0) {
-			unit->psynergy[index].encodedAction = masked;
-			found = index;
+			unit->psynergy[idx].encodedAction = masked;
+			found = idx;
 			break;
 		}
 	}
 
 	if(found < 0) {
-		for(index = 0; index < PSYNERGY_SLOTS - 1; index++) {
-			Sint32 action = unit->psynergy[index].encodedAction;
+		for(idx = 0; idx < PSYNERGY_SLOTS - 1; idx++) {
+			Sint32 action = unit->psynergy[idx].encodedAction;
 
 			if(action == 0) {
-				unit->psynergy[index].encodedAction = key;
-				found = index;
+				unit->psynergy[idx].encodedAction = key;
+				found = idx;
 				break;
 			}
 		}
@@ -206,12 +206,12 @@ Sint32 gmUnitLearnPsynergy(Sint32 owner, Sint32 ability)
 	}
 
 	gmUnitRefreshPsynergy(owner);
-	for(index = 0; index < PSYNERGY_SLOTS; index++) {
-		if(unit->psynergy[index].encodedAction == key) {
+	for(idx = 0; idx < PSYNERGY_SLOTS; idx++) {
+		if(unit->psynergy[idx].encodedAction == key) {
 			break;
 		}
 	}
-	return index;
+	return idx;
 }
 
 /* Levels the character up once if it has the experience, and returns gains, or
@@ -221,14 +221,14 @@ LEVEL_UP_RESULT *gmUnitCheckLevelUp(Sint32 unitId, LEVEL_UP_RESULT *gains)
 	return gmUnitTryLevelUp(unitId, gains);
 }
 
-/* Returns character `index`'s definition: growth curves, starting level and
+/* Returns character `idx`'s definition: growth curves, starting level and
    equipment. */
-const CHARACTER_DEFINITION *gmCharacterGetDefinition(Sint32 index)
+const CHARACTER_DEFINITION *gmCharacterGetDefinition(Sint32 idx)
 {
 	const CHARACTER_DEFINITION *base;
 
-	base = Character_DefinitionTable;
-	return &base[index];
+	base = CharacterDefinitionTable;
+	return &base[idx];
 }
 
 /* Sets up all eight characters for a new game: names from the message table,
@@ -240,7 +240,7 @@ void gmPartyInitCharacters(void)
 	const CHARACTER_DEFINITION *character;
 	Uint16						nameBuf[16];
 	Sint32						unitId;
-	const Sint32			   *startingUnitId = Character_NewGameIds;
+	const Sint32			   *startingUnitId = CharacterNewGameIds;
 	Sint32						i;
 	Sint32						slot;
 	Uint8					   *name;
@@ -263,7 +263,7 @@ void gmPartyInitCharacters(void)
 		unit->name[UNIT_NAME_SIZE - 1] = 0;
 	}
 
-	/* Character_NewGameIds lists the characters given starting equipment, ended
+	/* CharacterNewGameIds lists the characters given starting equipment, ended
 	   by -1 (rare_item_counters.c). */
 	if(*startingUnitId != -1) {
 		for(; *startingUnitId != -1; startingUnitId++) {
@@ -309,7 +309,7 @@ Uint32 gmUnitGetExperienceForLevel(Sint32 unitId, Sint32 level)
 			return 0;
 		}
 		if(level <= UNIT_LEVEL_MAX && unit->enemyId <= PIERS) {
-			return Character_LevelExpTable[unit->enemyId * UNIT_LEVEL_MAX +
+			return CharacterLevelExpTable[unit->enemyId * UNIT_LEVEL_MAX +
 				level - 1];
 		}
 	}
@@ -429,16 +429,15 @@ LEVEL_UP_RESULT *gmUnitTryLevelUp(Sint32 unitId, LEVEL_UP_RESULT *gains)
 	return 0;
 }
 
-/* Levels character `unitId` up one level at a time until `targetLevel`, then
+/* Levels character `unitId` up one level at a time until `tgtLevel`, then
    recomputes its stats. */
-void gmUnitLevelUpTo(Sint32 unitId, Sint32 targetLevel)
+void gmUnitLevelUpTo(Sint32 unitId, Sint32 tgtLevel)
 {
 	/* Each level's gains are discarded. */
 	LEVEL_UP_RESULT gains;
-	Sint32			currentLevel;
+	Sint32			curLevel;
 
-	for(currentLevel = syUnitGet(unitId)->level; currentLevel < targetLevel;
-		currentLevel++) {
+	for(curLevel = syUnitGet(unitId)->level; curLevel < tgtLevel; curLevel++) {
 		gmUnitLevelUp(unitId, &gains);
 	}
 	gmUnitCalc(unitId);

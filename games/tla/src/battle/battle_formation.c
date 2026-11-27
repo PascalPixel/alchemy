@@ -15,36 +15,36 @@
    returns it with the levels its enemies must gain in outMargin. */
 Sint32 btFormationSelectLevelMatchedCandidate(Sint32 *outMargin)
 {
-	Sint32				 matchCount = 0;
+	Sint32				 matchCnt = 0;
 	FORMATION_CANDIDATE *pool =
 		syHeapAllocEWRAM(FORMATION_POOL_SIZE * sizeof *pool);
 	Uint16 party[8];
-	Sint32 targetLevel = 0;
-	Sint32 unitCount = btPartyPrepareMembers(party);
+	Sint32 tgtLevel = 0;
+	Sint32 unitCnt = btPartyPrepareMembers(party);
 	Sint32 i;
-	Sint32 poolIndex;
+	Sint32 poolIdx;
 	Sint32 result;
 
-	if(unitCount > 0) {
+	if(unitCnt > 0) {
 		Uint16 *unitCursor = party;
 
-		i = unitCount;
+		i = unitCnt;
 		do {
 			Uint8 level = syUnitGet(*unitCursor)->level;
 
 			i--;
 			unitCursor++;
-			targetLevel += level;
+			tgtLevel += level;
 		} while(i != 0);
 	}
 
 	/* The flag byte is -1 once a series has ended, which takes a level off. */
-	targetLevel = targetLevel / unitCount;
-	targetLevel += (Sint8)syGameFlagGetByte(FLAG_MONSTER_BATTLE_WINS);
-	if(targetLevel <= 0)
-		targetLevel = 1;
-	if(targetLevel > UNIT_LEVEL_MAX)
-		targetLevel = UNIT_LEVEL_MAX;
+	tgtLevel = tgtLevel / unitCnt;
+	tgtLevel += (Sint8)syGameFlagGetByte(FLAG_MONSTER_BATTLE_WINS);
+	if(tgtLevel <= 0)
+		tgtLevel = 1;
+	if(tgtLevel > UNIT_LEVEL_MAX)
+		tgtLevel = UNIT_LEVEL_MAX;
 
 	for(i = 0; i < FORMATION_POOL_SIZE; i++)
 		pool[i].score = -1;
@@ -71,9 +71,8 @@ Sint32 btFormationSelectLevelMatchedCandidate(Sint32 *outMargin)
 		syGameFlagSet(ENEMY_DEFEATED_FLAG(ENEMY_DOOM_DRAGON_A));
 
 	/* Forget the defeated classes the monster battles exclude. */
-	for(i = 0; i < ARRAY_COUNT(BattleFormation_ExcludedEnemies); i++)
-		syGameFlagClear(
-			ENEMY_DEFEATED_FLAG(BattleFormation_ExcludedEnemies[i]));
+	for(i = 0; i < ARRAY_COUNT(BattleFormationExcludedEnemies); i++)
+		syGameFlagClear(ENEMY_DEFEATED_FLAG(BattleFormationExcludedEnemies[i]));
 	/* BUG: the three enemies formations 241 to 248 are made of are set by their
 	   enemy ids, not their defeated flags, so they stay unavailable unless
 	   beaten, and FLAG_DJINNI(DJINNI_SPRITZ), FLAG_DJINNI(DJINNI_ETHER) and
@@ -93,37 +92,37 @@ Sint32 btFormationSelectLevelMatchedCandidate(Sint32 *outMargin)
 	for(i = 0; (Uint32)i < FORMATION_COUNT; i++) {
 		Sint32 score = btFormationAverageLevel(i);
 
-		if(score >= 0 && score <= targetLevel + FORMATION_LEVEL_MARGIN) {
-			Sint32 lowestIndex = -1;
+		if(score >= 0 && score <= tgtLevel + FORMATION_LEVEL_MARGIN) {
+			Sint32 lowestIdx = -1;
 			Sint32 lowestLevel;
 
-			for(lowestLevel = FORMATION_SCORE_ABOVE_ALL, poolIndex = 0;
-				poolIndex < FORMATION_POOL_SIZE; poolIndex++) {
-				if(pool[poolIndex].score < lowestLevel) {
-					lowestLevel = pool[poolIndex].score;
-					lowestIndex = poolIndex;
+			for(lowestLevel = FORMATION_SCORE_ABOVE_ALL, poolIdx = 0;
+				poolIdx < FORMATION_POOL_SIZE; poolIdx++) {
+				if(pool[poolIdx].score < lowestLevel) {
+					lowestLevel = pool[poolIdx].score;
+					lowestIdx = poolIdx;
 				}
 			}
 
-			if(lowestIndex >= 0) {
-				pool[lowestIndex].score = score;
-				pool[lowestIndex].recordId = i;
-				matchCount++;
+			if(lowestIdx >= 0) {
+				pool[lowestIdx].score = score;
+				pool[lowestIdx].recordId = i;
+				matchCnt++;
 			}
 		}
 	}
 
-	/* matchCount includes formations evicted from the pool. */
-	if(matchCount > FORMATION_POOL_SIZE)
-		matchCount = FORMATION_POOL_SIZE;
+	/* matchCnt includes formations evicted from the pool. */
+	if(matchCnt > FORMATION_POOL_SIZE)
+		matchCnt = FORMATION_POOL_SIZE;
 
-	if(matchCount != 0) {
-		FORMATION_CANDIDATE *chosen = &pool[(matchCount * syRandom()) >> 16];
+	if(matchCnt != 0) {
+		FORMATION_CANDIDATE *chosen = &pool[(matchCnt * syRandom()) >> 16];
 
 		result = chosen->recordId;
-		*outMargin = targetLevel - chosen->score;
+		*outMargin = tgtLevel - chosen->score;
 	} else {
-		*outMargin = matchCount;
+		*outMargin = matchCnt;
 		result = 1;
 	}
 
@@ -215,42 +214,42 @@ void btUnitStrengthen(Sint32 unitId)
 Sint32 btEnemyClaimNameLetter(Sint32 classId, Sint32 unused)
 {
 	BATTLE_STATE *battle;
-	Sint32		  classCount;
-	Sint32		  classIndex;
+	Sint32		  classCnt;
+	Sint32		  classIdx;
 	Sint32		  attempt;
 
 	battle = Ram_HeapSlots->battleState;
-	classCount = battle->enemyKindCnt;
-	for(classIndex = 0; classIndex < classCount; classIndex++) {
-		if(battle->enemyKinds[classIndex] == classId)
+	classCnt = battle->enemyKindCnt;
+	for(classIdx = 0; classIdx < classCnt; classIdx++) {
+		if(battle->enemyKinds[classIdx] == classId)
 			break;
 	}
-	if(classIndex != classCount) {
+	if(classIdx != classCnt) {
 		attempt = 0;
 		/* The second of its class: suffixes 0 and 1 both taken. */
-		if(battle->lastNameLetter[classIndex] < 0) {
-			battle->lastNameLetter[classIndex] = 1;
-			battle->nameLetterMasks[classIndex] = 3;
+		if(battle->lastNameLetter[classIdx] < 0) {
+			battle->lastNameLetter[classIdx] = 1;
+			battle->nameLetterMasks[classIdx] = 3;
 			return ENEMY_LETTER_FIRST_TOO | 1;
 		}
 		/* The next suffix after the last given that is free; after 32 tries the
 		   last one tried is reused. */
 		for(; attempt < NAME_SUFFIX_MASK_BITS; attempt++) {
-			battle->lastNameLetter[classIndex] =
-				(battle->lastNameLetter[classIndex] + 1) % NAME_SUFFIX_COUNT;
-			if((battle->nameLetterMasks[classIndex] &
-				   (1 << battle->lastNameLetter[classIndex])) == 0)
+			battle->lastNameLetter[classIdx] =
+				(battle->lastNameLetter[classIdx] + 1) % NAME_SUFFIX_COUNT;
+			if((battle->nameLetterMasks[classIdx] &
+				   (1 << battle->lastNameLetter[classIdx])) == 0)
 				break;
 		}
-		battle->nameLetterMasks[classIndex] |= 1
-			<< battle->lastNameLetter[classIndex];
-		return battle->lastNameLetter[classIndex];
+		battle->nameLetterMasks[classIdx] |= 1
+			<< battle->lastNameLetter[classIdx];
+		return battle->lastNameLetter[classIdx];
 	}
-	if(classCount <= 4) {
-		battle->lastNameLetter[classCount] = -1;
-		battle->enemyKinds[classCount] = classId;
-		battle->nameLetterMasks[classCount] = 0;
-		battle->enemyKindCnt = classCount + 1;
+	if(classCnt <= 4) {
+		battle->lastNameLetter[classCnt] = -1;
+		battle->enemyKinds[classCnt] = classId;
+		battle->nameLetterMasks[classCnt] = 0;
+		battle->enemyKindCnt = classCnt + 1;
 		return NAME_SUFFIX_COUNT;
 	}
 	return -1;
@@ -261,8 +260,8 @@ UNREAD_RESULT btEnemyReleaseNameLetter(Sint32 unitId)
 {
 	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
 	UNIT		 *unit;
-	Sint32		  count = battle->enemyKindCnt;
-	Sint32		  index;
+	Sint32		  cnt = battle->enemyKindCnt;
+	Sint32		  idx;
 	Sint32		  nameLength;
 	Sint32		  suffix;
 	Sint32		  classId;
@@ -272,11 +271,11 @@ UNREAD_RESULT btEnemyReleaseNameLetter(Sint32 unitId)
 		return;
 
 	classId = unit->enemyId;
-	for(index = 0; index < count; index++) {
-		if(battle->enemyKinds[index] == classId)
+	for(idx = 0; idx < cnt; idx++) {
+		if(battle->enemyKinds[idx] == classId)
 			break;
 	}
-	if(index == count || battle->nameLetterMasks[index] == 0)
+	if(idx == cnt || battle->nameLetterMasks[idx] == 0)
 		return;
 
 	for(nameLength = 0; nameLength < UNIT_NAME_SIZE - 1; nameLength++) {
@@ -294,7 +293,7 @@ UNREAD_RESULT btEnemyReleaseNameLetter(Sint32 unitId)
 #endif
 	if(nameLength > 0)
 		suffix = unit->name[nameLength - 1] - ENEMY_NAME_LETTER_FIRST;
-	battle->nameLetterMasks[index] &= ~(1 << suffix);
+	battle->nameLetterMasks[idx] &= ~(1 << suffix);
 }
 
 /* Gives the first enemy of the class on the field the first suffix (0),
@@ -302,37 +301,37 @@ UNREAD_RESULT btEnemyReleaseNameLetter(Sint32 unitId)
 Sint32 btEnemyLetterFirstOfKind(Sint32 enemyId)
 {
 	UNIT  *unit;
-	Sint32 enemyIndex;
-	Sint32 nameIndex;
-	Sint32 terminatorIndex;
+	Sint32 enemyIdx;
+	Sint32 nameIdx;
+	Sint32 terminatorIdx;
 	Uint8  nameByte;
 
-	for(enemyIndex = 0; enemyIndex < ENEMY_BATTLE_SIZE; enemyIndex++) {
-		unit = syUnitGet(enemyIndex + FIRST_ENEMY_UNIT);
+	for(enemyIdx = 0; enemyIdx < ENEMY_BATTLE_SIZE; enemyIdx++) {
+		unit = syUnitGet(enemyIdx + FIRST_ENEMY_UNIT);
 		nameByte = unit->side;
 		if(nameByte != BATTLE_SIDE_ENEMY)
 			continue;
 		if(unit->enemyId != enemyId)
 			continue;
 		/* nameByte still holds BATTLE_SIDE_ENEMY here, used as the index after
-		   the suffix; nameIndex holds the terminator, 0. */
-		nameIndex = 0;
+		   the suffix; nameIdx holds the terminator, 0. */
+		nameIdx = 0;
 		if(unit->name[0] == 0) {
 			unit->name[0] = ENEMY_NAME_LETTER_FIRST;
-			unit->name[nameByte] = nameIndex;
+			unit->name[nameByte] = nameIdx;
 			return;
 		}
 		/* The name's end, then the suffix and a new terminator after it. */
 	scan_slots:
-		nameIndex++;
-		if(nameIndex > UNIT_NAME_SIZE - 2)
+		nameIdx++;
+		if(nameIdx > UNIT_NAME_SIZE - 2)
 			return;
-		nameByte = unit->name[nameIndex];
+		nameByte = unit->name[nameIdx];
 		if(nameByte != 0)
 			goto scan_slots;
-		terminatorIndex = nameIndex + 1;
-		unit->name[nameIndex] = ENEMY_NAME_LETTER_FIRST;
-		unit->name[terminatorIndex] = nameByte;
+		terminatorIdx = nameIdx + 1;
+		unit->name[nameIdx] = ENEMY_NAME_LETTER_FIRST;
+		unit->name[terminatorIdx] = nameByte;
 		return;
 	}
 }
@@ -344,31 +343,31 @@ Sint32 btFormationGetRandomMember(Sint32 recordId)
 	Sint32	   choices[FORMATION_MEMBERS];
 	FORMATION *record;
 	Sint32	  *choiceCursor;
-	Uint8	  *maximumCount;
+	Uint8	  *maximumCnt;
 	Uint16	  *memberId;
 	Sint32	   remaining;
-	Uint32	   count;
+	Uint32	   cnt;
 
-	count = 0;
+	cnt = 0;
 	if((Uint32)recordId >= FORMATION_COUNT)
 		recordId = 1;
 
 	record = &Formations[recordId];
 	choicesBase = choices;
 	memberId = record->memberIds;
-	maximumCount = record->maxCnts;
+	maximumCnt = record->maxCnts;
 	choiceCursor = choicesBase;
 	for(remaining = 0; remaining < FORMATION_MEMBERS; remaining++) {
-		if(*maximumCount++ != 0) {
+		if(*maximumCnt++ != 0) {
 			Sint32 id = *memberId;
 
-			count++;
+			cnt++;
 			*choiceCursor++ = id + ENEMY_ID_FIRST;
 		}
 		memberId++;
 	}
 
-	return choices[(syRandom() * count) >> 16];
+	return choices[(syRandom() * cnt) >> 16];
 }
 
 /* The enemy sprite slots an enemy of the class takes: one for a small enemy,
@@ -383,47 +382,47 @@ Sint32 btFormationBuildEnemyList(Sint32 recordId)
 	Uint16		 *enemyClasses;
 	BATTLE_STATE *battle;
 	FORMATION	 *record;
-	Sint32		  freeSpriteSlots;
-	Sint32		  enemyCount;
+	Sint32		  freeSprSlots;
+	Sint32		  enemyCnt;
 	Sint32		  levelAdjustment;
-	Uint16		  listBuffer[UNIT_MAX];
-	Sint32		  extraCounts[FORMATION_MEMBERS];
-	Sint32		  memberCounts[FORMATION_MEMBERS];
+	Uint16		  listBuf[UNIT_MAX];
+	Sint32		  extraCnts[FORMATION_MEMBERS];
+	Sint32		  memberCnts[FORMATION_MEMBERS];
 	Sint32		  memberOrder[FORMATION_MEMBERS];
 	Bool		  changed;
 	Sint32		  additionalRoom;
-	Sint32		  spriteSlots;
-	Sint32		  fittingCount;
+	Sint32		  sprSlots;
+	Sint32		  fittingCnt;
 	Sint32		  classId;
 	Sint32		  remainingKinds;
 	Sint32		  copies;
 	Uint32		  i;
-	Sint32		  memberIndex;
+	Sint32		  memberIdx;
 
 	battle = (BATTLE_STATE *)Ram_HeapSlots->battleState;
 	levelAdjustment = 0;
 	battle->enemyKindCnt = 0;
-	enemyClasses = listBuffer;
+	enemyClasses = listBuf;
 	if(syGameFlagGet(FLAG_MONSTER_BATTLE))
 		recordId = btFormationSelectLevelMatchedCandidate(&levelAdjustment);
 	if((Uint32)recordId >= FORMATION_COUNT)
 		recordId = 1;
 	record = &Formations[recordId];
-	for(memberIndex = 0;
-		memberIndex < FORMATION_MEMBERS && record->minCnts[memberIndex] == 0;
-		memberIndex++)
+	for(memberIdx = 0;
+		memberIdx < FORMATION_MEMBERS && record->minCnts[memberIdx] == 0;
+		memberIdx++)
 		;
-	if(memberIndex == FORMATION_MEMBERS)
+	if(memberIdx == FORMATION_MEMBERS)
 		record = &Formations[1];
 
-	freeSpriteSlots = ENEMY_SPRITE_SLOTS;
-	enemyCount = 0;
+	freeSprSlots = ENEMY_SPRITE_SLOTS;
+	enemyCnt = 0;
 	for(i = 0; i < FORMATION_MEMBERS; i++) {
 		if(record->minCnts[i] != 0) {
 			Sint32 requiredSlots =
 				ENEMY_SLOTS_TAKEN(record->memberIds[i] + ENEMY_ID_FIRST);
 
-			freeSpriteSlots -= requiredSlots * record->minCnts[i];
+			freeSprSlots -= requiredSlots * record->minCnts[i];
 		}
 	}
 
@@ -431,19 +430,19 @@ Sint32 btFormationBuildEnemyList(Sint32 recordId)
 		Sint32 minimum;
 		Sint32 maximum;
 
-		memberCounts[i] = minimum = record->minCnts[i];
+		memberCnts[i] = minimum = record->minCnts[i];
 		maximum = record->maxCnts[i];
 		additionalRoom = maximum - minimum;
 		if(additionalRoom > 0) {
 			Sint32 memberSlots =
 				ENEMY_SLOTS_TAKEN(record->memberIds[i] + ENEMY_ID_FIRST);
 
-			fittingCount = freeSpriteSlots / memberSlots;
-			if(fittingCount < additionalRoom)
-				additionalRoom = fittingCount;
-			extraCounts[i] = ((additionalRoom + 1) * syRandom()) >> 16;
+			fittingCnt = freeSprSlots / memberSlots;
+			if(fittingCnt < additionalRoom)
+				additionalRoom = fittingCnt;
+			extraCnts[i] = ((additionalRoom + 1) * syRandom()) >> 16;
 		} else {
-			extraCounts[i] = 0;
+			extraCnts[i] = 0;
 		}
 	}
 
@@ -451,14 +450,14 @@ Sint32 btFormationBuildEnemyList(Sint32 recordId)
 		changed = FALSE;
 		for(i = 0; i < FORMATION_MEMBERS; i++) {
 			classId = record->memberIds[i] + ENEMY_ID_FIRST;
-			if(extraCounts[i] != 0) {
-				spriteSlots = ENEMY_SLOTS_TAKEN(classId);
-				if(spriteSlots > freeSpriteSlots) {
-					extraCounts[i] = 0;
+			if(extraCnts[i] != 0) {
+				sprSlots = ENEMY_SLOTS_TAKEN(classId);
+				if(sprSlots > freeSprSlots) {
+					extraCnts[i] = 0;
 				} else {
-					memberCounts[i]++;
-					extraCounts[i]--;
-					freeSpriteSlots -= spriteSlots;
+					memberCnts[i]++;
+					extraCnts[i]--;
+					freeSprSlots -= sprSlots;
 					changed = TRUE;
 				}
 			}
@@ -479,11 +478,11 @@ Sint32 btFormationBuildEnemyList(Sint32 recordId)
 			memberOrder[second] = swap;
 		}
 		for(i = 0; i < FORMATION_MEMBERS; i++) {
-			Sint32 copyIndex;
+			Sint32 copyIdx;
 			Sint32 slot = memberOrder[i];
 
-			for(copyIndex = 0; copyIndex < memberCounts[slot]; copyIndex++)
-				enemyClasses[enemyCount++] =
+			for(copyIdx = 0; copyIdx < memberCnts[slot]; copyIdx++)
+				enemyClasses[enemyCnt++] =
 					record->memberIds[slot] + ENEMY_ID_FIRST;
 		}
 		break;
@@ -493,27 +492,27 @@ Sint32 btFormationBuildEnemyList(Sint32 recordId)
 
 			remainingKinds = 0;
 			for(i = 0; i < FORMATION_MEMBERS; i++) {
-				if(memberCounts[i] != 0)
+				if(memberCnts[i] != 0)
 					memberOrder[remainingKinds++] = i;
 			}
 			if(remainingKinds == 0)
 				break;
 			/* One of the members still owed a copy, at random. */
 			member = memberOrder[(syRandom() * remainingKinds) >> 16];
-			enemyClasses[enemyCount++] =
+			enemyClasses[enemyCnt++] =
 				record->memberIds[member] + ENEMY_ID_FIRST;
-			memberCounts[member]--;
+			memberCnts[member]--;
 		}
 		break;
 	default:
 		for(i = 0; i < FORMATION_MEMBERS; i++) {
-			for(copies = 0; copies < memberCounts[i]; copies++)
-				enemyClasses[enemyCount++] =
+			for(copies = 0; copies < memberCnts[i]; copies++)
+				enemyClasses[enemyCnt++] =
 					record->memberIds[i] + ENEMY_ID_FIRST;
 		}
 		break;
 	}
-	enemyClasses[enemyCount] = 0;
+	enemyClasses[enemyCnt] = 0;
 	battle->firstDefeated = ENEMY_BATTLE_SIZE;
 	battle->defeatState = DEFEAT_ONE;
 	for(i = FIRST_ENEMY_UNIT; i < (FIRST_ENEMY_UNIT + ENEMY_BATTLE_SIZE); i++)
@@ -558,9 +557,9 @@ Sint32 btFormationBuildEnemyList(Sint32 recordId)
 
 /* Returns the class's defeat-sound kind, 0 to 4, or -1 for none; a fallen
    enemy's sound is SE_ENEMY_CRY plus it. Reads any index unchecked. */
-Uint32 btSprGetDefeatSnd(Sint32 index)
+Uint32 btSprGetDefeatSnd(Sint32 idx)
 {
-	Uint32 kind = BattleSprites[index].defeatSnd;
+	Uint32 kind = BattleSprites[idx].defeatSnd;
 
 	if((Sint32)kind > 4)
 		kind = -1U;
@@ -571,77 +570,77 @@ Uint32 btSprGetDefeatSnd(Sint32 index)
 #define ENEMY_CLASS_LAST 386
 
 /* Returns the class's battle sprite, row 0's for a class out of range. */
-Sint32 btSprGetSpr(Sint32 index)
+Sint32 btSprGetSpr(Sint32 idx)
 {
-	if((Uint32)index > ENEMY_CLASS_LAST)
+	if((Uint32)idx > ENEMY_CLASS_LAST)
 		return BattleSprites[0].anm;
-	return BattleSprites[index].anm;
+	return BattleSprites[idx].anm;
 }
 
 /* Returns the class's sprite palette. For a class out of range it returns row
    0's sprite, not a palette. */
-Sint32 btSprGetPalette(Sint32 index)
+Sint32 btSprGetPalette(Sint32 idx)
 {
-	if((Uint32)index > ENEMY_CLASS_LAST)
+	if((Uint32)idx > ENEMY_CLASS_LAST)
 		return BattleSprites[0].anm;
-	return BattleSprites[index].pal;
+	return BattleSprites[idx].pal;
 }
 
 /* Returns 1 for a small class, which takes one enemy sprite slot instead of two
    and stands closer to its neighbours; 0 out of range. */
-Sint32 btSprIsSmall(Sint32 index)
+Sint32 btSprIsSmall(Sint32 idx)
 {
 
 	Bool   result;
-	Uint32 flags;
+	Uint32 flg;
 
-	if((Uint32)index > ENEMY_CLASS_LAST)
+	if((Uint32)idx > ENEMY_CLASS_LAST)
 		return 0;
 	result = FALSE;
-	flags = BattleSprites[index].isSmall;
-	if(flags)
+	flg = BattleSprites[idx].isSmall;
+	if(flg)
 		result = TRUE;
 	return result;
 }
 
 /* Returns the battle effect a class's plain attack shows, 1 for none or out of
    range. */
-Uint32 btSprGetAttackEffect(Uint32 index)
+Uint32 btSprGetAttackEffect(Uint32 idx)
 {
 	Uint16 value;
 
-	if(index > ENEMY_CLASS_LAST)
+	if(idx > ENEMY_CLASS_LAST)
 		return 1;
-	value = BattleSprites[index].attackEff;
+	value = BattleSprites[idx].attackEff;
 	return value ? value : 1;
 }
 
 /* Returns how high a class hops as it runs up to attack, in pixels; 0 out of
    range. */
-Uint32 btSprGetAttackHop(Uint32 index)
+Uint32 btSprGetAttackHop(Uint32 idx)
 {
 	Uint16 value;
 
-	if(index > ENEMY_CLASS_LAST)
+	if(idx > ENEMY_CLASS_LAST)
 		return 0;
-	value = BattleSprites[index].attackHop;
+	value = BattleSprites[idx].attackHop;
 	return value ? value : 0;
 }
 
 /* Returns 1 for a class whose blow lands with a heavier impact; 0 out of
    range. */
-Sint32 btSprHasHeavyImpact(Sint32 index)
+Sint32 btSprHasHeavyImpact(Sint32 idx)
 {
-	if((Uint32)index > ENEMY_CLASS_LAST)
+	if((Uint32)idx > ENEMY_CLASS_LAST)
 		return 0;
-	return BattleSprites[index].heavyImpact;
+	return BattleSprites[idx].heavyImpact;
 }
 
 /* Returns the height an animation is drawn at over a class, in pixels, or 0 for
    its size's default; 0 out of range. */
-Uint32 btSprGetEffectHeight(Uint32 index)
+Uint32 btSprGetEffectHeight(Uint32 idx)
 {
-	if(index > ENEMY_CLASS_LAST)
+	if(idx > ENEMY_CLASS_LAST)
 		return 0;
-	return BattleSprites[index].effHeight;
+	return BattleSprites[idx].effHeight;
 }

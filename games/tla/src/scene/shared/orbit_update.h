@@ -1,7 +1,7 @@
-/* An orbiting actor's growth climbs by ORBIT_GROWTH_STEP every other frame, up
+/* An orbiting actor's growth climbs by ORBIT_GROWTH_STEP every other tick, up
    to ORBIT_GROWTH_FULL, and its circle's radius is the growth times the sine of
    its phase, in ORBIT_PHASE_UNIT steps. Once grown it slows by ORBIT_SLOWDOWN a
-   frame to a stop. */
+   tick to a stop. */
 #define ORBIT_GROWTH_FULL 141
 #define ORBIT_GROWTH_STEP 10
 #define ORBIT_PHASE_UNIT  (TRIG_TURN / 64)
@@ -18,7 +18,7 @@ Bool syOrbitUpdate(ORBIT *object)
 	z = syIWRAMMulFX(syMathSin(object->ang), object->orbitRadius);
 	object->x += object->centreX;
 	object->z = (z >> 1) + object->centreZ;
-	if(object->growth != ORBIT_GROWTH_FULL && (FrameCount & 1)) {
+	if(object->growth != ORBIT_GROWTH_FULL && (TickCount & 1)) {
 		object->orbitRadius =
 			object->growth * syMathSin(object->phase * ORBIT_PHASE_UNIT);
 		object->growth += ORBIT_GROWTH_STEP;

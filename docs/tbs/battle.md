@@ -90,17 +90,17 @@ take one each.
 Watch the end of Quake: the first target flinches while the ground is still
 shaking.
 
-Two pieces of code share each of those frames, and they are of the two
+Two pieces of code share each of those ticks, and they are of the two
 kinds [the system library](system.md#waiting-and-events) describes. The
 ability's picture is its [battle effect](glossary.md#battle-effect). It is
-the code that waits: a loop that draws one frame of pillars and calls
+the code that waits: a loop that draws one tick of pillars and calls
 `sySynch(1)`. It knows nothing about damage. The battle knows the damage and
 draws no rock, and its showing is an [event](glossary.md#event), the playback,
-which `sySynch()` calls once in each of the effect's frames.
+which `sySynch()` calls once in each of the effect's ticks.
 
 They meet at one moment. When the blow should land the effect calls one
 function, `btPlaybackStart`, and from then on the event shows what
-happened, one target at a time. Quake calls it 16 frames before its last.
+happened, one target at a time. Quake calls it 16 ticks before its last.
 
 So an effect is free to be any length and any shape, and the rules never
 need to know. [How outcomes reach the screen](../../games/tbs/src/battle/README.md#how-outcomes-reach-the-screen)
@@ -116,7 +116,7 @@ that never zooms.
 An effect draws on a small picture of its own, the canvas, laid over the
 battle and usually added to its colours, which is what makes fire look like
 light. [Battle effects](../../games/tbs/src/battle_effect/README.md) follows one effect
-frame by frame.
+tick by tick.
 
 ## How it ends
 

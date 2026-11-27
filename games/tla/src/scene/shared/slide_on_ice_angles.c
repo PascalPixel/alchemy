@@ -5,7 +5,7 @@
 
 /* The heading fdActorSteerByPad turns toward, diagonals included; a second row
    of sixteen keeps only the four straight headings. */
-Sint16 SlideOnIce_SteerAngles[] = {
+Sint16 SlideOnIceSteerAngles[] = {
 	-1,
 	FACING_EAST,
 	FACING_WEST,
@@ -42,7 +42,7 @@ Sint16 SlideOnIce_SteerAngles[] = {
 
 /* The heading a slide sets off in: a diagonal goes the way of its left or right
    key. */
-Sint16 SlideOnIce_AnglesByKey[] = {
+Sint16 SlideOnIceAnglesByKey[] = {
 	-1,
 	FACING_EAST,
 	FACING_WEST,

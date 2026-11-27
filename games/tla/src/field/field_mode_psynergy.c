@@ -24,7 +24,7 @@ Sint32 fdUsePsynergy(Uint32 code)
 	PENDING_CUE *event;
 	ACTOR		*actor;
 	Sint32		 selector;
-	Sint32		 target;
+	Sint32		 tgt;
 	Sint32		 declined;
 	Sint32		 hit;
 	FIELD_EFFECT_STATE *effect;
@@ -101,10 +101,10 @@ Sint32 fdUsePsynergy(Uint32 code)
 	event =
 		fdFindPsynergyCue(PSYNERGY_CUE(PSYNERGY_PHASE_FIRST), group, selector);
 	if(event != NULL) {
-		target = -1;
+		tgt = -1;
 		if(selector != -1 && (selector & PSYNERGY_TARGET_ACTOR))
-			target = selector & PSYNERGY_TARGET_ID;
-		fdRunPsynergyScript(event, userId, target);
+			tgt = selector & PSYNERGY_TARGET_ID;
+		fdRunPsynergyScript(event, userId, tgt);
 	}
 	if(code & ACT_PACKED)
 		return fdRunPsynergyEndScripts(code);
@@ -157,10 +157,10 @@ Sint32 fdUsePsynergy(Uint32 code)
 	/* Choose how the Psynergy plays. */
 	syGameFlagSet(FLAG_PLAY_PSYNERGY_CAST);
 	syGameFlagClear(FLAG_PSYNERGY_TARGET);
-	target = -1;
+	tgt = -1;
 	if(before != NULL || after != NULL || during != NULL) {
 		if(selector != -1 && (selector & PSYNERGY_TARGET_ACTOR))
-			target = selector & PSYNERGY_TARGET_ID;
+			tgt = selector & PSYNERGY_TARGET_ID;
 		syGameFlagSet(FLAG_PSYNERGY_TARGET);
 		if(after != NULL && (after->flg & CUE_SUBJECT_OWN_EFFECT)) {
 			syGameFlagClear(FLAG_PLAY_PSYNERGY_CAST);
@@ -186,9 +186,9 @@ Sint32 fdUsePsynergy(Uint32 code)
 		effect->flashCaster = 0;
 		effect->announceName = 0;
 	}
-	fdPsynergySetupActorPair(fdPartyGetLeaderActor(), target);
+	fdPsynergySetupActorPair(fdPartyGetLeaderActor(), tgt);
 	fdPsynergyStartCast();
-	fdRunPsynergyScript(before, userId, target);
+	fdRunPsynergyScript(before, userId, tgt);
 	if(syGameFlagGet(FLAG_PLAY_PSYNERGY_CAST)) {
 		if(syGameFlagGet(FLAG_PSYNERGY_TARGET))
 			fdPsynergyDispatch();
@@ -205,7 +205,7 @@ Sint32 fdUsePsynergy(Uint32 code)
 		if(event != NULL)
 			fdRunPsynergyScript(event, userId, fieldState->psynergyHitObj);
 	}
-	fdRunPsynergyScript(after, userId, target);
+	fdRunPsynergyScript(after, userId, tgt);
 	if(syGameFlagGet(FLAG_PLAY_PSYNERGY_CAST))
 		fdPsynergyFinishMindRead();
 	fieldState->psynergyActing = 0;
@@ -219,17 +219,17 @@ Sint32 fdUsePsynergy(Uint32 code)
    CUE_RESULT_MESSAGE_END is a message, shown at target; any other is a
    function, called with argument (the user, when a cast runs it) and target.
    With FLAG_NOTHING_HAPPENS set it then says "But nothing happens." */
-Sint32 fdRunPsynergyScript(PENDING_CUE *event, Sint32 argument, Sint32 target)
+Sint32 fdRunPsynergyScript(PENDING_CUE *event, Sint32 argument, Sint32 tgt)
 {
 	if(event != NULL) {
 		if(event->action != 0) {
 			if(event->action < CUE_RESULT_MESSAGE_END) {
 				fdScriptStart();
 				fdScriptSetMessageId(event->action);
-				fdScriptShowMessageAndWait(target, 0);
+				fdScriptShowMessageAndWait(tgt, 0);
 				fdScriptEnd();
 			} else {
-				((void (*)(Sint32, Sint32))event->action)(argument, target);
+				((void (*)(Sint32, Sint32))event->action)(argument, tgt);
 			}
 		}
 		if(syGameFlagGet(FLAG_NOTHING_HAPPENS)) {

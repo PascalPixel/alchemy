@@ -21,7 +21,7 @@
    actor's on the World Map. A row of zeros is an actor with no marker, and -1
    ends the table. */
 /* clang-format off */
-const Sint32 MapScreen_AreaMarkers[] = {
+const Sint32 MapScreenAreaMarkers[] = {
 	AREA_MARKER(3, SCENE_VALE_PROLOGUE),
 	AREA_MARKER(5, SCENE_VAULT),
 	AREA_MARKER(25, SCENE_ALTIN),

@@ -3,7 +3,7 @@
 
 /* The canvas sprite of a field Psynergy: a 64 by 64 sprite whose pixels an
    effect draws into a 4 KB canvas. fdBattleEffectStartCanvasSpr starts it,
-   fdBattleEffectDrawCanvasSpr draws the sprite each frame,
+   fdBattleEffectDrawCanvasSpr draws the sprite each tick,
    fdBattleEffectUploadCanvas copies the canvas into its tiles on command, and
    fdBattleEffectEndCanvasSpr ends it. */
 
@@ -16,15 +16,15 @@
 #define CANVAS_SPRITE_BYTES 4096
 
 /* How the sprite is drawn. */
-#define CANVAS_SPRITE_16_COLORS	 1 /* rebuilt each frame, in OBJ palette 14 */
-#define CANVAS_SPRITE_256_COLORS 2 /* rebuilt each frame, in 256 colours */
+#define CANVAS_SPRITE_16_COLORS	 1 /* rebuilt each tick, in OBJ palette 14 */
+#define CANVAS_SPRITE_256_COLORS 2 /* rebuilt each tick, in 256 colours */
 #define CANVAS_SPRITE_KEPT		 3 /* drawn as the effect left it */
 
 /* The OBJ palette a 16-colour canvas is drawn in. The effects that draw in 256
    colours keep their own colours in it and the next, colours 224 to 255. */
 #define CANVAS_PALETTE 14
 
-/* What fdBattleEffectUploadCanvas does with the canvas in the next frame. */
+/* What fdBattleEffectUploadCanvas does with the canvas in the next tick. */
 #define CANVAS_UPLOAD_AND_CLEAR				 1
 #define CANVAS_UPLOAD						 2
 #define CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL	 3
@@ -32,7 +32,7 @@
 #define CANVAS_UPLOAD_AND_DARKEN_FOUR_LEVELS 5
 #define CANVAS_UPLOAD_TO_BG					 11
 
-/* A field Psynergy's canvas sprite: its effect sprite, the frame it is on and
+/* A field Psynergy's canvas sprite: its effect sprite, the tick it is on and
    how long it has drawn, and where, how large, at what angle and depth it is
    drawn. */
 typedef struct CANVAS_SPR_STATE {

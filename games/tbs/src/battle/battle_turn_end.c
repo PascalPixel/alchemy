@@ -251,16 +251,16 @@ UNREAD_RESULT btProcessTurnEnd(void)
 {
 	BATTLE_STATE		*battle;
 	Sint32				 side;
-	Sint32				 sideCount;
-	Sint32				 count;
+	Sint32				 sideCnt;
+	Sint32				 cnt;
 	Sint32				 i;
 	DJINN_RECOVERY_LIST *list;
 
 	/* Djinn recovery: the party's list, and in a link battle the opponent's
 	   too. Only a Djinni whose unit is on the field with HP counts down. */
 	battle = BattleStateWork;
-	sideCount = (battle->isLink != 0) + 1;
-	for(side = 0; side < sideCount; side++) {
+	sideCnt = (battle->isLink != 0) + 1;
+	for(side = 0; side < sideCnt; side++) {
 		list = &gmDjinnGetRecoveryTableStub(side)->list;
 		for(i = 0; i < list->cnt; i++) {
 			DJINN_RECOVERY_ENTRY *entry = &list->entries[i];
@@ -312,10 +312,10 @@ UNREAD_RESULT btProcessTurnEnd(void)
 	btBackgroundSetMode(BATTLE_BACKGROUND_ZOOMED, BattleStateWork->bg, 0);
 	{
 		Sint32			 *groupList;
-		BATTLE_SIDE_ORDER order = Battle_TurnEndSideOrder;
+		BATTLE_SIDE_ORDER order = BattleTurnEndSideOrder;
 		Uint16			  unitIds[UNIT_MAX];
 		Sint32			  group;
-		Sint32			  unitIndex;
+		Sint32			  unitIdx;
 
 		/* Each unit's regeneration and counters, the party's first; the link
 		   child takes the enemies first, so both consoles show the same
@@ -326,11 +326,11 @@ UNREAD_RESULT btProcessTurnEnd(void)
 		}
 		groupList = order.group;
 		for(group = 0; group <= 1; group++) {
-			count = btUnitListIds(groupList[group], unitIds);
-			for(unitIndex = 0; unitIndex < count; unitIndex++) {
+			cnt = btUnitListIds(groupList[group], unitIds);
+			for(unitIdx = 0; unitIdx < cnt; unitIdx++) {
 				Sint32 hpAmount;
 				Sint32 ppAmount;
-				Sint32 unitId = unitIds[unitIndex];
+				Sint32 unitId = unitIds[unitIdx];
 				UNIT  *unit = gmUnitGetStub(unitId);
 
 				if(unit->ready != 0) {
@@ -466,10 +466,10 @@ UNREAD_RESULT btUnitProcessActionEnd(BATTLE_ACTION_RUN *plan)
 	Sint32				 unitId;
 	UNIT				*unit;
 	Sint32				 battleContinues;
-	Sint32				 counts[ELEMENT_COUNT];
+	Sint32				 cnts[ELEMENT_COUNT];
 	DJINN_RECOVERY_LIST *list;
 	/* An index: a recovery list entry's, then the strongest element's. */
-	Sint32 index;
+	Sint32 idx;
 	Sint32 recoveryTurn;
 
 	/* The unit's standby Djinn come off its set. */
@@ -477,11 +477,11 @@ UNREAD_RESULT btUnitProcessActionEnd(BATTLE_ACTION_RUN *plan)
 	battleContinues = 0;
 	unit = gmUnitGetStub(unitId);
 	list = &gmDjinnGetRecoveryTableStub(unitId < 0 || unitId > ALLY_MAX)->list;
-	for(index = 0; index < list->cnt; index++) {
-		if(list->entries[index].unitId == unitId &&
-			list->entries[index].turns == DJINN_RECOVERY_AFTER_BATTLE) {
+	for(idx = 0; idx < list->cnt; idx++) {
+		if(list->entries[idx].unitId == unitId &&
+			list->entries[idx].turns == DJINN_RECOVERY_AFTER_BATTLE) {
 			gmDjinnPutOnStandbyStub(
-				unitId, list->entries[index].element, list->entries[index].idx);
+				unitId, list->entries[idx].element, list->entries[idx].idx);
 		}
 	}
 	if(btUnitListLiving(BATTLE_SIDE_MASK_PARTY, 0) != 0 &&
@@ -497,7 +497,7 @@ UNREAD_RESULT btUnitProcessActionEnd(BATTLE_ACTION_RUN *plan)
 		/* The Djinn a summon used recover one a turn, after those already
 		   recovering and no sooner than in 2 turns. */
 		for(i = 0; i < ELEMENT_COUNT; i++) {
-			counts[i] = 0;
+			cnts[i] = 0;
 		}
 		for(;;) {
 			holderId = -1;
@@ -525,7 +525,7 @@ UNREAD_RESULT btUnitProcessActionEnd(BATTLE_ACTION_RUN *plan)
 				if(pending->entries[i].unitId == holderId &&
 					pending->entries[i].turns == DJINN_RECOVERY_SUMMONED) {
 					pending->entries[i].turns = recoveryTurn;
-					counts[pending->entries[i].element]++;
+					cnts[pending->entries[i].element]++;
 					recoveryTurn++;
 				}
 			}
@@ -540,15 +540,15 @@ UNREAD_RESULT btUnitProcessActionEnd(BATTLE_ACTION_RUN *plan)
 		mostOfOneElement = 0;
 		before = syHeapAllocEWRAM(sizeof(UNIT));
 		syWordsCopy(before, unit, sizeof(UNIT));
-		index = -1;
+		idx = -1;
 		for(i = 0; i < ELEMENT_COUNT; i++) {
-			if(counts[i] > mostOfOneElement) {
-				mostOfOneElement = counts[i];
-				index = i;
+			if(cnts[i] > mostOfOneElement) {
+				mostOfOneElement = cnts[i];
+				idx = i;
 			}
 		}
-		if(index >= 0 && unit->summonBoost[index] < mostOfOneElement) {
-			unit->summonBoost[index] = mostOfOneElement;
+		if(idx >= 0 && unit->summonBoost[idx] < mostOfOneElement) {
+			unit->summonBoost[idx] = mostOfOneElement;
 		}
 		gmUnitCalcStub(unitId);
 		for(i = 0; i < ELEMENT_COUNT; i++) {
@@ -587,15 +587,15 @@ UNREAD_RESULT btUnitProcessActionEnd(BATTLE_ACTION_RUN *plan)
 			btPlaybackPush(PLAYBACK_NUMBER, plan->hauntDamage);
 			PUSH_MESSAGE(MsgCurseDamage);
 			if(gmUnitAddHpStub(unitId, -plan->hauntDamage) == 0) {
-				Sint32 message;
+				Sint32 msg;
 				btPlaybackPush(PLAYBACK_DEFEAT, unitId);
 				btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
 				if(unitId >= 0 && unitId <= ALLY_MAX) {
-					message = MsgGoesDown;
+					msg = MsgGoesDown;
 				} else {
-					message = MsgStrengthExhausted;
+					msg = MsgStrengthExhausted;
 				}
-				PUSH_MESSAGE(message);
+				PUSH_MESSAGE(msg);
 			} else {
 				btPlaybackPush(PLAYBACK_REFRESH_UNIT, unitId);
 			}
@@ -621,15 +621,15 @@ UNREAD_RESULT btUnitProcessActionEnd(BATTLE_ACTION_RUN *plan)
 				battle->playback.pendingSnd = SE_IMPACT;
 			}
 			if(gmUnitAddHpStub(unitId, -damage) == 0) {
-				Sint32 message;
+				Sint32 msg;
 				btPlaybackPush(PLAYBACK_DEFEAT, unitId);
 				btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
 				if(unitId >= 0 && unitId <= ALLY_MAX) {
-					message = MsgGoesDown;
+					msg = MsgGoesDown;
 				} else {
-					message = MsgStrengthExhausted;
+					msg = MsgStrengthExhausted;
 				}
-				PUSH_MESSAGE(message);
+				PUSH_MESSAGE(msg);
 			} else {
 				btPlaybackPush(PLAYBACK_REFRESH_UNIT, unitId);
 			}

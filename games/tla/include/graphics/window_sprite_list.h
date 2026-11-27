@@ -8,7 +8,7 @@
 #include "system.h"
 
 WINDOW_SPR *mnWindowSprAcquireFree(void);
-void		mnWindowSprReleaseFree(WINDOW_SPR *sprite);
-void		mnWindowSprAppendToList(WINDOW_SPR_LIST *list, WINDOW_SPR *sprite);
+void		mnWindowSprReleaseFree(WINDOW_SPR *spr);
+void		mnWindowSprAppendToList(WINDOW_SPR_LIST *list, WINDOW_SPR *spr);
 
 #endif

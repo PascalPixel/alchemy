@@ -57,9 +57,9 @@ typedef struct DICE_CAMERA {
 #define DICE_BET_PER_LEVEL	  10
 /* The coins, and Super Lucky Dice's bet, are drawn with six digits. */
 #define DICE_COIN_DIGITS	  6
-/* The dice screen fades in and out over 16 frames, a sixteenth of full
-   brightness a frame. */
-#define DICE_FADE_FRAMES	  16
+/* The dice screen fades in and out over 16 ticks, a sixteenth of full
+   brightness a tick. */
+#define DICE_FADE_TICKS		  16
 /* The depths from the camera a die or its shadow is drawn between: nearer or
    further is drawn as at the limit, and the nearer, the larger. */
 #define DICE_NEAREST_DEPTH	  350
@@ -68,7 +68,7 @@ typedef struct DICE_CAMERA {
    half a 256-colour tile): after the rolling die's eighteen 256-colour
    views. */
 #define DICE_SHADOW_TILE	  144
-/* A thrown die starts spinning at this rate, its roll angle a frame; each
+/* A thrown die starts spinning at this rate, its roll angle a tick; each
    bounce takes DICE_BOUNCE_SPIN_LOSS off it. */
 #define DICE_THROW_SPIN		  300
 #define DICE_BOUNCE_SPIN_LOSS 20

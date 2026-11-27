@@ -113,7 +113,7 @@ Stubs_Overworld:
 	unnamed_stub fdPaletteFadeSetBackdrop
 	stub fdScriptStartScreenTransitionStub, fdScriptStartScreenTransition
 	stub fdScriptFinishScreenTransitionStub, fdScriptFinishScreenTransition
-	stub fdScriptWaitTransitionFramesStub, fdScriptWaitTransitionFrames
+	stub fdScriptWaitTransitionTicksStub, fdScriptWaitTransitionTicks
 	stub scLineScrollInitWaveStub, scLineScrollInitWave
 	stub fdLineScrollStopStub, fdLineScrollStop
 	stub fdChestOpenAndShowItemStub, fdChestOpenAndShowItem

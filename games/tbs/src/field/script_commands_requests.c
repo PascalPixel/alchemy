@@ -50,7 +50,7 @@ void fdRequestDjinnBattle(Sint32 actorAndHop, Sint32 djinni)
 		fdEncounterResolveWorldMapZoneAndBackdrop(&leader->x.fixed);
 	}
 	/* Key 0 is no listed encounter, so every Djinni battle takes MUS_BATTLE,
-	   the last of Encounter_BattleMusic. */
+	   the last of EncounterBattleMusic. */
 	fdEncounterSelectBattleMusic(0, 0);
 }
 
@@ -82,23 +82,23 @@ void fdScriptLeaveFor(Uint16 sceneId, Uint16 entrance)
 	state->exit = EXIT_KEEP_DESTINATION;
 }
 
-/* Changes the scene's music to soundId and remembers it for fdPlayQueuedMusic;
+/* Changes the scene's music to sndId and remembers it for fdPlayQueuedMusic;
    -1 fades the music out and remembers none. */
-void fdQueueMusic(Sint32 soundId)
+void fdQueueMusic(Sint32 sndId)
 {
-	FieldStateWork->queuedSnd = soundId;
-	if((Sint16)soundId == -1) {
-		soundId = SOUND_FADE_OUT_ACTION_SE;
+	FieldStateWork->queuedSnd = sndId;
+	if((Sint16)sndId == -1) {
+		sndId = SOUND_FADE_OUT_ACTION_SE;
 	}
 	sySndPlayStub(SE_STOP_EXIT_SE);
-	sySndPlayStub(soundId);
+	sySndPlayStub(sndId);
 }
 
 /* Plays the sound fdQueueMusic remembered, if any. */
 void fdPlayQueuedMusic(void)
 {
-	Sint16 soundId = FieldStateWork->queuedSnd;
+	Sint16 sndId = FieldStateWork->queuedSnd;
 
-	if(soundId != -1)
-		sySndPlayStub(soundId);
+	if(sndId != -1)
+		sySndPlayStub(sndId);
 }

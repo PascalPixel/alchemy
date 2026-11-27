@@ -17,7 +17,7 @@ void scCrackedTileDropIn(void)
 	leader->motionFlg = 0;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptPlaySnd(SE_DUST_PUFF);
 	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	syFieldScriptWait(24);
@@ -27,19 +27,18 @@ void scCrackedTileDropIn(void)
 	options.startScaleY = toFIXED(16) / 25;
 	/* A puff each sixteenth of a turn, the last over the first. */
 	for(i = 0; i <= TRIG_TURN / FACING_STEP; i++) {
-		Sint32 angle;
-		Sint32 velocity[3];
+		Sint32 ang;
+		Sint32 vel[3];
 
-		angle = i * FACING_STEP;
-		velocity[0] = syCos(angle);
-		velocity[1] = 0;
-		velocity[2] = syMathSin(angle);
-		velocity[0] += velocity[0] >> 1;
-		velocity[0] += (syRandom() * (toFIXED(3) / 4) >> 16) - (toFIXED(3) / 8);
-		velocity[2] +=
-			(syRandom() * (toFIXED(3) / 8) >> 16) - (toFIXED(3) / 16);
+		ang = i * FACING_STEP;
+		vel[0] = syCos(ang);
+		vel[1] = 0;
+		vel[2] = syMathSin(ang);
+		vel[0] += vel[0] >> 1;
+		vel[0] += (syRandom() * (toFIXED(3) / 4) >> 16) - (toFIXED(3) / 8);
+		vel[2] += (syRandom() * (toFIXED(3) / 8) >> 16) - (toFIXED(3) / 16);
 		scFieldEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-			velocity[0], velocity[1], velocity[2],
+			vel[0], vel[1], vel[2],
 			EFFECT_USE_PALETTE | EFFECT_USE_START_SCALE | EFFECT_USE_UPDATE |
 				EFFECT_SCRIPT_MEDIUM,
 			&options);

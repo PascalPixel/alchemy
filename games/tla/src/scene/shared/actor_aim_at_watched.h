@@ -5,12 +5,12 @@
    in AIM_STEPS steps of scActorStepToWatched. */
 Sint32 scActorAimAtWatched(ACTOR *actor)
 {
-	ACTOR *target = &actor->watchedActor->actor;
+	ACTOR *tgt = &actor->watchedActor->actor;
 
-	actor->bounce = (target->x.fixed - actor->x.fixed) / AIM_STEPS;
+	actor->bounce = (tgt->x.fixed - actor->x.fixed) / AIM_STEPS;
 	actor->sceneWord =
-		(target->y.fixed - actor->y.fixed + toFIXED(16)) / AIM_STEPS;
-	actor->gravity = (target->z.fixed - actor->z.fixed) / AIM_STEPS;
+		(tgt->y.fixed - actor->y.fixed + toFIXED(16)) / AIM_STEPS;
+	actor->gravity = (tgt->z.fixed - actor->z.fixed) / AIM_STEPS;
 	actor->sceneCnt = AIM_STEPS;
 	return 0;
 }

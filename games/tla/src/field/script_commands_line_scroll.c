@@ -4,14 +4,14 @@
 /* LINE_SCROLL_STATE.mode: 0 waves BG1, BG2 and BG3 alike; any other mode waves
    BG3 alone (Mars Lighthouse's rain ledges). */
 #define LINE_SCROLL_ALL_LAYERS	 0
-/* LineScroll_WaveSine's entries, a whole cycle: a phase is 16.16 entries. */
+/* LineScrollWaveSine's entries, a whole cycle: a phase is 16.16 entries. */
 #define LINE_SCROLL_WAVE_ENTRIES 256
 /* The sine's units in a pixel: its peak, 4096, is 16 pixels at an amplitude of
    toFIXED(1). */
 #define LINE_SCROLL_WAVE_UNITS	 256
 /* The wave's offset in pixels at phase, for a 16.16 amplitude. */
 #define LINE_SCROLL_WAVE(phase, amplitude) \
-	(syMulFX(LineScroll_WaveSine[FIXEDtoINT(phase) & \
+	(syMulFX(LineScrollWaveSine[FIXEDtoINT(phase) & \
 				 (LINE_SCROLL_WAVE_ENTRIES - 1)], \
 		 (amplitude)) / \
 		LINE_SCROLL_WAVE_UNITS)
@@ -25,7 +25,7 @@ void fdLineScrollArmDMA(void)
 	Uint32			  *line = (Uint32 *)state->rows[state->page];
 	volatile Uint32	  *dest = (volatile Uint32 *)&REG_BG1HOFS;
 	FIELD_STATE		  *event = Ram_HeapSlots->fieldState;
-	volatile Uint32	  *target;
+	volatile Uint32	  *tgt;
 
 	if(event != NULL) {
 		if(event->revealActive != 0)
@@ -40,13 +40,13 @@ void fdLineScrollArmDMA(void)
 		control = dma[DMA0_CONTROL];
 		dma[DMA0_CONTROL] = control & (Uint16)~DMA_START_TIMING_DRQ_REPEAT;
 		dma[DMA0_CONTROL] &= ~DMA_ENABLE;
-		target = dest;
+		tgt = dest;
 		(void)dma[DMA0_CONTROL];
 	}
 	*dest = *line++;
 	*dest = *line++;
 	*dest = *line++;
-	syDMAXCopy(line, (void *)target,
+	syDMAXCopy(line, (void *)tgt,
 		(DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD |
 			DMA_32BIT)
 				<< DMA_CONTROL_SHIFT |
@@ -186,9 +186,9 @@ static inline void fdWaitDMA(volatile DMA_REGISTERS *channel)
 }
 
 /* Starts the line scroll: its state (heap slot HEAP_SLOT_LINE_SCROLL) holds the
-   mode and, for x and y, how fast the wave runs from frame to frame, its step
+   mode and, for x and y, how fast the wave runs from tick to tick, its step
    from one scanline to the next and its amplitude; two events, one in the
-   vertical blank pass and one in the frame pass, build and send each frame's
+   vertical blank pass and one in the tick pass, build and send each tick's
    line offsets. */
 void fdLineScrollInitWave(Sint32 mode, Sint32 freqX, Sint32 stepX, Sint32 ampX,
 	Sint32 freqY, Sint32 stepY, Sint32 ampY)
@@ -206,7 +206,7 @@ void fdLineScrollInitWave(Sint32 mode, Sint32 freqX, Sint32 stepX, Sint32 ampX,
 	state->ampY = ampY;
 	state->stepX = stepX;
 	state->stepY = stepY;
-	sySetEvent(fdLineScrollBuildPage, EVENT_PASS_FRAME);
+	sySetEvent(fdLineScrollBuildPage, EVENT_PASS_TICK);
 	sySetEvent(fdLineScrollArmDMA, EVENT_PASS_VBLANK);
 }
 

@@ -57,30 +57,30 @@
 #include "graphics/graphics.h"
 #include "text/msg_ids.h"
 
-extern Uint16		  KalayTolbiDocks_KalayDoorMetatiles[];
-extern Uint16		  KalayTolbiDocks_TolbiDoorMetatiles[];
-extern Sint32		  KalayTolbiDocks_BodyguardSpinScript[];
-extern SCENE_ENTRANCE KalayTolbiDocks_NoEntrances[];
-extern SCENE_ENTRANCE KalayTolbiDocks_KalayEntrances[];
-extern SCENE_ENTRANCE KalayTolbiDocks_TolbiEntrances[];
-extern SCENE_ENTRANCE KalayTolbiDocks_RoomEntrances[];
-extern Uint32		  KalayTolbiDocks_Exits[];
-extern ACTOR_PLACE	  KalayTolbiDocks_NoActorPlacements[];
-extern ACTOR_PLACE	  KalayTolbiDocks_TolbiActorPlacements[];
-extern ACTOR_PLACE	  KalayTolbiDocks_TolbiActorPlacementsStranded[];
-extern ACTOR_PLACE	  KalayTolbiDocks_KalayActorPlacements[];
-extern ACTOR_PLACE	  KalayTolbiDocks_KalayActorPlacementsShipGone[];
-extern ACTOR_PLACE	  KalayTolbiDocks_RoomActorPlacements[];
-extern ACTOR_PLACE	  KalayTolbiDocks_RoomActorPlacementsShipGone[];
-extern ACTOR_PLACE	  KalayTolbiDocks_RoomActorPlacementsStranded[];
-extern CUE			  KalayTolbiDocks_NoCues[];
-extern CUE			  KalayTolbiDocks_KalayCues[];
-extern CUE			  KalayTolbiDocks_KalayCuesShipGone[];
-extern CUE			  KalayTolbiDocks_TolbiCues[];
-extern CUE			  KalayTolbiDocks_TolbiCuesStranded[];
-extern CUE			  KalayTolbiDocks_RoomCues[];
-extern CUE			  KalayTolbiDocks_RoomCuesShipGone[];
-extern CUE			  KalayTolbiDocks_RoomCuesStranded[];
+extern Uint16		  KalayTolbiDocksKalayDoorMetatiles[];
+extern Uint16		  KalayTolbiDocksTolbiDoorMetatiles[];
+extern Sint32		  KalayTolbiDocksBodyguardSpinScript[];
+extern SCENE_ENTRANCE KalayTolbiDocksNoEntrances[];
+extern SCENE_ENTRANCE KalayTolbiDocksKalayEntrances[];
+extern SCENE_ENTRANCE KalayTolbiDocksTolbiEntrances[];
+extern SCENE_ENTRANCE KalayTolbiDocksRoomEntrances[];
+extern Uint32		  KalayTolbiDocksExits[];
+extern ACTOR_PLACE	  KalayTolbiDocksNoActorPlacements[];
+extern ACTOR_PLACE	  KalayTolbiDocksTolbiActorPlacements[];
+extern ACTOR_PLACE	  KalayTolbiDocksTolbiActorPlacementsStranded[];
+extern ACTOR_PLACE	  KalayTolbiDocksKalayActorPlacements[];
+extern ACTOR_PLACE	  KalayTolbiDocksKalayActorPlacementsShipGone[];
+extern ACTOR_PLACE	  KalayTolbiDocksRoomActorPlacements[];
+extern ACTOR_PLACE	  KalayTolbiDocksRoomActorPlacementsShipGone[];
+extern ACTOR_PLACE	  KalayTolbiDocksRoomActorPlacementsStranded[];
+extern CUE			  KalayTolbiDocksNoCues[];
+extern CUE			  KalayTolbiDocksKalayCues[];
+extern CUE			  KalayTolbiDocksKalayCuesShipGone[];
+extern CUE			  KalayTolbiDocksTolbiCues[];
+extern CUE			  KalayTolbiDocksTolbiCuesStranded[];
+extern CUE			  KalayTolbiDocksRoomCues[];
+extern CUE			  KalayTolbiDocksRoomCuesShipGone[];
+extern CUE			  KalayTolbiDocksRoomCuesStranded[];
 
 /* The metatiles of the docks the scenes give a meaning of their own. */
 typedef enum KALAY_TOLBI_DOCKS_METATILE_BEHAVIOR {
@@ -95,9 +95,9 @@ typedef enum KALAY_TOLBI_DOCKS_METATILE_BEHAVIOR {
 } KALAY_TOLBI_DOCKS_METATILE_BEHAVIOR;
 
 /* Kalay Docks' people, numbering the rows of
-   KalayTolbiDocks_KalayActorPlacements from ACTOR_FIRST_PLACED. Garet's row
+   KalayTolbiDocksKalayActorPlacements from ACTOR_FIRST_PLACED. Garet's row
    takes his own actor slot. Once the ship has crossed
-   (KalayTolbiDocks_KalayActorPlacementsShipGone) the first four stand off the
+   (KalayTolbiDocksKalayActorPlacementsShipGone) the first four stand off the
    map. */
 typedef enum KALAY_DOCKS_ACTOR_ID {
 	/* A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), who walks
@@ -121,7 +121,7 @@ typedef enum KALAY_DOCKS_ACTOR_ID {
 } KALAY_DOCKS_ACTOR_ID;
 
 /* Tolbi Docks' people after the crossing, numbering the rows of
-   KalayTolbiDocks_TolbiActorPlacements from ACTOR_FIRST_PLACED. */
+   KalayTolbiDocksTolbiActorPlacements from ACTOR_FIRST_PLACED. */
 typedef enum TOLBI_DOCKS_ACTOR_ID {
 	/* A man in a yellow bandana (SPRITE_MAN_IN_YELLOW_BANDANA) who hears of the
 	   party's scary trip. After Colosso, "There are many here who want to
@@ -146,8 +146,8 @@ typedef enum TOLBI_DOCKS_ACTOR_ID {
 } TOLBI_DOCKS_ACTOR_ID;
 
 /* Tolbi Docks once the Colosso Tour's passengers are stranded there: the rows
-   of KalayTolbiDocks_TolbiActorPlacementsStranded that hold other people than
-   KalayTolbiDocks_TolbiActorPlacements. The man who hears of the scary trip,
+   of KalayTolbiDocksTolbiActorPlacementsStranded that hold other people than
+   KalayTolbiDocksTolbiActorPlacements. The man who hears of the scary trip,
    the one done sailing and the crates keep their rows. */
 typedef enum TOLBI_DOCKS_STRANDED_ACTOR_ID {
 	/* A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), the
@@ -170,9 +170,9 @@ typedef enum TOLBI_DOCKS_STRANDED_ACTOR_ID {
 } TOLBI_DOCKS_STRANDED_ACTOR_ID;
 
 /* The people of the two dock rooms, numbering the rows of
-   KalayTolbiDocks_RoomActorPlacements from ACTOR_FIRST_PLACED: the Kalay room's
+   KalayTolbiDocksRoomActorPlacements from ACTOR_FIRST_PLACED: the Kalay room's
    three, then the Tolbi room's. Once the ship has crossed
-   (KalayTolbiDocks_RoomActorPlacementsShipGone) the Kalay room's two travellers
+   (KalayTolbiDocksRoomActorPlacementsShipGone) the Kalay room's two travellers
    stand off the map. */
 typedef enum KALAY_TOLBI_DOCKS_ROOM_ACTOR_ID {
 	/* A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR) in the Kalay
@@ -193,7 +193,7 @@ typedef enum KALAY_TOLBI_DOCKS_ROOM_ACTOR_ID {
 	ACTOR_OLD_WOMAN_WITH_NOWHERE_TO_SLEEP
 } KALAY_TOLBI_DOCKS_ROOM_ACTOR_ID;
 
-/* The dock rooms after Colosso (KalayTolbiDocks_RoomActorPlacementsStranded):
+/* The dock rooms after Colosso (KalayTolbiDocksRoomActorPlacementsStranded):
    the Tolbi room's last two rows hold other people. */
 typedef enum KALAY_TOLBI_DOCKS_ROOM_STRANDED_ACTOR_ID {
 	/* A burly grey-haired man (SPRITE_BURLY_MAN_WITH_GREY_HAIR). "Some rich guy
@@ -224,15 +224,15 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_KALAY_DOCKS) {
-		return KalayTolbiDocks_KalayEntrances;
+		return KalayTolbiDocksKalayEntrances;
 	}
 	if(sceneId == SCENE_TOLBI_DOCKS) {
-		return KalayTolbiDocks_TolbiEntrances;
+		return KalayTolbiDocksTolbiEntrances;
 	}
 	if(sceneId == SCENE_COTTAGE_ROOMS_E) {
-		return KalayTolbiDocks_RoomEntrances;
+		return KalayTolbiDocksRoomEntrances;
 	}
-	return KalayTolbiDocks_NoEntrances;
+	return KalayTolbiDocksNoEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -243,7 +243,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 /* The ways out of all three scenes. */
 const Uint32 *scGetExits(void)
 {
-	return KalayTolbiDocks_Exits;
+	return KalayTolbiDocksExits;
 }
 
 /* Each scene's people before the crossing, once the ship has crossed and not
@@ -255,29 +255,29 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 
 	if(sceneId == SCENE_KALAY_DOCKS) {
 		if(gmFlagGet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
-			return KalayTolbiDocks_KalayActorPlacementsShipGone;
+			return KalayTolbiDocksKalayActorPlacementsShipGone;
 		}
-		return KalayTolbiDocks_KalayActorPlacements;
+		return KalayTolbiDocksKalayActorPlacements;
 	}
 
 	if(sceneId == SCENE_TOLBI_DOCKS) {
 		if(gmFlagGet(FLAG_COLOSSO_OVER) != 0) {
-			return KalayTolbiDocks_TolbiActorPlacementsStranded;
+			return KalayTolbiDocksTolbiActorPlacementsStranded;
 		}
-		return KalayTolbiDocks_TolbiActorPlacements;
+		return KalayTolbiDocksTolbiActorPlacements;
 	}
 
 	if(sceneId == SCENE_COTTAGE_ROOMS_E) {
 		if(gmFlagGet(FLAG_COLOSSO_OVER) != 0) {
-			return KalayTolbiDocks_RoomActorPlacementsStranded;
+			return KalayTolbiDocksRoomActorPlacementsStranded;
 		}
 		if(gmFlagGet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
-			return KalayTolbiDocks_RoomActorPlacementsShipGone;
+			return KalayTolbiDocksRoomActorPlacementsShipGone;
 		}
-		return KalayTolbiDocks_RoomActorPlacements;
+		return KalayTolbiDocksRoomActorPlacements;
 	}
 
-	return KalayTolbiDocks_NoActorPlacements;
+	return KalayTolbiDocksNoActorPlacements;
 }
 
 /* Stepping off the ship onto the pier at Tolbi Docks (metatile (24, 18)), Isaac
@@ -302,29 +302,29 @@ const CUE *scGetCues(void)
 
 	if(sceneId == SCENE_KALAY_DOCKS) {
 		if(gmFlagGet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
-			return KalayTolbiDocks_KalayCuesShipGone;
+			return KalayTolbiDocksKalayCuesShipGone;
 		}
-		return KalayTolbiDocks_KalayCues;
+		return KalayTolbiDocksKalayCues;
 	}
 
 	if(sceneId == SCENE_TOLBI_DOCKS) {
 		if(gmFlagGet(FLAG_COLOSSO_OVER) != 0) {
-			return KalayTolbiDocks_TolbiCuesStranded;
+			return KalayTolbiDocksTolbiCuesStranded;
 		}
-		return KalayTolbiDocks_TolbiCues;
+		return KalayTolbiDocksTolbiCues;
 	}
 
 	if(sceneId == SCENE_COTTAGE_ROOMS_E) {
 		if(gmFlagGet(FLAG_COLOSSO_OVER) != 0) {
-			return KalayTolbiDocks_RoomCuesStranded;
+			return KalayTolbiDocksRoomCuesStranded;
 		}
 		if(gmFlagGet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
-			return KalayTolbiDocks_RoomCuesShipGone;
+			return KalayTolbiDocksRoomCuesShipGone;
 		}
-		return KalayTolbiDocks_RoomCues;
+		return KalayTolbiDocksRoomCues;
 	}
 
-	return KalayTolbiDocks_NoCues;
+	return KalayTolbiDocksNoCues;
 }
 
 /* At Kalay Docks, a young man asks whether the party wants to go to Tolbi. */
@@ -492,7 +492,7 @@ static void scKalayTolbiDocksTalkToDockWorker(void)
    ship's plank. */
 static void scKalayTolbiDocksTalkToWomanSellingTickets(void)
 {
-	WINDOW			   *coinsWindow;
+	WINDOW			   *coinsWin;
 	MAIN_ROUTINE_STATE *state;
 	Sint32				ticketPrice = TICKET_PRICE;
 	Sint32				coinLabel;
@@ -514,27 +514,27 @@ static void scKalayTolbiDocksTalkToWomanSellingTickets(void)
 			mnMessageArgumentPush(ticketPrice, MESSAGE_ARGUMENT_NUMBER);
 			/* "Let's see...there are four of you, so it will cost ......" */
 			fdScriptOpenMessage(ACTOR_SELLING_TICKETS, 0);
-			coinsWindow = mnWindowCreate(
+			coinsWin = mnWindowCreate(
 				DOCKS_COINS_WINDOW_X, 8, DOCKS_COINS_WINDOW_WIDTH, 4, 2);
 			coinLabel = MSGNO(MsgYourCoins);
-			mnTextDrawMessageAsTiles(coinLabel, coinsWindow, 0, 0);
+			mnTextDrawMessageAsTiles(coinLabel, coinsWin, 0, 0);
 			state = &MainRoutineStateWork;
 			mnTextDrawNumInWindow(
-				state->holdings.coins, 6, coinsWindow, DOCKS_COINS_X, 8);
+				state->holdings.coins, 6, coinsWin, DOCKS_COINS_X, 8);
 #if LANGUAGE == LANGUAGE_JAPANESE
 			mnTextDrawMessageAsTiles(
-				coinLabel + (MSGNO(MsgCoins) - MSGNO(MsgYourCoins)),
-				coinsWindow, 48, 8);
+				coinLabel + (MSGNO(MsgCoins) - MSGNO(MsgYourCoins)), coinsWin,
+				48, 8);
 #endif
 			if(fdScriptAskYesNoWithActorAnimation(-1, 0) == 1) {
-				mnWindowClose(coinsWindow, 2);
+				mnWindowClose(coinsWin, 2);
 				fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
 				fdScriptWait(10);
 				/* "You're not going to do it? If you don't get onboard,
 				   you..." */
 				fdScriptShowMessage(ACTOR_SELLING_TICKETS, 0);
 			} else if((Uint32)ticketPrice > (Uint32)state->holdings.coins) {
-				mnWindowClose(coinsWindow, 2);
+				mnWindowClose(coinsWin, 2);
 				fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
 				fdScriptWait(10);
 				FieldStateWork->msg++;
@@ -543,7 +543,7 @@ static void scKalayTolbiDocksTalkToWomanSellingTickets(void)
 				   ticket." */
 				fdScriptShowMessage(ACTOR_SELLING_TICKETS, 0);
 			} else {
-				mnWindowClose(coinsWindow, 2);
+				mnWindowClose(coinsWin, 2);
 				fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
 				fdScriptWait(10);
 				FieldStateWork->msg += 3;
@@ -643,12 +643,11 @@ static void scKalayTolbiDocksOpenDoorAndLeave(void)
 	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 3);
 	if(MainRoutineStateWork.next == SCENE_KALAY_DOCKS) {
 		fdActorWalkTo(ACTOR_PARTY_LEADER, 304, 1392);
-		fdMapGridAnimateMetatiles(KalayTolbiDocks_KalayDoorMetatiles, 78, 86);
+		fdMapGridAnimateMetatiles(KalayTolbiDocksKalayDoorMetatiles, 78, 86);
 	} else {
 		if(MainRoutineStateWork.next == SCENE_TOLBI_DOCKS) {
 			fdActorWalkTo(ACTOR_PARTY_LEADER, 248, 192);
-			fdMapGridAnimateMetatiles(
-				KalayTolbiDocks_TolbiDoorMetatiles, 74, 9);
+			fdMapGridAnimateMetatiles(KalayTolbiDocksTolbiDoorMetatiles, 74, 9);
 		}
 	}
 	fdScriptWait(16);
@@ -803,7 +802,7 @@ static void scKalayTolbiDocksGaretSeesTheKaragol(void)
 	fdActorSetPos(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 328, 1424);
 	fdActorGet(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI)->paused = 1;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	syFieldActorLaunchFromLeader(ACTOR_GARET, -16, 0, FACING_WEST);
 	fdActorWaitForMoveById(ACTOR_GARET);
@@ -1048,7 +1047,7 @@ static void scKalayTolbiDocksPassengersBlameTourGuide(void)
 	fdActorJump(ACTOR_BODYGUARD, 6, 0);
 	/* The passenger bounces off the spinning bodyguard and lands on his
 	   back. */
-	fdActorSetScript(ACTOR_BODYGUARD, KalayTolbiDocks_BodyguardSpinScript);
+	fdActorSetScript(ACTOR_BODYGUARD, KalayTolbiDocksBodyguardSpinScript);
 	fdActorGet(ACTOR_ANGRY_YOUNG_MAN)->steeringFlg &= ~ACTOR_FACES_MOTION;
 	fdActorJump(ACTOR_ANGRY_YOUNG_MAN, 6, 0);
 	fdActorWalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -12, 4);
@@ -1104,31 +1103,31 @@ static void scKalayTolbiDocksPassengersBlameTourGuide(void)
 }
 
 /* The docks' cottage doors opening, at Kalay Docks and at Tolbi Docks. */
-Uint16 KalayTolbiDocks_KalayDoorMetatiles[] = {
+Uint16 KalayTolbiDocksKalayDoorMetatiles[] = {
 	MAPGRID_ANIMATION_STEP(98, 84, 2, 2, 5),
 	MAPGRID_ANIMATION_STEP(98, 82, 2, 2, 5),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 KalayTolbiDocks_TolbiDoorMetatiles[] = {
+Uint16 KalayTolbiDocksTolbiDoorMetatiles[] = {
 	MAPGRID_ANIMATION_STEP(92, 9, 2, 2, 5),
 	MAPGRID_ANIMATION_STEP(92, 7, 2, 2, 5),
 	MAPGRID_ANIMATION_STEPS_END,
 };
 
-Sint32 KalayTolbiDocks_BodyguardSpinScript[] = {
+Sint32 KalayTolbiDocksBodyguardSpinScript[] = {
 	SC_ADD(SW_FACING, -(DEGtoANG(45))),
 	SC_WAIT(2),
 	SC_LOOP(8, SC_TOP),
 	SC_END,
 };
 
-SCENE_ENTRANCE KalayTolbiDocks_NoEntrances[] = {
+SCENE_ENTRANCE KalayTolbiDocksNoEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 128, 0, 128, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE KalayTolbiDocks_KalayEntrances[] = {
+SCENE_ENTRANCE KalayTolbiDocksKalayEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 248, 0, 1368, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{KALAY_DOCKS_FROM_WORLD_MAP_SOUTH, CONDITION_ALWAYS, 288, 0, 1464,
@@ -1142,7 +1141,7 @@ SCENE_ENTRANCE KalayTolbiDocks_KalayEntrances[] = {
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE KalayTolbiDocks_TolbiEntrances[] = {
+SCENE_ENTRANCE KalayTolbiDocksTolbiEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 392, 0, 296, FACING_WEST, 0, -1, -1,
 		-1, -1, 0},
 	{TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK, CONDITION_ALWAYS, 408, 0, 296,
@@ -1156,7 +1155,7 @@ SCENE_ENTRANCE KalayTolbiDocks_TolbiEntrances[] = {
 
 /* CottageRoomsE's entrances, each into the room at the dock it is entered
    from. */
-SCENE_ENTRANCE KalayTolbiDocks_RoomEntrances[] = {
+SCENE_ENTRANCE KalayTolbiDocksRoomEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 96, 0, 248, FACING_NORTH, 0, -1, -1,
 		-1, -1, 0},
 	{COTTAGE_ROOMS_E_FROM_KALAY_DOCKS, CONDITION_ALWAYS, 96, 0, 248,
@@ -1167,7 +1166,7 @@ SCENE_ENTRANCE KalayTolbiDocks_RoomEntrances[] = {
 };
 
 /* Kalay Docks' exits, then Tolbi Docks' and CottageRoomsE's. */
-Uint32 KalayTolbiDocks_Exits[] = {
+Uint32 KalayTolbiDocksExits[] = {
 	SCENE_EXITS(KalayDocks),
 	SCENE_EXIT(KALAY_DOCKS_TO_WORLD_MAP_SOUTH, WorldMap,
 		WORLD_MAP_FROM_KALAY_DOCKS_SOUTH),
@@ -1191,12 +1190,12 @@ Uint32 KalayTolbiDocks_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE KalayTolbiDocks_NoActorPlacements[] = {
+ACTOR_PLACE KalayTolbiDocksNoActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
 /* clang-format off */
-ACTOR_PLACE KalayTolbiDocks_TolbiActorPlacements[] = {
+ACTOR_PLACE KalayTolbiDocksTolbiActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		408, 0, 280, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
@@ -1216,7 +1215,7 @@ ACTOR_PLACE KalayTolbiDocks_TolbiActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE KalayTolbiDocks_TolbiActorPlacementsStranded[] = {
+ACTOR_PLACE KalayTolbiDocksTolbiActorPlacementsStranded[] = {
 	ACTOR_PLACEMENT(SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		408, 0, 296, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1240,7 +1239,7 @@ ACTOR_PLACE KalayTolbiDocks_TolbiActorPlacementsStranded[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE KalayTolbiDocks_KalayActorPlacements[] = {
+ACTOR_PLACE KalayTolbiDocksKalayActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		-64, 0, -64, FACING_EAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
@@ -1260,7 +1259,7 @@ ACTOR_PLACE KalayTolbiDocks_KalayActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE KalayTolbiDocks_KalayActorPlacementsShipGone[] = {
+ACTOR_PLACE KalayTolbiDocksKalayActorPlacementsShipGone[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		-64, 0, -64, FACING_EAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1280,7 +1279,7 @@ ACTOR_PLACE KalayTolbiDocks_KalayActorPlacementsShipGone[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE KalayTolbiDocks_RoomActorPlacements[] = {
+ACTOR_PLACE KalayTolbiDocksRoomActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		152, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1296,7 +1295,7 @@ ACTOR_PLACE KalayTolbiDocks_RoomActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE KalayTolbiDocks_RoomActorPlacementsShipGone[] = {
+ACTOR_PLACE KalayTolbiDocksRoomActorPlacementsShipGone[] = {
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		152, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1312,7 +1311,7 @@ ACTOR_PLACE KalayTolbiDocks_RoomActorPlacementsShipGone[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE KalayTolbiDocks_RoomActorPlacementsStranded[] = {
+ACTOR_PLACE KalayTolbiDocksRoomActorPlacementsStranded[] = {
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		152, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1328,11 +1327,11 @@ ACTOR_PLACE KalayTolbiDocks_RoomActorPlacementsStranded[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE KalayTolbiDocks_NoCues[] = {
+CUE KalayTolbiDocksNoCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE KalayTolbiDocks_KalayCues[] = {
+CUE KalayTolbiDocksKalayCues[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_SOUTH },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, KALAY_DOCKS_TO_TOLBI_SHIP_DECK },
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), METATILE_BEHAVIOR_KALAY_TOLBI_DOCKS_COTTAGE_DOOR, CONDITION_ALWAYS, SCRIPT_REF(scKalayTolbiDocksOpenDoorAndLeave) },
@@ -1363,7 +1362,7 @@ CUE KalayTolbiDocks_KalayCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE KalayTolbiDocks_KalayCuesShipGone[] = {
+CUE KalayTolbiDocksKalayCuesShipGone[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, KALAY_DOCKS_TO_WORLD_MAP_SOUTH },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, KALAY_DOCKS_TO_TOLBI_SHIP_DECK },
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), METATILE_BEHAVIOR_KALAY_TOLBI_DOCKS_COTTAGE_DOOR, CONDITION_ALWAYS, SCRIPT_REF(scKalayTolbiDocksOpenDoorAndLeave) },
@@ -1376,7 +1375,7 @@ CUE KalayTolbiDocks_KalayCuesShipGone[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE KalayTolbiDocks_TolbiCues[] = {
+CUE KalayTolbiDocksTolbiCues[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, TOLBI_DOCKS_TO_WORLD_MAP },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, TOLBI_DOCKS_TO_TOLBI_SHIP_DECK },
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), METATILE_BEHAVIOR_KALAY_TOLBI_DOCKS_COTTAGE_DOOR, CONDITION_ALWAYS, SCRIPT_REF(scKalayTolbiDocksOpenDoorAndLeave) },
@@ -1401,7 +1400,7 @@ CUE KalayTolbiDocks_TolbiCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE KalayTolbiDocks_TolbiCuesStranded[] = {
+CUE KalayTolbiDocksTolbiCuesStranded[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, TOLBI_DOCKS_TO_WORLD_MAP },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, TOLBI_DOCKS_TO_TOLBI_SHIP_DECK },
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), METATILE_BEHAVIOR_KALAY_TOLBI_DOCKS_COTTAGE_DOOR, CONDITION_ALWAYS, SCRIPT_REF(scKalayTolbiDocksOpenDoorAndLeave) },
@@ -1429,7 +1428,7 @@ CUE KalayTolbiDocks_TolbiCuesStranded[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE KalayTolbiDocks_RoomCues[] = {
+CUE KalayTolbiDocksRoomCues[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_KALAY_DOCKS },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_TOLBI_DOCKS },
 	{ CUE_TALK, ACTOR_SELLING_TICKETS, CONDITION_ALWAYS, SCRIPT_REF(scKalayTolbiDocksTalkToWomanSellingTickets) },
@@ -1448,7 +1447,7 @@ CUE KalayTolbiDocks_RoomCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE KalayTolbiDocks_RoomCuesShipGone[] = {
+CUE KalayTolbiDocksRoomCuesShipGone[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_KALAY_DOCKS },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_TOLBI_DOCKS },
 	{ CUE_TALK, ACTOR_SELLING_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipWontBeLeavingHere) },
@@ -1462,7 +1461,7 @@ CUE KalayTolbiDocks_RoomCuesShipGone[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE KalayTolbiDocks_RoomCuesStranded[] = {
+CUE KalayTolbiDocksRoomCuesStranded[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_KALAY_DOCKS },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_TOLBI_DOCKS },
 	{ CUE_TALK, ACTOR_SELLING_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipWontBeLeavingHere) },

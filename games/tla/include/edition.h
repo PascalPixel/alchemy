@@ -93,7 +93,7 @@
 #define FEIZHI_SKIPPED_WHEN_ISAAC_IN_PARTY				1
 #define FIELD_MENU_DEMO_NO_LABEL_WINDOW					1
 #define FORTUNE_TELLER_READS_EQUIPPED_TRIDENT			1
-#define FRAME_WAIT_BEFORE_PSYNERGY						1
+#define TICK_WAIT_BEFORE_PSYNERGY						1
 #define FUGUE_NEW_POSITION								1
 #define GABOMBA_WITCH_DOCTOR_RETREAT_TO_LAST_DOOR		1
 #define GAIA_ROCK_PILLAR_LANDS_WITH_BOOM				1
@@ -118,7 +118,7 @@
 #define LINE_SPACING_COUNTS_ALWAYS_STORED				1
 #define LONESOME_GEORGE_RIDES_SHAPE_TRANSITION			1
 #define LUCKY_WHEELS_PROMPT_DRAWN_ONCE					1
-#define LUCKY_WHEELS_TITLE_MOVES_TWICE_A_FRAME			1
+#define LUCKY_WHEELS_TITLE_MOVES_TWICE_A_TICK			1
 #define MADRA_INNKEEPER_YES_NO_QUESTION					1
 #define MAP_SCREEN_NAME_DELAYED_REDRAW					1
 #define MAP_SCREEN_OFF_MAP_POINT_FOLLOWS_LEADER			1
@@ -196,7 +196,7 @@
 #define FEIZHI_SKIPPED_WHEN_ISAAC_IN_PARTY				1
 #define FIELD_MENU_DEMO_NO_LABEL_WINDOW					1
 #define FORTUNE_TELLER_READS_EQUIPPED_TRIDENT			1
-#define FRAME_WAIT_BEFORE_PSYNERGY						1
+#define TICK_WAIT_BEFORE_PSYNERGY						1
 #define FUGUE_NEW_POSITION								1
 #define GABOMBA_WITCH_DOCTOR_RETREAT_TO_LAST_DOOR		1
 #define GAIA_ROCK_PILLAR_LANDS_WITH_BOOM				1
@@ -224,7 +224,7 @@
 #define LONG_BATTLE_ITEM_REFUSAL						1
 #define LONG_STATUS_ITEM_HELP							1
 #define LUCKY_WHEELS_PROMPT_DRAWN_ONCE					1
-#define LUCKY_WHEELS_TITLE_MOVES_TWICE_A_FRAME			1
+#define LUCKY_WHEELS_TITLE_MOVES_TWICE_A_TICK			1
 #define MADRA_INNKEEPER_YES_NO_QUESTION					1
 #define MAP_SCREEN_NAME_DELAYED_REDRAW					1
 #define MAP_SCREEN_OFF_MAP_POINT_FOLLOWS_LEADER			1
@@ -317,7 +317,7 @@
 #define FEIZHI_SKIPPED_WHEN_ISAAC_IN_PARTY				1
 #define FIELD_MENU_DEMO_NO_LABEL_WINDOW					1
 #define FORTUNE_TELLER_READS_EQUIPPED_TRIDENT			1
-#define FRAME_WAIT_BEFORE_PSYNERGY						1
+#define TICK_WAIT_BEFORE_PSYNERGY						1
 #define FUGUE_NEW_POSITION								1
 #define GABOMBA_WITCH_DOCTOR_RETREAT_TO_LAST_DOOR		1
 #define GAIA_ROCK_PILLAR_LANDS_WITH_BOOM				1
@@ -346,7 +346,7 @@
 #define LONG_STATUS_DJINN_HELP							1
 #define LONG_STATUS_ITEM_HELP							1
 #define LUCKY_WHEELS_PROMPT_DRAWN_ONCE					1
-#define LUCKY_WHEELS_TITLE_MOVES_TWICE_A_FRAME			1
+#define LUCKY_WHEELS_TITLE_MOVES_TWICE_A_TICK			1
 #define MADRA_INNKEEPER_YES_NO_QUESTION					1
 #define MAP_SCREEN_NAME_DELAYED_REDRAW					1
 #define MAP_SCREEN_OFF_MAP_POINT_FOLLOWS_LEADER			1
@@ -436,7 +436,7 @@
 #define FEIZHI_SKIPPED_WHEN_ISAAC_IN_PARTY				1
 #define FIELD_MENU_DEMO_NO_LABEL_WINDOW					1
 #define FORTUNE_TELLER_READS_EQUIPPED_TRIDENT			1
-#define FRAME_WAIT_BEFORE_PSYNERGY						1
+#define TICK_WAIT_BEFORE_PSYNERGY						1
 #define FUGUE_NEW_POSITION								1
 #define GABOMBA_WITCH_DOCTOR_RETREAT_TO_LAST_DOOR		1
 #define GAIA_ROCK_PILLAR_LANDS_WITH_BOOM				1
@@ -466,7 +466,7 @@
 #define LONG_STATUS_ITEM_HELP							1
 #define LUCKY_WHEELS_PROMPT_DRAWN_ONCE					1
 #define LUCKY_WHEELS_THREE_DIGIT_TICKET_COUNT			1
-#define LUCKY_WHEELS_TITLE_MOVES_TWICE_A_FRAME			1
+#define LUCKY_WHEELS_TITLE_MOVES_TWICE_A_TICK			1
 #define MADRA_INNKEEPER_YES_NO_QUESTION					1
 #define MAP_SCREEN_NAME_DELAYED_REDRAW					1
 #define MAP_SCREEN_OFF_MAP_POINT_FOLLOWS_LEADER			1
@@ -560,7 +560,7 @@
 #define FEIZHI_SKIPPED_WHEN_ISAAC_IN_PARTY				1
 #define FIELD_MENU_DEMO_NO_LABEL_WINDOW					1
 #define FORTUNE_TELLER_READS_EQUIPPED_TRIDENT			1
-#define FRAME_WAIT_BEFORE_PSYNERGY						1
+#define TICK_WAIT_BEFORE_PSYNERGY						1
 #define FUGUE_NEW_POSITION								1
 #define GABOMBA_WITCH_DOCTOR_RETREAT_TO_LAST_DOOR		1
 #define GAIA_ROCK_PILLAR_LANDS_WITH_BOOM				1
@@ -589,7 +589,7 @@
 #define LONG_STATUS_DJINN_HELP							1
 #define LONG_STATUS_ITEM_HELP							1
 #define LUCKY_WHEELS_PROMPT_DRAWN_ONCE					1
-#define LUCKY_WHEELS_TITLE_MOVES_TWICE_A_FRAME			1
+#define LUCKY_WHEELS_TITLE_MOVES_TWICE_A_TICK			1
 #define MADRA_INNKEEPER_YES_NO_QUESTION					1
 #define MAP_SCREEN_NAME_DELAYED_REDRAW					1
 #define MAP_SCREEN_OFF_MAP_POINT_FOLLOWS_LEADER			1
@@ -707,7 +707,7 @@
 
 /* In Aqua Rock, the stone pillar pushed east off the ledge in Steam's room
    falls inside an event that locks input and ends lasting Psynergy. It waits
-   until the pillar has actually landed, instead of a fixed 15 frames, then
+   until the pillar has actually landed, instead of a fixed 15 ticks, then
    plays SE_THUMP before the dropped flag and its hop-across cell are set. */
 #ifndef AQUA_ROCK_PILLAR_LANDS_WITH_THUMP
 #define AQUA_ROCK_PILLAR_LANDS_WITH_THUMP 0
@@ -778,7 +778,7 @@
 #define BATTLE_STATUS_FREES_UNSHOWN_TEXT_TILES_ON_CLOSE 0
 #endif
 
-/* The per-frame task that pulses the lit Jupiter Lighthouse beacon's light
+/* The per-tick task that pulses the lit Jupiter Lighthouse beacon's light
    returns early when the orb actor (ACTOR_BEACON_ORB) is missing. Japanese goes
    on and reads the missing actor's sprite through a null pointer. */
 #ifndef BEACON_ORB_NULL_CHECK
@@ -946,7 +946,7 @@
 #define DJINNI_SPIN_JUMP_SOUNDS 0
 #endif
 
-/* Drawing a Djinn menu page waits one frame after each party member's column,
+/* Drawing a Djinn menu page waits one tick after each party member's column,
    for occupied columns only. The tilemap upload is held, so this only adds
    delay and does not show the columns one by one. */
 #ifndef DJINN_COLUMN_WAIT_AFTER_DRAW
@@ -960,15 +960,15 @@
 #define DJINN_EFFECT_CLEARED_WITHOUT_DJINNI 0
 #endif
 
-/* Every redraw of the Djinn menu, a plain cursor move included, waits one frame
+/* Every redraw of the Djinn menu, a plain cursor move included, waits one tick
    after the help window and another after the trade help line. With the flag
-   off, as in Japanese, the menu waits one frame only when it redraws the page,
+   off, as in Japanese, the menu waits one tick only when it redraws the page,
    after the page arrows. */
 #ifndef DJINN_MENU_WAITS_ON_EVERY_REDRAW
 #define DJINN_MENU_WAITS_ON_EVERY_REDRAW 0
 #endif
 
-/* After a Djinn menu page is drawn, the menu waits three frames. With the flag
+/* After a Djinn menu page is drawn, the menu waits three ticks. With the flag
    off it does not wait. */
 #ifndef DJINN_PAGE_WAIT_AFTER_DRAW
 #define DJINN_PAGE_WAIT_AFTER_DRAW 0
@@ -1014,7 +1014,7 @@
 #define EQUIPMENT_PAGE_REDRAWS_HELP 0
 #endif
 
-/* The long secret button code (Clear_ExtraButtonCode) has a second 0 after its
+/* The long secret button code (ClearExtraButtonCode) has a second 0 after its
    terminating 0. Nothing reads past the first 0, so only the data layout
    changes: the array is 32 bytes instead of 30. */
 #ifndef EXTRA_BUTTON_CODE_PADDING
@@ -1061,11 +1061,11 @@
 #define FORTUNE_TELLER_READS_EQUIPPED_TRIDENT 0
 #endif
 
-/* Psynergy cast from the field (a request that pays PP) waits one frame after
+/* Psynergy cast from the field (a request that pays PP) waits one tick after
    the area name is hidden and the World Map is frozen, before the Psynergy
    starts. Requests that pay no PP skip both the freeze and the wait. */
-#ifndef FRAME_WAIT_BEFORE_PSYNERGY
-#define FRAME_WAIT_BEFORE_PSYNERGY 0
+#ifndef TICK_WAIT_BEFORE_PSYNERGY
+#define TICK_WAIT_BEFORE_PSYNERGY 0
 #endif
 
 /* At the Mars Lighthouse entrance, the Djinni Fugue stands at (728, 408) facing
@@ -1086,7 +1086,7 @@
 
 /* In Gaia Rock, the two stone pillars of the first cliffs play SE_BOOM as they
    land, through the Ankohl Ruins' wait-to-land helper. The Japanese edition's
-   helper waits for the landing in the same way (at most 60 frames, then 10
+   helper waits for the landing in the same way (at most 60 ticks, then 10
    more) but plays no sound. There is no event here in any edition. */
 #ifndef GAIA_ROCK_PILLAR_LANDS_WITH_BOOM
 #define GAIA_ROCK_PILLAR_LANDS_WITH_BOOM 0
@@ -1157,9 +1157,9 @@
    faces-motion steering flag set, acceleration 1/4, the standing animation.
    Three things change against Japanese. With no direction held at a cell's
    centre, the slide goes to that cleanup instead of returning without it (50).
-   The move to the cell's centre before sliding waits at most 180 frames and
+   The move to the cell's centre before sliding waits at most 180 ticks and
    ends at once if the slide is stopped (81); before, it was
-   fdActorWaitForMove's 600-frame wait, which ignores the stop. A slide stopped
+   fdActorWaitForMove's 600-tick wait, which ignores the stop. A slide stopped
    between cells ends at once (101) instead of settling back to the cell's
    centre and retrying. In Japanese a retry can leave the leader steered by the
    pad, walking at triple animation speed with acceleration 1/2. */
@@ -1309,9 +1309,9 @@
 
 /* Lucky Wheels remembers which prompt window is open, and opens and draws it
    only when the prompt changes, instead of closing and reopening it every
-   frame. Because the state is remembered, two more things work:
+   tick. Because the state is remembered, two more things work:
    - The all-held prompt gains a second line ('cannot pull the lever'), drawn on
-	 the next frame.
+	 the next tick.
    - After a losing pull, the 'pull the lever' line is drawn once. */
 #ifndef LUCKY_WHEELS_PROMPT_DRAWN_ONCE
 #define LUCKY_WHEELS_PROMPT_DRAWN_ONCE 0
@@ -1326,11 +1326,11 @@
 
 /* On a Lucky Wheels jackpot, the title letters' fall-and-bounce is stepped a
    second time as each letter is drawn, on top of the step at the end of the
-   frame. The letters therefore fall and bounce about twice as fast. The Spanish
-   title's ninth letter, which the frame-end step does not reach, moves once a
-   frame. */
-#ifndef LUCKY_WHEELS_TITLE_MOVES_TWICE_A_FRAME
-#define LUCKY_WHEELS_TITLE_MOVES_TWICE_A_FRAME 0
+   tick. The letters therefore fall and bounce about twice as fast. The Spanish
+   title's ninth letter, which the tick-end step does not reach, moves once a
+   tick. */
+#ifndef LUCKY_WHEELS_TITLE_MOVES_TWICE_A_TICK
+#define LUCKY_WHEELS_TITLE_MOVES_TWICE_A_TICK 0
 #endif
 
 /* Once the Gabomba message has been carried, Madra's innkeeper, talked to from
@@ -1342,8 +1342,8 @@
 #endif
 
 /* When the nearest place changes, the map screen clears its name window at once
-   and draws the new name 6 frames later, using whichever place is nearest then.
-   Japanese clears and draws in the same frame. */
+   and draws the new name 6 ticks later, using whichever place is nearest then.
+   Japanese clears and draws in the same tick. */
 #ifndef MAP_SCREEN_NAME_DELAYED_REDRAW
 #define MAP_SCREEN_NAME_DELAYED_REDRAW 0
 #endif
@@ -1474,7 +1474,7 @@
 /* In battle, while the player chooses a reserve member to switch into a party
    place, A is ignored until the first preview has been drawn: the swapped-in
    member moved into the place and highlighted. Japanese accepts A on the
-   screen's very first frame, before that preview, and confirms the swap with
+   screen's very first tick, before that preview, and confirms the swap with
    the first reserve member unseen. */
 #ifndef PARTY_SWAP_WAITS_FOR_PREVIEW
 #define PARTY_SWAP_WAITS_FOR_PREVIEW 0
@@ -1529,7 +1529,7 @@
 #define POI_MEETING_RESTORES_HALL_TRANSITION 0
 #endif
 
-/* The Psynergy menu's list waits one more frame after drawing the selected
+/* The Psynergy menu's list waits one more tick after drawing the selected
    Psynergy's description in the info window. It happens only when a description
    is actually drawn: the slot is not empty and no kept message holds the info
    window. */
@@ -1657,7 +1657,7 @@
    Start' prompt nor accepts A or Start, so a press in that window is lost. This
    also applies to the prompt-less title shown after Idejima, where the only
    effect is that A/Start cannot end the hold early. The Japanese edition shows
-   the prompt and takes the keys from the first frame. */
+   the prompt and takes the keys from the first tick. */
 #ifndef TITLE_PROMPT_AND_KEYS_AFTER_DELAY
 #define TITLE_PROMPT_AND_KEYS_AFTER_DELAY 0
 #endif
@@ -1693,8 +1693,8 @@
 /* The six-byte table of the HP and PP labels' tile numbers is left out of the
    ROM. It sits after the party status's divider column offsets, and nothing
    reads it, so only the position of the data after it changes and nothing
-   visible differs. In TLA it is Window_UnusedPartyColumnBytes; in TBS it is the
-   bytes after Window_PartyColumnOffsets. */
+   visible differs. In TLA it is WindowUnusedPartyColumnBytes; in TBS it is the
+   bytes after WindowPartyColumnOffsets. */
 #ifndef UNUSED_HP_PP_LABEL_TILES_DROPPED
 #define UNUSED_HP_PP_LABEL_TILES_DROPPED 0
 #endif

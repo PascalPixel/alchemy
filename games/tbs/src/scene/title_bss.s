@@ -7,8 +7,8 @@
 	.else
 	.space 58
 	.endif
-	.global TitleRevealFrame
-TitleRevealFrame:
+	.global TitleRevealTick
+TitleRevealTick:
 	.space 20
 	.global TitleSprites
 TitleSprites:

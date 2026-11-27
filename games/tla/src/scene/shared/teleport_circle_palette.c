@@ -10,7 +10,7 @@
 #define CIRCLE_ENTRY(n) (TELEPORT_CIRCLE_FIRST_ENTRY + (n))
 
 /* The entries the circle is drawn in. */
-Uint16 TeleportCircle_PaletteSlots[] = {
+Uint16 TeleportCirclePaletteSlots[] = {
 	CIRCLE_ENTRY(0),
 	CIRCLE_ENTRY(1),
 	CIRCLE_ENTRY(2),
@@ -24,7 +24,7 @@ Uint16 TeleportCircle_PaletteSlots[] = {
 #include "teleport_circle_colors.c"
 
 /* The shimmer's six steps: for each, the entries its colours go to. */
-Uint16 TeleportCircle_ShimmerSlots[] ALIGNED(4) = {
+Uint16 TeleportCircleShimmerSlots[] ALIGNED(4) = {
 	CIRCLE_ENTRY(5),
 	CIRCLE_ENTRY(0),
 	CIRCLE_ENTRY(1),

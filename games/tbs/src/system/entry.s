@@ -1,13 +1,13 @@
 @ Why syEntry is assembly:
 @ msr CPSR_fc selects IRQ and system modes before their stack setup.
 @ Why IwramSoundReverbCodes is assembly:
-@ fp is a packed sample operand in arithmetic and rotates, not a frame
+@ fp is a packed sample operand in arithmetic and rotates, not a tick
 @ pointer.
 @ Why IwramCodeRecord1 is assembly:
-@ fp is a packed sample operand in arithmetic and rotates, not a frame
+@ fp is a packed sample operand in arithmetic and rotates, not a tick
 @ pointer.
 @ Why IwramCodeRecord2 is assembly:
-@ fp is a packed sample operand in arithmetic and rotates, not a frame
+@ fp is a packed sample operand in arithmetic and rotates, not a tick
 @ pointer.
 @ Why IwramSoundReverbCodesEnd is assembly:
 @ this unused packed-sample arithmetic suffix uses fp (r11) as an

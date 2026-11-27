@@ -13,19 +13,19 @@ const Uint32		 *scGetExits(void);
 const ACTOR_PLACE	 *scGetActorPlacements(void);
 const CUE			 *scGetCues(void);
 Sint32				  scInit(void);
-extern char			  IncreaseItemAndLevel_LvLabel[4];
-extern char			  IncreaseItemAndLevel_ItemPrompt[12];
-extern char			  IncreaseItemAndLevel_ItemHelp[24];
-extern char			  IncreaseItemAndLevel_ItemFull[20];
-extern char			  IncreaseItemAndLevel_PsyPrompt[8];
-extern char			  IncreaseItemAndLevel_PsyHelp[12];
-extern char			  IncreaseItemAndLevel_GlyphsUpper[28];
-extern char			  IncreaseItemAndLevel_GlyphsLower[28];
-extern char			  IncreaseItemAndLevel_GlyphsMarks[12];
-extern SCENE_ENTRANCE IncreaseItemAndLevel_Entrances[];
-extern Uint32		  IncreaseItemAndLevel_Exits[];
-extern ACTOR_PLACE	  IncreaseItemAndLevel_ActorPlacements[];
-extern CUE			  IncreaseItemAndLevel_Cues[];
+extern char			  IncreaseItemAndLevelLvLabel[4];
+extern char			  IncreaseItemAndLevelItemPrompt[12];
+extern char			  IncreaseItemAndLevelItemHelp[24];
+extern char			  IncreaseItemAndLevelItemFull[20];
+extern char			  IncreaseItemAndLevelPsyPrompt[8];
+extern char			  IncreaseItemAndLevelPsyHelp[12];
+extern char			  IncreaseItemAndLevelGlyphsUpper[28];
+extern char			  IncreaseItemAndLevelGlyphsLower[28];
+extern char			  IncreaseItemAndLevelGlyphsMarks[12];
+extern SCENE_ENTRANCE IncreaseItemAndLevelEntrances[];
+extern Uint32		  IncreaseItemAndLevelExits[];
+extern ACTOR_PLACE	  IncreaseItemAndLevelActorPlacements[];
+extern CUE			  IncreaseItemAndLevelCues[];
 
 /* The item browser's details window, 28 tiles wide outside Japanese and 13 in
    it, and how it draws the item's plain name: as tiles outside Japanese, into
@@ -42,8 +42,8 @@ extern CUE			  IncreaseItemAndLevel_Cues[];
 	WHEN(DEBUG_LEVEL_EDITOR_SMALLER, (toFIXED(8) / 5), (toFIXED(17) / 10))
 
 /* The scene's actors, numbering the rows of
-   IncreaseItemAndLevel_ActorPlacements; the game names none of them, so each is
-   named for what talking to it opens (IncreaseItemAndLevel_Cues). */
+   IncreaseItemAndLevelActorPlacements; the game names none of them, so each is
+   named for what talking to it opens (IncreaseItemAndLevelCues). */
 typedef enum INCREASE_ITEM_AND_LEVEL_ACTOR_ID {
 	/* dbIncreaseItemAndLevelSelectItem: `Item No:` over an item's name and what
 	   equipping it does, with `A:Get Item  B:Return`. */
@@ -71,7 +71,7 @@ typedef enum INCREASE_ITEM_AND_LEVEL_ACTOR_ID {
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return IncreaseItemAndLevel_Entrances;
+	return IncreaseItemAndLevelEntrances;
 }
 
 /* The scene has no exit regions: its regions entry returns none. */
@@ -82,12 +82,12 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return IncreaseItemAndLevel_Exits;
+	return IncreaseItemAndLevelExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return IncreaseItemAndLevel_ActorPlacements;
+	return IncreaseItemAndLevelActorPlacements;
 }
 
 #if DEBUG_ABILITY_BROWSER_AND_EMOTE_BUBBLES
@@ -114,7 +114,7 @@ static void dbIncreaseItemAndLevelEllipsisAndSpeak(void)
 
 const CUE *scGetCues(void)
 {
-	return IncreaseItemAndLevel_Cues;
+	return IncreaseItemAndLevelCues;
 }
 
 /* Raises one party member the given number of levels and works out their new
@@ -133,13 +133,13 @@ static void dbIncreaseItemAndLevelRaisePartyLevels(Sint32 levels)
 {
 	Uint16	memberIds[16];
 	Uint16 *member;
-	Sint32	memberCount;
+	Sint32	memberCnt;
 
-	memberCount = syFieldPartyListMembers(memberIds);
-	if(memberCount > 0) {
+	memberCnt = syFieldPartyListMembers(memberIds);
+	if(memberCnt > 0) {
 		Sint32 remaining;
 		member = memberIds;
-		remaining = memberCount;
+		remaining = memberCnt;
 		do {
 			dbIncreaseItemAndLevelRaiseMemberLevel(*member++, levels);
 		} while(--remaining != 0);
@@ -152,29 +152,28 @@ static void dbIncreaseItemAndLevelRaisePartyLevels(Sint32 levels)
 static void dbIncreaseItemAndLevelRunLevelEditor(void)
 {
 	UNIT   *unit;
-	WINDOW *window;
+	WINDOW *win;
 	Sint32	redraw;
-	Sint32	messageId;
+	Sint32	msgId;
 
 	unit = gmUnitGet(MainRoutineStateWork.leaderActorId);
-	window = mnWindowCreate(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
+	win = mnWindowCreate(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
 
 	/* "Raise everyone's level.", the A and Start help, and "B Button: End". */
-	messageId = MsgDebugRaiseEveryonesLevel;
-	mnTextDrawMessage(messageId, window, 0, 0);
-	mnTextDrawMessage(messageId + 1, window, 0, 16);
-	messageId += 2;
+	msgId = MsgDebugRaiseEveryonesLevel;
+	mnTextDrawMessage(msgId, win, 0, 0);
+	mnTextDrawMessage(msgId + 1, win, 0, 16);
+	msgId += 2;
 	redraw = 1;
-	mnTextDrawMessage(messageId, window, 0, 32);
+	mnTextDrawMessage(msgId, win, 0, 32);
 
 	for(;;) {
 		if(redraw != 0) {
-			mnWindowSprRedrawSavedRect(window);
-			mnTextDrawStringAtOffset(unit->name, window, 0, 48);
-			mnTextDrawStringInWindow(
-				IncreaseItemAndLevel_LvLabel, window, 48, 48);
+			mnWindowSprRedrawSavedRect(win);
+			mnTextDrawStringAtOffset(unit->name, win, 0, 48);
+			mnTextDrawStringInWindow(IncreaseItemAndLevelLvLabel, win, 48, 48);
 			redraw = 0;
-			mnTextDrawNumInWindow(unit->level, 0, window, 72, 48);
+			mnTextDrawNumInWindow(unit->level, 0, win, 72, 48);
 		}
 
 		/* Start or Select adds five levels, A one. */
@@ -192,9 +191,9 @@ static void dbIncreaseItemAndLevelRunLevelEditor(void)
 
 		if((PerPush & KEY_B) != 0) {
 			sySndPlay(SE_MENU_CANCEL);
-			mnWindowSprRedrawSavedRect(window);
+			mnWindowSprRedrawSavedRect(win);
 			sySynch(1);
-			mnWindowClose(window, 1);
+			mnWindowClose(win, 1);
 
 			gmUnitCalc(ISAAC);
 			gmUnitCalc(GARET);
@@ -212,20 +211,20 @@ static void dbIncreaseItemAndLevelRunLevelEditor(void)
    the party, and B, or A once the bags are full, leaves. */
 static void dbIncreaseItemAndLevelSelectItem(void)
 {
-	WINDOW *window;
+	WINDOW *win;
 	WINDOW *details;
 	Sint32	selectedItemId;
 	Sint32	redraw;
 	Sint32	itemId;
-	Sint32	entryCount;
+	Sint32	entryCnt;
 	Sint8	seekDirection;
 
-	entryCount = DEBUG_ITEM_COUNT;
+	entryCnt = DEBUG_ITEM_COUNT;
 	seekDirection = 0;
 	selectedItemId = 1;
 	sySndPlay(SE_MENU_CONFIRM);
 	redraw = 1;
-	window = mnWindowCreate(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
+	win = mnWindowCreate(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
 	details =
 		mnWindowCreate(0, 8, ITEM_DEBUG_DETAILS_WIDTH, 10, WINDOW_FLAG_INSTANT);
 	/* Lend HIGHLIGHT_PALETTE to the item icons, as
@@ -243,27 +242,26 @@ static void dbIncreaseItemAndLevelSelectItem(void)
 		if(redraw) {
 			redraw = 0;
 			/* Wrap the number into 0 to 269 (a step back from 0 is 269). */
-			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % entryCount;
-			mnWindowSprRedrawSavedRect(window);
-			mnWindowSprClearList(window);
-			mnTextDrawStringInWindow(
-				IncreaseItemAndLevel_ItemPrompt, window, 0, 0);
-			mnTextDrawNumAtOffset(selectedItemId, 0, window, 80, 0);
+			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % entryCnt;
+			mnWindowSprRedrawSavedRect(win);
+			mnWindowSprClearList(win);
+			mnTextDrawStringInWindow(IncreaseItemAndLevelItemPrompt, win, 0, 0);
+			mnTextDrawNumAtOffset(selectedItemId, 0, win, 80, 0);
 			if(gmPartyInventoryHasSpace()) {
 				mnTextDrawStringInWindow(
-					IncreaseItemAndLevel_ItemHelp, window, 0, 32);
+					IncreaseItemAndLevelItemHelp, win, 0, 32);
 				itemId = selectedItemId & INVENTORY_ITEM_ID_MASK;
 				/* DEAD: the item's definition is looked up and not used; the
 				   ROM keeps the call. */
 				gmItemGetDirect(itemId);
-				mnTextDrawMessageAsTiles(itemId + MsgItemName, window, 120, 0);
+				mnTextDrawMessageAsTiles(itemId + MsgItemName, win, 120, 0);
 				ITEM_DEBUG_DRAW_ITEM_NAME(
-					itemId + MsgItemPlainName, window, 0, 16);
+					itemId + MsgItemPlainName, win, 0, 16);
 				mnWindowSprRedrawSavedRect(details);
 				mnItemMenuDrawItemDetails(details, selectedItemId);
 			} else {
 				mnTextDrawStringInWindow(
-					IncreaseItemAndLevel_ItemFull, window, 0, 32);
+					IncreaseItemAndLevelItemFull, win, 0, 32);
 			}
 		}
 		if(PerPush & KEY_A) {
@@ -315,22 +313,20 @@ static void dbIncreaseItemAndLevelSelectItem(void)
 		}
 		/* Step on past numbers with no item, in the direction moved. */
 		if(seekDirection == -1) {
-			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % entryCount;
+			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % entryCnt;
 			goto check_back;
 		back:
-			selectedItemId =
-				(selectedItemId + DEBUG_ITEM_COUNT - 1) % entryCount;
+			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT - 1) % entryCnt;
 		check_back:
 			if(gmItemGetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon ==
 				0)
 				goto back;
 		}
 		if(seekDirection == 1) {
-			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % entryCount;
+			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % entryCnt;
 			goto check_ahead;
 		ahead:
-			selectedItemId =
-				(selectedItemId + DEBUG_ITEM_COUNT + 1) % entryCount;
+			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT + 1) % entryCnt;
 		check_ahead:
 			if(gmItemGetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon ==
 				0)
@@ -339,9 +335,9 @@ static void dbIncreaseItemAndLevelSelectItem(void)
 		seekDirection = 0;
 		sySynch(1);
 	}
-	mnWindowSprRedrawSavedRect(window);
+	mnWindowSprRedrawSavedRect(win);
 	sySynch(1);
-	mnWindowClose(window, 1);
+	mnWindowClose(win, 1);
 	mnWindowClose(details, 1);
 }
 
@@ -351,22 +347,22 @@ static void dbIncreaseItemAndLevelSelectItem(void)
    ability; B leaves. */
 UNUSED static void dbIncreaseItemAndLevelSelectAbility(void)
 {
-	WINDOW *window;
+	WINDOW *win;
 #if !FIX_UNINITIALIZED_READ
 	WINDOW *details;
 #endif
 	Sint32 selectedAbilityId;
 	Sint32 redraw;
 	Sint32 abilityId;
-	Sint32 entryCount;
+	Sint32 entryCnt;
 	Sint8  seekDirection;
 
-	entryCount = DEBUG_ABILITY_COUNT;
+	entryCnt = DEBUG_ABILITY_COUNT;
 	seekDirection = 0;
 	selectedAbilityId = 1;
 	sySndPlay(SE_MENU_CONFIRM);
 	redraw = 1;
-	window = mnWindowCreate(0, 0, 30, 12, WINDOW_FLAG_INSTANT);
+	win = mnWindowCreate(0, 0, 30, 12, WINDOW_FLAG_INSTANT);
 	/* Lend HIGHLIGHT_PALETTE to the icons, as the item browser does. */
 	syDMAXCopy((const void *)OBJ_PLTT,
 		(void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
@@ -380,21 +376,18 @@ UNUSED static void dbIncreaseItemAndLevelSelectAbility(void)
 		if(redraw) {
 			redraw = 0;
 			selectedAbilityId =
-				(selectedAbilityId + DEBUG_ABILITY_COUNT) % entryCount;
-			mnWindowSprRedrawSavedRect(window);
-			mnWindowSprClearList(window);
-			mnTextDrawStringInWindow(
-				IncreaseItemAndLevel_PsyPrompt, window, 0, 0);
-			mnTextDrawNumAtOffset(selectedAbilityId, 0, window, 80, 0);
-			mnTextDrawStringInWindow(
-				IncreaseItemAndLevel_PsyHelp, window, 0, 72);
+				(selectedAbilityId + DEBUG_ABILITY_COUNT) % entryCnt;
+			mnWindowSprRedrawSavedRect(win);
+			mnWindowSprClearList(win);
+			mnTextDrawStringInWindow(IncreaseItemAndLevelPsyPrompt, win, 0, 0);
+			mnTextDrawNumAtOffset(selectedAbilityId, 0, win, 80, 0);
+			mnTextDrawStringInWindow(IncreaseItemAndLevelPsyHelp, win, 0, 72);
 			abilityId = selectedAbilityId & ACTION_ID_MASK;
-			mnTextDrawMessageAsTiles(
-				abilityId + MsgAbilityName, window, 120, 0);
+			mnTextDrawMessageAsTiles(abilityId + MsgAbilityName, win, 120, 0);
 			/* The description twice: as tiles, and below it into the canvas. */
 			mnTextDrawMessageAsTiles(
-				abilityId + MsgAbilityDescription, window, 0, 24);
-			mnTextDrawMessage(abilityId + MsgAbilityDescription, window, 0, 48);
+				abilityId + MsgAbilityDescription, win, 0, 24);
+			mnTextDrawMessage(abilityId + MsgAbilityDescription, win, 0, 48);
 		}
 		if(PerPush & KEY_B) {
 			sySndPlay(SE_MENU_CANCEL);
@@ -439,11 +432,11 @@ UNUSED static void dbIncreaseItemAndLevelSelectAbility(void)
 		/* Step on past numbers with no ability, in the direction moved. */
 		if(seekDirection == -1) {
 			selectedAbilityId =
-				(selectedAbilityId + DEBUG_ABILITY_COUNT) % entryCount;
+				(selectedAbilityId + DEBUG_ABILITY_COUNT) % entryCnt;
 			goto check_back;
 		back:
 			selectedAbilityId =
-				(selectedAbilityId + DEBUG_ABILITY_COUNT - 1) % entryCount;
+				(selectedAbilityId + DEBUG_ABILITY_COUNT - 1) % entryCnt;
 		check_back:
 			if(gmAbilityGetDirect(selectedAbilityId & ACTION_ID_MASK)->icon ==
 				0)
@@ -451,11 +444,11 @@ UNUSED static void dbIncreaseItemAndLevelSelectAbility(void)
 		}
 		if(seekDirection == 1) {
 			selectedAbilityId =
-				(selectedAbilityId + DEBUG_ABILITY_COUNT) % entryCount;
+				(selectedAbilityId + DEBUG_ABILITY_COUNT) % entryCnt;
 			goto check_ahead;
 		ahead:
 			selectedAbilityId =
-				(selectedAbilityId + DEBUG_ABILITY_COUNT + 1) % entryCount;
+				(selectedAbilityId + DEBUG_ABILITY_COUNT + 1) % entryCnt;
 		check_ahead:
 			if(gmAbilityGetDirect(selectedAbilityId & ACTION_ID_MASK)->icon ==
 				0)
@@ -464,9 +457,9 @@ UNUSED static void dbIncreaseItemAndLevelSelectAbility(void)
 		seekDirection = 0;
 		sySynch(1);
 	}
-	mnWindowSprRedrawSavedRect(window);
+	mnWindowSprRedrawSavedRect(win);
 	sySynch(1);
-	mnWindowClose(window, 1);
+	mnWindowClose(win, 1);
 #if !FIX_UNINITIALIZED_READ
 	/* UB: details is never created, but the browser closes it. */
 	mnWindowClose(details, 1);
@@ -474,7 +467,7 @@ UNUSED static void dbIncreaseItemAndLevelSelectAbility(void)
 }
 #endif
 
-/* Unused: requests an exit through TRANSITION_WINDOW over 24 frames; no script
+/* Unused: requests an exit through TRANSITION_WINDOW over 24 ticks; no script
    row names it. */
 UNUSED static void dbIncreaseItemAndLevelRequestExit(void)
 {
@@ -518,15 +511,15 @@ static void dbIncreaseItemAndLevelRunMotionTest(void)
    of the screen with three rows of the font's letters and marks, left open. */
 static void dbIncreaseItemAndLevelShowGlyphCaptions(void)
 {
-	WINDOW *window;
+	WINDOW *win;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
 	UNUSED Uint8 text[32];
 
-	window = mnWindowCreate(0, 13, 30, 6, WINDOW_FLAG_INSTANT);
-	mnTextDrawStringInWindow(IncreaseItemAndLevel_GlyphsUpper, window, 0, 0);
-	mnTextDrawStringInWindow(IncreaseItemAndLevel_GlyphsLower, window, 0, 8);
-	mnTextDrawStringInWindow(IncreaseItemAndLevel_GlyphsMarks, window, 0, 16);
+	win = mnWindowCreate(0, 13, 30, 6, WINDOW_FLAG_INSTANT);
+	mnTextDrawStringInWindow(IncreaseItemAndLevelGlyphsUpper, win, 0, 0);
+	mnTextDrawStringInWindow(IncreaseItemAndLevelGlyphsLower, win, 0, 8);
+	mnTextDrawStringInWindow(IncreaseItemAndLevelGlyphsMarks, win, 0, 16);
 }
 #endif
 
@@ -553,42 +546,42 @@ static int dbIncreaseItemAndLevelOpenPortraitBrowser(void)
 	return mnDebugBrowserPortraits();
 }
 
-char IncreaseItemAndLevel_LvLabel[4] = "Lv";
+char IncreaseItemAndLevelLvLabel[4] = "Lv";
 
-char IncreaseItemAndLevel_ItemPrompt[12] = "Item No:";
+char IncreaseItemAndLevelItemPrompt[12] = "Item No:";
 
-char IncreaseItemAndLevel_ItemHelp[24] = "A:Get Item  B:Return";
+char IncreaseItemAndLevelItemHelp[24] = "A:Get Item  B:Return";
 
-char IncreaseItemAndLevel_ItemFull[20] = "ITEM FULL........";
+char IncreaseItemAndLevelItemFull[20] = "ITEM FULL........";
 
 #if DEBUG_ABILITY_BROWSER_AND_EMOTE_BUBBLES
-char IncreaseItemAndLevel_PsyPrompt[8] = "Psy No:";
+char IncreaseItemAndLevelPsyPrompt[8] = "Psy No:";
 #endif
 
 #if DEBUG_ABILITY_BROWSER_AND_EMOTE_BUBBLES
-char IncreaseItemAndLevel_PsyHelp[12] = "B:Return";
+char IncreaseItemAndLevelPsyHelp[12] = "B:Return";
 #endif
 
 #if DEBUG_FORCE_SHOWS_GLYPH_CAPTIONS
 /* The glyph captions' first row; it has no I. */
-char IncreaseItemAndLevel_GlyphsUpper[28] = "A B C D E F G H J K L M N O";
+char IncreaseItemAndLevelGlyphsUpper[28] = "A B C D E F G H J K L M N O";
 #endif
 
 #if DEBUG_FORCE_SHOWS_GLYPH_CAPTIONS
-char IncreaseItemAndLevel_GlyphsLower[28] = "P Q R S T U V W X Y Z a b c";
+char IncreaseItemAndLevelGlyphsLower[28] = "P Q R S T U V W X Y Z a b c";
 #endif
 
 #if DEBUG_FORCE_SHOWS_GLYPH_CAPTIONS
-char IncreaseItemAndLevel_GlyphsMarks[12] = "! ? # $ %";
+char IncreaseItemAndLevelGlyphsMarks[12] = "! ? # $ %";
 #endif
 
-SCENE_ENTRANCE IncreaseItemAndLevel_Entrances[] = {
+SCENE_ENTRANCE IncreaseItemAndLevelEntrances[] = {
 	{0, CONDITION_ALWAYS, 824, 0, 864, FACING_NORTH, 0, 280, 504, 912, 896, 0},
 	{SCENE_TABLE_END},
 };
 
 /* No exits. */
-Uint32 IncreaseItemAndLevel_Exits[] = {
+Uint32 IncreaseItemAndLevelExits[] = {
 	SCENE_EXITS_END,
 };
 
@@ -597,7 +590,7 @@ Uint32 IncreaseItemAndLevel_Exits[] = {
    also the ability browser (reachable in English and German only) and the two
    emote bubbles. */
 /* clang-format off */
-ACTOR_PLACE IncreaseItemAndLevel_ActorPlacements[] = {
+ACTOR_PLACE IncreaseItemAndLevelActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_LADY_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 864, FACING_SOUTHEAST,
 		TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_SATUROS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 480, FACING_SOUTHEAST,
@@ -632,7 +625,7 @@ ACTOR_PLACE IncreaseItemAndLevel_ActorPlacements[] = {
 
 /* Talking to each actor opens its tool; Force cast at Menardi runs a test of
    its own. */
-CUE IncreaseItemAndLevel_Cues[] = {
+CUE IncreaseItemAndLevelCues[] = {
 	{CUE_TALK, ACTOR_ITEM_BROWSER, CONDITION_ALWAYS,
 		SCRIPT_REF(dbIncreaseItemAndLevelSelectItem)},
 	{CUE_TALK, ACTOR_ICON_BROWSER, CONDITION_ALWAYS,

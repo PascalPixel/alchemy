@@ -15,7 +15,7 @@
 /* The battle camera: its eye, the focus it turns about, and its pitch, yaw and
    distance. It lives in the HEAP_SLOT_CAMERA heap slot. */
 typedef struct BATTLE_CAMERA {
-	/* The eye, 16.16 fixed-point pixels: written each frame distance behind the
+	/* The eye, 16.16 fixed-point pixels: written each tick distance behind the
 	   focus along the turned view. */
 	FIXED eye[3];
 	FIXED focus[3]; /* the focus, 16.16 fixed-point pixels */
@@ -44,17 +44,17 @@ STATIC_ASSERT(offsetof(BATTLE_CAMERA, yaw) == 54);
 #define BattleCameraWork (*(BATTLE_CAMERA **)&HeapSlots[HEAP_SLOT_CAMERA])
 
 /* The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the yaw the battle camera eases
-   toward and the frames left to ease it, and how the battle background is
+   toward and the ticks left to ease it, and how the battle background is
    shown. */
 typedef struct BATTLE_BACKGROUND_STATE {
 	Sint32 tgtYaw; /* 1/65536 turns */
-	Sint32 frames; /* frames left to ease the yaw, a sixteenth a frame */
+	Sint32 ticks;  /* ticks left to ease the yaw, a sixteenth a tick */
 	Sint32 mode;   /* BATTLE_BACKGROUND_MODE */
 	/* BATTLE_BACKGROUND_FIXED also sets BG1's scroll whatever the mode; the
 	   battle effects' canvas layers set it. */
 	Sint32 secondMode;
 	Sint32 busy; /* while set, btCameraSetRange leaves BG1's scroll */
-	/* 0 lets the camera update set the background's range each frame; 1 for a
+	/* 0 lets the camera update set the background's range each tick; 1 for a
 	   critical hit's zoom and once a turn's view is set. */
 	Sint32 keepRange;
 	/* cleared when a battle starts; nothing reads them */
@@ -107,13 +107,13 @@ typedef struct BATTLE_AFFINE {
 } BATTLE_AFFINE;
 
 /* The battle background's scanline state, in HEAP_SLOT_BATTLE_SCANLINES: two
-   pages of per-line BG2CNT values, swapped each frame, and the affine
+   pages of per-line BG2CNT values, swapped each tick, and the affine
    parameters. */
 typedef struct BATTLE_AFFINE_HDMA {
 	Uint32		  page; /* the page of lines shown; the other one is built */
 	Uint8		  unused[12]; /* no code names it */
 	BATTLE_AFFINE affine;
-	/* Each scanline's BG2CNT, one page per frame: which half of the picture a
+	/* Each scanline's BG2CNT, one page per tick: which half of the picture a
 	   line shows, or the plane off, with BGCNT_WRAP at a zoom of 1 or more. */
 	Uint16 lines[2][160];
 } BATTLE_AFFINE_HDMA;

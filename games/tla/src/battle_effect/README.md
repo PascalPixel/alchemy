@@ -48,7 +48,7 @@ pillar hides what is behind it.
 ![Jenna casts Fire at Felix, Piers and Sheba: fireballs rise, hang and stream into the three](https://alchemy.pascalpixel.com/tla/abilities/fire.gif)
 
 A handler never draws on the screen. It draws on its own copy of the
-canvas, marks it ready, and waits a frame. An event, the transfer, copies it
+canvas, marks it ready, and waits a tick. An event, the transfer, copies it
 to the screen at VBlank (`btEffectTransferCanvas`).
 
 Straight after the copy, the transfer does one thing to the handler's
@@ -56,13 +56,13 @@ copy, and which thing is the effect's choice:
 
 | After the copy | What the player sees |
 | --- | --- |
-| wipe it clean | only this frame's drawing |
+| wipe it clean | only this tick's drawing |
 | cut every level to three quarters | a long trail |
 | cut every level to half | a short trail |
 | leave it | the drawing builds up |
 
 That is how Fire's fireballs have tails nobody draws: the tail is last
-frame's fireball, a little dimmer.
+tick's fireball, a little dimmer.
 
 ## Blitters
 
@@ -83,7 +83,7 @@ flare, each at ten sizes, so a mote shrinks as it dies just by being asked
 for at a smaller size.
 
 Sparks, embers and chips of rock are particles: a position, a speed and
-one spare number the effect uses as it likes, often the frames left to
+one spare number the effect uses as it likes, often the ticks left to
 live.
 
 ## Models
@@ -100,16 +100,16 @@ Each of them replaces the canvas, keeps the brighter, or adds
 (`MODEL_KIND`). The rings, columns and whirlpools of the summons are
 models; Coatlicue's coils and Iris's pillars are strips of them.
 
-## A handler's frame loop
+## A handler's tick loop
 
 ![Sheba casts Bolt at Felix: sparks gather, a bolt strikes him, and the damage is told while sparks are in the air](https://alchemy.pascalpixel.com/tla/abilities/bolt.gif)
 
-A handler reads the way its effect plays: set up, then one frame's work
-after another with a wait of one frame between, then tidy up. Anything that
-happens once is tied to a frame number. `btEffectRunBolt` is a short
+A handler reads the way its effect plays: set up, then one tick's work
+after another with a wait of one tick between, then tidy up. Anything that
+happens once is tied to a tick number. `btEffectRunBolt` is a short
 one to start with.
 
-One of those frames is the signal to the battle. From it on, the battle
+One of those ticks is the signal to the battle. From it on, the battle
 shows each target's flinch and its message while the effect goes on
 drawing ([Battles](../battle/README.md#how-outcomes-reach-the-screen)).
 

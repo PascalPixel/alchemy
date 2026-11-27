@@ -33,7 +33,7 @@ typedef struct BATTLE_SUMMARY_CURSOR {
 	Uint8 reserved; /* 0 in every row */
 } BATTLE_SUMMARY_CURSOR;
 
-/* A row of Menu_BarPatternRows: the two words a menu bar's tile pair is XORed
+/* A row of MenuBarPatternRows: the two words a menu bar's tile pair is XORed
    with (mnRangeIconBuildTiles). */
 typedef struct BAR_PATTERN_ROW {
 	Uint32 firstTile;
@@ -55,25 +55,25 @@ static __inline__ Uint32 mnXorWord(Uint32 word, Uint32 mask)
 #define RANGE_PATTERN_COUNT		6
 #define RANGE_ICON_ALL			(RANGE_PATTERN_SET_COUNT * RANGE_PATTERN_COUNT - 1)
 
-Sint32 mnCommandIconReloadSlot(Sint32 slot, Sint32 index);
-void   mnBattleMenuUpdateEachFrame(void);
+Sint32 mnCommandIconReloadSlot(Sint32 slot, Sint32 idx);
+void   mnBattleMenuUpdateEachTick(void);
 Sint32 mnBattleCommandRowRun(Sint32 mode, Sint32 fleeAllowed);
 Sint32 mnBattleTargetRunSelection(
 	Sint32 selection, Sint32 mode, Uint32 spread, Uint32 kind);
-Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCount, Sint32 member);
+Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member);
 Sint32 mnBattleRefuseFlee(void);
-Sint32 mnBattlePsynergyMenuRun(Sint32 unitId, Uint16 *actions, Sint32 count);
+Sint32 mnBattlePsynergyMenuRun(Sint32 unitId, Uint16 *actions, Sint32 cnt);
 Sint32 mnBattleSummonMenuRun(
 	Sint32 unusedA, Sint32 unusedB, const Uint8 *standby);
-Sint32 mnBattleItemMenuRun(Sint32 member, Uint16 *entries, Sint32 count);
+Sint32 mnBattleItemMenuRun(Sint32 member, Uint16 *entries, Sint32 cnt);
 Sint32 mnItemCheckBattleUse(Sint32 member, Sint32 item);
 Sint32 mnItemIconLoadIntoSlot(Sint32 item, Sint32 slot);
 void   mnIconMenuDrawIcons(void);
 Sint32 mnLinkCreateCountdownLabelWindow(void);
 /* Shows the advance cursor bobbing at (x, y) and waits for A, B, L or R. */
 void btMessageWaitForAdvanceAtStub(Sint32 x, Sint32 y);
-/* Sets the BGM volume target (BGM_UNITY_SCALE full) and its step a VBlank. */
-void sySndSetBGMVolumeTargetStub(Sint32 target, Sint32 step);
+/* Sets the BGM volume target (BGM_UNITY_SCALE full) and its step a frame. */
+void sySndSetBGMVolumeTargetStub(Sint32 tgt, Sint32 step);
 /* Plays the music fdQueueMusic remembered, if any. */
 void fdPlayQueuedMusicStub(void);
 /* Saves up to 32 actors into SnapshotObjects so that they can be put back. */
@@ -84,8 +84,8 @@ void mnDjinnFiguresInitTopRowStub(void);
 void mnDjinnFiguresReleaseTopRowStub(void);
 /* Shows the Djinn figures (nonzero) or hides them (0). */
 void mnDjinnFiguresSetShownStub(Sint32 shown);
-/* Moves Djinn figure `index` to screen pixel (x, y), if it exists. */
-void   mnDjinnFiguresSetSlotPosStub(Sint32 index, Sint32 x, Sint32 y);
+/* Moves Djinn figure `idx` to screen pixel (x, y), if it exists. */
+void   mnDjinnFiguresSetSlotPosStub(Sint32 idx, Sint32 x, Sint32 y);
 Sint32 mnFileListSelectFile(Sint32 selectedFile, Sint32 menuMode);
 void   mnTitleBob(struct WINDOW_SPR *object);
 
@@ -105,11 +105,11 @@ typedef enum MENU_TITLE_PICTURE {
 } MENU_TITLE_PICTURE;
 
 struct WINDOW_SPR *mnTitleCreate(
-	Sint32 picture, struct WINDOW *window, Sint32 x, Sint32 y);
+	Sint32 picture, struct WINDOW *win, Sint32 x, Sint32 y);
 void mnWindowSprPulse(struct WINDOW_SPR *obj);
 
 /* The file menu's choices, as mnFileListSelectAction returns them
-   (Menu_SaveSlotActionByPosition). */
+   (MenuSaveSlotActionByPosition). */
 typedef enum FILE_ACTION {
 	SAVE_ACTION_NEW_GAME = 0,
 	SAVE_ACTION_CONTINUE = 1,
@@ -154,7 +154,7 @@ typedef struct PREVIEW_SPR {
 } PREVIEW_SPR;
 
 /* The field menu's commands, as mnFieldMenuSelectCommand takes and returns them
-   (Menu_TopEntryCommandByPosition). */
+   (MenuTopEntryCommandByPosition). */
 typedef enum FIELD_MENU_COMMAND {
 	FIELD_MENU_PSYNERGY = 1,
 	FIELD_MENU_DJINN = 2,
@@ -226,7 +226,7 @@ typedef enum BATTLE_SUMMARY_STAT {
 } BATTLE_SUMMARY_STAT;
 
 /* The two tiles of the link screen's page arrows, which mnPageArrowsDraw shifts
-   and merges into the window border each frame. */
+   and merges into the window border each tick. */
 extern Uint8 PageArrowTiles[];
 /* Merges two 4bpp tiles row by row into `output`: `second` moved `shift`
    pixels, drawn over `first`. */
@@ -239,10 +239,10 @@ extern Sint32 MenuTitlePictures[];
 void mnFileListUpdatePulse(void);
 /* The eight scales mnWindowSprPulse pulses the settings menu's selected icon
    through. */
-extern const FIXED WindowSprite_PulseScales[];
+extern const FIXED WindowSpritePulseScales[];
 /* Eight offsets, 0 to 3 and back, that make the name entry screen's caret
    circle: the x offset leads the y offset by five steps. */
-extern const Sint8 NameEntry_CaretWave[];
+extern const Sint8 NameEntryCaretWave[];
 /* The name entry screen keyboard's compressed tilemap, the Spanish edition's
    with its own letters. */
 extern const Uint8 NameEntry_KeyboardTilemap[];

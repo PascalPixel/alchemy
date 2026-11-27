@@ -5,12 +5,12 @@
    bounces on to and sinks (STUMP_RESTING_X and _Z), and the height of the
    ground it comes down to (STUMP_FLOOR_HEIGHT, 16.16). */
 
-/* Spins the leaping stump a thirty-second of a turn each frame. */
+/* Spins the leaping stump a thirty-second of a turn each tick. */
 static void scSpinStump(ACTOR *actor)
 {
-	SPR *sprite = actor->spr;
+	SPR *spr = actor->spr;
 
-	sprite->rotation -= TRIG_TURN / 32;
+	spr->rotation -= TRIG_TURN / 32;
 }
 
 #include "actor_wait_below_height.c"
@@ -26,7 +26,7 @@ static void scLeapStump(Sint32 stumpId)
 
 	stump = fdActorGet(stumpId);
 	stump->motionFlg = 0;
-	for(i = 0; i < STUMP_TIP_FRAMES; i++) {
+	for(i = 0; i < STUMP_TIP_TICKS; i++) {
 		sySynch(1);
 		stump->spr->rotation -= TRIG_TURN / 256;
 		stump->x.fixed -= syCos(stump->spr->rotation) / 2;

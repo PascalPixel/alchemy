@@ -185,13 +185,12 @@ typedef enum TUNDARIA_TOWER_METATILE_BEHAVIOR {
 } TUNDARIA_TOWER_METATILE_BEHAVIOR;
 
 void scTundariaTowerAdvanceIceChip(FIELD_OBJECT *object);
-void scTundariaTowerScatterIceChips(
-	VECTOR3 *position, Sint32 count, FIXED scale);
-void		  scParticleUpdateFalling(void);
-void		  scTundariaTowerStartFallingRocks(void);
-void		  scTundariaTowerEndFallingRocks(void);
-void		  scTundariaTowerUpdateBrownWallMetatile(void);
-void		  scTundariaTowerSparkleCenterProng(ACTOR *actor);
+void scTundariaTowerScatterIceChips(VECTOR3 *pos, Sint32 cnt, FIXED scale);
+void scParticleUpdateFalling(void);
+void scTundariaTowerStartFallingRocks(void);
+void scTundariaTowerEndFallingRocks(void);
+void scTundariaTowerUpdateBrownWallMetatile(void);
+void scTundariaTowerSparkleCenterProng(ACTOR *actor);
 extern Sint16 TundariaTowerPillarPuzzlePillars[];
 extern Sint16 TundariaTowerBurstBroochPillar[];
 extern CUE	  TundariaTowerEntranceCues[];
@@ -250,26 +249,26 @@ void scTundariaTowerSetColumnMetatile(ACTOR *actor)
 
 /* Sets each listed ice column, by its row of (actor, animation, flag), standing
    or pounded flat as its flag says (scTundariaTowerSetColumnMetatile). */
-void scTundariaTowerSetUpIceColumns(Uint16 *table)
+void scTundariaTowerSetUpIceColumns(Uint16 *tbl)
 {
 	Uint16		*row;
 	FIELD_ACTOR *object;
-	Sint16		 flag;
-	Sint16		 animation;
+	Sint16		 flg;
+	Sint16		 anm;
 
-	if(table[0] == ACTOR_LIST_END)
+	if(tbl[0] == ACTOR_LIST_END)
 		return;
-	for(row = table; row[0] != ACTOR_LIST_END; row += 3) {
+	for(row = tbl; row[0] != ACTOR_LIST_END; row += 3) {
 		object = ((FIELD_ACTOR *)fdActorGetById(row[0]));
-		animation = row[1];
-		flag = row[2];
+		anm = row[1];
+		flg = row[2];
 
 		fdActorSetSprFlags(object, 0);
 		fdActorSelectAnimation(
-			object, (Uint16)animation + syGameFlagGet((Uint16)flag));
+			object, (Uint16)anm + syGameFlagGet((Uint16)flg));
 		object->motionFlg = 0;
 		object->collisionFlg &= ~ACTOR_SOLID;
-		object->tmr = flag;
+		object->tmr = flg;
 		scTundariaTowerSetColumnMetatile(object);
 	}
 }
@@ -376,13 +375,13 @@ void scTundariaTowerOpenDoor(void)
 		(FIXEDtoINT(fdActorGetById(state->leaderActorId)->z.fixed) | 1) - 16);
 	syFieldScriptWait(5);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorWaitForMoveById(state->leaderActorId);
 	syImportScriptSetExitRequest(*choice);
 	fdScriptEnd();
 }
 
-/* Each frame of a chip of ice: it moves and scales by its rates and falls. */
+/* Each tick of a chip of ice: it moves and scales by its rates and falls. */
 void scTundariaTowerAdvanceIceChip(FIELD_OBJECT *object)
 {
 	object->eff.x += object->eff.vel.x;
@@ -395,13 +394,12 @@ void scTundariaTowerAdvanceIceChip(FIELD_OBJECT *object)
 
 /* Throws chips of ice (SPRITE_BLUE_CRYSTAL) off a point, each turned at random,
    to fall under scTundariaTowerAdvanceIceChip. */
-void scTundariaTowerScatterIceChips(
-	VECTOR3 *position, Sint32 count, FIXED scale)
+void scTundariaTowerScatterIceChips(VECTOR3 *pos, Sint32 cnt, FIXED scale)
 {
 	EFFECT_OPTIONS options;
 	Sint32		   i;
-	Sint32		   velocityX;
-	Sint32		   velocityY;
+	Sint32		   velX;
+	Sint32		   velY;
 	FIXED		   x;
 
 	options.pri = 1;
@@ -411,17 +409,17 @@ void scTundariaTowerScatterIceChips(
 	options.startScaleY = scale;
 	options.startScaleX = scale;
 	options.update = scTundariaTowerAdvanceIceChip;
-	for(i = 0; i != count; i++) {
+	for(i = 0; i != cnt; i++) {
 		options.rotation = (syRandom() & 15) << 12;
-		velocityX = syRandom() & 15;
-		velocityX -= 8;
-		velocityX *= toFIXED(1) / 4;
-		velocityY = syRandom() & 15;
-		velocityY += 8;
-		velocityY *= toFIXED(1) / 4;
-		x = position->x - toFIXED(syRandom() & 31) + toFIXED(15);
-		scFieldEffectSpawn(x, position->y + toFIXED(syRandom() & 15),
-			position->z, velocityX, velocityY, 0,
+		velX = syRandom() & 15;
+		velX -= 8;
+		velX *= toFIXED(1) / 4;
+		velY = syRandom() & 15;
+		velY += 8;
+		velY *= toFIXED(1) / 4;
+		x = pos->x - toFIXED(syRandom() & 31) + toFIXED(15);
+		scFieldEffectSpawn(x, pos->y + toFIXED(syRandom() & 15), pos->z, velX,
+			velY, 0,
 			EFFECT_USE_UPDATE | EFFECT_USE_ROTATION | EFFECT_USE_TYPE |
 				EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET |
 				EFFECT_USE_PRIORITY,
@@ -433,32 +431,32 @@ void scTundariaTowerScatterIceChips(
    cracks and throws off chips of ice. */
 void scTundariaTowerBurstCrystal(Sint32 step)
 {
-	VECTOR3 position;
+	VECTOR3 pos;
 
 	switch(step) {
 	case 1:
 		break;
 	case 2:
-		position.x = toFIXED(347);
-		position.y = 0;
-		position.z = toFIXED(376);
-		scTundariaTowerScatterIceChips(&position, 1, toFIXED(8) / 10);
+		pos.x = toFIXED(347);
+		pos.y = 0;
+		pos.z = toFIXED(376);
+		scTundariaTowerScatterIceChips(&pos, 1, toFIXED(8) / 10);
 		break;
 	case 3:
 		fdMapGridCopyMetatileTilesIndicesRect(31, 85, 20, 85, 3, 4);
-		position.x = toFIXED(347);
-		position.y = 0;
-		position.z = toFIXED(376);
-		scTundariaTowerScatterIceChips(&position, 8, toFIXED(3) / 2);
+		pos.x = toFIXED(347);
+		pos.y = 0;
+		pos.z = toFIXED(376);
+		scTundariaTowerScatterIceChips(&pos, 8, toFIXED(3) / 2);
 		break;
 	}
 }
 
-/* The fallen Center Prong's update: a sparkle near it every eighth frame. */
+/* The fallen Center Prong's update: a sparkle near it every eighth tick. */
 void scTundariaTowerSparkleCenterProng(ACTOR *actor)
 {
 	EFFECT_OPTIONS params;
-	Uint32		   phase = FrameCount & 7;
+	Uint32		   phase = TickCount & 7;
 	Sint32		   dx;
 	Sint32		   dy;
 
@@ -518,7 +516,7 @@ void scTundariaTowerSlideOnIce(void)
 	fdLeaderSlideOnIce();
 }
 
-extern Sint32 TundariaTower_RefluxSpinScript[];
+extern Sint32 TundariaTowerRefluxSpinScript[];
 
 /* Sliding onto metatile (21, 33) in Reflux's sliding puzzle: the screen flashes
    white with a splash and a shake, and Reflux hops down before the party and
@@ -541,7 +539,7 @@ void scTundariaTowerRefluxAppears(void)
 	actor->steeringFlg = 0;
 	actor->update = 0;
 	fdActorSetDestination(ACTOR_REFLUX, 424, 536);
-	scTundariaTowerStartEffectScript(actor, TundariaTower_RefluxSpinScript);
+	scTundariaTowerStartEffectScript(actor, TundariaTowerRefluxSpinScript);
 	fdActorWaitForMoveById(ACTOR_REFLUX);
 	syGameFlagSet(FLAG_REFLUX_APPEARED);
 	fdActorWatchAndSetScript(ACTOR_REFLUX, MainRoutineStateWork.leaderActorId);
@@ -561,7 +559,7 @@ void scTundariaTowerShrinkIceColumn(Sint32 phase, Sint32 step)
 	EFFECT_OPTIONS		options;
 	FIELD_EFFECT_STATE *effectState = Ram_HeapSlots->fieldEffState;
 	ACTOR			   *actor = fdActorGetById(effectState->tgtId);
-	Sint32				velocityX;
+	Sint32				velX;
 
 	if(step < 8) {
 		options.type = SPRITE_BLUE_CRYSTAL;
@@ -571,10 +569,10 @@ void scTundariaTowerShrinkIceColumn(Sint32 phase, Sint32 step)
 		options.tgtScaleY = toFIXED(1) / 2;
 		options.tgtScaleX = toFIXED(1) / 2;
 		options.rotation = (syRandom() & 15) << 12;
-		velocityX = ((syRandom() & 15) - 8) << 13;
+		velX = ((syRandom() & 15) - 8) << 13;
 		scFieldEffectSpawn(actor->x.fixed,
 			actor->y.fixed - toFIXED(step * 3) + toFIXED(16), actor->z.fixed,
-			velocityX, 0, 0,
+			velX, 0, 0,
 			EFFECT_USE_ROTATION | EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
 				EFFECT_USE_PRIORITY,
 			&options);
@@ -745,11 +743,11 @@ void scTundariaTowerEndRevealHiddenWay(void)
 		if(FIELD_METATILE(
 			   fdActorGetById(MainRoutineStateWork.leaderActorId)->z.fixed) ==
 			38) {
-			Sint16 angle =
+			Sint16 ang =
 				fdActorGetById(MainRoutineStateWork.leaderActorId)->facing;
 			Sint32 owner = MainRoutineStateWork.leaderActorId;
 
-			if(angle < 0)
+			if(ang < 0)
 				fdActorSetPos(owner, 872, 600);
 			else
 				fdActorSetPos(owner, 872, 632);
@@ -792,7 +790,7 @@ void scTundariaTowerStopSliding(void)
    onto the rooms of chests beyond. */
 void scTundariaTowerBurstMirrorWall(Sint32 step)
 {
-	VECTOR3 position;
+	VECTOR3 pos;
 
 	switch(step) {
 	case 1:
@@ -802,16 +800,16 @@ void scTundariaTowerBurstMirrorWall(Sint32 step)
 		syGameFlagSet(FLAG_MIRROR_WALL_BURST);
 		break;
 	case 2:
-		position.x = toFIXED(120);
-		position.y = 0;
-		position.z = toFIXED(568);
-		scTundariaTowerScatterIceChips(&position, 1, toFIXED(8) / 10);
+		pos.x = toFIXED(120);
+		pos.y = 0;
+		pos.z = toFIXED(568);
+		scTundariaTowerScatterIceChips(&pos, 1, toFIXED(8) / 10);
 		break;
 	case 3:
-		position.x = toFIXED(120);
-		position.y = 0;
-		position.z = toFIXED(568);
-		scTundariaTowerScatterIceChips(&position, 8, toFIXED(3) / 2);
+		pos.x = toFIXED(120);
+		pos.y = 0;
+		pos.z = toFIXED(568);
+		scTundariaTowerScatterIceChips(&pos, 8, toFIXED(3) / 2);
 		break;
 	}
 }
@@ -825,9 +823,9 @@ void scTundariaTowerResolveBeforePsynergy(void)
 
 /* Burst on the brown part of the outer wall in the Burst Brooch's room, from
    the ground below it: rocks fall as it breaks open into a shortcut. */
-void scTundariaTowerBurstBrownWall(Sint32 shake, Sint32 frame)
+void scTundariaTowerBurstBrownWall(Sint32 shake, Sint32 frm)
 {
-	if(frame == 0) {
+	if(frm == 0) {
 		scTundariaTowerStartFallingRocks();
 		syCloseEvent(scTundariaTowerUpdateBrownWallMetatile);
 	}
@@ -840,7 +838,7 @@ void scTundariaTowerBurstBrownWall(Sint32 shake, Sint32 frame)
 		scRockSpawn(toFIXED(232), toFIXED(16), toFIXED(280), 2);
 	if(shake == 3)
 		scRockSpawn(toFIXED(232), toFIXED(16), toFIXED(280), 30);
-	if(frame == FIELD_PSYNERGY_FINISHED)
+	if(frm == FIELD_PSYNERGY_FINISHED)
 		scTundariaTowerEndFallingRocks();
 }
 
@@ -869,7 +867,7 @@ const CUE *scGetCues(void)
 void scTundariaTowerReflectLeader(ACTOR *actor)
 {
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	SPR	  *leaderSprite = leader->spr;
+	SPR	  *leaderSpr = leader->spr;
 	SPR	  *reflection = actor->spr;
 
 	if(leader->z.fixed <= actor->sceneWord) {
@@ -884,18 +882,18 @@ void scTundariaTowerReflectLeader(ACTOR *actor)
 			actor->z.fixed = 0;
 			actor->x.fixed = 0;
 		} else {
-			SPR_ANIMATION *animation = reflection->entries[0];
-			SPR_ANIMATION *source;
+			SPR_ANIMATION *anm = reflection->entries[0];
+			SPR_ANIMATION *src;
 
 			actor->x.fixed = leader->x.fixed;
 			actor->y.fixed = leader->y.fixed;
 			actor->z.fixed =
 				actor->sceneWord - (leader->z.fixed - actor->sceneWord);
 			actor->facing = ~leader->facing;
-			source = leaderSprite->entries[0];
-			animation->script = source->script;
-			animation->tmr = source->tmr;
-			animation->scriptOfs = source->scriptOfs;
+			src = leaderSpr->entries[0];
+			anm->script = src->script;
+			anm->tmr = src->tmr;
+			anm->scriptOfs = src->scriptOfs;
 		}
 	}
 }
@@ -909,25 +907,25 @@ union FIELD_OBJECT;
 
 void fdLeaderStopIfPending(void);
 
-void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flag, Sint32 layer);
+void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flg, Sint32 layer);
 
 void scTundariaTowerScatterDust(Sint32 spread);
 void fdLeaderSetMetatileShapeAt(Sint32 a, Sint32 b);
 
 void scTundariaTowerSpawnDustRing(void);
 
-ACTOR *TundariaTower_Reflection	   BSS_DATA;
-volatile Sint16 SlideOnIce_Stopped BSS_DATA;
+ACTOR *TundariaTowerReflection	  BSS_DATA;
+volatile Sint16 SlideOnIceStopped BSS_DATA;
 
 void scTundariaTowerParchLeftWater(void);
 void scTundariaTowerParchRightWater(void);
 
-extern Sint16 SlideOnIce_SteerAngles[];
-extern Sint16 SlideOnIce_AnglesByKey[];
+extern Sint16 SlideOnIceSteerAngles[];
+extern Sint16 SlideOnIceAnglesByKey[];
 
-extern Uint32 Dust_ScatterScript[];
+extern Uint32 DustScatterScript[];
 
-extern Uint32 Dust_BurstScript[];
+extern Uint32 DustBurstScript[];
 
 void scTundariaTowerExamineCrystal(void);
 void scTundariaTowerSlideOnIce(void);
@@ -939,9 +937,8 @@ void scTundariaTowerRevealHiddenWay(void);
 void scTundariaTowerStopSliding(void);
 void scTundariaTowerResolveBeforePsynergy(void);
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 /* At the foot of a black ice slide, Felix drops in from above and lands in a
    puff of dust with a thump that shakes the screen. */
@@ -949,7 +946,7 @@ void scTundariaTowerLandFromSlide(void)
 {
 	ACTOR		  *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	EFFECT_OPTIONS options;
-	Sint32		   angle;
+	Sint32		   ang;
 	Uint32		   i;
 
 	fdScriptStart();
@@ -963,7 +960,7 @@ void scTundariaTowerLandFromSlide(void)
 	leader->motionFlg = 0;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	sySndPlay(SE_DUST_PUFF);
 	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdScriptWait(24);
@@ -973,17 +970,17 @@ void scTundariaTowerLandFromSlide(void)
 	options.startScaleY = toFIXED(8) / 10;
 	i = 0;
 	do {
-		FIXED velocity[3];
+		FIXED vel[3];
 
-		angle = i * (TRIG_TURN / DUST_RING_PUFFS);
-		velocity[0] = syCos(angle);
-		velocity[1] = 0;
-		velocity[2] = sySin(angle);
-		velocity[0] += velocity[0] >> 1;
-		velocity[0] += syRandomBelow(toFIXED(3) / 4) - toFIXED(3) / 8;
-		velocity[2] += syRandomBelow(toFIXED(3) / 8) - toFIXED(3) / 16;
+		ang = i * (TRIG_TURN / DUST_RING_PUFFS);
+		vel[0] = syCos(ang);
+		vel[1] = 0;
+		vel[2] = sySin(ang);
+		vel[0] += vel[0] >> 1;
+		vel[0] += syRandomBelow(toFIXED(3) / 4) - toFIXED(3) / 8;
+		vel[2] += syRandomBelow(toFIXED(3) / 8) - toFIXED(3) / 16;
 		scFieldEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-			velocity[0], velocity[1], velocity[2],
+			vel[0], vel[1], vel[2],
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
 			&options);
 		i++;
@@ -1005,7 +1002,7 @@ void scTundariaTowerLandFromSlide(void)
 	fdScriptEnd();
 }
 
-/* Each frame in the Burst Brooch's room, the metatile before the brown wall
+/* Each tick in the Burst Brooch's room, the metatile before the brown wall
    answers Burst only while Felix stands on the ground below it, not on the
    ladders above. */
 void scTundariaTowerUpdateBrownWallMetatile(void)
@@ -1026,7 +1023,7 @@ Sint32 scInit(void)
 {
 	ACTOR *actor;
 	Sint32 scene;
-	Sint32 flag;
+	Sint32 flg;
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -1045,8 +1042,8 @@ Sint32 scInit(void)
 				scTundariaTowerParchRightWater();
 			break;
 		case CENTER_PRONG_CRYSTAL_CHAMBER:
-			flag = syGameFlagGet(FLAG_CENTER_PRONG_TAKEN);
-			if(flag == 0) {
+			flg = syGameFlagGet(FLAG_CENTER_PRONG_TAKEN);
+			if(flg == 0) {
 				actor = fdActorGetById(ACTOR_FROZEN_CENTER_PRONG);
 				fdActorSetSprFlags(
 					fdActorGetById(ACTOR_FROZEN_CENTER_PRONG), 0);
@@ -1132,7 +1129,7 @@ Sint32 scInit(void)
 			{
 				ACTOR *effect;
 
-				TundariaTower_Reflection = effect =
+				TundariaTowerReflection = effect =
 					scFieldActorCreate(SPRITE_FELIX, 0, 0, 0);
 				effect->sceneWord = toFIXED(576);
 				effect->update = scTundariaTowerReflectLeader;
@@ -1144,7 +1141,7 @@ Sint32 scInit(void)
 		case PILLAR_PUZZLE_MIRROR_ROOM_FOOT: {
 			ACTOR *effect;
 
-			TundariaTower_Reflection = effect =
+			TundariaTowerReflection = effect =
 				scFieldActorCreate(SPRITE_FELIX, 0, 0, 0);
 			effect->sceneWord = toFIXED(624);
 			effect->update = scTundariaTowerReflectLeader;
@@ -1162,8 +1159,7 @@ Sint32 scInit(void)
 			fdMapGridCopyMetatilesTo(13, 26, 13, 16, 3, 3);
 			fdMapGridCopyMetatileAttributes(13, 26, 3, 3, 13, 16);
 		} else {
-			sySetEvent(
-				scTundariaTowerUpdateBrownWallMetatile, EVENT_PASS_FRAME);
+			sySetEvent(scTundariaTowerUpdateBrownWallMetatile, EVENT_PASS_TICK);
 		}
 		fdActorPlaceBlocks(TundariaTowerBurstBroochPillar);
 	}
@@ -1181,7 +1177,7 @@ Sint32 scPrepareMap(void)
 
 #include "shared/leader_slide_on_ice.h"
 
-extern Sint16 SlideOnIce_AnglesByKey[];
+extern Sint16 SlideOnIceAnglesByKey[];
 void		  fdActorSteerByPad(ACTOR *actor);
 void		  fdLeaderStopIfPending(void);
 
@@ -1190,22 +1186,22 @@ void		  fdLeaderStopIfPending(void);
 /* Stops the leader's slide on the ice where it is (nonzero), or lets it run. */
 void scLeaderSetSlideStopped(Sint32 value)
 {
-	SlideOnIce_Stopped = value;
+	SlideOnIceStopped = value;
 }
 
 #include "shared/leader_slide_on_ice_ahead.h"
 
 /* Unused: places each listed stake at its metatile, as Yampi Desert's do. */
-UNUSED void scTundariaTowerPlaceStakes(Uint16 *table)
+UNUSED void scTundariaTowerPlaceStakes(Uint16 *tbl)
 {
 	Uint16 *row;
 	Sint32	id;
 	ACTOR  *actor;
 	Sint16	x, z;
 
-	if(table[0] == ACTOR_LIST_END)
+	if(tbl[0] == ACTOR_LIST_END)
 		return;
-	for(row = table; row[0] != ACTOR_LIST_END; row += 3) {
+	for(row = tbl; row[0] != ACTOR_LIST_END; row += 3) {
 		id = row[0];
 		actor = fdActorGetById(id);
 		x = row[1];
@@ -1224,39 +1220,39 @@ UNUSED void scTundariaTowerPlaceStakes(Uint16 *table)
 /* Unused: Magma Rock's crumbling pillars on entering: each listed pillar from
    its two flags (fallen: moved away; else its metatile raised and its shape
    redrawn), then the leader lifted onto the ground under him. */
-UNUSED void scTundariaTowerRestoreCrumblingPillars(const Uint16 *table)
+UNUSED void scTundariaTowerRestoreCrumblingPillars(const Uint16 *tbl)
 {
 	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
 	ACTOR		 *actor;
 	Sint32		  id;
-	Sint32		  flag;
-	Sint32		  nextFlag;
+	Sint32		  flg;
+	Sint32		  nextFlg;
 	MAP_METATILE *metatiles;
 	Uint8		 *shapes;
 	MAP_METATILE *metatile;
-	Sint32		  index;
+	Sint32		  idx;
 	ACTOR		 *leader;
 	Sint32		  ground;
 
-	if(*table != ACTOR_LIST_END) {
-		for(; *table != ACTOR_LIST_END; table += 2) {
-			id = table[0];
+	if(*tbl != ACTOR_LIST_END) {
+		for(; *tbl != ACTOR_LIST_END; tbl += 2) {
+			id = tbl[0];
 			actor = fdActorGetById(id);
-			flag = table[1];
-			nextFlag = flag + 1;
+			flg = tbl[1];
+			nextFlg = flg + 1;
 			metatiles = map->layers[actor->layer].metatiles;
 			shapes = Ram_MapShapeGrid +
 				(metatiles - (MAP_METATILE *)Ram_MapMetatileBuffer);
-			if(syGameFlagGet(nextFlag)) {
+			if(syGameFlagGet(nextFlg)) {
 				fdActorSetPos(id, 0, 0);
 			} else {
 				Sint32 shape;
 				Uint8 *slot;
 				Sint32 height;
 
-				index = fdActorGetMetatileIndex(actor);
-				metatile = &metatiles[index];
-				slot = shapes + index;
+				idx = fdActorGetMetatileIndex(actor);
+				metatile = &metatiles[idx];
+				slot = shapes + idx;
 				shape = fdMapGridGetTerrainKind(
 					actor->layer, actor->x.fixed, actor->z.fixed);
 				height = fdMapGetTerrainHeight(
@@ -1265,7 +1261,7 @@ UNUSED void scTundariaTowerRestoreCrumblingPillars(const Uint16 *table)
 				metatile->attributeB = MAP_METATILE_JUMP;
 				*slot = fdMapShapeFindOrAdd(
 					actor->layer, shape, FIELD_HALF_METATILE(height) + 4);
-				if(syGameFlagGet(flag))
+				if(syGameFlagGet(flg))
 					fdActorSelectAnimation(actor, 0);
 			}
 		}
@@ -1281,33 +1277,33 @@ UNUSED void scTundariaTowerRestoreCrumblingPillars(const Uint16 *table)
 
 /* Unused: Magma Rock's crumbling floor: a listed pillar stepped on flashes the
    first time and crumbles under the leader the second. */
-UNUSED void scTundariaTowerCheckCrumblingStep(const Uint16 *table)
+UNUSED void scTundariaTowerCheckCrumblingStep(const Uint16 *tbl)
 {
 	ACTOR *leader;
 	ACTOR *trap;
-	FIXED  position[3];
+	FIXED  pos[3];
 	Sint32 id;
-	Sint32 flag;
+	Sint32 flg;
 	Sint32 second;
 
 	if(fdTryJumpForward() != 0)
 		return;
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	position[0] = leader->x.fixed;
-	position[1] = leader->y.fixed;
-	position[2] = leader->z.fixed;
-	trap = fdActorFindAtMetatile(position, 0);
+	pos[0] = leader->x.fixed;
+	pos[1] = leader->y.fixed;
+	pos[2] = leader->z.fixed;
+	trap = fdActorFindAtMetatile(pos, 0);
 	if(trap == 0)
 		return;
-	while(*table != ACTOR_LIST_END) {
-		id = table[0];
+	while(*tbl != ACTOR_LIST_END) {
+		id = tbl[0];
 		if(fdActorGetById(id) != trap) {
-			table += 2;
+			tbl += 2;
 			continue;
 		}
-		flag = table[1];
+		flg = tbl[1];
 		fdScriptStart();
-		if(!syGameFlagGet(flag)) {
+		if(!syGameFlagGet(flg)) {
 			sySndPlay(SE_CHEST_CLOSE);
 			fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_WHITE);
 			sySynch(2);
@@ -1318,9 +1314,9 @@ UNUSED void scTundariaTowerCheckCrumblingStep(const Uint16 *table)
 			sySynch(4);
 			fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_NORMAL);
 			scTundariaTowerScatterDust(0);
-			syGameFlagSet(flag);
+			syGameFlagSet(flg);
 		} else {
-			second = flag + 1;
+			second = flg + 1;
 			if(!syGameFlagGet(second)) {
 				leader->motionFlg = 0;
 				sySndPlay(SE_PUSH);
@@ -1355,8 +1351,8 @@ UNUSED void scTundariaTowerCheckCrumblingStep(const Uint16 *table)
 UNUSED void scTundariaTowerCrumblePillar(Uint16 *row, Sint32 id)
 {
 	ACTOR *actor = fdActorGetById(id);
-	Sint32 flag;
-	Sint32 nextFlag;
+	Sint32 flg;
+	Sint32 nextFlg;
 
 	if(*row == ACTOR_LIST_END)
 		return;
@@ -1365,10 +1361,10 @@ UNUSED void scTundariaTowerCrumblePillar(Uint16 *row, Sint32 id)
 			row += 2;
 			continue;
 		}
-		flag = row[1];
+		flg = row[1];
 		fdScriptStart();
-		nextFlag = flag + 1;
-		if(!syGameFlagGet(nextFlag)) {
+		nextFlg = flg + 1;
+		if(!syGameFlagGet(nextFlg)) {
 			sySndPlay(SE_PUSH);
 			fdMapGridSetShake(1, 4, 1);
 			scTundariaTowerScatterDust(0);
@@ -1384,8 +1380,8 @@ UNUSED void scTundariaTowerCrumblePillar(Uint16 *row, Sint32 id)
 			sySndPlay(SE_THUMP);
 			scTundariaTowerSpawnDustRing();
 			sySynch(20);
-			syGameFlagSet(flag);
-			syGameFlagSet(nextFlag);
+			syGameFlagSet(flg);
+			syGameFlagSet(nextFlg);
 		}
 		fdScriptEnd();
 		return;
@@ -1409,12 +1405,12 @@ UNUSED void scTundariaTowerRestorePillars(Uint16 *list)
 	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
 	ACTOR		 *actor;
 	Sint32		  id;
-	Sint32		  flag;
-	Sint32		  nextFlag;
+	Sint32		  flg;
+	Sint32		  nextFlg;
 	MAP_METATILE *metatiles;
 	Uint8		 *shapes;
 	MAP_METATILE *metatile;
-	Sint32		  index;
+	Sint32		  idx;
 	Uint8		 *grid = MapShapeGrid;
 
 	fdActorPlaceOnActor(ACTOR_FIRST_PLACED, MainRoutineStateWork.leaderActorId);
@@ -1436,22 +1432,22 @@ UNUSED void scTundariaTowerRestorePillars(Uint16 *list)
 		for(; *list != ACTOR_LIST_END; list += 2) {
 			id = list[0];
 			actor = fdActorGetById(id);
-			flag = list[1];
-			nextFlag = flag + 1;
+			flg = list[1];
+			nextFlg = flg + 1;
 			metatiles = map->layers[actor->layer].metatiles;
 			shapes = grid + (metatiles - (MAP_METATILE *)Ram_MapMetatileBuffer);
 			actor->retainSprCache =
 				ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
-			if(syGameFlagGet(nextFlag)) {
+			if(syGameFlagGet(nextFlg)) {
 				fdActorSetPos(id, 0, 0);
 			} else {
 				Sint32 shape;
 				Uint8 *slot;
 				Sint32 height;
 
-				index = fdActorGetMetatileIndex(actor);
-				metatile = &metatiles[index];
-				slot = shapes + index;
+				idx = fdActorGetMetatileIndex(actor);
+				metatile = &metatiles[idx];
+				slot = shapes + idx;
 				shape = fdMapGridGetTerrainKind(
 					actor->layer, actor->x.fixed, actor->z.fixed);
 				height = fdMapGetTerrainHeight(
@@ -1460,7 +1456,7 @@ UNUSED void scTundariaTowerRestorePillars(Uint16 *list)
 				metatile->attributeB = MAP_METATILE_JUMP;
 				*slot = fdMapShapeFindOrAdd(
 					actor->layer, shape, FIELD_HALF_METATILE(height) + 4);
-				if(syGameFlagGet(flag))
+				if(syGameFlagGet(flg))
 					fdActorCopyGraphics(id, ACTOR_FIRST_PLACED + 1);
 			}
 		}
@@ -1472,14 +1468,14 @@ UNUSED void scTundariaTowerRestorePillars(Uint16 *list)
 
 /* Unused: Magma Rock's trap floor: a listed pillar stepped on flashes the first
    time and gives way under the leader the second. */
-UNUSED void scTundariaTowerStepOnTrap(const Uint16 *table)
+UNUSED void scTundariaTowerStepOnTrap(const Uint16 *tbl)
 {
 	ACTOR *leader;
 	ACTOR *partner;
 	ACTOR *trap;
-	FIXED  position[3];
+	FIXED  pos[3];
 	Sint32 id;
-	Sint32 flag;
+	Sint32 flg;
 	Sint32 second;
 	Uint8 *motion;
 
@@ -1487,20 +1483,20 @@ UNUSED void scTundariaTowerStepOnTrap(const Uint16 *table)
 		return;
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	partner = fdActorGetById(ACTOR_FIRST_PLACED);
-	position[0] = leader->x.fixed;
-	position[1] = leader->y.fixed;
-	position[2] = leader->z.fixed;
-	trap = fdActorFindAtMetatile(position, 0);
+	pos[0] = leader->x.fixed;
+	pos[1] = leader->y.fixed;
+	pos[2] = leader->z.fixed;
+	trap = fdActorFindAtMetatile(pos, 0);
 	if(trap != 0) {
-		while(*table != ACTOR_LIST_END) {
-			id = table[0];
+		while(*tbl != ACTOR_LIST_END) {
+			id = tbl[0];
 			if(fdActorGetById(id) != trap) {
-				table += 2;
+				tbl += 2;
 				continue;
 			}
-			flag = table[1];
+			flg = tbl[1];
 			fdScriptStart();
-			if(!syGameFlagGet(flag)) {
+			if(!syGameFlagGet(flg)) {
 				fdActorSelectAnimation(partner, 1);
 				scActorTakePlaceOf(partner, trap);
 				sySynch(1);
@@ -1521,9 +1517,9 @@ UNUSED void scTundariaTowerStepOnTrap(const Uint16 *table)
 				scTundariaTowerScatterDust(0);
 				scActorTakePlaceOf(trap, partner);
 				sySynch(1);
-				syGameFlagSet(flag);
+				syGameFlagSet(flg);
 			} else {
-				second = flag + 1;
+				second = flg + 1;
 				if(!syGameFlagGet(second)) {
 					fdActorSelectAnimation(partner, 0);
 					scActorTakePlaceOf(partner, trap);
@@ -1566,7 +1562,7 @@ void scTundariaTowerScatterDust(Sint32 spread)
 {
 	ACTOR		 *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	FIELD_EFFECT *effect;
-	Uint32		  frame = 0;
+	Uint32		  frm = 0;
 	Uint32		  i;
 
 	for(i = 0; i <= 7; i++) {
@@ -1579,12 +1575,12 @@ void scTundariaTowerScatterDust(Sint32 spread)
 				leader->z.fixed);
 		}
 		if(effect != 0) {
-			frame = fdSprShareVRAMCacheEntry(effect->spr, frame);
+			frm = fdSprShareVRAMCacheEntry(effect->spr, frm);
 			effect->motionFlg = 0;
 			effect->collisionFlg = 0;
 			fdActorSetSprFlags(effect, 0);
 			fdActorSelectAnimation(effect, 2);
-			scTundariaTowerStartEffectScript(effect, Dust_ScatterScript);
+			scTundariaTowerStartEffectScript(effect, DustScatterScript);
 			effect->scaleY = effect->scaleX = toFIXED(7) / 10;
 			effect->spr->pri = 1;
 			if(spread != 0) {
@@ -1619,18 +1615,18 @@ void scTundariaTowerSpawnDustRing(void)
 					leader->x.fixed, leader->y.fixed, leader->z.fixed));
 
 			if(effect != NULL) {
-				Sint32 angle;
+				Sint32 ang;
 
 				state = fdSprShareVRAMCacheEntry(effect->spr, state);
 				effect->motionFlg = 0;
 				effect->collisionFlg = 0;
 				fdActorSetSprFlags(effect, 0);
 				fdActorSelectAnimation(effect, 2);
-				scTundariaTowerStartEffectScript(effect, Dust_BurstScript);
-				angle = i * (TRIG_TURN / DUST_RING_PUFFS);
-				effect->vel.x = syCos(angle);
+				scTundariaTowerStartEffectScript(effect, DustBurstScript);
+				ang = i * (TRIG_TURN / DUST_RING_PUFFS);
+				effect->vel.x = syCos(ang);
 				effect->vel.y = 0;
-				effect->vel.z = sySin(angle);
+				effect->vel.z = sySin(ang);
 				effect->vel.x += effect->vel.x >> 1;
 				effect->vel.x += syRandomBelow(toFIXED(3) / 4) - toFIXED(3) / 8;
 				effect->vel.z +=
@@ -1663,7 +1659,7 @@ void scTundariaTowerStartFallingRocks(void)
 	Sint32		resource;
 	Sint32		tile;
 	ROCK	   *rock;
-	EFFECT_SPR *sprite;
+	EFFECT_SPR *spr;
 	Sint32		i;
 
 	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_FALLING_ROCK), state);
@@ -1673,17 +1669,17 @@ void scTundariaTowerStartFallingRocks(void)
 	state->resource = resource;
 	rock = state->rocks;
 	for(i = 0; i < ROCK_COUNT; i++) {
-		sprite = &state->sprs[i];
-		fdEffectSprInit(sprite, 8, 8, OBJ_SIZE_16X16, tile);
-		sprite->oam.fullCol = 1;
-		sprite->oam.pal = 0;
-		sprite->oam.pri = 0;
-		sprite->depth = OAM_DEPTH_WINDOW;
+		spr = &state->sprs[i];
+		fdEffectSprInit(spr, 8, 8, OBJ_SIZE_16X16, tile);
+		spr->oam.fullCol = 1;
+		spr->oam.pal = 0;
+		spr->oam.pri = 0;
+		spr->depth = OAM_DEPTH_WINDOW;
 		rock->tmr = -1;
 		rock++;
 	}
 	state->next = 0;
-	sySetFrameEvent(scParticleUpdateFalling, EVENT_PASS_FRAME);
+	sySetTickEvent(scParticleUpdateFalling, EVENT_PASS_TICK);
 }
 
 /* Stops the falling rocks and frees their pictures and state. */
@@ -1721,10 +1717,10 @@ Sint16 TundariaTowerBurstBroochPillar[] = {
 
 #include "shared/dust_burst_script.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 /* The ice columns of the room of ice columns: each one's actor, its standing */
@@ -1746,8 +1742,8 @@ Sint16 TundariaTowerPillarPuzzleColumns[] = {
 	-1, 0,
 };
 
-/* Reflux turning round a sixteenth of a turn each frame as he comes down. */
-Sint32 TundariaTower_RefluxSpinScript[] = {
+/* Reflux turning round a sixteenth of a turn each tick as he comes down. */
+Sint32 TundariaTowerRefluxSpinScript[] = {
 	SC_SET(SW_FACING, 0),
 	SC_LABEL(1),
 	SC_WAIT(1),

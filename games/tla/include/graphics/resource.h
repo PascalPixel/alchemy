@@ -28,6 +28,6 @@ struct SPR;
    and a VRAM cache entry for its tiles. */
 struct RESOURCE_OBJECT *fdSprCreateStub(Sint32 resource);
 /* Releases a sprite and, unless it keeps it, its VRAM cache entry. */
-void fdSprDestroyStub(SPR *sprite);
+void fdSprDestroyStub(SPR *spr);
 
 #endif

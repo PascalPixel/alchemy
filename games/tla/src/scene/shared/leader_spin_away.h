@@ -14,13 +14,13 @@ UNUSED void scLeaderSpinAway(Sint32 entrance)
 	fdActorSelectAnimation(leader, ANIM_LEADER_TUMBLE_IN_WATER);
 	fdScriptPlaySnd(SE_SPIN_AWAY);
 	for(i = 0; i < 60; i++) {
-		Sint32 angle;
+		Sint32 ang;
 
 		if(i == 30)
 			fdScriptFinishScreenTransition();
 		leader->y.fixed -= toFIXED(1) / 4;
-		angle = leader->facing;
-		leader->facing = angle + TRIG_TURN / 16;
+		ang = leader->facing;
+		leader->facing = ang + TRIG_TURN / 16;
 		if((i & 7) == 0)
 			scActorSpawnWadingSplash(fdActorGet(ACTOR_VIAL_CHEST_PUDDLE_C));
 		syWait(1);

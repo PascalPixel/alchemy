@@ -1,20 +1,20 @@
 /* Condemn. Part of battle_effect.c. */
 
-#define CONDEMN_FRAMES		 132
-/* The reaper's first two passes, in frames; it fades out, rippling harder, over
-   the last CONDEMN_FADE_FRAMES of each. */
-#define CONDEMN_PASS_FRAMES	 32
-#define CONDEMN_FADE_FRAMES	 16
-#define CONDEMN_SWING_FRAME	 88	 /* the reaper swings, in a white flash */
-#define CONDEMN_BOUNCE_FRAME 120 /* the falling target bounces */
+#define CONDEMN_TICKS		132
+/* The reaper's first two passes, in ticks; it fades out, rippling harder, over
+   the last CONDEMN_FADE_TICKS of each. */
+#define CONDEMN_PASS_TICKS	32
+#define CONDEMN_FADE_TICKS	16
+#define CONDEMN_SWING_TICK	88	/* the reaper swings, in a white flash */
+#define CONDEMN_BOUNCE_TICK 120 /* the falling target bounces */
 /* How far the reaper sways across and up and down as it circles, in pixels. */
-#define CONDEMN_SWAY_X		 16
-#define CONDEMN_SWAY_Y		 4
+#define CONDEMN_SWAY_X		16
+#define CONDEMN_SWAY_Y		4
 
 /* Where `picture`, one of the reaper's seven pictures, is drawn
    (REAPER_PICTURE_X), by the casting side's `column` and `row`. */
-#define CONDEMN_PICTURE_X(column, picture) Condemn_PictureX[(column)][(picture)]
-#define CONDEMN_PICTURE_Y(row, picture)	   Condemn_PictureY[(row)][(picture)]
+#define CONDEMN_PICTURE_X(column, picture) CondemnPictureX[(column)][(picture)]
+#define CONDEMN_PICTURE_Y(row, picture)	   CondemnPictureY[(row)][(picture)]
 
 /* A hooded reaper with a scythe sways across the screen three times, fading out
    through a ripple, the last pass over the first target; the screen flashes
@@ -31,15 +31,15 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 	Uint8				*sheet;
 	void				*cells;
 	BLITTER_PAIR		 draw;
-	ACTOR				*target;
+	ACTOR				*tgt;
 	/* LEFTOVER(frame): position[1], which the ROM's frame reserves and never
 	 * touches. */
-	SCREEN_POINT position[2];
+	SCREEN_POINT pos[2];
 	FIXED		 swayCenter[2];
 	Sint32		 drawReaper;
 	Sint32		 pictureColumn;
 	Sint32		 pictureRow;
-	Sint32		 frame;
+	Sint32		 frm;
 
 	slots = &HeapSlots[HEAP_SLOT_BATTLE_EFFECT];
 	cursor = slots;
@@ -78,26 +78,26 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 		swayCenter[0] = toFIXED(112);
 	}
 	swayCenter[1] = -toFIXED(32);
-	for(frame = 0; frame != CONDEMN_FRAMES; frame++) {
+	for(frm = 0; frm != CONDEMN_TICKS; frm++) {
 		Sint32	spin;
 		Sint32	screenX;
 		Sint32	screenY;
 		Sint32	ripple;
-		Sint32	lineOffset;
-		Sint32	angle;
+		Sint32	lineOfs;
+		Sint32	ang;
 		Sint32	i;
 		Sint32 *scanline;
 
-		spin = frame * (TRIG_TURN / 128);
+		spin = frm * (TRIG_TURN / 128);
 		screenX = FIXEDtoINT(swayCenter[0]) +
 			FIXEDtoINT(sySin(spin) * CONDEMN_SWAY_X) + 48;
 		screenY = FIXEDtoINT(swayCenter[1]) +
 			FIXEDtoINT(syCos(spin) * CONDEMN_SWAY_Y) + 16;
-		if(frame == CONDEMN_SWING_FRAME) {
+		if(frm == CONDEMN_SWING_TICK) {
 			sySndPlayStub(SE_HEAVY_IMPACT);
 		}
 		/* The second pass, lower and further across. */
-		if(frame == CONDEMN_PASS_FRAMES) {
+		if(frm == CONDEMN_PASS_TICKS) {
 			if(state->args->side == EFFECT_SIDE_PARTY) {
 				swayCenter[0] = -toFIXED(32);
 			} else {
@@ -106,22 +106,22 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 			swayCenter[1] = toFIXED(24);
 			drawReaper = 0;
 		}
-		if(frame == CONDEMN_PASS_FRAMES + 1) {
+		if(frm == CONDEMN_PASS_TICKS + 1) {
 			REG_BLDALPHA = EFFECT_BLEND_ADD;
 			drawReaper = 1;
 		}
 		/* The last pass, on the first target. */
-		if(frame == 2 * CONDEMN_PASS_FRAMES) {
-			btProjectionScaledUnit(state->args->tgts[0], position);
+		if(frm == 2 * CONDEMN_PASS_TICKS) {
+			btProjectionScaledUnit(state->args->tgts[0], pos);
 			if(state->args->side == EFFECT_SIDE_PARTY) {
-				swayCenter[0] = INTtoFIXED(position[0].x - 128);
+				swayCenter[0] = INTtoFIXED(pos[0].x - 128);
 			} else {
-				swayCenter[0] = INTtoFIXED(position[0].x - 64);
+				swayCenter[0] = INTtoFIXED(pos[0].x - 64);
 			}
 			swayCenter[1] = 0;
 			drawReaper = 0;
 		}
-		if(frame == 2 * CONDEMN_PASS_FRAMES + 1) {
+		if(frm == 2 * CONDEMN_PASS_TICKS + 1) {
 			REG_BLDALPHA = EFFECT_BLEND_ADD;
 			drawReaper = 1;
 		}
@@ -129,20 +129,18 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 		   out. */
 		scanline = state->bg2xLines;
 		ripple = 0;
-		if(frame < CONDEMN_PASS_FRAMES) {
-			if(frame >= CONDEMN_PASS_FRAMES - CONDEMN_FADE_FRAMES) {
-				ripple =
-					(frame - (CONDEMN_PASS_FRAMES - CONDEMN_FADE_FRAMES)) * 2;
+		if(frm < CONDEMN_PASS_TICKS) {
+			if(frm >= CONDEMN_PASS_TICKS - CONDEMN_FADE_TICKS) {
+				ripple = (frm - (CONDEMN_PASS_TICKS - CONDEMN_FADE_TICKS)) * 2;
 				REG_BLDALPHA =
-					EFFECT_BLEND_CANVAS(CONDEMN_PASS_FRAMES - 1 - frame);
+					EFFECT_BLEND_CANVAS(CONDEMN_PASS_TICKS - 1 - frm);
 			}
-		} else if(frame < 2 * CONDEMN_PASS_FRAMES) {
-			if(frame >= 2 * CONDEMN_PASS_FRAMES - CONDEMN_FADE_FRAMES) {
+		} else if(frm < 2 * CONDEMN_PASS_TICKS) {
+			if(frm >= 2 * CONDEMN_PASS_TICKS - CONDEMN_FADE_TICKS) {
 				ripple =
-					(frame - (2 * CONDEMN_PASS_FRAMES - CONDEMN_FADE_FRAMES)) *
-					2;
+					(frm - (2 * CONDEMN_PASS_TICKS - CONDEMN_FADE_TICKS)) * 2;
 				REG_BLDALPHA =
-					EFFECT_BLEND_CANVAS(2 * CONDEMN_PASS_FRAMES - 1 - frame);
+					EFFECT_BLEND_CANVAS(2 * CONDEMN_PASS_TICKS - 1 - frm);
 			}
 		}
 		if(ripple < 0) {
@@ -152,11 +150,11 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 		/* The reaper moves by scrolling the canvas line by line, not by where
 		   it is drawn. */
 		i = 0;
-		lineOffset = (6 - screenX) << 8;
-		angle = frame * (TRIG_TURN / 32);
+		lineOfs = (6 - screenX) << 8;
+		ang = frm * (TRIG_TURN / 32);
 		for(; i != DISPLAY_HEIGHT; i++) {
-			*scanline++ = lineOffset - CANVAS_WAVE_BG2X(sySin(angle) * ripple);
-			angle += TRIG_TURN / 32;
+			*scanline++ = lineOfs - CANVAS_WAVE_BG2X(sySin(ang) * ripple);
+			ang += TRIG_TURN / 32;
 		}
 		if(drawReaper != 0) {
 			if(state->args->side == EFFECT_SIDE_ENEMIES) {
@@ -167,13 +165,13 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 				/* FAKEMATCH(dead): i is 160 here. */
 				pictureRow = i >> 31;
 			}
-			if(frame < CONDEMN_SWING_FRAME) {
+			if(frm < CONDEMN_SWING_TICK) {
 				draw[state->args->side](canvas, state->sheet,
 					CONDEMN_PICTURE_X(pictureColumn, 0),
 					CONDEMN_PICTURE_Y(pictureRow, 0) + screenY,
 					REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
 			} else {
-				if(frame <= 91) {
+				if(frm <= 91) {
 					draw[state->args->side](canvas, state->sheet,
 						CONDEMN_PICTURE_X(pictureColumn, 0),
 						CONDEMN_PICTURE_Y(pictureRow, 0) + screenY,
@@ -183,37 +181,37 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 					state->sheet, REAPER_SHEET_SWUNG,
 					CONDEMN_PICTURE_X(pictureColumn, 1),
 					CONDEMN_PICTURE_Y(pictureRow, 1) + screenY);
-				/* Two frames each: the white flash, the swung crescent, then
+				/* Two ticks each: the white flash, the swung crescent, then
 				   the crescent fading in four pictures. */
-				if(frame >= 88 && frame <= 89) {
+				if(frm >= 88 && frm <= 89) {
 					syWordsFill(canvas, CANVAS_BYTES,
 						CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 				}
-				if(frame >= 90 && frame <= 91) {
+				if(frm >= 90 && frm <= 91) {
 					EFFECT_DRAW_PICTURE(draw[state->args->side], canvas,
 						state->sheet, REAPER_SHEET_CRESCENT,
 						CONDEMN_PICTURE_X(pictureColumn, 2),
 						CONDEMN_PICTURE_Y(pictureRow, 2) + screenY);
 				}
-				if(frame >= 92 && frame <= 93) {
+				if(frm >= 92 && frm <= 93) {
 					EFFECT_DRAW_PICTURE(draw[state->args->side], canvas,
 						Ram_MapGridMetatileBuffer, RED_CRESCENT_FADE_A,
 						CONDEMN_PICTURE_X(pictureColumn, 3),
 						CONDEMN_PICTURE_Y(pictureRow, 3) + screenY);
 				}
-				if(frame >= 94 && frame <= 95) {
+				if(frm >= 94 && frm <= 95) {
 					EFFECT_DRAW_PICTURE(draw[state->args->side], canvas,
 						Ram_MapGridMetatileBuffer, RED_CRESCENT_FADE_B,
 						CONDEMN_PICTURE_X(pictureColumn, 4),
 						CONDEMN_PICTURE_Y(pictureRow, 4) + screenY);
 				}
-				if(frame >= 96 && frame <= 97) {
+				if(frm >= 96 && frm <= 97) {
 					EFFECT_DRAW_PICTURE(draw[state->args->side], canvas,
 						Ram_MapGridMetatileBuffer, RED_CRESCENT_FADE_C,
 						CONDEMN_PICTURE_X(pictureColumn, 5),
 						CONDEMN_PICTURE_Y(pictureRow, 5) + screenY);
 				}
-				if(frame >= 98 && frame <= 99) {
+				if(frm >= 98 && frm <= 99) {
 					EFFECT_DRAW_PICTURE(draw[state->args->side], canvas,
 						Ram_MapGridMetatileBuffer, RED_CRESCENT_FADE_D,
 						CONDEMN_PICTURE_X(pictureColumn, 6),
@@ -222,20 +220,19 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		/* Knock the target back. */
-		if(frame == CONDEMN_SWING_FRAME) {
-			target = btObjectGetStub(state->args->tgts[0])->actor;
-			target->velY = toFIXED(1);
-			target->acceleration = toFIXED(2);
-			target->speedLimit = toFIXED(2);
-			target->gravity = 0;
-			target->steeringFlg = 0;
-			target->snapToTgt = 0;
-			fdActorSetMoveTargetStub(
-				target, target->x.fixed << 1, 0, target->z.fixed);
+		if(frm == CONDEMN_SWING_TICK) {
+			tgt = btObjectGetStub(state->args->tgts[0])->actor;
+			tgt->velY = toFIXED(1);
+			tgt->acceleration = toFIXED(2);
+			tgt->speedLimit = toFIXED(2);
+			tgt->gravity = 0;
+			tgt->steeringFlg = 0;
+			tgt->snapToTgt = 0;
+			fdActorSetMoveTargetStub(tgt, tgt->x.fixed << 1, 0, tgt->z.fixed);
 			btEffectTintBattler(
 				state->args->tgts[0], TINT_KEEP, POSE_DAMAGE, TINT_KEEP, 0);
 		}
-		if(frame == CONDEMN_BOUNCE_FRAME) {
+		if(frm == CONDEMN_BOUNCE_TICK) {
 			btObjectGetStub(state->args->tgts[0])->actor->gravity =
 				BATTLE_UNIT_GRAVITY;
 		}
@@ -253,11 +250,11 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 	btEffectEndCanvasLayer();
 }
 
-#undef CONDEMN_FRAMES
-#undef CONDEMN_PASS_FRAMES
-#undef CONDEMN_FADE_FRAMES
-#undef CONDEMN_SWING_FRAME
-#undef CONDEMN_BOUNCE_FRAME
+#undef CONDEMN_TICKS
+#undef CONDEMN_PASS_TICKS
+#undef CONDEMN_FADE_TICKS
+#undef CONDEMN_SWING_TICK
+#undef CONDEMN_BOUNCE_TICK
 #undef CONDEMN_SWAY_X
 #undef CONDEMN_SWAY_Y
 #undef CONDEMN_PICTURE_X

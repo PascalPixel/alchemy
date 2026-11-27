@@ -20,7 +20,7 @@
 #define Ram_SoundMixer FIXED_ADDRESS((Uint8 *), 0x03007000, SoundMainRAM)
 
 /* The sound mode m4aSoundInit sets for the whole game: 8 PCM notes (bits
-   11..8), volume 15 (15..12), rate 7 (19..16), 352 samples a VBlank or 21024 a
+   11..8), volume 15 (15..12), rate 7 (19..16), 352 samples a frame or 21024 a
    second, and sound bias resolution 1 (from bits 23..20). */
 #define SOUND_GAME_MODE 0x0097F800
 

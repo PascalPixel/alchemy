@@ -3,7 +3,7 @@
 
 /* The view's swing as Tremor and Grind shake the ground. Its state sits in
    HEAP_SLOT_BATTLE_EFFECT: fdViewMoveStart opens the map's view bounds and
-   keeps the old ones, fdViewMoveSwing swings the view centre each frame, and
+   keeps the old ones, fdViewMoveSwing swings the view centre each tick, and
    fdViewMoveEnd puts the bounds back. fdViewMoveSaveNearbySprs gathers the
    nearby actors whose sprites rock with the view, and
    fdViewMoveRestoreNearbySprs sets them back. */

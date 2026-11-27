@@ -16,8 +16,8 @@
    the curse (FLAG_KOLIMA_CURSE_LIFTED).
 
    The water level, the bank log's place and where each log lies are kept in
-   SceneLocalState (KolimaForestFloodgate_WaterHigh,
-   KolimaForestFloodgate_BankLogWest and KolimaForestFloodgate_Logs), so they
+   SceneLocalState (KolimaForestFloodgateWaterHigh,
+   KolimaForestFloodgateBankLogWest and KolimaForestFloodgateLogs), so they
    survive a battle.
 
    The metatiles under a log are METATILE_BEHAVIOR_JUMP_FORWARD while it floats,
@@ -44,30 +44,30 @@
 #include "text/msg_ids.h"
 
 /* Unused: eight bytes before the logs' records that nothing reads. */
-Uint8 KolimaForestFloodgate_UnusedBeforeRecords[8] BSS_DATA;
+Uint8 KolimaForestFloodgateUnusedBeforeRecords[8] BSS_DATA;
 /* The bend's logs in SceneLocalState from byte 4, so they survive a battle. */
-struct FLOODGATE_LOG *KolimaForestFloodgate_Logs BSS_DATA;
+struct FLOODGATE_LOG *KolimaForestFloodgateLogs BSS_DATA;
 /* The bank log's place in SceneLocalState's first halfword: 1 west, 0 east. */
-Uint16 *KolimaForestFloodgate_BankLogWest BSS_DATA;
+Uint16 *KolimaForestFloodgateBankLogWest BSS_DATA;
 /* The bend's water level in SceneLocalState's second halfword: 1 high (the logs
    float), 0 low; the floodgate switch flips it. */
-Sint16 *KolimaForestFloodgate_WaterHigh BSS_DATA;
+Sint16 *KolimaForestFloodgateWaterHigh BSS_DATA;
 /* Unused: four bytes nothing reads or writes. */
-Uint8 KolimaForestFloodgate_UnusedAfterMap[4] BSS_DATA;
+Uint8 KolimaForestFloodgateUnusedAfterMap[4] BSS_DATA;
 /* The healthy colours, kept by scKolimaPaletteSaveHealthy: the palette fade's
    448 background and sprite colours, in the array's first half. */
-Uint8 KolimaPalette_Healthy[1792] BSS_DATA;
+Uint8 KolimaPaletteHealthy[1792] BSS_DATA;
 /* The cursed colours, kept by scKolimaPaletteSaveCursed. */
-Uint8 KolimaPalette_Cursed[896] BSS_DATA;
+Uint8 KolimaPaletteCursed[896] BSS_DATA;
 /* Unused: 896 bytes nothing reads or writes. */
-Uint8 KolimaForestFloodgate_UnusedAfterCursed[896] BSS_DATA;
-/* BG1 to BG3's scroll, captured each frame and moved down to where the river's
+Uint8 KolimaForestFloodgateUnusedAfterCursed[896] BSS_DATA;
+/* BG1 to BG3's scroll, captured each tick and moved down to where the river's
    new level is drawn (NEW_LEVEL_OFFSET). */
-Uint32 KolimaForestFloodgate_NewLevelScroll[3] BSS_DATA;
+Uint32 KolimaForestFloodgateNewLevelScroll[3] BSS_DATA;
 /* The percent chance that a line of the river shows its new level: 0 when the
-   rumble starts (SE_WATER_LEVEL), then a point higher each frame up to 101
+   rumble starts (SE_WATER_LEVEL), then a point higher each tick up to 101
    (scKolimaForestFloodgateFlipFloodgateSwitch). */
-Uint32 KolimaForestFloodgate_NewLevelPercent BSS_DATA;
+Uint32 KolimaForestFloodgateNewLevelPercent BSS_DATA;
 
 struct ACTOR;
 
@@ -92,10 +92,10 @@ STATIC_ASSERT(offsetof(FLOODGATE_LOG, actor) == 8);
 void scKolimaForestFloodgateMarkLogMetatiles(
 	const FLOODGATE_LOG *records, Sint32 value);
 #endif
-extern FLOODGATE_LOG  KolimaForestFloodgate_DefaultLogs[];
-extern Uint8		  KolimaForestFloodgate_PushAnimations[];
-extern Sint8		  KolimaForestFloodgate_PushStepX[];
-extern Sint8		  KolimaForestFloodgate_PushStepZ[];
+extern FLOODGATE_LOG  KolimaForestFloodgateDefaultLogs[];
+extern Uint8		  KolimaForestFloodgatePushAnimations[];
+extern Sint8		  KolimaForestFloodgatePushStepX[];
+extern Sint8		  KolimaForestFloodgatePushStepZ[];
 extern SCENE_ENTRANCE KolimaForestFloodgateEntrances[];
 extern Uint32		  KolimaForestFloodgateExits[];
 extern ACTOR_PLACE	  KolimaForestFloodgateActorPlacements[];
@@ -184,10 +184,10 @@ const CUE *scGetCues(void)
    they now lie. */
 static void scKolimaForestFloodgatePushLog(void)
 {
-	scKolimaForestFloodgateRollLog(KolimaForestFloodgate_Logs);
+	scKolimaForestFloodgateRollLog(KolimaForestFloodgateLogs);
 	fdMapGridCopyMetatileAttributes(0, 64, 32, 32, 0, 0);
 	scKolimaForestFloodgateMarkLogMetatiles(
-		KolimaForestFloodgate_Logs, METATILE_BEHAVIOR_WALL);
+		KolimaForestFloodgateLogs, METATILE_BEHAVIOR_WALL);
 	scKolimaForestFloodgateMarkBankLogMetatiles();
 }
 
@@ -205,7 +205,7 @@ static void scKolimaForestFloodgateJumpSouth(void)
    6 at its east, rows 9 to 12. */
 static void scKolimaForestFloodgateMarkBankLogMetatiles(void)
 {
-	if((Sint16)*KolimaForestFloodgate_BankLogWest == 1) {
+	if((Sint16)*KolimaForestFloodgateBankLogWest == 1) {
 		fdMapGridCopyMetatileAttributes(0, 0, 1, 4, 4, 9);
 	} else {
 		fdMapGridCopyMetatileAttributes(0, 0, 1, 4, 6, 9);
@@ -217,10 +217,10 @@ static void scKolimaForestFloodgateMarkBankLogMetatiles(void)
 static void scKolimaForestFloodgateDrawWaterLevel(void)
 {
 	ACTOR		  *log;
-	FLOODGATE_LOG *record = KolimaForestFloodgate_Logs;
+	FLOODGATE_LOG *record = KolimaForestFloodgateLogs;
 
 	/* The floodgate, shut over the full pool or lifted over the drained one. */
-	if(*KolimaForestFloodgate_WaterHigh != 0) {
+	if(*KolimaForestFloodgateWaterHigh != 0) {
 		fdMapGridCopyMetatiles(65, 53, 2, 1, 79, 29);
 		fdMapGridCopyMetatiles(65, 40, 2, 4, 15, 28);
 	} else {
@@ -228,7 +228,7 @@ static void scKolimaForestFloodgateDrawWaterLevel(void)
 	}
 
 	/* The pool's water or its riverbed, on both layers, and its metatiles. */
-	if(*KolimaForestFloodgate_WaterHigh != 0) {
+	if(*KolimaForestFloodgateWaterHigh != 0) {
 		fdMapGridCopyMetatiles(0, 32, 32, 32, 32, 0);
 		fdMapGridCopyMetatiles(32, 32, 32, 32, 64, 0);
 		fdMapGridCopyMetatileAttributes(0, 32, 32, 32, 0, 0);
@@ -243,7 +243,7 @@ static void scKolimaForestFloodgateDrawWaterLevel(void)
 	for(; record->spr != -1; record++) {
 		log = record->actor;
 
-		if(*KolimaForestFloodgate_WaterHigh == 1) {
+		if(*KolimaForestFloodgateWaterHigh == 1) {
 			fdActorSelectAnimation(log, LOG_ANIMATION_FLOAT);
 			log->priFlg = ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
 			log->motionFlg = 0;
@@ -266,58 +266,58 @@ static void scKolimaForestFloodgateDrawWaterLevel(void)
 	   (10, 18), takes metatile (70, 42): a wall metatile (render probe scene
 	   KolimaForestFloodgate --metatiles 8,48,12,52 reads 255 there), so the
 	   water under the west end of the last log of
-	   KolimaForestFloodgate_DefaultLogs stays a wall once the log has been
+	   KolimaForestFloodgateDefaultLogs stays a wall once the log has been
 	   shoved away. Its picture shows from the next time the pool fills. */
 	/* XXX: what that picture is; a map photo of the full pool with that log
 	   shoved off (10, 18) would settle it. */
 	fdMapGridCopyMetatiles(70, 42, 1, 1, 10, 50);
 
-	if(*KolimaForestFloodgate_WaterHigh == 1) {
+	if(*KolimaForestFloodgateWaterHigh == 1) {
 		fdMapGridCopyMetatileAttributes(0, 32, 32, 32, 0, 0);
 		scKolimaForestFloodgateMarkLogMetatiles(
-			KolimaForestFloodgate_Logs, METATILE_BEHAVIOR_JUMP_FORWARD);
+			KolimaForestFloodgateLogs, METATILE_BEHAVIOR_JUMP_FORWARD);
 	} else {
 		fdMapGridCopyMetatileAttributes(0, 64, 32, 32, 0, 0);
 		scKolimaForestFloodgateMarkLogMetatiles(
-			KolimaForestFloodgate_Logs, METATILE_BEHAVIOR_WALL);
+			KolimaForestFloodgateLogs, METATILE_BEHAVIOR_WALL);
 	}
 
 	scKolimaForestFloodgateMarkBankLogMetatiles();
 }
 
 /* HBlank callback: gives each line of the river, with a chance of
-   KolimaForestFloodgate_NewLevelPercent in 100, the scroll that shows its new
+   KolimaForestFloodgateNewLevelPercent in 100, the scroll that shows its new
    level. The HBlank after line n sets line n + 1's scroll. */
 static void scKolimaForestFloodgateChangeRiverLines(void)
 {
 	Uint16			 line = REG_VCOUNT;
-	Uint32			*source = (Uint32 *)&BgScrollWork[1];
+	Uint32			*src = (Uint32 *)&BgScrollWork[1];
 	volatile Uint32 *destination = (volatile Uint32 *)&REG_BG1HOFS;
 
 	if(line == DISPLAY_TOTAL_LINES - 1 || line < RIVER_LAST_LINE) {
-		if(syRandomBelow(100) < KolimaForestFloodgate_NewLevelPercent) {
-			source = KolimaForestFloodgate_NewLevelScroll;
+		if(syRandomBelow(100) < KolimaForestFloodgateNewLevelPercent) {
+			src = KolimaForestFloodgateNewLevelScroll;
 		}
 	}
 
-	*destination = *source++;
+	*destination = *src++;
 	destination = (volatile Uint32 *)&REG_BG2HOFS;
-	*destination++ = *source++;
-	*destination = *source;
+	*destination++ = *src++;
+	*destination = *src;
 }
 
 /* Captures BG1 to BG3's scroll and moves it down to the river's new level. */
 static void scKolimaForestFloodgateCaptureNewLevelScroll(void)
 {
-	const Uint32 *source = (const Uint32 *)&BgScrollWork[1];
-	Uint32		 *destination = KolimaForestFloodgate_NewLevelScroll;
+	const Uint32 *src = (const Uint32 *)&BgScrollWork[1];
+	Uint32		 *dst = KolimaForestFloodgateNewLevelScroll;
 	BG_SCROLL	 *newLevel;
 
 	/* BG1 to BG3's offsets, each pair one word. */
-	*destination++ = *source++;
-	*destination++ = *source++;
-	*destination = *source;
-	newLevel = (BG_SCROLL *)KolimaForestFloodgate_NewLevelScroll;
+	*dst++ = *src++;
+	*dst++ = *src++;
+	*dst = *src;
+	newLevel = (BG_SCROLL *)KolimaForestFloodgateNewLevelScroll;
 	newLevel[0].y += NEW_LEVEL_OFFSET;
 	newLevel[1].y += NEW_LEVEL_OFFSET;
 	newLevel[2].y += NEW_LEVEL_OFFSET;
@@ -341,7 +341,7 @@ static void scKolimaForestFloodgateFlipFloodgateSwitch(void)
 	sySndPlay(SE_CRUNCH);
 	/* The switch's lever turns, then the gate drops shut, or lifts, a picture
 	   at a time. */
-	if(*KolimaForestFloodgate_WaterHigh == 0) {
+	if(*KolimaForestFloodgateWaterHigh == 0) {
 		fdActorSetPos(ACTOR_FLOODGATE_SPRAY, 256, 462);
 		fdMapGridCopyMetatiles(77, 34, 1, 2, 83, 25);
 		sySynch(3);
@@ -386,9 +386,9 @@ static void scKolimaForestFloodgateFlipFloodgateSwitch(void)
 		fdMapGridCopyMetatiles(65, 50, 2, 5, 79, 25);
 		sySynch(30);
 	}
-	if(*KolimaForestFloodgate_WaterHigh == 0) {
+	if(*KolimaForestFloodgateWaterHigh == 0) {
 		scMapGridDrawMetatilePanel(9, 19, 16, 5,
-			*KolimaForestFloodgate_WaterHigh, 9, NEW_LEVEL_PANEL_ROW);
+			*KolimaForestFloodgateWaterHigh, 9, NEW_LEVEL_PANEL_ROW);
 		scMapGridDrawMetatilePanel(9, 51, 16, 5, 1, 9, NEW_LEVEL_PANEL_ROW);
 		scMapGridDrawMetatilePanel(41, 51, 16, 5, 2, 9, NEW_LEVEL_PANEL_ROW);
 	} else {
@@ -397,24 +397,24 @@ static void scKolimaForestFloodgateFlipFloodgateSwitch(void)
 		scMapGridDrawMetatilePanel(41, 83, 16, 5, 2, 9, NEW_LEVEL_PANEL_ROW);
 	}
 
-	/* Each frame captures the scroll, and the HBlank handler shows the river's
+	/* Each tick captures the scroll, and the HBlank handler shows the river's
 	   lines at their new level, more often as the chance climbs to 100%. */
-	KolimaForestFloodgate_NewLevelPercent = 0;
-	sySetFrameEvent(
-		scKolimaForestFloodgateCaptureNewLevelScroll, EVENT_PASS_FRAME);
+	KolimaForestFloodgateNewLevelPercent = 0;
+	sySetTickEvent(
+		scKolimaForestFloodgateCaptureNewLevelScroll, EVENT_PASS_TICK);
 	sySynch(1);
 	syIntFunction(IRQ_HBLANK, 0, scKolimaForestFloodgateChangeRiverLines);
 	sySndPlay(SE_WATER_LEVEL);
-	KolimaForestFloodgate_NewLevelPercent = 0;
+	KolimaForestFloodgateNewLevelPercent = 0;
 	do {
 		sySynch(1);
-		nextPercent = KolimaForestFloodgate_NewLevelPercent + 1;
-		KolimaForestFloodgate_NewLevelPercent += 1;
+		nextPercent = KolimaForestFloodgateNewLevelPercent + 1;
+		KolimaForestFloodgateNewLevelPercent += 1;
 	} while(nextPercent <= 100);
 	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
-	if(*KolimaForestFloodgate_WaterHigh == 0) {
+	if(*KolimaForestFloodgateWaterHigh == 0) {
 		scMapGridDrawMetatilePanel(
-			9, 19, 16, 5, *KolimaForestFloodgate_WaterHigh, 9, RIVER_PANEL_ROW);
+			9, 19, 16, 5, *KolimaForestFloodgateWaterHigh, 9, RIVER_PANEL_ROW);
 		scMapGridDrawMetatilePanel(9, 51, 16, 5, 1, 9, RIVER_PANEL_ROW);
 		scMapGridDrawMetatilePanel(41, 51, 16, 5, 2, 9, RIVER_PANEL_ROW);
 	} else {
@@ -426,7 +426,7 @@ static void scKolimaForestFloodgateFlipFloodgateSwitch(void)
 	syIntFunction(IRQ_HBLANK, 0, 0);
 	sySynch(1);
 	syCloseEvent(scKolimaForestFloodgateCaptureNewLevelScroll);
-	*KolimaForestFloodgate_WaterHigh ^= 1;
+	*KolimaForestFloodgateWaterHigh ^= 1;
 	scKolimaForestFloodgateDrawWaterLevel();
 	fdMapGridCenterOnFollowedPoint();
 	fdScriptEnd();
@@ -456,7 +456,7 @@ static void scKolimaForestFloodgatePushBankLogWest(void)
 	sySndPlay(SE_HEAVY_STOP);
 	fdMapGridCopyMetatileAttributes(5, 9, 1, 4, 6, 9);
 	fdMapGridCopyMetatileAttributes(0, 0, 1, 4, 4, 9);
-	*KolimaForestFloodgate_BankLogWest = 1;
+	*KolimaForestFloodgateBankLogWest = 1;
 	fdScriptEnd();
 }
 
@@ -484,7 +484,7 @@ static void scKolimaForestFloodgatePushBankLogEast(void)
 	sySndPlay(SE_HEAVY_STOP);
 	fdMapGridCopyMetatileAttributes(5, 9, 1, 4, 4, 9);
 	fdMapGridCopyMetatileAttributes(0, 0, 1, 4, 6, 9);
-	*KolimaForestFloodgate_BankLogWest = 0;
+	*KolimaForestFloodgateBankLogWest = 0;
 	fdScriptEnd();
 }
 
@@ -498,24 +498,24 @@ Sint32 scInit(void)
 {
 	ACTOR *actor;
 
-	KolimaForestFloodgate_BankLogWest = (Uint16 *)SceneLocalState;
-	KolimaForestFloodgate_WaterHigh = (Sint16 *)SceneLocalState + 1;
+	KolimaForestFloodgateBankLogWest = (Uint16 *)SceneLocalState;
+	KolimaForestFloodgateWaterHigh = (Sint16 *)SceneLocalState + 1;
 	/* The bank log's place and the water level take the first two halfwords. */
-	KolimaForestFloodgate_Logs =
+	KolimaForestFloodgateLogs =
 		(FLOODGATE_LOG *)(SceneLocalState + 2 * sizeof(Uint16));
 	fdMapGridCopyMetatiles(32, 0, 64, 32, 0, 64);
 	fdMapGridCopyMetatileAttributes(0, 0, 32, 32, 0, 64);
 	fdMapGridCopyMetatileAttributes(32, 0, 32, 32, 0, 32);
 	if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) == 0) {
 		/* The five logs and the end of the list, six records of three words. */
-		syDMAXCopy(KolimaForestFloodgate_DefaultLogs,
-			KolimaForestFloodgate_Logs, DMA_COPY_WORDS(18), REG_DMA3);
-		*KolimaForestFloodgate_BankLogWest = 0;
-		*KolimaForestFloodgate_WaterHigh = 1;
+		syDMAXCopy(KolimaForestFloodgateDefaultLogs, KolimaForestFloodgateLogs,
+			DMA_COPY_WORDS(18), REG_DMA3);
+		*KolimaForestFloodgateBankLogWest = 0;
+		*KolimaForestFloodgateWaterHigh = 1;
 	}
-	scKolimaForestFloodgateCreateLogs(KolimaForestFloodgate_Logs);
+	scKolimaForestFloodgateCreateLogs(KolimaForestFloodgateLogs);
 	scKolimaForestFloodgateMarkLogMetatiles(
-		KolimaForestFloodgate_DefaultLogs, METATILE_BEHAVIOR_WALL);
+		KolimaForestFloodgateDefaultLogs, METATILE_BEHAVIOR_WALL);
 	scKolimaForestFloodgateDrawWaterLevel();
 	fdActorSetAnimation(ACTOR_FLOODGATE_SPRAY, 0);
 	fdActorGet(ACTOR_FLOODGATE_SPRAY)->motionFlg = 0;
@@ -691,8 +691,7 @@ static void scKolimaForestFloodgateRollLog(FLOODGATE_LOG *logs)
 	actor->speedLimit = toFIXED(1) / 2;
 	actor->acceleration = toFIXED(1) / 5;
 	sySndPlay(SE_HEAVY_MOVE);
-	fdActorSelectAnimation(
-		actor, KolimaForestFloodgate_PushAnimations[quarter]);
+	fdActorSelectAnimation(actor, KolimaForestFloodgatePushAnimations[quarter]);
 	syFieldActorSetMoveTargetFX(actor, x, 0, z);
 	fdScriptWait(6);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -700,8 +699,8 @@ static void scKolimaForestFloodgateRollLog(FLOODGATE_LOG *logs)
 	fdActorStartCamera(state->camera, (Sint32)actor);
 	fdActorSetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.3, 0.2);
 	fdActorSetDestinationOffset(ACTOR_PARTY_LEADER,
-		KolimaForestFloodgate_PushStepX[quarter],
-		KolimaForestFloodgate_PushStepZ[quarter]);
+		KolimaForestFloodgatePushStepX[quarter],
+		KolimaForestFloodgatePushStepZ[quarter]);
 	fdScriptWait(24);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	fdActorWaitForMove(actor);
@@ -717,7 +716,7 @@ static void scKolimaForestFloodgateRollLog(FLOODGATE_LOG *logs)
 /* The logs on a first visit, as FLOODGATE_LOG, each in the sprite of the way it
    runs: one sprite for north to south, another for west to east. */
 /* clang-format off */
-FLOODGATE_LOG KolimaForestFloodgate_DefaultLogs[] = {
+FLOODGATE_LOG KolimaForestFloodgateDefaultLogs[] = {
 	{SPRITE_LOG_NORTH_SOUTH, 11, 9, 1, NULL},
 	{SPRITE_LOG_WEST_EAST, 12, 12, 0, NULL},
 	{SPRITE_LOG_WEST_EAST, 17, 12, 0, NULL},
@@ -728,14 +727,14 @@ FLOODGATE_LOG KolimaForestFloodgate_DefaultLogs[] = {
 
 /* For each quarter turn of the way a log is pushed: its rolling animation, */
 /* and the leader's step after it in pixels. */
-Uint8 KolimaForestFloodgate_PushAnimations[] = {
+Uint8 KolimaForestFloodgatePushAnimations[] = {
 	LOG_ANIMATION_ROLL_EAST,
 	LOG_ANIMATION_ROLL_EAST,
 	LOG_ANIMATION_ROLL_WEST,
 	LOG_ANIMATION_ROLL_WEST,
 };
-Sint8 KolimaForestFloodgate_PushStepX[] = {8, 0, -8, 0};
-Sint8 KolimaForestFloodgate_PushStepZ[] = {0, 8, 0, -8};
+Sint8 KolimaForestFloodgatePushStepX[] = {8, 0, -8, 0};
+Sint8 KolimaForestFloodgatePushStepZ[] = {0, 8, 0, -8};
 
 SCENE_ENTRANCE KolimaForestFloodgateEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 407, 0, 276, FACING_WEST, 0, -1, -1, -1, -1, 0 },

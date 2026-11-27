@@ -54,9 +54,9 @@ extern Uint8 SceneLocalState[];
 #define SPEAKER_ACTOR_MASK	   0xfff  /* the actor id below them */
 
 /* One step of a metatile animation: copy the width by height metatiles at
-   sourceX, sourceY over the destination, then wait frames. */
-#define MAPGRID_ANIMATION_STEP(sourceX, sourceY, width, height, frames) \
-	(sourceX), (sourceY), (width), (height), (frames)
+   sourceX, sourceY over the destination, then wait ticks. */
+#define MAPGRID_ANIMATION_STEP(sourceX, sourceY, width, height, ticks) \
+	(sourceX), (sourceY), (width), (height), (ticks)
 /* A source column that ends the steps. */
 #define MAPGRID_ANIMATION_STEPS_END 65535
 
@@ -85,14 +85,14 @@ void syImportActorSetPos();
 void syImportActorSetAnimation();
 
 /* Switches an actor to an ACTOR_ANIMATION, such as ANIM_NOD. */
-static inline void fdActorSetAnimation(Sint32 actorId, Sint32 animation)
+static inline void fdActorSetAnimation(Sint32 actorId, Sint32 anm)
 {
-	syImportActorSetAnimation(actorId, animation);
+	syImportActorSetAnimation(actorId, anm);
 }
 
 /* Sets a game flag (gmFlagSet), for the two scenes whose calls compile only as
    calls of a void function. */
-void syImportGameFlagSet(Sint32 flag);
+void syImportGameFlagSet(Sint32 flg);
 /* Advances the game's random number generator and returns 0 to 65535
    (syRandom). */
 Sint32 syImportRandomNext();
@@ -109,7 +109,7 @@ static inline void fdActorSetScript(Sint32 actorId, const Sint32 *script)
 	fdActorSetMovementTypeById(actorId, (Sint32)script);
 }
 
-/* Runs a script, waiting at most 300 frames for its final command. */
+/* Runs a script, waiting at most 300 ticks for its final command. */
 static inline void fdActorRunScriptAndWait(Sint32 actorId, const Sint32 *script)
 {
 	fdActorSetMovementTypeAndWaitById(actorId, (Sint32)script);
@@ -128,32 +128,32 @@ void sySndPlayStub(Sint32 id);
 
 /* Moves the script's message number count messages on, past lines the script
    doesn't show. */
-static inline void fdScriptSkipMessages(Sint32 count)
+static inline void fdScriptSkipMessages(Sint32 cnt)
 {
-	Uint16 *message = &FieldStateWork->msg;
+	Uint16 *msg = &FieldStateWork->msg;
 
-	*message = *message + count;
+	*msg = *msg + cnt;
 }
 
 /* Shows the script's next line of dialogue and waits for the player to read
    it. */
-static inline void fdScriptShowMessage(Sint32 speaker, Sint32 flags)
+static inline void fdScriptShowMessage(Sint32 speaker, Sint32 flg)
 {
-	fdScriptShowMessageAndWait(speaker, flags);
+	fdScriptShowMessageAndWait(speaker, flg);
 }
 
 /* Opens the script's next line and returns its window once the text is typed
    out, so the script can act while it is still on screen. */
-static inline Sint32 fdScriptOpenMessage(Sint32 speaker, Sint32 flags)
+static inline Sint32 fdScriptOpenMessage(Sint32 speaker, Sint32 flg)
 {
-	return (Sint32)fdMessageShowAtActor(speaker, flags);
+	return (Sint32)fdMessageShowAtActor(speaker, flg);
 }
 
 /* Puts the current line to the player as a question and shows the line that
    answers it; returns 0 for yes. */
-static inline Sint32 fdScriptAskYesNo(Sint32 speaker, Sint32 flags)
+static inline Sint32 fdScriptAskYesNo(Sint32 speaker, Sint32 flg)
 {
-	return fdScriptAskYesNoAndShowResponse(speaker, flags);
+	return fdScriptAskYesNoAndShowResponse(speaker, flg);
 }
 
 /* Looks up an actor for a script, NULL when it doesn't exist
@@ -184,13 +184,13 @@ static inline void fdActorSetSpeedFX(
 	fdActorSetSpeedParms(actorId, speed, acceleration);
 }
 
-/* Sets an actor's top speed for the script's next moves, in pixels a frame, and
+/* Sets an actor's top speed for the script's next moves, in pixels a tick, and
    an acceleration of half that: `fdActorSetSpeed(ACTOR_GARET, 0.8)`. */
 #define fdActorSetSpeed(actorId, speed) \
 	fdActorSetSpeedFX(actorId, toFIXED(speed), toFIXED(speed) / 2)
 
-/* Sets an actor's top speed, in pixels a frame, and its acceleration, in pixels
-   a frame per frame, where the acceleration isn't half the speed. */
+/* Sets an actor's top speed, in pixels a tick, and its acceleration, in pixels
+   a tick per tick, where the acceleration isn't half the speed. */
 #define fdActorSetSpeedAndAcceleration(actorId, speed, acceleration) \
 	fdActorSetSpeedFX(actorId, toFIXED(speed), toFIXED(acceleration))
 
@@ -223,25 +223,24 @@ static inline void fdActorWalkBy(Sint32 actorId, Sint32 dx, Sint32 dz)
 	fdActorWalkByById(actorId, dx, dz);
 }
 
-/* Turns an actor to a direction and holds the script for a few frames. */
+/* Turns an actor to a direction and holds the script for a few ticks. */
 static inline void fdActorFaceDirection(
-	Sint32 actorId, Sint32 facing, Sint32 frames)
+	Sint32 actorId, Sint32 facing, Sint32 ticks)
 {
-	fdActorFaceDirectionById(actorId, facing, frames);
+	fdActorFaceDirectionById(actorId, facing, ticks);
 }
 
 /* Has one actor look at another at once, then pauses the script. */
-static inline void fdActorFaceActor(
-	Sint32 actorId, Sint32 target, Sint32 frames)
+static inline void fdActorFaceActor(Sint32 actorId, Sint32 tgt, Sint32 ticks)
 {
-	fdActorFaceActorById(actorId, target, frames);
+	fdActorFaceActorById(actorId, tgt, ticks);
 }
 
-/* Pops an emote bubble up over an actor, then lets frames pass before the
+/* Pops an emote bubble up over an actor, then lets ticks pass before the
    script goes on. */
-static inline void fdActorShowEmote(Sint32 actorId, Sint32 emote, Sint32 frames)
+static inline void fdActorShowEmote(Sint32 actorId, Sint32 emote, Sint32 ticks)
 {
-	fdActorShowEmoteById(actorId, emote, frames);
+	fdActorShowEmoteById(actorId, emote, ticks);
 }
 
 /* Attaches a field effect to an actor, takes it off, or plays one over it
@@ -259,13 +258,13 @@ static inline void fdCameraSetSpeedFX(FIXED speed, FIXED acceleration)
 }
 
 /* Sets the camera's top panning speed for the script's next camera moves, in
-   pixels a frame, and an acceleration of an eighth of that:
+   pixels a tick, and an acceleration of an eighth of that:
    `fdCameraSetSpeed(0.8)`. */
 #define fdCameraSetSpeed(speed) \
 	fdCameraSetSpeedFX(toFIXED(speed), toFIXED(speed) / 8)
 
-/* Sets the camera's top panning speed, in pixels a frame, and its acceleration,
-   in pixels a frame per frame, where the acceleration isn't an eighth of the
+/* Sets the camera's top panning speed, in pixels a tick, and its acceleration,
+   in pixels a tick per tick, where the acceleration isn't an eighth of the
    speed. */
 #define fdCameraSetSpeedAndAcceleration(speed, acceleration) \
 	fdCameraSetSpeedFX(toFIXED(speed), toFIXED(acceleration))
@@ -290,24 +289,22 @@ static inline void fdCameraMoveToFX(FIXED x, FIXED y, FIXED z, Sint32 pan)
 
 /* Changes part of the room in place, copying whole metatiles, picture and
    metatile behavior alike, from another part of the map. */
-static inline void fdMapGridCopyMetatiles(Sint32 sourceX, Sint32 sourceY,
-	Sint32 width, Sint32 height, Sint32 destinationX, Sint32 destinationY)
+static inline void fdMapGridCopyMetatiles(Sint32 srcX, Sint32 srcY,
+	Sint32 width, Sint32 height, Sint32 dstX, Sint32 dstY)
 {
 	fdMapGridCopyMetatileTilesMetatilesRect(
-		sourceX, sourceY, width, height, destinationX, destinationY);
+		srcX, srcY, width, height, dstX, dstY);
 }
 
 /* Changes where the party can walk in part of the room, copying only the
    metatiles' metatile behaviors and flags. */
-static inline void fdMapGridCopyMetatileAttributes(Sint32 sourceX,
-	Sint32 sourceY, Sint32 width, Sint32 height, Sint32 destinationX,
-	Sint32 destinationY)
+static inline void fdMapGridCopyMetatileAttributes(Sint32 srcX, Sint32 srcY,
+	Sint32 width, Sint32 height, Sint32 dstX, Sint32 dstY)
 {
-	fdMapGridCopyMetatileAttributeRect(
-		sourceX, sourceY, width, height, destinationX, destinationY);
+	fdMapGridCopyMetatileAttributeRect(srcX, srcY, width, height, dstX, dstY);
 }
 
-/* Sets shake amplitudes in 16.16 fixed-point pixels and the per-frame decay
+/* Sets shake amplitudes in 16.16 fixed-point pixels and the per-tick decay
    factor in 16.16; SHAKE_KEEP keeps that component, toFIXED(1) keeps the
    shake. */
 static inline void fdMapGridSetShakeFX(
@@ -322,7 +319,7 @@ static inline void fdMapGridSetShakeFX(
 #define SCRIPT_SHAKE_FIXED(value) \
 	((value) == SHAKE_KEEP ? SHAKE_KEEP : toFIXED(value))
 
-/* Shakes the screen by amplitudes in pixels, shrunk each frame by a decay
+/* Shakes the screen by amplitudes in pixels, shrunk each tick by a decay
    factor (1 keeps the shake going); SHAKE_KEEP keeps a component:
    `fdMapGridSetShake(2, 2, 1)`, `fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP,
    0.9)`. */
@@ -335,29 +332,29 @@ static inline void fdMapGridSetShakeFX(
    sites use them; other scripts call those functions by their own. */
 
 /* gmFlagGet, from a script: 1 when the FLAG_ is set. */
-static inline Sint32 fdScriptGetFlag(Sint32 flag)
+static inline Sint32 fdScriptGetFlag(Sint32 flg)
 {
-	return gmFlagGet(flag);
+	return gmFlagGet(flg);
 }
 
 /* gmFlagSet, from a script. */
-static inline void fdScriptSetFlag(Sint32 flag)
+static inline void fdScriptSetFlag(Sint32 flg)
 {
-	gmFlagSet(flag);
+	gmFlagSet(flg);
 }
 
 /* gmFlagClear, from a script. */
-static inline void fdScriptClearFlag(Sint32 flag)
+static inline void fdScriptClearFlag(Sint32 flg)
 {
-	gmFlagClear(flag);
+	gmFlagClear(flg);
 }
 
 #ifndef FIELD_STAGED_ACTOR_IMPORTS
 /* Plays a sound effect or music from a script, as an actor script's SC_SE
    does. */
-static inline void fdScriptPlaySnd(Sint32 sound)
+static inline void fdScriptPlaySnd(Sint32 snd)
 {
-	sySndPlay(sound);
+	sySndPlay(snd);
 }
 #endif
 
@@ -413,9 +410,9 @@ typedef enum ACTOR_BLEND_MODE {
 /* Plays a metatile animation, such as a door opening, and holds the script
    until its last step. */
 static inline void fdMapGridAnimateMetatiles(
-	const Uint16 *steps, Sint32 destinationX, Sint32 destinationY)
+	const Uint16 *steps, Sint32 dstX, Sint32 dstY)
 {
-	fdMapGridPlayMapEdit((Uint16 *)steps, destinationX, destinationY);
+	fdMapGridPlayMapEdit((Uint16 *)steps, dstX, dstY);
 }
 
 /* Moves a treasure spot's actor to a point on the ground. */
@@ -426,10 +423,9 @@ static inline void fdTreasureSpotSetPos(Sint32 object, FIXED x, FIXED z)
 
 /* Lines an actor up with the middle of its column, then walks it straight along
    z. */
-static inline void fdActorCenterAndWalk(
-	Sint32 actorId, Sint32 priority, Sint32 dz)
+static inline void fdActorCenterAndWalk(Sint32 actorId, Sint32 pri, Sint32 dz)
 {
-	fdActorCenterOnColumn(actorId, priority, dz);
+	fdActorCenterOnColumn(actorId, pri, dz);
 }
 
 /* Walks an actor some distance and waits until it is there. */
@@ -440,9 +436,9 @@ static inline void fdActorWalkByAndWait(Sint32 actorId, Sint32 dx, Sint32 dz)
 
 /* Shows a line of dialogue, then pauses before the script goes on. */
 static inline void syFieldScriptShowMessageThenWait(
-	Sint32 speaker, Sint32 flags, Sint32 frames)
+	Sint32 speaker, Sint32 flg, Sint32 ticks)
 {
-	fdScriptShowMessageThenWait(speaker, flags, frames);
+	fdScriptShowMessageThenWait(speaker, flg, ticks);
 }
 
 /* Sets a colour mode on every part of an actor's sprite, or with
@@ -454,20 +450,19 @@ static inline void fdActorSetSprColById(Sint32 actorId, Sint32 value)
 
 /* Changes what part of the room shows, copying the metatiles' tiles but not
    their metatile behaviors. */
-static inline void fdMapGridCopyMetatilesTo(Sint32 sourceX, Sint32 sourceY,
-	Sint32 destinationX, Sint32 destinationY, Sint32 width, Sint32 height)
+static inline void fdMapGridCopyMetatilesTo(Sint32 srcX, Sint32 srcY,
+	Sint32 dstX, Sint32 dstY, Sint32 width, Sint32 height)
 {
 	fdMapGridCopyMetatileTilesIndicesRect(
-		sourceX, sourceY, destinationX, destinationY, width, height);
+		srcX, srcY, dstX, dstY, width, height);
 }
 
 /* Changes the pictures of part of the room as fdMapGridCopyMetatilesTo does,
    through fdMapGridCopyMetatileIndexRect, which takes the size first. */
-static inline void fdMapGridCopyMetatilesLayered(Sint32 sourceX, Sint32 sourceY,
-	Sint32 destinationX, Sint32 destinationY, Sint32 width, Sint32 height)
+static inline void fdMapGridCopyMetatilesLayered(Sint32 srcX, Sint32 srcY,
+	Sint32 dstX, Sint32 dstY, Sint32 width, Sint32 height)
 {
-	fdMapGridCopyMetatileIndexRect(
-		sourceX, sourceY, destinationX, destinationY, width, height);
+	fdMapGridCopyMetatileIndexRect(srcX, srcY, dstX, dstY, width, height);
 }
 
 /* Sets the colours the screen shows now, where a script's palette fade

@@ -10,7 +10,7 @@ void fdPsynergyCatchOnTarget(Sint32 unused)
 }
 
 /* A hand (SPRITE_MOVE_HAND) reaches from 16 pixels above the caster to the
-   target over GROW_STEPS frames, growing from a quarter to full size, clenches
+   target over GROW_STEPS ticks, growing from a quarter to full size, clenches
    and presses down 20 pixels, taking what it caught off the map, then rises
    19.5 pixels and shrinks back into the caster. */
 void fdPsynergyCatch(void)
@@ -21,7 +21,7 @@ void fdPsynergyCatch(void)
 	ACTOR			   *hand;
 	POS					spawn;
 	POS					origin;
-	POS					target;
+	POS					tgt;
 	Sint32				step;
 	Sint32				i;
 	Sint32				steps = GROW_STEPS + 1;
@@ -30,14 +30,14 @@ void fdPsynergyCatch(void)
 	origin.y = caster->y.fixed + toFIXED(16);
 	origin.z = caster->z.fixed;
 	if(effectState->aimAhead) {
-		target.x = caster->x.fixed;
-		target.y = caster->y.fixed + toFIXED(32);
-		target.z = caster->z.fixed;
-		syVectorAddPolarOffset(toFIXED(32), effectState->ang, &target.x);
+		tgt.x = caster->x.fixed;
+		tgt.y = caster->y.fixed + toFIXED(32);
+		tgt.z = caster->z.fixed;
+		syVectorAddPolarOffset(toFIXED(32), effectState->ang, &tgt.x);
 	} else {
-		target.x = effectState->x;
-		target.y = effectState->y + toFIXED(32);
-		target.z = effectState->z;
+		tgt.x = effectState->x;
+		tgt.y = effectState->y + toFIXED(32);
+		tgt.z = effectState->z;
 	}
 	spawn.x = effectState->x;
 	spawn.y = effectState->y + toFIXED(32);
@@ -53,15 +53,15 @@ void fdPsynergyCatch(void)
 	fdActorSelectAnimationStub(hand, MOVE_HAND_ANIMATION_FIST);
 	fdActorSetSprColModeStub(hand, SPRITE_COLOR_GRB);
 
-	/* Reach out to the target, a step of the way each frame. */
+	/* Reach out to the target, a step of the way each tick. */
 	step = 0;
 	do {
 		Sint32 scale;
 
 		SET_ACTOR_POSITION(hand,
-			origin.x + (target.x - origin.x) * step / GROW_STEPS,
-			origin.y + (target.y - origin.y) * step / GROW_STEPS,
-			origin.z + (target.z - origin.z) * step / GROW_STEPS);
+			origin.x + (tgt.x - origin.x) * step / GROW_STEPS,
+			origin.y + (tgt.y - origin.y) * step / GROW_STEPS,
+			origin.z + (tgt.z - origin.z) * step / GROW_STEPS);
 		scale = fdEffectInterpolate(toFIXED(1), toFIXED(1) / 4, step);
 		hand->scaleX = scale;
 		hand->scaleY = scale;
@@ -72,7 +72,7 @@ void fdPsynergyCatch(void)
 	fdActorSelectAnimationStub(hand, MOVE_HAND_ANIMATION_CLENCH);
 	sySynch(15);
 
-	/* Press down 2 pixels a frame for 10 frames. */
+	/* Press down 2 pixels a tick for 10 ticks. */
 	for(i = 0; i < 10; i++) {
 		hand->y.fixed -= toFIXED(2);
 		sySynch(1);
@@ -86,7 +86,7 @@ void fdPsynergyCatch(void)
 			caught, -toFIXED(9), caught->y.fixed, -toFIXED(9));
 	sySynch(20);
 
-	/* Rise 1.5 pixels a frame for 13 frames. */
+	/* Rise 1.5 pixels a tick for 13 ticks. */
 	for(i = 0; i < 13; i++) {
 		hand->y.fixed += toFIXED(3) / 2;
 		sySynch(1);
@@ -99,10 +99,9 @@ void fdPsynergyCatch(void)
 	do {
 		Sint32 scale;
 
-		SET_ACTOR_POSITION(hand,
-			target.x + (origin.x - target.x) * step / GROW_STEPS,
-			target.y + (origin.y - target.y) * step / GROW_STEPS,
-			target.z + (origin.z - target.z) * step / GROW_STEPS);
+		SET_ACTOR_POSITION(hand, tgt.x + (origin.x - tgt.x) * step / GROW_STEPS,
+			tgt.y + (origin.y - tgt.y) * step / GROW_STEPS,
+			tgt.z + (origin.z - tgt.z) * step / GROW_STEPS);
 		scale = fdEffectInterpolate(toFIXED(1) / 4, toFIXED(1), step);
 		hand->scaleX = scale;
 		hand->scaleY = scale;

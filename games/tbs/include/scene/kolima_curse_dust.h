@@ -6,13 +6,13 @@
 
 #include "types.h"
 
-/* Kolima_CurseDustState: how the curse dust falls about the point the map view
+/* KolimaCurseDustState: how the curse dust falls about the point the map view
    follows (scKolimaUpdateCurseDust). */
 typedef enum KOLIMA_CURSE_DUST_STATE {
 	KOLIMA_DUST_CENTRED = 0, /* within 128 pixels of the point */
-	/* Over a band that widens, by 50 a frame to 15000, as it closes in. */
+	/* Over a band that widens, by 50 a tick to 15000, as it closes in. */
 	KOLIMA_DUST_CLOSING = 1,
-	/* Over a band that widens, by 50 a frame to 30000, as it closes in
+	/* Over a band that widens, by 50 a tick to 30000, as it closes in
 	   nearer. */
 	KOLIMA_DUST_CLOSING_WIDE = 2,
 	/* Drifting on until it is far past the point, then back to
@@ -20,7 +20,7 @@ typedef enum KOLIMA_CURSE_DUST_STATE {
 	KOLIMA_DUST_DRIFTING = 3
 } KOLIMA_CURSE_DUST_STATE;
 
-/* An event that sends down a speck of curse dust every eighth frame. */
+/* An event that sends down a speck of curse dust every eighth tick. */
 void scKolimaUpdateCurseDust(void);
 
 #endif

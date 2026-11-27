@@ -48,7 +48,7 @@
 
 /* clang-format off */
 /* The 516 items, by item id, read through gmItemGetDirect. */
-const ITEM_DEFINITION Item_DefinitionTable[] = {
+const ITEM_DEFINITION ItemDefinitionTable[] = {
 	/* No item; the text names it "???". */
 	[ITEM_NONE] = {
 		.element = ELEMENT_NONE,

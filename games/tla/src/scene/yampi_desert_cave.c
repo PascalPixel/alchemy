@@ -35,7 +35,7 @@
 #define FLAG_YAMPI_DESERT_CAVE_CRYSTAL_DUG_UP			 FLAG_SCENE_TEMP_71
 /* The ripple's step count, the byte of flags from FLAG_SCENE_TEMP_78: each
    RIPPLE_STEPS_PER_POINT steps it moves on one point of
-   YampiDesertCave_RipplePath. */
+   YampiDesertCaveRipplePath. */
 #define FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP			 FLAG_SCENE_TEMP_78
 /* The steps the ripple takes at each point of its path. */
 #define RIPPLE_STEPS_PER_POINT							 32
@@ -45,7 +45,7 @@
 
 /* The Water of Life chest's room's actors
    (SceneId_YampiDesertCaveWaterOfLifeChest), the rows of
-   YampiDesertCave_Placements. */
+   YampiDesertCavePlacements. */
 typedef enum YAMPI_DESERT_CAVE_CHEST_ROOM_ACTOR_ID {
 	/* The three fallen columns pushed as logs (PushKinds). */
 	ACTOR_CHEST_ROOM_FIRST_LOG = ACTOR_FIRST_PLACED,
@@ -147,7 +147,7 @@ void scYampiDesertCaveStopLeaderAtLog(ACTOR *actor);
 
 void scTeleportArriveWhirling(void);
 
-extern Uint16 TeleportCircle_ShimmerSlots[];
+extern Uint16 TeleportCircleShimmerSlots[];
 
 void scYampiDesertCaveFightCrystal(void);
 
@@ -164,7 +164,7 @@ void scYampiDesertCaveTeleportFromSouthCircle(void);
 void scYampiDesertCaveCastSand(void);
 void scYampiDesertCaveEndSand(void);
 
-extern Uint32 YampiDesertCave_Settle[];
+extern Uint32 YampiDesertCaveSettle[];
 
 /* The Teleport circles' shimmer (shared/teleport_shimmer.c). */
 Uint16 PaletteCycleBright		  BSS_DATA;
@@ -186,7 +186,7 @@ Bool scYampiDesertCaveSetLogMetatiles(Sint32 id)
 {
 	MAP_STATE *map = Ram_HeapSlots->mapGrid;
 	ACTOR	  *actor = fdActorGetById(id);
-	Sint16	   sprite = ((SPR *)actor->spr)->entries[0]->anmId;
+	Sint16	   spr = ((SPR *)actor->spr)->entries[0]->anmId;
 	Sint16	   i;
 	Uint32	   kind;
 	Sint32	   w, h, x, z;
@@ -194,7 +194,7 @@ Bool scYampiDesertCaveSetLogMetatiles(Sint32 id)
 	Sint32	   bx, bz;
 
 	i = 0;
-	if((Uint16)sprite != PushKinds[i]) {
+	if((Uint16)spr != PushKinds[i]) {
 		do {
 			/* FAKEMATCH(dead): the counter's halfword step written out by hand;
 			 * as a Uint16 counter in for (i = 0; i < PUSH_KINDS; i++) with the
@@ -202,7 +202,7 @@ Bool scYampiDesertCaveSetLogMetatiles(Sint32 id)
 			 * own, 22 lines off. */
 			kind = (Uint16)NEXT_HALFWORD(i);
 			i = kind;
-		} while(kind < PUSH_KINDS && (Uint16)sprite != PushKinds[kind]);
+		} while(kind < PUSH_KINDS && (Uint16)spr != PushKinds[kind]);
 	}
 	kind = (Uint16)i;
 	if(kind == PUSH_KINDS)
@@ -249,9 +249,9 @@ ACTOR *scYampiDesertCaveFindPushedLog(
    layer's inline, as The Broken Seal's system_call.h has it, which this game's
    does not yet. */
 static inline Sint32 scFieldActorCheckMovementCollision(
-	ACTOR *actor, Sint32 *position)
+	ACTOR *actor, Sint32 *pos)
 {
-	return fdMapGridCheckCollision(actor, position);
+	return fdMapGridCheckCollision(actor, pos);
 }
 
 /* Finds how far a pushed object can roll in the leader's direction, probing its
@@ -264,7 +264,7 @@ Bool scYampiDesertCaveFindLogRoll(LOG_ROLL *roll)
 	ACTOR *actor;
 	Sint32 kind, w, h, dx;
 	FIXED  dz;
-	Sint32 count, i, j;
+	Sint32 cnt, i, j;
 	Uint8 *layer;
 
 	actor =
@@ -276,7 +276,7 @@ Bool scYampiDesertCaveFindLogRoll(LOG_ROLL *roll)
 		dx = PushLeaderSteps[direction] & FIELD_PIXEL_MASK;
 		dz = toFIXED(PushLeaderSteps[direction]);
 		roll->onPushed = NULL;
-		count = 0;
+		cnt = 0;
 		layer = &actor->layer;
 		*layer = MAPGRID_LAYER_OVERHEAD;
 		roll->x = actor->x.fixed + dx;
@@ -295,16 +295,16 @@ Bool scYampiDesertCaveFindLogRoll(LOG_ROLL *roll)
 				probe[2] += toFIXED(MAPGRID_METATILE_PIXELS);
 			}
 			roll->x += dx;
-			count++;
+			cnt++;
 			roll->z += dz;
 		} while(1);
 	blocked:
 		*layer = MAPGRID_LAYER_GROUND;
-		if(count == 0)
+		if(cnt == 0)
 			return FALSE;
-		roll->x = actor->x.fixed + dx * count;
+		roll->x = actor->x.fixed + dx * cnt;
 		roll->y = actor->y.fixed;
-		roll->z = actor->z.fixed + dz * count;
+		roll->z = actor->z.fixed + dz * cnt;
 		return TRUE;
 	} else {
 		return FALSE;
@@ -359,11 +359,11 @@ ACTOR *scYampiDesertCaveFindPushedLog(
 	return NULL;
 }
 
-extern ACTOR_PLACE YampiDesertCave_Placements[];
+extern ACTOR_PLACE YampiDesertCavePlacements[];
 extern ACTOR_PLACE YampiDesertCaveGuardianPlacements[];
 extern ACTOR_PLACE YampiDesertCaveCrystalPlacements[];
 extern Uint16	   YampiDesertCaveCrystalStakes[];
-extern CUE		   YampiDesertCave_Cues[];
+extern CUE		   YampiDesertCaveCues[];
 extern CUE		   YampiDesertCaveGuardianCues[];
 extern CUE		   YampiDesertCaveCrystalCues[];
 
@@ -375,7 +375,7 @@ void   scTeleportStartShimmer(void);
 void   scTeleportStopShimmer(void);
 Sint32 syListCountEntries(Uint16 *list);
 void   fdPaletteCycleFade(void);
-void   fdPoundSinkTarget(Uint16 *list, Sint32 mode, Sint32 count);
+void   fdPoundSinkTarget(Uint16 *list, Sint32 mode, Sint32 cnt);
 void   fdTeleportPlaySparks(void);
 
 void scYampiDesertCavePushLog(LOG_ROLL roll)
@@ -485,7 +485,7 @@ void scYampiDesertCavePushLog(LOG_ROLL roll)
 /* The leader's update while pushing: it stops at a wall or another log. */
 void scYampiDesertCaveStopLeaderAtLog(ACTOR *actor)
 {
-	FIXED  position[3];
+	FIXED  pos[3];
 	ACTOR *hit;
 	Uint32 i;
 	Sint32 angle = FACING_INDEX(actor->facing);
@@ -494,11 +494,11 @@ void scYampiDesertCaveStopLeaderAtLog(ACTOR *actor)
 	   sixteenths on, whole quarters kept, and back from sixteenths to a
 	   facing. */
 	angle = FACING_FROM_INDEX((angle + 2) & 0xc);
-	position[0] = actor->x.fixed;
-	position[1] = actor->y.fixed;
-	position[2] = actor->z.fixed;
-	syVectorAddPolarOffset(toFIXED(MAPGRID_METATILE_PIXELS), angle, position);
-	hit = fdActorFindAtMetatile(position, 1);
+	pos[0] = actor->x.fixed;
+	pos[1] = actor->y.fixed;
+	pos[2] = actor->z.fixed;
+	syVectorAddPolarOffset(toFIXED(MAPGRID_METATILE_PIXELS), angle, pos);
+	hit = fdActorFindAtMetatile(pos, 1);
 	if(hit != NULL) {
 		for(i = 0; i < PUSH_KINDS; i++) {
 			if(((SPR *)hit->spr)->entries[0]->anmId == PushKinds[i])
@@ -507,17 +507,17 @@ void scYampiDesertCaveStopLeaderAtLog(ACTOR *actor)
 		fdActorSetPosAndResetMotion(
 			actor, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 	}
-	position[0] = actor->x.fixed;
-	position[1] = actor->y.fixed;
-	position[2] = actor->z.fixed;
-	if(fdMapGridCheckCollision(actor, position) > 0)
+	pos[0] = actor->x.fixed;
+	pos[1] = actor->y.fixed;
+	pos[2] = actor->z.fixed;
+	if(fdMapGridCheckCollision(actor, pos) > 0)
 		fdActorSetPosAndResetMotion(
 			actor, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 }
 
 #include "shared/teleport_shimmer.c"
 
-void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flag, Sint32 layer);
+void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flg, Sint32 layer);
 
 #include "shared/pillar_place.h"
 
@@ -568,7 +568,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 		return YampiDesertCaveGuardianPlacements;
 	if(MainRoutineStateWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL)
 		return YampiDesertCaveCrystalPlacements;
-	return YampiDesertCave_Placements;
+	return YampiDesertCavePlacements;
 }
 
 void scYampiDesertCaveTryPushLog(void)
@@ -733,24 +733,24 @@ void scYampiDesertCaveEndSand(void)
 
 /* Pound on the wooden stake in Crystal's room hammers it into the ground and
    opens the way past it. */
-void scYampiDesertCavePoundStake(Sint32 mode, Sint32 count)
+void scYampiDesertCavePoundStake(Sint32 mode, Sint32 cnt)
 {
-	fdPoundSinkTarget(YampiDesertCaveCrystalStakes, mode, count);
+	fdPoundSinkTarget(YampiDesertCaveCrystalStakes, mode, cnt);
 	fdMapGridCopyMetatileAttributes(47, 12, 1, 1, 46, 12);
 }
 
-extern Sint16 YampiDesertCave_RipplePath[];
+extern Sint16 YampiDesertCaveRipplePath[];
 
-/* Moves the ripple along its path, a row of YampiDesertCave_RipplePath for
+/* Moves the ripple along its path, a row of YampiDesertCaveRipplePath for
    every RIPPLE_STEPS_PER_POINT steps of its counter, which counts on while the
    player has control, whether the party walks or stands. */
 void scYampiDesertCaveMoveSandRipple(void)
 {
 	Sint32 step =
 		scFieldGameFlagGetByte(FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP);
-	Sint32 index = (step / RIPPLE_STEPS_PER_POINT) * 2;
-	Sint32 column = YampiDesertCave_RipplePath[index];
-	Sint32 row = YampiDesertCave_RipplePath[index + 1];
+	Sint32 idx = (step / RIPPLE_STEPS_PER_POINT) * 2;
+	Sint32 column = YampiDesertCaveRipplePath[idx];
+	Sint32 row = YampiDesertCaveRipplePath[idx + 1];
 
 	if(fdActorGetById(ACTOR_SAND_RIPPLE)->paused == 0) {
 		fdActorSetPosFX(ACTOR_SAND_RIPPLE, FIELD_HALF_METATILE_ORIGIN(column),
@@ -767,13 +767,13 @@ void scYampiDesertCaveMoveSandRipple(void)
    as she comes up (SCOOP_STAGE_DUG_UP). */
 void scYampiDesertCaveScoopDjinni(Sint32 mode)
 {
-	Sint32 index =
+	Sint32 idx =
 		(((Sint32)syGameFlagGetByte(FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP)) /
 			RIPPLE_STEPS_PER_POINT) *
 		2;
-	Sint16		 column = YampiDesertCave_RipplePath[index];
+	Sint16		 column = YampiDesertCaveRipplePath[idx];
 	Sint32		 px = column * (MAPGRID_METATILE_PIXELS / 2);
-	Sint16		 row = YampiDesertCave_RipplePath[index + 1];
+	Sint16		 row = YampiDesertCaveRipplePath[idx + 1];
 	Sint32		 pz = row * (MAPGRID_METATILE_PIXELS / 2);
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	/* The Scoop's hand, where it digs. */
@@ -862,12 +862,12 @@ const CUE *scGetCues(void)
 		return YampiDesertCaveGuardianCues;
 	if(MainRoutineStateWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL)
 		return YampiDesertCaveCrystalCues;
-	return YampiDesertCave_Cues;
+	return YampiDesertCaveCues;
 }
 
-extern Uint16 TeleportCircle_PaletteSlots[];
-extern Uint16 TeleportCircle_Colors[];
-extern Uint16 TeleportCircle_ShimmerColors[];
+extern Uint16 TeleportCirclePaletteSlots[];
+extern Uint16 TeleportCircleColors[];
+extern Uint16 TeleportCircleShimmerColors[];
 
 /* Sets up Yampi Desert Cave's three rooms as each one loads: the first room's
    palette cycle and Retreat destination, the third room's background
@@ -879,8 +879,8 @@ Sint32 scInit(void)
 	fdEffectStartBlankOverlay(0);
 	if(MainRoutineStateWork.next ==
 		SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST) {
-		scPaletteSetColsFade(TeleportCircle_PaletteSlots, TeleportCircle_Colors,
-			TeleportCircle_ShimmerColors, TeleportCircle_ShimmerSlots);
+		scPaletteSetColsFade(TeleportCirclePaletteSlots, TeleportCircleColors,
+			TeleportCircleShimmerColors, TeleportCircleShimmerSlots);
 		fdActorDisableById(ACTOR_CHEST_ROOM_FIRST_LOG);
 		fdActorDisableById(ACTOR_CHEST_ROOM_SECOND_LOG);
 		fdActorDisableById(ACTOR_CHEST_ROOM_THIRD_LOG);
@@ -981,15 +981,14 @@ Sint32 scInit(void)
 				step = step / RIPPLE_STEPS_PER_POINT * 2;
 				fdActorSetPos(ACTOR_SAND_RIPPLE, 0, 0);
 				fdActorSetPosFX(ACTOR_CRYSTAL,
+					FIELD_HALF_METATILE_ORIGIN(YampiDesertCaveRipplePath[step]),
 					FIELD_HALF_METATILE_ORIGIN(
-						YampiDesertCave_RipplePath[step]),
-					FIELD_HALF_METATILE_ORIGIN(
-						YampiDesertCave_RipplePath[step + 1]));
+						YampiDesertCaveRipplePath[step + 1]));
 			} else {
 				if(fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION))
 					syGameFlagSetByte(
 						FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP, 0);
-				sySetEvent(scYampiDesertCaveMoveSandRipple, EVENT_PASS_FRAME);
+				sySetEvent(scYampiDesertCaveMoveSandRipple, EVENT_PASS_TICK);
 				fdScriptSetFlag(FLAG_YAMPI_DESERT_CAVE_RIPPLE_RUNNING);
 				fdActorSetSprPriority(ACTOR_SAND_RIPPLE, 3);
 				fdActorGetById(ACTOR_SAND_RIPPLE)->collisionFlg = 0;
@@ -1018,7 +1017,7 @@ void scYampiDesertCaveMeetGuardianOfFire(void);
 /* The ripple's path, a column and a row in half metatiles (8 pixels) for */
 /* each thirty-two steps: it shows at four places in turn, and between them */
 /* lies at the origin, out of sight. */
-Sint16 YampiDesertCave_RipplePath[] = {
+Sint16 YampiDesertCaveRipplePath[] = {
 	101, 39, 0, 0, 97, 35, 0, 0,
 	99, 37, 0, 0, 95, 33, 0, 0,
 };
@@ -1063,13 +1062,13 @@ Uint32 SceneExits[] = {
 };
 
 /* A pushed pillar or stake stands still where it was placed. */
-Uint32 YampiDesertCave_Settle[] = {
+Uint32 YampiDesertCaveSettle[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_END,
 };
 
 /* The Water of Life chest's room: three logs and the pillar Burst breaks. */
-ACTOR_PLACE YampiDesertCave_Placements[] = {
+ACTOR_PLACE YampiDesertCavePlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 888, 0, 336, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 832, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 912, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1081,7 +1080,7 @@ ACTOR_PLACE YampiDesertCave_Placements[] = {
 /* Valukar's room: the pillar Move pushes, and Valukar until he is beaten. */
 ACTOR_PLACE YampiDesertCaveGuardianPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS,
-		(Sint32)YampiDesertCave_Settle, 552, 0, 200, FACING_SOUTH,
+		(Sint32)YampiDesertCaveSettle, 552, 0, 200, FACING_SOUTH,
 		TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_VALUKAR, FLAG_VALUKAR_BEATEN, MOVEMENT_TYPE_STAND,
 		200, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1103,13 +1102,13 @@ ACTOR_PLACE YampiDesertCaveCrystalPlacements[] = {
 		MOVEMENT_TYPE_CLEAR_COLLISION, 800, 0, 760, FACING_SOUTH,
 		TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS,
-		(Sint32)YampiDesertCave_Settle, 632, 0, 264, FACING_SOUTH,
+		(Sint32)YampiDesertCaveSettle, 632, 0, 264, FACING_SOUTH,
 		TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS,
-		(Sint32)YampiDesertCave_Settle, 136, 0, 168, FACING_SOUTH,
+		(Sint32)YampiDesertCaveSettle, 136, 0, 168, FACING_SOUTH,
 		TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS,
-		(Sint32)YampiDesertCave_Settle, 744, 0, 200, FACING_SOUTH,
+		(Sint32)YampiDesertCaveSettle, 744, 0, 200, FACING_SOUTH,
 		TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_BURST_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		264, 0, 632, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1131,7 +1130,7 @@ Uint16 YampiDesertCaveCrystalStakes[] ALIGNED(4) = {
 
 /* The Water of Life chest's room: its exits, the logs, the pillar, the two
    Teleport circles and Sand. */
-CUE YampiDesertCave_Cues[] = {
+CUE YampiDesertCaveCues[] = {
 	{CUE_EXIT,
 		YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST_TO_YAMPI_DESERT_TRAINERS_WHIP_CHEST,
 		CONDITION_ALWAYS,

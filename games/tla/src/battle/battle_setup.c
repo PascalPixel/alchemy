@@ -1,30 +1,29 @@
-/* The battle camera each frame, the opening announcement, the unit lists, the
+/* The battle camera each tick, the opening announcement, the unit lists, the
    tile pattern, and the party's battle state and Djinn as a battle starts. Part
    of battle.c. */
 
-/* Each frame of a turn the camera closes this share of the gap to its target
+/* Each tick of a turn the camera closes this share of the gap to its target
    yaw, one sixteenth, so it slows as it nears it. */
 #define CAMERA_YAW_EASE 16
 
-/* Runs each frame of a battle: pauses a link battle whose connection is lost,
+/* Runs each tick of a battle: pauses a link battle whose connection is lost,
    turns the camera a sixteenth of the way toward its target yaw, places it, and
    refreshes the background's zoom. */
 void btCameraUpdate(void)
 {
 	BATTLE_CAMERA			*camera = Ram_HeapSlots->cameraState;
 	BATTLE_BACKGROUND_STATE *background = Ram_HeapSlots->battleBg;
-	POS						 eyeOffset;
+	POS						 eyeOfs;
 	Sint32					*focus;
 	Sint16					 delta;
 	Uint32					 linkId;
 
-	/* The link check: a missed frame counts only while the link is down, and
-	   any frame with it up resets the count. */
+	/* The link check: a missed tick counts only while the link is down, and
+	   any tick with it up resets the count. */
 	if(Ram_HeapSlots->battleState->isLink != 0) {
 		if((LinkStatusWork & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
 			Ram_HeapSlots->battleState->linkMisses++;
-			if(Ram_HeapSlots->battleState->linkMisses >
-				LINK_MAX_MISSED_FRAMES) {
+			if(Ram_HeapSlots->battleState->linkMisses > LINK_MAX_MISSED_TICKS) {
 				Ram_HeapSlots->battleState->linkPaused = 1;
 			}
 		} else {
@@ -36,12 +35,12 @@ void btCameraUpdate(void)
 		}
 	}
 
-	if(background->frames != 0) {
+	if(background->ticks != 0) {
 		delta = background->tgtYaw - camera->yaw;
 		delta /= CAMERA_YAW_EASE;
 		/* The step is added to the yaw read as an unsigned halfword. */
 		camera->yaw = (Uint16)camera->yaw + delta;
-		background->frames--;
+		background->ticks--;
 	}
 
 	focus = camera->focus;
@@ -55,8 +54,8 @@ void btCameraUpdate(void)
 	syMatrixSetTranslation(focus);
 
 	/* The eye sits distance behind the focus, along the turned view. */
-	SET_POSITION(&eyeOffset, 0, 0, camera->distance);
-	syCalcPoint(&eyeOffset.x, (Sint32 *)camera);
+	SET_POSITION(&eyeOfs, 0, 0, camera->distance);
+	syCalcPoint(&eyeOfs.x, (Sint32 *)camera);
 
 	if(background->keepRange == 0) {
 		btCameraSetRange(toFIXED(120), toFIXED(120), 0, 0, toFIXED(1));
@@ -65,7 +64,7 @@ void btCameraUpdate(void)
 
 /* Announces the enemies at the start of a battle, "<enemy> appeared!" for each,
    then whether the party strikes first or is caught by surprise. */
-void btIntroAnnounceEncounter(Sint32 enemyCount)
+void btIntroAnnounceEncounter(Sint32 enemyCnt)
 {
 	Sint16		  enemies[8];
 	BATTLE_STATE *battle;
@@ -77,17 +76,17 @@ void btIntroAnnounceEncounter(Sint32 enemyCount)
 	btEnemyList(enemies);
 
 	announced = 0;
-	if(enemyCount != 0) {
+	if(enemyCnt != 0) {
 		enemy = enemies;
 		do {
 			mnMessageArgumentPushStub((Uint16)*enemy++, MESSAGE_ARGUMENT_ACTOR);
-			if(announced == enemyCount - 1)
+			if(announced == enemyCnt - 1)
 				mnBattleMessageShowAndWaitStub((Sint32)MsgLastEnemyAppeared);
 			else
 				mnBattleMessageShowAndWaitStub((Sint32)MsgEnemyAppeared);
 			announced++;
 			btMessageWaitForAdvance();
-		} while(announced != enemyCount);
+		} while(announced != enemyCnt);
 	}
 
 	mnBattleMessageCloseStub();
@@ -108,34 +107,34 @@ void btUnitCollect(void)
 {
 	Uint16		  unitIds[UNIT_MAX];
 	BATTLE_STATE *battle;
-	Sint32		  count;
+	Sint32		  cnt;
 	Sint32		  i;
-	Sint32		  position;
+	Sint32		  pos;
 	Sint32		  formation;
 
 	battle = Ram_HeapSlots->battleState;
-	count = btPartyPrepareMembers(unitIds);
-	for(i = 0; i < count; i++)
+	cnt = btPartyPrepareMembers(unitIds);
+	for(i = 0; i < cnt; i++)
 		battle->partyUnits[i] = unitIds[i];
-	battle->partyUnits[count] = BATTLE_UNIT_LIST_END;
+	battle->partyUnits[cnt] = BATTLE_UNIT_LIST_END;
 
 	/* The shuffled and interleaved formations keep the enemies in unit order;
 	   the others put the first in the centre and the rest either side of it. */
-	count = btEnemyList(unitIds);
+	cnt = btEnemyList(unitIds);
 	formation = battle->layout;
 	if(formation >= FORMATION_LAYOUT_SHUFFLED) {
 		if(formation <= FORMATION_LAYOUT_INTERLEAVED) {
-			for(i = 0; i < count; i++)
+			for(i = 0; i < cnt; i++)
 				battle->enemyIds[i] = unitIds[i];
 			goto placed;
 		}
 	}
-	for(i = 0; i < count; i++) {
-		position = BattleFormation_CenteredOffsets[i] + count / 2;
-		battle->enemyIds[position] = unitIds[i];
+	for(i = 0; i < cnt; i++) {
+		pos = BattleFormationCenteredOffsets[i] + cnt / 2;
+		battle->enemyIds[pos] = unitIds[i];
 	}
 placed:
-	battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
+	battle->enemyIds[cnt] = BATTLE_UNIT_LIST_END;
 }
 
 /* Unused: moves 16 bytes of VRAM down by 16 and clears the 20 from 12 bytes
@@ -165,13 +164,13 @@ void btPartyBattleSetupNoOperation(Sint32 unused)
 UNREAD_RESULT btPartyClearBattleStatuses(void)
 {
 	Uint16 owners[10];
-	Sint32 count;
+	Sint32 cnt;
 	Sint32 i;
 
-	count = btPartyPrepareMembers(owners);
-	count += btPartyPrepareReserveOwners(owners + count);
+	cnt = btPartyPrepareMembers(owners);
+	cnt += btPartyPrepareReserveOwners(owners + cnt);
 
-	for(i = 0; i < count; i++) {
+	for(i = 0; i < cnt; i++) {
 		UNIT  *unit = syUnitGet(owners[i]);
 		Sint32 element;
 
@@ -212,19 +211,19 @@ void btPartyClearGuards(void)
 {
 	Uint16	ids[16];
 	Uint16 *id = ids;
-	Sint32	count;
+	Sint32	cnt;
 
-	count = btPartyPrepareMembers(ids);
-	count += btPartyPrepareReserveOwners(ids + count);
-	count += btUnitListIds(BATTLE_SIDE_MASK_ENEMIES, ids + count);
-	if(count > 0) {
+	cnt = btPartyPrepareMembers(ids);
+	cnt += btPartyPrepareReserveOwners(ids + cnt);
+	cnt += btUnitListIds(BATTLE_SIDE_MASK_ENEMIES, ids + cnt);
+	if(cnt > 0) {
 		do {
 			UNIT *unit = syUnitGet(*id++);
 
 			unit->defendLevel = 0;
 			unit->immobile = 0;
-			count--;
-		} while(count != 0);
+			cnt--;
+		} while(cnt != 0);
 	}
 }
 
@@ -234,7 +233,7 @@ void btPartyClearGuards(void)
 void btDjinnRecoveryReconcile(void)
 {
 	Uint16				 owners[10];
-	Sint32				 count;
+	Sint32				 cnt;
 	Sint32				 n;
 	Uint32				 owner;
 	Sint32				 element;
@@ -242,8 +241,8 @@ void btDjinnRecoveryReconcile(void)
 	Sint32				 i;
 	DJINN_RECOVERY_LIST *list;
 
-	count = btPartyPrepareMembers(owners);
-	for(n = 0; n < count; n++) {
+	cnt = btPartyPrepareMembers(owners);
+	for(n = 0; n < cnt; n++) {
 		owner = owners[n];
 		for(element = 0; element < ELEMENT_COUNT; element++) {
 			for(djinn = 0; djinn < DJINN_PER_ELEMENT; djinn++) {

@@ -19,12 +19,12 @@
 ACTOR_PLACE *fdFindActorPlacement(Sint32 id)
 {
 	ACTOR_PLACE *placement;
-	Sint32		 tableIndex;
+	Sint32		 tblIdx;
 	Sint32		 placedActorId = ACTOR_FIRST_PLACED;
 
-	for(tableIndex = 0; tableIndex < (Sint32)ARRAY_COUNT(FieldStateWork->tbls);
-		tableIndex++) {
-		placement = FieldStateWork->tbls[tableIndex];
+	for(tblIdx = 0; tblIdx < (Sint32)ARRAY_COUNT(FieldStateWork->tbls);
+		tblIdx++) {
+		placement = FieldStateWork->tbls[tblIdx];
 		if(placement == NULL)
 			continue;
 		if(id < ACTOR_FIRST_PLACED) {
@@ -69,7 +69,7 @@ found:
    clear. */
 Sint32 fdGameFlagIsConditionActive(Sint32 condition)
 {
-	Sint32 flagSet;
+	Sint32 flgSet;
 
 	if(condition == -1) {
 		return 1;
@@ -77,18 +77,18 @@ Sint32 fdGameFlagIsConditionActive(Sint32 condition)
 	if(CONDITION_FLAG_SET & condition) {
 		return gmFlagGetStub(condition);
 	}
-	flagSet = gmFlagGetStub(condition);
-	return flagSet == 0;
+	flgSet = gmFlagGetStub(condition);
+	return flgSet == 0;
 }
 
 /* Returns 1 for an examine cue (CUE_EXAMINE) that holds whatever its condition:
    one with more flags than its kind, unless its result is a mimic battle
    (FIND_MIMIC). */
-Uint32 fdExamineCueIgnoresCondition(Sint32 flags, Sint32 result)
+Uint32 fdExamineCueIgnoresCondition(Sint32 flg, Sint32 result)
 {
-	if((flags & CUE_KIND_MASK) != CUE_EXAMINE)
+	if((flg & CUE_KIND_MASK) != CUE_EXAMINE)
 		return 0;
-	if((flags & EXAMINE_CUE_MASK) == CUE_EXAMINE)
+	if((flg & EXAMINE_CUE_MASK) == CUE_EXAMINE)
 		return 0;
 	if((result & FIND_TYPE_MASK) != FIND_MIMIC)
 		return 1;
@@ -97,51 +97,50 @@ Uint32 fdExamineCueIgnoresCondition(Sint32 flags, Sint32 result)
 
 /* Returns the first of the scene's cues of kind for target whose condition
    holds, or NULL. */
-const CUE *fdFindCue(Sint32 kind, Sint32 target)
+const CUE *fdFindCue(Sint32 kind, Sint32 tgt)
 {
 	FIELD_STATE *state = FieldStateWork;
 	const CUE	*cue = state->cues;
-	Sint32		 flags;
+	Sint32		 flg;
 	Uint32		 facing =
 		((ACTOR *)fdActorLookup(MainRoutineStateWork.leaderActorId))->facing;
 
-	flags = cue->kind;
-	while(flags != -1) {
+	flg = cue->kind;
+	while(flg != -1) {
 		/* DEAD: flags already holds trigger->kind; the ROM keeps the second
 		   load of it once the condition holds. */
-		if((flags & CUE_KIND_MASK) == kind && (Uint8)cue->subject == target &&
-			(fdExamineCueIgnoresCondition(flags, cue->value) != 0 ||
+		if((flg & CUE_KIND_MASK) == kind && (Uint8)cue->subject == tgt &&
+			(fdExamineCueIgnoresCondition(flg, cue->value) != 0 ||
 				(fdGameFlagIsConditionActive(cue->condition) != 0 &&
-					(flags = cue->kind, 1)))) {
+					(flg = cue->kind, 1)))) {
 			Sint32 matches = 0;
-			Sint32 minimumPushFrames = FIELD_PUSH_FRAMES;
+			Sint32 minimumPushTicks = FIELD_PUSH_TICKS;
 			Sint32 touchRequirements;
 
-			if((flags & STEP_CUE_FLAG_QUICK) != 0)
-				minimumPushFrames = 2;
-			touchRequirements =
-				flags & (STEP_CUE_FLAG_WALKING | CUE_FLAG_FACING);
+			if((flg & STEP_CUE_FLAG_QUICK) != 0)
+				minimumPushTicks = 2;
+			touchRequirements = flg & (STEP_CUE_FLAG_WALKING | CUE_FLAG_FACING);
 
 			switch(touchRequirements) {
 			case 0:
 				matches = 1;
 				break;
 			case STEP_CUE_FLAG_WALKING:
-				if(state->blockedSteps > minimumPushFrames) {
+				if(state->blockedSteps > minimumPushTicks) {
 					matches = 1;
 				}
 				break;
 			case CUE_FLAG_FACING:
 				/* Bits 15 to 12 are a facing in sixteenths of a turn; the
 				   leader's facing must be within an eighth of a turn of it. */
-				flags &= CUE_FACING_MASK;
-				matches = (Uint16)((flags - facing) + (DEGtoANG(45) - 1)) <=
+				flg &= CUE_FACING_MASK;
+				matches = (Uint16)((flg - facing) + (DEGtoANG(45) - 1)) <=
 					DEGtoANG(90) - 2;
 				break;
 			case STEP_CUE_FLAG_WALKING | CUE_FLAG_FACING:
-				if(state->blockedSteps > minimumPushFrames) {
-					flags &= CUE_FACING_MASK;
-					matches = (Uint16)((flags - facing) + (DEGtoANG(45) - 1)) <=
+				if(state->blockedSteps > minimumPushTicks) {
+					flg &= CUE_FACING_MASK;
+					matches = (Uint16)((flg - facing) + (DEGtoANG(45) - 1)) <=
 						DEGtoANG(90) - 2;
 				}
 				break;
@@ -153,7 +152,7 @@ const CUE *fdFindCue(Sint32 kind, Sint32 target)
 		cue++;
 		if(cue->kind == -1)
 			break;
-		flags = cue->kind;
+		flg = cue->kind;
 	}
 	return 0;
 }
@@ -195,15 +194,15 @@ Sint32 fdTalkToActor(Sint32 id)
 	ACTOR		*actor = fdActorGetById(id);
 	const CUE	*cue;
 	Bool		 actorHalted = FALSE;
-	Uint32		 savedAngle;
-	Sint32		 decodeFlags = 0;
+	Uint32		 savedAng;
+	Sint32		 decodeFlg = 0;
 
 	if(MainRoutineStateWork.haltedActor == id) {
 		actorHalted = TRUE;
 		cue = fdFindCue(CUE_TALK_HALTED, id);
 		if(cue == 0) {
 			cue = fdFindCue(CUE_TALK, id);
-			decodeFlags = MESSAGE_DECODE_HALTING_SPEECH;
+			decodeFlg = MESSAGE_DECODE_HALTING_SPEECH;
 			if(cue == 0) {
 				return -1;
 			}
@@ -212,10 +211,10 @@ Sint32 fdTalkToActor(Sint32 id)
 			if(cue->value >= CUE_RESULT_MESSAGE_END) {
 				Sint32 haltedLines = fdSpeakerGetHaltedLines(id);
 				Uint32 random = syRandom();
-				Sint32 message =
+				Sint32 msg =
 					MsgPonderEllipsis + haltedLines * 2 + (random * 2 >> 16);
 				fdScriptStart();
-				fdScriptSetMessageId(message);
+				fdScriptSetMessageId(msg);
 				fdScriptShowMessageAndWait(id, 0);
 				fdScriptEnd();
 				goto finish;
@@ -231,7 +230,7 @@ Sint32 fdTalkToActor(Sint32 id)
 			   stop the leader and make each watch the other. */
 			actor->paused = 1;
 			fdActorSetAnimationSpeedStub(actor, 0);
-			savedAngle = actor->facing;
+			savedAng = actor->facing;
 			if((Uint8)placement->talkFacing <= TALK_FACING_PARTY_AND_BACK ||
 				(Sint8)placement->talkFacing == TALK_FACING_PARTY_THEN_WATCH) {
 				ACTOR *leader =
@@ -248,7 +247,7 @@ Sint32 fdTalkToActor(Sint32 id)
 		/* A result below CUE_RESULT_MESSAGE_END is a message; above, a function
 		   to call. */
 		if(cue->value < CUE_RESULT_MESSAGE_END) {
-			mnMessageSetDecodeFlagsStub(decodeFlags);
+			mnMessageSetDecodeFlagsStub(decodeFlg);
 			fdScriptStart();
 			fdScriptSetMessageId(cue->value);
 			fdScriptShowMessageAndWait(id, 0);
@@ -268,12 +267,12 @@ Sint32 fdTalkToActor(Sint32 id)
 							MainRoutineStateWork.leaderActorId);
 					actor->steeringFlg |= ACTOR_FACES_MOTION;
 					fdActorSetMovementType(
-						actor, (Sint32)Actor_FaceWatchedScript);
+						actor, (Sint32)ActorFaceWatchedScript);
 				} else if((Sint8)placement->talkFacing ==
 					TALK_FACING_PARTY_AND_BACK) {
-					actor->tmr = savedAngle;
+					actor->tmr = savedAng;
 					fdActorStartScriptStub(
-						actor, (const Sint32 *)Actor_StepAngleScript);
+						actor, (const Sint32 *)ActorStepAngleScript);
 				}
 			}
 			actor->paused = 0;
@@ -374,7 +373,7 @@ Sint32 fdRunStepCueOrExit(Sint32 value)
 /* Runs the script of a metatile the leader pushes against
    (METATILE_BEHAVIOR_LEDGE to METATILE_BEHAVIOR_JUMP_FORWARD, and
    METATILE_BEHAVIOR_JUMP_FORWARD_UNREACHED), once it has pushed for more than
-   FIELD_PUSH_FRAMES frames; the count then restarts. */
+   FIELD_PUSH_TICKS ticks; the count then restarts. */
 Sint32 fdRunPushMetatile(Sint32 behavior)
 {
 	FIELD_STATE *state = FieldStateWork;
@@ -382,20 +381,20 @@ Sint32 fdRunPushMetatile(Sint32 behavior)
 
 	switch(behavior) {
 	case METATILE_BEHAVIOR_LEDGE:
-		if(state->blockedSteps > FIELD_PUSH_FRAMES && (PerData & KEY_DOWN)) {
+		if(state->blockedSteps > FIELD_PUSH_TICKS && (PerData & KEY_DOWN)) {
 			fdActorJumpDownLedge(leader, ANIM_LEADER_SPRING, 0);
 			state->blockedSteps = 0;
 		}
 		break;
 	case METATILE_BEHAVIOR_JUMP_FORWARD_UNREACHED:
 	case METATILE_BEHAVIOR_JUMP_FORWARD:
-		if(state->blockedSteps > FIELD_PUSH_FRAMES) {
+		if(state->blockedSteps > FIELD_PUSH_TICKS) {
 			fdTryJumpForward();
 			state->blockedSteps = 0;
 		}
 		break;
 	case METATILE_BEHAVIOR_CLIMB:
-		if(state->blockedSteps > FIELD_PUSH_FRAMES) {
+		if(state->blockedSteps > FIELD_PUSH_TICKS) {
 			if(PerData & KEY_DOWN) {
 				fdClimbDown();
 			} else if(PerData & KEY_UP) {
@@ -415,7 +414,7 @@ Sint32 fdExamineMetatile(Sint32 tile)
 {
 	const CUE *cue;
 	Sint32	   leader;
-	Uint32	   messageOffset;
+	Uint32	   msgOfs;
 	Sint16	   condition;
 	Uint32	   searchResult;
 	Sint32	   rewardType;
@@ -423,18 +422,18 @@ Sint32 fdExamineMetatile(Sint32 tile)
 
 	leader = MainRoutineStateWork.leaderActorId;
 	/* Each fixed spot has its own pair of lines, chosen through
-	   Field_ExamineCueMessageOffsets; the unsigned compare also rejects codes
+	   FieldExamineCueMessageOffsets; the unsigned compare also rejects codes
 	   below METATILE_BEHAVIOR_JAR. */
-	messageOffset = tile - METATILE_BEHAVIOR_JAR;
-	if(messageOffset <= METATILE_BEHAVIOR_WELL - METATILE_BEHAVIOR_JAR) {
+	msgOfs = tile - METATILE_BEHAVIOR_JAR;
+	if(msgOfs <= METATILE_BEHAVIOR_WELL - METATILE_BEHAVIOR_JAR) {
 		fdLeaderStopMoving();
-		tile = Field_ExamineCueMessageOffsets[messageOffset];
+		tile = FieldExamineCueMessageOffsets[msgOfs];
 		mnFieldMessageShowStub(MsgTileChecked + tile, FIELD_MESSAGE_ZOOM);
 		mnFieldMessageShowStub(MsgTileResult + tile, FIELD_MESSAGE_ZOOM);
 	} else {
 		cue = fdFindCue(CUE_EXAMINE, tile);
 		if(cue != NULL) {
-			Sint32 flags = cue->kind;
+			Sint32 flg = cue->kind;
 
 			/* Bits 8 to 4, the search target (EXAMINE), choose what the leader
 			   checks ("checked the chest...") unless CUE_SUBJECT_OWN_EFFECT
@@ -442,12 +441,11 @@ Sint32 fdExamineMetatile(Sint32 tile)
 			   FLAG_NOTHING_HAPPENS set, the matching result line follows ("but
 			   the chest was empty."). */
 			condition = cue->condition;
-			messageOffset = EXAMINE_TARGET(flags);
-			if((cue->subject & CUE_SUBJECT_OWN_EFFECT) == 0 &&
-				messageOffset != 0) {
+			msgOfs = EXAMINE_TARGET(flg);
+			if((cue->subject & CUE_SUBJECT_OWN_EFFECT) == 0 && msgOfs != 0) {
 				fdLeaderStopMoving();
 				mnFieldMessageShowStub(
-					MsgTileChecked + messageOffset, FIELD_MESSAGE_ZOOM);
+					MsgTileChecked + msgOfs, FIELD_MESSAGE_ZOOM);
 				gmFlagSetStub(FLAG_NOTHING_HAPPENS);
 			} else {
 				gmFlagClearStub(FLAG_NOTHING_HAPPENS);
@@ -465,7 +463,7 @@ Sint32 fdExamineMetatile(Sint32 tile)
 							MainRoutineStateWork.leaderActorId);
 					if(gmFlagGetStub(FLAG_NOTHING_HAPPENS) != 0)
 						mnFieldMessageShowStub(
-							MsgTileResult + messageOffset, FIELD_MESSAGE_ZOOM);
+							MsgTileResult + msgOfs, FIELD_MESSAGE_ZOOM);
 				} else {
 					if(fdGameFlagIsConditionActive(condition) != 0)
 						mnFieldMessageShowStub(
@@ -590,9 +588,9 @@ Sint32 fdExamineMetatile(Sint32 tile)
 							sySynch(30);
 							recipient =
 								gmPartyInventoryAddStub((Uint16)cue->value);
-							/* messageOffset now masks the inventory entry the
+							/* msgOfs now masks the inventory entry the
 							   chest gave. */
-							messageOffset =
+							msgOfs =
 								INVENTORY_QUANTITY_MASK | INVENTORY_ENTRY_MASK;
 							if(recipient == -1) {
 								mnMessageArgumentPushStub(
@@ -616,8 +614,7 @@ Sint32 fdExamineMetatile(Sint32 tile)
 								fdItemDispRaiseAboveLeader(object);
 								sySndPlayStub(MUS_TREASURE_FOUND);
 								mnMessageArgumentPushStub(
-									cue->value & messageOffset,
-									MESSAGE_ARGUMENT_ITEM);
+									cue->value & msgOfs, MESSAGE_ARGUMENT_ITEM);
 								if(recipient ==
 									MainRoutineStateWork.leaderActorId) {
 									/* "Isaac got [item]." */
@@ -645,7 +642,7 @@ Sint32 fdExamineMetatile(Sint32 tile)
 				} else {
 					/* Already opened: the result line for the check message. */
 					mnFieldMessageShowStub(
-						MsgTileResult + messageOffset, FIELD_MESSAGE_ZOOM);
+						MsgTileResult + msgOfs, FIELD_MESSAGE_ZOOM);
 				}
 				fdScriptEnd();
 				fdPlayQueuedMusic();

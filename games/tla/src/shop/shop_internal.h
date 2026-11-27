@@ -43,7 +43,7 @@
 #include "shop/shop.h"
 #include "field/field_particle.h"
 
-void mnWindowSprRedrawSavedRectStub(void *window);
+void mnWindowSprRedrawSavedRectStub(void *win);
 
 /* What the player chose at a shop's counter, in the order of its menu's */
 /* Buy, Sell, Artifacts and Repair, held in shop->action while it runs. The
@@ -207,7 +207,7 @@ typedef struct SHOP_STATE {
 	Uint8  unusedAfterSelection[4]; /* no view of the menu state names it */
 	Sint16 stockCnt;
 	Sint8  partyMemberCnt;
-	Uint8  cursorFrm; /* the frames the hand cursor takes to its next place */
+	Uint8  cursorFrm; /* the ticks the hand cursor takes to its next place */
 	Sint8  shopType;  /* the stock row's type (SHOP_TYPE) */
 	Sint8  action;	  /* the counter or service chosen (SHOP_ACTION or */
 	/* SANCTUM_SERVICE) the sanctum's party member whose pose is randomized;
@@ -262,12 +262,12 @@ extern const Uint8 Shop_PriceTiles[];
    (quantity.4bpp). */
 extern const Uint8 Shop_QuantityTiles[];
 
-extern const Uint16		  Shop_QuantityBarSegmentOffsets[30];
-extern const Uint16		  Shop_PriceDigitTileOffsets[5];
-extern const Sint16		  Shop_GameTicketCreditCosts[30];
-extern const Sint16		  Shop_StockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS];
-extern const FORGE_RECIPE Forge_Recipes[];
-extern const Sint8		  Sanctum_ServiceTunes[4];
-extern const Sint8		  Inn_PricesPerGuest[16];
+extern const Uint16		  ShopQuantityBarSegmentOffsets[30];
+extern const Uint16		  ShopPriceDigitTileOffsets[5];
+extern const Sint16		  ShopGameTicketCreditCosts[30];
+extern const Sint16		  ShopStockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS];
+extern const FORGE_RECIPE ForgeRecipes[];
+extern const Sint8		  SanctumServiceTunes[4];
+extern const Sint8		  InnPricesPerGuest[16];
 
 #endif

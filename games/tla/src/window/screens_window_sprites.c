@@ -6,46 +6,46 @@
 #define OAM_Y_MASK 0xff
 
 /* Creates a window sprite for the VRAM cache slot `slot` and attaches it to
-   `window`, placed at (offsetX, offsetY) pixels from the window's inner corner
-   (one tile in from its top-left border). `oamFlags` holds the OAM shape and
+   `win`, placed at (ofsX, ofsY) pixels from the window's inner corner
+   (one tile in from its top-left border). `oamFlg` holds the OAM shape and
    size bits. Releases the slot and returns NULL when no sprite is free. */
-WINDOW_SPR *mnWindowSprCreate(Sint32 slot, Sint32 oamFlags, WINDOW *window,
-	Sint32 offsetX, Sint32 offsetY)
+WINDOW_SPR *mnWindowSprCreate(
+	Sint32 slot, Sint32 oamFlg, WINDOW *win, Sint32 ofsX, Sint32 ofsY)
 {
 	Sint32		x;
-	WINDOW_SPR *sprite;
+	WINDOW_SPR *spr;
 	Sint32		y;
 
-	sprite = mnWindowSprAcquireFree();
-	if(sprite == NULL) {
+	spr = mnWindowSprAcquireFree();
+	if(spr == NULL) {
 		syVRAMCacheFreeEntry((Uint32)slot);
 		return NULL;
 	}
 	/* Window tiles to screen pixels, wrapped to OAM's 9-bit X and 8-bit Y. */
-	x = offsetX + window->x * 8 + 8;
-	y = offsetY + window->y * 8 + 8;
+	x = ofsX + win->x * 8 + 8;
+	y = ofsY + win->y * 8 + 8;
 	x &= OAM_X_MASK;
 	y &= OAM_Y_MASK;
-	*(Uint32 *)&sprite->spr.oam = OBJ_X(x) | y | oamFlags;
+	*(Uint32 *)&spr->spr.oam = OBJ_X(x) | y | oamFlg;
 	/* Attribute 2: the first tile of the slot's VRAM block (32 bytes a
 	   tile). */
-	((Uint32 *)&sprite->spr.oam)[1] = VramCacheEntries[slot].ofs >> 5;
-	sprite->depth = OAM_DEPTH_FRONT - 1;
-	sprite->x = x;
-	sprite->y = (Sint16)y;
-	sprite->next = NULL;
-	sprite->idx = (Sint8)slot;
+	((Uint32 *)&spr->spr.oam)[1] = VramCacheEntries[slot].ofs >> 5;
+	spr->depth = OAM_DEPTH_FRONT - 1;
+	spr->x = x;
+	spr->y = (Sint16)y;
+	spr->next = NULL;
+	spr->idx = (Sint8)slot;
 	/* An icon owns its VRAM cache slot, which is freed with it. */
-	sprite->kind = WINDOW_SPRITE_ICON;
-	sprite->motion = WINDOW_SPRITE_MOTION_STILL;
-	mnWindowSprAppendToList((WINDOW_SPR_LIST *)window, sprite);
-	return sprite;
+	spr->kind = WINDOW_SPRITE_ICON;
+	spr->motion = WINDOW_SPRITE_MOTION_STILL;
+	mnWindowSprAppendToList((WINDOW_SPR_LIST *)win, spr);
+	return spr;
 }
 
 /* Loads resource `resource` in loading mode `mode` into a VRAM slot and shows
-   it as a 16x16 sprite at (x, y) in `window`. */
+   it as a 16x16 sprite at (x, y) in `win`. */
 WINDOW_SPR *mnWindowSprCreateFromResource(
-	Sint32 mode, Sint32 resource, WINDOW *window, Sint32 x, Sint32 y)
+	Sint32 mode, Sint32 resource, WINDOW *win, Sint32 x, Sint32 y)
 {
 	Sint32 slot;
 
@@ -53,53 +53,52 @@ WINDOW_SPR *mnWindowSprCreateFromResource(
 	if(slot < 0) {
 		return NULL;
 	}
-	return mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
+	return mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_16X16, win, x, y);
 }
 
 /* Copies icon `icon` (with `layers` passed on to the copier) into a free VRAM
-   slot and shows it as a 16x16 sprite at (x, y) in `window`. */
+   slot and shows it as a 16x16 sprite at (x, y) in `win`. */
 WINDOW_SPR *mnWindowSprCreateLoaded(
-	Sint32 icon, Sint32 layers, WINDOW *window, Sint32 x, Sint32 y)
+	Sint32 icon, Sint32 layers, WINDOW *win, Sint32 x, Sint32 y)
 {
 	Sint32		slot;
-	WINDOW_SPR *sprite;
+	WINDOW_SPR *spr;
 
 	slot = syVRAMCacheFindFreeEntry();
-	sprite = NULL;
+	spr = NULL;
 	if(slot != VRAM_CACHE_ENTRY_COUNT) {
 		mnItemIconLoadLayersIntoSlot(icon, layers, slot);
-		sprite =
-			mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
+		spr = mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_16X16, win, x, y);
 	}
-	return sprite;
+	return spr;
 }
 
 /* Unused: builds the 16x16 command icon of overlay `icon` over base 1
-   (mnIconBuildCommandIconTiles) and shows it at (x, y) in `window`, in front of
+   (mnIconBuildCommandIconTiles) and shows it at (x, y) in `win`, in front of
    the other window sprites. Nothing calls it. */
 UNUSED WINDOW_SPR *mnWindowSprCreateCommandIcon(
-	Sint32 icon, WINDOW *window, Sint32 x, Sint32 y)
+	Sint32 icon, WINDOW *win, Sint32 x, Sint32 y)
 {
 	Sint32		slot;
 	Sint32		unusedTile;
-	WINDOW_SPR *sprite;
+	WINDOW_SPR *spr;
 
 	slot = syVRAMCacheFindFreeEntry();
 	if(slot == VRAM_CACHE_ENTRY_COUNT) {
 		return NULL;
 	}
 	mnIconBuildCommandIconTiles(icon, 1, &slot, &unusedTile, 1);
-	sprite = mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
+	spr = mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_16X16, win, x, y);
 	/* Not checked: with every sprite in use, this stores through NULL. */
-	sprite->depth = OAM_DEPTH_FRONT - 4;
-	return sprite;
+	spr->depth = OAM_DEPTH_FRONT - 4;
+	return spr;
 }
 
-/* Shows the 32x32 portrait of `character` at (x, y) in `window`, in portrait
+/* Shows the 32x32 portrait of `character` at (x, y) in `win`, in portrait
    slot `side` (0 or 1, or any other value for the first free one; the second is
    tried first), in PORTRAIT_PALETTE + side. */
-WINDOW_SPR *mnPortraitCreate(Sint32 character, Sint32 position, Sint32 side,
-	WINDOW *window, Sint32 x, Sint32 y)
+WINDOW_SPR *mnPortraitCreate(
+	Sint32 character, Sint32 pos, Sint32 side, WINDOW *win, Sint32 x, Sint32 y)
 {
 	WIN_STATE  *state = (WIN_STATE *)Ram_HeapSlots->winState;
 	WINDOW_SPR *portrait = 0;
@@ -114,11 +113,11 @@ WINDOW_SPR *mnPortraitCreate(Sint32 character, Sint32 position, Sint32 side,
 
 	/* No side given: the second slot if it is free, else the first. */
 	if((Uint32)side > 1) {
-		Uint32 current;
+		Uint32 cur;
 
-		current = state->portraitPictures[1];
+		cur = state->portraitPictures[1];
 		side = 1;
-		if(current != PORTRAIT_SLOT_EMPTY) {
+		if(cur != PORTRAIT_SLOT_EMPTY) {
 			side = 0;
 			if(state->portraitPictures[0] != PORTRAIT_SLOT_EMPTY)
 				return portrait;
@@ -126,9 +125,9 @@ WINDOW_SPR *mnPortraitCreate(Sint32 character, Sint32 position, Sint32 side,
 	}
 
 	palette = PORTRAIT_PALETTE + side;
-	mnIconLoadWithPalette(icon, position, &slot, &tile, palette, 0);
-	portrait = mnWindowSprCreate(
-		slot, WINDOW_SPRITE_SIZE_32X32, (WINDOW *)window, x, y);
+	mnIconLoadWithPalette(icon, pos, &slot, &tile, palette, 0);
+	portrait =
+		mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_32X32, (WINDOW *)win, x, y);
 	if(portrait != 0) {
 		portrait->spr.oam.pal = palette;
 		portrait->kind = WINDOW_SPRITE_PORTRAIT;
@@ -177,13 +176,13 @@ void mnWindowSprSetMotion(WINDOW_SPR *out, Sint32 mode)
 	}
 }
 
-/* Sets the depth of the window sprite `sprite` to ~priority, which is
-   OAM_DEPTH_FRONT - `priority`: a higher priority draws further back. Does
-   nothing when `sprite` is NULL. */
-void mnWindowSprSetPriority(void *sprite, Sint32 priority)
+/* Sets the depth of the window sprite `spr` to ~priority, which is
+   OAM_DEPTH_FRONT - `pri`: a higher priority draws further back. Does
+   nothing when `spr` is NULL. */
+void mnWindowSprSetPriority(void *spr, Sint32 pri)
 {
-	if(sprite != NULL)
-		((WINDOW_SPR *)sprite)->depth = ~priority;
+	if(spr != NULL)
+		((WINDOW_SPR *)spr)->depth = ~pri;
 }
 
 /* A line's window span with no window: left and right both at 224. */

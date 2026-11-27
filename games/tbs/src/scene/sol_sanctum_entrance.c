@@ -74,20 +74,20 @@
 #include "scene/walk_into_leader.h"
 #include "text/msg_ids.h"
 
-extern SCENE_ENTRANCE SolSanctumEntrance_FallbackEntrances[];
-extern SCENE_ENTRANCE SolEntrance_Entrances[];
-extern SCENE_ENTRANCE SolSanctumReliefs_Entrances[];
-extern Uint32		  SolSanctumEntrance_Exits[];
-extern ACTOR_PLACE	  SolSanctumEntrance_FallbackActorPlacements[];
-extern ACTOR_PLACE	  SolSanctumReliefs_ActorPlacements[];
-extern ACTOR_PLACE	  SolSanctumReliefs_FirstReliefRoomActorPlacements[];
-extern ACTOR_PLACE	  SolSanctumReliefs_SecondReliefRoomActorPlacements[];
-extern ACTOR_PLACE	  SolEntrance_ActorPlacements[];
-extern CUE			  SolSanctumEntrance_FallbackCues[];
-extern CUE			  SolEntrance_Cues[];
-extern CUE			  SolSanctumReliefs_Cues[];
-extern CUE			  SolSanctumReliefs_FirstReliefRoomCues[];
-extern CUE			  SolSanctumReliefs_SecondReliefRoomCues[];
+extern SCENE_ENTRANCE SolSanctumEntranceFallbackEntrances[];
+extern SCENE_ENTRANCE SolEntranceEntrances[];
+extern SCENE_ENTRANCE SolSanctumReliefsEntrances[];
+extern Uint32		  SolSanctumEntranceExits[];
+extern ACTOR_PLACE	  SolSanctumEntranceFallbackActorPlacements[];
+extern ACTOR_PLACE	  SolSanctumReliefsActorPlacements[];
+extern ACTOR_PLACE	  SolSanctumReliefsFirstReliefRoomActorPlacements[];
+extern ACTOR_PLACE	  SolSanctumReliefsSecondReliefRoomActorPlacements[];
+extern ACTOR_PLACE	  SolEntranceActorPlacements[];
+extern CUE			  SolSanctumEntranceFallbackCues[];
+extern CUE			  SolEntranceCues[];
+extern CUE			  SolSanctumReliefsCues[];
+extern CUE			  SolSanctumReliefsFirstReliefRoomCues[];
+extern CUE			  SolSanctumReliefsSecondReliefRoomCues[];
 
 /* In Sol Sanctum (SceneId_SolSanctumReliefs), Kraden follows the party; Garet
    and Jenna, placed before him, take their own party slots. */
@@ -198,7 +198,7 @@ static void scSolSanctumEntranceKradenSeesStatuesOutOfReach(void);
 static void scSolSanctumEntranceRestoreRowStatueMetatiles(Sint32 placeActors);
 static void scSolSanctumEntranceUpdateEruptionRumbles(void);
 
-Sint32 SolSanctumEntrance_RumbleTimer BSS_DATA;
+Sint32 SolSanctumEntranceRumbleTimer BSS_DATA;
 
 /* Returns Sol Entrance's entrances (SceneId_SolEntrance) or Sol */
 /* Sanctum's (SceneId_SolSanctumReliefs). */
@@ -207,12 +207,12 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_SOL_ENTRANCE) {
-		return SolEntrance_Entrances;
+		return SolEntranceEntrances;
 	}
 	if(sceneId == SCENE_SOL_SANCTUM_RELIEFS) {
-		return SolSanctumReliefs_Entrances;
+		return SolSanctumReliefsEntrances;
 	}
-	return SolSanctumEntrance_FallbackEntrances;
+	return SolSanctumEntranceFallbackEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -222,13 +222,13 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return SolSanctumEntrance_Exits;
+	return SolSanctumEntranceExits;
 }
 
 /* Selects the actors for the scene and, in Sol Sanctum, the room. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	ACTOR_PLACE *table;
+	ACTOR_PLACE *tbl;
 	Sint32		 firstStatueRoomEntrance =
 		SOL_SANCTUM_RELIEFS_STATUE_HALL_FROM_CHEST_ROOM;
 
@@ -238,20 +238,20 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 				SOL_SANCTUM_RELIEFS_STATUE_HALL_FROM_STEPS_ROOM) {
 				if(MainRoutineStateWork.entrance <=
 					SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
-					return SolSanctumReliefs_SecondReliefRoomActorPlacements;
+					return SolSanctumReliefsSecondReliefRoomActorPlacements;
 				}
 			} else {
-				return SolSanctumReliefs_FirstReliefRoomActorPlacements;
+				return SolSanctumReliefsFirstReliefRoomActorPlacements;
 			}
 		}
-		table = SolSanctumReliefs_ActorPlacements;
-		fdAssignViewFlags(table);
-		return table;
+		tbl = SolSanctumReliefsActorPlacements;
+		fdAssignViewFlags(tbl);
+		return tbl;
 	}
 	if(MainRoutineStateWork.next == SCENE_SOL_ENTRANCE) {
-		return SolEntrance_ActorPlacements;
+		return SolEntranceActorPlacements;
 	}
-	return SolSanctumEntrance_FallbackActorPlacements;
+	return SolSanctumEntranceFallbackActorPlacements;
 }
 
 /* Selects the scripts for the scene and room, by the same entrances as
@@ -262,7 +262,7 @@ const CUE *scGetCues(void)
 		SOL_SANCTUM_RELIEFS_STATUE_HALL_FROM_CHEST_ROOM;
 
 	if(MainRoutineStateWork.next == SCENE_SOL_ENTRANCE) {
-		return SolEntrance_Cues;
+		return SolEntranceCues;
 	}
 	if(MainRoutineStateWork.next == SCENE_SOL_SANCTUM_RELIEFS) {
 		if(MainRoutineStateWork.entrance >= firstStatueRoomEntrance) {
@@ -270,22 +270,22 @@ const CUE *scGetCues(void)
 				SOL_SANCTUM_RELIEFS_STATUE_HALL_FROM_STEPS_ROOM) {
 				if(MainRoutineStateWork.entrance <=
 					SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
-					return SolSanctumReliefs_SecondReliefRoomCues;
+					return SolSanctumReliefsSecondReliefRoomCues;
 				}
 			} else {
-				return SolSanctumReliefs_FirstReliefRoomCues;
+				return SolSanctumReliefsFirstReliefRoomCues;
 			}
 		}
-		return SolSanctumReliefs_Cues;
+		return SolSanctumReliefsCues;
 	}
-	return SolSanctumEntrance_FallbackCues;
+	return SolSanctumEntranceFallbackCues;
 }
 
 /* Isaac walks north into Sol Sanctum's door at the top of the terrace
    (metatiles (6, 6) to (8, 6)); with a boom the stone door slides open, and he
    walks in as the screen fades.
 
-   The door is drawn open in three steps ten frames apart, each copying the next
+   The door is drawn open in three steps ten ticks apart, each copying the next
    picture of it from a spare part of the map. */
 static void scSolSanctumEntranceOpenDoorAndEnter(void)
 {
@@ -305,7 +305,7 @@ static void scSolSanctumEntranceOpenDoorAndEnter(void)
 	fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
 	fdScriptWait(10);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS);
 	fdScriptEnd();
 }
@@ -364,7 +364,7 @@ static inline void scSolSanctumEntranceReactToOpeningPassage(void)
    visits. */
 static void scSolSanctumEntranceSetFirstSmallJewel(void)
 {
-	Sint32 message;
+	Sint32 msg;
 
 	if(gmFlagGet(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) != 0) {
 		if(fdScriptGetFlag(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) == 0) {
@@ -375,9 +375,9 @@ static void scSolSanctumEntranceSetFirstSmallJewel(void)
 			fdMapGridCopyMetatilesTo(0, 70, 30, 42, 1, 1);
 			fdMapGridCenterOnFollowedPoint();
 			fdScriptWait(40);
-			message = MsgSolSanctumSetSmallGem;
+			msg = MsgSolSanctumSetSmallGem;
 			/* "Isaac set the small gem into the empty socket." */
-			mnFieldMessageShow(message, 1);
+			mnFieldMessageShow(msg, 1);
 			fdScriptWait(20);
 			sySndPlay(SE_STONE_RUMBLE);
 			fdMapGridCopyMetatilesTo(0, 29, 3, 1, 3, 2);
@@ -386,7 +386,7 @@ static void scSolSanctumEntranceSetFirstSmallJewel(void)
 			fdMapGridCenterOnFollowedPoint();
 			scSolSanctumEntranceReactToOpeningPassage();
 			/* "You hear the sound of shifting stone." */
-			mnFieldMessageShow(message + 1, 1);
+			mnFieldMessageShow(msg + 1, 1);
 			gmFlagSet(FLAG_ITEM_USED_UP);
 			gmFlagSet(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET);
 			fdScriptEnd();
@@ -428,7 +428,7 @@ static void scSolSanctumEntranceInspectSecondMinotaurRelief(void)
    aside. */
 static void scSolSanctumEntranceSetSecondSmallJewel(void)
 {
-	Sint32 message;
+	Sint32 msg;
 
 	if(gmFlagGet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) != 0 &&
 		fdScriptGetFlag(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET) == 0) {
@@ -439,9 +439,9 @@ static void scSolSanctumEntranceSetSecondSmallJewel(void)
 		fdMapGridCopyMetatilesTo(0, 71, 100, 71, 1, 1);
 		fdMapGridCenterOnFollowedPoint();
 		fdScriptWait(40);
-		message = MsgSolSanctumSetSmallGem;
+		msg = MsgSolSanctumSetSmallGem;
 		/* "Isaac set the small gem into the empty socket." */
-		mnFieldMessageShow(message, 1);
+		mnFieldMessageShow(msg, 1);
 		fdScriptWait(20);
 		sySndPlay(SE_STONE_RUMBLE);
 		fdMapGridCopyMetatilesTo(122, 20, 120, 30, 1, 2);
@@ -449,7 +449,7 @@ static void scSolSanctumEntranceSetSecondSmallJewel(void)
 		fdMapGridCenterOnFollowedPoint();
 		scSolSanctumEntranceReactToOpeningPassage();
 		/* "You hear the sound of shifting stone." */
-		mnFieldMessageShow(message + 1, 1);
+		mnFieldMessageShow(msg + 1, 1);
 		gmFlagSet(FLAG_ITEM_USED_UP);
 		gmFlagSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET);
 		fdScriptEnd();
@@ -457,18 +457,18 @@ static void scSolSanctumEntranceSetSecondSmallJewel(void)
 }
 
 /* Notes which side of its starting column a moved statue now stands on, so it
-   stays there for the rest of the visit: flagBase (its _AT_EAST flag) for
+   stays there for the rest of the visit: flgBase (its _AT_EAST flag) for
    rightColumn, the flag after it (_AT_WEST) for leftColumn, neither back at its
    start. */
 static inline void scSolSanctumEntranceRecordStatueColumn(
-	Sint32 column, Sint32 flagBase, Sint32 leftColumn, Sint32 rightColumn)
+	Sint32 column, Sint32 flgBase, Sint32 leftColumn, Sint32 rightColumn)
 {
-	gmFlagClear(flagBase);
-	gmFlagClear(flagBase + 1);
+	gmFlagClear(flgBase);
+	gmFlagClear(flgBase + 1);
 	if(column == leftColumn) {
-		gmFlagSet(flagBase + 1);
+		gmFlagSet(flgBase + 1);
 	} else if(column == rightColumn) {
-		gmFlagSet(flagBase);
+		gmFlagSet(flgBase);
 	}
 }
 
@@ -640,34 +640,34 @@ static void scSolSanctumEntrancePushStatue(void)
 	ACTOR	 *leader;
 	ACTOR	 *statue;
 	Uint32	  direction;
-	FIELD_POS target;
+	FIELD_POS tgt;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	direction = FACING_INDEX(leader->facing);
 	statue = scActorFindAtMetatile(
 		(leader->x.part[0].integer +
-			(FIXEDtoINT(PushedActor_DirectionSteps[direction]))) >>
+			(FIXEDtoINT(PushedActorDirectionSteps[direction]))) >>
 			4,
 		(leader->z.part[0].integer +
-			(Sint16)PushedActor_DirectionSteps[direction]) >>
+			(Sint16)PushedActorDirectionSteps[direction]) >>
 			4);
 	if(statue != NULL) {
 		statue->layer = 2;
-		fdActorStepFrom(&target, statue, PushedActor_DirectionSteps[direction]);
+		fdActorStepFrom(&tgt, statue, PushedActorDirectionSteps[direction]);
 		/* Move only after the statue's proposed position passes collision. */
-		if(syFieldActorCheckMovementCollision(statue, &target) <= 0) {
+		if(syFieldActorCheckMovementCollision(statue, &tgt) <= 0) {
 			fdActorSelectAnimation(leader, ANIM_PUSH);
 			sySynch(15);
 			sySndPlay(SE_PUSH);
 			statue->speedLimit = toFIXED(1) / 5;
 			statue->acceleration = toFIXED(1) / 5;
-			syFieldActorSetMoveTargetFX(statue, target.x, target.y, target.z);
+			syFieldActorSetMoveTargetFX(statue, tgt.x, tgt.y, tgt.z);
 			leader->speedLimit = toFIXED(1) / 5;
 			leader->acceleration = toFIXED(1) / 5;
-			syFieldActorSetMoveTargetFX(leader, target.x, target.y, target.z);
+			syFieldActorSetMoveTargetFX(leader, tgt.x, tgt.y, tgt.z);
 			fdActorWaitForMove(statue);
-			statue->x.fixed = target.x;
-			statue->z.fixed = target.z;
+			statue->x.fixed = tgt.x;
+			statue->z.fixed = tgt.z;
 			statue->velX = 0;
 			statue->velZ = 0;
 			fdActorSelectAnimation(leader, ANIM_STAND);
@@ -713,9 +713,9 @@ static void scSolSanctumEntranceApplyEntryState(void)
 	gmFlagSet(FLAG_RETREAT_BLOCKED);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	if(gmFlagGet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
-		SolSanctumEntrance_RumbleTimer = 0;
-		sySetFrameEvent(
-			scSolSanctumEntranceUpdateEruptionRumbles, EVENT_PASS_FRAME);
+		SolSanctumEntranceRumbleTimer = 0;
+		sySetTickEvent(
+			scSolSanctumEntranceUpdateEruptionRumbles, EVENT_PASS_TICK);
 	}
 	if(gmFlagGet(FLAG_VALE_RETURNED_FROM_MT_ALEPH) != 0) {
 		fdMapGridCopyMetatileAttributes(5, 6, 1, 1, 6, 6);
@@ -898,7 +898,7 @@ static void scSolSanctumEntranceKradenSuspectsHiddenPassage(void)
 
 	fdScriptStart();
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	if(leader != NULL)
@@ -1124,7 +1124,7 @@ static void scSolSanctumEntranceKradenSeesStatuesOutOfReach(void)
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	scPlaceAtLeader(ACTOR_KRADEN);
 	fdActorSetSpeed(ACTOR_KRADEN, 1);
@@ -1273,30 +1273,30 @@ static void scSolSanctumEntranceDoorTightlyLocked(void)
 /* After the eruption the terrace before the door rumbles and shakes every few
    seconds, at random, each shake dying away.
 
-   A shake lasts 80 frames and starts to fade after 40. Between shakes, each
-   frame has one chance in 120 of starting the next. */
+   A shake lasts 80 ticks and starts to fade after 40. Between shakes, each
+   tick has one chance in 120 of starting the next. */
 static void scSolSanctumEntranceUpdateEruptionRumbles(void)
 {
-	if(SolSanctumEntrance_RumbleTimer != 0) {
-		if(--SolSanctumEntrance_RumbleTimer == 40) {
+	if(SolSanctumEntranceRumbleTimer != 0) {
+		if(--SolSanctumEntranceRumbleTimer == 40) {
 			fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 		}
 	} else {
 		if(syRandomBelow(120) == 0) {
 			sySndPlay(SE_ITEM_BREAK);
 			fdMapGridSetShake(1, 2, 1);
-			SolSanctumEntrance_RumbleTimer = 80;
+			SolSanctumEntranceRumbleTimer = 80;
 		}
 	}
 }
 
-SCENE_ENTRANCE SolSanctumEntrance_FallbackEntrances[] = {
+SCENE_ENTRANCE SolSanctumEntranceFallbackEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE SolEntrance_Entrances[] = {
+SCENE_ENTRANCE SolEntranceEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{SOL_ENTRANCE_FROM_VALE, CONDITION_ALWAYS, 80, 0, 288, FACING_NORTH, 0, -1,
@@ -1306,7 +1306,7 @@ SCENE_ENTRANCE SolEntrance_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE SolSanctumReliefs_Entrances[] = {
+SCENE_ENTRANCE SolSanctumReliefsEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST, CONDITION_ALWAYS, 280,
@@ -1351,7 +1351,7 @@ SCENE_ENTRANCE SolSanctumReliefs_Entrances[] = {
    (SceneId_SolSanctumReliefs). Sol Entrance's way down leads to SceneId_Vale
    until the eruption, then to Vale during the eruption (SceneId_ValeEruption)
    until the party has left Vale. */
-Uint32 SolSanctumEntrance_Exits[] = {
+Uint32 SolSanctumEntranceExits[] = {
 	SCENE_EXITS(SolEntrance),
 	SCENE_EXIT_UNLESS(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE,
 		FLAG_SOL_SANCTUM_ERUPTED),
@@ -1416,12 +1416,12 @@ Uint32 SolSanctumEntrance_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE SolSanctumEntrance_FallbackActorPlacements[] = {
+ACTOR_PLACE SolSanctumEntranceFallbackActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
 /* clang-format off */
-ACTOR_PLACE SolSanctumReliefs_ActorPlacements[] = {
+ACTOR_PLACE SolSanctumReliefsActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1433,7 +1433,7 @@ ACTOR_PLACE SolSanctumReliefs_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE SolSanctumReliefs_FirstReliefRoomActorPlacements[] = {
+ACTOR_PLACE SolSanctumReliefsFirstReliefRoomActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1465,7 +1465,7 @@ ACTOR_PLACE SolSanctumReliefs_FirstReliefRoomActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE SolSanctumReliefs_SecondReliefRoomActorPlacements[] = {
+ACTOR_PLACE SolSanctumReliefsSecondReliefRoomActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1487,17 +1487,17 @@ ACTOR_PLACE SolSanctumReliefs_SecondReliefRoomActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE SolEntrance_ActorPlacements[] = {
+ACTOR_PLACE SolEntranceActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
 	{ SCENE_TABLE_END },
 };
 
-CUE SolSanctumEntrance_FallbackCues[] = {
+CUE SolSanctumEntranceFallbackCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE SolEntrance_Cues[] = {
+CUE SolEntranceCues[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, SOL_ENTRANCE_TO_VALE },
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), METATILE_BEHAVIOR_SOL_ENTRANCE_DOOR, CONDITION_ALWAYS, SCRIPT_REF(scSolSanctumEntranceOpenDoorAndEnter) },
 	{ EXAMINE_CUE(EXAMINE_SILENT), METATILE_BEHAVIOR_SOL_ENTRANCE_LOCKED_DOOR, CONDITION_ALWAYS, SCRIPT_REF(scSolSanctumEntranceDoorTightlyLocked) },
@@ -1506,7 +1506,7 @@ CUE SolEntrance_Cues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE SolSanctumReliefs_Cues[] = {
+CUE SolSanctumReliefsCues[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_STATUE_HALL },
 	{ CUE_EXIT, 3, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_STATUE_HALL },
@@ -1529,7 +1529,7 @@ CUE SolSanctumReliefs_Cues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE SolSanctumReliefs_FirstReliefRoomCues[] = {
+CUE SolSanctumReliefsFirstReliefRoomCues[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_STATUE_HALL },
 	{ CUE_EXIT, 3, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_STATUE_HALL },
@@ -1554,7 +1554,7 @@ CUE SolSanctumReliefs_FirstReliefRoomCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE SolSanctumReliefs_SecondReliefRoomCues[] = {
+CUE SolSanctumReliefsSecondReliefRoomCues[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_STATUE_HALL },
 	{ CUE_EXIT, 3, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_STATUE_HALL },

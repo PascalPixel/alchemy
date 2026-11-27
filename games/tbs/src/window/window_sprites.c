@@ -1,4 +1,4 @@
-/* Characters drawn into windows, and the per-frame sprite update. Part of
+/* Characters drawn into windows, and the per-tick sprite update. Part of
    window.c. */
 
 /* Pixels added to the page arrow's and the sprite glyphs' screen y, which
@@ -15,7 +15,7 @@ typedef Sint32 (*GLYPH_ROUTINE)(
 /* Draws a character of a window's text with its top-left corner at pixel (x, y)
    of the window's interior and returns how far the text advances. */
 Sint32 mnGlyphDraw(
-	WINDOW *window, Sint32 character, Sint32 x, Sint32 y, Sint32 mode)
+	WINDOW *win, Sint32 character, Sint32 x, Sint32 y, Sint32 mode)
 {
 	WIN_STATE *state = WINDOW_STATE;
 	Uint32	   spacingX = state->letterSpacing;
@@ -24,7 +24,7 @@ Sint32 mnGlyphDraw(
 
 	/* A text canvas window draws the glyph into its canvas. */
 	if(mode != GLYPH_DRAW_PAGE_ARROW &&
-		(window->flg & WINDOW_FLAG_TEXT_CANVAS) != 0) {
+		(win->flg & WINDOW_FLAG_TEXT_CANVAS) != 0) {
 		Uint8		 *font;
 		GLYPH_ROUTINE draw;
 		Sint32		  result;
@@ -32,18 +32,18 @@ Sint32 mnGlyphDraw(
 		Sint32 mark;
 
 		font = NULL;
-		if(BattleMessageStateWork->win == window) {
+		if(BattleMessageStateWork->win == win) {
 			font = syResourceGetTableEntry(RESOURCE_SMALL_FONT);
 			width = 3;
 			if(character == ' ')
 				goto done;
 		}
 		mark = (Sint16)
-			Font_MarkGlyphCodes[(Uint32)character >> TEXT_CODE_MARK_SHIFT];
+			FontMarkGlyphCodes[(Uint32)character >> TEXT_CODE_MARK_SHIFT];
 		character &= (1 << TEXT_CODE_MARK_SHIFT) - 1;
 		width = 4;
 #else
-		if(BattleMessageStateWork->win == window) {
+		if(BattleMessageStateWork->win == win) {
 			syResourceGetTableEntry(RESOURCE_SMALL_FONT);
 			syResourceGetTableEntry(RESOURCE_WINDOW_TILES);
 			width = 3;
@@ -55,10 +55,10 @@ Sint32 mnGlyphDraw(
 #endif
 		if(character != ' ') {
 			RAM_CODE_LOAD(draw, mnGlyphDrawArm, mnGlyphDrawCodeSize);
-			result = draw(window, character, x, y, font);
+			result = draw(win, character, x, y, font);
 #if LANGUAGE == LANGUAGE_JAPANESE
 			if((Uint16)mark != 0)
-				result += draw(window, (Uint16)mark, x + result, y, font);
+				result += draw(win, (Uint16)mark, x + result, y, font);
 #endif
 			syHeapRelease(draw);
 			return result;
@@ -70,36 +70,36 @@ Sint32 mnGlyphDraw(
 		   style (the motions of TXT_STYLE) or, with GLYPH_DRAW_PAGE_ARROW, as
 		   the page arrow. */
 		Uint32		tiles[32];
-		WINDOW_SPR *windowSprite;
-		QUEUED_SPR *sprite;
-		Sint32		index;
+		WINDOW_SPR *winSpr;
+		QUEUED_SPR *spr;
+		Sint32		idx;
 
-		windowSprite = mnWindowSprAcquireFree();
-		if(windowSprite == NULL)
+		winSpr = mnWindowSprAcquireFree();
+		if(winSpr == NULL)
 			return 0;
 		/* The sprite's own four of the glyph tiles. */
-		index = (windowSprite - state->sprs) * 4;
-		windowSprite->motion = WINDOW_SPRITE_MOTION_STILL;
-		windowSprite->kind = WINDOW_SPRITE_PLAIN;
+		idx = (winSpr - state->sprs) * 4;
+		winSpr->motion = WINDOW_SPRITE_MOTION_STILL;
+		winSpr->kind = WINDOW_SPRITE_PLAIN;
 		if(mode == GLYPH_DRAW_PAGE_ARROW) {
 			width = 1;
-			windowSprite->motion = WINDOW_SPRITE_MOTION_PAGE_ARROW;
+			winSpr->motion = WINDOW_SPRITE_MOTION_PAGE_ARROW;
 		} else {
 			switch(state->outline) {
 			case TEXT_STYLE_SHAKE:
-				windowSprite->motion = WINDOW_SPRITE_MOTION_SHAKE;
+				winSpr->motion = WINDOW_SPRITE_MOTION_SHAKE;
 				break;
 			case TEXT_STYLE_POP:
-				windowSprite->motion = WINDOW_SPRITE_MOTION_POP;
-				windowSprite->anmStep = 8;
+				winSpr->motion = WINDOW_SPRITE_MOTION_POP;
+				winSpr->anmStep = 8;
 				break;
 			case TEXT_STYLE_SPIN:
-				windowSprite->motion = WINDOW_SPRITE_MOTION_SPIN;
-				windowSprite->anmStep = 0;
+				winSpr->motion = WINDOW_SPRITE_MOTION_SPIN;
+				winSpr->anmStep = 0;
 				break;
 			case TEXT_STYLE_WOBBLE:
-				windowSprite->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-				windowSprite->anmStep = 0;
+				winSpr->motion = WINDOW_SPRITE_MOTION_WOBBLE;
+				winSpr->anmStep = 0;
 				break;
 			}
 #if !ZERO_WIDTH_GLYPH_ADVANCES
@@ -115,14 +115,14 @@ Sint32 mnGlyphDraw(
 #endif
 		}
 
-		if(windowSprite->motion == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
+		if(winSpr->motion == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
 			/* The page arrow sits in the window's bottom-right corner. */
-			sprite = &windowSprite->spr;
+			spr = &winSpr->spr;
 			if(state->glyphResource == NO_GLYPH_RESOURCE)
 				state->glyphResource = syVRAMCacheFindFreeEntry();
-			sprite->oam.x = (window->x << 3) + ((window->width - 2) << 3) + 4;
-			sprite->oam.y = (window->y << 3) + ((window->height - 2) << 3) +
-				PAGE_ARROW_Y_OFFSET;
+			spr->oam.x = (win->x << 3) + ((win->width - 2) << 3) + 4;
+			spr->oam.y =
+				(win->y << 3) + ((win->height - 2) << 3) + PAGE_ARROW_Y_OFFSET;
 		} else {
 			/* Copy the glyph's tiles to its sprite tiles (sprite VRAM) and
 			   place it:
@@ -130,21 +130,21 @@ Sint32 mnGlyphDraw(
 			   of x, in screen pixels. */
 			syDMAXCopy(tiles,
 				(void *)(OBJ_VRAM0 +
-					(state->glyphTiles + index) * TILE_SIZE_4BPP),
+					(state->glyphTiles + idx) * TILE_SIZE_4BPP),
 				DMA_COPY_WORDS(32), REG_DMA3);
-			((Uint16 *)&windowSprite->spr.oam)[0] =
-				y + (spacingY >> 1) + window->y * 8 + GLYPH_SPRITE_Y_OFFSET;
-			((Uint16 *)&windowSprite->spr.oam)[1] =
-				(x + (spacingX >> 1) + window->x * 8 + 2) | GLYPH_SPRITE_SIZE;
-			((Uint16 *)&windowSprite->spr.oam)[2] = state->glyphTiles + index;
-			sprite = &windowSprite->spr;
+			((Uint16 *)&winSpr->spr.oam)[0] =
+				y + (spacingY >> 1) + win->y * 8 + GLYPH_SPRITE_Y_OFFSET;
+			((Uint16 *)&winSpr->spr.oam)[1] =
+				(x + (spacingX >> 1) + win->x * 8 + 2) | GLYPH_SPRITE_SIZE;
+			((Uint16 *)&winSpr->spr.oam)[2] = state->glyphTiles + idx;
+			spr = &winSpr->spr;
 		}
-		windowSprite->depth = OAM_DEPTH_FRONT - 1;
-		windowSprite->x = sprite->oam.x;
-		windowSprite->y = sprite->oam.y;
-		windowSprite->idx = index;
-		windowSprite->next = NULL;
-		mnWindowSprAppendToList(&window->sprs, windowSprite);
+		winSpr->depth = OAM_DEPTH_FRONT - 1;
+		winSpr->x = spr->oam.x;
+		winSpr->y = spr->oam.y;
+		winSpr->idx = idx;
+		winSpr->next = NULL;
+		mnWindowSprAppendToList(&win->sprs, winSpr);
 	}
 done:
 	return width;
@@ -161,7 +161,7 @@ void mnWindowPutGlyph(WINDOW *win, Uint32 tile, Uint32 x, Uint32 y, Sint32 mode)
 	WINDOW_SPR *out;
 	Sint32		idx;
 	Uint16	   *slot;
-	QUEUED_SPR *sprite;
+	QUEUED_SPR *spr;
 	Uint32		pos;
 	Uint16		row;
 
@@ -179,13 +179,13 @@ void mnWindowPutGlyph(WINDOW *win, Uint32 tile, Uint32 x, Uint32 y, Sint32 mode)
 		out = state;
 		idx = (out - base->sprs) * 4;
 		out->motion = WINDOW_SPRITE_MOTION_PAGE_ARROW;
-		sprite = &out->spr;
+		spr = &out->spr;
 		slot = &base->glyphResource;
 		if(*slot == NO_GLYPH_RESOURCE)
 			*slot = syVRAMCacheFindFreeEntry();
 		/* 0xfffe and 254 are -2: the arrow sits on the interior's last tile, 4
 		   pixels right and 1 up. */
-		sprite->oam.x = (win->x + (column + win->width)) * 8 + 4;
+		spr->oam.x = (win->x + (column + win->width)) * 8 + 4;
 #if FIX_UNSEQUENCED_SIDE_EFFECT
 		/* Write row twice, in order. */
 		row = (Uint8)win->height + 254;
@@ -193,9 +193,9 @@ void mnWindowPutGlyph(WINDOW *win, Uint32 tile, Uint32 x, Uint32 y, Sint32 mode)
 #else
 		row = (Uint8)win->y + (row = (Uint8)win->height + 254);
 #endif
-		sprite->oam.y = row * 8 - 1;
-		out->x = sprite->oam.x;
-		out->y = sprite->oam.y;
+		spr->oam.y = row * 8 - 1;
+		out->x = spr->oam.x;
+		out->y = spr->oam.y;
 		out->next = NULL;
 		out->idx = idx;
 		if(out->motion == 0)
@@ -213,7 +213,7 @@ void mnWindowPutGlyph(WINDOW *win, Uint32 tile, Uint32 x, Uint32 y, Sint32 mode)
 
 #else
 
-/* The tiles a voiced mark takes in place of its own over the frame's top edge
+/* The tiles a voiced mark takes in place of its own over the tick's top edge
    and over a divider; a semi-voiced mark takes the next. */
 #define VOICED_MARK_OVER_BORDER_TILE  30
 #define VOICED_MARK_OVER_DIVIDER_TILE 14
@@ -227,7 +227,7 @@ void mnWindowPutGlyph(WINDOW *win, Uint32 tile, Uint32 x, Uint32 y, Sint32 mode)
 	WINDOW_SPR *out;
 	Sint32		idx;
 	Uint16	   *slot;
-	QUEUED_SPR *sprite;
+	QUEUED_SPR *spr;
 	Uint32		pos;
 	Uint16		row;
 
@@ -247,12 +247,12 @@ void mnWindowPutGlyph(WINDOW *win, Uint32 tile, Uint32 x, Uint32 y, Sint32 mode)
 			return;
 		idx = (out - ((WIN_STATE *)base)->sprs) * 4;
 		out->motion = WINDOW_SPRITE_MOTION_PAGE_ARROW;
-		sprite = &out->spr;
+		spr = &out->spr;
 		slot = &((WIN_STATE *)base)->glyphResource;
 		if(*slot == NO_GLYPH_RESOURCE)
 			*slot = syVRAMCacheFindFreeEntry();
 		left = win->x;
-		sprite->oam.x = (left + (column + win->width)) * 8 + 4;
+		spr->oam.x = (left + (column + win->width)) * 8 + 4;
 		/* UB: row is written twice without a sequence point. */
 #if FIX_UNSEQUENCED_SIDE_EFFECT
 		row = (Uint8)win->height + 254;
@@ -260,9 +260,9 @@ void mnWindowPutGlyph(WINDOW *win, Uint32 tile, Uint32 x, Uint32 y, Sint32 mode)
 #else
 		row = (Uint8)win->y + (row = (Uint8)win->height + 254);
 #endif
-		sprite->oam.y = row * 8 + 1;
-		out->x = sprite->oam.x;
-		out->y = sprite->oam.y;
+		spr->oam.y = row * 8 + 1;
+		out->x = spr->oam.x;
+		out->y = spr->oam.y;
 		out->next = NULL;
 		out->idx = idx;
 		if(out->motion == 0)
@@ -271,7 +271,7 @@ void mnWindowPutGlyph(WINDOW *win, Uint32 tile, Uint32 x, Uint32 y, Sint32 mode)
 	} else if(tile <= TEXT_LAST_FONT_CODE) {
 		if(tile - TEXT_MARK_VOICED <= 1) {
 			/* A kana mark goes in the tile above the character before it. Over
-			   the frame's top edge or a divider it takes another tile. XXX (no
+			   the tick's top edge or a divider it takes another tile. XXX (no
 			   evidence): whether a voiced kana ever lands on a window's top
 			   edge or a divider, where it takes VOICED_MARK_OVER_BORDER_TILE
 			   (parts of the Japanese HP and PP labels) or
@@ -308,19 +308,19 @@ void mnWindowPutGlyph(WINDOW *win, Uint32 tile, Uint32 x, Uint32 y, Sint32 mode)
    palette mode names (TILEMAP_ENTRY_), or as it is for TILEMAP_ENTRY_PLAIN;
    TILEMAP_ENTRY_NONE writes nothing. y -1 is the border's top row, where the
    menus put their page numbers and arrows (menu/menu_shared.c); a place beyond
-   the bottom or right frame, or outside the tilemap, is ignored. */
+   the bottom or right tick, or outside the tilemap, is ignored. */
 void mnWindowSetTilemapEntry(
-	WINDOW *window, Sint32 value, Sint32 x, Sint32 y, Uint32 mode)
+	WINDOW *win, Sint32 value, Sint32 x, Sint32 y, Uint32 mode)
 {
 	WIN_STATE *state = WINDOW_STATE;
 	Sint32	   palette;
-	Sint32	   index;
+	Sint32	   idx;
 
 	y += 1;
 	x += 1;
-	if(y > (Uint32)(window->height - 1))
+	if(y > (Uint32)(win->height - 1))
 		return;
-	if(x > (Uint32)(window->width - 1))
+	if(x > (Uint32)(win->width - 1))
 		return;
 
 	switch(mode) {
@@ -344,114 +344,114 @@ void mnWindowSetTilemapEntry(
 	case TILEMAP_ENTRY_HIGHLIGHT:
 	case TILEMAP_ENTRY_WINDOW:
 	case TILEMAP_ENTRY_ICON:
-		index = (window->y + y) * BG_SCREEN_WIDTH + (window->x + x);
-		if((Uint32)index >= TILEMAP_ENTRIES)
+		idx = (win->y + y) * BG_SCREEN_WIDTH + (win->x + x);
+		if((Uint32)idx >= TILEMAP_ENTRIES)
 			return;
-		state->tilemap[index] = palette | value;
+		state->tilemap[idx] = palette | value;
 		return;
 	case TILEMAP_ENTRY_PLAIN:
 	default:
-		index = (window->y + y) * BG_SCREEN_WIDTH + (window->x + x);
-		if((Uint32)index >= TILEMAP_ENTRIES)
+		idx = (win->y + y) * BG_SCREEN_WIDTH + (win->x + x);
+		if((Uint32)idx >= TILEMAP_ENTRIES)
 			return;
-		state->tilemap[index] = value;
+		state->tilemap[idx] = value;
 		return;
 	}
 }
 
-/* The steps of WindowSprite_BounceScales: a swell to 1.5 times and back. */
+/* The steps of WindowSpriteBounceScales: a swell to 1.5 times and back. */
 #define BOUNCE_SCALE_STEPS 32
 
 /* Steps a scaling sprite's animation (WINDOW_SPRITE_MOTION_SWELL to
    WINDOW_SPRITE_MOTION_SHRINK_HALF) and sets its affine scale for this
-   frame. */
-void mnWindowSprUpdateScaleAnimation(WINDOW_SPR *windowSprite)
+   tick. */
+void mnWindowSprUpdateScaleAnimation(WINDOW_SPR *winSpr)
 {
 	/* Scales are 8.8 fixed point: Q_8_8(1) is the sprite's own size. */
 	Sint32			 scale = Q_8_8(1);
-	QUEUED_SPR		*sprite = &windowSprite->spr;
+	QUEUED_SPR		*spr = &winSpr->spr;
 	AFFINE_TRANSFORM effect;
 
-	switch(windowSprite->motion) {
+	switch(winSpr->motion) {
 	case WINDOW_SPRITE_MOTION_SWELL:
-		scale = WindowSprite_BounceScales[windowSprite->anmStep++ &
+		scale = WindowSpriteBounceScales[winSpr->anmStep++ &
 			(BOUNCE_SCALE_STEPS - 1)];
 		break;
 	case WINDOW_SPRITE_MOTION_SWELL_HALF:
-		scale = WindowSprite_BounceScales[windowSprite->anmStep++ &
+		scale = WindowSpriteBounceScales[winSpr->anmStep++ &
 					(BOUNCE_SCALE_STEPS - 1)] >>
 			1;
 		break;
 	/* The shrinks play the bounce's second half at twice its pace. */
 	case WINDOW_SPRITE_MOTION_SHRINK:
-		if(windowSprite->anmStep < BOUNCE_SCALE_STEPS / 4)
-			scale = WindowSprite_BounceScales[windowSprite->anmStep++ * 2 +
+		if(winSpr->anmStep < BOUNCE_SCALE_STEPS / 4)
+			scale = WindowSpriteBounceScales[winSpr->anmStep++ * 2 +
 				BOUNCE_SCALE_STEPS / 2];
 		break;
 	case WINDOW_SPRITE_MOTION_SHRINK_HALF:
-		if(windowSprite->anmStep < BOUNCE_SCALE_STEPS / 4)
-			scale = WindowSprite_BounceScales[windowSprite->anmStep++ * 2 +
+		if(winSpr->anmStep < BOUNCE_SCALE_STEPS / 4)
+			scale = WindowSpriteBounceScales[winSpr->anmStep++ * 2 +
 						BOUNCE_SCALE_STEPS / 2] >>
 				1;
 		break;
 	}
 	if(scale == Q_8_8(1)) {
-		sprite->oam.matrix = 0;
-		sprite->oam.affineMode = SPRITE_AFFINE_OFF;
-		sprite->oam.x = windowSprite->x;
-		sprite->oam.y = windowSprite->y;
+		spr->oam.matrix = 0;
+		spr->oam.affineMode = SPRITE_AFFINE_OFF;
+		spr->oam.x = winSpr->x;
+		spr->oam.y = winSpr->y;
 	} else {
 		effect.scaleX = scale;
 		effect.scaleY = scale;
 		effect.ang = 0;
-		sprite->oam.matrix = syOAMMatrixAllocFromTransform(&effect);
+		spr->oam.matrix = syOAMMatrixAllocFromTransform(&effect);
 		/* Larger than its size the sprite needs the double-size box; smaller,
 		   it fits its own. */
 		if(scale > Q_8_8(1)) {
-			sprite->oam.affineMode = SPRITE_AFFINE_DOUBLE_SIZE;
-			sprite->oam.x = windowSprite->x - 8;
-			sprite->oam.y = windowSprite->y - 8;
+			spr->oam.affineMode = SPRITE_AFFINE_DOUBLE_SIZE;
+			spr->oam.x = winSpr->x - 8;
+			spr->oam.y = winSpr->y - 8;
 		} else {
-			sprite->oam.affineMode = SPRITE_AFFINE_ON;
-			sprite->oam.x = windowSprite->x;
-			sprite->oam.y = windowSprite->y;
+			spr->oam.affineMode = SPRITE_AFFINE_ON;
+			spr->oam.x = winSpr->x;
+			spr->oam.y = winSpr->y;
 		}
 	}
 }
 
 /* A frame of the next-page arrow: an 8 by 16 sprite of 256 colours. */
 #define PAGE_ARROW_FRAME_BYTES (2 * TILE_SIZE_8BPP)
-/* The steps of WindowSprite_WobbleOffsets and WindowSprite_BounceOffsets. */
+/* The steps of WindowSpriteWobbleOffsets and WindowSpriteBounceOffsets. */
 #define WOBBLE_STEPS		   20
 #define HOP_STEPS			   16
 
-/* The per-frame sprite update: moves each sprite that an open window carries by
+/* The per-tick sprite update: moves each sprite that an open window carries by
    its animation mode (WINDOW_SPRITE_MOTION_) and queues it for drawing, at its
    depth slot (WINDOW_SPR.depth). */
 void mnWindowSprUpdateAll(void)
 {
 	WIN_STATE		*state = WINDOW_STATE;
-	WINDOW			*window = state->wins;
+	WINDOW			*win = state->wins;
 	Sint32			 i;
 	AFFINE_TRANSFORM effect;
 
-	for(i = 0; i != WINDOW_COUNT; window++, i++) {
-		WINDOW_SPR *windowSprite;
+	for(i = 0; i != WINDOW_COUNT; win++, i++) {
+		WINDOW_SPR *winSpr;
 		Uint32		phase;
 
-		if(!(window->flg & WINDOW_FLAG_OPEN))
+		if(!(win->flg & WINDOW_FLAG_OPEN))
 			continue;
-		windowSprite = window->sprs.head;
-		/* The page arrow's picture: one of 8, each shown for 4 VBlanks. */
-		phase = (VBlankCount >> 2) & 7;
-		while(windowSprite != NULL) {
-			QUEUED_SPR *sprite = &windowSprite->spr;
+		winSpr = win->sprs.head;
+		/* The page arrow's picture: one of 8, each shown for 4 frames. */
+		phase = (FrameCount >> 2) & 7;
+		while(winSpr != NULL) {
+			QUEUED_SPR *spr = &winSpr->spr;
 
-			if(window->anm == WINDOW_ANIMATION_SWELL) {
-				windowSprite->anmStep = 2;
-				windowSprite->motion = WINDOW_SPRITE_MOTION_PULSE;
+			if(win->anm == WINDOW_ANIMATION_SWELL) {
+				winSpr->anmStep = 2;
+				winSpr->motion = WINDOW_SPRITE_MOTION_PULSE;
 			}
-			switch(windowSprite->motion) {
+			switch(winSpr->motion) {
 			case WINDOW_SPRITE_MOTION_PAGE_ARROW:
 				/* VRAM_CACHE_ENTRY_COUNT means no entry was free for the
 				   arrow. */
@@ -459,138 +459,138 @@ void mnWindowSprUpdateAll(void)
 					const Uint8 *tiles = &WindowSprite_PageArrowTiles[phase *
 						PAGE_ARROW_FRAME_BYTES];
 
-					sprite->oam.idx = syVRAMCacheLoad(
+					spr->oam.idx = syVRAMCacheLoad(
 						state->glyphResource, PAGE_ARROW_FRAME_BYTES, tiles);
-					windowSprite->idx = sprite->oam.idx;
-					sprite->oam.objMode = OBJ_MODE_NORMAL;
-					sprite->oam.mosaic = 0;
-					sprite->oam.fullCol = 1;
-					sprite->oam.size = 0;
-					sprite->oam.shape = SPRITE_SHAPE_TALL;
-					sprite->oam.y = windowSprite->y +
-						WindowSprite_CursorBobOffsets[VBlankCount % 80] + 2;
-					sprite->oam.affineMode = SPRITE_AFFINE_OFF;
-					sprite->oam.matrix = 0;
+					winSpr->idx = spr->oam.idx;
+					spr->oam.objMode = OBJ_MODE_NORMAL;
+					spr->oam.mosaic = 0;
+					spr->oam.fullCol = 1;
+					spr->oam.size = 0;
+					spr->oam.shape = SPRITE_SHAPE_TALL;
+					spr->oam.y = winSpr->y +
+						WindowSpriteCursorBobOffsets[FrameCount % 80] + 2;
+					spr->oam.affineMode = SPRITE_AFFINE_OFF;
+					spr->oam.matrix = 0;
 				}
 				break;
 			case WINDOW_SPRITE_MOTION_SHAKE:
-				/* Every other frame each axis moves -1 to 1 pixels from its
+				/* Every other tick each axis moves -1 to 1 pixels from its
 				   place:
 				   half the sum of two random 0 to 2, less 1. */
-				if(VBlankCount & 1) {
-					sprite->oam.x = windowSprite->x +
+				if(FrameCount & 1) {
+					spr->oam.x = winSpr->x +
 						(Sint32)((syRandom16Below(3) + syRandom16Below(3)) >>
 							1) -
 						1;
-					sprite->oam.y = windowSprite->y +
+					spr->oam.y = winSpr->y +
 						(Sint32)((syRandom16Below(3) + syRandom16Below(3)) >>
 							1) -
 						1;
 				}
 				break;
 			case WINDOW_SPRITE_MOTION_POP:
-				/* Twice its size for animationStep frames, which mnGlyphDraw
+				/* Twice its size for animationStep ticks, which mnGlyphDraw
 				   starts at 8. */
-				if(windowSprite->anmStep == 0) {
-					sprite->oam.matrix = 0;
-					sprite->oam.affineMode = SPRITE_AFFINE_OFF;
-					sprite->oam.x = windowSprite->x;
-					sprite->oam.y = windowSprite->y;
+				if(winSpr->anmStep == 0) {
+					spr->oam.matrix = 0;
+					spr->oam.affineMode = SPRITE_AFFINE_OFF;
+					spr->oam.x = winSpr->x;
+					spr->oam.y = winSpr->y;
 					break;
 				}
 				effect.scaleX = Q_8_8(2);
 				effect.scaleY = Q_8_8(2);
 				effect.ang = 0;
-				sprite->oam.matrix = syOAMMatrixAllocFromTransform(&effect);
-				sprite->oam.affineMode = SPRITE_AFFINE_DOUBLE_SIZE;
-				sprite->oam.x = windowSprite->x - 5;
-				sprite->oam.y = windowSprite->y - 5;
-				windowSprite->anmStep--;
+				spr->oam.matrix = syOAMMatrixAllocFromTransform(&effect);
+				spr->oam.affineMode = SPRITE_AFFINE_DOUBLE_SIZE;
+				spr->oam.x = winSpr->x - 5;
+				spr->oam.y = winSpr->y - 5;
+				winSpr->anmStep--;
 				break;
 			case WINDOW_SPRITE_MOTION_SPIN:
-				/* animationStep is the angle, three 256ths of a turn a frame, a
-				   turn in about 85 frames, while the sprite circles its place
+				/* animationStep is the angle, three 256ths of a turn a tick, a
+				   turn in about 85 ticks, while the sprite circles its place
 				   four pixels out (a sine shifted down 14 bits). */
 				effect.scaleX = Q_8_8(1);
 				effect.scaleY = Q_8_8(1);
-				windowSprite->anmStep += TRIG_TURN * 3 / 256;
-				effect.ang = windowSprite->anmStep;
-				sprite->oam.matrix = syOAMMatrixAllocFromTransform(&effect);
-				sprite->oam.affineMode = SPRITE_AFFINE_ON;
-				sprite->oam.x = windowSprite->x -
+				winSpr->anmStep += TRIG_TURN * 3 / 256;
+				effect.ang = winSpr->anmStep;
+				spr->oam.matrix = syOAMMatrixAllocFromTransform(&effect);
+				spr->oam.affineMode = SPRITE_AFFINE_ON;
+				spr->oam.x = winSpr->x -
 					(sySin(effect.ang + TRIG_TURN * 29 / 32) >> 14) - 2;
-				sprite->oam.y = windowSprite->y -
+				spr->oam.y = winSpr->y -
 					(syCos(effect.ang + TRIG_TURN * 13 / 32) >> 14) - 2;
 				break;
 			case WINDOW_SPRITE_MOTION_WOBBLE:
-				/* One step of WindowSprite_WobbleOffsets every other frame. */
-				if(VBlankCount & 1)
-					windowSprite->anmStep++;
-				sprite->oam.x = windowSprite->x +
-					WindowSprite_WobbleOffsets[windowSprite->anmStep %
-						WOBBLE_STEPS][0];
-				sprite->oam.y = windowSprite->y +
-					WindowSprite_WobbleOffsets[windowSprite->anmStep %
-						WOBBLE_STEPS][1] -
+				/* One step of WindowSpriteWobbleOffsets every other tick. */
+				if(FrameCount & 1)
+					winSpr->anmStep++;
+				spr->oam.x = winSpr->x +
+					WindowSpriteWobbleOffsets[winSpr->anmStep % WOBBLE_STEPS]
+											 [0];
+				spr->oam.y = winSpr->y +
+					WindowSpriteWobbleOffsets[winSpr->anmStep % WOBBLE_STEPS]
+											 [1] -
 					2;
 				break;
 			case WINDOW_SPRITE_MOTION_HOP_UP:
-				windowSprite->anmStep++;
-				sprite->oam.y = windowSprite->y -
-					WindowSprite_BounceOffsets[windowSprite->anmStep &
+				winSpr->anmStep++;
+				spr->oam.y = winSpr->y -
+					WindowSpriteBounceOffsets[winSpr->anmStep &
 						(HOP_STEPS - 1)];
 				break;
 			case WINDOW_SPRITE_MOTION_HOP_DOWN:
 			case WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE:
 			case WINDOW_SPRITE_MOTION_HOP_DOWN_UNUSED:
-				windowSprite->anmStep++;
-				sprite->oam.y = windowSprite->y +
-					WindowSprite_BounceOffsets[windowSprite->anmStep &
+				winSpr->anmStep++;
+				spr->oam.y = winSpr->y +
+					WindowSpriteBounceOffsets[winSpr->anmStep &
 						(HOP_STEPS - 1)];
 				break;
 			case WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT:
-				windowSprite->anmStep++;
-				sprite->oam.x = windowSprite->x -
-					WindowSprite_BounceOffsets[windowSprite->anmStep &
+				winSpr->anmStep++;
+				spr->oam.x = winSpr->x -
+					WindowSpriteBounceOffsets[winSpr->anmStep &
 						(HOP_STEPS - 1)];
-				sprite->oam.y = windowSprite->y +
-					WindowSprite_BounceOffsets[windowSprite->anmStep &
+				spr->oam.y = winSpr->y +
+					WindowSpriteBounceOffsets[winSpr->anmStep &
 						(HOP_STEPS - 1)];
 				break;
 			case WINDOW_SPRITE_MOTION_PULSE:
-				/* 1.25 times for animationStep frames, then its own size. */
-				if(windowSprite->anmStep != 0) {
+				/* 1.25 times for animationStep ticks, then its own size. */
+				if(winSpr->anmStep != 0) {
 					effect.scaleX = Q_8_8(1.25);
 					effect.scaleY = Q_8_8(1.25);
 					effect.ang = 0;
-					sprite->oam.matrix = syOAMMatrixAllocFromTransform(&effect);
-					sprite->oam.affineMode = SPRITE_AFFINE_DOUBLE_SIZE;
-					sprite->oam.x = windowSprite->x - 8;
-					sprite->oam.y = windowSprite->y - 8;
-					windowSprite->anmStep--;
+					spr->oam.matrix = syOAMMatrixAllocFromTransform(&effect);
+					spr->oam.affineMode = SPRITE_AFFINE_DOUBLE_SIZE;
+					spr->oam.x = winSpr->x - 8;
+					spr->oam.y = winSpr->y - 8;
+					winSpr->anmStep--;
 					break;
 				}
-				sprite->oam.matrix = 0;
-				sprite->oam.affineMode = SPRITE_AFFINE_OFF;
-				sprite->oam.x = windowSprite->x;
-				sprite->oam.y = windowSprite->y;
+				spr->oam.matrix = 0;
+				spr->oam.affineMode = SPRITE_AFFINE_OFF;
+				spr->oam.x = winSpr->x;
+				spr->oam.y = winSpr->y;
 				break;
 			case WINDOW_SPRITE_MOTION_SWELL:
 			case WINDOW_SPRITE_MOTION_SWELL_HALF:
 			case WINDOW_SPRITE_MOTION_SHRINK:
 			case WINDOW_SPRITE_MOTION_SHRINK_HALF:
-				mnWindowSprUpdateScaleAnimation((WINDOW_SPR *)windowSprite);
+				mnWindowSprUpdateScaleAnimation((WINDOW_SPR *)winSpr);
 				break;
 			}
 			/* Queue it unless it is hidden, or an arrow with no picture. */
-			if(windowSprite->motion == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
+			if(winSpr->motion == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
 				if(state->glyphResource != VRAM_CACHE_ENTRY_COUNT)
-					syOAMAddSprAtDepth(sprite, windowSprite->depth);
-			} else if(windowSprite->motion != WINDOW_SPRITE_MOTION_HIDDEN) {
-				syOAMAddSprAtDepth(sprite, windowSprite->depth);
+					syOAMAddSprAtDepth(spr, winSpr->depth);
+			} else if(winSpr->motion != WINDOW_SPRITE_MOTION_HIDDEN) {
+				syOAMAddSprAtDepth(spr, winSpr->depth);
 			}
-			windowSprite = windowSprite->next;
-			phase = (VBlankCount >> 2) & 7;
+			winSpr = winSpr->next;
+			phase = (FrameCount >> 2) & 7;
 		}
 	}
 }

@@ -3,7 +3,7 @@
 
 /* clang-format off */
 /* The 244 classes, by class id. */
-const CLASS_DEFINITION Class_DefinitionTable[] = {
+const CLASS_DEFINITION ClassDefinitionTable[] = {
 	/* NPC */
 	{
 		.series = CLASS_SERIES_NPC,

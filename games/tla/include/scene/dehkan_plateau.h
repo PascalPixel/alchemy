@@ -34,7 +34,7 @@ void scDehkanPlateauStepOnFullMetalVestChestPillars(void);
 void scDehkanPlateauStepOnThemisAxeChestPillars(void);
 void scDehkanPlateauStepOnTightropesPillars(void);
 void scDehkanPlateauStepOnCannonPillar(void);
-void scDehkanPlateauCrackPillar(Sint32 id, Sint32 standingId, Sint32 flag);
+void scDehkanPlateauCrackPillar(Sint32 id, Sint32 standingId, Sint32 flg);
 void scDehkanPlateauSetThemisAxeChestStandingPillarMetatiles(void);
 void scDehkanPlateauSetTightropesStandingPillarMetatiles(void);
 
@@ -91,27 +91,26 @@ typedef enum DEHKAN_PLATEAU_CRACK_FIELD {
 } DEHKAN_PLATEAU_CRACK_FIELD;
 
 /* The cracks' pictures and records (each room's crack table). */
-extern Uint16 DehkanPlateau_PoundCubeCrackPictures[];
-extern Uint16 DehkanPlateau_PoundCubeCracks[][CRACK_FIELDS];
-extern Uint16 DehkanPlateau_FullMetalVestChestHolePictures[];
-extern Uint16 DehkanPlateau_ThemisAxeChestHolePictures[];
-extern Uint16 DehkanPlateau_TightropesHolePictures[];
-extern Uint16 DehkanPlateau_PoundCubeHolePictures[];
+extern Uint16 DehkanPlateauPoundCubeCrackPictures[];
+extern Uint16 DehkanPlateauPoundCubeCracks[][CRACK_FIELDS];
+extern Uint16 DehkanPlateauFullMetalVestChestHolePictures[];
+extern Uint16 DehkanPlateauThemisAxeChestHolePictures[];
+extern Uint16 DehkanPlateauTightropesHolePictures[];
+extern Uint16 DehkanPlateauPoundCubeHolePictures[];
 
 /* Functions and scripts other scenes keep a copy of. */
-void fdPoundSinkTarget(Uint16 *list, Sint32 mode, Sint32 count);
+void fdPoundSinkTarget(Uint16 *list, Sint32 mode, Sint32 cnt);
 void fdActorDropAndWait(struct ACTOR *actor);
 void syCrumblingPillarPrepare(Sint32 id);
 void syCrumblingPillarPlace(Uint16 *list);
 void scDustScatter(Sint32 spread);
 void scDustBurst(void);
 void fdLeaderSetMetatileShapeAt(Sint32 level, Sint32 layer);
-void fdActorSetMetatileOpen(Sint32 id, Uint32 mode, Sint32 flag, Sint32 layer);
+void fdActorSetMetatileOpen(Sint32 id, Uint32 mode, Sint32 flg, Sint32 layer);
 void fdActorSetMetatileShape(Sint32 level, Sint32 layer, Sint32 owner);
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const struct EFFECT_OPTIONS *options);
-extern Uint32 FieldEffect_ShortScript[];
-extern Uint32 FieldEffect_MediumScript[];
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const struct EFFECT_OPTIONS *options);
+extern Uint32 FieldEffectShortScript[];
+extern Uint32 FieldEffectMediumScript[];
 
 #endif

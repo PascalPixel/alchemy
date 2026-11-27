@@ -250,7 +250,7 @@ syOAMBuildBufferKernel:
 .Loam_done:
 	pop	{r5, r6, r7, r8, r9, lr}
 	bx	lr
-	.4byte	VBlankCount
+	.4byte	FrameCount
 	.4byte	syIWRAMWordsFill
 	.4byte	OamMatrixCount
 	.4byte	OamMatrices

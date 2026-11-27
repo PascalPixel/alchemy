@@ -102,7 +102,7 @@ typedef enum DJINN_MENU_RESULT {
 
 /* DJINN_MENU_BACKDROP.tutorialStep: where the Djinn tutorial is. The tutorial
    plays the menu itself, one scripted press a step, after a wait counted in
-   frames (mnDjinnMenuSelectDjinn and, on the preview screens,
+   ticks (mnDjinnMenuSelectDjinn and, on the preview screens,
    mnDjinnMenuRunPreview). */
 typedef enum DJINN_TUTORIAL_STEP {
 	DJINN_TUTORIAL_OFF = 0,
@@ -180,14 +180,14 @@ typedef enum DJINN_COMPARE_OPERATION {
 	DJINN_COMPARE_SET = 3
 } DJINN_COMPARE_OPERATION;
 
-void mnPlaceEntryIconInGrid(WINDOW_SPR *icon, Sint32 index, Sint32 originX,
+void mnPlaceEntryIconInGrid(WINDOW_SPR *icon, Sint32 idx, Sint32 originX,
 	Sint32 originY, Sint32 columns);
 void mnPsynergyMenuPlaceEntryIcon(
-	WINDOW_SPR **icons, Sint32 index, Sint32 x, Sint32 y, Sint32 columns);
+	WINDOW_SPR **icons, Sint32 idx, Sint32 x, Sint32 y, Sint32 columns);
 void mnItemMenuPlaceIcon(
-	WINDOW_SPR **icons, Sint32 index, Sint32 x, Sint32 y, Sint32 columns);
+	WINDOW_SPR **icons, Sint32 idx, Sint32 x, Sint32 y, Sint32 columns);
 void mnWindowSetBounds(
-	WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height);
+	WINDOW *win, Sint32 x, Sint32 y, Sint32 width, Sint32 height);
 
 /* The item menu's state, Ram_HeapSlots->menuState (HEAP_SLOT_MENU): its
    windows, the party figures, the items listed and the two choices a command
@@ -254,7 +254,7 @@ typedef struct ITEM_MENU_STATE {
 	/* The row of four figures the Djinn and status screens and the file list
 	   show (mnDjinnFiguresInitTopRow): each one's sprite, place in screen
 	   pixels and depth, and its scale in 16.16, which closes a quarter of its
-	   gap to toFIXED(1) each frame, or holds -scale while negative. */
+	   gap to toFIXED(1) each tick, or holds -scale while negative. */
 	void  *figures[4];
 	Sint16 figureX[4];
 	Sint16 figureY[4];
@@ -459,11 +459,10 @@ STATIC_ASSERT(offsetof(PSYNERGY_MENU_STATE, mode) == 620);
 
 /* The menu object's functions its parts call before their definitions, or with
    declarations of their own that disagree. */
-void mnStatPanelDrawHpPp(UNIT *unit, Sint32 window);
+void mnStatPanelDrawHpPp(UNIT *unit, Sint32 win);
 void mnTextDrawStatComparison(
-	const UNIT *after, const UNIT *before, Sint32 window);
-void mnTextDrawMessageAsTilesStub(
-	Sint32 message, WINDOW *window, Sint32 x, Sint32 y);
+	const UNIT *after, const UNIT *before, Sint32 win);
+void mnTextDrawMessageAsTilesStub(Sint32 msg, WINDOW *win, Sint32 x, Sint32 y);
 
 /* Tags the parts name in prototypes before the part that defines them. */
 struct DJINN_MENU_BACKDROP;
@@ -471,18 +470,17 @@ struct DJINN_MENU_BACKDROP;
 /* What several parts call, declared once here for all of them. */
 Sint32 gmInventoryEquipStub(Sint32 owner, Sint32 slot);
 void   mnTextDrawStringAtOffsetStub(
-	  const Uint8 *text, Sint32 window, Sint32 offsetX, Sint32 offsetY);
-void mnTextDrawStringInWindowStub(
-	Uint8 *text, Sint32 window, Uint32 x, Uint32 y);
+	  const Uint8 *text, Sint32 win, Sint32 ofsX, Sint32 ofsY);
+void mnTextDrawStringInWindowStub(Uint8 *text, Sint32 win, Uint32 x, Uint32 y);
 void mnTextDrawNumAtOffsetStub(
-	Sint32 value, Sint32 width, Sint32 window, Sint32 x, Sint32 y);
+	Sint32 value, Sint32 width, Sint32 win, Sint32 x, Sint32 y);
 void mnTextDrawNumInWindowStub(
-	Sint32 value, Sint32 width, Sint32 window, Sint32 x, Sint32 y);
-Sint32 mnTextSetColStub(Sint32 color);
+	Sint32 value, Sint32 width, Sint32 win, Sint32 x, Sint32 y);
+Sint32 mnTextSetColStub(Sint32 col);
 void   mnAbilityBuildIconTilesStub(
 	  Sint32 action, Sint32 withBase, Sint32 *slot, Sint32 *tile, Sint32 reuse);
 void mnWindowDrawDividerLineStub(
-	Sint32 window, Sint32 x1, Sint32 y1, Sint32 x2, Sint32 y2);
+	Sint32 win, Sint32 x1, Sint32 y1, Sint32 x2, Sint32 y2);
 void mnPortraitReloadStub(Sint32 slot, Sint32 key, Sint32 unused);
 /* Draws an empty window at tile (x, y), width by height tiles, and frees the
    text tiles the rectangle showed. */
@@ -493,38 +491,38 @@ void mnWindowEraseBorderRectStub(
 	Sint32 x, Sint32 y, Sint32 width, Sint32 height);
 /* Frees the second range of text tiles and, with flag set, lets text take them
    too. */
-void mnTextUseExtraTilesStub(Sint32 flag);
+void mnTextUseExtraTilesStub(Sint32 flg);
 /* Marks the text tiles the tilemap shows and frees those it no longer shows. */
 void   mnWindowMarkVisibleTextTilesStub(void);
-void   mnMarkChosenMember(Sint32 unused, Sint32 index, Sint32 count);
-Sint32 mnMoveGridCursor(Sint32 *selection, Sint32 count, Sint32 columns);
+void   mnMarkChosenMember(Sint32 unused, Sint32 idx, Sint32 cnt);
+Sint32 mnMoveGridCursor(Sint32 *selection, Sint32 cnt, Sint32 columns);
 /* Loads entry id's icon of kind mode into sprite tile slot slot (a free one
    when -1). */
 void mnSelectionIconLoadIntoSlotStub(
-	Sint32 mode, Sint32 id, Sint32 slot, Sint32 flags);
+	Sint32 mode, Sint32 id, Sint32 slot, Sint32 flg);
 Sint32 fdSprStartAnimationStub(void *object, Sint32 argument);
 /* Animates the page arrows on a window's top border, from tile offset. */
-void   mnPageArrowsDrawStub(Sint32 offset);
+void   mnPageArrowsDrawStub(Sint32 ofs);
 Sint32 mnStatScreenListStatuses(
 	Uint8 *ailments, Sint32 requested, Sint32 owner);
-void   mnItemMenuDrawEquipment(Sint32 window, Sint32 ownerId, Sint32 mode);
+void   mnItemMenuDrawEquipment(Sint32 win, Sint32 ownerId, Sint32 mode);
 Sint32 mnAbilityApplyToTargets(
-	Sint32 abilityId, Sint32 userId, Sint32 targetId, Sint32 plainPower);
+	Sint32 abilityId, Sint32 userId, Sint32 tgtId, Sint32 plainPower);
 void mnAbilityPlayUseSnd(Sint32 abilityId);
 void mnFreeArrows(void);
 /* One 4-bit tile (class_change_arrow.4bpp) the Djinn menus copy into the
    backdrop's frame; the Djinn preview blinks it, drawing it and a fill of the
-   window background in turn every four frames. */
+   window background in turn every four ticks. */
 extern Uint8 Menu_BackdropBorderTile[];
-void		 mnWindowSprPrepareForRedrawStub(Sint32 window);
+void		 mnWindowSprPrepareForRedrawStub(Sint32 win);
 Sint32		 mnMessageAllTypedStub(void);
 /* The draw slot of the party and Djinn figures the menus place, among the
    windows' sprites. */
 #define MENU_FIGURE_DEPTH (OAM_DEPTH_WINDOW + 10)
 /* Places a sprite through the field's projected placement, facing as an actor
    faces, into draw slot depth. */
-void fdRenderApplyProjectedPlacementAtDepthStub(SPR *object,
-	SPR_PLACEMENT *position, SPR_SCALE *scale, Sint32 facing, Sint32 depth);
+void fdRenderApplyProjectedPlacementAtDepthStub(SPR *object, SPR_PLACEMENT *pos,
+	SPR_SCALE *scale, Sint32 facing, Sint32 depth);
 
 /* The result of using an item or Psynergy from the menu: its message, counted
    from MsgItemUseResult (mnAbilityApplyToTargets). */
@@ -624,21 +622,20 @@ typedef enum DJINN_COMPARE_PAGE {
 
 /* The Japanese status panel's PP row, "EP    /": label and slash in one
    string, drawn by the unit summary. */
-extern const Uint8 StatusPanel_PpRowString[];
+extern const Uint8 StatusPanelPpRowString[];
 /* The Japanese status panel's HP row, "HP    /", the slash already in its
    cell at 48. */
-extern const Uint8 StatusPanel_HpRowString[];
+extern const Uint8 StatusPanelHpRowString[];
 /* The HP label outside Japan, in each language's form ("KP" in German, "PV" in
    Spanish and French, "PS" in Italian). */
-extern const Uint8 StatusPanel_HpString[];
+extern const Uint8 StatusPanelHpString[];
 /* The PP label outside Japan, which every language writes "PP". */
-extern const Uint8 StatusPanel_PpString[];
+extern const Uint8 StatusPanelPpString[];
 /* The slash between a current and maximum figure on the status panel, outside
    Japan. */
-extern const Uint8 StatusPanel_SlashString[];
+extern const Uint8 StatusPanelSlashString[];
 /* Draws a number right-aligned in a field ending at pixel x of a window: the HP
    and PP figures outside Japan. */
-void mnTextDrawNumRightAligned(
-	Sint32 number, Sint32 window, Sint32 x, Sint32 y);
+void mnTextDrawNumRightAligned(Sint32 num, Sint32 win, Sint32 x, Sint32 y);
 
 #endif

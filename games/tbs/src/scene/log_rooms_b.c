@@ -58,10 +58,10 @@
 #include "game/system_call.h"
 #include "text/msg_ids.h"
 
-extern SCENE_ENTRANCE LogRoomsB_Entrances[];
-extern Uint32		  LogRoomsB_Exits[];
-extern ACTOR_PLACE	  LogRoomsB_ActorPlacements[];
-extern CUE			  LogRoomsB_Cues[];
+extern SCENE_ENTRANCE LogRoomsBEntrances[];
+extern Uint32		  LogRoomsBExits[];
+extern ACTOR_PLACE	  LogRoomsBActorPlacements[];
+extern CUE			  LogRoomsBCues[];
 
 /* The townspeople, numbering the actor placement rows from ACTOR_FIRST_PLACED
    and named by what they say on the party's return. */
@@ -105,7 +105,7 @@ enum { FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK = FLAG_AREA_TEMP_00 };
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return LogRoomsB_Entrances;
+	return LogRoomsBEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -115,7 +115,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return LogRoomsB_Exits;
+	return LogRoomsBExits;
 }
 
 /* Gives the actor placements' condition 0 whether each lies inside the view
@@ -123,7 +123,7 @@ const Uint32 *scGetExits(void)
    appear. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	ACTOR_PLACE *placements = LogRoomsB_ActorPlacements;
+	ACTOR_PLACE *placements = LogRoomsBActorPlacements;
 
 	fdAssignViewFlags(placements);
 	return placements;
@@ -139,9 +139,9 @@ static void scLogRoomsBShowStandingActorMessage(Sint32 actorId)
 }
 
 /* Faces the leader and shows this resident's dialogue while standing still. */
-static inline void scLogRoomsBFaceAndSpeak(Sint32 actorId, Sint32 message)
+static inline void scLogRoomsBFaceAndSpeak(Sint32 actorId, Sint32 msg)
 {
-	fdScriptSetMessageId(message);
+	fdScriptSetMessageId(msg);
 	fdActorTurnToFaceEachOther(actorId, ACTOR_PARTY_LEADER, 2);
 	scLogRoomsBShowStandingActorMessage(actorId);
 }
@@ -385,7 +385,7 @@ static void scLogRoomsBReadInnGirlsMind(void)
 /* The rooms' doors, people, Mind Reads and the things to search. */
 const CUE *scGetCues(void)
 {
-	return LogRoomsB_Cues;
+	return LogRoomsBCues;
 }
 
 /* Opens the room entered with the window transition. In the gem owner's house
@@ -409,7 +409,7 @@ Sint32 scInit(void)
 		entrance == LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS) {
 		scVaultPlaceItemIcon(
 			ITEM_BONE, toFIXED(568), toFIXED(16), toFIXED(672));
-		sySetFrameEvent(scVaultUpdateLeaderBesideBoneFlag, EVENT_PASS_FRAME);
+		sySetTickEvent(scVaultUpdateLeaderBesideBoneFlag, EVENT_PASS_TICK);
 	}
 
 	return 0;
@@ -417,7 +417,7 @@ Sint32 scInit(void)
 
 #include "shared/vault_item_icon.c"
 
-SCENE_ENTRANCE LogRoomsB_Entrances[] = {
+SCENE_ENTRANCE LogRoomsBEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST, CONDITION_ALWAYS, 192, 0, 220,
@@ -439,7 +439,7 @@ SCENE_ENTRANCE LogRoomsB_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 LogRoomsB_Exits[] = {
+Uint32 LogRoomsBExits[] = {
 	SCENE_EXITS(LogRoomsB),
 	SCENE_EXIT(LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTHEAST, VaultRevisit,
 		VAULT_REVISIT_FROM_LOG_ROOMS_B_SOUTHEAST),
@@ -461,7 +461,7 @@ Uint32 LogRoomsB_Exits[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE LogRoomsB_ActorPlacements[] = {
+ACTOR_PLACE LogRoomsBActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0, MOVEMENT_TYPE_STAND,
 		160, 0, 136, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, 0, MOVEMENT_TYPE_WANDER_NEAR,
@@ -497,7 +497,7 @@ ACTOR_PLACE LogRoomsB_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE LogRoomsB_Cues[] = {
+CUE LogRoomsBCues[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTHEAST },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTH },
 	{ CUE_EXIT, 3, CONDITION_ALWAYS, LOG_ROOMS_B_TO_VAULT_REVISIT_SOUTHWEST },

@@ -201,7 +201,7 @@ typedef enum AIRS_ROCK_INSIDE_HALL_ACTOR_ID {
 	ACTOR_HALL_FIRST_WHIRLWIND
 } AIRS_ROCK_INSIDE_HALL_ACTOR_ID;
 
-/* The Vial chest's room (AirsRockInside_VialChestPlacements). */
+/* The Vial chest's room (AirsRockInsideVialChestPlacements). */
 typedef enum AIRS_ROCK_INSIDE_VIAL_CHEST_ACTOR_ID {
 	ACTOR_VIAL_CHEST_STATUE = ACTOR_FIRST_PLACED,
 	ACTOR_VIAL_CHEST_EAST_PILLAR,
@@ -210,7 +210,7 @@ typedef enum AIRS_ROCK_INSIDE_VIAL_CHEST_ACTOR_ID {
 } AIRS_ROCK_INSIDE_VIAL_CHEST_ACTOR_ID;
 
 /* The Clarity Circlet chest's room
-   (AirsRockInside_ClarityCircletChestPlacements). */
+   (AirsRockInsideClarityCircletChestPlacements). */
 typedef enum AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST_ACTOR_ID {
 	ACTOR_CLARITY_CIRCLET_CHEST_FIRST_PILLAR = ACTOR_FIRST_PLACED,
 	ACTOR_CLARITY_CIRCLET_CHEST_STATUE_A,
@@ -220,7 +220,7 @@ typedef enum AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST_ACTOR_ID {
 	ACTOR_CLARITY_CIRCLET_CHEST_STATUE_C
 } AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST_ACTOR_ID;
 
-/* The tightropes' room (AirsRockInside_TightropesPlacements). */
+/* The tightropes' room (AirsRockInsideTightropesPlacements). */
 typedef enum AIRS_ROCK_INSIDE_TIGHTROPES_ACTOR_ID {
 	ACTOR_TIGHTROPES_NORTH_WIND_STONE = ACTOR_FIRST_PLACED,
 	ACTOR_TIGHTROPES_PILLAR,
@@ -241,7 +241,7 @@ typedef enum AIRS_ROCK_INSIDE_TIGHTROPES_ACTOR_ID {
 /* The Reveal tablet (SPRITE_SLATE), which rises as Sheba reads it. */
 #define ACTOR_REVEAL_TABLET ACTOR_FIRST_PLACED
 
-/* The Elixir chest's room (AirsRockInside_ElixirChestPlacements). */
+/* The Elixir chest's room (AirsRockInsideElixirChestPlacements). */
 typedef enum AIRS_ROCK_INSIDE_ELIXIR_CHEST_ACTOR_ID {
 	/* The stone pillar scAirsRockInsideMoveElixirChestPillar moves. */
 	ACTOR_ELIXIR_CHEST_PILLAR = ACTOR_FIRST_PLACED,
@@ -255,7 +255,7 @@ typedef enum AIRS_ROCK_INSIDE_ELIXIR_CHEST_ACTOR_ID {
 	ACTOR_ELIXIR_CHEST_POST_F
 } AIRS_ROCK_INSIDE_ELIXIR_CHEST_ACTOR_ID;
 
-/* The paired stakes' room (AirsRockInside_PairedStakesPlacements). */
+/* The paired stakes' room (AirsRockInsidePairedStakesPlacements). */
 typedef enum AIRS_ROCK_INSIDE_PAIRED_STAKES_ACTOR_ID {
 	ACTOR_PAIRED_STAKES_PILLAR = ACTOR_FIRST_PLACED,
 	/* The three pillars pushed among the stakes. */
@@ -272,7 +272,7 @@ typedef enum AIRS_ROCK_INSIDE_PAIRED_STAKES_ACTOR_ID {
 	ACTOR_PAIRED_STAKES_SOUTH_WIND_STONE
 } AIRS_ROCK_INSIDE_PAIRED_STAKES_ACTOR_ID;
 
-/* The room of the face vents (AirsRockInside_FaceVentsPlacements). */
+/* The room of the face vents (AirsRockInsideFaceVentsPlacements). */
 typedef enum AIRS_ROCK_INSIDE_FACE_VENTS_ACTOR_ID {
 	ACTOR_FACE_VENTS_FIRST_PILLAR = ACTOR_FIRST_PLACED,
 	ACTOR_FACE_VENTS_SECOND_PILLAR,
@@ -283,7 +283,7 @@ typedef enum AIRS_ROCK_INSIDE_FACE_VENTS_ACTOR_ID {
 	ACTOR_FACE_VENTS_PILLAR_B
 } AIRS_ROCK_INSIDE_FACE_VENTS_ACTOR_ID;
 
-/* The coins chest's room (AirsRockInside_CoinsChestPlacements). */
+/* The coins chest's room (AirsRockInsideCoinsChestPlacements). */
 typedef enum AIRS_ROCK_INSIDE_COINS_CHEST_ACTOR_ID {
 	ACTOR_COINS_CHEST_WIND_STONE = ACTOR_FIRST_PLACED,
 	ACTOR_COINS_CHEST_PILLAR,
@@ -291,11 +291,11 @@ typedef enum AIRS_ROCK_INSIDE_COINS_CHEST_ACTOR_ID {
 } AIRS_ROCK_INSIDE_COINS_CHEST_ACTOR_ID;
 
 /* The metatile stampers keep their last metatile and the block they copy. */
-extern Sint32						AirsRockInside_StampedMetatile;
-Sint32 AirsRockInside_StampedWidth	BSS_DATA;
-Sint32 AirsRockInside_StampedHeight BSS_DATA;
-Sint32 AirsRockInside_StampedX		BSS_DATA;
-Sint32 AirsRockInside_StampedZ		BSS_DATA;
+extern Sint32					   AirsRockInsideStampedMetatile;
+Sint32 AirsRockInsideStampedWidth  BSS_DATA;
+Sint32 AirsRockInsideStampedHeight BSS_DATA;
+Sint32 AirsRockInsideStampedX	   BSS_DATA;
+Sint32 AirsRockInsideStampedZ	   BSS_DATA;
 
 #include "scene/scene.h"
 #include "field/call.h"
@@ -304,38 +304,38 @@ Sint32 AirsRockInside_StampedZ		BSS_DATA;
 
 struct ACTOR;
 
-extern ACTOR_PLACE AirsRockInside_Placements[];
-extern ACTOR_PLACE AirsRockInside_HallPlacements[];
-extern ACTOR_PLACE AirsRockInside_VialChestPlacements[];
-extern ACTOR_PLACE AirsRockInside_ClarityCircletChestPlacements[];
-extern ACTOR_PLACE AirsRockInside_RevealTabletPlacements[];
+extern ACTOR_PLACE AirsRockInsidePlacements[];
+extern ACTOR_PLACE AirsRockInsideHallPlacements[];
+extern ACTOR_PLACE AirsRockInsideVialChestPlacements[];
+extern ACTOR_PLACE AirsRockInsideClarityCircletChestPlacements[];
+extern ACTOR_PLACE AirsRockInsideRevealTabletPlacements[];
 
 void scAirsRockInsideRestoreMetatileBehindLeader(void);
 
 void scAirsRockInsideBurstDust(Sint32 x, Sint32 z);
 void scAirsRockInsideScatterSparks(Sint32 x, Sint32 z);
 
-extern Sint16 AirsRockInside_HallPillars[];
-extern Sint16 AirsRockInside_VialChestPillars[];
-extern Sint16 AirsRockInside_ClarityCircletChestPillars[];
-extern Sint16 AirsRockInside_TightropesPillars[];
-extern Sint16 AirsRockInside_PairedStakesPillars[];
-extern Sint16 AirsRockInside_FaceVentsPillars[];
-extern Sint16 AirsRockInside_CoinsChestPillars[];
+extern Sint16 AirsRockInsideHallPillars[];
+extern Sint16 AirsRockInsideVialChestPillars[];
+extern Sint16 AirsRockInsideClarityCircletChestPillars[];
+extern Sint16 AirsRockInsideTightropesPillars[];
+extern Sint16 AirsRockInsidePairedStakesPillars[];
+extern Sint16 AirsRockInsideFaceVentsPillars[];
+extern Sint16 AirsRockInsideCoinsChestPillars[];
 
 void scAirsRockInsideStampMetatileUnderLeader(void);
 void scAirsRockInsideReadRevealTablet(void);
 
-extern CUE AirsRockInside_HallCues[];
-extern CUE AirsRockInside_VialChestCues[];
-extern CUE AirsRockInside_ClarityCircletChestCues[];
-extern CUE AirsRockInside_TightropesCues[];
-extern CUE AirsRockInside_RevealTabletCues[];
-extern CUE AirsRockInside_ElixirChestCues[];
-extern CUE AirsRockInside_PairedStakesCues[];
-extern CUE AirsRockInside_FaceVentsCues[];
-extern CUE AirsRockInside_CoinsChestCues[];
-extern CUE AirsRockInside_PsynergyStoneCues[];
+extern CUE AirsRockInsideHallCues[];
+extern CUE AirsRockInsideVialChestCues[];
+extern CUE AirsRockInsideClarityCircletChestCues[];
+extern CUE AirsRockInsideTightropesCues[];
+extern CUE AirsRockInsideRevealTabletCues[];
+extern CUE AirsRockInsideElixirChestCues[];
+extern CUE AirsRockInsidePairedStakesCues[];
+extern CUE AirsRockInsideFaceVentsCues[];
+extern CUE AirsRockInsideCoinsChestCues[];
+extern CUE AirsRockInsidePsynergyStoneCues[];
 
 void scAirsRockInsideStartRestoringMetatiles(void);
 void scAirsRockInsideSetLedgeMetatilesByLevel(void);
@@ -372,8 +372,8 @@ void scAirsRockInsideRideFaceVent(void);
 void scAirsRockInsideCheckPsynergyStone(void);
 void scAirsRockInsideIgnoreStep(void);
 
-extern Uint32 FieldEffect_MediumScript[];
-extern Uint32 AirsRockInside_WindStoneScript[];
+extern Uint32 FieldEffectMediumScript[];
+extern Uint32 AirsRockInsideWindStoneScript[];
 
 void fdActorPlaySndInView(ACTOR *actor, Sint32 snd);
 
@@ -391,11 +391,11 @@ UNUSED void scPillarPlace(Sint16 *list)
 		Sint32 id = (Uint16)entry[0];
 		ACTOR *actor = fdActorGetById(id);
 		Sint32 kind = entry[1];
-		Sint32 flag = entry[2];
+		Sint32 flg = entry[2];
 
 		actor->collisionFlg &= ~ACTOR_SOLID;
 		fdActorSetSprFlags(actor, 0);
-		fdActorSetMetatileOpen(id, (Uint16)kind, (Uint16)flag, actor->layer);
+		fdActorSetMetatileOpen(id, (Uint16)kind, (Uint16)flg, actor->layer);
 	}
 }
 
@@ -416,15 +416,15 @@ UNUSED void scPillarPlace(Sint16 *list)
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect_spawn.c"
 
-extern ACTOR_PLACE AirsRockInside_TightropesPlacements[];
-extern ACTOR_PLACE AirsRockInside_ElixirChestPlacements[];
-extern ACTOR_PLACE AirsRockInside_PairedStakesPlacements[];
-extern ACTOR_PLACE AirsRockInside_FaceVentsPlacements[];
-extern ACTOR_PLACE AirsRockInside_CoinsChestPlacements[];
+extern ACTOR_PLACE AirsRockInsideTightropesPlacements[];
+extern ACTOR_PLACE AirsRockInsideElixirChestPlacements[];
+extern ACTOR_PLACE AirsRockInsidePairedStakesPlacements[];
+extern ACTOR_PLACE AirsRockInsideFaceVentsPlacements[];
+extern ACTOR_PLACE AirsRockInsideCoinsChestPlacements[];
 
 /* A mote of light moves on to a random spot, x 176 to 431 pixels and y and z up
    to 31 and 127 pixels past the leader's, to drift there for its timer's
-   frames, swelling slowly or quickly by its lifetime. */
+   ticks, swelling slowly or quickly by its lifetime. */
 void scAirsRockInsideScatterMote(ACTOR *actor)
 {
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
@@ -458,7 +458,7 @@ void scAirsRockInsideDriftMote(ACTOR *actor)
 	fdActorSetAnimationSpeed(actor, ANIM_STEP_NORMAL);
 	fdTilesetAnimResumeAll();
 	if(actor->sceneByte != 0) {
-		if((FrameCount & 7) == 0)
+		if((TickCount & 7) == 0)
 			actor->sceneByte--;
 		return;
 	}
@@ -511,7 +511,7 @@ void scAirsRockInsideSetStakeMetatiles(ACTOR *actor)
 	Sint32 height = METATILE_HEIGHT_STEPS(
 		fdMapGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed));
 	Sint32 set = syGameFlagGet(actor->tmr);
-	Uint8 *flags = &actor->priFlg;
+	Uint8 *flg = &actor->priFlg;
 	Sint32 px = FIELD_METATILE_ORIGIN(x);
 	Sint32 pz = FIELD_METATILE_ORIGIN(z);
 
@@ -526,7 +526,7 @@ void scAirsRockInsideSetStakeMetatiles(ACTOR *actor)
 		metatile |= METATILE_ATTRIBUTES(METATILE_BEHAVIOR_WALL, 0);
 		ground |= METATILE_ATTRIBUTES(
 			METATILE_BEHAVIOR_AIRS_ROCK_INSIDE_STAKE_TOP, MAP_METATILE_JUMP);
-		*flags &= ~ACTOR_PRIORITY_UNDERFOOT;
+		*flg &= ~ACTOR_PRIORITY_UNDERFOOT;
 		height += 4;
 		fdSetActorSprPriority(actor, 1);
 	}
@@ -557,18 +557,18 @@ void scAirsRockInsidePoundStake(Sint32 mode, Sint32 step)
 	Sint32	even = *pair - ((*(Uint16 *)pair & 1) << 1);
 	ACTOR  *first = fdActorGetById(*pair);
 	ACTOR  *second = fdActorGetById(even + 1);
-	FIELD_SPR		 *firstSprite, *secondSprite;
+	FIELD_SPR		 *firstSpr, *secondSpr;
 	VRAM_CACHE_ENTRY *entry;
 
 	if(step == 0) {
-		firstSprite = first->spr;
-		secondSprite = second->spr;
+		firstSpr = first->spr;
+		secondSpr = second->spr;
 		second->motionFlg = 0;
 		second->y.fixed -= toFIXED(28);
 		sySynch(1);
-		entry = &VramCacheEntries[secondSprite->slot];
+		entry = &VramCacheEntries[secondSpr->slot];
 		second->watchedActor = (void *)(entry->ofs + OBJ_VRAM0);
-		entry = &VramCacheEntries[firstSprite->slot];
+		entry = &VramCacheEntries[firstSpr->slot];
 		first->watchedActor = (void *)(entry->ofs + OBJ_VRAM0);
 		DMA_FILL32(step, second->watchedActor, entry->size);
 		syDMAXCopy(first->watchedActor, second->watchedActor,
@@ -642,7 +642,7 @@ void scAirsRockInsideRideWhirlwind(void)
 	ACTOR *statue, *dust;
 	Sint32 rise;
 	FIXED  dx, dz;
-	Sint32 moved, frames, height;
+	Sint32 moved, ticks, height;
 	Uint16 facing;
 	Sint32 angle;
 
@@ -659,8 +659,8 @@ void scAirsRockInsideRideWhirlwind(void)
 		leader->z.fixed = ride->z.fixed;
 		if(rise < toFIXED(12))
 			rise += toFIXED(1) / 10;
-		leader->facing = (Uint8)FrameCount * FACING_STEP;
-		leader->priFlg ^= ACTOR_PRIORITY_UNDERFOOT << (FrameCount & 1);
+		leader->facing = (Uint8)TickCount * FACING_STEP;
+		leader->priFlg ^= ACTOR_PRIORITY_UNDERFOOT << (TickCount & 1);
 		sySynch(1);
 	}
 	sySndPlay(SE_STOP_ACTION_SE);
@@ -685,7 +685,7 @@ void scAirsRockInsideRideWhirlwind(void)
 			(FIELD_HALF_METATILE(ride->y.fixed) & ~1) + 3);
 		leader->z.fixed = FIELD_HALF_METATILE_ORIGIN(
 			(FIELD_HALF_METATILE(leader->z.fixed) & ~1) + 1);
-		for(frames = 0; frames != 60; frames++) {
+		for(ticks = 0; ticks != 60; ticks++) {
 			moved = 0;
 			if(PerWork.data & KEY_UP) {
 				dx = 0;
@@ -791,14 +791,14 @@ void scAirsRockInsideRideWhirlwind(void)
 
 #include "shared/position_distance_above.h"
 
-extern Uint32 AirsRockInside_WhirlwindFadesScript[];
-extern Uint32 AirsRockInside_WhirlwindRisesScript[];
+extern Uint32 AirsRockInsideWhirlwindFadesScript[];
+extern Uint32 AirsRockInsideWhirlwindRisesScript[];
 
 /* How near a whirlwind comes to catch the leader above him while others move
    him, in his metatile's row, in pixels; on his level it is WHIRLWIND_REACH. */
 enum { WHIRLWIND_REACH_ABOVE = 16 };
 
-/* A statue's whirlwind: it moves 1.5 pixels a frame the way it faces, upward
+/* A statue's whirlwind: it moves 1.5 pixels a tick the way it faces, upward
    when it faces north, and where the overhead layer reads
    METATILE_BEHAVIOR_AIRS_ROCK_INSIDE_WHIRLWIND_END it fades (facing north) or
    rises. The first time it comes within reach of the leader it carries him
@@ -809,8 +809,8 @@ void scAirsRockInsideMoveWhirlwind(ACTOR *shot)
 	ACTOR		*leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	Sint32		 near;
-	Sint32		*leaderPosition;
-	Sint32		*shotPosition;
+	Sint32		*leaderPos;
+	Sint32		*shotPos;
 	FIXED		 speed = toFIXED(3) / 2;
 
 	if(state->psynergy != 0 || state->fieldMenu != 0 || state->pauseMenu != 0 ||
@@ -828,24 +828,23 @@ void scAirsRockInsideMoveWhirlwind(ACTOR *shot)
 		shot->update = 0;
 		Call2((void (*)())fdActorPlaySndInView, (Sint32)shot, SE_SAND_EMERGE);
 		if(shot->facing == FACING_NORTH)
-			fdActorStartScript(shot, AirsRockInside_WhirlwindFadesScript);
+			fdActorStartScript(shot, AirsRockInsideWhirlwindFadesScript);
 		else
-			fdActorStartScript(shot, AirsRockInside_WhirlwindRisesScript);
+			fdActorStartScript(shot, AirsRockInsideWhirlwindRisesScript);
 		return;
 	}
 	if(shot->sceneCnt == 0) {
 		near = 0;
-		leaderPosition = &leader->x.fixed;
-		shotPosition = &shot->x.fixed;
+		leaderPos = &leader->x.fixed;
+		shotPos = &shot->x.fixed;
 		if(MainRoutineStateWork.movementMode == LEADER_MOVEMENT_KEYS) {
-			if(scPosDistanceAbove(leaderPosition, shotPosition) <=
+			if(scPosDistanceAbove(leaderPos, shotPos) <=
 					WHIRLWIND_REACH_ABOVE &&
 				FIELD_METATILE(leader->z.fixed) ==
 					FIELD_METATILE(shot->z.fixed))
 				near = 1;
 		} else {
-			if(scPosFlatDistance(leaderPosition, shotPosition) <=
-					WHIRLWIND_REACH &&
+			if(scPosFlatDistance(leaderPos, shotPos) <= WHIRLWIND_REACH &&
 				FIELD_METATILE(leader->y.fixed) ==
 					FIELD_METATILE(shot->y.fixed))
 				near = 1;
@@ -871,33 +870,33 @@ void scAirsRockInsideMoveWhirlwind(ACTOR *shot)
 }
 
 /* A woken statue's update: while no menu, Psynergy or item is in use it counts
-   frames in its timer, and every WHIRLWIND_BREATH_FRAMES breathes a new
+   ticks in its timer, and every WHIRLWIND_BREATH_TICKS breathes a new
    whirlwind 8 pixels ahead of it, with a puff of dust below and a flare unless
    the leader is riding one. */
 void scAirsRockInsideStatueBreathesWhirlwind(ACTOR *actor)
 {
 	FIELD_STATE	  *state = Ram_HeapSlots->fieldState;
 	ACTOR		  *shot;
-	VECTOR3		   position;
+	VECTOR3		   pos;
 	EFFECT_OPTIONS options;
 
 	if(state->psynergy != 0 || state->fieldMenu != 0 || state->pauseMenu != 0 ||
 		state->item != 0)
 		return;
-	if(actor->tmr == WHIRLWIND_BREATH_FRAMES) {
+	if(actor->tmr == WHIRLWIND_BREATH_TICKS) {
 		if(!syGameFlagGet(FLAG_RIDING_WHIRLWIND))
 			fdActorPlaySndInView(actor, SE_FLAME_FLARE);
 		if(actor->facing == FACING_NORTH) {
-			position.x = actor->x.fixed;
-			position.z = actor->z.fixed;
+			pos.x = actor->x.fixed;
+			pos.z = actor->z.fixed;
 		} else {
-			position.x =
+			pos.x =
 				actor->x.fixed + syMathMulFX(toFIXED(8), syCos(actor->facing));
-			position.z =
+			pos.z =
 				actor->z.fixed + syMathMulFX(toFIXED(8), sySin(actor->facing));
 		}
 		shot = (ACTOR *)syImportActorCreate(
-			SPRITE_WHIRLWIND, position.x, actor->y.fixed, position.z);
+			SPRITE_WHIRLWIND, pos.x, actor->y.fixed, pos.z);
 		fdActorSelectAnimation(shot, 2);
 		fdActorSetSprFlags(shot, 0);
 		((FIELD_SPR *)shot->spr)->pri = 1;
@@ -910,14 +909,14 @@ void scAirsRockInsideStatueBreathesWhirlwind(ACTOR *actor)
 		actor->tmr = 0;
 		options.pri = 1;
 		options.pal = 7;
-		scFieldEffectSpawn(position.x, actor->y.fixed, position.z - toFIXED(6),
-			0, 0, 0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
+		scFieldEffectSpawn(pos.x, actor->y.fixed, pos.z - toFIXED(6), 0, 0, 0,
+			EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
 	}
 	actor->tmr++;
 }
 
 /* Wakes a statue unless the party keeps its place: it breathes its first
-   whirlwind once its timer reaches WHIRLWIND_BREATH_FRAMES, and its whirlwinds
+   whirlwind once its timer reaches WHIRLWIND_BREATH_TICKS, and its whirlwinds
    set the leader down on the ledge of layer `landingLayer`. */
 void scAirsRockInsideWakeStatue(ACTOR *actor, Sint16 timer, Uint8 landingLayer)
 {
@@ -929,7 +928,7 @@ void scAirsRockInsideWakeStatue(ACTOR *actor, Sint16 timer, Uint8 landingLayer)
 	}
 }
 
-extern Uint32 AirsRockInside_PooledWhirlwindFadesScript[];
+extern Uint32 AirsRockInsidePooledWhirlwindFadesScript[];
 
 /* A whirlwind of the hall's movable statue, one of three it uses in turn: as
    scAirsRockInsideMoveWhirlwind, but it also holds still until the room's
@@ -954,7 +953,7 @@ void scAirsRockInsideMovePooledWhirlwind(ACTOR *shot)
 		Call2((void (*)())fdActorPlaySndInView, (Sint32)shot, SE_SAND_EMERGE);
 		shot->sceneByte = 0;
 		shot->update = 0;
-		fdActorStartScript(shot, AirsRockInside_PooledWhirlwindFadesScript);
+		fdActorStartScript(shot, AirsRockInsidePooledWhirlwindFadesScript);
 		return;
 	}
 	if(shot->sceneCnt == 0) {
@@ -998,7 +997,7 @@ void scAirsRockInsideStatueBreathesPooledWhirlwind(ACTOR *actor)
 {
 	FIELD_STATE	  *state = Ram_HeapSlots->fieldState;
 	ACTOR		  *shot;
-	VECTOR3		   position;
+	VECTOR3		   pos;
 	EFFECT_OPTIONS options;
 	Sint32		   i;
 
@@ -1009,17 +1008,17 @@ void scAirsRockInsideStatueBreathesPooledWhirlwind(ACTOR *actor)
 	   three calls. */
 	for(i = 0; i != 3;)
 		fdActorGetById(ACTOR_HALL_FIRST_WHIRLWIND + i++);
-	if(actor->tmr == WHIRLWIND_BREATH_FRAMES) {
+	if(actor->tmr == WHIRLWIND_BREATH_TICKS) {
 		shot = 0;
 		if(!syGameFlagGet(FLAG_RIDING_WHIRLWIND))
 			fdActorPlaySndInView(actor, SE_FLAME_FLARE);
 		if(actor->facing == FACING_NORTH) {
-			position.x = actor->x.fixed;
-			position.z = actor->z.fixed;
+			pos.x = actor->x.fixed;
+			pos.z = actor->z.fixed;
 		} else {
-			position.x =
+			pos.x =
 				actor->x.fixed + syMathMulFX(toFIXED(8), syCos(actor->facing));
-			position.z =
+			pos.z =
 				actor->z.fixed + syMathMulFX(toFIXED(8), sySin(actor->facing));
 		}
 		for(i = 0; i != 3; i++) {
@@ -1027,9 +1026,9 @@ void scAirsRockInsideStatueBreathesPooledWhirlwind(ACTOR *actor)
 			if(shot->update == 0)
 				break;
 		}
-		shot->x.fixed = position.x;
+		shot->x.fixed = pos.x;
 		shot->y.fixed = actor->y.fixed;
-		shot->z.fixed = position.z;
+		shot->z.fixed = pos.z;
 		fdActorSelectAnimation(shot, 2);
 		fdActorSetSprFlags(shot, 0);
 		((FIELD_SPR *)shot->spr)->pri = 1;
@@ -1043,8 +1042,8 @@ void scAirsRockInsideStatueBreathesPooledWhirlwind(ACTOR *actor)
 		actor->tmr = 0;
 		options.pri = 1;
 		options.pal = 7;
-		scFieldEffectSpawn(position.x, actor->y.fixed, position.z - toFIXED(6),
-			0, 0, 0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
+		scFieldEffectSpawn(pos.x, actor->y.fixed, pos.z - toFIXED(6), 0, 0, 0,
+			EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
 	}
 	actor->tmr++;
 }
@@ -1145,28 +1144,28 @@ void scAirsRockInsidePuffVent(Sint32 x, Sint32 y, Sint32 z)
 	actor->update = (Sint32)scAirsRockInsideUpdateVentPuff;
 }
 
-/* An event: on two frames in eight, while no menu, Psynergy or item is in use,
+/* An event: on two ticks in eight, while no menu, Psynergy or item is in use,
    a vent puffs steam (scAirsRockInsidePuffVent). In the Clarity Circlet chest
-   room the west vent puffs, or on odd frames the east one until its pillar is
+   room the west vent puffs, or on odd ticks the east one until its pillar is
    placed; in the face vents room a vent near the leader puffs, the scene's
    flags passing over a vent a pillar has blocked. */
 void scAirsRockInsidePuffVents(void)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
-	Uint32		 frame;
+	Uint32		 frm;
 	Sint32		 scene;
 
 	if(state->psynergy != 0 || state->fieldMenu != 0 || state->pauseMenu != 0 ||
 		state->item != 0)
 		return;
-	frame = FrameCount;
-	if((frame & 6) != 0)
+	frm = TickCount;
+	if((frm & 6) != 0)
 		return;
 	scene = MainRoutineStateWork.next;
 	if(scene == SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST) {
 		FIXED x;
 
-		if((frame & 1) &&
+		if((frm & 1) &&
 			!syGameFlagGet(
 				FLAG_AIRS_ROCK_CLARITY_CIRCLET_CHEST_FIRST_PILLAR_PLACED))
 			x = toFIXED(376);
@@ -1174,7 +1173,7 @@ void scAirsRockInsidePuffVents(void)
 			x = toFIXED(280);
 		scAirsRockInsidePuffVent(x, 0, toFIXED(616));
 	} else if(scene == SCENE_AIRS_ROCK_INSIDE_FACE_VENTS) {
-		if(frame & 1) {
+		if(frm & 1) {
 			if(FIELD_HALF_METATILE(
 				   fdActorGetById(MainRoutineStateWork.leaderActorId)
 					   ->z.fixed) > 41) {
@@ -1219,11 +1218,11 @@ void scAirsRockInsidePuffVents(void)
    flickering. */
 void scAirsRockInsideFollowGust(ACTOR *actor)
 {
-	ACTOR *target = &actor->watchedActor->actor;
+	ACTOR *tgt = &actor->watchedActor->actor;
 
-	actor->priFlg ^= ACTOR_PRIORITY_UNDERFOOT << (FrameCount & 1);
+	actor->priFlg ^= ACTOR_PRIORITY_UNDERFOOT << (TickCount & 1);
 	SET_ACTOR_POSITION(
-		actor, target->x.fixed, target->y.fixed + toFIXED(8), target->z.fixed);
+		actor, tgt->x.fixed, tgt->y.fixed + toFIXED(8), tgt->z.fixed);
 }
 
 void scAirsRockInsideSpiralGust(ACTOR *actor);
@@ -1264,7 +1263,7 @@ void scAirsRockInsideBlowGust(void)
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	FIELD_EFFECT_STATE *effect = Ram_HeapSlots->fieldEffState;
 	ACTOR			   *gust, *spark, *actor;
-	VECTOR3				velocity;
+	VECTOR3				vel;
 	EFFECT_OPTIONS		glints, dust;
 	CELL				dir, metatile;
 	Sint32				i, steps = 0, carried;
@@ -1292,7 +1291,7 @@ void scAirsRockInsideBlowGust(void)
 	fdActorWaitForMove(gust);
 	gust->z.fixed = TARGET(effect)->z.fixed - toFIXED(1);
 	while(gust->scaleY < toFIXED(18) / 10) {
-		if((FrameCount & 3) == 0) {
+		if((TickCount & 3) == 0) {
 			spark =
 				syImportActorCreate(SPRITE_PARTICLE, TARGET(effect)->x.fixed,
 					TARGET(effect)->y.fixed, TARGET(effect)->z.fixed);
@@ -1305,12 +1304,12 @@ void scAirsRockInsideBlowGust(void)
 			spark->sceneWord = spark->z.fixed;
 			spark->speedLimit = syRandom() & 0xffff;
 			fdActorSelectAnimation(spark, 7);
-			fdActorStartScript(spark, FieldEffect_MediumScript);
+			fdActorStartScript(spark, FieldEffectMediumScript);
 			fdActorSetSprFlags(spark, 0);
 			fdActorSetSprCol(spark, SPRITE_COLOR_RBG);
 			spark->update = scAirsRockInsideSpiralGust;
 		}
-		if(FrameCount & 1) {
+		if(TickCount & 1) {
 			gust->scaleX += toFIXED(1) / 100;
 			gust->scaleY += toFIXED(1) / 100;
 			fdActorSetSprCol(TARGET(effect), SPRITE_COLOR_HIDDEN);
@@ -1389,15 +1388,15 @@ void scAirsRockInsideBlowGust(void)
 				carried == 0)
 				PICK_UP(actor, GUST_DROP(120, 408));
 		}
-		if((FrameCount & 1) == 0) {
+		if((TickCount & 1) == 0) {
 			glints.pri = 1;
 			glints.type = SPRITE_GLINT;
 			glints.pal = 2;
-			velocity.x = syCos((FrameCount & 0x1ff) * (TRIG_TURN / 16)) << 1;
-			velocity.y = gust->y.fixed + toFIXED(syRandom() & 31);
-			velocity.z = sySin((FrameCount & 0x1ff) * (TRIG_TURN / 16));
-			scFieldEffectSpawn(gust->x.fixed, velocity.y, gust->z.fixed,
-				velocity.x, 0, velocity.z,
+			vel.x = syCos((TickCount & 0x1ff) * (TRIG_TURN / 16)) << 1;
+			vel.y = gust->y.fixed + toFIXED(syRandom() & 31);
+			vel.z = sySin((TickCount & 0x1ff) * (TRIG_TURN / 16));
+			scFieldEffectSpawn(gust->x.fixed, vel.y, gust->z.fixed, vel.x, 0,
+				vel.z,
 				EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
 				&glints);
 		}
@@ -1461,19 +1460,18 @@ void scAirsRockInsideBlowGust(void)
 				sySndPlay(SE_GUST);
 				i = 1;
 			}
-			if((FrameCount & 1) == 0) {
+			if((TickCount & 1) == 0) {
 				dust.pri = 1;
 				dust.startScaleX = dust.startScaleY =
 					(syRandom() & 0xffff) + toFIXED(1);
-				velocity.x = syCos((FrameCount & 0x1ff) * (TRIG_TURN / 16))
-					<< 1;
-				velocity.y = toFIXED(1);
-				velocity.z = sySin((FrameCount & 0x1ff) * (TRIG_TURN / 16));
+				vel.x = syCos((TickCount & 0x1ff) * (TRIG_TURN / 16)) << 1;
+				vel.y = toFIXED(1);
+				vel.z = sySin((TickCount & 0x1ff) * (TRIG_TURN / 16));
 				scFieldEffectSpawn(gust->x.fixed, gust->y.fixed, gust->z.fixed,
-					velocity.x, velocity.y, velocity.z,
+					vel.x, vel.y, vel.z,
 					EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY, &dust);
 			}
-			if((FrameCount & 3) == 0) {
+			if((TickCount & 3) == 0) {
 				if(MainRoutineStateWork.next ==
 					SCENE_AIRS_ROCK_INSIDE_TIGHTROPES) {
 					syGameFlagSet(FLAG_TIGHTROPES_GUST_PATH_CLEARED);
@@ -1561,18 +1559,16 @@ shrink:
 			if(FIELD_HALF_METATILE(
 				   fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed) ==
 				ELIXIR_CHEST_PILLAR_ON_BRIDGE_X) {
-				velocity.x =
-					fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed -
+				vel.x = fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed -
 					toFIXED(8);
-				velocity.y = fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->y.fixed;
-				velocity.z =
-					fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->z.fixed +
+				vel.y = fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->y.fixed;
+				vel.z = fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->z.fixed +
 					toFIXED(8);
 				fdActorSetSprPriority(ACTOR_ELIXIR_CHEST_PILLAR, 2);
 				for(i = 0; i != 8; i++) {
 					dust.pri = 1;
-					scFieldEffectSpawn(velocity.x + toFIXED(syRandom() & 15),
-						velocity.y + toFIXED(syRandom() & 31), velocity.z, 0, 0,
+					scFieldEffectSpawn(vel.x + toFIXED(syRandom() & 15),
+						vel.y + toFIXED(syRandom() & 31), vel.z, 0, 0,
 						-(toFIXED(1) / 2), EFFECT_USE_PRIORITY, &dust);
 				}
 				sySynch(30);
@@ -1594,15 +1590,14 @@ shrink:
 			if(FIELD_HALF_METATILE(
 				   fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed) ==
 				ELIXIR_CHEST_PILLAR_ON_BRIDGE_X) {
-				velocity.x =
-					fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed -
+				vel.x = fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed -
 					toFIXED(8);
-				velocity.y = fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->y.fixed;
-				velocity.z = fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->z.fixed;
+				vel.y = fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->y.fixed;
+				vel.z = fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->z.fixed;
 				for(i = 0; i != 8; i++) {
 					dust.pri = 1;
-					scFieldEffectSpawn(velocity.x + toFIXED(syRandom() & 15),
-						velocity.y, velocity.z - toFIXED(syRandom() & 31), 0, 0,
+					scFieldEffectSpawn(vel.x + toFIXED(syRandom() & 15), vel.y,
+						vel.z - toFIXED(syRandom() & 31), 0, 0,
 						-(toFIXED(1) / 2), EFFECT_USE_PRIORITY, &dust);
 				}
 				sySynch(20);
@@ -1625,14 +1620,14 @@ shrink:
 	fdScriptEnd();
 }
 
-extern SCENE_ENTRANCE AirsRockInside_Entrances[];
-extern SCENE_ENTRANCE AirsRockInside_HallEntrances[];
+extern SCENE_ENTRANCE AirsRockInsideEntrances[];
+extern SCENE_ENTRANCE AirsRockInsideHallEntrances[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
 	if(MainRoutineStateWork.next == SCENE_AIRS_ROCK_INSIDE_HALL)
-		return AirsRockInside_HallEntrances;
-	return AirsRockInside_Entrances;
+		return AirsRockInsideHallEntrances;
+	return AirsRockInsideEntrances;
 }
 
 const SCENE_REGION *scGetExitRegions(void)
@@ -1648,25 +1643,25 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.next == SCENE_AIRS_ROCK_INSIDE_HALL)
-		return AirsRockInside_HallPlacements;
+		return AirsRockInsideHallPlacements;
 	if(MainRoutineStateWork.next == SCENE_AIRS_ROCK_INSIDE_VIAL_CHEST)
-		return AirsRockInside_VialChestPlacements;
+		return AirsRockInsideVialChestPlacements;
 	if(MainRoutineStateWork.next ==
 		SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST)
-		return AirsRockInside_ClarityCircletChestPlacements;
+		return AirsRockInsideClarityCircletChestPlacements;
 	if(MainRoutineStateWork.next == SCENE_AIRS_ROCK_INSIDE_TIGHTROPES)
-		return AirsRockInside_TightropesPlacements;
+		return AirsRockInsideTightropesPlacements;
 	if(MainRoutineStateWork.next == SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET)
-		return AirsRockInside_RevealTabletPlacements;
+		return AirsRockInsideRevealTabletPlacements;
 	if(MainRoutineStateWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST)
-		return AirsRockInside_ElixirChestPlacements;
+		return AirsRockInsideElixirChestPlacements;
 	if(MainRoutineStateWork.next == SCENE_AIRS_ROCK_INSIDE_PAIRED_STAKES)
-		return AirsRockInside_PairedStakesPlacements;
+		return AirsRockInsidePairedStakesPlacements;
 	if(MainRoutineStateWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_VENTS)
-		return AirsRockInside_FaceVentsPlacements;
+		return AirsRockInsideFaceVentsPlacements;
 	if(MainRoutineStateWork.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST)
-		return AirsRockInside_CoinsChestPlacements;
-	return AirsRockInside_Placements;
+		return AirsRockInsideCoinsChestPlacements;
+	return AirsRockInsidePlacements;
 }
 
 /* Nothing visible of its own: once Felix stands still on a new metatile, the
@@ -1686,15 +1681,15 @@ void scAirsRockInsideRestoreMetatileBehindLeader(void)
 
 	if(actor->velX != 0 || actor->velZ != 0)
 		return;
-	last = AirsRockInside_StampedMetatile;
+	last = AirsRockInsideStampedMetatile;
 	if(last == -1 || key == last)
 		return;
 	x = METATILE_KEY_X(last);
 	z = METATILE_KEY_Z(last);
-	AirsRockInside_StampedMetatile = -1;
-	fdMapGridCopyMetatilesLayered(73, 72, AirsRockInside_StampedWidth,
-		AirsRockInside_StampedHeight, AirsRockInside_StampedX,
-		AirsRockInside_StampedZ);
+	AirsRockInsideStampedMetatile = -1;
+	fdMapGridCopyMetatilesLayered(73, 72, AirsRockInsideStampedWidth,
+		AirsRockInsideStampedHeight, AirsRockInsideStampedX,
+		AirsRockInsideStampedZ);
 	if(MainRoutineStateWork.next != SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET)
 		return;
 	state = Ram_HeapSlots->fieldState;
@@ -1711,8 +1706,8 @@ void scAirsRockInsideStartRestoringMetatiles(void)
 {
 	Sint32 value = -1;
 
-	AirsRockInside_StampedMetatile = value;
-	sySetEvent(scAirsRockInsideRestoreMetatileBehindLeader, EVENT_PASS_FRAME);
+	AirsRockInsideStampedMetatile = value;
+	sySetEvent(scAirsRockInsideRestoreMetatileBehindLeader, EVENT_PASS_TICK);
 }
 
 /* As Felix steps onto one of the yellow stepping stones marked with a diamond,
@@ -1732,30 +1727,30 @@ void scAirsRockInsideStampMetatileUnderLeader(void)
 	Sint32 metatile = METATILE_KEY(x, z);
 	Sint32 scene;
 
-	if(metatile == AirsRockInside_StampedMetatile)
+	if(metatile == AirsRockInsideStampedMetatile)
 		return;
-	AirsRockInside_StampedMetatile = metatile;
-	AirsRockInside_StampedWidth = 1;
-	AirsRockInside_StampedHeight = 2;
+	AirsRockInsideStampedMetatile = metatile;
+	AirsRockInsideStampedWidth = 1;
+	AirsRockInsideStampedHeight = 2;
 	scene = MainRoutineStateWork.next;
 	if(scene == SCENE_AIRS_ROCK_INSIDE_HALL ||
 		scene == SCENE_AIRS_ROCK_INSIDE_VIAL_CHEST ||
 		scene == SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST) {
-		AirsRockInside_StampedX = x;
-		AirsRockInside_StampedZ = z - y + 64;
+		AirsRockInsideStampedX = x;
+		AirsRockInsideStampedZ = z - y + 64;
 	} else if(scene == SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET ||
 		scene == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST ||
 		scene == SCENE_AIRS_ROCK_INSIDE_PAIRED_STAKES ||
 		scene == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
-		AirsRockInside_StampedX = x + 64;
-		AirsRockInside_StampedZ = z - y;
+		AirsRockInsideStampedX = x + 64;
+		AirsRockInsideStampedZ = z - y;
 	}
-	fdMapGridCopyMetatilesLayered(AirsRockInside_StampedX,
-		AirsRockInside_StampedZ, AirsRockInside_StampedWidth,
-		AirsRockInside_StampedHeight, 73, 72);
-	fdMapGridCopyMetatilesLayered(70, 72, AirsRockInside_StampedWidth,
-		AirsRockInside_StampedHeight, AirsRockInside_StampedX,
-		AirsRockInside_StampedZ);
+	fdMapGridCopyMetatilesLayered(AirsRockInsideStampedX,
+		AirsRockInsideStampedZ, AirsRockInsideStampedWidth,
+		AirsRockInsideStampedHeight, 73, 72);
+	fdMapGridCopyMetatilesLayered(70, 72, AirsRockInsideStampedWidth,
+		AirsRockInsideStampedHeight, AirsRockInsideStampedX,
+		AirsRockInsideStampedZ);
 }
 
 /* The same for the stepping stones of a second kind, in the hall, the Vial
@@ -1770,27 +1765,27 @@ void scAirsRockInsideStampOtherMetatileUnderLeader(void)
 	Sint32 metatile = METATILE_KEY(x, z);
 	Sint32 scene;
 
-	if(metatile == AirsRockInside_StampedMetatile)
+	if(metatile == AirsRockInsideStampedMetatile)
 		return;
-	AirsRockInside_StampedMetatile = metatile;
-	AirsRockInside_StampedWidth = 1;
-	AirsRockInside_StampedHeight = 2;
+	AirsRockInsideStampedMetatile = metatile;
+	AirsRockInsideStampedWidth = 1;
+	AirsRockInsideStampedHeight = 2;
 	scene = MainRoutineStateWork.next;
 	if(scene == SCENE_AIRS_ROCK_INSIDE_HALL ||
 		scene == SCENE_AIRS_ROCK_INSIDE_VIAL_CHEST) {
-		AirsRockInside_StampedX = x;
-		AirsRockInside_StampedZ = z - y + 64;
+		AirsRockInsideStampedX = x;
+		AirsRockInsideStampedZ = z - y + 64;
 	} else if(scene == SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET ||
 		scene == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {
-		AirsRockInside_StampedX = x + 64;
-		AirsRockInside_StampedZ = z - y;
+		AirsRockInsideStampedX = x + 64;
+		AirsRockInsideStampedZ = z - y;
 	}
-	fdMapGridCopyMetatilesLayered(AirsRockInside_StampedX,
-		AirsRockInside_StampedZ, AirsRockInside_StampedWidth,
-		AirsRockInside_StampedHeight, 73, 72);
-	fdMapGridCopyMetatilesLayered(71, 72, AirsRockInside_StampedWidth,
-		AirsRockInside_StampedHeight, AirsRockInside_StampedX,
-		AirsRockInside_StampedZ);
+	fdMapGridCopyMetatilesLayered(AirsRockInsideStampedX,
+		AirsRockInsideStampedZ, AirsRockInsideStampedWidth,
+		AirsRockInsideStampedHeight, 73, 72);
+	fdMapGridCopyMetatilesLayered(71, 72, AirsRockInsideStampedWidth,
+		AirsRockInsideStampedHeight, AirsRockInsideStampedX,
+		AirsRockInsideStampedZ);
 }
 
 /* As Felix steps onto a stepping stone stacked on another, three metatiles of
@@ -1805,17 +1800,17 @@ void scAirsRockInsideStampOtherMetatileUnderLeader(void)
 		Sint32 z = FIELD_METATILE(actor->z.fixed); \
 		Sint32 key = METATILE_KEY(x, z); \
 \
-		if(key != AirsRockInside_StampedMetatile) { \
-			AirsRockInside_StampedMetatile = key; \
-			AirsRockInside_StampedWidth = 1; \
-			AirsRockInside_StampedHeight = 3; \
-			AirsRockInside_StampedX = x; \
-			AirsRockInside_StampedZ = z - y + n1; \
+		if(key != AirsRockInsideStampedMetatile) { \
+			AirsRockInsideStampedMetatile = key; \
+			AirsRockInsideStampedWidth = 1; \
+			AirsRockInsideStampedHeight = 3; \
+			AirsRockInsideStampedX = x; \
+			AirsRockInsideStampedZ = z - y + n1; \
 			fdMapGridCopyMetatilesLayered( \
-				x, AirsRockInside_StampedZ, 1, 3, 73, 72); \
-			fdMapGridCopyMetatilesLayered(72, 72, AirsRockInside_StampedWidth, \
-				AirsRockInside_StampedHeight, AirsRockInside_StampedX, \
-				AirsRockInside_StampedZ); \
+				x, AirsRockInsideStampedZ, 1, 3, 73, 72); \
+			fdMapGridCopyMetatilesLayered(72, 72, AirsRockInsideStampedWidth, \
+				AirsRockInsideStampedHeight, AirsRockInsideStampedX, \
+				AirsRockInsideStampedZ); \
 		} \
 	}
 
@@ -1854,14 +1849,14 @@ void scAirsRockInsideBurstDust(Sint32 x, Sint32 z)
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 }
 
-/* The sparks scAirsRockInsideScatterSparks raises, 5 frames apart. */
+/* The sparks scAirsRockInsideScatterSparks raises, 5 ticks apart. */
 enum { SCATTERED_SPARKS = 12 };
 
 /* Sparks rise one after another around x, z. */
 void scAirsRockInsideScatterSparks(Sint32 x, Sint32 z)
 {
 	EFFECT_OPTIONS options;
-	VECTOR3		   position;
+	VECTOR3		   pos;
 	Sint32		   i;
 
 	options.type = SPRITE_PARTICLE;
@@ -1869,10 +1864,10 @@ void scAirsRockInsideScatterSparks(Sint32 x, Sint32 z)
 	options.startScaleX = toFIXED(4) / 5;
 	options.startScaleY = toFIXED(3);
 	for(i = 0; i != SCATTERED_SPARKS; i++) {
-		position.x = x + toFIXED(syRandom() & 31) - toFIXED(16);
-		position.y = toFIXED(4);
-		position.z = z;
-		scFieldEffectSpawn(position.x, 0, position.z, 0, position.y, 0,
+		pos.x = x + toFIXED(syRandom() & 31) - toFIXED(16);
+		pos.y = toFIXED(4);
+		pos.z = z;
+		scFieldEffectSpawn(pos.x, 0, pos.z, 0, pos.y, 0,
 			EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
 			&options);
 		syFieldScriptWait(5);
@@ -1880,7 +1875,7 @@ void scAirsRockInsideScatterSparks(Sint32 x, Sint32 z)
 }
 
 /* A gust's spark: circles the centre kept in bounce and sceneWord, a lap every
-   32 frames, its radius growing as it rises above the ground. */
+   32 ticks, its radius growing as it rises above the ground. */
 void scAirsRockInsideSpiralGust(ACTOR *actor)
 {
 	FIXED radius = ((actor->y.fixed - actor->groundHeight) >> 1) + toFIXED(16);
@@ -1896,8 +1891,8 @@ void scAirsRockInsideSpiralGust(ACTOR *actor)
 
 /* A spark: circles the centre kept in bounce and sceneWord on an ellipse twice
    as wide as deep, the radius growing with its height; it rises by its gravity
-   each frame and turns blue (SPRITE_COLOR_BLUE_TINT) and back every two
-   frames. */
+   each tick and turns blue (SPRITE_COLOR_BLUE_TINT) and back every two
+   ticks. */
 void scAirsRockInsideSpiralSpark(ACTOR *actor)
 {
 	FIXED  y = actor->y.fixed;
@@ -1912,14 +1907,14 @@ void scAirsRockInsideSpiralSpark(ACTOR *actor)
 		syMulFX(sySin((actor->speedLimit & 0xff) * (TRIG_TURN / 32)), radius);
 	actor->y.fixed += actor->gravity;
 	actor->speedLimit++;
-	fdActorSetSprCol(actor, ((FrameCount & 2) >> 1) * SPRITE_COLOR_BLUE_TINT);
+	fdActorSetSprCol(actor, ((TickCount & 2) >> 1) * SPRITE_COLOR_BLUE_TINT);
 }
 
 /* A Whirlwind target's update while the gust gathers: it flickers to the colour
    mode in sceneCnt (a SPR_COL_MODE), at the rate sceneByte sets. */
 void scAirsRockInsideFlickerTarget(ACTOR *actor)
 {
-	Sint32 bit = ((FrameCount & 3) >> actor->sceneByte) & 1;
+	Sint32 bit = ((TickCount & 3) >> actor->sceneByte) & 1;
 
 	fdActorSetSprCol(actor, (Uint8)(bit * actor->sceneCnt));
 }
@@ -1973,7 +1968,7 @@ void scAirsRockInsideWakeHallStatue(void)
 	fdActorGetById(ACTOR_HALL_TWISTER_ROCK)->update =
 		scAirsRockInsideFlickerTarget;
 	for(i = 0; i != 45; i++) {
-		if((FrameCount & 3) == 0) {
+		if((TickCount & 3) == 0) {
 			spark = syImportActorCreate(SPRITE_PARTICLE,
 				fdActorGetById(ACTOR_HALL_TWISTER_ROCK)->x.fixed,
 				fdActorGetById(ACTOR_HALL_TWISTER_ROCK)->y.fixed,
@@ -1988,7 +1983,7 @@ void scAirsRockInsideWakeHallStatue(void)
 			spark->sceneWord = spark->z.fixed;
 			spark->speedLimit = syRandom() & 0xffff;
 			fdActorSelectAnimation(spark, 7);
-			fdActorStartScript(spark, FieldEffect_MediumScript);
+			fdActorStartScript(spark, FieldEffectMediumScript);
 			fdActorSetSprFlags(spark, 0);
 			fdActorSetSprCol(spark, SPRITE_COLOR_RBG);
 			spark->update = scAirsRockInsideSpiralSpark;
@@ -2116,22 +2111,22 @@ void scAirsRockInsideStartPushingPillar(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_AIRS_ROCK_INSIDE_HALL) {
-		fdActorLiftTargetBlock(AirsRockInside_HallPillars);
+		fdActorLiftTargetBlock(AirsRockInsideHallPillars);
 	} else if(scene == SCENE_AIRS_ROCK_INSIDE_VIAL_CHEST) {
-		fdActorLiftTargetBlock(AirsRockInside_VialChestPillars);
+		fdActorLiftTargetBlock(AirsRockInsideVialChestPillars);
 	} else if(scene == SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST) {
-		fdActorLiftTargetBlock(AirsRockInside_ClarityCircletChestPillars);
+		fdActorLiftTargetBlock(AirsRockInsideClarityCircletChestPillars);
 	} else if(scene == SCENE_AIRS_ROCK_INSIDE_TIGHTROPES) {
-		fdActorLiftTargetBlock(AirsRockInside_TightropesPillars);
+		fdActorLiftTargetBlock(AirsRockInsideTightropesPillars);
 	} else if(scene == SCENE_AIRS_ROCK_INSIDE_PAIRED_STAKES) {
 		syFieldMapGridSetMetatileHeight(toFIXED(608), toFIXED(336), 2, 0);
 		fdMapGridSetMetatileHeight(toFIXED(624), toFIXED(336), 2, 0);
-		fdActorLiftTargetBlock(AirsRockInside_PairedStakesPillars);
+		fdActorLiftTargetBlock(AirsRockInsidePairedStakesPillars);
 	} else if(scene == SCENE_AIRS_ROCK_INSIDE_FACE_VENTS) {
-		fdActorLiftTargetBlock(AirsRockInside_FaceVentsPillars);
+		fdActorLiftTargetBlock(AirsRockInsideFaceVentsPillars);
 	} else if(scene == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
 		fdActorGetById(ACTOR_COINS_CHEST_STATUE)->tmr = 0;
-		fdActorLiftTargetBlock(AirsRockInside_CoinsChestPillars);
+		fdActorLiftTargetBlock(AirsRockInsideCoinsChestPillars);
 	}
 }
 
@@ -2259,7 +2254,7 @@ void scAirsRockInsideFinishPushingPillar(void)
    rock turns grey, spent. */
 void scAirsRockInsideWakeVialChestStatue(void)
 {
-	Uint16 *buffer = syHeapAlloc(LIGHTNING_TILES * TILE_SIZE_4BPP);
+	Uint16 *buf = syHeapAlloc(LIGHTNING_TILES * TILE_SIZE_4BPP);
 	Uint16 *metatile;
 	ACTOR  *spark;
 	Uint32	i;
@@ -2269,23 +2264,22 @@ void scAirsRockInsideWakeVialChestStatue(void)
 	REG_DISPCNT &= ~DISPCNT_BG0_ON;
 	syIOWrite16(BGCNT_SCREEN_BASE(LIGHTNING_SCREEN_BLOCK), &REG_BG0CNT);
 	syDecompressTaggedLZ(
-		syResourceGetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
-	syDMAXCopy(buffer, (void *)BG_CHAR_BLOCK(0),
+		syResourceGetTableEntry(RESOURCE_LIGHTNING_TILES), buf);
+	syDMAXCopy(buf, (void *)BG_CHAR_BLOCK(0),
 		DMA_COPY_WORDS(LIGHTNING_TILES * TILE_SIZE_4BPP / 4), REG_DMA3);
-	syHeapRelease(buffer);
+	syHeapRelease(buf);
 	DMA_FILL16(
 		0, (void *)BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK), BG_SCREEN_SIZE);
-	buffer = syHeapAlloc(
+	buf = syHeapAlloc(
 		LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * sizeof(Uint16));
-	syDecompressTaggedLZ(
-		syResourceGetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
-	metatile = buffer;
+	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_LIGHTNING_MAP), buf);
+	metatile = buf;
 	/* The map's tile numbers less 512. */
 	for(i = 0; i != LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS; i++) {
 		*metatile &= 0xfcff;
 		metatile++;
 	}
-	metatile = buffer;
+	metatile = buf;
 	for(i = 0; i != LIGHTNING_MAP_ROWS; i++) {
 		syDMAXCopy(metatile,
 			(void *)(BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK) +
@@ -2294,7 +2288,7 @@ void scAirsRockInsideWakeVialChestStatue(void)
 			REG_DMA3);
 		metatile += LIGHTNING_MAP_COLUMNS;
 	}
-	syHeapRelease(buffer);
+	syHeapRelease(buf);
 	sySndPlay(SE_GLITTER);
 	fdActorGetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->sceneCnt =
 		SPRITE_COLOR_BLUE_TINT;
@@ -2302,7 +2296,7 @@ void scAirsRockInsideWakeVialChestStatue(void)
 	fdActorGetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->update =
 		scAirsRockInsideFlickerTarget;
 	for(i = 0; i != 45; i++) {
-		if((FrameCount & 3) == 0) {
+		if((TickCount & 3) == 0) {
 			spark = syImportActorCreate(SPRITE_PARTICLE,
 				fdActorGetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->x.fixed,
 				fdActorGetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->y.fixed,
@@ -2318,7 +2312,7 @@ void scAirsRockInsideWakeVialChestStatue(void)
 			spark->sceneWord = spark->z.fixed;
 			spark->speedLimit = syRandom() & 0xffff;
 			fdActorSelectAnimation(spark, 7);
-			fdActorStartScript(spark, FieldEffect_MediumScript);
+			fdActorStartScript(spark, FieldEffectMediumScript);
 			fdActorSetSprFlags(spark, 0);
 			fdActorSetSprCol(spark, SPRITE_COLOR_RBG);
 			spark->update = scAirsRockInsideSpiralSpark;
@@ -2436,7 +2430,7 @@ void scAirsRockInsideRideClarityCircletVent(void)
 void scAirsRockInsideVanishStone(Sint32 x, Sint32 y)
 {
 	ACTOR	  *marker;
-	FIELD_SPR *sprite;
+	FIELD_SPR *spr;
 	Sint32	   i, metatileX, metatileY;
 
 	marker =
@@ -2445,8 +2439,8 @@ void scAirsRockInsideVanishStone(Sint32 x, Sint32 y)
 	REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 	fdSetActorSprPriority(marker, 0);
 	fdActorSetSprFlags(marker, 0);
-	sprite = marker->spr;
-	sprite->objMode = OBJ_MODE_WINDOW;
+	spr = marker->spr;
+	spr->objMode = OBJ_MODE_WINDOW;
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |
@@ -2521,21 +2515,21 @@ void scAirsRockInsideStampWideMetatileUnderLeader(void)
 	Sint32 z = FIELD_METATILE(actor->z.fixed);
 	Sint32 key = METATILE_KEY(x, z);
 
-	if(key != AirsRockInside_StampedMetatile) {
-		AirsRockInside_StampedMetatile = key;
-		AirsRockInside_StampedWidth = 1;
-		AirsRockInside_StampedHeight = 2;
-		AirsRockInside_StampedX = x + 64;
-		AirsRockInside_StampedZ = z - y;
+	if(key != AirsRockInsideStampedMetatile) {
+		AirsRockInsideStampedMetatile = key;
+		AirsRockInsideStampedWidth = 1;
+		AirsRockInsideStampedHeight = 2;
+		AirsRockInsideStampedX = x + 64;
+		AirsRockInsideStampedZ = z - y;
 		fdMapGridCopyMetatilesLayered(
-			AirsRockInside_StampedX, AirsRockInside_StampedZ, 1, 2, 73, 72);
-		fdMapGridCopyMetatilesLayered(70, 74, AirsRockInside_StampedWidth,
-			AirsRockInside_StampedHeight, AirsRockInside_StampedX,
-			AirsRockInside_StampedZ);
+			AirsRockInsideStampedX, AirsRockInsideStampedZ, 1, 2, 73, 72);
+		fdMapGridCopyMetatilesLayered(70, 74, AirsRockInsideStampedWidth,
+			AirsRockInsideStampedHeight, AirsRockInsideStampedX,
+			AirsRockInsideStampedZ);
 	}
 }
 
-extern Uint32 OrbitSpark_Script[];
+extern Uint32 OrbitSparkScript[];
 
 /* Defines a function that sets the Reveal tablet room's two hidden doorways, at
    metatiles (8, 19) and (24, 19), from the spare metatiles of row 17: their
@@ -2597,20 +2591,20 @@ Bool scAirsRockInsideOrbitAnchor(ORBITER *orbiter)
 
 #include "shared/actor_emit_sparkles.h"
 
-extern Uint32 Lesson_TabletRiseScript[];
-extern Uint32 AirsRockInside_RisingSparkScript[];
-extern Sint32 AirsRockInside_OrbitingSparkScript[];
-extern Uint32 Lesson_AdeptRiseScript[];
-extern Sint32 Lesson_SeekingSparkScript[];
-extern Sint32 Lesson_TabletSettleScript[];
-extern Sint32 Lesson_AdeptSettleScript[];
+extern Uint32 LessonTabletRiseScript[];
+extern Uint32 AirsRockInsideRisingSparkScript[];
+extern Sint32 AirsRockInsideOrbitingSparkScript[];
+extern Uint32 LessonAdeptRiseScript[];
+extern Sint32 LessonSeekingSparkScript[];
+extern Sint32 LessonTabletSettleScript[];
+extern Sint32 LessonAdeptSettleScript[];
 
 /* The sparks that rise from the tablet as it lifts. */
 enum { TABLET_SPARKS = 16 };
 
 /* The sparks that spiral in on Sheba, one set out every
-   ORBITING_SPARK_FRAMES. */
-enum { ORBITING_SPARKS = 16, ORBITING_SPARK_FRAMES = 8 };
+   ORBITING_SPARK_TICKS. */
+enum { ORBITING_SPARKS = 16, ORBITING_SPARK_TICKS = 8 };
 
 /* The sparks that then close in on her start every 2 pixels up her, each
    circling out as far as the sine of its height in 64ths of a turn
@@ -2642,7 +2636,7 @@ void scAirsRockInsideShebaLearnsReveal(Sint32 tabletId, Sint32 shebaId)
 	tablet->motionFlg = 0;
 	tablet->acceleration = toFIXED(1) / 5;
 	tablet->speedLimit = toFIXED(1) / 5;
-	fdActorSetMovementTypeById(tabletId, Lesson_TabletRiseScript);
+	fdActorSetMovementTypeById(tabletId, LessonTabletRiseScript);
 	sySndPlay(SE_TABLET_RISE);
 	syFieldScriptWait(45);
 	fdActorConfigureSprCol(tabletId, SPRITE_COLOR_BLINK);
@@ -2662,7 +2656,7 @@ void scAirsRockInsideShebaLearnsReveal(Sint32 tabletId, Sint32 shebaId)
 		fdActorSelectAnimation(spark, 7);
 		fdActorSetSprFlags(spark, 0);
 		fdActorSetBlendMode(spark, 1);
-		fdActorStartScript(spark, AirsRockInside_RisingSparkScript);
+		fdActorStartScript(spark, AirsRockInsideRisingSparkScript);
 		REG_BLDALPHA = BLEND_ALPHA(4, 16);
 		sySynch(2);
 		REG_BLDALPHA = BLEND_ALPHA(10, 16);
@@ -2683,8 +2677,8 @@ void scAirsRockInsideShebaLearnsReveal(Sint32 tabletId, Sint32 shebaId)
 		spark->motionFlg = 0;
 		spark->sceneWord = toFIXED(122);
 		spark->watchedActor = (FIELD_OBJECT *)sheba;
-		/* All spirals end together, 15 frames after the loop's last wait. */
-		spark->sceneCnt = (ORBITING_SPARKS - i) * ORBITING_SPARK_FRAMES + 15;
+		/* All spirals end together, 15 ticks after the loop's last wait. */
+		spark->sceneCnt = (ORBITING_SPARKS - i) * ORBITING_SPARK_TICKS + 15;
 		fdActorSetSprCol(spark, SPRITE_COLOR_RBG);
 		fdSetActorSprPriority(spark, 1);
 		fdActorSelectAnimation(spark, 7);
@@ -2692,15 +2686,15 @@ void scAirsRockInsideShebaLearnsReveal(Sint32 tabletId, Sint32 shebaId)
 		fdActorSetBlendMode(spark, 1);
 		syFieldVectorAddPolarOffsetFX(
 			spark->sceneWord, spark->tmr, (Sint32)&spark->x.fixed);
-		fdActorStartScript(spark, AirsRockInside_OrbitingSparkScript);
+		fdActorStartScript(spark, AirsRockInsideOrbitingSparkScript);
 		if(i == 3) {
 			fdActorSetSprColById(shebaId, SPRITE_COLOR_BLINK);
 			sheba->motionFlg = 0;
 			sheba->acceleration = toFIXED(1) / 5;
 			sheba->speedLimit = toFIXED(1) / 5;
-			fdActorSetMovementTypeById(shebaId, Lesson_AdeptRiseScript);
+			fdActorSetMovementTypeById(shebaId, LessonAdeptRiseScript);
 		}
-		sySynch(ORBITING_SPARK_FRAMES);
+		sySynch(ORBITING_SPARK_TICKS);
 	}
 	sySndPlay(SE_SHIMMER);
 	sySynch(16);
@@ -2721,7 +2715,7 @@ void scAirsRockInsideShebaLearnsReveal(Sint32 tabletId, Sint32 shebaId)
 		fdActorSelectAnimation(spark, 7);
 		fdActorSetSprFlags(spark, 0);
 		fdActorSetBlendMode(spark, 1);
-		fdActorStartScript(spark, Lesson_SeekingSparkScript);
+		fdActorStartScript(spark, LessonSeekingSparkScript);
 	}
 	sySndPlay(SE_SHIMMER);
 	sySynch(50);
@@ -2734,8 +2728,8 @@ void scAirsRockInsideShebaLearnsReveal(Sint32 tabletId, Sint32 shebaId)
 	sySndPlay(SE_FLASH);
 	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(80);
-	fdActorSetMovementTypeById(tabletId, Lesson_TabletSettleScript);
-	fdActorSetMovementTypeById(shebaId, Lesson_AdeptSettleScript);
+	fdActorSetMovementTypeById(tabletId, LessonTabletSettleScript);
+	fdActorSetMovementTypeById(shebaId, LessonAdeptSettleScript);
 	sheba->update = scActorEmitSparkles;
 	sySynch(120);
 	sheba->update = 0;
@@ -2904,7 +2898,7 @@ void scAirsRockInsidePoundPairedStakesStake(Sint32 mode, Sint32 step)
 	scAirsRockInsidePoundStake(mode, step);
 }
 
-extern Uint16 AirsRockInside_PairedStakesStakes[];
+extern Uint16 AirsRockInsidePairedStakesStakes[];
 void		  scAirsRockInsideSetStakeMetatiles(ACTOR *actor);
 
 /* Stepping onto a raised stake's top: unless a pillar stands on its pair, the
@@ -2913,14 +2907,14 @@ void		  scAirsRockInsideSetStakeMetatiles(ACTOR *actor);
 void scAirsRockInsideStepOntoStake(void)
 {
 	ACTOR			 *first = 0, *second = 0, *leader;
-	FIELD_SPR		 *firstSprite, *secondSprite;
+	FIELD_SPR		 *firstSpr, *secondSpr;
 	VRAM_CACHE_ENTRY *entry;
 	Uint16			 *pair;
 	Uint32			  id, i;
 	Sint32			  busy;
 
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	pair = AirsRockInside_PairedStakesStakes;
+	pair = AirsRockInsidePairedStakesStakes;
 	if(*pair != ACTOR_LIST_END) {
 		do {
 			id = *pair;
@@ -2940,14 +2934,14 @@ void scAirsRockInsideStepOntoStake(void)
 		return;
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	firstSprite = first->spr;
-	secondSprite = second->spr;
+	firstSpr = first->spr;
+	secondSpr = second->spr;
 	second->motionFlg = busy;
 	second->y.fixed -= toFIXED(28);
 	sySynch(1);
-	entry = &VramCacheEntries[secondSprite->slot];
+	entry = &VramCacheEntries[secondSpr->slot];
 	second->watchedActor = (void *)(entry->ofs + OBJ_VRAM0);
-	entry = &VramCacheEntries[firstSprite->slot];
+	entry = &VramCacheEntries[firstSpr->slot];
 	first->watchedActor = (void *)(entry->ofs + OBJ_VRAM0);
 	DMA_FILL32(busy, second->watchedActor, entry->size);
 	syDMAXCopy(first->watchedActor, second->watchedActor,
@@ -3044,19 +3038,19 @@ void scAirsRockInsideRideFaceVent(void)
 /* Checking the Psynergy Stone restores the party's PP. */
 void scAirsRockInsideCheckPsynergyStone(void)
 {
-	const Uint8 *message;
+	const Uint8 *msg;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	message = MsgCheckedThePsynergy;
+	msg = MsgCheckedThePsynergy;
 	/* "Felix checked the Psynergy Stone." */
-	mnFieldMessageShow(message, FIELD_MESSAGE_ZOOM);
+	mnFieldMessageShow(msg, FIELD_MESSAGE_ZOOM);
 	sySndPlay(SE_RECOVERY);
 	fdPartyAddPp(PARTY_PP_REPLENISH, 0);
 	syFieldScriptWait(10);
 	syGameFlagClear(FLAG_NOTHING_HAPPENS);
 	/* "Everyone's PP was replenished!" */
-	mnFieldMessageShow(message + 1, FIELD_MESSAGE_ZOOM);
+	mnFieldMessageShow(msg + 1, FIELD_MESSAGE_ZOOM);
 	fdScriptEnd();
 }
 
@@ -3066,26 +3060,26 @@ const CUE *scGetCues(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_AIRS_ROCK_INSIDE_HALL)
-		return AirsRockInside_HallCues;
+		return AirsRockInsideHallCues;
 	if(scene == SCENE_AIRS_ROCK_INSIDE_VIAL_CHEST)
-		return AirsRockInside_VialChestCues;
+		return AirsRockInsideVialChestCues;
 	if(scene == SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST)
-		return AirsRockInside_ClarityCircletChestCues;
+		return AirsRockInsideClarityCircletChestCues;
 	if(scene == SCENE_AIRS_ROCK_INSIDE_TIGHTROPES)
-		return AirsRockInside_TightropesCues;
+		return AirsRockInsideTightropesCues;
 	if(scene == SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET)
-		return AirsRockInside_RevealTabletCues;
+		return AirsRockInsideRevealTabletCues;
 	if(scene == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST)
-		return AirsRockInside_ElixirChestCues;
+		return AirsRockInsideElixirChestCues;
 	if(scene == SCENE_AIRS_ROCK_INSIDE_PAIRED_STAKES)
-		return AirsRockInside_PairedStakesCues;
+		return AirsRockInsidePairedStakesCues;
 	if(scene == SCENE_AIRS_ROCK_INSIDE_FACE_VENTS)
-		return AirsRockInside_FaceVentsCues;
+		return AirsRockInsideFaceVentsCues;
 	if(scene == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST)
-		return AirsRockInside_CoinsChestCues;
+		return AirsRockInsideCoinsChestCues;
 	if(scene == SCENE_AIRS_ROCK_INSIDE_PSYNERGY_STONE)
-		return AirsRockInside_PsynergyStoneCues;
-	return AirsRockInside_VialChestCues;
+		return AirsRockInsidePsynergyStoneCues;
+	return AirsRockInsideVialChestCues;
 }
 
 /* The leader rises 80 pixels on a lift into the room. */
@@ -3094,14 +3088,14 @@ void scAirsRockInsideRiseOnLift(void)
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	ACTOR *prepared, *lift;
 #if LIFT_RESTORES_LEADER_PRIORITY
-	Uint8 priorityFlags;
+	Uint8 priFlg;
 #endif
 	Sint32 height;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 #if LIFT_RESTORES_LEADER_PRIORITY
-	priorityFlags = leader->priFlg;
+	priFlg = leader->priFlg;
 #endif
 	prepared = fdActorCreateSilhouette(
 		toFIXED(216), -toFIXED(32), toFIXED(544), SPRITE_CRATE);
@@ -3123,8 +3117,8 @@ void scAirsRockInsideRiseOnLift(void)
 	sySndPlay(SE_KIRIN);
 	fdScriptStartScreenTransition();
 	while(!fdActorHasArrived(leader)) {
-		leader->facing = (Uint8)FrameCount * FACING_STEP;
-		leader->priFlg ^= ACTOR_PRIORITY_UNDERFOOT << (FrameCount & 1);
+		leader->facing = (Uint8)TickCount * FACING_STEP;
+		leader->priFlg ^= ACTOR_PRIORITY_UNDERFOOT << (TickCount & 1);
 		sySynch(1);
 	}
 	sySndPlay(SE_STOP_ACTION_SE);
@@ -3156,11 +3150,11 @@ void scAirsRockInsideRiseOnLift(void)
 	leader->groundHeight = leader->y.fixed;
 	fdActorSetSprFlags(leader, 1);
 #if LIFT_RESTORES_LEADER_PRIORITY
-	leader->priFlg = priorityFlags;
+	leader->priFlg = priFlg;
 #endif
 	fdActorRelease(prepared);
 	sySynch(1);
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -3170,12 +3164,12 @@ void scAirsRockInsideSpawnMotes(void)
 {
 	ACTOR	  *actor;
 	Sint32	   i;
-	FIELD_SPR *sprite;
+	FIELD_SPR *spr;
 
 	for(i = 0; i != 8; i++) {
 		actor = syImportActorCreate(SPRITE_PARTICLE, 0, 0, 0);
-		sprite = actor->spr;
-		sprite->pri = 1;
+		spr = actor->spr;
+		spr->pri = 1;
 		actor->sceneByte = i << 4;
 		actor->motionFlg = 0;
 		actor->priFlg = 0;
@@ -3195,7 +3189,7 @@ void scAirsRockInsideSpawnMotes(void)
 	}
 }
 
-extern Sint32 AirsRockInside_LeaderLevel;
+extern Sint32 AirsRockInsideLeaderLevel;
 
 /* An event in the great hall: as the leader climbs, two blocks of metatiles at
    the hall's west and east sides take the collision codes kept for the level he
@@ -3212,7 +3206,7 @@ void scAirsRockInsideSetLedgeMetatilesByLevel(void)
 		level = 1;
 	else
 		level = 0;
-	if(AirsRockInside_LeaderLevel == level)
+	if(AirsRockInsideLeaderLevel == level)
 		return;
 	switch(level) {
 	case 2: {
@@ -3234,7 +3228,7 @@ void scAirsRockInsideSetLedgeMetatilesByLevel(void)
 		fdMapCopyMetatileAttributeRect(70, 68, 6, 4, 26, 39);
 		break;
 	}
-	AirsRockInside_LeaderLevel = level;
+	AirsRockInsideLeaderLevel = level;
 }
 
 #include "../field/field_effect_advance_motion.c"
@@ -3268,7 +3262,7 @@ void scAirsRockInsideLandInHall(void)
 	leader->motionFlg = 0;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	sySndPlay(SE_DUST_PUFF);
 	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	syFieldScriptWait(24);
@@ -3278,19 +3272,19 @@ void scAirsRockInsideLandInHall(void)
 	options.startScaleY = toFIXED(4) / 5;
 	/* A puff each sixteenth of a turn, the last over the first. */
 	for(i = 0; i <= TRIG_TURN / FACING_STEP; i++) {
-		Sint32 angle;
-		FIXED  velocity[3];
+		Sint32 ang;
+		FIXED  vel[3];
 
-		angle = i * FACING_STEP;
-		velocity[0] = syCos(angle);
-		velocity[1] = 0;
-		velocity[2] = sySin(angle);
-		velocity[0] += velocity[0] >> 1;
-		velocity[0] += syRandomBelow(toFIXED(3) / 4);
-		velocity[0] += -(toFIXED(3) / 8);
-		velocity[2] += syRandomBelow(toFIXED(3) / 8) + -(toFIXED(3) / 16);
+		ang = i * FACING_STEP;
+		vel[0] = syCos(ang);
+		vel[1] = 0;
+		vel[2] = sySin(ang);
+		vel[0] += vel[0] >> 1;
+		vel[0] += syRandomBelow(toFIXED(3) / 4);
+		vel[0] += -(toFIXED(3) / 8);
+		vel[2] += syRandomBelow(toFIXED(3) / 8) + -(toFIXED(3) / 16);
 		scFieldEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-			velocity[0], velocity[1], velocity[2],
+			vel[0], vel[1], vel[2],
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
 				EFFECT_SCRIPT_MEDIUM,
 			&options);
@@ -3340,7 +3334,7 @@ Sint32 scInit(void)
 		if(MainRoutineStateWork.entrance <= HALL_LAST_GREAT_HALL_ENTRANCE ||
 			MainRoutineStateWork.entrance == ENTRANCE_HALL_FROM_REVEAL_TABLET) {
 			sySetEvent(
-				scAirsRockInsideSetLedgeMetatilesByLevel, EVENT_PASS_FRAME);
+				scAirsRockInsideSetLedgeMetatilesByLevel, EVENT_PASS_TICK);
 			REG_BLDALPHA = BLEND_ALPHA(8, 16);
 			REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
 			scAirsRockInsideSpawnMotes();
@@ -3349,7 +3343,7 @@ Sint32 scInit(void)
 			if(syGameFlagGet(FLAG_AIRS_ROCK_HALL_MOVABLE_STATUE_PLACED))
 				fdActorSetPosFX(
 					ACTOR_HALL_MOVABLE_STATUE, toFIXED(824), toFIXED(328));
-			fdActorPlaceBlocks(AirsRockInside_HallPillars);
+			fdActorPlaceBlocks(AirsRockInsideHallPillars);
 		}
 		fdActorGetById(ACTOR_HALL_TWISTER_STATUE)->motionFlg = 0;
 		fdActorGetById(ACTOR_HALL_TWISTER_STATUE)->y.fixed = 0;
@@ -3397,7 +3391,7 @@ Sint32 scInit(void)
 		if(syGameFlagGet(FLAG_AIRS_ROCK_VIAL_CHEST_WEST_PILLAR_PLACED))
 			fdActorSetPosFX(
 				ACTOR_VIAL_CHEST_WEST_PILLAR, toFIXED(104), toFIXED(392));
-		fdActorPlaceBlocks(AirsRockInside_VialChestPillars);
+		fdActorPlaceBlocks(AirsRockInsideVialChestPillars);
 		if(!syGameFlagGet(FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN)) {
 			fdActorSetSprCol(
 				fdActorGetById(ACTOR_VIAL_CHEST_STATUE), SPRITE_COLOR_GREY);
@@ -3418,7 +3412,7 @@ Sint32 scInit(void)
 		fdQueueMusic(SE_AMBIENT_STREAM);
 		REG_BLDALPHA = BLEND_ALPHA(8, 12);
 		REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-		sySetEvent(scAirsRockInsidePuffVents, EVENT_PASS_FRAME);
+		sySetEvent(scAirsRockInsidePuffVents, EVENT_PASS_TICK);
 		if(syGameFlagGet(
 			   FLAG_AIRS_ROCK_CLARITY_CIRCLET_CHEST_FIRST_PILLAR_PLACED))
 			fdActorSetPosFX(ACTOR_CLARITY_CIRCLET_CHEST_FIRST_PILLAR,
@@ -3431,7 +3425,7 @@ Sint32 scInit(void)
 			   FLAG_AIRS_ROCK_CLARITY_CIRCLET_CHEST_THIRD_PILLAR_PLACED))
 			fdActorSetPosFX(ACTOR_CLARITY_CIRCLET_CHEST_THIRD_PILLAR,
 				toFIXED(472), toFIXED(520));
-		fdActorPlaceBlocks(AirsRockInside_ClarityCircletChestPillars);
+		fdActorPlaceBlocks(AirsRockInsideClarityCircletChestPillars);
 		if(!syGameFlagGet(FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN)) {
 			fdActorSetSprCol(
 				fdActorGetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_A),
@@ -3487,7 +3481,7 @@ Sint32 scInit(void)
 		if(syGameFlagGet(FLAG_AIRS_ROCK_TIGHTROPES_PILLAR_PLACED))
 			fdActorSetPosFX(
 				ACTOR_TIGHTROPES_PILLAR, toFIXED(648), toFIXED(296));
-		fdActorPlaceBlocks(AirsRockInside_TightropesPillars);
+		fdActorPlaceBlocks(AirsRockInsideTightropesPillars);
 	} else if(MainRoutineStateWork.next ==
 		SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET) {
 		syGameFlagSet(FLAG_RETREAT_BLOCKED);
@@ -3550,11 +3544,11 @@ Sint32 scInit(void)
 			syGameFlagSet(FLAG_STAKE_B_DOWN);
 			syGameFlagSet(FLAG_STAKE_C_DOWN);
 		}
-		scAirsRockInsidePlaceStakes(AirsRockInside_PairedStakesStakes);
+		scAirsRockInsidePlaceStakes(AirsRockInsidePairedStakesStakes);
 		if(syGameFlagGet(FLAG_AIRS_ROCK_PAIRED_STAKES_PILLAR_PLACED))
 			fdActorSetPosFX(
 				ACTOR_PAIRED_STAKES_PILLAR, toFIXED(344), toFIXED(696));
-		fdActorPlaceBlocks(AirsRockInside_PairedStakesPillars);
+		fdActorPlaceBlocks(AirsRockInsidePairedStakesPillars);
 		if(syGameFlagGet(FLAG_PAIRED_STAKES_NORTH_BARRIER_BLOWN_AWAY)) {
 			fdMapGridCopyMetatilesTo(39, 82, 38, 82, 1, 3);
 			fdMapGridCopyMetatileAttributes(39, 82, 1, 1, 38, 82);
@@ -3569,7 +3563,7 @@ Sint32 scInit(void)
 		fdQueueMusic(SE_AMBIENT_STREAM);
 		REG_BLDALPHA = BLEND_ALPHA(8, 12);
 		REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-		sySetEvent(scAirsRockInsidePuffVents, EVENT_PASS_FRAME);
+		sySetEvent(scAirsRockInsidePuffVents, EVENT_PASS_TICK);
 		if(syGameFlagGet(FLAG_AIRS_ROCK_FACE_VENTS_FIRST_PILLAR_PLACED))
 			fdActorSetPosFX(
 				ACTOR_FACE_VENTS_FIRST_PILLAR, toFIXED(280), toFIXED(472));
@@ -3582,7 +3576,7 @@ Sint32 scInit(void)
 			syGameFlagSet(FLAG_SOUTHEAST_VENT_STILL);
 		}
 		fdActorSetSprPriority(ACTOR_FACE_VENTS_SECOND_PILLAR, 2);
-		fdActorPlaceBlocks(AirsRockInside_FaceVentsPillars);
+		fdActorPlaceBlocks(AirsRockInsideFaceVentsPillars);
 		scMapMetatileSetAttributes(MAPGRID_LAYER_OVERHEAD,
 			FIELD_METATILE(
 				fdActorGetById(ACTOR_FACE_VENTS_FIRST_PILLAR)->x.fixed),
@@ -3607,7 +3601,7 @@ Sint32 scInit(void)
 		if(syGameFlagGet(FLAG_AIRS_ROCK_COINS_CHEST_PILLAR_PLACED))
 			fdActorSetPosFX(
 				ACTOR_COINS_CHEST_PILLAR, toFIXED(360), toFIXED(264));
-		fdActorPlaceBlocks(AirsRockInside_CoinsChestPillars);
+		fdActorPlaceBlocks(AirsRockInsideCoinsChestPillars);
 		scMapMetatileSetAttributes(MAPGRID_LAYER_OVERHEAD,
 			FIELD_METATILE(fdActorGetById(ACTOR_COINS_CHEST_STATUE)->x.fixed),
 			FIELD_METATILE(fdActorGetById(ACTOR_COINS_CHEST_STATUE)->z.fixed),
@@ -3638,25 +3632,25 @@ Sint32 scPrepareMap(void)
 
 void scAirsRockInsideStartWhirlwind(void);
 
-extern Uint32 FieldEffect_ShortScript[];
-extern Uint32 FieldEffect_LongScript[];
+extern Uint32 FieldEffectShortScript[];
+extern Uint32 FieldEffectLongScript[];
 
 /* clang-format off */
 #include "shared/field_effect_duration_scripts.c"
 
 /* The blocks Move pushes in each room (fdActorPlaceBlocks), ended by -1: the */
 /* hall's statue. */
-Sint16 AirsRockInside_HallPillars[] = {
+Sint16 AirsRockInsideHallPillars[] = {
 	ACTOR_HALL_MOVABLE_STATUE, -1,
 };
 
 /* The Vial chest room's two pillars. */
-Sint16 AirsRockInside_VialChestPillars[] = {
+Sint16 AirsRockInsideVialChestPillars[] = {
 	ACTOR_VIAL_CHEST_EAST_PILLAR, ACTOR_VIAL_CHEST_WEST_PILLAR, -1,
 };
 
 /* The Clarity Circlet chest room's three pillars and its statue. */
-Sint16 AirsRockInside_ClarityCircletChestPillars[] = {
+Sint16 AirsRockInsideClarityCircletChestPillars[] = {
 	ACTOR_CLARITY_CIRCLET_CHEST_FIRST_PILLAR,
 	ACTOR_CLARITY_CIRCLET_CHEST_SECOND_PILLAR,
 	ACTOR_CLARITY_CIRCLET_CHEST_THIRD_PILLAR,
@@ -3665,43 +3659,43 @@ Sint16 AirsRockInside_ClarityCircletChestPillars[] = {
 };
 
 /* The tightropes room's pillar. */
-Sint16 AirsRockInside_TightropesPillars[] = {
+Sint16 AirsRockInsideTightropesPillars[] = {
 	ACTOR_TIGHTROPES_PILLAR, -1,
 };
 
 /* The paired stakes room's four pillars. */
-Sint16 AirsRockInside_PairedStakesPillars[] = {
+Sint16 AirsRockInsidePairedStakesPillars[] = {
 	ACTOR_PAIRED_STAKES_PILLAR,   ACTOR_PAIRED_STAKES_PILLAR_A,
 	ACTOR_PAIRED_STAKES_PILLAR_B, ACTOR_PAIRED_STAKES_PILLAR_C,
 	-1,
 };
 
 /* The face vents room's five pillars. */
-Sint16 AirsRockInside_FaceVentsPillars[] = {
+Sint16 AirsRockInsideFaceVentsPillars[] = {
 	ACTOR_FACE_VENTS_THIRD_PILLAR, ACTOR_FACE_VENTS_FIRST_PILLAR,
 	ACTOR_FACE_VENTS_SECOND_PILLAR, ACTOR_FACE_VENTS_PILLAR_A,
 	ACTOR_FACE_VENTS_PILLAR_B, -1,
 };
 
 /* The coins chest room's pillar and statue. */
-Sint16 AirsRockInside_CoinsChestPillars[] = {
+Sint16 AirsRockInsideCoinsChestPillars[] = {
 	ACTOR_COINS_CHEST_PILLAR, ACTOR_COINS_CHEST_STATUE, -1,
 };
 
-Uint32 OrbitSpark_Script[] = {
+Uint32 OrbitSparkScript[] = {
 	SC_WAIT(6),
 	SC_RELEASE,
 	SC_END,
 };
 
-Uint32 AirsRockInside_RisingSparkScript[] = {
+Uint32 AirsRockInsideRisingSparkScript[] = {
 	SC_MOVE_BY(0, 160, 0),
 	SC_SYNC,
 	SC_RELEASE,
 	SC_END,
 };
 
-Sint32 AirsRockInside_OrbitingSparkScript[] = {
+Sint32 AirsRockInsideOrbitingSparkScript[] = {
 	SC_CALL(scAirsRockInsideOrbitAnchor),
 	SC_RELEASE,
 	SC_END,
@@ -3711,20 +3705,20 @@ Sint32 AirsRockInside_OrbitingSparkScript[] = {
 
 #include "shared/lesson_scripts.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
-Uint32 AirsRockInside_WhirlwindRisesScript[] = {
+Uint32 AirsRockInsideWhirlwindRisesScript[] = {
 	SC_ANIMATION(5),
 	SC_WAIT(12),
 	SC_RELEASE,
 	SC_END,
 };
 
-Uint32 AirsRockInside_WhirlwindFadesScript[] = {
+Uint32 AirsRockInsideWhirlwindFadesScript[] = {
 	SC_WAIT(60),
 	SC_ANIMATION(5),
 	SC_WAIT(12),
@@ -3732,7 +3726,7 @@ Uint32 AirsRockInside_WhirlwindFadesScript[] = {
 	SC_END,
 };
 
-Uint32 AirsRockInside_PooledWhirlwindFadesScript[] = {
+Uint32 AirsRockInsidePooledWhirlwindFadesScript[] = {
 	SC_ANIMATION(5),
 	SC_WAIT(12),
 	SC_POSITION(0, 0, 0),
@@ -3740,7 +3734,7 @@ Uint32 AirsRockInside_PooledWhirlwindFadesScript[] = {
 	SC_END,
 };
 
-Uint32 AirsRockInside_WindStoneScript[] = {
+Uint32 AirsRockInsideWindStoneScript[] = {
 	SC_SET(SW_SCALE_Y, toFIXED(3) / 2),
 	SC_SET(SW_STEERING, 0),
 	SC_ANIMATION(2),
@@ -3749,7 +3743,7 @@ Uint32 AirsRockInside_WindStoneScript[] = {
 
 /* The paired stakes room's four stakes, as scAirsRockInsidePlaceStakes reads */
 /* them: each stake, its first pose and the flag set while it is sunk. */
-Uint16 AirsRockInside_PairedStakesStakes[] = {
+Uint16 AirsRockInsidePairedStakesStakes[] = {
 	ACTOR_PAIRED_STAKES_STAKE_A, 1, FLAG_STAKE_A_DOWN,
 	ACTOR_PAIRED_STAKES_STAKE_B, 1, FLAG_STAKE_B_DOWN,
 	ACTOR_PAIRED_STAKES_STAKE_C, 1, FLAG_STAKE_C_DOWN,
@@ -3757,12 +3751,12 @@ Uint16 AirsRockInside_PairedStakesStakes[] = {
 	ACTOR_LIST_END, 0,
 };
 
-SCENE_ENTRANCE AirsRockInside_Entrances[] = {
+SCENE_ENTRANCE AirsRockInsideEntrances[] = {
 	{0, CONDITION_ALWAYS, 320, 0, 320, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
 	{SCENE_TABLE_END},
 };
 
-SCENE_ENTRANCE AirsRockInside_HallEntrances[] = {
+SCENE_ENTRANCE AirsRockInsideHallEntrances[] = {
 	{1, CONDITION_ALWAYS, 232, 0, 120, FACING_SOUTH, 0, 64, 16, 560, 1008, 0},
 	{2, CONDITION_ALWAYS, 152, 0, 136, FACING_SOUTH, 0, 64, 16, 560, 1008, 0},
 	{3, CONDITION_ALWAYS, 152, 0, 232, FACING_SOUTH, 0, 64, 16, 560, 1008, 0},
@@ -3832,11 +3826,11 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE AirsRockInside_Placements[] = {
+ACTOR_PLACE AirsRockInsidePlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE AirsRockInside_HallPlacements[] = {
+ACTOR_PLACE AirsRockInsideHallPlacements[] = {
 	{SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 3, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
@@ -3848,7 +3842,7 @@ ACTOR_PLACE AirsRockInside_HallPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE AirsRockInside_VialChestPlacements[] = {
+ACTOR_PLACE AirsRockInsideVialChestPlacements[] = {
 	{SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_TWISTER_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 3, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
@@ -3856,7 +3850,7 @@ ACTOR_PLACE AirsRockInside_VialChestPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE AirsRockInside_ClarityCircletChestPlacements[] = {
+ACTOR_PLACE AirsRockInsideClarityCircletChestPlacements[] = {
 	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 3, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
@@ -3866,10 +3860,10 @@ ACTOR_PLACE AirsRockInside_ClarityCircletChestPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE AirsRockInside_TightropesPlacements[] = {
-	{SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockInside_WindStoneScript, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+ACTOR_PLACE AirsRockInsideTightropesPlacements[] = {
+	{SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockInsideWindStoneScript, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockInside_WindStoneScript, 3, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+	{SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockInsideWindStoneScript, 3, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 4, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 5, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
 	{SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 6, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
@@ -3883,16 +3877,16 @@ ACTOR_PLACE AirsRockInside_TightropesPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE AirsRockInside_RevealTabletPlacements[] = {
+ACTOR_PLACE AirsRockInsideRevealTabletPlacements[] = {
 	{SPRITE_SLATE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_WEST, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE AirsRockInside_ElixirChestPlacements[] = {
+ACTOR_PLACE AirsRockInsideElixirChestPlacements[] = {
 	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockInside_WindStoneScript, 2, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockInside_WindStoneScript, 3, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+	{SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockInsideWindStoneScript, 2, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+	{SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockInsideWindStoneScript, 3, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 4, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 5, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
 	{SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 6, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
@@ -3902,7 +3896,7 @@ ACTOR_PLACE AirsRockInside_ElixirChestPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE AirsRockInside_PairedStakesPlacements[] = {
+ACTOR_PLACE AirsRockInsidePairedStakesPlacements[] = {
 	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 3, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
@@ -3911,15 +3905,15 @@ ACTOR_PLACE AirsRockInside_PairedStakesPlacements[] = {
 	{SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 6, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 7, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockInside_WindStoneScript, 9, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockInside_WindStoneScript, 10, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+	{SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockInsideWindStoneScript, 9, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+	{SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockInsideWindStoneScript, 10, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE AirsRockInside_FaceVentsPlacements[] = {
+ACTOR_PLACE AirsRockInsideFaceVentsPlacements[] = {
 	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-	{SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockInside_WindStoneScript, 3, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+	{SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockInsideWindStoneScript, 3, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 4, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 5, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 6, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
@@ -3927,16 +3921,16 @@ ACTOR_PLACE AirsRockInside_FaceVentsPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE AirsRockInside_CoinsChestPlacements[] = {
-	{SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockInside_WindStoneScript, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+ACTOR_PLACE AirsRockInsideCoinsChestPlacements[] = {
+	{SPRITE_WIND_STONE, CONDITION_ALWAYS, (Sint32)AirsRockInsideWindStoneScript, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 3, 0, 0, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
 	{SCENE_TABLE_END},
 };
 
-Sint32 AirsRockInside_StampedMetatile = -1;
+Sint32 AirsRockInsideStampedMetatile = -1;
 
-CUE AirsRockInside_HallCues[] = {
+CUE AirsRockInsideHallCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3968,7 +3962,7 @@ CUE AirsRockInside_HallCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE AirsRockInside_VialChestCues[] = {
+CUE AirsRockInsideVialChestCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
 	{STEP_CUE_WALKING_INTO(FACING_SOUTH), METATILE_BEHAVIOR_AIRS_ROCK_INSIDE_VIAL_CHEST_LEDGE, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockInsideJumpDownLedge)},
@@ -3987,7 +3981,7 @@ CUE AirsRockInside_VialChestCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE AirsRockInside_ClarityCircletChestCues[] = {
+CUE AirsRockInsideClarityCircletChestCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
 	{CUE_STEP, METATILE_BEHAVIOR_AIRS_ROCK_INSIDE_STEPPING_STONE, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockInsideStampMetatileUnderLeader)},
@@ -4006,7 +4000,7 @@ CUE AirsRockInside_ClarityCircletChestCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE AirsRockInside_TightropesCues[] = {
+CUE AirsRockInsideTightropesCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
@@ -4024,7 +4018,7 @@ CUE AirsRockInside_TightropesCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE AirsRockInside_RevealTabletCues[] = {
+CUE AirsRockInsideRevealTabletCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_STEP, METATILE_BEHAVIOR_AIRS_ROCK_INSIDE_STEPPING_STONE, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockInsideStampMetatileUnderLeader)},
 	{CUE_STEP, METATILE_BEHAVIOR_AIRS_ROCK_INSIDE_OTHER_STEPPING_STONE, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockInsideStampOtherMetatileUnderLeader)},
@@ -4044,7 +4038,7 @@ CUE AirsRockInside_RevealTabletCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE AirsRockInside_ElixirChestCues[] = {
+CUE AirsRockInsideElixirChestCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_STEP, METATILE_BEHAVIOR_AIRS_ROCK_INSIDE_STEPPING_STONE, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockInsideStampMetatileUnderLeader)},
@@ -4059,7 +4053,7 @@ CUE AirsRockInside_ElixirChestCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE AirsRockInside_PairedStakesCues[] = {
+CUE AirsRockInsidePairedStakesCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
 	{CUE_STEP, METATILE_BEHAVIOR_AIRS_ROCK_INSIDE_STEPPING_STONE, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockInsideStampMetatileUnderLeader)},
@@ -4087,7 +4081,7 @@ CUE AirsRockInside_PairedStakesCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE AirsRockInside_FaceVentsCues[] = {
+CUE AirsRockInsideFaceVentsCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
 	{CUE_RAISED, CUE_PUFF_REACHES_LEADER, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockInsideRideFaceVent)},
@@ -4110,7 +4104,7 @@ CUE AirsRockInside_FaceVentsCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE AirsRockInside_CoinsChestCues[] = {
+CUE AirsRockInsideCoinsChestCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
 	{CUE_STEP, METATILE_BEHAVIOR_AIRS_ROCK_INSIDE_STEPPING_STONE, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockInsideStampMetatileUnderLeader)},
@@ -4125,7 +4119,7 @@ CUE AirsRockInside_CoinsChestCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE AirsRockInside_PsynergyStoneCues[] = {
+CUE AirsRockInsidePsynergyStoneCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXAMINE, METATILE_BEHAVIOR_AIRS_ROCK_INSIDE_PSYNERGY_STONE, CONDITION_ALWAYS, SCRIPT_REF(scAirsRockInsideCheckPsynergyStone)},
@@ -4134,5 +4128,5 @@ CUE AirsRockInside_PsynergyStoneCues[] = {
 
 /* The great hall's level the leader stood at when its ledge metatiles were */
 /* last set; -1 before. */
-Sint32 AirsRockInside_LeaderLevel = -1;
+Sint32 AirsRockInsideLeaderLevel = -1;
 #undef fdActorSetHorizontalPosWithTerrain

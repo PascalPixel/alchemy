@@ -2,14 +2,14 @@
    starts drawing the lit actors (none yet), large, each at its own priority. */
 void scLightSprsInitC(void)
 {
-	Uint8 *buffer = syHeapCallAlternatePool(syHeapAlloc, 2048);
+	Uint8 *buf = syHeapCallAlternatePool(syHeapAlloc, 2048);
 
 	syWordsClearEntry(LightSpriteActors, sizeof(LightSpriteActors));
-	syDecompressTaggedLZ(Field_CachedTilesC, buffer);
+	syDecompressTaggedLZ(Field_CachedTilesC, buf);
 	LightSpriteTile = syVRAMCacheFindFreeEntry();
-	mnVRAMLoad(LightSpriteTile, 2048, buffer);
-	syHeapRelease(buffer);
-	sySetFrameEvent(scLightSprsDraw, EVENT_PASS_FRAME);
+	mnVRAMLoad(LightSpriteTile, 2048, buf);
+	syHeapRelease(buf);
+	sySetTickEvent(scLightSprsDraw, EVENT_PASS_TICK);
 	LightSpriteCount = 0;
 	LightSpritesLarge = 1;
 	LightSpritePriority = -1;

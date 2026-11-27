@@ -1,13 +1,13 @@
 /* Ray. Part of battle_effect.c. */
 
-#define RAY_FRAMES 64 /* frames of the bolts' approach */
+#define RAY_TICKS 64 /* ticks of the bolts' approach */
 
 #define RAY_SPARK_COUNT PARTICLE_POOL_COUNT /* sparks in PARTICLES */
 
 #define RAY_PICTURES \
 	GLOW_SHEET_ROOM				/* where the bolt pictures start in the sheet */
 #define RAY_COUNT			  4 /* bolts */
-/* The bolts turn a 32nd of a turn a frame, each a quarter turn more than the
+/* The bolts turn a 32nd of a turn a tick, each a quarter turn more than the
    one before. */
 #define RAY_BOLT_TURN		  (TRIG_TURN / 32)
 /* The strongest variant shows the canvas twice as wide, scrolled this many
@@ -16,8 +16,8 @@
 /* Where the canvas is shown over targets on the party's side: from screen x
    128. */
 #define RAY_PARTY_CANVAS_X	  128
-/* The column of a Ray_Sparks row that says how many sparks each bolt throws a
-   frame; nothing reads the first. */
+/* The column of a RaySparks row that says how many sparks each bolt throws a
+   tick; nothing reads the first. */
 #define RAY_SPARKS_PER_BOLT	  1
 
 /* Four bolts close in, turning towards the centre and scattering sparks from
@@ -28,7 +28,7 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	Uint8				*motes;
 	Sint32				 bolt;
 	Sint32				 thrown;
@@ -66,13 +66,12 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 	for(i = 0; i != RAY_SPARK_COUNT; i++) {
 		PARTICLE *spark = &PARTICLES[i];
 		Sint32	  speed;
-		Sint32	  angle;
+		Sint32	  ang;
 
 		speed = (syRandom() & 0x3ff) + 256;
-		angle = (syRandom() & 0x7fff) - DEGtoANG(90);
-		SET_POSITION(
-			spark, 64 << 8, 112 << 8, FIXEDtoINT(sySin(angle) * speed));
-		spark->velZ = FIXEDtoINT(-(syCos(angle) * speed * 2));
+		ang = (syRandom() & 0x7fff) - DEGtoANG(90);
+		SET_POSITION(spark, 64 << 8, 112 << 8, FIXEDtoINT(sySin(ang) * speed));
+		spark->velZ = FIXEDtoINT(-(syCos(ang) * speed * 2));
 		spark->variant = 0;
 	}
 
@@ -80,22 +79,22 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	sySndPlayStub(SE_ITEM_BREAK);
 
-	for(frame = 0; frame != RAY_FRAMES; frame++) {
-		if(frame == 20)
+	for(frm = 0; frm != RAY_TICKS; frm++) {
+		if(frm == 20)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
-		/* The bolts, over the first 16 frames. */
-		if(frame < 16) {
-			if(frame % 5 == 2)
+		/* The bolts, over the first 16 ticks. */
+		if(frm < 16) {
+			if(frm % 5 == 2)
 				syWordsFill(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
 			for(bolt = 0; bolt != RAY_COUNT; bolt++) {
-				Sint32 angle;
+				Sint32 ang;
 				Sint32 x;
 				Sint32 y;
 
 				thrown = 0;
-				angle = (frame * RAY_BOLT_TURN + DEGtoANG(90)) * bolt;
-				x = FIXEDtoINT((32 - frame) * sySin(angle)) + 64;
-				y = -FIXEDtoINT(syCos(angle) * 8) - 8;
+				ang = (frm * RAY_BOLT_TURN + DEGtoANG(90)) * bolt;
+				x = FIXEDtoINT((32 - frm) * sySin(ang)) + 64;
+				y = -FIXEDtoINT(syCos(ang) * 8) - 8;
 				if(state->args->variant == EFFECT_VARIANT_BASIC)
 					draw[0](canvas,
 						state->sheet +
@@ -128,8 +127,8 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 						spark->variant = (syRandom() & 7) + 32;
 						thrown++;
 						if(thrown ==
-							Ray_Sparks[state->args->variant]
-									  [RAY_SPARKS_PER_BOLT])
+							RaySparks[state->args->variant]
+									 [RAY_SPARKS_PER_BOLT])
 							break;
 					}
 				}
@@ -157,16 +156,16 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		/* The targets are hit 4 frames apart. */
-		if(frame >= 4 && frame < 96) {
+		/* The targets are hit 4 ticks apart. */
+		if(frm >= 4 && frm < 96) {
 			EFFECT_FOR_EACH_TARGET(i, state->args) {
-				if(frame == i * 4 + 4)
+				if(frm == i * 4 + 4)
 					btEffectTintBattler(state->args->tgts[i],
 						SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 10);
 			}
 		}
 		btCameraShake(2, 4);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS();
@@ -178,5 +177,5 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 #undef RAY_BOLT_TURN
 #undef RAY_WIDE_CANVAS_SHIFT
 #undef RAY_PARTY_CANVAS_X
-#undef RAY_FRAMES
+#undef RAY_TICKS
 #undef RAY_SPARKS_PER_BOLT

@@ -26,7 +26,7 @@
 /* Sends an actor toward the point magnitude (16.16 pixels) away from it in
    direction angle (actor_polar_target.h). */
 void fdActorSetTargetPosFromMagnitudeAng(
-	ACTOR *actor, Sint32 magnitude, Sint32 angle);
+	ACTOR *actor, Sint32 magnitude, Sint32 ang);
 
 /* The field effect sprites of a field Psynergy
    (FIELD_EFFECT_STATE.particles). */
@@ -54,7 +54,7 @@ typedef enum PENDING_BATTLE_KIND {
 /* A Djinni battle's script without DJINN_NO_HOP. */
 #define DJINN_PENDING_BATTLE_SCRIPT_MASK 0x7ff
 
-/* The steps, one a frame, in which an object grows out of the caster on its way
+/* The steps, one a tick, in which an object grows out of the caster on its way
    to the target or shrinks back into it: fdEffectInterpolate's tenths. */
 #define GROW_STEPS 10
 
@@ -62,15 +62,15 @@ typedef enum PENDING_BATTLE_KIND {
    smaller than what they follow. */
 #define AFTERIMAGE_SCALE (toFIXED(15) / 16)
 
-/* Per-frame update of an afterimage: closes half the distance to the actor it
+/* Per-tick update of an afterimage: closes half the distance to the actor it
    watches, on all three axes. */
 static inline void fdEffectMoveAfterimageHalfway(ACTOR *afterimage)
 {
-	ACTOR *target = (ACTOR *)afterimage->watchedActor;
+	ACTOR *tgt = (ACTOR *)afterimage->watchedActor;
 
-	afterimage->x.fixed += (target->x.fixed - afterimage->x.fixed) / 2;
-	afterimage->y.fixed += (target->y.fixed - afterimage->y.fixed) / 2;
-	afterimage->z.fixed += (target->z.fixed - afterimage->z.fixed) / 2;
+	afterimage->x.fixed += (tgt->x.fixed - afterimage->x.fixed) / 2;
+	afterimage->y.fixed += (tgt->y.fixed - afterimage->y.fixed) / 2;
+	afterimage->z.fixed += (tgt->z.fixed - afterimage->z.fixed) / 2;
 }
 
 /* Runs the update of each of the 24 field effect sprites. */
@@ -84,10 +84,10 @@ static __inline__ void fdEffectUpdateEffectSlots(void)
 		fdParticleUpdate(&particles[i]);
 }
 
-/* Defines a per-frame update that spins an actor 1/8 turn a frame while its
+/* Defines a per-tick update that spins an actor 1/8 turn a tick while its
    scale changes by step, releasing the actor once the scale falls below
    toFIXED(1) * 3 / 16. step is negative: from full size the actor lasts
-   (toFIXED(13) / 16) / -step frames, rounded down, plus one. */
+   (toFIXED(13) / 16) / -step ticks, rounded down, plus one. */
 #define DEFINE_SHRINK_AND_DESTROY(name, step) \
 	void name(ACTOR *actor) \
 	{ \
@@ -115,8 +115,8 @@ typedef struct WAVE_EFFECT_SPR {
 } WAVE_EFFECT_SPR;
 
 /* Move's hand and Carry shed the same short-lived falling particle: it falls
-   under a gravity of 0.1 pixel a frame, each frame, and is freed after 12
-   frames. */
+   under a gravity of 0.1 pixel a tick, each tick, and is freed after 12
+   ticks. */
 static inline void fdEffectInitFallingFragment(ACTOR *fragment)
 {
 	/* The caller spawns the fragment and places it. */
@@ -125,7 +125,7 @@ static inline void fdEffectInitFallingFragment(ACTOR *fragment)
 		fragment->gravity = toFIXED(1) / 10;
 		fdActorSelectAnimationStub(fragment, 0);
 		fragment->wait = 12;
-		fdActorStartScriptStub(fragment, FieldEffect_SharedParticleScript);
+		fdActorStartScriptStub(fragment, FieldEffectSharedParticleScript);
 	}
 }
 
@@ -172,7 +172,7 @@ static inline void fdEffectInitFallingFragment(ACTOR *fragment)
 			pos.z = effectState->z; \
 			obj = fdActorSpawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z); \
 			if(obj != 0) { \
-				fdActorStartScriptStub(obj, FieldEffect_FragmentScript); \
+				fdActorStartScriptStub(obj, FieldEffectFragmentScript); \
 				obj->speedLimit = syRandom() + toFIXED(2); \
 				obj->acceleration = toFIXED(2); \
 				obj->motionFlg = 0; \
@@ -225,7 +225,7 @@ typedef enum MERCURY_DROPLET_STATE {
 typedef enum MARS_SPARK_STATE {
 	MARS_SPARK_AIM = 0,	   /* aimed 120 pixels up the screen from its origin */
 	MARS_SPARK_RISING = 1, /* back to MARS_SPARK_AIM once it arrives */
-	/* Stops where it arrives, hidden, and waits 40 frames. */
+	/* Stops where it arrives, hidden, and waits 40 ticks. */
 	MARS_SPARK_STOPPING = 2,
 	MARS_SPARK_AIM_LEADER = 3, /* aimed at a point by the leader */
 	MARS_SPARK_SWARMING = 4,   /* back to MARS_SPARK_AIM_LEADER on arrival */

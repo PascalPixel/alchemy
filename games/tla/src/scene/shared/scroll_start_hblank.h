@@ -1,9 +1,9 @@
 /* Starts the HBlank scroll handler and its event. */
 void scScrollStartHBlank(void)
 {
-	Sint32 priority;
+	Sint32 pri;
 
 	syIntFunction(IRQ_HBLANK, 0, scScrollHBlank);
-	priority = EVENT_PASS_VBLANK;
-	syFieldSetFrameEvent(scLayerTrackScroll, priority);
+	pri = EVENT_PASS_VBLANK;
+	syFieldSetTickEvent(scLayerTrackScroll, pri);
 }

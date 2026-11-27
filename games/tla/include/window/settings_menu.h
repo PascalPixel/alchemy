@@ -28,11 +28,11 @@ typedef struct SETTINGS_MENU_STATE {
 	   and optionCnt; on the Pause menu its entry, indexing icon. */
 	Uint16 page;
 	Uint16 tint[3]; /* the window tint's red, green and blue, 0 to 31 */
-	/* Frames counted; its low three bits pick the picture of the marker of the
+	/* Ticks counted; its low three bits pick the picture of the marker of the
 	   slider in use. */
 	Uint16 cursorFrm;
-	/* The colour preset SELECT last chose, 0 to 5, from SettingsMenu_HuePresets
-	   and SettingsMenu_BrightnessPresets. */
+	/* The colour preset SELECT last chose, 0 to 5, from SettingsMenuHuePresets
+	   and SettingsMenuBrightnessPresets. */
 	Uint16 preset;
 	Uint8  unusedAfterPreset[20];
 	/* The settings being edited: window hue (0 to 23), window brightness (0 to

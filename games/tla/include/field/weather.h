@@ -7,7 +7,7 @@
 #include "types.h"
 
 /* A ground particle: an OAM entry linked by depth, its place (16.16 pixels),
-   its delay and its frame count. */
+   its delay and its tick count. */
 typedef struct WEATHER_PARTICLE {
 	Uint8  unused[4]; /* no code names it */
 	Uint16 y : 8;
@@ -34,7 +34,7 @@ typedef struct WEATHER_PARTICLE {
 /* WEATHER_PARTICLE.tmr after the decrement that counts a live particle down,
    when it was already free (0): the Uint16 wraps. */
 #define GROUND_PARTICLE_FREED 65535
-/* The frames of a ground particle's splash (Weather_RainSplashFrames, or a
+/* The frames of a ground particle's splash (WeatherRainSplashFrames, or a
    scene's own GroundParticleFrames, five halfwords each), played from the last
    down to the first. */
 #define RAIN_SPLASH_FRAMES	  16
@@ -42,7 +42,7 @@ typedef struct WEATHER_PARTICLE {
 /* WEATHER_STATE.particles. */
 #define WEATHER_PARTICLE_COUNT 64
 /* A raindrop's frames (fdWeatherUpdateRain). */
-#define RAIN_DROP_FRAMES	   12
+#define RAIN_DROP_TICKS		   12
 
 /* The heap slot weather while the ground particles run: their tiles' VRAM cache
    entry and first tile, and the particles. */

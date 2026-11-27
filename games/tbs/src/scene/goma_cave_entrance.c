@@ -78,10 +78,10 @@ static void scGomaCaveEntranceGiveShamansRod(void);
 #include "shared/field_effect_spawn.c"
 
 /* Shows the next message over the speaker, then pauses. */
-static void scGomaCaveEntranceSayThenWait(Sint32 actorId, Sint32 frames)
+static void scGomaCaveEntranceSayThenWait(Sint32 actorId, Sint32 ticks)
 {
 	fdScriptShowMessage(actorId, 0);
-	fdScriptWait(frames);
+	fdScriptWait(ticks);
 }
 
 const SCENE_ENTRANCE *scGetEntrances(void)
@@ -156,7 +156,7 @@ enum { CUE_PUSH_WEST_PILLAR_EAST = 5, CUE_PUSH_WEST_PILLAR_WEST = 6 };
 static void scGomaCaveEntrancePushWestPillar(void)
 {
 	FIELD_STATE *state;
-	Sint32		 offsetX;
+	Sint32		 ofsX;
 
 	state = FieldStateWork;
 	fdScriptStart();
@@ -167,11 +167,11 @@ static void scGomaCaveEntrancePushWestPillar(void)
 	sySndPlay(SE_PUSH);
 	/* A metatile east from CUE_PUSH_WEST_PILLAR_EAST, west from
 	   CUE_PUSH_WEST_PILLAR_WEST. */
-	offsetX = CUE_PUSH_WEST_PILLAR_EAST + CUE_PUSH_WEST_PILLAR_WEST -
+	ofsX = CUE_PUSH_WEST_PILLAR_EAST + CUE_PUSH_WEST_PILLAR_WEST -
 		state->stepCue * 2;
-	offsetX *= MAPGRID_METATILE_PIXELS;
-	fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, 0);
-	fdActorSetDestinationOffset(ACTOR_WEST_PILLAR, offsetX, 0);
+	ofsX *= MAPGRID_METATILE_PIXELS;
+	fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, ofsX, 0);
+	fdActorSetDestinationOffset(ACTOR_WEST_PILLAR, ofsX, 0);
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 	fdActorWaitForMoveById(ACTOR_WEST_PILLAR);
 	fdScriptWait(20);
@@ -525,13 +525,13 @@ static void scGomaCaveEntranceMoveStump(void)
 static void scGomaCaveEntranceWhirlwindOnStumpIvy(void)
 {
 	FIELD_EFFECT_STATE *effectState;
-	Uint8				flags;
+	Uint8				flg;
 
 	effectState = FieldEffectStateWork;
 	fdPsynergyLoadResources(ABILITY_WHIRLWIND, 1);
 	fdPsynergySetupActorPair(ACTOR_IVAN, ACTOR_STUMP_IVY);
-	flags = (Uint8)effectState->msgMode | FIELD_MESSAGE_LOWER;
-	effectState->msgMode = flags;
+	flg = (Uint8)effectState->msgMode | FIELD_MESSAGE_LOWER;
+	effectState->msgMode = flg;
 	fdPsynergyStartCast();
 	fdPsynergyRunHandler(FIELD_PSYNERGY_HANDLER_ON_TARGET);
 	fdPsynergyStopCasterUpdate();
@@ -607,10 +607,10 @@ retry:
 
 #include "shared/field_effect_duration_scripts.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 /* Stretches the tall ivy over the cave's mouth to 1.6 times its height. */

@@ -3,7 +3,7 @@
 
 /* A wait for a shake to settle gives up after five seconds, and ends once both
    amplitudes are under 1/256 pixel (16.16). */
-#define MAPGRID_SHAKE_SETTLE_FRAMES		   300
+#define MAPGRID_SHAKE_SETTLE_TICKS		   300
 #define MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE (toFIXED(1) / 256 - 1)
 /* One of the world map's two tile maps of one-byte tiles, BG3's and then BG2's,
    as fdWorldMapStartStillImage copies them into DecodeBuffer. */
@@ -14,7 +14,7 @@
    beach. */
 #define WORLD_MAP_BLOCK_BEACH (1 << 7)
 
-/* The sets of rows of WorldMap_TerrainBehaviorTable, 16 collision values each,
+/* The sets of rows of WorldMapTerrainBehaviorTable, 16 collision values each,
    which differ in the battles their walkable ground and forest give. */
 typedef enum TERRAIN_BEHAVIOR_ROWS {
 	TERRAIN_ROWS_PLAIN = 0,
@@ -35,26 +35,24 @@ enum {
 };
 
 /* Returns the world map's battle environment at position from
-   WorldMap_TerrainBehaviorTable, by its collision value and its block's rows,
+   WorldMapTerrainBehaviorTable, by its collision value and its block's rows,
    and stores the block's encounter region in encounterRegion. */
-Uint8 fdWorldMapGetBattleEnvironment(
-	WORLD_POS *position, Sint32 *encounterRegion)
+Uint8 fdWorldMapGetBattleEnvironment(WORLD_POS *pos, Sint32 *encounterRegion)
 {
-	Sint32	collisionKind = fdWorldMapGetCollision(position);
-	Sint32	x = position->x;
+	Sint32	collisionKind = fdWorldMapGetCollision(pos);
+	Sint32	x = pos->x;
 	Sint32	y;
 	Sint32	rows = TERRAIN_ROWS_PLAIN;
 	Uint32	blockX;
-	Uint32	index;
+	Uint32	idx;
 	Uint32 *block;
 	Uint32	region;
 
 	blockX = (x / toFIXED(32)) & (WORLD_MAP_VIEW_METATILES - 1);
-	y = position->y;
+	y = pos->y;
 
-	index =
-		blockX + (((y / toFIXED(32)) & (WORLD_MAP_VIEW_METATILES - 1)) << 5);
-	block = MetatileTiles + index;
+	idx = blockX + (((y / toFIXED(32)) & (WORLD_MAP_VIEW_METATILES - 1)) << 5);
+	block = MetatileTiles + idx;
 	if(((Uint8 *)block)[3] & WORLD_MAP_BLOCK_BEACH)
 		rows = TERRAIN_ROWS_BEACH;
 
@@ -68,11 +66,11 @@ Uint8 fdWorldMapGetBattleEnvironment(
 		region == SHAMAN_VILLAGE_SANDS_REGION)
 		rows = TERRAIN_ROWS_DESERT;
 
-	return WorldMap_TerrainBehaviorTable[rows + collisionKind];
+	return WorldMapTerrainBehaviorTable[rows + collisionKind];
 }
 
 /* Changes the shake without restarting an axis whose argument is negative.
-   Amplitudes are 16.16 pixels and decay is a 16.16 multiplier per frame. */
+   Amplitudes are 16.16 pixels and decay is a 16.16 multiplier per tick. */
 void fdMapGridSetScreenShake(FIXED shakeX, FIXED shakeY, FIXED shakeDecay)
 {
 	MAP_STATE *grid;
@@ -91,20 +89,20 @@ void fdMapGridSetScreenShake(FIXED shakeX, FIXED shakeY, FIXED shakeDecay)
 	}
 }
 
-/* Waits until both shake amplitudes are below 1/256 pixel, with a 300-frame
+/* Waits until both shake amplitudes are below 1/256 pixel, with a 300-tick
    limit for a shake whose decay never settles. */
 void fdMapGridWaitForShakeToSettle(void)
 {
 	MAP_STATE *grid;
-	Sint32	   waitedFrames;
+	Sint32	   waitedTicks;
 
 	grid = Ram_HeapSlots->mapGrid;
-	/* 300 frames is five seconds; 255 in 16.16 is just under 1/256 pixel. A
+	/* 300 ticks is five seconds; 255 in 16.16 is just under 1/256 pixel. A
 	   decay of 1.0 or more never settles, so the limit ends the wait. */
-	for(waitedFrames = 0; waitedFrames < MAPGRID_SHAKE_SETTLE_FRAMES &&
+	for(waitedTicks = 0; waitedTicks < MAPGRID_SHAKE_SETTLE_TICKS &&
 		(grid->shakeX > MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE ||
 			grid->shakeY > MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE);
-		waitedFrames++) {
+		waitedTicks++) {
 		sySynch(1);
 	}
 	/* A zero decay makes the next view update's shake its last. */
@@ -135,7 +133,7 @@ void fdTileMapDrawRowsFromRam(const WORLD_MAP_AFFINE_PAIR *lines, Uint8 *pixels)
 /* Rebuilds the ground plane's scanline terms when the world map pitch
    changes. */
 void fdWorldMapBuildScanlineTable(
-	FIXED pitchSlope, Sint32 *position, WORLD_MAP_SCANLINE *scanline)
+	FIXED pitchSlope, Sint32 *pos, WORLD_MAP_SCANLINE *scanline)
 {
 	Sint32 groundPoint[3];
 	Sint32 cameraPoint[3];
@@ -150,9 +148,9 @@ void fdWorldMapBuildScanlineTable(
 
 	/* The followed point on the ground (height 0), in camera space; horizon is
 	   its height less its depth times the pitch slope. */
-	groundPoint[0] = position[0];
+	groundPoint[0] = pos[0];
 	groundPoint[1] = groundHeight;
-	groundPoint[2] = position[2];
+	groundPoint[2] = pos[2];
 	syCalcPoint(groundPoint, cameraPoint);
 	horizon = cameraPoint[1] - syMulFX(cameraPoint[2], pitchSlope);
 	focus = -ProjectionWork.focal;

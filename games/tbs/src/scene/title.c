@@ -31,7 +31,7 @@ static void scTitleLoadBackground(void);
 /* The scene tables fdModeRun reads; the title has no exits, actors or cues. */
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return Screen_Entrances;
+	return ScreenEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -57,16 +57,16 @@ const CUE *scGetCues(void)
 /* Plays the screens the entrance asks for, then sets the scene that follows. */
 Sint32 scInit(void)
 {
-	Sint32 waitFrames;
+	Sint32 waitTicks;
 
 	if(MainRoutineStateWork.entrance == TITLE_FROM_WORLD_MAP) {
-		/* "To Be Continued": after 120 frames the logo waits up to 3600 frames
+		/* "To Be Continued": after 120 ticks the logo waits up to 3600 ticks
 		   (a minute) for a key press. */
 		fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
 		sySndPlay(MUS_TO_BE_CONTINUED);
 		scTitleRevealScreen(0);
 		sySynch(120);
-		for(waitFrames = 0; waitFrames < 3600 && PerPush == 0; waitFrames++)
+		for(waitTicks = 0; waitTicks < 3600 && PerPush == 0; waitTicks++)
 			sySynch(1);
 		fdScriptSetDestination(SCENE_TITLE, TITLE_AFTER_RUN);
 		return 0;
@@ -106,11 +106,11 @@ Sint32 scInit(void)
 					sySndPlay(SOUND_FADE_OUT_BGM);
 					syScreenFadeToBlack(30);
 					syScreenFadeWait();
-					waitFrames = 0;
+					waitTicks = 0;
 					if(PerData == 0) {
 						do {
 							sySynch(1);
-							if(++waitFrames > 119)
+							if(++waitTicks > 119)
 								break;
 						} while(PerData == 0);
 					}
@@ -147,13 +147,13 @@ enum { LETTERING_ROWS = 32 };
 /* Loads the "To Be Continued" lettering's sprites and their palette. */
 static void scTitleLoadSprs(Sint32 unused)
 {
-	Uint8			*decodedSprites;
+	Uint8			*decodedSprs;
 	volatile Uint32 *dma3;
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH || \
 	LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 	Uint8 *encodedGraphics;
 
-	decodedSprites = syHeapAllocEWRAM(DISPLAY_WIDTH * DISPLAY_HEIGHT);
+	decodedSprs = syHeapAllocEWRAM(DISPLAY_WIDTH * DISPLAY_HEIGHT);
 	encodedGraphics =
 		syResourceGetTableEntry(RESOURCE_TO_BE_CONTINUED_LETTERING);
 	if(TitleVramBlock == -1)
@@ -162,40 +162,40 @@ static void scTitleLoadSprs(Sint32 unused)
 	syDMAXCopy(encodedGraphics, (void *)OBJ_PLTT,
 		DMA_COPY_WORDS(LOGO_PALETTE_COLORS / 2), REG_DMA3);
 	encodedGraphics += LOGO_PALETTE_COLORS * 2;
-	syFieldDecompressTaggedLZ(encodedGraphics, decodedSprites);
+	syFieldDecompressTaggedLZ(encodedGraphics, decodedSprs);
 	/* The picture is a whole screen in 256 colours (to_be_continued_de.png and
 	   the others). The lettering is its bottom LETTERING_ROWS rows: 120 sprites
 	   of one 64-byte tile. The tiles of one colour above it are not loaded. */
 	mnVRAMLoad(TitleVramBlock, DISPLAY_WIDTH * LETTERING_ROWS,
-		decodedSprites + DISPLAY_WIDTH * (DISPLAY_HEIGHT - LETTERING_ROWS));
+		decodedSprs + DISPLAY_WIDTH * (DISPLAY_HEIGHT - LETTERING_ROWS));
 #else
 	/* The decoded data opens with its 16-colour palette, then 40 4-bit tiles of
 	   lettering. */
-	decodedSprites = syHeapAllocEWRAM(PALETTE_COLORS * 2 + 40 * TILE_SIZE_4BPP);
+	decodedSprs = syHeapAllocEWRAM(PALETTE_COLORS * 2 + 40 * TILE_SIZE_4BPP);
 	if(TitleVramBlock == -1)
 		TitleVramBlock = syVRAMCacheFindFreeEntry();
 	syFieldDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_TO_BE_CONTINUED_LETTERING),
-		decodedSprites);
-	syDMAXCopy(decodedSprites, (void *)&OBJ_PLTT_COLOR(LETTERING_PALETTE, 0),
+		decodedSprs);
+	syDMAXCopy(decodedSprs, (void *)&OBJ_PLTT_COLOR(LETTERING_PALETTE, 0),
 		DMA_COPY_WORDS(PALETTE_COLORS / 2), REG_DMA3);
-	mnVRAMLoad(TitleVramBlock, 40 * TILE_SIZE_4BPP,
-		decodedSprites + PALETTE_COLORS * 2);
+	mnVRAMLoad(
+		TitleVramBlock, 40 * TILE_SIZE_4BPP, decodedSprs + PALETTE_COLORS * 2);
 #endif
 	dma3 = REG_DMA3;
 	while(dma3[2] & DMA_BUSY)
 		;
-	syHeapRelease(decodedSprites);
+	syHeapRelease(decodedSprs);
 }
 
-/* The event that queues the "To Be Continued" lettering each frame, writing it
-   in from the left a column every two frames, each new column flickering for
+/* The event that queues the "To Be Continued" lettering each tick, writing it
+   in from the left a column every two ticks, each new column flickering for
    its first few. */
 static void scTitleUpdateSprReveal(void)
 {
 	Uint32	  *attributes;
-	TITLE_SPR *sprite;
-	Sint32	   tileIndex;
+	TITLE_SPR *spr;
+	Sint32	   tileIdx;
 	Sint32	   column;
 	Sint32	   revealAge;
 	Sint32	   screenY;
@@ -209,9 +209,9 @@ static void scTitleUpdateSprReveal(void)
 	/* Four rows of 30 8-by-8 sprites across the screen at y 128 to 152, in 256
 	   colours and semi-transparent. A 256-colour tile is two of the 32-byte
 	   tile numbers the cache offset counts in. */
-	sprite = TitleSprites;
+	spr = TitleSprites;
 	attributes = TitleSprites[0].attr;
-	tileIndex = VramCacheEntries[TitleVramBlock].ofs >> 5;
+	tileIdx = VramCacheEntries[TitleVramBlock].ofs >> 5;
 	row = 0;
 	screenY = 128;
 	for(; row <= 3; row++) {
@@ -219,21 +219,21 @@ static void scTitleUpdateSprReveal(void)
 #if FIX_POINTER_OUTSIDE_OBJECT
 			/* Stay inside each sprite's three-word array instead of walking
 			   into the next struct. */
-			attributes = sprite->attr;
+			attributes = spr->attr;
 #endif
 			*attributes++ = 0;
 			*attributes++ = OBJ_X(column * 8) | screenY | OBJ_256_COLORS |
 				OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-			*attributes++ = tileIndex;
-			revealAge = TitleRevealFrame / 2 - column;
+			*attributes++ = tileIdx;
+			revealAge = TitleRevealTick / 2 - column;
 			if(revealAge < 0)
 				revealAge = 0;
-			if(revealAge <= 2 && (FrameCount & 1))
+			if(revealAge <= 2 && (TickCount & 1))
 				revealAge = 0;
 			if(revealAge != 0)
-				syOAMAddSprAtDepth(sprite, OAM_DEPTH_FRONT);
-			sprite++;
-			tileIndex += 2;
+				syOAMAddSprAtDepth(spr, OAM_DEPTH_FRONT);
+			spr++;
+			tileIdx += 2;
 		}
 		screenY += 8;
 	}
@@ -241,9 +241,9 @@ static void scTitleUpdateSprReveal(void)
 
 	/* One row of 18 semi-transparent sprites of 8 by 16 pixels at y 136 and x
 	   88 to 224. */
-	sprite = TitleSprites;
+	spr = TitleSprites;
 	attributes = TitleSprites[0].attr;
-	tileIndex = VramCacheEntries[TitleVramBlock].ofs >> 5;
+	tileIdx = VramCacheEntries[TitleVramBlock].ofs >> 5;
 	column = 0;
 	screenY = 136;
 	for(; column <= 17; column++) {
@@ -254,18 +254,18 @@ static void scTitleUpdateSprReveal(void)
 		*attributes++ = 0;
 		*attributes++ = OBJ_X(screenX) | screenY | OBJ_SIZE_8X16 |
 			OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-		*attributes++ = OBJ_PALETTE(LETTERING_PALETTE) | tileIndex;
-		revealAge = TitleRevealFrame / 2 - column;
+		*attributes++ = OBJ_PALETTE(LETTERING_PALETTE) | tileIdx;
+		revealAge = TitleRevealTick / 2 - column;
 		if(revealAge < 0)
 			revealAge = 0;
-		if(revealAge <= 2 && (FrameCount & 1))
+		if(revealAge <= 2 && (TickCount & 1))
 			revealAge = 0;
 		if(revealAge != 0)
-			syOAMAddSprAtDepth(sprite++, OAM_DEPTH_FRONT);
-		tileIndex += 2;
+			syOAMAddSprAtDepth(spr++, OAM_DEPTH_FRONT);
+		tileIdx += 2;
 	}
 #endif
-	TitleRevealFrame++;
+	TitleRevealTick++;
 }
 
 /* Shows the Golden Sun logo for TITLE_FROM_WORLD_MAP: the logo fades up from
@@ -276,9 +276,9 @@ static void scTitleRevealScreen(Sint32 unused)
 
 	scTitleLoadBackground();
 	fdScriptWait(30);
-	TitleRevealFrame = 0;
+	TitleRevealTick = 0;
 	scTitleLoadSprs(0);
-	sySetFrameEvent(scTitleUpdateSprReveal, EVENT_PASS_FRAME);
+	sySetTickEvent(scTitleUpdateSprReveal, EVENT_PASS_TICK);
 	/* Show BG0, BG2 and the sprites. BG1 to BG3 start fully darkened, so the
 	   logo on BG2 is black; the semi-transparent lettering is blended onto the
 	   layers under it at full weight. */
@@ -303,7 +303,7 @@ static void scTitleRevealScreen(Sint32 unused)
 	FieldStateWork->transition = 0;
 	FieldStateWork->transitionFrm = 1;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	FieldStateWork->transitionFrm = 60;
 }
 
@@ -316,7 +316,7 @@ static void scTitleLoadBackground(void)
 	Uint16		*tilemap;
 	Uint32		 screenX;
 	Uint32		 screenY;
-	Uint16		 tileIndex;
+	Uint16		 tileIdx;
 	SCROLL_PAIR *bgScroll;
 	Sint32		 offscreenTile = OFFSCREEN_TILE;
 
@@ -332,10 +332,10 @@ static void scTitleLoadBackground(void)
 	syDMAXCopy((void *)Ram_MapGridMetatileBuffer, LOGO_TILES,
 		DMA_COPY_WORDS(9600), REG_DMA3);
 	tilemap = LOGO_MAP;
-	tileIndex = LOGO_FIRST_TILE;
+	tileIdx = LOGO_FIRST_TILE;
 	for(screenY = 0; screenY <= 19; screenY++) {
 		for(screenX = 0; screenX <= 29; screenX++)
-			*tilemap++ = tileIndex++;
+			*tilemap++ = tileIdx++;
 		*tilemap++ = offscreenTile;
 		*tilemap++ = offscreenTile;
 	}

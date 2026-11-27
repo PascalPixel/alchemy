@@ -8,7 +8,7 @@
    << 4) + column: the second (1) inside a square whose corners are rounded off,
    the first (0) in the corners. */
 /* clang-format off */
-const Uint8 Terrain_RoundedSquareMask[256] = {
+const Uint8 TerrainRoundedSquareMask[256] = {
 	0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
 	0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
 	0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
@@ -29,7 +29,7 @@ const Uint8 Terrain_RoundedSquareMask[256] = {
 
 /* The sample fdTerrainGetSampleTableHeight reads at each position: 0, 1 or */
 /* 2, split along two diagonals. */
-const Uint8 Terrain_SampleIndexTable[256] = {
+const Uint8 TerrainSampleIndexTable[256] = {
 	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

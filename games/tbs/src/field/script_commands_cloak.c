@@ -60,13 +60,13 @@ void fdPsynergyCheckCloakTile(void)
 void fdPsynergyEndCloak(void)
 {
 	ACTOR		  *actor;
-	SPR			  *sprite;
+	SPR			  *spr;
 	SPR_ANIMATION *entry;
 	Uint32		   i;
 
 	actor = fdActorLookup(MainRoutineStateWork.leaderActorId);
-	sprite = actor->spr;
-	entry = sprite->entries[0];
+	spr = actor->spr;
+	entry = spr->entries[0];
 
 	sySndPlayStub(SE_CAST);
 	syCloseEvent(fdPsynergyCheckCloakTile);
@@ -75,25 +75,25 @@ void fdPsynergyEndCloak(void)
 
 	for(i = 0; i < 5; ++i) {
 		entry->colMode = SPRITE_COLOR_WHITE;
-		sprite->dirty = 1;
-		sprite->flg = SPRITE_FLAG_OUTLINED;
+		spr->dirty = 1;
+		spr->flg = SPRITE_FLAG_OUTLINED;
 		sySynch(2);
-		sprite->dirty = 1;
-		sprite->flg = 0;
+		spr->dirty = 1;
+		spr->flg = 0;
 		sySynch(2);
 	}
 
 	for(i = 0; i < 5; ++i) {
 		entry->colMode = SPRITE_COLOR_WHITE;
-		sprite->dirty = 1;
-		sprite->flg = 0;
+		spr->dirty = 1;
+		spr->flg = 0;
 		sySynch(2);
 		entry->colMode = SPRITE_COLOR_NORMAL;
-		sprite->dirty = 1;
+		spr->dirty = 1;
 		sySynch(2);
 	}
 
-	sprite->flg = SPRITE_FLAG_SHADOW;
+	spr->flg = SPRITE_FLAG_SHADOW;
 	MainRoutineStateWork.cloaked = 0;
 }
 
@@ -102,7 +102,7 @@ void fdPsynergyEndCloak(void)
 void fdPsynergyResumeCloakCheck(void)
 {
 	if(MainRoutineStateWork.cloaked != 0) {
-		sySetEvent(fdPsynergyCheckCloakTile, EVENT_PASS_FRAME);
+		sySetEvent(fdPsynergyCheckCloakTile, EVENT_PASS_TICK);
 	}
 }
 
@@ -112,8 +112,8 @@ void fdPsynergyStartCloak(void)
 {
 	FIELD_STATE	  *state = FieldStateWork;
 	ACTOR		  *leader = fdActorLookup(MainRoutineStateWork.leaderActorId);
-	SPR			  *sprite = leader->spr;
-	SPR_ANIMATION *entry = sprite->entries[0];
+	SPR			  *spr = leader->spr;
+	SPR_ANIMATION *entry = spr->entries[0];
 	Uint32		   n;
 	void (*check)(void);
 
@@ -122,21 +122,21 @@ void fdPsynergyStartCloak(void)
 	leader->update = 0;
 	for(n = 0; n <= 9; n++) {
 		entry->colMode = SPRITE_COLOR_WHITE;
-		sprite->dirty = 1;
-		sprite->flg = SPRITE_FLAG_OUTLINED;
+		spr->dirty = 1;
+		spr->flg = SPRITE_FLAG_OUTLINED;
 		sySynch(2);
-		sprite->dirty = 1;
-		sprite->flg = 0;
+		spr->dirty = 1;
+		spr->flg = 0;
 		sySynch(2);
 	}
 	n = 0;
 	entry->colMode = n;
-	sprite->flg = SPRITE_FLAG_OUTLINED;
-	sprite->dirty = 1;
+	spr->flg = SPRITE_FLAG_OUTLINED;
+	spr->dirty = 1;
 	/* Check the metatile at once: off a Cloak metatile, unhide and drop the
 	   request the check just raised (n is 0 here). */
 	check = fdPsynergyCheckCloakTile;
-	sySetEvent(check, EVENT_PASS_FRAME);
+	sySetEvent(check, EVENT_PASS_TICK);
 	MainRoutineStateWork.cloaked = 1;
 	check();
 	if(state->psynergy == CLOAK_END) {

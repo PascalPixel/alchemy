@@ -8,11 +8,11 @@ Sint32 mnItemMenuRunStub(void);
 Sint32 mnPsynergyMenuRunStub(void);
 Sint32 mnStatScreenRunStub(void);
 Sint32 mnPartyMemberChooserOpenStub(void);
-void   mnCreatePartyFiguresStub(void *source, Sint32 originX, Sint32 originY,
-	  Sint32 spacing, Sint32 unused);
+void   mnCreatePartyFiguresStub(
+	  void *src, Sint32 originX, Sint32 originY, Sint32 spacing, Sint32 unused);
 void   mnReleasePartyFiguresStub(void);
 void   mnIconShowStub(struct WINDOW_SPR *object);
 Sint32 mnDjinnMenuRunStub(void);
-void   mnItemMenuDrawItemDetailsStub(Sint32 window, Sint32 inventoryEntry);
+void   mnItemMenuDrawItemDetailsStub(Sint32 win, Sint32 inventoryEntry);
 
 #endif

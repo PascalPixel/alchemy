@@ -19,13 +19,13 @@
    in this order. */
 typedef enum LIST_SORT {
 	/* The equipped items, the items that are not equipment, then the other
-	   equipment (Menu_ListOrderEquippedThenItems). */
+	   equipment (MenuListOrderEquippedThenItems). */
 	LIST_SORT_EQUIPPED_THEN_ITEMS = 0,
 	/* The equipped items, the other equipment, then the rest
-	   (Menu_ListOrderEquippedThenEquipment). */
+	   (MenuListOrderEquippedThenEquipment). */
 	LIST_SORT_EQUIPPED_THEN_EQUIPMENT = 1,
-	LIST_SORT_EQUIPMENT_FIRST = 2, /* Menu_ListOrderEquipmentFirst */
-	/* The items that are not equipment first (Menu_ListOrderItemsFirst). */
+	LIST_SORT_EQUIPMENT_FIRST = 2, /* MenuListOrderEquipmentFirst */
+	/* The items that are not equipment first (MenuListOrderItemsFirst). */
 	LIST_SORT_ITEMS_FIRST = 3,
 	LIST_SORT_COUNT = 4
 } LIST_SORT;
@@ -40,21 +40,21 @@ typedef enum LIST_SORT {
 
 /* The width in tiles of each status row's highlight on the status page (enum
    UNIT_STAT). */
-extern Uint8 StatusScreen_CursorWidths[];
-extern Uint8 Menu_ListOrderItemsFirst[];
-extern Uint8 Menu_ListOrderEquippedThenItems[];
-extern Uint8 Menu_ListOrderEquippedThenEquipment[];
-extern Uint8 Menu_ListOrderEquipmentFirst[];
+extern Uint8 StatusScreenCursorWidths[];
+extern Uint8 MenuListOrderItemsFirst[];
+extern Uint8 MenuListOrderEquippedThenItems[];
+extern Uint8 MenuListOrderEquippedThenEquipment[];
+extern Uint8 MenuListOrderEquipmentFirst[];
 /* `-`, before a stat change that is not a gain (mnItemMenuDrawStat). */
-extern Uint8 Menu_MinusSignString;
+extern Uint8 MenuMinusSignString;
 /* `+`, before a stat gain. */
-extern Uint8 Menu_PlusSignString;
+extern Uint8 MenuPlusSignString;
 /* The field menu's four icons: the command at each place, and the place of each
    command. */
-extern Sint8 Menu_TopEntryCommandByPosition[];
-extern Sint8 Menu_TopEntryPositionByCommand[];
+extern Sint8 MenuTopEntryCommandByPosition[];
+extern Sint8 MenuTopEntryPositionByCommand[];
 /* `L`, before a level in the file list (screens_save.c). */
-extern const Uint8 StatusMenu_LevelLetterString[];
+extern const Uint8 StatusMenuLevelLetterString[];
 void			   mnHideEntryIcons(void);
 
 struct WINDOW;
@@ -62,25 +62,25 @@ struct WINDOW_SPR;
 struct DJINN_MENU_BACKDROP;
 
 /* The down arrow from the class now to the class an equipment would give
-   (backdrop.4bpp), which mnWatchStart blinks every four frames at
+   (backdrop.4bpp), which mnWatchStart blinks every four ticks at
    CLASS_CHANGE_ARROW_TILE. */
 extern Uint8 Menu_ClassChangeArrowTile[];
 void   mnDjinnMenuDrawPage(struct DJINN_MENU_BACKDROP *backdrop, Sint32 first);
 void   fdScriptFinishScreenTransitionStub(void);
 void   mnItemMenuArrangeCategoryItemIcons(Uint16 *items);
-void   mnItemMenuDrawEquippedItemNames(Sint32 window, Uint16 *items);
+void   mnItemMenuDrawEquippedItemNames(Sint32 win, Uint16 *items);
 void   gmPartyAdjustCoinsStub(Sint32 amount);
 Sint32 gmPartyListMembersStub(Sint16 *unitIds);
 Sint32 gmPartySumDjinnCountsStub(Sint32 element);
-void  *mnStringFormatPlayTime(Sint32 frames, Uint8 *out);
+void  *mnStringFormatPlayTime(Sint32 ticks, Uint8 *out);
 
 /* `:` and the sixteen hex digits, for the debug rooms' flag and destination
    lists. */
-extern const Uint8 Menu_ColonString[];
-extern const Uint8 Menu_HexDigitsString[];
-/* The frames a selection made for the player to watch waits at each step, by
+extern const Uint8 MenuColonString[];
+extern const Uint8 MenuHexDigitsString[];
+/* The ticks a selection made for the player to watch waits at each step, by
    the icons still to go (mnIconMenuAnimateTo). */
-extern Uint8 Menu_SelectionStepDelays[];
+extern Uint8 MenuSelectionStepDelays[];
 
 /* mnCreditsRun's modes: the title's story crawl over the slideshow, or the
    staff credits from a page, CREDITS_MODE_FIRST_PAGE being their first. */
@@ -114,7 +114,7 @@ Sint32 mnStatScreenRun(void);
 Sint32 mnPartyMemberChooserOpen(void);
 /* Creates a hand cursor sprite in window at (x, y), loading the hand's tiles
    into a free VRAM block. */
-Sint32 mnIconCreateHandCursor(struct WINDOW *window, Sint32 x, Sint32 y);
+Sint32 mnIconCreateHandCursor(struct WINDOW *win, Sint32 x, Sint32 y);
 /* Shows an icon at its place, unscaled. */
 void mnIconShow(struct WINDOW_SPR *icon);
 /* Runs the Djinn menu over the field: the field menu's Djinn screen
@@ -128,14 +128,13 @@ void mnIconShow(struct WINDOW_SPR *icon);
 Sint32 mnDjinnMenuRun(void);
 /* Describes item in window with the entry's own count, through
    mnItemMenuDrawItemDetailsWithCount. */
-void mnItemMenuDrawItemDetails(Sint32 window, Sint32 item);
+void mnItemMenuDrawItemDetails(Sint32 win, Sint32 item);
 /* Describes an item (an inventory entry) in window, one 8-pixel row a line: its
    equip bonuses and effects, a curse, the Psynergy it bestows, its uses and its
    count, or failing all of these whether it is rare or important. count is the
    count to show, which only Japanese reads; mnItemMenuDrawItemDetails passes
    -1, the entry's own. */
-void mnItemMenuDrawItemDetailsWithCount(
-	Sint32 window, Sint32 item, Sint32 count);
+void mnItemMenuDrawItemDetailsWithCount(Sint32 win, Sint32 item, Sint32 cnt);
 /* Lends HIGHLIGHT_PALETTE to the element icons: copies the first sprite
    palette, the icons' colours, into it, then WINDOW_BACKGROUND_COLOR over its
    TEXT_BACKGROUND_COLOR. */
@@ -147,30 +146,30 @@ void mnUpdatePartyFigures(void);
    from party place first on, standing (ANIM_STAND), and counts the party. */
 void mnCreatePartyFigures(Sint32 first);
 /* Creates the first four party members' figures in a row from tile (originX,
-   originY) inside window, three tiles apart, and starts placing them each frame
+   originY) inside window, three tiles apart, and starts placing them each tick
    (mnUpdatePartyFigures). */
-void mnShowPartyFigures(struct WINDOW *window, Sint32 originX, Sint32 originY);
+void mnShowPartyFigures(struct WINDOW *win, Sint32 originX, Sint32 originY);
 /* Destroys the menu's party figures and stops placing them. */
 void mnReleasePartyFigures(void);
 /* Replaces the four Djinn figures with one Djinni of each element
-   (DjinnFigures_SpriteIds) walking (ANIM_WALK), at FIGURE_START_X and
+   (DjinnFiguresSpriteIds) walking (ANIM_WALK), at FIGURE_START_X and
    MENU_FIGURE_HIDDEN_Y until the screen moves them, and starts placing them
-   each frame (mnDjinnFiguresUpdateTopRow). */
+   each tick (mnDjinnFiguresUpdateTopRow). */
 void mnDjinnFiguresInitTopRow(void);
 /* Destroys the four Djinn figures and stops placing them. */
 void mnDjinnFiguresReleaseTopRow(void);
 /* Shows the Djinn figures of the top row (nonzero) or hides them (0). */
 void mnDjinnFiguresSetShown(Sint32 shown);
 /* Replaces Djinn figure index with a Djinni of element kind
-   (DjinnFigures_SpriteIds) playing animation. */
-void mnDjinnFiguresReplaceSlot(Sint32 index, Sint32 kind, Sint32 animation);
+   (DjinnFiguresSpriteIds) playing animation. */
+void mnDjinnFiguresReplaceSlot(Sint32 idx, Sint32 kind, Sint32 anm);
 /* Moves Djinn figure index to screen pixel (x, y), if it exists. */
-void mnDjinnFiguresSetSlotPos(Sint32 index, Sint32 x, Sint32 y);
+void mnDjinnFiguresSetSlotPos(Sint32 idx, Sint32 x, Sint32 y);
 /* Turns Djinn figure index to face facing (FACING), if it exists. */
-void mnDjinnFiguresSetSlotFacing(Sint32 index, Sint32 facing);
+void mnDjinnFiguresSetSlotFacing(Sint32 idx, Sint32 facing);
 /* Sets Djinn figure index's scale, if it exists: positive grows towards full
    size, negative holds at its size. */
-void mnDjinnFiguresSetSlotPhase(Sint32 index, Sint32 scale);
+void mnDjinnFiguresSetSlotPhase(Sint32 idx, Sint32 scale);
 
 /* The title module's functions in the order of its stub table. Shows the title
    screen from white: the Golden Sun logo over the valley and its lighthouse,
@@ -188,7 +187,7 @@ void mnTitleBeforeLogosNoOperation(void);
    unused, waits a second, fades in, holds three seconds and fades out, faster
    once skipped. Returns -1 when A or Start skipped it. */
 Sint32 mnTitleShowPublisherLogo(Sint32 mode);
-/* Shows the Camelot logo for two seconds, cycling its four frames of tiles. A
+/* Shows the Camelot logo for two seconds, cycling its four ticks of tiles. A
    or Start ends it early. A unit whose ROM code is compiled against another
    form defines OWN_mnTitleShowCamelotLogo and declares that form itself. */
 #ifndef OWN_mnTitleShowCamelotLogo
@@ -220,11 +219,11 @@ void mnEndingImageStart(void);
    (the fill word marks the second block's tiles), and queues the resource's
    128-colour palette. Then it copies the map at position into the tilemap
    (CopyScrollMap), flips the block and restarts the fade-in counter. */
-void mnEndingImageShow(Sint32 resource, Uint8 *map, Sint32 position);
+void mnEndingImageShow(Sint32 resource, Uint8 *map, Sint32 pos);
 /* Sets the row the ending's scrolling image moves to, in pixels from its top,
-   at most EndingImage_Speed a frame. */
+   at most EndingImageSpeed a tick. */
 void mnEndingImageSetTargetRow(Uint16 row);
-/* Waits, for at most 300 frames, until the scroll reaches its row. */
+/* Waits, for at most 300 ticks, until the scroll reaches its row. */
 void mnEndingImageWaitForScroll(void);
 /* Moves the top strip's eight sprites to y 120 when enable is set, and to y 0
    otherwise. */

@@ -17,13 +17,13 @@ struct ACTOR;
 
 /* An IWRAM word the scrolling camera's setup clears; nothing in the tree reads
    it. */
-extern Sint32 Camera_UnreadWordA;
+extern Sint32 CameraUnreadWordA;
 /* The second IWRAM word the scrolling camera's setup clears; also unread. With
    no reader to give them a role, the two are numbered in IWRAM order. */
-extern Sint32		Camera_UnreadWordB;
-extern const Sint32 Actor_DefaultScript[];
-extern const Uint8	WorldMap_BattleEnvironments[];
-/* The size of fdRenderDecodePicture, copied to HEAP_SLOT_FRAME_SCRATCH; an
+extern Sint32		CameraUnreadWordB;
+extern const Sint32 ActorDefaultScript[];
+extern const Uint8	WorldMapBattleEnvironments[];
+/* The size of fdRenderDecodePicture, copied to HEAP_SLOT_TICK_SCRATCH; an
    address equal to the size (ld_script.ld). */
 extern Uint8 Render_DecodePictureCodeSize[];
 /* Four 256-byte colour tables (remap0 to remap3), indexed by pixel: the
@@ -45,7 +45,7 @@ typedef struct PATH_RECORDER {
 	Sint16 mirror;	/* nonzero mirrors the path across the finish */
 	Sint16 actorId; /* the actor id moved along the path */
 	Uint16 pathIdx; /* the next halfword of COLOSSO_RACE_STATE.path, x then z */
-	/* Frames the actor has not moved; from 3 it stands (fdActorSelectAnimation
+	/* Ticks the actor has not moved; from 3 it stands (fdActorSelectAnimation
 	   1). */
 	Sint16 still;
 } PATH_RECORDER;
@@ -58,20 +58,20 @@ typedef struct SWITCH_METATILE {
 
 /* One of a ledge jump's dust puffs (fdEffectSpawnDustPuff):
    SC_WAIT(1) looped 38 times, then SC_RELEASE. */
-extern const Sint32 FieldEffect_BurstParticleScriptA[];
+extern const Sint32 FieldEffectBurstParticleScriptA[];
 /* The other dust puff: the same, looped 18 times. */
-extern const Sint32 FieldEffect_BurstParticleScriptB[];
-extern Uint32		WorldMap_GraphicsResources[][6];
+extern const Sint32 FieldEffectBurstParticleScriptB[];
+extern Uint32		WorldMapGraphicsResources[][6];
 /* SC_WAIT(40), then SC_RELEASE: the one-off attached effect that ends by itself
    (fdEffectSetAttached, ATTACHED_EFFECT_ONCE). */
-extern const Sint32 Actor_WaitScript[];
+extern const Sint32 ActorWaitScript[];
 /* The sparkles' 16 by 16 tiles, packed (fdEffectInitSparkles). */
 extern const Uint8 FieldEffect_SparkleTiles[];
-extern const Uint8 Field_ExamineCueMessageOffsets[];
+extern const Uint8 FieldExamineCueMessageOffsets[];
 /* The motes of light's 16 by 16 tiles, packed (fdMotesStart). */
 extern const Uint8 FieldEffect_MoteTiles[];
-extern Sint32	   DjinnFigures_SpriteIds[];
-extern Sint32	   ShipRooms_ShakeTimer;
+extern Sint32	   DjinnFiguresSpriteIds[];
+extern Sint32	   ShipRoomsShakeTimer;
 struct FLOODGATE_LOG;
 /* The ACTOR_COUNT actors (HEAP_SLOT_ACTORS), 112 bytes each. */
 #define ActorsWork (*(ACTOR **)&HeapSlots[HEAP_SLOT_ACTORS])
@@ -95,49 +95,49 @@ typedef enum WORLD_MAP_LIGHTHOUSE {
 /* The race gauge's 16 colours, loaded as OBJ palette 14
    (scColossoDrawGauge). */
 extern Uint16 Colosso_GaugePalette[];
-/* Frames in a row the chase has found a suspect cornered; at
-   LOG_ROOMS_A_CORNERED_FRAMES the chase raises its script. */
-extern Uint16 LogRoomsA_CorneredFrames;
+/* Ticks in a row the chase has found a suspect cornered; at
+   LOG_ROOMS_A_CORNERED_TICKS the chase raises its script. */
+extern Uint16 LogRoomsACorneredTicks;
 /* The size of fdActorUpdateAll's code, an address equal to the size
    (ld_script.ld). */
 extern Uint8	   fdActorUpdateAllCodeSize[];
-extern const Uint8 Actor_BlinkSpriteColors[];
+extern const Uint8 ActorBlinkSpriteColors[];
 /* The actor motion scripts: movement types 1 to 7, which fdActorSetMovementType
    starts by number, and two turning scripts with no movement type number.
    Movement type 1: a lone SC_END. */
-extern const Sint32 MovementType_StandScript[];
+extern const Sint32 MovementTypeStandScript[];
 /* Movement type 2: wanders within 16 pixels of home (SC_WANDER_HOME) at half a
-   pixel a frame. */
-extern const Sint32 MovementType_WanderScript[];
+   pixel a tick. */
+extern const Sint32 MovementTypeWanderScript[];
 /* Movement type 3: the same within 8 pixels of home. */
-extern const Sint32 MovementType_WanderNearScript[];
-/* Movement type 4: wanders within 6 pixels of home at 0.4 pixels a frame. */
-extern const Sint32 MovementType_WanderCloseScript[];
+extern const Sint32 MovementTypeWanderNearScript[];
+/* Movement type 4: wanders within 6 pixels of home at 0.4 pixels a tick. */
+extern const Sint32 MovementTypeWanderCloseScript[];
 /* Waits to arrive, then turns by fdActorStepAng until it faces the kept angle
    (fdActorLaunchFromLeader). */
-extern const Sint32 Actor_LaunchScript[];
-/* Movement type 5: fdActorMoveTowardTarget every frame, forever. */
-extern const Sint32 MovementType_FollowWatchedScript[];
+extern const Sint32 ActorLaunchScript[];
+/* Movement type 5: fdActorMoveTowardTarget every tick, forever. */
+extern const Sint32 MovementTypeFollowWatchedScript[];
 /* Movement type 7: fdActorClearSprAndCollisionFlags once, then SC_END. */
-extern const Sint32 MovementType_ResetActionScript[];
+extern const Sint32 MovementTypeResetActionScript[];
 /* Turns by fdActorStepAng until it faces the kept angle, then SC_END. */
-extern const Sint32 Actor_StepAngleScript[];
-/* Movement type 6: turns toward the leader every frame, forever. */
-extern const Sint32 MovementType_FaceLeaderScript[];
-extern const Sint32 Actor_VariantScripts[];
+extern const Sint32 ActorStepAngleScript[];
+/* Movement type 6: turns toward the leader every tick, forever. */
+extern const Sint32 MovementTypeFaceLeaderScript[];
+extern const Sint32 ActorVariantScripts[];
 /* Lamakan Desert's heat gauge (scHeatGaugeStart and scHeatGaugeDraw). The
    gauge's tiles, packed (tagged LZ). */
 extern Uint8 HeatGauge_Tiles[];
 /* The gauge's 16 colours, loaded as OBJ palette 14. */
 extern const Uint16 HeatGauge_Palette[16];
 /* The sprite picture decoder, ARM code run from a copy in
-   HEAP_SLOT_FRAME_SCRATCH. */
+   HEAP_SLOT_TICK_SCRATCH. */
 extern Uint8 fdRenderDecodePicture[];
 /* The statue scene's three scrolling strips, packed (syDecompressByteLZ). */
 extern Uint8 SolSanctumStatue_SpriteRowsGraphics[];
 /* The six large things' sprite animations, which pick their rectangles in
-   PushedActor_Rectangles; each scene with them defines its own. */
-extern Uint32 PushedActor_RectangleKinds[];
+   PushedActorRectangles; each scene with them defines its own. */
+extern Uint32 PushedActorRectangleKinds[];
 /* The tilemap row drawer, run from a copy in HEAP_SLOT_RAM_CODE_TEMP. */
 extern const Uint8 fdTileMapDrawRows[];
 /* The size of fdTileMapDrawRows (picture_decode.s). */
@@ -145,49 +145,49 @@ extern Uint8 fdTileMapDrawRowsCodeSize[];
 /* The size of fdWorldMapUpdateAffineLines, copied to HEAP_SLOT_RAM_CODE; an
    address equal to the size (ld_script.ld). */
 extern Uint8		fdWorldMapUpdateAffineLinesCodeSize;
-extern const Sint32 WorldMap_FootprintActions[6];
+extern const Sint32 WorldMapFootprintActions[6];
 /* The direction pad's headings, defined as Uint16 in facing.c. Declared here
    with the sign, so Up's three quarters of a turn reads negative; the player's
    steps keep each one as a Uint16 again, the same heading. */
-extern const Sint16 WorldMap_KeyHeadings[16];
+extern const Sint16 WorldMapKeyHeadings[16];
 
 /* The field effects' scripts and tables (field_mode_tables.c,
    movement_scripts.c, field_effect_tables.c and
    graphics/field_effects/spark_tiles.s). */
-extern const Uint16 Input_DpadAngles[];
-extern const Sint8	Halt_FlickerColorModes[];
+extern const Uint16 InputDpadAngles[];
+extern const Sint8	HaltFlickerColorModes[];
 /* The 32 by 16 spark of Avoid's falling arcs (arc_spark.png), 4 bits a pixel;
    fdPsynergyAvoid loads it. */
 extern const Uint8	FieldEffect_ArcSparkTiles[];
-extern const Sint32 Growth_LeafScript[];
+extern const Sint32 GrowthLeafScript[];
 /* Waits to arrive, sets off fdEffectSpawnHeavyImpact and releases the actor:
    Force's fist as it lands. */
-extern const Sint32 Force_FistScript[];
-/* The emote bubble's script (fdActorShowEmoteById): eight 2-frame steps of
-   squash and stretch (SC_ADD to SW_SCALE_X and SW_SCALE_Y), 30 frames still,
+extern const Sint32 ForceFistScript[];
+/* The emote bubble's script (fdActorShowEmoteById): eight 2-tick steps of
+   squash and stretch (SC_ADD to SW_SCALE_X and SW_SCALE_Y), 30 ticks still,
    then SC_RELEASE. */
-extern const Sint32 Emote_BubbleScript[];
-extern const Sint32 Reveal_MarkerScript[];
-extern const Sint32 ItemDisplay_GrowInScript[];
-extern const Sint32 FieldEffect_ParticleScript[];
-extern const Uint32 FieldEffect_PulseScales[];
-extern const Sint32 FieldEffect_SourceHoldScript[];
-extern const Sint16 FieldEffect_TargetRangeByMode[];
+extern const Sint32 EmoteBubbleScript[];
+extern const Sint32 RevealMarkerScript[];
+extern const Sint32 ItemDisplayGrowInScript[];
+extern const Sint32 FieldEffectParticleScript[];
+extern const Uint32 FieldEffectPulseScales[];
+extern const Sint32 FieldEffectSourceHoldScript[];
+extern const Sint16 FieldEffectTargetRangeByMode[];
 /* A lone SC_RELEASE: an actor that has arrived releases itself
    (fdMindReadUpdateCrescent). */
-extern const Sint32 FieldEffect_UntargetedActorScript[];
+extern const Sint32 FieldEffectUntargetedActorScript[];
 /* The 32 by 16 spark a field Psynergy's particles draw (spark.png), 4 bits a
    pixel; fdPsynergyLoadResources loads it. */
 extern const Uint8 FieldEffect_SparkTiles[];
-extern const Uint8 FieldEffect_QuadrantModes[];
+extern const Uint8 FieldEffectQuadrantModes[];
 /* The eight tints (PALETTE_TINT_CUSTOM and an RGB555 colour) a field Psynergy
-   fades the palettes toward, picked by the frame counter or by the
+   fades the palettes toward, picked by the tick counter or by the
    FLAG_PSYNERGY_TINT flags (fdPsynergyFadeToCastCol). */
-extern const Sint32 FieldPsynergy_CastColors[];
-extern const Sint16 Weather_RainSplashFrames[];
+extern const Sint32 FieldPsynergyCastColors[];
+extern const Sint16 WeatherRainSplashFrames[];
 /* The ground particles' 16 by 16 tiles, packed (syDecompressByteLZ). */
 extern const Uint8	Weather_ParticleTiles[];
-extern const Sint32 ItemDisplay_PulseScript[];
+extern const Sint32 ItemDisplayPulseScript[];
 
 /* The first five 256-byte colour tables of SPR_COL_MODE, indexed by pixel. */
 extern const Uint8 SpriteColorTables[][256];
@@ -291,7 +291,7 @@ typedef enum ACTOR_CREATE {
 #define ACTOR_CREATE_SPRITE_MASK 0xfff
 
 /* The world map's collision values (fdWorldMapGetCollision), 1 to 15; each
-   indexes a row of WorldMap_BattleEnvironments. */
+   indexes a row of WorldMapBattleEnvironments. */
 typedef enum WORLD_MAP_COLLISION {
 	/* The party walks only on WORLD_MAP_COLLISION_WALKABLE_FIRST to
 	   WORLD_MAP_COLLISION_WALKABLE_LAST (fdWorldMapIsWalkable). */
@@ -306,7 +306,7 @@ typedef enum WORLD_MAP_COLLISION {
 	WORLD_MAP_COLLISION_WALKABLE_LAST = 12
 } WORLD_MAP_COLLISION;
 
-/* A world map battle environment (WorldMap_BattleEnvironments,
+/* A world map battle environment (WorldMapBattleEnvironments,
    fdWorldMapGetBattleEnvironment): what its ground means for battles, named by
    the battle background fdBattleBackgroundSelectForEnvironment gives it. */
 typedef enum BATTLE_ENVIRONMENT {
@@ -325,7 +325,7 @@ typedef enum BATTLE_ENVIRONMENT {
 } BATTLE_ENVIRONMENT;
 
 /* A world map metatile's encounter region (bits 30..24 of its block word),
-   which picks its encounter zones (WorldMap_EncounterRules), each named for the
+   which picks its encounter zones (WorldMapEncounterRules), each named for the
    places whose entrances lie in it. */
 typedef enum WORLD_MAP_ENCOUNTER_REGION {
 	WORLD_MAP_ENCOUNTER_REGION_VALE_VAULT = 1, /* also Lunpa and Goma Cave */
@@ -349,7 +349,7 @@ typedef enum WORLD_MAP_ENCOUNTER_REGION {
 } WORLD_MAP_ENCOUNTER_REGION;
 
 /* A map metatile's terrain kind: the low four bits of its shape's first byte,
-   which pick its height function from MapGrid_TerrainHeightFunctions. */
+   which pick its height function from MapGridTerrainHeightFunctions. */
 typedef enum TERRAIN_KIND {
 	TERRAIN_FLAT = 0,	 /* the first sample everywhere */
 	TERRAIN_SLOPE_X = 1, /* from the first sample at x 0 towards the second */
@@ -362,13 +362,13 @@ typedef enum TERRAIN_KIND {
 	TERRAIN_BEND_SUM_DIAGONAL = 5,
 	/* Three samples, bending on the diagonal x = y. */
 	TERRAIN_BEND_DIFFERENCE_DIAGONAL = 6,
-	/* A raised or sunken rounded square (Terrain_RoundedSquareMask). */
+	/* A raised or sunken rounded square (TerrainRoundedSquareMask). */
 	TERRAIN_ROUNDED_SQUARE = 7,
 	TERRAIN_STEP_X = 8,	 /* the first sample for x below 8, then the second */
 	TERRAIN_STEP_Y = 9,	 /* the first sample for y below 8, then the second */
 	TERRAIN_BEND_X = 10, /* three samples along x, bending at the middle */
 	TERRAIN_BEND_Y = 11, /* three samples along y, read unsigned */
-	/* The sample Terrain_SampleIndexTable picks for each pixel. */
+	/* The sample TerrainSampleIndexTable picks for each pixel. */
 	TERRAIN_SAMPLE_TABLE = 12,
 	/* As TERRAIN_SAMPLE_TABLE, mirrored left to right. */
 	TERRAIN_SAMPLE_TABLE_MIRRORED = 13,
@@ -389,43 +389,43 @@ typedef enum COLLISION {
 /* The field module's functions in the order of its stub table
    (src/field/stubs.s). */
 void fdActorSystemConfigure(Sint32 mode);
-void fdRenderApplyProjectedPlacement(SPR *sprite, const SPR_PLACEMENT *position,
-	const SPR_SCALE *scale, Sint32 facing);
+void fdRenderApplyProjectedPlacement(
+	SPR *spr, const SPR_PLACEMENT *pos, const SPR_SCALE *scale, Sint32 facing);
 void fdRenderPlaceProjectedSpr(
-	SPR *sprite, Sint32 *point, Sint32 *scale, Sint32 facing, Sint32 depth);
-Sint32 fdSprResetAnimations(SPR *sprite);
-Sint32 fdSprStartAnimation(SPR *sprite, Sint32 animation);
-Sint32 fdSprSetAnimationTimers(SPR *sprite, Sint32 frames);
+	SPR *spr, Sint32 *point, Sint32 *scale, Sint32 facing, Sint32 depth);
+Sint32 fdSprResetAnimations(SPR *spr);
+Sint32 fdSprStartAnimation(SPR *spr, Sint32 anm);
+Sint32 fdSprSetAnimationTimers(SPR *spr, Sint32 ticks);
 SPR	  *fdSprCreate(Sint32 id);
-void   fdSprDestroy(SPR *sprite);
-void   fdRenderPlaceSprPartPair(SPR *sprite, FIXED screenX, Sint32 height,
+void   fdSprDestroy(SPR *spr);
+void   fdRenderPlaceSprPartPair(SPR *spr, FIXED screenX, Sint32 height,
 	  Sint32 screenY, Sint32 groundHeight, FIXED *scale);
-Sint32 fdSprAddAnimation(SPR *sprite, Sint32 id);
-void   fdSprRemoveAnimation(SPR *sprite, Sint32 layer);
-void   fdSprRemoveAnimationAt(SPR *sprite, Uint32 index);
+Sint32 fdSprAddAnimation(SPR *spr, Sint32 id);
+void   fdSprRemoveAnimation(SPR *spr, Sint32 layer);
+void   fdSprRemoveAnimationAt(SPR *spr, Uint32 idx);
 void   fdSprAnimationClear(SPR_ANIMATION *record);
 void   fdSprAnimationReset(SPR_ANIMATION *layer);
-void   fdSprAnimationStart(SPR_ANIMATION *layer, Sint32 animation);
+void   fdSprAnimationStart(SPR_ANIMATION *layer, Sint32 anm);
 void   fdActorSystemInit(Sint32 controlMode);
 void   fdActorSelectAnimation(void *rawActor, Sint32 value);
 void   fdActorSetAnimationSpeed(ACTOR *rawActor, Sint32 value);
-void   fdActorSetAnimationAndSpeed(ACTOR *actor, Sint32 animation, Sint32 step);
+void   fdActorSetAnimationAndSpeed(ACTOR *actor, Sint32 anm, Sint32 step);
 void   fdActorStartScript(ACTOR *actor, const Sint32 *script);
 void   fdActorStartPlayerCtrl(ACTOR *actor);
 void   fdActorStartWorldMapCtrl(ACTOR *actor);
 void   fdActorStartMoveByKeys(ACTOR *actor);
 void   fdActorStartKeyCheck(ACTOR *actor);
 void  *fdActorFindFree(void);
-ACTOR *fdActorCreate(Sint32 encodedSprite, FIXED x, FIXED y, FIXED z);
+ACTOR *fdActorCreate(Sint32 encodedSpr, FIXED x, FIXED y, FIXED z);
 void   fdActorRelease(ACTOR *actor);
 void   fdActorSetSprRotation(ACTOR *actor, Uint32 rotation);
 void   fdActorStartCamera(ACTOR *actor, Sint32 watchedActorHandle);
 void   fdActorStartApproachWatched(ACTOR *actor, Sint32 watchedActorHandle);
 void   fdActorSetPosAndResetMotion(ACTOR *actor, FIXED x, FIXED y, FIXED z);
-void   fdSprDissolveStep(Uint8 *rawSprite, Uint32 step);
-void   fdSprDissolveRun(Uint8 *sprite);
-void   fdSprDissolveRunMany(Uint8 **sprites, Sint32 count);
-Sint32 fdMapGridLoadMap(Sint32 index);
+void   fdSprDissolveStep(Uint8 *rawSpr, Uint32 step);
+void   fdSprDissolveRun(Uint8 *spr);
+void   fdSprDissolveRunMany(Uint8 **sprs, Sint32 cnt);
+Sint32 fdMapGridLoadMap(Sint32 idx);
 UNREAD_RESULT fdWorldMapInitPerspective(void);
 void		  fdMapGridSetCameraCenter(FIXED x, FIXED y);
 void		  fdMapGridCenterOnFollowedPoint(void);
@@ -435,68 +435,65 @@ void		  fdActorStartIdle(ACTOR *actor);
 void		  fdActorWaitForScriptEnd(void *rawActor);
 void		  fdActorSetMoveTarget(ACTOR *actor, FIXED x, FIXED y, FIXED z);
 void		  fdActorWaitForMove(void *actor);
-Sint32 fdMapGridGetScreenRelativePos(ACTOR *actor, Sint32 *screenPosition);
-void   fdWorldMapUpdateView(void);
-void   fdWorldMapLoadDefaultMetatilesAndUpdateBlock(void);
-void   fdMapGridPlayMapEdit(
-	  Uint16 *steps, Sint32 destinationX, Uint32 destinationY);
-void   fdMapGridCopyMetatileTilesIndicesRect(Sint32 sourceX, Sint32 sourceY,
-	  Uint32 dstX, Uint32 dstY, Uint32 width, Uint32 height);
-void   fdTilesetAnimResume(Uint32 channelIndex);
-void   fdTilesetAnimPause(Uint32 channelIndex);
-void   fdBlendScriptResume(void);
-void   fdBlendScriptSuspend(void);
-FIXED  fdMapGridGetTerrainHeight(Sint32 layer, FIXED x, FIXED y);
-Sint32 fdMapGridGetMetatileBehaviorAt(Sint32 layer, FIXED x, FIXED y);
-void   fdMapGridCopyMetatileTilesMetatilesRect(Sint32 sourceX, Sint32 sourceY,
-	  Sint32 width, Sint32 height, Sint32 dstX, Sint32 dstY);
-void   fdMapGridCopyMetatileAttributeRect(Sint32 sourceX, Sint32 sourceY,
-	  Sint32 width, Sint32 height, Sint32 dstX, Sint32 dstY);
-void   fdMapGridCopyMetatileIndexRect(Sint32 sourceX, Sint32 sourceY,
-	  Sint32 width, Sint32 height, Sint32 dstX, Sint32 dstY);
-void   fdWorldMapSetGridTile(
-	  Sint32 x, Sint32 y, Sint32 metatileX, Sint32 metatileY);
-Sint32 fdMapGridCheckCollision(ACTOR *actor, FIELD_POS *position);
-void   fdActorSetSprFlags(ACTOR *actor, Uint32 flags);
+Sint32		  fdMapGridGetScreenRelativePos(ACTOR *actor, Sint32 *screenPos);
+void		  fdWorldMapUpdateView(void);
+void		  fdWorldMapLoadDefaultMetatilesAndUpdateBlock(void);
+void		  fdMapGridPlayMapEdit(Uint16 *steps, Sint32 dstX, Uint32 dstY);
+void		  fdMapGridCopyMetatileTilesIndicesRect(Sint32 srcX, Sint32 srcY,
+			 Uint32 dstX, Uint32 dstY, Uint32 width, Uint32 height);
+void		  fdTilesetAnimResume(Uint32 channelIdx);
+void		  fdTilesetAnimPause(Uint32 channelIdx);
+void		  fdBlendScriptResume(void);
+void		  fdBlendScriptSuspend(void);
+FIXED		  fdMapGridGetTerrainHeight(Sint32 layer, FIXED x, FIXED y);
+Sint32		  fdMapGridGetMetatileBehaviorAt(Sint32 layer, FIXED x, FIXED y);
+void		  fdMapGridCopyMetatileTilesMetatilesRect(Sint32 srcX, Sint32 srcY,
+			 Sint32 width, Sint32 height, Sint32 dstX, Sint32 dstY);
+void fdMapGridCopyMetatileAttributeRect(Sint32 srcX, Sint32 srcY, Sint32 width,
+	Sint32 height, Sint32 dstX, Sint32 dstY);
+void fdMapGridCopyMetatileIndexRect(Sint32 srcX, Sint32 srcY, Sint32 width,
+	Sint32 height, Sint32 dstX, Sint32 dstY);
+void fdWorldMapSetGridTile(
+	Sint32 x, Sint32 y, Sint32 metatileX, Sint32 metatileY);
+Sint32 fdMapGridCheckCollision(ACTOR *actor, FIELD_POS *pos);
+void   fdActorSetSprFlags(ACTOR *actor, Uint32 flg);
 void   fdActorSetBlendMode(ACTOR *actor, Uint32 mode);
 void   fdMapGridSetScreenShake(FIXED shakeX, FIXED shakeY, FIXED shakeDecay);
 void   fdMapGridWaitForShakeToSettle(void);
-void   fdActorSetFirstSprAnimation(ACTOR *actor, Sint32 animationId);
+void   fdActorSetFirstSprAnimation(ACTOR *actor, Sint32 anmId);
 void   fdActorSystemSuspendProjectionAndShowSprs(void);
 void   fdActorSystemResumeProjectionAndHideLayers(void);
 void   fdActorSetSprScale(ACTOR *actor, Uint32 fixedScale);
-Sint32 fdMapGridIsWallAt(struct WORLD_POS *position);
-void   fdActorRegisterSprMetadata(ACTOR *actor, Sint32 animationId);
+Sint32 fdMapGridIsWallAt(struct WORLD_POS *pos);
+void   fdActorRegisterSprMetadata(ACTOR *actor, Sint32 anmId);
 void   fdWorldMapStartStillImage(void);
 void   fdWorldMapLoadAreaGraphics(void);
-void   fdActorSetSprColMode(ACTOR *actor, Uint32 colorMode);
-void   fdSprSetAnimationColModes(void *rawSprite, Uint32 colorMode);
+void   fdActorSetSprColMode(ACTOR *actor, Uint32 colMode);
+void   fdSprSetAnimationColModes(void *rawSpr, Uint32 colMode);
 Sint32 fdActorScriptCheckOverlap(ACTOR *actor, Sint32 *values);
-void   fdMapGridSetShownLayers(Uint32 layerFlags);
-Sint32 fdSprAnimationSumCommandLengths(
-	Sint32 id, Uint32 animation, Sint32 timedCount);
-Sint32 fdWorldMapGetBattleEnvironment(
-	struct WORLD_POS *position, Sint32 *region);
+void   fdMapGridSetShownLayers(Uint32 layerFlg);
+Sint32 fdSprAnimationSumCommandLengths(Sint32 id, Uint32 anm, Sint32 timedCnt);
+Sint32 fdWorldMapGetBattleEnvironment(struct WORLD_POS *pos, Sint32 *region);
 Sint32 fdSprPictureCacheLoad(
-	Uint32 slot, Uint32 *buffer, Sint32 number, Uint32 variant);
+	Uint32 slot, Uint32 *buf, Sint32 num, Uint32 variant);
 void fdMapGridSetMetatileBehaviorAt(
 	Uint32 layer, FIXED x, FIXED y, Uint32 behavior);
-void   fdSprSetAnimationSpeed(SPR *sprite, Sint32 step);
-void   fdSprColRemapPixels(Uint8 *bytes, Sint32 byteCount);
+void   fdSprSetAnimationSpeed(SPR *spr, Sint32 step);
+void   fdSprColRemapPixels(Uint8 *bytes, Sint32 byteCnt);
 void   fdTilesetAnimSuspendAll(void);
 void   fdTilesetAnimResumeAll(void);
 ACTOR *fdActorScriptFindOverlappingActor(ACTOR *actor, Sint32 *values);
 Sint32 fdMapGridGetTerrainKindAt(Sint32 layer, FIXED x, FIXED y);
 void   fdSprViewerRun(void);
 
-Uint8		  *fdDecompressLZ(const Uint8 *source, Uint8 *destination);
-Sint32		   fdSprComposePicture(SPR *sprite, Uint16 dir);
+Uint8		  *fdDecompressLZ(const Uint8 *src, Uint8 *dst);
+Sint32		   fdSprComposePicture(SPR *spr, Uint16 dir);
 Sint32		   fdSprPictureCacheFindByTag(Sint32 tag);
 SPR_ANIMATION *fdSprAnimationAlloc(Sint32 id);
 Sint32		   fdActorScriptSetFlagAndTest(ACTOR *interpreter);
 Sint32		   fdActorScriptClearFlagAndTest(ACTOR *interpreter);
 /* The state values of SC_SET, SC_ADD and SC_CMP, one handler each
-   (ActorScript_OperandHandlerTable, field/field_script_commands.c): by
+   (ActorScriptOperandHandlerTable, field/field_script_commands.c): by
    operation, each sets one of the actor's fields to value, adds value to it, or
    compares the two into conditionResult. */
 void fdActorScriptSetOrCompareScriptAddress(
@@ -625,8 +622,8 @@ Sint32 fdActorScriptApplyOperandCompare(ACTOR *interpreter);
 void   fdActorSetUpdateValue(void *rawActor, Sint32 value);
 Uint32 fdRequestShortcut(Uint32 encodedAssignment);
 Sint32 fdCheckConfiguredKeys(void);
-Sint32 fdCheckSpheresOverlap(FIXED *firstPosition, Sint32 radiusA,
-	FIXED *secondPosition, Sint32 radiusB);
+Sint32 fdCheckSpheresOverlap(
+	FIXED *firstPos, Sint32 radiusA, FIXED *secondPos, Sint32 radiusB);
 Sint32 fdActorUpdatePlayerCtrl(ACTOR *interpreter);
 Sint32 fdActorMoveOnWorldMap(ACTOR *interpreter);
 Sint32 fdCheckConfiguredKeysAndCount(ACTOR *interpreter);
@@ -655,7 +652,7 @@ void fdBlendScriptStart(Uint16 *script);
 
 void   fdPaletteCycleInit(void);
 Sint32 fdPaletteCycleAdd(
-	Sint16 paletteNumber, Sint16 firstColor, Sint16 delay, Sint16 colorCount);
+	Sint16 paletteNum, Sint16 firstCol, Sint16 delay, Sint16 colCnt);
 void fdPaletteCycleStop(void);
 void fdPaletteCycleStart(void);
 void fdPaletteCycleStep(void);
@@ -694,21 +691,20 @@ FIXED fdTerrainGetFlatCHeight(
 	const Uint8 *heightBytes, Sint32 pixelX, Sint32 pixelY);
 
 Sint32 fdMapGridGetMetatileHighFlags(Sint32 x, Sint32 y);
-Sint32 fdWorldMapGetCollision(struct WORLD_POS *position);
-Sint32 fdWorldMapIsWalkable(Sint32 unused, struct WORLD_POS *position);
+Sint32 fdWorldMapGetCollision(struct WORLD_POS *pos);
+Sint32 fdWorldMapIsWalkable(Sint32 unused, struct WORLD_POS *pos);
 /* A screen shake's component left as it is; any negative value does. */
 #define SHAKE_KEEP (-1)
 void fdTileMapDrawRowsFromRam(
 	const struct WORLD_MAP_AFFINE_PAIR *lines, Uint8 *pixels);
 void fdWorldMapBuildScanlineTable(
-	FIXED depth, Sint32 *position, struct WORLD_MAP_SCANLINE *scanline);
+	FIXED depth, Sint32 *pos, struct WORLD_MAP_SCANLINE *scanline);
 
-Sint32 fdSprViewerStepSprId(Sint32 spriteId, Sint32 direction);
+Sint32 fdSprViewerStepSprId(Sint32 sprId, Sint32 direction);
 void   fdSprViewerLayOutRing(
 	  Sint32 centerX, Sint32 centerY, SPR_PLACEMENT *positions);
-void fdSprViewerStartStaggeredAnimations(
-	Sint32 layerIndex, Sint32 animationIndex);
-void fdSprViewerSetLayerSpr(Sint32 layerIndex, Sint32 spriteId);
+void fdSprViewerStartStaggeredAnimations(Sint32 layerIdx, Sint32 anmIdx);
+void fdSprViewerSetLayerSpr(Sint32 layerIdx, Sint32 sprId);
 void fdSprViewerPlaceRing(void);
 
 /* Read as a halfword by fdActorSetOthersPaused: the actor id of the player's

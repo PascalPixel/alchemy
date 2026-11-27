@@ -1,6 +1,6 @@
 /* The dust a crumbling pillar throws up around the leader. */
 
-extern Uint32 Dust_ScatterScript[];
+extern Uint32 DustScatterScript[];
 
 /* Eight clouds of dust rise in a row across the leader, 2 pixels apart, and fly
    out from him in eight directions when `spread` is set. */
@@ -8,7 +8,7 @@ void scDustScatter(Sint32 spread)
 {
 	ACTOR		 *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	FIELD_EFFECT *effect;
-	void		 *frame = 0;
+	void		 *frm = 0;
 	Uint32		  i;
 	FIXED		  y;
 
@@ -18,12 +18,12 @@ void scDustScatter(Sint32 spread)
 			i * toFIXED(2) + leader->x.fixed - toFIXED(8), y - toFIXED(2),
 			leader->z.fixed);
 		if(effect != 0) {
-			frame = fdSprShareVRAMCacheEntry(effect->spr, frame);
+			frm = fdSprShareVRAMCacheEntry(effect->spr, frm);
 			effect->motionFlg = 0;
 			effect->collisionFlg = 0;
 			fdActorSetSprFlags((ACTOR *)effect, 0);
 			fdActorSelectAnimation((ACTOR *)effect, 2);
-			fdActorStartScript(effect, Dust_ScatterScript);
+			fdActorStartScript(effect, DustScatterScript);
 			effect->scaleY = effect->scaleX = toFIXED(7) / 10;
 			effect->spr->pri = 1;
 			if(spread != 0) {
@@ -43,7 +43,7 @@ void scDustScatter(Sint32 spread)
 	}
 }
 
-extern Uint32 Dust_BurstScript[];
+extern Uint32 DustBurstScript[];
 
 /* Throws a ring of dust clouds out from the leader as a pillar lands, the first
    thrown twice. */
@@ -51,22 +51,22 @@ void scDustBurst(void)
 {
 	ACTOR		 *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	FIELD_EFFECT *effect;
-	void		 *frame;
+	void		 *frm;
 	Uint32		  i;
 
 	if(leader == 0)
 		return;
-	frame = 0;
+	frm = 0;
 	for(i = 0; i <= DUST_RING_PUFFS; i++) {
 		effect = (FIELD_EFFECT *)scFieldActorCreate(SPRITE_DUST_CLOUD,
 			leader->x.fixed, leader->y.fixed, leader->z.fixed);
 		if(effect != 0) {
-			frame = fdSprShareVRAMCacheEntry(effect->spr, frame);
+			frm = fdSprShareVRAMCacheEntry(effect->spr, frm);
 			effect->motionFlg = 0;
 			effect->collisionFlg = 0;
 			fdActorSetSprFlags((ACTOR *)effect, 0);
 			fdActorSelectAnimation((ACTOR *)effect, 2);
-			fdActorStartScript(effect, Dust_BurstScript);
+			fdActorStartScript(effect, DustBurstScript);
 			effect->vel.x = syCos(i * (TRIG_TURN / DUST_RING_PUFFS));
 			effect->vel.y = 0;
 			effect->vel.z = syMathSin(i * (TRIG_TURN / DUST_RING_PUFFS));

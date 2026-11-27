@@ -103,12 +103,12 @@ meet.
 ![Sheba casts Plasma at Jenna, Felix and Piers: lightning over them, then each target's damage line in turn](https://alchemy.pascalpixel.com/tla/abilities/plasma.gif)
 
 Working out what an ability does to a target takes no time. Its HP drops
-in a single frame. What takes time is the showing: the flinch, the number,
+in a single tick. What takes time is the showing: the flinch, the number,
 the line of text waiting for a button.
 
 So the two are split. Resolving changes the numbers at once and leaves
 behind a list of things to show (`btPlaybackPush`). An event plays that
-list a little each frame, while the battle effect goes on drawing
+list a little each tick, while the battle effect goes on drawing
 (`btPlaybackRun`). That is how lightning and text share the screen.
 
 ## How an ability resolves
@@ -161,7 +161,7 @@ the camera is that layer's zoom and slide. The picture is larger than the
 layer can hold, so it is kept as an upper and a lower half, and the layer
 is switched from one to the other partway down the screen as it is drawn.
 `btCameraSetRange` writes where the switch falls on each line, and
-`btBackgroundShowZoomedPage` starts it every frame.
+`btBackgroundShowZoomedPage` starts it every tick.
 
 ## The other files
 

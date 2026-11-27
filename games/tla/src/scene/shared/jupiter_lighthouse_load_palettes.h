@@ -22,8 +22,8 @@ void scJupiterLighthouseLoadPalettes(Sint32 mode)
 	}
 	if(fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) ||
 		mode == LIGHTHOUSE_PALETTES_LIT) {
-		scPaletteCycleSetFrame(0);
-		sySetEvent(fdPaletteCycleStep, EVENT_PASS_FRAME);
+		scPaletteCycleSetTick(0);
+		sySetEvent(fdPaletteCycleStep, EVENT_PASS_TICK);
 	} else {
 		syDMAXCopy(PaletteCycleUnlitColors,
 			(void *)&BG_PLTT_COLOR(CYCLE_PALETTE, CYCLE_FIRST_COLOR),
@@ -35,4 +35,4 @@ void scJupiterLighthouseLoadPalettes(Sint32 mode)
 #undef CYCLE_PALETTE
 #undef CYCLE_FIRST_COLOR
 #undef CYCLE_PLACES
-#undef CYCLE_STEP_FRAMES
+#undef CYCLE_STEP_TICKS

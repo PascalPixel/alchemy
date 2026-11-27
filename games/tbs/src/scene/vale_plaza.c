@@ -93,7 +93,7 @@
    A villager showing Psynergy flashes white (scValePlazaFlashPsynergyPalette).
    By day that is the strongman in scValePlazaDemonstratePsynergy, and on the
    stormy night it is scValePlazaBoyLiftsSmallRock. He then cycles through his
-   colour modes while pairs of sparks rise and fall about him every 16 frames
+   colour modes while pairs of sparks rise and fall about him every 16 ticks
    (scValePlazaCyclePsynergyPaletteAndSpawnEffects). */
 
 #include "flags.h"
@@ -110,36 +110,36 @@
 #include "text/msg_ids.h"
 
 Sint32				  scInit(void);
-extern Sint32		  ValePlaza_ChargedUpStrongmanActions[];
-extern Sint32		  ValePlaza_SecondTravelerLeapActions[];
-extern Sint32		  ValePlaza_FirstTravelerLeapActions[];
-extern Sint32		  ValePlaza_LeaderActions[];
-extern Sint32		  ValePlaza_StormGaretLeapActions[];
-extern Sint32		  ValePlaza_FirstTravelerLeapAwayActions[];
-extern Sint32		  ValePlaza_SecondTravelerLeapAwayActions[];
-extern Sint32		  ValePlaza_FaceTargetActions[];
-extern Sint32		  ValePlaza_FarewellDogActions[];
-extern Sint32		  ValePlaza_FarewellChaseActions[];
-extern Sint32		  ValePlaza_FarewellFirstChildActions[];
-extern Sint32		  ValePlaza_FarewellSecondChildActions[];
-extern Sint32		  ValePlaza_PartyDepartureActions[];
-extern Sint32		  ValePlaza_HutOwnerSearchActions[];
-extern Sint32		  ValePlaza_AideRunActions[];
-extern Sint32		  ValePlaza_LeaderStepActions[];
-extern Sint32		  ValePlaza_StormGaretStepActions[];
-extern SCENE_ENTRANCE ValePlaza_Entrances[];
-extern Uint32		  ValePlaza_Exits[];
-extern Uint32		  ValePlaza_StormExits[];
-extern ACTOR_PLACE	  ValePlaza_ActorPlacements[];
-extern ACTOR_PLACE	  ValePlaza_StormActorPlacements[];
-extern ACTOR_PLACE	  ValePlaza_DepartureActorPlacements[];
-extern ACTOR_PLACE	  ValePlaza_ActorPlacementsAfterKalay[];
-extern CUE			  ValePlaza_Cues[];
-extern CUE			  ValePlaza_StormCues[];
-extern CUE			  ValePlaza_DepartureCues[];
-extern CUE			  ValePlaza_CuesAfterLeaving[];
-extern CUE			  ValePlaza_CuesAfterKalay[];
-extern Uint16		  ValePlaza_DoorOpens[];
+extern Sint32		  ValePlazaChargedUpStrongmanActions[];
+extern Sint32		  ValePlazaSecondTravelerLeapActions[];
+extern Sint32		  ValePlazaFirstTravelerLeapActions[];
+extern Sint32		  ValePlazaLeaderActions[];
+extern Sint32		  ValePlazaStormGaretLeapActions[];
+extern Sint32		  ValePlazaFirstTravelerLeapAwayActions[];
+extern Sint32		  ValePlazaSecondTravelerLeapAwayActions[];
+extern Sint32		  ValePlazaFaceTargetActions[];
+extern Sint32		  ValePlazaFarewellDogActions[];
+extern Sint32		  ValePlazaFarewellChaseActions[];
+extern Sint32		  ValePlazaFarewellFirstChildActions[];
+extern Sint32		  ValePlazaFarewellSecondChildActions[];
+extern Sint32		  ValePlazaPartyDepartureActions[];
+extern Sint32		  ValePlazaHutOwnerSearchActions[];
+extern Sint32		  ValePlazaAideRunActions[];
+extern Sint32		  ValePlazaLeaderStepActions[];
+extern Sint32		  ValePlazaStormGaretStepActions[];
+extern SCENE_ENTRANCE ValePlazaEntrances[];
+extern Uint32		  ValePlazaExits[];
+extern Uint32		  ValePlazaStormExits[];
+extern ACTOR_PLACE	  ValePlazaActorPlacements[];
+extern ACTOR_PLACE	  ValePlazaStormActorPlacements[];
+extern ACTOR_PLACE	  ValePlazaDepartureActorPlacements[];
+extern ACTOR_PLACE	  ValePlazaActorPlacementsAfterKalay[];
+extern CUE			  ValePlazaCues[];
+extern CUE			  ValePlazaStormCues[];
+extern CUE			  ValePlazaDepartureCues[];
+extern CUE			  ValePlazaCuesAfterLeaving[];
+extern CUE			  ValePlazaCuesAfterKalay[];
+extern Uint16		  ValePlazaDoorOpens[];
 
 /* Vale's area flags, kept while the party stays in Vale's scenes. Back from
    Kalay, a young man has welcomed Isaac home. */
@@ -188,7 +188,7 @@ typedef enum VALE_PLAZA_ACTOR_ID {
 	ACTOR_THIRD_IVY
 } VALE_PLAZA_ACTOR_ID;
 
-/* By day (ValePlaza_ActorPlacements, before and after the party leaves). The
+/* By day (ValePlazaActorPlacements, before and after the party leaves). The
    notes quote the day the story begins. */
 typedef enum VALE_PLAZA_DAY_ACTOR_ID {
 	/* An old man with a cane: "The Valeans are a chosen people." On the stormy
@@ -242,7 +242,7 @@ typedef enum VALE_PLAZA_DAY_ACTOR_ID {
 	ACTOR_HUT_OWNER = ACTOR_FIRST_PLACED + 18
 } VALE_PLAZA_DAY_ACTOR_ID;
 
-/* On the stormy night (ValePlaza_StormActorPlacements). */
+/* On the stormy night (ValePlazaStormActorPlacements). */
 typedef enum VALE_PLAZA_STORM_ACTOR_ID {
 	/* The same old man as ACTOR_CURIOUS_OLD_MAN: "Huh? Are you...asking me if I
 	   can use Psynergy, Isaac?" */
@@ -290,7 +290,7 @@ typedef enum VALE_PLAZA_STORM_ACTOR_ID {
 	ACTOR_STORM_JENNA /* "Garet, Isaac... You came to help me?" */
 } VALE_PLAZA_STORM_ACTOR_ID;
 
-/* At the farewell (ValePlaza_DepartureActorPlacements). */
+/* At the farewell (ValePlazaDepartureActorPlacements). */
 typedef enum VALE_PLAZA_FAREWELL_ACTOR_ID {
 	/* The small boy of ACTOR_FIRST_CHILD, at the top of the path. "What, didn't
 	   you hear? Isaac and Garet are leaving Vale on a journey." */
@@ -343,7 +343,7 @@ typedef enum VALE_PLAZA_FAREWELL_ACTOR_ID {
 	ACTOR_FAREWELL_CAT
 } VALE_PLAZA_FAREWELL_ACTOR_ID;
 
-/* Back from Kalay (ValePlaza_ActorPlacementsAfterKalay). */
+/* Back from Kalay (ValePlazaActorPlacementsAfterKalay). */
 typedef enum VALE_PLAZA_AFTER_KALAY_ACTOR_ID {
 	/* A young man with brown hair: "Hey, if it isn't Isaac! You came back home,
 	   huh?" */
@@ -382,10 +382,10 @@ static void scValePlazaMeetSurvivingTravelers(void);
 static void scValePlazaFightTravelers(void);
 static void scValePlazaTravelersLeaveAfterBattle(void);
 static void scValePlazaDepartForQuest(void);
-static void scValePlazaSayThenWait(Sint32 speaker, Sint32 frames);
+static void scValePlazaSayThenWait(Sint32 speaker, Sint32 ticks);
 static void scValePlazaFlashPsynergyPalette(ACTOR *actor);
 static void scValePlazaFaceDirectionAndWait(
-	Sint32 actorId, Sint32 facing, Sint32 frames);
+	Sint32 actorId, Sint32 facing, Sint32 ticks);
 static void scValePlazaSpawnEffectPair(ACTOR *parent);
 static void scValePlazaUpdateRockLiftingBoyPsynergy(void);
 static void scValePlazaUpdateShowingStrongmanPsynergy(void);
@@ -396,7 +396,7 @@ static void scValePlazaSetProgressFlagsAndExit(void);
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return ValePlaza_Entrances;
+	return ValePlazaEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -409,9 +409,9 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 const Uint32 *scGetExits(void)
 {
 	if(gmFlagGet(FLAG_VALE_STORM) != 0) {
-		return ValePlaza_StormExits;
+		return ValePlazaStormExits;
 	}
-	return ValePlaza_Exits;
+	return ValePlazaExits;
 }
 
 /* Selects the actor placements: the stormy night's, the farewell's
@@ -419,15 +419,15 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(gmFlagGet(FLAG_VALE_STORM) != 0) {
-		return ValePlaza_StormActorPlacements;
+		return ValePlazaStormActorPlacements;
 	}
 	if(MainRoutineStateWork.entrance == VALE_PLAZA_FROM_SANCTUM) {
-		return ValePlaza_DepartureActorPlacements;
+		return ValePlazaDepartureActorPlacements;
 	}
 	if(gmFlagGet(FLAG_KALAY_REACHED) != 0) {
-		return ValePlaza_ActorPlacementsAfterKalay;
+		return ValePlazaActorPlacementsAfterKalay;
 	}
-	return ValePlaza_ActorPlacements;
+	return ValePlazaActorPlacements;
 }
 
 /* The PP a Psynergy Stone gives each party member, as the field's own stones
@@ -454,18 +454,18 @@ static void scValePlazaUsePsynergyStone(void)
 const CUE *scGetCues(void)
 {
 	if(gmFlagGet(FLAG_KALAY_REACHED) != 0) {
-		return ValePlaza_CuesAfterKalay;
+		return ValePlazaCuesAfterKalay;
 	}
 	if(gmFlagGet(FLAG_VALE_PARTY_LEFT) != 0) {
-		return ValePlaza_CuesAfterLeaving;
+		return ValePlazaCuesAfterLeaving;
 	}
 	if(MainRoutineStateWork.entrance == VALE_PLAZA_FROM_SANCTUM) {
-		return ValePlaza_DepartureCues;
+		return ValePlazaDepartureCues;
 	}
 	if(gmFlagGet(FLAG_VALE_STORM) != 0) {
-		return ValePlaza_StormCues;
+		return ValePlazaStormCues;
 	}
-	return ValePlaza_Cues;
+	return ValePlazaCues;
 }
 
 /* A burly grey-haired man on the shore in front of the Psynergy Stone asks
@@ -513,22 +513,22 @@ static void scValePlazaAskAboutTheTravelers(void)
 }
 
 /* The strongman's tremor shifts the view a pixel, each way in turn, every this
-   many frames. */
-#define TREMOR_STEP_FRAMES 10
+   many ticks. */
+#define TREMOR_STEP_TICKS 10
 
 /* A strongman south-east of the Psynergy Stone's pond, near the town gate,
    shows Isaac his Psynergy and shakes the ground. */
 static void scValePlazaDemonstratePsynergy(void)
 {
-	Uint32	frame;
-	Sint32	message;
+	Uint32	frm;
+	Sint32	msg;
 	Sint32	shakes;
 	Sint32 *origin;
 
 	fdScriptStart();
 	if(gmFlagGet(FLAG_VALE_PARTY_LEFT) != 0) {
-		message = MsgValeArentWorriedCrossing;
-		fdScriptSetMessageId(message);
+		msg = MsgValeArentWorriedCrossing;
+		fdScriptSetMessageId(msg);
 		/* "...with just the two of you?", three or four: the flag numbered for
 		   a character is set once that character has joined. */
 		if(gmFlagGet(FLAG_IN_PARTY(IVAN)) != 0) {
@@ -539,9 +539,9 @@ static void scValePlazaDemonstratePsynergy(void)
 		}
 		fdScriptOpenMessage(ACTOR_STRONGMAN_SHOWING_PSYNERGY, 0);
 		if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-			fdScriptSetMessageId(message + 3);
+			fdScriptSetMessageId(msg + 3);
 		} else {
-			fdScriptSetMessageId(message + 4);
+			fdScriptSetMessageId(msg + 4);
 		}
 		fdScriptShowMessage(ACTOR_STRONGMAN_SHOWING_PSYNERGY, 0);
 	} else {
@@ -558,16 +558,16 @@ static void scValePlazaDemonstratePsynergy(void)
 		fdScriptWait(15);
 		scStartScriptPsynergy();
 		shakes = 0;
-		for(frame = 0; frame < 40; frame++) {
+		for(frm = 0; frm < 40; frm++) {
 			scValePlazaFlashPsynergyPalette(
 				fdActorGet(ACTOR_STRONGMAN_SHOWING_PSYNERGY));
 			sySynch(1);
 		}
-		sySetFrameEvent(
-			scValePlazaUpdateShowingStrongmanPsynergy, EVENT_PASS_FRAME);
+		sySetTickEvent(
+			scValePlazaUpdateShowingStrongmanPsynergy, EVENT_PASS_TICK);
 		sySndPlay(SE_TREMOR);
-		for(frame = 0; frame != 180; frame++) {
-			if(syMathRemainderUnsigned(frame, TREMOR_STEP_FRAMES) == 0) {
+		for(frm = 0; frm != 180; frm++) {
+			if(syMathRemainderUnsigned(frm, TREMOR_STEP_TICKS) == 0) {
 				if((1 & shakes) != 0) {
 					*origin -= toFIXED(1);
 				} else {
@@ -652,8 +652,8 @@ static void scValePlazaTalkAboutFallenStone(void)
    small rock (ACTOR_STORM_SMALL_ROCK) into the air. */
 static void scValePlazaBoyLiftsSmallRock(void)
 {
-	Uint32 frame;
-	Sint32 savedMotionFlags;
+	Uint32 frm;
+	Sint32 savedMotionFlg;
 	ACTOR *rock;
 
 	fdScriptStart();
@@ -669,24 +669,24 @@ static void scValePlazaBoyLiftsSmallRock(void)
 	/* The boy flashes white as he calls up his Psynergy, then he and the rock
 	   shift colours as it rises. */
 	scStartScriptPsynergy();
-	for(frame = 0; frame < 40; frame++) {
+	for(frm = 0; frm < 40; frm++) {
 		scValePlazaFlashPsynergyPalette(
 			fdActorGet(ACTOR_STORM_ROCK_LIFTING_BOY));
 		sySynch(1);
 	}
-	sySetOrUpdateFrameEvent(
-		scValePlazaUpdateRockLiftingBoyPsynergy, EVENT_PASS_FRAME);
-	sySetFrameEvent(scValePlazaUpdateSmallRockPalette, EVENT_PASS_FRAME);
+	sySetOrUpdateTickEvent(
+		scValePlazaUpdateRockLiftingBoyPsynergy, EVENT_PASS_TICK);
+	sySetTickEvent(scValePlazaUpdateSmallRockPalette, EVENT_PASS_TICK);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 10);
-	/* The rock floats up a little each frame, kept from falling back. */
+	/* The rock floats up a little each tick, kept from falling back. */
 	rock = fdActorGet(ACTOR_STORM_SMALL_ROCK);
-	savedMotionFlags = rock->motionFlg;
+	savedMotionFlg = rock->motionFlg;
 	rock->motionFlg = 0;
-	for(frame = 0; frame < 40; frame++) {
+	for(frm = 0; frm < 40; frm++) {
 		rock->y.fixed += toFIXED(3) / 32;
 		sySynch(1);
 	}
-	rock->motionFlg = savedMotionFlags;
+	rock->motionFlg = savedMotionFlg;
 	syCloseEvent(scValePlazaUpdateRockLiftingBoyPsynergy);
 	syCloseEvent(scValePlazaUpdateSmallRockPalette);
 	sySynch(1);
@@ -761,7 +761,7 @@ static void scValePlazaPsynergyStoneIsGone(void)
 	fdActorStop(ACTOR_AFTER_KALAY_HUT_OWNER);
 	sySynch(1);
 	fdActorSetScript(
-		ACTOR_AFTER_KALAY_HUT_OWNER, ValePlaza_HutOwnerSearchActions);
+		ACTOR_AFTER_KALAY_HUT_OWNER, ValePlazaHutOwnerSearchActions);
 	fdScriptEnd();
 }
 
@@ -773,7 +773,7 @@ static inline void scValePlazaOpenDoorAndWalkThrough(
 	Sint32 metatileX, Sint32 metatileZ, Sint32 x, Sint32 z)
 {
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridAnimateMetatiles(ValePlaza_DoorOpens, metatileX, metatileZ);
+	fdMapGridAnimateMetatiles(ValePlazaDoorOpens, metatileX, metatileZ);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, x, z);
 }
 
@@ -943,7 +943,7 @@ Sint32 scInit(void)
 				fdActorSetPos(ACTOR_STORM_SECOND_AIDE, 0, 0);
 				syFieldActorWatchAndStartScript(ACTOR_STORM_GARETS_GRANDFATHER,
 					ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-					ValePlaza_FaceTargetActions);
+					ValePlazaFaceTargetActions);
 			}
 		} else {
 			if(gmFlagGet(FLAG_VALE_PARTY_LEFT) != 0) {
@@ -997,7 +997,7 @@ Sint32 scInit(void)
 				} else {
 					if(gmFlagGet(FLAG_VALE_STORM) != 0) {
 						fdScriptStartScreenTransition();
-						fdScriptWaitTransitionFrames();
+						fdScriptWaitTransitionTicks();
 						fdWeatherResumeLightning();
 					}
 				}
@@ -1063,17 +1063,17 @@ static void scValePlazaSentToAidElders(void)
 		fdActorSetSpeed(ACTOR_STORM_FIRST_AIDE, 1.6);
 		fdActorSetSpeed(ACTOR_STORM_SECOND_AIDE, 1.6);
 		/* The two run off; Isaac and Garet step up to the group. */
-		fdActorSetScript(ACTOR_STORM_FIRST_AIDE, ValePlaza_AideRunActions);
+		fdActorSetScript(ACTOR_STORM_FIRST_AIDE, ValePlazaAideRunActions);
 		fdScriptWait(20);
 #if VALE_PLAZA_SECOND_AIDE_PRIORITY_PINNED
 		fdActorGet(ACTOR_STORM_SECOND_AIDE)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
 #endif
-		fdActorSetScript(ACTOR_STORM_SECOND_AIDE, ValePlaza_AideRunActions);
+		fdActorSetScript(ACTOR_STORM_SECOND_AIDE, ValePlazaAideRunActions);
 		fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 		fdActorFaceDirection(ACTOR_STORM_GARET, FACING_NORTH, 60);
-		fdActorSetScript(ACTOR_PARTY_LEADER, ValePlaza_LeaderStepActions);
+		fdActorSetScript(ACTOR_PARTY_LEADER, ValePlazaLeaderStepActions);
 		fdActorRunScriptAndWait(
-			ACTOR_STORM_GARET, ValePlaza_StormGaretStepActions);
+			ACTOR_STORM_GARET, ValePlazaStormGaretStepActions);
 		fdScriptWait(20);
 		fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
 		fdActorFaceDirection(ACTOR_STORM_GARET, FACING_EAST, 10);
@@ -1137,7 +1137,7 @@ static void scValePlazaSentToAidElders(void)
 		/* He hops down to them; asked about his Psynergy, he has enough to save
 		   Felix, thanks to the Psynergy Stone. */
 		fdActorSetScript(ACTOR_STORM_CHARGED_UP_STRONGMAN,
-			ValePlaza_ChargedUpStrongmanActions);
+			ValePlazaChargedUpStrongmanActions);
 		fdActorWaitForScriptEndById(ACTOR_STORM_CHARGED_UP_STRONGMAN);
 		scValePlazaFaceDirectionAndWait(
 			ACTOR_STORM_CHARGED_UP_STRONGMAN, FACING_SOUTHEAST, 60);
@@ -1184,7 +1184,7 @@ static void scValePlazaSentToAidElders(void)
 		scWalkIntoLeader(ACTOR_STORM_CHARGED_UP_STRONGMAN);
 		syFieldActorWatchAndStartScript(ACTOR_STORM_GARETS_GRANDFATHER,
 			ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-			ValePlaza_FaceTargetActions);
+			ValePlazaFaceTargetActions);
 		gmFlagSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
 		fdScriptEnd();
 	}
@@ -1334,7 +1334,7 @@ static void scValePlazaFightTravelers(void)
 	scValePlazaSayThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_STORM_GARET, 10);
 	syFieldActorWatchAndStartScript(ACTOR_PARTY_LEADER,
 		ACTOR_WATCH_KEEP_MOTION | ACTOR_STORM_GARET,
-		ValePlaza_FaceTargetActions);
+		ValePlazaFaceTargetActions);
 	fdActorWalkToAndWait(ACTOR_STORM_GARET, 93, 361);
 	scValePlazaFaceDirectionAndWait(
 		ACTOR_STORM_GARET, FACING_NORTH_NORTHEAST, 40);
@@ -1365,14 +1365,13 @@ static void scValePlazaFightTravelers(void)
 	fdActorSetAttachedEffect(
 		ACTOR_STORM_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(80);
-	fdActorSetScript(
-		ACTOR_SECOND_TRAVELER, ValePlaza_SecondTravelerLeapActions);
+	fdActorSetScript(ACTOR_SECOND_TRAVELER, ValePlazaSecondTravelerLeapActions);
 	fdScriptWait(6);
-	fdActorSetScript(ACTOR_FIRST_TRAVELER, ValePlaza_FirstTravelerLeapActions);
+	fdActorSetScript(ACTOR_FIRST_TRAVELER, ValePlazaFirstTravelerLeapActions);
 	fdScriptWait(20);
-	fdActorSetScript(ACTOR_PARTY_LEADER, ValePlaza_LeaderActions);
+	fdActorSetScript(ACTOR_PARTY_LEADER, ValePlazaLeaderActions);
 	fdScriptWait(6);
-	fdActorRunScriptAndWait(ACTOR_STORM_GARET, ValePlaza_StormGaretLeapActions);
+	fdActorRunScriptAndWait(ACTOR_STORM_GARET, ValePlazaStormGaretLeapActions);
 	/* The confrontation continues in battle; both outcomes return here. */
 	SET_BATTLE_TYPE(BATTLE_TYPE_NO_ESCAPE);
 	{
@@ -1421,7 +1420,7 @@ static void scValePlazaTravelersLeaveAfterBattle(void)
 	}
 	fdScriptStartScreenTransition();
 	fdWeatherResumeLightning();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(80);
 	fdActorFaceDirection(ACTOR_FIRST_TRAVELER, FACING_SOUTH_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_SECOND_TRAVELER, FACING_NORTH, 40);
@@ -1437,14 +1436,14 @@ static void scValePlazaTravelersLeaveAfterBattle(void)
 	actor->bounce = toFIXED(1) / 100;
 	actor->gravity = toFIXED(1) / 2;
 	fdActorSetScript(
-		ACTOR_FIRST_TRAVELER, ValePlaza_FirstTravelerLeapAwayActions);
+		ACTOR_FIRST_TRAVELER, ValePlazaFirstTravelerLeapAwayActions);
 	fdScriptWait(24);
 	fdActorSetSpeed(ACTOR_SECOND_TRAVELER, 2.4);
 	actor = fdActorGet(ACTOR_SECOND_TRAVELER);
 	actor->bounce = toFIXED(1) / 100;
 	actor->gravity = toFIXED(1) / 2;
 	fdActorRunScriptAndWait(
-		ACTOR_SECOND_TRAVELER, ValePlaza_SecondTravelerLeapAwayActions);
+		ACTOR_SECOND_TRAVELER, ValePlazaSecondTravelerLeapAwayActions);
 	fdScriptWait(40);
 	/* Three last flashes of lightning, then the storm ends and the screen fades
 	   slowly out. */
@@ -1459,7 +1458,7 @@ static void scValePlazaTravelersLeaveAfterBattle(void)
 	fdScriptWait(40);
 	FieldStateWork->transitionFrm = 120;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	gmFlagClear(FLAG_VALE_STORM);
 	syImportScriptSetExitRequest(VALE_PLAZA_TO_TITLE);
 	fdScriptEnd();
@@ -1471,7 +1470,7 @@ static void scValePlazaDepartForQuest(void)
 {
 	ACTOR		 *actor;
 	FIELD_STATE	 *state;
-	Sint32		  priorityFlags;
+	Sint32		  priFlg;
 	const Sint32 *faceActions;
 	const Sint32 *chaseActions;
 	const Sint32 *departureActions;
@@ -1497,7 +1496,7 @@ static void scValePlazaDepartForQuest(void)
 	fdActorSetSprPriority(ACTOR_FAREWELL_GARETS_GRANDFATHER, 1);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 208, 814);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(80);
 	/* The second child asks why everyone is at the gate; the first says Isaac
 	   and Garet are leaving on a journey. */
@@ -1547,9 +1546,9 @@ static void scValePlazaDepartForQuest(void)
 	fdActorSetPos(ACTOR_FAREWELL_DOG, 110, 744);
 	sySynch(2);
 	fdActorSetAnimation(ACTOR_FAREWELL_DOG, ANIM_NOD);
-	fdActorSetScript(ACTOR_FAREWELL_DOG, ValePlaza_FarewellDogActions);
+	fdActorSetScript(ACTOR_FAREWELL_DOG, ValePlazaFarewellDogActions);
 	fdScriptWait(40);
-	faceActions = ValePlaza_FaceTargetActions;
+	faceActions = ValePlazaFaceTargetActions;
 	syFieldActorWatchAndStartScript(ACTOR_FAREWELL_FIRST_CHILD,
 		ACTOR_WATCH_KEEP_MOTION | ACTOR_FAREWELL_DOG, faceActions);
 	syFieldActorWatchAndStartScript(ACTOR_FAREWELL_SECOND_CHILD,
@@ -1629,15 +1628,15 @@ static void scValePlazaDepartForQuest(void)
 	if(actor != NULL) {
 		fdActorSetPosFX(ACTOR_FAREWELL_CAT, actor->x.fixed, actor->z.fixed);
 	}
-	priorityFlags = (Uint8)~ACTOR_PRIORITY_AUTOMATIC;
+	priFlg = (Uint8)~ACTOR_PRIORITY_AUTOMATIC;
 	sySynch(2);
-	fdActorGetById(ACTOR_FAREWELL_DOG)->priFlg &= priorityFlags;
-	fdActorGetById(ACTOR_FAREWELL_CAT)->priFlg &= priorityFlags;
+	fdActorGetById(ACTOR_FAREWELL_DOG)->priFlg &= priFlg;
+	fdActorGetById(ACTOR_FAREWELL_CAT)->priFlg &= priFlg;
 	fdActorSetSprPriority(ACTOR_FAREWELL_DOG, 2);
 	fdActorSetSprPriority(ACTOR_FAREWELL_CAT, 2);
 	fdActorSetSpeed(ACTOR_FAREWELL_CAT, 3.6);
 	fdActorSetAnimation(ACTOR_FAREWELL_CAT, ANIM_WALK);
-	chaseActions = ValePlaza_FarewellChaseActions;
+	chaseActions = ValePlazaFarewellChaseActions;
 	fdActorSetScript(ACTOR_FAREWELL_CAT, chaseActions);
 	fdScriptWait(20);
 	fdActorSetAnimation(ACTOR_FAREWELL_DOG, ANIM_NOD);
@@ -1665,14 +1664,14 @@ static void scValePlazaDepartForQuest(void)
 	fdActorSetSpeed(ACTOR_FAREWELL_FIRST_CHILD, 2.4);
 	fdActorSetSpeed(ACTOR_FAREWELL_SECOND_CHILD, 2.4);
 	fdActorSetScript(
-		ACTOR_FAREWELL_FIRST_CHILD, ValePlaza_FarewellFirstChildActions);
+		ACTOR_FAREWELL_FIRST_CHILD, ValePlazaFarewellFirstChildActions);
 	fdScriptWait(10);
 	fdCameraSetSpeed(2.4);
 	fdCameraGetActor()->motionFlg = 0;
 	fdCameraMoveTo(215, 16, 801, 1);
 	fdScriptWait(10);
 	fdActorSetScript(
-		ACTOR_FAREWELL_SECOND_CHILD, ValePlaza_FarewellSecondChildActions);
+		ACTOR_FAREWELL_SECOND_CHILD, ValePlazaFarewellSecondChildActions);
 	fdActorWaitForScriptEndById(ACTOR_FAREWELL_SECOND_CHILD);
 	scValePlazaFaceDirectionAndWait(
 		ACTOR_FAREWELL_SECOND_CHILD, FACING_SOUTH_SOUTHEAST, 120);
@@ -1854,21 +1853,21 @@ static void scValePlazaDepartForQuest(void)
 	fdActorJump(ACTOR_FAREWELL_WOMAN_IN_GREEN, 4, 0);
 	/* "Farewell!" */
 	mnFieldMessageShow(MSGNO(MsgValeFarewell), 1);
-	priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+	priFlg = ACTOR_PRIORITY_AUTOMATIC;
 	fdScriptWait(80);
-	fdActorGetById(ACTOR_PARTY_LEADER)->priFlg |= priorityFlags;
+	fdActorGetById(ACTOR_PARTY_LEADER)->priFlg |= priFlg;
 	{
 		ACTOR *garet = fdActorGetById(ACTOR_GARET);
-		Uint8  flags = priorityFlags | garet->priFlg;
+		Uint8  flg = priFlg | garet->priFlg;
 
-		garet->priFlg = flags;
+		garet->priFlg = flg;
 	}
 	fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
 	scValePlazaFaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
 	scValePlazaFaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 20);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
-	departureActions = ValePlaza_PartyDepartureActions;
+	departureActions = ValePlazaPartyDepartureActions;
 	fdActorSetScript(ACTOR_PARTY_LEADER, departureActions);
 	fdScriptWait(20);
 	fdCameraSetSpeed(0.4);
@@ -1881,36 +1880,36 @@ static void scValePlazaDepartForQuest(void)
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	state->transitionFrm = 60;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorStop(ACTOR_PARTY_LEADER);
 	fdActorStop(ACTOR_GARET);
 	syImportScriptSetExitRequest(VALE_PLAZA_TO_WORLD_MAP);
 	fdScriptEnd();
 }
 
-static void scValePlazaSayThenWait(Sint32 speaker, Sint32 frames)
+static void scValePlazaSayThenWait(Sint32 speaker, Sint32 ticks)
 {
 	fdScriptShowMessage(speaker, 0);
-	fdScriptWait(frames);
+	fdScriptWait(ticks);
 }
 
 static void scValePlazaFaceDirectionAndWait(
-	Sint32 actorId, Sint32 facing, Sint32 frames)
+	Sint32 actorId, Sint32 facing, Sint32 ticks)
 {
 	fdActorFaceDirection(actorId, facing, 0);
-	fdScriptWait(frames);
+	fdScriptWait(ticks);
 }
 
-/* A villager calling up Psynergy. He is drawn SPRITE_COLOR_WHITE for two frames
-   in four, with a pair of sparks every 16 frames. */
+/* A villager calling up Psynergy. He is drawn SPRITE_COLOR_WHITE for two ticks
+   in four, with a pair of sparks every 16 ticks. */
 static void scValePlazaFlashPsynergyPalette(ACTOR *actor)
 {
-	if((FrameCount & 2) != 0) {
+	if((TickCount & 2) != 0) {
 		fdActorSetColMode(actor, SPRITE_COLOR_WHITE);
 	} else {
 		fdActorSetColMode(actor, SPRITE_COLOR_NORMAL);
 	}
-	if((FrameCount & 15) == 0) {
+	if((TickCount & 15) == 0) {
 		scValePlazaSpawnEffectPair(actor);
 	}
 }
@@ -1918,21 +1917,21 @@ static void scValePlazaFlashPsynergyPalette(ACTOR *actor)
 /* A villager using Psynergy. */
 static void scValePlazaCyclePsynergyPaletteAndSpawnEffects(ACTOR *actor)
 {
-	if((FrameCount & 1) != 0) {
-		Sint32 palette = syMathRemainderUnsigned(FrameCount >> 1, 6);
+	if((TickCount & 1) != 0) {
+		Sint32 palette = syMathRemainderUnsigned(TickCount >> 1, 6);
 		fdActorSetColMode(actor, palette);
 	}
-	if((FrameCount & 15) == 0) {
+	if((TickCount & 15) == 0) {
 		scValePlazaSpawnEffectPair(actor);
 	}
 }
 
 /* Cycles the lifted rock through colour modes SPRITE_COLOR_NORMAL to
-   SPRITE_COLOR_BRG, a step every second frame. */
+   SPRITE_COLOR_BRG, a step every second tick. */
 static void scValePlazaCyclePsynergyPalette(ACTOR *actor)
 {
-	if((FrameCount & 1) != 0) {
-		Sint32 palette = syMathRemainderUnsigned(FrameCount >> 1, 6);
+	if((TickCount & 1) != 0) {
+		Sint32 palette = syMathRemainderUnsigned(TickCount >> 1, 6);
 		fdActorSetColMode(actor, palette);
 	}
 }
@@ -1945,7 +1944,7 @@ static void scValePlazaSpawnEffectPair(ACTOR *parent)
 {
 	ACTOR			   *pair[2];
 	ACTOR			   *child;
-	SPR				   *sprite;
+	SPR				   *spr;
 	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
 	Sint32				i;
 
@@ -1956,37 +1955,37 @@ static void scValePlazaSpawnEffectPair(ACTOR *parent)
 		pair[i] = child;
 		if(child != NULL) {
 			child->groundHeight = parent->groundHeight;
-			sprite = child->spr;
+			spr = child->spr;
 			child->motionFlg = 0;
 			child->tmr = 0;
 			child->watchedActor = (ACTOR_OR_EFFECT *)parent;
-			if(sprite != NULL) {
-				fdSprStartAnimation(sprite, 0);
-				sprite->flg = 0;
-				syVRAMCacheFreeEntry(sprite->slot);
-				sprite->slot = effectState->tileSlot;
-				sprite->retainCacheEntry = 1;
-				sprite->image.tile =
-					(VramCacheEntries[sprite->slot].ofs >> 5) & OBJ_TILE_MASK;
-				sprite->image.fullCol = 0;
-				sprite->image.shape = RING_HALF_SHAPE;
-				sprite->image.size = RING_HALF_SIZE;
-				sprite->entries[0]->picture = 0;
+			if(spr != NULL) {
+				fdSprStartAnimation(spr, 0);
+				spr->flg = 0;
+				syVRAMCacheFreeEntry(spr->slot);
+				spr->slot = effectState->tileSlot;
+				spr->retainCacheEntry = 1;
+				spr->image.tile =
+					(VramCacheEntries[spr->slot].ofs >> 5) & OBJ_TILE_MASK;
+				spr->image.fullCol = 0;
+				spr->image.shape = RING_HALF_SHAPE;
+				spr->image.size = RING_HALF_SIZE;
+				spr->entries[0]->picture = 0;
 			}
 		}
 	}
 	{
 		ACTOR *effect = pair[0];
-		SPR	  *effectSprite = effect->spr;
+		SPR	  *effectSpr = effect->spr;
 
 		effect->update = scFieldEffectRiseRingFrontHalf;
-		effectSprite->image.pri = 2;
+		effectSpr->image.pri = 2;
 	}
 	{
 		ACTOR *effect = pair[1];
-		SPR	  *effectSprite = effect->spr;
+		SPR	  *effectSpr = effect->spr;
 
-		effectSprite->image.pri = 2;
+		effectSpr->image.pri = 2;
 		effect->update = scFieldEffectRiseRingBackHalf;
 		effect->priFlg = ACTOR_PRIORITY_UNDERFOOT;
 	}
@@ -2082,12 +2081,12 @@ static void scValePlazaSetProgressFlagsAndExit(void)
 /* Unused: nothing refers to it. A run of palette numbers, 0 to 6 three times */
 /* each and then 0 to 5 twice each, as a palette cycle of the Psynergy */
 /* displays would step through them. */
-Uint8 ValePlaza_UnusedPaletteSteps[] = {
+Uint8 ValePlazaUnusedPaletteSteps[] = {
 	0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5,
 	5, 5, 6, 6, 6, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5,
 };
 
-Sint32 ValePlaza_ChargedUpStrongmanActions[] = {
+Sint32 ValePlazaChargedUpStrongmanActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(214, 0, 721),
 	SC_SYNC,
@@ -2103,7 +2102,7 @@ Sint32 ValePlaza_ChargedUpStrongmanActions[] = {
 	SC_END,
 };
 
-Sint32 ValePlaza_SecondTravelerLeapActions[] = {
+Sint32 ValePlazaSecondTravelerLeapActions[] = {
 	SC_SPEED(2),
 	SC_ACCELERATION(2),
 	SC_SE(SE_HIGH_JUMP),
@@ -2115,7 +2114,7 @@ Sint32 ValePlaza_SecondTravelerLeapActions[] = {
 	SC_END,
 };
 
-Sint32 ValePlaza_FirstTravelerLeapActions[] = {
+Sint32 ValePlazaFirstTravelerLeapActions[] = {
 	SC_SPEED(2),
 	SC_ACCELERATION(2),
 	SC_SE(SE_HIGH_JUMP),
@@ -2127,7 +2126,7 @@ Sint32 ValePlaza_FirstTravelerLeapActions[] = {
 	SC_END,
 };
 
-Sint32 ValePlaza_LeaderActions[] = {
+Sint32 ValePlazaLeaderActions[] = {
 	SC_SPEED(2),
 	SC_ACCELERATION(2),
 	SC_SE(SE_JUMP),
@@ -2139,7 +2138,7 @@ Sint32 ValePlaza_LeaderActions[] = {
 	SC_END,
 };
 
-Sint32 ValePlaza_StormGaretLeapActions[] = {
+Sint32 ValePlazaStormGaretLeapActions[] = {
 	SC_SPEED(2),
 	SC_ACCELERATION(2),
 	SC_SE(SE_JUMP),
@@ -2151,7 +2150,7 @@ Sint32 ValePlaza_StormGaretLeapActions[] = {
 	SC_END,
 };
 
-Sint32 ValePlaza_FirstTravelerLeapAwayActions[] = {
+Sint32 ValePlazaFirstTravelerLeapAwayActions[] = {
 	SC_ANIMATION(TRAVELER_ANIMATION_CROUCH),
 	SC_WAIT(10),
 	SC_ANIMATION(TRAVELER_ANIMATION_LEAP),
@@ -2179,7 +2178,7 @@ Sint32 ValePlaza_FirstTravelerLeapAwayActions[] = {
 	SC_END,
 };
 
-Sint32 ValePlaza_SecondTravelerLeapAwayActions[] = {
+Sint32 ValePlazaSecondTravelerLeapAwayActions[] = {
 	SC_ANIMATION(TRAVELER_ANIMATION_CROUCH),
 	SC_WAIT(10),
 	SC_ANIMATION(TRAVELER_ANIMATION_LEAP),
@@ -2205,12 +2204,12 @@ Sint32 ValePlaza_SecondTravelerLeapAwayActions[] = {
 	SC_END,
 };
 
-Sint32 ValePlaza_FaceTargetActions[] = {
+Sint32 ValePlazaFaceTargetActions[] = {
 	SC_CALL(scTurnTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-Sint32 ValePlaza_FarewellDogActions[] = {
+Sint32 ValePlazaFarewellDogActions[] = {
 	SC_MOVE(132, 0, 636),
 	SC_SYNC,
 	SC_MOVE(171, 0, 629),
@@ -2226,7 +2225,7 @@ Sint32 ValePlaza_FarewellDogActions[] = {
 	SC_END,
 };
 
-Sint32 ValePlaza_FarewellChaseActions[] = {
+Sint32 ValePlazaFarewellChaseActions[] = {
 	SC_MOVE(271, 0, 571),
 	SC_SYNC,
 	SC_MOVE(187, 0, 577),
@@ -2240,7 +2239,7 @@ Sint32 ValePlaza_FarewellChaseActions[] = {
 	SC_END,
 };
 
-Sint32 ValePlaza_FarewellFirstChildActions[] = {
+Sint32 ValePlazaFarewellFirstChildActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(137, 0, 639),
 	SC_SYNC,
@@ -2256,7 +2255,7 @@ Sint32 ValePlaza_FarewellFirstChildActions[] = {
 	SC_END,
 };
 
-Sint32 ValePlaza_FarewellSecondChildActions[] = {
+Sint32 ValePlazaFarewellSecondChildActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(137, 0, 639),
 	SC_SYNC,
@@ -2272,7 +2271,7 @@ Sint32 ValePlaza_FarewellSecondChildActions[] = {
 	SC_END,
 };
 
-Sint32 ValePlaza_PartyDepartureActions[] = {
+Sint32 ValePlazaPartyDepartureActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(216, 0, 854),
 	SC_SYNC,
@@ -2282,7 +2281,7 @@ Sint32 ValePlaza_PartyDepartureActions[] = {
 	SC_END,
 };
 
-Sint32 ValePlaza_HutOwnerSearchActions[] = {
+Sint32 ValePlazaHutOwnerSearchActions[] = {
 	SC_SPEED(0.5),
 	SC_ACCELERATION(0.05),
 	SC_SET(SW_COLLISION, ACTOR_SOLID | ACTOR_PUSHABLE),
@@ -2306,7 +2305,7 @@ Sint32 ValePlaza_HutOwnerSearchActions[] = {
 	SC_END,
 };
 
-Sint32 ValePlaza_AideRunActions[] = {
+Sint32 ValePlazaAideRunActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(148, 0, 758),
 	SC_SYNC,
@@ -2319,7 +2318,7 @@ Sint32 ValePlaza_AideRunActions[] = {
 	SC_END,
 };
 
-Sint32 ValePlaza_LeaderStepActions[] = {
+Sint32 ValePlazaLeaderStepActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(196, 0, 774),
 	SC_SYNC,
@@ -2327,7 +2326,7 @@ Sint32 ValePlaza_LeaderStepActions[] = {
 	SC_END,
 };
 
-Sint32 ValePlaza_StormGaretStepActions[] = {
+Sint32 ValePlazaStormGaretStepActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(196, 0, 790),
 	SC_SYNC,
@@ -2335,7 +2334,7 @@ Sint32 ValePlaza_StormGaretStepActions[] = {
 	SC_END,
 };
 
-SCENE_ENTRANCE ValePlaza_Entrances[] = {
+SCENE_ENTRANCE ValePlazaEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ VALE_PLAZA_FROM_COTTAGE_ROOMS_A_NORTH, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH, CONDITION_ALWAYS, 352, 0, 308, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -2353,7 +2352,7 @@ SCENE_ENTRANCE ValePlaza_Entrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-Uint32 ValePlaza_Exits[] = {
+Uint32 ValePlazaExits[] = {
 	SCENE_EXITS(ValePlaza),
 	SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH),
 	SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTH, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST),
@@ -2375,7 +2374,7 @@ Uint32 ValePlaza_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-Uint32 ValePlaza_StormExits[] = {
+Uint32 ValePlazaStormExits[] = {
 	SCENE_EXITS(ValePlaza),
 	SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH),
 	SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTH, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST),
@@ -2389,7 +2388,7 @@ Uint32 ValePlaza_StormExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE ValePlaza_ActorPlacements[] = {
+ACTOR_PLACE ValePlazaActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		186, 0, 460, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2435,7 +2434,7 @@ ACTOR_PLACE ValePlaza_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE ValePlaza_StormActorPlacements[] = {
+ACTOR_PLACE ValePlazaStormActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		186, 0, 460, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2482,7 +2481,7 @@ ACTOR_PLACE ValePlaza_StormActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE ValePlaza_DepartureActorPlacements[] = {
+ACTOR_PLACE ValePlazaDepartureActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		186, 0, 460, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2536,7 +2535,7 @@ ACTOR_PLACE ValePlaza_DepartureActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE ValePlaza_ActorPlacementsAfterKalay[] = {
+ACTOR_PLACE ValePlazaActorPlacementsAfterKalay[] = {
 	ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		186, 0, 460, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2568,7 +2567,7 @@ ACTOR_PLACE ValePlaza_ActorPlacementsAfterKalay[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE ValePlaza_Cues[] = {
+CUE ValePlazaCues[] = {
 	{ CUE_TALK, ACTOR_YOUNG_MAN_QUIET_DAY, CONDITION_ALWAYS, MSGNO(MsgValeQuietDay) },
 	{ CUE_TALK, ACTOR_WOMAN_ON_KRADENS_VISITORS, CONDITION_ALWAYS, MSGNO(MsgValeKradenHadVisitors) },
 	{ CUE_TALK, ACTOR_MAN_ASKING_ABOUT_MEDITATION, CONDITION_ALWAYS, SCRIPT_REF(scValePlazaAskAboutMeditation) },
@@ -2596,7 +2595,7 @@ CUE ValePlaza_Cues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE ValePlaza_StormCues[] = {
+CUE ValePlazaStormCues[] = {
 	{ CUE_TALK, ACTOR_STORM_CURIOUS_OLD_MAN, CONDITION_ALWAYS, SCRIPT_REF(scValePlazaAskAboutJourney) },
 	{ CUE_TALK, ACTOR_STORM_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgValeOldWomanCannotUsePsynergy) },
 	{ CUE_TALK, ACTOR_STORM_ROCK_DEFLECTING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgValeExhaustedFromFallingRocks) },
@@ -2616,11 +2615,11 @@ CUE ValePlaza_StormCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE ValePlaza_DepartureCues[] = {
+CUE ValePlazaDepartureCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE ValePlaza_CuesAfterLeaving[] = {
+CUE ValePlazaCuesAfterLeaving[] = {
 	{ CUE_TALK, ACTOR_YOUNG_MAN_QUIET_DAY, CONDITION_ALWAYS, MSGNO(MsgValeTremorsSettled) },
 	{ CUE_TALK, ACTOR_WOMAN_ON_KRADENS_VISITORS, CONDITION_ALWAYS, MSGNO(MsgValeRoadToVault) },
 	{ CUE_TALK, ACTOR_MAN_ASKING_ABOUT_MEDITATION, CONDITION_ALWAYS, MSGNO(MsgValeRoadToGomaRange) },
@@ -2659,7 +2658,7 @@ CUE ValePlaza_CuesAfterLeaving[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE ValePlaza_CuesAfterKalay[] = {
+CUE ValePlazaCuesAfterKalay[] = {
 	{ CUE_TALK, ACTOR_AFTER_KALAY_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, SCRIPT_REF(scValePlazaWelcomeIsaacHome) },
 	{ CUE_TALK, ACTOR_AFTER_KALAY_WOMAN_BACK_SOONER, CONDITION_ALWAYS, MSGNO(MsgValeCameBackSooner) },
 	{ CUE_TALK, ACTOR_AFTER_KALAY_MAN_ON_NEW_FRIENDS, CONDITION_ALWAYS, MSGNO(MsgValeMadeFriendsOnJourney) },
@@ -2700,8 +2699,8 @@ CUE ValePlaza_CuesAfterKalay[] = {
 	{ CUE_TABLE_END },
 };
 
-/* A door of the plaza opening, in three pictures a frame each. */
-Uint16 ValePlaza_DoorOpens[] = {
+/* A door of the plaza opening, in three pictures a tick each. */
+Uint16 ValePlazaDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(0, 57, 2, 2, 1), MAPGRID_ANIMATION_STEP(0, 59, 2, 2, 1), MAPGRID_ANIMATION_STEP(2, 59, 2, 2, 1), MAPGRID_ANIMATION_STEPS_END,
 };
 /* clang-format on */

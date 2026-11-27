@@ -29,7 +29,7 @@
    chosen with a pointing hand. */
 Sint32 mnColossoMenuChoose(Sint32 unused)
 {
-	WINDOW	   *window;
+	WINDOW	   *win;
 	MENU_CURSOR cursor;
 	Sint32		slot;
 	Sint32		row;
@@ -37,19 +37,18 @@ Sint32 mnColossoMenuChoose(Sint32 unused)
 	Uint16	   *palette;
 
 	moved = TRUE;
-	window = mnWindowCreate(
+	win = mnWindowCreate(
 		TALK_WINDOW_X, 13, TALK_WINDOW_WIDTH, 7, WINDOW_FLAG_INSTANT);
-	mnTextDrawMessageAsTiles(MsgTalkChoice, window, 8, 0);
-	mnTextDrawMessageAsTiles(MsgTalkChoice + 1, window, 8, 16);
-	mnTextDrawMessageAsTiles(MsgTalkChoice + 2, window, 8, 32);
+	mnTextDrawMessageAsTiles(MsgTalkChoice, win, 8, 0);
+	mnTextDrawMessageAsTiles(MsgTalkChoice + 1, win, 8, 16);
+	mnTextDrawMessageAsTiles(MsgTalkChoice + 2, win, 8, 32);
 	slot = syVRAMCacheFindFreeEntry();
 	row = 0;
 	if(slot < VRAM_CACHE_ENTRY_COUNT) {
 		syVRAMCacheLoad(slot, 128, PointingHandTiles);
 		cursor.anchor =
-			mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
-		mnCursorSetPosImmediateStub(
-			&cursor, window->x * 8 - 3, window->y * 8 + 9);
+			mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_16X16, win, 0, 0);
+		mnCursorSetPosImmediateStub(&cursor, win->x * 8 - 3, win->y * 8 + 9);
 	}
 	/* The choice under the cursor flashes between WINDOW_PALETTE and
 	   HIGHLIGHT_PALETTE, a copy of it with WINDOW_BACKGROUND_COLOR grey. */
@@ -59,14 +58,14 @@ Sint32 mnColossoMenuChoose(Sint32 unused)
 	palette[WINDOW_BACKGROUND_COLOR] = RGB(24, 24, 24);
 	while(1) {
 		mnWindowSetInteriorPalette(
-			window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1, HIGHLIGHT_PALETTE);
+			win, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1, HIGHLIGHT_PALETTE);
 		sySynch(1);
 		mnWindowSetInteriorPalette(
-			window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1, WINDOW_PALETTE);
+			win, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1, WINDOW_PALETTE);
 		if(moved) {
 			moved = FALSE;
 			mnCursorSetStub(
-				&cursor, window->x * 8 - 3, (window->y + row * 2) * 8 + 9, 3);
+				&cursor, win->x * 8 - 3, (win->y + row * 2) * 8 + 9, 3);
 		}
 		mnCursorAdvanceStub(&cursor);
 		if(PerRepeat & KEY_UP) {
@@ -93,7 +92,7 @@ Sint32 mnColossoMenuChoose(Sint32 unused)
 			break;
 		}
 	}
-	mnWindowClose(window, 2);
+	mnWindowClose(win, 2);
 	sySynch(1);
 	syVRAMCacheFreeEntry(slot);
 	return row;
@@ -105,24 +104,24 @@ void mnDjinnShowJoinedMessage(Sint32 member, Sint32 element, Sint32 djinn)
 {
 	WIN_STATE *state = WINDOW_STATE;
 	Sint32	   speaker;
-	WINDOW	  *window;
+	WINDOW	  *win;
 	Sint32	   portrait[3];
 	Sint32	  *entry;
 	Sint32	   palette, handle;
 	Sint32	  *word;
 	Uint16	  *spacing = NULL;
 
-	window = NULL;
-	speaker = Djinn_ElementSprites[element & 3];
+	win = NULL;
+	speaker = DjinnElementSprites[element & 3];
 	entry = portrait;
-	window = mnWindowCreate(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, 0);
-	if(window == NULL)
+	win = mnWindowCreate(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, 0);
+	if(win == NULL)
 		return;
-	mnWindowDrawDividerLine(window, 4, 0, 4, 4);
+	mnWindowDrawDividerLine(win, 4, 0, 4, 4);
 	state->dirty = 1;
 	mnIconLoadWithPalette(mnPortraitGetForSpeaker(speaker), 0, &handle,
 		&palette, PORTRAIT_PALETTE, 0);
-	/* The portrait as a bare OAM entry, drawn each frame at y 12: a link word,
+	/* The portrait as a bare OAM entry, drawn each tick at y 12: a link word,
 	   attributes 0 and 1 and attribute 2. */
 	word = entry;
 	*word++ = 0;
@@ -135,7 +134,7 @@ void mnDjinnShowJoinedMessage(Sint32 member, Sint32 element, Sint32 djinn)
 	mnMessageArgumentPush(
 		element * DJINN_PER_ELEMENT + djinn + ABILITY_DJINNI_FIRST,
 		MESSAGE_ARGUMENT_ABILITY);
-	JOINED_QUEUE_TEXT(window,
+	JOINED_QUEUE_TEXT(win,
 		mnMessageDecodeAndClearArguments(element + MsgVenusDjinnJoined), 36, 2,
 		spacing);
 	sySndPlayStub(MUS_A_NEW_ALLY);
@@ -144,13 +143,13 @@ void mnDjinnShowJoinedMessage(Sint32 member, Sint32 element, Sint32 djinn)
 		sySynch(1);
 	} while(sySndGetBGMRestoreDelayStub() != 0 &&
 		(PerPush & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
-	mnWindowClose(window, 2);
+	mnWindowClose(win, 2);
 	sySynch(1);
 	syVRAMCacheFreeEntry(handle);
 }
 
 /* Returns the sprite whose portrait shows party member `member` (0 to 8): from
-   Character_ChildSpriteTable during the prologue, from Character_SpriteTable
+   CharacterChildSpriteTable during the prologue, from CharacterSpriteTable
    otherwise; 0 for any other party member. */
 Sint32 mnPartyGetMemberPortraitSpr(Uint32 member)
 {
@@ -158,9 +157,9 @@ Sint32 mnPartyGetMemberPortraitSpr(Uint32 member)
 		return 0;
 	}
 	if(gmFlagGetStub(FLAG_CHILDHOOD) == 0) {
-		return Character_SpriteTable[member];
+		return CharacterSpriteTable[member];
 	}
-	return Character_ChildSpriteTable[member];
+	return CharacterChildSpriteTable[member];
 }
 
 /* Shows that a party member joined the party while the join jingle
@@ -169,8 +168,8 @@ void mnPartyShowJoinedMessage(Sint32 member)
 {
 	WIN_STATE *state = WINDOW_STATE;
 	WINDOW	  *window = NULL;
-	Sint32	   sprite[3];
-	Sint32	  *entry = sprite;
+	Sint32	   spr[3];
+	Sint32	  *entry = spr;
 	Sint32	   palette, handle;
 	Sint32	  *p;
 
@@ -181,7 +180,7 @@ void mnPartyShowJoinedMessage(Sint32 member)
 		mnIconLoadWithPalette(
 			mnPortraitGetForSpeaker(mnPartyGetMemberPortraitSpr(member)), 0,
 			&handle, &palette, PORTRAIT_PALETTE, 0);
-		/* The portrait as a bare OAM entry, drawn each frame: a link word,
+		/* The portrait as a bare OAM entry, drawn each tick: a link word,
 		   attributes 0 and 1 and attribute 2. */
 		p = entry;
 		*p++ = 0;
@@ -209,7 +208,7 @@ void mnPartyShowJoinedMessage(Sint32 member)
 void mnPartyShowPairJoinedMessage(Sint32 first, Sint32 second)
 {
 	WIN_STATE *state = WINDOW_STATE;
-	WINDOW	  *window;
+	WINDOW	  *win;
 	Sint32	   secondOam[3];
 	Sint32	   firstOam[3];
 	Sint32	  *firstEntry;
@@ -217,19 +216,19 @@ void mnPartyShowPairJoinedMessage(Sint32 first, Sint32 second)
 	Sint32	   firstHandle, palette, secondHandle;
 	Sint32	  *p;
 
-	window = NULL;
+	win = NULL;
 	firstEntry = firstOam;
-	window = mnWindowCreate(1, 1, 28, 5, 0);
+	win = mnWindowCreate(1, 1, 28, 5, 0);
 
-	if(window != NULL) {
+	if(win != NULL) {
 		/* BUG: from (8, 0) to (4, 4) is neither across nor down, so
 		   mnWindowDrawDividerLine draws nothing and the window has no divider.
 		   The single joins draw (4, 0, 4, 4), half a tile before their text at
 		   x 36; column 8 is the same place before this one's text at x 68. */
 #if FIX_PAIR_JOINED_DIVIDER
-		mnWindowDrawDividerLine(window, 8, 0, 8, 4);
+		mnWindowDrawDividerLine(win, 8, 0, 8, 4);
 #else
-		mnWindowDrawDividerLine(window, 8, 0, 4, 4);
+		mnWindowDrawDividerLine(win, 8, 0, 4, 4);
 #endif
 
 		state->dirty = 1;
@@ -237,7 +236,7 @@ void mnPartyShowPairJoinedMessage(Sint32 first, Sint32 second)
 		mnIconLoadWithPalette(
 			mnPortraitGetForSpeaker(mnPartyGetMemberPortraitSpr(first)), 0,
 			&firstHandle, &palette, PORTRAIT_PALETTE, 0);
-		/* The portrait as a bare OAM entry, drawn each frame: a link word,
+		/* The portrait as a bare OAM entry, drawn each tick: a link word,
 		   attributes 0 and 1 and attribute 2. */
 		p = firstEntry;
 		*p++ = 0;
@@ -259,7 +258,7 @@ void mnPartyShowPairJoinedMessage(Sint32 first, Sint32 second)
 		mnMessageArgumentPush(first, MESSAGE_ARGUMENT_ACTOR);
 		mnMessageArgumentPush(second, MESSAGE_ARGUMENT_ACTOR);
 
-		JOINED_QUEUE_TEXT(window,
+		JOINED_QUEUE_TEXT(win,
 			mnMessageDecodeAndClearArguments(MsgPairJoinedParty), 68, 2, 0);
 
 		sySndPlayStub(MUS_A_NEW_ALLY);
@@ -271,7 +270,7 @@ void mnPartyShowPairJoinedMessage(Sint32 first, Sint32 second)
 		} while(sySndGetBGMRestoreDelayStub() != 0 &&
 			(PerPush & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
-		mnWindowClose(window, 2);
+		mnWindowClose(win, 2);
 		sySynch(1);
 		syVRAMCacheFreeEntry(firstHandle);
 		syVRAMCacheFreeEntry(secondHandle);

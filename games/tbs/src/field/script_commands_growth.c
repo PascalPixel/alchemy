@@ -10,16 +10,16 @@
    under it. */
 void fdPsynergyGrowthOnTarget(Sint32 unused)
 {
-	ACTOR *target;
+	ACTOR *tgt;
 
-	target = ((FIELD_EFFECT_STATE *)FieldEffectStateWork)->tgt;
-	if(target != NULL) {
+	tgt = ((FIELD_EFFECT_STATE *)FieldEffectStateWork)->tgt;
+	if(tgt != NULL) {
 		fdEffectSpawnBurstParticleField();
 		/* A sprout grows tall: sprout.tsv's animation 2, pictures 0 to 6. */
-		fdActorSelectAnimationStub(target, SPROUT_ANIMATION_GROW);
-		target->collisionFlg = 0;
-		fdActorSetSprFlagsStub(target, 0);
-		target->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSelectAnimationStub(tgt, SPROUT_ANIMATION_GROW);
+		tgt->collisionFlg = 0;
+		fdActorSetSprFlagsStub(tgt, 0);
+		tgt->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
 		sySynch(10);
 		sySndPlayStub(SE_RECOVERY);
 		sySynch(40);
@@ -49,7 +49,7 @@ void fdPsynergyGrowth(void)
 		pos.y = effectState->y;
 		particle = fdActorSpawn(SPRITE_VINE, pos.x, pos.y, pos.z);
 		if(particle != 0) {
-			fdActorStartScriptStub(particle, Growth_LeafScript);
+			fdActorStartScriptStub(particle, GrowthLeafScript);
 			particle->motionFlg = ACTOR_FALLS;
 		}
 		sySynch(((syRandom() * 2) >> 16) + 2);
@@ -58,21 +58,20 @@ void fdPsynergyGrowth(void)
 	fdPsynergyFadeFromCastCol();
 }
 
-/* Sends GROWTH_PARTICLE_MAX green sparks, one every 2 frames, from in front of
+/* Sends GROWTH_PARTICLE_MAX green sparks, one every 2 ticks, from in front of
    the caster to points round the Psynergy's position. */
 void fdEffectSpawnBurstParticleField(void)
 {
 	FIELD_EFFECT_STATE *effectState;
 	ACTOR			   *caster;
 	Sint32				pos[3];
-	Sint32				particleIndex;
+	Sint32				particleIdx;
 
 	effectState = FieldEffectStateWork;
 	caster = effectState->caster;
 	fdPsynergyFadeToCastCol();
 
-	for(particleIndex = 0; particleIndex < GROWTH_PARTICLE_MAX;
-		particleIndex++) {
+	for(particleIdx = 0; particleIdx < GROWTH_PARTICLE_MAX; particleIdx++) {
 		ACTOR			   *particle;
 		ANIMATION_SPR_PART *image;
 		ANIMATION_SPR_PART *shadow;
@@ -113,7 +112,7 @@ void fdEffectSpawnBurstParticleField(void)
 			fdActorSelectAnimationStub(particle, 7);
 			/* From the shared script's SC_SYNC: released once it arrives. */
 			fdActorStartScriptStub(
-				particle, FieldEffect_SharedParticleScript + 1);
+				particle, FieldEffectSharedParticleScript + 1);
 			fdActorSetSprFlagsStub(particle, SPRITE_FLAG_SHADOW);
 
 			/* Destination: 4 to 10 pixels from the Psynergy's position. */

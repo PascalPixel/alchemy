@@ -38,20 +38,20 @@ Sint32 btEnemyHasSprRoom(Sint32 enemyId)
 {
 	BATTLE_STATE *battle;
 	Sint32		  needsSingleSlot;
-	Sint32		  spriteSlot;
+	Sint32		  sprSlot;
 
 	needsSingleSlot = btSprIsSmall(enemyId);
 	battle = BattleStateWork;
-	for(spriteSlot = 0; spriteSlot < ENEMY_SPRITE_SLOTS; spriteSlot++) {
-		if(battle->sprSlots[spriteSlot] != 0)
+	for(sprSlot = 0; sprSlot < ENEMY_SPRITE_SLOTS; sprSlot++) {
+		if(battle->sprSlots[sprSlot] != 0)
 			continue;
 		if(needsSingleSlot != 0)
 			break;
-		if(spriteSlot < ENEMY_SPRITE_SLOTS - 1 &&
-			battle->sprSlots[spriteSlot + 1] == 0)
+		if(sprSlot < ENEMY_SPRITE_SLOTS - 1 &&
+			battle->sprSlots[sprSlot + 1] == 0)
 			break;
 	}
-	return spriteSlot != ENEMY_SPRITE_SLOTS;
+	return sprSlot != ENEMY_SPRITE_SLOTS;
 }
 
 /* Loads an enemy's battle sprite into the first free enemy sprite slots, the
@@ -59,17 +59,17 @@ Sint32 btEnemyHasSprRoom(Sint32 enemyId)
    first slot (SPRITE_PICTURE_TAG), or 0. */
 Sint32 btEnemySprLoadIntoSlots(Sint32 unitId)
 {
-	Sint32		  spritePart;
+	Sint32		  sprPart;
 	BATTLE_STATE *battle = BattleStateWork;
 	UNIT		 *unit = gmUnitGetStub(unitId);
 	Sint32		  needsSingleSlot = btSprIsSmall(unit->id);
 	Sint32		  result;
-	Sint32		  sprite;
+	Sint32		  spr;
 
-	result = spritePart = 0;
-	sprite = btSprGetSpr(unit->id);
+	result = sprPart = 0;
+	spr = btSprGetSpr(unit->id);
 	/* Once for the sprite, and again for its second part if it has one. */
-	for(spritePart = 0; spritePart <= 1; spritePart++) {
+	for(sprPart = 0; sprPart <= 1; sprPart++) {
 		Sint32 slot;
 
 		/* A unit with a class is a character, no enemy: nothing is loaded and
@@ -92,16 +92,16 @@ Sint32 btEnemySprLoadIntoSlots(Sint32 unitId)
 
 		{
 			Sint32 palette = btSprGetPalette(unit->id);
-			Uint8 *spriteBuffer =
+			Uint8 *sprBuf =
 				Ram_EnemySpriteSlots + slot * ENEMY_SPRITE_SLOT_SIZE;
 
-			if(fdSprPictureCacheLoadStub(slot, (Uint32 *)spriteBuffer,
-				   sprite + spritePart, palette) == 0)
+			if(fdSprPictureCacheLoadStub(
+				   slot, (Uint32 *)sprBuf, spr + sprPart, palette) == 0)
 				return 0;
 		}
 
-		if(spritePart == 0)
-			result = (slot << PICTURE_CACHE_TAG_SLOT_SHIFT) | sprite;
+		if(sprPart == 0)
+			result = (slot << PICTURE_CACHE_TAG_SLOT_SHIFT) | spr;
 
 		battle->sprSlots[slot] = unitId;
 		if(!needsSingleSlot)
@@ -109,8 +109,7 @@ Sint32 btEnemySprLoadIntoSlots(Sint32 unitId)
 
 		/* Only the Kraken and the Fusion Dragon are drawn in two parts, the
 		   second the sprite after the first. */
-		if(sprite != SPRITE_BATTLE_KRAKEN &&
-			sprite != SPRITE_BATTLE_FUSION_DRAGON)
+		if(spr != SPRITE_BATTLE_KRAKEN && spr != SPRITE_BATTLE_FUSION_DRAGON)
 			break;
 	}
 
@@ -122,12 +121,12 @@ Sint32 btEnemySprLoadIntoSlots(Sint32 unitId)
 UNREAD_RESULT btObjectReleaseSprSlots(Sint32 unitId)
 {
 	BATTLE_STATE *battle = BattleStateWork;
-	Sint32		  spriteSlot;
+	Sint32		  sprSlot;
 
-	for(spriteSlot = 0; spriteSlot < ENEMY_SPRITE_SLOTS; spriteSlot++) {
-		if(battle->sprSlots[spriteSlot] == unitId) {
-			fdSprPictureCacheLoadStub(spriteSlot, 0, 0, 0);
-			battle->sprSlots[spriteSlot] = 0;
+	for(sprSlot = 0; sprSlot < ENEMY_SPRITE_SLOTS; sprSlot++) {
+		if(battle->sprSlots[sprSlot] == unitId) {
+			fdSprPictureCacheLoadStub(sprSlot, 0, 0, 0);
+			battle->sprSlots[sprSlot] = 0;
 		}
 	}
 }
@@ -136,18 +135,18 @@ UNREAD_RESULT btObjectReleaseSprSlots(Sint32 unitId)
    which picks a party member's weapon sprite. */
 Sint32 btUnitGetWeaponKind(Sint32 itemId)
 {
-	Sint32 assignmentIndex;
+	Sint32 assignmentIdx;
 	Uint32 assignment;
 	Sint32 weaponKind;
 
-	for(assignmentIndex = 0;; assignmentIndex++) {
+	for(assignmentIdx = 0;; assignmentIdx++) {
 		if(itemId ==
-			(BattleUnit_WeaponKinds[assignmentIndex] & WEAPON_ITEM_MASK)) {
-			assignment = BattleUnit_WeaponKinds[assignmentIndex];
+			(BattleUnitWeaponKinds[assignmentIdx] & WEAPON_ITEM_MASK)) {
+			assignment = BattleUnitWeaponKinds[assignmentIdx];
 			weaponKind = assignment >> WEAPON_KIND_SHIFT;
 			break;
 		}
-		if((Sint16)BattleUnit_WeaponKinds[assignmentIndex] == -1) {
+		if((Sint16)BattleUnitWeaponKinds[assignmentIdx] == -1) {
 			weaponKind = WEAPON_KIND_NONE;
 			break;
 		}
@@ -161,11 +160,11 @@ Sint32 btUnitGetWeaponSpr(Sint32 unitId)
 {
 	UNIT  *unit;
 	Sint32 slot;
-	Sint32 weaponSprite;
+	Sint32 weaponSpr;
 
 	unit = gmUnitGetStub(unitId);
 	slot = gmInventoryFindEquippedStub(unitId, EQUIP_WEAPON);
-	weaponSprite = 0;
+	weaponSpr = 0;
 	if(slot >= 0) {
 		Sint32 weaponKind;
 
@@ -173,25 +172,25 @@ Sint32 btUnitGetWeaponSpr(Sint32 unitId)
 			btUnitGetWeaponKind(unit->inventory[slot] & WEAPON_ITEM_MASK);
 		switch(unit->id) {
 		case ISAAC:
-			weaponSprite = BattleUnit_WeaponAnimationsIsaac[weaponKind];
+			weaponSpr = BattleUnitWeaponAnimationsIsaac[weaponKind];
 			break;
 		case GARET:
-			weaponSprite = BattleUnit_WeaponAnimationsGaret[weaponKind];
+			weaponSpr = BattleUnitWeaponAnimationsGaret[weaponKind];
 			break;
 		case IVAN:
-			weaponSprite = BattleUnit_WeaponAnimationsIvan[weaponKind];
+			weaponSpr = BattleUnitWeaponAnimationsIvan[weaponKind];
 			break;
 		case MIA:
-			weaponSprite = BattleUnit_WeaponAnimationsMia[weaponKind];
+			weaponSpr = BattleUnitWeaponAnimationsMia[weaponKind];
 			break;
 		case FELIX:
 			break;
 		case JENNA:
-			weaponSprite = BattleUnit_WeaponAnimationsJenna[weaponKind];
+			weaponSpr = BattleUnitWeaponAnimationsJenna[weaponKind];
 			break;
 		}
 	}
-	return weaponSprite;
+	return weaponSpr;
 }
 
 #undef ENEMY_SPRITE_SLOT_SIZE

@@ -3,7 +3,7 @@
 /* Element levels are counted in tenths: a Djinni set adds a whole level. */
 #define ELEMENT_LEVEL_SCALE 10
 /* The highest whole element level, the last row of
-   Element_PowerResistByLevel. */
+   ElementPowerResistByLevel. */
 #define ELEMENT_LEVEL_MAX	15
 
 /* Returns the class series of a character whose strongest element is
@@ -11,7 +11,7 @@
    ELEMENT_COUNT table. */
 Sint32 gmClassGetSeries(Sint32 primaryElement, Sint32 secondaryElement)
 {
-	return Class_SeriesByElements[(primaryElement * ELEMENT_COUNT) +
+	return ClassSeriesByElements[(primaryElement * ELEMENT_COUNT) +
 		secondaryElement];
 }
 
@@ -25,16 +25,16 @@ Sint32 gmUnitGetElementLevels(
 	Sint32 *cursor;
 
 	if(unitId > PIERS) {
-		Uint32 index;
+		Uint32 idx;
 
-		index = gmEnemyGetDefinition(unitId)->elementPreset;
-		if(index >= ENEMY_ELEMENT_PRESET_COUNT)
-			index = 0;
+		idx = gmEnemyGetDefinition(unitId)->elementPreset;
+		if(idx >= ENEMY_ELEMENT_PRESET_COUNT)
+			idx = 0;
 
 		i = 0;
 		cursor = output;
 		for(; i < ELEMENT_COUNT; i++)
-			*cursor++ = Enemy_ElementPresetTable[index].elementLevels[i] *
+			*cursor++ = EnemyElementPresetTable[idx].elementLevels[i] *
 				ELEMENT_LEVEL_SCALE;
 	} else {
 		cursor = output;
@@ -42,9 +42,9 @@ Sint32 gmUnitGetElementLevels(
 		   unit. */
 		djinnHeld += offsetof(UNIT, djinnSetCnts) - offsetof(UNIT, djinnHeld);
 		for(i = 0; i < ELEMENT_COUNT; i++) {
-			Uint32 count = *djinnHeld++;
+			Uint32 cnt = *djinnHeld++;
 
-			*cursor++ = count * ELEMENT_LEVEL_SCALE;
+			*cursor++ = cnt * ELEMENT_LEVEL_SCALE;
 		}
 
 		if(unitId <= PIERS) {
@@ -77,17 +77,17 @@ Sint32 gmUnitGetElementLevel(Sint32 unitId, Sint32 element)
 Sint32 gmEnemyGetAttackElement(UNIT *unit)
 {
 	const ENEMY_DEFINITION *enemy = gmEnemyGetDefinition(unit->id);
-	Uint8					presetIndex = enemy->elementPreset;
+	Uint8					presetIdx = enemy->elementPreset;
 
-	if(presetIndex >= ENEMY_ELEMENT_PRESET_COUNT)
-		presetIndex = 0;
-	return Enemy_ElementPresetTable[presetIndex].attackElement;
+	if(presetIdx >= ENEMY_ELEMENT_PRESET_COUNT)
+		presetIdx = 0;
+	return EnemyElementPresetTable[presetIdx].attackElement;
 }
 
 /* Writes a unit's base Power and Resist in each element, from its element
    levels. */
 UNREAD_RESULT
-gmUnitCalcBaseElements(Sint32 unitId, BATTLE_ELEMENT_STATS *destination)
+gmUnitCalcBaseElements(Sint32 unitId, BATTLE_ELEMENT_STATS *dst)
 {
 	UNIT  *unit = gmUnitGet(unitId);
 	Sint32 levels[ELEMENT_COUNT];
@@ -101,7 +101,7 @@ gmUnitCalcBaseElements(Sint32 unitId, BATTLE_ELEMENT_STATS *destination)
 		/* The copy returns from inside its loop, as the last element is
 		   written. */
 		for(i = 0;;) {
-			destination[i] = Enemy_ElementPresetTable[preset].stats[i];
+			dst[i] = EnemyElementPresetTable[preset].stats[i];
 			if(++i >= ELEMENT_COUNT)
 				RETURN_UNREAD(preset);
 		}
@@ -120,10 +120,10 @@ gmUnitCalcBaseElements(Sint32 unitId, BATTLE_ELEMENT_STATS *destination)
 			level = 0;
 		/* The pair is written as two halfwords in a row, power then
 		   resistance. */
-		((Sint16 *)destination)[i * 2] =
-			Element_PowerResistByLevel[level].power + tenths;
-		((Sint16 *)destination)[i * 2 + 1] =
-			Element_PowerResistByLevel[level].resistance + tenths;
+		((Sint16 *)dst)[i * 2] =
+			ElementPowerResistByLevel[level].power + tenths;
+		((Sint16 *)dst)[i * 2 + 1] =
+			ElementPowerResistByLevel[level].resistance + tenths;
 	}
 }
 
@@ -176,11 +176,11 @@ Sint32 gmClassDetermine(Sint32 character, const Uint8 *djinn)
 		primary, levels[j] >= ELEMENT_LEVEL_SCALE ? j : primary);
 	/* The last class of the series that the element levels reach. */
 	for(i = CLASS_COUNT - 1; i >= 0; i--) {
-		if(Class_DefinitionTable[i].series != series)
+		if(ClassDefinitionTable[i].series != series)
 			continue;
 		for(j = 0; j < ELEMENT_COUNT; j++) {
 			if(levels[j] <
-				Class_DefinitionTable[i].required[j] * ELEMENT_LEVEL_SCALE)
+				ClassDefinitionTable[i].required[j] * ELEMENT_LEVEL_SCALE)
 				break;
 		}
 		if(j == ELEMENT_COUNT) {
@@ -197,7 +197,7 @@ Sint32 gmClassDetermine(Sint32 character, const Uint8 *djinn)
    multipliers and the Psynergy it teaches by level. */
 CLASS_DEFINITION *gmClassGetDefinition(Sint32 classId)
 {
-	return (CLASS_DEFINITION *)&Class_DefinitionTable[classId];
+	return (CLASS_DEFINITION *)&ClassDefinitionTable[classId];
 }
 
 /* Works out a character's class again after its Djinn change, then its Psynergy

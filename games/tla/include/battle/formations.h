@@ -61,6 +61,6 @@ extern FORMATION Formations[];
 
 /* The 87 enemies whose defeated flags (0x600 + id) a monster battle clears
    before it picks a formation (btFormationSelectLevelMatchedCandidate). */
-extern Uint16 BattleFormation_ExcludedEnemies[87];
+extern Uint16 BattleFormationExcludedEnemies[87];
 
 #endif

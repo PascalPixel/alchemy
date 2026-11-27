@@ -49,7 +49,7 @@
    (FLAG_TRET_TREE_SECOND_FLOOR_LEAF_A_TORN and the others). The metatiles of a
    leaf carry the number of the entrance its fall lands at, so the step cues
    name them by those entrances. A torn leaf is redrawn after a battle
-   (FLAG_KEEP_PARTY_POSITION) from TreeRooms_MapPatches. */
+   (FLAG_KEEP_PARTY_POSITION) from TreeRoomsMapPatches. */
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -63,9 +63,9 @@
 #include "scene/walk_into_leader.h"
 #include "text/msg_ids.h"
 
-extern Sint16 TreeRooms_MapPatches[];
+extern Sint16 TreeRoomsMapPatches[];
 
-/* The columns of a row of TreeRooms_MapPatches, six halfwords, whose rows run
+/* The columns of a row of TreeRoomsMapPatches, six halfwords, whose rows run
    on until a flag of -1. */
 enum {
 	MAP_PATCH_FLAG,
@@ -77,19 +77,19 @@ enum {
 	MAP_PATCH_ROW_LENGTH
 };
 
-extern Sint32			 TreeRooms_LeaderGathersActions[];
-extern Sint32			 TreeRooms_GaretGathersActions[];
-extern Sint32			 TreeRooms_IvanGathersActions[];
-extern Sint32			 TreeRooms_MiaGathersActions[];
-extern Sint32			 TreeRooms_FaceSinksActions[];
-extern Sint32			 TreeRooms_WalkBackToLeaderScript[];
-extern Uint32			 TreeRooms_TintSteps[];
+extern Sint32			 TreeRoomsLeaderGathersActions[];
+extern Sint32			 TreeRoomsGaretGathersActions[];
+extern Sint32			 TreeRoomsIvanGathersActions[];
+extern Sint32			 TreeRoomsMiaGathersActions[];
+extern Sint32			 TreeRoomsFaceSinksActions[];
+extern Sint32			 TreeRoomsWalkBackToLeaderScript[];
+extern Uint32			 TreeRoomsTintSteps[];
 extern SCENE_ENTRANCE	 TreeRoomsEntrances[];
 extern SCENE_EXIT_REGION TreeRoomsRegions[];
 extern Uint32			 TreeRoomsExits[];
 extern ACTOR_PLACE		 TreeRoomsActorPlacements[];
 extern CUE				 TreeRoomsCues[];
-extern Sint32			 TreeRooms_TintIndex;
+extern Sint32			 TreeRoomsTintIndex;
 
 /* Tret's face in the north wall of his room (SPRITE_TRET), the first actor
    placed after the party, and a second Tret actor (SPRITE_TRET_RAISED) placed
@@ -124,14 +124,14 @@ typedef enum TREE_ROOMS_METATILE_BEHAVIOR {
 } TREE_ROOMS_METATILE_BEHAVIOR;
 
 /* How long Isaac spins as he drops through a broken leaf. */
-#define LEAF_FALL_SPIN_FRAMES		  30
-#define SWIRL_SPARK_LAST_FRAME		  79
-#define SWIRL_SPARK_SHRINK_LAST_FRAME 39
+#define LEAF_FALL_SPIN_TICKS		 30
+#define SWIRL_SPARK_LAST_TICK		 79
+#define SWIRL_SPARK_SHRINK_LAST_TICK 39
 /* The light's slow swell inside Tret (scTretPaletteUpdateMapTint) covers
    background palettes 1 to 4 but palette 4's last colour. */
-#define TRET_TINT_COLOR_COUNT		  (4 * PALETTE_COLORS - 1)
-#define TRET_TINT_CHANNEL_MAX		  31
-#define TRET_TINT_END				  99
+#define TRET_TINT_COLOR_COUNT		 (4 * PALETTE_COLORS - 1)
+#define TRET_TINT_CHANNEL_MAX		 31
+#define TRET_TINT_END				 99
 
 /* The fall from the fifth floor's centre leaf goes down a floor at a time
    through entrances ten apart: TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF on the
@@ -166,12 +166,12 @@ static void scTreeRoomsSpawnSwirlSparks(void);
 static void scTreeRoomsApplyFlaggedMapPatches(void);
 static void scTreeRoomsLandFromFall(void);
 
-/* Where the sparks spring from, the frame of their 121-frame cycle, and the
+/* Where the sparks spring from, the tick of their 121-tick cycle, and the
    metatile keeping the entrance of the leaf last landed on, -1 once he jumps
    off. */
-static FIELD_POS sSparkOrigin ALIGNED(8);
-static Sint32				  sSparkFrame;
-static Sint16				 *sLastLeaf;
+static FIELD_POS SparkOrigin ALIGNED(8);
+static Sint32				 SparkTick;
+static Sint16				*LastLeaf;
 
 #include "shared/field_effect_create.c"
 
@@ -256,40 +256,38 @@ const ACTOR_PLACE *scGetActorPlacements(void)
    The next time the leaf breaks: he starts in surprise, spins as he drops
    through the web, leaving a hole where the leaf lay, and falls into the room
    below, landing straight under the leaf. The torn leaf and the hole are
-   pictures kept on a spare row of the map (`sourceColumn` on `sourceRow`, and
+   pictures kept on a spare row of the map (`srcColumn` on `srcRow`, and
    the row below it), copied over the leaf's metatile in the map's upper layer.
-   `entrance` is where the fall lands. `sLastLeaf` keeps a landing from counting
+   `entrance` is where the fall lands. `LastLeaf` keeps a landing from counting
    again while he stands on the leaf, until he jumps off it
    (scTreeRoomsJumpOffLeaf). FLAG_ARRIVE_FALLING has him drop into the room
    below, except from the fifth floor's centre leaf, whose fall goes on down
    through the rooms (scInit). */
 static void scTreeRoomsStepOnLeaf(
-	Sint32 leafFlag, Sint32 sourceColumn, Sint32 sourceRow, Sint32 entrance)
+	Sint32 leafFlg, Sint32 srcColumn, Sint32 srcRow, Sint32 entrance)
 {
-	Sint32 destinationColumn;
-	Sint32 destinationRow;
+	Sint32 dstColumn;
+	Sint32 dstRow;
 	Sint32 leaderActorId;
 	ACTOR *actor;
-	Sint32 spinFrame;
+	Sint32 spinFrm;
 
-	destinationColumn = FIELD_METATILE(MainRoutineStateWork.x) + 64;
-	destinationRow = FIELD_METATILE(MainRoutineStateWork.z);
+	dstColumn = FIELD_METATILE(MainRoutineStateWork.x) + 64;
+	dstRow = FIELD_METATILE(MainRoutineStateWork.z);
 	leaderActorId = MainRoutineStateWork.leaderActorId;
 	actor = fdActorGet(leaderActorId);
-	if(entrance == *sLastLeaf)
+	if(entrance == *LastLeaf)
 		return;
-	*sLastLeaf = entrance;
-	if(gmFlagGet(leafFlag) == 0) {
-		fdMapGridCopyMetatiles(
-			sourceColumn, sourceRow, 1, 1, destinationColumn, destinationRow);
-		gmFlagSet(leafFlag);
+	*LastLeaf = entrance;
+	if(gmFlagGet(leafFlg) == 0) {
+		fdMapGridCopyMetatiles(srcColumn, srcRow, 1, 1, dstColumn, dstRow);
+		gmFlagSet(leafFlg);
 		return;
 	}
 	/* Landing on a torn leaf: draw the hole and spin Isaac down through the
 	   web. */
-	*sLastLeaf = -1;
-	fdMapGridCopyMetatiles(
-		sourceColumn, sourceRow + 1, 1, 1, destinationColumn, destinationRow);
+	*LastLeaf = -1;
+	fdMapGridCopyMetatiles(srcColumn, srcRow + 1, 1, 1, dstColumn, dstRow);
 	sySndPlay(SE_CURSE_FALL);
 	fdScriptStart();
 	fdScriptSetDestination(SCENE_TREE_ROOMS, entrance);
@@ -306,7 +304,7 @@ static void scTreeRoomsStepOnLeaf(
 	fdScriptWait(3);
 	actor->layer = 2;
 	fdActorSetSprPriority(leaderActorId, 3);
-	for(spinFrame = 0; spinFrame < LEAF_FALL_SPIN_FRAMES; spinFrame++) {
+	for(spinFrm = 0; spinFrm < LEAF_FALL_SPIN_TICKS; spinFrm++) {
 		actor->facing += 2 * FACING_STEP;
 		sySynch(1);
 	}
@@ -458,12 +456,12 @@ static void scTreeRoomsStepOnFifthFloorFarSoutheastLeaf(void)
 
 /* Walking while Isaac stands on a leaf in Tret Tree makes him jump two
    metatiles that way, over the web to the next leaf, wherever there is room to
-   land (fdTryJumpForward). Once he has jumped, `sLastLeaf` is cleared, so that
+   land (fdTryJumpForward). Once he has jumped, `LastLeaf` is cleared, so that
    the leaf he lands on counts as a fresh landing. */
 static void scTreeRoomsJumpOffLeaf(void)
 {
 	if(fdTryJumpForward() == 0)
-		*sLastLeaf = -1;
+		*LastLeaf = -1;
 }
 
 /* Returns the doors, the vines, the leaves, Tret, Reveal, the chests and the
@@ -504,11 +502,11 @@ static void scTreeRoomsFightTret(void)
 	scPlaceAtLeader(ACTOR_IVAN);
 	if(hasMia != 0) {
 		scPlaceAtLeader(ACTOR_MIA);
-		fdActorSetScript(ACTOR_MIA, TreeRooms_MiaGathersActions);
+		fdActorSetScript(ACTOR_MIA, TreeRoomsMiaGathersActions);
 	}
-	fdActorSetScript(ACTOR_PARTY_LEADER, TreeRooms_LeaderGathersActions);
-	fdActorSetScript(ACTOR_GARET, TreeRooms_GaretGathersActions);
-	fdActorRunScriptAndWait(ACTOR_IVAN, TreeRooms_IvanGathersActions);
+	fdActorSetScript(ACTOR_PARTY_LEADER, TreeRoomsLeaderGathersActions);
+	fdActorSetScript(ACTOR_GARET, TreeRoomsGaretGathersActions);
+	fdActorRunScriptAndWait(ACTOR_IVAN, TreeRoomsIvanGathersActions);
 	fdScriptWait(10);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTH, 0);
@@ -606,7 +604,7 @@ static void scTreeRoomsPlayPostBattleConversation(void)
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	FieldStateWork->transitionFrm = 48;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	fdCameraSetSpeed(1.2);
 	fdCameraMoveTo(168, CAMERA_KEEP, 152, 1);
@@ -737,15 +735,15 @@ static void scTreeRoomsPlayPostBattleConversation(void)
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
 	fdScriptWait(20);
-	sSparkFrame = 0;
+	SparkTick = 0;
 	{
-		FIELD_POS *origin = &sSparkOrigin;
+		FIELD_POS *origin = &SparkOrigin;
 		origin->x = toFIXED(168);
 		origin->y = toFIXED(32);
 		sparkTask = scTreeRoomsSpawnSwirlSparks;
 		origin->z = toFIXED(52);
 	}
-	sySetFrameEvent(sparkTask, EVENT_PASS_FRAME);
+	sySetTickEvent(sparkTask, EVENT_PASS_TICK);
 	fdScriptWait(220);
 	syCloseEvent(sparkTask);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
@@ -759,7 +757,7 @@ static void scTreeRoomsPlayPostBattleConversation(void)
 	scTreeRoomsChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
 	/* "People of Kolima... Forgive me..." */
 	fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0);
-	fdActorRunScriptAndWait(ACTOR_TRET, TreeRooms_FaceSinksActions);
+	fdActorRunScriptAndWait(ACTOR_TRET, TreeRoomsFaceSinksActions);
 	fdScriptWait(40);
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
 	/* "Tret's too weak! He doesn't have the power to save Kolima." */
@@ -786,7 +784,7 @@ static void scTreeRoomsPlayPostBattleConversation(void)
 	fdActorSetAnimation(ACTOR_GARET, ANIM_NOD);
 	fdActorSetAnimation(ACTOR_MIA, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-	actions = TreeRooms_WalkBackToLeaderScript;
+	actions = TreeRoomsWalkBackToLeaderScript;
 	fdActorSetScript(ACTOR_GARET, actions);
 	if(hasMia != 0) {
 		fdActorSetScript(ACTOR_MIA, actions);
@@ -795,7 +793,7 @@ static void scTreeRoomsPlayPostBattleConversation(void)
 	fdScriptWait(20);
 	fdActorGet(ACTOR_PARTY_LEADER)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
 	gmFlagSet(FLAG_TRET_DEFEATED);
-	sySetFrameEvent(scTretPaletteUpdateMapTint, EVENT_PASS_FRAME);
+	sySetTickEvent(scTretPaletteUpdateMapTint, EVENT_PASS_TICK);
 	fdScriptEnd();
 }
 
@@ -846,7 +844,7 @@ Sint32 scInit(void)
 	ACTOR				  *secondTret;
 
 	tret = fdActorGet(ACTOR_TRET);
-	sLastLeaf = (Sint16 *)SceneLocalState;
+	LastLeaf = (Sint16 *)SceneLocalState;
 	scTretPaletteSaveMapCols();
 	tret->motionFlg = 0;
 	tret->y.fixed = -toFIXED(10);
@@ -857,7 +855,7 @@ Sint32 scInit(void)
 	fdActorSetSprColById(ACTOR_SECOND_TRET, SPRITE_COLOR_HIDDEN);
 	scTreeRoomsChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
 	if(MainRoutineStateWork.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
-		sySetFrameEvent(scTretPaletteUpdateMapTint, EVENT_PASS_FRAME);
+		sySetTickEvent(scTretPaletteUpdateMapTint, EVENT_PASS_TICK);
 	if(gmFlagGet(FLAG_TRET_DEFEATED)) {
 		fdActorSetPos(ACTOR_SECOND_TRET, 0, 0);
 		fdActorSetPos(ACTOR_TRET, 0, 0);
@@ -931,56 +929,55 @@ static void scTretPaletteSaveMapCols(void)
 /* The light inside Tret Tree slowly swells and fades: over a few seconds the
    walls and floors grow a little brighter and warmer, then sink back, again and
    again. It pauses while Psynergy is being cast, and stops for good once Reveal
-   is cast (scTreeRoomsCastReveal). Every 32 frames it adds the next red, green
-   and blue step of TreeRooms_TintSteps, a ramp from 0 up to 4 and back, to the
+   is cast (scTreeRoomsCastReveal). Every 32 ticks it adds the next red, green
+   and blue step of TreeRoomsTintSteps, a ramp from 0 up to 4 and back, to the
    saved colours of background palettes 1 to 4, skipping a random few steps each
    time; each later palette takes a weaker step. */
 static void scTretPaletteUpdateMapTint(void)
 {
-	Uint16		 *sourceColors;
-	Uint16		 *destinationColors;
-	Uint32		  colorIndex;
+	Uint16		 *srcCols;
+	Uint16		 *dstCols;
+	Uint32		  colIdx;
 	Sint32		  redStep;
 	Sint32		  greenStep;
 	Sint32		  blueStep;
 	Sint32		  red;
 	Sint32		  green;
 	Sint32		  blue;
-	Uint32		  color;
+	Uint32		  col;
 	FIELD_STATE	 *state;
 	PALETTE_FADE *paletteState;
 
 	state = FieldStateWork;
 	paletteState = PaletteFadeState;
-	sourceColors = paletteState->pal;
+	srcCols = paletteState->pal;
 	if(state->psynergy != 0)
 		return;
-	if((FrameCount & 31) != 0)
+	if((TickCount & 31) != 0)
 		return;
-	sourceColors += PALETTE_COLORS;
-	destinationColors = (Uint16 *)&BG_PLTT_COLOR(1, 0);
-	for(colorIndex = 0; colorIndex < TRET_TINT_COLOR_COUNT;
-		colorIndex++, sourceColors++) {
-		redStep = TreeRooms_TintSteps[TreeRooms_TintIndex];
-		greenStep = TreeRooms_TintSteps[TreeRooms_TintIndex + 1];
-		blueStep = TreeRooms_TintSteps[TreeRooms_TintIndex + 2];
-		if(colorIndex >= 3 * PALETTE_COLORS) {
+	srcCols += PALETTE_COLORS;
+	dstCols = (Uint16 *)&BG_PLTT_COLOR(1, 0);
+	for(colIdx = 0; colIdx < TRET_TINT_COLOR_COUNT; colIdx++, srcCols++) {
+		redStep = TreeRoomsTintSteps[TreeRoomsTintIndex];
+		greenStep = TreeRoomsTintSteps[TreeRoomsTintIndex + 1];
+		blueStep = TreeRoomsTintSteps[TreeRoomsTintIndex + 2];
+		if(colIdx >= 3 * PALETTE_COLORS) {
 			redStep -= redStep / 2 + redStep / 3;
 			greenStep -= greenStep / 2 + greenStep / 3;
 			blueStep -= blueStep / 2 + blueStep / 3;
-		} else if(colorIndex >= 2 * PALETTE_COLORS) {
+		} else if(colIdx >= 2 * PALETTE_COLORS) {
 			redStep -= redStep / 3 + redStep / 4;
 			greenStep -= greenStep / 3 + greenStep / 4;
 			blueStep -= blueStep / 3 + blueStep / 4;
-		} else if(colorIndex >= PALETTE_COLORS) {
+		} else if(colIdx >= PALETTE_COLORS) {
 			redStep -= redStep / 4 + redStep / 5;
 			greenStep -= greenStep / 4 + greenStep / 5;
 			blueStep -= blueStep / 4 + blueStep / 5;
 		}
-		color = *sourceColors;
-		red = RGB_RED(color);
-		green = RGB_GREEN(color);
-		blue = RGB_BLUE(color);
+		col = *srcCols;
+		red = RGB_RED(col);
+		green = RGB_GREEN(col);
+		blue = RGB_BLUE(col);
 		red += redStep;
 		green += greenStep;
 		blue += blueStep;
@@ -996,16 +993,16 @@ static void scTretPaletteUpdateMapTint(void)
 			green = 0;
 		if(blue < 0)
 			blue = 0;
-		*destinationColors++ = RGB(red, green, blue);
+		*dstCols++ = RGB(red, green, blue);
 	}
-	TreeRooms_TintIndex += (syRandomNext() & 7) * 3;
-	if(TreeRooms_TintSteps[TreeRooms_TintIndex] == TRET_TINT_END)
-		TreeRooms_TintIndex = 0;
+	TreeRoomsTintIndex += (syRandomNext() & 7) * 3;
+	if(TreeRoomsTintSteps[TreeRoomsTintIndex] == TRET_TINT_END)
+		TreeRoomsTintIndex = 0;
 }
 
 /* Changes Tret's face in the north wall of his room (opening or closing his
-   eyes, blinking, looking aside), six frames to a picture, and waits twelve
-   frames after it. */
+   eyes, blinking, looking aside), six ticks to a picture, and waits twelve
+   ticks after it. */
 static void scTreeRoomsChangeFace(Sint32 change)
 {
 	switch(change) {
@@ -1081,27 +1078,27 @@ static void scTreeRoomsChangeFace(Sint32 change)
 
 /* One of the sparks that swirl out from Tret's face as he tries to free the
    people of Kolima: it spirals outward from his face, shrinking as it goes, and
-   is put away after 80 frames. */
+   is put away after 80 ticks. */
 static void scTreeRoomsUpdateSwirlSpark(ACTOR *spark)
 {
-	FIELD_POS position;
-	Sint32	  frame;
+	FIELD_POS pos;
+	Sint32	  frm;
 
-	frame = spark->tmr;
-	if(frame <= SWIRL_SPARK_LAST_FRAME) {
-		position.x = spark->tgtX;
-		position.y = spark->tgtY;
-		position.z = spark->tgtZ;
+	frm = spark->tmr;
+	if(frm <= SWIRL_SPARK_LAST_TICK) {
+		pos.x = spark->tgtX;
+		pos.y = spark->tgtY;
+		pos.z = spark->tgtZ;
 		{
-			Sint32 initialAngle = spark->userValue;
+			Sint32 initAng = spark->userValue;
 
-			syVectorAddPolarOffset(toFIXED(frame),
-				((frame * 3) << 8) + initialAngle, (FIXED *)&position);
+			syVectorAddPolarOffset(
+				toFIXED(frm), ((frm * 3) << 8) + initAng, (FIXED *)&pos);
 		}
-		spark->x.fixed = position.x;
-		spark->y.fixed = position.y;
-		spark->z.fixed = position.z;
-		if(spark->tmr <= SWIRL_SPARK_SHRINK_LAST_FRAME) {
+		spark->x.fixed = pos.x;
+		spark->y.fixed = pos.y;
+		spark->z.fixed = pos.z;
+		if(spark->tmr <= SWIRL_SPARK_SHRINK_LAST_TICK) {
 			spark->scaleX -= toFIXED(1) / 50;
 			spark->scaleY -= toFIXED(1) / 50;
 		}
@@ -1113,20 +1110,20 @@ static void scTreeRoomsUpdateSwirlSpark(ACTOR *spark)
 }
 
 /* Sends out the sparks from Tret's face as he tries to free the people of
-   Kolima: five waves, ten frames apart, of six, five, four, three and two
+   Kolima: five waves, ten ticks apart, of six, five, four, three and two
    sparks, each wave with a shimmering sound. */
 static void scTreeRoomsSpawnSwirlSparks(void)
 {
 	ACTOR *spark;
-	Uint32 frame;
+	Uint32 tick;
 	void  *previousResourceEntry;
 	Sint32 wave;
 	Uint32 sparkIndex;
 
-	frame = sSparkFrame;
+	tick = SparkTick;
 	previousResourceEntry = 0;
-	wave = (Sint32)frame / 10;
-	switch(frame) {
+	wave = (Sint32)tick / 10;
+	switch(tick) {
 	case 0:
 	case 10:
 	case 20:
@@ -1136,7 +1133,7 @@ static void scTreeRoomsSpawnSwirlSparks(void)
 		/* Waves of 6, 5, 4, 3 and 2 sparks, spread evenly round a turn. */
 		for(sparkIndex = 0; sparkIndex < 6 - wave; sparkIndex++) {
 			spark = syFieldActorCreate(
-				SPRITE_SPARKLE, sSparkOrigin.x, sSparkOrigin.y, sSparkOrigin.z);
+				SPRITE_SPARKLE, SparkOrigin.x, SparkOrigin.y, SparkOrigin.z);
 			if(spark != NULL) {
 				previousResourceEntry =
 					fdSprShareVRAMCacheEntry(spark->spr, previousResourceEntry);
@@ -1147,9 +1144,9 @@ static void scTreeRoomsSpawnSwirlSparks(void)
 				spark->tmr = 0;
 				spark->userValue =
 					DEGtoANG(360 / (Uint32)(6 - wave) * sparkIndex);
-				spark->tgtX = sSparkOrigin.x;
-				spark->tgtY = sSparkOrigin.y;
-				spark->tgtZ = sSparkOrigin.z;
+				spark->tgtX = SparkOrigin.x;
+				spark->tgtY = SparkOrigin.y;
+				spark->tgtZ = SparkOrigin.z;
 				spark->speedLimit = toFIXED(8) / 5;
 				spark->update = scTreeRoomsUpdateSwirlSpark;
 			}
@@ -1159,8 +1156,8 @@ static void scTreeRoomsSpawnSwirlSparks(void)
 		sySndPlay(SOUND_FADE_OUT_ACTION_SE);
 		break;
 	}
-	if(++sSparkFrame > 120) {
-		sSparkFrame = 0;
+	if(++SparkTick > 120) {
+		SparkTick = 0;
 	}
 }
 
@@ -1168,18 +1165,17 @@ static void scTreeRoomsSpawnSwirlSparks(void)
    the party left them. */
 static void scTreeRoomsApplyFlaggedMapPatches(void)
 {
-	Sint32 patchOffset;
+	Sint32 patchOfs;
 
-	for(patchOffset = 0; TreeRooms_MapPatches[patchOffset] != -1;
-		patchOffset += MAP_PATCH_ROW_LENGTH) {
-		if(gmFlagGet(TreeRooms_MapPatches[patchOffset + MAP_PATCH_FLAG]) &&
-			TreeRooms_MapPatches[patchOffset + MAP_PATCH_REDRAWN] != 0)
+	for(patchOfs = 0; TreeRoomsMapPatches[patchOfs] != -1;
+		patchOfs += MAP_PATCH_ROW_LENGTH) {
+		if(gmFlagGet(TreeRoomsMapPatches[patchOfs + MAP_PATCH_FLAG]) &&
+			TreeRoomsMapPatches[patchOfs + MAP_PATCH_REDRAWN] != 0)
 			fdMapGridCopyMetatilesTo(
-				TreeRooms_MapPatches[patchOffset + MAP_PATCH_SOURCE_X],
-				TreeRooms_MapPatches[patchOffset + MAP_PATCH_SOURCE_Y],
-				TreeRooms_MapPatches[patchOffset + MAP_PATCH_DESTINATION_X],
-				TreeRooms_MapPatches[patchOffset + MAP_PATCH_DESTINATION_Y], 1,
-				1);
+				TreeRoomsMapPatches[patchOfs + MAP_PATCH_SOURCE_X],
+				TreeRoomsMapPatches[patchOfs + MAP_PATCH_SOURCE_Y],
+				TreeRoomsMapPatches[patchOfs + MAP_PATCH_DESTINATION_X],
+				TreeRoomsMapPatches[patchOfs + MAP_PATCH_DESTINATION_Y], 1, 1);
 	}
 }
 
@@ -1200,11 +1196,11 @@ static void scTreeRoomsCastReveal(void)
 static void scTreeRoomsLandFromFall(void)
 {
 	EFFECT_OPTIONS options;
-	FIELD_POS	   velocity;
+	FIELD_POS	   vel;
 	ACTOR		  *leader;
-	Uint32		   particleIndex;
-	Sint32		   velocityX;
-	FIXED		   velocityZ;
+	Uint32		   particleIdx;
+	Sint32		   velX;
+	FIXED		   velZ;
 
 	fdScriptStart();
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -1215,7 +1211,7 @@ static void scTreeRoomsLandFromFall(void)
 	fdActorGet(ACTOR_PARTY_LEADER)->bounce = 0;
 	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	sySndPlay(SE_DUST_PUFF);
 	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg =
 		ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -1225,17 +1221,17 @@ static void scTreeRoomsLandFromFall(void)
 	options.update = scFieldEffectAdvanceMotion;
 	options.startScaleX = toFIXED(4) / 5;
 	options.startScaleY = toFIXED(4) / 5;
-	for(particleIndex = 0; particleIndex <= TRIG_TURN / FACING_STEP;
-		particleIndex++) {
-		velocity.x = syCos(particleIndex * FACING_STEP);
-		velocity.y = 0;
-		velocityZ = sySin(particleIndex * FACING_STEP);
-		velocityX = velocity.x;
-		velocity.z = velocityZ;
-		velocityX += velocityX / 2;
-		velocity.x = velocityX;
-		fdEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-			velocityX, velocity.y, velocityZ,
+	for(particleIdx = 0; particleIdx <= TRIG_TURN / FACING_STEP;
+		particleIdx++) {
+		vel.x = syCos(particleIdx * FACING_STEP);
+		vel.y = 0;
+		velZ = sySin(particleIdx * FACING_STEP);
+		velX = vel.x;
+		vel.z = velZ;
+		velX += velX / 2;
+		vel.x = velX;
+		fdEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, velX,
+			vel.y, velZ,
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
 				EFFECT_SCRIPT_MEDIUM,
 			&options);
@@ -1260,7 +1256,7 @@ static void scTreeRoomsLandFromFall(void)
    is redrawn (0 for the four the map draws torn), the torn picture's metatile
    x/y on the spare row and the leaf's metatile x/y in the map's upper layer. */
 /* clang-format off */
-Sint16 TreeRooms_MapPatches[] = {
+Sint16 TreeRoomsMapPatches[] = {
 	FLAG_TRET_TREE_SECOND_FLOOR_LEAF_A_TORN, 1, 64, 35, 113, 6,
 	FLAG_TRET_TREE_SECOND_FLOOR_LEAF_B_TORN, 0, 65, 35, 115, 6,
 	FLAG_TRET_TREE_SECOND_FLOOR_LEAF_C_TORN, 1, 66, 35, 110, 8,
@@ -1285,15 +1281,15 @@ Sint16 TreeRooms_MapPatches[] = {
 	-1, 0,
 };
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 /* The party gathers in front of Tret before the battle */
 /* (scTreeRoomsFightTret), each walking to its own place. */
-Sint32 TreeRooms_LeaderGathersActions[] = {
+Sint32 TreeRoomsLeaderGathersActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(166, 0, 80),
 	SC_SYNC,
@@ -1301,7 +1297,7 @@ Sint32 TreeRooms_LeaderGathersActions[] = {
 	SC_END,
 };
 
-Sint32 TreeRooms_GaretGathersActions[] = {
+Sint32 TreeRoomsGaretGathersActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(148, 0, 90),
 	SC_SYNC,
@@ -1309,7 +1305,7 @@ Sint32 TreeRooms_GaretGathersActions[] = {
 	SC_END,
 };
 
-Sint32 TreeRooms_IvanGathersActions[] = {
+Sint32 TreeRoomsIvanGathersActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(182, 0, 90),
 	SC_SYNC,
@@ -1317,7 +1313,7 @@ Sint32 TreeRooms_IvanGathersActions[] = {
 	SC_END,
 };
 
-Sint32 TreeRooms_MiaGathersActions[] = {
+Sint32 TreeRoomsMiaGathersActions[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(166, 0, 104),
 	SC_SYNC,
@@ -1326,9 +1322,9 @@ Sint32 TreeRooms_MiaGathersActions[] = {
 };
 
 /* Tret's face sinking into the wall at the end of the conversation after the */
-/* battle. Eight times it is raised 80 pixels for 4 frames and lowered 78, a */
+/* battle. Eight times it is raised 80 pixels for 4 ticks and lowered 78, a */
 /* sixteenth smaller each time, and then it is put away. */
-Sint32 TreeRooms_FaceSinksActions[] = {
+Sint32 TreeRoomsFaceSinksActions[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_ADD(SW_Y, toFIXED(80)),
 	SC_WAIT(4),
@@ -1344,7 +1340,7 @@ Sint32 TreeRooms_FaceSinksActions[] = {
 
 /* Garet, Ivan and Mia walk back into Isaac at the end of the conversation */
 /* after the battle, and are put away. */
-Sint32 TreeRooms_WalkBackToLeaderScript[] = {
+Sint32 TreeRoomsWalkBackToLeaderScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(166, 0, 80),
 	SC_SYNC,
@@ -1355,7 +1351,7 @@ Sint32 TreeRooms_WalkBackToLeaderScript[] = {
 
 /* The tint's steps of red, green and blue, three to an entry: a ramp from 0 */
 /* up to 4 and back. */
-Uint32 TreeRooms_TintSteps[] = {
+Uint32 TreeRoomsTintSteps[] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0,
@@ -1642,6 +1638,6 @@ CUE TreeRoomsCues[] = {
 	{CUE_TABLE_END},
 };
 
-/* Where in TreeRooms_TintSteps the tint is, a random number of entries on each
+/* Where in TreeRoomsTintSteps the tint is, a random number of entries on each
    time. */
-Sint32 TreeRooms_TintIndex = 0;
+Sint32 TreeRoomsTintIndex = 0;

@@ -4,7 +4,7 @@
 #include "script_commands_internal.h"
 
 /* Makes the camera, the script's view centre, follow actorId. */
-void fdCameraFollowActor(Sint32 actorId, Sint32 keepPosition)
+void fdCameraFollowActor(Sint32 actorId, Sint32 keepPos)
 {
 	ACTOR				  *subject;
 	ACTOR				  *camera;
@@ -20,7 +20,7 @@ void fdCameraFollowActor(Sint32 actorId, Sint32 keepPosition)
 	if(subject != 0) {
 		grid->origin = &camera->x.fixed;
 		fdActorStartCameraStub(camera, (Sint32)subject);
-		if(keepPosition == 0) {
+		if(keepPos == 0) {
 			SET_ACTOR_POSITION(
 				camera, subject->x.fixed, subject->y.fixed, subject->z.fixed);
 			sySynch(1);
@@ -31,7 +31,7 @@ void fdCameraFollowActor(Sint32 actorId, Sint32 keepPosition)
 	}
 }
 
-/* Sets the camera's top speed and acceleration, in 16.16 pixels per frame. */
+/* Sets the camera's top speed and acceleration, in 16.16 pixels per tick. */
 void fdCameraSetSpeedParms(FIXED speedLimit, FIXED acceleration)
 {
 	FIELD_STATE *fieldState =
@@ -53,16 +53,16 @@ void fdCameraMoveWithinMapBounds(
 	FIXED				   maximumX;
 	FIXED				   cameraY;
 	FIXED				   maximumZ;
-	FIXED				   positionX;
-	FIXED				   positionZ;
-	FIXED				   positionY;
+	FIXED				   posX;
+	FIXED				   posZ;
+	FIXED				   posY;
 	MAP_GRID_SCROLL_STATE *grid;
 	ACTOR				  *camera;
 
-	positionX = requestedX;
-	positionY = requestedY;
+	posX = requestedX;
+	posY = requestedY;
 	shouldGlide = glide;
-	positionZ = requestedZ;
+	posZ = requestedZ;
 	fieldState = syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
 	camera = fieldState->camera;
 	grid = MapGridState[0];
@@ -78,35 +78,35 @@ void fdCameraMoveWithinMapBounds(
 	maximumZ = grid->maxY + cameraY - toFIXED(64);
 	grid->origin = &camera->x.fixed;
 	fdActorStartIdleStub(camera);
-	if(positionX == CAMERA_KEEP) {
-		positionX = camera->x.fixed;
+	if(posX == CAMERA_KEEP) {
+		posX = camera->x.fixed;
 	}
-	if(positionY == CAMERA_KEEP) {
-		positionY = camera->y.fixed;
+	if(posY == CAMERA_KEEP) {
+		posY = camera->y.fixed;
 	}
-	if(positionZ == CAMERA_KEEP) {
-		positionZ = camera->z.fixed;
+	if(posZ == CAMERA_KEEP) {
+		posZ = camera->z.fixed;
 	}
-	if(positionX < minimumX) {
-		positionX = minimumX;
+	if(posX < minimumX) {
+		posX = minimumX;
 	}
-	if(positionZ < minimumZ) {
-		positionZ = minimumZ;
+	if(posZ < minimumZ) {
+		posZ = minimumZ;
 	}
-	if(positionX > maximumX) {
-		positionX = maximumX;
+	if(posX > maximumX) {
+		posX = maximumX;
 	}
-	if(positionZ > maximumZ) {
-		positionZ = maximumZ;
+	if(posZ > maximumZ) {
+		posZ = maximumZ;
 	}
 	if(shouldGlide == 0) {
-		SET_ACTOR_POSITION(camera, positionX, positionY, positionZ);
+		SET_ACTOR_POSITION(camera, posX, posY, posZ);
 		sySynch(1);
 		if(fieldState->mode != ACTOR_SYSTEM_WORLD_MAP) {
 			fdMapGridCenterOnFollowedPointStub();
 		}
 	} else {
-		fdActorSetMoveTargetStub(camera, positionX, positionY, positionZ);
+		fdActorSetMoveTargetStub(camera, posX, posY, posZ);
 	}
 }
 
@@ -125,7 +125,7 @@ void fdCameraMoveToActorById(Sint32 actorId, Sint32 glide)
 	}
 }
 
-/* Waits (at most 600 frames) for the camera to arrive, then 2 frames more. */
+/* Waits (at most 600 ticks) for the camera to arrive, then 2 ticks more. */
 void fdCameraWaitForArrival(void)
 {
 	fdActorWaitForMoveStub(((FIELD_STATE *)syHeapSlotAllocEWRAM(
@@ -142,21 +142,21 @@ ACTOR *fdCameraGetActor(void)
 		->camera;
 }
 
-/* Unused: makes the camera follow target; unless keepCurrentPosition is set it
+/* Unused: makes the camera follow target; unless keepCurPos is set it
    jumps there at once. */
-UNUSED void fdCameraFollow(ACTOR *target, Sint32 keepCurrentPosition)
+UNUSED void fdCameraFollow(ACTOR *tgt, Sint32 keepCurPos)
 {
 	ACTOR *camera;
 
 	camera = ((FIELD_STATE *)syHeapSlotAllocEWRAM(
 				  HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))
 				 ->camera;
-	if(target != NULL) {
+	if(tgt != NULL) {
 		fdActorStartCameraStub(camera, 0);
-		camera->watchedActor = (union ACTOR_OR_EFFECT *)target;
-		if(keepCurrentPosition == 0) {
+		camera->watchedActor = (union ACTOR_OR_EFFECT *)tgt;
+		if(keepCurPos == 0) {
 			SET_ACTOR_POSITION(
-				camera, target->x.fixed, target->y.fixed, target->z.fixed);
+				camera, tgt->x.fixed, tgt->y.fixed, tgt->z.fixed);
 		}
 	}
 }

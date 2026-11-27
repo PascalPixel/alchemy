@@ -73,9 +73,9 @@ UNUSED void btEffectRunNereidCopy(BATTLE_EFFECT_PARM *args)
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	{
 		POINT2_D  focus;
-		POINT2_D  velocity;
+		POINT2_D  vel;
 		Sint32	  rise;
-		Sint32	  frame;
+		Sint32	  frm;
 		Sint32	  k;
 		PARTICLE *point;
 		PARTICLE *drop;
@@ -85,8 +85,8 @@ UNUSED void btEffectRunNereidCopy(BATTLE_EFFECT_PARM *args)
 		rise = 0;
 		focus.x = toFIXED(256);
 		focus.y = toFIXED(88);
-		velocity.x = -toFIXED(16);
-		velocity.y = -toFIXED(4);
+		vel.x = -toFIXED(16);
+		vel.y = -toFIXED(4);
 		EFFECT_FREE_PARTICLES(k, state->particles, 64);
 		/* DEAD: particles NEREID_UNREAD_FIRST on get a place and delay nothing
 		   reads; the ROM keeps the stores. */
@@ -103,30 +103,30 @@ UNUSED void btEffectRunNereidCopy(BATTLE_EFFECT_PARM *args)
 		sySynch(1);
 		btEffectCreateSprs(NEREID_OBJECTS, SPRITE_NEREID, 2);
 
-		for(frame = 0; frame != NEREID_FRAMES; frame++) {
+		for(frm = 0; frm != NEREID_TICKS; frm++) {
 			if((PerWork.repeat & (KEY_A | KEY_B)) &&
-				frame > NEREID_COLUMNS_FRAME && frame < 98)
-				frame = 98;
-			if(frame == 120)
+				frm > NEREID_COLUMNS_TICK && frm < 98)
+				frm = 98;
+			if(frm == 120)
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			/* The waves rise. */
-			if(frame <= 15)
+			if(frm <= 15)
 				rise += 2;
 
 			/* She slows, and is pushed back right once she passes x = 120. */
-			if(frame <= 99) {
-				focus.x += velocity.x;
-				focus.y += velocity.y;
-				velocity.x = velocity.x * 58 / DAMPING_SCALE;
-				velocity.y = velocity.y * 56 / DAMPING_SCALE;
+			if(frm <= 99) {
+				focus.x += vel.x;
+				focus.y += vel.y;
+				vel.x = vel.x * 58 / DAMPING_SCALE;
+				vel.y = vel.y * 56 / DAMPING_SCALE;
 				if(focus.x < toFIXED(120))
-					velocity.x += toFIXED(1) / 2;
+					vel.x += toFIXED(1) / 2;
 			}
 			btEffectPlaceFormationSprs(
 				SUMMON_FORMATION_NEREID, focus.x, focus.y);
 
 			/* Drops burst up among the targets. */
-			if(frame == 28) {
+			if(frm == 28) {
 				for(k = 0; k != NEREID_BURST_DROPS; k++) {
 					drop = &drops[k];
 					if(drop->variant == -1) {
@@ -141,8 +141,7 @@ UNUSED void btEffectRunNereidCopy(BATTLE_EFFECT_PARM *args)
 					}
 				}
 			}
-			if(frame >= NEREID_COLUMNS_FRAME &&
-				frame < NEREID_COLUMNS_END_FRAME) {
+			if(frm >= NEREID_COLUMNS_TICK && frm < NEREID_COLUMNS_END_TICK) {
 				Sint32 spawned = 0;
 
 				for(k = 0; k != NEREID_DROPS; k++) {
@@ -157,47 +156,46 @@ UNUSED void btEffectRunNereidCopy(BATTLE_EFFECT_PARM *args)
 						drop->velY = (-(syRandom() & 63) - 8) << 13;
 						drop->variant = 0;
 						spawned++;
-						if(spawned == NEREID_DROPS_A_FRAME)
+						if(spawned == NEREID_DROPS_A_TICK)
 							break;
 					}
 				}
 			}
-			if(frame == 0)
+			if(frm == 0)
 				sySndPlayStub(SE_SCATTER);
-			if(frame == NEREID_COLUMNS_FRAME)
+			if(frm == NEREID_COLUMNS_TICK)
 				sySndPlayStub(SE_CRASH);
-			if(frame == NEREID_COLUMNS_END_FRAME)
+			if(frm == NEREID_COLUMNS_END_TICK)
 				sySndPlayStub(SE_CLATTER);
 
 			/* The columns of water scroll up. */
-			if(frame >= NEREID_COLUMNS_FRAME &&
-				frame < NEREID_COLUMNS_END_FRAME) {
+			if(frm >= NEREID_COLUMNS_TICK && frm < NEREID_COLUMNS_END_TICK) {
 				for(k = 0; k != NEREID_COLUMNS; k++) {
 					Sint32 span =
-						(frame * 16 - 256 + k * 25) % FIRE_PILLAR_HEIGHT;
+						(frm * 16 - 256 + k * 25) % FIRE_PILLAR_HEIGHT;
 
 					draw[0](canvas, state->sheet + NEREID_COLUMN_PICTURE,
-						NereidCopy_Columns[k * 2] - FIRE_PILLAR_WIDTH / 2,
-						NereidCopy_Columns[k * 2 + 1] - span -
+						NereidCopyColumns[k * 2] - FIRE_PILLAR_WIDTH / 2,
+						NereidCopyColumns[k * 2 + 1] - span -
 							FIRE_PILLAR_HEIGHT,
 						FIRE_PILLAR_WIDTH, FIRE_PILLAR_HEIGHT);
 					draw[0](canvas, state->sheet + NEREID_COLUMN_PICTURE,
-						NereidCopy_Columns[k * 2] - FIRE_PILLAR_WIDTH / 2,
-						NereidCopy_Columns[k * 2 + 1] - span, FIRE_PILLAR_WIDTH,
+						NereidCopyColumns[k * 2] - FIRE_PILLAR_WIDTH / 2,
+						NereidCopyColumns[k * 2 + 1] - span, FIRE_PILLAR_WIDTH,
 						span);
 				}
 			}
 
 			/* The waves along the bottom. */
-			if(frame <= 95) {
+			if(frm <= 95) {
 				for(k = 0; k != 5; k++)
 					draw[0](canvas, state->sheet,
-						k * WATER_WAVE_WIDTH + ((frame / 4) & 31) -
+						k * WATER_WAVE_WIDTH + ((frm / 4) & 31) -
 							WATER_WAVE_WIDTH,
 						120 - rise, WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
 			}
 
-			/* Drops swell as they clear: they fall under gravity until frame
+			/* Drops swell as they clear: they fall under gravity until tick
 			   80, then rise away, and a falling drop that sinks into the waves
 			   is freed. */
 			for(k = 0; k != NEREID_DROPS; k++) {
@@ -207,25 +205,25 @@ UNUSED void btEffectRunNereidCopy(BATTLE_EFFECT_PARM *args)
 
 					if(drop->velY > 0)
 						size += 2;
-					if(frame > 68 && size <= 5)
+					if(frm > 68 && size <= 5)
 						size = 6;
-					if(frame > 70 && size <= 6)
+					if(frm > 70 && size <= 6)
 						size = 7;
-					if(frame > 72 && size <= 7)
+					if(frm > 72 && size <= 7)
 						size = 8;
-					if(frame > 74 && size <= 8)
+					if(frm > 74 && size <= 8)
 						size = 9;
-					if(frame > 76)
+					if(frm > 76)
 						size = MOTE_PICTURES;
 					EFFECT_DRAW_MOTE(draw[drop->velY > 0], canvas, cells,
 						FIXED_INTEGER_PART(drop->x),
 						FIXED_INTEGER_PART(drop->y), size);
 					drop->x += drop->velX;
 					drop->y += drop->velY;
-					if(frame > NEREID_COLUMNS_END_FRAME)
+					if(frm > NEREID_COLUMNS_END_TICK)
 						drop->velY += -toFIXED(1) / 2;
 					else
-						drop->velY += NereidCopy_Gravity[k & 3];
+						drop->velY += NereidCopyGravity[k & 3];
 					drop->velX = drop->velX * 62 / DAMPING_SCALE;
 					drop->velY = drop->velY * 62 / DAMPING_SCALE;
 					drop->variant++;
@@ -235,22 +233,21 @@ UNUSED void btEffectRunNereidCopy(BATTLE_EFFECT_PARM *args)
 				}
 			}
 
-			/* The targets bounce and flash white every twelve frames from frame
+			/* The targets bounce and flash white every twelve ticks from tick
 			   30. */
-			if(frame < NEREID_COLUMNS_END_FRAME) {
+			if(frm < NEREID_COLUMNS_END_TICK) {
 				for(k = 0; k != args->tgtCnt; k++) {
-					if(frame > 29) {
-						Sint32 phase = frame % 12;
+					if(frm > 29) {
+						Sint32 phase = frm % 12;
 
 						if(phase == 0) {
-							MOTION_OBJECT *target =
+							MOTION_OBJECT *tgt =
 								btObjectGetStub(args->tgts[k])->obj;
 
 							btEffectTintBattler(args->tgts[k],
 								SPRITE_COLOR_WHITE, POSE_DAMAGE, TINT_KEEP, 0);
-							target->velY = toFIXED(9) / 2;
-							target->verticalMotionStrength =
-								BATTLE_UNIT_GRAVITY;
+							tgt->velY = toFIXED(9) / 2;
+							tgt->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
 						}
 						if(phase == 6)
 							btEffectTintBattler(args->tgts[k],
@@ -271,8 +268,8 @@ UNUSED void btEffectRunNereidCopy(BATTLE_EFFECT_PARM *args)
 	btEffectEndCanvasLayer();
 }
 
-extern const SCALE SummonFormation_Scale;
-extern const SCALE SummonFormation_LargeScale;
+extern const SCALE SummonFormationScale;
+extern const SCALE SummonFormationLargeScale;
 
 /* The grid formations' sprites stand this many pixels apart. */
 #define FORMATION_SPACING 32
@@ -282,8 +279,8 @@ extern const SCALE SummonFormation_LargeScale;
 void btEffectPlaceFormationSprs(Sint32 formation, Sint32 x, Sint32 z)
 {
 	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
-	SCALE				 normal = SummonFormation_Scale;
-	SCALE				 big = SummonFormation_LargeScale;
+	SCALE				 normal = SummonFormationScale;
+	SCALE				 big = SummonFormationLargeScale;
 	FIXED				 pos[4];
 	Sint32				 i;
 	void			   **objects;
@@ -309,39 +306,39 @@ void btEffectPlaceFormationSprs(Sint32 formation, Sint32 x, Sint32 z)
 		break;
 	case SUMMON_FORMATION_NEREID:
 		for(i = 0; i != NEREID_OBJECTS; i++) {
-			pos[0] = toFIXED(SummonFormation_NereidX[i]) + x - toFIXED(16);
-			pos[2] = toFIXED(SummonFormation_NereidZ[i]) + z - toFIXED(32);
+			pos[0] = toFIXED(SummonFormationNereidX[i]) + x - toFIXED(16);
+			pos[2] = toFIXED(SummonFormationNereidZ[i]) + z - toFIXED(32);
 			fdRenderApplyProjectedPlacementStub(
 				state->sprs[i], pos, &normal.x, 0);
 		}
 		break;
 	case SUMMON_FORMATION_CYBELE:
 		for(i = 0; i != 8; i++) {
-			pos[0] = toFIXED(SummonFormation_CybeleX[i]) + x + toFIXED(16);
-			pos[2] = toFIXED(SummonFormation_CybeleZ[i]) + z;
+			pos[0] = toFIXED(SummonFormationCybeleX[i]) + x + toFIXED(16);
+			pos[2] = toFIXED(SummonFormationCybeleZ[i]) + z;
 			fdRenderApplyProjectedPlacementStub(
 				state->sprs[i], pos, &normal.x, 0);
 		}
 		break;
 	case SUMMON_FORMATION_TIAMAT_ALTERNATE:
 		for(i = 0; i != 8; i++) {
-			pos[0] = toFIXED(SummonFormation_TiamatAlternateX[i]) + x;
-			pos[2] = toFIXED(SummonFormation_TiamatAlternateZ[i]) + z;
+			pos[0] = toFIXED(SummonFormationTiamatAlternateX[i]) + x;
+			pos[2] = toFIXED(SummonFormationTiamatAlternateZ[i]) + z;
 			fdRenderApplyProjectedPlacementStub(
 				state->sprs[i], pos, &normal.x, 0);
 		}
 		break;
 	case SUMMON_FORMATION_TIAMAT:
 		for(i = 0; i != 8; i++) {
-			pos[0] = toFIXED(SummonFormation_TiamatX[i]) + x;
-			pos[2] = toFIXED(SummonFormation_TiamatZ[i]) + z;
+			pos[0] = toFIXED(SummonFormationTiamatX[i]) + x;
+			pos[2] = toFIXED(SummonFormationTiamatZ[i]) + z;
 			fdRenderApplyProjectedPlacementStub(state->sprs[i], pos, &big.x, 0);
 		}
 		break;
 	case SUMMON_FORMATION_MEGAERA:
 		for(i = 0; i != MEGAERA_OBJECTS; i++) {
-			pos[0] = toFIXED(SummonFormation_MegaeraX[i]) + x;
-			pos[2] = toFIXED(SummonFormation_MegaeraZ[i]) + z;
+			pos[0] = toFIXED(SummonFormationMegaeraX[i]) + x;
+			pos[2] = toFIXED(SummonFormationMegaeraZ[i]) + z;
 			fdRenderApplyProjectedPlacementStub(
 				state->sprs[i], pos, &normal.x, 0);
 		}
@@ -354,7 +351,7 @@ void btEffectPlaceFormationSprs(Sint32 formation, Sint32 x, Sint32 z)
 #define IMPACT_BURST_FRAGMENT_WIDTH	 12 /* each fragment picture's width */
 #define IMPACT_BURST_FRAGMENT_HEIGHT 24
 
-#define IMPACT_BURST_FRAMES			72
+#define IMPACT_BURST_TICKS			72
 #define IMPACT_BURST_FRAGMENTS		3 /* fragments, state->particles 61 to 63 */
 #define IMPACT_BURST_DRAWN_LARGE	30 /* large sparks drawn */
 #define IMPACT_BURST_DRAWN_SMALL	60 /* small sparks drawn */
@@ -363,11 +360,11 @@ void btEffectPlaceFormationSprs(Sint32 formation, Sint32 x, Sint32 z)
 /* the first fragment in state->particles */
 #define IMPACT_BURST_FIRST_FRAGMENT 61
 #define IMPACT_BURST_FRAGMENT_SPEED 32 /* in the units of a spark's speed */
-/* A spark shrinks a size each time this many frames of its life run out. */
-#define IMPACT_BURST_SHRINK_FRAMES	16
+/* A spark shrinks a size each time this many ticks of its life run out. */
+#define IMPACT_BURST_SHRINK_TICKS	16
 
 /* Opens an impact flash and scatters sparks and fragments, keeping the effect's
-   sprites in formation for the first 36 frames. */
+   sprites in formation for the first 36 ticks. */
 void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 {
 	BATTLE_EFFECT_STATE *state;
@@ -377,7 +374,7 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 	Uint8				*sheet;
 	Sint32				 orgX;
 	PARTICLE			*p;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 
 	state = Ram_HeapSlots->battleEff;
@@ -436,14 +433,14 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 		cells[i].variant = (syRandom() & 15) + 20;
 	}
 
-	for(frame = 0; frame != IMPACT_BURST_FRAMES; frame++) {
-		if(frame == 4)
+	for(frm = 0; frm != IMPACT_BURST_TICKS; frm++) {
+		if(frm == 4)
 			sySndPlayStub(SE_CAST);
-		if(frame == 32)
+		if(frm == 32)
 			sySndPlayStub(SE_POWER_UP);
 
-		if(frame <= 47) {
-			Sint32 picture = (frame - 8) / 5;
+		if(frm <= 47) {
+			Sint32 picture = (frm - 8) / 5;
 			Uint32 width;
 			Uint32 height;
 
@@ -451,31 +448,31 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 				picture = 0;
 			/* UB: width is assigned in one argument and read in another. */
 #if FIX_UNSEQUENCED_SIDE_EFFECT
-			width = ImpactBurst_PictureWidths[picture];
-			height = ImpactBurst_PictureHeights[picture];
-			maxBlend(canvas, state->sheet + ImpactBurst_Pictures[picture],
+			width = ImpactBurstPictureWidths[picture];
+			height = ImpactBurstPictureHeights[picture];
+			maxBlend(canvas, state->sheet + ImpactBurstPictures[picture],
 				FIXEDtoINT(x) - (width >> 1), FIXEDtoINT(y) - (height >> 1),
 				width, height);
 #else
-			maxBlend(canvas, state->sheet + ImpactBurst_Pictures[picture],
+			maxBlend(canvas, state->sheet + ImpactBurstPictures[picture],
 				(FIXEDtoINT(x)) -
-					((width = ImpactBurst_PictureWidths[picture]) >> 1),
+					((width = ImpactBurstPictureWidths[picture]) >> 1),
 				(FIXEDtoINT(y)) -
-					((height = ImpactBurst_PictureHeights[picture]) >> 1),
+					((height = ImpactBurstPictureHeights[picture]) >> 1),
 				width, height);
 #endif
 		}
 
 		for(i = 0, p = state->particles; i != IMPACT_BURST_DRAWN_LARGE;
 			i++, p++) {
-			if(frame > i / 2 && p->variant > 0) {
+			if(frm > i / 2 && p->variant > 0) {
 				Sint32 size;
 				Sint32 px;
 				Sint32 py;
 
 				p->variant--;
 				btParticleAdvanceWithGravity2D(p, 60, 0);
-				size = p->variant / IMPACT_BURST_SHRINK_FRAMES + 3;
+				size = p->variant / IMPACT_BURST_SHRINK_TICKS + 3;
 				px = FIXED_INTEGER_PART(p->x);
 				py = FIXED_INTEGER_PART(p->y);
 				EFFECT_DRAW_MOTE(additive, canvas, sheet, px, py, size);
@@ -483,14 +480,14 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 		}
 
 		for(i = 0, p = PARTICLES; i != IMPACT_BURST_DRAWN_SMALL; i++, p++) {
-			if(frame > 35 && p->variant > 0) {
+			if(frm > 35 && p->variant > 0) {
 				Sint32 size;
 				Sint32 px;
 				Sint32 py;
 
 				p->variant--;
 				btParticleAdvanceWithGravity2D(p, 60, 0);
-				size = p->variant / IMPACT_BURST_SHRINK_FRAMES + 1;
+				size = p->variant / IMPACT_BURST_SHRINK_TICKS + 1;
 				px = FIXED_INTEGER_PART(p->x);
 				py = FIXED_INTEGER_PART(p->y);
 				EFFECT_DRAW_MOTE(additive, canvas, sheet, px, py, size);
@@ -501,13 +498,13 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 			PARTICLE *shard =
 				&state->particles[IMPACT_BURST_FIRST_FRAGMENT + i];
 
-			if(frame >= 36 && frame <= 63) {
+			if(frm >= 36 && frm <= 63) {
 				Sint32 picture;
 				Sint32 px;
 				Sint32 py;
 
 				btParticleAdvanceWithGravity2D(shard, PARTICLE_DAMPING_NONE, 0);
-				picture = (frame - 36) / 7;
+				picture = (frm - 36) / 7;
 				px = FIXED_INTEGER_PART(shard->x);
 				py = FIXED_INTEGER_PART(shard->y);
 				maxBlend(canvas,
@@ -520,7 +517,7 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 			}
 		}
 
-		if(frame <= 35)
+		if(frm <= 35)
 			btEffectPlaceFormationSprs(formation, orgX, y);
 		EFFECT_PRESENT_CANVAS(state);
 	}
@@ -600,13 +597,13 @@ void btPaletteBrightenSavedBattleBg(
 	Sint32 redDelta, Sint32 greenDelta, Sint32 blueDelta)
 {
 	Uint16 *color = (Uint16 *)&BG_PLTT_COLOR(6, 0);
-	Uint16 *source = Ram_HeapSlots->battleState->pal;
+	Uint16 *src = Ram_HeapSlots->battleState->pal;
 	Sint32	i;
 
 	for(i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
-		Sint32 blue = RGB_BLUE(*source);
-		Sint32 green = RGB_GREEN(*source);
-		Sint32 red = RGB_RED(*source);
+		Sint32 blue = RGB_BLUE(*src);
+		Sint32 green = RGB_GREEN(*src);
+		Sint32 red = RGB_RED(*src);
 
 		red += redDelta;
 		green += greenDelta;
@@ -624,7 +621,7 @@ void btPaletteBrightenSavedBattleBg(
 		if(blue < 0)
 			blue = 0;
 		*color++ = RGB(red, green, blue);
-		source++;
+		src++;
 	}
 }
 
@@ -660,11 +657,11 @@ void btEffectRunOuterSpace(BATTLE_EFFECT_PARM *args)
 	btEffectRunStarfieldFall(args, STARFIELD_FALL_OUTER_SPACE);
 }
 
-/* The fall and the burst, in frames. */
-#define STARFIELD_FALL_FALL_FRAMES	  192
-#define STARFIELD_FALL_BURST_FRAMES	  54
-/* The burst's frame the damage is told from. */
-#define PARTICLE_STREAMS_DAMAGE_FRAME 48
+/* The fall and the burst, in ticks. */
+#define STARFIELD_FALL_FALL_TICKS	 192
+#define STARFIELD_FALL_BURST_TICKS	 54
+/* The burst's tick the damage is told from. */
+#define PARTICLE_STREAMS_DAMAGE_TICK 48
 
 /* The pictures in FlameSheetB (RESOURCE_FLAME_SHEET_B), each starting where the
    one before ends: six flames, then three large and three small glows, each
@@ -707,11 +704,11 @@ typedef enum PARTICLE_STREAMS_SHEET_PICTURE {
    these. */
 #define STARFIELD_FALL_GLOW_BLUE_LEVEL	  32
 #define STARFIELD_FALL_GLOW_GREEN_LEVEL	  80
-/* The burst's flashes rise from this frame on, three more a frame, and the
-   background brightens from STARFIELD_FALL_BRIGHTEN_DELAY frames after it. */
-#define STARFIELD_FALL_FLASH_FRAME		  16
+/* The burst's flashes rise from this tick on, three more a tick, and the
+   background brightens from STARFIELD_FALL_BRIGHTEN_DELAY ticks after it. */
+#define STARFIELD_FALL_FLASH_TICK		  16
 #define STARFIELD_FALL_BRIGHTEN_DELAY	  20
-/* The blast sprite sheet's flash pictures, each shown two frames. */
+/* The blast sprite sheet's flash pictures, each shown two ticks. */
 #define STARFIELD_FALL_FLASH_PICTURES	  7
 /* An ember's depth is held between these: the nearest are drawn as mote 9, each
    PARTICLE_STREAMS_EMBER_SIZE_DEPTH deeper a size smaller. */
@@ -769,12 +766,12 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		}
 	}
 
-	FIXED		 position[4];
+	FIXED		 pos[4];
 	FIXED		 vector[3];
 	SCREEN_POINT spot;
 	SCREEN_POINT screen;
 	SCALE		 scale;
-	Sint32		 frame;
+	Sint32		 frm;
 	Sint32		 i;
 
 	canvas = Ram_HeapSlots->battleCanvas;
@@ -808,13 +805,13 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	/* The Fusion Dragon's two halves, or the meteor. */
 	if(mode == STARFIELD_FALL_OUTER_SPACE) {
 		for(i = 0; i != 2; i++) {
-			SPR *sprite = fdSprCreateStub(
+			SPR *spr = fdSprCreateStub(
 				SPRITE_BATTLE_FUSION_DRAGON + i * SPRITE_SECOND_PART);
 
-			state->sprs[i] = sprite;
-			if(sprite != 0) {
-				sprite->flg = 0;
-				fdSprStartAnimationStub(sprite, 2);
+			state->sprs[i] = spr;
+			if(spr != 0) {
+				spr->flg = 0;
+				fdSprStartAnimationStub(spr, 2);
 				((SPR *)state->sprs[i])->image.pri = 3;
 			}
 		}
@@ -919,14 +916,14 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		EFFECT_FREE_PARTICLES(i, state->particles, 64);
 		transition->busy = 1;
 		state->frm = 0;
-		frame = 0;
+		frm = 0;
 		do {
-			Sint32	growth = frame << 8;
+			Sint32	growth = frm << 8;
 			Sint32	value = state->frm;
 			Sint32	dividend;
 			Sint32	glow;
 			Uint16 *line;
-			Sint32	spriteScale;
+			Sint32	sprScale;
 			Sint32	x;
 			Sint32	y;
 			Sint32	hold;
@@ -948,13 +945,13 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			line = state->backdropLines;
 
 			if(mode == STARFIELD_FALL_OUTER_SPACE) {
-				if((PerWork.repeat & (KEY_A | KEY_B)) && frame > 16)
+				if((PerWork.repeat & (KEY_A | KEY_B)) && frm > 16)
 					break;
 			} else {
-				if((PerWork.repeat & (KEY_A | KEY_B)) && frame > 4)
+				if((PerWork.repeat & (KEY_A | KEY_B)) && frm > 4)
 					break;
 			}
-			if(frame == 0)
+			if(frm == 0)
 				sySndPlayStub(SE_RUMBLE);
 			/* FAKEMATCH(dead): updates of hold that cancel out. */
 			if(hold) {
@@ -984,30 +981,30 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 			/* The falling sprite drifts with the stream and grows. */
 			if(direction == 1)
-				x = frame / 4;
+				x = frm / 4;
 			else
-				x = 64 - frame / 4;
-			y = 96 - frame;
-			position[3] = 0;
-			position[1] = toFIXED(255);
+				x = 64 - frm / 4;
+			y = 96 - frm;
+			pos[3] = 0;
+			pos[1] = toFIXED(255);
 			if(mode == STARFIELD_FALL_OUTER_SPACE) {
-				spriteScale = growth + toFIXED(5) / 8;
-				scale.x = spriteScale;
-				scale.y = spriteScale;
-				position[0] = toFIXED(x) + toFIXED(80);
-				position[2] = toFIXED(64 - y);
+				sprScale = growth + toFIXED(5) / 8;
+				scale.x = sprScale;
+				scale.y = sprScale;
+				pos[0] = toFIXED(x) + toFIXED(80);
+				pos[2] = toFIXED(64 - y);
 				fdRenderApplyProjectedPlacementStub(
-					state->sprs[0], position, &scale, 0);
+					state->sprs[0], pos, &scale, 0);
 				fdRenderApplyProjectedPlacementStub(
-					state->sprs[1], position, &scale, 0);
+					state->sprs[1], pos, &scale, 0);
 			} else {
-				spriteScale = growth + toFIXED(1);
-				scale.x = spriteScale;
-				scale.y = spriteScale;
-				position[0] = toFIXED(x) + toFIXED(96);
-				position[2] = toFIXED(96 - y);
+				sprScale = growth + toFIXED(1);
+				scale.x = sprScale;
+				scale.y = sprScale;
+				pos[0] = toFIXED(x) + toFIXED(96);
+				pos[2] = toFIXED(96 - y);
 				fdRenderApplyProjectedPlacementStub(
-					state->sprs[0], position, &scale, 0);
+					state->sprs[0], pos, &scale, 0);
 			}
 
 			/* A new flame below the falling sprite. */
@@ -1019,27 +1016,27 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 					flame->variant = 0;
 					flame->x = INTtoFIXED(x + 96) +
-						sySin(angle) * 30 / toFIXED(1) * spriteScale;
-					flame->y = toFIXED(y) -
-						syCos(angle) * 30 / toFIXED(1) * spriteScale;
+						sySin(angle) * 30 / toFIXED(1) * sprScale;
+					flame->y =
+						toFIXED(y) - syCos(angle) * 30 / toFIXED(1) * sprScale;
 					break;
 				}
 			}
 
 			/* Seven sparks orbit the falling sprite. The orbit's centre is set
 			   in screen, which the burst's embers are later projected into: the
-			   frame has no other slot for it. */
+			   tick has no other slot for it. */
 			screen.x = 0;
 			screen.y = 0;
 			screen.depth = toFIXED(512);
 			syInitMatrix();
 			syMatrixTranslateVector(syScreenPointCoordinates(&screen));
 			syRotZ(TRIG_TURN / 32);
-			syRotY(frame << 8);
+			syRotY(frm << 8);
 			for(i = 0; i != 7; i++) {
-				vector[0] = toFIXED(StarfieldFall_OrbitPoints[i][0] / 2);
-				vector[1] = toFIXED(StarfieldFall_OrbitPoints[i][1] + frame);
-				vector[2] = toFIXED(StarfieldFall_OrbitPoints[i][2] / 2);
+				vector[0] = toFIXED(StarfieldFallOrbitPoints[i][0] / 2);
+				vector[1] = toFIXED(StarfieldFallOrbitPoints[i][1] + frm);
+				vector[2] = toFIXED(StarfieldFallOrbitPoints[i][2] / 2);
 				btEffectPosProjectPoint(vector, &spot);
 				spot.x = FIXEDtoINT(spot.x) + 128;
 				spot.y = FIXEDtoINT(spot.y) + 60;
@@ -1054,24 +1051,24 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			/* Seven fireballs fall; one that reaches the ground becomes a
 			   landing. */
 			if(direction == 1)
-				x = frame / 4 - 16;
+				x = frm / 4 - 16;
 			else
-				x = 16 - frame / 4;
-			y = frame - 96;
+				x = 16 - frm / 4;
+			y = frm - 96;
 			for(i = 0; i != 7; i++) {
-				Sint32 fireballY = StarfieldFall_FireballPoints[i][1] + y;
+				Sint32 fireballY = StarfieldFallFireballPoints[i][1] + y;
 
 				if(fireballY <= 93)
 					draw(Ram_MapMetatileBuffer,
 						state->sheet + STARFIELD_FALL_LARGE_GLOW,
-						StarfieldFall_FireballPoints[i][0] + x -
+						StarfieldFallFireballPoints[i][0] + x -
 							STARFIELD_FALL_LARGE_GLOW_SIZE / 2,
 						fireballY - STARFIELD_FALL_LARGE_GLOW_SIZE / 2,
 						STARFIELD_FALL_LARGE_GLOW_SIZE,
 						STARFIELD_FALL_LARGE_GLOW_SIZE);
 				else if(fireballY <= 95)
 					syParticleStreamsSpawnLanding(
-						toFIXED(StarfieldFall_FireballPoints[i][0] + x),
+						toFIXED(StarfieldFallFireballPoints[i][0] + x),
 						toFIXED(fireballY), 1);
 			}
 
@@ -1098,9 +1095,9 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				}
 			}
 			EFFECT_PRESENT_CANVAS(state);
-			frame++;
+			frm++;
 			state->frm++;
-		} while(frame != STARFIELD_FALL_FALL_FRAMES);
+		} while(frm != STARFIELD_FALL_FALL_TICKS);
 		sySynch(1);
 		transition->busy = 0;
 		syCloseEvent(btEffectAdvanceBg2OnInterval);
@@ -1146,10 +1143,10 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	}
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
 
-	for(frame = 0; frame != STARFIELD_FALL_BURST_FRAMES; frame++) {
-		Sint32		   dragonScale = (frame + 464) << 8;
+	for(frm = 0; frm != STARFIELD_FALL_BURST_TICKS; frm++) {
+		Sint32		   dragonScale = (frm + 464) << 8;
 		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
-		Sint32		   elapsed = frame - STARFIELD_FALL_FLASH_FRAME;
+		Sint32		   elapsed = frm - STARFIELD_FALL_FLASH_TICK;
 		SCALE		   scale;
 		Sint32		   x;
 		Sint32		   y;
@@ -1157,11 +1154,11 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 		if(elapsed >= STARFIELD_FALL_BRIGHTEN_DELAY)
 			btPaletteBrightenBgEntries(2, 2, 2);
-		if(frame == 0)
+		if(frm == 0)
 			sySndPlayStub(SE_SWITCH_MECHANISM);
-		if(frame == 40)
+		if(frm == 40)
 			sySndPlayStub(SE_CRASH);
-		if(frame == PARTICLE_STREAMS_DAMAGE_FRAME) {
+		if(frm == PARTICLE_STREAMS_DAMAGE_TICK) {
 			if(mode == STARFIELD_FALL_OUTER_SPACE) {
 				fdSprDestroyStub(state->sprs[0]);
 				fdSprDestroyStub(state->sprs[1]);
@@ -1188,7 +1185,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					(screen.depth - PARTICLE_STREAMS_EMBER_NEAR) /
 						PARTICLE_STREAMS_EMBER_SIZE_DEPTH;
 				/* UB: from depth 736 the size is 0, a picture 0 pixels wide,
-				   and its picture is read from BattleEffect_MotePictures[-1];
+				   and its picture is read from BattleEffectMotePictures[-1];
 				   UBFIX draws the farthest embers at the smallest size. */
 #if FIX_ZERO_SIZE_EMBER
 				if(size < 1)
@@ -1196,7 +1193,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 #endif
 				draw(canvas,
 					state->sheet +
-						(BattleEffect_MotePictures[size - 1] +
+						(BattleEffectMotePictures[size - 1] +
 							(i & 1) * MOTE_SET_BYTES) +
 						STARFIELD_FALL_MOTE_PICTURES,
 					screen.x - size / 2, screen.y - size, size, size * 2);
@@ -1221,7 +1218,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 			draw(canvas,
 				state->sheet +
-					(BattleEffect_MotePictures[size - 1] +
+					(BattleEffectMotePictures[size - 1] +
 						(i & 1) * MOTE_SET_BYTES) +
 					STARFIELD_FALL_MOTE_PICTURES,
 				mote->x - size / 2, mote->y - size, size, size * 2);
@@ -1231,7 +1228,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		}
 
 		for(i = 0; i != STARFIELD_FALL_FLASHES_DRAWN; i++) {
-			/* Flashes grow and rise, three more each frame. */
+			/* Flashes grow and rise, three more each tick. */
 			PARTICLE *flash = &PARTICLES[i];
 
 			if(i / 3 < elapsed && flash->y >= 0) {
@@ -1241,11 +1238,11 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					Sint32 picture = flash->variant / 2;
 
 					draw(canvas,
-						state->sheet + StarfieldFall_FlashPictures[picture],
-						screen.x - StarfieldFall_FlashSizes[picture] / 2,
-						screen.y - StarfieldFall_FlashSizes[picture] / 2,
-						StarfieldFall_FlashSizes[picture],
-						StarfieldFall_FlashSizes[picture]);
+						state->sheet + StarfieldFallFlashPictures[picture],
+						screen.x - StarfieldFallFlashSizes[picture] / 2,
+						screen.y - StarfieldFallFlashSizes[picture] / 2,
+						StarfieldFallFlashSizes[picture],
+						StarfieldFallFlashSizes[picture]);
 				}
 				flash->variant++;
 				if(flash->variant == 2 * STARFIELD_FALL_FLASH_PICTURES) {
@@ -1263,29 +1260,26 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 		/* The falling sprite comes down onto the targets, growing. */
 		if(direction == 1)
-			x = frame / 2 + 24;
+			x = frm / 2 + 24;
 		else
-			x = 56 - frame / 2;
-		y = 64 - frame * 2;
-		grow = (frame << 8) + toFIXED(2);
-		position[3] = 0;
-		position[1] = toFIXED(255);
+			x = 56 - frm / 2;
+		y = 64 - frm * 2;
+		grow = (frm << 8) + toFIXED(2);
+		pos[3] = 0;
+		pos[1] = toFIXED(255);
 		if(mode == STARFIELD_FALL_OUTER_SPACE) {
 			scale.x = dragonScale;
 			scale.y = dragonScale;
-			position[0] = toFIXED(x) + toFIXED(96);
-			position[2] = toFIXED(96 - y);
-			fdRenderApplyProjectedPlacementStub(
-				state->sprs[0], position, &scale, 0);
-			fdRenderApplyProjectedPlacementStub(
-				state->sprs[1], position, &scale, 0);
+			pos[0] = toFIXED(x) + toFIXED(96);
+			pos[2] = toFIXED(96 - y);
+			fdRenderApplyProjectedPlacementStub(state->sprs[0], pos, &scale, 0);
+			fdRenderApplyProjectedPlacementStub(state->sprs[1], pos, &scale, 0);
 		} else {
 			scale.x = grow;
 			scale.y = grow;
-			position[0] = toFIXED(x) + toFIXED(96);
-			position[2] = toFIXED(96 - y);
-			fdRenderApplyProjectedPlacementStub(
-				state->sprs[0], position, &scale, 0);
+			pos[0] = toFIXED(x) + toFIXED(96);
+			pos[2] = toFIXED(96 - y);
+			fdRenderApplyProjectedPlacementStub(state->sprs[0], pos, &scale, 0);
 		}
 		state->shakeFrm = 1;
 		btCameraShake(8, 8);
@@ -1300,9 +1294,9 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 }
 
 #undef FORMATION_SPACING
-#undef STARFIELD_FALL_FALL_FRAMES
-#undef STARFIELD_FALL_BURST_FRAMES
-#undef PARTICLE_STREAMS_DAMAGE_FRAME
+#undef STARFIELD_FALL_FALL_TICKS
+#undef STARFIELD_FALL_BURST_TICKS
+#undef PARTICLE_STREAMS_DAMAGE_TICK
 #undef STARFIELD_FALL_FLAME_SIZE
 #undef STARFIELD_FALL_LARGE_GLOW_SIZE
 #undef STARFIELD_FALL_SMALL_GLOW_SIZE
@@ -1317,7 +1311,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 #undef STARFIELD_FALL_RAGGED_EDGE
 #undef STARFIELD_FALL_GLOW_BLUE_LEVEL
 #undef STARFIELD_FALL_GLOW_GREEN_LEVEL
-#undef STARFIELD_FALL_FLASH_FRAME
+#undef STARFIELD_FALL_FLASH_TICK
 #undef STARFIELD_FALL_BRIGHTEN_DELAY
 #undef STARFIELD_FALL_FLASH_PICTURES
 #undef PARTICLE_STREAMS_EMBER_NEAR

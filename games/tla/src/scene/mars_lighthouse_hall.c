@@ -65,7 +65,7 @@ enum {
 };
 
 /* The hall's doorways, in the order of their step metatiles
-   (MarsLighthouseHall_Doorway). */
+   (MarsLighthouseHallDoorway). */
 enum { DOORWAY_VENUS, DOORWAY_MERCURY, DOORWAY_MARS, DOORWAY_JUPITER };
 
 /* The hall's other metatiles: the carving Teleport is cast on, the four
@@ -86,14 +86,14 @@ enum {
 /* The inscriptions' colours: BG palettes 8 and 9 hold six for each element, the
    hall's four inscriptions glowing in them once that element's flame is lit,
    and the ledge's inscription takes its tower's six into palette 13. */
-#define INSCRIPTION_FIRST_PALETTE	 8
-#define LEDGE_INSCRIPTION_PALETTE	 13
+#define INSCRIPTION_FIRST_PALETTE	8
+#define LEDGE_INSCRIPTION_PALETTE	13
 /* The hall's palette whose last six colours are an unlit inscription's. */
-#define UNLIT_INSCRIPTION_PALETTE	 2
+#define UNLIT_INSCRIPTION_PALETTE	2
 /* An inscription's glow: a run of INSCRIPTION_GLOW_COLORS colours that turns
-   round, one colour on every INSCRIPTION_GLOW_STEP_FRAMES frames. */
-#define INSCRIPTION_GLOW_COLORS		 6
-#define INSCRIPTION_GLOW_STEP_FRAMES 8
+   round, one colour on every INSCRIPTION_GLOW_STEP_TICKS ticks. */
+#define INSCRIPTION_GLOW_COLORS		6
+#define INSCRIPTION_GLOW_STEP_TICKS 8
 
 /* The first of each element's six colours in palettes 8 and 9, and of the ledge
    inscription's in palette 13. */
@@ -145,8 +145,8 @@ void scTeleportStartShimmer(void);
 
 void scMarsLighthouseHallFadeDoorway(void);
 
-void scMarsLighthouseHallBreakFloorTile(Sint32 x, Sint32 z, Sint32 sourceX,
-	Sint32 sourceY, Sint32 metatileX, Sint32 metatileY);
+void scMarsLighthouseHallBreakFloorTile(Sint32 x, Sint32 z, Sint32 srcX,
+	Sint32 srcY, Sint32 metatileX, Sint32 metatileY);
 
 void scMarsLighthouseHallCycleLedgeInscription(void);
 
@@ -160,10 +160,10 @@ void scMarsLighthouseHallFlashDoorways(void);
 
 void fdActorBlink(ACTOR *actor);
 
-extern Uint32 Crumbs_Script[];
-extern Uint32 IceChips_Script[];
+extern Uint32 CrumbsScript[];
+extern Uint32 IceChipsScript[];
 
-extern Sint32 MarsLighthouseHall_TorchScript[];
+extern Sint32 MarsLighthouseHallTorchScript[];
 
 void fdTeleportPlaySparks(void);
 
@@ -185,20 +185,20 @@ Uint16 PaletteCycleLength		  BSS_DATA;
 Uint16 PaletteCycleIndex BSS_DATA ALIGNED(4);
 /* The beacon ledge inscription's colours: the element palettes as loaded, the
    palette the glow is built in, and the inscription's own palette as loaded. */
-Uint16 MarsLighthouseHall_LedgeElementColors[2 * PALETTE_COLORS] BSS_DATA
+Uint16 MarsLighthouseHallLedgeElementColors[2 * PALETTE_COLORS] BSS_DATA
 	   ALIGNED(4);
-Uint16 MarsLighthouseHall_LedgePalette[2 * PALETTE_COLORS] BSS_DATA;
-Uint16 MarsLighthouseHall_LedgeSavedPalette[PALETTE_COLORS] BSS_DATA;
-HALL_COL MarsLighthouseHall_HallElementColors BSS_DATA;
-HALL_COL MarsLighthouseHall_HallPalette		  BSS_DATA;
+Uint16 MarsLighthouseHallLedgePalette[2 * PALETTE_COLORS] BSS_DATA;
+Uint16 MarsLighthouseHallLedgeSavedPalette[PALETTE_COLORS] BSS_DATA;
+HALL_COL MarsLighthouseHallHallElementColors BSS_DATA;
+HALL_COL MarsLighthouseHallHallPalette		 BSS_DATA;
 /* BG palette 2's first ten colours; it is saved whole, with the unlit
    inscription colours after them. */
-Uint16 MarsLighthouseHall_HallSavedPalette[10] BSS_DATA;
-Uint16 MarsLighthouseHall_UnlitInscriptionColors[6] BSS_DATA;
-Sint16 MarsLighthouseHall_DoorwayBlend		 BSS_DATA;
-Sint16 MarsLighthouseHall_DoorwayBlendTarget BSS_DATA;
-Sint16 MarsLighthouseHall_Doorway			 BSS_DATA;
-Sint16 MarsLighthouseHall_DoorwayStep		 BSS_DATA;
+Uint16 MarsLighthouseHallHallSavedPalette[10] BSS_DATA;
+Uint16 MarsLighthouseHallUnlitInscriptionColors[6] BSS_DATA;
+Sint16 MarsLighthouseHallDoorwayBlend		BSS_DATA;
+Sint16 MarsLighthouseHallDoorwayBlendTarget BSS_DATA;
+Sint16 MarsLighthouseHallDoorway			BSS_DATA;
+Sint16 MarsLighthouseHallDoorwayStep		BSS_DATA;
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -226,14 +226,14 @@ Sint32 scMarsLighthouseHallSetUpTorch(ACTOR *actor)
 }
 
 /* Shows a flame on its torch, 14 pixels up, in its element's animation. */
-Sint32 scMarsLighthouseHallShowFlame(Sint32 id, Sint32 animation)
+Sint32 scMarsLighthouseHallShowFlame(Sint32 id, Sint32 anm)
 {
 	ACTOR *actor = fdActorGet(id);
 
 	actor->motionFlg = 0;
 	actor->y.fixed = toFIXED(14);
 	fdActorSetSprFlags(actor, 0);
-	fdActorSelectAnimation(actor, animation);
+	fdActorSelectAnimation(actor, anm);
 #if FIX_FUNCTION_SIGNATURES
 	return 0;
 #endif
@@ -243,17 +243,17 @@ void scFlameUpdateForward(ACTOR *actor);
 void scActorSetupScriptedPart(ACTOR *actor, Sint32 layer);
 void scFlameUpdateSideways(ACTOR *actor);
 
-extern Sint32	   ScriptedPart_Script[];
-extern ACTOR_PLACE MarsLighthouseHall_Placements[];
-extern ACTOR_PLACE MarsLighthouseHall_FlamePlacements[];
-extern ACTOR_PLACE MarsLighthouseHall_InscriptionsPlacements[];
+extern Sint32	   ScriptedPartScript[];
+extern ACTOR_PLACE MarsLighthouseHallPlacements[];
+extern ACTOR_PLACE MarsLighthouseHallFlamePlacements[];
+extern ACTOR_PLACE MarsLighthouseHallInscriptionsPlacements[];
 
-extern CUE	  MarsLighthouseHall_Cues[];
-extern CUE	  MarsLighthouseHall_FlameCues[];
-extern CUE	  MarsLighthouseHall_InscriptionsCues[];
-extern CUE	  MarsLighthouseHall_LedgesCues[];
-extern Sint32 MarsLighthouseHall_FlamePuffSwellScript[];
-extern Sint32 MarsLighthouseHall_FlamePuffThrownScript[];
+extern CUE	  MarsLighthouseHallCues[];
+extern CUE	  MarsLighthouseHallFlameCues[];
+extern CUE	  MarsLighthouseHallInscriptionsCues[];
+extern CUE	  MarsLighthouseHallLedgesCues[];
+extern Sint32 MarsLighthouseHallFlamePuffSwellScript[];
+extern Sint32 MarsLighthouseHallFlamePuffThrownScript[];
 
 Sint32 syListCountEntries(Uint16 *list);
 void   fdPaletteCycleFade(void);
@@ -271,15 +271,15 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_MARS_LIGHTHOUSE_BEACON_LEDGE)
-		return MarsLighthouseHall_FlamePlacements;
+		return MarsLighthouseHallFlamePlacements;
 	if(scene == SCENE_MARS_LIGHTHOUSE_HALL)
-		return MarsLighthouseHall_InscriptionsPlacements;
-	return MarsLighthouseHall_Placements;
+		return MarsLighthouseHallInscriptionsPlacements;
+	return MarsLighthouseHallPlacements;
 }
 
-extern Sint32 MarsLighthouseHall_LedgeCycleFrame;
+extern Sint32 MarsLighthouseHallLedgeCycleTick;
 
-/* Each frame on the beacon ledge: once its flame is lit, the inscription on the
+/* Each tick on the beacon ledge: once its flame is lit, the inscription on the
    wall behind it glows in its element's colours, turning round. */
 void scMarsLighthouseHallCycleLedgeInscription(void)
 {
@@ -294,58 +294,58 @@ void scMarsLighthouseHallCycleLedgeInscription(void)
 	busy = state->revealActive;
 	if(busy != 0)
 		return;
-	if(MarsLighthouseHall_LedgeCycleFrame == -1) {
-		syWordsCopyEntry(MarsLighthouseHall_LedgeSavedPalette,
+	if(MarsLighthouseHallLedgeCycleTick == -1) {
+		syWordsCopyEntry(MarsLighthouseHallLedgeSavedPalette,
 			(void *)&BG_PLTT_COLOR(LEDGE_INSCRIPTION_PALETTE, 0),
-			sizeof(MarsLighthouseHall_LedgeSavedPalette));
-		syWordsCopyEntry(MarsLighthouseHall_LedgeElementColors,
+			sizeof(MarsLighthouseHallLedgeSavedPalette));
+		syWordsCopyEntry(MarsLighthouseHallLedgeElementColors,
 			(void *)&BG_PLTT_COLOR(INSCRIPTION_FIRST_PALETTE, 0),
-			sizeof(MarsLighthouseHall_LedgeElementColors));
-		syWordsCopyEntry(MarsLighthouseHall_LedgePalette,
-			MarsLighthouseHall_LedgeElementColors,
-			sizeof(MarsLighthouseHall_LedgeElementColors));
-		MarsLighthouseHall_LedgeCycleFrame = 0;
+			sizeof(MarsLighthouseHallLedgeElementColors));
+		syWordsCopyEntry(MarsLighthouseHallLedgePalette,
+			MarsLighthouseHallLedgeElementColors,
+			sizeof(MarsLighthouseHallLedgeElementColors));
+		MarsLighthouseHallLedgeCycleTick = 0;
 	}
-	base = MarsLighthouseHall_LedgeCycleFrame / INSCRIPTION_GLOW_STEP_FRAMES %
+	base = MarsLighthouseHallLedgeCycleTick / INSCRIPTION_GLOW_STEP_TICKS %
 		INSCRIPTION_GLOW_COLORS;
-	syWordsCopyEntry(MarsLighthouseHall_LedgePalette,
-		MarsLighthouseHall_LedgeSavedPalette,
-		sizeof(MarsLighthouseHall_LedgeSavedPalette));
+	syWordsCopyEntry(MarsLighthouseHallLedgePalette,
+		MarsLighthouseHallLedgeSavedPalette,
+		sizeof(MarsLighthouseHallLedgeSavedPalette));
 	if(entrance ==
 			MARS_LIGHTHOUSE_BEACON_LEDGE_FROM_MARS_LIGHTHOUSE_VENUS_TOWER &&
 		fdScriptGetFlag(FLAG_VENUS_FLAME_LIT)) {
 		for(i = 0; i < INSCRIPTION_GLOW_COLORS; i++)
-			MarsLighthouseHall_LedgePalette[LEDGE_GLOW + i] =
-				MarsLighthouseHall_LedgeElementColors[VENUS_GLOW +
+			MarsLighthouseHallLedgePalette[LEDGE_GLOW + i] =
+				MarsLighthouseHallLedgeElementColors[VENUS_GLOW +
 					(base + i) % INSCRIPTION_GLOW_COLORS];
 	}
 	if(entrance ==
 			MARS_LIGHTHOUSE_BEACON_LEDGE_FROM_MARS_LIGHTHOUSE_MERCURY_TOWER &&
 		fdScriptGetFlag(FLAG_MERCURY_FLAME_LIT)) {
 		for(i = 0; i < INSCRIPTION_GLOW_COLORS; i++)
-			MarsLighthouseHall_LedgePalette[LEDGE_GLOW + i] =
-				MarsLighthouseHall_LedgeElementColors[MERCURY_GLOW +
+			MarsLighthouseHallLedgePalette[LEDGE_GLOW + i] =
+				MarsLighthouseHallLedgeElementColors[MERCURY_GLOW +
 					(base + i) % INSCRIPTION_GLOW_COLORS];
 	}
 	if(entrance ==
 			MARS_LIGHTHOUSE_BEACON_LEDGE_FROM_MARS_LIGHTHOUSE_MARS_TOWER &&
 		fdScriptGetFlag(FLAG_MARS_FLAME_LIT)) {
 		for(i = 0; i < INSCRIPTION_GLOW_COLORS; i++)
-			MarsLighthouseHall_LedgePalette[LEDGE_GLOW + i] =
-				MarsLighthouseHall_LedgeElementColors[MARS_GLOW +
+			MarsLighthouseHallLedgePalette[LEDGE_GLOW + i] =
+				MarsLighthouseHallLedgeElementColors[MARS_GLOW +
 					(base + i) % INSCRIPTION_GLOW_COLORS];
 	}
 	if(entrance ==
 			MARS_LIGHTHOUSE_BEACON_LEDGE_FROM_MARS_LIGHTHOUSE_JUPITER_TOWER &&
 		fdScriptGetFlag(FLAG_JUPITER_FLAME_LIT)) {
 		for(i = 0; i < INSCRIPTION_GLOW_COLORS; i++)
-			MarsLighthouseHall_LedgePalette[LEDGE_GLOW + i] =
-				MarsLighthouseHall_LedgeElementColors[JUPITER_GLOW +
+			MarsLighthouseHallLedgePalette[LEDGE_GLOW + i] =
+				MarsLighthouseHallLedgeElementColors[JUPITER_GLOW +
 					(base + i) % INSCRIPTION_GLOW_COLORS];
 	}
 	IO_WRITE_QUEUE_PUSH((Uint32)&BG_PLTT_COLOR(LEDGE_INSCRIPTION_PALETTE, 0),
-		(Uint32)MarsLighthouseHall_LedgePalette, DMA_COPY_WORDS(8));
-	MarsLighthouseHall_LedgeCycleFrame++;
+		(Uint32)MarsLighthouseHallLedgePalette, DMA_COPY_WORDS(8));
+	MarsLighthouseHallLedgeCycleTick++;
 }
 
 /* Walking back into the doorway at the top of the beacon ledge's steps
@@ -410,9 +410,9 @@ void scMarsLighthouseHallLightFlame(void)
 	fdScriptEnd();
 }
 
-extern Sint32 MarsLighthouseHall_HallCycleFrame;
+extern Sint32 MarsLighthouseHallHallCycleTick;
 
-/* Each frame in the hall: the inscription of each element whose flame is lit
+/* Each tick in the hall: the inscription of each element whose flame is lit
    glows in its colours, turning round, and the others show unlit. */
 void scMarsLighthouseHallCycleHallInscriptions(void)
 {
@@ -426,56 +426,56 @@ void scMarsLighthouseHallCycleHallInscriptions(void)
 	busy = state->revealActive;
 	if(busy != 0)
 		return;
-	if(MarsLighthouseHall_HallCycleFrame == -1) {
-		syWordsCopyEntry(MarsLighthouseHall_HallSavedPalette,
+	if(MarsLighthouseHallHallCycleTick == -1) {
+		syWordsCopyEntry(MarsLighthouseHallHallSavedPalette,
 			(void *)&BG_PLTT_COLOR(UNLIT_INSCRIPTION_PALETTE, 0),
 			PALETTE_COLORS * 2);
-		syWordsCopyEntry(MarsLighthouseHall_HallElementColors.cols,
+		syWordsCopyEntry(MarsLighthouseHallHallElementColors.cols,
 			(void *)&BG_PLTT_COLOR(INSCRIPTION_FIRST_PALETTE, 0),
-			sizeof(MarsLighthouseHall_HallElementColors));
-		syWordsCopyEntry(MarsLighthouseHall_HallPalette.cols,
-			MarsLighthouseHall_HallElementColors.cols,
-			sizeof(MarsLighthouseHall_HallElementColors));
-		MarsLighthouseHall_HallCycleFrame = 0;
+			sizeof(MarsLighthouseHallHallElementColors));
+		syWordsCopyEntry(MarsLighthouseHallHallPalette.cols,
+			MarsLighthouseHallHallElementColors.cols,
+			sizeof(MarsLighthouseHallHallElementColors));
+		MarsLighthouseHallHallCycleTick = 0;
 	}
-	base = MarsLighthouseHall_HallCycleFrame / INSCRIPTION_GLOW_STEP_FRAMES %
+	base = MarsLighthouseHallHallCycleTick / INSCRIPTION_GLOW_STEP_TICKS %
 		INSCRIPTION_GLOW_COLORS;
 	for(i = 0; i < INSCRIPTION_GLOW_COLORS; i++) {
-		MarsLighthouseHall_HallPalette.cols[JUPITER_GLOW + i] =
-			MarsLighthouseHall_HallElementColors
+		MarsLighthouseHallHallPalette.cols[JUPITER_GLOW + i] =
+			MarsLighthouseHallHallElementColors
 				.cols[JUPITER_GLOW + (base + i) % INSCRIPTION_GLOW_COLORS];
-		MarsLighthouseHall_HallPalette.cols[VENUS_GLOW + i] =
-			MarsLighthouseHall_HallElementColors
+		MarsLighthouseHallHallPalette.cols[VENUS_GLOW + i] =
+			MarsLighthouseHallHallElementColors
 				.cols[VENUS_GLOW + (base + i) % INSCRIPTION_GLOW_COLORS];
-		MarsLighthouseHall_HallPalette.cols[MERCURY_GLOW + i] =
-			MarsLighthouseHall_HallElementColors
+		MarsLighthouseHallHallPalette.cols[MERCURY_GLOW + i] =
+			MarsLighthouseHallHallElementColors
 				.cols[MERCURY_GLOW + (base + i) % INSCRIPTION_GLOW_COLORS];
-		MarsLighthouseHall_HallPalette.cols[MARS_GLOW + i] =
-			MarsLighthouseHall_HallElementColors
+		MarsLighthouseHallHallPalette.cols[MARS_GLOW + i] =
+			MarsLighthouseHallHallElementColors
 				.cols[MARS_GLOW + (base + i) % INSCRIPTION_GLOW_COLORS];
 	}
 	if(!fdScriptGetFlag(FLAG_VENUS_FLAME_LIT))
-		syWordsCopyEntry(&MarsLighthouseHall_HallPalette.cols[VENUS_GLOW],
-			MarsLighthouseHall_UnlitInscriptionColors,
-			sizeof(MarsLighthouseHall_UnlitInscriptionColors));
+		syWordsCopyEntry(&MarsLighthouseHallHallPalette.cols[VENUS_GLOW],
+			MarsLighthouseHallUnlitInscriptionColors,
+			sizeof(MarsLighthouseHallUnlitInscriptionColors));
 	if(!fdScriptGetFlag(FLAG_MERCURY_FLAME_LIT))
-		syWordsCopyEntry(&MarsLighthouseHall_HallPalette.cols[MERCURY_GLOW],
-			MarsLighthouseHall_UnlitInscriptionColors,
-			sizeof(MarsLighthouseHall_UnlitInscriptionColors));
+		syWordsCopyEntry(&MarsLighthouseHallHallPalette.cols[MERCURY_GLOW],
+			MarsLighthouseHallUnlitInscriptionColors,
+			sizeof(MarsLighthouseHallUnlitInscriptionColors));
 	if(!fdScriptGetFlag(FLAG_MARS_FLAME_LIT))
-		syWordsCopyEntry(&MarsLighthouseHall_HallPalette.cols[MARS_GLOW],
-			MarsLighthouseHall_UnlitInscriptionColors,
-			sizeof(MarsLighthouseHall_UnlitInscriptionColors));
+		syWordsCopyEntry(&MarsLighthouseHallHallPalette.cols[MARS_GLOW],
+			MarsLighthouseHallUnlitInscriptionColors,
+			sizeof(MarsLighthouseHallUnlitInscriptionColors));
 	if(!fdScriptGetFlag(FLAG_JUPITER_FLAME_LIT))
-		syWordsCopyEntry(&MarsLighthouseHall_HallPalette.cols[JUPITER_GLOW],
-			MarsLighthouseHall_UnlitInscriptionColors,
-			sizeof(MarsLighthouseHall_UnlitInscriptionColors));
+		syWordsCopyEntry(&MarsLighthouseHallHallPalette.cols[JUPITER_GLOW],
+			MarsLighthouseHallUnlitInscriptionColors,
+			sizeof(MarsLighthouseHallUnlitInscriptionColors));
 	IO_WRITE_QUEUE_PUSH((Uint32)&BG_PLTT_COLOR(INSCRIPTION_FIRST_PALETTE, 0),
-		(Uint32)MarsLighthouseHall_HallPalette.cols, DMA_COPY_WORDS(16));
-	MarsLighthouseHall_HallCycleFrame++;
+		(Uint32)MarsLighthouseHallHallPalette.cols, DMA_COPY_WORDS(16));
+	MarsLighthouseHallHallCycleTick++;
 }
 
-/* Each frame, the purple light in the arched doorway Felix last stepped up to
+/* Each tick, the purple light in the arched doorway Felix last stepped up to
    fades one step in or out. Fully lit, the doorway opens a way through the wall
    (the metatiles under its arch are copied from the open template); faded out,
    the wall closes again. */
@@ -483,37 +483,37 @@ void scMarsLighthouseHallFadeDoorway(void)
 {
 	Sint32 step;
 
-	if(MarsLighthouseHall_DoorwayBlend == MarsLighthouseHall_DoorwayBlendTarget)
+	if(MarsLighthouseHallDoorwayBlend == MarsLighthouseHallDoorwayBlendTarget)
 		return;
 	step =
-		MarsLighthouseHall_DoorwayBlendTarget - MarsLighthouseHall_DoorwayBlend;
+		MarsLighthouseHallDoorwayBlendTarget - MarsLighthouseHallDoorwayBlend;
 	if(step < 0)
 		step = -1;
 	else
 		step = 1;
-	MarsLighthouseHall_DoorwayBlend += step;
+	MarsLighthouseHallDoorwayBlend += step;
 	IO_WRITE_QUEUE_PUSH((Uint32)&REG_BLDALPHA,
-		BLEND_ALPHA(MarsLighthouseHall_DoorwayBlend,
-			BLEND_WEIGHT_MAX - MarsLighthouseHall_DoorwayBlend),
+		BLEND_ALPHA(MarsLighthouseHallDoorwayBlend,
+			BLEND_WEIGHT_MAX - MarsLighthouseHallDoorwayBlend),
 		IO_WRITE_HALFWORD);
-	if(MarsLighthouseHall_DoorwayBlend == 0) {
-		if(MarsLighthouseHall_Doorway == DOORWAY_VENUS)
+	if(MarsLighthouseHallDoorwayBlend == 0) {
+		if(MarsLighthouseHallDoorway == DOORWAY_VENUS)
 			fdMapGridCopyMetatileAttributes(34, 8, 3, 3, 17, 8);
-		if(MarsLighthouseHall_Doorway == DOORWAY_MERCURY)
+		if(MarsLighthouseHallDoorway == DOORWAY_MERCURY)
 			fdMapGridCopyMetatileAttributes(30, 8, 3, 3, 8, 8);
-		if(MarsLighthouseHall_Doorway == DOORWAY_MARS)
+		if(MarsLighthouseHallDoorway == DOORWAY_MARS)
 			fdMapGridCopyMetatileAttributes(34, 8, 3, 3, 17, 8);
-		if(MarsLighthouseHall_Doorway == DOORWAY_JUPITER)
+		if(MarsLighthouseHallDoorway == DOORWAY_JUPITER)
 			fdMapGridCopyMetatileAttributes(30, 8, 3, 3, 8, 8);
 	}
-	if(MarsLighthouseHall_DoorwayBlend == BLEND_WEIGHT_MAX) {
-		if(MarsLighthouseHall_Doorway == DOORWAY_VENUS)
+	if(MarsLighthouseHallDoorwayBlend == BLEND_WEIGHT_MAX) {
+		if(MarsLighthouseHallDoorway == DOORWAY_VENUS)
 			fdMapGridCopyMetatileAttributes(34, 0, 3, 3, 17, 8);
-		if(MarsLighthouseHall_Doorway == DOORWAY_MERCURY)
+		if(MarsLighthouseHallDoorway == DOORWAY_MERCURY)
 			fdMapGridCopyMetatileAttributes(30, 4, 3, 3, 8, 8);
-		if(MarsLighthouseHall_Doorway == DOORWAY_MARS)
+		if(MarsLighthouseHallDoorway == DOORWAY_MARS)
 			fdMapGridCopyMetatileAttributes(34, 4, 3, 3, 17, 8);
-		if(MarsLighthouseHall_Doorway == DOORWAY_JUPITER)
+		if(MarsLighthouseHallDoorway == DOORWAY_JUPITER)
 			fdMapGridCopyMetatileAttributes(30, 0, 3, 3, 8, 8);
 	}
 }
@@ -529,34 +529,34 @@ void scMarsLighthouseHallStepTowardDoorway(Sint32 state)
 	Sint32	odd;
 	Uint16 *flash;
 
-	if(state == MarsLighthouseHall_DoorwayStep)
+	if(state == MarsLighthouseHallDoorwayStep)
 		return;
-	if((state ^ MarsLighthouseHall_DoorwayStep) & 1)
+	if((state ^ MarsLighthouseHallDoorwayStep) & 1)
 		fdScriptPlaySnd(SE_MARS_LIGHTHOUSE_DOORWAY);
-	MarsLighthouseHall_DoorwayStep = state;
+	MarsLighthouseHallDoorwayStep = state;
 	odd = state & 1;
-	flash = (Uint16 *)&MarsLighthouseHall_DoorwayBlendTarget;
+	flash = (Uint16 *)&MarsLighthouseHallDoorwayBlendTarget;
 	next = state - METATILE_BEHAVIOR_VENUS_DOORWAY;
 	if(odd)
 		*flash = 0;
 	else
 		*flash = BLEND_WEIGHT_MAX;
-	if(MarsLighthouseHall_Doorway == DOORWAY_VENUS)
+	if(MarsLighthouseHallDoorway == DOORWAY_VENUS)
 		fdMapGridCopyMetatilesLayered(0, 122, 3, 3, 17, 67);
-	if(MarsLighthouseHall_Doorway == DOORWAY_MERCURY)
+	if(MarsLighthouseHallDoorway == DOORWAY_MERCURY)
 		fdMapGridCopyMetatilesLayered(0, 122, 3, 3, 8, 72);
-	if(MarsLighthouseHall_Doorway == DOORWAY_MARS)
+	if(MarsLighthouseHallDoorway == DOORWAY_MARS)
 		fdMapGridCopyMetatilesLayered(0, 122, 3, 3, 17, 72);
-	if(MarsLighthouseHall_Doorway == DOORWAY_JUPITER)
+	if(MarsLighthouseHallDoorway == DOORWAY_JUPITER)
 		fdMapGridCopyMetatilesLayered(0, 122, 3, 3, 8, 67);
-	MarsLighthouseHall_Doorway = next / 2;
-	if(MarsLighthouseHall_Doorway == DOORWAY_VENUS)
+	MarsLighthouseHallDoorway = next / 2;
+	if(MarsLighthouseHallDoorway == DOORWAY_VENUS)
 		fdMapGridCopyMetatilesLayered(0, 125, 3, 3, 17, 67);
-	if(MarsLighthouseHall_Doorway == DOORWAY_MERCURY)
+	if(MarsLighthouseHallDoorway == DOORWAY_MERCURY)
 		fdMapGridCopyMetatilesLayered(0, 125, 3, 3, 8, 72);
-	if(MarsLighthouseHall_Doorway == DOORWAY_MARS)
+	if(MarsLighthouseHallDoorway == DOORWAY_MARS)
 		fdMapGridCopyMetatilesLayered(0, 125, 3, 3, 17, 72);
-	if(MarsLighthouseHall_Doorway == DOORWAY_JUPITER)
+	if(MarsLighthouseHallDoorway == DOORWAY_JUPITER)
 		fdMapGridCopyMetatilesLayered(0, 125, 3, 3, 8, 67);
 }
 
@@ -569,17 +569,17 @@ void scMarsLighthouseHallFlashDoorways(void)
 	fdMapGridCopyMetatilesLayered(0, 125, 3, 3, 17, 72);
 	fdMapGridCopyMetatilesLayered(0, 125, 3, 3, 8, 67);
 	syWait(1);
-	MarsLighthouseHall_DoorwayBlendTarget = BLEND_WEIGHT_MAX * 3 / 4;
+	MarsLighthouseHallDoorwayBlendTarget = BLEND_WEIGHT_MAX * 3 / 4;
 	syWait(12);
-	MarsLighthouseHall_DoorwayBlendTarget = BLEND_WEIGHT_MAX / 2;
+	MarsLighthouseHallDoorwayBlendTarget = BLEND_WEIGHT_MAX / 2;
 	syWait(4);
-	MarsLighthouseHall_DoorwayBlendTarget = BLEND_WEIGHT_MAX * 3 / 4;
+	MarsLighthouseHallDoorwayBlendTarget = BLEND_WEIGHT_MAX * 3 / 4;
 	syWait(4);
-	MarsLighthouseHall_DoorwayBlendTarget = BLEND_WEIGHT_MAX / 2;
+	MarsLighthouseHallDoorwayBlendTarget = BLEND_WEIGHT_MAX / 2;
 	syWait(4);
-	MarsLighthouseHall_DoorwayBlendTarget = BLEND_WEIGHT_MAX * 3 / 4;
+	MarsLighthouseHallDoorwayBlendTarget = BLEND_WEIGHT_MAX * 3 / 4;
 	syWait(4);
-	MarsLighthouseHall_DoorwayBlendTarget = 0;
+	MarsLighthouseHallDoorwayBlendTarget = 0;
 	syWait(12);
 	fdMapGridCopyMetatilesLayered(0, 122, 3, 3, 17, 67);
 	fdMapGridCopyMetatilesLayered(0, 122, 3, 3, 8, 72);
@@ -596,7 +596,7 @@ void scMarsLighthouseHallStartDoorways(Sint32 entrance)
 	Sint32	metatile = -1;
 	Sint16 *blend;
 	fdBlendScriptSuspend();
-	blend = &MarsLighthouseHall_DoorwayBlend;
+	blend = &MarsLighthouseHallDoorwayBlend;
 	if(entrance == ENTRANCE_THROUGH_VENUS_DOORWAY)
 		metatile = METATILE_BEHAVIOR_VENUS_DOORWAY;
 	if(entrance == ENTRANCE_THROUGH_MERCURY_DOORWAY)
@@ -607,33 +607,33 @@ void scMarsLighthouseHallStartDoorways(Sint32 entrance)
 		metatile = METATILE_BEHAVIOR_JUPITER_DOORWAY;
 	if(metatile == -1) {
 		*blend = 0;
-		MarsLighthouseHall_DoorwayBlendTarget = 0;
-		MarsLighthouseHall_Doorway = metatile;
-		MarsLighthouseHall_DoorwayStep = metatile;
+		MarsLighthouseHallDoorwayBlendTarget = 0;
+		MarsLighthouseHallDoorway = metatile;
+		MarsLighthouseHallDoorwayStep = metatile;
 	} else {
 		Sint32 step;
 		*blend = BLEND_WEIGHT_MAX - 1;
-		MarsLighthouseHall_DoorwayBlendTarget = BLEND_WEIGHT_MAX;
+		MarsLighthouseHallDoorwayBlendTarget = BLEND_WEIGHT_MAX;
 		step = (metatile - METATILE_BEHAVIOR_VENUS_DOORWAY) / 2;
-		MarsLighthouseHall_Doorway = step;
-		MarsLighthouseHall_DoorwayStep = metatile;
+		MarsLighthouseHallDoorway = step;
+		MarsLighthouseHallDoorwayStep = metatile;
 		if(step == DOORWAY_VENUS)
 			fdMapGridCopyMetatilesLayered(0, 125, 3, 3, 17, 67);
-		if(MarsLighthouseHall_Doorway == DOORWAY_MERCURY)
+		if(MarsLighthouseHallDoorway == DOORWAY_MERCURY)
 			fdMapGridCopyMetatilesLayered(0, 125, 3, 3, 8, 72);
-		if(MarsLighthouseHall_Doorway == DOORWAY_MARS)
+		if(MarsLighthouseHallDoorway == DOORWAY_MARS)
 			fdMapGridCopyMetatilesLayered(0, 125, 3, 3, 17, 72);
-		if(MarsLighthouseHall_Doorway == DOORWAY_JUPITER)
+		if(MarsLighthouseHallDoorway == DOORWAY_JUPITER)
 			fdMapGridCopyMetatilesLayered(0, 125, 3, 3, 8, 67);
 	}
 	IO_WRITE_QUEUE_PUSH((Uint32)&REG_BLDALPHA,
-		BLEND_ALPHA(MarsLighthouseHall_DoorwayBlend,
-			BLEND_WEIGHT_MAX - MarsLighthouseHall_DoorwayBlend),
+		BLEND_ALPHA(MarsLighthouseHallDoorwayBlend,
+			BLEND_WEIGHT_MAX - MarsLighthouseHallDoorwayBlend),
 		IO_WRITE_HALFWORD);
 	IO_WRITE_QUEUE_PUSH((Uint32)&REG_BLDCNT,
 		BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
 		IO_WRITE_HALFWORD);
-	sySetFrameEvent(scMarsLighthouseHallFadeDoorway, EVENT_PASS_FRAME);
+	sySetTickEvent(scMarsLighthouseHallFadeDoorway, EVENT_PASS_TICK);
 }
 
 /* Felix casts Teleport on the round carving the dragon statue's fireball
@@ -656,23 +656,23 @@ const CUE *scGetCues(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_MARS_LIGHTHOUSE_BEACON_LEDGE)
-		return MarsLighthouseHall_FlameCues;
+		return MarsLighthouseHallFlameCues;
 	if(scene == SCENE_MARS_LIGHTHOUSE_HALL)
-		return MarsLighthouseHall_InscriptionsCues;
+		return MarsLighthouseHallInscriptionsCues;
 	if(scene == SCENE_MARS_LIGHTHOUSE_MERCURY_LEDGE ||
 		scene == SCENE_MARS_LIGHTHOUSE_JUPITER_LEDGE ||
 		scene == SCENE_MARS_LIGHTHOUSE_MARS_LEDGE ||
 		scene == SCENE_MARS_LIGHTHOUSE_VENUS_LEDGE)
-		return MarsLighthouseHall_LedgesCues;
-	return MarsLighthouseHall_Cues;
+		return MarsLighthouseHallLedgesCues;
+	return MarsLighthouseHallCues;
 }
 
 void scPaletteSetColsFade(Uint16 *slots, Uint16 *colours, Uint16 *a, Uint16 *b);
 
-extern Uint16 TeleportCircle_PaletteSlots[];
-extern Uint16 TeleportCircle_Colors[];
-extern Uint16 TeleportCircle_ShimmerColors[];
-extern Uint16 TeleportCircle_ShimmerSlots[];
+extern Uint16 TeleportCirclePaletteSlots[];
+extern Uint16 TeleportCircleColors[];
+extern Uint16 TeleportCircleShimmerColors[];
+extern Uint16 TeleportCircleShimmerSlots[];
 
 Sint32 scInit(void)
 {
@@ -684,9 +684,9 @@ Sint32 scInit(void)
 
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptSetFlag(FLAG_IN_MARS_LIGHTHOUSE);
-	scPaletteSetColsFade((Sint32)TeleportCircle_PaletteSlots,
-		(Sint32)TeleportCircle_Colors, (Sint32)TeleportCircle_ShimmerColors,
-		(Sint32)TeleportCircle_ShimmerSlots);
+	scPaletteSetColsFade((Sint32)TeleportCirclePaletteSlots,
+		(Sint32)TeleportCircleColors, (Sint32)TeleportCircleShimmerColors,
+		(Sint32)TeleportCircleShimmerSlots);
 	if(scene != SCENE_MARS_LIGHTHOUSE_BEACON_LEDGE &&
 		scene == SCENE_MARS_LIGHTHOUSE_HALL) {
 		Call1((void (*)())fdEffectStartBlankOverlay, 0);
@@ -711,7 +711,7 @@ Sint32 scInit(void)
 				fdScriptStart();
 				syFieldScriptEndLastingPsynergy(0);
 				fdScriptStartScreenTransition();
-				fdScriptWaitTransitionFrames();
+				fdScriptWaitTransitionTicks();
 				fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
 				fdCameraSetSpeed(2);
 				fdCameraMoveTo(224, 64, 216, 1);
@@ -832,8 +832,8 @@ Sint32 scPrepareMap(void)
 		actor = fdActorGet(ACTOR_LEDGE_BLAZE_TARGET);
 		actor->motionFlg = 0;
 		actor->z.fixed = toFIXED(104);
-		syFieldSetFrameEvent(
-			scMarsLighthouseHallCycleLedgeInscription, EVENT_PASS_FRAME);
+		syFieldSetTickEvent(
+			scMarsLighthouseHallCycleLedgeInscription, EVENT_PASS_TICK);
 	} else if(scene == SCENE_MARS_LIGHTHOUSE_HALL) {
 		if(entrance == MARS_LIGHTHOUSE_HALL_FROM_MARS_LIGHTHOUSE_AERIE ||
 			entrance ==
@@ -849,9 +849,9 @@ Sint32 scPrepareMap(void)
 			}
 			scMarsLighthouseHallStartDoorways(entrance);
 			{
-				Sint32 priority = EVENT_PASS_FRAME;
+				Sint32 priority = EVENT_PASS_TICK;
 
-				syFieldSetFrameEvent(
+				syFieldSetTickEvent(
 					scMarsLighthouseHallCycleHallInscriptions, priority);
 			}
 			scMarsLighthouseHallShowFlame(
@@ -984,21 +984,21 @@ void scMarsLighthouseHallSpawnFlamePuff(Sint32 x, Sint32 z, Sint32 kind)
 		fdActorSelectAnimation(actor, 3);
 		if(kind != 0) {
 			((PLACED_SPR *)actor->spr)->pri = 2;
-			fdActorStartScript(actor, MarsLighthouseHall_FlamePuffSwellScript);
+			fdActorStartScript(actor, MarsLighthouseHallFlamePuffSwellScript);
 		} else {
 			((PLACED_SPR *)actor->spr)->pri = 1;
 			actor->velX = toFIXED(syRandomBelow(8) - 4);
 			actor->velY = toFIXED(4);
-			fdActorStartScript(actor, MarsLighthouseHall_FlamePuffThrownScript);
+			fdActorStartScript(actor, MarsLighthouseHallFlamePuffThrownScript);
 		}
 	}
 }
 
 /* One floor tile before the statue breaks in a burst of flame with a clatter,
    showing its part of the round carving beneath: the metatile (metatileX,
-   metatileY) takes the picture at (sourceX, sourceY). */
-void scMarsLighthouseHallBreakFloorTile(Sint32 x, Sint32 z, Sint32 sourceX,
-	Sint32 sourceY, Sint32 metatileX, Sint32 metatileY)
+   metatileY) takes the picture at (srcX, srcY). */
+void scMarsLighthouseHallBreakFloorTile(Sint32 x, Sint32 z, Sint32 srcX,
+	Sint32 srcY, Sint32 metatileX, Sint32 metatileY)
 {
 	Uint32 i;
 	Sint32 px;
@@ -1012,7 +1012,7 @@ void scMarsLighthouseHallBreakFloorTile(Sint32 x, Sint32 z, Sint32 sourceX,
 		scMarsLighthouseHallSpawnFlamePuff(px, pz, 0);
 	}
 	sySynch(4);
-	fdMapGridCopyMetatilesTo(sourceX, sourceY, metatileX + 64, metatileY, 1, 1);
+	fdMapGridCopyMetatilesTo(srcX, srcY, metatileX + 64, metatileY, 1, 1);
 }
 
 /* The great dragon statue at the head of the hall speaks as Felix steps in from
@@ -1109,14 +1109,13 @@ Bool fdActorIsBeside(ACTOR *a, ACTOR *b);
 
 #include "shared/actor_reset_scripted_for.h"
 
-/* A flame thrower's flame (FLAME_FORWARD), sent south from `position` at
+/* A flame thrower's flame (FLAME_FORWARD), sent south from `pos` at
    `speed` (scFlameUpdateForward); `offScreen` keeps its sprite's picture loaded
    out of sight. */
-void scFlameThrowerSendForward(
-	VECTOR3 *position, Sint32 speed, Sint32 offScreen)
+void scFlameThrowerSendForward(VECTOR3 *pos, Sint32 speed, Sint32 offScreen)
 {
-	ACTOR *actor = scFieldActorCreate(
-		SPRITE_BLAZE_FLAME, position->x, position->y, position->z);
+	ACTOR *actor =
+		scFieldActorCreate(SPRITE_BLAZE_FLAME, pos->x, pos->y, pos->z);
 
 	if(actor != 0) {
 		actor->bounce = 0;
@@ -1137,14 +1136,13 @@ Bool fdActorIsBeside(ACTOR *a, ACTOR *b);
 
 #include "shared/actor_setup_scripted_part.h"
 
-/* A flame thrower's flame (FLAME_BACKWARD), sent north from `position` at
+/* A flame thrower's flame (FLAME_BACKWARD), sent north from `pos` at
    `speed` (scFlameUpdateForward); `offScreen` keeps its sprite's picture loaded
    out of sight. */
-void scFlameThrowerSendBackward(
-	VECTOR3 *position, Sint32 speed, Sint32 offScreen)
+void scFlameThrowerSendBackward(VECTOR3 *pos, Sint32 speed, Sint32 offScreen)
 {
-	ACTOR *actor = scFieldActorCreate(
-		SPRITE_BLAZE_FLAME, position->x, position->y, position->z);
+	ACTOR *actor =
+		scFieldActorCreate(SPRITE_BLAZE_FLAME, pos->x, pos->y, pos->z);
 
 	if(actor != 0) {
 		actor->bounce = 0;
@@ -1158,13 +1156,13 @@ void scFlameThrowerSendBackward(
 	}
 }
 
-/* A flame thrower's flame (FLAME_EAST), sent east from `position` at `speed`
+/* A flame thrower's flame (FLAME_EAST), sent east from `pos` at `speed`
    (scFlameUpdateSideways); `offScreen` keeps its sprite's picture loaded out of
    sight. */
-void scFlameThrowerSendEast(VECTOR3 *position, Sint32 speed, Sint32 offScreen)
+void scFlameThrowerSendEast(VECTOR3 *pos, Sint32 speed, Sint32 offScreen)
 {
-	ACTOR *actor = scFieldActorCreate(
-		SPRITE_BLAZE_FLAME, position->x, position->y, position->z);
+	ACTOR *actor =
+		scFieldActorCreate(SPRITE_BLAZE_FLAME, pos->x, pos->y, pos->z);
 
 	if(actor != 0) {
 		actor->bounce = 0;
@@ -1178,13 +1176,13 @@ void scFlameThrowerSendEast(VECTOR3 *position, Sint32 speed, Sint32 offScreen)
 	}
 }
 
-/* A flame thrower's flame (FLAME_WEST), sent west from `position` at `speed`
+/* A flame thrower's flame (FLAME_WEST), sent west from `pos` at `speed`
    (scFlameUpdateSideways); `offScreen` keeps its sprite's picture loaded out of
    sight. */
-void scFlameThrowerSendWest(VECTOR3 *position, Sint32 speed, Sint32 offScreen)
+void scFlameThrowerSendWest(VECTOR3 *pos, Sint32 speed, Sint32 offScreen)
 {
-	ACTOR *actor = scFieldActorCreate(
-		SPRITE_BLAZE_FLAME, position->x, position->y, position->z);
+	ACTOR *actor =
+		scFieldActorCreate(SPRITE_BLAZE_FLAME, pos->x, pos->y, pos->z);
 
 	if(actor != 0) {
 		actor->bounce = 0;
@@ -1205,10 +1203,10 @@ void scFlameThrowerSendWest(VECTOR3 *position, Sint32 speed, Sint32 offScreen)
 #include "shared/actor_setup_scripted.h"
 
 /* A spark puffed from a flame thrower, drifting off in a random direction. */
-void scFlameThrowerSendSpark(VECTOR3 *position, Sint32 speed, Sint32 offScreen)
+void scFlameThrowerSendSpark(VECTOR3 *pos, Sint32 speed, Sint32 offScreen)
 {
 	ACTOR *actor = scFieldActorCreate(
-		SPRITE_DUST_CLOUD, position->x, position->y, position->z - toFIXED(2));
+		SPRITE_DUST_CLOUD, pos->x, pos->y, pos->z - toFIXED(2));
 	Sint32 spin;
 
 	if(actor != 0) {
@@ -1368,7 +1366,7 @@ Sint32 fdMapGetTerrainHeight(Sint32 layer, Sint32 x, Sint32 z);
 
 #include "shared/actor_park.h"
 
-Sint32 MarsLighthouseHall_TorchScript[] = {
+Sint32 MarsLighthouseHallTorchScript[] = {
 	SC_CALL(scMarsLighthouseHallSetUpTorch),
 	SC_END,
 };
@@ -1420,20 +1418,20 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE MarsLighthouseHall_Placements[] = {
+ACTOR_PLACE MarsLighthouseHallPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE MarsLighthouseHall_FlamePlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (Sint32)MarsLighthouseHall_TorchScript, 504, 0, 184, FACING_EAST, TALK_FACING_KEEP, 0),
+ACTOR_PLACE MarsLighthouseHallFlamePlacements[] = {
+	ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (Sint32)MarsLighthouseHallTorchScript, 504, 0, 184, FACING_EAST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SMALL_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 504, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, (Sint32)MarsLighthouseHall_TorchScript, 504, 0, 112, FACING_EAST, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, (Sint32)MarsLighthouseHallTorchScript, 504, 0, 112, FACING_EAST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_DRAGON_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 232, FACING_EAST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_DRAGON_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE MarsLighthouseHall_InscriptionsPlacements[] = {
+ACTOR_PLACE MarsLighthouseHallInscriptionsPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_ROBED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 184, FACING_EAST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_ROBED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 184, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
 	ACTOR_PLACEMENT(SPRITE_ROBED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 216, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
@@ -1448,14 +1446,14 @@ ACTOR_PLACE MarsLighthouseHall_InscriptionsPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-CUE MarsLighthouseHall_Cues[] = {
+CUE MarsLighthouseHallCues[] = {
 	{CUE_TABLE_END},
 };
 
-/* The beacon ledge inscription's glow, in frames; -1 before it starts. */
-Sint32 MarsLighthouseHall_LedgeCycleFrame = -1;
+/* The beacon ledge inscription's glow, in ticks; -1 before it starts. */
+Sint32 MarsLighthouseHallLedgeCycleTick = -1;
 
-CUE MarsLighthouseHall_FlameCues[] = {
+CUE MarsLighthouseHallFlameCues[] = {
 	{CUE_STEP, METATILE_LEDGE_DOORWAY, CONDITION_ALWAYS, SCRIPT_REF(scMarsLighthouseHallLeaveLedge)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_LEDGE_TORCH, CONDITION_ALWAYS, SCRIPT_REF(scMarsLighthouseHallStartBlazeOnTorch)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS), ACTOR_LEDGE_BLAZE_TARGET, CONDITION_ALWAYS, SCRIPT_REF(scMarsLighthouseHallWatchBlazeReachFlame)},
@@ -1463,10 +1461,10 @@ CUE MarsLighthouseHall_FlameCues[] = {
 	{CUE_TABLE_END},
 };
 
-/* The hall inscriptions' glow, in frames; -1 before it starts. */
-Sint32 MarsLighthouseHall_HallCycleFrame = -1;
+/* The hall inscriptions' glow, in ticks; -1 before it starts. */
+Sint32 MarsLighthouseHallHallCycleTick = -1;
 
-CUE MarsLighthouseHall_InscriptionsCues[] = {
+CUE MarsLighthouseHallInscriptionsCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
 	{CUE_EXIT, 4, CONDITION_ALWAYS, 4},
@@ -1497,13 +1495,13 @@ CUE MarsLighthouseHall_InscriptionsCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE MarsLighthouseHall_LedgesCues[] = {
+CUE MarsLighthouseHallLedgesCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_TABLE_END},
 };
 
-Sint32 MarsLighthouseHall_FlamePuffSwellScript[] = {
+Sint32 MarsLighthouseHallFlamePuffSwellScript[] = {
 	SC_ADD(SW_SCALE_X, toFIXED(3) / 16),
 	SC_ADD(SW_SCALE_Y, toFIXED(3) / 16),
 	SC_ADD(SW_Y, -toFIXED(3) / 32),
@@ -1520,7 +1518,7 @@ Sint32 MarsLighthouseHall_FlamePuffSwellScript[] = {
 	SC_RELEASE,
 };
 
-Sint32 MarsLighthouseHall_FlamePuffThrownScript[] = {
+Sint32 MarsLighthouseHallFlamePuffThrownScript[] = {
 	SC_WAIT(20),
 	SC_POSITION_ORIGIN,
 	SC_WAIT(1),

@@ -19,8 +19,8 @@ typedef struct WORLD_MAP_ENCOUNTER_RULE {
 	Sint16 zone; /* a row of EncounterZones */
 } WORLD_MAP_ENCOUNTER_RULE;
 
-extern const WORLD_MAP_ENCOUNTER_RULE WorldMap_EncounterRules[];
+extern const WORLD_MAP_ENCOUNTER_RULE WorldMapEncounterRules[];
 /* The same aboard the ship (LEADER_MOVEMENT_SHIP). */
-extern const WORLD_MAP_ENCOUNTER_RULE WorldMap_ShipEncounterRules[];
+extern const WORLD_MAP_ENCOUNTER_RULE WorldMapShipEncounterRules[];
 
 #endif

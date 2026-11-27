@@ -368,7 +368,7 @@ graphics(void)
 	equal(&corners, &cornerReference,
 		  "a corner's flip and palette join the tile before them");
 	free(corners.data);
-	textFile("anims.tsv", "animation\tcommand\tvalue\tcount\tdestination\tframes\n"
+	textFile("anims.tsv", "animation\tcommand\tvalue\tcount\tdestination\tticks\n"
 						  "1\tpicture\t1536\t2\t1152\t10\n1\tjump\t0\n10\tstop\n");
 	textFile("anims.paused.tsv", "animation\n10\n");
 	RUN("graphics", true, "anims.tsv", "anims.script");
@@ -382,12 +382,12 @@ graphics(void)
 		  "and its own end");
 	free(anims.data);
 	textFile("manyanims.tsv",
-			 "animation\tcommand\tvalue\tcount\tdestination\tframes\n16\tstop\n");
+			 "animation\tcommand\tvalue\tcount\tdestination\tticks\n16\tstop\n");
 	RUN("graphics", false, "manyanims.tsv", "manyanims.script");
-	textFile("blend.tsv", "command\tvalue\tframes\ncontrol\t100\n"
+	textFile("blend.tsv", "command\tvalue\tticks\ncontrol\t100\n"
 						  "level\t5\t3\nlevel\t6\t3\njump\t1\n");
 	RUN("graphics", false, "blend.tsv", "blend.script");
-	textFile("blend.tsv", "command\tvalue\tframes\nlevel\t5\t3\n"
+	textFile("blend.tsv", "command\tvalue\tticks\nlevel\t5\t3\n"
 						  "level\t6\t3\njump\t1\n");
 	RUN("graphics", true, "blend.tsv", "blend.script");
 	Buffer blend = readFile("blend.script");
@@ -507,7 +507,7 @@ tileLayouts(void)
 static void
 spriteAnimations(void)
 {
-	const char *columns = "animation\tcommand\tvalue\tframes\n";
+	const char *columns = "animation\tcommand\tvalue\tticks\n";
 	textFile("bank.tsv", "sprite\twidth\theight\tscale\tdraw\tadjust_x\t"
 						 "adjust_y\tbox_x\tbox_y\tcodec\tpictures\tanimations\t"
 						 "animation_count\n"

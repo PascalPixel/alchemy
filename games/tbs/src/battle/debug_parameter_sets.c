@@ -7,7 +7,7 @@
 #include "game/character_ids.h"
 
 /* clang-format off */
-DEBUG_PARM_SET_ROW Debug_ParameterSets[] = {
+DEBUG_PARM_SET_ROW DebugParameterSets[] = {
 	/* Set 0 */
 	{
 		.unitId = ISAAC,

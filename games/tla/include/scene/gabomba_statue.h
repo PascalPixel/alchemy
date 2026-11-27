@@ -54,19 +54,19 @@ void scGabombaStatueReleaseLeftArrowPanel(void);
 void scGabombaStatuePressRightArrowPanel(void);
 void scGabombaStatueReleaseRightArrowPanel(void);
 
-extern Sint32 GabombaStatue_FlashCogScript[];
-extern Sint32 GabombaStatue_TurnToothScript[];
-extern Uint32 GabombaStatue_JennaFocusScript[];
-extern Uint32 GabombaStatue_PiersFocusScript[];
-extern Uint32 GabombaStatue_KradenFocusScript[];
-extern Uint32 GabombaStatue_KradenPointsScript[];
-extern Sint32 GabombaStatue_LookNorthAndEastScript[];
-extern Sint32 GabombaStatue_LookNorthAndWestScript[];
+extern Sint32 GabombaStatueFlashCogScript[];
+extern Sint32 GabombaStatueTurnToothScript[];
+extern Uint32 GabombaStatueJennaFocusScript[];
+extern Uint32 GabombaStatuePiersFocusScript[];
+extern Uint32 GabombaStatueKradenFocusScript[];
+extern Uint32 GabombaStatueKradenPointsScript[];
+extern Sint32 GabombaStatueLookNorthAndEastScript[];
+extern Sint32 GabombaStatueLookNorthAndWestScript[];
 
-extern Uint32 GabombaStatue_PinionReleaseScript[];
+extern Uint32 GabombaStatuePinionReleaseScript[];
 
-extern Uint32 GabombaStatue_JennaWatchesScript[];
-extern Uint32 GabombaStatue_AkafubuComesUpScript[];
+extern Uint32 GabombaStatueJennaWatchesScript[];
+extern Uint32 GabombaStatueAkafubuComesUpScript[];
 
 void scGabombaStatueRestartClock(void);
 
@@ -78,7 +78,7 @@ Sint32 scGabombaStatueSetUpChannelPuzzle(
 	Sint32 x, Sint32 z, Sint32 value, Sint32 id);
 void scGabombaStatueFindBrokenMetatile(Uint32 *x_out, Uint32 *z_out);
 
-extern Uint32 GabombaStatue_LookAtChannelScript[];
+extern Uint32 GabombaStatueLookAtChannelScript[];
 
 void scGabombaStatueDrawCogMetatiles(void);
 
@@ -102,25 +102,25 @@ Sint32 scGabombaStatueLayChannel(Sint32 value);
 
 void scGabombaStatueCountDownShowingClock(void);
 void scGabombaStatueCountDown(void);
-void fdActorSetMetatileOpen(Sint32 id, Uint32 mode, Sint32 flag, Sint32 layer);
+void fdActorSetMetatileOpen(Sint32 id, Uint32 mode, Sint32 flg, Sint32 layer);
 
 void scGabombaStatueFadeByDepth(void);
 
-void scActorsSetDrawn(Sint32 show, Sint32 first, Uint32 count);
+void scActorsSetDrawn(Sint32 show, Sint32 first, Uint32 cnt);
 
 void scGabombaStatueLandFromFall(void);
 
 void scGabombaStatueClimbDownLadder(Sint32 x, Sint32 z);
 
 Sint32		  scGabombaStatueGetClock(void);
-extern Uint32 GabombaStatue_CogShapes[];
+extern Uint32 GabombaStatueCogShapes[];
 
 /* Coils a rope at its first post (fdRopeCoil, through the overlay's own import
    row). */
-void scGabombaStatueCoilRope(Sint32 index, Sint32 firstPost, Sint32 secondPost);
+void scGabombaStatueCoilRope(Sint32 idx, Sint32 firstPost, Sint32 secondPost);
 /* Places a rope between its posts, tied when its flag is set, else coiled
    (fdRopePlace, through the overlay's own import row). */
 void scGabombaStatuePlaceRope(
-	Sint32 index, Sint32 flag, Sint32 firstPost, Sint32 secondPost);
+	Sint32 idx, Sint32 flg, Sint32 firstPost, Sint32 secondPost);
 
 #endif

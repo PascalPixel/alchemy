@@ -37,8 +37,8 @@ typedef struct SELECTION_NODE {
 	Uint16 tile;
 	Sint16 x;	 /* screen pixels */
 	Sint16 y;	 /* screen pixels */
-	Sint16 dx;	 /* pixels a frame */
-	Sint16 dy;	 /* pixels a frame */
+	Sint16 dx;	 /* pixels a tick */
+	Sint16 dy;	 /* pixels a tick */
 	Sint16 tgtX; /* screen pixels */
 	Sint16 tgtY; /* screen pixels */
 	Sint16 homeX;
@@ -98,7 +98,7 @@ typedef struct SELECTION_MENU_STATE {
 	Uint16 cursorIdx;
 	Uint16 verticalScroll; /* pixels added to the icons' y; 32 at setup */
 	/* SELECTION_STATUS_SCROLLING while the cursor steps, SELECTION_STATUS_SHOWN
-	   after (window_selection.c); each frame drawn adds 1. */
+	   after (window_selection.c); each tick drawn adds 1. */
 	Uint16 stat;
 	Uint16 pathTop[5];	  /* top, kept for each icon chosen on the path */
 	Uint16 pathCursor[5]; /* cursorIdx, kept for each icon chosen on the path */
@@ -133,7 +133,7 @@ void   mnIconMenuAddIcon(Sint32 icon);
 void   mnIconMenuClose(void);
 void   mnSelectionMenuFreeLargeIcon(void);
 void   mnIconMenuLayoutIcons(Sint32 x, Sint32 y, Sint32 w, Sint32 h);
-Sint32 mnIconMenuRun(Sint32 initial);
+Sint32 mnIconMenuRun(Sint32 init);
 
 /* Loads the icon of a selection entry of kind mode (ICON_KIND) into a free
    sprite tile slot and returns the slot, or -1. */

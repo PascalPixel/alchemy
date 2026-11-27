@@ -8,18 +8,18 @@
 static UNREAD_RESULT scActorUpdateBlockDrawOrder(ACTOR *actor)
 {
 	ACTOR *leader;
-	Uint8  flag;
+	Uint8  flg;
 	leader = fdActorGetById(ACTOR_PARTY_LEADER);
-	flag = actor->priFlg | ACTOR_PRIORITY_UNDERFOOT;
-	actor->priFlg = flag;
+	flg = actor->priFlg | ACTOR_PRIORITY_UNDERFOOT;
+	actor->priFlg = flg;
 	if(leader->z.fixed < actor->z.fixed) {
 		FIXED reach = actor->z.fixed - leader->z.fixed;
 		FIXED top;
 		reach += toFIXED(4);
 		top = actor->y.fixed + reach;
 		if(leader->y.fixed <= top) {
-			flag &= ~ACTOR_PRIORITY_UNDERFOOT;
-			actor->priFlg = flag;
+			flg &= ~ACTOR_PRIORITY_UNDERFOOT;
+			actor->priFlg = flg;
 		}
 	}
 	RETURN_UNREAD(0);
@@ -27,7 +27,7 @@ static UNREAD_RESULT scActorUpdateBlockDrawOrder(ACTOR *actor)
 
 /* After Move, puts a pair of pillars back in order, the first south of the
    second: unless it already is, the two trade places and the game waits a
-   frame. Nothing visible changes, since the pillars of a pair look alike, and
+   tick. Nothing visible changes, since the pillars of a pair look alike, and
    the scenes that call it treat the two alike afterwards. */
 static void scActorSwapPossByDepth(Sint32 first, Sint32 second)
 {

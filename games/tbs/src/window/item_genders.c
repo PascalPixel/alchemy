@@ -7,7 +7,7 @@
 /* clang-format off */
 /* Each item's gender, by item id. */
 #if LANGUAGE == LANGUAGE_GERMAN
-const Sint8 LocalizedWord_ItemGenders[] = {
+const Sint8 LocalizedWordItemGenders[] = {
 	ITEM_MASCULINE, /* ??? */
 	ITEM_NEUTER, /* Long Sword */
 	ITEM_NEUTER, /* Broad Sword */
@@ -279,7 +279,7 @@ const Sint8 LocalizedWord_ItemGenders[] = {
 	ITEM_MASCULINE, /* Cleric's Ring */
 };
 #elif LANGUAGE == LANGUAGE_ITALIAN
-const Sint8 LocalizedWord_ItemGenders[] = {
+const Sint8 LocalizedWordItemGenders[] = {
 	ITEM_MASCULINE, /* ??? */
 	ITEM_FEMININE, /* Long Sword */
 	ITEM_FEMININE, /* Broad Sword */

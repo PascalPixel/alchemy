@@ -23,21 +23,21 @@
 #include "field/call.h"
 #include "field/actor_script.h"
 
-void fdPoundSinkTarget(Uint16 *list, Sint32 mode, Sint32 count);
+void fdPoundSinkTarget(Uint16 *list, Sint32 mode, Sint32 cnt);
 void scIzumoRuinsShowStakeState(ACTOR *actor);
 
-extern Sint16		IzumoRuins_FirstRoomPillars[];
-extern Sint16		IzumoRuins_SecondRoomPillars[];
-extern Sint16		IzumoRuins_FirstRoomStakes[];
-extern Sint16		IzumoRuins_SecondRoomStakes[];
-extern Sint16		IzumoRuins_Puddles[];
-extern SCENE_REGION IzumoRuins_FirstRoomRegions[];
-extern SCENE_REGION IzumoRuins_SecondRoomRegions[];
-extern ACTOR_PLACE	IzumoRuins_ActorPlacements[];
-extern ACTOR_PLACE	IzumoRuins_FirstRoomActorPlacements[];
-extern ACTOR_PLACE	IzumoRuins_SecondRoomActorPlacements[];
-extern CUE			IzumoRuins_FirstRoomCues[];
-extern CUE			IzumoRuins_SecondRoomCues[];
+extern Sint16		IzumoRuinsFirstRoomPillars[];
+extern Sint16		IzumoRuinsSecondRoomPillars[];
+extern Sint16		IzumoRuinsFirstRoomStakes[];
+extern Sint16		IzumoRuinsSecondRoomStakes[];
+extern Sint16		IzumoRuinsPuddles[];
+extern SCENE_REGION IzumoRuinsFirstRoomRegions[];
+extern SCENE_REGION IzumoRuinsSecondRoomRegions[];
+extern ACTOR_PLACE	IzumoRuinsActorPlacements[];
+extern ACTOR_PLACE	IzumoRuinsFirstRoomActorPlacements[];
+extern ACTOR_PLACE	IzumoRuinsSecondRoomActorPlacements[];
+extern CUE			IzumoRuinsFirstRoomCues[];
+extern CUE			IzumoRuinsSecondRoomCues[];
 
 void   scIzumoRuinsPlaceStakes(Uint16 *list);
 void   scDustScatter(Sint32 mode);
@@ -45,7 +45,7 @@ void   scDustBurst(void);
 Sint32 fdMapGetTerrainHeight(Sint32 layer, Sint32 x, Sint32 z);
 void   fdLeaderSetMetatileShapeAt(Sint32 level, Sint32 layer);
 
-void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flag, Sint32 layer);
+void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flg, Sint32 layer);
 
 #include "shared/crumbling_pillar.h"
 
@@ -65,9 +65,9 @@ void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flag, Sint32 layer);
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
 
-extern Uint32 FieldEffect_ShortScript[];
-extern Uint32 FieldEffect_MediumScript[];
-extern Uint32 FieldEffect_LongScript[];
+extern Uint32 FieldEffectShortScript[];
+extern Uint32 FieldEffectMediumScript[];
+extern Uint32 FieldEffectLongScript[];
 
 /* Set as Parch dries the green pool on the way to the room of the stone
    tablet. */
@@ -77,7 +77,7 @@ extern Uint32 FieldEffect_LongScript[];
 enum { METATILE_POOL = 50 };
 
 /* Both scenes' first two actors: wooden stakes Pound drives down
-   (IzumoRuins_FirstRoomStakes, IzumoRuins_SecondRoomStakes), at metatiles (10,
+   (IzumoRuinsFirstRoomStakes, IzumoRuinsSecondRoomStakes), at metatiles (10,
    51) and (12, 51) in the first and (27, 34) and (25, 34) in the second. */
 enum { ACTOR_FIRST_STAKE = ACTOR_FIRST_PLACED, ACTOR_SECOND_STAKE };
 
@@ -176,16 +176,16 @@ void scIzumoRuinsShowStakeState(ACTOR *actor)
 void scIzumoRuinsPlaceStakes(Uint16 *list)
 {
 	ACTOR *actor;
-	Sint32 flag;
+	Sint32 flg;
 
 	for(; list[0] != ACTOR_LIST_END; list += 3) {
 		actor = fdActorGet(list[0]);
-		flag = (Sint16)list[2];
+		flg = (Sint16)list[2];
 		fdActorSetSprFlags(actor, 0);
-		fdActorSelectAnimation(actor, fdScriptGetFlag((Uint16)flag) + 1);
+		fdActorSelectAnimation(actor, fdScriptGetFlag((Uint16)flg) + 1);
 		actor->motionFlg = 0;
 		actor->collisionFlg &= ~ACTOR_SOLID;
-		actor->tmr = flag;
+		actor->tmr = flg;
 		scIzumoRuinsShowStakeState(actor);
 	}
 }
@@ -200,9 +200,9 @@ const SCENE_REGION *scGetExitRegions(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_IZUMO_RUINS_FIRST_ROOM)
-		return IzumoRuins_FirstRoomRegions;
+		return IzumoRuinsFirstRoomRegions;
 	if(scene == SCENE_IZUMO_RUINS_SECOND_ROOM)
-		return IzumoRuins_SecondRoomRegions;
+		return IzumoRuinsSecondRoomRegions;
 	return 0;
 }
 
@@ -216,10 +216,10 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_IZUMO_RUINS_FIRST_ROOM)
-		return IzumoRuins_FirstRoomActorPlacements;
+		return IzumoRuinsFirstRoomActorPlacements;
 	if(scene == SCENE_IZUMO_RUINS_SECOND_ROOM)
-		return IzumoRuins_SecondRoomActorPlacements;
-	return IzumoRuins_ActorPlacements;
+		return IzumoRuinsSecondRoomActorPlacements;
+	return IzumoRuinsActorPlacements;
 }
 
 /* Pound on one of the ruins' wooden stakes: the giant fist hammers it down
@@ -230,7 +230,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 
    fdPoundSinkTarget animates the blow from the scene's list of stakes; as the
    stake lands (mode 1) scIzumoRuinsShowStakeState makes its metatile floor. */
-void scIzumoRuinsPoundStake(Sint32 mode, Sint32 frame)
+void scIzumoRuinsPoundStake(Sint32 mode, Sint32 frm)
 {
 	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
 	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
@@ -238,9 +238,9 @@ void scIzumoRuinsPoundStake(Sint32 mode, Sint32 frame)
 
 	scene = party->next;
 	if(scene == SCENE_IZUMO_RUINS_FIRST_ROOM)
-		fdPoundSinkTarget(IzumoRuins_FirstRoomStakes, mode, frame);
+		fdPoundSinkTarget(IzumoRuinsFirstRoomStakes, mode, frm);
 	else
-		fdPoundSinkTarget(IzumoRuins_SecondRoomStakes, mode, frame);
+		fdPoundSinkTarget(IzumoRuinsSecondRoomStakes, mode, frm);
 	if(mode == POUND_STAGE_LANDED)
 		scIzumoRuinsShowStakeState(fdActorGet(state->tgtId));
 }
@@ -255,7 +255,7 @@ void scIzumoRuinsFreezePuddle(void)
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdFlagBlockApplyFlags(IzumoRuins_Puddles);
+	fdFlagBlockApplyFlags(IzumoRuinsPuddles);
 	actor = state->movedBlock;
 	actor->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
 	actor->priFlg &= ~ACTOR_PRIORITY_UNDERFOOT;
@@ -292,7 +292,7 @@ void scIzumoRuinsRiseOutOfSand(void)
 void scIzumoRuinsStartMovingPillar(void)
 {
 	if(MainRoutineStateWork.next == SCENE_IZUMO_RUINS_FIRST_ROOM) {
-		fdActorLiftTargetBlock(IzumoRuins_FirstRoomPillars);
+		fdActorLiftTargetBlock(IzumoRuinsFirstRoomPillars);
 	} else {
 		Sint32 metatile = fdMapMetatileGetAttributes(
 			MAPGRID_LAYER_OVERHEAD, RING_SOUTH_GAP_COLUMN, RING_SOUTH_GAP_ROW);
@@ -301,7 +301,7 @@ void scIzumoRuinsStartMovingPillar(void)
 			METATILE_BEHAVIOR_WALL, metatile & METATILE_ATTRIBUTE_BITS);
 		scMapMetatileSetAttributes(MAPGRID_LAYER_OVERHEAD,
 			RING_SOUTH_GAP_COLUMN, RING_SOUTH_GAP_ROW, metatile);
-		fdActorLiftTargetBlock(IzumoRuins_SecondRoomPillars);
+		fdActorLiftTargetBlock(IzumoRuinsSecondRoomPillars);
 	}
 }
 
@@ -337,8 +337,8 @@ const CUE *scGetCues(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_IZUMO_RUINS_FIRST_ROOM)
-		return IzumoRuins_FirstRoomCues;
-	return IzumoRuins_SecondRoomCues;
+		return IzumoRuinsFirstRoomCues;
+	return IzumoRuinsSecondRoomCues;
 }
 
 /* Sets up the scene being entered: the window in, its stone pillars and stakes,
@@ -356,16 +356,16 @@ Sint32 scInit(void)
 		ACTOR_PRIORITY_IGNORES_RISES;
 	fdEffectStartBlankOverlay(0);
 	if(MainRoutineStateWork.next == SCENE_IZUMO_RUINS_FIRST_ROOM) {
-		fdActorPlaceBlocks(IzumoRuins_FirstRoomPillars);
-		scIzumoRuinsPlaceStakes((Uint16 *)IzumoRuins_FirstRoomStakes);
-		fdFlagBlockPlaceAll(IzumoRuins_Puddles);
+		fdActorPlaceBlocks(IzumoRuinsFirstRoomPillars);
+		scIzumoRuinsPlaceStakes((Uint16 *)IzumoRuinsFirstRoomStakes);
+		fdFlagBlockPlaceAll(IzumoRuinsPuddles);
 	} else {
 		fdActorGet(ACTOR_RING_NORTHWEST_PILLAR)->priFlg |=
 			ACTOR_PRIORITY_IGNORES_RISES;
 		fdActorGet(ACTOR_RING_NORTHEAST_PILLAR)->priFlg |=
 			ACTOR_PRIORITY_IGNORES_RISES;
-		fdActorPlaceBlocks(IzumoRuins_SecondRoomPillars);
-		scIzumoRuinsPlaceStakes((Uint16 *)IzumoRuins_SecondRoomStakes);
+		fdActorPlaceBlocks(IzumoRuinsSecondRoomPillars);
+		scIzumoRuinsPlaceStakes((Uint16 *)IzumoRuinsSecondRoomStakes);
 		if(fdScriptGetFlag(FLAG_IZUMO_RUINS_POOL_PARCHED)) {
 			scIzumoRuinsShowThePoolDried();
 			fdMapGridCenterOnFollowedPoint();
@@ -398,32 +398,32 @@ Sint32 scPrepareMap(void)
 #include "shared/field_effect_duration_scripts.c"
 
 /* The stone pillars Move can push in each scene, ended by -1. */
-Sint16 IzumoRuins_FirstRoomPillars[] = {
+Sint16 IzumoRuinsFirstRoomPillars[] = {
 	ACTOR_FIRST_ROOM_PILLAR, -1,
 };
-Sint16 IzumoRuins_SecondRoomPillars[] = {
+Sint16 IzumoRuinsSecondRoomPillars[] = {
 	ACTOR_RING_NORTHWEST_PILLAR, ACTOR_RING_NORTHEAST_PILLAR,
 	ACTOR_RING_WEST_PILLAR, ACTOR_RING_SOUTHWEST_PILLAR,
 	ACTOR_RING_SOUTHEAST_PILLAR, ACTOR_RING_EAST_PILLAR,
 	-1, 0,
 };
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 /* Pound's stakes in each scene (scIzumoRuinsPlaceStakes, fdPoundSinkTarget): */
 /* actor, the metatile kind Pound opens under it, and the flag set while it */
 /* is driven down; ended by -1. */
-Sint16 IzumoRuins_FirstRoomStakes[] = {
+Sint16 IzumoRuinsFirstRoomStakes[] = {
 	ACTOR_FIRST_STAKE, 0, FLAG_FIRST_STAKE_POUNDED,
 	ACTOR_SECOND_STAKE, 0, FLAG_SECOND_STAKE_POUNDED,
 	ACTOR_THIRD_STAKE, 0, FLAG_THIRD_STAKE_POUNDED,
 	-1,
 };
-Sint16 IzumoRuins_SecondRoomStakes[] = {
+Sint16 IzumoRuinsSecondRoomStakes[] = {
 	ACTOR_FIRST_STAKE, 0, FLAG_FIRST_STAKE_POUNDED,
 	ACTOR_SECOND_STAKE, 0, FLAG_SECOND_STAKE_POUNDED,
 	-1,
@@ -431,7 +431,7 @@ Sint16 IzumoRuins_SecondRoomStakes[] = {
 
 /* The first scene's puddles Frost freezes: actor and the flag set once */
 /* frozen, ended by -1. */
-Sint16 IzumoRuins_Puddles[] = {
+Sint16 IzumoRuinsPuddles[] = {
 	ACTOR_WEST_PUDDLE, FLAG_WEST_PUDDLE_FROZEN,
 	ACTOR_EAST_PUDDLE, FLAG_EAST_PUDDLE_FROZEN,
 	-1,
@@ -441,13 +441,13 @@ Sint16 IzumoRuins_Puddles[] = {
 
 /* The top of the ladder up out of each scene, which takes Felix out by its */
 /* exit: up to Izumo from the first, up to the first from the second. */
-SCENE_REGION IzumoRuins_FirstRoomRegions[] = {
+SCENE_REGION IzumoRuinsFirstRoomRegions[] = {
 	{208, 44, 752, 224, 60, 768, CONDITION_ALWAYS,
 	 IZUMO_RUINS_FIRST_ROOM_TO_IZUMO},
 	{SCENE_TABLE_END},
 };
 
-SCENE_REGION IzumoRuins_SecondRoomRegions[] = {
+SCENE_REGION IzumoRuinsSecondRoomRegions[] = {
 	{400, 16, 352, 416, 32, 368, CONDITION_ALWAYS,
 	 IZUMO_RUINS_SECOND_ROOM_TO_IZUMO_RUINS_FIRST_ROOM},
 	{SCENE_TABLE_END},
@@ -473,11 +473,11 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE IzumoRuins_ActorPlacements[] = {
+ACTOR_PLACE IzumoRuinsActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE IzumoRuins_FirstRoomActorPlacements[] = {
+ACTOR_PLACE IzumoRuinsFirstRoomActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 824, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 824, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 824, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -487,7 +487,7 @@ ACTOR_PLACE IzumoRuins_FirstRoomActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE IzumoRuins_SecondRoomActorPlacements[] = {
+ACTOR_PLACE IzumoRuinsSecondRoomActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 152, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -500,7 +500,7 @@ ACTOR_PLACE IzumoRuins_SecondRoomActorPlacements[] = {
 };
 /* clang-format on */
 
-CUE IzumoRuins_FirstRoomCues[] = {
+CUE IzumoRuinsFirstRoomCues[] = {
 	{CUE_EXIT, IZUMO_RUINS_FIRST_ROOM_TO_IZUMO, CONDITION_ALWAYS,
 		IZUMO_RUINS_FIRST_ROOM_TO_IZUMO},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -535,7 +535,7 @@ CUE IzumoRuins_FirstRoomCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE IzumoRuins_SecondRoomCues[] = {
+CUE IzumoRuinsSecondRoomCues[] = {
 	{CUE_EXIT, IZUMO_RUINS_SECOND_ROOM_TO_IZUMO_RUINS_FIRST_ROOM,
 		CONDITION_ALWAYS, IZUMO_RUINS_SECOND_ROOM_TO_IZUMO_RUINS_FIRST_ROOM},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},

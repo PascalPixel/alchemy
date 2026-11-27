@@ -10,7 +10,7 @@
 #define PUSHED_ACTOR_TABLE_SECTION
 #endif
 
-Sint32 PushedActor_DirectionSteps[] PUSHED_ACTOR_TABLE_SECTION = {
+Sint32 PushedActorDirectionSteps[] PUSHED_ACTOR_TABLE_SECTION = {
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),
 	DIRECTION_STEP(16, 0),

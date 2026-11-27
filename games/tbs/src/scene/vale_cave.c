@@ -51,20 +51,20 @@
 #include "sound/sound_driver_symbols.h"
 #include "game/system_call.h"
 
-extern Sint32		  ValeCave_WalkTargets[][2];
-extern SCENE_ENTRANCE ValeCave_MouthEntrances[];
-extern SCENE_ENTRANCE ValeCave_KiteEntrances[];
-extern SCENE_ENTRANCE ValeCave_LogsEntrances[];
-extern Uint32		  ValeCave_Exits[];
-extern ACTOR_PLACE	  ValeCave_MouthActorPlacements[];
-extern ACTOR_PLACE	  ValeCave_KiteActorPlacements[];
-extern ACTOR_PLACE	  ValeCave_LogsActorPlacements[];
-extern CUE			  ValeCave_CuesOther[];
-extern CUE			  ValeCave_MouthCues[];
-extern CUE			  ValeCave_KiteCues[];
-extern CUE			  ValeCave_LogsCues[];
+extern Sint32		  ValeCaveWalkTargets[][2];
+extern SCENE_ENTRANCE ValeCaveMouthEntrances[];
+extern SCENE_ENTRANCE ValeCaveKiteEntrances[];
+extern SCENE_ENTRANCE ValeCaveLogsEntrances[];
+extern Uint32		  ValeCaveExits[];
+extern ACTOR_PLACE	  ValeCaveMouthActorPlacements[];
+extern ACTOR_PLACE	  ValeCaveKiteActorPlacements[];
+extern ACTOR_PLACE	  ValeCaveLogsActorPlacements[];
+extern CUE			  ValeCaveCuesOther[];
+extern CUE			  ValeCaveMouthCues[];
+extern CUE			  ValeCaveKiteCues[];
+extern CUE			  ValeCaveLogsCues[];
 
-/* The clearing's actor placements (ValeCave_MouthActorPlacements), numbered
+/* The clearing's actor placements (ValeCaveMouthActorPlacements), numbered
    from ACTOR_FIRST_PLACED.
 
    They are three stacks of crates, drawn as the crates of the Bilibin Barricade
@@ -75,7 +75,7 @@ typedef enum VALE_CAVE_MOUTH_ACTOR_ID {
 	ACTOR_VALE_CAVE_MOUTH_SECOND_LOG
 } VALE_CAVE_MOUTH_ACTOR_ID;
 
-/* The first room's actor placements (ValeCave_KiteActorPlacements), numbered
+/* The first room's actor placements (ValeCaveKiteActorPlacements), numbered
    from ACTOR_FIRST_PLACED. */
 typedef enum VALE_CAVE_KITE_ACTOR_ID {
 	/* Kite, a Jupiter Djinni, placed until it joins (FLAG_KITE). */
@@ -97,7 +97,7 @@ typedef enum VALE_CAVE_KITE_ACTOR_ID {
 	ACTOR_SECOND_STANDING_LOG
 } VALE_CAVE_KITE_ACTOR_ID;
 
-/* The room of logs' actor placements (ValeCave_LogsActorPlacements), numbered
+/* The room of logs' actor placements (ValeCaveLogsActorPlacements), numbered
    from ACTOR_FIRST_PLACED.
 
    Its first row places Kite as the first room's does, out of sight of this
@@ -128,7 +128,7 @@ typedef enum VALE_CAVE_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_VALE_CAVE_KITE_RIDGE_FOOT,
 	/* The first of the twelve metatile behaviors on the ring of floor round
 	   Kite's mossy rocks (scValeCaveKiteKeepsAway), one for each of
-	   ValeCave_WalkTargets. */
+	   ValeCaveWalkTargets. */
 	METATILE_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE = 45,
 	/* In Kite's part, the chests of the Halt Gem and of the Nut. */
 	METATILE_BEHAVIOR_VALE_CAVE_HALT_GEM_CHEST = 100,
@@ -220,18 +220,18 @@ static void scValeCaveTalkToKite(void)
 /* Waits for an actor to land, bounded by a one-second timeout. */
 static void scValeCaveWaitForActorLanding(ACTOR *actor)
 {
-	Sint32 framesRemaining = 60;
+	Sint32 ticksRemaining = 60;
 
-	while(framesRemaining != 0) {
+	while(ticksRemaining != 0) {
 		sySynch(1);
-		framesRemaining--;
+		ticksRemaining--;
 		if(actor->y.fixed <= actor->groundHeight)
 			break;
 	}
 	actor->y.fixed = actor->groundHeight;
 }
 
-/* Turns Kite to face the party leader each frame, so that it watches Isaac from
+/* Turns Kite to face the party leader each tick, so that it watches Isaac from
    behind its rocks. */
 static UNREAD_RESULT scValeCaveFaceActorTowardLeader(ACTOR *actor)
 {
@@ -257,15 +257,15 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_VALE_CAVE_MOUTH) {
-		return ValeCave_MouthEntrances;
+		return ValeCaveMouthEntrances;
 	}
 	if(sceneId == SCENE_VALE_CAVE_KITE) {
-		return ValeCave_KiteEntrances;
+		return ValeCaveKiteEntrances;
 	}
 	if(sceneId == SCENE_VALE_CAVE_LOGS) {
-		return ValeCave_LogsEntrances;
+		return ValeCaveLogsEntrances;
 	}
-	return Scene_FallbackEntrances;
+	return SceneFallbackEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -276,7 +276,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 /* Returns the shared packed exits for all cave rooms. */
 const Uint32 *scGetExits(void)
 {
-	return ValeCave_Exits;
+	return ValeCaveExits;
 }
 
 /* Selects the current room's actor placements, which are Kite, and the crates
@@ -286,15 +286,15 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_VALE_CAVE_MOUTH) {
-		return ValeCave_MouthActorPlacements;
+		return ValeCaveMouthActorPlacements;
 	}
 	if(sceneId == SCENE_VALE_CAVE_KITE) {
-		return ValeCave_KiteActorPlacements;
+		return ValeCaveKiteActorPlacements;
 	}
 	if(sceneId == SCENE_VALE_CAVE_LOGS) {
-		return ValeCave_LogsActorPlacements;
+		return ValeCaveLogsActorPlacements;
 	}
-	return ValeCave_MouthActorPlacements;
+	return ValeCaveMouthActorPlacements;
 }
 
 /* When Reveal fades in the pool just inside the cave, the post it showed at
@@ -315,14 +315,14 @@ static void scValeCaveRevealHiddenTile(void)
 	fdMapGridCopyMetatiles(16, 17, 1, 1, 15, 15);
 }
 
-/* Sinks a stack of crates into the water over 68 frames, with a white splash of
+/* Sinks a stack of crates into the water over 68 ticks, with a white splash of
    spray round it. */
 static inline void scValeCaveSinkActorWithParticles(
 	Sint32 actorId, Sint32 baseX, Sint32 baseZ, EFFECT_OPTIONS *particleOptions)
 {
-	Uint32 frame;
+	Uint32 frm;
 
-	for(frame = 0; frame < 68; frame++) {
+	for(frm = 0; frm < 68; frm++) {
 		FIXED particleX = toFIXED(syRandomBelow(17)) + baseX;
 		FIXED particleZ = toFIXED(syRandomBelow(14)) + baseZ;
 
@@ -360,7 +360,7 @@ static void scValeCaveMoveWestCratesIntoWater(void)
 			fdActorGet(ACTOR_WEST_CRATES)->z.fixed + toFIXED(52),
 			SPRITE_CRATES);
 		fdActorGet(ACTOR_WEST_CRATES)->motionFlg = 0;
-		/* Surround the sinking crates with one particle per frame. */
+		/* Surround the sinking crates with one particle per tick. */
 		options.startScaleX = toFIXED(3) / 5;
 		options.startScaleY = toFIXED(3) / 5;
 		options.pal = SPRITE_COLOR_WHITE;
@@ -405,7 +405,7 @@ static void scValeCaveMoveEastCratesIntoWater(void)
 		   all the same, since the sinking writes their height directly and
 		   nothing pulls them back up, as the recording of this script shows. */
 		fdActorGet(ACTOR_WEST_CRATES)->motionFlg = 0;
-		/* Surround the sinking crates with one particle per frame. */
+		/* Surround the sinking crates with one particle per tick. */
 		options.startScaleX = toFIXED(3) / 5;
 		options.startScaleY = toFIXED(3) / 5;
 		options.pal = SPRITE_COLOR_WHITE;
@@ -442,25 +442,23 @@ static void scValeCavePushEastCratesIntoWater(void)
    stands there. */
 static Bool scValeCaveLeapOffRidingLog(Sint32 unusedArgument)
 {
-	FIELD_COORDINATE landingPosition[3];
+	FIELD_COORDINATE landingPos[3];
 	ACTOR			*leader;
-	Sint32			 savedMotionFlags;
+	Sint32			 savedMotionFlg;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	savedMotionFlags = leader->motionFlg;
+	savedMotionFlg = leader->motionFlg;
 #if JUMP_LANDS_ON_CELL_CENTER
-	landingPosition[0].fixed =
-		(leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-	landingPosition[1].fixed = leader->y.fixed;
-	landingPosition[2].fixed =
-		(leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(40);
+	landingPos[0].fixed = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	landingPos[1].fixed = leader->y.fixed;
+	landingPos[2].fixed = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(40);
 #else
-	landingPosition[0].fixed = leader->x.fixed;
-	landingPosition[1].fixed = leader->y.fixed;
-	landingPosition[2].fixed = leader->z.fixed + toFIXED(32);
+	landingPos[0].fixed = leader->x.fixed;
+	landingPos[1].fixed = leader->y.fixed;
+	landingPos[2].fixed = leader->z.fixed + toFIXED(32);
 #endif
-	if(syFieldActorCheckMovementCollision(
-		   leader, (FIELD_POS *)landingPosition) == 0) {
+	if(syFieldActorCheckMovementCollision(leader, (FIELD_POS *)landingPos) ==
+		0) {
 		fdScriptStart();
 		fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 		sySynch(6);
@@ -471,12 +469,11 @@ static Bool scValeCaveLeapOffRidingLog(Sint32 unusedArgument)
 		leader->velY = toFIXED(4);
 		leader->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
 		fdActorSetSprFlags(leader, 0);
-		fdActorMoveToAndWait(ACTOR_PARTY_LEADER,
-			landingPosition[0].part[0].integer,
-			landingPosition[2].part[0].integer);
+		fdActorMoveToAndWait(ACTOR_PARTY_LEADER, landingPos[0].part[0].integer,
+			landingPos[2].part[0].integer);
 		fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 		fdActorSetSprFlags(leader, SPRITE_FLAG_SHADOW);
-		leader->motionFlg = savedMotionFlags;
+		leader->motionFlg = savedMotionFlg;
 		fdScriptEnd();
 		return TRUE;
 	}
@@ -543,7 +540,7 @@ static void scValeCaveKiteRunsBehindRocks(void)
    matching his pace, until Halt stops it.
 
    Each metatile of the ring of floor round the rocks (metatiles (46..52,
-   17..20)) sends Kite to the point opposite, from ValeCave_WalkTargets. */
+   17..20)) sends Kite to the point opposite, from ValeCaveWalkTargets. */
 static void scValeCaveKiteKeepsAway(void)
 {
 	FIELD_STATE *state = FieldStateWork;
@@ -556,8 +553,8 @@ static void scValeCaveKiteKeepsAway(void)
 			fdActorGet(ACTOR_PARTY_LEADER)->speedLimit;
 		fdActorGet(ACTOR_KITE)->acceleration =
 			fdActorGet(ACTOR_PARTY_LEADER)->acceleration;
-		fdActorWalkTo(ACTOR_KITE, ValeCave_WalkTargets[route][0],
-			ValeCave_WalkTargets[route][1]);
+		fdActorWalkTo(ACTOR_KITE, ValeCaveWalkTargets[route][0],
+			ValeCaveWalkTargets[route][1]);
 	}
 }
 
@@ -689,15 +686,15 @@ const CUE *scGetCues(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_VALE_CAVE_MOUTH) {
-		return ValeCave_MouthCues;
+		return ValeCaveMouthCues;
 	}
 	if(sceneId == SCENE_VALE_CAVE_KITE) {
-		return ValeCave_KiteCues;
+		return ValeCaveKiteCues;
 	}
 	if(sceneId == SCENE_VALE_CAVE_LOGS) {
-		return ValeCave_LogsCues;
+		return ValeCaveLogsCues;
 	}
-	return ValeCave_CuesOther;
+	return ValeCaveCuesOther;
 }
 
 /* Arriving in any of the three rooms chooses the entry transition and restores
@@ -726,10 +723,10 @@ Sint32 scInit(void)
    number. */
 static void scValeCaveLeaveRoom(void)
 {
-	Sint32 exitNumber = FieldStateWork->stepCue;
+	Sint32 exitNum = FieldStateWork->stepCue;
 
 	sySndPlay(SE_MAP_EXIT);
-	syImportScriptSetExitRequest(exitNumber);
+	syImportScriptSetExitRequest(exitNum);
 }
 
 /* Puts the riding log at the end of its pool where it was left, and makes that
@@ -915,7 +912,7 @@ static void scValeCaveTouchRidingLog(void)
 /* The twelve points round Kite's mossy rocks, x then z in pixels, */
 /* one for each metatile behavior from */
 /* METATILE_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE on. */
-Sint32 ValeCave_WalkTargets[][2] = {
+Sint32 ValeCaveWalkTargets[][2] = {
 	760, 296,
 	760, 280,
 	776, 280,
@@ -930,15 +927,15 @@ Sint32 ValeCave_WalkTargets[][2] = {
 	760, 312,
 };
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 #include "shared/fallback_entrances.c"
 
-SCENE_ENTRANCE ValeCave_MouthEntrances[] = {
+SCENE_ENTRANCE ValeCaveMouthEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, 16, 0, 336, 368, 0 },
 	{ VALE_CAVE_MOUTH_FROM_VALE_KRADENS_COTTAGE_WEST, CONDITION_ALWAYS, 104, 0, 344, FACING_NORTH, 0, 16, 0, 336, 368, 0 },
 	{ VALE_CAVE_MOUTH_FROM_VALE_CAVE_KITE, CONDITION_ALWAYS, 136, 0, 184, FACING_SOUTH, 0, 16, 0, 336, 368, 0 },
@@ -946,7 +943,7 @@ SCENE_ENTRANCE ValeCave_MouthEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-SCENE_ENTRANCE ValeCave_KiteEntrances[] = {
+SCENE_ENTRANCE ValeCaveKiteEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH, CONDITION_ALWAYS, 328, 0, 392, FACING_NORTH, 0, 48, 32, 544, 416, 0 },
 	{ VALE_CAVE_KITE_WEST_FROM_EAST, CONDITION_ALWAYS, 312, 0, 160, FACING_SOUTH, 0, 48, 32, 544, 416, 0 },
@@ -961,7 +958,7 @@ SCENE_ENTRANCE ValeCave_KiteEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-SCENE_ENTRANCE ValeCave_LogsEntrances[] = {
+SCENE_ENTRANCE ValeCaveLogsEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 200, 0, 432, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST, CONDITION_ALWAYS, 200, 0, 432, FACING_NORTH, 0, 64, 24, 416, 464, 0 },
 	{ VALE_CAVE_LOGS_NORTH_FROM_SOUTH, CONDITION_ALWAYS, 344, 0, 120, FACING_SOUTH, 0, 64, 24, 416, 464, 0 },
@@ -971,7 +968,7 @@ SCENE_ENTRANCE ValeCave_LogsEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-Uint32 ValeCave_Exits[] = {
+Uint32 ValeCaveExits[] = {
 	SCENE_EXITS(ValeCaveMouth),
 	SCENE_EXIT(VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST, ValeKradensCottage, VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_WEST),
 	SCENE_EXIT(VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE, ValeCaveKite, VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH),
@@ -996,7 +993,7 @@ Uint32 ValeCave_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE ValeCave_MouthActorPlacements[] = {
+ACTOR_PLACE ValeCaveMouthActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
 		232, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -1010,7 +1007,7 @@ ACTOR_PLACE ValeCave_MouthActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE ValeCave_KiteActorPlacements[] = {
+ACTOR_PLACE ValeCaveKiteActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_KITE, MOVEMENT_TYPE_STAND,
 		792, 0, 232, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -1030,7 +1027,7 @@ ACTOR_PLACE ValeCave_KiteActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE ValeCave_LogsActorPlacements[] = {
+ACTOR_PLACE ValeCaveLogsActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_KITE, MOVEMENT_TYPE_STAND,
 		792, 0, 232, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -1042,18 +1039,18 @@ ACTOR_PLACE ValeCave_LogsActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE ValeCave_CuesOther[] = {
+CUE ValeCaveCuesOther[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE ValeCave_MouthCues[] = {
+CUE ValeCaveMouthCues[] = {
 	{ CUE_STEP, VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST, CONDITION_ALWAYS, SCRIPT_REF(scValeCaveLeaveRoom) },
 	{ CUE_STEP, VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE, CONDITION_ALWAYS, SCRIPT_REF(scValeCaveLeaveRoom) },
 	{ CUE_STEP, VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST, CONDITION_ALWAYS, SCRIPT_REF(scValeCaveLeaveRoom) },
 	{ CUE_TABLE_END },
 };
 
-CUE ValeCave_KiteCues[] = {
+CUE ValeCaveKiteCues[] = {
 	{ CUE_EXIT, VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH },
 	{ CUE_EXIT, VALE_CAVE_KITE_WEST_TO_EAST, CONDITION_ALWAYS, VALE_CAVE_KITE_WEST_TO_EAST },
 	{ CUE_EXIT, VALE_CAVE_KITE_WEST_TO_SOUTH, CONDITION_ALWAYS, VALE_CAVE_KITE_WEST_TO_SOUTH },
@@ -1096,7 +1093,7 @@ CUE ValeCave_KiteCues[] = {
 };
 /* clang-format on */
 
-CUE ValeCave_LogsCues[] = {
+CUE ValeCaveLogsCues[] = {
 	{CUE_EXIT, VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_WEST, CONDITION_ALWAYS,
 		VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_WEST},
 	{CUE_EXIT, VALE_CAVE_LOGS_NORTH_TO_SOUTH, CONDITION_ALWAYS,

@@ -17,7 +17,7 @@ scene up, then goes round one small loop until the party leaves.
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  setup(["Set the scene up"]) --> walk(["sySynch(1): one frame, every actor moves"])
+  setup(["Set the scene up"]) --> walk(["sySynch(1): one tick, every actor moves"])
   walk --> requests{"Any request?"}
   requests -- "no" --> walk
   requests -- "a talk, a step, a menu" --> answer(["Answer it"])
@@ -32,18 +32,18 @@ flowchart TD
 ```
 
 The first box of the loop is a single call, `sySynch(1)`. That call runs one
-frame of the game: every [event](glossary.md#event) once, and one of the
+tick of the game: every [event](glossary.md#event) once, and one of the
 events moves every actor. This function is the code that is waiting, and when
 `sySynch(1)` returns it looks at the requests itself
 ([Waiting and events](system.md#waiting-and-events)). This is not a loop that
-runs the game. It asks for one frame, then asks whether anything needs an
+runs the game. It asks for one tick, then asks whether anything needs an
 answer.
 
-No request is answered in the middle of a frame. Pressing A only sets a
+No request is answered in the middle of a tick. Pressing A only sets a
 [field request](glossary.md#field-request): the leader's actor script sees
 the button and notes it. A step onto a doorstep or a battle coming due is
-noted by the function itself, from where the leader stands after the frame.
-So an answer always starts between two frames, and can take as long as it
+noted by the function itself, from where the leader stands after the tick.
+So an answer always starts between two ticks, and can take as long as it
 likes: one line from a villager, or a whole cutscene. While it lasts, the
 answer is the code that waits, and the loop above stands still inside it.
 
@@ -111,13 +111,13 @@ Isaac, a villager, a chest, each footprint in Imil's snow. A scene has room
 for 64.
 
 Every actor carries an [actor script](glossary.md#actor-script), a short
-list of orders that is worked through a little each frame. A footprint's
+list of orders that is worked through a little each tick. A footprint's
 is two orders long: `SC_WAIT` for two seconds, then disappear.
 
 An actor does not run itself. It is a row in a table, and one
-[event](glossary.md#event) visits every row each frame and carries that
+[event](glossary.md#event) visits every row each tick and carries that
 actor's script on from where it stopped. The footprint's two seconds are a
-count in its row that the event takes one off each frame: not the
+count in its row that the event takes one off each tick: not the
 [`sySynch()`](glossary.md#wait) a cutscene calls
 ([Waiting and events](system.md#two-kinds-of-waiting)).
 
@@ -166,7 +166,7 @@ Cast Move and the field code draws the hand and finds what it touches. Only
 Vale knows its pillar can be pushed, and says so with one more kind of
 cue row: Move, on the pillar.
 
-Random battles measure distance. After each frame the field's function adds
+Random battles measure distance. After each tick the field's function adds
 to a counter by how far the leader has walked, and
 the ground he walks on says how fast it fills and which enemies come.
 Running gets you there sooner, after exactly the same distance.

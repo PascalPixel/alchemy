@@ -69,7 +69,7 @@ typedef enum ABILITY_FORMULA {
 	ABILITY_FORMULA_ATTACK_MULTIPLIED = 4, /* that attack times power / 10 */
 	ABILITY_FORMULA_DAMAGE = 5, /* HP damage from the power (Psynergy) */
 	/* HP damage from enemies' moves such as Fire Blessing and Deadly Gas,
-	   falling off faster than Psynergy's (RangeFalloff_EnemyDamage). Unless the
+	   falling off faster than Psynergy's (RangeFalloffEnemyDamage). Unless the
 	   move has wording of its own, it's announced as `<unit> unleashes
 	   <ability>!`. A weapon's unleash is something else:
 	   ABILITY_FORMULA_ATTACK, or for Rapid Smash
@@ -78,7 +78,7 @@ typedef enum ABILITY_FORMULA {
 	/* Granite, Flash and Kite, whose effect is all they do. */
 	ABILITY_FORMULA_EFFECT_ONLY = 7,
 	/* Summon damage falls off faster than Psynergy's
-	   (RangeFalloff_SummonDamage). Called with the Summon command, a summon
+	   (RangeFalloffSummonDamage). Called with the Summon command, a summon
 	   also adds 3% of the target's maximum HP to its power for each Djinni it
 	   spends; the Fusion Dragon's Outer Space and Dragon Driver go without that
 	   bonus. */

@@ -4,11 +4,11 @@
 /* A Mars Djinni joins the party: it turns to the camera, bounces three times,
    spins ever faster and shrinks away in a fountain of sparks
    (fdEffectUpdateMarsSpark). The leader turns to the camera and raises its
-   arms, the sparks swarm it while it pulses for 100 frames, and the sparks
+   arms, the sparks swarm it while it pulses for 100 ticks, and the sparks
    vanish. */
 void fdDjinnRunMarsJoinEffect(Sint32 djinniId)
 {
-	VECTOR3				position;
+	VECTOR3				pos;
 	FIXED				scale;
 	Sint32				remaining;
 	ACTOR			   *djinni;
@@ -36,7 +36,7 @@ void fdDjinnRunMarsJoinEffect(Sint32 djinniId)
 	fdActorRunRepeatedMotion(djinniId, 1);
 	sySndPlayStub(SE_NOTE_HIGH);
 	fdActorRunRepeatedMotion(djinniId, 1);
-	/* Spin up for 80 frames, then spin and shrink away. */
+	/* Spin up for 80 ticks, then spin and shrink away. */
 	sySynch(20);
 	sySndPlayStub(SE_SPIN);
 	djinni->update = (OBJECT_UPDATE)fdEffectAdvanceAngWithRamp;
@@ -46,16 +46,16 @@ void fdDjinnRunMarsJoinEffect(Sint32 djinniId)
 	fdActorSelectAnimationStub(djinni, DJINNI_ANIMATION_EXCITED);
 
 	/* The sparks start where the Djinni is on screen. */
-	position.x = djinni->x.fixed;
-	position.y = djinni->y.fixed;
-	position.z = djinni->z.fixed;
-	fdCameraWorldToScreen(&position);
+	pos.x = djinni->x.fixed;
+	pos.y = djinni->y.fixed;
+	pos.z = djinni->z.fixed;
+	fdCameraWorldToScreen(&pos);
 
-	/* One spark a frame into each field effect sprite. */
+	/* One spark a tick into each field effect sprite. */
 	effect = effectState->particles;
 	for(remaining = 0; remaining < (Sint32)ARRAY_COUNT(effectState->particles);
 		remaining++) {
-		fdParticleInit(effect, SPRITE_PARTICLE, position.x, position.z);
+		fdParticleInit(effect, SPRITE_PARTICLE, pos.x, pos.z);
 		fdParticleSetCallback(effect, fdEffectUpdateMarsSpark);
 		fdParticleSetAnimation(effect, ANIM_PARTICLE_TWINKLE);
 		fdSprSetAnimationColModesStub(effect->spr, SPRITE_COLOR_RED_TINT);
@@ -103,49 +103,49 @@ void fdDjinnRunMarsJoinEffect(Sint32 djinniId)
 	fdEffectReleaseSlots();
 }
 
-/* Spins an actor 1/8 turn and shrinks it by 1/64 a frame, releasing it once its
-   scale falls below 3/16: 53 frames from full size. */
+/* Spins an actor 1/8 turn and shrinks it by 1/64 a tick, releasing it once its
+   scale falls below 3/16: 53 ticks from full size. */
 void fdEffectShrinkActorAndDestroyFast(void *obj)
 {
 	ACTOR *actor = obj;
 	Sint32 step = -(toFIXED(1) / 64);
 	Sint32 scaleY;
 	Sint32 scale;
-	Sint32 angle;
+	Sint32 ang;
 
 	scaleY = actor->scaleY + step;
 	scale = actor->scaleX;
 	actor->scaleY = scaleY;
-	angle = actor->facing;
+	ang = actor->facing;
 	scale += step;
-	actor->facing = angle + DEGtoANG(45);
+	actor->facing = ang + DEGtoANG(45);
 	actor->scaleX = scale;
 	if(scale < toFIXED(3) / 16)
 		fdActorReleaseStub(actor);
 }
 
-/* Per-frame update of a Venus Djinni's falling motes: each circles the leader
+/* Per-tick update of a Venus Djinni's falling motes: each circles the leader
    on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a pixel a
-   frame, and is released 20 pixels above the leader's feet. Set by
+   tick, and is released 20 pixels above the leader's feet. Set by
    fdDjinnRunVenusJoinEffect, the Venus Djinni's effect. */
 void fdEffectUpdateDescendingOrbitActor(ACTOR *mote)
 {
-	VECTOR3 position;
+	VECTOR3 pos;
 	ACTOR  *leader;
-	Sint32	timer;
-	Sint16	frames;
+	Sint32	tmr;
+	Sint16	ticks;
 	FIXED	y;
 
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	timer = mote->orbitFrm - 1;
-	mote->orbitFrm = timer;
-	frames = mote->orbitFrm;
-	position.x = leader->x.fixed;
-	position.z = leader->z.fixed;
-	syVectorAddPolarOffset(frames * (toFIXED(2) / 5),
-		frames * (TRIG_TURN / 32) + mote->orbitAng, &position);
-	mote->x.fixed = position.x;
-	mote->z.fixed = position.z;
+	tmr = mote->orbitFrm - 1;
+	mote->orbitFrm = tmr;
+	ticks = mote->orbitFrm;
+	pos.x = leader->x.fixed;
+	pos.z = leader->z.fixed;
+	syVectorAddPolarOffset(ticks * (toFIXED(2) / 5),
+		ticks * (TRIG_TURN / 32) + mote->orbitAng, &pos);
+	mote->x.fixed = pos.x;
+	mote->z.fixed = pos.z;
 	y = mote->y.fixed - toFIXED(1);
 	mote->y.fixed = y;
 	if(y < leader->y.fixed + toFIXED(20))
@@ -158,39 +158,39 @@ void fdEffectUpdateDescendingOrbitActor(ACTOR *mote)
    VENUS_PARTICLE_LAST_RISE and freed once it arrives. */
 void fdEffectUpdateRadialSpread(FIELD_PARTICLE *effect)
 {
-	VECTOR3 position;
-	ACTOR  *source;
+	VECTOR3 pos;
+	ACTOR  *src;
 	Sint32	state;
 	Uint32	random;
 
-	source = fdActorGetById(MainRoutineStateWork.leaderActorId);
+	src = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	state = effect->state;
 
 	if(state == VENUS_PARTICLE_AIM) {
-		position.x = source->x.fixed;
-		position.y = source->y.fixed;
-		position.z = source->z.fixed;
+		pos.x = src->x.fixed;
+		pos.y = src->y.fixed;
+		pos.z = src->z.fixed;
 
 		random = syRandom() * 10 + toFIXED(10);
-		syVectorAddPolarOffset(random, syRandom(), &position);
-		fdCameraWorldToScreen(&position);
+		syVectorAddPolarOffset(random, syRandom(), &pos);
+		fdCameraWorldToScreen(&pos);
 
-		effect->originX = position.x;
-		effect->originZ = position.z;
-		effect->x = position.x;
-		effect->z = position.z;
-		position.x = effect->x;
-		position.z = effect->z;
+		effect->originX = pos.x;
+		effect->originZ = pos.z;
+		effect->x = pos.x;
+		effect->z = pos.z;
+		pos.x = effect->x;
+		pos.z = effect->z;
 
-		syVectorAddPolarOffset(toFIXED(120), FACING_NORTH, &position);
-		effect->tgtX = position.x;
-		effect->tgtZ = position.z;
+		syVectorAddPolarOffset(toFIXED(120), FACING_NORTH, &pos);
+		effect->tgtX = pos.x;
+		effect->tgtZ = pos.z;
 		effect->acceleration = toFIXED(1);
 		effect->speedMax = toFIXED(5);
 		effect->turnStepLimited = state;
 		effect->state++;
 
-		if((VBlankCount & 1) != 0)
+		if((FrameCount & 1) != 0)
 			sySndPlayStub(SE_CLATTER);
 	} else if(state == VENUS_PARTICLE_RISING) {
 		if(fdParticleHasPendingTarget(effect) == 0)

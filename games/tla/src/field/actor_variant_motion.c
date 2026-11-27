@@ -81,7 +81,7 @@ const Sint16 SpeakerDefinitions[][2] ALIGNED(4) = {
 #undef SPEAKER_SILENT
 
 /* One bounce of the squash: wider and shorter, then back in three steps, */
-/* 10 frames in all. */
+/* 10 ticks in all. */
 #define VARIANT_BOUNCE                                                         \
   SC_ADD(SW_SCALE_X, -toFIXED(1) / 4), SC_ADD(SW_SCALE_Y, toFIXED(1) / 8),       \
 	  SC_WAIT(2), SC_ADD(SW_SCALE_X, toFIXED(1) / 8),                           \
@@ -90,9 +90,9 @@ const Sint16 SpeakerDefinitions[][2] ALIGNED(4) = {
 	  SC_WAIT(2), SC_ADD(SW_SCALE_X, toFIXED(1) / 16),                          \
 	  SC_ADD(SW_SCALE_Y, -toFIXED(1) / 32), SC_WAIT(4)
 /* Three bounces for fdActorStartRepeatedMotion, each squashing the actor */
-/* (wider, then shorter) and stretching it back over 10 frames; it starts */
+/* (wider, then shorter) and stretching it back over 10 ticks; it starts */
 /* count bounces from the end. */
-const Sint32 Actor_VariantScripts[] = {
+const Sint32 ActorVariantScripts[] = {
 	VARIANT_BOUNCE,
 	VARIANT_BOUNCE,
 	VARIANT_BOUNCE,
@@ -100,24 +100,24 @@ const Sint32 Actor_VariantScripts[] = {
 };
 #undef VARIANT_BOUNCE
 
-/* A dust puff's script (fdEffectSpawnDustPuff): it lasts 38 frames and */
+/* A dust puff's script (fdEffectSpawnDustPuff): it lasts 38 ticks and */
 /* is released. */
-const Uint32 DustPuff_LongScript[] = {
+const Uint32 DustPuffLongScript[] = {
 	SC_WAIT(1),
 	SC_LOOP(38, SC_TOP),
 	SC_RELEASE,
 };
 
-/* A short dust puff's script: it lasts 18 frames and is released. */
-const Uint32 DustPuff_ShortScript[] = {
+/* A short dust puff's script: it lasts 18 ticks and is released. */
+const Uint32 DustPuffShortScript[] = {
 	SC_WAIT(1),
 	SC_LOOP(18, SC_TOP),
 	SC_RELEASE,
 };
 
-/* The colour of a blinking actor in each of four two-frame steps */
+/* The colour of a blinking actor in each of four two-tick steps */
 /* (fdActorUpdateBlink): white, then its own colours. */
-const Uint8 Actor_BlinkSpriteColors[] = {
+const Uint8 ActorBlinkSpriteColors[] = {
 	SPRITE_COLOR_WHITE,
 	SPRITE_COLOR_NORMAL,
 	SPRITE_COLOR_NORMAL,

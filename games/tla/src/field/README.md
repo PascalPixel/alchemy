@@ -16,18 +16,18 @@ battles, clear room for 64 actors, take the scene's tables, place the party
 and the people, put out the chests, run the scene's own set-up, fade in.
 
 Then it walks. The walking loop is three lines: call `sySynch(1)`, which is
-one frame; look at the ground the leader now stands on; go round again
+one tick; look at the ground the leader now stands on; go round again
 unless a request is set. The function is the code that waits, and everything
-that moves during that frame is an event's doing
+that moves during that tick is an event's doing
 ([Waiting and events](../../../../docs/tla/system.md#waiting-and-events)).
 
 ### The field's events
 
 Setting a scene up puts these [events](../../../../docs/tla/glossary.md#event) on the list,
 and they stay there until the party leaves. A higher rank runs earlier in
-the frame.
+the tick.
 
-| Rank | Event | Each frame it |
+| Rank | Event | Each tick it |
 | --- | --- | --- |
 | 15 | `fdPaletteFadeUpdate` | moves the colours a step toward their target |
 | 11 | `fdActorUpdateAllOnField` | carries every actor's script on and moves the actor |
@@ -56,7 +56,7 @@ field's state, 0 while nothing is asked. Three kinds of code set one.
 - The leader's script. Its control order, `SC_PLAYER` on foot, which the
   actors' event runs, looks at the buttons and sets the request for A, the
   field menu, the Pause menu, or the Psynergy or item on a shortcut button.
-- The field mode's function. After each frame it looks at where the leader
+- The field mode's function. After each tick it looks at where the leader
   stands and sets a step, a push or a battle.
 - A script or a menu, when the field has to carry something out after it
   has returned: a script sets an exit, and the field menu sets a field
@@ -118,18 +118,18 @@ written with `SC_` macros (script command): set an animation, set a speed,
 move to a spot, wait, loop. It is a table of numbers, not code, and the
 functions that carry the orders out are the ones whose names start
 `fdActorScript`. One [event](../../../../docs/tla/glossary.md#event), `fdActorUpdateAllOnField`, visits
-every actor each frame and reads its script on from where it stopped. In a
+every actor each tick and reads its script on from where it stopped. In a
 battle the event is `fdActorUpdateAllMotion`. An order that takes no time
 runs at once, and one that takes time holds the script there until it is
 done: `SC_WAIT(20)` sets a count in the actor that the event takes one off
-each frame, which is not the `sySynch()` a script calls
+each tick, which is not the `sySynch()` a script calls
 ([Two kinds of waiting](../../../../docs/tla/system.md#two-kinds-of-waiting)). Kraden
 stepping aside on Idejima is a few lines,
-`Idejima_KradenStepsAsideScript`, in [the scenes](../scene/README.md).
+`IdejimaKradenStepsAsideScript`, in [the scenes](../scene/README.md).
 
 Moving is eased. An actor has a top speed and an acceleration, and gains
-speed toward its target each frame up to the top. Once it has no target it
-loses the same acceleration each frame until it stands still.
+speed toward its target each tick up to the top. Once it has no target it
+loses the same acceleration each tick until it stands still.
 
 ### Who runs which script
 
@@ -139,10 +139,10 @@ from.
 Most townspeople never get one written for them. The scene lists each
 person once, with a spot and one of eleven stock behaviours: stand, wander
 near home, and so on. A behaviour is a script the field keeps ready, such
-as `MovementType_WanderScript`.
+as `MovementTypeWanderScript`.
 
 The leader's script, while the player steers, is one control order on
-repeat: on foot it is `SC_PLAYER`. Each frame that order reads the D-pad
+repeat: on foot it is `SC_PLAYER`. Each tick that order reads the D-pad
 and the buttons. A script takes control by giving the leader another
 script, and the field gives the control order back when the script has
 returned.
@@ -160,10 +160,10 @@ watching whomever.
 
 ## Walking and running
 
-Each frame the leader's `SC_PLAYER` order reads the D-pad, picks a speed,
+Each tick the leader's `SC_PLAYER` order reads the D-pad, picks a speed,
 and probes the ground 8 pixels ahead and to either side. If the way is
 blocked it tries the directions a little further round and takes the first
-that is clear, which is why Felix slides along a wall. A frame with no
+that is clear, which is why Felix slides along a wall. A tick with no
 clear direction counts as a push, and ledges and ladders answer only after
 more than 12 in a row.
 
@@ -200,11 +200,11 @@ to four pictures laid over one another, each playing its own animation
 ([Graphics](../graphics/README.md#sprites-and-their-animations)). In a
 battle Felix is four: body, weapon, a status icon and shadow.
 
-Order matters inside a frame: every actor moves, then the map scrolls to
+Order matters inside a tick: every actor moves, then the map scrolls to
 the camera actor, then each sprite is placed. Those are events, and their
 ranks, 11, 5 and 0, put them in that order
 ([The field's events](#the-fields-events)). Any other order and Felix would
-trail a frame behind himself.
+trail a tick behind himself.
 
 ## Towns and dungeons on screen
 
@@ -242,7 +242,7 @@ is that spot, scaled down.
 
 A counter fills as the leader walks, at a rate the ground's zone sets, and
 a battle starts when it is full. The field mode's function counts,
-after each frame of its walking loop, and sets the battle request. So
+after each tick of its walking loop, and sets the battle request. So
 battles come after a distance, not a time, with some luck mixed in after
 each one. The zone also names the groups of enemies that can appear there
 and how likely each is. In a town or a dungeon the scene chooses its zones
@@ -278,7 +278,7 @@ Parch, Sand, Burst, Grind, Hover, Teleport and Blaze.
 ### The palette fade
 
 When Halt tints the screen, nothing is redrawn. The fade changes the
-palette, the list of colours every picture indexes, a step each frame.
+palette, the list of colours every picture indexes, a step each tick.
 Scenes fade in the same way.
 
 ## Lucky Dice, Lucky Wheels and Super Lucky Dice

@@ -40,7 +40,7 @@ Isaac is one file, `sprite/isaac.png`: a strip one
 [picture](../../../../docs/tbs/glossary.md#picture) wide, with 210 pictures of 32 by 32
 stacked top to bottom. Beside it, `isaac.tsv` is his
 [animations](../../../../docs/tbs/glossary.md#sprite-animation), one a line, each a list
-of which picture to show and for how many frames:
+of which picture to show and for how many ticks:
 
 ```
 picture 55 6, picture 30 6, picture 35 6, picture 40 6, picture 45 6, picture 50 6, loop

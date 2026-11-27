@@ -23,7 +23,7 @@ void Clear64byte(void *block)
 }
 
 /* The VBlank rate in ten-thousandths of a hertz (SOUND_RATE_E4_UNIT): 59.7275
-   VBlanks a second. */
+   Frames a second. */
 #define SOUND_VBLANK_RATE_E4 597275
 #define SOUND_RATE_E4_UNIT	 10000
 
@@ -80,13 +80,13 @@ void SoundInit(struct SoundInfo *work)
 	work->externalVolumePitch = DummyFunc;
 	MPlayJumpTableCopy(Ram_MPlayJumpTable);
 	work->commands = Ram_MPlayJumpTable;
-	/* Rate 4 (224 samples a VBlank, 13379 a second) until m4aSoundInit sets the
+	/* Rate 4 (224 samples a frame, 13379 a second) until m4aSoundInit sets the
 	   game's mode. */
 	SampleFreqSet(SOUND_MODE_FREQ_INITIAL);
 	work->ident = ID_NUMBER;
 }
 
-/* Sets the PCM rate in samples a VBlank (`mode` bits 16 to 19 pick a
+/* Sets the PCM rate in samples a frame (`mode` bits 16 to 19 pick a
    PcmSamplesPerVBlankTable entry) and the rates derived from it, and Timer 0's
    reload, starting it as the last line is drawn. */
 void SampleFreqSet(u32 mode)
@@ -99,7 +99,7 @@ void SampleFreqSet(u32 mode)
 	work->rate = mode;
 	pcmSamplesPerVBlank = PcmSamplesPerVBlankTable[mode - 1];
 	work->pcmSamplesPerVBlank = pcmSamplesPerVBlank;
-	/* VBlanks the DMA plays before the buffer wraps, and the sample rate in
+	/* Frames the DMA plays before the buffer wraps, and the sample rate in
 	   hertz (rounded), and half its reciprocal in 24-bit fixed point */
 	work->transferPeriod = __divsi3(SOUND_PCM_BUFFER_SIZE, pcmSamplesPerVBlank);
 	work->outputRate = __divsi3(
@@ -107,7 +107,7 @@ void SampleFreqSet(u32 mode)
 		SOUND_RATE_E4_UNIT);
 	work->rateStep = (__divsi3(SOUND_RATE_STEP_ONE, work->outputRate) + 1) >> 1;
 	/* Timer 0 counts the CPU cycles of one sample: it overflows, and the FIFOs
-	   take their next sample, pcmSamplesPerVBlank times a VBlank. */
+	   take their next sample, pcmSamplesPerVBlank times a frame. */
 	REG_TM0CNT_H = 0;
 	timer = &REG_TM0CNT_L;
 	*timer = -__divsi3(SOUND_CYCLES_PER_VBLANK, pcmSamplesPerVBlank);
@@ -585,9 +585,9 @@ void CgbModVol(struct CgbChannel *note)
 	note->panBits &= note->channelBits;
 }
 
-/* The VBlanks in which the CGB envelopes take one step more than VBlanks, 16 in
+/* The frames in which the CGB envelopes take one step more than frames, 16 in
    15: 63.7 steps a second, close to the 64 a second the hardware steps its own
-   envelopes, where one step a VBlank would give 59.7. */
+   envelopes, where one step a frame would give 59.7. */
 enum { CGB_EXTRA_STEP_PERIOD = 15 };
 
 /* The envelope steps a sustained CGB note waits each time before its level is
@@ -865,7 +865,7 @@ void CgbSound(void)
 }
 
 /* Sets the tempo multiplier (SOUND_TEMPO_SCALE_NORMAL the song's own tempo) and
-   updates the number of ticks advanced per VBlank. */
+   updates the number of ticks advanced per frame. */
 void m4aMPlayTempoControl(struct MusicPlayerInfo *player, u16 scale)
 {
 	if(player->ident == ID_NUMBER) {

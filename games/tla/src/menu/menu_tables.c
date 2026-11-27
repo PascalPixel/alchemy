@@ -8,11 +8,11 @@
 #include "window/screens.h"
 #include "sprite_ids.h"
 
-/* The hand cursor's bob in pixels, a step every two frames: right and up by up
+/* The hand cursor's bob in pixels, a step every two ticks: right and up by up
    to two and back (mnCursorPos). The ninth step is never reached. */
-Uint8 MenuCursor_BobX[9] = {0, 1, 1, 2, 2, 1, 1, 0, 0};
+Uint8 MenuCursorBobX[9] = {0, 1, 1, 2, 2, 1, 1, 0, 0};
 /* clang-format off */
-Uint8 MenuCursor_BobY[9] = {0, (Uint8)-1, (Uint8)-1, (Uint8)-2, (Uint8)-2, (Uint8)-1, (Uint8)-1, 0, 0};
+Uint8 MenuCursorBobY[9] = {0, (Uint8)-1, (Uint8)-1, (Uint8)-2, (Uint8)-2, (Uint8)-1, (Uint8)-1, 0, 0};
 
 /* The item menu's sort orders (LIST_SORT, mnCopyListOrder): one item */
 /* type per byte, with LIST_ORDER_EQUIPPED for only the equipped items of */
@@ -20,14 +20,14 @@ Uint8 MenuCursor_BobY[9] = {0, (Uint8)-1, (Uint8)-1, (Uint8)-2, (Uint8)-2, (Uint
 /* between the boots and the Psynergy items, and the Elemental Stars after */
 /* the shirts. */
 /* LIST_SORT_ITEMS_FIRST: the items that are not equipment first. */
-Uint8 Menu_ListOrderItemsFirst[13] = {
+Uint8 MenuListOrderItemsFirst[13] = {
 	ITEM_TYPE_NONE, ITEM_TYPE_WEAPON, ITEM_TYPE_HELM, ITEM_TYPE_SHIELD,
 	ITEM_TYPE_ARMOR, ITEM_TYPE_BOOTS, ITEM_TYPE_CLASS_CHANGE, ITEM_TYPE_PSYNERGY,
 	ITEM_TYPE_TRIDENT, ITEM_TYPE_RING, ITEM_TYPE_SHIRT, ITEM_TYPE_ELEMENTAL_STAR,
 	LIST_ORDER_END,
 };
 /* LIST_SORT_EQUIPMENT_FIRST: the equipment first, the rest last. */
-Uint8 Menu_ListOrderEquipmentFirst[13] = {
+Uint8 MenuListOrderEquipmentFirst[13] = {
 	ITEM_TYPE_WEAPON, ITEM_TYPE_HELM, ITEM_TYPE_SHIELD, ITEM_TYPE_ARMOR,
 	ITEM_TYPE_BOOTS, ITEM_TYPE_CLASS_CHANGE, ITEM_TYPE_PSYNERGY, ITEM_TYPE_TRIDENT,
 	ITEM_TYPE_RING, ITEM_TYPE_SHIRT, ITEM_TYPE_ELEMENTAL_STAR, ITEM_TYPE_NONE,
@@ -35,7 +35,7 @@ Uint8 Menu_ListOrderEquipmentFirst[13] = {
 };
 /* LIST_SORT_EQUIPPED_THEN_EQUIPMENT: the equipped items, the other */
 /* equipment, then the rest. */
-Uint8 Menu_ListOrderEquippedThenEquipment[24] = {
+Uint8 MenuListOrderEquippedThenEquipment[24] = {
 	LIST_ORDER_EQUIPPED | ITEM_TYPE_WEAPON, LIST_ORDER_EQUIPPED | ITEM_TYPE_HELM,
 	LIST_ORDER_EQUIPPED | ITEM_TYPE_SHIELD, LIST_ORDER_EQUIPPED | ITEM_TYPE_ARMOR,
 	LIST_ORDER_EQUIPPED | ITEM_TYPE_BOOTS, LIST_ORDER_EQUIPPED | ITEM_TYPE_CLASS_CHANGE,
@@ -49,7 +49,7 @@ Uint8 Menu_ListOrderEquippedThenEquipment[24] = {
 };
 /* LIST_SORT_EQUIPPED_THEN_ITEMS: the equipped items, the items that are not */
 /* equipment, then the other equipment. */
-Uint8 Menu_ListOrderEquippedThenItems[24] = {
+Uint8 MenuListOrderEquippedThenItems[24] = {
 	LIST_ORDER_EQUIPPED | ITEM_TYPE_WEAPON, LIST_ORDER_EQUIPPED | ITEM_TYPE_HELM,
 	LIST_ORDER_EQUIPPED | ITEM_TYPE_SHIELD, LIST_ORDER_EQUIPPED | ITEM_TYPE_ARMOR,
 	LIST_ORDER_EQUIPPED | ITEM_TYPE_BOOTS, LIST_ORDER_EQUIPPED | ITEM_TYPE_CLASS_CHANGE,
@@ -67,7 +67,7 @@ Uint8 Menu_ListOrderEquippedThenItems[24] = {
 /* The hand's x at each of the six item commands, in their two rows of three */
 /* (mnItemMenuGetCommandCursorX): the middle column stands 9 pixels left of */
 /* the even 40-pixel spacing the other editions use. */
-Sint32 ItemMenu_CommandColumnXTable[6] = {
+Sint32 ItemMenuCommandColumnXTable[6] = {
 	86, 117, 166,
 	86, 117, 166,
 };
@@ -77,17 +77,17 @@ Sint32 ItemMenu_CommandColumnXTable[6] = {
 /* The highlight's width in tiles over each label of the Status screen's rows
    (mnStatScreenDrawSelectionCursor), fitted to each language's words. */
 #if (LANGUAGE == LANGUAGE_FRENCH)
-Uint8 StatusScreen_CursorWidths[5] = {6, 7, 7, 6, 6};
+Uint8 StatusScreenCursorWidths[5] = {6, 7, 7, 6, 6};
 #else
-Uint8 StatusScreen_CursorWidths[5] = {9, 4, 6, 5, 7};
+Uint8 StatusScreenCursorWidths[5] = {9, 4, 6, 5, 7};
 #endif
 
 /* The four Djinn figures' sprites, one for each element: Venus, Mercury, Mars
    and Jupiter (mnDjinnFiguresReplaceSlot). */
-Sint32 DjinnFigures_SpriteIds[4] = {SPRITE_VENUS_DJINNI, SPRITE_MERCURY_DJINNI,
+Sint32 DjinnFiguresSpriteIds[4] = {SPRITE_VENUS_DJINNI, SPRITE_MERCURY_DJINNI,
 	SPRITE_MARS_DJINNI, SPRITE_JUPITER_DJINNI};
 
 /* The status icons (mnIconLoadSlots). */
-Uint16 StatusScreen_StatusIcons[5] = {OWNER_CONDITION_DOWNED,
+Uint16 StatusScreenStatusIcons[5] = {OWNER_CONDITION_DOWNED,
 	OWNER_CONDITION_POISON, OWNER_CONDITION_DEADLY_POISON,
 	OWNER_CONDITION_CURSED_ITEM, OWNER_CONDITION_HAUNT};

@@ -1,6 +1,6 @@
 /* Tables of the field commands, in the order of The Broken Seal's
    field_mode_tables.c: the rope's headings, the line scroll's sine, the ground
-   particles' frames and offsets, the sparkles and Jupiter's pulse. */
+   particles' ticks and offsets, the sparkles and Jupiter's pulse. */
 
 #include "fixed_math.h"
 #include "types.h"
@@ -13,8 +13,8 @@
 /* The heading the +Control Pad points, by its right, left, up and down bits */
 /* (DPAD_INDEX), where fdLeaderStepOffRope and fdLeaderStepOffTightrope step; */
 /* DPAD_ANGLE_NONE for none or opposed keys. The same table as */
-/* Input_DpadAngles. */
-const Uint16 Rope_KeyHeadings[16] = {
+/* InputDpadAngles. */
+const Uint16 RopeKeyHeadings[16] = {
 	DPAD_ANGLE_NONE, FACING_EAST,     FACING_WEST,     DPAD_ANGLE_NONE,
 	FACING_NORTH,    DPAD_ANGLE_NONE, DPAD_ANGLE_NONE, FACING_NORTH,
 	FACING_SOUTH,    DPAD_ANGLE_NONE, DPAD_ANGLE_NONE, FACING_SOUTH,
@@ -23,7 +23,7 @@ const Uint16 Rope_KeyHeadings[16] = {
 
 /* A sine wave of 256 steps and amplitude 4096 that the line scrolls ride */
 /* (script_commands_line_scroll.c), as The Broken Seal's. */
-const Sint16 LineScroll_WaveSine[256] = {
+const Sint16 LineScrollWaveSine[256] = {
 	0, 100, 200, 301, 401, 501, 601, 700,
 	799, 897, 995, 1092, 1189, 1284, 1379, 1474,
 	1567, 1659, 1751, 1841, 1930, 2018, 2105, 2191,
@@ -61,7 +61,7 @@ const Sint16 LineScroll_WaveSine[256] = {
 /* {dx, dy, tile, shape, size} for each of 16 frames of a ground particle */
 /* (script_commands_weather.c): dx and dy in screen pixels from its spot, */
 /* tile from its first tile. */
-const Sint16 Weather_RainSplashFrames[80] = {
+const Sint16 WeatherRainSplashFrames[80] = {
 	-8, -12, 20, 0, 1,
 	-8, -12, 20, 0, 1,
 	-8, -12, 20, 0, 1,
@@ -80,9 +80,9 @@ const Sint16 Weather_RainSplashFrames[80] = {
 	64, -160, 0, 2, 2,
 };
 
-/* {x, y} screen offsets of a falling raindrop in pixels by the frames it has */
+/* {x, y} screen offsets of a falling raindrop in pixels by the ticks it has */
 /* left (fdWeatherUpdateRain); The Broken Seal has no such table. */
-const Sint16 GroundParticles_Offsets[22] = {
+const Sint16 GroundParticlesOffsets[22] = {
 	-32, -16,
 	-48, -23,
 	-64, -34,
@@ -97,8 +97,8 @@ const Sint16 GroundParticles_Offsets[22] = {
 };
 
 /* {dy, tile} of a sparkle (script_commands_motes.c): dy in screen pixels */
-/* from its spot, a row every two frames. */
-const SPARKLE_PICTURE FieldEffect_SparklePictures[32] = {
+/* from its spot, a row every two ticks. */
+const SPARKLE_PICTURE FieldEffectSparklePictures[32] = {
 	{-2, 12},
 	{-4, 12},
 	{-6, 12},
@@ -133,8 +133,8 @@ const SPARKLE_PICTURE FieldEffect_SparklePictures[32] = {
 	{-120, 0},
 };
 
-/* The two scales fdEffectPulseActorScale switches between every 4 frames, */
+/* The two scales fdEffectPulseActorScale switches between every 4 ticks, */
 /* full size and 0.97 of it: the leader pulsing as a Mars Djinni joins; The */
 /* Broken Seal's table, its third word gone. */
-const Uint32 FieldEffect_PulseScales[2] = {toFIXED(1), toFIXED(97) / 100};
+const Uint32 FieldEffectPulseScales[2] = {toFIXED(1), toFIXED(97) / 100};
 /* clang-format on */

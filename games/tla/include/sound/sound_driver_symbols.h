@@ -29,7 +29,7 @@ enum AudioCommandMask {
 enum SoundControl {
 	SOUND_NUM_MASK = 0xfff,
 	SOUND_FLAGS_MASK = 0xf000,
-	SOUND_FLAG_FADE_IN = 0x1000, /* music fades in over 64 VBlanks */
+	SOUND_FLAG_FADE_IN = 0x1000, /* music fades in over 64 frames */
 	/* Sounds from here to SOUND_SE_FIRST are jingles; those below are music,
 	   but for SOUND_FADE_OUT_BGM and SOUND_KEEP_BGM. */
 	SOUND_JINGLE_FIRST = MUS_PUZZLE_SOLVED,
@@ -64,18 +64,18 @@ enum SoundReverbCode {
 	SOUND_REVERB_NONE
 };
 
-/* How the frame wait and the VBlank handler share the sound driver's update, so
+/* How the tick wait and the VBlank handler share the sound driver's update, so
    that it runs once a VBlank, from whichever reaches it first. */
 struct SoundVBlankState {
-	/* The low byte of VBlankCount when the update last ran. */
-	Uint8 lastVBlank;
+	/* The low byte of FrameCount when the update last ran. */
+	Uint8 lastFrame;
 	/* SoundInfo.transferCountdown as the update last left it: the VBlank
-	   handler copies it, the frame wait counts it a VBlank ahead. */
+	   handler copies it, the tick wait counts it a frame ahead. */
 	Uint8 transferCountdown;
-	/* Set while the sound test runs: the frame wait then leaves the update to
+	/* Set while the sound test runs: the tick wait then leaves the update to
 	   the VBlank handler. */
 	Uint8 soundTestActive;
-	/* Set while the frame wait runs the update: the VBlank handler skips its
+	/* Set while the tick wait runs the update: the VBlank handler skips its
 	   own, and sySndPlay ignores every sound. */
 	Uint8 updating;
 };

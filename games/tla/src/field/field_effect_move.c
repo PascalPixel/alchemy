@@ -1,4 +1,4 @@
-/* A field effect's motion, growth and spin each frame, with no drag. */
+/* A field effect's motion, growth and spin each tick, with no drag. */
 
 #include "system/field_effect.h"
 #include "field/sprite.h"
@@ -8,17 +8,17 @@
 void fdEffectUpdateMotionScaleAndSpin(FIELD_OBJECT *object)
 {
 	Sint32 x;
-	Sint32 velocityX;
-	SPR	  *sprite;
+	Sint32 velX;
+	SPR	  *spr;
 
 	x = object->eff.x;
-	velocityX = object->eff.vel.x;
-	sprite = object->eff.spr;
+	velX = object->eff.vel.x;
+	spr = object->eff.spr;
 
-	object->eff.x = x + velocityX;
+	object->eff.x = x + velX;
 	object->eff.y += object->eff.vel.y;
 	object->eff.z += object->eff.vel.z;
 	object->eff.scaleX += object->eff.scaleRateX;
 	object->eff.scaleY += object->eff.scaleRateY;
-	sprite->rotation += object->eff.spin;
+	spr->rotation += object->eff.spin;
 }

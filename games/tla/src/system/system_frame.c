@@ -1,4 +1,4 @@
-/* Interrupt handlers, the frame wait, key repeat and the VBlank handler. Part
+/* Interrupt handlers, the tick wait, key repeat and the VBlank handler. Part
    of system.c. */
 
 /* The word a soft reset leaves in CartridgeResetMarker: a date, 4 July 1967,
@@ -51,10 +51,10 @@ void syIntFunction(Uint32 irq, Sint32 vcount, INTERRUPT_HANDLER handler)
 /* Waits for the next VBlank; outside the sound test it first runs the music
    ramps and the sound driver's VBlank update, and mixes this VBlank's sound
    when the driver is free. */
-void syWaitForFrameInterrupt(void)
+void syWaitForVBlankInterrupt(void)
 {
 	Uint32 saved;
-	Uint8 *sound;
+	Uint8 *snd;
 
 	if(SoundVBlankStateWork.soundTestActive) {
 		VBlankDone &= ~1;
@@ -64,15 +64,15 @@ void syWaitForFrameInterrupt(void)
 	} else {
 		IRQ_LOCK(saved);
 		VBlankDone &= ~1;
-		SoundVBlankStateWork.lastVBlank = VBlankCount;
+		SoundVBlankStateWork.lastFrame = FrameCount;
 		SoundVBlankStateWork.updating = 1;
-		sound = SoundInfoPointer;
-		if(SOUND_INFO_BYTE(sound, transferCountdown) <= 1)
+		snd = SoundInfoPointer;
+		if(SOUND_INFO_BYTE(snd, transferCountdown) <= 1)
 			SoundVBlankStateWork.transferCountdown =
-				SOUND_INFO_BYTE(sound, transferPeriod);
+				SOUND_INFO_BYTE(snd, transferPeriod);
 		else
 			SoundVBlankStateWork.transferCountdown =
-				SOUND_INFO_BYTE(sound, transferCountdown) - 1;
+				SOUND_INFO_BYTE(snd, transferCountdown) - 1;
 		REG_IME = saved;
 		sySndUpdateBGMRampsStub();
 		if(SoundDriver_EnterVBlankUpdate() == 0) {
@@ -86,12 +86,12 @@ void syWaitForFrameInterrupt(void)
 	}
 }
 
-/* Durations of the sleep: the first in frames, the others in VBlanks, since the
-   sleep waits on syWaitForFrameInterrupt alone. */
+/* Durations of the sleep: the first in ticks, the others in frames, since the
+   sleep waits on syWaitForVBlankInterrupt alone. */
 enum {
-	SLEEP_IDLE_FRAMES = 3 * 60 * 60, /* three minutes with no key held */
-	SLEEP_WHITE_VBLANKS = 10, /* the white screen shown before the Stop */
-	SLEEP_WAKE_VBLANKS = 10	  /* waited after waking, before the screen */
+	SLEEP_IDLE_TICKS = 3 * 60 * 60, /* three minutes with no key held */
+	SLEEP_WHITE_FRAMES = 10,		/* the white screen shown before the Stop */
+	SLEEP_WAKE_FRAMES = 10			/* waited after waking, before the screen */
 };
 
 /* The lines REG_VCOUNT counts in VBlank, after the DISPLAY_HEIGHT drawn: it
@@ -117,11 +117,11 @@ static __inline__ void Bios_Stop(void)
 	ASM_BIOS_STOP();
 }
 
-/* Frames the debug CPU-load display holds a peak. */
-enum { CPU_LOAD_PEAK_FRAMES = 30 };
+/* Ticks the debug CPU-load display holds a peak. */
+enum { CPU_LOAD_PEAK_TICKS = 30 };
 
-/* The game's frame loop: runs `frames` frames and returns. */
-void sySynch(Sint32 frames)
+/* The game's tick loop: runs `ticks` ticks and returns. */
+void sySynch(Sint32 ticks)
 {
 	Uint32 i;
 	Uint32 line;
@@ -131,45 +131,45 @@ void sySynch(Sint32 frames)
 	/* The start address, set at each restart. */
 	Uint32 entry;
 
-	for(i = 0; i < (Uint32)frames; i++) {
+	for(i = 0; i < (Uint32)ticks; i++) {
 		EventsRunning = 1;
-		syExecuteEvent(EVENT_PASS_FRAME);
+		syExecuteEvent(EVENT_PASS_TICK);
 		EventsRunning = 0;
 		if(OamCopyEnabled) {
 			syRenderBuildOAMList(
-				syHeapSlotAlloc(HEAP_SLOT_FRAME_SCRATCH, OAM_SIZE));
+				syHeapSlotAlloc(HEAP_SLOT_TICK_SCRATCH, OAM_SIZE));
 		} else {
 			OamUsageWork.used = 0;
 			OamUsageWork.limit = OAM_SIZE / 4;
 		}
-		FrameRenderPending = 1;
+		TickRenderPending = 1;
 		if(CpuLoadDisplayEnabled) {
-			/* CPU load: the line the frame's work ended on, counted from the
+			/* CPU load: the line the tick's work ended on, counted from the
 			   last VBlank, plus 256 for each VBlank it overran; the peak is
-			   held for CPU_LOAD_PEAK_FRAMES. */
+			   held for CPU_LOAD_PEAK_TICKS. */
 			line = *(Uint16 *)&REG_VCOUNT;
 			if(line >= DISPLAY_HEIGHT)
 				line -= DISPLAY_HEIGHT;
 			else
 				line += VBLANK_LINES;
-			line += (FrameVBlanks - 1) << 8;
+			line += (TickFrames - 1) << 8;
 			if(CpuLoadTimer == 0)
 				CpuLoadPeak = 0;
 			else
 				CpuLoadTimer--;
 			if(CpuLoadPeak < line) {
 				CpuLoadPeak = line;
-				CpuLoadTimer = CPU_LOAD_PEAK_FRAMES;
+				CpuLoadTimer = CPU_LOAD_PEAK_TICKS;
 			}
 		}
-		/* Idle frames and the L+R+Select combination request sleep. */
+		/* Idle ticks and the L+R+Select combination request sleep. */
 		if(SleepDisabled == 0) {
 			if(IdleSleepEnabled) {
 				if(PerWork.data)
-					IdleFrames = 0;
+					IdleTicks = 0;
 				else {
-					IdleFrames++;
-					if(IdleFrames > SLEEP_IDLE_FRAMES)
+					IdleTicks++;
+					if(IdleTicks > SLEEP_IDLE_TICKS)
 						SleepRequested = 1;
 				}
 			}
@@ -177,7 +177,7 @@ void sySynch(Sint32 frames)
 				SleepRequested = 1;
 		}
 		/* Debug builds: Start+Select pauses the game; while paused, A, B,
-		   Select or the D-pad advances one frame and Start resumes. */
+		   Select or the D-pad advances one tick and Start resumes. */
 		if(DebugMode) {
 			for(;;) {
 				if(DebugPaused) {
@@ -194,7 +194,7 @@ void sySynch(Sint32 frames)
 						break;
 					DebugPaused = 1;
 				}
-				syWaitForFrameInterrupt();
+				syWaitForVBlankInterrupt();
 				syInputUpdateKeyRepeatAndDirection();
 				if(ResetRequested) {
 					ResetRequested = 0;
@@ -202,13 +202,13 @@ void sySynch(Sint32 frames)
 				}
 			}
 		}
-		LastFrameVBlanks = FrameVBlanks;
-		FrameVBlanks = 0;
-		syWaitForFrameInterrupt();
-		syHeapSlotRelease(HEAP_SLOT_FRAME_SCRATCH);
-		syOAMResetFrame();
-		FrameCount++;
-		PlayTimeFrames++;
+		LastTickFrames = TickFrames;
+		TickFrames = 0;
+		syWaitForVBlankInterrupt();
+		syHeapSlotRelease(HEAP_SLOT_TICK_SCRATCH);
+		syOAMResetTick();
+		TickCount++;
+		PlayTimeTicks++;
 		syInputUpdateKeyRepeatAndDirection();
 		if(SerialExchangeActive) {
 			sySerialPollStat();
@@ -224,10 +224,10 @@ void sySynch(Sint32 frames)
 			if(SleepRequested == 1) {
 				syIOWrite16(0, &REG_DISPCNT);
 				syIOWrite16(RGB_WHITE, &PLTT_BACKDROP);
-				for(j = 0; j < SLEEP_WHITE_VBLANKS; j++)
-					syWaitForFrameInterrupt();
+				for(j = 0; j < SLEEP_WHITE_FRAMES; j++)
+					syWaitForVBlankInterrupt();
 				while(PerWork.data)
-					syWaitForFrameInterrupt();
+					syWaitForVBlankInterrupt();
 				SleepActive = 1;
 				syIOWrite16(KEYCNT_SLEEP_WAKE, &REG_KEYCNT);
 				Bios_SoundBiasOff();
@@ -235,14 +235,14 @@ void sySynch(Sint32 frames)
 				Bios_SoundBiasOn();
 				syIOWrite16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
 				syIOWrite16(0, &SleepActive);
-				for(j = 0; j < SLEEP_WAKE_VBLANKS; j++)
-					syWaitForFrameInterrupt();
+				for(j = 0; j < SLEEP_WAKE_FRAMES; j++)
+					syWaitForVBlankInterrupt();
 				while(PerWork.data)
-					syWaitForFrameInterrupt();
+					syWaitForVBlankInterrupt();
 				syIOWrite16((Uint16)display, &REG_DISPCNT);
 				syIOWrite16((Uint16)backdrop, &PLTT_BACKDROP);
 				SleepRequested = 0;
-				IdleFrames = 0;
+				IdleTicks = 0;
 			} else
 				SleepRequested--;
 		}
@@ -253,7 +253,7 @@ void sySynch(Sint32 frames)
 	}
 }
 
-/* Frames a key is held before it first repeats, and between later repeats. */
+/* Ticks a key is held before it first repeats, and between later repeats. */
 #define INPUT_KEY_REPEAT_FIRST 19
 #define INPUT_KEY_REPEAT_NEXT  6
 
@@ -266,18 +266,18 @@ void syInputResetKeyRepeat(void)
 	PerWork.repeatTmr = INPUT_KEY_REPEAT_FIRST;
 }
 
-/* Turns the keys the VBlank handler read into repeats, once a frame after
+/* Turns the keys the VBlank handler read into repeats, once a tick after
    VBlank. When the repeat timer has run out, the held keys repeat into
    PerWork.repeat. PerWork.dir is the same keys with at most one D-pad
    direction: of several held directions it keeps the one added last (prevDir
    remembers it), and with all four it keeps none. Last, the keys newly held
-   since the previous frame go to pressed, and prevData takes held. */
+   since the previous tick go to pressed, and prevData takes held. */
 void syInputUpdateKeyRepeatAndDirection(void)
 {
 	Uint32 held;
 	Uint32 keys;
 	Uint32 axis = 0;
-	Uint32 directionCount;
+	Uint32 directionCnt;
 	Uint32 mask;
 	Sint32 delay;
 
@@ -297,18 +297,18 @@ void syInputUpdateKeyRepeatAndDirection(void)
 
 	if(keys != 0) {
 		/* Count the D-pad directions in the repeat */
-		directionCount = 0;
+		directionCnt = 0;
 		if(keys & KEY_UP)
-			directionCount = 1;
+			directionCnt = 1;
 		if(keys & KEY_DOWN)
-			directionCount++;
+			directionCnt++;
 		if(keys & KEY_LEFT)
-			directionCount++;
+			directionCnt++;
 		if(keys & KEY_RIGHT)
-			directionCount++;
+			directionCnt++;
 
 		PerWork.dir = keys;
-		switch(directionCount) {
+		switch(directionCnt) {
 		default:
 			PerWork.prevDir = KEYS_HORIZONTAL;
 			mask = KEY_WORD_BITS & ~KEYS_DPAD;
@@ -357,7 +357,7 @@ static __inline__ void Copy16Bytes(
 void syVBlankHandler(void)
 {
 	Uint32 keys;
-	Uint32 vblankCount;
+	Uint32 frameCnt;
 	void (*hook)(void);
 
 	/* The display writes come first, while the blank lasts: OAM can be written
@@ -370,10 +370,10 @@ void syVBlankHandler(void)
 		sySerialStepBlockTransfer();
 	}
 	SoundDriver_VSyncRefresh();
-	if(ScreenFadeVBlanks != 0)
+	if(ScreenFadeFrames != 0)
 		syScreenFadeUpdate();
-	if(FrameRenderPending != 0) {
-		FrameRenderPending = 0;
+	if(TickRenderPending != 0) {
+		TickRenderPending = 0;
 		if(OamUsageWork.used != 0)
 			syDMAXCopy(Ram_HeapSlots->frmScratch, OAM,
 				DMA_COPY_WORDS(0) + OamUsageWork.used, REG_DMA3);
@@ -386,7 +386,7 @@ void syVBlankHandler(void)
 		VBlankCallback = 0;
 		hook();
 	}
-	syRunPassBeforeFrameEvents(EVENT_PASS_VBLANK);
+	syRunPassBeforeTickEvents(EVENT_PASS_VBLANK);
 
 	/* Read the keypad (its bits are 0 while pressed). */
 	keys = REG_KEYINPUT ^ KEYS_MASK;
@@ -409,17 +409,17 @@ void syVBlankHandler(void)
 		}
 	}
 	{
-		/* volatile: the frame loop waits on the count this interrupt
+		/* volatile: the tick loop waits on the count this interrupt
 		   advances. */
-		volatile Uint32					 *count;
-		volatile struct SoundVBlankState *sound;
+		volatile Uint32					 *cnt;
+		volatile struct SoundVBlankState *snd;
 
-		count = &VBlankCount;
+		cnt = &FrameCount;
 		((volatile INPUT_STATE *)&PerWork)->prevVblankData = keys;
-		sound = &SoundVBlankStateWork;
-		vblankCount = *count;
-		if(sound->lastVBlank != (Uint8)vblankCount && sound->updating == 0) {
-			sound->transferCountdown =
+		snd = &SoundVBlankStateWork;
+		frameCnt = *cnt;
+		if(snd->lastFrame != (Uint8)frameCnt && snd->updating == 0) {
+			snd->transferCountdown =
 				SOUND_INFO_BYTE(SoundInfoPointer, transferCountdown);
 			sySndUpdateBGMRampsStub();
 			if(SoundDriver_EnterVBlankUpdate() == 0) {
@@ -427,11 +427,11 @@ void syVBlankHandler(void)
 
 				render(8);
 			}
-			sound->lastVBlank = vblankCount;
+			snd->lastFrame = frameCnt;
 		}
-		*count = vblankCount + 1;
+		*cnt = frameCnt + 1;
 	}
-	syIOWrite32(FrameVBlanks + 1, &FrameVBlanks);
+	syIOWrite32(TickFrames + 1, &TickFrames);
 	VBlankDone = 1;
 }
 
@@ -459,7 +459,7 @@ UNUSED void sySndReservedNoOperationB(void)
 }
 
 /* The keypad interrupt, from the handler table: A+B+Select+Start was pressed,
-   so it sets ResetRequested for the frame loop and disarms the interrupt. */
+   so it sets ResetRequested for the tick loop and disarms the interrupt. */
 void syInputHandleKeyInterrupt(void)
 {
 	if(SleepActive == 0) {

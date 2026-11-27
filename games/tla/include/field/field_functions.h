@@ -33,66 +33,65 @@ void fdActorSystemConfigure(Sint32 mode);
    scaled by scale[0] and scale[1] and turned by its rotation, and its shadow on
    the ground below; both go into the depth list by their screen row. */
 void fdRenderApplyProjectedPlacement(
-	struct SPR *sprite, Sint32 *pos, Sint32 *scale, Sint32 mode);
+	struct SPR *spr, Sint32 *pos, Sint32 *scale, Sint32 mode);
 /* fdRenderApplyProjectedPlacement into the given draw slot: the sprite and its
    shadow both go to depth, and mode chooses the picture as facing does there.
    It also moves a double-size sprite's shadow by twice its half size, and its
-   frame and locals differ, so the two stay separate functions. */
+   tick and locals differ, so the two stay separate functions. */
 void fdRenderApplyProjectedPlacementAtDepth(
-	struct SPR *sprite, Sint32 *pos, Sint32 *scale, Sint32 mode, Sint32 depth);
+	struct SPR *spr, Sint32 *pos, Sint32 *scale, Sint32 mode, Sint32 depth);
 /* Places a sprite at a 3D point for the fixed camera and queues it for drawing:
    projected to the screen and scaled by its distance (unless useOwnScale keeps
    its own scale), with an affine matrix as needed and its shadow on the ground
    below. depth 0 sorts it by distance; any other value is its draw slot. */
-void fdRenderPlaceProjectedSpr(struct SPR *sprite, Sint32 *point, Sint32 *scale,
-	Sint32 facing, Sint32 depth);
+void fdRenderPlaceProjectedSpr(
+	struct SPR *spr, Sint32 *point, Sint32 *scale, Sint32 facing, Sint32 depth);
 /* Resets each sprite animation of a sprite from its animation's metadata: its
    facing kind, pictures, scripts and codec, with no picture shown and no script
    running. */
-Sint32 fdSprResetAnimations(struct SPR *sprite);
+Sint32 fdSprResetAnimations(struct SPR *spr);
 /* Starting, timing, resetting and adding a sprite's animations and setting
    their colour modes; a timer step of 16 is normal speed. */
-Sint32 fdSprStartAnimation(struct SPR *sprite, Sint32 animation);
-/* Sets each playing sprite animation's timer to the given duration in frames.
+Sint32 fdSprStartAnimation(struct SPR *spr, Sint32 anm);
+/* Sets each playing sprite animation's timer to the given duration in ticks.
    Returns 0. */
-Sint32 fdSprSetAnimationTimers(struct SPR *sprite, Sint32 frames);
+Sint32 fdSprSetAnimationTimers(struct SPR *spr, Sint32 ticks);
 /* Creates a sprite for animation id, taking one of the 64 free sprites and a
    VRAM cache entry for its tiles. */
 struct RESOURCE_OBJECT *fdSprCreate(Sint32 id);
 /* Releases a sprite: gives back its VRAM cache entry unless it keeps it
    (retainCacheEntry), clears its four sprite animations and zeroes it. */
-void fdSprDestroy(struct SPR *sprite);
+void fdSprDestroy(struct SPR *spr);
 /* Positions a sprite's image (part 0) and shadow (part 1) on the screen: the
    image centred on screenX and raised height above screenY, the shadow at
    groundHeight. scale is the sprite's (x, y) scale (16.16); above 1.0 both
    parts use the double-size affine mode. */
-void fdRenderPlaceSprPartPair(struct SPR *sprite, FIXED screenX, Sint32 height,
+void fdRenderPlaceSprPartPair(struct SPR *spr, FIXED screenX, Sint32 height,
 	Sint32 screenY, Sint32 groundHeight, FIXED *scale);
 /* Adds a sprite animation of animation id to a sprite, in the first of its four
    slots that is free; returns it, 0 when none could be taken, or -1 when all
    four are in use. */
-Sint32 fdSprAddAnimation(struct SPR *sprite, Sint32 id);
+Sint32 fdSprAddAnimation(struct SPR *spr, Sint32 id);
 /* Removes the sprite animation handle from a sprite and clears it, trimming the
    sprite's animation count when no later sprite animation remains. */
-void fdSprRemoveAnimation(struct SPR *sprite, Sint32 spriteAnimation);
+void fdSprRemoveAnimation(struct SPR *spr, Sint32 sprAnm);
 /* Removes and clears the sprite animation in a sprite's slot index (0 to 3),
    trimming the sprite's animation count when no later sprite animation
    remains. */
-void fdSprRemoveAnimationAt(struct SPR *sprite, Uint32 index);
+void fdSprRemoveAnimationAt(struct SPR *spr, Uint32 idx);
 /* Zeroes one sprite animation (SPR_ANIMATION); does nothing for NULL. Zeroing
    kind frees the sprite animation for fdSprAnimationAlloc. */
 void fdSprAnimationClear(void *record);
 /* Resets a sprite animation from its metadata: its pictures, scripts, codec and
    drawing kind, with no script running and no picture shown. */
-void fdSprAnimationReset(struct SPR_ANIMATION *spriteAnimation);
+void fdSprAnimationReset(struct SPR_ANIMATION *sprAnm);
 /* Starts the indexed animation on a sprite animation when its metadata contains
    it. Unlike fdSprStartAnimation it does not mask SPRITE_ANIMATION_KEEP_PLACE
    off, so with it set the index would pass anmCnt only in a set of more than
    128 animations. */
-void fdSprAnimationStart(
-	struct SPR_ANIMATION *spriteAnimation, Sint32 animation);
+void fdSprAnimationStart(struct SPR_ANIMATION *sprAnm, Sint32 anm);
 /* Sets up the actor system: allocates and zeroes the 64 actors and the system's
-   state, sets the outline's colours and registers the per-frame updates (mode
+   state, sets the outline's colours and registers the per-tick updates (mode
    is an ACTOR_SYSTEM_MODE). A battle moves its actors with
    fdActorUpdateAllMotion; the World Map and a battle place their sprites with
    the fixed camera. */
@@ -105,29 +104,28 @@ void fdActorSelectAnimation(struct ACTOR *actor, Sint32 argument);
 void fdActorSetAnimationSpeed(struct ACTOR *actor, Sint32 value);
 /* Both of the above: switches all of an actor's sprites to animation and sets
    their timer step to step. */
-void fdActorSetAnimationAndSpeed(
-	struct ACTOR *actor, Sint32 animation, Sint32 step);
+void fdActorSetAnimationAndSpeed(struct ACTOR *actor, Sint32 anm, Sint32 step);
 /* Starting an actor's script and setting its sprite's flags, colour mode and
    priority. */
 void fdActorStartScript(struct ACTOR *actor, const Sint32 *script);
 /* Starts the leader's control script for the way the party moves now
-   (MainRoutineStateWork.movementMode), waiting a frame first for Sand on the
+   (MainRoutineStateWork.movementMode), waiting a tick first for Sand on the
    World Map. */
 void fdActorStartMovementModeScript(struct ACTOR *actor);
 /* Returns an unused actor (one without a script) from the 64 slots, or 0 if
    none is free. */
 void *fdActorFindFree(void);
 /* Creates an actor at (x, y, z), in 16.16 pixels, or returns 0 when every slot
-   is in use. encodedSprite / 4096 is the kind of actor (enum ACTOR_CREATE) and
+   is in use. encodedSpr / 4096 is the kind of actor (enum ACTOR_CREATE) and
    its low 12 bits the sprite's animation id. */
-struct ACTOR *fdActorCreate(Sint32 encodedSprite, FIXED x, FIXED y, FIXED z);
+struct ACTOR *fdActorCreate(Sint32 encodedSpr, FIXED x, FIXED y, FIXED z);
 /* Releases an actor's sprites and zeroes it, releasing its slot. Clearing the
    script lets fdActorFindFree hand the actor out again. */
 void fdActorRelease(struct ACTOR *actor);
 /* Sets the rotation of an actor's sprite, when it has just one. */
 void fdActorSetSprRotation(struct ACTOR *actor, Uint32 value);
 /* Starts an actor on the camera script (SC_CAMERA). With a leader to follow, it
-   also gets a speed limit of 4 pixels a frame and an acceleration of 0.5. */
+   also gets a speed limit of 4 pixels a tick and an acceleration of 0.5. */
 void fdActorStartCamera(struct ACTOR *actor, Sint32 watchedActorHandle);
 /* Starts an actor on the script that approaches its watched actor
    (SC_APPROACH_WATCHED), watching watchedActorHandle. */
@@ -139,10 +137,10 @@ void fdActorSetPosAndResetMotion(
 	struct ACTOR *actor, FIXED x, FIXED y, FIXED z);
 /* One step of dissolving a sprite pixel by pixel. */
 void fdSprDissolveStep(Uint8 *obj, Uint32 pos);
-/* Dissolves a sprite pixel by pixel, four steps a frame, over 32 frames. */
-void fdSprDissolveRun(Uint8 *sprite);
-/* Dissolves count sprites together, pixel by pixel, over 32 frames. */
-void fdSprDissolveRunMany(Uint8 **sprites, Sint32 count);
+/* Dissolves a sprite pixel by pixel, four steps a tick, over 32 ticks. */
+void fdSprDissolveRun(Uint8 *spr);
+/* Dissolves count sprites together, pixel by pixel, over 32 ticks. */
+void fdSprDissolveRunMany(Uint8 **sprs, Sint32 cnt);
 /* Loads layout index from MapsWork: its metatile tiles, collision (cleared to
    -1 first), metatiles, shapes, tileset animations, blend script and script;
    sets up the three background layers' origins, parallax and wrap from the
@@ -150,10 +148,10 @@ void fdSprDissolveRunMany(Uint8 **sprites, Sint32 count);
    FLAG_KEEP_LAYER_GRAPHICS says they are loaded; and starts the layer scrolling
    (fdMapGridUpdateLayerScroll). Returns 2, as The Broken Seal's does; no caller
    reads it. */
-Sint32 fdMapGridLoadMap(Sint32 index);
+Sint32 fdMapGridLoadMap(Sint32 idx);
 /* Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
    camera state, the projection, the per-scanline ground plane function in RAM
-   (fdWorldMapUpdateAffineLines) and its first frame, and the per-frame view and
+   (fdWorldMapUpdateAffineLines) and its first tick, and the per-tick view and
    HBlank updates. */
 UNREAD_RESULT fdWorldMapInitPerspective(void);
 /* Centres the view on (x, y) in 16.16 pixels, clamped to the map's bounds, and
@@ -173,22 +171,21 @@ void fdWorldMapLoadGraphics(Sint32 x, Sint32 z);
 #ifndef OWN_fdActorStartIdle
 void fdActorStartIdle(struct ACTOR *actor);
 #endif
-/* Waits until the actor's script reaches SC_END, at most ACTOR_WAIT_FRAMES_MAX
-   frames; it returns as soon as the script idles, and after the limit whether
+/* Waits until the actor's script reaches SC_END, at most ACTOR_WAIT_TICKS_MAX
+   ticks; it returns as soon as the script idles, and after the limit whether
    or not it has. */
 void fdActorWaitForScriptEnd(struct ACTOR *actor);
 /* Sends an actor towards (x, y, z), in 16.16 pixels. Within a pixel it arrives
    at once. */
 void fdActorSetMoveTarget(struct ACTOR *actor, FIXED x, FIXED y, FIXED z);
-/* Waits, at most ACTOR_WAIT_FRAMES_MAX frames, for an actor to reach where it
+/* Waits, at most ACTOR_WAIT_TICKS_MAX ticks, for an actor to reach where it
    is going. */
 void fdActorWaitForMove(struct ACTOR *actor);
-/* Writes the actor's screen position, in pixels, to screenPosition[0..1] and
+/* Writes the actor's screen position, in pixels, to screenPos[0..1] and
    returns 0 when it is on or near the screen; otherwise writes 0, 0 and returns
    -1. */
-Sint32 fdMapGridGetScreenRelativePos(
-	struct ACTOR *actor, Sint32 *screenPosition);
-/* Each frame: follows the followed point with the screen shake, draws the rows
+Sint32 fdMapGridGetScreenRelativePos(struct ACTOR *actor, Sint32 *screenPos);
+/* Each tick: follows the followed point with the screen shake, draws the rows
    and columns that came into view, and recomputes the projection and the ground
    plane for the current pitch and yaw; while the still image shows, only BG1
    shakes. */
@@ -198,24 +195,23 @@ void fdWorldMapUpdateView(void);
 void fdWorldMapLoadDefaultMetatilesAndUpdateBlock(void);
 /* Plays a map edit (MAP_GRID_METATILE_ANIMATION_STEP entries, ended by a source
    of MAPGRID_ANIMATION_STEPS_END): copies each entry's rectangle of metatile
-   picture numbers to (destinationX, destinationY) and waits its delay in
-   frames. */
-void fdMapGridPlayMapEdit(
-	Uint16 *steps, Sint32 destinationX, Uint32 destinationY);
+   picture numbers to (dstX, dstY) and waits its delay in
+   ticks. */
+void fdMapGridPlayMapEdit(Uint16 *steps, Sint32 dstX, Uint32 dstY);
 /* Plays every edit of the map whose flag is set, as fdMapApplyFlagEdits does,
    MAP_EDIT_ATTRIBUTES in an edit's flag word choosing attributes over pictures:
    the map as the story has left it, as the player enters. */
 void fdMapApplySetFlagEdits(void);
 /* Sets flag (its low 12 bits) and plays its map edits on the metatiles'
    pictures. */
-void fdMapSetFlagAndApplyEdits(Sint32 flag);
+void fdMapSetFlagAndApplyEdits(Sint32 flg);
 /* Sets flag (its low 12 bits) and plays its map edits on the metatiles'
    attributes. */
-void fdMapSetFlagAndApplyAttributeEdits(Sint32 flag);
-/* Resumes tileset animation channelIndex. */
-void fdTilesetAnimResume(Uint32 channelIndex);
-/* Pauses tileset animation channelIndex. */
-void fdTilesetAnimPause(Uint32 channelIndex);
+void fdMapSetFlagAndApplyAttributeEdits(Sint32 flg);
+/* Resumes tileset animation channelIdx. */
+void fdTilesetAnimResume(Uint32 channelIdx);
+/* Pauses tileset animation channelIdx. */
+void fdTilesetAnimPause(Uint32 channelIdx);
 /* Resumes the blend script, through fdBlendScriptResumeStub. */
 void fdBlendScriptResume(void);
 /* Suspends the blend script; scenes reach it through
@@ -270,22 +266,22 @@ void fdWorldMapSetWindowMetatileTileAndDraw(
 /* The collision at an actor's probe point (tile_animation.c): 2 for a metatile
    with no tile, 1 a rise of more than 8 pixels, -1 a drop of more than 12, else
    0. */
-Sint32 fdMapGridCheckCollision(struct ACTOR *actor, struct POS *position);
+Sint32 fdMapGridCheckCollision(struct ACTOR *actor, struct POS *pos);
 /* Sets the flags of a one-sprite actor's sprite (SPR_FLAG). */
 void fdActorSetSprFlags(struct ACTOR *actor, Uint32 value);
 /* Sets the OAM blend mode of a one-sprite actor's sprite. */
 void fdActorSetBlendMode(struct ACTOR *actor, Uint32 mode);
 /* Changes the shake without restarting an axis whose argument is negative.
-   Amplitudes are 16.16 pixels and decay is a 16.16 multiplier per frame. */
+   Amplitudes are 16.16 pixels and decay is a 16.16 multiplier per tick. */
 void fdMapGridSetScreenShake(FIXED shakeX, FIXED shakeY, FIXED shakeDecay);
-/* Waits until both shake amplitudes are below 1/256 pixel, with a 300-frame
+/* Waits until both shake amplitudes are below 1/256 pixel, with a 300-tick
    limit for a shake whose decay never settles. */
 void fdMapGridWaitForShakeToSettle(void);
-/* Gives a one-sprite actor's first sprite animation animation id animationId
-   and restarts its animations. A negative animationId does nothing. */
-void fdActorSetFirstSprAnimation(struct ACTOR *actor, Sint32 animationId);
+/* Gives a one-sprite actor's first sprite animation animation id anmId
+   and restarts its animations. A negative anmId does nothing. */
+void fdActorSetFirstSprAnimation(struct ACTOR *actor, Sint32 anmId);
 /* Suspends the actor camera updates, starts the palette back to normal and, a
-   frame later, shows the sprites with BG1-3 hidden, leaving BG0 unchanged. */
+   tick later, shows the sprites with BG1-3 hidden, leaving BG0 unchanged. */
 void fdActorSystemSuspendProjectionAndShowSprs(void);
 /* Resumes the actor camera updates and hides BG1-3 and the sprites. */
 void fdActorSystemResumeProjectionAndHideLayers(void);
@@ -294,10 +290,10 @@ void fdActorSystemResumeProjectionAndHideLayers(void);
 void fdActorSetOwnScale(struct ACTOR *actor, Uint32 value);
 /* Returns -1 when the metatile under position (its x, and z less its height) in
    the overhead layer is a wall, else 0; also 0 before the map state exists. */
-Sint32 fdMapGridIsWallAt(Sint32 *position);
-/* Adds a sprite animation of animation id animationId to a one-sprite actor's
-   sprite. A negative animationId does nothing. */
-void fdActorRegisterSprMetadata(struct ACTOR *actor, Sint32 animationId);
+Sint32 fdMapGridIsWallAt(Sint32 *pos);
+/* Adds a sprite animation of animation id anmId to a one-sprite actor's
+   sprite. A negative anmId does nothing. */
+void fdActorRegisterSprMetadata(struct ACTOR *actor, Sint32 anmId);
 /* Freezes the world map's perspective view as a still image on BG1: decodes the
    area's tiles again where a field Psynergy used their buffer, saves BG1's
    tiles, draws the current affine frame into pixels and hands the window and
@@ -312,38 +308,37 @@ void fdWorldMapLoadAreaGraphics(void);
 void fdActorSetSprColMode(struct ACTOR *actor, Uint32 value);
 /* Sets the colour mode of every sprite animation of the sprite that is not
    hidden (SPRITE_COLOR_HIDDEN) and has it drawn again. */
-void fdSprSetAnimationColModes(struct SPR *sprite, Uint32 colorMode);
+void fdSprSetAnimationColModes(struct SPR *spr, Uint32 colMode);
 /* Sets the colour mode (SPR_COL_MODE) of the sprite's first sprite animation
    and has it drawn again. */
-void fdSprSetFirstAnimationColMode(struct SPR *sprite, Uint32 colorMode);
+void fdSprSetFirstAnimationColMode(struct SPR *spr, Uint32 colMode);
 /* Fixes the priority of a one-sprite actor's sprite and its shadow, which then
    no longer follow the metatiles under it (ACTOR_PRIORITY_AUTOMATIC). */
-void fdActorSetSprPriorityDirect(struct ACTOR *actor, Sint32 priority);
+void fdActorSetSprPriorityDirect(struct ACTOR *actor, Sint32 pri);
 /* Returns -1 when an actor at position values would overlap a solid actor, each
    radius less 2 pixels; otherwise 0. */
 Sint32 fdActorScriptCheckOverlap(struct ACTOR *actor, Sint32 *values);
 /* Sets which of BG1-BG3 the map shows (bits 9-11 of its display flags, as in
-   REG_DISPCNT) from layerFlags, keeping its other flags. */
-void fdMapGridSetShownLayers(Uint32 layerFlags);
-/* Returns how many frames the first timedCount timed steps of animation number
+   REG_DISPCNT) from layerFlg, keeping its other flags. */
+void fdMapGridSetShownLayers(Uint32 layerFlg);
+/* Returns how many ticks the first timedCnt timed steps of animation number
    animation of sprite id last. Commands are two bytes (command, value);
    ANIMCMD_PLAY, ANIMCMD_HOLD, ANIMCMD_JUMP and ANIMCMD_END end the count, and
    the values of ANIMCMD_WAIT, ANIMCMD_BLANK and the pictures below ANIMCMD_END
    count. */
-Sint32 fdSprAnimationSumCommandLengths(
-	Sint32 id, Uint32 animation, Sint32 timedCount);
+Sint32 fdSprAnimationSumCommandLengths(Sint32 id, Uint32 anm, Sint32 timedCnt);
 /* Returns the world map's battle environment at position from
-   WorldMap_TerrainBehaviorTable, by its collision value and its block's rows,
+   WorldMapTerrainBehaviorTable, by its collision value and its block's rows,
    and stores the block's encounter region in encounterRegion. */
 Uint8 fdWorldMapGetBattleEnvironment(
-	struct WORLD_POS *position, Sint32 *encounterRegion);
+	struct WORLD_POS *pos, Sint32 *encounterRegion);
 /* Loads the pictures of animation id number into picture cache slot's buffer:
    the resource listed for it in SpritePictureCache_Sources, decoded, its
    picture offsets turned into pointers, and for variant 1-5 its pixel colours
    (those up to 223, the basic sprite palettes 0 to 13) remapped through that
    variant's conversion table; a variant above 5 uses variant 1's. */
 Sint32 fdSprPictureCacheLoad(
-	Uint32 slot, Uint32 *buffer, Sint32 number, Uint32 variant);
+	Uint32 slot, Uint32 *buf, Sint32 num, Uint32 variant);
 /* Sets the metatile behavior of a layer's metatile at (x, y) in 16.16 pixels.
    Writes the metatile in the map's grid; does nothing before the map is set
    up. */
@@ -351,9 +346,9 @@ void fdMapGridSetMetatileBehaviorAt(
 	Uint32 layer, FIXED x, FIXED y, Uint32 collisionCode);
 /* Sets the timer step, the animation speed, of each playing sprite animation of
    a sprite (16 is normal speed). */
-void fdSprSetAnimationSpeed(struct SPR *sprite, Sint32 step);
-/* Remaps byteCount bytes in place through SpriteColorGreyTable. */
-void fdSprColRemapPixels(Uint8 *bytes, Sint32 byteCount);
+void fdSprSetAnimationSpeed(struct SPR *spr, Sint32 step);
+/* Remaps byteCnt bytes in place through SpriteColorGreyTable. */
+void fdSprColRemapPixels(Uint8 *bytes, Sint32 byteCnt);
 /* Suspends the tileset animations, unless the world map's still image is
    shown. */
 void fdTilesetAnimSuspendAll(void);
@@ -384,9 +379,9 @@ FIXED fdMapGridGetTerrainHeightAbove(
 /* Returns 0 when the world map at position can be walked on (a place there, and
    collision WORLD_MAP_COLLISION_WALKABLE_FIRST to
    WORLD_MAP_COLLISION_WALKABLE_LAST), else -1. */
-Sint32 fdWorldMapIsWalkable(void *mover, struct WORLD_POS *position);
+Sint32 fdWorldMapIsWalkable(void *mover, struct WORLD_POS *pos);
 /* Returns 0 where the ship can sail (the sea or shallow water), else -1. */
-Sint32 fdWorldMapIsSailable(void *mover, struct WORLD_POS *position);
+Sint32 fdWorldMapIsSailable(void *mover, struct WORLD_POS *pos);
 /* Reads map's camera bounds from its header, in 8-pixel tiles: bounds[0] its
    left, bounds[1] its right, bounds[2] its top and bounds[3] its bottom, a
    right or bottom of 0 standing for the map's whole MAPGRID_TILES. */
@@ -394,25 +389,25 @@ void fdMapGetCameraBounds(Sint32 map, Sint32 *bounds);
 /* The sprite id an actor is drawn with (the first halfword of its sprite's
    definition), or 0 for none. */
 Sint32 fdActorGetSprId(struct ACTOR *actor);
-/* Waits, at most TRACK_END_WAIT_FRAMES, for a sprite's animation to change or
+/* Waits, at most TRACK_END_WAIT_TICKS, for a sprite's animation to change or
    for its first layer's script to reach ANIMCMD_HOLD. */
-void fdSprWaitForTrackEnd(struct SPR *sprite);
+void fdSprWaitForTrackEnd(struct SPR *spr);
 /* fdSprWaitForTrackEnd on an actor's sprite. */
 void fdActorWaitForTrackEnd(struct ACTOR *actor);
-/* Returns 0 when two spheres overlap: at firstPosition and secondPosition
+/* Returns 0 when two spheres overlap: at firstPos and secondPos
    (16.16 pixels) with radii radiusA and radiusB (pixels); -1 otherwise. */
-Sint32 fdCheckSpheresOverlap(FIXED *firstPosition, Sint32 radiusA,
-	FIXED *secondPosition, Sint32 radiusB);
+Sint32 fdCheckSpheresOverlap(
+	FIXED *firstPos, Sint32 radiusA, FIXED *secondPos, Sint32 radiusB);
 /* The metatile behavior of the world map block under position (blocks 32 pixels
    square on a 32 by 32 grid), which the World Map's step cues answer
    (world_map.c: STEP_CUE_AREA(AREA_DAILA) enters Daila,
    METATILE_BEHAVIOR_WORLD_MAP_IRON meets Iron), or METATILE_BEHAVIOR_WALL where
    the map has no block. */
-Sint32 fdWorldMapGetBlockMetatileBehavior(struct WORLD_POS *position);
+Sint32 fdWorldMapGetBlockMetatileBehavior(struct WORLD_POS *pos);
 /* Returns the world map's collision value (1-15) at position: from the upper
    collision layer where it has one, else the lower, else
    WORLD_MAP_COLLISION_DEFAULT. */
-Sint32 fdWorldMapGetCollision(struct WORLD_POS *position);
+Sint32 fdWorldMapGetCollision(struct WORLD_POS *pos);
 /* Gives the metatile at (x, z) of layer the ground height `height`, in 8-pixel
    steps, by tagging its shape with terrain kind 0 at that height. */
 void fdMapGridSetMetatileHeight(
@@ -424,7 +419,7 @@ Sint32 fdMapGridGetMetatileHeight(FIXED x, FIXED z, Sint32 layer);
    leaves the stop to run next; marks the sprite and each sprite animation
    changed. The battle's motion calls it before it releases a borrowed sprite
    buffer. */
-void fdSprSkipToStop(struct SPR *sprite);
+void fdSprSkipToStop(struct SPR *spr);
 /* Decodes the current map's metatiles into the map metatile buffer and converts
    them, then decodes its metatile shapes into MapShapeGrid. */
 void fdMapLoadMetatilesAndShapes(void);
@@ -435,7 +430,7 @@ void fdActorShadowLoadTiles(void);
 /* Decodes the palette resource of a map's header row (its second halfword) and
    copies its 224 colors to destination, keeping the current backdrop color in
    the first entry. */
-void fdMapCopyPalette(Sint32 map, void *destination);
+void fdMapCopyPalette(Sint32 map, void *dst);
 /* The debug sprite viewer, in The Broken Seal's form with this game's changes;
    it never returns. */
 void fdSprViewerRun(void);

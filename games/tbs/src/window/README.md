@@ -14,12 +14,12 @@ letters, portrait and pointing hand are sprites that belong to it, and are
 given back when it closes.
 
 Whoever wants a window only asks for it. Opening and closing are
-animations, a border redrawn a little bigger or smaller each frame, and the
+animations, a border redrawn a little bigger or smaller each tick, and the
 caller does not run them.
 
 ## The windows' event
 
-One [event](../../../../docs/tbs/glossary.md#event) runs every frame and does three things in
+One [event](../../../../docs/tbs/glossary.md#event) runs every tick and does three things in
 order: step every window that is opening or closing, type the next letters
 of every message whose window is open, and draw. Everything on this page
 happens inside it, which is why a window keeps typing while the code that
@@ -70,14 +70,14 @@ code, until it has been typed.
 
 ![Isaac talks to Garet's sister in Vale: a window opens at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out letter by letter with a bobbing arrow at the end, the next page `I wish I could go with you.` follows, and the window closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
 
-Each frame the event reads the next few places for each open message. A
+Each tick the event reads the next few places for each open message. A
 letter is drawn at the pen, which then moves on by that letter's width. A
 control code is obeyed: new line, pause, hold for a button, turn the page,
 change colour, stop. A pause or a hold is a state the event finds again on
-its next visit. The event returns every frame and never calls `sySynch()`.
+its next visit. The event returns every tick and never calls `sySynch()`.
 
 The message speed in the settings decides how many letters come in a
-frame. Lines are also set level at the right edge, by measuring a line
+tick. Lines are also set level at the right edge, by measuring a line
 before it is typed and widening its spaces a little (`window_typing.c`,
 `window_measure.c`).
 

@@ -1,9 +1,9 @@
 /* The mirrored wall of Berserk, Spasm, Recovery and Sack, and the summon
    Daedalus with its second strike. Part of battle_effect.c. */
 
-#define MIRRORED_WALL_FRAMES	  48 /* frames of the wall */
-/* frames the wall's pictures are drawn */
-#define MIRRORED_WALL_DRAW_FRAMES 28
+#define MIRRORED_WALL_TICKS		 48 /* ticks of the wall */
+/* ticks the wall's pictures are drawn */
+#define MIRRORED_WALL_DRAW_TICKS 28
 
 /* The wall's three 64x64 pictures, each a half wall and its mirror image, built
    at the start of the sprite sheet; EarthWallSheet decodes behind them, at
@@ -44,10 +44,10 @@ void btEffectRunMirroredWall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
 	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
 	MODEL_TEXTURE		 texture;
-	SCREEN_POINT		 target;
+	SCREEN_POINT		 tgt;
 	RENDER_MODEL		*quad;
 	void				*vertices;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 picture;
 	Sint32				 y;
 	Sint32				 x;
@@ -74,9 +74,9 @@ void btEffectRunMirroredWall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			SHEET_PALETTE_BYTES);
 
 	/* Centre the canvas on the target. */
-	btEffectPosProjectBattler(args->tgts[0], &target);
+	btEffectPosProjectBattler(args->tgts[0], &tgt);
 	REG_BG2PA = Q_8_8(1);
-	REG_BG2X = (CANVAS_SIZE / 2 - target.x) << 8;
+	REG_BG2X = (CANVAS_SIZE / 2 - tgt.x) << 8;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	sySetEvent((Sint32)btEffectTransferCanvas, EVENT_PASS_VBLANK);
@@ -90,8 +90,8 @@ void btEffectRunMirroredWall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		state->shakeFrm = 32;
 	}
 
-	for(frame = 0; frame != MIRRORED_WALL_FRAMES; frame++) {
-		if(frame == 0) {
+	for(frm = 0; frm != MIRRORED_WALL_TICKS; frm++) {
+		if(frm == 0) {
 			if(mode == MIRRORED_WALL_RECOVERY)
 				btEffectTintBattler(
 					args->tgts[0], SPRITE_COLOR_WHITE, TINT_KEEP, 0, 32);
@@ -99,32 +99,32 @@ void btEffectRunMirroredWall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				btEffectTintBattler(
 					args->tgts[0], SPRITE_COLOR_RED_TINT, TINT_KEEP, 0, 32);
 		}
-		if(frame == 24)
+		if(frm == 24)
 			EFFECT_SHOW_DAMAGE(0);
-		if(frame == 8 && mode == MIRRORED_WALL_SPASM)
+		if(frm == 8 && mode == MIRRORED_WALL_SPASM)
 			sySndPlayStub(SE_RECOVERY);
 
-		/* Pictures 0, 1 and 2 four frames each, then 1 and 2 by turns. */
-		if(frame < 32) {
-			picture = frame / 4;
+		/* Pictures 0, 1 and 2 four ticks each, then 1 and 2 by turns. */
+		if(frm < 32) {
+			picture = frm / 4;
 			if(picture > 2)
 				picture = (picture & 1) + 1;
-			if(frame < MIRRORED_WALL_DRAW_FRAMES) {
+			if(frm < MIRRORED_WALL_DRAW_TICKS) {
 				vertices = syHeapAllocEWRAM(32);
 				quad = btRenderAllocateModelList(1);
 				texture.logWidth = 6;
 				texture.logHeight = 6;
 				texture.pixels = state->sheet + picture * PICTURE_SLOT_SIZE;
 				quad->kind = MODEL_SHADED_MAX;
-				quad->mesh = BattleEffect_SquareMesh;
+				quad->mesh = BattleEffectSquareMesh;
 				quad->texture = &texture;
-				quad->shade = MirroredWall_Shades[mode];
+				quad->shade = MirroredWallShades[mode];
 				quad->vertices = vertices;
 				syInitMatrix();
-				syTranslate(0, INTtoFIXED(target.y - 58), 0);
-				syMatrixScaleUniform(MirroredWall_Scales[mode] << 1);
+				syTranslate(0, INTtoFIXED(tgt.y - 58), 0);
+				syMatrixScaleUniform(MirroredWallScales[mode] << 1);
 				btRenderTransformVertices(
-					BattleEffect_StandingSquareCorners, vertices, 4);
+					BattleEffectStandingSquareCorners, vertices, 4);
 				btRenderDrawModelList(quad);
 				syHeapRelease(quad);
 				syHeapRelease(vertices);
@@ -135,7 +135,7 @@ void btEffectRunMirroredWall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			btCameraShake(4, 4);
 		else
 			btCameraShake(16, 16);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	syCloseEvent((Sint32)btEffectTransferCanvas);
@@ -150,15 +150,15 @@ void btEffectPackYellowOrbs(Uint8 *src, Uint8 *dst, Sint32 stride)
 {
 	Sint32 row = 0;
 	Sint32 rows = YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT;
-	Sint32 offset = 0;
+	Sint32 ofs = 0;
 
 	for(; row != rows; row++) {
 		Sint32 x;
 
 		for(x = 0; x != YELLOW_ORB_WIDTH; x++) {
-			dst[offset / 2 + x / 2] = src[offset + x];
+			dst[ofs / 2 + x / 2] = src[ofs + x];
 		}
-		offset += stride;
+		ofs += stride;
 	}
 }
 
@@ -239,7 +239,7 @@ typedef void (*COPY_FUNC)(void *, const void *, Sint32);
 #define ROCKET_FLAME_HEIGHT 24
 #define ROCKET_FLAME_COUNT	6
 /* BirdFlockSheet's 16x16 birds, and the twelve steps of a wing beat
-   (Daedalus_WingBeatPictures). */
+   (DaedalusWingBeatPictures). */
 #define BIRD_WIDTH			16
 #define BIRD_HEIGHT			16
 #define BIRD_WING_BEAT		12
@@ -268,7 +268,7 @@ typedef void (*COPY_FUNC)(void *, const void *, Sint32);
    green is the machine's core, which the sky scene recolours as it glows. */
 #define DAEDALUS_MACHINE_COLORS 224
 /* The core's colour: dark at first; from DAEDALUS_GLOW_START it brightens a
-   level a frame towards orange (red at most, CORE_GLOW_GREEN and
+   level a tick towards orange (red at most, CORE_GLOW_GREEN and
    CORE_GLOW_BLUE) until DAEDALUS_GLOW_END, then cools towards a dark red
    (CORE_EMBER_RED). */
 #define CORE_DARK				RGB(11, 8, 6)
@@ -279,21 +279,21 @@ typedef void (*COPY_FUNC)(void *, const void *, Sint32);
 #define DAEDALUS_GLOW_END		558
 
 /* Until DAEDALUS_SWAY_STOP the machine's legs swing DAEDALUS_SWAY pixels to and
-   fro, opposite ways, once every 256 frames, and it bobs up twice a swing,
+   fro, opposite ways, once every 256 ticks, and it bobs up twice a swing,
    never below its place. It lurches as its core glows and again as it fires,
-   each lurch half a turn of a sine over 16 frames. */
+   each lurch half a turn of a sine over 16 ticks. */
 #define DAEDALUS_SWAY		  4
 #define DAEDALUS_SWAY_STEP	  (TRIG_TURN / 256)
 #define DAEDALUS_SWAY_STOP	  538
 #define DAEDALUS_LURCH_STEP	  (TRIG_TURN / 32)
 #define DAEDALUS_RECOIL_START 560
 #define DAEDALUS_RECOIL_END	  576
-/* The frame the machine fires: a ring of fire and a ring of flames spread from
-   it, and two frames later the rocket leaves. */
-#define DAEDALUS_FIRE_FRAME	  568
+/* The tick the machine fires: a ring of fire and a ring of flames spread from
+   it, and two ticks later the rocket leaves. */
+#define DAEDALUS_FIRE_TICK	  568
 
 /* The rocket: where it rests in the machine and leaves from, how far its nozzle
-   is from its middle, the pull of its flight, from which frame of it the camera
+   is from its middle, the pull of its flight, from which tick of it the camera
    would let it draw ahead, and its scale, a little over one so that it turns in
    a sprite box twice its size and keeps its fins. */
 #define DAEDALUS_ROCKET_X 152
@@ -303,21 +303,21 @@ typedef void (*COPY_FUNC)(void *, const void *, Sint32);
 #define ROCKET_LEAD_START 230
 #define ROCKET_SCALE	  toFIXED(1.01561)
 
-/* The rocket's flight, in frames from its launch. It sinks a little faster over
-   its first ROCKET_SINK_FRAMES and speeds forward from ROCKET_THRUST_START. It
+/* The rocket's flight, in ticks from its launch. It sinks a little faster over
+   its first ROCKET_SINK_TICKS and speeds forward from ROCKET_THRUST_START. It
    lifts from ROCKET_LIFT_START to ROCKET_LIFT_END, tipping its nose up from
    ROCKET_NOSE_UP_START to ROCKET_NOSE_UP_END. From ROCKET_TURN_START to
    ROCKET_TURN_END it turns its nose up as it climbs, the nose dipping a moment
    from ROCKET_DIP_START to ROCKET_DIP_END; it climbs more gently until
    ROCKET_SOAR_START and steeply after. Bursts rise from the foot of the view
-   every fourth frame while its nose tips up, and again from ROCKET_BURSTS_START
+   every fourth tick while its nose tips up, and again from ROCKET_BURSTS_START
    to ROCKET_BURSTS_END. */
 #define ROCKET_THRUST_START	 30
 #define ROCKET_LIFT_START	 40
 #define ROCKET_NOSE_UP_START 50
 #define ROCKET_NOSE_UP_END	 60
 #define ROCKET_LIFT_END		 68
-#define ROCKET_SINK_FRAMES	 80
+#define ROCKET_SINK_TICKS	 80
 #define ROCKET_TURN_START	 108
 #define ROCKET_BURSTS_START	 113
 #define ROCKET_DIP_START	 120
@@ -327,36 +327,36 @@ typedef void (*COPY_FUNC)(void *, const void *, Sint32);
 #define ROCKET_BURSTS_END	 200
 
 /* The ring of flames the machine sends out as it fires: FLAME_RING_COUNT flames
-   round a ring centred on Daedalus_RingX and FLAME_RING_Y, its radius spreading
-   for FLAME_RING_FRAMES frames while each flame burns down through
-   RocketFlameSheet's pictures, two frames each. */
-#define FLAME_RING_COUNT  32
-#define FLAME_RING_STEP	  (TRIG_TURN / FLAME_RING_COUNT)
-#define FLAME_RING_Y	  60
-#define FLAME_RING_FRAMES 26
+   round a ring centred on DaedalusRingX and FLAME_RING_Y, its radius spreading
+   for FLAME_RING_TICKS ticks while each flame burns down through
+   RocketFlameSheet's pictures, two ticks each. */
+#define FLAME_RING_COUNT 32
+#define FLAME_RING_STEP	 (TRIG_TURN / FLAME_RING_COUNT)
+#define FLAME_RING_Y	 60
+#define FLAME_RING_TICKS 26
 
 /* From DAEDALUS_SPLASH_START, flames burst along four lines of six points over
-   the hull (Daedalus_SplashPoints), a point every two frames, each burning down
-   through RocketFlameSheet's pictures two frames each; the hull falls away
+   the hull (DaedalusSplashPoints), a point every two ticks, each burning down
+   through RocketFlameSheet's pictures two ticks each; the hull falls away
    after them. */
 #define DAEDALUS_SPLASH_START 490
 
-/* The sky scene's frames, unless A or B ends it sooner. */
-#define DAEDALUS_SKY_FRAMES 800
+/* The sky scene's ticks, unless A or B ends it sooner. */
+#define DAEDALUS_SKY_TICKS 800
 
-/* The fall's frames, and its runs of EXTRA_PARTICLES: each missile's
+/* The fall's ticks, and its runs of EXTRA_PARTICLES: each missile's
    FALL_BURST_SLOTS, of which its two bursts use the first, and from FALL_TRAILS
    each missile's trail of FALL_TRAIL_LENGTH flames. */
-#define DAEDALUS_FALL_FRAMES 109
-#define FALL_BURST_SLOTS	 8
-#define FALL_TRAILS			 256
-#define FALL_TRAIL_LENGTH	 16
+#define DAEDALUS_FALL_TICKS 109
+#define FALL_BURST_SLOTS	8
+#define FALL_TRAILS			256
+#define FALL_TRAIL_LENGTH	16
 /* The angle a missile's dive turns by for each unit of its velocityZ, a spread
    the fall leaves at 0. */
-#define FALL_DIVE_SPREAD	 40
+#define FALL_DIVE_SPREAD	40
 
-/* The missiles fire in pairs, the first DAEDALUS_VOLLEY_START frames after
-   their cover flies off and the next every DAEDALUS_VOLLEY_STEP frames. */
+/* The missiles fire in pairs, the first DAEDALUS_VOLLEY_START ticks after
+   their cover flies off and the next every DAEDALUS_VOLLEY_STEP ticks. */
 #define DAEDALUS_VOLLEY_START 10
 #define DAEDALUS_VOLLEY_STEP  6
 
@@ -416,7 +416,7 @@ typedef void (*COPY_FUNC)(void *, const void *, Sint32);
    Abilities: Daedalus. */
 void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 {
-	Sint16					 targets[UNIT_MAX];
+	Sint16					 tgts[UNIT_MAX];
 	SPR_PLACEMENT			 canopyPlace;
 	SPR_PLACEMENT			 place;
 	SPR_PLACEMENT			 missilePlace;
@@ -426,7 +426,7 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 	MODEL_TEXTURE			 fireRingTexture;
 	SCALE					 missileScale;
 	Uint8					*canvas;
-	Sint32					 frame;
+	Sint32					 frm;
 	Uint8					*dimMotes;
 	BATTLE_BACKGROUND_STATE *view;
 	BATTLE_STATE			*battle;
@@ -468,8 +468,8 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 	savedScrollX = BgScrollWork[1].x;
 	bgX = -80;
 
-	for(frame = 0; frame != SUMMON_OPENING_FRAMES; frame++) {
-		if(frame == SUMMON_OPENING_LOAD_FRAME) {
+	for(frm = 0; frm != SUMMON_OPENING_TICKS; frm++) {
+		if(frm == SUMMON_OPENING_LOAD_TICK) {
 			Uint16		 *col;
 			Sint32		  n;
 			Sint32		  off;
@@ -482,8 +482,8 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 
 			syVRAMCacheFreeEntry(battle->arrowTiles);
 			ProjectionWork.centerY = SUMMON_PROJECTION_CENTER_Y;
-			targets[0] = BATTLE_UNIT_LIST_END;
-			btActorSpawnObjectsForListStub(targets, 0);
+			tgts[0] = BATTLE_UNIT_LIST_END;
+			btActorSpawnObjectsForListStub(tgts, 0);
 			btBackgroundLoadStub(
 				BATTLE_BACKGROUND_FIXED, RESOURCE_VIOLET_SKY_BACKDROP, 0);
 			for(col = (Uint16 *)&BG_PLTT_COLOR(6, 0), i = 0;
@@ -515,7 +515,7 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 			state->scrollInterval = 5;
 			state->scrollStepX = -1;
 			state->scrollStepY = 0;
-			sySetEvent(btEffectAdvanceScrollOnInterval, EVENT_PASS_FRAME);
+			sySetEvent(btEffectAdvanceScrollOnInterval, EVENT_PASS_TICK);
 			view->busy = 1;
 			btResourceLoadAndDecompress(
 				RESOURCE_YELLOW_GLOW_SHEET, state->sheet, 0, 0);
@@ -529,8 +529,7 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 				v = k * 2;
 				out = (Uint8 *)(v + (Sint32)dimMotes);
 				do {
-					v = ((
-						Uint8 *)state)[BattleEffect_MotePictures[n] + i + off];
+					v = ((Uint8 *)state)[BattleEffectMotePictures[n] + i + off];
 					if(v != 0) {
 						v = v - j * DAEDALUS_MOTE_DIM_STEP -
 							DAEDALUS_MOTE_DIM_FIRST;
@@ -592,8 +591,8 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 			} while(0);
 			obj->pri = 3;
 			/* FAKEMATCH(dead): updates of i that cancel out. */
-			i ^= frame;
-			i ^= frame;
+			i ^= frm;
+			i ^= frm;
 			syWordsCopy((void *)(VramCacheEntries[obj->slot].ofs + OBJ_VRAM0),
 				DECODE_BUFFER + i * OBJ_32X32_8BPP_BYTES, 32 * 64);
 			src =
@@ -621,15 +620,15 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 					DAEDALUS_SPRITE(DAEDALUS_MISSILE + 1 + i)->pri = 2;
 			}
 		}
-		/* The canopy scrolls by half a pixel a frame; each time it has moved a
+		/* The canopy scrolls by half a pixel a tick; each time it has moved a
 		   whole picture, every sprite takes the picture before its own. */
-		if(frame > SUMMON_OPENING_LOAD_FRAME) {
+		if(frm > SUMMON_OPENING_LOAD_TICK) {
 			/* FAKEMATCH(temporary): canopyPlaceRef, a pointer standing for
 			 * canopyPlace. */
 			SPR_PLACEMENT *canopyPlaceRef;
 			Sint32		   row;
 
-			canopyScale = Daedalus_CanopyScale;
+			canopyScale = DaedalusCanopyScale;
 			canopyPlace.groundHeight = 0;
 			canopyPlace.height = toFIXED(255);
 			canopyScroll += toFIXED(1) / 2;
@@ -738,10 +737,10 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 		for(i = 0; i != DAEDALUS_PARTICLE_COUNT; i++)
 			EXTRA_PARTICLES[i].variant = -1;
 
-		frame = 0;
+		frm = 0;
 		if(!(PerWork.data & KEY_B) && !(PerWork.repeat & KEY_A)) {
-		skyFrame:
-			if(frame == 0) {
+		skyTick:
+			if(frm == 0) {
 				REG_BG2PA = Q_8_8(1);
 				*pal = CORE_DARK;
 				climb = -toFIXED(DAEDALUS_CLIMB);
@@ -794,7 +793,7 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 				}
 			}
 			prevCamera = camera;
-			if(frame >= DAEDALUS_GLOW_START && frame < DAEDALUS_GLOW_END) {
+			if(frm >= DAEDALUS_GLOW_START && frm < DAEDALUS_GLOW_END) {
 				Sint32 r, g, b;
 
 				r = RGB_RED(*pal);
@@ -808,7 +807,7 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 					b++;
 				*pal = RGB(r, g, b);
 			}
-			if(frame >= DAEDALUS_GLOW_END) {
+			if(frm >= DAEDALUS_GLOW_END) {
 				Sint32 r, g, b;
 
 				r = RGB_RED(*pal);
@@ -823,36 +822,36 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 				*pal = RGB(r, g, b);
 			}
 			/* The cover flies off, and the missiles follow it two at a time. */
-			if(frame == 280) {
+			if(frm == 280) {
 				syWordsCopy((void *)BG_PLTT,
 					(const void *)syResourceGetTableEntry(RESOURCE_SMOKE_SHEET),
 					SHEET_PALETTE_BYTES);
 				state->particles[DAEDALUS_COVER_MOTION].variant = 1;
 			}
 			/* The blade flies off, spinning. */
-			if(frame == 288)
+			if(frm == 288)
 				state->particles[DAEDALUS_BLADE_MOTION].variant = 1;
-			if(frame == 279) {
+			if(frm == 279) {
 				REG_BG2PA = Q_8_8(0.5);
 				REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
 					BGCNT_SCREEN_BASE(7);
 				REG_BG2PA = Q_8_8(0.5);
 			}
 			/* The hull falls away. */
-			if(frame == 506)
+			if(frm == 506)
 				state->particles[DAEDALUS_HULL_MOTION].variant = 1;
-			if(frame == 489) {
+			if(frm == 489) {
 				REG_BG2PA = Q_8_8(0.5);
 				REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
 					BGCNT_SCREEN_BASE(7);
 				state->scrollStepX = 0;
 			}
-			if(frame == 528) {
+			if(frm == 528) {
 				REG_BG2PA = Q_8_8(0.5);
 				REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) |
 					BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 			}
-			if(frame == 0) {
+			if(frm == 0) {
 				EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 				EFFECT_SET_TRANSFER(
 					state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -860,10 +859,10 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 					PARTICLE *p;
 
 					p = &EXTRA_PARTICLES[DAEDALUS_BIRDS + i];
-					p->x = toFIXED(Daedalus_BirdStarts[i][0]);
-					p->y = toFIXED(Daedalus_BirdStarts[i][1]);
-					p->velX = Daedalus_BirdSpeeds[i][0];
-					p->velY = Daedalus_BirdSpeeds[i][1];
+					p->x = toFIXED(DaedalusBirdStarts[i][0]);
+					p->y = toFIXED(DaedalusBirdStarts[i][1]);
+					p->velX = DaedalusBirdSpeeds[i][0];
+					p->velY = DaedalusBirdSpeeds[i][1];
 					p->variant = syRandom() & 127;
 				}
 			}
@@ -871,10 +870,10 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 				PARTICLE *p;
 
 				p = &EXTRA_PARTICLES[DAEDALUS_BIRDS + i];
-				if(frame >= Daedalus_BirdFrames[i]) {
+				if(frm >= DaedalusBirdTicks[i]) {
 					blit[0](canvas,
 						&state
-							->sheet[Daedalus_WingBeatPictures[(p->variant / 4) %
+							->sheet[DaedalusWingBeatPictures[(p->variant / 4) %
 										BIRD_WING_BEAT] *
 									PICTURE_BYTES(BIRD) +
 								DAEDALUS_BIRD_FLOCK],
@@ -885,7 +884,7 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 					p->variant++;
 				}
 			}
-			if(frame <= 473)
+			if(frm <= 473)
 				canopyScroll += toFIXED(1) / 2;
 			canopyX = canopyScroll + camera;
 			if(canopyX >= toFIXED(CANOPY_PICTURE_SIZE)) {
@@ -896,34 +895,33 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 			}
 			if(climb < 0)
 				climb += toFIXED(1) / 8;
-			pieceScale = Daedalus_MachineScale;
+			pieceScale = DaedalusMachineScale;
 			bobX = 0;
 			bobY = 0;
-			if(frame >= DAEDALUS_SWAY_STOP) {
+			if(frm >= DAEDALUS_SWAY_STOP) {
 				swayX = syCos(DAEDALUS_SWAY_STOP * DAEDALUS_SWAY_STEP) *
 					DAEDALUS_SWAY;
 				swayY = sySin(DAEDALUS_SWAY_STOP * DAEDALUS_SWAY_STEP) *
 					DAEDALUS_SWAY;
-				if(frame >= DAEDALUS_GLOW_START && frame < DAEDALUS_GLOW_END) {
+				if(frm >= DAEDALUS_GLOW_START && frm < DAEDALUS_GLOW_END) {
 					Sint32 v;
 
-					v = frame * DAEDALUS_LURCH_STEP -
+					v = frm * DAEDALUS_LURCH_STEP -
 						DAEDALUS_GLOW_START * DAEDALUS_LURCH_STEP;
 					bobX = sySin(v) * 3;
 					bobY = sySin(v) * 2;
 				}
-				if(frame >= DAEDALUS_RECOIL_START &&
-					frame < DAEDALUS_RECOIL_END) {
+				if(frm >= DAEDALUS_RECOIL_START && frm < DAEDALUS_RECOIL_END) {
 					Sint32 v;
 
-					v = frame * DAEDALUS_LURCH_STEP -
+					v = frm * DAEDALUS_LURCH_STEP -
 						DAEDALUS_RECOIL_START * DAEDALUS_LURCH_STEP;
 					bobX = sySin(v) * 2;
 					bobY = sySin(v) * 3;
 				}
 			} else {
-				swayX = syCos(frame * DAEDALUS_SWAY_STEP) * DAEDALUS_SWAY;
-				swayY = sySin(frame * DAEDALUS_SWAY_STEP) * DAEDALUS_SWAY;
+				swayX = syCos(frm * DAEDALUS_SWAY_STEP) * DAEDALUS_SWAY;
+				swayY = sySin(frm * DAEDALUS_SWAY_STEP) * DAEDALUS_SWAY;
 			}
 			if(swayY > 0)
 				swayY = -swayY;
@@ -931,18 +929,18 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 			place.groundHeight = 0;
 			place.height = toFIXED(255);
 			for(i = 0; i != 5; i++) {
-				if(frame == Daedalus_ClatterFrames[i]) {
+				if(frm == DaedalusClatterTicks[i]) {
 					state->shakeFrm = 23;
 					sySndPlayStub(SE_CLATTER);
 				}
 			}
-			if(frame == 510)
+			if(frm == 510)
 				sySndPlayStub(SE_SOL_SANCTUM_LIGHT_UP);
-			if(frame == DAEDALUS_FIRE_FRAME) {
+			if(frm == DAEDALUS_FIRE_TICK) {
 				state->shakeFrm = 10;
 				sySndPlayStub(SE_CRASH);
 			}
-			if(frame == 578)
+			if(frm == 578)
 				sySndPlayStub(SE_WAVE_HIGH);
 			for(i = 0; i != DAEDALUS_MISSILE_COUNT; i++) {
 				PARTICLE *p;
@@ -975,12 +973,12 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 					p->variant = 1;
 					p->x += swayX;
 					p->y +=
-						swayY - toFIXED(Daedalus_ShakeOffsets[state->shakeFrm]);
+						swayY - toFIXED(DaedalusShakeOffsets[state->shakeFrm]);
 					p->velY = (syRandom() & TRIG_ANGLE_MASK) - toFIXED(0.5);
 					p->velZ = (syRandom() & 0x3fff) - toFIXED(0.125);
 				}
 			}
-			if(frame <= 489) {
+			if(frm <= 489) {
 				for(i = DAEDALUS_MISSILE_COUNT / 2; i != DAEDALUS_MISSILE_COUNT;
 					i++) {
 					PARTICLE *p;
@@ -1002,21 +1000,21 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 							&place, &pieceScale, 0);
 				}
 			}
-			if(frame == 578) {
+			if(frm == 578) {
 				state->scrollInterval = 1;
 				state->scrollTmr = 0;
 			}
-			if(frame >= 578 && frame < 594)
-				state->scrollStepX = ~((frame - 578) / 8);
+			if(frm >= 578 && frm < 594)
+				state->scrollStepX = ~((frm - 578) / 8);
 			for(i = 0; i != 2; i++) {
 				place.x = camera - swayX + bobX + toFIXED(120);
 				place.y = toFIXED(i * DAEDALUS_PIECE_SIZE -
-							  Daedalus_ShakeOffsets[state->shakeFrm]) +
+							  DaedalusShakeOffsets[state->shakeFrm]) +
 					swayY + bobY + toFIXED(100);
 				fdRenderApplyProjectedPlacementStub(
 					state->sprs[DAEDALUS_LEFT_LEG + i], &place, &pieceScale, 0);
 			}
-			if(frame <= 316) {
+			if(frm <= 316) {
 				PARTICLE *p;
 
 				p = &state->particles[DAEDALUS_BLADE_MOTION];
@@ -1031,7 +1029,7 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 						TRIG_TURN / 128;
 				}
 				place.x = p->x - swayX + camera + toFIXED(120);
-				place.y = toFIXED(99 - Daedalus_ShakeOffsets[state->shakeFrm]) +
+				place.y = toFIXED(99 - DaedalusShakeOffsets[state->shakeFrm]) +
 					swayY + p->y;
 				fdRenderApplyProjectedPlacementStub(
 					state->sprs[DAEDALUS_BLADE], &place, &pieceScale, 0);
@@ -1042,29 +1040,28 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 
 				v = camera + bobX;
 				place.x = v + toFIXED(142);
-				place.y = toFIXED(72 - Daedalus_ShakeOffsets[state->shakeFrm]) +
+				place.y = toFIXED(72 - DaedalusShakeOffsets[state->shakeFrm]) +
 					swayY + bobY;
 				fdRenderApplyProjectedPlacementStub(
 					state->sprs[DAEDALUS_TOP], &place, &pieceScale, 0);
 				place.x = v + toFIXED(174);
-				place.y = toFIXED(72 - Daedalus_ShakeOffsets[state->shakeFrm]) +
+				place.y = toFIXED(72 - DaedalusShakeOffsets[state->shakeFrm]) +
 					swayY + bobY;
 				fdRenderApplyProjectedPlacementStub(
 					state->sprs[DAEDALUS_TOP + 1], &place, &pieceScale, 0);
 				v += toFIXED(128);
 				place.x = v;
-				place.y =
-					toFIXED(104 - Daedalus_ShakeOffsets[state->shakeFrm]) +
+				place.y = toFIXED(104 - DaedalusShakeOffsets[state->shakeFrm]) +
 					swayY + bobY;
 				fdRenderApplyProjectedPlacementStub(
 					state->sprs[DAEDALUS_CORE], &place, &pieceScale, 0);
 				p = &state->particles[DAEDALUS_ROCKET_MOTION];
-				if(frame > 602)
+				if(frm > 602)
 					btEffectStepPaletteToResource(RESOURCE_ORANGE_PALETTE_B);
-				if(frame == DAEDALUS_FIRE_FRAME + 2) {
+				if(frm == DAEDALUS_FIRE_TICK + 2) {
 					p->x = toFIXED(DAEDALUS_ROCKET_X);
 					p->y = toFIXED(DAEDALUS_ROCKET_Y -
-							   Daedalus_ShakeOffsets[state->shakeFrm]) +
+							   DaedalusShakeOffsets[state->shakeFrm]) +
 						swayY;
 					p->variant = 1;
 					p->velX = -toFIXED(4);
@@ -1085,8 +1082,8 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 						EXTRA_PARTICLES[DAEDALUS_BURSTS + i].variant = -1;
 				}
 				/* The rocket's flight, its particle's variant counting its
-				   frames:
-				   exhaust from its tenth frame, bursts every fourth frame of
+				   ticks:
+				   exhaust from its tenth tick, bursts every fourth tick of
 				   two stretches, and the turns, climbs and pulls of its
 				   course. */
 				if(p->variant != 0) {
@@ -1134,8 +1131,8 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 						/* The camera follows the rocket, keeping it where it
 						   left the machine. */
 						f = &state->particles[DAEDALUS_ROCKET_MOTION];
-						/* DEAD: the lead of two pixels a frame from
-						   ROCKET_LEAD_START, which is 0 on the one frame that
+						/* DEAD: the lead of two pixels a tick from
+						   ROCKET_LEAD_START, which is 0 on the one tick that
 						   reaches it, the sky scene's last; the ROM keeps its
 						   test and its sum. */
 						if(f->variant >= ROCKET_LEAD_START)
@@ -1160,7 +1157,7 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 						p->velX = p->velX * 63 / DAMPING_SCALE;
 						p->velY = p->velY * 63 / DAMPING_SCALE + ROCKET_GRAVITY;
 					}
-					if(p->variant < ROCKET_SINK_FRAMES)
+					if(p->variant < ROCKET_SINK_TICKS)
 						p->velY += toFIXED(1) / 128;
 					if(p->variant >= ROCKET_THRUST_START)
 						p->velX -= toFIXED(1) / 4;
@@ -1230,7 +1227,7 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 				if(p->variant == 0) {
 					place.x = camera + bobX + toFIXED(DAEDALUS_ROCKET_X);
 					place.y = toFIXED(DAEDALUS_ROCKET_Y -
-								  Daedalus_ShakeOffsets[state->shakeFrm]) +
+								  DaedalusShakeOffsets[state->shakeFrm]) +
 						swayY + bobY;
 				} else {
 					place.x = p->x + camera;
@@ -1242,25 +1239,25 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 			DAEDALUS_SPRITE(DAEDALUS_ROCKET)->ofsX = 0;
 			DAEDALUS_SPRITE(DAEDALUS_ROCKET)->ofsY = 32;
 			/* The ring of fire: FireRingTexture on a square laid nearly flat,
-			   growing by a quarter a frame, bright for seven frames and fading
+			   growing by a quarter a tick, bright for seven ticks and fading
 			   out over the next three. */
-			if(frame >= DAEDALUS_FIRE_FRAME) {
+			if(frm >= DAEDALUS_FIRE_TICK) {
 				RENDER_MODEL *fireRing;
-				void		 *buffer;
+				void		 *buf;
 				Sint32		  v;
 				Sint32		  z;
 
-				buffer = syHeapAllocEWRAM(512);
+				buf = syHeapAllocEWRAM(512);
 				fireRing = btRenderAllocateModelList(1);
 				fireRingTexture.logWidth = 7;
 				fireRingTexture.logHeight = 7;
 				fireRingTexture.pixels = pixels;
 				fireRing->texture = &fireRingTexture;
 				fireRing->flg = 0;
-				fireRing->mesh = BattleEffect_LargeSquareMesh;
+				fireRing->mesh = BattleEffectLargeSquareMesh;
 				fireRing->kind = MODEL_SHADED_ADDITIVE;
-				fireRing->vertices = buffer;
-				v = frame - DAEDALUS_FIRE_FRAME;
+				fireRing->vertices = buf;
+				v = frm - DAEDALUS_FIRE_TICK;
 				z = 96 - (v << 4);
 				if(z > 0)
 					z = 0;
@@ -1273,24 +1270,24 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 					syMatrixScaleUniform(
 						v * (toFIXED(1) / 4) + toFIXED(131) / 512);
 					btRenderTransformVertices(
-						BattleEffect_GroundSquareCorners, buffer, 4);
+						BattleEffectGroundSquareCorners, buf, 4);
 					btRenderDrawModelList(fireRing);
 				}
 				syHeapRelease(fireRing);
-				syHeapRelease(buffer);
+				syHeapRelease(buf);
 			}
-			if(frame == DAEDALUS_FIRE_FRAME) {
+			if(frm == DAEDALUS_FIRE_TICK) {
 				state->particles[DAEDALUS_RING_MOTION].x = 0;
 				state->particles[DAEDALUS_RING_MOTION].velX = toFIXED(8);
 			}
 			for(j = 0; j != 1; j++) {
 				ringX = &state->particles[DAEDALUS_RING_MOTION].x;
-				if(frame >= Daedalus_RingStarts[j] &&
-					frame < Daedalus_RingStarts[j] + FLAME_RING_FRAMES) {
+				if(frm >= DaedalusRingStarts[j] &&
+					frm < DaedalusRingStarts[j] + FLAME_RING_TICKS) {
 					Sint32 n;
 
 					radius = FIXEDtoINT(*ringX);
-					n = (frame - Daedalus_RingStarts[j]) / 2;
+					n = (frm - DaedalusRingStarts[j]) / 2;
 					*ringX += state->particles[DAEDALUS_RING_MOTION].velX;
 					state->particles[DAEDALUS_RING_MOTION].velX =
 						state->particles[DAEDALUS_RING_MOTION].velX * 48 /
@@ -1301,7 +1298,7 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 
 							v = (FIXEDtoINT(
 									sySin(i * FLAME_RING_STEP) * radius / 2)) +
-								Daedalus_RingX[j];
+								DaedalusRingX[j];
 							blit[0](canvas,
 								&state->sheet[n * PICTURE_BYTES(ROCKET_FLAME)],
 								v - ROCKET_FLAME_WIDTH / 2,
@@ -1324,49 +1321,44 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 
 				v = prevCamera + bobX;
 				place.x = v + toFIXED(160);
-				place.y =
-					toFIXED(104 - Daedalus_ShakeOffsets[state->shakeFrm]) +
+				place.y = toFIXED(104 - DaedalusShakeOffsets[state->shakeFrm]) +
 					swayY + bobY;
 				fdRenderApplyProjectedPlacementStub(
 					state->sprs[DAEDALUS_BODY], &place, &pieceScale, 0);
 				place.x = v + toFIXED(128);
-				place.y =
-					toFIXED(136 - Daedalus_ShakeOffsets[state->shakeFrm]) +
+				place.y = toFIXED(136 - DaedalusShakeOffsets[state->shakeFrm]) +
 					swayY + bobY;
 				fdRenderApplyProjectedPlacementStub(
 					state->sprs[DAEDALUS_BODY + 1], &place, &pieceScale, 0);
 				place.x = v + toFIXED(160);
-				place.y =
-					toFIXED(136 - Daedalus_ShakeOffsets[state->shakeFrm]) +
+				place.y = toFIXED(136 - DaedalusShakeOffsets[state->shakeFrm]) +
 					swayY + bobY;
 				fdRenderApplyProjectedPlacementStub(
 					state->sprs[DAEDALUS_BODY + 2], &place, &pieceScale, 0);
 				place.x = v + toFIXED(192);
-				place.y =
-					toFIXED(136 - Daedalus_ShakeOffsets[state->shakeFrm]) +
+				place.y = toFIXED(136 - DaedalusShakeOffsets[state->shakeFrm]) +
 					swayY + bobY;
 				fdRenderApplyProjectedPlacementStub(
 					state->sprs[DAEDALUS_BODY + 3], &place, &pieceScale, 0);
 				DAEDALUS_SPRITE(DAEDALUS_BODY + 4)->pri = 2;
 				place.x = v + toFIXED(128);
-				place.y =
-					toFIXED(104 - Daedalus_ShakeOffsets[state->shakeFrm]) +
+				place.y = toFIXED(104 - DaedalusShakeOffsets[state->shakeFrm]) +
 					swayY + bobY;
 				fdRenderApplyProjectedPlacementStub(
 					state->sprs[DAEDALUS_BODY + 4], &place, &pieceScale, 0);
 			}
 			for(i = 0; i != 5; i++) {
-				place.x = toFIXED(Daedalus_RightLegPoints[i][0]) + swayX +
+				place.x = toFIXED(DaedalusRightLegPoints[i][0]) + swayX +
 					prevCamera + bobX + toFIXED(176);
-				place.y = toFIXED(Daedalus_RightLegPoints[i][1] -
-							  Daedalus_ShakeOffsets[state->shakeFrm]) +
+				place.y = toFIXED(DaedalusRightLegPoints[i][1] -
+							  DaedalusShakeOffsets[state->shakeFrm]) +
 					swayY + bobY + toFIXED(84);
 				DAEDALUS_SPRITE(DAEDALUS_RIGHT_LEG + i)->pri = 2;
 				fdRenderApplyProjectedPlacementStub(
 					state->sprs[DAEDALUS_RIGHT_LEG + i], &place, &pieceScale,
 					0);
 			}
-			if(frame <= 489) {
+			if(frm <= 489) {
 				for(i = 0; i != DAEDALUS_MISSILE_COUNT / 2; i++) {
 					PARTICLE *p;
 
@@ -1379,7 +1371,7 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 							&pieceScale, 0);
 				}
 			}
-			if(frame < 540) {
+			if(frm < 540) {
 				PARTICLE *p;
 
 				p = &state->particles[DAEDALUS_HULL_MOTION];
@@ -1394,14 +1386,14 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 					place.x = toFIXED((i & 1) * DAEDALUS_PIECE_SIZE) + p->x +
 						camera + toFIXED(128);
 					place.y = toFIXED((i / 2) * DAEDALUS_PIECE_SIZE -
-								  Daedalus_ShakeOffsets[state->shakeFrm]) +
+								  DaedalusShakeOffsets[state->shakeFrm]) +
 						swayY + p->y + toFIXED(104);
 					DAEDALUS_SPRITE(DAEDALUS_HULL + i)->pri = 1;
 					fdRenderApplyProjectedPlacementStub(
 						state->sprs[DAEDALUS_HULL + i], &place, &pieceScale, 0);
 				}
 			}
-			if(frame <= 316) {
+			if(frm <= 316) {
 				PARTICLE *p;
 
 				p = &state->particles[DAEDALUS_COVER_MOTION];
@@ -1416,7 +1408,7 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 						TRIG_TURN / 256;
 				}
 				place.x = swayX + p->x + camera + toFIXED(184);
-				place.y = toFIXED(92 - Daedalus_ShakeOffsets[state->shakeFrm]) +
+				place.y = toFIXED(92 - DaedalusShakeOffsets[state->shakeFrm]) +
 					swayY + p->y;
 				DAEDALUS_SPRITE(DAEDALUS_COVER)->pri = 1;
 				fdRenderApplyProjectedPlacementStub(
@@ -1431,7 +1423,7 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 						Sint32		  v;
 						place.x = toFIXED(i * CANOPY_PICTURE_SIZE) + canopyX;
 						place.y = toFIXED(j * CANOPY_PICTURE_SIZE -
-									  Daedalus_ShakeOffsets[state->shakeFrm]) +
+									  DaedalusShakeOffsets[state->shakeFrm]) +
 							climb + toFIXED(CANOPY_Y);
 						if(i == CANOPY_PICTURES) {
 							DAEDALUS_SPRITE(j * DAEDALUS_CANOPY_ROW + i)->tile =
@@ -1466,16 +1458,16 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 			}
 			for(j = 0; j != 4; j++) {
 				for(i = 0; i != 6; i++) {
-					if(frame >= i * 2 + DAEDALUS_SPLASH_START &&
-						frame < i * 2 + DAEDALUS_SPLASH_START +
+					if(frm >= i * 2 + DAEDALUS_SPLASH_START &&
+						frm < i * 2 + DAEDALUS_SPLASH_START +
 								ROCKET_FLAME_COUNT * 2) {
 						Sint32 x, y, n;
 
-						x = Daedalus_SplashPoints[j][i][0];
-						n = (frame - (i * 2 + DAEDALUS_SPLASH_START)) / 2;
-						y = Daedalus_SplashPoints[j][i][1] +
+						x = DaedalusSplashPoints[j][i][0];
+						n = (frm - (i * 2 + DAEDALUS_SPLASH_START)) / 2;
+						y = DaedalusSplashPoints[j][i][1] +
 							(FIXEDtoINT(swayY)) -
-							Daedalus_ShakeOffsets[state->shakeFrm];
+							DaedalusShakeOffsets[state->shakeFrm];
 						blit[0](canvas,
 							&state->sheet[n * PICTURE_BYTES(ROCKET_FLAME)],
 							x - ROCKET_FLAME_WIDTH / 2,
@@ -1514,17 +1506,17 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 
 				shake = &state->shakeFrm;
 				bg = BgScrollWork;
-				v = Daedalus_ShakeOffsets[*shake];
+				v = DaedalusShakeOffsets[*shake];
 				bg[1].y = v + BATTLE_BACKGROUND_SCROLL_Y;
 				ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y - v;
 				if(*shake > 0)
 					*shake -= 1;
 			}
-			EFFECT_END_FRAME(state);
-			frame++;
-			if(frame != DAEDALUS_SKY_FRAMES && !(PerWork.data & KEY_B) &&
+			EFFECT_END_TICK(state);
+			frm++;
+			if(frm != DAEDALUS_SKY_TICKS && !(PerWork.data & KEY_B) &&
 				!(PerWork.repeat & KEY_A))
-				goto skyFrame;
+				goto skyTick;
 		}
 
 		syCloseEvent(btEffectAdvanceScrollOnInterval);
@@ -1564,17 +1556,17 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 		btResourceLoadAndDecompress(RESOURCE_ROCKET_FLAME_SHEET,
 			state->sheet + DAEDALUS_ROCKET_FLAMES, 0, 0);
 		{
-			const void *colors = (const void *)syResourceGetTableEntry(
+			const void *cols = (const void *)syResourceGetTableEntry(
 				RESOURCE_ORANGE_PALETTE_B);
 			COPY_FUNC copy = IWRAM_COPY_WORDS_LINKED;
 
-			copy((void *)BG_PLTT, colors, SHEET_PALETTE_BYTES);
+			copy((void *)BG_PLTT, cols, SHEET_PALETTE_BYTES);
 		}
 
-		for(frame = 0; frame != DAEDALUS_FALL_FRAMES; frame++) {
-			/* Each missile dives at its own angle, eight pixels a frame, from
-			   where it reaches its point in 24 frames. */
-			if(frame == 0) {
+		for(frm = 0; frm != DAEDALUS_FALL_TICKS; frm++) {
+			/* Each missile dives at its own angle, eight pixels a tick, from
+			   where it reaches its point in 24 ticks. */
+			if(frm == 0) {
 				Sint32	  z;
 				PARTICLE *p;
 
@@ -1602,14 +1594,14 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 				for(i = 0; i != DAEDALUS_PARTICLE_COUNT; i++)
 					EXTRA_PARTICLES[i].variant = -1;
 			}
-			missileScale = Daedalus_MissileScale;
+			missileScale = DaedalusMissileScale;
 			missilePlace.groundHeight = 0;
 			missilePlace.height = toFIXED(255);
 			for(i = 0; i != DAEDALUS_MISSILE_COUNT; i++) {
 				PARTICLE *p;
 
 				p = &state->particles[i];
-				if(frame >= Daedalus_DiveStarts[i] && p->variant == 0) {
+				if(frm >= DaedalusDiveStarts[i] && p->variant == 0) {
 					missilePlace.x = p->x;
 					missilePlace.y = p->y;
 					if(missilePlace.y > 0 && missilePlace.y < toFIXED(128))
@@ -1621,16 +1613,16 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 						p->variant = 1;
 						for(j = 0; j != 2; j++) {
 							Sint32	  speed;
-							Sint32	  angle;
+							Sint32	  ang;
 							PARTICLE *q;
 
 							q = &EXTRA_PARTICLES[i * FALL_BURST_SLOTS + j];
 							speed = (syRandom() & 31) + 32;
-							angle = (syRandom() & 0x7fff) + DEGtoANG(90);
+							ang = (syRandom() & 0x7fff) + DEGtoANG(90);
 							q->x = p->x / 2;
 							q->y = p->y;
-							q->velX = sySin(angle) * speed >> 4;
-							q->velY = syCos(angle) * speed >> 4;
+							q->velX = sySin(ang) * speed >> 4;
+							q->velY = syCos(ang) * speed >> 4;
 							q->variant = 0;
 						}
 						sySndPlayStub(SE_CLATTER);
@@ -1645,7 +1637,7 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 						PARTICLE *q;
 
 						{
-							Sint32 m = (frame - Daedalus_DiveStarts[i]) %
+							Sint32 m = (frm - DaedalusDiveStarts[i]) %
 								FALL_TRAIL_LENGTH;
 							q = &EXTRA_PARTICLES[i * FALL_TRAIL_LENGTH + m +
 								FALL_TRAILS];
@@ -1663,7 +1655,7 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 					DAEDALUS_SPRITE(i)->tile = DAEDALUS_SPRITE(0)->tile;
 				}
 			}
-			/* A trail's flame shows from its third frame. */
+			/* A trail's flame shows from its third tick. */
 			for(i = 0; i != DAEDALUS_MISSILE_COUNT * FALL_TRAIL_LENGTH; i++) {
 				PARTICLE *q;
 
@@ -1682,7 +1674,7 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 					q->variant++;
 				}
 			}
-			/* The bursts, three frames a picture, every other one added. */
+			/* The bursts, three ticks a picture, every other one added. */
 			for(i = 0; i != DAEDALUS_MISSILE_COUNT * FALL_BURST_SLOTS; i++) {
 				PARTICLE *q;
 
@@ -1701,7 +1693,7 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 				}
 			}
 			btCameraShake(8, 8);
-			EFFECT_END_FRAME(state);
+			EFFECT_END_TICK(state);
 		}
 		for(i = 0; i != DAEDALUS_MISSILE_COUNT; i++)
 			fdSprDestroyStub(state->sprs[i]);
@@ -1710,24 +1702,24 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 }
 
 /* The rocket's scale in the second strike: twice its size. */
-extern const SCALE DaedalusStrike_RocketScale;
+extern const SCALE DaedalusStrikeRocketScale;
 
-#define DAEDALUS_STRIKE_FRAMES		108
-/* The rocket dives in over the strike's first DAEDALUS_STRIKE_DIVE_FRAMES. */
-#define DAEDALUS_STRIKE_DIVE_FRAMES 92
+#define DAEDALUS_STRIKE_TICKS		108
+/* The rocket dives in over the strike's first DAEDALUS_STRIKE_DIVE_TICKS. */
+#define DAEDALUS_STRIKE_DIVE_TICKS	92
 /* From DAEDALUS_STRIKE_GLOW_START a disc of light swells to
    DAEDALUS_STRIKE_DISC_SIZE beneath it and its rays of light spin out: six of
    the sixteen set up, each shown for DAEDALUS_STRIKE_RAY_LIFE steps, two a
-   frame. */
+   tick. */
 #define DAEDALUS_STRIKE_GLOW_START	56
 #define DAEDALUS_STRIKE_DISC_SIZE	128
 #define DAEDALUS_STRIKE_RAYS_SET_UP 16
 #define DAEDALUS_STRIKE_RAYS		6
 #define DAEDALUS_STRIKE_RAY_LIFE	48
-/* At DAEDALUS_STRIKE_SPARK_FRAME the canvas flashes, and a burst of
+/* At DAEDALUS_STRIKE_SPARK_TICK the canvas flashes, and a burst of
    SPARKS_PER_BURST sparks scatters each of the next DAEDALUS_STRIKE_BURSTS
-   frames. */
-#define DAEDALUS_STRIKE_SPARK_FRAME 80
+   ticks. */
+#define DAEDALUS_STRIKE_SPARK_TICK	80
 #define DAEDALUS_STRIKE_BURSTS		8
 #define SPARKS_PER_BURST			8
 #define DAEDALUS_STRIKE_SPARKS		(DAEDALUS_STRIKE_BURSTS * SPARKS_PER_BURST)
@@ -1748,9 +1740,9 @@ typedef struct STRIKE_ROCKET {
 /* Daedalus's second strike, at the end of the turn after the summon: its rocket
    (SPRITE_DAEDALUS_ROCKET) dives from above the screen and settles while, from
    DAEDALUS_STRIKE_GLOW_START, a disc of light swells beneath it and rays of
-   light spin out. At DAEDALUS_STRIKE_SPARK_FRAME the canvas flashes and a burst
-   of sparks scatters each frame of DAEDALUS_STRIKE_BURSTS, and at the frames of
-   DaedalusStrike_HitFrames every target is knocked back and flashes.
+   light spin out. At DAEDALUS_STRIKE_SPARK_TICK the canvas flashes and a burst
+   of sparks scatters each tick of DAEDALUS_STRIKE_BURSTS, and at the ticks of
+   DaedalusStrikeHitTicks every target is knocked back and flashes.
 
    Abilities: Daedalus (its second strike). */
 void btEffectRunDaedalusStrike(BATTLE_EFFECT_PARM *args)
@@ -1761,7 +1753,7 @@ void btEffectRunDaedalusStrike(BATTLE_EFFECT_PARM *args)
 	MODEL_TEXTURE		 texture;
 	SPR_PLACEMENT		 place;
 	SCALE				 rocketScale;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 	Sint32				 j;
 	FIXED				 centerX;
@@ -1787,24 +1779,24 @@ void btEffectRunDaedalusStrike(BATTLE_EFFECT_PARM *args)
 	draw[0] = Ram_HeapSlots->ramCode;
 	btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 0);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-	state->fadeFrm = BACKGROUND_DARKEN_FRAMES;
+	state->fadeFrm = BACKGROUND_DARKEN_TICKS;
 	state->fadeStep = 0;
 
-	frame = 0;
+	frm = 0;
 	/* The first burst's sparks, counted from the strike's start. */
-	burst = -DAEDALUS_STRIKE_SPARK_FRAME * SPARKS_PER_BURST;
+	burst = -DAEDALUS_STRIKE_SPARK_TICK * SPARKS_PER_BURST;
 	do {
-		if(frame == 0) {
+		if(frm == 0) {
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 			syWordsCopyEntry((void *)BG_PLTT,
 				syResourceGetTableEntry(RESOURCE_ORANGE_PALETTE_B),
 				SHEET_PALETTE_BYTES);
 		}
-		if(frame == DAEDALUS_STRIKE_GLOW_START) {
+		if(frm == DAEDALUS_STRIKE_GLOW_START) {
 			sySndPlayStub(SE_SPIN);
 		}
 		for(i = 0; i != 7; i++) {
-			if(frame == DaedalusStrike_HitFrames[i]) {
+			if(frm == DaedalusStrikeHitTicks[i]) {
 				for(j = 0; j != args->tgtCnt; j++) {
 					btEffectStartActorMotion(args->tgts[j], 1, toFIXED(2),
 						toFIXED(8), toFIXED(2), 120);
@@ -1816,13 +1808,13 @@ void btEffectRunDaedalusStrike(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		/* The flash, and a burst of sparks a frame. */
-		if(frame >= DAEDALUS_STRIKE_SPARK_FRAME) {
+		/* The flash, and a burst of sparks a tick. */
+		if(frm >= DAEDALUS_STRIKE_SPARK_TICK) {
 			/* One pointer to the sparks for the burst and the draw loop
 			   below. */
 			PARTICLE *sparks;
 
-			if(frame == DAEDALUS_STRIKE_SPARK_FRAME) {
+			if(frm == DAEDALUS_STRIKE_SPARK_TICK) {
 				/* UB: the lives are cleared through one Sint32 pointer stepped
 				   a whole step at a time, past the step's scalar members. */
 				Sint32 *life = &EXTRA_PARTICLES[0].variant;
@@ -1836,7 +1828,7 @@ void btEffectRunDaedalusStrike(BATTLE_EFFECT_PARM *args)
 					CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 			}
 			sparks = EXTRA_PARTICLES;
-			if((Uint32)(frame - DAEDALUS_STRIKE_SPARK_FRAME) <
+			if((Uint32)(frm - DAEDALUS_STRIKE_SPARK_TICK) <
 				DAEDALUS_STRIKE_BURSTS) {
 				centerX = INTtoFIXED((syRandom() & 63) + 28);
 				centerY = INTtoFIXED((syRandom() & 31) + 80);
@@ -1846,16 +1838,16 @@ void btEffectRunDaedalusStrike(BATTLE_EFFECT_PARM *args)
 				spark = sparks + burst;
 				for(; j != SPARKS_PER_BURST; j++, spark++) {
 					Sint32 speed;
-					Sint32 angle;
+					Sint32 ang;
 					speed = 31;
 					speed &= syRandom();
-					angle = syRandom();
+					ang = syRandom();
 
 					spark->x = centerX + toFIXED((syRandom() & mask) - 8);
 					spark->y = centerY + toFIXED((syRandom() & mask) - 8);
 					speed += 32;
-					spark->velX = (sySin(angle) * speed) >> 3;
-					spark->velY = (syCos(angle) * speed) >> 3;
+					spark->velX = (sySin(ang) * speed) >> 3;
+					spark->velY = (syCos(ang) * speed) >> 3;
 					spark->variant = 0;
 				}
 			}
@@ -1880,26 +1872,26 @@ void btEffectRunDaedalusStrike(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		/* The rocket dives two pixels a frame for 64 frames, then sinks half a
-		   pixel a frame. */
-		if(frame < DAEDALUS_STRIKE_DIVE_FRAMES) {
+		/* The rocket dives two pixels a tick for 64 ticks, then sinks half a
+		   pixel a tick. */
+		if(frm < DAEDALUS_STRIKE_DIVE_TICKS) {
 			STRIKE_ROCKET *rocket;
 
-			rocketScale = DaedalusStrike_RocketScale;
+			rocketScale = DaedalusStrikeRocketScale;
 			rocket = state->sprs[0];
 			rocket->ofsY = 32;
 			rocket->ofsX = 0;
 			place.groundHeight = 0;
 			rocket->rotation = TRIG_TURN * 17 / 32;
 			place.height = toFIXED(255);
-			if(frame <= 63) {
-				place.x = toFIXED(152 - frame / 4);
-				place.y = toFIXED(frame * 2) - toFIXED(64);
-			} else if((Uint32)(frame - 64) <= 63) {
-				Sint32 sinkFrame = frame - 64;
+			if(frm <= 63) {
+				place.x = toFIXED(152 - frm / 4);
+				place.y = toFIXED(frm * 2) - toFIXED(64);
+			} else if((Uint32)(frm - 64) <= 63) {
+				Sint32 sinkFrm = frm - 64;
 
-				place.x = toFIXED(136 - sinkFrame / 16);
-				place.y = toFIXED(sinkFrame / 2) + toFIXED(64);
+				place.x = toFIXED(136 - sinkFrm / 16);
+				place.y = toFIXED(sinkFrm / 2) + toFIXED(64);
 			} else {
 				place.x = toFIXED(136);
 				place.y = toFIXED(64);
@@ -1909,10 +1901,10 @@ void btEffectRunDaedalusStrike(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The disc and the rays, until the rocket settles. */
-		if((Uint32)(frame - DAEDALUS_STRIKE_GLOW_START) <
-			DAEDALUS_STRIKE_DIVE_FRAMES - DAEDALUS_STRIKE_GLOW_START) {
+		if((Uint32)(frm - DAEDALUS_STRIKE_GLOW_START) <
+			DAEDALUS_STRIKE_DIVE_TICKS - DAEDALUS_STRIKE_GLOW_START) {
 			Sint32		  size;
-			Sint32		  grow = frame * 2 - 104;
+			Sint32		  grow = frm * 2 - 104;
 			RENDER_MODEL *model;
 			void		 *vertices;
 			PARTICLE	 *ray;
@@ -1931,7 +1923,7 @@ void btEffectRunDaedalusStrike(BATTLE_EFFECT_PARM *args)
 				cells, FIXEDtoINT(discX), FIXEDtoINT(discY), size);
 			/* Each ray at a random angle, turning a random way, a little after
 			   the one before. */
-			if(frame == DAEDALUS_STRIKE_GLOW_START) {
+			if(frm == DAEDALUS_STRIKE_GLOW_START) {
 				Sint32 delay;
 
 				i = 0;
@@ -1958,7 +1950,7 @@ void btEffectRunDaedalusStrike(BATTLE_EFFECT_PARM *args)
 			texture.pixels = state->sheet + DAEDALUS_STRIKE_GLOW_BAND;
 			model->kind = MODEL_SHADED_ADDITIVE;
 			model->texture = &texture;
-			model->mesh = BattleEffect_SmallSquareMesh;
+			model->mesh = BattleEffectSmallSquareMesh;
 
 			/* A ray swells and narrows again over its life. */
 			for(i = 0; i != DAEDALUS_STRIKE_RAYS; i++) {
@@ -1979,7 +1971,7 @@ void btEffectRunDaedalusStrike(BATTLE_EFFECT_PARM *args)
 							toFIXED(1),
 						toFIXED(2), toFIXED(1));
 					btRenderTransformVertices(
-						BattleEffect_TaperedBeamCorners, vertices, 4);
+						BattleEffectTaperedBeamCorners, vertices, 4);
 					btRenderDrawModelList(model);
 				}
 			}
@@ -1987,18 +1979,18 @@ void btEffectRunDaedalusStrike(BATTLE_EFFECT_PARM *args)
 			syHeapRelease(vertices);
 		}
 		btCameraShake(8, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 		burst += SPARKS_PER_BURST;
-		frame++;
-	} while(frame != DAEDALUS_STRIKE_FRAMES);
+		frm++;
+	} while(frm != DAEDALUS_STRIKE_TICKS);
 	syCloseEvent(btEffectTransferCanvas);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 	fdSprDestroyStub(state->sprs[0]);
 	btEffectEndCanvasLayer();
 }
 
-#undef MIRRORED_WALL_FRAMES
-#undef MIRRORED_WALL_DRAW_FRAMES
+#undef MIRRORED_WALL_TICKS
+#undef MIRRORED_WALL_DRAW_TICKS
 #undef PICTURE_SLOT_SIZE
 #undef PICTURE_OFFSET
 #undef EARTH_WALL_LOW
@@ -2013,14 +2005,14 @@ void btEffectRunDaedalusStrike(BATTLE_EFFECT_PARM *args)
 #undef MIRROR_HALF
 #undef IWRAM_COPY_WORDS_LINKED
 #undef DECODE_BUFFER
-#undef DAEDALUS_STRIKE_FRAMES
-#undef DAEDALUS_STRIKE_DIVE_FRAMES
+#undef DAEDALUS_STRIKE_TICKS
+#undef DAEDALUS_STRIKE_DIVE_TICKS
 #undef DAEDALUS_STRIKE_GLOW_START
 #undef DAEDALUS_STRIKE_DISC_SIZE
 #undef DAEDALUS_STRIKE_RAYS_SET_UP
 #undef DAEDALUS_STRIKE_RAYS
 #undef DAEDALUS_STRIKE_RAY_LIFE
-#undef DAEDALUS_STRIKE_SPARK_FRAME
+#undef DAEDALUS_STRIKE_SPARK_TICK
 #undef DAEDALUS_STRIKE_BURSTS
 #undef SPARKS_PER_BURST
 #undef DAEDALUS_STRIKE_SPARKS
@@ -2043,7 +2035,7 @@ void btEffectRunDaedalusStrike(BATTLE_EFFECT_PARM *args)
 #undef FALL_DIVE_SPREAD
 #undef FALL_TRAIL_LENGTH
 #undef FLAME_RING_COUNT
-#undef FLAME_RING_FRAMES
+#undef FLAME_RING_TICKS
 #undef FLAME_RING_STEP
 #undef FLAME_RING_Y
 #undef ROCKET_FLAME_COUNT
@@ -2058,7 +2050,7 @@ void btEffectRunDaedalusStrike(BATTLE_EFFECT_PARM *args)
 #undef ROCKET_NOSE_UP_START
 #undef ROCKET_NOSE_UP_END
 #undef ROCKET_LIFT_END
-#undef ROCKET_SINK_FRAMES
+#undef ROCKET_SINK_TICKS
 #undef ROCKET_TURN_START
 #undef ROCKET_BURSTS_START
 #undef ROCKET_DIP_START

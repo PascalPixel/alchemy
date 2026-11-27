@@ -70,15 +70,15 @@ void btEffectRunFreebiteRush(BATTLE_EFFECT_PARM *args)
 FLURRY_DEFINE_BY_VARIANT(btEffectRunFlyingAttack, FLURRY_FLYING_ATTACK,
 	FLURRY_FLYING_ATTACK_DOUBLE, FLURRY_FLYING_ATTACK_TRIPLE)
 
-/* The bytes of a Flurry_Styles row, one row a mode. */
+/* The bytes of a FlurryStyles row, one row a mode. */
 typedef enum FLURRY_COLUMN {
 	FLURRY_ARC_SHEET, /* the arcs (FLURRY_ARC) */
 	FLURRY_PALETTE,	  /* whose palette (FLURRY_PAL) */
 	FLURRY_STRIKES,
 	/* motes thrown by each strike, at most FLURRY_MOTES_PER_STRIKE */
 	FLURRY_MOTES,
-	FLURRY_INTERVAL, /* frames between strikes */
-	FLURRY_FRAMES,	 /* frames in the whole effect */
+	FLURRY_INTERVAL, /* ticks between strikes */
+	FLURRY_TICKS,	 /* ticks in the whole effect */
 	FLURRY_FLASH	 /* 1 fills the canvas with level 47 on each hit */
 } FLURRY_COLUMN;
 
@@ -93,17 +93,17 @@ typedef enum FLURRY_COLUMN {
 void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
 	SCREEN_POINT		 userPos;
-	SCREEN_POINT		 targetPos;
+	SCREEN_POINT		 tgtPos;
 	SCREEN_POINT		 screen;
 	Sint32				 screenX;
 	Sint32				 screenY;
 	BLITTER_PAIR		 draw;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
-	Uint8				*sprites;
+	Sint32				 frm;
+	Uint8				*sprs;
 	BATTLE_CAMERA		*camera;
-	ACTOR				*target;
+	ACTOR				*tgt;
 	Uint8				*palette;
 	Sint32				 paletteId;
 	Sint32				 row;
@@ -113,7 +113,7 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-	sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+	sprs = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
 	camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
 	state->args = args;
 	btEffectStartCanvasLayer(0);
@@ -122,7 +122,7 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		btEffectRunDjinniEntrance(args, ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG,
 			state->args->side, DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
 
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, state->sheet, 1, 0);
 	for(row = 0; row != YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT; row++) {
@@ -134,7 +134,7 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			state->sheet[dst] = state->sheet[src];
 		}
 	}
-	if(Flurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS_AND_WAVES)
+	if(FlurryStyles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS_AND_WAVES)
 		btResourceLoadAndDecompress(
 			RESOURCE_BLUE_ARC_SHEET_A, state->sheet, 1, 1);
 	else
@@ -142,7 +142,7 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			RESOURCE_BLUE_ARC_SHEET_B, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(
 		RESOURCE_WAVE_SHEET, FLURRY_WAVE_PICTURES, 1, 0);
-	switch(Flurry_Styles[mode][FLURRY_PALETTE]) {
+	switch(FlurryStyles[mode][FLURRY_PALETTE]) {
 	case FLURRY_PALETTE_MARS_DJINNI:
 		paletteId = RESOURCE_MARS_DJINN_SHEET;
 		break;
@@ -160,27 +160,27 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	syWordsCopy(BG_PLTT, palette, SHEET_PALETTE_BYTES);
 	sySynch(1);
 
-	btProjectionScaledUnit(state->args->tgts[0], &targetPos);
+	btProjectionScaledUnit(state->args->tgts[0], &tgtPos);
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
 	/* Motes wait above the target until their strike releases them. */
-	target = btObjectGetStub(state->args->tgts[0])->actor;
+	tgt = btObjectGetStub(state->args->tgts[0])->actor;
 	for(i = 0; i != FLURRY_WAITING_MOTES; i++) {
 		PARTICLE *mote = &PARTICLES[i];
 
-		SET_POSITION(mote, target->x.fixed, target->y.fixed + toFIXED(25),
-			target->z.fixed);
+		SET_POSITION(
+			mote, tgt->x.fixed, tgt->y.fixed + toFIXED(25), tgt->z.fixed);
 		SET_VELOCITY(mote, (syRandom() & 255) << 12,
 			((syRandom() & 255) - 127) << 12, ((syRandom() & 255) - 127) << 12);
 		if(mote->x > 0)
 			mote->velX = -mote->velX;
-		mote->variant = -1; /* frames left (negative: not out yet) */
+		mote->variant = -1; /* ticks left (negative: not out yet) */
 	}
 	btMotionApproachTargetStub(state->args->user, state->args->tgts[0], 4, 0);
 
-	for(frame = 0; frame != Flurry_Styles[mode][FLURRY_FRAMES]; frame++) {
-		Sint32 strikes = Flurry_Styles[mode][FLURRY_STRIKES];
+	for(frm = 0; frm != FlurryStyles[mode][FLURRY_TICKS]; frm++) {
+		Sint32 strikes = FlurryStyles[mode][FLURRY_STRIKES];
 
 		btProjectionScaledUnit(state->args->user, &userPos);
 		userPos.x /= 2;
@@ -199,38 +199,38 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 		draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 		for(i = 0; i != strikes; i++) {
-			Sint32 start = i * Flurry_Styles[mode][FLURRY_INTERVAL];
+			Sint32 start = i * FlurryStyles[mode][FLURRY_INTERVAL];
 
-			if(frame >= start && frame < start + 6) {
-				Sint32 step = frame - start;
+			if(frm >= start && frm < start + 6) {
+				Sint32 step = frm - start;
 
 				if((i & 3) <= 1 ||
-					Flurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS) {
+					FlurryStyles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS) {
 					if(state->args->side == EFFECT_SIDE_ENEMIES)
 						draw[i & 1](canvas,
 							state->sheet + step * PICTURE_BYTES(BLUE_ARC),
-							targetPos.x / 2 - 16, targetPos.y - 40,
-							BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
+							tgtPos.x / 2 - 16, tgtPos.y - 40, BLUE_ARC_WIDTH,
+							BLUE_ARC_HEIGHT);
 					else
 						draw[i & 1](canvas,
 							state->sheet + step * PICTURE_BYTES(BLUE_ARC),
-							targetPos.x / 2 - 32, targetPos.y - 40,
-							BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
+							tgtPos.x / 2 - 32, tgtPos.y - 40, BLUE_ARC_WIDTH,
+							BLUE_ARC_HEIGHT);
 				} else {
 					if(state->args->side == EFFECT_SIDE_ENEMIES)
 						draw[i & 1](canvas,
 							FLURRY_WAVE_PICTURES + step * PICTURE_BYTES(WAVE),
-							targetPos.x / 2 - 16, userPos.y - WAVE_HEIGHT / 2,
+							tgtPos.x / 2 - 16, userPos.y - WAVE_HEIGHT / 2,
 							WAVE_WIDTH, WAVE_HEIGHT);
 					else
 						draw[i & 1](canvas,
 							FLURRY_WAVE_PICTURES + step * PICTURE_BYTES(WAVE),
-							targetPos.x / 2 - 32, userPos.y - WAVE_HEIGHT / 2,
+							tgtPos.x / 2 - 32, userPos.y - WAVE_HEIGHT / 2,
 							WAVE_WIDTH, WAVE_HEIGHT);
 				}
 			}
-			if(frame == start + 2) {
-				if(Flurry_Styles[mode][FLURRY_FLASH] == 1)
+			if(frm == start + 2) {
+				if(FlurryStyles[mode][FLURRY_FLASH] == 1)
 					syWordsFill(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
 				btEffectTintBattler(state->args->tgts[0], SPRITE_COLOR_WHITE,
 					POSE_DAMAGE, 0, 4);
@@ -246,18 +246,18 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					state->shakeFrm = 4;
 					sySndPlayStub(SE_HEAVY_IMPACT);
 				}
-				for(j = 0; j != Flurry_Styles[mode][FLURRY_MOTES]; j++)
+				for(j = 0; j != FlurryStyles[mode][FLURRY_MOTES]; j++)
 					PARTICLES[i * FLURRY_MOTES_PER_STRIKE + j].variant =
 						(syRandom() & 7) + 15;
 			}
-			if(frame >= start + 2 && frame < start + 14)
+			if(frm >= start + 2 && frm < start + 14)
 				draw[0](canvas,
 					state->sheet +
-						((frame - start - 2) / 2) *
+						((frm - start - 2) / 2) *
 							PICTURE_BYTES(YELLOW_ORB_PACKED) +
 						FLURRY_ORB_PICTURES,
-					targetPos.x / 2 - YELLOW_ORB_PACKED_WIDTH / 2,
-					targetPos.y - YELLOW_ORB_PACKED_HEIGHT / 2,
+					tgtPos.x / 2 - YELLOW_ORB_PACKED_WIDTH / 2,
+					tgtPos.y - YELLOW_ORB_PACKED_HEIGHT / 2,
 					YELLOW_ORB_PACKED_WIDTH, YELLOW_ORB_PACKED_HEIGHT);
 		}
 		EFFECT_RELEASE_BLITTERS();
@@ -280,8 +280,8 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				screen.x /= 2;
 				size >>= 3;
 				size++;
-				EFFECT_DRAW_MOTE(draw[(i / 2) & 1], canvas, sprites, screen.x,
-					screen.y, size);
+				EFFECT_DRAW_MOTE(
+					draw[(i / 2) & 1], canvas, sprs, screen.x, screen.y, size);
 				btParticleAdvanceWithGravity3D(mote, 60, -toFIXED(1) / 64);
 				if(mote->y < toFIXED(8))
 					mote->velY = -mote->velY / 2;
@@ -290,7 +290,7 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		}
 		EFFECT_RELEASE_BLITTERS();
 		btCameraShake(8, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 	syCloseEvent(btEffectTransferCanvas);
 	btEffectEndCanvasLayer();

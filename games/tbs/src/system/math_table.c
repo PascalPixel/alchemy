@@ -6,7 +6,7 @@
 /* A quarter-wave sine table, scaled by 65536: entry i is the sine of i/1024 of
    a turn. */
 /* clang-format off */
-const Uint16 Math_SinQuarter[256] = {
+const Uint16 MathSinQuarter[256] = {
 	0, 402, 804, 1206, 1608, 2010, 2412, 2814,
 	3216, 3617, 4019, 4420, 4821, 5222, 5623, 6023,
 	6424, 6824, 7224, 7623, 8022, 8421, 8820, 9218,
@@ -42,19 +42,19 @@ const Uint16 Math_SinQuarter[256] = {
 };
 
 /* Unused: floor(i * 2π) for i from 0 to 7; nothing reads it. */
-const Uint16 Math_TwoPiSteps[8] = {
+const Uint16 MathTwoPiSteps[8] = {
 	0, 6, 12, 18, 25, 31, 37, 43,
 };
 
 /* Unused: the sine at 0, 90, 180 and 270 degrees, in 16.16; nothing reads it. */
-const Sint32 Math_QuadrantSin[4] = {
+const Sint32 MathQuadrantSin[4] = {
 	0, toFIXED(1), 0, toFIXED(-1),
 };
 
 /* Tangents scaled by 256: index i is about tan(i * 45 / 128 degrees), so */
 /* index 128 is tan(45 degrees); the last entries before 90 degrees run high. */
 /* syAtan starts its binary search at index 127. */
-const Uint16 Math_TanTable[258] = {
+const Uint16 MathTanTable[258] = {
 	0, 1, 3, 4, 6, 7, 9, 11,
 	12, 14, 15, 17, 18, 20, 22, 23,
 	25, 26, 28, 30, 31, 33, 34, 36,

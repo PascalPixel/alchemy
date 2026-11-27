@@ -87,7 +87,7 @@ STATIC_ASSERT(offsetof(TOUCH_COPIES, copies) == 5964);
 #define TouchCopiesWork (*(TOUCH_COPIES *)SceneLocalState)
 
 /* A particle of the particle burst (fdParticleBurstStart): its place, heading,
-   speed, spin and the frames before it starts. */
+   speed, spin and the ticks before it starts. */
 typedef struct BURST_PARTICLE {
 	Sint32 x;
 	Sint32 y;
@@ -102,14 +102,14 @@ typedef struct BURST_PARTICLE {
 #define PARTICLE_BURST_COUNT 96
 
 /* The particle burst's state (fdParticleBurstStart): its tiles, 96 sprites and
-   particles, its VRAM cache entry, a flash on frame 30 and its frame count. */
+   particles, its VRAM cache entry, a flash on tick 30 and its tick count. */
 typedef struct PARTICLE_BURST_STATE {
 	Uint8		   tiles[384];
 	EFFECT_SPR	   sprs[PARTICLE_BURST_COUNT];
 	BURST_PARTICLE particles[PARTICLE_BURST_COUNT];
 	Sint16 cacheEntry; /* the VRAM cache entry holding the leaves' tiles */
 	Sint16 tile;	   /* their first tile in OBJ VRAM */
-	Sint16 flash;	   /* set on frame 30 only */
+	Sint16 flash;	   /* set on tick 30 only */
 	Sint16 frm;
 	Sint16 active;
 } PARTICLE_BURST_STATE;
@@ -120,7 +120,7 @@ typedef struct BURST_METATILE {
 	Sint16 z;
 } BURST_METATILE;
 
-/* One step of a sparkle's rise (FieldEffect_SparklePictures): its height above
+/* One step of a sparkle's rise (FieldEffectSparklePictures): its height above
    its spot in screen pixels, and its tile. */
 typedef struct SPARKLE_PICTURE {
 	Sint16 dy;
@@ -135,7 +135,7 @@ Sint32 gmPartyInventoryFindRoomStub(Sint32 item);
 Sint32 mnItemPickerRunToDropStub(Sint32 *member, Sint32 *slot);
 /* fdActorScriptCheckOverlap through its stub call: -1 when the actor at
    position would overlap a solid actor, otherwise 0. */
-Sint32 fdActorScriptCheckOverlapStub(ACTOR *actor, VECTOR3 *position);
+Sint32 fdActorScriptCheckOverlapStub(ACTOR *actor, VECTOR3 *pos);
 /* fdActorGetSprId through its stub call: the sprite id the actor is drawn with,
    or 0 for none. */
 Sint32 fdActorGetSprIdStub(ACTOR *actor);
@@ -145,11 +145,11 @@ void fdMapGridCopyMetatileTilesMetatilesRectStub(Sint32 toX, Sint32 toZ,
 	Sint32 width, Sint32 height, Sint32 fromX, Sint32 fromZ);
 /* fdActorScriptFindOverlappingActor through its stub call: the first solid
    actor the actor at position would overlap, or NULL. */
-ACTOR *fdActorScriptFindOverlappingActorStub(ACTOR *actor, VECTOR3 *position);
+ACTOR *fdActorScriptFindOverlappingActorStub(ACTOR *actor, VECTOR3 *pos);
 
 void   fdPsynergyMove(void);
 void   fdPsynergyCarry(void);
-void   fdPsynergySteerLiftedTarget(Sint32 targetId);
+void   fdPsynergySteerLiftedTarget(Sint32 tgtId);
 void   fdPsynergyForce(void);
 void   fdPsynergyLash(void);
 void   fdPsynergyLashOnTarget(Sint32 value);
@@ -184,9 +184,9 @@ void   fdPsynergyRing(void);
 void   fdPsynergyEndRing(void);
 void   fdPsynergyWatchLeaderDistance(void);
 
-/* The stage Burst passes its target's script each frame (BURST_STATE.shake). */
+/* The stage Burst passes its target's script each tick (BURST_STATE.shake). */
 typedef enum BURST_STAGE {
-	BURST_STAGE_QUIET,		 /* no explosion this frame */
+	BURST_STAGE_QUIET,		 /* no explosion this tick */
 	BURST_STAGE_DYING_DOWN,	 /* the great blast dying down */
 	BURST_STAGE_SMALL_BLAST, /* a small explosion shakes the ground */
 	BURST_STAGE_GREAT_BLAST	 /* the last and largest blast */
@@ -198,9 +198,9 @@ void fdMindReadAdvanceTint(void);
 void fdMindReadUpdateCrescent(ACTOR *actor);
 void fdMindReadStartRipple(void);
 
-ACTOR *fdEffectSpawnCarryHand(Sint32 x, Sint32 y, Sint32 z, Sint32 angle);
-ACTOR *fdEffectSpawnLiftHand(Sint32 x, Sint32 y, Sint32 z, Sint32 angle);
-Sint32 fdEffectSpawnHeavyImpact(ACTOR *source);
+ACTOR *fdEffectSpawnCarryHand(Sint32 x, Sint32 y, Sint32 z, Sint32 ang);
+ACTOR *fdEffectSpawnLiftHand(Sint32 x, Sint32 y, Sint32 z, Sint32 ang);
+Sint32 fdEffectSpawnHeavyImpact(ACTOR *src);
 void   fdEffectSpawnBurstParticleField(void);
 void   fdEffectUpdateRandomTargetParticle(FIELD_PARTICLE *effect);
 void   fdEffectCheckCloakTile(void);
@@ -222,12 +222,12 @@ typedef enum CASTER_LOOK {
 
 void fdBattleEffectDrawCanvasBlock(
 	const Uint8 *src, Sint32 x, Sint32 y, Sint32 width, Sint32 height);
-extern const Sint32 DustPuff_LongScript[];
-extern const Sint32 DustPuff_ShortScript[];
-extern const Sint32 FieldEffect_SourceHoldScript[];
-extern const Sint32 Force_FistScript[];
-extern const Uint8	MindRead_CasterColorCycle[];
-extern const Uint8	MoveHand_PushPoses[];
+extern const Sint32 DustPuffLongScript[];
+extern const Sint32 DustPuffShortScript[];
+extern const Sint32 FieldEffectSourceHoldScript[];
+extern const Sint32 ForceFistScript[];
+extern const Uint8	MindReadCasterColorCycle[];
+extern const Uint8	MoveHandPushPoses[];
 
 /* Three coordinates of a burst piece's place, x, y and z, filled in turn as
    syVectorAddPolarOffset reads them. */
@@ -295,11 +295,11 @@ void fdDjinnRestoreActorAfterBattle(void);
 void fdMapScreenGetLeaderPoint(Sint32 *screenX, Sint32 *screenY);
 void fdPsynergyMarkWorldMapTilesUsed(void);
 
-/* The places' markers' blend, a level for every two frames of a 64-frame
+/* The places' markers' blend, a level for every two ticks of a 64-tick
    cycle. */
-extern const Uint8 WorldMap_MarkerBlendCycle[];
+extern const Uint8 WorldMapMarkerBlendCycle[];
 /* The cursor's heading for each way the +Control Pad is held. */
-extern const Uint16 WorldMap_CursorDirectionAngles[];
+extern const Uint16 WorldMapCursorDirectionAngles[];
 
 /* The battles the scripts start: the encounter zones of the story's battles,
    the Mad Plants' leap and the transition into a battle. */
@@ -373,7 +373,7 @@ typedef enum HIDDEN_BOSS {
 } HIDDEN_BOSS;
 
 /* fdActorSetLayersColMode's value that cycles the actor's colours
-   (MindRead_CasterColorCycle); any other is a colour mode plus one. */
+   (MindReadCasterColorCycle); any other is a colour mode plus one. */
 #define LAYERS_COLOR_CYCLING 0
 void fdActorSetLayersColMode(void *actor, Sint32 value);
 void fdActorSetOthersPaused(
@@ -385,7 +385,7 @@ void fdWeatherUpdateLightning(void);
 
 /* What fdInputGetDpadAngEightWay returns when no direction is held, or right
    and left or up and down together: the blank entries of
-   Input_DpadAnglesEightWay. */
+   InputDpadAnglesEightWay. */
 #define DPAD_ANGLE_NONE 65535
 
 #endif

@@ -4,15 +4,15 @@
 #include "field_mode_internal.h"
 
 /* How far, in pixels, a field Psynergy reaches when
-   FieldEffect_TargetRangeByMode does not list its kind. */
+   FieldEffectTargetRangeByMode does not list its kind. */
 #define TARGET_RANGE_DEFAULT 16
 
 /* Returns how far, in pixels, a field Psynergy of the given kind reaches:
-   FieldEffect_TargetRangeByMode (field_mode_tables.c) pairs kinds with ranges,
+   FieldEffectTargetRangeByMode (field_mode_tables.c) pairs kinds with ranges,
    ended by -1. */
 Sint32 fdGetPsynergyTargetRange(Sint32 kind)
 {
-	const Sint16 *rangeEntry = FieldEffect_TargetRangeByMode;
+	const Sint16 *rangeEntry = FieldEffectTargetRangeByMode;
 	Sint32		  range = TARGET_RANGE_DEFAULT;
 	Sint32		  listedKind = *rangeEntry;
 
@@ -208,20 +208,19 @@ Sint32 fdFindNearbyPsynergyTarget(Sint32 id, Sint32 kind)
 }
 
 /* Opens the chest that is actor target (SE_CHEST_OPEN, the lid lifting on
-   treasure) and, 12 frames later, shows itemId in front of actor actorId with
+   treasure) and, 12 ticks later, shows itemId in front of actor actorId with
    sparkles; returns the actor that shows the item, or 0 when there is no
    chest. */
-Sint32 fdChestOpenAndShowItem(Sint32 actorId, Sint32 target, Sint32 itemId)
+Sint32 fdChestOpenAndShowItem(Sint32 actorId, Sint32 tgt, Sint32 itemId)
 {
-	void  *targetActor;
+	void  *tgtActor;
 	Sint32 itemActor;
 
-	targetActor = fdActorGetById(target);
+	tgtActor = fdActorGetById(tgt);
 	itemActor = 0;
-	if(targetActor != 0) {
+	if(tgtActor != 0) {
 		sySndPlayStub(SE_CHEST_OPEN);
-		fdActorSelectAnimationStub(
-			targetActor, CHEST_ANIMATION_OPEN_ON_TREASURE);
+		fdActorSelectAnimationStub(tgtActor, CHEST_ANIMATION_OPEN_ON_TREASURE);
 		sySynch(12);
 		itemActor = (Sint32)fdItemDispShowItemInFront(actorId, itemId);
 	}
@@ -229,27 +228,27 @@ Sint32 fdChestOpenAndShowItem(Sint32 actorId, Sint32 target, Sint32 itemId)
 }
 
 /* Gives each running layer of an actor's one sprite the colour mode
-   colorModePlusOne - 1 (SPRITE_COLOR_NORMAL for 1), or for 0 the next of Mind
-   Read's caster cycle, a mode every 2 frames; a hidden layer stays hidden. */
-void fdActorSetLayersColMode(ACTOR *actor, Sint32 colorModePlusOne)
+   colModePlusOne - 1 (SPRITE_COLOR_NORMAL for 1), or for 0 the next of Mind
+   Read's caster cycle, a mode every 2 ticks; a hidden layer stays hidden. */
+void fdActorSetLayersColMode(ACTOR *actor, Sint32 colModePlusOne)
 {
-	SPR			   *sprite;
+	SPR			   *spr;
 	SPR_ANIMATION **entrySlot;
 	SPR_ANIMATION  *entry;
 	Sint32			remainingParts;
 	Sint32			replacement;
-	Uint8			partCount;
+	Uint8			partCnt;
 
 	if((actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
-		sprite = actor->spr;
-		replacement = colorModePlusOne - 1;
-		if(colorModePlusOne == 0)
-			replacement = MindRead_CasterPaletteCycle[(FrameCount >> 1) & 7];
+		spr = actor->spr;
+		replacement = colModePlusOne - 1;
+		if(colModePlusOne == 0)
+			replacement = MindReadCasterPaletteCycle[(TickCount >> 1) & 7];
 
-		partCount = sprite->cnt;
-		if(partCount != 0) {
-			entrySlot = sprite->entries;
-			remainingParts = partCount;
+		partCnt = spr->cnt;
+		if(partCnt != 0) {
+			entrySlot = spr->entries;
+			remainingParts = partCnt;
 			do {
 				entry = *entrySlot++;
 				if(entry != 0 && entry->script != 0 &&
@@ -258,7 +257,7 @@ void fdActorSetLayersColMode(ACTOR *actor, Sint32 colorModePlusOne)
 				remainingParts--;
 			} while(remainingParts != 0);
 		}
-		sprite->dirty = 1;
+		spr->dirty = 1;
 	}
 }
 

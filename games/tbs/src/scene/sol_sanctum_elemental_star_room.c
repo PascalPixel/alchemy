@@ -53,12 +53,12 @@
 #include "scene/walk_into_leader.h"
 #include "text/msg_ids.h"
 
-extern Sint32	   SolSanctumElementalStarRoom_AngleScript[];
-extern Sint32	   ItemIcon_GrowScript[];
-extern Uint32	   SolSanctumElementalStarRoom_Exits[];
-extern ACTOR_PLACE SolSanctumElementalStarRoom_ActorPlacements[];
-extern CUE		   SolSanctumElementalStarRoom_Cues[];
-extern Uint16	   SolSanctum_StarMetatiles[];
+extern Sint32	   SolSanctumElementalStarRoomAngleScript[];
+extern Sint32	   ItemIconGrowScript[];
+extern Uint32	   SolSanctumElementalStarRoomExits[];
+extern ACTOR_PLACE SolSanctumElementalStarRoomActorPlacements[];
+extern CUE		   SolSanctumElementalStarRoomCues[];
+extern Uint16	   SolSanctumStarMetatiles[];
 
 static void scSolSanctumElementalStarRoomBagJupiterStar(void);
 static void scSolSanctumElementalStarRoomRevealSaturosAndMenardi(void);
@@ -68,7 +68,7 @@ static void scSolSanctumElementalStarRoomFelixRemovesMask(void);
 static void scSolSanctumElementalStarRoomAlexTakesStars(void);
 static void scSolSanctumElementalStarRoomStandAroundHostages(void);
 static void scSolSanctumElementalStarRoomShowMessageAndWait(
-	Sint32 speaker, Sint32 frames);
+	Sint32 speaker, Sint32 ticks);
 static Sint32 scSolSanctumElementalStarRoomPresentStarFX(
 	Sint32 item, FIXED x, FIXED y, FIXED z);
 /* scSolSanctumElementalStarRoomPresentStarFX at a point in whole pixels. */
@@ -79,7 +79,7 @@ static void scSolSanctumElementalStarRoomGiveMythrilBags(void);
 static void scSolSanctumElementalStarRoomAlexWarpsIn(void);
 
 /* The placed actors, numbered in the order of
-   SolSanctumElementalStarRoom_ActorPlacements.
+   SolSanctumElementalStarRoomActorPlacements.
 
    Garet and Jenna, placed first, keep their own slots. */
 typedef enum STAR_ROOM_ACTOR_ID {
@@ -156,7 +156,7 @@ typedef enum SOL_SANCTUM_ELEMENTAL_STAR_ROOM_METATILE_BEHAVIOR {
 
 /* Draws a sunken pillar risen, as bagging a star raises three of them into
    stepping stones: its picture, 3 by 4 metatiles on the overhead layer, then
-   OPEN_RISEN_PILLAR. The scripts play the rise (SolSanctum_StarMetatiles) where
+   OPEN_RISEN_PILLAR. The scripts play the rise (SolSanctumStarMetatiles) where
    this draws its last picture. */
 #define DRAW_RISEN_PILLAR(column, row) \
 	(fdMapGridCopyMetatilesTo(83, 40, RISEN_PILLAR_LEFT(column), row, 3, 4), \
@@ -177,7 +177,7 @@ static inline void scSolSanctumElementalStarRoomSkipMessages(Sint32 amount)
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return SolSanctum_StarRoomEntrances;
+	return SolSanctumStarRoomEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -187,12 +187,12 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return SolSanctumElementalStarRoom_Exits;
+	return SolSanctumElementalStarRoomExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return SolSanctumElementalStarRoom_ActorPlacements;
+	return SolSanctumElementalStarRoomActorPlacements;
 }
 
 /* Returns the statues' examine cues, the talk rows, the beam of light that
@@ -200,7 +200,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
    rows are there too, though no one in the party knows Mind Read yet. */
 const CUE *scGetCues(void)
 {
-	return SolSanctumElementalStarRoom_Cues;
+	return SolSanctumElementalStarRoomCues;
 }
 
 /* Isaac searches the statue in the south east of the room (metatile (44, 28))
@@ -217,7 +217,7 @@ static void scSolSanctumElementalStarRoomBagVenusStar(void)
 {
 	Uint32 i;
 	Sint32 member;
-	Sint32 message;
+	Sint32 msg;
 
 	fdScriptStart();
 	sySndPlay(SE_RUMBLE);
@@ -241,7 +241,7 @@ static void scSolSanctumElementalStarRoomBagVenusStar(void)
 	fdScriptWait(20);
 	fdMapGridSetShake(1, 2, 1);
 	sySndPlay(SE_CLATTER);
-	fdMapGridPlayMapEdit(SolSanctum_StarMetatiles, RISEN_PILLAR_LEFT(41), 29);
+	fdMapGridPlayMapEdit(SolSanctumStarMetatiles, RISEN_PILLAR_LEFT(41), 29);
 	OPEN_RISEN_PILLAR(41, 29);
 	fdScriptWait(40);
 	fdMapGridSetScreenShake(0, 0, 0);
@@ -251,7 +251,7 @@ static void scSolSanctumElementalStarRoomBagVenusStar(void)
 	fdMapGridSetShake(1, 2, 1);
 	fdScriptWait(20);
 	sySndPlay(SE_CLATTER);
-	fdMapGridPlayMapEdit(SolSanctum_StarMetatiles, RISEN_PILLAR_LEFT(19), 29);
+	fdMapGridPlayMapEdit(SolSanctumStarMetatiles, RISEN_PILLAR_LEFT(19), 29);
 	OPEN_RISEN_PILLAR(19, 29);
 	fdScriptWait(40);
 	fdMapGridSetScreenShake(0, 0, 0);
@@ -260,19 +260,19 @@ static void scSolSanctumElementalStarRoomBagVenusStar(void)
 	fdMapGridSetShake(1, 2, 1);
 	fdScriptWait(20);
 	sySndPlay(SE_CLATTER);
-	fdMapGridPlayMapEdit(SolSanctum_StarMetatiles, RISEN_PILLAR_LEFT(41), 10);
+	fdMapGridPlayMapEdit(SolSanctumStarMetatiles, RISEN_PILLAR_LEFT(41), 10);
 	OPEN_RISEN_PILLAR(41, 10);
 	fdScriptWait(40);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdCameraMoveTo(710, CAMERA_KEEP, 474, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdMapGridSetShake(2, 1, 1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -284,30 +284,30 @@ static void scSolSanctumElementalStarRoomBagVenusStar(void)
 		scSolSanctumElementalStarRoomPresentStar(ITEM_VENUS_STAR, 712, 16, 464);
 	fdScriptWait(40);
 	mnMessageArgumentPush(member, MESSAGE_ARGUMENT_ACTOR);
-	message = MsgSolSanctumVenusStarBagged;
+	msg = MsgSolSanctumVenusStarBagged;
 	/* "...put the Venus Star in a Mythril Bag." */
-	mnFieldMessageShow(message, 1);
+	mnFieldMessageShow(msg, 1);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 20);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdCameraMoveTo(462, CAMERA_KEEP, 350, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	fdActorJump(ACTOR_KRADEN, 4, 30);
-	fdScriptSetMessageId(message - 1);
+	fdScriptSetMessageId(msg - 1);
 	/* "Good, good! Now, go fetch the others!" */
 	scSolSanctumElementalStarRoomShowMessageAndWait(ACTOR_KRADEN, 20);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdCameraMoveTo(710, CAMERA_KEEP, 474, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	gmFlagSet(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED);
 	fdScriptEnd();
 }
@@ -323,7 +323,7 @@ static void scSolSanctumElementalStarRoomBagMercuryStar(void)
 {
 	Uint32 i;
 	Sint32 member;
-	Sint32 message;
+	Sint32 msg;
 
 	fdScriptStart();
 	sySndPlay(SE_RUMBLE);
@@ -348,7 +348,7 @@ static void scSolSanctumElementalStarRoomBagMercuryStar(void)
 	fdMapGridSetShake(1, 2, 1);
 	fdScriptWait(20);
 	sySndPlay(SE_CLATTER);
-	fdMapGridPlayMapEdit(SolSanctum_StarMetatiles, RISEN_PILLAR_LEFT(29), 4);
+	fdMapGridPlayMapEdit(SolSanctumStarMetatiles, RISEN_PILLAR_LEFT(29), 4);
 	OPEN_RISEN_PILLAR(29, 4);
 	fdScriptWait(40);
 	fdMapGridSetShake(0, 0, 0);
@@ -357,7 +357,7 @@ static void scSolSanctumElementalStarRoomBagMercuryStar(void)
 	fdMapGridSetShake(1, 2, 1);
 	fdScriptWait(20);
 	sySndPlay(SE_CLATTER);
-	fdMapGridPlayMapEdit(SolSanctum_StarMetatiles, RISEN_PILLAR_LEFT(21), 21);
+	fdMapGridPlayMapEdit(SolSanctumStarMetatiles, RISEN_PILLAR_LEFT(21), 21);
 	OPEN_RISEN_PILLAR(21, 21);
 	fdScriptWait(40);
 	fdMapGridSetShake(0, 0, 0);
@@ -367,19 +367,19 @@ static void scSolSanctumElementalStarRoomBagMercuryStar(void)
 	fdMapGridSetShake(1, 2, 1);
 	fdScriptWait(20);
 	sySndPlay(SE_CLATTER);
-	fdMapGridPlayMapEdit(SolSanctum_StarMetatiles, RISEN_PILLAR_LEFT(21), 29);
+	fdMapGridPlayMapEdit(SolSanctumStarMetatiles, RISEN_PILLAR_LEFT(21), 29);
 	OPEN_RISEN_PILLAR(21, 29);
 	fdScriptWait(40);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdCameraMoveTo(712, CAMERA_KEEP, 152, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdMapGridSetShake(2, 1, 1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -391,30 +391,30 @@ static void scSolSanctumElementalStarRoomBagMercuryStar(void)
 		ITEM_MERCURY_STAR, 712, 16, 144);
 	fdScriptWait(40);
 	mnMessageArgumentPush(member, MESSAGE_ARGUMENT_ACTOR);
-	message = MsgSolSanctumPutMercuryStar;
+	msg = MsgSolSanctumPutMercuryStar;
 	/* "...put the Mercury Star in a Mythril Bag." */
-	mnFieldMessageShow(message, 1);
+	mnFieldMessageShow(msg, 1);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 20);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdCameraMoveTo(462, CAMERA_KEEP, 350, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	fdActorJump(ACTOR_KRADEN, 4, 30);
-	fdScriptSetMessageId(message - 2);
+	fdScriptSetMessageId(msg - 2);
 	/* "Good, good! Now, go fetch the others!" */
 	scSolSanctumElementalStarRoomShowMessageAndWait(ACTOR_KRADEN, 20);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdCameraMoveTo(712, CAMERA_KEEP, 152, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	gmFlagSet(FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED);
 	fdScriptEnd();
 }
@@ -472,7 +472,7 @@ static void scSolSanctumElementalStarRoomBagJupiterStar(void)
 	fdMapGridSetShake(1, 2, 1);
 	fdScriptWait(20);
 	sySndPlay(SE_CLATTER);
-	fdMapGridPlayMapEdit(SolSanctum_StarMetatiles, RISEN_PILLAR_LEFT(10), 31);
+	fdMapGridPlayMapEdit(SolSanctumStarMetatiles, RISEN_PILLAR_LEFT(10), 31);
 	OPEN_RISEN_PILLAR(10, 31);
 	fdScriptWait(40);
 	fdMapGridSetShake(0, 0, 0);
@@ -482,7 +482,7 @@ static void scSolSanctumElementalStarRoomBagJupiterStar(void)
 	fdMapGridSetShake(1, 2, 1);
 	fdScriptWait(20);
 	sySndPlay(SE_CLATTER);
-	fdMapGridPlayMapEdit(SolSanctum_StarMetatiles, RISEN_PILLAR_LEFT(24), 9);
+	fdMapGridPlayMapEdit(SolSanctumStarMetatiles, RISEN_PILLAR_LEFT(24), 9);
 	OPEN_RISEN_PILLAR(24, 9);
 	fdScriptWait(40);
 	fdMapGridSetShake(0, 0, 0);
@@ -492,19 +492,19 @@ static void scSolSanctumElementalStarRoomBagJupiterStar(void)
 	fdMapGridSetShake(1, 2, 1);
 	fdScriptWait(20);
 	sySndPlay(SE_CLATTER);
-	fdMapGridPlayMapEdit(SolSanctum_StarMetatiles, RISEN_PILLAR_LEFT(36), 10);
+	fdMapGridPlayMapEdit(SolSanctumStarMetatiles, RISEN_PILLAR_LEFT(36), 10);
 	OPEN_RISEN_PILLAR(36, 10);
 	fdScriptWait(40);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdCameraMoveTo(232, CAMERA_KEEP, 477, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdMapGridSetShake(2, 1, 1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -584,8 +584,8 @@ static void scSolSanctumElementalStarRoomDemandElementalStars(void)
 {
 	ACTOR *felix;
 	ACTOR *shadow;
-	Sint32 frame;
-	SPR	  *sprite;
+	Sint32 frm;
+	SPR	  *spr;
 
 	sySndPlay(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
 	fdActorSetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
@@ -620,8 +620,8 @@ static void scSolSanctumElementalStarRoomDemandElementalStars(void)
 	scSolSanctumElementalStarRoomShowMessageAndWait(ACTOR_KRADEN, 10);
 	felix = fdActorGet(ACTOR_FELIX_MASKED);
 	shadow = fdActorGet(ACTOR_PLATFORM_SHADOW);
-	sprite = felix->spr;
-	sprite->flg = 0;
+	spr = felix->spr;
+	spr->flg = 0;
 	felix->scaleX = toFIXED(1) / 10;
 	felix->scaleY = toFIXED(1) / 10;
 	shadow->scaleX = toFIXED(1) / 10;
@@ -645,7 +645,7 @@ static void scSolSanctumElementalStarRoomDemandElementalStars(void)
 	fdActorSetPos(ACTOR_PLATFORM_SHADOW, 471, 290);
 	sySndPlay(SE_WARP);
 	fdActorSetSprPriority(ACTOR_FELIX_MASKED, 2);
-	for(frame = 0; frame != 90; frame++) {
+	for(frm = 0; frm != 90; frm++) {
 		felix->y.fixed -= toFIXED(1) / 10;
 		felix->scaleX += toFIXED(1) / 100;
 		felix->scaleY += toFIXED(1) / 100;
@@ -655,13 +655,13 @@ static void scSolSanctumElementalStarRoomDemandElementalStars(void)
 	}
 	felix->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
 	fdScriptWait(80);
-	for(frame = 0; frame != 60; frame++) {
+	for(frm = 0; frm != 60; frm++) {
 		felix->y.fixed -= toFIXED(1) / 2;
 		fdScriptWait(1);
 	}
 	felix->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdScriptWait(30);
-	sprite->flg = SPRITE_FLAG_SHADOW;
+	spr->flg = SPRITE_FLAG_SHADOW;
 	fdActorSetPos(ACTOR_PLATFORM_SHADOW, 0, 0);
 	fdActorSetSprPriority(ACTOR_FELIX_MASKED, 1);
 	fdActorGet(ACTOR_FELIX_MASKED)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
@@ -706,12 +706,12 @@ static void scSolSanctumElementalStarRoomDemandElementalStars(void)
 	fdActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
 	fdScriptWait(20);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdCameraMoveTo(264, CAMERA_KEEP, 460, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	/* "You heard us... If you wish to save your friends, then give us..." */
 	scSolSanctumElementalStarRoomShowMessageAndWait(ACTOR_SATUROS, 40);
@@ -727,12 +727,12 @@ static void scSolSanctumElementalStarRoomDemandElementalStars(void)
 	   good, Isaac! You must not give them the Elemental Stars!" */
 	fdScriptShowMessageThenWait(ACTOR_KRADEN, 0, 20);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdCameraMoveTo(477, CAMERA_KEEP, 334, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_SATUROS, 2);
 	fdActorFaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHWEST, 10);
@@ -805,13 +805,13 @@ static void scSolSanctumElementalStarRoomOfferHostageGuarantee(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHWEST, 20);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorSetPos(ACTOR_GARET, 280, 470);
 	fdCameraMoveTo(261, CAMERA_KEEP, 466, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHEAST, 10);
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -838,12 +838,12 @@ static void scSolSanctumElementalStarRoomOfferHostageGuarantee(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHEAST, 20);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdCameraMoveTo(477, CAMERA_KEEP, 334, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_KRADEN, 2);
 	fdScriptWait(10);
@@ -877,9 +877,9 @@ static void scSolSanctumElementalStarRoomFelixRemovesMask(void)
 	ACTOR  *other;
 	Uint16 *inventoryEntry;
 	Sint32	slot;
-	Sint32	starCount;
-	Sint32	messageA;
-	Sint32	messageB;
+	Sint32	starCnt;
+	Sint32	msgA;
+	Sint32	msgB;
 
 	sySndPlay(SE_RATTLE);
 	fdActorRunRepeatedMotion(ACTOR_FELIX_MASKED, 3);
@@ -964,12 +964,12 @@ static void scSolSanctumElementalStarRoomFelixRemovesMask(void)
 	/* "Felix will be our guarantee. Now, give us the Elemental Stars!" */
 	scSolSanctumElementalStarRoomShowMessageAndWait(ACTOR_MENARDI, 20);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdCameraMoveTo(261, CAMERA_KEEP, 466, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 20);
@@ -986,39 +986,39 @@ static void scSolSanctumElementalStarRoomFelixRemovesMask(void)
 	fdActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	fdActorSetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
 	fdScriptWait(20);
-	starCount = 0;
+	starCnt = 0;
 	inventoryEntry = gmUnitGet(GARET)->inventory;
 	for(slot = 0; slot < INVENTORY_SLOTS; slot++) {
 		Uint32 item = *inventoryEntry & INVENTORY_ITEM_ID_MASK;
 		inventoryEntry++;
 		if(item == ITEM_VENUS_STAR || item == ITEM_MERCURY_STAR ||
 			item == ITEM_JUPITER_STAR)
-			starCount++;
+			starCnt++;
 	}
 	/* "We don't have any choice..." */
 	fdScriptOpenMessage(ACTOR_GARET, 0);
 	if(fdScriptAskYesNoWithActorAnimation(0, 0) == 0) {
-		messageA = MsgSolSanctumGuessTakeElemental;
-		fdScriptSetMessageId(messageA);
+		msgA = MsgSolSanctumGuessTakeElemental;
+		fdScriptSetMessageId(msgA);
 		fdActorSetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
 		fdScriptWait(10);
-		if(starCount <= 2) {
+		if(starCnt <= 2) {
 			/* "I guess I should take the Elemental Stars to them." */
 			scSolSanctumElementalStarRoomShowMessageAndWait(ACTOR_GARET, 30);
 			fdActorWalkToAndWait(ACTOR_GARET, 252, 486);
 			fdActorRunRepeatedMotion(ACTOR_GARET, 2);
 			fdScriptWait(10);
 			/* "Isaac handed over the Elemental Stars." */
-			mnFieldMessageShowCentered((messageA + 1), 1, 0);
+			mnFieldMessageShowCentered((msgA + 1), 1, 0);
 		} else {
 			fdScriptSetMessageId(MsgSolSanctumRightTake);
 			/* "All right, I'll take them." */
 			scSolSanctumElementalStarRoomShowMessageAndWait(ACTOR_GARET, 30);
 		}
 	} else {
-		if(starCount <= 2) {
-			messageB = MsgSolSanctumDontHandOver;
-			fdScriptSetMessageId(messageB);
+		if(starCnt <= 2) {
+			msgB = MsgSolSanctumDontHandOver;
+			fdScriptSetMessageId(msgB);
 			fdActorRunRepeatedMotion(ACTOR_GARET, 3);
 			fdActorSetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
 			/* "If you don't hand them over, they won't let Jenna go!" */
@@ -1034,7 +1034,7 @@ static void scSolSanctumElementalStarRoomFelixRemovesMask(void)
 			fdActorSetDestination(ACTOR_PARTY_LEADER, 218, 471);
 			fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 			/* "Garet took the Elemental Stars." */
-			mnFieldMessageShowCentered((messageB + 1), 1, 0);
+			mnFieldMessageShowCentered((msgB + 1), 1, 0);
 			fdActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 			fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 30);
 			actor->steeringFlg |= ACTOR_FACES_MOTION;
@@ -1083,7 +1083,7 @@ static void scSolSanctumElementalStarRoomFelixRemovesMask(void)
 /* Alex appears, takes the three stars from Garet and demands the last one. */
 static void scSolSanctumElementalStarRoomAlexTakesStars(void)
 {
-	Uint32 frame;
+	Uint32 frm;
 	ACTOR *actor;
 
 	fdActorRunRepeatedMotion(ACTOR_GARET, 3);
@@ -1146,7 +1146,7 @@ static void scSolSanctumElementalStarRoomAlexTakesStars(void)
 	actor = fdActorGet(ACTOR_ALEX);
 	actor->motionFlg = 0;
 	sySndPlay(SE_SHIMMER);
-	for(frame = 0; frame != 30; frame++) {
+	for(frm = 0; frm != 30; frm++) {
 		actor->y.fixed += toFIXED(1);
 		fdScriptWait(1);
 	}
@@ -1168,12 +1168,12 @@ static void scSolSanctumElementalStarRoomAlexTakesStars(void)
 	fdActorFaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHEAST, 40);
 	fdActorFaceDirection(ACTOR_SATUROS, FACING_SOUTH_SOUTHWEST, 10);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdCameraMoveTo(477, CAMERA_KEEP, 334, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
 	/* "No, my friend... We want you to bring us ALL the Elemental..." */
@@ -1290,19 +1290,19 @@ static void scSolSanctumElementalStarRoomStandAroundHostages(void)
 	actor = fdActorGet(ACTOR_JENNA);
 	actor->watchedActor = (ACTOR_OR_EFFECT *)leader;
 	actor->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorStartScript(actor, SolSanctumElementalStarRoom_AngleScript);
+	fdActorStartScript(actor, SolSanctumElementalStarRoomAngleScript);
 	actor = fdActorGet(ACTOR_KRADEN);
 	actor->watchedActor = (ACTOR_OR_EFFECT *)leader;
 	actor->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorStartScript(actor, SolSanctumElementalStarRoom_AngleScript);
+	fdActorStartScript(actor, SolSanctumElementalStarRoomAngleScript);
 	actor = fdActorGet(ACTOR_MENARDI);
 	actor->watchedActor = (ACTOR_OR_EFFECT *)leader;
 	actor->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorStartScript(actor, SolSanctumElementalStarRoom_AngleScript);
+	fdActorStartScript(actor, SolSanctumElementalStarRoomAngleScript);
 	actor = fdActorGet(ACTOR_SATUROS);
 	actor->watchedActor = (ACTOR_OR_EFFECT *)leader;
 	actor->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorStartScript(actor, SolSanctumElementalStarRoom_AngleScript);
+	fdActorStartScript(actor, SolSanctumElementalStarRoomAngleScript);
 	alex = fdActorGet(ACTOR_ALEX);
 	alex->watchedActor = (ACTOR_OR_EFFECT *)leader;
 	alex->steeringFlg |= ACTOR_FACES_MOTION;
@@ -1310,11 +1310,11 @@ static void scSolSanctumElementalStarRoomStandAroundHostages(void)
 	alex->scaleY = toFIXED(1);
 	alex->motionFlg = fdActorGet(ACTOR_MENARDI)->motionFlg;
 	alex->y.fixed = 0;
-	fdActorStartScript(alex, SolSanctumElementalStarRoom_AngleScript);
+	fdActorStartScript(alex, SolSanctumElementalStarRoomAngleScript);
 	actor = fdActorGet(ACTOR_FELIX);
 	actor->watchedActor = (ACTOR_OR_EFFECT *)leader;
 	actor->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorStartScript(actor, SolSanctumElementalStarRoom_AngleScript);
+	fdActorStartScript(actor, SolSanctumElementalStarRoomAngleScript);
 	fdScriptEnd();
 }
 
@@ -1395,7 +1395,7 @@ static void scSolSanctumElementalStarRoomTakeMarsStar(void)
 	fdActorJump(ACTOR_GARET, 6, 40);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(
 		SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION);
 }
@@ -1547,9 +1547,9 @@ static inline void scSolSanctumElementalStarRoomShowElementalStar(
    Kraden. */
 static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 {
-	Uint16 frame;
+	Uint16 frm;
 	ACTOR *rising;
-	SPR	  *sprite;
+	SPR	  *spr;
 	ACTOR *shadow;
 
 	fdScriptStart();
@@ -1563,8 +1563,8 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 	shadow->scaleX = toFIXED(1) / 10;
 	shadow->scaleY = toFIXED(1) / 10;
 	rising = fdActorGet(ACTOR_PARTY_LEADER);
-	sprite = rising->spr;
-	sprite->flg = 0;
+	spr = rising->spr;
+	spr->flg = 0;
 	rising->scaleX = toFIXED(1) / 10;
 	rising->scaleY = toFIXED(1) / 10;
 	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_BLINK);
@@ -1575,12 +1575,12 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
 	FieldStateWork->transitionFrm = 32;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	fdActorSetPos(ACTOR_PLATFORM_SHADOW, 471, 290);
 	sySndPlay(SE_WARP);
 	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 2);
-	for(frame = 0; frame != 90; frame++) {
+	for(frm = 0; frm != 90; frm++) {
 		rising->y.fixed -= toFIXED(1) / 10;
 		rising->scaleX += toFIXED(1) / 100;
 		rising->scaleY += toFIXED(1) / 100;
@@ -1592,7 +1592,7 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 	fdScriptWait(80);
 	fdCameraSetSpeed(0.3);
 	fdCameraMoveTo(471, CAMERA_KEEP, 290, 1);
-	for(frame = 0; frame != 60; frame++) {
+	for(frm = 0; frm != 60; frm++) {
 		rising->y.fixed -= toFIXED(1) / 2;
 		fdScriptWait(1);
 	}
@@ -1601,7 +1601,7 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 1);
 	fdActorGet(ACTOR_PARTY_LEADER)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
 	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
-	sprite->flg = SPRITE_FLAG_SHADOW;
+	spr->flg = SPRITE_FLAG_SHADOW;
 	fdActorSetPos(ACTOR_PLATFORM_SHADOW, 0, 0);
 	fdCameraWaitForMove();
 	fdScriptWait(20);
@@ -1676,8 +1676,8 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 	fdActorFaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 60);
 	/* Materialize Kraden after the companions have explored the chamber. */
 	rising = fdActorGet(ACTOR_KRADEN);
-	sprite = rising->spr;
-	sprite->flg = 0;
+	spr = rising->spr;
+	spr->flg = 0;
 	rising->scaleX = toFIXED(1) / 10;
 	rising->scaleY = toFIXED(1) / 10;
 	shadow->scaleX = toFIXED(1) / 10;
@@ -1702,7 +1702,7 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 	fdActorSetPos(ACTOR_PLATFORM_SHADOW, 471, 290);
 	sySndPlay(SE_WARP);
 	fdActorSetSprPriority(ACTOR_KRADEN, 2);
-	for(frame = 0; frame != 90; frame++) {
+	for(frm = 0; frm != 90; frm++) {
 		rising->y.fixed -= toFIXED(1) / 10;
 		rising->scaleX += toFIXED(1) / 100;
 		rising->scaleY += toFIXED(1) / 100;
@@ -1712,7 +1712,7 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 	}
 	rising->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
 	fdScriptWait(80);
-	for(frame = 0; frame != 60; frame++) {
+	for(frm = 0; frm != 60; frm++) {
 		rising->y.fixed -= toFIXED(1) / 2;
 		fdScriptWait(1);
 	}
@@ -1721,7 +1721,7 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 	fdActorSetSprPriority(ACTOR_KRADEN, 1);
 	fdActorGet(ACTOR_KRADEN)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
 	fdActorSetSprColById(ACTOR_KRADEN, SPRITE_COLOR_NORMAL);
-	sprite->flg = SPRITE_FLAG_SHADOW;
+	spr->flg = SPRITE_FLAG_SHADOW;
 	fdActorSetPos(ACTOR_PLATFORM_SHADOW, 0, 0);
 	fdScriptWait(30);
 	fdActorSetSpeed(ACTOR_KRADEN, 1.2);
@@ -2222,7 +2222,7 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 	fdPartyRemoveMemberRestored(JENNA);
 	scSolSanctumElementalStarRoomGiveMythrilBags();
 	fdMapGridCopyMetatileAttributes(8, 0, 5, 1, 27, 17);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 	gmFlagClear(FLAG_SHOW_AREA_NAME);
 	fdScriptEnd();
 }
@@ -2273,12 +2273,12 @@ Sint32 scInit(void)
 	return 0;
 }
 
-/* Shows the script's next line at the speaker, then waits the frames. */
+/* Shows the script's next line at the speaker, then waits the ticks. */
 static void scSolSanctumElementalStarRoomShowMessageAndWait(
-	Sint32 speaker, Sint32 frames)
+	Sint32 speaker, Sint32 ticks)
 {
 	fdScriptShowMessage(speaker, 0);
-	fdScriptWait(frames);
+	fdScriptWait(ticks);
 }
 
 /* Animates a star's icon and replaces its owner's mythril bag with the star. */
@@ -2287,7 +2287,7 @@ static Sint32 scSolSanctumElementalStarRoomPresentStarFX(
 {
 	ICON_TRANSFER *glyph;
 	ACTOR		  *actor;
-	SPR			  *sprite;
+	SPR			  *spr;
 	Sint32		   member;
 	Sint32		   slot;
 
@@ -2297,17 +2297,17 @@ static Sint32 scSolSanctumElementalStarRoomPresentStarFX(
 	slot = gmInventoryFind(member, ITEM_MYTHRIL_BAG);
 	if(actor == NULL)
 		return member;
-	fdActorStartScript(actor, ItemIcon_GrowScript);
-	sprite = actor->spr;
-	sprite->flg = 0;
-	sprite->cnt = 0;
-	sprite->image.fullCol = 0;
-	sprite->image.pal = 0;
+	fdActorStartScript(actor, ItemIconGrowScript);
+	spr = actor->spr;
+	spr->flg = 0;
+	spr->cnt = 0;
+	spr->image.fullCol = 0;
+	spr->image.pal = 0;
 	actor->velY = toFIXED(5) / 2;
 	actor->gravity = toFIXED(1) / 4;
 	glyph = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(*glyph));
 	mnIconDrawItem(item);
-	syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
+	syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	sySndPlay(MUS_TREASURE_FOUND);
 	fdItemDispShowPicture(actor, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
@@ -2323,7 +2323,7 @@ static Sint32 scSolSanctumElementalStarRoomPresentStarFX(
 static void scSolSanctumElementalStarRoomGiveMythrilBags(void)
 {
 	FIELD_STATE *state = FieldStateWork;
-	Sint16		 savedMessage = state->msg;
+	Sint16		 savedMsg = state->msg;
 	Sint32		 itemSlot;
 	Sint32		 itemOwner;
 	Sint32		 freeSlots;
@@ -2347,7 +2347,7 @@ static void scSolSanctumElementalStarRoomGiveMythrilBags(void)
 	gmPartyInventoryAdd(ITEM_MYTHRIL_BAG);
 	gmPartyInventoryAdd(ITEM_MYTHRIL_BAG);
 	gmPartyInventoryAdd(ITEM_MYTHRIL_BAG);
-	state->msg = savedMessage;
+	state->msg = savedMsg;
 }
 
 /* Alex warps in where he has been placed, hidden. */
@@ -2355,9 +2355,9 @@ static void scSolSanctumElementalStarRoomAlexWarpsIn(void)
 {
 	EFFECT_OPTIONS options;
 	ACTOR		  *alex;
-	Uint32		   frame;
+	Uint32		   frm;
 	FIXED		   x;
-	FIXED		   xOffset;
+	FIXED		   xOfs;
 
 	alex = fdActorGet(ACTOR_ALEX);
 	sySndPlay(SE_WARP);
@@ -2367,11 +2367,11 @@ static void scSolSanctumElementalStarRoomAlexWarpsIn(void)
 	options.type = SPRITE_PARTICLE;
 	options.startScaleX = toFIXED(2) / 5;
 	options.startScaleY = toFIXED(3);
-	for(frame = 0; frame < WARP_FRAMES; frame++) {
+	for(frm = 0; frm < WARP_TICKS; frm++) {
 		fdScriptWait(1);
-		if(!(frame & 1)) {
-			xOffset = toFIXED(syRandomBelow(24));
-			x = alex->x.fixed + xOffset;
+		if(!(frm & 1)) {
+			xOfs = toFIXED(syRandomBelow(24));
+			x = alex->x.fixed + xOfs;
 			x -= toFIXED(12);
 			fdEffectSpawn(x,
 				alex->y.fixed + toFIXED(syRandomBelow(32)) + toFIXED(32),
@@ -2380,7 +2380,7 @@ static void scSolSanctumElementalStarRoomAlexWarpsIn(void)
 					EFFECT_USE_PALETTE,
 				&options);
 		}
-		if(frame == WARP_IN_BLINK_FRAME)
+		if(frm == WARP_IN_BLINK_TICK)
 			fdActorSetSprColById(ACTOR_ALEX, SPRITE_COLOR_BLINK);
 	}
 	fdActorSetSprColById(ACTOR_ALEX, SPRITE_COLOR_NORMAL);
@@ -2391,13 +2391,13 @@ static void scSolSanctumElementalStarRoomAlexWarpsIn(void)
 
 #include "shared/field_effect_duration_scripts.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
-Sint32 SolSanctumElementalStarRoom_AngleScript[] = {
+Sint32 SolSanctumElementalStarRoomAngleScript[] = {
 	SC_CALL(scTurnTowardTarget),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -2406,7 +2406,7 @@ Sint32 SolSanctumElementalStarRoom_AngleScript[] = {
 
 #include "shared/sol_sanctum_star_room_entrances.c"
 
-Uint32 SolSanctumElementalStarRoom_Exits[] = {
+Uint32 SolSanctumElementalStarRoomExits[] = {
 	SCENE_EXITS(SolSanctumElementalStarRoom),
 	SCENE_EXIT(SOL_SANCTUM_ELEMENTAL_STAR_ROOM_TO_SOL_SANCTUM_ERUPTION,
 		SolSanctumEruption,
@@ -2415,7 +2415,7 @@ Uint32 SolSanctumElementalStarRoom_Exits[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE SolSanctumElementalStarRoom_ActorPlacements[] = {
+ACTOR_PLACE SolSanctumElementalStarRoomActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2457,7 +2457,7 @@ ACTOR_PLACE SolSanctumElementalStarRoom_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE SolSanctumElementalStarRoom_Cues[] = {
+CUE SolSanctumElementalStarRoomCues[] = {
 	{ CUE_TALK, ACTOR_KRADEN, CONDITION_ALWAYS, SCRIPT_REF(scSolSanctumElementalStarRoomTalkToKraden) },
 	{ CUE_TALK, ACTOR_JENNA, CONDITION_ALWAYS, SCRIPT_REF(scSolSanctumElementalStarRoomTalkToJenna) },
 	{ CUE_TALK, ACTOR_SATUROS, CONDITION_ALWAYS, SCRIPT_REF(scSolSanctumElementalStarRoomTalkToSaturos) },

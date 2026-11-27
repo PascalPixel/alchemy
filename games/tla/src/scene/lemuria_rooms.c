@@ -109,7 +109,7 @@ enum { ANIM_WHITE_BIRD_PERCH = 1, ANIM_WHITE_BIRD_FLAP = 3 };
 void scLemuriaRoomsPiersVisitsUncle(void);
 
 extern SCENE_REGION SceneRegions[];
-extern Uint32		QuestionMark_Script[];
+extern Uint32		QuestionMarkScript[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -550,8 +550,8 @@ void scLemuriaRoomsPiersVisitsUncle(void)
 	fdScriptEnd();
 }
 
-/* Frames of each of the bird's two loops round the room. */
-#define BIRD_FLIGHT_FRAMES 192
+/* Ticks of each of the bird's two loops round the room. */
+#define BIRD_FLIGHT_TICKS 192
 
 /* Once Piers has gone to his mother's grave, his uncle stops the party on its
    way out, asks it to leave Piers to his mourning, tells of the mission the
@@ -560,11 +560,11 @@ void scLemuriaRoomsPiersVisitsUncle(void)
 void scLemuriaRoomsLeavePiersToMourn(void)
 {
 	ACTOR  *actor;
-	Sint32	startBuf[3], targetBuf[3], posBuf[3];
-	Sint32 *start, *target, *pos;
+	Sint32	startBuf[3], tgtBuf[3], posBuf[3];
+	Sint32 *start, *tgt, *pos;
 	FIXED	radius;
-	Sint32	angle;
-	Sint32	result, frame, phase, sine, answer;
+	Sint32	ang;
+	Sint32	result, frm, phase, sine, answer;
 
 	actor = fdActorGetById(ACTOR_BIRD);
 	result = fdScriptGetFlag(FLAG_PIERS_VISITED_UNCLE);
@@ -734,27 +734,27 @@ void scLemuriaRoomsLeavePiersToMourn(void)
 	start[0] = actor->x.fixed;
 	start[1] = actor->y.fixed;
 	start[2] = actor->z.fixed;
-	target = targetBuf;
-	target[0] = toFIXED(116);
-	target[1] = 0;
-	target[2] = toFIXED(110);
-	angle = FACING_NORTH_NORTHWEST;
-	for(frame = 0; frame < BIRD_FLIGHT_FRAMES; frame++) {
-		phase = frame * (DEGtoANG(180)) / BIRD_FLIGHT_FRAMES;
+	tgt = tgtBuf;
+	tgt[0] = toFIXED(116);
+	tgt[1] = 0;
+	tgt[2] = toFIXED(110);
+	ang = FACING_NORTH_NORTHWEST;
+	for(frm = 0; frm < BIRD_FLIGHT_TICKS; frm++) {
+		phase = frm * (DEGtoANG(180)) / BIRD_FLIGHT_TICKS;
 		radius = sySin(phase) * 32;
-		angle += TRIG_TURN / 128;
+		ang += TRIG_TURN / 128;
 		pos = posBuf;
-		pos[0] = start[0] + (target[0] - start[0]) * frame / BIRD_FLIGHT_FRAMES;
+		pos[0] = start[0] + (tgt[0] - start[0]) * frm / BIRD_FLIGHT_TICKS;
 		sine = sySin(phase);
-		pos[1] = start[1] +
-			(target[1] - start[1]) * frame / BIRD_FLIGHT_FRAMES + sine * 56;
-		pos[2] = start[2] + (target[2] - start[2]) * frame / BIRD_FLIGHT_FRAMES;
-		syVectorAddPolarOffset(radius, angle, pos);
+		pos[1] = start[1] + (tgt[1] - start[1]) * frm / BIRD_FLIGHT_TICKS +
+			sine * 56;
+		pos[2] = start[2] + (tgt[2] - start[2]) * frm / BIRD_FLIGHT_TICKS;
+		syVectorAddPolarOffset(radius, ang, pos);
 		actor->x.fixed = pos[0];
 		actor->y.fixed = pos[1];
 		actor->z.fixed = pos[2];
-		actor->facing = angle + DEGtoANG(90);
-		if(frame == 128) {
+		actor->facing = ang + DEGtoANG(90);
+		if(frm == 128) {
 			fdActorFaceDirection(ACTOR_PIERS_UNCLE, FACING_SOUTH_SOUTHEAST, 0);
 		}
 		syWait(1);
@@ -799,24 +799,24 @@ void scLemuriaRoomsLeavePiersToMourn(void)
 	start[0] = actor->x.fixed;
 	start[1] = actor->y.fixed;
 	start[2] = actor->z.fixed;
-	target[0] = toFIXED(132);
-	target[1] = toFIXED(32);
-	target[2] = toFIXED(100);
-	angle = FACING_SOUTH + TRIG_TURN / 128;
-	for(frame = 0; frame < BIRD_FLIGHT_FRAMES; frame++) {
-		radius = sySin(frame * (DEGtoANG(90)) / BIRD_FLIGHT_FRAMES) * 40;
-		angle += TRIG_TURN * 3 / 256;
-		pos[0] = start[0] + (target[0] - start[0]) * frame / BIRD_FLIGHT_FRAMES;
-		sine = sySin(frame * (DEGtoANG(180)) / BIRD_FLIGHT_FRAMES);
-		pos[1] = start[1] +
-			(target[1] - start[1]) * frame / BIRD_FLIGHT_FRAMES + (sine <<= 5);
-		pos[2] = start[2] + (target[2] - start[2]) * frame / BIRD_FLIGHT_FRAMES;
-		syVectorAddPolarOffset(radius, angle, pos);
+	tgt[0] = toFIXED(132);
+	tgt[1] = toFIXED(32);
+	tgt[2] = toFIXED(100);
+	ang = FACING_SOUTH + TRIG_TURN / 128;
+	for(frm = 0; frm < BIRD_FLIGHT_TICKS; frm++) {
+		radius = sySin(frm * (DEGtoANG(90)) / BIRD_FLIGHT_TICKS) * 40;
+		ang += TRIG_TURN * 3 / 256;
+		pos[0] = start[0] + (tgt[0] - start[0]) * frm / BIRD_FLIGHT_TICKS;
+		sine = sySin(frm * (DEGtoANG(180)) / BIRD_FLIGHT_TICKS);
+		pos[1] = start[1] + (tgt[1] - start[1]) * frm / BIRD_FLIGHT_TICKS +
+			(sine <<= 5);
+		pos[2] = start[2] + (tgt[2] - start[2]) * frm / BIRD_FLIGHT_TICKS;
+		syVectorAddPolarOffset(radius, ang, pos);
 		actor->x.fixed = pos[0];
 		actor->y.fixed = pos[1];
 		actor->z.fixed = pos[2];
-		actor->facing = angle + DEGtoANG(90);
-		if(frame == 153) {
+		actor->facing = ang + DEGtoANG(90);
+		if(frm == 153) {
 			fdActorFaceDirection(ACTOR_PIERS_UNCLE, FACING_WEST_SOUTHWEST, 0);
 		}
 		syWait(1);
@@ -826,13 +826,13 @@ void scLemuriaRoomsLeavePiersToMourn(void)
 	start[0] = actor->x.fixed;
 	start[1] = actor->y.fixed;
 	start[2] = actor->z.fixed;
-	target[0] = toFIXED(90);
-	target[1] = toFIXED(4);
-	target[2] = toFIXED(64);
-	for(frame = 0; frame < 16; frame++) {
-		actor->x.fixed = start[0] + (target[0] - start[0]) * frame / 16;
-		actor->y.fixed = start[1] + (target[1] - start[1]) * frame / 16;
-		actor->z.fixed = start[2] + (target[2] - start[2]) * frame / 16;
+	tgt[0] = toFIXED(90);
+	tgt[1] = toFIXED(4);
+	tgt[2] = toFIXED(64);
+	for(frm = 0; frm < 16; frm++) {
+		actor->x.fixed = start[0] + (tgt[0] - start[0]) * frm / 16;
+		actor->y.fixed = start[1] + (tgt[1] - start[1]) * frm / 16;
+		actor->z.fixed = start[2] + (tgt[2] - start[2]) * frm / 16;
 		syWait(1);
 	}
 	fdActorSetPos(ACTOR_BIRD, 0, 0);
@@ -862,7 +862,7 @@ void scLemuriaRoomsMeetLunpa(void)
 {
 	ACTOR *leader;
 	ACTOR *actor;
-	ACTOR *target;
+	ACTOR *tgt;
 	Sint32 result;
 
 	fdScriptSetFlag(FLAG_MET_LUNPA);
@@ -1457,7 +1457,7 @@ void scLemuriaRoomsMeetLunpa(void)
 		SPEAKER_PORTRAIT_LEFT | ACTOR_LUNPA, 0, 10);
 	fdActorSetSpeed(ACTOR_LUNPA, 2.2);
 	fdActorWalkByAndWait(ACTOR_LUNPA, 0, 32);
-	target = fdActorGetById(ACTOR_LUNPA);
+	tgt = fdActorGetById(ACTOR_LUNPA);
 	fdScriptPlaySnd(SE_HEAVY_IMPACT);
 	fdMapGridSetShake(4, 4, 1);
 	fdActorGetById(ACTOR_LUNPA)->steeringFlg &= ~ACTOR_FACES_MOTION;
@@ -1465,9 +1465,9 @@ void scLemuriaRoomsMeetLunpa(void)
 	fdScriptWait(1);
 	fdActorGetById(ACTOR_LUNPA)->steeringFlg |= ACTOR_FACES_MOTION;
 	/* One more flash, back to his own colours, and the flashing stops. */
-	target->tmr = 3;
+	tgt->tmr = 3;
 	sySynch(1);
-	target->update = NULL;
+	tgt->update = NULL;
 	fdActorSetSprFlags((Sint32)fdActorGetById(ACTOR_LUNPA), 1);
 	fdScriptWait(40);
 	fdMapGridSetShake(0, 0, 0);
@@ -1723,7 +1723,7 @@ CUE SceneCues[] = {
 	{CUE_TABLE_END},
 };
 
-/* The script each "?" bubble runs: it is released once its frames are up. */
-Uint32 QuestionMark_Script[] = {
+/* The script each "?" bubble runs: it is released once its ticks are up. */
+Uint32 QuestionMarkScript[] = {
 	SC_RELEASE,
 };

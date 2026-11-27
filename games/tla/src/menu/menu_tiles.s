@@ -1,8 +1,8 @@
 	.section .rodata
 	.balign 4
 @ 4bpp rows of dots in colour 5, each reaching further right than the last
-	.global Menu_PatternRowMasks
-Menu_PatternRowMasks:
+	.global MenuPatternRowMasks
+MenuPatternRowMasks:
 	.4byte 0x00055000, 0x00000000
 	.4byte 0x05055050, 0x00000000
 	.4byte 0x05055050, 0x00000005

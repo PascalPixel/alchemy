@@ -11,7 +11,7 @@
 /* Where each of the quantity bar's 30 segments starts in its tile buffer: a */
 /* byte column of a 4-bit tile, so four segments to a tile and the next tile */
 /* 32 bytes on, eight tiles in all. */
-const Uint16 Shop_QuantityBarSegmentOffsets[30] = {
+const Uint16 ShopQuantityBarSegmentOffsets[30] = {
 	0, 1, 2, 3,
 	32, 33, 34, 35,
 	64, 65, 66, 67,
@@ -23,13 +23,13 @@ const Uint16 Shop_QuantityBarSegmentOffsets[30] = {
 };
 
 /* Where each of a price's five digits starts in its tile buffer, ones first. */
-const Uint16 Shop_PriceDigitTileOffsets[5] = {
+const Uint16 ShopPriceDigitTileOffsets[5] = {
 	192, 144, 128, 80, 64,
 };
 
 /* The shop credit each Game Ticket costs, by how many have been given: five */
 /* at each price: 300, then 500 doubling to 8000. */
-const Sint16 Shop_GameTicketCreditCosts[30] = {
+const Sint16 ShopGameTicketCreditCosts[30] = {
 	300, 300, 300, 300, 300,
 	500, 500, 500, 500, 500,
 	1000, 1000, 1000, 1000, 1000,
@@ -40,7 +40,7 @@ const Sint16 Shop_GameTicketCreditCosts[30] = {
 
 /* Unused: a list of gift items, ended by 0, that nothing reads: The Broken */
 /* Seal's, with the Fire Brand where it has the Masamune. */
-const Sint16 Shop_UnusedItemIds[21] = {
+const Sint16 ShopUnusedItemIds[21] = {
 	ITEM_LONG_SWORD, ITEM_BROAD_SWORD, ITEM_CLAYMORE, ITEM_GREAT_SWORD, ITEM_SHAMSHIR,
 	ITEM_SILVER_BLADE, ITEM_FIRE_BRAND, ITEM_ARCTIC_BLADE, ITEM_GAIA_BLADE,
 	ITEM_SOL_BLADE, ITEM_MURAMASA, ITEM_SHORT_SWORD, ITEM_MINT, ITEM_DEMON_AXE,
@@ -52,7 +52,7 @@ const Sint16 Shop_UnusedItemIds[21] = {
 /* (each list ending with 0 when shorter), then the shop's type, which an */
 /* item shop, SHOP_TYPE_ITEMS, leaves at 0. Each row is named by the town */
 /* whose script opens it. */
-const Sint16 Shop_StockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS] = {
+const Sint16 ShopStockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS] = {
 	/* 0: sells nothing, and stands in for a row out of range */
 	{0},
 	/* 1: Daila's weapon shop */
@@ -225,7 +225,7 @@ const Sint16 Shop_StockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS] = {
 /* What the forge makes of each material, ended by an item of -1: a rare */
 /* material may become any of its results, by weight out of 100, and a rusted */
 /* weapon always becomes its one result. */
-const FORGE_RECIPE Forge_Recipes[] = {
+const FORGE_RECIPE ForgeRecipes[] = {
 	{
 		.item = ITEM_TEAR_STONE,
 		.condition = FORGE_CONDITION_PROCESSED,
@@ -350,7 +350,7 @@ const FORGE_RECIPE Forge_Recipes[] = {
 };
 
 /* The tune each service's burst plays. */
-const Sint8 Sanctum_ServiceTunes[4] = {
+const Sint8 SanctumServiceTunes[4] = {
 	[SANCTUM_SERVICE_REVIVE] = MUS_RECOVERING_AFTER_COMBAT,
 	[SANCTUM_SERVICE_CURE_POISON] = MUS_POISON_CURED,
 	[SANCTUM_SERVICE_REPEL_EVIL] = MUS_EXORCISED,
@@ -361,7 +361,7 @@ const Sint8 Sanctum_ServiceTunes[4] = {
 /* Garoh, Mikasalla, Naribwe, Kibombo, Yallam, the Apojii Islands, Izumo, */
 /* Champa, the Shaman Village, Contigo, Loho and Prox, as their scripts open */
 /* them. Unused: inn 15 costs nothing and no script opens it. */
-const Sint8 Inn_PricesPerGuest[16] = {
+const Sint8 InnPricesPerGuest[16] = {
 	2, 4, 7, 8, 8, 10, 12, 16, 14, 15, 18, 20, 20, 22, 25, 0,
 };
 /* clang-format on */

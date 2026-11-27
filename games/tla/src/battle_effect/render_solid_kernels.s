@@ -152,7 +152,7 @@ AlchemyUncreditedEnd_08138fca:
 	bne	.L_081390d8
 	pop	{r0, r1, r9}
 	b	.L_08138ff4
-	.4byte	System_ReciprocalTable + 1
+	.4byte	SystemReciprocalTable + 1
 .L_081391c0:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr
@@ -308,7 +308,7 @@ AlchemyUncreditedEnd_081391ca:
 	bne	.L_081392d8
 	pop	{r0, r1, r9}
 	b	.L_081391f4
-	.4byte	System_ReciprocalTable + 1
+	.4byte	SystemReciprocalTable + 1
 .L_081393d0:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr
@@ -468,7 +468,7 @@ AlchemyUncreditedEnd_081393da:
 	bne	.L_081394e8
 	pop	{r0, r1, r9}
 	b	.L_08139404
-	.4byte	System_ReciprocalTable + 1
+	.4byte	SystemReciprocalTable + 1
 .L_081395f0:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	bx	lr

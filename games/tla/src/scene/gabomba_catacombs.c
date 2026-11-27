@@ -32,29 +32,29 @@
    (scGabombaCatacombsGabombaBestowsPower). */
 #define FLAG_GABOMBA_BESTOWED_POWER 0x9ce
 
-extern Uint32 GabombaCatacombs_SplashScript[];
+extern Uint32 GabombaCatacombsSplashScript[];
 
 /* A Mad Plant of the given sprite leaps out at Felix from (x, z) and
    attacks. */
 static __inline__ void scGabombaCatacombsMadPlantLeaps(
-	Sint32 sprite, Sint32 x, Sint32 z)
+	Sint32 spr, Sint32 x, Sint32 z)
 {
-	fdMadPlantLeapAtLeader(sprite, x, z);
+	fdMadPlantLeapAtLeader(spr, x, z);
 }
 
-extern Uint32		FieldEffect_MediumScript[];
-extern SCENE_REGION GabombaCatacombs_TeleportersExitRegions[];
-extern ACTOR_PLACE	GabombaCatacombs_Placements[];
-extern ACTOR_PLACE	GabombaCatacombs_TeleportersActorPlacements[];
-extern ACTOR_PLACE	GabombaCatacombs_MudActorPlacements[];
-extern ACTOR_PLACE	GabombaCatacombs_HiddenWallActorPlacements[];
-extern ACTOR_PLACE	GabombaCatacombs_TomegathericonActorPlacements[];
-extern ACTOR_PLACE	GabombaCatacombs_StreamActorPlacements[];
-extern CUE			GabombaCatacombs_TeleportersCues[];
-extern CUE			GabombaCatacombs_MudCues[];
-extern CUE			GabombaCatacombs_HiddenWallCues[];
-extern CUE			GabombaCatacombs_TomegathericonCues[];
-extern CUE			GabombaCatacombs_StreamCues[];
+extern Uint32		FieldEffectMediumScript[];
+extern SCENE_REGION GabombaCatacombsTeleportersExitRegions[];
+extern ACTOR_PLACE	GabombaCatacombsPlacements[];
+extern ACTOR_PLACE	GabombaCatacombsTeleportersActorPlacements[];
+extern ACTOR_PLACE	GabombaCatacombsMudActorPlacements[];
+extern ACTOR_PLACE	GabombaCatacombsHiddenWallActorPlacements[];
+extern ACTOR_PLACE	GabombaCatacombsTomegathericonActorPlacements[];
+extern ACTOR_PLACE	GabombaCatacombsStreamActorPlacements[];
+extern CUE			GabombaCatacombsTeleportersCues[];
+extern CUE			GabombaCatacombsMudCues[];
+extern CUE			GabombaCatacombsHiddenWallCues[];
+extern CUE			GabombaCatacombsTomegathericonCues[];
+extern CUE			GabombaCatacombsStreamCues[];
 
 #include "text/msg_ids.h"
 
@@ -545,26 +545,26 @@ void scGabombaCatacombsFreezeStreamPuddle(void)
 void scGabombaCatacombsDriftWithStream(ACTOR *actor, Sint32 dz)
 {
 	ACTOR *camera;
-	POS	   position;
+	POS	   pos;
 
 	camera = FieldStateWork->camera;
 
-	position.x = actor->x.fixed;
-	position.y = actor->y.fixed;
-	position.z = actor->z.fixed + dz;
-	fdMapGridCheckCollision(actor, &position);
-	position.x = actor->x.fixed;
-	position.y = actor->y.fixed;
-	position.z = actor->z.fixed + toFIXED(8);
-	if(fdMapGridCheckCollision(actor, &position) <= 0) {
-		position.x = actor->x.fixed + toFIXED(57) / 10;
-		position.y = actor->y.fixed;
-		position.z = actor->z.fixed + toFIXED(57) / 10;
-		if(fdMapGridCheckCollision(actor, &position) <= 0) {
-			position.x = actor->x.fixed - toFIXED(57) / 10;
-			position.y = actor->y.fixed;
-			position.z = actor->z.fixed + toFIXED(57) / 10;
-			if(fdMapGridCheckCollision(actor, &position) <= 0) {
+	pos.x = actor->x.fixed;
+	pos.y = actor->y.fixed;
+	pos.z = actor->z.fixed + dz;
+	fdMapGridCheckCollision(actor, &pos);
+	pos.x = actor->x.fixed;
+	pos.y = actor->y.fixed;
+	pos.z = actor->z.fixed + toFIXED(8);
+	if(fdMapGridCheckCollision(actor, &pos) <= 0) {
+		pos.x = actor->x.fixed + toFIXED(57) / 10;
+		pos.y = actor->y.fixed;
+		pos.z = actor->z.fixed + toFIXED(57) / 10;
+		if(fdMapGridCheckCollision(actor, &pos) <= 0) {
+			pos.x = actor->x.fixed - toFIXED(57) / 10;
+			pos.y = actor->y.fixed;
+			pos.z = actor->z.fixed + toFIXED(57) / 10;
+			if(fdMapGridCheckCollision(actor, &pos) <= 0) {
 				camera->z.fixed += dz;
 				actor->z.fixed += dz;
 			}
@@ -573,20 +573,20 @@ void scGabombaCatacombsDriftWithStream(ACTOR *actor, Sint32 dz)
 }
 
 /* Wading in the shallow stream that runs south through the stream cave, Felix
-   splashes, with the sound of wading, every eighth frame, and the water pushes
+   splashes, with the sound of wading, every eighth tick, and the water pushes
    him slowly south. */
 void scGabombaCatacombsWadeStream(void)
 {
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	ACTOR *splash;
 
-	if((FrameCount & 7) == 0) {
+	if((TickCount & 7) == 0) {
 		splash = ((ACTOR *)syImportActorCreate(SPRITE_WADING_SPLASH,
 			leader->x.fixed, leader->y.fixed + toFIXED(6), leader->z.fixed));
 		if(splash) {
 			fdActorSetSprFlags(splash, 0);
 			fdActorSelectAnimation(splash, 1);
-			fdActorStartScript(splash, GabombaCatacombs_SplashScript);
+			fdActorStartScript(splash, GabombaCatacombsSplashScript);
 		}
 		sySndPlay(SE_WADE);
 	}
@@ -594,7 +594,7 @@ void scGabombaCatacombsWadeStream(void)
 }
 
 /* The flash of light about the Tomegathericon as it appears on the idol's lap:
-   each frame it shrinks by a twentieth of its full size. */
+   each tick it shrinks by a twentieth of its full size. */
 Sint32 scGabombaCatacombsShrinkGlow(ACTOR *actor)
 {
 	actor->scaleX -= toFIXED(1) / 20;
@@ -641,7 +641,7 @@ void scGabombaCatacombsGabombaBestowsPower(void)
 	treasure->groundHeight += toFIXED(16);
 	sySndPlay(SE_SHIMMER);
 	glow = ((ACTOR *)syImportActorCreate(SPRITE_FIREBALL, 0, 0, 0));
-	fdActorStartScript(glow, FieldEffect_MediumScript);
+	fdActorStartScript(glow, FieldEffectMediumScript);
 	fdActorSetSprColMode(glow, 1);
 	glow->motionFlg = 0;
 	glow->x.fixed = treasure->x.fixed;
@@ -748,7 +748,7 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 const SCENE_REGION *scGetExitRegions(void)
 {
 	if(MainRoutineStateWork.next == SCENE_GABOMBA_CATACOMBS_TELEPORTERS)
-		return GabombaCatacombs_TeleportersExitRegions;
+		return GabombaCatacombsTeleportersExitRegions;
 	return 0;
 }
 
@@ -757,36 +757,36 @@ const Uint32 *scGetExits(void)
 	return SceneExits;
 }
 
-extern CUE GabombaCatacombs_Cues[];
+extern CUE GabombaCatacombsCues[];
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.next == SCENE_GABOMBA_CATACOMBS_TELEPORTERS)
-		return GabombaCatacombs_TeleportersActorPlacements;
+		return GabombaCatacombsTeleportersActorPlacements;
 	if(MainRoutineStateWork.next == SCENE_GABOMBA_CATACOMBS_MUD)
-		return GabombaCatacombs_MudActorPlacements;
+		return GabombaCatacombsMudActorPlacements;
 	if(MainRoutineStateWork.next == SCENE_GABOMBA_CATACOMBS_HIDDEN_WALL)
-		return GabombaCatacombs_HiddenWallActorPlacements;
+		return GabombaCatacombsHiddenWallActorPlacements;
 	if(MainRoutineStateWork.next == SCENE_GABOMBA_CATACOMBS_TOMEGATHERICON)
-		return GabombaCatacombs_TomegathericonActorPlacements;
+		return GabombaCatacombsTomegathericonActorPlacements;
 	if(MainRoutineStateWork.next == SCENE_GABOMBA_CATACOMBS_STREAM)
-		return GabombaCatacombs_StreamActorPlacements;
-	return GabombaCatacombs_Placements;
+		return GabombaCatacombsStreamActorPlacements;
+	return GabombaCatacombsPlacements;
 }
 
 const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.next == SCENE_GABOMBA_CATACOMBS_TELEPORTERS)
-		return GabombaCatacombs_TeleportersCues;
+		return GabombaCatacombsTeleportersCues;
 	if(MainRoutineStateWork.next == SCENE_GABOMBA_CATACOMBS_MUD)
-		return GabombaCatacombs_MudCues;
+		return GabombaCatacombsMudCues;
 	if(MainRoutineStateWork.next == SCENE_GABOMBA_CATACOMBS_HIDDEN_WALL)
-		return GabombaCatacombs_HiddenWallCues;
+		return GabombaCatacombsHiddenWallCues;
 	if(MainRoutineStateWork.next == SCENE_GABOMBA_CATACOMBS_TOMEGATHERICON)
-		return GabombaCatacombs_TomegathericonCues;
+		return GabombaCatacombsTomegathericonCues;
 	if(MainRoutineStateWork.next == SCENE_GABOMBA_CATACOMBS_STREAM)
-		return GabombaCatacombs_StreamCues;
-	return GabombaCatacombs_Cues;
+		return GabombaCatacombsStreamCues;
+	return GabombaCatacombsCues;
 }
 
 /* The transition the catacombs open with: the window's shape in the Japanese
@@ -868,14 +868,14 @@ Sint32 scPrepareMap(void)
 }
 
 /* clang-format off */
-Uint32 GabombaCatacombs_SplashScript[] = {
+Uint32 GabombaCatacombsSplashScript[] = {
 	SC_WAIT(15),
 	SC_POSITION_ORIGIN,
 	SC_WAIT(1),
 	SC_RELEASE,
 };
 
-Uint32 FieldEffect_MediumScript[] = {
+Uint32 FieldEffectMediumScript[] = {
 	SC_WAIT(1), SC_LOOP(44, SC_TOP),
 	SC_WAIT(1), SC_POSITION(0, 0, 0),
 	SC_WAIT(1), SC_RELEASE,
@@ -884,7 +884,7 @@ Uint32 FieldEffect_MediumScript[] = {
 
 #include "shared/scene_entrances_default.c"
 
-SCENE_REGION GabombaCatacombs_TeleportersExitRegions[] = {
+SCENE_REGION GabombaCatacombsTeleportersExitRegions[] = {
 	{388, 46, 276, 396, 54, 284, CONDITION_ALWAYS, 1},
 	{SCENE_TABLE_END},
 };
@@ -910,20 +910,20 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE GabombaCatacombs_Placements[] = {
+ACTOR_PLACE GabombaCatacombsPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE GabombaCatacombs_TeleportersActorPlacements[] = {
+ACTOR_PLACE GabombaCatacombsTeleportersActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE GabombaCatacombs_MudActorPlacements[] = {
+ACTOR_PLACE GabombaCatacombsMudActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_MUD), MOVEMENT_TYPE_STAND, 728, 0, 312, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE GabombaCatacombs_HiddenWallActorPlacements[] = {
+ACTOR_PLACE GabombaCatacombsHiddenWallActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -934,7 +934,7 @@ ACTOR_PLACE GabombaCatacombs_HiddenWallActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE GabombaCatacombs_TomegathericonActorPlacements[] = {
+ACTOR_PLACE GabombaCatacombsTomegathericonActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_SEATED_IDOL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_LIT_CANDLESTICK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -942,17 +942,17 @@ ACTOR_PLACE GabombaCatacombs_TomegathericonActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE GabombaCatacombs_StreamActorPlacements[] = {
+ACTOR_PLACE GabombaCatacombsStreamActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
 /* clang-format on */
 
-CUE GabombaCatacombs_Cues[] = {
+CUE GabombaCatacombsCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE GabombaCatacombs_TeleportersCues[] = {
+CUE GabombaCatacombsTeleportersCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN,
 		GABOMBA_CATACOMBS_TELEPORTERS_TO_GABOMBA_CATACOMBS_MUD_NORTHEAST,
 		CONDITION_ALWAYS,
@@ -972,7 +972,7 @@ CUE GabombaCatacombs_TeleportersCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE GabombaCatacombs_MudCues[] = {
+CUE GabombaCatacombsMudCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP,
 		GABOMBA_CATACOMBS_MUD_TO_GABOMBA_CATACOMBS_TELEPORTERS_NORTHEAST,
 		CONDITION_ALWAYS,
@@ -985,7 +985,7 @@ CUE GabombaCatacombs_MudCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE GabombaCatacombs_HiddenWallCues[] = {
+CUE GabombaCatacombsHiddenWallCues[] = {
 	{CUE_EXIT, GABOMBA_CATACOMBS_HIDDEN_WALL_TO_GABOMBA_CATACOMBS_MUD,
 		CONDITION_ALWAYS,
 		GABOMBA_CATACOMBS_HIDDEN_WALL_TO_GABOMBA_CATACOMBS_MUD},
@@ -1051,7 +1051,7 @@ CUE GabombaCatacombs_HiddenWallCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE GabombaCatacombs_TomegathericonCues[] = {
+CUE GabombaCatacombsTomegathericonCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN,
 		GABOMBA_CATACOMBS_TOMEGATHERICON_TO_GABOMBA_CATACOMBS_STREAM,
 		CONDITION_ALWAYS,
@@ -1069,7 +1069,7 @@ CUE GabombaCatacombs_TomegathericonCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE GabombaCatacombs_StreamCues[] = {
+CUE GabombaCatacombsStreamCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP,
 		GABOMBA_CATACOMBS_STREAM_TO_GABOMBA_CATACOMBS_HIDDEN_WALL,
 		CONDITION_ALWAYS,

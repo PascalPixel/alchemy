@@ -13,7 +13,7 @@
    DJINN_PER_ELEMENT to an element, in the order Venus, Mercury, Mars, Jupiter.
    A Djinni's English name is the message MsgDjinnName + its number. Each
    element has seven; the 13 numbers after them are spares, which the text names
-   "=" and whose rows of Djinn_DefinitionTable hold only their abilities. */
+   "=" and whose rows of DjinnDefinitionTable hold only their abilities. */
 typedef enum DJINNI_ID {
 	DJINNI_FLINT,
 	DJINNI_GRANITE,

@@ -7,7 +7,7 @@
 #include "types.h"
 #include "battle/battle_unit.h"
 
-/* An enemy's element preset in Enemy_ElementPresetTable: the element it attacks
+/* An enemy's element preset in EnemyElementPresetTable: the element it attacks
    with, its level in each element, and its base power and resistance in each
    element. */
 typedef struct ENEMY_ELEMENT_PRESET {
@@ -22,7 +22,7 @@ typedef struct ENEMY_ELEMENT_PRESET {
 	BATTLE_ELEMENT_STATS stats[4];
 } ENEMY_ELEMENT_PRESET;
 
-/* The rows of Enemy_ElementPresetTable (ENEMY_DEFINITION.elementPreset), each
+/* The rows of EnemyElementPresetTable (ENEMY_DEFINITION.elementPreset), each
    named by the first enemy that has it. Rows 6, 10, 18, 22, 28 and 35 are
    spares no enemy has. */
 typedef enum ENEMY_ELEMENT_PRESET_ID {
@@ -67,7 +67,7 @@ typedef enum ENEMY_ELEMENT_PRESET_ID {
 	ELEMENT_PRESET_GRYPHON = 43
 } ENEMY_ELEMENT_PRESET_ID;
 
-/* How many rows Enemy_ElementPresetTable has; an enemy's preset past them reads
+/* How many rows EnemyElementPresetTable has; an enemy's preset past them reads
    as row 0. */
 #define ENEMY_ELEMENT_PRESET_COUNT 44
 

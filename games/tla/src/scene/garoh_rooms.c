@@ -25,7 +25,7 @@
 enum { ENTRANCE_WAKE_AT_INN = 99 };
 
 /* The actors of the four houses, numbering the rows of
-   GarohRooms_HousesActorPlacements. */
+   GarohRoomsHousesActorPlacements. */
 typedef enum GAROH_HOUSES_ACTOR_ID {
 	/* The father of the young werewolf who led the party to Maha. His script is
 	   scGarohRoomsAskWhatTheWanderersSeek. */
@@ -53,7 +53,7 @@ typedef enum GAROH_HOUSES_ACTOR_ID {
 } GAROH_HOUSES_ACTOR_ID;
 
 /* The Item Shopkeeper's house's actors, numbering the rows of
-   GarohRooms_ShopActorPlacements. */
+   GarohRoomsShopActorPlacements. */
 typedef enum GAROH_SHOP_ACTOR_ID {
 	ACTOR_AIRS_ROCK_GUARDIAN = ACTOR_FIRST_PLACED,
 	ACTOR_VILLAGER_ON_WHIRLWIND,
@@ -81,16 +81,16 @@ typedef enum GAROH_ROOMS_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_PLANT_POT_STOVE
 } GAROH_ROOMS_METATILE_BEHAVIOR;
 
-extern ACTOR_PLACE GarohRooms_NoActorPlacements[];
-extern ACTOR_PLACE GarohRooms_HousesActorPlacements[];
-extern ACTOR_PLACE GarohRooms_ShopActorPlacements[];
-extern ACTOR_PLACE GarohRooms_SanctumActorPlacements[];
-extern CUE		   GarohRooms_DoorCues[];
-extern CUE		   GarohRooms_HousesNightCues[];
-extern CUE		   GarohRooms_ShopNightCues[];
-extern CUE		   GarohRooms_SanctumCues[];
-extern CUE		   GarohRooms_HousesMorningCues[];
-extern CUE		   GarohRooms_ShopMorningCues[];
+extern ACTOR_PLACE GarohRoomsNoActorPlacements[];
+extern ACTOR_PLACE GarohRoomsHousesActorPlacements[];
+extern ACTOR_PLACE GarohRoomsShopActorPlacements[];
+extern ACTOR_PLACE GarohRoomsSanctumActorPlacements[];
+extern CUE		   GarohRoomsDoorCues[];
+extern CUE		   GarohRoomsHousesNightCues[];
+extern CUE		   GarohRoomsShopNightCues[];
+extern CUE		   GarohRoomsSanctumCues[];
+extern CUE		   GarohRoomsHousesMorningCues[];
+extern CUE		   GarohRoomsShopMorningCues[];
 
 void scGarohRoomsWakeAtInn(void);
 
@@ -114,12 +114,12 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	Sint16 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_GAROH_ROOMS_HOUSES)
-		return GarohRooms_HousesActorPlacements;
+		return GarohRoomsHousesActorPlacements;
 	if(scene == SCENE_GAROH_ROOMS_SHOP)
-		return GarohRooms_ShopActorPlacements;
+		return GarohRoomsShopActorPlacements;
 	if(scene == SCENE_GAROH_ROOMS_SANCTUM)
-		return GarohRooms_SanctumActorPlacements;
-	return GarohRooms_NoActorPlacements;
+		return GarohRoomsSanctumActorPlacements;
+	return GarohRoomsNoActorPlacements;
 }
 
 /* Garoh's shops, as mnShopRun numbers them. */
@@ -194,20 +194,20 @@ void scGarohRoomsTalkToItemShopkeeper(Sint32 actor)
 		   Rock..." */
 		fdScriptShowMessageAndWait(actor, 0);
 	} else {
-		Sint32 message = (Sint32)MsgGarohRoomsDidYouComeHereFrom;
+		Sint32 msg = (Sint32)MsgGarohRoomsDidYouComeHereFrom;
 
 		/* "Did you come here from Alhafra?" Yes: "Really? You must have gone
 		   through the cave..." No: "Oh, so you must have come by way of
 		   Mikasalla." */
-		fdScriptSetMessageId(message);
+		fdScriptSetMessageId(msg);
 		fdMessageShowAtActor(actor, 0);
 		if(fdScriptAskYesNoWithActorAnimation(fdPartyGetLeaderActor(), 0) ==
 			0) {
 			fdScriptWait(10);
-			fdScriptSetMessageId(message + 1);
+			fdScriptSetMessageId(msg + 1);
 		} else {
 			fdScriptWait(20);
-			fdScriptSetMessageId(message + 2);
+			fdScriptSetMessageId(msg + 2);
 		}
 		fdScriptShowMessageAndWait(actor, 0);
 	}
@@ -267,17 +267,17 @@ void scGarohRoomsTalkToPriest(void)
    something?", and then whether they are searching for werewolves. */
 void scGarohRoomsAskWhatTheWanderersSeek(Sint32 actor)
 {
-	Sint32 message;
+	Sint32 msg;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	message = (Sint32)MsgGarohRoomsGoodEveningWanderersAreYou;
-	fdScriptSetMessageId(message);
+	msg = (Sint32)MsgGarohRoomsGoodEveningWanderersAreYou;
+	fdScriptSetMessageId(msg);
 	/* "Good evening, wanderers! Are you looking for something?" */
 	fdMessageShowAtActor(actor, 0);
 	if(fdScriptAskYesNoWithActorAnimation(
 		   MainRoutineStateWork.leaderActorId, 0) == 0) {
-		fdScriptSetMessageId(message + 2);
+		fdScriptSetMessageId(msg + 2);
 		/* "Searching for werewolves, eh?" */
 		fdMessageShowAtActor(actor, 0);
 		if(fdScriptAskYesNoWithActorAnimation(
@@ -375,17 +375,17 @@ void scGarohRoomsReadStubbornTravelersMind(void)
    and one for No. */
 void scGarohRoomsAskAboutReveal(void)
 {
-	Sint32 message = (Sint32)MsgGarohRoomsYouIsItTrueThat;
+	Sint32 msg = (Sint32)MsgGarohRoomsYouIsItTrueThat;
 
 	/* "You... Is it true that you learned Reveal?" */
-	fdScriptSetMessageId(message);
+	fdScriptSetMessageId(msg);
 	fdMessageShowAtActor(ACTOR_REVEAL_SEEKER, 0);
 	if(fdScriptAskYesNoWithActorAnimation(fdPartyGetLeaderActor(), 0) == 0) {
 		fdScriptWait(10);
-		fdScriptSetMessageId(message + 1);
+		fdScriptSetMessageId(msg + 1);
 	} else {
 		fdScriptWait(20);
-		fdScriptSetMessageId(message + 2);
+		fdScriptSetMessageId(msg + 2);
 	}
 	fdScriptShowMessageAndWait(ACTOR_REVEAL_SEEKER, 0);
 	syGameFlagSet(FLAG_GAROH_ASKED_ABOUT_REVEAL);
@@ -403,22 +403,22 @@ const CUE *scGetCues(void)
 	if(shared) {
 		scene = party->next;
 		if(scene == houses)
-			return GarohRooms_HousesMorningCues;
+			return GarohRoomsHousesMorningCues;
 		if(scene == SCENE_GAROH_ROOMS_SHOP)
-			return GarohRooms_ShopMorningCues;
+			return GarohRoomsShopMorningCues;
 	} else {
 		scene = party->next;
 		if(scene == houses) {
 			if(party->entrance == ENTRANCE_WAKE_AT_INN)
-				return GarohRooms_HousesMorningCues;
-			return GarohRooms_HousesNightCues;
+				return GarohRoomsHousesMorningCues;
+			return GarohRoomsHousesNightCues;
 		}
 		if(scene == SCENE_GAROH_ROOMS_SHOP)
-			return GarohRooms_ShopNightCues;
+			return GarohRoomsShopNightCues;
 	}
 	if(scene == SCENE_GAROH_ROOMS_SANCTUM)
-		return GarohRooms_SanctumCues;
-	return GarohRooms_DoorCues;
+		return GarohRoomsSanctumCues;
+	return GarohRoomsDoorCues;
 }
 
 /* The map layers the rooms show at night (fdMapGridSetShownLayers), which leave
@@ -447,11 +447,11 @@ Sint32 scInit(void)
 			fdActorSetPosAndFacing(
 				ACTOR_DISAPPOINTED_TRAVELER, toFIXED(306), toFIXED(335), turn);
 			{
-				Sint32 angle = FACING_SOUTHWEST;
+				Sint32 ang = FACING_SOUTHWEST;
 				FIXED  z = toFIXED(336);
 
 				fdActorSetHorizontalPosAndAngWithTerrain(
-					ACTOR_STUBBORN_TRAVELER, toFIXED(345), z, angle);
+					ACTOR_STUBBORN_TRAVELER, toFIXED(345), z, ang);
 			}
 			fdActorSetSprFlags(
 				fdActorGetById(ACTOR_DISAPPOINTED_TRAVELERS_BED), 0);
@@ -505,7 +505,7 @@ void scGarohRoomsWakeAtInn(void)
 	fdActorSystemResumeProjectionAndHideLayers();
 	fdMapGridCenterOnFollowedPoint();
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	/* "You folks didn't sleep much last night..." */
 	fdScriptSetMessageId((Sint32)MsgGarohRoomsYouFolksDidntSleepMuch);
 	/* "You folks didn't sleep much last night... You don't look like you..." */
@@ -552,11 +552,11 @@ Uint32 SceneExits[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE GarohRooms_NoActorPlacements[] = {
+ACTOR_PLACE GarohRoomsNoActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE GarohRooms_HousesActorPlacements[] = {
+ACTOR_PLACE GarohRoomsHousesActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 336, 0, 120, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 136, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -573,7 +573,7 @@ ACTOR_PLACE GarohRooms_HousesActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE GarohRooms_ShopActorPlacements[] = {
+ACTOR_PLACE GarohRoomsShopActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 406, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 424, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -581,19 +581,19 @@ ACTOR_PLACE GarohRooms_ShopActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE GarohRooms_SanctumActorPlacements[] = {
+ACTOR_PLACE GarohRoomsSanctumActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	{SCENE_TABLE_END},
 };
 
-CUE GarohRooms_DoorCues[] = {
+CUE GarohRoomsDoorCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_TABLE_END},
 };
 /* clang-format on */
 
-CUE GarohRooms_HousesNightCues[] = {
+CUE GarohRoomsHousesNightCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -659,7 +659,7 @@ CUE GarohRooms_HousesNightCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE GarohRooms_ShopNightCues[] = {
+CUE GarohRoomsShopNightCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -689,7 +689,7 @@ CUE GarohRooms_ShopNightCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE GarohRooms_SanctumCues[] = {
+CUE GarohRoomsSanctumCues[] = {
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_TALK, ACTOR_PRIEST, CONDITION_ALWAYS,
 		SCRIPT_REF(scGarohRoomsTalkToPriest)},
@@ -706,7 +706,7 @@ CUE GarohRooms_SanctumCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE GarohRooms_HousesMorningCues[] = {
+CUE GarohRoomsHousesMorningCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -774,7 +774,7 @@ CUE GarohRooms_HousesMorningCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE GarohRooms_ShopMorningCues[] = {
+CUE GarohRoomsShopMorningCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},

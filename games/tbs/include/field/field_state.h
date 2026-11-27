@@ -46,11 +46,11 @@ typedef enum FIELD_RAISED_CUE {
 	FIELD_RAISED_CUE_WORLD_MAP_ZOOM = -889
 } FIELD_RAISED_CUE;
 
-/* How long a map's screen transition takes, in frames, unless a script or scene
+/* How long a map's screen transition takes, in ticks, unless a script or scene
    sets another length. */
-#define MAP_TRANSITION_FRAMES 16
-/* The frames Reveal lasts once cast, ten seconds (FIELD_STATE.revealFrm). */
-#define REVEAL_FRAMES		  600
+#define MAP_TRANSITION_TICKS 16
+/* The ticks Reveal lasts once cast, ten seconds (FIELD_STATE.revealFrm). */
+#define REVEAL_TICKS		 600
 
 /* A field Psynergy for FIELD_STATE.psynergy: the unit who uses it, in bits 10
    to 13, and the Psynergy, in bits 0 to 9 (fdUsePsynergy). */
@@ -92,7 +92,7 @@ typedef struct FIELD_STATE {
 	Sint16 survivorCnt;		/* 0 when the whole party fell */
 	Sint16 fallenOwners[9]; /* the characters who fell, from the active party */
 	Sint16 itemSlot;		/* the inventory slot fdUseItem receives */
-	/* Frames the leader has pushed against something, counted by the player
+	/* Ticks the leader has pushed against something, counted by the player
 	   controls; step cues and push metatiles need more than 12. */
 	Sint16 blockedSteps;
 	Sint16 mode;			  /* an ACTOR_SYSTEM_MODE */
@@ -112,7 +112,7 @@ typedef struct FIELD_STATE {
 	Sint32 transition; /* SCENE_TRANSITION(style, variant); (1, 0) on entry */
 	Uint16 unused;
 	Uint16 transitionActive; /* set once the opening transition has started */
-	/* frames; MAP_TRANSITION_FRAMES on entry and at each script */
+	/* ticks; MAP_TRANSITION_TICKS on entry and at each script */
 	Sint32 transitionFrm;
 	/* debug: skip timed script waits and actor messages */
 	Sint32 fastForward;
@@ -134,15 +134,15 @@ typedef struct FIELD_STATE {
 	/* The area name notice's window (mnAreaNameWindowShow); it may since have
 	   closed. */
 	struct WINDOW *areaNameWin;
-	Uint16		   areaNameCountdown; /* frames left to show the area name */
+	Uint16		   areaNameCountdown; /* ticks left to show the area name */
 	/* The palette a field Psynergy's tint fades back to, as a palette fade's
 	   target (BG half, then sprite half), saved as the tint starts. */
 	Uint16 savedFadeTgt[448 * 3];
 	/* Set while a raised or step cue runs; fdScriptStart then resets the effect
 	   counter. */
 	Uint16 busy;
-	Sint16 revealActive; /* nonzero while Reveal is active */
-	Sint16 revealFrm;	 /* the frames Reveal has left, REVEAL_FRAMES as cast */
+	Sint16 revealActive;  /* nonzero while Reveal is active */
+	Sint16 revealFrm;	  /* the ticks Reveal has left, REVEAL_TICKS as cast */
 	Sint16 revealCenterX; /* where Reveal was cast, in pixels */
 	Sint16 revealCenterY;
 	/* Nonzero lets the Reveal countdown advance; menus and other effects pause

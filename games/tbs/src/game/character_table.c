@@ -5,7 +5,7 @@
 #include "game/game.h"
 
 /* clang-format off */
-const CHARACTER_DEFINITION Character_DefinitionTable[] = {
+const CHARACTER_DEFINITION CharacterDefinitionTable[] = {
 	[ISAAC] = {
 		.hp = {30, 182, 334, 486, 638, 790},
 		.pp = {20, 80, 130, 170, 210, 250},

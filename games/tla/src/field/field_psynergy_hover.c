@@ -1,6 +1,6 @@
 /* Hover: its glow, the cast and its end. Part of field_psynergy.c. */
 
-/* The levels in HoverGlow_Levels's cycle, and the steps of the glow's
+/* The levels in HoverGlowLevels's cycle, and the steps of the glow's
    colours. */
 #define HOVER_GLOW_WAVE_LENGTH	 96
 #define HOVER_GLOW_STEPS		 24
@@ -9,7 +9,7 @@
 
 /* A cycle of 96 colour levels (31 down to 0, 32 at 0, then 0 up to 31), read a
    third of a turn apart for red, green and blue. */
-extern const Uint8 HoverGlow_Levels[];
+extern const Uint8 HoverGlowLevels[];
 
 /* The colour of Hover's glow (fdHoverGlowUpdate) for a step of its 24-step
    cycle and a brightness level (HOVER_GLOW_NEUTRAL_LEVEL leaves it as it is):
@@ -27,7 +27,7 @@ Sint32 fdHoverGlowGetCol(Sint32 counter, Sint32 level)
 	const Uint8 *wave;
 
 	step = (counter + HOVER_GLOW_STEPS / 2) % HOVER_GLOW_STEPS;
-	wave = HoverGlow_Levels;
+	wave = HoverGlowLevels;
 	phase = step * (HOVER_GLOW_WAVE_LENGTH / HOVER_GLOW_STEPS);
 	redLevel = wave[(Sint16)(phase % HOVER_GLOW_WAVE_LENGTH)];
 	bias = level - HOVER_GLOW_NEUTRAL_LEVEL;
@@ -56,16 +56,16 @@ Sint32 fdHoverGlowGetCol(Sint32 counter, Sint32 level)
 /* The glow's colours: sprite palette CANVAS_PALETTE. */
 #define HOVER_GLOW_PALETTE ((Uint16 *)&OBJ_PLTT_COLOR(CANVAS_PALETTE, 0))
 
-/* The glow's strength, in frames: full at 112, and it fades out a frame at a
+/* The glow's strength, in ticks: full at 112, and it fades out a tick at a
    time once the player leaves the place that feeds it. */
-#define GLOW_FULL			   112
+#define GLOW_FULL			  112
 /* The glow's strength set as the ring grows, before the glow is held. */
-#define GLOW_RISING			   100
+#define GLOW_RISING			  100
 /* The field Psynergy the glow asks for when it runs out: Hover, without paying
    PP. */
-#define GLOW_SPENT_SOUND	   (ABILITY_HOVER | ACT_PACKED)
-/* The frames the ring under the leader takes to grow, or to shrink away. */
-#define HOVER_RING_GROW_FRAMES 32
+#define GLOW_SPENT_SOUND	  (ABILITY_HOVER | ACT_PACKED)
+/* The ticks the ring under the leader takes to grow, or to shrink away. */
+#define HOVER_RING_GROW_TICKS 32
 
 /* Hover's state (heap slot HEAP_SLOT_BATTLE_EFFECT): the glowing ring under the
    hovering leader, its scale, tile and stage. */
@@ -82,11 +82,11 @@ typedef struct HOVER_STATE {
 
 Sint32 fdMapGridIsHoverMetatile(Sint32 x, Sint32 z, Sint32 layer);
 
-/* Hover's frame callback: keeps the glow's strength full while the player
+/* Hover's tick callback: keeps the glow's strength full while the player
    stands where fdMapGridIsHoverMetatile allows, and runs it down otherwise
    (once it is fading, the glow shrinks with it and the script takes its sound
    when it is spent). It cycles HOVER_GLOW_PALETTE through fdHoverGlowGetCol's
-   colours, flickers between two pictures every other frame, and draws the glow
+   colours, flickers between two pictures every other tick, and draws the glow
    under the player, flattened to three quarters of its height. */
 void fdHoverGlowUpdate(void)
 {
@@ -94,12 +94,12 @@ void fdHoverGlowUpdate(void)
 	ACTOR		*player = fdActorLookup(fdPartyGetLeaderActor());
 	FIELD_STATE *field = Ram_HeapSlots->fieldState;
 	Uint16		*palette;
-	FIXED		 position[3];
+	FIXED		 pos[3];
 	Sint32		 level;
 	Sint32		 i;
 	Sint32		 scaleX;
 	Sint32		 scaleY;
-	EFFECT_SPR	*sprite;
+	EFFECT_SPR	*spr;
 
 	/* The glow's strength. */
 	if(fdMapGridIsHoverMetatile(
@@ -134,19 +134,19 @@ void fdHoverGlowUpdate(void)
 	/* Draw it under the player. */
 	scaleX = state->scale;
 	scaleY = scaleX * 6 / 8;
-	sprite = &state->spr;
-	sprite->oam.idx = state->tile + ((FrameCount >> 1) & 1) * 32;
-	sprite->oam.pri = fdActorGetSprPriority(player);
-	sprite->depth = fdActorGetSprDepth(player) - 1;
-	position[0] = player->x.fixed;
-	position[1] = player->y.fixed;
-	position[2] = player->z.fixed;
-	fdCameraWorldToScreen(position);
-	sprite->x = position[0];
-	sprite->y = position[2];
-	sprite->scaleX = scaleX;
-	sprite->scaleY = scaleY;
-	fdEffectSprDraw(sprite);
+	spr = &state->spr;
+	spr->oam.idx = state->tile + ((TickCount >> 1) & 1) * 32;
+	spr->oam.pri = fdActorGetSprPriority(player);
+	spr->depth = fdActorGetSprDepth(player) - 1;
+	pos[0] = player->x.fixed;
+	pos[1] = player->y.fixed;
+	pos[2] = player->z.fixed;
+	fdCameraWorldToScreen(pos);
+	spr->x = pos[0];
+	spr->y = pos[2];
+	spr->scaleX = scaleX;
+	spr->scaleY = scaleY;
+	fdEffectSprDraw(spr);
 }
 
 /* Hover cast on a target: runs fdPsynergyHover. */
@@ -170,9 +170,9 @@ void fdPsynergyHover(void)
 	FIELD_STATE		   *field = Ram_HeapSlots->fieldState;
 	ACTOR			   *player = scene->caster;
 	PENDING_CUE		   *pending;
-	EFFECT_SPR		   *sprite;
+	EFFECT_SPR		   *spr;
 	ACTOR			   *other;
-	FIXED				position[3];
+	FIXED				pos[3];
 	Sint32				blocked;
 	Sint32				slot;
 	ACTOR			  **list;
@@ -188,10 +188,10 @@ void fdPsynergyHover(void)
 	state->resource = slot;
 	state->tile = tile;
 	state->scale = 0;
-	sprite = &state->spr;
-	fdEffectSprInit(sprite, 15, 15, OBJ_SIZE_32X32, (Sint16)state->tile);
-	sprite->oam.fullCol = 1;
-	sprite->oam.pal = 0;
+	spr = &state->spr;
+	fdEffectSprInit(spr, 15, 15, OBJ_SIZE_32X32, (Sint16)state->tile);
+	spr->oam.fullCol = 1;
+	spr->oam.pal = 0;
 	fdActorSetPosAndResetMotionStub(
 		player, player->x.fixed, player->y.fixed, player->z.fixed);
 	fdBattleEffectSetObjectUpdateMode(player, CASTER_LOOK_NORMAL);
@@ -202,7 +202,7 @@ void fdPsynergyHover(void)
 	state->unused = 0;
 	state->phase = 0;
 	state->fading = 0;
-	sySetEvent(fdHoverGlowUpdate, EVENT_PASS_FRAME);
+	sySetEvent(fdHoverGlowUpdate, EVENT_PASS_TICK);
 
 	blocked = 0;
 	if(fdMapGridIsHoverMetatile(
@@ -215,9 +215,9 @@ void fdPsynergyHover(void)
 				(other->collisionFlg & ACTOR_SOLID) && other != scene->caster) {
 				/* DEAD: the overlap test reads the actors themselves; the ROM
 				   keeps the stores. */
-				position[0] = other->x.fixed;
-				position[1] = other->groundHeight;
-				position[2] = other->z.fixed;
+				pos[0] = other->x.fixed;
+				pos[1] = other->groundHeight;
+				pos[2] = other->z.fixed;
 				if(fdPsynergyCheckOverlap(&player->x.fixed, player->radius,
 					   &other->x.fixed, other->radius - 2) >= 0) {
 					blocked = 1;
@@ -230,15 +230,15 @@ void fdPsynergyHover(void)
 	if(blocked) {
 		sySynch(5);
 		sySndPlayStub(SE_GLITTER);
-		for(i = 0; i < HOVER_RING_GROW_FRAMES; i++) {
-			state->scale = toFIXED(1) * i / HOVER_RING_GROW_FRAMES;
+		for(i = 0; i < HOVER_RING_GROW_TICKS; i++) {
+			state->scale = toFIXED(1) * i / HOVER_RING_GROW_TICKS;
 			sySynch(1);
 		}
 		sySynch(10);
 		if(pending != NULL)
 			fdRunPsynergyScript(pending, scene->casterId, scene->tgtId);
-		for(i = HOVER_RING_GROW_FRAMES - 1; i != 0; i--) {
-			state->scale = toFIXED(1) * i / HOVER_RING_GROW_FRAMES;
+		for(i = HOVER_RING_GROW_TICKS - 1; i != 0; i--) {
+			state->scale = toFIXED(1) * i / HOVER_RING_GROW_TICKS;
 			sySynch(1);
 		}
 		sySynch(5);
@@ -251,14 +251,14 @@ void fdPsynergyHover(void)
 		state->scale = 0;
 		field->glowHeld = 0;
 		/* DEAD: fdHoverGlowUpdate holds the glow at GLOW_FULL from the next
-		   frame, the leader standing on a hover metatile; the ROM keeps the
+		   tick, the leader standing on a hover metatile; the ROM keeps the
 		   store. */
 		field->glow = GLOW_RISING;
-		for(i = 0; i < HOVER_RING_GROW_FRAMES; i++) {
+		for(i = 0; i < HOVER_RING_GROW_TICKS; i++) {
 			if(i == 10)
 				sySndPlayStub(SE_GLITTER);
 			player->y.fixed += toFIXED(1);
-			state->scale = toFIXED(1) * i / HOVER_RING_GROW_FRAMES;
+			state->scale = toFIXED(1) * i / HOVER_RING_GROW_TICKS;
 			sySynch(1);
 		}
 		player->motionFlg = ACTOR_FLOATS;
@@ -273,7 +273,7 @@ void fdPsynergyHover(void)
 
 #undef GLOW_FULL
 #undef GLOW_RISING
-#undef HOVER_RING_GROW_FRAMES
+#undef HOVER_RING_GROW_TICKS
 
 /* Ends Hover: the leader drops back to the ground with a splash and the ring is
    freed. */

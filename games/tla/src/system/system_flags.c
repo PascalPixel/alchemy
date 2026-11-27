@@ -28,13 +28,13 @@ UNIT *syUnitGet(Uint32 unitId)
    numbering. Bits above the twelfth are dropped (GAME_FLAG_BYTE), so a number
    past 4095 wraps onto a flag below it rather than reaching other memory. */
 
-/* Returns 1 when `flag` is set and 0 when it is clear. */
-Sint32 syGameFlagGet(Sint32 flag)
+/* Returns 1 when `flg` is set and 0 when it is clear. */
+Sint32 syGameFlagGet(Sint32 flg)
 {
-	Sint32 bit = flag & 7;
+	Sint32 bit = flg & 7;
 
-	flag = GAME_FLAG_BYTE(flag);
-	return (GameFlagBytes[flag] >> bit) & 1;
+	flg = GAME_FLAG_BYTE(flg);
+	return (GameFlagBytes[flg] >> bit) & 1;
 }
 
 /* Sets `flag` and returns its byte number. */
@@ -71,19 +71,19 @@ Uint32 syGameFlagToggle(Sint32 flag)
 	return 0;
 }
 
-/* Returns the whole byte `flag` is in, a counter kept among the flags. */
-Sint32 syGameFlagGetByte(Sint32 flag)
+/* Returns the whole byte `flg` is in, a counter kept among the flags. */
+Sint32 syGameFlagGetByte(Sint32 flg)
 {
-	flag = GAME_FLAG_BYTE(flag);
-	return GameFlagBytes[flag];
+	flg = GAME_FLAG_BYTE(flg);
+	return GameFlagBytes[flg];
 }
 
-/* Sets the whole byte `flag` is in. */
-Uint32 syGameFlagSetByte(Uint32 flag, Uint8 value)
+/* Sets the whole byte `flg` is in. */
+Uint32 syGameFlagSetByte(Uint32 flg, Uint8 value)
 {
-	flag = GAME_FLAG_BYTE(flag);
-	GameFlagBytes[flag] = value;
-	return flag;
+	flg = GAME_FLAG_BYTE(flg);
+	GameFlagBytes[flg] = value;
+	return flg;
 }
 
 /* The most a counter byte among the flags holds. */
@@ -116,13 +116,13 @@ Uint8 syGameFlagDecrementByte(Sint32 flag)
 #define GAME_FLAG_NIBBLE_MASK 0xf
 
 /* Unused: returns the four bits a flag is in, 0 to 15. */
-Sint32 syGameFlagGetNibble(Uint32 flag)
+Sint32 syGameFlagGetNibble(Uint32 flg)
 {
-	Sint32 shift = flag & 4;
+	Sint32 shift = flg & 4;
 	Sint32 mask = GAME_FLAG_NIBBLE_MASK << shift;
-	flag = GAME_FLAG_BYTE(flag);
+	flg = GAME_FLAG_BYTE(flg);
 
-	return (GameFlagBytes[flag] & mask) >> shift;
+	return (GameFlagBytes[flg] & mask) >> shift;
 }
 
 /* Unused: sets the four bits `flag` is in. */

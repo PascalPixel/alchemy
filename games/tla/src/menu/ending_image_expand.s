@@ -2,7 +2,7 @@
 @ value and jumps, through the case table, to one of the case commands below,
 @ which update the running pixel value in r5. They share the decoder's
 @ registers (r0 source, r2 and r3 read state, r5 value, r11 the mask 7) and
-@ have no frames of their own. One object, as The Broken Seal's
+@ have no ticks of their own. One object, as The Broken Seal's
 @ credits_background_expand.s: the relocation words, the dispatch, the case
 @ table and the commands, which the linker script places in that order.
 @
@@ -21,7 +21,7 @@
 	.section .rodata,"a",%progbits
 	.arm
 	.4byte	0x80808080
-	.4byte	EndingImage_DecodeCaseTable
+	.4byte	EndingImageDecodeCaseTable
 .text
 	.arm
 	.global EndingImage_DecodeRead
@@ -34,8 +34,8 @@ AlchemyUncreditedEnd_ending_image_read:
 	.section .data,"aw",%progbits
 	.arm
 	.4byte	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
-	.global EndingImage_DecodeCaseTable
-EndingImage_DecodeCaseTable:
+	.global EndingImageDecodeCaseTable
+EndingImageDecodeCaseTable:
 	.4byte	EndingImage_DecodeCase2
 	.4byte	EndingImage_DecodeCase4Plus
 	.4byte	EndingImage_DecodeCase8

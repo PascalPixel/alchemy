@@ -116,15 +116,15 @@ typedef enum MERCURY_LIGHTHOUSE_ENTRANCE_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_MIMIC_CHEST = 101
 } MERCURY_LIGHTHOUSE_ENTRANCE_METATILE_BEHAVIOR;
 
-extern Sint32		  MercuryLighthouseEntrance_RippleScript[];
-extern Sint32		  MercuryLighthouseEntrance_LizardManStepCenter[];
-extern Sint32		  MercuryLighthouseEntrance_LizardManStepWest[];
-extern Sint32		  MercuryLighthouseEntrance_LizardManStepEast[];
-extern SCENE_ENTRANCE MercuryLighthouseEntrance_Entrances[];
-extern Uint32		  MercuryLighthouseEntrance_Exits[];
-extern ACTOR_PLACE	  MercuryLighthouseEntrance_ActorPlacements[];
-extern CUE			  MercuryLighthouseEntrance_Cues[];
-extern Sint32		  Glint_TwinkleScript[];
+extern Sint32		  MercuryLighthouseEntranceRippleScript[];
+extern Sint32		  MercuryLighthouseEntranceLizardManStepCenter[];
+extern Sint32		  MercuryLighthouseEntranceLizardManStepWest[];
+extern Sint32		  MercuryLighthouseEntranceLizardManStepEast[];
+extern SCENE_ENTRANCE MercuryLighthouseEntranceEntrances[];
+extern Uint32		  MercuryLighthouseEntranceExits[];
+extern ACTOR_PLACE	  MercuryLighthouseEntranceActorPlacements[];
+extern CUE			  MercuryLighthouseEntranceCues[];
+extern Sint32		  GlintTwinkleScript[];
 
 /* This floor's actors, numbering its actor placement rows from
    ACTOR_FIRST_PLACED.
@@ -240,7 +240,7 @@ static void scMercuryLighthouseEntranceChargeLights(void)
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return MercuryLighthouseEntrance_Entrances;
+	return MercuryLighthouseEntranceEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -250,14 +250,14 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return MercuryLighthouseEntrance_Exits;
+	return MercuryLighthouseEntranceExits;
 }
 
 /* Returns Mia, the Lizard Man, the six statues and the two invisible actors in
    the goddess's room. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return MercuryLighthouseEntrance_ActorPlacements;
+	return MercuryLighthouseEntranceActorPlacements;
 }
 
 /* Searching the white stone post at the south edge of the goddess's pool,
@@ -314,7 +314,7 @@ static void scMercuryLighthouseEntranceWaterfallToChestFountain(void)
 /* Returns the floor's step, search, talk and Psynergy cues. */
 const CUE *scGetCues(void)
 {
-	return MercuryLighthouseEntrance_Cues;
+	return MercuryLighthouseEntranceCues;
 }
 
 /* The glints that rise from the heart tile below the goddess's hands once Ply
@@ -336,11 +336,11 @@ static void scMercuryLighthouseEntranceActivateWithPly(void)
 {
 	Sint32		   leaderColumn;
 	Sint32		   leaderRow;
-	Uint32		   sparkIndex;
+	Uint32		   sparkIdx;
 	Sint32		   sparkX;
 	Sint32		   sparkZ;
 	Sint32		   speedRoll;
-	Sint32		   velocityY;
+	Sint32		   velY;
 	EFFECT_OPTIONS options;
 
 	leaderColumn = fdActorGet(ACTOR_PARTY_LEADER)->x.fixed / toFIXED(16);
@@ -353,18 +353,17 @@ static void scMercuryLighthouseEntranceActivateWithPly(void)
 		fdPaletteFadeApplyTarget(PALETTE_TINT_PALE, PALETTES_BG);
 		fdPaletteFadeStartInterpolation(60);
 		fdScriptWait(40);
-		for(sparkIndex = 0; sparkIndex < PLY_GLINTS; sparkIndex++) {
+		for(sparkIdx = 0; sparkIdx < PLY_GLINTS; sparkIdx++) {
 			options.pri = 1;
 			options.type = SPRITE_GLINT;
-			options.script = Glint_TwinkleScript;
+			options.script = GlintTwinkleScript;
 			sySndPlay(SE_GLITTER);
 			sparkX = 208 - (syRandomBelow(16));
 			sparkZ = 560 - (syRandomBelow(16));
-			/* Rising at 0.6 to 1.05 pixels a frame. */
+			/* Rising at 0.6 to 1.05 pixels a tick. */
 			speedRoll = (syRandomBelow(4));
-			velocityY =
-				syMathDivide(toFIXED(speedRoll * 15) + toFIXED(60), 100);
-			fdEffectSpawn(toFIXED(sparkX), 0, toFIXED(sparkZ), 0, velocityY, 0,
+			velY = syMathDivide(toFIXED(speedRoll * 15) + toFIXED(60), 100);
+			fdEffectSpawn(toFIXED(sparkX), 0, toFIXED(sparkZ), 0, velY, 0,
 				EFFECT_USE_PRIORITY | EFFECT_USE_TYPE | EFFECT_USE_SCRIPT |
 					EFFECT_SCRIPT_MEDIUM,
 				&options);
@@ -374,7 +373,7 @@ static void scMercuryLighthouseEntranceActivateWithPly(void)
 		fdScriptWait(60);
 		/* The goddess's pool takes its awakened tiles. */
 		gmFlagSet(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED);
-		sySetFrameEvent(scMercuryLighthouseCyclePalette, EVENT_PASS_FRAME);
+		sySetTickEvent(scMercuryLighthouseCyclePalette, EVENT_PASS_TICK);
 		fdMapGridCopyMetatilesTo(37, 98, 10, 97, 5, 3);
 		fdMapGridCopyMetatileAttributes(70, 32, 13, 7, 6, 32);
 		fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -405,7 +404,7 @@ static void scMercuryLighthouseEntranceLizardManReturnsToCenter(void)
 {
 	gmFlagClear(FLAG_LIZARD_MAN_STEPPED_ASIDE);
 	fdActorSetScript(
-		ACTOR_LIZARD_MAN, MercuryLighthouseEntrance_LizardManStepCenter);
+		ACTOR_LIZARD_MAN, MercuryLighthouseEntranceLizardManStepCenter);
 }
 
 /* Walking up beside the Lizard Man, metatile (7, 10) or (9, 10), makes him
@@ -422,10 +421,10 @@ static void scMercuryLighthouseEntranceLizardManBlocksLeader(void)
 	gmFlagSet(FLAG_LIZARD_MAN_STEPPED_ASIDE);
 	if(leaderColumn == 7) {
 		fdActorSetScript(
-			ACTOR_LIZARD_MAN, MercuryLighthouseEntrance_LizardManStepWest);
+			ACTOR_LIZARD_MAN, MercuryLighthouseEntranceLizardManStepWest);
 	} else {
 		fdActorSetScript(
-			ACTOR_LIZARD_MAN, MercuryLighthouseEntrance_LizardManStepEast);
+			ACTOR_LIZARD_MAN, MercuryLighthouseEntranceLizardManStepEast);
 	}
 }
 
@@ -458,10 +457,10 @@ static void scMercuryLighthouseEntranceFightLizardMan(void)
 Sint32 scInit(void)
 {
 	EFFECT_OPTIONS options;
-	Sint32		   velocity[3];
+	Sint32		   vel[3];
 	ACTOR		  *actor;
-	Uint32		   sparkIndex;
-	Sint32		   angle;
+	Uint32		   sparkIdx;
+	Sint32		   ang;
 	Sint32		   arrivalSeen;
 	Sint32		   alpha;
 
@@ -477,7 +476,7 @@ Sint32 scInit(void)
 	MainRoutineStateWork.retreatScene = SCENE_MERCURY_LIGHTHOUSE_EXTERIOR;
 	fdEffectStartGroundMask(0);
 	if(gmFlagGet(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
-		sySetFrameEvent(scMercuryLighthouseCyclePalette, EVENT_PASS_FRAME);
+		sySetTickEvent(scMercuryLighthouseCyclePalette, EVENT_PASS_TICK);
 	else
 		scMercuryLighthouseClearPalette();
 	FieldStateWork->transition =
@@ -516,7 +515,7 @@ Sint32 scInit(void)
 	case MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_TWIN_FOUNTAINS_WEST:
 	case MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_TWIN_FOUNTAINS_EAST:
 	case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE:
-		sySetFrameEvent(scMercuryLighthouseCyclePalette, EVENT_PASS_FRAME);
+		sySetTickEvent(scMercuryLighthouseCyclePalette, EVENT_PASS_TICK);
 		/* The metatiles scMercuryLighthouseEntranceActivateWithPly copies as it
 		   sets the flag, redrawn on arrival. */
 		if(gmFlagGet(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
@@ -543,7 +542,7 @@ Sint32 scInit(void)
 		fdActorGet(ACTOR_PARTY_LEADER)->bounce = arrivalSeen;
 		fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = arrivalSeen;
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdScriptWait(30);
 		fdActorGet(ACTOR_PARTY_LEADER)->motionFlg =
 			ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -552,13 +551,13 @@ Sint32 scInit(void)
 		/* A ring of white puffs bursts out round him. */
 		actor = fdActorGet(ACTOR_PARTY_LEADER);
 		options.pal = SPRITE_COLOR_WHITE;
-		for(sparkIndex = 0; sparkIndex < LANDING_PUFFS; sparkIndex++) {
-			angle = sparkIndex * FACING_STEP;
-			SET_VECTOR(velocity, syCos(angle), 0, sySin(angle));
-			velocity[0] -= velocity[0] / 4;
-			velocity[2] -= velocity[2] / 2;
+		for(sparkIdx = 0; sparkIdx < LANDING_PUFFS; sparkIdx++) {
+			ang = sparkIdx * FACING_STEP;
+			SET_VECTOR(vel, syCos(ang), 0, sySin(ang));
+			vel[0] -= vel[0] / 4;
+			vel[2] -= vel[2] / 2;
 			fdEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
-				velocity[0], velocity[1], velocity[2],
+				vel[0], vel[1], vel[2],
 				EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM, &options);
 		}
 		sySndPlay(SE_THUMP);
@@ -576,7 +575,7 @@ Sint32 scInit(void)
 			fdPaletteFadeApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
 			fdPaletteFadeApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
 			fdPaletteFadeStartInterpolation(30);
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 			fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 			fdScriptWait(30);
 			mnFieldMessageShowCentered(MsgMercuryWhoHonorsHeart, 0, 0);
@@ -602,7 +601,7 @@ Sint32 scInit(void)
 		FieldStateWork->transition =
 			SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdScriptWait(120);
 		syImportScriptSetExitRequest(
 			MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_PIPE);
@@ -647,7 +646,7 @@ static void scMercuryLighthouseEntranceLizardManBlocksMia(void)
 	fdCameraSetSpeed(0.8);
 	fdCameraMoveTo(136, CAMERA_KEEP, 184, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorRunRepeatedMotion(ACTOR_MIA, 1);
 	fdActorGet(ACTOR_LIZARD_MAN)->steeringFlg &= ~ACTOR_FACES_MOTION;
 	fdScriptWait(20);
@@ -656,7 +655,7 @@ static void scMercuryLighthouseEntranceLizardManBlocksMia(void)
 		fdActorWalkTo(ACTOR_MIA, 152, 168);
 		fdScriptWait(10);
 		fdActorSetScript(
-			ACTOR_LIZARD_MAN, MercuryLighthouseEntrance_LizardManStepEast);
+			ACTOR_LIZARD_MAN, MercuryLighthouseEntranceLizardManStepEast);
 		fdActorWaitForMoveById(ACTOR_MIA);
 		fdActorFaceDirection(ACTOR_MIA, FACING_NORTH, 30);
 		fdActorRunRepeatedMotion(ACTOR_MIA, 1);
@@ -664,14 +663,14 @@ static void scMercuryLighthouseEntranceLizardManBlocksMia(void)
 		fdActorWalkTo(ACTOR_MIA, 136, 184);
 		fdScriptWait(10);
 		fdActorSetScript(
-			ACTOR_LIZARD_MAN, MercuryLighthouseEntrance_LizardManStepCenter);
+			ACTOR_LIZARD_MAN, MercuryLighthouseEntranceLizardManStepCenter);
 		fdActorWaitForMoveById(ACTOR_MIA);
 		fdActorGet(ACTOR_MIA)->steeringFlg |= ACTOR_FACES_MOTION;
 		fdScriptWait(30);
 		fdActorWalkTo(ACTOR_MIA, 120, 168);
 		fdScriptWait(5);
 		fdActorSetScript(
-			ACTOR_LIZARD_MAN, MercuryLighthouseEntrance_LizardManStepWest);
+			ACTOR_LIZARD_MAN, MercuryLighthouseEntranceLizardManStepWest);
 		fdActorWaitForMoveById(ACTOR_MIA);
 		fdActorFaceDirection(ACTOR_MIA, FACING_NORTH, 30);
 		fdActorRunRepeatedMotion(ACTOR_MIA, 1);
@@ -680,7 +679,7 @@ static void scMercuryLighthouseEntranceLizardManBlocksMia(void)
 		fdActorWalkTo(ACTOR_MIA, 136, 184);
 		fdScriptWait(15);
 		fdActorSetScript(
-			ACTOR_LIZARD_MAN, MercuryLighthouseEntrance_LizardManStepCenter);
+			ACTOR_LIZARD_MAN, MercuryLighthouseEntranceLizardManStepCenter);
 		fdActorWaitForMoveById(ACTOR_MIA);
 		fdActorRunRepeatedMotion(ACTOR_MIA, 1);
 		fdActorGet(ACTOR_MIA)->steeringFlg |= ACTOR_FACES_MOTION;
@@ -722,7 +721,7 @@ static void scMercuryLighthouseEntranceMiaEntersLighthouse(void)
 		FieldStateWork->transition =
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdScriptWait(60);
 		fdActorFaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
 		fdActorSetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
@@ -741,23 +740,23 @@ static void scMercuryLighthouseEntranceMiaEntersLighthouse(void)
 
 #include "shared/mercury_lighthouse_lights.c"
 
-/* Spreads one blue ripple (SPRITE_RIPPLE) from an actor, for 30 frames. */
-static void scMercuryLighthouseSpawnRipple(ACTOR *source)
+/* Spreads one blue ripple (SPRITE_RIPPLE) from an actor, for 30 ticks. */
+static void scMercuryLighthouseSpawnRipple(ACTOR *src)
 {
 	ACTOR *effect = syFieldActorCreate(
-		SPRITE_RIPPLE, source->x.fixed, source->y.fixed, source->z.fixed);
+		SPRITE_RIPPLE, src->x.fixed, src->y.fixed, src->z.fixed);
 
 	if(effect != NULL) {
-		SPR *sprite = (SPR *)effect->spr;
+		SPR *spr = (SPR *)effect->spr;
 
-		fdActorStartScript(effect, MercuryLighthouseEntrance_RippleScript);
+		fdActorStartScript(effect, MercuryLighthouseEntranceRippleScript);
 		effect->motionFlg = 0;
 		effect->layer = 1;
 		effect->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-		if(sprite != NULL) {
-			fdSprStartAnimation(sprite, 2);
-			sprite->flg = 0;
-			sprite->image.pri = 3;
+		if(spr != NULL) {
+			fdSprStartAnimation(spr, 2);
+			spr->flg = 0;
+			spr->image.pri = 3;
 		}
 	}
 }
@@ -769,35 +768,35 @@ static void scMercuryLighthouseSpawnRipple(ACTOR *source)
 #include "shared/pushed_actor_tables.c"
 /* clang-format off */
 
-Sint32 MercuryLighthouseEntrance_RippleScript[] = {
+Sint32 MercuryLighthouseEntranceRippleScript[] = {
 	SC_WAIT(30),
 	SC_RELEASE,
 };
 
-Sint32 MercuryLighthouse_SparkScript[] = {
+Sint32 MercuryLighthouseSparkScript[] = {
 	SC_CALL(scMercuryLighthouseRiseSpark),
 	SC_RELEASE,
 };
 
-Sint32 MercuryLighthouse_GrowLightScript[] = {
+Sint32 MercuryLighthouseGrowLightScript[] = {
 	SC_CALL(scMercuryLighthouseGrowLight),
 	SC_END,
 };
 
-Sint32 MercuryLighthouse_LightOutScript[] = {
+Sint32 MercuryLighthouseLightOutScript[] = {
 	SC_CALL(scMercuryLighthouseSwellLightOut),
 	SC_RELEASE,
 };
 
 #include "shared/mercury_lighthouse_pillar_tables.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
-Sint32 MercuryLighthouseEntrance_LizardManStepCenter[] = {
+Sint32 MercuryLighthouseEntranceLizardManStepCenter[] = {
 	SC_SPEED(2),
 	SC_ACCELERATION(2),
 	SC_SET(SW_STEERING, 0),
@@ -809,7 +808,7 @@ Sint32 MercuryLighthouseEntrance_LizardManStepCenter[] = {
 	SC_END,
 };
 
-Sint32 MercuryLighthouseEntrance_LizardManStepWest[] = {
+Sint32 MercuryLighthouseEntranceLizardManStepWest[] = {
 	SC_SPEED(2),
 	SC_ACCELERATION(2),
 	SC_SET(SW_STEERING, 0),
@@ -821,7 +820,7 @@ Sint32 MercuryLighthouseEntrance_LizardManStepWest[] = {
 	SC_END,
 };
 
-Sint32 MercuryLighthouseEntrance_LizardManStepEast[] = {
+Sint32 MercuryLighthouseEntranceLizardManStepEast[] = {
 	SC_SPEED(2),
 	SC_ACCELERATION(2),
 	SC_SET(SW_STEERING, 0),
@@ -839,7 +838,7 @@ Sint32 PaletteCycleGreen = 0;
 
 Sint32 PaletteCycleBlue = 0;
 
-SCENE_ENTRANCE MercuryLighthouseEntrance_Entrances[] = {
+SCENE_ENTRANCE MercuryLighthouseEntranceEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR, CONDITION_ALWAYS, 136, 0, 280, FACING_NORTH, 0, 16, 32, 256, 320, 0 },
 	{ MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_FROM_GODDESS, CONDITION_ALWAYS, 136, 0, 120, FACING_SOUTH, 0, 16, 32, 256, 320, 0 },
@@ -874,7 +873,7 @@ SCENE_ENTRANCE MercuryLighthouseEntrance_Entrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-Uint32 MercuryLighthouseEntrance_Exits[] = {
+Uint32 MercuryLighthouseEntranceExits[] = {
 	SCENE_EXITS(MercuryLighthouseEntrance),
 	SCENE_EXIT(MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_EXTERIOR, MercuryLighthouseExterior, MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_ENTRANCE),
 	SCENE_EXIT(MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_TO_GODDESS, MercuryLighthouseEntrance, MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_SIX_STATUES),
@@ -901,7 +900,7 @@ Uint32 MercuryLighthouseEntrance_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE MercuryLighthouseEntrance_ActorPlacements[] = {
+ACTOR_PLACE MercuryLighthouseEntranceActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_LIZARD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -925,7 +924,7 @@ ACTOR_PLACE MercuryLighthouseEntrance_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE MercuryLighthouseEntrance_Cues[] = {
+CUE MercuryLighthouseEntranceCues[] = {
 	{ STEP_CUE_WALKING, METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), SCRIPT_REF(scMercuryLighthouseEntranceHopAcrossPool) },
 	{ CUE_STEP, METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), SCRIPT_REF(scMercuryLighthouseEntranceLoseLights) },
 	{ STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK, METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), SCRIPT_REF(scMercuryLighthouseEntranceHopAcrossPool) },

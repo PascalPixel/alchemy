@@ -333,7 +333,7 @@ AlchemyUncreditedEnd_08139df4:
 	stm	r9, {r3, r4, r5}
 	ldr	r0, [r0, #8]
 	b	.L_08139ac4
-	.4byte	System_ReciprocalTable + 1
+	.4byte	SystemReciprocalTable + 1
 @ Four words of run-time state: stm lr, {r3, r4} and the two str to pc
 @ write them, and ldm r7, {r7, r8, fp} reads three back.
 AlchemyUncredited_08139f58:

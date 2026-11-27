@@ -92,7 +92,7 @@ typedef struct WINDOW_SPR {
 	/* The depth slot it is drawn at (syOAMAddSprAtDepth): a higher slot is
 	   drawn in front. The windows' glyphs take 254. */
 	Uint8	   depth;
-	QUEUED_SPR spr; /* queued at its depth each frame */
+	QUEUED_SPR spr; /* queued at its depth each tick */
 } WINDOW_SPR;
 
 /* A list of window sprites: its first sprite and the link to append after. */

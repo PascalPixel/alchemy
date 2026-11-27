@@ -7,6 +7,6 @@
 
 /* Isaac, Garet, Ivan, Mia and Jenna, ended by -1: the characters
    gmPartyInitCharacters equips with their definitions' items at a new game. */
-extern const Sint32 Character_NewGameIds[6];
+extern const Sint32 CharacterNewGameIds[6];
 
 #endif

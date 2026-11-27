@@ -63,7 +63,7 @@ void fdEncounterSelectMapZones(Sint32 useRules)
 Sint32 fdEncounterResolveWorldMapZoneAndBackdrop(void *pos)
 {
 	Sint32							region;
-	const WORLD_MAP_ENCOUNTER_RULE *rule = WorldMap_EncounterRules;
+	const WORLD_MAP_ENCOUNTER_RULE *rule = WorldMapEncounterRules;
 	Sint32 environment = fdWorldMapGetBattleEnvironmentStub(pos, &region);
 	Sint32 zone = 0;
 
@@ -225,7 +225,7 @@ Uint16 fdEncounterGetFormationAtSlot(Sint32 zone, Sint32 slot)
    zone and slot. */
 Sint16 fdEncounterGetDjinnFormation(Sint32 djinni)
 {
-	const DJINNI_BATTLE *battle = &Encounter_DjinnBattles[djinni];
+	const DJINNI_BATTLE *battle = &EncounterDjinnBattles[djinni];
 
 #if FIX_FUNCTION_SIGNATURES
 	return fdEncounterGetFormationAtSlot(battle->zone, battle->slot);
@@ -325,22 +325,22 @@ Sint16 fdBattleBackgroundGetSelected(void)
 }
 
 /* Chooses the battle background for the current scene.
-   Scene_BattleBackgroundRules lists each battle background (a word with bit 31
+   SceneBattleBackgroundRules lists each battle background (a word with bit 31
    set) followed by the scenes that use it, ended by 0; a scene takes the one
    listed last before it, and a scene not listed takes the last one. */
 void fdBattleBackgroundSelectForMap(void)
 {
-	Sint32	target = MainRoutineStateWork.next;
-	Sint32 *table = Scene_BattleBackgroundRules;
-	Sint32	entry = *table++;
+	Sint32	tgt = MainRoutineStateWork.next;
+	Sint32 *tbl = SceneBattleBackgroundRules;
+	Sint32	entry = *tbl++;
 	/* The first battle_background_rules.c word names a battle background. */
 	Sint32 backdrop;
 
-	while(entry != 0 && entry != target) {
+	while(entry != 0 && entry != tgt) {
 		if(entry & BATTLE_BACKGROUND_RULE) {
 			backdrop = entry & BATTLE_BACKGROUND_RULE_RESOURCE;
 		}
-		entry = *table++;
+		entry = *tbl++;
 	}
 	MainRoutineStateWork.battleBg = backdrop;
 }
@@ -382,8 +382,8 @@ void fdBattleBackgroundSelectForEnvironment(Sint32 environment)
 void fdEncounterSelectBattleMusic(Sint32 zone, Sint32 slot)
 {
 	Uint16		  key = ENCOUNTER_KEY(zone, slot);
-	const Uint16 *table = Encounter_BattleMusic;
-	/* Encounter_BattleMusic opens with a music marker, so the loop assigns
+	const Uint16 *tbl = EncounterBattleMusic;
+	/* EncounterBattleMusic opens with a music marker, so the loop assigns
 	   music before either stopping test holds. */
 	Uint16 music;
 	Uint16 value;
@@ -392,7 +392,7 @@ void fdEncounterSelectBattleMusic(Sint32 zone, Sint32 slot)
 		music = SOUND_KEEP_BGM;
 	} else {
 		for(;;) {
-			value = *table++;
+			value = *tbl++;
 			if(value == 0)
 				break;
 			if(value == key)

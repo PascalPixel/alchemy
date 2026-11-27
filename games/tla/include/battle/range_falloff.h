@@ -10,21 +10,21 @@
 /* The range falloff: each table is a percent of the full amount, indexed by the
    target's distance in places from the aimed unit (0 to 5), from the chance an
    effect lands to the damage, healing and PP each formula gives. */
-extern Uint8  RangeFalloff_EffectChance[];
-extern Sint32 RangeFalloff_PpLoss[];
-extern Sint32 RangeFalloff_HealHp[];
-extern Sint32 RangeFalloff_PpDamage[];
-extern Sint32 RangeFalloff_PsynergyDamage[];
-extern Sint32 RangeFalloff_SummonDamage[];
-extern Sint32 RangeFalloff_EnemyDamage[];
-extern Sint32 RangeFalloff_HealPp[];
-extern Sint32 RangeFalloff_EffectDamage[];
+extern Uint8  RangeFalloffEffectChance[];
+extern Sint32 RangeFalloffPpLoss[];
+extern Sint32 RangeFalloffHealHp[];
+extern Sint32 RangeFalloffPpDamage[];
+extern Sint32 RangeFalloffPsynergyDamage[];
+extern Sint32 RangeFalloffSummonDamage[];
+extern Sint32 RangeFalloffEnemyDamage[];
+extern Sint32 RangeFalloffHealPp[];
+extern Sint32 RangeFalloffEffectDamage[];
 
 /* Rolls whether an ability's effect lands on the target, less likely the
    farther it is from the aimed unit (gmBattleRollEffectSuccess); returns 1 when
    it does. */
 Sint32 gmBattleRollEffectSuccessStub(
-	Sint32 actor, Sint32 target, Sint32 range, Sint32 effect, Sint32 table);
+	Sint32 actor, Sint32 tgt, Sint32 range, Sint32 effect, Sint32 tbl);
 /* Scales max(attack - defense, 0) plus twice the added power by half the
    element multiplier, then halves it (gmBattleCalcAttackDamage). */
 Sint32 gmBattleCalcAttackDamageStub(

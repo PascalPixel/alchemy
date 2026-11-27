@@ -33,7 +33,7 @@ FIXED fdTerrainGetSplitBottomStepHeight();
 /* Ground height functions, by TERRAIN_KIND, called with (the remaining samples,
    x within the metatile, y within the metatile). Each reads only the arguments
    it needs. */
-const TERRAIN_HEIGHT_FN MapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
+const TERRAIN_HEIGHT_FN MapGridTerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
 	[TERRAIN_FLAT] = fdTerrainGetFlatHeight,
 	[TERRAIN_SLOPE_X] = fdTerrainGetSlopeXHeight,
 	[TERRAIN_SLOPE_Y] = fdTerrainGetSlopeYHeight,
@@ -65,7 +65,7 @@ const TERRAIN_HEIGHT_FN MapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
 #define ENV(name) BATTLE_ENVIRONMENT_##name
 /* The World Map's battle environments, by collision value, sixteen to each */
 /* of its sets of rows. */
-const Uint8 WorldMap_TerrainBehaviorTable[80] = {
+const Uint8 WorldMapTerrainBehaviorTable[80] = {
 	/* plain */
 	ENV(NONE), ENV(SEA), ENV(SEA), ENV(SEA), ENV(SEA_LAST), ENV(GRASSLAND),
 	ENV(SHALLOWS), ENV(GRASSLAND), ENV(GRASSLAND), ENV(FOREST), ENV(GRASSLAND),
@@ -93,7 +93,7 @@ const Uint8 WorldMap_TerrainBehaviorTable[80] = {
 
 /* The sprite viewer's backdrops, which B steps through: black, blue, green, */
 /* red, dark grey, grey, white and dark red. */
-const Uint16 SpriteViewer_BackdropColors[8] = {
+const Uint16 SpriteViewerBackdropColors[8] = {
 	RGB(0, 0, 0),    RGB(0, 0, 31),   RGB(0, 31, 0),
 	RGB(31, 0, 0),   RGB(7, 7, 7),    RGB(15, 15, 15),
 	RGB(31, 31, 31), RGB(15, 0, 0),
@@ -103,7 +103,7 @@ const Uint16 SpriteViewer_BackdropColors[8] = {
 /* stops at, the first of each group of sprites: a skip forward goes to the */
 /* next stop above the sprite shown, back to the last stop below it. (Uint16)-1 */
 /* ends the list. */
-const Uint16 SpriteViewer_SkipStops[10] = {
+const Uint16 SpriteViewerSkipStops[10] = {
 	SPRITE_ISAAC,              /* the party */
 	SPRITE_BRIGGS,             /* the people */
 	SPRITE_VENUS_DJINNI,       /* the Djinn */
@@ -118,7 +118,7 @@ const Uint16 SpriteViewer_SkipStops[10] = {
 /* clang-format on */
 
 /* Unused: nothing refers to it. Eight directions at a radius of 40 (x, y). */
-const Sint8 WorldMap_DirectionOffsets[8][2] = {
+const Sint8 WorldMapDirectionOffsets[8][2] = {
 	{0, -40},
 	{28, -28},
 	{40, 0},
@@ -130,13 +130,13 @@ const Sint8 WorldMap_DirectionOffsets[8][2] = {
 };
 
 /* Unused: nothing refers to it. A scale of 1 on both axes (16.16). */
-const Uint32 WorldMap_UnitScale[2] = {
+const Uint32 WorldMapUnitScale[2] = {
 	toFIXED(1),
 	toFIXED(1),
 };
 
 /* The sprite viewer's scale for its ring of copies: full size. */
-const SPR_SCALE SpriteViewer_Scale = {{{toFIXED(1), toFIXED(1)}}};
+const SPR_SCALE SpriteViewerScale = {{{toFIXED(1), toFIXED(1)}}};
 
 /* --------------------------------------------------------------------------
    Actor scripts: the ones the field starts by itself, the command table and the
@@ -190,119 +190,119 @@ Bool   fdActorScriptInvokeCallback();
 Sint32 fdCameraFollowWatchedInBounds();
 Sint32 fdActorScriptSetMoveTargetXZ();
 
-/* Each runs one control command every frame: the command, SC_WAIT(1),
+/* Each runs one control command every tick: the command, SC_WAIT(1),
    SC_LOOP(SC_FOREVER, SC_TOP). */
-const Sint32 Actor_KeyCheckScript[] = {
+const Sint32 ActorKeyCheckScript[] = {
 	SC_KEY_COUNT,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Climbing by the keys (fdActorMoveByKeys). */
-const Sint32 Actor_KeysScript[] = {
+const Sint32 ActorKeysScript[] = {
 	SC_KEYS,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Crossing a tied rope (fdActorCrossRope). */
-const Sint32 Actor_RopeScript[] = {
+const Sint32 ActorRopeScript[] = {
 	SC_ROPE,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Crossing a tightrope (fdActorCrossTightrope). */
-const Sint32 Actor_TightropeScript[] = {
+const Sint32 ActorTightropeScript[] = {
 	SC_TIGHTROPE,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Moving as sand (fdActorMoveAsSand). */
-const Sint32 Actor_SandScript[] = {
+const Sint32 ActorSandScript[] = {
 	SC_SAND,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Hovering (fdActorUpdateHoverCtrl). */
-const Sint32 Actor_HoverScript[] = {
+const Sint32 ActorHoverScript[] = {
 	SC_HOVER,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Walking (fdActorUpdateWalkingCtrl). */
-const Sint32 Actor_WalkingScript[] = {
+const Sint32 ActorWalkingScript[] = {
 	SC_WALK,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* The leader on foot (fdActorUpdatePlayerCtrl). */
-const Sint32 Actor_PlayerScript[] = {
+const Sint32 ActorPlayerScript[] = {
 	SC_PLAYER,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* The leader on the World Map (fdActorMoveOnWorldMap). */
-const Sint32 Actor_WorldMapScript[] = {
+const Sint32 ActorWorldMapScript[] = {
 	SC_WORLD,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Sailing on a map (fdActorSailOnMap). */
-const Sint32 Actor_SailOnMapScript[] = {
+const Sint32 ActorSailOnMapScript[] = {
 	SC_SAIL,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Sailing on the World Map (fdActorSailOnWorldMap). */
-const Sint32 Actor_SailScript[] = {
+const Sint32 ActorSailScript[] = {
 	SC_WORLD_SAIL,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Flying on the World Map (fdActorFlyOnWorldMap). */
-const Sint32 Actor_FlyScript[] = {
+const Sint32 ActorFlyScript[] = {
 	SC_WORLD_FLY,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Moving as sand on the World Map (fdActorMoveAsSandOnWorldMap). */
-const Sint32 Actor_SandOnWorldMapScript[] = {
+const Sint32 ActorSandOnWorldMapScript[] = {
 	SC_WORLD_SAND,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* The camera following the leader within the map's bounds. */
-const Sint32 Actor_CameraScript[] = {
+const Sint32 ActorCameraScript[] = {
 	SC_CAMERA,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* Following the watched actor (fdActorApproachWatchedActor). */
-const Sint32 Actor_ApproachWatchedScript[] = {
+const Sint32 ActorApproachWatchedScript[] = {
 	SC_APPROACH_WATCHED,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 /* A script that ends at once. */
-const Sint32 ActorScript_EndScript[] = {
+const Sint32 ActorScriptEndScript[] = {
 	SC_END,
 };
 
 /* The handler of each command. 0x31 to 0x35 repeat SC_END's. */
-const SCRIPT_COMMAND_FN ActorScript_CommandTable[54] = {
+const SCRIPT_COMMAND_FN ActorScriptCommandTable[54] = {
 	fdActorScriptWait,							 /* 0x00 SC_WAIT */
 	fdActorScriptWaitForArrival,				 /* 0x01 SC_SYNC */
 	fdActorScriptSetPosAndResetMotion,			 /* 0x02 SC_POSITION */
@@ -360,7 +360,7 @@ const SCRIPT_COMMAND_FN ActorScript_CommandTable[54] = {
 };
 
 /* The handler of each work value (ACTOR_SCRIPT_VALUE in actor_script.h). */
-const OPERAND_FUNC ActorScript_OperandHandlerTable[41] = {
+const OPERAND_FUNC ActorScriptOperandHandlerTable[41] = {
 	fdActorScriptSetOrCompareScriptAddress,	   /* 0x00 SW_SCRIPT */
 	fdActorScriptSetOrCompareCursor,		   /* 0x01 SW_CURSOR */
 	fdActorScriptSetOrCompareFacing,		   /* 0x02 */

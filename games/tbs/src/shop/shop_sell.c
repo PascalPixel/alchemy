@@ -7,8 +7,8 @@
 Sint32 mnShopChooseMember(void)
 {
 	SHOP_STATE *shop = MenuState;
-	WINDOW	   *listWindow;
-	Sint32		memberIndex = 0;
+	WINDOW	   *listWin;
+	Sint32		memberIdx = 0;
 	Bool		redraw = TRUE;
 	Sint32		unitId = 0;
 
@@ -16,20 +16,20 @@ Sint32 mnShopChooseMember(void)
 		0, 9, SHOP_MONEY_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
 	mnShopDrawMoney();
 	shop->itemWin = mnWindowCreateStub(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
-	listWindow = mnWindowCreateStub(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
+	listWin = mnWindowCreateStub(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
 	shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-	shop->cursorFrm = SHOP_CURSOR_ENTER_FRAMES;
-	mnCreatePartyFiguresStub(listWindow, 2, 0, 8, 0);
+	shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
+	mnCreatePartyFiguresStub(listWin, 2, 0, 8, 0);
 
 	for(;;) {
 		if(redraw != 0) {
 			redraw = FALSE;
-			memberIndex =
-				(memberIndex + shop->partyMemberCnt) % shop->partyMemberCnt;
-			unitId = shop->partyMemberIds[memberIndex];
-			mnCursorPlace(listWindow, memberIndex * 24 - 12, 0);
+			memberIdx =
+				(memberIdx + shop->partyMemberCnt) % shop->partyMemberCnt;
+			unitId = shop->partyMemberIds[memberIdx];
+			mnCursorPlace(listWin, memberIdx * 24 - 12, 0);
 			shop->cursorFrm = 3;
-			mnShopDrawParty(listWindow, memberIndex, 0);
+			mnShopDrawParty(listWin, memberIdx, 0);
 			mnShopDrawMemberItems(shop->itemWin, unitId);
 		}
 
@@ -44,7 +44,7 @@ Sint32 mnShopChooseMember(void)
 				else
 					mnShopSelectRepair(unitId);
 				shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-				shop->cursorFrm = SHOP_CURSOR_ENTER_FRAMES;
+				shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
 				redraw = TRUE;
 			}
 			continue;
@@ -53,7 +53,7 @@ Sint32 mnShopChooseMember(void)
 		if((PerPush & KEY_B) != 0) {
 			sySndPlayStub(SE_MENU_CANCEL);
 			mnReleasePartyFiguresStub();
-			mnWindowCloseStub(listWindow, 2);
+			mnWindowCloseStub(listWin, 2);
 			mnWindowCloseStub(shop->itemWin, 2);
 			mnWindowCloseStub(shop->moneyWin, 2);
 			sySynch(1);
@@ -62,12 +62,12 @@ Sint32 mnShopChooseMember(void)
 
 		if((PerRepeat & KEY_LEFT) != 0) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
-			memberIndex--;
+			memberIdx--;
 			redraw = TRUE;
 		}
 		if((PerRepeat & KEY_RIGHT) != 0) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
-			memberIndex++;
+			memberIdx++;
 			redraw = TRUE;
 		}
 		sySynch(1);
@@ -79,49 +79,47 @@ Sint32 mnShopChooseMember(void)
    empty. Returns -1 when cancelled, 0 when the inventory ran out. */
 Sint32 mnShopSelectSell(Sint32 unitId)
 {
-	WINDOW	   *descriptionWindow;
+	WINDOW	   *descriptionWin;
 	SHOP_STATE *shop;
-	WINDOW	   *priceWindow;
+	WINDOW	   *priceWin;
 	UNIT	   *unit;
 	Sint32		slot;
-	Sint32		inventoryCount;
+	Sint32		inventoryCnt;
 	Bool		redraw;
 	Sint32		result;
 	Sint32		itemId;
 	Sint32		quantity;
-	WINDOW	   *window;
+	WINDOW	   *win;
 	Sint32		x;
 
 	shop = MenuState;
 	unit = gmUnitGetStub(unitId);
-	inventoryCount = 1;
-	priceWindow = mnWindowCreateStub(
+	inventoryCnt = 1;
+	priceWin = mnWindowCreateStub(
 		SHOP_SELL_PRICE_X, 8, SHOP_SELL_PRICE_WIDTH, 4, WINDOW_FLAG_INSTANT);
 	slot = 0;
 
 	for(;;) {
-		descriptionWindow =
-			mnWindowCreateStub(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
+		descriptionWin = mnWindowCreateStub(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
 		shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
-		shop->cursorFrm = SHOP_CURSOR_ENTER_FRAMES;
+		shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
 		redraw = TRUE;
 
 		while(1) {
 			if(redraw != 0) {
 				redraw = FALSE;
-				inventoryCount = gmInventoryCountStub(unitId);
-				if(slot > inventoryCount - 1)
-					slot = inventoryCount - 1;
+				inventoryCnt = gmInventoryCountStub(unitId);
+				if(slot > inventoryCnt - 1)
+					slot = inventoryCnt - 1;
 				itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
-				window = shop->itemWin;
+				win = shop->itemWin;
 				x = slot % SHOP_INVENTORY_COLUMNS * 16;
-				mnCursorPlace(
-					window, x, slot / SHOP_INVENTORY_COLUMNS * 16 + 8);
+				mnCursorPlace(win, x, slot / SHOP_INVENTORY_COLUMNS * 16 + 8);
 				shop->cursorFrm = 3;
-				mnShopDrawItemPrice(priceWindow, itemId,
+				mnShopDrawItemPrice(priceWin, itemId,
 					mnShopSalePrice(unit->inventory[slot]),
 					SHOP_PRICE_KIND_SELL);
-				mnShopDrawMessage(descriptionWindow, itemId + MsgItemPlainName);
+				mnShopDrawMessage(descriptionWin, itemId + MsgItemPlainName);
 			}
 
 			if((PerPush & KEY_A) != 0) {
@@ -137,13 +135,13 @@ Sint32 mnShopSelectSell(Sint32 unitId)
 			if((PerRepeat & KEY_LEFT) != 0) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				slot--;
-				slot = (slot + inventoryCount) % inventoryCount;
+				slot = (slot + inventoryCnt) % inventoryCnt;
 				redraw = TRUE;
 			}
 			if((PerRepeat & KEY_RIGHT) != 0) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				slot++;
-				slot = (slot + inventoryCount) % inventoryCount;
+				slot = (slot + inventoryCnt) % inventoryCnt;
 				redraw = TRUE;
 			}
 			/* Up and down wrap round the 15-slot grid onto filled slots. */
@@ -151,14 +149,14 @@ Sint32 mnShopSelectSell(Sint32 unitId)
 				slot -= SHOP_INVENTORY_COLUMNS;
 				if(slot < 0)
 					slot += INVENTORY_SLOTS;
-				while(slot >= inventoryCount)
+				while(slot >= inventoryCnt)
 					slot -= SHOP_INVENTORY_COLUMNS;
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				redraw = TRUE;
 			}
 			if((PerRepeat & KEY_DOWN) != 0) {
 				slot += SHOP_INVENTORY_COLUMNS;
-				if(slot >= inventoryCount)
+				if(slot >= inventoryCnt)
 					slot -= INVENTORY_SLOTS;
 				while(slot < 0)
 					slot += SHOP_INVENTORY_COLUMNS;
@@ -168,7 +166,7 @@ Sint32 mnShopSelectSell(Sint32 unitId)
 			sySynch(1);
 		}
 
-		mnWindowCloseStub(descriptionWindow, 2);
+		mnWindowCloseStub(descriptionWin, 2);
 		sySynch(1);
 		if(result != 0)
 			break;
@@ -182,13 +180,13 @@ Sint32 mnShopSelectSell(Sint32 unitId)
 			break;
 	}
 
-	mnWindowCloseStub(priceWindow, 2);
+	mnWindowCloseStub(priceWin, 2);
 	return result;
 }
 
 /* Draws the party member's items as icons in rows of five, or a line saying it
    has none. */
-void mnShopDrawMemberItems(WINDOW *window, Sint32 unitId)
+void mnShopDrawMemberItems(WINDOW *win, Sint32 unitId)
 {
 	UNIT	   *unit;
 	Sint32		x;
@@ -199,18 +197,18 @@ void mnShopDrawMemberItems(WINDOW *window, Sint32 unitId)
 	unit = gmUnitGetStub(unitId);
 	x = 8;
 	y = 0;
-	if(window != 0) {
-		mnWindowSprPrepareForRedrawStub(window);
+	if(win != 0) {
+		mnWindowSprPrepareForRedrawStub(win);
 		if(gmInventoryCountStub(unitId) == 0) {
 			mnTextDrawMessageStub(
-				MsgNoItems, window, SHOP_EMPTY_GRID_X, SHOP_EMPTY_GRID_Y);
+				MsgNoItems, win, SHOP_EMPTY_GRID_X, SHOP_EMPTY_GRID_Y);
 		} else {
 			for(slot = 0; slot < INVENTORY_SLOTS; slot++) {
 				if(unit->inventory[slot] != 0) {
 					icon = mnWindowSprCreateLoadedStub(unit->inventory[slot],
 						ICON_BASE | ICON_COUNT_ABOVE_ONE | ICON_BROKEN |
 							ICON_EQUIPPED,
-						window, x, y);
+						win, x, y);
 					icon->depth = OAM_DEPTH_FRONT - 3;
 				}
 				x += 16;
@@ -253,7 +251,7 @@ Sint32 mnShopSelectSellCount(Sint32 unitId, Sint32 slot)
 		savedX = shop->cursor.tgtX;
 		savedY = shop->cursor.tgtY;
 		shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-		shop->cursorFrm = SHOP_CURSOR_ENTER_FRAMES;
+		shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
 		mnCursorPlace(NULL, SHOP_QUANTITY_CURSOR_X, 48);
 		result = mnShopSelectQuantity(0, stackQuantity, unitSalePrice);
 		sySynch(1);
@@ -263,10 +261,10 @@ Sint32 mnShopSelectSellCount(Sint32 unitId, Sint32 slot)
 	return result;
 }
 
-/* Sells `count` of the item in `slot`, after the shopkeeper's offer that fits
+/* Sells `cnt` of the item in `slot`, after the shopkeeper's offer that fits
    it and a Yes; whatever the shops keep a stock of goes back on sale. A count
    of -1 sells the one old piece of equipment a purchase replaced. */
-void mnShopSellItem(Sint32 unitId, Sint32 slot, Sint32 count)
+void mnShopSellItem(Sint32 unitId, Sint32 slot, Sint32 cnt)
 {
 	SHOP_STATE		*shop = MenuState;
 	UNIT			*unit = gmUnitGetStub(unitId);
@@ -275,14 +273,14 @@ void mnShopSellItem(Sint32 unitId, Sint32 slot, Sint32 count)
 	Uint8			 rare = item->flg & ITEM_RARE;
 	Sint32			 sellingReplacedItem = 0;
 	Sint32			 total;
-	Sint32			 message;
-	Sint32			 soldCount;
+	Sint32			 msg;
+	Sint32			 soldCnt;
 
-	if(count == -1) {
+	if(cnt == -1) {
 		sellingReplacedItem = 1;
-		count = 1;
+		cnt = 1;
 	}
-	total = mnShopSalePrice(unit->inventory[slot]) * count;
+	total = mnShopSalePrice(unit->inventory[slot]) * cnt;
 	if(total == 0) {
 		mnMessageArgumentPushStub(itemId, MESSAGE_ARGUMENT_ITEM);
 		/* "Sorry, but we don't buy those." */
@@ -301,38 +299,38 @@ void mnShopSellItem(Sint32 unitId, Sint32 slot, Sint32 count)
 	   "What rare stuff! How about (total) coins?" or "How about (total) coins
 	   for your (item)?" */
 	if(sellingReplacedItem)
-		message = MsgOldItemSellOffer;
+		msg = MsgOldItemSellOffer;
 	else if(unit->inventory[slot] & INVENTORY_BROKEN)
-		message = MsgDamagedSellOffer;
-	else if(count > 1)
-		message = MsgSellTotal;
+		msg = MsgDamagedSellOffer;
+	else if(cnt > 1)
+		msg = MsgSellTotal;
 	else if(rare)
-		message = MsgRareSellOffer;
+		msg = MsgRareSellOffer;
 	else
-		message = MsgSellOffer;
+		msg = MsgSellOffer;
 	mnMessageArgumentPushStub(itemId, MESSAGE_ARGUMENT_ITEM);
 	mnMessageArgumentPushStub(total, MESSAGE_ARGUMENT_NUMBER);
-	mnShopShowKeeperMessageHidingCursor(message);
+	mnShopShowKeeperMessageHidingCursor(msg);
 	if(mnShopAskYesNo(0) != 0) {
 		/* "You don't want to let go of it, do you?", or "What? Changed your
 		   mind? Well, too bad for you." */
 		if(rare || sellingReplacedItem)
-			message = MsgKeepIt;
+			msg = MsgKeepIt;
 		else
-			message = MsgChangedMind;
-		mnShopShowKeeperMessageHidingCursor(message);
+			msg = MsgChangedMind;
+		mnShopShowKeeperMessageHidingCursor(msg);
 		return;
 	}
 	sySndPlayStub(SE_SHOP_SELL);
-	for(soldCount = 0; soldCount < count; soldCount++)
+	for(soldCnt = 0; soldCnt < cnt; soldCnt++)
 		gmInventoryDiscardStub(unitId, slot);
 	gmPartyAdjustCoinsStub(total);
 	mnShopDrawMoney();
 	mnShopDrawMemberItems(shop->itemWin, unitId);
 	/* "All right, I'll buy it! Here are your coins.", or "OK! It's a deal!" */
 	if(rare || sellingReplacedItem)
-		message = MsgSold;
+		msg = MsgSold;
 	else
-		message = MsgDeal;
-	mnShopShowKeeperMessageHidingCursor(message);
+		msg = MsgDeal;
+	mnShopShowKeeperMessageHidingCursor(msg);
 }

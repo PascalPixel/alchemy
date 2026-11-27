@@ -1641,7 +1641,7 @@ FORMATION Formations[FORMATION_COUNT] = {
 		.minCnts = {1},
 		.maxCnts = {1},
 	},
-	/* Bane's row of Encounter_DjinnBattles; no event starts it */
+	/* Bane's row of EncounterDjinnBattles; no event starts it */
 	[362] = {
 		.memberIds = {ENEMY_ROW(ENEMY_VENUS_DJINNI_UNUSED_BANE)},
 		.minCnts = {1},
@@ -1717,7 +1717,7 @@ FORMATION Formations[FORMATION_COUNT] = {
 
 /* The 20 enemies whose defeated flags a monster battle clears before it */
 /* picks a formation (btFormationSelectLevelMatchedCandidate). */
-Uint16 BattleFormation_ExcludedEnemies[] = {
+Uint16 BattleFormationExcludedEnemies[] = {
 	ENEMY_ZOMBIE_DJINN_LESSON,
 	ENEMY_MYSTERY_MAN,
 	ENEMY_MYSTERY_WOMAN,

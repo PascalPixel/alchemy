@@ -59,10 +59,10 @@
 #include "graphics/graphics.h"
 #include "game/system_call.h"
 
-extern SCENE_ENTRANCE TretTreeBranch_Entrances[];
-extern Uint32		  TretTreeBranch_Exits[];
-extern ACTOR_PLACE	  TretTreeBranch_ActorPlacements[];
-extern CUE			  TretTreeBranch_Cues[];
+extern SCENE_ENTRANCE TretTreeBranchEntrances[];
+extern Uint32		  TretTreeBranchExits[];
+extern ACTOR_PLACE	  TretTreeBranchActorPlacements[];
+extern CUE			  TretTreeBranchCues[];
 
 /* Breeze, a Jupiter Djinni (DJINNI_BREEZE), is the only placed actor. Its actor
    placement is gone once its flag (FLAG_DJINNI(DJINNI_BREEZE)) is set. */
@@ -95,17 +95,17 @@ static void scTretTreeBranchStartBg3Split(void);
 
 /* The header and data of the unused input exchange
    (scTretTreeBranchExchangeInputPacket). */
-static Uint16 sTransferHeader[16] ALIGNED(16);
-static Uint8  sTransferData[96];
+static Uint16 TransferHeader[16] ALIGNED(16);
+static Uint8  TransferData[96];
 /* The map height at which the background splits: the clouds drift above it, and
    the forest far below lies under it. */
 #define BG3_SPLIT_Y 192
 
 /* The screen line where BG3 splits, and its horizontal scroll below the split
    (the forest) and above it (the drifting clouds). */
-static Sint32 sSplitLine;
-static Uint16 sHofsAtOrAfterSplit;
-static Uint16 sHofsBeforeSplit;
+static Sint32 SplitLine;
+static Uint16 HofsAtOrAfterSplit;
+static Uint16 HofsBeforeSplit;
 
 /* Talking to Breeze, the Jupiter Djinni at the east end of Tret's highest
    branch, makes it hop and starts the battle with it. */
@@ -116,7 +116,7 @@ static void scTretTreeBranchTalkToBreeze(void)
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return TretTreeBranch_Entrances;
+	return TretTreeBranchEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -126,33 +126,33 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return TretTreeBranch_Exits;
+	return TretTreeBranchExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return TretTreeBranch_ActorPlacements;
+	return TretTreeBranchActorPlacements;
 }
 
 /* Moves the leader and the camera the same number of metatiles, each set on the
    ground of the metatile it lands on. Between a branch and its hidden copy the
    metatiles south are as much higher, so the picture does not change. */
 static void scTretTreeBranchShiftLeaderAndCameraByMetatiles(
-	Sint32 metatileOffsetX, Sint32 metatileOffsetZ)
+	Sint32 metatileOfsX, Sint32 metatileOfsZ)
 {
 	FIELD_STATE *state = FieldStateWork;
 	ACTOR		*actor;
-	Sint32		 offsetX = metatileOffsetX;
-	Sint32		 offsetZ = metatileOffsetZ;
+	Sint32		 ofsX = metatileOfsX;
+	Sint32		 ofsZ = metatileOfsZ;
 	FIXED		 groundHeight;
 
 	actor = fdActorGet(MainRoutineStateWork.leaderActorId);
-	offsetX *= toFIXED(16);
-	offsetZ *= toFIXED(16);
+	ofsX *= toFIXED(16);
+	ofsZ *= toFIXED(16);
 
 	if(actor != NULL) {
-		actor->x.fixed += offsetX;
-		actor->z.fixed += offsetZ;
+		actor->x.fixed += ofsX;
+		actor->z.fixed += ofsZ;
 		groundHeight = fdMapGridGetTerrainHeight(
 			actor->layer, actor->x.fixed, actor->z.fixed);
 		actor->y.fixed = groundHeight;
@@ -161,8 +161,8 @@ static void scTretTreeBranchShiftLeaderAndCameraByMetatiles(
 
 	actor = state->camera;
 	if(actor != NULL) {
-		actor->x.fixed += offsetX;
-		actor->z.fixed += offsetZ;
+		actor->x.fixed += ofsX;
+		actor->z.fixed += ofsZ;
 		groundHeight = fdMapGridGetTerrainHeight(
 			actor->layer, actor->x.fixed, actor->z.fixed);
 		actor->y.fixed = groundHeight;
@@ -265,7 +265,7 @@ static void scTretTreeBranchRevealFades(void)
    tops, Breeze and Reveal. */
 const CUE *scGetCues(void)
 {
-	return TretTreeBranch_Cues;
+	return TretTreeBranchCues;
 }
 
 /* Unused script hook: begins and immediately ends a script. */
@@ -288,11 +288,11 @@ static void UNUSED scTretTreeBranchUnusedHookSecond(void)
 /* Unused exchange callback: puts held/repeated keys in the transfer header. */
 static void UNUSED scTretTreeBranchExchangeInputPacket(void)
 {
-	Uint16 *header = sTransferHeader;
+	Uint16 *header = TransferHeader;
 
 	header[0] = PerData;
 	header[1] = PerRepeat;
-	sySerialPollAndTransfer(header, sTransferData);
+	sySerialPollAndTransfer(header, TransferData);
 }
 
 /* Opens Tret's branches with a backdrop fade, opens the see-through oval in the
@@ -319,41 +319,41 @@ Sint32 scInit(void)
    clouds' above the split, the map's below it. */
 static void scTretTreeBranchApplyBg3ScrollAtScanline(void)
 {
-	Uint16 *scrollOffset;
+	Uint16 *scrollOfs;
 	Uint32	horizontalScroll;
 
-	if(REG_VCOUNT >= sSplitLine) {
-		scrollOffset = &sHofsAtOrAfterSplit;
+	if(REG_VCOUNT >= SplitLine) {
+		scrollOfs = &HofsAtOrAfterSplit;
 	} else {
-		scrollOffset = &sHofsBeforeSplit;
+		scrollOfs = &HofsBeforeSplit;
 	}
-	horizontalScroll = *scrollOffset;
+	horizontalScroll = *scrollOfs;
 	REG_BG3HOFS = horizontalScroll;
 }
 
-/* Each frame, moves the split with the map's vertical scroll, so that it stays
+/* Each tick, moves the split with the map's vertical scroll, so that it stays
    at BG3_SPLIT_Y on the map. The clouds above it lag the map by one more pixel
-   every four frames, so they drift slowly right. */
+   every four ticks, so they drift slowly right. */
 static void scTretTreeBranchUpdateBg3ScrollSplit(void)
 {
 	MAP_GRID_LAYER_SCROLL *layer = &((MAP_GRID_SCROLL_STATE *)MapGridState[0])
 										->layers[MAPGRID_LAYER_GROUND];
-	Sint32 horizontalOffset;
+	Sint32 horizontalOfs;
 
-	sSplitLine = BG3_SPLIT_Y - (Sint16)(FIXEDtoINT(layer->y));
-	sHofsAtOrAfterSplit = horizontalOffset = (Sint16)(FIXEDtoINT(layer->x));
-	sHofsBeforeSplit = horizontalOffset - (FrameCount >> 2);
+	SplitLine = BG3_SPLIT_Y - (Sint16)(FIXEDtoINT(layer->y));
+	HofsAtOrAfterSplit = horizontalOfs = (Sint16)(FIXEDtoINT(layer->x));
+	HofsBeforeSplit = horizontalOfs - (TickCount >> 2);
 }
 
 /* Starts the clouds drifting: the split is chosen at every scanline and moved
-   every frame. */
+   every tick. */
 static void scTretTreeBranchStartBg3Split(void)
 {
 	syIntFunction(IRQ_HBLANK, 0, scTretTreeBranchApplyBg3ScrollAtScanline);
-	sySetFrameEvent(scTretTreeBranchUpdateBg3ScrollSplit, EVENT_PASS_FRAME);
+	sySetTickEvent(scTretTreeBranchUpdateBg3ScrollSplit, EVENT_PASS_TICK);
 }
 
-SCENE_ENTRANCE TretTreeBranch_Entrances[] = {
+SCENE_ENTRANCE TretTreeBranchEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 100, 0, 100, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{TRET_TREE_BRANCH_FROM_TREE_ROOMS_SOUTH_SOUTHWEST, CONDITION_ALWAYS, 328, 0,
@@ -375,7 +375,7 @@ SCENE_ENTRANCE TretTreeBranch_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 TretTreeBranch_Exits[] = {
+Uint32 TretTreeBranchExits[] = {
 	SCENE_EXITS(TretTreeBranch),
 	SCENE_EXIT(TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST, TreeRooms,
 		TREE_ROOMS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHWEST),
@@ -397,14 +397,14 @@ Uint32 TretTreeBranch_Exits[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE TretTreeBranch_ActorPlacements[] = {
+ACTOR_PLACE TretTreeBranchActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_BREEZE), MOVEMENT_TYPE_STAND,
 		648, 0, 88, FACING_WEST, TALK_FACING_PARTY, 0),
 	{ SCENE_TABLE_END },
 };
 /* clang-format on */
 
-CUE TretTreeBranch_Cues[] = {
+CUE TretTreeBranchCues[] = {
 	{STEP_CUE_WALKING | STEP_CUE_FLAG_QUICK,
 		TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST, CONDITION_ALWAYS,
 		SCRIPT_REF(scTretTreeBranchEnterTretTreeRooms)},
@@ -449,8 +449,8 @@ CUE TretTreeBranch_Cues[] = {
 };
 
 /* Unused: the two steps of a door opening, as Vale's doors have them
-   (ValePrologue_SanctumDoorOpens). Nothing on the branch plays them. */
-Uint16 TretTreeBranch_UnusedMetatileSteps[] = {
+   (ValePrologueSanctumDoorOpens). Nothing on the branch plays them. */
+Uint16 TretTreeBranchUnusedMetatileSteps[] = {
 	MAPGRID_ANIMATION_STEP(0, 96, 2, 2, 2),
 	MAPGRID_ANIMATION_STEP(2, 96, 2, 2, 2),
 	MAPGRID_ANIMATION_STEPS_END,

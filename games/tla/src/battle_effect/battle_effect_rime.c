@@ -7,7 +7,7 @@
 #define DJINNI_SIGN_DJINNI_PICTURE 26048
 /* How far the Djinni sways either side as it rises, in pixels. */
 #define DJINNI_SIGN_DJINNI_SWAY	   32
-#define DJINNI_SIGN_FRAMES		   48
+#define DJINNI_SIGN_TICKS		   48
 
 /* Rime's seal: the 64x64 texture after RuneSheet's half, which the rune's half
    and its mirror fill (RUNE_TEXTURE_RUNE); the stretch of the sprite sheet
@@ -16,10 +16,10 @@
 #define RIME_SEAL_CLEARED_BYTES 16384
 
 /* Haze's stars: thirty-two placed, of which the first sixteen bloom, each over
-   sixteen frames. */
+   sixteen ticks. */
 #define HAZE_PLACED_STARS 32
 #define HAZE_STARS		  16
-#define HAZE_STAR_FRAMES  16
+#define HAZE_STAR_TICKS	  16
 
 /* Rime and Haze: the Djinni rises swaying out of sight over the targets while
    its sign turns in the air: for Rime a seal that spins in two mirrored copies
@@ -32,12 +32,12 @@ void btEffectRunDjinniSign(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	/* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
-	 * frame reserves and never touches; as one DRAW_RECTANGLE. */
+	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE blit[2];
 	void		  *vertices;
 	MODEL_TEXTURE  texture;
 	RENDER_MODEL  *model;
-	Sint32		   frame;
+	Sint32		   frm;
 	Sint32		   i;
 
 	state = Ram_HeapSlots->battleEff;
@@ -94,10 +94,10 @@ void btEffectRunDjinniSign(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
 	blit[0] = Ram_HeapSlots->ramCode;
 
-	for(frame = 0; frame != DJINNI_SIGN_FRAMES; frame++) {
-		/* Frame 0: Haze's stars take random places about the centre, one more
-		   blooming every two frames. */
-		if(frame == 0) {
+	for(frm = 0; frm != DJINNI_SIGN_TICKS; frm++) {
+		/* Tick 0: Haze's stars take random places about the centre, one more
+		   blooming every two ticks. */
+		if(frm == 0) {
 			for(i = 0; i != HAZE_PLACED_STARS; i++) {
 				PARTICLE *star = &state->particles[i];
 
@@ -107,20 +107,20 @@ void btEffectRunDjinniSign(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				star->variant = -i * 2;
 			}
 		}
-		if(frame == 38)
+		if(frm == 38)
 			EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
 		if(mode == DJINNI_SIGN_RIME) {
-			if(frame == 32)
+			if(frm == 32)
 				sySndPlayStub(SE_POWER_UP);
 		} else {
-			if(frame > 7)
+			if(frm > 7)
 				btEffectStepPaletteToResource(RESOURCE_STAR_CROSS_SHEET);
-			if(frame == 32)
+			if(frm == 32)
 				btEffectTintBattler(
 					args->tgts[0], SPRITE_COLOR_WHITE, TINT_KEEP, 0, 24);
 		}
 
-		/* The Djinni rises a pixel a frame, swaying, until it leaves the
+		/* The Djinni rises a pixel a tick, swaying, until it leaves the
 		   top. */
 		if(--center[1] > 0) {
 			Sint32 height = center[1];
@@ -129,7 +129,7 @@ void btEffectRunDjinniSign(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				height = DJINNI_HEIGHT;
 			blit[0](canvas, state->sheet + DJINNI_SIGN_DJINNI_PICTURE,
 				FIXEDtoINT(
-					sySin(frame * (TRIG_TURN / 64)) * DJINNI_SIGN_DJINNI_SWAY) +
+					sySin(frm * (TRIG_TURN / 64)) * DJINNI_SIGN_DJINNI_SWAY) +
 					CANVAS_SIZE / 2 - DJINNI_WIDTH / 2,
 				center[1] - DJINNI_HEIGHT / 2, DJINNI_WIDTH, height);
 		}
@@ -143,44 +143,44 @@ void btEffectRunDjinniSign(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		texture.logHeight = 6;
 		model->kind = MODEL_SHADED_MAX;
 		model->texture = &texture;
-		model->mesh = BattleEffect_SquareMesh;
+		model->mesh = BattleEffectSquareMesh;
 		model->vertices = vertices;
 		if(mode == DJINNI_SIGN_RIME) {
-			/* Rime's seal fades in over the first eight frames and turns in two
-			   mirrored copies that come together at frame 32, shrinking from
+			/* Rime's seal fades in over the first eight ticks and turns in two
+			   mirrored copies that come together at tick 32, shrinking from
 			   twice its size. */
-			Sint32 brightness = frame * 8 - 64;
+			Sint32 brightness = frm * 8 - 64;
 
 			if(brightness > 0)
 				brightness = 0;
-			/* DEAD: the effect ends after frame 47, so this fade-out never
+			/* DEAD: the effect ends after tick 47, so this fade-out never
 			   runs; the ROM keeps its test and store. */
-			if(frame > 55)
-				brightness = (56 - frame) * 8;
+			if(frm > 55)
+				brightness = (56 - frm) * 8;
 			model->shade = brightness;
 			texture.pixels = state->sheet + RIME_SEAL_TEXTURE;
 			for(i = 0; i != 2; i++) {
-				FIXED scale = toFIXED(2) - frame * (toFIXED(1) / 32);
+				FIXED scale = toFIXED(2) - frm * (toFIXED(1) / 32);
 
-				if(frame > 31 && i == 1)
+				if(frm > 31 && i == 1)
 					continue;
 				if(scale < toFIXED(1))
 					scale = toFIXED(1);
 				syInitMatrix();
 				syRotX(-DEGtoANG(90));
-				if(frame <= 31) {
+				if(frm <= 31) {
 					if(i == 0)
-						syRotY((32 - frame) << 9);
+						syRotY((32 - frm) << 9);
 					else
-						syRotY((frame << 9) - DEGtoANG(90));
+						syRotY((frm << 9) - DEGtoANG(90));
 				}
 				syScale(scale >> 1, scale >> 1, scale >> 1);
 				btRenderTransformVertices(
-					BattleEffect_GroundSquareCorners, vertices, 4);
+					BattleEffectGroundSquareCorners, vertices, 4);
 				btRenderDrawModelList(model);
 			}
 		} else {
-			/* Each of Haze's stars swells and shrinks over 16 frames, and every
+			/* Each of Haze's stars swells and shrinks over 16 ticks, and every
 			   fourth one chimes as it opens. */
 			PARTICLE *star;
 
@@ -189,7 +189,7 @@ void btEffectRunDjinniSign(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			for(i = 0, star = state->particles; i != HAZE_STARS; i++, star++) {
 				if(star->variant == 4 && (i & 3) == 0)
 					sySndPlayStub(SE_PSYNERGY_START);
-				if(star->variant >= 0 && star->variant < HAZE_STAR_FRAMES) {
+				if(star->variant >= 0 && star->variant < HAZE_STAR_TICKS) {
 					FIXED swell =
 						sySin(star->variant * (TRIG_TURN / 32)) * star->z;
 					Sint32 size;
@@ -198,11 +198,11 @@ void btEffectRunDjinniSign(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					syTranslate(star->x, star->y, 0);
 					size = swell >> 8;
 					syRotX(DEGtoANG(90));
-					syRotY(frame << 9);
+					syRotY(frm << 9);
 					size /= 2;
 					syScale(size, size, size);
 					btRenderTransformVertices(
-						BattleEffect_GroundSquareCorners, vertices, 4);
+						BattleEffectGroundSquareCorners, vertices, 4);
 					btRenderDrawModelList(model);
 				}
 				star->variant++;
@@ -213,7 +213,7 @@ void btEffectRunDjinniSign(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X;
 		ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y;
 
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
@@ -323,4 +323,4 @@ void btEffectRunCage(BATTLE_EFFECT_PARM *args)
 #undef RIME_SEAL_CLEARED_BYTES
 #undef HAZE_PLACED_STARS
 #undef HAZE_STARS
-#undef HAZE_STAR_FRAMES
+#undef HAZE_STAR_TICKS

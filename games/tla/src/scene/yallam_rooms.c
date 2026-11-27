@@ -66,10 +66,10 @@ typedef enum YALLAM_ROOMS_SHOPS_ACTOR_ID {
 	ACTOR_ITEM_COUNTER
 } YALLAM_ROOMS_SHOPS_ACTOR_ID;
 
-extern ACTOR_PLACE YallamRooms_Placements[];
+extern ACTOR_PLACE YallamRoomsPlacements[];
 extern ACTOR_PLACE YallamRoomsInnPlacements[];
 extern ACTOR_PLACE YallamRoomsShopsPlacements[];
-extern CUE		   YallamRooms_Cues[];
+extern CUE		   YallamRoomsCues[];
 extern CUE		   YallamRoomsInnCues[];
 extern CUE		   YallamRoomsShopsCues[];
 
@@ -96,7 +96,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 		return YallamRoomsInnPlacements;
 	if(scene == SCENE_YALLAM_ROOMS_SHOPS)
 		return YallamRoomsShopsPlacements;
-	return YallamRooms_Placements;
+	return YallamRoomsPlacements;
 }
 
 /* Sunshine the blacksmith thinks of the swamp he cannot reach without rain, and
@@ -228,7 +228,7 @@ const CUE *scGetCues(void)
 		return YallamRoomsInnCues;
 	if(scene == SCENE_YALLAM_ROOMS_SHOPS)
 		return YallamRoomsShopsCues;
-	return YallamRooms_Cues;
+	return YallamRoomsCues;
 }
 
 /* The woman pacing among the crates of the house behind Yallam's south-east
@@ -416,7 +416,7 @@ Bool scYallamRoomsPartyHasForgeMaterial(void)
    the item, even once the party carries no more material. */
 void scYallamRoomsTalkToSunshine(void)
 {
-	Sint32 message;
+	Sint32 msg;
 
 	if(scYallamRoomsPartyHasForgeMaterial())
 		fdScriptSetFlag(FLAG_FORGE_OPEN);
@@ -424,17 +424,17 @@ void scYallamRoomsTalkToSunshine(void)
 		fdScriptClearFlag(FLAG_FORGE_OPEN);
 
 	if(!fdScriptGetFlag(FLAG_FORGE_OPEN)) {
-		message = (Sint32)MsgAhSoYou;
-		fdScriptSetMessageId(message);
+		msg = (Sint32)MsgAhSoYou;
+		fdScriptSetMessageId(msg);
 		/* "Ah, so you're looking for a really unique item, huh?" */
 		fdScriptOpenMessage(ACTOR_SUNSHINE, 0);
 		if(fdScriptAskYesNoWithActorAnimation(fdPartyGetLeaderActor(), 0) ==
 			0) {
 			syFieldScriptWait(10);
-			fdScriptSetMessageId(message + 1);
+			fdScriptSetMessageId(msg + 1);
 		} else {
 			syFieldScriptWait(20);
-			fdScriptSetMessageId(message + 2);
+			fdScriptSetMessageId(msg + 2);
 		}
 		fdScriptShowMessage(ACTOR_SUNSHINE, 0);
 	} else if(fdScriptGetFlag(FLAG_SUNSHINE_FORGING)) {
@@ -447,13 +447,13 @@ void scYallamRoomsTalkToSunshine(void)
 		/* "My wife has the item I made you. She can give it to you." */
 		fdScriptShowMessage(ACTOR_SUNSHINE, 0);
 	} else {
-		message = (Sint32)MsgYouWantMe;
-		fdScriptSetMessageId(message);
+		msg = (Sint32)MsgYouWantMe;
+		fdScriptSetMessageId(msg);
 		/* "You want me to make you a little something special?" */
 		fdScriptOpenMessage(ACTOR_SUNSHINE, 0);
 		if(fdScriptAskYesNoWithActorAnimation(fdPartyGetLeaderActor(), 0) ==
 			0) {
-			fdScriptSetMessageId(message + 1);
+			fdScriptSetMessageId(msg + 1);
 			/* "Well, look at that! You went to get some raw materials for
 			   me..." */
 			fdScriptShowMessage(ACTOR_SUNSHINE, 0);
@@ -502,7 +502,7 @@ void scYallamRoomsTalkToSunshine(void)
 				fdActorFallOverById(ACTOR_SUNSHINE, 0);
 			}
 		} else {
-			fdScriptSetMessageId(message + 2);
+			fdScriptSetMessageId(msg + 2);
 			/* "Hm... Maybe I made a mistake. It's hard to tell... If you
 			   want..." */
 			fdScriptShowMessage(ACTOR_SUNSHINE, 0);
@@ -528,33 +528,33 @@ void scYallamRoomsTalkToSunshinesWife(Sint32 actor)
 	} else if(mnForgeGetItem()) {
 		Sint32 item = mnForgeGetItem();
 		Uint32 price = gmItemGetDirect(item)->price;
-		Sint32 message;
+		Sint32 msg;
 
 		mnMessageArgumentPush(item, MESSAGE_ARGUMENT_ITEM);
 		mnMessageArgumentPush(price, MESSAGE_ARGUMENT_NUMBER);
-		message = (Sint32)MsgHereSThe;
-		fdScriptSetMessageId(message);
+		msg = (Sint32)MsgHereSThe;
+		fdScriptSetMessageId(msg);
 		/* "Here's the item you wanted. Now, about the payment... We only
 		   take..." */
 		fdScriptOpenMessage(actor, 0);
 		if(fdScriptAskYesNoWithActorAnimation(fdPartyGetLeaderActor(), 0) !=
 			0) {
-			fdScriptSetMessageId(message + 1);
+			fdScriptSetMessageId(msg + 1);
 			/* "Hey, we're not a charity! If you can't pay for it, you don't get
 			   it!" */
 			fdScriptShowMessage(actor, 0);
 		} else if(gmPartyInventoryFindRoom(item) < 0) {
-			fdScriptSetMessageId(message + 2);
+			fdScriptSetMessageId(msg + 2);
 			/* "Whoops! Looks like you've got a full load there! This'll have
 			   to..." */
 			fdScriptShowMessage(actor, 0);
 		} else if(MainRoutineStateWork.coins < price) {
-			fdScriptSetMessageId(message + 3);
+			fdScriptSetMessageId(msg + 3);
 			/* "You don't enough money! What are you trying to pull? I can't
 			   give..." */
 			fdScriptShowMessage(actor, 0);
 		} else {
-			fdScriptSetMessageId(message + 4);
+			fdScriptSetMessageId(msg + 4);
 			/* "OK, here you go!" */
 			fdScriptShowMessage(actor, 0);
 			fdItemDispShowItem(
@@ -618,7 +618,7 @@ Sint32 scPrepareMap(void)
 /* clang-format off */
 /* The woman who asks about children's songs paces among the crates of the */
 /* house behind Yallam's south-east door. */
-Uint32 YallamRooms_ChildrensSongsVillagerPacing[] = {
+Uint32 YallamRoomsChildrensSongsVillagerPacing[] = {
 	SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
 	SC_ACCELERATION(0.1),
 	SC_SPEED(0.3),
@@ -682,7 +682,7 @@ Uint32 SceneExits[] = {
 
 /* Unused: the actors of a room that is neither the inn nor the shops, which */
 /* this overlay has none of. */
-ACTOR_PLACE YallamRooms_Placements[] = {
+ACTOR_PLACE YallamRoomsPlacements[] = {
 	{SCENE_TABLE_END},
 };
 /* clang-format on */
@@ -700,7 +700,7 @@ ACTOR_PLACE YallamRoomsInnPlacements[] = {
 		TALK_FACING_PARTY_AND_BACK, 0),
 #endif
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS,
-		(Sint32)YallamRooms_ChildrensSongsVillagerPacing, 88, 0, 104,
+		(Sint32)YallamRoomsChildrensSongsVillagerPacing, 88, 0, 104,
 		FACING_EAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_STAND, 424, 0, 88, FACING_SOUTHEAST,
@@ -740,7 +740,7 @@ ACTOR_PLACE YallamRoomsShopsPlacements[] = {
 };
 
 /* Unused: the exits of a room that is neither the inn nor the shops. */
-CUE YallamRooms_Cues[] = {
+CUE YallamRoomsCues[] = {
 	{CUE_EXIT, 10, CONDITION_ALWAYS, 10},
 	{CUE_EXIT, 11, CONDITION_ALWAYS, 11},
 	{CUE_TABLE_END},

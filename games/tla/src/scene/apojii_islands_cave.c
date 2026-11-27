@@ -16,7 +16,7 @@
 #define APOJII_ISLANDS_CAVE_SOUTH_FROM_NORTH 1
 #define APOJII_ISLANDS_CAVE_NORTH_FROM_SOUTH 2
 
-extern Uint32 ApojiiIslandsCave_WeedsScript[];
+extern Uint32 ApojiiIslandsCaveWeedsScript[];
 
 /* The four clumps of weeds on the south chamber's walls, from west to east,
    numbering the rows of ActorPlacements. */
@@ -73,7 +73,7 @@ Sint32 scPrepareMap(void)
 /* clang-format off */
 /* The weeds' script: each clump stands still three pixels up, on ground four */
 /* pixels up, drawn half as tall again. */
-Uint32 ApojiiIslandsCave_WeedsScript[] = {
+Uint32 ApojiiIslandsCaveWeedsScript[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_SET(SW_GROUND, toFIXED(4)),
 	SC_SET(SW_Y, toFIXED(3)),
@@ -105,19 +105,19 @@ Uint32 SceneExits[] = {
 ACTOR_PLACE ActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_WEEDS,
 		FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FIRST_WEEDS),
-		(Sint32)ApojiiIslandsCave_WeedsScript, 120, 0, 608, FACING_NORTH,
+		(Sint32)ApojiiIslandsCaveWeedsScript, 120, 0, 608, FACING_NORTH,
 		TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_WEEDS,
 		FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_SECOND_WEEDS),
-		(Sint32)ApojiiIslandsCave_WeedsScript, 184, 0, 592, FACING_NORTH,
+		(Sint32)ApojiiIslandsCaveWeedsScript, 184, 0, 592, FACING_NORTH,
 		TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_WEEDS,
 		FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_PASSAGE_WEEDS),
-		(Sint32)ApojiiIslandsCave_WeedsScript, 216, 0, 592, FACING_NORTH,
+		(Sint32)ApojiiIslandsCaveWeedsScript, 216, 0, 592, FACING_NORTH,
 		TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_WEEDS,
 		FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FOURTH_WEEDS),
-		(Sint32)ApojiiIslandsCave_WeedsScript, 280, 0, 640, FACING_NORTH,
+		(Sint32)ApojiiIslandsCaveWeedsScript, 280, 0, 640, FACING_NORTH,
 		TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };

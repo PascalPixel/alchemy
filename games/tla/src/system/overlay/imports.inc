@@ -317,7 +317,7 @@
 	stub fdPaletteFadeStartInterpolation, fdPaletteFadeStartInterpolationStub
 	stub fdScriptStartScreenTransition, fdScriptStartScreenTransitionStub
 	stub fdScriptFinishScreenTransition, fdScriptFinishScreenTransitionStub
-	stub fdScriptWaitTransitionFrames, fdScriptWaitTransitionFramesStub
+	stub fdScriptWaitTransitionTicks, fdScriptWaitTransitionTicksStub
 	stub mnCreditsRun, mnCreditsRunStub
 	stub fdActorSetWideSpr, fdActorSetWideSprStub
 	stub fdItemDispShowItem, fdItemDispShowItemStub

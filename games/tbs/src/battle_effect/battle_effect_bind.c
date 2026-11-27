@@ -1,20 +1,20 @@
 /* Bind and Triangle Strike. Part of battle_effect.c. */
 
 /* Bind's sprite sheet: the rune, the flare pictures, then the Djinni. */
-#define BIND_FLARE_PICTURES			4096
-#define BIND_DJINNI_PICTURE			8192
+#define BIND_FLARE_PICTURES		   4096
+#define BIND_DJINNI_PICTURE		   8192
 /* The particles each target's triangle keeps, and the flares along each
    edge. */
-#define BIND_SLOTS_PER_TARGET		32
-#define BIND_EDGE_FLARES			24
-/* The frames the triangle of flares shrinks and turns before the rune shows,
+#define BIND_SLOTS_PER_TARGET	   32
+#define BIND_EDGE_FLARES		   24
+/* The ticks the triangle of flares shrinks and turns before the rune shows,
    with the damage. */
-#define BIND_RUNE_FRAME				64
+#define BIND_RUNE_TICK			   64
 /* The Djinni of Bind's prelude sways this far either way, a sway every 32
-   frames. */
-#define BIND_DJINNI_SWAY			20
-/* The frames Triangle Strike's user takes to leap at the target. */
-#define TRIANGLE_STRIKE_LEAP_FRAMES 16
+   ticks. */
+#define BIND_DJINNI_SWAY		   20
+/* The ticks Triangle Strike's user takes to leap at the target. */
+#define TRIANGLE_STRIKE_LEAP_TICKS 16
 
 /* The blue ramp: one colour for each blue level from BG palette
    BLUE_RAMP_PALETTE (later from BLUE_RAMP_SECOND_PALETTE), each colour's red
@@ -24,11 +24,11 @@
 #define BLUE_RAMP_PALETTE		 2
 #define BLUE_RAMP_SECOND_PALETTE 6
 #define BLUE_RAMP_COLORS		 (RGB_LEVEL_MAX + 1)
-/* The ramp's edge moves down a quarter of its speed in rows a frame, from this
-   speed and a row faster every four frames, for at most BLUE_RAMP_FRAMES or
+/* The ramp's edge moves down a quarter of its speed in rows a tick, from this
+   speed and a row faster every four ticks, for at most BLUE_RAMP_TICKS or
    until it is past BLUE_RAMP_LAST_ROW. */
 #define BLUE_RAMP_START_SPEED	 16
-#define BLUE_RAMP_FRAMES		 27
+#define BLUE_RAMP_TICKS			 27
 #define BLUE_RAMP_LAST_ROW		 248
 
 /* Turns the screen into shades of blue, top down, with a ragged edge; nothing
@@ -37,7 +37,7 @@ UNUSED void btEffectConvertBackgroundToBlueRamp(void)
 {
 	Sint32	i, x, y, row, end, speed;
 	Sint32	red, green, blue;
-	Uint16	color;
+	Uint16	col;
 	Uint8  *delays, *pixel;
 	Uint16 *palette;
 	palette = (Uint16 *)&BG_PLTT_COLOR(BLUE_RAMP_PALETTE, 0);
@@ -54,7 +54,7 @@ UNUSED void btEffectConvertBackgroundToBlueRamp(void)
 		delays[x] = syRandom() & 63;
 	}
 	row = 0;
-	for(i = 0; i != BLUE_RAMP_FRAMES; i++) {
+	for(i = 0; i != BLUE_RAMP_TICKS; i++) {
 		end += speed / 4;
 		speed++;
 		for(; row != end; row++) {
@@ -64,10 +64,10 @@ UNUSED void btEffectConvertBackgroundToBlueRamp(void)
 					if(y < BATTLE_BACKGROUND_HEIGHT) {
 						pixel =
 							BLUE_RAMP_PIXELS + BACKGROUND_PIXEL_OFFSET(x, y);
-						color = ((Sint16 *)BG_PLTT)[*pixel];
-						red = RGB_RED(color);
-						green = RGB_GREEN(color);
-						blue = RGB_BLUE(color);
+						col = ((Sint16 *)BG_PLTT)[*pixel];
+						red = RGB_RED(col);
+						green = RGB_GREEN(col);
+						blue = RGB_BLUE(col);
 						if(red < green)
 							red = green;
 						if(red < blue)
@@ -116,14 +116,14 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 	BLITTER_PAIR		 draw;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 member;
 	BATTLE_CAMERA		*camera;
 	Sint32				 shift;
 	Uint8				*graphics;
 	Uint8				*palette;
 	ACTOR				*actor;
-	Sint32				 memberFrame;
+	Sint32				 memberFrm;
 	PARTICLE			*point;
 	Sint32				 size;
 	Sint32				 j;
@@ -157,27 +157,27 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 	REG_BG2X = shift << 8;
 	sySndPlayStub(SE_SWIRL);
 
-	for(frame = 0; frame != state->args->tgtCnt * 20 + 72; frame++) {
-		if(frame == BIND_RUNE_FRAME)
+	for(frm = 0; frm != state->args->tgtCnt * 20 + 72; frm++) {
+		if(frm == BIND_RUNE_TICK)
 			EFFECT_SHOW_DAMAGE(0);
 		/* The colours cycle through the hues. */
 		btEffectUpdatePhasePalette(
-			frame, TRIG_TURN - DEGtoANG(120), DEGtoANG(120), 0);
+			frm, TRIG_TURN - DEGtoANG(120), DEGtoANG(120), 0);
 
 		/* The Djinni sways, then rises away. */
 		if(state->args->prelude == 1) {
 			Sint32 x;
 			Sint32 y;
 
-			x = FIXEDtoINT(sySin(frame * (TRIG_TURN / 32)) * BIND_DJINNI_SWAY) +
+			x = FIXEDtoINT(sySin(frm * (TRIG_TURN / 32)) * BIND_DJINNI_SWAY) +
 				originX + shift - DJINNI_WIDTH / 2;
-			y = FIXEDtoINT(syCos(frame * (TRIG_TURN / 32)) * 4) + originY - 24;
+			y = FIXEDtoINT(syCos(frm * (TRIG_TURN / 32)) * 4) + originY - 24;
 			btEffectBuildCanvasBlitters(state->args->side, draw);
-			if(frame > 32)
-				y = y - frame * 2 + 64;
+			if(frm > 32)
+				y = y - frm * 2 + 64;
 			draw[0](canvas, state->sheet + BIND_DJINNI_PICTURE, x, y,
 				DJINNI_WIDTH, DJINNI_HEIGHT);
-			if(frame <= 3)
+			if(frm <= 3)
 				draw[1](canvas, state->sheet + BIND_DJINNI_PICTURE, x, y,
 					DJINNI_WIDTH, DJINNI_HEIGHT);
 			EFFECT_RELEASE_BLITTERS();
@@ -188,15 +188,15 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
 		draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
-		if(frame > 16 && (frame & 15) == 0)
+		if(frm > 16 && (frm & 15) == 0)
 			state->transferValue += CANVAS_FILL_WORD(1);
 
-		/* Only the first target's triangle is drawn, though the frames are
+		/* Only the first target's triangle is drawn, though the ticks are
 		   counted for every target. */
 		for(member = 0; member != 1; member++) {
-			memberFrame = frame - member * 8;
+			memberFrm = frm - member * 8;
 			actor = btObjectGetStub(state->args->tgts[member])->actor;
-			if(memberFrame >= 0 && memberFrame < 96) {
+			if(memberFrm >= 0 && memberFrm < 96) {
 				EFFECT_VIEW_FROM_CAMERA(camera);
 				SET_VECTOR(syScreenPointCoordinates(&corner), actor->x.fixed,
 					actor->y.fixed, actor->z.fixed);
@@ -204,22 +204,22 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 				screen.x = anchor.x + shift;
 				screen.y -= 24;
 				/* The triangle. */
-				if(memberFrame <= 67) {
+				if(memberFrm <= 67) {
 					for(j = 0; j != 3; j++) {
 						point =
 							&state->particles[member * BIND_SLOTS_PER_TARGET +
 								j];
 						syInitMatrix();
-						if(memberFrame < BIND_RUNE_FRAME) {
-							scale.x = toFIXED(21) / 8 - (memberFrame * 3 << 9);
-							scale.y = toFIXED(21) / 8 - (memberFrame * 3 << 9);
-							scale.z = toFIXED(21) / 8 - (memberFrame * 3 << 9);
+						if(memberFrm < BIND_RUNE_TICK) {
+							scale.x = toFIXED(21) / 8 - (memberFrm * 3 << 9);
+							scale.y = toFIXED(21) / 8 - (memberFrm * 3 << 9);
+							scale.z = toFIXED(21) / 8 - (memberFrm * 3 << 9);
 							syMatrixScaleVector(syVector3Coordinates(&scale));
-							syRotZ((BIND_RUNE_FRAME - memberFrame) << 9);
-							syRotY((BIND_RUNE_FRAME - memberFrame) << 9);
+							syRotZ((BIND_RUNE_TICK - memberFrm) << 9);
+							syRotY((BIND_RUNE_TICK - memberFrm) << 9);
 						}
 						syRotZ(j * (DEGtoANG(120)));
-						btProjectionPoint(Bind_Vertex, &corner);
+						btProjectionPoint(BindVertex, &corner);
 						point->velX = corner.x + screen.x;
 						point->velY = corner.y + screen.y + 16;
 					}
@@ -229,7 +229,7 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 						PARTICLE *to = &state->particles[(j + 1) % 3 +
 							member * BIND_SLOTS_PER_TARGET];
 
-						size = 5 - memberFrame / 16;
+						size = 5 - memberFrm / 16;
 						for(k = 0; k != BIND_EDGE_FLARES; k++) {
 							Sint32 x = from->velX +
 								k * (to->velX - from->velX) / BIND_EDGE_FLARES;
@@ -242,7 +242,7 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 					}
 				}
 				/* Then the rune, in two mirrored halves. */
-				if(memberFrame >= BIND_RUNE_FRAME) {
+				if(memberFrm >= BIND_RUNE_TICK) {
 					draw[0](canvas, state->sheet, screen.x - RUNE_HALF_WIDTH,
 						screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
 						RUNE_HALF_HEIGHT);
@@ -262,8 +262,8 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 
 /* Unused: no row of AbilityBattleEffects in either game names its kind, and the
    handler table is reached with no other kind (btEffectRunFromTable), so the
-   player never sees it. Its frame loop is btEffectRunBind's, without the Djinni
-   prelude, and on frame 46 it starts the user's approach to the first
+   player never sees it. Its tick loop is btEffectRunBind's, without the Djinni
+   prelude, and on tick 46 it starts the user's approach to the first
    target. */
 void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 {
@@ -274,7 +274,7 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 	VECTOR3				 scale;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	BLITTER_PAIR		 draw;
 	Sint32				 member;
 	BATTLE_CAMERA		*camera;
@@ -282,7 +282,7 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 	Uint8				*graphics;
 	Uint8				*palette;
 	ACTOR				*actor;
-	Sint32				 memberFrame;
+	Sint32				 memberFrm;
 	PARTICLE			*point;
 	Sint32				 size;
 	Sint32				 j;
@@ -309,52 +309,52 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 	REG_BG2X = shift << 8;
 	sySndPlayStub(SE_SWIRL);
 
-	for(frame = 0; frame != state->args->tgtCnt * 20 + 72; frame++) {
-		if(frame == BIND_RUNE_FRAME)
+	for(frm = 0; frm != state->args->tgtCnt * 20 + 72; frm++) {
+		if(frm == BIND_RUNE_TICK)
 			EFFECT_SHOW_DAMAGE(0);
 		/* The user sets off towards the target. */
-		if(frame == 46)
+		if(frm == 46)
 			btMotionApproachTargetStub(state->args->user, state->args->tgts[0],
-				TRIANGLE_STRIKE_LEAP_FRAMES, 0);
+				TRIANGLE_STRIKE_LEAP_TICKS, 0);
 		btEffectUpdatePhasePalette(
-			frame, TRIG_TURN - DEGtoANG(120), DEGtoANG(120), 0);
+			frm, TRIG_TURN - DEGtoANG(120), DEGtoANG(120), 0);
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
 		draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
 		draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
-		if(frame > 16 && (frame & 15) == 0)
+		if(frm > 16 && (frm & 15) == 0)
 			state->transferValue += CANVAS_FILL_WORD(1);
 
-		/* Only the first target's triangle is drawn, though the frames are
+		/* Only the first target's triangle is drawn, though the ticks are
 		   counted for every target. */
 		for(member = 0; member != 1; member++) {
-			memberFrame = frame - member * 8;
+			memberFrm = frm - member * 8;
 			actor = btObjectGetStub(state->args->tgts[member])->actor;
-			if(memberFrame >= 0 && memberFrame < 96) {
+			if(memberFrm >= 0 && memberFrm < 96) {
 				EFFECT_VIEW_FROM_CAMERA(camera);
 				SET_VECTOR(syScreenPointCoordinates(&corner), actor->x.fixed,
 					actor->y.fixed, actor->z.fixed);
 				btProjectionPoint(&corner, &screen);
 				screen.x = anchor.x + shift;
 				screen.y -= 24;
-				if(memberFrame <= 67) {
+				if(memberFrm <= 67) {
 					for(j = 0; j != 3; j++) {
 						point =
 							&state->particles[member * BIND_SLOTS_PER_TARGET +
 								j];
 						syInitMatrix();
-						if(memberFrame < BIND_RUNE_FRAME) {
-							scale.x = toFIXED(21) / 8 - (memberFrame * 3 << 9);
-							scale.y = toFIXED(21) / 8 - (memberFrame * 3 << 9);
-							scale.z = toFIXED(21) / 8 - (memberFrame * 3 << 9);
+						if(memberFrm < BIND_RUNE_TICK) {
+							scale.x = toFIXED(21) / 8 - (memberFrm * 3 << 9);
+							scale.y = toFIXED(21) / 8 - (memberFrm * 3 << 9);
+							scale.z = toFIXED(21) / 8 - (memberFrm * 3 << 9);
 							syMatrixScaleVector(syVector3Coordinates(&scale));
-							syRotZ((BIND_RUNE_FRAME - memberFrame) << 9);
-							syRotY((BIND_RUNE_FRAME - memberFrame) << 9);
+							syRotZ((BIND_RUNE_TICK - memberFrm) << 9);
+							syRotY((BIND_RUNE_TICK - memberFrm) << 9);
 						}
 						syRotZ(j * (DEGtoANG(120)));
-						btProjectionPoint(Bind_TriangleStrikeVertex, &corner);
+						btProjectionPoint(BindTriangleStrikeVertex, &corner);
 						point->velX = corner.x + screen.x;
 						point->velY = corner.y + screen.y + 16;
 					}
@@ -364,7 +364,7 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 						PARTICLE *to = &state->particles[(j + 1) % 3 +
 							member * BIND_SLOTS_PER_TARGET];
 
-						size = 5 - memberFrame / 16;
+						size = 5 - memberFrm / 16;
 						for(k = 0; k != BIND_EDGE_FLARES; k++) {
 							Sint32 x = from->velX +
 								k * (to->velX - from->velX) / BIND_EDGE_FLARES;
@@ -377,7 +377,7 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 					}
 				}
 				/* Then the rune, in two mirrored halves. */
-				if(memberFrame >= BIND_RUNE_FRAME) {
+				if(memberFrm >= BIND_RUNE_TICK) {
 					draw[0](canvas, state->sheet, screen.x - RUNE_HALF_WIDTH,
 						screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
 						RUNE_HALF_HEIGHT);
@@ -399,12 +399,12 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 #undef BIND_DJINNI_PICTURE
 #undef BIND_SLOTS_PER_TARGET
 #undef BIND_EDGE_FLARES
-#undef BIND_RUNE_FRAME
+#undef BIND_RUNE_TICK
 #undef BIND_DJINNI_SWAY
-#undef TRIANGLE_STRIKE_LEAP_FRAMES
+#undef TRIANGLE_STRIKE_LEAP_TICKS
 #undef BLUE_RAMP_PALETTE
 #undef BLUE_RAMP_SECOND_PALETTE
 #undef BLUE_RAMP_COLORS
 #undef BLUE_RAMP_START_SPEED
-#undef BLUE_RAMP_FRAMES
+#undef BLUE_RAMP_TICKS
 #undef BLUE_RAMP_LAST_ROW

@@ -100,16 +100,16 @@ struct ACTOR;
    drifting outwards. */
 void scVenusLighthouseEntranceEmitDust(
 	ACTOR *actor, Sint32 x, Sint32 y, Sint32 z);
-/* Loads the dust puffs' pictures and starts drawing them each frame. */
+/* Loads the dust puffs' pictures and starts drawing them each tick. */
 void scVenusLighthouseEntranceStartDust(void);
 /* Stops the dust puffs and frees their pictures and state. */
 void		  scVenusLighthouseEntranceStopDust(void);
-extern Uint32 VenusLighthouseEntrance_BirdLands[];
+extern Uint32 VenusLighthouseEntranceBirdLands[];
 
-/* Each frame of the column of water: it rises, holds, hurls the soldier off the
+/* Each tick of the column of water: it rises, holds, hurls the soldier off the
    top of the screen, sinks, and its puddle dries away as the ground shakes. */
 void scVenusLighthouseEntranceUpdateBlastColumn(void);
-/* Each frame, draws and moves the dust puffs still playing. */
+/* Each tick, draws and moves the dust puffs still playing. */
 void scVenusLighthouseEntranceUpdateDust(void);
 
 void scVenusLighthouseEntranceBirdsFlyOff(void);
@@ -121,9 +121,9 @@ void scVenusLighthouseEntranceRuffianWaitsForBackup(void);
 void scVenusLighthouseEntrancePointToMeetingSpot(void);
 
 /* The dust puffs kept at once, each emitted in turn over the oldest, and the
-   frames a puff lasts. */
-#define DUST_PUFFS		 96
-#define DUST_PUFF_FRAMES 16
+   ticks a puff lasts. */
+#define DUST_PUFFS		96
+#define DUST_PUFF_TICKS 16
 
 /* The dust puffs' state, kept in Ram_HeapSlots' menu runtime while they play:
    their pictures, the puffs each with its place and sprite, and the next to
@@ -182,7 +182,7 @@ void scVenusLighthouseEntranceBlastActorWithPsynergy(void *soldierId)
 }
 
 /* A running soldier's update: it kicks up dust where it is, with a scuff every
-   eighth frame. */
+   eighth tick. */
 void scVenusLighthouseEntranceKickUpDust(ACTOR *actor)
 {
 	scVenusLighthouseEntranceEmitDust(
@@ -321,18 +321,18 @@ void scVenusLighthouseEntranceBirdsLand(void)
 	fdCameraSetSpeed(0.8);
 	fdCameraMoveTo(376, CAMERA_KEEP, 248, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	westBird = fdActorGet(ACTOR_WEST_BIRD);
 	fdActorSetAnimation(ACTOR_WEST_BIRD, 4);
 	fdScriptPlaySnd(SE_BIRD_WINGS);
 	scFieldActorSetMoveTarget(westBird, 352, 8, 176);
-	fdActorStartScript(westBird, (Sint32)VenusLighthouseEntrance_BirdLands);
+	fdActorStartScript(westBird, (Sint32)VenusLighthouseEntranceBirdLands);
 	syFieldScriptWait(25);
 	fdCameraMoveTo(376, CAMERA_KEEP, 104, 1);
 	eastBird = fdActorGet(ACTOR_EAST_BIRD);
 	fdActorSetAnimation(ACTOR_EAST_BIRD, 4);
 	scFieldActorSetMoveTarget(eastBird, 416, 8, 152);
-	fdActorStartScript(eastBird, (Sint32)VenusLighthouseEntrance_BirdLands);
+	fdActorStartScript(eastBird, (Sint32)VenusLighthouseEntranceBirdLands);
 	syFieldScriptWait(60);
 	fdScriptPlaySnd(SE_BIRD_WINGS);
 	scFieldActorWaitForMoveById(ACTOR_WEST_BIRD);
@@ -340,7 +340,7 @@ void scVenusLighthouseEntranceBirdsLand(void)
 	fdCameraWaitForArrival();
 }
 
-extern Uint32 VenusLighthouseEntrance_BirdFlies[];
+extern Uint32 VenusLighthouseEntranceBirdFlies[];
 
 /* Walking past the lighthouse door, metatiles (17, 7) to (29, 7), the birds
    take off and fly away. */
@@ -362,7 +362,7 @@ void scVenusLighthouseEntranceBirdsFlyOff(void)
 	westBird->acceleration = toFIXED(1) / 2;
 	fdActorSetAnimation(ACTOR_WEST_BIRD, 4);
 	scFieldActorSetMoveTarget(westBird, 616, 96, 176);
-	fdActorStartScript(westBird, (Sint32)VenusLighthouseEntrance_BirdFlies);
+	fdActorStartScript(westBird, (Sint32)VenusLighthouseEntranceBirdFlies);
 	eastBird = fdActorGet(ACTOR_EAST_BIRD);
 	eastBird->motionFlg = 0;
 	eastBird->speedLimit = toFIXED(2);
@@ -370,7 +370,7 @@ void scVenusLighthouseEntranceBirdsFlyOff(void)
 	fdActorSetAnimation(ACTOR_EAST_BIRD, 4);
 	scFieldActorSetMoveTarget(eastBird, 120, 96, 176);
 	Call2(fdActorStartScript, (Sint32)eastBird,
-		(Sint32)VenusLighthouseEntrance_BirdFlies);
+		(Sint32)VenusLighthouseEntranceBirdFlies);
 	fdScriptEnd();
 }
 
@@ -1165,7 +1165,7 @@ void scVenusLighthouseEntranceWakeUp(void)
 	fdCameraMoveToActorById(ACTOR_JENNA, 0);
 	FieldStateWork->transitionFrm = 60;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syFieldScriptWait(20);
 	syFieldScriptSetMessageId((Sint32)MsgAreAreYou);
 	fdActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
@@ -1271,9 +1271,9 @@ void scVenusLighthouseEntranceWakeUp(void)
 #define BLAST_FINISHED 999
 
 /* The blast column: its pieces, 16 pixels each, and its 16x16 pictures in 256
-   colours, four frames for its top and then four for the column below. */
+   colours, four ticks for its top and then four for the column below. */
 #define BLAST_COLUMN_PIECES 16
-#define BLAST_COLUMN_FRAMES 4
+#define BLAST_COLUMN_TICKS	4
 #define BLAST_PICTURE_TILES SPRITE_TILES_8BPP(16, 16)
 
 /* The rising column's state, kept in Ram_HeapSlots' menu runtime while it
@@ -1289,7 +1289,7 @@ typedef struct BLAST_COLUMN_STATE {
 	FIXED		y;
 	FIXED		z;
 	Sint16		stage; /* BLAST_FINISHED once the column has burnt out */
-	Sint16		tmr;   /* frames into the stage */
+	Sint16		tmr;   /* ticks into the stage */
 	Uint16		columnTile;
 	Uint16		topTile;
 	Sint16		height;	  /* the column's height in pixels */
@@ -1303,19 +1303,19 @@ void scVenusLighthouseEntranceUpdateBlastColumn(void)
 	ACTOR			   *puddle = blastColumnState->puddle;
 	Sint32				i, y;
 	FIXED				scale;
-	Sint32				frameStep;
+	Sint32				frmStep;
 	Sint32				mask;
 	SPARK_STATE		   *state;
-	EFFECT_SPR		   *sprite;
+	EFFECT_SPR		   *spr;
 
 	switch(blastColumnState->stage) {
-	case 0: /* the first frame */
+	case 0: /* the first tick */
 		if(blastColumnState->tmr == 0) {
 			blastColumnState->stage++;
 			blastColumnState->tmr = -1;
 		}
 		break;
-	case 1: /* the column rises under the soldier, 4 pixels a frame */
+	case 1: /* the column rises under the soldier, 4 pixels a tick */
 		blastColumnState->height += 4;
 		if(blastColumnState->height > 31) {
 			blastColumnState->stage++;
@@ -1342,13 +1342,13 @@ void scVenusLighthouseEntranceUpdateBlastColumn(void)
 		}
 		break;
 	case 4: { /* out of sight, he is taken off the stage */
-		Sint16 *timer = &blastColumnState->tmr;
+		Sint16 *tmr = &blastColumnState->tmr;
 
 		if(blastColumnState->tmr == 10) {
 			actor->z.fixed = 0;
 			actor->x.fixed = 0;
 		}
-		if(*timer == 30) {
+		if(*tmr == 30) {
 			blastColumnState->stage++;
 			blastColumnState->tmr = -1;
 		}
@@ -1362,7 +1362,7 @@ void scVenusLighthouseEntranceUpdateBlastColumn(void)
 		}
 		break;
 	case 6: { /* the puddle dries away, with the sound of a fall */
-		Sint16 *timer;
+		Sint16 *tmr;
 
 		scale = puddle->scaleX;
 		if(scale > 0) {
@@ -1373,23 +1373,23 @@ void scVenusLighthouseEntranceUpdateBlastColumn(void)
 			puddle->scaleX = 0;
 			puddle->scaleY = 0;
 		}
-		timer = &blastColumnState->tmr;
+		tmr = &blastColumnState->tmr;
 		if(blastColumnState->tmr == 10)
 			sySndPlay(SE_FALL);
-		if(*timer == 90) {
+		if(*tmr == 90) {
 			blastColumnState->stage++;
 			blastColumnState->tmr = -1;
 		}
 		break;
 	}
 	case 7: { /* a clatter, and the ground shakes for half a second */
-		Sint16 *timer = &blastColumnState->tmr;
+		Sint16 *tmr = &blastColumnState->tmr;
 
 		if(blastColumnState->tmr == 0) {
 			sySndPlay(SE_CLATTER);
 			fdMapGridSetShake(3, 3, 1);
 		}
-		if(*timer == 30) {
+		if(*tmr == 30) {
 			fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 			if(blastColumnState->tmr == 30) {
 				blastColumnState->stage = BLAST_FINISHED;
@@ -1408,13 +1408,13 @@ void scVenusLighthouseEntranceUpdateBlastColumn(void)
 			state->x = blastColumnState->x;
 			state->y = blastColumnState->y + toFIXED(y) + toFIXED(8);
 			state->z = blastColumnState->z;
-			sprite = &blastColumnState->sprs[i];
+			spr = &blastColumnState->sprs[i];
 			state->frm++;
-			frameStep = state->frm >> 2;
+			frmStep = state->frm >> 2;
 			mask = 3;
-			sprite->oam.idx = blastColumnState->columnTile +
-				(frameStep & mask) * BLAST_PICTURE_TILES;
-			fdEffectSprDrawAtWorldPos(sprite, &state->x);
+			spr->oam.idx = blastColumnState->columnTile +
+				(frmStep & mask) * BLAST_PICTURE_TILES;
+			fdEffectSprDrawAtWorldPos(spr, &state->x);
 		}
 		if(i < BLAST_COLUMN_PIECES) {
 			state = &blastColumnState->states[i];
@@ -1425,10 +1425,10 @@ void scVenusLighthouseEntranceUpdateBlastColumn(void)
 			state->y += syMathMulFX(-toFIXED(2),
 							syMathSin(state->frm * (TRIG_TURN / 16))) -
 				toFIXED(2);
-			sprite = &blastColumnState->sprs[i];
-			sprite->oam.idx = blastColumnState->topTile +
+			spr = &blastColumnState->sprs[i];
+			spr->oam.idx = blastColumnState->topTile +
 				((state->frm >> 2) & 3) * BLAST_PICTURE_TILES;
-			fdEffectSprDrawAtWorldPos(sprite, &state->x);
+			fdEffectSprDrawAtWorldPos(spr, &state->x);
 			if(blastColumnState->carrying != 0)
 				actor->y.fixed = state->y;
 		}
@@ -1444,7 +1444,7 @@ void scVenusLighthouseEntranceBlastActorSkyward(Sint32 id)
 		syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(BLAST_COLUMN_STATE));
 	ACTOR		*actor = fdActorGet(id);
 	ACTOR		*puddle;
-	EFFECT_SPR	*sprite;
+	EFFECT_SPR	*spr;
 	SPARK_STATE *state;
 	Sint32		 resource, tile, i;
 	Uint8		 unpaused = 0;
@@ -1459,18 +1459,18 @@ void scVenusLighthouseEntranceBlastActorSkyward(Sint32 id)
 	tile = mnVRAMLoad(resource, 2048, blastColumnState);
 	blastColumnState->topTile = tile;
 	blastColumnState->columnTile =
-		tile + BLAST_COLUMN_FRAMES * BLAST_PICTURE_TILES;
+		tile + BLAST_COLUMN_TICKS * BLAST_PICTURE_TILES;
 	state = blastColumnState->states;
-	sprite = blastColumnState->sprs;
+	spr = blastColumnState->sprs;
 	for(i = BLAST_COLUMN_PIECES - 1; i >= 0;) {
-		fdEffectSprInit(sprite, 8, 8, OBJ_SIZE_16X16, tile);
-		sprite->depth = fdActorGetSprDepth(actor) - 2;
-		sprite->oam.pri = fdActorGetSprPriority(actor);
-		sprite->oam.fullCol = 1;
-		sprite->oam.pal = 0;
+		fdEffectSprInit(spr, 8, 8, OBJ_SIZE_16X16, tile);
+		spr->depth = fdActorGetSprDepth(actor) - 2;
+		spr->oam.pri = fdActorGetSprPriority(actor);
+		spr->oam.fullCol = 1;
+		spr->oam.pal = 0;
 		state->frm = -1;
 		i--;
-		sprite++;
+		spr++;
 		state++;
 	}
 	puddle = (scFieldActorCreate(
@@ -1488,8 +1488,7 @@ void scVenusLighthouseEntranceBlastActorSkyward(Sint32 id)
 	blastColumnState->height = 0;
 	blastColumnState->carrying = 1;
 	fdScriptPlaySnd(SE_RISE_WITH_SPARKS);
-	sySetFrameEvent(
-		scVenusLighthouseEntranceUpdateBlastColumn, EVENT_PASS_FRAME);
+	sySetTickEvent(scVenusLighthouseEntranceUpdateBlastColumn, EVENT_PASS_TICK);
 	while(blastColumnState->stage != BLAST_FINISHED)
 		syWait(1);
 	syFieldCloseEvent(scVenusLighthouseEntranceUpdateBlastColumn);
@@ -1502,43 +1501,41 @@ void scVenusLighthouseEntranceUpdateDust(void)
 {
 	DUST_PUFF_STATE *dustPuffState = Ram_HeapSlots->menuState;
 	SPARK_STATE		*state = dustPuffState->states;
-	EFFECT_SPR		*sprite = dustPuffState->sprs;
-	Sint32			 frame;
+	EFFECT_SPR		*spr = dustPuffState->sprs;
+	Sint32			 frm;
 	Sint32			 i;
 
-	for(i = 0; i < DUST_PUFFS; i++, sprite++, state++) {
-		frame = state->frm;
-		if((Uint32)frame < DUST_PUFF_FRAMES) {
-			sprite->oam.idx = dustPuffState->tileBase +
-				((frame >> 1) & 7) * SPRITE_TILES_8BPP(16, 16);
-			fdEffectSprDrawAtWorldPos(sprite, &state->x);
+	for(i = 0; i < DUST_PUFFS; i++, spr++, state++) {
+		frm = state->frm;
+		if((Uint32)frm < DUST_PUFF_TICKS) {
+			spr->oam.idx = dustPuffState->tileBase +
+				((frm >> 1) & 7) * SPRITE_TILES_8BPP(16, 16);
+			fdEffectSprDrawAtWorldPos(spr, &state->x);
 			fdBattleEffectStepVector3(state, 64, 0);
 			state->frm++;
 		}
 	}
 }
 
-void scVenusLighthouseEntranceEmitDust(
-	ACTOR *source, Sint32 x, Sint32 y, Sint32 z)
+void scVenusLighthouseEntranceEmitDust(ACTOR *src, Sint32 x, Sint32 y, Sint32 z)
 {
 	DUST_PUFF_STATE *dustPuffState = Ram_HeapSlots->menuState;
-	Sint32			 angle = syRandom();
+	Sint32			 ang = syRandom();
 	Sint16			*next = &dustPuffState->next;
-	EFFECT_SPR		*sprite = &dustPuffState->sprs[*next];
+	EFFECT_SPR		*spr = &dustPuffState->sprs[*next];
 	SPARK_STATE		*state = &dustPuffState->states[*next];
 
-	sprite->oam.pri = fdActorGetSprPriority(source);
-	sprite->depth = fdActorGetSprDepth(source);
+	spr->oam.pri = fdActorGetSprPriority(src);
+	spr->depth = fdActorGetSprDepth(src);
 	state->frm = 0;
 	state->x = x;
 	state->y = y;
 	state->z = z;
-	syFieldVectorAddPolarOffsetFX(
-		syRandom() * 2 + toFIXED(2), angle, &state->x);
+	syFieldVectorAddPolarOffsetFX(syRandom() * 2 + toFIXED(2), ang, &state->x);
 	state->velX = 0;
 	state->velY = (syRandom() >> 1) + toFIXED(3) / 4;
 	state->velZ = 0;
-	syFieldVectorAddPolarOffsetFX(syRandom() >> 2, angle, &state->velX);
+	syFieldVectorAddPolarOffsetFX(syRandom() >> 2, ang, &state->velX);
 	*next = *next + 1;
 	*next = *next % DUST_PUFFS;
 }
@@ -1551,7 +1548,7 @@ void scVenusLighthouseEntranceStartDust(void)
 	Sint32		 tileBase;
 	Sint32		 i;
 	SPARK_STATE *state;
-	EFFECT_SPR	*sprite;
+	EFFECT_SPR	*spr;
 
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_DUST_PUFF_A), dustPuffState);
@@ -1561,17 +1558,17 @@ void scVenusLighthouseEntranceStartDust(void)
 	dustPuffState->resource = resource;
 	state = dustPuffState->states;
 	for(i = 0; i < DUST_PUFFS; i++) {
-		sprite = &dustPuffState->sprs[i];
-		fdEffectSprInit(sprite, 8, 8, OBJ_SIZE_16X16, tileBase);
-		sprite->oam.fullCol = 1;
-		sprite->oam.pal = 0;
-		sprite->oam.pri = 0;
-		sprite->depth = OAM_DEPTH_WINDOW;
+		spr = &dustPuffState->sprs[i];
+		fdEffectSprInit(spr, 8, 8, OBJ_SIZE_16X16, tileBase);
+		spr->oam.fullCol = 1;
+		spr->oam.pal = 0;
+		spr->oam.pri = 0;
+		spr->depth = OAM_DEPTH_WINDOW;
 		state->frm = -1;
 		state++;
 	}
 	dustPuffState->next = 0;
-	sySetFrameEvent(scVenusLighthouseEntranceUpdateDust, EVENT_PASS_FRAME);
+	sySetTickEvent(scVenusLighthouseEntranceUpdateDust, EVENT_PASS_TICK);
 }
 
 void scVenusLighthouseEntranceStopDust(void)
@@ -1667,7 +1664,7 @@ CUE SceneCues[] = {
 };
 
 /* clang-format off */
-Uint32 VenusLighthouseEntrance_BirdLands[] = {
+Uint32 VenusLighthouseEntranceBirdLands[] = {
 	SC_SYNC,
 	SC_WAIT(1),
 	SC_ANIMATION(2),
@@ -1678,7 +1675,7 @@ Uint32 VenusLighthouseEntrance_BirdLands[] = {
 	SC_END,
 };
 
-Uint32 VenusLighthouseEntrance_BirdFlies[] = {
+Uint32 VenusLighthouseEntranceBirdFlies[] = {
 	SC_SYNC,
 	SC_WAIT(1),
 	SC_RELEASE,

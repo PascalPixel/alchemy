@@ -38,7 +38,7 @@ typedef enum ACTOR_MOTION_FLAG {
 
 /* ACTOR.steeringFlg bits. */
 typedef enum ACTOR_STEERING_FLAG {
-	ACTOR_FACES_MOTION = 0x01 /* turns toward its velocity, 1/16 turn a frame */
+	ACTOR_FACES_MOTION = 0x01 /* turns toward its velocity, 1/16 turn a tick */
 } ACTOR_STEERING_FLAG;
 
 /* UB: scripts have variable lengths, so a one-word member cannot describe
@@ -70,12 +70,12 @@ typedef struct ACTOR_ARM_VIEW {
 	Uint16 radius;
 	Uint8  layer;	   /* the map layer whose ground height it follows */
 	Uint8  priFlg;	   /* Actor's; not named here */
-	FIXED  velX;	   /* 16.16 fixed-point pixels per frame */
-	FIXED  velY;	   /* 16.16 fixed-point pixels per frame */
-	FIXED  velZ;	   /* 16.16 fixed-point pixels per frame */
-	FIXED  speedLimit; /* 16.16 fixed-point pixels per frame */
-	/* Added toward the target each frame, or taken off the speed when there is
-	   none, in 16.16 fixed-point pixels per frame. */
+	FIXED  velX;	   /* 16.16 fixed-point pixels per tick */
+	FIXED  velY;	   /* 16.16 fixed-point pixels per tick */
+	FIXED  velZ;	   /* 16.16 fixed-point pixels per tick */
+	FIXED  speedLimit; /* 16.16 fixed-point pixels per tick */
+	/* Added toward the target each tick, or taken off the speed when there is
+	   none, in 16.16 fixed-point pixels per tick. */
 	FIXED acceleration;
 	FIXED tgtX; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
 	FIXED tgtY; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
@@ -84,13 +84,13 @@ typedef struct ACTOR_ARM_VIEW {
 	union {
 		/* The share of the falling speed kept on landing, 16.16 fixed point. */
 		FIXED bounce;
-		/* A floating actor's step along ActorScript_CycleTable, low six
+		/* A floating actor's step along ActorScriptCycleTable, low six
 		   bits. */
 		Sint32 phase;
 	} vertical;
 
-	/* Taken off velocityY each frame above the ground, 16.16 fixed-point pixels
-	   per frame; also scales a floating actor's bob. */
+	/* Taken off velocityY each tick above the ground, 16.16 fixed-point pixels
+	   per tick; also scales a floating actor's bob. */
 	FIXED gravity;
 	/* Actor's sceneWord, sprite and sprite kind; not named here. */
 	Sint32 sceneWord;
@@ -110,8 +110,8 @@ typedef struct ACTOR_ARM_VIEW {
 	   count; not named here. */
 	Uint8  retainSprCache;
 	Uint8  repeatCnt;
-	Sint16 wait;	/* frames left before its script runs again */
-	Uint8  refused; /* frames in a row a solid actor refused its move */
+	Sint16 wait;	/* ticks left before its script runs again */
+	Uint8  refused; /* ticks in a row a solid actor refused its move */
 	Uint8  frozen;	/* nonzero skips steering, terrain, gravity and floating */
 	/* Actor's two bytes scene code uses, and its timer (the actor script's
 	   parameter), footprint side and watched actor; not named here. */
@@ -120,7 +120,7 @@ typedef struct ACTOR_ARM_VIEW {
 	Sint16				   tmr;
 	Sint16				   userValue;
 	struct ACTOR_ARM_VIEW *watchedActor;
-	/* Called each frame before its script. */
+	/* Called each tick before its script. */
 	void (*update)(struct ACTOR *actor);
 } ACTOR_ARM_VIEW;
 

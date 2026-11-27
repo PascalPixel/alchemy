@@ -1,7 +1,7 @@
 /* Meteor and Outer Space. Part of battle_effect.c. */
 
-#define STARFIELD_FALL_FALL_FRAMES	192 /* frames of the fall */
-#define STARFIELD_FALL_BURST_FRAMES 54	/* frames of the burst */
+#define STARFIELD_FALL_FALL_TICKS  192 /* ticks of the fall */
+#define STARFIELD_FALL_BURST_TICKS 54  /* ticks of the burst */
 
 /* The starfield fall's modes (btEffectRunStarfieldFall). */
 typedef enum STARFIELD_FALL_MODE {
@@ -41,13 +41,13 @@ typedef enum FLAME_SHEET_B_PICTURE {
 void btPaletteBrightenBgEntries(
 	Sint32 blueStep, Sint32 greenStep, Sint32 redStep)
 {
-	Uint16 *color = (Uint16 *)&BG_PLTT[1];
+	Uint16 *col = (Uint16 *)&BG_PLTT[1];
 	Sint32	i;
 
 	for(i = 0; i != SHEET_PALETTE_COLORS - 1; i++) {
-		Sint32 blue = RGB_BLUE(*color);
-		Sint32 green = RGB_GREEN(*color);
-		Sint32 red = RGB_RED(*color);
+		Sint32 blue = RGB_BLUE(*col);
+		Sint32 green = RGB_GREEN(*col);
+		Sint32 red = RGB_RED(*col);
 
 		blue += blueStep;
 		green += greenStep;
@@ -58,7 +58,7 @@ void btPaletteBrightenBgEntries(
 			green = RGB_LEVEL_MAX;
 		if(red > RGB_LEVEL_MAX)
 			red = RGB_LEVEL_MAX;
-		*color++ = RGB(red, green, blue);
+		*col++ = RGB(red, green, blue);
 	}
 }
 
@@ -115,18 +115,18 @@ void btEffectRunOuterSpace(BATTLE_EFFECT_PARM *args)
    these. */
 #define STARFIELD_FALL_GLOW_BLUE_LEVEL	 32
 #define STARFIELD_FALL_GLOW_GREEN_LEVEL	 80
-/* The burst's flashes rise from this frame on, three more a frame, and the
-   background brightens from STARFIELD_FALL_BRIGHTEN_DELAY frames after it. */
-#define STARFIELD_FALL_FLASH_FRAME		 16
+/* The burst's flashes rise from this tick on, three more a tick, and the
+   background brightens from STARFIELD_FALL_BRIGHTEN_DELAY ticks after it. */
+#define STARFIELD_FALL_FLASH_TICK		 16
 #define STARFIELD_FALL_BRIGHTEN_DELAY	 20
-/* The blast sprite sheet's flash pictures, each shown two frames. */
+/* The blast sprite sheet's flash pictures, each shown two ticks. */
 #define STARFIELD_FALL_FLASH_PICTURES	 7
 /* An ember is drawn at size STARFIELD_FALL_EMBER_SIZE_MAX at MOTE_DEPTH_NEAR or
    nearer, one size smaller every MOTE_DEPTH_STEP farther. */
 #define STARFIELD_FALL_EMBER_SIZE_MAX	 9
 /* The fall's own VBlank events run first in the pass, ahead of the image copy:
    the starfield's scroll, then the backdrop's HBlank DMA, so that both are set
-   before the frame's first line. */
+   before the tick's first line. */
 #define STARFIELD_FALL_SCROLL_PRIORITY	 EVENT_PASS_VBLANK_FIRST
 #define STARFIELD_FALL_BACKDROP_PRIORITY (EVENT_PASS_VBLANK_FIRST - 1)
 
@@ -182,12 +182,12 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		}
 	}
 
-	SPR_PLACEMENT position;
+	SPR_PLACEMENT pos;
 	Sint32		  vector[3];
 	SCREEN_POINT  spot;
 	SCREEN_POINT  screen;
 	SPR_SCALE	  scale;
-	Sint32		  frame;
+	Sint32		  frm;
 	Sint32		  i;
 
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
@@ -218,13 +218,13 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	syCloseEvent(btEffectTransferCanvas);
 	if(mode == STARFIELD_FALL_OUTER_SPACE) {
 		for(i = 0; i != 2; i++) {
-			SPR *sprite = fdSprCreateStub(
+			SPR *spr = fdSprCreateStub(
 				SPRITE_BATTLE_FUSION_DRAGON + i * SPRITE_SECOND_PART);
 
-			state->sprs[i] = sprite;
-			if(sprite != 0) {
-				sprite->flg = 0;
-				fdSprStartAnimationStub(sprite, 2);
+			state->sprs[i] = spr;
+			if(spr != 0) {
+				spr->flg = 0;
+				fdSprStartAnimationStub(spr, 2);
 				state->sprs[i]->image.pri = 3;
 			}
 		}
@@ -307,7 +307,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		} while(limit < CANVAS_SIZE + STARFIELD_FALL_RAGGED_EDGE);
 	}
 	/* The fall, drawn on the battle background's image (BG1, over the
-	   starfield), which darkens a little each frame to leave trails. */
+	   starfield), which darkens a little each tick to leave trails. */
 	REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	{
@@ -329,9 +329,9 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			i, state->particles, ARRAY_COUNT(state->particles));
 		view->busy = 1;
 		state->frm = 0;
-		frame = 0;
+		frm = 0;
 		do {
-			Sint32	growth = frame << 8;
+			Sint32	growth = frm << 8;
 			Sint32	value = state->frm;
 			Sint32	dividend;
 			Sint32	glow;
@@ -357,13 +357,13 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			__asm__("" : "=r"(hold) : "r"(value) : "r1", "r6");
 			line = (Uint16 *)(state->sheet + STARFIELD_FALL_BACKDROP_LINES);
 			if(mode == STARFIELD_FALL_OUTER_SPACE) {
-				if((PerRepeat & (KEY_A | KEY_B)) && frame > 16)
+				if((PerRepeat & (KEY_A | KEY_B)) && frm > 16)
 					break;
 			} else {
-				if((PerRepeat & (KEY_A | KEY_B)) && frame > 4)
+				if((PerRepeat & (KEY_A | KEY_B)) && frm > 4)
 					break;
 			}
-			if(frame == 0)
+			if(frm == 0)
 				sySndPlayStub(SE_RUMBLE);
 			/* FAKEMATCH(dead): updates of hold that cancel out. */
 			if(hold) {
@@ -390,31 +390,31 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			for(; i != DISPLAY_HEIGHT; i++)
 				*line++ = 0;
 			if(direction == 1)
-				x = frame / 4;
+				x = frm / 4;
 			else
-				x = 64 - frame / 4;
-			y = 96 - frame;
+				x = 64 - frm / 4;
+			y = 96 - frm;
 			/* The falling sprite drifts with the stream and grows. */
-			position.groundHeight = 0;
-			position.height = toFIXED(255);
+			pos.groundHeight = 0;
+			pos.height = toFIXED(255);
 			if(mode == STARFIELD_FALL_OUTER_SPACE) {
 				size = growth + toFIXED(5) / 8;
 				scale.x = size;
 				scale.y = size;
-				position.x = toFIXED(x) + toFIXED(80);
-				position.y = toFIXED(64 - y);
+				pos.x = toFIXED(x) + toFIXED(80);
+				pos.y = toFIXED(64 - y);
 				fdRenderApplyProjectedPlacementStub(
-					state->sprs[0], &position, &scale, 0);
+					state->sprs[0], &pos, &scale, 0);
 				fdRenderApplyProjectedPlacementStub(
-					state->sprs[1], &position, &scale, 0);
+					state->sprs[1], &pos, &scale, 0);
 			} else {
 				size = growth + toFIXED(1);
 				scale.x = size;
 				scale.y = size;
-				position.x = toFIXED(x) + toFIXED(96);
-				position.y = toFIXED(96 - y);
+				pos.x = toFIXED(x) + toFIXED(96);
+				pos.y = toFIXED(96 - y);
 				fdRenderApplyProjectedPlacementStub(
-					state->sprs[0], &position, &scale, 0);
+					state->sprs[0], &pos, &scale, 0);
 			}
 			/* A new flame below the falling sprite. */
 			for(i = 0, y = 32 - y; i != STARFIELD_FALL_FLAME_COUNT; i++) {
@@ -433,18 +433,18 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 			/* Seven sparks orbit the falling sprite. The orbit's centre is set
 			   in screen, which the burst's embers are later projected into: the
-			   frame has no other slot for it. */
+			   tick has no other slot for it. */
 			screen.x = 0;
 			screen.y = 0;
 			screen.depth = toFIXED(512);
 			syInitMatrix();
 			syMatrixTranslateVector(syScreenPointCoordinates(&screen));
 			syRotZ(TRIG_TURN / 32);
-			syRotY(frame << 8);
+			syRotY(frm << 8);
 			for(i = 0; i != 7; i++) {
-				SET_VECTOR(vector, toFIXED(StarfieldFall_OrbitPoints[i][0] / 2),
-					toFIXED(StarfieldFall_OrbitPoints[i][1] + frame),
-					toFIXED(StarfieldFall_OrbitPoints[i][2] / 2));
+				SET_VECTOR(vector, toFIXED(StarfieldFallOrbitPoints[i][0] / 2),
+					toFIXED(StarfieldFallOrbitPoints[i][1] + frm),
+					toFIXED(StarfieldFallOrbitPoints[i][2] / 2));
 				btProjectionPoint(vector, &spot);
 				spot.x = FIXEDtoINT(spot.x) + 128;
 				spot.y = FIXEDtoINT(spot.y) + 60;
@@ -456,26 +456,26 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					STARFIELD_FALL_SMALL_GLOW_SIZE);
 			}
 			if(direction == 1)
-				x = frame / 4 - 16;
+				x = frm / 4 - 16;
 			else
-				x = 16 - frame / 4;
+				x = 16 - frm / 4;
 			/* Seven fireballs fall; one that reaches the ground becomes a
 			   landing. */
-			y = frame - 96;
+			y = frm - 96;
 			for(i = 0; i != 7; i++) {
-				Sint32 fireballY = StarfieldFall_FireballPoints[i][1] + y;
+				Sint32 fireballY = StarfieldFallFireballPoints[i][1] + y;
 
 				if(fireballY <= 93)
 					draw(Ram_MapGridMetatileBuffer,
 						state->sheet + STARFIELD_FALL_LARGE_GLOW,
-						StarfieldFall_FireballPoints[i][0] + x -
+						StarfieldFallFireballPoints[i][0] + x -
 							STARFIELD_FALL_LARGE_GLOW_SIZE / 2,
 						fireballY - STARFIELD_FALL_LARGE_GLOW_SIZE / 2,
 						STARFIELD_FALL_LARGE_GLOW_SIZE,
 						STARFIELD_FALL_LARGE_GLOW_SIZE);
 				else if(fireballY <= 95)
 					syStarfieldFallSpawnLanding(
-						toFIXED(StarfieldFall_FireballPoints[i][0] + x),
+						toFIXED(StarfieldFallFireballPoints[i][0] + x),
 						toFIXED(fireballY), 1);
 			}
 			for(i = 0; i != STARFIELD_FALL_FLAME_COUNT; i++) {
@@ -499,9 +499,9 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				}
 			}
 			EFFECT_PRESENT_CANVAS(state);
-			frame++;
+			frm++;
 			state->frm++;
-		} while(frame != STARFIELD_FALL_FALL_FRAMES);
+		} while(frm != STARFIELD_FALL_FALL_TICKS);
 		sySynch(1);
 		view->busy = 0;
 		syCloseEvent(btEffectAdvanceBg2OnInterval);
@@ -547,10 +547,10 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	}
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
 
-	for(frame = 0; frame != STARFIELD_FALL_BURST_FRAMES; frame++) {
-		FIXED		   dragonScale = (frame + 464) << 8;
+	for(frm = 0; frm != STARFIELD_FALL_BURST_TICKS; frm++) {
+		FIXED		   dragonScale = (frm + 464) << 8;
 		BATTLE_CAMERA *camera = BattleCameraWork;
-		Sint32		   elapsed = frame - STARFIELD_FALL_FLASH_FRAME;
+		Sint32		   elapsed = frm - STARFIELD_FALL_FLASH_TICK;
 		SPR_SCALE	   scale;
 		Sint32		   x;
 		Sint32		   y;
@@ -558,11 +558,11 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 		if(elapsed >= STARFIELD_FALL_BRIGHTEN_DELAY)
 			btPaletteBrightenBgEntries(2, 2, 2);
-		if(frame == 0)
+		if(frm == 0)
 			sySndPlayStub(SE_SWITCH_MECHANISM);
-		if(frame == 40)
+		if(frm == 40)
 			sySndPlayStub(SE_CRASH);
-		if(frame == 48) {
+		if(frm == 48) {
 			if(mode == STARFIELD_FALL_OUTER_SPACE) {
 				fdSprDestroyStub(state->sprs[0]);
 				fdSprDestroyStub(state->sprs[1]);
@@ -585,14 +585,14 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				if(screen.depth > MOTE_DEPTH_FAR)
 					screen.depth = MOTE_DEPTH_FAR;
 				/* UB: from depth 736 the size is 0, a picture 0 pixels wide,
-				   and its picture is read from BattleEffect_MotePictures[-1],
+				   and its picture is read from BattleEffectMotePictures[-1],
 				   the last halfword of the blitter template, which ends at the
 				   table (btEffectBuildBlitter). No UBFIX form yet. */
 				size = STARFIELD_FALL_EMBER_SIZE_MAX -
 					(screen.depth - MOTE_DEPTH_NEAR) / MOTE_DEPTH_STEP;
 				draw(canvas,
 					state->sheet +
-						(BattleEffect_MotePictures[size - 1] +
+						(BattleEffectMotePictures[size - 1] +
 							(i & 1) * MOTE_SET_BYTES) +
 						STARFIELD_FALL_MOTE_PICTURES,
 					screen.x - size / 2, screen.y - size, size, size * 2);
@@ -616,7 +616,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 			draw(canvas,
 				state->sheet +
-					(BattleEffect_MotePictures[size - 1] +
+					(BattleEffectMotePictures[size - 1] +
 						(i & 1) * MOTE_SET_BYTES) +
 					STARFIELD_FALL_MOTE_PICTURES,
 				mote->x - size / 2, mote->y - size, size, size * 2);
@@ -625,7 +625,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				mote->y = 128;
 		}
 		for(i = 0; i != STARFIELD_FALL_FLASHES_DRAWN; i++) {
-			/* Flashes grow and rise, three more each frame. */
+			/* Flashes grow and rise, three more each tick. */
 			PARTICLE *flash = &PARTICLES[i];
 
 			if(i / 3 < elapsed && flash->y >= 0) {
@@ -636,11 +636,11 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					Sint32 picture = flash->variant / 2;
 
 					draw(canvas,
-						state->sheet + StarfieldFall_FlashPictures[picture],
-						screen.x - StarfieldFall_FlashSizes[picture] / 2,
-						screen.y - StarfieldFall_FlashSizes[picture] / 2,
-						StarfieldFall_FlashSizes[picture],
-						StarfieldFall_FlashSizes[picture]);
+						state->sheet + StarfieldFallFlashPictures[picture],
+						screen.x - StarfieldFallFlashSizes[picture] / 2,
+						screen.y - StarfieldFallFlashSizes[picture] / 2,
+						StarfieldFallFlashSizes[picture],
+						StarfieldFallFlashSizes[picture]);
 				}
 				flash->variant++;
 				if(flash->variant == 2 * STARFIELD_FALL_FLASH_PICTURES) {
@@ -656,29 +656,29 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		}
 		if(direction == 1)
-			x = frame / 2 + 24;
+			x = frm / 2 + 24;
 		else
-			x = 56 - frame / 2;
-		y = 64 - frame * 2;
-		meteorScale = (frame << 8) + toFIXED(2);
-		position.groundHeight = 0;
-		position.height = toFIXED(255);
+			x = 56 - frm / 2;
+		y = 64 - frm * 2;
+		meteorScale = (frm << 8) + toFIXED(2);
+		pos.groundHeight = 0;
+		pos.height = toFIXED(255);
 		if(mode == STARFIELD_FALL_OUTER_SPACE) {
 			scale.x = dragonScale;
 			scale.y = dragonScale;
-			position.x = toFIXED(x) + toFIXED(96);
-			position.y = toFIXED(96 - y);
+			pos.x = toFIXED(x) + toFIXED(96);
+			pos.y = toFIXED(96 - y);
 			fdRenderApplyProjectedPlacementStub(
-				state->sprs[0], &position, &scale, 0);
+				state->sprs[0], &pos, &scale, 0);
 			fdRenderApplyProjectedPlacementStub(
-				state->sprs[1], &position, &scale, 0);
+				state->sprs[1], &pos, &scale, 0);
 		} else {
 			scale.x = meteorScale;
 			scale.y = meteorScale;
-			position.x = toFIXED(x) + toFIXED(96);
-			position.y = toFIXED(96 - y);
+			pos.x = toFIXED(x) + toFIXED(96);
+			pos.y = toFIXED(96 - y);
 			fdRenderApplyProjectedPlacementStub(
-				state->sprs[0], &position, &scale, 0);
+				state->sprs[0], &pos, &scale, 0);
 		}
 		state->shakeFrm = 1;
 		btCameraShake(8, 8);
@@ -692,7 +692,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 }
 
 #undef STARFIELD_FALL_EMBERS
-#undef STARFIELD_FALL_FALL_FRAMES
+#undef STARFIELD_FALL_FALL_TICKS
 #undef STARFIELD_FALL_FLASHES_DRAWN
 #undef STARFIELD_FALL_EMBERS_DRAWN
 #undef STARFIELD_FALL_FLAME_COUNT
@@ -702,7 +702,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 #undef STARFIELD_FALL_RAGGED_EDGE
 #undef STARFIELD_FALL_GLOW_BLUE_LEVEL
 #undef STARFIELD_FALL_GLOW_GREEN_LEVEL
-#undef STARFIELD_FALL_FLASH_FRAME
+#undef STARFIELD_FALL_FLASH_TICK
 #undef STARFIELD_FALL_BRIGHTEN_DELAY
 #undef STARFIELD_FALL_FLASH_PICTURES
 #undef STARFIELD_FALL_MOTE_PICTURES

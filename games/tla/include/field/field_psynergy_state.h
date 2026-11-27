@@ -12,12 +12,12 @@
 struct SPR;
 union FIELD_OBJECT;
 
-/* The frame a scene's Psynergy script is given once the cast has ended
+/* The tick a scene's Psynergy script is given once the cast has ended
    (fdRunPsynergyScript, as Burst passes it): its last call. */
-#define PSYNERGY_SCRIPT_LAST_FRAME 999
+#define PSYNERGY_SCRIPT_LAST_TICK 999
 
 /* A particle of a field Psynergy's effect: its place and velocity, in 16.16
-   pixels on the field or on the screen, and the frames since it began (negative
+   pixels on the field or on the screen, and the ticks since it began (negative
    before it starts, or while it is free). */
 typedef struct FIELD_PSYNERGY_PARTICLE {
 	FIXED  x;
@@ -31,9 +31,9 @@ typedef struct FIELD_PSYNERGY_PARTICLE {
 
 /* The effect sprites a field Psynergy has (FIELD_EFFECT_STATE.particles). */
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
-/* The frame of Scoop's dig at which the ground is dug, its stage 1
+/* The tick of Scoop's dig at which the ground is dug, its stage 1
    (fdPsynergyScoop). */
-#define SCOOP_DUG_FRAME			   30
+#define SCOOP_DUG_TICK			   30
 
 /* The particles of dust and sparkles Scoop throws up. */
 #define SCOOP_PARTICLE_COUNT 64
@@ -52,7 +52,7 @@ typedef struct SCOOP_STATE {
 	EFFECT_SPR				pictureSpr;
 	/* the stage of the cast; FIELD_PSYNERGY_FINISHED once it ends */
 	Sint16 phase;
-	Sint16 tmr; /* frames into the stage */
+	Sint16 tmr; /* ticks into the stage */
 	Sint16 particleTile;
 	Sint16 pictureTile;
 	/* SPRITE_SCOOP_HAND, which digs and sinks as it does */
@@ -117,7 +117,7 @@ typedef struct FIELD_EFFECT_STATE {
 	Uint8 savedPriFlg;
 	Uint8 savedSprPri;
 	Uint8 unusedAfterSavedSprPri[170]; /* no code names it */
-	/* A lasting Psynergy's stage and frame, passed to its script as it runs. */
+	/* A lasting Psynergy's stage and tick, passed to its script as it runs. */
 	Sint16	   stage;
 	Sint16	   frm;
 	EFFECT_SPR spr;			/* a field Psynergy's own sprite on screen */
@@ -140,7 +140,7 @@ STATIC_ASSERT(offsetof(FIELD_EFFECT_STATE, spr) == 1992);
 STATIC_ASSERT(offsetof(FIELD_EFFECT_STATE, sprActive) == 2034);
 
 /* Returns the value step tenths of the way from `from` to `to`; the field
-   Psynergy that uses it steps from 0 to 10, one a frame. */
+   Psynergy that uses it steps from 0 to 10, one a tick. */
 static __inline__ Sint32 fdEffectInterpolate(
 	Sint32 to, Sint32 from, Sint32 step)
 {

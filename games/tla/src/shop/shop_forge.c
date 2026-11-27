@@ -8,7 +8,7 @@ const FORGE_RECIPE *mnForgeFindRecipe(Sint32 itemId)
 	const FORGE_RECIPE *recipe;
 
 	itemId &= INVENTORY_ITEM_ID_MASK;
-	for(recipe = Forge_Recipes; recipe->item != -1; recipe++) {
+	for(recipe = ForgeRecipes; recipe->item != -1; recipe++) {
 		if(recipe->item == itemId)
 			return recipe;
 	}
@@ -72,11 +72,11 @@ Bool mnForgeUnitHasMaterial(Sint32 unitId)
 Bool mnForgePartyHasMaterial(void)
 {
 	Uint16 partyMemberIds[16];
-	Sint32 count;
+	Sint32 cnt;
 	Sint32 i;
 
-	count = gmPartyListMembersStub(partyMemberIds);
-	for(i = 0; i < count; i++) {
+	cnt = gmPartyListMembersStub(partyMemberIds);
+	for(i = 0; i < cnt; i++) {
 		if(mnForgeUnitHasMaterial(partyMemberIds[i]) != 0)
 			return TRUE;
 	}

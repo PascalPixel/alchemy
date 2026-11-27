@@ -1,10 +1,10 @@
 /* Quake. Part of battle_effect.c. */
 
-/* The columns of a Quake_Timings row. */
+/* The columns of a QuakeTimings row. */
 enum {
-	QUAKE_TIMING_FRAMES,	  /* frames in the whole effect */
-	QUAKE_TIMING_RISE_FRAMES, /* frames each pillar stands */
-	QUAKE_TIMING_SHAKE		  /* how far the screen shakes */
+	QUAKE_TIMING_TICKS,		 /* ticks in the whole effect */
+	QUAKE_TIMING_RISE_TICKS, /* ticks each pillar stands */
+	QUAKE_TIMING_SHAKE		 /* how far the screen shakes */
 };
 
 /* The peak heights of Quake's rock pillars; only the first three are drawn. */
@@ -26,7 +26,7 @@ typedef struct ROCK_WALL_HEIGHTS {
 #define QUAKE_PILLAR_X(pillar) ((pillar) * QUAKE_PILLAR_WIDTH + 8)
 #define QUAKE_PILLAR_FOOT	   112
 
-/* Three rock pillars rise from the left, 4 frames apart, and sink again,
+/* Three rock pillars rise from the left, 4 ticks apart, and sink again,
    throwing the targets standing on them into the air.
 
    Abilities: Quake, Earthquake, Quake Sphere. */
@@ -40,11 +40,11 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 	};
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 pillar;
 	DRAW_RECTANGLE		 draw;
 	BATTLE_CAMERA		*camera;
-	Sint32				 xOffset;
+	Sint32				 xOfs;
 	ROCK_WALL_HEIGHTS	 heights;
 	Sint32				 point[3];
 	SCREEN_POINT		 screen;
@@ -80,9 +80,9 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 
 	if(state->args->side == EFFECT_SIDE_PARTY) {
 		REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
-		xOffset = -NARROW_CANVAS_PARTY_X;
+		xOfs = -NARROW_CANVAS_PARTY_X;
 	} else {
-		xOffset = 0;
+		xOfs = 0;
 	}
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_TRANSPARENT);
@@ -94,32 +94,30 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 	state->shakeFrm = 128;
 	sySndPlayStub(SE_RUMBLE);
 
-	for(frame = 0;
-		frame != Quake_Timings[state->args->variant][QUAKE_TIMING_FRAMES];
-		frame++) {
+	for(frm = 0; frm != QuakeTimings[state->args->variant][QUAKE_TIMING_TICKS];
+		frm++) {
 		EFFECT_VIEW_FROM_CAMERA(camera);
-		if(frame ==
-			Quake_Timings[state->args->variant][QUAKE_TIMING_FRAMES] - 16)
+		if(frm == QuakeTimings[state->args->variant][QUAKE_TIMING_TICKS] - 16)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
 		for(pillar = 0; pillar != 3; pillar++) {
-			Sint32 riseFrame = pillar * 4 + 16;
+			Sint32 riseFrm = pillar * 4 + 16;
 
-			/* DEAD: never true, as the left side is 32 or more and riseFrame at
+			/* DEAD: never true, as the left side is 32 or more and riseFrm at
 			   most 24; the ROM keeps the test and its store. */
-			if((frame & 31) + 32 == riseFrame)
+			if((frm & 31) + 32 == riseFrm)
 				heights.column[pillar] += 32;
-			if(frame >= riseFrame &&
-				frame < riseFrame +
-						Quake_Timings[state->args->variant]
-									 [QUAKE_TIMING_RISE_FRAMES]) {
+			if(frm >= riseFrm &&
+				frm < riseFrm +
+						QuakeTimings[state->args->variant]
+									[QUAKE_TIMING_RISE_TICKS]) {
 				Sint32 height;
 				Sint32 top;
 
 				/* A pillar rises and sinks along a sine, once, twice or three
 				   times by variant. */
 				height = FIXEDtoINT(heights.column[pillar] *
-					sySin((frame - riseFrame) * (TRIG_TURN / 64)));
+					sySin((frm - riseFrm) * (TRIG_TURN / 64)));
 				if(height < 0)
 					height = -height;
 				top = QUAKE_PILLAR_FOOT - height;
@@ -137,7 +135,7 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 					SET_VECTOR(
 						point, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 					btProjectionPoint(point, &screen);
-					screen.x += xOffset;
+					screen.x += xOfs;
 					if(screen.x >= QUAKE_PILLAR_X(pillar) &&
 						screen.x <=
 							QUAKE_PILLAR_X(pillar) + QUAKE_PILLAR_WIDTH &&
@@ -165,9 +163,9 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 					SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 5);
 			}
 		}
-		btCameraShake(Quake_Timings[state->args->variant][QUAKE_TIMING_SHAKE],
-			Quake_Timings[state->args->variant][QUAKE_TIMING_SHAKE]);
-		EFFECT_END_FRAME(state);
+		btCameraShake(QuakeTimings[state->args->variant][QUAKE_TIMING_SHAKE],
+			QuakeTimings[state->args->variant][QUAKE_TIMING_SHAKE]);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();

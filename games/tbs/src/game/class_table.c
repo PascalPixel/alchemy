@@ -6,7 +6,7 @@
 #include "game/game.h"
 
 /* clang-format off */
-const CLASS_DEFINITION Class_DefinitionTable[] = {
+const CLASS_DEFINITION ClassDefinitionTable[] = {
 	/* NPC */
 	{
 		.series = CLASS_SERIES_NPC,

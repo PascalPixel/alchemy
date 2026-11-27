@@ -68,15 +68,15 @@
 #include "scene/walk_into_leader.h"
 #include "text/msg_ids.h"
 
-extern Sint32		  ColosseumEntrance_GatherIntoIsaacScript[];
-extern Sint32		  ColosseumEntrance_GatherIntoGaretScript[];
-extern Sint32		  ColosseumEntrance_GatherIntoIsaacInWaitingRoomScript[];
-extern Sint32		  ColosseumEntrance_EnterGatesScript[];
-extern Sint32		  ColosseumEntrance_ApproachFinalsGroupScript[];
-extern Sint32		  ColosseumEntrance_JoinFinalsFromEastScript[];
-extern Sint32		  ColosseumEntrance_JoinFinalsFromSouthScript[];
-extern Sint32		  ColosseumEntrance_EnterFinalsScript[];
-extern Sint32		  ColosseumEntrance_PulseScaleScript[];
+extern Sint32		  ColosseumEntranceGatherIntoIsaacScript[];
+extern Sint32		  ColosseumEntranceGatherIntoGaretScript[];
+extern Sint32		  ColosseumEntranceGatherIntoIsaacInWaitingRoomScript[];
+extern Sint32		  ColosseumEntranceEnterGatesScript[];
+extern Sint32		  ColosseumEntranceApproachFinalsGroupScript[];
+extern Sint32		  ColosseumEntranceJoinFinalsFromEastScript[];
+extern Sint32		  ColosseumEntranceJoinFinalsFromSouthScript[];
+extern Sint32		  ColosseumEntranceEnterFinalsScript[];
+extern Sint32		  ColosseumEntrancePulseScaleScript[];
 extern SCENE_ENTRANCE ColosseumEntranceEntrancesOther[];
 extern SCENE_ENTRANCE ColosseumEntrances[];
 extern SCENE_ENTRANCE ColosseumEntranceEntrances[];
@@ -319,17 +319,17 @@ const Uint32 *scGetExits(void)
 /* Selects the actors for the scene being entered. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	const ACTOR_PLACE *table;
+	const ACTOR_PLACE *tbl;
 
 	if(MainRoutineStateWork.next == SCENE_COLOSSEUM) {
 		switch(MainRoutineStateWork.entrance) {
 		case COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST:
 		case COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS:
-			table = ColosseumStandsActorPlacements;
+			tbl = ColosseumStandsActorPlacements;
 			break;
 		case COLOSSEUM_FAILED_TRIAL_FROM_STANDS:
 		case COLOSSEUM_CLEARED_TRIAL_FROM_STANDS:
-			table = ColosseumTrialGroundsActorPlacements;
+			tbl = ColosseumTrialGroundsActorPlacements;
 			break;
 		/* XXX (no evidence): what entrances 3 and 8 were made for; no exit or
 		   code enters by them, only the debug scene selector can. 3 stands the
@@ -342,31 +342,31 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 		case COLOSSEUM_FROM_COLOSSEUM_ENTRANCE:
 		case COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_EAST:
 		case COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_WEST:
-			table = ColosseumSoldiersActorPlacements;
+			tbl = ColosseumSoldiersActorPlacements;
 			break;
 		case COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST:
-			table = ColosseumActorPlacementsFromColosseumAzartMatchWest;
+			tbl = ColosseumActorPlacementsFromColosseumAzartMatchWest;
 			break;
 		case COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH:
 		case COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH:
-			table = ColosseumActorPlacementsFromColosseumNavampaMatch;
+			tbl = ColosseumActorPlacementsFromColosseumNavampaMatch;
 			break;
 		default:
-			table = ColosseumActorPlacements;
+			tbl = ColosseumActorPlacements;
 			break;
 		}
 	} else if(MainRoutineStateWork.next == SCENE_COLOSSEUM_ENTRANCE) {
 		if(gmFlagGet(FLAG_COLOSSO_OVER) != 0) {
-			table = ColosseumEntranceActorPlacementsAfterColosso;
+			tbl = ColosseumEntranceActorPlacementsAfterColosso;
 		} else if(gmFlagGet(FLAG_BABI_SAVED) != 0) {
-			table = ColosseumEntranceActorPlacementsFinalsDay;
+			tbl = ColosseumEntranceActorPlacementsFinalsDay;
 		} else {
-			table = ColosseumEntranceActorPlacements;
+			tbl = ColosseumEntranceActorPlacements;
 		}
 	} else {
-		table = ColosseumEntranceActorPlacementsOther;
+		tbl = ColosseumEntranceActorPlacementsOther;
 	}
-	return table;
+	return tbl;
 }
 
 const CUE *scGetCues(void)
@@ -753,23 +753,22 @@ static void scColosseumEntranceCrowdRecognizesIsaac(void)
 		fdActorSetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
 		/* "All right, this way please." */
 		scColosseumEntranceShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
-		fdActorSetScript(ACTOR_GARET, ColosseumEntrance_GatherIntoIsaacScript);
-		fdActorSetScript(ACTOR_IVAN, ColosseumEntrance_GatherIntoIsaacScript);
+		fdActorSetScript(ACTOR_GARET, ColosseumEntranceGatherIntoIsaacScript);
+		fdActorSetScript(ACTOR_IVAN, ColosseumEntranceGatherIntoIsaacScript);
 		fdActorRunScriptAndWait(
-			ACTOR_MIA, ColosseumEntrance_GatherIntoIsaacScript);
+			ACTOR_MIA, ColosseumEntranceGatherIntoIsaacScript);
 		fdCameraSetSpeed(0.4);
 		fdCameraMoveTo(256, CAMERA_KEEP, 100, 1);
 		fdActorSetSpeed(ACTOR_FIRST_GATE_SOLDIER, 1);
 		fdActorSetScript(
-			ACTOR_FIRST_GATE_SOLDIER, ColosseumEntrance_EnterGatesScript);
+			ACTOR_FIRST_GATE_SOLDIER, ColosseumEntranceEnterGatesScript);
 		fdScriptWait(10);
 		fdActorSetSpeed(ACTOR_PARTY_LEADER, 1);
-		fdActorSetScript(
-			ACTOR_PARTY_LEADER, ColosseumEntrance_EnterGatesScript);
+		fdActorSetScript(ACTOR_PARTY_LEADER, ColosseumEntranceEnterGatesScript);
 		fdScriptWait(80);
 		FieldStateWork->transitionFrm = 40;
 		fdScriptFinishScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 	} else {
 		fdScriptSkipMessages(1);
 		fdActorShowEmote(
@@ -830,24 +829,24 @@ static void scColosseumEntranceCrowdRecognizesIsaac(void)
 			/* "We appreciate this, Isaac. Well, come this way, please." */
 			scColosseumEntranceShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
 			fdActorSetScript(
-				ACTOR_GARET, ColosseumEntrance_GatherIntoIsaacScript);
+				ACTOR_GARET, ColosseumEntranceGatherIntoIsaacScript);
 			fdActorSetScript(
-				ACTOR_IVAN, ColosseumEntrance_GatherIntoIsaacScript);
+				ACTOR_IVAN, ColosseumEntranceGatherIntoIsaacScript);
 			fdActorRunScriptAndWait(
-				ACTOR_MIA, ColosseumEntrance_GatherIntoIsaacScript);
+				ACTOR_MIA, ColosseumEntranceGatherIntoIsaacScript);
 			fdCameraSetSpeed(0.4);
 			fdCameraMoveTo(256, CAMERA_KEEP, 100, 1);
 			fdActorSetSpeed(ACTOR_FIRST_GATE_SOLDIER, 1);
 			fdActorSetScript(
-				ACTOR_FIRST_GATE_SOLDIER, ColosseumEntrance_EnterGatesScript);
+				ACTOR_FIRST_GATE_SOLDIER, ColosseumEntranceEnterGatesScript);
 			fdScriptWait(10);
 			fdActorSetSpeed(ACTOR_PARTY_LEADER, 1);
 			fdActorSetScript(
-				ACTOR_PARTY_LEADER, ColosseumEntrance_EnterGatesScript);
+				ACTOR_PARTY_LEADER, ColosseumEntranceEnterGatesScript);
 			fdScriptWait(80);
 			FieldStateWork->transitionFrm = 40;
 			fdScriptFinishScreenTransition();
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 		} else {
 			fdScriptSkipMessages(1);
 			fdScriptWait(20);
@@ -864,12 +863,12 @@ static void scColosseumEntranceCrowdRecognizesIsaac(void)
 			   mindset." */
 			scColosseumEntranceShowMessageAndPause(ACTOR_MIA);
 			fdActorSetScript(
-				ACTOR_IVAN, ColosseumEntrance_GatherIntoGaretScript);
+				ACTOR_IVAN, ColosseumEntranceGatherIntoGaretScript);
 			fdActorRunScriptAndWait(
-				ACTOR_MIA, ColosseumEntrance_GatherIntoGaretScript);
+				ACTOR_MIA, ColosseumEntranceGatherIntoGaretScript);
 			fdScriptWait(20);
 			fdActorRunScriptAndWait(
-				ACTOR_PARTY_LEADER, ColosseumEntrance_GatherIntoGaretScript);
+				ACTOR_PARTY_LEADER, ColosseumEntranceGatherIntoGaretScript);
 			fdActorWalkToAndWait(ACTOR_GARET, 262, 188);
 			scColosseumEntranceFaceDirection(ACTOR_GARET, FACING_NORTH);
 			fdActorSetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
@@ -879,14 +878,14 @@ static void scColosseumEntranceCrowdRecognizesIsaac(void)
 			fdCameraMoveTo(256, CAMERA_KEEP, 100, 1);
 			fdActorSetSpeed(ACTOR_FIRST_GATE_SOLDIER, 1);
 			fdActorSetScript(
-				ACTOR_FIRST_GATE_SOLDIER, ColosseumEntrance_EnterGatesScript);
+				ACTOR_FIRST_GATE_SOLDIER, ColosseumEntranceEnterGatesScript);
 			fdScriptWait(10);
 			fdActorSetSpeed(ACTOR_GARET, 1);
-			fdActorSetScript(ACTOR_GARET, ColosseumEntrance_EnterGatesScript);
+			fdActorSetScript(ACTOR_GARET, ColosseumEntranceEnterGatesScript);
 			fdScriptWait(80);
 			FieldStateWork->transitionFrm = 40;
 			fdScriptFinishScreenTransition();
-			fdScriptWaitTransitionFrames();
+			fdScriptWaitTransitionTicks();
 		}
 	}
 
@@ -974,9 +973,9 @@ static void scColosseumEntranceFinalsStart(void)
 			fdActorSetSpeed(ACTOR_GALAHAD, 1.6);
 			fdActorSetSpeed(ACTOR_DEKKA, 1.6);
 			fdActorSetScript(
-				ACTOR_AZART, ColosseumEntrance_ApproachFinalsGroupScript);
+				ACTOR_AZART, ColosseumEntranceApproachFinalsGroupScript);
 			fdActorSetScript(
-				ACTOR_DEKKA, ColosseumEntrance_JoinFinalsFromSouthScript);
+				ACTOR_DEKKA, ColosseumEntranceJoinFinalsFromSouthScript);
 			fdScriptWait(20);
 			fdActorFaceDirection(ACTOR_SATRAGE, FACING_NORTH_NORTHEAST, 0);
 			fdActorFaceDirection(ACTOR_NAVAMPA, FACING_NORTH_NORTHWEST, 0);
@@ -984,7 +983,7 @@ static void scColosseumEntranceFinalsStart(void)
 			fdActorFaceDirection(ACTOR_MORGAN, FACING_NORTH_NORTHEAST, 0);
 			fdActorFaceDirection(ACTOR_BUFORD, FACING_NORTH_NORTHWEST, 0);
 			fdActorRunScriptAndWait(
-				ACTOR_GALAHAD, ColosseumEntrance_JoinFinalsFromEastScript);
+				ACTOR_GALAHAD, ColosseumEntranceJoinFinalsFromEastScript);
 			fdScriptWait(20);
 			fdActorFaceDirection(ACTOR_FINALS_SOLDIER, FACING_EAST, 0);
 			fdActorFaceDirection(ACTOR_GONG_SOLDIER, FACING_WEST, 40);
@@ -1013,7 +1012,7 @@ static void scColosseumEntranceFinalsStart(void)
 			actor->tgtY = ACTOR_NO_TARGET;
 			actor->tgtZ = ACTOR_NO_TARGET;
 			sySynch(1);
-			script = ColosseumEntrance_EnterFinalsScript;
+			script = ColosseumEntranceEnterFinalsScript;
 			fdActorSetScript(ACTOR_SATRAGE, script);
 			fdScriptWait(20);
 			fdActorSetScript(ACTOR_AZART, script);
@@ -1079,7 +1078,7 @@ static void scColosseumEntranceTalkToTrialAttendant(void)
 		FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 		FieldStateWork->transitionFrm = 32;
 		fdScriptFinishScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		if(gmFlagGet(FLAG_COLOSSO_FAILED_TRIAL_SEEN) != 0) {
 			syImportScriptSetExitRequest(COLOSSEUM_STANDS_TO_CLEARED_TRIAL);
 		} else {
@@ -1117,7 +1116,7 @@ static void scColosseumEntranceShowFailedTrial(void)
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 	FieldStateWork->transitionFrm = 32;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	fdActorRunRepeatedMotion(ACTOR_FAILING_WARRIOR, 1);
 	fdScriptWait(20);
@@ -1141,7 +1140,7 @@ static void scColosseumEntranceShowFailedTrial(void)
 	fdScriptWait(60);
 	fdActorRunRepeatedMotion(ACTOR_FAILING_WARRIOR, 3);
 	fdScriptWait(40);
-	fdActorSetScript(ACTOR_FAILING_WARRIOR, ColosseumEntrance_PulseScaleScript);
+	fdActorSetScript(ACTOR_FAILING_WARRIOR, ColosseumEntrancePulseScaleScript);
 	fdScriptWait(80);
 	fdActorSetAttachedEffect(
 		ACTOR_FAILING_WARRIOR, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1202,9 +1201,9 @@ static void scColosseumEntranceShowFailedTrial(void)
 		fdActorSetPos(ACTOR_FAILING_WARRIOR, 0, 0);
 		FieldStateWork->transition =
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-		FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+		FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 		fdScriptFinishScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		FieldStateWork->transition =
 			SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		syImportScriptSetExitRequest(COLOSSEUM_TRIAL_GROUNDS_TO_STANDS);
@@ -1221,7 +1220,7 @@ static void scColosseumEntranceExplainTrial(void)
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 
 	fdScriptWait(20);
 	scColosseumEntranceFaceDirection(
@@ -1275,7 +1274,7 @@ static void scColosseumEntranceShowClearedTrial(void)
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
 	FieldStateWork->transitionFrm = 32;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	fdActorRunRepeatedMotion(ACTOR_CLEARING_WARRIOR, 1);
 	fdScriptWait(20);
@@ -1299,8 +1298,7 @@ static void scColosseumEntranceShowClearedTrial(void)
 	fdScriptWait(60);
 	fdActorRunRepeatedMotion(ACTOR_CLEARING_WARRIOR, 3);
 	fdScriptWait(40);
-	fdActorSetScript(
-		ACTOR_CLEARING_WARRIOR, ColosseumEntrance_PulseScaleScript);
+	fdActorSetScript(ACTOR_CLEARING_WARRIOR, ColosseumEntrancePulseScaleScript);
 	fdScriptWait(80);
 	fdActorSetAttachedEffect(ACTOR_CLEARING_WARRIOR,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1370,9 +1368,9 @@ static void scColosseumEntranceShowClearedTrial(void)
 	fdScriptWait(80);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	gmFlagSet(FLAG_COLOSSO_CLEARED_TRIAL_SEEN);
 	syImportScriptSetExitRequest(COLOSSEUM_TRIAL_GROUNDS_TO_STANDS);
 	fdScriptEnd();
@@ -1458,14 +1456,14 @@ static void scColosseumEntranceApplyArrivalState(void)
 	}
 }
 
-/* Shows the next message from a speaker, then pauses ten frames. */
+/* Shows the next message from a speaker, then pauses ten ticks. */
 static void scColosseumEntranceShowMessageAndPause(Sint32 speaker)
 {
 	fdScriptShowMessage(speaker, 0);
 	fdScriptWait(10);
 }
 
-/* Turns an actor to the given facing over ten frames. */
+/* Turns an actor to the given facing over ten ticks. */
 static void scColosseumEntranceFaceDirection(Sint32 actorId, Sint32 facing)
 {
 	fdActorFaceDirection(actorId, (Uint16)facing, 10);
@@ -1509,7 +1507,7 @@ static inline void scColosseumEntrancePlaceCompanionsBehindIsaac(void)
    (COLOSSEUM_FROM_COLOSSEUM_ENTRANCE). */
 static void scColosseumEntranceExplainPartySupport(void)
 {
-	Sint32 flag;
+	Sint32 flg;
 
 	fdScriptStart();
 	scColosseumEntrancePlaceCompanionsBehindIsaac();
@@ -1523,7 +1521,7 @@ static void scColosseumEntranceExplainPartySupport(void)
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
 	FieldStateWork->transitionFrm = 1;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdPaletteFadeApplySource(RGB(0, 0, 0), PALETTES_ALL);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(40);
@@ -1660,12 +1658,12 @@ static void scColosseumEntranceExplainPartySupport(void)
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
 	fdActorFaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-	flag = 0;
+	flg = 0;
 	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
 		/* "Of course, we won't argue if you don't, but if you can, you
 		   should." */
 		scColosseumEntranceShowMessageAndPause(ACTOR_IVAN);
-		flag = 1;
+		flg = 1;
 	} else {
 		FieldStateWork->msg++;
 		fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
@@ -1673,7 +1671,7 @@ static void scColosseumEntranceExplainPartySupport(void)
 		/* "Come on, you can make another exception, can't you?" */
 		scColosseumEntranceShowMessageAndPause(ACTOR_IVAN);
 	}
-	if(flag != 0) {
+	if(flg != 0) {
 		FieldStateWork->msg++;
 	}
 	fdActorFaceDirection(ACTOR_FIRST_SOLDIER, FACING_WEST, 0);
@@ -1717,11 +1715,11 @@ static void scColosseumEntranceExplainPartySupport(void)
 	fdActorSetSpeed(ACTOR_IVAN, 1);
 	fdActorSetSpeed(ACTOR_MIA, 1);
 	fdActorSetScript(
-		ACTOR_GARET, ColosseumEntrance_GatherIntoIsaacInWaitingRoomScript);
+		ACTOR_GARET, ColosseumEntranceGatherIntoIsaacInWaitingRoomScript);
 	fdActorSetScript(
-		ACTOR_IVAN, ColosseumEntrance_GatherIntoIsaacInWaitingRoomScript);
+		ACTOR_IVAN, ColosseumEntranceGatherIntoIsaacInWaitingRoomScript);
 	fdActorRunScriptAndWait(
-		ACTOR_MIA, ColosseumEntrance_GatherIntoIsaacInWaitingRoomScript);
+		ACTOR_MIA, ColosseumEntranceGatherIntoIsaacInWaitingRoomScript);
 	fdScriptWait(20);
 	scColosseumEntranceFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST);
 	fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1741,7 +1739,7 @@ static void scColosseumEntranceExplainPartySupport(void)
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	FieldStateWork->transitionFrm = 40;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST);
 }
 
@@ -1771,7 +1769,7 @@ static void scColosseumEntranceEscortToEastExit(void)
 	fdActorSetDestination(ACTOR_PARTY_LEADER, 980, 588);
 	fdActorSetDestination(ACTOR_ESCORTING_SOLDIER, 1012, 588);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	if(gmFlagGet(FLAG_COLOSSO_SECOND_MATCH_WON) != 0) {
 		syImportScriptSetExitRequest(
 			COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_NORTH);
@@ -1789,7 +1787,7 @@ static void scColosseumEntranceAnnounceFinals(void)
 	contestant = fdActorGet(ACTOR_AZART);
 	fdScriptStart();
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	fdActorRunRepeatedMotion(ACTOR_FINALS_SOLDIER, 2);
 	fdActorStop(ACTOR_AZART);
@@ -1832,7 +1830,7 @@ static void scColosseumEntranceWalkToEastExit(void)
 	fdActorMoveToAndWait(ACTOR_PARTY_LEADER, 880, 428);
 	fdActorSetDestination(ACTOR_PARTY_LEADER, 980, 428);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	if(gmFlagGet(FLAG_COLOSSO_SECOND_MATCH_WON) != 0) {
 		syImportScriptSetExitRequest(
 			COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_SOUTH);
@@ -1850,7 +1848,7 @@ static void scColosseumEntrancePraiseFirstMatchWon(void)
 	fdScriptStart();
 	scColosseumEntrancePlaceCompanionsBehindIsaac();
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	fdActorRunRepeatedMotion(ACTOR_FIRST_SOLDIER, 1);
 	fdActorSetAnimation(ACTOR_FIRST_SOLDIER, ANIM_NOD);
@@ -1873,7 +1871,7 @@ static void scColosseumEntrancePraiseFirstMatchWon(void)
 	fdActorSetSpeed(ACTOR_GARET, 1);
 	fdActorSetSpeed(ACTOR_IVAN, 1);
 	fdActorSetSpeed(ACTOR_MIA, 1);
-	actions = ColosseumEntrance_GatherIntoIsaacInWaitingRoomScript;
+	actions = ColosseumEntranceGatherIntoIsaacInWaitingRoomScript;
 	fdActorSetScript(ACTOR_GARET, actions);
 	fdActorSetScript(ACTOR_IVAN, actions);
 	fdActorRunScriptAndWait(ACTOR_MIA, actions);
@@ -1894,7 +1892,7 @@ static void scColosseumEntrancePraiseFirstMatchWon(void)
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 808, 312);
 	fdScriptWait(60);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_WEST);
 }
 
@@ -1924,7 +1922,7 @@ static void scColosseumEntranceEscortToWestExit(void)
 	fdActorSetDestination(ACTOR_PARTY_LEADER, 600, 588);
 	fdActorSetDestination(ACTOR_ESCORTING_SOLDIER, 568, 588);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_WEST);
 }
 
@@ -1939,7 +1937,7 @@ static void scColosseumEntranceWalkToWestExit(void)
 	fdActorMoveToAndWait(ACTOR_PARTY_LEADER, 700, 428);
 	fdActorSetDestination(ACTOR_PARTY_LEADER, 600, 428);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_EAST);
 }
 
@@ -1952,7 +1950,7 @@ static void scColosseumEntrancePraiseBothMatchesWon(void)
 	fdScriptStart();
 	scColosseumEntrancePlaceCompanionsBehindIsaac();
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	fdActorRunRepeatedMotion(ACTOR_FIRST_SOLDIER, 1);
 	fdActorSetAnimation(ACTOR_FIRST_SOLDIER, ANIM_NOD);
@@ -1974,7 +1972,7 @@ static void scColosseumEntrancePraiseBothMatchesWon(void)
 	fdActorSetSpeed(ACTOR_GARET, 1);
 	fdActorSetSpeed(ACTOR_IVAN, 1);
 	fdActorSetSpeed(ACTOR_MIA, 1);
-	actions = ColosseumEntrance_GatherIntoIsaacInWaitingRoomScript;
+	actions = ColosseumEntranceGatherIntoIsaacInWaitingRoomScript;
 	fdActorSetScript(ACTOR_GARET, actions);
 	fdActorSetScript(ACTOR_IVAN, actions);
 	fdActorRunScriptAndWait(ACTOR_MIA, actions);
@@ -1995,7 +1993,7 @@ static void scColosseumEntrancePraiseBothMatchesWon(void)
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 808, 312);
 	fdScriptWait(60);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST);
 }
 
@@ -2020,7 +2018,7 @@ static void scColosseumEntranceInitContestants(void)
 	fdActorSetAnimationSpeedById(ACTOR_BUFORD, 60);
 }
 
-Sint32 ColosseumEntrance_GatherIntoIsaacScript[] = {
+Sint32 ColosseumEntranceGatherIntoIsaacScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(262, 0, 188),
 	SC_SYNC,
@@ -2029,7 +2027,7 @@ Sint32 ColosseumEntrance_GatherIntoIsaacScript[] = {
 	SC_END,
 };
 
-Sint32 ColosseumEntrance_GatherIntoGaretScript[] = {
+Sint32 ColosseumEntranceGatherIntoGaretScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(246, 0, 200),
 	SC_SYNC,
@@ -2038,7 +2036,7 @@ Sint32 ColosseumEntrance_GatherIntoGaretScript[] = {
 	SC_END,
 };
 
-Sint32 ColosseumEntrance_GatherIntoIsaacInWaitingRoomScript[] = {
+Sint32 ColosseumEntranceGatherIntoIsaacInWaitingRoomScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(808, 0, 120),
 	SC_SYNC,
@@ -2047,7 +2045,7 @@ Sint32 ColosseumEntrance_GatherIntoIsaacInWaitingRoomScript[] = {
 	SC_END,
 };
 
-Sint32 ColosseumEntrance_EnterGatesScript[] = {
+Sint32 ColosseumEntranceEnterGatesScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(268, 0, 146),
 	SC_SYNC,
@@ -2057,7 +2055,7 @@ Sint32 ColosseumEntrance_EnterGatesScript[] = {
 	SC_END,
 };
 
-Sint32 ColosseumEntrance_ApproachFinalsGroupScript[] = {
+Sint32 ColosseumEntranceApproachFinalsGroupScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(776, 0, 120),
 	SC_SYNC,
@@ -2067,7 +2065,7 @@ Sint32 ColosseumEntrance_ApproachFinalsGroupScript[] = {
 	SC_END,
 };
 
-Sint32 ColosseumEntrance_JoinFinalsFromEastScript[] = {
+Sint32 ColosseumEntranceJoinFinalsFromEastScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(894, 0, 106),
 	SC_SYNC,
@@ -2083,7 +2081,7 @@ Sint32 ColosseumEntrance_JoinFinalsFromEastScript[] = {
 	SC_END,
 };
 
-Sint32 ColosseumEntrance_JoinFinalsFromSouthScript[] = {
+Sint32 ColosseumEntranceJoinFinalsFromSouthScript[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(840, 0, 136),
 	SC_SYNC,
@@ -2095,7 +2093,7 @@ Sint32 ColosseumEntrance_JoinFinalsFromSouthScript[] = {
 	SC_END,
 };
 
-Sint32 ColosseumEntrance_EnterFinalsScript[] = {
+Sint32 ColosseumEntranceEnterFinalsScript[] = {
 	SC_SPEED(0.8),
 	SC_ACCELERATION(0.4),
 	SC_ANIMATION(2),
@@ -2108,7 +2106,7 @@ Sint32 ColosseumEntrance_EnterFinalsScript[] = {
 	SC_END,
 };
 
-Sint32 ColosseumEntrance_PulseScaleScript[] = {
+Sint32 ColosseumEntrancePulseScaleScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1)),
 	SC_SET(SW_SCALE_Y, toFIXED(1)),
 	SC_WAIT(2),

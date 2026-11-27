@@ -187,7 +187,7 @@ enum {
 };
 
 static void scMcCoyPalaceClaimReward(
-	Sint32 chestActorId, Sint32 itemId, Sint32 chestFlag);
+	Sint32 chestActorId, Sint32 itemId, Sint32 chestFlg);
 static void scMcCoyPalaceAudienceWithMcCoy(void);
 static void scMcCoyPalaceCaptainTalksAboutBarricade(void);
 static void scMcCoyPalaceMcCoyRewardsParty(void);
@@ -454,9 +454,9 @@ static void scMcCoyPalaceShowChestLocked(void)
 
 /* After the reward, the chest the party opened searches as empty and the other
    three as locked. */
-static void scMcCoyPalaceShowUnavailableChest(Sint32 chestFlag)
+static void scMcCoyPalaceShowUnavailableChest(Sint32 chestFlg)
 {
-	if(gmFlagGet(chestFlag) != 0) {
+	if(gmFlagGet(chestFlg) != 0) {
 		scMcCoyPalaceShowChestEmpty();
 	} else {
 		scMcCoyPalaceShowChestLocked();
@@ -517,7 +517,7 @@ static void scMcCoyPalaceSearchWaterOfLifeChest(void)
    the party has room for it, the lid peeks open and shuts again, and the party
    can still choose. */
 static void scMcCoyPalaceClaimReward(
-	Sint32 chestActorId, Sint32 itemId, Sint32 chestFlag)
+	Sint32 chestActorId, Sint32 itemId, Sint32 chestFlg)
 {
 	Sint32 emitterHandle;
 
@@ -528,7 +528,7 @@ static void scMcCoyPalaceClaimReward(
 	if(gmPartyGiveItem(itemId, 0) != -1) {
 		fdActorSetAnimation(chestActorId, CHEST_ANIMATION_OPEN_EMPTY);
 		gmFlagSet(FLAG_MCCOY_PALACE_REWARD_TAKEN);
-		gmFlagSet(chestFlag);
+		gmFlagSet(chestFlg);
 		gmFlagClear(FLAG_REWARD_OFFERED);
 		gmFlagClear(FLAG_CHOOSING_REWARD);
 	} else {
@@ -738,7 +738,7 @@ static void scMcCoyPalaceAudienceWithMcCoy(void)
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	FieldStateWork->transitionFrm = 40;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	if(gmFlagGet(FLAG_MCCOY_PALACE_JOB_REFUSED) == 0) {
 		fdScriptWait(80);
 		fdActorSetPos(ACTOR_CAPTAIN, 894, 798);
@@ -887,9 +887,9 @@ static void scMcCoyPalaceAudienceWithMcCoy(void)
 		gmFlagSet(FLAG_MCCOY_PALACE_JOB_REFUSED);
 		fdActorSetSpeed(ACTOR_PARTY_LEADER, 1);
 		fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 894, 752);
-		FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+		FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 		fdScriptFinishScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		goto leave;
 	}
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.6);
@@ -1202,9 +1202,9 @@ accepted:
 	fdActorSetPos(ACTOR_MIA, 0, 0);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 894, 752);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	gmFlagSet(FLAG_CAPTAIN_SEEING_PARTY_OUT);
 leave:
 	syImportScriptSetExitRequest(MCCOY_PALACE_MCCOYS_ROOM_TO_ENTRANCE_ROOM);
@@ -1219,7 +1219,7 @@ static void scMcCoyPalaceCaptainTalksAboutBarricade(void)
 {
 	fdScriptStart();
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorFaceDirection(ACTOR_CAPTAIN, FACING_SOUTH_SOUTHEAST, 0);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.6);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 256, 660);
@@ -1298,14 +1298,14 @@ static void scMcCoyPalaceMcCoyRewardsParty(void)
 {
 	ACTOR *viewCenter;
 	ACTOR *actor;
-	Sint32 motionFlags = 0;
+	Sint32 motionFlg = 0;
 	Sint32 advanceAlternateReply;
 
 	fdScriptStart();
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	sySynch(1);
 	viewCenter = fdCameraGetActor();
-	viewCenter->motionFlg = motionFlags;
+	viewCenter->motionFlg = motionFlg;
 	fdCameraMoveTo(894, CAMERA_KEEP, 664, 0);
 	sySynch(1);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 0, 0);
@@ -1314,10 +1314,10 @@ static void scMcCoyPalaceMcCoyRewardsParty(void)
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	fdActorSetPos(ACTOR_CAPTAIN, 888, 798);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 904, 798);
@@ -1603,7 +1603,7 @@ static void scMcCoyPalaceMcCoyRewardsParty(void)
 	fdActorWalkTo(ACTOR_CAPTAIN, 894, 764);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 894, 764);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	gmFlagSet(FLAG_REWARD_OFFERED);
 	if(fdScriptGetFlag(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
 		gmFlagSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY);
@@ -1648,9 +1648,9 @@ static void scMcCoyPalacePresentRewardChests(void)
 	sySynch(1);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorSetSpeed(ACTOR_CAPTAIN, 0.6);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.6);
 	fdActorWalkTo(ACTOR_CAPTAIN, 628, 764);

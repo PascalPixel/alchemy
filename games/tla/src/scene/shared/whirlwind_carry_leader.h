@@ -8,9 +8,9 @@ void fdWhirlwindCarryLeader(void)
 	ACTOR		*linked = &actor->watchedActor->actor;
 	ACTOR		*shadow;
 	Uint8		*p;
-	Sint32		 angle;
+	Sint32		 ang;
 	Sint32		 rise;
-	Sint32		 frame;
+	Sint32		 frm;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
@@ -26,21 +26,21 @@ void fdWhirlwindCarryLeader(void)
 		actor->z.fixed = linked->z.fixed;
 		if(rise < toFIXED(4))
 			rise += toFIXED(0.1);
-		actor->facing = (Uint8)FrameCount * FACING_STEP;
+		actor->facing = (Uint8)TickCount * FACING_STEP;
 		/* As he spins he is drawn now under the wind, now over it. */
 		p = &actor->priFlg;
-		*p ^= ACTOR_PRIORITY_UNDERFOOT << (FrameCount & 1);
+		*p ^= ACTOR_PRIORITY_UNDERFOOT << (TickCount & 1);
 		sySynch(1);
 	}
 	state->glow = 1;
 	state->glowHeld = 1;
-	angle = linked->facing;
+	ang = linked->facing;
 	actor->x.fixed =
 		FIELD_HALF_METATILE_ORIGIN((FIELD_HALF_METATILE(linked->x.fixed) & ~1) +
-			FACING_EIGHTH_INDEX(angle) - 1);
+			FACING_EIGHTH_INDEX(ang) - 1);
 	actor->z.fixed =
 		FIELD_HALF_METATILE_ORIGIN((FIELD_HALF_METATILE(linked->z.fixed) & ~1) -
-			(FACING_EIGHTH_INDEX(angle) & 2) + 1);
+			(FACING_EIGHTH_INDEX(ang) & 2) + 1);
 	actor->velY = toFIXED(6);
 	actor->priFlg = ACTOR_PRIORITY_AUTOMATIC;
 	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -53,22 +53,22 @@ void fdWhirlwindCarryLeader(void)
 	scFieldActorSetMoveTargetFX(shadow, actor->x.fixed,
 		fdMapGetTerrainHeight(0, actor->x.fixed, actor->z.fixed),
 		actor->z.fixed);
-	frame = 0;
+	frm = 0;
 	if(actor->y.fixed > actor->groundHeight + toFIXED(16)) {
 		do {
 			sySynch(1);
-			frame++;
-			if(frame >= 60)
+			frm++;
+			if(frm >= 60)
 				break;
 		} while(actor->y.fixed > actor->groundHeight + toFIXED(16));
 	}
 	fdScriptPlaySnd(SE_LANDING_THUD);
-	frame = 0;
+	frm = 0;
 	if(actor->velY != 0) {
 		do {
 			sySynch(1);
-			frame++;
-			if(frame >= 60)
+			frm++;
+			if(frm >= 60)
 				break;
 		} while(actor->velY != 0);
 	}

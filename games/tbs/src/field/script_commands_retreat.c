@@ -3,9 +3,9 @@
 
 #include "script_commands_internal.h"
 
-/* Per-frame update: spins by FACING_STEP + timer * 80 a frame, speeding up
+/* Per-tick update: spins by FACING_STEP + timer * 80 a tick, speeding up
    (timer counts up) until timer * 80 reaches FACING_STEP: from 1/16 turn a
-   frame to just over 1/8 in 52 frames, as fdEffectAdvanceAngWithRamp. */
+   tick to just over 1/8 in 52 ticks, as fdEffectAdvanceAngWithRamp. */
 void fdEffectUpdateSpinAng(ACTOR *actor)
 {
 	Uint32 step;
@@ -16,8 +16,8 @@ void fdEffectUpdateSpinAng(ACTOR *actor)
 		actor->tmr = actor->tmr + 1;
 }
 
-/* Per-frame update: spins 1/8 turn a frame as it shrinks by 5/512 of its full
-   size, rising a pixel a frame; once its scale falls below 3/16 (84 frames from
+/* Per-tick update: spins 1/8 turn a tick as it shrinks by 5/512 of its full
+   size, rising a pixel a tick; once its scale falls below 3/16 (84 ticks from
    full size) its sprites are hidden, but it is not released. Retreat gives it
    to the caster. */
 void fdEffectUpdateRetreatCaster(ACTOR *actor)
@@ -43,7 +43,7 @@ typedef enum RETREAT_PARTICLE_STATE {
 
 /* Field effect sprite callback: a particle flies 120 pixels from the main
    actor's screen position (8 pixels lower) in a direction within 1/8 turn of up
-   the screen, at up to 5 pixels a frame, and starts again from the main actor
+   the screen, at up to 5 pixels a tick, and starts again from the main actor
    on arrival until it takes its last flight. */
 void fdRetreatUpdateSpark(FIELD_PARTICLE *effect)
 {
@@ -82,7 +82,7 @@ void fdRetreatUpdateSpark(FIELD_PARTICLE *effect)
 		effect->turnStepLimited = state;
 		effect->state++;
 
-		if((FrameCount & 2) != 0)
+		if((TickCount & 2) != 0)
 			sySndPlayStub(SE_GLITTER);
 	} else if(state == RETREAT_PARTICLE_FLYING) {
 		if(fdParticleHasPendingTarget(effect) == 0)
@@ -94,7 +94,7 @@ void fdRetreatUpdateSpark(FIELD_PARTICLE *effect)
 }
 
 /* Spins the main actor and shrinks it while 24 particles fly out, one a
-   frame. */
+   tick. */
 void fdPsynergyRetreat(void)
 {
 	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
@@ -158,19 +158,19 @@ void fdPsynergyRetreat(void)
 	sySynch(10);
 }
 
-/* Per-frame update of a falling arc: grows toward full size (3/64 a frame) as
-   it falls 2 pixels a frame on the actor it follows, 9 pixels in front of it
+/* Per-tick update of a falling arc: grows toward full size (3/64 a tick) as
+   it falls 2 pixels a tick on the actor it follows, 9 pixels in front of it
    and up to 5 pixels further while small; released 10 pixels above the ground
    (4 on the World Map, MAP_INDEX_WORLD). */
 void fdEffectUpdateDescendingParticlePositiveArc(ACTOR *particle)
 {
-	ACTOR *source;
+	ACTOR *src;
 	FIXED  y;
 	FIXED  limit;
 	FIXED  scale;
 
 	limit = particle->groundHeight + toFIXED(10);
-	source = (ACTOR *)particle->watchedActor;
+	src = (ACTOR *)particle->watchedActor;
 	if(MainRoutineStateWork.mapId == MAP_INDEX_WORLD)
 		limit = particle->groundHeight + toFIXED(4);
 
@@ -185,23 +185,22 @@ void fdEffectUpdateDescendingParticlePositiveArc(ACTOR *particle)
 		scale = toFIXED(1);
 	particle->scaleX = scale;
 	particle->scaleY = scale;
-	particle->x.fixed = source->x.fixed;
+	particle->x.fixed = src->x.fixed;
 	particle->y.fixed = y - toFIXED(2);
-	particle->z.fixed =
-		source->z.fixed + ((toFIXED(1) - scale) * 5) + toFIXED(9);
+	particle->z.fixed = src->z.fixed + ((toFIXED(1) - scale) * 5) + toFIXED(9);
 }
 
 /* As fdEffectUpdateDescendingParticlePositiveArc for the arc drawn upside down,
    16 pixels in front of the actor and up to 5 pixels nearer. */
 void fdEffectUpdateDescendingParticleNegativeArc(ACTOR *particle)
 {
-	ACTOR *source;
+	ACTOR *src;
 	FIXED  y;
 	FIXED  limit;
 	FIXED  scale;
 
 	limit = particle->groundHeight + toFIXED(10);
-	source = (ACTOR *)particle->watchedActor;
+	src = (ACTOR *)particle->watchedActor;
 	if(MainRoutineStateWork.mapId == MAP_INDEX_WORLD)
 		limit = particle->groundHeight + toFIXED(4);
 
@@ -216,50 +215,49 @@ void fdEffectUpdateDescendingParticleNegativeArc(ACTOR *particle)
 		scale = toFIXED(1);
 	particle->scaleX = scale;
 	particle->scaleY = -scale;
-	particle->x.fixed = source->x.fixed;
+	particle->x.fixed = src->x.fixed;
 	particle->y.fixed = y - toFIXED(2);
-	particle->z.fixed =
-		source->z.fixed - ((toFIXED(1) - scale) * 5) + toFIXED(16);
+	particle->z.fixed = src->z.fixed - ((toFIXED(1) - scale) * 5) + toFIXED(16);
 }
 
 /* Avoid's rings: a pair of falling arcs (one upside down) 64 pixels above
    source, at 0.4 of full size, drawn with the tiles in
    effectState->arcTileSlot. */
-void fdEffectSpawnDescendingArcParticles(ACTOR *source)
+void fdEffectSpawnDescendingArcParticles(ACTOR *src)
 {
 	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
 	ACTOR			   *leader = effectState->caster;
 	ACTOR			   *actors[2];
 	ACTOR			   *actor;
-	SPR				   *sprite;
-	Sint32				arcIndex;
+	SPR				   *spr;
+	Sint32				arcIdx;
 
-	for(arcIndex = 0; arcIndex <= 1; arcIndex++) {
-		actor = fdActorCreateStub(SPRITE_GOLDEN_RINGS, source->x.fixed,
-			source->y.fixed + toFIXED(64), source->z.fixed);
-		actors[arcIndex] = actor;
+	for(arcIdx = 0; arcIdx <= 1; arcIdx++) {
+		actor = fdActorCreateStub(SPRITE_GOLDEN_RINGS, src->x.fixed,
+			src->y.fixed + toFIXED(64), src->z.fixed);
+		actors[arcIdx] = actor;
 		if(actor == NULL)
 			continue;
-		actor->groundHeight = source->groundHeight;
-		sprite = actor->spr;
+		actor->groundHeight = src->groundHeight;
+		spr = actor->spr;
 		actor->motionFlg = 0;
 		actor->tmr = 0;
-		actor->watchedActor = (union ACTOR_OR_EFFECT *)source;
+		actor->watchedActor = (union ACTOR_OR_EFFECT *)src;
 		actor->scaleY = toFIXED(2) / 5;
 		actor->scaleX = toFIXED(2) / 5;
-		if(sprite == NULL)
+		if(spr == NULL)
 			continue;
-		fdSprStartAnimationStub(sprite, 0);
-		sprite->flg = 0;
-		syVRAMCacheFreeEntry(sprite->slot);
-		sprite->slot = effectState->arcTileSlot;
-		sprite->retainCacheEntry = 1;
-		sprite->image.tile = VramCacheEntries[sprite->slot].ofs >> 5;
+		fdSprStartAnimationStub(spr, 0);
+		spr->flg = 0;
+		syVRAMCacheFreeEntry(spr->slot);
+		spr->slot = effectState->arcTileSlot;
+		spr->retainCacheEntry = 1;
+		spr->image.tile = VramCacheEntries[spr->slot].ofs >> 5;
 		/* In 16 colours, 32 by 16 pixels. */
-		sprite->image.fullCol = 0;
-		sprite->image.shape = RING_HALF_SHAPE;
-		sprite->image.size = RING_HALF_SIZE;
-		sprite->entries[0]->picture = 0;
+		spr->image.fullCol = 0;
+		spr->image.shape = RING_HALF_SHAPE;
+		spr->image.size = RING_HALF_SIZE;
+		spr->entries[0]->picture = 0;
 	}
 	/* BUG: failed allocations above leave a missing arc or sprite here. */
 	actors[0]->update = fdEffectUpdateDescendingParticleNegativeArc;

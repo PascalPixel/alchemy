@@ -1,7 +1,7 @@
 /* Gaia Rock's climbing walls, which its outside and inside overlays keep a copy
    of. */
 
-/* Each frame while the leader climbs a wall (fdClimbUp and fdClimbDown leave
+/* Each tick while the leader climbs a wall (fdClimbUp and fdClimbDown leave
    the keys alone moving him): the metatile behavior of the overhead layer's
    metatile where he is drawn, if one that raises a step cue, is his step
    cue. */

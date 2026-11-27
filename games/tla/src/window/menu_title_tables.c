@@ -7,7 +7,7 @@
 /* clang-format off */
 /* Each 4bpp colour as mnGraphicsExpandVRAMTilesByColTable maps it: the */
 /* first sixteen with colour 1 as colour 10, then the sixteen unchanged. */
-Uint16 Graphics_ExpandNibbleTable[32] = {
+Uint16 GraphicsExpandNibbleTable[32] = {
 	0, 10, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 };
@@ -16,11 +16,11 @@ Uint16 Graphics_ExpandNibbleTable[32] = {
 /* The label of the link battle's countdown window
    (mnLinkCreateCountdownLabelWindow). */
 #if LANGUAGE == LANGUAGE_SPANISH
-Uint8 Link_TimeLabelString[] = "TMPO.";
+Uint8 LinkTimeLabelString[] = "TMPO.";
 #elif LANGUAGE == LANGUAGE_FRENCH
-Uint8 Link_TimeLabelString[] = "TEMPS";
+Uint8 LinkTimeLabelString[] = "TEMPS";
 #elif LANGUAGE == LANGUAGE_ITALIAN
-Uint8 Link_TimeLabelString[] = "TEMPO";
+Uint8 LinkTimeLabelString[] = "TEMPO";
 #else
-Uint8 Link_TimeLabelString[] = "TIME";
+Uint8 LinkTimeLabelString[] = "TIME";
 #endif

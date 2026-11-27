@@ -19,7 +19,7 @@ typedef enum SND_TEST_ROW {
 
 #define SOUND_TEST_PRESETS 5
 
-/* The sound test's per-frame event: moves the cursor. */
+/* The sound test's per-tick event: moves the cursor. */
 void mnDebugSndTestStepCursor(void)
 {
 	SETTINGS_MENU_STATE *state = Ram_HeapSlots->settingsMenu;
@@ -34,7 +34,7 @@ void mnDebugSndTestInit(void)
 		HEAP_SLOT_SETTINGS_MENU, sizeof(SETTINGS_MENU_STATE));
 
 	DMA_FILL32(0, state, sizeof(SETTINGS_MENU_STATE));
-	sySetEvent(mnDebugSndTestStepCursor, EVENT_PASS_FRAME);
+	sySetEvent(mnDebugSndTestStepCursor, EVENT_PASS_TICK);
 }
 
 /* Stops the sound test's cursor event and frees its state. */
@@ -48,22 +48,22 @@ void mnDebugSndTestRelease(void)
 WINDOW *mnDebugSndTestOpen(void)
 {
 	SETTINGS_MENU_STATE *state = Ram_HeapSlots->settingsMenu;
-	WINDOW				*window;
+	WINDOW				*win;
 
-	window = mnWindowCreate(7, 3, 15, 9, WINDOW_FLAG_INSTANT);
-	state->cursor.spr = mnWindowSprCreate(mnPointingHandLoadIntoFreeSlot(),
-		WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
+	win = mnWindowCreate(7, 3, 15, 9, WINDOW_FLAG_INSTANT);
+	state->cursor.spr = mnWindowSprCreate(
+		mnPointingHandLoadIntoFreeSlot(), WINDOW_SPRITE_SIZE_16X16, win, 0, 0);
 	mnCursorSetPosImmediateStub(
-		&state->cursor, (window->x << 3) - 4, (window->y << 3) + 12);
-	return window;
+		&state->cursor, (win->x << 3) - 4, (win->y << 3) + 12);
+	return win;
 }
 
-extern const SND_TEST_VALUES DebugSoundTest_StartValues;
-extern const Uint8			 SoundTest_MusicString[], SoundTest_JingleString[],
-	SoundTest_SeString[], SoundTest_EffectString[];
+extern const SND_TEST_VALUES DebugSoundTestStartValues;
+extern const Uint8			 SoundTestMusicString[], SoundTestJingleString[],
+	SoundTestSeString[], SoundTestEffectString[];
 
 /* Unused: the debug sound test. Four values (music, jingle, sound effect, sound
-   preset) start from DebugSoundTest_StartValues; up and down pick one, left and
+   preset) start from DebugSoundTestStartValues; up and down pick one, left and
    right step it by 1, L and R by DEBUG_LARGE_STEP; A plays it (the fourth loads
    its preset parameters), START fades out the sound and stops the music, and B
    leaves. */
@@ -73,16 +73,16 @@ UNUSED Sint32 mnDebugSndTestRun(void)
 	Sint32				 redraw = 1;
 	Sint32				 cursor = 0;
 	SETTINGS_MENU_STATE *state;
-	WINDOW				*window;
+	WINDOW				*win;
 	Sint32				 rows = SOUND_TEST_ROWS;
 	Sint32				 i;
 	Sint32				 y;
 	Sint32				*value;
 
-	test = DebugSoundTest_StartValues;
+	test = DebugSoundTestStartValues;
 	mnDebugSndTestInit();
 	state = Ram_HeapSlots->settingsMenu;
-	window = mnDebugSndTestOpen();
+	win = mnDebugSndTestOpen();
 	sySynch(1);
 	do {
 		if(redraw != 0) {
@@ -91,21 +91,21 @@ UNUSED Sint32 mnDebugSndTestRun(void)
 			test.values[SOUND_TEST_PRESET] =
 				(test.values[SOUND_TEST_PRESET] + SOUND_TEST_PRESETS) %
 				SOUND_TEST_PRESETS;
-			mnWindowSprRedrawSavedRect(window);
+			mnWindowSprRedrawSavedRect(win);
 			for(i = 0, y = 2; i < SOUND_TEST_ROWS - 1; i++, y += 2)
-				mnWindowDrawDividerLine(window, 0, y, 14, y);
+				mnWindowDrawDividerLine(win, 0, y, 14, y);
 			for(i = 0, value = test.values; i < SOUND_TEST_ROWS; i++)
-				mnTextDrawNumInWindow(*value++, 0, (Sint32)window, 72, i * 16);
+				mnTextDrawNumInWindow(*value++, 0, (Sint32)win, 72, i * 16);
 			mnTextDrawStringInWindow(
-				(Uint8 *)SoundTest_MusicString, (Sint32)window, 8, 0);
+				(Uint8 *)SoundTestMusicString, (Sint32)win, 8, 0);
 			mnTextDrawStringInWindow(
-				(Uint8 *)SoundTest_JingleString, (Sint32)window, 8, 16);
+				(Uint8 *)SoundTestJingleString, (Sint32)win, 8, 16);
 			mnTextDrawStringInWindow(
-				(Uint8 *)SoundTest_SeString, (Sint32)window, 8, 32);
+				(Uint8 *)SoundTestSeString, (Sint32)win, 8, 32);
 			mnTextDrawStringInWindow(
-				(Uint8 *)SoundTest_EffectString, (Sint32)window, 8, 48);
-			mnCursorSetStub(&state->cursor, (window->x << 3) - 4,
-				(window->y << 3) + (cursor << 4) + 12, 3);
+				(Uint8 *)SoundTestEffectString, (Sint32)win, 8, 48);
+			mnCursorSetStub(&state->cursor, (win->x << 3) - 4,
+				(win->y << 3) + (cursor << 4) + 12, 3);
 		}
 		sySynch(1);
 		if(PerWork.push & KEY_B)
@@ -145,13 +145,13 @@ UNUSED Sint32 mnDebugSndTestRun(void)
 			redraw = 1;
 		}
 	} while(1);
-	mnWindowClose(window, WINDOW_FLAG_INSTANT);
+	mnWindowClose(win, WINDOW_FLAG_INSTANT);
 	mnDebugSndTestRelease();
 	sySynch(1);
 	return 0;
 }
 
-/* The debug menu's per-frame event: moves the cursor. */
+/* The debug menu's per-tick event: moves the cursor. */
 void mnDebugMenuStepCursor(void)
 {
 	SETTINGS_MENU_STATE *state = Ram_HeapSlots->settingsMenu;
@@ -166,7 +166,7 @@ void mnDebugMenuInit(void)
 		HEAP_SLOT_SETTINGS_MENU, sizeof(SETTINGS_MENU_STATE));
 
 	DMA_FILL32(0, state, sizeof(SETTINGS_MENU_STATE));
-	sySetEvent(mnDebugMenuStepCursor, EVENT_PASS_FRAME);
+	sySetEvent(mnDebugMenuStepCursor, EVENT_PASS_TICK);
 }
 
 /* Stops the debug menu's cursor event and frees its state. */
@@ -183,43 +183,43 @@ extern Uint8 MsgFullPpAndMoney[];
 WINDOW *mnDebugMenuOpen(void)
 {
 	SETTINGS_MENU_STATE *state = Ram_HeapSlots->settingsMenu;
-	WINDOW *window = mnWindowCreate(6, 2, 18, 16, WINDOW_FLAG_INSTANT);
+	WINDOW *win = mnWindowCreate(6, 2, 18, 16, WINDOW_FLAG_INSTANT);
 	Sint32	i;
 
 	for(i = 0; i < 4; i++)
-		mnWindowDrawDividerLine(window, 0, i * 3 + 3, 17, i * 3 + 3);
-	mnTextDrawMessage((Sint32)MsgFullPpAndMoney, (Sint32)window, 8, 4);
-	mnTextDrawMessage((Sint32)MsgFullPpAndMoney + 1, (Sint32)window, 8, 28);
-	mnTextDrawMessage((Sint32)MsgFullPpAndMoney + 2, (Sint32)window, 8, 52);
-	mnTextDrawMessage((Sint32)MsgFullPpAndMoney + 3, (Sint32)window, 8, 76);
-	mnTextDrawMessage((Sint32)MsgFullPpAndMoney + 4, (Sint32)window, 8, 100);
-	state->cursor.spr = mnWindowSprCreate(mnPointingHandLoadIntoFreeSlot(),
-		WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
-	return window;
+		mnWindowDrawDividerLine(win, 0, i * 3 + 3, 17, i * 3 + 3);
+	mnTextDrawMessage((Sint32)MsgFullPpAndMoney, (Sint32)win, 8, 4);
+	mnTextDrawMessage((Sint32)MsgFullPpAndMoney + 1, (Sint32)win, 8, 28);
+	mnTextDrawMessage((Sint32)MsgFullPpAndMoney + 2, (Sint32)win, 8, 52);
+	mnTextDrawMessage((Sint32)MsgFullPpAndMoney + 3, (Sint32)win, 8, 76);
+	mnTextDrawMessage((Sint32)MsgFullPpAndMoney + 4, (Sint32)win, 8, 100);
+	state->cursor.spr = mnWindowSprCreate(
+		mnPointingHandLoadIntoFreeSlot(), WINDOW_SPRITE_SIZE_16X16, win, 0, 0);
+	return win;
 }
 
 /* Unused: shows the debug menu with the cursor on row index, lets Up and Down
    move it (wrapping), and returns the row A chooses, or -1 for B. */
-UNUSED Sint32 mnDebugMenuRun(Sint32 index)
+UNUSED Sint32 mnDebugMenuRun(Sint32 idx)
 {
 	SETTINGS_MENU_STATE *state;
-	WINDOW				*window;
+	WINDOW				*win;
 	Sint32				 moved;
 
 	mnDebugMenuInit();
 	state = Ram_HeapSlots->settingsMenu;
 	sySynch(1);
 	moved = -1;
-	window = mnDebugMenuOpen();
+	win = mnDebugMenuOpen();
 	while(1) {
 		if(moved != 0) {
 			Sint32 x;
 			Sint32 y;
 
-			index = (index + 5) % 5;
-			x = window->x * 8 - 4;
-			y = window->y;
-			y = (index * 3 + y) * 8 + 16;
+			idx = (idx + 5) % 5;
+			x = win->x * 8 - 4;
+			y = win->y;
+			y = (idx * 3 + y) * 8 + 16;
 			if(moved == -1)
 				mnCursorSetPosImmediateStub(&state->cursor, x, y);
 			else
@@ -229,7 +229,7 @@ UNUSED Sint32 mnDebugMenuRun(Sint32 index)
 		sySynch(1);
 		if(PerWork.push & KEY_B) {
 			sySndPlayStub(SE_MENU_CANCEL);
-			index = -1;
+			idx = -1;
 			break;
 		}
 		if(PerWork.push & KEY_A) {
@@ -237,23 +237,23 @@ UNUSED Sint32 mnDebugMenuRun(Sint32 index)
 			break;
 		}
 		if(PerWork.repeat & KEY_UP) {
-			index--;
+			idx--;
 			moved = 1;
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerWork.repeat & KEY_DOWN) {
-			index++;
+			idx++;
 			moved = 1;
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
 		}
 	}
-	mnWindowClose(window, WINDOW_FLAG_INSTANT);
+	mnWindowClose(win, WINDOW_FLAG_INSTANT);
 	mnDebugMenuRelease();
 	sySynch(1);
-	return index;
+	return idx;
 }
 
-/* The warp menu's presets, named for their rows of DebugWarp_Presets: each sets
+/* The warp menu's presets, named for their rows of DebugWarpPresets: each sets
    the flags and items of a point in the story and sends the party to one
    room. */
 
@@ -361,7 +361,7 @@ void mnDebugWarpKaoruSpecial1(void)
 		MARS_LIGHTHOUSE_STAR_ROOM_AFTER_FLAME_DRAGONS_BATTLE);
 }
 
-/* The debug warp menu's per-frame event: moves the cursor. */
+/* The debug warp menu's per-tick event: moves the cursor. */
 void mnDebugWarpStepCursor(void)
 {
 	SETTINGS_MENU_STATE *state = Ram_HeapSlots->settingsMenu;
@@ -376,7 +376,7 @@ void mnDebugWarpInit(void)
 		HEAP_SLOT_SETTINGS_MENU, sizeof(SETTINGS_MENU_STATE));
 
 	DMA_FILL32(0, state, sizeof(SETTINGS_MENU_STATE));
-	sySetEvent(mnDebugWarpStepCursor, EVENT_PASS_FRAME);
+	sySetEvent(mnDebugWarpStepCursor, EVENT_PASS_TICK);
 }
 
 /* Stops the debug warp menu's cursor event and frees its state. */
@@ -391,39 +391,39 @@ void mnDebugWarpRelease(void)
 WINDOW *mnDebugWarpOpen(void)
 {
 	SETTINGS_MENU_STATE		*state = Ram_HeapSlots->settingsMenu;
-	WINDOW					*window;
+	WINDOW					*win;
 	const DEBUG_WARP_PRESET *line;
 	Sint32					 i;
 	Sint32					 row;
 	Sint32					 y;
 
-	window = mnWindowCreate(0, 0, 30, 19, WINDOW_FLAG_INSTANT);
+	win = mnWindowCreate(0, 0, 30, 19, WINDOW_FLAG_INSTANT);
 	y = 4;
 	i = 0;
 	row = 2;
-	line = DebugWarp_Presets;
+	line = DebugWarpPresets;
 	for(;;) {
-		mnTextDrawStringInWindow((Uint8 *)line->name, (Sint32)window, 8, y);
+		mnTextDrawStringInWindow((Uint8 *)line->name, (Sint32)win, 8, y);
 		y += 16;
 		line++;
 		if(i == 8)
 			break;
-		mnWindowDrawDividerLine(window, 0, row, 29, row);
+		mnWindowDrawDividerLine(win, 0, row, 29, row);
 		row += 2;
 		i++;
 	}
-	state->cursor.spr = mnWindowSprCreate(mnPointingHandLoadIntoFreeSlot(),
-		WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
-	return window;
+	state->cursor.spr = mnWindowSprCreate(
+		mnPointingHandLoadIntoFreeSlot(), WINDOW_SPRITE_SIZE_16X16, win, 0, 0);
+	return win;
 }
 
 /* Unused: shows the nine warp presets with the cursor on row index, lets Up and
    Down move it (wrapping), and returns the row A chooses after running its
    handler, or -1 for B. */
-UNUSED Sint32 mnDebugWarpRun(Sint32 index)
+UNUSED Sint32 mnDebugWarpRun(Sint32 idx)
 {
 	SETTINGS_MENU_STATE *state;
-	WINDOW				*window;
+	WINDOW				*win;
 	Sint32				 moved;
 	Uint32				 down;
 
@@ -432,15 +432,15 @@ UNUSED Sint32 mnDebugWarpRun(Sint32 index)
 	sySynch(1);
 	/* -1 places the cursor at once; 1 slides it to a new row. */
 	moved = -1;
-	window = mnDebugWarpOpen();
+	win = mnDebugWarpOpen();
 	while(1) {
 		if(moved != 0) {
 			Sint32 x;
 			Sint32 y;
 
-			index = (index + 9) % 9;
-			x = window->x * 8 - 4;
-			y = (window->y << 3) + (index << 4) + 12;
+			idx = (idx + 9) % 9;
+			x = win->x * 8 - 4;
+			y = (win->y << 3) + (idx << 4) + 12;
 			if(moved == -1)
 				mnCursorSetPosImmediateStub(&state->cursor, x, y);
 			else
@@ -450,7 +450,7 @@ UNUSED Sint32 mnDebugWarpRun(Sint32 index)
 		sySynch(1);
 		if(PerWork.push & KEY_B) {
 			sySndPlayStub(SE_MENU_CANCEL);
-			index = -1;
+			idx = -1;
 			break;
 		}
 		if(PerWork.push & KEY_A) {
@@ -458,26 +458,26 @@ UNUSED Sint32 mnDebugWarpRun(Sint32 index)
 			break;
 		}
 		if(PerWork.repeat & KEY_UP) {
-			index--;
+			idx--;
 			moved = 1;
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
 		}
 		down = KEY_DOWN;
 		if(PerWork.repeat & down) {
-			index++;
+			idx++;
 			moved = 1;
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
 		}
 	}
-	mnWindowClose(window, WINDOW_FLAG_INSTANT);
+	mnWindowClose(win, WINDOW_FLAG_INSTANT);
 	mnDebugWarpRelease();
 	sySynch(1);
-	if(index != -1)
-		DebugWarp_Presets[index].warp();
-	return index;
+	if(idx != -1)
+		DebugWarpPresets[idx].warp();
+	return idx;
 }
 
-/* The shortcut grid's per-frame event: moves the cursor. */
+/* The shortcut grid's per-tick event: moves the cursor. */
 void mnDebugShortcutStepCursor(void)
 {
 	SETTINGS_MENU_STATE *state = Ram_HeapSlots->settingsMenu;
@@ -492,7 +492,7 @@ void mnDebugShortcutInit(void)
 		HEAP_SLOT_SETTINGS_MENU, sizeof(SETTINGS_MENU_STATE));
 
 	DMA_FILL32(0, state, sizeof(SETTINGS_MENU_STATE));
-	sySetEvent(mnDebugShortcutStepCursor, EVENT_PASS_FRAME);
+	sySetEvent(mnDebugShortcutStepCursor, EVENT_PASS_TICK);
 }
 
 /* Stops the shortcut grid's cursor event and frees its state. */
@@ -502,47 +502,46 @@ void mnDebugShortcutRelease(void)
 	syHeapSlotRelease(HEAP_SLOT_SETTINGS_MENU);
 }
 
-extern const Uint8 DebugShortcut_NoAbilityName[];
+extern const Uint8 DebugShortcutNoAbilityName[];
 
 /* Draws an ability's name in the shortcut grid; ability 0, an empty place,
-   draws DebugShortcut_NoAbilityName. */
-void mnDebugShortcutDrawAbility(
-	Sint32 ability, Sint32 window, Sint32 x, Sint32 y)
+   draws DebugShortcutNoAbilityName. */
+void mnDebugShortcutDrawAbility(Sint32 ability, Sint32 win, Sint32 x, Sint32 y)
 {
 	if(ability != 0)
 		mnTextDrawMessageAsTiles(
-			ability + (Sint32)MsgAbilityName, (WINDOW *)window, x, y);
+			ability + (Sint32)MsgAbilityName, (WINDOW *)win, x, y);
 	else
 		mnTextDrawStringInWindow(
-			(Uint8 *)DebugShortcut_NoAbilityName, window, x, y);
+			(Uint8 *)DebugShortcutNoAbilityName, win, x, y);
 }
 
-/* Opens the shortcut grid's window: the four columns of DebugShortcut_Abilities
+/* Opens the shortcut grid's window: the four columns of DebugShortcutAbilities
    in nine rows, a divider under each row but the last. */
 WINDOW *mnDebugShortcutOpen(void)
 {
 	SETTINGS_MENU_STATE *state = Ram_HeapSlots->settingsMenu;
-	WINDOW		 *window = mnWindowCreate(0, 0, 30, 19, WINDOW_FLAG_INSTANT);
+	WINDOW		 *win = mnWindowCreate(0, 0, 30, 19, WINDOW_FLAG_INSTANT);
 	const Sint16 *abilities;
 	Sint32		  i;
 	Sint32		  y;
 	Sint32		  rowY;
 
 	for(i = 0, rowY = 2; i < 8; i++, rowY += 2)
-		mnWindowDrawDividerLine(window, 0, rowY, 29, rowY);
+		mnWindowDrawDividerLine(win, 0, rowY, 29, rowY);
 	for(y = 0, i = 0; i < 9; y += 16, i++) {
 		mnDebugShortcutDrawAbility(
-			DebugShortcut_Abilities[0][i], (Sint32)window, 8, y);
+			DebugShortcutAbilities[0][i], (Sint32)win, 8, y);
 		mnDebugShortcutDrawAbility(
-			DebugShortcut_Abilities[1][i], (Sint32)window, 64, y);
+			DebugShortcutAbilities[1][i], (Sint32)win, 64, y);
 		mnDebugShortcutDrawAbility(
-			DebugShortcut_Abilities[2][i], (Sint32)window, 120, y);
+			DebugShortcutAbilities[2][i], (Sint32)win, 120, y);
 		mnDebugShortcutDrawAbility(
-			DebugShortcut_Abilities[3][i], (Sint32)window, 176, y);
+			DebugShortcutAbilities[3][i], (Sint32)win, 176, y);
 	}
-	state->cursor.spr = mnWindowSprCreate(mnPointingHandLoadIntoFreeSlot(),
-		WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
-	return window;
+	state->cursor.spr = mnWindowSprCreate(
+		mnPointingHandLoadIntoFreeSlot(), WINDOW_SPRITE_SIZE_16X16, win, 0, 0);
+	return win;
 }
 
 Sint32 gmPartyFindOwnerWithActionStub(Sint32 action);
@@ -551,7 +550,7 @@ Sint32 gmPartyFindOwnerWithActionStub(Sint32 action);
 #define DEBUG_SHORTCUT_PP 500
 
 /* Unused: the shortcut grid, drawn by mnDebugShortcutOpen. The cursor moves
-   over four columns of nine field Psynergy (DebugShortcut_Abilities); A makes
+   over four columns of nine field Psynergy (DebugShortcutAbilities); A makes
    the chosen one, with the party member who knows it, the field Psynergy to use
    (FIELD_STATE.psynergy), L and R the L or R shortcut, and each fills Felix's,
    Jenna's, Sheba's and Piers's PP to DEBUG_SHORTCUT_PP; B cancels. Returns 0, 1
@@ -561,7 +560,7 @@ UNUSED Sint32 mnDebugShortcutRun(void)
 	Sint32				 row = 0;
 	SETTINGS_MENU_STATE *state;
 	MAIN_ROUTINE_STATE	*party;
-	WINDOW				*window;
+	WINDOW				*win;
 	Sint32				 result;
 	Sint32				 column;
 	Sint32				 ability;
@@ -575,7 +574,7 @@ UNUSED Sint32 mnDebugShortcutRun(void)
 	sySynch(1);
 	result = -1;
 	column = 0;
-	window = mnDebugShortcutOpen();
+	win = mnDebugShortcutOpen();
 	while(1) {
 		if(result != 0) {
 			Sint32 x;
@@ -584,9 +583,9 @@ UNUSED Sint32 mnDebugShortcutRun(void)
 			column = (column + columns) % columns;
 			row = (row + 9) % 9;
 			/* y holds the window's left edge first. */
-			y = window->x;
+			y = win->x;
 			x = (column * 7 + y) * 8 - 4;
-			y = (window->y << 3) + (row << 4) + 12;
+			y = (win->y << 3) + (row << 4) + 12;
 			if(result == -1)
 				mnCursorSetPosImmediateStub(&state->cursor, x, y);
 			else
@@ -635,12 +634,12 @@ UNUSED Sint32 mnDebugShortcutRun(void)
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
 		}
 	}
-	mnWindowClose(window, WINDOW_FLAG_INSTANT);
+	mnWindowClose(win, WINDOW_FLAG_INSTANT);
 	mnDebugShortcutRelease();
 	sySynch(1);
 	if(result != -1) {
 		events = Ram_HeapSlots->fieldState;
-		ability = DebugShortcut_Abilities[column][row];
+		ability = DebugShortcutAbilities[column][row];
 		owner = gmPartyFindOwnerWithActionStub(ability);
 		if(owner == -1)
 			owner = MainRoutineStateWork.leaderActorId;

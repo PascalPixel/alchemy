@@ -43,7 +43,7 @@ typedef enum SUMMON_EFFECT_ID {
 } SUMMON_EFFECT_ID;
 
 /* Effect kinds: the kind an ability's AbilityBattleEffects row selects for
-   btEffectRunFromTable, by the handler of BattleEffect_Handlers that plays it;
+   btEffectRunFromTable, by the handler of BattleEffectHandlers that plays it;
    a later kind that shares a handler is named for the ability that uses it, or
    Unused when none does. Kinds without a handler have no name. A row with
    EFFECT_SUMMON holds an SUMMON_EFFECT_ID instead, and one with

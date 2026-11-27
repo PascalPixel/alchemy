@@ -6,22 +6,22 @@
    rare one, then the higher item id; 0 for none. */
 Uint32 btSpoilsRankItem(Uint32 inventoryEntry)
 {
-	Uint32 priority = 0;
+	Uint32 pri = 0;
 	Uint32 itemId = inventoryEntry & INVENTORY_ITEM_ID_MASK;
 	if(itemId == 0)
 		return 0;
 	{
-		Uint8 flags = gmItemGetDirectStub(itemId)->flg;
+		Uint8 flg = gmItemGetDirectStub(itemId)->flg;
 
-		if(flags & ITEM_INDISPENSABLE)
-			priority = 1;
-		priority <<= 1;
-		if(flags & ITEM_RARE)
-			priority++;
-		priority <<= 9;
-		priority += itemId;
+		if(flg & ITEM_INDISPENSABLE)
+			pri = 1;
+		pri <<= 1;
+		if(flg & ITEM_RARE)
+			pri++;
+		pri <<= 9;
+		pri += itemId;
 	}
-	return priority;
+	return pri;
 }
 
 /* Above every item's rank: the search for the lowest of the spoils' four starts
@@ -37,27 +37,27 @@ void btSpoilsClear(void)
 	BATTLE_STATE  *battle = BattleStateWork;
 	BATTLE_SPOILS *spoils = &battle->spoils;
 	Uint16		  *items;
-	Sint32		   index;
+	Sint32		   idx;
 
 	MainRoutineStateWork.pendingItem = 0;
 	spoils->coins = 0;
 	spoils->experience = 0;
 	spoils->defeated = 0;
 	items = battle->spoils.items;
-	for(index = 3; index >= 0; index--)
-		items[index] = 0;
+	for(idx = 3; idx >= 0; idx--)
+		items[idx] = 0;
 }
 
 /* Returns an enemy's coins with the Djinn bonus: its own, plus a six-sided die
    for every ten levels and one more, at least 30 percent of its own. */
 static __inline__ Sint32 btEnemyCalcCoinReward(UNIT *unit, const Uint16 *reward)
 {
-	Sint32 rollIndex;
+	Sint32 rollIdx;
 	Sint32 bonus = 0;
 	Sint32 base;
 	Sint32 minimumBonus;
 
-	for(rollIndex = 0; rollIndex < (Uint8)(unit->level / 10U) + 1; rollIndex++)
+	for(rollIdx = 0; rollIdx < (Uint8)(unit->level / 10U) + 1; rollIdx++)
 		bonus += syRandom16Below(6) + 1;
 	base = *reward;
 	minimumBonus = base * 3 / 10;
@@ -71,12 +71,12 @@ static __inline__ Sint32 btEnemyCalcCoinReward(UNIT *unit, const Uint16 *reward)
 static __inline__ Sint32 btEnemyCalcExperienceReward(
 	UNIT *unit, const Uint16 *reward)
 {
-	Sint32 rollIndex;
+	Sint32 rollIdx;
 	Sint32 bonus = 0;
 	Sint32 base;
 	Sint32 minimumBonus;
 
-	for(rollIndex = 0; rollIndex < (Uint8)(unit->level / 10U) + 1; rollIndex++)
+	for(rollIdx = 0; rollIdx < (Uint8)(unit->level / 10U) + 1; rollIdx++)
 		bonus += syRandom16Below(4) + 1;
 	base = *reward;
 	minimumBonus = base * 3 / 10;
@@ -97,9 +97,9 @@ Sint32 btEnemyRecordDefeat(Sint32 unitId, Sint32 djinnBonus)
 	Sint32					i;
 	Sint32					dropShift;
 	Sint32					classSlot;
-	Sint32					lowestItemPriority;
+	Sint32					lowestItemPri;
 	Sint32					lowestSlot;
-	Sint32					itemPriority;
+	Sint32					itemPri;
 
 	unit = gmUnitGetStub(unitId);
 	battle = BattleStateWork;
@@ -152,15 +152,15 @@ Sint32 btEnemyRecordDefeat(Sint32 unitId, Sint32 djinnBonus)
 	/* Twice toFIXED(1) >> n against a 16-bit random number: 1 in 2^(n - 1). */
 	if((toFIXED(2) >> dropShift) > (gmBattleRandomStub() & 0xffff)) {
 		lowestSlot = -1;
-		lowestItemPriority = SPOILS_RANK_CEILING;
+		lowestItemPri = SPOILS_RANK_CEILING;
 		for(i = 0; i <= 3; i++) {
-			itemPriority = btSpoilsRankItem(spoils->items[i]);
-			if(itemPriority < lowestItemPriority) {
-				lowestItemPriority = itemPriority;
+			itemPri = btSpoilsRankItem(spoils->items[i]);
+			if(itemPri < lowestItemPri) {
+				lowestItemPri = itemPri;
 				lowestSlot = i;
 			}
 		}
-		if((Sint32)btSpoilsRankItem(enemy->item) > lowestItemPriority)
+		if((Sint32)btSpoilsRankItem(enemy->item) > lowestItemPri)
 			spoils->items[lowestSlot] = enemy->item;
 	}
 	return 0;
@@ -172,17 +172,17 @@ Sint32 btEnemyRecordDefeat(Sint32 unitId, Sint32 djinnBonus)
 void btAwardSpoils(void)
 {
 	BATTLE_SPOILS  *spoils;
-	Sint32			count;
+	Sint32			cnt;
 	UNIT		   *unit;
 	UNIT		   *beforeLevelUp;
-	Sint32			abilityIndex;
+	Sint32			abilityIdx;
 	Uint32			encodedAbility;
-	Sint32			oldAbilityIndex;
-	Sint32			highestItemPriority;
+	Sint32			oldAbilityIdx;
+	Sint32			highestItemPri;
 	Sint32			highestItemSlot;
 	Sint32			slot;
 	Uint16		   *overflowItem;
-	Sint32			itemPriority;
+	Sint32			itemPri;
 	LEVEL_UP_RESULT gains; /* Read stat increases as signed values. */
 	Uint16			units[8];
 
@@ -195,13 +195,13 @@ void btAwardSpoils(void)
 	/* Experience and level ups: each party member is copied before every level
 	   it may gain, so that what the level brought can be read against the
 	   copy. */
-	count = btUnitListLiving(BATTLE_SIDE_MASK_PARTY, units);
+	cnt = btUnitListLiving(BATTLE_SIDE_MASK_PARTY, units);
 	beforeLevelUp = syHeapAllocEWRAM(sizeof(UNIT));
 	{
-		Sint32 unitIndex;
+		Sint32 unitIdx;
 
-		for(unitIndex = 0; unitIndex < count; unitIndex++) {
-			Sint32 unitId = units[unitIndex];
+		for(unitIdx = 0; unitIdx < cnt; unitIdx++) {
+			Sint32 unitId = units[unitIdx];
 
 			unit = gmUnitGetStub(unitId);
 			unit->experience += spoils->experience;
@@ -212,25 +212,23 @@ void btAwardSpoils(void)
 				mnMessageArgumentPushStub(
 					unit->classId, MESSAGE_ARGUMENT_CLASS);
 				mnMessageArgumentPushStub(
-					units[unitIndex], MESSAGE_ARGUMENT_ACTOR);
+					units[unitIdx], MESSAGE_ARGUMENT_ACTOR);
 				mnMessageArgumentPushStub(unit->level, MESSAGE_ARGUMENT_NUMBER);
 				mnBattleMessageShowAndWaitStub(MsgLevelUp);
 				btMessageWaitForAdvance();
 				/* A class ability the copy lacks is newly learned. */
-				for(abilityIndex = 0; abilityIndex < PSYNERGY_SLOTS;
-					abilityIndex++) {
-					encodedAbility = unit->psynergy[abilityIndex].encodedAction;
+				for(abilityIdx = 0; abilityIdx < PSYNERGY_SLOTS; abilityIdx++) {
+					encodedAbility = unit->psynergy[abilityIdx].encodedAction;
 					if((encodedAbility & PSYNERGY_ABILITY_MASK) &&
 						(encodedAbility >> PSYNERGY_FROM_CLASS_SHIFT)) {
-						for(oldAbilityIndex = 0;
-							oldAbilityIndex < PSYNERGY_SLOTS;
-							oldAbilityIndex++) {
+						for(oldAbilityIdx = 0; oldAbilityIdx < PSYNERGY_SLOTS;
+							oldAbilityIdx++) {
 							if(encodedAbility ==
-								beforeLevelUp->psynergy[oldAbilityIndex]
+								beforeLevelUp->psynergy[oldAbilityIdx]
 									.encodedAction)
 								break;
 						}
-						if(oldAbilityIndex == PSYNERGY_SLOTS) {
+						if(oldAbilityIdx == PSYNERGY_SLOTS) {
 							mnMessageArgumentClearAllStub();
 							mnMessageArgumentPushStub(
 								unit->classId, MESSAGE_ARGUMENT_CLASS);
@@ -296,12 +294,12 @@ void btAwardSpoils(void)
 	overflowItem = &OverflowItem;
 	for(;;) {
 		highestItemSlot = -1;
-		highestItemPriority = -1;
+		highestItemPri = -1;
 		for(slot = 0; slot <= 3; slot++) {
 			if(spoils->items[slot] != 0) {
-				itemPriority = btSpoilsRankItem(spoils->items[slot]);
-				if(itemPriority >= highestItemPriority) {
-					highestItemPriority = itemPriority;
+				itemPri = btSpoilsRankItem(spoils->items[slot]);
+				if(itemPri >= highestItemPri) {
+					highestItemPri = itemPri;
 					highestItemSlot = slot;
 				}
 			}

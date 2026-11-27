@@ -215,7 +215,7 @@ typedef enum ENEMY_ID {
 	ENEMY_MIMIC_PIRATE_SHIP,
 	/* The Djinn the party fights, each element's in order of level;
 	   gmBattleUnitSet puts them on the party's side. A Djinni's battle is a
-	   slot of its element's zone (Encounter_DjinnBattles), which Djinn who join
+	   slot of its element's zone (EncounterDjinnBattles), which Djinn who join
 	   without a fight share; each row is named for the one Djinni whose scene
 	   starts its battle (fdRequestDjinnBattle). Level 12, in Mogall Forest. */
 	ENEMY_VENUS_DJINNI_QUARTZ,

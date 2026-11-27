@@ -121,31 +121,31 @@ enum { WHIRLWIND_LEAVES = 16 };
 
 struct ACTOR;
 
-extern SCENE_REGION GaiaRock_SusaExitRegions[];
-extern SCENE_REGION GaiaRock_StatueSpotsExitRegions[];
+extern SCENE_REGION GaiaRockSusaExitRegions[];
+extern SCENE_REGION GaiaRockStatueSpotsExitRegions[];
 
-void scStoneHeadBurstOut(Sint32 id, Sint32 flag);
+void scStoneHeadBurstOut(Sint32 id, Sint32 flg);
 
-extern ACTOR_PLACE GaiaRock_Placements[];
-extern ACTOR_PLACE GaiaRock_SusaActorPlacements[];
+extern ACTOR_PLACE GaiaRockPlacements[];
+extern ACTOR_PLACE GaiaRockSusaActorPlacements[];
 
-extern ACTOR_PLACE GaiaRock_StatueSpotsActorPlacements[];
-extern ACTOR_PLACE GaiaRock_DancingIdolActorPlacements[];
+extern ACTOR_PLACE GaiaRockStatueSpotsActorPlacements[];
+extern ACTOR_PLACE GaiaRockDancingIdolActorPlacements[];
 
-extern CUE	  GaiaRock_SusaCues[];
-extern CUE	  GaiaRock_StatueSpotsCues[];
-extern CUE	  GaiaRock_Cues[];
-extern Uint32 GaiaRock_LeafScript[];
+extern CUE	  GaiaRockSusaCues[];
+extern CUE	  GaiaRockStatueSpotsCues[];
+extern CUE	  GaiaRockCues[];
+extern Uint32 GaiaRockLeafScript[];
 
-extern Sint32 GaiaRock_WindScript[];
+extern Sint32 GaiaRockWindScript[];
 
 void scGaiaRockStartWallCues(void);
 void scStoneHeadPlace(Sint32 id, Sint32 x, Sint32 y, Sint32 z);
 
-extern Sint32 StoneHead_RiseScript[];
+extern Sint32 StoneHeadRiseScript[];
 
-extern Uint32 Debris_Script[];
-extern Uint32 GaiaRock_PillarScript[];
+extern Uint32 DebrisScript[];
+extern Uint32 GaiaRockPillarScript[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -155,9 +155,9 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 const SCENE_REGION *scGetExitRegions(void)
 {
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_SUSA)
-		return GaiaRock_SusaExitRegions;
+		return GaiaRockSusaExitRegions;
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS)
-		return GaiaRock_StatueSpotsExitRegions;
+		return GaiaRockStatueSpotsExitRegions;
 	return 0;
 }
 
@@ -169,12 +169,12 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_SUSA)
-		return GaiaRock_SusaActorPlacements;
+		return GaiaRockSusaActorPlacements;
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS)
-		return GaiaRock_StatueSpotsActorPlacements;
+		return GaiaRockStatueSpotsActorPlacements;
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_DANCING_IDOL)
-		return GaiaRock_DancingIdolActorPlacements;
-	return GaiaRock_Placements;
+		return GaiaRockDancingIdolActorPlacements;
+	return GaiaRockPlacements;
 }
 
 /* Climbing the great wall of handholds, Felix reaches the lowest of its three
@@ -207,7 +207,7 @@ void scGaiaRockClimbOntoHighestStoneFace(void)
 
 /* The Japanese edition lets a pillar land with no sound, through the function
    of Taopo Swamp and the Kibombo Mountains, which tests for landing before it
-   counts the frame down; the later editions take the Ankohl Ruins' function and
+   counts the tick down; the later editions take the Ankohl Ruins' function and
    play SE_BOOM as it lands. */
 #if !GAIA_ROCK_PILLAR_LANDS_WITH_BOOM
 #include "shared/actor_wait_to_land.h"
@@ -400,10 +400,10 @@ void scGaiaRockMindReadSusa(void)
 const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_SUSA)
-		return GaiaRock_SusaCues;
+		return GaiaRockSusaCues;
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS)
-		return GaiaRock_StatueSpotsCues;
-	return GaiaRock_Cues;
+		return GaiaRockStatueSpotsCues;
+	return GaiaRockCues;
 }
 
 /* A circling leaf as its update reads it: ACTOR's fields under a type of its
@@ -427,19 +427,19 @@ typedef struct ORBIT_EFFECT {
 	void (*update)(struct ORBIT_EFFECT *);
 } ORBIT_EFFECT;
 
-/* Each frame, carries a leaf round a wobbling circle, now and then turning
-   faster for a moment, and releases it at its 71st frame. */
+/* Each tick, carries a leaf round a wobbling circle, now and then turning
+   faster for a moment, and releases it at its 71st tick. */
 void scGaiaRockCircleLeaf(ORBIT_EFFECT *effect)
 {
 	Sint32 radius;
-	Sint32 angle;
+	Sint32 ang;
 	FIXED  dx;
 	FIXED  dz;
 
 	radius = syRandom() + toFIXED(2);
-	angle = effect->facing;
-	dx = syMulFX(radius, syCos(angle));
-	dz = syMulFX(radius, syMathSin(angle));
+	ang = effect->facing;
+	dx = syMulFX(radius, syCos(ang));
+	dz = syMulFX(radius, syMathSin(ang));
 	effect->x += dx;
 	effect->z += dz;
 	effect->facing -= TRIG_TURN / 4096;
@@ -450,35 +450,35 @@ void scGaiaRockCircleLeaf(ORBIT_EFFECT *effect)
 		effect->pause = syRandomBelow(16) + 8;
 	}
 	if(++effect->tmr == 71)
-		fdActorStartScript((ACTOR *)effect, GaiaRock_LeafScript);
+		fdActorStartScript((ACTOR *)effect, GaiaRockLeafScript);
 }
 
 /* The whirlwind's 16 leaves, spawned in a column around it, each circling from
    its own start. */
-Sint32 scGaiaRockSpawnCirclingLeaves(ORBIT_EFFECT *source)
+Sint32 scGaiaRockSpawnCirclingLeaves(ORBIT_EFFECT *src)
 {
 	Sint32 i;
-	Sint32 timer;
+	Sint32 tmr;
 
 	i = 0;
-	timer = 20;
+	tmr = 20;
 	for(; i < WHIRLWIND_LEAVES; i++) {
 		{
 			ORBIT_EFFECT *effect;
 			Sint32		  radius;
-			FIXED		  position[3];
+			FIXED		  pos[3];
 
-			position[0] = source->x;
-			position[1] = source->y + i * (toFIXED(4) / 5) + toFIXED(4);
-			position[2] = source->z;
+			pos[0] = src->x;
+			pos[1] = src->y + i * (toFIXED(4) / 5) + toFIXED(4);
+			pos[2] = src->z;
 			radius = syRandom();
 			syFieldVectorAddPolarOffsetFX(
-				radius * 5 + toFIXED(3), syRandom(), position);
+				radius * 5 + toFIXED(3), syRandom(), pos);
 			effect = (ORBIT_EFFECT *)Value4((Sint32 (*)())fdActorSpawn,
-				SPRITE_LEAF, position[0], position[1], position[2]);
+				SPRITE_LEAF, pos[0], pos[1], pos[2]);
 			if(effect != NULL) {
 				effect->update = scGaiaRockCircleLeaf;
-				effect->tmr = timer;
+				effect->tmr = tmr;
 				effect->pause = 0;
 				effect->gravity = toFIXED(1) / 10;
 				effect->velY = toFIXED(3);
@@ -487,7 +487,7 @@ Sint32 scGaiaRockSpawnCirclingLeaves(ORBIT_EFFECT *source)
 				fdActorSetSprPriorityDirect((ACTOR *)effect, 2);
 			}
 		}
-		timer -= 2;
+		tmr -= 2;
 	}
 	return 0;
 }
@@ -527,14 +527,14 @@ void scGaiaRockWhirlwindBlowsVineHarder(void)
 	slot->swing += TRIG_TURN / 512;
 }
 
-void fdActorPlaySndInView(ACTOR *actor, Sint32 sound);
+void fdActorPlaySndInView(ACTOR *actor, Sint32 snd);
 
-/* Every 256 frames the stone statue on the upper ledge of the first cliffs
+/* Every 256 ticks the stone statue on the upper ledge of the first cliffs
    blows a whirlwind west at the hanging vine beside it, setting it swinging. */
 void scGaiaRockStatueBlowsWind(void)
 {
 	ACTOR *actor = fdActorGet(ACTOR_WIND_STATUE);
-	Uint8  phase = FrameCount;
+	Uint8  phase = TickCount;
 
 	if(phase == 0) {
 		fdActorPlaySndInView(actor, SE_FLAME_FLARE);
@@ -549,7 +549,7 @@ void scGaiaRockStatueBlowsWind(void)
 			fdActorSelectAnimation(actor, 2);
 			scFieldActorSetMoveTargetFX(actor, actor->x.fixed - toFIXED(32),
 				actor->y.fixed, actor->z.fixed);
-			fdActorStartScript(actor, GaiaRock_WindScript);
+			fdActorStartScript(actor, GaiaRockWindScript);
 			fdActorSetSprPriorityDirect(actor, 2);
 		}
 	}
@@ -576,7 +576,7 @@ Sint32 scInit(void)
 	fdActorGetById(fdPartyGetLeaderActor())->priFlg |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_SUSA) {
-		sySetEvent((Sint32)scGaiaRockStatueBlowsWind, EVENT_PASS_FRAME);
+		sySetEvent((Sint32)scGaiaRockStatueBlowsWind, EVENT_PASS_TICK);
 		Call2((void (*)())fdHangingVinePlace, ACTOR_FIRST_VINE, 1);
 		Call2((void (*)())fdHangingVinePlace, ACTOR_FIRST_VINE + 1, 1);
 		Call2((void (*)())fdHangingVinePlace, ACTOR_FIRST_VINE + 2, 1);
@@ -622,7 +622,7 @@ Sint32 scInit(void)
 			fdActorSetAnimationById(ACTOR_SUSA, 5);
 			if(!fdScriptGetFlag(FLAG_SUSA_RESTED)) {
 				fdScriptStartScreenTransition();
-				fdScriptWaitTransitionFrames();
+				fdScriptWaitTransitionTicks();
 				scFieldActorStartRepeatedMotion(ACTOR_SUSA, 3);
 				fdCameraMoveToActorById(ACTOR_SUSA, 1);
 				syFieldScriptWait(30);
@@ -693,10 +693,10 @@ Sint32 scPrepareMap(void)
 
 #include "shared/stone_head_burst_out.h"
 
-/* Starts scGaiaRockCueWallMetatile each frame. */
+/* Starts scGaiaRockCueWallMetatile each tick. */
 void scGaiaRockStartWallCues(void)
 {
-	sySetFrameEvent(scGaiaRockCueWallMetatile, EVENT_PASS_FRAME);
+	sySetTickEvent(scGaiaRockCueWallMetatile, EVENT_PASS_TICK);
 }
 
 SCENE_ENTRANCE SceneEntrances[] = {
@@ -705,13 +705,13 @@ SCENE_ENTRANCE SceneEntrances[] = {
 };
 
 /* clang-format off */
-SCENE_REGION GaiaRock_SusaExitRegions[] = {
+SCENE_REGION GaiaRockSusaExitRegions[] = {
 	{771, -28, 484, 779, -20, 492, CONDITION_ALWAYS, GAIA_ROCK_SUSA_CLIFFS_TO_CAVE_MOUTH},
 	{771, 180, 707, 779, 188, 715, CONDITION_ALWAYS, GAIA_ROCK_SUSA_CAVE_MOUTH_TO_CLIFFS},
 	{SCENE_TABLE_END},
 };
 
-SCENE_REGION GaiaRock_StatueSpotsExitRegions[] = {
+SCENE_REGION GaiaRockStatueSpotsExitRegions[] = {
 	{195, 296, 323, 203, 304, 331, CONDITION_ALWAYS, GAIA_ROCK_STATUE_SPOTS_VINES_TO_WALL},
 	{707, -554, 452, 715, -546, 460, CONDITION_ALWAYS, GAIA_ROCK_STATUE_SPOTS_WALL_TO_VINES},
 	{SCENE_TABLE_END},
@@ -734,16 +734,16 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-Uint32 GaiaRock_PillarScript[] = {
+Uint32 GaiaRockPillarScript[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_END,
 };
 
-ACTOR_PLACE GaiaRock_Placements[] = {
+ACTOR_PLACE GaiaRockPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE GaiaRock_SusaActorPlacements[] = {
+ACTOR_PLACE GaiaRockSusaActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -752,15 +752,15 @@ ACTOR_PLACE GaiaRock_SusaActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1000, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 936, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, (Sint32)GaiaRock_PillarScript, 120, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, (Sint32)GaiaRockPillarScript, 120, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 295, 0, 442, FACING_WEST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_WHIRLWIND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, (Sint32)GaiaRock_PillarScript, 600, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, (Sint32)GaiaRockPillarScript, 600, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SUSA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE GaiaRock_StatueSpotsActorPlacements[] = {
+ACTOR_PLACE GaiaRockStatueSpotsActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -776,7 +776,7 @@ ACTOR_PLACE GaiaRock_StatueSpotsActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE GaiaRock_DancingIdolActorPlacements[] = {
+ACTOR_PLACE GaiaRockDancingIdolActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
@@ -790,11 +790,11 @@ ACTOR_PLACE GaiaRock_DancingIdolActorPlacements[] = {
 };
 
 /* Unused: an empty cue table nothing returns. */
-CUE GaiaRock_UnusedCues[] = {
+CUE GaiaRockUnusedCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE GaiaRock_SusaCues[] = {
+CUE GaiaRockSusaCues[] = {
 	{CUE_EXIT, GAIA_ROCK_SUSA_TO_GAIA_ROCK_STATUE_SPOTS, CONDITION_ALWAYS, GAIA_ROCK_SUSA_TO_GAIA_ROCK_STATUE_SPOTS},
 	{CUE_EXIT, GAIA_ROCK_SUSA_TO_GAIA_ROCK_INSIDE_FIRST_ALTAR, CONDITION_ALWAYS, GAIA_ROCK_SUSA_TO_GAIA_ROCK_INSIDE_FIRST_ALTAR},
 	{CUE_EXIT, GAIA_ROCK_SUSA_TO_WORLD_MAP, CONDITION_ALWAYS, GAIA_ROCK_SUSA_TO_WORLD_MAP},
@@ -817,7 +817,7 @@ CUE GaiaRock_SusaCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE GaiaRock_StatueSpotsCues[] = {
+CUE GaiaRockStatueSpotsCues[] = {
 	{CUE_EXIT, GAIA_ROCK_STATUE_SPOTS_TO_GAIA_ROCK_SUSA, CONDITION_ALWAYS, GAIA_ROCK_STATUE_SPOTS_TO_GAIA_ROCK_SUSA},
 	{CUE_EXIT, GAIA_ROCK_STATUE_SPOTS_TO_GAIA_ROCK_DANCING_IDOL, CONDITION_ALWAYS, GAIA_ROCK_STATUE_SPOTS_TO_GAIA_ROCK_DANCING_IDOL},
 	{CUE_STEP, METATILE_BEHAVIOR_LOWEST_STONE_FACE, FLAG_FIRST_STATUE_RISEN, SCRIPT_REF(scGaiaRockClimbOntoLowestStoneFace)},
@@ -833,7 +833,7 @@ CUE GaiaRock_StatueSpotsCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE GaiaRock_Cues[] = {
+CUE GaiaRockCues[] = {
 	{CUE_EXIT, GAIA_ROCK_DANCING_IDOL_TO_GAIA_ROCK_STATUE_SPOTS, CONDITION_ALWAYS, GAIA_ROCK_DANCING_IDOL_TO_GAIA_ROCK_STATUE_SPOTS},
 	{CUE_TALK, ACTOR_ALTAR, CONDITION_ALWAYS, SCRIPT_REF(scGaiaRockCheckAltar)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PUSHED_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(scGaiaRockStartPushingPillar)},
@@ -845,11 +845,11 @@ CUE GaiaRock_Cues[] = {
 	{CUE_TABLE_END},
 };
 
-Uint32 GaiaRock_LeafScript[] = {
+Uint32 GaiaRockLeafScript[] = {
 	SC_RELEASE,
 };
 
-Sint32 GaiaRock_WindScript[] = {
+Sint32 GaiaRockWindScript[] = {
 	SC_ADD(SW_SCALE_X, toFIXED(1) / 10),
 	SC_ADD(SW_SCALE_Y, toFIXED(1) / 10),
 	SC_WAIT(1),

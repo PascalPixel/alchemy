@@ -8,7 +8,7 @@
 
 /* Battle music: which battles have music of their own
    (fdEncounterSelectBattleMusic). */
-const Uint16 Encounter_BattleMusic[35] = {
+const Uint16 EncounterBattleMusic[35] = {
 	ENCOUNTER_BATTLE_MUSIC(MUS_BATTLE_WITH_THE_FUSION_DRAGON),
 	/* The Fusion Dragon, Venus Lighthouse's aerie. */
 	ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED, 0),

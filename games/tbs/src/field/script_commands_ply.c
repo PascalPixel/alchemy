@@ -3,8 +3,8 @@
 
 #include "script_commands_internal.h"
 
-/* Per-frame update: sways 4 pixels either side of anchorX, once every 128
-   frames. */
+/* Per-tick update: sways 4 pixels either side of anchorX, once every 128
+   ticks. */
 void fdEffectSwayParticle(ACTOR *actor)
 {
 	actor->x.fixed = actor->tgtX +
@@ -13,38 +13,38 @@ void fdEffectSwayParticle(ACTOR *actor)
 	actor->tmr = (actor->tmr + 128) % 128;
 }
 
-/* Per-frame update: spirals in on a point 10 pixels above the Psynergy's
-   position, at a radius of as many pixels as frames are left; released when
+/* Per-tick update: spirals in on a point 10 pixels above the Psynergy's
+   position, at a radius of as many pixels as ticks are left; released when
    timer reaches 0. */
 void fdEffectUpdateShrinkingOrbitActor(ACTOR *particle)
 {
 	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
 	VECTOR3				pos;
-	Sint16				remainingFrames;
+	Sint16				remainingTicks;
 	Sint32				decrementedTimer;
 
 	if(particle != NULL) {
 		decrementedTimer = (Uint16)particle->tmr - 1;
 		particle->tmr = decrementedTimer;
-		remainingFrames = decrementedTimer;
-		if(remainingFrames != 0) {
+		remainingTicks = decrementedTimer;
+		if(remainingTicks != 0) {
 			pos.x = effectState->x;
 			pos.y = effectState->y + toFIXED(10);
 			pos.z = effectState->z;
-			syVectorAddPolarOffset(toFIXED(remainingFrames),
-				particle->userValue + remainingFrames * (TRIG_TURN / 32),
+			syVectorAddPolarOffset(toFIXED(remainingTicks),
+				particle->userValue + remainingTicks * (TRIG_TURN / 32),
 				(FIXED *)&pos);
 			particle->x.fixed = pos.x;
 			particle->y.fixed = pos.y;
 			particle->z.fixed = pos.z;
 		} else {
-			fdActorStartScriptStub(particle, FieldEffect_SharedParticleScript);
+			fdActorStartScriptStub(particle, FieldEffectSharedParticleScript);
 		}
 	}
 }
 
-/* Per-frame update: sways 6 pixels either side (a 64-frame cycle) 16 pixels
-   above the Psynergy's position, and every 3 frames sheds a spark that sways as
+/* Per-tick update: sways 6 pixels either side (a 64-tick cycle) 16 pixels
+   above the Psynergy's position, and every 3 ticks sheds a spark that sways as
    it slowly falls. */
 void fdEffectRunSparkEmitter(ACTOR *emitter)
 {
@@ -61,14 +61,14 @@ void fdEffectRunSparkEmitter(ACTOR *emitter)
 		emitter->tmr++;
 		emitter->tmr = (emitter->tmr + 64) % 64;
 	}
-	if(FrameCount % 3 == 0) {
+	if(TickCount % 3 == 0) {
 		/* From 2 pixels up, 0 to 6 pixels in a random direction. */
 		SET_VECTOR(pos, emitter->x.fixed, emitter->y.fixed + toFIXED(2),
 			emitter->z.fixed);
 		syVectorAddPolarOffset(syRandom() * 6, syRandom(), pos);
 		spark = fdActorSpawn(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
-		/* Each falls, 0.007 pixels a frame faster each frame, and is released
-		   after 72 frames, its script's wait. */
+		/* Each falls, 0.007 pixels a tick faster each tick, and is released
+		   after 72 ticks, its script's wait. */
 		if(spark != 0) {
 			spark->update = fdEffectSwayParticle;
 			spark->scaleX = spark->scaleY = toFIXED(3) / 5;
@@ -78,12 +78,12 @@ void fdEffectRunSparkEmitter(ACTOR *emitter)
 			spark->tgtX = spark->x.fixed;
 			fdActorSetSprColModeStub(spark, SPRITE_COLOR_BLUE_TINT);
 			spark->wait = 72;
-			fdActorStartScriptStub(spark, FieldEffect_SharedParticleScript);
+			fdActorStartScriptStub(spark, FieldEffectSharedParticleScript);
 		}
 	}
 }
 
-/* Ply's flashing figure: its steps, of 2 frames each. */
+/* Ply's flashing figure: its steps, of 2 ticks each. */
 #define PLY_FLASH_STEPS 30
 
 /* Ply cast on a target, which stops the caster's update once it is done. */
@@ -106,7 +106,7 @@ void fdPsynergyPly(void)
 
 	fdPsynergyFadeToCastCol();
 
-	/* The spiralling particles: one a frame, each 1/8 turn on from the last. */
+	/* The spiralling particles: one a tick, each 1/8 turn on from the last. */
 	last = 0;
 	for(i = 0; i < 8; i++) {
 		actor = fdActorSpawn(SPRITE_WINGED_FIGURE, target->x.fixed,
@@ -127,7 +127,7 @@ void fdPsynergyPly(void)
 	   last is read with no check that any particle spawned. */
 	resourceSlot = last->slot;
 	sySndPlayStub(SE_PSYNERGY_START);
-	/* The last particle spawned 7 frames ago with 120 frames to live: wait
+	/* The last particle spawned 7 ticks ago with 120 ticks to live: wait
 	   until the spiral is nearly closed. */
 	sySynch(110);
 
@@ -149,7 +149,7 @@ void fdPsynergyPly(void)
 	sySndPlayStub(SE_PSYNERGY_SPARKLE);
 	sySynch(12);
 	if(target != 0) {
-		/* Blue every 2 frames, red one time in 4. */
+		/* Blue every 2 ticks, red one time in 4. */
 		for(i = 0; i < PLY_FLASH_STEPS; i++) {
 			/* FAKEMATCH(dead): target set again to actor. */
 			target = actor;
@@ -168,7 +168,7 @@ void fdPsynergyPly(void)
 		target->update = fdEffectRunSparkEmitter;
 		target->tmr = 0;
 		/* Cast on a target (enabled cleared by fdPsynergyDispatch), the sparks
-		   fall for 192 frames instead of 128. */
+		   fall for 192 ticks instead of 128. */
 		if(effectState->aimAhead != 0)
 			sySynch(128);
 		else

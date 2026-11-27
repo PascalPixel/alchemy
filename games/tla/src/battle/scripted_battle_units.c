@@ -4,7 +4,7 @@
 #include "game/character_ids.h"
 
 /* Felix, Piers and Jenna, and the first two enemies. */
-Uint8 ScriptedBattle_Units[] = {
+Uint8 ScriptedBattleUnits[] = {
 	FELIX,
 	PIERS,
 	JENNA,

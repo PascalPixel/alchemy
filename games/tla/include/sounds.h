@@ -124,7 +124,7 @@ typedef enum SND_ID {
 	MUS_BATTLE_JENNA = 49,
 	/* The battle music: the usual one, and with Felix in the front row. */
 	MUS_BATTLE_THE_LOST_AGE,
-	/* Battle music Encounter_BattleMusic gives Briggs's battle on his ship at
+	/* Battle music EncounterBattleMusic gives Briggs's battle on his ship at
 	   Eastern Alhafra (ENCOUNTER_ZONE_SCRIPTED_YAMPI_DESERT_ALHAFRA, slot 1)
 	   and ENCOUNTER_ZONE_MOAPA's slots 0 to 4. */
 	MUS_BRIGGS_BATTLE,
@@ -269,7 +269,7 @@ typedef enum SND_ID {
 	SE_HEAVY_IMPACT,
 	SE_CLICK,
 	SE_WHOOSH,
-	/* Plays in the Kirin summon, 46 frames into its charge; the field plays it
+	/* Plays in the Kirin summon, 46 ticks into its charge; the field plays it
 	   too, as rain starts and in Air's Rock. */
 	SE_KIRIN,
 	SE_ITEM_BREAK,
@@ -351,7 +351,7 @@ typedef enum SND_ID {
 	SE_STONE_GRIND,
 	SE_WARP,
 	/* Played as a face over one of Gaia Rock's altars shakes and slides aside,
-	   at Zagan's frame 32 as it gallops in its blaze (btEffectRunZagan), and as
+	   at Zagan's tick 32 as it gallops in its blaze (btEffectRunZagan), and as
 	   Megiddo's sun starts to fall (btEffectRunMegiddo): SE_TABLET_RISE's note
 	   nine semitones higher. */
 	SE_TABLET_RISE_HIGH,
@@ -408,7 +408,7 @@ typedef enum SND_ID {
 	SE_LIFT,
 	SE_UNUSED_WARBLE_TONE,
 	/* Played as Moloch's white cloud starts billowing up from the ground under
-	   the falling flakes, at its frame 90 (btEffectRunMoloch). */
+	   the falling flakes, at its tick 90 (btEffectRunMoloch). */
 	SE_CLOUD_BILLOWS,
 	SE_LOG_PUSH,
 	SE_TOPPLE,
@@ -814,15 +814,15 @@ typedef enum SND_ID {
 	/* The battle music when Isaac is in the front row and Felix is not. */
 	MUS_BATTLE_THE_BROKEN_SEAL = 750,
 	/* The Broken Seal's MUS_SWORN_ENEMIES_STAND_IN_YOUR_WAY, the battle music
-	   Encounter_BattleMusic gives ENCOUNTER_ZONE_HIDDEN_BOSSES's slot 0. */
+	   EncounterBattleMusic gives ENCOUNTER_ZONE_HIDDEN_BOSSES's slot 0. */
 	MUS_BATTLE_WITH_STAR_MAGICIAN,
 	/* The Broken Seal's MUS_BATTLING_A_POWERFUL_FOE, note for note. */
 	MUS_BATTLE_WITH_VALUKAR,
 	/* The Broken Seal's MUS_BATTLE_WITH_SATUROS_AND_MENARDI, the battle music
-	   Encounter_BattleMusic gives ENCOUNTER_ZONE_HIDDEN_BOSSES's slot 2. */
+	   EncounterBattleMusic gives ENCOUNTER_ZONE_HIDDEN_BOSSES's slot 2. */
 	MUS_BATTLE_WITH_SENTINEL,
 	/* The Broken Seal's MUS_BATTLE_WITH_THE_FUSION_DRAGON, the battle music
-	   Encounter_BattleMusic gives the Shadow's battle at the Anemos Inner
+	   EncounterBattleMusic gives the Shadow's battle at the Anemos Inner
 	   Sanctum's entrance (ENCOUNTER_ZONE_HIDDEN_BOSSES, slot 3). */
 	MUS_BATTLE_WITH_DULLAHAN,
 	/* The Broken Seal's MUS_TO_BE_CONTINUED, note for note, on the song table's

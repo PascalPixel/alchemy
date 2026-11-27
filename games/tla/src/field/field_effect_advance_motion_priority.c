@@ -1,4 +1,4 @@
-/* A field effect's motion each frame, drawn at the leader's priority. */
+/* A field effect's motion each tick, drawn at the leader's priority. */
 
 #include "system/field_effect.h"
 #include "field/script.h"
@@ -9,24 +9,24 @@
 void fdEffectAdvanceMotionAtLeaderPriority(FIELD_OBJECT *object)
 {
 	FIELD_EFFECT	   *effect = &object->eff;
-	Sint32				velocityX = effect->vel.x;
-	Sint32				velocityZ;
+	Sint32				velX = effect->vel.x;
+	Sint32				velZ;
 	MAIN_ROUTINE_STATE *party;
-	FIELD_SPR		   *sprite;
+	FIELD_SPR		   *spr;
 	ACTOR			   *leader;
 	PLACED_SPR		   *to;
 	PLACED_SPR		   *from;
 
-	effect->x += velocityX;
+	effect->x += velX;
 	effect->y += effect->vel.y;
-	velocityZ = effect->vel.z;
-	effect->z += velocityZ;
-	effect->vel.x = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
-	effect->vel.z = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
+	velZ = effect->vel.z;
+	effect->z += velZ;
+	effect->vel.x = velX - velX / FIELD_EFFECT_DRAG_X;
+	effect->vel.z = velZ - velZ / FIELD_EFFECT_DRAG_Z;
 	effect->scaleX += effect->scaleRateX;
-	sprite = effect->spr;
+	spr = effect->spr;
 	effect->scaleY += effect->scaleRateY;
-	sprite->rotation += effect->spin;
+	spr->rotation += effect->spin;
 
 	party = &MainRoutineStateWork;
 

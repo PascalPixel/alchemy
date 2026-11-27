@@ -3,8 +3,8 @@
 	.section .rodata
 	.balign 4
 @ The sprite of each element's Djinni (Venus, Mercury, Mars, Jupiter)
-	.global FileList_DjinnSpriteIds
-FileList_DjinnSpriteIds:
+	.global FileListDjinnSpriteIds
+FileListDjinnSpriteIds:
 	.4byte SPRITE_VENUS_DJINNI, SPRITE_MERCURY_DJINNI, SPRITE_MARS_DJINNI
 	.4byte SPRITE_JUPITER_DJINNI
 @ The name entry screen's keyboard tilemaps
@@ -26,6 +26,6 @@ NameEntry_UnusedKeyboardTilemap:
 	.endif
 	.endif
 	.balign 4, 0
-	.global WindowSprite_PointerTiles
-WindowSprite_PointerTiles:
+	.global WindowSpritePointerTiles
+WindowSpritePointerTiles:
 	.4byte PointingHandTiles

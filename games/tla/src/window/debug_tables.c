@@ -4,15 +4,15 @@
 #include "ability_ids.h"
 #include "debug/debug.h"
 
-extern const Uint8 DebugWarp_JupiterName[];
-extern const Uint8 DebugWarp_Arafura2Name[];
-extern const Uint8 DebugWarp_EnergySampleName[];
-extern const Uint8 DebugWarp_Arafura3Name[];
-extern const Uint8 DebugWarp_Champa2Name[];
-extern const Uint8 DebugWarp_KaoruSpecial4Name[];
-extern const Uint8 DebugWarp_KaoruSpecial3Name[];
-extern const Uint8 DebugWarp_KaoruSpecial2Name[];
-extern const Uint8 DebugWarp_KaoruSpecial1Name[];
+extern const Uint8 DebugWarpJupiterName[];
+extern const Uint8 DebugWarpArafura2Name[];
+extern const Uint8 DebugWarpEnergySampleName[];
+extern const Uint8 DebugWarpArafura3Name[];
+extern const Uint8 DebugWarpChampa2Name[];
+extern const Uint8 DebugWarpKaoruSpecial4Name[];
+extern const Uint8 DebugWarpKaoruSpecial3Name[];
+extern const Uint8 DebugWarpKaoruSpecial2Name[];
+extern const Uint8 DebugWarpKaoruSpecial1Name[];
 
 /* A row's handler, cast to the row's type unless UBFIX gives the row the
    handler's own. */
@@ -23,22 +23,22 @@ extern const Uint8 DebugWarp_KaoruSpecial1Name[];
 #endif
 
 /* The debug warp menu's rows, "0:Jupiter" to "8:Kaoru Special1". */
-const DEBUG_WARP_PRESET DebugWarp_Presets[] = {
-	{DebugWarp_JupiterName, WARP(mnDebugWarpJupiter)},
-	{DebugWarp_Arafura2Name, WARP(mnDebugWarpArafura2)},
-	{DebugWarp_EnergySampleName, WARP(mnDebugWarpEnergySample)},
-	{DebugWarp_Arafura3Name, WARP(mnDebugWarpArafura3)},
-	{DebugWarp_Champa2Name, WARP(mnDebugWarpChampa2)},
-	{DebugWarp_KaoruSpecial4Name, WARP(mnDebugWarpKaoruSpecial4)},
-	{DebugWarp_KaoruSpecial3Name, WARP(mnDebugWarpKaoruSpecial3)},
-	{DebugWarp_KaoruSpecial2Name, WARP(mnDebugWarpKaoruSpecial2)},
-	{DebugWarp_KaoruSpecial1Name, WARP(mnDebugWarpKaoruSpecial1)},
+const DEBUG_WARP_PRESET DebugWarpPresets[] = {
+	{DebugWarpJupiterName, WARP(mnDebugWarpJupiter)},
+	{DebugWarpArafura2Name, WARP(mnDebugWarpArafura2)},
+	{DebugWarpEnergySampleName, WARP(mnDebugWarpEnergySample)},
+	{DebugWarpArafura3Name, WARP(mnDebugWarpArafura3)},
+	{DebugWarpChampa2Name, WARP(mnDebugWarpChampa2)},
+	{DebugWarpKaoruSpecial4Name, WARP(mnDebugWarpKaoruSpecial4)},
+	{DebugWarpKaoruSpecial3Name, WARP(mnDebugWarpKaoruSpecial3)},
+	{DebugWarpKaoruSpecial2Name, WARP(mnDebugWarpKaoruSpecial2)},
+	{DebugWarpKaoruSpecial1Name, WARP(mnDebugWarpKaoruSpecial1)},
 };
 
 #undef WARP
 
 /* The field Psynergy of the debug shortcut grid, a column of nine at a time. */
-const Sint16 DebugShortcut_Abilities[4][9] = {
+const Sint16 DebugShortcutAbilities[4][9] = {
 	{ABILITY_SAND, ABILITY_BLAZE, ABILITY_POUND, ABILITY_ARROW, ABILITY_BURST,
 		ABILITY_CYCLONE, ABILITY_LASH, ABILITY_SCOOP, ABILITY_PARCH},
 	{ABILITY_TELEPORT, ABILITY_TREMOR, ABILITY_HOVER, ABILITY_GRIND,

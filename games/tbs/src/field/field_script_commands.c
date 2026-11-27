@@ -1,8 +1,8 @@
 /* Actor script commands: waits, jumps, flags, moves and state values.
 
-   Each `SC_` handler here is reached through ActorScript_CommandTable
+   Each `SC_` handler here is reached through ActorScriptCommandTable
    (actor_script.c), which fdActorUpdateAll and fdActorUpdateAllOnField call for
-   each live actor; each returns 1 to run on and 0 to end the actor's frame (the
+   each live actor; each returns 1 to run on and 0 to end the actor's tick (the
    protocol is in this folder's README). */
 
 #include "field_internal.h"
@@ -10,8 +10,8 @@
 /* The interpreter's limits, distances and turns. */
 enum {
 	SCRIPT_LABEL_SEARCH_WORDS = 1024, /* script words a jump searches */
-	SCRIPT_BLOCKED_MOVE_FRAMES = 60,  /* refused frames SC_SYNC waits through */
-	SCRIPT_WANDER_TRIES = 7,		  /* random points a wander tries a frame */
+	SCRIPT_BLOCKED_MOVE_TICKS = 60,	  /* refused ticks SC_SYNC waits through */
+	SCRIPT_WANDER_TRIES = 7,		  /* random points a wander tries a tick */
 	/* The wander probes' distance, 8 pixels in 16.16: past the point for
 	   ground, and along the heading for solid actors (SC_WANDER_HOME). */
 	SCRIPT_WANDER_PROBE_DISTANCE = toFIXED(8),
@@ -32,7 +32,7 @@ enum {
 /* SC_LABEL and SC_TO differ only in bit 30; a jump searches for the label. */
 #define SCRIPT_LABEL_KEY_MASK 0xbfffffff
 
-/* SC_WAIT(n): waits n frames; this frame counts as the first. */
+/* SC_WAIT(n): waits n ticks; this tick counts as the first. */
 Sint32 fdActorScriptWait(ACTOR *interpreter)
 {
 	Sint16 commandCursor = interpreter->scriptCursor;
@@ -43,11 +43,11 @@ Sint32 fdActorScriptWait(ACTOR *interpreter)
 }
 
 /* SC_SYNC: waits until the actor arrives at its target, or until a solid actor
-   has blocked it for 60 frames (refused is the blocked count, which
+   has blocked it for 60 ticks (refused is the blocked count, which
    fdActorUpdateAllOnField raises). */
 Bool fdActorScriptWaitForArrival(ACTOR *interpreter)
 {
-	if(interpreter->refused > SCRIPT_BLOCKED_MOVE_FRAMES - 1) {
+	if(interpreter->refused > SCRIPT_BLOCKED_MOVE_TICKS - 1) {
 		interpreter->refused = 0;
 		interpreter->scriptCursor++;
 		return TRUE;
@@ -62,13 +62,12 @@ Bool fdActorScriptWaitForArrival(ACTOR *interpreter)
 /* SC_CALL(fn): calls fn with the actor. */
 Bool fdActorScriptInvokeCallback(ACTOR *interpreter)
 {
-	Sint16		   initialCursor = interpreter->scriptCursor;
-	SCRIPT_COMMAND callback =
-		(SCRIPT_COMMAND)interpreter->script[initialCursor + 1];
+	Sint16		   initCursor = interpreter->scriptCursor;
+	SCRIPT_COMMAND func = (SCRIPT_COMMAND)interpreter->script[initCursor + 1];
 
-	if(callback(interpreter) != 0)
+	if(func(interpreter) != 0)
 		return FALSE;
-	if(interpreter->scriptCursor == initialCursor)
+	if(interpreter->scriptCursor == initCursor)
 		interpreter->scriptCursor = interpreter->scriptCursor + 2;
 	return TRUE;
 }
@@ -80,7 +79,7 @@ Bool fdActorScriptInvokeCallback(ACTOR *interpreter)
 Sint32 fdActorScriptFindLabel(ACTOR *interpreter, Uint32 labelKey)
 {
 	Uint32 *scriptWords;
-	Sint32	wordIndex;
+	Sint32	wordIdx;
 
 	interpreter->wait = 0;
 	if(labelKey == 0) {
@@ -89,9 +88,9 @@ Sint32 fdActorScriptFindLabel(ACTOR *interpreter, Uint32 labelKey)
 
 	labelKey &= SCRIPT_LABEL_KEY_MASK;
 	scriptWords = (Uint32 *)interpreter->script;
-	for(wordIndex = 0; wordIndex < SCRIPT_LABEL_SEARCH_WORDS; wordIndex++) {
+	for(wordIdx = 0; wordIdx < SCRIPT_LABEL_SEARCH_WORDS; wordIdx++) {
 		if(*scriptWords++ == labelKey) {
-			return wordIndex + 1;
+			return wordIdx + 1;
 		}
 	}
 	return 0;
@@ -104,7 +103,7 @@ Sint32 fdActorScriptRepeatOrJump(ACTOR *interpreter)
 	const Sint32 *arguments;
 	Sint32		  repeatLimit;
 	Sint32		  jumpKey;
-	Sint32		  nextCount;
+	Sint32		  nextCnt;
 
 	arguments = &interpreter->script[interpreter->scriptCursor + 1];
 	repeatLimit = *arguments++;
@@ -113,9 +112,9 @@ Sint32 fdActorScriptRepeatOrJump(ACTOR *interpreter)
 		interpreter->scriptCursor =
 			fdActorScriptFindLabel(interpreter, jumpKey);
 	} else {
-		nextCount = interpreter->repeatCnt + 1;
-		interpreter->repeatCnt = nextCount;
-		if((Uint8)nextCount < (Sint16)repeatLimit) {
+		nextCnt = interpreter->repeatCnt + 1;
+		interpreter->repeatCnt = nextCnt;
+		if((Uint8)nextCnt < (Sint16)repeatLimit) {
 			interpreter->scriptCursor =
 				fdActorScriptFindLabel(interpreter, jumpKey);
 		} else {
@@ -166,11 +165,11 @@ Sint32 fdActorScriptJumpIfFalse(ACTOR *interpreter)
 	return 1;
 }
 
-/* SC_END: hands the actor back to the idle script, ActorScript_EndScript, whose
-   lone SC_END runs again each frame. Returns 0. */
+/* SC_END: hands the actor back to the idle script, ActorScriptEndScript, whose
+   lone SC_END runs again each tick. Returns 0. */
 Sint32 fdActorScriptEnd(ACTOR *interpreter)
 {
-	interpreter->script = ActorScript_EndScript;
+	interpreter->script = ActorScriptEndScript;
 	interpreter->scriptCursor = 0;
 	return 0;
 }
@@ -206,16 +205,16 @@ SCRIPT_DEFINE_FLAG_COMMAND(fdActorScriptClearFlagAndTest, gmFlagClearStub)
 /* SC_FLAG_REV(f): tests game flag f, then flips it. */
 Sint32 fdActorScriptToggleFlagAndTest(ACTOR *interpreter)
 {
-	Sint32 flagId;
-	Sint32 previousFlagValue;
+	Sint32 flgId;
+	Sint32 prevFlgValue;
 
-	flagId = interpreter->script[interpreter->scriptCursor + 1];
-	previousFlagValue = gmFlagGetStub(flagId);
-	interpreter->conditionResult = previousFlagValue;
-	if((Uint8)previousFlagValue == 1) {
-		gmFlagClearStub(flagId);
+	flgId = interpreter->script[interpreter->scriptCursor + 1];
+	prevFlgValue = gmFlagGetStub(flgId);
+	interpreter->conditionResult = prevFlgValue;
+	if((Uint8)prevFlgValue == 1) {
+		gmFlagClearStub(flgId);
 	} else {
-		gmFlagSetStub(flagId);
+		gmFlagSetStub(flgId);
 	}
 	interpreter->scriptCursor += 2;
 	return 1;
@@ -257,10 +256,10 @@ Sint32 fdActorScriptPlaySnd(ACTOR *interpreter)
    (ACTOR_SOLID), each radius less 2 pixels; otherwise 0. */
 Sint32 fdActorScriptCheckOverlap(ACTOR *actor, Sint32 *values)
 {
-	Sint32 actorIndex;
+	Sint32 actorIdx;
 	ACTOR *candidate = ActorsWork;
 
-	for(actorIndex = 0; actorIndex < ACTOR_COUNT; actorIndex++, candidate++) {
+	for(actorIdx = 0; actorIdx < ACTOR_COUNT; actorIdx++, candidate++) {
 		if(candidate->script != NULL &&
 			(candidate->collisionFlg & ACTOR_SOLID) && candidate != actor) {
 			if(fdCheckSpheresOverlap(&candidate->x.fixed, candidate->radius - 2,
@@ -275,10 +274,10 @@ Sint32 fdActorScriptCheckOverlap(ACTOR *actor, Sint32 *values)
    as fdActorScriptCheckOverlap tests, or NULL. */
 ACTOR *fdActorScriptFindOverlappingActor(ACTOR *actor, Sint32 *values)
 {
-	Sint32 actorIndex;
+	Sint32 actorIdx;
 	ACTOR *candidate = ActorsWork;
 
-	for(actorIndex = 0; actorIndex < ACTOR_COUNT; actorIndex++, candidate++) {
+	for(actorIdx = 0; actorIdx < ACTOR_COUNT; actorIdx++, candidate++) {
 		if(candidate->script != NULL &&
 			(candidate->collisionFlg & ACTOR_SOLID) && candidate != actor) {
 			if(fdCheckSpheresOverlap(&candidate->x.fixed, candidate->radius - 2,
@@ -292,7 +291,7 @@ ACTOR *fdActorScriptFindOverlappingActor(ACTOR *actor, Sint32 *values)
 /* Reads three coordinate words and applies the selected positioning
    operation. */
 static __inline__ Sint32 fdActorScriptApplyPosCommand(ACTOR *interpreter,
-	void (*applyPosition)(ACTOR *actor, Sint32 x, Sint32 y, Sint32 z))
+	void (*applyPos)(ACTOR *actor, Sint32 x, Sint32 y, Sint32 z))
 {
 	Sint32		  x;
 	Sint32		  y;
@@ -306,7 +305,7 @@ static __inline__ Sint32 fdActorScriptApplyPosCommand(ACTOR *interpreter,
 	y = *coordinates;
 	coordinates++;
 	z = *coordinates;
-	applyPosition(interpreter, x, y, z);
+	applyPos(interpreter, x, y, z);
 	interpreter->scriptCursor += 4;
 	return 1;
 }
@@ -343,11 +342,11 @@ Sint32 fdActorScriptApplyRelativePos(ACTOR *actor)
    ground. */
 Sint32 fdActorScriptStoreAngToWatchedActor(ACTOR *actor)
 {
-	ACTOR *target;
+	ACTOR *tgt;
 
-	target = (ACTOR *)actor->watchedActor;
+	tgt = (ACTOR *)actor->watchedActor;
 	actor->facing = syAtan(
-		(target->z.fixed - actor->z.fixed), (target->x.fixed - actor->x.fixed));
+		(tgt->z.fixed - actor->z.fixed), (tgt->x.fixed - actor->x.fixed));
 	actor->scriptCursor++;
 	return 1;
 }
@@ -355,11 +354,10 @@ Sint32 fdActorScriptStoreAngToWatchedActor(ACTOR *actor)
 /* SC_MOVE_TO_WATCHED: sends the actor towards its watched actor. */
 Sint32 fdActorScriptApplyWatchedActorPos(ACTOR *actor)
 {
-	ACTOR *target;
+	ACTOR *tgt;
 
-	target = (ACTOR *)actor->watchedActor;
-	fdActorSetMoveTarget(
-		actor, target->x.fixed, target->y.fixed, target->z.fixed);
+	tgt = (ACTOR *)actor->watchedActor;
+	fdActorSetMoveTarget(actor, tgt->x.fixed, tgt->y.fixed, tgt->z.fixed);
 	actor->scriptCursor++;
 	return 1;
 }
@@ -368,15 +366,15 @@ Sint32 fdActorScriptApplyWatchedActorPos(ACTOR *actor)
    is never filled in; the operands are skipped unread. */
 Sint32 fdActorScriptApplyLocalOffsetPos(ACTOR *actor)
 {
-	Sint32 localOffset[3];
+	Sint32 localOfs[3];
 
 	/* BUG: offset is never set, so the target is the position plus whatever the
 	   stack held. */
 #if FIX_UNINITIALIZED_READ
-	localOffset[0] = localOffset[1] = localOffset[2] = 0;
+	localOfs[0] = localOfs[1] = localOfs[2] = 0;
 #endif
-	fdActorSetMoveTarget(actor, actor->x.fixed + localOffset[0],
-		actor->y.fixed + localOffset[1], actor->z.fixed + localOffset[2]);
+	fdActorSetMoveTarget(actor, actor->x.fixed + localOfs[0],
+		actor->y.fixed + localOfs[1], actor->z.fixed + localOfs[2]);
 	actor->scriptCursor += 3;
 	return 1;
 }
@@ -472,7 +470,7 @@ Sint32 fdCameraFollowLeaderInBounds(ACTOR *cameraActor)
 				cameraActor->z.fixed += dz;
 			}
 			/* Height follows at once within half a pixel, else a quarter a
-			   frame. */
+			   tick. */
 			if((dy < 0 ? -dy : dy) > CAMERA_FOLLOW_HEIGHT_SNAP)
 				dy /= 4;
 			cameraActor->y.fixed += dy;
@@ -528,8 +526,8 @@ Bool fdActorApproachWatchedActor(ACTOR *actor)
    and within limit pixels of home. */
 Bool fdActorWander(ACTOR *actor)
 {
-	FIELD_POS	  candidatePosition;
-	FIELD_POS	  probePosition;
+	FIELD_POS	  candidatePos;
+	FIELD_POS	  probePos;
 	Sint32		  minimumDistance;
 	const Sint32 *operands;
 	Sint32		  distanceRange;
@@ -555,67 +553,59 @@ retry:
 	attempts++;
 	if(attempts <= SCRIPT_WANDER_TRIES) {
 		SET_POSITION(
-			&candidatePosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+			&candidatePos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 		/* syRandom is a 16.16 fraction below 1, so the distance is base plus up
 		   to range. */
 		travelDistance = minimumDistance + syMulFX(syRandom(), distanceRange);
 		heading = actor->facing + (syRandom() >> 2) - (syRandom() >> 2);
-		syVectorAddPolarOffset(
-			travelDistance, heading, (FIXED *)&candidatePosition);
-		if(fdActorScriptCheckOverlap(actor, (Sint32 *)&candidatePosition) !=
-				0 ||
-			fdMapGridCheckCollision(actor, &candidatePosition) !=
-				COLLISION_NONE)
+		syVectorAddPolarOffset(travelDistance, heading, (FIXED *)&candidatePos);
+		if(fdActorScriptCheckOverlap(actor, (Sint32 *)&candidatePos) != 0 ||
+			fdMapGridCheckCollision(actor, &candidatePos) != COLLISION_NONE)
 			goto retry;
 		/* Probes 8 pixels past the point, ahead and at 45 degrees
 		   (DEGtoANG(45)) either side. */
 		travelDistance += SCRIPT_WANDER_PROBE_DISTANCE;
-		SET_POSITION(
-			&probePosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-		syVectorAddPolarOffset(
-			travelDistance, heading, (FIXED *)&probePosition);
+		SET_POSITION(&probePos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+		syVectorAddPolarOffset(travelDistance, heading, (FIXED *)&probePos);
 		/* BUG: the probe straight ahead is placed but never tested, so only the
 		   two at 45 degrees need clear ground; SC_WANDER_HOME tests all
 		   three. */
 #if FIX_WANDER_AHEAD_PROBE
-		aheadBlocked = fdMapGridCheckCollision(actor, &probePosition);
+		aheadBlocked = fdMapGridCheckCollision(actor, &probePos);
 #endif
-		SET_POSITION(
-			&probePosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+		SET_POSITION(&probePos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 		syVectorAddPolarOffset(travelDistance,
-			heading + SCRIPT_WANDER_DIAGONAL_ANGLE, (FIXED *)&probePosition);
+			heading + SCRIPT_WANDER_DIAGONAL_ANGLE, (FIXED *)&probePos);
 #if FIX_WANDER_AHEAD_PROBE
 		if(aheadBlocked != 0 ||
-			fdMapGridCheckCollision(actor, &probePosition) != COLLISION_NONE)
+			fdMapGridCheckCollision(actor, &probePos) != COLLISION_NONE)
 #else
-		if(fdMapGridCheckCollision(actor, &probePosition) != COLLISION_NONE)
+		if(fdMapGridCheckCollision(actor, &probePos) != COLLISION_NONE)
 #endif
 			goto retry;
-		SET_POSITION(
-			&probePosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+		SET_POSITION(&probePos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 		syVectorAddPolarOffset(travelDistance,
-			heading - SCRIPT_WANDER_DIAGONAL_ANGLE, (FIXED *)&probePosition);
-		if(fdMapGridCheckCollision(actor, &probePosition) != COLLISION_NONE)
+			heading - SCRIPT_WANDER_DIAGONAL_ANGLE, (FIXED *)&probePos);
+		if(fdMapGridCheckCollision(actor, &probePos) != COLLISION_NONE)
 			goto retry;
 		/* FAKEMATCH(dead): the offsets in both arms of a test of actor. */
 		if(actor != 0) {
-			dx = candidatePosition.x / toFIXED(1) - actor->homeX;
-			dz = candidatePosition.z / toFIXED(1) - actor->homeZ;
+			dx = candidatePos.x / toFIXED(1) - actor->homeX;
+			dz = candidatePos.z / toFIXED(1) - actor->homeZ;
 		} else {
-			dx = candidatePosition.x / toFIXED(1) - actor->homeX;
-			dz = candidatePosition.z / toFIXED(1) - actor->homeZ;
+			dx = candidatePos.x / toFIXED(1) - actor->homeX;
+			dz = candidatePos.z / toFIXED(1) - actor->homeZ;
 		}
 		if(dx * dx + dz * dz > homeRadiusSquared)
 			goto retry;
 	} else {
 		/* Out of tries: face the other way (half a turn) and stay on this
-		   command, to try again next frame. */
+		   command, to try again next tick. */
 		actor->facing += SCRIPT_HALF_TURN;
 		actor->wait = 1;
 		return FALSE;
 	}
-	fdActorSetMoveTarget(
-		actor, candidatePosition.x, candidatePosition.y, candidatePosition.z);
+	fdActorSetMoveTarget(actor, candidatePos.x, candidatePos.y, candidatePos.z);
 	actor->scriptCursor += 4;
 	return TRUE;
 }
@@ -799,7 +789,7 @@ typedef enum SCRIPT_OPERAND_OPERATION {
 	}
 
 /* The state value handlers, one for each entry of ACTOR_SCRIPT_VALUE (see
-   ActorScript_OperandHandlerTable in actor_script_operands.c); each names the
+   ActorScriptOperandHandlerTable in actor_script_operands.c); each names the
    actor field it sets, adds to or compares. */
 SCRIPT_DEFINE_OPERAND_ADDRESS(fdActorScriptSetOrCompareScriptAddress, scriptAdr)
 
@@ -951,7 +941,7 @@ static __inline__ Sint32 fdActorScriptApplyOperandCommand(
 	Sint16		  commandCursor = operands->cursor;
 	const Sint32 *arguments =
 		(const Sint32 *)operands->scriptAdr + commandCursor + 1;
-	OPERAND_FUNC handler = ActorScript_OperandHandlerTable[arguments[0]];
+	OPERAND_FUNC handler = ActorScriptOperandHandlerTable[arguments[0]];
 
 	if(handler != 0)
 		handler(operands, operation, arguments[1]);

@@ -81,7 +81,7 @@ typedef struct ITEM_MENU_STATE {
 	/* The row of four figures the Djinn and status screens show
 	   (menu_djinn_figures.c): each one's sprite and place in screen pixels, and
 	   its scale in 16.16, which closes a third of its gap to toFIXED(1) each
-	   frame, or holds -scale while negative. */
+	   tick, or holds -scale while negative. */
 	struct SPR *figures[4];
 	Sint16		figureX[4];
 	Sint16		figureY[4];

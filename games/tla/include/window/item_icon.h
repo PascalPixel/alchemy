@@ -32,9 +32,9 @@ void mnItemIconLoadLayersIntoSlotStub(
 	Sint32 item, Sint32 mode, Sint32 resource);
 
 void mnItemIconGridDraw(void);
-void mnItemIconGridSetPos(Sint32 index, Sint32 x, Sint32 y);
+void mnItemIconGridSetPos(Sint32 idx, Sint32 x, Sint32 y);
 void mnItemIconGridSetVisible(Sint32 active);
-void mnItemIconGridLoadItems(Uint16 *items, Sint32 count, Sint32 mode);
+void mnItemIconGridLoadItems(Uint16 *items, Sint32 cnt, Sint32 mode);
 
 /* The compressed item icons, indexed by an item's icon field. */
 extern Uint8 *ItemIcons[];
@@ -47,7 +47,7 @@ extern Uint8 *PsynergyIcons[];
 /* The end of PsynergyIcons, for mnIconCountPsynergyIcons. */
 extern Uint8 *PsynergyIconsEnd[];
 /* Draws one of the other icons into the glyph buffer. */
-void mnIconDrawMisc(Uint32 index);
+void mnIconDrawMisc(Uint32 idx);
 /* Builds a command icon, overlayIcon over baseIcon, and loads it into a sprite
    tile slot: *slot, or a free one when reuse is 0. */
 void mnIconBuildCommandIconTiles(Sint32 overlayIcon, Sint32 baseIcon,

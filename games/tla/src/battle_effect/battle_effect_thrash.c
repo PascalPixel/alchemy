@@ -2,13 +2,13 @@
    Vorpal Slash, Lunar Slash, Boost Hack and Twin Shear. Part of
    battle_effect.c. */
 
-/* The flashing strike's frames, from the user's arrival: four pictures flash
-   four frames each, then the canvas floods at its brightest for four frames,
+/* The flashing strike's ticks, from the user's arrival: four pictures flash
+   four ticks each, then the canvas floods at its brightest for four ticks,
    the damage shows and the target is hurled. */
-#define FLASHING_STRIKE_FRAMES		 21
-#define FLASHING_STRIKE_FLOOD_FRAME	 16
-#define FLASHING_STRIKE_DAMAGE_FRAME 18
-#define FLASHING_STRIKE_HIT_FRAME	 20
+#define FLASHING_STRIKE_TICKS		21
+#define FLASHING_STRIKE_FLOOD_TICK	16
+#define FLASHING_STRIKE_DAMAGE_TICK 18
+#define FLASHING_STRIKE_HIT_TICK	20
 
 /* One 120x120 picture of a flashing strike; Twin Shear's are half as tall. */
 #define FLASHING_STRIKE_PICTURE_BYTES (SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE)
@@ -116,7 +116,7 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	DRAW_RECTANGLE		 draw[2];
-	Sint32				 frame;
+	Sint32				 frm;
 
 	state = Ram_HeapSlots->battleEff;
 	canvas = Ram_HeapSlots->battleCanvas;
@@ -171,7 +171,7 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	}
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 
-	/* The user closes on the target in 16 frames (Lunar Slash jumps in place,
+	/* The user closes on the target in 16 ticks (Lunar Slash jumps in place,
 	   Boost Hack strikes a pose instead and waits 8). */
 	if(mode == FLASHING_STRIKE_QUICK_STRIKE ||
 		mode == FLASHING_STRIKE_TWIN_SHEAR)
@@ -208,16 +208,16 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	draw[1] = Ram_HeapSlots->ramCodePaired;
 
 	sySndPlayStub(SE_POWER_UP);
-	for(frame = 0; frame != FLASHING_STRIKE_FRAMES; frame++) {
+	for(frm = 0; frm != FLASHING_STRIKE_TICKS; frm++) {
 		if(mode == FLASHING_STRIKE_TWIN_SHEAR) {
 			/* Half the picture, then its reflection below it. */
-			if(frame <= 3) {
+			if(frm <= 3) {
 				draw[0](canvas, Ram_MapMetatileBuffer, 0, 0, SLASH_PICTURE_SIZE,
 					SLASH_PICTURE_SIZE / 2);
 				draw[1](canvas, Ram_MapMetatileBuffer, 0,
 					SLASH_PICTURE_SIZE / 2, SLASH_PICTURE_SIZE,
 					SLASH_PICTURE_SIZE / 2);
-			} else if(frame <= 7) {
+			} else if(frm <= 7) {
 				draw[0](canvas,
 					Ram_MapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES, 0, 0,
 					SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
@@ -225,7 +225,7 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					Ram_MapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES, 0,
 					SLASH_PICTURE_SIZE / 2, SLASH_PICTURE_SIZE,
 					SLASH_PICTURE_SIZE / 2);
-			} else if(frame <= 11) {
+			} else if(frm <= 11) {
 				draw[0](canvas,
 					Ram_MapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES * 2, 0,
 					0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
@@ -233,7 +233,7 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					Ram_MapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES * 2, 0,
 					SLASH_PICTURE_SIZE / 2, SLASH_PICTURE_SIZE,
 					SLASH_PICTURE_SIZE / 2);
-			} else if(frame <= 15) {
+			} else if(frm <= 15) {
 				draw[0](canvas,
 					Ram_MapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES * 3, 0,
 					0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
@@ -243,34 +243,34 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					SLASH_PICTURE_SIZE / 2);
 			}
 		} else {
-			if(frame <= 3)
+			if(frm <= 3)
 				draw[0](canvas, state->sheet, 0, 0, SLASH_PICTURE_SIZE,
 					SLASH_PICTURE_SIZE);
-			else if(frame <= 7)
+			else if(frm <= 7)
 				draw[0](canvas, state->sheet + FLASHING_STRIKE_PICTURE_BYTES, 0,
 					0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
-			else if(frame <= 11)
+			else if(frm <= 11)
 				draw[0](canvas, Ram_MapMetatileBuffer, 0, 0, SLASH_PICTURE_SIZE,
 					SLASH_PICTURE_SIZE);
-			else if(frame <= 15)
+			else if(frm <= 15)
 				draw[0](canvas,
 					Ram_MapMetatileBuffer + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
 					SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
 		}
 
-		/* The flood: four frames of the canvas at its brightest. */
-		if(frame >= FLASHING_STRIKE_FLOOD_FRAME &&
-			frame <= FLASHING_STRIKE_FLOOD_FRAME + 3)
+		/* The flood: four ticks of the canvas at its brightest. */
+		if(frm >= FLASHING_STRIKE_FLOOD_TICK &&
+			frm <= FLASHING_STRIKE_FLOOD_TICK + 3)
 			syWordsFillEntry(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-		if(frame == FLASHING_STRIKE_DAMAGE_FRAME)
+		if(frm == FLASHING_STRIKE_DAMAGE_TICK)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-		if(frame == FLASHING_STRIKE_HIT_FRAME) {
+		if(frm == FLASHING_STRIKE_HIT_TICK) {
 			state->shakeFrm = 8;
 			btMotionApplyKnockbackStub(args->tgts[0], KNOCKBACK_HURL);
 		}
 		btCameraShake(16, 16);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
@@ -291,9 +291,9 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	}
 }
 
-#undef FLASHING_STRIKE_FRAMES
-#undef FLASHING_STRIKE_FLOOD_FRAME
-#undef FLASHING_STRIKE_DAMAGE_FRAME
-#undef FLASHING_STRIKE_HIT_FRAME
+#undef FLASHING_STRIKE_TICKS
+#undef FLASHING_STRIKE_FLOOD_TICK
+#undef FLASHING_STRIKE_DAMAGE_TICK
+#undef FLASHING_STRIKE_HIT_TICK
 #undef FLASHING_STRIKE_PICTURE_BYTES
 #undef FLASHING_STRIKE_HALF_BYTES

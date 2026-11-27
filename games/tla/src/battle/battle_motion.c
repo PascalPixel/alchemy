@@ -148,15 +148,15 @@ void btMotionApplyKnockback(Sint32 id, Sint32 variant)
 	enemyId = syUnitGet(id)->enemyId;
 	if(enemyId != ENEMY_FUSION_DRAGON && enemyId != ENEMY_DOOM_DRAGON_A &&
 		enemyId != ENEMY_DOOM_DRAGON_E && enemyId != ENEMY_DOOM_DRAGON_H) {
-		object->acceleration = BattleKnockback_Acceleration[variant];
-		object->speedLimit = BattleKnockback_SpeedLimit[variant];
+		object->acceleration = BattleKnockbackAcceleration[variant];
+		object->speedLimit = BattleKnockbackSpeedLimit[variant];
 		/* A unit already in the air keeps its hop, except from KNOCKBACK_SKID
 		   on. */
 		if(object->y == 0 || variant > 4)
-			object->velY = BattleKnockback_VelocityY[variant];
+			object->velY = BattleKnockbackVelocityY[variant];
 		fdActorStartIdleStub(object);
 		scale = slot->anchorX;
-		x = (scale * BattleKnockback_DistancePercent[variant]) / 100;
+		x = (scale * BattleKnockbackDistancePercent[variant]) / 100;
 		fdActorSetMoveTargetStub(object, x, 0, slot->anchorZ);
 	}
 	object->verticalMotionStrength = toFIXED(3) / 5;
@@ -166,19 +166,19 @@ void btMotionApplyKnockback(Sint32 id, Sint32 variant)
 }
 
 /* Sends one unit leaping three quarters of the way to another, arriving in
-   travelFrames frames. */
-void btMotionApproachTarget(Sint32 actorId, Sint32 targetId,
-	Sint32 travelFrames, Sint32 initialVelocityY)
+   travelTicks ticks. */
+void btMotionApproachTarget(
+	Sint32 actorId, Sint32 tgtId, Sint32 travelTicks, Sint32 initVelY)
 {
 	BATTLE_OBJECT *actorSlot = btObjectGet(actorId);
-	BATTLE_OBJECT *targetSlot = btObjectGet(targetId);
+	BATTLE_OBJECT *tgtSlot = btObjectGet(tgtId);
 	MOTION_OBJECT *object = actorSlot->obj;
-	MOTION_OBJECT *target = targetSlot->obj;
+	MOTION_OBJECT *tgt = tgtSlot->obj;
 	Sint32		   percent = 75;
-	Sint32		   dx = target->x - object->x;
+	Sint32		   dx = tgt->x - object->x;
 	Sint32		   startX = object->x;
 	Sint32		   stepX = percent * dx / 100;
-	Sint32		   dz = target->z - object->z;
+	Sint32		   dz = tgt->z - object->z;
 	Sint32		   startZ = object->z;
 	Sint32		   stepZ = percent * dz / 100;
 	Sint32		   x = startX + stepX;
@@ -193,7 +193,7 @@ void btMotionApproachTarget(Sint32 actorId, Sint32 targetId,
 		dist = sySquartIWRAM(sum) << 8;
 	else
 		dist = 0;
-	dist = dist / travelFrames;
+	dist = dist / travelTicks;
 	object->acceleration = dist;
 	object->speedLimit = dist;
 	object->snapToTgt = 1;
@@ -201,8 +201,8 @@ void btMotionApproachTarget(Sint32 actorId, Sint32 targetId,
 	/* DEAD: the store under ACTOR_FLOATS is overwritten at once; the ROM keeps
 	   the test and its store. */
 	if(object->motionFlg & ACTOR_FLOATS)
-		object->velY = initialVelocityY;
-	object->velY = initialVelocityY;
+		object->velY = initVelY;
+	object->velY = initVelY;
 	object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
 	object->autoFaceMotion = 1;
 	fdActorStartIdleStub(object);
@@ -227,7 +227,7 @@ void btMotionRestartLeap(Sint32 id)
 
 /* Does nothing; btMotionApplyPairMidpoint, its only caller, passes it a
    position and a distance. */
-void btMotionMidpointNoOperation(void *position, Sint32 speed)
+void btMotionMidpointNoOperation(void *pos, Sint32 speed)
 {
 }
 
@@ -275,7 +275,7 @@ void btMotionApplyPairMidpoint(Sint32 firstId, Sint32 secondId)
 	btMotionMidpointNoOperation(&pos, toFIXED(1) / 16);
 }
 
-/* Unused: plays the hit flash on a unit's sprite and waits ten frames. Only a
+/* Unused: plays the hit flash on a unit's sprite and waits ten ticks. Only a
    single-sprite actor takes it. */
 void btMotionPlayHitFlash(Sint32 unitId)
 {

@@ -70,7 +70,7 @@ struct ACTOR;
 struct METATILE_TARGET;
 struct METATILE_TARGET_ENTRY;
 
-extern Uint32 Orb_RisingScript[];
+extern Uint32 OrbRisingScript[];
 
 void scJupiterLighthouseStartSparkRing(const Sint32 *from, const Sint32 *to);
 
@@ -79,7 +79,7 @@ void scJupiterLighthouseUpdateSparkRing(void);
 /* Fills an effect sprite: its OAM attributes, its tiles and its size from its
    shape, pivoted at (pivotX, pivotY) (fdEffectSprInit, through the overlay's
    own import row). */
-void scJupiterLighthouseInitSparkSpr(EFFECT_SPR *sprite, Sint32 pivotX,
+void scJupiterLighthouseInitSparkSpr(EFFECT_SPR *spr, Sint32 pivotX,
 	Sint32 pivotY, Uint32 attributes, Sint32 tile);
 
 /* The state of the code every Jupiter Lighthouse room's overlay keeps its own
@@ -104,7 +104,7 @@ METATILE_TARGET CrackedTiles BSS_DATA;
 
 void scLeaderCenterInMetatile(void);
 
-void scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
+void scCrackedTileCrack(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry);
 
 void scJupiterLighthouseHearTheVoice(void);
 
@@ -112,15 +112,15 @@ void scJupiterLighthouseLeaveTheCenter(void);
 
 void scJupiterLighthouseAlexHealsTheParty(void);
 
-extern Uint32 FieldEffect_ShortScript[];
-extern Uint32 FieldEffect_MediumScript[];
-extern Uint32 FieldEffect_LongScript[];
+extern Uint32 FieldEffectShortScript[];
+extern Uint32 FieldEffectMediumScript[];
+extern Uint32 FieldEffectLongScript[];
 
 struct FIELD_EFFECT;
 
-/* Queues an effect sprite for this frame at its depth, turned and scaled about
+/* Queues an effect sprite for this tick at its depth, turned and scaled about
    its pivot (fdEffectSprDraw, through the overlay's own import row). */
-void scJupiterLighthouseDrawSparkSpr(EFFECT_SPR *sprite);
+void scJupiterLighthouseDrawSparkSpr(EFFECT_SPR *spr);
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -142,12 +142,12 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	return ActorPlacements;
 }
 
-extern Sint16 JupiterLighthouse_PushedBlocks[];
+extern Sint16 JupiterLighthousePushedBlocks[];
 
 /* As Move lifts one of the hall's blocks: lifts it off its metatiles. */
 void scJupiterLighthouseLiftPushedBlock(void)
 {
-	fdActorLiftTargetBlock(JupiterLighthouse_PushedBlocks);
+	fdActorLiftTargetBlock(JupiterLighthousePushedBlocks);
 }
 
 void scActorRaiseFromMetatile(Sint32 id);
@@ -158,7 +158,7 @@ void scActorRaiseFromMetatile(Sint32 id);
 void scJupiterLighthousePlacePushedBlock(Sint32 unused, Sint32 id)
 {
 	ACTOR *actor;
-	Sint32 frame;
+	Sint32 frm;
 
 	actor = fdActorGet(id);
 	if(id == ACTOR_SOCKET_BLOCK) {
@@ -167,7 +167,7 @@ void scJupiterLighthousePlacePushedBlock(Sint32 unused, Sint32 id)
 			FIELD_METATILE(actor->z.fixed) != EMPTY_SOCKET_METATILE_Z)
 			return;
 		actor->motionFlg = 0;
-		for(frame = 0; frame < 16; frame++) {
+		for(frm = 0; frm < 16; frm++) {
 			actor->y.fixed += toFIXED(2);
 			syWait(1);
 		}
@@ -180,27 +180,27 @@ void scJupiterLighthousePlacePushedBlock(Sint32 unused, Sint32 id)
 
 #include "shared/actor_cycle_pictures.h"
 
-/* An actor's update while the lighthouse wakes: every other frame its sprite
+/* An actor's update while the lighthouse wakes: every other tick its sprite
    steps through six colour modes. */
 void scJupiterLighthouseFlashCols(ACTOR *actor)
 {
-	Uint32 frameCount = FrameCount;
+	Uint32 frmCnt = TickCount;
 
-	if(frameCount & 1)
-		fdActorSetSprColMode(actor, (frameCount >> 1) % 6);
+	if(frmCnt & 1)
+		fdActorSetSprColMode(actor, (frmCnt >> 1) % 6);
 }
 
 /* A rising particle's update: it circles the beam of light. */
 void scOrbUpdate(ACTOR *self)
 {
 	ACTOR *centre = fdActorGet(ACTOR_LOWER_BEAM);
-	Uint16 angle = self->tmr;
+	Uint16 ang = self->tmr;
 	FIXED  sine;
 	FIXED  x;
 	FIXED  z;
 
-	self->x.fixed = centre->x.fixed + syCos(angle) * (self->speedLimit + 3);
-	sine = syMathSin(angle);
+	self->x.fixed = centre->x.fixed + syCos(ang) * (self->speedLimit + 3);
+	sine = syMathSin(ang);
 	z = centre->z.fixed;
 	x = self->x.fixed;
 	z += sine * 2;
@@ -211,16 +211,16 @@ void scOrbUpdate(ACTOR *self)
 }
 
 /* Starts a particle circling the beam of light at a random height, every third
-   frame; every frame while FLAG_SCENE_TEMP_01 is set, which nothing in the hall
+   tick; every tick while FLAG_SCENE_TEMP_01 is set, which nothing in the hall
    sets. */
 void scOrbSpawnRising(void)
 {
 	ACTOR	  *center;
 	ACTOR	  *effect;
-	FIELD_SPR *sprite;
-	Sint32	   angle;
+	FIELD_SPR *spr;
+	Sint32	   ang;
 
-	if(fdScriptGetFlag(FLAG_SCENE_TEMP_01) == 0 && FrameCount % 3 != 0)
+	if(fdScriptGetFlag(FLAG_SCENE_TEMP_01) == 0 && TickCount % 3 != 0)
 		return;
 	center = fdActorGet(ACTOR_LOWER_BEAM);
 	if(fdScriptGetFlag(FLAG_SCENE_TEMP_01) != 0) {
@@ -241,37 +241,37 @@ void scOrbSpawnRising(void)
 			center->z.fixed);
 	}
 	if(effect != 0) {
-		sprite = effect->spr;
-		fdActorStartScript(effect, Orb_RisingScript);
+		spr = effect->spr;
+		fdActorStartScript(effect, OrbRisingScript);
 		scFieldActorSetSprCol(effect, SPRITE_COLOR_GRB);
 		effect->motionFlg = 0;
-		angle = syRandom() & 0xffff000;
-		effect->tmr = angle;
+		ang = syRandom() & 0xffff000;
+		effect->tmr = ang;
 		effect->userValue = 0;
 		effect->update = (OBJECT_UPDATE)scOrbUpdate;
 		effect->speedLimit =
 			syMathSin((Uint32)(syRandom() * 65535) >> 20) * 24 >> 16;
-		sprite->flg = 0;
-		sprite->pri = 1;
+		spr->flg = 0;
+		spr->pri = 1;
 	}
 }
 
-extern Sint32 JupiterLighthouse_SparksPerFrame;
-extern Sint32 JupiterLighthouse_SparkSoundOn;
+extern Sint32 JupiterLighthouseSparksPerTick;
+extern Sint32 JupiterLighthouseSparkSoundOn;
 
 void scJupiterLighthouseAddSparks(Sint32 count);
 
-/* A frame event while the lighthouse wakes: adds this frame's sparks to the
+/* A tick event while the lighthouse wakes: adds this tick's sparks to the
    ring, with the rising sound until the tower starts to shake. */
 void scJupiterLighthouseFeedSparkRing(void)
 {
-	if(JupiterLighthouse_SparkSoundOn != 0)
+	if(JupiterLighthouseSparkSoundOn != 0)
 		fdScriptPlaySnd(SE_ASCEND);
-	scJupiterLighthouseAddSparks(JupiterLighthouse_SparksPerFrame);
+	scJupiterLighthouseAddSparks(JupiterLighthouseSparksPerTick);
 }
 
-extern Uint32 JupiterLighthouse_BringInScript[];
-extern Sint32 JupiterLighthouse_NarrowBeamScript[];
+extern Uint32 JupiterLighthouseBringInScript[];
+extern Sint32 JupiterLighthouseNarrowBeamScript[];
 
 void scJupiterLighthouseEndSparkRing(void);
 
@@ -288,7 +288,7 @@ static __inline__ void scJupiterLighthouseBringInBeam(Sint32 id)
 	actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
 	actor->scaleY = -toFIXED(1);
 	actor->scaleX = toFIXED(1) / 10;
-	fdActorSetMovementTypeById(id, JupiterLighthouse_BringInScript);
+	fdActorSetMovementTypeById(id, JupiterLighthouseBringInScript);
 }
 
 /* Hover cast at the ladder's foot wakes the lighthouse: the leader faces north
@@ -331,26 +331,26 @@ void scJupiterLighthouseActivateTheLighthouse(void)
 	to[1] = 0;
 	to[2] = toFIXED(574);
 	scJupiterLighthouseStartSparkRing(from, to);
-	JupiterLighthouse_SparksPerFrame = 0;
-	JupiterLighthouse_SparkSoundOn = 1;
-	sySetFrameEvent(scJupiterLighthouseFeedSparkRing, EVENT_PASS_FRAME);
+	JupiterLighthouseSparksPerTick = 0;
+	JupiterLighthouseSparkSoundOn = 1;
+	sySetTickEvent(scJupiterLighthouseFeedSparkRing, EVENT_PASS_TICK);
 	for(i = 0; i < RING_PULSES; i++) {
-		JupiterLighthouse_SparksPerFrame = 0;
+		JupiterLighthouseSparksPerTick = 0;
 		syWait((RING_PULSES - i) / 2);
-		JupiterLighthouse_SparksPerFrame = 1;
+		JupiterLighthouseSparksPerTick = 1;
 		syWait(1);
 	}
 	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
 	fdMapGridSetShake(1, 1, 1);
-	JupiterLighthouse_SparksPerFrame = 1;
+	JupiterLighthouseSparksPerTick = 1;
 	syFieldScriptWait(90);
 	fdMapGridSetShake(3, 3, 1);
-	JupiterLighthouse_SparksPerFrame = 3;
-	JupiterLighthouse_SparkSoundOn = 0;
+	JupiterLighthouseSparksPerTick = 3;
+	JupiterLighthouseSparkSoundOn = 0;
 	syFieldScriptWait(40);
 	scJupiterLighthouseBringInBeam(ACTOR_LOWER_BEAM);
 	scJupiterLighthouseBringInBeam(ACTOR_UPPER_BEAM);
-	sySetFrameEvent(scOrbSpawnRising, EVENT_PASS_FRAME);
+	sySetTickEvent(scOrbSpawnRising, EVENT_PASS_TICK);
 	fdScriptPlaySnd(SE_CLATTER);
 	fdMapGridSetShake(6, 6, 1);
 	fdPaletteFadeApplySource(PALETTE_TINT_NONE, 0);
@@ -374,13 +374,13 @@ void scJupiterLighthouseActivateTheLighthouse(void)
 	fdActorSetAnimationSpeed(leader, ANIM_STEP_NORMAL);
 	fdActorSetSprFlags(
 		fdActorGetById(MainRoutineStateWork.leaderActorId), SPRITE_FLAG_SHADOW);
-	fdActorSetScript(ACTOR_LOWER_BEAM, JupiterLighthouse_NarrowBeamScript);
-	fdActorSetScript(ACTOR_UPPER_BEAM, JupiterLighthouse_NarrowBeamScript);
-	JupiterLighthouse_SparksPerFrame = 2;
+	fdActorSetScript(ACTOR_LOWER_BEAM, JupiterLighthouseNarrowBeamScript);
+	fdActorSetScript(ACTOR_UPPER_BEAM, JupiterLighthouseNarrowBeamScript);
+	JupiterLighthouseSparksPerTick = 2;
 	syFieldScriptWait(30);
-	JupiterLighthouse_SparksPerFrame = 1;
+	JupiterLighthouseSparksPerTick = 1;
 	syFieldScriptWait(30);
-	JupiterLighthouse_SparksPerFrame = 0;
+	JupiterLighthouseSparksPerTick = 0;
 	scFieldActorWaitForScriptEndById(ACTOR_LOWER_BEAM);
 	scFieldActorWaitForScriptEndById(ACTOR_UPPER_BEAM);
 	fdActorGetById(ACTOR_LOWER_BEAM)->scaleX = 0;
@@ -414,9 +414,8 @@ void scJupiterLighthouseActivateTheLighthouse(void)
 
 extern Sint32 PaletteCyclePausesInScripts;
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 /* Stepping into the hall's centre: the screen warms and a voice asks for the
    power of Anemos, once until the party leaves the centre. */
@@ -429,7 +428,7 @@ void scJupiterLighthouseHearTheVoice(void)
 		fdPaletteFadeApplySource(PALETTE_TINT_NONE, 0);
 		fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, 1);
 		fdPaletteFadeInterpolate(30);
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdActorSetAnimation(ACTOR_ISAAC, ANIM_STAND);
 		syFieldScriptWait(30);
 		/* "Holder of the star... Show the power of Anemos!" */
@@ -451,7 +450,7 @@ void scJupiterLighthouseAlexAppears(void)
 {
 	EFFECT_OPTIONS params;
 	ACTOR		  *actor;
-	Uint32		   frame;
+	Uint32		   frm;
 	FIXED		   x;
 	Sint32		   y;
 	Uint32		   random;
@@ -465,9 +464,9 @@ void scJupiterLighthouseAlexAppears(void)
 	params.type = SPRITE_PARTICLE;
 	params.startScaleX = toFIXED(2) / 5;
 	params.startScaleY = toFIXED(3);
-	for(frame = 0; frame < 32; frame++) {
+	for(frm = 0; frm < 32; frm++) {
 		syFieldScriptWait(1);
-		if(!(frame & 1)) {
+		if(!(frm & 1)) {
 			/* A whole pixel from 12 west of Alex to 11 east, and up to 31 over
 			   the 32 above his feet. */
 			random = syRandom();
@@ -481,7 +480,7 @@ void scJupiterLighthouseAlexAppears(void)
 					EFFECT_USE_PALETTE,
 				&params);
 		}
-		if(frame == 20)
+		if(frm == 20)
 			fdActorSetSprColById(ACTOR_ALEX, SPRITE_COLOR_BLINK);
 	}
 	fdActorSetSprColById(ACTOR_ALEX, SPRITE_COLOR_NORMAL);
@@ -490,9 +489,9 @@ void scJupiterLighthouseAlexAppears(void)
 
 /* The healer raises arcs of light over the target, which spins and flashes for
    two seconds to the revival jingle and then stands facing north. */
-void scJupiterLighthouseHealTarget(Sint32 actorId, Sint32 target)
+void scJupiterLighthouseHealTarget(Sint32 actorId, Sint32 tgt)
 {
-	Sint32 frame;
+	Sint32 frm;
 
 	fdBattleEffectStartArcEffect();
 	fdBattleEffectSetObjectUpdateMode(
@@ -500,23 +499,23 @@ void scJupiterLighthouseHealTarget(Sint32 actorId, Sint32 target)
 	fdScriptPlaySnd(SE_ASCEND);
 	syWait(50);
 	fdScriptPlaySnd(MUS_RECOVERING_AFTER_COMBAT);
-	for(frame = 0; frame < 120; frame++) {
+	for(frm = 0; frm < 120; frm++) {
 		{
-			ACTOR *actor = fdActorGet(target);
+			ACTOR *actor = fdActorGet(tgt);
 			Uint32 facing = actor->facing;
 
 			actor->facing = facing + FACING_STEP;
 		}
-		scFieldActorSetSprCol(fdActorGet(target),
-			(frame & 4) ? SPRITE_COLOR_WHITE : SPRITE_COLOR_NORMAL);
+		scFieldActorSetSprCol(fdActorGet(tgt),
+			(frm & 4) ? SPRITE_COLOR_WHITE : SPRITE_COLOR_NORMAL);
 		syWait(1);
 	}
-	fdActorGet(target)->facing = FACING_NORTH;
-	scFieldActorSetSprCol(fdActorGet(target), SPRITE_COLOR_NORMAL);
+	fdActorGet(tgt)->facing = FACING_NORTH;
+	scFieldActorSetSprCol(fdActorGet(tgt), SPRITE_COLOR_NORMAL);
 	fdBattleEffectSetObjectUpdateMode(fdActorGet(actorId), CASTER_LOOK_NORMAL);
 	fdBattleEffectWaitForArcGroups();
 	fdBattleEffectEndArcEffect();
-	fdActorSetAnimation(target, ANIM_STAND);
+	fdActorSetAnimation(tgt, ANIM_STAND);
 }
 
 /* On the way to the fight by the aerie, Alex's voice stops Felix, who looks
@@ -525,7 +524,7 @@ void scJupiterLighthouseHealTarget(Sint32 actorId, Sint32 target)
    encounters and Retreat is blocked. */
 void scJupiterLighthouseAlexHealsTheParty(void)
 {
-	Sint32 angle;
+	Sint32 ang;
 
 	if(!fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_FIGHT_WATCHED))
 		return;
@@ -552,8 +551,8 @@ void scJupiterLighthouseAlexHealsTheParty(void)
 	fdActorSetSprFlags(((void *)fdActorGet(ACTOR_ALEX)), 0);
 	scFieldActorSetSprCol(
 		((void *)fdActorGet(ACTOR_ALEX)), SPRITE_COLOR_HIDDEN);
-	angle = FACING_SOUTH;
-	fdActorSetPosAndFacing(ACTOR_ALEX, toFIXED(64), toFIXED(225), angle);
+	ang = FACING_SOUTH;
+	fdActorSetPosAndFacing(ACTOR_ALEX, toFIXED(64), toFIXED(225), ang);
 	scJupiterLighthouseAlexAppears();
 	syFieldScriptWait(40);
 	fdCameraMoveTo(68, CAMERA_KEEP, 240, 1);
@@ -615,17 +614,17 @@ const CUE *scGetCues(void)
 Sint32 scInit(void)
 {
 	ACTOR *actor;
-	Sint32 angle;
+	Sint32 ang;
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 	if(fdScriptGetFlag(FLAG_ISAAC_AND_IVAN_FELL))
 		fdScriptClearFlag(FLAG_ALEX_WAITING);
 	if(fdScriptGetFlag(FLAG_ALEX_WAITING)) {
-		angle = FACING_SOUTH;
-		fdActorSetPosAndFacing(ACTOR_ALEX, toFIXED(64), toFIXED(225), angle);
+		ang = FACING_SOUTH;
+		fdActorSetPosAndFacing(ACTOR_ALEX, toFIXED(64), toFIXED(225), ang);
 	}
-	fdActorPlaceBlocks(JupiterLighthouse_PushedBlocks);
+	fdActorPlaceBlocks(JupiterLighthousePushedBlocks);
 	fdActorSetMovementType(
 		fdActorGet(FIELD_TREASURE_ACTOR), MOVEMENT_TYPE_TAKE_LEADER_LAYER);
 	actor = fdActorGet(ACTOR_LOWER_BEAM);
@@ -642,7 +641,7 @@ Sint32 scInit(void)
 		/* The floor as the activation left it. */
 		fdMapGridCopyMetatilesLayered(58, 99, 3, 3, 41, 99);
 		fdMapGridCopyMetatilesLayered(123, 32, 1, 5, 106, 32);
-		sySetFrameEvent(scOrbSpawnRising, EVENT_PASS_FRAME);
+		sySetTickEvent(scOrbSpawnRising, EVENT_PASS_TICK);
 	}
 	return 0;
 }
@@ -677,12 +676,12 @@ Sint32 scPrepareMap(void)
 
 #include "shared/palette_cycle_set_pauses_in_scripts.h"
 
-extern Sint32 PaletteCycleFrame;
+extern Sint32 PaletteCycleTick;
 
-/* Restarts the palette cycle at the given frame. */
-static inline void scPaletteCycleSetFrame(Sint32 value)
+/* Restarts the palette cycle at the given tick. */
+static inline void scPaletteCycleSetTick(Sint32 value)
 {
-	PaletteCycleFrame = value;
+	PaletteCycleTick = value;
 }
 
 #include "shared/palette_cycle_step.h"
@@ -733,63 +732,63 @@ typedef struct SPARK_RING_STATE {
 	Sint16	   vramEntry;
 } SPARK_RING_STATE;
 
-/* A frame event: moves each live spark along the way between the ring's ends,
+/* A tick event: moves each live spark along the way between the ring's ends,
    swinging out and back on a half sine, and draws it. */
 void scJupiterLighthouseUpdateSparkRing(void)
 {
 	SPARK_RING_STATE *state = Ram_HeapSlots->menuState;
 	SPARK			 *spark = state->sparks;
-	EFFECT_SPR		 *sprite = state->sprs;
-	Sint32			  position[3];
+	EFFECT_SPR		 *spr = state->sprs;
+	Sint32			  pos[3];
 	Sint32			  duration;
 	Sint32			  i;
 
-	for(i = 0; i < ACTIVATION_SPARKS; sprite++, i++, spark++) {
+	for(i = 0; i < ACTIVATION_SPARKS; spr++, i++, spark++) {
 		duration = spark->duration;
 		if(spark->age < 0 || spark->age > duration)
 			continue;
 		{
 			FIXED sine =
 				syMathSin((Sint32)((spark->age * (TRIG_TURN / 2)) / duration));
-			position[0] = state->from[0] +
+			pos[0] = state->from[0] +
 				(state->to[0] - state->from[0]) * spark->age / duration +
 				sine * spark->dx;
 			sine =
 				syMathSin((Sint32)((spark->age * (TRIG_TURN / 2)) / duration));
-			position[1] = state->from[1] +
+			pos[1] = state->from[1] +
 				(state->to[1] - state->from[1]) * spark->age / duration +
 				sine * spark->dy;
-			position[2] = state->from[2] +
+			pos[2] = state->from[2] +
 				(state->to[2] - state->from[2]) * spark->age / duration;
-			fdCameraWorldToScreen(position);
-			sprite->x = position[0];
-			sprite->y = position[2];
-			scJupiterLighthouseDrawSparkSpr(sprite);
+			fdCameraWorldToScreen(pos);
+			spr->x = pos[0];
+			spr->y = pos[2];
+			scJupiterLighthouseDrawSparkSpr(spr);
 			spark->age++;
 		}
 	}
 }
 
 /* Sends count new sparks along the ring, each swinging up to 64 pixels out to a
-   random side (never straight down) and taking 16 to 31 frames to arrive. */
-void scJupiterLighthouseAddSparks(Sint32 count)
+   random side (never straight down) and taking 16 to 31 ticks to arrive. */
+void scJupiterLighthouseAddSparks(Sint32 cnt)
 {
 	SPARK_RING_STATE *state = Ram_HeapSlots->menuState;
 	SPARK			 *spark;
-	Sint32			  angle;
+	Sint32			  ang;
 	Sint32			  i;
 	FIXED			  radius;
 	Sint32			  duration;
 
-	if(count > 0) {
-		i = count;
+	if(cnt > 0) {
+		i = cnt;
 		do {
 			spark = &state->sparks[state->next];
-			angle = ((syRandom() * 3) >> 2) + DEGtoANG(135);
+			ang = ((syRandom() * 3) >> 2) + DEGtoANG(135);
 			radius = toFIXED(64);
 			duration = syRandomBelow(16) + 16;
-			spark->dx = FIXEDtoINT(syMulFX(syCos(angle), radius));
-			spark->dy = FIXEDtoINT(-syMulFX(syMathSin(angle), radius));
+			spark->dx = FIXEDtoINT(syMulFX(syCos(ang), radius));
+			spark->dy = FIXEDtoINT(-syMulFX(syMathSin(ang), radius));
 			spark->duration = duration;
 			spark->age = 0;
 			state->next++;
@@ -806,7 +805,7 @@ void scJupiterLighthouseStartSparkRing(const Sint32 *from, const Sint32 *to)
 	SPARK_RING_STATE *state =
 		syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(SPARK_RING_STATE));
 	ACTOR	   *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	EFFECT_SPR *sprite;
+	EFFECT_SPR *spr;
 	SPARK	   *spark;
 	Sint32		entry;
 	Sint32		tile;
@@ -824,14 +823,14 @@ void scJupiterLighthouseStartSparkRing(const Sint32 *from, const Sint32 *to)
 	tile = mnVRAMLoad(entry, sizeof(state->tiles), state);
 	state->tile = tile;
 	state->vramEntry = entry;
-	for(i = 0, spark = state->sparks, sprite = state->sprs;
-		i < ACTIVATION_SPARKS; i++, sprite++, spark++) {
+	for(i = 0, spark = state->sparks, spr = state->sprs; i < ACTIVATION_SPARKS;
+		i++, spr++, spark++) {
 		scJupiterLighthouseInitSparkSpr(
-			sprite, 4, 4, 0, tile + (i & (ORB_PICTURES - 1)) * 2);
-		sprite->oam.fullCol = 1;
-		sprite->oam.pal = 0;
-		sprite->oam.pri = fdActorGetSprPriority(leader);
-		sprite->depth = fdActorGetSprDepth(leader) - 1;
+			spr, 4, 4, 0, tile + (i & (ORB_PICTURES - 1)) * 2);
+		spr->oam.fullCol = 1;
+		spr->oam.pal = 0;
+		spr->oam.pri = fdActorGetSprPriority(leader);
+		spr->depth = fdActorGetSprDepth(leader) - 1;
 		spark->age = -1;
 	}
 	{
@@ -839,7 +838,7 @@ void scJupiterLighthouseStartSparkRing(const Sint32 *from, const Sint32 *to)
 
 		state->next = firstSlot;
 	}
-	sySetFrameEvent(scJupiterLighthouseUpdateSparkRing, EVENT_PASS_FRAME);
+	sySetTickEvent(scJupiterLighthouseUpdateSparkRing, EVENT_PASS_TICK);
 }
 
 /* Stops the spark ring and frees its pictures and state. */
@@ -872,7 +871,7 @@ UNUSED void scLightSprsSetPriority(Sint32 value)
 
 #include "../field/field_effect_move.c"
 
-extern const Sint32 *FieldEffect_DurationScripts[];
+extern const Sint32 *FieldEffectDurationScripts[];
 
 #define EFFECT_SET_MODE	  fdActorSelectAnimation
 #define EFFECT_SET_SCRIPT fdActorStartScript
@@ -894,13 +893,12 @@ extern const Sint32 *FieldEffect_DurationScripts[];
 #include "../field/field_effect_advance_motion.c"
 
 #undef METATILE_PUSH_SLOT_ENTRY
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 #include "shared/cracked_tile_drop_in.h"
 
-void syGameFlagSetByte(Sint32 flag, Sint32 value);
+void syGameFlagSetByte(Sint32 flg, Sint32 value);
 
 #include "shared/cracked_tile_step.h"
 
@@ -912,16 +910,16 @@ void scJupiterLighthouseActivateTheLighthouse(void);
 /* clang-format off */
 #include "shared/field_effect_duration_scripts.c"
 
-/* The beam of light widens over 32 frames. */
-Uint32 JupiterLighthouse_BringInScript[] = {
+/* The beam of light widens over 32 ticks. */
+Uint32 JupiterLighthouseBringInScript[] = {
 	SC_ADD(SW_SCALE_X, toFIXED(1) / 16),
 	SC_WAIT(1),
 	SC_LOOP(32, SC_TOP),
 	SC_END,
 };
 
-/* The beam of light narrows away over 140 frames. */
-Sint32 JupiterLighthouse_NarrowBeamScript[] = {                                                               
+/* The beam of light narrows away over 140 ticks. */
+Sint32 JupiterLighthouseNarrowBeamScript[] = {                                                               
 	  SC_ADD(SW_SCALE_X, -960),                                                 
 	  SC_WAIT(1),                                                              
 	  SC_LOOP(140, SC_TOP),                                                     
@@ -929,7 +927,7 @@ Sint32 JupiterLighthouse_NarrowBeamScript[] = {
   };
 
 /* The three blocks Move pushes, ended by -1. */
-Sint16 JupiterLighthouse_PushedBlocks[] = {
+Sint16 JupiterLighthousePushedBlocks[] = {
 	ACTOR_FIRST_PUSHED_BLOCK, ACTOR_FIRST_PUSHED_BLOCK + 1, ACTOR_LAST_PUSHED_BLOCK, -1,
 };
 
@@ -968,10 +966,10 @@ ACTOR_PLACE ActorPlacements[] = {
 
 #include "shared/orb_rising_script.c"
 
-/* How many sparks the ring takes each frame, and whether the rising sound */
+/* How many sparks the ring takes each tick, and whether the rising sound */
 /* plays with them. */
-Sint32 JupiterLighthouse_SparksPerFrame = 0;
-Sint32 JupiterLighthouse_SparkSoundOn = 1;
+Sint32 JupiterLighthouseSparksPerTick = 0;
+Sint32 JupiterLighthouseSparkSoundOn = 1;
 
 CUE SceneCues[] = {
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
@@ -1005,7 +1003,7 @@ CUE SceneCues[] = {
 	{CUE_TABLE_END},
 };
 
-Sint32 PaletteCycleFrame = -1;
+Sint32 PaletteCycleTick = -1;
 
 Sint32 PaletteCyclePausesInScripts = 1;
 
@@ -1016,8 +1014,8 @@ Sint32 WhirlwindEndScript[] = {
 };
 /* clang-format on */
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };

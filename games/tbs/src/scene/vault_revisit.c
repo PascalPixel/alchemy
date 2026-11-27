@@ -48,10 +48,10 @@
 #include "scene/vault_range.h"
 #include "text/msg_ids.h"
 
-extern SCENE_ENTRANCE VaultRevisit_Entrances[];
-extern Uint32		  VaultRevisit_Exits[];
-extern ACTOR_PLACE	  VaultRevisit_ActorPlacements[];
-extern CUE			  VaultRevisit_Cues[];
+extern SCENE_ENTRANCE VaultRevisitEntrances[];
+extern Uint32		  VaultRevisitExits[];
+extern ACTOR_PLACE	  VaultRevisitActorPlacements[];
+extern CUE			  VaultRevisitCues[];
 
 /* The townspeople, the dog and Sap, standing where vault.c places them. */
 typedef enum VAULT_REVISIT_ACTOR_ID {
@@ -112,7 +112,7 @@ enum {
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return VaultRevisit_Entrances;
+	return VaultRevisitEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -122,13 +122,13 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return VaultRevisit_Exits;
+	return VaultRevisitExits;
 }
 
 /* The townspeople, the dog and Sap. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	return VaultRevisit_ActorPlacements;
+	return VaultRevisitActorPlacements;
 }
 
 /* Stands the person still while they say the message already chosen. */
@@ -385,21 +385,21 @@ static void scVaultRevisitReadMindOnJailKey(void)
 	}
 }
 
-/* Jumps the actor to (x, z), launched upward at `velocityY`, and waits there
+/* Jumps the actor to (x, z), launched upward at `velY`, and waits there
    until it lands, a second at most. */
 static void scVaultRevisitJumpActorToAndWait(
-	Sint32 actorId, Sint32 x, Sint32 z, FIXED velocityY)
+	Sint32 actorId, Sint32 x, Sint32 z, FIXED velY)
 {
 	ACTOR *jumpingActor = fdActorGet(actorId);
-	Sint32 frames;
+	Sint32 ticks;
 	fdActorSetSpeed(actorId, 3);
 	jumpingActor->gravity = toFIXED(1) / 2;
 	jumpingActor->bounce = 0;
-	jumpingActor->velY = velocityY;
+	jumpingActor->velY = velY;
 	fdActorSetSprFlags(jumpingActor, 0);
 	fdActorMoveToAndWait(actorId, x, z);
 	fdActorSetPos(actorId, x, z);
-	for(frames = FRAMES_PER_SECOND; frames != 0; --frames) {
+	for(ticks = TICKS_PER_SECOND; ticks != 0; --ticks) {
 		sySynch(1);
 		if((FIXEDtoINT(jumpingActor->velY)) == 0)
 			break;
@@ -543,7 +543,7 @@ static void scVaultRevisitPeerIntoWell(void)
    Reveal among the gravestones. */
 const CUE *scGetCues(void)
 {
-	return VaultRevisit_Cues;
+	return VaultRevisitCues;
 }
 
 /* Patched editions keep Sap on the cliff top when the party keeps its position,
@@ -592,15 +592,15 @@ Sint32 scInit(void)
 
 #include "shared/field_effect_duration_scripts.c"
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 #include "shared/vault_well_routes.c"
 
-SCENE_ENTRANCE VaultRevisit_Entrances[] = {
+SCENE_ENTRANCE VaultRevisitEntrances[] = {
 	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
 		-1, -1, 0},
 	{VAULT_REVISIT_FROM_VAULT, CONDITION_ALWAYS, 400, 0, 472, FACING_NORTH, 0,
@@ -630,7 +630,7 @@ SCENE_ENTRANCE VaultRevisit_Entrances[] = {
 	{SCENE_TABLE_END},
 };
 
-Uint32 VaultRevisit_Exits[] = {
+Uint32 VaultRevisitExits[] = {
 	SCENE_EXITS(VaultRevisit),
 	SCENE_EXIT(
 		VAULT_REVISIT_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_VAULT_SOUTH),
@@ -659,7 +659,7 @@ Uint32 VaultRevisit_Exits[] = {
 };
 
 /* clang-format off */
-ACTOR_PLACE VaultRevisit_ActorPlacements[] = {
+ACTOR_PLACE VaultRevisitActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		381, 0, 342, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -672,9 +672,9 @@ ACTOR_PLACE VaultRevisit_ActorPlacements[] = {
 		124, 0, 196, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
 		244, 0, 300, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, (Sint32)Vault_BoyRoundTheWellRoute,
+	ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, (Sint32)VaultBoyRoundTheWellRoute,
 		132, 0, 380, FACING_WEST, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, (Sint32)Vault_GirlRoundTheWellRoute,
+	ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, (Sint32)VaultGirlRoundTheWellRoute,
 		132, 0, 420, FACING_EAST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
 		332, 0, 412, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
@@ -693,7 +693,7 @@ ACTOR_PLACE VaultRevisit_ActorPlacements[] = {
 
 #include "shared/vault_door_metatiles.c"
 
-CUE VaultRevisit_Cues[] = {
+CUE VaultRevisitCues[] = {
 	{ CUE_EXIT, METATILE_BEHAVIOR_VAULT_SOUTH_GATE, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_SOUTH },
 	{ CUE_EXIT, METATILE_BEHAVIOR_VAULT_NORTH_GATE, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_NORTH },
 	{ CUE_EXIT, METATILE_BEHAVIOR_VAULT_HIDDEN_PASSAGE, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE },

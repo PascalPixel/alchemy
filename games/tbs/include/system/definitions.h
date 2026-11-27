@@ -26,7 +26,7 @@
 #define DISPSTAT_VCOUNT_LINE(line) ((line) << 8)
 /* line being drawn, 0..227 */
 #define REG_VCOUNT				   (*(volatile Uint16 *)0x04000006)
-/* The lines REG_VCOUNT counts through in a frame: the DISPLAY_HEIGHT drawn and
+/* The lines REG_VCOUNT counts through in a tick: the DISPLAY_HEIGHT drawn and
    those of VBlank. A line's HBlank comes before the next line is drawn, the
    last line's before line 0. */
 #define DISPLAY_TOTAL_LINES		   228
@@ -402,7 +402,7 @@ typedef enum DISPLAY_CONTROL {
    system.h, so the prototypes are here with the constants they take. The BIOS
    CpuSet call (system/bios.s): copies or fills by halfwords or words, as the
    CPU_SET_ flags above the count say. */
-void Bios_CpuSet(const void *source, void *destination, Uint32 control);
+void Bios_CpuSet(const void *src, void *dst, Uint32 control);
 /* The C library's signed division and remainder (system/iwram_entry.s), which
    `/` and `%` compile to; declared for the functions that call them by name. */
 Sint32 __divsi3(Sint32 numerator, Sint32 denominator);
@@ -614,13 +614,13 @@ STATIC_ASSERT(offsetof(EVENT, flg) == 6);
    event is suspended, so no pass matches it.
 
    The two passes: the VBlank handler runs EVENT_PASS_VBLANK's events, and
-   sySynch() runs EVENT_PASS_FRAME's once a frame. Each ranks 0x80, the middle
-   of the low byte, so an event added at EVENT_PASS_FRAME + 10 runs before those
-   added at EVENT_PASS_FRAME. */
+   sySynch() runs EVENT_PASS_TICK's once a tick. Each ranks 0x80, the middle
+   of the low byte, so an event added at EVENT_PASS_TICK + 10 runs before those
+   added at EVENT_PASS_TICK. */
 #define EVENT_PASS_VBLANK		0x480
-#define EVENT_PASS_FRAME		0xc80
+#define EVENT_PASS_TICK			0xc80
 /* The highest rank in the VBlank pass: an event added here runs first of the
-   VBlank events, before the frame's first line is drawn. */
+   VBlank events, before the tick's first line is drawn. */
 #define EVENT_PASS_VBLANK_FIRST (EVENT_PASS_VBLANK + 127)
 /* An empty slot's priority, sorted last: the sort reads priorities signed. */
 #define EVENT_PRIORITY_EMPTY	-1
@@ -790,7 +790,7 @@ typedef enum HEAP_SLOT {
 	HEAP_SLOT_BATTLE_CANVAS = 40,
 	/* The running battle effect's tile sheet, or its set of mote metatiles. */
 	HEAP_SLOT_BATTLE_SHEET = 41,
-	/* The battle's entry transition timer, in frames (BattleEntryTimer). */
+	/* The battle's entry transition timer, in ticks (BattleEntryTimer). */
 	HEAP_SLOT_BATTLE_ENTRY_TIMER = 42,
 	/* The title intro's state (INTRO_STATE). */
 	HEAP_SLOT_TITLE_INTRO = 43,
@@ -818,9 +818,9 @@ typedef enum HEAP_SLOT {
 	   around each save, load, copy or delete and each scan of the files, as the
 	   main menu's (mnSaveScanFileSummaries). */
 	HEAP_SLOT_BUP = 51,
-	/* Lives for one frame: sySynch() builds the OAM list in it, and the field
+	/* Lives for one tick: sySynch() builds the OAM list in it, and the field
 	   sprite decoder keeps its code there between its own uses. */
-	HEAP_SLOT_FRAME_SCRATCH = 52,
+	HEAP_SLOT_TICK_SCRATCH = 52,
 	/* A RAM copy of fdTileCopyStrided, which uploads field sprite pictures to
 	   VRAM; loaded with the animation pools. */
 	HEAP_SLOT_PICTURE_UPLOADER = 53,
@@ -867,14 +867,14 @@ struct SCREEN_TRANSITION_STATE;
 	(*(struct SCREEN_TRANSITION_STATE * \
 			*)&HeapSlots[HEAP_SLOT_SCREEN_TRANSITION])
 /* HEAP_SLOT_BATTLE_ENTRY_TIMER: the battle's entry transition timer in
-   frames. */
+   ticks. */
 #define BattleEntryTimer	 (*(Sint32 **)&HeapSlots[HEAP_SLOT_BATTLE_ENTRY_TIMER])
 /* The running Psynergy effect's state (FIELD_EFFECT_STATE), heap slot
    HEAP_SLOT_FIELD_EFFECT. */
 #define FieldEffectStateWork (*(void **)&HeapSlots[HEAP_SLOT_FIELD_EFFECT])
 
 /* The affine group. Sprite rotation and scale, and the affine matrices handed
-   out each frame. A sprite's rotation and scale: scales in 8.8 fixed point (256
+   out each tick. A sprite's rotation and scale: scales in 8.8 fixed point (256
    is full size), the angle in 1/65536 turns. */
 typedef struct AFFINE_TRANSFORM {
 	/* 8.8 fixed point, read signed: negative mirrors the sprite */
@@ -951,18 +951,18 @@ STATIC_ASSERT(offsetof(SYSTEM_STUB_TABLE, arcTan2) == 64);
 STATIC_ASSERT(offsetof(SYSTEM_STUB_TABLE, sin) == 88);
 STATIC_ASSERT(offsetof(SYSTEM_STUB_TABLE, cos) == 96);
 
-/* The frame group. The frame loop's globals: the VBlanks a frame takes, the CPU
+/* The tick group. The tick loop's globals: the frames a tick takes, the CPU
    load display and the VBlank flags.
 
    sySynch() (system/system_frame.c) and the VBlank handler share these
    metatiles; those marked volatile are changed by an interrupt or counted by
-   sySynch() while other code reads them. Frames in a second: the screen
+   sySynch() while other code reads them. Ticks in a second: the screen
    refreshes about 60 times a second. */
-#define FRAMES_PER_SECOND 60
+#define TICKS_PER_SECOND 60
 
 /* The io_write_queue group. The register write queue that VBlank carries out
-   after each finished frame. The register writes VBlank carries out once the
-   frame loop has finished a frame; syIOWriteQueueFlushPending empties it. */
+   after each finished tick. The register writes VBlank carries out once the
+   tick loop has finished a tick; syIOWriteQueueFlushPending empties it. */
 typedef struct IO_WRITE_QUEUE {
 	Uint16 cnt; /* Entries waiting, at most 32. */
 	Uint16 pad;
@@ -1107,10 +1107,10 @@ STATIC_ASSERT(offsetof(PROJECTION, centerY) == 16);
 #define syRamIWRAMHeapEnd \
 	FIXED_ADDRESS((Uint8 *), 0x03007800, CartridgeResetMarker)
 
-/* The stack top sySynch() runs its frames from: the 512 bytes below it are what
-   the frame loop, its events and the VBlank work always have. */
-#define Ram_FrameWaitStackTop \
-	FIXED_ADDRESS((Uint8 *), 0x03007a00, FrameWaitStackTop)
+/* The stack top sySynch() runs its ticks from: the 512 bytes below it are what
+   the tick loop, its events and the VBlank work always have. */
+#define Ram_TickWaitStackTop \
+	FIXED_ADDRESS((Uint8 *), 0x03007a00, TickWaitStackTop)
 
 /* IWRAM variables the code reaches as constants; German moves them 16 bytes
    up. */
@@ -1145,7 +1145,7 @@ STATIC_ASSERT(offsetof(PROJECTION, centerY) == 16);
 typedef struct SERIAL_PACKET {
 	/* SERIAL_STATE's packet number when the packet was built */
 	Uint8 packetNum;
-	/* The consoles heard from before but not this frame (receivedMask ^
+	/* The consoles heard from before but not this tick (receivedMask ^
 	   currentMask); a receiver complements it once the checksum is good. */
 	Uint8 missingMask;
 	/* The complement of the sum of the packet's first 14 halfwords, taken with
@@ -1178,7 +1178,7 @@ typedef enum SERIAL_MODE {
 
 /* The link status bits sySerialExchangePayloads returns. */
 typedef enum LINK_STAT {
-	LINK_STATUS_HEARD_BOTH = 3,	 /* both consoles heard from this frame */
+	LINK_STATUS_HEARD_BOTH = 3,	 /* both consoles heard from this tick */
 	LINK_STATUS_CLOCKING = 0x80, /* this console clocks the transfers */
 	/* The last transfer interrupt found SIOCNT's error bit (SIO_ERROR) set. */
 	LINK_STATUS_ERROR = 0x1000,
@@ -1197,9 +1197,9 @@ typedef struct SERIAL_STATE {
 	Uint8 mode;
 	Uint8 phase;		/* an SERIAL_PHASE */
 	Uint8 receivedMask; /* the consoles heard from since the link began */
-	Uint8 curMask;		/* the consoles heard from this frame */
+	Uint8 curMask;		/* the consoles heard from this tick */
 	/* Each console's SERIAL_CHANNEL_FLAG bits, set by the transfer interrupt
-	   and cleared each frame. */
+	   and cleared each tick. */
 	Uint8 channelFlg[4];
 	/* Nonzero lets a new packet restart timer 3. */
 	Uint8 transferEnabled;
@@ -1209,7 +1209,7 @@ typedef struct SERIAL_STATE {
 	   meanwhile. */
 	Uint8 transferError;
 	Uint8 reservedAfterError;
-	/* The packet number, counted up each frame once connected. */
+	/* The packet number, counted up each tick once connected. */
 	Uint8 packetNum;
 	Uint8 reservedAfterPacketNum[8];
 	/* The halfword of sendBuf[1] sent next; -1 between packets, when
@@ -1226,8 +1226,8 @@ typedef struct SERIAL_STATE {
 	Uint16 *incomingBuf[4];
 	/* Each console's last complete packet, swapped in by the interrupt. */
 	Uint16 *readyBuf[4];
-	/* The packets the frame code checks and copies, swapped with readyBuf each
-	   frame. */
+	/* The packets the tick code checks and copies, swapped with readyBuf each
+	   tick. */
 	Uint16 *pendingBuf[4];
 	/* The buffers' memory: two 32-byte send buffers, then 96 bytes a console
 	   for its incoming, ready and pending packets. */
@@ -1241,7 +1241,7 @@ STATIC_ASSERT(offsetof(SERIAL_STATE, sendIdx) == 20);
 STATIC_ASSERT(offsetof(SERIAL_STATE, storage) == 96);
 
 /* SERIAL_STATE.channelFlg: what the transfer interrupts saw of a console's
-   packets since the last frame. */
+   packets since the last tick. */
 typedef enum SERIAL_CHANNEL_FLAG {
 	SERIAL_CHANNEL_PACKET_COMPLETE = 1, /* its fourteenth halfword arrived */
 	/* a transfer interrupt found SIOCNT's error bit (SIO_ERROR) set */

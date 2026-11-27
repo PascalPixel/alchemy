@@ -91,10 +91,10 @@ Sint32 fdMapGridIsSandMetatile(Sint32 x, Sint32 z, Sint32 layer)
 	FIELD_STATE *event = Ram_HeapSlots->fieldState;
 	Sint32		 column = x;
 	if(event->mode == ACTOR_SYSTEM_WORLD_MAP) {
-		Sint32 position[3];
+		Sint32 pos[3];
 
-		SET_VECTOR(position, column, 0, z);
-		column = (Uint32)(fdWorldMapGetCollisionStub(position) -
+		SET_VECTOR(pos, column, 0, z);
+		column = (Uint32)(fdWorldMapGetCollisionStub(pos) -
 					 WORLD_MAP_COLLISION_WALKABLE_FIRST) <=
 			WORLD_MAP_COLLISION_SHALLOW_WATER -
 				WORLD_MAP_COLLISION_WALKABLE_FIRST;
@@ -126,13 +126,13 @@ Sint32 fdMapGridIsWaterMetatile(Sint32 x, Sint32 z, Sint32 layer)
 	FIELD_STATE *event = Ram_HeapSlots->fieldState;
 
 	if(event->mode == ACTOR_SYSTEM_WORLD_MAP) {
-		Sint32 position[3];
+		Sint32 pos[3];
 		Sint32 collision;
 
-		position[1] = 0;
-		position[0] = x;
-		position[2] = z;
-		collision = fdWorldMapGetCollisionStub(position);
+		pos[1] = 0;
+		pos[0] = x;
+		pos[2] = z;
+		collision = fdWorldMapGetCollisionStub(pos);
 		return (Uint32)(collision - WORLD_MAP_COLLISION_WATER_FIRST) <=
 			WORLD_MAP_COLLISION_SEA_LAST - WORLD_MAP_COLLISION_WATER_FIRST;
 	}
@@ -191,24 +191,24 @@ Uint8 fdMapGridSetMetatileAttributesAt(
 Uint8 fdMapGridSetMetatileAttributeBitsAt(
 	Sint32 x, Sint32 z, Sint32 layer, Sint32 bits)
 {
-	Sint32		  flags = fdMapGridGetMetatileAttributesAt(x, z, layer);
+	Sint32		  flg = fdMapGridGetMetatileAttributesAt(x, z, layer);
 	MAP_METATILE *metatile = fdMapGridGetMetatileAt(x, z, layer);
 
-	flags |= bits;
-	metatile->attributeB = flags;
-	return flags;
+	flg |= bits;
+	metatile->attributeB = flg;
+	return flg;
 }
 
 /* Clears bits in the attribute byte of the map metatile at x, z in layer. */
 Uint8 fdMapGridClearAttributeBBitsAt(
 	Sint32 x, Sint32 z, Sint32 layer, Sint32 bits)
 {
-	Sint32		  flags = fdMapGridGetMetatileAttributesAt(x, z, layer);
+	Sint32		  flg = fdMapGridGetMetatileAttributesAt(x, z, layer);
 	MAP_METATILE *metatile = fdMapGridGetMetatileAt(x, z, layer);
 
-	flags &= ~bits;
-	metatile->attributeB = flags;
-	return flags;
+	flg &= ~bits;
+	metatile->attributeB = flg;
+	return flg;
 }
 
 /* Returns 1 when two upright cylinders overlap, their centres closer on the
@@ -280,14 +280,14 @@ void fdPsynergyShrinkToCaster(ACTOR *actor, Sint32 x, Sint32 y, Sint32 z)
 }
 
 /* Spawns a sparkle at x, y, z that hops off in a random direction 8 to 32
-   pixels away at 1 to 2 pixels a frame. */
+   pixels away at 1 to 2 pixels a tick. */
 ACTOR *fdBattleEffectSpawnScatterParticle(Sint32 x, Sint32 y, Sint32 z)
 {
 	ACTOR *actor = fdActorSpawn(SPRITE_SPARKLE, x, y, z);
 	Sint32 magnitude;
 
 	if(actor != NULL) {
-		fdActorStartScriptStub(actor, FieldEffect_FragmentScript);
+		fdActorStartScriptStub(actor, FieldEffectFragmentScript);
 		actor->speedLimit = syRandom() + toFIXED(1);
 		actor->acceleration = toFIXED(1);
 		actor->motionFlg = ACTOR_FALLS;
@@ -305,39 +305,39 @@ ACTOR *fdBattleEffectSpawnScatterParticle(Sint32 x, Sint32 y, Sint32 z)
 Sint32 fdResourceTableCountFreeBlocks(void)
 {
 	Uint8 *marker = VramCacheBlockOwners;
-	Sint32 freeCount;
+	Sint32 freeCnt;
 	Sint32 remaining;
 
-	freeCount = 0;
+	freeCnt = 0;
 	remaining = VRAM_BLOCK_COUNT;
 	do {
 		if(*marker++ == VRAM_BLOCK_OWNER_FREE) {
-			freeCount++;
+			freeCnt++;
 		}
 		remaining--;
 	} while(remaining != 0);
-	return freeCount;
+	return freeCnt;
 }
 
-/* Makes sourceSprite share sharedSprite's VRAM block, releasing its own; with
-   no sharedSprite it keeps its block. */
-void *fdSprShareVRAMCacheEntry(void *sourceSprite, void *sharedSprite)
+/* Makes srcSpr share sharedSpr's VRAM block, releasing its own; with
+   no sharedSpr it keeps its block. */
+void *fdSprShareVRAMCacheEntry(void *srcSpr, void *sharedSpr)
 {
 	SPR *shared;
-	SPR *sprite;
+	SPR *spr;
 
-	sprite = sourceSprite;
+	spr = srcSpr;
 	shared = NULL;
-	if(sprite != NULL) {
-		if(sharedSprite == NULL) {
-			sprite->retainCacheEntry = 1;
+	if(spr != NULL) {
+		if(sharedSpr == NULL) {
+			spr->retainCacheEntry = 1;
 		} else {
-			syVRAMCacheFreeEntry(sprite->slot);
-			sprite->slot = ((SPR *)sharedSprite)->slot;
-			sprite->retainCacheEntry = 1;
-			sprite = sharedSprite;
+			syVRAMCacheFreeEntry(spr->slot);
+			spr->slot = ((SPR *)sharedSpr)->slot;
+			spr->retainCacheEntry = 1;
+			spr = sharedSpr;
 		}
-		shared = sprite;
+		shared = spr;
 	}
 	return shared;
 }
@@ -398,9 +398,9 @@ void fdActorSetOthersPaused(
 /* The channels of those colours, three a colour, before the OBJ colours'. */
 #define BG_CHANNELS (PALETTE_FADE_BG_COLORS * 3)
 
-/* Fades the palettes to color over frames frames, keeping the field's colours
+/* Fades the palettes to color over ticks ticks, keeping the field's colours
    for fdStartPaletteTransition; FLAG_PSYNERGY_TINTED is set while it holds. */
-void fdStartColTransition(Sint32 frames, Sint32 color)
+void fdStartColTransition(Sint32 ticks, Sint32 col)
 {
 	FIELD_STATE	 *field = Ram_HeapSlots->fieldState;
 	PALETTE_FADE *state = Ram_HeapSlots->palFade;
@@ -414,15 +414,15 @@ void fdStartColTransition(Sint32 frames, Sint32 color)
 			DMA_COPY_WORDS(BG_CHANNELS / 2), REG_DMA3);
 	syDMAXCopy(state->tgt, state->cur, DMA_COPY_WORDS(sizeof state->cur / 4),
 		REG_DMA3);
-	fdPaletteFadeSetTarget(PALETTE_TINT_CUSTOM | color, PALETTES_BG);
+	fdPaletteFadeSetTarget(PALETTE_TINT_CUSTOM | col, PALETTES_BG);
 	syGameFlagSet(FLAG_PSYNERGY_TINTED);
-	fdPaletteFadeStartInterpolation(frames);
+	fdPaletteFadeStartInterpolation(ticks);
 }
 
-/* Fades the palettes back from fdStartColTransition's colour over frames
-   frames, the BG half to grey while Reveal is active; clears
+/* Fades the palettes back from fdStartColTransition's colour over ticks
+   ticks, the BG half to grey while Reveal is active; clears
    FLAG_PSYNERGY_TINTED. */
-void fdStartPaletteTransition(Sint32 frames)
+void fdStartPaletteTransition(Sint32 ticks)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	Sint32		 savedPalettes = (Sint32)state->savedFadeTgt;
@@ -433,40 +433,40 @@ void fdStartPaletteTransition(Sint32 frames)
 	else
 		fdPaletteFadeSetTarget(savedPalettes, PALETTES_BG);
 	syGameFlagClear(FLAG_PSYNERGY_TINTED);
-	fdPaletteFadeStartInterpolation(frames);
+	fdPaletteFadeStartInterpolation(ticks);
 }
 
-/* Tints the field for a Psynergy animation: a tint chosen by the frame counter
+/* Tints the field for a Psynergy animation: a tint chosen by the tick counter
    (so each cast looks a little different), fixed for some animations, and
-   forced by the tint flags; then fades towards it over eight frames. The
+   forced by the tint flags; then fades towards it over eight ticks. The
    palettes are copied by fdStartColTransition. */
 void fdPsynergyFadeToCastCol(void)
 {
 	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
 	Sint32				tint;
-	Sint32				animation;
+	Sint32				anm;
 
-	tint = FrameCount & 7;
-	animation = scene->fieldPsynergy;
-	if(animation == FIELD_PSYNERGY_POUND)
+	tint = TickCount & 7;
+	anm = scene->fieldPsynergy;
+	if(anm == FIELD_PSYNERGY_POUND)
 		tint = PSYNERGY_TINT_BLUE;
-	if(animation == FIELD_PSYNERGY_BLAZE)
+	if(anm == FIELD_PSYNERGY_BLAZE)
 		tint = PSYNERGY_TINT_RED;
-	if(animation == FIELD_PSYNERGY_SAND)
+	if(anm == FIELD_PSYNERGY_SAND)
 		tint = PSYNERGY_TINT_GREY;
-	if(animation == FIELD_PSYNERGY_CYCLONE)
+	if(anm == FIELD_PSYNERGY_CYCLONE)
 		tint = PSYNERGY_TINT_BLUE;
-	if(animation == FIELD_PSYNERGY_SCOOP)
+	if(anm == FIELD_PSYNERGY_SCOOP)
 		tint = PSYNERGY_TINT_YELLOW;
-	if(animation == FIELD_PSYNERGY_ARROW)
+	if(anm == FIELD_PSYNERGY_ARROW)
 		tint = PSYNERGY_TINT_BLUE;
-	if(animation == FIELD_PSYNERGY_PARCH)
+	if(anm == FIELD_PSYNERGY_PARCH)
 		tint = PSYNERGY_TINT_GREY;
-	if(animation == FIELD_PSYNERGY_TREMOR)
+	if(anm == FIELD_PSYNERGY_TREMOR)
 		tint = PSYNERGY_TINT_DARK_GREY;
-	if(animation == FIELD_PSYNERGY_GRIND)
+	if(anm == FIELD_PSYNERGY_GRIND)
 		tint = PSYNERGY_TINT_BLUE;
-	if(animation == FIELD_PSYNERGY_BURST)
+	if(anm == FIELD_PSYNERGY_BURST)
 		tint = PSYNERGY_TINT_GREY;
 	if(scene->fieldPsynergy == FIELD_PSYNERGY_TELEPORT)
 		tint = PSYNERGY_TINT_DARK_GREY;
@@ -487,7 +487,7 @@ void fdPsynergyFadeToCastCol(void)
 		tint = PSYNERGY_TINT_DARK_GREY;
 	if(syGameFlagGet(FLAG_PSYNERGY_TINT(PSYNERGY_TINT_GREY)))
 		tint = PSYNERGY_TINT_GREY;
-	fdStartColTransition(8, FieldPsynergy_CastColors[tint]);
+	fdStartColTransition(8, FieldPsynergyCastColors[tint]);
 }
 
 #undef fdActorSetAnimationSpeedStub

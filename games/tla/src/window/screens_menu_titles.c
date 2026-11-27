@@ -13,20 +13,20 @@
    heap block is not freed when `slot` is not a valid VRAM slot. */
 void mnTitleLoad(Sint32 picture, Sint32 slot)
 {
-	void  *stagingBuffer = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
+	void  *stagingBuf = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
 	Sint32 resource = MenuTitlePictures[picture];
 
 	if(slot < VRAM_CACHE_ENTRY_COUNT) {
-		syDecompressByteLZ((void *)resource, stagingBuffer);
-		syVRAMCacheLoad(slot, MENU_TITLE_BYTES, stagingBuffer);
+		syDecompressByteLZ((void *)resource, stagingBuf);
+		syVRAMCacheLoad(slot, MENU_TITLE_BYTES, stagingBuf);
 		syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
 	}
 }
 
 /* Shows heading `picture` of MenuTitlePictures as two 32x16 sprites side by
-   side at (x, y) in `window`, at depth OAM_DEPTH_FRONT - 2, and returns the
+   side at (x, y) in `win`, at depth OAM_DEPTH_FRONT - 2, and returns the
    left one (the right one follows it in the window's list). */
-WINDOW_SPR *mnTitleCreate(Sint32 picture, WINDOW *window, Sint32 x, Sint32 y)
+WINDOW_SPR *mnTitleCreate(Sint32 picture, WINDOW *win, Sint32 x, Sint32 y)
 {
 	Sint32		slot;
 	WINDOW_SPR *first;
@@ -38,10 +38,9 @@ WINDOW_SPR *mnTitleCreate(Sint32 picture, WINDOW *window, Sint32 x, Sint32 y)
 
 	/* Neither sprite is checked for NULL. */
 	mnTitleLoad(picture, slot);
-	first = mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_32X16, window, x, y);
+	first = mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_32X16, win, x, y);
 	first->depth = OAM_DEPTH_FRONT - 2;
-	second =
-		mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_32X16, window, x + 32, y);
+	second = mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_32X16, win, x + 32, y);
 	second->depth = OAM_DEPTH_FRONT - 2;
 	/* The right half's tiles, after the left half's. */
 	second->spr.oam.idx += MENU_TITLE_HALF_TILES;
@@ -52,19 +51,19 @@ WINDOW_SPR *mnTitleCreate(Sint32 picture, WINDOW *window, Sint32 x, Sint32 y)
 /* A current GCC refuses the volatile redeclaration and reads the one
    system/globals.h declares. Counted up by every VBlank. The ROM's callers here
    are compiled against this form, volatile where system/globals.h's is not. */
-extern volatile Uint32 VBlankCount;
+extern volatile Uint32 FrameCount;
 #endif
 
 /* Bobs the two sprites of a pair (see mnTitleCreate) up and down by
-   MenuTitle_BobOffsets, one step every four VBlanks. */
+   MenuTitleBobOffsets, one step every four frames. */
 void mnTitleBob(WINDOW_SPR *obj)
 {
 	Sint32 value;
 
-	value = (Uint8)obj->y + MenuTitle_BobOffsets[(VBlankCount >> 2) & 7];
+	value = (Uint8)obj->y + MenuTitleBobOffsets[(FrameCount >> 2) & 7];
 	obj->spr.oam.y = value;
 	obj = obj->next;
-	value = (Uint8)obj->y + MenuTitle_BobOffsets[(VBlankCount >> 2) & 7];
+	value = (Uint8)obj->y + MenuTitleBobOffsets[(FrameCount >> 2) & 7];
 	obj->spr.oam.y = value;
 }
 
@@ -74,47 +73,45 @@ void mnTitleBob(WINDOW_SPR *obj)
 void mnCommandIconLoad(Sint32 icon, Sint32 slot, Sint32 remap)
 {
 	Sint32	size = COMMAND_ICON_BYTES;
-	void   *buffer = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, size);
-	Uint16 *offsetTable = syResourceGetTableEntry(RESOURCE_COMMAND_ICONS);
+	void   *buf = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, size);
+	Uint16 *ofsTbl = syResourceGetTableEntry(RESOURCE_COMMAND_ICONS);
 
 	if(slot < VRAM_CACHE_ENTRY_COUNT) {
-		syDecompressByteLZ(
-			(void *)((Uint32)offsetTable + offsetTable[icon]), buffer);
+		syDecompressByteLZ((void *)((Uint32)ofsTbl + ofsTbl[icon]), buf);
 		if(remap != 0)
-			fdSprColRemapPixelsStub(buffer, 3 * COMMAND_ICON_TILE_ROW_BYTES);
-		syVRAMCacheLoad(slot, size, buffer);
+			fdSprColRemapPixelsStub(buf, 3 * COMMAND_ICON_TILE_ROW_BYTES);
+		syVRAMCacheLoad(slot, size, buf);
 		syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
 	}
 }
 
 /* Shows command icon `icon` (see mnCommandIconLoad) as a 32x32 256-colour
-   sprite at (x, y) in `window`, at depth OAM_DEPTH_FRONT - 4. Returns NULL when
+   sprite at (x, y) in `win`, at depth OAM_DEPTH_FRONT - 4. Returns NULL when
    no VRAM slot is free. The settings menu's icons come through here
    (window_settings_menu.c). */
 WINDOW_SPR *mnCommandIconCreate(
-	Sint32 icon, Sint32 remap, WINDOW *window, Sint32 x, Sint32 y)
+	Sint32 icon, Sint32 remap, WINDOW *win, Sint32 x, Sint32 y)
 {
 	Sint32		slot;
-	WINDOW_SPR *sprite;
+	WINDOW_SPR *spr;
 
 	slot = syVRAMCacheFindFreeEntry();
-	sprite = NULL;
+	spr = NULL;
 	if(slot != VRAM_CACHE_ENTRY_COUNT) {
 		mnCommandIconLoad(icon, slot, remap);
-		sprite =
-			mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_32X32, window, x, y);
-		sprite->spr.oam.fullCol = 1;
-		sprite->depth = OAM_DEPTH_FRONT - 4;
+		spr = mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_32X32, win, x, y);
+		spr->spr.oam.fullCol = 1;
+		spr->depth = OAM_DEPTH_FRONT - 4;
 	}
-	return sprite;
+	return spr;
 }
 
 /* Makes the sprite `obj` pulse: scales it about its centre by
-   WindowSprite_PulseScales (16.16, used as 8.8), one step every two frames, and
+   WindowSpritePulseScales (16.16, used as 8.8), one step every two ticks, and
    puts it at depth OAM_DEPTH_FRONT - 3. */
 void mnWindowSprPulse(WINDOW_SPR *obj)
 {
-	Sint32 scale = WindowSprite_PulseScales[(VBlankCount >> 1) & 7] /
+	Sint32 scale = WindowSpritePulseScales[(FrameCount >> 1) & 7] /
 		(toFIXED(1) / Q_8_8(1));
 	AFFINE_TRANSFORM effect;
 
@@ -148,19 +145,18 @@ Sint32 mnDjinnGetGiveTutorialMessage(void)
 
 /* Builds the twelve range icons mnRangeIconDraw draws, as the 24 BG tiles from
    RANGE_ICON_FIRST_TILE: icon n is a centre tile and an end tile, filled with
-   colour 4, then rows 1 to 7 marked by XOR with Menu_BarPatternRows. The first
+   colour 4, then rows 1 to 7 marked by XOR with MenuBarPatternRows. The first
    set grows its pattern with the row, the second skips row 1. */
 UNREAD_RESULT mnRangeIconBuildTiles(void)
 {
 	Sint32 patternSet;
-	Sint32 patternIndex;
+	Sint32 patternIdx;
 
 	for(patternSet = 0; patternSet < RANGE_PATTERN_SET_COUNT; patternSet++) {
-		for(patternIndex = 0; patternIndex < RANGE_PATTERN_COUNT;
-			patternIndex++) {
+		for(patternIdx = 0; patternIdx < RANGE_PATTERN_COUNT; patternIdx++) {
 			Uint32 *tile = (Uint32 *)(patternSet *
 					(RANGE_PATTERN_COUNT * RANGE_PATTERN_PAIR_BYTES) +
-				patternIndex * RANGE_PATTERN_PAIR_BYTES +
+				patternIdx * RANGE_PATTERN_PAIR_BYTES +
 				(Uint32)BG_CHAR_BLOCK(0) +
 				RANGE_ICON_FIRST_TILE * TILE_SIZE_4BPP);
 			Sint32	row;
@@ -168,39 +164,39 @@ UNREAD_RESULT mnRangeIconBuildTiles(void)
 			syWordsFillEntry(
 				tile, RANGE_PATTERN_PAIR_BYTES, TEXT_CANVAS_BACKGROUND_WORD);
 			for(row = 1; row <= 7; row++) {
-				Sint32 sourcePattern = patternIndex;
+				Sint32 srcPattern = patternIdx;
 
 				if(patternSet == 1 && row <= 1) {
 					continue;
 				}
-				if(patternSet == 0 && patternIndex > row - 2) {
-					sourcePattern = row - 2;
-					if(sourcePattern < 0) {
-						sourcePattern = 0;
+				if(patternSet == 0 && patternIdx > row - 2) {
+					srcPattern = row - 2;
+					if(srcPattern < 0) {
+						srcPattern = 0;
 					}
 				}
 				tile[row] = mnXorWord(
-					tile[row], Menu_BarPatternRows[sourcePattern].firstTile);
-				tile[row + 8] = mnXorWord(tile[row + 8],
-					Menu_BarPatternRows[sourcePattern].secondTile);
+					tile[row], MenuBarPatternRows[srcPattern].firstTile);
+				tile[row + 8] = mnXorWord(
+					tile[row + 8], MenuBarPatternRows[srcPattern].secondTile);
 			}
 		}
 	}
 }
 
-/* Draws range icon `pattern` across tiles (x, y) to (x + 2, y) of `window`'s
+/* Draws range icon `pattern` across tiles (x, y) to (x + 2, y) of `win`'s
    interior: its end tile mirrored, its centre tile and its end tile, in the UI
    palette. */
 UNREAD_RESULT mnRangeIconDraw(
-	WINDOW *window, Sint32 x, Sint32 y, Sint32 pattern, Sint32 unused)
+	WINDOW *win, Sint32 x, Sint32 y, Sint32 pattern, Sint32 unused)
 {
-	Sint32 patternOffset = pattern * 2;
-	Sint32 rightTile = patternOffset + WINDOW_TILE(RANGE_ICON_FIRST_TILE + 1);
+	Sint32 patternOfs = pattern * 2;
+	Sint32 rightTile = patternOfs + WINDOW_TILE(RANGE_ICON_FIRST_TILE + 1);
 
-	mnWindowSetTilemapEntry(window, TILE_HFLIP | rightTile, x, y, 0);
-	mnWindowSetTilemapEntry(window,
-		patternOffset + WINDOW_TILE(RANGE_ICON_FIRST_TILE), x + 1, y, 0);
-	mnWindowSetTilemapEntry(window, rightTile, x + 2, y, 0);
+	mnWindowSetTilemapEntry(win, TILE_HFLIP | rightTile, x, y, 0);
+	mnWindowSetTilemapEntry(
+		win, patternOfs + WINDOW_TILE(RANGE_ICON_FIRST_TILE), x + 1, y, 0);
+	mnWindowSetTilemapEntry(win, rightTile, x + 2, y, 0);
 }
 
 /* A 4bpp tile row's eighth pixel, in the top four bits of its word. */
@@ -251,15 +247,15 @@ void mnGraphicsMergeShiftedTileRows(
 }
 
 /* Draws the two page arrows (PageArrowTiles) into the two tiles at VRAM address
-   `offset`, sliding outward: the left arrow 2 or 3 pixels to the left, the
-   right one as far to the right, eight frames each. They are drawn over the
+   `ofs`, sliding outward: the left arrow 2 or 3 pixels to the left, the
+   right one as far to the right, eight ticks each. They are drawn over the
    border's top edge tile (WINDOW_TILE_BORDER_TOP) and top-right corner tile
-   (WINDOW_TILE_BORDER_TOP_RIGHT). The battle menus call it each frame for
+   (WINDOW_TILE_BORDER_TOP_RIGHT). The battle menus call it each tick for
    LIST_PAGE_ARROW_VRAM; the field menus (by stub call) and the password pages
    of the title's Send call it for PAGE_ARROW_VRAM. */
-void mnPageArrowsDraw(Sint32 offset)
+void mnPageArrowsDraw(Sint32 ofs)
 {
-	Sint32 phase = (FrameCount >> 2) & 3;
+	Sint32 phase = (TickCount >> 2) & 3;
 
 	if(phase > 2) {
 		phase = 2;
@@ -271,20 +267,20 @@ void mnPageArrowsDraw(Sint32 offset)
 	mnGraphicsMergeShiftedTileRows(
 		(Uint32 *)(BG_CHAR_BLOCK(0) +
 			(WINDOW_TILE_BORDER_TOP & TILE_NUMBER_MASK) * TILE_SIZE_4BPP),
-		(Uint32 *)PageArrowTiles, (Uint32 *)offset, -phase);
+		(Uint32 *)PageArrowTiles, (Uint32 *)ofs, -phase);
 	mnGraphicsMergeShiftedTileRows(
 		(Uint32 *)(BG_CHAR_BLOCK(0) +
 			(WINDOW_TILE_BORDER_TOP_RIGHT & TILE_NUMBER_MASK) * TILE_SIZE_4BPP),
 		(Uint32 *)(PageArrowTiles + TILE_SIZE_4BPP),
-		(Uint32 *)(offset + TILE_SIZE_4BPP), phase);
+		(Uint32 *)(ofs + TILE_SIZE_4BPP), phase);
 }
 
 /* mnPageArrowsDraw for the Status screen's own arrows: both slide over the
    window's fill tile (WINDOW_TILE_WINDOW_FILL) rather than the border's. The
-   battle's status screen calls it each frame. */
-void mnBattleStatDrawPageArrows(Sint32 offset)
+   battle's status screen calls it each tick. */
+void mnBattleStatDrawPageArrows(Sint32 ofs)
 {
-	Sint32 phase = (FrameCount >> 2) & 3;
+	Sint32 phase = (TickCount >> 2) & 3;
 
 	if(phase > 2) {
 		phase = 2;
@@ -296,80 +292,80 @@ void mnBattleStatDrawPageArrows(Sint32 offset)
 	mnGraphicsMergeShiftedTileRows(
 		(Uint32 *)(BG_CHAR_BLOCK(0) +
 			(WINDOW_TILE_WINDOW_FILL & TILE_NUMBER_MASK) * TILE_SIZE_4BPP),
-		(Uint32 *)PageArrowTiles, (Uint32 *)offset, -phase);
+		(Uint32 *)PageArrowTiles, (Uint32 *)ofs, -phase);
 	mnGraphicsMergeShiftedTileRows(
 		(Uint32 *)(BG_CHAR_BLOCK(0) +
 			(WINDOW_TILE_WINDOW_FILL & TILE_NUMBER_MASK) * TILE_SIZE_4BPP),
 		(Uint32 *)(PageArrowTiles + TILE_SIZE_4BPP),
-		(Uint32 *)(offset + TILE_SIZE_4BPP), phase);
+		(Uint32 *)(ofs + TILE_SIZE_4BPP), phase);
 }
 
 /* Copies the UI's ten digit tiles ('0' to '9', tiles 48 to 57) twice into
-   `dst`, each pixel mapped through Graphics_ExpandNibbleTable: first with
+   `dst`, each pixel mapped through GraphicsExpandNibbleTable: first with
    colour 1 drawn as colour 10, then unchanged. */
 void mnGraphicsExpandVRAMTilesByColTable(Uint16 *dst)
 {
 	Sint32 set = 0;
-	Sint32 paletteOffset = 0;
+	Sint32 paletteOfs = 0;
 	Sint32 setStep = 0;
 
 	/* The second set of ten digit tiles goes right after the first. */
 	for(; set <= 1; set++) {
 		Sint32 digit = 0;
-		Sint32 destinationOffset = (setStep + set) << 6;
+		Sint32 dstOfs = (setStep + set) << 6;
 
 		do {
-			Uint16 *output = (Uint16 *)((Uint8 *)dst + destinationOffset);
-			Uint16 *source = (Uint16 *)(BG_CHAR_BLOCK(0) +
-				'0' * TILE_SIZE_4BPP + (digit << 5));
+			Uint16 *output = (Uint16 *)((Uint8 *)dst + dstOfs);
+			Uint16 *src = (Uint16 *)(BG_CHAR_BLOCK(0) + '0' * TILE_SIZE_4BPP +
+				(digit << 5));
 			Sint32	column;
 
 			for(column = 0; column < TILE_SIZE_4BPP / 2; column++) {
-				Uint32 packed = *source++;
+				Uint32 packed = *src++;
 				Uint32 expanded = 0;
 				Sint32 nibble = 0;
 
 				do {
-					Uint32 color = Graphics_ExpandNibbleTable[(packed & 0xf) +
-									   paletteOffset]
+					Uint32 col =
+						GraphicsExpandNibbleTable[(packed & 0xf) + paletteOfs]
 						<< (nibble * 4);
 					nibble++;
 					packed >>= 4;
-					expanded |= color;
+					expanded |= col;
 				} while(nibble <= 3);
 
 				*output++ = expanded;
 			}
 
 			digit++;
-			destinationOffset += TILE_SIZE_4BPP;
+			dstOfs += TILE_SIZE_4BPP;
 		} while(digit <= 9);
 
-		paletteOffset += PALETTE_COLORS;
+		paletteOfs += PALETTE_COLORS;
 		setStep += 4;
 	}
 }
 
 /* Builds icon `resource` (0 to 31) of Icon_MiscIconPointers, the status
    patterns (mnIconDrawMisc), in a transfer block taken from
-   HEAP_SLOT_ICON_TRANSFER, reloads VRAM cache entry `index` with it and returns
+   HEAP_SLOT_ICON_TRANSFER, reloads VRAM cache entry `idx` with it and returns
    the entry's first tile. */
-Sint32 mnMiscIconLoadIntoSlot(Sint32 resource, Sint32 index)
+Sint32 mnMiscIconLoadIntoSlot(Sint32 resource, Sint32 idx)
 {
 	Sint32		   result;
 	ICON_TRANSFER *state;
 
 	state = syHeapSlotAllocEWRAM(HEAP_SLOT_ICON_TRANSFER, sizeof(*state));
 	mnIconDrawMisc(resource);
-	result = syVRAMCacheReload(index, (Sint32)state->tiles);
+	result = syVRAMCacheReload(idx, (Sint32)state->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	return result;
 }
 
 /* Builds the icon of inventory item `resource` (the count above one and both
    marks) in a transfer block taken from HEAP_SLOT_ICON_TRANSFER, reloads VRAM
-   cache entry `index` with it and returns the entry's first tile. */
-Sint32 mnItemIconLoadIntoSlot(Sint32 resource, Sint32 index)
+   cache entry `idx` with it and returns the entry's first tile. */
+Sint32 mnItemIconLoadIntoSlot(Sint32 resource, Sint32 idx)
 {
 	Sint32		   result;
 	ICON_TRANSFER *state;
@@ -377,15 +373,15 @@ Sint32 mnItemIconLoadIntoSlot(Sint32 resource, Sint32 index)
 	state = syHeapSlotAllocEWRAM(HEAP_SLOT_ICON_TRANSFER, sizeof(*state));
 	mnItemIconCompose(
 		resource, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN);
-	result = syVRAMCacheReload(index, (Sint32)state->tiles);
+	result = syVRAMCacheReload(idx, (Sint32)state->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	return result;
 }
 
 /* Builds the icon of ability `resource` in a transfer block taken from
-   HEAP_SLOT_ICON_TRANSFER, reloads VRAM cache entry `index` with it and returns
+   HEAP_SLOT_ICON_TRANSFER, reloads VRAM cache entry `idx` with it and returns
    the entry's first tile. */
-Sint32 mnAbilityIconLoadIntoSlot(Sint32 resource, Sint32 index)
+Sint32 mnAbilityIconLoadIntoSlot(Sint32 resource, Sint32 idx)
 {
 	Sint32		   tile;
 	Sint32		   slot;
@@ -393,9 +389,9 @@ Sint32 mnAbilityIconLoadIntoSlot(Sint32 resource, Sint32 index)
 	ICON_TRANSFER *state;
 
 	state = syHeapSlotAllocEWRAM(HEAP_SLOT_ICON_TRANSFER, sizeof(*state));
-	slot = index;
+	slot = idx;
 	mnAbilityBuildIconTiles(resource, 0, &slot, &tile, 1);
-	result = syVRAMCacheReload(index, (Sint32)state->tiles);
+	result = syVRAMCacheReload(idx, (Sint32)state->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	return result;
 }
@@ -419,12 +415,12 @@ extern Uint8 mnTileDecompress4bppCode[];
 /* The decoder's byte count, as this symbol's address (ld_script.ld). */
 extern Uint8 Tile_Decompress4bppCodeSize[];
 
-/* Returns Window_FixedTileBlocks[0], whatever no is. */
+/* Returns WindowFixedTileBlocks[0], whatever no is. */
 Sint32 mnWindowSprGetPointerTiles(Sint32 no)
 {
 	if(no != 0)
 		no = 0;
-	return Window_FixedTileBlocks[no];
+	return WindowFixedTileBlocks[no];
 }
 
 /* Copies the 4bpp decoder into RAM, calls it with the transfer's encoded source
@@ -440,7 +436,7 @@ UNUSED void mnIconDecompress(ICON_TRANSFER *state)
 }
 
 /* Opens the link battle timer's 6x4 window at the upper left, labelled "TIME",
-   and returns it; mnBattleMenuUpdateEachFrame draws the seconds. */
+   and returns it; mnBattleMenuUpdateEachTick draws the seconds. */
 Sint32 mnLinkCreateCountdownLabelWindow(void)
 {
 	Sint32 win = (Sint32)mnWindowCreate(
@@ -448,28 +444,28 @@ Sint32 mnLinkCreateCountdownLabelWindow(void)
 
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) || \
 	(LANGUAGE == LANGUAGE_ITALIAN)
-	mnTextDrawStringAtOffset(Link_TimeLabelString, (WINDOW *)win, 0, 0);
+	mnTextDrawStringAtOffset(LinkTimeLabelString, (WINDOW *)win, 0, 0);
 #else
-	mnTextDrawStringInWindow(Link_TimeLabelString, win, 0, 0);
+	mnTextDrawStringInWindow(LinkTimeLabelString, win, 0, 0);
 #endif
 	return win;
 }
 
 /* Decodes command icon `icon` (RESOURCE_COMMAND_ICONS, 1 KB of 256-colour
    pixels) in a block taken from HEAP_SLOT_ICON_TRANSFER, reloads VRAM cache
-   entry `slotIndex` with it and returns the entry's first tile. */
-Sint32 mnCommandIconReloadSlot(Sint32 slotIndex, Sint32 icon)
+   entry `slotIdx` with it and returns the entry's first tile. */
+Sint32 mnCommandIconReloadSlot(Sint32 slotIdx, Sint32 icon)
 {
-	ICON_TRANSFER *buffer =
+	ICON_TRANSFER *buf =
 		syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
-	Uint16 *offsetTable = syResourceGetTableEntry(RESOURCE_COMMAND_ICONS);
-	Uint8 **encoded = &buffer->encoded;
-	void   *target = (void *)((Uint32)offsetTable + offsetTable[icon]);
+	Uint16 *ofsTbl = syResourceGetTableEntry(RESOURCE_COMMAND_ICONS);
+	Uint8 **encoded = &buf->encoded;
+	void   *tgt = (void *)((Uint32)ofsTbl + ofsTbl[icon]);
 	Sint32	tile;
 
-	*encoded = target;
-	syDecompressByteLZ(target, buffer);
-	tile = syVRAMCacheReload(slotIndex, (Sint32)buffer);
+	*encoded = tgt;
+	syDecompressByteLZ(tgt, buf);
+	tile = syVRAMCacheReload(slotIdx, (Sint32)buf);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	return tile;
 }
@@ -489,10 +485,10 @@ void mnBattleCommandRowLoadIconTiles(
 	ICON_TRANSFER *decoded;
 	Uint8		  *font;
 	Uint8		  *remapped;
-	Uint8		  *source;
-	Uint8		  *destination;
+	Uint8		  *src;
+	Uint8		  *dst;
 	Sint32		   i;
-	Uint32		   index;
+	Uint32		   idx;
 
 	decoded = (ICON_TRANSFER *)syHeapSlotAlloc(
 		HEAP_SLOT_ICON_TRANSFER, sizeof(*decoded));
@@ -500,18 +496,18 @@ void mnBattleCommandRowLoadIconTiles(
 	decoded->encoded = font + ((Uint16 *)font)[glyph];
 	syDecompressByteLZ(decoded->encoded, decoded);
 	remapped = syHeapAlloc(COMMAND_ICON_BYTES);
-	source = decoded->input;
-	destination = remapped;
+	src = decoded->input;
+	dst = remapped;
 	for(i = 0; i < COMMAND_ICON_BYTES; i++) {
-		index = *source++;
-		if(palette->slot[index] == GLYPH_PALETTE_SLOT_FREE) {
-			palette->slot[index] = palette->cnt;
+		idx = *src++;
+		if(palette->slot[idx] == GLYPH_PALETTE_SLOT_FREE) {
+			palette->slot[idx] = palette->cnt;
 			if(palette->cnt < COMMAND_ICON_COLORS) {
-				BG_PLTT[palette->cnt] = OBJ_PLTT[index];
+				BG_PLTT[palette->cnt] = OBJ_PLTT[idx];
 				palette->cnt++;
 			}
 		}
-		*destination++ = palette->slot[index];
+		*dst++ = palette->slot[idx];
 	}
 	syDMAXCopy(remapped, BG_CHAR_BLOCK(1) + tile * TILE_SIZE_8BPP,
 		DMA_COPY_WORDS(COMMAND_ICON_BYTES / 4), REG_DMA3);
@@ -519,21 +515,21 @@ void mnBattleCommandRowLoadIconTiles(
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 }
 
-/* Loads the command row's icon `index` as command icon `icon`: as BG1 tiles
+/* Loads the command row's icon `idx` as command icon `icon`: as BG1 tiles
    from tile index * COMMAND_ICON_BG_TILES (mnBattleCommandRowLoadIconTiles),
    and into the row's shared VRAM cache entry for its 32x32 sprite, which
    mnBattleCommandRowRun shows only for the selected icon. */
 void mnBattleCommandRowLoadIcon(
-	BATTLE_COMMAND_ROW_STATE *state, Sint32 index, Uint32 icon)
+	BATTLE_COMMAND_ROW_STATE *state, Sint32 idx, Uint32 icon)
 {
-	BATTLE_COMMAND_ROW_ICON *entry = &state->entries[index];
+	BATTLE_COMMAND_ROW_ICON *entry = &state->entries[idx];
 
 	mnBattleCommandRowLoadIconTiles(
-		&state->pal, icon, index * COMMAND_ICON_BG_TILES);
-	state->entries[index].kind = icon;
+		&state->pal, icon, idx * COMMAND_ICON_BG_TILES);
+	state->entries[idx].kind = icon;
 	MENU_SPR_INIT(entry->spr, OBJ_SIZE_32X32 | OBJ_256_COLORS);
 	entry->spr.oam.f.tile =
-		mnCommandIconReloadSlot(state->entries[index].resource, icon);
+		mnCommandIconReloadSlot(state->entries[idx].resource, icon);
 }
 
 /* Puts BG1 behind the other layers (priority 3). The command row runs it as an

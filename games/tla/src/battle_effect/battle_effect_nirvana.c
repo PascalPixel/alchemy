@@ -1,13 +1,13 @@
 /* Nirvana, Stone Justice, Soul Shatter and Serac, and the entries of Heavy
    Divide and Strong Hit. Part of battle_effect.c. */
 
-#define NIRVANA_FRAMES		   80
+#define NIRVANA_TICKS		   80
 /* The orb is drawn as two rings of NIRVANA_SPARKS / 2 sparks, a quarter turn
    apart, turning about it; the rings open to NIRVANA_RING_RADIUS pixels and
    close again over the effect. */
 #define NIRVANA_SPARKS		   24
 #define NIRVANA_RING_RADIUS	   64
-/* What the orb's speed gains toward the user each frame: 1/1024 of the distance
+/* What the orb's speed gains toward the user each tick: 1/1024 of the distance
    between them. */
 #define NIRVANA_PULL(distance) ((distance) >> 10)
 
@@ -26,7 +26,7 @@ void btEffectRunNirvana(BATTLE_EFFECT_PARM *args)
 	MOTION_OBJECT		*object;
 	PARTICLE			*orb;
 	Sint32				 half;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 
 	state = Ram_HeapSlots->battleEff;
@@ -49,21 +49,21 @@ void btEffectRunNirvana(BATTLE_EFFECT_PARM *args)
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	sySndPlayStub(SE_SWIRL);
 
-	for(frame = 0; frame != NIRVANA_FRAMES; frame++) {
+	for(frm = 0; frm != NIRVANA_TICKS; frm++) {
 		MOTION_OBJECT *user = btObjectGetStub(args->user)->obj;
 		Sint32		   userHalf = btUnitGetEffectHeightStub(args->user) / 2;
 
-		if(frame == 64)
+		if(frm == 64)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 		syInitMatrix();
 		syLookAtLoad(view->eye, view->focus);
-		if(frame == 72)
+		if(frm == 72)
 			btEffectTintBattler(
 				args->user, SPRITE_COLOR_WHITE, TINT_KEEP, TINT_KEEP, 0);
-		if(frame == 79)
+		if(frm == 79)
 			btEffectTintBattler(
 				args->user, SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
-		if(frame == 0)
+		if(frm == 0)
 			btEffectTintBattler(
 				args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 42);
 		if(orb->variant == 0) {
@@ -76,23 +76,23 @@ void btEffectRunNirvana(BATTLE_EFFECT_PARM *args)
 				syPushMatrix();
 				syTranslate(orb->x, orb->y, orb->z);
 				if(i < NIRVANA_SPARKS / 2)
-					syRotX(frame * (TRIG_TURN / 128));
+					syRotX(frm * (TRIG_TURN / 128));
 				else
-					syRotX(frame * (TRIG_TURN / 128) + DEGtoANG(90));
-				syRotZ(i * (TRIG_TURN / 12) + frame * (TRIG_TURN / 64));
-				syTranslate(0,
-					sySin(frame * (TRIG_TURN / 160)) * NIRVANA_RING_RADIUS, 0);
+					syRotX(frm * (TRIG_TURN / 128) + DEGtoANG(90));
+				syRotZ(i * (TRIG_TURN / 12) + frm * (TRIG_TURN / 64));
+				syTranslate(
+					0, sySin(frm * (TRIG_TURN / 160)) * NIRVANA_RING_RADIUS, 0);
 				point[0] = 0;
 				point[1] = 0;
 				point[2] = 0;
 				btEffectPosProjectPoint(point, &out);
 				out.x >>= 1;
 				syPopMatrix();
-				blit(canvas, sheet + BattleEffect_MotePictures[size - 1],
+				blit(canvas, sheet + BattleEffectMotePictures[size - 1],
 					out.x - size / 2, out.y - size, size, size * 2);
 			}
 			btParticleAdvanceWithGravity3D(orb, 62, 0);
-			if(frame > 0) {
+			if(frm > 0) {
 				Sint32 dx = NIRVANA_PULL(user->x - orb->x);
 				Sint32 dy = NIRVANA_PULL(user->y + userHalf - orb->y);
 				Sint32 dz = NIRVANA_PULL(user->z - orb->z);
@@ -113,19 +113,19 @@ void btEffectRunNirvana(BATTLE_EFFECT_PARM *args)
 					orb->variant = -1;
 			}
 		}
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-#define STONE_JUSTICE_ROCKS		 21
-#define STONE_JUSTICE_FRAMES	 107
-/* The frame the rocks are hurled at the target and the battle background starts
+#define STONE_JUSTICE_ROCKS		21
+#define STONE_JUSTICE_TICKS		107
+/* The tick the rocks are hurled at the target and the battle background starts
    to slide after them. */
-#define STONE_JUSTICE_HURL_FRAME 64
+#define STONE_JUSTICE_HURL_TICK 64
 /* A rock shows the next picture of its tumble each time its spin passes this
    much. */
-#define STONE_JUSTICE_SPIN_STEP	 96
+#define STONE_JUSTICE_SPIN_STEP 96
 
 /* Themis' Axe's unleash: rocks rise in a column beside the user and spin as
    they fly; then they are hurled across the screen into the target while the
@@ -143,10 +143,10 @@ void btEffectRunStoneJustice(BATTLE_EFFECT_PARM *args)
 	Sint32				 sndTmr;
 	MOTION_OBJECT		*user;
 	Sint32				 scrollX;
-	SCREEN_POINT		 userPosition;
-	SCREEN_POINT		 targetPosition;
+	SCREEN_POINT		 userPos;
+	SCREEN_POINT		 tgtPos;
 	PARTICLE			*rock;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 hit;
 	Sint32				 i;
 
@@ -165,18 +165,18 @@ void btEffectRunStoneJustice(BATTLE_EFFECT_PARM *args)
 	user = btObjectGetStub(args->user)->obj;
 	fdActorSetAnimationSpeedStub(user, ANIM_STEP_NORMAL * 3);
 
-	for(frame = 0; frame != STONE_JUSTICE_FRAMES; frame++) {
-		btEffectPosProjectScaledBattler(args->user, &userPosition);
-		btEffectPosProjectScaledBattler(args->tgts[0], &targetPosition);
-		if(frame == 0)
+	for(frm = 0; frm != STONE_JUSTICE_TICKS; frm++) {
+		btEffectPosProjectScaledBattler(args->user, &userPos);
+		btEffectPosProjectScaledBattler(args->tgts[0], &tgtPos);
+		if(frm == 0)
 			sySndPlayStub(SE_GATE_MOVE);
-		if(frame == STONE_JUSTICE_HURL_FRAME)
+		if(frm == STONE_JUSTICE_HURL_TICK)
 			sySndPlayStub(SE_LAUNCH);
 
-		/* Frame 0: the rocks stand in a column 2 pixels apart from canvas row
+		/* Tick 0: the rocks stand in a column 2 pixels apart from canvas row
 		   96 down, on the user's side of the canvas, and are thrown upward at
 		   random speeds. */
-		if(frame == 0) {
+		if(frm == 0) {
 			for(i = 0; i != STONE_JUSTICE_ROCKS; i++) {
 				rock = &state->particles[i];
 				if(args->side == EFFECT_SIDE_ENEMIES)
@@ -192,11 +192,11 @@ void btEffectRunStoneJustice(BATTLE_EFFECT_PARM *args)
 				rock->variant = 0;
 			}
 		}
-		if(frame == 52)
+		if(frm == 52)
 			fdActorSelectAnimationStub(user, POSE_LEAP);
 
 		/* The background follows the rocks, ever faster. */
-		if(frame > STONE_JUSTICE_HURL_FRAME) {
+		if(frm > STONE_JUSTICE_HURL_TICK) {
 			if(args->side == EFFECT_SIDE_ENEMIES)
 				scroll += scrollSpeed;
 			else
@@ -205,7 +205,7 @@ void btEffectRunStoneJustice(BATTLE_EFFECT_PARM *args)
 			scrollSpeed = scrollSpeed * 60 / DAMPING_SCALE;
 		}
 		scrollX = FIXEDtoINT(scroll);
-		REG_BG2X = (64 - (userPosition.x - scrollX)) << 8;
+		REG_BG2X = (64 - (userPos.x - scrollX)) << 8;
 
 		/* Each rock tumbles through three pictures of one of Spire's shards (z
 		   is its spin rate, velocityZ the angle) and hits the target once it
@@ -219,23 +219,23 @@ void btEffectRunStoneJustice(BATTLE_EFFECT_PARM *args)
 
 			rock = &state->particles[i];
 			cell = (i % 5) * 3 + rock->velZ / STONE_JUSTICE_SPIN_STEP % 3;
-			width = Spire_ShardWidths[cell];
+			width = SpireShardWidths[cell];
 			left = FIXED_INTEGER_PART(rock->x) - width / 2 + scrollX;
-			top = FIXED_INTEGER_PART(rock->y) - Spire_ShardHeights[cell] / 2;
+			top = FIXED_INTEGER_PART(rock->y) - SpireShardHeights[cell] / 2;
 			blit(canvas,
-				state->sheet + Spire_ShardPictures[cell] +
+				state->sheet + SpireShardPictures[cell] +
 					BOULDER_SHARD_PICTURES,
-				left, top, width, Spire_ShardHeights[cell]);
+				left, top, width, SpireShardHeights[cell]);
 			if(rock->variant == 0) {
 				if(args->side == EFFECT_SIDE_ENEMIES) {
-					if(targetPosition.x >
-						FIXED_INTEGER_PART(rock->x) + userPosition.x - 64) {
+					if(tgtPos.x >
+						FIXED_INTEGER_PART(rock->x) + userPos.x - 64) {
 						rock->variant = 1;
 						hit = 1;
 					}
 				} else {
-					if(targetPosition.x <
-						FIXED_INTEGER_PART(rock->x) + userPosition.x - 64) {
+					if(tgtPos.x <
+						FIXED_INTEGER_PART(rock->x) + userPos.x - 64) {
 						rock->variant = 1;
 						hit = 1;
 					}
@@ -243,7 +243,7 @@ void btEffectRunStoneJustice(BATTLE_EFFECT_PARM *args)
 			}
 			btParticleAdvanceWithGravity2D(rock, 60, 0);
 			rock->velZ += rock->z;
-			if(frame > i / 2 + STONE_JUSTICE_HURL_FRAME) {
+			if(frm > i / 2 + STONE_JUSTICE_HURL_TICK) {
 				if(args->side == EFFECT_SIDE_ENEMIES)
 					rock->velX -= toFIXED(1) / 2;
 				else
@@ -254,7 +254,7 @@ void btEffectRunStoneJustice(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* A hit flashes and pushes the target; the impact sound plays at most
-		   every eight frames. */
+		   every eight ticks. */
 		if(sndTmr > 0)
 			sndTmr--;
 		if(hit == 1) {
@@ -270,31 +270,31 @@ void btEffectRunStoneJustice(BATTLE_EFFECT_PARM *args)
 		}
 
 		btCameraShake(2, 4);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	fdActorSetAnimationSpeedStub(user, ANIM_STEP_NORMAL);
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-#define SOUL_SHATTER_FRAMES			106
+#define SOUL_SHATTER_TICKS			106
 /* The column, LimeColumnSheet's half of it at the start of the effect's
    pictures, drawn twice side by side, the right half mirrored; BlastSheet's
    spark pictures follow it. */
 #define SOUL_SHATTER_COLUMN_WIDTH	14
 #define SOUL_SHATTER_COLUMN_HEIGHT	80
 #define SOUL_SHATTER_SPARK_PICTURES PICTURE_BYTES(SOUL_SHATTER_COLUMN)
-/* The sparks, each drawn for SOUL_SHATTER_SPARK_FRAMES, and the motes of the
+/* The sparks, each drawn for SOUL_SHATTER_SPARK_TICKS, and the motes of the
    target's soul, after twice as many particles. */
 #define SOUL_SHATTER_SPARKS			16
-#define SOUL_SHATTER_SPARK_FRAMES	29
+#define SOUL_SHATTER_SPARK_TICKS	29
 #define SOUL_SHATTER_MOTES			32
 
 /* The Soul Brand's unleash: a column bursts up under the target in a spray of
-   sparks and throws it into the air; the user glows, and from frame 32 motes of
+   sparks and throws it into the air; the user glows, and from tick 32 motes of
    the target's soul fly out and are drawn back into the user, who flashes
-   white. The column rises from frame 8, stands at its full height and sinks
-   from frame 80, as the target comes down.
+   white. The column rises from tick 8, stands at its full height and sinks
+   from tick 80, as the target comes down.
 
    Abilities: Soul Shatter. */
 void btEffectRunSoulShatter(BATTLE_EFFECT_PARM *args)
@@ -302,11 +302,11 @@ void btEffectRunSoulShatter(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	Uint8				*sheet;
-	MOTION_OBJECT		*target;
+	MOTION_OBJECT		*tgt;
 	DRAW_RECTANGLE		 draw[2];
-	SCREEN_POINT		 position;
+	SCREEN_POINT		 pos;
 	SCREEN_POINT		 screen;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 
 	state = Ram_HeapSlots->battleEff;
@@ -321,28 +321,28 @@ void btEffectRunSoulShatter(BATTLE_EFFECT_PARM *args)
 	LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-	target = btObjectGetStub(args->tgts[0])->obj;
-	btEffectPosProjectBattler(args->tgts[0], &position);
-	position.x /= 2;
+	tgt = btObjectGetStub(args->tgts[0])->obj;
+	btEffectPosProjectBattler(args->tgts[0], &pos);
+	pos.x /= 2;
 	state->shakeFrm = 8;
 
-	for(frame = 0; frame != SOUL_SHATTER_FRAMES; frame++) {
-		/* Frame 0: sparks leave the column's foot upward, and the motes start
+	for(frm = 0; frm != SOUL_SHATTER_TICKS; frm++) {
+		/* Tick 0: sparks leave the column's foot upward, and the motes start
 		   at the target, 52 pixels up, in every direction. */
-		if(frame == 0) {
-			target->y = 0;
+		if(frm == 0) {
+			tgt->y = 0;
 			{
 				PARTICLE *spark;
 
 				for(i = 0, spark = state->particles; i != SOUL_SHATTER_SPARKS;
 					i++, spark++) {
 					Sint32 speed = (syRandom() & 0xff) + 256;
-					Sint32 angle = (syRandom() & 0x7fff) + DEGtoANG(90);
+					Sint32 ang = (syRandom() & 0x7fff) + DEGtoANG(90);
 
-					spark->x = toFIXED(position.x);
+					spark->x = toFIXED(pos.x);
 					spark->y = toFIXED(96 - (syRandom() & 31));
-					spark->velX = (sySin(angle) * speed) >> 7;
-					spark->velY = (syCos(angle) * speed) >> 9;
+					spark->velX = (sySin(ang) * speed) >> 7;
+					spark->velY = (syCos(ang) * speed) >> 9;
 					spark->variant = syRandom() & 7;
 				}
 			}
@@ -352,12 +352,12 @@ void btEffectRunSoulShatter(BATTLE_EFFECT_PARM *args)
 				for(i = 0, mote = &state->particles[SOUL_SHATTER_SPARKS * 2];
 					i != SOUL_SHATTER_MOTES; i++, mote++) {
 					Sint32 speed = (syRandom() & 127) + 128;
-					Sint32 angle = syRandom() & 0x7fff;
+					Sint32 ang = syRandom() & 0x7fff;
 
-					SET_POSITION(mote, target->x, toFIXED(52), target->z);
+					SET_POSITION(mote, tgt->x, toFIXED(52), tgt->z);
 					mote->velY = ((syRandom() & 0xff) - 128) << 9;
-					mote->velX = (sySin(angle) * speed) >> 7;
-					mote->velZ = (syCos(angle) * speed) >> 7;
+					mote->velX = (sySin(ang) * speed) >> 7;
+					mote->velZ = (syCos(ang) * speed) >> 7;
 					mote->variant = 0;
 				}
 			}
@@ -365,40 +365,40 @@ void btEffectRunSoulShatter(BATTLE_EFFECT_PARM *args)
 
 		/* The sounds: the burst, the target thrown up 32 pixels, the user
 		   raising a hand, the drain and the target's fall. */
-		if(frame == 4)
+		if(frm == 4)
 			sySndPlayStub(SE_POWER_UP);
-		if(frame == 10) {
+		if(frm == 10) {
 			state->shakeFrm = 8;
 			sySndPlayStub(SE_CLATTER);
 			btEffectTintBattler(
 				args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 80);
-			target->verticalMotionStrength = 0;
-			target->y = toFIXED(32);
+			tgt->verticalMotionStrength = 0;
+			tgt->y = toFIXED(32);
 		}
-		if(frame == 80)
-			target->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
-		if(frame == 24)
+		if(frm == 80)
+			tgt->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
+		if(frm == 24)
 			btEffectTintBattler(args->user, TINT_KEEP, POSE_CAST, TINT_KEEP, 0);
-		if(frame == 40)
+		if(frm == 40)
 			sySndPlayStub(SE_SWIRL);
-		if(frame == 32)
+		if(frm == 32)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-		if(frame == 64)
+		if(frm == 64)
 			btEffectTintBattler(
 				args->user, SPRITE_COLOR_WHITE, TINT_KEEP, TINT_KEEP, 0);
-		if(frame == 88)
+		if(frm == 88)
 			btEffectTintBattler(
 				args->user, SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
 
 		/* The column: its two halves, the right one mirrored. */
-		if(frame > 7) {
-			Sint32 centre = position.x;
+		if(frm > 7) {
+			Sint32 centre = pos.x;
 			Sint32 height;
 
-			if(frame <= 79)
-				height = frame * 12 - 96;
+			if(frm <= 79)
+				height = frm * 12 - 96;
 			else
-				height = 560 - frame * 6;
+				height = 560 - frm * 6;
 			if(height > 0) {
 				Uint32 mode;
 				Sint32 x;
@@ -425,16 +425,16 @@ void btEffectRunSoulShatter(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		/* The sparks: from frame 8, two more each frame, through seven pictures
-		   three frames apiece, the last held; one in four is drawn mirrored. */
+		/* The sparks: from tick 8, two more each tick, through seven pictures
+		   three ticks apiece, the last held; one in four is drawn mirrored. */
 		btEffectBuildCanvasBlitters(args->side, draw);
 		{
 			PARTICLE *spark;
 
 			for(i = 0, spark = state->particles; i != SOUL_SHATTER_SPARKS;
 				i++, spark++) {
-				if(frame >= i / 2 + 8 &&
-					spark->variant < SOUL_SHATTER_SPARK_FRAMES) {
+				if(frm >= i / 2 + 8 &&
+					spark->variant < SOUL_SHATTER_SPARK_TICKS) {
 					Sint32 cell = spark->variant / 3;
 					Sint32 x = FIXED_INTEGER_PART(spark->x);
 					Sint32 y = FIXED_INTEGER_PART(spark->y);
@@ -442,21 +442,21 @@ void btEffectRunSoulShatter(BATTLE_EFFECT_PARM *args)
 					if(cell > 6)
 						cell = 6;
 					draw[(i & 3) ? 0 : 1](canvas,
-						state->sheet + SoulShatter_SparkPictures[cell] +
+						state->sheet + SoulShatterSparkPictures[cell] +
 							SOUL_SHATTER_SPARK_PICTURES,
-						x - SoulShatter_SparkSizes[cell] / 2,
-						y - SoulShatter_SparkSizes[cell] / 2,
-						SoulShatter_SparkSizes[cell],
-						SoulShatter_SparkSizes[cell]);
+						x - SoulShatterSparkSizes[cell] / 2,
+						y - SoulShatterSparkSizes[cell] / 2,
+						SoulShatterSparkSizes[cell],
+						SoulShatterSparkSizes[cell]);
 					spark->variant++;
 					btParticleAdvanceWithGravity2D(spark, 62, -toFIXED(1) / 8);
 				}
 			}
 		}
 
-		/* From frame 32 the motes fly; mote i turns toward the user's middle
-		   from frame 32 + i and vanishes once it passes the user. */
-		if(frame > 31) {
+		/* From tick 32 the motes fly; mote i turns toward the user's middle
+		   from tick 32 + i and vanishes once it passes the user. */
+		if(frm > 31) {
 			MOTION_OBJECT *user;
 			Sint32		   userHalfHeight;
 			BATTLE_CAMERA *camera;
@@ -475,11 +475,11 @@ void btEffectRunSoulShatter(BATTLE_EFFECT_PARM *args)
 					Sint32 moteX;
 
 					btEffectPosProjectPoint(&mote->x, &screen);
-					draw[0](canvas, sheet + BattleEffect_MotePictures[size - 1],
+					draw[0](canvas, sheet + BattleEffectMotePictures[size - 1],
 						(screen.x >> 1) - size / 2, screen.y - size, size,
 						size * 2);
 					btParticleAdvanceWithGravity3D(mote, 62, 0);
-					if(frame > i + 32) {
+					if(frm > i + 32) {
 						Sint32 dx = (user->x - mote->x) >> 7;
 						Sint32 dy = (user->y + userHalfHeight - mote->y) >> 7;
 						Sint32 dz = (user->z - mote->z) >> 7;
@@ -511,11 +511,11 @@ void btEffectRunSoulShatter(BATTLE_EFFECT_PARM *args)
 		}
 
 		EFFECT_RELEASE_BLITTERS();
-		if(frame <= 7)
+		if(frm <= 7)
 			btCameraShake(4, 4);
 		else
 			btCameraShake(16, 16);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	syCloseEvent(btEffectTransferCanvas);
@@ -534,7 +534,7 @@ typedef struct PROJECTED_POINT {
 /* Where MercuryDjinnSheet is decoded in the effect's pictures. */
 #define SERAC_MERCURY_DJINN_PICTURES 16384
 
-#define SERAC_FRAMES 88
+#define SERAC_TICKS 88
 
 /* Where BlueCloudPuffSheet is decoded in the effect's pictures. */
 #define SERAC_CLOUD_PUFFS 1024
@@ -544,40 +544,40 @@ typedef struct PROJECTED_POINT {
 
 /* The spire of ice: a cone of SERAC_SPIRE_RINGS rings of SERAC_SPIRE_SIDES
    corners, each quad of its mesh 16 texels across and 8 high. It grows from
-   frame 26 by SERAC_SPIRE_GROWTH a frame to its scale SERAC_SPIRE_SCALE. */
+   tick 26 by SERAC_SPIRE_GROWTH a tick to its scale SERAC_SPIRE_SCALE. */
 #define SERAC_SPIRE_RINGS		8
 #define SERAC_SPIRE_SIDES		8
 #define SERAC_SPIRE_QUAD_TEXELS 16
 #define SERAC_SPIRE_GROWTH		toFIXED(0.1526)
 #define SERAC_SPIRE_SCALE		toFIXED(0.91553)
 
-/* The camera circles the spire SERAC_CAMERA_TURN a frame, slowing from frame
+/* The camera circles the spire SERAC_CAMERA_TURN a tick, slowing from tick
    64, and turns no further than SERAC_CAMERA_YAW_MAX either way. */
 #define SERAC_CAMERA_TURN	 320
 #define SERAC_CAMERA_YAW_MAX 14000
 
 /* The puffs of dust where the Djinni lands, each drawn for
-   SERAC_DUST_PUFF_FRAMES through BlueCloudPuffSheet's four pictures. */
-#define SERAC_DUST_PUFFS	   32
-#define SERAC_DUST_PUFF_FRAMES 24
+   SERAC_DUST_PUFF_TICKS through BlueCloudPuffSheet's four pictures. */
+#define SERAC_DUST_PUFFS	  32
+#define SERAC_DUST_PUFF_TICKS 24
 
-/* The four rings of mist spread from the spire's foot from frame
-   SERAC_RINGS_FRAME; a ring of BattleEffect_CylinderMesh starts at
+/* The four rings of mist spread from the spire's foot from tick
+   SERAC_RINGS_TICK; a ring of BattleEffectCylinderMesh starts at
    SERAC_RING_START_SCALE and grows by its growth times SERAC_RING_GROWTH a
-   frame. */
-#define SERAC_RINGS_FRAME	   22
+   tick. */
+#define SERAC_RINGS_TICK	   22
 #define SERAC_RING_START_SCALE toFIXED(0.25586)
 #define SERAC_RING_GROWTH	   toFIXED(0.0229)
 
 /* A shard's y speed is three times a random fraction of a pixel less
-   SERAC_SHARD_SPEED_BIAS: from about -0.58 to 2.42 pixels a frame, 0.92 on
+   SERAC_SHARD_SPEED_BIAS: from about -0.58 to 2.42 pixels a tick, 0.92 on
    average. */
 #define SERAC_SHARD_SPEED_BIAS 12768
 
 /* "Strike a chilling finishing blow." The Mercury Djinni drops onto the target,
    dust bursting where it lands; a spire of ice (its mesh built on the first
-   frame) grows up around the target in rings of mist while the camera circles,
-   the caster closes in at frame 56, and at 64 the spire shatters into 64
+   tick) grows up around the target in rings of mist while the camera circles,
+   the caster closes in at tick 56, and at 64 the spire shatters into 64
    tumbling shards.
 
    Abilities: Serac. */
@@ -585,7 +585,7 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 {
 	void				*canvas;
 	BATTLE_EFFECT_STATE *state;
-	Sint32				 frame;
+	Sint32				 frm;
 	DRAW_RECTANGLE		 blitters[2];
 	Sint32				 screenB[3];
 	Sint32				 screenA[3];
@@ -620,7 +620,7 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 	{
 		BATTLE_CAMERA  *camera;
 		Sint16			savedYaw;
-		MOTION_OBJECT  *target;
+		MOTION_OBJECT  *tgt;
 		PROJECTED_POINT screen;
 		Sint32			world[3];
 		PROJECTED_POINT point;
@@ -628,7 +628,7 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 		MODEL_TEXTURE	texture;
 		RENDER_MODEL   *model;
 		void		   *vertices;
-		Uint8			color[1];
+		Uint8			col[1];
 		Sint32			savedCenterX;
 		Sint32			savedCenterY;
 		Sint32			row;
@@ -637,34 +637,34 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 
 		camera = (BATTLE_CAMERA *)Ram_HeapSlots->cameraState;
 		savedYaw = camera->yaw;
-		target = btObjectGetStub(args->tgts[0])->obj;
+		tgt = btObjectGetStub(args->tgts[0])->obj;
 		REG_BG2PA = Q_8_8(1);
 		REG_BG2X = 0;
 
-		for(frame = 0; frame != SERAC_FRAMES; frame++) {
-			if(frame == 0) {
+		for(frm = 0; frm != SERAC_TICKS; frm++) {
+			if(frm == 0) {
 				camera->yaw = savedYaw;
 				for(row = 0; row != SERAC_SPIRE_RINGS; row++) {
 					for(column = 0; column != SERAC_SPIRE_SIDES; column++) {
 						Sint32 height;
 						Sint32 radius;
-						Sint32 angle;
+						Sint32 ang;
 
 						if(row == 0) {
-							height = Serac_RowHeights[row];
-							radius = Serac_RowRadii[row];
+							height = SeracRowHeights[row];
+							radius = SeracRowRadii[row];
 						} else {
-							height = Serac_RowHeights[row] + (syRandom() & 3);
-							radius = Serac_RowRadii[row] + (syRandom() & 3);
+							height = SeracRowHeights[row] + (syRandom() & 3);
+							radius = SeracRowRadii[row] + (syRandom() & 3);
 						}
-						angle = column * (TRIG_TURN / SERAC_SPIRE_SIDES) +
+						ang = column * (TRIG_TURN / SERAC_SPIRE_SIDES) +
 							TRIG_TURN / 16;
 						SERAC_SPIRE_CORNERS[row * SERAC_SPIRE_SIDES + column]
-							.x = FIXEDtoINT(sySin(angle) * radius);
+							.x = FIXEDtoINT(sySin(ang) * radius);
 						SERAC_SPIRE_CORNERS[row * SERAC_SPIRE_SIDES + column]
 							.y = -height;
 						SERAC_SPIRE_CORNERS[row * SERAC_SPIRE_SIDES + column]
-							.z = FIXEDtoINT(syCos(angle) * radius);
+							.z = FIXEDtoINT(syCos(ang) * radius);
 						/* Each quad between this ring and the next is two
 						   triangles of the mesh. */
 						if(row < SERAC_SPIRE_RINGS - 1) {
@@ -706,19 +706,19 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 						}
 					}
 				}
-				Serac_MeshEnd[0] = 0;
-				Serac_MeshEnd[1] = 0;
-				Serac_MeshEnd[2] = 0;
+				SeracMeshEnd[0] = 0;
+				SeracMeshEnd[1] = 0;
+				SeracMeshEnd[2] = 0;
 			}
 
 			/* The camera circles the spire. */
-			if((Uint32)(frame - 4) <= 79) {
+			if((Uint32)(frm - 4) <= 79) {
 				Sint32 turn;
 
-				if(frame <= 63) {
+				if(frm <= 63) {
 					turn = SERAC_CAMERA_TURN;
 				} else {
-					turn = 1600 - frame * 20;
+					turn = 1600 - frm * 20;
 				}
 				if(args->side == EFFECT_SIDE_ENEMIES) {
 					camera->yaw -= turn;
@@ -741,9 +741,9 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 			ProjectionWork.centerY = savedCenterY - 16;
 			syInitMatrix();
 			syLookAtLoad(camera->eye, camera->focus);
-			world[0] = target->x;
+			world[0] = tgt->x;
 			world[1] = 0;
-			world[2] = target->z;
+			world[2] = tgt->z;
 			syConvert3Dto2D(world, &screen);
 			if(screen.x <= 63) {
 				screen.x = 64;
@@ -756,17 +756,17 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 				(Uint32)&REG_BG2X, (64 - screen.x) << 8, IO_WRITE_WORD);
 
 			/* Dust where the Djinni lands. */
-			if((Uint32)frame <= 63) {
-				if(frame == 0) {
+			if((Uint32)frm <= 63) {
+				if(frm == 0) {
 					for(i = 0; i != SERAC_DUST_PUFFS; i++) {
 						PARTICLE *p = &state->particles[i];
 						Sint32	  speed = (syRandom() & 1023) + 1024;
-						Sint32	  angle = syRandom() & TRIG_ANGLE_MASK;
+						Sint32	  ang = syRandom() & TRIG_ANGLE_MASK;
 
-						SET_POSITION(p, target->x, 0, target->z);
-						p->velX = (sySin(angle) * speed) >> 9;
+						SET_POSITION(p, tgt->x, 0, tgt->z);
+						p->velX = (sySin(ang) * speed) >> 9;
 						p->velY = 0;
-						p->velZ = (syCos(angle) * speed) >> 9;
+						p->velZ = (syCos(ang) * speed) >> 9;
 						p->variant = -i;
 					}
 				}
@@ -776,7 +776,7 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 					Sint32	  x;
 					Sint32	  y;
 
-					if((Uint32)++p->variant >= SERAC_DUST_PUFF_FRAMES) {
+					if((Uint32)++p->variant >= SERAC_DUST_PUFF_TICKS) {
 						continue;
 					}
 					picture = p->variant / 6;
@@ -791,46 +791,45 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 				}
 			}
 			/* The Djinni falls. */
-			if(frame <= 29) {
-				point.x = target->x;
-				point.y = toFIXED(60) - frame * toFIXED(2);
-				point.depth =
-					target->z + (sySin(frame * (TRIG_TURN / 128)) << 5);
+			if(frm <= 29) {
+				point.x = tgt->x;
+				point.y = toFIXED(60) - frm * toFIXED(2);
+				point.depth = tgt->z + (sySin(frm * (TRIG_TURN / 128)) << 5);
 				syConvert3Dto2D((const FIXED *)&point, &dropScreen);
 				blitters[1](canvas, state->sheet + SERAC_MERCURY_DJINN_PICTURES,
 					dropScreen.x - 20, dropScreen.y - 30, DJINNI_WIDTH,
 					DJINNI_HEIGHT);
 			}
-			if(frame == 4) {
+			if(frm == 4) {
 				sySndPlayStub(SE_SWITCH_MECHANISM);
 			}
-			if(frame == 30) {
+			if(frm == 30) {
 				sySndPlayStub(SE_DJINNI_SET);
 			}
-			if(frame == 60) {
+			if(frm == 60) {
 				sySndPlayStub(SE_POWER_UP);
 			}
-			if(frame == 64) {
+			if(frm == 64) {
 				sySndPlayStub(SE_HEAVY_IMPACT);
 				EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
 			}
-			if(frame == 30) {
+			if(frm == 30) {
 				btEffectTintBattler(args->tgts[0], SPRITE_COLOR_BLUE_TINT,
 					POSE_DAMAGE, TINT_KEEP, 0);
 			}
-			if(frame == 26) {
+			if(frm == 26) {
 				state->shakeFrm = 8;
 			}
-			if(frame == 64) {
+			if(frm == 64) {
 				state->shakeFrm = 4;
 				btEffectTintBattler(
 					args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 4);
 			}
-			if(frame == 70) {
+			if(frm == 70) {
 				btEffectTintBattler(
 					args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 4);
 			}
-			if(frame == 56) {
+			if(frm == 56) {
 				/* The caster closes four fifths of the way. */
 				ACTOR *caster = (ACTOR *)btObjectGetStub(args->user)->obj;
 				ACTOR *to = (ACTOR *)btObjectGetStub(args->tgts[0])->obj;
@@ -859,20 +858,20 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 				fdActorSelectAnimationStub(caster, POSE_LEAP);
 			}
 
-			if(frame > 63) {
-				if(frame == 64) {
+			if(frm > 63) {
+				if(frm == 64) {
 					syWordsFillEntry(canvas, CANVAS_BYTES,
 						CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 					for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
 						PARTICLE *p = &state->particles[i];
-						Sint32	  angle = (i & 7) * (TRIG_TURN / 8);
+						Sint32	  ang = (i & 7) * (TRIG_TURN / 8);
 						Sint32	  ring;
 
 						SET_POSITION(p,
-							target->x + ((sySin(angle) * (ring = i / 8)) << 2),
+							tgt->x + ((sySin(ang) * (ring = i / 8)) << 2),
 							((syRandom() & TRIG_ANGLE_MASK) << 2) -
 								ring * toFIXED(10) + toFIXED(64),
-							target->z + ((syCos(angle) * ring) << 2));
+							tgt->z + ((syCos(ang) * ring) << 2));
 						p->velX =
 							((syRandom() & TRIG_ANGLE_MASK) << 1) + toFIXED(1);
 						p->velY = ((syRandom() & TRIG_ANGLE_MASK) -
@@ -889,33 +888,33 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 				} else {
 					model->kind = MODEL_SOLID_MAX;
 					model->flg = 0;
-					model->mesh = BattleEffect_TriangleMesh;
+					model->mesh = BattleEffectTriangleMesh;
 					model->vertices = vertices;
 					for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
 						PARTICLE *p = &state->particles[i];
-						Sint32	  angle = (frame + i) * (TRIG_TURN / 64);
+						Sint32	  ang = (frm + i) * (TRIG_TURN / 64);
 
 						if(p->variant < 0) {
 							continue;
 						}
-						color[0] = p->variant;
+						col[0] = p->variant;
 						p->variant -= 2;
-						model->shade = color;
+						model->shade = col;
 						btParticleAdvanceWithGravity3D(p, 62, toFIXED(1) / 64);
 						syPushMatrix();
 						syTranslate(p->x, p->y, p->z);
-						syRotX(angle);
-						syRotZ(angle);
+						syRotX(ang);
+						syRotZ(ang);
 						syMatrixScaleUniform(toFIXED(1));
 						btRenderProjectVertices(
-							BattleEffect_TriangleCorners, vertices, 3);
+							BattleEffectTriangleCorners, vertices, 3);
 						btRenderDrawModelList(model);
 						syPopMatrix();
 					}
 				}
 			}
-			if(frame < 64) {
-				if(frame > 25) {
+			if(frm < 64) {
+				if(frm > 25) {
 					Sint32 scale;
 					Sint32 start;
 					/* The spire is drawn at its own shade, the mist inside it
@@ -933,17 +932,17 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 					model->scrollU = 0;
 					model->texture = &texture;
 					model->mesh = mesh;
-					model->scrollV = -((frame / 2) & 31);
+					model->scrollV = -((frm / 2) & 31);
 					syPushMatrix();
 					spireShade = 0;
-					if(frame <= 31) {
-						scale = frame * SERAC_SPIRE_GROWTH -
-							26 * SERAC_SPIRE_GROWTH;
+					if(frm <= 31) {
+						scale =
+							frm * SERAC_SPIRE_GROWTH - 26 * SERAC_SPIRE_GROWTH;
 					} else {
 						scale = SERAC_SPIRE_SCALE;
 					}
 					model->shade = (const void *)spireShade;
-					syTranslate(target->x, -toFIXED(4), target->z);
+					syTranslate(tgt->x, -toFIXED(4), tgt->z);
 					syScale(scale, scale, scale);
 					btRenderProjectVertices(
 						(const Uint8 *)MapGridMetatileBuffer, vertices,
@@ -953,7 +952,7 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 					model->shade = (const void *)spireShade;
 					model->kind = MODEL_SHADED_ADDITIVE;
 					model->scrollU = 0;
-					model->scrollV = (frame / 2) & 31;
+					model->scrollV = (frm / 2) & 31;
 					model->flg = MODEL_ONE_SIDED;
 					btRenderDrawModelList(model);
 					syPopMatrix();
@@ -964,7 +963,7 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 					texture.pixels = mistSheet;
 					model->kind = MODEL_SHADED_ADDITIVE;
 					model->texture = &texture;
-					model->mesh = BattleEffect_CylinderMesh;
+					model->mesh = BattleEffectCylinderMesh;
 					model->flg = 0;
 					model->vertices = vertices;
 					model->scrollU = 0;
@@ -973,14 +972,14 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 						Sint32 size;
 						Sint32 shade;
 
-						start = Serac_RingStarts[i] + SERAC_RINGS_FRAME;
-						if(frame <= start) {
+						start = SeracRingStarts[i] + SERAC_RINGS_TICK;
+						if(frm <= start) {
 							continue;
 						}
-						size = (frame - start) * Serac_RingGrowth[i] *
+						size = (frm - start) * SeracRingGrowth[i] *
 								SERAC_RING_GROWTH +
 							SERAC_RING_START_SCALE;
-						shade = (start - frame) * 8 + 56;
+						shade = (start - frm) * 8 + 56;
 						if(shade > 0) {
 							shade = 0;
 						}
@@ -989,12 +988,12 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 						}
 						syPushMatrix();
 						model->shade = (const void *)shade;
-						syTranslate(target->x, toFIXED(Serac_RingHeights[i]),
-							target->z);
+						syTranslate(
+							tgt->x, toFIXED(SeracRingHeights[i]), tgt->z);
 						syScale(size, size, size);
-						model->scrollU = ((frame + i * 5) & 7) << 4;
+						model->scrollU = ((frm + i * 5) & 7) << 4;
 						btRenderProjectVertices(
-							BattleEffect_CylinderCorners, vertices, 32);
+							BattleEffectCylinderCorners, vertices, 32);
 						btRenderDrawModelList(model);
 						syPopMatrix();
 					}
@@ -1005,7 +1004,7 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 			ProjectionWork.centerX = savedCenterX;
 			ProjectionWork.centerY = savedCenterY;
 			btCameraShake(8, 8);
-			EFFECT_END_FRAME(state);
+			EFFECT_END_TICK(state);
 		}
 	}
 	EFFECT_FINISH_CANVAS();
@@ -1027,25 +1026,25 @@ void btEffectRunStrongHit(BATTLE_EFFECT_PARM *args)
 	btEffectRunHeavyBlow(args, HEAVY_BLOW_STRONG_HIT);
 }
 
-#undef NIRVANA_FRAMES
+#undef NIRVANA_TICKS
 #undef NIRVANA_SPARKS
 #undef NIRVANA_RING_RADIUS
 #undef NIRVANA_PULL
 #undef STONE_JUSTICE_ROCKS
-#undef STONE_JUSTICE_FRAMES
-#undef STONE_JUSTICE_HURL_FRAME
+#undef STONE_JUSTICE_TICKS
+#undef STONE_JUSTICE_HURL_TICK
 #undef STONE_JUSTICE_SPIN_STEP
-#undef SOUL_SHATTER_FRAMES
+#undef SOUL_SHATTER_TICKS
 #undef SOUL_SHATTER_COLUMN_WIDTH
 #undef SOUL_SHATTER_COLUMN_HEIGHT
 #undef SOUL_SHATTER_SPARK_PICTURES
 #undef SOUL_SHATTER_SPARKS
-#undef SOUL_SHATTER_SPARK_FRAMES
+#undef SOUL_SHATTER_SPARK_TICKS
 #undef SOUL_SHATTER_MOTES
 #undef SERAC_SPIRE_CORNERS
 #undef SERAC_SPIRE_MESH
 #undef SERAC_MERCURY_DJINN_PICTURES
-#undef SERAC_FRAMES
+#undef SERAC_TICKS
 #undef SERAC_CLOUD_PUFFS
 #undef SERAC_MIST
 #undef SERAC_SPIRE_RINGS
@@ -1056,8 +1055,8 @@ void btEffectRunStrongHit(BATTLE_EFFECT_PARM *args)
 #undef SERAC_CAMERA_TURN
 #undef SERAC_CAMERA_YAW_MAX
 #undef SERAC_DUST_PUFFS
-#undef SERAC_DUST_PUFF_FRAMES
-#undef SERAC_RINGS_FRAME
+#undef SERAC_DUST_PUFF_TICKS
+#undef SERAC_RINGS_TICK
 #undef SERAC_RING_START_SCALE
 #undef SERAC_RING_GROWTH
 #undef SERAC_SHARD_SPEED_BIAS

@@ -31,10 +31,10 @@
 #include "field/actor_script.h"
 #include "scene/dehkan_plateau.h"
 
-void		  scPillarPlace(const Uint16 *table);
+void		  scPillarPlace(const Uint16 *tbl);
 void		  scAlhafranCaveTakeLeadersLayer(void);
-extern Sint32 AlhafranCave_GuardStepsAsideScript[];
-extern Uint32 AlhafranCave_VisitorsLeaveScript[];
+extern Sint32 AlhafranCaveGuardStepsAsideScript[];
+extern Uint32 AlhafranCaveVisitorsLeaveScript[];
 void		  scAlhafranCaveRaiseBridgeMetatiles(void);
 void		  scAlhafranCaveLowerBridgeMetatiles(void);
 void		  scAlhafranCaveCastSand(void);
@@ -52,7 +52,7 @@ void		  scAlhafranCaveFinishMovingCrate(void);
 #define FLAG_ALHAFRAN_CAVE_PUDDLE_FROZEN FLAG_SCENE_TEMP_03
 
 /* The cave's actors (SceneId_AlhafranCave), numbering the rows of
-   AlhafranCave_CaveActorPlacements. */
+   AlhafranCaveCaveActorPlacements. */
 typedef enum ALHAFRAN_CAVE_ACTOR_ID {
 	/* Three stone bridges, raised twelve pixels over the channel and the
 	   chasm. */
@@ -75,7 +75,7 @@ typedef enum ALHAFRAN_CAVE_ACTOR_ID {
 } ALHAFRAN_CAVE_ACTOR_ID;
 
 /* The jail's actors (SceneId_AlhafraJail), numbering the rows of
-   AlhafranCave_JailActorPlacements. */
+   AlhafranCaveJailActorPlacements. */
 typedef enum ALHAFRA_JAIL_ACTOR_ID {
 	/* The crate Move pushes. */
 	ACTOR_CRATE = ACTOR_FIRST_PLACED,
@@ -141,17 +141,17 @@ void fdActorTakeLeaderLayer(void);
 void scAlhafranCaveSetUpCave(void);
 void scAlhafranCaveSetUpJail(void);
 
-extern Sint16								 AlhafranCave_Puddles[];
-extern Uint16								 AlhafranCave_PoundStakes[];
-extern ACTOR_PLACE							 AlhafranCave_CaveActorPlacements[];
-extern ACTOR_PLACE							 AlhafranCave_JailActorPlacements[];
-extern CUE									 AlhafranCave_CaveCues[];
-extern CUE									 AlhafranCave_JailCues[];
-EFFECT_SPR AlhafranCave_CrateSprite BSS_DATA ALIGNED(16);
-/* The frame count of scAlhafranCaveIdleEvent, cleared as the event is added, as
+extern Sint16								AlhafranCavePuddles[];
+extern Uint16								AlhafranCavePoundStakes[];
+extern ACTOR_PLACE							AlhafranCaveCaveActorPlacements[];
+extern ACTOR_PLACE							AlhafranCaveJailActorPlacements[];
+extern CUE									AlhafranCaveCaveCues[];
+extern CUE									AlhafranCaveJailCues[];
+EFFECT_SPR AlhafranCaveCrateSprite BSS_DATA ALIGNED(16);
+/* The tick count of scAlhafranCaveIdleEvent, cleared as the event is added, as
    other scenes clear the count their script's event keeps; the event is empty,
    so nothing counts it or reads it. */
-Sint32 AlhafranCave_IdleEventFrame BSS_DATA;
+Sint32 AlhafranCaveIdleEventTick BSS_DATA;
 
 /* The current scene's actors: the cave's or the jail's. */
 const ACTOR_PLACE *scGetActorPlacements(void)
@@ -159,17 +159,17 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	Sint32 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_ALHAFRAN_CAVE)
-		return AlhafranCave_CaveActorPlacements;
+		return AlhafranCaveCaveActorPlacements;
 	if(scene == SCENE_ALHAFRA_JAIL)
-		return AlhafranCave_JailActorPlacements;
-	return AlhafranCave_CaveActorPlacements;
+		return AlhafranCaveJailActorPlacements;
+	return AlhafranCaveCaveActorPlacements;
 }
 
 /* Felix casts Pound on the stake in the caves beyond the jail and drives it
    into the ground. */
-void scAlhafranCavePoundStake(Sint32 mode, Sint32 frame)
+void scAlhafranCavePoundStake(Sint32 mode, Sint32 frm)
 {
-	fdPoundSinkTarget(AlhafranCave_PoundStakes, mode, frame);
+	fdPoundSinkTarget(AlhafranCavePoundStakes, mode, frm);
 }
 
 /* Nothing more than the move itself happens as Felix starts casting Move on the
@@ -208,7 +208,7 @@ void scAlhafranCaveTalkToBriggs(Sint32 id)
    freezes into a pillar of ice that lifts the way up to them. */
 void scAlhafranCaveFreezePuddle(void)
 {
-	fdFlagBlockApplyFlags(AlhafranCave_Puddles);
+	fdFlagBlockApplyFlags(AlhafranCavePuddles);
 }
 
 /* Nothing visible happens as Felix walks east onto metatile (18, 8), on the
@@ -264,13 +264,13 @@ const CUE *scGetCues(void)
 	Sint32 scene = MainRoutineStateWork.next;
 
 	if(scene == SCENE_ALHAFRAN_CAVE)
-		return AlhafranCave_CaveCues;
+		return AlhafranCaveCaveCues;
 	if(scene == SCENE_ALHAFRA_JAIL)
-		return AlhafranCave_JailCues;
-	return AlhafranCave_CaveCues;
+		return AlhafranCaveJailCues;
+	return AlhafranCaveCaveCues;
 }
 
-/* Nothing visible: each frame the game notes whether Felix stands on the cave's
+/* Nothing visible: each tick the game notes whether Felix stands on the cave's
    upper level, for wading. */
 void scAlhafranCaveCheckUpperLevel(void)
 {
@@ -287,7 +287,7 @@ Sint32 scAlhafranCaveDrawCrateSpr(void)
 {
 	ACTOR *actor = fdActorGet(ACTOR_CRATE);
 
-	fdEffectSprDrawAtWorldXYZ(&AlhafranCave_CrateSprite, actor->x.fixed,
+	fdEffectSprDrawAtWorldXYZ(&AlhafranCaveCrateSprite, actor->x.fixed,
 		actor->y.fixed + toFIXED(28), actor->z.fixed);
 	return 0;
 }
@@ -336,7 +336,7 @@ void scAlhafranCaveSetUpCave(void)
 	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	map->wading = MAP_WADING_UPPER_LEVEL;
-	sySetFrameEvent(scAlhafranCaveCheckUpperLevel, EVENT_PASS_FRAME);
+	sySetTickEvent(scAlhafranCaveCheckUpperLevel, EVENT_PASS_TICK);
 	if(fdScriptGetFlag(FLAG_BRIDGE_METATILES_RAISED))
 		scAlhafranCaveRaiseBridgeMetatiles();
 	actor = fdActorGet(ACTOR_CAVE_FIRST_BRIDGE);
@@ -394,7 +394,7 @@ void scAlhafranCaveSetUpCave(void)
 	actor->groundHeight = 0;
 	actor->y.fixed = 0;
 	fdMapGridSetMetatileHeight(actor->x.fixed, actor->z.fixed, 0, 4);
-	fdFlagBlockPlaceAllMarkingEdges(AlhafranCave_Puddles);
+	fdFlagBlockPlaceAllMarkingEdges(AlhafranCavePuddles);
 	fdActorSetMovementType(
 		fdActorGet(ACTOR_CAVE_PUDDLE), MOVEMENT_TYPE_TAKE_LEADER_LAYER);
 	/* Until the mast is cleared, the ladder behind the first pillar is drawn as
@@ -418,11 +418,11 @@ void scAlhafranCaveSetUpJail(void)
 		ACTOR_PRIORITY_IGNORES_RISES;
 	fdActorGet(ACTOR_CRATE)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
 	fdEffectStartBlankOverlay(0);
-	crate = &AlhafranCave_CrateSprite;
+	crate = &AlhafranCaveCrateSprite;
 	fdFadeOverlayFillTiles(0);
 	Call4((void (*)())fdEffectSprInitWithFadeOverlay, (Sint32)crate, 8, 15,
 		OBJ_SIZE_16X16);
-	syFieldSetFrameEvent(scAlhafranCaveDrawCrateSpr, EVENT_PASS_FRAME);
+	syFieldSetTickEvent(scAlhafranCaveDrawCrateSpr, EVENT_PASS_TICK);
 	if(MainRoutineStateWork.entrance == ALHAFRA_JAIL_FROM_ALHAFRA ||
 		MainRoutineStateWork.entrance == ENTRANCE_UNDER_CRATE) {
 		state = Ram_HeapSlots->fieldState;
@@ -437,7 +437,7 @@ void scAlhafranCaveSetUpJail(void)
 		ACTOR_PRIORITY_IGNORES_RISES;
 	fdActorGet(ACTOR_JAIL_ROPE_HIGH_POST)->priFlg |=
 		ACTOR_PRIORITY_IGNORES_RISES;
-	scPillarPlace(AlhafranCave_PoundStakes);
+	scPillarPlace(AlhafranCavePoundStakes);
 	fdActorSetSprFlags(fdActorGet(ACTOR_JAIL_STAKE), 0);
 	scFieldActorSetSprRotationById(
 		ACTOR_JAIL_BROKEN_BRIDGE_MIDDLE, TRIG_TURN / 16);
@@ -497,7 +497,7 @@ void scAlhafranCaveSetUpJail(void)
 	if(MainRoutineStateWork.entrance == ENTRANCE_UNDER_CRATE &&
 		!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION)) {
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdActorSetSpeed(ACTOR_CRATE, 0.3);
 		fdActorSetDestinationOffset(ACTOR_CRATE, 0, 16);
 		scFieldActorWaitForMoveById(ACTOR_CRATE);
@@ -539,7 +539,7 @@ void scAlhafranCaveChauchaAndEoleoVisit(void)
 	ACTOR *eoleo;
 	ACTOR *key;
 	ACTOR *effect;
-	FIXED  position[3];
+	FIXED  pos[3];
 
 	if(syGameFlagGet(FLAG_BRIGGS_CAUGHT) == 0)
 		return;
@@ -603,7 +603,7 @@ void scAlhafranCaveChauchaAndEoleoVisit(void)
 	syScriptCameraFollowActor(ACTOR_GUARD, 1);
 	fdCameraWaitForArrival();
 	fdActorSetSpeed(ACTOR_GUARD, 1.5);
-	fdActorSetScript(ACTOR_GUARD, AlhafranCave_GuardStepsAsideScript);
+	fdActorSetScript(ACTOR_GUARD, AlhafranCaveGuardStepsAsideScript);
 	syFieldScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_EOLEO, ANIM_NOD);
 	syFieldScriptWait(20);
@@ -634,12 +634,12 @@ void scAlhafranCaveChauchaAndEoleoVisit(void)
 	fdScriptPlaySnd(SE_ASCEND);
 	syFieldScriptWait(40);
 	effect = fdEffectSpawnMoveHand(eoleo);
-	position[0] = key->x.fixed;
+	pos[0] = key->x.fixed;
 	effect->watchedActor = (union FIELD_OBJECT *)key;
-	position[1] = key->y.fixed + toFIXED(16);
-	position[2] = key->z.fixed;
-	syFieldVectorAddPolarOffset(16, FACING_NORTH, position);
-	scFieldActorSetMoveTargetFX(effect, position[0], position[1], position[2]);
+	pos[1] = key->y.fixed + toFIXED(16);
+	pos[2] = key->z.fixed;
+	syFieldVectorAddPolarOffset(16, FACING_NORTH, pos);
+	scFieldActorSetMoveTargetFX(effect, pos[0], pos[1], pos[2]);
 	fdEffectGrowHandAndWait(effect);
 	fdActorSelectAnimation(effect, 4);
 	key->update = scAlhafranCaveCycleKeyCols;
@@ -772,8 +772,8 @@ void scAlhafranCaveChauchaAndEoleoVisit(void)
 		ACTOR_EOLEO, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	/* "WAHHH!" */
 	syFieldScriptShowMessageThenWait(ACTOR_EOLEO, 0, 20);
-	AlhafranCave_IdleEventFrame = 0;
-	sySetFrameEvent(scAlhafranCaveIdleEvent, EVENT_PASS_FRAME);
+	AlhafranCaveIdleEventTick = 0;
+	sySetTickEvent(scAlhafranCaveIdleEvent, EVENT_PASS_TICK);
 	fdActorShowEmote(ACTOR_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
 	/* "I don't know why he's crying! You're his mother! Can't you do..." */
 	syFieldScriptShowMessageThenWait(ACTOR_GUARD, 0, 10);
@@ -855,9 +855,9 @@ void scAlhafranCaveChauchaAndEoleoVisit(void)
 	scFieldActorWatchAndSetScript(ACTOR_FELIX, ACTOR_EOLEO);
 	scFieldActorSetSprPriority(ACTOR_CHAUCHA, 2);
 	scFieldActorSetSprPriority(ACTOR_EOLEO, 2);
-	fdActorSetScript(ACTOR_CHAUCHA, AlhafranCave_VisitorsLeaveScript);
+	fdActorSetScript(ACTOR_CHAUCHA, AlhafranCaveVisitorsLeaveScript);
 	syFieldScriptWait(10);
-	fdActorSetScript(ACTOR_EOLEO, AlhafranCave_VisitorsLeaveScript);
+	fdActorSetScript(ACTOR_EOLEO, AlhafranCaveVisitorsLeaveScript);
 	syFieldScriptWait(10);
 	fdActorWalkByAndWait(ACTOR_PIRATE_GUARDING_EOLEOS_SECRET, 16, 0);
 	fdActorFaceDirection(
@@ -900,11 +900,11 @@ void scAlhafranCaveCycleKeyCols(void)
 
 /* clang-format off */
 /* The puddle Frost freezes into a pillar, and the flag set while it stands. */
-Sint16 AlhafranCave_Puddles[] = {
+Sint16 AlhafranCavePuddles[] = {
 	ACTOR_CAVE_PUDDLE, FLAG_ALHAFRAN_CAVE_PUDDLE_FROZEN, -1, 0,
 };
 
-Sint32 AlhafranCave_GuardStepsAsideScript[] = {
+Sint32 AlhafranCaveGuardStepsAsideScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE_BY(16, 0, 0),
 	SC_SYNC,
@@ -918,7 +918,7 @@ Sint32 AlhafranCave_GuardStepsAsideScript[] = {
 	SC_END,
 };
 
-Uint32 AlhafranCave_VisitorsLeaveScript[] = {
+Uint32 AlhafranCaveVisitorsLeaveScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(780, 0, 288),
 	SC_SYNC,
@@ -935,7 +935,7 @@ Uint32 AlhafranCave_VisitorsLeaveScript[] = {
 
 /* The jail's stake that Pound sinks: its actor, its kind and the flag set */
 /* once it is sunk. */
-Uint16 AlhafranCave_PoundStakes[] = {
+Uint16 AlhafranCavePoundStakes[] = {
 	ACTOR_JAIL_STAKE, 1, FLAG_JAIL_STAKE_POUNDED, ACTOR_LIST_END,
 };
 
@@ -957,7 +957,7 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE AlhafranCave_CaveActorPlacements[] = {
+ACTOR_PLACE AlhafranCaveCaveActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_PLANK_BRIDGE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 120, 0, 296, FACING_EAST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_PLANK_BRIDGE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 472, 0, 200, FACING_EAST, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_PLANK_BRIDGE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 424, 0, 312, FACING_EAST, TALK_FACING_KEEP, 0),
@@ -970,7 +970,7 @@ ACTOR_PLACE AlhafranCave_CaveActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE AlhafranCave_JailActorPlacements[] = {
+ACTOR_PLACE AlhafranCaveJailActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_TALL_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -991,7 +991,7 @@ ACTOR_PLACE AlhafranCave_JailActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-CUE AlhafranCave_CaveCues[] = {
+CUE AlhafranCaveCaveCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, 1},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
@@ -1004,7 +1004,7 @@ CUE AlhafranCave_CaveCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE AlhafranCave_JailCues[] = {
+CUE AlhafranCaveJailCues[] = {
 	{CUE_EXIT, 6, CONDITION_ALWAYS, 6},
 	{CUE_EXIT, 7, CONDITION_ALWAYS, 7},
 	{CUE_EXIT, 8, CONDITION_ALWAYS, 8},

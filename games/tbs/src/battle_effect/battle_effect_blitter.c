@@ -105,13 +105,13 @@
 		} \
 		PUT(templateWords[6]); \
 		PUT(templateWords[7]); \
-		PUT(templateWords[8] + Blitter_ImmediatePowers[widthShift]); \
+		PUT(templateWords[8] + BlitterImmediatePowers[widthShift]); \
 		if((flags & COMPOSITE_FLIP_X) != 0) { \
 			PUT(templateWords[9]); \
 		} else { \
 			PUT(templateWords[10]); \
 		} \
-		PUT(templateWords[11] + Blitter_ImmediatePowers[widthShift]); \
+		PUT(templateWords[11] + BlitterImmediatePowers[widthShift]); \
 	} \
 	templateWords += 12; \
 \
@@ -332,7 +332,7 @@ Sint32 btEffectBuildBlitter(Sint32 slot, Sint32 widthShift, Sint32 heightShift,
 
 	/* The template ends where battle_effect_table.c's first table begins, so a
 	   complete walk ends at that table. */
-	if(templateWords == (const Uint32 *)BattleEffect_MotePictures)
+	if(templateWords == (const Uint32 *)BattleEffectMotePictures)
 		return TRUE;
 	return FALSE;
 }

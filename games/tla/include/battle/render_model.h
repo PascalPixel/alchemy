@@ -57,6 +57,6 @@ void btRenderDrawModelList(RENDER_MODEL *model);
 /* Projects count model vertices through syConvert3Dto2D into screen
    coordinates. */
 void btRenderProjectVertices(
-	MODEL_VERTEX *vertices, PROJECTED_VERTEX *screen, Sint32 count);
+	MODEL_VERTEX *vertices, PROJECTED_VERTEX *screen, Sint32 cnt);
 
 #endif

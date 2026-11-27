@@ -44,9 +44,8 @@ enum {
 
 struct EFFECT_OPTIONS;
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 Sint32 WhirlwindRiding BSS_DATA;
 Uint16				   PaletteCycleColors[16] BSS_DATA;
@@ -74,9 +73,9 @@ void scJupiterLighthouseScatterFarWeeds(void);
 
 void scJupiterLighthouseTeleportToEntrance(void);
 
-extern Uint32 FieldEffect_ShortScript[];
-extern Uint32 FieldEffect_MediumScript[];
-extern Uint32 FieldEffect_LongScript[];
+extern Uint32 FieldEffectShortScript[];
+extern Uint32 FieldEffectMediumScript[];
+extern Uint32 FieldEffectLongScript[];
 
 /* The ROM's callers here are compiled against this form, which returns an
    Sint32 where the definition returns a Uint8. */
@@ -102,8 +101,8 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	return ActorPlacements;
 }
 
-extern CUE JupiterLighthouseBasement_TeleportersCues[];
-extern CUE JupiterLighthouseBasement_PsynergyStoneCues[];
+extern CUE JupiterLighthouseBasementTeleportersCues[];
+extern CUE JupiterLighthouseBasementPsynergyStoneCues[];
 
 /* Cyclone cast in the weeds round the near teleporter in the west of the cave,
    the one up to the grounds, scatters those within two metatiles of Felix. */
@@ -164,8 +163,8 @@ const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.next ==
 		(Sint32)&SceneId_JupiterLighthouseBasementPsynergyStone)
-		return JupiterLighthouseBasement_PsynergyStoneCues;
-	return JupiterLighthouseBasement_TeleportersCues;
+		return JupiterLighthouseBasementPsynergyStoneCues;
+	return JupiterLighthouseBasementTeleportersCues;
 }
 
 /* Starts a spark's life again, 32 pixels below the floor at a random point 8 to
@@ -174,16 +173,15 @@ const CUE *scGetCues(void)
 void scJupiterLighthouseRestartSpark(ACTOR *actor)
 {
 	if(syRandom() & 0xff) {
-		FIXED  position[3];
+		FIXED  pos[3];
 		Sint32 radius;
-		Sint32 angle;
+		Sint32 ang;
 
-		SET_VECTOR(position, toFIXED(200), toFIXED(-32), toFIXED(164));
+		SET_VECTOR(pos, toFIXED(200), toFIXED(-32), toFIXED(164));
 		radius = syRandom();
-		angle = syRandom();
-		syFieldVectorAddPolarOffsetFX(
-			(radius << 5) + toFIXED(8), angle, position);
-		SET_ACTOR_POSITION(actor, position[0], position[1], position[2]);
+		ang = syRandom();
+		syFieldVectorAddPolarOffsetFX((radius << 5) + toFIXED(8), ang, pos);
+		SET_ACTOR_POSITION(actor, pos[0], pos[1], pos[2]);
 	}
 	actor->userValue = actor->tmr;
 	if(actor->tmr == PARTICLE_SLOW_LIFETIME)
@@ -208,7 +206,7 @@ void scJupiterLighthouseUpdateSpark(ACTOR *actor)
 	fdActorSetAnimationSpeed(actor, ANIM_STEP_NORMAL);
 	fdTilesetAnimResumeAll();
 	if(actor->sceneByte != 0) {
-		if((FrameCount & 7) == 0)
+		if((TickCount & 7) == 0)
 			actor->sceneByte--;
 		return;
 	}
@@ -222,8 +220,8 @@ void scJupiterLighthouseUpdateSpark(ACTOR *actor)
 	actor->y.fixed += actor->speedLimit;
 }
 
-/* Places the side room's sixteen sparks, each starting 64 frames after the one
-   before and rising a sixteenth of a pixel a frame faster; every second one
+/* Places the side room's sixteen sparks, each starting 64 ticks after the one
+   before and rising a sixteenth of a pixel a tick faster; every second one
    swells slowly. */
 void scJupiterLighthouseSpawnSparks(void)
 {
@@ -293,12 +291,12 @@ extern Sint32 PaletteCyclePausesInScripts;
 
 #include "shared/palette_cycle_set_pauses_in_scripts.h"
 
-extern Sint32 PaletteCycleFrame;
+extern Sint32 PaletteCycleTick;
 
-/* Sets the palette cycle's frame (PaletteCycleFrame). */
-static inline void scPaletteCycleSetFrame(Sint32 value)
+/* Sets the palette cycle's tick (PaletteCycleTick). */
+static inline void scPaletteCycleSetTick(Sint32 value)
 {
-	PaletteCycleFrame = value;
+	PaletteCycleTick = value;
 }
 
 #include "shared/palette_cycle_step.h"
@@ -361,7 +359,7 @@ void scLightSprsSetPriority(Sint32 value)
 
 #include "../field/field_effect_move.c"
 
-extern const Sint32 *FieldEffect_DurationScripts[];
+extern const Sint32 *FieldEffectDurationScripts[];
 
 #define EFFECT_SET_MODE	  fdActorSelectAnimation
 #define EFFECT_SET_SCRIPT fdActorStartScript
@@ -413,7 +411,7 @@ ACTOR_PLACE ActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-CUE JupiterLighthouseBasement_TeleportersCues[] = {
+CUE JupiterLighthouseBasementTeleportersCues[] = {
 	{CUE_EXIT, JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_TO_JUPITER_LIGHTHOUSE_BASEMENT_PSYNERGY_STONE, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_TO_JUPITER_LIGHTHOUSE_BASEMENT_PSYNERGY_STONE},
 	{CUE_EXIT, 2, CONDITION_ALWAYS, 2},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -427,12 +425,12 @@ CUE JupiterLighthouseBasement_TeleportersCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE JupiterLighthouseBasement_PsynergyStoneCues[] = {
+CUE JupiterLighthouseBasementPsynergyStoneCues[] = {
 	{CUE_EXIT, JUPITER_LIGHTHOUSE_BASEMENT_PSYNERGY_STONE_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_BASEMENT_PSYNERGY_STONE_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS},
 	{CUE_TABLE_END},
 };
 
-Sint32 PaletteCycleFrame = -1;
+Sint32 PaletteCycleTick = -1;
 
 Sint32 PaletteCyclePausesInScripts = 1;
 
@@ -443,8 +441,8 @@ Sint32 WhirlwindEndScript[] = {
 };
 /* clang-format on */
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };

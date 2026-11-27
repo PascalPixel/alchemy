@@ -1,5 +1,5 @@
 @ Why IwramSoundMixInterpolated to IwramSoundMixDone are assembly:
-@ fp (r11) holds the packed volumes, the multiplier in mlane, not a frame
+@ fp (r11) holds the packed volumes, the multiplier in mlane, not a tick
 @ pointer; addne pc, lr, #8 returns 8 bytes past the return address of the
 @ blle that called it, a linkage no procedure-call standard produces.
 @ Why IwramSoundMixBlock to IwramSoundMixNextChannel are assembly:

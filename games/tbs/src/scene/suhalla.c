@@ -217,7 +217,7 @@ static void scSuhallaEnterDoor(void)
 	sySndPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(SuhallaDoorOpenSteps, metatileX, metatileZ);
 	fdActorWalkBy(ACTOR_PARTY_LEADER, 0, -16);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 	syImportScriptSetExitRequest(exitCue);
 }
 
@@ -236,7 +236,7 @@ static void scSuhallaEnterSanctumDoor(void)
 	sySndPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(SuhallaWideDoorOpenSteps, metatileX, metatileZ);
 	fdActorWalkBy(ACTOR_PARTY_LEADER, 0, -16);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 	syImportScriptSetExitRequest(exitCue);
 }
 

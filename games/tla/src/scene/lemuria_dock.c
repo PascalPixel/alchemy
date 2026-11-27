@@ -21,15 +21,15 @@ enum {
 enum { METATILE_BEHAVIOR_GANGPLANK = 21 };
 
 extern Uint8					   MsgAreWeSetting[];
-extern Sint32					   LemuriaDock_Exits[];
-extern Sint32					   LemuriaDock_ExitsToOtherWayIn[];
-extern MAP_GRID_METATILE_ANIMATION LemuriaDock_CabinDoor;
+extern Sint32					   LemuriaDockExits[];
+extern Sint32					   LemuriaDockExitsToOtherWayIn[];
+extern MAP_GRID_METATILE_ANIMATION LemuriaDockCabinDoor;
 
 void scLemuriaDockEnterDoor(
 	const MAP_GRID_METATILE_ANIMATION *door, Sint32 exit, Sint32 mode);
 void scLemuriaDockCyclePalette(void);
 
-extern Uint16 LemuriaDock_CabinDoorOpening[];
+extern Uint16 LemuriaDockCabinDoorOpening[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -47,8 +47,8 @@ const SCENE_REGION *scGetExitRegions(void)
 Sint32 *scGetExits(void)
 {
 	if(!fdScriptGetFlag(FLAG_LEMURIA_OTHER_WAY_IN))
-		return LemuriaDock_Exits;
-	return LemuriaDock_ExitsToOtherWayIn;
+		return LemuriaDockExits;
+	return LemuriaDockExitsToOtherWayIn;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
@@ -162,7 +162,7 @@ void scLemuriaDockEnterDoor(
 	fdScriptWait(10);
 	syImportScriptSetExitRequest(exit);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }
 
@@ -170,7 +170,7 @@ void scLemuriaDockEnterDoor(
    into the cabins. */
 void scLemuriaDockEnterCabins(Sint32 exit)
 {
-	scLemuriaDockEnterDoor(&LemuriaDock_CabinDoor, exit, 0);
+	scLemuriaDockEnterDoor(&LemuriaDockCabinDoor, exit, 0);
 }
 
 const CUE *scGetCues(void)
@@ -178,12 +178,12 @@ const CUE *scGetCues(void)
 	return SceneCues;
 }
 
-/* A palette event: every eighth frame it turns both runs of
+/* A palette event: every eighth tick it turns both runs of
    LEMURIAN_SHIP_PALETTE's colours round by one, as the Lemurian Ship's deck
    turns its own: the blues of the band along the ship's hull, and the surf. */
 void scLemuriaDockCyclePalette(void)
 {
-	if((FrameCount & 7) == 0) {
+	if((TickCount & 7) == 0) {
 		Sint16 saved;
 		Sint32 i;
 
@@ -207,7 +207,7 @@ Sint32 scInit(void)
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
 		ACTOR_PRIORITY_IGNORES_RISES;
-	sySetEvent(scLemuriaDockCyclePalette, EVENT_PASS_FRAME);
+	sySetEvent(scLemuriaDockCyclePalette, EVENT_PASS_TICK);
 	fdScriptClearFlag(FLAG_SHOW_AREA_NAME);
 #if LEMURIA_DOCK_CANNON_ON_DECK
 	if(fdScriptGetFlag(FLAG_SHIP_CARRIES_CANNON))
@@ -240,7 +240,7 @@ SCENE_ENTRANCE SceneEntrances[] = {
 /* clang-format off */
 /* The dock's exits, when the party came in by the harbour's north quay and */
 /* the shore's first way. */
-Sint32 LemuriaDock_Exits[] = {
+Sint32 LemuriaDockExits[] = {
 	SCENE_EXITS(LemuriaDock),
 	SCENE_EXIT_UNLESS(LEMURIA_DOCK_TO_LEMURIA_ENTRANCE_NORTH, LemuriaEntrance, LEMURIA_ENTRANCE_FROM_LEMURIA_DOCK_NORTH, EXIT_FLAG_NONE),
 	SCENE_EXIT_UNLESS(LEMURIA_DOCK_TO_ANCIENT_LEMURIA_EAST_A, AncientLemuria, ANCIENT_LEMURIA_FROM_LEMURIA_DOCK_EAST_A, EXIT_FLAG_NONE),
@@ -249,7 +249,7 @@ Sint32 LemuriaDock_Exits[] = {
 };
 
 /* The dock's exits once the party came by Lemuria's other way in. */
-Sint32 LemuriaDock_ExitsToOtherWayIn[] = {
+Sint32 LemuriaDockExitsToOtherWayIn[] = {
 	SCENE_EXITS(LemuriaDock),
 	SCENE_EXIT_UNLESS(LEMURIA_DOCK_TO_LEMURIA_ENTRANCE_NORTH, LemuriaEntrance, LEMURIA_ENTRANCE_FROM_LEMURIA_DOCK_SOUTH, EXIT_FLAG_NONE),
 	SCENE_EXIT_UNLESS(LEMURIA_DOCK_TO_ANCIENT_LEMURIA_EAST_A, AncientLemuria, ANCIENT_LEMURIA_FROM_LEMURIA_DOCK_EAST_B, EXIT_FLAG_NONE),
@@ -265,17 +265,17 @@ ACTOR_PLACE ActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-/* The cabin door's opening, one frame of metatiles copied over the shut */
+/* The cabin door's opening, one tick of metatiles copied over the shut */
 /* door. */
-Uint16 LemuriaDock_CabinDoorOpening[] = {
+Uint16 LemuriaDockCabinDoorOpening[] = {
 	MAPGRID_ANIMATION_STEP(51, 38, 1, 1, 6),
 	MAPGRID_ANIMATION_STEPS_END,
 };
 /* clang-format on */
 
 /* The cabin door's opening, at its place on the map grid. */
-MAP_GRID_METATILE_ANIMATION LemuriaDock_CabinDoor = {
-	LemuriaDock_CabinDoorOpening, 70, 22};
+MAP_GRID_METATILE_ANIMATION LemuriaDockCabinDoor = {
+	LemuriaDockCabinDoorOpening, 70, 22};
 
 CUE SceneCues[] = {
 	{CUE_EXIT, LEMURIA_DOCK_TO_ANCIENT_LEMURIA_EAST_A, CONDITION_ALWAYS,

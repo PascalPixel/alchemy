@@ -45,7 +45,7 @@ extern CUE			  LemurianShipCues[];
 extern Sint32		  OrbGlowActive;
 extern Sint32		  OrbGlowPhase;
 extern Sint32		  OrbGlowStrength;
-extern Sint32		  OrbGlowFadeFrames;
+extern Sint32		  OrbGlowFadeTicks;
 extern Sint32		  SprayActive;
 extern Sint32		  SwellActive;
 extern Sint32		  SwellPhase;
@@ -63,9 +63,9 @@ extern Sint32		  MiaBoardsShip[];
 
 /* The ship's glow (scShipGlowCyclePalette): SHIP_GLOW_COLORS of
    ShipGlowPalettes at a time, from a start that moves one colour every
-   SHIP_GLOW_STEP_FRAMES frames, through as many starts as colours shown. */
-#define SHIP_GLOW_COLORS	  6
-#define SHIP_GLOW_STEP_FRAMES 6
+   SHIP_GLOW_STEP_TICKS ticks, through as many starts as colours shown. */
+#define SHIP_GLOW_COLORS	 6
+#define SHIP_GLOW_STEP_TICKS 6
 
 /* The curtains (scCurtainClose): three rows of CURTAIN_ROW_PARTS sprites, 32 by
    16, one row sliding down from above the screen and two up from below,
@@ -77,9 +77,9 @@ extern Sint32		  MiaBoardsShip[];
 #define CURTAIN_BOTTOM_Y	136
 #define CURTAIN_START_GAP	48
 
-/* The frames from the curtains starting to close to the ship sailing west: 30
+/* The ticks from the curtains starting to close to the ship sailing west: 30
    in the French, Spanish and Italian editions, 80 before. */
-#define LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES \
+#define LEMURIAN_SHIP_DEPARTURE_DELAY_TICKS \
 	WHEN(SHORTER_ENDING_SHIP_DEPARTURE_DELAY, 30, 80)
 
 static void scRippleStop(void);
@@ -157,13 +157,13 @@ const CUE *scGetCues(void)
 /* Runs the glow along the risen ship's hull, a colour at a time. */
 static void scShipGlowCyclePalette(void)
 {
-	Uint16 paletteIndex;
+	Uint16 paletteIdx;
 
-	paletteIndex = syMathDivideUnsigned(ShipGlowStep, SHIP_GLOW_STEP_FRAMES);
-	syDMAXCopy(&ShipGlowPalettes[paletteIndex], (void *)&BG_PLTT_COLOR(7, 4),
+	paletteIdx = syMathDivideUnsigned(ShipGlowStep, SHIP_GLOW_STEP_TICKS);
+	syDMAXCopy(&ShipGlowPalettes[paletteIdx], (void *)&BG_PLTT_COLOR(7, 4),
 		DMA_COPY_HALFWORDS(SHIP_GLOW_COLORS), REG_DMA3);
 	ShipGlowStep++;
-	if(ShipGlowStep > SHIP_GLOW_COLORS * SHIP_GLOW_STEP_FRAMES - 1)
+	if(ShipGlowStep > SHIP_GLOW_COLORS * SHIP_GLOW_STEP_TICKS - 1)
 		ShipGlowStep = 0;
 }
 
@@ -172,7 +172,7 @@ static void scShipGlowCyclePalette(void)
 enum { ANIM_DROP_BURST = 1 };
 
 /* A drop of spray rises and wobbles for its timer, then bursts into a ring of
-   spray and is released 20 frames later by SprayFallScript. */
+   spray and is released 20 ticks later by SprayFallScript. */
 static void scLemurianShipSprayUpdate(ACTOR *drop)
 {
 	if(drop->tmr != 0) {
@@ -190,16 +190,16 @@ static void scLemurianShipSprayUpdate(ACTOR *drop)
 	}
 }
 
-/* Every 40 frames, the Black Orb's glow fades a step, down to 4. */
+/* Every 40 ticks, the Black Orb's glow fades a step, down to 4. */
 static void scOrbGlowFade(void)
 {
-	Sint32 frame = OrbGlowFadeFrames + 1;
+	Sint32 tick = OrbGlowFadeTicks + 1;
 
-	OrbGlowFadeFrames = frame;
-	if(frame == 40) {
+	OrbGlowFadeTicks = tick;
+	if(tick == 40) {
 		if(OrbGlowStrength > 4) {
 			OrbGlowStrength -= 1;
-			OrbGlowFadeFrames = 0;
+			OrbGlowFadeTicks = 0;
 		}
 	}
 }
@@ -214,7 +214,7 @@ static void scShipUpdateSwell(void)
 
 	grid = MapGridState[0];
 	if(OrbGlowActive != 0) {
-		/* The blend is a halfword in the frame, written through its address. */
+		/* The blend is a halfword in the tick, written through its address. */
 		Uint16 blend;
 
 		swell = syMulFX(sySin(OrbGlowPhase << 9), 3);
@@ -252,7 +252,7 @@ static void scShipUpdateSwell(void)
 		}
 		SwellPhase++;
 	}
-	if(SprayActive != 0 && (FrameCount & 1) != 0) {
+	if(SprayActive != 0 && (TickCount & 1) != 0) {
 		POS sprayPosition;
 
 		x = grid->view[0] & FIELD_PIXEL_MASK;
@@ -552,7 +552,7 @@ static void scLemurianShipSetSail(void)
 	sySndPlay(MUS_THE_BROKEN_SEAL_ENDING);
 	sySndSetBGMTempo(SOUND_TEMPO_SCALE_NORMAL * 15 / 16);
 	scCurtainStart();
-	fdScriptWait(LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES);
+	fdScriptWait(LEMURIAN_SHIP_DEPARTURE_DELAY_TICKS);
 	grid = MapGridState[0];
 	ship = fdActorGet(ACTOR_GANGWAY_NORTH);
 	ship->acceleration = toFIXED(0.002);
@@ -571,7 +571,7 @@ static void scLemurianShipSetSail(void)
 	IO_WRITE16(0, &PLTT_BACKDROP);
 	state->transitionFrm = 96;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(30);
 	gmFlagSet(FLAG_KEEP_MUSIC_ONCE);
 	fdScriptSetDestination(SCENE_TITLE, TITLE_FROM_LEMURIAN_SHIP);
@@ -580,25 +580,25 @@ static void scLemurianShipSetSail(void)
 /* The water's ripple, this scene's view of the line scroll's state (LineScroll,
    LINE_SCROLL_STATE).
 
-   It holds two pages of per-line scroll offsets, swapped each frame and built
+   It holds two pages of per-line scroll offsets, swapped each tick and built
    from a sine table. Here a line is one word, BG3's x and y, where
    LINE_SCROLL_STATE has three. */
 typedef struct RIPPLE_SCROLL_STATE {
 	Uint16 pages[2][960]; /* per page: 160 lines of BG3 x, y; the rest unused */
 	Uint8  page; /* the page the HBlank DMA shows; the other is built */
 	Uint8  mode;
-	Uint16 phase;		 /* frames built so far, added to BG3's y */
+	Uint16 phase;		 /* ticks built so far, added to BG3's y */
 	Uint8  unused[4];	 /* zeroed with the block; nothing reads or writes it */
-	FIXED  frequency[2]; /* x, y: 16.16 sine entries per frame and per row */
+	FIXED  frequency[2]; /* x, y: 16.16 sine entries per tick and per row */
 	FIXED  step[2];		 /* x, y: 16.16 sine entries a line */
 	FIXED amplitude[2]; /* x, y: 16.16 scale on the sine, then divided by 256 */
 } RIPPLE_SCROLL_STATE;
 
 /* One line's ripple offset. */
 static inline Sint32 scLemurianShipWaveOffset(
-	Sint32 angle, FIXED amplitude, Uint16 base)
+	Sint32 ang, FIXED amplitude, Uint16 base)
 {
-	return (Uint16)(syMulFX(RippleSine[FIXEDtoINT(angle) &
+	return (Uint16)(syMulFX(RippleSine[FIXEDtoINT(ang) &
 								(LINE_SCROLL_WAVE_ENTRIES - 1)],
 						amplitude) /
 			   LINE_SCROLL_WAVE_SCALE) +
@@ -619,7 +619,7 @@ static void scLemurianShipRaiseTheShip(void)
 	Sint32				   white;
 	Sint32				   dark;
 	FIXED				   risen;
-	Uint16 cnt; /* each control, read into the frame by syIORead16 */
+	Uint16 cnt; /* each control, read into the tick by syIORead16 */
 
 	grid = MapGridState[0];
 
@@ -650,7 +650,7 @@ static void scLemurianShipRaiseTheShip(void)
 	   steps. */
 	OrbGlowActive = 1;
 	OrbGlowPhase = 0;
-	sySetFrameEvent(scShipUpdateSwell, EVENT_PASS_FRAME);
+	sySetTickEvent(scShipUpdateSwell, EVENT_PASS_TICK);
 	SprayActive = 1;
 	fdScriptWait(20);
 	sySndPlay(SE_RUSH);
@@ -660,9 +660,9 @@ static void scLemurianShipRaiseTheShip(void)
 	fdMapGridSetShake(2, 2, 1);
 	fdScriptWait(60);
 	fdMapGridSetShake(3, 3, 1);
-	OrbGlowFadeFrames = 0;
-	sySetFrameEvent(scOrbGlowFade, EVENT_PASS_FRAME);
-	/* The ship rises 90 pixels, 0.2 pixels a frame. */
+	OrbGlowFadeTicks = 0;
+	sySetTickEvent(scOrbGlowFade, EVENT_PASS_TICK);
+	/* The ship rises 90 pixels, 0.2 pixels a tick. */
 	risen = 0;
 	do {
 		grid->layers[MAPGRID_LAYER_MIDDLE].ofsY += toFIXED(1) / 5;
@@ -700,7 +700,7 @@ static void scLemurianShipRaiseTheShip(void)
 		REG_BLDY = dark;
 		fdScriptWait(8);
 	}
-	sySetFrameEvent(scShipGlowCyclePalette, EVENT_PASS_FRAME);
+	sySetTickEvent(scShipGlowCyclePalette, EVENT_PASS_TICK);
 	sySndPlay(MUS_PUZZLE_SOLVED);
 	mnSndWaitForJingle();
 	fdScriptWait(20);
@@ -714,7 +714,7 @@ static void scLemurianShipRaiseTheShip(void)
 Sint32 scInit(void)
 {
 	MAP_GRID_SCROLL_STATE *grid;
-	Uint16 cnt; /* each control, read into the frame by syIORead16 */
+	Uint16 cnt; /* each control, read into the tick by syIORead16 */
 
 	grid = MapGridState[0];
 	if(MainRoutineStateWork.entrance == LEMURIAN_SHIP_WITH_BLACK_ORB) {
@@ -789,22 +789,22 @@ Sint32 scInit(void)
 void fdLineScrollArmDMA(void)
 {
 	RIPPLE_SCROLL_STATE *state;
-	Uint32				*source;
+	Uint32				*src;
 	volatile Uint16		*dma0;
-	volatile Uint32		*destination;
+	volatile Uint32		*dst;
 
 	state = (RIPPLE_SCROLL_STATE *)LineScroll;
-	source = (Uint32 *)state->pages[state->page];
+	src = (Uint32 *)state->pages[state->page];
 
 	dma0 = REG_DMA0;
-	destination = (volatile Uint32 *)&REG_BG3HOFS;
+	dst = (volatile Uint32 *)&REG_BG3HOFS;
 	dma0[DMA_CNT_H_INDEX] &= ~DMA_START_TIMING_DRQ_REPEAT;
 	dma0[DMA_CNT_H_INDEX] &= ~DMA_ENABLE;
 	dma0[DMA_CNT_H_INDEX];
 
-	*destination = *source++;
-	syDMAXCopy(source, (void *)destination, DMA_HBLANK_WORD_PER_LINE,
-		(volatile Uint32 *)dma0);
+	*dst = *src++;
+	syDMAXCopy(
+		src, (void *)dst, DMA_HBLANK_WORD_PER_LINE, (volatile Uint32 *)dma0);
 }
 
 /* Builds the other ripple page and swaps it in. */
@@ -812,7 +812,7 @@ void fdLineScrollBuildPage(void)
 {
 	RIPPLE_SCROLL_STATE *state;
 	Uint16				*line;
-	Sint32				 angle;
+	Sint32				 ang;
 	Uint16				 base;
 	Sint32				 amplitude;
 	Sint32				 step;
@@ -823,21 +823,21 @@ void fdLineScrollBuildPage(void)
 	y = BgScrollWork[3].y;
 	line = state->pages[state->page ^ 1];
 	step = state->step[0];
-	angle = (state->phase + y) * state->frequency[0];
+	ang = (state->phase + y) * state->frequency[0];
 	amplitude = state->amplitude[0];
 	base = BgScrollWork[3].x;
 	for(i = 0; i != DISPLAY_HEIGHT; i++) {
-		*line = scLemurianShipWaveOffset(angle, amplitude, base);
-		angle += step;
+		*line = scLemurianShipWaveOffset(ang, amplitude, base);
+		ang += step;
 		line += 2;
 	}
 	line = state->pages[state->page ^ 1] + 1;
 	step = state->step[1];
-	angle = (state->phase + y) * state->frequency[1];
+	ang = (state->phase + y) * state->frequency[1];
 	amplitude = state->amplitude[1];
 	for(i = 0; i != DISPLAY_HEIGHT; i++) {
-		*line = scLemurianShipWaveOffset(angle, amplitude, y);
-		angle += step;
+		*line = scLemurianShipWaveOffset(ang, amplitude, y);
+		ang += step;
 		line += 2;
 	}
 	state->phase++;
@@ -861,9 +861,9 @@ static void scRippleStop(void)
 
 /* The curtains' sprites, which close in from above and below as the ship
    sails. */
-static MENU_SPR sCurtainSprites[3 * CURTAIN_ROW_PARTS];
-static Sint16	sCurtainGap;
-static Sint16	sCurtainVramSlot;
+static MENU_SPR CurtainSprites[3 * CURTAIN_ROW_PARTS];
+static Sint16	CurtainGap;
+static Sint16	CurtainVramSlot;
 
 /* Writes one curtain sprite: its queue link, its attributes 0 and 1, and its
    attribute 2. */
@@ -877,7 +877,7 @@ static Sint16	sCurtainVramSlot;
 	(*word++ = 0, *word++ = (attributes), *word++ = (tile))
 #endif
 
-/* Each frame from scCurtainStart to the end of the game: closes the curtains a
+/* Each tick from scCurtainStart to the end of the game: closes the curtains a
    pixel more, until they rest, and queues their 24 sprites. */
 static void scCurtainClose(void)
 {
@@ -891,19 +891,19 @@ static void scCurtainClose(void)
 	Sint32 edge;
 	Uint32 i;
 
-	tile = VramCacheEntries[sCurtainVramSlot].ofs >> 5;
+	tile = VramCacheEntries[CurtainVramSlot].ofs >> 5;
 #if FIX_TYPE_PUNNING
-	part = sCurtainSprites;
+	part = CurtainSprites;
 #else
-	word = (Uint32 *)sCurtainSprites;
+	word = (Uint32 *)CurtainSprites;
 #endif
-	if(sCurtainGap != 0)
-		sCurtainGap--;
+	if(CurtainGap != 0)
+		CurtainGap--;
 	/* The top row, then the bottom two. */
 	for(i = 0; i < CURTAIN_ROW_PARTS; i++) {
 		Sint32 topEdge;
 
-		gap = sCurtainGap;
+		gap = CurtainGap;
 		topEdge = -gap / 2;
 		CURTAIN_PART((topEdge & (OBJ_Y_RANGE - 1)) |
 				OBJ_X(i * CURTAIN_PART_WIDTH) | OBJ_SIZE_32X16,
@@ -914,13 +914,13 @@ static void scCurtainClose(void)
 		CURTAIN_PART(
 			OBJ_X(i * CURTAIN_PART_WIDTH) | edge | OBJ_SIZE_32X16, tile);
 	i = 0;
-	edge = (sCurtainGap / 2 + CURTAIN_BOTTOM_Y + CURTAIN_PART_HEIGHT) &
+	edge = (CurtainGap / 2 + CURTAIN_BOTTOM_Y + CURTAIN_PART_HEIGHT) &
 		(OBJ_Y_RANGE - 1);
 	for(; i < CURTAIN_ROW_PARTS; i++)
 		CURTAIN_PART(
 			OBJ_X(i * CURTAIN_PART_WIDTH) | edge | OBJ_SIZE_32X16, tile);
 	for(i = 0; i < 3 * CURTAIN_ROW_PARTS; i++)
-		syOAMAddSprAtDepth(&sCurtainSprites[i], OAM_DEPTH_FRONT);
+		syOAMAddSprAtDepth(&CurtainSprites[i], OAM_DEPTH_FRONT);
 }
 
 /* Fills a curtain sprite's tiles with colour 1 and starts the curtains
@@ -931,20 +931,20 @@ static void scCurtainStart(void)
 
 	tiles = syHeapCallAlternatePool(
 		syHeapAllocEWRAM, CURTAIN_PART_WIDTH * CURTAIN_PART_HEIGHT / 2);
-	sCurtainVramSlot = syVRAMCacheFindFreeEntry();
+	CurtainVramSlot = syVRAMCacheFindFreeEntry();
 	DMA_FILL32(
 		PIXELS_4BPP(1), tiles, CURTAIN_PART_WIDTH * CURTAIN_PART_HEIGHT / 2);
 	syVRAMCacheLoad(
-		sCurtainVramSlot, CURTAIN_PART_WIDTH * CURTAIN_PART_HEIGHT / 2, tiles);
+		CurtainVramSlot, CURTAIN_PART_WIDTH * CURTAIN_PART_HEIGHT / 2, tiles);
 
-	sCurtainGap = CURTAIN_START_GAP;
-	sySetFrameEvent(scCurtainClose, EVENT_PASS_FRAME);
+	CurtainGap = CURTAIN_START_GAP;
+	sySetTickEvent(scCurtainClose, EVENT_PASS_TICK);
 }
 
 /* The ship's glow.
 
    scShipGlowCyclePalette shows six of these colours at a time, from a start
-   that moves one colour every 6 frames. */
+   that moves one colour every 6 ticks. */
 Uint16 ShipGlowPalettes[] = {
 	RGB(0, 3, 22),
 	RGB(0, 14, 26),
@@ -965,7 +965,7 @@ Sint32 SprayFallScript[] = {
 	SC_RELEASE,
 };
 
-/* The ripple's sine, the line scroll's LineScroll_WaveSine kept again in this
+/* The ripple's sine, the line scroll's LineScrollWaveSine kept again in this
    overlay. */
 Sint16 RippleSine[LINE_SCROLL_WAVE_ENTRIES] = {LINE_SCROLL_WAVE_SINE};
 
@@ -1009,18 +1009,18 @@ CUE LemurianShipCues[] = {
 	{CUE_TABLE_END},
 };
 
-/* The Black Orb's glow: whether it shows, its phase in frames, its strength
-   (BLDALPHA's first weight, a step weaker every 40 frames down to 4) and the
-   frames into that step. */
+/* The Black Orb's glow: whether it shows, its phase in ticks, its strength
+   (BLDALPHA's first weight, a step weaker every 40 ticks down to 4) and the
+   ticks into that step. */
 Sint32 OrbGlowActive = 0;
 Sint32 OrbGlowPhase = 0;
 Sint32 OrbGlowStrength = 16;
-Sint32 OrbGlowFadeFrames = 0;
+Sint32 OrbGlowFadeTicks = 0;
 
 /* Set while spray flies about the rising ship. */
 Sint32 SprayActive = 0;
 
-/* The raised ship's swell: whether it runs, its phase in frames, the hull's and
+/* The raised ship's swell: whether it runs, its phase in ticks, the hull's and
    deck's layer heights it rocks about, and the height on the deck of each of
    the party (16.16 pixels), SHIP_NOT_ON_DECK for one not on it. */
 Sint32 SwellActive = 0;
@@ -1032,8 +1032,8 @@ Sint32 GaretDeckY = SHIP_NOT_ON_DECK;
 Sint32 MiaDeckY = SHIP_NOT_ON_DECK;
 Sint32 IvanDeckY = SHIP_NOT_ON_DECK;
 
-/* The frames into the glow's run along the risen ship's hull,
-   SHIP_GLOW_STEP_FRAMES for each of its SHIP_GLOW_COLORS colours. */
+/* The ticks into the glow's run along the risen ship's hull,
+   SHIP_GLOW_STEP_TICKS for each of its SHIP_GLOW_COLORS colours. */
 Uint16 ShipGlowStep = 0;
 
 Sint32 LeaderBoardsShip[] = {

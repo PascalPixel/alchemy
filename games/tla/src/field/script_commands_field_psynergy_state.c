@@ -6,16 +6,16 @@
 #include "text/msg_ids.h"
 
 /* How long fdPsynergyEnd waits at most for the World Map's palette fade. */
-#define END_FADE_WAIT_FRAMES 90
+#define END_FADE_WAIT_TICKS 90
 
-/* Fades the palettes back to the saved ones over the given frames. */
-void fdBattleEffectFadeToSavedPalettes(Sint32 frames)
+/* Fades the palettes back to the saved ones over the given ticks. */
+void fdBattleEffectFadeToSavedPalettes(Sint32 ticks)
 {
-	fdStartPaletteTransition(frames);
+	fdStartPaletteTransition(ticks);
 }
 
 /* Fades the palettes back from a cast's colours to the saved ones over 8
-   frames; while Reveal is active the BG half fades to Reveal's grey instead
+   ticks; while Reveal is active the BG half fades to Reveal's grey instead
    (PALETTE_TINT_GRAYSCALE). */
 void fdPsynergyFadeFromCastCol(void)
 {
@@ -24,17 +24,17 @@ void fdPsynergyFadeFromCastCol(void)
 
 /* Converts a world position (16.16 pixels) to the screen: x and z receive the
    screen's x and y and y becomes 0. */
-void fdCameraWorldToScreen(VECTOR3 *position)
+void fdCameraWorldToScreen(VECTOR3 *pos)
 {
 	HEAP_SLOTS *heap = Ram_HeapSlots;
 
 	if(((FIELD_STATE *)heap->fieldState)->mode == ACTOR_SYSTEM_WORLD_MAP) {
 		Sint32 result[3];
 
-		syConvert3Dto2D((const FIXED *)position, result);
-		position->x = toFIXED(result[0]);
-		position->z = toFIXED(result[1]);
-		position->y = 0;
+		syConvert3Dto2D((const FIXED *)pos, result);
+		pos->x = toFIXED(result[0]);
+		pos->z = toFIXED(result[1]);
+		pos->y = 0;
 	} else {
 		MAP_STATE *map = heap->mapGrid;
 		Sint32	   x = map->view[0] & FIELD_PIXEL_MASK;
@@ -42,10 +42,10 @@ void fdCameraWorldToScreen(VECTOR3 *position)
 
 		/* Relative to the view's whole-pixel corner; height lifts a point up
 		   the screen. */
-		position->x -= x;
-		position->z -= position->y;
-		position->z -= z;
-		position->y = 0;
+		pos->x -= x;
+		pos->z -= pos->y;
+		pos->z -= z;
+		pos->y = 0;
 	}
 }
 
@@ -122,42 +122,42 @@ void fdPsynergyLoadResources(Sint32 abilityId, Sint32 mode)
 	event->blazeLongSpray = 0;
 	event->psynergyHitObj = -1;
 	fdBattleEffectStartArcEffect();
-	sySetEvent(fdBattleEffectUpdateAllEffectSlots, EVENT_PASS_FRAME);
+	sySetEvent(fdBattleEffectUpdateAllEffectSlots, EVENT_PASS_TICK);
 }
 
 /* Records the caster and the target of a field Psynergy. */
-void fdPsynergySetupActorPair(Sint32 userId, Sint32 targetId)
+void fdPsynergySetupActorPair(Sint32 userId, Sint32 tgtId)
 {
 	ACTOR			   *user;
-	ACTOR			   *target;
+	ACTOR			   *tgt;
 	FIELD_EFFECT_STATE *scene;
 
 	scene = Ram_HeapSlots->fieldEffState;
 	scene->casterId = userId;
 	user = fdActorLookup((Sint16)userId);
-	scene->tgtId = targetId;
+	scene->tgtId = tgtId;
 	scene->caster = user;
-	target = fdActorLookup((Sint16)targetId);
+	tgt = fdActorLookup((Sint16)tgtId);
 	/* The facing rounded to four directions, and to eight. */
 	scene->ang = (user->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
 	scene->ang8 = (user->facing + FACING_STEP) & TRIG_TURN * 7 / 8;
-	scene->tgt = target;
+	scene->tgt = tgt;
 	if(user != NULL) {
-		Uint8 priorityFlags;
+		Uint8 priFlg;
 
-		priorityFlags = user->priFlg;
+		priFlg = user->priFlg;
 
-		scene->savedPriFlg = priorityFlags;
+		scene->savedPriFlg = priFlg;
 		scene->savedSprPri = ((SPR *)user->spr)->image.pri;
 	}
-	if(target != NULL) {
+	if(tgt != NULL) {
 		/* Save target motion and colors for later restoration. */
-		scene->savedFunc = target->update;
-		scene->savedScript = target->script;
-		scene->savedPal = ((SPR *)target->spr)->entries[0]->colMode;
-		scene->x = target->x.fixed;
-		scene->z = target->z.fixed;
-		scene->y = target->y.fixed;
+		scene->savedFunc = tgt->update;
+		scene->savedScript = tgt->script;
+		scene->savedPal = ((SPR *)tgt->spr)->entries[0]->colMode;
+		scene->x = tgt->x.fixed;
+		scene->z = tgt->z.fixed;
+		scene->y = tgt->y.fixed;
 	} else {
 		scene->x = user->x.fixed;
 		scene->z = user->z.fixed;
@@ -207,7 +207,7 @@ void fdPsynergyStartCast(void)
 	event->castStarted = 1;
 }
 
-/* Takes the caster out of its casting update and waits a frame. */
+/* Takes the caster out of its casting update and waits a tick. */
 void fdBattleEffectStopMainActor(void)
 {
 	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
@@ -248,7 +248,7 @@ void fdPsynergyEnd(void)
 		if(fade->duration != 0) {
 			do {
 				sySynch(1);
-				if(++i >= END_FADE_WAIT_FRAMES)
+				if(++i >= END_FADE_WAIT_TICKS)
 					break;
 			} while(fade->duration != 0);
 		}
@@ -283,18 +283,18 @@ void fdPsynergyMarkWorldMapTilesUsed(void)
 }
 
 /* Starts Mind Read's wave between the caster and the one it reads
-   (HEAP_SLOT_MIND_READ): a hue taken from the frame count, the field faded
+   (HEAP_SLOT_MIND_READ): a hue taken from the tick count, the field faded
    toward it, the message window greyed for thoughts, and
-   fdPsynergyUpdateMindReadWave run each frame. */
-void fdPsynergyStartMindReadWave(Sint32 casterId, Sint32 targetId)
+   fdPsynergyUpdateMindReadWave run each tick. */
+void fdPsynergyStartMindReadWave(Sint32 casterId, Sint32 tgtId)
 {
 	MIND_READ_STATE *state;
 
 	state = syHeapSlotAllocEWRAM(HEAP_SLOT_MIND_READ, sizeof(*state));
 	DMA_FILL32(0, state, sizeof(*state));
-	state->hue = (FrameCount * 2) % HUE_DEGREES;
+	state->hue = (TickCount * 2) % HUE_DEGREES;
 	state->srcId = casterId;
-	state->tgtId = targetId;
+	state->tgtId = tgtId;
 	state->delay = 8;
 	state->cnt = 0;
 	fdPsynergyFadeToCastCol();
@@ -304,7 +304,7 @@ void fdPsynergyStartMindReadWave(Sint32 casterId, Sint32 targetId)
 		PALETTES_BG);
 	fdPaletteFadeStartInterpolation(8);
 	fdPsynergyGreyMindReadPalette();
-	sySetEvent((EVENT_FUNC)fdPsynergyUpdateMindReadWave, EVENT_PASS_FRAME);
+	sySetEvent((EVENT_FUNC)fdPsynergyUpdateMindReadWave, EVENT_PASS_TICK);
 }
 
 /* Stops the wave effect: restores the caster's colours and the palettes and

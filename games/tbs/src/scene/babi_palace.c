@@ -46,28 +46,28 @@
 #include "sound/sound_driver_symbols.h"
 #include "text/msg_ids.h"
 
-extern Uint16			 BabiPalace_DoorMetatiles[];
-extern Sint32			 BabiPalace_IndigestionScript[];
-extern SCENE_ENTRANCE	 BabiPalace_Entrances[];
-extern SCENE_ENTRANCE	 BabiPalace_OutsideEntrances[];
-extern SCENE_EXIT_REGION BabiPalace_Regions[];
-extern Uint32			 BabiPalace_Exits[];
-extern ACTOR_PLACE		 BabiPalace_OutsideActorPlacements[];
-extern ACTOR_PLACE		 BabiPalace_ActorPlacementsBabiMissing[];
-extern ACTOR_PLACE		 BabiPalace_ActorPlacementsFinals[];
-extern ACTOR_PLACE		 BabiPalace_ActorPlacementsAfterColosso[];
-extern CUE				 BabiPalace_CuesBabiMissing[];
-extern CUE				 BabiPalace_CuesFinals[];
-extern CUE				 BabiPalace_CuesAfterColosso[];
-extern CUE				 BabiPalace_OutsideCuesBabiMissing[];
-extern CUE				 BabiPalace_OutsideCuesFinals[];
-extern CUE				 BabiPalace_OutsideCuesAfterColosso[];
+extern Uint16			 BabiPalaceDoorMetatiles[];
+extern Sint32			 BabiPalaceIndigestionScript[];
+extern SCENE_ENTRANCE	 BabiPalaceEntrances[];
+extern SCENE_ENTRANCE	 BabiPalaceOutsideEntrances[];
+extern SCENE_EXIT_REGION BabiPalaceRegions[];
+extern Uint32			 BabiPalaceExits[];
+extern ACTOR_PLACE		 BabiPalaceOutsideActorPlacements[];
+extern ACTOR_PLACE		 BabiPalaceActorPlacementsBabiMissing[];
+extern ACTOR_PLACE		 BabiPalaceActorPlacementsFinals[];
+extern ACTOR_PLACE		 BabiPalaceActorPlacementsAfterColosso[];
+extern CUE				 BabiPalaceCuesBabiMissing[];
+extern CUE				 BabiPalaceCuesFinals[];
+extern CUE				 BabiPalaceCuesAfterColosso[];
+extern CUE				 BabiPalaceOutsideCuesBabiMissing[];
+extern CUE				 BabiPalaceOutsideCuesFinals[];
+extern CUE				 BabiPalaceOutsideCuesAfterColosso[];
 
 /* The palace's actors are placed by one of three tables, as the story goes on.
 
-   The three are before Babi is rescued (BabiPalace_ActorPlacementsBabiMissing),
-   during the finals (BabiPalace_ActorPlacementsFinals) and after Colosso
-   (BabiPalace_ActorPlacementsAfterColosso).
+   The three are before Babi is rescued (BabiPalaceActorPlacementsBabiMissing),
+   during the finals (BabiPalaceActorPlacementsFinals) and after Colosso
+   (BabiPalaceActorPlacementsAfterColosso).
 
    Each numbers its rows from ACTOR_FIRST_PLACED, with Garet, Ivan, Mia and
    Sheba in their own party slots. Most of the people stand in all three under
@@ -251,11 +251,11 @@ static inline void scBabiPalaceRestorePartyAndInventory(void)
 {
 	Sint16 members[8];
 	UNIT  *state;
-	Sint32 memberCount;
+	Sint32 memberCnt;
 	Sint32 i;
 
-	memberCount = syFieldPartyListMembers(members);
-	for(i = 0; i < memberCount; i++) {
+	memberCnt = syFieldPartyListMembers(members);
+	for(i = 0; i < memberCnt; i++) {
 		state = gmUnitGet(members[i]);
 		state->hp = state->hpMax;
 		state->pp = state->ppMax;
@@ -270,21 +270,21 @@ static inline void scBabiPalaceRestorePartyAndInventory(void)
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
 	if(MainRoutineStateWork.next == SCENE_BABI_PALACE_ENTRANCE) {
-		return BabiPalace_OutsideEntrances;
+		return BabiPalaceOutsideEntrances;
 	}
-	return BabiPalace_Entrances;
+	return BabiPalaceEntrances;
 }
 
 /* The palace has no exit regions, so the table is empty. */
 const SCENE_EXIT_REGION *scGetExitRegions(void)
 {
-	return BabiPalace_Regions;
+	return BabiPalaceRegions;
 }
 
 /* Both scenes share one exit table. */
 const Uint32 *scGetExits(void)
 {
-	return BabiPalace_Exits;
+	return BabiPalaceExits;
 }
 
 /* Returns the actor placements for the scene and the story, which is before
@@ -292,15 +292,15 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.next == SCENE_BABI_PALACE_ENTRANCE) {
-		return BabiPalace_OutsideActorPlacements;
+		return BabiPalaceOutsideActorPlacements;
 	}
 	if(gmFlagGet(FLAG_COLOSSO_OVER) != 0) {
-		return BabiPalace_ActorPlacementsAfterColosso;
+		return BabiPalaceActorPlacementsAfterColosso;
 	}
 	if(gmFlagGet(FLAG_BABI_SAVED) != 0) {
-		return BabiPalace_ActorPlacementsFinals;
+		return BabiPalaceActorPlacementsFinals;
 	}
-	return BabiPalace_ActorPlacementsBabiMissing;
+	return BabiPalaceActorPlacementsBabiMissing;
 }
 
 /* Asks a yes or no question. The answers are the two messages after it. */
@@ -332,7 +332,7 @@ static void scBabiPalaceAskAboutSoldiers(Sint32 actorId)
 static void scBabiPalaceShowBeds(Sint32 actorId)
 {
 	Sint16 roundedFacing;
-	Sint32 facingOrMessage;
+	Sint32 facingOrMsg;
 
 	roundedFacing =
 		FACING_NEAREST_CARDINAL(fdActorGet(ACTOR_PARTY_LEADER)->facing);
@@ -345,7 +345,7 @@ static void scBabiPalaceShowBeds(Sint32 actorId)
 		/* "We have just enough extra beds in this room for everybody...." */
 		fdScriptShowMessage(actorId, 0);
 		fdScriptWait(10);
-		facingOrMessage = FACING_SOUTH;
+		facingOrMsg = FACING_SOUTH;
 		if((Uint16)roundedFacing == FACING_SOUTH) {
 			fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 40, 104);
 			fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
@@ -353,7 +353,7 @@ static void scBabiPalaceShowBeds(Sint32 actorId)
 		fdActorSetSpeed(actorId, 1);
 		fdActorWalkByAndWait(actorId, 0, -48);
 		fdActorWalkByAndWait(actorId, 64, 0);
-		fdActorFaceDirection(actorId, facingOrMessage, 0);
+		fdActorFaceDirection(actorId, facingOrMsg, 0);
 	} else {
 		gmFlagClear(FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS);
 		gmFlagSet(FLAG_BABI_PALACE_BEDS_OPEN);
@@ -361,16 +361,16 @@ static void scBabiPalaceShowBeds(Sint32 actorId)
 		fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 120, 96);
 		fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 		fdScriptWait(20);
-		facingOrMessage = MsgTolbiUseFourBeds;
-		fdScriptSetMessageId(facingOrMessage);
+		facingOrMsg = MsgTolbiUseFourBeds;
+		fdScriptSetMessageId(facingOrMsg);
 		/* "You may use these four beds. Will you be going right to sleep?" */
 		fdScriptOpenMessage(actorId, 0);
 		if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-			fdScriptSetMessageId(facingOrMessage + 1);
+			fdScriptSetMessageId(facingOrMsg + 1);
 			/* "Then, enjoy your rest." */
 			fdScriptShowMessage(actorId, 0);
 		} else {
-			fdScriptSetMessageId(facingOrMessage + 2);
+			fdScriptSetMessageId(facingOrMsg + 2);
 			/* "Well, if you do get tired, feel free to sleep here
 			   anytime..." */
 			fdScriptShowMessage(actorId, 0);
@@ -460,7 +460,7 @@ static void scBabiPalaceTalkToWarriorWithIndigestion(Sint32 actorId)
 
 	actor = fdActorGet(actorId);
 	fdScriptStart();
-	indigestionScript = BabiPalace_IndigestionScript;
+	indigestionScript = BabiPalaceIndigestionScript;
 	fdActorSetScript(actorId, indigestionScript);
 	fdScriptSetMessageId(MsgTolbiCantFightBecauseLittleIndigestion);
 	/* "I can't fight because of a little indigestion? That's pathetic!" */
@@ -604,7 +604,7 @@ static void scBabiPalaceWakeFromFinalsDream(void)
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
 	FieldStateWork->transitionFrm = 60;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	FieldStateWork->transitionFrm = 24;
 	fdActorSetSpeed(ACTOR_MIA, 1);
@@ -1215,7 +1215,7 @@ static void scBabiPalaceWakeAfterFinals(void)
 	state->insideLayers = WAKE_WININ;
 	state->outsideLayers = WINOUT_WIN01_BG0;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	for(step = 1; step <= 5; step++) {
 		sySynch(3);
 		state->value = step;
@@ -1466,7 +1466,7 @@ static void scBabiPalaceMeetBabiAfterColosso(void)
 	fdScriptStart();
 	fdScriptSetMessageId(MsgTolbiWaitingCompanions);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdCameraMoveTo(216, CAMERA_KEEP, 736, 1);
 	fdCameraWaitForMove();
 	fdScriptWait(20);
@@ -2552,7 +2552,7 @@ static void scBabiPalaceLeaveThroughAnimatedDoor(void)
 	fdScriptStart();
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridAnimateMetatiles(BabiPalace_DoorMetatiles, 36, 10);
+	fdMapGridAnimateMetatiles(BabiPalaceDoorMetatiles, 36, 10);
 	fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
 	fdScriptWait(16);
 	syImportScriptSetExitRequest(BABI_PALACE_ENTRANCE_TO_BABI_PALACE);
@@ -2666,27 +2666,27 @@ const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.next == SCENE_BABI_PALACE_ENTRANCE) {
 		if(gmFlagGet(FLAG_COLOSSO_OVER) != 0) {
-			return BabiPalace_OutsideCuesAfterColosso;
+			return BabiPalaceOutsideCuesAfterColosso;
 		}
 		if(gmFlagGet(FLAG_BABI_SAVED) != 0) {
-			return BabiPalace_OutsideCuesFinals;
+			return BabiPalaceOutsideCuesFinals;
 		}
-		return BabiPalace_OutsideCuesBabiMissing;
+		return BabiPalaceOutsideCuesBabiMissing;
 	}
 	if(gmFlagGet(FLAG_COLOSSO_OVER) != 0) {
-		return BabiPalace_CuesAfterColosso;
+		return BabiPalaceCuesAfterColosso;
 	}
 	if(gmFlagGet(FLAG_BABI_SAVED) != 0) {
-		return BabiPalace_CuesFinals;
+		return BabiPalaceCuesFinals;
 	}
-	return BabiPalace_CuesBabiMissing;
+	return BabiPalaceCuesBabiMissing;
 }
 
 /* Sets up the scene being entered. Returns 0. */
 Sint32 scInit(void)
 {
 	ACTOR		  *actor;
-	SPR			  *sprite;
+	SPR			  *spr;
 	ICON_TRANSFER *glyph;
 	Sint32		   set;
 
@@ -2714,16 +2714,16 @@ Sint32 scInit(void)
 				actor = fdActorGet(ACTOR_CLOAK_BALL);
 				actor->retainSprCache = 1;
 				actor->motionFlg = set;
-				sprite = actor->spr;
+				spr = actor->spr;
 				actor->y.fixed = toFIXED(4);
-				sprite->cnt = set;
-				sprite->image.fullCol = 0;
-				sprite->image.pal = 0;
+				spr->cnt = set;
+				spr->image.fullCol = 0;
+				spr->image.pal = 0;
 				/* The icon's tiles are the 128 bytes of a 16 by 16 sprite. */
 				glyph = syHeapSlotAlloc(
 					HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 				gmItemLoadIcon(ITEM_CLOAK_BALL);
-				mnVRAMLoad(sprite->slot, 128, glyph->tiles);
+				mnVRAMLoad(spr->slot, 128, glyph->tiles);
 				syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 			}
 			if(MainRoutineStateWork.entrance ==
@@ -2777,11 +2777,11 @@ Sint32 scInit(void)
 /* clang-format off */
 /* The palace door between the two guards opening, a column of three */
 /* metatiles at a time. */
-Uint16 BabiPalace_DoorMetatiles[] = {
+Uint16 BabiPalaceDoorMetatiles[] = {
 	MAPGRID_ANIMATION_STEP(25, 28, 1, 3, 5), MAPGRID_ANIMATION_STEP(26, 28, 1, 3, 5), MAPGRID_ANIMATION_STEP(27, 28, 1, 3, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
-Sint32 BabiPalace_IndigestionScript[] = {
+Sint32 BabiPalaceIndigestionScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1)),
 	SC_SET(SW_SCALE_Y, toFIXED(1)),
 	SC_ADD(SW_SCALE_X, -toFIXED(1) / 4),
@@ -2799,7 +2799,7 @@ Sint32 BabiPalace_IndigestionScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-SCENE_ENTRANCE BabiPalace_Entrances[] = {
+SCENE_ENTRANCE BabiPalaceEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ BABI_PALACE_FROM_BABI_PALACE_ENTRANCE, CONDITION_ALWAYS, 768, 0, 200, FACING_NORTH, 0, 512, 0, 1024, 224, 0 },
 	{ BABI_PALACE_STATUE_ROOM_FROM_CARPET_ROOM_WEST, CONDITION_ALWAYS, 728, 0, 88, FACING_EAST, 0, 512, 0, 1024, 224, 0 },
@@ -2845,18 +2845,18 @@ SCENE_ENTRANCE BabiPalace_Entrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-SCENE_ENTRANCE BabiPalace_OutsideEntrances[] = {
+SCENE_ENTRANCE BabiPalaceOutsideEntrances[] = {
 	{ ENTRANCE_DEFAULT, CONDITION_ALWAYS, 264, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ BABI_PALACE_ENTRANCE_FROM_TOLBI, CONDITION_ALWAYS, 264, 0, 424, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	{ BABI_PALACE_ENTRANCE_FROM_BABI_PALACE, CONDITION_ALWAYS, 200, 0, 248, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-SCENE_EXIT_REGION BabiPalace_Regions[] = {
+SCENE_EXIT_REGION BabiPalaceRegions[] = {
 	{ SCENE_TABLE_END },
 };
 
-Uint32 BabiPalace_Exits[] = {
+Uint32 BabiPalaceExits[] = {
 	SCENE_EXITS(BabiPalace),
 	SCENE_EXIT(BABI_PALACE_TO_BABI_PALACE_ENTRANCE, BabiPalaceEntrance, BABI_PALACE_ENTRANCE_FROM_BABI_PALACE),
 	SCENE_EXIT(BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_WEST, BabiPalace, BABI_PALACE_CARPET_ROOM_FROM_STATUE_ROOM_WEST),
@@ -2903,7 +2903,7 @@ Uint32 BabiPalace_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE BabiPalace_OutsideActorPlacements[] = {
+ACTOR_PLACE BabiPalaceOutsideActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		232, 0, 248, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2911,7 +2911,7 @@ ACTOR_PLACE BabiPalace_OutsideActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE BabiPalace_ActorPlacementsBabiMissing[] = {
+ACTOR_PLACE BabiPalaceActorPlacementsBabiMissing[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2924,7 +2924,7 @@ ACTOR_PLACE BabiPalace_ActorPlacementsBabiMissing[] = {
 		56, 0, 120, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		392, 0, 96, FACING_EAST, TALK_FACING_PARTY, 0),
-	ACTOR_PLACEMENT(SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, (Sint32)BabiPalace_IndigestionScript,
+	ACTOR_PLACEMENT(SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, (Sint32)BabiPalaceIndigestionScript,
 		472, 0, 136, FACING_NORTHEAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		88, 0, 296, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
@@ -2953,7 +2953,7 @@ ACTOR_PLACE BabiPalace_ActorPlacementsBabiMissing[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE BabiPalace_ActorPlacementsFinals[] = {
+ACTOR_PLACE BabiPalaceActorPlacementsFinals[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2977,7 +2977,7 @@ ACTOR_PLACE BabiPalace_ActorPlacementsFinals[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE BabiPalace_ActorPlacementsAfterColosso[] = {
+ACTOR_PLACE BabiPalaceActorPlacementsAfterColosso[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3013,7 +3013,7 @@ ACTOR_PLACE BabiPalace_ActorPlacementsAfterColosso[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE BabiPalace_CuesBabiMissing[] = {
+CUE BabiPalaceCuesBabiMissing[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_TO_BABI_PALACE_ENTRANCE },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_WEST },
 	{ CUE_EXIT, 3, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_EAST },
@@ -3092,7 +3092,7 @@ CUE BabiPalace_CuesBabiMissing[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE BabiPalace_CuesFinals[] = {
+CUE BabiPalaceCuesFinals[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_TO_BABI_PALACE_ENTRANCE },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_WEST },
 	{ CUE_EXIT, 3, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_EAST },
@@ -3158,7 +3158,7 @@ CUE BabiPalace_CuesFinals[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE BabiPalace_CuesAfterColosso[] = {
+CUE BabiPalaceCuesAfterColosso[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_TO_BABI_PALACE_ENTRANCE },
 	{ CUE_EXIT, 2, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_WEST },
 	{ CUE_EXIT, 3, CONDITION_ALWAYS, BABI_PALACE_STATUE_ROOM_TO_CARPET_ROOM_EAST },
@@ -3233,7 +3233,7 @@ CUE BabiPalace_CuesAfterColosso[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE BabiPalace_OutsideCuesBabiMissing[] = {
+CUE BabiPalaceOutsideCuesBabiMissing[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_ENTRANCE_TO_TOLBI },
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), BABI_PALACE_ENTRANCE_TO_BABI_PALACE, CONDITION_ALWAYS, SCRIPT_REF(scBabiPalaceLeaveThroughAnimatedDoor) },
 	{ CUE_TALK, ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceNormallyNoOnesAllowedIntoBabis) },
@@ -3244,7 +3244,7 @@ CUE BabiPalace_OutsideCuesBabiMissing[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE BabiPalace_OutsideCuesFinals[] = {
+CUE BabiPalaceOutsideCuesFinals[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_ENTRANCE_TO_TOLBI },
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), BABI_PALACE_ENTRANCE_TO_BABI_PALACE, CONDITION_ALWAYS, SCRIPT_REF(scBabiPalaceLeaveThroughAnimatedDoor) },
 	{ CUE_TALK, ACTOR_FIRST_GUARD, FLAG_BABI_PALACE_GUARD_GAVE_WORD, SCRIPT_REF(scBabiPalacePassOnBabisWord) },
@@ -3259,7 +3259,7 @@ CUE BabiPalace_OutsideCuesFinals[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE BabiPalace_OutsideCuesAfterColosso[] = {
+CUE BabiPalaceOutsideCuesAfterColosso[] = {
 	{ CUE_EXIT, 1, CONDITION_ALWAYS, BABI_PALACE_ENTRANCE_TO_TOLBI },
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), BABI_PALACE_ENTRANCE_TO_BABI_PALACE, CONDITION_ALWAYS, SCRIPT_REF(scBabiPalaceLeaveThroughAnimatedDoor) },
 	{ CUE_TALK, ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIveLostAllMyEnthusiasmSince) },

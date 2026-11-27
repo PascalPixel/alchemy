@@ -4,7 +4,7 @@
    PALETTE_LIST_END. */
 
 /* The circle's colours: one pale grey-green on every entry. */
-Uint16 TeleportCircle_Colors[] = {
+Uint16 TeleportCircleColors[] = {
 	23,
 	25,
 	22,
@@ -31,7 +31,7 @@ Uint16 TeleportCircle_Colors[] = {
 
 /* The shimmer's colours, which it moves round the entries: lilac, blues
    deepening to violet, and white. */
-Uint16 TeleportCircle_ShimmerColors[] = {
+Uint16 TeleportCircleShimmerColors[] = {
 	30,
 	27,
 	31,

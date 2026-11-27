@@ -35,7 +35,7 @@ enum {
 };
 
 /* A glow's value with this bit drawn mirrored left to right; its low three bits
-   are its frame. */
+   are its tick. */
 #define LIGHT_SPRITE_MIRRORED (1 << 7)
 
 /* Where a glow joins the depth list: its actor's y + z plus this, where the
@@ -55,7 +55,7 @@ void scAnemosInnerSanctumEntranceSetLightPicture(Uint16 picture);
 #include "../field/field_effect_move.c"
 
 /* The hall's and the last room's actors
-   (AnemosInnerSanctumEntrance_Placements). */
+   (AnemosInnerSanctumEntrancePlacements). */
 typedef enum ANEMOS_INNER_SANCTUM_ENTRANCE_ACTOR_ID {
 	/* "I am the shadow, the keeper of light." */
 	ACTOR_SHADOW = ACTOR_FIRST_PLACED,
@@ -80,15 +80,15 @@ typedef enum ANEMOS_INNER_SANCTUM_ENTRANCE_ACTOR_ID {
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect_spawn.c"
 
-extern Sint32 AnemosInnerSanctumEntrance_LightGrowsScript[];
-extern Sint32 AnemosInnerSanctumEntrance_LightShrinksScript[];
-extern Sint32 AnemosInnerSanctumEntrance_ShadowScript[];
-extern Sint8  AnemosInnerSanctumEntrance_BlockOrder[];
+extern Sint32 AnemosInnerSanctumEntranceLightGrowsScript[];
+extern Sint32 AnemosInnerSanctumEntranceLightShrinksScript[];
+extern Sint32 AnemosInnerSanctumEntranceShadowScript[];
+extern Sint8  AnemosInnerSanctumEntranceBlockOrder[];
 void		  scAnemosInnerSanctumEntranceStartLightSprs(void);
-void		  scAnemosInnerSanctumEntranceSetLightPriority(Uint16 priority);
+void		  scAnemosInnerSanctumEntranceSetLightPriority(Uint16 pri);
 void		  scAnemosInnerSanctumEntranceOpenTheWay(void);
 
-extern Sint32 AnemosInnerSanctumEntrance_DragonStatueScript[];
+extern Sint32 AnemosInnerSanctumEntranceDragonStatueScript[];
 
 struct ACTOR;
 
@@ -96,15 +96,15 @@ Sint16 LightSpriteTile	BSS_DATA;
 Sint16 LightSpriteCount BSS_DATA;
 /* The actors that carry a glow, LightSpriteCount of them. */
 ACTOR *LightSpriteActors[16] BSS_DATA;
-/* The glows' sprite attributes, built each frame by scLightSprsDraw. */
-LIGHT_OAM									   LightSpriteOams[16] BSS_DATA;
-Sint16 LightSpritesLarge					   BSS_DATA;
-Sint16 LightSpritePriority					   BSS_DATA;
-Sint16 AnemosInnerSanctumEntrance_LightPicture BSS_DATA;
+/* The glows' sprite attributes, built each tick by scLightSprsDraw. */
+LIGHT_OAM									  LightSpriteOams[16] BSS_DATA;
+Sint16 LightSpritesLarge					  BSS_DATA;
+Sint16 LightSpritePriority					  BSS_DATA;
+Sint16 AnemosInnerSanctumEntranceLightPicture BSS_DATA;
 
 #include "text/msg_ids.h"
 
-/* The call AnemosInnerSanctumEntrance_DragonStatueScript makes: the actor's
+/* The call AnemosInnerSanctumEntranceDragonStatueScript makes: the actor's
    shadow is no longer drawn. */
 Sint32 scAnemosInnerSanctumEntranceRemoveShadow(ACTOR *actor)
 {
@@ -127,14 +127,14 @@ const Uint32 *scGetExits(void)
 	return SceneExits;
 }
 
-extern LATE_DATA ACTOR_PLACE AnemosInnerSanctumEntrance_EmptyPlacements[];
-extern ACTOR_PLACE			 AnemosInnerSanctumEntrance_Placements[];
+extern LATE_DATA ACTOR_PLACE AnemosInnerSanctumEntranceEmptyPlacements[];
+extern ACTOR_PLACE			 AnemosInnerSanctumEntrancePlacements[];
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.next == (Sint32)&SceneId_AnemosInnerSanctumEntrance)
-		return AnemosInnerSanctumEntrance_Placements;
-	return AnemosInnerSanctumEntrance_EmptyPlacements;
+		return AnemosInnerSanctumEntrancePlacements;
+	return AnemosInnerSanctumEntranceEmptyPlacements;
 }
 
 /* As the blocks set the party down before him, the shadow at the door speaks,
@@ -179,11 +179,11 @@ void scAnemosInnerSanctumEntranceLightRises(void)
 	fdActorPlaceOnActor(ACTOR_LIGHT, ACTOR_SHADOW);
 	sySynch(1);
 	fdActorSetMovementTypeById(
-		ACTOR_SHADOW, AnemosInnerSanctumEntrance_ShadowScript);
+		ACTOR_SHADOW, AnemosInnerSanctumEntranceShadowScript);
 	fdActorSetMovementTypeAndWaitById(
-		ACTOR_LIGHT, AnemosInnerSanctumEntrance_LightGrowsScript);
+		ACTOR_LIGHT, AnemosInnerSanctumEntranceLightGrowsScript);
 	fdActorSetMovementTypeAndWaitById(
-		ACTOR_LIGHT, AnemosInnerSanctumEntrance_LightShrinksScript);
+		ACTOR_LIGHT, AnemosInnerSanctumEntranceLightShrinksScript);
 	fdScriptWait(10);
 	fdScriptEnd();
 }
@@ -213,20 +213,20 @@ void scAnemosInnerSanctumEntranceShadowByHeight(ACTOR *actor)
 		fdActorSetSprFlags(actor, 0);
 }
 
-extern Sint8 AnemosInnerSanctumEntrance_BlockSpots[];
+extern Sint8 AnemosInnerSanctumEntranceBlockSpots[];
 
 /* Felix moves one of the six symbol blocks in the last room, with Move or by
    pushing it. Once all six stand together on the dark square in the middle of
    the room (metatiles (11, 27) to (13, 28)), their symbols light up and flicker
    with a rising sound, and the blocks stay put for the rest of the visit.
 
-   Each block has its own spot, in AnemosInnerSanctumEntrance_BlockSpots. */
+   Each block has its own spot, in AnemosInnerSanctumEntranceBlockSpots. */
 void scAnemosInnerSanctumEntranceMoveBlock(Sint32 unused, Sint32 block)
 {
 	Sint32 i;
 
-	const Sint8 *x = AnemosInnerSanctumEntrance_BlockSpots;
-	const Sint8 *z = AnemosInnerSanctumEntrance_BlockSpots + 1;
+	const Sint8 *x = AnemosInnerSanctumEntranceBlockSpots;
+	const Sint8 *z = AnemosInnerSanctumEntranceBlockSpots + 1;
 
 	for(i = ACTOR_SYMBOL_BLOCK_A; i <= ACTOR_SYMBOL_BLOCK_F; i++) {
 		ACTOR *actor = fdActorGetById(i);
@@ -311,9 +311,9 @@ void scAnemosInnerSanctumEntranceOpenTheWay(void)
 	sySynch(10);
 	i = 0;
 	/* BUG: the loop runs seven times, reading one byte past the six blocks of
-	   AnemosInnerSanctumEntrance_BlockOrder; BUGFIX stops at the sixth. */
+	   AnemosInnerSanctumEntranceBlockOrder; BUGFIX stops at the sixth. */
 	do {
-		actor = fdActorGetById(AnemosInnerSanctumEntrance_BlockOrder[i]);
+		actor = fdActorGetById(AnemosInnerSanctumEntranceBlockOrder[i]);
 		actor->motionFlg = 0;
 		actor->y.fixed += toFIXED(1) / 2;
 		actor->acceleration = toFIXED(1) / 16;
@@ -359,14 +359,14 @@ void scAnemosInnerSanctumEntranceNoOperation(void)
 {
 }
 
-extern CUE AnemosInnerSanctumEntrance_EmptyCues[];
-extern CUE AnemosInnerSanctumEntrance_Cues[];
+extern CUE AnemosInnerSanctumEntranceEmptyCues[];
+extern CUE AnemosInnerSanctumEntranceCues[];
 
 const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.next == (Sint32)&SceneId_AnemosInnerSanctumEntrance)
-		return AnemosInnerSanctumEntrance_Cues;
-	return AnemosInnerSanctumEntrance_EmptyCues;
+		return AnemosInnerSanctumEntranceCues;
+	return AnemosInnerSanctumEntranceEmptyCues;
 }
 
 /* Opens with the window transition. In the last room, gives the six blocks
@@ -405,7 +405,7 @@ Sint32 scInit(void)
 	}
 	if(fdScriptGetFlag(FLAG_DULLAHAN_FOUGHT)) {
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		scAnemosInnerSanctumEntranceLightRises();
 		syGameFlagClear(FLAG_DULLAHAN_FOUGHT);
 	}
@@ -417,7 +417,7 @@ Sint32 scPrepareMap(void)
 	return 0;
 }
 
-/* Draws each listed actor's glow: a small 16-pixel glow on its frame, or, in
+/* Draws each listed actor's glow: a small 16-pixel glow on its tick, or, in
    the large mode, a 32 by 64 one. */
 void scLightSprsDraw(void)
 {
@@ -431,8 +431,8 @@ void scLightSprsDraw(void)
 	tile = VramCacheEntries[LightSpriteTile].ofs >> 5;
 	viewY = map->origin[1];
 	oam = LightSpriteOams;
-	picture = AnemosInnerSanctumEntrance_LightPicture *
-		((FrameCount >> 2) % 5 * 32 + 32);
+	picture = AnemosInnerSanctumEntranceLightPicture *
+		((TickCount >> 2) % 5 * 32 + 32);
 
 	for(i = 0; i < LightSpriteCount; i++) {
 		ACTOR *actor = LightSpriteActors[i];
@@ -447,7 +447,7 @@ void scLightSprsDraw(void)
 			Uint32 *word;
 
 			if(mode == 0) {
-				Sint32 frame = actor->tmr;
+				Sint32 frm = actor->tmr;
 				Sint32 pixelX = FIXEDtoINT(screenX);
 				Sint32 pixelY = FIXEDtoINT(screenY);
 				screenX = pixelX - 8;
@@ -460,10 +460,10 @@ void scLightSprsDraw(void)
 				word = (Uint32 *)oam;
 				*word++ = 0;
 				*word++ = screenY | OBJ_X(screenX) |
-					(frame & LIGHT_SPRITE_MIRRORED) *
+					(frm & LIGHT_SPRITE_MIRRORED) *
 						(OBJ_HFLIP / LIGHT_SPRITE_MIRRORED) |
 					OBJ_SIZE_16X16 | OBJ_256_COLORS;
-				*word = (tile + picture + (frame & 7) * 8) | OBJ_PRIORITY(2);
+				*word = (tile + picture + (frm & 7) * 8) | OBJ_PRIORITY(2);
 				if(LightSpritePriority == -1)
 					oam->pri = fdActorGetSprPriority(actor);
 				else
@@ -471,7 +471,7 @@ void scLightSprsDraw(void)
 				syOAMAddSprAtDepthClamped(oam, depth);
 				oam++;
 			} else {
-				Sint32 frame = actor->tmr;
+				Sint32 frm = actor->tmr;
 				Sint32 pixelX = FIXEDtoINT(screenX);
 				Sint32 pixelY = FIXEDtoINT(screenY);
 				screenX = pixelX - 8;
@@ -485,7 +485,7 @@ void scLightSprsDraw(void)
 				*word++ = 0;
 				*word++ =
 					screenY | OBJ_X(screenX) | OBJ_SIZE_32X64 | OBJ_256_COLORS;
-				*word = (tile + frame * 8) | OBJ_PRIORITY(2);
+				*word = (tile + frm * 8) | OBJ_PRIORITY(2);
 				if(LightSpritePriority == -1)
 					oam->pri = fdActorGetSprPriority(actor);
 				else
@@ -503,21 +503,21 @@ void scLightSprsDraw(void)
    picture row chosen yet. */
 void scAnemosInnerSanctumEntranceStartLightSprs(void)
 {
-	Uint8 *buffer = syHeapCallAlternatePool(syHeapAlloc, 6144);
+	Uint8 *buf = syHeapCallAlternatePool(syHeapAlloc, 6144);
 
 	syWordsClearEntry(LightSpriteActors, sizeof(LightSpriteActors));
-	syDecompressTaggedLZ(Field_CachedTilesD, buffer);
+	syDecompressTaggedLZ(Field_CachedTilesD, buf);
 	LightSpriteTile = syVRAMCacheFindFreeEntry();
-	syVRAMCacheLoad(LightSpriteTile, 6144, buffer);
-	syHeapRelease(buffer);
-	sySetEvent(scLightSprsDraw, EVENT_PASS_FRAME);
+	syVRAMCacheLoad(LightSpriteTile, 6144, buf);
+	syHeapRelease(buf);
+	sySetEvent(scLightSprsDraw, EVENT_PASS_TICK);
 	LightSpriteCount = 0;
 	LightSpritesLarge = 0;
 	LightSpritePriority = -1;
-	AnemosInnerSanctumEntrance_LightPicture = 0;
+	AnemosInnerSanctumEntranceLightPicture = 0;
 }
 
-/* Gives actor `id` a glow: `glow` is its frame, with LIGHT_SPRITE_MIRRORED to
+/* Gives actor `id` a glow: `glow` is its tick, with LIGHT_SPRITE_MIRRORED to
    draw it mirrored. */
 void scLightSprsAdd(Sint32 id, Sint32 glow)
 {
@@ -536,17 +536,17 @@ void scAnemosInnerSanctumEntranceSetLightPriority(Uint16 priority)
 	LightSpritePriority = priority;
 }
 
-/* Chooses the glows' picture: 0 the still glow, 1 the five-frame flicker. */
+/* Chooses the glows' picture: 0 the still glow, 1 the five-tick flicker. */
 void scAnemosInnerSanctumEntranceSetLightPicture(Uint16 picture)
 {
-	AnemosInnerSanctumEntrance_LightPicture = picture;
+	AnemosInnerSanctumEntranceLightPicture = picture;
 }
 
 /* clang-format off */
 #include "shared/field_effect_duration_scripts.c"
 
-/* The light's rise: it grows and climbs for 40 frames. */
-Sint32 AnemosInnerSanctumEntrance_LightGrowsScript[] = {
+/* The light's rise: it grows and climbs for 40 ticks. */
+Sint32 AnemosInnerSanctumEntranceLightGrowsScript[] = {
 	SC_ADD(SW_SCALE_X, toFIXED(1) / 64),
 	SC_ADD(SW_SCALE_Y, toFIXED(1) / 64),
 	SC_ADD(SW_Y, -toFIXED(1) / 4),
@@ -556,7 +556,7 @@ Sint32 AnemosInnerSanctumEntrance_LightGrowsScript[] = {
 };
 
 /* The light shrinking back as it sinks, then gone. */
-Sint32 AnemosInnerSanctumEntrance_LightShrinksScript[] = {
+Sint32 AnemosInnerSanctumEntranceLightShrinksScript[] = {
 	SC_ADD(SW_SCALE_X, -toFIXED(1) / 32),
 	SC_ADD(SW_SCALE_Y, -toFIXED(1) / 32),
 	SC_ADD(SW_Y, toFIXED(1) / 4),
@@ -567,8 +567,8 @@ Sint32 AnemosInnerSanctumEntrance_LightShrinksScript[] = {
 	SC_END,
 };
 
-/* The shadow shrinking away for 40 frames, then gone. */
-Sint32 AnemosInnerSanctumEntrance_ShadowScript[] = {
+/* The shadow shrinking away for 40 ticks, then gone. */
+Sint32 AnemosInnerSanctumEntranceShadowScript[] = {
 	SC_ADD(SW_SCALE_X, -toFIXED(1) / 64),
 	SC_ADD(SW_SCALE_Y, -toFIXED(1) / 64),
 	SC_WAIT(1),
@@ -581,11 +581,11 @@ Sint32 AnemosInnerSanctumEntrance_ShadowScript[] = {
 
 /* The metatiles, x then z, where the six blocks must stand before Hover opens
    the way: the dark square in the middle of the room. */
-Sint8 AnemosInnerSanctumEntrance_BlockSpots[] = {
+Sint8 AnemosInnerSanctumEntranceBlockSpots[] = {
 	11, 27, 11, 28, 12, 27, 12, 28, 13, 27, 13, 28};
 
 /* The order the blocks hop up in when the way opens. */
-Sint8 AnemosInnerSanctumEntrance_BlockOrder[] = {
+Sint8 AnemosInnerSanctumEntranceBlockOrder[] = {
 	ACTOR_SYMBOL_BLOCK_D,
 	ACTOR_SYMBOL_BLOCK_F,
 	ACTOR_SYMBOL_BLOCK_A,
@@ -598,15 +598,15 @@ Sint8 AnemosInnerSanctumEntrance_BlockOrder[] = {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SPRITE_PRIORITY
 
-LATE_DATA const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+LATE_DATA const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 /* The coiled dragon statues' script, from ACTOR_FIRST_DRAGON_STATUE on: hides
    each one's sprite, then stops. */
-LATE_DATA Sint32 AnemosInnerSanctumEntrance_DragonStatueScript[] = {
+LATE_DATA Sint32 AnemosInnerSanctumEntranceDragonStatueScript[] = {
 	SC_CALL(scAnemosInnerSanctumEntranceRemoveShadow),
 	SC_END,
 };
@@ -643,13 +643,13 @@ LATE_DATA Uint32 SceneExits[] = {
 };
 
 /* The scene's other room's actors: none. */
-LATE_DATA ACTOR_PLACE AnemosInnerSanctumEntrance_EmptyPlacements[] = {
+LATE_DATA ACTOR_PLACE AnemosInnerSanctumEntranceEmptyPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
 /* The hall's and the last room's actors, in
    ANEMOS_INNER_SANCTUM_ENTRANCE_ACTOR_ID's order. */
-LATE_DATA ACTOR_PLACE AnemosInnerSanctumEntrance_Placements[] = {
+LATE_DATA ACTOR_PLACE AnemosInnerSanctumEntrancePlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_DULLAHAN, FLAG_DULLAHAN_BEATEN, MOVEMENT_TYPE_STAND,
 		200, 0, 104, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_SYMBOL_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -668,58 +668,58 @@ LATE_DATA ACTOR_PLACE AnemosInnerSanctumEntrance_Placements[] = {
 		MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP,
 		0),
 	ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
-		(Sint32)AnemosInnerSanctumEntrance_DragonStatueScript, 152, 0, 168,
+		(Sint32)AnemosInnerSanctumEntranceDragonStatueScript, 152, 0, 168,
 		FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
-		(Sint32)AnemosInnerSanctumEntrance_DragonStatueScript, 152, 0, 216,
+		(Sint32)AnemosInnerSanctumEntranceDragonStatueScript, 152, 0, 216,
 		FACING_WEST, TALK_FACING_PARTY_AND_BACK, 1),
 	ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
-		(Sint32)AnemosInnerSanctumEntrance_DragonStatueScript, 248, 0, 168,
+		(Sint32)AnemosInnerSanctumEntranceDragonStatueScript, 248, 0, 168,
 		FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
 	ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
-		(Sint32)AnemosInnerSanctumEntrance_DragonStatueScript, 248, 0, 216,
+		(Sint32)AnemosInnerSanctumEntranceDragonStatueScript, 248, 0, 216,
 		FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
 	ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
-		(Sint32)AnemosInnerSanctumEntrance_DragonStatueScript, 696, 0, 240,
+		(Sint32)AnemosInnerSanctumEntranceDragonStatueScript, 696, 0, 240,
 		FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
-		(Sint32)AnemosInnerSanctumEntrance_DragonStatueScript, 744, 0, 240,
+		(Sint32)AnemosInnerSanctumEntranceDragonStatueScript, 744, 0, 240,
 		FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
-		(Sint32)AnemosInnerSanctumEntrance_DragonStatueScript, 424, 0, 232,
+		(Sint32)AnemosInnerSanctumEntranceDragonStatueScript, 424, 0, 232,
 		FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
-		(Sint32)AnemosInnerSanctumEntrance_DragonStatueScript, 424, 0, 288,
+		(Sint32)AnemosInnerSanctumEntranceDragonStatueScript, 424, 0, 288,
 		FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
-		(Sint32)AnemosInnerSanctumEntrance_DragonStatueScript, 504, 0, 232,
+		(Sint32)AnemosInnerSanctumEntranceDragonStatueScript, 504, 0, 232,
 		FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
-		(Sint32)AnemosInnerSanctumEntrance_DragonStatueScript, 504, 0, 288,
+		(Sint32)AnemosInnerSanctumEntranceDragonStatueScript, 504, 0, 288,
 		FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
-		(Sint32)AnemosInnerSanctumEntrance_DragonStatueScript, 424, 0, 712,
+		(Sint32)AnemosInnerSanctumEntranceDragonStatueScript, 424, 0, 712,
 		FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
-		(Sint32)AnemosInnerSanctumEntrance_DragonStatueScript, 424, 0, 768,
+		(Sint32)AnemosInnerSanctumEntranceDragonStatueScript, 424, 0, 768,
 		FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
-		(Sint32)AnemosInnerSanctumEntrance_DragonStatueScript, 504, 0, 712,
+		(Sint32)AnemosInnerSanctumEntranceDragonStatueScript, 504, 0, 712,
 		FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
-		(Sint32)AnemosInnerSanctumEntrance_DragonStatueScript, 504, 0, 768,
+		(Sint32)AnemosInnerSanctumEntranceDragonStatueScript, 504, 0, 768,
 		FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
 	{SCENE_TABLE_END},
 };
 
 /* The scene's other room's cues: none. */
-LATE_DATA CUE AnemosInnerSanctumEntrance_EmptyCues[] = {
+LATE_DATA CUE AnemosInnerSanctumEntranceEmptyCues[] = {
 	{CUE_TABLE_END},
 };
 
 /* The scene's exits, the last room's floor for pushing, Move on each block and
    Hover on the blocks' metatiles. */
-LATE_DATA CUE AnemosInnerSanctumEntrance_Cues[] = {
+LATE_DATA CUE AnemosInnerSanctumEntranceCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS,
 		ANEMOS_INNER_SANCTUM_ENTRANCE_TO_CONTIGO_GEOGLYPH_NORTHEAST},
 	{CUE_EXIT, 2, CONDITION_ALWAYS,

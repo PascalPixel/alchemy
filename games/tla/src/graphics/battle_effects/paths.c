@@ -1,14 +1,14 @@
 /* The flight paths of two battle effects: Atalanta's across the screen, and the
    flame of Dragon Cloud and Epicenter. Each opens with its start, x and then y
    as 16-bit pixels written a byte to a row (high byte, low byte), and goes on
-   with a change of x and y in pixels for each frame. Both are resources
+   with a change of x and y in pixels for each tick. Both are resources
    (ResourceId_AtalantaPath, ResourceId_DragonCloudFlamePath), as The Broken
    Seal's are. */
 
 #include "types.h"
 
 /* clang-format off */
-/* Atalanta's flight while she gathers her shafts, a step a frame */
+/* Atalanta's flight while she gathers her shafts, a step a tick */
 /* (RESOURCE_ATALANTA_PATH). */
 const Sint8 BattleEffect_AtalantaPath[][2] = {
 	{0, -96}, /* starts at x 160 */
@@ -225,7 +225,7 @@ const Sint8 BattleEffect_AtalantaPath[][2] = {
 	{8, 6},
 };
 
-/* The flame's flight from the user, from frame 18 to 58 of Dragon Cloud and */
+/* The flame's flight from the user, from tick 18 to 58 of Dragon Cloud and */
 /* Epicenter (RESOURCE_DRAGON_CLOUD_FLAME_PATH). */
 const Sint8 BattleEffect_DragonCloudFlamePath[][2] = {
 	{0, 17},   /* starts at x 17 */

@@ -4,9 +4,9 @@
 
 /* Sets the actor's sprite priority (0 in front of the backgrounds, 3
    behind). */
-UNUSED static void scSetActorSprPriority(ACTOR *actor, Sint32 priority)
+UNUSED static void scSetActorSprPriority(ACTOR *actor, Sint32 pri)
 {
-	actor->spr->image.pri = priority;
+	actor->spr->image.pri = pri;
 }
 
 /* A still, translucent black actor in front of the backgrounds (sprite priority

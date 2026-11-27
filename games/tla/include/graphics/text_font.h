@@ -15,7 +15,7 @@ extern const Uint8 Font_KanjiGlyphs[];
 
 /* The mark each of a kana's top-bit values stands for (TEXT_MARK_SHIFT): none,
    voiced, semi-voiced, none. */
-extern const Uint16 Font_MarkGlyphCodes[];
+extern const Uint16 FontMarkGlyphCodes[];
 
 /* The marks a kana is drawn with: their character codes. */
 typedef enum TEXT_MARK_GLYPH {
@@ -25,7 +25,7 @@ typedef enum TEXT_MARK_GLYPH {
 } TEXT_MARK_GLYPH;
 
 /* Japanese text carries a kana's mark in the top bits of its code, as its index
-   in Font_MarkGlyphCodes. */
+   in FontMarkGlyphCodes. */
 #define TEXT_MARK_SHIFT 14
 
 #endif

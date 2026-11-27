@@ -7,7 +7,7 @@
 #include "types.h"
 
 /* One sprite of the logo's lettering, as syOAMAddSprAtDepth queues it.
-   scTitleUpdateSprReveal rewrites every entry each frame. */
+   scTitleUpdateSprReveal rewrites every entry each tick. */
 typedef struct TITLE_SPR {
 	/* [0] the queue link syOAMAddSprAtDepth writes; [1] OAM attribute 0 (y,
 	   mode and shape) in the low half and attribute 1 (x) in the high half; [2]
@@ -15,8 +15,8 @@ typedef struct TITLE_SPR {
 	Uint32 attr[3];
 } TITLE_SPR;
 
-/* Frames since the lettering's reveal began; a column appears every two. */
-extern Sint16 TitleRevealFrame;
+/* Ticks since the lettering's reveal began; a column appears every two. */
+extern Sint16 TitleRevealTick;
 /* The lettering's sprites, in the overlay's BSS (scene/title_bss.s): 18 in the
    English and Japanese editions, 120 in the others. */
 extern TITLE_SPR TitleSprites[];

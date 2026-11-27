@@ -287,7 +287,7 @@
 #define RELIEF_WALL_SINGLE_TRIGGER						   1
 #define RESISTANCE_DOWN_HELP_NO_MINUS					   1
 #define REVISED_ENTRANCE_TRANSITIONS					   1
-#define SENDING_WINDOW_WAITS_A_FRAME_AFTER_CLOSING		   1
+#define SENDING_WINDOW_WAITS_A_TICK_AFTER_CLOSING		   1
 #define SET_DJINNI_WINDOW_FITS_SCREEN					   1
 #define SHAMANS_ROD_SPARES_INDISPENSABLE_ITEMS			   1
 #define SHORTER_ENDING_SHIP_DEPARTURE_DELAY				   1
@@ -529,7 +529,7 @@
 #define RELIEF_WALL_SINGLE_TRIGGER						   1
 #define RESISTANCE_DOWN_HELP_NO_MINUS					   1
 #define REVISED_ENTRANCE_TRANSITIONS					   1
-#define SENDING_WINDOW_WAITS_A_FRAME_AFTER_CLOSING		   1
+#define SENDING_WINDOW_WAITS_A_TICK_AFTER_CLOSING		   1
 #define SET_DJINNI_WINDOW_FITS_SCREEN					   1
 #define SHAMANS_ROD_SPARES_INDISPENSABLE_ITEMS			   1
 #define SHORTER_ENDING_SHIP_DEPARTURE_DELAY				   1
@@ -629,7 +629,7 @@
 #endif
 
 /* At the Babi Lighthouse Entry, both pillars get an update function that runs
-   every frame. A pillar north of the party leader takes his sprite priority. A
+   every tick. A pillar north of the party leader takes his sprite priority. A
    pillar level with him or south of him is drawn one level in front of him,
    never below 1, so he passes behind it. In that south case the pillar is also
    left on automatic priority, so the camera can replace the value with the
@@ -735,7 +735,7 @@
 /* On Crossbone Isle's floors, moving or pushing the stone pillar when it
    already sits in the gap (its floor's passage flag is set) returns at once.
    Without the flag the pillar drops again: the fall, the dust, the whoosh, the
-   40-frame wait and the cell copy all repeat. */
+   40-tick wait and the cell copy all repeat. */
 #ifndef CROSSBONE_ISLE_PILLAR_DROPS_ONCE
 #define CROSSBONE_ISLE_PILLAR_DROPS_ONCE 0
 #endif
@@ -767,7 +767,7 @@
 
 /* The Menu test debug room's Djinn gift (talking to the first Dora) no longer
    runs the Japanese leftover loop. That loop fills an unused 256-byte stack
-   buffer with letters 16 times and steps MenuTest_FillLetter. The buffer itself
+   buffer with letters 16 times and steps MenuTestFillLetter. The buffer itself
    stays, so the stack frame is unchanged. Nothing visible changes. */
 #ifndef DEBUG_DJINN_GIFT_FILL_LOOP_DROPPED
 #define DEBUG_DJINN_GIFT_FILL_LOOP_DROPPED 0
@@ -891,7 +891,7 @@
 /* While the field menu's screens are up, Reveal shows no sparkles. Once the
    first command ring returns, the menu is marked open. If Reveal is active, the
    sparkles already on screen are released (the markers stay, and Reveal itself
-   stays active) and the game waits a frame. No new sparkles are spawned while
+   stays active) and the game waits a tick. No new sparkles are spawned while
    the mark is set, and it is cleared when the field menu closes. */
 #ifndef FIELD_MENU_STOPS_REVEAL_SPARKLES
 #define FIELD_MENU_STOPS_REVEAL_SPARKLES 0
@@ -1120,9 +1120,9 @@
 
 /* Lucky Wheels remembers which prompt window is open, and opens and draws it
    only when the prompt changes, instead of closing and reopening it every
-   frame. Because the state is remembered, two more things work:
+   tick. Because the state is remembered, two more things work:
    - The all-held prompt gains a second line ('cannot pull the lever'), drawn on
-	 the next frame.
+	 the next tick.
    - After a losing pull, the 'pull the lever' line is drawn once. */
 #ifndef LUCKY_WHEELS_PROMPT_DRAWN_ONCE
 #define LUCKY_WHEELS_PROMPT_DRAWN_ONCE 0
@@ -1178,7 +1178,7 @@
 #endif
 
 /* Mercury Lighthouse's middle floor has a gate room with a terrace. When the
-   party enters that room from the lower floor or from the pipes, a frame task
+   party enters that room from the lower floor or from the pipes, a tick task
    starts. While the leader is on the ground layer in rows 13 to 18 (the
    terrace), the task stops the ground mask from drawing on him. Everywhere else
    the mask follows him as before. The ground mask is what draws raised ground
@@ -1255,7 +1255,7 @@
 
 /* In Mercury Lighthouse, the north jet in the Nut chest's room carries Isaac to
    (696, 592) and the event waits until he arrives. The jet then carries him 8
-   pixels further, to (696, 600), and the event pauses 30 frames. Without this
+   pixels further, to (696, 600), and the event pauses 30 ticks. Without this
    feature the event only sets his destination to (696, 592) and waits for that
    move. */
 #ifndef NUT_ROOM_JET_CARRIES_FURTHER
@@ -1320,7 +1320,7 @@
 #endif
 
 /* If Reveal is cast again while it is still running, revealActive stays 1
-   through the one-frame wait and the scene's Reveal event. The other editions
+   through the one-tick wait and the scene's Reveal event. The other editions
    set it to 0 first. A fresh cast behaves the same in every edition. */
 #ifndef REVEAL_RECAST_STAYS_ACTIVE
 #define REVEAL_RECAST_STAYS_ACTIVE 0
@@ -1340,12 +1340,12 @@
 #define REVISED_ENTRANCE_TRANSITIONS 0
 #endif
 
-/* After a cable send, the game waits one more frame after closing the 'Sending
+/* After a cable send, the game waits one more tick after closing the 'Sending
    data' window before it goes back to the file menu. The explicit clear before
    the close is dropped as well, which changes nothing on screen, because
    closing a window always clears it first. */
-#ifndef SENDING_WINDOW_WAITS_A_FRAME_AFTER_CLOSING
-#define SENDING_WINDOW_WAITS_A_FRAME_AFTER_CLOSING 0
+#ifndef SENDING_WINDOW_WAITS_A_TICK_AFTER_CLOSING
+#define SENDING_WINDOW_WAITS_A_TICK_AFTER_CLOSING 0
 #endif
 
 /* When a battle target is chosen, the Set Djinni window is kept on screen by
@@ -1364,7 +1364,7 @@
 #define SHAMANS_ROD_SPARES_INDISPENSABLE_ITEMS 0
 #endif
 
-/* In the game's ending, the Lemurian ship starts sailing west 30 frames after
+/* In the game's ending, the Lemurian ship starts sailing west 30 ticks after
    the curtains begin to close, instead of 80. */
 #ifndef SHORTER_ENDING_SHIP_DEPARTURE_DELAY
 #define SHORTER_ENDING_SHIP_DEPARTURE_DELAY 0
@@ -1474,7 +1474,7 @@
 #endif
 
 /* The unnamed span at the start of the title's globals, before
-   TitleRevealFrame, is 54 bytes instead of 58. TitleRevealFrame and
+   TitleRevealTick, is 54 bytes instead of 58. TitleRevealTick and
    TitleSprites therefore sit 4 bytes earlier. No code names or reads the span,
    so only the layout of memory changes. */
 #ifndef TITLE_GLOBALS_LEAD_SHORTER
@@ -1552,7 +1552,7 @@
    ROM. It sits after the party status's divider column offsets, and nothing
    reads it, so only the position of the data after it changes and nothing
    visible differs. In TLA it is Window_UnusedPartyColumnBytes; in TBS it is the
-   bytes after Window_PartyColumnOffsets. */
+   bytes after WindowPartyColumnOffsets. */
 #ifndef UNUSED_HP_PP_LABEL_TILES_DROPPED
 #define UNUSED_HP_PP_LABEL_TILES_DROPPED 0
 #endif
@@ -1593,14 +1593,14 @@
 
 /* On the stormy night, as the first aide runs off past the second aide, the
    second aide's sprite priority is pinned at 1. The pin starts right after the
-   grandfather's "We're counting on you" and lasts the 20 or so frames of the
+   grandfather's "We're counting on you" and lasts the 20 or so ticks of the
    first aide's run. Just before the second aide runs off himself, his priority
    goes back to automatic. */
 #ifndef VALE_PLAZA_SECOND_AIDE_PRIORITY_PINNED
 #define VALE_PLAZA_SECOND_AIDE_PRIORITY_PINNED 0
 #endif
 
-/* In the prologue by the river, a per-frame task keeps Garet and the exhausted
+/* In the prologue by the river, a per-tick task keeps Garet and the exhausted
    strongman at the leader's sprite priority. It now sets that priority through
    fdActorSetSprPriority, so their shadows follow the leader's priority too.
    Before, only their sprites did, and their shadows kept whatever priority they

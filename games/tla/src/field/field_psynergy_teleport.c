@@ -3,11 +3,11 @@
    field_psynergy.c. */
 
 #define WHIRL_COUNT				   100 /* sparks that whirl round the leader */
-/* The frames a spark flies before it vanishes. */
-#define TELEPORT_SPARK_FRAMES	   20
-/* Before the sparks, the leader spins for TELEPORT_SPIN_FRAMES, its turn each
-   frame TELEPORT_SPIN_ACCELERATION (1/65536 turns) faster than the last. */
-#define TELEPORT_SPIN_FRAMES	   50
+/* The ticks a spark flies before it vanishes. */
+#define TELEPORT_SPARK_TICKS	   20
+/* Before the sparks, the leader spins for TELEPORT_SPIN_TICKS, its turn each
+   tick TELEPORT_SPIN_ACCELERATION (1/65536 turns) faster than the last. */
+#define TELEPORT_SPIN_TICKS		   50
 #define TELEPORT_SPIN_ACCELERATION 60
 
 /* The stages of fdTeleportPlayWhirl. */
@@ -41,20 +41,20 @@ typedef struct TELEPORT_WHIRL_STATE {
    Contigo). */
 void fdTeleportPlayWhirl(void)
 {
-	Sint32				  position[3];
+	Sint32				  pos[3];
 	TELEPORT_WHIRL_STATE *teleportWhirlState =
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*teleportWhirlState));
 	ACTOR		*actor = fdActorLookup(fdPartyGetLeaderActor());
 	WHIRL_SPARK *spark;
-	EFFECT_SPR	*sprite;
+	EFFECT_SPR	*spr;
 	Sint32		 next;
 	Sint32		 state;
 	Sint32		 entry;
-	Sint32		 count;
+	Sint32		 cnt;
 	Sint32		 tiles;
 	Sint32		 i;
-	Sint32		 angle;
-	Sint32		 frame;
+	Sint32		 ang;
+	Sint32		 frm;
 	FIXED		 radius;
 
 	syDecompressTaggedLZ(
@@ -63,13 +63,13 @@ void fdTeleportPlayWhirl(void)
 	tiles = syVRAMCacheLoad(entry, 1024, teleportWhirlState);
 	for(i = 0, spark = teleportWhirlState->sparks; i < WHIRL_COUNT;
 		i++, spark++) {
-		sprite = &teleportWhirlState->sprs[i];
-		fdEffectSprInit(sprite, 4, 4, 0,
+		spr = &teleportWhirlState->sprs[i];
+		fdEffectSprInit(spr, 4, 4, 0,
 			tiles + (i & (ORB_PICTURES - 1)) * OBJ_TILES_PER_8BPP_TILE);
-		sprite->oam.fullCol = 1;
-		sprite->oam.pal = 0;
-		sprite->oam.pri = 0;
-		sprite->depth = OAM_DEPTH_WINDOW;
+		spr->oam.fullCol = 1;
+		spr->oam.pal = 0;
+		spr->oam.pri = 0;
+		spr->depth = OAM_DEPTH_WINDOW;
 		spark->age = -1;
 	}
 	sySndPlayStub(SE_SPARKLE_FALL);
@@ -78,23 +78,23 @@ void fdTeleportPlayWhirl(void)
 	actor->scaleY = 0;
 	fdActorSetSprFlagsStub(actor, 0);
 
-	count = 2;
+	cnt = 2;
 	state = WHIRL_FALLS_IN;
 	next = 0;
-	frame = 0;
+	frm = 0;
 	do {
-		if(count != 0) {
+		if(cnt != 0) {
 			radius = toFIXED(80);
-			i = count;
+			i = cnt;
 			do {
-				angle = syRandom();
+				ang = syRandom();
 				spark = &teleportWhirlState->sparks[next];
 				spark->age = 0;
 				SET_POSITION(spark, actor->x.fixed,
 					actor->y.fixed + syRandom() * 20, actor->z.fixed);
-				syVectorAddPolarOffset(syRandom() << 3, angle, &spark->x);
+				syVectorAddPolarOffset(syRandom() << 3, ang, &spark->x);
 				next++;
-				spark->ang = angle;
+				spark->ang = ang;
 				spark->radius = radius;
 				next %= WHIRL_COUNT;
 				i--;
@@ -102,65 +102,65 @@ void fdTeleportPlayWhirl(void)
 		}
 
 		spark = teleportWhirlState->sparks;
-		sprite = teleportWhirlState->sprs;
-		for(i = 0; i < WHIRL_COUNT; i++, sprite++, spark++) {
+		spr = teleportWhirlState->sprs;
+		for(i = 0; i < WHIRL_COUNT; i++, spr++, spark++) {
 			if(spark->age >= 0) {
-				if((Uint32)spark->age < TELEPORT_SPARK_FRAMES) {
-					Sint32 sparkAngle = spark->ang;
+				if((Uint32)spark->age < TELEPORT_SPARK_TICKS) {
+					Sint32 sparkAng = spark->ang;
 					Sint32 sparkRadius = spark->radius;
-					position[0] = spark->x;
-					position[1] = spark->y;
-					position[2] = spark->z;
-					syVectorAddPolarOffset(sparkRadius, sparkAngle, position);
-					fdCameraWorldToScreen(position);
-					sprite->x = position[0];
-					sprite->y = position[2];
-					fdEffectSprDraw(sprite);
+					pos[0] = spark->x;
+					pos[1] = spark->y;
+					pos[2] = spark->z;
+					syVectorAddPolarOffset(sparkRadius, sparkAng, pos);
+					fdCameraWorldToScreen(pos);
+					spr->x = pos[0];
+					spr->y = pos[2];
+					fdEffectSprDraw(spr);
 					spark->ang += TRIG_TURN / 32;
 					spark->radius += -toFIXED(4);
 				}
-				if(++spark->age == TELEPORT_SPARK_FRAMES)
+				if(++spark->age == TELEPORT_SPARK_TICKS)
 					spark->age = -1;
 			}
 		}
 
 		switch(state) {
 		case WHIRL_FALLS_IN:
-			if(frame == 20)
-				count = 3;
-			if(frame == 30) {
-				count = 5;
+			if(frm == 20)
+				cnt = 3;
+			if(frm == 30) {
+				cnt = 5;
 				state = WHIRL_LEADER_GROWS;
-				frame = -1;
+				frm = -1;
 			}
 			break;
 		case WHIRL_LEADER_GROWS:
 			actor->facing += DEGtoANG(45);
-			actor->scaleX = toFIXED(1) * frame / 30;
+			actor->scaleX = toFIXED(1) * frm / 30;
 			if(actor->scaleX > toFIXED(1))
 				actor->scaleX = toFIXED(1);
 			actor->scaleY = actor->scaleX;
-			if(frame == 40) {
+			if(frm == 40) {
 				state = WHIRL_DIES_AWAY;
-				frame = -1;
+				frm = -1;
 			}
 			break;
 		case WHIRL_DIES_AWAY:
-			if(frame == 0) {
+			if(frm == 0) {
 				actor->facing = DEGtoANG(90);
 				fdActorSetSprFlagsStub(actor, SPRITE_FLAG_SHADOW);
-				count = 3;
+				cnt = 3;
 			}
-			if(frame == 10)
-				count = 1;
-			if(frame == 20)
-				count = 0;
-			if(frame == 40)
+			if(frm == 10)
+				cnt = 1;
+			if(frm == 20)
+				cnt = 0;
+			if(frm == 40)
 				state = FIELD_PSYNERGY_FINISHED;
 			break;
 		}
 		sySynch(1);
-		frame++;
+		frm++;
 	} while(state != FIELD_PSYNERGY_FINISHED);
 	syVRAMCacheFreeEntry(entry);
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
@@ -188,16 +188,16 @@ void fdTeleportPlaySparks(void)
 	Sint32					 owner = fdPartyGetLeaderActor();
 	ACTOR					*actor = fdActorLookup(fdPartyGetLeaderActor());
 	FIELD_PSYNERGY_PARTICLE *particle;
-	EFFECT_SPR				*sprite;
+	EFFECT_SPR				*spr;
 	Sint32					 state;
 	Sint32					 entry;
-	Sint32					 count;
+	Sint32					 cnt;
 	Sint32					 tiles;
 	Sint32					 i;
 	Sint32					 spin;
-	Sint32					 angle;
+	Sint32					 ang;
 	Sint32					 next;
-	Sint32					 frame;
+	Sint32					 frm;
 	Sint32					 age;
 
 	sySynch(20);
@@ -208,13 +208,13 @@ void fdTeleportPlaySparks(void)
 	tiles = syVRAMCacheLoad(entry, 1024, teleportSparksState);
 	for(i = 0, particle = teleportSparksState->particles;
 		i < TELEPORT_SPARK_COUNT; i++, particle++) {
-		sprite = &teleportSparksState->sprs[i];
-		fdEffectSprInit(sprite, 4, 4, 0,
+		spr = &teleportSparksState->sprs[i];
+		fdEffectSprInit(spr, 4, 4, 0,
 			tiles + (i & (ORB_PICTURES - 1)) * OBJ_TILES_PER_8BPP_TILE);
-		sprite->oam.fullCol = 1;
-		sprite->oam.pal = 0;
-		sprite->oam.pri = 0;
-		sprite->depth = OAM_DEPTH_WINDOW;
+		spr->oam.fullCol = 1;
+		spr->oam.pal = 0;
+		spr->oam.pri = 0;
+		spr->depth = OAM_DEPTH_WINDOW;
 		particle->tmr = -1;
 	}
 	sySynch(10);
@@ -226,35 +226,35 @@ void fdTeleportPlaySparks(void)
 	sySynch(30);
 	sySndPlayStub(SE_SHIMMER);
 	fdActorSelectAnimationStub(actor, ANIM_NOD);
-	for(spin = 0, frame = 0; frame < TELEPORT_SPIN_FRAMES;
-		frame++, spin += TELEPORT_SPIN_ACCELERATION) {
+	for(spin = 0, frm = 0; frm < TELEPORT_SPIN_TICKS;
+		frm++, spin += TELEPORT_SPIN_ACCELERATION) {
 		actor->facing += spin + FACING_STEP;
 		sySynch(1);
 	}
 
-	count = 2;
+	cnt = 2;
 	state = SPARKS_BURST;
 	next = 0;
-	frame = 0;
+	frm = 0;
 	do {
-		for(i = 0; i < count; i++) {
-			angle = syRandom();
+		for(i = 0; i < cnt; i++) {
+			ang = syRandom();
 			particle = &teleportSparksState->particles[next];
 			particle->tmr = 0;
 			SET_POSITION(particle, actor->x.fixed,
 				actor->y.fixed + syRandom() * 20, actor->z.fixed);
-			syVectorAddPolarOffset(syRandom() << 3, angle, &particle->x);
+			syVectorAddPolarOffset(syRandom() << 3, ang, &particle->x);
 			if(next & 1) {
 				particle->velX = 0;
 				particle->velY = -toFIXED(4);
 				particle->velZ = 0;
-				syVectorAddPolarOffset((syRandom() << 2) + toFIXED(4), angle,
+				syVectorAddPolarOffset((syRandom() << 2) + toFIXED(4), ang,
 					&teleportSparksState->particles[next].velX);
 			} else {
 				particle->velX = 0;
 				particle->velY = toFIXED(5);
 				particle->velZ = 0;
-				syVectorAddPolarOffset((syRandom() << 2) + toFIXED(4), angle,
+				syVectorAddPolarOffset((syRandom() << 2) + toFIXED(4), ang,
 					&teleportSparksState->particles[next].velX);
 			}
 			next++;
@@ -262,12 +262,12 @@ void fdTeleportPlaySparks(void)
 		}
 
 		for(i = 0, particle = teleportSparksState->particles,
-		sprite = teleportSparksState->sprs;
-			i < TELEPORT_SPARK_COUNT; i++, sprite++, particle++) {
+		spr = teleportSparksState->sprs;
+			i < TELEPORT_SPARK_COUNT; i++, spr++, particle++) {
 			age = particle->tmr;
 			if(age >= 0) {
-				if((Uint32)age < TELEPORT_SPARK_FRAMES) {
-					fdEffectSprDrawAtWorldPos(sprite, particle);
+				if((Uint32)age < TELEPORT_SPARK_TICKS) {
+					fdEffectSprDrawAtWorldPos(spr, particle);
 					if(i & 1)
 						fdAdvanceWithGravity3D(
 							&particle->x, 63, toFIXED(1) / 2);
@@ -275,53 +275,53 @@ void fdTeleportPlaySparks(void)
 						fdAdvanceWithGravity3D(
 							&particle->x, 63, -(toFIXED(5) / 8));
 				}
-				if(++particle->tmr == TELEPORT_SPARK_FRAMES)
+				if(++particle->tmr == TELEPORT_SPARK_TICKS)
 					particle->tmr = -1;
 			}
 		}
 
 		switch(state) {
 		case SPARKS_BURST:
-			if(frame == 10)
+			if(frm == 10)
 				sySndPlayStub(SE_KOLIMA_BRIDGE_POST);
 			actor->facing += DEGtoANG(45);
-			if(frame == 40)
-				count = 3;
-			if(frame == 50)
-				count = 4;
-			if(frame == 60) {
-				count = 5;
+			if(frm == 40)
+				cnt = 3;
+			if(frm == 50)
+				cnt = 4;
+			if(frm == 60) {
+				cnt = 5;
 				state = SPARKS_LEADER_SHRINKS;
-				frame = -1;
+				frm = -1;
 			}
 			break;
 		case SPARKS_LEADER_SHRINKS:
 			actor->facing += DEGtoANG(45);
-			actor->scaleX = toFIXED(1) - toFIXED(1) * frame / 30;
+			actor->scaleX = toFIXED(1) - toFIXED(1) * frm / 30;
 			if(actor->scaleX < 0)
 				actor->scaleX = 0;
 			actor->scaleY = actor->scaleX;
 			fdActorSetSprFlagsStub(actor, 0);
-			if(frame == 30) {
+			if(frm == 30) {
 				state = SPARKS_DIE_AWAY;
-				frame = -1;
+				frm = -1;
 			}
 			break;
 		case SPARKS_DIE_AWAY:
-			count = 0;
-			if(frame == 20)
+			cnt = 0;
+			if(frm == 20)
 				state = FIELD_PSYNERGY_FINISHED;
 			break;
 		}
 		sySynch(1);
-		frame++;
+		frm++;
 	} while(state != FIELD_PSYNERGY_FINISHED);
 	syVRAMCacheFreeEntry(entry);
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 /* Runs fdTeleportPlaySparks, fades the palettes back to the saved ones and
-   waits 10 frames. */
+   waits 10 ticks. */
 void fdTeleportPlaySparksAndFade(void)
 {
 	fdTeleportPlaySparks();
@@ -344,7 +344,7 @@ void fdPsynergyTeleport(void)
 }
 
 #undef WHIRL_COUNT
-#undef TELEPORT_SPARK_FRAMES
-#undef TELEPORT_SPIN_FRAMES
+#undef TELEPORT_SPARK_TICKS
+#undef TELEPORT_SPIN_TICKS
 #undef TELEPORT_SPIN_ACCELERATION
 #undef TELEPORT_SPARK_COUNT

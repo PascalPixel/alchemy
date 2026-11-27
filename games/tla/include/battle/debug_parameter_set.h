@@ -22,6 +22,6 @@ typedef struct DEBUG_PARTY_ENTRY {
 
 /* The debug parameter sets btDebugParmSetLoad loads, a party member a row
    (debug_parameter_sets.c). */
-extern DEBUG_PARTY_ENTRY Debug_ParameterSets[];
+extern DEBUG_PARTY_ENTRY DebugParameterSets[];
 
 #endif

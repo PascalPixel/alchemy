@@ -15,6 +15,6 @@ void scLeaderOpenDoorAndEnter(
 	syFieldScriptWait(10);
 	syFieldScriptSetExitRequest(exit);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptEnd();
 }

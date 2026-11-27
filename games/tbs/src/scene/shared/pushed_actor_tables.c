@@ -4,9 +4,9 @@
 #include "pushed_actor_direction_steps.c"
 
 /* The large things that roll, by sprite: a rectangle's row in
-   PushedActor_Rectangles. Each lies west to east or north to south, the odd
+   PushedActorRectangles. Each lies west to east or north to south, the odd
    rows north to south. */
-Uint32 PushedActor_RectangleKinds[] PUSHED_ACTOR_TABLE_SECTION = {
+Uint32 PushedActorRectangleKinds[] PUSHED_ACTOR_TABLE_SECTION = {
 	SPRITE_LOG_WEST_EAST,
 	SPRITE_LOG_NORTH_SOUTH,
 	SPRITE_PIPE_WEST_EAST,
@@ -19,7 +19,7 @@ Uint32 PushedActor_RectangleKinds[] PUSHED_ACTOR_TABLE_SECTION = {
    thing's position: four metatiles by one, or a pipe's four by one north of
    it. */
 PUSHED_ACTOR_RECTANGLE
-PushedActor_Rectangles[] PUSHED_ACTOR_TABLE_SECTION = {
+PushedActorRectangles[] PUSHED_ACTOR_TABLE_SECTION = {
 	{-32, -8, 32, 8},  /* log, west to east */
 	{-8, -32, 8, 32},  /* log, north to south */
 	{-32, -16, 32, 0}, /* pipe, west to east */

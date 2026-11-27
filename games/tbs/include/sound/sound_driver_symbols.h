@@ -18,7 +18,7 @@ enum SoundCommandMask {
 enum SoundControl {
 	SOUND_NUM_MASK = 0xfff,
 	SOUND_FLAGS_MASK = 0xf000,
-	SOUND_FLAG_FADE_IN = 0x1000, /* music fades in over 64 VBlanks */
+	SOUND_FLAG_FADE_IN = 0x1000, /* music fades in over 64 frames */
 	/* Sounds from here to SOUND_SE_FIRST are jingles; those below are music,
 	   but for SOUND_FADE_OUT_BGM and SOUND_KEEP_BGM. */
 	SOUND_JINGLE_FIRST = MUS_PUZZLE_SOLVED,
@@ -43,7 +43,7 @@ enum MusicPlayerId {
 };
 
 /* The five versions of the IWRAM mixer's last step sySndLoadReverbCode copies
-   into place, each carrying a different share of a VBlank's sound into the
+   into place, each carrying a different share of a frame's sound into the
    next: the song's reverb, as MusicPlayer2000 calls it. */
 enum SoundReverbCode {
 	/* One value for both channels, from the two buffers together; only the
@@ -75,7 +75,7 @@ extern struct MusicPlayerInfo MPlayInfo_ActionSE;
    are not recorded, and SOUND_FADE_OUT_ACTION_SE clears
    MUSIC_PLAYER_ACTION_SE's entry. Nothing reads it. */
 extern Uint16 MusicPlayerLastSound[8];
-/* VBlanks after a jingle starts before the music waits for its end; held at 1
+/* Frames after a jingle starts before the music waits for its end; held at 1
    until the jingle's player stops, then 0. */
 extern Uint8 BgmRestoreDelay;
 

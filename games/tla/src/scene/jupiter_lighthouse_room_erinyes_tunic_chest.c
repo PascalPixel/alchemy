@@ -88,8 +88,8 @@ typedef enum JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_METATILE_BEHAVIOR {
 
 void scSetArrivalFlags(Sint32 a);
 Bool scPushTargetFillRectangle(Sint32 id);
-Bool scPushTargetFindStop(PUSH_TARGET *target);
-void scPushTargetPush(PUSH_TARGET target);
+Bool scPushTargetFindStop(PUSH_TARGET *tgt);
+void scPushTargetPush(PUSH_TARGET tgt);
 
 void				   scJupiterLighthouseStartMovingPillar(void);
 void				   scJupiterLighthouseLeaveByCyclone(void);
@@ -114,12 +114,12 @@ ACTOR *scPushTargetFindAhead(Sint32 *direction, Sint32 *slot, Sint32 *kind);
 extern Uint16 PushKinds[PUSH_KINDS];
 void		  fdPaletteCycleStep(void);
 
-extern Sint32 PaletteCycleFrame;
+extern Sint32 PaletteCycleTick;
 
-/* Sets the palette cycle's frame (PaletteCycleFrame). */
-static inline void scPaletteCycleSetFrame(Sint32 value)
+/* Sets the palette cycle's tick (PaletteCycleTick). */
+static inline void scPaletteCycleSetTick(Sint32 value)
 {
-	PaletteCycleFrame = value;
+	PaletteCycleTick = value;
 }
 
 extern Sint32 PaletteCyclePausesInScripts;
@@ -162,13 +162,13 @@ void scJupiterLighthouseDrawColumnBelowLedge(ACTOR *actor)
 void scJupiterLighthousePushColumnOffTheLedge(void)
 {
 	ACTOR	   *actor = fdActorGet(ACTOR_LEDGE_COLUMN);
-	PUSH_TARGET target;
+	PUSH_TARGET tgt;
 	Sint32		i;
 	FIXED		x;
 
 	actor->update = (OBJECT_UPDATE)scJupiterLighthouseDrawColumnBelowLedge;
-	if(scPushTargetFindStop(&target))
-		scPushTargetPush(target);
+	if(scPushTargetFindStop(&tgt))
+		scPushTargetPush(tgt);
 	if(FIELD_METATILE(actor->x.fixed) == TRENCH_METATILE_X &&
 		FIELD_METATILE(actor->z.fixed) == LEDGE_COLUMN_METATILE_Z &&
 		fdScriptGetFlag(FLAG_COLUMN_OFF_LEDGE) == 0) {
@@ -352,9 +352,8 @@ extern Sint32 WhirlwindEndScript[];
 Sint32 fdMapGridGetMetatileBehavior(Sint32 x, Sint32 z, Sint32 layer);
 #include "shared/whirlwind_update_lower.h"
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
-	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
-	const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
+	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
 
 #include "shared/whirlwind_spawn.h"
 
@@ -370,9 +369,9 @@ extern Sint8 PushRectangles[][4];
 
 extern Sint32 PushLeaderSteps[];
 
-static inline Sint32 scPushTargetCheckCollision(ACTOR *actor, Sint32 *position)
+static inline Sint32 scPushTargetCheckCollision(ACTOR *actor, Sint32 *pos)
 {
-	return fdMapGridCheckCollision(actor, position);
+	return fdMapGridCheckCollision(actor, pos);
 }
 
 #include "shared/push_target_find_stop.h"
@@ -417,7 +416,7 @@ void scLightSprsSetPriority(Sint32 value)
 
 void fdCrackedTileUpdate(void);
 
-extern const Sint32 *FieldEffect_DurationScripts[];
+extern const Sint32 *FieldEffectDurationScripts[];
 
 #define EFFECT_SET_MODE	  fdActorSelectAnimation
 #define EFFECT_SET_SCRIPT fdActorStartScript
@@ -438,7 +437,7 @@ extern const Sint32 *FieldEffect_DurationScripts[];
 
 #undef METATILE_PUSH_SLOT_ENTRY
 
-void syGameFlagSetByte(Sint32 flag, Sint32 value);
+void syGameFlagSetByte(Sint32 flg, Sint32 value);
 
 #include "shared/cracked_tile_drop_in.h"
 
@@ -447,9 +446,9 @@ void scCrackedTileCrack();
 
 #include "shared/cracked_tile_place_landing.h"
 
-extern Uint32 FieldEffect_ShortScript[];
-extern Uint32 FieldEffect_MediumScript[];
-extern Uint32 FieldEffect_LongScript[];
+extern Uint32 FieldEffectShortScript[];
+extern Uint32 FieldEffectMediumScript[];
+extern Uint32 FieldEffectLongScript[];
 
 /* clang-format off */
 #define FIELD_EFFECT_DURATION_SCRIPT_SECTION LATE_DATA
@@ -516,7 +515,7 @@ LATE_DATA CUE SceneCues[] = {
 	{CUE_TABLE_END},
 };
 
-LATE_DATA Sint32 PaletteCycleFrame = -1;
+LATE_DATA Sint32 PaletteCycleTick = -1;
 
 LATE_DATA Sint32 PaletteCyclePausesInScripts = 1;
 
@@ -527,8 +526,8 @@ LATE_DATA Sint32 WhirlwindEndScript[] = {
 };
 /* clang-format on */
 
-LATE_DATA const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+LATE_DATA const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };

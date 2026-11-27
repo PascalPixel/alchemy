@@ -23,6 +23,6 @@ typedef struct DEBUG_PARM_SET_ROW {
 #define DEBUG_PARAMETER_SET_END -1
 
 /* The debug menu's parameter sets (debug_parameter_sets.c). */
-extern DEBUG_PARM_SET_ROW Debug_ParameterSets[];
+extern DEBUG_PARM_SET_ROW DebugParameterSets[];
 
 #endif

@@ -40,7 +40,7 @@
 
    As the water heals Tret, scKolimaForestTreeRestoreTret fades background
    palettes 0 to 13 to the healthy set. Then it pulses them towards the healthy
-   set and back towards the cursed one every 30 frames
+   set and back towards the cursed one every 30 ticks
    (scKolimaForestTreeUpdateHealingPalette) while the camera pans to three
    places. It flashes between the two sets four times and settles on the healthy
    one. All this runs from the line that the water has seeped into Tret until
@@ -64,16 +64,16 @@
 #include "game/system_call.h"
 #include "text/msg_ids.h"
 
-extern Sint32			 KolimaForestTree_GaretApproachActions[];
-extern Sint32			 KolimaForestTree_IvanApproachActions[];
-extern Sint32			 KolimaForestTree_MiaApproachActions[];
-extern Sint32			 KolimaForestTree_ReturnToPartyActions[];
+extern Sint32			 KolimaForestTreeGaretApproachActions[];
+extern Sint32			 KolimaForestTreeIvanApproachActions[];
+extern Sint32			 KolimaForestTreeMiaApproachActions[];
+extern Sint32			 KolimaForestTreeReturnToPartyActions[];
 extern SCENE_ENTRANCE	 KolimaForestTreeEntrances[];
 extern SCENE_EXIT_REGION KolimaForestTreeRegions[];
 extern Uint32			 KolimaForestTreeExits[];
 extern ACTOR_PLACE		 KolimaForestTreeActorPlacements[];
 extern CUE				 KolimaForestTreeCues[];
-extern Sint32			 KolimaForestTree_RepelRingScript[];
+extern Sint32			 KolimaForestTreeRepelRingScript[];
 
 /* The actors, numbering KolimaForestTreeActorPlacements' rows from
    ACTOR_FIRST_PLACED. */
@@ -128,20 +128,20 @@ static void scKolimaForestTreeChangeFace(Sint32 blankActorId, Sint32 change);
 static void scKolimaForestTreeSpawnOrbitSparks(void);
 static void scInventoryReplaceItem(Sint32 oldItem, Sint32 newItem);
 
-/* Where Tret's sparks spring from (16.16 pixels), the frame of their cycle,
-   whether a repelling spark plays its sound, and the frames of the healing
+/* Where Tret's sparks spring from (16.16 pixels), the tick of their cycle,
+   whether a repelling spark plays its sound, and the ticks of the healing
    palette's spread. */
-Sint32 KolimaForestTree_SparkOrigin[3] BSS_DATA ALIGNED(16);
-Sint32 KolimaForestTree_SparkFrame				BSS_DATA;
-Sint32 KolimaForestTree_PlaySparkSound			BSS_DATA;
-Sint32 KolimaForestTree_PaletteFrame			BSS_DATA;
-/* Unused: eight bytes after the palette frame that nothing reads. */
-Uint8 KolimaForestTree_UnusedAfterPaletteFrame[8] BSS_DATA;
+Sint32 KolimaForestTreeSparkOrigin[3] BSS_DATA ALIGNED(16);
+Sint32 KolimaForestTreeSparkTick			   BSS_DATA;
+Sint32 KolimaForestTreePlaySparkSound		   BSS_DATA;
+Sint32 KolimaForestTreePaletteTick			   BSS_DATA;
+/* Unused: eight bytes after the palette tick that nothing reads. */
+Uint8 KolimaForestTreeUnusedAfterPaletteTick[8] BSS_DATA;
 /* The healthy colours, kept by scKolimaPaletteSaveHealthy: the palette fade's
    448 background and sprite colours, in the array's first half. */
-Uint8 KolimaPalette_Healthy[1792] BSS_DATA;
+Uint8 KolimaPaletteHealthy[1792] BSS_DATA;
 /* The cursed colours, kept by scKolimaPaletteSaveCursed. */
-Uint8 KolimaPalette_Cursed[896] BSS_DATA;
+Uint8 KolimaPaletteCursed[896] BSS_DATA;
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -347,10 +347,10 @@ static void scKolimaForestTreeRejectHermesWater(void)
 	fdPaletteFadeStartInterpolation(20);
 	sySynch(40);
 	sySndPlay(SOUND_FADE_OUT_BGM);
-	KolimaForestTree_PlaySparkSound = 1;
-	sySetFrameEvent(scKolimaForestTreeSpawnRepelSpark, EVENT_PASS_FRAME);
+	KolimaForestTreePlaySparkSound = 1;
+	sySetTickEvent(scKolimaForestTreeSpawnRepelSpark, EVENT_PASS_TICK);
 	sySynch(30);
-	KolimaForestTree_PlaySparkSound = 0;
+	KolimaForestTreePlaySparkSound = 0;
 	fdCameraMoveTo(328, CAMERA_KEEP, 235, 1);
 	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 1);
 	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
@@ -401,13 +401,13 @@ static void scKolimaForestTreeRejectHermesWater(void)
 	fdScriptWait(20);
 }
 
-/* Turns the four of them to facing together, then waits waitFrames. */
-static inline void scKolimaForestTreeFaceParty(Sint32 facing, Sint32 waitFrames)
+/* Turns the four of them to facing together, then waits waitTicks. */
+static inline void scKolimaForestTreeFaceParty(Sint32 facing, Sint32 waitTicks)
 {
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, facing, 0);
 	fdActorFaceDirection(ACTOR_GARET, facing, 0);
 	fdActorFaceDirection(ACTOR_MIA, facing, 0);
-	fdActorFaceDirection(ACTOR_IVAN, facing, waitFrames);
+	fdActorFaceDirection(ACTOR_IVAN, facing, waitTicks);
 }
 
 /* Hermes' Water heals Tret. */
@@ -434,15 +434,15 @@ static void scKolimaForestTreeRestoreTret(void)
 	if(leader != NULL) {
 		fdActorSetPosFX(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
 	}
-	fdActorSetScript(ACTOR_GARET, KolimaForestTree_GaretApproachActions);
-	fdActorSetScript(ACTOR_IVAN, KolimaForestTree_IvanApproachActions);
+	fdActorSetScript(ACTOR_GARET, KolimaForestTreeGaretApproachActions);
+	fdActorSetScript(ACTOR_IVAN, KolimaForestTreeIvanApproachActions);
 	if(includeMia != 0) {
 		fdActorSetSpeed(ACTOR_MIA, 1);
 		leader = fdActorGet(ACTOR_PARTY_LEADER);
 		if(leader != NULL) {
 			fdActorSetPosFX(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
 		}
-		fdActorSetScript(ACTOR_MIA, KolimaForestTree_MiaApproachActions);
+		fdActorSetScript(ACTOR_MIA, KolimaForestTreeMiaApproachActions);
 	}
 	fdActorWaitForScriptEndById(ACTOR_IVAN);
 	fdScriptWait(40);
@@ -450,8 +450,8 @@ static void scKolimaForestTreeRestoreTret(void)
 	fdPaletteFadeStartInterpolation(32);
 	sySynch(40);
 	/* Carry the healing across the forest as its healthy colours return. */
-	KolimaForestTree_PaletteFrame = 0;
-	sySetFrameEvent(scKolimaForestTreeUpdateHealingPalette, EVENT_PASS_FRAME);
+	KolimaForestTreePaletteTick = 0;
+	sySetTickEvent(scKolimaForestTreeUpdateHealingPalette, EVENT_PASS_TICK);
 	fdScriptWait(40);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
 	fdCameraSetSpeed(3.2);
@@ -469,7 +469,7 @@ static void scKolimaForestTreeRestoreTret(void)
 	fdCameraMoveTo(326, CAMERA_KEEP, 384, 1);
 	fdCameraWaitForArrival();
 	sySndPlay(SE_GLITTER);
-	while(KolimaForestTree_PaletteFrame != 24) {
+	while(KolimaForestTreePaletteTick != 24) {
 		sySynch(1);
 	}
 	syCloseEvent(scKolimaForestTreeUpdateHealingPalette);
@@ -592,13 +592,13 @@ static void scKolimaForestTreeRestoreTret(void)
 	fdPaletteFadeApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
 	fdPaletteFadeStartInterpolation(40);
 	fdScriptWait(60);
-	KolimaForestTree_SparkFrame = 0;
+	KolimaForestTreeSparkTick = 0;
 	/* Tret sends out the power that frees Kolima's villagers. */
-	KolimaForestTree_SparkOrigin[0] = toFIXED(328);
-	KolimaForestTree_SparkOrigin[1] = toFIXED(48);
+	KolimaForestTreeSparkOrigin[0] = toFIXED(328);
+	KolimaForestTreeSparkOrigin[1] = toFIXED(48);
 	spawnOrbitSparks = scKolimaForestTreeSpawnOrbitSparks;
-	KolimaForestTree_SparkOrigin[2] = toFIXED(205);
-	sySetFrameEvent(spawnOrbitSparks, EVENT_PASS_FRAME);
+	KolimaForestTreeSparkOrigin[2] = toFIXED(205);
+	sySetTickEvent(spawnOrbitSparks, EVENT_PASS_TICK);
 	fdScriptWait(100);
 	syCloseEvent(spawnOrbitSparks);
 	fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
@@ -718,13 +718,13 @@ static void scKolimaForestTreeRestoreTret(void)
 	fdPaletteFadeApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
 	fdPaletteFadeStartInterpolation(40);
 	fdScriptWait(60);
-	KolimaForestTree_SparkFrame = 0;
+	KolimaForestTreeSparkTick = 0;
 	/* Laurel looks beyond the river and warns of the forest to the south. */
-	KolimaForestTree_SparkOrigin[0] = toFIXED(136);
-	KolimaForestTree_SparkOrigin[1] = toFIXED(20);
+	KolimaForestTreeSparkOrigin[0] = toFIXED(136);
+	KolimaForestTreeSparkOrigin[1] = toFIXED(20);
 	spawnOrbitSparks = scKolimaForestTreeSpawnOrbitSparks;
-	KolimaForestTree_SparkOrigin[2] = toFIXED(258);
-	sySetFrameEvent(spawnOrbitSparks, EVENT_PASS_FRAME);
+	KolimaForestTreeSparkOrigin[2] = toFIXED(258);
+	sySetTickEvent(spawnOrbitSparks, EVENT_PASS_TICK);
 	fdScriptWait(100);
 	scKolimaForestTreeFaceParty(FACING_SOUTHWEST, 40);
 	fdActorStartRepeatedMotion(ACTOR_IVAN, 1);
@@ -800,7 +800,7 @@ static void scKolimaForestTreeRestoreTret(void)
 	fdActorFaceDirection(ACTOR_IVAN, FACING_WEST, 10);
 	scNodTogether();
 	sySndPlay(SOUND_FADE_OUT_BGM);
-	finalActions = KolimaForestTree_ReturnToPartyActions;
+	finalActions = KolimaForestTreeReturnToPartyActions;
 	fdActorSetScript(ACTOR_GARET, finalActions);
 	if(includeMia != 0) {
 		fdActorSetScript(ACTOR_MIA, finalActions);
@@ -876,59 +876,59 @@ Sint32 scInit(void)
 
 #include "shared/kolima_grow.c"
 
-/* Every fourth frame, a golden ring falls from Tret onto the leader as his
+/* Every fourth tick, a golden ring falls from Tret onto the leader as his
    wrathful side throws him back, with its sound while
-   KolimaForestTree_PlaySparkSound is set. */
+   KolimaForestTreePlaySparkSound is set. */
 static void scKolimaForestTreeSpawnRepelSpark(void)
 {
 	ACTOR *effect;
-	SPR	  *sprite;
+	SPR	  *spr;
 	Sint32 phase;
 
-	phase = FrameCount & 3;
+	phase = TickCount & 3;
 	if(phase != 0)
 		return;
-	if(KolimaForestTree_PlaySparkSound != 0)
+	if(KolimaForestTreePlaySparkSound != 0)
 		sySndPlay(SE_SPARKLE_FALL);
 	effect = syFieldActorCreate(
 		SPRITE_GOLDEN_RINGS, toFIXED(326), toFIXED(32), toFIXED(192));
 	if(effect == NULL)
 		return;
-	sprite = effect->spr;
-	sprite->flg = phase;
+	spr = effect->spr;
+	spr->flg = phase;
 	effect->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	sprite->image.pri = 1;
+	spr->image.pri = 1;
 	effect->scaleX = toFIXED(1) / 10;
 	effect->speedLimit = toFIXED(4);
 	effect->acceleration = toFIXED(4);
 	effect->motionFlg = phase;
 	fdActorSelectAnimation(effect, 2);
 	syFieldActorSetMoveTargetFX(effect, toFIXED(326), 0, toFIXED(240));
-	fdActorStartScript(effect, KolimaForestTree_RepelRingScript);
+	fdActorStartScript(effect, KolimaForestTreeRepelRingScript);
 }
 
-/* The healing palette's cycle: HEALTHY_FADE_FRAMES towards the healthy colours,
-   then back towards the cursed ones until HEALING_CYCLE_FRAMES. */
-#define HEALTHY_FADE_FRAMES	 20
-#define HEALING_CYCLE_FRAMES 30
+/* The healing palette's cycle: HEALTHY_FADE_TICKS towards the healthy colours,
+   then back towards the cursed ones until HEALING_CYCLE_TICKS. */
+#define HEALTHY_FADE_TICKS	20
+#define HEALING_CYCLE_TICKS 30
 
-/* Each frame of the healing: the forest's colours fade towards the healthy set,
-   then back towards the cursed one, every HEALING_CYCLE_FRAMES. */
+/* Each tick of the healing: the forest's colours fade towards the healthy set,
+   then back towards the cursed one, every HEALING_CYCLE_TICKS. */
 static void scKolimaForestTreeUpdateHealingPalette(void)
 {
-	Sint32 step = KolimaForestTree_PaletteFrame;
+	Sint32 step = KolimaForestTreePaletteTick;
 
 	if(step == 0) {
 		scKolimaPaletteRestore(0);
-		fdPaletteFadeStartInterpolation(HEALTHY_FADE_FRAMES);
-	} else if(step == HEALTHY_FADE_FRAMES) {
+		fdPaletteFadeStartInterpolation(HEALTHY_FADE_TICKS);
+	} else if(step == HEALTHY_FADE_TICKS) {
 		scKolimaPaletteRestore(1);
 		fdPaletteFadeStartInterpolation(8);
 	}
-	step = KolimaForestTree_PaletteFrame + 1;
-	KolimaForestTree_PaletteFrame = step;
-	if(step == HEALING_CYCLE_FRAMES) {
-		KolimaForestTree_PaletteFrame = 0;
+	step = KolimaForestTreePaletteTick + 1;
+	KolimaForestTreePaletteTick = step;
+	if(step == HEALING_CYCLE_TICKS) {
+		KolimaForestTreePaletteTick = 0;
 	}
 }
 
@@ -1038,27 +1038,27 @@ static void scKolimaForestTreeChangeFace(Sint32 blankActorId, Sint32 change)
 	sySynch(12);
 }
 
-/* A spark's spiral: it lasts ORBIT_SPARK_FRAMES, moving a pixel further out and
-   ORBIT_SPARK_TURN round each frame. */
-#define ORBIT_SPARK_FRAMES 120
-#define ORBIT_SPARK_TURN   (TRIG_TURN * 3 / 256)
+/* A spark's spiral: it lasts ORBIT_SPARK_TICKS, moving a pixel further out and
+   ORBIT_SPARK_TURN round each tick. */
+#define ORBIT_SPARK_TICKS 120
+#define ORBIT_SPARK_TURN  (TRIG_TURN * 3 / 256)
 
-/* Moves a sparkle out along its spiral, swelling, for ORBIT_SPARK_FRAMES; then
+/* Moves a sparkle out along its spiral, swelling, for ORBIT_SPARK_TICKS; then
    it is gone. */
 static void scKolimaForestTreeUpdateOrbitSpark(ACTOR *spark)
 {
-	Sint32 position[3];
+	Sint32 pos[3];
 	Sint32 age = spark->tmr;
 	Sint32 heading;
 
-	if(age < ORBIT_SPARK_FRAMES) {
-		SET_VECTOR(position, spark->tgtX, spark->tgtY, spark->tgtZ);
+	if(age < ORBIT_SPARK_TICKS) {
+		SET_VECTOR(pos, spark->tgtX, spark->tgtY, spark->tgtZ);
 		heading = spark->userValue;
 		syVectorAddPolarOffset(
-			toFIXED(age), age * ORBIT_SPARK_TURN + heading, position);
-		spark->x.fixed = position[0];
-		spark->y.fixed = position[1];
-		spark->z.fixed = position[2];
+			toFIXED(age), age * ORBIT_SPARK_TURN + heading, pos);
+		spark->x.fixed = pos[0];
+		spark->y.fixed = pos[1];
+		spark->z.fixed = pos[2];
 		spark->scaleX += toFIXED(1) / 200;
 		spark->scaleY += toFIXED(1) / 200;
 		spark->tmr++;
@@ -1068,8 +1068,8 @@ static void scKolimaForestTreeUpdateOrbitSpark(ACTOR *spark)
 	}
 }
 
-/* Sends out a ring of six sparkles spiralling from KolimaForestTree_SparkOrigin
-   with a shimmer, every ten frames for the first 50 of each 121. */
+/* Sends out a ring of six sparkles spiralling from KolimaForestTreeSparkOrigin
+   with a shimmer, every ten ticks for the first 50 of each 121. */
 static void scKolimaForestTreeSpawnOrbitSparks(void)
 {
 	ACTOR *spark;
@@ -1077,7 +1077,7 @@ static void scKolimaForestTreeSpawnOrbitSparks(void)
 	Uint32 sparkIndex;
 
 	previousSprite = NULL;
-	switch(KolimaForestTree_SparkFrame) {
+	switch(KolimaForestTreeSparkTick) {
 	case 0:
 	case 10:
 	case 20:
@@ -1086,9 +1086,8 @@ static void scKolimaForestTreeSpawnOrbitSparks(void)
 		sySndPlay(SE_SHIMMER);
 		for(sparkIndex = 0; sparkIndex <= 5; sparkIndex++) {
 			spark = syFieldActorCreate(SPRITE_SPARKLE,
-				KolimaForestTree_SparkOrigin[0],
-				KolimaForestTree_SparkOrigin[1],
-				KolimaForestTree_SparkOrigin[2]);
+				KolimaForestTreeSparkOrigin[0], KolimaForestTreeSparkOrigin[1],
+				KolimaForestTreeSparkOrigin[2]);
 			if(spark != NULL) {
 				previousSprite =
 					fdSprShareVRAMCacheEntry(spark->spr, previousSprite);
@@ -1098,17 +1097,17 @@ static void scKolimaForestTreeSpawnOrbitSparks(void)
 				fdActorSelectAnimation(spark, 1);
 				spark->tmr = 0;
 				spark->userValue = DEGtoANG(sparkIndex * 60);
-				spark->tgtX = KolimaForestTree_SparkOrigin[0];
-				spark->tgtY = KolimaForestTree_SparkOrigin[1];
-				spark->tgtZ = KolimaForestTree_SparkOrigin[2];
+				spark->tgtX = KolimaForestTreeSparkOrigin[0];
+				spark->tgtY = KolimaForestTreeSparkOrigin[1];
+				spark->tgtZ = KolimaForestTreeSparkOrigin[2];
 				spark->speedLimit = toFIXED(8) / 5;
 				spark->update = scKolimaForestTreeUpdateOrbitSpark;
 			}
 		}
 		break;
 	}
-	if(++KolimaForestTree_SparkFrame > 120) {
-		KolimaForestTree_SparkFrame = 0;
+	if(++KolimaForestTreeSparkTick > 120) {
+		KolimaForestTreeSparkTick = 0;
 	}
 }
 
@@ -1116,7 +1115,7 @@ static void scKolimaForestTreeSpawnOrbitSparks(void)
 
 #include "shared/kolima_palette.c"
 
-Sint32 KolimaForestTree_GaretApproachActions[] = {
+Sint32 KolimaForestTreeGaretApproachActions[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(312, 0, 230),
 	SC_SYNC,
@@ -1126,7 +1125,7 @@ Sint32 KolimaForestTree_GaretApproachActions[] = {
 	SC_END,
 };
 
-Sint32 KolimaForestTree_IvanApproachActions[] = {
+Sint32 KolimaForestTreeIvanApproachActions[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(346, 0, 224),
 	SC_SYNC,
@@ -1136,7 +1135,7 @@ Sint32 KolimaForestTree_IvanApproachActions[] = {
 	SC_END,
 };
 
-Sint32 KolimaForestTree_MiaApproachActions[] = {
+Sint32 KolimaForestTreeMiaApproachActions[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(333, 0, 240),
 	SC_SYNC,
@@ -1146,7 +1145,7 @@ Sint32 KolimaForestTree_MiaApproachActions[] = {
 	SC_END,
 };
 
-Sint32 KolimaForestTree_ReturnToPartyActions[] = {
+Sint32 KolimaForestTreeReturnToPartyActions[] = {
 	SC_ANIMATION(2),
 	SC_MOVE(328, 0, 212),
 	SC_SYNC,
@@ -1214,7 +1213,7 @@ CUE KolimaForestTreeCues[] = {
 };
 /* clang-format on */
 
-Sint32 KolimaForestTree_RepelRingScript[] = {
+Sint32 KolimaForestTreeRepelRingScript[] = {
 	SC_ADD(SW_SCALE_X, toFIXED(1) / 10),
 	SC_CALL(scFieldEffectStretchUntilArrived),
 	SC_LOOP(SC_FOREVER, SC_TOP),

@@ -2,8 +2,8 @@
    (scStoneHeadBurstOut), which its outside and inside keep a copy of. */
 
 /* The head swells by half and settles back in three steps, three times over,
-   then rests 20 frames: three rounds in all. */
-Sint32 StoneHead_RiseScript[] = {
+   then rests 20 ticks: three rounds in all. */
+Sint32 StoneHeadRiseScript[] = {
 	SC_ADD(SW_SCALE_X, toFIXED(1) / 2),
 	SC_ADD(SW_SCALE_Y, toFIXED(1) / 2),
 	SC_WAIT(2),

@@ -21,7 +21,7 @@
 @ Why ColorBuffer_DarkenKernelCode is assembly:
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
-@ fp (r11) holds the eighth colour word of each ldm and stmia, not a frame
+@ fp (r11) holds the eighth colour word of each ldm and stmia, not a tick
 @ pointer.
 @ Why assembly: its Thumb entry's bx pc switches to the ARM code that follows,
 @ a mode switch inside a function; the halfword after bx pc is never run.

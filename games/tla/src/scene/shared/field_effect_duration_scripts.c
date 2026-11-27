@@ -1,9 +1,9 @@
 /* The three lifetimes scFieldEffectSpawn (../field/field_effect_spawn.c) gives
-   its effects through each scene's FieldEffect_DurationScripts, which most
+   its effects through each scene's FieldEffectDurationScripts, which most
    scenes keep a copy of, as ☀️'s do (its
    shared/field_effect_duration_scripts.c). An effect lasts 24, 46 or 128
-   frames: it waits a frame 22, 44 or 126 times, then twice more, placed at 0,
-   0, 0 and stopped between the two, and is released. The repeated one-frame
+   ticks: it waits a tick 22, 44 or 126 times, then twice more, placed at 0,
+   0, 0 and stopped between the two, and is released. The repeated one-tick
    wait keeps the count in each script's fourth word, by which
    scFieldEffectSpawn divides a change of scale so the effect reaches its scale
    by the end of the repeats.
@@ -15,7 +15,7 @@
 #define FIELD_EFFECT_DURATION_SCRIPT_SECTION
 #endif
 
-FIELD_EFFECT_DURATION_SCRIPT_SECTION Uint32 FieldEffect_ShortScript[] = {
+FIELD_EFFECT_DURATION_SCRIPT_SECTION Uint32 FieldEffectShortScript[] = {
 	SC_WAIT(1),
 	SC_LOOP(22, SC_TOP),
 	SC_WAIT(1),
@@ -25,7 +25,7 @@ FIELD_EFFECT_DURATION_SCRIPT_SECTION Uint32 FieldEffect_ShortScript[] = {
 	SC_END,
 };
 
-FIELD_EFFECT_DURATION_SCRIPT_SECTION Uint32 FieldEffect_MediumScript[] = {
+FIELD_EFFECT_DURATION_SCRIPT_SECTION Uint32 FieldEffectMediumScript[] = {
 	SC_WAIT(1),
 	SC_LOOP(44, SC_TOP),
 	SC_WAIT(1),
@@ -35,7 +35,7 @@ FIELD_EFFECT_DURATION_SCRIPT_SECTION Uint32 FieldEffect_MediumScript[] = {
 	SC_END,
 };
 
-FIELD_EFFECT_DURATION_SCRIPT_SECTION Uint32 FieldEffect_LongScript[] = {
+FIELD_EFFECT_DURATION_SCRIPT_SECTION Uint32 FieldEffectLongScript[] = {
 	SC_WAIT(1),
 	SC_LOOP(126, SC_TOP),
 	SC_WAIT(1),

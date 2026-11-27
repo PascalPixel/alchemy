@@ -1,4 +1,4 @@
-command	value	frames
+command	value	ticks
 control	16194
 level	16	52501
 jump	0

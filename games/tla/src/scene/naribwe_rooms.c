@@ -11,7 +11,7 @@
    follow.
 
    Once Piers has carried Gabomba's message (`FLAG_GABOMBA_MESSAGE_CARRIED`) the
-   villagers have other things to say (`NaribweRooms_CuesOnReturn`). */
+   villagers have other things to say (`NaribweRoomsCuesOnReturn`). */
 
 #include "graphics/palette_buffers.h"
 #include "window/message_argument.h"
@@ -63,8 +63,8 @@ typedef enum NARIBWE_ROOMS_ACTOR_ID {
    high, then a crouch, over and over. */
 #define ANIM_FORTUNE_TELLER_DANCE 5
 
-extern CUE NaribweRooms_Cues[];
-extern CUE NaribweRooms_CuesOnReturn[];
+extern CUE NaribweRoomsCues[];
+extern CUE NaribweRoomsCuesOnReturn[];
 
 void scNaribweRoomsReadFortune(void);
 
@@ -148,8 +148,8 @@ Sint32 scNaribweRoomsMindReadFortuneTellerOnReturn(void)
 const CUE *scGetCues(void)
 {
 	if(fdScriptGetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
-		return NaribweRooms_CuesOnReturn;
-	return NaribweRooms_Cues;
+		return NaribweRoomsCuesOnReturn;
+	return NaribweRoomsCues;
 }
 
 /* The back door between the northwest hut and the west hut, whose own door
@@ -291,17 +291,17 @@ void scNaribweRoomsTalkToInnkeeperOnReturn(Sint32 speaker)
    it. */
 void scNaribweRoomsTalkToFortuneTeller(void)
 {
-	Uint8 *message;
+	Uint8 *msg;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	message = MsgNaribweRoomsIAmTellerOfFortunes;
-	syFieldScriptSetMessageId((Sint32)message);
+	msg = MsgNaribweRoomsIAmTellerOfFortunes;
+	syFieldScriptSetMessageId((Sint32)msg);
 	/* "I am a teller of fortunes. Would you have a reading?" */
 	fdScriptOpenMessage(ACTOR_FORTUNE_TELLER, 0);
 	if(syFieldScriptAskYesNoWithActorAnimation(
 		   syFieldPartyGetLeaderActor(), 0) == 0) {
-		syFieldScriptSetMessageId((Sint32)(message + 2));
+		syFieldScriptSetMessageId((Sint32)(msg + 2));
 		/* "It costs 20 coins to hear what your future holds. Will you pay?" */
 		fdScriptOpenMessage(ACTOR_FORTUNE_TELLER, 0);
 		if(syFieldScriptAskYesNoWithActorAnimation(
@@ -310,7 +310,7 @@ void scNaribweRoomsTalkToFortuneTeller(void)
 				scNaribweRoomsReadFortune();
 				fdScriptEnd();
 			} else {
-				syFieldScriptSetMessageId((Sint32)(message + 4));
+				syFieldScriptSetMessageId((Sint32)(msg + 4));
 				/* "Many want things they cannot afford. If you do not have
 				   the..." */
 				fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
@@ -545,25 +545,25 @@ Uint8 *scNaribweRoomsGetDjinniHint(void);
 /* A weapon: the foe that lies beyond it. */
 void scNaribweRoomsReadWeapon(void)
 {
-	Uint8 *message = MsgNaribweRoomsBeyondWeaponYouSetDown;
+	Uint8 *msg = MsgNaribweRoomsBeyondWeaponYouSetDown;
 
-	syFieldScriptSetMessageId((Sint32)message);
+	syFieldScriptSetMessageId((Sint32)msg);
 	/* "Beyond the weapon you set down lies a terrible foe." */
 	fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
 	switch(scNaribweRoomsFoeAhead()) {
 	case READING_BEFORE_GABOMBAS_MESSAGE:
-		syFieldScriptSetMessageId((Sint32)(message + 1));
+		syFieldScriptSetMessageId((Sint32)(msg + 1));
 		/* "Many enemies await you, far beyond the mountains. If you move
 		   to..." */
 		fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
 		break;
 	case READING_FOE_IN_MISTY_SEA:
-		syFieldScriptSetMessageId((Sint32)(message + 2));
+		syFieldScriptSetMessageId((Sint32)(msg + 2));
 		/* "In a misty sea, a mighty foe... A fiersome battle awaits you..." */
 		fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
 		break;
 	case READING_EAST_CONQUERED:
-		syFieldScriptSetMessageId((Sint32)(message + 3));
+		syFieldScriptSetMessageId((Sint32)(msg + 3));
 		/* "None in the eastern world can stand against the power you
 		   possess." */
 		fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
@@ -575,9 +575,9 @@ void scNaribweRoomsReadWeapon(void)
    waits. */
 void scNaribweRoomsReadShiningItem(void)
 {
-	Uint8 *message = MsgNaribweRoomsIFeelShiningPowerGlowing;
+	Uint8 *msg = MsgNaribweRoomsIFeelShiningPowerGlowing;
 
-	syFieldScriptSetMessageId((Sint32)message);
+	syFieldScriptSetMessageId((Sint32)msg);
 	/* "I feel a shining power glowing beyond the item before me." */
 	fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
 	switch(scNaribweRoomsNextPowerToGain()) {
@@ -613,7 +613,7 @@ void scNaribweRoomsReadShiningItem(void)
 		fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
 		break;
 	default:
-		syFieldScriptSetMessageId((Sint32)(message + 6));
+		syFieldScriptSetMessageId((Sint32)(msg + 6));
 		/* "The eastern lands hold little for you now. You will not
 		   remain..." */
 		fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
@@ -625,10 +625,10 @@ void scNaribweRoomsReadShiningItem(void)
    nothing of the future once none is left. */
 void scNaribweRoomsReadArmor(void)
 {
-	Sint32 message = scNaribweRoomsGetDjinniHint();
+	Sint32 msg = scNaribweRoomsGetDjinniHint();
 
-	if(message == (Sint32)MsgNaribweRoomsInItemYouHavePlaced) {
-		syFieldScriptSetMessageId(message);
+	if(msg == (Sint32)MsgNaribweRoomsInItemYouHavePlaced) {
+		syFieldScriptSetMessageId(msg);
 		/* "In the item you have placed before me, I can see nothing of
 		   the..." */
 		fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
@@ -638,7 +638,7 @@ void scNaribweRoomsReadArmor(void)
 		/* "From the garb you have placed before me, I sense the presence of
 		   the..." */
 		fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
-		syFieldScriptSetMessageId(message);
+		syFieldScriptSetMessageId(msg);
 		fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
 	}
 }
@@ -695,31 +695,31 @@ void scNaribweRoomsReadOtherItem(void)
    still missing lies. */
 void scNaribweRoomsReadProng(void)
 {
-	Uint8 *message = MsgNaribweRoomsObjectYouHavePlacedBefore;
+	Uint8 *msg = MsgNaribweRoomsObjectYouHavePlacedBefore;
 
-	syFieldScriptSetMessageId((Sint32)message);
+	syFieldScriptSetMessageId((Sint32)msg);
 	/* "The object you have placed before me wields a mighty power over a..." */
 	fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
 	switch(scNaribweRoomsProngToSeek()) {
 	case READING_PRONG_BY_BEACH:
-		syFieldScriptSetMessageId((Sint32)(message + 1));
+		syFieldScriptSetMessageId((Sint32)(msg + 1));
 		/* "Near the beach where you washed ashore lie ancient ruins. Seek
 		   them..." */
 		fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
 		break;
 	case READING_PRONG_IN_MOSSY_RUINS:
-		syFieldScriptSetMessageId((Sint32)(message + 2));
+		syFieldScriptSetMessageId((Sint32)(msg + 2));
 		/* "In the northern reaches of the Eastern Sea lie moss-covered,..." */
 		fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
 		break;
 	case READING_PRONG_IN_TOWER:
-		syFieldScriptSetMessageId((Sint32)(message + 3));
+		syFieldScriptSetMessageId((Sint32)(msg + 3));
 		/* "In the distant south lies an icy cape. Above the rocky shore
 		   stands..." */
 		fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
 		break;
 	case READING_ALL_PRONGS:
-		syFieldScriptSetMessageId((Sint32)(message + 4));
+		syFieldScriptSetMessageId((Sint32)(msg + 4));
 		/* "You have the weapon you need in many fragments.. Bring them to
 		   the..." */
 		fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
@@ -836,14 +836,14 @@ Sint32 scNaribweRoomsDjinniHintLimit(Sint32 group)
    many. */
 Sint32 scNaribweRoomsListMissingDjinn(Sint32 limit, Sint32 group, Sint32 *out)
 {
-	Sint32 count = 0;
+	Sint32 cnt = 0;
 	Sint32 i = TRANSFERRED_DJINN_PER_ELEMENT;
 
 	if(i < limit) {
 		Sint32 *cursor = out;
 
 		for(; i < limit; i++) {
-			Sint32 flag;
+			Sint32 flg;
 
 			if(group == ELEMENT_VENUS && i == DJINNI_INDEX(DJINNI_ECHO))
 				continue;
@@ -853,14 +853,14 @@ Sint32 scNaribweRoomsListMissingDjinn(Sint32 limit, Sint32 group, Sint32 *out)
 				if(i == DJINNI_INDEX(DJINNI_SHADE))
 					continue;
 			}
-			flag = FLAG_DJINNI(group * DJINN_PER_ELEMENT + i);
-			if(fdScriptGetFlag(flag) == 0) {
-				*cursor++ = flag;
-				count++;
+			flg = FLAG_DJINNI(group * DJINN_PER_ELEMENT + i);
+			if(fdScriptGetFlag(flg) == 0) {
+				*cursor++ = flg;
+				cnt++;
 			}
 		}
 	}
-	return count;
+	return cnt;
 }
 
 /* Higher than any element's hint limit, so that the first one is lower. */
@@ -878,12 +878,12 @@ Uint8 *scNaribweRoomsGetDjinniHint(void)
 		HEAP_SLOT_DJINNI_HINTS,
 		ELEMENT_COUNT * DJINN_PER_ELEMENT * sizeof(Sint32));
 	Sint32	limits[ELEMENT_COUNT];
-	Sint32	count = 0;
+	Sint32	cnt = 0;
 	Sint32	lowest = HINT_LIMIT_ABOVE_ALL;
 	Sint32	lowestGroup = 0;
 	Uint32	group;
-	Sint32	index;
-	Uint8  *message;
+	Sint32	idx;
+	Uint8  *msg;
 
 	for(group = 0; group < ELEMENT_COUNT; group++) {
 		Sint32 limit = scNaribweRoomsDjinniHintLimit(group);
@@ -896,153 +896,152 @@ Uint8 *scNaribweRoomsGetDjinniHint(void)
 			lowestGroup = group;
 		}
 		if(limit != -1)
-			count +=
-				scNaribweRoomsListMissingDjinn(limit, group, hints + count);
+			cnt += scNaribweRoomsListMissingDjinn(limit, group, hints + cnt);
 	}
-	if(count == 0) {
+	if(cnt == 0) {
 		for(group = 0; group < ELEMENT_COUNT; group++)
-			count += scNaribweRoomsListMissingDjinn(
-				DJINNI_INDEX(DJINNI_CRYSTAL) + 1, group, hints + count);
-		if(count == 0) {
+			cnt += scNaribweRoomsListMissingDjinn(
+				DJINNI_INDEX(DJINNI_CRYSTAL) + 1, group, hints + cnt);
+		if(cnt == 0) {
 			syHeapSlotRelease(HEAP_SLOT_DJINNI_HINTS);
 			return MsgNaribweRoomsInItemYouHavePlaced;
 		}
 		scNaribweRoomsListMissingDjinn(
 			DJINNI_INDEX(DJINNI_CRYSTAL) + 1, lowestGroup, hints);
-		index = 0;
+		idx = 0;
 	} else {
-		index = syRandom() % count;
+		idx = syRandom() % cnt;
 	}
-	switch(hints[index]) {
+	switch(hints[idx]) {
 	case FLAG_DJINNI(DJINNI_IRON):
-		message = MsgNaribweRoomsToEastLiesContinentMoved;
+		msg = MsgNaribweRoomsToEastLiesContinentMoved;
 		break;
 	case FLAG_DJINNI(DJINNI_STEEL):
-		message = MsgNaribweRoomsToNorthInsideSacredIcon;
+		msg = MsgNaribweRoomsToNorthInsideSacredIcon;
 		break;
 	case FLAG_DJINNI(DJINNI_MUD):
-		message = MsgNaribweRoomsToNorthBeneathSacredIcon;
+		msg = MsgNaribweRoomsToNorthBeneathSacredIcon;
 		break;
 	case FLAG_DJINNI(DJINNI_FLOWER):
-		message = MsgNaribweRoomsHeadEastBySoutheast;
+		msg = MsgNaribweRoomsHeadEastBySoutheast;
 		break;
 	case FLAG_DJINNI(DJINNI_MELD):
-		message = MsgNaribweRoomsHeadEastByNortheast;
+		msg = MsgNaribweRoomsHeadEastByNortheast;
 		break;
 	case FLAG_DJINNI(DJINNI_PETRA):
-		message = MsgNaribweRoomsHeadNorthByNorthwest;
+		msg = MsgNaribweRoomsHeadNorthByNorthwest;
 		break;
 	case FLAG_DJINNI(DJINNI_SALT):
-		message = MsgNaribweRoomsToNorthwestInRuins;
+		msg = MsgNaribweRoomsToNorthwestInRuins;
 		break;
 	case FLAG_DJINNI(DJINNI_GEODE):
-		message = MsgNaribweRoomsHeadWestByNorthwest;
+		msg = MsgNaribweRoomsHeadWestByNorthwest;
 		break;
 	case FLAG_DJINNI(DJINNI_MOLD):
-		message = MsgNaribweRoomsToNorthInVillage;
+		msg = MsgNaribweRoomsToNorthInVillage;
 		break;
 	case FLAG_DJINNI(DJINNI_CRYSTAL):
-		message = MsgNaribweRoomsHeadEastBySoutheastInDesert;
+		msg = MsgNaribweRoomsHeadEastBySoutheastInDesert;
 		break;
 	case FLAG_DJINNI(DJINNI_FOG):
-		message = MsgNaribweRoomsHeadEastByNortheastInCave;
+		msg = MsgNaribweRoomsHeadEastByNortheastInCave;
 		break;
 	case FLAG_DJINNI(DJINNI_SOUR):
-		message = MsgNaribweRoomsToSoutheastInPlains;
+		msg = MsgNaribweRoomsToSoutheastInPlains;
 		break;
 	case FLAG_DJINNI(DJINNI_CHILL):
-		message = MsgNaribweRoomsToSouthInForestOne;
+		msg = MsgNaribweRoomsToSouthInForestOne;
 		break;
 	case FLAG_DJINNI(DJINNI_STEAM):
-		message = MsgNaribweRoomsToEastBesideBoulder;
+		msg = MsgNaribweRoomsToEastBesideBoulder;
 		break;
 	case FLAG_DJINNI(DJINNI_RIME):
-		message = MsgHeadEastByNortheastInThe;
+		msg = MsgHeadEastByNortheastInThe;
 		break;
 	case FLAG_DJINNI(DJINNI_GEL):
-		message = MsgNaribweRoomsToNorthSomewhereOnSmall;
+		msg = MsgNaribweRoomsToNorthSomewhereOnSmall;
 		break;
 	case FLAG_DJINNI(DJINNI_EDDY):
-		message = MsgNaribweRoomsHeadNorthByNorthwestInCave;
+		msg = MsgNaribweRoomsHeadNorthByNorthwestInCave;
 		break;
 	case FLAG_DJINNI(DJINNI_BALM):
-		message = MsgNaribweRoomsToNorthInRuinsChilled;
+		msg = MsgNaribweRoomsToNorthInRuinsChilled;
 		break;
 	case FLAG_DJINNI(DJINNI_SERAC):
-		message = MsgHeadEastByNortheastInA;
+		msg = MsgHeadEastByNortheastInA;
 		break;
 	case FLAG_DJINNI(DJINNI_CANNON):
-		message = MsgNaribweRoomsToEastInMountainPaths;
+		msg = MsgNaribweRoomsToEastInMountainPaths;
 		break;
 	case FLAG_DJINNI(DJINNI_SPARK):
-		message = MsgNaribweRoomsToSoutheastInVillageLulled;
+		msg = MsgNaribweRoomsToSoutheastInVillageLulled;
 		break;
 	case FLAG_DJINNI(DJINNI_KINDLE):
-		message = MsgNaribweRoomsHeadSouthBySoutheast;
+		msg = MsgNaribweRoomsHeadSouthBySoutheast;
 		break;
 	case FLAG_DJINNI(DJINNI_CHAR):
-		message = MsgNaribweRoomsHeadEastBySoutheastInTown;
+		msg = MsgNaribweRoomsHeadEastBySoutheastInTown;
 		break;
 	case FLAG_DJINNI(DJINNI_COAL):
-		message = MsgNaribweRoomsHeadEastByNortheastOnIsland;
+		msg = MsgNaribweRoomsHeadEastByNortheastOnIsland;
 		break;
 	case FLAG_DJINNI(DJINNI_REFLUX):
-		message = MsgNaribweRoomsHeadSouthBySoutheastInRuins;
+		msg = MsgNaribweRoomsHeadSouthBySoutheastInRuins;
 		break;
 	case FLAG_DJINNI(DJINNI_CORE):
-		message = MsgNaribweRoomsToNorthwestInForest;
+		msg = MsgNaribweRoomsToNorthwestInForest;
 		break;
 	case FLAG_DJINNI(DJINNI_TINDER):
-		message = MsgNaribweRoomsToNorthwestAlongCoast;
+		msg = MsgNaribweRoomsToNorthwestAlongCoast;
 		break;
 	case FLAG_DJINNI(DJINNI_SHINE):
-		message = MsgNaribweRoomsToNorthwestBesideRuins;
+		msg = MsgNaribweRoomsToNorthwestBesideRuins;
 		break;
 	case FLAG_DJINNI(DJINNI_FURY):
-		message = MsgNaribweRoomsHeadNorthByNorthwestAtGreat;
+		msg = MsgNaribweRoomsHeadNorthByNorthwestAtGreat;
 		break;
 	case FLAG_DJINNI(DJINNI_FUGUE):
-		message = MsgNaribweRoomsToNorthInRuinsChilledByIcy;
+		msg = MsgNaribweRoomsToNorthInRuinsChilledByIcy;
 		break;
 	case FLAG_DJINNI(DJINNI_BREATH):
-		message = MsgHeadEastByNortheastInACave;
+		msg = MsgHeadEastByNortheastInACave;
 		break;
 	case FLAG_DJINNI(DJINNI_BLITZ):
-		message = MsgHeadEastBySoutheastInThe;
+		msg = MsgHeadEastBySoutheastInThe;
 		break;
 	case FLAG_DJINNI(DJINNI_ETHER):
-		message = MsgHeadEastBySoutheastInA;
+		msg = MsgHeadEastBySoutheastInA;
 		break;
 	case FLAG_DJINNI(DJINNI_WAFT):
-		message = MsgToTheNorthInTheMountain;
+		msg = MsgToTheNorthInTheMountain;
 		break;
 	case FLAG_DJINNI(DJINNI_HAZE):
-		message = MsgNaribweRoomsToEastSomewhereOnTiny;
+		msg = MsgNaribweRoomsToEastSomewhereOnTiny;
 		break;
 	case FLAG_DJINNI(DJINNI_WHEEZE):
-		message = MsgNaribweRoomsToEastInForest;
+		msg = MsgNaribweRoomsToEastInForest;
 		break;
 	case FLAG_DJINNI(DJINNI_AROMA):
-		message = MsgNaribweRoomsHeadNorthByNorthwestInVillage;
+		msg = MsgNaribweRoomsHeadNorthByNorthwestInVillage;
 		break;
 	case FLAG_DJINNI(DJINNI_WHORL):
-		message = MsgNaribweRoomsInNorthwestInRuins;
+		msg = MsgNaribweRoomsInNorthwestInRuins;
 		break;
 	case FLAG_DJINNI(DJINNI_GASP):
-		message = MsgNaribweRoomsHeadNorthByNorthwestNear;
+		msg = MsgNaribweRoomsHeadNorthByNorthwestNear;
 		break;
 	case FLAG_DJINNI(DJINNI_LULL):
-		message = MsgToTheNorthInTheRuins;
+		msg = MsgToTheNorthInTheRuins;
 		break;
 	case FLAG_DJINNI(DJINNI_GALE):
-		message = MsgNaribweRoomsHeadNorthByNortheast;
+		msg = MsgNaribweRoomsHeadNorthByNortheast;
 		break;
 	default:
-		message = MsgNaribweRoomsInItemYouHavePlaced;
+		msg = MsgNaribweRoomsInItemYouHavePlaced;
 		break;
 	}
 	syHeapSlotRelease(HEAP_SLOT_DJINNI_HINTS);
-	return message;
+	return msg;
 }
 
 /* Opens the houses through the window transition, and keeps the reading's item,
@@ -1158,7 +1157,7 @@ ACTOR_PLACE ActorPlacements[] = {
 
 /* The ways out, the villagers talked to and read, and the fortune-teller's
    table, until Gabomba's message is carried. */
-CUE NaribweRooms_Cues[] = {
+CUE NaribweRoomsCues[] = {
 	{CUE_EXIT, NARIBWE_ROOMS_TO_NARIBWE_NORTHWEST, CONDITION_ALWAYS,
 		NARIBWE_ROOMS_TO_NARIBWE_NORTHWEST},
 	{CUE_EXIT, NARIBWE_ROOMS_TO_NARIBWE_WEST, CONDITION_ALWAYS,
@@ -1218,7 +1217,7 @@ CUE NaribweRooms_Cues[] = {
 };
 
 /* The same, once Gabomba's message is carried. */
-CUE NaribweRooms_CuesOnReturn[] = {
+CUE NaribweRoomsCuesOnReturn[] = {
 	{CUE_EXIT, NARIBWE_ROOMS_TO_NARIBWE_NORTHWEST, CONDITION_ALWAYS,
 		NARIBWE_ROOMS_TO_NARIBWE_NORTHWEST},
 	{CUE_EXIT, NARIBWE_ROOMS_TO_NARIBWE_WEST, CONDITION_ALWAYS,

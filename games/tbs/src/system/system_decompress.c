@@ -1,15 +1,15 @@
 /* Resource decoding and pixel buffer shading, through RAM copies of ARM code.
    Part of system.c. */
 
-/* Decompresses the halfword LZ stream at `source` to `destination`, with a copy
+/* Decompresses the halfword LZ stream at `src` to `dst`, with a copy
    of the ARM decoder on the stack. */
-void syDecompressHalfwords(const void *source, void *destination)
+void syDecompressHalfwords(const void *src, void *dst)
 {
 	Uint32 words = (Uint32)syDecompressHalfwordsCodeSize >> 2;
 	Uint32 routine[words];
 	syDMAXCopy(
 		syDecompressHalfwordLZ, routine, DMA_COPY_WORDS(words), REG_DMA3);
-	((void (*)(const void *, void *))routine)(source, destination);
+	((void (*)(const void *, void *))routine)(src, dst);
 }
 
 /* Each decoder copies its ARM function `code` to RAM, runs it and frees the
@@ -42,7 +42,7 @@ RESOURCE_DEFINE_DECODE(
    canvas is a buffer of 8-bit pixels, each a step 0 to 63 of a colour ramp.
    Each function copies the canvas to `destination`, the tiles on screen, 16
    bytes at a time, and shades each group in the canvas as it goes, so what is
-   drawn next lands on a dimmer copy of this frame. `amount` holds the step in
+   drawn next lands on a dimmer copy of this tick. `amount` holds the step in
    each of its four bytes (CANVAS_FILL_WORD). */
 #define CANVAS_DEFINE_FADE_BY(name, code, size) \
 	void name(Uint8 *buffer, Uint32 amount, Uint8 *destination, Uint32 bytes) \

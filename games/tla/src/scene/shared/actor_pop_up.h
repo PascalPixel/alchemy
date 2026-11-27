@@ -1,20 +1,20 @@
 /* scActorPopUpSlow without the wait before it rises. */
 Bool scActorPopUp(ACTOR *actor)
 {
-	Sint32 frame = actor->tmr;
+	Sint32 frm = actor->tmr;
 
-	if(frame == 0) {
+	if(frm == 0) {
 		fdScriptPlaySnd(SE_WHOOSH);
 		fdActorSelectAnimation((ACTOR *)actor->watchedActor, 2);
 		actor->y.fixed =
 			fdMapGetTerrainHeight(0, actor->x.fixed, actor->z.fixed) +
 			toFIXED(16);
-		actor->scaleX = frame;
-		actor->scaleY = frame;
+		actor->scaleX = frm;
+		actor->scaleY = frm;
 		actor->speedLimit = toFIXED(1);
 		actor->acceleration = toFIXED(1) / 2;
 		fdActorSetSprPriorityDirect(actor, 1);
-	} else if(frame <= 32) {
+	} else if(frm <= 32) {
 		actor->scaleX = toFIXED(1);
 		actor->scaleY = toFIXED(1);
 		{

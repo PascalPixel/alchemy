@@ -4,7 +4,7 @@ void scDustScatter(Sint32 spread)
 {
 	ACTOR		 *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	FIELD_EFFECT *effect;
-	Uint32		  frame = 0;
+	Uint32		  frm = 0;
 	Uint32		  i;
 	FIXED		  y;
 
@@ -14,12 +14,12 @@ void scDustScatter(Sint32 spread)
 			i * toFIXED(2) + leader->x.fixed - toFIXED(8), y - toFIXED(2),
 			leader->z.fixed);
 		if(effect != 0) {
-			frame = fdSprShareVRAMCacheEntry(effect->spr, frame);
+			frm = fdSprShareVRAMCacheEntry(effect->spr, frm);
 			effect->motionFlg = 0;
 			effect->collisionFlg = 0;
 			fdActorSetSprFlags(effect, 0);
 			fdActorSelectAnimation(effect, 2);
-			fdActorStartScript(effect, Dust_ScatterScript);
+			fdActorStartScript(effect, DustScatterScript);
 			effect->scaleY = effect->scaleX = toFIXED(7) / 10;
 			effect->spr->pri = 1;
 			if(spread != 0) {

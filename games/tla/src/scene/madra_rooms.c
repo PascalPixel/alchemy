@@ -29,8 +29,8 @@
 /* Set once the man focusing on making ice has groaned on this visit. */
 #define FLAG_MADRA_FOCUSING_MAN_GROANED	   FLAG_SCENE_TEMP_11
 
-/* Madra's houses, numbering the rows MadraRooms_Placements and
-   MadraRooms_PlacementsOnReturn share. */
+/* Madra's houses, numbering the rows MadraRoomsPlacements and
+   MadraRoomsPlacementsOnReturn share. */
 typedef enum MADRA_ROOMS_ACTOR_ID {
 	/* A couple who fear what lies south in Gondowan, and then the Kibombo. */
 	ACTOR_OLD_MAN_WARY_OF_GONDOWAN = ACTOR_FIRST_PLACED,
@@ -67,7 +67,7 @@ typedef enum MADRA_ROOMS_ACTOR_ID {
 	ACTOR_BLACK_CRYSTAL
 } MADRA_ROOMS_ACTOR_ID;
 
-/* The rest of MadraRooms_Placements. */
+/* The rest of MadraRoomsPlacements. */
 typedef enum MADRA_ROOMS_TRAVELERS_ACTOR_ID {
 	/* Two travelers at the inn, the first slept through the pirate raid; his
 	   partner wears the same sprite in other colours. */
@@ -80,7 +80,7 @@ typedef enum MADRA_ROOMS_TRAVELERS_ACTOR_ID {
 	ACTOR_DEKKA
 } MADRA_ROOMS_TRAVELERS_ACTOR_ID;
 
-/* The rest of MadraRooms_PlacementsOnReturn, when the party brings Piers home.
+/* The rest of MadraRoomsPlacementsOnReturn, when the party brings Piers home.
    The rows for Piers, Jenna and Sheba go to their party slots. */
 typedef enum MADRA_ROOMS_RETURN_ACTOR_ID {
 	/* The elder, who held Piers' jewel, and Madra's mayor. */
@@ -94,7 +94,7 @@ typedef enum MADRA_ROOMS_RETURN_ACTOR_ID {
 	ACTOR_TRAVELERS_PARTNER_ON_RETURN
 } MADRA_ROOMS_RETURN_ACTOR_ID;
 
-/* The jail's actors, by the rows of MadraRooms_JailPlacements; Piers' row goes
+/* The jail's actors, by the rows of MadraRoomsJailPlacements; Piers' row goes
    to his party slot. */
 typedef enum MADRA_ROOMS_JAIL_ACTOR_ID {
 	/* The puddle Piers freezes into a shaft of ice. */
@@ -114,7 +114,7 @@ typedef enum MADRA_ROOMS_JAIL_ACTOR_ID {
 } MADRA_ROOMS_JAIL_ACTOR_ID;
 
 /* The left cavern home (MadraRoomsCavernHomes), by the rows of
-   MadraRooms_SecondRoomsPlacements. */
+   MadraRoomsSecondRoomsPlacements. */
 typedef enum MADRA_ROOMS_CAVERN_HOME_ACTOR_ID {
 	/* A couple who talk of Alhafra, and later of a plan to make money. */
 	ACTOR_MAN_ON_ALHAFRA = ACTOR_FIRST_PLACED,
@@ -132,17 +132,17 @@ enum { METATILE_BEHAVIOR_MADRA_ROOMS_WELCOME = 30 };
 /* Madra's inn, as mnInnCheckIn numbers the inns. */
 enum { MADRA_INN = 1 };
 
-extern Sint32 MadraRooms_ShinLifted[];
-extern Sint32 MadraRooms_ShinFalls[];
+extern Sint32 MadraRoomsShinLifted[];
+extern Sint32 MadraRoomsShinFalls[];
 void		  scMadraRoomsSayFarewellAgain(void);
 
 void scMadraRoomsAskToStayLonger(void);
 
-extern Sint32 MadraRooms_OldManWalksToBackRoom[];
-extern Sint32 MadraRooms_WifeComesBack[];
-extern Sint32 MadraRooms_OldManComesBack[];
+extern Sint32 MadraRoomsOldManWalksToBackRoom[];
+extern Sint32 MadraRoomsWifeComesBack[];
+extern Sint32 MadraRoomsOldManComesBack[];
 
-extern Sint32 MadraRooms_CharFollows[];
+extern Sint32 MadraRoomsCharFollows[];
 
 /* Counts one more weird answer Felix gives (fdScriptCountAnswer, through the
    overlay's stub). */
@@ -163,27 +163,27 @@ const Uint32 *scGetExits(void)
 	return SceneExits;
 }
 
-extern ACTOR_PLACE MadraRooms_Placements[];
-extern ACTOR_PLACE MadraRooms_PlacementsOnReturn[];
-extern ACTOR_PLACE MadraRooms_JailPlacements[];
-extern ACTOR_PLACE MadraRooms_SecondRoomsPlacements[];
-extern CUE		   MadraRooms_CuesBeforeRaid[];
-extern CUE		   MadraRooms_JailCues[];
-extern CUE		   MadraRooms_SecondRoomsCues[];
-extern CUE		   MadraRooms_CuesAfterRaid[];
-extern CUE		   MadraRooms_CuesOnReturn[];
+extern ACTOR_PLACE MadraRoomsPlacements[];
+extern ACTOR_PLACE MadraRoomsPlacementsOnReturn[];
+extern ACTOR_PLACE MadraRoomsJailPlacements[];
+extern ACTOR_PLACE MadraRoomsSecondRoomsPlacements[];
+extern CUE		   MadraRoomsCuesBeforeRaid[];
+extern CUE		   MadraRoomsJailCues[];
+extern CUE		   MadraRoomsSecondRoomsCues[];
+extern CUE		   MadraRoomsCuesAfterRaid[];
+extern CUE		   MadraRoomsCuesOnReturn[];
 
 void scMadraRoomsShinAngersPiers(void);
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.next == SCENE_MADRA_ROOMS_CAVERN_HOMES)
-		return MadraRooms_SecondRoomsPlacements;
+		return MadraRoomsSecondRoomsPlacements;
 	if(MainRoutineStateWork.entrance == MADRA_ROOMS_HOUSES_FROM_MADRA_WEST)
-		return MadraRooms_JailPlacements;
+		return MadraRoomsJailPlacements;
 	if(fdScriptGetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
-		return MadraRooms_PlacementsOnReturn;
-	return MadraRooms_Placements;
+		return MadraRoomsPlacementsOnReturn;
+	return MadraRoomsPlacements;
 }
 
 /* Talking to the auburn-haired woman in the house by the town's south-west
@@ -395,10 +395,10 @@ void scMadraRoomsMindReadMushroomLover(void)
 			fdScriptShowMessage(ACTOR_MUSHROOM_LOVER, 0);
 		}
 	} else {
-		Sint32 flag = fdScriptGetFlag(FLAG_MADRA_LAUGHING_FUNGUS_OFFERED);
+		Sint32 flg = fdScriptGetFlag(FLAG_MADRA_LAUGHING_FUNGUS_OFFERED);
 		Sint32 msg = (Sint32)MsgMadraRoomsImDyingForSome;
 
-		if(flag) {
+		if(flg) {
 			syFieldScriptSetMessageId(msg);
 			fdScriptShowMessage(ACTOR_MUSHROOM_LOVER, 0);
 		} else {
@@ -425,10 +425,10 @@ void scMadraRoomsMindReadMushroomCook(void)
 			fdScriptShowMessage(ACTOR_MUSHROOM_COOK, 0);
 		}
 	} else {
-		Sint32 flag = fdScriptGetFlag(FLAG_MADRA_LAUGHING_FUNGUS_OFFERED);
+		Sint32 flg = fdScriptGetFlag(FLAG_MADRA_LAUGHING_FUNGUS_OFFERED);
 		Sint32 msg = (Sint32)MsgMadraRoomsMyPoorHusbandsGettingOld;
 
-		if(flag) {
+		if(flg) {
 			syFieldScriptSetMessageId(msg);
 			fdScriptShowMessage(ACTOR_MUSHROOM_COOK, 0);
 		} else {
@@ -473,14 +473,14 @@ void scMadraRoomsTalkToManFocusingOnIce(void)
 const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.next == SCENE_MADRA_ROOMS_CAVERN_HOMES)
-		return MadraRooms_SecondRoomsCues;
+		return MadraRoomsSecondRoomsCues;
 	if(MainRoutineStateWork.entrance == MADRA_ROOMS_HOUSES_FROM_MADRA_WEST)
-		return MadraRooms_JailCues;
+		return MadraRoomsJailCues;
 	if(fdScriptGetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
-		return MadraRooms_CuesOnReturn;
+		return MadraRoomsCuesOnReturn;
 	if(fdScriptGetFlag(FLAG_BRIGGS_CAUGHT))
-		return MadraRooms_CuesAfterRaid;
-	return MadraRooms_CuesBeforeRaid;
+		return MadraRoomsCuesAfterRaid;
+	return MadraRoomsCuesBeforeRaid;
 }
 
 /* The Black Crystal sits on the mantel in the mayor's house until the Kibombo
@@ -532,7 +532,7 @@ void scMadraRoomsSetUpJail(void)
 	}
 }
 
-extern Sint32 MadraRooms_ShinAndFriendRunAway[];
+extern Sint32 MadraRoomsShinAndFriendRunAway[];
 
 /* Sets up Madra's buildings as the party walks in: Morgan and Dekka at the inn
    only for a party that won Colosso in The Broken Seal, the jail, the sister
@@ -540,7 +540,7 @@ extern Sint32 MadraRooms_ShinAndFriendRunAway[];
    Black Crystal. */
 Sint32 scInit(void)
 {
-	FIELD_SPR	*sprite;
+	FIELD_SPR	*spr;
 	FIELD_STATE *event;
 
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -575,8 +575,8 @@ Sint32 scInit(void)
 			   sunk. */
 			((FIELD_SPR *)fdActorGet(ACTOR_SISTER_IN_BED)->spr)->flg |=
 				SPRITE_FLAG_SUNK;
-			sprite = fdActorGet(ACTOR_SISTER_IN_BED)->spr;
-			sprite->sunkRows = 8;
+			spr = fdActorGet(ACTOR_SISTER_IN_BED)->spr;
+			spr->sunkRows = 8;
 			((FIELD_SPR *)fdActorGet(ACTOR_SISTER_IN_BED)->spr)->dirty = 1;
 		}
 	}
@@ -595,26 +595,26 @@ Sint32 scPrepareMap(void)
 	return 0;
 }
 
-/* Turns an actor's sprite a thirty-second of a turn, a frame of Shin falling
-   over (MadraRooms_ShinFalls). */
+/* Turns an actor's sprite a thirty-second of a turn, a tick of Shin falling
+   over (MadraRoomsShinFalls). */
 Sint32 scMadraRoomsRotateSpr(ACTOR *actor)
 {
-	FIELD_SPR *sprite;
+	FIELD_SPR *spr;
 
-	sprite = actor->spr;
-	if(actor != NULL && sprite != NULL)
-		sprite->rotation -= TRIG_TURN / 32;
+	spr = actor->spr;
+	if(actor != NULL && spr != NULL)
+		spr->rotation -= TRIG_TURN / 32;
 	return 0;
 }
 
 /* Unused: stands an actor's sprite upright again; no script calls it. */
 UNUSED Sint32 scMadraRoomsResetSprRotation(ACTOR *actor)
 {
-	FIELD_SPR *sprite;
+	FIELD_SPR *spr;
 
-	sprite = actor->spr;
-	if(actor != NULL && sprite != NULL)
-		sprite->rotation = 0;
+	spr = actor->spr;
+	if(actor != NULL && spr != NULL)
+		spr->rotation = 0;
 	return 0;
 }
 
@@ -631,7 +631,7 @@ void scMadraRoomsShinAngersPiers(void)
 	fdActorSetPos(ACTOR_FELIX, 400, 888);
 	fdCameraMoveTo(408, CAMERA_KEEP, 848, 1);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorSetSpeed(ACTOR_PIERS, 0.8);
 	syFieldScriptSetMessageId((Sint32)MsgMadraRoomsAdmitItYoureOne);
 	/* "Admit it! You're one of the Champa, aren't you, Piers?" */
@@ -727,7 +727,7 @@ void scMadraRoomsShinAngersPiers(void)
 	fdActorFaceActor(ACTOR_SHIN, ACTOR_PIERS, 0);
 	fdActorFaceActor(ACTOR_SHINS_FRIEND, ACTOR_PIERS, 0);
 	fdActorSetSprFlags(fdActorGet(ACTOR_SHIN), 0);
-	fdActorSetScript(ACTOR_SHIN, MadraRooms_ShinLifted);
+	fdActorSetScript(ACTOR_SHIN, MadraRoomsShinLifted);
 	fdPsynergyRunHandler(1);
 	fdBattleEffectStopMainActor();
 	fdPsynergyEnd();
@@ -740,7 +740,7 @@ void scMadraRoomsShinAngersPiers(void)
 	fdActorGet(ACTOR_SHIN)->motionFlg = ACTOR_FALLS;
 	fdActorGet(ACTOR_SHIN)->steeringFlg &= ~ACTOR_FACES_MOTION;
 	fdActorSetDestinationOffset(ACTOR_SHIN, -8, 0);
-	fdActorSetScript(ACTOR_SHIN, MadraRooms_ShinFalls);
+	fdActorSetScript(ACTOR_SHIN, MadraRoomsShinFalls);
 	scFieldActorWaitForScriptEndById(ACTOR_SHIN);
 	fdScriptPlaySnd(SE_LANDING_THUD);
 	syFieldScriptWait(60);
@@ -775,7 +775,7 @@ void scMadraRoomsShinAngersPiers(void)
 	scFieldActorJump(ACTOR_SHIN, 6, 20);
 	syFieldScriptWait(20);
 	fdActorGet(ACTOR_SHIN)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorSetScript(ACTOR_SHIN, MadraRooms_ShinAndFriendRunAway);
+	fdActorSetScript(ACTOR_SHIN, MadraRoomsShinAndFriendRunAway);
 	scFieldActorWatchAndSetScript(ACTOR_FELIX, ACTOR_SHIN);
 	scFieldActorWatchAndSetScript(ACTOR_JAIL_KRADEN, ACTOR_SHIN);
 	/* "Waaaaaaaaaahh!" */
@@ -805,7 +805,7 @@ void scMadraRoomsShinAngersPiers(void)
 	/* "Help!!!" */
 	syFieldScriptShowMessageThenWait(ACTOR_SHINS_FRIEND, 0, 10);
 	fdActorGet(ACTOR_SHINS_FRIEND)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorSetScript(ACTOR_SHINS_FRIEND, MadraRooms_ShinAndFriendRunAway);
+	fdActorSetScript(ACTOR_SHINS_FRIEND, MadraRoomsShinAndFriendRunAway);
 	syFieldScriptWait(40);
 	scFieldActorStop(ACTOR_FELIX);
 	scFieldActorStop(ACTOR_JAIL_KRADEN);
@@ -917,8 +917,8 @@ UNUSED void scMadraRoomsPiersUsesPsynergy(void)
 	fdPsynergyEnd();
 }
 
-extern Sint32 MadraRooms_WifeWalksToBackRoom[];
-extern Sint32 MadraRooms_LeaderStepsAside[];
+extern Sint32 MadraRoomsWifeWalksToBackRoom[];
+extern Sint32 MadraRoomsLeaderStepsAside[];
 
 /* Felix gives the old mushroom lover the Healing Fungus from the Gondowan
    Cliffs: "Oh, my... Is... Is that..." He and his wife go to their back room
@@ -990,17 +990,17 @@ void scMadraRoomsGiveHealingFungus(void)
 	fdActorSetSpeed(ACTOR_MUSHROOM_LOVER, 0.5);
 	fdActorSetSpeed(ACTOR_MUSHROOM_COOK, 0.5);
 	fdActorSetSpeed(ACTOR_CHAR, 0.5);
-	fdActorSetScript(ACTOR_MUSHROOM_COOK, MadraRooms_WifeWalksToBackRoom);
-	fdActorSetScript(ACTOR_FELIX, MadraRooms_LeaderStepsAside);
+	fdActorSetScript(ACTOR_MUSHROOM_COOK, MadraRoomsWifeWalksToBackRoom);
+	fdActorSetScript(ACTOR_FELIX, MadraRoomsLeaderStepsAside);
 	syFieldScriptWait(60);
-	fdActorSetScript(ACTOR_MUSHROOM_LOVER, MadraRooms_OldManWalksToBackRoom);
+	fdActorSetScript(ACTOR_MUSHROOM_LOVER, MadraRoomsOldManWalksToBackRoom);
 	scFieldActorWaitForScriptEndById(ACTOR_MUSHROOM_LOVER);
 	syFieldScriptWait(120);
-	fdActorSetScript(ACTOR_MUSHROOM_COOK, MadraRooms_WifeComesBack);
+	fdActorSetScript(ACTOR_MUSHROOM_COOK, MadraRoomsWifeComesBack);
 	scFieldActorWatchAndSetScript(ACTOR_FELIX, ACTOR_MUSHROOM_COOK);
 	syFieldScriptWait(60);
-	fdActorSetScript(ACTOR_MUSHROOM_LOVER, MadraRooms_OldManComesBack);
-	fdActorSetScript(ACTOR_CHAR, MadraRooms_CharFollows);
+	fdActorSetScript(ACTOR_MUSHROOM_LOVER, MadraRoomsOldManComesBack);
+	fdActorSetScript(ACTOR_CHAR, MadraRoomsCharFollows);
 	scFieldActorWaitForScriptEndById(ACTOR_MUSHROOM_LOVER);
 	scFieldActorWaitForScriptEndById(ACTOR_MUSHROOM_COOK);
 	scFieldActorWaitForScriptEndById(ACTOR_CHAR);
@@ -1404,7 +1404,7 @@ void scMadraRoomsAskToStayLonger(void)
 /* clang-format off */
 /* The old couple's walks into their back room and out again, Char hopping */
 /* after them, as they fetch the Djinni for the Healing Fungus. */
-Sint32 MadraRooms_WifeWalksToBackRoom[] = {
+Sint32 MadraRoomsWifeWalksToBackRoom[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE_XZ(356, 72),
 	SC_SYNC,
@@ -1415,7 +1415,7 @@ Sint32 MadraRooms_WifeWalksToBackRoom[] = {
 };
 
 /* Felix's script as the old man passes: one step aside. */
-Sint32 MadraRooms_LeaderStepsAside[] = {
+Sint32 MadraRoomsLeaderStepsAside[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE_XZ(339, 111),
 	SC_SYNC,
@@ -1426,9 +1426,9 @@ Sint32 MadraRooms_LeaderStepsAside[] = {
 	SC_END,
 };
 
-/* The same script as MadraRooms_WifeWalksToBackRoom, under another name. */
+/* The same script as MadraRoomsWifeWalksToBackRoom, under another name. */
 /* The mushroom lover's script off to the back room to fetch Char. */
-Sint32 MadraRooms_OldManWalksToBackRoom[] = {
+Sint32 MadraRoomsOldManWalksToBackRoom[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE_XZ(356, 72),
 	SC_SYNC,
@@ -1439,7 +1439,7 @@ Sint32 MadraRooms_OldManWalksToBackRoom[] = {
 };
 
 /* The mushroom cook's script back to her place. */
-Sint32 MadraRooms_WifeComesBack[] = {
+Sint32 MadraRoomsWifeComesBack[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_POSITION(327, 0, 71),
 	SC_SET(SW_FACING, FACING_EAST),
@@ -1458,7 +1458,7 @@ Sint32 MadraRooms_WifeComesBack[] = {
 };
 
 /* The mushroom lover's script back from the back room with Char. */
-Sint32 MadraRooms_OldManComesBack[] = {
+Sint32 MadraRoomsOldManComesBack[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_POSITION(327, 0, 71),
 	SC_SET(SW_FACING, FACING_EAST),
@@ -1477,7 +1477,7 @@ Sint32 MadraRooms_OldManComesBack[] = {
 };
 
 /* Char's script once the old man gives him to the party: he follows Felix. */
-Sint32 MadraRooms_CharFollows[] = {
+Sint32 MadraRoomsCharFollows[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_POSITION(327, 24, 71),
 	SC_SET(SW_FACING, FACING_EAST),
@@ -1523,7 +1523,7 @@ Uint32 SceneExits[] = {
 
 /* Madra's houses, shops, inn and sanctum until the party returns with Piers */
 /* (MADRA_ROOMS_ACTOR_ID, then MADRA_ROOMS_TRAVELERS_ACTOR_ID). */
-ACTOR_PLACE MadraRooms_Placements[] = {
+ACTOR_PLACE MadraRoomsPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_ORANGE_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 184, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_AUBURN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 112, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_BLUE_COAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 109, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1552,7 +1552,7 @@ ACTOR_PLACE MadraRooms_Placements[] = {
 
 /* Madra's houses once the party returns with Piers (enum */
 /* MADRA_ROOMS_ACTOR_ID, then MADRA_ROOMS_RETURN_ACTOR_ID). */
-ACTOR_PLACE MadraRooms_PlacementsOnReturn[] = {
+ACTOR_PLACE MadraRoomsPlacementsOnReturn[] = {
 	ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_ORANGE_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 184, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_AUBURN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 112, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_BLUE_COAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 109, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1586,7 +1586,7 @@ ACTOR_PLACE MadraRooms_PlacementsOnReturn[] = {
 };
 
 /* The jail (MADRA_ROOMS_JAIL_ACTOR_ID). */
-ACTOR_PLACE MadraRooms_JailPlacements[] = {
+ACTOR_PLACE MadraRoomsJailPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 528, 0, 840, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 522, 0, 840, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 840, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1599,7 +1599,7 @@ ACTOR_PLACE MadraRooms_JailPlacements[] = {
 };
 
 /* The left cavern home (MADRA_ROOMS_CAVERN_HOME_ACTOR_ID). */
-ACTOR_PLACE MadraRooms_SecondRoomsPlacements[] = {
+ACTOR_PLACE MadraRoomsSecondRoomsPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 128, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_IN_WHITE_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 192, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 356, 0, 109, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1610,7 +1610,7 @@ ACTOR_PLACE MadraRooms_SecondRoomsPlacements[] = {
 /* The houses' talk and Mind Read before the Kibombo raid. The exits without */
 /* a name lead from one of the map's rooms to another, 3 to 4, 6 to 7, 11 to */
 /* 12 and 13 to 14 and back; 16 and 17 have no row in SceneExits. */
-CUE MadraRooms_CuesBeforeRaid[] = {
+CUE MadraRoomsCuesBeforeRaid[] = {
 	{CUE_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHWEST, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHWEST},
 	{CUE_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_A, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_A},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1680,7 +1680,7 @@ CUE MadraRooms_CuesBeforeRaid[] = {
 };
 
 /* The jail's talk and Mind Read, by the story flags. */
-CUE MadraRooms_JailCues[] = {
+CUE MadraRoomsJailCues[] = {
 	{CUE_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_WEST, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_WEST},
 	{CUE_TALK, ACTOR_SHIN, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraRoomsOhPiersAfterWay)},
 	{CUE_TALK, ACTOR_SHINS_FRIEND, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraRoomsShinsDevelopedTerribleFear)},
@@ -1703,7 +1703,7 @@ CUE MadraRooms_JailCues[] = {
 };
 
 /* The left cavern home's talk and Mind Read, by the story flags. */
-CUE MadraRooms_SecondRoomsCues[] = {
+CUE MadraRoomsSecondRoomsCues[] = {
 	{CUE_EXIT, MADRA_ROOMS_CAVERN_HOMES_TO_MADRA_EAST, CONDITION_ALWAYS, MADRA_ROOMS_CAVERN_HOMES_TO_MADRA_EAST},
 	{CUE_EXIT, MADRA_ROOMS_CAVERN_HOMES_TO_MADRA_WEST, CONDITION_ALWAYS, MADRA_ROOMS_CAVERN_HOMES_TO_MADRA_WEST},
 	{CUE_TALK, ACTOR_MAN_ON_ALHAFRA, FLAG_BRIGGS_CAUGHT, MSGNO(MsgMadraRoomsInAllThisChaosEveryone)},
@@ -1729,7 +1729,7 @@ CUE MadraRooms_SecondRoomsCues[] = {
 };
 
 /* The houses' talk and Mind Read once the Kibombo have raided Madra. */
-CUE MadraRooms_CuesAfterRaid[] = {
+CUE MadraRoomsCuesAfterRaid[] = {
 	{CUE_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHWEST, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHWEST},
 	{CUE_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_A, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_A},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1796,7 +1796,7 @@ CUE MadraRooms_CuesAfterRaid[] = {
 
 /* The houses' talk and Mind Read once the party returns with Piers, the */
 /* welcome, and the mushroom trade. */
-CUE MadraRooms_CuesOnReturn[] = {
+CUE MadraRoomsCuesOnReturn[] = {
 	{CUE_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHWEST, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHWEST},
 	{CUE_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_A, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_A},
 	{CUE_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1869,7 +1869,7 @@ CUE MadraRooms_CuesOnReturn[] = {
 };
 
 /* Shin and then his friend run out of the jail, crying for help. */
-Sint32 MadraRooms_ShinAndFriendRunAway[] = {
+Sint32 MadraRoomsShinAndFriendRunAway[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(408, 0, 872),
 	SC_SYNC,
@@ -1881,8 +1881,8 @@ Sint32 MadraRooms_ShinAndFriendRunAway[] = {
 	SC_END,
 };
 
-/* Shin falls over, a quarter turn in eight frames. */
-Sint32 MadraRooms_ShinFalls[] = {
+/* Shin falls over, a quarter turn in eight ticks. */
+Sint32 MadraRoomsShinFalls[] = {
 	SC_CALL(scMadraRoomsRotateSpr),
 	SC_WAIT(1),
 	SC_CALL(scMadraRoomsRotateSpr),
@@ -1903,7 +1903,7 @@ Sint32 MadraRooms_ShinFalls[] = {
 };
 
 /* Piers' shaft of ice lifts Shin and holds him bobbing in the air. */
-Sint32 MadraRooms_ShinLifted[] = {
+Sint32 MadraRoomsShinLifted[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_WAIT(100),
 	SC_WAIT(36),

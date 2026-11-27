@@ -18,7 +18,7 @@ typedef struct BATTLE_PLAYBACK_STATE {
 	BATTLE_PLAYBACK_QUEUE queue;
 	Sint32				  phase; /* BATTLE_PLAYBACK_PHASE, or a message phase */
 	Sint32				  eventIdx; /* the next queued event to play */
-	Sint32				  tmr;		/* frames to wait */
+	Sint32				  tmr;		/* ticks to wait */
 	MENU_SPR			  arrow;	/* the advance arrow */
 	Sint32 arrowResource; /* the arrow's resource entry; -1 until it is shown */
 	Sint32 unitId;		  /* the unit of the hit or defeat being played */
@@ -64,10 +64,10 @@ STATIC_ASSERT(sizeof(BATTLE_MESSAGE_STATE) == 12);
    opponent. */
 #define OPPONENT_SLOT_NONE 255
 
-/* The frames a link battle tolerates without a connection before it gives up: a
+/* The ticks a link battle tolerates without a connection before it gives up: a
    count above it pauses the battle (BATTLE_STATE.linkPaused) or fails the sync
    or transfer under way. */
-#define LINK_MAX_MISSED_FRAMES 24
+#define LINK_MAX_MISSED_TICKS 24
 
 /* The battle's own state: its enemies, units and their objects, the turn's
    actions, the background palette and the events. */
@@ -105,7 +105,7 @@ typedef struct BATTLE_STATE {
 	   OPPONENT_SLOT_NONE for none. */
 	Uint8 opponentSlots[8];
 	Uint8 linkSide;			/* this console's multiplayer id */
-	Uint8 linkMisses;		/* frames the link has been down */
+	Uint8 linkMisses;		/* ticks the link has been down */
 	Uint8 linkPaused;		/* set when the link drops */
 	Uint8 paddingAfterLink; /* up to the word arrowTiles starts on */
 	Sint32
@@ -128,7 +128,7 @@ typedef struct BATTLE_STATE {
 	   fade. */
 	Uint16 bg;				 /* the battle background's id */
 	Uint8  unusedAfterBg[4]; /* no code names it */
-	/* stepped each frame while the units are highlighted */
+	/* stepped each tick while the units are highlighted */
 	Uint16 highlightStep;
 	Uint16 highlightMode; /* nonzero while the units are highlighted */
 	Uint8  paddingAfterHighlight[2]; /* up to the word plan starts on */

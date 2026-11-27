@@ -29,7 +29,7 @@
 /* How far off its heading the leader's pad movement probes for a clear way: a
    sixteenth of a turn, 22.5 degrees, and three times that. */
 #define FIELD_PROBE_ANGLE	   (TRIG_TURN / 16)
-/* The most a blocked actor turns toward its heading in one frame. */
+/* The most a blocked actor turns toward its heading in one tick. */
 #define FIELD_BLOCKED_TURN_MAX (TRIG_TURN / 16)
 /* Two 16.16 coordinates fall in the same 16-pixel metatile, rounding to
    nearest. */
@@ -38,7 +38,7 @@
 struct ACTOR;
 struct POS;
 
-Sint32 fdMapGridCheckCollisionAbove(ACTOR *actor, POS *position);
+Sint32 fdMapGridCheckCollisionAbove(ACTOR *actor, POS *pos);
 
 /* The map converter copied to RAM (fdRenderConvertMapCode), which joins a
    decoded map's planes into its metatile words. */
@@ -95,8 +95,8 @@ typedef struct MAP_HEADER_LAYER {
 	Uint8 y;	   /* 8-pixel tiles */
 	Sint8 scrollX; /* sixteenths of the view's motion */
 	Sint8 scrollY; /* sixteenths of the view's motion */
-	Sint8 speedX;  /* 1/16 pixels per frame */
-	Sint8 speedY;  /* 1/16 pixels per frame */
+	Sint8 speedX;  /* 1/16 pixels per tick */
+	Sint8 speedY;  /* 1/16 pixels per tick */
 	Uint8 periodX; /* 8-pixel tiles */
 	Uint8 periodY; /* 8-pixel tiles */
 } MAP_HEADER_LAYER;
@@ -139,7 +139,7 @@ typedef struct MAP_GRID_TILE_POS {
 typedef struct MAP_GRID_METATILE_ANIMATION_STEP {
 	/* The source rectangle's x in metatiles, or MAPGRID_ANIMATION_STEPS_END. */
 	Uint16 src;
-	/* The source rectangle's y, width and height in metatiles, and the frames
+	/* The source rectangle's y, width and height in metatiles, and the ticks
 	   to wait after the copy. */
 	Sint16 y, width, height, delay;
 } __attribute__((packed, aligned(2))) MAP_GRID_METATILE_ANIMATION_STEP;
@@ -216,12 +216,12 @@ enum {
 	SPRITE_PICTURE_CACHE_COUNT = 8, /* ACTOR_SYSTEM_STATE.pictureCaches */
 	SPRITE_ANIMATION_COUNT = 4,		/* SPR.entries */
 	RUNNING_LIST_SLOTS = 14, /* the actor slots fdActorListRunning reads */
-	/* Sixteenths of a frame taken off a sprite animation's timer each frame:
-	   one frame. */
+	/* Sixteenths of a tick taken off a sprite animation's timer each tick:
+	   one tick. */
 	SPRITE_ANIMATION_NORMAL_STEP = 16
 };
 
-/* What stopped the leader's step this frame (fdActorUpdatePlayerCtrl,
+/* What stopped the leader's step this tick (fdActorUpdatePlayerCtrl,
    fdActorMoveOnWorldMap, fdActorUpdateHoverCtrl and the climbing and rope
    controls). */
 typedef enum PLAYER_STEP_BLOCK {
@@ -288,14 +288,14 @@ extern Uint8 fdRenderCopyStridedCode[];
 /* The size of fdRenderCopyStridedCode (copy_strided.s). */
 extern Uint8 fdRenderCopyStridedCodeSize[];
 
-/* Copies fdRenderDecodePicture into the frame scratch slot, the block sized for
+/* Copies fdRenderDecodePicture into the tick scratch slot, the block sized for
    the function and the colour tables it keeps after its code; the copy stops at
    the tables, which the decoder fills itself. As RAM_CODE_LOAD_SLOT, a
    statement. */
 #define btRenderLoadDecoder() \
 	do { \
 		syDMAXCopy(fdRenderDecodePictureCode, \
-			syHeapSlotAlloc(HEAP_SLOT_FRAME_SCRATCH, \
+			syHeapSlotAlloc(HEAP_SLOT_TICK_SCRATCH, \
 				(Sint32)Render_DecodePictureBlockSize), \
 			DMA_COPY_WORDS((Uint32)(fdRenderDecodePictureCopyEnd - \
 							   fdRenderDecodePictureCode) >> \
@@ -308,7 +308,7 @@ extern Uint8 fdRenderCopyStridedCodeSize[];
 void fdTileMapDrawRowsFromRam(
 	const WORLD_MAP_AFFINE_PAIR *lines, Uint8 *pixels);
 void fdWorldMapBuildScanlineTable(
-	FIXED pitchSlope, Sint32 *position, WORLD_MAP_SCANLINE *scanline);
+	FIXED pitchSlope, Sint32 *pos, WORLD_MAP_SCANLINE *scanline);
 
 /* The footprints the leader leaves in snow and sand, and the leader's userValue
    that asks for the pair next. Every function that moves the leader by the pad

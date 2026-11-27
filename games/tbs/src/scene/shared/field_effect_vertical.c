@@ -4,28 +4,28 @@
    is two arcs of SPRITE_GOLDEN_RINGS, its back half under the caster and its
    front half, the same arc upside down, in front. */
 
-/* How long a ring lives, in frames, swelling and shrinking over half a sine
+/* How long a ring lives, in ticks, swelling and shrinking over half a sine
    wave. */
-#define VERTICAL_EFFECT_FRAMES 32
+#define VERTICAL_EFFECT_TICKS 32
 
-/* The ring's back half: it rises a pixel a frame on the watched actor, up to 13
+/* The ring's back half: it rises a pixel a tick on the watched actor, up to 13
    pixels south of it while small. */
 static void scFieldEffectRiseRingBackHalf(ACTOR *actor)
 {
 	ACTOR *anchor;
-	Sint32 frame;
+	Sint32 frm;
 	FIXED  amplitude;
 
 	anchor = (ACTOR *)actor->watchedActor;
 	actor->tmr = actor->tmr + 1;
-	frame = actor->tmr;
+	frm = actor->tmr;
 
-	if(frame >= VERTICAL_EFFECT_FRAMES) {
+	if(frm >= VERTICAL_EFFECT_TICKS) {
 		fdActorRelease(actor);
 		return;
 	}
 
-	amplitude = sySin(frame * (DEGtoANG(180) / VERTICAL_EFFECT_FRAMES));
+	amplitude = sySin(frm * (DEGtoANG(180) / VERTICAL_EFFECT_TICKS));
 	actor->scaleX = amplitude;
 	actor->scaleY = amplitude;
 	actor->x.fixed = anchor->x.fixed;
@@ -38,19 +38,19 @@ static void scFieldEffectRiseRingBackHalf(ACTOR *actor)
 static void scFieldEffectRiseRingFrontHalf(ACTOR *actor)
 {
 	ACTOR *anchor;
-	Sint32 frame;
+	Sint32 frm;
 	FIXED  amplitude;
 
 	anchor = (ACTOR *)actor->watchedActor;
 	actor->tmr = actor->tmr + 1;
-	frame = actor->tmr;
+	frm = actor->tmr;
 
-	if(frame >= VERTICAL_EFFECT_FRAMES) {
+	if(frm >= VERTICAL_EFFECT_TICKS) {
 		fdActorRelease(actor);
 		return;
 	}
 
-	amplitude = sySin(frame * (DEGtoANG(180) / VERTICAL_EFFECT_FRAMES));
+	amplitude = sySin(frm * (DEGtoANG(180) / VERTICAL_EFFECT_TICKS));
 	actor->scaleX = amplitude;
 	actor->scaleY = -amplitude;
 	actor->x.fixed = anchor->x.fixed;

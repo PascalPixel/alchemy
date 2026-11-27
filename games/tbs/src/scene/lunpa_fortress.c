@@ -63,7 +63,7 @@
    The patrolling guards walk actor scripts (LunpaFortressFirstPatrolRoute and
    the others) and stand still while a menu, Psynergy or an item is in use. Each
    carries his circle of light, drawn on MAPGRID_LAYER_OVERHEAD, which his event
-   moves with him and shakes by a pixel every frame, so the light flickers. Each
+   moves with him and shakes by a pixel every tick, so the light flickers. Each
    has stretches of its rounds where it cannot see the leader. The pair in the
    upper floor's west hall walk east and west across columns 5 to 12, one in row
    12 and one in row 18, and never see Isaac in rows 5 to 7 west of column 11,
@@ -258,7 +258,7 @@ enum {
 };
 
 /* Animations of the fortress's sprites beyond ACTOR_ANIMATION, as their
-   animation tables and frames under graphics/sprite draw them. */
+   animation tables and ticks under graphics/sprite draw them. */
 typedef enum LUNPA_FORTRESS_ANIMATION {
 	/* One of Dodonpa's men lying beaten on the floor
 	   (man_with_orange_hair.png), as the three guards lie after their fight. */
@@ -683,11 +683,10 @@ static void scLunpaFortressRestoreLoweredCrates(void)
 }
 
 /* Draws one of the metatiles' doors open. */
-static void scLunpaFortressOpenToadonpaDoor(Sint32 doorIndex)
+static void scLunpaFortressOpenToadonpaDoor(Sint32 doorIdx)
 {
-	Sint32 doorMetatileX = LunpaFortressToadonpaDoorMetatiles[doorIndex * 2];
-	Sint32 doorMetatileY =
-		LunpaFortressToadonpaDoorMetatiles[doorIndex * 2 + 1];
+	Sint32 doorMetatileX = LunpaFortressToadonpaDoorMetatiles[doorIdx * 2];
+	Sint32 doorMetatileY = LunpaFortressToadonpaDoorMetatiles[doorIdx * 2 + 1];
 
 	fdMapGridCopyMetatiles(0, 77, 1, 3, doorMetatileX, doorMetatileY);
 	fdMapGridCopyMetatiles(1, 77, 1, 1, doorMetatileX + 1, doorMetatileY);
@@ -707,14 +706,14 @@ static void scLunpaFortressUnlockToadonpaDoor(void)
 {
 	FIELD_STATE *state;
 	Sint32		 doorCue;
-	Sint32		 doorIndex;
+	Sint32		 doorIdx;
 
 	state = FieldStateWork;
 	if(gmPartyInventoryFindMember(ITEM_CELL_KEY) != -1) {
 		doorCue = state->stepCue;
-		doorIndex = doorCue - METATILE_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR;
-		if(gmFlagGet(FLAG_DODONPA_LOCKED_UP) == 0 || doorIndex != 4) {
-			scLunpaFortressOpenToadonpaDoor(doorIndex);
+		doorIdx = doorCue - METATILE_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR;
+		if(gmFlagGet(FLAG_DODONPA_LOCKED_UP) == 0 || doorIdx != 4) {
+			scLunpaFortressOpenToadonpaDoor(doorIdx);
 			sySndPlay(SE_GATE_MOVE);
 			fdMapGridSetShake(3, 3, 1);
 			fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -727,20 +726,20 @@ static void scLunpaFortressUnlockToadonpaDoor(void)
 
 /* Draws one of the cave's metatile doors open and lets the party through. The
    middle door, to the crates' nook, opens two metatiles. */
-static void scLunpaFortressOpenCaveDoor(Sint32 doorIndex)
+static void scLunpaFortressOpenCaveDoor(Sint32 doorIdx)
 {
 	Sint32 doorMetatileX;
 	Sint32 doorMetatileY;
 	Sint32 attributeMetatileY;
 
-	doorMetatileX = LunpaFortressCaveDoorMetatiles[doorIndex * 2];
-	doorMetatileY = LunpaFortressCaveDoorMetatiles[doorIndex * 2 + 1];
+	doorMetatileX = LunpaFortressCaveDoorMetatiles[doorIdx * 2];
+	doorMetatileY = LunpaFortressCaveDoorMetatiles[doorIdx * 2 + 1];
 	fdMapGridCopyMetatiles(0, 77, 1, 3, doorMetatileX, doorMetatileY);
 	fdMapGridCopyMetatiles(1, 77, 1, 1, doorMetatileX + 1, doorMetatileY);
 	attributeMetatileY = doorMetatileY - 44;
 	fdMapGridCopyMetatileAttributes(doorMetatileX, doorMetatileY - 45, 1, 1,
 		doorMetatileX, attributeMetatileY);
-	if(doorIndex == 1)
+	if(doorIdx == 1)
 		fdMapGridCopyMetatileAttributes(doorMetatileX, attributeMetatileY, 1, 1,
 			doorMetatileX, doorMetatileY - 43);
 }
@@ -769,11 +768,11 @@ static void scLunpaFortressUnlockCaveDoor(void)
 }
 
 /* Draws one of the upper floor's two metatile doors open. */
-static void scLunpaFortressOpenUpperFloorDoor(Sint32 doorIndex)
+static void scLunpaFortressOpenUpperFloorDoor(Sint32 doorIdx)
 {
-	Sint32 doorMetatileX = LunpaFortressUpperFloorDoorMetatiles[doorIndex * 2];
+	Sint32 doorMetatileX = LunpaFortressUpperFloorDoorMetatiles[doorIdx * 2];
 	Sint32 doorMetatileY =
-		LunpaFortressUpperFloorDoorMetatiles[doorIndex * 2 + 1];
+		LunpaFortressUpperFloorDoorMetatiles[doorIdx * 2 + 1];
 
 	fdMapGridCopyMetatiles(55, 121, 1, 3, doorMetatileX, doorMetatileY);
 	fdMapGridCopyMetatiles(56, 121, 1, 1, doorMetatileX + 1, doorMetatileY);
@@ -806,14 +805,14 @@ static void scLunpaFortressUnlockUpperFloorDoor(void)
 
 /* Draws one of the ground floor's metatile doors open and lets the party
    through. */
-static void scLunpaFortressOpenGroundFloorDoor(Sint32 doorIndex)
+static void scLunpaFortressOpenGroundFloorDoor(Sint32 doorIdx)
 {
 	/* BUG: the third door's cue and flag (GROUND_FLOOR_DOOR_FLAG + 2) ask for
 	   index 2, past the two doors LunpaFortressGroundFloorDoorMetatiles
 	   holds. */
-	Sint32 doorMetatileX = LunpaFortressGroundFloorDoorMetatiles[doorIndex * 2];
+	Sint32 doorMetatileX = LunpaFortressGroundFloorDoorMetatiles[doorIdx * 2];
 	Sint32 doorMetatileY =
-		LunpaFortressGroundFloorDoorMetatiles[doorIndex * 2 + 1];
+		LunpaFortressGroundFloorDoorMetatiles[doorIdx * 2 + 1];
 
 	fdMapGridCopyMetatiles(1, 80, 1, 3, doorMetatileX, doorMetatileY);
 	fdMapGridCopyMetatiles(2, 80, 1, 1, doorMetatileX + 1, doorMetatileY);
@@ -995,7 +994,7 @@ static Bool scLunpaFortressIsLeaderHiddenFromPatrolPair(void)
 	return FALSE;
 }
 
-/* Every frame in the upper floor's west hall: walks the two patrolling guards'
+/* Every tick in the upper floor's west hall: walks the two patrolling guards'
    circles of light with them, and raises RAISED_PATROL_PAIR_SPOTTED when either
    sees an uncloaked Isaac.
 
@@ -1010,7 +1009,7 @@ static void scLunpaFortressCheckPatrolPair(void)
 			 ->layers[MAPGRID_LAYER_OVERHEAD];
 	FIELD_STATE *state = FieldStateWork;
 
-	if(FrameCount & 1) {
+	if(TickCount & 1) {
 		patrolLayer->speedX = 1;
 		patrolLayer->speedY = 1;
 	} else {
@@ -1100,7 +1099,7 @@ static Bool scLunpaFortressIsLeaderPassingHallPatrol(void)
 	return FALSE;
 }
 
-/* Every frame in the upper floor's east hall: as
+/* Every tick in the upper floor's east hall: as
    scLunpaFortressCheckPatrolPair, for the guard who walks its rounds. */
 static void scLunpaFortressCheckHallPatrol(void)
 {
@@ -1113,7 +1112,7 @@ static void scLunpaFortressCheckHallPatrol(void)
 	/* DEAD: the camera's actor looked up and dropped; the ROM keeps the
 	   call. */
 	fdCameraGetActor();
-	if(FrameCount & 1) {
+	if(TickCount & 1) {
 		patrolLayer->speedX = 1;
 		patrolLayer->speedY = 1;
 	} else {
@@ -1184,7 +1183,7 @@ static Bool scLunpaFortressIsLeaderHiddenFromGroundFloorPatrol(void)
 	return FALSE;
 }
 
-/* Every frame in the ground floor's east hall: as
+/* Every tick in the ground floor's east hall: as
    scLunpaFortressCheckPatrolPair, for the guard who walks its rounds. */
 static void scLunpaFortressCheckGroundFloorPatrol(void)
 {
@@ -1194,7 +1193,7 @@ static void scLunpaFortressCheckGroundFloorPatrol(void)
 			 ->layers[MAPGRID_LAYER_OVERHEAD];
 	FIELD_STATE *state = FieldStateWork;
 
-	if(FrameCount & 1) {
+	if(TickCount & 1) {
 		patrolLayer->speedX = 1;
 		patrolLayer->speedY = 1;
 	} else {
@@ -1254,7 +1253,7 @@ static Bool scLunpaFortressIsLeaderOutsideNortheastHall(void)
 	return TRUE;
 }
 
-/* Every frame in the ground floor's north-east hall: raises
+/* Every tick in the ground floor's north-east hall: raises
    RAISED_NORTHEAST_HALL_SPOTTED when its guard sees an uncloaked Isaac in the
    stretch he watches. */
 static void scLunpaFortressCheckNortheastHallGuard(void)
@@ -1286,7 +1285,7 @@ static void scLunpaFortressNortheastHallGuardThrowsPartyOut(void)
 	fdScriptEnd();
 }
 
-/* Every frame after the party comes into the ground floor's long hall, or the
+/* Every tick after the party comes into the ground floor's long hall, or the
    small room inside the door: raises RAISED_ENTRANCE_GUARD_SPOTTED once, when
    the guard at the hall's west end sees an uncloaked Isaac. */
 static void scLunpaFortressCheckEntranceGuard(void)
@@ -1304,7 +1303,7 @@ static void scLunpaFortressCheckEntranceGuard(void)
 	}
 }
 
-/* Every frame after the party comes into the ground floor's long hall, or the
+/* Every tick after the party comes into the ground floor's long hall, or the
    small room inside the door: raises RAISED_SENTRIES_SPOTTED once for both
    sentries, when the first of them sees an uncloaked Isaac. */
 static void scLunpaFortressCheckFirstEntranceSentry(void)
@@ -1450,7 +1449,7 @@ static Bool scLunpaFortressIsGuardNearViewCenter(Sint32 actorId)
 	return TRUE;
 }
 
-/* Every frame in the ground floor's east hall: walking into the column of its
+/* Every tick in the ground floor's east hall: walking into the column of its
    metatile door, at metatile (43, 30), with the Metatile Key in the party opens
    it. */
 static void scLunpaFortressCheckGroundFloorDoorApproach(void)
@@ -1471,7 +1470,7 @@ static void scLunpaFortressCheckGroundFloorDoorApproach(void)
 	}
 }
 
-/* Every frame in the Metatile Key room: walking north or south into the column
+/* Every tick in the Metatile Key room: walking north or south into the column
    of its south metatile door, at metatile (16, 57), with the Metatile Key in
    the party opens it. */
 static void scLunpaFortressCheckUpperFloorDoorApproach(void)
@@ -1587,20 +1586,20 @@ static void scLunpaFortressGuardChallengesParty(Sint32 actorId)
 /* A guard spots an intruder. "Hey! Intruder!" */
 static void scLunpaFortressCryIntruder(Sint32 actorId)
 {
-	Sint32 messageBase;
+	Sint32 msgBase;
 
 	fdActorRunRepeatedMotion(actorId, 1);
-	messageBase = MsgLunpaIntruder;
-	fdScriptSetMessageId(messageBase);
+	msgBase = MsgLunpaIntruder;
+	fdScriptSetMessageId(msgBase);
 	/* "Hey! Intruder!" */
 	fdScriptShowMessage(actorId, 0);
 	fdActorShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-	fdScriptSetMessageId(messageBase + 1);
+	fdScriptSetMessageId(msgBase + 1);
 	/* "You think you're going any farther?" */
 	fdScriptShowMessage(actorId, 0);
-	messageBase += 2;
+	msgBase += 2;
 	fdActorSetAnimationAndWait(actorId, ANIM_SHAKE_HEAD);
-	fdScriptSetMessageId(messageBase);
+	fdScriptSetMessageId(msgBase);
 	/* "Hey! Intruder!" */
 	fdScriptShowMessage(actorId, 0);
 }
@@ -1626,23 +1625,23 @@ static void scLunpaFortressAskWhosThat(Sint32 actorId)
 /* A guard expects his relief, then sees who it is. "Is my shift up already?" */
 static void scLunpaFortressAskIfShiftIsUp(Sint32 actorId)
 {
-	Sint32 messageBase;
+	Sint32 msgBase;
 
-	messageBase = MsgLunpaShiftAlready;
-	fdScriptSetMessageId(messageBase);
+	msgBase = MsgLunpaShiftAlready;
+	fdScriptSetMessageId(msgBase);
 	/* "Is my shift up already?" */
 	fdScriptShowMessage(actorId, 0);
 	fdScriptWait(120);
 	fdActorShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-	fdScriptSetMessageId(messageBase + 1);
+	fdScriptSetMessageId(msgBase + 1);
 	/* "...Wait a minute! Who are you?" */
 	fdScriptShowMessage(actorId, 0);
 	fdActorRunRepeatedMotion(actorId, 1);
-	fdScriptSetMessageId(messageBase + 2);
+	fdScriptSetMessageId(msgBase + 2);
 	/* "I've never seen you before! Intruder!" */
 	fdScriptShowMessage(actorId, 0);
 	fdActorSetAnimationAndWait(actorId, ANIM_SHAKE_HEAD);
-	fdScriptSetMessageId(messageBase + 3);
+	fdScriptSetMessageId(msgBase + 3);
 	/* "Come on! You'll have to deal with me!" */
 	fdScriptShowMessage(actorId, 0);
 }
@@ -1718,7 +1717,7 @@ static void scLunpaFortressFightMiddleHallGuard(void)
    the floor (scLunpaFortressPlaceThreeBeatenGuards). */
 static void scLunpaFortressFightThreeGuards(void)
 {
-	Sint32 messageBase;
+	Sint32 msgBase;
 
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	fdActorSetAnimation(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, ANIM_STAND);
@@ -1730,8 +1729,8 @@ static void scLunpaFortressFightThreeGuards(void)
 	fdScriptWait(30);
 	fdActorFaceActor(
 		ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, ACTOR_PARTY_LEADER, 0);
-	messageBase = MsgLunpaWhoAreYouShouted;
-	fdScriptSetMessageId(messageBase);
+	msgBase = MsgLunpaWhoAreYouShouted;
+	fdScriptSetMessageId(msgBase);
 	/* "Who are you!?" */
 	fdScriptShowMessage(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, 0);
 	fdActorShowEmote(ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE,
@@ -1749,22 +1748,22 @@ static void scLunpaFortressFightThreeGuards(void)
 		ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE, FACING_SOUTH_SOUTHWEST, 0);
 	fdActorFaceDirection(
 		ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, FACING_NORTH_NORTHEAST, 0);
-	fdScriptSetMessageId(messageBase + 1);
+	fdScriptSetMessageId(msgBase + 1);
 	/* "Could this be the guy who's come to get Hammet back?" */
 	fdScriptShowMessage(ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE, 0);
 	fdActorSetAnimationAndWait(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, ANIM_NOD);
-	fdScriptSetMessageId(messageBase + 2);
+	fdScriptSetMessageId(msgBase + 2);
 	/* "Yeah! I bet he is!" */
 	fdScriptShowMessage(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, 0);
-	fdScriptSetMessageId(messageBase + 3);
+	fdScriptSetMessageId(msgBase + 3);
 	/* "What a bold rascal!" */
 	fdScriptShowMessage(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, 0);
 	fdActorRunRepeatedMotion(ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE, 1);
-	fdScriptSetMessageId(messageBase + 4);
+	fdScriptSetMessageId(msgBase + 4);
 	/* "Dodonpa will be livid if we lose Hammet!" */
 	fdScriptShowMessage(ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE, 0);
 	fdActorSetAnimationAndWait(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, ANIM_NOD);
-	fdScriptSetMessageId(messageBase + 5);
+	fdScriptSetMessageId(msgBase + 5);
 	/* "We're really going to be in for it if we let these kids get..." */
 	fdScriptShowMessage(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, 0);
 	fdActorSetAnimationAndWait(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, ANIM_NOD);
@@ -1782,7 +1781,7 @@ static void scLunpaFortressFightThreeGuards(void)
 #endif
 	fdActorSetAnimationAndWait(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, ANIM_NOD);
 	fdScriptWait(30);
-	fdScriptSetMessageId(messageBase + 6);
+	fdScriptSetMessageId(msgBase + 6);
 	/* "You're not going any farther! Not without some serious..." */
 	fdScriptShowMessage(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, 0);
 	FieldStateWork->transition =
@@ -1876,7 +1875,7 @@ static void scLunpaFortressEntranceGuardThrowsPartyOut(void)
    metatile of the map: only the sentries' events start it. */
 static void scLunpaFortressSentriesThrowPartyOut(void)
 {
-	Sint32 challengeMessage;
+	Sint32 challengeMsg;
 
 	fdScriptStart();
 	fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 0);
@@ -1889,12 +1888,12 @@ static void scLunpaFortressSentriesThrowPartyOut(void)
 		EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
 	fdActorFaceActor(ACTOR_GROUND_FLOOR_SECOND_SENTRY, ACTOR_PARTY_LEADER, 0);
 	fdActorFaceActor(ACTOR_GROUND_FLOOR_FIRST_SENTRY, ACTOR_PARTY_LEADER, 0);
-	challengeMessage = MsgLunpaWhoAreYou;
-	fdScriptSetMessageId(challengeMessage);
+	challengeMsg = MsgLunpaWhoAreYou;
+	fdScriptSetMessageId(challengeMsg);
 	/* "Who are you?" */
 	fdScriptShowMessage(ACTOR_GROUND_FLOOR_FIRST_SENTRY, 0);
 	fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-	fdScriptSetMessageId(challengeMessage + 1);
+	fdScriptSetMessageId(challengeMsg + 1);
 	/* "How did you get in here?" */
 	fdScriptShowMessage(ACTOR_GROUND_FLOOR_FIRST_SENTRY, 0);
 	fdScriptFinishScreenTransition();
@@ -1928,7 +1927,7 @@ static void scLunpaFortressOpenIvyPassage(void)
 	fdMapGridCopyMetatileAttributes(26, 16, 1, 1, 27, 17);
 }
 
-/* The switch is drawn flipping, two pictures five frames apart, and then its
+/* The switch is drawn flipping, two pictures five ticks apart, and then its
    doorway opens. */
 static inline void scLunpaFortressFlipHiddenSwitch(
 	Sint32 metatileX, Sint32 metatileY, void (*openPassage)(void))
@@ -2128,7 +2127,7 @@ static void scLunpaFortressPosPartyForMonster(void)
    and his trap. Once Donpa has judged Dodonpa, the metatile starts nothing. */
 static void scLunpaFortressFindHammet(void)
 {
-	Sint32 messageBase;
+	Sint32 msgBase;
 
 	if(gmFlagGet(FLAG_LUNPA_FORTRESS_DODONPA_JUDGED) != 0)
 		return;
@@ -2158,8 +2157,8 @@ static void scLunpaFortressFindHammet(void)
 		/* Dodonpa approaches from the south, then springs the lever trap. */
 		fdActorSetPos(ACTOR_TOADONPA_DODONPA, 456, 320);
 		fdCameraSetSpeed(2);
-		messageBase = MsgLunpaBackMoreGuess;
-		fdScriptSetMessageId(messageBase);
+		msgBase = MsgLunpaBackMoreGuess;
+		fdScriptSetMessageId(msgBase);
 		/* "Back for more? I guess you didn't learn your lesson!" */
 		fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 		fdActorWalkTo(ACTOR_TOADONPA_DODONPA, 458, 272);
@@ -2171,7 +2170,7 @@ static void scLunpaFortressFindHammet(void)
 		fdScriptWait(60);
 		sySndPlay(SE_SWITCH);
 		/* "Dodonpa pulled a lever." */
-		mnFieldMessageShow(messageBase + 1, 1);
+		mnFieldMessageShow(msgBase + 1, 1);
 		fdActorSetDestinationOffset(ACTOR_TOADONPA_DODONPA, 8, -8);
 		scLunpaFortressActivateLeverTrap();
 		fdScriptWait(120);
@@ -2180,10 +2179,10 @@ static void scLunpaFortressFindHammet(void)
 		fdActorStartRepeatedMotion(ACTOR_GARET, 2);
 		fdActorStartRepeatedMotion(ACTOR_MIA, 2);
 		fdScriptWait(20);
-		messageBase += 2;
+		msgBase += 2;
 		scLunpaFortressPosPartyForMonster();
 		fdActorFaceActor(ACTOR_TOADONPA_DODONPA, ACTOR_PARTY_LEADER, 0);
-		fdScriptSetMessageId(messageBase);
+		fdScriptSetMessageId(msgBase);
 		/* "Go ahead-keep trying! You'll never win!" */
 		fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 		scLunpaFortressRevealMonster();
@@ -2199,8 +2198,8 @@ static void scLunpaFortressFindHammet(void)
 		sySndPlay(SOUND_FADE_OUT_BGM);
 		fdScriptWait(30);
 		/* Ivan recognizes Hammet before Dodonpa interrupts the reunion. */
-		messageBase = MsgLunpaTimeEat;
-		fdScriptSetMessageId(messageBase + REUNION_HAMMET_ASKS_IF_TIME_TO_EAT);
+		msgBase = MsgLunpaTimeEat;
+		fdScriptSetMessageId(msgBase + REUNION_HAMMET_ASKS_IF_TIME_TO_EAT);
 		/* "Is it time to eat?" */
 		fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 		fdActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_HAMMET, 0);
@@ -2209,7 +2208,7 @@ static void scLunpaFortressFindHammet(void)
 		fdActorJump(ACTOR_TOADONPA_HAMMET, 4, 0);
 		fdActorSetSprFlags(
 			fdActorGet(ACTOR_TOADONPA_HAMMET), SPRITE_FLAG_SHADOW);
-		fdScriptSetMessageId(messageBase + REUNION_HAMMET_ASKS_WHO);
+		fdScriptSetMessageId(msgBase + REUNION_HAMMET_ASKS_WHO);
 		/* "...Who are you?" */
 		fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 		fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
@@ -2220,14 +2219,14 @@ static void scLunpaFortressFindHammet(void)
 		fdActorWalkTo(ACTOR_IVAN, 464, 192);
 		fdActorWaitForMoveById(ACTOR_IVAN);
 		fdScriptWait(30);
-		fdScriptSetMessageId(messageBase + REUNION_IVAN_NAMES_HAMMET);
+		fdScriptSetMessageId(msgBase + REUNION_IVAN_NAMES_HAMMET);
 		/* "Hammet..." */
 		fdScriptShowMessage(ACTOR_IVAN, 0);
 		fdActorShowEmote(
 			ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 		fdScriptWait(110);
 		sySndPlay(MUS_WIND_ADEPTS);
-		fdScriptSetMessageId(messageBase + REUNION_HAMMET_KNOWS_IVAN);
+		fdScriptSetMessageId(msgBase + REUNION_HAMMET_KNOWS_IVAN);
 		/* "Ivan, is that you?" */
 		fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 		fdScriptWait(30);
@@ -2247,7 +2246,7 @@ static void scLunpaFortressFindHammet(void)
 		fdScriptWait(30);
 		fdActorFaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_IVAN, 0);
 		fdScriptWait(20);
-		fdScriptSetMessageId(messageBase + REUNION_HAMMET_ASKS_ABOUT_FRIENDS);
+		fdScriptSetMessageId(msgBase + REUNION_HAMMET_ASKS_ABOUT_FRIENDS);
 		/* "These people... Are they friends of yours?" */
 		fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 		fdScriptWait(40);
@@ -2256,7 +2255,7 @@ static void scLunpaFortressFindHammet(void)
 		fdActorShowEmote(
 			ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
 		fdScriptWait(120);
-		fdScriptSetMessageId(messageBase + REUNION_HAMMET_SEES_JOURNEY_BEGUN);
+		fdScriptSetMessageId(msgBase + REUNION_HAMMET_SEES_JOURNEY_BEGUN);
 		/* "Then it would appear your journey has begun, Ivan." */
 		fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 		fdScriptWait(25);
@@ -2268,19 +2267,19 @@ static void scLunpaFortressFindHammet(void)
 		fdActorWaitForMoveById(ACTOR_IVAN);
 		fdActorFaceEachOther(ACTOR_IVAN, ACTOR_TOADONPA_HAMMET, 0);
 		fdScriptWait(60);
-		fdScriptSetMessageId(messageBase + REUNION_IVAN_COMES_TO_SAVE_HAMMET);
+		fdScriptSetMessageId(msgBase + REUNION_IVAN_COMES_TO_SAVE_HAMMET);
 		/* "I am a little late, but I have come to save you." */
 		fdScriptShowMessage(ACTOR_IVAN, 0);
 		fdScriptWait(20);
 		fdActorSetAnimation(ACTOR_TOADONPA_HAMMET, ANIM_SHAKE_HEAD);
 		fdScriptWait(80);
-		fdScriptSetMessageId(messageBase + REUNION_HAMMET_WARNS_OF_RISK);
+		fdScriptSetMessageId(msgBase + REUNION_HAMMET_WARNS_OF_RISK);
 		/* "You shouldn't have risked yourself, Ivan." */
 		fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 		/* Dodonpa approaches from the south, then springs the lever trap. */
 		fdActorSetPos(ACTOR_TOADONPA_DODONPA, 456, 320);
 		sySndPlay(MUS_SILENCE);
-		fdScriptSetMessageId(messageBase + REUNION_DODONPA_HALTS_PARTY);
+		fdScriptSetMessageId(msgBase + REUNION_DODONPA_HALTS_PARTY);
 		/* "Hold it right there!" */
 		fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 		fdActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_DODONPA, 0);
@@ -2309,17 +2308,17 @@ static void scLunpaFortressFindHammet(void)
 		fdActorFaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
 		fdActorStartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 2);
 		fdScriptWait(60);
-		fdScriptSetMessageId(messageBase + REUNION_HAMMET_NAMES_DODONPA);
+		fdScriptSetMessageId(msgBase + REUNION_HAMMET_NAMES_DODONPA);
 		/* "Dodonpa!" */
 		fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 		fdActorFaceActor(ACTOR_TOADONPA_DODONPA, ACTOR_TOADONPA_HAMMET, 0);
-		fdScriptSetMessageId(messageBase + REUNION_DODONPA_INTERRUPTS);
+		fdScriptSetMessageId(msgBase + REUNION_DODONPA_INTERRUPTS);
 		/* "Sorry to interrupt your teary little reunion, Hammet!" */
 		fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 		fdScriptWait(60);
 		fdActorFaceActor(ACTOR_TOADONPA_DODONPA, ACTOR_IVAN, 0);
 		fdScriptWait(30);
-		fdScriptSetMessageId(messageBase + REUNION_DODONPA_MOCKS_IVAN);
+		fdScriptSetMessageId(msgBase + REUNION_DODONPA_MOCKS_IVAN);
 		/* "This must be your little rat, Ivan-you always did claim he'd..." */
 		fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 		fdActorFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
@@ -2331,32 +2330,32 @@ static void scLunpaFortressFindHammet(void)
 		fdActorFaceActor(ACTOR_MIA, ACTOR_TOADONPA_DODONPA, 0);
 		fdActorStartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
 		fdScriptWait(60);
-		fdScriptSetMessageId(messageBase + REUNION_DODONPA_SCORNS_CHILD);
+		fdScriptSetMessageId(msgBase + REUNION_DODONPA_SCORNS_CHILD);
 		/* "Look at him. He's just a child!" */
 		fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 		fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
 		fdScriptWait(60);
 		fdActorSetAnimation(ACTOR_TOADONPA_DODONPA, ANIM_SHAKE_HEAD);
-		fdScriptSetMessageId(messageBase + REUNION_DODONPA_MARVELS_AT_KIDS);
+		fdScriptSetMessageId(msgBase + REUNION_DODONPA_MARVELS_AT_KIDS);
 		/* "But to think these kids could get this far!" */
 		fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 		fdActorWalkTo(ACTOR_GARET, 456, 248);
 		fdActorWaitForMoveById(ACTOR_GARET);
 		fdActorFaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
-		fdScriptSetMessageId(messageBase + REUNION_GARET_TAUNTS_DODONPA);
+		fdScriptSetMessageId(msgBase + REUNION_GARET_TAUNTS_DODONPA);
 		/* "Hey, yeah! If we're just kids, what does that make your..." */
 		fdScriptShowMessage(ACTOR_GARET, 0);
 		fdActorWalkTo(ACTOR_IVAN, 472, 216);
 		fdActorWaitForMoveById(ACTOR_IVAN);
 		fdActorFaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
 		fdScriptWait(10);
-		fdScriptSetMessageId(messageBase + REUNION_IVAN_ACCUSES_DODONPA);
+		fdScriptSetMessageId(msgBase + REUNION_IVAN_ACCUSES_DODONPA);
 		/* "What kind of scum takes ransom money and then doesn't free..." */
 		fdScriptShowMessage(ACTOR_IVAN, 0);
 		fdActorShowEmote(
 			ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
 		fdScriptWait(60);
-		fdScriptSetMessageId(messageBase + REUNION_HAMMET_LEARNS_OF_EXTORTION);
+		fdScriptSetMessageId(msgBase + REUNION_HAMMET_LEARNS_OF_EXTORTION);
 		/* "I see. So, you've been extorting money from Layana, have you?" */
 		fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 		fdActorWalkTo(ACTOR_MIA, 440, 216);
@@ -2364,11 +2363,11 @@ static void scLunpaFortressFindHammet(void)
 		fdActorFaceActor(ACTOR_MIA, ACTOR_TOADONPA_DODONPA, 0);
 		fdActorSetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
 		fdScriptWait(10);
-		fdScriptSetMessageId(messageBase + REUNION_MIA_TAKES_HAMMET_HOME);
+		fdScriptSetMessageId(msgBase + REUNION_MIA_TAKES_HAMMET_HOME);
 		/* "Now that we've found Hammet, we'll be taking him home!" */
 		fdScriptShowMessage(ACTOR_MIA, 0);
 		fdActorSetAnimation(ACTOR_TOADONPA_DODONPA, ANIM_SHAKE_HEAD);
-		fdScriptSetMessageId(messageBase + REUNION_DODONPA_REFUSES);
+		fdScriptSetMessageId(msgBase + REUNION_DODONPA_REFUSES);
 		/* "I'm afraid I can't let you do that." */
 		fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 		fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -2378,20 +2377,18 @@ static void scLunpaFortressFindHammet(void)
 		fdActorShowEmote(
 			ACTOR_TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
 		fdScriptWait(60);
-		fdScriptSetMessageId(
-			messageBase + REUNION_DODONPA_CALLS_HAMMET_MONEY_TREE);
+		fdScriptSetMessageId(msgBase + REUNION_DODONPA_CALLS_HAMMET_MONEY_TREE);
 		/* "Hammet is what I like to call my little money tree." */
 		fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 		fdScriptWait(20);
 		fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
 		fdScriptWait(60);
-		fdScriptSetMessageId(
-			messageBase + REUNION_GARET_CALLS_DODONPA_SCOUNDREL);
+		fdScriptSetMessageId(msgBase + REUNION_GARET_CALLS_DODONPA_SCOUNDREL);
 		/* "You dirty scoundrel!" */
 		fdScriptShowMessage(ACTOR_GARET, 0);
 		fdActorStartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
 		fdScriptWait(60);
-		fdScriptSetMessageId(messageBase + REUNION_DODONPA_KEEPS_HAMMET);
+		fdScriptSetMessageId(msgBase + REUNION_DODONPA_KEEPS_HAMMET);
 		/* "Name-calling won't help you! I'm not giving Hammet up!" */
 		fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 		fdActorWalkTo(ACTOR_TOADONPA_DODONPA, 456, 280);
@@ -2407,7 +2404,7 @@ static void scLunpaFortressFindHammet(void)
 		fdActorFaceActor(ACTOR_TOADONPA_DODONPA, ACTOR_TOADONPA_BOSS, 0);
 		scLunpaFortressActivateLeverTrap();
 		sySndPlay(MUS_BATTLING_A_POWERFUL_FOE);
-		fdScriptSetMessageId(messageBase + REUNION_DODONPA_SPRINGS_TRAP);
+		fdScriptSetMessageId(msgBase + REUNION_DODONPA_SPRINGS_TRAP);
 		/* "This little trap here marks the end of your good fortune!" */
 		fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 		fdScriptWait(60);
@@ -2443,9 +2440,9 @@ static void scLunpaFortressFindHammet(void)
 static void scLunpaFortressDonpaJudgesDodonpa(void)
 {
 	ACTOR *actor;
-	Sint32 aftermathMessage;
-	Sint32 punishmentMessage;
-	Sint32 donpaMessage;
+	Sint32 aftermathMsg;
+	Sint32 punishmentMsg;
+	Sint32 donpaMsg;
 
 	gmFlagSet(FLAG_LUNPA_FORTRESS_DODONPA_JUDGED);
 	gmFlagSet(FLAG_DODONPA_LOCKED_UP);
@@ -2475,13 +2472,13 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdScriptWait(120);
 
 	/* The fallen monster has pinned Dodonpa; decide whether to help him. */
-	aftermathMessage = MsgLunpaUhnnGetOff;
-	fdScriptSetMessageId(aftermathMessage + AFTERMATH_DODONPA_CRIES_OUT);
+	aftermathMsg = MsgLunpaUhnnGetOff;
+	fdScriptSetMessageId(aftermathMsg + AFTERMATH_DODONPA_CRIES_OUT);
 	/* "Uhnn! Get it off me!" */
 	fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
 	fdScriptSetMessageId(
-		aftermathMessage + AFTERMATH_GARET_ASKS_HOW_DODONPA_WAS_TRAPPED);
+		aftermathMsg + AFTERMATH_GARET_ASKS_HOW_DODONPA_WAS_TRAPPED);
 	/* "How did Dodonpa get trapped under the monster?" */
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 1);
@@ -2490,7 +2487,7 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdScriptWait(60);
 	fdActorFaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
 	fdScriptWait(60);
-	fdScriptSetMessageId(aftermathMessage + AFTERMATH_HAMMET_TELLS_OF_TRICK);
+	fdScriptSetMessageId(aftermathMsg + AFTERMATH_HAMMET_TELLS_OF_TRICK);
 	/* "He tried to pull another dirty trick on you!" */
 	fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 	fdActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_HAMMET, 0);
@@ -2501,12 +2498,12 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdActorWalkTo(ACTOR_TOADONPA_HAMMET, 512, 232);
 	fdActorSetAnimation(ACTOR_TOADONPA_HAMMET, ANIM_SHAKE_HEAD);
 	fdScriptWait(60);
-	fdScriptSetMessageId(aftermathMessage + AFTERMATH_HAMMET_EXPLAINS_TRICK);
+	fdScriptSetMessageId(aftermathMsg + AFTERMATH_HAMMET_EXPLAINS_TRICK);
 	/* "When Dodonpa saw his monster was losing, he tried to get..." */
 	fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 	fdScriptWait(15);
 	fdActorStartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
-	fdScriptSetMessageId(aftermathMessage + AFTERMATH_DODONPA_BOASTS);
+	fdScriptSetMessageId(aftermathMsg + AFTERMATH_DODONPA_BOASTS);
 	/* "Just a second longer, and you'd have been history!" */
 	fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 	fdActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_DODONPA, 0);
@@ -2514,34 +2511,34 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdActorFaceActor(ACTOR_MIA, ACTOR_TOADONPA_DODONPA, 0);
 	fdActorFaceActor(ACTOR_GARET, ACTOR_TOADONPA_DODONPA, 0);
 	fdActorStartRepeatedMotion(ACTOR_IVAN, 1);
-	fdScriptSetMessageId(aftermathMessage + AFTERMATH_IVAN_CALLS_DODONPA_SNAKE);
+	fdScriptSetMessageId(aftermathMsg + AFTERMATH_IVAN_CALLS_DODONPA_SNAKE);
 	/* "You dirty snake!" */
 	fdScriptShowMessage(ACTOR_IVAN, 0);
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
 	fdActorSetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
 	fdScriptWait(80);
 	fdActorSetAnimation(ACTOR_MIA, ANIM_STAND);
-	fdScriptSetMessageId(aftermathMessage + AFTERMATH_MIA_CALLS_DODONPA_ROTTEN);
+	fdScriptSetMessageId(aftermathMsg + AFTERMATH_MIA_CALLS_DODONPA_ROTTEN);
 	/* "Dodonpa, you are rotten to the core!" */
 	fdScriptShowMessage(ACTOR_MIA, 0);
 	fdActorShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_WINCE, 65);
 	fdActorStartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 2);
 	fdScriptWait(100);
-	fdScriptSetMessageId(aftermathMessage + AFTERMATH_DODONPA_APOLOGIZES);
+	fdScriptSetMessageId(aftermathMsg + AFTERMATH_DODONPA_APOLOGIZES);
 	/* "Yeah, OK! I'm sorry! Now, get this thing off of me!" */
 	fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 	fdActorFaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
 	fdScriptWait(10);
-	fdScriptSetMessageId(aftermathMessage + AFTERMATH_GARET_REPEATS_DEMAND);
+	fdScriptSetMessageId(aftermathMsg + AFTERMATH_GARET_REPEATS_DEMAND);
 	/* "'Get this thing off of me'!?" */
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdActorStartRepeatedMotion(ACTOR_IVAN, 1);
 	fdScriptWait(30);
-	fdScriptSetMessageId(aftermathMessage + AFTERMATH_IVAN_DOUBTS_STRENGTH);
+	fdScriptSetMessageId(aftermathMsg + AFTERMATH_IVAN_DOUBTS_STRENGTH);
 	/* "I don't know. That thing looks awfully heavy for us kids to..." */
 	fdScriptShowMessage(ACTOR_IVAN, 0);
 	fdActorFaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
-	fdScriptSetMessageId(aftermathMessage + AFTERMATH_MIA_ASKS_TO_MOVE_MONSTER);
+	fdScriptSetMessageId(aftermathMsg + AFTERMATH_MIA_ASKS_TO_MOVE_MONSTER);
 	/* "What should we do, Isaac? Should we try to move it?" */
 	fdScriptOpenMessage(ACTOR_MIA, 0);
 	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
@@ -2551,7 +2548,7 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 		fdActorFaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
 		fdScriptWait(60);
 	} else {
-		fdScriptSetMessageId(aftermathMessage + AFTERMATH_MIA_ASKS_HAMMET);
+		fdScriptSetMessageId(aftermathMsg + AFTERMATH_MIA_ASKS_HAMMET);
 		/* "I agree. What do you think, Hammet?" */
 		fdScriptShowMessage(ACTOR_MIA, 0);
 		fdActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_HAMMET, 0);
@@ -2566,7 +2563,7 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 		fdActorSetAnimationAndWait(ACTOR_TOADONPA_HAMMET, ANIM_NOD);
 		fdScriptWait(30);
 		fdActorFaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_PARTY_LEADER, 0);
-		fdScriptSetMessageId(aftermathMessage + AFTERMATH_HAMMET_WILL_TRY);
+		fdScriptSetMessageId(aftermathMsg + AFTERMATH_HAMMET_WILL_TRY);
 		/* "I think we have to try, at least." */
 		fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 		fdScriptWait(60);
@@ -2671,8 +2668,8 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdScriptWait(30);
 	fdScriptWait(60);
 	/* Debate Dodonpa's punishment before his father arrives. */
-	punishmentMessage = MsgLunpaAbleGet;
-	fdScriptSetMessageId(punishmentMessage + PUNISHMENT_GARET_FREES_DODONPA);
+	punishmentMsg = MsgLunpaAbleGet;
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_GARET_FREES_DODONPA);
 	/* "There. You should be able to get up now!" */
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdActorSetAnimation(ACTOR_TOADONPA_DODONPA, ANIM_DODONPA_PRONE_HEAD_DOWN);
@@ -2680,7 +2677,7 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdActorStartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
 	fdScriptWait(60);
 	fdActorSetAnimation(ACTOR_TOADONPA_DODONPA, ANIM_DODONPA_PRONE);
-	fdScriptSetMessageId(punishmentMessage + PUNISHMENT_DODONPA_CANNOT_STAND);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_DODONPA_CANNOT_STAND);
 	/* "I... I can't." */
 	fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 	fdScriptWait(20);
@@ -2689,7 +2686,7 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
 	fdActorFaceActor(ACTOR_MIA, ACTOR_TOADONPA_DODONPA, 0);
 	fdActorFaceActor(ACTOR_IVAN, ACTOR_TOADONPA_DODONPA, 0);
-	fdScriptSetMessageId(punishmentMessage + PUNISHMENT_MIA_ASKS_ABOUT_LEG);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_MIA_ASKS_ABOUT_LEG);
 	/* "Did you break your leg or something?" */
 	fdScriptShowMessage(ACTOR_MIA, 0);
 	fdActorShowEmote(ACTOR_TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
@@ -2697,12 +2694,12 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdScriptWait(60);
 	fdActorSetAnimation(ACTOR_TOADONPA_DODONPA, ANIM_DODONPA_PRONE_SLUMP);
 	fdScriptWait(70);
-	fdScriptSetMessageId(punishmentMessage + PUNISHMENT_DODONPA_WILL_STAND);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_DODONPA_WILL_STAND);
 	/* "It's not broken... I should be able to stand after a bit." */
 	fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 	fdActorSetAnimation(ACTOR_TOADONPA_DODONPA, ANIM_DODONPA_PRONE);
 	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-	fdScriptSetMessageId(punishmentMessage + PUNISHMENT_IVAN_IS_RELIEVED);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_IVAN_IS_RELIEVED);
 	/* "Thank goodness..." */
 	fdScriptShowMessage(ACTOR_IVAN, 0);
 	fdActorSetAnimationAndWait(ACTOR_TOADONPA_HAMMET, ANIM_NOD);
@@ -2710,7 +2707,7 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdActorWalkTo(ACTOR_GARET, 440, 208);
 	fdActorWaitForMoveById(ACTOR_GARET);
 	fdActorFaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
-	fdScriptSetMessageId(punishmentMessage + PUNISHMENT_GARET_QUESTIONS_RELIEF);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_GARET_QUESTIONS_RELIEF);
 	/* "What do you mean, 'thank goodness'!?" */
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdScriptWait(20);
@@ -2723,52 +2720,51 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 75);
 	fdActorFaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
-	fdScriptSetMessageId(punishmentMessage + PUNISHMENT_GARET_RECALLS_ATTACK);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_GARET_RECALLS_ATTACK);
 	/* "Didn't he just try to kill us?" */
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdActorShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
 	fdScriptWait(60);
-	fdScriptSetMessageId(punishmentMessage + PUNISHMENT_HAMMET_FORGIVES);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_HAMMET_FORGIVES);
 	/* "Can't we just forgive and forget?" */
 	fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 	fdActorWalkTo(ACTOR_GARET, 448, 208);
 	fdActorWaitForMoveById(ACTOR_GARET);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_STAND);
 	fdActorFaceActor(ACTOR_GARET, ACTOR_TOADONPA_HAMMET, 0);
-	fdScriptSetMessageId(
-		punishmentMessage + PUNISHMENT_GARET_RECALLS_KIDNAPPING);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_GARET_RECALLS_KIDNAPPING);
 	/* "Dodonpa kidnapped you, remember!?" */
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdActorStartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 1);
 	fdScriptWait(60);
 	fdActorFaceActor(ACTOR_GARET, ACTOR_TOADONPA_HAMMET, 0);
 	fdScriptWait(60);
-	fdScriptSetMessageId(punishmentMessage + PUNISHMENT_HAMMET_REMEMBERS);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_HAMMET_REMEMBERS);
 	/* "Oh, that's right..." */
 	fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
 	fdScriptWait(60);
-	fdScriptSetMessageId(punishmentMessage + PUNISHMENT_GARET_LOSES_PATIENCE);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_GARET_LOSES_PATIENCE);
 	/* "Get a grip, you guys!" */
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdActorStartRepeatedMotion(ACTOR_IVAN, 1);
 	fdScriptWait(30);
-	fdScriptSetMessageId(punishmentMessage + PUNISHMENT_IVAN_POINTS_TO_SAFETY);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_IVAN_POINTS_TO_SAFETY);
 	/* "But Hammet is safe now, isn't he?" */
 	fdScriptShowMessage(ACTOR_IVAN, 0);
 	fdActorFaceActor(ACTOR_GARET, ACTOR_MIA, 0);
 	fdScriptWait(20);
-	fdScriptSetMessageId(punishmentMessage + PUNISHMENT_GARET_DOUBTS_REFORM);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_GARET_DOUBTS_REFORM);
 	/* "Yeah, but do you really think Dodonpa will reform if Hammet..." */
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdScriptWait(30);
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
 	fdActorFaceActor(ACTOR_MIA, ACTOR_GARET, 0);
-	fdScriptSetMessageId(punishmentMessage + PUNISHMENT_MIA_WONDERS);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_MIA_WONDERS);
 	/* "Hmm... I wonder..." */
 	fdScriptShowMessage(ACTOR_MIA, 0);
 	fdActorFaceActor(ACTOR_MIA, ACTOR_TOADONPA_DODONPA, 0);
-	fdScriptSetMessageId(punishmentMessage + PUNISHMENT_MIA_ASKS_DODONPA);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_MIA_ASKS_DODONPA);
 	/* "How about it, Dodonpa?" */
 	fdScriptShowMessage(ACTOR_MIA, 0);
 	fdActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_DODONPA, 0);
@@ -2781,21 +2777,20 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdScriptWait(120);
 	fdActorStartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 1);
 	fdScriptWait(60);
-	fdScriptSetMessageId(punishmentMessage + PUNISHMENT_HAMMET_DEFENDS_DODONPA);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_HAMMET_DEFENDS_DODONPA);
 	/* "He already said he wouldn't do anything!" */
 	fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 110);
 	fdActorWalkTo(ACTOR_GARET, 456, 212);
 	fdActorWaitForMoveById(ACTOR_GARET);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_STAND);
-	fdScriptSetMessageId(
-		punishmentMessage + PUNISHMENT_GARET_DISTRUSTS_DODONPA);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_GARET_DISTRUSTS_DODONPA);
 	/* "Of course, he's going to say that! He wants us to forgive him!" */
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdActorFaceActor(ACTOR_IVAN, ACTOR_GARET, 0);
 	fdScriptWait(60);
 	fdActorStartRepeatedMotion(ACTOR_IVAN, 1);
-	fdScriptSetMessageId(punishmentMessage + PUNISHMENT_IVAN_ASKS_GARET);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_IVAN_ASKS_GARET);
 	/* "What do you think we should do with him, Garet?" */
 	fdScriptShowMessage(ACTOR_IVAN, 0);
 	fdActorFaceActor(ACTOR_GARET, ACTOR_TOADONPA_DODONPA, 0);
@@ -2812,22 +2807,22 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdActorSetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
 	fdScriptWait(30);
 	fdScriptSetMessageId(
-		punishmentMessage + PUNISHMENT_GARET_WANTS_DODONPA_LOCKED_UP);
+		punishmentMsg + PUNISHMENT_GARET_WANTS_DODONPA_LOCKED_UP);
 	/* "We should lock him up here, just like he did to Hammet." */
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdActorStartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
 	fdScriptWait(70);
-	fdScriptSetMessageId(punishmentMessage + PUNISHMENT_DODONPA_PLEADS);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_DODONPA_PLEADS);
 	/* "No! How can you be so cruel!" */
 	fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-	fdScriptSetMessageId(punishmentMessage + PUNISHMENT_MIA_SCOLDS_DODONPA);
+	fdScriptSetMessageId(punishmentMsg + PUNISHMENT_MIA_SCOLDS_DODONPA);
 	/* "Oh? And yet you have no problem being that cruel to Hammet!" */
 	fdScriptShowMessage(ACTOR_MIA, 0);
 	fdActorFaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
 	fdScriptWait(80);
 	fdScriptSetMessageId(
-		punishmentMessage + PUNISHMENT_IVAN_ASKS_TO_LOCK_DODONPA_UP);
+		punishmentMsg + PUNISHMENT_IVAN_ASKS_TO_LOCK_DODONPA_UP);
 	/* "What should we do, Isaac? Should we lock Dodonpa up?" */
 	fdScriptOpenMessage(ACTOR_IVAN, 0);
 	fdActorFaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -2838,13 +2833,12 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdActorSetSpeed(ACTOR_TOADONPA_DONPA, 0.5);
 	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
 		sySndPlay(MUS_SILENCE);
-		fdScriptSetMessageId(punishmentMessage + PUNISHMENT_DONPA_APPROVES);
+		fdScriptSetMessageId(punishmentMsg + PUNISHMENT_DONPA_APPROVES);
 		/* "Serves the little punk right!" */
 		fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	} else {
 		sySndPlay(MUS_SILENCE);
-		fdScriptSetMessageId(
-			punishmentMessage + PUNISHMENT_DONPA_LEAVES_DODONPA);
+		fdScriptSetMessageId(punishmentMsg + PUNISHMENT_DONPA_LEAVES_DODONPA);
 		/* "Just leave him here like this for a while!" */
 		fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	}
@@ -2859,15 +2853,15 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdScriptWait(60);
 	sySndPlay(MUS_COLOSSEUM);
 	/* Donpa takes charge and orders his son to remain imprisoned. */
-	donpaMessage = MsgLunpaDad;
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DODONPA_CALLS_FATHER);
+	donpaMsg = MsgLunpaDad;
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DODONPA_CALLS_FATHER);
 	/* "Dad!" */
 	fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 	fdActorWalkTo(ACTOR_TOADONPA_DONPA, 456, 280);
 	fdActorWaitForMoveById(ACTOR_TOADONPA_DONPA);
 	fdActorWalkTo(ACTOR_TOADONPA_DONPA, 440, 256);
 	fdCameraMoveTo(456, CAMERA_KEEP, 224, 1);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_PITIES_DODONPA);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_PITIES_DODONPA);
 	/* "Dodonpa... You pitiful wretch." */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorWaitForMoveById(ACTOR_TOADONPA_DONPA);
@@ -2875,12 +2869,12 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdActorShowEmote(ACTOR_TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
 	fdActorSetAnimation(ACTOR_TOADONPA_DONPA, ANIM_SHAKE_HEAD);
 	fdScriptWait(89);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_RECALLS_WARNING);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_RECALLS_WARNING);
 	/* "I always told you that if you did evil to others... others..." */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorRunRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
 	fdActorSetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_DEMANDS_AMENDS);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_DEMANDS_AMENDS);
 	/* "You must right all of the misdeeds you've done!" */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorShowEmote(
@@ -2889,32 +2883,32 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdScriptWait(80);
 	fdActorFaceDirection(ACTOR_TOADONPA_DONPA, FACING_SOUTH_SOUTHEAST, 0);
 	fdScriptWait(20);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_REGRETS_SPOILING);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_REGRETS_SPOILING);
 	/* "I feel bad for spoiling you. Look at the trouble it has..." */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorStartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DODONPA_BLAMES_DONPA);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DODONPA_BLAMES_DONPA);
 	/* "See! It's all your fault that all this happened!" */
 	fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 	fdScriptWait(30);
 	fdActorSetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
 	fdActorFaceActor(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_DODONPA, 0);
 	fdScriptWait(20);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_WILL_PUNISH);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_WILL_PUNISH);
 	/* "Yes, which is why this is going to hurt you more than it..." */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorStartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
 	fdActorShowEmote(ACTOR_TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DODONPA_DOUBTS_DONPA);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DODONPA_DOUBTS_DONPA);
 	/* "You're not serious, are you, Dad?" */
 	fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 	fdActorShowEmote(
 		ACTOR_TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_INSISTS);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_INSISTS);
 	/* "I most certainly am!" */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorSetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_SENTENCES_DODONPA);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_SENTENCES_DODONPA);
 	/* "You're going to spend some time here thinking about all that..." */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdScriptWait(20);
@@ -2927,27 +2921,27 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdActorFaceActor(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_HAMMET, 0);
 	fdScriptWait(20);
 	fdActorFaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DONPA, 0);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_ASKS_ABOUT_TROUBLE);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_ASKS_ABOUT_TROUBLE);
 	/* "Dodonpa has caused you all sorts of trouble, hasn't he?" */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorStartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 1);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_HAMMET_DENIES_TROUBLE);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_HAMMET_DENIES_TROUBLE);
 	/* "No, not at all!" */
 	fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 	fdScriptWait(40);
 	fdActorSetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
 	fdScriptWait(20);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_APOLOGIZES);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_APOLOGIZES);
 	/* "I must apologize deeply for all of this." */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorSetAnimation(ACTOR_TOADONPA_DONPA, ANIM_NOD);
 	fdActorShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_HAMMET_DECLINES_APOLOGY);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_HAMMET_DECLINES_APOLOGY);
 	/* "Thank you, Donpa, but you do not need to apologize." */
 	fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 	fdActorShowEmote(
 		ACTOR_TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_ASKS_FORGIVENESS);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_ASKS_FORGIVENESS);
 	/* "Then you forgive me?" */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorSetAnimation(ACTOR_TOADONPA_HAMMET, ANIM_NOD);
@@ -2961,12 +2955,12 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdActorSetAnimation(ACTOR_MIA, ANIM_NOD);
 	fdScriptWait(120);
 	fdActorShowEmote(ACTOR_TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_SMILE, 180);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_HAS_REQUEST);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_HAS_REQUEST);
 	/* "I am sorry about the trouble, but I do have one request." */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorShowEmote(
 		ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_HAMMET_ASKS_ABOUT_REQUEST);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_HAMMET_ASKS_ABOUT_REQUEST);
 	/* "A request?" */
 	fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 	fdActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
@@ -2979,7 +2973,7 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdActorFaceActor(ACTOR_IVAN, ACTOR_TOADONPA_DONPA, 0);
 	fdActorFaceActor(ACTOR_MIA, ACTOR_TOADONPA_DONPA, 0);
 	fdScriptWait(60);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_ASKS_PARTY_TO_LEAVE);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_ASKS_PARTY_TO_LEAVE);
 	/* "I don't know how you got in here, but please leave by the..." */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2987,17 +2981,17 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
 	fdScriptWait(100);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_GARET_QUESTIONS_SECRECY);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_GARET_QUESTIONS_SECRECY);
 	/* "Huh? Donpa, didn't you just say you're going to lock up Dodonpa?" */
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdActorStartRepeatedMotion(ACTOR_IVAN, 1);
 	fdScriptWait(60);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_IVAN_QUESTIONS_SNEAKING);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_IVAN_QUESTIONS_SNEAKING);
 	/* "So we shouldn't have to sneak around, should we?" */
 	fdScriptShowMessage(ACTOR_IVAN, 0);
 	fdActorFaceActor(ACTOR_TOADONPA_DONPA, ACTOR_IVAN, 0);
 	fdScriptWait(20);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_WARNS_OF_HENCHMEN);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_WARNS_OF_HENCHMEN);
 	/* "Some of Dodonpa's henchmen are still loyal to him." */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -3007,11 +3001,11 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdScriptWait(120);
 	fdActorSetAnimation(ACTOR_TOADONPA_DONPA, ANIM_SHAKE_HEAD);
 	fdScriptWait(120);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_IS_ASHAMED);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_IS_ASHAMED);
 	/* "I'm ashamed to say it, but they won't listen to any of my..." */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorShowEmote(ACTOR_TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 90);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_WARNS_OF_ATTACK);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_WARNS_OF_ATTACK);
 	/* "This new gang of thieves will attack Hammet if they find him..." */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -3022,83 +3016,83 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdScriptWait(80);
 	fdActorSetAnimation(ACTOR_TOADONPA_DONPA, ANIM_SHAKE_HEAD);
 	fdScriptWait(120);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_FEARS_METATILE_CHECK);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_FEARS_METATILE_CHECK);
 	/* "And they may come to check his metatile, right?" */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorShowEmote(
 		ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_HAMMET_FORESEES_RELEASE);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_HAMMET_FORESEES_RELEASE);
 	/* "I see. Then they'd free Dodonpa, wouldn't they?" */
 	fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 	fdActorFaceActor(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_HAMMET, 0);
 	fdScriptWait(20);
 	fdActorStartRepeatedMotion(ACTOR_TOADONPA_DONPA, 1);
 	fdScriptWait(50);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_FORESEES_REVENGE);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_FORESEES_REVENGE);
 	/* "And then he'd head straight for Kalay seeking his revenge!" */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_NOD);
 	fdScriptWait(70);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_GARET_AGREES);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_GARET_AGREES);
 	/* "I see. Yes, you're right." */
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdActorSetAnimation(ACTOR_MIA, ANIM_NOD);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_MIA_FEARS_FOR_KALAY);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_MIA_FEARS_FOR_KALAY);
 	/* "It would be terrible if Kalay were attacked." */
 	fdScriptShowMessage(ACTOR_MIA, 0);
 	fdActorFaceActor(ACTOR_TOADONPA_DONPA, ACTOR_PARTY_LEADER, 0);
 	fdActorSetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
 	fdScriptWait(20);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_URGES_HASTE);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_URGES_HASTE);
 	/* "That's why you must go while you still can!" */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 90);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_IVAN_ASKS_IF_NOW);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_IVAN_ASKS_IF_NOW);
 	/* "You mean immediately?" */
 	fdScriptShowMessage(ACTOR_IVAN, 0);
 	fdActorFaceDirection(ACTOR_TOADONPA_DONPA, FACING_SOUTH_SOUTHWEST, 0);
 	fdScriptWait(20);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_SPREAD_RUMORS);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_SPREAD_RUMORS);
 	/* "I heard of your intrusion, so I spread some rumors through..." */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorStartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 1);
 	fdScriptWait(60);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_HAMMET_ASKS_ABOUT_RUMORS);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_HAMMET_ASKS_ABOUT_RUMORS);
 	/* "Rumors?" */
 	fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 	fdActorFaceActor(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_HAMMET, 0);
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
 	fdScriptWait(20);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_TELLS_RUMOR);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_TELLS_RUMOR);
 	/* "I said brigands had snuck in to kidnap Hammet, but failed..." */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_GARET_ASKS_WHY);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_GARET_ASKS_WHY);
 	/* "Why in the world did you do that?" */
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdActorFaceActor(ACTOR_TOADONPA_DONPA, ACTOR_PARTY_LEADER, 0);
 	fdScriptWait(30);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_EXPLAINS_RUMOR);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_EXPLAINS_RUMOR);
 	/* "Now, they won't let anyone down here at all. Plus, many of..." */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_MIA_PRAISES_DONPA);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_MIA_PRAISES_DONPA);
 	/* "Donpa, you are a shrewd one!" */
 	fdScriptShowMessage(ACTOR_MIA, 0);
 	fdActorSetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_OFFERS_HELP);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_OFFERS_HELP);
 	/* "I just thought I'd try to help however I could..." */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorFaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
 	fdScriptWait(30);
 	fdActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
 	fdScriptWait(100);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_IVAN_URGES_ESCAPE);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_IVAN_URGES_ESCAPE);
 	/* "With Dodonpa's henchmen gone, this is our chance to escape,..." */
 	fdScriptOpenMessage(ACTOR_IVAN, 0);
 	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
-		fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_HURRIES_PARTY);
+		fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_HURRIES_PARTY);
 		/* "Why did I even bother asking? Let's get a move on!" */
 		fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	}
@@ -3146,11 +3140,11 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdScriptWait(20);
 	fdActorFaceActor(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_DODONPA, 0);
 	fdScriptWait(20);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DONPA_PROMISES_CHANGE);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DONPA_PROMISES_CHANGE);
 	/* "The next time you meet Dodonpa, he will be a changed man." */
 	fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	fdActorRunRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
-	fdScriptSetMessageId(donpaMessage + JUDGMENT_DODONPA_PROMISES_TO_BEHAVE);
+	fdScriptSetMessageId(donpaMsg + JUDGMENT_DODONPA_PROMISES_TO_BEHAVE);
 	/* "I get it already! I won't do anything wrong! Come on, let me go!" */
 	fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -3265,7 +3259,7 @@ static void scLunpaFortressReadSentryMind(void)
    someone!" */
 static void scLunpaFortressTalkToSentry(void)
 {
-	Sint32 messageBase;
+	Sint32 msgBase;
 
 	fdActorShowEmote(
 		ACTOR_GROUND_FLOOR_SECOND_SENTRY, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
@@ -3278,8 +3272,8 @@ static void scLunpaFortressTalkToSentry(void)
 	fdActorFaceDirection(
 		ACTOR_GROUND_FLOOR_SECOND_SENTRY, FACING_SOUTH_SOUTHWEST, 0);
 	fdScriptWait(50);
-	messageBase = MsgLunpaLeftGuardHearsSomeone;
-	fdScriptSetMessageId(messageBase);
+	msgBase = MsgLunpaLeftGuardHearsSomeone;
+	fdScriptSetMessageId(msgBase);
 	/* "Huh? I could swear I just heard someone!" */
 	fdScriptShowMessage(ACTOR_GROUND_FLOOR_SECOND_SENTRY, 0);
 	fdActorSetAnimation(ACTOR_GROUND_FLOOR_SECOND_SENTRY, ANIM_SHAKE_HEAD);
@@ -3287,7 +3281,7 @@ static void scLunpaFortressTalkToSentry(void)
 	fdActorFaceDirection(
 		ACTOR_GROUND_FLOOR_SECOND_SENTRY, FACING_NORTH_NORTHWEST, 0);
 	fdScriptWait(40);
-	fdScriptSetMessageId(messageBase + 1);
+	fdScriptSetMessageId(msgBase + 1);
 	/* "You're crazy! Still, this place is kind of creepy. I never..." */
 	fdScriptShowMessage(ACTOR_GROUND_FLOOR_SECOND_SENTRY, 0);
 }
@@ -3301,8 +3295,8 @@ static void scLunpaFortressTalkToSentry(void)
    opened. */
 static void scLunpaFortressTalkToAttendant(void)
 {
-	Sint32 whisperMessage;
-	Sint32 familyMessage;
+	Sint32 whisperMsg;
+	Sint32 familyMsg;
 
 	fdScriptStart();
 	if(gmFlagGet(FLAG_DODONPA_LOCKED_UP) != 0) {
@@ -3329,8 +3323,8 @@ static void scLunpaFortressTalkToAttendant(void)
 				ACTOR_UPPER_FLOOR_ATTENDANT, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
 			fdActorFaceActor(
 				ACTOR_UPPER_FLOOR_ATTENDANT, ACTOR_PARTY_LEADER, 0);
-			whisperMessage = MsgLunpaShhhPleaseDont;
-			fdScriptSetMessageId(whisperMessage);
+			whisperMsg = MsgLunpaShhhPleaseDont;
+			fdScriptSetMessageId(whisperMsg);
 			/* "Shhh! Please don't wake Donpa!" */
 			fdScriptShowMessage(ACTOR_UPPER_FLOOR_ATTENDANT, 0);
 			fdActorFaceActor(
@@ -3342,12 +3336,12 @@ static void scLunpaFortressTalkToAttendant(void)
 			fdScriptWait(20);
 			fdActorShowEmote(ACTOR_UPPER_FLOOR_ATTENDANT,
 				EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-			fdScriptSetMessageId(whisperMessage + 1);
+			fdScriptSetMessageId(whisperMsg + 1);
 			/* "He's been driven to despair after battling a terrible foe." */
 			fdScriptShowMessage(ACTOR_UPPER_FLOOR_ATTENDANT, 0);
 			fdActorShowEmote(
 				ACTOR_UPPER_FLOOR_ATTENDANT, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
-			fdScriptSetMessageId(whisperMessage + 2);
+			fdScriptSetMessageId(whisperMsg + 2);
 			/* "It is all because of that Dodonpa!" */
 			fdScriptShowMessage(ACTOR_UPPER_FLOOR_ATTENDANT, 0);
 			fdScriptWait(70);
@@ -3355,15 +3349,15 @@ static void scLunpaFortressTalkToAttendant(void)
 				EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
 			fdActorFaceActor(
 				ACTOR_UPPER_FLOOR_ATTENDANT, ACTOR_PARTY_LEADER, 0);
-			fdScriptSetMessageId(whisperMessage + 3);
+			fdScriptSetMessageId(whisperMsg + 3);
 			/* "Are you the one who Donpa said would come to punish Dodonpa?" */
 			fdScriptOpenMessage(ACTOR_UPPER_FLOOR_ATTENDANT, 0);
 			if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-				fdScriptSetMessageId(whisperMessage + 4);
+				fdScriptSetMessageId(whisperMsg + 4);
 				/* "Donpa has waited a very long time for you." */
 				fdScriptOpenMessage(ACTOR_UPPER_FLOOR_ATTENDANT, 0);
 			} else {
-				fdScriptSetMessageId(whisperMessage + 5);
+				fdScriptSetMessageId(whisperMsg + 5);
 				/* "Oh, you're not? Well...can you do it anyway? Someone has
 				   to..." */
 				fdScriptOpenMessage(ACTOR_UPPER_FLOOR_ATTENDANT, 0);
@@ -3371,17 +3365,17 @@ static void scLunpaFortressTalkToAttendant(void)
 			fdScriptWait(60);
 			fdActorShowEmote(ACTOR_UPPER_FLOOR_ATTENDANT,
 				EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-			familyMessage = MsgLunpaDonpaKnowsCoddled;
-			fdScriptSetMessageId(familyMessage);
+			familyMsg = MsgLunpaDonpaKnowsCoddled;
+			fdScriptSetMessageId(familyMsg);
 			/* "Donpa knows that he coddled Dodonpa too much as a child." */
 			fdScriptOpenMessage(ACTOR_UPPER_FLOOR_ATTENDANT, 0);
 			fdActorRunRepeatedMotion(ACTOR_UPPER_FLOOR_ATTENDANT, 1);
-			fdScriptSetMessageId(familyMessage + 1);
+			fdScriptSetMessageId(familyMsg + 1);
 			/* "It pains him so much. He can't die with things the way they
 			   are." */
 			fdScriptOpenMessage(ACTOR_UPPER_FLOOR_ATTENDANT, 0);
 			fdActorSetAnimationAndWait(ACTOR_UPPER_FLOOR_ATTENDANT, ANIM_NOD);
-			fdScriptSetMessageId(familyMessage + 2);
+			fdScriptSetMessageId(familyMsg + 2);
 			/* "Maybe if Dodonpa's eyes are opened, Lunpa will be a good..." */
 			fdScriptOpenMessage(ACTOR_UPPER_FLOOR_ATTENDANT, 0);
 			gmFlagSet(FLAG_LUNPA_FORTRESS_ATTENDANT_TOLD_OF_DONPA);
@@ -3431,13 +3425,13 @@ static void scLunpaFortressReadDonpaMind(void)
    Dodonpa will really turn over a new leaf. */
 static void scLunpaFortressTalkToDonpa(void)
 {
-	Sint32 rewardMessage;
+	Sint32 rewardMsg;
 
 	if(gmFlagGet(FLAG_DODONPA_LOCKED_UP) != 0) {
 		if(gmFlagGet(FLAG_LUNPA_FORTRESS_REWARD_TAKEN) == 0 &&
 			fdScriptGetFlag(FLAG_LUNPA_FORTRESS_REWARD_SHOWN) == 0) {
-			rewardMessage = MsgLunpaThankHelpDodonpa;
-			fdScriptSetMessageId(rewardMessage);
+			rewardMsg = MsgLunpaThankHelpDodonpa;
+			fdScriptSetMessageId(rewardMsg);
 			/* "Thank you for your help with Dodonpa." */
 			fdScriptShowMessage(ACTOR_UPPER_FLOOR_DONPA, 0);
 			fdActorRunRepeatedMotion(ACTOR_UPPER_FLOOR_DONPA, 1);
@@ -3451,14 +3445,14 @@ static void scLunpaFortressTalkToDonpa(void)
 			fdActorSetDestinationOffset(ACTOR_UPPER_FLOOR_DONPA, -6, 0);
 			fdActorFaceActor(ACTOR_UPPER_FLOOR_DONPA, ACTOR_PARTY_LEADER, 0);
 			fdActorWaitForMoveById(ACTOR_UPPER_FLOOR_DONPA);
-			fdScriptSetMessageId(rewardMessage + 1);
+			fdScriptSetMessageId(rewardMsg + 1);
 			/* "I have a little something for you, for your teaching
 			   Dodonpa..." */
 			fdScriptShowMessage(ACTOR_UPPER_FLOOR_DONPA, 0);
 			fdActorRunRepeatedMotion(ACTOR_UPPER_FLOOR_DONPA, 1);
 			fdActorFaceActor(
 				ACTOR_UPPER_FLOOR_ATTENDANT, ACTOR_UPPER_FLOOR_DONPA, 0);
-			fdScriptSetMessageId(rewardMessage + 2);
+			fdScriptSetMessageId(rewardMsg + 2);
 			/* "Give these people a token of my gratitude." */
 			fdScriptShowMessage(ACTOR_UPPER_FLOOR_DONPA, 0);
 			fdScriptWait(70);
@@ -3469,7 +3463,7 @@ static void scLunpaFortressTalkToDonpa(void)
 			fdActorWaitForMoveById(ACTOR_UPPER_FLOOR_ATTENDANT);
 			fdActorFaceDirection(
 				ACTOR_UPPER_FLOOR_ATTENDANT, FACING_NORTH_NORTHEAST, 0);
-			fdScriptSetMessageId(rewardMessage + 3);
+			fdScriptSetMessageId(rewardMsg + 3);
 			/* "Deep within there is an interesting creature that I
 			   fought..." */
 			fdScriptShowMessage(ACTOR_UPPER_FLOOR_DONPA, 0);
@@ -3478,7 +3472,7 @@ static void scLunpaFortressTalkToDonpa(void)
 			fdActorSetDestinationOffset(ACTOR_UPPER_FLOOR_DONPA, 8, 0);
 			fdActorWaitForMoveById(ACTOR_UPPER_FLOOR_DONPA);
 			fdActorSetAnimation(ACTOR_UPPER_FLOOR_DONPA, ANIM_DONPA_IN_BED);
-			fdScriptSetMessageId(rewardMessage + 4);
+			fdScriptSetMessageId(rewardMsg + 4);
 			/* "I give this to you. Please take good care of it." */
 			fdScriptShowMessage(ACTOR_UPPER_FLOOR_DONPA, 0);
 			fdActorWalkTo(ACTOR_PARTY_LEADER, 896, 120);
@@ -3559,8 +3553,8 @@ static void scLunpaFortressAskWhereDodonpaIs(void)
    quiet. */
 static void scLunpaFortressTalkToStartledOldMan(void)
 {
-	Sint32 frightMessage;
-	Sint32 purposeMessage;
+	Sint32 frightMsg;
+	Sint32 purposeMsg;
 
 	if(fdScriptGetFlag(FLAG_LUNPA_FORTRESS_OLD_MAN_PROMISED_SILENCE) != 0) {
 		fdScriptSetMessageId(MsgLunpaWontTellAnyone);
@@ -3575,13 +3569,13 @@ static void scLunpaFortressTalkToStartledOldMan(void)
 			fdActorStop(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN);
 			fdActorWaitForScriptEndById(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN);
 			fdScriptWait(20);
-			frightMessage = MsgLunpaWhWhWho;
-			fdScriptSetMessageId(frightMessage);
+			frightMsg = MsgLunpaWhWhWho;
+			fdScriptSetMessageId(frightMsg);
 			/* "Wh-Wh-Who goes there!" */
 			fdScriptShowMessage(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN, 0);
 			fdActorShowEmote(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN,
 				EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-			fdScriptSetMessageId(frightMessage + 1);
+			fdScriptSetMessageId(frightMsg + 1);
 			/* "Wh-Who are you?" */
 			fdScriptShowMessage(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN, 0);
 			fdScriptWait(30);
@@ -3589,23 +3583,23 @@ static void scLunpaFortressTalkToStartledOldMan(void)
 				ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN, ANIM_SHAKE_HEAD);
 			fdScriptWait(30);
 		}
-		purposeMessage = MsgLunpaDontLookNearly;
-		fdScriptSetMessageId(purposeMessage);
+		purposeMsg = MsgLunpaDontLookNearly;
+		fdScriptSetMessageId(purposeMsg);
 		/* "You don't look nearly as mean as the thieves in the fortress." */
 		fdScriptShowMessage(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN, 0);
 		fdActorShowEmote(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN,
 			EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-		fdScriptSetMessageId(purposeMessage + 1);
+		fdScriptSetMessageId(purposeMsg + 1);
 		/* "Did you sneak into Lunpa Fortress in search of something?" */
 		fdScriptOpenMessage(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN, 0);
 		if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-			fdScriptSetMessageId(purposeMessage + 2);
+			fdScriptSetMessageId(purposeMsg + 2);
 			/* "The great merchant Hammet? I'd tell you if I knew, but I
 			   don't." */
 			fdScriptOpenMessage(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN, 0);
 			gmFlagSet(FLAG_LUNPA_FORTRESS_OLD_MAN_PROMISED_SILENCE);
 		} else {
-			fdScriptSetMessageId(purposeMessage + 3);
+			fdScriptSetMessageId(purposeMsg + 3);
 			/* "Who would sneak into such a dangerous place just for fun?" */
 			fdScriptOpenMessage(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN, 0);
 		}
@@ -3746,11 +3740,11 @@ static void scLunpaFortressInitGroundFloor(void)
 	case LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_EAST_PASSAGE:
 		FieldStateWork->transition =
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-		sySetFrameEvent(scLunpaFortressCheckEntranceGuard, EVENT_PASS_FRAME);
-		sySetFrameEvent(
-			scLunpaFortressCheckFirstEntranceSentry, EVENT_PASS_FRAME);
-		sySetFrameEvent(
-			scLunpaFortressCheckSecondEntranceSentry, EVENT_PASS_FRAME);
+		sySetTickEvent(scLunpaFortressCheckEntranceGuard, EVENT_PASS_TICK);
+		sySetTickEvent(
+			scLunpaFortressCheckFirstEntranceSentry, EVENT_PASS_TICK);
+		sySetTickEvent(
+			scLunpaFortressCheckSecondEntranceSentry, EVENT_PASS_TICK);
 		fdMapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
 		break;
 	case LUNPA_FORTRESS_GROUND_FLOOR_FEAST_ROOM_FROM_MAIN_PASSAGE:
@@ -3764,10 +3758,9 @@ static void scLunpaFortressInitGroundFloor(void)
 	case LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_TREASURE_ROOM:
 		FieldStateWork->transition =
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-		sySetFrameEvent(
-			scLunpaFortressCheckGroundFloorPatrol, EVENT_PASS_FRAME);
-		sySetFrameEvent(
-			scLunpaFortressCheckGroundFloorDoorApproach, EVENT_PASS_FRAME);
+		sySetTickEvent(scLunpaFortressCheckGroundFloorPatrol, EVENT_PASS_TICK);
+		sySetTickEvent(
+			scLunpaFortressCheckGroundFloorDoorApproach, EVENT_PASS_TICK);
 		sySynch(1);
 		fdMapGridCenterOnFollowedPoint();
 		sySynch(1);
@@ -3779,8 +3772,7 @@ static void scLunpaFortressInitGroundFloor(void)
 	case LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_BARREL_ROOM:
 		FieldStateWork->transition =
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-		sySetFrameEvent(
-			scLunpaFortressCheckNortheastHallGuard, EVENT_PASS_FRAME);
+		sySetTickEvent(scLunpaFortressCheckNortheastHallGuard, EVENT_PASS_TICK);
 		break;
 	default:
 		FieldStateWork->transition =
@@ -3828,7 +3820,7 @@ static void scLunpaFortressInitUpperFloor(void)
 		FieldStateWork->transition =
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
 		fdMapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
-		sySetFrameEvent(scLunpaFortressCheckPatrolPair, EVENT_PASS_FRAME);
+		sySetTickEvent(scLunpaFortressCheckPatrolPair, EVENT_PASS_TICK);
 		sySynch(1);
 		fdMapGridCenterOnFollowedPoint();
 		sySynch(1);
@@ -3851,7 +3843,7 @@ static void scLunpaFortressInitUpperFloor(void)
 		FieldStateWork->transition =
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
 		fdMapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
-		sySetFrameEvent(scLunpaFortressCheckHallPatrol, EVENT_PASS_FRAME);
+		sySetTickEvent(scLunpaFortressCheckHallPatrol, EVENT_PASS_TICK);
 		sySynch(1);
 		fdMapGridCenterOnFollowedPoint();
 		sySynch(1);
@@ -3872,8 +3864,8 @@ static void scLunpaFortressInitUpperFloor(void)
 	case LUNPA_FORTRESS_UPPER_FLOOR_METATILE_KEY_ROOM_FROM_MIDDLE_PASSAGE:
 	case LUNPA_FORTRESS_UPPER_FLOOR_METATILE_KEY_ROOM_FROM_EAST_PASSAGE:
 	case LUNPA_FORTRESS_UPPER_FLOOR_FROM_LUNPA_FORTRESS_GROUND_FLOOR_NORTH:
-		sySetFrameEvent(
-			scLunpaFortressCheckUpperFloorDoorApproach, EVENT_PASS_FRAME);
+		sySetTickEvent(
+			scLunpaFortressCheckUpperFloorDoorApproach, EVENT_PASS_TICK);
 		break;
 	default:
 		FieldStateWork->transition =

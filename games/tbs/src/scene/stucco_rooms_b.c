@@ -279,7 +279,7 @@ const CUE *scGetCues(void)
 	return StuccoRoomsBTriggersFestival;
 }
 
-/* Unused: leaves through TRANSITION_WINDOW, a screen transition of 24 frames.
+/* Unused: leaves through TRANSITION_WINDOW, a screen transition of 24 ticks.
 
    No script row names it. */
 UNUSED static void scStuccoRoomsBExitThroughWindow(void)
@@ -304,7 +304,7 @@ static void scStuccoRoomsBEnterDoor(void)
 	ACTOR		*actor;
 	FIELD_STATE *state;
 	Sint16		*cue;
-	Sint32		 doorIndex;
+	Sint32		 doorIdx;
 
 	state = FieldStateWork;
 	for(actorId = ACTOR_FIRST_PLACED; actorId < ACTOR_ID_COUNT; actorId++) {
@@ -314,10 +314,10 @@ static void scStuccoRoomsBEnterDoor(void)
 		}
 	}
 	cue = &state->stepCue;
-	doorIndex = *cue - METATILE_BEHAVIOR_STUCCO_ROOMS_B_FIRST_DOOR;
+	doorIdx = *cue - METATILE_BEHAVIOR_STUCCO_ROOMS_B_FIRST_DOOR;
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridAnimateMetatiles(StuccoRoomsBDoors[doorIndex].steps,
-		StuccoRoomsBDoors[doorIndex].x, StuccoRoomsBDoors[doorIndex].y);
+	fdMapGridAnimateMetatiles(StuccoRoomsBDoors[doorIdx].steps,
+		StuccoRoomsBDoors[doorIdx].x, StuccoRoomsBDoors[doorIdx].y);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
 	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -700,7 +700,7 @@ static void scStuccoRoomsBTalkToHealer(Sint32 speaker)
 	}
 }
 
-/* An actor that squashes and stretches twice, then rests 40 frames. */
+/* An actor that squashes and stretches twice, then rests 40 ticks. */
 Sint32 StuccoRoomsBSquashStretch[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1)),
 	SC_SET(SW_SCALE_Y, toFIXED(1)),

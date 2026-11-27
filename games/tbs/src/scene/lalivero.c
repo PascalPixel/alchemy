@@ -39,7 +39,7 @@
 #include "text/msg_ids.h"
 
 Sint32				  scInit(void);
-extern Sint32		  Lalivero_CryingScript[];
+extern Sint32		  LaliveroCryingScript[];
 extern SCENE_ENTRANCE LaliveroEntrances[];
 extern Uint32		  LaliveroExits[];
 extern ACTOR_PLACE	  LaliveroActorPlacements[];
@@ -74,7 +74,7 @@ typedef enum LALIVERO_ACTOR_ID {
 	ACTOR_WEST_SOLDIER = ACTOR_FIRST_PLACED,
 	/* "They were terrible! We were no match..." */
 	ACTOR_EAST_SOLDIER,
-	/* A young man with brown hair who sobs for Sheba (Lalivero_CryingScript).
+	/* A young man with brown hair who sobs for Sheba (LaliveroCryingScript).
 	   "Ohh... They took Sheba and headed for the ruins." */
 	ACTOR_VILLAGER_THEY_TOOK_SHEBA,
 	/* A woman with fair hair. "Sheba is our only hope. If something happens to
@@ -176,7 +176,7 @@ static void scLaliveroTalkToVillagerTheyTookSheba(Sint32 actorId)
 	fdScriptShowMessage(actorId, 0);
 	fdActorFaceDirection(actorId, FACING_NORTH, 0);
 	fdScriptWait(20);
-	fdActorSetScript(actorId, Lalivero_CryingScript);
+	fdActorSetScript(actorId, LaliveroCryingScript);
 }
 
 /* After Venus Lighthouse, the fair-haired woman in Lalivero asks whether the
@@ -229,7 +229,7 @@ static void scLaliveroEnterDoor(void)
 		fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
 	}
 	fdScriptWait(10);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_FRAMES;
+	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
 	syImportScriptSetExitRequest(door);
 }
 
@@ -242,7 +242,7 @@ static void scLaliveroEnterDoorway(void)
 	Sint16		*cue = (Sint16 *)&state->stepCue;
 	Sint32		 exit = *cue;
 
-	state->transitionFrm = MAP_TRANSITION_FRAMES;
+	state->transitionFrm = MAP_TRANSITION_TICKS;
 	syImportScriptSetExitRequest(exit);
 }
 
@@ -261,7 +261,7 @@ static void scLaliveroWatchWoundedSoldiers(void)
 	fdActorSetAnimation(ACTOR_WEST_SOLDIER, ANIM_STILL);
 	fdActorSetAnimation(ACTOR_EAST_SOLDIER, ANIM_STILL);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	/* Iodem steps out from the party and looks them over. */
 	syFieldActorLaunchFromLeader(ACTOR_IODEM, 8, -16, FACING_NORTH);
@@ -880,7 +880,7 @@ const CUE *scGetCues(void)
 Sint32 scInit(void)
 {
 	ACTOR		  *actor;
-	SPR			  *sprite;
+	SPR			  *spr;
 	ICON_TRANSFER *icon;
 
 	/* Coming back from the lighthouse switches the town to its later state. */
@@ -912,14 +912,14 @@ Sint32 scInit(void)
 	actor = fdActorGet(ACTOR_BLACK_ORB);
 	actor->retainSprCache = 1;
 	actor->motionFlg = 0;
-	sprite = actor->spr;
+	spr = actor->spr;
 	actor->y.fixed = toFIXED(10);
-	sprite->cnt = 0;
-	sprite->image.fullCol = 0;
-	sprite->image.pal = 0;
+	spr->cnt = 0;
+	spr->image.fullCol = 0;
+	spr->image.pal = 0;
 	icon = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	mnIconDrawItem(ITEM_BLACK_ORB);
-	syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, icon->tiles);
+	syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, icon->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 
 	if(gmFlagGet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
@@ -983,8 +983,8 @@ Sint32 scInit(void)
 }
 
 /* The sobbing of ACTOR_VILLAGER_THEY_TOOK_SHEBA: the sprite squashes and
-   stretches twice, then rests 80 frames. */
-Sint32 Lalivero_CryingScript[] = {
+   stretches twice, then rests 80 ticks. */
+Sint32 LaliveroCryingScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(1)),
 	SC_SET(SW_SCALE_Y, toFIXED(1)),
 	SC_ADD(SW_SCALE_X, -toFIXED(1) / 4),
@@ -1083,7 +1083,7 @@ ACTOR_PLACE LaliveroActorPlacements[] = {
 		224, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		288, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (Sint32)Lalivero_CryingScript,
+	ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (Sint32)LaliveroCryingScript,
 		248, 0, 96, FACING_NORTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
 		312, 0, 280, FACING_EAST, TALK_FACING_PARTY, 0),

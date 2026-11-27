@@ -21,26 +21,26 @@ void fdRequestBattleFromEncounterTable(Sint32 row, Sint32 column)
    element's last Djinni stands for the one of The Broken Seal's chosen for it
    (SCENE_STATE_CHOSEN_DJINN; none: nothing happens). The low 8 bits of flags
    are the Djinni's actor, which hops first unless DJINN_NO_HOP is set. */
-void fdRequestDjinnBattle(Uint32 flags, Uint32 djinn)
+void fdRequestDjinnBattle(Uint32 flg, Uint32 djinn)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
-	Uint32		 skipHop = flags & DJINN_NO_HOP;
+	Uint32		 skipHop = flg & DJINN_NO_HOP;
 	Uint32		 element;
-	Sint32		 index;
+	Sint32		 idx;
 
-	flags &= DJINN_ACTOR_MASK;
+	flg &= DJINN_ACTOR_MASK;
 	element = djinn / DJINN_PER_ELEMENT;
-	index = djinn % DJINN_PER_ELEMENT;
+	idx = djinn % DJINN_PER_ELEMENT;
 
-	if(index == DJINN_PER_ELEMENT - 1) {
-		index = SceneLocalState[element + SCENE_STATE_CHOSEN_DJINN];
-		if(index == 0)
+	if(idx == DJINN_PER_ELEMENT - 1) {
+		idx = SceneLocalState[element + SCENE_STATE_CHOSEN_DJINN];
+		if(idx == 0)
 			return;
-		index--;
+		idx--;
 	}
-	djinn = element * DJINN_PER_ELEMENT + index;
+	djinn = element * DJINN_PER_ELEMENT + idx;
 	if(skipHop == 0)
-		fdDjinnRunBattleStartHop(flags);
+		fdDjinnRunBattleStartHop(flg);
 	/* DJINN_NO_HOP rides along: it tells fdDjinnRestoreActorAfterBattle to put
 	   the Djinni back 32 pixels north of the leader, not at its placement's
 	   position. */
@@ -82,18 +82,18 @@ void fdScriptLeaveFor(Uint16 sceneId, Uint16 entrance)
 	state->exit = EXIT_KEEP_DESTINATION;
 }
 
-/* Plays SE_STOP_EXIT_SE, then soundId (SOUND_FADE_OUT_ACTION_SE for -1), and
-   remembers soundId for fdPlayQueuedMusic in the field state's queuedSnd; -1 is
+/* Plays SE_STOP_EXIT_SE, then sndId (SOUND_FADE_OUT_ACTION_SE for -1), and
+   remembers sndId for fdPlayQueuedMusic in the field state's queuedSnd; -1 is
    remembered as none, so it plays SOUND_FADE_OUT_ACTION_SE now and nothing
    later. */
-void fdQueueMusic(Sint32 soundId)
+void fdQueueMusic(Sint32 sndId)
 {
-	FieldStateWork->queuedSnd = soundId;
-	if((Sint16)soundId == -1) {
-		soundId = SOUND_FADE_OUT_ACTION_SE;
+	FieldStateWork->queuedSnd = sndId;
+	if((Sint16)sndId == -1) {
+		sndId = SOUND_FADE_OUT_ACTION_SE;
 	}
 	sySndPlayStub(SE_STOP_EXIT_SE);
-	sySndPlayStub(soundId);
+	sySndPlayStub(sndId);
 }
 
 /* A script that does nothing. */
@@ -116,11 +116,11 @@ void fdPlayQueuedMusic(void)
 
 /* Shows message in a script and clears FLAG_NOTHING_HAPPENS; when someone in
    the party has Scoop, the field menu then opens. */
-void fdScriptShowMessageAndOfferScoop(Sint32 message)
+void fdScriptShowMessageAndOfferScoop(Sint32 msg)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	mnFieldMessageShowStub(message, FIELD_MESSAGE_ZOOM);
+	mnFieldMessageShowStub(msg, FIELD_MESSAGE_ZOOM);
 	syGameFlagClear(FLAG_NOTHING_HAPPENS);
 	fdScriptEnd();
 	if(gmPartyFindOwnerWithActionStub(ABILITY_SCOOP) != -1)
@@ -129,7 +129,7 @@ void fdScriptShowMessageAndOfferScoop(Sint32 message)
 
 /* Plays sound when the actor is in view: within 152 pixels across and 112 up or
    down the screen of the actor the camera follows. */
-void fdActorPlaySndInView(ACTOR *actor, Sint32 sound)
+void fdActorPlaySndInView(ACTOR *actor, Sint32 snd)
 {
 	ACTOR *focus = FieldStateWork->camera;
 
@@ -140,7 +140,7 @@ void fdActorPlaySndInView(ACTOR *actor, Sint32 sound)
 	if(ABS((focus->z.fixed - focus->y.fixed) -
 		   (actor->z.fixed - actor->y.fixed)) > toFIXED(112))
 		return;
-	sySndPlayStub(sound);
+	sySndPlayStub(snd);
 }
 
 /* Counts one more weird answer Felix gives

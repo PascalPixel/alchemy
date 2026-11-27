@@ -64,7 +64,7 @@ layer mixes into the others, and for how long.
 The World Map is four times a town's grid in each direction, too big to
 unpack whole. Its ground is cut into squares of 512 pixels, each packed
 separately, and only the four around the party are kept unpacked. As the
-party walks, the next square is unpacked, never more than one in a frame.
+party walks, the next square is unpacked, never more than one in a tick.
 
 ## Loading a map
 

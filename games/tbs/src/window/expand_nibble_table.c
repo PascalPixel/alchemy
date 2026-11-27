@@ -5,7 +5,7 @@
 
 /* The colour each pixel's colour becomes: the first sixteen draw colour 1 as
    colour 10, the second sixteen leave every colour as it is. */
-const Uint16 Graphics_ExpandNibbleTable[] = {
+const Uint16 GraphicsExpandNibbleTable[] = {
 	0,
 	10,
 	2,
@@ -41,9 +41,9 @@ const Uint16 Graphics_ExpandNibbleTable[] = {
 };
 
 #if LANGUAGE == LANGUAGE_SPANISH
-const Uint8 Link_TimeLabelString[] = "TMPO.";
+const Uint8 LinkTimeLabelString[] = "TMPO.";
 #elif LANGUAGE == LANGUAGE_FRENCH
-const Uint8 Link_TimeLabelString[] = "TEMPS";
+const Uint8 LinkTimeLabelString[] = "TEMPS";
 #else
-const Uint8 Link_TimeLabelString[] = "TIME";
+const Uint8 LinkTimeLabelString[] = "TIME";
 #endif

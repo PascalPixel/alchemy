@@ -12,7 +12,7 @@
 #define UNLEASH_PERCENT(percent) ((percent) / 5)
 
 /* clang-format off */
-const ITEM_DEFINITION Item_DefinitionTable[] = {
+const ITEM_DEFINITION ItemDefinitionTable[] = {
 	[ITEM_NONE] = {
 		.element = ELEMENT_NONE,
 	},

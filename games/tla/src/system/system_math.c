@@ -13,16 +13,16 @@ Uint32 syRandom(void)
 	return (Uint16)(value >> 8);
 }
 
-/* Moves the point `position` by `radius` in direction `angle` on the ground
+/* Moves the point `pos` by `radius` in direction `ang` on the ground
    plane: x by the cosine, z by the sine. */
-void syVectorAddPolarOffset(FIXED radius, ANGLE angle, POINT position)
+void syVectorAddPolarOffset(FIXED radius, ANGLE ang, POINT pos)
 {
-	*position++ += syMulFX(radius, sySin(angle + DEGtoANG(90)));
-	position++;
-	*position += syMulFX(radius, sySin(angle));
+	*pos++ += syMulFX(radius, sySin(ang + DEGtoANG(90)));
+	pos++;
+	*pos += syMulFX(radius, sySin(ang));
 }
 
-/* The entries of Math_TanTable in a quarter turn, which syAtan searches, the
+/* The entries of MathTanTable in a quarter turn, which syAtan searches, the
    angle between neighbouring entries, and the tangent of the last one searched,
    in 8.8, beyond which syAtan gives a quarter turn. */
 #define ATAN_ENTRIES	 256
@@ -34,7 +34,7 @@ void syVectorAddPolarOffset(FIXED radius, ANGLE angle, POINT position)
    binary-searches the tangent table to ATAN_ENTRY_ANGLE. */
 ANGLE syAtan(FIXED x, FIXED y)
 {
-	const Uint16 *table;
+	const Uint16 *tbl;
 	Sint32		  value;
 	Sint32		  ratio;
 	Sint32		  result;
@@ -64,58 +64,58 @@ ANGLE syAtan(FIXED x, FIXED y)
 			   decides one bit of the entry's index, from the highest down, and
 			   so of the angle, from an eighth of a turn down to
 			   ATAN_ENTRY_ANGLE. */
-			table = &Math_TanTable[ATAN_ENTRIES / 2 - 1];
+			tbl = &MathTanTable[ATAN_ENTRIES / 2 - 1];
 			result = 0;
 			bit = DEGtoANG(45);
 
-			value = *table;
-			table -= ATAN_ENTRIES / 4;
+			value = *tbl;
+			tbl -= ATAN_ENTRIES / 4;
 			if(ratio > value) {
 				result += bit;
-				table += ATAN_ENTRIES / 2;
+				tbl += ATAN_ENTRIES / 2;
 			}
-			value = *table;
+			value = *tbl;
 			bit >>= 1;
-			table -= ATAN_ENTRIES / 8;
+			tbl -= ATAN_ENTRIES / 8;
 			if(ratio > value) {
 				result += bit;
-				table += ATAN_ENTRIES / 4;
+				tbl += ATAN_ENTRIES / 4;
 			}
-			value = *table;
+			value = *tbl;
 			bit >>= 1;
-			table -= ATAN_ENTRIES / 16;
+			tbl -= ATAN_ENTRIES / 16;
 			if(ratio > value) {
 				result += bit;
-				table += ATAN_ENTRIES / 8;
+				tbl += ATAN_ENTRIES / 8;
 			}
-			value = *table;
+			value = *tbl;
 			bit >>= 1;
-			table -= ATAN_ENTRIES / 32;
+			tbl -= ATAN_ENTRIES / 32;
 			if(ratio > value) {
 				result += bit;
-				table += ATAN_ENTRIES / 16;
+				tbl += ATAN_ENTRIES / 16;
 			}
-			value = *table;
+			value = *tbl;
 			bit >>= 1;
-			table -= ATAN_ENTRIES / 64;
+			tbl -= ATAN_ENTRIES / 64;
 			if(ratio > value) {
 				result += bit;
-				table += ATAN_ENTRIES / 32;
+				tbl += ATAN_ENTRIES / 32;
 			}
-			value = *table;
+			value = *tbl;
 			bit >>= 1;
-			table -= ATAN_ENTRIES / 128;
+			tbl -= ATAN_ENTRIES / 128;
 			if(ratio > value) {
 				result += bit;
-				table += ATAN_ENTRIES / 64;
+				tbl += ATAN_ENTRIES / 64;
 			}
-			value = *table;
-			table--;
+			value = *tbl;
+			tbl--;
 			if(ratio > value) {
 				result += 2 * ATAN_ENTRY_ANGLE;
-				table += 2;
+				tbl += 2;
 			}
-			value = *table;
+			value = *tbl;
 			if(ratio > value)
 				result += ATAN_ENTRY_ANGLE;
 		}

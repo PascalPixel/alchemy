@@ -4,7 +4,7 @@
 #include "battle/battle.h"
 
 /* clang-format off */
-FIXED BattleKnockback_Acceleration[] = {
+FIXED BattleKnockbackAcceleration[] = {
 	[KNOCKBACK_NUDGE]  = toFIXED(1),
 	[KNOCKBACK_HOP]    = toFIXED(1),
 	[KNOCKBACK_LEAP]   = toFIXED(1),
@@ -15,7 +15,7 @@ FIXED BattleKnockback_Acceleration[] = {
 	[KNOCKBACK_JOLT]   = toFIXED(1),
 };
 
-FIXED BattleKnockback_SpeedLimit[] = {
+FIXED BattleKnockbackSpeedLimit[] = {
 	[KNOCKBACK_NUDGE]  = toFIXED(4),
 	[KNOCKBACK_HOP]    = toFIXED(4),
 	[KNOCKBACK_LEAP]   = toFIXED(4),
@@ -26,7 +26,7 @@ FIXED BattleKnockback_SpeedLimit[] = {
 	[KNOCKBACK_JOLT]   = toFIXED(4),
 };
 
-FIXED BattleKnockback_VelocityY[] = {
+FIXED BattleKnockbackVelocityY[] = {
 	[KNOCKBACK_NUDGE]  = toFIXED(3),
 	[KNOCKBACK_HOP]    = toFIXED(6),
 	[KNOCKBACK_LEAP]   = toFIXED(7),
@@ -37,7 +37,7 @@ FIXED BattleKnockback_VelocityY[] = {
 	[KNOCKBACK_JOLT]   = toFIXED(11) / 2,
 };
 
-Sint32 BattleKnockback_DistancePercent[] = {
+Sint32 BattleKnockbackDistancePercent[] = {
 	[KNOCKBACK_NUDGE]  = 140,
 	[KNOCKBACK_HOP]    = 140,
 	[KNOCKBACK_LEAP]   = 150,
@@ -50,4 +50,4 @@ Sint32 BattleKnockback_DistancePercent[] = {
 /* clang-format on */
 
 /* Unused: three words after the knockback tables that no code names. */
-Sint32 BattleKnockback_UnusedWords[] = {0, 20, 27};
+Sint32 BattleKnockbackUnusedWords[] = {0, 20, 27};

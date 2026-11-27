@@ -213,10 +213,10 @@ typedef enum ABILITY_EFFECT {
 	ABILITY_EFFECT_CALL_QUEUED = 87,
 	ABILITY_EFFECT_GUARD_AURA = 88, /* Guard Aura: as Total Defense */
 	ABILITY_EFFECT_VENGEANCE = 89,	/* Vengeance */
-	/* Raiden's Wrath: lands only on a dragon (Enemy_DragonIds), and ignores its
+	/* Raiden's Wrath: lands only on a dragon (EnemyDragonIds), and ignores its
 	   Defense. */
 	ABILITY_EFFECT_SLAY_DRAGON = 90,
-	/* Trident: lands only on a sea creature (Enemy_SeaCreatureIds), and ignores
+	/* Trident: lands only on a sea creature (EnemySeaCreatureIds), and ignores
 	   its Defense. */
 	ABILITY_EFFECT_SLAY_SEA_CREATURE = 91
 } ABILITY_EFFECT;
@@ -296,7 +296,7 @@ typedef struct BATTLE_AI_STATE {
 	/* ACTION_STRATEGY_RANDOM_START has drawn its start. */
 	unsigned initialized : 1;
 	unsigned selection : 3; /* the place in its action list, 0 to 7 */
-	/* the Dullahan's form, 0 to 2 (BattleAI_DullahanForms) */
+	/* the Dullahan's form, 0 to 2 (BattleAIDullahanForms) */
 	unsigned form : 2;
 	unsigned remaining : 26; /* no code names it */
 } BATTLE_AI_STATE;

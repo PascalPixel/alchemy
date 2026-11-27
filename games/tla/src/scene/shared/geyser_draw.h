@@ -6,9 +6,9 @@ void btGeyserDraw(void)
 	GEYSER		*entry = state->entries;
 	Sint32		 i;
 	Uint32		 tile = VramCacheEntries[state->entry].ofs >> 5;
-	Sint32		 frame;
+	Sint32		 frm;
 	Uint32		*oam = state->block;
-	Sint32		 count = 0;
+	Sint32		 cnt = 0;
 	MAP_STATE	*map = Ram_HeapSlots->mapGrid;
 	Sint32		 viewX, viewZ, originY;
 	ACTOR		*actor;
@@ -27,9 +27,9 @@ void btGeyserDraw(void)
 		if(entry->id == 0 || entry->height == 0)
 			continue;
 		actor = fdActorGetById(entry->id);
-		frame = (FrameCount % 12) / 3 * 8 + 32;
+		frm = (TickCount % 12) / 3 * 8 + 32;
 		for(pieceY = 0; pieceY < entry->height; pieceY += 16) {
-			if(count >= GEYSER_SPRITES)
+			if(cnt >= GEYSER_SPRITES)
 				continue;
 			x = actor->x.fixed - viewX;
 			y = actor->y.fixed + toFIXED(pieceY) - originY;
@@ -45,12 +45,12 @@ void btGeyserDraw(void)
 			p = oam;
 			*p++ = 0;
 			*p++ = screenY | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
-			*p = (tile + frame) | OBJ_PRIORITY(2);
+			*p = (tile + frm) | OBJ_PRIORITY(2);
 			syOAMAddSprAtDepthClamped(oam, depth);
 			oam += 3;
-			count++;
+			cnt++;
 		}
-		if(count >= GEYSER_SPRITES)
+		if(cnt >= GEYSER_SPRITES)
 			continue;
 		x = actor->x.fixed - viewX;
 		y = actor->y.fixed + toFIXED(entry->height) - originY;
@@ -69,9 +69,9 @@ void btGeyserDraw(void)
 		p = oam;
 		*p++ = 0;
 		*p++ = screenY | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
-		*p = (tile + frame - 32) | OBJ_PRIORITY(2);
+		*p = (tile + frm - 32) | OBJ_PRIORITY(2);
 		syOAMAddSprAtDepthClamped(oam, depth);
 		oam += 3;
-		count++;
+		cnt++;
 	}
 }

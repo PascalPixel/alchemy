@@ -2,8 +2,8 @@
    scatter debris keep a copy of: Gaia Rock's stone heads, Taopo Swamp's tremor,
    Mars Lighthouse's ice and rubble. */
 
-/* A piece of debris flies for 40 frames, then blinks ten times and is gone. */
-Uint32 Debris_Script[] = {
+/* A piece of debris flies for 40 ticks, then blinks ten times and is gone. */
+Uint32 DebrisScript[] = {
 	SC_WAIT(40),
 	SC_LABEL(1),
 	SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_NONE),

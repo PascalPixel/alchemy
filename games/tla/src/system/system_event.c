@@ -1,4 +1,4 @@
-/* Events: per-frame and VBlank functions in priority order. Part of
+/* Events: per-tick and VBlank functions in priority order. Part of
    system.c. */
 
 /* Empties the event table: every slot gets no function, priority
@@ -19,14 +19,13 @@ void syInitEvent(void)
 	EventsInitialized = 1;
 }
 
-/* Unused: copies `byteCount` bytes a word at a time. */
-UNUSED void syCopyEventWords(
-	Uint32 *destination, Uint32 *source, Uint32 byteCount)
+/* Unused: copies `byteCnt` bytes a word at a time. */
+UNUSED void syCopyEventWords(Uint32 *dst, Uint32 *src, Uint32 byteCnt)
 {
-	Uint32 index;
-	byteCount >>= 2;
-	for(index = 0; index < byteCount; index++)
-		*destination++ = *source++;
+	Uint32 idx;
+	byteCnt >>= 2;
+	for(idx = 0; idx < byteCnt; idx++)
+		*dst++ = *src++;
 }
 
 /* Bubble-sorts the event table by priority, highest first, so each pass runs
@@ -79,17 +78,17 @@ UNUSED Sint32 syFindEvent(EVENT_FUNC func)
 	return result;
 }
 
-/* Adds an event running `func` with priority `priority`, or gives an event
+/* Adds an event running `func` with priority `pri`, or gives an event
    already running it the new priority, and re-sorts the table. Returns its
    slot, or -1 when all EVENT_COUNT slots are taken. */
-Sint32 sySetEvent(EVENT_FUNC func, Sint32 priority)
+Sint32 sySetEvent(EVENT_FUNC func, Sint32 pri)
 {
 	Uint32 savedIme;
-	Sint32 index;
+	Sint32 idx;
 	EVENT *event;
 	Sint32 i;
 
-	index = -1;
+	idx = -1;
 	event = EventBuf;
 	/* DEAD: nothing uses the status read here; the ROM keeps the load. */
 	(void)EventsRunning;
@@ -98,26 +97,26 @@ Sint32 sySetEvent(EVENT_FUNC func, Sint32 priority)
 	   slot. */
 	for(i = 0; i < EVENT_COUNT; i++, event++) {
 		if(event->func == (Uint32)func) {
-			event->pri = priority;
-			index = i;
+			event->pri = pri;
+			idx = i;
 			break;
 		}
 	}
 	event = EventBuf;
-	if(index == -1) {
+	if(idx == -1) {
 		for(i = 0; i < EVENT_COUNT; i++, event++) {
 			if(event->func == 0) {
 				event->func = (Uint32)func;
-				event->pri = priority;
+				event->pri = pri;
 				event->flg = 0;
-				index = i;
+				idx = i;
 				break;
 			}
 		}
 	}
 	sySortEvents();
 	IRQ_UNLOCK(savedIme);
-	return index;
+	return idx;
 }
 
 /* Unused: an empty function. */
@@ -273,7 +272,7 @@ Sint32 syResumeOverlayEvents(void)
 }
 
 /* Runs one pass of the events: every event whose priority's high byte matches
-   `pass`'s (EVENT_PASS_VBLANK or EVENT_PASS_FRAME), in table order. */
+   `pass`'s (EVENT_PASS_VBLANK or EVENT_PASS_TICK), in table order. */
 void syExecuteEvent(Sint32 pass)
 {
 	EVENT *event = EventBuf;
@@ -306,18 +305,18 @@ void syExecuteEvent(Sint32 pass)
 }
 
 /* Returns how many events run in pass `pass` (EVENT_PASS_VBLANK or
-   EVENT_PASS_FRAME); before the event table is set up, the pass's high byte. */
+   EVENT_PASS_TICK); before the event table is set up, the pass's high byte. */
 Sint32 syCountEventsInPass(Sint32 pass)
 {
 	Uint32 cursor;
 	EVENT *event;
-	Sint32 count;
+	Sint32 cnt;
 	Sint32 i;
-	Uint8 *status = &EventsInitialized;
+	Uint8 *stat = &EventsInitialized;
 	Uint32 observed;
 
-	count = 0;
-	observed = *status;
+	cnt = 0;
+	observed = *stat;
 	cursor = (Uint32)EventBuf;
 	pass >>= 8;
 	if(observed == 1) {
@@ -325,19 +324,19 @@ Sint32 syCountEventsInPass(Sint32 pass)
 		cursor -= sizeof(*event);
 		for(;;) {
 			if(--i == 0)
-				return count;
+				return cnt;
 			cursor += sizeof(*event);
 			event = (EVENT *)cursor;
 			if(EVENT_STATE_HIGH(event) == pass)
-				count++;
+				cnt++;
 		}
 	}
 	return pass;
 }
 
-/* Runs pass `pass`'s events in table order, up to the first event of the frame
-   pass: the VBlank handler's pass, whose events sort before the frame's. */
-void syRunPassBeforeFrameEvents(Sint32 pass)
+/* Runs pass `pass`'s events in table order, up to the first event of the tick
+   pass: the VBlank handler's pass, whose events sort before the tick's. */
+void syRunPassBeforeTickEvents(Sint32 pass)
 {
 	EVENT *event = EventBuf;
 	Sint32 remaining;
@@ -350,7 +349,7 @@ void syRunPassBeforeFrameEvents(Sint32 pass)
 			if(--remaining == 0)
 				return;
 			event++;
-			if(EVENT_STATE_HIGH(event) == EVENT_PASS_FRAME >> 8)
+			if(EVENT_STATE_HIGH(event) == EVENT_PASS_TICK >> 8)
 				return;
 			if(EVENT_STATE_HIGH(event) == pass) {
 				EVENT_INT_FUNC func = *(EVENT_INT_FUNC *)&event->func;

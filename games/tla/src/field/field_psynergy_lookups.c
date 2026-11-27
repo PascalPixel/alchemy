@@ -7,7 +7,7 @@
 
 /* The screen entries of Parch's 16x16-tile picture (fdBgMapDrawClipped16x16), */
 /* row by row: tile numbers with their flip bits. */
-const Uint16 Parch_PictureTiles[256] = {
+const Uint16 ParchPictureTiles[256] = {
 	0, 1, 2, 3, 4, 5, 6, 7,
 	64, 65, 66, 67, 68, 69, 70, 71,
 	8, 9, 10, 11, 12, 13, 14, 15,
@@ -44,7 +44,7 @@ const Uint16 Parch_PictureTiles[256] = {
 
 /* {width, height} in pixels of each sprite shape and size, by shape * 4 + */
 /* size: square, wide, then tall. */
-const Uint8 Oam_ShapeSizes[12][2] = {
+const Uint8 OamShapeSizes[12][2] = {
 	{8, 8},   {16, 16}, {32, 32}, {64, 64},
 	{16, 8},  {32, 8},  {32, 16}, {64, 32},
 	{8, 16},  {8, 32},  {16, 32}, {32, 64},
@@ -52,26 +52,26 @@ const Uint8 Oam_ShapeSizes[12][2] = {
 
 /* The colour ramp from 224 to 255 darkened by one, two and four levels: */
 /* each colour's index one, two or four steps down, 0 below 224. */
-const Uint8 ColorBuffer_DarkenOneLevelMap[32] = {
+const Uint8 ColorBufferDarkenOneLevelMap[32] = {
 	0, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238,
 	239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254,
 };
 
-/* As ColorBuffer_DarkenOneLevelMap, two steps down. */
-const Uint8 ColorBuffer_DarkenTwoLevelsMap[32] = {
+/* As ColorBufferDarkenOneLevelMap, two steps down. */
+const Uint8 ColorBufferDarkenTwoLevelsMap[32] = {
 	0, 0, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237,
 	238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253,
 };
 
-/* As ColorBuffer_DarkenOneLevelMap, four steps down. */
-const Uint8 ColorBuffer_DarkenFourLevelsMap[32] = {
+/* As ColorBufferDarkenOneLevelMap, four steps down. */
+const Uint8 ColorBufferDarkenFourLevelsMap[32] = {
 	0, 0, 0, 0, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235,
 	236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251,
 };
 
 /* Unused: 41 rows of four words, each 2, two numbers and -1, after the */
 /* darkening maps; nothing names them. */
-const Sint32 FieldPsynergy_UnusedRows[41][4] = {
+const Sint32 FieldPsynergyUnusedRows[41][4] = {
 	{2, 2, 10, -1},
 	{2, 4, 21, -1},
 	{2, 5, 23, -1},

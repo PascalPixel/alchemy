@@ -5,12 +5,12 @@ void scFreezePuddleIntoPillar(void)
 {
 	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 	ACTOR		*pillar;
-	Sint32		 flags;
+	Sint32		 flg;
 
-	fdFlagBlockApplyFlags(DailaRooms_PillarFrozenFlags);
+	fdFlagBlockApplyFlags(DailaRoomsPillarFrozenFlags);
 	pillar = state->movedBlock;
-	flags = ACTOR_PRIORITY_AUTOMATIC;
-	flags |= pillar->priFlg;
-	flags &= (Uint8)~ACTOR_PRIORITY_UNDERFOOT;
-	pillar->priFlg = flags;
+	flg = ACTOR_PRIORITY_AUTOMATIC;
+	flg |= pillar->priFlg;
+	flg &= (Uint8)~ACTOR_PRIORITY_UNDERFOOT;
+	pillar->priFlg = flg;
 }

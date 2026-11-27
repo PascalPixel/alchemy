@@ -76,26 +76,26 @@
 #include "scene/floating_nut.h"
 #include "scene/catch_nut.h"
 
-extern Uint16		  CrossboneIsle_DoorOpens[];
-extern SCENE_ENTRANCE CrossboneIsle_IsleEntrances[];
-extern SCENE_ENTRANCE CrossboneIsle_CaveEntranceEntrances[];
-extern SCENE_ENTRANCE CrossboneIsle_FloatingLogsEntrances[];
-extern SCENE_ENTRANCE CrossboneIsle_PierEntrances[];
-extern SCENE_ENTRANCE CrossboneIsle_PirateShipEntrances[];
-extern Uint32		  CrossboneIsle_Exits[];
-extern ACTOR_PLACE	  CrossboneIsle_NoActorPlacements[];
-extern ACTOR_PLACE	  CrossboneIsle_IsleActorPlacements[];
-extern ACTOR_PLACE	  CrossboneIsle_FloatingLogsActorPlacements[];
-extern ACTOR_PLACE	  CrossboneIsle_FloorActorPlacements[];
-extern CUE			  CrossboneIsle_FloorCues[];
-extern CUE			  CrossboneIsle_CaveEntranceCues[];
-extern CUE			  CrossboneIsle_IsleCues[];
-extern CUE			  CrossboneIsle_FloatingLogsCues[];
-extern CUE			  CrossboneIsle_PierCues[];
-extern CUE			  CrossboneIsle_PirateShipCues[];
+extern Uint16		  CrossboneIsleDoorOpens[];
+extern SCENE_ENTRANCE CrossboneIsleIsleEntrances[];
+extern SCENE_ENTRANCE CrossboneIsleCaveEntranceEntrances[];
+extern SCENE_ENTRANCE CrossboneIsleFloatingLogsEntrances[];
+extern SCENE_ENTRANCE CrossboneIslePierEntrances[];
+extern SCENE_ENTRANCE CrossboneIslePirateShipEntrances[];
+extern Uint32		  CrossboneIsleExits[];
+extern ACTOR_PLACE	  CrossboneIsleNoActorPlacements[];
+extern ACTOR_PLACE	  CrossboneIsleIsleActorPlacements[];
+extern ACTOR_PLACE	  CrossboneIsleFloatingLogsActorPlacements[];
+extern ACTOR_PLACE	  CrossboneIsleFloorActorPlacements[];
+extern CUE			  CrossboneIsleFloorCues[];
+extern CUE			  CrossboneIsleCaveEntranceCues[];
+extern CUE			  CrossboneIsleIsleCues[];
+extern CUE			  CrossboneIsleFloatingLogsCues[];
+extern CUE			  CrossboneIslePierCues[];
+extern CUE			  CrossboneIslePirateShipCues[];
 
 /* Crossbone Isle's placed actors, numbered in the order of
-   CrossboneIsle_IsleActorPlacements. */
+   CrossboneIsleIsleActorPlacements. */
 typedef enum CROSSBONE_ISLE_ACTOR_ID {
 	/* The Nut up in the tree by the waterfall, until Catch takes it
 	   (FLAG_CROSSBONE_ISLE_NUT_CAUGHT). */
@@ -137,7 +137,7 @@ enum {
 
 /* The twelve floating logs of the ninth floor's side room
    (SceneId_CrossboneIsleFloatingLogs), lettered A to L in the order of
-   CrossboneIsle_FloatingLogsActorPlacements. Each is given by the place it
+   CrossboneIsleFloatingLogsActorPlacements. Each is given by the place it
    starts in on every visit, with its middle metatile.
 
    A log lying west-east rolls north and south, and one lying north-south rolls
@@ -202,7 +202,7 @@ enum {
 
 /* The metatile behaviour under each floating log: stepping on it sets the log
    bobbing, walking on along it rolls it, and walking off its side hops Isaac
-   over a metatile of water (CrossboneIsle_FloatingLogsCues). The metatiles are
+   over a metatile of water (CrossboneIsleFloatingLogsCues). The metatiles are
    stored in rows 30 to 32 of the room's map.txt and laid under the logs on
    every visit (scCrossboneIslePlaceLogs). */
 enum {
@@ -222,7 +222,7 @@ enum {
 
 /* The floating-logs room's shore metatiles where walking off the edge hops
    Isaac over a metatile of water onto a log beyond
-   (CrossboneIsle_FloatingLogsCues). */
+   (CrossboneIsleFloatingLogsCues). */
 enum {
 	/* The east shores of both pools: metatiles (14, 8) to (14, 19) beside the
 	   west pool's side logs, and (37, 7) to (37, 18) beside the east pool's. */
@@ -240,7 +240,7 @@ enum {
    from which walking east pushes it (scCrossboneIslePushPillar). */
 enum { METATILE_BEHAVIOR_CROSSBONE_ISLE_WEST_OF_PILLAR = 20 };
 
-/* The nine floors' one placed actor (CrossboneIsle_FloorActorPlacements). */
+/* The nine floors' one placed actor (CrossboneIsleFloorActorPlacements). */
 typedef enum CROSSBONE_ISLE_FLOOR_ACTOR_ID {
 	/* The stone pillar on the west ledge, at the edge of the gap between the
 	   ledges, that drops into the gap when pushed east. */
@@ -337,22 +337,22 @@ const SCENE_ENTRANCE *scGetEntrances(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_CROSSBONE_ISLE) {
-		return CrossboneIsle_IsleEntrances;
+		return CrossboneIsleIsleEntrances;
 	}
 	if(sceneId == SCENE_CROSSBONE_ISLE_CAVE_ENTRANCE) {
-		return CrossboneIsle_CaveEntranceEntrances;
+		return CrossboneIsleCaveEntranceEntrances;
 	}
 	if(sceneId == SCENE_CROSSBONE_ISLE_FLOATING_LOGS) {
-		return CrossboneIsle_FloatingLogsEntrances;
+		return CrossboneIsleFloatingLogsEntrances;
 	}
 	if(sceneId == SCENE_CROSSBONE_ISLE_PIER) {
-		return CrossboneIsle_PierEntrances;
+		return CrossboneIslePierEntrances;
 	}
 	if(sceneId == SCENE_PIRATE_SHIP) {
-		return CrossboneIsle_PirateShipEntrances;
+		return CrossboneIslePirateShipEntrances;
 	}
 	/* The nine floors share the tail of the Pirate Ship's table. */
-	return &CrossboneIsle_PirateShipEntrances[2];
+	return &CrossboneIslePirateShipEntrances[2];
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -362,7 +362,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return CrossboneIsle_Exits;
+	return CrossboneIsleExits;
 }
 
 const ACTOR_PLACE *scGetActorPlacements(void)
@@ -370,16 +370,16 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_CROSSBONE_ISLE) {
-		return CrossboneIsle_IsleActorPlacements;
+		return CrossboneIsleIsleActorPlacements;
 	}
 	if(sceneId == SCENE_CROSSBONE_ISLE_FLOATING_LOGS) {
-		return CrossboneIsle_FloatingLogsActorPlacements;
+		return CrossboneIsleFloatingLogsActorPlacements;
 	}
 	if(sceneId <= SCENE_CROSSBONE_ISLE_NINTH_FLOOR &&
 		sceneId >= SCENE_CROSSBONE_ISLE_FIRST_FLOOR) {
-		return CrossboneIsle_FloorActorPlacements;
+		return CrossboneIsleFloorActorPlacements;
 	}
-	return CrossboneIsle_NoActorPlacements;
+	return CrossboneIsleNoActorPlacements;
 }
 
 #include "shared/field_effect_advance.c"
@@ -388,27 +388,26 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 static void scCrossboneIsleSpawnPillarMovedBurst(Sint32 actorId)
 {
 	ACTOR		  *actor;
-	VECTOR3		   velocity;
+	VECTOR3		   vel;
 	EFFECT_OPTIONS options;
-	Uint32		   angleStep;
-	Sint32		   angle;
-	Sint32		   velocityX;
-	FIXED		   velocityZ;
+	Uint32		   angStep;
+	Sint32		   ang;
+	Sint32		   velX;
+	FIXED		   velZ;
 
 	actor = fdActorGet(actorId);
 	options.update = scFieldEffectAdvanceMotion;
-	for(angleStep = 0; angleStep <= TRIG_TURN / FACING_STEP; angleStep += 2) {
-		angle = angleStep * FACING_STEP;
-		velocity.x = syCos(angle);
-		velocity.y = 0;
-		velocityZ = sySin(angle);
-		velocityX = velocity.x;
-		velocity.z = velocityZ;
-		velocityX += syMathDivide(velocityX, 3);
-		velocity.x = velocityX;
-		fdEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocityX,
-			velocity.y, velocityZ, EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM,
-			&options);
+	for(angStep = 0; angStep <= TRIG_TURN / FACING_STEP; angStep += 2) {
+		ang = angStep * FACING_STEP;
+		vel.x = syCos(ang);
+		vel.y = 0;
+		velZ = sySin(ang);
+		velX = vel.x;
+		vel.z = velZ;
+		velX += syMathDivide(velX, 3);
+		vel.x = velX;
+		fdEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velX,
+			vel.y, velZ, EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
 	}
 }
 
@@ -436,21 +435,21 @@ const CUE *scGetCues(void)
 	Sint16 sceneId = MainRoutineStateWork.next;
 
 	if(sceneId == SCENE_CROSSBONE_ISLE) {
-		return CrossboneIsle_IsleCues;
+		return CrossboneIsleIsleCues;
 	}
 	if(sceneId == SCENE_CROSSBONE_ISLE_CAVE_ENTRANCE) {
-		return CrossboneIsle_CaveEntranceCues;
+		return CrossboneIsleCaveEntranceCues;
 	}
 	if(sceneId == SCENE_CROSSBONE_ISLE_FLOATING_LOGS) {
-		return CrossboneIsle_FloatingLogsCues;
+		return CrossboneIsleFloatingLogsCues;
 	}
 	if(sceneId == SCENE_CROSSBONE_ISLE_PIER) {
-		return CrossboneIsle_PierCues;
+		return CrossboneIslePierCues;
 	}
 	if(sceneId == SCENE_PIRATE_SHIP) {
-		return CrossboneIsle_PirateShipCues;
+		return CrossboneIslePirateShipCues;
 	}
-	return CrossboneIsle_FloorCues;
+	return CrossboneIsleFloorCues;
 }
 
 /* Catch on the Nut up in the tree by the waterfall on Crossbone Isle: the hand
@@ -468,7 +467,7 @@ Sint32 scInit(void)
 {
 	ACTOR *actor;
 	Sint32 sceneId;
-	Sint32 current;
+	Sint32 cur;
 	Sint32 first;
 
 	FieldStateWork->transition =
@@ -499,8 +498,8 @@ Sint32 scInit(void)
 			return 0;
 		}
 	}
-	current = MainRoutineStateWork.next;
-	if(current == SCENE_CROSSBONE_ISLE) {
+	cur = MainRoutineStateWork.next;
+	if(cur == SCENE_CROSSBONE_ISLE) {
 		scCrossboneIsleRestoreIvy();
 		fdActorGet(ACTOR_ISLE_NUT)->tgtX = toFIXED(129);
 		scPushedActorBlockFootprint(ACTOR_FIRST_ISLE_LOG);
@@ -550,16 +549,16 @@ Sint32 scInit(void)
 	}
 	/* The nine floors share their door battle, pillar and return entrance. */
 	first = SCENE_CROSSBONE_ISLE_FIRST_FLOOR;
-	if(current == first) {
+	if(cur == first) {
 		if(gmFlagGet(FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN) == 0) {
 			fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 37, 10);
 			fdTreasureSpotSetPos(TREASURE_SPOT_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC,
 				toFIXED(600), toFIXED(168));
 		}
 	}
-	current = MainRoutineStateWork.next;
-	if(current >= first) {
-		if(current <= SCENE_CROSSBONE_ISLE_NINTH_FLOOR) {
+	cur = MainRoutineStateWork.next;
+	if(cur >= first) {
+		if(cur <= SCENE_CROSSBONE_ISLE_NINTH_FLOOR) {
 			scCrossboneIsleRestorePillar();
 			if(MainRoutineStateWork.entrance == ENTRANCE_AFTER_BATTLE) {
 				scCrossboneIsleOpenEastDoorAfterBattle();
@@ -658,7 +657,7 @@ static void scCrossboneIslePushPillar(void)
    it with a rumble, and the party goes through into the floor's side room. */
 static void scCrossboneIsleOpenWestDoor(void)
 {
-	fdMapGridPlayMapEdit(CrossboneIsle_DoorOpens, 37, 7);
+	fdMapGridPlayMapEdit(CrossboneIsleDoorOpens, 37, 7);
 	sySndPlay(SE_STONE_RUMBLE);
 	syImportScriptSetExitRequest(FLOOR_TO_SIDE_ROOM_WEST);
 }
@@ -720,7 +719,7 @@ static void scCrossboneIsleOpenEastDoor(void)
 		}
 		fdScriptEnd();
 	} else {
-		fdMapGridPlayMapEdit(CrossboneIsle_DoorOpens, 44, 7);
+		fdMapGridPlayMapEdit(CrossboneIsleDoorOpens, 44, 7);
 		sySndPlay(SE_STONE_RUMBLE);
 		syImportScriptSetExitRequest(FLOOR_TO_SIDE_ROOM_EAST);
 	}
@@ -737,12 +736,12 @@ static void scCrossboneIsleOpenEastDoorAfterBattle(void)
 	fdScriptStart();
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.4);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	gmFlagSet((MainRoutineStateWork.next +
 		(FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
 			SCENE_CROSSBONE_ISLE_FIRST_FLOOR)));
 	fdScriptWait(30);
-	fdMapGridAnimateMetatiles(CrossboneIsle_DoorOpens, 44, 7);
+	fdMapGridAnimateMetatiles(CrossboneIsleDoorOpens, 44, 7);
 	fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
 	syImportScriptSetExitRequest(FLOOR_TO_SIDE_ROOM_EAST);
 	fdScriptEnd();
@@ -930,9 +929,9 @@ static void scCrossboneIsleRideLog(Sint32 actorId, Sint32 dx, Sint32 dz)
 
 /* Lays the metatiles of a log lying west-east under it, so that it can be
    walked on: the three metatiles it covers take the stored metatiles at
-   (sourceColumn, sourceRow). Its metatile behaviour is passed and not used. */
-static void scCrossboneIslePlaceWestEastLog(Sint32 actorId, Sint32 sourceColumn,
-	Sint32 sourceRow, Sint32 metatileBehavior)
+   (srcColumn, srcRow). Its metatile behaviour is passed and not used. */
+static void scCrossboneIslePlaceWestEastLog(
+	Sint32 actorId, Sint32 srcColumn, Sint32 srcRow, Sint32 metatileBehavior)
 {
 	ACTOR *actor = fdActorGet(actorId);
 
@@ -945,14 +944,14 @@ static void scCrossboneIslePlaceWestEastLog(Sint32 actorId, Sint32 sourceColumn,
 			Sint32 column = FIELD_METATILE(actor->x.fixed) - 1;
 
 			fdMapGridCopyMetatileAttributes(
-				sourceColumn, sourceRow, 3, 1, column, row);
+				srcColumn, srcRow, 3, 1, column, row);
 		}
 	}
 }
 
 /* As scCrossboneIslePlaceWestEastLog, for a log lying north-south. */
-static void scCrossboneIslePlaceNorthSouthLog(Sint32 actorId,
-	Sint32 sourceColumn, Sint32 sourceRow, Sint32 metatileBehavior)
+static void scCrossboneIslePlaceNorthSouthLog(
+	Sint32 actorId, Sint32 srcColumn, Sint32 srcRow, Sint32 metatileBehavior)
 {
 	ACTOR *actor = fdActorGet(actorId);
 
@@ -965,7 +964,7 @@ static void scCrossboneIslePlaceNorthSouthLog(Sint32 actorId,
 			Sint32 row = FIELD_METATILE(actor->z.fixed) - 1;
 
 			fdMapGridCopyMetatileAttributes(
-				sourceColumn, sourceRow, 1, 3, column, row);
+				srcColumn, srcRow, 1, 3, column, row);
 		}
 	}
 }
@@ -1149,12 +1148,12 @@ static Bool scCrossboneIsleTryHop(ACTOR *actor, FIELD_POS *requested)
 static Sint32 scCrossboneIsleHopNorth(void)
 {
 	ACTOR	 *actor = fdActorGet(ACTOR_PARTY_LEADER);
-	FIELD_POS destination;
+	FIELD_POS dst;
 
-	destination.x = actor->x.fixed;
-	destination.y = actor->y.fixed;
-	destination.z = actor->z.fixed + -toFIXED(32);
-	return scCrossboneIsleTryHop(actor, &destination);
+	dst.x = actor->x.fixed;
+	dst.y = actor->y.fixed;
+	dst.z = actor->z.fixed + -toFIXED(32);
+	return scCrossboneIsleTryHop(actor, &dst);
 }
 
 /* Walking south off the side of a floating log, or off the west pool's north
@@ -1164,12 +1163,12 @@ static Sint32 scCrossboneIsleHopNorth(void)
 static Sint32 scCrossboneIsleHopSouth(void)
 {
 	ACTOR	 *actor = fdActorGet(ACTOR_PARTY_LEADER);
-	FIELD_POS destination;
+	FIELD_POS dst;
 
-	destination.x = actor->x.fixed;
-	destination.y = actor->y.fixed;
-	destination.z = actor->z.fixed + toFIXED(32);
-	return scCrossboneIsleTryHop(actor, &destination);
+	dst.x = actor->x.fixed;
+	dst.y = actor->y.fixed;
+	dst.z = actor->z.fixed + toFIXED(32);
+	return scCrossboneIsleTryHop(actor, &dst);
 }
 
 /* Walking west off the side of a floating log, or off the east shore of either
@@ -1178,12 +1177,12 @@ static Sint32 scCrossboneIsleHopSouth(void)
 static Sint32 scCrossboneIsleHopWest(void)
 {
 	ACTOR	 *actor = fdActorGet(ACTOR_PARTY_LEADER);
-	FIELD_POS destination;
+	FIELD_POS dst;
 
-	destination.x = actor->x.fixed + -toFIXED(32);
-	destination.y = actor->y.fixed;
-	destination.z = actor->z.fixed;
-	return scCrossboneIsleTryHop(actor, &destination);
+	dst.x = actor->x.fixed + -toFIXED(32);
+	dst.y = actor->y.fixed;
+	dst.z = actor->z.fixed;
+	return scCrossboneIsleTryHop(actor, &dst);
 }
 
 /* Walking east off the side of a floating log, or off the west pool's west
@@ -1192,12 +1191,12 @@ static Sint32 scCrossboneIsleHopWest(void)
 static Sint32 scCrossboneIsleHopEast(void)
 {
 	ACTOR	 *actor = fdActorGet(ACTOR_PARTY_LEADER);
-	FIELD_POS destination;
+	FIELD_POS dst;
 
-	destination.x = actor->x.fixed + toFIXED(32);
-	destination.y = actor->y.fixed;
-	destination.z = actor->z.fixed;
-	return scCrossboneIsleTryHop(actor, &destination);
+	dst.x = actor->x.fixed + toFIXED(32);
+	dst.y = actor->y.fixed;
+	dst.z = actor->z.fixed;
+	return scCrossboneIsleTryHop(actor, &dst);
 }
 
 /* Moves the metatiles of a log lying west-east from row `row` to the row it now
@@ -2291,44 +2290,44 @@ static void scCrossboneIsleRideLogIEast(void)
 
 /* A floor's side-room door opening with a rumble, a column of two metatiles */
 /* at a time. */
-Uint16 CrossboneIsle_DoorOpens[] = {
+Uint16 CrossboneIsleDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(58, 23, 1, 2, 5), MAPGRID_ANIMATION_STEP(59, 23, 1, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 #include "shared/fallback_entrances.c"
 
-SCENE_ENTRANCE CrossboneIsle_IsleEntrances[] = {
+SCENE_ENTRANCE CrossboneIsleIsleEntrances[] = {
 	{ CROSSBONE_ISLE_FROM_WORLD_MAP, CONDITION_ALWAYS, 280, 0, 544, FACING_NORTH, 0, 0, 0, 512, 560, 0 },
 	{ CROSSBONE_ISLE_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE, CONDITION_ALWAYS, 136, 0, 360, FACING_SOUTH, 0, 0, 0, 512, 560, 0 },
 	{ SCENE_TABLE_END },
 };
 
-SCENE_ENTRANCE CrossboneIsle_CaveEntranceEntrances[] = {
+SCENE_ENTRANCE CrossboneIsleCaveEntranceEntrances[] = {
 	{ CROSSBONE_ISLE_CAVE_ENTRANCE_FROM_CROSSBONE_ISLE, CONDITION_ALWAYS, 312, 0, 520, FACING_NORTH, 0, 16, 64, 416, 544, 0 },
 	{ CROSSBONE_ISLE_CAVE_ENTRANCE_FROM_CROSSBONE_ISLE_FIRST_FLOOR, CONDITION_ALWAYS, 280, 0, 144, FACING_EAST, 0, 16, 64, 416, 544, 0 },
 	{ SCENE_TABLE_END },
 };
 
-SCENE_ENTRANCE CrossboneIsle_FloatingLogsEntrances[] = {
+SCENE_ENTRANCE CrossboneIsleFloatingLogsEntrances[] = {
 	{ CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_EAST, CONDITION_ALWAYS, 312, 0, 408, FACING_NORTH, 0, 0, 16, 640, 464, 0 },
 	{ CROSSBONE_ISLE_FLOATING_LOGS_FROM_CROSSBONE_ISLE_NINTH_FLOOR_WEST, CONDITION_ALWAYS, 200, 0, 408, FACING_NORTH, 0, 0, 16, 640, 464, 0 },
 	{ CROSSBONE_ISLE_FLOATING_LOGS_MIDDLE, CONDITION_ALWAYS, 272, 0, 232, FACING_SOUTH, 0, 0, 16, 640, 464, 0 },
 	{ SCENE_TABLE_END },
 };
 
-SCENE_ENTRANCE CrossboneIsle_PierEntrances[] = {
+SCENE_ENTRANCE CrossboneIslePierEntrances[] = {
 	{ CROSSBONE_ISLE_PIER_FROM_CROSSBONE_ISLE_NINTH_FLOOR, CONDITION_ALWAYS, 184, 0, 136, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ CROSSBONE_ISLE_PIER_FROM_PIRATE_SHIP, CONDITION_ALWAYS, 40, 0, 184, FACING_EAST, 0, -1, -1, -1, -1, 0 },
 	{ SCENE_TABLE_END },
 };
 
-SCENE_ENTRANCE CrossboneIsle_PirateShipEntrances[] = {
+SCENE_ENTRANCE CrossboneIslePirateShipEntrances[] = {
 	{ PIRATE_SHIP_FROM_CROSSBONE_ISLE_PIER, CONDITION_ALWAYS, 312, 0, 656, FACING_WEST, 0, -1, -1, -1, -1, 0 },
 	{ ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 216, 0, 544, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
 	/* The nine floors (CrossboneIsleFirstFloor to CrossboneIsleNinthFloor) */
@@ -2343,7 +2342,7 @@ SCENE_ENTRANCE CrossboneIsle_PirateShipEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-Uint32 CrossboneIsle_Exits[] = {
+Uint32 CrossboneIsleExits[] = {
 	SCENE_EXITS(CrossboneIsle),
 	SCENE_EXIT(CROSSBONE_ISLE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_CROSSBONE_ISLE),
 	SCENE_EXIT(CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE, CrossboneIsleCaveEntrance, CROSSBONE_ISLE_CAVE_ENTRANCE_FROM_CROSSBONE_ISLE),
@@ -2406,11 +2405,11 @@ Uint32 CrossboneIsle_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE CrossboneIsle_NoActorPlacements[] = {
+ACTOR_PLACE CrossboneIsleNoActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE CrossboneIsle_IsleActorPlacements[] = {
+ACTOR_PLACE CrossboneIsleIsleActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_CROSSBONE_ISLE_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
 		344, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -2434,7 +2433,7 @@ ACTOR_PLACE CrossboneIsle_IsleActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE CrossboneIsle_FloatingLogsActorPlacements[] = {
+ACTOR_PLACE CrossboneIsleFloatingLogsActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
 		408, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -2462,13 +2461,13 @@ ACTOR_PLACE CrossboneIsle_FloatingLogsActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE CrossboneIsle_FloorActorPlacements[] = {
+ACTOR_PLACE CrossboneIsleFloorActorPlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		632, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	{ SCENE_TABLE_END },
 };
 
-CUE CrossboneIsle_FloorCues[] = {
+CUE CrossboneIsleFloorCues[] = {
 	{ CUE_EXIT, FLOOR_TO_PREVIOUS_ROOM, CONDITION_ALWAYS, FLOOR_TO_PREVIOUS_ROOM },
 	{ CUE_EXIT, FLOOR_TO_NEXT_ROOM, CONDITION_ALWAYS, FLOOR_TO_NEXT_ROOM },
 	{ STEP_CUE_WALKING_INTO(FACING_NORTH), FLOOR_TO_SIDE_ROOM_EAST, CONDITION_ALWAYS, SCRIPT_REF(scCrossboneIsleOpenEastDoor) },
@@ -2479,13 +2478,13 @@ CUE CrossboneIsle_FloorCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE CrossboneIsle_CaveEntranceCues[] = {
+CUE CrossboneIsleCaveEntranceCues[] = {
 	{ CUE_EXIT, CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE, CONDITION_ALWAYS, CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE },
 	{ CUE_EXIT, CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE_FIRST_FLOOR, CONDITION_ALWAYS, CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE_FIRST_FLOOR },
 	{ CUE_TABLE_END },
 };
 
-CUE CrossboneIsle_IsleCues[] = {
+CUE CrossboneIsleIsleCues[] = {
 	{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_ISLE_NUT, FLAG_CROSSBONE_ISLE_NUT_CAUGHT, SCRIPT_REF(scCrossboneIsleCatchNut) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT, FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN, SCRIPT_REF(scCrossboneIsleUnusedGrowFirstPlant) },
 	{ PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_FIRST_PLANT + 1, FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 1, SCRIPT_REF(scCrossboneIsleGrowSecondPlant) },
@@ -2508,7 +2507,7 @@ CUE CrossboneIsle_IsleCues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE CrossboneIsle_FloatingLogsCues[] = {
+CUE CrossboneIsleFloatingLogsCues[] = {
 	{ CUE_EXIT, CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_EAST, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_EAST },
 	{ CUE_EXIT, CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_WEST, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_WEST },
 	{ STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_CROSSBONE_ISLE_SHORE_HOP_WEST, CONDITION_ALWAYS, SCRIPT_REF(scCrossboneIsleHopWest) },
@@ -2583,7 +2582,7 @@ CUE CrossboneIsle_FloatingLogsCues[] = {
 };
 /* clang-format on */
 
-CUE CrossboneIsle_PierCues[] = {
+CUE CrossboneIslePierCues[] = {
 	{CUE_EXIT, CROSSBONE_ISLE_PIER_TO_CROSSBONE_ISLE_NINTH_FLOOR,
 		CONDITION_ALWAYS, CROSSBONE_ISLE_PIER_TO_CROSSBONE_ISLE_NINTH_FLOOR},
 	{CUE_EXIT, CROSSBONE_ISLE_PIER_TO_PIRATE_SHIP, CONDITION_ALWAYS,
@@ -2591,7 +2590,7 @@ CUE CrossboneIsle_PierCues[] = {
 	{CUE_TABLE_END},
 };
 
-CUE CrossboneIsle_PirateShipCues[] = {
+CUE CrossboneIslePirateShipCues[] = {
 	{CUE_EXIT, PIRATE_SHIP_TO_CROSSBONE_ISLE_PIER, CONDITION_ALWAYS,
 		PIRATE_SHIP_TO_CROSSBONE_ISLE_PIER},
 	{CUE_STEP, METATILE_BEHAVIOR_PIRATE_SHIP_TOP_OF_WEST_STAIRS,

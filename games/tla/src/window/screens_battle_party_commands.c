@@ -7,23 +7,23 @@
 Sint32 mnBattleClassifyEntryKind(const ABILITY_DEFINITION *act)
 {
 	Sint32 abilityKind;
-	Sint32 targetKind;
+	Sint32 tgtKind;
 
-	targetKind = TARGET_HINT_NONE;
+	tgtKind = TARGET_HINT_NONE;
 	abilityKind = act->flg & ABILITY_FORMULA_MASK;
 	if(abilityKind == ABILITY_FORMULA_HEAL_HP)
-		targetKind = TARGET_HINT_HP;
+		tgtKind = TARGET_HINT_HP;
 	if(abilityKind == ABILITY_FORMULA_HEAL_PP)
-		targetKind = TARGET_HINT_PP;
+		tgtKind = TARGET_HINT_PP;
 	if(act->eff == ABILITY_EFFECT_CURE_POISON)
-		targetKind = TARGET_HINT_CURE_POISON;
+		tgtKind = TARGET_HINT_CURE_POISON;
 	if(act->eff == ABILITY_EFFECT_RESTORE)
-		targetKind = TARGET_HINT_RESTORE;
+		tgtKind = TARGET_HINT_RESTORE;
 	if(act->eff == ABILITY_EFFECT_CURE_ALL)
-		targetKind = TARGET_HINT_CURE_ALL;
+		tgtKind = TARGET_HINT_CURE_ALL;
 	if(gmBattleIsReviveEffectStub(act->eff) != 0)
-		targetKind = TARGET_HINT_REVIVE;
-	return targetKind;
+		tgtKind = TARGET_HINT_REVIVE;
+	return tgtKind;
 }
 
 /* Lets the player choose which reserve member takes a party slot in battle,
@@ -59,7 +59,7 @@ Sint32 mnBattlePartyChooseReserve(Sint32 slot)
 			sySndPlayStub(SE_MENU_CANCEL);
 			break;
 		}
-		/* Japanese also takes A on the first frame, before the first preview
+		/* Japanese also takes A on the first tick, before the first preview
 		   has been drawn. */
 #if PARTY_SWAP_WAITS_FOR_PREVIEW
 		if((PerWork.push & KEY_A) && !redraw) {
@@ -133,20 +133,20 @@ Sint32 btUnitListLivingStub(Sint32 sideMask, Uint16 *unitIds);
 /* The first half of The Broken Seal's Battle_BuildPartyActions: each action of
    a living party member who is asleep, confused, charmed or stunned is lost
    (COMMAND_NONE) and written at *cursor, which moves past them, their count
-   going to *forcedCount; every other member's actions are listed in ready to be
+   going to *forcedCnt; every other member's actions are listed in ready to be
    chosen. Returns how many are listed. */
 Sint32 mnBattlePartySplitChoosers(
-	Uint16 *ready, BATTLE_ACTION_RECORD **cursor, Sint32 *forcedCount)
+	Uint16 *ready, BATTLE_ACTION_RECORD **cursor, Sint32 *forcedCnt)
 {
 	Uint16				 *unitIds = syHeapAllocEWRAM(9);
 	BATTLE_ACTION_RECORD *entries = *cursor;
-	Sint32 count = btUnitListLivingStub(BATTLE_SIDE_MASK_PARTY, unitIds);
-	Sint32 readyCount = 0;
+	Sint32 cnt = btUnitListLivingStub(BATTLE_SIDE_MASK_PARTY, unitIds);
+	Sint32 readyCnt = 0;
 	Sint32 forced = 0;
 	Sint32 i;
 	Sint32 action;
 
-	for(i = 0; i < count; i++) {
+	for(i = 0; i < cnt; i++) {
 		UNIT *unit = syUnitGet(unitIds[i]);
 
 		for(action = 0; action < unit->actionsPerTurn; action++) {
@@ -162,12 +162,12 @@ Sint32 mnBattlePartySplitChoosers(
 				entry->tgt = PLACE_ENEMY;
 				forced++;
 			} else {
-				ready[readyCount++] = unitIds[i];
+				ready[readyCnt++] = unitIds[i];
 			}
 		}
 	}
-	*forcedCount = forced;
+	*forcedCnt = forced;
 	entries += forced;
 	*cursor = entries;
-	return readyCount;
+	return readyCnt;
 }

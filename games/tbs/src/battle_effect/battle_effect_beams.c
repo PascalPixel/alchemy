@@ -1,10 +1,10 @@
 /* The plain attack's slash, and the critical hit's gathering light and
    crescent. Part of battle_effect.c. */
 
-#define BEAM_FRAMES				32 /* the slash's and the critical hit's length */
+#define BEAM_TICKS				32 /* the slash's and the critical hit's length */
 #define BEAM_SPARKS				64 /* sparks in state->particles, drawn in pairs */
-/* The frames the first spark lives, shrinking as it goes; each later one lives
-   a frame longer. */
+/* The ticks the first spark lives, shrinking as it goes; each later one lives
+   a tick longer. */
 #define BEAM_SPARK_LIFE			16
 /* BG1's scroll that shows the canvas, 96 pixels down BG1's map
    (btEffectSetupCanvasTileMap), from the battle view's top line. */
@@ -30,7 +30,7 @@ typedef enum BEAM_KIND {
    a yellow orb flashes over the target and sparks fly off. */
 void btEffectRunAttackSlash(BATTLE_EFFECT_PARM *args)
 {
-	SCREEN_POINT		 screenPosition;
+	SCREEN_POINT		 screenPos;
 	SCREEN_POINT		 anchor;
 	SCREEN_POINT		 screen;
 	BATTLE_EFFECT_STATE *state;
@@ -41,9 +41,9 @@ void btEffectRunAttackSlash(BATTLE_EFFECT_PARM *args)
 	Sint32				 kind;
 	UNIT				*unit;
 	BLITTER_PAIR		 draw;
-	ACTOR				*target;
+	ACTOR				*tgt;
 	Sint32				 half;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -142,13 +142,12 @@ void btEffectRunAttackSlash(BATTLE_EFFECT_PARM *args)
 	BgScrollWork[1].y = BEAM_CANVAS_SCROLL_Y;
 	sySynch(1);
 	/* Sparks fly from the target, mostly rising. */
-	target = btObjectGetStub(state->args->tgts[0])->actor;
+	tgt = btObjectGetStub(state->args->tgts[0])->actor;
 	half = btUnitGetEffectHeightStub(state->args->tgts[0]) / 2;
 	for(i = 0; i != BEAM_SPARKS; i++) {
 		PARTICLE *spark = &state->particles[i];
 
-		SET_POSITION(
-			spark, target->x.fixed, target->y.fixed + half, target->z.fixed);
+		SET_POSITION(spark, tgt->x.fixed, tgt->y.fixed + half, tgt->z.fixed);
 		SET_VELOCITY(spark, (syRandom() & 255) << 10,
 			((syRandom() & 255) - 32) << 10, ((syRandom() & 255) - 127) << 10);
 		if(spark->x > 0)
@@ -157,77 +156,75 @@ void btEffectRunAttackSlash(BATTLE_EFFECT_PARM *args)
 		spark->variant = i + BEAM_SPARK_LIFE;
 	}
 
-	for(frame = 0; frame != BEAM_FRAMES; frame++) {
-		if(frame == 5) {
+	for(frm = 0; frm != BEAM_TICKS; frm++) {
+		if(frm == 5) {
 			if(btSprHasHeavyImpactStub(unit->id))
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			else
 				EFFECT_SHOW_DAMAGE(SE_IMPACT);
 		}
-		if(frame == 4)
+		if(frm == 4)
 			btMotionApplyKnockbackStub(state->args->tgts[0], KNOCKBACK_NUDGE);
 		/* The slash or streak plays from the user. */
-		btProjectionScaledUnit(state->args->user, &screenPosition);
-		screenPosition.y += 16;
+		btProjectionScaledUnit(state->args->user, &screenPos);
+		screenPos.y += 16;
 		if(kind == BEAM_WAVE) {
-			if(frame <= 11) {
+			if(frm <= 11) {
 				if(state->args->side == EFFECT_SIDE_ENEMIES)
 					draw[1](canvas,
-						state->sheet + (5 - frame / 2) * PICTURE_BYTES(WAVE),
-						screenPosition.x + scrollX - WAVE_WIDTH,
-						screenPosition.y - WAVE_HEIGHT / 2, WAVE_WIDTH,
-						WAVE_HEIGHT);
+						state->sheet + (5 - frm / 2) * PICTURE_BYTES(WAVE),
+						screenPos.x + scrollX - WAVE_WIDTH,
+						screenPos.y - WAVE_HEIGHT / 2, WAVE_WIDTH, WAVE_HEIGHT);
 				else
 					draw[1](canvas,
-						state->sheet + (5 - frame / 2) * PICTURE_BYTES(WAVE),
-						screenPosition.x + scrollX,
-						screenPosition.y - WAVE_HEIGHT / 2, WAVE_WIDTH,
-						WAVE_HEIGHT);
+						state->sheet + (5 - frm / 2) * PICTURE_BYTES(WAVE),
+						screenPos.x + scrollX, screenPos.y - WAVE_HEIGHT / 2,
+						WAVE_WIDTH, WAVE_HEIGHT);
 			}
 		} else if((kind >= BEAM_PLAIN_ATTACK && kind <= BEAM_ARC_B) ||
 			kind == BEAM_ARC_A_INVERTED) {
-			if(frame <= 11) {
+			if(frm <= 11) {
 				if(state->args->side == EFFECT_SIDE_ENEMIES)
 					draw[1](canvas,
-						state->sheet + frame / 2 * PICTURE_BYTES(BLUE_ARC),
-						screenPosition.x + scrollX - BLUE_ARC_WIDTH,
-						screenPosition.y - 40, BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
+						state->sheet + frm / 2 * PICTURE_BYTES(BLUE_ARC),
+						screenPos.x + scrollX - BLUE_ARC_WIDTH,
+						screenPos.y - 40, BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
 				else
 					draw[1](canvas,
-						state->sheet + frame / 2 * PICTURE_BYTES(BLUE_ARC),
-						screenPosition.x + scrollX, screenPosition.y - 40,
-						BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
+						state->sheet + frm / 2 * PICTURE_BYTES(BLUE_ARC),
+						screenPos.x + scrollX, screenPos.y - 40, BLUE_ARC_WIDTH,
+						BLUE_ARC_HEIGHT);
 			}
 		} else {
-			if(frame <= 17) {
-				Sint32 picture = frame / 3;
+			if(frm <= 17) {
+				Sint32 picture = frm / 3;
 
 				if(state->args->side == EFFECT_SIDE_ENEMIES)
-					draw[1](canvas, state->sheet + Beam_Pictures[picture],
-						screenPosition.x + Beam_PictureReaches[picture] +
-							scrollX - 58,
-						screenPosition.y - Beam_PictureHeights[picture] / 2,
-						Beam_PictureWidths[picture],
-						Beam_PictureHeights[picture]);
+					draw[1](canvas, state->sheet + BeamPictures[picture],
+						screenPos.x + BeamPictureReaches[picture] + scrollX -
+							58,
+						screenPos.y - BeamPictureHeights[picture] / 2,
+						BeamPictureWidths[picture],
+						BeamPictureHeights[picture]);
 				else
-					draw[1](canvas, state->sheet + Beam_Pictures[picture],
-						screenPosition.x - Beam_PictureReaches[picture] +
-							scrollX - Beam_PictureWidths[picture] + 58,
-						screenPosition.y - Beam_PictureHeights[picture] / 2,
-						Beam_PictureWidths[picture],
-						Beam_PictureHeights[picture]);
+					draw[1](canvas, state->sheet + BeamPictures[picture],
+						screenPos.x - BeamPictureReaches[picture] + scrollX -
+							BeamPictureWidths[picture] + 58,
+						screenPos.y - BeamPictureHeights[picture] / 2,
+						BeamPictureWidths[picture],
+						BeamPictureHeights[picture]);
 			}
 		}
 		/* The yellow orb flashes over the target. */
-		if(frame >= 4 && frame <= 15)
+		if(frm >= 4 && frm <= 15)
 			draw[0](canvas,
 				Ram_MapGridMetatileBuffer +
-					(frame - 4) / 2 * PICTURE_BYTES(YELLOW_ORB),
+					(frm - 4) / 2 * PICTURE_BYTES(YELLOW_ORB),
 				anchor.x - 16, anchor.y - YELLOW_ORB_HEIGHT / 2,
 				YELLOW_ORB_WIDTH, YELLOW_ORB_HEIGHT);
 		EFFECT_VIEW_FROM_CAMERA(camera);
 		/* The sparks fly. */
-		if(frame >= 4 && frame <= 31) {
+		if(frm >= 4 && frm <= 31) {
 			for(i = 0; i != BEAM_SPARKS; i++) {
 				Sint32	  pair = i / 2;
 				PARTICLE *spark = &state->particles[pair];
@@ -260,7 +257,7 @@ void btEffectRunAttackSlash(BATTLE_EFFECT_PARM *args)
    from it. */
 void btEffectRunCriticalHit(BATTLE_EFFECT_PARM *args)
 {
-	SCREEN_POINT		 screenPosition;
+	SCREEN_POINT		 screenPos;
 	SCREEN_POINT		 anchor;
 	SCREEN_POINT		 screen;
 	SCREEN_POINT		 spot;
@@ -269,18 +266,18 @@ void btEffectRunCriticalHit(BATTLE_EFFECT_PARM *args)
 	Sint32				 scrollX;
 	Uint8				*sheet;
 	BATTLE_CAMERA		*camera;
-	Sint32				 velocityX;
-	Sint32				 velocityY;
-	Sint32				 velocityZ;
+	Sint32				 velX;
+	Sint32				 velY;
+	Sint32				 velZ;
 	Sint32				 acceleration;
 	Sint32				 gravity;
 	BLITTER_PAIR		 draw;
 	ACTOR				*actor;
-	ACTOR				*target;
+	ACTOR				*tgt;
 	BATTLE_STATE		*battle;
 	Sint32				 gathers;
 	Sint32				 half;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -352,29 +349,29 @@ void btEffectRunCriticalHit(BATTLE_EFFECT_PARM *args)
 				syRandom() & TRIG_ANGLE_MASK, syRandom() & TRIG_ANGLE_MASK);
 		}
 		fdActorSetAnimationSpeedStub(actor, 0);
-		velocityX = actor->velX;
-		velocityY = actor->velY;
-		velocityZ = actor->velZ;
+		velX = actor->velX;
+		velY = actor->velY;
+		velZ = actor->velZ;
 		gravity = actor->gravity;
 		acceleration = actor->acceleration;
 		SET_VELOCITY(actor, 0, 0, 0);
 		actor->acceleration = 0;
 		actor->gravity = 0;
-		btProjectionScaledUnit(state->args->user, &screenPosition);
-		scrollX = 64 - screenPosition.x;
+		btProjectionScaledUnit(state->args->user, &screenPos);
+		scrollX = 64 - screenPos.x;
 		BgScrollWork[1].x = scrollX;
 		BgScrollWork[1].y = BEAM_CANVAS_SCROLL_Y;
-		state->fadeFrm = BACKGROUND_DARKEN_FRAMES;
+		state->fadeFrm = BACKGROUND_DARKEN_TICKS;
 		state->fadeStep = 0;
-		sySetEvent(btEffectDarkenBackgroundStep, EVENT_PASS_FRAME);
+		sySetEvent(btEffectDarkenBackgroundStep, EVENT_PASS_TICK);
 		sySndPlayStub(SE_POWER_UP);
-		for(frame = 0; frame != BEAM_FRAMES; frame++) {
+		for(frm = 0; frm != BEAM_TICKS; frm++) {
 			btCameraSetViewAtPairMidpointStub(
 				state->args->user, state->args->firstTgt, CRITICAL_HIT_ZOOM);
 			for(i = 0; i != CRITICAL_HIT_MOTES; i++) {
 				PARTICLE *mote = &state->particles[i];
 
-				if(mote->x >= 0 && frame >= i / 4) {
+				if(mote->x >= 0 && frm >= i / 4) {
 					Sint32 size = (i & 1) + 5;
 
 					syInitMatrix();
@@ -383,7 +380,7 @@ void btEffectRunCriticalHit(BATTLE_EFFECT_PARM *args)
 					syRotY(mote->velY);
 					btProjectionPoint(&mote->x, &screen);
 					screen.x += 64;
-					screen.y = screen.y + screenPosition.y + 24;
+					screen.y = screen.y + screenPos.y + 24;
 					/* DEAD: the depth is clamped and moved to start at 0 but
 					   never read; the ROM keeps the clamp and the move. */
 					CLAMP(screen.depth, -CRITICAL_HIT_MOTE_DEPTH,
@@ -398,7 +395,7 @@ void btEffectRunCriticalHit(BATTLE_EFFECT_PARM *args)
 		}
 		syCloseEvent(btEffectDarkenBackgroundStep);
 		fdActorSetAnimationSpeedStub(actor, ANIM_STEP_NORMAL);
-		SET_VELOCITY(actor, velocityX, velocityY, velocityZ);
+		SET_VELOCITY(actor, velX, velY, velZ);
 		actor->acceleration = acceleration;
 		actor->gravity = gravity;
 	}
@@ -422,13 +419,12 @@ void btEffectRunCriticalHit(BATTLE_EFFECT_PARM *args)
 	anchor.x += scrollX;
 	BgScrollWork[1].y = BEAM_CANVAS_SCROLL_Y;
 	BgScrollWork[1].x = scrollX;
-	target = btObjectGetStub(state->args->tgts[0])->actor;
+	tgt = btObjectGetStub(state->args->tgts[0])->actor;
 	half = btUnitGetEffectHeightStub(state->args->tgts[0]) / 2;
 	for(i = 0; i != BEAM_SPARKS; i++) {
 		PARTICLE *spark = &state->particles[i];
 
-		SET_POSITION(
-			spark, target->x.fixed, target->y.fixed + half, target->z.fixed);
+		SET_POSITION(spark, tgt->x.fixed, tgt->y.fixed + half, tgt->z.fixed);
 		SET_VELOCITY(spark, (syRandom() & 255) << 10, (syRandom() & 255) << 10,
 			((syRandom() & 255) - 127) << 10);
 		if(spark->x > 0)
@@ -436,32 +432,32 @@ void btEffectRunCriticalHit(BATTLE_EFFECT_PARM *args)
 		spark->variant = i + BEAM_SPARK_LIFE;
 	}
 
-	for(frame = 0; frame != BEAM_FRAMES; frame++) {
-		if(frame == 5)
+	for(frm = 0; frm != BEAM_TICKS; frm++) {
+		if(frm == 5)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-		if(frame == 4)
+		if(frm == 4)
 			btMotionApplyKnockbackStub(state->args->tgts[0], KNOCKBACK_NUDGE);
-		btProjectionScaledUnit(state->args->user, &screenPosition);
-		screenPosition.y += 16;
+		btProjectionScaledUnit(state->args->user, &screenPos);
+		screenPos.y += 16;
 		/* The slash: a star, an arc, then two crescents. */
-		if(frame <= 1)
+		if(frm <= 1)
 			draw[0](canvas, state->imageStorage, 0, 0, SLASH_PICTURE_SIZE,
 				SLASH_PICTURE_SIZE);
-		else if(frame <= 3)
+		else if(frm <= 3)
 			draw[0](canvas,
 				state->imageStorage + SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE,
 				0, 0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
-		else if(frame <= 5)
+		else if(frm <= 5)
 			draw[0](canvas, Ram_MapGridMetatileBuffer, 0, 0, SLASH_PICTURE_SIZE,
 				SLASH_PICTURE_SIZE);
-		else if(frame <= 7)
+		else if(frm <= 7)
 			draw[0](canvas,
 				Ram_MapGridMetatileBuffer +
 					SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE,
 				0, 0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
 		EFFECT_VIEW_FROM_CAMERA(camera);
 		/* The sparks fly. */
-		if(frame >= 4 && frame <= 31) {
+		if(frm >= 4 && frm <= 31) {
 			for(i = 0; i != BEAM_SPARKS; i++) {
 				Sint32	  pair = i / 2;
 				PARTICLE *spark = &state->particles[pair];
@@ -487,14 +483,14 @@ void btEffectRunCriticalHit(BATTLE_EFFECT_PARM *args)
 	EFFECT_RELEASE_BLITTERS();
 	BgScrollWork[1].y = BATTLE_BACKGROUND_SCROLL_Y;
 	battle = BattleStateWork;
-	for(frame = 0; frame != 7; frame++) {
-		btBackgroundSetPaletteLevelStub(battle->bg, 6 - frame);
+	for(frm = 0; frm != 7; frm++) {
+		btBackgroundSetPaletteLevelStub(battle->bg, 6 - frm);
 		sySynch(1);
 	}
 	btEffectHideBg1AndRestoreBackdrop();
 }
 
-#undef BEAM_FRAMES
+#undef BEAM_TICKS
 #undef BEAM_SPARKS
 #undef BEAM_SPARK_LIFE
 #undef BEAM_CANVAS_SCROLL_Y

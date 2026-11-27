@@ -5,10 +5,10 @@
 #include "field/actor_script.h"
 #include "item_ids.h"
 
-const Sint32 BattleObject_EmptyScript[] = {SC_END};
+const Sint32 BattleObjectEmptyScript[] = {SC_END};
 
 /* clang-format off */
-const Uint16 BattleUnit_WeaponKinds[] = {
+const Uint16 BattleUnitWeaponKinds[] = {
 	WEAPON(ITEM_LONG_SWORD, WEAPON_KIND_LONG_SWORD),
 	WEAPON(ITEM_BROAD_SWORD, WEAPON_KIND_LONG_SWORD),
 	WEAPON(ITEM_CLAYMORE, WEAPON_KIND_LONG_SWORD),

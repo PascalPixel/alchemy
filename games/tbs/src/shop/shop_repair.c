@@ -27,49 +27,48 @@ Sint32 mnShopRunRepairMemberChoice(void)
 Sint32 mnShopSelectRepair(Sint32 unitId)
 {
 	SHOP_STATE *shop;
-	Sint32		inventoryCount;
-	WINDOW	   *descriptionWindow;
-	WINDOW	   *priceWindow;
+	Sint32		inventoryCnt;
+	WINDOW	   *descriptionWin;
+	WINDOW	   *priceWin;
 	UNIT	   *unit;
 	Sint32		slot;
 	Bool		redraw;
 	Sint32		result;
 	Sint32		itemId;
 	Sint32		repairCost;
-	WINDOW	   *window;
+	WINDOW	   *win;
 	Sint32		x;
 	Sint32		y;
 
 	shop = MenuState;
 	unit = gmUnitGetStub(unitId);
-	inventoryCount = 1;
-	priceWindow = mnWindowCreateStub(
+	inventoryCnt = 1;
+	priceWin = mnWindowCreateStub(
 		SHOP_SELL_PRICE_X, 8, SHOP_SELL_PRICE_WIDTH, 4, WINDOW_FLAG_INSTANT);
 	slot = 0;
 
 	for(;;) {
-		descriptionWindow =
-			mnWindowCreateStub(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
+		descriptionWin = mnWindowCreateStub(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
 		shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
-		shop->cursorFrm = SHOP_CURSOR_ENTER_FRAMES;
+		shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
 		redraw = TRUE;
 
 		while(1) {
 			if(redraw != 0) {
 				redraw = FALSE;
-				inventoryCount = gmInventoryCountStub(unitId);
-				if(slot > inventoryCount - 1)
-					slot = inventoryCount - 1;
+				inventoryCnt = gmInventoryCountStub(unitId);
+				if(slot > inventoryCnt - 1)
+					slot = inventoryCnt - 1;
 				itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
-				window = shop->itemWin;
+				win = shop->itemWin;
 				x = slot % SHOP_INVENTORY_COLUMNS * 16;
 				y = slot / SHOP_INVENTORY_COLUMNS * 16 + 8;
-				mnCursorPlace(window, x, y);
+				mnCursorPlace(win, x, y);
 				shop->cursorFrm = 3;
 				repairCost = mnShopRepairPrice(unit->inventory[slot]);
 				mnShopDrawItemPrice(
-					priceWindow, itemId, repairCost, SHOP_PRICE_KIND_REPAIR);
-				mnShopDrawMessage(descriptionWindow, itemId + MsgItemPlainName);
+					priceWin, itemId, repairCost, SHOP_PRICE_KIND_REPAIR);
+				mnShopDrawMessage(descriptionWin, itemId + MsgItemPlainName);
 			}
 			if((PerPush & KEY_A) != 0) {
 				sySndPlayStub(SE_MENU_CONFIRM);
@@ -84,27 +83,27 @@ Sint32 mnShopSelectRepair(Sint32 unitId)
 			if((PerRepeat & KEY_LEFT) != 0) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				slot--;
-				slot = (slot + inventoryCount) % inventoryCount;
+				slot = (slot + inventoryCnt) % inventoryCnt;
 				redraw = TRUE;
 			}
 			if((PerRepeat & KEY_RIGHT) != 0) {
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				slot++;
-				slot = (slot + inventoryCount) % inventoryCount;
+				slot = (slot + inventoryCnt) % inventoryCnt;
 				redraw = TRUE;
 			}
 			if((PerRepeat & KEY_UP) != 0) {
 				slot -= SHOP_INVENTORY_COLUMNS;
 				if(slot < 0)
 					slot += INVENTORY_SLOTS;
-				while(slot >= inventoryCount)
+				while(slot >= inventoryCnt)
 					slot -= SHOP_INVENTORY_COLUMNS;
 				sySndPlayStub(SE_MENU_CURSOR_MOVE);
 				redraw = TRUE;
 			}
 			if((PerRepeat & KEY_DOWN) != 0) {
 				slot += SHOP_INVENTORY_COLUMNS;
-				if(slot >= inventoryCount)
+				if(slot >= inventoryCnt)
 					slot -= INVENTORY_SLOTS;
 				while(slot < 0)
 					slot += SHOP_INVENTORY_COLUMNS;
@@ -114,7 +113,7 @@ Sint32 mnShopSelectRepair(Sint32 unitId)
 			sySynch(1);
 		}
 
-		mnWindowCloseStub(descriptionWindow, 2);
+		mnWindowCloseStub(descriptionWin, 2);
 		sySynch(1);
 		if(result != 0)
 			break;
@@ -126,7 +125,7 @@ Sint32 mnShopSelectRepair(Sint32 unitId)
 			break;
 	}
 
-	mnWindowCloseStub(priceWindow, 2);
+	mnWindowCloseStub(priceWin, 2);
 	return result;
 }
 
@@ -142,7 +141,7 @@ void mnShopRepairItem(Sint32 unitId, Sint32 slot)
 	ITEM_DEFINITION *item = gmItemGetDirectStub(itemId);
 	Sint32			 equipped = gmInventoryFindEquippedStub(unitId, item->type);
 	Uint32			 repairCost = mnShopRepairPrice(unit->inventory[slot]);
-	Sint32			 messageBase;
+	Sint32			 msgBase;
 	Uint8			 useType;
 	Uint32			 savedEntry;
 
@@ -173,12 +172,12 @@ void mnShopRepairItem(Sint32 unitId, Sint32 slot)
 	}
 	mnMessageArgumentPushStub(itemId, MESSAGE_ARGUMENT_ITEM);
 	mnMessageArgumentPushStub(repairCost, MESSAGE_ARGUMENT_NUMBER);
-	messageBase = MsgShopRepairConfirm;
+	msgBase = MsgShopRepairConfirm;
 	/* "I'll fix your (item) for (price) coins, OK?" */
-	mnShopShowKeeperMessageHidingCursor(messageBase);
+	mnShopShowKeeperMessageHidingCursor(msgBase);
 	if(mnShopAskYesNo(0) != 0) {
 		/* "Changed your mind? Whatever you say!" */
-		mnShopShowKeeperMessageHidingCursor(messageBase + 1);
+		mnShopShowKeeperMessageHidingCursor(msgBase + 1);
 		return;
 	}
 	/* Hide the item while it is repaired, without compacting its slot. */
@@ -187,9 +186,9 @@ void mnShopRepairItem(Sint32 unitId, Sint32 slot)
 	mnShopDrawMemberItems(shop->itemWin, unitId);
 	mnMessageArgumentPushStub(itemId, MESSAGE_ARGUMENT_ITEM);
 	/* "Yes, sir! I'll take your (item), then." */
-	mnShopShowKeeperMessageHidingCursor(messageBase + 2);
+	mnShopShowKeeperMessageHidingCursor(msgBase + 2);
 	mnMessageCloseFinishedWindowsStub();
-	/* Six seconds of work: three clangs 110 frames apart, then the menu's
+	/* Six seconds of work: three clangs 110 ticks apart, then the menu's
 	   confirm sound. */
 	sySynch(10);
 	sySndPlayStub(SE_BELL);
@@ -207,7 +206,7 @@ void mnShopRepairItem(Sint32 unitId, Sint32 slot)
 	mnShopDrawMemberItems(shop->itemWin, unitId);
 	mnMessageArgumentPushStub(itemId, MESSAGE_ARGUMENT_ITEM);
 	/* "I've repaired your (item). Here it is." */
-	mnShopShowKeeperMessageHidingCursor(messageBase + 3);
+	mnShopShowKeeperMessageHidingCursor(msgBase + 3);
 	if(mnShopConfirmEquip(unitId, slot))
 		mnShopSellOld(unitId, equipped);
 }

@@ -3,38 +3,38 @@
    their metatiles raised 32 pixels, gaps to jump onto, in animation 0 once
    their first flag is set, as the first step on one leaves it. Then a leader
    left below the ground is lifted onto it. */
-void scMagmaRockInsideRestoreCrumblingPillars(const Uint16 *table)
+void scMagmaRockInsideRestoreCrumblingPillars(const Uint16 *tbl)
 {
 	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
 	ACTOR		 *actor;
 	Sint32		  id;
-	Sint32		  flag;
-	Sint32		  nextFlag;
+	Sint32		  flg;
+	Sint32		  nextFlg;
 	MAP_METATILE *metatiles;
 	Uint8		 *shapes;
 	MAP_METATILE *metatile;
-	Sint32		  index;
+	Sint32		  idx;
 	ACTOR		 *leader;
 	Sint32		  ground;
 
-	for(; *table != ACTOR_LIST_END; table += 2) {
-		id = table[0];
+	for(; *tbl != ACTOR_LIST_END; tbl += 2) {
+		id = tbl[0];
 		actor = fdActorGet(id);
-		flag = table[1];
-		nextFlag = flag + 1;
+		flg = tbl[1];
+		nextFlg = flg + 1;
 		metatiles = map->layers[actor->layer].metatiles;
 		shapes =
 			MapShapeGrid + (metatiles - (MAP_METATILE *)Ram_MapMetatileBuffer);
-		if(fdScriptGetFlag(nextFlag)) {
+		if(fdScriptGetFlag(nextFlg)) {
 			fdActorSetPos(id, 0, 0);
 		} else {
 			Sint32 shape;
 			Uint8 *slot;
 			Sint32 height;
 
-			index = fdActorGetMetatileIndex(actor);
-			metatile = &metatiles[index];
-			slot = shapes + index;
+			idx = fdActorGetMetatileIndex(actor);
+			metatile = &metatiles[idx];
+			slot = shapes + idx;
 			shape = fdMapGridGetTerrainKind(
 				actor->layer, actor->x.fixed, actor->z.fixed);
 			height = fdMapGetTerrainHeight(
@@ -44,7 +44,7 @@ void scMagmaRockInsideRestoreCrumblingPillars(const Uint16 *table)
 			*slot = fdMapShapeFindOrAdd(actor->layer, shape,
 				METATILE_HEIGHT_STEPS(height) +
 					METATILE_HEIGHT_STEPS(toFIXED(32)));
-			if(fdScriptGetFlag(flag))
+			if(fdScriptGetFlag(flg))
 				fdActorSelectAnimation(actor, 0);
 		}
 	}

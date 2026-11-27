@@ -27,7 +27,7 @@ void   syImportScriptSetExitRequest(Sint32 exit);
 ACTOR *syImportActorCreate(Sint32 type, Sint32 x, Sint32 y, Sint32 z);
 /* Starts an animation on an actor's sprite (fdActorSelectAnimation, through the
    overlay's own import row). */
-void syImportActorSelectAnimation(ACTOR *actor, Sint32 animation);
+void syImportActorSelectAnimation(ACTOR *actor, Sint32 anm);
 /* Gives an actor a script and starts it from the top (fdActorStartScript,
    through the overlay's own import row). */
 void syImportActorStartScript(ACTOR *actor, const void *script);

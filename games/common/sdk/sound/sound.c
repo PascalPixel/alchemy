@@ -66,8 +66,8 @@ void MPlayContinue(struct MusicPlayerInfo *player)
 }
 
 /* Starts a fade with the music player's ident raised, resuming the music player
-   for fade-ins: FadeOutBody moves the level 16 of 256 every `period` VBlanks,
-   so a whole fade takes 16 * period VBlanks. */
+   for fade-ins: FadeOutBody moves the level 16 of 256 every `period` frames,
+   so a whole fade takes 16 * period frames. */
 static __inline__ void MPlayStartFade(
 	struct MusicPlayerInfo *player, u16 period, u16 volume)
 {
@@ -82,7 +82,7 @@ static __inline__ void MPlayStartFade(
 	}
 }
 
-/* Fades a player's song out over 16 * `period` VBlanks, then stops it for
+/* Fades a player's song out over 16 * `period` frames, then stops it for
    good. */
 void MPlayFadeOut(struct MusicPlayerInfo *player, u16 period)
 {
@@ -213,7 +213,7 @@ UNUSED void m4aMPlayAllContinue(void)
 		MPlayContinue(MPlayTable[playerIndex].info);
 }
 
-/* Fades a player's song out over 16 * `period` VBlanks, then stops it: how
+/* Fades a player's song out over 16 * `period` frames, then stops it: how
    sySndPlay's fade controls, such as SOUND_FADE_OUT_BGM, end their sounds. */
 void m4aMPlayFadeOut(struct MusicPlayerInfo *player, u16 period)
 {

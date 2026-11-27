@@ -190,7 +190,7 @@ extern ACTOR_PLACE TreasureIsleChestsPlacements[];
 extern ACTOR_PLACE TreasureIsleArmletPlacements[];
 extern ACTOR_PLACE TreasureIsleGalePlacements[];
 extern ACTOR_PLACE TreasureIsleGuardianPlacements[];
-extern Uint32	   TreasureIsle_RockDust[];
+extern Uint32	   TreasureIsleRockDust[];
 
 extern TREASURE_ISLE_METATILE TreasureIsleChestsSpikyRocks[];
 extern TREASURE_ISLE_METATILE TreasureIsleArmletSpikyRocks[];
@@ -199,26 +199,25 @@ extern CUE					  TreasureIsleArmletCues[];
 extern CUE					  TreasureIsleGaleCues[];
 extern CUE					  TreasureIsleGuardianCues[];
 
-void scTreasureIsleSetSpikyRock(
-	TREASURE_ISLE_METATILE *metatiles, Sint16 index);
+void scTreasureIsleSetSpikyRock(TREASURE_ISLE_METATILE *metatiles, Sint16 idx);
 
 void scTreasureIsleCycleWaterCols(void);
 
-extern Uint32 FieldEffect_ShortScript[];
-extern Uint32 FieldEffect_MediumScript[];
-extern Uint32 FieldEffect_LongScript[];
-extern Uint32 TreasureIsle_PostStill[];
-extern Uint32 TreasureIsle_LiftRockScale[];
+extern Uint32 FieldEffectShortScript[];
+extern Uint32 FieldEffectMediumScript[];
+extern Uint32 FieldEffectLongScript[];
+extern Uint32 TreasureIslePostStill[];
+extern Uint32 TreasureIsleLiftRockScale[];
 
 /* One palette's sixteen colours. */
 typedef struct PALETTE {
 	Uint16 cols[PALETTE_COLORS];
 } PALETTE;
 
-PALETTE TreasureIsle_SavedWaterColorsA BSS_DATA;
-PALETTE TreasureIsle_WaterColorsA	   BSS_DATA;
-PALETTE TreasureIsle_SavedWaterColorsB BSS_DATA;
-PALETTE TreasureIsle_WaterColorsB	   BSS_DATA;
+PALETTE TreasureIsleSavedWaterColorsA BSS_DATA;
+PALETTE TreasureIsleWaterColorsA	  BSS_DATA;
+PALETTE TreasureIsleSavedWaterColorsB BSS_DATA;
+PALETTE TreasureIsleWaterColorsB	  BSS_DATA;
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -257,26 +256,25 @@ extern MAP_METATILE MapGridMetatileBuffer[];
 
 /* Draws a spiky rock risen at its metatile, blocks the metatile and sets its
    flag. */
-void scTreasureIsleSetSpikyRock(TREASURE_ISLE_METATILE *metatiles, Sint16 index)
+void scTreasureIsleSetSpikyRock(TREASURE_ISLE_METATILE *metatiles, Sint16 idx)
 {
 	fdMapGridCopyMetatilesLayered(
-		0, 100, 3, 4, metatiles[index].x + 63, metatiles[index].z - 2);
+		0, 100, 3, 4, metatiles[idx].x + 63, metatiles[idx].z - 2);
 	fdMapGridCopyMetatileAttributes(
-		1, 0, 1, 1, metatiles[index].x, metatiles[index].z);
-	fdScriptSetFlag(metatiles[index].flg);
+		1, 0, 1, 1, metatiles[idx].x, metatiles[idx].z);
+	fdScriptSetFlag(metatiles[idx].flg);
 }
 
 /* A spiky rock rises out of the ground at a listed metatile: the camera goes to
    it, the ground shakes and dust bursts, and scTreasureIsleSetSpikyRock leaves
    it standing. */
-void scTreasureIsleRaiseSpikyRock(
-	TREASURE_ISLE_METATILE *metatiles, Sint16 index)
+void scTreasureIsleRaiseSpikyRock(TREASURE_ISLE_METATILE *metatiles, Sint16 idx)
 {
 	EFFECT_OPTIONS options;
 
 	fdCameraSetSpeed(6);
-	fdCameraMoveToFX(FIELD_METATILE_CENTER(metatiles[index].x), -1,
-		FIELD_METATILE_CENTER(metatiles[index].z), 1);
+	fdCameraMoveToFX(FIELD_METATILE_CENTER(metatiles[idx].x), -1,
+		FIELD_METATILE_CENTER(metatiles[idx].z), 1);
 	fdCameraWaitForArrival();
 	fdMapGridSetShake(0, 16, 1);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -285,31 +283,31 @@ void scTreasureIsleRaiseSpikyRock(
 	options.startScaleY = toFIXED(3) / 2;
 	options.pri = 1;
 	options.type = SPRITE_WATER_SPRAY;
-	options.script = TreasureIsle_RockDust;
-	scFieldEffectSpawn(FIELD_METATILE_CENTER(metatiles[index].x), 0,
-		FIELD_METATILE_ORIGIN(metatiles[index].z) + toFIXED(20), 0, 0, 0,
+	options.script = TreasureIsleRockDust;
+	scFieldEffectSpawn(FIELD_METATILE_CENTER(metatiles[idx].x), 0,
+		FIELD_METATILE_ORIGIN(metatiles[idx].z) + toFIXED(20), 0, 0, 0,
 		EFFECT_USE_SCRIPT | EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
 			EFFECT_USE_PRIORITY,
 		&options);
 	options.startScaleX = toFIXED(6) / 10;
-	scFieldEffectSpawn(FIELD_METATILE_ORIGIN(metatiles[index].x) - toFIXED(2),
-		0, FIELD_METATILE_CENTER(metatiles[index].z), 0, 0, 0,
+	scFieldEffectSpawn(FIELD_METATILE_ORIGIN(metatiles[idx].x) - toFIXED(2), 0,
+		FIELD_METATILE_CENTER(metatiles[idx].z), 0, 0, 0,
 		EFFECT_USE_SCRIPT | EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
 			EFFECT_USE_PRIORITY,
 		&options);
-	scFieldEffectSpawn(FIELD_METATILE_ORIGIN(metatiles[index].x) + toFIXED(18),
-		0, FIELD_METATILE_CENTER(metatiles[index].z), 0, 0, 0,
+	scFieldEffectSpawn(FIELD_METATILE_ORIGIN(metatiles[idx].x) + toFIXED(18), 0,
+		FIELD_METATILE_CENTER(metatiles[idx].z), 0, 0, 0,
 		EFFECT_USE_SCRIPT | EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
 			EFFECT_USE_PRIORITY,
 		&options);
 	syFieldScriptWait(10);
 	fdMapGridCopyMetatilesLayered(
-		6, 100, 3, 4, metatiles[index].x + 63, metatiles[index].z - 2);
+		6, 100, 3, 4, metatiles[idx].x + 63, metatiles[idx].z - 2);
 	syFieldScriptWait(10);
 	fdMapGridCopyMetatilesLayered(
-		3, 100, 3, 4, metatiles[index].x + 63, metatiles[index].z - 2);
+		3, 100, 3, 4, metatiles[idx].x + 63, metatiles[idx].z - 2);
 	syFieldScriptWait(10);
-	scTreasureIsleSetSpikyRock(metatiles, index);
+	scTreasureIsleSetSpikyRock(metatiles, idx);
 }
 
 /* Stepping on the red button on a small island in the chests' room's water,
@@ -319,40 +317,40 @@ void scTreasureIsleRaiseSpikyRock(
    rises again; one still standing is left as it is. */
 void scTreasureIslePressChestsRoomButton(void)
 {
-	Sint16 count = 0;
+	Sint16 cnt = 0;
 
 	if(!fdScriptGetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(0))) {
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
 		scTreasureIsleRaiseSpikyRock(TreasureIsleChestsSpikyRocks, 0);
 		fdScriptSetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(0));
-		count = 1;
+		cnt = 1;
 	}
 	if(!fdScriptGetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(1))) {
-		if(count == 0)
+		if(cnt == 0)
 			fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
 		scTreasureIsleRaiseSpikyRock(TreasureIsleChestsSpikyRocks, 1);
 		fdScriptSetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(1));
-		count++;
+		cnt++;
 	}
 	if(!fdScriptGetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(2))) {
-		if(count == 0)
+		if(cnt == 0)
 			fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
 		scTreasureIsleRaiseSpikyRock(TreasureIsleChestsSpikyRocks, 2);
 		fdScriptSetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(2));
-		count++;
+		cnt++;
 	}
 	if(!fdScriptGetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(3))) {
-		if(count == 0)
+		if(cnt == 0)
 			fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
 		scTreasureIsleRaiseSpikyRock(TreasureIsleChestsSpikyRocks, 3);
 		fdScriptSetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(3));
-		count++;
+		cnt++;
 	}
-	if(count != 0)
+	if(cnt != 0)
 		fdScriptEnd();
 }
 
@@ -362,32 +360,32 @@ void scTreasureIslePressChestsRoomButton(void)
    broken rises again. */
 void scTreasureIslePressArmletRoomButton(void)
 {
-	Sint16 count = 0;
+	Sint16 cnt = 0;
 
 	if(!fdScriptGetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(0))) {
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
 		scTreasureIsleRaiseSpikyRock(TreasureIsleArmletSpikyRocks, 0);
 		fdScriptSetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(0));
-		count = 1;
+		cnt = 1;
 	}
 	if(!fdScriptGetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(1))) {
-		if(count == 0)
+		if(cnt == 0)
 			fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
 		scTreasureIsleRaiseSpikyRock(TreasureIsleArmletSpikyRocks, 1);
 		fdScriptSetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(1));
-		count++;
+		cnt++;
 	}
 	if(!fdScriptGetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(2))) {
-		if(count == 0)
+		if(cnt == 0)
 			fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
 		scTreasureIsleRaiseSpikyRock(TreasureIsleArmletSpikyRocks, 2);
 		fdScriptSetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(2));
-		count++;
+		cnt++;
 	}
-	if(count != 0)
+	if(cnt != 0)
 		fdScriptEnd();
 }
 
@@ -471,8 +469,8 @@ void scTreasureIsleVenusDjinniJoins(void)
 
 /* Grind on a spiky rock in the chests' or the Jester's Armlet room crushes it
    back into the water in three steps, clearing the way. Grind calls this as it
-   plays, with how far it has got in `frame`, and `id` says which rock. */
-void scTreasureIsleGrindSpikyRock(Sint32 unused, Sint32 frame, Sint32 id)
+   plays, with how far it has got in `frm`, and `id` says which rock. */
+void scTreasureIsleGrindSpikyRock(Sint32 unused, Sint32 frm, Sint32 id)
 {
 	TREASURE_ISLE_METATILE *metatiles;
 
@@ -483,13 +481,13 @@ void scTreasureIsleGrindSpikyRock(Sint32 unused, Sint32 frame, Sint32 id)
 		metatiles = TreasureIsleArmletSpikyRocks;
 		id -= ARMLET_FIRST_ROCK_METATILE;
 	}
-	if(frame == 15) {
+	if(frm == 15) {
 		fdMapGridCopyMetatilesLayered(
 			3, 100, 3, 4, metatiles[id].x + 63, metatiles[id].z - 2);
-	} else if(frame == 30) {
+	} else if(frm == 30) {
 		fdMapGridCopyMetatilesLayered(
 			6, 100, 3, 4, metatiles[id].x + 63, metatiles[id].z - 2);
-	} else if(frame == 45) {
+	} else if(frm == 45) {
 		fdMapGridCopyMetatilesLayered(
 			9, 100, 3, 4, metatiles[id].x + 63, metatiles[id].z - 2);
 		fdMapGridCopyMetatileAttributes(
@@ -601,11 +599,11 @@ const CUE *scGetCues(void)
 	return TreasureIsleEntranceCues;
 }
 
-/* The water colours' cycle frame, -1 until the first frame saves the
+/* The water colours' cycle tick, -1 until the first tick saves the
    palettes. */
-extern Sint32 TreasureIsle_ColorCycleFrame[];
+extern Sint32 TreasureIsleColorCycleTick[];
 
-/* An event: cycles four colours of the two water palettes every eight frames,
+/* An event: cycles four colours of the two water palettes every eight ticks,
    saving both palettes the first time. */
 void scTreasureIsleCycleWaterCols(void)
 {
@@ -619,31 +617,31 @@ void scTreasureIsleCycleWaterCols(void)
 	busy = (Sint8)state->revealActive;
 	if(busy != 0)
 		return;
-	if(TreasureIsle_ColorCycleFrame[0] == -1) {
-		syWordsCopy(TreasureIsle_SavedWaterColorsA.cols,
+	if(TreasureIsleColorCycleTick[0] == -1) {
+		syWordsCopy(TreasureIsleSavedWaterColorsA.cols,
 			(void *)&BG_PLTT_COLOR(WATER_PALETTE_A, 0), sizeof(PALETTE));
-		syWordsCopyEntry(TreasureIsle_WaterColorsA.cols,
-			TreasureIsle_SavedWaterColorsA.cols, sizeof(PALETTE));
-		syWordsCopyEntry(TreasureIsle_SavedWaterColorsB.cols,
+		syWordsCopyEntry(TreasureIsleWaterColorsA.cols,
+			TreasureIsleSavedWaterColorsA.cols, sizeof(PALETTE));
+		syWordsCopyEntry(TreasureIsleSavedWaterColorsB.cols,
 			(void *)&BG_PLTT_COLOR(WATER_PALETTE_B, 0), sizeof(PALETTE));
-		syWordsCopyEntry(TreasureIsle_WaterColorsB.cols,
-			TreasureIsle_SavedWaterColorsB.cols, sizeof(PALETTE));
-		TreasureIsle_ColorCycleFrame[0] = 0;
+		syWordsCopyEntry(TreasureIsleWaterColorsB.cols,
+			TreasureIsleSavedWaterColorsB.cols, sizeof(PALETTE));
+		TreasureIsleColorCycleTick[0] = 0;
 	}
-	phase = TreasureIsle_ColorCycleFrame[0] / 8 % 4;
+	phase = TreasureIsleColorCycleTick[0] / 8 % 4;
 	for(i = 0; i <= 3; i++) {
-		TreasureIsle_WaterColorsA.cols[(phase + i) % 4 + 2] =
-			TreasureIsle_SavedWaterColorsA.cols[i + 2];
-		TreasureIsle_WaterColorsB.cols[(phase + i) % 4 + 2] =
-			TreasureIsle_SavedWaterColorsB.cols[i + 2];
+		TreasureIsleWaterColorsA.cols[(phase + i) % 4 + 2] =
+			TreasureIsleSavedWaterColorsA.cols[i + 2];
+		TreasureIsleWaterColorsB.cols[(phase + i) % 4 + 2] =
+			TreasureIsleSavedWaterColorsB.cols[i + 2];
 	}
 	IO_WRITE_QUEUE_PUSH((Uint32)&BG_PLTT_COLOR(WATER_PALETTE_A, 0),
-		(Uint32)TreasureIsle_WaterColorsA.cols,
+		(Uint32)TreasureIsleWaterColorsA.cols,
 		DMA_COPY_WORDS(PALETTE_COLORS / 2));
 	IO_WRITE_QUEUE_PUSH((Uint32)&BG_PLTT_COLOR(WATER_PALETTE_B, 0),
-		(Uint32)TreasureIsle_WaterColorsB.cols,
+		(Uint32)TreasureIsleWaterColorsB.cols,
 		DMA_COPY_WORDS(PALETTE_COLORS / 2));
-	TreasureIsle_ColorCycleFrame[0]++;
+	TreasureIsleColorCycleTick[0]++;
 }
 
 /* Treasure Isle's setup for each of its rooms: places the pillars already
@@ -673,7 +671,7 @@ Sint32 scInit(void)
 				ENTRANCE_PILLAR_C_MOVED_Z);
 	}
 	if(MainRoutineStateWork.next == SCENE_TREASURE_ISLE_CHESTS) {
-		sySetFrameEvent(scTreasureIsleCycleWaterCols, EVENT_PASS_FRAME);
+		sySetTickEvent(scTreasureIsleCycleWaterCols, EVENT_PASS_TICK);
 		fdTightropePlace(0, ACTOR_TIGHTROPE_POST_A, ACTOR_TIGHTROPE_POST_B);
 		if(fdScriptGetFlag(FLAG_TREASURE_ISLE_CHESTS_PILLAR_MOVED))
 			fdActorSetPos(ACTOR_STONE_PILLAR, CHESTS_PILLAR_MOVED_X,
@@ -690,7 +688,7 @@ Sint32 scInit(void)
 			scTreasureIsleSetSpikyRock(TreasureIsleChestsSpikyRocks, 4);
 	}
 	if(MainRoutineStateWork.next == SCENE_TREASURE_ISLE_JESTERS_ARMLET_CHEST) {
-		sySetFrameEvent(scTreasureIsleCycleWaterCols, EVENT_PASS_FRAME);
+		sySetTickEvent(scTreasureIsleCycleWaterCols, EVENT_PASS_TICK);
 		fdTightropePlace(0, ACTOR_TIGHTROPE_POST_A, ACTOR_TIGHTROPE_POST_B);
 		if(fdScriptGetFlag(FLAG_TREASURE_ISLE_ARMLET_PILLAR_MOVED))
 			fdActorSetPos(ACTOR_STONE_PILLAR, ARMLET_PILLAR_MOVED_X,
@@ -736,7 +734,7 @@ void scTreasureIsleJumpForward(void)
 /* clang-format off */
 #include "shared/field_effect_duration_scripts.c"
 
-Uint32 TreasureIsle_RockDust[] = {
+Uint32 TreasureIsleRockDust[] = {
 	SC_ANIMATION(2),
 	SC_LABEL(1),
 	SC_WAIT(1),
@@ -748,10 +746,10 @@ Uint32 TreasureIsle_RockDust[] = {
 	SC_END,
 };
 
-const Sint32 *FieldEffect_DurationScripts[] = {
-	FieldEffect_ShortScript,
-	FieldEffect_MediumScript,
-	FieldEffect_LongScript,
+const Sint32 *FieldEffectDurationScripts[] = {
+	FieldEffectShortScript,
+	FieldEffectMediumScript,
+	FieldEffectLongScript,
 };
 
 /* The spiky rocks that rise in the chests' room and the Armlet's room: each */
@@ -808,7 +806,7 @@ Uint32 SceneExits[] = {
 	SCENE_EXITS_END,
 };
 
-Uint32 TreasureIsle_PostStill[] = {
+Uint32 TreasureIslePostStill[] = {
 	SC_ANIMATION(1),
 	SC_WAIT(1),
 	SC_END,
@@ -822,8 +820,8 @@ ACTOR_PLACE TreasureIsleEntrancePlacements[] = {
 };
 
 ACTOR_PLACE TreasureIsleChestsPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIsle_PostStill, 600, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIsle_PostStill, 680, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIslePostStill, 600, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIslePostStill, 680, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 664, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_SEA_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -835,13 +833,13 @@ ACTOR_PLACE TreasureIsleChestsPlacements[] = {
 };
 
 ACTOR_PLACE TreasureIsleArmletPlacements[] = {
-	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIsle_PostStill, 824, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIsle_PostStill, 824, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIslePostStill, 824, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIslePostStill, 824, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	{SCENE_TABLE_END},
 };
 
-Uint32 TreasureIsle_LiftRockScale[] = {
+Uint32 TreasureIsleLiftRockScale[] = {
 	SC_SET(SW_SCALE_X, toFIXED(4) / 5),
 	SC_SET(SW_SCALE_Y, toFIXED(4) / 5),
 	SC_WAIT(1),
@@ -850,20 +848,20 @@ Uint32 TreasureIsle_LiftRockScale[] = {
 
 ACTOR_PLACE TreasureIsleGalePlacements[] = {
 	ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 600, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (Sint32)TreasureIsle_LiftRockScale, 328, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (Sint32)TreasureIsle_LiftRockScale, 216, 0, 312, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (Sint32)TreasureIsle_LiftRockScale, 104, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (Sint32)TreasureIsle_LiftRockScale, 312, 0, 216, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (Sint32)TreasureIsle_LiftRockScale, 216, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (Sint32)TreasureIsle_LiftRockScale, 120, 0, 216, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (Sint32)TreasureIsle_LiftRockScale, 744, 0, 728, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (Sint32)TreasureIsle_LiftRockScale, 424, 0, 680, FACING_NORTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIsle_PostStill, 360, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIsle_PostStill, 360, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIsle_PostStill, 152, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIsle_PostStill, 152, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIsle_PostStill, 72, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIsle_PostStill, 72, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (Sint32)TreasureIsleLiftRockScale, 328, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (Sint32)TreasureIsleLiftRockScale, 216, 0, 312, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (Sint32)TreasureIsleLiftRockScale, 104, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (Sint32)TreasureIsleLiftRockScale, 312, 0, 216, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (Sint32)TreasureIsleLiftRockScale, 216, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (Sint32)TreasureIsleLiftRockScale, 120, 0, 216, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (Sint32)TreasureIsleLiftRockScale, 744, 0, 728, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (Sint32)TreasureIsleLiftRockScale, 424, 0, 680, FACING_NORTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIslePostStill, 360, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIslePostStill, 360, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIslePostStill, 152, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIslePostStill, 152, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIslePostStill, 72, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+	ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (Sint32)TreasureIslePostStill, 72, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
 	ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_GALE), MOVEMENT_TYPE_STAND, 88, 0, 328, FACING_SOUTH, TALK_FACING_PARTY, 0),
 	{SCENE_TABLE_END},
 };
@@ -1078,7 +1076,7 @@ CUE TreasureIsleGuardianCues[] = {
 	{CUE_TABLE_END},
 };
 
-Sint32 TreasureIsle_ColorCycleFrame[] = {
+Sint32 TreasureIsleColorCycleTick[] = {
 	-1,
 };
 

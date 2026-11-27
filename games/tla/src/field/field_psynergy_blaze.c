@@ -1,18 +1,18 @@
 /* Blaze, and the check whether an actor stands where the map or another actor
    blocks it. Part of field_psynergy.c. */
 
-extern const Sint32 Blaze_TintColors[];
+extern const Sint32 BlazeTintColors[];
 
 /* The first layer of an actor's sprite. */
 #define ACTOR_FIRST_LAYER(actor) (((SPR *)(actor)->spr)->entries[0])
 
-/* The jet's longest spray, in frames; B ends it sooner. */
-#define BLAZE_SPRAY_FRAMES 80
+/* The jet's longest spray, in ticks; B ends it sooner. */
+#define BLAZE_SPRAY_TICKS 80
 /* How far in front of the caster the jet's flames are drawn. */
-#define BLAZE_FLAME_DEPTH  10
+#define BLAZE_FLAME_DEPTH 10
 
 /* The flame's colour, after the torch it is cast at: an index of
-   Blaze_TintColors. */
+   BlazeTintColors. */
 typedef enum BLAZE_LOOK {
 	BLAZE_RED,
 	BLAZE_VIOLET,
@@ -21,7 +21,7 @@ typedef enum BLAZE_LOOK {
 } BLAZE_LOOK;
 
 /* Blaze: a jet of flame sprays from the caster, with smoke, until B is pressed
-   or for BLAZE_SPRAY_FRAMES at most: red, or violet, yellow or blue to match
+   or for BLAZE_SPRAY_TICKS at most: red, or violet, yellow or blue to match
    the torch (SPRITE_MARS_TORCH_LIT) it is cast at. Each actor it reaches runs
    its Blaze script, and one that is lit by it ends the jet, its actor id kept
    in the field state. Cast at nothing, the nearest fire in reach is the target:
@@ -35,7 +35,7 @@ void fdPsynergyBlaze(void)
 	FIELD_EFFECT_STATE *scene;
 	ACTOR			   *caster;
 	ACTOR			   *actor;
-	EFFECT_SPR		   *sprite;
+	EFFECT_SPR		   *spr;
 
 	union {
 		ACTOR					*actor;
@@ -74,7 +74,7 @@ void fdPsynergyBlaze(void)
 		if(kind == SPRITE_COLOR_BGR)
 			look = BLAZE_BLUE;
 	}
-	fdStartColTransition(8, Blaze_TintColors[look]);
+	fdStartColTransition(8, BlazeTintColors[look]);
 	state->mode = BLAZE_FLICKER;
 	if(scene->aimAhead != 0) {
 		state->origin[0] = scene->x;
@@ -178,13 +178,13 @@ void fdPsynergyBlaze(void)
 		state->flameTile = tile;
 		cursor.particle = state->flameMotion;
 		for(j = 0; j < BLAZE_FLAMES; j++) {
-			sprite = &state->flames[j];
+			spr = &state->flames[j];
 
-			fdEffectSprInit(sprite, 15, 24, OBJ_SIZE_32X32, tile);
-			sprite->depth = fdActorGetSprDepth(caster) + BLAZE_FLAME_DEPTH;
-			sprite->oam.pri = fdActorGetSprPriority(caster);
-			sprite->oam.fullCol = 1;
-			sprite->oam.pal = 0;
+			fdEffectSprInit(spr, 15, 24, OBJ_SIZE_32X32, tile);
+			spr->depth = fdActorGetSprDepth(caster) + BLAZE_FLAME_DEPTH;
+			spr->oam.pri = fdActorGetSprPriority(caster);
+			spr->oam.fullCol = 1;
+			spr->oam.pal = 0;
 			cursor.particle->tmr = -1;
 			cursor.particle++;
 		}
@@ -195,21 +195,21 @@ void fdPsynergyBlaze(void)
 		state->puffTile = tile;
 		cursor.particle = state->puffMotion;
 		for(j = 0; j < BLAZE_FLAMES; j++) {
-			sprite = &state->puffs[j];
+			spr = &state->puffs[j];
 
-			fdEffectSprInit(sprite, 8, 15, OBJ_SIZE_16X16, tile);
-			sprite->scaleY = sprite->scaleX = toFIXED(3) / 4;
-			sprite->depth = EFFECT_SPRITE_FRONT_DEPTH;
-			sprite->oam.pri = 0;
-			sprite->oam.fullCol = 1;
-			sprite->oam.pal = 0;
+			fdEffectSprInit(spr, 8, 15, OBJ_SIZE_16X16, tile);
+			spr->scaleY = spr->scaleX = toFIXED(3) / 4;
+			spr->depth = EFFECT_SPRITE_FRONT_DEPTH;
+			spr->oam.pri = 0;
+			spr->oam.fullCol = 1;
+			spr->oam.pal = 0;
 			cursor.particle->tmr = -1;
 			cursor.particle++;
 		}
 		sySynch(1);
 		state->emitting = 1;
-		sySetEvent(fdBlazeUpdateSpray, EVENT_PASS_FRAME);
-		for(k = 0; k < BLAZE_SPRAY_FRAMES; k++) {
+		sySetEvent(fdBlazeUpdateSpray, EVENT_PASS_TICK);
+		for(k = 0; k < BLAZE_SPRAY_TICKS; k++) {
 			sySynch(1);
 			if(state->hit != 0) {
 				pending = fdFindPsynergyCue(PSYNERGY_CUE(PSYNERGY_PHASE_HITS),
@@ -280,5 +280,5 @@ Sint32 fdActorCheckBlocked(ACTOR *actor)
 	return result;
 }
 
-#undef BLAZE_SPRAY_FRAMES
+#undef BLAZE_SPRAY_TICKS
 #undef BLAZE_FLAME_DEPTH

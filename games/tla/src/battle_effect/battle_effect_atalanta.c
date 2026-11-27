@@ -64,13 +64,13 @@ typedef enum SLASH_SHEET_PICTURE {
 /* Atalanta's sprites: four rows of three 32x32 pieces, the last row two. */
 #define ATALANTA_PIECES 11
 
-/* The gathering's length, unless A or B cuts it short, and the frames Atalanta
+/* The gathering's length, unless A or B cuts it short, and the ticks Atalanta
    flies across in it. */
-#define ATALANTA_GATHER_FRAMES	   220
-#define ATALANTA_FLIGHT_LAST_FRAME 209
-/* The frame of the gathering the sky starts to darken. */
-#define ATALANTA_DARKEN_FRAME	   48
-#define ATALANTA_FALL_FRAMES	   88 /* frames of the shafts' fall */
+#define ATALANTA_GATHER_TICKS	  220
+#define ATALANTA_FLIGHT_LAST_TICK 209
+/* The tick of the gathering the sky starts to darken. */
+#define ATALANTA_DARKEN_TICK	  48
+#define ATALANTA_FALL_TICKS		  88 /* ticks of the shafts' fall */
 
 #define ATALANTA_SHAFTS				 16 /* shafts of light that gather over the field */
 #define ATALANTA_TRAIL_MOTES		 24 /* motes in each gathering shaft's trail */
@@ -78,25 +78,25 @@ typedef enum SLASH_SHEET_PICTURE {
 /* The particles the falling shafts are set up in, more than fall. */
 #define ATALANTA_FALLING_SHAFT_SLOTS 32
 
-/* The gathering shafts' timing: the first one's trail gathers from frame
-   ATALANTA_SHAFT_FIRST_FRAME and each next one ATALANTA_SHAFT_INTERVAL frames
-   later; a trail gathers for ATALANTA_TRAIL_FRAMES, the shaft flashes in for
-   ATALANTA_FLASH_FRAMES, one a picture, then flies off. */
-#define ATALANTA_SHAFT_FIRST_FRAME 64
-#define ATALANTA_SHAFT_INTERVAL	   8
-#define ATALANTA_TRAIL_FRAMES	   16
-#define ATALANTA_FLASH_FRAMES	   5
+/* The gathering shafts' timing: the first one's trail gathers from tick
+   ATALANTA_SHAFT_FIRST_TICK and each next one ATALANTA_SHAFT_INTERVAL ticks
+   later; a trail gathers for ATALANTA_TRAIL_TICKS, the shaft flashes in for
+   ATALANTA_FLASH_TICKS, one a picture, then flies off. */
+#define ATALANTA_SHAFT_FIRST_TICK 64
+#define ATALANTA_SHAFT_INTERVAL	  8
+#define ATALANTA_TRAIL_TICKS	  16
+#define ATALANTA_FLASH_TICKS	  5
 
 /* How far below its projected point a trail mote is drawn. */
 #define ATALANTA_TRAIL_DROP 16
 
-/* A landed shaft's burst: EmberStreakSheet's six flame pictures, four frames
+/* A landed shaft's burst: EmberStreakSheet's six flame pictures, four ticks
    each, the shaft still showing over the first three. */
-#define ATALANTA_BURST_PICTURES		  6
-#define ATALANTA_BURST_PICTURE_FRAMES 4
-#define ATALANTA_BURST_FRAMES \
-	(ATALANTA_BURST_PICTURES * ATALANTA_BURST_PICTURE_FRAMES)
-#define ATALANTA_BURST_SHAFT_FRAMES (3 * ATALANTA_BURST_PICTURE_FRAMES)
+#define ATALANTA_BURST_PICTURES		 6
+#define ATALANTA_BURST_PICTURE_TICKS 4
+#define ATALANTA_BURST_TICKS \
+	(ATALANTA_BURST_PICTURES * ATALANTA_BURST_PICTURE_TICKS)
+#define ATALANTA_BURST_SHAFT_TICKS (3 * ATALANTA_BURST_PICTURE_TICKS)
 
 /* Under a violet sky Atalanta flies across the screen while sixteen shafts of
    light gather trails of motes, flash and fly off; then 24 shafts rain down
@@ -108,8 +108,8 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 {
 	Sint32					 point[3];
 	SCREEN_POINT			 screen;
-	SPR_PLACEMENT			 position;
-	SCREEN_POINT			 target;
+	SPR_PLACEMENT			 pos;
+	SCREEN_POINT			 tgt;
 	DRAW_RECTANGLE			 draw[2];
 	BATTLE_BACKGROUND_STATE *view;
 	void					*canvas;
@@ -117,7 +117,7 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 	Sint8					*path;
 	Sint32					 i;
 	Sint32					 j;
-	Sint32					 frame;
+	Sint32					 frm;
 	Uint8					*sheet;
 	Sint32					 scrollX;
 	Sint32					 pathX;
@@ -209,13 +209,13 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 	REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 
 	/* The gathering (A or B ends it). */
-	for(frame = 0;
-		frame != ATALANTA_GATHER_FRAMES && !(PerWork.repeat & (KEY_A | KEY_B));
-		frame++) {
+	for(frm = 0;
+		frm != ATALANTA_GATHER_TICKS && !(PerWork.repeat & (KEY_A | KEY_B));
+		frm++) {
 		/* Atalanta flies along her path: where she starts, then a step a
-		   frame. */
-		if(frame <= ATALANTA_FLIGHT_LAST_FRAME) {
-			if(frame == 0) {
+		   tick. */
+		if(frm <= ATALANTA_FLIGHT_LAST_TICK) {
+			if(frm == 0) {
 				pathX = (path[0] << 8) + (Uint8)path[1];
 				pathY = (path[2] << 8) + (Uint8)path[3];
 				path += 4;
@@ -224,27 +224,26 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 				pathY += path[1];
 				path += 2;
 			}
-			position.groundHeight = 0;
-			position.height = toFIXED(255);
+			pos.groundHeight = 0;
+			pos.height = toFIXED(255);
 			for(row = 0; row != 4; row++) {
 				for(column = 0; column != 3; column++) {
 					if(row != 3 || column != 2) {
-						position.x = toFIXED(pathX + 80 + column * 32);
-						position.y = toFIXED(64 - pathY + row * 32);
+						pos.x = toFIXED(pathX + 80 + column * 32);
+						pos.y = toFIXED(64 - pathY + row * 32);
 						if(row == 3)
-							position.x = toFIXED(pathX + 80 + column * 32 + 32);
+							pos.x = toFIXED(pathX + 80 + column * 32 + 32);
 						fdRenderApplyProjectedPlacementStub(
 							state->sprs[row * 3 + column],
-							sySprPlacementValues(&position), Atalanta_UnitScale,
-							0);
+							sySprPlacementValues(&pos), AtalantaUnitScale, 0);
 					}
 				}
 			}
 		}
 		point[1] = 0;
 		point[2] = 0;
-		if(frame == ATALANTA_DARKEN_FRAME) {
-			state->fadeFrm = BACKGROUND_DARKEN_FRAMES;
+		if(frm == ATALANTA_DARKEN_TICK) {
+			state->fadeFrm = BACKGROUND_DARKEN_TICKS;
 			state->fadeStep = 0;
 		}
 
@@ -252,18 +251,17 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 		   flashes and flies off. */
 		for(i = 0; i != ATALANTA_SHAFTS; i++) {
 			Sint32 start =
-				i * ATALANTA_SHAFT_INTERVAL + ATALANTA_SHAFT_FIRST_FRAME;
+				i * ATALANTA_SHAFT_INTERVAL + ATALANTA_SHAFT_FIRST_TICK;
 
-			if(frame >= start) {
+			if(frm >= start) {
 				PARTICLE *shaft = &state->particles[i];
 				Sint32	  x = FIXED_INTEGER_PART(shaft->x);
 				Sint32	  y = FIXED_INTEGER_PART(shaft->y);
 
-				if(frame ==
-					start + ATALANTA_TRAIL_FRAMES + ATALANTA_FLASH_FRAMES - 1)
+				if(frm ==
+					start + ATALANTA_TRAIL_TICKS + ATALANTA_FLASH_TICKS - 1)
 					sySndPlayStub(SE_POWER_UP);
-				if(frame >=
-					start + ATALANTA_TRAIL_FRAMES + ATALANTA_FLASH_FRAMES) {
+				if(frm >= start + ATALANTA_TRAIL_TICKS + ATALANTA_FLASH_TICKS) {
 					shaft->x += shaft->velX;
 					shaft->y += shaft->velY;
 					shaft->velX -= toFIXED(1);
@@ -274,8 +272,8 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 						ATALANTA_SHAFT_MIDDLE, x - 16, y - 19);
 					EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 						ATALANTA_SHAFT_BOTTOM, x - 20, y + 16);
-				} else if(frame >= start + ATALANTA_TRAIL_FRAMES) {
-					switch(frame - start - ATALANTA_TRAIL_FRAMES) {
+				} else if(frm >= start + ATALANTA_TRAIL_TICKS) {
+					switch(frm - start - ATALANTA_TRAIL_TICKS) {
 					case 0:
 						EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 							ATALANTA_SHAFT_FLASH_A, x - 7, y - 14);
@@ -357,57 +355,55 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 		Sint32	  member = i % 6;
 
 		if(member < args->tgtCnt) {
-			btEffectPosProjectScaledBattler(args->tgts[member], &target);
+			btEffectPosProjectScaledBattler(args->tgts[member], &tgt);
 			shaft->y = -((syRandom() & 31) + 40);
-			shaft->x = target.x / 2 + (80 - shaft->y) / 2;
+			shaft->x = tgt.x / 2 + (80 - shaft->y) / 2;
 		} else {
 			shaft->x = (syRandom() & 63) + 80;
 			shaft->y = -((syRandom() & 31) + 40);
 		}
 		shaft->variant = -1;
 	}
-	/* The shafts rain down on the targets, two frames apart. */
-	for(frame = 0; frame != ATALANTA_FALL_FRAMES; frame++) {
+	/* The shafts rain down on the targets, two ticks apart. */
+	for(frm = 0; frm != ATALANTA_FALL_TICKS; frm++) {
 		for(i = 0; i != ATALANTA_FALLING_SHAFTS; i++) {
 			PARTICLE *shaft = &state->particles[i];
 
-			if(frame >= i * 2 || frame > 40) {
+			if(frm >= i * 2 || frm > 40) {
 				if(shaft->variant >= 0) {
 					/* A landed shaft bursts in light. */
-					if(shaft->variant < ATALANTA_BURST_FRAMES) {
+					if(shaft->variant < ATALANTA_BURST_TICKS) {
 						Sint32 flame =
-							shaft->variant / ATALANTA_BURST_PICTURE_FRAMES;
+							shaft->variant / ATALANTA_BURST_PICTURE_TICKS;
 						Uint32 width;
 
 						/* UB: width is assigned in one argument and read in
 						   another. */
 #if FIX_UNSEQUENCED_SIDE_EFFECT
-						width = BattleEffect_EmberStreakPictureWidths[flame];
+						width = BattleEffectEmberStreakPictureWidths[flame];
 						draw[i & 1](canvas,
 							Ram_MapMetatileBuffer +
-								BattleEffect_EmberStreakPictures[flame],
+								BattleEffectEmberStreakPictures[flame],
 							shaft->x - (width >> 1) - 8,
 							shaft->y +
-								BattleEffect_EmberStreakPictureBiasY[flame] -
-								40,
+								BattleEffectEmberStreakPictureBiasY[flame] - 40,
 							width,
-							BattleEffect_EmberStreakPictureHeights[flame]);
+							BattleEffectEmberStreakPictureHeights[flame]);
 #else
 						draw[i & 1](canvas,
 							Ram_MapMetatileBuffer +
-								BattleEffect_EmberStreakPictures[flame],
+								BattleEffectEmberStreakPictures[flame],
 							shaft->x -
-								((width = BattleEffect_EmberStreakPictureWidths
+								((width = BattleEffectEmberStreakPictureWidths
 										 [flame]) >>
 									1) -
 								8,
 							shaft->y +
-								BattleEffect_EmberStreakPictureBiasY[flame] -
-								40,
+								BattleEffectEmberStreakPictureBiasY[flame] - 40,
 							width,
-							BattleEffect_EmberStreakPictureHeights[flame]);
+							BattleEffectEmberStreakPictureHeights[flame]);
 #endif
-						if(shaft->variant < ATALANTA_BURST_SHAFT_FRAMES) {
+						if(shaft->variant < ATALANTA_BURST_SHAFT_TICKS) {
 							EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 								ATALANTA_SHAFT_TOP, shaft->x + 4,
 								shaft->y - 40);
@@ -449,23 +445,23 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		btCameraShake(4, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 	EFFECT_FINISH_CANVAS();
 }
 
 #undef ATALANTA_MATRICES
-#undef ATALANTA_GATHER_FRAMES
-#undef ATALANTA_FLIGHT_LAST_FRAME
-#undef ATALANTA_DARKEN_FRAME
+#undef ATALANTA_GATHER_TICKS
+#undef ATALANTA_FLIGHT_LAST_TICK
+#undef ATALANTA_DARKEN_TICK
 #undef ATALANTA_PIECES
 #undef ATALANTA_FALLING_SHAFT_SLOTS
 #undef ATALANTA_TRAIL_DROP
-#undef ATALANTA_SHAFT_FIRST_FRAME
+#undef ATALANTA_SHAFT_FIRST_TICK
 #undef ATALANTA_SHAFT_INTERVAL
-#undef ATALANTA_TRAIL_FRAMES
-#undef ATALANTA_FLASH_FRAMES
+#undef ATALANTA_TRAIL_TICKS
+#undef ATALANTA_FLASH_TICKS
 #undef ATALANTA_BURST_PICTURES
-#undef ATALANTA_BURST_PICTURE_FRAMES
-#undef ATALANTA_BURST_FRAMES
-#undef ATALANTA_BURST_SHAFT_FRAMES
+#undef ATALANTA_BURST_PICTURE_TICKS
+#undef ATALANTA_BURST_TICKS
+#undef ATALANTA_BURST_SHAFT_TICKS

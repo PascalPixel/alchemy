@@ -15,18 +15,18 @@ typedef enum INN_MESSAGE_ID {
 Sint32 mnInnRoomPrice(Sint32 innId)
 {
 	SHOP_STATE *shop;
-	Sint32		guestCount;
+	Sint32		guestCnt;
 	Sint32		pricePerGuest;
-	Sint32		memberIndex;
+	Sint32		memberIdx;
 
 	shop = Ram_HeapSlots->menuState;
-	guestCount = 0;
-	pricePerGuest = Inn_PricesPerGuest[innId];
-	for(memberIndex = 0; memberIndex < shop->partyMemberCnt; memberIndex++) {
-		if(syUnitGet(shop->partyMemberIds[memberIndex])->hp != 0)
-			guestCount++;
+	guestCnt = 0;
+	pricePerGuest = InnPricesPerGuest[innId];
+	for(memberIdx = 0; memberIdx < shop->partyMemberCnt; memberIdx++) {
+		if(syUnitGet(shop->partyMemberIds[memberIdx])->hp != 0)
+			guestCnt++;
 	}
-	return pricePerGuest * guestCount;
+	return pricePerGuest * guestCnt;
 }
 
 /* Returns the night's price at inn `innId` with the shop's state opened for it,
@@ -44,15 +44,15 @@ Sint32 mnInnQuoteRoomPrice(Sint32 innId)
 }
 
 /* Runs an inn's counter: the innkeeper names the price, and on Yes the party
-   sleeps. `innId` is the row of Inn_PricesPerGuest and `actorId` the innkeeper,
+   sleeps. `innId` is the row of InnPricesPerGuest and `actorId` the innkeeper,
    whose portrait the lines show. */
 Sint32 mnInnCheckIn(Sint32 innId, Sint32 actorId)
 {
 	SHOP_STATE *shop;
 	ACTOR	   *innkeeper;
-	WINDOW	   *innkeeperWindow;
+	WINDOW	   *innkeeperWin;
 	Sint32		roomPrice;
-	Sint32		messageBase;
+	Sint32		msgBase;
 
 	mnShopInitState();
 	shop = Ram_HeapSlots->menuState;
@@ -60,36 +60,35 @@ Sint32 mnInnCheckIn(Sint32 innId, Sint32 actorId)
 
 	innkeeper = fdActorGetByIdStub(actorId);
 	shop->keeperGraphics = ((SPR *)innkeeper->spr)->entries[0]->anmId;
-	innkeeperWindow = mnPortraitOpenWindowStub(shop->keeperGraphics, 0, 0, 0);
+	innkeeperWin = mnPortraitOpenWindowStub(shop->keeperGraphics, 0, 0, 0);
 
 	roomPrice = mnInnRoomPrice(innId);
 	mnMessageArgumentPushStub(roomPrice, MESSAGE_ARGUMENT_NUMBER);
-	messageBase = (Sint32)MsgInnWelcome;
-	mnShopShowKeeperMessage(messageBase);
+	msgBase = (Sint32)MsgInnWelcome;
+	mnShopShowKeeperMessage(msgBase);
 	shop->moneyWin = mnWindowCreateStub(
 		0, 16, SHOP_COIN_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
 	mnShopDrawMoney();
 
 	if(mnShopAskYesNo(0) != 0) {
-		mnShopShowKeeperMessage(messageBase + INN_MESSAGE_COME_AGAIN);
+		mnShopShowKeeperMessage(msgBase + INN_MESSAGE_COME_AGAIN);
 		mnWindowCloseStub(shop->moneyWin, 2);
 	} else if((Uint32)roomPrice > MainRoutineStateWork.coins) {
-		mnShopShowKeeperMessage(messageBase + INN_MESSAGE_NOT_ENOUGH_COINS);
+		mnShopShowKeeperMessage(msgBase + INN_MESSAGE_NOT_ENOUGH_COINS);
 		mnWindowCloseStub(shop->moneyWin, 2);
 	} else {
 		mnWindowCloseStub(shop->moneyWin, 2);
-		mnShopShowKeeperMessage(messageBase + INN_MESSAGE_ENJOY_STAY);
-		mnWindowCloseStub(innkeeperWindow, 2);
+		mnShopShowKeeperMessage(msgBase + INN_MESSAGE_ENJOY_STAY);
+		mnWindowCloseStub(innkeeperWin, 2);
 		mnInnPlaySleep(roomPrice);
 
 		innkeeper = fdActorGetByIdStub(actorId);
 		shop->keeperGraphics = ((SPR *)innkeeper->spr)->entries[0]->anmId;
-		innkeeperWindow =
-			mnPortraitOpenWindowStub(shop->keeperGraphics, 0, 0, 0);
-		mnShopShowKeeperMessage(messageBase + INN_MESSAGE_SLEPT_WELL);
+		innkeeperWin = mnPortraitOpenWindowStub(shop->keeperGraphics, 0, 0, 0);
+		mnShopShowKeeperMessage(msgBase + INN_MESSAGE_SLEPT_WELL);
 	}
 
-	mnWindowCloseStub(innkeeperWindow, 2);
+	mnWindowCloseStub(innkeeperWin, 2);
 	mnShopReleaseState();
 	return 0;
 }
@@ -99,24 +98,24 @@ Sint32 mnInnCheckIn(Sint32 innId, Sint32 actorId)
 void mnInnPlaySleep(Sint32 roomPrice)
 {
 	Sint16		 partyMemberIds[8];
-	Sint32		 memberCount;
-	Sint32		 memberIndex;
+	Sint32		 memberCnt;
+	Sint32		 memberIdx;
 	UNIT		*unit;
 	FIELD_STATE *state;
 
-	memberCount = gmPartyListMembersStub(partyMemberIds);
+	memberCnt = gmPartyListMembersStub(partyMemberIds);
 	gmPartyAdjustCoinsStub(-roomPrice);
 
-	for(memberIndex = 0; memberIndex < memberCount; memberIndex++) {
-		unit = syUnitGet(partyMemberIds[memberIndex]);
+	for(memberIdx = 0; memberIdx < memberCnt; memberIdx++) {
+		unit = syUnitGet(partyMemberIds[memberIdx]);
 		if(unit->hp != 0) {
 			unit->hp = unit->hpMax;
 			unit->pp = unit->ppMax;
-			gmUnitRecalculateGaugesStub(partyMemberIds[memberIndex]);
+			gmUnitRecalculateGaugesStub(partyMemberIds[memberIdx]);
 		}
 	}
 
-	/* The night's fades take 60 frames each, a window closing round the leader
+	/* The night's fades take 60 ticks each, a window closing round the leader
 	   as The Broken Seal's. */
 	state = Ram_HeapSlots->fieldState;
 	state->transition =
@@ -124,12 +123,12 @@ void mnInnPlaySleep(Sint32 roomPrice)
 	state->transitionFrm = 60;
 	sySynch(20);
 	fdScriptFinishScreenTransitionStub();
-	fdScriptWaitTransitionFramesStub();
+	fdScriptWaitTransitionTicksStub();
 	sySndPlayStub(MUS_OVERNIGHT_AT_THE_INN);
 	mnSndWaitForJingle();
 	sySynch(10);
 	fdScriptStartScreenTransitionStub();
-	fdScriptWaitTransitionFramesStub();
+	fdScriptWaitTransitionTicksStub();
 	sySynch(30);
 	FieldStateWork->transitionFrm = 16;
 }

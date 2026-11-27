@@ -14,8 +14,8 @@
 
 void scMercuryLighthouseHearVoices(void);
 
-extern Sint32						 MercuryLighthouse_GlintScript[];
-Uint32 MercuryLighthouse_GlintFrames BSS_DATA; /* frames the glint has run */
+extern Sint32					   MercuryLighthouseGlintScript[];
+Uint32 MercuryLighthouseGlintTicks BSS_DATA; /* ticks the glint has run */
 
 enum {
 	/* Unused: an entrance no exit leads to, which the map does not have. By it
@@ -28,28 +28,28 @@ enum {
 };
 
 /* A glint's script call: it flickers, hidden and white by turns every two
-   frames. */
+   ticks. */
 Sint32 scMercuryLighthouseFlickerGlint(ACTOR *actor)
 {
-	if((MercuryLighthouse_GlintFrames >> 1) & 1)
+	if((MercuryLighthouseGlintTicks >> 1) & 1)
 		scFieldActorSetSprCol(actor, SPRITE_COLOR_HIDDEN);
 	else
 		scFieldActorSetSprCol(actor, SPRITE_COLOR_WHITE);
 	return 0;
 }
 
-/* An Imil villager's update while the voices talk: every 40 to 120 frames it
+/* An Imil villager's update while the voices talk: every 40 to 120 ticks it
    turns between two headings, as if looking around for them. */
 void scMercuryLighthouseLookAround(ACTOR *actor)
 {
-	Uint8 *timer = &actor->sceneCnt;
+	Uint8 *tmr = &actor->sceneCnt;
 	Uint8 *state;
 
-	if(*timer != 0) {
-		(*timer)--;
+	if(*tmr != 0) {
+		(*tmr)--;
 		return;
 	}
-	*timer = (syRandomBelow(80)) + 40;
+	*tmr = (syRandomBelow(80)) + 40;
 	state = &actor->sceneByte;
 	switch(*state) {
 	case 0:
@@ -114,9 +114,9 @@ enum {
 	ACTOR_VOICES_TARGET
 };
 
-/* The event scMercuryLighthouseHearVoices starts: every 16 frames it starts a
+/* The event scMercuryLighthouseHearVoices starts: every 16 ticks it starts a
    flickering glint (SPRITE_GLINT) at a random spot in front of the lighthouse,
-   and it counts the frames in MercuryLighthouse_GlintFrames. */
+   and it counts the ticks in MercuryLighthouseGlintTicks. */
 void scMercuryLighthouseSpawnGlints(void)
 {
 	ACTOR *actor;
@@ -124,7 +124,7 @@ void scMercuryLighthouseSpawnGlints(void)
 	fdActorSetSprPriority(ACTOR_BOY, 3);
 	fdActorSetSprPriority(ACTOR_GIRL, 3);
 	fdActorSetSprFlags(fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
-	if((FrameCount & 15) == 0) {
+	if((TickCount & 15) == 0) {
 		actor = syImportActorCreate(SPRITE_GLINT, 0, 0, 0);
 		if(actor != NULL) {
 			FIELD_SPR *sprite = actor->spr;
@@ -138,11 +138,11 @@ void scMercuryLighthouseSpawnGlints(void)
 			fdActorSetSprFlags(actor, 0);
 			actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
 			sprite->pri = 2;
-			fdActorStartScript(actor, MercuryLighthouse_GlintScript);
+			fdActorStartScript(actor, MercuryLighthouseGlintScript);
 			fdActorSelectAnimation(actor, 1);
 		}
 	}
-	MercuryLighthouse_GlintFrames++;
+	MercuryLighthouseGlintTicks++;
 }
 
 /* As the Mars beacon is lit, two children of Imil at the base of Mercury
@@ -159,13 +159,13 @@ void scMercuryLighthouseHearVoices(void)
 	scFieldActorSetSprCol(fdActorGetById(MainRoutineStateWork.leaderActorId),
 		SPRITE_COLOR_HIDDEN);
 	sySynch(1);
-	MercuryLighthouse_GlintFrames = 0;
-	sySetEvent(scMercuryLighthouseSpawnGlints, EVENT_PASS_FRAME);
+	MercuryLighthouseGlintTicks = 0;
+	sySetEvent(scMercuryLighthouseSpawnGlints, EVENT_PASS_TICK);
 	fdActorSetSprPriority(ACTOR_BOY, 2);
 	fdActorSetSprPriority(ACTOR_GIRL, 2);
 	FieldStateWork->transitionFrm = 40;
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
 	fdPsynergyStartMindReadWave(ACTOR_VOICES_SOURCE, ACTOR_VOICES_TARGET);
 	fdScriptSetMessageId(MsgImilVoicesDisbeliefReply);
@@ -271,7 +271,7 @@ void scMercuryLighthouseHearVoices(void)
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptSetFlag(FLAG_MARS_BEACON_BURNING);
 	syFieldScriptSetExitRequest(
 		MERCURY_LIGHTHOUSE_TO_MARS_LIGHTHOUSE_AERIE_EAST_B);
@@ -283,7 +283,7 @@ Sint32 scInit(void)
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdScriptPlaySnd(SE_ASCEND);
 		fdPaletteFadeSetTarget(RGB_WHITE, 0);
 		fdPaletteFadeStartInterpolation(20);
@@ -300,7 +300,7 @@ Sint32 scPrepareMap(void)
 	return 0;
 }
 
-Sint32 MercuryLighthouse_GlintScript[] = {
+Sint32 MercuryLighthouseGlintScript[] = {
 	SC_ADD(SW_Y, toFIXED(-2)),
 	SC_CALL(scMercuryLighthouseFlickerGlint),
 	SC_WAIT(1),

@@ -18,12 +18,12 @@ void fdActorSetRevealSprCol(Sint32 value)
 			Uint8 kind = actor->sprStorageKind;
 
 			if(kind == ACTOR_SPRITE_ONE) {
-				SPR			  *animation = actor->spr;
-				SPR_ANIMATION *entry = animation->entries[0];
+				SPR			  *anm = actor->spr;
+				SPR_ANIMATION *entry = anm->entries[0];
 
 				if(entry->anmId == SPRITE_ROCK) {
 					entry->colMode = value;
-					animation->dirty = kind;
+					anm->dirty = kind;
 				}
 			}
 		}
@@ -77,19 +77,19 @@ void fdPsynergyReveal(void)
 {
 	FIELD_STATE				*fieldState;
 	SCREEN_TRANSITION_STATE *state;
-	ACTOR					*target;
-	Sint32					 eventTarget;
+	ACTOR					*tgt;
+	Sint32					 eventTgt;
 	void					*event;
-	Sint32					 frame;
+	Sint32					 frm;
 
 	fieldState = FieldStateWork;
 	fdActorSetRevealSprCol(SPRITE_COLOR_GREY);
 	fdScreenTransitionStartHeldWindow(WINDOW_TRANSITION_RIPPLE);
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_SCREEN_TRANSITION);
-	target = fdActorLookup(MainRoutineStateWork.leaderActorId);
-	state->centerX = target->x.fixed;
-	state->centerY = target->z.fixed - target->y.fixed;
-	/* The BG palettes turn grey in one frame. */
+	tgt = fdActorLookup(MainRoutineStateWork.leaderActorId);
+	state->centerX = tgt->x.fixed;
+	state->centerY = tgt->z.fixed - tgt->y.fixed;
+	/* The BG palettes turn grey in one tick. */
 	fdPaletteFadeSetSource(PALETTE_TINT_NONE, PALETTES_ALL);
 	fdPaletteFadeSetTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
 	fdPaletteFadeStartInterpolation(1);
@@ -99,10 +99,10 @@ void fdPsynergyReveal(void)
 #endif
 	sySynch(1);
 	event = fdFindPsynergyCue(
-		PSYNERGY_CUE(PSYNERGY_PHASE_ACTS), FIELD_PSYNERGY_REVEAL, &eventTarget);
+		PSYNERGY_CUE(PSYNERGY_PHASE_ACTS), FIELD_PSYNERGY_REVEAL, &eventTgt);
 	if(event != NULL)
 		fdRunPsynergyScript(
-			event, MainRoutineStateWork.leaderActorId, eventTarget);
+			event, MainRoutineStateWork.leaderActorId, eventTgt);
 	sySndPlayStub(SE_PSYNERGY_SPARKLE);
 
 	/* Record the centre (in pixels) and the time in the field state, and put
@@ -110,24 +110,24 @@ void fdPsynergyReveal(void)
 	fieldState->revealActive = 1;
 	fieldState->revealCenterX = state->centerX / toFIXED(1);
 	fieldState->revealCenterY = state->centerY / toFIXED(1);
-	fieldState->revealFrm = REVEAL_FRAMES;
+	fieldState->revealFrm = REVEAL_TICKS;
 	fieldState->effTmrRunning = 1;
 	fdEffectSpawnRevealMarkers();
-	for(frame = 0; frame <= 18; frame++) {
+	for(frm = 0; frm <= 18; frm++) {
 		sySynch(1);
-		state->value = frame;
+		state->value = frm;
 	}
-	sySetEvent(fdPsynergyWatchLeaderDistance, EVENT_PASS_FRAME);
+	sySetEvent(fdPsynergyWatchLeaderDistance, EVENT_PASS_TICK);
 }
 
 /* Ends Reveal if it is running: stops its watch, brings the colours back from
-   black over 30 frames and runs the scene's PSYNERGY_PHASE_FADES script. */
+   black over 30 ticks and runs the scene's PSYNERGY_PHASE_FADES script. */
 void fdPsynergyEndReveal(void)
 {
 	FIELD_EFFECT_STATE		*effectState = FieldEffectStateWork;
 	SCREEN_TRANSITION_STATE *transition = ScreenTransitionStateWork;
 	FIELD_STATE				*state = FieldStateWork;
-	Sint32					 eventTarget;
+	Sint32					 eventTgt;
 	void					*event;
 
 	if(state->revealActive != 0) {
@@ -146,10 +146,10 @@ void fdPsynergyEndReveal(void)
 		sySynch(1);
 
 		event = fdFindPsynergyCue(PSYNERGY_CUE(PSYNERGY_PHASE_FADES),
-			FIELD_PSYNERGY_REVEAL, &eventTarget);
+			FIELD_PSYNERGY_REVEAL, &eventTgt);
 		if(event != NULL)
 			fdRunPsynergyScript(
-				event, MainRoutineStateWork.leaderActorId, eventTarget);
+				event, MainRoutineStateWork.leaderActorId, eventTgt);
 
 		if(effectState->sceneVariant == 0) {
 			transition->nextMode = 0;

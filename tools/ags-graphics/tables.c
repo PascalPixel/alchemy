@@ -145,21 +145,21 @@ plane(const Buffer *input)
  * A map's timed changes, one command a row; the game reads halfwords.
  *
  * Tileset animations, under the columns animation, command, value, count,
- * destination and frames. The rows of one animation, 0 to 15, stand
+ * destination and ticks. The rows of one animation, 0 to 15, stand
  * together:
  *
  *   picture   copy count tiles from tile value to tile destination, then
- *             wait frames
+ *             wait ticks
  *   jump      continue at the animation's command value, counted from 0
  *   stop      stay here for good
  *
  * NAME.paused.tsv beside the table, one column, lists the animations that
  * start paused.
  *
- * A blend script, under the columns command, value and frames:
+ * A blend script, under the columns command, value and ticks:
  *
  *   control   set the blend register to value
- *   level     set the blend level to value, then wait frames
+ *   level     set the blend level to value, then wait ticks
  *   jump      continue at command value, counted from 0
  *
  * The marker that starts each animation and the one that ends the script are
@@ -172,10 +172,10 @@ script(const char *input, const Buffer *data)
 	Strings lines = linesOf(data), paused = {0};
 	if (!lines.len)
 		fail("a script names its columns");
-	bool blend = !strcmp(lines.items[0], "command\tvalue\tframes");
+	bool blend = !strcmp(lines.items[0], "command\tvalue\tticks");
 	if (!blend &&
 		strcmp(lines.items[0],
-			   "animation\tcommand\tvalue\tcount\tdestination\tframes"))
+			   "animation\tcommand\tvalue\tcount\tdestination\tticks"))
 		fail("a script's columns are a tileset animation's or a blend's");
 	char *path = formatString("%.*s.paused.tsv", (int) (strlen(input) - 4),
 							  input);

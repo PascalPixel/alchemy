@@ -3,8 +3,8 @@
 #define DJINN_BEAMS_MOTES		  512 /* motes in PARTICLES */
 /* Each target's own run of the motes, of which the first eight are drawn. */
 #define DJINN_BEAMS_TARGET_MOTES  64
-/* Each target's motes and column start this many frames after the last's. */
-#define DJINN_BEAMS_TARGET_FRAMES 16
+/* Each target's motes and column start this many ticks after the last's. */
+#define DJINN_BEAMS_TARGET_TICKS  16
 /* How far a mote sways either side, and the Djinni across and up and down, in
    pixels. */
 #define DJINN_BEAMS_MOTE_SWAY	  16
@@ -46,8 +46,8 @@ void btEffectRunDew(BATTLE_EFFECT_PARM *args)
    target in turn motes drift down and a column of light falls on it. */
 void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 {
-	SCREEN_POINT		 onlyTarget;
-	SCREEN_POINT		 screenPosition;
+	SCREEN_POINT		 onlyTgt;
+	SCREEN_POINT		 screenPos;
 	Sint32				 ground[3];
 	Sint32				 point[3];
 	Sint32				 djinniX;
@@ -55,8 +55,8 @@ void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 	BLITTER_PAIR		 draw;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
-	Sint32				 offsetX;
+	Sint32				 frm;
+	Sint32				 ofsX;
 	Uint8				*palette;
 	Sint32				 i;
 	Sint32				 k;
@@ -94,41 +94,40 @@ void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 
 	REG_BG2PA = Q_8_8(1);
 	if(state->args->tgtCnt == 1) {
-		btProjectionScaledUnit(state->args->tgts[0], &onlyTarget);
-		offsetX = CANVAS_SIZE / 2 - onlyTarget.x;
+		btProjectionScaledUnit(state->args->tgts[0], &onlyTgt);
+		ofsX = CANVAS_SIZE / 2 - onlyTgt.x;
 	} else {
 		if(state->args->side == EFFECT_SIDE_PARTY)
-			offsetX = -NARROW_CANVAS_PARTY_X;
+			ofsX = -NARROW_CANVAS_PARTY_X;
 		else
-			offsetX = 0;
+			ofsX = 0;
 	}
-	REG_BG2X = offsetX << 8;
+	REG_BG2X = ofsX << 8;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-	for(frame = 0;
-		frame != state->args->tgtCnt * DJINN_BEAMS_TARGET_FRAMES + 116;
-		frame++) {
+	for(frm = 0; frm != state->args->tgtCnt * DJINN_BEAMS_TARGET_TICKS + 116;
+		frm++) {
 		BATTLE_CAMERA *camera = BattleCameraWork;
 
-		if(frame == 64)
+		if(frm == 64)
 			sySndPlayStub(SE_POWER_UP);
-		if(frame == 80)
+		if(frm == 80)
 			EFFECT_SHOW_DAMAGE(0);
 
 		/* The Djinni sways, then rises away. */
 		if(state->args->prelude == 1) {
-			Sint32 angle = frame * (TRIG_TURN / 32);
-			Sint32 x = FIXEDtoINT(-sySin(angle) * DJINN_BEAMS_DJINNI_SWAY_X) +
-				djinniX + offsetX - DJINNI_WIDTH / 2;
-			Sint32 y = FIXEDtoINT(syCos(angle) * DJINN_BEAMS_DJINNI_SWAY_Y) +
+			Sint32 ang = frm * (TRIG_TURN / 32);
+			Sint32 x = FIXEDtoINT(-sySin(ang) * DJINN_BEAMS_DJINNI_SWAY_X) +
+				djinniX + ofsX - DJINNI_WIDTH / 2;
+			Sint32 y = FIXEDtoINT(syCos(ang) * DJINN_BEAMS_DJINNI_SWAY_Y) +
 				djinniY - 24;
 
 			btEffectBuildCanvasBlitters(state->args->side ^ 1, draw);
-			if(frame > 32)
-				y = y - frame * 2 + 64;
+			if(frm > 32)
+				y = y - frm * 2 + 64;
 			draw[1](canvas, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
 				DJINNI_WIDTH, DJINNI_HEIGHT);
-			if(frame <= 3)
+			if(frm <= 3)
 				draw[1](canvas, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
 					DJINNI_WIDTH, DJINNI_HEIGHT);
 			EFFECT_RELEASE_BLITTERS();
@@ -142,36 +141,36 @@ void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 
 		/* Motes sink, swaying. */
 		EFFECT_FOR_EACH_TARGET(k, state->args) {
-			ACTOR *target = btObjectGetStub(state->args->tgts[k])->actor;
-			Sint32 start = k * DJINN_BEAMS_TARGET_FRAMES;
+			ACTOR *tgt = btObjectGetStub(state->args->tgts[k])->actor;
+			Sint32 start = k * DJINN_BEAMS_TARGET_TICKS;
 
 			EFFECT_VIEW_FROM_CAMERA(camera);
-			SET_VECTOR(point, target->x.fixed, 0, target->z.fixed);
+			SET_VECTOR(point, tgt->x.fixed, 0, tgt->z.fixed);
 			syMatrixTranslateVector(point);
-			if(frame > start) {
+			if(frm > start) {
 				for(i = 0; i != 8; i++) {
 					PARTICLE *mote =
 						&PARTICLES[k * DJINN_BEAMS_TARGET_MOTES + i];
 
-					if(frame > i * 8 + start && mote->y > toFIXED(8)) {
+					if(frm > i * 8 + start && mote->y > toFIXED(8)) {
 						Sint32 sway;
 
-						btProjectionPoint(mote, &screenPosition);
-						screenPosition.x += offsetX;
+						btProjectionPoint(mote, &screenPos);
+						screenPos.x += ofsX;
 						sway =
 							FIXEDtoINT(sySin(mote->variant * (TRIG_TURN / 64)) *
 								DJINN_BEAMS_MOTE_SWAY);
 						if(i & 1)
-							screenPosition.x -= sway;
+							screenPos.x -= sway;
 						else
-							screenPosition.x += sway;
+							screenPos.x += sway;
 						draw[i & 1](canvas,
 							state->sheet +
-								DjinnBeams_MotePictures[mote->variant / 8 & 7] *
+								DjinnBeamsMotePictures[mote->variant / 8 & 7] *
 									PICTURE_BYTES(DJINN_BEAMS_MOTE) +
 								DJINN_BEAMS_MOTE_PICTURES,
-							screenPosition.x - DJINN_BEAMS_MOTE_WIDTH / 2,
-							screenPosition.y - DJINN_BEAMS_MOTE_HEIGHT / 2,
+							screenPos.x - DJINN_BEAMS_MOTE_WIDTH / 2,
+							screenPos.y - DJINN_BEAMS_MOTE_HEIGHT / 2,
 							DJINN_BEAMS_MOTE_WIDTH, DJINN_BEAMS_MOTE_HEIGHT);
 						mote->y -= toFIXED(1);
 						mote->variant++;
@@ -182,49 +181,49 @@ void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 
 		/* The column of light. */
 		EFFECT_FOR_EACH_TARGET(i, state->args) {
-			Sint32 start = i * DJINN_BEAMS_TARGET_FRAMES;
+			Sint32 start = i * DJINN_BEAMS_TARGET_TICKS;
 
-			if(frame >= start + 72) {
-				ACTOR *target = btObjectGetStub(state->args->tgts[i])->actor;
+			if(frm >= start + 72) {
+				ACTOR *tgt = btObjectGetStub(state->args->tgts[i])->actor;
 
 				EFFECT_VIEW_FROM_CAMERA(camera);
-				if(frame == start + 72)
+				if(frm == start + 72)
 					btEffectTintBattler(state->args->tgts[i], SPRITE_COLOR_GRB,
 						TINT_KEEP, TINT_KEEP, 0);
-				if(frame == start + 88)
+				if(frm == start + 88)
 					btEffectTintBattler(state->args->tgts[i],
 						SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
-				SET_VECTOR(ground, target->x.fixed, 0, target->z.fixed);
-				btProjectionPoint(ground, &screenPosition);
-				screenPosition.x += offsetX;
-				if(frame < start + 104) {
-					Sint32 pic = frame / 4;
+				SET_VECTOR(ground, tgt->x.fixed, 0, tgt->z.fixed);
+				btProjectionPoint(ground, &screenPos);
+				screenPos.x += ofsX;
+				if(frm < start + 104) {
+					Sint32 pic = frm / 4;
 					Sint32 width = DJINN_BEAMS_COLUMN_HALF_WIDTH;
 
-					if(frame > start + 88)
+					if(frm > start + 88)
 						width = DJINN_BEAMS_COLUMN_HALF_WIDTH -
-							(frame - start - 88) / 3;
+							(frm - start - 88) / 3;
 					if(pic > 2)
 						pic = (pic & 1) + 1;
-					if(frame < start + 100) {
+					if(frm < start + 100) {
 						draw[0](canvas,
-							state->sheet + DjinnBeams_HeadPictures[pic],
-							screenPosition.x - DjinnBeams_HeadWidths[pic],
-							screenPosition.y - DjinnBeams_HeadHeights[pic] + 8,
-							DjinnBeams_HeadWidths[pic],
-							DjinnBeams_HeadHeights[pic]);
+							state->sheet + DjinnBeamsHeadPictures[pic],
+							screenPos.x - DjinnBeamsHeadWidths[pic],
+							screenPos.y - DjinnBeamsHeadHeights[pic] + 8,
+							DjinnBeamsHeadWidths[pic],
+							DjinnBeamsHeadHeights[pic]);
 						draw[1](canvas,
-							state->sheet + DjinnBeams_HeadPictures[pic],
-							screenPosition.x,
-							screenPosition.y - DjinnBeams_HeadHeights[pic] + 8,
-							DjinnBeams_HeadWidths[pic],
-							DjinnBeams_HeadHeights[pic]);
+							state->sheet + DjinnBeamsHeadPictures[pic],
+							screenPos.x,
+							screenPos.y - DjinnBeamsHeadHeights[pic] + 8,
+							DjinnBeamsHeadWidths[pic],
+							DjinnBeamsHeadHeights[pic]);
 					}
-					for(k = 0; k != screenPosition.y; k++) {
+					for(k = 0; k != screenPos.y; k++) {
 						draw[0](canvas, state->sheet + DJINN_BEAMS_COLUMN_RAMP,
-							screenPosition.x - width, k, width, 1);
+							screenPos.x - width, k, width, 1);
 						draw[1](canvas, state->sheet + DJINN_BEAMS_COLUMN_RAMP,
-							screenPosition.x, k, width, 1);
+							screenPos.x, k, width, 1);
 					}
 				}
 			}
@@ -243,7 +242,7 @@ void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 #undef DJINN_BEAMS_MOTE_WIDTH
 #undef DJINN_BEAMS_MOTE_HEIGHT
 #undef DJINN_BEAMS_TARGET_MOTES
-#undef DJINN_BEAMS_TARGET_FRAMES
+#undef DJINN_BEAMS_TARGET_TICKS
 #undef DJINN_BEAMS_MOTE_SWAY
 #undef DJINN_BEAMS_DJINNI_SWAY_X
 #undef DJINN_BEAMS_DJINNI_SWAY_Y

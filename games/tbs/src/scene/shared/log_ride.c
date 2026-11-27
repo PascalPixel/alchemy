@@ -2,7 +2,7 @@
    pool. */
 
 /* Floats the log actor id and the leader standing on it by (dx, dz) pixels, to
-   the centres of their metatiles, at a pixel a frame. The leader is drawn in
+   the centres of their metatiles, at a pixel a tick. The leader is drawn in
    ANIM_LEADER_WALK_BACKWARDS and the log in its sheet's animation 4 going north
    or west, 3 going south or east. */
 static void scActorFloatLogWithLeader(Sint32 id, Sint32 dx, Sint32 dz)

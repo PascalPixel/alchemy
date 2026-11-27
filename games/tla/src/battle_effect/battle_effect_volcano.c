@@ -2,23 +2,23 @@
    each erupting in a fountain of sparks and spitting more. Part of
    battle_effect.c. */
 
-#define VOLCANO_FRAMES			  96
-/* The frames the pillars burn, and the strongest variant's camera turns. */
-#define VOLCANO_PILLAR_FRAMES	  64
-/* The camera's turn each of those frames: three sixteenths of a turn in all. */
-#define VOLCANO_CAMERA_SPIN		  (TRIG_TURN * 3 / 16 / VOLCANO_PILLAR_FRAMES)
+#define VOLCANO_TICKS			  96
+/* The ticks the pillars burn, and the strongest variant's camera turns. */
+#define VOLCANO_PILLAR_TICKS	  64
+/* The camera's turn each of those ticks: three sixteenths of a turn in all. */
+#define VOLCANO_CAMERA_SPIN		  (TRIG_TURN * 3 / 16 / VOLCANO_PILLAR_TICKS)
 #define VOLCANO_ERUPTION		  200 /* sparks thrown as a pillar starts */
-#define VOLCANO_TRICKLE			  4	  /* and each frame after */
+#define VOLCANO_TRICKLE			  4	  /* and each tick after */
 #define VOLCANO_SPARK_POOL		  PARTICLE_POOL_COUNT /* sparks in PARTICLES */
-/* The flame on odd frames, then on even frames, after the 34x104 column. */
+/* The flame on odd ticks, then on even ticks, after the 34x104 column. */
 #define VOLCANO_FLAME_PICTURE_ODD PICTURE_BYTES(FIRE_PILLAR)
 #define VOLCANO_FLAME_PICTURE_EVEN \
 	(VOLCANO_FLAME_PICTURE_ODD + PICTURE_BYTES(FIRE_PILLAR_FLAME))
 /* Sparks are thrown from this far below the column's foot. */
 #define VOLCANO_SPARK_DROP		 16
-/* How much faster a spark falls each frame: a sixteenth of a pixel a frame. */
+/* How much faster a spark falls each tick: a sixteenth of a pixel a tick. */
 #define VOLCANO_SPARK_GRAVITY	 (Q_8_8(1) / 16)
-/* The mote size a spark is drawn at: a size smaller every 8 frames of its life,
+/* The mote size a spark is drawn at: a size smaller every 8 ticks of its life,
    and the smallest for its last 32, which is all of a trickled spark's. */
 #define VOLCANO_SPARK_SIZE(life) (((life) - 17) / 8)
 
@@ -31,7 +31,7 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 pillar;
 	Uint8				*sheet;
 	SCREEN_POINT		 screen;
@@ -70,39 +70,39 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 		Sint32	  x;
 
 		x = INTtoFIXED((syRandom() & 15) + 72);
-		SET_POSITION(base, x, 0, toFIXED(Volcano_Depths[args->variant][i]));
+		SET_POSITION(base, x, 0, toFIXED(VolcanoDepths[args->variant][i]));
 		if(object->x < 0)
 			base->x = -x;
 	}
 
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-	for(frame = 0; frame != VOLCANO_FRAMES; frame++) {
+	for(frm = 0; frm != VOLCANO_TICKS; frm++) {
 		camera = Ram_HeapSlots->cameraState;
 		if(args->variant == EFFECT_VARIANT_STRONGEST &&
-			frame < VOLCANO_PILLAR_FRAMES) {
+			frm < VOLCANO_PILLAR_TICKS) {
 			if(args->side == EFFECT_SIDE_ENEMIES)
 				camera->yaw += VOLCANO_CAMERA_SPIN;
 			else
 				camera->yaw -= VOLCANO_CAMERA_SPIN;
 		}
-		if(frame == 16)
+		if(frm == 16)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 		EFFECT_VIEW_FROM_CAMERA(camera);
 
-		if(frame < VOLCANO_PILLAR_FRAMES) {
-			for(pillar = 0; pillar != Volcano_Counts[args->variant]; pillar++) {
+		if(frm < VOLCANO_PILLAR_TICKS) {
+			for(pillar = 0; pillar != VolcanoCounts[args->variant]; pillar++) {
 				btEffectPosProjectPoint(
 					(Sint32 *)&state->particles[pillar], &screen);
 				screen.x /= 2;
 				screen.y -= 8;
-				if(frame == Volcano_StartFrames[pillar])
+				if(frm == VolcanoStartTicks[pillar])
 					sySndPlayStub(SE_CRASH);
 
 				/* The column scrolls up over its flickering flame. */
-				if(frame >= Volcano_StartFrames[pillar] + 4) {
+				if(frm >= VolcanoStartTicks[pillar] + 4) {
 					Sint32 scroll =
-						(frame * 16 + pillar * 25) % FIRE_PILLAR_HEIGHT;
+						(frm * 16 + pillar * 25) % FIRE_PILLAR_HEIGHT;
 
 					draw[pillar & 1](canvas, state->sheet,
 						screen.x - FIRE_PILLAR_WIDTH / 2,
@@ -111,7 +111,7 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 					draw[pillar & 1](canvas, state->sheet,
 						screen.x - FIRE_PILLAR_WIDTH / 2, screen.y - scroll,
 						FIRE_PILLAR_WIDTH, scroll);
-					if(frame & 1) {
+					if(frm & 1) {
 						draw[0](canvas,
 							state->sheet + VOLCANO_FLAME_PICTURE_ODD,
 							screen.x - FIRE_PILLAR_FLAME_WIDTH, screen.y - 24,
@@ -132,9 +132,9 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 					}
 				}
 
-				/* Sparks: a fountain at the start, then a few a frame. */
-				if(frame == Volcano_StartFrames[pillar] ||
-					frame >= Volcano_StartFrames[pillar] + 16) {
+				/* Sparks: a fountain at the start, then a few a tick. */
+				if(frm == VolcanoStartTicks[pillar] ||
+					frm >= VolcanoStartTicks[pillar] + 16) {
 					Sint32 spawned = 0;
 
 					for(i = 0; i != VOLCANO_SPARK_POOL; i++) {
@@ -142,17 +142,17 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 
 						if(spark->variant == 0) {
 							Sint32 speed;
-							Sint32 angle;
+							Sint32 ang;
 
 							speed = (syRandom() & 0x3ff) + 32;
-							angle = (syRandom() & 0x7fff) - DEGtoANG(90);
+							ang = (syRandom() & 0x7fff) - DEGtoANG(90);
 							SET_POSITION(spark, screen.x << 8,
 								(screen.y << 8) + Q_8_8(VOLCANO_SPARK_DROP),
-								FIXEDtoINT_TWICE(sySin(angle) * speed));
+								FIXEDtoINT_TWICE(sySin(ang) * speed));
 							spark->velY =
-								FIXEDtoINT_TWICE(-(syCos(angle) * speed * 2));
+								FIXEDtoINT_TWICE(-(syCos(ang) * speed * 2));
 							spawned++;
-							if(frame == Volcano_StartFrames[pillar]) {
+							if(frm == VolcanoStartTicks[pillar]) {
 								spark->variant = (syRandom() & 7) + 48;
 								if(spawned == VOLCANO_ERUPTION)
 									break;
@@ -165,7 +165,7 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 					}
 				}
 
-				if(frame == Volcano_StartFrames[pillar]) {
+				if(frm == VolcanoStartTicks[pillar]) {
 					state->shakeFrm = 2;
 					EFFECT_FOR_EACH_TARGET(i, args) {
 						btEffectTintBattler(args->tgts[i],
@@ -211,7 +211,7 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 		}
 
 		btCameraShake(16, 16);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_RELEASE_BLITTERS();
@@ -219,8 +219,8 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 	btEffectEndCanvasLayer();
 }
 
-#undef VOLCANO_FRAMES
-#undef VOLCANO_PILLAR_FRAMES
+#undef VOLCANO_TICKS
+#undef VOLCANO_PILLAR_TICKS
 #undef VOLCANO_CAMERA_SPIN
 #undef VOLCANO_ERUPTION
 #undef VOLCANO_TRICKLE

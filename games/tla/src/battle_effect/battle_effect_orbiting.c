@@ -1,7 +1,7 @@
 /* Swirling stars and target bursts, two effects no table names and nothing in
    the game reaches. Part of battle_effect.c. */
 
-#define SWIRLING_STARS_FRAMES	 160
+#define SWIRLING_STARS_TICKS	 160
 #define SWIRLING_STARS_COUNT	 64 /* stars that swirl */
 /* stars given a place, the first to swirl */
 #define SWIRLING_STARS_PLACED	 256
@@ -13,7 +13,7 @@
 #define SWIRLING_STAR_DEPTH_NEAR 250
 #define SWIRLING_STAR_DEPTH_FAR	 634
 #define SWIRLING_STAR_DEPTH_STEP 64
-/* The angle star `i` turns each frame about its axis: each later star
+/* The angle star `i` turns each tick about its axis: each later star
    faster. */
 #define SWIRLING_STAR_SPIN(i)	 (((i) + 32) * 8)
 
@@ -28,7 +28,7 @@ UNUSED void btEffectRunSwirlingStars(BATTLE_EFFECT_PARM *args)
 	DRAW_RECTANGLE		 draw[2];
 	PARTICLE			*star;
 	Sint32				 i;
-	Sint32				 frame;
+	Sint32				 frm;
 
 	state = Ram_HeapSlots->battleEff;
 	canvas = Ram_HeapSlots->battleCanvas;
@@ -45,30 +45,30 @@ UNUSED void btEffectRunSwirlingStars(BATTLE_EFFECT_PARM *args)
 	}
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 	SET_VECTOR(center, 0, toFIXED(80), 0);
-	for(frame = 0; frame != SWIRLING_STARS_FRAMES; frame++) {
+	for(frm = 0; frm != SWIRLING_STARS_TICKS; frm++) {
 		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
 
 		EFFECT_VIEW_FROM_CAMERA(camera);
 		syMatrixTranslateVector(center);
 		for(i = 0; i != SWIRLING_STARS_COUNT; i++) {
 			star = &PARTICLES[i];
-			if(frame > i / 4 && star->variant == 0) {
+			if(frm > i / 4 && star->variant == 0) {
 				Sint32 size;
 
 				syPushMatrix();
 				switch(i & 3) {
 				case 0:
-					syRotY(frame * SWIRLING_STAR_SPIN(i));
+					syRotY(frm * SWIRLING_STAR_SPIN(i));
 					break;
 				case 1:
-					syRotX(-frame * SWIRLING_STAR_SPIN(i));
+					syRotX(-frm * SWIRLING_STAR_SPIN(i));
 					break;
 				case 2:
-					syRotZ(-frame * SWIRLING_STAR_SPIN(i));
+					syRotZ(-frm * SWIRLING_STAR_SPIN(i));
 					break;
 				case 3:
-					syRotX(-frame * SWIRLING_STAR_SPIN(i));
-					syRotZ(-frame * SWIRLING_STAR_SPIN(i));
+					syRotX(-frm * SWIRLING_STAR_SPIN(i));
+					syRotZ(-frm * SWIRLING_STAR_SPIN(i));
 					break;
 				}
 				btEffectPosProjectPoint(star, &screen);
@@ -82,11 +82,11 @@ UNUSED void btEffectRunSwirlingStars(BATTLE_EFFECT_PARM *args)
 				draw[0](canvas,
 					state->sheet +
 						((i & 3) * MOTE_SET_BYTES +
-							BattleEffect_MotePictures[size - 1]),
+							BattleEffectMotePictures[size - 1]),
 					screen.x - size / 2, screen.y - size, size, size * 2);
 				btParticleAdvanceWithGravity3D(star, 60, 0);
-				/* After 30 frames a star springs back towards the centre. */
-				if(frame > i / 4 + 30) {
+				/* After 30 ticks a star springs back towards the centre. */
+				if(frm > i / 4 + 30) {
 					Sint32 dx = -star->x >> 8;
 					Sint32 dy = -star->y >> 8;
 					Sint32 dz = -star->z >> 8;
@@ -105,7 +105,7 @@ UNUSED void btEffectRunSwirlingStars(BATTLE_EFFECT_PARM *args)
 /* The burst's six pictures in the sprite sheet, after the smoke's six. */
 #define TARGET_BURST_PICTURES (6 * PICTURE_BYTES(SMOKE_PUFF))
 
-#define TARGET_BURSTS_FRAMES 96
+#define TARGET_BURSTS_TICKS 96
 
 /* Unused: nothing calls it. On each target in turn a burst flares while puffs
    of smoke scatter around it. */
@@ -114,7 +114,7 @@ UNUSED void btEffectRunTargetBursts(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	void				*palette;
-	Sint32				 frame;
+	Sint32				 frm;
 	DRAW_RECTANGLE		 drawSmoke;
 	DRAW_RECTANGLE		 drawBurst;
 	PARTICLE			*puff;
@@ -138,19 +138,19 @@ UNUSED void btEffectRunTargetBursts(BATTLE_EFFECT_PARM *args)
 	drawSmoke = Ram_HeapSlots->ramCodePaired;
 
 	for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
-		Sint32 angle;
+		Sint32 ang;
 		Sint32 speed;
 
 		puff = &state->particles[i];
-		angle = syRandom() & TRIG_ANGLE_MASK;
+		ang = syRandom() & TRIG_ANGLE_MASK;
 		speed = syRandom() & 0xff;
 		SET_POSITION(puff, 0, 0, 0);
 		if(i % 6 == 5) {
 			puff->velX = 0;
 			puff->velY = 0;
 		} else {
-			puff->velX = (sySin(angle) * speed) >> 7;
-			puff->velY = (syCos(angle) * speed) >> 9;
+			puff->velX = (sySin(ang) * speed) >> 7;
+			puff->velY = (syCos(ang) * speed) >> 9;
 		}
 		puff->velZ = 0;
 		puff->variant = 0;
@@ -159,22 +159,22 @@ UNUSED void btEffectRunTargetBursts(BATTLE_EFFECT_PARM *args)
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-	for(frame = 0; frame != TARGET_BURSTS_FRAMES; frame++) {
+	for(frm = 0; frm != TARGET_BURSTS_TICKS; frm++) {
 		Sint32		   member;
 		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
 
 		EFFECT_FOR_EACH_TARGET(member, args) {
-			MOTION_OBJECT *target;
+			MOTION_OBJECT *tgt;
 
-			target = btObjectGetStub(args->tgts[member])->obj;
+			tgt = btObjectGetStub(args->tgts[member])->obj;
 			EFFECT_VIEW_FROM_CAMERA(camera);
-			SET_VECTOR(point, target->x, toFIXED(20), target->z);
+			SET_VECTOR(point, tgt->x, toFIXED(20), tgt->z);
 			syMatrixTranslateVector(point);
-			if(frame >= member * 8 && frame < member * 8 + 40) {
+			if(frm >= member * 8 && frm < member * 8 + 40) {
 				for(i = 0; i != 6; i++) {
 					Sint32 picture;
 
-					/* A picture every six frames, holding the last. */
+					/* A picture every six ticks, holding the last. */
 					puff = &state->particles[member * 6 + i];
 					picture = puff->variant / 6;
 					if(picture > 5)
@@ -206,7 +206,7 @@ UNUSED void btEffectRunTargetBursts(BATTLE_EFFECT_PARM *args)
 	EFFECT_FINISH_CANVAS();
 }
 
-#undef SWIRLING_STARS_FRAMES
+#undef SWIRLING_STARS_TICKS
 #undef SWIRLING_STARS_COUNT
 #undef SWIRLING_STARS_PLACED
 #undef SWIRLING_STAR_LARGEST
@@ -215,4 +215,4 @@ UNUSED void btEffectRunTargetBursts(BATTLE_EFFECT_PARM *args)
 #undef SWIRLING_STAR_DEPTH_STEP
 #undef SWIRLING_STAR_SPIN
 #undef TARGET_BURST_PICTURES
-#undef TARGET_BURSTS_FRAMES
+#undef TARGET_BURSTS_TICKS

@@ -99,32 +99,32 @@
 #include "scene/golden_ring.h"
 #include "text/msg_ids.h"
 
-extern Sint32		  Vale_AlephGuardPatrolRoute[];
-extern Sint32		  Vale_LeaderHammers[];
-extern Sint32		  Vale_GaretWalksToTheHouse[];
-extern Sint32		  Vale_UnusedWaterGrows[];
-extern Sint32		  Vale_SparkleScript[];
-extern SCENE_ENTRANCE Vale_Entrances[];
-extern Uint32		  Vale_Exits[];
-extern ACTOR_PLACE	  Vale_ActorPlacements[];
-extern ACTOR_PLACE	  Vale_ActorPlacementsAfterLeaving[];
-extern ACTOR_PLACE	  Vale_ActorPlacementsAfterKalay[];
-extern ACTOR_PLACE	  Vale_RepairActorPlacements[];
-extern CUE			  Vale_Cues[];
-extern CUE			  Vale_CuesAfterLeaving[];
-extern Uint16		  Vale_SanctumDoorOpens[];
-extern Uint16		  Vale_IsaacsDoorOpens[];
-extern Uint16		  Vale_GrandparentsDoorOpens[];
-extern Uint16		  Vale_WestHouseDoorOpens[];
-extern Sint32		  Vale_FirstWarningLeaderPath[];
-extern Sint32		  Vale_FirstWarningGuardPath[];
-extern Sint32		  Vale_LeaderRunsBackFromThePath[];
-extern Sint32		  Vale_GuardComesDownThePath[];
-extern Sint32		  Vale_LeaderRunsBackBeforeTheDoor[];
-extern Sint32		  Vale_GuardStepsBeforeTheDoor[];
+extern Sint32		  ValeAlephGuardPatrolRoute[];
+extern Sint32		  ValeLeaderHammers[];
+extern Sint32		  ValeGaretWalksToTheHouse[];
+extern Sint32		  ValeUnusedWaterGrows[];
+extern Sint32		  ValeSparkleScript[];
+extern SCENE_ENTRANCE ValeEntrances[];
+extern Uint32		  ValeExits[];
+extern ACTOR_PLACE	  ValeActorPlacements[];
+extern ACTOR_PLACE	  ValeActorPlacementsAfterLeaving[];
+extern ACTOR_PLACE	  ValeActorPlacementsAfterKalay[];
+extern ACTOR_PLACE	  ValeRepairActorPlacements[];
+extern CUE			  ValeCues[];
+extern CUE			  ValeCuesAfterLeaving[];
+extern Uint16		  ValeSanctumDoorOpens[];
+extern Uint16		  ValeIsaacsDoorOpens[];
+extern Uint16		  ValeGrandparentsDoorOpens[];
+extern Uint16		  ValeWestHouseDoorOpens[];
+extern Sint32		  ValeFirstWarningLeaderPath[];
+extern Sint32		  ValeFirstWarningGuardPath[];
+extern Sint32		  ValeLeaderRunsBackFromThePath[];
+extern Sint32		  ValeGuardComesDownThePath[];
+extern Sint32		  ValeLeaderRunsBackBeforeTheDoor[];
+extern Sint32		  ValeGuardStepsBeforeTheDoor[];
 
-extern CUE	  Vale_CuesAfterKalay[];
-extern Sint32 Vale_JennaWalksToTheHouse[];
+extern CUE	  ValeCuesAfterKalay[];
+extern Sint32 ValeJennaWalksToTheHouse[];
 
 /* Where Garet lands after his jump once Dora has gone in, at the roof's end
    (scValeRoofMended): two pixels further south in the German, Spanish, French
@@ -147,12 +147,11 @@ extern Sint32 Vale_JennaWalksToTheHouse[];
 static void scValeJennaSaysKradenIsWaiting(void);
 static void scValeAskAboutSneakingToAleph(
 	const Sint32 *leaderActions, const Sint32 *guardActions);
-static void scValeClimbUpRoofLadder(Sint32 actorId, Sint32 approachAnimationId,
-	Sint32 departureAnimationId, Sint32 resumeMotion);
-static void scValeClimbDownRoofLadder(Sint32 actorId,
-	Sint32 approachAnimationId, Sint32 departureAnimationId,
-	Sint32 resumeMotion);
-static void scValePlaceOrHideBoards(Sint32 first, Uint32 count, Sint32 mode);
+static void scValeClimbUpRoofLadder(Sint32 actorId, Sint32 approachAnmId,
+	Sint32 departureAnmId, Sint32 resumeMotion);
+static void scValeClimbDownRoofLadder(Sint32 actorId, Sint32 approachAnmId,
+	Sint32 departureAnmId, Sint32 resumeMotion);
+static void scValePlaceOrHideBoards(Sint32 first, Uint32 cnt, Sint32 mode);
 static void scValeMendingTheRoof(void);
 static void scValeRoofMended(void);
 static void scValeUpdateGaretPaletteAndEffects(void);
@@ -165,7 +164,7 @@ static UNREAD_RESULT scValeHaveGuardWatchTheLeader(ACTOR *actor);
 static void			 scValeTrailSparkles(ACTOR *actor);
 static void			 scValeVanishMoveHand(ACTOR *emitter);
 static void			 fdActorSetTargetPosFromMagnitudeAng(
-			 ACTOR *actor, Sint32 magnitude, Sint32 angle);
+			 ACTOR *actor, Sint32 magnitude, Sint32 ang);
 static void scValeMovePillarBelowCliff(void);
 static void scValePlayPsynergySparkleSnd(void);
 static void scValeSynchronizeAlephGuardPause(void);
@@ -175,7 +174,7 @@ static void scValeCycleActorPaletteAndSpawnEffects(ACTOR *actor);
 static void scValeCycleActorPalette(ACTOR *actor);
 
 /* The placed actors of Vale by day, numbered in the order of
-   Vale_ActorPlacements and Vale_ActorPlacementsAfterLeaving, which place the
+   ValeActorPlacements and ValeActorPlacementsAfterLeaving, which place the
    same people in the same rows.
 
    A row whose sprite is a party member's (Garet's, Jenna's) takes that party
@@ -232,7 +231,7 @@ typedef enum VALE_ACTOR_ID {
 	ACTOR_NUT /* the Nut for Catch, until FLAG_VALE_NUT_CAUGHT is set */
 } VALE_ACTOR_ID;
 
-/* Back from Kalay, the placed actors of Vale_ActorPlacementsAfterKalay. Garet's
+/* Back from Kalay, the placed actors of ValeActorPlacementsAfterKalay. Garet's
    row takes his own actor id. */
 typedef enum VALE_AFTER_KALAY_ACTOR_ID {
 	/* Garet's sister. "Ah! It's been a while... You're back?"
@@ -251,7 +250,7 @@ typedef enum VALE_AFTER_KALAY_ACTOR_ID {
 	   SPRITE_SPLASH. Only scValeUnusedWaterBurstsByTheRiver shows them. During
 	   a tremor each in turn grows from a tenth of its size at (266, 1230),
 	   north of ACTOR_STRONGMAN_REMEMBERING_FELIX, and vanishes
-	   (Vale_UnusedWaterGrows).
+	   (ValeUnusedWaterGrows).
 
 	   The row after them places the woman with fair hair of
 	   ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN at the origin, and nothing names her. */
@@ -273,7 +272,7 @@ typedef enum VALE_AFTER_KALAY_ACTOR_ID {
 } VALE_AFTER_KALAY_ACTOR_ID;
 
 /* The game's opening (scValeMendingTheRoof), the placed actors of
-   Vale_RepairActorPlacements. Jenna's and Garet's rows take their own actor
+   ValeRepairActorPlacements. Jenna's and Garet's rows take their own actor
    ids. */
 typedef enum VALE_OPENING_ACTOR_ID {
 	/* A woman in a green dress who meets Jenna on her way. */
@@ -352,7 +351,7 @@ typedef enum VALE_METATILE_BEHAVIOR {
 } VALE_METATILE_BEHAVIOR;
 
 /* Which stretch of his beat the man guarding Mt. Aleph is on, kept in his
-   SW_TIMER (Vale_AlephGuardPatrolRoute). He catches Isaac sneaking only on the
+   SW_TIMER (ValeAlephGuardPatrolRoute). He catches Isaac sneaking only on the
    first two. */
 typedef enum VALE_GUARD_BEAT {
 	/* Up and down the path along the Sanctum's west side. */
@@ -368,7 +367,7 @@ typedef enum VALE_GUARD_BEAT {
 enum { ANIM_HAMMER = 11 };
 
 /* Animations of Garet's sprite beyond ACTOR_ANIMATION, as its animation table
-   and frames under graphics/sprite draw them. */
+   and ticks under graphics/sprite draw them. */
 typedef enum VALE_ANIMATION {
 	/* Garet throwing up his arms, then crouching, as he jumps in fright
 	   (garet.png). */
@@ -409,7 +408,7 @@ typedef enum VALE_ANIMATION {
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
-	return Vale_Entrances;
+	return ValeEntrances;
 }
 
 const SCENE_EXIT_REGION *scGetExitRegions(void)
@@ -419,7 +418,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 
 const Uint32 *scGetExits(void)
 {
-	return Vale_Exits;
+	return ValeExits;
 }
 
 /* Places the villagers for the story so far, or for the game's opening, when
@@ -427,12 +426,12 @@ const Uint32 *scGetExits(void)
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(MainRoutineStateWork.entrance == VALE_FROM_TITLE)
-		return Vale_RepairActorPlacements;
+		return ValeRepairActorPlacements;
 	if(gmFlagGet(FLAG_KALAY_REACHED) != 0)
-		return Vale_ActorPlacementsAfterKalay;
+		return ValeActorPlacementsAfterKalay;
 	if(gmFlagGet(FLAG_VALE_PARTY_LEFT) != 0)
-		return Vale_ActorPlacementsAfterLeaving;
-	return Vale_ActorPlacements;
+		return ValeActorPlacementsAfterLeaving;
+	return ValeActorPlacements;
 }
 
 /* Catch on the Nut in the tree on the ledge by the river, above the house the
@@ -461,10 +460,10 @@ static void scValeCatchNutAfterKalay(void)
 const CUE *scGetCues(void)
 {
 	if(gmFlagGet(FLAG_KALAY_REACHED) != 0)
-		return Vale_CuesAfterKalay;
+		return ValeCuesAfterKalay;
 	if(gmFlagGet(FLAG_VALE_PARTY_LEFT) != 0)
-		return Vale_CuesAfterLeaving;
-	return Vale_Cues;
+		return ValeCuesAfterLeaving;
+	return ValeCues;
 }
 
 /* A little girl with orange pigtails, west of Garet's training stone, tells
@@ -666,7 +665,7 @@ static void scValeStepOffBridge(void)
 static void scValeEnterSanctum(void)
 {
 	sySndPlay(SE_THUMP);
-	fdMapGridAnimateMetatiles(Vale_SanctumDoorOpens, 45, 11);
+	fdMapGridAnimateMetatiles(ValeSanctumDoorOpens, 45, 11);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 257, 420);
 	syImportScriptSetExitRequest(VALE_TO_SANCTUM);
 }
@@ -718,11 +717,11 @@ static void scValeExitToValePlaza(void)
 /* Walking into the door of Garet's house, north-east of Isaac's, at metatile
    (25, 46), opens it, and Isaac walks in to Garet's family.
 
-   The door opens with the same pictures as Isaac's (Vale_IsaacsDoorOpens). */
+   The door opens with the same pictures as Isaac's (ValeIsaacsDoorOpens). */
 static void scValeEnterGaretsHouse(void)
 {
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridAnimateMetatiles(Vale_IsaacsDoorOpens, 54, 32);
+	fdMapGridAnimateMetatiles(ValeIsaacsDoorOpens, 54, 32);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 406, 727);
 	syImportScriptSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_EAST);
 }
@@ -733,7 +732,7 @@ static void scValeEnterGaretsHouse(void)
 static void scValeEnterCottageRoomsA(void)
 {
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridAnimateMetatiles(Vale_GrandparentsDoorOpens, 45, 39);
+	fdMapGridAnimateMetatiles(ValeGrandparentsDoorOpens, 45, 39);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 262, 805);
 	syImportScriptSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_SOUTH);
 }
@@ -764,7 +763,7 @@ static void scValeEnterIsaacsHouse(void)
 		fdScriptEnd();
 	} else {
 		sySndPlay(SE_DOOR_OPEN);
-		fdMapGridPlayMapEdit(Vale_IsaacsDoorOpens, 50, 44);
+		fdMapGridPlayMapEdit(ValeIsaacsDoorOpens, 50, 44);
 		fdActorWalkTo(ACTOR_PARTY_LEADER, 340, 888);
 		syImportScriptSetExitRequest(VALE_TO_COTTAGE_ROOMS_B);
 	}
@@ -776,7 +775,7 @@ static void scValeEnterIsaacsHouse(void)
 static void scValeEnterJennasGrandparentsHouse(void)
 {
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridAnimateMetatiles(Vale_GrandparentsDoorOpens, 49, 69);
+	fdMapGridAnimateMetatiles(ValeGrandparentsDoorOpens, 49, 69);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 326, 1126);
 	syImportScriptSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH);
 }
@@ -790,7 +789,7 @@ static void scValeEnterJennasGrandparentsHouse(void)
 static void scValeEnterCottageRoomsAWest(void)
 {
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridAnimateMetatiles(Vale_WestHouseDoorOpens, 52, 76);
+	fdMapGridAnimateMetatiles(ValeWestHouseDoorOpens, 52, 76);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 374, 1238);
 	syImportScriptSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_WEST);
 }
@@ -805,7 +804,7 @@ static void scValeEnterCottageRoomsAWest(void)
 static void scValeUnusedEnterJennasGrandparentsHouseByWestBankDoor(void)
 {
 	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridAnimateMetatiles(Vale_IsaacsDoorOpens, 35, 74);
+	fdMapGridAnimateMetatiles(ValeIsaacsDoorOpens, 35, 74);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 102, 1206);
 	syImportScriptSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR);
 }
@@ -859,15 +858,15 @@ static void scValeJennaSaysKradenIsWaiting(void)
    view comes back before Isaac walks away north.
 
    Once the party has met Saturos and Menardi the puppies are gone, and nothing
-   happens here. The view follows a point of its own, moved 2 pixels a frame for
-   40 frames, while Isaac stands still. */
+   happens here. The view follows a point of its own, moved 2 pixels a tick for
+   40 ticks, while Isaac stands still. */
 static void scValeWatchThePuppies(void)
 {
 	MAP_GRID_SCROLL_STATE *grid;
 	Sint32				  *savedOrigin;
 	ACTOR				  *leader;
-	Sint32				   frame;
-	FIXED				   cameraPosition[3];
+	Sint32				   frm;
+	FIXED				   cameraPos[3];
 
 	if(gmFlagGet(FLAG_MET_SATUROS_AND_MENARDI) == 0) {
 		grid = MapGridState[0];
@@ -882,24 +881,24 @@ static void scValeWatchThePuppies(void)
 		fdScriptShowMessageThenWait(ACTOR_FIRST_PUPPY + 1, 0, 2);
 		leader = fdActorGet(ACTOR_PARTY_LEADER);
 		SET_VECTOR(
-			cameraPosition, leader->x.fixed, leader->y.fixed, leader->z.fixed);
+			cameraPos, leader->x.fixed, leader->y.fixed, leader->z.fixed);
 		savedOrigin = grid->origin;
-		grid->origin = cameraPosition;
-		for(frame = 0; frame != 40; frame++) {
-			cameraPosition[2] += toFIXED(2);
+		grid->origin = cameraPos;
+		for(frm = 0; frm != 40; frm++) {
+			cameraPos[2] += toFIXED(2);
 			fdScriptWait(1);
 			fdMapGridCenterOnFollowedPoint();
 		}
 		fdScriptWait(60);
 		mnFieldMessageShow(MsgValePuppiesPlayingOver, 1);
-		frame = 0;
+		frm = 0;
 		fdScriptWait(6);
 		do {
-			cameraPosition[2] -= toFIXED(2);
+			cameraPos[2] -= toFIXED(2);
 			fdScriptWait(1);
-			frame++;
+			frm++;
 			fdMapGridCenterOnFollowedPoint();
-		} while(frame != 40);
+		} while(frm != 40);
 		grid->origin = savedOrigin;
 		fdScriptWait(60);
 		fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 70, 741);
@@ -973,7 +972,7 @@ static void scValeClimbDownFromRoof(void)
    long robe jumps out from the trees by the river and drives him back to the
    Sanctum's door. "You're not planning on sneaking up to Mt. Aleph, are you?"
 
-   From then on the man walks his beat (Vale_AlephGuardPatrolRoute) and watches
+   From then on the man walks his beat (ValeAlephGuardPatrolRoute) and watches
    for Isaac on the path (scValeCatchSneakingOnThePath and the two after it).
    FLAG_VALE_WARNED_AGAINST_MT_ALEPH keeps this from playing again. */
 static void scValeWarnAgainstSneakingUpMtAleph(void)
@@ -1001,11 +1000,11 @@ static void scValeWarnAgainstSneakingUpMtAleph(void)
 	fdActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	fdScriptWait(20);
 	fdActorSetSpeedAndAcceleration(ACTOR_MAN_GUARDING_MT_ALEPH, 1.5, 1);
-	fdActorSetScript(ACTOR_PARTY_LEADER, Vale_FirstWarningLeaderPath);
+	fdActorSetScript(ACTOR_PARTY_LEADER, ValeFirstWarningLeaderPath);
 	fdScriptWait(10);
 	fdActorShowEmote(
 		ACTOR_MAN_GUARDING_MT_ALEPH, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-	fdActorSetScript(ACTOR_MAN_GUARDING_MT_ALEPH, Vale_FirstWarningGuardPath);
+	fdActorSetScript(ACTOR_MAN_GUARDING_MT_ALEPH, ValeFirstWarningGuardPath);
 	fdActorWaitForScriptEndById(ACTOR_PARTY_LEADER);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 256, 474);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -1022,7 +1021,7 @@ static void scValeWarnAgainstSneakingUpMtAleph(void)
 	fdScriptAskYesNo(ACTOR_MAN_GUARDING_MT_ALEPH, 0);
 	fdActorGet(ACTOR_MAN_GUARDING_MT_ALEPH)->update =
 		(void (*)(ACTOR *))scValeHaveGuardWatchTheLeader;
-	fdActorSetScript(ACTOR_MAN_GUARDING_MT_ALEPH, Vale_AlephGuardPatrolRoute);
+	fdActorSetScript(ACTOR_MAN_GUARDING_MT_ALEPH, ValeAlephGuardPatrolRoute);
 	gmFlagSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH);
 	fdScriptEnd();
 }
@@ -1041,7 +1040,7 @@ static void scValeCatchSneakingOnThePath(void)
 	if(gmFlagGet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
 		if(guard->tmr == GUARD_ON_THE_PATH) {
 			scValeAskAboutSneakingToAleph(
-				Vale_LeaderRunsBackFromThePath, Vale_GuardComesDownThePath);
+				ValeLeaderRunsBackFromThePath, ValeGuardComesDownThePath);
 		}
 	}
 }
@@ -1085,7 +1084,7 @@ static void scValeAskAboutSneakingToAleph(
 	fdScriptAskYesNo(ACTOR_MAN_GUARDING_MT_ALEPH, 0);
 	fdActorGet(ACTOR_MAN_GUARDING_MT_ALEPH)->update =
 		(void (*)(ACTOR *))scValeHaveGuardWatchTheLeader;
-	fdActorSetScript(ACTOR_MAN_GUARDING_MT_ALEPH, Vale_AlephGuardPatrolRoute);
+	fdActorSetScript(ACTOR_MAN_GUARDING_MT_ALEPH, ValeAlephGuardPatrolRoute);
 	fdScriptEnd();
 }
 
@@ -1099,7 +1098,7 @@ static void scValeCatchSneakingBesideTheSanctum(void)
 	if(gmFlagGet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
 		if(guard->tmr == GUARD_BEFORE_THE_SANCTUM) {
 			scValeAskAboutSneakingToAleph(
-				Vale_LeaderRunsBackBeforeTheDoor, Vale_GuardStepsBeforeTheDoor);
+				ValeLeaderRunsBackBeforeTheDoor, ValeGuardStepsBeforeTheDoor);
 		}
 	}
 }
@@ -1117,10 +1116,10 @@ static void scValeCatchSneakingAtThePathsFoot(void)
 		stretch = guard->tmr;
 		if(stretch == GUARD_ON_THE_PATH) {
 			scValeAskAboutSneakingToAleph(
-				Vale_LeaderRunsBackBeforeTheDoor, Vale_GuardComesDownThePath);
+				ValeLeaderRunsBackBeforeTheDoor, ValeGuardComesDownThePath);
 		} else if(stretch == GUARD_BEFORE_THE_SANCTUM) {
 			scValeAskAboutSneakingToAleph(
-				Vale_LeaderRunsBackBeforeTheDoor, Vale_GuardStepsBeforeTheDoor);
+				ValeLeaderRunsBackBeforeTheDoor, ValeGuardStepsBeforeTheDoor);
 		}
 	}
 }
@@ -1129,14 +1128,14 @@ static void scValeCatchSneakingAtThePathsFoot(void)
    begins.
 
    No table names it. It plays the same lines as the script the game uses, `Good
-   job, Isaac.` and `I was devastated when Kyle died...` among them, but frames
+   job, Isaac.` and `I was devastated when Kyle died...` among them, but ticks
    them with its own camera and map grid metatiles, and sets
    FLAG_VALE_ROOF_JUST_MENDED as that script does. */
 UNUSED static void scValeUnusedRoofMended(void)
 {
 	ACTOR *leader;
 	ACTOR *actor;
-	Uint8  leaderMotionFlags;
+	Uint8  leaderMotionFlg;
 	Sint32 i;
 
 	fdScriptStart();
@@ -1151,7 +1150,7 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdMapGridCopyMetatilesTo(1, 102, 83, 41, 1, 1);
 	fdMapGridCopyMetatilesTo(0, 103, 82, 42, 1, 1);
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	leaderMotionFlags = leader->motionFlg;
+	leaderMotionFlg = leader->motionFlg;
 	leader->motionFlg = 0;
 	fdActorSetPos(ACTOR_PARTY_LEADER, 407, 690);
 	fdActorSetPos(ACTOR_DORA, 392, 896);
@@ -1162,15 +1161,15 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdActorFaceDirection(ACTOR_GARET, FACING_WEST, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_WEST, 0);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-	fdActorSetScript(ACTOR_PARTY_LEADER, Vale_LeaderHammers);
+	fdActorSetScript(ACTOR_PARTY_LEADER, ValeLeaderHammers);
 	scValePlaceOrHideBoards(ACTOR_FIRST_BOARD, 2, 1);
 	FieldStateWork->transition = 0;
 	FieldStateWork->transitionFrm = 32;
 	fdScriptStartScreenTransition();
 	fdActorSetSpeed(ACTOR_JENNA, 0.5);
 	fdActorSetSpeed(ACTOR_GARET, 0.5);
-	fdActorSetScript(ACTOR_JENNA, Vale_JennaWalksToTheHouse);
-	fdActorSetScript(ACTOR_GARET, Vale_GaretWalksToTheHouse);
+	fdActorSetScript(ACTOR_JENNA, ValeJennaWalksToTheHouse);
+	fdActorSetScript(ACTOR_GARET, ValeGaretWalksToTheHouse);
 
 	fdActorSetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
 	leader->scaleX = toFIXED(1);
@@ -1199,7 +1198,7 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdActorSetSprColById(ACTOR_FIRST_BOARD, SPRITE_COLOR_NORMAL);
 	fdActorSetPos(ACTOR_FIRST_BOARD, 390, 842);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-	fdActorSetScript(ACTOR_PARTY_LEADER, Vale_LeaderHammers);
+	fdActorSetScript(ACTOR_PARTY_LEADER, ValeLeaderHammers);
 	fdScriptWait(200);
 	fdMapGridCopyMetatilesTo(7, 102, 84, 41, 2, 1);
 
@@ -1226,7 +1225,7 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdActorSetSprColById(ACTOR_FIRST_BOARD, SPRITE_COLOR_NORMAL);
 	fdActorSetPos(ACTOR_FIRST_BOARD, 0, 0);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-	fdActorSetScript(ACTOR_PARTY_LEADER, Vale_LeaderHammers);
+	fdActorSetScript(ACTOR_PARTY_LEADER, ValeLeaderHammers);
 	fdScriptWait(200);
 	fdMapGridCopyMetatilesTo(6, 102, 83, 41, 1, 1);
 
@@ -1253,7 +1252,7 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdActorSetSprColById(ACTOR_SECOND_BOARD, SPRITE_COLOR_NORMAL);
 	fdActorSetPos(ACTOR_SECOND_BOARD, 0, 0);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-	fdActorSetScript(ACTOR_PARTY_LEADER, Vale_LeaderHammers);
+	fdActorSetScript(ACTOR_PARTY_LEADER, ValeLeaderHammers);
 	fdScriptWait(200);
 	fdMapGridCopyMetatilesTo(5, 103, 82, 42, 1, 1);
 	fdActorSetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
@@ -1694,7 +1693,7 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdScriptWait(100);
 	gmFlagSet(FLAG_VALE_ROOF_JUST_MENDED);
 	gmFlagClear(FLAG_SHOW_AREA_NAME);
-	leader->motionFlg = leaderMotionFlags;
+	leader->motionFlg = leaderMotionFlg;
 	fdScriptEnd();
 }
 
@@ -1744,8 +1743,7 @@ Sint32 scInit(void)
 		scValeMovePillarBelowCliff();
 		actor->layer = 3;
 		actor->motionFlg = 0;
-		sySetFrameEvent(
-			scValeSetPillarPriorityByLeaderHeight, EVENT_PASS_FRAME);
+		sySetTickEvent(scValeSetPillarPriorityByLeaderHeight, EVENT_PASS_TICK);
 #if VALE_DORA_FIXED_PRIORITY_BEFORE_KALAY
 		if(gmFlagGet(FLAG_KALAY_REACHED)) {
 			if(gmFlagGet(FLAG_KEEP_PARTY_POSITION)) {
@@ -1786,7 +1784,7 @@ Sint32 scInit(void)
 							(void *)scValeHaveGuardWatchTheLeader;
 #endif
 						fdActorSetScript(ACTOR_MAN_GUARDING_MT_ALEPH,
-							Vale_AlephGuardPatrolRoute);
+							ValeAlephGuardPatrolRoute);
 					}
 				} else {
 					fdActorGet(ACTOR_MAN_GUARDING_MT_ALEPH)->paused = set;
@@ -1794,8 +1792,8 @@ Sint32 scInit(void)
 				}
 				if(MainRoutineStateWork.entrance != VALE_FROM_TITLE &&
 					!gmFlagGet(FLAG_KALAY_REACHED)) {
-					sySetFrameEvent(
-						scValeSynchronizeAlephGuardPause, EVENT_PASS_FRAME);
+					sySetTickEvent(
+						scValeSynchronizeAlephGuardPause, EVENT_PASS_TICK);
 				}
 			}
 			if(!fdScriptGetFlag(FLAG_VALE_ROOF_MENDED_SCRIPT_PLAYED) &&
@@ -2062,7 +2060,7 @@ UNUSED static void scValeUnusedWaterBurstsByTheRiver(void)
 	fdActorSetAnimation(ACTOR_FIRST_WATER + 2, 0);
 	sySynch(20);
 	fdMapGridSetShake(2, 2, 1);
-	actions = Vale_UnusedWaterGrows;
+	actions = ValeUnusedWaterGrows;
 	fdActorSetScript(ACTOR_FIRST_WATER, actions);
 	sySynch(10);
 	fdActorSetScript(ACTOR_FIRST_WATER + 1, actions);
@@ -2086,16 +2084,16 @@ UNUSED static void scValeUnusedWaterBurstsByTheRiver(void)
 }
 
 /* Walks an actor to the foot of the ladder beside Isaac's house and climbs it
-   onto the roof, in `approachAnimationId` on the rungs and
-   `departureAnimationId` over the eaves. */
-static void scValeClimbUpRoofLadder(Sint32 actorId, Sint32 approachAnimationId,
-	Sint32 departureAnimationId, Sint32 resumeMotion)
+   onto the roof, in `approachAnmId` on the rungs and
+   `departureAnmId` over the eaves. */
+static void scValeClimbUpRoofLadder(Sint32 actorId, Sint32 approachAnmId,
+	Sint32 departureAnmId, Sint32 resumeMotion)
 {
 	ACTOR *actor;
-	SPR	  *sprite;
+	SPR	  *spr;
 
 	actor = fdActorGet(actorId);
-	sprite = actor->spr;
+	spr = actor->spr;
 	fdActorSetSpeed(actorId, 1);
 	fdActorWalkToAndWait(actorId, 392, 886);
 	/* The leader, not actorId, is turned north. The player sees no turn: Isaac
@@ -2103,15 +2101,15 @@ static void scValeClimbUpRoofLadder(Sint32 actorId, Sint32 approachAnimationId,
 	   when Jenna and Garet do. */
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
 	actor->motionFlg = 0;
-	sprite->flg = 0;
-	fdActorSetAnimation(actorId, approachAnimationId);
+	spr->flg = 0;
+	fdActorSetAnimation(actorId, approachAnmId);
 	fdActorSetSpeed(actorId, 0.3);
 	fdActorMoveToAndWait(actorId, 392, 875);
 	fdScriptWait(10);
-	fdActorSetAnimation(actorId, departureAnimationId);
+	fdActorSetAnimation(actorId, departureAnmId);
 	fdActorSetSpeed(actorId, 1);
 	fdActorMoveToAndWait(actorId, 392, 859);
-	sprite->flg = SPRITE_FLAG_SHADOW;
+	spr->flg = SPRITE_FLAG_SHADOW;
 	if(resumeMotion != 0) {
 		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	}
@@ -2121,45 +2119,44 @@ static void scValeClimbUpRoofLadder(Sint32 actorId, Sint32 approachAnimationId,
 
 /* Climbs an actor down the ladder beside Isaac's house from the roof, and
    restores falling motion if requested. */
-static void scValeClimbDownRoofLadder(Sint32 actorId,
-	Sint32 approachAnimationId, Sint32 departureAnimationId,
-	Sint32 resumeMotion)
+static void scValeClimbDownRoofLadder(Sint32 actorId, Sint32 approachAnmId,
+	Sint32 departureAnmId, Sint32 resumeMotion)
 {
 	ACTOR *actor;
-	SPR	  *sprite;
+	SPR	  *spr;
 
 	actor = fdActorGet(actorId);
-	sprite = actor->spr;
+	spr = actor->spr;
 	fdActorSetSpeed(actorId, 1);
 	fdActorWalkToAndWait(actorId, 392, 859);
 	fdActorFaceDirection(actorId, FACING_NORTH, 10);
 	actor->motionFlg = 0;
-	sprite->flg = 0;
-	fdActorSetAnimation(actorId, approachAnimationId);
+	spr->flg = 0;
+	fdActorSetAnimation(actorId, approachAnmId);
 	fdActorSetSpeed(actorId, 1);
 	fdActorMoveToAndWait(actorId, 392, 875);
 	fdScriptWait(10);
 	fdActorSetSpeed(actorId, 0.3);
-	fdActorSetAnimation(actorId, departureAnimationId);
+	fdActorSetAnimation(actorId, departureAnmId);
 	fdActorMoveToAndWait(actorId, 392, 890);
 	actor->velY = toFIXED(2);
-	sprite->flg = SPRITE_FLAG_SHADOW;
+	spr->flg = SPRITE_FLAG_SHADOW;
 	if(resumeMotion != 0) {
 		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	}
 	fdActorSetAnimation(actorId, ANIM_STAND);
 }
 
-/* Lays `count` of the roof's boards, from actor `first` on, by the hole in the
+/* Lays `cnt` of the roof's boards, from actor `first` on, by the hole in the
    roof, still and without shadows; with any `mode` but 0 it puts them out of
    sight instead. */
-static void scValePlaceOrHideBoards(Sint32 first, Uint32 count, Sint32 mode)
+static void scValePlaceOrHideBoards(Sint32 first, Uint32 cnt, Sint32 mode)
 {
 	Sint32 actorId = first;
 	Uint32 i;
 
 	if(mode == 0) {
-		for(i = 0; i < count; i++) {
+		for(i = 0; i < cnt; i++) {
 			ACTOR *actor = fdActorGet(actorId);
 
 			actor->motionFlg = 0;
@@ -2172,7 +2169,7 @@ static void scValePlaceOrHideBoards(Sint32 first, Uint32 count, Sint32 mode)
 		return;
 	}
 
-	for(i = 0; i < count; i++) {
+	for(i = 0; i < cnt; i++) {
 		fdActorSetPos(actorId, 0, 0);
 		actorId++;
 	}
@@ -2193,7 +2190,7 @@ static void scValeMendingTheRoof(void)
 	ACTOR *repairActor = NULL;
 	ACTOR *leader;
 	ACTOR *moveHand;
-	Sint32 message;
+	Sint32 msg;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	moveHand = fdActorGet(ACTOR_OPENING_MOVE_HAND);
@@ -2233,10 +2230,10 @@ static void scValeMendingTheRoof(void)
 	fdActorSetSprFlags(fdActorGet(ACTOR_OPENING_FIRST_BOARD), 0);
 	fdActorSetSprFlags(fdActorGet(ACTOR_OPENING_SECOND_BOARD), 0);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-	fdActorSetScript(ACTOR_PARTY_LEADER, Vale_LeaderHammers);
+	fdActorSetScript(ACTOR_PARTY_LEADER, ValeLeaderHammers);
 	fdActorSystemSuspendProjectionAndShowSprs();
-	message = MsgValeRepairCaption;
-	mnFieldMessageShowCentered(message, 0, 0);
+	msg = MsgValeRepairCaption;
+	mnFieldMessageShowCentered(msg, 0, 0);
 	fdActorSystemResumeProjectionAndHideLayers();
 
 	fdCameraMoveTo(339, 160, 1173, 0);
@@ -2281,7 +2278,7 @@ static void scValeMendingTheRoof(void)
 	fdCameraMoveTo(387, 160, 866, 1);
 	fdCameraWaitForMove();
 	fdActorJump(ACTOR_OPENING_DORA, 2, 20);
-	fdScriptSetMessageId(message + 1);
+	fdScriptSetMessageId(msg + 1);
 	/* "Isaac! Haven't you finished mending the roof yet?" */
 	syFieldScriptShowMessageThenWait(
 		SPEAKER_PORTRAIT_LEFT | ACTOR_OPENING_DORA, 0, 10);
@@ -2299,7 +2296,7 @@ static void scValeMendingTheRoof(void)
 	fdScriptShowMessageThenWait(
 		SPEAKER_PORTRAIT_LEFT | ACTOR_OPENING_DORA, 0, 40);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-	fdActorSetScript(ACTOR_PARTY_LEADER, Vale_LeaderHammers);
+	fdActorSetScript(ACTOR_PARTY_LEADER, ValeLeaderHammers);
 	fdCameraFollowActor(ACTOR_JENNA, 1);
 	fdCameraWaitForMove();
 	fdScriptWait(40);
@@ -2343,8 +2340,8 @@ static void scValeMendingTheRoof(void)
 		sySynch(1);
 	}
 	fdActorSetSprPriority(ACTOR_GARET, 1);
-	sySetFrameEvent(scValeUpdateGaretPaletteAndEffects, EVENT_PASS_FRAME);
-	sySetFrameEvent(scValeCycleOpeningPillarPalette, EVENT_PASS_FRAME);
+	sySetTickEvent(scValeUpdateGaretPaletteAndEffects, EVENT_PASS_TICK);
+	sySetTickEvent(scValeCycleOpeningPillarPalette, EVENT_PASS_TICK);
 	fdActorSetSprFlags(fdActorGet(ACTOR_OPENING_MOVE_HAND), 0);
 	moveHand->motionFlg = 0;
 	moveHand->x.fixed = toFIXED(428);
@@ -2542,7 +2539,7 @@ static void scValeMendingTheRoof(void)
 	fdScriptWait(60);
 	FieldStateWork->transitionFrm = 60;
 	fdScriptFinishScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(VALE_TO_ROOF_MENDED);
 	fdScriptEnd();
 }
@@ -2582,7 +2579,7 @@ static void scValeRoofMended(void)
 	fdActorSetPos(ACTOR_JENNA, 298, 760);
 	fdActorGet(ACTOR_JENNA)->facing = FACING_SOUTH;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-	fdActorSetScript(ACTOR_PARTY_LEADER, Vale_LeaderHammers);
+	fdActorSetScript(ACTOR_PARTY_LEADER, ValeLeaderHammers);
 	actor = fdActorGet(ACTOR_FIRST_BOARD);
 	actor->motionFlg = 0;
 	actor->x.fixed = toFIXED(388);
@@ -2610,8 +2607,8 @@ static void scValeRoofMended(void)
 	fdScriptStartScreenTransition();
 	fdActorSetSpeedFX(ACTOR_JENNA, toFIXED(1) / 2, FACING_SOUTH);
 	fdActorSetSpeedFX(ACTOR_GARET, toFIXED(1) / 2, FACING_SOUTH);
-	fdActorSetScript(ACTOR_JENNA, Vale_JennaWalksToTheHouse);
-	fdActorSetScript(ACTOR_GARET, Vale_GaretWalksToTheHouse);
+	fdActorSetScript(ACTOR_JENNA, ValeJennaWalksToTheHouse);
+	fdActorSetScript(ACTOR_GARET, ValeGaretWalksToTheHouse);
 	fdScriptWait(40);
 	fdActorSetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
 	leader->scaleX = toFIXED(1);
@@ -2628,15 +2625,15 @@ static void scValeRoofMended(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 40);
 	scStartScriptPsynergy();
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_CAST_PSYNERGY);
-	sySetFrameEvent(scValePlayPsynergySparkleSnd, EVENT_PASS_FRAME);
+	sySetTickEvent(scValePlayPsynergySparkleSnd, EVENT_PASS_TICK);
 	for(i = 0; i < 40; i++) {
 		scValeFlashActorAndSpawnEffects(leader);
 		sySynch(1);
 	}
 	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 1);
 
-	sySetFrameEvent(scValeUpdateLeaderPaletteAndEffects, EVENT_PASS_FRAME);
-	sySetFrameEvent(scValeCycleFirstBoardPalette, EVENT_PASS_FRAME);
+	sySetTickEvent(scValeUpdateLeaderPaletteAndEffects, EVENT_PASS_TICK);
+	sySetTickEvent(scValeCycleFirstBoardPalette, EVENT_PASS_TICK);
 	fdActorSetSpeed(ACTOR_FIRST_BOARD, 0.2);
 	fdActorMoveToAndWait(ACTOR_FIRST_BOARD, 390, 832);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2653,7 +2650,7 @@ static void scValeRoofMended(void)
 	fdActorSetPos(ACTOR_FIRST_BOARD, 0, 0);
 	fdScriptWait(20);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-	fdActorSetScript(ACTOR_PARTY_LEADER, Vale_LeaderHammers);
+	fdActorSetScript(ACTOR_PARTY_LEADER, ValeLeaderHammers);
 	fdScriptWait(120);
 	fdMapGridCopyMetatilesTo(7, 102, 84, 41, 2, 1);
 	fdActorSetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
@@ -2666,14 +2663,14 @@ static void scValeRoofMended(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_CAST_PSYNERGY);
-	sySetFrameEvent(scValePlayPsynergySparkleSnd, EVENT_PASS_FRAME);
+	sySetTickEvent(scValePlayPsynergySparkleSnd, EVENT_PASS_TICK);
 	for(i = 0; i < 40; i++) {
 		scValeFlashActorAndSpawnEffects(leader);
 		sySynch(1);
 	}
 	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 1);
-	sySetFrameEvent(scValeUpdateLeaderPaletteAndEffects, EVENT_PASS_FRAME);
-	sySetFrameEvent(scValeCycleSecondBoardPalette, EVENT_PASS_FRAME);
+	sySetTickEvent(scValeUpdateLeaderPaletteAndEffects, EVENT_PASS_TICK);
+	sySetTickEvent(scValeCycleSecondBoardPalette, EVENT_PASS_TICK);
 	fdActorSetSpeed(ACTOR_SECOND_BOARD, 0.2);
 	fdActorMoveToAndWait(ACTOR_SECOND_BOARD, 390, 832);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2690,7 +2687,7 @@ static void scValeRoofMended(void)
 	fdActorSetPos(ACTOR_SECOND_BOARD, 0, 0);
 	fdScriptWait(20);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-	fdActorSetScript(ACTOR_PARTY_LEADER, Vale_LeaderHammers);
+	fdActorSetScript(ACTOR_PARTY_LEADER, ValeLeaderHammers);
 	fdScriptWait(120);
 	fdMapGridCopyMetatilesTo(6, 102, 83, 41, 1, 1);
 	fdActorSetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
@@ -2704,14 +2701,14 @@ static void scValeRoofMended(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 20);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_CAST_PSYNERGY);
-	sySetFrameEvent(scValePlayPsynergySparkleSnd, EVENT_PASS_FRAME);
+	sySetTickEvent(scValePlayPsynergySparkleSnd, EVENT_PASS_TICK);
 	for(i = 0; i < 40; i++) {
 		scValeFlashActorAndSpawnEffects(leader);
 		sySynch(1);
 	}
 	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 1);
-	sySetFrameEvent(scValeUpdateLeaderPaletteAndEffects, EVENT_PASS_FRAME);
-	sySetFrameEvent(scValeCycleThirdBoardPalette, EVENT_PASS_FRAME);
+	sySetTickEvent(scValeUpdateLeaderPaletteAndEffects, EVENT_PASS_TICK);
+	sySetTickEvent(scValeCycleThirdBoardPalette, EVENT_PASS_TICK);
 	fdActorSetSpeed(ACTOR_THIRD_BOARD, 0.2);
 	fdActorMoveToAndWait(ACTOR_THIRD_BOARD, 390, 832);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2728,7 +2725,7 @@ static void scValeRoofMended(void)
 	fdActorSetPos(ACTOR_THIRD_BOARD, 0, 0);
 	fdScriptWait(20);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
-	fdActorSetScript(ACTOR_PARTY_LEADER, Vale_LeaderHammers);
+	fdActorSetScript(ACTOR_PARTY_LEADER, ValeLeaderHammers);
 	fdScriptWait(120);
 	scEndScriptPsynergy();
 	fdMapGridCopyMetatilesTo(5, 103, 82, 42, 1, 1);
@@ -3266,10 +3263,10 @@ static Sint32 scValeDistanceInPixels(FIXED *first, FIXED *second)
 
    Returns 1 when he is stopped. */
 static Sint32 scValeTestFacing(
-	ACTOR *actor, ACTOR *target, Sint32 range, Sint32 force)
+	ACTOR *actor, ACTOR *tgt, Sint32 range, Sint32 force)
 {
 	Sint32 result;
-	Uint32 angle;
+	Uint32 ang;
 	Uint32 left;
 	Uint32 right;
 	Uint32 dir;
@@ -3281,15 +3278,15 @@ static Sint32 scValeTestFacing(
 			return 1;
 		}
 	}
-	if(scValeDistanceInPixels(&target->x.fixed, &actor->x.fixed) < range ||
+	if(scValeDistanceInPixels(&tgt->x.fixed, &actor->x.fixed) < range ||
 		force != 0) {
-		angle = (Uint16)syAtan(
-			target->z.fixed - actor->z.fixed, target->x.fixed - actor->x.fixed);
-		left = FACING_SIXTEENTH(angle - FACING_STEP);
-		right = FACING_SIXTEENTH(angle + FACING_STEP);
-		angle = FACING_SIXTEENTH(angle);
+		ang = (Uint16)syAtan(
+			tgt->z.fixed - actor->z.fixed, tgt->x.fixed - actor->x.fixed);
+		left = FACING_SIXTEENTH(ang - FACING_STEP);
+		right = FACING_SIXTEENTH(ang + FACING_STEP);
+		ang = FACING_SIXTEENTH(ang);
 		dir = FACING_SIXTEENTH(actor->facing);
-		if(angle == dir || right == dir || left == dir || force != 0) {
+		if(ang == dir || right == dir || left == dir || force != 0) {
 			actor->paused = 1;
 			fdActorSelectAnimation(actor, ANIM_STAND);
 			result = 1;
@@ -3318,40 +3315,40 @@ static UNREAD_RESULT scValeHaveGuardWatchTheLeader(ACTOR *guard)
 	RETURN_UNREAD(0);
 }
 
-/* The Move hand's update function in the opening. Each frame it sheds a sparkle
+/* The Move hand's update function in the opening. Each tick it sheds a sparkle
    (SPRITE_SPARKLE) just below and around it, with SE_ITEM_BREAK. */
-static void scValeTrailSparkles(ACTOR *source)
+static void scValeTrailSparkles(ACTOR *src)
 {
-	Sint32 spawnPosition[3];
+	Sint32 spawnPos[3];
 	Sint32 randomDistance;
 	ACTOR *particle;
-	SET_VECTOR(spawnPosition, source->x.fixed,
-		source->y.fixed - (syRandomNext() << 4) - toFIXED(8), source->z.fixed);
+	SET_VECTOR(spawnPos, src->x.fixed,
+		src->y.fixed - (syRandomNext() << 4) - toFIXED(8), src->z.fixed);
 	randomDistance = syRandomNext();
-	syVectorAddPolarOffset(randomDistance * 48, syRandomNext(), spawnPosition);
+	syVectorAddPolarOffset(randomDistance * 48, syRandomNext(), spawnPos);
 	particle = syFieldActorCreate(
-		SPRITE_SPARKLE, spawnPosition[0], spawnPosition[1], spawnPosition[2]);
+		SPRITE_SPARKLE, spawnPos[0], spawnPos[1], spawnPos[2]);
 	if(particle != NULL) {
 		particle->motionFlg = ACTOR_FALLS;
 		particle->gravity = toFIXED(1) / 10;
 		particle->wait = 12;
 		fdActorSetSprFlags(particle, 0);
 		fdActorSelectAnimation(particle, 0);
-		fdActorStartScript(particle, Vale_SparkleScript);
+		fdActorStartScript(particle, ValeSparkleScript);
 		particle->spr->image.pri = 1;
 	}
 	sySndPlay(SE_ITEM_BREAK);
 }
 
-/* The Move hand rises, spins and shrinks for 31 frames, bursts into eight
+/* The Move hand rises, spins and shrinks for 31 ticks, bursts into eight
    sparkles with SE_PSYNERGY_SPARKLE, and is put out of sight. */
 static void scValeVanishMoveHand(ACTOR *emitter)
 {
-	Sint32 frame;
+	Sint32 frm;
 
 	sySndPlay(SE_CAST);
 
-	for(frame = 0; frame < 31; frame++) {
+	for(frm = 0; frm < 31; frm++) {
 		emitter->y.fixed += toFIXED(1);
 		emitter->facing = (Uint16)(emitter->facing + DEGtoANG(45));
 		emitter->scaleX -= toFIXED(1) / 32;
@@ -3359,7 +3356,7 @@ static void scValeVanishMoveHand(ACTOR *emitter)
 		sySynch(1);
 	}
 
-	for(frame = 0; frame < 8; frame++) {
+	for(frm = 0; frm < 8; frm++) {
 		ACTOR *particle = syFieldActorCreate(SPRITE_SPARKLE, emitter->x.fixed,
 			emitter->y.fixed, emitter->z.fixed);
 
@@ -3367,7 +3364,7 @@ static void scValeVanishMoveHand(ACTOR *emitter)
 			FIXED verticalSpeed;
 
 			fdActorSetSprFlags(particle, 0);
-			fdActorStartScript(particle, (const void *)&Vale_SparkleScript[1]);
+			fdActorStartScript(particle, (const void *)&ValeSparkleScript[1]);
 
 			verticalSpeed = syRandomNext() + toFIXED(1);
 			particle->acceleration = toFIXED(1);
@@ -3457,11 +3454,11 @@ static void scValeMovePillarBelowCliff(void)
 	}
 }
 
-/* The event that plays SE_PSYNERGY_SPARKLE every 16 frames while Isaac's
+/* The event that plays SE_PSYNERGY_SPARKLE every 16 ticks while Isaac's
    Psynergy lifts a board at the roof's end. */
 static void scValePlayPsynergySparkleSnd(void)
 {
-	if((FrameCount & 15) == 0)
+	if((TickCount & 15) == 0)
 		sySndPlay(SE_PSYNERGY_SPARKLE);
 }
 
@@ -3478,16 +3475,16 @@ static void scValeSearchTheLockedDoor(void)
 /* Keeps the man guarding Mt. Aleph standing still while a menu is open, and
    lets him walk on when it closes.
 
-   It runs every frame from Vale's setup, before the party leaves, and
+   It runs every tick from Vale's setup, before the party leaves, and
    FLAG_VALE_MT_ALEPH_GUARD_PAUSED remembers that it stopped him. */
 static void scValeSynchronizeAlephGuardPause(void)
 {
-	Sint32 pauseFlag;
+	Sint32 pauseFlg;
 
 	if(fdScriptGetFlag(FLAG_VALE_MT_ALEPH_GUARD_PAUSED) != 0) {
-		pauseFlag = gmFlagGet(FLAG_MENU_OPEN);
-		if(pauseFlag == 0) {
-			fdActorGet(ACTOR_MAN_GUARDING_MT_ALEPH)->paused = pauseFlag;
+		pauseFlg = gmFlagGet(FLAG_MENU_OPEN);
+		if(pauseFlg == 0) {
+			fdActorGet(ACTOR_MAN_GUARDING_MT_ALEPH)->paused = pauseFlg;
 			gmFlagClear(FLAG_VALE_MT_ALEPH_GUARD_PAUSED);
 		}
 	} else {
@@ -3501,7 +3498,7 @@ static void scValeSynchronizeAlephGuardPause(void)
 /* Draws Garet's training stone under Isaac while he is up on the cliff above
    it, and in front of him or behind as usual while he is down beside it.
 
-   It runs every frame. Isaac is above the stone when his height is over 200;
+   It runs every tick. Isaac is above the stone when his height is over 200;
    the stone's foot is at height 192. */
 static void scValeSetPillarPriorityByLeaderHeight(void)
 {
@@ -3522,33 +3519,33 @@ static void scValeSetPillarPriorityByLeaderHeight(void)
 
 #include "shared/floating_nut.c"
 
-/* Someone calling up Psynergy. They are drawn SPRITE_COLOR_WHITE for two frames
-   in four, with the World Map's attached sparks every 16 frames. */
+/* Someone calling up Psynergy. They are drawn SPRITE_COLOR_WHITE for two ticks
+   in four, with the World Map's attached sparks every 16 ticks. */
 static void scValeFlashActorAndSpawnEffects(ACTOR *actor)
 {
-	if((FrameCount & 2) != 0)
+	if((TickCount & 2) != 0)
 		fdActorSetColMode(actor, SPRITE_COLOR_WHITE);
 	else
 		fdActorSetColMode(actor, SPRITE_COLOR_NORMAL);
-	if((FrameCount & 0xf) == 0)
+	if((TickCount & 0xf) == 0)
 		scSpawnGoldenRing(actor);
 }
 
 /* Someone using Psynergy. */
 static void scValeCycleActorPaletteAndSpawnEffects(ACTOR *actor)
 {
-	if((FrameCount & 1) != 0)
-		fdActorSetColMode(actor, (FrameCount >> 1) % 6);
-	if((FrameCount & 0xf) == 0)
+	if((TickCount & 1) != 0)
+		fdActorSetColMode(actor, (TickCount >> 1) % 6);
+	if((TickCount & 0xf) == 0)
 		scSpawnGoldenRing(actor);
 }
 
 /* What Psynergy moves. It goes through colour modes SPRITE_COLOR_NORMAL to
-   SPRITE_COLOR_BRG in turn, a step every second frame. */
+   SPRITE_COLOR_BRG in turn, a step every second tick. */
 static void scValeCycleActorPalette(ACTOR *actor)
 {
-	if((FrameCount & 1) != 0)
-		fdActorSetColMode(actor, (FrameCount >> 1) % 6);
+	if((TickCount & 1) != 0)
+		fdActorSetColMode(actor, (TickCount >> 1) % 6);
 }
 
 #include "shared/field_effect_vertical.c"
@@ -3563,7 +3560,7 @@ static void scValeCycleActorPalette(ACTOR *actor)
 /* behind it, back before its door, then west and up the path along its west */
 /* side, and back. SW_TIMER says which stretch of it he is on */
 /* (VALE_GUARD_BEAT). */
-Sint32 Vale_AlephGuardPatrolRoute[] = {
+Sint32 ValeAlephGuardPatrolRoute[] = {
 	SC_SPEED(0.5),
 	SC_ACCELERATION(0.25),
 	SC_SET(SW_TIMER, GUARD_BEFORE_THE_SANCTUM),
@@ -3654,7 +3651,7 @@ Sint32 Vale_AlephGuardPatrolRoute[] = {
 
 /* Isaac on the roof, his sprite stretching and settling with each blow of */
 /* the hammer. */
-Sint32 Vale_LeaderHammers[] = {
+Sint32 ValeLeaderHammers[] = {
 	SC_LABEL(1),
 	SC_ADD(SW_SCALE_Y, toFIXED(3) / 100),
 	SC_WAIT(12),
@@ -3667,7 +3664,7 @@ Sint32 Vale_LeaderHammers[] = {
 /* Garet and Jenna walk to the front of Isaac's house to watch him on the */
 /* roof. */
 
-Sint32 Vale_GaretWalksToTheHouse[] = {
+Sint32 ValeGaretWalksToTheHouse[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(300, 0, 880),
 	SC_SYNC,
@@ -3678,7 +3675,7 @@ Sint32 Vale_GaretWalksToTheHouse[] = {
 	SC_END,
 };
 
-Sint32 Vale_JennaWalksToTheHouse[] = {
+Sint32 ValeJennaWalksToTheHouse[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(300, 0, 904),
 	SC_SYNC,
@@ -3691,7 +3688,7 @@ Sint32 Vale_JennaWalksToTheHouse[] = {
 
 /* A spout of water grows from a tenth of its size north of the strongman by */
 /* the river and vanishes (scValeUnusedWaterBurstsByTheRiver). */
-Sint32 Vale_UnusedWaterGrows[] = {
+Sint32 ValeUnusedWaterGrows[] = {
 	SC_ANIMATION(ANIM_STAND),
 	SC_POSITION(266, 0, 1230),
 	SC_SET(SW_SCALE_X, toFIXED(1) / 10),
@@ -3707,9 +3704,9 @@ Sint32 Vale_UnusedWaterGrows[] = {
 	SC_END,
 };
 
-/* A sparkle falls and vanishes after 10 frames. The burst's sparkles start */
+/* A sparkle falls and vanishes after 10 ticks. The burst's sparkles start */
 /* at its second word, past the first SC_RELEASE. */
-Sint32 Vale_SparkleScript[] = {
+Sint32 ValeSparkleScript[] = {
 	SC_RELEASE,
 	SC_SYNC,
 	SC_SPEED(0.0625),
@@ -3718,7 +3715,7 @@ Sint32 Vale_SparkleScript[] = {
 	SC_RELEASE,
 };
 
-SCENE_ENTRANCE Vale_Entrances[] = {
+SCENE_ENTRANCE ValeEntrances[] = {
 	{ 0, CONDITION_ALWAYS, 167, 0, 1281, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ VALE_FROM_SANCTUM, CONDITION_ALWAYS, 256, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
 	{ VALE_FROM_SOL_ENTRANCE, CONDITION_ALWAYS, 113, 0, 303, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -3736,7 +3733,7 @@ SCENE_ENTRANCE Vale_Entrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-Uint32 Vale_Exits[] = {
+Uint32 ValeExits[] = {
 	SCENE_EXITS(Vale),
 	SCENE_EXIT(VALE_TO_SOL_ENTRANCE, SolEntrance, SOL_ENTRANCE_FROM_VALE),
 	SCENE_EXIT(VALE_TO_VALE_PLAZA, ValePlaza, VALE_PLAZA_FROM_VALE),
@@ -3753,7 +3750,7 @@ Uint32 Vale_Exits[] = {
 	SCENE_EXITS_END,
 };
 
-ACTOR_PLACE Vale_ActorPlacements[] = {
+ACTOR_PLACE ValeActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3799,7 +3796,7 @@ ACTOR_PLACE Vale_ActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE Vale_ActorPlacementsAfterLeaving[] = {
+ACTOR_PLACE ValeActorPlacementsAfterLeaving[] = {
 	ACTOR_PLACEMENT(ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3845,7 +3842,7 @@ ACTOR_PLACE Vale_ActorPlacementsAfterLeaving[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE Vale_ActorPlacementsAfterKalay[] = {
+ACTOR_PLACE ValeActorPlacementsAfterKalay[] = {
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3879,7 +3876,7 @@ ACTOR_PLACE Vale_ActorPlacementsAfterKalay[] = {
 	{ SCENE_TABLE_END },
 };
 
-ACTOR_PLACE Vale_RepairActorPlacements[] = {
+ACTOR_PLACE ValeRepairActorPlacements[] = {
 	ACTOR_PLACEMENT(ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
 		409, 0, 1134, FACING_NORTH, TALK_FACING_PARTY, 0),
 	ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3901,7 +3898,7 @@ ACTOR_PLACE Vale_RepairActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };
 
-CUE Vale_Cues[] = {
+CUE ValeCues[] = {
 	{ CUE_TALK, ACTOR_OLD_WOMAN_ADMIRING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephLooksBeautifulTodayIts) },
 	{ CUE_TALK, ACTOR_WOMAN_ON_ALEPHS_PURITY, CONDITION_ALWAYS, MSGNO(MsgValeValeStaysPristineBecauseOfMt) },
 	{ CUE_TALK, ACTOR_GIRL_JEALOUS_OF_GARET, CONDITION_ALWAYS, SCRIPT_REF(scValeTalkAboutTheMayorAndTremors) },
@@ -3942,7 +3939,7 @@ CUE Vale_Cues[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE Vale_CuesAfterLeaving[] = {
+CUE ValeCuesAfterLeaving[] = {
 	{ CUE_TALK, ACTOR_OLD_WOMAN_ADMIRING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeValeIsSavedThanksToThe) },
 	{ CUE_TALK, ACTOR_WOMAN_ON_ALEPHS_PURITY, CONDITION_ALWAYS, MSGNO(MsgValeEverSinceTheTremorsStartedMt) },
 	{ CUE_TALK, ACTOR_GIRL_JEALOUS_OF_GARET, CONDITION_ALWAYS, SCRIPT_REF(scValeTalkAboutTheMayorAndTremors) },
@@ -3992,7 +3989,7 @@ CUE Vale_CuesAfterLeaving[] = {
 	{ CUE_TABLE_END },
 };
 
-CUE Vale_CuesAfterKalay[] = {
+CUE ValeCuesAfterKalay[] = {
 	{ CUE_TALK, ACTOR_GARETS_SISTER_AFTER_KALAY, FLAG_VALE_GARET_MET_SISTER, SCRIPT_REF(scValeGaretMeetsHisSister) },
 	{ CUE_TALK, ACTOR_GARETS_SISTER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeICanTellJustByLooking) },
 	{ CUE_TALK, ACTOR_GARETS_BROTHER_AFTER_KALAY, FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY, SCRIPT_REF(scValeGaretAsksToProtectFamily) },
@@ -4041,26 +4038,26 @@ CUE Vale_CuesAfterKalay[] = {
 /* clang-format on */
 
 /* The doors' metatile animations, from the layout's metatiles below the
-   village, each picture shown for two frames; vale_prologue.c has the same four
+   village, each picture shown for two ticks; vale_prologue.c has the same four
    kinds. Each table takes the name of a door it opens. The two of Jenna's
    grandparents' kind and the west house's show their one open picture twice,
    where the stormy night's show two. */
-Uint16 Vale_SanctumDoorOpens[] = {
+Uint16 ValeSanctumDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(0, 98, 2, 2, 2),
 	MAPGRID_ANIMATION_STEP(2, 98, 2, 2, 2),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Vale_IsaacsDoorOpens[] = {
+Uint16 ValeIsaacsDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(0, 96, 2, 2, 2),
 	MAPGRID_ANIMATION_STEP(2, 96, 2, 2, 2),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Vale_GrandparentsDoorOpens[] = {
+Uint16 ValeGrandparentsDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(4, 98, 2, 2, 2),
 	MAPGRID_ANIMATION_STEP(4, 98, 2, 2, 2),
 	MAPGRID_ANIMATION_STEPS_END,
 };
-Uint16 Vale_WestHouseDoorOpens[] = {
+Uint16 ValeWestHouseDoorOpens[] = {
 	MAPGRID_ANIMATION_STEP(4, 96, 2, 2, 2),
 	MAPGRID_ANIMATION_STEP(4, 96, 2, 2, 2),
 	MAPGRID_ANIMATION_STEPS_END,
@@ -4070,7 +4067,7 @@ Uint16 Vale_WestHouseDoorOpens[] = {
    door: at the first warning (scValeWarnAgainstSneakingUpMtAleph), and each
    time he catches him on it again (scValeAskAboutSneakingToAleph). */
 
-Sint32 Vale_FirstWarningLeaderPath[] = {
+Sint32 ValeFirstWarningLeaderPath[] = {
 	SC_ANIMATION(ANIM_LEADER_RUN),
 	SC_MOVE(199, 0, 446),
 	SC_SYNC,
@@ -4082,7 +4079,7 @@ Sint32 Vale_FirstWarningLeaderPath[] = {
 	SC_END,
 };
 
-Sint32 Vale_FirstWarningGuardPath[] = {
+Sint32 ValeFirstWarningGuardPath[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_MOVE(199, 0, 446),
 	SC_SYNC,
@@ -4094,7 +4091,7 @@ Sint32 Vale_FirstWarningGuardPath[] = {
 	SC_END,
 };
 
-Sint32 Vale_LeaderRunsBackFromThePath[] = {
+Sint32 ValeLeaderRunsBackFromThePath[] = {
 	SC_SPEED(2),
 	SC_ACCELERATION(2),
 	SC_ANIMATION(ANIM_LEADER_RUN),
@@ -4112,7 +4109,7 @@ Sint32 Vale_LeaderRunsBackFromThePath[] = {
 	SC_END,
 };
 
-Sint32 Vale_GuardComesDownThePath[] = {
+Sint32 ValeGuardComesDownThePath[] = {
 	SC_SPEED(1.5),
 	SC_ACCELERATION(1),
 	SC_ANIMATION(ANIM_WALK),
@@ -4128,7 +4125,7 @@ Sint32 Vale_GuardComesDownThePath[] = {
 	SC_END,
 };
 
-Sint32 Vale_LeaderRunsBackBeforeTheDoor[] = {
+Sint32 ValeLeaderRunsBackBeforeTheDoor[] = {
 	SC_SPEED(2),
 	SC_ACCELERATION(2),
 	SC_ANIMATION(ANIM_LEADER_RUN),
@@ -4144,7 +4141,7 @@ Sint32 Vale_LeaderRunsBackBeforeTheDoor[] = {
 	SC_END,
 };
 
-Sint32 Vale_GuardStepsBeforeTheDoor[] = {
+Sint32 ValeGuardStepsBeforeTheDoor[] = {
 	SC_SPEED(1.5),
 	SC_ACCELERATION(1),
 	SC_ANIMATION(ANIM_WALK),

@@ -37,18 +37,18 @@ STATIC_ASSERT(offsetof(BATTLE_CAMERA, pitch) == 52);
 STATIC_ASSERT(offsetof(BATTLE_CAMERA, yaw) == 54);
 
 /* The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the yaw the battle camera eases
-   toward and the frames left to ease it, and how the battle background is
+   toward and the ticks left to ease it, and how the battle background is
    shown. */
 typedef struct BATTLE_BACKGROUND_STATE {
 	Sint32 tgtYaw; /* 1/65536 turns */
-	Sint32 frames; /* frames left to ease the yaw, a sixteenth a frame */
+	Sint32 ticks;  /* ticks left to ease the yaw, a sixteenth a tick */
 	Sint32 mode;   /* BATTLE_BACKGROUND_MODE */
 	/* BATTLE_BACKGROUND_FIXED also sets BG1's scroll whatever the mode; the
 	   battle effects' canvas layers set it. */
 	Sint32 bg1ScrollMode;
 	/* while set, an effect owns BG1's scroll and the camera leaves it */
 	Sint32 busy;
-	/* 0 lets the camera update set the background's range each frame. */
+	/* 0 lets the camera update set the background's range each tick. */
 	Sint32 keepRange;
 	/* cleared when a battle starts; nothing reads them */
 	Sint32 unusedAfterKeepRange[2];
@@ -102,7 +102,7 @@ typedef struct BATTLE_AFFINE {
 } BATTLE_AFFINE;
 
 /* The battle background's scanline state: two pages of per-line values, swapped
-   each frame, and the affine parameters. */
+   each tick, and the affine parameters. */
 typedef struct BATTLE_AFFINE_HDMA {
 	Uint32		  page;		  /* the page of lines shown */
 	Uint8		  unused[12]; /* no code names it */

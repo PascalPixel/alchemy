@@ -66,7 +66,7 @@ typedef enum ALHAFRA_MANOR_ACTOR_ID {
 } ALHAFRA_MANOR_ACTOR_ID;
 
 /* Who is in the manor the night Briggs escapes, once the mast is cleared
-   (AlhafraManor_ActorPlacementsOnceTheMastIsCleared, Jiya and the mayor first
+   (AlhafraManorActorPlacementsOnceTheMastIsCleared, Jiya and the mayor first
    as before). */
 typedef enum ALHAFRA_MANOR_ONCE_THE_MAST_IS_CLEARED_ACTOR_ID {
 	/* "Briggs destroyed the prison and escaped with his pirates!" */
@@ -100,12 +100,12 @@ const Uint32 *scGetExits(void)
 }
 
 extern ACTOR_PLACE ActorPlacements[];
-extern ACTOR_PLACE AlhafraManor_ActorPlacementsOnceTheMastIsCleared[];
+extern ACTOR_PLACE AlhafraManorActorPlacementsOnceTheMastIsCleared[];
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
 	if(syGameFlagGet(FLAG_ALHAFRA_MAST_CLEARED))
-		return AlhafraManor_ActorPlacementsOnceTheMastIsCleared;
+		return AlhafraManorActorPlacementsOnceTheMastIsCleared;
 	return ActorPlacements;
 }
 
@@ -353,7 +353,7 @@ Sint32 scInit(void)
 		fdActorFaceDirectionById(
 			ACTOR_MAN_GAZING_AT_AIRS_ROCK, FACING_SOUTH_SOUTHWEST, 0);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdScriptWait(10);
 		fdScriptSetMessageId((Sint32)&MsgAlhafraManorFromHereItJustLooks);
 		/* "From here, it just looks like a regular old rock, but from up
@@ -377,7 +377,7 @@ Sint32 scInit(void)
 		FieldStateWork->transition =
 			SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		fdScriptStartScreenTransition();
-		fdScriptWaitTransitionFrames();
+		fdScriptWaitTransitionTicks();
 		fdScriptWait(10);
 		fdCameraSetSpeed(2);
 		fdCameraMoveWithinMapBounds(toFIXED(144), cameraY, cameraZ, 1);
@@ -434,7 +434,7 @@ void scAlhafraManorBriggsEscapes(void)
 	FieldStateWork->transitionFrm = 60;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, 3);
 	fdScriptWait(20);
@@ -490,7 +490,7 @@ void scAlhafraManorBriggsEscapes(void)
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(40);
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdActorSetAnimationAndWait(ACTOR_MAYOR, 3);
 	fdScriptWait(20);
 	fdActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
@@ -539,11 +539,11 @@ void scAlhafraManorBriggsEscapes(void)
 	fdPaletteFadeSetSource(PALETTE_TINT_SEPIA, PALETTES_ALL);
 	fdPaletteFadeSetTarget(RGB(0, 0, 0), PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(60);
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(60);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 	fdScriptStartScreenTransition();
-	fdScriptWaitTransitionFrames();
+	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	gmPlayMusic();
 	fdActorSetSpeed(ACTOR_MAYOR, 0.8);
@@ -917,7 +917,7 @@ ACTOR_PLACE ActorPlacements[] = {
 	{SCENE_TABLE_END},
 };
 
-ACTOR_PLACE AlhafraManor_ActorPlacementsOnceTheMastIsCleared[] = {
+ACTOR_PLACE AlhafraManorActorPlacementsOnceTheMastIsCleared[] = {
 	ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS,
 		MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_WEST,
 		TALK_FACING_PARTY_AND_BACK, 0),

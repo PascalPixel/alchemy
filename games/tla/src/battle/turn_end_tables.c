@@ -5,12 +5,12 @@
 
 /* The party takes its turn-end effects first, then the enemies; the second
    console of a link battle swaps them (btProcessTurnEnd). */
-const BATTLE_SIDE_ORDER Battle_TurnEndSideOrder = {
+const BATTLE_SIDE_ORDER BattleTurnEndSideOrder = {
 	{BATTLE_SIDE_MASK_PARTY, BATTLE_SIDE_MASK_ENEMIES},
 };
 
 /* Unused: the numbers 0 to 15 in order. */
-const Uint8 Battle_UnusedCounting[] = {
+const Uint8 BattleUnusedCounting[] = {
 	0,
 	1,
 	2,
@@ -31,7 +31,7 @@ const Uint8 Battle_UnusedCounting[] = {
 
 /* clang-format off */
 /* Unused: a unit matrix. */
-const MATRIX Battle_UnusedUnitMatrix = {
+const MATRIX BattleUnusedUnitMatrix = {
 	toFIXED(1), 0,         0,
 	0,         toFIXED(1), 0,
 	0,         0,         toFIXED(1),

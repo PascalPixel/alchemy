@@ -14,12 +14,12 @@ typedef struct LINE_SCROLL_STATE {
 	BG_SCROLL rows[2][160][3]; /* per page and scanline: BG3, BG2, BG1 */
 	Uint8	  page; /* the page the HBlank DMA shows; the other is built */
 	Uint8	  mode; /* set at the start; not read by name */
-	Uint16 frm; /* frames built so far, added to BG3's y for the wave's phase */
+	Uint16 frm; /* ticks built so far, added to BG3's y for the wave's phase */
 	Uint8  unused[4]; /* zeroed with the block; nothing reads or writes it */
-	FIXED freqX; /* phase per frame and per BG3 row, 16.16 wave table entries */
-	FIXED freqY; /* phase per frame and per BG3 row, 16.16 wave table entries */
-	FIXED stepX; /* 16.16 wave table entries a scanline, 256 a cycle */
-	FIXED stepY; /* 16.16 wave table entries a scanline, 256 a cycle */
+	FIXED  freqX; /* phase per tick and per BG3 row, 16.16 wave table entries */
+	FIXED  freqY; /* phase per tick and per BG3 row, 16.16 wave table entries */
+	FIXED  stepX; /* 16.16 wave table entries a scanline, 256 a cycle */
+	FIXED  stepY; /* 16.16 wave table entries a scanline, 256 a cycle */
 	FIXED
 	ampX; /* 16.16 scale on the sine entry, which is then divided by 256 */
 	FIXED
@@ -34,7 +34,7 @@ STATIC_ASSERT(offsetof(LINE_SCROLL_STATE, freqX) == 3848);
    scLineScrollInitWave takes for a scene's wave. */
 #define LineScroll (*(LINE_SCROLL_STATE **)&HeapSlots[HEAP_SLOT_LINE_SCROLL])
 /* One cycle of sine in 256 entries, 4.12 fixed point (4096 at the peak). */
-extern const Sint16 LineScroll_WaveSine[];
+extern const Sint16 LineScrollWaveSine[];
 /* The entries of a wave's sine, one cycle. */
 #define LINE_SCROLL_WAVE_ENTRIES 256
 /* A wave's offset is its sine entry times its 16.16 amplitude, over this: an

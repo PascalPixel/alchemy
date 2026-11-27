@@ -8,7 +8,7 @@
    (gmPartyAdjustShopGifts), so every ticket from the 29th costs entry 28's 8000
    and entry 29 is never read. */
 /* clang-format off */
-static const Sint16 sGameTicketCreditCosts[30] = {
+static const Sint16 GameTicketCreditCosts[30] = {
 	300, 300, 300, 300, 300,
 	500, 500, 500, 500, 500,
 	1000, 1000, 1000, 1000, 1000,
@@ -21,7 +21,7 @@ static const Sint16 sGameTicketCreditCosts[30] = {
 /* the Muramasa, the Short Sword, Mint, the Demon Axe, Asura's Armor, the */
 /* Cotton Shirt, the Travel Vest, Herb, Nut and the id after the Water of */
 /* Life. */
-const Sint16 Shop_UnusedItemIds[21] = {
+const Sint16 ShopUnusedItemIds[21] = {
 	ITEM_LONG_SWORD, ITEM_BROAD_SWORD, ITEM_CLAYMORE, ITEM_GREAT_SWORD, ITEM_SHAMSHIR,
 	ITEM_SILVER_BLADE, ITEM_MASAMUNE, ITEM_ARCTIC_BLADE, ITEM_GAIA_BLADE,
 	ITEM_SOL_BLADE, ITEM_MURAMASA, ITEM_SHORT_SWORD, ITEM_MINT, ITEM_DEMON_AXE,
@@ -32,23 +32,22 @@ const Sint16 Shop_UnusedItemIds[21] = {
 
 /* Gives a Game Ticket once the party's spending in shops reaches the next
    ticket's cost, and lets the player choose who takes it. */
-void mnShopGiveGameTicket(WINDOW *window, WINDOW *itemWindow)
+void mnShopGiveGameTicket(WINDOW *win, WINDOW *itemWin)
 {
 	SHOP_STATE *shop = MenuState;
 	Sint32		creditCost;
 	Uint32		savedSelectedItem;
 	Sint32		redraw;
 	Sint32		unitId;
-	Sint32		memberIndex;
-	Sint32		messageBase;
+	Sint32		memberIdx;
+	Sint32		msgBase;
 	Sint32		slot;
 
 	redraw = 1;
 	unitId = 0;
 	savedSelectedItem = shop->selectedItem;
-	creditCost =
-		sGameTicketCreditCosts[MainRoutineStateWork.holdings.shopGifts];
-	memberIndex = 0;
+	creditCost = GameTicketCreditCosts[MainRoutineStateWork.holdings.shopGifts];
+	memberIdx = 0;
 
 	/* A ticket is paid for by the coins already spent, which it uses up; the
 	   party's coins are left alone. */
@@ -56,23 +55,23 @@ void mnShopGiveGameTicket(WINDOW *window, WINDOW *itemWindow)
 		return;
 	shop->selectedItem = ITEM_GAME_TICKET;
 	mnMessageArgumentPushStub(ITEM_GAME_TICKET, MESSAGE_ARGUMENT_ITEM);
-	messageBase = MsgTokenGift;
+	msgBase = MsgTokenGift;
 	/* "Let me give you this Game Ticket as a token of my gratitude." */
-	mnShopShowKeeperMessageHidingCursor(messageBase);
+	mnShopShowKeeperMessageHidingCursor(msgBase);
 	mnMessageArgumentPushStub(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
 	/* "So who gets this Game Ticket?" */
-	mnShopShowKeeperMessageHidingCursor(messageBase + 1);
+	mnShopShowKeeperMessageHidingCursor(msgBase + 1);
 
 	while(1) {
 		if(redraw != 0) {
 			redraw = 0;
-			memberIndex =
-				(memberIndex + shop->partyMemberCnt) % shop->partyMemberCnt;
-			unitId = shop->partyMemberIds[memberIndex];
-			mnCursorPlace(window, memberIndex * 24 - 12, 0);
+			memberIdx =
+				(memberIdx + shop->partyMemberCnt) % shop->partyMemberCnt;
+			unitId = shop->partyMemberIds[memberIdx];
+			mnCursorPlace(win, memberIdx * 24 - 12, 0);
 			shop->cursorFrm = 3;
-			mnShopDrawParty(window, memberIndex, shop->selectedItem);
-			mnShopDrawCarriedItem(itemWindow, unitId, shop->selectedItem);
+			mnShopDrawParty(win, memberIdx, shop->selectedItem);
+			mnShopDrawCarriedItem(itemWin, unitId, shop->selectedItem);
 		}
 		if((PerPush & KEY_A) != 0) {
 			/* The ticket goes into the pack to see that it fits, and comes out
@@ -110,12 +109,12 @@ void mnShopGiveGameTicket(WINDOW *window, WINDOW *itemWindow)
 		}
 		if((PerRepeat & KEY_LEFT) != 0) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
-			memberIndex--;
+			memberIdx--;
 			redraw = 1;
 		}
 		if((PerRepeat & KEY_RIGHT) != 0) {
 			sySndPlayStub(SE_MENU_CURSOR_MOVE);
-			memberIndex++;
+			memberIdx++;
 			redraw = 1;
 		}
 		sySynch(1);
@@ -141,7 +140,7 @@ enum {
 
 /* clang-format off */
 /* Every shop's stock, a row by stock row: its items, artifacts and type. */
-static const Sint16 sStockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS] = {
+static const Sint16 StockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS] = {
 	/* SHOP_STOCK_ROW_EMPTY: sells nothing */
 	{0},
 	/* Vale's weapon shop */
@@ -356,21 +355,21 @@ void mnShopStockAddArtifacts(Sint32 stockRow)
 	const Sint16 *stockEntries;
 	const Sint16 *artifactCursor;
 	Sint32		  itemId;
-	Sint32		  artifactIndex;
-	Sint32		  initializedFlag;
+	Sint32		  artifactIdx;
+	Sint32		  initializedFlg;
 
-	initializedFlag = stockRow + FLAG_SHOP_ARTIFACTS_STOCKED;
-	if(gmFlagGetStub(initializedFlag) == 0) {
-		gmFlagSetStub(initializedFlag);
-		artifactIndex = 0;
-		itemId = sStockTable[stockRow][SHOP_STOCK_ARTIFACTS];
+	initializedFlg = stockRow + FLAG_SHOP_ARTIFACTS_STOCKED;
+	if(gmFlagGetStub(initializedFlg) == 0) {
+		gmFlagSetStub(initializedFlg);
+		artifactIdx = 0;
+		itemId = StockTable[stockRow][SHOP_STOCK_ARTIFACTS];
 		if(itemId != 0) {
-			stockEntries = sStockTable[stockRow];
+			stockEntries = StockTable[stockRow];
 			artifactCursor = stockEntries + SHOP_STOCK_ARTIFACTS;
 			do {
 				gmItemAdjustRareItemStockStub(itemId, 1);
-				artifactIndex++;
-				if(artifactIndex > SHOP_STOCK_ARTIFACT_COUNT - 1)
+				artifactIdx++;
+				if(artifactIdx > SHOP_STOCK_ARTIFACT_COUNT - 1)
 					break;
 				artifactCursor++;
 				itemId = *artifactCursor;
@@ -385,30 +384,30 @@ Sint32 mnShopStockCopyItems(Sint32 stockRow, Sint16 *output)
 {
 	const Sint16 *src;
 	Sint16		 *dst;
-	Sint32		  count;
+	Sint32		  cnt;
 	Uint32		  item;
 
-	count = 0;
-	if(sStockTable[stockRow][SHOP_STOCK_ITEMS] != 0) {
+	cnt = 0;
+	if(StockTable[stockRow][SHOP_STOCK_ITEMS] != 0) {
 		dst = output;
-		src = sStockTable[stockRow];
+		src = StockTable[stockRow];
 		do {
 			item = (Uint16)*src;
 			*dst = item;
-			count++;
+			cnt++;
 			src++;
 			dst++;
-			if(count > SHOP_STOCK_ITEM_COUNT - 1)
+			if(cnt > SHOP_STOCK_ITEM_COUNT - 1)
 				break;
 		} while(*src != 0);
 	}
-	output[count] = 0;
-	return count;
+	output[cnt] = 0;
+	return cnt;
 }
 
 /* Returns the shop's type from the last column of its stock row (enum
    SHOP_TYPE). */
 Sint32 mnShopStockGetType(Sint32 stockRow)
 {
-	return sStockTable[stockRow][SHOP_STOCK_TYPE];
+	return StockTable[stockRow][SHOP_STOCK_TYPE];
 }

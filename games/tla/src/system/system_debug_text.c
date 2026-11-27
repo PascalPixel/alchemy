@@ -22,12 +22,12 @@
 /* Writes `value` as HEX_DIGITS hexadecimal digits to the number buffer. */
 void syStringFormatHex(Uint32 value)
 {
-	Uint8		*buffer = NumberTextBuffer;
-	const Uint8 *digits = String_HexDigits;
-	Sint32		 index;
+	Uint8		*buf = NumberTextBuffer;
+	const Uint8 *digits = StringHexDigits;
+	Sint32		 idx;
 
-	for(index = HEX_DIGITS - 1; index >= 0; index--) {
-		buffer[index] = digits[value & 0xf];
+	for(idx = HEX_DIGITS - 1; idx >= 0; idx--) {
+		buf[idx] = digits[value & 0xf];
 		value >>= 4;
 	}
 	NumberTextBuffer[HEX_DIGITS] = 0;
@@ -65,15 +65,15 @@ void syStringFormatDecimal(Sint32 value)
 		NumberTextBuffer[i] = ' ';
 }
 
-/* Writes `count` blank characters (WINDOW_TILE_BLANK) at the debug text cursor
+/* Writes `cnt` blank characters (WINDOW_TILE_BLANK) at the debug text cursor
    and moves it on, when debug text is on. */
-void syPrintBlanks(Uint32 count)
+void syPrintBlanks(Uint32 cnt)
 {
 	Uint16 *dst = DebugTextCursor;
 	Uint32	i;
 
 	if(DebugTextEnabled != 0) {
-		for(i = 0; i < count; i++)
+		for(i = 0; i < cnt; i++)
 			*dst++ = WINDOW_TILE_BLANK;
 		DebugTextCursor = dst;
 	}
@@ -87,7 +87,7 @@ void syPrint(const Uint8 *text)
 	if(DebugTextEnabled != 0) {
 		Uint16 *cursor = DebugTextCursor;
 		Uint32	c = *text;
-		Uint32	count = 0;
+		Uint32	cnt = 0;
 
 		text++;
 		if(c != 0) {
@@ -100,7 +100,7 @@ void syPrint(const Uint8 *text)
 					(Uint16 *)(BG_SCREEN_BLOCK(DEBUG_TEXT_SCREEN_BLOCK) +
 						DEBUG_TEXT_SCREEN_BYTES))
 					cursor = (Uint16 *)BG_SCREEN_BLOCK(DEBUG_TEXT_SCREEN_BLOCK);
-				if(++count > DEBUG_TEXT_MAX_LENGTH - 1)
+				if(++cnt > DEBUG_TEXT_MAX_LENGTH - 1)
 					break;
 				c = *text++;
 			} while(c != 0);

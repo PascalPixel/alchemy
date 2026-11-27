@@ -52,7 +52,7 @@ STATIC_ASSERT(sizeof(WORLD_MAP_PLACE) == 20);
 
 /* The most places fdWorldMapPlacesGetTable lists. */
 #define MAP_SCREEN_PLACE_COUNT 128
-/* The step cue the actor of WorldMap_PlacedActors' first place raises when
+/* The step cue the actor of WorldMapPlacedActors' first place raises when
    touched; each next place's actor raises the next. */
 #define STEP_CUE_AREA_BASE	   100
 /* BG1's map screen image, of 256 colours: 32 by 24 tiles from char block 1 on,

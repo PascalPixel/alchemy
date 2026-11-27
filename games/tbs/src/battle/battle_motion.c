@@ -3,8 +3,8 @@
 
 #include "battle_internal.h"
 
-/* The motion values below are per frame; gravity is taken from a hop's speed
-   each frame. */
+/* The motion values below are per tick; gravity is taken from a hop's speed
+   each tick. */
 
 /* Sends unitId back to its spot, landing exactly there (snapToTgt), and turns
    it to face the centre at once. */
@@ -140,43 +140,43 @@ void btMotionApplyKnockback(Sint32 unitId, Sint32 variant)
 {
 	BATTLE_OBJECT *battleObject;
 	ACTOR		  *actor;
-	Sint32		   targetX;
+	Sint32		   tgtX;
 	Sint32		   anchorX;
 
 	battleObject = btObjectGet(unitId);
 	actor = battleObject->actor;
 	if(gmUnitGetStub(unitId)->id != ENEMY_FUSION_DRAGON) {
-		actor->acceleration = BattleKnockback_Acceleration[variant];
-		actor->speedLimit = BattleKnockback_SpeedLimit[variant];
+		actor->acceleration = BattleKnockbackAcceleration[variant];
+		actor->speedLimit = BattleKnockbackSpeedLimit[variant];
 		/* A unit already in the air keeps its hop, except from KNOCKBACK_SKID
 		   on. */
 		if(actor->y.fixed == 0 || variant > KNOCKBACK_HURL)
-			actor->velY = BattleKnockback_VelocityY[variant];
+			actor->velY = BattleKnockbackVelocityY[variant];
 		actor->gravity = toFIXED(3) / 5;
 		actor->bounce = 0;
 		actor->steeringFlg = 0;
 		fdActorStartIdleStub(actor);
 		anchorX = battleObject->anchorX;
-		targetX = (anchorX * BattleKnockback_DistancePercent[variant]) / 100;
-		fdActorSetMoveTargetStub(actor, targetX, 0, battleObject->anchorZ);
+		tgtX = (anchorX * BattleKnockbackDistancePercent[variant]) / 100;
+		fdActorSetMoveTargetStub(actor, tgtX, 0, battleObject->anchorZ);
 	}
 	fdActorSelectAnimationStub(actor, POSE_DAMAGE);
 }
 
 /* Sends one unit leaping three quarters of the way to another, arriving in
-   `frames` frames, with a hop of initialVelocityY. */
+   `ticks` ticks, with a hop of initVelY. */
 void btMotionApproachTarget(
-	Sint32 unitId, Sint32 targetId, Sint32 frames, Sint32 initialVelocityY)
+	Sint32 unitId, Sint32 tgtId, Sint32 ticks, Sint32 initVelY)
 {
 	BATTLE_OBJECT *actorSlot = btObjectGet(unitId);
-	BATTLE_OBJECT *targetSlot = btObjectGet(targetId);
+	BATTLE_OBJECT *tgtSlot = btObjectGet(tgtId);
 	ACTOR		  *actor = actorSlot->actor;
-	ACTOR		  *target = targetSlot->actor;
+	ACTOR		  *tgt = tgtSlot->actor;
 	Sint32		   percent = 75;
-	FIXED		   dx = target->x.fixed - actor->x.fixed;
+	FIXED		   dx = tgt->x.fixed - actor->x.fixed;
 	FIXED		   startX = actor->x.fixed;
 	FIXED		   stepX = percent * dx / 100;
-	FIXED		   dz = target->z.fixed - actor->z.fixed;
+	FIXED		   dz = tgt->z.fixed - actor->z.fixed;
 	FIXED		   startZ = actor->z.fixed;
 	FIXED		   stepZ = percent * dz / 100;
 	FIXED		   x = startX + stepX;
@@ -187,7 +187,7 @@ void btMotionApproachTarget(
 	Sint32 speed;
 
 	speed = sySquartIWRAM(coarseX * coarseX + coarseZ * coarseZ);
-	speed = (speed << 8) / frames;
+	speed = (speed << 8) / ticks;
 	actor->acceleration = speed;
 	actor->speedLimit = speed;
 	actor->snapToTgt = 1;
@@ -195,8 +195,8 @@ void btMotionApproachTarget(
 	/* DEAD: the store under ACTOR_FLOATS is overwritten at once; the ROM keeps
 	   the test and its store. */
 	if(actor->motionFlg & ACTOR_FLOATS)
-		actor->velY = initialVelocityY;
-	actor->velY = initialVelocityY;
+		actor->velY = initVelY;
+	actor->velY = initVelY;
 	actor->gravity = BATTLE_UNIT_GRAVITY;
 	actor->steeringFlg = 1;
 	fdActorStartIdleStub(actor);
@@ -231,7 +231,7 @@ void btMotionApplyPairMidpoint(Sint32 firstId, Sint32 secondId)
 	FIXED		   secondX;
 	FIXED		   firstZ;
 	FIXED		   secondZ;
-	POS			   position;
+	POS			   pos;
 
 	first = btObjectGet(firstId)->actor;
 	secondSlot = btObjectGet(secondId);
@@ -254,14 +254,14 @@ void btMotionApplyPairMidpoint(Sint32 firstId, Sint32 secondId)
 		secondZ = second->z.fixed;
 	}
 
-	position.x = (firstX + secondX) / 2;
-	position.y = 0;
-	position.z = (firstZ + secondZ) / 2;
+	pos.x = (firstX + secondX) / 2;
+	pos.y = 0;
+	pos.z = (firstZ + secondZ) / 2;
 
-	btMotionMidpointNoOperation(&position, toFIXED(1) / 16);
+	btMotionMidpointNoOperation(&pos, toFIXED(1) / 16);
 }
 
-/* Unused: plays the hit flash on unit id's sprite and waits ten frames. Only a
+/* Unused: plays the hit flash on unit id's sprite and waits ten ticks. Only a
    single-sprite actor takes it. */
 void btMotionPlayHitFlash(Sint32 unitId)
 {
@@ -288,18 +288,18 @@ void btMotionPlayHitFlash(Sint32 unitId)
 Sint32 btMotionProjectScaledPos(Sint32 unitId, Sint32 *projected)
 {
 	ACTOR *actor = btObjectGet(unitId)->actor;
-	SPR	  *sprite = btActorGetSpr(actor, 0);
+	SPR	  *spr = btActorGetSpr(actor, 0);
 	Sint32 projectionScale;
-	FIXED  spriteScale;
+	FIXED  sprScale;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
 	UNUSED SCREEN_POINT input;
 
 	btCameraApplyTransform();
 	projectionScale = syConvert3Dto2D(&actor->x.fixed, projected);
-	spriteScale = syMulFX(projectionScale, sprite->scale);
+	sprScale = syMulFX(projectionScale, spr->scale);
 	projectionScale =
-		syMulFX(spriteScale, FIXEDtoINT((Sint32)btUnitGetEffectHeight(unitId)));
+		syMulFX(sprScale, FIXEDtoINT((Sint32)btUnitGetEffectHeight(unitId)));
 	projected[1] -= projectionScale;
 	return 0;
 }
@@ -315,17 +315,17 @@ Sint32 btMotionProjectScaledPos(Sint32 unitId, Sint32 *projected)
 Sint32 btMotionProjectCursorPoint(Sint32 unitId, Sint32 *projected)
 {
 	ACTOR *actor = btObjectGet(unitId)->actor;
-	SPR	  *sprite = btActorGetSpr(actor, 0);
+	SPR	  *spr = btActorGetSpr(actor, 0);
 	Sint32 projectedHeight;
-	FIXED  spriteScale;
+	FIXED  sprScale;
 
 	btCameraApplyTransform();
 	projectedHeight = syConvert3Dto2D(&actor->x.fixed, projected);
-	spriteScale = syMulFX(projectedHeight, sprite->scale);
+	sprScale = syMulFX(projectedHeight, spr->scale);
 	if(btSprIsSmall(gmUnitGetStub(unitId)->id) != 0)
-		projectedHeight = syMulFX(spriteScale, EFFECT_HEIGHT_SMALL);
+		projectedHeight = syMulFX(sprScale, EFFECT_HEIGHT_SMALL);
 	else
-		projectedHeight = syMulFX(spriteScale, EFFECT_HEIGHT_LARGE);
+		projectedHeight = syMulFX(sprScale, EFFECT_HEIGHT_LARGE);
 	projected[1] -= projectedHeight;
 	return 0;
 }
@@ -336,13 +336,13 @@ Sint32 btMotionProjectCursorPoint(Sint32 unitId, Sint32 *projected)
 Sint32 btUnitGetEffectHeight(Sint32 unitId)
 {
 	Uint32 height;
-	Uint8  spriteRow;
+	Uint8  sprRow;
 
-	spriteRow = gmUnitGetStub(unitId)->id;
-	height = toFIXED((Uint8)btSprGetEffectHeight(spriteRow));
+	sprRow = gmUnitGetStub(unitId)->id;
+	height = toFIXED((Uint8)btSprGetEffectHeight(sprRow));
 	if(height == 0) {
-		spriteRow = gmUnitGetStub(unitId)->id;
-		if(btSprIsSmall(spriteRow) != 0) {
+		sprRow = gmUnitGetStub(unitId)->id;
+		if(btSprIsSmall(sprRow) != 0) {
 			height = toFIXED(EFFECT_HEIGHT_SMALL);
 		} else {
 			height = toFIXED(EFFECT_HEIGHT_LARGE);

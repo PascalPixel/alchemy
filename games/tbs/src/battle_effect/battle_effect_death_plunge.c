@@ -4,7 +4,7 @@
 /* A word of two palette entries, both `color`. */
 #define COLOR_PAIR(color) ((color) << 16 | (color))
 
-#define ELEMENT_BURST_FRAMES	  56 /* frames of the element burst */
+#define ELEMENT_BURST_TICKS		  56 /* ticks of the element burst */
 /* The battle background's first BG palette, of the eight its colours take. */
 #define BATTLE_BACKGROUND_PALETTE 6
 
@@ -12,10 +12,10 @@
    the battle through stub calls, not the handler table, and take their own
    state, canvas and sprite sheet. */
 
-#define DEATH_PLUNGE_FRAMES		  96
+#define DEATH_PLUNGE_TICKS		  96
 /* The plunge strikes: the target flashes, the user flashes and the damage
    shows. */
-#define DEATH_PLUNGE_STRIKE_FRAME 54
+#define DEATH_PLUNGE_STRIKE_TICK  54
 /* How far toward the target the user runs, in hundredths of the way. */
 #define DEATH_PLUNGE_RUN_PERCENT  90
 /* The flashes thrown in a ring after the strike. */
@@ -34,14 +34,14 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args)
 	BATTLE_OBJECT *first;
 	BATTLE_OBJECT *second;
 	ACTOR		  *user;
-	ACTOR		  *target;
+	ACTOR		  *tgt;
 	FIXED		   x;
 	FIXED		   z;
 	Sint32		   userHeight;
-	Sint32		   targetHeight;
+	Sint32		   tgtHeight;
 	Sint32		   point[3];
 	SCREEN_POINT   screen;
-	Sint32		   frame;
+	Sint32		   frm;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
@@ -58,15 +58,15 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args)
 	first = btObjectGetStub(state->args->user);
 	second = btObjectGetStub(state->args->tgts[0]);
 	user = first->actor;
-	target = second->actor;
+	tgt = second->actor;
 	{
 		Sint32 percent = DEATH_PLUNGE_RUN_PERCENT;
 
-		x = user->x.fixed + percent * (target->x.fixed - user->x.fixed) / 100;
-		z = user->z.fixed + percent * (target->z.fixed - user->z.fixed) / 100;
+		x = user->x.fixed + percent * (tgt->x.fixed - user->x.fixed) / 100;
+		z = user->z.fixed + percent * (tgt->z.fixed - user->z.fixed) / 100;
 	}
 	userHeight = btUnitGetEffectHeightStub(state->args->user);
-	targetHeight = btUnitGetEffectHeightStub(state->args->tgts[0]);
+	tgtHeight = btUnitGetEffectHeightStub(state->args->tgts[0]);
 	fdActorStartIdleStub(user);
 	fdActorSetMoveTargetStub(user, x, 0, z);
 	fdActorSelectAnimationStub(user, POSE_LEAP);
@@ -75,32 +75,32 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args)
 	user->acceleration = toFIXED(2);
 	user->speedLimit = toFIXED(8);
 	sySynch(20);
-	for(frame = 0; frame != DEATH_PLUNGE_FRAMES; frame++) {
+	for(frm = 0; frm != DEATH_PLUNGE_TICKS; frm++) {
 		BATTLE_CAMERA *camera = BattleCameraWork;
 
 		EFFECT_VIEW_FROM_CAMERA(camera);
 
-		/* Both leap at 15 pixels a frame. */
-		if(frame == 0) {
-			target->velY = toFIXED(15);
-			target->gravity = toFIXED(57) / 100;
+		/* Both leap at 15 pixels a tick. */
+		if(frm == 0) {
+			tgt->velY = toFIXED(15);
+			tgt->gravity = toFIXED(57) / 100;
 			user->velY = toFIXED(15);
 			user->gravity = toFIXED(57) / 100;
 		}
-		if(frame == 11) {
-			target->scaleY = -target->scaleY;
+		if(frm == 11) {
+			tgt->scaleY = -tgt->scaleY;
 			user->scaleY = -user->scaleY;
 			user->y.fixed += userHeight;
-			target->y.fixed += targetHeight;
+			tgt->y.fixed += tgtHeight;
 		}
 
 		/* The target flashes and both bounce; the user heads back towards the
 		   middle of the field. */
-		if(frame == DEATH_PLUNGE_STRIKE_FRAME) {
+		if(frm == DEATH_PLUNGE_STRIKE_TICK) {
 			btEffectTintBattler(
 				state->args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 10);
-			target->velY = toFIXED(8);
-			target->gravity = BATTLE_UNIT_GRAVITY;
+			tgt->velY = toFIXED(8);
+			tgt->gravity = BATTLE_UNIT_GRAVITY;
 			user->velY = toFIXED(5);
 			user->gravity = toFIXED(47) / 100;
 			user->acceleration = toFIXED(1);
@@ -115,44 +115,43 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args)
 		screen.x >>= 1;
 
 		/* One big flash on the user. */
-		if(frame == DEATH_PLUNGE_STRIKE_FRAME ||
-			frame == DEATH_PLUNGE_STRIKE_FRAME + 1)
+		if(frm == DEATH_PLUNGE_STRIKE_TICK ||
+			frm == DEATH_PLUNGE_STRIKE_TICK + 1)
 			draw[0](canvas, state->sheet, screen.x - FLASH_BURST_WIDTH / 2,
 				screen.y - 16, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-		if(frame >= 56 && frame <= 67) {
+		if(frm >= 56 && frm <= 67) {
 			Sint32 i;
 
 			for(i = 0; i != DEATH_PLUNGE_RING_FLASHES; i++) {
-				Sint32 angle;
+				Sint32 ang;
 				Sint32 rx;
 				Sint32 ry;
 
-				angle = i * (TRIG_TURN / DEATH_PLUNGE_RING_FLASHES);
-				rx = screen.x + FIXEDtoINT(sySin(angle) * (frame - 46));
-				ry = FIXEDtoINT(syCos(angle) * (frame - 46)) - frame + 100;
+				ang = i * (TRIG_TURN / DEATH_PLUNGE_RING_FLASHES);
+				rx = screen.x + FIXEDtoINT(sySin(ang) * (frm - 46));
+				ry = FIXEDtoINT(syCos(ang) * (frm - 46)) - frm + 100;
 				draw[0](canvas,
-					state->sheet +
-						(frame - 56) / 2 * PICTURE_BYTES(FLASH_BURST),
+					state->sheet + (frm - 56) / 2 * PICTURE_BYTES(FLASH_BURST),
 					rx - FLASH_BURST_WIDTH / 2, ry, FLASH_BURST_WIDTH,
 					FLASH_BURST_HEIGHT);
 			}
 		}
 
 		/* Both turn right side up again. */
-		if(frame == 64) {
-			target->scaleY = -target->scaleY;
+		if(frm == 64) {
+			tgt->scaleY = -tgt->scaleY;
 			user->scaleY = -user->scaleY;
 			user->y.fixed -= userHeight;
-			target->y.fixed -= targetHeight;
+			tgt->y.fixed -= tgtHeight;
 			fdActorSelectAnimationStub(user, POSE_STILL);
 		}
-		if(frame == DEATH_PLUNGE_STRIKE_FRAME)
+		if(frm == DEATH_PLUNGE_STRIKE_TICK)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-		if(frame == 0) {
+		if(frm == 0) {
 			sySndPlayStub(SE_WHOOSH);
 			state->shakeFrm = 6;
 		}
-		if(frame == 53)
+		if(frm == 53)
 			state->shakeFrm = 6;
 		btCameraShake(16, 16);
 		EFFECT_PRESENT_CANVAS(state);
@@ -160,20 +159,20 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args)
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-#define BLADE_RAIN_FRAMES	  120
+#define BLADE_RAIN_TICKS	  120
 #define BLADE_RAIN_SWORDS	  16
-/* A sword drifts sideways 0 to 3 steps of two pixels a frame, and its picture
+/* A sword drifts sideways 0 to 3 steps of two pixels a tick, and its picture
    is its step's: velocityX is the step << BLADE_RAIN_STEP_SHIFT. */
 #define BLADE_RAIN_STEP_SHIFT 17
 /* Where on the canvas the first sword waits for its turn; each four after it
    wait a pixel higher. */
 #define BLADE_RAIN_WAIT_Y	  24
 
-/* Swords fall slanting in on the first target, one every 4 frames, and stick in
+/* Swords fall slanting in on the first target, one every 4 ticks, and stick in
    the ground. */
 UNUSED void btEffectRunBladeRain(BATTLE_EFFECT_PARM *args)
 {
-	SCREEN_POINT		 screenPosition;
+	SCREEN_POINT		 screenPos;
 	BLITTER_PAIR		 draw;
 	void			   **slots;
 	void			   **cursor;
@@ -181,7 +180,7 @@ UNUSED void btEffectRunBladeRain(BATTLE_EFFECT_PARM *args)
 	void				*canvas;
 	DRAW_RECTANGLE		*blit;
 	PARTICLE			*blade;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 
 	slots = &HeapSlots[HEAP_SLOT_BATTLE_EFFECT];
@@ -201,8 +200,8 @@ UNUSED void btEffectRunBladeRain(BATTLE_EFFECT_PARM *args)
 	blit = draw;
 	btResourceLoadAndDecompress(RESOURCE_SWORD_SLASH_SHEET, state->sheet, 1, 1);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
-	btProjectionScaledUnit(state->args->tgts[0], &screenPosition);
-	REG_BG2X = (CANVAS_SIZE / 2 - screenPosition.x) << 8;
+	btProjectionScaledUnit(state->args->tgts[0], &screenPos);
+	REG_BG2X = (CANVAS_SIZE / 2 - screenPos.x) << 8;
 
 	/* Each sword waits near the top of the canvas until its turn, then falls,
 	   drifting towards the middle. */
@@ -232,15 +231,15 @@ UNUSED void btEffectRunBladeRain(BATTLE_EFFECT_PARM *args)
 		blade->x <<= 16;
 	}
 	sySndPlayStub(SE_POWER_UP);
-	for(frame = 0; frame != BLADE_RAIN_FRAMES; frame++) {
-		if(frame <= 16) {
-			REG_BLDALPHA = EFFECT_BLEND_CANVAS(frame);
-			if(frame == 16)
+	for(frm = 0; frm != BLADE_RAIN_TICKS; frm++) {
+		if(frm <= 16) {
+			REG_BLDALPHA = EFFECT_BLEND_CANVAS(frm);
+			if(frm == 16)
 				REG_BLDCNT = 0;
 		}
-		if(frame > 103) {
-			REG_BLDALPHA = EFFECT_BLEND_CANVAS(120 - frame);
-			if(frame == 104)
+		if(frm > 103) {
+			REG_BLDALPHA = EFFECT_BLEND_CANVAS(120 - frm);
+			if(frm == 104)
 				REG_BLDCNT =
 					BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 		}
@@ -259,29 +258,29 @@ UNUSED void btEffectRunBladeRain(BATTLE_EFFECT_PARM *args)
 			if(drift < 0)
 				speed = -drift;
 			picture = speed >> BLADE_RAIN_STEP_SHIFT;
-			if(frame < i * 4 + 25) {
+			if(frm < i * 4 + 25) {
 				Uint32 width;
 				Uint32 height;
 
 				mirrored = drift < 0;
 				/* UB: width is assigned in one argument and read in another. */
 #if FIX_UNSEQUENCED_SIDE_EFFECT
-				width = BladeRain_SwordWidths[picture];
-				height = BladeRain_SwordHeights[picture];
+				width = BladeRainSwordWidths[picture];
+				height = BladeRainSwordHeights[picture];
 				blit[mirrored](canvas,
-					state->sheet + BladeRain_SwordPictures[picture],
+					state->sheet + BladeRainSwordPictures[picture],
 					FIXEDtoINT(blade->x) - (width >> 1),
 					FIXEDtoINT(blade->y) - (height >> 1), width, height);
 #else
 				blit[mirrored](canvas,
-					state->sheet + BladeRain_SwordPictures[picture],
+					state->sheet + BladeRainSwordPictures[picture],
 					FIXEDtoINT(blade->x) -
-						((width = BladeRain_SwordWidths[picture]) >> 1),
+						((width = BladeRainSwordWidths[picture]) >> 1),
 					FIXEDtoINT(blade->y) -
-						((height = BladeRain_SwordHeights[picture]) >> 1),
+						((height = BladeRainSwordHeights[picture]) >> 1),
 					width, height);
 #endif
-				if(frame >= i * 4 + 16) {
+				if(frm >= i * 4 + 16) {
 					blade->x += blade->velX;
 					blade->y += blade->velY;
 				}
@@ -291,39 +290,39 @@ UNUSED void btEffectRunBladeRain(BATTLE_EFFECT_PARM *args)
 
 				mirrored = drift < 0;
 #if FIX_UNSEQUENCED_SIDE_EFFECT
-				width = BladeRain_SwordWidths[picture];
-				height = BladeRain_SwordHeights[picture];
+				width = BladeRainSwordWidths[picture];
+				height = BladeRainSwordHeights[picture];
 				blit[mirrored](canvas,
-					state->sheet + BladeRain_SwordPictures[picture],
+					state->sheet + BladeRainSwordPictures[picture],
 					FIXEDtoINT(blade->x) - (width >> 1),
 					FIXEDtoINT(blade->y) - (height >> 1), width, height - 4);
 #else
 				blit[mirrored](canvas,
-					state->sheet + BladeRain_SwordPictures[picture],
+					state->sheet + BladeRainSwordPictures[picture],
 					FIXEDtoINT(blade->x) -
-						((width = BladeRain_SwordWidths[picture]) >> 1),
+						((width = BladeRainSwordWidths[picture]) >> 1),
 					FIXEDtoINT(blade->y) -
-						((height = BladeRain_SwordHeights[picture]) >> 1),
+						((height = BladeRainSwordHeights[picture]) >> 1),
 					width, height - 4);
 #endif
 			}
 		}
 
-		/* The target flashes and the screen shakes every 4 frames. */
-		if(frame >= 23 && frame <= 87 && (frame & 3) == 0) {
+		/* The target flashes and the screen shakes every 4 ticks. */
+		if(frm >= 23 && frm <= 87 && (frm & 3) == 0) {
 			btEffectTintBattler(
 				state->args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 2);
 			state->shakeFrm = 1;
-			if((frame & 7) == 0)
+			if((frm & 7) == 0)
 				sySndPlayStub(SE_IMPACT);
 		}
 		btCameraShake(8, 8);
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 	EFFECT_FINISH_CANVAS();
 }
 
-#define ELEMENT_PILLAR_FRAMES	   56
+#define ELEMENT_PILLAR_TICKS	   56
 /* IceTileSheet: the pillar's half in four pictures, then its glow in three. */
 #define ELEMENT_PILLAR_HALF_WIDTH  17
 #define ELEMENT_PILLAR_HALF_HEIGHT 64
@@ -335,24 +334,24 @@ UNUSED void btEffectRunBladeRain(BATTLE_EFFECT_PARM *args)
 #define ELEMENT_BLEND_LEVEL		   12
 /* The motes both set up in PARTICLES; the pillar spirals the first
    ELEMENT_PILLAR_MOTES up around it, each circling once in
-   ELEMENT_PILLAR_TURN_FRAMES. */
+   ELEMENT_PILLAR_TURN_TICKS. */
 #define ELEMENT_SPIRAL_MOTES	   128
 #define ELEMENT_PILLAR_MOTES	   32
-#define ELEMENT_PILLAR_TURN_FRAMES 64
+#define ELEMENT_PILLAR_TURN_TICKS  64
 
 /* A pillar of light in an element's colours stands at a unit's feet while motes
    spiral up around it. */
 void btEffectRunElementPillar(BATTLE_EFFECT_PARM *args)
 {
 	SCREEN_POINT		 ground;
-	SCREEN_POINT		 screenPosition;
+	SCREEN_POINT		 screenPos;
 	Sint32				 point[3];
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	BLITTER_PAIR		 draw;
 	Uint8				*sheet;
 	BATTLE_CAMERA		*camera;
-	Sint32				 frame;
+	Sint32				 frm;
 	void				*palette;
 	Sint32				 i;
 
@@ -362,7 +361,7 @@ void btEffectRunElementPillar(BATTLE_EFFECT_PARM *args)
 	camera = BattleCameraWork;
 	state->args = args;
 	btEffectStartCanvasLayer(0);
-	state->fadeFrm = BACKGROUND_DARKEN_FRAMES;
+	state->fadeFrm = BACKGROUND_DARKEN_TICKS;
 	state->fadeStep = 0;
 	REG_BLDALPHA = EFFECT_BLEND_CANVAS(ELEMENT_BLEND_LEVEL);
 	REG_BG2PA = Q_8_8(1);
@@ -402,21 +401,21 @@ void btEffectRunElementPillar(BATTLE_EFFECT_PARM *args)
 		state->args->variant = 4;
 	sySndPlayStub(SE_POWER_UP);
 
-	for(frame = 0; frame != ELEMENT_PILLAR_FRAMES; frame++) {
+	for(frm = 0; frm != ELEMENT_PILLAR_TICKS; frm++) {
 		btProjectionUnit(state->args->user, &ground);
 		REG_BG2X = (CANVAS_SIZE / 2 - ground.x) << 8;
-		if(frame > 49)
-			REG_BLDALPHA = EFFECT_BLEND_CANVAS(112 - frame * 2);
-		if(frame == 16)
+		if(frm > 49)
+			REG_BLDALPHA = EFFECT_BLEND_CANVAS(112 - frm * 2);
+		if(frm == 16)
 			btEffectTintBattler(
 				state->args->tgts[0], SPRITE_COLOR_WHITE, TINT_KEEP, 0, 20);
 
 		/* The pillar, its right half mirrored. */
-		if(frame <= 55) {
+		if(frm <= 55) {
 			Sint32 n;
 			Uint8 *glow;
 
-			n = frame / 2 % 4;
+			n = frm / 2 % 4;
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
 				COMPOSITE_LIGHTEN);
 			draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
@@ -424,7 +423,7 @@ void btEffectRunElementPillar(BATTLE_EFFECT_PARM *args)
 				state->sheet + n * PICTURE_BYTES(ELEMENT_PILLAR_HALF), 47,
 				ground.y - ELEMENT_PILLAR_HALF_HEIGHT,
 				ELEMENT_PILLAR_HALF_WIDTH, ELEMENT_PILLAR_HALF_HEIGHT);
-			n = frame / 4 % 3;
+			n = frm / 4 % 3;
 			glow = state->sheet + n * PICTURE_BYTES(ELEMENT_PILLAR_GLOW) +
 				ELEMENT_PILLAR_GLOW;
 			draw[1](canvas, glow, 40, ground.y - 36, ELEMENT_PILLAR_GLOW_WIDTH,
@@ -433,7 +432,7 @@ void btEffectRunElementPillar(BATTLE_EFFECT_PARM *args)
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
 			draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
-			n = frame / 2 % 4;
+			n = frm / 2 % 4;
 			draw[1](canvas,
 				state->sheet + n * PICTURE_BYTES(ELEMENT_PILLAR_HALF), 64,
 				ground.y - ELEMENT_PILLAR_HALF_HEIGHT,
@@ -451,7 +450,7 @@ void btEffectRunElementPillar(BATTLE_EFFECT_PARM *args)
 
 			if(fleck->variant >= 0) {
 				Sint32 size;
-				Sint32 turnSteps = ELEMENT_PILLAR_TURN_FRAMES;
+				Sint32 turnSteps = ELEMENT_PILLAR_TURN_TICKS;
 
 				point[0] = fleck->z * sySin(fleck->x) >> 4;
 				point[2] = -(fleck->z * syCos(fleck->x) >> 4);
@@ -459,15 +458,15 @@ void btEffectRunElementPillar(BATTLE_EFFECT_PARM *args)
 				fleck->x += TRIG_TURN / turnSteps;
 				fleck->y += toFIXED(5);
 				fleck->z += 64;
-				btProjectionPoint(point, &screenPosition);
-				screenPosition.x /= 2;
+				btProjectionPoint(point, &screenPos);
+				screenPos.x /= 2;
 				size = (i & 1) + state->args->variant;
-				EFFECT_DRAW_FLARE(draw[0], canvas, sheet, screenPosition.x,
-					screenPosition.y, size);
+				EFFECT_DRAW_FLARE(
+					draw[0], canvas, sheet, screenPos.x, screenPos.y, size);
 			}
 			fleck->variant++;
 		}
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
@@ -490,15 +489,15 @@ void btEffectRunElementPillar(BATTLE_EFFECT_PARM *args)
 		SHATTERING_OPENING_PLOT_PIXEL(x1, y2), \
 		SHATTERING_OPENING_PLOT_PIXEL(x1, y1))
 
-#define SHATTERING_OPENING_FRAMES		128
+#define SHATTERING_OPENING_TICKS	   128
 /* flashes thrown as the screen breaks */
-#define SHATTERING_OPENING_FLASHES		32
-/* How long a flash floats up, its six pictures four frames each and the last
+#define SHATTERING_OPENING_FLASHES	   32
+/* How long a flash floats up, its six pictures four ticks each and the last
    held. */
-#define SHATTERING_OPENING_FLASH_FRAMES 40
-#define SHATTERING_OPENING_PIECES		33 /* pieces the screen breaks into */
-#define SHATTERING_OPENING_DISC_X		96 /* the centre of the opening disc */
-#define SHATTERING_OPENING_DISC_Y		60 /* the centre of the opening disc */
+#define SHATTERING_OPENING_FLASH_TICKS 40
+#define SHATTERING_OPENING_PIECES	   33 /* pieces the screen breaks into */
+#define SHATTERING_OPENING_DISC_X	   96 /* the centre of the opening disc */
+#define SHATTERING_OPENING_DISC_Y	   60 /* the centre of the opening disc */
 
 /* As a battle opens on the storm at Venus Lighthouse's aerie, the screen turns
    white and breaks into pieces that fly apart and fall, while a grey disc grows
@@ -507,14 +506,14 @@ void btEffectRunShatteringOpening(BATTLE_EFFECT_PARM *args)
 {
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
-	UNUSED SCREEN_POINT		 position;
+	UNUSED SCREEN_POINT		 pos;
 	BATTLE_EFFECT_STATE		*state;
 	void					*canvas;
-	Sint32					 frame;
+	Sint32					 frm;
 	BLITTER_PAIR			 draw;
 	BATTLE_STATE			*battle;
 	BATTLE_BACKGROUND_STATE *view;
-	Sint32					 targetRadius;
+	Sint32					 tgtRadius;
 	PARTICLE				*piece;
 	Sint32					 radius;
 	Sint32					 i;
@@ -582,8 +581,8 @@ void btEffectRunShatteringOpening(BATTLE_EFFECT_PARM *args)
 	draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 
 	/* The pieces fly out from the middle. */
-	startY = ShatteringOpening_PieceStartY;
-	startX = ShatteringOpening_PieceStartX;
+	startY = ShatteringOpeningPieceStartY;
+	startX = ShatteringOpeningPieceStartX;
 	radius = 0;
 	piece = state->particles;
 	for(i = 0; i != SHATTERING_OPENING_PIECES; i++) {
@@ -619,33 +618,33 @@ void btEffectRunShatteringOpening(BATTLE_EFFECT_PARM *args)
 	btEffectTintBattler(
 		state->args->tgts[0], SPRITE_COLOR_WHITE, POSE_CAST, 0, 30);
 
-	for(frame = 0; frame != SHATTERING_OPENING_FRAMES; frame++) {
-		if(frame == 2)
+	for(frm = 0; frm != SHATTERING_OPENING_TICKS; frm++) {
+		if(frm == 2)
 			sySndPlayStub(SE_POWER_UP);
-		if(frame == 3)
+		if(frm == 3)
 			sySndPlayStub(SE_POWER_UP);
-		if(frame == 28)
+		if(frm == 28)
 			btEffectTintBattler(
 				state->args->tgts[0], TINT_KEEP, POSE_CAST, TINT_KEEP, 0);
-		if(frame == 32)
+		if(frm == 32)
 			sySndPlayStub(SE_MONSTER_ROAR);
-		if(frame == 5)
+		if(frm == 5)
 			sySndPlayStub(SE_CRASH);
 		/* Bring the battle background back on BG1. */
-		if(frame == 5) {
+		if(frm == 5) {
 			BgScrollWork[1].x = state->savedBg1X;
 			btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED, battle->bg, -1);
 		}
 
 		/* Ease the white back to the battle background's colours. */
-		if(frame > 7) {
-			Uint16 *color;
+		if(frm > 7) {
+			Uint16 *col;
 
-			color = (Uint16 *)&BG_PLTT_COLOR(BATTLE_BACKGROUND_PALETTE, 0);
+			col = (Uint16 *)&BG_PLTT_COLOR(BATTLE_BACKGROUND_PALETTE, 0);
 			for(i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
-				Sint32 red = RGB_RED(*color);
-				Sint32 green = RGB_GREEN(*color);
-				Sint32 blue = RGB_BLUE(*color);
+				Sint32 red = RGB_RED(*col);
+				Sint32 green = RGB_GREEN(*col);
+				Sint32 blue = RGB_BLUE(*col);
 				Sint32 goalRed = RGB_RED(battle->pal[i]);
 				Sint32 goalGreen = RGB_GREEN(battle->pal[i]);
 				Sint32 goalBlue = RGB_BLUE(battle->pal[i]);
@@ -662,23 +661,23 @@ void btEffectRunShatteringOpening(BATTLE_EFFECT_PARM *args)
 					blue++;
 				else if(blue > goalBlue)
 					blue--;
-				*color++ = RGB(red, green, blue);
+				*col++ = RGB(red, green, blue);
 			}
 		}
 
 		/* The whole screen turns the disc's grey. */
-		if(frame == 4)
+		if(frm == 4)
 			syWordsFill((void *)BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES,
 				CANVAS_FILL_WORD(2));
 
 		/* Grow the grey disc. */
-		if(frame <= 3) {
+		if(frm <= 3) {
 			Sint32 v;
 
-			v = frame * 4 + 8;
-			targetRadius = frame * 32;
+			v = frm * 4 + 8;
+			tgtRadius = frm * 32;
 			BG_PLTT[2] = RGB(v, v, v);
-			for(; radius != targetRadius; radius++) {
+			for(; radius != tgtRadius; radius++) {
 				octantX = radius;
 				octantY = 0;
 				error = radius;
@@ -740,30 +739,30 @@ void btEffectRunShatteringOpening(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The pieces fly and fall. */
-		if(frame <= 50) {
+		if(frm <= 50) {
 			for(i = 0; i != SHATTERING_OPENING_PIECES; i++) {
 				piece = &state->particles[i];
 				draw[0](canvas,
-					state->imageStorage + ShatteringOpening_PiecePictures[i],
+					state->imageStorage + ShatteringOpeningPiecePictures[i],
 					FIXEDtoINT(piece->x), FIXEDtoINT(piece->y),
-					ShatteringOpening_PieceWidths[i],
-					ShatteringOpening_PieceHeights[i]);
-				if(frame > 3)
+					ShatteringOpeningPieceWidths[i],
+					ShatteringOpeningPieceHeights[i]);
+				if(frm > 3)
 					btParticleAdvanceWithGravity2D(
 						piece, PARTICLE_DAMPING_NONE, toFIXED(1) / 4);
 			}
 		}
 
-		if(frame >= 8 && frame <= 50) {
+		if(frm >= 8 && frm <= 50) {
 			Sint32 v;
 
-			v = frame - 8;
+			v = frm - 8;
 			if(v > RGB_LEVEL_MAX)
 				v = RGB_LEVEL_MAX;
 			BG_PLTT[1] = RGB(v, v, v);
 		}
 
-		if(frame == 51) {
+		if(frm == 51) {
 			btResourceLoadAndDecompress(
 				RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 0);
 			for(i = 1; i != SHEET_PALETTE_COLORS; i++) {
@@ -790,11 +789,11 @@ void btEffectRunShatteringOpening(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* Flashes float up and fade. */
-		if(frame > 52) {
+		if(frm > 52) {
 			for(i = 0; i != SHATTERING_OPENING_FLASHES; i++) {
 				piece = &state->particles[i];
-				if(frame >= i / 4 + 52 &&
-					piece->variant < SHATTERING_OPENING_FLASH_FRAMES) {
+				if(frm >= i / 4 + 52 &&
+					piece->variant < SHATTERING_OPENING_FLASH_TICKS) {
 					Sint32 picture;
 
 					picture = piece->variant / 4;
@@ -811,7 +810,7 @@ void btEffectRunShatteringOpening(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	EFFECT_RELEASE_BLITTERS();
@@ -842,7 +841,7 @@ void btEffectRunShatteringOpening(BATTLE_EFFECT_PARM *args)
 /* One streak of light of the element streak burst, over a particle's entry. */
 typedef struct PLUNGE_STREAK {
 	Sint32 head;	/* the head's distance from the centre */
-	Sint32 tail;	/* the tail's distance; both close in 4 a frame */
+	Sint32 tail;	/* the tail's distance; both close in 4 a tick */
 	Sint32 unusedZ; /* the Particle's z, which the streaks leave alone */
 	Sint32 pitch;	/* the axis's turn, a random 16-bit angle */
 	Sint32 yaw;		/* the axis's turn, a random 16-bit angle */
@@ -857,7 +856,7 @@ typedef struct PLUNGE_STREAK {
 #define ELEMENT_BURST_BURST_WIDTH  48
 #define ELEMENT_BURST_BURST_HEIGHT 48
 #define ELEMENT_BURST_BURST		   (5 * PICTURE_BYTES(ELEMENT_BURST_SPARK))
-/* A burst mote's shortest life in frames; by its index a mote lives up to twice
+/* A burst mote's shortest life in ticks; by its index a mote lives up to twice
    as long, less one. */
 #define ELEMENT_BURST_MOTE_LIFE	   16
 
@@ -871,7 +870,7 @@ void btEffectRunElementBurst(BATTLE_EFFECT_PARM *args)
 	BLITTER_PAIR		 draw;
 	Uint8				*sheet;
 	void				*palette;
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 
 	state = syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof *state);
@@ -880,7 +879,7 @@ void btEffectRunElementBurst(BATTLE_EFFECT_PARM *args)
 	state->args = args;
 	btEffectStartCanvasLayer(0);
 	/* Setup, as for the element pillar. */
-	state->fadeFrm = BACKGROUND_DARKEN_FRAMES;
+	state->fadeFrm = BACKGROUND_DARKEN_TICKS;
 	state->fadeStep = 0;
 	REG_BLDALPHA = EFFECT_BLEND_CANVAS(ELEMENT_BLEND_LEVEL);
 	REG_BG2PA = Q_8_8(1);
@@ -923,40 +922,40 @@ void btEffectRunElementBurst(BATTLE_EFFECT_PARM *args)
 	draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 	sySndPlayStub(SE_SPIN);
 
-	for(frame = 0; frame != ELEMENT_BURST_FRAMES; frame++) {
+	for(frm = 0; frm != ELEMENT_BURST_TICKS; frm++) {
 		btProjectionScaledUnit(args->user, &ground);
 		REG_BG2X = (CANVAS_SIZE / 2 - ground.x) << 8;
-		if(frame > 49)
-			REG_BLDALPHA = EFFECT_BLEND_CANVAS(112 - frame * 2);
-		if(frame == 26) {
+		if(frm > 49)
+			REG_BLDALPHA = EFFECT_BLEND_CANVAS(112 - frm * 2);
+		if(frm == 26) {
 			sySndPlayStub(SE_POWER_UP);
 			btEffectTintBattler(
 				state->args->tgts[0], SPRITE_COLOR_WHITE, TINT_KEEP, 0, 20);
 		}
-		if(frame >= 28 && frame <= 48)
+		if(frm >= 28 && frm <= 48)
 			draw[0](canvas,
 				state->sheet +
-					(frame - 28) / 3 * PICTURE_BYTES(ELEMENT_BURST_BURST) +
+					(frm - 28) / 3 * PICTURE_BYTES(ELEMENT_BURST_BURST) +
 					ELEMENT_BURST_BURST,
 				40, ground.y - 24, ELEMENT_BURST_BURST_WIDTH,
 				ELEMENT_BURST_BURST_HEIGHT);
-		if(frame >= 0 && frame <= 14) {
-			Sint32 picture = frame / 3 % 5;
+		if(frm >= 0 && frm <= 14) {
+			Sint32 picture = frm / 3 % 5;
 
 			for(i = 0; i != 4; i++) {
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-					ElementBurst_SparkFlips[i] | EFFECT_CLIP_BOUNDS,
+					ElementBurstSparkFlips[i] | EFFECT_CLIP_BOUNDS,
 					COMPOSITE_LIGHTEN);
 				draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 				draw[1](canvas,
 					state->sheet + picture * PICTURE_BYTES(ELEMENT_BURST_SPARK),
-					ElementBurst_SparkX[i] + 32,
-					ground.y + ElementBurst_SparkY[i] - 32,
+					ElementBurstSparkX[i] + 32,
+					ground.y + ElementBurstSparkY[i] - 32,
 					ELEMENT_BURST_SPARK_WIDTH, ELEMENT_BURST_SPARK_HEIGHT);
 				syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 			}
 		}
-		if(frame >= 0) {
+		if(frm >= 0) {
 			for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
 				PARTICLE *mote = &state->particles[i];
 
@@ -975,7 +974,7 @@ void btEffectRunElementBurst(BATTLE_EFFECT_PARM *args)
 				}
 			}
 		}
-		EFFECT_END_FRAME(state);
+		EFFECT_END_TICK(state);
 	}
 
 	/* Finish, as for the element pillar. */
@@ -987,20 +986,20 @@ void btEffectRunElementBurst(BATTLE_EFFECT_PARM *args)
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-/* Draws a frame of the element streaks: lines of light closing in on the centre
+/* Draws a tick of the element streaks: lines of light closing in on the centre
    of the canvas. */
 void btEffectDrawStreaks(void)
 {
 	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-	Sint32				 frame;
+	Sint32				 frm;
 	Sint32				 i;
 	PLUNGE_STREAK		*streak;
 	VECTOR3				 point;
 	SCREEN_POINT		 head;
 	SCREEN_POINT		 tail;
 
-	frame = (state->frm)++;
-	if(frame == 0) {
+	frm = (state->frm)++;
+	if(frm == 0) {
 		for(i = 0; i != STREAK_SEEDS; i++) {
 			PLUNGE_STREAK *seed =
 				&((PLUNGE_STREAK *)Ram_MapGridMetatileBuffer)[i];
@@ -1017,7 +1016,7 @@ void btEffectDrawStreaks(void)
 	point.z = 0;
 	for(i = 0; i != STREAKS; i++) {
 		streak = &((PLUNGE_STREAK *)Ram_MapGridMetatileBuffer)[i];
-		if(frame > i / 4 && streak->head > 0) {
+		if(frm > i / 4 && streak->head > 0) {
 			Sint32 fade;
 
 			syInitMatrix();
@@ -1061,7 +1060,7 @@ void btEffectStartElementStreaks(Sint32 element)
 	state = syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof *state);
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 	btEffectStartCanvasLayer(0);
-	state->fadeFrm = BACKGROUND_DARKEN_FRAMES;
+	state->fadeFrm = BACKGROUND_DARKEN_TICKS;
 	REG_BG2PA = Q_8_8(1);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	switch(element) {
@@ -1087,7 +1086,7 @@ void btEffectStartElementStreaks(Sint32 element)
 	state->frm = 0;
 	state->transferMode = CANVAS_COPY_AND_DARKEN;
 	state->transferValue = CANVAS_FILL_WORD(6);
-	sySetEvent(btEffectDrawStreaks, EVENT_PASS_FRAME);
+	sySetEvent(btEffectDrawStreaks, EVENT_PASS_TICK);
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 }
 
@@ -1104,25 +1103,25 @@ void btEffectEndElementStreaks(void)
 
 #undef COLOR_PAIR
 #undef BATTLE_BACKGROUND_PALETTE
-#undef ELEMENT_BURST_FRAMES
-#undef DEATH_PLUNGE_STRIKE_FRAME
-#undef DEATH_PLUNGE_FRAMES
+#undef ELEMENT_BURST_TICKS
+#undef DEATH_PLUNGE_STRIKE_TICK
+#undef DEATH_PLUNGE_TICKS
 #undef DEATH_PLUNGE_RUN_PERCENT
 #undef DEATH_PLUNGE_RING_FLASHES
-#undef BLADE_RAIN_FRAMES
+#undef BLADE_RAIN_TICKS
 #undef BLADE_RAIN_SWORDS
 #undef BLADE_RAIN_STEP_SHIFT
 #undef BLADE_RAIN_WAIT_Y
-#undef ELEMENT_PILLAR_FRAMES
+#undef ELEMENT_PILLAR_TICKS
 #undef ELEMENT_BLEND_LEVEL
 #undef ELEMENT_SPIRAL_MOTES
 #undef ELEMENT_PILLAR_MOTES
-#undef ELEMENT_PILLAR_TURN_FRAMES
+#undef ELEMENT_PILLAR_TURN_TICKS
 #undef SHATTERING_OPENING_PLOT_PIXEL
 #undef SHATTERING_OPENING_PLOT_CORNERS
-#undef SHATTERING_OPENING_FRAMES
+#undef SHATTERING_OPENING_TICKS
 #undef SHATTERING_OPENING_FLASHES
-#undef SHATTERING_OPENING_FLASH_FRAMES
+#undef SHATTERING_OPENING_FLASH_TICKS
 #undef SHATTERING_OPENING_PIECES
 #undef SHATTERING_OPENING_DISC_X
 #undef SHATTERING_OPENING_DISC_Y
